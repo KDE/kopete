@@ -56,6 +56,9 @@ public:
 	static IRC::Networks *self();
 
 	const IRC::NetworkList &networks() const;
+	void setNetworks( const IRC::NetworkList& networks );
+
+	const IRC::Network& network(const QString &name);
 
 public slots:
 	void slotReadNetworks();

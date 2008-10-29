@@ -210,16 +210,25 @@ void KopeteApplication::slotLoadPlugins()
 	}
 }
 
+
 void KopeteApplication::slotAllPluginsLoaded()
 {
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	//FIXME: this should probably ask for the identities to connect instead of all accounts
 	// --noconnect not specified?
-	if ( args->isSet( "connect" )  && Kopete::BehaviorSettings::self()->autoConnect() &&
+
+	Kopete::OnlineStatusManager::Category initStatus = Kopete::OnlineStatusManager::self()->initialStatus();
+
+	if ( args->isSet( "connect" )  &&  initStatus != Kopete::OnlineStatusManager::Offline &&
 			( Solid::Networking::status() == Solid::Networking::Unknown ||
-			  Solid::Networking::status() == Solid::Networking::Connected ) )
-		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), Kopete::AccountManager::ConnectIfOffline );
+			  Solid::Networking::status() == Solid::Networking::Connected ) ){
+
+		Kopete::AccountManager::self()->setOnlineStatus( initStatus, QString(), Kopete::AccountManager::ConnectIfOffline );
+
+	 }
+
+ 	kDebug(14000)<< "initial status set in config: " << initStatus;
 
 	QStringList connectArgs = args->getOptionList( "autoconnect" );
 
@@ -267,6 +276,8 @@ void KopeteApplication::slotAllPluginsLoaded()
 	handleURLArgs();
 }
 
+
+
 int KopeteApplication::newInstance()
 {
 //	kDebug(14000) ;
@@ -292,6 +303,7 @@ void KopeteApplication::handleURLArgs()
 		} // END for()
 	} // END args->count() > 0
 }
+
 
 void KopeteApplication::quitKopete()
 {

@@ -94,23 +94,10 @@
          <string>Use a message queue to store incoming messages</string>
         </property>
         <property name="whatsThis" >
-         <string>Store new incoming messages in a message queue. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via chat window and system tray icon animations.</string>
+         <string>Store new incoming messages in a message queue. New messages are messages that cannot be displayed in an already open chat window. Only queued messages trigger notification via chat window and system tray icon animations.</string>
         </property>
         <property name="text" >
          <string>Use message &amp;queue</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="kcfg_useMessageStack" >
-        <property name="toolTip" >
-         <string>Use a message stack to store incoming messages</string>
-        </property>
-        <property name="whatsThis" >
-         <string>Store new incoming messages in a message stack. New messages are messages that cannot be displayed in an already open chat window. Only queued or stacked messages trigger notification via chat window and system tray icon animations.</string>
-        </property>
-        <property name="text" >
-         <string>Use message stac&amp;k</string>
         </property>
        </widget>
       </item>
@@ -120,13 +107,13 @@
          <bool>false</bool>
         </property>
         <property name="toolTip" >
-         <string>Also add unread messages to queue/stack</string>
+         <string>Also add unread messages to queue</string>
         </property>
         <property name="whatsThis" >
          <string>Unread messages are messages that will be displayed in an already opened but inactive chat window. Only incoming queued messages trigger notification via chat window and system tray icon animations. With this option disabled only new incoming messages are queued, i.e. messages that cannot be displayed in an already open chat window.</string>
         </property>
         <property name="text" >
-         <string>Queue/stack unrea&amp;d messages</string>
+         <string>Queue unrea&amp;d messages</string>
         </property>
        </widget>
       </item>
@@ -134,33 +121,57 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3" >
-     <property name="title" >
-      <string>Miscellaneous</string>
-     </property>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <item>
-       <widget class="QCheckBox" name="kcfg_autoConnect" >
-        <property name="toolTip" >
-         <string>Connect on startup and when a network is available</string>
-        </property>
-        <property name="whatsThis" >
-         <string>When starting Kopete, and whenever your computer is online, all your accounts will be connected automatically. You can exclude accounts individually in their properties.</string>
-        </property>
-        <property name="text" >
-         <string>Connect automatically</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+	  <widget class="QGroupBox" name="initialStatusGroup" >
+	  <property name="title" >
+		  <string>Initial status</string>
+	  </property>
+	  <layout class="QVBoxLayout" >
+		<property name="spacing" >
+		  <number>6</number>
+		</property>
+		<property name="margin" >
+		  <number>9</number>
+		</property>
+		<item>
+		  <widget class="QComboBox" name="kcfg_initialStatus" >
+			<property name="toolTip" >
+			  <string>Set the initial status</string>
+			</property>
+			<property name="whatsThis" >
+			  <string>When starting Kopete, and whenever your computer is online, all your accounts will go into the status selected here. You can exclude accounts individually in their properties.</string>
+			</property>
+			<item>
+			  <property name="text" >
+				<string>Offline</string>
+			  </property>
+			</item>
+			<item>
+			  <property name="text" >
+				<string>Online</string>
+			  </property>
+			</item>
+			<item>
+			  <property name="text" >
+				<string>Away</string>
+			  </property>
+			</item>
+			<item>
+			  <property name="text" >
+				<string>Busy</string>
+			  </property>
+			  </item>
+			<item>
+			<property name="text" >
+			  <string>Invisible</string>
+			</property>
+		  </item>
+		 </widget>
+		</item>
+	  </layout>
+	</widget>
    </item>
+
+
    <item>
     <spacer>
      <property name="orientation" >
@@ -186,6 +197,7 @@
   <tabstop>kcfg_startDocked</tabstop>
   <tabstop>kcfg_useMessageQueue</tabstop>
   <tabstop>kcfg_autoConnect</tabstop>
+  <tabstop>kcfg_initialStatus</tabstop>
  </tabstops>
  <resources/>
  <connections/>

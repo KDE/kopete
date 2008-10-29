@@ -2,12 +2,12 @@
 	client.cpp - Kopete Oscar Protocol
 
 	Copyright (c) 2004-2005 Matt Rogers <mattr@kde.org>
-    Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
+    Copyright (c) 2008 Roman Jarosz <kedgedev@centrum.cz>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-	Based on Iris, Copyright (C) 2003  Justin Karneges
+	Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
-	Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -21,10 +21,11 @@
 
 #include "client.h"
 
-#include <qtimer.h>
+#include <QTimer>
 #include <QList>
 #include <QByteArray>
-#include <qtextcodec.h>
+#include <QPointer>
+#include <QTextCodec>
 #include <QtNetwork/QTcpSocket>
 
 #include <kdebug.h> //for kDebug()
@@ -42,6 +43,7 @@
 #include "logintask.h"
 #include "connection.h"
 #include "messagereceivertask.h"
+#include "messageacktask.h"
 #include "onlinenotifiertask.h"
 #include "oscarclientstream.h"
 #include "oscarsettings.h"
@@ -71,6 +73,7 @@
 #include "closeconnectiontask.h"
 #include "icqtlvinforequesttask.h"
 #include "icqtlvinfoupdatetask.h"
+#include "filetransferhandler.h"
 
 
 namespace
@@ -104,6 +107,9 @@ public:
 	enum { StageOne, StageTwo };
 	int stage;
 
+	StageOneLoginTask* loginTask;
+	QPointer<StageTwoLoginTask> loginTaskTwo;
+
 	//Protocol specific data
 	bool isIcq;
 	bool redirectRequested;
@@ -118,6 +124,7 @@ public:
 	OnlineNotifierTask* onlineNotifier;
 	OwnUserInfoTask* ownStatusTask;
 	MessageReceiverTask* messageReceiverTask;
+	MessageAckTask* messageAckTask;
 	SSIAuthTask* ssiAuthTask;
 	ICQUserInfoRequestTask* icqInfoTask;
 	ICQTlvInfoRequestTask* icqTlvInfoTask;
@@ -139,7 +146,8 @@ public:
 		Oscar::DWORD status;
 		QString message;     // for away-,DND-message etc., and for Xtraz status
 		int xtraz;           // Xtraz status
-		QString description; // Xtraz description
+		int mood;            // Mood
+		QString title;       // Xtraz/Mood title
 		bool sent;
 	} status;
 
@@ -161,8 +169,6 @@ Client::Client( QObject* parent )
 :QObject( parent )
 {
 	setObjectName( "oscarclient" );
-	m_loginTask = 0L;
-	m_loginTaskTwo = 0L;
 
 	d = new ClientPrivate;
 	d->tzoffset = 0;
@@ -173,6 +179,7 @@ Client::Client( QObject* parent )
 	d->offlineMessagesRequested = false;
 	d->status.status = 0x0; // default to online
 	d->status.xtraz = -1; // default to no Xtraz
+	d->status.mood = -1;
 	d->status.sent = false;
 	d->ssiManager = new ContactManager( this );
 	d->settings = new Oscar::Settings();
@@ -180,11 +187,14 @@ Client::Client( QObject* parent )
 	d->onlineNotifier = 0L;
 	d->ownStatusTask = 0L;
 	d->messageReceiverTask = 0L;
+	d->messageAckTask = 0L;
 	d->ssiAuthTask = 0L;
 	d->icqInfoTask = 0L;
 	d->icqTlvInfoTask = 0L;
 	d->userInfoTask = 0L;
 	d->stage = ClientPrivate::StageOne;
+	d->loginTask = 0L;
+	d->loginTaskTwo = 0L;
 	d->typingNotifyTask = 0L;
 	d->ssiModifyTask = 0L;
 	d->awayMsgRequestTimer = new QTimer();
@@ -218,8 +228,8 @@ void Client::connectToServer( Connection *c, const QString& host, quint16 port, 
 	d->connections.append( c );
 	if ( auth == true )
 	{
-		m_loginTask = new StageOneLoginTask( c->rootTask() );
-		connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+		d->loginTask = new StageOneLoginTask( c->rootTask() );
+		connect( d->loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	}
 
 	connect( c, SIGNAL( socketError( int, const QString& ) ), this, SLOT( determineDisconnection( int, const QString& ) ) );
@@ -230,6 +240,10 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 {
 	Q_UNUSED( host );
 	Q_UNUSED( port );
+
+	// Cleanup client
+	close();
+
 	d->user = userId;
 	d->pass = pass;
 	d->stage = ClientPrivate::StageOne;
@@ -240,12 +254,19 @@ void Client::close()
 {
 	QList<Connection*> cList = d->connections.connections();
 	for ( int i = 0; i < cList.size(); i++ )
-		(new CloseConnectionTask( cList.at(i)->rootTask() ))->go( Task::AutoDelete );
+	{
+		Connection* c = cList.at(i);
+		(new CloseConnectionTask( c->rootTask() ))->go( Task::AutoDelete );
+		
+		foreach ( Oscar::MessageInfo info, c->messageInfoList() )
+			emit messageError( info.contact, info.id );
+	}
 
 	d->active = false;
 	d->awayMsgRequestTimer->stop();
 	d->awayMsgRequestQueue.clear();
 	d->connections.clear();
+
 	deleteStaticTasks();
 
 	//don't clear the stored status between stage one and two
@@ -253,9 +274,10 @@ void Client::close()
 	{
 		d->status.status = 0x0;
 		d->status.xtraz = -1;
+		d->status.mood = -1;
 		d->status.sent = false;
 		d->status.message.clear();
-		d->status.description.clear();
+		d->status.title.clear();
 	}
 
 	d->exchanges.clear();
@@ -266,17 +288,20 @@ void Client::close()
 	d->offlineMessagesRequested = false;
 }
 
-void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &description )
+void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, const QString &title, int mood )
 {
 	kDebug(OSCAR_RAW_DEBUG) << "Setting status message to "<< message;
 
 	// remember the values to reply with, when requested
 	bool xtrazChanged = (xtraz > -1 || d->status.xtraz != xtraz);
-	bool statusInfoChanged = ( !d->status.sent || message != d->status.message || description != d->status.description );
+	bool moodChanged = (mood > -1 || d->status.mood != mood);
+	bool titleChanged = (d->status.title != title);
+	bool statusInfoChanged = ( !d->status.sent || message != d->status.message || title != d->status.title );
 	d->status.status = status;
 	d->status.message = message;
 	d->status.xtraz = xtraz;
-	d->status.description = description;
+	d->status.mood = mood;
+	d->status.title = title;
 	d->status.sent = false;
 
 	if ( d->active )
@@ -306,7 +331,23 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 		if ( !c )
 			return;
 
+		if ( d->isIcq && statusInfoChanged )
+		{
+			ICQFullInfo info( false );
+			info.statusDescription.set( title.toUtf8() );
+			
+			ICQTlvInfoUpdateTask* infoUpdateTask = new ICQTlvInfoUpdateTask( c->rootTask() );
+			infoUpdateTask->setInfo( info );
+			infoUpdateTask->go( Task::AutoDelete );
+		}
+
 		SendDCInfoTask* sdcit = new SendDCInfoTask( c->rootTask(), status );
+		if ( d->isIcq && moodChanged )
+			sdcit->setIcqMood( mood );
+
+		if ( d->isIcq && statusInfoChanged )
+			sdcit->setIcqMessage( title );
+
 		sdcit->go( Task::AutoDelete ); //autodelete
 
 		QString msg;
@@ -333,15 +374,6 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 
 		pt->go( Task::AutoDelete );
 
-		if ( d->isIcq && statusInfoChanged )
-		{
-			ICQFullInfo info( false );
-			info.statusDescription.set( description.toUtf8() );
-
-			ICQTlvInfoUpdateTask* infoUpdateTask = new ICQTlvInfoUpdateTask( c->rootTask() );
-			infoUpdateTask->setInfo( info );
-			infoUpdateTask->go( Task::AutoDelete );
-		}
 		d->status.sent = true;
 	}
 }
@@ -381,9 +413,8 @@ Guid Client::versionCap() const
 void Client::streamConnected()
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
-	d->stage = ClientPrivate::StageTwo;
-	if ( m_loginTaskTwo )
-		m_loginTaskTwo->go();
+	if ( d->loginTaskTwo )
+		d->loginTaskTwo->go( Task::AutoDelete );
 }
 
 void Client::lt_loginFinished()
@@ -399,33 +430,31 @@ void Client::lt_loginFinished()
 		ServiceSetupTask* ssTask = new ServiceSetupTask( d->connections.defaultConnection()->rootTask() );
 		connect( ssTask, SIGNAL( finished() ), this, SLOT( serviceSetupFinished() ) );
 		ssTask->go( Task::AutoDelete ); //fire and forget
-		m_loginTaskTwo->deleteLater();
-		m_loginTaskTwo = 0;
 	}
 	else if ( d->stage == ClientPrivate::StageOne )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "stage one login done";
-		disconnect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+		disconnect( d->loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 
-		if ( m_loginTask->statusCode() == 0 ) //we can start stage two
+		if ( d->loginTask->statusCode() == 0 ) //we can start stage two
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "no errors from stage one. moving to stage two";
 
 			//cache these values since they'll be deleted when we close the connections (which deletes the tasks)
-			d->host = m_loginTask->bosServer();
-			d->port = m_loginTask->bosPort().toUInt();
-			d->cookie = m_loginTask->loginCookie();
+			d->host = d->loginTask->bosServer();
+			d->port = d->loginTask->bosPort().toUInt();
+			d->cookie = d->loginTask->loginCookie();
 			close();
 			QTimer::singleShot( 100, this, SLOT(startStageTwo() ) );
+			d->stage = ClientPrivate::StageTwo;
 		}
 		else
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "errors reported. not moving to stage two";
 			close(); //deletes the connections for us
 		}
-
-		m_loginTask->deleteLater();
-		m_loginTask = 0;
+		d->loginTask->deleteLater();
+		d->loginTask = 0;
 	}
 
 }
@@ -437,10 +466,9 @@ void Client::startStageTwo()
 	new CloseConnectionTask( c->rootTask() );
 
 	//create the new login task
-	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
-	m_loginTaskTwo->setCookie( d->cookie );
-	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
-
+	d->loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
+	d->loginTaskTwo->setCookie( d->cookie );
+	QObject::connect( d->loginTaskTwo, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 
 	//connect
 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
@@ -452,7 +480,7 @@ void Client::serviceSetupFinished()
 {
 	d->active = true;
 
-	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.description );
+	setStatus( d->status.status, d->status.message, d->status.xtraz, d->status.title, d->status.mood );
 	d->ownStatusTask->go();
 
 	emit haveContactList();
@@ -533,9 +561,14 @@ int Client::statusXtraz() const
 	return d->status.xtraz;
 }
 
-QString Client::statusDescription() const
+int Client::statusMood() const
 {
-	return d->status.description;
+	return d->status.mood;
+}
+
+QString Client::statusTitle() const
+{
+	return d->status.title;
 }
 
 QString Client::statusMessage() const
@@ -625,7 +658,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 						{
 							XtrazNotify xNotifyResponse;
 							xNotifyResponse.setSenderUni( userId() );
-							response.setPlugin( xNotifyResponse.statusResponse( statusXtraz(), statusDescription(), statusMessage() ) );
+							response.setPlugin( xNotifyResponse.statusResponse( statusXtraz(), statusTitle(), statusMessage() ) );
 							emit userReadsStatusMessage( msg.sender() );
 						}
 					}
@@ -782,6 +815,7 @@ void Client::initializeStaticTasks()
 	d->onlineNotifier = new OnlineNotifierTask( c->rootTask() );
 	d->ownStatusTask = new OwnUserInfoTask( c->rootTask() );
 	d->messageReceiverTask = new MessageReceiverTask( c->rootTask() );
+	d->messageAckTask = new MessageAckTask( c->rootTask() );
 	d->ssiAuthTask = new SSIAuthTask( c->rootTask() );
 	d->icqInfoTask = new ICQUserInfoRequestTask( c->rootTask() );
 	d->icqTlvInfoTask = new ICQTlvInfoRequestTask( c->rootTask() );
@@ -803,6 +837,11 @@ void Client::initializeStaticTasks()
 	connect( d->messageReceiverTask, SIGNAL( fileMessage( int, const QString, const QByteArray, Buffer ) ),
 	         this, SLOT( gotFileMessage( int, const QString, const QByteArray, Buffer ) ) );
 
+	connect( d->messageAckTask, SIGNAL(messageAck(const QString&, uint)),
+	         this, SIGNAL(messageAck(const QString&, uint)) );
+	connect( d->errorTask, SIGNAL(messageError(const QString&, uint)),
+	         this, SIGNAL(messageError(const QString&, uint)) );
+	
 	connect( d->ssiAuthTask, SIGNAL( authRequested( const QString&, const QString& ) ),
 	         this, SIGNAL( authRequestReceived( const QString&, const QString& ) ) );
 	connect( d->ssiAuthTask, SIGNAL( authReplied( const QString&, const QString&, bool ) ),
@@ -1518,9 +1557,9 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 	Connection* c = createConnection();
 	//create the new login task
-	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
-	m_loginTaskTwo->setCookie( cookie );
-	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
+	d->loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
+	d->loginTaskTwo->setCookie( cookie );
+	QObject::connect( d->loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
 
 	//connect
 	connectToServer( c, realHost, realPort.toInt(), false );
@@ -1532,7 +1571,9 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 void Client::serverRedirectFinished()
 {
-	if ( m_loginTaskTwo &&  m_loginTaskTwo->statusCode() == 0 )
+	StageTwoLoginTask* loginTaskTwo = qobject_cast<StageTwoLoginTask*>( sender() );
+
+	if ( loginTaskTwo && loginTaskTwo->statusCode() == 0 )
 	{ //stage two was successful
 		Connection* c = d->connections.connectionForFamily( d->currentRedirect );
 		if ( !c )
@@ -1555,33 +1596,33 @@ void Client::serverRedirectFinished()
 		emit chatNavigationConnected();
 	}
 
-    if ( d->currentRedirect == 0x000E )
-    {
-        //HACK! such abuse! think of a better way
-        if ( !m_loginTaskTwo )
-        {
-            kWarning(OSCAR_RAW_DEBUG) << "no login task to get connection from!";
-            emit redirectionFinished( d->currentRedirect );
-            return;
-        }
-
-        Connection* c = m_loginTaskTwo->client();
-        QString roomName = d->connections.chatRoomForConnection( c );
-        Oscar::WORD exchange = d->connections.exchangeForConnection( c );
-        if ( c )
-        {
-            kDebug(OSCAR_RAW_DEBUG) << "setting up chat connection";
-            ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
-            connect( cst, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
-                     this, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
-            connect( cst, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
-                     this, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
-            connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
-                     this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
-        }
-        emit chatRoomConnected( exchange, roomName );
-    }
-
+	if ( d->currentRedirect == 0x000E )
+	{
+		//HACK! such abuse! think of a better way
+		if ( !loginTaskTwo )
+		{
+			kWarning(OSCAR_RAW_DEBUG) << "no login task to get connection from!";
+			emit redirectionFinished( d->currentRedirect );
+			return;
+		}
+	
+		Connection* c = loginTaskTwo->client();
+		QString roomName = d->connections.chatRoomForConnection( c );
+		Oscar::WORD exchange = d->connections.exchangeForConnection( c );
+		if ( c )
+		{
+			kDebug(OSCAR_RAW_DEBUG) << "setting up chat connection";
+			ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
+			connect( cst, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
+			         this, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
+			connect( cst, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
+			         this, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
+			connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
+			         this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
+		}
+		emit chatRoomConnected( exchange, roomName );
+	}
+	
 	emit redirectionFinished( d->currentRedirect );
 
 }
@@ -1630,6 +1671,9 @@ void Client::determineDisconnection( int code, const QString& string )
 	{
 		emit socketError( code, string );
 	}
+
+	foreach ( Oscar::MessageInfo info, c->messageInfoList() )
+		emit messageError( info.contact, info.id );
 
     //connection is deleted. deleteLater() is used
     d->connections.remove( c );
@@ -1697,6 +1741,7 @@ void Client::deleteStaticTasks()
 	delete d->onlineNotifier;
 	delete d->ownStatusTask;
 	delete d->messageReceiverTask;
+	delete d->messageAckTask;
 	delete d->ssiAuthTask;
 	delete d->icqInfoTask;
 	delete d->icqTlvInfoTask;
@@ -1708,6 +1753,7 @@ void Client::deleteStaticTasks()
 	d->onlineNotifier = 0;
 	d->ownStatusTask = 0;
 	d->messageReceiverTask = 0;
+	d->messageAckTask = 0;
 	d->ssiAuthTask = 0;
 	d->icqInfoTask = 0;
 	d->icqTlvInfoTask = 0;
@@ -1722,16 +1768,17 @@ bool Client::hasIconConnection( ) const
 	return c;
 }
 
-void Client::sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t )
+FileTransferHandler* Client::createFileTransfer( const QString& contact, const QStringList& files )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0004 );
 	if ( !c )
-		return;
+		return 0;
 
-	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files, t );
+	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files );
 	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
-	ft->go( Task::AutoDelete );
+
+	return new FileTransferHandler(ft);
 }
 
 void Client::gotFileMessage( int type, const QString from, const QByteArray cookie, Buffer buf)
@@ -1753,14 +1800,11 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 	{
 		kDebug(14151) << "new request :)";
 		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, ourInfo().userId(), cookie, buf );
-		connect( ft, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
-				SIGNAL( getTransferManager( Kopete::TransferManager ** ) ) );
-		connect( ft, SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ),
-				SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
 		connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
 				this, SLOT( fileMessage( const Oscar::Message& ) ) );
 		ft->go( Task::AutoDelete );
-		return;
+		
+		emit incomingFileTransfer( new FileTransferHandler(ft) );
 	}
 
 	kDebug(14151) << "nobody wants it :(";

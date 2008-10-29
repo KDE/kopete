@@ -22,16 +22,7 @@
    </size>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="leftMargin" >
-    <number>0</number>
-   </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
+   <property name="margin" >
     <number>0</number>
    </property>
    <item>
@@ -39,16 +30,7 @@
      <property name="spacing" >
       <number>6</number>
      </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
+     <property name="margin" >
       <number>0</number>
      </property>
      <item>
@@ -65,7 +47,7 @@
       </widget>
      </item>
      <item>
-      <widget class="KComboBox" native="1" name="contactComboBox" >
+      <widget class="KComboBox" name="contactComboBox" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
          <horstretch>0</horstretch>
@@ -129,6 +111,9 @@
          <property name="alternatingRowColors" >
           <bool>true</bool>
          </property>
+         <property name="rootIsDecorated" >
+          <bool>false</bool>
+         </property>
          <property name="sortingEnabled" >
           <bool>true</bool>
          </property>
@@ -173,16 +158,7 @@
      <property name="spacing" >
       <number>6</number>
      </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
+     <property name="margin" >
       <number>0</number>
      </property>
      <item>
@@ -193,7 +169,7 @@
       </widget>
      </item>
      <item>
-      <widget class="KLineEdit" native="1" name="searchLine" />
+      <widget class="KLineEdit" name="searchLine" />
      </item>
      <item>
       <widget class="QPushButton" name="searchButton" >
@@ -212,16 +188,7 @@
      <property name="spacing" >
       <number>6</number>
      </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
+     <property name="margin" >
       <number>0</number>
      </property>
      <item>
@@ -253,18 +220,18 @@
  <customwidgets>
   <customwidget>
    <class>KComboBox</class>
-   <extends></extends>
+   <extends>QComboBox</extends>
    <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
-   <extends></extends>
+   <extends>QLineEdit</extends>
    <header>klineedit.h</header>
   </customwidget>
   <customwidget>
    <class>KTreeWidgetSearchLine</class>
-   <extends>QLineEdit</extends>
-   <header location="global" >ktreewidgetsearchline.h</header>
+   <extends>KLineEdit</extends>
+   <header>ktreewidgetsearchline.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

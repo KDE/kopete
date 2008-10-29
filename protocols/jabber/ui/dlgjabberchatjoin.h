@@ -36,7 +36,7 @@ public:
 public slots:
   /*$PUBLIC_SLOTS$*/
   virtual void          slotJoin();
-  virtual void          slotBowse();
+  virtual void          slotQuery();
 
 protected:
   /*$PROTECTED_FUNCTIONS$*/
@@ -56,6 +56,9 @@ private:
 private slots:
 	void slotQueryFinished();
 	void slotDiscoFinished();
+	void slotChatRooomsQueryFinished();
+	void slotCheckData();
+	void slotDoubleClick(QTreeWidgetItem *item);
 
 	// end todo.
 

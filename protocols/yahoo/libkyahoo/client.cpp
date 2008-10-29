@@ -5,7 +5,7 @@
     Copyright (c) 2004 Duncan Mac-Vicar P. <duncan@kde.org>
     Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
     Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-    Copyright (C) 2003  Justin Karneges
+    Copyright (C) 2003  Justin Karneges <justin@affinix.com>
     
     Kopete (c) 2002-2006 by the Kopete developers <kopete-devel@kde.org>
  
@@ -221,12 +221,12 @@ void Client::streamError( int error )
 	d->active = false;
 
 	// Examine error
-	if( error == ClientStream::ErrConnection )			// Ask Connector in this case
+	if( error == ClientStream::ErrConnection && m_connector )			// Ask Connector in this case
 	{
 		d->error = m_connector->errorCode();
 		d->errorString = KSocketBase::errorString( (KSocketBase::SocketError)d->error );
 	}
-	else
+	else if( d->stream )
 	{
 		d->error = error;
 		d->errorString = d->stream->errorText();

@@ -86,7 +86,7 @@ private:
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
 
-	QString m_statusDescription;
+	QString m_statusTitle;
 	enum { InfoNone = 0, InfoShort, InfoMediumTlv } m_requestingInfo;
 
 private slots:

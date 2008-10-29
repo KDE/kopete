@@ -140,7 +140,7 @@ static void inject_message( void *opdata, const char *accountname, const char *p
 	Q_UNUSED(accountname)
 	Q_UNUSED(protocol)
 
-	kDebug(14318) << "Sending message:" << message;
+//	kDebug(14318) << "Sending message:" << message;
 
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::ContactPtrList list = session->members();		
@@ -402,6 +402,23 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 	if (context) {
 		nextMsg = context->smstate->nextExpected;
 
+
+	if (context->smstate->sm_prog_state == OTRL_SMP_PROG_CHEATED) {
+		abortSMP(context, chatSession);
+		context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+		context->smstate->sm_prog_state = OTRL_SMP_PROG_OK;
+	} else {
+		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1Q);
+		if (tlv) {
+			if (nextMsg != OTRL_SMP_EXPECT1){
+				kDebug(14318) << "Abording SMP: 1Q";
+				abortSMP( context, chatSession );
+			} else {
+				kDebug(14318) << "Update SMP state: 1Q";
+				new AuthenticationWizard( chatSession->view()->mainWidget(), context, chatSession, false, QString((char*)tlvs->data) );
+			}
+		}
+
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1);
 		if (tlv) {
 			if (nextMsg != OTRL_SMP_EXPECT1){
@@ -409,8 +426,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 				abortSMP( context, chatSession );
 			} else {
 				kDebug(14318) << "Update SMP state: 1 ";
-				SMPPopup *popup = new SMPPopup( chatSession->view()->mainWidget(), context, chatSession, false );
-				popup->show();
+				new AuthenticationWizard( chatSession->view()->mainWidget(), context, chatSession, false );
 			}
 		}
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP2);
@@ -420,6 +436,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 				abortSMP( context, chatSession );
 			} else {
 				kDebug(14318) << "Update SMP state: 2 -> 3";
+				AuthenticationWizard::findWizard(chatSession)->nextState();
 				context->smstate->nextExpected = OTRL_SMP_EXPECT4;
 			}
 		}
@@ -429,20 +446,35 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 				kDebug(14318) << "Abording SMP: 3";
 				abortSMP( context, chatSession );
 			} else {
-				if (context->active_fingerprint->trust && context->active_fingerprint->trust[0]) {
-					Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
-					msg.setHtmlBody( i18n("<b>Authentication successful. The conversation is now secure!</b>") );
-					msg.setDirection( Kopete::Message::Internal );
-					chatSession->appendMessage( msg );
-					OtrlChatInterface::self()->emitGoneSecure( chatSession, 2 );
+				kDebug(14318) << "SMP: 3";
+				if(context->smstate->sm_prog_state == OTRL_SMP_PROG_SUCCEEDED){
+					if (context->active_fingerprint->trust && context->active_fingerprint->trust[0]) {
+						AuthenticationWizard::findWizard(chatSession)->finished(true, true);
+						kDebug(14318) << "trust found";
+						Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
+						msg.setHtmlBody( i18n("Authentication with <b>%1</b> successful. The conversation is now secure.", formatContact(chatSession->members().first()->contactId())));
+						msg.setDirection( Kopete::Message::Internal );
+						chatSession->appendMessage( msg );
+						OtrlChatInterface::self()->emitGoneSecure( chatSession, 2 );
+					} else {
+						AuthenticationWizard::findWizard(chatSession)->finished(true, false);
+						kDebug(14318) << "trust _NOT_ found";
+						Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
+						msg.setHtmlBody( i18n("<b>%1</b> has successfully authenticated you. You may want to authenticate this contact as well by asking your own question.", formatContact(chatSession->members().first()->contactId())));
+						msg.setDirection( Kopete::Message::Internal );
+						chatSession->appendMessage( msg );
+						OtrlChatInterface::self()->emitGoneSecure( chatSession, 1 );
+					}
+
 				} else {
+					AuthenticationWizard::findWizard(chatSession)->finished(false, false);
 					Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
-					msg.setHtmlBody( i18n("<b>Authentication failed. The conversation is now insecure!</b>") );
+					msg.setHtmlBody( i18n("Authentication with <b>%1</b> failed. The conversation is now insecure.", formatContact(chatSession->members().first()->contactId())));
 					msg.setDirection( Kopete::Message::Internal );
 					chatSession->appendMessage( msg );
 					OtrlChatInterface::self()->emitGoneSecure( chatSession, 1 );
-				}
 
+				}
 				context->smstate->nextExpected = OTRL_SMP_EXPECT1;
 			}
 		}
@@ -452,13 +484,18 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 				kDebug(14318) << "Abording SMP: 4";
 				abortSMP( context, chatSession );
 			} else {
+				kDebug(14318) << "SMP: 4";
 				if (context->active_fingerprint->trust && context->active_fingerprint->trust[0]) {
+					AuthenticationWizard::findWizard(chatSession)->finished(true, true);
+					kDebug(14318) << "trust found";
 					Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
 					msg.setHtmlBody( i18n("<b>Authentication successful. The conversation is now secure!</b>") );
 					msg.setDirection( Kopete::Message::Internal );
 					chatSession->appendMessage( msg );
 					OtrlChatInterface::self()->emitGoneSecure( chatSession, 2 );
 				} else {
+					AuthenticationWizard::findWizard(chatSession)->finished(false, false);
+					kDebug(14318) << "trust _NOT_ found";
 					Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
 					msg.setHtmlBody( i18n("<b>Authentication failed. The conversation is now insecure!</b>") );
 					msg.setDirection( Kopete::Message::Internal );
@@ -478,6 +515,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 		}
 	
 		otrl_tlv_free(tlvs);
+	}
 	}
 	
 
@@ -562,7 +600,7 @@ KDE_EXPORT bool OtrlChatInterface::shouldDiscard( const QString &message ){
 //		kDebug(14318) << otrl_proto_message_type( message.toLatin1() );
 		switch( otrl_proto_message_type( message.toLatin1() ) ){
 			case OTRL_MSGTYPE_TAGGEDPLAINTEXT:
-//			case OTRL_MSGTYPE_UNKNOWN: // Fragmented messages seem to be type UNKNOWN
+			case OTRL_MSGTYPE_UNKNOWN: // Fragmented messages seem to be type UNKNOWN
 			case OTRL_MSGTYPE_NOTOTR:
 				return false;
 			default:
@@ -617,33 +655,14 @@ KDE_EXPORT void OtrlChatInterface::verifyFingerprint( Kopete::ChatSession *sessi
 
 	context = otrl_context_find( userstate, session->members().first()->contactId().toLocal8Bit(), session->account()->accountId().toLocal8Bit(), session->protocol()->displayName().toLocal8Bit(), 0, NULL, NULL, NULL);
 
-	SMPPopup *popup = new SMPPopup( session->view()->mainWidget(), context, session, true );
-	popup->show();
-
-/*	fingerprint = findFingerprint( session->members().first()->contactId() );
-	if( fingerprint != 0 ){
-		if( trust ){
-			otrl_context_set_trust( fingerprint, "verified" );
-		} else {
-			otrl_context_set_trust( fingerprint, NULL );
-		}
-  //		kdDebug() << "Writing fingerprints" << endl;
-		QString savePath = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "fingerprints";
-		otrl_privkey_write_fingerprints( userstate, savePath.toLocal8Bit() );
-		OtrlChatInterface::self()->emitGoneSecure( session, privState( session ) );
-	} else {
-//		kdDebug() << "could not find fingerprint" << endl;
-	}
-*/
+	new AuthenticationWizard( session->view()->mainWidget(), context, session, true );
 }
 
 Fingerprint *OtrlChatInterface::findFingerprint( const QString &account ){
 	ConnContext *context;
 
 	for( context = userstate->context_root; context != NULL; context = context->next ){
-//		kdDebug() << context->username << endl;
 		if( strcmp( context->username, account.toLocal8Bit() ) == 0 ){
-//			kdDebug() << "found Context" << endl;
 			return context->active_fingerprint ? context->active_fingerprint : NULL;
 		}
 	}
@@ -655,9 +674,7 @@ QString OtrlChatInterface::findActiveFingerprint( Kopete::ChatSession *session )
 	char hash[45];
 
 	for( context = userstate->context_root; context != NULL; context = context->next ){
-//		kdDebug() << context->username << endl;
 		if( strcmp( context->username, session->members().first()->contactId().toLocal8Bit() ) == 0 ){
-//			otrl_privkey_hash_to_human( hash, context->fingerprint_root.next->fingerprint );
 			otrl_privkey_hash_to_human( hash, context->active_fingerprint->fingerprint );
 			return hash;
 		}
@@ -666,14 +683,11 @@ QString OtrlChatInterface::findActiveFingerprint( Kopete::ChatSession *session )
 }
 
 bool OtrlChatInterface::isVerified( Kopete::ChatSession *session ){
-//	kdDebug() << "checking for trust" << endl;
 	Fingerprint *fingerprint = findFingerprint( session->members().first()->contactId() );
 
 	if( fingerprint->trust && fingerprint->trust[0] != '\0' ){
-//		kdDebug() << "verified" << endl;
 		return true;
 	} else {
-//		kdDebug() << "not verified" << endl;
 		return false;
 	}
 }
@@ -689,7 +703,6 @@ KDE_EXPORT void OtrlChatInterface::checkFilePermissions( const QString &file ){
 			privkeysInfo.permission( QFile::ReadOther ) |
 			privkeysInfo.permission( QFile::WriteOther ) |
 			privkeysInfo.permission( QFile::ExeOther ) ){
-//			kdDebug() << "Permissions of OTR storage file are wrong! Correcting..." << endl;
 			chmod( file.toLocal8Bit(), 0600);	
 		}
 	}
@@ -732,17 +745,34 @@ void OtrlChatInterface::abortSMP( ConnContext *context, Kopete::ChatSession *ses
 	}
 }
 
-void OtrlChatInterface::respondSMP( ConnContext *context, Kopete::ChatSession *session, const QString &secret, bool initiate ){
+void OtrlChatInterface::initSMP( ConnContext *context, Kopete::ChatSession *session, const QString &secret){
+	context = otrl_context_find( userstate, session->members().first()->contactId().toLocal8Bit(), session->account()->accountId().toLocal8Bit(), session->protocol()->displayName().toLocal8Bit(), 0, NULL, NULL, NULL);
+	otrl_message_initiate_smp( userstate, &ui_ops, session, context, (unsigned char*)secret.toLocal8Bit().data(), secret.length() );
 
-	kDebug(14318) << "sending SMP message. initiate: " << initiate;	
+	Kopete::Message msg( session->members().first(), session->account()->myself() );
+	msg.setHtmlBody( i18n("<b>Authenticating contact...</b>") );
+	msg.setDirection( Kopete::Message::Internal );
 
-	if( initiate ){
-		context = otrl_context_find( userstate, session->members().first()->contactId().toLocal8Bit(), session->account()->accountId().toLocal8Bit(), session->protocol()->displayName().toLocal8Bit(), 0, NULL, NULL, NULL);
-		otrl_message_initiate_smp( userstate, &ui_ops, session, context, (unsigned char*)secret.toLocal8Bit().data(), secret.length() );
-		
-	} else {
-		otrl_message_respond_smp( userstate, &ui_ops, session, context, (unsigned char*)secret.toLocal8Bit().data(), secret.length());
-	}
+	session->appendMessage( msg );
+
+}
+
+void OtrlChatInterface::initSMPQ( ConnContext *context, Kopete::ChatSession *session, const QString &question, const QString &secret){
+	context = otrl_context_find( userstate, session->members().first()->contactId().toLocal8Bit(), session->account()->accountId().toLocal8Bit(), session->protocol()->displayName().toLocal8Bit(), 0, NULL, NULL, NULL);
+	otrl_message_initiate_smp_q( userstate, &ui_ops, session, context, (const char*)question.toLocal8Bit().data(), (unsigned char*)secret.toLocal8Bit().data(), secret.length() );
+
+	Kopete::Message msg( session->members().first(), session->account()->myself() );
+	msg.setHtmlBody( i18n("<b>Authenticating contact...</b>") );
+	msg.setDirection( Kopete::Message::Internal );
+
+	session->appendMessage( msg );
+}
+
+void OtrlChatInterface::respondSMP( ConnContext *context, Kopete::ChatSession *session, const QString &secret ){
+
+	kDebug(14318) << "resonding SMP";	
+
+	otrl_message_respond_smp( userstate, &ui_ops, session, context, (unsigned char*)secret.toLocal8Bit().data(), secret.length());
 
 	Kopete::Message msg( session->members().first(), session->account()->myself() );
 	msg.setHtmlBody( i18n("<b>Authenticating contact...</b>") );
@@ -761,7 +791,6 @@ KeyGenThread::KeyGenThread( const QString &accountname, const QString &protocol 
 
 void KeyGenThread::run()
 {
-//	kdDebug() << "Creating private key... Storing to: " + QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true)) + "privkeys" << endl;
 	QString storeFile = QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys";
 	otrl_privkey_generate(OtrlChatInterface::self()->getUserstate(), storeFile.toLocal8Bit(), accountname.toLocal8Bit(), protocol.toLocal8Bit());
 	OtrlChatInterface::self()->checkFilePermissions( QString(KGlobal::dirs()->saveLocation("data", "kopete_otr/", true )) + "privkeys" );

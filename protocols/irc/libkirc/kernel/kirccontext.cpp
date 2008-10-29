@@ -19,6 +19,8 @@
 
 #include "kircentity.h"
 
+#include <QtCore/QEvent>
+
 using namespace KIrc;
 
 class KIrc::ContextPrivate
@@ -28,66 +30,86 @@ public:
 		: defaultCodec(0)
 	{ }
 
-	QList<Entity *> entities;
+	KIrc::EntityList entities;
 
 	QTextCodec *defaultCodec;
 };
 
 Context::Context(QObject *parent)
-	: QObject(parent)
-//	, d(new Private)
+	: Handler(parent)
+	, d_ptr(new ContextPrivate)
 {
 }
 
 Context::~Context()
 {
-//	delete d;
+	delete d_ptr;
+}
+/*
+QList<KIrc::Entity *> Context::anonymous() const
+{
+
+}
+*/
+KIrc::EntityList Context::entities() const
+{
+	#warning implement me
+	//return findChildren<EntityPtr>();
+	return EntityList();
 }
 
-Entity::List Context::entities() const
+KIrc::EntityPtr Context::entityFromName(const QByteArray &name)
 {
-	Q_D(const Context);
+	Q_D(Context);
+	EntityPtr entity;
 
-	Entity::List entities;
+	QByteArray nick=name;
 
-	foreach(Entity *entity, d->entities)
-		entities.append(Entity::Ptr(entity));
-
-	return entities;
-}
-
-Entity::Ptr Context::entityFromName(const QByteArray &name)
-{
-	Entity::Ptr entity;
-
-	if (name.isEmpty())
+	if (nick.isEmpty())
 		return entity;
 
-#ifdef __GNUC__
-	#warning Do the searching code here.
-#endif
+	if (nick.contains( '!' ) ) //Its the extended format, containing hostname and stuff. only search for the nick
+	  nick=name.left( nick.indexOf( '!' ) );
+
+	//TODO: optimize this using Hash or something
+	foreach( EntityPtr e, d->entities )
+	{
+		if ( e->name()==nick )
+		{
+			entity=e;
+			break;
+		}
+	}
 
 	if (!entity)
 	{
 		entity = new Entity(this);
-		entity->setName(name);
-//		add(entity);
+		entity->setName(nick);
+		add( entity );
 	}
 
 	return entity;
 }
 
-Entity::List Context::entitiesFromNames(const QList<QByteArray> &names)
+KIrc::EntityList Context::entitiesFromNames(const QList<QByteArray> &names)
 {
-	Entity::List entities;
+	EntityList entities;
+	EntityPtr entity;
 
+	// This is slow and can easily be optimised with sorted lists
 	foreach (const QByteArray &name, names)
-		entities.append(entityFromName(name));
+	{
+		entity = entityFromName(name);
+		if (entity)
+			entities.append(entity);
+//		else
+//			warn the user
+	}
 
 	return entities;
 }
 
-Entity::List Context::entitiesFromNames(const QByteArray &names, char sep)
+KIrc::EntityList Context::entitiesFromNames(const QByteArray &names, char sep)
 {
 	return entitiesFromNames(names.split(sep));
 }
@@ -106,28 +128,31 @@ void Context::setDefaultCodec(QTextCodec *defaultCodec)
 	d->defaultCodec = defaultCodec;
 }
 
-void Context::postEvent(Event *event)
+void Context::postEvent(QEvent *event)
 {
-#warning CODE ME
-//	delete event;
+	// FIXME: use the Qt event system here
+	emit ircEvent( event );
+	delete event;
 }
-#if 0
-void Context::add(Entity *entity)
+
+void Context::add(EntityPtr entity)
 {
+	Q_D(Context);
 	if (!d->entities.contains(entity))
 	{
 		d->entities.append(entity);
-		connect(entity, SIGNAL(destroyed(KIrc::Entity *)),
+		connect(entity.data(), SIGNAL(destroyed(KIrc::Entity *)),
 			this, SLOT(remove(KIrc::Entity *)));
 	}
 }
 
-void Context::remove(Entity *entity)
+void Context::remove(EntityPtr entity)
 {
+	Q_D(Context);
 	d->entities.removeAll(entity);
 //	disconnect(entity);
 }
-#endif
+
 
 #if 0
 Status Context::SET()

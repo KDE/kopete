@@ -41,7 +41,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().userHost () ), account, mc) , mNick( rosterItem.jid().resource() )
 {
 	setIcon( "jabber_group" );
-	
+
 	// initialize here, we need it set before we instantiate the manager below
 	mManager = 0;
 
@@ -61,7 +61,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 											Kopete::ContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
 
 	connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
-	
+
 	connect ( account->myself() , SIGNAL(onlineStatusChanged( Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus& ) ) ,
 			  this , SLOT(slotStatusChanged()  ) ) ;
 
@@ -73,12 +73,12 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * is empty. This makes at least the history plugin crash.
 	 */
 	mManager->addContact ( this );
-	
-	
-	
+
+
+
 	/**
 	 * Let's construct the window:
-	 *  otherwise, the ref count of maznager is equal to zero. 
+	 *  otherwise, the ref count of maznager is equal to zero.
 	 *   and if we receive a message before the window is shown,
 	 *   it will be deleted and we will be out of the channel
 	 * In all case, there are no reason to don't show it.
@@ -91,11 +91,11 @@ JabberGroupContact::~JabberGroupContact ()
 
 	kDebug ( JABBER_DEBUG_GLOBAL ) ;
 
-	if(mManager) 
+	if(mManager)
 	{
 		mManager->deleteLater();
 	}
-	
+
 	foreach ( Kopete::Contact *contact,  mContactList )
 	{
 		/*if(mManager)
@@ -134,9 +134,9 @@ Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFla
 				Kopete::ContactPtrList (), XMPP::Jid ( rosterItem().jid().userHost() ) );
 
 		mManager->addContact ( this );
-		
+
 		connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
-		
+
 		//if we have to recreate the manager, we probably have to connect again to the chat.
 		slotStatusChanged();
 	}
@@ -149,7 +149,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	// message type is always chat in a groupchat
 	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
-	
+
 	kDebug (JABBER_DEBUG_GLOBAL) << "Received a message";
 
 	/**
@@ -160,14 +160,14 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		return;
 
 	manager(CanCreate); //force to create mManager
-	
+
 	Kopete::ContactPtrList contactList = manager()->members();
 
 	// check for errors
 	if ( message.type () == "error" )
 	{
 		newMessage = new Kopete::Message( this, contactList );
-		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"", 
+		newMessage->setPlainBody( i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"",
 										  message.body (), message.error().text ) );
 		newMessage->setTimestamp( message.timeStamp() );
 		newMessage->setSubject( message.subject() );
@@ -189,8 +189,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 		if ( !subContact )
 		{
-			kWarning (JABBER_DEBUG_GLOBAL) << "the contact is not in the list   : " <<  message.from().full();
-			return;
+			kDebug (JABBER_DEBUG_GLOBAL) << "the contact is not in the list   : " <<  message.from().full();
 			/**
 			 * We could not find the contact for this message. That most likely means
 			 * that it originated from a history backlog or something similar and
@@ -206,6 +205,8 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		newMessage->setTimestamp( message.timeStamp() );
 		newMessage->setPlainBody( body );
 		newMessage->setRequestedPlugin( viewType );
+		newMessage->setImportance( Kopete::Message::Low );
+		newMessage->setDelayed( message.spooled() );
 	}
 
 	// append message to manager
@@ -227,7 +228,7 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "Contact already exists, not adding again.";
 		return subContact;
 	}
-	
+
 	// Create new meta contact that holds the groupchat contact.
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact ();
 	metaContact->setTemporary ( true );
@@ -247,7 +248,7 @@ JabberBaseContact *JabberGroupContact::addSubContact ( const XMPP::RosterItem &r
 
 	// now, add the contact also to our own list
 	mContactList.append ( subContact );
-	
+
 	connect(subContact , SIGNAL(contactDestroyed(Kopete::Contact*)) , this , SLOT(slotSubContactDestroyed(Kopete::Contact*)));
 
 	return subContact;
@@ -273,7 +274,7 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "WARNING: Subcontact could not be located!";
 		return;
 	}
-	
+
 	if(mManager && subContact->contactId() == mManager->myself()->contactId() )
 	{
 		//HACK WORKAROUND FIXME KDE4
@@ -329,8 +330,8 @@ void JabberGroupContact::slotChatSessionDeleted ()
 	{
 		account()->client()->leaveGroupChat ( mRosterItem.jid().host (), mRosterItem.jid().user () );
 	}
-	
-	//deleteLater(); //we will be deleted later when the the account will know we have left
+
+	//deleteLater(); //we will be deleted later when the account will know we have left
 
 }
 
@@ -346,14 +347,14 @@ void JabberGroupContact::slotStatusChanged( )
 		}
 		return;
 	}
-	
-	
+
+
 	if( !isOnline() )
 	{
 		//HACK WORKAROUND   XMPP::client->d->groupChatList must contains us.
 		account()->client()->joinGroupChat( rosterItem().jid().host() , rosterItem().jid().user() , mNick );
 	}
-	
+
 	//TODO: away message
 	XMPP::Status newStatus = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
 	account()->client()->setGroupChatStatus( rosterItem().jid().host() , rosterItem().jid().user() , newStatus );
@@ -361,16 +362,16 @@ void JabberGroupContact::slotStatusChanged( )
 
 void JabberGroupContact::slotChangeNick( )
 {
-	
+
 	bool ok;
 	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickname - Jabber Plugin" ),
 			i18n( "Please enter the new nickname you want to have in the room <i>%1</i>" , rosterItem().jid().userHost()),
 			mNick, &ok );
 	if ( !ok || !account()->isConnected())
 		return;
-	
+
 	mNick=futureNewNickName;
-	
+
 	XMPP::Status status = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
 	account()->client()->changeGroupChatNick( rosterItem().jid().host() , rosterItem().jid().user()  , mNick , status);
 

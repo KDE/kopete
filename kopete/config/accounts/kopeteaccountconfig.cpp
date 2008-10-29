@@ -422,11 +422,8 @@ void KopeteAccountConfig::slotCopyIdentity()
 
 	IdentityDialog dialog(ident, this);
 	if ( dialog.exec() == QDialog::Accepted ) {
-		ident = Kopete::IdentityManager::self()->registerIdentity(ident);
-		if (ident) {
+		if ( Kopete::IdentityManager::self()->registerIdentity(ident) ) {
 			load();
-		} else {
-			delete ident;
 		}
 	} else {
 		delete ident;

@@ -58,6 +58,7 @@ void MSNSecureLoginHandler::slotLoginServerReceived(KJob *job)
 
 		// Get the login URL using QRegExp
 		QRegExp rx("PassportURLs: DARealm=(.*),DALogin=(.*),DAReg=");
+		rx.setCaseSensitivity(Qt::CaseInsensitive);
 		rx.indexIn(httpHeaders);
 
 		// Set the loginUrl and loginServer

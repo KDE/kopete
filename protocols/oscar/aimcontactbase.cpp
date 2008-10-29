@@ -159,6 +159,11 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 		s += brMargin( it.blockFormat().bottomMargin(), defaultCharFormat.fontPointSize(), true );
 	}
 
+	s.replace( QChar::LineSeparator, "<BR>" );
+
+	if ( s.endsWith( "<BR>" ) )
+		s.chop(4);
+
 	if ( hasFontTag )
 		s += "</FONT>";
 	if ( defaultCharFormat.font().bold() )
@@ -219,9 +224,6 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	s.replace ( QRegExp ( QString::fromLatin1("<br[ /]*>")), QString::fromLatin1("<br>") );
 #endif
 
-	s.replace( QChar::LineSeparator, "<BR>" );
-	s.remove ( QRegExp ( QString::fromLatin1("<BR>$") ) );
-	
 	kDebug(OSCAR_GEN_DEBUG) << "sending " << s;
 	
 	// XXX Need to check for message size?
@@ -230,12 +232,14 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	bool allowUCS2 = !isOnline() || !(m_details.userClass() & Oscar::CLASS_ICQ) || m_details.hasCap( CAP_UTF8 );
 	msg.setText( Oscar::Message::encodingForText( s, allowUCS2 ), s, contactCodec() );
 	
+	msg.setId( message.id() );
 	msg.setReceiver(mName);
 	msg.setTimestamp(message.timestamp());
 	msg.setChannel(0x01);
 	
 	mAccount->engine()->sendMessage(msg);
 	
+	message.setState( Kopete::Message::StateSending );
 	// Show the message we just sent in the chat window
 	manager(Kopete::Contact::CanCreate)->appendMessage(message);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();

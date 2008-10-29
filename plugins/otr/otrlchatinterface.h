@@ -32,7 +32,7 @@
 #include <kopetechatsession.h>
 #include <kopeteplugin.h>
 
-#include "smppopup.h"
+#include "authenticationwizard.h"
 
 extern "C" {
 #include <libotr/privkey.h>
@@ -66,7 +66,9 @@ public:
 	void setPlugin(Kopete::Plugin *plugin);
 	void emitGoneSecure(Kopete::ChatSession *sesseion, int state);
 	void abortSMP( ConnContext *context, Kopete::ChatSession *session );
-	void respondSMP( ConnContext *context, Kopete::ChatSession *session, const QString &secret, bool initiate );
+	void initSMP( ConnContext *context, Kopete::ChatSession *session, const QString &secret );
+	void initSMPQ( ConnContext *context, Kopete::ChatSession *session, const QString &question, const QString &secret );
+	void respondSMP( ConnContext *context, Kopete::ChatSession *session, const QString &secret );
 	void setTrust( Kopete::ChatSession *session, bool trust );
 
 private:

@@ -1,6 +1,7 @@
 /*
- 
- Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
+ aliaspreferences.cpp  -  Alias Plugin Preferences
+
+ Copyright (c) 2003-2004      by the Kopete developers  <kopete-devel@kde.org>
 
  ***************************************************************************
  *                                                                         *

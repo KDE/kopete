@@ -70,42 +70,45 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	KAction *actionCreateNewGroup = new KAction( i18n( "Create New Group..." ), ac );
 	actionCreateNewGroup->setIcon( KIcon( "user-group-new" ) );
 	connect( actionCreateNewGroup, SIGNAL( triggered(bool) ), this, SLOT( addGroup() ) );
-        ac->addAction( "AddGroup", actionCreateNewGroup );
+	ac->addAction( "AddGroup", actionCreateNewGroup );
 
-	actionSendMessage = KopeteStdAction::sendMessage(
-		this, SLOT( slotSendMessage() ), ac, "contactSendMessage" );
-	actionStartChat = KopeteStdAction::chat( this, SLOT( slotStartChat() ),
-		ac, "contactStartChat" );
+	actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( slotSendMessage() ), ac );
+	ac->addAction( "contactSendMessage", actionSendMessage );
+	actionStartChat = KopeteStdAction::chat( this, SLOT( slotStartChat() ), ac );
+	ac->addAction( "contactStartChat", actionStartChat );
 
 	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
                                                 KShortcut(), this, SLOT( slotMoveToGroup() ), ac );
-        ac->addAction( "contactMove", actionMove );
+	ac->addAction( "contactMove", actionMove );
 	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "edit-copy" ),
                                                 KShortcut(), this, SLOT( slotCopyToGroup() ), ac );
-        ac->addAction( "contactCopy", actionCopy );
+	ac->addAction( "contactCopy", actionCopy );
 
 	actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Make Meta Contact"), ac);
-        ac->addAction( "makeMetaContact", actionMakeMetaContact );
-        connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
+	ac->addAction( "makeMetaContact", actionMakeMetaContact );
+	connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
 
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ), ac );
-        ac->addAction( "contactRemove", actionRemove );
+	ac->addAction( "contactRemove", actionRemove );
+
 	actionSendEmail = new KAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
-        ac->addAction( "contactSendEmail", actionSendEmail );
+	ac->addAction( "contactSendEmail", actionSendEmail );
 	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( slotSendEmail() ) );
 	-* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*-
+
 	actionRename = new KAction( KIcon("edit-rename"), i18n( "Rename" ), ac );
-        ac->addAction( "contactRename", actionRename );
+	ac->addAction( "contactRename", actionRename );
 	connect( actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
-	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ),
-		ac, "contactSendFile" );
+
+	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ), ac );
+	ac->addAction( "contactSendFile", actionSendFile );
 
 	actionAddContact = new KActionMenu( KIcon( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
-        ac->addAction( "contactAddContact", actionAddContact );
+	ac->addAction( "contactAddContact", actionAddContact );
 	actionAddContact->menu()->addTitle( i18n("Select Account") );
 
 	actionAddTemporaryContact = new KAction( KIcon("list-add-user"), i18n( "Add to Your Contact List" ), ac );
-        ac->addAction( "contactAddTemporaryContact", actionAddTemporaryContact );
+	ac->addAction( "contactAddTemporaryContact", actionAddTemporaryContact );
 	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
 
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
@@ -114,7 +117,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
 
 	actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
-        ac->addAction( "contactProperties", actionProperties );
+	ac->addAction( "contactProperties", actionProperties );
 	actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
 	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( slotProperties() ) );
 

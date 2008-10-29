@@ -7,3 +7,4 @@ body	{
 
 .imageContainer  { margin: 4px 4px 4px 4px; display: block }
 .buddyIcon  { width: 48px; float: right; border-style: dotted none; border-width: 2px medium; border-color: #666 white }
+.stateSendingImg { width: 16px; height: 16px; background: transparent url("../images/state-sending-white.gif") no-repeat center center; }

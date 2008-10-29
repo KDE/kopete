@@ -21,6 +21,8 @@
 
 #include <kdebug.h>
 
+#include <QtCore/QPointer>
+
 using namespace KIrc;
 
 /**
@@ -56,13 +58,15 @@ bool Entity::isChannel( const QByteArray &name )
 	return sm_channelRegExp.exactMatch(name);
 }
 */
-class KIrc::Entity::Private
+class KIrc::EntityPrivate
 {
 public:
-	Private()
-		: type(Unknown)
+	EntityPrivate()
+		: type(Entity::Unknown)
 		, codec(0)
 	{ }
+
+	QPointer<Context> context;
 
 	Entity::Type type;
 
@@ -78,22 +82,24 @@ public:
 
 Entity::Entity(Context *context)
 	: QObject(context)
-	, d(new Private)
+	, d_ptr(new EntityPrivate)
 {
 }
 
 Entity::~Entity()
 {
-	delete d;
+	delete d_ptr;
 }
 
 Entity::Type Entity::type() const
 {
+	Q_D(const Entity);
 	return d->type;
 }
 
 QByteArray Entity::topic() const
 {
+	Q_D(const Entity);
 	return d->topic;
 }
 
@@ -109,9 +115,10 @@ bool Entity::isUser() const
 
 void Entity::setType( Entity::Type type )
 {
+	Q_D(Entity);
 	if ( d->type != type )
 	{
-//		d->status.type = type;
+		d->type = type;
 		emit updated();
 	}
 }
@@ -124,11 +131,13 @@ EntityType Entity::guessType()
 */
 QByteArray Entity::name() const
 {
+	Q_D(const Entity);
 	return d->name;
 }
 
 void Entity::setName(const QByteArray &name)
 {
+	Q_D(Entity);
 	if ( d->name != name )
 	{
 		d->name = name;
@@ -138,11 +147,13 @@ void Entity::setName(const QByteArray &name)
 
 QByteArray Entity::host() const
 {
+	Q_D(const Entity);
 	return d->host;
 }
 
 void Entity::setAwayMessage(const QByteArray &awayMessage)
 {
+	Q_D(Entity);
 	if ( d->awayMessage != awayMessage )
 	{
 		d->awayMessage = awayMessage;
@@ -152,11 +163,13 @@ void Entity::setAwayMessage(const QByteArray &awayMessage)
 
 QByteArray Entity::modes() const
 {
+	Q_D(const Entity);
 	return d->modes;
 }
 
 QByteArray Entity::setModes(const QByteArray &modes)
 {
+	Q_D(Entity);
 #ifdef __GNUC__
 	#warning this needs more logic to handle the +/- modes.
 #endif
@@ -170,11 +183,13 @@ QByteArray Entity::setModes(const QByteArray &modes)
 
 QTextCodec *Entity::codec() const
 {
+	Q_D(const Entity);
 	return d->codec;
 }
 
 void Entity::setCodec(QTextCodec *codec)
 {
+	Q_D(Entity);
 	if ( d->codec != codec )
 	{
 		d->codec = codec;

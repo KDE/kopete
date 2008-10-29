@@ -4,7 +4,7 @@
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
     url_escape_string from Gaim src/protocols/novell/nmconn.c
     Copyright (c) 2004 Novell, Inc. All Rights Reserved
 

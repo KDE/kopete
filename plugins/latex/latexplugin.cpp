@@ -130,10 +130,14 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			pos += rg.matchedLength();
 
 			QString formul=match;
-			if(!securityCheck(formul))
+			// first remove the $$ delimiters on start and end
+			formul.remove("$$");
+			// then trim the result, so we can skip totally empty/whitespace-only formulas
+			formul = formul.trimmed();
+			if (formul.isEmpty() || !securityCheck(formul))
 				continue;
 			
-			QString fileName=handleLatex(formul.remove("$$"));
+			QString fileName = handleLatex(formul);
 			
 			// get the image and encode it with base64
 			#if ENCODED_IMAGE_MODE

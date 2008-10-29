@@ -26,6 +26,8 @@
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
  */
+
+
 const QRegExp KIrc::sm_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
 const QString KIrc::URL_NICKNAME("nickname");

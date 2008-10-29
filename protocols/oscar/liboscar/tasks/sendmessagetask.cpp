@@ -71,6 +71,14 @@ void SendMessageTask::onGo()
 	SNAC s = { 0x0004, snacSubfamily, 0x0000, client()->snacSequence() };
 	Buffer* b = new Buffer();
 
+	if ( m_message.id() > 0 )
+	{
+		Oscar::MessageInfo info;
+		info.contact = m_message.receiver();
+		info.id = m_message.id();
+		client()->addMessageInfo( s.id, info );
+	}
+
 	if ( snacSubfamily == 0x0006 && m_message.messageType() != Oscar::MessageType::File )
 	{
 		Oscar::DWORD cookie1 = KRandom::random();
@@ -322,7 +330,7 @@ void SendMessageTask::addRendezvousMessageData( Buffer* b )
 	// status code, priority:
 	// common (ICQ) practice seems to be: both 1 when requesting away message, both 0 otherwise
 	// miranda sends 256/0 in away message request. it works, but i don't see the point...
-	// other then that, don't yet really know what they are for.
+	// other than that, don't yet really know what they are for.
 	if ( m_message.hasProperty( Oscar::Message::StatusMessageRequest ) && ( ! m_message.hasProperty( Oscar::Message::AutoResponse ) ) )
 	{
 		b->addLEWord( 0x0001 ); // status (?)

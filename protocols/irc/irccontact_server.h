@@ -24,8 +24,8 @@
 
 #include "kopetechatsessionmanager.h"
 
-#include <q3valuelist.h>
-#include <qstringlist.h>
+#include <qvaluelist.h>
+#include <qlist.h>
 
 class KAction;
 class KopeteView;
@@ -67,7 +67,7 @@ class IRCServerContact
 		void slotCannotSendToChannel( const QString &channel, const QString &msg );
 
 	private:
-		Q3ValueList<Kopete::Message> mMsgBuffer;
+		QList<Kopete::Message> mMsgBuffer;
 };
 
 #endif // IRCCONTACT_SERVER_H

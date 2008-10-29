@@ -260,6 +260,7 @@ void AvatarSelectorWidget::queryJobFinished(KJob *job)
 void AvatarSelectorWidget::avatarAdded(Kopete::AvatarManager::AvatarEntry newEntry)
 {
 	d->addItem(newEntry);
+	setCurrentAvatar(newEntry.path);
 }
 
 void AvatarSelectorWidget::avatarRemoved(Kopete::AvatarManager::AvatarEntry entryRemoved)

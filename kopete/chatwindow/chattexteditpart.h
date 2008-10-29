@@ -168,6 +168,11 @@ private slots:
 	 */
 	void slotPropertyChanged( Kopete::PropertyContainer *, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
+	/**
+	 * Some appearance settings has changed.
+	 */
+	void slotAppearanceChanged();
+
 private:
 	void setProtocolRichTextSupport();
 

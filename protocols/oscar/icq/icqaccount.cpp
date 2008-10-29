@@ -67,18 +67,23 @@ void ICQMyselfContact::userInfoUpdated()
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
 
 	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
-	if ( details().xtrazStatus() != -1 )
+	if ( details().statusMood() != -1 )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus2 );
+		presence.setMood( details().statusMood() );
+	}
+	else if ( details().xtrazStatus() != -1 )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setXtrazStatus( details().xtrazStatus() );
 	}
-	else if ( !icqAccount->engine()->statusDescription().isEmpty() )
+	else if ( !icqAccount->engine()->statusTitle().isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
 	}
 
 	Kopete::StatusMessage statusMessage;
-	statusMessage.setTitle( icqAccount->engine()->statusDescription() );
+	statusMessage.setTitle( icqAccount->engine()->statusTitle() );
 	statusMessage.setMessage( icqAccount->engine()->statusMessage() );
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
 	setStatusMessage( statusMessage );
@@ -123,7 +128,6 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	QString nickName = configGroup()->readEntry("NickName", QString() );
 	mWebAware = configGroup()->readEntry( "WebAware", false );
 	mHideIP = configGroup()->readEntry( "HideIP", true );
-	mInfoContact = 0L;
 	mInfoWidget = 0L;
 
 	QObject::connect( engine(), SIGNAL(userReadsStatusMessage(const QString&)),
@@ -255,7 +259,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 			status |= Oscar::StatusCode::WEBAWARE;
 
 		engine()->setStatus( status, mInitialStatusMessage.message(),
-		                     pres.xtrazStatus(), mInitialStatusMessage.title() );
+		                     pres.xtrazStatus(), mInitialStatusMessage.title(), pres.mood() );
 		updateVersionUpdaterStamp();
 
 		Connection* c = setupConnection();
@@ -317,14 +321,10 @@ void ICQAccount::slotUserInfo()
 		if ( !this->isConnected() )
 			return;
 
-		mInfoContact = new ICQContact( this, engine()->userId(), NULL );
-
-		mInfoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), true );
+		mInfoWidget = new ICQUserInfoWidget( this, engine()->userId(), Kopete::UI::Global::mainWidget(), true );
 		QObject::connect( mInfoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
 		QObject::connect( mInfoWidget, SIGNAL( okClicked() ), this, SLOT( storeUserInfoDialog() ) );
-		mInfoWidget->setContact( mInfoContact );
 		mInfoWidget->show();
-		engine()->requestFullInfo( engine()->userId() );
 	}
 }
 
@@ -339,8 +339,6 @@ void ICQAccount::closeUserInfoDialog()
 {
 	QObject::disconnect( this, 0, mInfoWidget, 0 );
 	mInfoWidget->delayedDestruct();
-	delete mInfoContact;
-	mInfoContact = 0L;
 	mInfoWidget = 0L;
 }
 
@@ -348,7 +346,7 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 {
 	QString name;
 
-	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
+	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
 	if ( ct )
 		name = ct->nickName();
 	else
@@ -411,7 +409,7 @@ void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const Kopete
 	else
 	{
 		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( newPres );
-		engine()->setStatus( status, reason.message(), newPres.xtrazStatus(), reason.title() );
+		engine()->setStatus( status, reason.message(), newPres.xtrazStatus(), reason.title(), newPres.mood() );
 	}
 }
 
@@ -498,7 +496,7 @@ void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reas
 	actions |= Kopete::AddedInfoEvent::BlockAction;
 	actions |= Kopete::AddedInfoEvent::InfoAction;
 
-	Kopete::Contact * ct = contacts()[contactId];
+	Kopete::Contact * ct = contacts().value( contactId );
 	if( !ct || !ct->metaContact() || ct->metaContact()->isTemporary() )
 		actions |= Kopete::AddedInfoEvent::AddAction;
 
@@ -530,15 +528,15 @@ void ICQAccount::addedInfoEventActionActivated( uint actionId )
 		break;
 	case Kopete::AddedInfoEvent::InfoAction:
 		{
-			ICQContact* c = new ICQContact( this, event->contactId(), NULL );
-			ICQUserInfoWidget* info = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
-			QObject::connect( info, SIGNAL(finished()), c, SLOT(deleteLater()) );
+			ICQUserInfoWidget* info = 0;
+			ICQContact *ct = dynamic_cast<ICQContact*>(contacts().value( event->contactId(), 0 ));
+			if ( ct )
+				info = new ICQUserInfoWidget( ct, Kopete::UI::Global::mainWidget() );
+			else
+				info = new ICQUserInfoWidget( this, event->contactId(), Kopete::UI::Global::mainWidget() );
+
 			QObject::connect( info, SIGNAL(finished()), info, SLOT(delayedDestruct()) );
 			QObject::connect( event, SIGNAL(eventClosed(Kopete::InfoEvent*)), info, SLOT(delayedDestruct()) );
-
-			info->setContact( c );
-			engine()->requestFullInfo( c->contactId() );
-
 			info->setModal( false );
 			info->show();
 		}

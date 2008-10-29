@@ -27,6 +27,9 @@
 
 SendDCInfoTask::SendDCInfoTask(Task* parent, Oscar::DWORD status): Task(parent), mStatus(status)
 {
+	mSendMood = false;
+	mSendMessage = false;
+	mMood = -1;
 }
 
 
@@ -34,6 +37,17 @@ SendDCInfoTask::~SendDCInfoTask()
 {
 }
 
+void SendDCInfoTask::setIcqMood( int mood )
+{
+	mMood = mood;
+	mSendMood = true;
+}
+
+void SendDCInfoTask::setIcqMessage( const QString &message )
+{
+	mMessage = message;
+	mSendMessage = true;
+}
 
 void SendDCInfoTask::onGo()
 {
@@ -94,10 +108,36 @@ void SendDCInfoTask::onGo()
 
 	buffer->addTLV16( 0x0008, 0x0A06 ); // we support online status messages
 
+	if ( mSendMood || mSendMessage )
+	{
+		Buffer tlv1D;
+
+		if ( mSendMessage )
+		{
+			Buffer tlv02;
+			tlv02.addWord( 0x0002 );
+			tlv02.addByte( 0x04 );
+			QByteArray msgData = mMessage.toUtf8();
+			msgData.truncate( 251 );
+			tlv02.addByte( msgData.length() + 4 );
+			tlv02.addWord( msgData.length() );
+			tlv02.addString( msgData );
+			tlv02.addWord( 0x0000 );
+			tlv1D.addString( tlv02.buffer() );
+		}
+
+		if ( mSendMood )
+		{
+			QString mood = QString( "icqmood%1" ).arg( mMood );
+			tlv1D.addTLV( 0x000E, mood.toLatin1() );
+		}
+
+		buffer->addTLV( 0x001D, tlv1D.buffer() );
+	}
+
 	Transfer* t = createTransfer( f, s, buffer );
 	send( t );
 	setSuccess( 0, QString() );
 }
-
 
 // kate: tab-width 4; indent-mode csands;

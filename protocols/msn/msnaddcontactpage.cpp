@@ -16,8 +16,6 @@
 
 #include <qlayout.h>
 #include <qlineedit.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
 
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -32,12 +30,10 @@ MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent)
 				  : AddContactPage(parent)
 {
 	Q_UNUSED(connected);
-	(new QVBoxLayout(this))->setAutoAdd(true);
 /*	if ( connected )
 	{*/
-			QWidget* w = new QWidget( this );
 			msndata = new Ui::msnAddUI();
-			msndata->setupUi( w );
+			msndata->setupUi( this );
 			/*
 			msndata->cmbGroup->insertStringList(owner->getGroups());
 			msndata->cmbGroup->setCurrentItem(0);

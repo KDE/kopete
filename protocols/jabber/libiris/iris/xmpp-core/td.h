@@ -3,7 +3,7 @@
 
 #include <qdom.h>
 
-class TD
+class IRIS_EXPORT TD
 {
 public:
 	TD();

@@ -4,7 +4,8 @@
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
     Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
     Copyright (c) 2004 by Matt Rogers <mattr@kde.org>
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2008 by Roman Jarosz <kedgedev@centrum.cz>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -58,6 +59,7 @@
 #include "kopetetransfermanager.h"
 #include "kopeteversion.h"
 #include "oscarversionupdater.h"
+#include "filetransferhandler.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
 {
@@ -77,7 +79,8 @@ public:
 	//contacts waiting on their group to be added
 	QMap<QString, QString> contactAddQueue;
 	QMap<QString, QString> contactChangeQueue;
-
+	QMap<uint, FileTransferHandler*> fileTransferHandlerMap;
+	
     OscarListNonServerContacts* olnscDialog;
 	
 	unsigned int versionUpdaterStamp;
@@ -141,10 +144,14 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( userStoppedTyping( const QString& ) ) );
 	QObject::connect( d->engine, SIGNAL( iconNeedsUploading() ),
 	                  this, SLOT( slotSendBuddyIcon() ) );
-	QObject::connect( d->engine, SIGNAL( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ),
-	                  this, SLOT( askIncoming( QString, QString, Oscar::DWORD, QString, QString ) ) );
-	QObject::connect( d->engine, SIGNAL( getTransferManager( Kopete::TransferManager ** ) ),
-	                  this, SLOT( getTransferManager( Kopete::TransferManager ** ) ) );
+	QObject::connect( d->engine, SIGNAL(incomingFileTransfer(FileTransferHandler*)),
+	                  this, SLOT(incomingFileTransfer(FileTransferHandler*)) );
+
+	Kopete::TransferManager *tm = Kopete::TransferManager::transferManager();
+	QObject::connect( tm, SIGNAL(refused(const Kopete::FileTransferInfo&)),
+	                  this, SLOT(fileTransferRefused(const Kopete::FileTransferInfo&)) );
+	QObject::connect( tm, SIGNAL(accepted(Kopete::Transfer*, const QString&)),
+	                  this, SLOT(fileTransferAccept(Kopete::Transfer*, const QString&)) );
 }
 
 OscarAccount::~OscarAccount()
@@ -272,7 +279,7 @@ void OscarAccount::processSSIList()
 
 		kDebug( OSCAR_GEN_DEBUG ) << "Adding contact '" << ( *bit ).name() << "' to kopete list in group " <<
 			group->displayName() << endl;
-		OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *bit ).name()] );
+		OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( ( *bit ).name() ) );
 		if ( oc )
 		{
 			OContact item = ( *bit );
@@ -355,7 +362,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
         QStringList::iterator it, itEnd = offliners.end();
         for ( it = offliners.begin(); it != itEnd; ++it )
         {
-            OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[( *it )] );
+	        OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( ( *it ) ) );
             if ( !oc )
             {
                 kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for" << ( *it );
@@ -390,7 +397,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
 		QStringList::iterator it, itEnd = offliners.end();
 		for ( it = offliners.begin(); it != itEnd; ++it )
 		{
-			OscarContact* oc = dynamic_cast<OscarContact*>( contacts()[(*it)] );
+			OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( (*it) ) );
 			if ( !oc )
 			{
 				kDebug( OSCAR_GEN_DEBUG ) << "no OscarContact object available "
@@ -427,22 +434,91 @@ void OscarAccount::nonServerAddContactDialogClosed()
     d->olnscDialog = 0L;
 }
 
-void OscarAccount::askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i )
+void OscarAccount::incomingFileTransfer( FileTransferHandler* ftHandler )
 {
-	QString sender = Oscar::normalize( c );
-	if ( !contacts()[sender] )
+	QString sender = Oscar::normalize( ftHandler->contact() );
+	if ( !contacts().value( sender ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact";
 		addContact( sender, QString(), 0,  Kopete::Account::Temporary );
 	}
-	Kopete::Contact * ct = contacts()[ sender ];
-	Kopete::TransferManager::transferManager()->askIncomingTransfer( ct, f, s, d, i);
+	Kopete::Contact * ct = contacts().value( sender );
+
+	// Fill the fileNameList with empty filenames if we have more files so the kopete transfer knows about them
+	QStringList fileNameList;
+	fileNameList << ftHandler->fileName();
+	for ( int i = 1; i < ftHandler->fileCount(); i++ )
+		fileNameList << "";
+
+	Kopete::TransferManager* tm = Kopete::TransferManager::transferManager();
+	uint ftId = tm->askIncomingTransfer( ct, fileNameList, ftHandler->totalSize(), ftHandler->description(),
+	                                     ftHandler->internalId(), QPixmap() );
+	QObject::connect( ftHandler, SIGNAL(destroyed(QObject*)), this, SLOT(fileTransferDestroyed(QObject*)) );
+	QObject::connect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+
+	d->fileTransferHandlerMap.insert( ftId, ftHandler );
 }
 
-//this is because the filetransfer task can't call the function itself.
-void OscarAccount::getTransferManager( Kopete::TransferManager **t )
+void OscarAccount::fileTransferDestroyed( QObject* object )
 {
-	*t = Kopete::TransferManager::transferManager();
+	FileTransferHandler* ftHandler = qobject_cast<FileTransferHandler*>(object);
+	if ( !ftHandler )
+		return;
+
+	uint key = d->fileTransferHandlerMap.key( ftHandler, 0 );
+	if ( key > 0 )
+		d->fileTransferHandlerMap.remove( key );
+	else
+		kDebug(OSCAR_GEN_DEBUG) << "FileTransferHandler not in the map!!!";
+}
+
+void OscarAccount::fileTransferCancelled()
+{
+	FileTransferHandler* ftHandler = qobject_cast<FileTransferHandler*>(sender());
+	if ( !ftHandler )
+		return;
+
+	uint key = d->fileTransferHandlerMap.key( ftHandler, 0 );
+	if ( key == 0 )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "FileTransferHandler not in the map!!!";
+		return;
+	}
+
+	QObject::disconnect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+	Kopete::TransferManager::transferManager()->cancelIncomingTransfer( key );
+}
+
+void OscarAccount::fileTransferRefused( const Kopete::FileTransferInfo& info )
+{
+	FileTransferHandler* ftHandler = d->fileTransferHandlerMap.value( info.transferId(), 0 );
+	if ( !ftHandler )
+		return;
+
+	QObject::disconnect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+	ftHandler->cancel();
+}
+
+void OscarAccount::fileTransferAccept( Kopete::Transfer* transfer, const QString& fileName )
+{
+	FileTransferHandler* ftHandler = d->fileTransferHandlerMap.value( transfer->info().transferId(), 0 );
+	if ( !ftHandler )
+		return;
+
+	QObject::disconnect( ftHandler, SIGNAL(transferCancelled()), this, SLOT(fileTransferCancelled()) );
+
+	QObject::connect( transfer, SIGNAL(transferCanceled()), ftHandler, SLOT(cancel()) );
+	QObject::connect( ftHandler, SIGNAL(transferCancelled()), transfer, SLOT(slotCancelled()) );
+	QObject::connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
+	QObject::connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
+	QObject::connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
+	QObject::connect( ftHandler, SIGNAL(transferNextFile(const QString&, const QString&)),
+	                  transfer, SLOT(slotNextFile(const QString&, const QString&)) );
+
+	if ( transfer->info().saveToDirectory() )
+		ftHandler->save( fileName );
+	else
+		ftHandler->saveAs( QStringList() << fileName );
 }
 
 void OscarAccount::kopeteGroupRemoved( Kopete::Group* group )
@@ -480,13 +556,13 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	 * Append to the chat window
 	 */
 	QString sender = Oscar::normalize( message.sender() );
-	if ( !contacts()[sender] )
+	if ( !contacts().value( sender ) )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Adding '" << sender << "' as temporary contact";
 		addContact( sender, QString(), 0,  Kopete::Account::Temporary );
 	}
 
-	OscarContact* ocSender = static_cast<OscarContact *> ( contacts()[sender] ); //should exist now
+	OscarContact* ocSender = static_cast<OscarContact *> ( contacts().value( sender ) ); //should exist now
 
 	if ( !ocSender )
 	{
@@ -537,7 +613,12 @@ void OscarAccount::setServerPort(int port)
 
 QTextCodec* OscarAccount::defaultCodec() const
 {
-	return QTextCodec::codecForMib( configGroup()->readEntry( "DefaultEncoding", 4 ) );
+	QTextCodec* codec = QTextCodec::codecForMib( configGroup()->readEntry( "DefaultEncoding", 4 ) );
+
+	if ( codec )
+		return codec;
+	else
+		return QTextCodec::codecForMib( 4 );
 }
 
 QTextCodec* OscarAccount::contactCodec( const OscarContact* contact ) const
@@ -552,7 +633,7 @@ QTextCodec* OscarAccount::contactCodec( const QString& contactName ) const
 {
 	// XXX  Need const_cast because Kopete::Account::contacts()
 	// XXX  method is not const for some strange reason.
-	OscarContact* contact = static_cast<OscarContact *> ( const_cast<OscarAccount *>(this)->contacts()[contactName] );
+	OscarContact* contact = static_cast<OscarContact *> ( const_cast<OscarAccount *>(this)->contacts().value( contactName ) );
 	return contactCodec( contact );
 }
 
@@ -677,10 +758,10 @@ bool OscarAccount::createContact(const QString &contactId,
 	if ( ssiItem )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "Have new SSI entry. Finding contact";
-		if ( contacts()[ssiItem.name()] )
+		if ( contacts().value( ssiItem.name() ) )
 		{
 			kDebug(OSCAR_GEN_DEBUG) << "Found contact in list. Updating SSI item";
-			OscarContact* oc = static_cast<OscarContact*>( contacts()[ssiItem.name()] );
+			OscarContact* oc = static_cast<OscarContact*>( contacts().value( ssiItem.name() ) );
 			oc->setSSIItem( ssiItem );
 			return true;
 		}
@@ -745,10 +826,10 @@ void OscarAccount::ssiContactAdded( const OContact& item )
 		if ( oc && oc->ssiItem().waitingAuth() )
 			QTimer::singleShot( 1, oc, SLOT(requestAuthorization()) );
 	}
-	else if ( contacts()[item.name()] )
+	else if ( contacts().value( item.name() ) )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. modifying " << item.name();
-		OscarContact* oc = static_cast<OscarContact*>( contacts()[item.name()] );
+		OscarContact* oc = static_cast<OscarContact*>( contacts().value( item.name() ) );
 		oc->setSSIItem( item );
 	}
 	else
@@ -788,7 +869,7 @@ void OscarAccount::ssiGroupAdded( const OContact& item )
 
 void OscarAccount::ssiContactUpdated( const OContact& item )
 {
-	Kopete::Contact* contact = contacts()[item.name()];
+	Kopete::Contact* contact = contacts().value( item.name() );
 	if ( !contact )
 		return;
 	else
@@ -801,7 +882,7 @@ void OscarAccount::ssiContactUpdated( const OContact& item )
 
 void OscarAccount::userStartedTyping( const QString & contact )
 {
-	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
+	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
 	if ( ct && contact != accountId() )
 	{
 		OscarContact * oc = static_cast<OscarContact *>( ct );
@@ -811,7 +892,7 @@ void OscarAccount::userStartedTyping( const QString & contact )
 
 void OscarAccount::userStoppedTyping( const QString & contact )
 {
-	Kopete::Contact * ct = contacts()[ Oscar::normalize( contact ) ];
+	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
 	if ( ct && contact != accountId() )
 	{
 		OscarContact * oc = static_cast<OscarContact *>( ct );

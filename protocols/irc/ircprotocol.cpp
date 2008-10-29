@@ -23,7 +23,7 @@
 #include "irctransferhandler.h"
 #include "ksparser.h"
 
-//#include "networkconfigwidget.h"
+#include "networkconfigwidget.h"
 //#include "channellist.h"
 #include "ircaddcontactpage.h"
 //#include "ircguiclient.h"
@@ -341,13 +341,13 @@ void IRCProtocol::initOnlineStatus()
 */
 }
 
-OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity)
+OnlineStatus IRCProtocol::onlineStatusFor(KIrc::EntityPtr entity)
 {
 //	return onlineStatusFor(entity, 0);
 	return OnlineStatus::Unknown;
 }
 /*
-OnlineStatus IRCProtocol::onlineStatusFor(const KIrc::Entity::Ptr &entity, unsigned categories)
+OnlineStatus IRCProtocol::onlineStatusFor(KIrc::Entity *entity, unsigned categories)
 {
 	// Only copy the needed status
 	KIrc::EntityStatus status;
@@ -538,10 +538,10 @@ void IRCProtocol::slotRawCommand( const QString &args, ChatSession *manager )
 
 void IRCProtocol::editNetworks(const QString &networkName)
 {
-/*
-	IRCNetworkConfigWidget *netConf = new IRCNetworkConfigWidget(UI::Global::mainWidget(), Qt::WDestructiveClose);
+
+	IRCNetworkConfigWidget *netConf = new IRCNetworkConfigWidget(UI::Global::mainWidget() );
+	netConf->setAttribute( Qt::WA_DeleteOnClose );
 	netConf->editNetworks(networkName);
 	netConf->show();
-*/
 }
 

@@ -29,6 +29,7 @@
 #include <QSharedData>
 #include <QTextCodec>
 
+
 //QRegExp Message::sd->("^()\\r\\n$")
 /*
 #ifndef _IRC_STRICTNESS_
@@ -79,8 +80,8 @@ QByteArray Message::unquote(const QByteArray &buffer)
 }
 
 static KIrc::ByteArrayEscaper IrcCtcpEscaper('\\', KIrc::ByteArrayEscaper::EscapeList()
-		<< KIrc::ByteArrayEscaper::Escape((char)1, '1')
-	);
+	<< KIrc::ByteArrayEscaper::Escape((char)1, '1')
+);
 
 QByteArray Message::quoteCtcp(const QByteArray &buffer)
 {
@@ -92,7 +93,7 @@ QByteArray Message::unquoteCtcp(const QByteArray &buffer)
 	return IrcCtcpEscaper.unescape(buffer);
 }
 
-Message::Message()
+Message::Message() : d(new KIrc::MessagePrivate())
 {
 }
 
@@ -131,19 +132,42 @@ Message &Message::operator=(const Message &o)
 
 Message Message::fromLine(const QByteArray &line, bool *ok)
 {
-	bool success = false;
+	bool success = true;
 
 	QByteArray prefix;
 	QList<QByteArray> args;
 	QByteArray suffix;
 
+
 	// Match a regexp instead of the replace ...
-//	remove the trailling \r\n if any(there must be in fact)
-//	d->line.replace("\r\n","");
- 
-#ifdef __GNUC__
-	#warning implement me: parsing
-#endif
+	QList<QByteArray> parts=line.trimmed().split(' ');
+
+	//	remove the trailling \r\n if any(there must be in fact)
+	parts.last()=parts.last().replace("\r\n","");
+	
+	QList<QByteArray>::const_iterator it=parts.begin();
+
+	if((*it).startsWith(":"))
+	{
+		prefix=(*it).mid(1);
+		++it;
+	}
+
+	for(;it!=parts.end()&&!(*it).startsWith(":");++it)
+	{
+			args.append((*it));
+	}
+	
+	if(it!=parts.end())
+	{
+		for(;it!=parts.end();++it)
+		{
+			suffix=suffix+" "+(*it);
+		}
+		//remove " :"
+		suffix=suffix.mid(2);
+	}
+
 /*
 	int token_start = 0;
 	int token_end;
@@ -199,6 +223,11 @@ QString Message::prefix(QTextCodec *codec) const
 }
 #endif
 
+void Message::setPrefix(const QByteArray & prefix)
+{
+	d->prefix=prefix;
+}
+
 Message &Message::operator << (const QByteArray &arg)
 {
 	d->args << arg;
@@ -242,6 +271,11 @@ QString Message::suffix(QTextCodec *codec) const
 	return codec->toUnicode(d->suffix);
 }
 #endif
+
+void Message::setSuffix(const QByteArray& suffix)
+{
+	d->suffix=suffix;
+}
 
 bool Message::isNumericReply() const
 {

@@ -43,7 +43,6 @@ set(kopete_ui_SRCS
   ui/collapsiblewidget.cpp
   ui/editaccountwidget.cpp
   ui/kopetecontactaction.cpp
-  ui/kopetefileconfirmdialog.cpp
   ui/kopeteinfodialog.cpp
   ui/kopetelistview.cpp
   ui/kopetelistviewitem.cpp
@@ -131,7 +130,6 @@ kde4_add_ui_files(kopete_LIB_SRCS
  ui/addressbookselectorwidget_base.ui
  ui/avatarselectorwidget.ui
  ui/contactaddednotifywidget.ui
- ui/fileconfirmbase.ui
  ui/kopeteawaydialogbase.ui
  ui/kopetepasswordwidgetbase.ui
  ui/metacontactselectorwidget_base.ui
@@ -167,7 +165,6 @@ install(TARGETS kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
 ########### install files ###############
 
 install(FILES
- ${CMAKE_CURRENT_BINARY_DIR}/ui_fileconfirmbase.h
  ${CMAKE_CURRENT_BINARY_DIR}/ui_kopeteawaydialogbase.h
  ${CMAKE_CURRENT_BINARY_DIR}/ui_kopetepasswordwidgetbase.h
  ui/accountselector.h
@@ -176,9 +173,9 @@ install(FILES
  ui/addressbookselectorwidget.h
  ui/avatardialog.h
  ui/avatarselectorwidget.h
+ ui/contactaddednotifydialog.h
  ui/editaccountwidget.h
  ui/kopetecontactaction.h
- ui/kopetefileconfirmdialog.h
  ui/kopeteinfodialog.h
  ui/kopetelistview.h
  ui/kopetelistviewitem.h
@@ -240,11 +237,13 @@ install( FILES
   kopetestatusmessage.h
   kopetetransfermanager.h
   kopeteuiglobal.h
+  kopeteutils.h
   kopeteversion.h
   kopetestatusmanager.h
   tasks/kopetetask.h
   tasks/kopetecontacttaskbase.h
   tasks/kopetedeletecontacttask.h
+  private/kopeteemoticons.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete COMPONENT Devel)
 
 install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

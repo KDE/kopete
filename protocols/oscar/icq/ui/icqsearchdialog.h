@@ -23,7 +23,6 @@
 #include "icquserinfo.h"
 
 class ICQAccount;
-class ICQContact;
 class ICQUserInfoWidget;
 class QStandardItemModel;
 class QItemSelection;
@@ -66,7 +65,6 @@ protected slots:
 private:
 	ICQAccount* m_account;
 	Ui::ICQSearchBase* m_searchUI;
-	ICQContact* m_contact;
 	ICQUserInfoWidget* m_infoWidget;
 	QStandardItemModel* m_searchResultsModel;
 	

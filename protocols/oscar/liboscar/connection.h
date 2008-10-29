@@ -37,9 +37,22 @@ class QHostAddress;
 namespace Oscar
 {
 class Settings;
+
+class MessageInfo
+{
+public:
+	MessageInfo() : id( 0 ) {}
+	bool isValid() const { return (id > 0 && !contact.isEmpty()); }
+
+	uint id;
+	QString contact;
+};
+
 }
 
 /**
+ * @brief a single independent connection to an OSCAR server
+ * 
  * This class encapsulates both the low level network layer code and the high
  * level OSCAR protocol code required to create a single independent
  * connection to an OSCAR server
@@ -150,6 +163,15 @@ public:
 	bool isLoggedIn() const;
 
 	QHostAddress localAddress() const;
+
+	/** Map snac sequence to message info */
+	void addMessageInfo( Oscar::DWORD snacSequence, const Oscar::MessageInfo& messageInfo );
+
+	/** Return message info for snac sequence and remove it from map */
+	Oscar::MessageInfo takeMessageInfo( Oscar::DWORD snacSequence );
+
+	/** Return message info list */
+	QList<Oscar::MessageInfo> messageInfoList() const;
 
 	/** Convenience function to get the root task for use in Tasks */
 	Task* rootTask() const;

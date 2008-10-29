@@ -23,10 +23,10 @@
 #include "kopetechatsession.h"
 #include "kopete_export.h"
 
-class Kopete::Contact;
-
 namespace Kopete
 {
+
+class Contact;
 
 class KOPETE_EXPORT ChatSessionMembersListModel : public QAbstractListModel
 {

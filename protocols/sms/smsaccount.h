@@ -1,17 +1,17 @@
-/*  *************************************************************************
-    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
-    *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
-    *************************************************************************
-*/
+/*
+  smsaccount.h  -  SMS Plugin Account
 
-/*  *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; either version 2 of the License, or     *
-    * (at your option) any later version.                                   *
-    *                                                                       *
-    *************************************************************************
+  Copyright (c) 2003      by Richard Lärkäng        <nouseforaname@home.se>
+  Copyright (c) 2003      by Gav Wood               <gav@kde.org>
+
+  *************************************************************************
+  *                                                                       *
+  * This program is free software; you can redistribute it and/or modify  *
+  * it under the terms of the GNU General Public License as published by  *
+  * the Free Software Foundation; either version 2 of the License, or     *
+  * (at your option) any later version.                                   *
+  *                                                                       *
+  *************************************************************************
 */
 
 #ifndef SMSACCOUNT_H
@@ -44,7 +44,7 @@ public:
 	 *
 	 * Only ever call in case of message being too long - may result in user interaction.
 	 */
-	const bool splitNowMsgTooLong(int msgLength);
+	bool splitNowMsgTooLong(int msgLength) const;
 
 	SMSService* service();
 

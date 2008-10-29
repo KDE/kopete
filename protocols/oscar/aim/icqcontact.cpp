@@ -21,6 +21,7 @@
 
 #include <qtimer.h>
 
+#include <KActionCollection>
 #include <klocale.h>
 #include <krandom.h>
 #include <ktoggleaction.h>
@@ -124,6 +125,8 @@ void ICQContact::userOffline( const QString& userId )
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
+	m_details.clear();
+
 	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline";
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
@@ -149,7 +152,7 @@ bool ICQContact::isReachable()
 
 QList<KAction*> *ICQContact::customContextMenuActions()
 {
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<KAction*> *actions = new QList<KAction*>();
 
 	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
         //, "actionVisibleTo");
@@ -168,10 +171,15 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
 	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
 
-	actionCollection->append(m_actionVisibleTo);
-	actionCollection->append(m_actionInvisibleTo);
+	actions->append(m_actionVisibleTo);
+	actions->append(m_actionInvisibleTo);
 
-	return actionCollection;
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysVisibleTo"), m_actionVisibleTo);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysInvisibleTo"), m_actionInvisibleTo);
+
+	return actions;
 }
 
 

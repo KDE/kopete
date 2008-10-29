@@ -1,6 +1,6 @@
 /*
  * xmpp_features.h
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,6 +46,10 @@ namespace XMPP
 		bool canMulticast() const;
 		bool canGroupchat() const;
 		bool canVoice() const;
+		bool canJingle() const;
+		bool canJingleRtp() const;
+		bool canJingleRaw() const;
+		bool canJingleIce() const;
 		bool canDisco() const;
 		bool canXHTML() const;
 		bool canChatState() const;

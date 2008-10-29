@@ -21,9 +21,14 @@
 #include "kircsocket_p.moc"
 
 #include "kirccontext.h"
+#include "kircentity.h"
+#include "kirchandler.h"
+
+#include <kdebug.h>
 
 #include <qtextcodec.h>
 #include <qtimer.h>
+
 
 using namespace KIrc;
 
@@ -34,46 +39,14 @@ SocketPrivate::SocketPrivate(KIrc::Socket *socket)
 {
 }
 
-void SocketPrivate::setSocket(QAbstractSocket *socket)
-{
-	connect(socket, SIGNAL(readyRead()), SLOT(onReadyRead()));
-	connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
-		SLOT(socketStateChanged(QAbstractSocket::SocketState)));
-	connect(socket, SIGNAL(error(QAbstractSocket::SocketError)),
-		SLOT(socketGotError(QAbstractSocket::SocketError)));
-}
-
-void SocketPrivate::setConnectionState(Socket::ConnectionState newstate)
+void SocketPrivate::socketGotError(QAbstractSocket::SocketError error)
 {
 	Q_Q(Socket);
-
-	if (state != newstate)
-	{
-		state = newstate;
-		emit q->connectionStateChanged(newstate);
-	}
-}
-
-
-void SocketPrivate::socketGotError(QAbstractSocket::SocketError)
-{
-	/*
-	KBufferedSocket::SocketError err = d->socket->error();
-
-	// Ignore spurious error
-	if (err == KBufferedSocket::NoError)
-		return;
-
-	QString errStr = d->socket->errorString();
-	kDebug(14121) << "Socket error: " << errStr;
+//	QString errStr = d->socket->errorString();
+	kDebug(14121) << "Socket error: " << error;
 //	postErrorEvent(errStr);
 
-	// ignore non-fatal error
-	if (!KBufferedSocket::isFatalError(err))
-		return;
-
-	close();
-	*/
+	q->close();
 }
 
 void SocketPrivate::socketReadyRead()
@@ -91,23 +64,114 @@ void SocketPrivate::socketReadyRead()
 //		msg.setDirection(Message::InGoing);
 
 		if (ok)
+		{
 			emit q->receivedMessage(msg);
+			context->onMessage(context, msg, q);
+		}
 //		else
 //			postErrorEvent(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
 
-		// FIXME: post events instead of reschudeling.
-		QTimer::singleShot( 0, this, SLOT( onReadyRead() ) );
+		// FIXME: post events instead of reschudeling ?
+		QTimer::singleShot( 0, this, SLOT( socketReadyRead() ) );
 	}
 
 //	if(d->socket->socketStatus() != KExtendedSocket::connected)
 //		error();
 }
 
-void SocketPrivate::socketStateChanged(QAbstractSocket::SocketState newstate)
+Socket::Socket(Context *context, SocketPrivate *socketp)
+	: QObject(context)
+	, d_ptr(socketp)
 {
-	Q_Q(Socket);
+	Q_D(Socket);
+	d->context = context;
+	d->owner = new Entity(context);
+}
 
-	switch (newstate) {
+Socket::~Socket()
+{
+	delete d_ptr;
+}
+
+Socket::ConnectionState Socket::connectionState() const
+{
+	Q_D(const Socket);
+	return d->state;
+}
+
+void Socket::setConnectionState(Socket::ConnectionState newstate)
+{
+	Q_D(Socket);
+	if (d->state != newstate)
+	{
+		d->state = newstate;
+		emit connectionStateChanged(newstate);
+	}
+}
+
+QAbstractSocket *Socket::socket()
+{
+	Q_D(Socket);
+	return d->socket;
+}
+
+void Socket::setSocket(QAbstractSocket *socket)
+{
+	Q_D(Socket);
+	d->socket = socket;
+
+	connect(socket, SIGNAL(error(QAbstractSocket::SocketError)),
+		d,	SLOT(socketGotError(QAbstractSocket::SocketError)));
+	connect(socket, SIGNAL(readyRead()),
+		d,	SLOT(socketReadyRead()));
+
+	connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
+			SLOT(socketStateChanged(QAbstractSocket::SocketState)));
+}
+
+EntityPtr Socket::owner() const
+{
+	Q_D(const Socket);
+	return d->owner;
+}
+
+void Socket::writeMessage(const Message &msg)
+{
+	Q_D(Socket);
+
+#ifdef __GNUC__
+	#warning Check message validity before sending it
+#endif
+
+	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
+	{
+		kDebug(14121)<<"Error sending message "<<msg.toLine();
+//		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
+		return;
+	}
+
+	qint64 wrote = d->socket->write(msg.toLine());
+
+	if (wrote == -1)
+		kDebug(14121) << "Socket write failed!";
+
+	//kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(QString(msg.toLine()));
+}
+
+void Socket::close()
+{
+	Q_D(Socket);
+
+	delete d->socket;
+	d->socket = 0;
+}
+
+void Socket::socketStateChanged(QAbstractSocket::SocketState newstate)
+{
+	Q_D(Socket);
+
+	switch (newstate)
+	{
 	case QAbstractSocket::UnconnectedState:
 		setConnectionState(Socket::Idle);
 		break;
@@ -126,84 +190,8 @@ void SocketPrivate::socketStateChanged(QAbstractSocket::SocketState newstate)
 		break;
 	default:
 //		postErrorEvent(i18n("Unknown SocketState value:%1", newstate));
-		q->close();
+		close();
 	}
-}
-
-
-
-
-
-Socket::Socket(Context *context, SocketPrivate *socketp, Entity::Ptr owner)
-	: QObject(context)
-	, d_ptr(socketp)
-{
-	Q_D(Socket);
-
-#if 0
-	// FIXME: create an anonymous as owner.
-	if ( owner.isNull() )
-		owner = context->anonymous();
-#endif
-	d->owner = owner;
-}
-
-Socket::~Socket()
-{
-	delete d_ptr;
-}
-
-Socket::ConnectionState Socket::connectionState() const
-{
-	Q_D(const Socket);
-
-	return d->state;
-}
-
-QAbstractSocket *Socket::socket()
-{
-	Q_D(Socket);
-
-	return d->socket;
-}
-
-Entity::Ptr Socket::owner() const
-{
-	Q_D(const Socket);
-
-	return d->owner;
-}
-
-void Socket::writeMessage(const Message &msg)
-{
-	Q_D(Socket);
-
-#ifdef __GNUC__
-	#warning Check message validity before sending it
-#endif
-
-//	if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
-	{
-//		postErrorEvent(i18n("Attempting to send while not connected: %1", msg.data()));
-		return;
-	}
-
-//	qint64 wrote = d->socket->write(msg.toLine());
-
-//	if (wrote == -1)
-//		kDebug(14121) << "Socket write failed!";
-
-//	kDebug(14121) << QString::fromLatin1("(%1 bytes) >> %2").arg(wrote).arg(rawMsg);
-}
-
-void Socket::close()
-{
-	Q_D(Socket);
-
-	delete d->socket;
-	d->socket = 0;
-
-	d->url = "";
 }
 
 #if 0

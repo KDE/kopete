@@ -22,7 +22,7 @@
 
 #include "ircconst.h"
 
-#include "kircentity.h"
+#include "kircglobal.h"
 
 #include "kopetecontact.h"
 #include "kopetemessage.h"
@@ -57,7 +57,7 @@ class IRCContact
 public:
 	typedef QList<IRCContact *> List;
 
-	IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity,
+	IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity,
 		Kopete::MetaContact *metac = 0, const QString& icon = QString());
 	~IRCContact();
 
@@ -65,6 +65,8 @@ public:
 	KIrc::ClientSocket *kircClient() const;
 
 	QString caption() const;
+
+	KIrc::EntityPtr entity() const;
 
 	/**
 	 * This function attempts to find the nickname specified within the current chat

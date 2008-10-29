@@ -59,14 +59,24 @@ public:
         if ( event->type() == QEvent::ShortcutOverride )
         {
             QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
-            if (keyEvent && ( keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter ) )
+            if (keyEvent)
             {
+                if( keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter )
+                {
                     // Enter is the default shortcut for sending a message,
                     // therefore it should not be handled by a textedit
                     return QWidget::event(event);
+                }
+                if ( keyEvent->matches(QKeySequence::Copy) && !textCursor().hasSelection() )
+                {
+                    // The copy shortcut has to be handled outside of
+                    // the textedit because otherwise you cannot use it 
+                    // to copy a selection in the chatmessagepart
+                    // see bug: #163535
+                    return QWidget::event(event);
+                }
             }
         }
-
         return KTextEdit::event(event);
     }
 };
@@ -76,18 +86,25 @@ class KRichTextEditPart::Private
 public:
     Private()
      : editor(0), richTextEnabled(false), richTextSupport(KRichTextEditPart::DisableRichText),
-       configWriteLock(false)
+        configDirty(false), usingDefault(true), defualtFont(KGlobalSettings::generalFont()),
+        updating(false)
     {}
 
     KopeteTextEdit *editor;
     bool richTextEnabled;
     RichTextSupport richTextSupport;
-    bool configWriteLock;
 
     KAction *checkSpelling;
     KToggleAction *enableRichText;
 
     KAction *actionTextColor;
+
+    bool configDirty;
+    bool usingDefault;
+    QColor defualtTextColor;
+    QFont defualtFont;
+    QColor desiredTextColor;
+    QFont desiredFont;
 
     KToggleAction *action_bold;
     KToggleAction *action_italic;
@@ -100,6 +117,8 @@ public:
     KToggleAction *action_align_right;
     KToggleAction *action_align_center;
     KToggleAction *action_align_justify;
+
+    bool updating;
 };
 
 KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringList&)
@@ -111,13 +130,11 @@ KRichTextEditPart::KRichTextEditPart(QWidget *wparent, QObject*, const QStringLi
     d->editor = new KopeteTextEdit( wparent );
     setWidget( d->editor );
 
+    // FIXME: The actions aren't available anywhere!!!
     createActions();
 
     // TODO: Rename rc file
     setXMLFile( "kopeterichtexteditpart/kopeterichtexteditpartfull.rc" );
-
-    //Set colors, font
-    readConfig();
 }
 
 KRichTextEditPart::~KRichTextEditPart()
@@ -151,6 +168,26 @@ bool KRichTextEditPart::isRichTextAvailable() const
             d->richTextSupport & SupportAlignment ||
             d->richTextSupport & SupportFont ||
             d->richTextSupport & SupportTextColor);
+}
+
+void KRichTextEditPart::setDefualtFont( const QFont& font )
+{
+    d->defualtFont = font;
+    if ( d->usingDefault && !d->configDirty )
+    {
+        d->desiredFont = d->defualtFont;
+        updateCharFormat();
+    }
+}
+
+void KRichTextEditPart::setDefualtTextColor( const QColor& textColor )
+{
+    d->defualtTextColor = textColor;
+    if ( d->usingDefault && !d->configDirty )
+    {
+        d->desiredTextColor = d->defualtTextColor;
+        updateCharFormat();
+    }
 }
 
 void KRichTextEditPart::setCheckSpellingEnabled( bool enabled )
@@ -194,11 +231,6 @@ void KRichTextEditPart::setRichTextSupport(const KRichTextEditPart::RichTextSupp
 void KRichTextEditPart::checkToolbarEnabled()
 {
     emit toolbarToggled( useRichText() );
-}
-
-void KRichTextEditPart::reloadConfig()
-{
-    readConfig();
 }
 
 KAboutData *KRichTextEditPart::createAboutData()
@@ -258,13 +290,10 @@ void KRichTextEditPart::createActions()
     connect( d->action_underline, SIGNAL(toggled(bool)),
         this, SLOT(setFontUnderline(bool)) );
 
-    // TODO: Port to new Qt4 signals
+    // TODO: Port to new Qt4 signals. These are qt4 signals no?
     connect( d->editor, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
         this, SLOT( updateCharFormat() ) );
     updateCharFormat();
-    connect( d->editor, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
-        this, SLOT(updateFont()) );
-    updateFont();
 
     //Alignment
     d->action_align_left = new KToggleAction( KIcon("text-left"), i18n("Align &Left"), actionCollection() );
@@ -323,9 +352,21 @@ void KRichTextEditPart::updateActions()
 
 void KRichTextEditPart::updateCharFormat()
 {
-    d->action_bold->setChecked(  d->editor->fontWeight() >= QFont::Bold );
-    d->action_italic->setChecked( d->editor->fontItalic() );
-    d->action_underline->setChecked( d->editor->fontUnderline() );
+    d->updating = true;
+    if( d->editor->fontPointSize() > 0 )
+        d->action_font_size->setFontSize( (int)d->editor->fontPointSize() );
+    d->action_font->setFont( d->editor->fontFamily() );
+
+    //this "workarounds" KTextEdit edit, to keep the font even when you delete all typed chars
+    d->editor->setTextColor( d->desiredTextColor );
+    if( useRichText() )
+    {
+        d->editor->setCurrentFont( d->desiredFont );
+        d->action_bold->setChecked( d->desiredFont.bold() );
+        d->action_italic->setChecked( d->desiredFont.italic() );
+        d->action_underline->setChecked( d->desiredFont.underline() );
+    }
+    d->updating = false;
 }
 
 void KRichTextEditPart::updateAligment()
@@ -351,35 +392,14 @@ void KRichTextEditPart::updateAligment()
     }
 }
 
-void KRichTextEditPart::updateFont()
+void KRichTextEditPart::readConfig( KConfigGroup& config )
 {
-    if( d->editor->fontPointSize() > 0 )
-        d->action_font_size->setFontSize( (int)d->editor->fontPointSize() );
-    d->action_font->setFont( d->editor->fontFamily() );
-}
+    kDebug() << "Loading config";
 
-void KRichTextEditPart::readConfig()
-{
-    // Don't update config untill we read whole config first
-    d->configWriteLock = true;
-    KConfigGroup config(KGlobal::config(), "RichTextEditor");
-
-    QColor standardColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color();
-    QColor tmpColor;
-    tmpColor = config.readEntry("TextColor", standardColor );
-    kDebug() << "Text color: " << tmpColor.name();
-
-    setTextColor( tmpColor );
-
-    QFont tmpFont = KGlobalSettings::generalFont();
-    setFont( config.readEntry("Font", tmpFont ) );
-
-    int tmp = KGlobalSettings::generalFont().pixelSize();
-    setFontSize( config.readEntry( "FontSize", tmp ) );
-
-    d->action_bold->setChecked( config.readEntry( "FontBold", false ) );
-    d->action_italic->setChecked( config.readEntry( "FontItalic", false ) );
-    d->action_underline->setChecked( config.readEntry( "FontUnderline", false ) );
+    d->usingDefault = ( !config.hasKey("TextColor") && !config.hasKey("Font") );
+    d->desiredTextColor = config.readEntry( "TextColor", d->defualtTextColor );
+    d->desiredFont = config.readEntry("Font", d->defualtFont );
+    updateCharFormat();
 
     switch( config.readEntry( "EditAlignment", int(Qt::AlignLeft) ) )
     {
@@ -396,31 +416,50 @@ void KRichTextEditPart::readConfig()
             d->action_align_justify->trigger();
             break;
     }
-    d->configWriteLock = false;
+
+    // Clean dirty flag.
+    d->configDirty = false;
 }
 
-void KRichTextEditPart::writeConfig()
+void KRichTextEditPart::writeConfig( KConfigGroup& config )
 {
-    // If true we're still reading the conf write now, so don't write.
-    if( d->configWriteLock ) return;
+    if ( d->configDirty == false )
+        return;
 
-    KConfigGroup config = KGlobal::config()->group("RichTextEditor");
+    kDebug() << "Saving config";
 
     QFont currentFont = d->editor->currentFont();
+    config.writeEntry( "Font", currentFont );
+    config.writeEntry( "TextColor", d->editor->textColor() );
+    config.writeEntry( "EditAlignment", int(d->editor->alignment()) );
+    d->usingDefault = false;
 
-    config.writeEntry("Font", currentFont );
-    config.writeEntry("FontSize", currentFont.pointSize() );
-    config.writeEntry("FontBold", currentFont.bold() );
-    config.writeEntry("FontItalic", currentFont.italic() );
-    config.writeEntry("FontUnderline", currentFont.underline() );
-    config.writeEntry("TextColor", d->editor->textColor() );
-    config.writeEntry("EditAlignment", int(d->editor->alignment()) );
-    config.sync();
+    // Clean dirty flag.
+    d->configDirty = false;
+}
+
+void KRichTextEditPart::resetConfig( KConfigGroup& config )
+{
+    kDebug() << "Setting default font style";
+
+    d->desiredTextColor = d->defualtTextColor;
+    d->desiredFont = d->defualtFont;
+    updateCharFormat();
+
+    d->action_align_left->trigger();
+
+    config.deleteEntry( "Font" );
+    config.deleteEntry( "TextColor" );
+    config.deleteEntry( "EditAlignment" );
+
+    d->usingDefault = true;
+    // Set dirty flag.
+    d->configDirty = false;
 }
 
 void KRichTextEditPart::setTextColor()
 {
-    QColor currentTextColor = d->editor->textColor();
+    QColor currentTextColor = d->desiredTextColor;
 
     int result = KColorDialog::getColor( currentTextColor, KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() , d->editor );
     if(!currentTextColor.isValid())
@@ -429,17 +468,16 @@ void KRichTextEditPart::setTextColor()
         return;
 
     setTextColor( currentTextColor );
-
-    writeConfig();
 }
 
 void KRichTextEditPart::setTextColor(const QColor &newColor)
 {
-    if( d->richTextSupport & KRichTextEditPart::SupportTextColor )
+    if( !d->updating && d->richTextSupport & KRichTextEditPart::SupportTextColor )
     {
-        d->editor->setTextColor( newColor );
+        d->desiredTextColor = newColor;
+        d->configDirty = true;
+        updateCharFormat();
     }
-
 }
 
 QColor KRichTextEditPart::textColor() const
@@ -454,99 +492,107 @@ void KRichTextEditPart::setFontSize(int size)
     if( size < 1 )
         return;
 
-    if( d->richTextSupport & KRichTextEditPart::SupportFont )
+    if( !d->updating && d->richTextSupport & KRichTextEditPart::SupportFont )
     {
-        d->editor->setFontPointSize( size );
-        writeConfig();
+        d->desiredFont.setPointSize( size );
+        d->configDirty = true;
+        updateCharFormat();
     }
 }
 
 void KRichTextEditPart::setFont()
 {
-    QFont currentFont = d->editor->currentFont();
+    QFont currentFont = d->desiredFont;
     KFontDialog::getFont( currentFont, false, d->editor );
-
     setFont( currentFont );
-    writeConfig();
 }
 
 void KRichTextEditPart::setFont(const QFont &newFont)
 {
-    if( useRichText() )
+    if( !d->updating && useRichText() )
     {
-        d->editor->setCurrentFont( newFont );
+        d->desiredFont = newFont;
+        d->configDirty = true;
+        updateCharFormat();
     }
-    updateFont();
 }
 
 void KRichTextEditPart::setFont(const QString &newFont)
 {
-    if( (d->richTextSupport & KRichTextEditPart::SupportFont) && useRichText() )
+    if( !d->updating && (d->richTextSupport & KRichTextEditPart::SupportFont) && useRichText() )
     {
-        d->editor->setFontFamily( newFont );
+        d->desiredFont.setFamily( newFont );
+        d->configDirty = true;
+        updateCharFormat();
     }
-
-    updateFont();
-    writeConfig();
 }
 
 
 void KRichTextEditPart::setFontBold(bool value)
 {
-    if( (d->richTextSupport & KRichTextEditPart::SupportFont) && useRichText() )
+    if( !d->updating && (d->richTextSupport & KRichTextEditPart::SupportFont) && useRichText() )
     {
-        d->editor->setFontWeight( value ? QFont::Bold : QFont::Normal );
+        d->desiredFont.setBold( value );
+        d->configDirty = true;
+        updateCharFormat();
     }
-    writeConfig();
 }
 
 void KRichTextEditPart::setFontItalic(bool value)
 {
-    if( (d->richTextSupport & KRichTextEditPart::SupportItalic) && useRichText() )
+    if( !d->updating && (d->richTextSupport & KRichTextEditPart::SupportItalic) && useRichText() )
     {
-        d->editor->setFontItalic(value);
+        d->desiredFont.setItalic( value );
+        d->configDirty = true;
+        updateCharFormat();
     }
-    writeConfig();
 }
 
 void KRichTextEditPart::setFontUnderline(bool value)
 {
-    if( (d->richTextSupport & KRichTextEditPart::SupportUnderline) && useRichText()  )
+    if( !d->updating && (d->richTextSupport & KRichTextEditPart::SupportUnderline) && useRichText()  )
     {
-        d->editor->setFontUnderline(value);
+        d->desiredFont.setUnderline( value );
+        d->configDirty = true;
+        updateCharFormat();
     }
-    writeConfig();
 }
 
 
 void KRichTextEditPart::setAlignLeft( bool yes )
 {
-    if( yes && useRichText() && (d->richTextSupport & KRichTextEditPart::SupportAlignment) )
+    if( !d->updating && yes && useRichText() && (d->richTextSupport & KRichTextEditPart::SupportAlignment) )
+    {
         d->editor->setAlignment( Qt::AlignLeft );
-
-    writeConfig();
+        d->configDirty = true;
+    }
 }
 
 void KRichTextEditPart::setAlignRight( bool yes )
 {
-    if( yes && useRichText() && (d->richTextSupport & KRichTextEditPart::SupportAlignment) )
+    if( !d->updating && yes && useRichText() && (d->richTextSupport & KRichTextEditPart::SupportAlignment) )
+    {
         d->editor->setAlignment( Qt::AlignRight );
-
-    writeConfig();
+        d->configDirty = true;
+    }
 }
 
 void KRichTextEditPart::setAlignCenter( bool yes )
 {
-    if( yes && useRichText() && (d->richTextSupport & KRichTextEditPart::SupportAlignment) )
+    if( !d->updating && yes && useRichText() && (d->richTextSupport & KRichTextEditPart::SupportAlignment) )
+    {
         d->editor->setAlignment( Qt::AlignCenter );
-    writeConfig();
+        d->configDirty = true;
+    }
 }
 
 void KRichTextEditPart::setAlignJustify( bool yes )
 {
-    if( yes && useRichText() && (d->richTextSupport & KRichTextEditPart::SupportAlignment) )
+    if( !d->updating && yes && useRichText() && (d->richTextSupport & KRichTextEditPart::SupportAlignment) )
+    {
         d->editor->setAlignment( Qt::AlignJustify );
-    writeConfig();
+        d->configDirty = true;
+    }
 }
 
 QString KRichTextEditPart::text( Qt::TextFormat format ) const

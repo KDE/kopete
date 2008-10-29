@@ -5,8 +5,9 @@
     Copyright (c) 2002-2006 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2006-2007 by Charles Connell        <charles@connells.org>
     Copyright (c) 2007      by Michaël Larouche      <larouche@kde.org>
+    Copyright (c) 2008      by Roman Jarosz           <kedgedev@centrum.cz>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -46,14 +47,16 @@ class Message::Private
 	: public QSharedData
 {
 public:
-	Private()
-		: direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), backgroundOverride(false),
-		  foregroundOverride(false), richTextOverride(false), isRightToLeft(false), timeStamp( QDateTime::currentDateTime() ),
-		  body(new QTextDocument), escapedBodyDirty(true)
+	Private() //assign next message id, it can't be changed later
+		: id(nextId++), direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), state(StateUnknown),
+		  delayed(false), backgroundOverride(false), foregroundOverride(false), richTextOverride(false), isRightToLeft(false),
+		  timeStamp( QDateTime::currentDateTime() ), body(new QTextDocument), parsedBodyDirty(true), escapedBodyDirty(true),
+		  fileTransfer(0)
 	{}
 	Private (const Private &other);
 	~Private();
 
+	const uint id;
 	QPointer<Contact> from;
 	ContactPtrList to;
 	QPointer<ChatSession> manager;
@@ -63,6 +66,8 @@ public:
 	MessageType type;
 	QString requestedPlugin;
 	MessageImportance importance;
+	MessageState state;
+	bool delayed;
 	bool backgroundOverride;
 	bool foregroundOverride;
 	bool richTextOverride;
@@ -76,12 +81,32 @@ public:
 	QString subject;
 
 	QTextDocument* body;
+	mutable QString parsedBody;
+	mutable bool parsedBodyDirty;
 	mutable QString escapedBody;
 	mutable bool escapedBodyDirty;
+
+	class FileTransferInfo
+	{
+	public:
+		FileTransferInfo() : disabled(false), fileSize(0)
+		{}
+
+		bool disabled;
+		QString fileName;
+		unsigned long fileSize;
+		QPixmap filePreview;
+	};
+	FileTransferInfo* fileTransfer;
+
+	static uint nextId;
 };
 
+// Start with 1 as 0 is reserved for invalid id;
+uint Message::Private::nextId = 1;
+
 Message::Private::Private (const Message::Private &other)
-	: QSharedData (other)
+	: QSharedData (other), id(other.id)
 {
 	from = other.from;
 	to = other.to;
@@ -92,6 +117,8 @@ Message::Private::Private (const Message::Private &other)
 	type = other.type;
 	requestedPlugin = other.requestedPlugin;
 	importance = other.importance;
+	state = other.state;
+	delayed = other.delayed;
 	backgroundOverride = other.backgroundOverride;
 	foregroundOverride = other.foregroundOverride;
 	richTextOverride = other.richTextOverride;
@@ -105,12 +132,22 @@ Message::Private::Private (const Message::Private &other)
 	subject = other.subject;
 
 	body = other.body->clone();
+	parsedBody = other.parsedBody;
+	parsedBodyDirty = other.parsedBodyDirty;
 	escapedBody = other.escapedBody;
 	escapedBodyDirty = other.escapedBodyDirty;
+
+	if ( other.fileTransfer )
+		fileTransfer = new FileTransferInfo( *other.fileTransfer );
+	else
+		fileTransfer = 0;
 }
 
 Message::Private::~Private ()
 {
+	if ( fileTransfer )
+		delete fileTransfer;
+
 	delete body;
 }
 
@@ -149,6 +186,16 @@ Message& Message::operator=( const Message &other )
 
 Message::~Message()
 {
+}
+
+uint Message::id() const
+{
+	return d->id;
+}
+
+uint Message::nextId()
+{
+	return Message::Private::nextId++;
 }
 
 void Message::setBackgroundOverride( bool enabled )
@@ -200,6 +247,7 @@ void Message::doSetBody (const QString &body, Qt::TextFormat f)
 	d->format = f;
 	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
 	d->escapedBodyDirty = true;
+	d->parsedBodyDirty = true;
 }
 
 void Message::setBody (const QTextDocument *_body)
@@ -214,6 +262,7 @@ void Message::doSetBody (const QTextDocument *body, Qt::TextFormat f)
 	d->format = f;
 	d->isRightToLeft = d->body->toPlainText().isRightToLeft();
 	d->escapedBodyDirty = true;
+	d->parsedBodyDirty = true;
 }
 
 void Message::setImportance(Message::MessageImportance i)
@@ -335,8 +384,12 @@ QString Message::escapedBody() const
 QString Message::parsedBody() const
 {
 	//kDebug(14000) << "messageformat: " << d->format;
-
-	return Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
+	if ( !d->parsedBodyDirty )
+		return d->parsedBody;
+	
+	d->parsedBody = Kopete::Emoticons::parseEmoticons(parseLinks(escapedBody(), Qt::RichText));
+	d->parsedBodyDirty = false;
+	return d->parsedBody;
 }
 
 static QString makeRegExp( const char *pattern )
@@ -509,6 +562,16 @@ Message::MessageImportance Message::importance() const
 	return d->importance;
 }
 
+Message::MessageState Message::state() const
+{
+	return d->state;
+}
+
+void Message::setState(MessageState state)
+{
+	d->state = state;
+}
+
 ChatSession *Message::manager() const
 {
 	return d->manager;
@@ -522,7 +585,7 @@ void Message::setManager(ChatSession *kmm)
 QString Message::getHtmlStyleAttribute() const
 {
 	QString styleAttribute;
-	
+
 	styleAttribute = QString::fromUtf8("style=\"");
 
 	// Affect foreground(color) and background color to message.
@@ -534,7 +597,7 @@ QString Message::getHtmlStyleAttribute() const
 	{
 		styleAttribute += QString::fromUtf8("background-color: %1; ").arg(d->backgroundColor.name());
 	}
-	
+
 	// Affect font parameters.
 	if( !d->richTextOverride && d->font!=QFont() )
 	{
@@ -558,8 +621,60 @@ QString Message::getHtmlStyleAttribute() const
 	return styleAttribute;
 }
 
+void Message::setFileTransferDisabled( bool disabled )
+{
+	if ( !d->fileTransfer )
+		d->fileTransfer = new Message::Private::FileTransferInfo();
+
+	d->fileTransfer->disabled = disabled;
+}
+
+bool Message::fileTransferDisabled() const
+{
+	return ( d->fileTransfer ) ? d->fileTransfer->disabled : false;
+}
+
+void Message::setFileName( const QString &fileName )
+{
+	if ( !d->fileTransfer )
+		d->fileTransfer = new Message::Private::FileTransferInfo();
+
+	d->fileTransfer->fileName = fileName;
+}
+
+QString Message::fileName() const
+{
+	return ( d->fileTransfer ) ? d->fileTransfer->fileName : QString();
+}
+
+void Message::setFileSize( unsigned long size )
+{
+	if ( !d->fileTransfer )
+		d->fileTransfer = new Message::Private::FileTransferInfo();
+
+	d->fileTransfer->fileSize = size;
+}
+
+unsigned long Message::fileSize() const
+{
+	return ( d->fileTransfer ) ? d->fileTransfer->fileSize : 0;
+}
+
+void Message::setFilePreview( const QPixmap &preview )
+{
+	if ( !d->fileTransfer )
+		d->fileTransfer = new Message::Private::FileTransferInfo();
+
+	d->fileTransfer->filePreview = preview;
+}
+
+QPixmap Message::filePreview() const
+{
+	return ( d->fileTransfer ) ? d->fileTransfer->filePreview : QPixmap();
+}
+
 // prime candidate for removal
-#if 0 
+#if 0
 QString Message::decodeString( const QByteArray &message, const QTextCodec *providedCodec, bool *success )
 {
 	/*
@@ -660,4 +775,14 @@ void Message::setClasses(const QStringList & classes)
 	d->classes = classes;
 }
 
+}
+
+bool Kopete::Message::delayed() const
+{
+	return d->delayed;
+}
+
+void Kopete::Message::setDelayed(bool delay)
+{
+	d->delayed = delay;
 }

@@ -17,6 +17,8 @@
 #ifndef KOPETEVIEWMANAGER_H
 #define KOPETEVIEWMANAGER_H
 
+#include <QtCore/QObject>
+
 #include "kopetemessage.h"
 #include "kopete_export.h"
 
@@ -58,6 +60,12 @@ public:
     * Provide access to the list of KopeteChatWindow the class maintains.
     */
     KopeteView *activeView() const;
+    
+    /**
+     * Returns unread messages for the given contact
+     * @param contact Message sender
+     */
+    QList<Kopete::MessageEvent*> pendingMessages( Kopete::Contact *contact );
 
 public slots:
     /**

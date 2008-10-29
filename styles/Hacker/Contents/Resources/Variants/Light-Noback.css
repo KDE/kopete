@@ -38,3 +38,5 @@ a:hover  { color: #82b6ff }
 .pastBuddy  { color: #7ab382; font-size: 11px; font-weight: bold; text-align: left; position: relative }
 
 .pastUser  { color: #7b95b4; font-size: 11px; font-weight: bold; text-align: left; position: relative }
+
+.stateSendingImg { width: 16px; height: 16px; background: transparent url("../images/state-sending.gif") no-repeat center center; }

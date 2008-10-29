@@ -30,10 +30,20 @@ class SendDCInfoTask : public Task
 public:
 	SendDCInfoTask( Task* parent, Oscar::DWORD status );
 	~SendDCInfoTask();
+
+	void setIcqMood( int mood );
+	void setIcqMessage( const QString &message );
+
 	virtual void onGo();
-	
+
 private:
 	Oscar::DWORD mStatus;
+
+	bool mSendMood;
+	int mMood;
+
+	bool mSendMessage;
+	QString mMessage;
 };
 
 #endif

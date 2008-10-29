@@ -18,38 +18,18 @@
 #ifndef KIRCGLOBAL_H
 #define KIRCGLOBAL_H
 
-#include <kdemacros.h>
-
 #include <QtCore/QByteArray>
+#include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
-
-#if defined Q_OS_WIN
-
-#ifndef KIRC_EXPORT
-# ifdef MAKE_KIRC_LIB
-#  define KIRC_EXPORT KDE_EXPORT
-# else
-#  define KIRC_EXPORT KDE_IMPORT
-# endif
-#endif
-
-#ifndef KIRCCLIENT_EXPORT
-# ifdef MAKE_KIRC_CLIENT_LIB
-#  define KIRCCLIENT_EXPORT KDE_EXPORT
-# else
-#  define KIRCCLIENT_EXPORT KDE_IMPORT
-# endif
-#endif
-
-#else
-
-#define KIRC_EXPORT KDE_EXPORT
-#define KIRCCLIENT_EXPORT KDE_EXPORT
-
-#endif
+#include <QtCore/QSet>
 
 namespace KIrc
 {
+
+class Entity;
+typedef QExplicitlySharedDataPointer<KIrc::Entity> EntityPtr;
+typedef QList<EntityPtr> EntityList;
+typedef QSet<EntityPtr> EntitySet;
 
 typedef struct
 {
@@ -64,6 +44,11 @@ KIrc::OptArg optArg(const QByteArray &arg)
 static inline
 QList<QByteArray> &operator << (QList<QByteArray> &list, const KIrc::OptArg &optArg)
 { if (!optArg.value.isNull()) list.append(optArg.value); return list; }
+
+template <class T>
+static inline
+QSet<T> &operator << (QSet<T> &set, const QList<T> &list)
+{ Q_FOREACH(const T &item, list) set << item; return set; }
 
 };
 

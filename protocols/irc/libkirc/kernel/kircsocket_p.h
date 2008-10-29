@@ -22,12 +22,11 @@
 
 #include "kircsocket.h"
 
-#include <QtNetwork/QAbstractSocket>
-
 namespace KIrc
 {
 
 class Context;
+class Handler;
 
 class KIRC_EXPORT SocketPrivate
 	: public QObject
@@ -38,21 +37,17 @@ class KIRC_EXPORT SocketPrivate
 public:
 	explicit SocketPrivate(KIrc::Socket *socket);
 
-	void setSocket(QAbstractSocket *socket);
-	void setConnectionState(Socket::ConnectionState newstate);
-
-public slots:
+public Q_SLOTS:
 	void socketGotError(QAbstractSocket::SocketError);
 	void socketReadyRead();
-	virtual void socketStateChanged(QAbstractSocket::SocketState newstate);
 
 public:
 	KIrc::Socket *q_ptr;
 
-	QUrl url;
+	KIrc::Context *context;
 	QAbstractSocket *socket;
 	KIrc::Socket::ConnectionState state;
-	KIrc::Entity::Ptr owner;
+	KIrc::EntityPtr owner;
 };
 
 }

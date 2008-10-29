@@ -22,7 +22,6 @@
 #include "kircclientsocket.h"
 
 #include "kirccontext.h"
-#include "kircevent.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -47,7 +46,7 @@ public:
 using namespace KIrc;
 
 ClientWhoHandler::ClientWhoHandler(Context *context)
-	: Handler(parent)
+	: Handler(context)
 	, d_ptr(new ClientWhoHandlerPrivate)
 {
 	Q_D(ClientWhoHandler);
@@ -59,6 +58,29 @@ ClientWhoHandler::~ClientWhoHandler()
 {
 	delete d_ptr;
 }
+
+
+/* WHO [ <mask> [ "o" ] ]
+ * List all the visible users to the user.
+ */
+void ClientWhoHandler::WHO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+}
+
+/* WHOIS [ <mask> [ "o" ] ]
+ * List all the visible users to the user.
+ */
+void ClientWhoHandler::WHOIS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+}
+
+/* WHOWAS [ <mask> [ "o" ] ]
+ * List all the visible users to the user.
+ */
+void ClientWhoHandler::WHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+}
+
 
 /* IMPORTANT NOTE:
  * Numeric replies always have the current nick or * as first argmuent.
@@ -112,7 +134,7 @@ void ClientWhoHandler::numericReply_307(KIrc::Context *context, const KIrc::Mess
 /* 311: "<nick> <user> <host> * :<real name>"
  * Show info about a user (part of a /whois) in the form of:
  */
-void ClientWhoHandler::numericReply_311(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+void ClientWhoHandler::RPL_WHOISUSER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(5, 5);
 
@@ -122,7 +144,7 @@ void ClientWhoHandler::numericReply_311(KIrc::Context *context, const KIrc::Mess
 /* 312: "<nick> <server> :<server info>"
  * Show info about a server (part of a /whois).
  */
-void ClientWhoHandler::numericReply_312(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+void ClientWhoHandler::RPL_WHOISSERVER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(4, 4);
 
@@ -132,7 +154,7 @@ void ClientWhoHandler::numericReply_312(KIrc::Context *context, const KIrc::Mess
 /* 313: "<nick> :is an IRC operator"
  * Show info about an operator (part of a /whois).
  */
-void ClientWhoHandler::numericReply_313(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+void ClientWhoHandler::RPL_WHOISOPERATOR(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(3, 3);
 
@@ -142,7 +164,7 @@ void ClientWhoHandler::numericReply_313(KIrc::Context *context, const KIrc::Mess
 /* 314: "<nick> <user> <host> * :<real name>"
  * Show WHOWAS Info
  */
-void ClientWhoHandler::numericReply_314(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+void ClientWhoHandler::RPL_WHOWASUSER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingWhoWasUser(msg.arg(1), msg.arg(2), msg.arg(3), msg.suffix());
 }
@@ -150,7 +172,7 @@ void ClientWhoHandler::numericReply_314(KIrc::Context *context, const KIrc::Mess
 /* 315: "<name> :End of WHO list"
  * End of WHO list.
  */
-void ClientWhoHandler::numericReply_315(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+void ClientWhoHandler::RPL_ENDOFWHO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	receivedServerMessage(msg);
 }
@@ -159,7 +181,7 @@ void ClientWhoHandler::numericReply_315(KIrc::Context *context, const KIrc::Mess
  * Some servers say: "<nick> <integer> <integer> :seconds idle, signon time"
  * Show info about someone who is idle (part of a /whois) in the form of:
  */
-void ClientWhoHandler::numericReply_317(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+void ClientWhoHandler::RPL_WHOISIDLE(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 /*
 	emit incomingWhoIsIdle(msg.arg(1), msg.arg(2).toULong());
@@ -171,8 +193,15 @@ void ClientWhoHandler::numericReply_317(KIrc::Context *context, const KIrc::Mess
 /* 318: "<nick>{<space><realname>} :End of /WHOIS list"
  * End of WHOIS for a given nick.
  */
-void ClientWhoHandler::numericReply_318(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+void ClientWhoHandler::RPL_ENDOFWHOIS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit receivedServerMessage(msg);
 }
 
+/* 319: "<nick> :*( ( "@" / "+" ) <channel> " " )"
+ * End of WHOIS for a given nick.
+ */
+void ClientWhoHandler::RPL_WHOISCHANNELS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+//	emit receivedServerMessage(msg);
+}

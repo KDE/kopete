@@ -98,10 +98,6 @@ private:
 	QString			parentIdentity_;
 	GaduAccount*		account_;
 
-	KAction*		actionSendMessage_;
-	KAction*		actionInfo_;
-	KAction*		actionRemove_;
-
 	QList<Contact*>		thisContact_;
 
 	QHostAddress remote_ip;

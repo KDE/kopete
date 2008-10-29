@@ -16,7 +16,7 @@
 #ifndef KIRCHANDLERFACTORY_H
 #define KIRCHANDLERFACTORY_H
 
-#include "kircglobal.h"
+#include "kirc_export.h"
 
 #include <QtCore/QStringList>
 

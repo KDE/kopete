@@ -425,6 +425,11 @@ void Kopete::ChatSession::receivedEventNotification( const QString& notification
 	emit eventNotification( notificationText );
 }
 
+void Kopete::ChatSession::receivedMessageState( uint messageId, Kopete::Message::MessageState state )
+{
+	emit messageStateChanged( messageId, state );
+}
+
 void Kopete::ChatSession::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted = b;

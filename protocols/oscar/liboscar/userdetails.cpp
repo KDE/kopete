@@ -32,11 +32,23 @@ using namespace Oscar;
 UserDetails::UserDetails()
 {
     m_capabilities.resize(CAP_LAST);
+	clear();
+}
+
+
+UserDetails::~UserDetails()
+{
+}
+
+void UserDetails::clear()
+{
+	m_capabilities.fill( false );
 	m_warningLevel = 0;
 	m_userClass = 0;
 	m_idleTime = 0;
 	m_extendedStatus = 0;
 	m_xtrazStatus = -1;
+	m_statusMood = -1;
 	m_dcPort = 0;
 	m_dcType = 0;
 	m_dcProtoVersion = 0;
@@ -56,15 +68,11 @@ UserDetails::UserDetails()
 	m_idleTimeSpecified = false;
 	m_extendedStatusSpecified = false;
 	m_xtrazStatusSpecified = false;
+	m_statusMoodSpecified = false;
 	m_capabilitiesSpecified = false;
 	m_dcOutsideSpecified = false;
 	m_dcInsideSpecified = false;
 	m_iconSpecified = false;
-}
-
-
-UserDetails::~UserDetails()
-{
 }
 
 int UserDetails::warningLevel() const
@@ -130,6 +138,11 @@ Oscar::DWORD UserDetails::extendedStatus() const
 int UserDetails::xtrazStatus() const
 {
 	return m_xtrazStatus;
+}
+
+int UserDetails::statusMood() const
+{
+	return m_statusMood;
 }
 
 Oscar::WORD UserDetails::iconType() const
@@ -395,6 +408,17 @@ void UserDetails::fill( Buffer * buffer )
 						}
 						else
 							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message";
+						break;
+					case 0x000E:
+						if ( length > 0 )
+						{
+							QString mood( b.getBlock( length ) );
+							m_statusMood = mood.mid( 7 ).toInt();
+						}
+						m_statusMoodSpecified = true;
+#ifdef OSCAR_USERINFO_DEBUG
+						kDebug(OSCAR_RAW_DEBUG) << "status mood:" << m_statusMood;
+#endif
 						break;
 					default:
 						b.skipBytes( length );
@@ -801,6 +825,11 @@ void UserDetails::merge( const UserDetails& ud )
 	{
 		m_xtrazStatus = ud.m_xtrazStatus;
 		m_xtrazStatusSpecified = true;
+	}
+	if ( ud.m_statusMoodSpecified )
+	{
+		m_statusMood = ud.m_statusMood;
+		m_statusMoodSpecified = true;
 	}
 	if ( ud.m_capabilitiesSpecified )
 	{

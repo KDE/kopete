@@ -53,6 +53,23 @@ const NetworkList &Networks::networks() const
 	return d->networks;
 }
 
+void Networks::setNetworks( const IRC::NetworkList& networks )
+{
+	d->networks=networks;
+}
+
+const IRC::Network& Networks::network(const QString &name)
+{
+	foreach(const Network& net,d->networks)
+	{
+		if(net.name==name)
+		{
+			return net;
+		}
+	}
+	return Network();
+}
+
 void Networks::slotReadNetworks()
 {
 	d->networks.clear();
@@ -60,7 +77,7 @@ void Networks::slotReadNetworks()
 	QFile xmlFile( KStandardDirs::locate( "appdata", "ircnetworks.xml" ) );
 	xmlFile.open( QIODevice::ReadOnly );
 
-#if 0
+
 	// FIXME
 	QDomDocument doc;
 	doc.setContent( &xmlFile );
@@ -107,18 +124,18 @@ void Networks::slotReadNetworks()
 		d->networks.append(network);
 		networkNode = networkNode.nextSibling().toElement();
 	}
-#endif
+
 
 	xmlFile.close();
 }
 
 bool Networks::slotSaveNetworkConfig() const
 {
-/*
+
 	// store any changes in the UI
-	storeCurrentNetwork();
-	kDebug( 14120 ) << m_uiCurrentHostSelection;
-	storeCurrentHost();
+	//storeCurrentNetwork();
+	//kDebug( 14120 ) << m_uiCurrentHostSelection;
+	//storeCurrentHost();
 
 	QDomDocument doc("irc-networks");
 	QDomNode root = doc.appendChild( doc.createElement("networks") );
@@ -127,25 +144,25 @@ bool Networks::slotSaveNetworkConfig() const
 	{
 		QDomNode networkNode = root.appendChild( doc.createElement("network") );
 		QDomNode nameNode = networkNode.appendChild( doc.createElement("name") );
-		nameNode.appendChild( doc.createTextNode( net->name ) );
+		nameNode.appendChild( doc.createTextNode( network.name ) );
 
 		QDomNode descNode = networkNode.appendChild( doc.createElement("description") );
-		descNode.appendChild( doc.createTextNode( net->description ) );
+		descNode.appendChild( doc.createTextNode( network.description ) );
 
 		QDomNode serversNode = networkNode.appendChild( doc.createElement("servers") );
 
-		foreach(const Host &host, network.host)
+		foreach(const Host &host, network.hosts)
 		{
 			QDomNode serverNode = serversNode.appendChild( doc.createElement("server") );
 
 			QDomNode hostNode = serverNode.appendChild( doc.createElement("host") );
-			hostNode.appendChild( doc.createTextNode( (*it2)->host ) );
+			hostNode.appendChild( doc.createTextNode( host.host ) );
 
 			QDomNode portNode = serverNode.appendChild( doc.createElement("port" ) );
-			portNode.appendChild( doc.createTextNode( QString::number( (*it2)->port ) ) );
+			portNode.appendChild( doc.createTextNode( QString::number( host.port ) ) );
 
 			QDomNode sslNode = serverNode.appendChild( doc.createElement("useSSL") );
-			sslNode.appendChild( doc.createTextNode( (*it2)->ssl ? "true" : "false" ) );
+			sslNode.appendChild( doc.createTextNode( host.ssl ? "true" : "false" ) );
 		}
 	}
 
@@ -159,7 +176,7 @@ bool Networks::slotSaveNetworkConfig() const
 		xmlFile.close();
 		return true;
 	}
-*/
+
 	kDebug(14121) << "Failed to save the Networks definition file";
 	return false;
 }

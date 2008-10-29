@@ -3,7 +3,7 @@
 
     Copyright (c) 2005      by Michaël Larouche     <larouche@kde.org>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -81,7 +81,7 @@ public:
 	 *          Contents/
 	 *            Resources/
 	 *
-	 * @return the path to the the resource directory.
+	 * @return the path to the resource directory.
 	 */
 	QString getStyleBaseHref() const;
 
@@ -95,6 +95,13 @@ public:
 
 	QString getActionIncomingHtml() const;
 	QString getActionOutgoingHtml() const;
+
+	QString getFileTransferIncomingHtml() const;
+
+	QString getOutgoingStateSendingHtml() const;
+	QString getOutgoingStateSentHtml() const;
+	QString getOutgoingStateErrorHtml() const;
+	QString getOutgoingStateUnknownHtml() const;
 
 	/**
 	 * Check if the style has the support for Kopete Action template (Kopete extension)

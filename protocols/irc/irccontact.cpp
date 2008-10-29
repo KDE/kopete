@@ -24,6 +24,8 @@
 
 #include "kircclientsocket.h"
 #include "kircentity.h"
+#include "kircmessage.h"
+#include "kircstdmessages.h"
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteglobal.h"
@@ -44,7 +46,7 @@ using namespace Kopete;
 class IRCContact::Private
 {
 public:
-	KIrc::Entity::Ptr entity;
+	KIrc::EntityPtr entity;
 
 	QMap<ChatSessionType, ChatSession *> chatSessions;
 
@@ -59,13 +61,13 @@ public:
 	QList<KAction *> userActions;
 };
 
-IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, MetaContact *metac, const QString& icon)
+IRCContact::IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity, MetaContact *metac, const QString& icon)
 	: Contact(account, entity->name(), metac, icon)
 	, d (new IRCContact::Private)
 {
 	Q_ASSERT(entity);
 
-	kDebug(14120) << entity->name();
+	kDebug(14120) <<"Entity name: "<< entity->name();
 
 	d->entity = entity;
 
@@ -82,7 +84,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::Entity::Ptr &entity, Met
 //	mMyself.append( static_cast<Contact*>( this ) );
 
 	// KIRC stuff
-	connect(client, SIGNAL(connectionStateChanged(KIrc::ConnectionState)),
+	connect(client, SIGNAL(connectionStateChanged(KIrc::Socket::ConnectionState)),
 		this, SLOT(updateStatus()));
 /*
 	connect(entity, SIGNAL(updated()),
@@ -129,6 +131,11 @@ KIrc::ClientSocket *IRCContact::kircClient() const
 	return ircAccount()->client();
 }
 
+KIrc::EntityPtr IRCContact::entity() const
+{
+	return d->entity;
+}
+
 void IRCContact::entityUpdated()
 {
 	Global::Properties *prop = Global::Properties::self();
@@ -172,23 +179,27 @@ void IRCContact::entityUpdated()
 
 QString IRCContact::caption() const
 {
-/*
 	QString caption = QString::fromLatin1("%1 @ %2")
-		.arg(d->entity->name()) // nickName
-		.arg(ircAccount()->networkName());
+		.arg(QString(d->entity->name())) // nickName
+		.arg(QString(ircAccount()->networkName()));
 
 	QString topic = d->entity->topic();
 	if(!topic.isEmpty())
 		caption.append( QString::fromLatin1(" - %1").arg(Kopete::Message::unescape(topic)) );
 
 	return caption;
-*/
-	return QLatin1String("FIXME");
 }
 
 void IRCContact::updateStatus()
 {
-	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
+	//setOnlineStatus(Kopete::OnlineStatus::Online);
+	//setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
+
+	//TODO: temporary until the real status handling is resurrected
+	if(account()->isConnected())
+		setOnlineStatus(Kopete::OnlineStatus::Online);
+	else
+		setOnlineStatus(Kopete::OnlineStatus::Offline);
 }
 
 bool IRCContact::isReachable()
@@ -242,27 +253,27 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 {
 	IRCAccount *account = ircAccount();
 	KIrc::ClientSocket *engine = kircClient();
-/*
-	Kopete::ChatSession *chatSession = d->chatSessions.get();
+
+	Kopete::ChatSession *chatSession = d->chatSessions.value(type);
 	if (!chatSession)
 	{
 //		if (engine->status() == KIrc::ClientSocket::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
 //			account->connect();
 
-		chatSession = ChatSessionManager::self()->create(account->myself(), mMyself, account->protocol());
+		kDebug(14120)<<"creating new ChatSession";
+
+		chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , account->protocol());
 		chatSession->setDisplayName(caption());
 
-		connect(chatSession, SIGNAL(messageSent(Message&, ChatSession *)),
-			this, SLOT(slotSendMsg(Message&, ChatSession *)));
+		connect(chatSession, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
+			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::ChatSession *)));
 		connect(chatSession, SIGNAL(closing(ChatSession *)),
 			this, SLOT(chatSessionDestroyed(ChatSession *)));
 
-		d->chatSessions.add(type, chatSession);
+		d->chatSessions.insert(type, chatSession);
 	}
 
 	return chatSession;
-*/
-	return 0;
 }
 
 void IRCContact::chatSessionDestroyed(ChatSession *chatSession)
@@ -318,7 +329,7 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 
 	if (htmlString.indexOf('\n') > -1)
 	{
-		QStringList messages = htmlString.split('\n');
+		QStringList messages = htmlString.trimmed().split('\n');
 
 		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 		{
@@ -349,21 +360,23 @@ void IRCContact::slotSendMsg(Message &message, ChatSession *chatSession)
 
 QString IRCContact::sendMessage(const QString &msg)
 {
-/*
+	kDebug(14120)<<"sending "<<msg;
+
 	QString newMessage = msg;
-	uint trueLength = msg.length() + m_nickName.length() + 12;
+	uint trueLength = msg.length() + entity()->name().length() + 12;
 	if( trueLength > 512 )
 	{
 		//TODO: tell them it is truncated
 		kWarning() << "Message was to long (" << trueLength << "), it has been truncated to 512 characters";
-		newMessage.truncate( 512 - ( m_nickName.length() + 12 ) );
+		newMessage.truncate( 512 - ( entity()->name().length() + 12 ) );
 	}
 
-	kircClient()->privmsg(m_nickName, newMessage );
+	if(entity()->type()==KIrc::Entity::Server) //if its a server, send raw data
+		ircAccount()->client()->writeMessage( KIrc::Message::fromLine(codec()->fromUnicode(newMessage)) );
+	else
+		ircAccount()->client()->writeMessage( KIrc::StdMessages::privmsg(codec()->fromUnicode(entity()->name()),codec()->fromUnicode(newMessage)) );
 
 	return newMessage;
-*/
-	return QString();
 }
 
 Contact *IRCContact::locateUser(const QString &nick)
@@ -412,7 +425,7 @@ bool IRCContact::isChatting(ChatSession *avoid) const
 
 void IRCContact::appendMessage(Message &msg)
 {
-//	manager(Contact::CanCreate)->appendMessage(msg);
+	manager(Contact::CanCreate)->appendMessage(msg);
 }
 /*
 void IRCServerContact::appendMessage(Kopete::Message &msg)

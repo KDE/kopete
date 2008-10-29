@@ -9,7 +9,7 @@
     <height>377</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout_2" >
    <item>
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
@@ -97,51 +97,55 @@
      <property name="title" >
       <string>Auto Away Message</string>
      </property>
-     <layout class="QGridLayout" >
-      <item row="0" column="0" colspan="2" >
+     <layout class="QVBoxLayout" name="verticalLayout" >
+      <item>
        <widget class="QRadioButton" name="kcfg_useLastAwayMessage" >
         <property name="text" >
          <string>Display the &amp;last away message used</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2" >
+      <item>
        <widget class="QRadioButton" name="kcfg_useCustomAwayMessage" >
         <property name="text" >
          <string>Display the &amp;following away message:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="label" >
-        <property name="text" >
-         <string>Title:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="KLineEdit" name="kcfg_autoAwayCustomTitle" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="label_4" >
-        <property name="text" >
-         <string>Message:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" >
-       <widget class="QTextEdit" name="mAutoAwayCustomMessage" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="acceptRichText" >
-         <bool>false</bool>
-        </property>
-       </widget>
+      <item>
+       <layout class="QFormLayout" name="formLayout" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="label" >
+          <property name="text" >
+           <string>Title:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="KLineEdit" name="kcfg_autoAwayCustomTitle" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="label_4" >
+          <property name="text" >
+           <string>Message:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QTextEdit" name="mAutoAwayCustomMessage" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="acceptRichText" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

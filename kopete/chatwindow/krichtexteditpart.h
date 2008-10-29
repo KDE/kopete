@@ -31,6 +31,7 @@
 
 class KAboutData;
 class KTextEdit;
+class KConfigGroup;
 
 /**
  * @brief Simple WYSIWYG rich text editor part.
@@ -97,6 +98,10 @@ public:
 
     bool isRichTextAvailable() const;
 
+    void setDefualtFont( const QFont& font );
+
+    void setDefualtTextColor( const QColor& textColor );
+
     /** 
      * Enable or Disable the automatic spell checking
      * @param enabled the state that auto spell checking should beee
@@ -143,7 +148,6 @@ public slots:
     void setAlignJustify(bool yes);
 
     void checkToolbarEnabled();
-    void reloadConfig();
     void setRichTextEnabled(bool enable);
 
 signals:
@@ -160,13 +164,13 @@ protected:
 protected slots:
     void updateActions();
 
-    void updateFont();
     void updateCharFormat();
     void updateAligment();
 
-private:
-    void readConfig();
-    void writeConfig();
+public:
+    void readConfig( KConfigGroup& config );
+    void resetConfig( KConfigGroup& config );
+    void writeConfig( KConfigGroup& config );
 
 private:
     class Private;

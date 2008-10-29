@@ -124,7 +124,10 @@ void StatusConfig_Manager::addGroup()
 	QModelIndex newIndex = d->statusModel->insertItem( index, group );
 
 	if ( newIndex.isValid() )
+	{
 		statusView->setCurrentIndex( newIndex );
+		statusView->setExpanded( newIndex, true );
+	}
 	else
 		delete group;
 }

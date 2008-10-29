@@ -82,7 +82,9 @@ public slots:
 	void slotDone();
 	void kill( bool );
 	
-	
+protected:
+	// Avoid compiler warning about QObject::event
+	using Task::event;
 private:
 	ProcessMessageTask(MessageHandlerChain::Ptr, MessageEvent *event);
 	~ProcessMessageTask();

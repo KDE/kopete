@@ -50,7 +50,7 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	// since KSetting::Dialog has margins here, we don't need our own.
 	layout->setContentsMargins( 0, 0, 0, 0);
-	
+
 	mBehaviorTabCtl = new QTabWidget(this);
 	mBehaviorTabCtl->setObjectName("mBehaviorTabCtl");
 	layout->addWidget( mBehaviorTabCtl );
@@ -116,7 +116,7 @@ void BehaviorConfig::load()
 {
 	KCModule::load();
 	// "General" TAB ===============================================================
-	if(!mPrfsGeneral->kcfg_useMessageQueue->isChecked() && !mPrfsGeneral->kcfg_useMessageStack->isChecked()) {
+	if(!mPrfsGeneral->kcfg_useMessageQueue->isChecked()) {
 		mPrfsGeneral->mInstantMessageOpeningChk->setChecked(true);
 	}
 

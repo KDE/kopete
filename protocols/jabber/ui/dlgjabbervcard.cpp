@@ -466,7 +466,12 @@ void dlgJabberVCard::slotGotVCard()
 	}
 	else
 	{
-		m_mainWidget->lblStatus->setText( i18n("Error: vCard could not be fetched correctly. Check connectivity with the Jabber server.") );
+		// XMPP::Task::ErrDisc + 1: error code set when a valid vCard reply is sent,
+		// but an empty vCard was sent
+		if ( vCard->statusCode() == ( XMPP::Task::ErrDisc + 1 ) )
+			m_mainWidget->lblStatus->setText( i18n("No vCard available.") );
+		else
+			m_mainWidget->lblStatus->setText( i18n("Error: vCard could not be fetched correctly.\nCheck connectivity with the Jabber server.") );
 		//it is maybe possible to anyway edit our own vCard (if it is new
 		if(m_account->myself() == m_contact)
 			setEnabled( true );
@@ -475,7 +480,13 @@ void dlgJabberVCard::slotGotVCard()
 
 void dlgJabberVCard::slotSelectPhoto()
 {
-	QString path = Kopete::UI::AvatarDialog::getAvatar(this, m_photoPath);
+	bool ok = false;
+	QString path = Kopete::UI::AvatarDialog::getAvatar(this, m_photoPath, &ok);
+	if ( !ok )
+	{
+		return;
+	}
+
 	QPixmap pix( path );
 
 	if( !pix.isNull() ) 

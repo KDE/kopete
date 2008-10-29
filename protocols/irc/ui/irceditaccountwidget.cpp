@@ -27,7 +27,6 @@
 
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <k3listview.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -86,7 +85,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 //	mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
 //	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mNickName ) );
 //	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mAltNickname ) );
-#if 0
+
 	KCharsets *c = KGlobal::charsets();
 	charset->addItems( c->availableEncodingNames() );
 
@@ -99,7 +98,6 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 			break;
 		}
 	}
-#endif
 /*
 	connect( commandList, SIGNAL( contextMenu( K3ListView *, QListViewItem *, const QPoint & ) ),
 		this, SLOT( slotCommandContextMenu( K3ListView *, QListViewItem *, const QPoint & ) ) );
@@ -107,16 +105,19 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 	connect( ctcpList, SIGNAL( contextMenu( K3ListView *, QListViewItem *, const QPoint & ) ),
 		this, SLOT( slotCtcpContextMenu( K3ListView *, QListViewItem *, const QPoint & ) ) );
 
+*/
 	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
 	connect( editButton, SIGNAL( clicked() ), this, SLOT(slotEditNetworks() ) );
 	connect( addReply, SIGNAL( clicked() ), this, SLOT( slotAddCtcp() ) );
 
-	connect( network, SIGNAL( activated( const QString & ) ),
-		this, SLOT( slotUpdateNetworkDescription( const QString &) ) );
 
+        connect( network, SIGNAL( activated( const QString & ) ),
+		this, SLOT( slotUpdateNetworkDescription( const QString &) ) );
+//TODO: signal doesn't exist anymore
+#if 0
 	connect( IRCProtocol::self(), SIGNAL( networkConfigUpdated( const QString & ) ),
 		this, SLOT( slotUpdateNetworks( const QString & ) ) );
-*/
+#endif
 	slotUpdateNetworks( QString() );
 }
 
@@ -137,11 +138,14 @@ struct NetNameComparator {
 
 void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 {
+
 	network->clear();
+	kDebug()<<"updating networks. selected="<<selectedNetwork<<endl;
 
 	IRC::NetworkList networks = IRC::Networks::self()->networks();
 	std::sort(networks.begin(), networks.end(), NetNameComparator());
 
+	kDebug()<<"got "<<networks.size()<<" networks"<<endl;
 	uint i = 0;
 	foreach(const IRC::Network& net, networks) {
 		network->addItem(net.name);
@@ -157,7 +161,7 @@ void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 
 void IRCEditAccountWidget::slotEditNetworks()
 {
-//	IRCProtocol::self()->editNetworks(network->currentText());
+	IRCProtocol::self()->editNetworks(network->currentText());
 }
 
 void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network )

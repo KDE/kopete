@@ -4,10 +4,10 @@ if(NOT WIN32)
 endif(NOT WIN32)
 
 
-install( FILES kopete-pluginloader.upd  kopete-nameTracking.upd  DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
+install( FILES kopete-pluginloader.upd  kopete-nameTracking.upd  kopete-initialstatus.upd  DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
 
 install( PROGRAMS kopete-pluginloader.pl
-	kopete-account-0.10.pl DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
+	kopete-account-0.10.pl kopete-initialstatus.pl DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
 
 
 set( kopeteclupdate_SRCS kopete-contactlist-v2-update.cpp )

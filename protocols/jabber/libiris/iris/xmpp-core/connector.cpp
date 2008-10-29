@@ -1,6 +1,6 @@
 /*
  * connector.cpp - establish a connection to an XMPP server
- * Copyright (C) 2003  Justin Karneges
+ * Copyright (C) 2003  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

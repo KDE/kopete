@@ -33,7 +33,11 @@ class KIRC_EXPORT Handler
 {
 	Q_OBJECT
 	Q_DECLARE_PRIVATE(KIrc::Handler)
+	Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled)
 	Q_ENUMS(Handled)
+
+private:
+	Q_DISABLE_COPY(Handler)
 
 public:
 	enum Handled
@@ -45,7 +49,11 @@ public:
 	};
 
 	explicit Handler(QObject *parent = 0);
+	Handler(Handler *parent);
 	virtual ~Handler();
+
+	void addEventHandler(KIrc::Handler *handler);
+	void removeEventHandler(KIrc::Handler *handler);
 
 	bool isEnabled() const;
 	void setEnabled(bool);	
@@ -53,11 +61,15 @@ public:
 #if 0
 	bool registerCommand();
 	bool unregisterCommand();
+#endif
+	void registerCommandAlias(const QByteArray &alias, const QByteArray &command);
 
+#if 0
 	bool registerMessage();
-	bool registerMessageAlias();
 	bool unregisterMessage();
 #endif
+
+	void registerMessageAlias(const QByteArray &alias, const QByteArray &message);
 
 public Q_SLOTS:
 	virtual KIrc::Handler::Handled onCommand(KIrc::Context *context, const QList<QByteArray> &command/*, KIrc::Entity::Ptr from*/);
@@ -67,9 +79,9 @@ Q_SIGNALS:
 /*
 	(QString eventId, KIrc::Entity::Ptr from, KIrc::Entity::List to, QString text);
 */
-
-private:
-	Q_DISABLE_COPY(Handler)
+protected:
+	Handler(HandlerPrivate *d, QObject *parent = 0);
+	Handler(HandlerPrivate *d, Handler *parent = 0);
 
 	HandlerPrivate * const d_ptr;
 };

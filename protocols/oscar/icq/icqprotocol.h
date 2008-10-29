@@ -87,6 +87,8 @@ private:
 	void initOrganizations();
 	void initAffiliations();
 
+	void addEncoding( const QSet<int> &availableMibs, int mib, const QString &name );
+
 private:
 	static ICQProtocol* protocolStatic_;
 	ICQStatusManager* statusManager_;
@@ -101,5 +103,19 @@ private:
 	QMap<int, QString> mAffiliations;
 	ICQProtocolHandler protohandler;
 };
+
+
+#define CP1250 2250
+#define CP1251 2251
+#define CP1252 2252
+#define CP1253 2253
+#define CP1254 2254
+#define CP1255 2255
+#define CP1256 2256
+#define CP1257 2257
+#define CP1258 2258
+
+
+
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

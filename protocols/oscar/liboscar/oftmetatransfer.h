@@ -31,8 +31,11 @@ class OftMetaTransfer : public QObject
 {
 Q_OBJECT
 public:
-	/** Receive constructor */
-	OftMetaTransfer( const QByteArray& cookie, const QString& dir, QTcpSocket *socket );
+	/** Receive constructor
+	 * @param files list of file names with path.
+	 * @param dir default directory if @p files list isn't big enough.
+	 */
+	OftMetaTransfer( const QByteArray& cookie, const QStringList &files, const QString& dir, QTcpSocket *socket );
 
 	/** Send constructor */
 	OftMetaTransfer( const QByteArray& cookie, const QStringList& files, QTcpSocket *socket );
@@ -45,13 +48,10 @@ public slots:
 	void doCancel(); //one of the users is cancelling us
 
 signals:
-	void fileIncoming( const QString& fileName, unsigned int fileSize );
-	void fileReceived( const QString& fileName, unsigned int bytesSent );
-
-	void fileOutgoing( const QString& fileName, unsigned int fileSize );
-	void fileSent( const QString& fileName, unsigned int fileSize );
-
+	void fileStarted( const QString& sourceFile, const QString& destinationFile );
+	void fileStarted( const QString& fileName, unsigned int fileSize );
 	void fileProcessed( unsigned int bytesSent, unsigned int fileSize );
+	void fileFinished( const QString& fileName, unsigned int fileSize );
 
 	void transferCompleted();
 	void transferError( int errorCode, const QString &error );

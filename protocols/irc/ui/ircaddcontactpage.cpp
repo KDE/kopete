@@ -35,9 +35,11 @@ IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a )
 {
 	setupUi(this);
 
-	//(new Q3VBoxLayout(this))->setAutoAdd(true);
+// 	d->search = new ChannelList( hbox, a->client() );
+// 	QVBoxLayout *layout = new QVBoxLayout( hbox );
+// 	hbox->setLayout(layout);
+// 	layout->addWidget(d->search);
 
-//	d->search = new ChannelList( hbox, a->client() );
 	d->account = a;
 
 	connect( d->search, SIGNAL( channelSelected( const QString & ) ),

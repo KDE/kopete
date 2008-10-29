@@ -5,7 +5,7 @@
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
               (c) 2008      Novell, Inc.
 
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -98,7 +98,6 @@ Client::~Client()
 {
 	delete d->root;
 	delete d->requestFactory;
-	delete d->userDetailsMgr;
 	delete d;
 }
 

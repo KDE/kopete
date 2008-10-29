@@ -5,8 +5,8 @@
 // *
 // * Purpose: UNIX serial port implementation with extras
 // *
-// * Original Author:  Peter Hofmann (software@pxh.de)
-// * Modified by: Justin Huff (jjhuff@mspin.net)
+// * Copyright (c)       by Peter Hofmann (Originial Author) <software@pxh.de>
+// * Copyright (c)       by Justin Huff (Modifier) <jjhuff@mspin.net>
 // *
 // * Created: 10.5.1999
 // *************************************************************************

@@ -79,7 +79,7 @@ EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QVariantList &) :
 KopeteView* EmailWindowPlugin::createView( Kopete::ChatSession *manager )
 {
 	//TODO: foreignMessage, how will we do this cleanly?
-	return (KopeteView*)new KopeteEmailWindow(manager,this, false);
+	return new KopeteEmailWindow(manager,this, false);
 }
 
 class KopeteEmailWindow::Private

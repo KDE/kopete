@@ -23,7 +23,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QMovie>
 
-#include "kanimatedsystemtrayicon.h"
+#include <KSystemTrayIcon>
 
 #include "kopetemessageevent.h"
 
@@ -36,7 +36,7 @@ class KMenu;
  * NOTE: This class is for use ONLY in libkopete! It is not public API, and
  *       is NOT supposed to remain binary compatible in the future!
  */
-class KopeteSystemTray : public KAnimatedSystemTrayIcon
+class KopeteSystemTray : public KSystemTrayIcon
 {
 	Q_OBJECT
 
@@ -54,7 +54,7 @@ public:
 	void startBlink();
 
 	void stopBlink();
-	bool isBlinking() const { return mIsBlinking || isPlaying(); }
+	bool isBlinking() const { return mIsBlinking || (movie() &&  movie()->state() == QMovie::Running); }
 
 Q_SIGNALS:
 	void aboutToShowMenu(KMenu *am);

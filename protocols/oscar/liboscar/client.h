@@ -5,9 +5,9 @@
 	Copyright (c) 2004-2005 by Matt Rogers <mattr@kde.org>
 
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-	Based on Iris, Copyright (C) 2003  Justin Karneges
+	Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
-	Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+	Kopete (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -37,13 +37,13 @@
 #include "contact.h"
 
 class Connection;
-class StageOneLoginTask;
-class StageTwoLoginTask;
 class ContactManager;
 class UserDetails;
 class QString;
 class Task;
 class QTextCodec;
+class FileTransferHandler;
+
 namespace Kopete
 {
 	class Transfer;
@@ -128,12 +128,14 @@ public:
 	 * \param status the oscar status
 	 * \param message the status message or Xtraz status message
 	 * \param xtraz the Xtraz status
-	 * \param description the Xtraz status description
-	 * @note If you want XStatus you have to set status, message, xtraz and description,
-	 * for ExtStatus (ICQ6 status) you have to set status, message and description, xtraz have to be -1.
+	 * \param title the Xtraz status title
+	 * @note If you want XStatus you should set status, message, xtraz and title,
+	 * for ExtStatus (ICQ6 status) you should set status, message, title, xtraz have to be -1,
+	 * for ExtStatus2 (ICQ6 status with icons) you should set status, message, title and mood.
 	 * If you want normal status than you should set only status and message.
+	 * XStatus and ExtStatus2 can be set together.
 	 */
-	void setStatus( Oscar::DWORD status, const QString &message = QString(), int xtraz = -1, const QString &description = QString() );
+	void setStatus( Oscar::DWORD status, const QString &message = QString(), int xtraz = -1, const QString &title = QString(), int mood = -1 );
 
 	/** Retrieve our user info */
 	UserDetails ourInfo() const;
@@ -396,8 +398,10 @@ public:
 	/**	Set version capability */
 	void setVersionCap( const QByteArray &cap );
 
-	/** start a filetransfer task */
-	void sendFiles( const QString& contact, const QStringList& files, Kopete::Transfer *t );
+	/** create a filetransfer task
+	 * \return FileTransferHandler object;
+	 */
+	FileTransferHandler* createFileTransfer( const QString& contact, const QStringList& files );
 
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS
@@ -427,10 +431,13 @@ public:
 
 	/** The current Xtraz status */
 	int statusXtraz() const;
-	
-	/** The current Xtraz status description */
-	QString statusDescription() const;
-	
+
+	/** The current status mood */
+	int statusMood() const;
+
+	/** The current Xtraz status title */
+	QString statusTitle() const;
+
 	/** The current status message (a.k.a. away message or Xtraz message) */
 	QString statusMessage() const;
 
@@ -480,6 +487,12 @@ signals:
 	/** we've received a message */
 	void messageReceived( const Oscar::Message& );
 
+	/** a message was delivered */
+	void messageAck( const QString& contact, uint messageId );
+
+	/** a message wasn't delivered */
+	void messageError( const QString& contact, uint messageId );
+
 	/** we've received an authorization request */
 	void authRequestReceived( const QString& contact, const QString& reason );
 
@@ -505,7 +518,7 @@ signals:
 
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );
-	void receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message );
+	void receivedXStatusMessage( const QString& contact, int icon, const QString& title, const QString& message );
 	void receivedUserInfo( const QString& contact, const UserDetails& details );
 	void userReadsStatusMessage( const QString& contact );
 
@@ -535,9 +548,7 @@ signals:
 	void redirectionFinished( Oscar::WORD );
 
 	/** incoming filetransfer */
-	void askIncoming( QString c, QString f, Oscar::DWORD s, QString d, QString i );
-
-	void getTransferManager( Kopete::TransferManager ** );
+	void incomingFileTransfer( FileTransferHandler* handler );
 
 protected slots:
 	// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
@@ -620,9 +631,6 @@ private:
 private:
 	class ClientPrivate;
 	ClientPrivate* d;
-
-	StageOneLoginTask* m_loginTask;
-	StageTwoLoginTask* m_loginTaskTwo;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Client::ICQStatus)
 

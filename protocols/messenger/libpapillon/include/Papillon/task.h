@@ -5,7 +5,7 @@
 
    Based on code Copyright (c) 2004 Matt Rogers <mattr@kde.org>
    Based on code copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-   Based on Iris, Copyright (C) 2003 Justin Karneges
+   Based on Iris, Copyright (C) 2003 Justin Karneges <justin@affinix.com>
 
    *************************************************************************
    *                                                                       *
@@ -46,7 +46,7 @@ class Connection;
  * @author Michaël Larouche <larouche@kde.org>
  * @author Matt Rogers  <mattr@kde.org>
  * @author SuSE Linux AG <http://www.suse.com>
- * @author Justin Karneges
+ * @author Justin Karneges <justin@affinix.com>
  */
 class PAPILLON_EXPORT Task : public QObject
 {

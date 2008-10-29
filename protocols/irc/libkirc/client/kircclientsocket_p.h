@@ -32,11 +32,9 @@ class KIrc::ClientSocketPrivate
 public:
 	ClientSocketPrivate(ClientSocket *socket);
 
-public slots:
-	void socketStateChanged(QAbstractSocket::SocketState newstate);
-
 public:
-	KIrc::Entity::Ptr server;
+	QUrl url;
+	KIrc::EntityPtr server;
 
 	bool failedNickOnLogin : 1;
 };

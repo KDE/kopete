@@ -19,23 +19,25 @@
 #ifndef IRCNETWORKCONFIGWIDGET_H
 #define IRCNETWORKCONFIGWIDGET_H
 
-#include "networkconfig.h"
+#include <QDialog>
+
+#include "ui_networkconfig.h"
 
 #include "ircnetwork.h"
 
 class IRCNetworkConfigWidget
-	: public QWidget, public NetworkConfig
+	: public QDialog, public Ui::NetworkConfig
 {
 	Q_OBJECT
 
 public:
-	explicit IRCNetworkConfigWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
+	explicit IRCNetworkConfigWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~IRCNetworkConfigWidget();
 
 	void editNetworks( const QString &networkName = QString() );
 
 signals:
-	void networkSelected(const IRCNetwork &network);
+	void networkSelected(const IRC::Network &network);
 
 	void networkConfigUpdated(const QString &selectedNetwork);
 
@@ -52,6 +54,9 @@ private slots:
 	void slotNewHost();
 	void slotHostPortChanged( int value );
 	// end of network list specific code
+	
+	// copies the altered information to the global IRCNetworks List
+	void slotSaveNetworkConfig();
 
 private:
 	void storeCurrentNetwork();

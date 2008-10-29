@@ -40,7 +40,7 @@ OscarPrivacyEngine::OscarPrivacyEngine( OscarAccount* account, Type type )
 	{
 		QString contactId = ( *it ).name();
 		
-		OscarContact* oc = dynamic_cast<OscarContact*>( account->contacts()[( *it ).name()] );
+		OscarContact* oc = dynamic_cast<OscarContact*>( account->contacts().value( ( *it ).name() ) );
 		if ( oc )
 		{	//for better orientation in lists use nickName and id
 			QString screenName( "%1 (%2)" );

@@ -19,8 +19,9 @@
 #define KOPETE_DBUSINTERFACE_H
 
 #include <QtCore/QObject>
+#include <QtCore/QVariantMap>
 
-class QStringList;
+class KopeteDBusInterfacePrivate;
 
 /**
  * @brief Public D-Bus interface for Kopete
@@ -167,12 +168,18 @@ public Q_SLOTS:
 
 	/**
 	 * @brief Send a message to the given contact
-	 * @param displayName Metacontact display name to send a messasge
+     * @param contactId Metacontact ID or displayName to send a message to
 	 * @param message The message to send
 	 */
-	void sendMessage(const QString &displayName, const QString &message);
+	void sendMessage(const QString &contactId, const QString &message);
 	
-	/**
+    /**
+     * Open a chat window for the given contact
+     * @param contactId Metacontact ID or displayName
+     */
+    void openChat(const QString &contactId);
+
+    /**
 	 * @brief Adds a contact with the specified params.
 	 *
 	 * @param protocolName The name of the protocol this contact is for ("Jabber", etc)
@@ -186,26 +193,39 @@ public Q_SLOTS:
 
 	/**
 	 * @brief Send a file to the given contact
-	 * @param displayName Metacontact display name to send a file
+     * @param contactId Metacontact ID or displayName to send a file to
 	 * @param fileUrl Url of the file to send
 	 */
-	void sendFile( const QString &displayName, const QString &fileUrl );
+	void sendFile( const QString &contactId, const QString &fileUrl );
 
 	/**
 	 * @brief Retrieve the Display Name from the given contact ID
 	 * @param contactId Metacontact contactId
 	 */
-
 	QString getDisplayName(const QString &contactId);
 
 	/**
 	 * @brief Get the Online Status of the contact
-	 * @param displayName The displayName of the contact
+     * @param contactId Metacontact ID or displayName
 	 */
-
-	bool isContactOnline(const QString &displayName);
-
-
+	bool isContactOnline(const QString &contactId);
+	
+	/**
+	 * Look up details for a specific contact
+	 * @param contactId Contact ID or display Name
+	 * @return A QVariantMap containing contact properties like online status, avatar, ...
+	 */
+	QVariantMap contactProperties(const QString &contactId);
+	
+Q_SIGNALS:
+    /**
+     * Contact properties have changed: displayName, avatar, pending messages...
+     * @param contactId ID of the contact whose properties have changed
+     */
+    void contactChanged(QString contactId);
+    
+private:
+    KopeteDBusInterfacePrivate * const d;    
 };
 
 #endif

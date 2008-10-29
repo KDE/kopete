@@ -4,7 +4,7 @@
    Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
 
    Based on code copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
-   Based on Iris, Copyright (C) 2003  Justin Karneges
+   Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
 
    *************************************************************************
    *                                                                       *

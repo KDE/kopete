@@ -56,7 +56,7 @@ ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QVariantList &) :
 
 KopeteView* ChatWindowPlugin::createView( Kopete::ChatSession *manager )
 {
-    return (KopeteView*)new ChatView(manager,this);
+    return new ChatView(manager,this);
 }
 
 class KopeteChatViewPrivate
@@ -102,7 +102,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	d->splitter->setChildrenCollapsible( false );
 	QList<int> sizes;
 	sizes << 240 << 40;
-	d->splitter->setSizes( sizes ); 
+	d->splitter->setSizes( sizes );
 
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toolbarToggled(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
@@ -251,6 +251,22 @@ void ChatView::setFont( const QFont &font )
 	editPart()->setFont( font );
 }
 
+void ChatView::resetFontAndColor()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+	if ( contacts.count() != 1 )
+		return;
+
+	Kopete::MetaContact* mc = contacts.first()->metaContact();
+	if ( !mc )
+		return;
+
+	QString contactListGroup = QLatin1String("chatwindow_") + mc->metaContactId();
+	KConfigGroup config = KGlobal::config()->group(contactListGroup);
+	editPart()->resetConfig( config );
+	config.sync();
+}
+
 void ChatView::setFgColor( const QColor &newColor )
 {
     if ( newColor.isValid() )
@@ -369,6 +385,11 @@ bool ChatView::closeView( bool force )
 	}
 
 	return false;
+}
+
+ChatView::KopeteTabState ChatView::tabState() const
+{
+	return m_tabState;
 }
 
 void ChatView::updateChatState( KopeteTabState newState )
@@ -715,15 +736,10 @@ void ChatView::saveOptions()
 void ChatView::saveChatSettings()
 {
 	Kopete::ContactPtrList contacts = msgManager()->members();
-
-	if ( contacts.count() == 0 )
-		return;
-
+	if ( contacts.count() != 1 )
+		return; //can't save with more than one other person in the chat
+	
 	Kopete::MetaContact* mc = contacts.first()->metaContact();
-
-	if ( contacts.count() > 1 )
-		return; //can't save with more than one person in chatview
-
 	if ( !mc )
 		return;
 
@@ -732,13 +748,14 @@ void ChatView::saveChatSettings()
     KConfigGroup config = KGlobal::config()->group(contactListGroup);
 	config.writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
 	config.writeEntry( "EnableAutoSpellCheck", editPart()->checkSpellingEnabled() );
+	editPart()->writeConfig( config );
 	config.sync();
 }
 
 void ChatView::loadChatSettings()
 {
 	Kopete::ContactPtrList contacts = msgManager()->members();
-	if ( contacts.count() > 1 )
+	if ( contacts.count() != 1 )
 		return; //can't load with more than one other person in the chat
 
 	//read settings for metacontact
@@ -750,6 +767,7 @@ void ChatView::loadChatSettings()
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
 	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", Kopete::BehaviorSettings::self()->spellCheck() );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
+	editPart()->readConfig( config );
 }
 
 void ChatView::readOptions()

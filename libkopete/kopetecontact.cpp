@@ -243,15 +243,15 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	bool reach = account()->isConnected() && isReachable();
 	bool myself = (this == account()->myself());
 
-	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), 0, "actionSendMessage" );
+	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), menu );
 	actionSendMessage->setEnabled( reach && !myself );
 	menu->addAction( actionSendMessage );
 
-	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), 0, "actionChat" );
+	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), menu );
 	actionChat->setEnabled( reach && !myself );
 	menu->addAction( actionChat );
 
-	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), 0, "actionSendFile" );
+	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), menu );
 	actionSendFile->setEnabled( reach && d->fileCapable && !myself );
 	menu->addAction( actionSendFile );
 
@@ -273,11 +273,11 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && !metaContact()->isTemporary() )
 	{
-		KAction* changeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), 0, "actionChangeMetaContact" );
+		KAction* changeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), menu );
 		menu->addAction( changeMetaContact );
 	}
 
-	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), 0, "actionUserInfo" ) );
+	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), menu ) );
 
 #if 0 //this is not fully implemented yet (and doesn't work).  disable for now   - Olivier 2005-01-11
 	if ( account()->isBlocked( d->contactId ) )
@@ -287,7 +287,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 #endif
 
 	if( metaContact() && !metaContact()->isTemporary() )
-		menu->addAction( KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), 0, "actionDeleteContact" ) );
+		menu->addAction( KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), menu ) );
 
 	return menu;
 }

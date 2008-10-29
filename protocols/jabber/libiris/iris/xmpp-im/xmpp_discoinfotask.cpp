@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002  Justin Karneges
+ * Copyright (C) 2001, 2002  Justin Karneges <justin@affinix.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

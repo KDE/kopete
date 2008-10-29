@@ -39,7 +39,6 @@
 #include "icqprotocol.h"
 #include "ui_icqsearchbase.h"
 #include "oscartypes.h"
-#include "icqcontact.h"
 #include "icquserinfowidget.h"
 
 ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
@@ -80,10 +79,6 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
 	p->fillComboFromTable( m_searchUI->country, p->countries() );
 	p->fillComboFromTable( m_searchUI->language, p->languages() );
 	
-	m_contact = NULL;
-	m_infoWidget = NULL;
-	
-	m_contact = NULL;
 	m_infoWidget = NULL;
 }
 
@@ -206,17 +201,12 @@ void ICQSearchDialog::userInfo()
 			const QAbstractItemModel *model = m_searchUI->searchResults->selectionModel()->model();
 			QModelIndex index = model->index( indexList.at( 0 ).row(), 0, QModelIndex() );
 			QString uin = model->data( index ).toString();
-			
-			m_contact = new ICQContact( m_account, uin, NULL );
-			
-			m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
+
+			m_infoWidget = new ICQUserInfoWidget( m_account, uin, Kopete::UI::Global::mainWidget() );
 			QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfo() ) );
-		
-			m_infoWidget->setContact( m_contact );
+
 			m_infoWidget->setModal(true);
 			m_infoWidget->show();
-				if ( m_contact->account()->isConnected() )
-				m_account->engine()->requestFullInfo( m_contact->contactId() );
 			kDebug(OSCAR_ICQ_DEBUG) << "Displaying user info";
 		}
 	}
@@ -228,10 +218,6 @@ void ICQSearchDialog::closeUserInfo()
 	QObject::disconnect( this, 0, m_infoWidget, 0 );
 	m_infoWidget->delayedDestruct();
 	m_infoWidget = NULL;
-	
-	// Free the ICQContact
-	delete m_contact;
-	m_contact = NULL;
 }
 
 void ICQSearchDialog::clearResults()

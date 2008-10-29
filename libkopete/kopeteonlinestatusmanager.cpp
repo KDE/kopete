@@ -19,6 +19,7 @@
 #include "kopeteonlinestatusmanager.h"
 
 #include "kopeteprotocol.h"
+#include "kopetebehaviorsettings.h"
 
 #include <kiconloader.h>
 #include <kiconeffect.h>
@@ -124,6 +125,31 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 
 	kWarning() << "No status in the category " << category << " for the protocol " << protocol->displayName();
 	return OnlineStatus();
+}
+
+OnlineStatusManager::Category OnlineStatusManager::initialStatus() const
+{
+    Kopete::OnlineStatusManager::Category statusValue;
+		switch( Kopete::BehaviorSettings::self()->initialStatus() )
+		{
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Offline:
+			statusValue = Kopete::OnlineStatusManager::Offline;
+		  break;
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Online:
+			statusValue = Kopete::OnlineStatusManager::Online;
+		  break;
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Away:
+			statusValue = Kopete::OnlineStatusManager::Away;
+		  break;
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Busy:
+			statusValue = Kopete::OnlineStatusManager::Busy;
+		  break;
+		  case Kopete::BehaviorSettings::EnumInitialStatus::Invisible:
+			statusValue = Kopete::OnlineStatusManager::Invisible;
+		  break;
+		}
+
+    return statusValue;
 }
 
 QString OnlineStatusManager::fingerprint( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle)

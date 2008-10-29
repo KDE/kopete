@@ -3,7 +3,7 @@
   
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
+    Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
     
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
@@ -24,7 +24,10 @@
 #include "libgroupwise_export.h"
 #include "tlshandler.h"
 
-class QCA::TLS;
+namespace QCA
+{
+class TLS;
+}
 
 class LIBGROUPWISE_EXPORT QCATLSHandler : public TLSHandler
 {

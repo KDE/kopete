@@ -17,13 +17,14 @@
 #include "icqeditaccountwidget.h"
 #include "ui_icqeditaccountui.h"
 
-#include <qlayout.h>
-#include <qcheckbox.h>
-#include <qlineedit.h>
-#include <qspinbox.h>
-#include <qpushbutton.h>
-#include <qvalidator.h>
+#include <QLayout>
+#include <QCheckBox>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QPushButton>
+#include <QValidator>
 #include <QLatin1String>
+#include <QLocale>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -136,9 +137,44 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	}
 	else
 	{
-		int encodingId=4; //see icqprotocol.cpp for mappings
-		if (KGlobal::locale()->language().startsWith("ru"))
-			encodingId=2251;
+		int encodingId=4; //see ../icqprotocol.* for mappings
+		switch (QLocale::system().language())
+		{
+			case QLocale::Russian:
+			case QLocale::Ukrainian:
+			case QLocale::Byelorussian:
+			case QLocale::Bulgarian:
+				encodingId=CP1251;
+				break;
+			case QLocale::English:
+			case QLocale::German:
+			case QLocale::Italian:
+			case QLocale::Spanish:
+			case QLocale::Portuguese:
+			case QLocale::French:
+			case QLocale::Dutch:
+			case QLocale::Danish:
+			case QLocale::Swedish:
+			case QLocale::Norwegian:
+			case QLocale::Icelandic:
+				encodingId=CP1252;
+				break;
+			case QLocale::Greek:
+				encodingId=CP1253;
+				break;
+			case QLocale::Turkish:
+				encodingId=CP1254;
+				break;
+			case QLocale::Hebrew:
+				encodingId=CP1255;
+				break;
+			case QLocale::Arabic:
+				encodingId=CP1256;
+				break;
+			default:
+				encodingId=4;
+		}
+		
 		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
 		                              mProtocol->encodings(),
 		                              encodingId );

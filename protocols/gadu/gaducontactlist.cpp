@@ -61,6 +61,11 @@ GaduContactsList::GaduContactsList( QString sList )
 
 		strList  = cline.split( QChar( ';' ), QString::KeepEmptyParts );
 
+		if ( strList.size() < 7 ) {
+			kDebug( 14100 ) << "Malformed entry, too short! Ignoring entry: " << strList;
+			break;
+		}
+
 		stringIterator = strList.begin();
 		
 		if ( strList.count() >= 12 ) {
@@ -104,11 +109,11 @@ GaduContactsList::GaduContactsList( QString sList )
 			++stringIterator;
 			++stringIterator;
 
-			if ( stringIterator != strList.end() ) {
+			if ( strList.count() >= 13 )
 				cl.offlineTo = (*++stringIterator) == QString('0') ? false : true;
-				cl.landline  = (*++stringIterator);
-			}
-        	}
+			if ( strList.count() >= 14 )
+				cl.landline  = (*++stringIterator);	
+		}
 		else {
 			 cl.email	= empty;
 		}

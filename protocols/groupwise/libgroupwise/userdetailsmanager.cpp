@@ -47,6 +47,7 @@ bool UserDetailsManager::known( const QString & dn )
 
 ContactDetails UserDetailsManager::details( const QString & dn )
 {
+//	qDebug() << "UserDetailsManager::details() requested for " << dn.toLatin1();
 	return m_detailsMap[ dn ];
 }
 
@@ -57,7 +58,7 @@ QStringList UserDetailsManager::knownDNs()
 
 void UserDetailsManager::addDetails( const ContactDetails & details )
 {
-	//qDebug( "UserDetailsManager::addContact, got %s, we now know: ", details.dn.ascii() );
+//	qDebug() << "UserDetailsManager::addDetails, got " << details.dn;
 	m_detailsMap.insert( details.dn, details );
 /*	QStringList keys = m_detailsMap.keys();
 	dump( keys );
@@ -120,6 +121,16 @@ void UserDetailsManager::slotReceiveContactDetails( const GroupWise::ContactDeta
 	m_pendingDNs.removeAll( details.dn );
 	/*client()->userDetailsManager()->*/
 	addDetails( details );
+		kDebug() 
+		<< "  Auth attribute: " << details.authAttribute
+		<< "  , Away message: " << details.awayMessage
+		<< "  , CN" << details.cn
+		<< "  , DN" << details.dn
+		<< "  , fullName" << details.fullName
+		<< "  , surname" << details.surname
+		<< "  , givenname" << details.givenName
+		<< "  , status" << details.status
+		<< endl;
 	//emit temporaryContact( details );
 	emit gotContactDetails( details );
 }

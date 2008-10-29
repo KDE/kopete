@@ -141,7 +141,7 @@ void OTRPlugin::slotNewChatSessionWindow( Kopete::ChatSession *KMM )
 {
 	//Check if there is another user in the session.
 	//If not it could be a Jabber-MUC
-	//If there are more then one members it is a MUC
+	//If there is more than one member it is a MUC
 	// Also don't add the Button on an IRC window!
 	if( KMM->members().count() == 1 && (KMM->protocol()) && ( KMM->protocol()->pluginId() != "IRCProtocol" ) ){
 		new OtrGUIClient( KMM );

@@ -20,6 +20,7 @@
 #include "icqcontact.h"
 
 #include <qtimer.h>
+#include <KActionCollection>
 #include <klocale.h>
 #include <knotification.h>
 #include <kinputdialog.h>
@@ -115,8 +116,6 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	kDebug( OSCAR_ICQ_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 
-	refreshStatus( details, presence );
-
 	if ( details.dcOutsideSpecified() )
 		setProperty( mProtocol->ipAddress, details.dcExternalIp().toString() );
 
@@ -124,6 +123,8 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 		setProperty( mProtocol->clientFeatures, details.clientName() );
 
 	OscarContact::userInfoUpdated( contact, details );
+
+	refreshStatus( m_details, presence );
 }
 
 void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence presence )
@@ -131,16 +132,21 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	// Filter our XStatus and ExtStatus
 	presence.setFlags( presence.flags() & ~Oscar::Presence::StatusTypeMask );
 
+	if ( details.statusMood() != -1 )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus2 );
+		presence.setMood( details.statusMood() );
+	}
 	// XStatus don't support offline status so don't show it (xtrazStatusSpecified can be true if contact was online)
-	if ( details.xtrazStatus() != -1 && presence.type() != Oscar::Presence::Offline )
+	else if ( details.xtrazStatus() != -1 && presence.type() != Oscar::Presence::Offline )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setXtrazStatus( details.xtrazStatus() );
 	}
-	else if ( !m_statusDescription.isEmpty() )
+	else if ( !m_statusTitle.isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
-		setProperty( mProtocol->statusTitle, m_statusDescription );
+		setProperty( mProtocol->statusTitle, m_statusTitle );
 	}
 	else
 	{
@@ -221,6 +227,8 @@ void ICQContact::userOffline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
+
+	m_details.clear();
 
 	kDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline";
 	if ( m_ssiItem.waitingAuth() )
@@ -386,7 +394,7 @@ void ICQContact::receivedTlvInfo( const QString& contact )
 	if ( m_ssiItem.alias().isEmpty() && !info.nickName.get().isEmpty() )
 		setNickName( QString::fromUtf8( info.nickName.get() ) );
 
-	m_statusDescription = QString::fromUtf8( info.statusDescription.get() );
+	m_statusTitle = QString::fromUtf8( info.statusDescription.get() );
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( onlineStatus() );
 
 	refreshStatus( m_details, presence );
@@ -552,7 +560,7 @@ bool ICQContact::isReachable()
 
 QList<KAction*> *ICQContact::customContextMenuActions()
 {
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<KAction*> *actions = new QList<KAction*>();
 
 	actionRequestAuth = new KAction( i18n("&Request Authorization"), this );
         //, "actionRequestAuth");
@@ -597,27 +605,32 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 	m_actionVisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_VISIBLE ));
 	m_actionInvisibleTo->setChecked( ssi->findItem( m_ssiItem.name(), ROSTER_INVISIBLE ));
 
-	actionCollection->append(actionRequestAuth);
-	actionCollection->append(actionSendAuth);
-    actionCollection->append( m_selectEncoding );
+	actions->append(actionRequestAuth);
+	actions->append(actionSendAuth);
+    actions->append( m_selectEncoding );
 
-	actionCollection->append(m_actionIgnore);
-	actionCollection->append(m_actionVisibleTo);
-	actionCollection->append(m_actionInvisibleTo);
+	actions->append(m_actionIgnore);
+	actions->append(m_actionVisibleTo);
+	actions->append(m_actionInvisibleTo);
 
-	return actionCollection;
+	// temporary action collection, used to apply Kiosk policy to the actions
+	KActionCollection tempCollection((QObject*)0);
+	tempCollection.addAction(QLatin1String("contactRequestAuth"), actionRequestAuth);
+	tempCollection.addAction(QLatin1String("contactSendAuth"), actionSendAuth);
+	tempCollection.addAction(QLatin1String("contactSelectEncoding"), m_selectEncoding);
+	tempCollection.addAction(QLatin1String("contactIgnore"), m_actionIgnore);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysVisibleTo"), m_actionVisibleTo);
+	tempCollection.addAction(QLatin1String("oscarContactAlwaysInvisibleTo"), m_actionInvisibleTo);
+	return actions;
 }
 
 
 void ICQContact::slotUserInfo()
 {
-	m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget() );
+	m_infoWidget = new ICQUserInfoWidget( this, Kopete::UI::Global::mainWidget() );
 	QObject::connect( m_infoWidget, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
 	QObject::connect( m_infoWidget, SIGNAL(okClicked()), this, SLOT(storeUserInfoDialog()) );
-	m_infoWidget->setContact( this );
 	m_infoWidget->show();
-	if ( account()->isConnected() )
-		mAccount->engine()->requestFullInfo( contactId() );
 }
 
 void ICQContact::storeUserInfoDialog()

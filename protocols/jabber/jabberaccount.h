@@ -46,18 +46,15 @@ class JabberProtocol;
 class JabberTransport;
 class JabberBookmarks;
 
+#ifdef JINGLE_SUPPORT
+class JingleCallsManager;
+#endif
+
 namespace Kopete
 {
 	class MetaContact;
 	class StatusMessage;
 }
-
-#ifdef SUPPORT_JINGLE
-//class JingleSessionManager;
-//class JingleSession;
-class VoiceCaller;
-#endif
-
 
 /* @author Daniel Stone, Till Gerken */
 
@@ -73,9 +70,9 @@ public:
 	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/* Return the resource of the client */
-	const QString resource () const;
-	const QString server () const;
-	const int port () const;
+	QString resource () const;
+	QString server () const;
+	int port () const;
 
 	JabberResourcePool *resourcePool ();
 	JabberContactPool *contactPool ();
@@ -95,18 +92,6 @@ public:
 	{
 		return m_privacyManager;
 	}
-
-#ifdef SUPPORT_JINGLE
-	VoiceCaller *voiceCaller() const
-	{
-		return m_voiceCaller;
-	}
-
-// 	JingleSessionManager *sessionManager()  const
-// 	{
-// 		return m_jingleSessionManager;
-// 	}
-#endif
 
 	// change the default S5B server port
 	void setS5BServerPort ( int port );
@@ -143,6 +128,10 @@ public:
 	 * called when the account is removed in the config ui
 	*/
 	virtual bool removeAccount();
+	
+#ifdef JINGLE_SUPPORT
+	JingleCallsManager *jingleCallsManager() const {return m_jcm;}
+#endif
 
 public slots:
 	/* Connects to the server. */
@@ -197,10 +186,10 @@ private:
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;
 
-#ifdef SUPPORT_JINGLE
+/*#ifdef SUPPORT_JINGLE
 	VoiceCaller *m_voiceCaller;
 	//JingleSessionManager *m_jingleSessionManager;
-#endif
+#endif*/
 
 	JabberBookmarks *m_bookmarks;
 
@@ -230,6 +219,10 @@ private:
 	/* keep track if we told the user we were not able to bind the
 	   jabber transfer port, to avoid popup insanity */
 	bool m_notifiedUserCannotBindTransferPort;
+	
+#ifdef JINGLE_SUPPORT
+	JingleCallsManager *m_jcm;
+#endif
 private slots:
 	/* Connects to the server. */
 	void slotConnect ();
@@ -309,7 +302,7 @@ private slots:
 	void slotGetServices ();
 
 	/* we received a voice invitation */
-	void slotIncomingVoiceCall(const Jid&);
+	//void slotIncomingVoiceCall(const Jid&);
 
 	/* the unregister task finished */
 	void slotUnregisterFinished();

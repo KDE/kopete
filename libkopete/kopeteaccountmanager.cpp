@@ -43,6 +43,7 @@
 #include "kopetegroup.h"
 #include "kopetestatusmanager.h"
 
+
 namespace Kopete {
 
 static int compareAccountsByPriority( Account *a, Account *b )
@@ -343,12 +344,13 @@ void AccountManager::load()
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
 		KConfigGroup cg( config, *it );
+		KConfigGroup pluginConfig( config, QLatin1String("Plugins") );
 
 		QString protocol = cg.readEntry( "Protocol", QString() );
 		if ( protocol.endsWith( QString::fromLatin1( "Protocol" ) ) )
 			protocol = QString::fromLatin1( "kopete_" ) + protocol.toLower().remove( QString::fromLatin1( "protocol" ) );
 
-		if ( cg.readEntry( "Enabled", true ) )
+		if ( cg.readEntry( "Enabled", true ) && pluginConfig.readEntry(protocol + QLatin1String("Enabled"), true) )
 			PluginManager::self()->loadPlugin( protocol, PluginManager::LoadAsync );
 	}
 }
@@ -420,9 +422,15 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 
 void AccountManager::networkConnected()
 {
-	if ( Kopete::BehaviorSettings::self()->autoConnect() )
-		setOnlineStatus( Kopete::OnlineStatusManager::Online, QString(), ConnectIfOffline );
+	Kopete::OnlineStatusManager::Category initStatus = Kopete::OnlineStatusManager::self()->initialStatus();
+	//we check for network availability here too
+	if ( Solid::Networking::status() == Solid::Networking::Unknown ||
+			  Solid::Networking::status() == Solid::Networking::Connected ){
+
+		Kopete::AccountManager::self()->setOnlineStatus( initStatus, QString(), Kopete::AccountManager::ConnectIfOffline );
+	}
 }
+
 
 void AccountManager::networkDisconnected()
 {

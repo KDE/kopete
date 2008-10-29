@@ -31,7 +31,7 @@
 		<Menu name="settings">
 			<text>&amp;Settings</text>
 			<Action name="settings_showmenubar" append="show_merge"/>
-			<Merge name="StandardToolBarMenuHandler" append="show_merge"/>
+			<Merge name="StandardToolBarMenuHandler"/>
 			<Action name="settings_showstatusbar" append="show_merge"/>
                         <Action name="settings_show_offliners" append="show_merge"/>
                         <Action name="settings_show_empty_groups" append="show_merge"/>
@@ -44,14 +44,14 @@
 		</Menu>
 	</MenuBar>
 
-	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1"><Text>Main Toolbar</Text>
+	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1"><text>Main Toolbar</text>
 		<Action name="Status"/>
 		<Action name="SetStatusMessage"/>
 		<Action name="AddContact"/>
 		<Action name="settings_show_all_offline_empty"/>
 	</ToolBar>
 
-        <ToolBar fullWidth="true" name="quickSearchBar" noMerge="1" newline="true"><Text>Quick Search Bar</Text>
+        <ToolBar fullWidth="true" name="quickSearchBar" noMerge="1" newline="false"><text>Quick Search Bar</text>
 		<Action name="quicksearch_reset"/>
 		<Action name="quicksearch_label"/>
 		<Action name="quicksearch_bar"/>

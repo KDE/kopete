@@ -104,7 +104,8 @@ void HistoryMessageLogger::handleMessage( Kopete::MessageEvent *event )
 
 void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
 {
-	if(m.direction()==Kopete::Message::Internal || !m.manager())
+	if(m.direction()==Kopete::Message::Internal || !m.manager() ||
+	   (m.type() == Kopete::Message::TypeFileTransferRequest && m.plainBody().isEmpty()) )
 		return;
 
 	if(!m_loggers.contains(m.manager()))
