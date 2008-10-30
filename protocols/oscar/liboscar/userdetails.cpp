@@ -290,8 +290,8 @@ void UserDetails::fill( Buffer * buffer )
 				break;
 			case 0x0004: //idle time
 				m_idleTime = b.getWord() * 60;
-#ifdef OSCAR_USERINFO_DEBUG
 				m_idleTimeSpecified = true;
+#ifdef OSCAR_USERINFO_DEBUG
 				kDebug(OSCAR_RAW_DEBUG) << "Idle time is " << m_idleTime;
 #endif
 				break;
