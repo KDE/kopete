@@ -90,7 +90,7 @@ void SkypeConnection::startLogOn() {
 }
 
 void SkypeConnection::parseMessage(const QString &message) {
-	kDebug() << k_funcinfo << QString("(message: %1)").arg(message) << endl;//some debug info
+	kDebug() << k_funcinfo << endl;//some debug info
 
 	switch (d->fase) {
 		case cfNameSent: {
@@ -216,53 +216,6 @@ void SkypeConnection::disconnectSkype(skypeCloseReason reason) {
 	emit connectionClosed(reason);//we disconnect
 }
 
-void SkypeConnection::send(const QString &message) {
-	kDebug() << k_funcinfo << QString("(message: %1)").arg(message) << endl;//some debug info
-
-	if (d->fase == cfNotConnected)
-		return;//not connected, posibly because of earlier error, do not show it again
-
-	QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API");
-	QDBusMessage reply = interface.call("Invoke", message);
-
-	if ( interface.lastError().type() != QDBusError::NoError && interface.lastError().type() != QDBusError::Other ){//There was some error
-		emit error(i18n("Error while sending a message to skype (%1)").arg(QDBusError::errorString(interface.lastError().type())));//say there was the error
-		if (d->fase != cfConnected)
-			emit connectionDone(seUnknown, 0);//Connection attempt finished with error
-		disconnectSkype(crLost);//lost the connection
-
-		return;//this is enough, no more errors please..
-	}
-
-	QStringList replylist = reply.arguments().at(0).toStringList();
-
-	if ( message == "PING" && ( replylist.isEmpty() || replylist.at(0) != "PONG" ) ){
-		emit error(i18n("Could not ping Skype"));
-		emit connectionDone(seNoSkype, 0);
-	}
-
-	for (QStringList::iterator it = replylist.begin(); it != replylist.end(); ++it) {
-		emit received((*it));
-	}
-}
-
-bool SkypeConnection::connected() const {
-	kDebug() << k_funcinfo << endl;//some debug info
-
-	return d->fase == cfConnected;
-}
-
-int SkypeConnection::protocolVer() const {
-	kDebug() << k_funcinfo << endl;//some debug info
-
-	return d->protocolVer;//just give him the protocol version
-}
-
-SkypeConnection &SkypeConnection::operator <<(const QString &message) {
-	send(message);//just send it
-	return *this;//and return yourself
-}
-
 QString SkypeConnection::operator %(const QString &message) {
 	kDebug() << k_funcinfo << "Send message:" << message << endl;//some debug info
 
@@ -293,6 +246,31 @@ QString SkypeConnection::operator %(const QString &message) {
 	}
 
 	return "";//the skype did not respond, which is unusual but what can I do..
+}
+
+void SkypeConnection::send(const QString &message) {
+	kDebug() << k_funcinfo << endl;//some debug info
+
+	QString reply = *this % message;
+	if ( ! reply.isEmpty() && reply != "" )
+		emit received(reply);
+}
+
+SkypeConnection &SkypeConnection::operator <<(const QString &message) {
+	send(message);//just send it
+	return *this;//and return yourself
+}
+
+bool SkypeConnection::connected() const {
+	kDebug() << k_funcinfo << endl;//some debug info
+
+	return d->fase == cfConnected;
+}
+
+int SkypeConnection::protocolVer() const {
+	kDebug() << k_funcinfo << endl;//some debug info
+
+	return d->protocolVer;//just give him the protocol version
 }
 
 void SkypeConnection::tryConnect() {

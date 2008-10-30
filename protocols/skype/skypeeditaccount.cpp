@@ -46,7 +46,6 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	QVBoxLayout *layout = new QVBoxLayout( this );
-				kDebug(14210) ;
 	QWidget *widget = new QWidget( this );
 	m_preferencesWidget = new Ui::SkypeEditAccountBase();
 	m_preferencesWidget->setupUi( widget );

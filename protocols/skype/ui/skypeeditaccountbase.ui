@@ -722,6 +722,9 @@ System Bus is not supported.</string>
       <layout class="QVBoxLayout" >
        <item>
         <widget class="QCheckBox" name="StartCallCommandCheck" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
           <string>E&amp;xecute before call</string>
          </property>
@@ -793,6 +796,9 @@ Note that it will freeze kopete for the time.</string>
        </item>
        <item>
         <widget class="QCheckBox" name="EndCallCommandCheck" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
           <string>Execute after call</string>
          </property>
@@ -863,6 +869,9 @@ Note that it will freeze kopete for the time.</string>
        </item>
        <item>
         <widget class="QCheckBox" name="IncomingCommandCheck" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
           <string>Execute on inco&amp;ming call</string>
          </property>

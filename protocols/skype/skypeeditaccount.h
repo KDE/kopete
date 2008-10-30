@@ -60,10 +60,7 @@ Q_OBJECT
 		 * @return Pointer to that account.
 		 */
 		virtual Kopete::Account *apply();
-	public slots:
-
 	protected:
-		Kopete::Account *m_account;
 		Ui::SkypeEditAccountBase *m_preferencesWidget;
 };
 

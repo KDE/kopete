@@ -95,7 +95,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	d->user = user;
 
 	d->callContactAction = new KAction( this );
-	d->callContactAction->setText( i18n ("Call Contact") );
+	d->callContactAction->setText( i18n ("Call contact") );
 	d->callContactAction->setIcon( (KIcon("skype_call") ) );
 	connect(d->callContactAction, SIGNAL(triggered()), SLOT(call()));
 
@@ -110,7 +110,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	connect(d->disAuthorAction, SIGNAL(triggered()), SLOT(disAuthor()));
 
 	d->blockAction = new KAction( this );
-	d->blockAction->setText( i18n("Block Contact") );
+	d->blockAction->setText( i18n("Block contact") );
 	d->blockAction->setIcon( (KIcon("skype_blockcontact") ) );
 	connect(d->blockAction, SIGNAL(triggered()), SLOT(block()));
 

@@ -30,31 +30,25 @@
 
 namespace Ui { class SkypeAddContactBase; }
 
-class SkypeAddContactWidget : public Ui::SkypeAddContactBase, public QWidget {
-	private:
-	public:
-		SkypeAddContactWidget(QWidget *parent, const char *name = 0L) : Ui::SkypeAddContactBase() {
-			kDebug() << k_funcinfo << endl;//some debug info
-		}
-};
-
 class SkypeAddContactPrivate {
 	public:
 		SkypeProtocol *protocol;
-		SkypeAddContactWidget *widget;
+		Ui::SkypeAddContactBase *widget;
 		SkypeAccount *account;
 };
 
-SkypeAddContact::SkypeAddContact(SkypeProtocol *protocol, QWidget *parent, SkypeAccount *account, const char *name) : AddContactPage(parent) {
+SkypeAddContact::SkypeAddContact(SkypeProtocol *protocol, QWidget *parent, SkypeAccount *account, const char *) : AddContactPage(parent) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	d = new SkypeAddContactPrivate();//create the d ponter
 	d->protocol = protocol;//remember the protocol
 	d->account = account;
 
-	///TODO: Port to kde4
-	//(new QVBoxLayout(this))->setAutoAdd(true);//create the layout and add there automatically
-	d->widget = new SkypeAddContactWidget(this);//create the insides
+	QVBoxLayout *topLayout = new QVBoxLayout( this );//create the layout
+	QWidget* w = new QWidget( this );
+	topLayout->addWidget( w );
+	d->widget = new Ui::SkypeAddContactBase();//create the insides
+	d->widget->setupUi( w );
 }
 
 
@@ -69,19 +63,26 @@ bool SkypeAddContact::validateData() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	if (!d->account->canComunicate()) {
-		KMessageBox::sorry(d->widget, i18n("You must connect to Skype first"), i18n("Not Connected"), QFlags<KMessageBox::Option>());
+		KMessageBox::sorry(this, i18n("You must connect to Skype first"), i18n("Not Connected"), QFlags<KMessageBox::Option>());
 		return false;
 	}
 
 	if (d->widget->NameEdit->text().isEmpty()) {//He wrote nothing
-		KMessageBox::sorry(d->widget, i18n("You must write the contact's name"), i18n("Wrong Information"));//Tell the user I don't like this at all
+		KMessageBox::sorry(this, i18n("You must write the contact's name"), i18n("Wrong Information"));//Tell the user I don't like this at all
+		return false;//and don't allow to continue
+	}
+
+	if (d->widget->NameEdit->text() == "echo123") {
+		KMessageBox::sorry(this, i18n("Contact echo123 is not needed. You can make test call in Skype protocol actions"), i18n("Wrong Information"));//Tell the user
 		return false;//and don't allow to continue
 	}
 
 	if (d->account->contact(d->widget->NameEdit->text())) {//this contact already exists in this account
-		KMessageBox::sorry(d->widget, i18n("This contact already exists in this account"), i18n("Wrong Information"));//Tell the user
+		KMessageBox::sorry(this, i18n("This contact already exists in this account"), i18n("Wrong Information"));//Tell the user
 		return false;//do not proceed
 	}
+
+	///TODO: Check if user dont adding yourself contact name.
 
 	return true;
 }
