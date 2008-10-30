@@ -225,6 +225,8 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		emit errorMessage( MSNSocket::ErrorSorry, msg );
 		break;
 	}
+	case 712: //"session is overloaded". This is just a useless error that only annoys the users. ignore it.
+		break;
 	case 715:
 	{
 		/*
