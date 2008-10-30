@@ -96,6 +96,7 @@ namespace XMPP
 		void setFirstPort(int);
 
 		QString externalIP() const;
+		void setExternalIP(const QString& eip);
 	signals:
 		
 		/*

@@ -31,6 +31,8 @@
 #include "jabberjinglesession.h"
 
 #include <KDebug>
+#include <KUrl>
+#include <kio/netaccess.h>
 
 //using namespace XMPP;
 
@@ -66,13 +68,21 @@ JingleCallsManager::~JingleCallsManager()
 	//delete d->sessions;
 	//delete d->contentDialog; --> Will be deleted when necessary.
 
-	//TODO:delete the other fields in Private...
         delete d;
 }
+
+#define ADDRESS "http://whatismyip.com/automation/n09230945.asp"
 
 void JingleCallsManager::init()
 {
 	d->client->jingleSessionManager()->setFirstPort(d->jabberAccount->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
+
+	QString filename;
+	if (d->jabberAccount->configGroup()->readEntry("JingleAutoDetectIP", true) && KIO::NetAccess::download(KUrl(ADDRESS), filename, 0))
+	{
+		QFile file(filename);
+		d->client->jingleSessionManager()->setExternalIP(file.readAll());
+	}
 
 	//Initialize oRTP library.
 	ortp_init();
@@ -231,11 +241,19 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 	JingleSession* newSession = d->client->jingleSessionManager()->startNewSession(toJid, contents);
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
 	connect(jabberSess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+	connect(jabberSess, SIGNAL(stateChanged()), this, SLOT(slotStateChanged()));
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	d->sessions << jabberSess;
 	if(d->gui)
 		d->gui->addSession(jabberSess);
 	return true;
+}
+
+void JingleCallsManager::slotStateChanged()
+{
+	JabberJingleSession *sess = (JabberJingleSession*) sender();
+
+	d->gui->changeState(sess);
 }
 
 void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
@@ -246,6 +264,7 @@ void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	connect(jabberSess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+	connect(jabberSess, SIGNAL(stateChanged()), this, SLOT(slotStateChanged()));
 
 	d->sessions << jabberSess;
 	if (d->gui)

@@ -742,6 +742,13 @@ If two resources have the same priority, the messages will be sent to the one mo
            </property>
            <layout class="QVBoxLayout" name="verticalLayout" >
             <item>
+             <widget class="QCheckBox" name="autoDetectIPBox" >
+              <property name="text" >
+               <string>Auto-detect External IP address</string>
+              </property>
+             </widget>
+	    </item>
+	    <item>
              <layout class="QHBoxLayout" name="horizontalLayout" >
               <item>
                <widget class="QLabel" name="label" >

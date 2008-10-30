@@ -24,15 +24,17 @@
 
 #include <KDebug>
 
-static QString stateToString(XMPP::JingleSession::State s)
+static QString stateToString(JabberJingleSession::State s)
 {
 	//TODO : more precise states...
 	switch (s)
 	{
-	case XMPP::JingleSession::Pending :
+	case JabberJingleSession::Pending :
 		return "Pending";
-	case XMPP::JingleSession::Active :
+	case JabberJingleSession::Active :
 		return "Active";
+	case JabberJingleSession::Ended :
+		return "Ended";
 	default :
 		return "Unknown";
 	}
@@ -42,17 +44,22 @@ JingleCallsGui::JingleCallsGui(JingleCallsManager* parent)
 : m_callsManager(parent)
 {
 	kDebug() << "Created";
-	setWindowTitle("Jigle calls");
 	ui.setupUi(this);
+	setWindowTitle("Jingle calls");
 	setupActions();
 
 	model = new JingleCallsModel(m_callsManager->jabberSessions());
 	ui.treeView->setModel(model);
+
+	updater = new QTimer();
+	connect(updater, SIGNAL(timeout()), this, SLOT(updateTime()));
+	updater->start(1000);
 }
 
 JingleCallsGui::~JingleCallsGui()
 {
 	kDebug() << "deleted";
+	delete updater;
 	delete model;
 }
 
@@ -140,7 +147,7 @@ void JingleCallsGui::addSession(JabberJingleSession* sess)
 
 	QVector<QVariant> sessData;
 	sessData << sess->session()->to().full();
-	sessData << stateToString(sess->session()->state());
+	sessData << stateToString(sess->state());
 	sessData << sess->upTime().toString("HH:mm"); // FIXME: find a better formatting : don't show 0 at the beginning (no 00:03)
 
 	for (int column = 0; column < model->columnCount(index.parent()); ++column)
@@ -163,8 +170,8 @@ void JingleCallsGui::addSession(JabberJingleSession* sess)
 	{
 		QVector<QVariant> contData;
 		contData << sess->contents()[i]->contentName();
-		contData << "[?]"; //FIXME:set good value.
-		contData << "[?]"; //FIXME:set good value.
+		contData << "";
+		contData << "";
 		
 		for (int column = 0; column < model->columnCount(index.parent()); ++column)
 		{
@@ -174,12 +181,63 @@ void JingleCallsGui::addSession(JabberJingleSession* sess)
 	}
 }
 
+void JingleCallsGui::changeState(JabberJingleSession *sess)
+{
+	JabberJingleSession::State s = sess->state();
+	
+	int i = 0;
+
+	//Looking for the QModelIndex with the session sess.
+	//root QModelIndex
+	QAbstractItemModel *model = ui.treeView->model();
+	QModelIndex child = model->index(0, 0);
+	//QModelIndex child = rootIndex.child(0, 0);
+
+	while (child.isValid())
+	{
+		kDebug() << child.data();
+		TreeItem *childItem = static_cast<TreeItem*>(child.internalPointer());
+		if (childItem == 0)
+			kDebug() << "childItem is NULL";
+		if (childItem->session() == sess)
+		{
+			// We have the right index :)
+			//model->removeRow(i, child.parent());
+			model->setData(model->index(child.row(), 1), QVariant(stateToString(s)), Qt::DisplayRole);
+			break;
+		}
+		child = model->index(++i, 0);
+	}
+}
+
+//This is run once every second.
+void JingleCallsGui::updateTime()
+{
+	int i = 0;
+
+	QAbstractItemModel *model = ui.treeView->model();
+	QModelIndex child = model->index(0, 0);
+
+	while (child.isValid())
+	{
+		TreeItem *childItem = static_cast<TreeItem*>(child.internalPointer());
+		
+		if (childItem->session() != 0)
+		{
+			// We have a session index, let's update it :)
+			QTime t = childItem->session()->upTime();
+			model->setData(model->index(child.row(), 2), QVariant(childItem->session()->upTime()), Qt::DisplayRole);
+		}
+		child = model->index(++i, 0);
+	}
+}
+
 void JingleCallsGui::removeSession(JabberJingleSession* sess)
 {
 	kDebug() << "Remove session" << sess;
 	int i = 0;
 
-//Looking for the QModelIndex with the session sess.
+	//Looking for the QModelIndex with the session sess.
 	//root QModelIndex
 	QAbstractItemModel *model = ui.treeView->model();
 	QModelIndex child = model->index(0, 0);
@@ -229,7 +287,7 @@ void JingleCallsModel::setModelUp(const QList<JabberJingleSession*> &sessions)
 	{
 		QVector<QVariant> sessData;
 		sessData << sessions[i]->session()->to().full();
-		sessData << stateToString(sessions[i]->session()->state());
+		sessData << stateToString(sessions[i]->state());
 		sessData << sessions[i]->upTime().toString("HH:mm"); // FIXME: find a better formatting : don't show 0 at the beginning (no 00:03)
 		TreeItem *sessItem = new TreeItem(sessData, rootItem);
 		sessItem->setSessionPtr(sessions[i]);

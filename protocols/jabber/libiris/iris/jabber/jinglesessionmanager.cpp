@@ -73,10 +73,11 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	d->firstPort = 9000;
 	
 	//Get External IP address, This is not Standard and might not work but let's try it before we have ICE support
-	d->http = new QHttp(this);
-	d->http->setHost("www.swlink.net");
-	connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
-	d->http->get("/~styma/REMOTE_ADDR.shtml");
+	//whatismyip.org has a better interface for this
+	//d->http = new QHttp(this);
+	//d->http->setHost("www.swlink.net");
+	//connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
+	//d->http->get("/~styma/REMOTE_ADDR.shtml");
 }
 
 void JingleSessionManager::slotExternalIPDone(bool err)
@@ -90,7 +91,6 @@ void JingleSessionManager::slotExternalIPDone(bool err)
 	}
 		
 	QByteArray pageData = d->http->readAll();
-	//FIXME: must parse html, this page has tag mismatch...
 	d->ip = pageData.split('\n').at(4);
 	qDebug() << "Received External IP :" << d->ip;
 
@@ -110,6 +110,11 @@ void JingleSessionManager::slotExternalIPDone(bool err)
 	delete d->http;
 }
 
+void JingleSessionManager::setExternalIP(const QString& eip)
+{
+	d->ip = eip;
+}
+
 QString JingleSessionManager::externalIP() const
 {
 	return d->ip;
@@ -117,7 +122,7 @@ QString JingleSessionManager::externalIP() const
 
 JingleSessionManager::~JingleSessionManager()
 {
-
+	delete d;
 }
 
 void JingleSessionManager::setSupportedTransports(const QStringList& transports)
@@ -180,8 +185,11 @@ void JingleSessionManager::slotSessionIncoming()
 	JingleSession *sess = d->pjs->takeNextIncomingSession();
 	d->sessions << sess;
 	connect(sess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+	QList<QString> incompatibleContents;
+	// This is a list of the names of the contents which have no supported transports or no supported payloads.
+	// We have to remove all contents present in this list.
+	// If all contents are here, reject the session because it's not possible to establish a session.
 
-	// TODO:Check if the Transport method is supported.
 	for (int i = 0; i < sess->contents().count(); i++)
 	{
 		JingleContent *c = sess->contents()[i];
@@ -189,20 +197,14 @@ void JingleSessionManager::slotSessionIncoming()
 		// Check payloads for the content c
 		if (!checkSupportedPayloads(c))
 		{
-			//I think we have to send a no payload supported stanza.
-			//sess->terminate(UnsupportedApplications);
-			//--> no, only if all transports are unsupported
-			//in this case, a content-remove MUST be sent.
-			return;
+			incompatibleContents << c->name();
+			//return;
 		}
 		
 		if (!checkSupportedTransport(c))
 		{
-			//I think we have to send a no transport supported stanza.
-			//sess->terminate(UnsupportedTransports);
-			//--> no, only if all applications are unsupported
-			//in this case, a content-remove MUST be sent.
-			return;
+			incompatibleContents << c->name();
+			//return;
 		}
 
 		//Set supported payloads for this content.
