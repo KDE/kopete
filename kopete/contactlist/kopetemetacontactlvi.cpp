@@ -177,7 +177,12 @@ public:
 	int currentIconMode;
 
 	QList<Kopete::MessageEvent*> events;
+
+	QTimer *idleTimer;
+	QSet<Kopete::Contact*> idleContacts;
 };
+
+const unsigned int IDLE_INTERVAL = 10 * 60;
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent )
 : ListView::Item( parent, contact )
@@ -225,6 +230,8 @@ void KopeteMetaContactLVI::initLVI()
 {
 	d = new Private;
 
+	d->idleTimer = 0;
+
 	d->toolTipSource.reset( new ListView::MetaContactToolTipSource( m_metaContact ) );
 
 	m_oldStatus = m_metaContact->status();
@@ -239,7 +246,7 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotPhotoChanged() ) );
 
 	connect( m_metaContact, SIGNAL( onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType ) ),
-		this, SLOT(slotIdleStateChanged(  ) ) );
+		SLOT(updateIdleState()) );
 
 	connect( m_metaContact, SIGNAL( contactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & ) ),
 		SLOT( slotContactStatusChanged( Kopete::Contact * ) ) );
@@ -257,7 +264,7 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotUpdateMetaContact() ) );
 
 	connect( m_metaContact, SIGNAL( contactIdleStateChanged( Kopete::Contact * ) ),
-		SLOT( slotIdleStateChanged( Kopete::Contact * ) ) );
+		SLOT(idleStateChanged()) );
 
 	connect( Kopete::AppearanceSettings::self(), SIGNAL( contactListAppearanceChanged() ),
 			 SLOT( slotConfigChanged() ) );
@@ -272,13 +279,14 @@ void KopeteMetaContactLVI::initLVI()
 	//if ( !mBlinkIcon )
 	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QLatin1String( "mail-unread" ), KIconLoader::Small ) );
 
-	slotConfigChanged();  // this calls slotIdleStateChanged(), which sets up the constituent components, spacing, fonts and indirectly, the contact icon
-	slotDisplayNameChanged();
-	updateContactIcons();
+	slotConfigChanged();  // this calls updateIdleState(), which sets up the constituent components, spacing, fonts and indirectly, the contact icon
 }
 
 KopeteMetaContactLVI::~KopeteMetaContactLVI()
 {
+	if ( d->idleTimer )
+		d->idleTimer->stop();
+
 	delete d;
 	//if ( m_parentGroup )
 	//	m_parentGroup->refreshDisplayName();
@@ -509,7 +517,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 
 void KopeteMetaContactLVI::slotUpdateMetaContact()
 {
-	slotIdleStateChanged( 0 );
+	updateIdleState();
 	updateVisibility();
 
 	if ( m_parentGroup )
@@ -722,7 +730,7 @@ void KopeteMetaContactLVI::slotConfigChanged()
 
 	updateVisibility();
 	updateContactIcons();
-	slotIdleStateChanged( 0 );
+	updateIdleState();
 	if(d->nameText)
 		d->nameText->redraw();
 	if(d->extraText)
@@ -807,15 +815,18 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	// update the display name
 	slotDisplayNameChanged();
 	slotPhotoChanged();
-	slotIdleStateChanged( 0 );
 
 	// finally, re-add all contacts so their icons appear. remove them first for consistency.
 	QList<Kopete::Contact*> contacts = m_metaContact->contacts();
 	for ( QList<Kopete::Contact*>::iterator it = contacts.begin(); it != contacts.end(); ++it )
 	{
-		slotContactRemoved( *it );
-		slotContactAdded( *it );
+		if ( Component *comp = contactComponent( *it ) )
+			delete comp;
+		
+		// Update status message
+		slotContactPropertyChanged( (*it), QLatin1String("statusMessage"), QVariant(), (*it)->property( QLatin1String("statusMessage") ).value() );
 	}
+
 	m_oldStatusIcon=d->metaContactIcon ? d->metaContactIcon->pixmap() : QPixmap();
 	if( mBlinkTimer->isActive() )
 		m_originalBlinkIcon=m_oldStatusIcon;
@@ -884,7 +895,11 @@ void KopeteMetaContactLVI::slotContactAdded( Kopete::Contact *c )
 			const QVariant &, const QVariant & ) ) );
 	connect( c->account() , SIGNAL( colorChanged(const QColor& ) ) , this, SLOT( updateContactIcons() ) );
 
-	updateContactIcon( c );
+	if ( IDLE_INTERVAL <= c->idleTime() )
+		d->idleContacts.insert( c );
+
+	updateIdleState( c );
+	resetIdleTimeout();
 
 	slotContactPropertyChanged( c, QLatin1String("statusMessage"),
 		QVariant(), c->property( QLatin1String("statusMessage") ).value() );
@@ -903,6 +918,10 @@ void KopeteMetaContactLVI::slotContactRemoved( Kopete::Contact *c )
 
 	slotContactPropertyChanged( c, QLatin1String("statusMessage"),
 		c->property( QLatin1String("statusMessage") ).value(), QVariant() );
+	
+	d->idleContacts.remove( c );
+	updateIdleState();
+	resetIdleTimeout();
 }
 
 void KopeteMetaContactLVI::updateContactIcons()
@@ -1003,9 +1022,71 @@ bool KopeteMetaContactLVI::isGrouped() const
 	return true;
 }
 
-void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
+void KopeteMetaContactLVI::resetIdleTimeout()
 {
-	bool doWeHaveToGrayThatContact = Kopete::AppearanceSettings::self()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 );
+	unsigned long int firstIdleTimeout = 0;
+
+	// Find nearest change interval
+	QList<Kopete::Contact*> contacts = m_metaContact->contacts();
+	for ( QList<Kopete::Contact*>::iterator it = contacts.begin(); it != contacts.end(); ++it )
+	{
+		unsigned long int idleTime = (*it)->idleTime();
+		if ( 0 < idleTime && idleTime < IDLE_INTERVAL && (firstIdleTimeout > idleTime || firstIdleTimeout == 0) )
+			firstIdleTimeout = idleTime;
+	}
+
+	if ( firstIdleTimeout > 0 )
+	{
+		// Setup timer which will update contact icon
+		if ( !d->idleTimer )
+		{
+			d->idleTimer = new QTimer( this );
+			connect( d->idleTimer, SIGNAL(timeout()), this, SLOT(idleStateChanged()) );
+		}
+		d->idleTimer->start( 1000 * (IDLE_INTERVAL - firstIdleTimeout) );
+	}
+	else if ( d->idleTimer )
+	{
+		d->idleTimer->stop();
+		d->idleTimer->deleteLater();
+		d->idleTimer = 0;
+	}
+}
+
+void KopeteMetaContactLVI::idleStateChanged()
+{
+	bool idleUpdated = false;
+
+	QList<Kopete::Contact*> contacts = m_metaContact->contacts();
+	for ( QList<Kopete::Contact*>::iterator it = contacts.begin(); it != contacts.end(); ++it )
+	{
+		unsigned long int idleTime = (*it)->idleTime();
+		bool isIdleOld = d->idleContacts.contains( *it );
+		bool isIdleNew = (IDLE_INTERVAL <= idleTime);
+
+		// Update contact if idle state has changed
+		if ( isIdleOld != isIdleNew )
+		{
+			if ( isIdleNew )
+				d->idleContacts.insert(*it);
+			else
+				d->idleContacts.remove(*it);
+
+			updateContactIcon( *it );
+			idleUpdated = true;
+		}
+	}
+
+	// If we have updated a contact then metaContact timeout has changed too.
+	if ( idleUpdated )
+		updateIdleState();
+
+	resetIdleTimeout();
+}
+
+void KopeteMetaContactLVI::updateIdleState( Kopete::Contact *c )
+{
+	bool doWeHaveToGrayThatContact = Kopete::AppearanceSettings::self()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= IDLE_INTERVAL );
 	if ( doWeHaveToGrayThatContact )
 	{
 		d->nameText->setColor( Kopete::AppearanceSettings::self()->idleContactColor() );
@@ -1038,8 +1119,6 @@ void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 	// if none was supplied, we only need to update the MC appearance
 	if ( c )
 		updateContactIcon( c );
-	else
-		return;
 }
 
 void KopeteMetaContactLVI::catchEvent( Kopete::MessageEvent *event )

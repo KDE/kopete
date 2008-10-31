@@ -139,7 +139,9 @@ private slots:
 	void slotPhotoChanged();
 
 	void slotAddToNewGroup();
-	void slotIdleStateChanged( Kopete::Contact * =0L);
+	void resetIdleTimeout();
+	void idleStateChanged();
+	void updateIdleState( Kopete::Contact* = 0L );
 
 	void slotConfigChanged();
 
