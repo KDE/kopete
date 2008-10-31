@@ -707,9 +707,9 @@ void DisplayNameComponent::redraw()
 {
 	QColor color;
 	for ( uint n = 0; n < components(); ++n )
-		if( component( n )->rtti() == Rtti_TextComponent )
 	{
-		((TextComponent*)component(n))->color();
+		if( component( n )->rtti() == Rtti_TextComponent )
+			color = ((TextComponent*)component(n))->color();
 	}
 
 	QList<KEmoticonsTheme::Token> tokens;
