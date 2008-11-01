@@ -576,7 +576,7 @@ QString Contact::toolTip() const
 	// FIXME: It shouldn't use QString to identity the properties. Instead it should use PropertyTmpl::key()
 	for(QStringList::Iterator it=shownProps.begin(); it!=shownProps.end(); ++it)
 	{
-		if((*it) == Kopete::Global::Properties::self()->fullName().key() )
+		if((*it) == Kopete::Global::Properties::self()->fullName().key())
 		{
 			QString name = formattedName();
 			if(!name.isEmpty())
@@ -585,7 +585,7 @@ QString Contact::toolTip() const
 							"<br /><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", Qt::escape(name));
 			}
 		}
-		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
+		else if ((*it) == Kopete::Global::Properties::self()->idleTime().key())
 		{
 			QString time = formattedIdleTime();
 			if(!time.isEmpty())
