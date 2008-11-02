@@ -78,11 +78,7 @@ if(WITH_telepathy AND DECIBEL_FOUND)
 endif(WITH_telepathy AND DECIBEL_FOUND)
 
 if(WITH_bonjour)
-  if(DNSSD_FOUND)
-    add_subdirectory( bonjour )
-  else(DNSSD_FOUND)
-    message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Disabled Bonjour Because KDNSSD was not found")
-  endif(DNSSD_FOUND)
+  add_subdirectory( bonjour )
 endif(WITH_bonjour)
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Meanwhile protocol has been disabled because it is not ported to KDE4 yet.")
