@@ -102,6 +102,12 @@ void Kopete::WalletManager::openWalletInner()
 	d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
 	            mainWindowID(), KWallet::Wallet::Asynchronous );
 
+	if ( !d->wallet )
+	{
+		emitWalletOpened( 0 );
+		return;
+	}
+
 	connect( d->wallet, SIGNAL( walletOpened(bool) ), SLOT( slotWalletChangedStatus() ) );
 }
 
