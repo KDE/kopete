@@ -295,7 +295,6 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 	// remember the values to reply with, when requested
 	bool xtrazChanged = (xtraz > -1 || d->status.xtraz != xtraz);
 	bool moodChanged = (mood > -1 || d->status.mood != mood);
-	bool titleChanged = (d->status.title != title);
 	bool statusInfoChanged = ( !d->status.sent || message != d->status.message || title != d->status.title );
 	d->status.status = status;
 	d->status.message = message;
@@ -498,7 +497,7 @@ void Client::receivedIcqInfo( const QString& contact, unsigned int type )
 		emit receivedIcqLongInfo( contact );
 }
 
-void Client::receivedInfo( quint16 sequence )
+void Client::receivedInfo( Oscar::DWORD sequence )
 {
 	UserDetails details = d->userInfoTask->getInfoFor( sequence );
 	emit receivedUserInfo( details.userId(), details );

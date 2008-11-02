@@ -40,14 +40,13 @@ bool ICQChangePasswordTask::forMe( const Transfer* transfer ) const
 	if ( !st )
 		return false;
 
-	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 )
+	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 || st->snacRequest() != m_goSequence )
 		return false;
 
 	Buffer buf( *( st->buffer() ) );
 	const_cast<ICQChangePasswordTask*>( this )->parseInitialData( buf );
 
-	if ( requestType() == 0x07DA && requestSubType() == 0x00AA
-	     && m_goSequence == sequence() )
+	if ( requestType() == 0x07DA && requestSubType() == 0x00AA )
 		return true;
 
 	return false;
@@ -92,17 +91,18 @@ void ICQChangePasswordTask::onGo()
 		return;
 	}
 
-	m_goSequence = client()->snacSequence();
-	setSequence( m_goSequence );
+	setSequence( client()->snacSequence() );
 	setRequestType( 0x07D0 );
 	setRequestSubType( 0x042E );
 
 	Buffer b;
 	b.addLELNTS( m_password.toLatin1() );
 
+	m_goSequence = client()->snacSequence();
+
 	Buffer *sendBuf = addInitialData( &b );
 	FLAP f = { 0x02, 0, 0 };
-	SNAC s = { 0x0015, 0x0002, 0, client()->snacSequence() };
+	SNAC s = { 0x0015, 0x0002, 0, m_goSequence };
 	Transfer* t = createTransfer( f, s, sendBuf );
 	send( t );
 }

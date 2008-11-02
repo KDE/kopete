@@ -45,20 +45,18 @@ public:
 	void onGo();
 
 	void requestInfoFor( const QString& userId, unsigned int types );
-	UserDetails getInfoFor( quint16 sequence ) const;
-	QString contactForSequence( quint16 sequence ) const;
-
+	UserDetails getInfoFor( Oscar::DWORD sequence ) const;
 
 signals:
-	void gotInfo( quint16 seqNumber );
+	void gotInfo( Oscar::DWORD seqNumber );
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );
 
 private:
-	QMap<quint16, UserDetails> m_sequenceInfoMap;
-	QMap<quint16, QString> m_contactSequenceMap;
-	QMap<quint16, unsigned int> m_typesSequenceMap;
-	quint16 m_seq;
+	QMap<Oscar::DWORD, UserDetails> m_sequenceInfoMap;
+	QMap<Oscar::DWORD, QString> m_contactSequenceMap;
+	QMap<Oscar::DWORD, unsigned int> m_typesSequenceMap;
+	Oscar::DWORD m_seq;
 
 };
 

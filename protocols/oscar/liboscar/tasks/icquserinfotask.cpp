@@ -90,7 +90,11 @@ bool ICQUserInfoRequestTask::take( Transfer* transfer )
 		//FIXME this is silly. parseInitialData should take care of this for me.
 		buffer->skipBytes( 12 );
 		
-		Oscar::WORD seq = sequence();
+		const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
+		if ( !st )
+			return false;
+		
+		Oscar::DWORD seq = st->snacRequest();
 		QString contactId = m_contactSequenceMap[seq];
 		
 		switch ( requestSubType() )
@@ -186,60 +190,61 @@ void ICQUserInfoRequestTask::onGo()
 	b.addLEDWord( m_userToRequestFor.toULong() );
 	sendBuf = addInitialData( &b );
 	
-	m_contactSequenceMap[sequence()] = m_userToRequestFor;
-	m_reverseContactMap[m_userToRequestFor] = sequence();
-	
 	FLAP f = { 0x02, 0, 0 };
-	SNAC s = { 0x0015, 0x0002, 0, client()->snacSequence() };
+	Oscar::SNAC s = { 0x0015, 0x0002, 0, client()->snacSequence() };
+	
+	m_contactSequenceMap[s.id] = m_userToRequestFor;
+	m_reverseContactMap[m_userToRequestFor] = s.id;
+	
 	Transfer* t = createTransfer( f, s, sendBuf );
 	send( t );
 }
 
 ICQGeneralUserInfo ICQUserInfoRequestTask::generalInfoFor( const QString& contact )
 {
-	int seq = m_reverseContactMap[contact];
+	Oscar::DWORD seq = m_reverseContactMap[contact];
 	return m_genInfoMap[seq];
 }
 
 ICQWorkUserInfo ICQUserInfoRequestTask::workInfoFor( const QString& contact )
 {
-	int seq = m_reverseContactMap[contact];
+	Oscar::DWORD seq = m_reverseContactMap[contact];
 	return m_workInfoMap[seq];
 }
 
 ICQMoreUserInfo ICQUserInfoRequestTask::moreInfoFor( const QString& contact )
 {
-	int seq = m_reverseContactMap[contact];
+	Oscar::DWORD seq = m_reverseContactMap[contact];
 	return m_moreInfoMap[seq];
 }
 
 ICQEmailInfo ICQUserInfoRequestTask::emailInfoFor( const QString& contact )
 {
-	int seq = m_reverseContactMap[contact];
+	Oscar::DWORD seq = m_reverseContactMap[contact];
 	return m_emailInfoMap[seq];
 }
 
 ICQNotesInfo ICQUserInfoRequestTask::notesInfoFor( const QString& contact )
 {
-	int seq = m_reverseContactMap[contact];
+	Oscar::DWORD seq = m_reverseContactMap[contact];
 	return m_notesInfoMap[seq];
 }
 
 ICQShortInfo ICQUserInfoRequestTask::shortInfoFor( const QString& contact )
 {
-	int seq = m_reverseContactMap[contact];
+	Oscar::DWORD seq = m_reverseContactMap[contact];
 	return m_shortInfoMap[seq];
 }
 
 ICQInterestInfo ICQUserInfoRequestTask::interestInfoFor( const QString& contact )
 {
-	int seq = m_reverseContactMap[contact];
+	Oscar::DWORD seq = m_reverseContactMap[contact];
 	return m_interestInfoMap[seq];
 }
 
 ICQOrgAffInfo ICQUserInfoRequestTask::orgAffInfoFor( const QString& contact )
 {
-	int seq = m_reverseContactMap[contact];
+	Oscar::DWORD seq = m_reverseContactMap[contact];
 	return m_orgAffInfoMap[seq];
 }
 

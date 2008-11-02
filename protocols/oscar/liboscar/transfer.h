@@ -161,7 +161,7 @@ private:
 	Oscar::WORD m_snacService;
 	Oscar::WORD m_snacSubtype;
 	Oscar::WORD m_snacFlags;
-	Oscar::WORD m_snacReqId;
+	Oscar::DWORD m_snacReqId;
 	
 	bool m_isSnacValid;
 };

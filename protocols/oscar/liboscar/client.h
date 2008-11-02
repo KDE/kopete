@@ -576,7 +576,7 @@ protected slots:
 	void receivedIcqInfo( const QString& contact, unsigned int type );
 
 	/** we have normal user info for a contact */
-	void receivedInfo( quint16 sequence );
+	void receivedInfo( Oscar::DWORD sequence );
 
 	/** received a message of some kind */
 	void receivedMessage( const Oscar::Message& msg );

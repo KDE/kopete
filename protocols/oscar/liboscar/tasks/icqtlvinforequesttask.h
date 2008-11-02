@@ -55,7 +55,7 @@ Q_SIGNALS:
 	void receivedInfoFor( const QString& contact );
 
 private:
-	void parse( const QByteArray &data );
+	void parse( Oscar::DWORD seq, const QByteArray &data );
 
 	QMap<QString, ICQFullInfo> m_fullInfoMap;
 	QMap<int, QString> m_contactSequenceMap;

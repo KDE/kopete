@@ -41,14 +41,13 @@ bool ICQUserInfoUpdateTask::forMe( const Transfer* transfer ) const
 	if ( !st )
 		return false;
 
-	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 )
+	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 || st->snacRequest() != m_goSequence )
 		return false;
 
 	Buffer buf( *( st->buffer() ) );
 	const_cast<ICQUserInfoUpdateTask*>( this )->parseInitialData( buf );
 
-	if ( requestType() == 0x07DA && requestSubType() == 0x0C3F
-	     && m_goSequence == sequence() )
+	if ( requestType() == 0x07DA && requestSubType() == 0x0C3F )
 		return true;
 
 	return false;
@@ -86,8 +85,7 @@ void ICQUserInfoUpdateTask::onGo()
 {
 	kDebug(OSCAR_RAW_DEBUG) << "Saving own user info.";
 
-	m_goSequence = client()->snacSequence();
-	setSequence( m_goSequence );
+	setSequence( client()->snacSequence() );
 	setRequestType( 0x07D0 );
 	setRequestSubType( 0x0C3A );
 
@@ -101,9 +99,11 @@ void ICQUserInfoUpdateTask::onGo()
 		return;
 	}
 
+	m_goSequence = client()->snacSequence();
+
 	Buffer *sendBuf = addInitialData( &b );
 	FLAP f = { 0x02, 0, 0 };
-	SNAC s = { 0x0015, 0x0002, 0, client()->snacSequence() };
+	SNAC s = { 0x0015, 0x0002, 0, m_goSequence };
 	Transfer* t = createTransfer( f, s, sendBuf );
 	send( t );
 }
