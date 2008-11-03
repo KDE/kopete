@@ -70,12 +70,32 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	slotUpdateDisplayName ();
 
 #ifdef JINGLE_SUPPORT
+	KAction *jingleSessionGui = new KAction(i18n("Show Jingle sessions" ), members().first());
+	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui() ));
+	setComponentData(protocol->componentData());
+	
 	KAction *jingleSession = new KAction(i18n("Start Jingle session" ), members().first());
 	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession() ));
 	setComponentData(protocol->componentData());
-	jingleSession->setEnabled( true ); //FIXME:Should be enabled only if supported.	
 	
-	KAction *jingleaudiocall = new KAction(i18n("Jingle Audio call" ), members().first());
+	Kopete::ContactPtrList chatMembers = members();
+	if (chatMembers.first())
+	{
+		JabberResource *bestResource = account()->resourcePool()->bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
+		if (bestResource)
+		{
+			jingleSessionGui->setEnabled( bestResource->features().canJingle() );
+			jingleSession->setEnabled( bestResource->features().canJingle() );
+		}
+		else
+		{
+			jingleSessionGui->setEnabled(false);
+			jingleSession->setEnabled(false);
+		}
+	}
+	
+
+	/*KAction *jingleaudiocall = new KAction(i18n("Jingle Audio call" ), members().first());
 	connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall() ));
 	setComponentData(protocol->componentData());
 	jingleaudiocall->setEnabled( false );
@@ -83,14 +103,13 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	KAction *jinglevideocall = new KAction(i18n("Jingle Video call" ), members().first());
 	connect(jinglevideocall, SIGNAL(triggered(bool)), SLOT (slotJingleVideoCall() ));
 	setComponentData(protocol->componentData());
-	jinglevideocall->setEnabled( false );
+	jinglevideocall->setEnabled( false );*/
 	
 	//Kopete::ContactPtrList chatMembers = members ();
 	//if ( chatMembers.first () )
 	//{
 		// Check if the current contact support Audio calls, also honor lock by default.
 		// FIXME: we should use the active ressource
-		//JabberResource *bestResource = account()->resourcePool()->bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
 		//jingleaudiocall->setEnabled( bestResource->features().canJingleAudio() );
 		//jinglevideocall->setEnabled( bestResource->features().canJingleVideo() );
 	//}
@@ -99,7 +118,8 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	//	  It should be corrected in trunk.
 	//actionCollection()->addAction( "jabberJingleaudiocall", jingleaudiocall );
 	//actionCollection()->addAction( "jabberJinglevideocall", jinglevideocall );
-	actionCollection()->addAction( "jabberSession", jingleSession );
+	actionCollection()->addAction( "jingleSession", jingleSession );
+	actionCollection()->addAction( "jingleSessionsGui", jingleSessionGui );
 
 #endif
 
@@ -465,6 +485,12 @@ void JabberChatSession::slotJingleVideoCall()
 {
 	QList<Kopete::Contact*> contacts = members();
 	static_cast<JabberContact *>(contacts.first())->startJingleVideoCall();
+}
+
+void JabberChatSession::slotJingleSessionGui()
+{
+	QList<Kopete::Contact*> contacts = members();
+	static_cast<JabberContact *>(contacts.first())->showSessionsGui();
 }
 
 void JabberChatSession::slotJingleSession()

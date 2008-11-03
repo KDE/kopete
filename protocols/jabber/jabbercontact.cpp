@@ -1326,6 +1326,11 @@ void JabberContact::slotDiscoFinished( )
 }
 
 #ifdef JINGLE_SUPPORT
+void JabberContact::showSessionsGui()
+{
+	account()->jingleCallsManager()->showCallsGui();
+}
+
 void JabberContact::startJingleSession()
 {
 	startJingleVideoCall(); //Only to show the message.

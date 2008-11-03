@@ -4,9 +4,8 @@
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
 			<Action name="jabberSendFile" />
-			<Action name="jabberSession" />
-			<Action name="jabberJingleaudiocall" />
-			<Action name="jabberJinglevideocall" />
+			<Action name="jingleSession" />
+			<Action name="jingleSessionsGui" />
 		</Menu>
 	</MenuBar>
 
@@ -14,9 +13,8 @@
 	<ToolBar name="statusToolBar">
 		<Action name="jabberDisplayPicture" />
 		<Action name="jabberSendFile" />		
-		<Action name="jabberSession" />
-		<Action name="jabberJingleaudiocall" />
-		<Action name="jabberJinglevideocall" />
+		<Action name="jingleSession" />
+		<Action name="jingleSessionsGui" />
 	</ToolBar>
 
 
