@@ -307,7 +307,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QStri
 {
 	QString body = QString(QUrl::toPercentEncoding( msg));
 	QString lp = from + '_' + to;
-	QString gurl = "http://babelfish.yahoo.com/translate_txt?"&lp=" + lp  + "&text=" + body ;
+	QString gurl = "http://babelfish.yahoo.com/translate_txt?&lp=" + lp  + "&text=" + body;
 	KUrl geturl ( gurl );
 
 	kDebug( 14308 ) << "URL: " << gurl;
