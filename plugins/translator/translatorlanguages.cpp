@@ -27,7 +27,7 @@ TranslatorLanguages::TranslatorLanguages()
 {
 	m_lc = 0;
 	m_sc = 0;
-//	m_services.insert("babelfish", "BabelFish");
+	m_services.insert("babelfish", "BabelFish");
 	m_services.insert("google", "Google");
 
 	m_langs.insert("null", i18n("Unknown"));
@@ -39,32 +39,32 @@ TranslatorLanguages::TranslatorLanguages()
 	m_langs.insert("ja", i18n("Japanese"));
 	m_langs.insert("ko", i18n("Korean"));
 	m_langs.insert("pt", i18n("Portuguese"));
-	m_langs.insert("ru", i18n("Russian"));
+    m_langs.insert("ru", i18n("Russian"));
 	m_langs.insert("es", i18n("Spanish"));
 
 	/* English to .. */
-//	m_supported["babelfish"].append("en_zh");
-//	m_supported["babelfish"].append("en_fr");
-//	m_supported["babelfish"].append("en_de");
-//	m_supported["babelfish"].append("en_it");
-//	m_supported["babelfish"].append("en_ja");
-//	m_supported["babelfish"].append("en_ko");
-//	m_supported["babelfish"].append("en_pt");
-//	m_supported["babelfish"].append("en_es");
+	m_supported["babelfish"].append("en_zh");
+	m_supported["babelfish"].append("en_fr");
+	m_supported["babelfish"].append("en_de");
+	m_supported["babelfish"].append("en_it");
+	m_supported["babelfish"].append("en_ja");
+	m_supported["babelfish"].append("en_ko");
+	m_supported["babelfish"].append("en_pt");
+	m_supported["babelfish"].append("en_es");
 	/* Chinese to .. */
-//	m_supported["babelfish"].append("zh_en");
-	/* French to ... */
-//	m_supported["babelfish"].append("fr_en");
-//	m_supported["babelfish"].append("fr_de");
+	m_supported["babelfish"].append("zh_en");
+    /* French to ... */
+	m_supported["babelfish"].append("fr_en");
+	m_supported["babelfish"].append("fr_de");
 	/* German to ... */
-//	m_supported["babelfish"].append("de_en");
-//	m_supported["babelfish"].append("de_fr");
+	m_supported["babelfish"].append("de_en");
+	m_supported["babelfish"].append("de_fr");
 
-//	m_supported["babelfish"].append("it_en");
-//	m_supported["babelfish"].append("ko_en");
-//	m_supported["babelfish"].append("pt_en");
-//	m_supported["babelfish"].append("ru_en");
-//	m_supported["babelfish"].append("es_en");
+	m_supported["babelfish"].append("it_en");
+	m_supported["babelfish"].append("ko_en");
+	m_supported["babelfish"].append("pt_en");
+    m_supported["babelfish"].append("ru_en");
+	m_supported["babelfish"].append("es_en");
 
 	/* Google Service */
 	m_supported["google"].append("en_de");
