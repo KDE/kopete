@@ -111,7 +111,7 @@ void JingleCallsGui::slotTerminate()
 {
 	kDebug() << "Terminate session";
 	TreeItem *item = static_cast<TreeItem*>(ui.treeView->currentIndex().internalPointer());
-	if (item->session() == 0)
+	if (item == 0 && item->session() == 0)
 		return;
 	item->session()->jingleSession()->terminate();
 	removeSession(item->session());
@@ -226,7 +226,7 @@ void JingleCallsGui::updateTime()
 		{
 			// We have a session index, let's update it :)
 			QTime t = childItem->session()->upTime();
-			model->setData(model->index(child.row(), 2), QVariant(childItem->session()->upTime()), Qt::DisplayRole);
+			model->setData(model->index(child.row(), 2), QVariant(t.toString()), Qt::DisplayRole);
 		}
 		child = model->index(++i, 0);
 	}

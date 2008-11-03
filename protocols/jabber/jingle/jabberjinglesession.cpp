@@ -71,10 +71,7 @@ void JabberJingleSession::slotStateChanged()
 			jContent = new JabberJingleContent(this, m_jingleSession->contents()[i]);
 			jabberJingleContents << jContent;
 		}
-		jContent->prepareRtpInSession();
-		jContent->prepareRtpOutSession();
-		jContent->startWritingRtpData();
-		//FIXME:Those 3 methods should be set in a method like startStreaming()
+		jContent->startStreaming();
 	}
 	emit stateChanged();
 	
@@ -90,7 +87,7 @@ void JabberJingleSession::slotSessionTerminated()
 	emit terminated();
 }
 
-void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)
+/*void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)
 {
 	qDebug() << "Called void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)";
 	JabberJingleContent *jContent = contentWithName(content->name());
@@ -99,8 +96,8 @@ void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)
 		jContent = new JabberJingleContent(this, content);
 		jabberJingleContents << jContent;
 	}
-	jContent->startWritingRtpData();
-}
+	jContent->startStreaming();
+}*/
 
 JabberJingleContent *JabberJingleSession::contentWithName(const QString& name)
 {
@@ -128,9 +125,12 @@ QTime JabberJingleSession::upTime()
 	if (m_startTime.hour() == 0 && m_startTime.minute() == 0 && m_startTime.second() == 0)
 		return m_startTime;
 
-	QTime current = QTime::currentTime();
+	int dTime = m_startTime.secsTo(QTime::currentTime());
+	int secs = dTime % 60;
+	int mins = (dTime - secs) / 60;
+	int hours = (dTime - secs - (mins * 60)) / 24;
 	QTime ret;
-	ret.setHMS(current.hour() - m_startTime.hour(), current.minute() - m_startTime.minute(), current.second() - m_startTime.second());
+	ret.setHMS(hours, mins, secs);
 	
 	return ret;
 }

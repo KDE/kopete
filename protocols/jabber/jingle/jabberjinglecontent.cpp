@@ -40,9 +40,6 @@ JabberJingleContent::JabberJingleContent(JabberJingleSession* parent, XMPP::Jing
 	if (c == 0)
 		return;
 	
-//	prepareRtpInSession();
-//	prepareRtpOutSession();
-
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Created a new JabberJingleContent with" << c->name();
 }
 
@@ -75,6 +72,7 @@ void JabberJingleContent::prepareRtpInSession()
 			return;
 		}
 		m_rtpInSession = new JingleRtpSession(JingleRtpSession::In);
+		m_rtpInSession->setMediaSession(m_mediaSession);
 		m_rtpInSession->setPayload(m_content->bestPayload());
 		m_rtpInSession->setRtpSocket(m_content->inSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
 		kDebug() << "Connecting m_rtpInSession readyRead signal.";
@@ -95,8 +93,14 @@ void JabberJingleContent::prepareRtpOutSession()
 			return;
 		}
 		m_rtpOutSession = new JingleRtpSession(JingleRtpSession::Out);
+		m_rtpOutSession->setMediaSession(m_mediaSession);
 		m_rtpOutSession->setPayload(m_content->bestPayload());
 		m_rtpOutSession->setRtpSocket(m_content->outSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
+		if (m_jabberSession->session()->state() == XMPP::JingleSession::Pending)
+		{
+			m_rtpOutSession->setPayload(m_content->bestPayload());
+		}
+		
 	}
 	else
 		kDebug() << "RTP OUT session already set !";
@@ -108,16 +112,10 @@ void JabberJingleContent::slotIncomingData(const QByteArray& data)
 	m_mediaSession->write(data);
 }
 
-void JabberJingleContent::startWritingRtpData()
+void JabberJingleContent::startStreaming()
 {
-	kDebug() << "Start Writing Rtp Data.";
-	
-	//slotPrepareRtpOutSession(); --> That should already be done...
+	kDebug() << "Start Streaming";
 
-	if (m_jabberSession->session()->state() == XMPP::JingleSession::Pending)
-	{
-		m_rtpOutSession->setPayload(m_content->bestPayload());
-	}
 	if (m_content->type() == XMPP::JingleContent::Audio)
 	{
 		m_mediaSession = new MediaSession(m_mediaManager, "speex"/*FIXME:use m_content->bestPayload()*/);
@@ -129,8 +127,13 @@ void JabberJingleContent::startWritingRtpData()
 		}
 		connect(m_mediaSession, SIGNAL(readyRead(int)), this, SLOT(slotReadyRead(int)));
 		m_mediaSession->setSamplingRate(8000 /*FIXME:use m_content->bestPayload()*/);
+		
+		prepareRtpOutSession();
+		prepareRtpInSession();
+		
 		if (!m_mediaSession->start())
 			QMessageBox::warning(0, tr("Jingle audio"), tr("Unable to start you audio device, the session will start anyway."));
+		
 		/*connect(m_mediaManager, SIGNAL(audioReadyRead()), this, SLOT(slotSendRtpData()));
 		m_mediaManager->startAudioStreaming();*/
 	}

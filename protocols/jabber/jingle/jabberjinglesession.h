@@ -58,7 +58,7 @@ public:
 	QTime upTime();
 
 public slots:
-	void writeRtpData(XMPP::JingleContent*);
+	//void writeRtpData(XMPP::JingleContent*);
 	void slotSessionTerminated();
 	void slotStateChanged();
 

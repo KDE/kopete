@@ -32,6 +32,7 @@ public:
 	bool start();
 	void write(const QByteArray& sData);
 	QByteArray read() const;
+	int timeStamp();
 
 public slots:
 	void slotReadyRead();
