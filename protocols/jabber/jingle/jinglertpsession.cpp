@@ -123,12 +123,8 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 		connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
 		rtcpSocket->connectToHost(rtpSocket->peerAddress(), rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort, QIODevice::ReadWrite);
 	}
+
 	rtp_session_set_sockets(m_rtpSession, rtpSocket->socketDescriptor(), rtcpSocket->socketDescriptor());
-	
-	//This line seem to cause problems and make data not come in properly.
-	//From netstat, I can see that the socket receives about 98000 bytes then, do nothing.
-	//Never a slot that should be called when data is received is called.
-	//This is a blocant problem as data is sent but never received.
 }
 
 /*void JingleRtpSession::bind(int rtpPort, int rtcpPort)

@@ -81,7 +81,11 @@ void JingleCallsManager::init()
 	if (d->jabberAccount->configGroup()->readEntry("JingleAutoDetectIP", true) && KIO::NetAccess::download(KUrl(ADDRESS), filename, 0))
 	{
 		QFile file(filename);
-		d->client->jingleSessionManager()->setExternalIP(file.readAll());
+		file.open(QIODevice::ReadOnly);
+		QString ip = file.readAll();
+		file.close();
+		kDebug() << "Setting external IP :" << ip;
+		d->client->jingleSessionManager()->setExternalIP(ip);
 	}
 
 	//Initialize oRTP library.

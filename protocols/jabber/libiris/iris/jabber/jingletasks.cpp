@@ -321,7 +321,7 @@ void JT_JingleAction::initiate()
 			QString ip;
 
 			//Trying to get the address with the most chances to succeed.
-			if (eip != "") //deos not seem to work...
+			if (eip != "") //does not seem to work...
 			{
 				ip = eip;
 			}
