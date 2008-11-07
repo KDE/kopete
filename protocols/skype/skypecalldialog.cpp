@@ -66,8 +66,13 @@ class SkypeCallDialogPrivate {
 		};
 };
 
-SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account) : QDialog() {
+SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account, QWidget *parent) : KDialog(parent) {
 	kDebug() << k_funcinfo << endl;//some debug info
+
+	QWidget *widget = new QWidget( this );
+	dialog = new Ui::SkypeCallDialogBase();
+	dialog->setupUi( widget );
+	setMainWidget( widget );
 
 	//Initialize values
 	d = new SkypeCallDialogPrivate();
@@ -84,7 +89,7 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	connect(d->updater, SIGNAL(timeout()), this, SLOT(updateCallInfo()));
 	d->updater->start(500);
 
-	NameLabel->setText(account->getUserLabel(userId));
+	dialog->NameLabel->setText(account->getUserLabel(userId));
 
 	//Show the window
 	show();
@@ -108,93 +113,93 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 
 	if (callId == d->callId) {
 		if (status == "CANCELLED") {
-			HoldButton->setEnabled(false);
-			HangButton->setEnabled(false);
-			AcceptButton->setEnabled(false);
-			StatusLabel->setText(i18n("Canceled"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->HangButton->setEnabled(false);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->StatusLabel->setText(i18n("Canceled"));
 			closeLater();
 			d->status = csNotRunning;
 		} else if (status == "BUSY") {
-			HoldButton->setEnabled(false);
-			HangButton->setEnabled(false);
-			AcceptButton->setEnabled(false);
-			StatusLabel->setText(i18n("Other person is busy"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->HangButton->setEnabled(false);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->StatusLabel->setText(i18n("Other person is busy"));
 			closeLater();
 			d->status = csNotRunning;
 		} else if (status == "REFUSED") {
-			HoldButton->setEnabled(false);
-			HangButton->setEnabled(false);
-			AcceptButton->setEnabled(false);
-			StatusLabel->setText(i18n("Refused"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->HangButton->setEnabled(false);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->StatusLabel->setText(i18n("Refused"));
 			closeLater();
 			d->status = csNotRunning;
 		} else if (status == "MISSED") {
-			HoldButton->setEnabled(false);
-			HangButton->setEnabled(false);
-			AcceptButton->setEnabled(true);
-			AcceptButton->setText(i18n("Call Back"));
-			StatusLabel->setText(i18n("Missed"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->HangButton->setEnabled(false);
+			dialog->AcceptButton->setEnabled(true);
+			dialog->AcceptButton->setText(i18n("Call Back"));
+			dialog->StatusLabel->setText(i18n("Missed"));
 			d->status = csNotRunning;
-			disconnect(AcceptButton, SIGNAL(clicked()), this, SLOT(acceptCall()));
-			connect(AcceptButton, SIGNAL(clicked()), this, SLOT(callBack()));
+			disconnect(dialog->AcceptButton, SIGNAL(clicked()), this, SLOT(acceptCall()));
+			connect(dialog->AcceptButton, SIGNAL(clicked()), this, SLOT(callBack()));
 		} else if (status == "FINISHED") {
-			HoldButton->setEnabled(false);
-			HangButton->setEnabled(false);
-			AcceptButton->setEnabled(false);
-			StatusLabel->setText(i18n("Finished"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->HangButton->setEnabled(false);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->StatusLabel->setText(i18n("Finished"));
 			closeLater();
 			d->status = csNotRunning;
 		} else if (status == "LOCALHOLD") {
-			HoldButton->setEnabled(true);
-			HoldButton->setText(i18n("Resume"));
-			HangButton->setEnabled(true);
-			AcceptButton->setEnabled(false);
-			StatusLabel->setText(i18n("On hold (local)"));
+			dialog->HoldButton->setEnabled(true);
+			dialog->HoldButton->setText(i18n("Resume"));
+			dialog->HangButton->setEnabled(true);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->StatusLabel->setText(i18n("On hold (local)"));
 			d->status = csOnHold;
 		} else if (status == "REMOTEHOLD") {
-			HoldButton->setEnabled(false);
-			HangButton->setEnabled(true);
-			AcceptButton->setEnabled(false);
-			StatusLabel->setText(i18n("On hold (remote)"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->HangButton->setEnabled(true);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->StatusLabel->setText(i18n("On hold (remote)"));
 			d->status = csOnHold;
 		} else if (status == "ONHOLD") {
-			HoldButton->setEnabled(true);
-			HangButton->setEnabled(true);
-			AcceptButton->setEnabled(false);
-			StatusLabel->setText(i18n("On hold"));
+			dialog->HoldButton->setEnabled(true);
+			dialog->HangButton->setEnabled(true);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->StatusLabel->setText(i18n("On hold"));
 			d->status = csOnHold;
 		} else if (status == "INPROGRESS") {
-			HoldButton->setEnabled(true);
-			HoldButton->setText(i18n("Hold"));
-			HangButton->setEnabled(true);
-			AcceptButton->setEnabled(false);
-			StatusLabel->setText(i18n("In progress"));
+			dialog->HoldButton->setEnabled(true);
+			dialog->HoldButton->setText(i18n("Hold"));
+			dialog->HangButton->setEnabled(true);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->StatusLabel->setText(i18n("In progress"));
 			d->status=csInProgress;
 		} else if (status == "RINGING") {
-			HoldButton->setEnabled(false);
-			AcceptButton->setEnabled(d->account->isCallIncoming(callId));
-			HangButton->setEnabled(true);
-			StatusLabel->setText(i18n("Ringing"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->AcceptButton->setEnabled(d->account->isCallIncoming(callId));
+			dialog->HangButton->setEnabled(true);
+			dialog->StatusLabel->setText(i18n("Ringing"));
 			d->status = csNotRunning;
 		} else if (status == "FAILED") {
 			if (d->error) //This one is already handled
 				return;
-			HoldButton->setEnabled(false);
-			AcceptButton->setEnabled(false);
-			HangButton->setEnabled(false);
-			StatusLabel->setText(i18n("Failed"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->HangButton->setEnabled(false);
+			dialog->StatusLabel->setText(i18n("Failed"));
 			d->status = csNotRunning;
 		} else if (status == "ROUTING") {
-			HoldButton->setEnabled(false);
-			AcceptButton->setEnabled(false);
-			HangButton->setEnabled(true);
-			StatusLabel->setText(i18n("Connecting"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->HangButton->setEnabled(true);
+			dialog->StatusLabel->setText(i18n("Connecting"));
 			d->status = csNotRunning;
 		} else if (status == "EARLYMEDIA") {
-			HoldButton->setEnabled(false);
-			AcceptButton->setEnabled(false);
-			HangButton->setEnabled(true);
-			StatusLabel->setText(i18n("Early media (waitong for operator..)"));
+			dialog->HoldButton->setEnabled(false);
+			dialog->AcceptButton->setEnabled(false);
+			dialog->HangButton->setEnabled(true);
+			dialog->StatusLabel->setText(i18n("Early media (waitong for operator..)"));
 			d->status = csNotRunning;
 		} else if (status == "UNPLACED") {//Ups, whats that, how that call got here?
 			deleteLater();//Just give up, this one is odd
@@ -240,10 +245,10 @@ void SkypeCallDialog::closeLater() {
 void SkypeCallDialog::updateError(const QString &callId, const QString &message) {
 	kDebug() << k_funcinfo << endl;//some debug info
 	if (callId == d->callId) {
-		AcceptButton->setEnabled(false);
-		HangButton->setEnabled(false);
-		HoldButton->setEnabled(false);
-		StatusLabel->setText(i18n("Failed (%1)").arg(message));
+		dialog->AcceptButton->setEnabled(false);
+		dialog->HangButton->setEnabled(false);
+		dialog->HoldButton->setEnabled(false);
+		dialog->StatusLabel->setText(i18n("Failed (%1)").arg(message));
 		closeLater();
 		d->error = true;
 	}
@@ -263,7 +268,7 @@ void SkypeCallDialog::updateCallInfo() {
 	}
 	const QString &activeTime = KGlobal::locale()->formatTime(QTime().addSecs(d->callTime / 2), true, true);
 	const QString &totalTime = KGlobal::locale()->formatTime(QTime().addSecs(d->totalTime / 2), true, true);
-	TimeLabel->setText(i18n("%1 active\n%2 total").arg(activeTime).arg(totalTime));
+	dialog->TimeLabel->setText(i18n("%1 active\n%2 total").arg(activeTime).arg(totalTime));
 }
 
 void SkypeCallDialog::skypeOutInfo(int balance, const QString &currency) {
@@ -275,11 +280,11 @@ void SkypeCallDialog::skypeOutInfo(int balance, const QString &currency) {
 		symbol = i18n("€");
 		digits = 2;
 	} else {
-		CreditLabel->setText(i18n("Skypeout inactive"));
+		dialog->CreditLabel->setText(i18n("Skypeout inactive"));
 		return;
 	}
 	float value = balance * part;
-	CreditLabel->setText(KGlobal::locale()->formatMoney(value, symbol, digits));
+	dialog->CreditLabel->setText(KGlobal::locale()->formatMoney(value, symbol, digits));
 }
 
 void SkypeCallDialog::chatUser() {

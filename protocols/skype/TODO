@@ -24,3 +24,5 @@ TODO New:
 - remove contact echo123 and add button "Make Test Call" in Skype protocol toolbar - done
 - add group support
 - add support searching contacts
+- add support for file transfer
+- show sent message imediately in chat window and show info when was delivered

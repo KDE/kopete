@@ -30,7 +30,7 @@ namespace Ui { class SkypeDetailsBase; }
  * @author Michal Vaner (VORNER) <michal.vaner@kdemail.net>
  * Dialog that shows users details
  */
-class SkypeDetails : public QDialog, private Ui::SkypeDetailsBase {
+class SkypeDetails : public KDialog, private Ui::SkypeDetailsBase {
 	Q_OBJECT
 	private:
 		SkypeAccount *account;
@@ -39,6 +39,7 @@ class SkypeDetails : public QDialog, private Ui::SkypeDetailsBase {
 	protected:
 		///Make sure it is deleted after it is closed
 		void closeEvent(QCloseEvent *e);
+		Ui::SkypeDetailsBase *dialog;
 	public:
 		///Just constructor
 		SkypeDetails();

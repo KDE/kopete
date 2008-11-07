@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>SkypeDetailsBase</class>
- <widget class="QDialog" name="SkypeDetailsBase" >
+ <widget class="QWidget" name="SkypeDetailsBase" >
   <property name="geometry" >
    <rect>
     <x>0</x>

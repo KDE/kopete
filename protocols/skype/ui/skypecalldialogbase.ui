@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>SkypeCallDialogBase</class>
- <widget class="QDialog" name="SkypeCallDialogBase" >
+ <widget class="QWidget" name="SkypeCallDialogBase" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -11,9 +11,6 @@
   </property>
   <property name="windowTitle" >
    <string>Skype Call</string>
-  </property>
-  <property name="sizeGripEnabled" >
-   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" >
    <item>

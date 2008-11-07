@@ -26,8 +26,14 @@
 #include <qlineedit.h>
 #include <qcombobox.h>
 
-SkypeDetails::SkypeDetails() : QDialog() {
+SkypeDetails::SkypeDetails() : KDialog() {
 	kDebug() << k_funcinfo << endl;
+	dialog = new Ui::SkypeDetailsBase();
+
+	QWidget* w = new QWidget( this );
+	dialog = new Ui::SkypeDetailsBase();
+	dialog->setupUi( w );
+	setMainWidget( w );
 }
 
 
@@ -44,47 +50,45 @@ void SkypeDetails::changeAuthor(int item) {
 	kDebug() << k_funcinfo << endl;
 	switch (item) {
 		case 0:
-			account->authorizeUser(idEdit->text());
+			account->authorizeUser(dialog->idEdit->text());
 			break;
 		case 1:
-			account->disAuthorUser(idEdit->text());
+			account->disAuthorUser(dialog->idEdit->text());
 			break;
 		case 2:
-			account->blockUser(idEdit->text());
+			account->blockUser(dialog->idEdit->text());
 			break;
 	}
 }
 
 SkypeDetails &SkypeDetails::setNames(const QString &id, const QString &nick, const QString &name) {
-	///TODO: Port to kde4
-	//setCaption(i18n("Details for User %1").arg(id));
-	idEdit->setText(id);
-	nickEdit->setText(nick);
-	nameEdit->setText(name);
+	setCaption(i18n("Details for User %1").arg(id));
+	dialog->idEdit->setText(id);
+	dialog->nickEdit->setText(nick);
+	dialog->nameEdit->setText(name);
 	return *this;
 }
 
 SkypeDetails &SkypeDetails::setPhones(const QString &priv, const QString &mobile, const QString &work) {
-	privatePhoneEdit->setText(priv);
-	mobilePhoneEdit->setText(mobile);
-	workPhoneEdit->setText(work);
+	dialog->privatePhoneEdit->setText(priv);
+	dialog->mobilePhoneEdit->setText(mobile);
+	dialog->workPhoneEdit->setText(work);
 	return *this;
 }
 
 SkypeDetails &SkypeDetails::setHomepage(const QString &homepage) {
-	homepageEdit->setText(homepage);
+	dialog->homepageEdit->setText(homepage);
 	return *this;
 }
 
 SkypeDetails &SkypeDetails::setAuthor(int author, SkypeAccount *account) {
-	//TODO: Port ot kde4
-	//authorCombo->setCurrentItem(author);
+	dialog->authorCombo->setCurrentIndex(author);
 	this->account = account;
 	return *this;
 }
 
 SkypeDetails &SkypeDetails::setSex(const QString &sex) {
-	sexEdit->setText(sex);
+	dialog->sexEdit->setText(sex);
 	return *this;
 }
 

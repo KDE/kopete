@@ -114,7 +114,7 @@ Kopete::Account *skypeEditAccount::apply() {
 
 	//first, I need a pointer to that account
 	if (!account()) //it does not exist
-		setAccount(new SkypeAccount(d->protocol, QString() ));//create a new one
+		setAccount(new SkypeAccount(d->protocol, "Skype" ));//create a new one
 	SkypeAccount *skype = static_cast<SkypeAccount *>(account());//get the account
 
 	//set it's values
