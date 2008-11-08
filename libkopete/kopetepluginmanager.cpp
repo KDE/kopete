@@ -248,10 +248,6 @@ void PluginManager::slotShutdownDone()
 {
 	kDebug( 14010 ) ;
 
-	// Disconnect any remaining plugins (bug 172011).
-	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.begin(); it != _kpmp->loadedPlugins.end(); ++it )
-		disconnect( it.value(), SIGNAL(destroyed(QObject*)), this, 0 );
-
 	_kpmp->shutdownMode = PluginManagerPrivate::DoneShutdown;
 
 	KGlobal::deref();
