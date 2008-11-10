@@ -645,7 +645,7 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	{
 			xmppStatus.setIsAvailable( false );
 			kDebug (JABBER_DEBUG_GLOBAL) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
-            disconnect (Manual, xmppStatus);
+			disconnect (Manual, xmppStatus);
             return;
     }
 
@@ -852,9 +852,12 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 				case QAbstractSocket::SocketTimeoutError:
 					errorCondition = i18n("Socket timed out.");
 					break;
+				case QAbstractSocket::RemoteHostClosedError:
+					errorCondition= i18n("Remote closed connection.");
+					break;
 				default:
 					errorClass = Kopete::Account::ConnectionReset;
-					errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
+					errorCondition = i18n("Unexpected error condition (%1).", connectorCode);
 					break;
 			}
 			if(!errorCondition.isEmpty())
@@ -1023,10 +1026,12 @@ void JabberAccount::slotCSError ( int error )
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "Disconnecting.";
 
 		// display message to user
-		if(!m_removing) //when removing the account, connection errors are normal.
+		// when removing or disconnecting, connection errors are normal
+		if(!m_removing && (isConnected() || isConnecting()))
 			handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass, client()->clientStream()->errorText());
 
-		disconnect ( errorClass );
+		if (isConnected() || isConnecting())
+			disconnect ( errorClass );
 		
 		/*	slotCSDisconnected  will not be called*/
 		resourcePool()->clear();
