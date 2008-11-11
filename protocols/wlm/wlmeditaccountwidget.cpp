@@ -20,55 +20,93 @@
 #include <QLineEdit>
 //Added by qt3to4:
 #include <QVBoxLayout>
+
 #include <kdebug.h>
+#include <kmessagebox.h>
+#include <ktoolinvocation.h>
+
+#include "kopeteuiglobal.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
 #include "ui_wlmaccountpreferences.h"
 #include "wlmaccount.h"
 #include "wlmprotocol.h"
 
-WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * account):QWidget (parent),
-KopeteEditAccountWidget
-(account)
+WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * account)
+ : QWidget (parent), KopeteEditAccountWidget(account)
 {
-    (new QVBoxLayout (this));
-    kDebug (14210) << k_funcinfo;
-    QWidget *
-        w = new QWidget (this);
-    layout ()->addWidget (w);
     m_preferencesWidget = new Ui::WlmAccountPreferences ();
-    m_preferencesWidget->setupUi (w);
+    m_preferencesWidget->setupUi (this);
+    m_preferencesWidget->mainTabWidget->setCurrentIndex(0);
+
+    if ( account )
+    {
+        KConfigGroup * config = account->configGroup();
+        WlmAccount* wlmAccount = static_cast<WlmAccount*>(account);
+
+        m_preferencesWidget->m_passport->setText( wlmAccount->accountId() );
+        m_preferencesWidget->m_password->load( &wlmAccount->password() );
+
+        m_preferencesWidget->m_passport->setReadOnly( true );
+        m_preferencesWidget->m_autologin->setChecked( account->excludeConnect()  );
+        if ( wlmAccount->serverName() != "messenger.hotmail.com" || wlmAccount->serverPort() != 1863 || wlmAccount->useHttpMethod() )
+            m_preferencesWidget->optionOverrideServer->setChecked( true );
+
+        m_preferencesWidget->m_serverName->setText( wlmAccount->serverName() );
+        m_preferencesWidget->m_serverPort->setValue( wlmAccount->serverPort() );
+        m_preferencesWidget->optionUseHttpMethod->setChecked( wlmAccount->useHttpMethod() );
+    }
+
+    connect( m_preferencesWidget->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
+
+    QWidget::setTabOrder( m_preferencesWidget->m_passport, m_preferencesWidget->m_password->mRemembered );
+    QWidget::setTabOrder( m_preferencesWidget->m_password->mRemembered, m_preferencesWidget->m_password->mPassword );
+    QWidget::setTabOrder( m_preferencesWidget->m_password->mPassword, m_preferencesWidget->m_autologin );
 }
 
 WlmEditAccountWidget::~WlmEditAccountWidget ()
 {
+    delete m_preferencesWidget;
 }
 
 Kopete::Account * WlmEditAccountWidget::apply ()
 {
-    QString
-        accountName;
-    if (m_preferencesWidget->m_acctName->text ().isEmpty ())
-        accountName = "Wlm Account";
-    else
-        accountName = m_preferencesWidget->m_acctName->text ();
+    if ( !account() )
+        setAccount( new WlmAccount( WlmProtocol::protocol (), m_preferencesWidget->m_passport->text () ) );
 
-    if (account ())
-        // FIXME: ? account()->setAccountLabel(accountName);
-        account ()->myself ()->
-            setProperty (Kopete::Global::Properties::self ()->nickName (),
-                         accountName);
-    else
-        setAccount (new WlmAccount (WlmProtocol::protocol (), accountName));
+    KConfigGroup *config = account()->configGroup();
+
+    account()->setExcludeConnect( m_preferencesWidget->m_autologin->isChecked() );
+    m_preferencesWidget->m_password->save( &static_cast<WlmAccount *>(account())->password() );
+
+    if (m_preferencesWidget->optionOverrideServer->isChecked() ) {
+        config->writeEntry( "serverName", m_preferencesWidget->m_serverName->text().trimmed() );
+        config->writeEntry( "serverPort", m_preferencesWidget->m_serverPort->value()  );
+    }
+    else {
+        config->writeEntry( "serverName", "messenger.hotmail.com" );
+        config->writeEntry( "serverPort", "1863" );
+    }
+
+    config->writeEntry( "useHttpMethod", m_preferencesWidget->optionUseHttpMethod->isChecked() );
 
     return account ();
 }
 
-bool
-WlmEditAccountWidget::validateData ()
+bool WlmEditAccountWidget::validateData ()
 {
-    //return !( m_preferencesWidget->m_acctName->text().isEmpty() );
-    return true;
+    QString contactId = m_preferencesWidget->m_passport->text();
+    if ( WlmProtocol::validContactId( contactId ) )
+        return true;
+
+    KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+                                   i18n( "<qt>You must enter a valid WLM passport.</qt>" ), i18n( "WLM Plugin" ) );
+    return false;
+}
+
+void WlmEditAccountWidget::slotOpenRegister()
+{
+    KToolInvocation::invokeBrowser( "http://register.passport.net/"  );
 }
 
 #include "wlmeditaccountwidget.moc"

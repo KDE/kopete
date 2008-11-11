@@ -56,6 +56,9 @@ class WlmProtocol: public Kopete::Protocol
 	 * Access the instance of this protocol
 	 */
     static WlmProtocol * protocol ();
+
+    static bool validContactId(const QString&);
+
     /**
 	 * Represents contacts that are Online
 	 */

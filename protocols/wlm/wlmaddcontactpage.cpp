@@ -21,10 +21,13 @@
 #include <QLineEdit>
 
 #include <kdebug.h>
+#include <kmessagebox.h>
 
+#include "kopeteuiglobal.h"
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
 
+#include "wlmprotocol.h"
 #include "ui_wlmaddui.h"
 
 WlmAddContactPage::WlmAddContactPage (QWidget * parent):
@@ -36,19 +39,27 @@ AddContactPage (parent)
 
 WlmAddContactPage::~WlmAddContactPage ()
 {
+    delete m_wlmAddUI;
 }
 
 bool
 WlmAddContactPage::apply (Kopete::Account *account, Kopete::MetaContact * metaContact)
 {
-	QString contactId = m_wlmAddUI->m_uniqueName->text();
-	return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
+   QString contactId = m_wlmAddUI->m_uniqueName->text();
+   return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
 }
 
 bool
 WlmAddContactPage::validateData ()
 {
-    return true;
+    QString contactId = m_wlmAddUI->m_uniqueName->text();
+    if (WlmProtocol::validContactId(contactId))
+        return true;
+
+    KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+                                   i18n( "<qt>You must enter a valid WLM passport.</qt>" ), i18n( "MSN Plugin" )  );
+
+    return false;
 }
 
 

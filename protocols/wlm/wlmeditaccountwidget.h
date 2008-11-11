@@ -49,7 +49,11 @@ class WlmEditAccountWidget:public QWidget,
 	 * Is the data correct?
 	 */
     virtual bool validateData ();
-  protected:
+
+private slots:
+    void slotOpenRegister();
+
+private:
       Kopete::Account * m_account;
       Ui::WlmAccountPreferences * m_preferencesWidget;
 };

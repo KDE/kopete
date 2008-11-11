@@ -149,6 +149,9 @@ WlmProtocol::protocol ()
     return s_protocol;
 }
 
-
+bool WlmProtocol::validContactId (const QString& contactId)
+{
+    return( contactId.count("@") == 1 && contactId.count(".") >= 1 );
+}
 
 #include "wlmprotocol.moc"

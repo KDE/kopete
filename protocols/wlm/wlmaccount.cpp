@@ -249,6 +249,21 @@ WlmAccount::connectWithPassword (const QString & pass)
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmConnecting);
 }
 
+QString WlmAccount::serverName() const
+{
+    return configGroup()->readEntry(  "serverName" , "messenger.hotmail.com" );
+}
+
+uint WlmAccount::serverPort() const
+{
+    return configGroup()->readEntry(  "serverPort" , 1863 );
+}
+
+bool WlmAccount::useHttpMethod() const
+{
+    return configGroup()->readEntry(  "useHttpMethod" , false );
+}
+
 void
 WlmAccount::gotNewContact (const MSN::ContactList & list,
                            const QString & contact,

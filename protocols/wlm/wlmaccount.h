@@ -83,24 +83,23 @@ class WlmAccount:public
         /**
 	 * Disconnect from the server.  Only sets myself() offline.
 	 */
-    virtual void
-    disconnect ();
+    virtual void disconnect ();
         /**
 	 * Return a reference to the server stub
 	 */
-    virtual void
-    connectWithPassword (const QString & password);
+    virtual void connectWithPassword (const QString & password);
 
-    WlmServer *
-    server ();
+    QString serverName() const;
+    uint serverPort() const;
+    bool useHttpMethod() const;
 
-    WlmChatManager *
-    chatManager ()
+    WlmServer * server ();
+
+    WlmChatManager * chatManager ()
     {
         return m_chatManager;
     }
-    WlmTransferManager *
-    transferManager ()
+    WlmTransferManager * transferManager ()
     {
         return m_transferManager;
     }

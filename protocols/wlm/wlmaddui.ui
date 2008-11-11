@@ -5,39 +5,83 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>375</width>
-    <height>49</height>
+    <width>420</width>
+    <height>69</height>
    </rect>
   </property>
-  <layout class="QFormLayout" name="formLayout" >
-   <item row="0" column="0" >
-    <widget class="QLabel" name="textLabel1" >
-     <property name="toolTip" >
-      <string>The account name of the account you would like to add.</string>
-     </property>
-     <property name="whatsThis" >
-      <string>The account name of the account you would like to add.</string>
-     </property>
-     <property name="text" >
-      <string>&amp;WLM Passport:</string>
-     </property>
-     <property name="wordWrap" >
-      <bool>false</bool>
-     </property>
-     <property name="buddy" >
-      <cstring>m_uniqueName</cstring>
-     </property>
-    </widget>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="QLabel" name="textLabel1" >
+       <property name="toolTip" >
+        <string>The account name of the account you would like to add.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The account name of the account you would like to add.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;WLM Passport:</string>
+       </property>
+       <property name="wordWrap" >
+        <bool>false</bool>
+       </property>
+       <property name="buddy" >
+        <cstring>m_uniqueName</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="m_uniqueName" >
+       <property name="toolTip" >
+        <string>The account name of the account you would like to add.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The account name of the account you would like to add.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="0" column="1" >
-    <widget class="QLineEdit" name="m_uniqueName" >
-     <property name="toolTip" >
-      <string>The account name of the account you would like to add.</string>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>175</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="textLabel2" >
+       <property name="text" >
+        <string>&lt;i>(for example: joe@hotmail.com)&lt;/i></string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="whatsThis" >
-      <string>The account name of the account you would like to add.</string>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>19</height>
+      </size>
      </property>
-    </widget>
+    </spacer>
    </item>
   </layout>
  </widget>
