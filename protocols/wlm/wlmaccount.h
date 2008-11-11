@@ -179,12 +179,33 @@ class WlmAccount:public
     void
     scheduleConnect ();
 
+    void gotAddedGroup (bool added,
+                        const QString & groupName,
+                        const QString & groupId);
+
+    void gotRemovedGroup (bool removed,
+                            const QString & groupId);
+
     void
-    gotAddedContactToAddressBook (const bool & added,
+    gotAddedContactToGroup (bool added,
+                            const QString & groupId,
+                            const QString & contactId);
+
+    void
+    gotRemovedContactFromGroup (bool removed,
+                                const QString & groupId,
+                                const QString & contactId);
+
+    void
+    gotAddedContactToAddressBook (bool added,
                                   const QString & passport,
                                   const QString & displayName,
                                   const QString & guid);
 
+    void
+    gotRemovedContactFromAddressBook (bool removed,
+                                          const QString & passport,
+                                          const QString & contactId);
     void
     deletedOIM(const QString& id, const bool deleted);
   protected:
@@ -258,6 +279,15 @@ class WlmAccount:public
         clientid;
 
     QMap < QString, QString > m_oimList;
+
+    //contacts waiting on their group to be added
+    QMap<QString, QString> m_contactAddQueue;
+
+    //group name to group id map
+    QMap<QString, QString> m_groupToGroupId;
+
+    // passport set of contacts which are stored on server
+    QSet<QString> m_serverSideContactsPassports;
 
 };
 

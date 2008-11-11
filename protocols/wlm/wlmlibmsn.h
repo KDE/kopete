@@ -332,11 +332,33 @@ class Callbacks:public QObject,
     gotNewContact (const MSN::ContactList & list, const QString & contact,
                    const QString & friendlyname);
 
+    void gotAddedGroup (bool added,
+                        const QString & groupName,
+                        const QString & groupId);
+
+    void gotRemovedGroup (bool removed,
+                            const QString & groupId);
+
     void
-    gotAddedContactToAddressBook (const bool & added,
+    gotAddedContactToGroup (bool added,
+                            const QString & groupId,
+                            const QString & contactId);
+
+    void
+    gotRemovedContactFromGroup (bool removed,
+                                const QString & groupId,
+                                const QString & contactId);
+
+    void
+    gotAddedContactToAddressBook (bool added,
                                   const QString & passport,
                                   const QString & displayName,
                                   const QString & guid);
+
+    void
+    gotRemovedContactFromAddressBook (bool removed,
+                                      const QString & passport,
+                                      const QString & contactId);
 
     void
     receivedNudge (MSN::SwitchboardServerConnection * conn,

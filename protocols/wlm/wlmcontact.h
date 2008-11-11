@@ -72,11 +72,9 @@ class WlmContact:public
 	 */
     virtual Kopete::ChatSession * manager (CanCreateFlags canCreate = CannotCreate);
 
-    void
-    setContactSerial (QString contactSerial)
-    {
-        m_contactSerial = contactSerial;
-    }
+    void setContactSerial (QString contactSerial) { m_contactSerial = contactSerial; }
+
+    QString contactSerial () const { return m_contactSerial; }
 
     public slots:
     /**

@@ -99,10 +99,43 @@ bool
 WlmAccount::createContact (const QString & contactId,
                            Kopete::MetaContact * parentContact)
 {
-    WlmContact *newContact =
-        new WlmContact (this, contactId, QString::null,
-                        parentContact->displayName (), parentContact);
-    return newContact != 0L;
+    kDebug() << "contact " << contactId;
+    WlmContact *newContact = new WlmContact (this, contactId, QString::null, parentContact->displayName (), parentContact);
+
+    if (parentContact->isTemporary())
+        return true;
+
+    if (m_serverSideContactsPassports.contains(contactId))
+    {
+        kDebug() << "contact " << contactId << " already on server list. Do nothing.";
+        return true;
+    }
+
+    QString groupName;
+    Kopete::GroupList kopeteGroups = parentContact->groups(); //get the group list
+
+    if (kopeteGroups.isEmpty() || kopeteGroups.first() == Kopete::Group::topLevel())
+        groupName = i18n("Buddies");
+    else
+        groupName = kopeteGroups.first() ? kopeteGroups.first()->displayName() : i18n("Buddies");
+
+    // emergency exit, should never occur
+    if (groupName.isEmpty())
+        return false;
+
+    m_contactAddQueue.insert(contactId.toAscii(), groupName.toAscii());
+    if (!m_groupToGroupId.contains(groupName.toAscii()))
+    {
+        kDebug() << "group \'" << groupName << "\' not found adding group";
+        m_server->cb.mainConnection->addGroup (groupName.toAscii().data());
+    }
+    else
+    {
+        kDebug() << "group \'" << groupName << "\' found adding contact";
+        m_server->cb.mainConnection->addToAddressBook (contactId.toAscii().data(), contactId.toAscii().data());
+    }
+
+	return newContact != 0L;
 }
 
 void
@@ -460,8 +493,12 @@ WlmAccount::groupListReceivedFromServer (std::map < std::string,
             Kopete::ContactList::self ()->findGroup (g->name.c_str ());
         QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
         if (!b)
-            Kopete::ContactList::self ()->addGroup (
-                      new Kopete::Group (QString (g->name.c_str ()).toAscii ().data ()));
+        {
+            b = new Kopete::Group (QString (g->name.c_str ()).toAscii ().data ());
+            Kopete::ContactList::self ()->addGroup ( b );
+        }
+
+        m_groupToGroupId.insert (QString(g->name.c_str()), QString(g->groupID.c_str()));
     }
 /*
 	// remove local groups which are not on server
@@ -491,6 +528,10 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                                            MSN::Buddy * >&list)
 {
     kDebug (14210) << k_funcinfo;
+
+    // Clear server side passports
+    m_serverSideContactsPassports.clear ();
+
     // local contacts which dont exist on server should be deleted
     std::map < std::string, MSN::Buddy * >::iterator it;
     for (it = list.begin (); it != list.end (); ++it)
@@ -513,18 +554,14 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                 // only add users in forward list
                 if (b->lists & MSN::LST_AB)
                 {
-                    metacontact =
-                        addContact (b->userName.c_str (),
-                                    QString(),
-                                    0L,
-                                    Kopete::Account::DontChangeKABC);
+                    m_serverSideContactsPassports.insert (b->userName.c_str());
+                    metacontact = addContact (b->userName.c_str (), QString(), 0L, Kopete::Account::DontChangeKABC);
 
                     Kopete::Contact * newcontact = contacts ()[b->userName.c_str ()];
                     if(!newcontact)
                         return;
 
-                    newcontact->setProperty (Kopete::Global::Properties::self ()->
-                              nickName (), QString (b->friendlyName.c_str ()));
+                    newcontact->setProperty (Kopete::Global::Properties::self ()->nickName (), QString (b->friendlyName.c_str ()));
                 }
 
                 if (metacontact)
@@ -536,8 +573,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                         if (contact)
                         {
                             contact->setContactSerial (b->properties["contactId"].c_str ());
-                            kDebug (14210) << "ContactID: " << b->
-                                properties["contactId"].c_str ();
+                            kDebug (14210) << "ContactID: " << b->properties["contactId"].c_str ();
                         }
                     }
                 }
@@ -546,20 +582,13 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 
             for (; i != b->groups.end (); ++i)
             {
-                Kopete::Group * g =
-                    Kopete::ContactList::self ()->
-                    findGroup (QString ((*i)->name.c_str ()).toAscii ());
+                Kopete::Group * g = Kopete::ContactList::self ()->findGroup (QString ((*i)->name.c_str ()).toAscii ());
+
+                m_serverSideContactsPassports.insert (b->userName.c_str());
                 if (g)
-                    metacontact =
-                        addContact (b->userName.c_str (),
-                                    QString(), g,
-                                    Kopete::Account::DontChangeKABC);
+                    metacontact = addContact (b->userName.c_str (), QString(), g, Kopete::Account::DontChangeKABC);
                 else
-                    metacontact =
-                        addContact (b->userName.c_str (),
-                                    QString(),
-                                    Kopete::Group::topLevel (),
-                                    Kopete::Account::DontChangeKABC);
+                    metacontact = addContact (b->userName.c_str (), QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
 
                 if (metacontact)
                 {
@@ -570,15 +599,10 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                         WlmContact *contact = dynamic_cast <WlmContact *>(c);
                         if (contact)
                         {
-                            c->setProperty (Kopete::Global::Properties::self ()->
-                                nickName (), QString (b->friendlyName.c_str ()));
+                            c->setProperty (Kopete::Global::Properties::self ()->nickName (), QString (b->friendlyName.c_str ()));
 
-                            contact->setContactSerial (b->
-                                                       properties
-                                                       ["contactId"].
-                                                       c_str ());
-                            kDebug (14210) << "ContactID: " << b->
-                                properties["contactId"].c_str ();
+                            contact->setContactSerial (b->properties["contactId"].c_str ());
+                            kDebug (14210) << "ContactID: " << b->properties["contactId"].c_str ();
                         }
                     }
                 }
@@ -744,13 +768,24 @@ WlmAccount::connectionCompleted ()
                             (const MSN::ContactList &, const QString &,
                              const QString &)));
 
-    QObject::connect (&m_server->cb,
-                      SIGNAL (gotAddedContactToAddressBook
-                              (const bool &, const QString &,
-                               const QString &, const QString &)),
-                      SLOT (gotAddedContactToAddressBook
-                            (const bool &, const QString &,
-                             const QString &, const QString &)));
+    QObject::connect (&m_server->cb, SIGNAL(gotAddedContactToGroup(bool, const QString&, const QString&)),
+                      this, SLOT(gotAddedContactToGroup(bool, const QString&, const QString&)) );
+
+    QObject::connect (&m_server->cb, SIGNAL(gotRemovedContactFromGroup(bool, const QString&, const QString&)),
+                      this, SLOT(gotRemovedContactFromGroup(bool, const QString&, const QString&)) );
+
+    QObject::connect (&m_server->cb, SIGNAL(gotAddedGroup(bool, const QString&, const QString&)),
+                      this, SLOT(gotAddedGroup(bool, const QString&, const QString&)) );
+
+    QObject::connect (&m_server->cb, SIGNAL(gotRemovedGroup(bool, const QString&)),
+                      this, SLOT(gotRemovedGroup(bool, const QString&)) );
+
+
+    QObject::connect (&m_server->cb, SIGNAL(gotAddedContactToAddressBook (bool, const QString&, const QString&, const QString&)),
+                      this, SLOT(gotAddedContactToAddressBook(bool, const QString&, const QString&, const QString&)));
+
+    QObject::connect (&m_server->cb, SIGNAL(gotRemovedContactFromAddressBook(const bool&, const QString&, const QString&)),
+                      this, SLOT(gotRemovedContactFromAddressBook(bool, const QString&, const QString&)));
 
     MSN::BuddyStatus state = MSN::STATUS_AVAILABLE;
 
@@ -779,31 +814,99 @@ WlmAccount::connectionCompleted ()
     setPersonalMessage (current_msg);
 }
 
-void
-WlmAccount::gotAddedContactToAddressBook (const bool & added,
-                                          const QString & passport,
-                                          const QString & displayName,
-                                          const QString & guid)
+void WlmAccount::gotAddedGroup (bool added,
+                                const QString & groupName,
+                                const QString & groupId)
 {
+    kDebug() << "groupName: " << groupName << "groupId: " << groupId << " added:" << added;
+    QList<QString> contactIdList = m_contactAddQueue.keys (groupName);
+    if (!added)
+    {
+        // Remove contact from add queue. FIXME: We should somehow sync the contact list here
+        foreach ( QString contactId, contactIdList )
+            m_contactAddQueue.remove(contactId);
+
+        return;
+    }
+
+    // Insert new group
+    m_groupToGroupId.insert(groupName, groupId);
+
+    // Add contact to the new group
+    foreach ( QString contactId, contactIdList )
+    {
+        kDebug() << "adding contact " << contactId;
+        m_server->cb.mainConnection->addToAddressBook (contactId.toAscii().data(), contactId.toAscii().data());
+    }
+}
+
+void WlmAccount::gotRemovedGroup (bool removed,
+                      const QString & groupId)
+{
+    kDebug() << "groupId: " << groupId << " removed:" << removed;
+    if ( !removed )
+        return;
+
+    // remove group
+    m_groupToGroupId.remove(m_groupToGroupId.key(groupId));
+}
+
+void
+WlmAccount::gotAddedContactToGroup (bool added,
+                        const QString & groupId,
+                        const QString & contactId)
+{
+    kDebug() << "groupId: " << groupId << " contactId: " << contactId << " added:" << added;
+}
+
+void
+WlmAccount::gotRemovedContactFromGroup (bool removed,
+                            const QString & groupId,
+                            const QString & contactId)
+{
+    kDebug() << "groupId: " << groupId << " contactId: " << contactId << " removed:" << removed;
+}
+
+void
+WlmAccount::gotAddedContactToAddressBook (bool added, const QString & passport, const QString & displayName, const QString & guid)
+{
+    kDebug() << "contact: " << passport << " added:" << added << " guid: " << guid;
     if (added)
     {
-        addContact (passport,
-                    QString(),
-                    Kopete::Group::topLevel (),
-                    Kopete::Account::DontChangeKABC);
+        m_serverSideContactsPassports.insert (passport);
+        addContact (passport, QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
 
-        Kopete::Contact * newcontact = contacts ()[passport];
-        if(!newcontact)
+        WlmContact * newcontact = dynamic_cast <WlmContact *>(contacts ()[passport]);
+        if (!newcontact)
             return;
 
-        newcontact->setProperty (Kopete::Global::Properties::self ()->
-                  nickName (), displayName);
+        newcontact->setContactSerial (guid);
+        newcontact->setProperty (Kopete::Global::Properties::self()->nickName(), displayName);
 
+        QString groupName = m_contactAddQueue.value (passport);
+        if( !groupName.isEmpty() && m_groupToGroupId.contains (groupName.toAscii()) )
+        {
+            kDebug() << "Adding contact \'" << passport << "\' to group \'" << groupName << "\'";
+            QString groupId = m_groupToGroupId.value (groupName.toAscii());
+            m_server->cb.mainConnection->addToGroup (groupId.toAscii().data(), guid.toAscii().data());
+        }
     }
     else
     {
         // TODO: Raise an error
     }
+
+    // Remove contact from add queue
+    m_contactAddQueue.remove(passport);
+}
+
+void
+WlmAccount::gotRemovedContactFromAddressBook (bool removed, const QString & passport, const QString & contactId)
+{
+    kDebug() << "contact: " << passport << " removed:" << removed;
+    if (removed)
+        m_serverSideContactsPassports.remove( passport );
+
 }
 
 void

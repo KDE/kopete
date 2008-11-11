@@ -39,9 +39,10 @@ WlmAddContactPage::~WlmAddContactPage ()
 }
 
 bool
-WlmAddContactPage::apply (Kopete::Account * a, Kopete::MetaContact * m)
+WlmAddContactPage::apply (Kopete::Account *account, Kopete::MetaContact * metaContact)
 {
-    return false;
+	QString contactId = m_wlmAddUI->m_uniqueName->text();
+	return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
 }
 
 bool

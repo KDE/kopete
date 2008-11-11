@@ -281,6 +281,8 @@ Callbacks::addedGroup (MSN::NotificationServerConnection * conn, bool added,
     else
         printf ("Group (%s) was NOT added\n", groupName.c_str ());
 */
+    emit gotAddedGroup (added, QString(groupName.c_str()),
+                        QString(groupID.c_str()));
 }
 
 void
@@ -293,6 +295,7 @@ Callbacks::removedGroup (MSN::NotificationServerConnection * conn,
     else
         printf ("Group (%s) was NOT removed\n", groupID.c_str ());
 */
+    emit gotRemovedGroup (removed, QString(groupID.c_str()));
 }
 
 void
@@ -707,6 +710,8 @@ Callbacks::addedContactToGroup (MSN::NotificationServerConnection * conn,
         printf ("User Id (%s) NOT added to group Id (%s)\n",
                 contactId.c_str (), groupId.c_str ());
 */
+    emit gotAddedContactToGroup (added, QString(groupId.c_str()),
+                                 QString(contactId.c_str()));
 }
 
 void
@@ -722,6 +727,8 @@ Callbacks::removedContactFromGroup (MSN::NotificationServerConnection * conn,
         printf ("User Id (%s) NOT removed from group Id (%s)\n",
                 contactId.c_str (), groupId.c_str ());
 */
+    emit gotRemovedContactFromGroup (removed, QString(groupId.c_str()),
+                                     QString(contactId.c_str()));
 }
 
 void
@@ -756,6 +763,8 @@ Callbacks::removedContactFromAddressBook (MSN::NotificationServerConnection *
         printf ("User %s NOT removed from AddressBook. Guid (%s)\n",
                 passport.c_str (), contactId.c_str ());
 */
+    emit gotRemovedContactFromAddressBook (removed, QString(passport.c_str()),
+                                           QString(contactId.c_str()));
 }
 
 void
