@@ -1446,7 +1446,8 @@ int VideoDevice::close()
 	{
 		kDebug() << " Device is open. Trying to properly shutdown the device.";
 		stopCapturing();
-		kDebug() << "::close() returns " << ::close(descriptor);
+		int ret = ::close(descriptor);
+		kDebug() << "::close() returns " << ret;
 	}
 	descriptor = -1;
 	return EXIT_SUCCESS;
