@@ -70,11 +70,11 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	slotUpdateDisplayName ();
 
 #ifdef JINGLE_SUPPORT
-	KAction *jingleSessionGui = new KAction(i18n("Show Jingle sessions" ), members().first());
+	KAction *jingleSessionGui = new KAction(i18n("Show audio calls"), members().first());
 	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui() ));
 	setComponentData(protocol->componentData());
 	
-	KAction *jingleSession = new KAction(i18n("Start Jingle session" ), members().first());
+	KAction *jingleSession = new KAction(i18n("Start audio call"), members().first());
 	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession() ));
 	setComponentData(protocol->componentData());
 	
