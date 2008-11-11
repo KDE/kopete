@@ -10,21 +10,20 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 IF (NOT WIN32)
-  INCLUDE(UsePkgConfig)
-
-  PKGCONFIG(libidn _IDNIncDir _IDNLinkDir _IDNLinkFlags _IDNCflags)
+  find_package(PkgConfig)
+  pkg_check_modules(LIBIDN libidn)
 
   FIND_PATH(IDN_INCLUDE_DIR idna.h
     PATHS
-    ${_IDNIncDir}
+    ${LIBIDN_INCLUDE_DIRS}
     NO_DEFAULT_PATH
   )
 
-  set(IDN_DEFINITIONS ${_IDNCflags})
+  set(IDN_DEFINITIONS ${LIBIDN_CFLAGS})
 
   FIND_LIBRARY(IDN_LIBRARY NAMES idn
     PATHS
-    ${_IDNLinkDir} 
+    ${LIBIDN_LIBRARY_DIRS} 
     NO_DEFAULT_PATH 
   )
 ELSE (NOT WIN32)

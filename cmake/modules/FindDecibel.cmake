@@ -21,19 +21,19 @@
 
 
 IF (NOT WIN32)
-INCLUDE(UsePkgConfig)
+find_package(PkgConfig)
+pkg_check_modules(QTTAPIOCA QtTapioca)
 
-PKGCONFIG(QtTapioca _TapiocaIncDir _TapiocaLinkDir _TapiocaLinkFlags _TapiocaCflags)
 ENDIF(NOT WIN32)
 
-set(QT_TAPIOCA_INCLUDE_DIR ${_TapiocaIncDir})
+set(QT_TAPIOCA_INCLUDE_DIR ${QTTAPIOCA_INCLUDE_DIRS})
 
-set(DECIBEL_DEFINITIONS ${_TapiocaCflags})
+set(DECIBEL_DEFINITIONS ${QTTAPIOCA_CFLAGS})
 set(DECIBEL_INCLUDES ${QT_TAPIOCA_INCLUDE_DIR} )
 
 FIND_LIBRARY(QT_TAPIOCA_LIBRARY NAMES QtTapioca
   PATHS
-  ${_TapiocaLinkDir} 
+  ${QTTAPIOCA_LIBRARY_DIRS} 
   NO_DEFAULT_PATH 
 )
 
