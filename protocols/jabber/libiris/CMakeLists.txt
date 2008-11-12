@@ -125,7 +125,7 @@ kde4_add_library(iris_kopete SHARED ${libiris_SRCS})
 #kde4_add_executable(testapp ${testapp_SRCS})
 
 set(iris_kopete_libs ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY}
-                     ${IDN_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES})
+                     ${IDN_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES})
 
 if(WIN32)
   set(iris_kopete_libs ${iris_kopete_libs} ws2_32)
@@ -139,7 +139,7 @@ endif(HAVE_NSL_LIBRARY)
 target_link_libraries(iris_kopete ${iris_kopete_libs})
 
 #set(iris_testapp_libs ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY}
-#                     ${IDN_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES}
+#                     ${IDN_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES}
 #		     iris_kopete)
 
 #target_link_libraries(testapp ${iris_testapp_libs})
