@@ -443,6 +443,9 @@ void JT_JingleAction::terminate(const JingleReason& r)
 	case JingleReason::NoReason :
 		rReason = doc()->createElement("no-error");
 		break;
+	case JingleReason::UnsupportedApplications :
+		rReason = doc()->createElement("unsupported-applications");
+		break;
 	default:
 		rReason = doc()->createElement("unknown");
 	}

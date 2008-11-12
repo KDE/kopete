@@ -317,7 +317,7 @@ void JingleCallsManager::slotUserAccepted()
 	else if (contentDialog->checked().count() == 0)
 	{
 		kDebug() << "Terminate the session, no contents accepted.";
-		contentDialog->session()->terminate(JingleReason(JingleReason::Decline));
+		contentDialog->session()->sessionTerminate(JingleReason(JingleReason::Decline));
 	}
 	else
 	{
@@ -337,7 +337,7 @@ void JingleCallsManager::slotUserRejected()
 		kDebug() << "Fatal Error : sender is NULL !!!!";
 		return;
 	}
-	contentDialog->session()->terminate(JingleReason(JingleReason::Decline));
+	contentDialog->session()->sessionTerminate(JingleReason(JingleReason::Decline));
 	kDebug() << "end";
 	contentDialog->close();
 	contentDialog->deleteLater();

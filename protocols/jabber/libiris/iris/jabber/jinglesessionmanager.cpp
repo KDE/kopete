@@ -185,30 +185,52 @@ void JingleSessionManager::slotSessionIncoming()
 	JingleSession *sess = d->pjs->takeNextIncomingSession();
 	d->sessions << sess;
 	connect(sess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
-	QList<QString> incompatibleContents;
-	// This is a list of the names of the contents which have no supported transports or no supported payloads.
-	// We have to remove all contents present in this list.
-	// If all contents are here, reject the session because it's not possible to establish a session.
+	//QList<QString> incompatibleContents;
+	
+	QList<QString> unsupportedPayloads;
+	// This is a list of the names of the contents which have no supported payloads.
+	
+	QList<QString> unsupportedTransports;
+	// This is a list of the names of the contents which have no supported transports
+	// We have to remove all contents present in those lists.
+	//
+	// If no content is supported, reject the session because it's not possible to establish a session.
 
 	for (int i = 0; i < sess->contents().count(); i++)
 	{
 		JingleContent *c = sess->contents()[i];
+		
+		//Set supported payloads for this content.
+		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
 
 		// Check payloads for the content c
 		if (!checkSupportedPayloads(c))
 		{
-			incompatibleContents << c->name();
-			//return;
+			//incompatibleContents << c->name();
+			unsupportedPayloads << c->name();
+			continue;
 		}
 		
 		if (!checkSupportedTransport(c))
 		{
-			incompatibleContents << c->name();
-			//return;
+			//incompatibleContents << c->name();
+			unsupportedTransports << c->name();
 		}
-
-		//Set supported payloads for this content.
-		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
+	}
+	
+	if (unsupportedPayloads.count() + unsupportedTransports.count() == sess->contents().count())
+	{
+		//Reject the session.
+		JingleReason r(JingleReason::UnsupportedApplications);
+		sess->sessionTerminate(r);
+		//What happens when we receive the ack of the session-terminate ?
+		return;
+	}
+	else if (unsupportedPayloads.count() + unsupportedTransports.count() > 0)
+	{
+		//remove this contents list
+		sess->removeContent(unsupportedPayloads + unsupportedTransports);
+		return;
 	}
 	
 	emit newJingleSession(sess);
@@ -220,8 +242,10 @@ void JingleSessionManager::slotSessionIncoming()
 
 bool JingleSessionManager::checkSupportedPayloads(JingleContent *c)
 {
-	/*for (int i = 0; i < c->payloadTypes().count(); i++)
+	qDebug() << "We have" << c->responderPayloads().count() << "responder payloads in this content.";
+	for (int i = 0; i < c->payloadTypes().count(); i++)
 	{
+		qDebug() << "We have" << d->supportedAudioPayloads.count() << "supported payloads.";
 		for (int j = 0; j < d->supportedAudioPayloads.count(); j++)
 		{
 			qDebug() << "compare" << c->payloadTypes().at(i).attribute("name") << "to" << d->supportedAudioPayloads.at(j).attribute("name");
@@ -234,9 +258,9 @@ bool JingleSessionManager::checkSupportedPayloads(JingleContent *c)
 			}
 		}
 	}
-	qDebug() << "return false";*/
 
-	return true;
+	qDebug() << "return false";
+	return false;
 }
 
 bool JingleSessionManager::checkSupportedTransport(JingleContent *c)
