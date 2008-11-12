@@ -3,8 +3,8 @@
 # Copyright (c) 2006, Will Stephenson <wstephenson@kde.org>
 #
 #  IDN_FOUND - Test has found IDN dependencies
-#  IDN_INCLUDES - Include needed for IDN
-#  IDN_LIBRARY - Libraries needed for IDN
+#  IDN_INCLUDE_DIR - Include needed for IDN
+#  IDN_LIBRARIES - Libraries needed for IDN
 #  IDN_DEFINITIONS - Compiler swithces required for using IDN
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
