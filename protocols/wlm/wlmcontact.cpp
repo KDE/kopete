@@ -19,6 +19,8 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <ktoggleaction.h>
+#include <kactioncollection.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <KUrl>
@@ -41,9 +43,13 @@ Kopete::Contact (_account, uniqueName, parent)
     kDebug (14210) << k_funcinfo << " uniqueName: " << uniqueName <<
         ", displayName: " << displayName;
     m_msgManager = 0L;
+    m_account = dynamic_cast<WlmAccount*>(account());
     setFileCapable (true);
     setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     m_contactSerial = contactSerial;
+
+    m_actionBlockContact = new KToggleAction(i18n("Block Contact"), this );
+    QObject::connect( m_actionBlockContact, SIGNAL(triggered(bool)), this, SLOT(blockContact(bool)) );
 }
 
 WlmContact::~WlmContact ()
@@ -109,10 +115,31 @@ Kopete::ChatSession *
     return manager;
 }
 
-QList < KAction * >*WlmContact::customContextMenuActions ()     //OBSOLETE
+QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
 {
-    //FIXME!!!  this function is obsolete, we should use XMLGUI instead
-    return 0L;
+    QList<KAction*> *actions = new QList<KAction*>();
+
+    m_actionBlockContact->setChecked( m_account->isOnBlockList(contactId()) );
+
+    actions->append(m_actionBlockContact);
+
+    // temporary action collection, used to apply Kiosk policy to the actions
+    KActionCollection tempCollection((QObject*)0);
+    tempCollection.addAction(QLatin1String("contactBlock"), m_actionBlockContact);
+
+    return actions;
+}
+
+void WlmContact::blockContact ( bool block )
+{
+    if (!account()->isConnected() || m_account->isOnBlockList(contactId()) == block)
+        return;
+
+    WlmAccount* wlmAccount = dynamic_cast<WlmAccount*>(account());
+    if (block)
+        wlmAccount->server()->mainConnection->addToList( MSN::LST_BL, contactId().toAscii().data() );
+    else
+        wlmAccount->server()->mainConnection->removeFromList( MSN::LST_BL, contactId().toAscii().data() );
 }
 
 void

@@ -29,6 +29,7 @@
 
 class KAction;
 class KActionCollection;
+class KToggleAction;
 namespace Kopete
 {
     class Account;
@@ -42,14 +43,15 @@ namespace Kopete
     class MetaContact;
 }
 
+class WlmAccount;
+
 /**
 @author Will Stephenson
 */
-class WlmContact:public
-    Kopete::Contact
+class WlmContact : public Kopete::Contact
 {
     Q_OBJECT
-  public:
+public:
     WlmContact (Kopete::Account * _account, const QString & uniqueName,
                 const QString & contactSerial,
                 const QString & displayName, Kopete::MetaContact * parent);
@@ -76,7 +78,7 @@ class WlmContact:public
 
     QString contactSerial () const { return m_contactSerial; }
 
-    public slots:
+public slots:
     /**
 	 * Transmits an outgoing message to the server 
 	 * Called when the chat window send button has been pressed
@@ -89,24 +91,17 @@ class WlmContact:public
 	 */
     void receivedMessage (const QString & message);
 
-    QString
-    getMsnObj ()
-    {
-        return m_msnobj;
-    }
+    QString getMsnObj () { return m_msnobj; }
 
-    void
-    setMsnObj (QString msnobj)
-    {
-        m_msnobj = msnobj;
-    }
+    void setMsnObj (QString msnobj) { m_msnobj = msnobj; }
 
     virtual void deleteContact ();
 
     virtual void sendFile (const KUrl & sourceURL = KUrl (),
               const QString & fileName = QString::null, uint fileSize = 0L);
 
-    protected slots:
+    void blockContact ( bool block );
+protected slots:
     /**
 	 * Show the settings dialog
 	 */
@@ -117,9 +112,10 @@ class WlmContact:public
 	 */
     void slotChatSessionDestroyed ();
 
-  protected:
+protected:
     WlmChatSession * m_msgManager;
-    KActionCollection * m_actionCollection;
+    WlmAccount * m_account;
+    KToggleAction* m_actionBlockContact;
     KAction * m_actionPrefs;
     QString m_msnobj;
     QString m_contactSerial;

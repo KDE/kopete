@@ -269,6 +269,7 @@ WlmAccount::gotNewContact (const MSN::ContactList & list,
                            const QString & contact,
                            const QString & friendlyname)
 {
+    kDebug() << "contact " << contact;
     if (list == MSN::LST_RL)
     {
         Kopete::UI::ContactAddedNotifyDialog * dialog =
@@ -279,6 +280,31 @@ WlmAccount::gotNewContact (const MSN::ContactList & list,
         QObject::connect (dialog, SIGNAL (applyClicked (const QString &)),
                           this,SLOT (slotContactAddedNotifyDialogClosed(const QString &)));
         dialog->show ();
+    }
+    else if (list == MSN::LST_BL)
+    {
+        kDebug() << "contact " << contact << " added to block list";
+        m_blockList.insert( contact );
+    }
+    else if (list == MSN::LST_AL)
+    {
+        kDebug() << "contact " << contact << " added to allow list";
+        m_allowList.insert( contact );
+    }
+}
+
+void WlmAccount::gotRemovedContactFromList (const MSN::ContactList & list, const QString & contact)
+{
+    kDebug() << "contact " << contact;
+    if (list == MSN::LST_BL)
+    {
+        kDebug() << "contact " << contact << " removed from block list";
+        m_blockList.remove( contact );
+    }
+    else if (list == MSN::LST_AL)
+    {
+        kDebug() << "contact " << contact << " removed from allow list";
+        m_allowList.remove( contact );
     }
 }
 
@@ -553,8 +579,14 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
     {
         Kopete::MetaContact * metacontact = 0L;
         MSN::Buddy * b = (*it).second;
-        Kopete::Contact * contact = contacts ()[(*it).first.c_str ()];
-        if (!contact)
+        QString passport = (*it).first.c_str();
+
+        if ( b->lists & MSN::LST_AL )
+            m_allowList.insert( passport );
+        if ( b->lists & MSN::LST_BL )
+            m_blockList.insert( passport );
+
+        if ( !contacts().value( passport ) )
         {
             if (!b->friendlyName.length ())
                 b->friendlyName = b->userName;
@@ -581,15 +613,11 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 
                 if (metacontact)
                 {
-                    Kopete::Contact * c = contacts ()[(*it).first.c_str ()];
-                    if (c)
+                    WlmContact *contact = dynamic_cast<WlmContact*>(contacts().value( passport ));
+                    if (contact)
                     {
-                        WlmContact *contact = dynamic_cast <WlmContact *>(c);
-                        if (contact)
-                        {
-                            contact->setContactSerial (b->properties["contactId"].c_str ());
-                            kDebug (14210) << "ContactID: " << b->properties["contactId"].c_str ();
-                        }
+                        contact->setContactSerial (b->properties["contactId"].c_str ());
+                        kDebug (14210) << "ContactID: " << b->properties["contactId"].c_str ();
                     }
                 }
                 continue;
@@ -607,18 +635,12 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 
                 if (metacontact)
                 {
-                    Kopete::Contact * c = contacts ()[(*it).first.c_str ()];
-
-                    if (c)
+                    WlmContact *contact = dynamic_cast<WlmContact*>(contacts().value( passport ));
+                    if (contact)
                     {
-                        WlmContact *contact = dynamic_cast <WlmContact *>(c);
-                        if (contact)
-                        {
-                            c->setProperty (Kopete::Global::Properties::self ()->nickName (), QString (b->friendlyName.c_str ()));
-
-                            contact->setContactSerial (b->properties["contactId"].c_str ());
-                            kDebug (14210) << "ContactID: " << b->properties["contactId"].c_str ();
-                        }
+                        contact->setProperty (Kopete::Global::Properties::self ()->nickName (), QString (b->friendlyName.c_str ()));
+                        contact->setContactSerial (b->properties["contactId"].c_str ());
+                        kDebug (14210) << "ContactID: " << b->properties["contactId"].c_str ();
                     }
                 }
             }
@@ -775,13 +797,11 @@ WlmAccount::connectionCompleted ()
                             (const MSN::Passport &,
                              const MSN::personalInfo &)));
 
-    QObject::connect (&m_server->cb,
-                      SIGNAL (gotNewContact
-                              (const MSN::ContactList &, const QString &,
-                               const QString &)),
-                      SLOT (gotNewContact
-                            (const MSN::ContactList &, const QString &,
-                             const QString &)));
+    QObject::connect (&m_server->cb, SIGNAL(gotNewContact(const MSN::ContactList&, const QString&, const QString&)),
+                      SLOT (gotNewContact(const MSN::ContactList&, const QString&, const QString&)));
+
+    QObject::connect (&m_server->cb, SIGNAL(gotRemovedContactFromList(const MSN::ContactList&, const QString&)),
+                      this, SLOT(gotRemovedContactFromList(const MSN::ContactList&, const QString&)) );
 
     QObject::connect (&m_server->cb, SIGNAL(gotAddedContactToGroup(bool, const QString&, const QString&)),
                       this, SLOT(gotAddedContactToGroup(bool, const QString&, const QString&)) );

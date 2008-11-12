@@ -104,6 +104,10 @@ class WlmAccount:public
         return m_transferManager;
     }
 
+    bool isOnAllowList( QString passport ) const { return m_allowList.contains( passport ); }
+
+    bool isOnBlockList( QString passport ) const { return m_blockList.contains( passport ); }
+
     public
         slots:
         /**
@@ -153,6 +157,8 @@ class WlmAccount:public
     void
     gotNewContact (const MSN::ContactList & list, const QString & contact,
                    const QString & friendlyname);
+
+    void gotRemovedContactFromList (const MSN::ContactList & list, const QString & contact);
 
     void
     slotContactAddedNotifyDialogClosed (const QString &);
@@ -287,6 +293,12 @@ class WlmAccount:public
 
     // passport set of contacts which are stored on server
     QSet<QString> m_serverSideContactsPassports;
+
+    // passport set of contacts which are on allow list
+    QSet<QString> m_allowList;
+
+    // passport set of contacts which are on block list
+    QSet<QString> m_blockList;
 
 };
 

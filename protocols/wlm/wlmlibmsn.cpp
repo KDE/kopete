@@ -268,7 +268,7 @@ void
 Callbacks::removedListEntry (MSN::NotificationServerConnection * conn,
                              MSN::ContactList list, MSN::Passport username)
 {
-    // list is a number which matches with MSN::ContactList enum on util.h
+    emit gotRemovedContactFromList (list, username.c_str ());
 }
 
 void

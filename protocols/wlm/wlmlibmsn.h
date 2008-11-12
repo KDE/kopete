@@ -332,6 +332,8 @@ class Callbacks:public QObject,
     gotNewContact (const MSN::ContactList & list, const QString & contact,
                    const QString & friendlyname);
 
+    void gotRemovedContactFromList (const MSN::ContactList & list, const QString & contact);
+
     void gotAddedGroup (bool added,
                         const QString & groupName,
                         const QString & groupId);
