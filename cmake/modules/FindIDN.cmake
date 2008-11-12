@@ -9,31 +9,37 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
-IF (NOT WIN32)
-  find_package(PkgConfig)
-  pkg_check_modules(LIBIDN libidn)
 
-  FIND_PATH(IDN_INCLUDE_DIR idna.h
-    PATHS
-    ${LIBIDN_INCLUDE_DIRS}
-    NO_DEFAULT_PATH
-  )
+if (IDN_INCLUDEDIR AND IDN_LIBRARIES)
+    # cached
+    SET(IDN_FOUND TRUE)
+else (IDN_INCLUDEDIR AND IDN_LIBRARIES)
+    if (NOT WIN32)
+        find_package(PkgConfig)
+        if(PKG_CONFIG_EXECUTABLE)
+            pkg_check_modules(IDN libidn)
+        endif(PKG_CONFIG_EXECUTABLE)
+    endif (NOT WIN32)
+  
+    if(NOT IDN_FOUND)
+        find_path(IDN_INCLUDEDIR idna.h)
+        find_library(IDN_LIBRARIES NAMES idn)
+        if (IDN_INCLUDEDIR AND IDN_LIBRARIES)
+            SET(IDN_FOUND TRUE)
+        endif (IDN_INCLUDEDIR AND IDN_LIBRARIES)
+    endif(NOT IDN_FOUND)
 
-  set(IDN_DEFINITIONS ${LIBIDN_CFLAGS})
-
-  FIND_LIBRARY(IDN_LIBRARY NAMES idn
-    PATHS
-    ${LIBIDN_LIBRARY_DIRS} 
-    NO_DEFAULT_PATH 
-  )
-ELSE (NOT WIN32)
-  FIND_PATH(IDN_INCLUDE_DIR idna.h)
-  FIND_LIBRARY(IDN_LIBRARY NAMES idn idn-11 libidn-11)
-ENDIF (NOT WIN32)
-set(IDN_INCLUDES ${IDN_INCLUDE_DIR} )
-
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(IDN DEFAULT_MSG IDN_INCLUDES IDN_LIBRARY )
-
-MARK_AS_ADVANCED(IDN_INCLUDE_DIR IDN_LIBRARY)
+    if(IDN_FOUND)
+        set(IDN_DEFINITIONS ${IDN_CFLAGS})
+        if(NOT IDN_FIND_QUIETLY)
+            message(STATUS "Found libidn: ${IDN_LIBRARIES}")
+        endif(NOT IDN_FIND_QUIETLY)
+        set(IDN_INCLUDE_DIR ${IDN_INCLUDEDIR})
+        mark_as_advanced( IDN_INCLUDE_DIR )
+    else(IDN_FOUND)
+        if (IDN_FIND_REQUIRED)
+            message(FATAL_ERROR "Not found required libidn")
+        endif (IDN_FIND_REQUIRED)
+    endif(IDN_FOUND)
+endif (IDN_INCLUDEDIR AND IDN_LIBRARIES)
 
