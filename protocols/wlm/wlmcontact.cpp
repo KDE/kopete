@@ -50,6 +50,9 @@ Kopete::Contact (_account, uniqueName, parent)
 
     m_actionBlockContact = new KToggleAction(i18n("Block Contact"), this );
     QObject::connect( m_actionBlockContact, SIGNAL(triggered(bool)), this, SLOT(blockContact(bool)) );
+
+    m_actionAllowContact = new KToggleAction(i18n("Allow Contact"), this );
+    QObject::connect( m_actionAllowContact, SIGNAL(triggered(bool)), this, SLOT(allowContact(bool)) );
 }
 
 WlmContact::~WlmContact ()
@@ -120,7 +123,9 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     QList<KAction*> *actions = new QList<KAction*>();
 
     m_actionBlockContact->setChecked( m_account->isOnBlockList(contactId()) );
+    m_actionAllowContact->setChecked( m_account->isOnAllowList(contactId()) );
 
+    actions->append(m_actionAllowContact);
     actions->append(m_actionBlockContact);
 
     // temporary action collection, used to apply Kiosk policy to the actions
@@ -128,6 +133,18 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     tempCollection.addAction(QLatin1String("contactBlock"), m_actionBlockContact);
 
     return actions;
+}
+
+void WlmContact::allowContact ( bool allow )
+{
+    if (!account()->isConnected() || m_account->isOnAllowList(contactId()) == allow)
+        return;
+
+    WlmAccount* wlmAccount = dynamic_cast<WlmAccount*>(account());
+    if (allow)
+        wlmAccount->server()->mainConnection->addToList( MSN::LST_AL, contactId().toAscii().data() );
+    else
+        wlmAccount->server()->mainConnection->removeFromList( MSN::LST_AL, contactId().toAscii().data() );
 }
 
 void WlmContact::blockContact ( bool block )
