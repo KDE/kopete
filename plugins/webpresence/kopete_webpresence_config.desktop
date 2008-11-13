@@ -7,7 +7,7 @@ X-KDE-Library=kcm_kopete_webpresence
 X-KDE-ParentApp=kopete_webpresence
 X-KDE-ParentComponents=kopete_webpresence
 
-Comment=Show the status of (parts of) your contact list on a web page
+Comment=Show the status of (parts of) your contact list on a webpage
 Comment[bg]=Приставка за показвана състоянието на (част от) списъка с контакти като уеб страница
 Comment[bn]=একটি ওয়েবপেজে আপনার যোগাযোগ তালিকার (এর অংশের) অবস্থা প্রদর্শন করে
 Comment[ca]=Mostra l'estat de (parts de) la vostra llista de contactes sobre una pàgina web
