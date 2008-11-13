@@ -30,7 +30,7 @@ class WlmServer:public QObject
       WlmServer (WlmAccount * account, QString & m_accountID,
                  QString & m_password);
      ~WlmServer ();
-    void WlmConnect ();
+    void WlmConnect ( const QString& server, uint port );
     void WlmDisconnect ();
       MSN::NotificationServerConnection * mainConnection;
       std::string myFriendlyName;

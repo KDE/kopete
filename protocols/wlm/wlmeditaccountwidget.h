@@ -51,6 +51,8 @@ class WlmEditAccountWidget:public QWidget,
     virtual bool validateData ();
 
 private slots:
+    void slotAllow();
+    void slotBlock();
     void slotOpenRegister();
 
 private:

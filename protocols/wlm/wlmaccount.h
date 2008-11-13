@@ -91,7 +91,6 @@ class WlmAccount:public
 
     QString serverName() const;
     uint serverPort() const;
-    bool useHttpMethod() const;
 
     WlmServer * server ();
 
@@ -104,9 +103,16 @@ class WlmAccount:public
         return m_transferManager;
     }
 
+    // TODO: Check BPL
+    bool blockUnknownUsers() const { return true; }
+
     bool isOnAllowList( QString passport ) const { return m_allowList.contains( passport ); }
 
     bool isOnBlockList( QString passport ) const { return m_blockList.contains( passport ); }
+
+    QSet<QString> allowList() const { return m_allowList; }
+
+    QSet<QString> blockList() const { return m_blockList; }
 
     public
         slots:

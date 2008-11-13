@@ -50,9 +50,6 @@ Kopete::Contact (_account, uniqueName, parent)
 
     m_actionBlockContact = new KToggleAction(i18n("Block Contact"), this );
     QObject::connect( m_actionBlockContact, SIGNAL(triggered(bool)), this, SLOT(blockContact(bool)) );
-
-    m_actionAllowContact = new KToggleAction(i18n("Allow Contact"), this );
-    QObject::connect( m_actionAllowContact, SIGNAL(triggered(bool)), this, SLOT(allowContact(bool)) );
 }
 
 WlmContact::~WlmContact ()
@@ -118,14 +115,18 @@ Kopete::ChatSession *
     return manager;
 }
 
+bool WlmContact::isBlocked() const
+{
+    return ( m_account->isOnBlockList(contactId()) ||
+             (m_account->blockUnknownUsers() && !m_account->isOnAllowList(contactId())) );
+}
+
 QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
 {
     QList<KAction*> *actions = new QList<KAction*>();
 
-    m_actionBlockContact->setChecked( m_account->isOnBlockList(contactId()) );
-    m_actionAllowContact->setChecked( m_account->isOnAllowList(contactId()) );
-
-    actions->append(m_actionAllowContact);
+    m_actionBlockContact->setEnabled( m_account->isConnected() );
+    m_actionBlockContact->setChecked( isBlocked() );
     actions->append(m_actionBlockContact);
 
     // temporary action collection, used to apply Kiosk policy to the actions
@@ -135,28 +136,16 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     return actions;
 }
 
-void WlmContact::allowContact ( bool allow )
-{
-    if (!account()->isConnected() || m_account->isOnAllowList(contactId()) == allow)
-        return;
-
-    WlmAccount* wlmAccount = dynamic_cast<WlmAccount*>(account());
-    if (allow)
-        wlmAccount->server()->mainConnection->addToList( MSN::LST_AL, contactId().toAscii().data() );
-    else
-        wlmAccount->server()->mainConnection->removeFromList( MSN::LST_AL, contactId().toAscii().data() );
-}
-
 void WlmContact::blockContact ( bool block )
 {
-    if (!account()->isConnected() || m_account->isOnBlockList(contactId()) == block)
+    if (!account()->isConnected() || isBlocked() == block)
         return;
 
     WlmAccount* wlmAccount = dynamic_cast<WlmAccount*>(account());
     if (block)
-        wlmAccount->server()->mainConnection->addToList( MSN::LST_BL, contactId().toAscii().data() );
+        wlmAccount->server()->mainConnection->blockContact( contactId().toAscii().data() );
     else
-        wlmAccount->server()->mainConnection->removeFromList( MSN::LST_BL, contactId().toAscii().data() );
+        wlmAccount->server()->mainConnection->unblockContact( contactId().toAscii().data() );
 }
 
 void

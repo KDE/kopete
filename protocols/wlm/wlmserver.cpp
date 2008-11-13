@@ -30,7 +30,7 @@ WlmServer::~WlmServer ()
 }
 
 void
-WlmServer::WlmConnect ()
+WlmServer::WlmConnect ( const QString& server, uint port )
 {
     cb.m_server = this;
     mainConnection =
@@ -40,7 +40,7 @@ WlmServer::WlmConnect ()
     cb.mainConnection = mainConnection;
 
     if (mainConnection)
-        mainConnection->connect ("messenger.hotmail.com", 1863);
+        mainConnection->connect (server.toLatin1().data(), port);
 }
 
 void

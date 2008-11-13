@@ -18,8 +18,8 @@
 
 #include <QLayout>
 #include <QLineEdit>
-//Added by qt3to4:
 #include <QVBoxLayout>
+#include <QSet>
 
 #include <kdebug.h>
 #include <kmessagebox.h>
@@ -49,14 +49,31 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
 
         m_preferencesWidget->m_passport->setReadOnly( true );
         m_preferencesWidget->m_autologin->setChecked( account->excludeConnect()  );
-        if ( wlmAccount->serverName() != "messenger.hotmail.com" || wlmAccount->serverPort() != 1863 || wlmAccount->useHttpMethod() )
+        if ( wlmAccount->serverName() != "messenger.hotmail.com" || wlmAccount->serverPort() != 1863 )
             m_preferencesWidget->optionOverrideServer->setChecked( true );
 
         m_preferencesWidget->m_serverName->setText( wlmAccount->serverName() );
         m_preferencesWidget->m_serverPort->setValue( wlmAccount->serverPort() );
-        m_preferencesWidget->optionUseHttpMethod->setChecked( wlmAccount->useHttpMethod() );
+
+        bool connected = account->isConnected();
+        if ( connected )
+            m_preferencesWidget->m_warning->hide();
+
+        m_preferencesWidget->m_allowButton->setEnabled( connected );
+        m_preferencesWidget->m_blockButton->setEnabled( connected );
+
+        m_preferencesWidget->m_allowButton->setIcon( KIcon( "arrow-left" ) );
+        m_preferencesWidget->m_blockButton->setIcon( KIcon( "arrow-right" ) );
+
+        foreach ( QString contact, wlmAccount->allowList() )
+            m_preferencesWidget->m_AL->addItem( contact );
+
+        foreach ( QString contact, wlmAccount->blockList() )
+            m_preferencesWidget->m_BL->addItem( contact );
     }
 
+    connect( m_preferencesWidget->m_allowButton, SIGNAL(clicked()), this, SLOT(slotAllow()) );
+    connect( m_preferencesWidget->m_blockButton, SIGNAL(clicked()), this, SLOT(slotBlock()) );
     connect( m_preferencesWidget->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 
     QWidget::setTabOrder( m_preferencesWidget->m_passport, m_preferencesWidget->m_password->mRemembered );
@@ -75,9 +92,10 @@ Kopete::Account * WlmEditAccountWidget::apply ()
         setAccount( new WlmAccount( WlmProtocol::protocol (), m_preferencesWidget->m_passport->text () ) );
 
     KConfigGroup *config = account()->configGroup();
+    WlmAccount* wlmAccount = static_cast<WlmAccount*>(account());
 
     account()->setExcludeConnect( m_preferencesWidget->m_autologin->isChecked() );
-    m_preferencesWidget->m_password->save( &static_cast<WlmAccount *>(account())->password() );
+    m_preferencesWidget->m_password->save( &wlmAccount->password() );
 
     if (m_preferencesWidget->optionOverrideServer->isChecked() ) {
         config->writeEntry( "serverName", m_preferencesWidget->m_serverName->text().trimmed() );
@@ -88,7 +106,25 @@ Kopete::Account * WlmEditAccountWidget::apply ()
         config->writeEntry( "serverPort", "1863" );
     }
 
-    config->writeEntry( "useHttpMethod", m_preferencesWidget->optionUseHttpMethod->isChecked() );
+    if ( wlmAccount->isConnected() )
+    {
+        QSet<QString> allowList = wlmAccount->allowList();
+        QSet<QString> blockList = wlmAccount->blockList();
+
+        for ( int i = 0; i < m_preferencesWidget->m_AL->count(); i++ )
+        {
+            QString contact = m_preferencesWidget->m_AL->item(i)->text();
+            if ( !allowList.contains(contact) )
+                wlmAccount->server()->mainConnection->unblockContact( contact.toAscii().data() );
+        }
+
+        for ( int i = 0; i < m_preferencesWidget->m_BL->count(); i++ )
+        {
+            QString contact = m_preferencesWidget->m_BL->item(i)->text();
+            if ( !blockList.contains(contact) )
+                wlmAccount->server()->mainConnection->blockContact( contact.toAscii().data() );
+        }
+    }
 
     return account ();
 }
@@ -102,6 +138,26 @@ bool WlmEditAccountWidget::validateData ()
     KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
                                    i18n( "<qt>You must enter a valid WLM passport.</qt>" ), i18n( "WLM Plugin" ) );
     return false;
+}
+
+void WlmEditAccountWidget::slotAllow()
+{
+    if ( m_preferencesWidget->m_BL->selectedItems().isEmpty() )
+        return;
+
+    QListWidgetItem *item = m_preferencesWidget->m_BL->selectedItems().at(0);
+    m_preferencesWidget->m_BL->takeItem( m_preferencesWidget->m_BL->row( item ) );
+    m_preferencesWidget->m_AL->addItem( item );
+}
+
+void WlmEditAccountWidget::slotBlock()
+{
+    if ( m_preferencesWidget->m_AL->selectedItems().isEmpty() )
+        return;
+
+    QListWidgetItem *item = m_preferencesWidget->m_AL->selectedItems().at(0);
+    m_preferencesWidget->m_AL->takeItem( m_preferencesWidget->m_AL->row( item ) );
+    m_preferencesWidget->m_BL->addItem( item );
 }
 
 void WlmEditAccountWidget::slotOpenRegister()

@@ -84,15 +84,7 @@ WlmAccount::~WlmAccount ()
 void
 WlmAccount::fillActionMenu (KActionMenu * actionMenu)
 {
-/*
     Kopete::Account::fillActionMenu (actionMenu);
-    actionMenu->addSeparator ();
-
-    KAction *action;
-
-    actionMenu->addAction (action);
-    action->setEnabled (isConnected ());
-*/
 }
 
 bool
@@ -212,7 +204,7 @@ WlmAccount::connectWithPassword (const QString & pass)
     enableInitialList ();
 
     m_server = new WlmServer (this, id, pass1);
-    m_server->WlmConnect ();
+    m_server->WlmConnect ( serverName(), serverPort() );
 
     m_transferManager = new WlmTransferManager (this);
 
@@ -251,17 +243,12 @@ WlmAccount::connectWithPassword (const QString & pass)
 
 QString WlmAccount::serverName() const
 {
-    return configGroup()->readEntry(  "serverName" , "messenger.hotmail.com" );
+    return configGroup()->readEntry( "serverName" , "messenger.hotmail.com" );
 }
 
 uint WlmAccount::serverPort() const
 {
-    return configGroup()->readEntry(  "serverPort" , 1863 );
-}
-
-bool WlmAccount::useHttpMethod() const
-{
-    return configGroup()->readEntry(  "useHttpMethod" , false );
+    return configGroup()->readEntry( "serverPort" , 1863 );
 }
 
 void
@@ -284,11 +271,13 @@ WlmAccount::gotNewContact (const MSN::ContactList & list,
     else if (list == MSN::LST_BL)
     {
         kDebug() << "contact " << contact << " added to block list";
+        m_allowList.remove( contact );
         m_blockList.insert( contact );
     }
     else if (list == MSN::LST_AL)
     {
         kDebug() << "contact " << contact << " added to allow list";
+        m_blockList.remove( contact );
         m_allowList.insert( contact );
     }
 }

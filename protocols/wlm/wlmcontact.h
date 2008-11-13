@@ -78,6 +78,8 @@ public:
 
     QString contactSerial () const { return m_contactSerial; }
 
+    bool isBlocked() const;
+
 public slots:
     /**
 	 * Transmits an outgoing message to the server 
@@ -102,8 +104,6 @@ public slots:
 
     void blockContact ( bool block );
 
-    void allowContact ( bool allow );
-
 protected slots:
     /**
 	 * Show the settings dialog
@@ -119,7 +119,6 @@ protected:
     WlmChatSession * m_msgManager;
     WlmAccount * m_account;
     KToggleAction* m_actionBlockContact;
-    KToggleAction* m_actionAllowContact;
     KAction * m_actionPrefs;
     QString m_msnobj;
     QString m_contactSerial;
