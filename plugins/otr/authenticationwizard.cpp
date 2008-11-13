@@ -314,11 +314,11 @@ void AuthenticationWizard::finished(bool success, bool trust){
 
 void AuthenticationWizard::updateInfoBox(){
 	if(rbQA->isChecked()){
-		infoLabel->setText(i18n("Ask a question to %1 whose answer is known only to you an her/him. If the answers don't match, you may be talking to an imposer.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+		infoLabel->setText(i18n("Ask a question to %1 whose answer is known only to you and her/him. If the answers do not match, you may be talking to an imposer.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 	} else if(rbSS->isChecked()) {
-		infoLabel->setText(i18n("Pick a secret known only to you and %1. If the secrets don't match, you may be talking to an impostor. Do not send the secret through the chat window, or this authentication method could be compromised with ease.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+		infoLabel->setText(i18n("Pick a secret known only to you and %1. If the secrets do not match, you may be talking to an impostor. Do not send the secret through the chat window, or this authentication method could be compromised with ease.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 	} else {
-		infoLabel->setText(i18n("Verify %1's fingerprint manualy. For example through a phonecall or signed (and verified) email.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+		infoLabel->setText(i18n("Verify %1's fingerprint manually. For example through a phonecall or signed (and verified) email.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 	}
 }
 

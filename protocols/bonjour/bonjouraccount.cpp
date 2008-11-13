@@ -188,7 +188,7 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 
 	if (! check_mDNS_running()) {
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
-		i18n("Sorry, We are unable to connect to the local mDNS server. Please Ensure Avahi Daemon is Running"));
+		i18n("Sorry, we are unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
 		return;
 	}
 

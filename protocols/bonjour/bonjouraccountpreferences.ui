@@ -160,7 +160,7 @@
              </sizepolicy>
             </property>
             <property name="text" >
-             <string>The Bonjour Protocol Needs You To At Least Specify a Name. The Name Can be of form `Full Name@Hostname`</string>
+             <string>The Bonjour protocol needs you to at least specify a name. The name can be of form 'Full Name@Hostname'</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignTop</set>
