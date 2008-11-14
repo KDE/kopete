@@ -52,6 +52,7 @@
 JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete::Account *account, Kopete::MetaContact * mc, const QString &legacyId)
 	: Kopete::Contact (account, legacyId.isEmpty() ? rosterItem.jid().full() : legacyId , mc )
 {
+	mSendsDeliveredEvent = false;
 	setDontSync ( false );
 	
 	JabberTransport *t=transport();

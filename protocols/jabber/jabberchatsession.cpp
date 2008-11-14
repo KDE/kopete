@@ -448,7 +448,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
         // send the message
 		account()->client()->sendMessage ( jabberMessage );
 
-		message.setState( Kopete::Message::StateSending );
+		if ( recipient->sendsDeliveredEvent() )
+			message.setState( Kopete::Message::StateSending );
 
 		// append the message to the manager
 		Kopete::ChatSession::appendMessage ( message );
