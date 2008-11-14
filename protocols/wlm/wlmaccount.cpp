@@ -1078,18 +1078,14 @@ WlmAccount::receivedOIMList (std::vector < MSN::eachOIM > &oimlist)
     for (; i != oimlist.end (); i++)
     {
         m_oimList[(*i).id.c_str ()] = (*i).from.c_str ();
+        m_server->cb.mainConnection->get_oim ((*i).id.c_str(), true);
     }
-    m_server->cb.mainConnection->get_oim (m_oimList.begin().key().toLatin1().data(), true);
 }
 
 void
 WlmAccount::deletedOIM(const QString& id, const bool deleted)
 {
-    // receive next oim
-    if(m_oimList.count())
-    {
-        m_server->cb.mainConnection->get_oim (m_oimList.begin().key().toLatin1 ().data(), true);
-    }
+    kDebug() << " deleted OIM " << id << " " << deleted;
 }
 
 void
