@@ -33,7 +33,7 @@
 #include "wlmprotocol.h"
 
 WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * account)
- : QWidget (parent), KopeteEditAccountWidget(account)
+ : QWidget (parent), KopeteEditAccountWidget(account), m_wlmAccount(0)
 {
     m_preferencesWidget = new Ui::WlmAccountPreferences ();
     m_preferencesWidget->setupUi (this);
@@ -42,18 +42,18 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
     if ( account )
     {
         KConfigGroup * config = account->configGroup();
-        WlmAccount* wlmAccount = static_cast<WlmAccount*>(account);
+        m_wlmAccount = static_cast<WlmAccount*>(account);
 
-        m_preferencesWidget->m_passport->setText( wlmAccount->accountId() );
-        m_preferencesWidget->m_password->load( &wlmAccount->password() );
+        m_preferencesWidget->m_passport->setText( m_wlmAccount->accountId() );
+        m_preferencesWidget->m_password->load( &m_wlmAccount->password() );
 
         m_preferencesWidget->m_passport->setReadOnly( true );
         m_preferencesWidget->m_autologin->setChecked( account->excludeConnect()  );
-        if ( wlmAccount->serverName() != "messenger.hotmail.com" || wlmAccount->serverPort() != 1863 )
+        if ( m_wlmAccount->serverName() != "messenger.hotmail.com" || m_wlmAccount->serverPort() != 1863 )
             m_preferencesWidget->optionOverrideServer->setChecked( true );
 
-        m_preferencesWidget->m_serverName->setText( wlmAccount->serverName() );
-        m_preferencesWidget->m_serverPort->setValue( wlmAccount->serverPort() );
+        m_preferencesWidget->m_serverName->setText( m_wlmAccount->serverName() );
+        m_preferencesWidget->m_serverPort->setValue( m_wlmAccount->serverPort() );
 
         bool connected = account->isConnected();
         if ( connected )
@@ -65,11 +65,22 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
         m_preferencesWidget->m_allowButton->setIcon( KIcon( "arrow-left" ) );
         m_preferencesWidget->m_blockButton->setIcon( KIcon( "arrow-right" ) );
 
-        foreach ( QString contact, wlmAccount->allowList() )
+        foreach ( QString contact, m_wlmAccount->allowList() )
             m_preferencesWidget->m_AL->addItem( contact );
 
-        foreach ( QString contact, wlmAccount->blockList() )
+        foreach ( QString contact, m_wlmAccount->blockList() )
             m_preferencesWidget->m_BL->addItem( contact );
+
+        m_deleteActionAL = new QAction( i18n( "Delete" ), m_preferencesWidget->m_AL );
+        m_preferencesWidget->m_AL->addAction( m_deleteActionAL );
+
+        m_deleteActionBL = new QAction( i18n( "Delete" ), m_preferencesWidget->m_BL );
+        m_preferencesWidget->m_BL->addAction( m_deleteActionBL );
+
+        connect( m_preferencesWidget->m_AL, SIGNAL(itemSelectionChanged()), this, SLOT(updateActionsAL()) );
+        connect( m_preferencesWidget->m_BL, SIGNAL(itemSelectionChanged()), this, SLOT(updateActionsBL()) );
+        connect( m_deleteActionAL, SIGNAL(triggered(bool)), this, SLOT(deleteALItem()) );
+        connect( m_deleteActionBL, SIGNAL(triggered(bool)), this, SLOT(deleteBLItem()) );
     }
 
     connect( m_preferencesWidget->m_allowButton, SIGNAL(clicked()), this, SLOT(slotAllow()) );
@@ -124,6 +135,12 @@ Kopete::Account * WlmEditAccountWidget::apply ()
             if ( !blockList.contains(contact) )
                 wlmAccount->server()->mainConnection->blockContact( contact.toAscii().data() );
         }
+
+        foreach ( QString contact, m_deletedContactsAL )
+            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_AL, contact.toAscii().data() );
+
+        foreach ( QString contact, m_deletedContactsBL )
+            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_BL, contact.toAscii().data() );
     }
 
     return account ();
@@ -158,6 +175,52 @@ void WlmEditAccountWidget::slotBlock()
     QListWidgetItem *item = m_preferencesWidget->m_AL->selectedItems().at(0);
     m_preferencesWidget->m_AL->takeItem( m_preferencesWidget->m_AL->row( item ) );
     m_preferencesWidget->m_BL->addItem( item );
+}
+
+void WlmEditAccountWidget::updateActionsAL()
+{
+    bool enableDeleteAction = false;
+
+    if ( m_wlmAccount && !m_preferencesWidget->m_AL->selectedItems().isEmpty() )
+        enableDeleteAction = !m_wlmAccount->serverSideContacts().contains( m_preferencesWidget->m_AL->selectedItems().at(0)->text() );
+
+    m_deleteActionAL->setEnabled( enableDeleteAction );
+}
+
+void WlmEditAccountWidget::updateActionsBL()
+{
+    bool enableDeleteAction = false;
+
+    if ( m_wlmAccount && !m_preferencesWidget->m_BL->selectedItems().isEmpty() )
+        enableDeleteAction = !m_wlmAccount->serverSideContacts().contains( m_preferencesWidget->m_BL->selectedItems().at(0)->text() );
+
+    m_deleteActionBL->setEnabled( enableDeleteAction );
+}
+
+void WlmEditAccountWidget::deleteALItem()
+{
+    if ( m_wlmAccount && !m_preferencesWidget->m_AL->selectedItems().isEmpty() )
+    {
+        QListWidgetItem *item = m_preferencesWidget->m_AL->selectedItems().at(0);
+        if ( !m_wlmAccount->serverSideContacts().contains( item->text() ) )
+        {
+            m_deletedContactsAL.insert( item->text() );
+            m_preferencesWidget->m_AL->takeItem( m_preferencesWidget->m_AL->row( item ) );
+        }
+    }
+}
+
+void WlmEditAccountWidget::deleteBLItem()
+{
+    if ( m_wlmAccount && !m_preferencesWidget->m_BL->selectedItems().isEmpty() )
+    {
+        QListWidgetItem *item = m_preferencesWidget->m_BL->selectedItems().at(0);
+        if ( !m_wlmAccount->serverSideContacts().contains( item->text() ) )
+        {
+            m_deletedContactsBL.insert( item->text() );
+            m_preferencesWidget->m_BL->takeItem( m_preferencesWidget->m_BL->row( item ) );
+        }
+    }
 }
 
 void WlmEditAccountWidget::slotOpenRegister()

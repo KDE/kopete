@@ -18,6 +18,7 @@
 #define WLMEDITACCOUNTWIDGET_H
 
 #include <QWidget>
+#include <QSet>
 #include <editaccountwidget.h>
 
 namespace Kopete
@@ -28,6 +29,7 @@ namespace Ui
 {
     class WlmAccountPreferences;
 }
+class WlmAccount;
 
 /**
  * A widget for editing this protocol's accounts
@@ -53,11 +55,19 @@ class WlmEditAccountWidget:public QWidget,
 private slots:
     void slotAllow();
     void slotBlock();
+    void updateActionsAL();
+    void updateActionsBL();
+    void deleteALItem();
+    void deleteBLItem();
     void slotOpenRegister();
 
 private:
-      Kopete::Account * m_account;
-      Ui::WlmAccountPreferences * m_preferencesWidget;
+    QSet<QString> m_deletedContactsAL;
+    QSet<QString> m_deletedContactsBL;
+    QAction* m_deleteActionAL;
+    QAction* m_deleteActionBL;
+    WlmAccount* m_wlmAccount;
+    Ui::WlmAccountPreferences * m_preferencesWidget;
 };
 
 #endif

@@ -143,9 +143,19 @@ void WlmContact::blockContact ( bool block )
 
     WlmAccount* wlmAccount = dynamic_cast<WlmAccount*>(account());
     if (block)
-        wlmAccount->server()->mainConnection->blockContact( contactId().toAscii().data() );
+    {
+        if ( wlmAccount->isOnAllowList(contactId()) )
+            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_AL, contactId().toAscii().data() );
+
+        wlmAccount->server()->mainConnection->addToList( MSN::LST_BL, contactId().toAscii().data() );
+    }
     else
-        wlmAccount->server()->mainConnection->unblockContact( contactId().toAscii().data() );
+    {
+        if ( wlmAccount->isOnBlockList(contactId()) )
+            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_BL, contactId().toAscii().data() );
+
+        wlmAccount->server()->mainConnection->addToList( MSN::LST_AL, contactId().toAscii().data() );
+    }
 }
 
 void

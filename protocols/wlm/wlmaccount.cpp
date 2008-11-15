@@ -572,6 +572,8 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
         MSN::Buddy * b = (*it).second;
         QString passport = (*it).first.c_str();
 
+        if (b->lists & MSN::LST_AB)
+            m_serverSideContactsPassports.insert (b->userName.c_str());
         if ( b->lists & MSN::LST_AL )
             m_allowList.insert( passport );
         if ( b->lists & MSN::LST_BL )
@@ -592,7 +594,6 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                 // only add users in forward list
                 if (b->lists & MSN::LST_AB)
                 {
-                    m_serverSideContactsPassports.insert (b->userName.c_str());
                     metacontact = addContact (b->userName.c_str (), QString(), 0L, Kopete::Account::DontChangeKABC);
 
                     Kopete::Contact * newcontact = contacts ()[b->userName.c_str ()];
@@ -618,7 +619,6 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             {
                 Kopete::Group * g = Kopete::ContactList::self ()->findGroup (QString ((*i)->name.c_str ()).toAscii ());
 
-                m_serverSideContactsPassports.insert (b->userName.c_str());
                 if (g)
                     metacontact = addContact (b->userName.c_str (), QString(), g, Kopete::Account::DontChangeKABC);
                 else

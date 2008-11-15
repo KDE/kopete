@@ -114,6 +114,8 @@ class WlmAccount:public
 
     QSet<QString> blockList() const { return m_blockList; }
 
+    QSet<QString> serverSideContacts() const { return m_serverSideContactsPassports; }
+
     public
         slots:
         /**

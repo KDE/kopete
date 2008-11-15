@@ -214,10 +214,18 @@
           </widget>
          </item>
          <item row="2" column="0" >
-          <widget class="QListWidget" name="m_AL" />
+          <widget class="QListWidget" name="m_AL" >
+           <property name="contextMenuPolicy" >
+            <enum>Qt::ActionsContextMenu</enum>
+           </property>
+          </widget>
          </item>
          <item row="2" column="4" >
-          <widget class="QListWidget" name="m_BL" />
+          <widget class="QListWidget" name="m_BL" >
+           <property name="contextMenuPolicy" >
+            <enum>Qt::ActionsContextMenu</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -373,8 +381,6 @@
         </spacer>
        </item>
       </layout>
-      <zorder>groupBox_4</zorder>
-      <zorder></zorder>
      </widget>
     </widget>
    </item>
