@@ -1,18 +1,6 @@
 project(wlm)
 
-find_package(KDE4 REQUIRED)
-include(KDE4Defaults)
-include(MacroLibrary)
-
-find_package(Kopete REQUIRED)
-
-include_directories(${KDE4_INCLUDES})
-add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-
 ADD_SUBDIRECTORY(icons)
-
-# FIXME: the libkopete source directory is only needed because of private/kopeteemoticons.h
-set(KOPETE_INCLUDES ${KOPETE_INCLUDE_DIR}/kopete/ ${KOPETE_INCLUDE_DIR}/kopete/ui/ /home/kde4/kdenetwork/kopete/libkopete)
 
 include_directories(
     ${KOPETE_INCLUDES}
@@ -50,7 +38,7 @@ target_link_libraries(
     ${QT_QTNETWORK_LIBRARY} 
     kopete 
     kopete_videodevice 
-    msn
+    ${LIBMSN_LIBRARIES}
 )
 
 install(TARGETS kopete_wlm  DESTINATION ${PLUGIN_INSTALL_DIR})

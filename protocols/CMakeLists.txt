@@ -7,7 +7,7 @@ check_library_exists(nsl gethostbyname "" HAVE_NSL_LIBRARY)
 
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
 option(WITH_messenger "Enable Kopete MSN/Windows Live Messenger protocol" OFF)
-option(WITH_msn "Enable Kopete MSN protocol" ON)
+option(WITH_msn "Enable Kopete MSN protocol" OFF)
 option(WITH_oscar "Enable Kopete Oscar (ICQ and AIM) protocol" ON)
 option(WITH_yahoo "Enable Kopete Yahoo protocol" ON)
 option(WITH_qq "Enable Kopete QQ protocol" ON)
@@ -19,8 +19,13 @@ option(WITH_gadu "Enable Kopete Gadu-Gadu protocol" ON)
 option(WITH_jabber "Enable Kopete Jabber protocol" ON)
 option(WITH_bonjour "Enable Kopete Bonjour protocol" ON)
 option(WITH_irc "Enable Kopete IRC protocol" OFF)
+option(WITH_wlm "Enable Window Live Messenger support" ON)
 
 include_directories(${KOPETE_INCLUDES})
+
+if(WITH_wlm AND LIBMSN_FOUND)
+  add_subdirectory( wlm )
+endif(WITH_wlm AND LIBMSN_FOUND)
 
 if(WITH_msn)
   add_subdirectory( msn ) 
