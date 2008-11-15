@@ -816,21 +816,22 @@ void OscarAccount::updateVersionUpdaterStamp()
 void OscarAccount::ssiContactAdded( const OContact& item )
 {
 	QString normalizedName = Oscar::normalize( item.name() );
-	if ( d->addContactMap.contains( normalizedName ) )
+	if ( contacts().value( item.name() ) )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. modifying " << item.name();
+		OscarContact* oc = static_cast<OscarContact*>( contacts().value( item.name() ) );
+		oc->setSSIItem( item );
+		// To be safe remove contact from addContactMap
+		d->addContactMap.remove( normalizedName );
+	}
+	else if ( d->addContactMap.contains( normalizedName ) )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. adding " << item.name()
 			<< " to the contact list" << endl;
 		OscarContact* oc = createNewContact( item.name(), d->addContactMap[normalizedName], item );
 		d->addContactMap.remove( normalizedName );
-
 		if ( oc && oc->ssiItem().waitingAuth() )
 			QTimer::singleShot( 1, oc, SLOT(requestAuthorization()) );
-	}
-	else if ( contacts().value( item.name() ) )
-	{
-		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. modifying " << item.name();
-		OscarContact* oc = static_cast<OscarContact*>( contacts().value( item.name() ) );
-		oc->setSSIItem( item );
 	}
 	else
 		kDebug(OSCAR_GEN_DEBUG) << "Got addition for contact we weren't waiting on";
