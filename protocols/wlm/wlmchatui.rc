@@ -1,0 +1,17 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="12" name="kopete_wlm_chat">
+	<MenuBar>
+		<Menu noMerge="1" name="file">
+			<text>&amp;Chat</text>
+			<Action name="wlmSendFile" />
+			<Action name="wlmSendNudge" />
+		</Menu>
+	</MenuBar>
+
+
+	<ToolBar name="chatToolBar">
+		<Action name="wlmSendFile" />
+		<Action name="wlmSendNudge" />
+		<Action name="wlmInvite" />
+	</ToolBar>
+</kpartgui>
