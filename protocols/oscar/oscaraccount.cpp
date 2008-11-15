@@ -60,6 +60,7 @@
 #include "kopeteversion.h"
 #include "oscarversionupdater.h"
 #include "filetransferhandler.h"
+#include "nscainfoevent.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
 {
@@ -348,45 +349,48 @@ void OscarAccount::processSSIList()
 
 void OscarAccount::nonServerAddContactDialogClosed()
 {
-    if ( !d->olnscDialog )
-        return;
+	if ( !d->olnscDialog )
+		return;
 
-    if ( d->olnscDialog->result() == KDialog::Yes )
-    {
-        //start adding contacts
-        kDebug(OSCAR_GEN_DEBUG) << "adding non server contacts to the contact list";
-        //get the contact list. get the OscarContact object, then the group
-        //check if the group is on ssi, if not, add it
-        //if so, add the contact.
-        QStringList offliners = d->olnscDialog->nonServerContactList();
-        QStringList::iterator it, itEnd = offliners.end();
-        for ( it = offliners.begin(); it != itEnd; ++it )
-        {
-	        OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( ( *it ) ) );
-            if ( !oc )
-            {
-                kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for" << ( *it );
-                continue;
-            }
+	if ( d->olnscDialog->result() == KDialog::Yes )
+	{
+		NonServerContactsAddInfoEvent *event = new NonServerContactsAddInfoEvent( d->engine->ssiManager(), engine()->isIcq(), this );
+		event->sendEvent();
 
-            Kopete::MetaContact* mc = oc->metaContact();
-            if ( !mc )
-            {
-                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
-                continue;
-            }
+		//start adding contacts
+		kDebug(OSCAR_GEN_DEBUG) << "adding non server contacts to the contact list";
+		//get the contact list. get the OscarContact object, then the group
+		//check if the group is on ssi, if not, add it
+		//if so, add the contact.
+		QStringList offliners = d->olnscDialog->nonServerContactList();
+		QStringList::iterator it, itEnd = offliners.end();
+		for ( it = offliners.begin(); it != itEnd; ++it )
+		{
+			OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( ( *it ) ) );
+			if ( !oc )
+			{
+				kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for" << ( *it );
+				continue;
+			}
 
-            Kopete::Group* group = mc->groups().first();
-            if ( !group )
-            {
-                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
-                continue;
-            }
+			Kopete::MetaContact* mc = oc->metaContact();
+			if ( !mc )
+			{
+				kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
+				continue;
+			}
 
-	    addContactToSSI( ( *it ), group->displayName(), true );
-        }
-    }
+			Kopete::Group* group = mc->groups().first();
+			if ( !group )
+			{
+				kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
+				continue;
+			}
 
+			event->addContact( *it );
+			addContactToSSI( ( *it ), group->displayName(), true );
+		}
+	}
 	else if ( d->olnscDialog->result() == KDialog::No )
 	{
 		//remove contacts

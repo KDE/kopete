@@ -96,6 +96,17 @@ public:
 	 */
 	void addAction( uint actionId, const QString& actionText );
 
+	/**
+	 * @return true if event should automatically be shown in contact list window
+	 */
+	bool showOnSend() const;
+
+	/**
+	 * Set if event should automatically be shown in contact list window.
+	 * @param showOnSend the show flag
+	 */
+	void setShowOnSend( bool showOnSend );
+
 public Q_SLOTS:
 	/**
 	 * Emit the event.
@@ -115,6 +126,11 @@ public Q_SLOTS:
 	void close();
 
 Q_SIGNALS:
+	/**
+	 * User visible data has been changed.
+	 */
+	void changed();
+
 	/**
 	 * A action has been activated. This signal is only emitted if
 	 * activate( uint ) is not replaced.

@@ -30,7 +30,8 @@
 class InfoEventWidget::Private
 {
 public:
-	int currentEvent;
+	QPointer<Kopete::InfoEvent> currentEvent;
+	int currentEventIndex;
 	QTimeLine *timeline;
 	Ui::InfoEventBase ui;
 	bool enableUpdates;
@@ -52,7 +53,7 @@ InfoEventWidget::InfoEventWidget(QWidget *parent)
 	d->ui.buttonClose->setIcon( KIcon( "window-close" ) );
 	QWidget::setVisible( false );
 
-	d->currentEvent = 0;
+	d->currentEventIndex = 0;
 	d->enableUpdates = false;
 	connect( Kopete::InfoEventManager::self(), SIGNAL(changed()), this, SLOT(updateInfo()) );
 	connect( Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent*)), this, SLOT(eventAdded(Kopete::InfoEvent*)) );
@@ -85,18 +86,18 @@ void InfoEventWidget::setVisible( bool visible )
 
 void InfoEventWidget::prevInfoEvent()
 {
-	if ( d->currentEvent > 0 )
+	if ( d->currentEventIndex > 0 )
 	{
-		d->currentEvent--;
+		d->currentEventIndex--;
 		updateInfo();
 	}
 }
 
 void InfoEventWidget::nextInfoEvent()
 {
-	if ( d->currentEvent + 1 < Kopete::InfoEventManager::self()->eventCount() )
+	if ( d->currentEventIndex + 1 < Kopete::InfoEventManager::self()->eventCount() )
 	{
-		d->currentEvent++;
+		d->currentEventIndex++;
 		updateInfo();
 	}
 }
@@ -104,7 +105,7 @@ void InfoEventWidget::nextInfoEvent()
 void InfoEventWidget::closeInfoEvent()
 {
 	Kopete::InfoEventManager* ie = Kopete::InfoEventManager::self();
-	Kopete::InfoEvent* event = ie->event( d->currentEvent );
+	Kopete::InfoEvent* event = ie->event( d->currentEventIndex );
 
 	Q_ASSERT( event );
 	event->close();
@@ -136,7 +137,7 @@ void InfoEventWidget::slotAnimate( qreal amount )
 
 void InfoEventWidget::linkClicked( const QString& link )
 {
-	Kopete::InfoEvent* event = Kopete::InfoEventManager::self()->event( d->currentEvent );
+	Kopete::InfoEvent* event = Kopete::InfoEventManager::self()->event( d->currentEventIndex );
 	Q_ASSERT( event );
 
 	event->activate( link.toInt() );
@@ -151,7 +152,7 @@ void InfoEventWidget::updateInfo()
 
 	if ( ie->eventCount() == 0 )
 	{
-		d->currentEvent = 0;
+		d->currentEventIndex = 0;
 		d->ui.lblInfo->clear();
 		d->ui.lblActions->clear();
 		// Can't use clear
@@ -163,36 +164,57 @@ void InfoEventWidget::updateInfo()
 		return;
 	}
 
-	if ( d->currentEvent >= ie->eventCount() )
-		d->currentEvent = ie->eventCount() - 1;
+	if ( d->currentEventIndex >= ie->eventCount() )
+		d->currentEventIndex = ie->eventCount() - 1;
 
 	d->ui.buttonClose->setEnabled( true );
-	d->ui.buttonPrev->setEnabled( (d->currentEvent > 0) );
-	d->ui.buttonNext->setEnabled( (d->currentEvent + 1 < ie->eventCount()) );
+	d->ui.buttonPrev->setEnabled( (d->currentEventIndex > 0) );
+	d->ui.buttonNext->setEnabled( (d->currentEventIndex + 1 < ie->eventCount()) );
 
-	const Kopete::InfoEvent* event = ie->event( d->currentEvent );
+	Kopete::InfoEvent* event = ie->event( d->currentEventIndex );
 	Q_ASSERT( event );
 
-	static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setText( Qt::escape( event->title() ) );
-	d->ui.lblEvent->setText( QString("%1/%2").arg( d->currentEvent + 1 ).arg( ie->eventCount() ) );
-
-	QString text = QString( "<p>%1</p>" ).arg( event->text() );
-	if ( !event->additionalText().isEmpty() )
-		text += QString( "<p>%1</p>" ).arg( event->additionalText() );
-
-	d->ui.lblInfo->setText( text );
-
-	QString linkCode = QString::fromLatin1( "<p align=\"right\">" );
-
-	QMap<uint, QString> actions = event->actions();
-	QMapIterator<uint, QString> it(actions);
-	while ( it.hasNext() )
+	if ( d->currentEvent != event )
 	{
-		it.next();
-		linkCode += QString::fromLatin1( "<a href=\"%1\">%2</a> " ).arg( it.key() ).arg( Qt::escape(it.value()) );
+		if ( !d->currentEvent )
+			disconnect( d->currentEvent, SIGNAL(changed()), this , SLOT(updateInfo()) );
+
+		d->currentEvent = event;
+		connect( d->currentEvent, SIGNAL(changed()), this , SLOT(updateInfo()) );
 	}
 
-	d->ui.lblActions->setText( linkCode );
+	static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setText( Qt::escape( event->title() ) );
+	d->ui.lblEvent->setText( QString("%1/%2").arg( d->currentEventIndex + 1 ).arg( ie->eventCount() ) );
+
+	d->ui.lblInfo->setVisible( !event->text().isEmpty() );
+	if ( !event->text().isEmpty() )
+	{
+		QString text = QString( "<p>%1</p>" ).arg( event->text() );
+		if ( !event->additionalText().isEmpty() )
+			text += QString( "<p>%1</p>" ).arg( event->additionalText() );
+
+		d->ui.lblInfo->setText( text );
+	}
+	else
+	{
+		d->ui.lblInfo->clear();
+	}
+
+	d->ui.lblActions->setVisible( !event->actions().isEmpty() );
+	if ( !event->actions().isEmpty() )
+	{
+		QString linkCode = QString::fromLatin1( "<p align=\"right\">" );
+
+		QMap<uint, QString> actions = event->actions();
+		QMapIterator<uint, QString> it(actions);
+		while ( it.hasNext() )
+		{
+			it.next();
+			linkCode += QString::fromLatin1( "<a href=\"%1\">%2</a> " ).arg( it.key() ).arg( Qt::escape(it.value()) );
+		}
+
+		d->ui.lblActions->setText( linkCode );
+	}
 
 	// Redo the layout otherwise sizeHint() won't be correct.
 	layout()->activate();
@@ -212,6 +234,17 @@ void InfoEventWidget::eventAdded( Kopete::InfoEvent* event )
 	connect( notify, SIGNAL(closed()), this, SLOT(notificationClosed()) );
 
 	notify->sendEvent();
+
+	if ( event->showOnSend() )
+	{
+		int index = Kopete::InfoEventManager::self()->events().indexOf( event );
+		if ( index != -1 )
+		{
+			d->currentEventIndex = index;
+			updateInfo();
+		}
+		emit showRequest();
+	}
 }
 
 void InfoEventWidget::notificationActivated()
@@ -225,7 +258,7 @@ void InfoEventWidget::notificationActivated()
 	int index = Kopete::InfoEventManager::self()->events().indexOf( event );
 	if ( index != -1 )
 	{
-		d->currentEvent = index;
+		d->currentEventIndex = index;
 		updateInfo();
 	}
 	emit showRequest();
