@@ -525,7 +525,7 @@ WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn,
     inkImage->setSuffix(".gif");
     inkImage->open();
     inkImage->write(ink.data(), ink.size());
-    QString msg=i18n("<img src=\"%1\" />", inkImage->fileName() );
+    QString msg=QString ("<img src=\"%1\" />").arg ( inkImage->fileName() );
     inkImage->close();
 
     Kopete::Message kmsg( contact, chat->members() );
