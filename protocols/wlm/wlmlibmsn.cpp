@@ -140,19 +140,19 @@ Callbacks::gotBuddyListInfo (MSN::NotificationServerConnection * conn,
         if (contact->lists & MSN::LST_AB)       // only if it is the address book
         {
             allContacts[contact->userName.c_str ()] = 0;
-            allContacts[contact->userName.c_str ()] += 1;
+            allContacts[contact->userName.c_str ()] |= MSN::LST_AB;
             std::list < MSN::Buddy::PhoneNumber >::iterator pns =
                 contact->phoneNumbers.begin ();
             std::list < MSN::Group * >::iterator g = contact->groups.begin ();
         }
         if (contact->lists & MSN::LST_AL)
         {
-            allContacts[contact->userName.c_str ()] += 2;
+            allContacts[contact->userName.c_str ()] |= MSN::LST_AL;
         }
 
         if (contact->lists & MSN::LST_BL)
         {
-            allContacts[contact->userName.c_str ()] += 4;
+            allContacts[contact->userName.c_str ()] |= MSN::LST_BL;
         }
 
         if (contact->lists & MSN::LST_RL)
