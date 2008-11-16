@@ -519,19 +519,24 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         int fontEffects = 0;
         QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
         MSN::Message mmsg (msg.plainBody ().toAscii ().data ());
-        mmsg.setFontName (msg.font ().family ().toAscii ().data ());
-        if (msg.font ().bold ())
-            fontEffects |= MSN::Message::BOLD_FONT;
-        if (msg.font ().italic ())
-            fontEffects |= MSN::Message::ITALIC_FONT;
-        if (msg.font ().underline ())
-            fontEffects |= MSN::Message::UNDERLINE_FONT;
-        if (msg.font ().strikeOut ())
-            fontEffects |= MSN::Message::STRIKETHROUGH_FONT;
 
-        mmsg.setFontEffects (fontEffects);
-        QColor color = msg.foregroundColor ();
-        mmsg.setColor (color.red (), color.green (), color.blue ());
+        // FIXME: Can we add FontFamily FF_DONTCARE ?
+        if ( msg.format() == Qt::RichText )
+        {
+            mmsg.setFontName (msg.font ().family ().toAscii ().data ());
+            if (msg.font ().bold ())
+                fontEffects |= MSN::Message::BOLD_FONT;
+            if (msg.font ().italic ())
+                fontEffects |= MSN::Message::ITALIC_FONT;
+            if (msg.font ().underline ())
+                fontEffects |= MSN::Message::UNDERLINE_FONT;
+            if (msg.font ().strikeOut ())
+                fontEffects |= MSN::Message::STRIKETHROUGH_FONT;
+
+            mmsg.setFontEffects (fontEffects);
+            QColor color = msg.foregroundColor ();
+            mmsg.setColor (color.red (), color.green (), color.blue ());
+        }
 
         // stolen from msn plugin
         const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
