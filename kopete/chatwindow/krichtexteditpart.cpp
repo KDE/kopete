@@ -218,6 +218,8 @@ void KRichTextEditPart::setRichTextEnabled( bool enable )
 
     d->enableRichText->setEnabled( useRichText() );
     d->enableRichText->setChecked( useRichText() );
+
+    emit richTextChanged();
 }
 
 void KRichTextEditPart::setRichTextSupport(const KRichTextEditPart::RichTextSupport &support)

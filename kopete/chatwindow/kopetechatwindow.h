@@ -163,6 +163,7 @@ private:
 	KAction *tabDetach;
 	KAction* tabClose;
 
+	KToggleAction* toggleRichText;
 	KToggleAction* toggleAutoSpellCheck;
 
 	KopeteEmoticonAction *actionSmileyMenu;
@@ -231,6 +232,9 @@ private slots:
 	void updateChatLabel();
 
 	void enableSpellCheckAction(bool enable);
+
+	void updateRichTextAction();
+	void toggleRichTextAction( bool enable );
 
 private:
 	void updateSpellCheckAction();

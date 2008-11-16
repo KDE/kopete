@@ -152,6 +152,7 @@ public slots:
 
 signals:
     void toolbarToggled(bool enabled);
+    void richTextChanged();
 
 protected:
     /**

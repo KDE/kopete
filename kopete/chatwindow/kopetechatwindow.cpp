@@ -437,6 +437,10 @@ void KopeteChatWindow::initActions(void)
 	coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
 
+	toggleRichText = new KToggleAction( KIcon("draw-freehand"), i18n("Enable &Rich Text"), this );
+	coll->addAction( "enableRichText", toggleRichText );
+	connect( toggleRichText, SIGNAL(toggled(bool)), this, SLOT(toggleRichTextAction(bool)) );
+
 	historyUp = new KAction( i18n( "Previous History" ), coll );
 	coll->addAction( "history_up", historyUp );
 	historyUp->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Up) );
@@ -558,6 +562,20 @@ void KopeteChatWindow::updateSpellCheckAction()
 void KopeteChatWindow::enableSpellCheckAction(bool enable)
 {
 	toggleAutoSpellCheck->setChecked( enable );
+}
+
+void KopeteChatWindow::updateRichTextAction()
+{
+	if ( !m_activeView )
+		return;
+
+	toggleRichText->setEnabled( m_activeView->editPart()->isRichTextAvailable() );
+	toggleRichText->setChecked( m_activeView->editPart()->isRichTextEnabled() );
+}
+
+void KopeteChatWindow::toggleRichTextAction( bool enable )
+{
+	m_activeView->editPart()->setRichTextEnabled( enable );
 }
 
 void KopeteChatWindow::slotHistoryUp()
@@ -752,6 +770,7 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
 
 	updateSpellCheckAction();
+	updateRichTextAction();
 	checkDetachEnable();
 	connect( newView, SIGNAL(autoSpellCheckEnabled( ChatView*, bool ) ),
 	         this, SLOT( slotAutoSpellCheckEnabled( ChatView*, bool ) ) );
@@ -909,8 +928,9 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	if(m_activeView)
 	{
-		disconnect( m_activeView->editWidget(), SIGNAL( checkSpellingChanged(bool) ), this, SLOT( enableSpellCheckAction(bool) ) );
-		disconnect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
+		disconnect( m_activeView->editWidget(), SIGNAL(checkSpellingChanged(bool)), this, SLOT(enableSpellCheckAction(bool)) );
+		disconnect( m_activeView->editPart(), SIGNAL(richTextChanged()), this, SLOT(updateRichTextAction()) );
+		disconnect( m_activeView, SIGNAL(canSendChanged(bool)), this, SLOT(slotUpdateSendEnabled()) );
 		guiFactory()->removeClient(m_activeView->msgManager());
 		m_activeView->saveChatSettings();
 	}
@@ -930,7 +950,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	if( chatViewList.indexOf( view ) == -1)
 		attachChatView( view );
 
-	connect( m_activeView->editWidget(), SIGNAL( checkSpellingChanged(bool) ), this, SLOT( enableSpellCheckAction(bool) ) );
+	connect( m_activeView->editWidget(), SIGNAL(checkSpellingChanged(bool)), this, SLOT(enableSpellCheckAction(bool)) );
+	connect( m_activeView->editPart(), SIGNAL(richTextChanged()), this, SLOT(updateRichTextAction()) );
 	connect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 
 	//Tell it it is active
@@ -963,6 +984,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	setStatus( m_activeView->statusText() );
 	m_activeView->setFocus();
 	updateSpellCheckAction();
+	updateRichTextAction();
 	slotUpdateSendEnabled();
 	m_activeView->loadChatSettings();
 
