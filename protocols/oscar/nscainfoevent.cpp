@@ -40,7 +40,7 @@ void NonServerContactsAddInfoEvent::updateText()
 	QString text;
 
 	int addedContacts = mContactCount - mRemainingContacts.count();
-	setAdditionalText( i18n( "%1 out of %2 added.", addedContacts, mContactCount ) );
+	setAdditionalText( i18nc( "%1 out of %2 contacts have been added", "%1 out of %2 added.", addedContacts, mContactCount ) );
 }
 
 void NonServerContactsAddInfoEvent::addContact( const QString& contact )
