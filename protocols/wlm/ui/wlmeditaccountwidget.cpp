@@ -65,11 +65,30 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
         m_preferencesWidget->m_allowButton->setIcon( KIcon( "arrow-left" ) );
         m_preferencesWidget->m_blockButton->setIcon( KIcon( "arrow-right" ) );
 
+        QSet<QString> serverSideContacts = m_wlmAccount->serverSideContacts();
         foreach ( QString contact, m_wlmAccount->allowList() )
-            m_preferencesWidget->m_AL->addItem( contact );
+        {
+            QListWidgetItem *item = new QListWidgetItem( contact );
+            if ( !serverSideContacts.contains( contact ) )
+            {
+                QFont f = item->font();
+                f.setItalic( true );
+                item->setFont( f );
+            }
+            m_preferencesWidget->m_AL->addItem( item );
+        }
 
         foreach ( QString contact, m_wlmAccount->blockList() )
-            m_preferencesWidget->m_BL->addItem( contact );
+        {
+            QListWidgetItem *item = new QListWidgetItem( contact );
+            if ( !serverSideContacts.contains( contact ) )
+            {
+                QFont f = item->font();
+                f.setItalic( true );
+                item->setFont( f );
+            }
+            m_preferencesWidget->m_BL->addItem( item );
+        }
 
         m_deleteActionAL = new QAction( i18n( "Delete" ), m_preferencesWidget->m_AL );
         m_preferencesWidget->m_AL->addAction( m_deleteActionAL );
