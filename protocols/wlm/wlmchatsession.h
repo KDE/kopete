@@ -100,7 +100,6 @@ class KOPETE_EXPORT WlmChatSession: public Kopete::ChatSession
     QLinkedList < QString > m_pendingInvitations;
     QLinkedList < QString > m_pendingFiles;
     KAction * m_actionNudge;
-    KAction * m_actionFile;
     KActionMenu * m_actionInvite;
     QList < KAction* > m_inviteactions;
     QTimer * m_keepalivetimer;

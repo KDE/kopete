@@ -1,9 +1,8 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="11" name="kopete_jabber_chat">
+<kpartgui version="12" name="kopete_jabber_chat">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
-			<Action name="jabberSendFile" />
 			<Action name="jingleSession" />
 			<Action name="jingleSessionsGui" />
 		</Menu>
@@ -12,7 +11,6 @@
 
 	<ToolBar name="statusToolBar">
 		<Action name="jabberDisplayPicture" />
-		<Action name="jabberSendFile" />		
 		<Action name="jingleSession" />
 		<Action name="jingleSessionsGui" />
 	</ToolBar>

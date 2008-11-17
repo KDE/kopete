@@ -123,11 +123,6 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 #endif
 
-	KAction* sendFile = new KAction( this );
-	sendFile->setIcon( KIcon( "attach" ) );
-	sendFile->setText( i18n( "Send File" ) );
-	QObject::connect(sendFile, SIGNAL( triggered( bool ) ), SLOT( slotSendFile() ));
-	actionCollection()->addAction( "jabberSendFile", sendFile );
 	setXMLFile("jabberchatui.rc");
 
 }

@@ -140,6 +140,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 	if( status == d->onlineStatus )
 		return;
 
+	bool oldCanAcceptFiles = canAcceptFiles();
 	OnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
 
@@ -166,6 +167,9 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 
 	if ( this == account()->myself() || account()->isConnected() )
 		emit onlineStatusChanged( this, status, oldStatus );
+
+	if ( oldCanAcceptFiles != canAcceptFiles() )
+		emit canAcceptFilesChanged();
 }
 
 Kopete::StatusMessage Contact::statusMessage() const
@@ -495,9 +499,12 @@ bool Contact::isFileCapable() const
 
 void Contact::setFileCapable( bool filecap )
 {
-	d->fileCapable = filecap;
+	if ( d->fileCapable != filecap )
+	{
+		d->fileCapable = filecap;
+		emit canAcceptFilesChanged();
+	}
 }
-
 
 bool Contact::canAcceptFiles() const
 {

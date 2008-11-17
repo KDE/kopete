@@ -158,7 +158,8 @@ public:
 	KTextEdit *editWidget();
 
 	bool canSend();
-
+	bool canSendFile();
+	
 	/** Reimplemented from KopeteView **/
 	virtual void registerContextMenuHandler( QObject *target, const char* slot );
 
@@ -232,6 +233,11 @@ public slots:
 	virtual void appendMessage( Kopete::Message &message );
 
 	/**
+	 * Send file (opens file dialog)
+	 */
+	void sendFile();
+
+	/**
 	 * Called when a typing event is received from a contact
 	 * Updates the typing map and outputs the typing message into the status area
 	 * @param contact The contact who is / isn't typing
@@ -288,6 +294,8 @@ signals:
 	 * Our send-button-enabled flag has changed
 	 */
 	void canSendChanged(bool);
+
+	void canAcceptFilesChanged();
 
 	/**
 	 * Emitted when we re-parent ourselves with a new window

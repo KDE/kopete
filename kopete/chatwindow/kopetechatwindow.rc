@@ -1,9 +1,10 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="34" name="kopetechatwindow">
+<kpartgui version="35" name="kopetechatwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
 			<Action name="chat_send" />
+			<Action name="chat_send_file" />
 			<Action name="file_save" />
 			<Action name="file_print" />
 			<Separator lineSeparator="true"/>
@@ -17,6 +18,13 @@
 		<Menu name="format" >
 			<text>&amp;Format</text>
 			<Action name="format_smiley"/>
+			<Separator lineSeparator="true"/>
+			<Action name="enable_richtext" />
+			<Action name="format_font_and_color_reset" />
+			<Separator lineSeparator="true"/>
+			<Action name="format_font" />
+			<Action name="format_fgcolor" />
+			<Action name="format_bgcolor" />
 		</Menu>
 
 		<Menu name="tabs" >
@@ -33,7 +41,7 @@
 			<text>&amp;Settings</text>
 			<Merge name="StandardToolBarMenuHandler" />
 			<Action name="enable_auto_spell_check" />
-			<Action append="show_merge" name="show_participants_widget" />			
+			<Action append="show_merge" name="show_participants_widget" />
 			<Action append="show_merge" name="options_styles"/>
 			<Action append="configure_merge" name="settings_prefs" />
 		</Menu>
@@ -46,6 +54,7 @@
 	</ToolBar>
     <ToolBar name="chatToolBar">
 		<text>Chat Toolbar</text>
+		<Action name="chat_send_file" />
 		<Action name="format_smiley"/>
 		<Action name="show_participants_widget" />
 		<Separator weakSeparator="true" lineSeparator="true"/>
@@ -60,6 +69,12 @@
 	</ToolBar>
 	<ToolBar name="formatToolBar" hidden="true">
 		<text>Format Toolbar</text>
+		<Action name="enable_richtext" />
+		<Action name="format_font_and_color_reset" />
+		<Separator lineSeparator="true"/>
+		<Action name="format_font" />
+		<Action name="format_fgcolor" />
+		<Action name="format_bgcolor" />
 	</ToolBar>
 
 

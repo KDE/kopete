@@ -365,6 +365,11 @@ void KopeteChatWindow::initActions(void)
 	chatSend->setShortcut( QKeySequence(Qt::Key_Return) );
 	chatSend->setEnabled( false );
 
+	chatSendFile = new KAction( KIcon("mail-attachment"), i18n( "Send File" ), coll );
+	coll->addAction( "chat_send_file", chatSendFile );
+	connect( chatSendFile, SIGNAL( triggered(bool) ), SLOT( slotSendFile() ) );
+	chatSendFile->setEnabled( false );
+
 	KStandardAction::save ( this, SLOT(slotChatSave()), coll );
 	KStandardAction::print ( this, SLOT(slotChatPrint()), coll );
 	KAction* quitAction = KStandardAction::quit ( this, SLOT(close()), coll );
@@ -426,7 +431,7 @@ void KopeteChatWindow::initActions(void)
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
 
 	action = new KAction( KIcon("format-stroke-color"), i18n( "Reset Font And Color" ), coll );
-	coll->addAction( "format_font_reset", action );
+	coll->addAction( "format_font_and_color_reset", action );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotResetFontAndColor()) );
 
 	action = new KAction( KIcon("format-text-color"), i18n( "Set Text &Color..." ), coll );
@@ -438,7 +443,7 @@ void KopeteChatWindow::initActions(void)
 	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
 
 	toggleRichText = new KToggleAction( KIcon("draw-freehand"), i18n("Enable &Rich Text"), this );
-	coll->addAction( "enableRichText", toggleRichText );
+	coll->addAction( "enable_richtext", toggleRichText );
 	connect( toggleRichText, SIGNAL(toggled(bool)), this, SLOT(toggleRichTextAction(bool)) );
 
 	historyUp = new KAction( i18n( "Previous History" ), coll );
@@ -540,6 +545,14 @@ void KopeteChatWindow::slotUpdateSendEnabled()
 		m_button_send->setEnabled( enabled );
 }
 
+void KopeteChatWindow::updateChatSendFileAction()
+{
+	if ( !m_activeView )
+		return;
+	
+	chatSendFile->setEnabled( m_activeView->canSendFile() );
+}
+
 void KopeteChatWindow::toggleAutoSpellChecking()
 {
 	if ( !m_activeView )
@@ -576,6 +589,13 @@ void KopeteChatWindow::updateRichTextAction()
 void KopeteChatWindow::toggleRichTextAction( bool enable )
 {
 	m_activeView->editPart()->setRichTextEnabled( enable );
+}
+
+void KopeteChatWindow::updateActions()
+{
+	updateSpellCheckAction();
+	updateRichTextAction();
+	updateChatSendFileAction();
 }
 
 void KopeteChatWindow::slotHistoryUp()
@@ -769,8 +789,7 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	connect( newView, SIGNAL(updateStatusIcon( ChatView* ) ), this, SLOT(slotUpdateCaptionIcons( ChatView* ) ) );
 	connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
 
-	updateSpellCheckAction();
-	updateRichTextAction();
+	updateActions();
 	checkDetachEnable();
 	connect( newView, SIGNAL(autoSpellCheckEnabled( ChatView*, bool ) ),
 	         this, SLOT( slotAutoSpellCheckEnabled( ChatView*, bool ) ) );
@@ -931,6 +950,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		disconnect( m_activeView->editWidget(), SIGNAL(checkSpellingChanged(bool)), this, SLOT(enableSpellCheckAction(bool)) );
 		disconnect( m_activeView->editPart(), SIGNAL(richTextChanged()), this, SLOT(updateRichTextAction()) );
 		disconnect( m_activeView, SIGNAL(canSendChanged(bool)), this, SLOT(slotUpdateSendEnabled()) );
+		disconnect( m_activeView, SIGNAL(canAcceptFilesChanged()), this, SLOT(updateChatSendFileAction()) );
 		guiFactory()->removeClient(m_activeView->msgManager());
 		m_activeView->saveChatSettings();
 	}
@@ -952,7 +972,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	connect( m_activeView->editWidget(), SIGNAL(checkSpellingChanged(bool)), this, SLOT(enableSpellCheckAction(bool)) );
 	connect( m_activeView->editPart(), SIGNAL(richTextChanged()), this, SLOT(updateRichTextAction()) );
-	connect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
+	connect( m_activeView, SIGNAL(canSendChanged(bool)), this, SLOT(slotUpdateSendEnabled()) );
+	connect( m_activeView, SIGNAL(canAcceptFilesChanged()), this, SLOT(updateChatSendFileAction()) );
 
 	//Tell it it is active
 	m_activeView->setActive( true );
@@ -983,8 +1004,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	setCaption( m_activeView->caption() );
 	setStatus( m_activeView->statusText() );
 	m_activeView->setFocus();
-	updateSpellCheckAction();
-	updateRichTextAction();
+	updateActions();
 	slotUpdateSendEnabled();
 	m_activeView->loadChatSettings();
 
@@ -1051,6 +1071,12 @@ void KopeteChatWindow::slotSendMessage()
 		}
 		m_activeView->sendMessage();
 	}
+}
+
+void KopeteChatWindow::slotSendFile()
+{
+	if ( m_activeView )
+		m_activeView->sendFile();
 }
 
 void KopeteChatWindow::slotPrepareContactMenu(void)

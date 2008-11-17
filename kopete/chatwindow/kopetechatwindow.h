@@ -151,6 +151,7 @@ private:
 	QPixmap normalIcon;
 
 	KAction *chatSend;
+	KAction *chatSendFile;
 	KAction *historyUp;
 	KAction *historyDown;
 	KAction *nickComplete;
@@ -205,6 +206,7 @@ private slots:
 	void slotPageDown();
 
 	void slotSendMessage();
+	void slotSendFile();
 	void slotChatSave();
 	void slotChatPrint();
 
@@ -215,6 +217,8 @@ private slots:
 	void slotPlaceTabs( QAction* );
 
 	void slotEnableUpdateBg() { updateBg = true; }
+
+	void updateChatSendFileAction();
 
 	void toggleAutoSpellChecking();
 	void slotAutoSpellCheckEnabled( ChatView*, bool );
@@ -235,6 +239,8 @@ private slots:
 
 	void updateRichTextAction();
 	void toggleRichTextAction( bool enable );
+
+	void updateActions();
 
 private:
 	void updateSpellCheckAction();

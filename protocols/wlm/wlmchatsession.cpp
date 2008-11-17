@@ -107,11 +107,6 @@ m_sessionID(1)
     connect (m_actionInvite->menu (), SIGNAL (aboutToShow ()), this,
              SLOT (slotActionInviteAboutToShow ()));
 
-    m_actionFile =
-        new KAction (KIcon ("mail-attachment"), i18n ("Send File"), this);
-    actionCollection ()->addAction ("wlmSendFile", m_actionFile);
-    connect (m_actionFile, SIGNAL (triggered (bool)), SLOT (slotSendFile ()));
-
     setXMLFile ("wlmchatui.rc");
     setMayInvite (true);
 }
