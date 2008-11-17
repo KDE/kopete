@@ -691,12 +691,18 @@ int
 Callbacks::listenOnPort (int port)
 {
     Q_UNUSED( port );
-    int s;
-    return s;
+    // this callback is not used yet, 
+    // so, for now we are returning a dummy 
+    // value to avoid compiling issues
+    return 0;
 }
 
 std::string Callbacks::getOurIP (void)
 {
+    // this callback is not used yet, 
+    // so, for now we are returning a dummy 
+    // value to avoid compiling issues
+    return "";
 }
 
 void
