@@ -67,6 +67,9 @@ void
 WlmContact::sendFile (const KUrl & sourceURL, const QString & fileName,
                       uint fileSize)
 {
+    Q_UNUSED( fileName );
+    Q_UNUSED( fileSize );
+
     QString filePath;
 
     if (!sourceURL.isValid ())

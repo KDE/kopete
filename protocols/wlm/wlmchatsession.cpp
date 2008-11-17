@@ -70,8 +70,8 @@ m_chatService (conn),
 m_downloadDisplayPicture (false),
 m_sendNudge (false),
 m_tries (0),
-m_sessionID(1),
-m_oimid (1)
+m_oimid (1),
+m_sessionID(1)
 {
     Kopete::ChatSessionManager::self ()->registerChatSession (this);
 
@@ -151,6 +151,8 @@ void
 WlmChatSession::sendFile (const QString & fileLocation,
                           long unsigned int fileSize)
 {
+    Q_UNUSED( fileSize );
+
     MSN::fileTransferInvite ft;
     ft.type = MSN::FILE_TRANSFER_WITHOUT_PREVIEW;
     ft.sessionId = generateSessionID();
@@ -370,6 +372,8 @@ WlmChatSession::setChatService (MSN::SwitchboardServerConnection * conn)
 void
 WlmChatSession::setReady (bool value)
 {
+    Q_UNUSED( value );
+
     if (isReady ())
     {
         m_tries = 0;
@@ -503,6 +507,7 @@ void
 WlmChatSession::slotMessageSent (Kopete::Message & msg,
                                  Kopete::ChatSession * chat)
 {
+    Q_UNUSED( chat );
     if (!account ()->isConnected ())
     {
         KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (),

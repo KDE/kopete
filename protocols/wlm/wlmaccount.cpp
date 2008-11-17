@@ -418,6 +418,8 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
                                   const unsigned int &clientID,
                                   const QString & msnobject)
 {
+    Q_UNUSED( clientID );
+
     kDebug (14210) << k_funcinfo;
     Kopete::Contact * contact = contacts ()[buddy.c_str ()];
     if (contact)
@@ -586,7 +588,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 
             QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
             std::list < MSN::Group * >::iterator i = b->groups.begin ();
-            bool ok = false;
+            //bool ok = false;
 
             // no groups, add to top level
             if (!b->groups.size ())
@@ -929,6 +931,8 @@ WlmAccount::gotAddedContactToAddressBook (bool added, const QString & passport, 
 void
 WlmAccount::gotRemovedContactFromAddressBook (bool removed, const QString & passport, const QString & contactId)
 {
+    Q_UNUSED( contactId );
+
     kDebug() << "contact: " << passport << " removed:" << removed;
     if (removed)
         m_serverSideContactsPassports.remove( passport );
@@ -940,6 +944,8 @@ WlmAccount::NotificationServerConnectionTerminated (MSN::
                                                     NotificationServerConnection
                                                     * conn)
 {
+    Q_UNUSED( conn );
+
     kDebug (14210) << k_funcinfo;
 
     if (myself ()->onlineStatus () == WlmProtocol::protocol ()->wlmConnecting

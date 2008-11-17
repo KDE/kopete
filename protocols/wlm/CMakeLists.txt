@@ -7,9 +7,14 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ui
 )
 
+set(kopete_wlm_ui_SRCS
+   ui/wlmaddcontactpage.cpp
+   ui/wlmeditaccountwidget.cpp
+)
+
 kde4_add_ui_files(kopete_wlm_ui_SRCS
-    wlmaddui.ui
-    wlmaccountpreferences.ui
+    ui/wlmaddui.ui
+    ui/wlmaccountpreferences.ui
 )
 
 set(kopete_wlm_PART_SRCS
@@ -17,8 +22,6 @@ set(kopete_wlm_PART_SRCS
    wlmprotocol.cpp
    wlmcontact.cpp
    wlmaccount.cpp
-   wlmaddcontactpage.cpp
-   wlmeditaccountwidget.cpp
    wlmlibmsn.cpp
    wlmsocket.cpp
    wlmserver.cpp

@@ -274,6 +274,8 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
                                     const QString & passport,
                                     const QString & friendlyname)
 {
+    Q_UNUSED( friendlyname );
+
     Kopete::ContactPtrList chatmembers;
     Kopete::Contact * contact = account ()->contacts ()[passport];
     if (!contact)
@@ -489,6 +491,9 @@ WlmChatManager::slotGotVoiceClipNotification (MSN::SwitchboardServerConnection *
                                 const MSN::Passport & from,
                                 const QString & msnobject)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( from );
+    Q_UNUSED( msnobject );
 }
 
 void
@@ -496,6 +501,9 @@ WlmChatManager::slotGotWinkNotification (MSN::SwitchboardServerConnection * conn
                                 const MSN::Passport & from,
                                 const QString & msnobject)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( from );
+    Q_UNUSED( msnobject );
 }
 
 void
@@ -542,12 +550,18 @@ WlmChatManager::slotGotVoiceClipFile(MSN::SwitchboardServerConnection * conn,
                                 const unsigned int & sessionID, 
                                 const QString & file)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( sessionID );
+    Q_UNUSED( file );
 }
+
 void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
                                 const MSN::Passport & buddy, 
                                 const QString & alias,
                                 const QString & msnobject)
 {
+    Q_UNUSED( buddy );
+
     WlmChatSession *chat = chatSessions[conn];
     if(!chat)
         return;
@@ -586,6 +600,8 @@ WlmChatManager::slotGotEmoticonFile(MSN::SwitchboardServerConnection * conn,
                                 const QString & alias,
                                 const QString & file)
 {
+    Q_UNUSED( sessionID );
+
     emoticonsList[alias] = file;
 
     if(pendingMessages[conn].isEmpty())
@@ -650,6 +666,9 @@ WlmChatManager::slotGotWinkFile(MSN::SwitchboardServerConnection * conn,
                                     const unsigned int & sessionID, 
                                     const QString & file)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( sessionID );
+    Q_UNUSED( file );
 }
 
 #include "wlmchatmanager.moc"

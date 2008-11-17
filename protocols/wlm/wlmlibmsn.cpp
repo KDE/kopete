@@ -57,6 +57,9 @@
 void
 Callbacks::registerSocket (void *s, int reading, int writing, bool isSSL)
 {
+    Q_UNUSED( writing );
+    Q_UNUSED( isSSL );
+
     WlmSocket *a = (WlmSocket*)s;
     if (!a)
         return;
@@ -94,6 +97,7 @@ void
 Callbacks::gotFriendlyName (MSN::NotificationServerConnection * conn,
                             std::string friendlyname)
 {
+    Q_UNUSED( conn );
     myFriendlyName = friendlyname.c_str ();
     emit gotDisplayName (friendlyname.c_str ());
 }
@@ -110,6 +114,7 @@ Callbacks::gotContactDisplayPicture (MSN::SwitchboardServerConnection * conn,
                                      MSN::Passport passport,
                                      std::string filename)
 {
+    Q_UNUSED( conn );
     emit gotDisplayPicture (passport.c_str (), filename.c_str ());
 }
 
@@ -189,17 +194,23 @@ void
 Callbacks::gotLatestListSerial (MSN::NotificationServerConnection * conn,
                                 std::string lastChange)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( lastChange );
 }
 
 void
 Callbacks::gotGTC (MSN::NotificationServerConnection * conn, char c)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( c );
 }
 
 void
 Callbacks::gotOIMDeleteConfirmation (MSN::NotificationServerConnection * conn,
                                      bool success, std::string id)
 {
+    Q_UNUSED( conn );
+
     if (success)
     {
         emit deletedOIM (id.c_str (), success);
@@ -214,6 +225,8 @@ void
 Callbacks::gotOIMSendConfirmation (MSN::NotificationServerConnection * conn,
                                    bool success, int id)
 {
+    Q_UNUSED( conn );
+
     if (success)
         std::cout << "OIM " << id << " sent sucessfully." << std::endl;
     else
@@ -224,6 +237,8 @@ void
 Callbacks::gotOIM (MSN::NotificationServerConnection * conn, bool success,
                    std::string id, std::string message)
 {
+    Q_UNUSED( conn );
+
     if (success)
         emit receivedOIM (id.c_str (), message.c_str ());
     else
@@ -234,18 +249,22 @@ void
 Callbacks::gotOIMList (MSN::NotificationServerConnection * conn,
                        std::vector < MSN::eachOIM > OIMs)
 {
+    Q_UNUSED( conn );
     emit receivedOIMList (OIMs);
 }
 
 void
 Callbacks::connectionReady (MSN::Connection * conn)
 {
+    Q_UNUSED( conn );
     emit connectionCompleted ();
 }
 
 void
 Callbacks::gotBLP (MSN::NotificationServerConnection * conn, char c)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( c );
 }
 
 void
@@ -253,6 +272,7 @@ Callbacks::addedListEntry (MSN::NotificationServerConnection * conn,
                            MSN::ContactList list, MSN::Passport username,
                            std::string friendlyname)
 {
+    Q_UNUSED( conn );
     QString username1 (username.c_str ());
     QString friendlyname1 (friendlyname.c_str ());
 
@@ -268,6 +288,7 @@ void
 Callbacks::removedListEntry (MSN::NotificationServerConnection * conn,
                              MSN::ContactList list, MSN::Passport username)
 {
+    Q_UNUSED( conn );
     emit gotRemovedContactFromList (list, username.c_str ());
 }
 
@@ -275,6 +296,7 @@ void
 Callbacks::addedGroup (MSN::NotificationServerConnection * conn, bool added,
                        std::string groupName, std::string groupID)
 {
+    Q_UNUSED( conn );
 /*    if (added)
         printf ("A group named %s (%s) was added\n", groupName.c_str (),
                 groupID.c_str ());
@@ -289,6 +311,7 @@ void
 Callbacks::removedGroup (MSN::NotificationServerConnection * conn,
                          bool removed, std::string groupID)
 {
+    Q_UNUSED( conn );
 /*
     if (removed)
         printf ("A group with ID %s was removed\n", groupID.c_str ());
@@ -303,6 +326,10 @@ Callbacks::renamedGroup (MSN::NotificationServerConnection * conn,
                          bool renamed, std::string newGroupName,
                          std::string groupID)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( renamed );
+    Q_UNUSED( newGroupName );
+    Q_UNUSED( groupID );
 /*
     if (renamed)
         printf ("A group with ID %s was renamed to %s\n", groupID.c_str (),
@@ -316,6 +343,7 @@ Callbacks::renamedGroup (MSN::NotificationServerConnection * conn,
 void
 Callbacks::showError (MSN::Connection * conn, std::string msg)
 {
+    Q_UNUSED( conn );
     std::cout << "MSN: Error: " << msg.c_str () << std::endl;
     QString a = msg.c_str ();
     // FIXME
@@ -331,6 +359,7 @@ Callbacks::buddyChangedStatus (MSN::NotificationServerConnection * conn,
                                MSN::BuddyStatus status, unsigned int clientID,
                                std::string msnobject)
 {
+    Q_UNUSED( conn );
     emit contactChangedStatus (buddy, QString(friendlyname.c_str()), status, clientID,
                                QString(msnobject.c_str()));
 }
@@ -339,6 +368,7 @@ void
 Callbacks::buddyOffline (MSN::NotificationServerConnection * conn,
                          MSN::Passport buddy)
 {
+    Q_UNUSED( conn );
     emit contactDisconnected (buddy);
 }
 
@@ -355,6 +385,8 @@ Callbacks::buddyJoinedConversation (MSN::SwitchboardServerConnection * conn,
                                     MSN::Passport username,
                                     std::string friendlyname, int is_initial)
 {
+    Q_UNUSED( is_initial );
+
     QString a (username.c_str ());
     QString b (friendlyname.c_str ());
     emit joinedConversation (conn, a, b);
@@ -421,6 +453,8 @@ Callbacks::gotInstantMessage (MSN::SwitchboardServerConnection * conn,
                               MSN::Passport username,
                               std::string friendlyname, MSN::Message * msg)
 {
+    Q_UNUSED( friendlyname );
+
     QString a = username.c_str ();
     Kopete::Message kmsg;
     kmsg.setPlainBody (msg->getBody ().c_str ());
@@ -453,6 +487,7 @@ Callbacks::gotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
 void
 Callbacks::failedSendingMessage (MSN::Connection * conn)
 {
+    Q_UNUSED( conn );
     //printf ("**************************************************\n");
     //printf ("ERROR:  Your last message failed to send correctly\n");
     //printf ("**************************************************\n");
@@ -462,6 +497,7 @@ void
 Callbacks::buddyTyping (MSN::SwitchboardServerConnection * conn,
                         MSN::Passport username, std::string friendlyname)
 {
+    Q_UNUSED( friendlyname );
     QString userid (username.c_str ());
     emit receivedTypingNotification (conn, userid);
 
@@ -499,6 +535,9 @@ void
 Callbacks::gotActionMessage (MSN::SwitchboardServerConnection * conn,
                              MSN::Passport username, std::string message)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( username );
+    Q_UNUSED( message );
 }
 
 void
@@ -507,6 +546,11 @@ Callbacks::gotInitialEmailNotification (MSN::NotificationServerConnection *
                                         int unread_inbox, int msgs_folders,
                                         int unread_folders)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( msgs_inbox );
+    Q_UNUSED( unread_inbox );
+    Q_UNUSED( msgs_folders );
+    Q_UNUSED( unread_folders );
 /*
     if (unread_inbox > 0)
         printf ("You have %d new messages in your Inbox. Total: %d\n",
@@ -522,6 +566,9 @@ void
 Callbacks::gotNewEmailNotification (MSN::NotificationServerConnection * conn,
                                     std::string from, std::string subject)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( from );
+    Q_UNUSED( subject );
 //    printf ("New e-mail has arrived from %s.\nSubject: %s\n", from.c_str (),
 //            subject.c_str ());
 }
@@ -532,6 +579,7 @@ Callbacks::fileTransferProgress (MSN::SwitchboardServerConnection * conn,
                                  unsigned long long transferred,
                                  unsigned long long total)
 {
+    Q_UNUSED( total );
     emit gotFileTransferProgress (conn, sessionID, transferred);
 }
 
@@ -562,6 +610,7 @@ Callbacks::buddyChangedPersonalInfo (MSN::NotificationServerConnection * conn,
                                      MSN::Passport fromPassport,
                                      MSN::personalInfo pInfo)
 {
+    Q_UNUSED( conn );
     // MSN::personalInfo shows all the data you can grab from the contact
     //printf ("User %s Personal Message: %s\n", fromPassport.c_str (),
     //        pInfo.PSM.c_str ());
@@ -583,6 +632,7 @@ void
 Callbacks::changedStatus (MSN::NotificationServerConnection * conn,
                           MSN::BuddyStatus state)
 {
+    Q_UNUSED( conn );
     //printf ("Your state is now: %s\n",
     //        MSN::buddyStatusToString (state).c_str ());
     emit changedStatus (state);
@@ -640,6 +690,7 @@ Callbacks::connectToServer (std::string hostname, int port, bool * connected, bo
 int
 Callbacks::listenOnPort (int port)
 {
+    Q_UNUSED( port );
     int s;
     return s;
 }
@@ -651,7 +702,8 @@ std::string Callbacks::getOurIP (void)
 void
 Callbacks::log (int i, const char *s)
 {
-
+    Q_UNUSED( i );
+    Q_UNUSED( s );
 }
 
 int
@@ -702,6 +754,7 @@ Callbacks::addedContactToGroup (MSN::NotificationServerConnection * conn,
                                 bool added, std::string groupId,
                                 std::string contactId)
 {
+    Q_UNUSED( conn );
 /*
     if (added)
         printf ("User Id (%s) added to group Id (%s)\n", contactId.c_str (),
@@ -719,6 +772,7 @@ Callbacks::removedContactFromGroup (MSN::NotificationServerConnection * conn,
                                     bool removed, std::string groupId,
                                     std::string contactId)
 {
+    Q_UNUSED( conn );
 /*
     if (removed)
         printf ("User Id (%s) removed from group Id (%s)\n",
@@ -737,6 +791,7 @@ Callbacks::addedContactToAddressBook (MSN::NotificationServerConnection *
                                       std::string displayName,
                                       std::string guid)
 {
+    Q_UNUSED( conn );
 /*
     if (added)
         printf ("User (%s - %s) added to AddressBook. Guid (%s)\n",
@@ -755,6 +810,7 @@ Callbacks::removedContactFromAddressBook (MSN::NotificationServerConnection *
                                           std::string contactId,
                                           std::string passport)
 {
+    Q_UNUSED( conn );
 /*
     if (removed)
         printf ("User %s removed from AddressBook. Guid (%s)\n",
@@ -773,6 +829,10 @@ Callbacks::enabledContactOnAddressBook (MSN::NotificationServerConnection *
                                         std::string contactId,
                                         std::string passport)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( enabled );
+    Q_UNUSED( contactId );
+    Q_UNUSED( passport );
 /*
     // this is used to enable a contact previously disabled from msn, but not fully removed
     if (enabled)
@@ -789,6 +849,9 @@ Callbacks::disabledContactOnAddressBook (MSN::NotificationServerConnection *
                                          conn, bool disabled,
                                          std::string contactId)
 {
+    Q_UNUSED( conn );
+    Q_UNUSED( disabled );
+    Q_UNUSED( contactId );
     // this is used when you have disabled this user from msn, but not deleted from hotmail
     // I suggest to delete the contact instead of disable, since I haven't tested this too much yet
 /*
