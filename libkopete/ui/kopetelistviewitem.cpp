@@ -723,7 +723,7 @@ void DisplayNameComponent::redraw()
 
 	QFontMetrics fontMetrics( d->font );
 	int fontHeight = fontMetrics.height();
-	for ( token = tokens.begin(); token != tokens.end(); ++token )
+	for ( token = tokens.constBegin(); token != tokens.constEnd(); ++token )
 	{
 		switch ( (*token).type )
 		{
