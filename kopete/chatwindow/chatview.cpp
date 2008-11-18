@@ -187,6 +187,15 @@ bool ChatView::canSend()
 	return editPart()->canSend();
 }
 
+bool ChatView::canSendFile()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+	if ( contacts.count() != 1 )
+		return false;
+
+	return contacts.first()->canAcceptFiles();
+}
+
 Kopete::Message ChatView::currentMessage()
 {
 	return editPart()->contents();
@@ -542,8 +551,14 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	if( !suppress && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.", contactName) );
 
+	if ( m_manager->members().count() == 1 )
+		connect( m_manager->members().first(), SIGNAL(canAcceptFilesChanged()), this, SIGNAL(canAcceptFilesChanged()) );
+	else
+		disconnect( m_manager->members().first(), SIGNAL(canAcceptFilesChanged()), this, SIGNAL(canAcceptFilesChanged()) );
+
 	updateChatState();
 	emit updateStatusIcon( this );
+	emit canAcceptFilesChanged();
 }
 
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format, bool suppressNotification )
@@ -583,10 +598,13 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 			else
 				sendInternalMessage( i18n( "%1 has left the chat (%2).", contactName, reason ), format);
 		}
+
+		disconnect( contact, SIGNAL(canAcceptFilesChanged()), this, SIGNAL(canAcceptFilesChanged()) );
 	}
 
 	updateChatState();
 	emit updateStatusIcon( this );
+	emit canAcceptFilesChanged();
 }
 
 QString& ChatView::caption() const
@@ -651,6 +669,17 @@ void ChatView::appendMessage(Kopete::Message &message)
 	}
 	else
 		unreadMessageFrom.clear();
+}
+
+void ChatView::sendFile()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+	if ( contacts.count() != 1 )
+		return;
+
+	Kopete::Contact* contact = contacts.first();
+	if ( contact->canAcceptFiles() )
+		contact->sendFile();
 }
 
 void ChatView::slotMarkMessageRead()

@@ -117,6 +117,7 @@ public slots:
 	  * See later for params...
 	  */
 #ifdef JINGLE_SUPPORT
+	void showSessionsGui();
 	void startJingleSession();
 	void startJingleAudioCall();
 	void startJingleVideoCall();

@@ -86,7 +86,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args
 
 	setXMLFile( "translatorui.rc" );
 
-	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
+	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already running)
 	Q3ValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
 	for (Q3ValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
 	  slotNewKMM( *it );
@@ -307,7 +307,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QStri
 {
 	QString body = QString(QUrl::toPercentEncoding( msg));
 	QString lp = from + '_' + to;
-	QString gurl = "http://babelfish.altavista.com/babelfish/tr?enc=utf8&doit=done&tt=urltext&urltext=" + body + "&lp=" + lp;
+	QString gurl = "http://babelfish.yahoo.com/translate_txt?&lp=" + lp  + "&text=" + body;
 	KUrl geturl ( gurl );
 
 	kDebug( 14308 ) << "URL: " << gurl;

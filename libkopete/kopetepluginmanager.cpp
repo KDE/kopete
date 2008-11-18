@@ -66,7 +66,7 @@ public:
 		// static once this destructor has started.
 		while ( !loadedPlugins.empty() )
 		{
-			InfoToPluginMap::ConstIterator it = loadedPlugins.begin();
+			InfoToPluginMap::ConstIterator it = loadedPlugins.constBegin();
 			kWarning( 14010 ) << "Deleting stale plugin '" << it.value()->objectName() << "'";
 			KPluginInfo info = it.key();
 			Plugin *plugin = it.value();
@@ -125,7 +125,7 @@ QList<KPluginInfo> PluginManager::availablePlugins( const QString &category ) co
 
 	QList<KPluginInfo> result;
 	QList<KPluginInfo>::ConstIterator it;
-	for ( it = _kpmp->plugins.begin(); it != _kpmp->plugins.end(); ++it )
+	for ( it = _kpmp->plugins.constBegin(); it != _kpmp->plugins.constEnd(); ++it )
 	{
 		if ( it->category() == category && !(*it).service()->noDisplay() )
 			result.append( *it );
@@ -138,8 +138,8 @@ PluginList PluginManager::loadedPlugins( const QString &category ) const
 {
 	PluginList result;
 
-	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.begin();
-	      it != _kpmp->loadedPlugins.end(); ++it )
+	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.constBegin();
+	      it != _kpmp->loadedPlugins.constEnd(); ++it )
 	{
 		if ( category.isEmpty() || it.key().category() == category )
 			result.append( it.value() );
@@ -151,8 +151,8 @@ PluginList PluginManager::loadedPlugins( const QString &category ) const
 
 KPluginInfo PluginManager::pluginInfo( const Plugin *plugin ) const
 {
-	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.begin();
-	      it != _kpmp->loadedPlugins.end(); ++it )
+	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.constBegin();
+	      it != _kpmp->loadedPlugins.constEnd(); ++it )
 	{
 		if ( it.value() == plugin )
 			return it.key();
@@ -183,8 +183,8 @@ void PluginManager::shutdown()
 	_kpmp->pluginsToLoad.clear();
 
 	// Ask all plugins to unload
-	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.begin();
-	      it != _kpmp->loadedPlugins.end(); /* EMPTY */ )
+	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.constBegin();
+	      it != _kpmp->loadedPlugins.constEnd(); /* EMPTY */ )
 	{
 		// Plugins could emit their ready for unload signal directly in response to this,
 		// which would invalidate the current iterator. Therefore, we copy the iterator
@@ -234,7 +234,7 @@ void PluginManager::slotShutdownTimeout()
 		return;
 
 	QStringList remaining;
-	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.begin(); it != _kpmp->loadedPlugins.end(); ++it )
+	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.constBegin(); it != _kpmp->loadedPlugins.constEnd(); ++it )
 		remaining.append( it.value()->pluginId() );
 
 	kWarning( 14010 ) << "Some plugins didn't shutdown in time!" << endl
@@ -247,10 +247,6 @@ void PluginManager::slotShutdownTimeout()
 void PluginManager::slotShutdownDone()
 {
 	kDebug( 14010 ) ;
-
-	// Disconnect any remaining plugins (bug 172011).
-	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.begin(); it != _kpmp->loadedPlugins.end(); ++it )
-		disconnect( it.value(), SIGNAL(destroyed(QObject*)), this, 0 );
 
 	_kpmp->shutdownMode = PluginManagerPrivate::DoneShutdown;
 
@@ -276,8 +272,8 @@ void PluginManager::loadAllPlugins()
 		}
 
 		QList<KPluginInfo> plugins = availablePlugins( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
-		QList<KPluginInfo>::ConstIterator it2 = plugins.begin();
-		QList<KPluginInfo>::ConstIterator end = plugins.end();
+		QList<KPluginInfo>::ConstIterator it2 = plugins.constBegin();
+		QList<KPluginInfo>::ConstIterator end = plugins.constEnd();
 		for ( ; it2 != end; ++it2 )
 		{
 			// Protocols are loaded automatically so they aren't always in Plugins group. (fixes bug 167113)
@@ -304,8 +300,8 @@ void PluginManager::loadAllPlugins()
 	{
 		// we had no config, so we load any plugins that should be loaded by default.
 		QList<KPluginInfo> plugins = availablePlugins( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
-		QList<KPluginInfo>::ConstIterator it = plugins.begin();
-		QList<KPluginInfo>::ConstIterator end = plugins.end();
+		QList<KPluginInfo>::ConstIterator it = plugins.constBegin();
+		QList<KPluginInfo>::ConstIterator end = plugins.constEnd();
 		for ( ; it != end; ++it )
 		{
 			if ( it->isPluginEnabledByDefault() )
@@ -464,7 +460,7 @@ Plugin* PluginManager::plugin( const QString &_pluginId ) const
 KPluginInfo PluginManager::infoForPluginId( const QString &pluginId ) const
 {
 	QList<KPluginInfo>::ConstIterator it;
-	for ( it = _kpmp->plugins.begin(); it != _kpmp->plugins.end(); ++it )
+	for ( it = _kpmp->plugins.constBegin(); it != _kpmp->plugins.constEnd(); ++it )
 	{
 		if ( it->pluginName() == pluginId )
 			return *it;

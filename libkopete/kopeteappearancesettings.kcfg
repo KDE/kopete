@@ -101,7 +101,7 @@
 		<!-- Tooltip content -->
 		<entry key="toolTipContents" type="StringList">
 			<label>Contact properties that contact tooltip will show.</label>
-			<default>FormattedName,userInfo,server,channels,FormattedIdleTime,channelMembers,channelTopic,emailAddress,homePage,onlineSince,lastOnline,statusTitle,statusMessage</default>
+			<default>FormattedName,userInfo,server,channels,idleTime,channelMembers,channelTopic,emailAddress,homePage,onlineSince,lastOnline,statusTitle,statusMessage</default>
 		</entry>
 	</group>
 	

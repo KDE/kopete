@@ -61,6 +61,21 @@ public:
     /** Provide an information plugin for this account */
     void    setPlugin(MeanwhilePlugin *plugin);
 
+    /** Set the client identification parameters for the sametime connection */
+    void    setClientID(int client, int major, int minor);
+
+    /** Returns true if custom IDs are in use, and populates the args */
+    bool    getClientIDParams(int *clientID, int *verMajor, int *verMinor);
+
+    /** Reset client identification parameters to their defaults */
+    void    resetClientID();
+
+    /** Set the 'force login' flag, to ignore server redirect messages */
+    void    setForceLogin(bool force);
+
+    /** Returns the state of the 'force login' option */
+    bool    getForceLogin();
+
     MeanwhilePlugin *infoPlugin;
 
     /**

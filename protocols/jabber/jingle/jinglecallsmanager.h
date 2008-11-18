@@ -62,6 +62,7 @@ public slots:
 	void slotSessionTerminated();
 	void slotUserAccepted();
 	void slotUserRejected();
+	void slotStateChanged();
 
 signals:
 	//FIXME:Those signals aren't used and I don't know what they are doing here.

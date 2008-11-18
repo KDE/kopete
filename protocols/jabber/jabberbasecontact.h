@@ -141,6 +141,15 @@ public:
 	 */
 	void setPropertiesFromVCard ( const XMPP::VCard &vCard );
 
+	/**
+	 * Set contact's client sends delivery event flag.
+	 */
+	void setSendsDeliveredEvent( bool sends ) { mSendsDeliveredEvent = sends; }
+
+	/**
+	 * Return true if contact's client sends delivery event.
+	 */
+	bool sendsDeliveredEvent() const { return mSendsDeliveredEvent; }
 
 public slots:
 
@@ -171,6 +180,11 @@ protected:
 	 * relevant data for this contact.
 	 */
 	XMPP::RosterItem mRosterItem;
+
+	/**
+	 * Flag if contact's client sends delivery event.
+	 */
+	bool mSendsDeliveredEvent;
 
 private:
 	bool mDontSync;

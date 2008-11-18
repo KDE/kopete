@@ -321,7 +321,7 @@ void JT_JingleAction::initiate()
 			QString ip;
 
 			//Trying to get the address with the most chances to succeed.
-			if (eip != "") //deos not seem to work...
+			if (eip != "") //does not seem to work...
 			{
 				ip = eip;
 			}
@@ -442,6 +442,9 @@ void JT_JingleAction::terminate(const JingleReason& r)
 		break;
 	case JingleReason::NoReason :
 		rReason = doc()->createElement("no-error");
+		break;
+	case JingleReason::UnsupportedApplications :
+		rReason = doc()->createElement("unsupported-applications");
 		break;
 	default:
 		rReason = doc()->createElement("unknown");

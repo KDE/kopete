@@ -140,6 +140,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 	if( status == d->onlineStatus )
 		return;
 
+	bool oldCanAcceptFiles = canAcceptFiles();
 	OnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
 
@@ -166,6 +167,9 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 
 	if ( this == account()->myself() || account()->isConnected() )
 		emit onlineStatusChanged( this, status, oldStatus );
+
+	if ( oldCanAcceptFiles != canAcceptFiles() )
+		emit canAcceptFilesChanged();
 }
 
 Kopete::StatusMessage Contact::statusMessage() const
@@ -495,9 +499,12 @@ bool Contact::isFileCapable() const
 
 void Contact::setFileCapable( bool filecap )
 {
-	d->fileCapable = filecap;
+	if ( d->fileCapable != filecap )
+	{
+		d->fileCapable = filecap;
+		emit canAcceptFilesChanged();
+	}
 }
-
 
 bool Contact::canAcceptFiles() const
 {
@@ -576,7 +583,7 @@ QString Contact::toolTip() const
 	// FIXME: It shouldn't use QString to identity the properties. Instead it should use PropertyTmpl::key()
 	for(QStringList::Iterator it=shownProps.begin(); it!=shownProps.end(); ++it)
 	{
-		if((*it) == Kopete::Global::Properties::self()->fullName().key() )
+		if((*it) == Kopete::Global::Properties::self()->fullName().key())
 		{
 			QString name = formattedName();
 			if(!name.isEmpty())
@@ -585,7 +592,7 @@ QString Contact::toolTip() const
 							"<br /><b>Full Name:</b>&nbsp;<nobr>%1</nobr>", Qt::escape(name));
 			}
 		}
-		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
+		else if ((*it) == Kopete::Global::Properties::self()->idleTime().key())
 		{
 			QString time = formattedIdleTime();
 			if(!time.isEmpty())

@@ -707,9 +707,9 @@ void DisplayNameComponent::redraw()
 {
 	QColor color;
 	for ( uint n = 0; n < components(); ++n )
-		if( component( n )->rtti() == Rtti_TextComponent )
 	{
-		((TextComponent*)component(n))->color();
+		if( component( n )->rtti() == Rtti_TextComponent )
+			color = ((TextComponent*)component(n))->color();
 	}
 
 	QList<KEmoticonsTheme::Token> tokens;
@@ -723,7 +723,7 @@ void DisplayNameComponent::redraw()
 
 	QFontMetrics fontMetrics( d->font );
 	int fontHeight = fontMetrics.height();
-	for ( token = tokens.begin(); token != tokens.end(); ++token )
+	for ( token = tokens.constBegin(); token != tokens.constEnd(); ++token )
 	{
 		switch ( (*token).type )
 		{

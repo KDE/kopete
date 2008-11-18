@@ -60,16 +60,16 @@ signals:
 	void receivedInfoFor( const QString& contact, unsigned int type );
 	
 private:
-	QMap<int, ICQGeneralUserInfo> m_genInfoMap;
-	QMap<int, ICQEmailInfo> m_emailInfoMap;
-	QMap<int, ICQNotesInfo> m_notesInfoMap;
-	QMap<int, ICQMoreUserInfo> m_moreInfoMap;
-	QMap<int, ICQWorkUserInfo> m_workInfoMap;
-	QMap<int, ICQShortInfo> m_shortInfoMap;
-	QMap<int, ICQInterestInfo> m_interestInfoMap;
-	QMap<int, ICQOrgAffInfo> m_orgAffInfoMap;
-	QMap<int, QString> m_contactSequenceMap;
-	QMap<QString, int> m_reverseContactMap;
+	QMap<Oscar::DWORD, ICQGeneralUserInfo> m_genInfoMap;
+	QMap<Oscar::DWORD, ICQEmailInfo> m_emailInfoMap;
+	QMap<Oscar::DWORD, ICQNotesInfo> m_notesInfoMap;
+	QMap<Oscar::DWORD, ICQMoreUserInfo> m_moreInfoMap;
+	QMap<Oscar::DWORD, ICQWorkUserInfo> m_workInfoMap;
+	QMap<Oscar::DWORD, ICQShortInfo> m_shortInfoMap;
+	QMap<Oscar::DWORD, ICQInterestInfo> m_interestInfoMap;
+	QMap<Oscar::DWORD, ICQOrgAffInfo> m_orgAffInfoMap;
+	QMap<Oscar::DWORD, QString> m_contactSequenceMap;
+	QMap<QString, Oscar::DWORD> m_reverseContactMap;
 	unsigned int m_type;
 	QString m_userToRequestFor;
 

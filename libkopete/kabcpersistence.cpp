@@ -129,8 +129,8 @@ void KABCPersistence::write( MetaContact * mc )
 		}
 
 		// insert a custom field for each protocol
-		QMap<QString, QStringList>::ConstIterator it = addressMap.begin();
-		for ( ; it != addressMap.end(); ++it )
+		QMap<QString, QStringList>::ConstIterator it = addressMap.constBegin();
+		for ( ; it != addressMap.constEnd(); ++it )
 		{
 			// read existing data for this key
 			QString currentCustomForProtocol = theAddressee.custom( it.key(), QLatin1String( "All" ) );
@@ -268,10 +268,10 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 		if ( !addr.isEmpty() ) // if we are associated with KABC
 		{
 // load the set of addresses from KABC
-		QStringList customs = addr.customs();
+		const QStringList customs = addr.customs();
 
 		QStringList::ConstIterator it;
-		for ( it = customs.begin(); it != customs.end(); ++it )
+		for ( it = customs.constBegin(); it != customs.constEnd(); ++it )
 		{
 			QString app, name, value;
 			splitField( *it, app, name, value );

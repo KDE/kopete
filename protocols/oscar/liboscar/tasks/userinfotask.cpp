@@ -43,7 +43,7 @@ bool UserInfoTask::forMe( const Transfer * transfer ) const
 
 	if ( st->snacService() == 0x0002 && st->snacSubtype() == 0x0006 )
 	{
-		if ( m_contactSequenceMap.find( st->snacRequest() ) == m_contactSequenceMap.end() )
+		if ( !m_contactSequenceMap.contains( st->snacRequest() ) )
 			return false;
 		else
 		{
@@ -60,7 +60,7 @@ bool UserInfoTask::take( Transfer * transfer )
 	if ( forMe( transfer ) )
 	{
 		setTransfer( transfer );
-		quint16 seq = 0;
+		Oscar::DWORD seq = 0;
 		SnacTransfer* st = dynamic_cast<SnacTransfer*>( transfer );
 		if ( st )
 			seq = st->snacRequest();
@@ -134,7 +134,7 @@ void UserInfoTask::onGo()
 
 void UserInfoTask::requestInfoFor( const QString& contact, unsigned int types )
 {
-	quint16 seq = client()->snacSequence();
+	Oscar::DWORD seq = client()->snacSequence();
 	kDebug(OSCAR_RAW_DEBUG) << "setting sequence " << seq << " for contact " << contact;
 	m_contactSequenceMap[seq] = contact;
 	m_typesSequenceMap[seq] = types;
@@ -142,7 +142,7 @@ void UserInfoTask::requestInfoFor( const QString& contact, unsigned int types )
 	onGo();
 }
 
-UserDetails UserInfoTask::getInfoFor( quint16 sequence ) const
+UserDetails UserInfoTask::getInfoFor( Oscar::DWORD sequence ) const
 {
 	return m_sequenceInfoMap[sequence];
 }

@@ -101,13 +101,16 @@ void MediaManager::stop()
 
 QByteArray MediaManager::read()
 {
-	return alsaIn()->data();
+	if (alsaIn())
+		return alsaIn()->data();
+	return 0;
 }
 
 void MediaManager::write(const QByteArray& data)
 {
 	//kDebug() << "Writin on alsa device !";
-	alsaOut()->write(data);
+	if (alsaOut())
+		alsaOut()->write(data);
 }
 
 bool MediaManager::addSession(MediaSession *sess)

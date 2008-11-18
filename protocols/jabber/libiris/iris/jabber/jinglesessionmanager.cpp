@@ -73,10 +73,11 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	d->firstPort = 9000;
 	
 	//Get External IP address, This is not Standard and might not work but let's try it before we have ICE support
-	d->http = new QHttp(this);
-	d->http->setHost("www.swlink.net");
-	connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
-	d->http->get("/~styma/REMOTE_ADDR.shtml");
+	//whatismyip.org has a better interface for this
+	//d->http = new QHttp(this);
+	//d->http->setHost("www.swlink.net");
+	//connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
+	//d->http->get("/~styma/REMOTE_ADDR.shtml");
 }
 
 void JingleSessionManager::slotExternalIPDone(bool err)
@@ -90,7 +91,6 @@ void JingleSessionManager::slotExternalIPDone(bool err)
 	}
 		
 	QByteArray pageData = d->http->readAll();
-	//FIXME: must parse html, this page has tag mismatch...
 	d->ip = pageData.split('\n').at(4);
 	qDebug() << "Received External IP :" << d->ip;
 
@@ -110,6 +110,11 @@ void JingleSessionManager::slotExternalIPDone(bool err)
 	delete d->http;
 }
 
+void JingleSessionManager::setExternalIP(const QString& eip)
+{
+	d->ip = eip;
+}
+
 QString JingleSessionManager::externalIP() const
 {
 	return d->ip;
@@ -117,7 +122,7 @@ QString JingleSessionManager::externalIP() const
 
 JingleSessionManager::~JingleSessionManager()
 {
-
+	delete d;
 }
 
 void JingleSessionManager::setSupportedTransports(const QStringList& transports)
@@ -180,33 +185,52 @@ void JingleSessionManager::slotSessionIncoming()
 	JingleSession *sess = d->pjs->takeNextIncomingSession();
 	d->sessions << sess;
 	connect(sess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+	//QList<QString> incompatibleContents;
+	
+	QList<QString> unsupportedPayloads;
+	// This is a list of the names of the contents which have no supported payloads.
+	
+	QList<QString> unsupportedTransports;
+	// This is a list of the names of the contents which have no supported transports
+	// We have to remove all contents present in those lists.
+	//
+	// If no content is supported, reject the session because it's not possible to establish a session.
 
-	// TODO:Check if the Transport method is supported.
 	for (int i = 0; i < sess->contents().count(); i++)
 	{
 		JingleContent *c = sess->contents()[i];
+		
+		//Set supported payloads for this content.
+		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
 
 		// Check payloads for the content c
 		if (!checkSupportedPayloads(c))
 		{
-			//I think we have to send a no payload supported stanza.
-			//sess->terminate(UnsupportedApplications);
-			//--> no, only if all transports are unsupported
-			//in this case, a content-remove MUST be sent.
-			return;
+			//incompatibleContents << c->name();
+			unsupportedPayloads << c->name();
+			continue;
 		}
 		
 		if (!checkSupportedTransport(c))
 		{
-			//I think we have to send a no transport supported stanza.
-			//sess->terminate(UnsupportedTransports);
-			//--> no, only if all applications are unsupported
-			//in this case, a content-remove MUST be sent.
-			return;
+			//incompatibleContents << c->name();
+			unsupportedTransports << c->name();
 		}
-
-		//Set supported payloads for this content.
-		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
+	}
+	
+	if (unsupportedPayloads.count() + unsupportedTransports.count() == sess->contents().count())
+	{
+		//Reject the session.
+		JingleReason r(JingleReason::UnsupportedApplications);
+		sess->sessionTerminate(r);
+		//What happens when we receive the ack of the session-terminate ?
+		return;
+	}
+	else if (unsupportedPayloads.count() + unsupportedTransports.count() > 0)
+	{
+		//remove this contents list
+		sess->removeContent(unsupportedPayloads + unsupportedTransports);
+		return;
 	}
 	
 	emit newJingleSession(sess);
@@ -218,8 +242,10 @@ void JingleSessionManager::slotSessionIncoming()
 
 bool JingleSessionManager::checkSupportedPayloads(JingleContent *c)
 {
-	/*for (int i = 0; i < c->payloadTypes().count(); i++)
+	qDebug() << "We have" << c->responderPayloads().count() << "responder payloads in this content.";
+	for (int i = 0; i < c->payloadTypes().count(); i++)
 	{
+		qDebug() << "We have" << d->supportedAudioPayloads.count() << "supported payloads.";
 		for (int j = 0; j < d->supportedAudioPayloads.count(); j++)
 		{
 			qDebug() << "compare" << c->payloadTypes().at(i).attribute("name") << "to" << d->supportedAudioPayloads.at(j).attribute("name");
@@ -232,9 +258,9 @@ bool JingleSessionManager::checkSupportedPayloads(JingleContent *c)
 			}
 		}
 	}
-	qDebug() << "return false";*/
 
-	return true;
+	qDebug() << "return false";
+	return false;
 }
 
 bool JingleSessionManager::checkSupportedTransport(JingleContent *c)

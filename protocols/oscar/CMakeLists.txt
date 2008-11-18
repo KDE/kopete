@@ -27,7 +27,8 @@ set(kopete_oscar_LIB_SRCS
    icqcontactbase.cpp
    oscarpresence.cpp
    oscarpresencesdataclasses.cpp
-   oscarstatusmanager.cpp)
+   oscarstatusmanager.cpp
+   nscainfoevent.cpp)
 
 kde4_add_ui_files(kopete_oscar_LIB_SRCS
    oscarencodingselectionbase.ui

@@ -35,18 +35,22 @@ public:
 	void addSession(JabberJingleSession*);
 	void setSessions(const QList<JabberJingleSession*>&);
 	void removeSession(JabberJingleSession*);
+	void changeState(JabberJingleSession*);
+
 public slots:
 	void slotNewSession();
 	void slotAddContent();
 	void slotTerminate();
 	void slotRemove();
 	void slotClose();
+	void updateTime();
 
 private:
 	void setupActions();
 	JingleCallsManager *m_callsManager;
 	Ui::jingleCallsGui ui;
 	JingleCallsModel *model;
+	QTimer *updater;
 };
 
 

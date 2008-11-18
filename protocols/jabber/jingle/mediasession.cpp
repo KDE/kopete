@@ -15,6 +15,7 @@
   * *************************************************************************
   */
 #include <KDebug>
+#include <QTime>
 
 #include "mediasession.h"
 #include "mediamanager.h"
@@ -28,6 +29,7 @@ public :
 	MediaManager *mediaManager;
 	QString codecName;
 	QByteArray encodedData;
+	QTime startTime;
 	int tsValue;
 	int ts;
 };
@@ -67,6 +69,7 @@ void MediaSession::setQuality(int q)
 
 bool MediaSession::start()
 {
+	d->startTime = QTime::currentTime();
 	bool managerOk = d->mediaManager->addSession(this); //Tell the media manager te session is being started.
 	bool pluginOk = d->plugin->start();
 
@@ -119,4 +122,11 @@ void MediaSession::slotDecoded()
 	//MediaManager always writes and reads from Alsa device(s)
 	//qDebug() << "rawData =" << rawData.toBase64() << "(" << rawData.size() << "bytes)";
 	d->mediaManager->write(rawData);
+}
+
+int MediaSession::timeStamp()
+{
+	int ret = d->startTime.msecsTo(QTime::currentTime());
+	//kDebug() << "Return value :" << ret;
+	return ret;
 }

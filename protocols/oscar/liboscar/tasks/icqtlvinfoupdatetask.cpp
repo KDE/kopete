@@ -40,14 +40,13 @@ bool ICQTlvInfoUpdateTask::forMe( const Transfer* transfer ) const
 	if ( !st )
 		return false;
 
-	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 )
+	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 || st->snacRequest() != m_goSequence )
 		return false;
 
 	Buffer buf( *( st->buffer() ) );
 	const_cast<ICQTlvInfoUpdateTask*>( this )->parseInitialData( buf );
 
-	if ( requestType() == 0x07DA && requestSubType() == 0x0FDC
-	     && m_goSequence == sequence() )
+	if ( requestType() == 0x07DA && requestSubType() == 0x0FDC )
 		return true;
 
 	return false;
@@ -85,8 +84,7 @@ void ICQTlvInfoUpdateTask::onGo()
 {
 	kDebug(OSCAR_RAW_DEBUG) << "Updating user info.";
 
-	m_goSequence = client()->snacSequence();
-	setSequence( m_goSequence );
+	setSequence( client()->snacSequence() );
 	setRequestType( 0x07D0 );
 	setRequestSubType( 0x0FD2 );
 
@@ -106,9 +104,11 @@ void ICQTlvInfoUpdateTask::onGo()
 
 	b.endBlock();
 
+	m_goSequence = client()->snacSequence();
+
 	Buffer *sendBuf = addInitialData( &b );
 	FLAP f = { 0x02, 0, 0 };
-	SNAC s = { 0x0015, 0x0002, 0, client()->snacSequence() };
+	SNAC s = { 0x0015, 0x0002, 0, m_goSequence };
 	Transfer* t = createTransfer( f, s, sendBuf );
 	send( t );
 }

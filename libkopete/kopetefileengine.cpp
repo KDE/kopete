@@ -76,8 +76,8 @@ namespace Kopete
 
 		// extract and decode arguments
 		QStringList parts = m_fileName.split(QChar(':'), QString::SkipEmptyParts);
-		QStringList::const_iterator partsEnd = parts.end();
-		for (QStringList::Iterator it = parts.begin(); it != partsEnd; ++it)
+		QStringList::iterator partsEnd = parts.end();
+		for (QStringList::iterator it = parts.begin(); it != partsEnd; ++it)
 			*it = QUrl::fromPercentEncoding((*it).toUtf8());
 
 		if (parts[0] == QString::fromLatin1("kopete-contact-icon"))

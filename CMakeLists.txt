@@ -29,6 +29,14 @@ macro_optional_find_package(LibOTR)
 macro_bool_to_01(LIBOTR_FOUND HAVE_LIBOTR)
 macro_log_feature(LIBOTR_FOUND "libotr" "A library to encrypt messages with Off-the-Record encryption" "http://www.cypherpunks.ca/otr" FALSE "3.1.0" "Required for the Kopete otr plugin.")
 
+macro_optional_find_package(Libmsn)
+macro_bool_to_01(LIBMSN_FOUND HAVE_LIBMSN)
+macro_log_feature(LIBMSN_FOUND "libmsn" "A library providing support for the msn protocol" "http://sourceforge.net/projects/libmsn" FALSE "0.4.0" "Required for the Kopete wlm plugin")
+
+macro_optional_find_package(LibMeanwhile)
+macro_bool_to_01(LIBMEANWHILE_FOUND HAVE_LIBMEANWHILE)
+macro_log_feature(LIBMEANWHILE_FOUND "libmeanwhile" "A library for protocol support for connection to Sametime servers" "http://libmeanwhile.sf.net" FALSE "" "Required for the Kopete Meanwhile protocol")
+
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)

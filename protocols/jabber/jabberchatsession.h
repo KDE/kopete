@@ -90,6 +90,7 @@ private slots:
 	void slotJingleAudioCall();
 	void slotJingleVideoCall();
 	void slotJingleSession();
+	void slotJingleSessionGui();
 #endif
 
 private:

@@ -28,8 +28,7 @@ MeanwhileAddContactPage::MeanwhileAddContactPage(
         : AddContactPage(parent), theAccount(_account),
           theParent(parent)
 {
-    QDialog *dialog = new QDialog(this);
-    ui.setupUi(dialog);
+    ui.setupUi(this);
 
     MeanwhileAccount *account = static_cast<MeanwhileAccount *>(_account);
     if (account->infoPlugin->canProvideMeanwhileId()) {
@@ -37,7 +36,6 @@ MeanwhileAddContactPage::MeanwhileAddContactPage(
     } else {
         ui.btnFindUser->setDisabled(true);
     }
-    dialog->show();
 }
 
 MeanwhileAddContactPage::~MeanwhileAddContactPage()

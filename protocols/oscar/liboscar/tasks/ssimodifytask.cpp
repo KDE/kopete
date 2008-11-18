@@ -235,7 +235,7 @@ bool SSIModifyTask::forMe( const Transfer * transfer ) const
 		}
 		else
 		{
-			if ( subtype == 0x000E && m_id == st->snac().id )
+			if ( subtype == 0x000E && m_id == st->snacRequest() )
 				return true;
 		}
 	}

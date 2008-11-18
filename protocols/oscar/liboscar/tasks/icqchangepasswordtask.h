@@ -41,7 +41,7 @@ public:
 
 private:
 	QString m_password;
-	Oscar::WORD m_goSequence;
+	Oscar::DWORD m_goSequence;
 
 };
 

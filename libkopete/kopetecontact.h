@@ -483,6 +483,12 @@ signals:
 	 * That mean when activity has been noticed
 	 */
 	void idleStateChanged( Kopete::Contact *contact );
+
+	/**
+	 * \brief Emitted when the file transfer capability of this contact has changed
+	 */
+	void canAcceptFilesChanged();
+
 private:
 	class Private;
 	Private *d;

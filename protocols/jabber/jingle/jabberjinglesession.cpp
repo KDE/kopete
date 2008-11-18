@@ -32,10 +32,7 @@ JabberJingleSession::JabberJingleSession(JingleCallsManager* parent)
 {
 	m_mediaManager = m_callsManager->mediaManager();
 	qDebug() << "Created a new JabberJingleSession";
-	m_timeUp = QTime(0, 0);
-	QTimer *uptime = new QTimer(this);
-	connect(uptime, SIGNAL(timeout()), this, SLOT(slotUptimeOut()));
-	uptime->start(1000);
+	m_startTime = QTime(0, 0);
 }
 
 JabberJingleSession::~JabberJingleSession()
@@ -44,11 +41,6 @@ JabberJingleSession::~JabberJingleSession()
 	for (int i = 0; i < jabberJingleContents.count(); i++)
 		delete jabberJingleContents[i];
 	delete m_jingleSession;
-}
-
-void JabberJingleSession::slotUptimeOut()
-{
-	m_timeUp.addSecs(1);
 }
 
 void JabberJingleSession::setJingleSession(XMPP::JingleSession* sess)
@@ -79,11 +71,12 @@ void JabberJingleSession::slotStateChanged()
 			jContent = new JabberJingleContent(this, m_jingleSession->contents()[i]);
 			jabberJingleContents << jContent;
 		}
-		jContent->prepareRtpInSession();
-		jContent->prepareRtpOutSession();
-		jContent->startWritingRtpData();
-		//FIXME:Those 3 methods should be set in a method like startStreaming()
+		jContent->startStreaming();
 	}
+	emit stateChanged();
+	
+	//Starting now !
+	m_startTime = QTime::currentTime();
 }
 
 void JabberJingleSession::slotSessionTerminated()
@@ -94,7 +87,7 @@ void JabberJingleSession::slotSessionTerminated()
 	emit terminated();
 }
 
-void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)
+/*void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)
 {
 	qDebug() << "Called void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)";
 	JabberJingleContent *jContent = contentWithName(content->name());
@@ -103,9 +96,8 @@ void JabberJingleSession::writeRtpData(XMPP::JingleContent* content)
 		jContent = new JabberJingleContent(this, content);
 		jabberJingleContents << jContent;
 	}
-	jContent->startWritingRtpData();
-	//FIXME:need different m_rtpSession for each content.
-}
+	jContent->startStreaming();
+}*/
 
 JabberJingleContent *JabberJingleSession::contentWithName(const QString& name)
 {
@@ -123,9 +115,23 @@ MediaManager *JabberJingleSession::mediaManager() const
 	return m_mediaManager;
 }
 
+JabberJingleSession::State JabberJingleSession::state()
+{
+	return static_cast<State>(m_jingleSession->state());
+}
+
 QTime JabberJingleSession::upTime()
 {
-	//TODO:Implement me !
-	return m_timeUp;
+	if (m_startTime.hour() == 0 && m_startTime.minute() == 0 && m_startTime.second() == 0)
+		return m_startTime;
+
+	int dTime = m_startTime.secsTo(QTime::currentTime());
+	int secs = dTime % 60;
+	int mins = (dTime - secs) / 60;
+	int hours = (dTime - secs - (mins * 60)) / 24;
+	QTime ret;
+	ret.setHMS(hours, mins, secs);
+	
+	return ret;
 }
 

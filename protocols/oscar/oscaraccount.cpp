@@ -60,6 +60,7 @@
 #include "kopeteversion.h"
 #include "oscarversionupdater.h"
 #include "filetransferhandler.h"
+#include "nscainfoevent.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
 {
@@ -348,45 +349,48 @@ void OscarAccount::processSSIList()
 
 void OscarAccount::nonServerAddContactDialogClosed()
 {
-    if ( !d->olnscDialog )
-        return;
+	if ( !d->olnscDialog )
+		return;
 
-    if ( d->olnscDialog->result() == KDialog::Yes )
-    {
-        //start adding contacts
-        kDebug(OSCAR_GEN_DEBUG) << "adding non server contacts to the contact list";
-        //get the contact list. get the OscarContact object, then the group
-        //check if the group is on ssi, if not, add it
-        //if so, add the contact.
-        QStringList offliners = d->olnscDialog->nonServerContactList();
-        QStringList::iterator it, itEnd = offliners.end();
-        for ( it = offliners.begin(); it != itEnd; ++it )
-        {
-	        OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( ( *it ) ) );
-            if ( !oc )
-            {
-                kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for" << ( *it );
-                continue;
-            }
+	if ( d->olnscDialog->result() == KDialog::Yes )
+	{
+		NonServerContactsAddInfoEvent *event = new NonServerContactsAddInfoEvent( d->engine->ssiManager(), engine()->isIcq(), this );
+		event->sendEvent();
 
-            Kopete::MetaContact* mc = oc->metaContact();
-            if ( !mc )
-            {
-                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
-                continue;
-            }
+		//start adding contacts
+		kDebug(OSCAR_GEN_DEBUG) << "adding non server contacts to the contact list";
+		//get the contact list. get the OscarContact object, then the group
+		//check if the group is on ssi, if not, add it
+		//if so, add the contact.
+		QStringList offliners = d->olnscDialog->nonServerContactList();
+		QStringList::iterator it, itEnd = offliners.end();
+		for ( it = offliners.begin(); it != itEnd; ++it )
+		{
+			OscarContact* oc = dynamic_cast<OscarContact*>( contacts().value( ( *it ) ) );
+			if ( !oc )
+			{
+				kDebug(OSCAR_GEN_DEBUG) << "no OscarContact object available for" << ( *it );
+				continue;
+			}
 
-            Kopete::Group* group = mc->groups().first();
-            if ( !group )
-            {
-                kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
-                continue;
-            }
+			Kopete::MetaContact* mc = oc->metaContact();
+			if ( !mc )
+			{
+				kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
+				continue;
+			}
 
-	    addContactToSSI( ( *it ), group->displayName(), true );
-        }
-    }
+			Kopete::Group* group = mc->groups().first();
+			if ( !group )
+			{
+				kDebug(OSCAR_GEN_DEBUG) << "no metacontact object available for" << oc->contactId();
+				continue;
+			}
 
+			event->addContact( *it );
+			addContactToSSI( ( *it ), group->displayName(), true );
+		}
+	}
 	else if ( d->olnscDialog->result() == KDialog::No )
 	{
 		//remove contacts
@@ -816,21 +820,22 @@ void OscarAccount::updateVersionUpdaterStamp()
 void OscarAccount::ssiContactAdded( const OContact& item )
 {
 	QString normalizedName = Oscar::normalize( item.name() );
-	if ( d->addContactMap.contains( normalizedName ) )
+	if ( contacts().value( item.name() ) )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. modifying " << item.name();
+		OscarContact* oc = static_cast<OscarContact*>( contacts().value( item.name() ) );
+		oc->setSSIItem( item );
+		// To be safe remove contact from addContactMap
+		d->addContactMap.remove( normalizedName );
+	}
+	else if ( d->addContactMap.contains( normalizedName ) )
 	{
 		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. adding " << item.name()
 			<< " to the contact list" << endl;
 		OscarContact* oc = createNewContact( item.name(), d->addContactMap[normalizedName], item );
 		d->addContactMap.remove( normalizedName );
-
 		if ( oc && oc->ssiItem().waitingAuth() )
 			QTimer::singleShot( 1, oc, SLOT(requestAuthorization()) );
-	}
-	else if ( contacts().value( item.name() ) )
-	{
-		kDebug(OSCAR_GEN_DEBUG) << "Received confirmation from server. modifying " << item.name();
-		OscarContact* oc = static_cast<OscarContact*>( contacts().value( item.name() ) );
-		oc->setSSIItem( item );
 	}
 	else
 		kDebug(OSCAR_GEN_DEBUG) << "Got addition for contact we weren't waiting on";

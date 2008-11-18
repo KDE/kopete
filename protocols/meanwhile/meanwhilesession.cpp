@@ -29,17 +29,17 @@
 #include "meanwhilesession.h"
 #include "meanwhileprotocol.h"
 
-#include <mw_channel.h>
-#include <mw_message.h>
-#include <mw_error.h>
-#include <mw_service.h>
-#include <mw_session.h>
-#include <mw_srvc_aware.h>
-#include <mw_srvc_conf.h>
-#include <mw_srvc_im.h>
-#include <mw_srvc_store.h>
-#include <mw_cipher.h>
-#include <mw_st_list.h>
+#include <meanwhile/mw_channel.h>
+#include <meanwhile/mw_message.h>
+#include <meanwhile/mw_error.h>
+#include <meanwhile/mw_service.h>
+#include <meanwhile/mw_session.h>
+#include <meanwhile/mw_srvc_aware.h>
+#include <meanwhile/mw_srvc_conf.h>
+#include <meanwhile/mw_srvc_im.h>
+#include <meanwhile/mw_srvc_store.h>
+#include <meanwhile/mw_cipher.h>
+#include <meanwhile/mw_st_list.h>
 //Added by qt3to4:
 #include <Q3ValueList>
 
@@ -50,6 +50,33 @@
 #define set_im_handler(a,b)   imHandler.a = _handleIm ## b
 
 #define get_protocol() (static_cast<MeanwhileProtocol *>(account->protocol()))
+
+static struct MeanwhileClientID ids[] = {
+    { mwLogin_LIB,		"Lotus Binary Library" },
+    { mwLogin_JAVA_WEB,		"Lotus Java Applet", },
+    { mwLogin_BINARY,		"Lotus Binary App", },
+    { mwLogin_JAVA_APP,		"Lotus Java App", },
+    { mwLogin_LINKS,		"Sametime Links", },
+
+    { mwLogin_NOTES_6_5,	"Notes 6.5", },
+    { mwLogin_NOTES_6_5_3,	"Notes 6.5.3", },
+    { mwLogin_NOTES_7_0_beta,	"Notes 7.0 beta", },
+    { mwLogin_NOTES_7_0,	"Notes 7.0", },
+    { mwLogin_ICT,		"ICT", },
+    { mwLogin_ICT_1_7_8_2,	"ICT 1.7.8.2", },
+    { mwLogin_ICT_SIP,		"ICT SIP", },
+    { mwLogin_NOTESBUDDY_4_14,	"NotesBuddy 4.14", },
+    { mwLogin_NOTESBUDDY_4_15,	"NotesBuddy 4.15" },
+    { mwLogin_NOTESBUDDY_4_16,	"NotesBuddy 4.16" },
+    { mwLogin_SANITY,		"Sanity", },
+    { mwLogin_ST_PERL,		"ST Perl", },
+    { mwLogin_PMR_ALERT,	"PMR Alert", },
+    { mwLogin_TRILLIAN,		"Trillian", },
+    { mwLogin_TRILLIAN_IBM,	"Trillian (IBM)", },
+    { mwLogin_MEANWHILE,	"Meanwhile Library", },
+    { 0, NULL },
+};
+
 
 MeanwhileSession::MeanwhileSession(MeanwhileAccount *acc)
     : session(0), state(mwSession_STOPPED), account(acc), socket(0)
@@ -118,6 +145,7 @@ MeanwhileSession::MeanwhileSession(MeanwhileAccount *acc)
 
     /* add a necessary cipher */
     mwSession_addCipher(session, mwCipher_new_RC2_40(session));
+    mwSession_addCipher(session, mwCipher_new_RC2_128(session));
 }
 
 MeanwhileSession::~MeanwhileSession()
@@ -137,15 +165,33 @@ MeanwhileSession::~MeanwhileSession()
     mwService_free(MW_SERVICE(imService));
     mwService_free(MW_SERVICE(awareService));
     mwCipher_free(mwSession_getCipher(session, mwCipher_RC2_40));
+    mwCipher_free(mwSession_getCipher(session, mwCipher_RC2_128));
 
     mwSession_free(session);
 }
 
+void MeanwhileSession::getDefaultClientIDParams(int *clientID,
+	int *verMajor, int *verMinor)
+{
+    *clientID = mwLogin_MEANWHILE;
+    *verMajor = MW_PROTOCOL_VERSION_MAJOR;
+    *verMinor = MW_PROTOCOL_VERSION_MINOR;
+}
+
 /* external interface called by meanwhileaccount */
-void MeanwhileSession::connect(QString host, int port,
-        QString account, QString password)
+void MeanwhileSession::connect(QString password)
 {
     HERE;
+
+    int port, clientID, versionMajor, versionMinor;
+    bool useCustomID;
+    QString host;
+
+    host = account->getServerName();
+    port = account->getServerPort();
+    useCustomID = account->getClientIDParams(&clientID,
+		    &versionMajor, &versionMinor);
+
 
     QTcpSocket *sock = new QTcpSocket(this);
     sock->connectToHost(host, quint16(port));
@@ -165,10 +211,22 @@ void MeanwhileSession::connect(QString host, int port,
     QObject::connect(sock, SIGNAL(aboutToClose()), this,
                      SLOT(slotSocketAboutToClose()));
 
+    /* set login details */
     mwSession_setProperty(session, mwSession_AUTH_USER_ID,
-                    g_strdup(account.toAscii()), g_free);
+                    g_strdup(account->meanwhileId().toAscii()), g_free);
     mwSession_setProperty(session, mwSession_AUTH_PASSWORD,
                     g_strdup(password.toAscii()), g_free);
+
+    /* set client type parameters */
+    if (useCustomID) {
+	mwSession_setProperty(session, mwSession_CLIENT_TYPE_ID,
+			GUINT_TO_POINTER(clientID), NULL);
+	mwSession_setProperty(session, mwSession_CLIENT_VER_MAJOR,
+			GUINT_TO_POINTER(versionMajor), NULL);
+	mwSession_setProperty(session, mwSession_CLIENT_VER_MINOR,
+			GUINT_TO_POINTER(versionMinor), NULL);
+    }
+
 
     /* go!! */
     mwSession_start(session);
@@ -522,6 +580,44 @@ MeanwhileContact *MeanwhileSession::conversationContact(
     return contact;
 }
 
+void MeanwhileSession::handleRedirect(const char *host)
+{
+    /* if configured manually, force the login */
+    if (account->getForceLogin()) {
+        mwSession_forceLogin(session);
+        return;
+    }
+
+    /* if we're connecting to the same host, force */
+    if (!host || account->getServerName() == host) {
+        mwSession_forceLogin(session);
+        return;
+    }
+
+    QTcpSocket *sock = new QTcpSocket(this);
+    sock->connectToHost(host, quint16(account->getServerPort()));
+
+    if (!sock->waitForConnected()) {
+        KMessageBox::queuedMessageBox(0, KMessageBox::Error,
+                i18n( "Could not connect to redirected server"),
+                        i18n("Meanwhile Plugin"),
+                KMessageBox::Notify);
+        delete sock;
+        mwSession_forceLogin(session);
+        return;
+    }
+
+    /* we've redirected, so swap the sockets */
+    delete this->socket;
+    this->socket = sock;
+
+    /* we want to receive signals when there is data to read */
+    QObject::connect(sock, SIGNAL(readyRead()), this,
+                     SLOT(slotSocketDataAvailable()));
+    QObject::connect(sock, SIGNAL(aboutToClose()), this,
+                     SLOT(slotSocketAboutToClose()));
+}
+
 /* priave session handling functions, called by libmeanwhile callbacks */
 void MeanwhileSession::handleSessionStateChange(
         enum mwSessionState state, gpointer data)
@@ -534,9 +630,12 @@ void MeanwhileSession::handleSessionStateChange(
         case mwSession_HANDSHAKE:
         case mwSession_HANDSHAKE_ACK:
         case mwSession_LOGIN:
-        case mwSession_LOGIN_REDIR:
         case mwSession_LOGIN_CONT:
         case mwSession_LOGIN_ACK:
+            break;
+
+        case mwSession_LOGIN_REDIR:
+            handleRedirect((char *)data);
             break;
 
         case mwSession_STARTED:
@@ -868,6 +967,11 @@ void MeanwhileSession::handleStorageLoad(struct mwServiceStorage * /* srvc */,
     g_list_free(glf);
 
     mwSametimeList_free(list);
+}
+
+const struct MeanwhileClientID *MeanwhileSession::getClientIDs()
+{
+    return ids;
 }
 
 #if 0

@@ -55,7 +55,11 @@ public:
 JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, const XMPP::Resource &resource )
 	: d( new Private(account, jid, resource) )
 {
-	d->capsEnabled = account->protocol()->capabilitiesManager()->capabilitiesEnabled(jid);
+    JabberCapabilitiesManager *cm = account->protocol()->capabilitiesManager();
+    if ( cm && cm->capabilitiesEnabled(jid) )
+    {    
+        d->capsEnabled = cm->capabilitiesEnabled(jid);
+    }
 
 	if ( account->isConnected () )
 	{

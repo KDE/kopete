@@ -35,7 +35,8 @@
 class ConnectionPrivate
 {
 public:
-	Oscar::DWORD snacSequence;
+	// The Oscar::WORD isn't typo see snacSequence function
+	Oscar::WORD snacSequence;
 	Oscar::WORD flapSequence;
 
 	QList<int> familyList;
@@ -126,7 +127,7 @@ Oscar::Settings* Connection::settings() const
 	return d->client->clientSettings();
 }
 
-quint16 Connection::flapSequence()
+Oscar::WORD Connection::flapSequence()
 {
 	d->flapSequence++;
 	if ( d->flapSequence >= 0x8000 ) //the max flap sequence is 0x8000 ( HEX )
@@ -135,9 +136,13 @@ quint16 Connection::flapSequence()
 	return d->flapSequence;
 }
 
-quint32 Connection::snacSequence()
+Oscar::DWORD Connection::snacSequence()
 {
 	d->snacSequence++;
+
+	if ( d->snacSequence == 0x0000 )
+		d->snacSequence++;
+
 	return d->snacSequence;
 }
 

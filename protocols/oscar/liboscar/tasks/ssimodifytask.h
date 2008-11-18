@@ -149,7 +149,7 @@ private:
 	OContact m_groupItem;
 	OperationType m_opType;
 	OperationSubject m_opSubject;
-	Oscar::WORD m_id;
+	Oscar::DWORD m_id;
 	ContactManager* m_ssiManager;
 	bool m_static;
 
