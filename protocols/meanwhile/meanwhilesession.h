@@ -28,6 +28,12 @@
 
 class QTcpSocket;
 
+struct MeanwhileClientID {
+    int		id;
+    const char *name;
+};
+
+
 /**
  * A class to handle libmeanwhile session management.
  */
@@ -53,7 +59,7 @@ public:
      * the connection process is ascychronous - a loginDone() signal will be
      * emitted when successfully logged in.
      */
-    void connect(QString host, int port, QString account, QString password);
+    void connect(QString password);
 
     /**
      * Disconnect from the server.
@@ -107,6 +113,17 @@ public:
      * @return true if the session is connecting
      */
     bool isConnecting();
+
+    /**
+     * Returns an array of well-known meanwhile client IDs
+     */
+    static const struct MeanwhileClientID *getClientIDs();
+
+    /**
+     * Get the default client ID parameters for kopete
+     */
+    static void getDefaultClientIDParams(int *clientID,
+	    int *verMajor, int *verMinor);
 
 signals:
     /**

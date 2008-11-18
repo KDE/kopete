@@ -47,6 +47,8 @@ protected:
 
 private:
     Ui::MeanwhileEditAccount ui;
+    void setupClientList();
+    void selectClientListItem(int selectedID);
 };
 
 #endif
