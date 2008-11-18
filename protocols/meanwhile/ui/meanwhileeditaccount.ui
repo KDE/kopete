@@ -320,9 +320,6 @@
          <property name="text" >
           <string>Restore &amp;Defaults</string>
          </property>
-         <property name="shortcut" >
-          <string>Alt+D</string>
-         </property>
         </widget>
        </item>
        <item>
