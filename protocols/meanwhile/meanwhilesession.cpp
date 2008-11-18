@@ -118,6 +118,7 @@ MeanwhileSession::MeanwhileSession(MeanwhileAccount *acc)
 
     /* add a necessary cipher */
     mwSession_addCipher(session, mwCipher_new_RC2_40(session));
+    mwSession_addCipher(session, mwCipher_new_RC2_128(session));
 }
 
 MeanwhileSession::~MeanwhileSession()
@@ -137,6 +138,7 @@ MeanwhileSession::~MeanwhileSession()
     mwService_free(MW_SERVICE(imService));
     mwService_free(MW_SERVICE(awareService));
     mwCipher_free(mwSession_getCipher(session, mwCipher_RC2_40));
+    mwCipher_free(mwSession_getCipher(session, mwCipher_RC2_128));
 
     mwSession_free(session);
 }
