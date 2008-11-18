@@ -18,11 +18,11 @@
 #include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
 
-#include <mw_session.h>
-#include <mw_service.h>
-#include <mw_srvc_aware.h>
-#include <mw_srvc_im.h>
-#include <mw_srvc_resolve.h>
+#include <meanwhile/mw_session.h>
+#include <meanwhile/mw_service.h>
+#include <meanwhile/mw_srvc_aware.h>
+#include <meanwhile/mw_srvc_im.h>
+#include <meanwhile/mw_srvc_resolve.h>
 //Added by qt3to4:
 #include <Q3ValueList>
 

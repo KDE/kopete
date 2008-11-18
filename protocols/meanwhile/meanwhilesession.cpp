@@ -29,17 +29,17 @@
 #include "meanwhilesession.h"
 #include "meanwhileprotocol.h"
 
-#include <mw_channel.h>
-#include <mw_message.h>
-#include <mw_error.h>
-#include <mw_service.h>
-#include <mw_session.h>
-#include <mw_srvc_aware.h>
-#include <mw_srvc_conf.h>
-#include <mw_srvc_im.h>
-#include <mw_srvc_store.h>
-#include <mw_cipher.h>
-#include <mw_st_list.h>
+#include <meanwhile/mw_channel.h>
+#include <meanwhile/mw_message.h>
+#include <meanwhile/mw_error.h>
+#include <meanwhile/mw_service.h>
+#include <meanwhile/mw_session.h>
+#include <meanwhile/mw_srvc_aware.h>
+#include <meanwhile/mw_srvc_conf.h>
+#include <meanwhile/mw_srvc_im.h>
+#include <meanwhile/mw_srvc_store.h>
+#include <meanwhile/mw_cipher.h>
+#include <meanwhile/mw_st_list.h>
 //Added by qt3to4:
 #include <Q3ValueList>
 
