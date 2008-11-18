@@ -354,6 +354,8 @@ private:
     };
     void handleStorageLoad(struct mwServiceStorage *srvc,
             guint32 result, struct mwStorageUnit *item, gpointer data);
+
+    void handleRedirect(const char *host);
 };
 
 #endif

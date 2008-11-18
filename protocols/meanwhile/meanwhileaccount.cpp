@@ -196,6 +196,16 @@ bool MeanwhileAccount::getClientIDParams(int *clientID,
     return custom_id;
 }
 
+void MeanwhileAccount::setForceLogin(bool force)
+{
+    configGroup()->writeEntry("forceLogin", force);
+}
+
+bool MeanwhileAccount::getForceLogin()
+{
+    return configGroup()->readEntry("forceLogin", false);
+}
+
 void MeanwhileAccount::slotServerNotification(const QString &mesg)
 {
     KMessageBox::queuedMessageBox(0, KMessageBox::Error , mesg,

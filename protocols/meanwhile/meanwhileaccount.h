@@ -70,6 +70,12 @@ public:
     /** Reset client identification parameters to their defaults */
     void    resetClientID();
 
+    /** Set the 'force login' flag, to ignore server redirect messages */
+    void    setForceLogin(bool force);
+
+    /** Returns the state of the 'force login' option */
+    bool    getForceLogin();
+
     MeanwhilePlugin *infoPlugin;
 
     /**

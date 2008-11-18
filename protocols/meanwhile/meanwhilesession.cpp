@@ -580,6 +580,44 @@ MeanwhileContact *MeanwhileSession::conversationContact(
     return contact;
 }
 
+void MeanwhileSession::handleRedirect(const char *host)
+{
+    /* if configured manually, force the login */
+    if (account->getForceLogin()) {
+        mwSession_forceLogin(session);
+        return;
+    }
+
+    /* if we're connecting to the same host, force */
+    if (!host || account->getServerName() == host) {
+        mwSession_forceLogin(session);
+        return;
+    }
+
+    QTcpSocket *sock = new QTcpSocket(this);
+    sock->connectToHost(host, quint16(account->getServerPort()));
+
+    if (!sock->waitForConnected()) {
+        KMessageBox::queuedMessageBox(0, KMessageBox::Error,
+                i18n( "Could not connect to redirected server"),
+                        i18n("Meanwhile Plugin"),
+                KMessageBox::Notify);
+        delete sock;
+        mwSession_forceLogin(session);
+        return;
+    }
+
+    /* we've redirected, so swap the sockets */
+    delete this->socket;
+    this->socket = sock;
+
+    /* we want to receive signals when there is data to read */
+    QObject::connect(sock, SIGNAL(readyRead()), this,
+                     SLOT(slotSocketDataAvailable()));
+    QObject::connect(sock, SIGNAL(aboutToClose()), this,
+                     SLOT(slotSocketAboutToClose()));
+}
+
 /* priave session handling functions, called by libmeanwhile callbacks */
 void MeanwhileSession::handleSessionStateChange(
         enum mwSessionState state, gpointer data)
@@ -592,9 +630,12 @@ void MeanwhileSession::handleSessionStateChange(
         case mwSession_HANDSHAKE:
         case mwSession_HANDSHAKE_ACK:
         case mwSession_LOGIN:
-        case mwSession_LOGIN_REDIR:
         case mwSession_LOGIN_CONT:
         case mwSession_LOGIN_ACK:
+            break;
+
+        case mwSession_LOGIN_REDIR:
+            handleRedirect((char *)data);
             break;
 
         case mwSession_STARTED:
