@@ -35,7 +35,7 @@ public:
     virtual bool validateData();
 
 protected:
-    Ui::AddContactDialog ui;
+    Ui::MeanwhileAddUI ui;
     Kopete::Account *theAccount;
     QWidget *theParent;
 
