@@ -58,6 +58,12 @@ ClientChannelHandler::ClientChannelHandler(QObject* parent)
 {
 }
 
+ClientChannelHandler::ClientChannelHandler( Handler * parent )
+  	: Handler(new ClientChannelHandlerPrivate, parent)
+{
+  kDebug(14121);
+}
+
 ClientChannelHandler::~ClientChannelHandler()
 {
 }
@@ -74,7 +80,7 @@ KIrc::Handler::Handled ClientChannelHandler::JOIN(KIrc::Context *context, const 
 	CHECK_ARGS(0, 0);
 
 	EntityPtr from = context->entityFromName(message.prefix());
-
+	
 #if 0
 	if (message.prefix() == QLatin1String("0"))
 		// leave all the channels
@@ -83,12 +89,23 @@ KIrc::Handler::Handled ClientChannelHandler::JOIN(KIrc::Context *context, const 
 	{
 		// For now lets forgot about the keys
 		EntityList to = context->entitiesFromNames(message.suffix());
-		TextEvent *event = new TextEvent("JOIN", from, to, message.toLine());
-		context->postEvent( event );
 
-		foreach(EntityPtr channel, to)
+		//If we caused the event, add the channel to the channels list
+		if(from==socket->owner()) 
 		{
+			kDebug(14121)<<"/me caused a join event";
+			foreach(const EntityPtr& e,to)
+				d->channels.insert(e);
+		}
+		else //otherwise broadcast a message that someone new is in the channel
+		{
+			TextEvent *event = new TextEvent( "JOIN", from, to,i18n("joined the channel") );
+			context->postEvent( event );
+
+			foreach(EntityPtr channel, to)
+			{
 //			channel->add(from);
+			}
 		}
 	}
 
@@ -107,7 +124,12 @@ KIrc::Handler::Handled ClientChannelHandler::KICK(KIrc::Context *context, const 
 	EntityList channels = context->entitiesFromNames(message.argAt(1));
 	EntityList users = context->entitiesFromNames(message.argAt(2));
 
-//	TexTEvent *event = new TextEvent("KICK", from, users);
+	//Send an event for each kicked user
+	foreach(const EntityPtr & e,users)
+	{
+		TextEvent *event = new TextEvent("KICK", e, channels, i18n("got kicked by %1").arg(QString( from->name() )));
+		context->postEvent(event);
+	}
 
 //	context->postEvent(ev, "KICK", from, channels, users);
 
@@ -142,13 +164,25 @@ KIrc::Handler::Handled ClientChannelHandler::MODE(KIrc::Context *context, const 
  */
 KIrc::Handler::Handled ClientChannelHandler::NICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
+	Q_D(ClientChannelHandler);
+
 	CHECK_ARGS(1, 1);
 
-/*
-	Entity::Ptr from = d->context->entityFromName(message.prefix());
-//	QString newNick/oldNick = message.arg(1);
-*/
-	return KIrc::Handler::NotHandled;
+	EntityPtr from = context->entityFromName(message.prefix());
+	QByteArray newNick = message.suffix();
+
+	//TODO only display this notification in the channels, the user is actually in
+	foreach(const EntityPtr& channel,d->channels)
+	{
+		TextEvent *event = new TextEvent( "PART", from, channel,i18n("is now known as %1").arg(QString(newNick)) );
+		context->postEvent( event );
+	}
+
+	//As KIRC::Context only uses a list to store the entities, its enough to change the nick here
+	//if we decide to use a QMap or similar, we must change the key too
+	from->setName(newNick);
+
+	return KIrc::Handler::CoreHandled;
 }
 
 /* Do not support CTCP here, just do the simple message handling.
@@ -171,16 +205,30 @@ KIrc::Handler::Handled ClientChannelHandler::PART(KIrc::Context *context, const 
 {
 	CHECK_ARGS(1, 1);
 
+	Q_D(ClientChannelHandler);
+	CHECK_ARGS(0, 0);
+
+	kDebug(14121)<<"part: "<<message.toLine();
+
 	EntityPtr from = context->entityFromName(message.prefix());
-	EntityList channels = context->entitiesFromNames(message.argAt(1));
-	QByteArray text = message.suffix();
+
+
+	// For now lets forgot about the keys
+	EntityList to = context->entitiesFromNames(message.argAt(1));
+	TextEvent *event = new TextEvent( "PART", from, to,i18n("left the channel (%1)").arg(QString( message.suffix() )) );
+	context->postEvent( event );
+	
+	foreach(EntityPtr channel, to)
+	{
+	  //channel->add(from);
+	}
+
+	return KIrc::Handler::CoreHandled;
 
 //	context->postEvent(ev, "PART", from, channels, text);
 
 //	foreach(channel, channels)
 //		channel->remove(from);
-
-	return KIrc::Handler::NotHandled;
 }
 
 /* Do not support CTCP here, just do the simple message handling.

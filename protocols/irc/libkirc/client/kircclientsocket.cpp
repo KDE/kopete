@@ -155,6 +155,8 @@ void ClientSocket::socketStateChanged(QAbstractSocket::SocketState newstate)
 		writeMessage( StdMessages::user( url.userName().toLatin1(), "127.0.0.1", url.host().toLatin1(), url.queryItemValue("realname").toLatin1() ) );
 		writeMessage( StdMessages::nick( url.queryItemValue("nickname").toLatin1() ) );
 
+		owner()->setName(url.queryItemValue("nickname").toLatin1());
+
 		break;
 	default:
 		Socket::socketStateChanged(newstate);

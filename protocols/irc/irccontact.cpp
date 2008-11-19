@@ -86,10 +86,10 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity, MetaC
 	// KIRC stuff
 	connect(client, SIGNAL(connectionStateChanged(KIrc::Socket::ConnectionState)),
 		this, SLOT(updateStatus()));
-/*
-	connect(entity, SIGNAL(updated()),
+
+	connect(d->entity.data(), SIGNAL(updated()),
 		this, SLOT(entityUpdated()));
-*/
+
 	entityUpdated();
 }
 

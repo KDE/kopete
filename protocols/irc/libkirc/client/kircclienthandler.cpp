@@ -22,6 +22,8 @@
 #include "kircclientsocket.h"
 
 #include "kircclientmotdhandler.h"
+#include "kircclientchannelhandler.h"
+#include "kircclientpingponghandler.h"
 
 #include "kirccontext.h"
 #include "kircentity.h"
@@ -48,6 +50,8 @@ class KIrc::ClientEventHandlerPrivate
 {
 public:
 	KIrc::ClientMotdHandler *motdHandler;
+	KIrc::ClientChannelHandler *channelHandler;
+	KIrc::ClientPingPongHandler *pingPongHandler;
 };
 
 using namespace KIrc;
@@ -56,7 +60,10 @@ ClientEventHandler::ClientEventHandler(QObject* parent)
 	: Handler(new ClientEventHandlerPrivate, parent)
 {
 	Q_D(ClientEventHandler);
+	kDebug(14121);
 	d->motdHandler = new KIrc::ClientMotdHandler(this);
+	d->channelHandler = new KIrc::ClientChannelHandler(this);
+	d->pingPongHandler = new KIrc::ClientPingPongHandler(this);
 }
 
 ClientEventHandler::~ClientEventHandler()
@@ -228,6 +235,7 @@ KIrc::Handler::Handled ClientEventHandler::NOTICE(KIrc::Context *context, const 
  */
 KIrc::Handler::Handled ClientEventHandler::PRIVMSG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
+#if 0
 	Q_D(ClientEventHandler);
 
 	CHECK_ARGS(1, 1);
@@ -243,6 +251,8 @@ KIrc::Handler::Handled ClientEventHandler::PRIVMSG(KIrc::Context *context, const
 	context->postEvent( event );
 
 	return KIrc::Handler::CoreHandled;
+#endif
+	return KIrc::Handler::NotHandled;
 }
 
 KIrc::Handler::Handled ClientEventHandler::QUIT(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)

@@ -86,6 +86,7 @@ Socket::Socket(Context *context, SocketPrivate *socketp)
 	Q_D(Socket);
 	d->context = context;
 	d->owner = new Entity(context);
+	d->context->add(d->owner);
 }
 
 Socket::~Socket()

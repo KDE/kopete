@@ -56,6 +56,12 @@ ClientPingPongHandler::ClientPingPongHandler(QObject* parent)
 {
 }
 
+ClientPingPongHandler::ClientPingPongHandler(Handler* parent)
+	: Handler(new ClientPingPongHandlerPrivate, parent)
+{
+
+}
+
 ClientPingPongHandler::~ClientPingPongHandler()
 {
 }
@@ -66,6 +72,9 @@ KIrc::Handler::Handled ClientPingPongHandler::PING(KIrc::Context *context, const
 
 	CHECK_ARGS(0, 0);
 
+	KIrc::Message reply;
+	reply<<"PONG"<<message.suffix();
+	socket->writeMessage(reply);
 #if 0
 	MessageEvent *reply;
 //	reply.setCommand(PONG);
@@ -74,7 +83,7 @@ KIrc::Handler::Handled ClientPingPongHandler::PING(KIrc::Context *context, const
 
 //	message->client->writeMessage(reply);
 #endif
-	return NotHandled;
+	return CoreHandled;
 }
 
 KIrc::Handler::Handled ClientPingPongHandler::PONG(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)

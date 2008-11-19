@@ -13,8 +13,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCCLIENTEVENTHANDLER_H
-#define KIRCCLIENTEVENTHANDLER_H
+#ifndef KIRCCLIENTPINGPONGHANDLER_H
+#define KIRCCLIENTPINGPONGHANDLER_H
 
 #include "kirchandler.h"
 #include "kircmessage.h"
@@ -40,6 +40,7 @@ private:
 
 public:
 	explicit ClientPingPongHandler(QObject* parent=0);
+	explicit ClientPingPongHandler(Handler* handler);
 	~ClientPingPongHandler();
 
 private Q_SLOTS:

@@ -35,6 +35,7 @@ private:
 
 public:
 	explicit ClientChannelHandler(QObject* parent=0);
+	explicit ClientChannelHandler(Handler* parent);
 	~ClientChannelHandler();
 
 private Q_SLOTS:
