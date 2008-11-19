@@ -424,7 +424,7 @@ QVariantMap KopeteDBusInterface::contactProperties(const QString &contactId)
 		properties["message_reachable"] = contact->isReachable();
 		properties["file_reachable"] = contact->canAcceptFiles();
 		properties["display_name"] = contact->displayName();
-		properties["id"] = contact->metaContactId();
+		properties["id"] = contact->metaContactId().toString();
 		if (contact->photoSource() == Kopete::MetaContact::SourceCustom)
 		{
 			properties["picture"] = contact->customPhoto().prettyUrl();

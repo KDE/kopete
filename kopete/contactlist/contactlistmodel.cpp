@@ -103,8 +103,8 @@ int ContactListModel::childCount( const QModelIndex& parent ) const
 	{
 		Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
 		Kopete::Group *g = dynamic_cast<Kopete::Group*>( cle );
-		
-		cnt = m_contacts[g].count();
+		if (g)
+			cnt = m_contacts[g].count();
 	}
 	
 	return cnt;
