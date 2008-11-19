@@ -742,13 +742,14 @@ void IRCAccount::receivedEvent(QEvent *event)
 
 		IRCContact *from = getContact( txtEvent->from() );
 		QList<Kopete::Contact*> to = getContacts( txtEvent->to() );
-		Kopete::Message::MessageType msgType = Kopete::Message::TypeNormal;
+		Kopete::Message::MessageType msgType = Kopete::Message::TypeAction;
 		Kopete::Message::MessageImportance msgImportance = Kopete::Message::Low;
 
 		if ( txtEvent->eventId()=="PRIVMSG" )
 		{
+			msgType=Kopete::Message::TypeNormal;
 //			if ( !to->isChannel() )
-//				importance = Kopete::Message::Normal;
+			msgImportance = Kopete::Message::Normal;
 		}
 		else if ( txtEvent->eventId() == "DCC_ACTION" )
 		{
@@ -760,7 +761,7 @@ void IRCAccount::receivedEvent(QEvent *event)
 			msgImportance = Kopete::Message::Highlight;
 		}
 #endif
-		appendMessage( from, to, txtEvent->text(), msgType );
+		appendMessage( from, to, txtEvent->text(), msgType, msgImportance );
 	}
    	/*
 	QList<Kopete::Contact*> to = getContacts(txtEvent->to());
@@ -790,7 +791,8 @@ void IRCAccount::receivedEvent(QEvent *event)
 */
 }
 
-void IRCAccount::appendMessage(IRCContact* from, QList<Contact*> to,const QString& text, Kopete::Message::MessageType type)
+void IRCAccount::appendMessage(IRCContact* from, QList<Contact*> to,const QString& text,
+							   Kopete::Message::MessageType type, Kopete::Message::MessageImportance importance)
 {
 	Kopete::Message::MessageDirection msgDirection =
 		from == mySelf() ? Kopete::Message::Outbound : Kopete::Message::Inbound;
@@ -799,13 +801,22 @@ void IRCAccount::appendMessage(IRCContact* from, QList<Contact*> to,const QStrin
 	msg.setDirection( msgDirection );
 	msg.setPlainBody( text );
 	msg.setType( type );
+	msg.setImportance(importance);
 
+	IRCContact* appendTo=0;
 	foreach( Kopete::Contact* c, to )
 	{
 		if ( c==myself() ) //If we are the target of the message, append it to the chatsession of the origin
-			from->appendMessage( msg );
+			appendTo=from;
 		else
-			dynamic_cast<IRCContact*> ( c )->appendMessage( msg );
+			appendTo=dynamic_cast<IRCContact*> ( c );
+
+		//If the target is the server, and the server window is not shown, drop the message, as most people
+		//won't be interested in the server's messages
+		if(appendTo==myServer()&&!myServer()->manager()->view())
+			continue;
+
+		appendTo->appendMessage( msg );
 	}
 }
 

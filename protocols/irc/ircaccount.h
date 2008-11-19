@@ -181,7 +181,8 @@ private slots:
 private:
 	void clientSetup();
 	void clientConnect();
-	void appendMessage(IRCContact* from, QList<Kopete::Contact*> to,const QString& text, Kopete::Message::MessageType type);
+	void appendMessage(IRCContact* from, QList<Kopete::Contact*> to,const QString& text, 
+					   Kopete::Message::MessageType type, Kopete::Message::MessageImportance importance);
 private:
 	Q_DISABLE_COPY(IRCAccount)
 
