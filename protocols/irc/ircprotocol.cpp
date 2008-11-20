@@ -542,6 +542,6 @@ void IRCProtocol::editNetworks(const QString &networkName)
 	IRCNetworkConfigWidget *netConf = new IRCNetworkConfigWidget(UI::Global::mainWidget() );
 	netConf->setAttribute( Qt::WA_DeleteOnClose );
 	netConf->editNetworks(networkName);
-	netConf->show();
+	netConf->exec();
 }
 

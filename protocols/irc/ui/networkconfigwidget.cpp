@@ -161,6 +161,9 @@ void IRCNetworkConfigWidget::slotUpdateNetworkConfig()
 	// update the data structure of the previous selection from the UI
 	storeCurrentNetwork();
 
+	// record the current selection
+	d->m_uiCurrentNetworkSelection = m_networkList->currentText();
+
 	// update the UI from the data for the current selection
 
 	if (d->m_networks.contains( m_networkList->currentText() ) )
@@ -177,15 +180,12 @@ void IRCNetworkConfigWidget::slotUpdateNetworkConfig()
 		disconnect(m_hostList, SIGNAL(selectionChanged()),
 			this, SLOT( slotUpdateNetworkHostConfig() ) );
 
-		m_hostList->setSelected( 0, true );
+		m_hostList->setCurrentItem( 0 );
 		slotUpdateNetworkHostConfig();
 
 		connect(m_hostList, SIGNAL(selectionChanged()),
 			this, SLOT(slotUpdateNetworkHostConfig()));
 	}
-
-	// record the current selection
-	d->m_uiCurrentNetworkSelection = m_networkList->currentText();
 
 }
 
@@ -242,11 +242,10 @@ void IRCNetworkConfigWidget::slotUpdateNetworkHostConfig()
 {
 	storeCurrentHost();
 
-	if (m_hostList->selectedItem())
+	if (m_hostList->currentItem()!=-1)
 	{
-		d->m_uiCurrentHostSelectionIndex = m_hostList->currentItem();
 		int hostIndex=m_hostList->currentItem();
-		kDebug(14120)<<"host index= "<< hostIndex;
+		d->m_uiCurrentHostSelectionIndex = hostIndex;
 
 		if ( hostIndex < d->m_networks[ d->m_uiCurrentNetworkSelection ].hosts.size() )
 		{
@@ -475,6 +474,8 @@ void IRCNetworkConfigWidget::slotMoveServerDown()
 
 void IRCNetworkConfigWidget::slotSaveNetworkConfig()
 {
+	storeCurrentNetwork();
+
 	//HACK: remove the empty entry
 	d->m_networks.remove(QString());
 
