@@ -618,8 +618,8 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
             WlmProtocol::protocol ()->wlmOffline))
     {
         KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (),
-                                       KMessageBox::Information, "Send OIM",
-                                       "Information");
+                                       KMessageBox::Information, i18n("Send OIM"),
+                                       i18n("Information"));
         messageSucceeded ();
         return;
     }
