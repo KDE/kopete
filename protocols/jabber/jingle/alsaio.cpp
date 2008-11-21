@@ -494,7 +494,7 @@ void AlsaIO::writeData()
 		return;
 	}
 
-	int size = snd_pcm_writei(handle, buf.data(), buf.size());
+	int size = snd_pcm_writei(handle, buf.data(), snd_pcm_bytes_to_frames(handle, buf.size()));
 
 	emit bytesWritten();
 
