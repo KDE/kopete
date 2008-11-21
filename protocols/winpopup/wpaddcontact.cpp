@@ -69,8 +69,8 @@ void WPAddContact::slotUpdateGroups()
 
 	theDialog->mHostGroup->clear();
 	QStringList Groups = theAccount->getGroups();
-	QStringList::ConstIterator end = Groups.end();
-	for (QStringList::ConstIterator i = Groups.begin(); i != end; i++)
+	QStringList::ConstIterator end = Groups.constEnd();
+	for (QStringList::ConstIterator i = Groups.constBegin(); i != end; i++)
 		theDialog->mHostGroup->addItem( QIcon(SmallIcon("network-wired")), *i);
 	slotSelected(theDialog->mHostGroup->currentText());
 }
@@ -82,8 +82,8 @@ void WPAddContact::slotSelected(const QString &Group)
 	theDialog->mHostName->clear();
 	QStringList Hosts = theAccount->getHosts(Group);
 	QString ownHost = theAccount->myself()->contactId();
-	QStringList::ConstIterator end = Hosts.end();
-	for (QStringList::ConstIterator i = Hosts.begin(); i != end; i++)
+	QStringList::ConstIterator end = Hosts.constEnd();
+	for (QStringList::ConstIterator i = Hosts.constBegin(); i != end; i++)
 		if (*i != ownHost) theDialog->mHostName->addItem( QIcon(SmallIcon("user-identity")), *i);
 }
 

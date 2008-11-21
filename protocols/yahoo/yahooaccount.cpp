@@ -1098,7 +1098,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 	QString m = who;
 	QStringList myMembers;
 	myMembers.push_back( who );
-	for( QStringList::const_iterator it = ++members.begin(); it != members.end(); it++ )
+	for( QStringList::const_iterator it = ++members.constBegin(); it != members.constEnd(); it++ )
 	{
 		if( *it != m_session->userId() )
 		{
@@ -1119,7 +1119,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 
 			QObject::connect( session, SIGNAL(leavingConference( YahooConferenceChatSession * ) ), this, SLOT( slotConfLeave( YahooConferenceChatSession * ) ) );
 
-			for ( QStringList::ConstIterator it = myMembers.begin(); it != myMembers.end(); ++it )
+			for ( QStringList::ConstIterator it = myMembers.constBegin(); it != myMembers.constEnd(); ++it )
 			{
 				YahooContact * c = contact( *it );
 				if ( !c )
