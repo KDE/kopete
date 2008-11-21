@@ -390,7 +390,7 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 {
 	// Contact id and display name are already set for us, only add the rest
 	QString groups;
-	for( QMap<QString, Kopete::Group *>::ConstIterator it = m_serverGroups.begin(); it != m_serverGroups.end(); ++it )
+	for( QMap<QString, Kopete::Group *>::ConstIterator it = m_serverGroups.constBegin(); it != m_serverGroups.constEnd(); ++it )
 	{
 		groups += it.key();
 		groups += ',';

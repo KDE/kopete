@@ -52,7 +52,7 @@ static QString makeKey(const QString &sid, const Jid &initiator, const Jid &targ
 
 static bool haveHost(const StreamHostList &list, const Jid &j)
 {
-	for(StreamHostList::ConstIterator it = list.begin(); it != list.end(); ++it) {
+	for(StreamHostList::ConstIterator it = list.constBegin(); it != list.constEnd(); ++it) {
 		if((*it).jid().compare(j))
 			return true;
 	}
@@ -1084,7 +1084,7 @@ bool S5BManager::targetShouldOfferProxy(Entry *e)
 
 	// if target, don't offer any proxy if the initiator already did
 	const StreamHostList &hosts = e->c->d->req.hosts;
-	for(StreamHostList::ConstIterator it = hosts.begin(); it != hosts.end(); ++it) {
+	for(StreamHostList::ConstIterator it = hosts.constBegin(); it != hosts.constEnd(); ++it) {
 		if((*it).isProxy())
 			return false;
 	}
@@ -1221,7 +1221,7 @@ void S5BManager::Item::doOutgoing()
 	S5BServer *serv = m->server();
 	if(serv && serv->isActive() && !haveHost(in_hosts, m->client()->jid())) {
 		QStringList hostList = serv->hostList();
-		for(QStringList::ConstIterator it = hostList.begin(); it != hostList.end(); ++it) {
+		for(QStringList::ConstIterator it = hostList.constBegin(); it != hostList.constEnd(); ++it) {
 			StreamHost h;
 			h.setJid(m->client()->jid());
 			h.setHost(*it);
@@ -1259,7 +1259,7 @@ void S5BManager::Item::doIncoming()
 	StreamHostList list;
 	if(lateProxy) {
 		// take just the proxy streamhosts
-		for(StreamHostList::ConstIterator it = in_hosts.begin(); it != in_hosts.end(); ++it) {
+		for(StreamHostList::ConstIterator it = in_hosts.constBegin(); it != in_hosts.constEnd(); ++it) {
 			if((*it).isProxy())
 				list += *it;
 		}
@@ -1270,7 +1270,7 @@ void S5BManager::Item::doIncoming()
 		if((state == Initiator || (state == Target && fast)) && !proxy.jid().isValid()) {
 			// take just the non-proxy streamhosts
 			bool hasProxies = false;
-			for(StreamHostList::ConstIterator it = in_hosts.begin(); it != in_hosts.end(); ++it) {
+			for(StreamHostList::ConstIterator it = in_hosts.constBegin(); it != in_hosts.constEnd(); ++it) {
 				if((*it).isProxy())
 					hasProxies = true;
 				else
@@ -1892,7 +1892,7 @@ void S5BConnector::start(const Jid &self, const StreamHostList &hosts, const QSt
 #ifdef S5B_DEBUG
 	printf("S5BConnector: starting [%p]!\n", this);
 #endif
-	for(StreamHostList::ConstIterator it = hosts.begin(); it != hosts.end(); ++it) {
+	for(StreamHostList::ConstIterator it = hosts.constBegin(); it != hosts.constEnd(); ++it) {
 		Item *i = new Item(self, *it, key, udp);
 		connect(i, SIGNAL(result(bool)), SLOT(item_result(bool)));
 		d->itemList.append(i);
@@ -2213,7 +2213,7 @@ void JT_S5B::request(const Jid &to, const QString &sid, const StreamHostList &ho
 	query.setAttribute("sid", sid);
 	query.setAttribute("mode", udp ? "udp" : "tcp" );
 	iq.appendChild(query);
-	for(StreamHostList::ConstIterator it = hosts.begin(); it != hosts.end(); ++it) {
+	for(StreamHostList::ConstIterator it = hosts.constBegin(); it != hosts.constEnd(); ++it) {
 		QDomElement shost = doc()->createElement("streamhost");
 		shost.setAttribute("jid", (*it).jid().full());
 		shost.setAttribute("host", (*it).host());
