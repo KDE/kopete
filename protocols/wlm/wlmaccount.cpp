@@ -130,20 +130,18 @@ WlmAccount::createContact (const QString & contactId,
 	return newContact != 0L;
 }
 
-void
-WlmAccount::setPersonalMessage (const QString & reason)
+void WlmAccount::setPersonalMessage (const Kopete::StatusMessage & reason)
 {
     kDebug (14210) << k_funcinfo;
-    myself ()->setProperty (WlmProtocol::protocol ()->personalMessage,
-                            reason);
+    myself()->setStatusMessage(reason);
     if (isConnected ())
     {
         MSN::personalInfo pInfo;
         QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
-        if (reason.isEmpty ())
+        if (reason.message().isEmpty ())
             pInfo.PSM = "";
         else
-            pInfo.PSM = reason.toAscii ().data ();
+            pInfo.PSM = reason.message().toAscii ().data ();
 //      pInfo.mediaType="Music";
         pInfo.mediaIsEnabled = 0;
 //      pInfo.mediaFormat="{0} - {1}";
@@ -159,7 +157,7 @@ WlmAccount::setOnlineStatus (const Kopete::OnlineStatus & status,
 {
     kDebug (14210) << k_funcinfo;
 
-    setPersonalMessage (reason.message ());
+    setPersonalMessage(reason);
 
     temporaryStatus = status;
 
@@ -179,7 +177,7 @@ WlmAccount::setOnlineStatus (const Kopete::OnlineStatus & status,
 void
 WlmAccount::setStatusMessage (const Kopete::StatusMessage & statusMessage)
 {
-    setPersonalMessage (statusMessage.message ());
+    setPersonalMessage(statusMessage);
 }
 
 void
@@ -388,8 +386,7 @@ WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
     if (contact)
     {
         // TODO - handle the other fields of pInfo
-        contact->setProperty (WlmProtocol::protocol ()->personalMessage,
-                              QString (pInfo.PSM.c_str ()));
+        contact->setStatusMessage(QString(pInfo.PSM.c_str()));
         QString type (pInfo.mediaType.c_str ());
         if (pInfo.mediaIsEnabled && type == "Music")
         {
@@ -836,10 +833,7 @@ WlmAccount::connectionCompleted ()
     // this prevents our client from downloading display pictures
     // when is just connected.
     QTimer::singleShot (10 * 1000, this, SLOT (disableInitialList ()));
-    QString current_msg =
-        myself ()->property (WlmProtocol::protocol ()->personalMessage).
-        value ().toString ();
-    setPersonalMessage (current_msg);
+    setPersonalMessage(myself()->statusMessage());
 }
 
 void WlmAccount::gotAddedGroup (bool added,

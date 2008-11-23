@@ -146,8 +146,7 @@ class WlmAccount:public
                                const QString & key, const QVariant &,
                                const QVariant & newValue);
 
-    void
-    setPersonalMessage (const QString & reason);
+    void setPersonalMessage (const Kopete::StatusMessage & reason);
 
     void
     addressBookReceivedFromServer (std::map < std::string,
@@ -281,9 +280,6 @@ class WlmAccount:public
 
     QString
         m_pictureFilename;
-
-    QString
-        m_PersonalMessage;
 
     bool
         m_initialList;
