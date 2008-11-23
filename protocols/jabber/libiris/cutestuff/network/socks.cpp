@@ -386,7 +386,7 @@ static QByteArray sp_set_request(const QHostAddress &addr, unsigned short port, 
 		int at = 0;
 		Q_UINT16 c;
 		bool ok;
-		for(QStringList::ConstIterator it = s6.begin(); it != s6.end(); ++it) {
+		for(QStringList::ConstIterator it = s6.constBegin(); it != s6.constEnd(); ++it) {
 			c = (*it).toInt(&ok, 16);
 			a6[at++] = (c >> 8);
 			a6[at++] = c & 0xff;

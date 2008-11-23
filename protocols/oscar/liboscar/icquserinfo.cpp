@@ -695,7 +695,7 @@ void ICQFullInfo::fill( Buffer* buffer )
 	QList<TLV> tlvList = tlvListBuffer.getTLVList();
 
 	QList<TLV>::const_iterator it;
-	for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+	for ( it = tlvList.constBegin(); it != tlvList.constEnd(); ++it )
 	{
 		switch ( (*it).type )
 		{
@@ -1016,7 +1016,7 @@ ICQFullInfo::AddressItemList ICQFullInfo::parseAddressItemList( const QByteArray
 
 		AddressItem info;
 		QList<TLV>::const_iterator it;
-		for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+		for ( it = tlvList.constBegin(); it != tlvList.constEnd(); ++it )
 		{
 			switch ( (*it).type )
 			{
@@ -1080,7 +1080,7 @@ ICQFullInfo::WorkItemList ICQFullInfo::parseWorkItemList( const QByteArray& data
 
 		WorkItem info;
 		QList<TLV>::const_iterator it;
-		for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+		for ( it = tlvList.constBegin(); it != tlvList.constEnd(); ++it )
 		{
 			switch ( (*it).type )
 			{
@@ -1172,7 +1172,7 @@ ICQFullInfo::InfoItemList ICQFullInfo::parseInfoItemList( const QByteArray& data
 
 		InfoItem info;
 		QList<TLV>::const_iterator it;
-		for ( it = tlvList.begin(); it != tlvList.end(); ++it )
+		for ( it = tlvList.constBegin(); it != tlvList.constEnd(); ++it )
 		{
 			switch ( (*it).type )
 			{

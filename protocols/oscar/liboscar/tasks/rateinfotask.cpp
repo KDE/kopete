@@ -118,8 +118,8 @@ QList<RateClass*> RateInfoTask::parseRateClasses(Buffer *buffer)
 		kDebug(OSCAR_RAW_DEBUG) << "Adding snac members to group " << groupNum;
 		
 		RateClass* rc = 0L;
-		QList<RateClass*>::iterator it = rates.begin();
-		for ( ; it != rates.end(); ++it )
+		QList<RateClass*>::ConstIterator it = rates.constBegin();
+		for ( ; it != rates.constEnd(); ++it )
 		{
 			if ( ( *it )->id() == groupNum )
 			{
@@ -146,8 +146,8 @@ void RateInfoTask::handleRateInfoResponse()
 	Buffer* buffer = transfer()->buffer();
 	QList<RateClass*> rates = parseRateClasses(buffer);
 
-	QList<RateClass*>::iterator it = rates.begin();
-	QList<RateClass*>::iterator rcEnd = rates.end();
+	QList<RateClass*>::ConstIterator it = rates.constBegin();
+	QList<RateClass*>::ConstIterator rcEnd = rates.constEnd();
 	for ( ; it != rcEnd; ++it )
 		client()->rateManager()->registerClass( ( *it ) );
 	
@@ -161,9 +161,9 @@ void RateInfoTask::sendRateInfoAck()
 	SNAC s = { 0x0001, 0x0008, 0x0000, client()->snacSequence() };
 	Buffer* buffer = new Buffer();
 
-	QList<int>::const_iterator cit = m_rateGroups.begin();
-	QList<int>::const_iterator end = m_rateGroups.end();
-	for ( cit = m_rateGroups.begin(); cit != end; ++cit )
+	QList<int>::const_iterator cit = m_rateGroups.constBegin();
+	QList<int>::const_iterator end = m_rateGroups.constEnd();
+	for ( cit = m_rateGroups.constBegin(); cit != end; ++cit )
 	{
 		//kDebug(OSCAR_RAW_DEBUG) << "Adding rate " << (*cit) << " to rate ack";
 		buffer->addWord( (*cit) );

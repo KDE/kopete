@@ -228,8 +228,22 @@ WlmChatSession::slotSendFile ()
 void
 WlmChatSession::slotInviteContact (Kopete::Contact * contact)
 {
+    // if we have a session, just invite the new contact
     if (isReady ())
+    {
         getChatService ()->inviteUser (contact->contactId ().toLatin1 ().data ());
+        return;
+    }
+    // if we are not in a session or connecting, add this contact to be invited later
+    if (!isReady () && !isConnecting ())
+    {
+        m_pendingInvitations.append (contact->contactId ());
+        requestChatService ();
+        return;
+    }
+    // finally if we have a connection in progress, only add this user to be invited later
+    if (isConnecting ())
+        m_pendingInvitations.append (contact->contactId ());
 }
 
 void
@@ -256,6 +270,9 @@ WlmChatSession::slotActionInviteAboutToShow ()
             KAction *a =
                 new Kopete::UI::ContactAction (it.value (),
                                                actionCollection ());
+			connect( a, SIGNAL(triggered(Kopete::Contact*,bool)),
+					this, SLOT(slotInviteContact(Kopete::Contact*)) );
+
             m_actionInvite->addAction (a);
             m_inviteactions.append (a);
         }
@@ -601,8 +618,8 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
             WlmProtocol::protocol ()->wlmOffline))
     {
         KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (),
-                                       KMessageBox::Information, "Send OIM",
-                                       "Information");
+                                       KMessageBox::Information, i18n("Send OIM"),
+                                       i18n("Information"));
         messageSucceeded ();
         return;
     }

@@ -204,8 +204,8 @@ void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 			if (!currentGroups.isEmpty()) {
 				QMap<QString, WorkGroup> newGroups;
 				//loop through the read groups and check for new ones
-				QMap<QString, QString>::ConstIterator end = currentGroups.end();
-				for (QMap<QString, QString>::ConstIterator i = currentGroups.begin(); i != end; i++) {
+				QMap<QString, QString>::ConstIterator end = currentGroups.constEnd();
+				for (QMap<QString, QString>::ConstIterator i = currentGroups.constBegin(); i != end; i++) {
 					QString groupMaster = i.value();
 					if (!done.contains(groupMaster)) todo += groupMaster;
 				}

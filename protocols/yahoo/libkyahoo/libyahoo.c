@@ -145,7 +145,7 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 
 	magic_ptr = (unsigned char *)seed;
 
-	while (*magic_ptr != (int)NULL) {
+	while (*magic_ptr) {
 		char *loc;
 
 		/* Ignore parentheses.  */

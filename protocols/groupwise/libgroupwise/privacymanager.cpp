@@ -157,17 +157,17 @@ void PrivacyManager::setPrivacy( bool defaultIsDeny, const QStringList & allowLi
 	// find the DNs new in the deny list
 	QStringList denysToAdd = difference( denyList, m_denyList );
 	
-	QStringList::ConstIterator end = allowsToRemove.end();
-	for ( QStringList::ConstIterator it = allowsToRemove.begin(); it != end; ++it )
+	QStringList::ConstIterator end = allowsToRemove.constEnd();
+	for ( QStringList::ConstIterator it = allowsToRemove.constBegin(); it != end; ++it )
 		removeAllow( *it );
-	end = denysToRemove.end();
-	for ( QStringList::ConstIterator it = denysToRemove.begin(); it != end; ++it )
+	end = denysToRemove.constEnd();
+	for ( QStringList::ConstIterator it = denysToRemove.constBegin(); it != end; ++it )
 		removeDeny( *it );
-	end = allowsToAdd.end();
-	for ( QStringList::ConstIterator it = allowsToAdd.begin(); it != end; ++it )
+	end = allowsToAdd.constEnd();
+	for ( QStringList::ConstIterator it = allowsToAdd.constBegin(); it != end; ++it )
 		addAllow( *it );
-	end = denysToAdd.end();
-	for ( QStringList::ConstIterator it = denysToAdd.begin(); it != end; ++it )
+	end = denysToAdd.constEnd();
+	for ( QStringList::ConstIterator it = denysToAdd.constBegin(); it != end; ++it )
 		addDeny( *it );
 }
 
@@ -239,9 +239,9 @@ void PrivacyManager::slotDenyRemoved()
 QStringList PrivacyManager::difference( const QStringList & lhs, const QStringList & rhs )
 {
 	QStringList diff;
-	const QStringList::ConstIterator lhsEnd = lhs.end();
-	const QStringList::ConstIterator rhsEnd = rhs.end();
-	for ( QStringList::ConstIterator lhsIt = lhs.begin(); lhsIt != lhsEnd; ++lhsIt )
+	const QStringList::ConstIterator lhsEnd = lhs.constEnd();
+	const QStringList::ConstIterator rhsEnd = rhs.constEnd();
+	for ( QStringList::ConstIterator lhsIt = lhs.constBegin(); lhsIt != lhsEnd; ++lhsIt )
 	{
 		if ( !rhs.contains( *lhsIt ) )
 			diff.append( *lhsIt );

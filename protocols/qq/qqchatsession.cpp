@@ -128,7 +128,7 @@ void QQChatSession::createConference()
 		QStringList invitees;
 		Kopete::ContactPtrList chatMembers = members();
 		Kopete::ContactPtrList::const_iterator contact;
-		for ( contact = chatMembers.begin(); contact != chatMembers.end(); contact++ )
+		for ( contact = chatMembers.constBegin(); contact != chatMembers.constEnd(); contact++ )
 		{
 			// FIXME: We don't have dn, just use the contactId()
 			invitees.append( static_cast<QQContact*>( *contact )->contactId() );
@@ -156,7 +156,7 @@ void QQChatSession::receiveGuid( const int newMmId, const QString & guid )
 		// in the UI again, at the price of a debug message when starting up a new chatwindow
 		Kopete::ContactPtrList chatMembers = members();
 		Kopete::ContactPtrList::const_iterator contact;
-		for ( contact = chatMembers.begin(); contact != chatMembers.end(); contact++ )
+		for ( contact = chatMembers.constBegin(); contact != chatMembers.constEnd(); contact++ )
 			addContact( *contact, true );
 
 		// notify the contact(s) using this message manager that it's been instantiated on the server
@@ -269,7 +269,7 @@ void QQChatSession::dequeueMessagesAndInvites()
 	m_pendingOutgoingMessages.clear();
 
 	Kopete::ContactPtrList::const_iterator contact;
-	for ( contact = m_pendingInvites.begin(); contact != m_pendingInvites.end(); contact++ )
+	for ( contact = m_pendingInvites.constBegin(); contact != m_pendingInvites.constEnd(); contact++ )
 		slotInviteContact( *contact );
 
 	m_pendingInvites.clear();
@@ -286,7 +286,7 @@ void QQChatSession::slotActionInviteAboutToShow()
 	m_actionInvite->menu()->clear();
 
 	QHash<QString, Kopete::Contact*>::const_iterator it;
-	for ( it = account()->contacts().begin(); it != account()->contacts().end(); it++ )
+	for ( it = account()->contacts().constBegin(); it != account()->contacts().constEnd(); it++ )
 	{
 		if( !members().contains( it.value() ) && it.value()->isOnline() && it.value() != myself() )
 		{
@@ -469,7 +469,7 @@ void QQChatSession::updateArchiving()
 
 	Kopete::ContactPtrList chatMembers = members();
 	Kopete::ContactPtrList::const_iterator contact;
-	for ( contact = chatMembers.begin(); contact != chatMembers.end(); contact++ )
+	for ( contact = chatMembers.constBegin(); contact != chatMembers.constEnd(); contact++ )
 	{
 		// if ( contact->archiving() )
 		{

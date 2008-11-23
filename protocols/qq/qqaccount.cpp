@@ -178,7 +178,7 @@ QQChatSession * QQAccount::findChatSessionByGuid( const QString& guid )
 {
 	QQChatSession * chatSession = 0;
 	QList<QQChatSession *>::const_iterator it;
-	for ( it = m_chatSessions.begin(); it != m_chatSessions.end(); ++it )
+	for ( it = m_chatSessions.constBegin(); it != m_chatSessions.constEnd(); ++it )
 	{
 		if ( (*it)->guid() == guid )
 		{
@@ -213,7 +213,7 @@ QQChatSession * QQAccount::chatSession( Kopete::ContactPtrList others, const QSt
 			kDebug( 14140 ) << " found a message manager by members with GUID: " << chatSession->guid();
 			// re-add the returning contact(s) (very likely only one) to the chat
 			Kopete::ContactPtrList::const_iterator returningContact;
-			for ( returningContact = others.begin(); returningContact != others.end(); returningContact++ )
+			for ( returningContact = others.constBegin(); returningContact != others.constEnd(); returningContact++ )
 					chatSession->joined( static_cast<QQContact*> ( *returningContact ) );
 
 			if ( !guid.isEmpty() )
@@ -292,7 +292,7 @@ void QQAccount::slotGroupNamesListed(const QStringList& ql )
 	// add the default group as #0 group.
 	m_groupList += Kopete::Group::topLevel();
 
-	for( QStringList::const_iterator it = ql.begin(); it != ql.end(); it++ )
+	for( QStringList::const_iterator it = ql.constBegin(); it != ql.constEnd(); it++ )
 	{
 		foreach(g, groupList)
 		{
