@@ -69,7 +69,7 @@ wlmUnknown (Kopete::OnlineStatus::Unknown, 25, this, 0,
 wlmConnecting (Kopete::OnlineStatus::Connecting, 2, this, 10,
                QStringList ("wlm_connecting"), i18n ("Connecting")),
 personalMessage ("personalMessage", i18n ("Personal Message")),
-currentSong ("currentSong", i18n ("Listening To"))
+currentSong ("currentSong", i18nc ("This is used in the tooltip of a contact", "Listening To"))
 {
     kDebug (14210) << k_funcinfo;
 
