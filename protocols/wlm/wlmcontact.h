@@ -78,8 +78,6 @@ public:
 
     QString contactSerial () const { return m_contactSerial; }
 
-    bool isBlocked() const;
-
 public slots:
     /**
 	 * Transmits an outgoing message to the server 

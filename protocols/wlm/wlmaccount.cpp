@@ -42,7 +42,7 @@
 #include "kopetetransfermanager.h"
 #include "kopeteidentity.h"
 #include "kopeteavatarmanager.h"
-#include "contactaddednotifydialog.h"
+#include "kopeteaddedinfoevent.h"
 
 #include "wlmcontact.h"
 #include "wlmprotocol.h"
@@ -251,32 +251,38 @@ uint WlmAccount::serverPort() const
 
 void
 WlmAccount::gotNewContact (const MSN::ContactList & list,
-                           const QString & contact,
+                           const QString & passport,
                            const QString & friendlyname)
 {
-    kDebug() << "contact " << contact;
+    kDebug() << "contact " << passport;
     if (list == MSN::LST_RL)
     {
-        Kopete::UI::ContactAddedNotifyDialog * dialog =
-            new Kopete::UI::ContactAddedNotifyDialog (contact, friendlyname,
-                           this,Kopete::UI::ContactAddedNotifyDialog::InfoButton | 
-			   Kopete::UI::ContactAddedNotifyDialog::AddGroupBox | 
-			   Kopete::UI::ContactAddedNotifyDialog::AuthorizeCheckBox);
-        QObject::connect (dialog, SIGNAL (applyClicked (const QString &)),
-                          this,SLOT (slotContactAddedNotifyDialogClosed(const QString &)));
-        dialog->show ();
+        Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent(passport, this);
+        QObject::connect(event, SIGNAL(actionActivated(uint)), this, SLOT(addedInfoEventActionActivated(uint)));
+
+        Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+        actions |= Kopete::AddedInfoEvent::BlockAction;
+        //actions |= Kopete::AddedInfoEvent::InfoAction;
+
+        Kopete::Contact * ct = contacts().value(passport);
+        if (!ct || !ct->metaContact() || ct->metaContact()->isTemporary())
+            actions |= Kopete::AddedInfoEvent::AddAction;
+
+        event->setContactNickname(friendlyname);
+        event->showActions(actions);
+        event->sendEvent();
     }
     else if (list == MSN::LST_BL)
     {
-        kDebug() << "contact " << contact << " added to block list";
-        m_allowList.remove( contact );
-        m_blockList.insert( contact );
+        kDebug() << "contact " << passport << " added to block list";
+        m_allowList.remove(passport);
+        m_blockList.insert(passport);
     }
     else if (list == MSN::LST_AL)
     {
-        kDebug() << "contact " << contact << " added to allow list";
-        m_blockList.remove( contact );
-        m_allowList.insert( contact );
+        kDebug() << "contact " << passport << " added to allow list";
+        m_blockList.remove(passport);
+        m_allowList.insert(passport);
     }
 }
 
@@ -295,21 +301,25 @@ void WlmAccount::gotRemovedContactFromList (const MSN::ContactList & list, const
     }
 }
 
-void
-WlmAccount::slotContactAddedNotifyDialogClosed (const QString & contactId)
+void WlmAccount::addedInfoEventActionActivated(uint actionId)
 {
-    const Kopete::UI::ContactAddedNotifyDialog * dialog =
-        dynamic_cast <
-        const Kopete::UI::ContactAddedNotifyDialog * >(sender ());
-
-    if (!dialog)
+    Kopete::AddedInfoEvent *event = dynamic_cast<Kopete::AddedInfoEvent *>(sender());
+    if (!event || !isConnected())
         return;
 
-    if (dialog->added ())
+    switch (actionId)
     {
-        // TODO: find a way to get the friendly name received in gotNewContact()
-        m_server->cb.mainConnection->addToAddressBook (contactId.toAscii().data(),
-                                                       contactId.toAscii().data());
+    case Kopete::AddedInfoEvent::AddContactAction:
+        event->addContact();
+        break;
+    case Kopete::AddedInfoEvent::AuthorizeAction:
+        blockContact(event->contactId(), false);
+        break;
+    case Kopete::AddedInfoEvent::BlockAction:
+        blockContact(event->contactId(), true);
+        break;
+/*    case Kopete::AddedInfoEvent::InfoAction:
+        break;*/
     }
 }
 
@@ -994,6 +1004,32 @@ WlmServer *
 WlmAccount::server ()
 {
     return m_server;
+}
+
+bool WlmAccount::isBlocked(const QString& passport) const
+{
+    return (isOnBlockList(passport) || (blockUnknownUsers() && !isOnAllowList(passport)));
+}
+
+void WlmAccount::blockContact(const QString& passport, bool block)
+{
+    if (!isConnected() || isBlocked(passport) == block)
+        return;
+
+    if (block)
+    {
+        if (isOnAllowList(passport))
+            server()->mainConnection->removeFromList(MSN::LST_AL, passport.toAscii().data());
+
+        server()->mainConnection->addToList(MSN::LST_BL, passport.toAscii().data());
+    }
+    else
+    {
+        if (isOnBlockList(passport))
+            server()->mainConnection->removeFromList(MSN::LST_BL, passport.toAscii().data());
+
+        server()->mainConnection->addToList(MSN::LST_AL, passport.toAscii().data());
+    }
 }
 
 void

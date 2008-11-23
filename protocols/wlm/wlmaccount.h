@@ -106,9 +106,13 @@ class WlmAccount:public
     // TODO: Check BPL
     bool blockUnknownUsers() const { return true; }
 
-    bool isOnAllowList( QString passport ) const { return m_allowList.contains( passport ); }
+    bool isBlocked(const QString& passport) const;
 
-    bool isOnBlockList( QString passport ) const { return m_blockList.contains( passport ); }
+    void blockContact(const QString& passport, bool block);
+
+    bool isOnAllowList(const QString& passport) const { return m_allowList.contains( passport ); }
+
+    bool isOnBlockList(const QString& passport) const { return m_blockList.contains( passport ); }
 
     QSet<QString> allowList() const { return m_allowList; }
 
@@ -166,9 +170,6 @@ class WlmAccount:public
                    const QString & friendlyname);
 
     void gotRemovedContactFromList (const MSN::ContactList & list, const QString & contact);
-
-    void
-    slotContactAddedNotifyDialogClosed (const QString &);
 
     void
     receivedOIMList (std::vector < MSN::eachOIM > &oimlist);
@@ -275,7 +276,10 @@ class WlmAccount:public
         return m_initialList;
     }
 
-  private:
+private slots:
+    void addedInfoEventActionActivated(uint actionId);
+
+private:
     Kopete::OnlineStatus temporaryStatus;
 
     QString
