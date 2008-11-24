@@ -613,17 +613,6 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         return;
     }
 
-    if (getChatService ()
-        && (members ().first ()->onlineStatus () ==
-            WlmProtocol::protocol ()->wlmOffline))
-    {
-        KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (),
-                                       KMessageBox::Information, i18n("Send OIM"),
-                                       i18n("Information"));
-        messageSucceeded ();
-        return;
-    }
-
 }
 bool
 WlmChatSession::isReady ()
