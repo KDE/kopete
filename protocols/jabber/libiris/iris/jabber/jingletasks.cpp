@@ -292,7 +292,7 @@ void JT_JingleAction::setSession(JingleSession *sess)
 bool interfaceOrder(const QHostAddress& a1, const QHostAddress& a2)
 {
 	Q_UNUSED(a2)
-	if ((a1 != QHostAddress::LocalHost) && (a1 != QHostAddress::Null))
+	if ((a1 != QHostAddress::LocalHost) && (a1 != QHostAddress::Null) && (a1.protocol() != QAbstractSocket::IPv6Protocol))
 		return true;
 	return false;
 }
