@@ -912,81 +912,8 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect4>
 <sect4 id="plugins-otr-auth-how">
 <title>How to authenticate</title>
-<para>Important: If you are using OTR version 3.0.0 or earlier, or you would like to continue using the old fingerprints method, please refer to the help on fingerprints. The remainder of this page assumes that you are using a recent copy of OTR, and the standard authentication method. </para>
-<para>To authenticate someone, open a conversation with them and click on "Authenticate Contact" on the OTR button. OTR will ask both you and your friend to enter a secret known only to the two of you.</para>
-<screenshot>
-  <mediaobject>
-    <imageobject>
-      <imagedata fileref="otr-auth-2.png" format="PNG"/>
-    </imageobject>
-    <textobject>
-      <phrase>How to authenticate</phrase>
-    </textobject>
-  </mediaobject>
-</screenshot>
-<para>If you both enter the same thing, then you know that you are really talking to your friend. Any imposter should have a hard time guessing what you're typing in, so you'll be able to catch them in the act. </para>
-<para>This method of authentication is only effective if it's hard for an imposter to guess what you're typing, but easy for your friend.
-The following is an example of what not to do:</para>
-<screenshot>
-  <mediaobject>
-    <imageobject>
-      <imagedata fileref="otr-auth-3.png" format="PNG"/>
-    </imageobject>
-    <textobject>
-      <phrase>Bad Example</phrase>
-    </textobject>
-  </mediaobject>
-</screenshot>
-<para>Here you are telling the other person exactly what to do. An imposter can figure out what to type in just as easily as your friend can.
-A better way to pick a secret would be something like this:</para>
- <screenshot>
-  <mediaobject>
-    <imageobject>
-      <imagedata fileref="otr-auth-4.png" format="PNG"/>
-    </imageobject>
-    <textobject>
-      <phrase>Good Example</phrase>
-    </textobject>
-  </mediaobject>
-</screenshot>
-<para>Now an imposter has no idea what to type in. Your friend, on the other hand, knows exactly what you're talking about. When OTR tells you that the secrets matched, you can be sure that you are really talking to your friend. </para>
-</sect4>
-<sect4 id="plugins-otr-auth-results">
-<title>What the results mean</title>
-<para>When you have entered your secret and hit OK, the message "Authenticate contact..." appears in the chatwindow. After a few seconds the result should show up in the chatwindow and display one of the following messages:</para>
-<screenshot>
-  <mediaobject>
-    <imageobject>
-      <imagedata fileref="otr-auth-5.png" format="PNG"/>
-    </imageobject>
-    <textobject>
-      <phrase>Authentication successful</phrase>
-    </textobject>
-  </mediaobject>
-</screenshot>
-<para>This means that authentication has been a complete success. Your buddy entered the same secret that you did, and so they are not an imposter. The OTR button will automatically change to "Private", showing that conversations with this buddy are safe.</para>
-<screenshot>
-  <mediaobject>
-    <imageobject>
-      <imagedata fileref="otr-auth-6.png" format="PNG"/>
-    </imageobject>
-    <textobject>
-      <phrase>Authentication failed</phrase>
-    </textobject>
-  </mediaobject>
-</screenshot>
-<para>This means that although there were no errors, your buddy did not enter the same text as you. You should try again, making sure that you are clear about what to type (for example, "the restaurant name in lower case"). If you repeatedly get this result, you should view your buddy with suspicion.</para>
-<screenshot>
-  <mediaobject>
-    <imageobject>
-      <imagedata fileref="otr-auth-7.png" format="PNG"/>
-    </imageobject>
-    <textobject>
-      <phrase>Authentication error</phrase>
-    </textobject>
-  </mediaobject>
-</screenshot>
-<para>This means that something has gone wrong and the process could not complete normally. This will happen if your buddy hits "cancel" or fails to receive one of your messages. In this case, you should simply try again. If you try several times and keep getting an error, you should view your buddy with suspicion.</para>
+<para>To authenticate someone, open a conversation with them and click on "Authenticate Contact" on the OTR button. A wizard will be shown, asking you what authentication method you would like to use. Please follow the steps in this wizard.</para>
+<para>If the authentication was successful, then you know that you are really talking to your friend. Any imposter should have a hard time guessing what you're typing in, so you'll be able to catch them in the act. </para>
 </sect4>
 </sect3>
 </sect2>
