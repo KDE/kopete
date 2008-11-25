@@ -13,7 +13,7 @@ set(kopete_highlight_PART_SRCS highlightplugin.cpp highlightconfig.cpp filter.cp
 kde4_add_plugin(kopete_highlight ${kopete_highlight_PART_SRCS})
 
 
-target_link_libraries(kopete_highlight  ${KDE4_KDECORE_LIBS} kopete ${QT_QTXML_LIBRARY})
+target_link_libraries(kopete_highlight  ${KDE4_KDEUI_LIBS} kopete ${QT_QTXML_LIBRARY})
 
 install(TARGETS kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 
