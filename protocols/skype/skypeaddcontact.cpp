@@ -82,7 +82,10 @@ bool SkypeAddContact::validateData() {
 		return false;//do not proceed
 	}
 
-	///TODO: Check if user dont adding yourself contact name.
+	if (d->account->getMyselfSkypeName() == d->widget->NameEdit->text()){
+		KMessageBox::sorry(this, i18n("You cannot add yourself contact"), i18n("Wrong Information"));//Tell the user
+		return false;//do not proceed
+	}
 
 	return true;
 }

@@ -143,6 +143,11 @@ Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaCont
 		return 0L;//create nothing
 	}
 
+	if (d->account->contact(contactID)){
+		kDebug() << "Contact" << contactID << "exists in contact list, skipping contact creation" << endl;
+		return 0L;
+	}
+
 	return new SkypeContact(d->account, contactID, metaContact);//create the contact
 }
 

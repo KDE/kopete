@@ -184,7 +184,7 @@ Q_OBJECT
 		 */
 		bool canAlterAuth();
 		/**
-		 * How shoul kopete authorize it self? (empty means as kopete)
+		 * How shoul kopete authorize it self? (empty means as Kopete)
 		 */
 		QString author;
 		/**
@@ -347,6 +347,10 @@ Q_OBJECT
 		 * Per-protocol actions for the systray and the status bar
 		 */
 		virtual void fillActionMenu( KActionMenu *actionMenu );
+		/**
+		 * This will return ID of the actual user this one that uses this skype)
+		 */
+		QString getMyselfSkypeName();
 	public slots:
 		/**
 		 * Sets online status for the account.

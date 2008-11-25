@@ -899,5 +899,9 @@ void SkypeAccount::fillActionMenu( KActionMenu *actionMenu )
 	}
 }
 
+QString SkypeAccount::getMyselfSkypeName()
+{
+	return d->skype.getMyself();
+}
 
 #include "skypeaccount.moc"
