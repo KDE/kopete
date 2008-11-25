@@ -600,8 +600,8 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             // no groups, add to top level
             if (!b->groups.size ())
             {
-                // only add users in forward list
-                if (b->lists & MSN::LST_AB)
+                // only add users in forward list and messenger users
+                if (b->lists & MSN::LST_AB && b->properties["isMessengerUser"] == "true" )
                 {
                     metacontact = addContact (b->userName.c_str (), QString(), 0L, Kopete::Account::DontChangeKABC);
 
