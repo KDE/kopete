@@ -153,7 +153,7 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 		content = jingle.firstChildElement();
 		while (!content.isNull())
 		{
-			if (content.tagName() == "content");
+			if (content.tagName() == "content")
 				d->incomingSession->addContent(content);
 			content = content.nextSiblingElement();
 		}
