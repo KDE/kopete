@@ -23,7 +23,7 @@ else (IDN_INCLUDEDIR AND IDN_LIBRARIES)
   
     if(NOT IDN_FOUND)
         find_path(IDN_INCLUDEDIR idna.h)
-        find_library(IDN_LIBRARIES NAMES idn)
+        find_library(IDN_LIBRARIES NAMES idn libidn idn-11 libidn-11)
         if (IDN_INCLUDEDIR AND IDN_LIBRARIES)
             SET(IDN_FOUND TRUE)
         endif (IDN_INCLUDEDIR AND IDN_LIBRARIES)
