@@ -99,12 +99,12 @@ KIrc::Handler::Handled ClientChannelHandler::JOIN(KIrc::Context *context, const 
 		}
 		else //otherwise broadcast a message that someone new is in the channel
 		{
-			TextEvent *event = new TextEvent( "JOIN", from, to,i18n("joined the channel") );
+			TextEvent *event = new TextEvent( "JOIN", from, to,QString() );
 			context->postEvent( event );
 
 			foreach(EntityPtr channel, to)
 			{
-//			channel->add(from);
+				channel->context()->add(from);
 			}
 		}
 	}
@@ -174,7 +174,7 @@ KIrc::Handler::Handled ClientChannelHandler::NICK(KIrc::Context *context, const 
 	//TODO only display this notification in the channels, the user is actually in
 	foreach(const EntityPtr& channel,d->channels)
 	{
-		TextEvent *event = new TextEvent( "PART", from, channel,i18n("is now known as %1").arg(QString(newNick)) );
+		TextEvent *event = new TextEvent( "NICK", from, channel,newNick );
 		context->postEvent( event );
 	}
 
@@ -215,12 +215,12 @@ KIrc::Handler::Handled ClientChannelHandler::PART(KIrc::Context *context, const 
 
 	// For now lets forgot about the keys
 	EntityList to = context->entitiesFromNames(message.argAt(1));
-	TextEvent *event = new TextEvent( "PART", from, to,i18n("left the channel (%1)").arg(QString( message.suffix() )) );
+	TextEvent *event = new TextEvent( "PART", from, to,message.suffix() );
 	context->postEvent( event );
 	
 	foreach(EntityPtr channel, to)
 	{
-	  //channel->add(from);
+		channel->context()->remove(from);
 	}
 
 	return KIrc::Handler::CoreHandled;
@@ -603,9 +603,38 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_352(KIrc::Context *con
 KIrc::Handler::Handled ClientChannelHandler::numericReply_353(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(3, 3);
+	KIrc::EntityPtr channel=context->entityFromName(message.argAt(3)); //I don't know where the = in this message comes from
+
+	if(!channel->isChannel())
+	{
+		kDebug(14120)<<"WARNING: got a NAMES list for something that is not a channel";
+		return KIrc::Handler::NotHandled;
+	}
+
+	QList<QByteArray> nicks=message.suffix().split(' ');
+	foreach(const QByteArray &user,nicks)
+	{
+		//Add the nick to the channel. As nicks are unique through the network, we use the Entities already present in the root context
+		QByteArray nick;
+		KIrc::EntityStatus status=0;
+		if(user.startsWith("@")) //It's a channel operator. drop this information for the moment
+		{
+			nick=user.mid(1);
+			status|=KIrc::Operator;
+		}
+		else
+			nick=user;
+
+		KIrc::EntityPtr entity=context->entityFromName( nick );
+		channel->context()->add( entity );
+		channel->context()->addStatus(entity,status);
+	}
+
+	//TODO: send out a notification about new entities on everyone of these messages,
+	//instead of just on "End of NAMES list"
 
 //	emit incomingNamesList(message.arg(2), QStringList::split(' ', message.suffix()));
-	return KIrc::Handler::NotHandled;
+	return KIrc::Handler::CoreHandled;
 }
 
 /* 366: "<channel> :End of NAMES list"
@@ -615,8 +644,13 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_366(KIrc::Context *con
 {
 	CHECK_ARGS(2, 2);
 
+	KIrc::EntityPtr channel=context->entityFromName(message.argAt(2));
+	
+	KIrc::ControlEvent *ev=new KIrc::ControlEvent("CHANNEL_INIT_LIST",channel);
+	context->postEvent(ev);
+
 //	emit receivedServerMessage(message);
-	return KIrc::Handler::NotHandled;
+	return KIrc::Handler::CoreHandled;
 }
 
 /* 369: "<nick> :End of WHOWAS"

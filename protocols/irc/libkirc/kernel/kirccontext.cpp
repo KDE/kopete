@@ -20,6 +20,9 @@
 #include "kircentity.h"
 
 #include <QtCore/QEvent>
+#include <QtCore/QHash>
+
+#include <kdebug.h>
 
 using namespace KIrc;
 
@@ -31,6 +34,9 @@ public:
 	{ }
 
 	KIrc::EntityList entities;
+
+	//Keeps Status information about the entities, relative to this context (e.g. Operators of a Channel)
+	QHash<KIrc::EntityPtr, KIrc::EntityStatus> statusMap;
 
 	QTextCodec *defaultCodec;
 };
@@ -53,9 +59,8 @@ QList<KIrc::Entity *> Context::anonymous() const
 */
 KIrc::EntityList Context::entities() const
 {
-	#warning implement me
-	//return findChildren<EntityPtr>();
-	return EntityList();
+	Q_D(const Context);
+	return d->entities;
 }
 
 KIrc::EntityPtr Context::entityFromName(const QByteArray &name)
@@ -85,6 +90,7 @@ KIrc::EntityPtr Context::entityFromName(const QByteArray &name)
 	{
 		entity = new Entity(this);
 		entity->setName(nick);
+		entity->setStatus(KIrc::Online);
 		add( entity );
 	}
 
@@ -151,6 +157,24 @@ void Context::remove(EntityPtr entity)
 	Q_D(Context);
 	d->entities.removeAll(entity);
 //	disconnect(entity);
+}
+
+EntityStatus Context::statusOf(EntityPtr e) const
+{
+	Q_D(const Context);
+	return e->status()|d->statusMap.value(e);
+}
+
+void Context::setStatus(EntityPtr entity, KIrc::EntityStatus s)
+{
+	Q_D(Context);
+	d->statusMap[entity]=s;
+}
+
+void Context::addStatus(EntityPtr entity, KIrc::EntityStatus s)
+{
+	Q_D(Context);
+	d->statusMap[entity]|=s;
 }
 
 

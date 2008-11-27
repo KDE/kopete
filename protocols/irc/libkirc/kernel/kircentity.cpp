@@ -69,6 +69,7 @@ public:
 	QPointer<Context> context;
 
 	Entity::Type type;
+	EntityStatus status;
 
 	QByteArray name;
 	QByteArray host;
@@ -119,6 +120,16 @@ void Entity::setType( Entity::Type type )
 	if ( d->type != type )
 	{
 		d->type = type;
+
+		if(type==Channel) //Create a new Context, representing this channel
+		{
+			if(!d->context)
+			{
+				kDebug(14120)<<"creating a new context for the channel "<<name()<<"  "<<this;
+				d->context=new Context(this);
+			}
+			d->status=d->status|KIrc::Channel;
+		}
 		emit updated();
 	}
 }
@@ -197,3 +208,21 @@ void Entity::setCodec(QTextCodec *codec)
 	}
 }
 
+QPointer<Context> Entity::context() const
+{
+	Q_D(const Entity);
+	return d->context;
+}
+
+EntityStatus Entity::status() const
+{
+	Q_D(const Entity);
+	return d->status;
+}
+
+void Entity::setStatus(const EntityStatus& status)
+{
+	Q_D(Entity);
+	d->status=status;
+	emit updated();
+}

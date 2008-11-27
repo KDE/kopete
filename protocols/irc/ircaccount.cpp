@@ -755,6 +755,24 @@ void IRCAccount::receivedEvent(QEvent *event)
 		{
 			msgType = Kopete::Message::TypeAction;
 		}
+		else if ( txtEvent->eventId() == "JOIN" )
+		{
+			foreach(Kopete::Contact *c,to)
+			{
+			  c->manager()->addContact(from,IRCProtocol::self()->onlineStatusFor( from->entity(),txtEvent->from()->context() ), false);
+			}
+			return;
+		}
+		else if ( txtEvent->eventId() == "PART" )
+		{
+			foreach(Kopete::Contact* c,to)
+			  c->manager()->removeContact(from,txtEvent->text());
+
+			return;
+		}else if ( txtEvent->eventId() == "NICK" )
+		{
+			return;
+		}
 #if 0 
 		else if ( txtEvent->eventId().startWith("ERR_") )
 		{
@@ -762,6 +780,25 @@ void IRCAccount::receivedEvent(QEvent *event)
 		}
 #endif
 		appendMessage( from, to, txtEvent->text(), msgType, msgImportance );
+	}
+	else if(event->type()==KIrc::ControlEvent::Type)
+	{
+		KIrc::ControlEvent *ctrlEvent=static_cast<KIrc::ControlEvent*> (event);
+		
+		kDebug(14120)<<"Control event from "<<ctrlEvent->src()->name();
+		//I'm not completely sure wether doing this in one big event is the right way to go
+		if(ctrlEvent->eventId()=="CHANNEL_INIT_LIST")
+		{
+			Kopete::ChatSession *chat=getContact(ctrlEvent->src())->manager();
+			foreach(const KIrc::EntityPtr& e,ctrlEvent->src()->context()->entities())
+			{
+				IRCContact * contact=getContact(e);
+				if(!chat->members().contains(contact)&&e!=mySelf()->entity())
+				{
+				  chat->addContact(contact,IRCProtocol::self()->onlineStatusFor(e,ctrlEvent->src()->context()),true);
+				}
+			}
+		}
 	}
    	/*
 	QList<Kopete::Contact*> to = getContacts(txtEvent->to());

@@ -25,3 +25,4 @@ const QEvent::Type KIrc::MessageEvent::Type = (QEvent::Type)QEvent::registerEven
 
 const QEvent::Type KIrc::TextEvent::Type = (QEvent::Type)QEvent::registerEventType();
 
+const QEvent::Type KIrc::ControlEvent::Type = (QEvent::Type)QEvent::registerEventType();

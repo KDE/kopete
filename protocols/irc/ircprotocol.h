@@ -21,6 +21,7 @@
 
 #include "kircentity.h"
 #include "kircglobal.h"
+#include "kirccontext.h"
 
 #include "kopetemessage.h"
 #include "kopeteonlinestatus.h"
@@ -88,7 +89,8 @@ public:
 
 //	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity);
+	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity,  KIrc::Context* relativeTo=0 );
+	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity, Kopete::OnlineStatusManager::Categories categories, KIrc::Context* relativeTo=0 );
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
@@ -110,7 +112,7 @@ private:
 	void initOnlineStatus();
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
-	//QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
+	QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;
 	const Kopete::OnlineStatus m_StatusUnknown;
 

@@ -19,10 +19,12 @@
 #define KIRCENTITY_H
 
 #include "kirc_export.h"
+#include "kircglobal.h"
 
 #include <QtCore/QList>
 #include <QtCore/QObject>
 #include <QtCore/QSharedData>
+#include <QtCore/QPointer>
 
 class QTextCodec;
 
@@ -95,6 +97,11 @@ public:
 
 	QTextCodec *codec() const;
 	void setCodec(QTextCodec *);
+
+	QPointer<Context> context() const;
+
+	EntityStatus status() const;
+	void setStatus(const EntityStatus& status);
 
 signals:
 	void destroyed(Entity *self);

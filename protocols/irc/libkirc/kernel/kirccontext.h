@@ -62,6 +62,9 @@ public:
 
 	KIrc::EntityList entitiesFromNames(const QByteArray &names, char sep = ',');
 
+	KIrc::EntityStatus statusOf(EntityPtr entity) const;
+	void setStatus(EntityPtr entity, KIrc::EntityStatus s);
+	void addStatus(EntityPtr entity, KIrc::EntityStatus s);
 public Q_SLOTS:
 	void add(EntityPtr entity);
 	void remove(EntityPtr entity);

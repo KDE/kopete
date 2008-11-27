@@ -166,6 +166,9 @@ void ClientSocket::socketStateChanged(QAbstractSocket::SocketState newstate)
 
 void ClientSocket::setAuthentified()
 {
+	owner()->setStatus(KIrc::Online);
+	server()->setStatus(KIrc::Online);
+
 	setConnectionState( Socket::Authentified );
 }
 
@@ -173,7 +176,8 @@ KIrc::EntityPtr ClientSocket::joinChannel( const QByteArray & channelName )
 {
 	Q_D( ClientSocket );
 	writeMessage( KIrc::StdMessages::join( channelName ) );
-    KIrc::EntityPtr channel=KIrc::EntityPtr( d->context->entityFromName( channelName ) );
+	KIrc::EntityPtr channel=KIrc::EntityPtr( d->context->entityFromName( channelName ) );
+	channel->setType(KIrc::Entity::Channel);
 
 	return channel;
 }

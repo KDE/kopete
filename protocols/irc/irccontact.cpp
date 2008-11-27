@@ -85,7 +85,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity, MetaC
 
 	// KIRC stuff
 	connect(client, SIGNAL(connectionStateChanged(KIrc::Socket::ConnectionState)),
-		this, SLOT(updateStatus()));
+			this, SLOT(updateStatus()));
 
 	connect(d->entity.data(), SIGNAL(updated()),
 		this, SLOT(entityUpdated()));
@@ -142,6 +142,7 @@ void IRCContact::entityUpdated()
 
 	// Basic entity properties.
 	setProperty(prop->nickName(), d->entity->name());
+
 //	setProperty(???->serverName(), d->entity->server());
 //	setProperty(???->type(), d->entity->type());
 
@@ -151,9 +152,9 @@ void IRCContact::entityUpdated()
 //	setProperty(???->topic(), d->entity->topic());
 
 	// Contact properties
-/*
+
 	// Update Icon properties
-	switch(m_entity->type())
+	switch(d->entity->type())
 	{
 //	case KIrc::Entity::Unknown: // Use default
 	case KIrc::Entity::Server:
@@ -173,7 +174,7 @@ void IRCContact::entityUpdated()
 		setIcon(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 		break;
 	}
-*/
+
 	updateStatus();
 }
 
@@ -192,14 +193,7 @@ QString IRCContact::caption() const
 
 void IRCContact::updateStatus()
 {
-	//setOnlineStatus(Kopete::OnlineStatus::Online);
-	//setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
-
-	//TODO: temporary until the real status handling is resurrected
-	if(account()->isConnected())
-		setOnlineStatus(Kopete::OnlineStatus::Online);
-	else
-		setOnlineStatus(Kopete::OnlineStatus::Offline);
+	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
 }
 
 bool IRCContact::isReachable()
@@ -262,7 +256,15 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 
 		kDebug(14120)<<"creating new ChatSession";
 
-		chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , account->protocol());
+		if(entity()->isChannel())
+		{
+			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , 
+															 account->protocol(), Kopete::ChatSession::Chatroom);
+		}else
+		{
+			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , 
+															 account->protocol(), Kopete::ChatSession::Small);
+		}
 		chatSession->setDisplayName(caption());
 
 		connect(chatSession, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),

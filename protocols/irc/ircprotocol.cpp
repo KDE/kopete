@@ -341,34 +341,38 @@ void IRCProtocol::initOnlineStatus()
 */
 }
 
-OnlineStatus IRCProtocol::onlineStatusFor(KIrc::EntityPtr entity)
+OnlineStatus IRCProtocol::onlineStatusFor(KIrc::EntityPtr entity, KIrc::Context* relativeTo )
 {
-//	return onlineStatusFor(entity, 0);
-	return OnlineStatus::Unknown;
+	return onlineStatusFor(entity,0,relativeTo);
 }
-/*
-OnlineStatus IRCProtocol::onlineStatusFor(KIrc::Entity *entity, unsigned categories)
+
+OnlineStatus IRCProtocol::onlineStatusFor(KIrc::EntityPtr entity, OnlineStatusManager::Categories categories, KIrc::Context* relativeTo)
 {
+
 	// Only copy the needed status
 	KIrc::EntityStatus status;
-	status.online = _status.online;
-	status.mode_a = _status.mode_a;
-//	status.mode_i = _status.mode_i;
-	status.mode_o = _status.mode_o;
-	status.mode_v = _status.mode_v;
-	status.mode_O = _status.mode_O;
+	if(relativeTo)
+		status=relativeTo->statusOf(entity);
+	else
+		status=entity->status();
+
+
+	//status.online = _status.online;
+	//status.mode_a = _status.mode_a;
+	//status.mode_i = _status.mode_i;
+	//status.mode_o = _status.mode_o;
+	//status.mode_v = _status.mode_v;
+	//status.mode_O = _status.mode_O;
 
 	OnlineStatus ret = m_statusMap[status];
 	if (ret.status() == OnlineStatus::Unknown)
 	{
-		kDebug(14120) << "New online status.";
-
 		OnlineStatus::StatusType statusType;
 		unsigned weight = 0;
 		QStringList overlayIcons;
 		QString description;
 
-		if (status.online)
+		if (status.testFlag(KIrc::Online))
 		{
 			statusType = OnlineStatus::Online;
 
@@ -376,8 +380,16 @@ OnlineStatus IRCProtocol::onlineStatusFor(KIrc::Entity *entity, unsigned categor
 			description = i18n("Online");
 			weight <<= 1;
 
+			//Is a channel
+			if(status.testFlag(KIrc::Channel))
+			{
+				weight+=1;
+				description= i18n("Channel");
+			}
+			weight <<=1;
+
 			// Is operator
-			if (status.mode_o || status.mode_O)
+			if (status.testFlag(KIrc::Operator)) //mode_o || status.mode_O)
 			{
 				weight += 1;
 				overlayIcons << "irc_op";
@@ -386,7 +398,7 @@ OnlineStatus IRCProtocol::onlineStatusFor(KIrc::Entity *entity, unsigned categor
 			weight <<= 1;
 
 			// Is Voiced
-			if (status.mode_v)
+			if (status.testFlag(KIrc::Voiced))
 			{
 				weight += 1;
 				overlayIcons << "irc_voice";
@@ -395,7 +407,7 @@ OnlineStatus IRCProtocol::onlineStatusFor(KIrc::Entity *entity, unsigned categor
 			weight <<= 1;
 
 			// Is away
-			if (status.mode_a)
+			if (status.testFlag(KIrc::Away))
 			{
 				statusType = OnlineStatus::Away;
 				weight += 1;
@@ -405,13 +417,12 @@ OnlineStatus IRCProtocol::onlineStatusFor(KIrc::Entity *entity, unsigned categor
 			weight <<= 1;
 
 			// Is Invisible
-			if (status.mode_i)
+			if (status.testFlag(KIrc::Invisible))
 			{
 				statusType = OnlineStatus::Invisible;
 				weight += 1;
 			}
 			weight <<= 1;
-
 		}
 		else
 		{
@@ -419,15 +430,15 @@ OnlineStatus IRCProtocol::onlineStatusFor(KIrc::Entity *entity, unsigned categor
 			description = i18n("Offline");
 		}
 
-		OnlineStatus onlineStatus(statusType, weight, this,
-			0, overlayIcons, description, description, categories);
+		ret=OnlineStatus(statusType, weight, this,
+						 status, overlayIcons, description, description, categories);
 
-		m_statusMap.insert(status, onlineStatus);
+		m_statusMap.insert(status, ret);
 	}
 
 	return ret;
 }
-*/
+
 void IRCProtocol::slotViewCreated(KopeteView *view)
 {
 //	if (view->msgManager()->protocol() == this)
