@@ -149,6 +149,52 @@ class Skype : public QObject
 		 * Is this version of protocol able to create conference calls?
 		 */
 		bool ableConference();
+		/**
+		 * Get group name, where is contact
+		 * @param name Skype contact name
+		 * @return group id, where is contact
+		 */
+		QString getContactGroupID(const QString &name);
+		/**
+		 * Remove user from group
+		 * @param name Skype contact name
+		 * @param groupID Skype group id
+		 */
+		void removeFromGroup(const QString &name, const QString &groupID);
+		/**
+		 * Add user to group
+		 * @param name Skype contact name
+		 * @param groupID Skype group id
+		 */
+		void addToGroup(const QString &name, const QString &groupID);
+		/**
+		 * Create Skype group
+		 * @param name Group name
+		 */
+		void createGroup(const QString &name);
+		/**
+		 * Remove Skype group
+		 * @param groupID Skype group id
+		 */
+		void deleteGroup(const QString &groupID);
+		/**
+		 * Get group id
+		 * @param groupname name
+		 * @return groupID
+		 */
+		QString getGroupID(const QString &groupname);
+		/**
+		 * Get group name
+		 * @param groupID groupID
+		 * @return group name
+		 */
+		QString getGroupName(const QString &groupID);
+		/**
+		 * Get Skype display name
+		 * @param name Skype name
+		 * @return Skype display name
+		 */
+		QString getDisplayName(const QString &name);
 	public slots:
 		/**
 		 * Tell the skype to go online
@@ -351,8 +397,9 @@ class Skype : public QObject
 		/**
 		 * Emitted when new user should be added to the list
 		 * @param name The skype name of the user
+		 * @param groupID The skype group id, where is user
 		 */
-		void newUser(const QString &name);
+		void newUser(const QString &name, const QString &groupID);
 		/**
 		 * All contacts should be asked to request update of their information. This is emitted after the connection to skype is made.
 		 */

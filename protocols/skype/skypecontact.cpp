@@ -81,6 +81,8 @@ class SkypeContactPrivate {
 		QString homepage;
 		///The contacts sex
 		QString sex;
+		///Skype id
+		QString id;
 };
 
 SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::MetaContact *parent, bool user)
@@ -123,6 +125,8 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	setNickName(id);//Just default, should be replaced later by something..
 
 	setOnlineStatus(account->protocol()->Offline);
+
+	d->id = id;
 }
 
 SkypeContact::~SkypeContact() {
@@ -412,6 +416,7 @@ void SkypeContact::slotUserInfo() {
 }
 
 void SkypeContact::deleteContact() {
+	kDebug() << k_funcinfo << endl;
 	d->account->removeContact(contactId());
 	deleteLater();
 }
@@ -422,18 +427,29 @@ void SkypeContact::sync(unsigned int changed) {
 	if (changed & MovedBetweenGroup) {
 		d->account->registerContact(contactId());
 	}
+
+	if (changed == MovedBetweenGroup)
+		d->account->MovedBetweenGroup(this);
 }
 
 void SkypeContact::authorize() {
+	kDebug() << k_funcinfo << endl;
 	d->account->authorizeUser(contactId());
 }
 
 void SkypeContact::disAuthor() {
+	kDebug() << k_funcinfo << endl;
 	d->account->disAuthorUser(contactId());
 }
 
 void SkypeContact::block() {
+	kDebug() << k_funcinfo << endl;
 	d->account->blockUser(contactId());
+}
+
+QString SkypeContact::getid() {
+	kDebug() << k_funcinfo << endl;
+	return d->id;
 }
 
 #include "skypecontact.moc"

@@ -31,6 +31,7 @@
 #include <kopeteonlinestatus.h>
 #include <kopetecontactlist.h>
 #include <kopetecontact.h>
+#include <kopetegroup.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -149,7 +150,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	QObject::connect(&d->skype, SIGNAL(wentInvisible()), this, SLOT(wentInvisible()));
 	QObject::connect(&d->skype, SIGNAL(wentSkypeMe()), this, SLOT(wentSkypeMe()));
 	QObject::connect(&d->skype, SIGNAL(statusConnecting()), this, SLOT(statusConnecting()));
-	QObject::connect(&d->skype, SIGNAL(newUser(const QString&)), this, SLOT(newUser(const QString&)));
+	QObject::connect(&d->skype, SIGNAL(newUser(const QString&, const QString&)), this, SLOT(newUser(const QString&, const QString&)));
 	QObject::connect(&d->skype, SIGNAL(contactInfo(const QString&, const QString& )), this, SLOT(updateContactInfo(const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(receivedIM(const QString&, const QString&, const QString& )), this, SLOT(receivedIm(const QString&, const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(gotMessageId(const QString& )), this, SLOT(gotMessageId(const QString& )));//every time some ID is known inform the contacts
@@ -342,11 +343,31 @@ void SkypeAccount::statusConnecting() {
 	emit connectionStatus(false);
 }
 
-void SkypeAccount::newUser(const QString &name) {
+void SkypeAccount::newUser(const QString &name, const QString &groupID) {
 	kDebug() << k_funcinfo << QString("name = %1").arg(name) << endl;//some debug info
-	if (contacts().contains(name) || name == "echo123") // echo123 - Make Test Call has moved to Skype protocol toolbar
+
+	if (name == "echo123")// echo123 - Make Test Call has moved to Skype protocol toolbar
 		return;
-	addContact(name);
+
+	QString group = d->skype.getGroupName(groupID);
+
+	Kopete::Group * skypeGroup;
+
+	if (group.isEmpty()) // If skype group hasnt name, in kopete will be in top
+		skypeGroup = Kopete::Group::topLevel();
+	else
+		skypeGroup = Kopete::ContactList::self()->findGroup(group); //get kopete group by skype group name. If skype group in kopete doesnt exist, create it automatically
+
+	if (contacts().contains(name)){
+		Kopete::Contact * contact = contacts().value(name); //get metacontact of skype contact name
+		if (skypeGroup != contact->metaContact()->groups().first()){ // if skype Group is different like kopete group, move metacontact to skype group
+			kDebug() << "Moving contact" << name << "to group" << group << endl;
+			contact->metaContact()->moveToGroup(contact->metaContact()->groups().first(), skypeGroup);
+		}
+		return;
+	}
+
+	addContact(name, d->skype.getDisplayName(name), skypeGroup, ChangeKABC);
 }
 
 void SkypeAccount::prepareContact(SkypeContact *contact) {
@@ -368,7 +389,7 @@ void SkypeAccount::updateContactInfo(const QString &contact, const QString &chan
 		const QString &type = change.section(' ', 0, 0).trimmed().toUpper();//get the first part of the message, it should be BUDDYSTATUS
 		const QString &value = change.section(' ', 1, 1).trimmed();//get the second part if it is some reasonable value
 		if ((type == "BUDDYSTATUS") && ((value == "2") || (value == "3"))) {//the user is in skype contact list
-			newUser(contact);
+			newUser(contact, d->skype.getContactGroupID(contact));
 		} else if (type != "BUDDYSTATUS")//this is some other info
 			d->skype.getContactBuddy(contact);//get the buddy status for the account and check, if it is in contact list or not
 	}
@@ -842,14 +863,12 @@ int SkypeAccount::getAuthor(const QString &contactId) {
 	}
 }
 
-bool SkypeAccount::hasCustomStatusMenu() const
-{
+bool SkypeAccount::hasCustomStatusMenu() const {
 	kDebug() << k_funcinfo << endl;//some debug info
 	return true;
 }
 
-void SkypeAccount::fillActionMenu( KActionMenu *actionMenu )
-{
+void SkypeAccount::fillActionMenu( KActionMenu *actionMenu ) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	actionMenu->setIcon( myself()->onlineStatus().iconFor(this) );
@@ -899,9 +918,32 @@ void SkypeAccount::fillActionMenu( KActionMenu *actionMenu )
 	}
 }
 
-QString SkypeAccount::getMyselfSkypeName()
-{
+QString SkypeAccount::getMyselfSkypeName() {
+	kDebug() << k_funcinfo << endl;//some debug info
 	return d->skype.getMyself();
+}
+
+void SkypeAccount::MovedBetweenGroup(SkypeContact *contact) {
+	kDebug() << k_funcinfo << endl;//some debug info
+
+	QString newGroup = d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
+	QString oldGroup = d->skype.getContactGroupID(contact->getid());
+
+	if (! oldGroup.isEmpty()){
+		kDebug() << "Removing contact" << contact->getid() << "from group" << d->skype.getContactGroupID(contact->getid()) << endl;
+		d->skype.removeFromGroup(contact->getid(), oldGroup);
+	}
+
+	if (newGroup.isEmpty()){
+		d->skype.createGroup(contact->metaContact()->groups().first()->displayName());
+		newGroup = d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
+	}
+
+	if (! newGroup.isEmpty()){
+		kDebug() << "Adding contact" << contact->getid() << "to group" << d->skype.getGroupID(contact->metaContact()->groups().first()->displayName()) << endl;
+		d->skype.addToGroup(contact->getid(), newGroup);
+	} else
+		kDebug() << "Error: Cant create new skype group" << contact->metaContact()->groups().first()->displayName() << endl;
 }
 
 #include "skypeaccount.moc"

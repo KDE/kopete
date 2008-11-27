@@ -84,6 +84,8 @@ class SkypeContact : public Kopete::Contact
 		SkypeChatSession *getChatSession();
 		///Can this contact be called now?
 		bool canCall() const;
+		///Get skype id
+		QString getid();
 	private slots:
 		/**
 		 * Authorize the user to see if I'm online

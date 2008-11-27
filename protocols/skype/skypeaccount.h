@@ -89,8 +89,9 @@ Q_OBJECT
 		/**
 		 * This adds user to the contact list if it is not there
 		 * @param name The skype name of the contact
+		 * @param group The skype group name, where is user
 		 */
-		void newUser(const QString &name);
+		void newUser(const QString &name, const QString &group);
 		/**
 		 * This is used for receiving messages from skype network
 		 * @param user The user that sent it
@@ -351,6 +352,10 @@ Q_OBJECT
 		 * This will return ID of the actual user this one that uses this skype)
 		 */
 		QString getMyselfSkypeName();
+		/**
+		 * Call it when contact move between group
+		 */
+		void MovedBetweenGroup(SkypeContact *contact);
 	public slots:
 		/**
 		 * Sets online status for the account.

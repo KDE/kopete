@@ -15,6 +15,7 @@ TODO New:
 - edit details in yourself accout
 - support automaticly start skype and login with given name and password - not added to add/edit accout dialog
 - store skype password in kwalet
+- add multiskype account support
 - hide skype to system tray after log in - done
 - automaticly go-offline, when quit/logout user from skype - done
 - use new blue skype icons - not all (missing unknow contact icon, animated connecting icon)
@@ -22,8 +23,8 @@ TODO New:
 - add support sending SMS
 - add support recording calls
 - remove contact echo123 and add button "Make Test Call" in Skype protocol toolbar - done
-- add group support
+- add group support - done
 - add support searching contacts
 - add support for file transfer
 - show sent message imediately in chat window and show info when was delivered
-- cannot add myself skype contact - done
+- cannot add yourself skype contact - done
