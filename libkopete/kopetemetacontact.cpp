@@ -501,7 +501,8 @@ bool MetaContact::isOnline() const
 	QListIterator<Contact *> it( d->contacts );
 	while ( it.hasNext() )
 	{
-		if( it.next()->isOnline() )
+		Contact* c = it.next();
+		if( c && c->isOnline() )
 			return true;
 	}
 	return false;
