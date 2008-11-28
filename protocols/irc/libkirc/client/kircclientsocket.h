@@ -54,14 +54,12 @@ public: // READ properties accessors.
 
 	QUrl url() const;
 
-public slots: // WRITE properties accessors.
+public Q_SLOTS: 
 	void setAuthentified();
 	KIrc::EntityPtr joinChannel(const QByteArray& channelName);
 
-public:
-
-public Q_SLOTS:
 	virtual void connectToServer(const QUrl &url);
+	void quit(const QByteArray& quitMessage);
 
 protected:
 	void connectToServer(const QUrl &url, QAbstractSocket *socket);

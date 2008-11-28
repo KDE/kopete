@@ -158,6 +158,9 @@ void ClientSocket::socketStateChanged(QAbstractSocket::SocketState newstate)
 		owner()->setName(url.queryItemValue("nickname").toLatin1());
 
 		break;
+	case QAbstractSocket::ClosingState:
+		owner()->setStatus(KIrc::Unknown);
+		server()->setStatus(KIrc::Unknown);
 	default:
 		Socket::socketStateChanged(newstate);
 		break;
@@ -180,4 +183,12 @@ KIrc::EntityPtr ClientSocket::joinChannel( const QByteArray & channelName )
 	channel->setType(KIrc::Entity::Channel);
 
 	return channel;
+}
+
+
+void ClientSocket::quit( const QByteArray & quitMessage )
+{
+	writeMessage(KIrc::StdMessages::quit(quitMessage));
+	//disconnect
+	socket()->close();
 }

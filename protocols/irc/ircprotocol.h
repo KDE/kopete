@@ -91,6 +91,7 @@ public:
 
 	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity,  KIrc::Context* relativeTo=0 );
 	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity, Kopete::OnlineStatusManager::Categories categories, KIrc::Context* relativeTo=0 );
+	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityStatus status, Kopete::OnlineStatusManager::Categories categories);
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }

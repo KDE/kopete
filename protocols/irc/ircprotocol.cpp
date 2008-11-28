@@ -339,6 +339,10 @@ void IRCProtocol::initOnlineStatus()
 	OnlineStatus UserOffline(OnlineStatus::Offline, 0, this, 0,
 		QString(), i18n("Offline"), i18n("Offline"), OnlineStatusManager::Offline);
 */
+	
+	onlineStatusFor(KIrc::Unknown,OnlineStatusManager::Offline);
+	onlineStatusFor(KIrc::Online,OnlineStatusManager::Online);
+	onlineStatusFor((KIrc::Online|KIrc::Away), OnlineStatusManager::Away);
 }
 
 OnlineStatus IRCProtocol::onlineStatusFor(KIrc::EntityPtr entity, KIrc::Context* relativeTo )
@@ -356,7 +360,11 @@ OnlineStatus IRCProtocol::onlineStatusFor(KIrc::EntityPtr entity, OnlineStatusMa
 	else
 		status=entity->status();
 
+	return onlineStatusFor(status,categories);
+}
 
+OnlineStatus IRCProtocol::onlineStatusFor(KIrc::EntityStatus status,OnlineStatusManager::Categories categories)
+{
 	//status.online = _status.online;
 	//status.mode_a = _status.mode_a;
 	//status.mode_i = _status.mode_i;

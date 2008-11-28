@@ -517,9 +517,9 @@ void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState news
 		// spewing out any number of replies), so just try delaying it
 		QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
 		break;
-/*
+
 	case KIrc::Socket::Closing:
-//		mySelf()->setOnlineStatus( protocol->m_UserStatusOffline );
+//		mySelf()->setOnlineStatus( OnlineStatus::Offline );
 //		d->contactManager->removeFromNotifyList( d->client->nickName() );
 
 //		if (d->contactManager && !autoConnect.isNull())
@@ -529,7 +529,7 @@ void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState news
 		//Try next server
 //		connect();
 //		break;
-*/
+
 	default:
 		kDebug(14120) << "Doing nothing on state" << newstate;
 	}
@@ -621,6 +621,7 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessag
 	if ( expected == OnlineStatus::Offline && current != OnlineStatus::Offline )
 	{
 		kDebug(14120) << "Disconnecting.";
+		client()->quit(codec()->fromUnicode(quitMessage()));
 		//quit(reason);
 	}
 }

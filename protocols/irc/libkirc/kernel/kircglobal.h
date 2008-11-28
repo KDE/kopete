@@ -43,7 +43,7 @@ enum EntityStatusFlag{
 };
 Q_DECLARE_FLAGS(EntityStatus,EntityStatusFlag);
 
-//Q_DECLARE_OPERATORS_FOR_FLAGS(KIrc::EntityStatus);
+Q_DECLARE_OPERATORS_FOR_FLAGS(KIrc::EntityStatus);
 
 
 typedef struct
