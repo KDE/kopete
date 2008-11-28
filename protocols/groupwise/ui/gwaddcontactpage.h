@@ -57,6 +57,8 @@ public:
 	 * Is the data correct?
 	 */
     virtual bool validateData();
+private slots:
+	void searchResult(bool valid);
 protected:
 	Q3ValueList< GroupWise::ContactDetails > m_searchResults;
 	unsigned char searchOperation( int comboIndex );
