@@ -177,9 +177,12 @@ QModelIndex ContactListModel::index( int row, int column, const QModelIndex & pa
 int ContactListModel::countConnected(Kopete::Group* g) const
 {
 	int onlineCount = 0;
-	foreach( Kopete::MetaContact* mc, m_contacts[g] )
+	QList<Kopete::MetaContact*> metaContactList = m_contacts.value(g);
+	QList<Kopete::MetaContact*>::const_iterator it, itEnd;
+	itEnd = metaContactList.constEnd();
+	for (it = metaContactList.constBegin(); it != itEnd; ++it)
 	{
-	  if ( mc->isOnline() )
+	  if ( (*it)->isOnline() )
 		onlineCount++;
 	}
 	
