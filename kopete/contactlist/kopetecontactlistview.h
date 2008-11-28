@@ -6,7 +6,7 @@
     Copyright (c) 2002      by Stefan Gehn <metz@gehn.net>
     Copyright (c) 2002-2005 by Olivier Goffart <ogoffart@kde.org>
     Copyright (c) 2004      by Richard Smith <kde@metafoo.co.uk>
-	Copyright     2007      by Matt Rogers <mattr@kde.org>
+    Copyright     2007-2008 by Matt Rogers <mattr@kde.org>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
