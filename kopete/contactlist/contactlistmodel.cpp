@@ -60,11 +60,21 @@ ContactListModel::~ContactListModel()
 void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 {
 	foreach( Kopete::Group* g, contact->groups() )
+	{
+		int pos = m_groups.indexOf( g );
+		int groupMemberCount = m_contacts[g].count();
+		QModelIndex groupIndex = index( pos, 0, QModelIndex() );
+		beginInsertColumns( groupIndex, groupMemberCount, 
+		                    groupMemberCount + 1 );
 		m_contacts[g].append(contact);
+		connect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		         this, SLOT(handleContactDataChange(Kopete::MetaContact*)));
+		endInsertColumns();
+	}
 	
-	connect( contact,
+	/*connect( contact,
 	         SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
-	         this, SLOT(resetModel()));
+	         this, SLOT(resetModel()));*/
 }
 
 void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
@@ -301,6 +311,12 @@ void ContactListModel::resetModel()
 {
 	reset();
 }
+
+void ContactListModel::handleContactDataChange(Kopete::MetaContact* mc)
+{
+	Q_UNUSED(mc);
+}
+
 
 QVariant ContactListModel::metaContactImage( Kopete::MetaContact* mc ) const
 {

@@ -56,6 +56,8 @@ Q_OBJECT
 	
 	private Q_SLOTS:
 		void resetModel();
+		void handleContactDataChange(Kopete::MetaContact*);
+  
 	private:
 		int childCount(const QModelIndex& parent) const;
 		int countConnected(Kopete::Group* g) const;
