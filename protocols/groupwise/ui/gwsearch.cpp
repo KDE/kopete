@@ -402,19 +402,20 @@ void GroupWiseContactSearch::slotGotSearchResults()
 		rowSelection.select( m_proxyModel->index( 0, 0, QModelIndex() ), m_proxyModel->index(0, 3, QModelIndex() ) );
 		selectionModel->select( rowSelection, QItemSelectionModel::Select );
 	}
-	kDebug() << "selectionModel is " << m_results->selectionModel();
 	m_results->selectionModel()->selectedRows();
-	kDebug() << "selectionModel is still valid.";
 }
 
 QList< GroupWise::ContactDetails > GroupWiseContactSearch::selectedResults()
 {
-	kDebug() << "selectionModel is " << m_results->selectionModel();
 	QList< GroupWise::ContactDetails> lst;
-	Q_ASSERT(m_results->selectionModel());
-	foreach( QModelIndex index, m_results->selectionModel()->selectedRows() )
-	{
-		lst.append( detailsAtIndex( index ) );
+	if (m_results->selectionModel()) {
+		foreach( QModelIndex index, m_results->selectionModel()->selectedRows() )
+		{
+			lst.append( detailsAtIndex( index ) );
+		}
+	} else {
+		kDebug() << "called when no model was set!";
+		kBacktrace();
 	}
 	return lst;
 }
