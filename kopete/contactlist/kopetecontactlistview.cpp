@@ -44,6 +44,9 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	//d = new KopeteContactListViewPrivate;
 	header()->hide();
 
+	setSelectionMode( QAbstractItemView::ExtendedSelection );
+	setDragEnabled( true );
+	setAcceptDrops( true );
 	setAlternatingRowColors( true );
 	setItemDelegate( new KopeteItemDelegate( this ) );
 
