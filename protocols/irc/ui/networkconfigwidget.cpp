@@ -182,6 +182,7 @@ void IRCNetworkConfigWidget::slotUpdateNetworkConfig()
 
 		m_hostList->setCurrentItem( 0 );
 		slotUpdateNetworkHostConfig();
+		d->m_uiCurrentHostSelectionIndex=0;
 
 		connect(m_hostList, SIGNAL(selectionChanged()),
 			this, SLOT(slotUpdateNetworkHostConfig()));
@@ -191,6 +192,7 @@ void IRCNetworkConfigWidget::slotUpdateNetworkConfig()
 
 void IRCNetworkConfigWidget::storeCurrentNetwork()
 {
+	storeCurrentHost();
 	if ( !d->m_uiCurrentNetworkSelection.isEmpty() )
 	{
 		if ( d->m_networks.contains( d->m_uiCurrentNetworkSelection ) )
@@ -226,7 +228,9 @@ void IRCNetworkConfigWidget::storeCurrentHost()
 
 void IRCNetworkConfigWidget::slotHostPortChanged( int value )
 {
-	QString entryText = m_hostList->text( d->m_uiCurrentHostSelectionIndex ) + QString::fromLatin1(":") + QString::number( value );
+	QString entryText = m_hostList->text( d->m_uiCurrentHostSelectionIndex );
+	entryText=entryText.left(entryText.lastIndexOf(':'));  //Cut away the old port
+	entryText+=QString::fromLatin1(":") + QString::number( value );
 	// changeItem causes a take() and insert, and we don't want a selectionChanged() signal that sets all this off again.
 	disconnect(m_hostList, SIGNAL(selectionChanged()),
 		this, SLOT( slotUpdateNetworkHostConfig() ) );
