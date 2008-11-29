@@ -412,7 +412,7 @@ bool SkypeContact::canCall() const {
 void SkypeContact::slotUserInfo() {
 	kDebug() << k_funcinfo << endl;
 
-	(new SkypeDetails)->setNames(contactId(), nickName(), formattedName()).setPhones(d->privatePhone, d->privateMobile, d->workPhone).setHomepage(d->homepage).setAuthor(d->account->getAuthor(contactId()), d->account).setSex(d->sex);
+	(new SkypeDetails)->setNames(contactId(), nickName(), formattedName()).setPhones(d->privatePhone, d->privateMobile, d->workPhone).setHomepage(d->homepage).setAuthor(d->account->getAuthor(contactId()), d->account).setSex(d->sex).exec();
 }
 
 void SkypeContact::deleteContact() {

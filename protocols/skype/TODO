@@ -2,7 +2,7 @@ Port to KDE4:
 - add/edit accout dialog - done
 - call dialog
 - add contact dialog - done
-- contact details dialog
+- contact details dialog - done
 - fix sending/receiving messages from Skype throw QDBus - done
 - support automaticly start skype - done
 - add Call button in chat window and on toolbars

@@ -28,12 +28,16 @@
 
 SkypeDetails::SkypeDetails() : KDialog() {
 	kDebug() << k_funcinfo << endl;
-	dialog = new Ui::SkypeDetailsBase();
 
+	setButtons( KDialog::Close ); //add only close button
+	setDefaultButton( KDialog::Close );
+
+	QVBoxLayout *topLayout = new QVBoxLayout( this );//create the layout
 	QWidget* w = new QWidget( this );
-	dialog = new Ui::SkypeDetailsBase();
+	topLayout->addWidget( w );
+	dialog = new Ui::SkypeDetailsBase();//create the insides
 	dialog->setupUi( w );
-	setMainWidget( w );
+
 }
 
 
@@ -62,6 +66,7 @@ void SkypeDetails::changeAuthor(int item) {
 }
 
 SkypeDetails &SkypeDetails::setNames(const QString &id, const QString &nick, const QString &name) {
+	kDebug() << k_funcinfo << endl;
 	setCaption(i18n("Details for User %1").arg(id));
 	dialog->idEdit->setText(id);
 	dialog->nickEdit->setText(nick);
@@ -70,6 +75,7 @@ SkypeDetails &SkypeDetails::setNames(const QString &id, const QString &nick, con
 }
 
 SkypeDetails &SkypeDetails::setPhones(const QString &priv, const QString &mobile, const QString &work) {
+	kDebug() << k_funcinfo << endl;
 	dialog->privatePhoneEdit->setText(priv);
 	dialog->mobilePhoneEdit->setText(mobile);
 	dialog->workPhoneEdit->setText(work);
@@ -77,17 +83,20 @@ SkypeDetails &SkypeDetails::setPhones(const QString &priv, const QString &mobile
 }
 
 SkypeDetails &SkypeDetails::setHomepage(const QString &homepage) {
+	kDebug() << k_funcinfo << endl;
 	dialog->homepageEdit->setText(homepage);
 	return *this;
 }
 
 SkypeDetails &SkypeDetails::setAuthor(int author, SkypeAccount *account) {
+	kDebug() << k_funcinfo << endl;
 	dialog->authorCombo->setCurrentIndex(author);
 	this->account = account;
 	return *this;
 }
 
 SkypeDetails &SkypeDetails::setSex(const QString &sex) {
+	kDebug() << k_funcinfo << endl;
 	dialog->sexEdit->setText(sex);
 	return *this;
 }
