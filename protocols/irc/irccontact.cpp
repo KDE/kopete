@@ -90,6 +90,9 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity, MetaC
 	connect(d->entity.data(), SIGNAL(updated()),
 		this, SLOT(entityUpdated()));
 
+	//Delete the contact, if the matching entity does no longer exist in the IRC network
+	connect(d->entity.data(), SIGNAL(destroyed()), this, SLOT(deleteLater() ) );
+
 	entityUpdated();
 }
 
@@ -258,11 +261,11 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 
 		if(entity()->isChannel())
 		{
-			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , 
+			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) ,
 															 account->protocol(), Kopete::ChatSession::Chatroom);
 		}else
 		{
-			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , 
+			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) ,
 															 account->protocol(), Kopete::ChatSession::Small);
 		}
 		chatSession->setDisplayName(caption());

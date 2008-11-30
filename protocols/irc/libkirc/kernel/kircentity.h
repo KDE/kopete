@@ -87,6 +87,8 @@ public slots: // Write attributes accessors
 //	void setTopic(const QByteArray &);
 //	void setUser(const QByteArray &);
 
+	//Reimplement this, to emit the aboutToBeDestroyed signal before deleting
+	void deleteLater();
 public:
 	Entity::Type type() const;
 	bool isChannel() const;
@@ -104,7 +106,7 @@ public:
 	void setStatus(const EntityStatus& status);
 
 signals:
-	void destroyed(Entity *self);
+	void aboutToBeDestroyed(KIrc::EntityPtr self);
 
 	void updated();
 

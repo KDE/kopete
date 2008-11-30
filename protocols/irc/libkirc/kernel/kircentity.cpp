@@ -89,6 +89,7 @@ Entity::Entity(Context *context)
 
 Entity::~Entity()
 {
+	kDebug(14121);
 	delete d_ptr;
 }
 
@@ -125,7 +126,7 @@ void Entity::setType( Entity::Type type )
 		{
 			if(!d->context)
 			{
-				kDebug(14120)<<"creating a new context for the channel "<<name()<<"  "<<this;
+				kDebug(14121)<<"creating a new context for the channel "<<name()<<"  "<<this;
 				d->context=new Context(this);
 			}
 			d->status=d->status|KIrc::Channel;
@@ -225,4 +226,10 @@ void Entity::setStatus(const EntityStatus& status)
 	Q_D(Entity);
 	d->status=status;
 	emit updated();
+}
+
+void Entity::deleteLater()
+{
+	emit aboutToBeDestroyed( KIrc::EntityPtr( this ) );
+	QObject::deleteLater();
 }

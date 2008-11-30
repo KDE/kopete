@@ -168,7 +168,7 @@ protected:
 private slots:
 	void clientConnectionStateChanged(KIrc::Socket::ConnectionState newstate);
 
-	void destroyed(IRCContact *contact);
+	void destroyed(QObject *contact);
 
 	void receivedEvent(QEvent *event);
 

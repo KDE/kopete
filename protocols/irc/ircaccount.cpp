@@ -712,7 +712,7 @@ IRCContact *IRCAccount::getContact(const KIrc::EntityPtr &entity, MetaContact *m
 		d->contacts.append(contact);
 	}
 
-	QObject::connect(contact, SIGNAL(destroyed(IRCContact *)), SLOT(destroyed(IRCContact *)));
+	QObject::connect(contact, SIGNAL(destroyed(QObject *)), SLOT(destroyed(QObject *)));
 	return contact;
 }
 
@@ -725,10 +725,10 @@ QList<Kopete::Contact*> IRCAccount::getContacts( const KIrc::EntityList &entitie
 	return contacts;
 }
 
-void IRCAccount::destroyed(IRCContact *contact)
+void IRCAccount::destroyed(QObject* contact)
 {
 	kDebug(14120) ;
-	d->contacts.removeAll(contact);
+	d->contacts.removeAll(dynamic_cast<IRCContact*>( contact ));
 }
 
 void IRCAccount::receivedEvent(QEvent *event)
@@ -770,11 +770,18 @@ void IRCAccount::receivedEvent(QEvent *event)
 			  c->manager()->removeContact(from,txtEvent->text());
 
 			return;
+		}
+		else if ( txtEvent->eventId() == "QUIT" )
+		{
+			foreach(Kopete::Contact* c, to)
+			  c->manager()->removeContact(from,txtEvent->text());
+
+			return;
 		}else if ( txtEvent->eventId() == "NICK" )
 		{
 			return;
 		}
-#if 0 
+#if 0
 		else if ( txtEvent->eventId().startWith("ERR_") )
 		{
 			msgImportance = Kopete::Message::Highlight;
@@ -785,7 +792,7 @@ void IRCAccount::receivedEvent(QEvent *event)
 	else if(event->type()==KIrc::ControlEvent::Type)
 	{
 		KIrc::ControlEvent *ctrlEvent=static_cast<KIrc::ControlEvent*> (event);
-		
+
 		kDebug(14120)<<"Control event from "<<ctrlEvent->src()->name();
 		//I'm not completely sure wether doing this in one big event is the right way to go
 		if(ctrlEvent->eventId()=="CHANNEL_INIT_LIST")

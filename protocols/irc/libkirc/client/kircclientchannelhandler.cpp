@@ -80,7 +80,7 @@ KIrc::Handler::Handled ClientChannelHandler::JOIN(KIrc::Context *context, const 
 	CHECK_ARGS(0, 0);
 
 	EntityPtr from = context->entityFromName(message.prefix());
-	
+
 #if 0
 	if (message.prefix() == QLatin1String("0"))
 		// leave all the channels
@@ -91,7 +91,7 @@ KIrc::Handler::Handled ClientChannelHandler::JOIN(KIrc::Context *context, const 
 		EntityList to = context->entitiesFromNames(message.suffix());
 
 		//If we caused the event, add the channel to the channels list
-		if(from==socket->owner()) 
+		if(from==socket->owner())
 		{
 			kDebug(14121)<<"/me caused a join event";
 			foreach(const EntityPtr& e,to)
@@ -217,7 +217,7 @@ KIrc::Handler::Handled ClientChannelHandler::PART(KIrc::Context *context, const 
 	EntityList to = context->entitiesFromNames(message.argAt(1));
 	TextEvent *event = new TextEvent( "PART", from, to,message.suffix() );
 	context->postEvent( event );
-	
+
 	foreach(EntityPtr channel, to)
 	{
 		channel->context()->remove(from);
@@ -253,17 +253,33 @@ KIrc::Handler::Handled ClientChannelHandler::PRIVMSG(KIrc::Context *context, con
 KIrc::Handler::Handled ClientChannelHandler::QUIT(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	Q_D(ClientChannelHandler);
-/*
+
 	CHECK_ARGS(0, 0);
 
-	Entity::Ptr from;
-	QString message;
+	kDebug( 14121 )<<"client quittting";
 
-	if (postEvent(ev, "QUIT", from, message)) {
-//		d->context->remove(from);
+	EntityPtr from=context->entityFromName(message.prefix());
+
+	//Not optimal, as we have to search through every channel,
+	//but it shouldn't be that problematic, as I think nobody
+	//can work with that many channels, to make this become too slow
+	foreach(KIrc::EntityPtr chan,d->channels)
+	{
+		if(chan->context()->entities().contains(from))
+		{
+			KIrc::TextEvent *event = new KIrc::TextEvent( "QUIT", from, chan, message.suffix() );
+			context->postEvent( event );
+		}
 	}
-*/
-	return KIrc::Handler::NotHandled;
+
+	kDebug( 14121 )<<"deleting";
+	from->deleteLater();
+
+	//if (postEvent(ev, "QUIT", from, message)) {
+	//d->context->remove(from);
+	//}
+
+	return KIrc::Handler::CoreHandled;
 }
 
 /*
@@ -645,7 +661,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_366(KIrc::Context *con
 	CHECK_ARGS(2, 2);
 
 	KIrc::EntityPtr channel=context->entityFromName(message.argAt(2));
-	
+
 	KIrc::ControlEvent *ev=new KIrc::ControlEvent("CHANNEL_INIT_LIST",channel);
 	context->postEvent(ev);
 
