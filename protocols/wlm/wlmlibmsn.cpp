@@ -22,6 +22,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+// include first to not get compile errors on windows
+#include <msn/msn.h>
+
 #include <errno.h>
 #include <sys/types.h>
 #include <unistd.h>

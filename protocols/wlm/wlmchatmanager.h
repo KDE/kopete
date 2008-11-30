@@ -26,7 +26,7 @@
 
 class WlmContact;
 
-class KOPETE_EXPORT WlmChatManager : public QObject
+class WlmChatManager : public QObject
 {
     Q_OBJECT
 

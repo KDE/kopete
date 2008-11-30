@@ -30,7 +30,7 @@
 
 class WlmContact;
 
-class KOPETE_EXPORT WlmChatSession: public Kopete::ChatSession
+class WlmChatSession: public Kopete::ChatSession
 {
     Q_OBJECT
   public:
