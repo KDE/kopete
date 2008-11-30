@@ -570,8 +570,14 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_331(KIrc::Context *con
  */
 KIrc::Handler::Handled ClientChannelHandler::numericReply_332(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
-//	emit incomingExistingTopic(message.arg(1), message.suffix());
-	return KIrc::Handler::NotHandled;
+	KIrc::EntityPtr channel=context->entityFromName( message.argAt( 2 ) );
+	channel->setTopic( message.suffix() );
+
+	TextEvent *event=new TextEvent( "TOPIC", channel, channel, message.suffix() );
+	context->postEvent( event );
+
+	//	emit incomingExistingTopic(message.arg(1), message.suffix());
+	return KIrc::Handler::CoreHandled;
 }
 
 /* 333:

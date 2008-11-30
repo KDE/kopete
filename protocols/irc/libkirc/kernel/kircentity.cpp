@@ -233,3 +233,9 @@ void Entity::deleteLater()
 	emit aboutToBeDestroyed( KIrc::EntityPtr( this ) );
 	QObject::deleteLater();
 }
+
+void Entity::setTopic( const QByteArray& topic )
+{
+	Q_D( Entity );
+	d->topic=topic;
+}

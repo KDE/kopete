@@ -84,7 +84,7 @@ public slots: // Write attributes accessors
 	QByteArray setModes(const QByteArray &);
 	void setName(const QByteArray &);
 //	void setNick(const QByteArray &);
-//	void setTopic(const QByteArray &);
+	void setTopic(const QByteArray &);
 //	void setUser(const QByteArray &);
 
 	//Reimplement this, to emit the aboutToBeDestroyed signal before deleting
