@@ -218,6 +218,7 @@ install( FILES
   kopetegroup.h
   kopeteidentity.h
   kopeteidentitymanager.h
+  kopeteinfoevent.h
   kopetemessageevent.h
   kopetemessage.h
   kopetemessagehandlerchain.h
