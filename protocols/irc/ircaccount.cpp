@@ -805,6 +805,10 @@ void IRCAccount::receivedEvent(QEvent *event)
 				{
 				  chat->addContact(contact,IRCProtocol::self()->onlineStatusFor(e,ctrlEvent->src()->context()),true);
 				}
+				else
+				{
+					chat->setContactOnlineStatus( contact, IRCProtocol::self()->onlineStatusFor( e, ctrlEvent->src()->context() ) );
+				}
 			}
 		}
 	}
