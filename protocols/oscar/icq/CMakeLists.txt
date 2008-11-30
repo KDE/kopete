@@ -60,7 +60,13 @@ set(kopete_icq_PART_SRCS
 kde4_add_plugin(kopete_icq ${kopete_icq_PART_SRCS})
 
 
-target_link_libraries(kopete_icq ${KDE4_KDECORE_LIBS} kopete_oscar oscar kopete ${QT_QTNETWORK_LIBRARY} )
+target_link_libraries(kopete_icq
+    kopete_oscar
+    oscar
+    kopete
+    ${KDE4_KDEUI_LIBS}
+    ${QT_QTNETWORK_LIBRARY}
+    )
 
 install(TARGETS kopete_icq  DESTINATION ${PLUGIN_INSTALL_DIR})
 
