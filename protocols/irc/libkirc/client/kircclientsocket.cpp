@@ -192,3 +192,9 @@ void ClientSocket::quit( const QByteArray & quitMessage )
 	//disconnect
 	socket()->close();
 }
+
+void ClientSocket::part( KIrc::EntityPtr channel, const QByteArray & partMessage )
+{
+	writeMessage( KIrc::StdMessages::part( channel->name(), partMessage ) );
+}
+

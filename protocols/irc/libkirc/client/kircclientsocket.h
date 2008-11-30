@@ -60,6 +60,7 @@ public Q_SLOTS:
 
 	virtual void connectToServer(const QUrl &url);
 	void quit(const QByteArray& quitMessage);
+	void part(KIrc::EntityPtr channel, const QByteArray& partMessage);
 
 protected:
 	void connectToServer(const QUrl &url, QAbstractSocket *socket);

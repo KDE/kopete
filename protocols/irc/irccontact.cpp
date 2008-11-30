@@ -272,8 +272,8 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 
 		connect(chatSession, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
 			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::ChatSession *)));
-		connect(chatSession, SIGNAL(closing(ChatSession *)),
-			this, SLOT(chatSessionDestroyed(ChatSession *)));
+		connect(chatSession, SIGNAL(closing(Kopete::ChatSession *)),
+			this, SLOT(chatSessionDestroyed(Kopete::ChatSession *)));
 
 		d->chatSessions.insert(type, chatSession);
 	}
@@ -281,9 +281,11 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 	return chatSession;
 }
 
-void IRCContact::chatSessionDestroyed(ChatSession *chatSession)
+void IRCContact::chatSessionDestroyed(Kopete::ChatSession *chatSession)
 {
 //	m_chatSession = 0; // d->chatSessions.remove(chatSession);
+	if ( entity()->isChannel() )
+		kircClient()->part( entity(), ircAccount()->codec()->fromUnicode( ircAccount()->partMessage() ) );
 
 	if (metaContact()->isTemporary() && !isChatting())
 		deleteLater();
