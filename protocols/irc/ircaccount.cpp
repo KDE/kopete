@@ -48,7 +48,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
-
+#include <kdatetime.h>
 
 
 #include <qtextcodec.h>
@@ -745,6 +745,7 @@ void IRCAccount::receivedEvent(QEvent *event)
 		QList<Kopete::Contact*> to = getContacts( txtEvent->to() );
 		Kopete::Message::MessageType msgType = Kopete::Message::TypeAction;
 		Kopete::Message::MessageImportance msgImportance = Kopete::Message::Low;
+		QString text=txtEvent->text();
 
 		if ( txtEvent->eventId()=="PRIVMSG" )
 		{
@@ -780,6 +781,11 @@ void IRCAccount::receivedEvent(QEvent *event)
 		}else if ( txtEvent->eventId() == "NICK" )
 		{
 			return;
+		}else if ( txtEvent->eventId() == "TOPIC_WHOTIME" )
+		{
+			KDateTime time;
+			time.setTime_t( txtEvent->text().toLong() );
+			text=i18n( " set topic at %1 " ).arg( KGlobal::locale()->formatDateTime( time ) );
 		}
 #if 0
 		else if ( txtEvent->eventId().startWith("ERR_") )
@@ -787,7 +793,7 @@ void IRCAccount::receivedEvent(QEvent *event)
 			msgImportance = Kopete::Message::Highlight;
 		}
 #endif
-		appendMessage( from, to, txtEvent->text(), msgType, msgImportance );
+		appendMessage( from, to, text, msgType, msgImportance );
 	}
 	else if(event->type()==KIrc::ControlEvent::Type)
 	{

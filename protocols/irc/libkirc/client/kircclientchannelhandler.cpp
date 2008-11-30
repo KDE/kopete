@@ -587,12 +587,13 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_333(KIrc::Context *con
 {
 	CHECK_ARGS(4, 4);
 
-/*
-	QDateTime d;
-	d.setTime_t( message.arg(3).toLong() );
-	emit incomingTopicUser(message.arg(1), message.arg(2), d );
-*/
-	return KIrc::Handler::NotHandled;
+	EntityPtr channel=context->entityFromName( message.argAt( 2 ) );
+	EntityPtr user=context->entityFromName( message.argAt( 3 ) );
+
+	TextEvent* event=new TextEvent( "TOPIC_WHOTIME", user, channel, message.argAt( 4 ) );
+	context->postEvent( event );
+
+	return KIrc::Handler::CoreHandled;
 }
 
 /* 352:
