@@ -127,7 +127,7 @@ WlmChatSession::inviteContact (const QString & passport)
         requestChatService ();
         return;
     }
-    Kopete::Contact * c = account ()->contacts ()[passport];
+    WlmContact * c = dynamic_cast<WlmContact*>(account ()->contacts ()[passport]);
     if (c)
         slotInviteContact (c);
 }
@@ -226,7 +226,7 @@ WlmChatSession::slotSendFile ()
 }
 
 void
-WlmChatSession::slotInviteContact (Kopete::Contact * contact)
+WlmChatSession::slotInviteContact (WlmContact * contact)
 {
     // if we have a session, just invite the new contact
     if (isReady ())
@@ -405,7 +405,7 @@ WlmChatSession::setReady (bool value)
         for (it = m_pendingInvitations.begin ();
              it != m_pendingInvitations.end (); ++it)
         {
-            Kopete::Contact * c = account ()->contacts ()[(*it)];
+            WlmContact * c = dynamic_cast<WlmContact*>(account ()->contacts ()[(*it)]);
             if (c)
                 slotInviteContact (c);
         }
@@ -673,9 +673,9 @@ WlmChatSession::stopSendKeepAlive()
 void
 WlmChatSession::receivedNudge (QString passport)
 {
-    Kopete::Contact * c = account ()->contacts ()[passport];
+    WlmContact * c = dynamic_cast<WlmContact*>(account ()->contacts ()[passport]);
     if (!c)
-        c = members ().first ();
+        c = dynamic_cast<WlmContact*>(members ().first ());
 
     Kopete::Message msg = Kopete::Message (c, myself ());
     msg.setPlainBody (i18n ("has sent you a nudge"));

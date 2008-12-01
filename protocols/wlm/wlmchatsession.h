@@ -82,7 +82,7 @@ class WlmChatSession: public Kopete::ChatSession
     void sendNudge ();
     void switchboardConnectionTimeout ();
     void slotActionInviteAboutToShow ();
-    void slotInviteContact (Kopete::Contact * contact);
+    void slotInviteContact (WlmContact * contact);
     void slotSendFile ();
     void sendKeepAlive ();
 

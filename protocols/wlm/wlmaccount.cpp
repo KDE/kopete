@@ -264,7 +264,7 @@ WlmAccount::gotNewContact (const MSN::ContactList & list,
         actions |= Kopete::AddedInfoEvent::BlockAction;
         //actions |= Kopete::AddedInfoEvent::InfoAction;
 
-        Kopete::Contact * ct = contacts().value(passport);
+        WlmContact * ct = dynamic_cast<WlmContact*>(contacts().value(passport));
         if (!ct || !ct->metaContact() || ct->metaContact()->isTemporary())
             actions |= Kopete::AddedInfoEvent::AddAction;
 
@@ -277,12 +277,18 @@ WlmAccount::gotNewContact (const MSN::ContactList & list,
         kDebug() << "contact " << passport << " added to block list";
         m_allowList.remove(passport);
         m_blockList.insert(passport);
+        WlmContact * ct = dynamic_cast<WlmContact*>(contacts().value(passport));
+        if(ct)
+            ct->setOnlineStatus(ct->onlineStatus());
     }
     else if (list == MSN::LST_AL)
     {
         kDebug() << "contact " << passport << " added to allow list";
         m_blockList.remove(passport);
         m_allowList.insert(passport);
+        WlmContact * ct = dynamic_cast<WlmContact*>(contacts().value(passport));
+        if(ct)
+            ct->setOnlineStatus(ct->onlineStatus());
     }
 }
 
@@ -341,7 +347,7 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
                                const QString & filename)
 {
     kDebug (14210) << k_funcinfo;
-    Kopete::Contact * contact = contacts ()[contactId];
+    WlmContact * contact = dynamic_cast<WlmContact*>(contacts ()[contactId]);
     if (contact)
     {
         if (!QFile (filename).exists () || !QFile (filename).size ())
@@ -392,7 +398,7 @@ WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
                                     const MSN::personalInfo & pInfo)
 {
     kDebug (14210) << k_funcinfo;
-    Kopete::Contact * contact = contacts ()[fromPassport.c_str ()];
+    WlmContact * contact = dynamic_cast<WlmContact*>(contacts ()[fromPassport.c_str ()]);
     if (contact)
     {
         // TODO - handle the other fields of pInfo
@@ -428,7 +434,7 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
     Q_UNUSED( clientID );
 
     kDebug (14210) << k_funcinfo;
-    Kopete::Contact * contact = contacts ()[buddy.c_str ()];
+    WlmContact *contact = dynamic_cast<WlmContact*>(contacts ()[buddy.c_str ()]);
     if (contact)
     {
         contact->setProperty (Kopete::Global::Properties::self ()->
@@ -511,7 +517,7 @@ void
 WlmAccount::contactDisconnected (const MSN::Passport & buddy)
 {
     kDebug (14210) << k_funcinfo;
-    Kopete::Contact * contact = contacts ()[buddy.c_str ()];
+    WlmContact * contact = dynamic_cast<WlmContact*>(contacts ()[buddy.c_str ()]);
     if (contact)
     {
         contact->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
@@ -587,6 +593,8 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             m_allowList.insert( passport );
         if ( b->lists & MSN::LST_BL )
             m_blockList.insert( passport );
+        if ( b->lists & MSN::LST_PL )
+            m_pendingList.insert( passport );
 
         if ( !contacts().value( passport ) )
         {
@@ -605,7 +613,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                 {
                     metacontact = addContact (b->userName.c_str (), QString(), 0L, Kopete::Account::DontChangeKABC);
 
-                    Kopete::Contact * newcontact = contacts ()[b->userName.c_str ()];
+                    WlmContact * newcontact = dynamic_cast<WlmContact*>(contacts ()[b->userName.c_str ()]);
                     if(!newcontact)
                         return;
 
@@ -844,6 +852,17 @@ WlmAccount::connectionCompleted ()
     // when is just connected.
     QTimer::singleShot (10 * 1000, this, SLOT (disableInitialList ()));
     setPersonalMessage(myself()->statusMessage());
+
+    // manage pending list
+    foreach ( QString contact, pendingList() )
+    {
+        // if we do not have this contact yet, so ask for add it
+        if(!isOnServerSideList(contact))
+        {
+            // fake this contact in RL to prompt the user to add it
+            gotNewContact (MSN::LST_RL, contact, contact);
+        }
+    }
 }
 
 void WlmAccount::gotAddedGroup (bool added,
@@ -1129,7 +1148,7 @@ WlmAccount::receivedOIM (const QString & id, const QString & message)
 {
     kDebug (14210) << k_funcinfo;
     QString contactId = m_oimList[id];
-    Kopete::Contact * contact = contacts ()[contactId];
+    WlmContact * contact = dynamic_cast<WlmContact*>(contacts ()[contactId]);
 
     Kopete::Message msg = Kopete::Message (contact, myself ());
     msg.setPlainBody (message);

@@ -48,7 +48,7 @@ Kopete::Contact (_account, uniqueName, parent)
     setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     m_contactSerial = contactSerial;
 
-    m_actionBlockContact = new KToggleAction(i18n("Block Contact"), this );
+    m_actionBlockContact = new KToggleAction(KIcon("wlm_blocked"), i18n("Block Contact"), this );
     QObject::connect( m_actionBlockContact, SIGNAL(triggered(bool)), this, SLOT(blockContact(bool)) );
 }
 
@@ -197,6 +197,65 @@ WlmContact::slotChatSessionDestroyed ()
 {
     //FIXME: the chat window was closed?  Take appropriate steps.
     m_msgManager = 0L;
+}
+
+void
+WlmContact::setOnlineStatus(const Kopete::OnlineStatus& status)
+{
+	bool isBlocked = dynamic_cast <WlmAccount *>(account())->isOnBlockList(contactId());
+	
+	// if this contact is blocked, and currently has a regular status,
+	// create a custom status and add wlm_blocked to ovelayIcons
+	if(isBlocked && status.internalStatus() < 15)
+	{
+		Kopete::Contact::setOnlineStatus(
+				Kopete::OnlineStatus(status.status() ,
+				(status.weight()==0) ? 0 : (status.weight() -1),
+				protocol(),
+				status.internalStatus()+15,
+				status.overlayIcons() + QStringList("wlm_blocked"),
+				i18n("%1|Blocked", status.description() ) ) );
+	}
+	else if (!isBlocked && status.internalStatus() >= 15)
+	{
+		// if this contact was previously blocked, set a regular status again
+		switch(status.internalStatus()-15)
+		{
+			case 1:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmOnline);
+				break;
+			case 2:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmAway);
+				break;
+			case 3:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmBusy);
+				break;
+			case 4:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmBeRightBack);
+				break;
+			case 5:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmOnThePhone);
+				break;
+			case 6:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmOutToLunch);
+				break;
+			case 7:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmInvisible);
+				break;
+			case 8:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmOffline);
+				break;
+			case 9:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmIdle);
+				break;
+			default:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmUnknown);
+				break;
+		}
+
+	}
+	else
+		Kopete::Contact::setOnlineStatus(status);
 }
 
 #include "wlmcontact.moc"

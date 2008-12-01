@@ -114,9 +114,16 @@ class WlmAccount:public
 
     bool isOnBlockList(const QString& passport) const { return m_blockList.contains( passport ); }
 
+    bool isOnPendingList(const QString& passport) const { return m_pendingList.contains( passport ); }
+    
+    // forward list (or also called address book)
+    bool isOnServerSideList(const QString& passport) const { return m_serverSideContactsPassports.contains( passport ); }
+
     QSet<QString> allowList() const { return m_allowList; }
 
     QSet<QString> blockList() const { return m_blockList; }
+    
+    QSet<QString> pendingList() const { return m_pendingList; }
 
     QSet<QString> serverSideContacts() const { return m_serverSideContactsPassports; }
 
@@ -307,6 +314,9 @@ private:
 
     // passport set of contacts which are on block list
     QSet<QString> m_blockList;
+
+    // passport set of contacts which are on pending list
+    QSet<QString> m_pendingList;
 
 };
 

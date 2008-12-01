@@ -78,6 +78,8 @@ public:
 
     QString contactSerial () const { return m_contactSerial; }
 
+	void setOnlineStatus(const Kopete::OnlineStatus&);
+
 public slots:
     /**
 	 * Transmits an outgoing message to the server 

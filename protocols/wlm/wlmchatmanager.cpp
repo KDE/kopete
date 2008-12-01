@@ -209,7 +209,7 @@ WlmChatManager::leftConversation (MSN::SwitchboardServerConnection * conn,
 
     if (chat)
     {
-        Kopete::Contact * contact = account ()->contacts ()[passport];
+        WlmContact * contact = dynamic_cast<WlmContact*>(account ()->contacts ()[passport]);
         if (!contact)
             return;
         chat->removeContact (contact);
