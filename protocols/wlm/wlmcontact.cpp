@@ -43,7 +43,7 @@ Kopete::Contact (_account, uniqueName, parent)
     kDebug (14210) << k_funcinfo << " uniqueName: " << uniqueName <<
         ", displayName: " << displayName;
     m_msgManager = 0L;
-    m_account = dynamic_cast<WlmAccount*>(account());
+    m_account = qobject_cast<WlmAccount*>(account());
     setFileCapable (true);
     setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     m_contactSerial = contactSerial;
@@ -108,7 +108,7 @@ Kopete::ChatSession *
     Kopete::ChatSession * _manager =
         Kopete::ChatSessionManager::self ()->
 				findChatSession (account ()->myself (), chatmembers, protocol ());
-    WlmChatSession *manager = dynamic_cast <WlmChatSession *>(_manager);
+    WlmChatSession *manager = qobject_cast <WlmChatSession *>(_manager);
     if (!manager && canCreate == Kopete::Contact::CanCreate)
     {
         manager =
@@ -163,7 +163,7 @@ WlmContact::deleteContact ()
 {
     if (account ()->isConnected ())
     {
-        dynamic_cast <WlmAccount *>(account ())->server ()->mainConnection->
+        qobject_cast <WlmAccount *>(account ())->server ()->mainConnection->
             delFromAddressBook (m_contactSerial.toLatin1 ().data (),
                                 contactId ().toLatin1 ().data ());
         deleteLater ();
@@ -202,7 +202,7 @@ WlmContact::slotChatSessionDestroyed ()
 void
 WlmContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 {
-	bool isBlocked = dynamic_cast <WlmAccount *>(account())->isOnBlockList(contactId());
+	bool isBlocked = qobject_cast <WlmAccount *>(account())->isOnBlockList(contactId());
 	
 	// if this contact is blocked, and currently has a regular status,
 	// create a custom status and add wlm_blocked to ovelayIcons

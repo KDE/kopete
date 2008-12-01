@@ -209,7 +209,7 @@ WlmChatManager::leftConversation (MSN::SwitchboardServerConnection * conn,
 
     if (chat)
     {
-        WlmContact * contact = dynamic_cast<WlmContact*>(account ()->contacts ()[passport]);
+        WlmContact * contact = qobject_cast<WlmContact*>(account ()->contacts ()[passport]);
         if (!contact)
             return;
         chat->removeContact (contact);
@@ -260,7 +260,7 @@ WlmChatManager::createChat (MSN::SwitchboardServerConnection * conn)
                                                               chatmembers,
                                                               account ()->protocol ());
     if (_manager)
-        chatSessions[conn] = dynamic_cast < WlmChatSession * >(_manager);
+        chatSessions[conn] = qobject_cast < WlmChatSession * >(_manager);
     else
         // create a new chat window
         chatSessions[conn] = new WlmChatSession (account ()->protocol (),
@@ -303,7 +303,7 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
 
     // check if we already have a similar connection
     WlmChatSession *_manager =
-        dynamic_cast <WlmChatSession *>(Kopete::ChatSessionManager::self ()->
+        qobject_cast <WlmChatSession *>(Kopete::ChatSessionManager::self ()->
           findChatSession (account ()->myself (), chatmembers,
                            account ()->protocol ()));
 
@@ -463,7 +463,7 @@ WlmChatManager::requestDisplayPicture (QString contactId)
         return;
 
     WlmChatSession *session =
-        dynamic_cast <WlmChatSession *>(contact->manager (Kopete::Contact::CanCreate));
+        qobject_cast <WlmChatSession *>(contact->manager (Kopete::Contact::CanCreate));
 
     if (session)
         session->requestDisplayPicture ();

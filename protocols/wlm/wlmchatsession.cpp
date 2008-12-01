@@ -127,7 +127,7 @@ WlmChatSession::inviteContact (const QString & passport)
         requestChatService ();
         return;
     }
-    WlmContact * c = dynamic_cast<WlmContact*>(account ()->contacts ()[passport]);
+    WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts ()[passport]);
     if (c)
         slotInviteContact (c);
 }
@@ -189,7 +189,7 @@ WlmChatSession::sendFile (const QString & fileLocation,
     {
         if (!account ())
             return;
-        WlmAccount *acc = dynamic_cast < WlmAccount * >(account ());
+        WlmAccount *acc = qobject_cast < WlmAccount * >(account ());
         if (!acc)
             return;
         Kopete::Transfer * transf =
@@ -222,7 +222,7 @@ WlmChatSession::sendFile (const QString & fileLocation,
 void
 WlmChatSession::slotSendFile ()
 {
-   dynamic_cast < WlmContact * >(members ().first ())->sendFile ();
+   qobject_cast < WlmContact * >(members ().first ())->sendFile ();
 }
 
 void
@@ -331,7 +331,7 @@ WlmChatSession::~WlmChatSession ()
     if (!account ())
         return;
 
-    WlmAccount *acc = dynamic_cast < WlmAccount * >(account ());
+    WlmAccount *acc = qobject_cast < WlmAccount * >(account ());
 
     if (!acc)
         return;
@@ -405,7 +405,7 @@ WlmChatSession::setReady (bool value)
         for (it = m_pendingInvitations.begin ();
              it != m_pendingInvitations.end (); ++it)
         {
-            WlmContact * c = dynamic_cast<WlmContact*>(account ()->contacts ()[(*it)]);
+            WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts ()[(*it)]);
             if (c)
                 slotInviteContact (c);
         }
@@ -673,9 +673,9 @@ WlmChatSession::stopSendKeepAlive()
 void
 WlmChatSession::receivedNudge (QString passport)
 {
-    WlmContact * c = dynamic_cast<WlmContact*>(account ()->contacts ()[passport]);
+    WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts ()[passport]);
     if (!c)
-        c = dynamic_cast<WlmContact*>(members ().first ());
+        c = qobject_cast<WlmContact*>(members ().first ());
 
     Kopete::Message msg = Kopete::Message (c, myself ());
     msg.setPlainBody (i18n ("has sent you a nudge"));
@@ -694,7 +694,7 @@ WlmChatSession::requestDisplayPicture ()
     if (members ().count () != 1)
         return;
 
-    WlmContact *contact = dynamic_cast < WlmContact * >(members ().first ());
+    WlmContact *contact = qobject_cast < WlmContact * >(members ().first ());
 
     if (!contact)
         return;
@@ -720,9 +720,7 @@ WlmChatSession::requestDisplayPicture ()
 
     if (QFile (newlocation).exists () && QFile (newlocation).size ())
     {
-        dynamic_cast <
-            WlmAccount *
-            >(account ())->gotDisplayPicture (contact->contactId (),
+        qobject_cast <WlmAccount *>(account ())->gotDisplayPicture (contact->contactId (),
                                               newlocation);
         return;
     }
