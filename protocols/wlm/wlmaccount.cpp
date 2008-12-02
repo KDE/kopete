@@ -730,6 +730,9 @@ WlmAccount::changedStatus (MSN::BuddyStatus & state)
         myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOnThePhone);
     else if (state == MSN::STATUS_BERIGHTBACK)
         myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmBeRightBack);
+    if (state == MSN::STATUS_IDLE)
+        myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmIdle);
+
 }
 
 void
@@ -1084,6 +1087,9 @@ WlmAccount::slotGoAway (const Kopete::OnlineStatus & status)
         connect (status);
     else
     {
+        if (status == WlmProtocol::protocol ()->wlmIdle)
+            m_server->cb.mainConnection->setState (MSN::STATUS_IDLE,
+                                                   clientid);
         if (status == WlmProtocol::protocol ()->wlmAway)
             m_server->cb.mainConnection->setState (MSN::STATUS_AWAY,
                                                    clientid);
