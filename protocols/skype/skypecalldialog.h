@@ -31,7 +31,7 @@ namespace Ui { class SkypeCallDialogBase; }
  * This class is a window that can control a call (show information about it, hang up, hold, ...)
  * @author Michal Vaner (Vorner)
  */
-class SkypeCallDialog : public KDialog//, private Ui::SkypeCallDialogBase
+class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 {
 	Q_OBJECT
 	private:
@@ -62,7 +62,7 @@ class SkypeCallDialog : public KDialog//, private Ui::SkypeCallDialogBase
 		/**
 		 * Constructor
 		 */
-		SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account, QWidget *parent = 0);
+		SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account);
 		///Destructor
 		~SkypeCallDialog();
 	public slots:

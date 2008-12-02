@@ -92,7 +92,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	d = new SkypeContactPrivate;//create the insides
 	d->session = 0L;//no session yet
 	d->account = account;//save the account for future, it will be needed
-	connect(this, SIGNAL(setCallPossible(bool )), this, SLOT(enableCall(bool )));
+	connect(this, SIGNAL(setActionsPossible(bool )), this, SLOT(enableActions(bool )));
 	account->prepareContact(this);//let the account prepare us
 	d->user = user;
 
@@ -103,7 +103,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 
 	d->authorizeAction = new KAction( this );
 	d->authorizeAction->setText( i18n ("(Re)send Authorization To") );
-	d->authorizeAction->setIcon( (KIcon("mail-forward") ) ); /// TODO: Add Skype icon
+	d->authorizeAction->setIcon( (KIcon("mail-forward") ) ); // TODO: Add Skype icon
 	connect(d->authorizeAction, SIGNAL(triggered()), SLOT(authorize()));
 
 	d->disAuthorAction = new KAction( this );
@@ -360,8 +360,11 @@ QList<KAction*> *SkypeContact::customContextMenuActions() {
 	return actions;
 }
 
-void SkypeContact::enableCall(bool value) {
+void SkypeContact::enableActions(bool value) {
 	d->callContactAction->setEnabled(value);
+	d->authorizeAction->setEnabled(value);
+	d->disAuthorAction->setEnabled(value);
+	d->blockAction->setEnabled(value);
 }
 
 void SkypeContact::statusChanged() {
@@ -377,11 +380,11 @@ void SkypeContact::statusChanged() {
 		d->blockAction->setEnabled(false);
 	}
 	if (this == d->account->myself()) {
-		emit setCallPossible(false);
-	} else if ((myStatus == protocol->Online) || (myStatus == protocol->Away) || (myStatus == protocol->NotAvailable) || (myStatus == protocol->DoNotDisturb) || (myStatus == protocol->NoAuth) || (myStatus == protocol->NotInList) || (myStatus == protocol->Phone) || (myStatus == protocol->SkypeMe))
-		emit setCallPossible(true);
+		emit setActionsPossible(false);
+	} else if (myStatus != protocol->Offline && myStatus != protocol->Connecting)
+		emit setActionsPossible(true);
 	else
-		emit setCallPossible(false);
+		emit setActionsPossible(false);
 }
 
 void SkypeContact::call() {
@@ -394,7 +397,7 @@ void SkypeContact::connectionStatus(bool connected) {
 	if (connected) {
 		statusChanged();
 	} else
-		emit setCallPossible(false);
+		emit setActionsPossible(false);
 }
 
 SkypeChatSession *SkypeContact::getChatSession() {

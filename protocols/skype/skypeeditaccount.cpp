@@ -46,10 +46,10 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	QVBoxLayout *layout = new QVBoxLayout( this );
-	QWidget *widget = new QWidget( this );
-	m_preferencesWidget = new Ui::SkypeEditAccountBase();
-	m_preferencesWidget->setupUi( widget );
-	layout->addWidget( widget );
+	QWidget *w = new QWidget( this );
+	widget = new Ui::SkypeEditAccountBase();
+	widget->setupUi( w );
+	layout->addWidget( w );
 
 	d = new SkypeEditAccountPrivate();//the d pointer
 	d->protocol = protocol;//I may need the protocol later
@@ -58,37 +58,37 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 
 	//Now, check weather it is existing account or just an old one to modify
 	if (account) {//it is old one
-		m_preferencesWidget->excludeCheck->setChecked(account->excludeConnect());//Check, weather it should be excluded
+		widget->excludeCheck->setChecked(account->excludeConnect());//Check, weather it should be excluded
 		//LaunchGroup->setButton(d->account->launchType);//set the launch type
-		m_preferencesWidget->AuthorCheck->setChecked(!d->account->author.isEmpty());//set the check box that allows you to change authorization
-		if (m_preferencesWidget->AuthorCheck->isChecked())
-			m_preferencesWidget->AuthorEdit->setText(d->account->author);//set the name
-		m_preferencesWidget->MarkCheck->setChecked(d->account->getMarkRead());//set the get read mode
-		m_preferencesWidget->HitchCheck->setChecked(d->account->getHitchHike());
-		m_preferencesWidget->ScanCheck->setChecked(d->account->getScanForUnread());
-		m_preferencesWidget->CallCheck->setChecked(d->account->getCallControl());
-		m_preferencesWidget->PingsCheck->setChecked(d->account->getPings());
+		widget->AuthorCheck->setChecked(!d->account->author.isEmpty());//set the check box that allows you to change authorization
+		if (widget->AuthorCheck->isChecked())
+			widget->AuthorEdit->setText(d->account->author);//set the name
+		widget->MarkCheck->setChecked(d->account->getMarkRead());//set the get read mode
+		widget->HitchCheck->setChecked(d->account->getHitchHike());
+		widget->ScanCheck->setChecked(d->account->getScanForUnread());
+		widget->CallCheck->setChecked(d->account->getCallControl());
+		widget->PingsCheck->setChecked(d->account->getPings());
 		//BusGroup->setButton(d->account->getBus());
-		m_preferencesWidget->DBusCheck->setChecked(d->account->getStartDBus());
-		m_preferencesWidget->LaunchSpin->setValue(d->account->getLaunchTimeout());
-		m_preferencesWidget->CommandEdit->setText(d->account->getSkypeCommand());
-		m_preferencesWidget->WaitSpin->setValue(d->account->getWaitBeforeConnect());
+		widget->DBusCheck->setChecked(d->account->getStartDBus());
+		widget->LaunchSpin->setValue(d->account->getLaunchTimeout());
+		widget->CommandEdit->setText(d->account->getSkypeCommand());
+		widget->WaitSpin->setValue(d->account->getWaitBeforeConnect());
 		if (d->account->closeCallWindowTimeout()) {
-			m_preferencesWidget->AutoCloseCallCheck->setChecked(true);
-			m_preferencesWidget->CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
-		} else m_preferencesWidget->AutoCloseCallCheck->setChecked(false);
-		m_preferencesWidget->LeaveCheck->setChecked(d->account->leaveOnExit());
+			widget->AutoCloseCallCheck->setChecked(true);
+			widget->CloseTimeoutSpin->setValue(d->account->closeCallWindowTimeout());
+		} else widget->AutoCloseCallCheck->setChecked(false);
+		widget->LeaveCheck->setChecked(d->account->leaveOnExit());
 		const QString &startCallCommand = d->account->startCallCommand();
-		m_preferencesWidget->StartCallCommandCheck->setChecked(!startCallCommand.isEmpty());
-		m_preferencesWidget->StartCallCommandEdit->setText(startCallCommand);
-		m_preferencesWidget->WaitForStartCallCommandCheck->setChecked(d->account->waitForStartCallCommand());
+		widget->StartCallCommandCheck->setChecked(!startCallCommand.isEmpty());
+		widget->StartCallCommandEdit->setText(startCallCommand);
+		widget->WaitForStartCallCommandCheck->setChecked(d->account->waitForStartCallCommand());
 		const QString &endCallCommand = d->account->endCallCommand();
-		m_preferencesWidget->EndCallCommandCheck->setChecked(!endCallCommand.isEmpty());
-		m_preferencesWidget->EndCallCommandEdit->setText(endCallCommand);
-		m_preferencesWidget->OnlyLastCallCommandCheck->setChecked(d->account->endCallCommandOnlyLast());
+		widget->EndCallCommandCheck->setChecked(!endCallCommand.isEmpty());
+		widget->EndCallCommandEdit->setText(endCallCommand);
+		widget->OnlyLastCallCommandCheck->setChecked(d->account->endCallCommandOnlyLast());
 		const QString &incomingCommand = d->account->incomingCommand();
-		m_preferencesWidget->IncomingCommandCheck->setChecked(!incomingCommand.isEmpty());
-		m_preferencesWidget->IncomingCommandEdit->setText(incomingCommand);
+		widget->IncomingCommandCheck->setChecked(!incomingCommand.isEmpty());
+		widget->IncomingCommandEdit->setText(incomingCommand);
 	} else {
 		//KMessageBox::information(this, i18n("Please note that this version of Skype plugin is a development version and it is probable it will cause more problems than solve. You have been warned"), i18n("Version info")); - I hope it is not needed any more
 	}
@@ -96,6 +96,9 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 
 skypeEditAccount::~skypeEditAccount() {
 	kDebug() << k_funcinfo << endl;//some debug info
+
+	delete widget;
+	delete d;
 }
 
 bool skypeEditAccount::validateData() {
@@ -118,46 +121,46 @@ Kopete::Account *skypeEditAccount::apply() {
 	SkypeAccount *skype = static_cast<SkypeAccount *>(account());//get the account
 
 	//set it's values
-	skype->setExcludeConnect(m_preferencesWidget->excludeCheck->isChecked());//Save the "exclude from connection" setup
-	skype->launchType = m_preferencesWidget->LaunchGroup->selectedId();//get the type how to launch skype
-	if (m_preferencesWidget->AuthorCheck->isChecked())
-		skype->author = m_preferencesWidget->AuthorEdit->text();//put there what user wrote
+	skype->setExcludeConnect(widget->excludeCheck->isChecked());//Save the "exclude from connection" setup
+	skype->launchType = widget->LaunchGroup->selectedId();//get the type how to launch skype
+	if (widget->AuthorCheck->isChecked())
+		skype->author = widget->AuthorEdit->text();//put there what user wrote
 	else
 		skype->author = "";//nothing unusual
-	skype->setHitchHike(m_preferencesWidget->HitchCheck->isChecked());//save the hitch hike mode and activat ethe new value
-	skype->setMarkRead(m_preferencesWidget->MarkCheck->isChecked());//set the mark read messages mode and activate it
-	skype->setScanForUnread(m_preferencesWidget->ScanCheck->isChecked());
-	skype->setCallControl(m_preferencesWidget->CallCheck->isChecked());
-	skype->setPings(m_preferencesWidget->PingsCheck->isChecked());
-	skype->setBus(m_preferencesWidget->BusGroup->selectedId());
-	skype->setStartDBus(m_preferencesWidget->DBusCheck->isChecked());
-	skype->setLaunchTimeout(m_preferencesWidget->LaunchSpin->value());
-	skype->setSkypeCommand(m_preferencesWidget->CommandEdit->text());
-	skype->setWaitBeforeConnect(m_preferencesWidget->WaitSpin->value());
-	skype->setLeaveOnExit(m_preferencesWidget->LeaveCheck->isChecked());
-	if (m_preferencesWidget->AutoCloseCallCheck->isChecked()) {
-		skype->setCloseWindowTimeout(m_preferencesWidget->CloseTimeoutSpin->value());
+	skype->setHitchHike(widget->HitchCheck->isChecked());//save the hitch hike mode and activat ethe new value
+	skype->setMarkRead(widget->MarkCheck->isChecked());//set the mark read messages mode and activate it
+	skype->setScanForUnread(widget->ScanCheck->isChecked());
+	skype->setCallControl(widget->CallCheck->isChecked());
+	skype->setPings(widget->PingsCheck->isChecked());
+	skype->setBus(widget->BusGroup->selectedId());
+	skype->setStartDBus(widget->DBusCheck->isChecked());
+	skype->setLaunchTimeout(widget->LaunchSpin->value());
+	skype->setSkypeCommand(widget->CommandEdit->text());
+	skype->setWaitBeforeConnect(widget->WaitSpin->value());
+	skype->setLeaveOnExit(widget->LeaveCheck->isChecked());
+	if (widget->AutoCloseCallCheck->isChecked()) {
+		skype->setCloseWindowTimeout(widget->CloseTimeoutSpin->value());
 	} else {
 		skype->setCloseWindowTimeout(0);
 	}
-	if (m_preferencesWidget->StartCallCommandCheck->isChecked()) {
-		skype->setStartCallCommand(m_preferencesWidget->StartCallCommandEdit->text());
+	if (widget->StartCallCommandCheck->isChecked()) {
+		skype->setStartCallCommand(widget->StartCallCommandEdit->text());
 	} else {
 		skype->setStartCallCommand("");
 	}
-	skype->setWaitForStartCallCommand(m_preferencesWidget->WaitForStartCallCommandCheck->isChecked());
-	if (m_preferencesWidget->EndCallCommandCheck->isChecked()) {
-		skype->setEndCallCommand(m_preferencesWidget->EndCallCommandEdit->text());
+	skype->setWaitForStartCallCommand(widget->WaitForStartCallCommandCheck->isChecked());
+	if (widget->EndCallCommandCheck->isChecked()) {
+		skype->setEndCallCommand(widget->EndCallCommandEdit->text());
 	} else {
 		skype->setEndCallCommand("");
 	}
-	if (m_preferencesWidget->IncomingCommandCheck->isChecked()) {
-		skype->setIncomingCommand(m_preferencesWidget->IncomingCommandEdit->text());
+	if (widget->IncomingCommandCheck->isChecked()) {
+		skype->setIncomingCommand(widget->IncomingCommandEdit->text());
 	} else {
 		skype->setIncomingCommand("");
 	}
 
-	skype->setEndCallCommandOnlyForLast(m_preferencesWidget->OnlyLastCallCommandCheck->isChecked());
+	skype->setEndCallCommandOnlyForLast(widget->OnlyLastCallCommandCheck->isChecked());
 	skype->save();//save it to config
 	return skype;//return the account
 }

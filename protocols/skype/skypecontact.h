@@ -47,7 +47,7 @@ class SkypeContact : public Kopete::Contact
 		///This will note that the session was destroyed and therefore can't be used again. As well used when the chat becomes multi-user so it no longer belongs to this contact
 		void removeChat();
 		///Enables or disables the call action depending on if it can be called or not.
-		void enableCall(bool value);
+		void enableActions(bool value);
 		///The status changed, so there should be update of the availiblity of some things
 		void statusChanged();
 	public:
@@ -151,7 +151,7 @@ class SkypeContact : public Kopete::Contact
 		 * The possibility to call this contact has changed, so GUI should enable/disable some buttons.
 		 * @param value Is it possible to call it now?
 		 */
-		void setCallPossible(bool value);
+		void setActionsPossible(bool value);
 };
 
 #endif

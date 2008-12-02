@@ -131,7 +131,7 @@ void SkypeConnection::parseMessage(const QString &message) {
 }
 
 void SkypeConnection::Notify(const QString &message){
-	kDebug() << k_funcinfo;//some debug info
+	kDebug() << k_funcinfo << "Got message:" << message << endl;//show what we have got
 	emit received(message);
 }
 

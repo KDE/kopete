@@ -38,7 +38,7 @@
 #include <kconfigbase.h>
 #include <Q3Dict>
 #include <kopetemessage.h>
-#include <kprocess.h>
+#include <qprocess.h>
 
 class SkypeAccountPrivate {
 	public:
@@ -127,7 +127,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	setLaunchTimeout(config->readEntry("LaunchTimeout", 30));
 	d->myName = config->readEntry("MyselfName", "Skype");
 	setSkypeCommand(config->readEntry("SkypeCommand", "skype"));
-	setWaitBeforeConnect(config->readEntry("WaitBeforeConnect", 10));
+	setWaitBeforeConnect(config->readEntry("WaitBeforeConnect", 0));
 	setLeaveOnExit(config->readEntry("LeaveOnExit", true));
 	setStartCallCommand(config->readEntry("StartCallCommand", ""));
 	setEndCallCommand(config->readEntry("EndCallCommand", ""));
@@ -164,7 +164,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	d->skype.setValues(launchType, author);
 	setHitchHike(config->readEntry("Hitch", true));
 	setMarkRead(config->readEntry("MarkRead", true));//read the modes of account
-	d->callWindowTimeout = config->readEntry("CloseWindowTimeout", 3);
+	d->callWindowTimeout = config->readEntry("CloseWindowTimeout", 4);
 	setPings(config->readEntry("Pings", true));
 	d->sessions.setAutoDelete(false);
 	d->lastSession = 0L;
@@ -225,6 +225,9 @@ void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kop
 		d->skype.setSkypeMe();
 	else
 		kDebug() << "Unknown online status" << endl;//Just a warning that I do not know that status
+
+	///TODO: Port to kde4
+	Q_UNUSED(reason);
 }
 
 void SkypeAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
@@ -376,7 +379,7 @@ void SkypeAccount::prepareContact(SkypeContact *contact) {
 	QObject::connect(&d->skype, SIGNAL(updateAllContacts()), contact, SLOT(requestInfo()));//all contacts will know that
 	QObject::connect(contact, SIGNAL(infoRequest(const QString& )), &d->skype, SLOT(getContactInfo(const QString& )));//How do we ask for info?
 	QObject::connect(this, SIGNAL(connectionStatus(bool )), contact, SLOT(connectionStatus(bool )));
-	QObject::connect(contact, SIGNAL(setCallPossible(bool )), d->protocol, SLOT(updateCallActionStatus()));
+	QObject::connect(contact, SIGNAL(setActionsPossible(bool )), d->protocol, SLOT(updateCallActionStatus()));
 }
 
 void SkypeAccount::updateContactInfo(const QString &contact, const QString &change) {
@@ -486,6 +489,7 @@ void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 
 	if (d->callControl) {//Show the skype call control window
 		SkypeCallDialog *dialog = new SkypeCallDialog(callId, userId, this);//It should free itself when it is closed
+
 		QObject::connect(&d->skype, SIGNAL(callStatus(const QString&, const QString& )), dialog, SLOT(updateStatus(const QString&, const QString& )));
 		QObject::connect(dialog, SIGNAL(acceptTheCall(const QString& )), &d->skype, SLOT(acceptCall(const QString& )));
 		QObject::connect(dialog, SIGNAL(hangTheCall(const QString& )), &d->skype, SLOT(hangUp(const QString& )));
@@ -494,17 +498,19 @@ void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 		QObject::connect(&d->skype, SIGNAL(skypeOutInfo(int, const QString& )), dialog, SLOT(skypeOutInfo(int, const QString& )));
 		QObject::connect(dialog, SIGNAL(updateSkypeOut()), &d->skype, SLOT(getSkypeOut()));
 		QObject::connect(dialog, SIGNAL(callFinished(const QString& )), this, SLOT(removeCall(const QString& )));
-		d->skype.getSkypeOut();
 
+		dialog->show();//Show Call dialog
+
+		d->skype.getSkypeOut();
 		d->calls.insert(callId, dialog);
 	}
 
 	if ((!d->incommingCommand.isEmpty()) && (d->skype.isCallIncoming(callId))) {
 		kDebug() << "Running ring command" << endl;
-		KProcess *proc = new KProcess();
-		(*proc) << d->incommingCommand.split(' ');
-		QObject::connect(proc, SIGNAL(processExited(KProcess* )), proc, SLOT(deleteLater()));
-		proc->start();
+		QProcess *proc = new QProcess();
+		QStringList args = d->incommingCommand.split(' ');
+		QString bin = args.takeFirst();
+		proc->start(bin, args);
 	}
 }
 
@@ -653,6 +659,8 @@ void SkypeAccount::receiveMultiIm(const QString &chatId, const QString &body, co
 	mes.setDirection(Kopete::Message::Inbound);
 	mes.setPlainBody(body);
 	session->appendMessage(mes);
+
+	Q_UNUSED(messageId);
 }
 
 QString SkypeAccount::getMessageChat(const QString &messageId) {
@@ -791,14 +799,13 @@ bool SkypeAccount::endCallCommandOnlyLast() const {
 void SkypeAccount::startCall() {
 	kDebug() << k_funcinfo << endl;
 
-	KProcess *proc = new KProcess();
-	QObject::connect(proc, SIGNAL(processExited(KProcess* )), proc, SLOT(deleteLater()));
+	QProcess *proc = new QProcess();
 	QStringList args = d->startCallCommand.split(' ');
-	(*proc) << args;//set what will be executed
-	///TODO: Port to kde4
-	//KProcess::RunMode mode = d->waitForStartCallCommand ? KProcess::Block : KProcess::NotifyOnExit;
-	proc->start();
-	//proc->start(mode);
+	QString bin = args.takeFirst();
+	if (d->waitForStartCallCommand)
+		proc->execute(bin, args);
+	else
+		proc->start(bin, args);
 	++d->callCount;
 }
 
@@ -806,10 +813,10 @@ void SkypeAccount::endCall() {
 	kDebug() << k_funcinfo << endl;
 
 	if ((--d->callCount == 0) || (!d->endCallCommandOnlyLats)) {
-		KProcess *proc = new KProcess();
-		QObject::connect(proc, SIGNAL(processExited(KProcess* )), proc, SLOT(deleteLater()));
-		(*proc) << d->endCallCommand.split(' ');
-		proc->start();
+		QProcess *proc = new QProcess();
+		QStringList args = d->endCallCommand.split(' ');
+		QString bin = args.takeFirst();
+		proc->start(bin, args);
 	}
 	if (d->callCount < 0)
 		d->callCount = 0;
@@ -908,6 +915,12 @@ void SkypeAccount::fillActionMenu( KActionMenu *actionMenu ) {
 
 		KAction *makeTestCall = new KAction( KIcon("skype_call"), i18n("Make Test Call"), this );
 		QObject::connect( makeTestCall, SIGNAL(triggered(bool)), this, SLOT(makeTestCall()) );
+
+		const Kopete::OnlineStatus &myStatus = (myself()) ? myself()->onlineStatus() : protocol()->Offline;
+		if (myStatus == protocol()->Offline || myStatus == protocol()->Connecting){
+			makeTestCall->setEnabled(false);
+		}
+
 		actionMenu->addAction(makeTestCall);
 
 		actionMenu->addSeparator();

@@ -283,7 +283,7 @@
             <number>120</number>
            </property>
            <property name="value" >
-            <number>10</number>
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -405,11 +405,11 @@ By default, kopete provides kopete as its name, but if you suspect another appli
           </item>
           <item>
            <widget class="QRadioButton" name="radioButton5" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
             <property name="text" >
              <string>S&amp;ystem</string>
+            </property>
+            <property name="enabled" >
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -419,7 +419,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
        <item>
         <widget class="QLabel" name="textLabel1_2" >
          <property name="text" >
-          <string>Note that Kopete will freeze while Skype asks you if it can let Kopete in. This is usual and if you allow it for ever (check that "Remember" checkbox on the Skype's dialog), it will not happen again. 
+          <string>Note that Kopete will freeze while Skype asks you if it can let Kopete in. This is usual and if you allow it for ever (check that "Remember" checkbox on the Skype's dialog), it will not happen again.
 System Bus is not supported.</string>
          </property>
          <property name="alignment" >
@@ -497,12 +497,6 @@ System Bus is not supported.</string>
        </item>
        <item>
         <widget class="QCheckBox" name="CallCheck" >
-         <property name="enabled" >
-          <bool>true</bool>
-         </property>
-         <property name="acceptDrops" >
-          <bool>false</bool>
-         </property>
          <property name="toolTip" >
           <string>Show call control window for all cals</string>
          </property>
@@ -513,7 +507,7 @@ System Bus is not supported.</string>
           <string>S&amp;how call control</string>
          </property>
          <property name="checked" >
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -537,9 +531,6 @@ System Bus is not supported.</string>
          </item>
          <item>
           <widget class="QCheckBox" name="AutoCloseCallCheck" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
            <property name="toolTip" >
             <string>Auto close the call control window</string>
            </property>
@@ -548,9 +539,6 @@ System Bus is not supported.</string>
            </property>
            <property name="text" >
             <string>Autoc&amp;lose</string>
-           </property>
-           <property name="checkable" >
-            <bool>true</bool>
            </property>
            <property name="checked" >
             <bool>true</bool>
@@ -611,9 +599,6 @@ System Bus is not supported.</string>
          </item>
          <item>
           <widget class="QSpinBox" name="CloseTimeoutSpin" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
              <horstretch>0</horstretch>
@@ -627,7 +612,7 @@ System Bus is not supported.</string>
             <number>120</number>
            </property>
            <property name="value" >
-            <number>5</number>
+            <number>4</number>
            </property>
           </widget>
          </item>
@@ -722,9 +707,6 @@ System Bus is not supported.</string>
       <layout class="QVBoxLayout" >
        <item>
         <widget class="QCheckBox" name="StartCallCommandCheck" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
          <property name="text" >
           <string>E&amp;xecute before call</string>
          </property>
@@ -796,9 +778,6 @@ Note that it will freeze kopete for the time.</string>
        </item>
        <item>
         <widget class="QCheckBox" name="EndCallCommandCheck" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
          <property name="text" >
           <string>Execute after call</string>
          </property>
@@ -869,9 +848,6 @@ Note that it will freeze kopete for the time.</string>
        </item>
        <item>
         <widget class="QCheckBox" name="IncomingCommandCheck" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
          <property name="text" >
           <string>Execute on inco&amp;ming call</string>
          </property>

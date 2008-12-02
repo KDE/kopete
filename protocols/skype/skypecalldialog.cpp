@@ -66,13 +66,16 @@ class SkypeCallDialogPrivate {
 		};
 };
 
-SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account, QWidget *parent) : KDialog(parent) {
+SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account) : KDialog() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
-	QWidget *widget = new QWidget( this );
+	setButtons( KDialog::None ); //dont add any buttons
+	setDefaultButton( KDialog::None );
+
+	QWidget *w = new QWidget( this );
 	dialog = new Ui::SkypeCallDialogBase();
-	dialog->setupUi( widget );
-	setMainWidget( widget );
+	dialog->setupUi( w );
+	setMainWidget( w );
 
 	//Initialize values
 	d = new SkypeCallDialogPrivate();
@@ -90,11 +93,12 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	d->updater->start(500);
 
 	dialog->NameLabel->setText(account->getUserLabel(userId));
+	setCaption(i18n("Call with %1").arg(account->getUserLabel(userId)));
 
-	//Show the window
-	show();
-	///TODO: Port to kde4
-	//KWin::activateWindow(winId());
+	connect(dialog->AcceptButton, SIGNAL(clicked()), this, SLOT(acceptCall()));
+	connect(dialog->HangButton, SIGNAL(clicked()), this, SLOT(hangUp()));
+	connect(dialog->HoldButton, SIGNAL(clicked()), this, SLOT(holdCall()));
+	connect(dialog->ChatButton, SIGNAL(clicked()), this, SLOT(chatUser()));
 }
 
 
@@ -106,6 +110,7 @@ SkypeCallDialog::~SkypeCallDialog(){
 
 	delete d->updater;
 	delete d;
+	delete dialog;
 }
 
 void SkypeCallDialog::updateStatus(const QString &callId, const QString &status) {
@@ -199,10 +204,12 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 			dialog->HoldButton->setEnabled(false);
 			dialog->AcceptButton->setEnabled(false);
 			dialog->HangButton->setEnabled(true);
-			dialog->StatusLabel->setText(i18n("Early media (waitong for operator..)"));
+			dialog->StatusLabel->setText(i18n("Early media (waitong for operator...)"));
 			d->status = csNotRunning;
 		} else if (status == "UNPLACED") {//Ups, whats that, how that call got here?
-			deleteLater();//Just give up, this one is odd
+			//deleteLater();//Just give up, this one is odd
+			dialog->StatusLabel->setText(i18n("Unplaced (please wait...)"));
+			//it is when user create call after hangup, so dont close dialog and wait
 		}
 	}
 }

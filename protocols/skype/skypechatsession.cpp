@@ -109,7 +109,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 	d->callAction->setIcon(KIcon("skype_call"));
 	connect(d->callAction, SIGNAL(triggered()), SLOT(callChatSession()));
 
-	connect(contact, SIGNAL(setCallPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
+	connect(contact, SIGNAL(setActionsPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
 	connect(this, SIGNAL(becameMultiChat(const QString&, SkypeChatSession* )), this, SLOT(disallowCall()));
 
 	d->contact = contact;
@@ -162,7 +162,9 @@ void SkypeChatSession::message(Kopete::Message &message) {
 }
 
 void SkypeChatSession::setTopic(const QString &chat, const QString &topic) {
-	///TODO This function
+	//TODO This function
+	Q_UNUSED(chat);
+	Q_UNUSED(topic);
 }
 
 void SkypeChatSession::joinUser(const QString &chat, const QString &userId) {
@@ -215,7 +217,7 @@ void SkypeChatSession::disallowCall() {
 	d->callAction->setEnabled(false);
 
 	if (d->contact) {
-		disconnect(d->contact, SIGNAL(setCallPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
+		disconnect(d->contact, SIGNAL(setActionsPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
 		d->contact = 0L;
 	}
 }

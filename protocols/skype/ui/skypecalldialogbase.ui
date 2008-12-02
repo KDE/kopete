@@ -218,7 +218,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton4" >
+      <widget class="QPushButton" name="ChatButton" >
        <property name="toolTip" >
         <string>Open chat to the person</string>
        </property>
@@ -256,70 +256,5 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <resources/>
- <connections>
-  <connection>
-   <sender>AcceptButton</sender>
-   <signal>clicked()</signal>
-   <receiver>SkypeCallDialogBase</receiver>
-   <slot>acceptCall()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>HangButton</sender>
-   <signal>clicked()</signal>
-   <receiver>SkypeCallDialogBase</receiver>
-   <slot>hangUp()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>HoldButton</sender>
-   <signal>clicked()</signal>
-   <receiver>SkypeCallDialogBase</receiver>
-   <slot>holdCall()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton4</sender>
-   <signal>clicked()</signal>
-   <receiver>SkypeCallDialogBase</receiver>
-   <slot>chatUser()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

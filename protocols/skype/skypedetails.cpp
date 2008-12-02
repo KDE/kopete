@@ -32,17 +32,18 @@ SkypeDetails::SkypeDetails() : KDialog() {
 	setButtons( KDialog::Close ); //add only close button
 	setDefaultButton( KDialog::Close );
 
-	QVBoxLayout *topLayout = new QVBoxLayout( this );//create the layout
 	QWidget* w = new QWidget( this );
-	topLayout->addWidget( w );
 	dialog = new Ui::SkypeDetailsBase();//create the insides
 	dialog->setupUi( w );
+	setMainWidget( w );
 
+	connect(dialog->authorCombo, SIGNAL(activated(int)), this, SLOT(changeAuthor(int)));
 }
 
 
 SkypeDetails::~SkypeDetails() {
 	kDebug() << k_funcinfo << endl;
+	delete dialog;
 }
 
 void SkypeDetails::closeEvent(QCloseEvent *) {

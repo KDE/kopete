@@ -210,22 +210,5 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <resources/>
- <connections>
-  <connection>
-   <sender>authorCombo</sender>
-   <signal>activated(int)</signal>
-   <receiver>SkypeDetails</receiver>
-   <slot>changeAuthor(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

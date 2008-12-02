@@ -55,7 +55,8 @@ SkypeAddContact::SkypeAddContact(SkypeProtocol *protocol, QWidget *parent, Skype
 SkypeAddContact::~SkypeAddContact() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
-	//free everything (the widget is deleted automatically)
+	//free everything
+	delete d->widget;
 	delete d;
 }
 

@@ -61,7 +61,7 @@ Q_OBJECT
 		 */
 		virtual Kopete::Account *apply();
 	protected:
-		Ui::SkypeEditAccountBase *m_preferencesWidget;
+		Ui::SkypeEditAccountBase *widget;
 };
 
 #endif

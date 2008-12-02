@@ -423,7 +423,7 @@ void Skype::skypeMessage(const QString &message) {
 		if (message.section(' ', 2, 2).trimmed().toUpper() == "CONF_ID") {
 			if (d->knownCalls.indexOf(callId) == -1) {//new call
 				d->knownCalls << callId;
-				const QString &userId = (d->connection % QString("GET CALL %1 PARTNER_HANDLE").arg(callId)).section(' ', 3, 3).toUpper();
+				const QString &userId = (d->connection % QString("GET CALL %1 PARTNER_HANDLE").arg(callId)).section(' ', 3, 3).trimmed();
 				emit newCall(callId, userId);
 			}
 			const QString &confId = message.section(' ', 3, 3).trimmed().toUpper();
@@ -434,7 +434,7 @@ void Skype::skypeMessage(const QString &message) {
 		if (message.section(' ', 2, 2).trimmed().toUpper() == "STATUS") {
 			if (d->knownCalls.indexOf(callId) == -1) {//new call
 				d->knownCalls << callId;
-				const QString &userId = (d->connection % QString("GET CALL %1 PARTNER_HANDLE").arg(callId)).section(' ', 3, 3).toUpper();
+				const QString &userId = (d->connection % QString("GET CALL %1 PARTNER_HANDLE").arg(callId)).section(' ', 3, 3).trimmed();
 				emit newCall(callId, userId);
 			}
 			const QString &status = message.section(' ', 3, 3).toUpper();
