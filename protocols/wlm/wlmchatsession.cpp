@@ -226,7 +226,7 @@ WlmChatSession::slotSendFile ()
 }
 
 void
-WlmChatSession::slotInviteContact (WlmContact * contact)
+WlmChatSession::slotInviteContact (Kopete::Contact * contact)
 {
     // if we have a session, just invite the new contact
     if (isReady ())
