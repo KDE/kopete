@@ -765,6 +765,14 @@ WlmAccount::connectionCompleted ()
             myself()->setProperty(Kopete::Global::Properties::self()->photo (), entry.path);
     }
 
+    if ( identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
+    {
+        // use the identity nickname instead of the one stored on the server side
+        QString nick = identity()->property(
+                Kopete::Global::Properties::self()->nickName()).value().toString();
+        m_server->cb.mainConnection->setFriendlyName(nick.toAscii().data());
+    }
+
     password ().setWrong (false);
 
     QObject::connect (&m_server->cb,
