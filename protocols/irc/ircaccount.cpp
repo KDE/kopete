@@ -710,9 +710,9 @@ IRCContact *IRCAccount::getContact(const KIrc::EntityPtr &entity, MetaContact *m
 #endif
 		contact = new IRCContact(this, entity, metac);
 		d->contacts.append(contact);
+		QObject::connect(contact, SIGNAL(destroyed(QObject *)), SLOT(destroyed(QObject *)));
 	}
 
-	QObject::connect(contact, SIGNAL(destroyed(QObject *)), SLOT(destroyed(QObject *)));
 	return contact;
 }
 
@@ -761,7 +761,7 @@ void IRCAccount::receivedEvent(QEvent *event)
 		{
 			foreach(Kopete::Contact *c,to)
 			{
-			  c->manager()->addContact(from,IRCProtocol::self()->onlineStatusFor( from->entity(),txtEvent->from()->context() ), false);
+			  c->manager()->addContact(from,IRCProtocol::self()->onlineStatusFor( txtEvent->from(),txtEvent->from()->context() ), false);
 			}
 			return;
 		}

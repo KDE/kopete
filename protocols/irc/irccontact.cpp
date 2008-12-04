@@ -91,7 +91,7 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity, MetaC
 		this, SLOT(entityUpdated()));
 
 	//Delete the contact, if the matching entity does no longer exist in the IRC network
-	connect(d->entity.data(), SIGNAL(destroyed()), this, SLOT(deleteLater() ) );
+	connect(d->entity.data(), SIGNAL(aboutToBeDestroyed(KIrc::Entity*)), this, SLOT(deleteLater() ) );
 
 	entityUpdated();
 }
@@ -105,6 +105,8 @@ IRCContact::~IRCContact()
 	emit destroyed(this);
 
 	delete d;
+
+	kDebug( 14120 );
 }
 
 void IRCContact::deleteContact()

@@ -228,10 +228,9 @@ void Entity::setStatus(const EntityStatus& status)
 	emit updated();
 }
 
-void Entity::deleteLater()
+void Entity::free()
 {
-	emit aboutToBeDestroyed( KIrc::EntityPtr( this ) );
-	QObject::deleteLater();
+	emit aboutToBeDestroyed( this );
 }
 
 void Entity::setTopic( const QByteArray& topic )

@@ -83,7 +83,7 @@ public:
 
 //	Status execute();
 private Q_SLOTS:
-	void onEntityAboutToBeDestroyed(KIrc::EntityPtr entity);
+	void onEntityAboutToBeDestroyed(KIrc::Entity* entity);
 
 protected:
 	ContextPrivate * const d_ptr;

@@ -102,7 +102,7 @@ KIrc::Handler::Handled ClientChannelHandler::JOIN(KIrc::Context *context, const 
 			TextEvent *event = new TextEvent( "JOIN", from, to,QString() );
 			context->postEvent( event );
 
-			foreach(EntityPtr channel, to)
+			foreach(const EntityPtr& channel, to)
 			{
 				channel->context()->add(from);
 			}
@@ -273,7 +273,7 @@ KIrc::Handler::Handled ClientChannelHandler::QUIT(KIrc::Context *context, const 
 	}
 
 	kDebug( 14121 )<<"deleting";
-	from->deleteLater();
+	from->free();
 
 	//if (postEvent(ev, "QUIT", from, message)) {
 	//d->context->remove(from);

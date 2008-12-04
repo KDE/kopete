@@ -147,8 +147,8 @@ void Context::add(EntityPtr entity)
 	if (!d->entities.contains(entity))
 	{
 		d->entities.append(entity);
-		connect(entity.data(), SIGNAL(aboutToBeDestroyed( KIrc::EntityPtr )),
-				this, SLOT(onEntityAboutToBeDestroyed(KIrc::EntityPtr )));
+		connect(entity.data(), SIGNAL(aboutToBeDestroyed( KIrc::Entity* )),
+				this, SLOT(onEntityAboutToBeDestroyed(KIrc::Entity* )));
 	}
 }
 
@@ -156,7 +156,8 @@ void Context::remove(EntityPtr entity)
 {
 	Q_D(Context);
 
-	d->entities.removeAll(entity);
+	d->entities.removeAll( entity );
+	d->statusMap.remove( entity );
 	disconnect(entity.data());
 }
 
@@ -185,8 +186,8 @@ Status Context::SET()
 #endif
 
 
-void Context::onEntityAboutToBeDestroyed( KIrc::EntityPtr entity )
+void Context::onEntityAboutToBeDestroyed( KIrc::Entity* entity )
 {
-	remove( entity );
+	remove( KIrc::EntityPtr( entity ) );
 }
 
