@@ -17,8 +17,6 @@
 
 #include "bonjouraccount.h"
 
-#include <QtDBus>
-
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
