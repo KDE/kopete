@@ -350,9 +350,10 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
     WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[contactId]);
     if (contact)
     {
-        if (!QFile (filename).exists () || !QFile (filename).size ())
+        QFile f(filename);
+        if (!f.exists () || !f.size ())
         {
-            QFile (filename).remove ();
+            f.remove ();
             contact->removeProperty (Kopete::Global::Properties::self ()->
                                      photo ());
             //dynamic_cast < WlmContact * >(contact)->setMsnObj ("0");
@@ -367,7 +368,7 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
 			Kopete::Global::Properties::self ()->photo()).value ().toString ();
             contact->removeProperty (Kopete::Global::Properties::self ()->photo ());
             if (QFile (file).exists () && file != filename)
-                QFile (file).remove ();
+                QFile::remove (file);
         }
         // check file integrity
         QImage contactPhoto = QImage( filename );
@@ -378,7 +379,7 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
         }
         else
         {
-            QFile (filename).remove();
+            f.remove();
             contact->removeProperty (Kopete::Global::Properties::self ()->
                                      photo ());
         }
@@ -410,7 +411,7 @@ WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
             int num = pInfo.mediaLines.size ();
             for (int i = 0; i < num; i++)
             {
-                song_line.replace ("{" + QString::number (i) + "}",
+                song_line.replace ('{' + QString::number (i) + '}',
                                    pInfo.mediaLines[i].c_str ());
             }
             contact->setProperty (WlmProtocol::protocol ()->currentSong,
@@ -472,7 +473,7 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
                         photo()).value ().toString ();
                 contact->removeProperty (Kopete::Global::Properties::self ()->photo ());
                 if (QFile (file).exists ())
-                    QFile (file).remove ();
+                    QFile::remove (file);
             }
             return;
         }
@@ -489,9 +490,9 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
         QString newlocation =
             KGlobal::dirs ()->locateLocal ("appdata",
                                            "wlmpictures/" +
-                                           QString (SHA1D.replace ("/", "_")));
-
-        if (QFile (newlocation).exists () && QFile (newlocation).size ())
+                                           QString (SHA1D.replace ('/', '_')));
+        QFile f(newlocation);
+        if (f.exists () && f.size ())
         {
             gotDisplayPicture (contact->contactId (), newlocation);
             return;

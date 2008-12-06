@@ -39,11 +39,11 @@ void PrivacyAccountListModel::loadAccounts( const QStringList &accounts )
 	beginInsertRows(QModelIndex(), 0, accounts.size());
 	foreach( QString entry, accounts )
 	{
-		Kopete::Plugin *protocol = Kopete::PluginManager::self()->plugin( entry.split(":")[0] );
+		Kopete::Plugin *protocol = Kopete::PluginManager::self()->plugin( entry.split(':')[0] );
 		if( !protocol )
 			continue;
 
-		m_list.append( AccountListEntry( entry.split(":")[1], (Kopete::Protocol *)protocol ) );
+		m_list.append( AccountListEntry( entry.split(':')[1], (Kopete::Protocol *)protocol ) );
 	}
 	endInsertRows();
 }

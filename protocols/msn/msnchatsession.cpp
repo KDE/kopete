@@ -634,7 +634,7 @@ void MSNChatSession::slotDebugRawCommand()
 	if( result == QDialog::Accepted && m_chatService )
 	{
 		m_chatService->sendCommand( dlg->command(), dlg->params(),
-					dlg->addId(), dlg->msg().replace("\n","\r\n").toUtf8() );
+					dlg->addId(), dlg->msg().replace('\n',"\r\n").toUtf8() );
 	}
 	delete dlg;
 #endif

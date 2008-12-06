@@ -87,8 +87,8 @@ void ListTask::parseStealthList( YMSGTransfer *t )
 	QString raw;
 	raw = t->firstParam( 185 );
 
-	QStringList buddies = raw.split( ",", QString::SkipEmptyParts );
-	for ( QStringList::Iterator it = buddies.begin(); it != buddies.end(); ++it ) 
+	const QStringList buddies = raw.split( ',', QString::SkipEmptyParts );
+	for ( QStringList::ConstIterator it = buddies.begin(); it != buddies.end(); ++it )
 	{
 		emit stealthStatusChanged( *it, Yahoo::StealthActive );
 	}

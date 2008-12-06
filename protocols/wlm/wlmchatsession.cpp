@@ -716,9 +716,9 @@ WlmChatSession::requestDisplayPicture ()
     QString newlocation =
         KGlobal::dirs ()->locateLocal ("appdata",
                                        "wlmpictures/" +
-                                       QString (SHA1D.replace ("/", "_")));
-
-    if (QFile (newlocation).exists () && QFile (newlocation).size ())
+                                       QString (SHA1D.replace ('/', '_')));
+    QFile f(newlocation);
+    if (f.exists () && f.size ())
     {
         qobject_cast <WlmAccount *>(account ())->gotDisplayPicture (contact->contactId (),
                                               newlocation);
@@ -736,9 +736,9 @@ WlmChatSession::requestDisplayPicture ()
     if (isReady ())
     {
         getChatService ()->requestDisplayPicture (generateSessionID(),
-                                              newlocation.toLatin1 ().data (),
+                                              newlocation.toLatin1 ().constData (),
                                               contact->getMsnObj ().
-                                              toAscii ().data ());
+                                              toAscii ().constData ());
         setDownloadDisplayPicture (false);
     }
 }

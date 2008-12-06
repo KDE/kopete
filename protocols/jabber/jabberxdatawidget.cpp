@@ -156,12 +156,12 @@ public:
 		if (!f.value().isEmpty())
 			sel = f.value().first();
 		XMPP::XData::Field::OptionList opts = f.options();
-		for(XMPP::XData::Field::OptionList::Iterator it = opts.begin(); it != opts.end(); it++)
+		for(XMPP::XData::Field::OptionList::Iterator it = opts.begin(); it != opts.end(); ++it)
 		{
 			QString lbl = (*it).label;
 			if(lbl.isEmpty())
 				lbl = (*it).value;
-			combo->insertItem(lbl);
+			combo->addItem(lbl);
 			if ((*it).value == sel)
 				combo->setCurrentText(lbl);
 		}
@@ -185,7 +185,7 @@ public:
 		QStringList val;
 		XMPP::XData::Field::OptionList opts = f.options();
 		XMPP::XData::Field::OptionList::Iterator it = opts.begin();
-		for ( ; it != opts.end(); it++)
+		for ( ; it != opts.end(); ++it)
 			if ( (*it).label == lbl || (*it).value == lbl )
 			{
 				val << (*it).value;
@@ -216,7 +216,7 @@ public:
 
 		XMPP::XData::Field::OptionList opts = f.options();
 		XMPP::XData::Field::OptionList::Iterator it = opts.begin();
-		for(; it != opts.end(); it++)
+		for(; it != opts.end(); ++it)
 		{
 			QString lbl = (*it).label;
 			if(lbl.isEmpty())
@@ -243,7 +243,7 @@ public:
 	{
 		XMPP::XData::Field f = XDataWidgetField::field();
 		QStringList val;
-		for(int i = 0; i < list->count(); i++)
+		for(int i = 0; i < list->count(); ++i)
 		{
 			QListWidgetItem *item = list->item(i);
 			if(list->isItemSelected(item))
@@ -251,7 +251,7 @@ public:
 				QString lbl = item->text();
 				XMPP::XData::Field::OptionList opts = f.options();
 				XMPP::XData::Field::OptionList::Iterator it = opts.begin();
-				for(; it != opts.end(); it++)
+				for(; it != opts.end(); ++it)
 				{
 					if((*it).label == lbl || (*it).value == lbl)
 					{
@@ -283,12 +283,12 @@ public:
 		edit = new QTextEdit(parent);
 		layout->addWidget(edit, row, 1);
 		QString text;
-		QStringList val = f.value();
-		QStringList::Iterator it = val.begin();
-		for(; it != val.end(); it++)
+		const QStringList val = f.value();
+		QStringList::ConstIterator it = val.begin();
+		for(; it != val.end(); ++it)
 		{
 			if(!text.isEmpty())
-				text += "\n";
+				text += '\n';
 			text += *it;
 		}
 		edit->setText(text);

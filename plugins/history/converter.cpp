@@ -114,7 +114,7 @@ void HistoryPlugin::convertOldHistory()
 			foreach(fi2, list)
 			{
 				//we assume that all "-" are dots.  (like in hotmail.com)
-				QString contactId=fi2.fileName().replace(".log" , QString()).replace("-" , ".");
+				QString contactId=fi2.fileName().remove(".log").replace('-', '.');
 
 				if(!contactId.isEmpty() )
 				{

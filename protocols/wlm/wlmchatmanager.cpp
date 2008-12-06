@@ -580,18 +580,19 @@ void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnecti
     QString newlocation =
         KGlobal::dirs ()->locateLocal ("appdata",
                                        "wlmpictures/" +
-                                       QString (SHA1D.replace ("/", "_")));
-    if (QFile (newlocation).exists () && QFile (newlocation).size ())
+                                       QString (SHA1D.replace ('/', '_')));
+    QFile f(newlocation);
+    if (f.exists () && f.size ())
     {
         emoticonsList[alias] = newlocation;
         return;
     }
 
     // pending emoticon
-    emoticonsList[alias] = "";
+    emoticonsList[alias].clear();
 
-    conn->requestEmoticon(sessionID, newlocation.toAscii().data(),
-            msnobject.toAscii().data(), alias.toAscii().data());
+    conn->requestEmoticon(sessionID, newlocation.toAscii().constData(),
+            msnobject.toAscii().constData(), alias.toAscii().constData());
 }
 
 void 

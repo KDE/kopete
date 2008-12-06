@@ -221,7 +221,7 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 	else if (! clast.isEmpty())
 		display = clast;
 	else
-		display = pointer->serviceName().split("@")[0];
+		display = pointer->serviceName().split('@')[0];
 
 	Kopete::MetaContact *mc;
 

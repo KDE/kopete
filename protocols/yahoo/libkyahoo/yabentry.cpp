@@ -48,9 +48,9 @@ void YABEntry::fromQDomElement( const QDomElement &e )
 	privateZIP = e.attribute("hz");
 	privateCountry = e.attribute("hn");
 	QString birtday = e.attribute("bi");
-	birthday = QDate( birtday.section("/",2,2).toInt(), birtday.section("/",1,1).toInt(), birtday.section("/",0,0).toInt() );
+	birthday = QDate( birtday.section('/',2,2).toInt(), birtday.section('/',1,1).toInt(), birtday.section('/',0,0).toInt() );
 	QString an = e.attribute("an");
-	anniversary = QDate( an.section("/",2,2).toInt(), an.section("/",1,1).toInt(), an.section("/",0,0).toInt() );
+	anniversary = QDate( an.section('/',2,2).toInt(), an.section('/',1,1).toInt(), an.section('/',0,0).toInt() );
 	additional1 = e.attribute("c1");
 	additional2 = e.attribute("c2");
 	additional3 = e.attribute("c3");
@@ -98,9 +98,9 @@ void YABEntry::fromQDomDocument( const QDomDocument &d )
 	privateZIP = d.elementsByTagName("hz").item(0).toElement().text();
 	privateCountry = d.elementsByTagName("hn").item(0).toElement().text();
 	QString birtday = d.elementsByTagName("bi").item(0).toElement().text();
-	birthday = QDate( birtday.section("/",2,2).toInt(), birtday.section("/",1,1).toInt(), birtday.section("/",0,0).toInt() );
+	birthday = QDate( birtday.section('/',2,2).toInt(), birtday.section('/',1,1).toInt(), birtday.section('/',0,0).toInt() );
 	QString an = d.elementsByTagName("an").item(0).toElement().text();
-	anniversary = QDate( an.section("/",2,2).toInt(), an.section("/",1,1).toInt(), an.section("/",0,0).toInt() );
+	anniversary = QDate( an.section('/',2,2).toInt(), an.section('/',1,1).toInt(), an.section('/',0,0).toInt() );
 	additional1 = d.elementsByTagName("c1").item(0).toElement().text();
 	additional2 = d.elementsByTagName("c2").item(0).toElement().text();
 	additional3 = d.elementsByTagName("c3").item(0).toElement().text();
@@ -135,13 +135,13 @@ void YABEntry::fillQDomElement( QDomElement &e ) const
 	e.setAttribute( "pu", privateURL );
 	e.setAttribute( "ti", title );
 	e.setAttribute( "co", corporation );
-	e.setAttribute( "wa", QString( workAdress ).replace( "\n", "&#xd;&#xa;" ) );
+	e.setAttribute( "wa", QString( workAdress ).replace( '\n', "&#xd;&#xa;" ) );
 	e.setAttribute( "wc", workCity );
 	e.setAttribute( "ws", workState );
 	e.setAttribute( "wz", workZIP );
 	e.setAttribute( "wn", workCountry );
 	e.setAttribute( "wu", workURL );
-	e.setAttribute( "ha", QString( privateAdress ).replace( "\n", "&#xd;&#xa;" ) );
+	e.setAttribute( "ha", QString( privateAdress ).replace( '\n', "&#xd;&#xa;" ) );
 	e.setAttribute( "hc", privateCity );
 	e.setAttribute( "hs", privateState );
 	e.setAttribute( "hz", privateZIP );
@@ -152,7 +152,7 @@ void YABEntry::fillQDomElement( QDomElement &e ) const
 	e.setAttribute( "c2", additional2 );
 	e.setAttribute( "c3", additional3 );
 	e.setAttribute( "c4", additional4 );
-	e.setAttribute( "cm", QString( notes ).replace( "\n", "&#xd;&#xa;" ) );
+	e.setAttribute( "cm", QString( notes ).replace( '\n', "&#xd;&#xa;" ) );
 	e.setAttribute( "ima", imAIM );
 	e.setAttribute( "img", imGoogleTalk );
 	e.setAttribute( "imq", imICQ );

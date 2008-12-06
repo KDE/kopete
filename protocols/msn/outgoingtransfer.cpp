@@ -297,7 +297,7 @@ void OutgoingTransfer::processMessage(const Message& message)
 				// Retrieve the listening endpoints of the receiving client.
 				regex = QRegExp("IPv4Internal-Addrs: ([^\r\n]+)\r\n");
 				regex.indexIn(body);
-				m_peerEndpoints = regex.cap(1).split( " ", QString::SkipEmptyParts );
+				m_peerEndpoints = regex.cap(1).split( ' ', QString::SkipEmptyParts );
 				m_endpointIterator = m_peerEndpoints.begin();
 				// Retrieve the listening port of the receiving client.
 				regex = QRegExp("IPv4Internal-Port: ([^\r\n]+)\r\n");
