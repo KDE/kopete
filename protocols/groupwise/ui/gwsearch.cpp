@@ -17,17 +17,13 @@
     *************************************************************************
 */
 
-#include <qcombobox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <QPainter>
-#include <q3listview.h>
-#include <qpushbutton.h>
-#include <QPixmap>
-#include <QHeaderView>
-#include <QHeaderView>
-#include <QAbstractItemModel>
-#include <QSortFilterProxyModel>
+#include <QtCore/QAbstractItemModel>
+#include <QtGui/QComboBox>
+#include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPainter>
+#include <QtGui/QSortFilterProxyModel>
 
 #include <kdebug.h>
 #include <klocale.h>
