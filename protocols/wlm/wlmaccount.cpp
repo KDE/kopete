@@ -57,7 +57,7 @@ clientid (0)
 {
     // Init the myself contact
     setMyself (new
-               WlmContact (this, accountId (), QString::null,
+               WlmContact (this, accountId (), QString(),
                            accountId (),
                            Kopete::ContactList::self ()->myself ()));
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
@@ -92,7 +92,7 @@ WlmAccount::createContact (const QString & contactId,
                            Kopete::MetaContact * parentContact)
 {
     kDebug() << "contact " << contactId;
-    WlmContact *newContact = new WlmContact (this, contactId, QString::null, parentContact->displayName (), parentContact);
+    WlmContact *newContact = new WlmContact (this, contactId, QString(), parentContact->displayName (), parentContact);
 
     if (parentContact->isTemporary())
         return true;
@@ -415,12 +415,12 @@ WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
                                    pInfo.mediaLines[i].c_str ());
             }
             contact->setProperty (WlmProtocol::protocol ()->currentSong,
-                                  song_line.toAscii ().data ());
+                                  song_line.toAscii ().constData ());
         }
         else
         {
             contact->setProperty (WlmProtocol::protocol ()->currentSong,
-                                  QVariant (QString::null));
+                                  QVariant (QString()));
         }
     }
 }

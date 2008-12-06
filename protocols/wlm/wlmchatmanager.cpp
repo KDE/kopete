@@ -241,13 +241,13 @@ WlmChatManager::createChat (MSN::SwitchboardServerConnection * conn)
         return;
 
     std::list < MSN::Passport >::iterator users = conn->users.begin ();
-    for (; users != conn->users.end (); users++)
+    for (; users != conn->users.end (); ++users)
     {
         Kopete::Contact * contact =
             account ()->contacts ()[(*users).c_str ()];
         if (!contact)
         {
-            account ()->addContact ((*users).c_str (), QString::null, 0L,
+            account ()->addContact ((*users).c_str (), QString(), 0L,
                                     Kopete::Account::Temporary);
             contact = account ()->contacts ()[(*users).c_str ()];
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
@@ -280,20 +280,20 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
     Kopete::Contact * contact = account ()->contacts ()[passport];
     if (!contact)
     {
-        account ()->addContact (passport, QString::null, 0L,
+        account ()->addContact (passport, QString(), 0L,
                                 Kopete::Account::Temporary);
         contact = account ()->contacts ()[passport];
         contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
     }
     // populate chatmembers from SwitchboardServerConnection
     std::list < MSN::Passport >::iterator users = conn->users.begin ();
-    for (; users != conn->users.end (); users++)
+    for (; users != conn->users.end (); ++users)
     {
         Kopete::Contact * contact =
             account ()->contacts ()[(*users).c_str ()];
         if (!contact)
         {
-            account ()->addContact ((*users).c_str (), QString::null, 0L,
+            account ()->addContact ((*users).c_str (), QString(), 0L,
                                     Kopete::Account::Temporary);
             contact = account ()->contacts ()[(*users).c_str ()];
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
@@ -346,7 +346,7 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
         Kopete::Contact * contact = account ()->contacts ()[from];
         if(!contact)
         {
-            account ()->addContact (from, QString::null, 0L,
+            account ()->addContact (from, QString(), 0L,
                                             Kopete::Account::Temporary);
             contact = account ()->contacts ()[from];
         }
@@ -358,8 +358,8 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
         newMessage->setDirection (Kopete::Message::Inbound);
 
         // stolen from msn plugin
-        QMap<QString,QString>::iterator it = emoticonsList.begin();
-        for(;it!=emoticonsList.end(); ++it)
+        QMap<QString,QString>::ConstIterator it = emoticonsList.constBegin();
+        for(;it!=emoticonsList.constEnd(); ++it)
         {
             QString es=Qt::escape(it.key());
             QString message1=newMessage->escapedBody();
@@ -520,7 +520,7 @@ WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn,
     Kopete::Contact * contact = account ()->contacts ()[from.c_str()];
     if(!contact)
     {
-        account ()->addContact (from.c_str(), QString::null, 0L,
+        account ()->addContact (from.c_str(), QString(), 0L,
                                         Kopete::Account::Temporary);
         contact = account ()->contacts ()[from.c_str()];
     }
