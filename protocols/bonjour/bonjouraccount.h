@@ -72,41 +72,6 @@ public:
 	 */
 	void parseConfig();
 
-	/**
-	 * @brief Resolve A Hostname Via Avahi
-	 * 
-	 * This Queries Avahi (via DBus) to resolve a hostName
-	 * This is practically instantaneous, and may be used synchronously
-	 * It may return an IPV4 or IPV6 address
-	 * @todo FIXME: Remove Avahi Dependency, Commit to KDNSSD
-	 * 
-	 * @param hostName the Hostname to be resolved
-	 * @return A String Containing the IP Address of the host. 
-	 */
-	static QString resolveHostName(const QString &hostName);
-
-	/**
-	 * @brief Get Local Hostname
-	 *
-	 * This Queries Avahi (via DBus) to get our local Hostname
-	 * This is practically instantaneous, and may be used synchronously
-	 * @todo FIXME: Remove Avahi Dependency, Commit to KDNSSD
-	 * 
-	 * @return A String Containing the local hostname
-	 */ 
-	static QString getLocalHostName();
-
-	/**
-	 * @brief Check the local mDNS server is running
-	 *
-	 * This Queries avahi (via DBus) and asks for it's version string
-	 * This may be used synchronously, to check if avahi-daemon is running
-	 * @todo FIXME: Remove Avahi Dependency, Commit to KDNSSD
-	 * 
-	 * @return @c true if avahi is running, @c false otherwise
-	 */ 
-	static bool check_mDNS_running();
-
 	/** 
 	 * @brief Verifies a connection is from a claimed user, and return the contact
 	 *

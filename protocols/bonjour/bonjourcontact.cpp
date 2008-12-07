@@ -152,7 +152,7 @@ void BonjourContact::setremoteHostName(const QString &nremoteHostName)
 	remoteHostName = nremoteHostName;
 
 	// FIXME: Resolve the following Avahi Dependency BonjourAccount::resolveHostName
-	remoteAddress = QHostAddress(BonjourAccount::resolveHostName(remoteHostName));
+	remoteAddress = DNSSD::ServiceBrowser::resolveHostName(remoteHostName);
 }
 
 const QString BonjourContact::getremoteHostName() const

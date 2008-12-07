@@ -157,7 +157,7 @@ void BonjourAccount::startPublish()
 {
 	if (! username.contains('@')) {
 		username.append("@");
-		username.append(getLocalHostName().toUtf8());
+		username.append(DNSSD::ServiceBrowser::getLocalHostName().toUtf8());
 	}
 
 	service = new DNSSD::PublicService(username, "_presence._tcp", listeningPort);
@@ -184,7 +184,7 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 	if (username.isEmpty())
 		username = accountId().toUtf8();
 
-	if (! check_mDNS_running()) {
+	if (DNSSD::ServiceBrowser::isAvailable() != DNSSD::ServiceBrowser::Working) {
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
 		i18n("Sorry, we are unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
 		return;
