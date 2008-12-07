@@ -387,7 +387,7 @@ void GroupWiseChatSession::slotInviteOtherContact()
 void GroupWiseChatSession::slotSearchedForUsers()
 {
 	// create an item for each result, in the block list
-	Q3ValueList< ContactDetails > selected = m_search->selectedResults();
+	QList< ContactDetails > selected = m_search->selectedResults();
 	if ( selected.count() )
 	{
 		QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
