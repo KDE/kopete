@@ -438,7 +438,7 @@ WlmChatSession::setReady (bool value)
             const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
 
             // Check the list for any custom emoticons
-            for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+            for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
             {
                 for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
                 {
@@ -559,7 +559,7 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
 
         // Check the list for any custom emoticons
-        for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+        for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
         {
             for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
             {

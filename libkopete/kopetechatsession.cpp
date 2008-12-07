@@ -66,8 +66,6 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	Kopete::ContactPtrList others, Kopete::Protocol *protocol, Kopete::ChatSession::Form form )
 : QObject( user->account())
 {
-	int i;
-
 	d = new KMMPrivate;
 	d->mUser = user;
 	d->mProtocol = protocol;
@@ -79,7 +77,7 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->mayInvite = false;
 	d->form = form;
 
-	for ( i = 0; others.size() != i; i++ )
+	for ( int i = 0; others.size() != i; ++i )
 		addContact( others[i], true );
 
 	connect( user, SIGNAL(contactDestroyed(Kopete::Contact*)), this, SLOT(slotMyselfDestroyed(Kopete::Contact*)) );

@@ -685,7 +685,6 @@ void ChatMessagePart::clear()
 Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 {
 	DOM::Node node = n;
-	int i;
 	QList<Kopete::Contact*> m;
 
 	if ( node.isNull() )
@@ -702,7 +701,7 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 	if ( element.hasAttribute( "contactid" ) )
 	{
 		QString contactId = element.getAttribute( "contactid" ).string();
-		for ( i =0; i != m.size(); i++ )
+		for ( int i =0; i != m.size(); ++i )
 			if ( m.at(i)->contactId() == contactId )
 				return m[i];
 	}

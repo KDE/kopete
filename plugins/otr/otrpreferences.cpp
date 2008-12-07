@@ -129,12 +129,12 @@ void OTRPreferences::showPrivFingerprint( int accountnr )
 
 void OTRPreferences::fillFingerprints(){
 	preferencesDialog->tbFingerprints->setRowCount(0);
-	QList<QStringList> list = otrlConfInterface->readAllFingerprints();
-	QList<QStringList>::iterator it;
+	const QList<QStringList> list = otrlConfInterface->readAllFingerprints();
+	QList<QStringList>::ConstIterator it;
 	int j = 0;
 
 //	preferencesDialog->tbFingerprints->setSortingEnabled(false);
-	for( it = list.begin(); it != list.end(); it++ ){
+	for( it = list.begin(); it != list.end(); ++it ){
 		preferencesDialog->tbFingerprints->setRowCount( preferencesDialog->tbFingerprints->rowCount() +1 );
  		(*it)[j*5] = OtrlChatInterface::self()->formatContact((*it)[j*5]);
 		for( int i = 0; i < 5; i++ ){ 	

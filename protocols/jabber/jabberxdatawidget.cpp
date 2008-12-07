@@ -111,8 +111,8 @@ public:
 	XDataWidgetField(f)
 	{
 		QString text;
-		QStringList val = f.value();
-		for(QStringList::Iterator it = val.begin(); it != val.end(); it++)
+		const QStringList val = f.value();
+		for(QStringList::ConstIterator it = val.begin(); it != val.end(); ++it)
 		{
 			if(!text.isEmpty())
 				text += "<br>";
@@ -418,7 +418,7 @@ JabberXDataWidget::JabberXDataWidget(const XMPP::XData &data, QWidget *parent) :
 	if(!data.instructions().isEmpty())
 		fields++;
 	XMPP::XData::FieldList::ConstIterator it = f.begin();
-	for(; it != f.end(); it++)
+	for(; it != f.end(); ++it)
 	{
 		switch((*it).type())
 		{
@@ -453,7 +453,7 @@ JabberXDataWidget::JabberXDataWidget(const XMPP::XData &data, QWidget *parent) :
 		row++;
 	}
 	it = f.begin();
-	for(; it != f.end(); it++, row++)
+	for(; it != f.end(); ++it, ++row)
 	{
 		XDataWidgetField *f;
 		switch((*it).type())
@@ -501,14 +501,14 @@ JabberXDataWidget::~JabberXDataWidget()
 XMPP::XData::FieldList JabberXDataWidget::fields() const
 {
 	XMPP::XData::FieldList f;
-	for(QList<XDataWidgetField *>::ConstIterator it = mFields.begin(); it != mFields.end(); it++)
+	for(QList<XDataWidgetField *>::ConstIterator it = mFields.constBegin(); it != mFields.constEnd(); ++it)
 		f.append((*it)->field());
 	return f;
 }
 
 bool JabberXDataWidget::isValid() const
 {
-	for(QList<XDataWidgetField *>::ConstIterator it = mFields.begin(); it != mFields.end(); it++)
+	for(QList<XDataWidgetField *>::ConstIterator it = mFields.constBegin(); it != mFields.constEnd(); ++it)
 		if(!(*it)->isValid())
 			return false;
 	return true;

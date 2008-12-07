@@ -1098,7 +1098,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 	QString m = who;
 	QStringList myMembers;
 	myMembers.push_back( who );
-	for( QStringList::const_iterator it = ++members.constBegin(); it != members.constEnd(); it++ )
+	for( QStringList::const_iterator it = ++members.constBegin(); it != members.constEnd(); ++it )
 	{
 		if( *it != m_session->userId() )
 		{

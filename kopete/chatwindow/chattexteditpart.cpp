@@ -184,8 +184,6 @@ void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 
 bool ChatTextEditPart::canSend()
 {
-	int i;
-
 	if ( !m_session ) return false;
 
 	// can't send if there's nothing *to* send...
@@ -200,7 +198,7 @@ bool ChatTextEditPart::canSend()
 		bool reachableContactFound = false;
 
 		//TODO: does this perform badly in large / busy IRC channels? - no, doesn't seem to
-		for( i = 0; i != members.size(); i++ )
+		for( int i = 0; i != members.size(); ++i )
 		{
 			if ( members[i]->isReachable() )
 			{

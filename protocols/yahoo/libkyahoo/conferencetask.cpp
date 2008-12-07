@@ -88,9 +88,9 @@ void ConferenceTask::parseInvitation( YMSGTransfer *t )
 		msg = t->firstParam( 58 );
 
 	QStringList members;
-	for( i = 0; i < t->paramCount( 52 ); i++ )
+	for( i = 0; i < t->paramCount( 52 ); ++i )
 		members.append( t->nthParam( 52, i ) );
-	for( i = 0; i < t->paramCount( 53 ); i++ )
+	for( i = 0; i < t->paramCount( 53 ); ++i )
 		members.append( t->nthParam( 53, i ) );
 	if( who == client()->userId() )
 		return;
@@ -161,7 +161,7 @@ void ConferenceTask::inviteConference( const QString &room, const QStringList &m
 	t->setParam( 57, room.toLocal8Bit() );
 	t->setParam( 58, msg.toLocal8Bit() );
 	t->setParam( 97, 1 );
-	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
+	for( QStringList::const_iterator it = members.begin(); it != members.end(); ++it )
 		t->setParam( 52, (*it).toLocal8Bit() );
 	t->setParam( 13, "0" );
 
@@ -184,7 +184,7 @@ void ConferenceTask::addInvite( const QString &room, const QStringList &who, con
 	t->setParam( 57, room.toLocal8Bit() );
 	t->setParam( 58, msg.toLocal8Bit() );
 	t->setParam( 97, 1 );
-	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
+	for( QStringList::const_iterator it = members.begin(); it != members.end(); ++it )
 	{
 		t->setParam( 52, (*it).toLocal8Bit() );
 		t->setParam( 53, (*it).toLocal8Bit() );	// Note: this field should only be set if the buddy has already joined the conference, but no harm is done this way
@@ -201,7 +201,7 @@ void ConferenceTask::joinConference( const QString &room, const QStringList &mem
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfLogon);
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().toLocal8Bit() );
-	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
+	for( QStringList::const_iterator it = members.begin(); it != members.end(); ++it )
 		t->setParam( 3, (*it).toLocal8Bit() );
 	t->setParam( 57, room.toLocal8Bit() );
 
@@ -215,7 +215,7 @@ void ConferenceTask::declineConference( const QString &room, const QStringList &
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfDecline);
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().toLocal8Bit() );
-	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
+	for( QStringList::const_iterator it = members.begin(); it != members.end(); ++it )
 		t->setParam( 3, (*it).toLocal8Bit() );
 	t->setParam( 57, room.toLocal8Bit() );	
 	t->setParam( 14, msg.toUtf8() );
@@ -230,7 +230,7 @@ void ConferenceTask::leaveConference( const QString &room, const QStringList &me
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfLogoff);
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().toLocal8Bit() );
-	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
+	for( QStringList::const_iterator it = members.begin(); it != members.end(); ++it )
 		t->setParam( 3, (*it).toLocal8Bit() );
 	t->setParam( 57, room.toLocal8Bit() );
 
@@ -244,7 +244,7 @@ void ConferenceTask::sendMessage( const QString &room, const QStringList &member
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfMsg);
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().toLocal8Bit() );
-	for( QStringList::const_iterator it = members.begin(); it != members.end(); it++ )
+	for( QStringList::const_iterator it = members.begin(); it != members.end(); ++it )
 		t->setParam( 53, (*it).toLocal8Bit() );
 	t->setParam( 57, room.toLocal8Bit() );
 	t->setParam( 14, msg.toUtf8() );
