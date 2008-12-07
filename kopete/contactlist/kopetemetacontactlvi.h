@@ -23,9 +23,7 @@
 
 #include "kopetelistviewitem.h"
 
-#include <qobject.h>
-#include <qpixmap.h>
-#include <q3ptrdict.h>
+#include <QtGui/QPixmap>
 
 #include <k3listview.h>
 
@@ -174,8 +172,6 @@ private:
 	QPixmap m_originalBlinkIcon;
 
 	QTimer *mBlinkTimer;
-
-	Q3PtrDict<Kopete::Account> m_addContactActions;
 
 	bool mIsBlinkIcon;
 	int m_blinkLeft;
