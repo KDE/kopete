@@ -211,7 +211,7 @@ void LatexPlugin::slotMessageAboutToSend( Kopete::Message& msg)
 
 		if(!url.isNull())
 		{
-			QString escapedLATEX= Qt::escape(messageText).replace("\"","&quot;");
+			QString escapedLATEX= Qt::escape(messageText).replace('\"',"&quot;");
 			QString messageText="<img src=\"" + url + "\" alt=\"" + escapedLATEX + "\" title=\"" + escapedLATEX +"\"  />";
 			msg.setBody( messageText, Kopete::Message::RichText );
 		}

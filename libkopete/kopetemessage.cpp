@@ -339,9 +339,9 @@ QString Message::escape( const QString &text )
 {
 	QString html = Qt::escape( text );
  	//Replace carriage returns inside the text
-	html.replace( QLatin1String( "\n" ), QLatin1String( "<br />" ) );
+	html.replace( QLatin1Char( '\n' ), QLatin1String( "<br />" ) );
 	//Replace a tab with 4 spaces
-	html.replace( QLatin1String( "\t" ), QLatin1String( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+	html.replace( QLatin1Char( '\t' ), QLatin1String( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 
 	//Replace multiple spaces with &nbsp;
 	//do not replace every space so we break the linebreak

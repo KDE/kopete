@@ -143,7 +143,7 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 	QList<QByteArray> parts=line.trimmed().split(' ');
 
 	//	remove the trailling \r\n if any(there must be in fact)
-	parts.last()=parts.last().replace("\r\n","");
+	parts.last()=parts.last().remove("\r\n");
 	
 	QList<QByteArray>::const_iterator it=parts.begin();
 

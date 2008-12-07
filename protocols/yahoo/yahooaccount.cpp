@@ -955,7 +955,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsgText.replace( regExp, QLatin1String("" ) );
+			newMsgText.remove( regExp );
 
 		}
 	}
@@ -965,7 +965,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsgText.replace( regExp, QLatin1String("" ) );
+			newMsgText.remove( regExp );
 		}
 	}
 

@@ -145,7 +145,7 @@ void HistoryGUIClient::slotQuote()
 	QString body = msgs.isEmpty() ? "" : msgs.last().plainBody();
 	kDebug(14310) << "Quoting last message " << body;
 
-	body = body.replace(QRegExp("\n"), "\n> ");
+	body = body.replace('\n', "\n> ");
 	body.prepend ("> ");
 	body.append ("\n");
 

@@ -143,7 +143,7 @@ void XmlContactStorage::load()
     QString versionString = list.attribute( QString::fromLatin1( "version" ), QString() );
     uint version = 0;
     if( QRegExp( QString::fromLatin1( "[0-9]+\\.[0-9]" ) ).exactMatch( versionString ) )
-        version = versionString.replace( QString::fromLatin1( "." ), QString() ).toUInt();
+        version = versionString.remove( QLatin1Char( '.' ) ).toUInt();
 
     if( version < Private::ContactListVersion )
     {
@@ -309,7 +309,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
             //  return false;
 
             //the replace is there to workaround the Bug 95444
-            metaContact->setDisplayName( contactElement.text().replace('\n',QString::fromUtf8("")) );
+            metaContact->setDisplayName( contactElement.text().remove('\n') );
 
             if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
             {
@@ -887,11 +887,11 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
                         QString data = oldContactElement.text();
 
                         QString app, key, val;
-                        QString separator = QLatin1String( "," );
+                        QChar separator = QLatin1Char( "," );
                         if( id == QLatin1String( "messaging/gadu" ) )
-                            separator = QLatin1String( "\n" );
+                            separator = QLatin1Char( "\n" );
                         else if( id == QLatin1String( "messaging/icq" ) )
-                            separator = QLatin1String( ";" );
+                            separator = QLatin1Char( ";" );
                         else if( id == QLatin1String( "messaging/jabber" ) )
                             id = QLatin1String( "messaging/xmpp" );
 
@@ -900,7 +900,7 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
                         {
                             app = id;
                             key = QLatin1String( "All" );
-                            val = data.replace( separator, QString( QChar( 0xE000 ) ) );
+                            val = data.replace( separator, QChar( 0xE000 ) );
                         }
 
                         if( !app.isEmpty() )
@@ -1021,13 +1021,13 @@ void XmlContactStorage::convertContactList( const QString &fileName, uint /* fro
                                 id == QLatin1String( "SMSProtocol" ) || id == QLatin1String( "WPProtocol" ) ||
                                 id == QLatin1String( "GaduProtocol" ) )
                             {
-                                QStringList strList = data.split( QLatin1String( "||" ), QString::SkipEmptyParts );
+                                const QStringList strList = data.split( QLatin1String( "||" ), QString::SkipEmptyParts );
 
                                 // Unescape '||'
-                                for( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
+                                for( QStringList::ConstIterator it = strList.begin(); it != strList.end(); ++it )
                                 {
-                                    ( *it ).replace( QLatin1String( "\\|;" ), QLatin1String( "|" ) ).
-                                            replace( QLatin1String( "\\\\" ), QLatin1String( "\\" ) );
+                                    ( *it ).replace( QLatin1String( "\\|;" ), QLatin1Char( '|' ) ).
+                                            replace( QLatin1String( "\\\\" ), QLatin1Char( '\\' ) );
                                 }
 
                                 uint idx = 0;
