@@ -94,7 +94,7 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 		void slotWriteAddressBook();
 	private:
 		class Private;
-		Private *d;
+		Private * const d;
 };
 
 } // end namespace Kopete

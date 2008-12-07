@@ -60,7 +60,7 @@ public:
 	
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 /**
@@ -80,7 +80,7 @@ signals:
 	
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }

@@ -47,7 +47,7 @@ private slots:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 #endif // STATUSCONFIG_MANAGER_H

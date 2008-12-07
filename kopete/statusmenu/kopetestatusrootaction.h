@@ -161,7 +161,7 @@ private:
 	void insertChild( QAction * before, Status::StatusItem* child );
 	
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }

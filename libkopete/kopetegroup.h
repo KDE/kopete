@@ -164,7 +164,7 @@ private:
 	static Group *s_temporary;
 
 	class Private;
-	Private *d;
+	Private * const d;
 	
 	/**
 	 * @internal  used to get reachabe contact to send message to thom.

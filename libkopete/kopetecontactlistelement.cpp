@@ -37,10 +37,8 @@ public:
 };
 
 ContactListElement::ContactListElement( QObject *parent )
-: PropertyContainer( parent )
+: PropertyContainer( parent ), d(new Private())
 {
-	d = new Private;
-
 	d->useCustomIcon = false;
 	d->loading = false;
 #if 0  //TODO

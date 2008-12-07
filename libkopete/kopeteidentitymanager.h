@@ -167,7 +167,7 @@ private slots:
 private:
 	static IdentityManager *s_self;
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 } //END namespace Kopete

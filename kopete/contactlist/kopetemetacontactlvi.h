@@ -181,7 +181,7 @@ private:
 	int m_blinkLeft;
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 #endif

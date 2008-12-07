@@ -40,7 +40,7 @@ class OnlineStatusAction : public KAction
 	void slotActivated();
   private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }  //END namespace Kopete

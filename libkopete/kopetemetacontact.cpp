@@ -44,10 +44,8 @@
 namespace Kopete {
 
 MetaContact::MetaContact()
-	: ContactListElement( ContactList::self() )
+	: ContactListElement( ContactList::self() ), d(new Private())
 {
-	d = new Private;
-
 	connect( this, SIGNAL( pluginDataChanged() ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( iconChanged( Kopete::ContactListElement::IconState, const QString & ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( useCustomIconChanged( bool ) ), SIGNAL( persistentDataChanged() ) );

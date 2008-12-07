@@ -185,7 +185,7 @@ public:
 const unsigned int IDLE_INTERVAL = 10 * 60;
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent )
-: ListView::Item( parent, contact )
+: ListView::Item( parent, contact ), d(new Private())
 //: QObject( contact, "MetaContactLVI" ), K3ListViewItem( parent )
 {
 	setObjectName( QLatin1String("MetaContactLVI") );
@@ -199,7 +199,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Kopete
 }
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListViewItem *parent )
-: ListView::Item( parent, contact )
+: ListView::Item( parent, contact ), d(new Private())
 //: QObject( contact, "MetaContactLVI" ), K3ListViewItem( parent )
 {
 	setObjectName( QLatin1String("MetaContactLVI") );
@@ -213,7 +213,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3List
 }
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3ListView *parent )
-: ListView::Item( parent, contact )
+: ListView::Item( parent, contact ), d(new Private())
 //: QObject( contact, "MetaContactLVI" ), K3ListViewItem( parent )
 {
 	setObjectName( QLatin1String("MetaContactLVI") );
@@ -228,8 +228,6 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, Q3List
 
 void KopeteMetaContactLVI::initLVI()
 {
-	d = new Private;
-
 	d->idleTimer = 0;
 
 	d->toolTipSource.reset( new ListView::MetaContactToolTipSource( m_metaContact ) );

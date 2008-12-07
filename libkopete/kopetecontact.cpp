@@ -85,10 +85,8 @@ public:
 
 Contact::Contact( Account *account, const QString &contactId,
 	MetaContact *parent, const QString &icon )
-	: ContactListElement( parent )
+	: ContactListElement( parent ), d(new Private())
 {
-	d = new Private;
-
 	//kDebug( 14010 ) << "Creating contact with id " << contactId;
 
 	d->contactId = contactId;

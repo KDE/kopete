@@ -282,7 +282,7 @@ private:
 	void readChatFont();
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 class HTMLEventListener: public QObject, public DOM::EventListener

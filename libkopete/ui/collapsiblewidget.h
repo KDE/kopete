@@ -90,7 +90,7 @@ class KOPETE_EXPORT CollapsibleWidget : public QWidget
   private:
     Q_DISABLE_COPY( CollapsibleWidget )
     class Private;
-    Private *d;
+    Private * const d;
 
 
 };
@@ -115,7 +115,7 @@ class KOPETE_EXPORT SettingsContainer : public QScrollArea
  private:
     Q_DISABLE_COPY( SettingsContainer )
     class Private;
-    Private *d;
+    Private * const d;
 };
 
 

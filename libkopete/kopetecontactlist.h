@@ -258,7 +258,7 @@ private:
 	
 	static ContactList *s_self;
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 } //END namespace Kopete

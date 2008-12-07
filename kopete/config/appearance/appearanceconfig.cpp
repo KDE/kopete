@@ -84,10 +84,8 @@ public:
 
 
 AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
-: KCModule( KopeteAppearanceConfigFactory::componentData(), parent, args )
+: KCModule( KopeteAppearanceConfigFactory::componentData(), parent, args ), d(new Private())
 {
-	d = new Private;
-
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	// since the tab widget is already within a layout with margins in the KSettings::Dialog
 	// it needs no margins of its own.

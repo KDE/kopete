@@ -206,7 +206,7 @@ class KOPETE_EXPORT Property
 
 	private:
 		class Private;
-		Private *d;
+		Private * const d;
 };
 
 } // END namespace Kopete

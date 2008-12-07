@@ -71,7 +71,7 @@ protected:
 	void updateAnimationPosition( int p, int s );
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 	// calls componentAdded and componentRemoved
 	friend class Component;
@@ -227,7 +227,7 @@ private:
 	QRect targetRect();
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 class KOPETE_EXPORT BoxComponent : public Component
@@ -254,7 +254,7 @@ private:
 	void calcMinSize();
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 class KOPETE_EXPORT TextComponent : public Component
@@ -284,7 +284,7 @@ private:
 	void calcMinSize();
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 class KOPETE_EXPORT ImageComponent : public Component
@@ -304,7 +304,7 @@ public:
 	virtual int rtti() const { return RTTI; }
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 /**
@@ -320,7 +320,7 @@ public:
 	std::pair<QString,QRect> toolTip( const QPoint &relativePos );
 protected:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 /**
@@ -364,7 +364,7 @@ public:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 class KOPETE_EXPORT HSpacerComponent : public Component
@@ -455,7 +455,7 @@ private slots:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 } // END namespace ListView

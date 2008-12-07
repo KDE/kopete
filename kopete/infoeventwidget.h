@@ -77,7 +77,7 @@ private:
 	int sizeHintHeight() const;
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 #endif

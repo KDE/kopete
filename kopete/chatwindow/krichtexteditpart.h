@@ -175,7 +175,7 @@ public:
 
 private:
     class Private;
-    Private *d;
+    Private * const d;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KRichTextEditPart::RichTextSupport)

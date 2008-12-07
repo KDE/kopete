@@ -69,14 +69,14 @@ private:
 } // END namespace Kopete
 
 KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, Q3ListView *parent )
-: Kopete::UI::ListView::Item( parent, group_ )
+: Kopete::UI::ListView::Item( parent, group_ ), d(new Private())
 {
 	m_group = group_;
 	initLVI();
 }
 
 KopeteGroupViewItem::KopeteGroupViewItem( Kopete::Group *group_, Q3ListViewItem *parent )
- : Kopete::UI::ListView::Item( parent, group_ )
+ : Kopete::UI::ListView::Item( parent, group_ ), d(new Private())
 {
 	m_group = group_;
 	initLVI();
@@ -89,8 +89,6 @@ KopeteGroupViewItem::~KopeteGroupViewItem()
 
 void KopeteGroupViewItem::initLVI()
 {
-	d = new Private;
-
 	d->toolTipSource.reset( new Kopete::UI::ListView::GroupToolTipSource( this ) );
 
 	using namespace Kopete::UI::ListView;

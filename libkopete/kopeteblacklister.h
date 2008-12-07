@@ -116,7 +116,7 @@ private:
 	void saveToDisk();
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }
