@@ -33,7 +33,7 @@ class KHTMLPart;
 
 namespace KParts
 {
-	class BrowserArguments;
+	struct BrowserArguments;
 	class OpenUrlArguments;
 }
 
