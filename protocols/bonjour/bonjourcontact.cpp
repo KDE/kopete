@@ -23,6 +23,7 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <dnssd/servicebrowser.h>
 
 #include <kopeteaccount.h>
 #include <kopetechatsessionmanager.h>

@@ -26,6 +26,7 @@
 #include <kmessagebox.h>
 
 #include <dnssd/publicservice.h>
+#include <dnssd/servicebrowser.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
