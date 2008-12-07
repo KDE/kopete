@@ -136,11 +136,8 @@
          </widget>
         </item>
         <item row="1" column="1" >
-         <widget class="QTextEdit" name="mAutoAwayCustomMessage" >
+         <widget class="QPlainTextEdit" name="mAutoAwayCustomMessage" >
           <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="acceptRichText" >
            <bool>false</bool>
           </property>
          </widget>
