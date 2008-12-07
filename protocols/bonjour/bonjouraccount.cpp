@@ -177,7 +177,21 @@ void BonjourAccount::startPublish()
         service->setTextData(map);
 
 	kDebug()<<"Starting Publish";
-        service->publish();
+	QObject::connect(service, SIGNAL(published(bool)), this, SLOT(published(bool)));
+        service->publishAsync();
+}
+
+void BonjourAccount::published(bool success)
+{
+	// If we have sucessfully published, great :)
+	if (success) {
+		kDebug()<<"Publish Successful";
+	} else {
+		kDebug()<<"Publish Failed";
+		disconnect();
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+		i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi"));
+	}
 }
 
 void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
@@ -280,18 +294,24 @@ void BonjourAccount::disconnect()
 {
 	wipeOutAllContacts();
 
-	localServer->close();
-	service->stop();
+	if (browser) {
+		delete browser;
+		browser = NULL;
+	}
 
-	delete browser;
-	browser = NULL;
+	if (localServer) {
+		localServer->close();
+		delete localServer;
+		localServer = NULL;
+	}
 
-	delete localServer;
-	localServer = NULL;
 	listeningPort = 0;
 
-	delete service;
-	service = NULL;
+	if (service) {
+		service->stop();
+		delete service;
+		service = NULL;
+	}
 
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
 }
@@ -300,8 +320,8 @@ void BonjourAccount::slotGoOnline ()
 {
 	kDebug();
 
-	if (!isConnected ())
-		connect ();
+	if (!isConnected())
+		connect();
 	else
 		myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOnline );
 }

@@ -216,6 +216,13 @@ public slots:
 	 */
 	void usernameNotInStream(BonjourContactConnection *conn);
 
+	/**
+	 * @brief This Slot is called when we finish publishing our service
+	 *
+	 * @param success This is set to true if we successfully started the publish. Else it's an error
+	 */
+	void published(bool success);
+
 private:
 
 	/** 
