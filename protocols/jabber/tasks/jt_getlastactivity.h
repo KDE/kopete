@@ -41,7 +41,7 @@ class JT_GetLastActivity : public XMPP::Task
 
 	private:
 		class Private;
-		Private *d;
+		Private * const d;
 
 		QDomElement iq;
 		XMPP::Jid jid;

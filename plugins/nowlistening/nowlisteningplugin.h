@@ -100,7 +100,7 @@ friend class NowListeningGUIClient;
 
 	private:
 		class Private;
-		Private *d;
+		Private * const d;
 
 		static NowListeningPlugin* pluginStatic_;
 };

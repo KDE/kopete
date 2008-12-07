@@ -61,9 +61,8 @@ public:
 };
 
 ClientStream::ClientStream( QAbstractSocket *socket, QObject *parent )
-: Stream( parent )
+: Stream( parent ), d(new Private())
 {
-	d = new Private;
 	d->socket = socket;
 
 	connect( d->socket, SIGNAL(connected()), SLOT(socketConnected()) );

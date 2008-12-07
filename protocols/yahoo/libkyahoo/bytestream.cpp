@@ -67,10 +67,9 @@ public:
 //!
 //! Constructs a ByteStream object with parent \a parent.
 ByteStream::ByteStream(QObject *parent)
-:QObject(parent)
+:QObject(parent), d(new Private())
 {
 // 	kDebug(14181) ;
-	d = new Private;
 }
 
 //!

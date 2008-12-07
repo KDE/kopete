@@ -127,9 +127,8 @@ QStringList JabberClient::Private::s5bAddressList;
 int JabberClient::Private::s5bServerPort = 8010;
 
 JabberClient::JabberClient ()
+ : d(new Private())
 {
-	d = new Private();
-
 	cleanUp ();
 
 	// initiate penalty timer

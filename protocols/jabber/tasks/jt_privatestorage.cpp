@@ -35,9 +35,8 @@ class JT_PrivateStorage::Private
 };
 
 JT_PrivateStorage::JT_PrivateStorage(Task *parent)
-	:Task(parent)
+	:Task(parent), d(new Private())
 {
-	d = new Private;
 }
 
 JT_PrivateStorage::~JT_PrivateStorage()

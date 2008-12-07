@@ -80,7 +80,7 @@ private:
 	void incomingData(const QByteArray &a);
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 class LayerTracker

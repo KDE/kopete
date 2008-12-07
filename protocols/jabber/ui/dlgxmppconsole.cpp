@@ -40,13 +40,13 @@ dlgXMPPConsole::~dlgXMPPConsole()
 
 void dlgXMPPConsole::slotIncomingXML(const QString &msg)
 {
-	ui.brLog->setColor(Qt::red);
+	ui.brLog->setTextColor(Qt::red);
 	ui.brLog->append(msg);
 }
 
 void dlgXMPPConsole::slotOutgoingXML(const QString &msg)
 {
-	ui.brLog->setColor(Qt::blue);
+	ui.brLog->setTextColor(Qt::blue);
 	ui.brLog->append(msg);
 }
 
