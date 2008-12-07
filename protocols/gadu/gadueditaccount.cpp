@@ -130,7 +130,7 @@ GaduEditAccount::publishUserInfo()
 void
 GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq )
 {
-	if ( !( seq != 0 && seqNr != 0 && seq == seqNr ) ) {
+	if ( !( seq != 0 && seqNr != 0 && seq == seqNr ) || result.isEmpty() ) {
 		return;
 	}
 
