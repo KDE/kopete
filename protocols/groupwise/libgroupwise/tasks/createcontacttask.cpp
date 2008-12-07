@@ -23,8 +23,6 @@
 #include "createcontactinstancetask.h"
 
 #include "createcontacttask.h"
-//Added by qt3to4:
-#include <Q3ValueList>
 
 CreateContactTask::CreateContactTask(Task* parent): Task(parent)
 {

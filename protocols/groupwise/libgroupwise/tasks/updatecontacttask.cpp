@@ -21,8 +21,7 @@
 #include "gwfield.h" 
 
 #include "updatecontacttask.h"
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QtCore/QList>
 
 using namespace GroupWise; 
 
@@ -40,13 +39,13 @@ QString UpdateContactTask::displayName()
 	return m_name;
 }
 
-void UpdateContactTask::renameContact( const QString & newName, const Q3ValueList<ContactItem> & contactInstances )
+void UpdateContactTask::renameContact( const QString & newName, const QList<ContactItem> & contactInstances )
 {
 	m_name = newName;
 	// build a list of delete, add fields that removes each instance on the server and then readds it with the new name
 	Field::FieldList lst;
-	const Q3ValueList<ContactItem>::ConstIterator end = contactInstances.end();
-	for( Q3ValueList<ContactItem>::ConstIterator it = contactInstances.begin(); it != end; ++it )
+	const QList<ContactItem>::ConstIterator end = contactInstances.end();
+	for( QList<ContactItem>::ConstIterator it = contactInstances.begin(); it != end; ++it )
 	{
 		Field::FieldList contactFields;
 		contactFields.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, (*it).id ) );
@@ -59,7 +58,7 @@ void UpdateContactTask::renameContact( const QString & newName, const Q3ValueLis
 		lst.append( 
 			new Field::MultiField( Field::NM_A_FA_CONTACT, NMFIELD_METHOD_DELETE, 0, NMFIELD_TYPE_ARRAY, contactFields ) );
 	}
-	for( Q3ValueList<ContactItem>::ConstIterator it = contactInstances.begin(); it != end; ++it )
+	for( QList<ContactItem>::ConstIterator it = contactInstances.begin(); it != end; ++it )
 	{
 		Field::FieldList contactFields;
 		contactFields.append( new Field::SingleField( Field::NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, (*it).id ) );

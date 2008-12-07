@@ -25,8 +25,7 @@
 #include "logintask.h"
 
 #include "pollsearchresultstask.h"
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QtCore/QList>
 
 using namespace GroupWise;
 
@@ -100,7 +99,7 @@ bool PollSearchResultsTask::take( Transfer * transfer )
 	return true;
 }
 
-Q3ValueList< GroupWise::ContactDetails > PollSearchResultsTask::results()
+QList< GroupWise::ContactDetails > PollSearchResultsTask::results()
 {
 	return m_results;
 }

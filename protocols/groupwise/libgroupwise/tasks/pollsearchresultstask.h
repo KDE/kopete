@@ -42,11 +42,11 @@ public:
 	void poll( const QString & queryHandle);
 	bool take( Transfer * transfer );
 	int queryStatus();
-	Q3ValueList< GroupWise::ContactDetails > results();
+	QList< GroupWise::ContactDetails > results();
 GroupWise::ContactDetails extractUserDetails( Field::FieldList & fields );
 private:
 	int m_queryStatus;
-	Q3ValueList< GroupWise::ContactDetails > m_results;
+	QList< GroupWise::ContactDetails > m_results;
 };
 
 #endif

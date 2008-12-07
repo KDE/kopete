@@ -25,8 +25,7 @@
 
 #include "libgroupwise_export.h"
 #include "updateitemtask.h"
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QtCore/QList>
 
 /**
  * Renames a contact on the server
@@ -38,7 +37,7 @@ Q_OBJECT
 public:
 	UpdateContactTask(Task* parent);
 	~UpdateContactTask();
-	void renameContact( const QString& newName, const Q3ValueList<GroupWise::ContactItem> & contactInstances );
+	void renameContact( const QString& newName, const QList<GroupWise::ContactItem> & contactInstances );
 	QString displayName();
 private:
 	QString m_name;
