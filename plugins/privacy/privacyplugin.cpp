@@ -87,7 +87,7 @@ void PrivacyPlugin::slotSettingsChanged()
 
 void PrivacyPlugin::slotAddToWhiteList()
 {
-	QList< Kopete::Contact *> list;
+	QList<const Kopete::Contact *> list;
 	foreach( const Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
 		foreach( const Kopete::Contact *contact, metacontact->contacts() )
@@ -101,7 +101,7 @@ void PrivacyPlugin::slotAddToWhiteList()
 
 void PrivacyPlugin::slotAddToBlackList()
 {
-	QList< Kopete::Contact *> list;
+	QList<const Kopete::Contact *> list;
 	foreach( const Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
 		foreach( const Kopete::Contact *contact, metacontact->contacts() )
@@ -113,7 +113,7 @@ void PrivacyPlugin::slotAddToBlackList()
 	addContactsToBlackList( list );
 }
 
-void PrivacyPlugin::addContactsToWhiteList( QList< Kopete::Contact *> list )
+void PrivacyPlugin::addContactsToWhiteList( QList<const Kopete::Contact *> list )
 {
 	QStringList whitelist = PrivacyConfig::whiteList();
 
@@ -128,7 +128,7 @@ void PrivacyPlugin::addContactsToWhiteList( QList< Kopete::Contact *> list )
 	PrivacyConfig::self()->writeConfig();
 }
 
-void PrivacyPlugin::addContactsToBlackList( QList< Kopete::Contact *> list )
+void PrivacyPlugin::addContactsToBlackList( QList<const Kopete::Contact *> list )
 {
 	QStringList blacklist = PrivacyConfig::blackList();
 
