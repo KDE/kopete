@@ -53,7 +53,7 @@ protected:
 
 private:
 	int aimFontSize( int size ) const;
-	QString brMargin( int margin, int fontPointSize, bool endBlock = false ) const;
+	QString brMargin( int margin, int fontPointSize, bool forceBr = false ) const;
 
 	QDateTime m_lastAutoresponseTime;
 	
