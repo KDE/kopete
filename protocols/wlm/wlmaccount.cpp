@@ -866,7 +866,7 @@ WlmAccount::connectionCompleted ()
     setPersonalMessage(myself()->statusMessage());
 
     // manage pending list
-    foreach ( QString contact, pendingList() )
+    foreach ( const QString &contact, pendingList() )
     {
         // if we do not have this contact yet, so ask for add it
         if(!isOnServerSideList(contact))
@@ -882,11 +882,11 @@ void WlmAccount::gotAddedGroup (bool added,
                                 const QString & groupId)
 {
     kDebug() << "groupName: " << groupName << "groupId: " << groupId << " added:" << added;
-    QList<QString> contactIdList = m_contactAddQueue.keys (groupName);
+    const QStringList contactIdList = m_contactAddQueue.keys (groupName);
     if (!added)
     {
         // Remove contact from add queue. FIXME: We should somehow sync the contact list here
-        foreach ( QString contactId, contactIdList )
+        foreach ( const QString &contactId, contactIdList )
             m_contactAddQueue.remove(contactId);
 
         return;
@@ -896,7 +896,7 @@ void WlmAccount::gotAddedGroup (bool added,
     m_groupToGroupId.insert(groupName, groupId);
 
     // Add contact to the new group
-    foreach ( QString contactId, contactIdList )
+    foreach ( const QString &contactId, contactIdList )
     {
         kDebug() << "adding contact " << contactId;
         m_server->cb.mainConnection->addToAddressBook (contactId.toAscii().data(), contactId.toAscii().data());

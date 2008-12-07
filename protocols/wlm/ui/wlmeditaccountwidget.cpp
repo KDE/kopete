@@ -66,7 +66,7 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
         m_preferencesWidget->m_blockButton->setIcon( KIcon( "arrow-right" ) );
 
         QSet<QString> serverSideContacts = m_wlmAccount->serverSideContacts();
-        foreach ( QString contact, m_wlmAccount->allowList() )
+        foreach ( const QString &contact, m_wlmAccount->allowList() )
         {
             QListWidgetItem *item = new QListWidgetItem( contact );
             if ( !serverSideContacts.contains( contact ) )
@@ -78,7 +78,7 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
             m_preferencesWidget->m_AL->addItem( item );
         }
 
-        foreach ( QString contact, m_wlmAccount->blockList() )
+        foreach ( const QString &contact, m_wlmAccount->blockList() )
         {
             QListWidgetItem *item = new QListWidgetItem( contact );
             if ( !serverSideContacts.contains( contact ) )
@@ -155,10 +155,10 @@ Kopete::Account * WlmEditAccountWidget::apply ()
                 wlmAccount->server()->mainConnection->blockContact( contact.toAscii().data() );
         }
 
-        foreach ( QString contact, m_deletedContactsAL )
+        foreach ( const QString &contact, m_deletedContactsAL )
             wlmAccount->server()->mainConnection->removeFromList( MSN::LST_AL, contact.toAscii().data() );
 
-        foreach ( QString contact, m_deletedContactsBL )
+        foreach ( const QString &contact, m_deletedContactsBL )
             wlmAccount->server()->mainConnection->removeFromList( MSN::LST_BL, contact.toAscii().data() );
     }
 

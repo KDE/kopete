@@ -473,7 +473,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 			// Notify affected jids.
 			QStringList jids = d->capabilitiesInformationMap[capabilities].jids();
 			kDebug(JABBER_DEBUG_GLOBAL) << "notify affected jids";
-			foreach( QString jid  , jids ) 
+			foreach( const QString &jid, jids )
 			{
 				emit capabilitiesChanged(jid);
 			}
@@ -571,7 +571,7 @@ XMPP::Features JabberCapabilitiesManager::features(const Jid& jid) const
 	{
 		CapabilitiesList capabilitiesList = d->jidCapabilitiesMap[jid.full()].flatten();
 
-		foreach(CapabilitiesList::value_type cap, capabilitiesList)
+		foreach(CapabilitiesList::const_reference cap, capabilitiesList)
 		{
 			featuresList += d->capabilitiesInformationMap[cap].features();
 		}

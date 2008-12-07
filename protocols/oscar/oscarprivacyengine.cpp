@@ -123,7 +123,7 @@ void OscarPrivacyEngine::slotRemove()
 {
 	QItemSelectionModel *selectionModel = m_listView->selectionModel();
 	
-	foreach ( QModelIndex selectedIndex, selectionModel->selectedIndexes() )
+	foreach ( const QModelIndex &selectedIndex, selectionModel->selectedIndexes() )
 	{
 		QString id = selectedIndex.data( Qt::UserRole ).toString();
 		
@@ -139,8 +139,8 @@ void OscarPrivacyEngine::storeChanges()
 	if ( !m_client->isActive() )
 		return;
 	
-	ChangeMap::Iterator it, cEnd = m_changesMap.end();
-	for ( it = m_changesMap.begin(); it != cEnd; ++it )
+	ChangeMap::ConstIterator it, cEnd = m_changesMap.constEnd();
+	for ( it = m_changesMap.constBegin(); it != cEnd; ++it )
 	{
 		switch( m_type )
 		{

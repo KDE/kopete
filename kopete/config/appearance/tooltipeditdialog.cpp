@@ -52,10 +52,10 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 
 	const Kopete::PropertyTmpl::Map propmap(
 		Kopete::Global::Properties::self()->templateMap());
-	QStringList usedKeys = Kopete::AppearanceSettings::self()->toolTipContents();
+	const QStringList usedKeys = Kopete::AppearanceSettings::self()->toolTipContents();
 
 	// first fill the "used" list
-	foreach(QString usedProp, usedKeys)
+	foreach(const QString &usedProp, usedKeys)
 	{
 		if(propmap.contains(usedProp) && !propmap[usedProp].isPrivate())
 		{
@@ -178,7 +178,7 @@ void TooltipEditDialog::slotUpButton()
 	QModelIndexList indexList = usedItemsListView->selectionModel()->selectedIndexes();
 	usedItemsListView->selectionModel()->clear();
 
-	foreach( QModelIndex index,	 indexList )
+	foreach( const QModelIndex &index, indexList )
 	{
 		int row = index.row();
 
@@ -204,7 +204,7 @@ void TooltipEditDialog::slotDownButton()
 	QModelIndexList indexList = usedItemsListView->selectionModel()->selectedIndexes();
 	usedItemsListView->selectionModel()->clear();
 
-	foreach( QModelIndex index,	 indexList )	{
+	foreach( const QModelIndex &index, indexList )	{
 		int row = index.row();
 
 		if ( row + 1 > mUsedEntries->rowCount() )
@@ -229,7 +229,7 @@ void TooltipEditDialog::slotAddButton()
 {
 	QModelIndexList indexList = unusedItemsListView->selectionModel()->selectedIndexes();
 
-	foreach( QModelIndex index_,  indexList )
+	foreach( const QModelIndex &index_, indexList )
 	{
 		QModelIndex index = static_cast<QSortFilterProxyModel*>( unusedItemsListView->model() )->mapToSource( index_ );
 
@@ -254,7 +254,7 @@ void TooltipEditDialog::slotRemoveButton()
 {
 	QModelIndexList indexList = usedItemsListView->selectionModel()->selectedIndexes();
 
-	foreach( QModelIndex index,	 indexList )
+	foreach( const QModelIndex &index, indexList )
 	{
 		int row = index.row();
 

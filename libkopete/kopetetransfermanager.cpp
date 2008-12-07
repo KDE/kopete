@@ -364,7 +364,7 @@ unsigned int Kopete::TransferManager::askIncomingTransfer( Kopete::Contact *cont
 	QString dn = contact ? (contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId()) : i18n("<unknown>");
 	
 	QString msgFileName;
-	foreach ( QString file, files )
+	foreach ( const QString &file, files )
 	{
 		QString trimmedFile = file.trimmed();
 		if ( !trimmedFile.isEmpty() )

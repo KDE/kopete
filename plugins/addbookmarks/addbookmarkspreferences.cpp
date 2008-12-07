@@ -66,7 +66,7 @@ void BookmarksPreferences::save()
 	{
 		QStringList list;
 		QModelIndexList indexList = p_dialog->contactList->selectionModel()->selectedIndexes();
-		foreach( QModelIndex index, indexList )
+		foreach( const QModelIndex &index, indexList )
 			list += p_contactsListModel->data( index, Qt::DisplayRole ).toString();
 
 		m_settings.setContactsList( list );
@@ -110,7 +110,7 @@ void BookmarksPreferences::load()
 	selectionModel->clearSelection();
 
 	QStringList selectedContactsList = m_settings.getContactsList();
-	foreach( QString contact, selectedContactsList )
+	foreach( const QString &contact, selectedContactsList )
 	{
 		int row = contactsList.indexOf( contact );
 		if ( row != -1 )

@@ -37,7 +37,7 @@ void PrivacyAccountListModel::loadAccounts( const QStringList &accounts )
 {
 	m_list.clear();
 	beginInsertRows(QModelIndex(), 0, accounts.size());
-	foreach( QString entry, accounts )
+	foreach( const QString &entry, accounts )
 	{
 		Kopete::Plugin *protocol = Kopete::PluginManager::self()->plugin( entry.split(':')[0] );
 		if( !protocol )
@@ -125,7 +125,7 @@ bool PrivacyAccountListModel::removeRows(int position, int rows, const QModelInd
 QStringList PrivacyAccountListModel::toStringList() const
 {
 	QStringList list;
-	foreach( AccountListEntry entry, m_list )
+	foreach( const AccountListEntry &entry, m_list )
 	{
 		list.append( entry.second->pluginId() + ':' + entry.first );
 	}

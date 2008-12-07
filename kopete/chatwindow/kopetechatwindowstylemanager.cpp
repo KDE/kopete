@@ -87,7 +87,7 @@ void ChatWindowStyleManager::loadStyles()
 	// Make sure there exists a directory where chat styles can be installed to and it will be watched for changes
 	KStandardDirs::locateLocal( "appdata", QLatin1String( "styles/" ) );
 
-        QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
+	QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
 	foreach(const QString &styleDir, chatStyles)
 	{
 		kDebug(14000) << styleDir;
@@ -162,9 +162,9 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	// main.css, Footer.html, Header.html, Status.html files in Contents/Resources.
 	// So for a style bundle to be valid, it must have a result greather than 8, because we test for 8 required entry.
 	int validResult = 0;
-	QStringList entries = rootDir->entries();
+	const QStringList entries = rootDir->entries();
 	// Will be reused later.
-	QStringList::Iterator entriesIt, entriesItEnd = entries.end();
+	QStringList::ConstIterator entriesIt, entriesItEnd = entries.end();
 	for(entriesIt = entries.begin(); entriesIt != entries.end(); ++entriesIt)
 	{
 		currentEntry = const_cast<KArchiveEntry*>(rootDir->entry(*entriesIt));
@@ -355,7 +355,7 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &styleNa
 
 void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)
 {
-	foreach(KFileItem item, dirList)
+	foreach(const KFileItem &item, dirList)
 	{
 		// Ignore data dir(from deprecated XSLT themes)
 		if( !item.url().fileName().contains(QString::fromUtf8("data")) )

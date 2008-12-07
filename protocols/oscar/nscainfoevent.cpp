@@ -37,8 +37,6 @@ NonServerContactsAddInfoEvent::NonServerContactsAddInfoEvent( ContactManager* li
 
 void NonServerContactsAddInfoEvent::updateText()
 {
-	QString text;
-
 	int addedContacts = mContactCount - mRemainingContacts.count();
 	setAdditionalText( i18nc( "%1 out of %2 contacts have been added", "%1 out of %2 added.", addedContacts, mContactCount ) );
 }

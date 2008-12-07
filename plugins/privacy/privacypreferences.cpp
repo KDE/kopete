@@ -173,7 +173,7 @@ void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 
 	if( addDialog->exec() == QDialog::Accepted )
 	{
-		foreach( AccountListEntry entry, selector->contacts() )
+		foreach( const AccountListEntry &entry, selector->contacts() )
 		{
 			m_whiteListModel->addAccount( entry );
 		}
@@ -199,7 +199,7 @@ void PrivacyPreferences::slotBtnAddToBlackListClicked()
 
 	if( addDialog->exec() == QDialog::Accepted )
 	{
-		foreach( AccountListEntry entry, selector->contacts() )
+		foreach( const AccountListEntry &entry, selector->contacts() )
 		{
 			m_blackListModel->addAccount( entry );
 		}
@@ -228,7 +228,7 @@ void PrivacyPreferences::slotBtnClearBlackListClicked()
 
 void PrivacyPreferences::slotBtnRemoveFromWhiteListClicked()
 {
-	foreach(QModelIndex index, prefUi->listWhiteList->selectionModel()->selectedRows() )
+	foreach(const QModelIndex &index, prefUi->listWhiteList->selectionModel()->selectedRows() )
 	{
 		m_whiteListModel->removeRow( index.row() );
 	}
@@ -238,7 +238,7 @@ void PrivacyPreferences::slotBtnRemoveFromWhiteListClicked()
 
 void PrivacyPreferences::slotBtnRemoveFromBlackListClicked()
 {
-	foreach(QModelIndex index, prefUi->listBlackList->selectionModel()->selectedRows() )
+	foreach(const QModelIndex &index, prefUi->listBlackList->selectionModel()->selectedRows() )
 	{
 		m_blackListModel->removeRow( index.row() );
 	}

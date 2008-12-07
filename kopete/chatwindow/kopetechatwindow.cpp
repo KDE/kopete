@@ -1079,7 +1079,6 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	KMenu *contactsMenu = actionContactMenu->menu();
 	contactsMenu->clear();
 
-	Kopete::Contact *contact;
 	Kopete::ContactPtrList m_them;
 
 	if( m_popupView )
@@ -1092,7 +1091,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	// 'Contacts' action, or something cleverer.
 	uint contactCount = 0;
 
-	foreach(contact, m_them)
+	foreach(Kopete::Contact *contact, m_them)
 	{
 		KMenu *p = contact->popupMenu();
 		connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),

@@ -712,7 +712,7 @@ const QDomElement XmlContactStorage::storeMetaContact( Kopete::MetaContact *meta
 
         // Store other plugin data
         const QList<QDomElement> pluginNodes = storeContactListElement( metaContact );
-        foreach ( QDomElement it , pluginNodes )
+        foreach ( const QDomElement &it , pluginNodes )
             metaContactDoc.documentElement().appendChild( metaContactDoc.importNode( it, true ) );
     }
     return metaContactDoc.documentElement();
@@ -747,7 +747,7 @@ const QDomElement XmlContactStorage::storeGroup( Kopete::Group *group ) const
 
     // Store other plugin data
     const QList<QDomElement> pluginNodes = storeContactListElement( group );
-    foreach ( QDomElement it , pluginNodes )
+    foreach ( const QDomElement &it , pluginNodes )
         groupDoc.documentElement().appendChild( groupDoc.importNode( it, true ) );
 
 

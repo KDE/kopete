@@ -315,8 +315,7 @@ void AvatarQueryJob::start()
 
 		QDir contactDir(contactUrl.path());
 		QStringList subdirsList = contactDir.entryList( QDir::AllDirs | QDir::NoDotAndDotDot );
-		QString subdir;
-		foreach(subdir, subdirsList)
+		foreach(const QString &subdir, subdirsList)
 		{
 			d->listAvatarDirectory( ContactDir + QDir::separator() + subdir );
 		}
@@ -346,8 +345,7 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 		KConfig *avatarConfig = new KConfig( avatarConfigUrl.path(), KConfig::SimpleConfig);
 		// Each avatar entry in configuration is a group
 		QStringList groupEntryList = avatarConfig->groupList();
-		QString groupEntry;
-		foreach(groupEntry, groupEntryList)
+		foreach(const QString &groupEntry, groupEntryList)
 		{
 			KConfigGroup cg(avatarConfig, groupEntry);
 

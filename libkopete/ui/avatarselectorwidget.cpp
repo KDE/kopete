@@ -244,8 +244,7 @@ void AvatarSelectorWidget::queryJobFinished(KJob *job)
 	if( !queryJob->error() )
 	{
 		QList<Kopete::AvatarManager::AvatarEntry> avatarList = queryJob->avatarList();
-		Kopete::AvatarManager::AvatarEntry entry;
-		foreach(entry, avatarList)
+		foreach(const Kopete::AvatarManager::AvatarEntry &entry, avatarList)
 		{
 			d->addItem(entry);
 		}
