@@ -62,11 +62,11 @@ public:
 		Channel,
 		Server
 	};
-/*
-	static EntityType guessType(const QByteArray &name);
+
+	static Type guessType(const QByteArray &name);
 	static bool isChannel( const QByteArray &name );
 	static bool isUser( const QByteArray &name );
-*/
+
 	Entity(KIrc::Context *context);
 	virtual ~Entity();
 

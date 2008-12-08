@@ -45,6 +45,7 @@ Q_DECLARE_FLAGS(EntityStatus,EntityStatusFlag);
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KIrc::EntityStatus);
 
+typedef QList<QByteArray> Command;
 
 typedef struct
 {
@@ -66,5 +67,6 @@ QSet<T> &operator << (QSet<T> &set, const QList<T> &list)
 { Q_FOREACH(const T &item, list) set << item; return set; }
 
 };
+
 
 #endif

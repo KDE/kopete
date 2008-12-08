@@ -51,6 +51,11 @@ public:
 
 //	Entity::List anonymous();
 
+	//The entity, this context belongs to. Its the server, for the root context,
+	//or the channel for channel-contexts
+	KIrc::EntityPtr owner() const;
+	void setOwner(KIrc::EntityPtr entity);
+
 	KIrc::EntityList entities() const;
 //	Entity::List entitiesByHost(...) const;
 //	Entity::List entitiesByServer(...) const;

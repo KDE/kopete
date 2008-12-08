@@ -56,12 +56,14 @@ public: // READ properties accessors.
 
 public Q_SLOTS: 
 	void setAuthentified();
-	KIrc::EntityPtr joinChannel(const QByteArray& channelName);
+	void joinChannel(const QByteArray& channelName);
 
 	virtual void connectToServer(const QUrl &url);
 	void quit(const QByteArray& quitMessage);
 	void part(KIrc::EntityPtr channel, const QByteArray& partMessage);
 
+	void onCommand( KIrc::Context* context, const QByteArray& command);
+	void onCommand( KIrc::Context* context, const KIrc::Command& command);
 protected:
 	void connectToServer(const QUrl &url, QAbstractSocket *socket);
 

@@ -107,6 +107,8 @@ private slots:
 	void slotQuoteCommand(const QString &args, Kopete::ChatSession *manager );
 	void slotRawCommand(const QString &args, Kopete::ChatSession *manager );
 
+	void slotNativeKIrcCommand( const QString& args, Kopete::ChatSession* manager );
+
 	void slotViewCreated(KopeteView *);
 
 private:

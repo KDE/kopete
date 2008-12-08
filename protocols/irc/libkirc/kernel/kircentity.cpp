@@ -31,19 +31,19 @@ using namespace KIrc;
  * where user and host are optional.
  * NOTE: If changes are done to the regexp string, update also the sm_userStrictRegExp regexp string.
  */
-//const QRegExp Entity::sm_userRegExp(QLatin1String("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
+const QRegExp sm_userRegExp(QLatin1String("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
 
 /**
  * Regexp to match strictly the complete user definition:
  * nick!user@host
  * NOTE: If changes are done to the regexp string, update also the sm_userRegExp regexp string.
  */
-//const QRegExp Entity::sm_userStrictRegExp(QLatin1String("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
+const QRegExp sm_userStrictRegExp(QLatin1String("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
 
-//const QRegExp Entity::sm_channelRegExp(QLatin1String("^[#!+&][^\\s,]+$") );
-/*
+const QRegExp sm_channelRegExp(QLatin1String("^[#!+&][^\\s,]+$") );
+
 // FIXME: Implement me
-EntityType Entity::guessType(const QByteArray &)
+Entity::Type Entity::guessType(const QByteArray &)
 {
 	return Unknown;
 }
@@ -57,7 +57,7 @@ bool Entity::isChannel( const QByteArray &name )
 {
 	return sm_channelRegExp.exactMatch(name);
 }
-*/
+
 class KIrc::EntityPrivate
 {
 public:
@@ -85,6 +85,8 @@ Entity::Entity(Context *context)
 	: QObject(context)
 	, d_ptr(new EntityPrivate)
 {
+	Q_D( Entity );
+	d->context=context;
 }
 
 Entity::~Entity()
@@ -124,11 +126,10 @@ void Entity::setType( Entity::Type type )
 
 		if(type==Channel) //Create a new Context, representing this channel
 		{
-			if(!d->context)
-			{
-				kDebug(14121)<<"creating a new context for the channel "<<name()<<"  "<<this;
-				d->context=new Context(this);
-			}
+			kDebug(14121)<<"creating a new context for the channel "<<name()<<"  "<<this;
+			d->context=new Context(this);
+			d->context->setOwner( KIrc::EntityPtr( this ) );
+
 			d->status=d->status|KIrc::Channel;
 		}
 		emit updated();

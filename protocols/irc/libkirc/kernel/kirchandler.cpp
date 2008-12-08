@@ -39,7 +39,7 @@ Handler::Handler(HandlerPrivate* d,Handler *parent)
 	: QObject(parent)
 	, d_ptr(d)
 {
-	parent->addEventHandler(this);	
+	parent->addEventHandler(this);
 }
 
 Handler::Handler(HandlerPrivate *d, QObject *parent)
@@ -114,34 +114,39 @@ void Handler::registerCommandAlias(const QByteArray &alias, const QByteArray &co
 	d->commandAliases.insert(alias.toUpper(), command.toUpper());
 }
 
-Handler::Handled Handler::onCommand(KIrc::Context *context, const QList<QByteArray> &command/*, KIrc::Entity::Ptr from*/)
+Handler::Handled Handler::onCommand(KIrc::Context *context, const KIrc::Command &command/*, KIrc::Entity::Ptr from*/, KIrc::Socket* socket)
 {
 	if (!isEnabled())
 		return NotHandled;
 
 	Q_D(Handler);
+
+	kDebug( 14121 )<<"onCommand "<<command;
+
 	Handled handled = NotHandled;
 
 	foreach(KIrc::Handler * handler, d->eventHandlers)
 	{
-		handled = handler->onCommand(context, command/*, from*/);
+		handled = handler->onCommand(context, command/*, from*/, socket);
 		if (handled != NotHandled)
 			return handled;
 	}
 
-	QGenericReturnArgument ret = Q_RETURN_ARG(KIrc::Handler::Handled, handled);
+	QGenericReturnArgument ret = Q_RETURN_ARG(Handler::Handled, handled);
 	QGenericArgument arg0 = Q_ARG(KIrc::Context *, context);
-	QGenericArgument arg1 = Q_ARG(QList<QByteArray>, command); // Should be implemented as (const QList<QByteArray> &)
+	QGenericArgument arg1 = Q_ARG(KIrc::Command, command ); // Should be implemented as (const KIrc::Command &)
 //	QGenericArgument arg2 = Q_ARG(KIrc::Entity *);
+	QGenericArgument arg3 = Q_ARG(KIrc::Socket *, socket );
 
 	QByteArray cmd = command.value(0).toUpper();
-	if (QMetaObject::invokeMethod(this, cmd, Qt::DirectConnection, ret, arg0, arg1/*, arg2*/))
+
+	if (QMetaObject::invokeMethod(this, "CMD_"+cmd, Qt::DirectConnection, ret, arg0, arg1/*, arg2*/, arg3))
 		if (handled != NotHandled)
 			return handled;
 
 	foreach(const QByteArray &alias, d->commandAliases.values(cmd))
 	{
-		if (QMetaObject::invokeMethod(this, alias, Qt::DirectConnection, ret, arg0, arg1/*, arg2*/))
+		if (QMetaObject::invokeMethod(this, alias, Qt::DirectConnection, ret, arg0, arg1/*, arg2*/, arg3))
 			if (handled != NotHandled)
 				return handled;
 	}
@@ -187,7 +192,7 @@ Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message 
 	QByteArray msg = message.argAt(0).toUpper();
 
 	//Check if it's a numeric reply
-	// FIXME: This is an old temporary solution that was backported for simplicity. One should port such 
+	// FIXME: This is an old temporary solution that was backported for simplicity. One should port such
 	//        code to use the alias system to use named numbers that can found in RFC and servers implementations
 	QByteArray msgToExecute=msg;
 	bool isNumeric=false;
@@ -206,5 +211,20 @@ Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message 
 				return handled;
 	}
 	return handled;
+}
+
+
+KIrc::Command Handler::handledCommands()
+{
+	Q_D( Handler );
+	KIrc::Command cmds;
+	//the generic handler doesn't handle things on its own.
+	//just return the stuff handled by the subhandlers
+	foreach( Handler* h, d->eventHandlers )
+	{
+		cmds<<h->handledCommands();
+	}
+
+	return cmds;
 }
 

@@ -23,6 +23,7 @@
 
 #include "kircclientmotdhandler.h"
 
+#include "kircstdmessages.h"
 #include "kirccontext.h"
 #include "kircentity.h"
 #include "kircevent.h"
@@ -95,18 +96,22 @@ KIrc::Handler::Handled ClientChannelHandler::JOIN(KIrc::Context *context, const 
 		{
 			kDebug(14121)<<"/me caused a join event";
 			foreach(const EntityPtr& e,to)
-				d->channels.insert(e);
-		}
-		else //otherwise broadcast a message that someone new is in the channel
-		{
-			TextEvent *event = new TextEvent( "JOIN", from, to,QString() );
-			context->postEvent( event );
-
-			foreach(const EntityPtr& channel, to)
 			{
-				channel->context()->add(from);
+				e->setType( KIrc::Entity::Channel );
+				d->channels.insert(e);
 			}
 		}
+
+		//broadcast a message that someone new is in the channel
+
+		TextEvent *event = new TextEvent( "JOIN", from, to,QString() );
+		context->postEvent( event );
+
+		foreach(const EntityPtr& channel, to)
+		{
+			channel->context()->add(from);
+		}
+
 	}
 
 	return KIrc::Handler::CoreHandled;
@@ -862,4 +867,71 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_475(KIrc::Context *con
 
 /* 502: ":Cannot change mode for other users"
  */
+
+
+KIrc::Handler::Handled ClientChannelHandler::CMD_JOIN( KIrc::Context* context , const KIrc::Command& command, KIrc::Socket* socket )
+{
+	kDebug( 14121 )<<"joining channel"<<command;
+	socket->writeMessage( KIrc::StdMessages::join( command.value(1) ) );
+//	KIrc::EntityPtr channel=KIrc::EntityPtr( context->entityFromName( channelName ) );
+//	channel->setType(KIrc::Entity::Channel);
+}
+
+KIrc::Handler::Handled ClientChannelHandler::CMD_PART( KIrc::Context* context , const KIrc::Command& command, KIrc::Socket* socket )
+{
+	QByteArray channel;
+	QByteArray message;
+
+	KIrc::Command args=command;
+	args.removeFirst();
+
+	if ( args.size()>1&&Entity::isChannel( args.first() ) )
+		channel=args.takeFirst();
+	else if ( context->owner()->isChannel() )
+		channel=context->owner()->name();
+	else
+		return KIrc::Handler::NotHandled;
+
+	//join together the args
+	foreach( const QByteArray& a, args )
+		message+=a+' ';
+	message.chop( 1 );
+
+	socket->writeMessage( KIrc::StdMessages::part( channel, message ) );
+
+	return KIrc::Handler::CoreHandled;
+}
+
+Handler::Handled ClientChannelHandler::CMD_PRIVMSG(KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket)
+{
+	KIrc::Command args=command;
+	args.removeFirst();
+
+  	QByteArray dest=args.takeFirst();
+	QByteArray msg;
+	foreach( const QByteArray & part, args )
+		msg+=part+" ";
+	msg.chop( 1 );
+
+	socket->writeMessage( KIrc::StdMessages::privmsg(dest, msg ) );
+}
+
+Handler::Handled ClientChannelHandler::CMD_TOPIC( KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket )
+{
+	QByteArray arg;
+
+	foreach( QByteArray a, command.mid( 1 ) )
+		arg+=a+' ';
+	arg.chop( 1 );
+
+	if ( arg.isEmpty() )
+		socket->writeMessage( KIrc::StdMessages::topic(context->owner()->name()) );
+	else
+		socket->writeMessage( KIrc::StdMessages::topic(context->owner()->name(), arg ) );
+}
+
+KIrc::Command ClientChannelHandler::handledCommands()
+{
+	return KIrc::Handler::handledCommands()<<"JOIN"<<"PART"<<"PRIVMSG"<<"TOPIC";
+}
 

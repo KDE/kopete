@@ -38,6 +38,8 @@ public:
 	explicit ClientChannelHandler(Handler* parent);
 	~ClientChannelHandler();
 
+	virtual KIrc::Command handledCommands();
+
 private Q_SLOTS:
 	Handler::Handled JOIN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled KICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
@@ -94,6 +96,13 @@ private Q_SLOTS:
 	Handler::Handled numericReply_473(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_474(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_475(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+
+//Commands
+
+	Handler::Handled CMD_JOIN(KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket);
+	Handler::Handled CMD_PART(KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket);
+	Handler::Handled CMD_PRIVMSG(KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket);
+	Handler::Handled CMD_TOPIC(KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket);
 };
 
 }

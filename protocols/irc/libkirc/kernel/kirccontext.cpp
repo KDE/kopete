@@ -33,6 +33,8 @@ public:
 		: defaultCodec(0)
 	{ }
 
+	KIrc::EntityPtr entity;
+
 	KIrc::EntityList entities;
 
 	//Keeps Status information about the entities, relative to this context (e.g. Operators of a Channel)
@@ -57,6 +59,19 @@ QList<KIrc::Entity *> Context::anonymous() const
 
 }
 */
+
+KIrc::EntityPtr Context::owner() const
+{
+	Q_D( const Context );
+	return d->entity;
+}
+
+void Context::setOwner(KIrc::EntityPtr entity)
+{
+	Q_D( Context );
+	d->entity=entity;
+}
+
 KIrc::EntityList Context::entities() const
 {
 	Q_D(const Context);

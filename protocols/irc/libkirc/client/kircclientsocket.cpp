@@ -175,26 +175,39 @@ void ClientSocket::setAuthentified()
 	setConnectionState( Socket::Authentified );
 }
 
-KIrc::EntityPtr ClientSocket::joinChannel( const QByteArray & channelName )
+void ClientSocket::joinChannel( const QByteArray & channelName )
 {
 	Q_D( ClientSocket );
-	writeMessage( KIrc::StdMessages::join( channelName ) );
-	KIrc::EntityPtr channel=KIrc::EntityPtr( d->context->entityFromName( channelName ) );
-	channel->setType(KIrc::Entity::Channel);
 
-	return channel;
+	onCommand( d->context, KIrc::Command()<<"JOIN"<<channelName );
 }
 
 
 void ClientSocket::quit( const QByteArray & quitMessage )
 {
-	writeMessage(KIrc::StdMessages::quit(quitMessage));
+	Q_D( ClientSocket );
+
+	onCommand( d->context, KIrc::Command()<< "QUIT"<<quitMessage  );
 	//disconnect
 	socket()->close();
 }
 
 void ClientSocket::part( KIrc::EntityPtr channel, const QByteArray & partMessage )
 {
-	writeMessage( KIrc::StdMessages::part( channel->name(), partMessage ) );
+	Q_D( ClientSocket );
+
+	onCommand( channel->context(), KIrc::Command()<<"PART"<<channel->name()<<partMessage );
+}
+
+void ClientSocket::onCommand( KIrc::Context* context, const QByteArray& command )
+{
+	onCommand( context, command.split( ' ' ) );
+}
+
+void ClientSocket::onCommand( KIrc::Context* context, const KIrc::Command& command )
+{
+	Q_D( ClientSocket );
+	kDebug( 14121 )<<"executing command "<<command;
+	d->context->onCommand( context, command, this );
 }
 

@@ -596,8 +596,7 @@ void IRCAccount::slotJoinChannel()
 		chans.prepend( channelName );
 		configGroup()->writeEntry( "Recent Channel list", chans );
 
-		KIrc::EntityPtr channel=d->client->joinChannel( channelName.toUtf8() );
-		getContact( channel )->startChat();
+		client()->onCommand( d->clientContext, KIrc::Command()<<"JOIN"<<codec()->fromUnicode( channelName ) );
 	}
 }
 
@@ -759,9 +758,15 @@ void IRCAccount::receivedEvent(QEvent *event)
 		}
 		else if ( txtEvent->eventId() == "JOIN" )
 		{
-			foreach(Kopete::Contact *c,to)
+			if ( from==mySelf() )
 			{
-			  c->manager()->addContact(from,IRCProtocol::self()->onlineStatusFor( txtEvent->from(),txtEvent->from()->context() ), false);
+				foreach(Kopete::Contact *c,to)
+					c->startChat();
+			}
+			else
+			{
+				foreach(Kopete::Contact *c,to)
+					c->manager()->addContact(from,IRCProtocol::self()->onlineStatusFor( txtEvent->from(),txtEvent->from()->context() ), false);
 			}
 			return;
 		}
