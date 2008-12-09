@@ -102,16 +102,12 @@ static void create_privkey(void *opdata, const char *accountname, const char *pr
 	popup->show();
 	popup->setCloseLock( true );
 
-
 	KeyGenThread *keyGenThread = new KeyGenThread ( accountname, protocol );
 	keyGenThread->start();
-	QEventLoop eventLoop;
-	eventLoop.exec(QEventLoop::ExcludeSocketNotifiers | QEventLoop::ExcludeUserInputEvents);
 	while( !keyGenThread->wait(100) ){
-//		eventLoop.processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 100);
+		qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 100);
 	}
 
-	eventLoop.quit();
 	popup->setCloseLock( false );
 	popup->close();
 }
@@ -520,18 +516,16 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 	}
 	}
 	
-
 	// message is now decrypted or is a Plaintext message and ready to deliver
 	if( !ignoremessage ){
 		// message is decrypted
 		if( newMessage != NULL ){
 			*msg = QString::fromUtf8(newMessage);
 			otrl_message_free( newMessage );
-			//msg = Qt::convertFromPlainText( msg, Qt::WhiteSpaceNormal );
-			msg->replace( QString('\n'), QString("<br>") );
-			msg->replace( QString("&lt;"), QString('<') );
-			msg->replace( QString("&gt;"), QString('>') );
+		} else {
+			msg->replace( QString('<'), QString("&lt;") );
 		}
+		msg->replace( QString('\n'), QString("<br>") );
 	}
 	return ignoremessage;
 }

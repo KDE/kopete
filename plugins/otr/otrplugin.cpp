@@ -239,7 +239,7 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		QString accountId = msg.manager()->account()->accountId();
 		QString contactId = msg.from()->contactId();
 		int ignoremessage = OtrlChatInterface::self()->decryptMessage( &body, accountId, msg.manager()->account()->protocol()->displayName(), contactId, msg.manager() );
-		msg.setPlainBody( body );
+		msg.setHtmlBody( body );
 		if( ignoremessage | OtrlChatInterface::self()->shouldDiscard( msg.plainBody() ) ){
 			event->discard();
 			return;
