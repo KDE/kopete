@@ -105,10 +105,13 @@ static void create_privkey(void *opdata, const char *accountname, const char *pr
 
 	KeyGenThread *keyGenThread = new KeyGenThread ( accountname, protocol );
 	keyGenThread->start();
+	QEventLoop eventLoop;
+	eventLoop.exec(QEventLoop::ExcludeSocketNotifiers | QEventLoop::ExcludeUserInputEvents);
 	while( !keyGenThread->wait(100) ){
-		qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 100);
+//		eventLoop.processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 100);
 	}
 
+	eventLoop.quit();
 	popup->setCloseLock( false );
 	popup->close();
 }
@@ -388,7 +391,6 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 
 	ignoremessage = otrl_message_receiving( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), msg->toLocal8Bit(), &newMessage, &tlvs, NULL, NULL );
 
-
 	tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
 	if( tlv ){
 		Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
@@ -527,6 +529,8 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 			otrl_message_free( newMessage );
 			//msg = Qt::convertFromPlainText( msg, Qt::WhiteSpaceNormal );
 			msg->replace( QString('\n'), QString("<br>") );
+			msg->replace( QString("&lt;"), QString('<') );
+			msg->replace( QString("&gt;"), QString('>') );
 		}
 	}
 	return ignoremessage;
