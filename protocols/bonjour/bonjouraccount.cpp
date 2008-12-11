@@ -217,9 +217,11 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 
 void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 {
-	pointer->resolve();
+	if (! pointer->resolve()) {
+		kDebug()<<"Unable to Resolve! Dumping Contact";
+	}
 
-	kDebug()<<"\nComing Online\n";
+	kDebug()<<"Coming Online:"<<pointer->serviceName();
 	
 	if (pointer->serviceName() == username)			// Don't Add Ourselves
 		return;
@@ -238,20 +240,29 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 	else
 		display = pointer->serviceName().split('@')[0];
 
-	Kopete::MetaContact *mc;
+	QString hostName = pointer->hostName();
+	kDebug()<<"Hostname is:"<<hostName;
+	if (! hostName.isEmpty()) {
+		QHostAddress hostAddress = DNSSD::ServiceBrowser::resolveHostName(hostName);
+		kDebug()<<"Host Address is:"<<hostAddress;
 
-	// FIXME: The Standard Has Specifications on What To Do in case of a clash
-	// We Ignore them over here.
-	mc = addContact(pointer->serviceName(), display, bonjourGroup);
+		if (hostAddress != QHostAddress() ) {
+			Kopete::MetaContact *mc;
 
-	BonjourContact *c = (BonjourContact *) mc->contacts()[0];
+			// FIXME: The Standard Has Specifications on What To Do in case of a clash
+			// We Ignore them over here.
+			mc = addContact(pointer->serviceName(), display, bonjourGroup);
 
-	//FIXME: QObject is needed to be called here as there is a conflict fo setproperty
-	c->setremoteHostName(pointer->hostName());
-	c->setremotePort(pointer->port());
-	c->settextdata(pointer->textData());
-	c->setusername(pointer->serviceName());
-	c->setOnlineStatus(Kopete::OnlineStatus::Online);
+			BonjourContact *c = (BonjourContact *) mc->contacts()[0];
+
+			c->setremoteHostName(hostName);
+			c->setremoteAddress(hostAddress);
+			c->setremotePort(pointer->port());
+			c->settextdata(pointer->textData());
+			c->setusername(pointer->serviceName());
+			c->setOnlineStatus(Kopete::OnlineStatus::Online);
+		}
+	}
 }
 
 void BonjourAccount::goingOffline(DNSSD::RemoteService::Ptr pointer)

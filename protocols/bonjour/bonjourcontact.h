@@ -91,11 +91,12 @@ public:
 	 * port. This Way, when a connection is made, we know who it is from
 	 */
 	Q_PROPERTY(QString remoteHostName READ getremoteHostName WRITE setremoteHostName)
-	Q_PROPERTY(QHostAddress remoteAddress READ getremoteAddress)
+	Q_PROPERTY(QHostAddress remoteAddress READ getremoteAddress WRITE setremoteAddress)
 	Q_PROPERTY(short int remotePort READ getremotePort WRITE setremotePort)
 	Q_PROPERTY(QString username READ getusername WRITE setusername)
 
 	void setremoteHostName(const QString &nremoteHostName);
+	void setremoteAddress(const QHostAddress &nremoteAddress);
 	void setremotePort(const short int &nremotePort);
 	void setusername(const QString &nusername);
 	void settextdata(const QMap <QString, QByteArray> &ntextdata);
