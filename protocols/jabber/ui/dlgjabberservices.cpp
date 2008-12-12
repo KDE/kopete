@@ -294,7 +294,7 @@ void ServiceItem::slotDiscoFinished()
 	if(jt->success())
 	{
 		const DiscoList &list = jt->items();
-		for(DiscoList::ConstIterator it = list.begin(); it != list.end(); it++)
+		for(DiscoList::ConstIterator it = list.begin(); it != list.end(); ++it)
 		{
 			const DiscoItem a = *it;
 			//kDebug() << a.jid().full() << " " << a.node() << " " << a.name();

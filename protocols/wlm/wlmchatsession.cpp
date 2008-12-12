@@ -127,7 +127,7 @@ WlmChatSession::inviteContact (const QString & passport)
         requestChatService ();
         return;
     }
-    Kopete::Contact * c = account ()->contacts ()[passport];
+    WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts ()[passport]);
     if (c)
         slotInviteContact (c);
 }
@@ -189,7 +189,7 @@ WlmChatSession::sendFile (const QString & fileLocation,
     {
         if (!account ())
             return;
-        WlmAccount *acc = dynamic_cast < WlmAccount * >(account ());
+        WlmAccount *acc = qobject_cast < WlmAccount * >(account ());
         if (!acc)
             return;
         Kopete::Transfer * transf =
@@ -222,7 +222,7 @@ WlmChatSession::sendFile (const QString & fileLocation,
 void
 WlmChatSession::slotSendFile ()
 {
-   dynamic_cast < WlmContact * >(members ().first ())->sendFile ();
+   qobject_cast < WlmContact * >(members ().first ())->sendFile ();
 }
 
 void
@@ -331,7 +331,7 @@ WlmChatSession::~WlmChatSession ()
     if (!account ())
         return;
 
-    WlmAccount *acc = dynamic_cast < WlmAccount * >(account ());
+    WlmAccount *acc = qobject_cast < WlmAccount * >(account ());
 
     if (!acc)
         return;
@@ -405,7 +405,7 @@ WlmChatSession::setReady (bool value)
         for (it = m_pendingInvitations.begin ();
              it != m_pendingInvitations.end (); ++it)
         {
-            Kopete::Contact * c = account ()->contacts ()[(*it)];
+            WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts ()[(*it)]);
             if (c)
                 slotInviteContact (c);
         }
@@ -438,7 +438,7 @@ WlmChatSession::setReady (bool value)
             const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
 
             // Check the list for any custom emoticons
-            for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+            for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
             {
                 for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
                 {
@@ -559,7 +559,7 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
 
         // Check the list for any custom emoticons
-        for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); itr++)
+        for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
         {
             for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
             {
@@ -610,17 +610,6 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         // put the message in the queue, we are trying to connect to the
         // switchboard server
         m_messagesQueue.append (msg);
-        return;
-    }
-
-    if (getChatService ()
-        && (members ().first ()->onlineStatus () ==
-            WlmProtocol::protocol ()->wlmOffline))
-    {
-        KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (),
-                                       KMessageBox::Information, i18n("Send OIM"),
-                                       i18n("Information"));
-        messageSucceeded ();
         return;
     }
 
@@ -684,9 +673,9 @@ WlmChatSession::stopSendKeepAlive()
 void
 WlmChatSession::receivedNudge (QString passport)
 {
-    Kopete::Contact * c = account ()->contacts ()[passport];
+    WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts ()[passport]);
     if (!c)
-        c = members ().first ();
+        c = qobject_cast<WlmContact*>(members ().first ());
 
     Kopete::Message msg = Kopete::Message (c, myself ());
     msg.setPlainBody (i18n ("has sent you a nudge"));
@@ -705,7 +694,7 @@ WlmChatSession::requestDisplayPicture ()
     if (members ().count () != 1)
         return;
 
-    WlmContact *contact = dynamic_cast < WlmContact * >(members ().first ());
+    WlmContact *contact = qobject_cast < WlmContact * >(members ().first ());
 
     if (!contact)
         return;
@@ -727,13 +716,11 @@ WlmChatSession::requestDisplayPicture ()
     QString newlocation =
         KGlobal::dirs ()->locateLocal ("appdata",
                                        "wlmpictures/" +
-                                       QString (SHA1D.replace ("/", "_")));
-
-    if (QFile (newlocation).exists () && QFile (newlocation).size ())
+                                       QString (SHA1D.replace ('/', '_')));
+    QFile f(newlocation);
+    if (f.exists () && f.size ())
     {
-        dynamic_cast <
-            WlmAccount *
-            >(account ())->gotDisplayPicture (contact->contactId (),
+        qobject_cast <WlmAccount *>(account ())->gotDisplayPicture (contact->contactId (),
                                               newlocation);
         return;
     }
@@ -749,9 +736,9 @@ WlmChatSession::requestDisplayPicture ()
     if (isReady ())
     {
         getChatService ()->requestDisplayPicture (generateSessionID(),
-                                              newlocation.toLatin1 ().data (),
+                                              newlocation.toLatin1 ().constData (),
                                               contact->getMsnObj ().
-                                              toAscii ().data ());
+                                              toAscii ().constData ());
         setDownloadDisplayPicture (false);
     }
 }

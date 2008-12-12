@@ -17,8 +17,6 @@
 
 #include "bonjouraccount.h"
 
-#include <QtDBus>
-
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -28,6 +26,7 @@
 #include <kmessagebox.h>
 
 #include <dnssd/publicservice.h>
+#include <dnssd/servicebrowser.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -159,7 +158,7 @@ void BonjourAccount::startPublish()
 {
 	if (! username.contains('@')) {
 		username.append("@");
-		username.append(getLocalHostName().toUtf8());
+		username.append(DNSSD::ServiceBrowser::getLocalHostName().toUtf8());
 	}
 
 	service = new DNSSD::PublicService(username, "_presence._tcp", listeningPort);
@@ -178,7 +177,21 @@ void BonjourAccount::startPublish()
         service->setTextData(map);
 
 	kDebug()<<"Starting Publish";
-        service->publish();
+	QObject::connect(service, SIGNAL(published(bool)), this, SLOT(published(bool)));
+        service->publishAsync();
+}
+
+void BonjourAccount::published(bool success)
+{
+	// If we have sucessfully published, great :)
+	if (success) {
+		kDebug()<<"Publish Successful";
+	} else {
+		kDebug()<<"Publish Failed";
+		disconnect();
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+		i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi"));
+	}
 }
 
 void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
@@ -186,7 +199,7 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 	if (username.isEmpty())
 		username = accountId().toUtf8();
 
-	if (! check_mDNS_running()) {
+	if (DNSSD::ServiceBrowser::isAvailable() != DNSSD::ServiceBrowser::Working) {
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
 		i18n("Sorry, we are unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
 		return;
@@ -204,9 +217,11 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 
 void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 {
-	pointer->resolve();
+	if (! pointer->resolve()) {
+		kDebug()<<"Unable to Resolve! Dumping Contact";
+	}
 
-	kDebug()<<"\nComing Online\n";
+	kDebug()<<"Coming Online:"<<pointer->serviceName();
 	
 	if (pointer->serviceName() == username)			// Don't Add Ourselves
 		return;
@@ -223,22 +238,31 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 	else if (! clast.isEmpty())
 		display = clast;
 	else
-		display = pointer->serviceName().split("@")[0];
+		display = pointer->serviceName().split('@')[0];
 
-	Kopete::MetaContact *mc;
+	QString hostName = pointer->hostName();
+	kDebug()<<"Hostname is:"<<hostName;
+	if (! hostName.isEmpty()) {
+		QHostAddress hostAddress = DNSSD::ServiceBrowser::resolveHostName(hostName);
+		kDebug()<<"Host Address is:"<<hostAddress;
 
-	// FIXME: The Standard Has Specifications on What To Do in case of a clash
-	// We Ignore them over here.
-	mc = addContact(pointer->serviceName(), display, bonjourGroup);
+		if (hostAddress != QHostAddress() ) {
+			Kopete::MetaContact *mc;
 
-	BonjourContact *c = (BonjourContact *) mc->contacts()[0];
+			// FIXME: The Standard Has Specifications on What To Do in case of a clash
+			// We Ignore them over here.
+			mc = addContact(pointer->serviceName(), display, bonjourGroup);
 
-	//FIXME: QObject is needed to be called here as there is a conflict fo setproperty
-	c->setremoteHostName(pointer->hostName());
-	c->setremotePort(pointer->port());
-	c->settextdata(pointer->textData());
-	c->setusername(pointer->serviceName());
-	c->setOnlineStatus(Kopete::OnlineStatus::Online);
+			BonjourContact *c = (BonjourContact *) mc->contacts()[0];
+
+			c->setremoteHostName(hostName);
+			c->setremoteAddress(hostAddress);
+			c->setremotePort(pointer->port());
+			c->settextdata(pointer->textData());
+			c->setusername(pointer->serviceName());
+			c->setOnlineStatus(Kopete::OnlineStatus::Online);
+		}
+	}
 }
 
 void BonjourAccount::goingOffline(DNSSD::RemoteService::Ptr pointer)
@@ -281,18 +305,24 @@ void BonjourAccount::disconnect()
 {
 	wipeOutAllContacts();
 
-	localServer->close();
-	service->stop();
+	if (browser) {
+		delete browser;
+		browser = NULL;
+	}
 
-	delete browser;
-	browser = NULL;
+	if (localServer) {
+		localServer->close();
+		delete localServer;
+		localServer = NULL;
+	}
 
-	delete localServer;
-	localServer = NULL;
 	listeningPort = 0;
 
-	delete service;
-	service = NULL;
+	if (service) {
+		service->stop();
+		delete service;
+		service = NULL;
+	}
 
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
 }
@@ -301,8 +331,8 @@ void BonjourAccount::slotGoOnline ()
 {
 	kDebug();
 
-	if (!isConnected ())
-		connect ();
+	if (!isConnected())
+		connect();
 	else
 		myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOnline );
 }

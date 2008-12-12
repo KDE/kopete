@@ -34,10 +34,8 @@ public:
 };
 
 PropertyContainer::PropertyContainer(QObject *parent)
-: QObject(parent)
+: QObject(parent), d(new Private())
 {
-	d = new Private;
-
 }
 
 PropertyContainer::~PropertyContainer()

@@ -116,7 +116,7 @@ private:
 	Q_DISABLE_COPY(AvatarSelectorWidget)
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }

@@ -39,7 +39,7 @@ public slots:
 	void testFullRendering();
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 	ChatMessagePart *chatPart;
 };

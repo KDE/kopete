@@ -71,7 +71,7 @@ void JingleContentDialog::setContents(QList<JingleContent*> c)
 		ui.verticalLayout->insertWidget(0, cb);
 		m_checkBoxes << cb;
 	}
-	QLabel *label = new QLabel(i18n("Check the contents you wanna accept : "), this);
+	QLabel *label = new QLabel(i18n("Choose the contents you want to accept:"), this);
 	ui.verticalLayout->insertWidget(0, label);
 }
 

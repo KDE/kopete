@@ -146,9 +146,8 @@ public:
 };
 
 ClientStream::ClientStream(Connector *conn, TLSHandler *tlsHandler, QObject *parent)
-:Stream(parent)
+:Stream(parent), d(new Private())
 {
-	d = new Private;
 	d->mode = Client;
 	d->conn = conn;
 	connect( d->conn, SIGNAL(connected()), SLOT(cr_connected()) );

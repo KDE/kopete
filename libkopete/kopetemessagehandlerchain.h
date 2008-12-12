@@ -64,7 +64,7 @@ private:
 	
 	friend class ProcessMessageTask;
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 /**
@@ -91,7 +91,7 @@ private:
 	
 	friend class MessageHandlerChain;
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }

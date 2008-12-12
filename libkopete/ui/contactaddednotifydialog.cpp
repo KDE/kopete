@@ -53,13 +53,12 @@ struct ContactAddedNotifyDialog::Private
 
 ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 		const QString& contactNick, Kopete::Account *account, const HideWidgetOptions &hide)
-	: KDialog( Global::mainWidget() )
+	: KDialog( Global::mainWidget() ), d(new Private())
 {
 	setCaption( i18n("Someone Has Added You") );
 	setButtons( KDialog::Ok | KDialog::Cancel );
     setAttribute( Qt::WA_DeleteOnClose );
 
-	d=new Private;
 	d->widget=new Ui::ContactAddedNotifyWidget;
 	QWidget* w = new QWidget(this);
 	d->widget->setupUi(w);
@@ -110,7 +109,9 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 
 ContactAddedNotifyDialog::~ContactAddedNotifyDialog()
 {
-	delete d->widget;
+// deleting the widget is not needed because it has a parent
+// which takes care of them
+//	delete d->widget;
 	delete d;
 }
 

@@ -150,14 +150,16 @@ void BonjourContact::slotChatSessionDestroyed()
 void BonjourContact::setremoteHostName(const QString &nremoteHostName)
 {
 	remoteHostName = nremoteHostName;
-
-	// FIXME: Resolve the following Avahi Dependency BonjourAccount::resolveHostName
-	remoteAddress = QHostAddress(BonjourAccount::resolveHostName(remoteHostName));
 }
 
 const QString BonjourContact::getremoteHostName() const
 {
 	return remoteHostName;
+}
+
+void BonjourContact::setremoteAddress(const QHostAddress &nremoteAddress)
+{
+	remoteAddress = nremoteAddress;
 }
 
 const QHostAddress BonjourContact::getremoteAddress() const

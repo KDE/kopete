@@ -48,7 +48,7 @@ private:
 	
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -43,12 +43,12 @@ Kopete::Contact (_account, uniqueName, parent)
     kDebug (14210) << k_funcinfo << " uniqueName: " << uniqueName <<
         ", displayName: " << displayName;
     m_msgManager = 0L;
-    m_account = dynamic_cast<WlmAccount*>(account());
+    m_account = qobject_cast<WlmAccount*>(account());
     setFileCapable (true);
     setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     m_contactSerial = contactSerial;
 
-    m_actionBlockContact = new KToggleAction(i18n("Block Contact"), this );
+    m_actionBlockContact = new KToggleAction(KIcon("wlm_blocked"), i18n("Block Contact"), this );
     QObject::connect( m_actionBlockContact, SIGNAL(triggered(bool)), this, SLOT(blockContact(bool)) );
 }
 
@@ -108,7 +108,7 @@ Kopete::ChatSession *
     Kopete::ChatSession * _manager =
         Kopete::ChatSessionManager::self ()->
 				findChatSession (account ()->myself (), chatmembers, protocol ());
-    WlmChatSession *manager = dynamic_cast <WlmChatSession *>(_manager);
+    WlmChatSession *manager = qobject_cast <WlmChatSession *>(_manager);
     if (!manager && canCreate == Kopete::Contact::CanCreate)
     {
         manager =
@@ -118,18 +118,12 @@ Kopete::ChatSession *
     return manager;
 }
 
-bool WlmContact::isBlocked() const
-{
-    return ( m_account->isOnBlockList(contactId()) ||
-             (m_account->blockUnknownUsers() && !m_account->isOnAllowList(contactId())) );
-}
-
 QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
 {
     QList<KAction*> *actions = new QList<KAction*>();
 
-    m_actionBlockContact->setEnabled( m_account->isConnected() );
-    m_actionBlockContact->setChecked( isBlocked() );
+    m_actionBlockContact->setEnabled(m_account->isConnected());
+    m_actionBlockContact->setChecked(m_account->isBlocked(contactId()));
     actions->append(m_actionBlockContact);
 
     // temporary action collection, used to apply Kiosk policy to the actions
@@ -139,26 +133,12 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     return actions;
 }
 
-void WlmContact::blockContact ( bool block )
+void WlmContact::blockContact(bool block)
 {
-    if (!account()->isConnected() || isBlocked() == block)
+    if (!m_account->isConnected())
         return;
 
-    WlmAccount* wlmAccount = dynamic_cast<WlmAccount*>(account());
-    if (block)
-    {
-        if ( wlmAccount->isOnAllowList(contactId()) )
-            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_AL, contactId().toAscii().data() );
-
-        wlmAccount->server()->mainConnection->addToList( MSN::LST_BL, contactId().toAscii().data() );
-    }
-    else
-    {
-        if ( wlmAccount->isOnBlockList(contactId()) )
-            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_BL, contactId().toAscii().data() );
-
-        wlmAccount->server()->mainConnection->addToList( MSN::LST_AL, contactId().toAscii().data() );
-    }
+    m_account->blockContact(contactId(), block);
 }
 
 void
@@ -183,7 +163,7 @@ WlmContact::deleteContact ()
 {
     if (account ()->isConnected ())
     {
-        dynamic_cast <WlmAccount *>(account ())->server ()->mainConnection->
+        qobject_cast <WlmAccount *>(account ())->server ()->mainConnection->
             delFromAddressBook (m_contactSerial.toLatin1 ().data (),
                                 contactId ().toLatin1 ().data ());
         deleteLater ();
@@ -217,6 +197,65 @@ WlmContact::slotChatSessionDestroyed ()
 {
     //FIXME: the chat window was closed?  Take appropriate steps.
     m_msgManager = 0L;
+}
+
+void
+WlmContact::setOnlineStatus(const Kopete::OnlineStatus& status)
+{
+	bool isBlocked = qobject_cast <WlmAccount *>(account())->isOnBlockList(contactId());
+	
+	// if this contact is blocked, and currently has a regular status,
+	// create a custom status and add wlm_blocked to ovelayIcons
+	if(isBlocked && status.internalStatus() < 15)
+	{
+		Kopete::Contact::setOnlineStatus(
+				Kopete::OnlineStatus(status.status() ,
+				(status.weight()==0) ? 0 : (status.weight() -1),
+				protocol(),
+				status.internalStatus()+15,
+				status.overlayIcons() + QStringList("wlm_blocked"),
+				i18n("%1|Blocked", status.description() ) ) );
+	}
+	else if (!isBlocked && status.internalStatus() >= 15)
+	{
+		// if this contact was previously blocked, set a regular status again
+		switch(status.internalStatus()-15)
+		{
+			case 1:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmOnline);
+				break;
+			case 2:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmAway);
+				break;
+			case 3:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmBusy);
+				break;
+			case 4:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmBeRightBack);
+				break;
+			case 5:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmOnThePhone);
+				break;
+			case 6:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmOutToLunch);
+				break;
+			case 7:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmInvisible);
+				break;
+			case 8:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmOffline);
+				break;
+			case 9:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmIdle);
+				break;
+			default:
+				Kopete::Contact::setOnlineStatus(WlmProtocol::protocol()->wlmUnknown);
+				break;
+		}
+
+	}
+	else
+		Kopete::Contact::setOnlineStatus(status);
 }
 
 #include "wlmcontact.moc"

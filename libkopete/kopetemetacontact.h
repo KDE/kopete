@@ -598,7 +598,7 @@ protected:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 // util functions shared with metacontact property dialog

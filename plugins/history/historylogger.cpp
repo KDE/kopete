@@ -707,7 +707,6 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 		return getFirstMonth();
 
 	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
-	QFileInfo fi;
 
 	// BEGIN check if there are Kopete 0.7.x
 	QDir d1(KStandardDirs::locateLocal("data",QString("kopete/logs/")+
@@ -718,7 +717,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 
 	const QFileInfoList list1 = d1.entryInfoList();
 
-	foreach(fi, list1)
+	foreach(const QFileInfo &fi, list1)
 	{
 		if(fi.fileName().contains(c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )))
 		{
@@ -747,7 +746,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 
 	const QFileInfoList list = d.entryInfoList();
 
-	foreach(fi, list)
+	foreach(const QFileInfo &fi, list)
 	{
 		if(fi.fileName().contains(c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )))
 		{

@@ -80,7 +80,7 @@ void YahooInviteListImpl::addInvitees( const QStringList &invitees )
 {
 	kDebug(14180) << "Adding invitees: " << invitees;
 
-	for( QStringList::const_iterator it = invitees.begin(); it != invitees.end(); it++ )
+	for( QStringList::const_iterator it = invitees.begin(); it != invitees.end(); ++it )
 	{
 		if( !m_inviteeList.contains( *it ) )
 			m_inviteeList.push_back( *it );
@@ -95,7 +95,7 @@ void YahooInviteListImpl::removeInvitees( const QStringList &invitees )
 {
 	kDebug(14180) << "Removing invitees: " << invitees;
 
-	for( QStringList::const_iterator it = invitees.begin(); it != invitees.end(); it++ )
+	for( QStringList::const_iterator it = invitees.begin(); it != invitees.end(); ++it )
 	{
 		if( !m_buddyList.contains( *it ) )
 			m_buddyList.push_back( *it );

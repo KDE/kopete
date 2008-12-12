@@ -92,7 +92,7 @@ private:
 	void emitWalletOpened( KWallet::Wallet *wallet );
 
 	class Private;
-	Private *d;
+	Private * const d;
 
 	WalletManager();
 };

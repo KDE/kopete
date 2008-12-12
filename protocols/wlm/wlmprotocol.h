@@ -88,8 +88,6 @@ class WlmProtocol: public Kopete::Protocol
 
     const Kopete::OnlineStatus wlmConnecting;
 
-    const Kopete::PropertyTmpl personalMessage;
-
     const Kopete::PropertyTmpl currentSong;
 
   protected:

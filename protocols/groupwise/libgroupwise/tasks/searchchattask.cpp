@@ -20,8 +20,6 @@
 
 #include <qdatetime.h>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 
 #include "client.h"
 #include "gwerror.h"

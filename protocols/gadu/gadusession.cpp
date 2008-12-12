@@ -268,7 +268,7 @@ GaduSession::sendMessage( uin_t recipient, const Kopete::Message& msg, int msgCl
 		}
 		else {
 			sendMsg = msg.plainBody();
-			sendMsg.replace( QString::fromAscii( "\n" ), QString::fromAscii( "\r\n" ) );
+			sendMsg.replace( QLatin1Char( '\n' ), QString::fromAscii( "\r\n" ) );
 			cpMsg = textcodec->fromUnicode( sendMsg );
 
 			return gg_send_message( session_, msgClass, recipient, (const unsigned char *)cpMsg.data() );

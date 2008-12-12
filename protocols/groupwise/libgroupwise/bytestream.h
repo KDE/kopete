@@ -67,7 +67,7 @@ protected:
 private:
 //! \if _hide_doc_
 	class Private;
-	Private *d;
+	Private * const d;
 //! \endif
 };
 // CS_EXPORT_END

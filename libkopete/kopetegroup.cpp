@@ -50,9 +50,8 @@ Group * Group::temporary()
 uint Group::Private::uniqueGroupId = 0;
 
 Group::Group( const QString &_name, GroupType _type )
-	: ContactListElement( ContactList::self() )
+	: ContactListElement( ContactList::self() ), d(new Private())
 {
-	d = new Private;
 	d->displayName = _name;
 	d->type = _type;
 	d->expanded = true;
@@ -60,9 +59,8 @@ Group::Group( const QString &_name, GroupType _type )
 }
 
 Group::Group()
-	: ContactListElement( ContactList::self() )
+	: ContactListElement( ContactList::self() ), d(new Private())
 {
-	d = new Private;
 	d->expanded = true;
 	d->type = Normal;
 	d->groupId = 0;

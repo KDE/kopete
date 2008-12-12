@@ -51,7 +51,7 @@ void dlgAHCList::slotGetList()
 {
 	if(mCommandsLayout)
 		delete mCommandsLayout;
-	foreach(Item item, mCommands)
+	foreach(const Item &item, mCommands)
 		delete item.radio;
 	mCommands.clear();
 	JT_AHCGetList *t = new JT_AHCGetList(mClient->rootTask(), mJid);
@@ -64,7 +64,7 @@ void dlgAHCList::slotListReceived()
 	JT_AHCGetList *t = (JT_AHCGetList *)sender();
 	Item item;
 	mCommandsLayout = new QVBoxLayout(mCommandsWidget);
-	foreach(JT_AHCGetList::Item i, t->commands())
+	foreach(const JT_AHCGetList::Item &i, t->commands())
 	{
 		item.radio = new QRadioButton(i.name, mCommandsWidget);
 		mCommandsLayout->addWidget(item.radio);
@@ -79,7 +79,7 @@ void dlgAHCList::slotListReceived()
 
 void dlgAHCList::slotExecuteCommand()
 {
-	foreach(Item item, mCommands)
+	foreach(const Item &item, mCommands)
 		if(item.radio->isChecked())
 		{
 			JT_AHCommand *t = new JT_AHCommand(item.jid, AHCommand(item.node), mClient->rootTask());

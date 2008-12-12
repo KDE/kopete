@@ -58,8 +58,9 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( Kopete::Account * owner, QWidg
 	{
 		m_searchUI = new GroupWiseContactSearch( m_account, QAbstractItemView::SingleSelection, false,
 				 this );
+		connect(m_searchUI, SIGNAL(selectionValidates(bool)),SLOT(searchResult(bool)));
 		layout->addWidget( m_searchUI );
-		m_canadd = true;
+		m_canadd = false;
 	}
 	else
 	{
@@ -104,14 +105,12 @@ bool GroupWiseAddContactPage::apply( Kopete::Account* account, Kopete::MetaConta
 
 bool GroupWiseAddContactPage::validateData()
 {
-	if ( m_canadd )
-#ifdef __GNUC__
-#warning FIXME port GroupWiseAddContactPage::validateData to interview based GroupWiseSearch
-#endif
-		return true;
-	//return ( m_searchUI->m_results->selectedItem() );
-	else
-		return false;
+	return m_canadd;
+}
+
+void GroupWiseAddContactPage::searchResult(bool valid)
+{
+	m_canadd = valid;
 }
 
 #include "gwaddcontactpage.moc"

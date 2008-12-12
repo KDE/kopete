@@ -103,11 +103,10 @@ public:
 };
 
 ClientStream::ClientStream(Connector *conn, QObject *parent)
-:Stream(parent)
+:Stream(parent), d(new Private())
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
 	
-	d = new Private;
 	d->mode = Client;
 	d->conn = conn;
 	connect( d->conn, SIGNAL(connected()), SLOT(cr_connected()) );

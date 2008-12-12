@@ -93,7 +93,7 @@ WlmTransferManager::fileTransferInviteResponse (MSN::SwitchboardServerConnection
         Kopete::ContactPtrList chatmembers;
         chatmembers.append (account ()->contacts ()[tfd.to]);
         WlmChatSession *_manager =
-            dynamic_cast <WlmChatSession *>(Kopete::ChatSessionManager::self ()->
+            qobject_cast <WlmChatSession *>(Kopete::ChatSessionManager::self ()->
               findChatSession (account ()->myself (), chatmembers,
                                account ()->protocol ()));
         if (!_manager)
@@ -194,7 +194,7 @@ WlmTransferManager::slotAccepted (Kopete::Transfer * ft,
 
     // find an existent session, or create a new one
     chatmembers.append (account ()->contacts ()[from]);
-    WlmChatSession *_manager = dynamic_cast <WlmChatSession *>
+    WlmChatSession *_manager = qobject_cast <WlmChatSession *>
         (Kopete::ChatSessionManager::self ()->
           findChatSession (account ()->myself (), chatmembers,
                            account ()->protocol ()));
@@ -224,7 +224,7 @@ WlmTransferManager::slotRefused (const Kopete::FileTransferInfo & fti)
 {
     Kopete::ContactPtrList chatmembers;
     chatmembers.append (fti.contact ());
-    WlmChatSession *_manager = dynamic_cast <WlmChatSession *>
+    WlmChatSession *_manager = qobject_cast <WlmChatSession *>
         (Kopete::ChatSessionManager::self ()->
           findChatSession (account ()->myself (), chatmembers,
                            account ()->protocol ()));
@@ -283,7 +283,7 @@ WlmTransferManager::gotFileTransferSucceeded (MSN::SwitchboardServerConnection *
             chatmembers.append (account ()->
                                 contacts ()[transferSessions[sessionID].to]);
 
-        WlmChatSession *_manager = dynamic_cast <WlmChatSession *>
+        WlmChatSession *_manager = qobject_cast <WlmChatSession *>
             (Kopete::ChatSessionManager::self ()->
               findChatSession (account ()->myself (), chatmembers,
                                account ()->protocol ()));
@@ -298,7 +298,7 @@ void
 WlmTransferManager::slotCanceled ()
 {
     kDebug (14210) << k_funcinfo;
-    Kopete::Transfer * ft = dynamic_cast < Kopete::Transfer * >(sender ());
+    Kopete::Transfer * ft = qobject_cast < Kopete::Transfer * >(sender ());
     if (!ft)
         return;
     unsigned int sessionID = 0;
@@ -319,7 +319,7 @@ WlmTransferManager::slotCanceled ()
     else
         chatmembers.append (account ()->contacts ()[session.to]);
 
-    WlmChatSession *_manager = dynamic_cast <WlmChatSession *>
+    WlmChatSession *_manager = qobject_cast <WlmChatSession *>
         (Kopete::ChatSessionManager::self ()->
           findChatSession (account ()->myself (), chatmembers,
                            account ()->protocol ()));

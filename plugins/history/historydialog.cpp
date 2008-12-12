@@ -246,7 +246,6 @@ void HistoryDialog::init(Kopete::Contact *c)
 	// Get year and month list
 	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
 	const QString contact_in_filename=c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) );
-	QFileInfo fi;
 
 	// BEGIN check if there are Kopete 0.7.x
 	QDir d1(KStandardDirs::locateLocal("data",QString("kopete/logs/")+
@@ -258,7 +257,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 	const QFileInfoList list1 = d1.entryInfoList();
 	if ( !list1.isEmpty() )
 	{
-		foreach( fi, list1 )
+		foreach( const QFileInfo &fi, list1 )
 		{
 			if(fi.fileName().contains(contact_in_filename))
 			{
@@ -285,7 +284,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 	const QFileInfoList list = d.entryInfoList();
 	if ( !list.isEmpty() )
 	{
-		foreach( fi, list )
+		foreach( const QFileInfo &fi, list )
 		{
 			if(fi.fileName().contains(contact_in_filename))
 			{

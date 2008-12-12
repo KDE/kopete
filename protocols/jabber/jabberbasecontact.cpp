@@ -520,7 +520,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	removeProperty( protocol()->propHomePostalCode );
 	removeProperty( protocol()->propHomeCountry );
 
-	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
+	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); ++it)
 	{
 		XMPP::VCard::Address address = (*it);
 

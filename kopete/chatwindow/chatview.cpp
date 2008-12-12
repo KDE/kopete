@@ -74,8 +74,6 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	 : KVBox( 0l ), KopeteView( mgr, parent )
          , d(new KopeteChatViewPrivate)
 {
-	int i;
-
 	d->isActive = false;
 	d->visibleMembers = false;
 	d->sendInProgress = false;
@@ -148,7 +146,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 
 	// add contacts
 	slotContactAdded( mgr->myself(), true );
-	for ( i = 0; i != mgr->members().size(); i++ )
+	for ( int i = 0; i != mgr->members().size(); ++i )
 	{
 		slotContactAdded( mgr->members()[i], true );
 	}

@@ -68,7 +68,7 @@ namespace XMPP
 		virtual void incomingXml(const QDomElement &)=0;
 	};
 
-	void setDebug(Debug *);
+	IRIS_EXPORT void setDebug(Debug *);
 
 	class IRIS_EXPORT Connector : public QObject
 	{

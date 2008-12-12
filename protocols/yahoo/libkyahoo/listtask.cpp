@@ -14,13 +14,13 @@
     *************************************************************************
 */
 
-#include <qstring.h>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
 
 #include "listtask.h"
 #include "transfer.h"
 #include "ymsgtransfer.h"
 #include "client.h"
-#include <qstringlist.h>
 #include <kdebug.h>
 
 ListTask::ListTask(Task* parent) : Task(parent)
@@ -67,7 +67,7 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 	QString group;
 
 	// We need some low-level parsing here
-	foreach( Param p, t->paramList() )
+	foreach( const Param &p, t->paramList() )
 	{
 		switch( p.first )
 		{
@@ -87,8 +87,8 @@ void ListTask::parseStealthList( YMSGTransfer *t )
 	QString raw;
 	raw = t->firstParam( 185 );
 
-	QStringList buddies = raw.split( ",", QString::SkipEmptyParts );
-	for ( QStringList::Iterator it = buddies.begin(); it != buddies.end(); ++it ) 
+	const QStringList buddies = raw.split( ',', QString::SkipEmptyParts );
+	for ( QStringList::ConstIterator it = buddies.begin(); it != buddies.end(); ++it )
 	{
 		emit stealthStatusChanged( *it, Yahoo::StealthActive );
 	}

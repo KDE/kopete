@@ -402,7 +402,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					//  see Bug 121627
 					// Anyway, theses client that do like that are *WRONG*  considreded the example of jep-71 where there are lot of
 					// linebreak that are not interpreted.  - Olivier 2006-31-03
-					xhtmlBody.replace('\n',"");
+					xhtmlBody.remove('\n');
 					
 					//&nbsp; is not a valid XML entity
 					xhtmlBody.replace("&nbsp;" , "&#160;");

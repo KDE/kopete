@@ -42,8 +42,8 @@ public:
 	PrivacyPlugin( QObject *parent, const QVariantList &args );
 	~PrivacyPlugin();
 
-	void addContactsToWhiteList( QList< Kopete::Contact *> list );
-	void addContactsToBlackList( QList< Kopete::Contact *> list );
+	void addContactsToWhiteList( QList<const Kopete::Contact *> list );
+	void addContactsToBlackList( QList<const Kopete::Contact *> list );
 
 private Q_SLOTS:
 	void slotSettingsChanged();

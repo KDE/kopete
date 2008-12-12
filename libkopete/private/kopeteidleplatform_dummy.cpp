@@ -16,7 +16,7 @@
 
 #include "kopeteidleplatform_p.h"
 
-Kopete::IdlePlatform::IdlePlatform()
+Kopete::IdlePlatform::IdlePlatform() : d(0)
 {
 }
 

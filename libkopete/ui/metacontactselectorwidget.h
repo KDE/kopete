@@ -70,7 +70,7 @@ signals:
 	void metaContactListClicked( Q3ListViewItem *mc );
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 /**
@@ -91,7 +91,7 @@ protected slots:
 	void slotUpdateContactBox();
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 } // namespace UI

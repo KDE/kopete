@@ -68,8 +68,7 @@ wlmUnknown (Kopete::OnlineStatus::Unknown, 25, this, 0,
             QStringList ("status_unknown"), i18n ("Status not available")),
 wlmConnecting (Kopete::OnlineStatus::Connecting, 2, this, 10,
                QStringList ("wlm_connecting"), i18n ("Connecting")),
-personalMessage ("personalMessage", i18n ("Personal Message")),
-currentSong ("currentSong", i18n ("Listening To"))
+currentSong ("currentSong", i18nc ("This is used in the tooltip of a contact", "Listening To"))
 {
     kDebug (14210) << k_funcinfo;
 
@@ -79,8 +78,6 @@ currentSong ("currentSong", i18n ("Listening To"))
     QStringList shownProps =
         Kopete::AppearanceSettings::self ()->toolTipContents ();
 
-    if (!shownProps.contains ("personalMessage"))
-        shownProps << QString::fromLatin1 ("personalMessage");
     if (!shownProps.contains ("currentSong"))
         shownProps << QString::fromLatin1 ("currentSong");
     Kopete::AppearanceSettings::self ()->setToolTipContents (shownProps);

@@ -207,7 +207,7 @@ private:
 	bool isAnyAccountConnected() const;
 	static AccountManager *s_self;
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 } //END namespace Kopete

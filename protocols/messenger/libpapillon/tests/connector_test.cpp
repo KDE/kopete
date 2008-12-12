@@ -117,7 +117,7 @@ void Connector_Test::slotReadNetworkMessage()
 	NetworkMessage *readNetworkMessage = d->stream->read();
 	if(readNetworkMessage)
 	{
-		qDebug() << Q_FUNC_INFO << "Data received: " << readNetworkMessage->toString().replace("\r\n", "");
+		qDebug() << Q_FUNC_INFO << "Data received: " << readNetworkMessage->toString().remove("\r\n");
 		if(readNetworkMessage->command() == QLatin1String("VER"))
 		{
 			loginProcessCvr();

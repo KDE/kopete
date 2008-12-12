@@ -237,7 +237,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 
 	for ( QStringList::ConstIterator i = connectArgs.constBegin(); i != connectArgs.constEnd(); ++i )
 	{
-		foreach ( const QString connectArg, (*i).split(','))
+		foreach ( const QString &connectArg, (*i).split(','))
 			toConnect.append( connectArg );
 	}
 

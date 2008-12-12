@@ -16,8 +16,9 @@
 #ifndef KOPETEINFOEVENT_H
 #define KOPETEINFOEVENT_H
 
-#include <QObject>
-#include <QMap>
+#include <QtCore/QMap>
+#include <QtCore/QObject>
+#include <QtCore/QString>
 
 #include "kopete_export.h"
 
@@ -145,7 +146,7 @@ Q_SIGNALS:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 };
 

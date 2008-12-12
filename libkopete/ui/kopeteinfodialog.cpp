@@ -39,9 +39,8 @@ public:
 };
 
 InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QString &icon)
-: KDialog(parent)
+: KDialog(parent), d(new Private())
 {
-
 	initialize();
 
 	if (!title.isEmpty())
@@ -54,7 +53,7 @@ InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QString &ico
 }
 
 InfoDialog::InfoDialog(QWidget *parent, const QString &title, const KIcon &icon)
-: KDialog(parent)
+: KDialog(parent), d(new Private())
 {
 	initialize();
 
@@ -71,7 +70,6 @@ void InfoDialog::initialize()
 	//FIXME: this should be changed
 	resize(500,500);
 
-	d = new Private();
 	d->layout = new QVBoxLayout(mainWidget());
 	
 	d->title = new KTitleWidget();

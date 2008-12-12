@@ -585,7 +585,7 @@ void IRCAccount::slotJoinChannel()
 	//kdDebug(14120) << "Recent channel list from config: " << chans << endl;
 	QString channelName=KInputDialog::getText( i18n( "Join Channel" ),
 			i18n("Please enter the name of the channel you want to join:"),
-			QString::null, 0,
+			QString(), 0,
 			Kopete::UI::Global::mainWidget(),
 			0, QString(), 0, chans
 		);

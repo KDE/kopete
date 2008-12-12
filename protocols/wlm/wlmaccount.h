@@ -106,13 +106,24 @@ class WlmAccount:public
     // TODO: Check BPL
     bool blockUnknownUsers() const { return true; }
 
-    bool isOnAllowList( QString passport ) const { return m_allowList.contains( passport ); }
+    bool isBlocked(const QString& passport) const;
 
-    bool isOnBlockList( QString passport ) const { return m_blockList.contains( passport ); }
+    void blockContact(const QString& passport, bool block);
+
+    bool isOnAllowList(const QString& passport) const { return m_allowList.contains( passport ); }
+
+    bool isOnBlockList(const QString& passport) const { return m_blockList.contains( passport ); }
+
+    bool isOnPendingList(const QString& passport) const { return m_pendingList.contains( passport ); }
+    
+    // forward list (or also called address book)
+    bool isOnServerSideList(const QString& passport) const { return m_serverSideContactsPassports.contains( passport ); }
 
     QSet<QString> allowList() const { return m_allowList; }
 
     QSet<QString> blockList() const { return m_blockList; }
+    
+    QSet<QString> pendingList() const { return m_pendingList; }
 
     QSet<QString> serverSideContacts() const { return m_serverSideContactsPassports; }
 
@@ -146,8 +157,7 @@ class WlmAccount:public
                                const QString & key, const QVariant &,
                                const QVariant & newValue);
 
-    void
-    setPersonalMessage (const QString & reason);
+    void setPersonalMessage (const Kopete::StatusMessage & reason);
 
     void
     addressBookReceivedFromServer (std::map < std::string,
@@ -167,9 +177,6 @@ class WlmAccount:public
                    const QString & friendlyname);
 
     void gotRemovedContactFromList (const MSN::ContactList & list, const QString & contact);
-
-    void
-    slotContactAddedNotifyDialogClosed (const QString &);
 
     void
     receivedOIMList (std::vector < MSN::eachOIM > &oimlist);
@@ -276,14 +283,14 @@ class WlmAccount:public
         return m_initialList;
     }
 
-  private:
+private slots:
+    void addedInfoEventActionActivated(uint actionId);
+
+private:
     Kopete::OnlineStatus temporaryStatus;
 
     QString
         m_pictureFilename;
-
-    QString
-        m_PersonalMessage;
 
     bool
         m_initialList;
@@ -307,6 +314,9 @@ class WlmAccount:public
 
     // passport set of contacts which are on block list
     QSet<QString> m_blockList;
+
+    // passport set of contacts which are on pending list
+    QSet<QString> m_pendingList;
 
 };
 

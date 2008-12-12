@@ -36,14 +36,13 @@ public:
 };
 
 IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
-: Kopete::UI::InfoDialog(parent, i18n("Identity Information"), "identity")
+: Kopete::UI::InfoDialog(parent, i18n("Identity Information"), "identity"), d(new Private())
 {
 	Q_ASSERT(identity);
 
 	setTitle(identity->label());
 	setWindowTitle(i18n("Identity Information"));
 
-	d = new Private();
 	d->identity = identity;
 	d->props = Kopete::Global::Properties::self();
 	

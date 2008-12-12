@@ -111,8 +111,8 @@ pascal void Kopete::IdlePlatform::Private::IdleTimerAction( EventLoopTimerRef, E
 
 
 Kopete::IdlePlatform::IdlePlatform()
+: d(new Private())
 {
-	d = new Private();
 }
 
 Kopete::IdlePlatform::~IdlePlatform()

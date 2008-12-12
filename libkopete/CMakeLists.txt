@@ -152,7 +152,6 @@ endif(Q_WS_X11 AND X11_Xss_FOUND)
 set_target_properties(kopete PROPERTIES
     VERSION ${GENERIC_LIB_VERSION}
     SOVERSION ${GENERIC_LIB_SOVERSION}
-    ${KDE4_DISABLE_PROPERTY_}LINK_INTERFACE_LIBRARIES "kdeui"
     )
 if(MSVC)
   set_target_properties(kopete PROPERTIES
@@ -218,6 +217,7 @@ install( FILES
   kopetegroup.h
   kopeteidentity.h
   kopeteidentitymanager.h
+  kopeteinfoevent.h
   kopetemessageevent.h
   kopetemessage.h
   kopetemessagehandlerchain.h

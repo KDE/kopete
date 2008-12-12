@@ -21,12 +21,13 @@
 #include <windows.h>
 
 Kopete::IdlePlatform::IdlePlatform()
+ : d(0)
 {
-    d = 0;
 }
 
 Kopete::IdlePlatform::~IdlePlatform()
 {
+    delete d;
 }
 
 bool Kopete::IdlePlatform::init()

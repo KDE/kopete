@@ -102,7 +102,6 @@ static void create_privkey(void *opdata, const char *accountname, const char *pr
 	popup->show();
 	popup->setCloseLock( true );
 
-
 	KeyGenThread *keyGenThread = new KeyGenThread ( accountname, protocol );
 	keyGenThread->start();
 	while( !keyGenThread->wait(100) ){
@@ -388,7 +387,6 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 
 	ignoremessage = otrl_message_receiving( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), msg->toLocal8Bit(), &newMessage, &tlvs, NULL, NULL );
 
-
 	tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
 	if( tlv ){
 		Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
@@ -518,16 +516,16 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 	}
 	}
 	
-
 	// message is now decrypted or is a Plaintext message and ready to deliver
 	if( !ignoremessage ){
 		// message is decrypted
 		if( newMessage != NULL ){
 			*msg = QString::fromUtf8(newMessage);
 			otrl_message_free( newMessage );
-			//msg = Qt::convertFromPlainText( msg, Qt::WhiteSpaceNormal );
-			msg->replace( QString('\n'), QString("<br>") );
+		} else {
+			msg->replace( QString('<'), QString("&lt;") );
 		}
+		msg->replace( QString('\n'), QString("<br>") );
 	}
 	return ignoremessage;
 }

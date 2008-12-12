@@ -80,7 +80,7 @@ private slots:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 	void toggleMode( WindowMode );
 	void updateNextButton();

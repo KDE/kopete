@@ -13,7 +13,7 @@ set(kopete_texteffect_PART_SRCS texteffectplugin.cpp texteffectconfig.cpp )
 kde4_add_plugin(kopete_texteffect ${kopete_texteffect_PART_SRCS})
 
 
-target_link_libraries(kopete_texteffect  ${KDE4_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_texteffect  ${KDE4_KDEUI_LIBS} kopete )
 
 install(TARGETS kopete_texteffect  DESTINATION ${PLUGIN_INSTALL_DIR})
 

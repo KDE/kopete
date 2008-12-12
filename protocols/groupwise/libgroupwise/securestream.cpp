@@ -337,10 +337,8 @@ public:
 };
 
 SecureStream::SecureStream(ByteStream *s)
-:ByteStream(0)
+:ByteStream(0), d(new Private())
 {
-	d = new Private;
-
 	d->bs = s;
 	connect(d->bs, SIGNAL(readyRead()), SLOT(bs_readyRead()));
 	connect(d->bs, SIGNAL(bytesWritten(int)), SLOT(bs_bytesWritten(int)));

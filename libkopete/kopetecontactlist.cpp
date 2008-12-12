@@ -76,10 +76,9 @@ ContactList *ContactList::self()
 }
 
 ContactList::ContactList()
-	: QObject( qApp )
+	: QObject( kapp ), d(new Private())
 {
 	setObjectName( "KopeteContactList" );
-	d=new Private;
 
 	//the myself metacontact can't be created now, because it will use
 	//ContactList::self() as parent which will call this constructor -> infinite loop

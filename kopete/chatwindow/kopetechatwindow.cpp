@@ -20,21 +20,16 @@
     *************************************************************************
 */
 
-#include <QTimer>
-#include <QLayout>
-
-#include <QFileInfo>
-#include <QDockWidget>
-
-//Added by qt3to4:
-#include <QPixmap>
-#include <QTextStream>
-#include <QCloseEvent>
-#include <QFrame>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QMenu>
-#include <QDockWidget>
+#include <QtCore/QTextStream>
+#include <QtCore/QTimer>
+#include <QtGui/QDockWidget>
+#include <QtGui/QFrame>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <QtGui/QMenu>
+#include <QtGui/QPixmap>
+#include <QtGui/QCloseEvent>
+#include <QtGui/QVBoxLayout>
 
 #ifdef CHRONO
 #include <QTime>
@@ -1084,7 +1079,6 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	KMenu *contactsMenu = actionContactMenu->menu();
 	contactsMenu->clear();
 
-	Kopete::Contact *contact;
 	Kopete::ContactPtrList m_them;
 
 	if( m_popupView )
@@ -1097,7 +1091,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	// 'Contacts' action, or something cleverer.
 	uint contactCount = 0;
 
-	foreach(contact, m_them)
+	foreach(Kopete::Contact *contact, m_them)
 	{
 		KMenu *p = contact->popupMenu();
 		connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),

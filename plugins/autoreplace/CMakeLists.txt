@@ -12,7 +12,7 @@ set(kopete_autoreplace_PART_SRCS autoreplaceplugin.cpp autoreplaceconfig.cpp )
 kde4_add_plugin(kopete_autoreplace ${kopete_autoreplace_PART_SRCS})
 
 
-target_link_libraries(kopete_autoreplace  ${KDE4_KDECORE_LIBS} kopete )
+target_link_libraries(kopete_autoreplace  ${KDE4_KDEUI_LIBS} kopete )
 
 install(TARGETS kopete_autoreplace  DESTINATION ${PLUGIN_INSTALL_DIR})
 

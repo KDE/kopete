@@ -81,7 +81,7 @@ private:
 	void addAccountItem( Kopete::Account *account );
 	void resizeAccountListWidget();
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 #endif

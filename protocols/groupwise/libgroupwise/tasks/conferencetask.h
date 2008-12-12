@@ -23,8 +23,7 @@
 
 #include "gwerror.h"
 #include "eventtask.h"
-//Added by qt3to4:
-#include <Q3ValueList>
+#include <QtCore/QList>
 
 /**
  * This Task is responsible for handling all conference related events, and signalling them up to @ref GroupWiseAccount
@@ -70,7 +69,7 @@ protected:
 	void dumpConferenceEvent( ConferenceEvent & evt );
 private:
 	// A list of events which are waiting for more data from the server before they can be exposed to the client
-	Q3ValueList< ConferenceEvent > m_pendingEvents; 
+	QList< ConferenceEvent > m_pendingEvents;
 };
 
 #endif

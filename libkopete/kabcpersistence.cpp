@@ -72,10 +72,10 @@ public:
 
 KABC::AddressBook* KABCPersistence::Private::s_addressBook = 0L;
 
-KABCPersistence::KABCPersistence( QObject * parent, const char * name ) : QObject( parent)
+KABCPersistence::KABCPersistence( QObject * parent, const char * name )
+  : QObject( parent), d(new Private())
 {
 	setObjectName( name );
-	d = new Private;
 }
 
 KABCPersistence::~KABCPersistence()

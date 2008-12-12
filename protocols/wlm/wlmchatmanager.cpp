@@ -209,7 +209,7 @@ WlmChatManager::leftConversation (MSN::SwitchboardServerConnection * conn,
 
     if (chat)
     {
-        Kopete::Contact * contact = account ()->contacts ()[passport];
+        WlmContact * contact = qobject_cast<WlmContact*>(account ()->contacts ()[passport]);
         if (!contact)
             return;
         chat->removeContact (contact);
@@ -241,13 +241,13 @@ WlmChatManager::createChat (MSN::SwitchboardServerConnection * conn)
         return;
 
     std::list < MSN::Passport >::iterator users = conn->users.begin ();
-    for (; users != conn->users.end (); users++)
+    for (; users != conn->users.end (); ++users)
     {
         Kopete::Contact * contact =
             account ()->contacts ()[(*users).c_str ()];
         if (!contact)
         {
-            account ()->addContact ((*users).c_str (), QString::null, 0L,
+            account ()->addContact ((*users).c_str (), QString(), 0L,
                                     Kopete::Account::Temporary);
             contact = account ()->contacts ()[(*users).c_str ()];
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
@@ -260,7 +260,7 @@ WlmChatManager::createChat (MSN::SwitchboardServerConnection * conn)
                                                               chatmembers,
                                                               account ()->protocol ());
     if (_manager)
-        chatSessions[conn] = dynamic_cast < WlmChatSession * >(_manager);
+        chatSessions[conn] = qobject_cast < WlmChatSession * >(_manager);
     else
         // create a new chat window
         chatSessions[conn] = new WlmChatSession (account ()->protocol (),
@@ -280,20 +280,20 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
     Kopete::Contact * contact = account ()->contacts ()[passport];
     if (!contact)
     {
-        account ()->addContact (passport, QString::null, 0L,
+        account ()->addContact (passport, QString(), 0L,
                                 Kopete::Account::Temporary);
         contact = account ()->contacts ()[passport];
         contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
     }
     // populate chatmembers from SwitchboardServerConnection
     std::list < MSN::Passport >::iterator users = conn->users.begin ();
-    for (; users != conn->users.end (); users++)
+    for (; users != conn->users.end (); ++users)
     {
         Kopete::Contact * contact =
             account ()->contacts ()[(*users).c_str ()];
         if (!contact)
         {
-            account ()->addContact ((*users).c_str (), QString::null, 0L,
+            account ()->addContact ((*users).c_str (), QString(), 0L,
                                     Kopete::Account::Temporary);
             contact = account ()->contacts ()[(*users).c_str ()];
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
@@ -303,7 +303,7 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
 
     // check if we already have a similar connection
     WlmChatSession *_manager =
-        dynamic_cast <WlmChatSession *>(Kopete::ChatSessionManager::self ()->
+        qobject_cast <WlmChatSession *>(Kopete::ChatSessionManager::self ()->
           findChatSession (account ()->myself (), chatmembers,
                            account ()->protocol ()));
 
@@ -346,7 +346,7 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
         Kopete::Contact * contact = account ()->contacts ()[from];
         if(!contact)
         {
-            account ()->addContact (from, QString::null, 0L,
+            account ()->addContact (from, QString(), 0L,
                                             Kopete::Account::Temporary);
             contact = account ()->contacts ()[from];
         }
@@ -358,8 +358,8 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
         newMessage->setDirection (Kopete::Message::Inbound);
 
         // stolen from msn plugin
-        QMap<QString,QString>::iterator it = emoticonsList.begin();
-        for(;it!=emoticonsList.end(); ++it)
+        QMap<QString,QString>::ConstIterator it = emoticonsList.constBegin();
+        for(;it!=emoticonsList.constEnd(); ++it)
         {
             QString es=Qt::escape(it.key());
             QString message1=newMessage->escapedBody();
@@ -463,7 +463,7 @@ WlmChatManager::requestDisplayPicture (QString contactId)
         return;
 
     WlmChatSession *session =
-        dynamic_cast <WlmChatSession *>(contact->manager (Kopete::Contact::CanCreate));
+        qobject_cast <WlmChatSession *>(contact->manager (Kopete::Contact::CanCreate));
 
     if (session)
         session->requestDisplayPicture ();
@@ -520,7 +520,7 @@ WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn,
     Kopete::Contact * contact = account ()->contacts ()[from.c_str()];
     if(!contact)
     {
-        account ()->addContact (from.c_str(), QString::null, 0L,
+        account ()->addContact (from.c_str(), QString(), 0L,
                                         Kopete::Account::Temporary);
         contact = account ()->contacts ()[from.c_str()];
     }
@@ -580,18 +580,19 @@ void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnecti
     QString newlocation =
         KGlobal::dirs ()->locateLocal ("appdata",
                                        "wlmpictures/" +
-                                       QString (SHA1D.replace ("/", "_")));
-    if (QFile (newlocation).exists () && QFile (newlocation).size ())
+                                       QString (SHA1D.replace ('/', '_')));
+    QFile f(newlocation);
+    if (f.exists () && f.size ())
     {
         emoticonsList[alias] = newlocation;
         return;
     }
 
     // pending emoticon
-    emoticonsList[alias] = "";
+    emoticonsList[alias].clear();
 
-    conn->requestEmoticon(sessionID, newlocation.toAscii().data(),
-            msnobject.toAscii().data(), alias.toAscii().data());
+    conn->requestEmoticon(sessionID, newlocation.toAscii().constData(),
+            msnobject.toAscii().constData(), alias.toAscii().constData());
 }
 
 void 

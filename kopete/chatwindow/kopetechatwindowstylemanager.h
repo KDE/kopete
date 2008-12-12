@@ -134,7 +134,7 @@ private:
 	 */
 	ChatWindowStyleManager(QObject *parent = 0);
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 #endif

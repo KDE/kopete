@@ -375,7 +375,7 @@ void MSNAccount::slotDebugRawCommand()
 	if ( result == QDialog::Accepted && m_notifySocket )
 	{
 		m_notifySocket->sendCommand( dlg->command(), dlg->params(),
-					dlg->addId(), dlg->msg().replace( "\n", "\r\n" ).toUtf8() );
+					dlg->addId(), dlg->msg().replace( '\n', "\r\n" ).toUtf8() );
 	}
 	delete dlg;
 #endif
@@ -780,7 +780,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 
 	if ( lists & 1 )	// FL
 	{
-		QStringList contactGroups = groups.split( ",", QString::SkipEmptyParts );
+		QStringList contactGroups = groups.split( ',', QString::SkipEmptyParts );
 		if ( c )
 		{
 			if( !c->metaContact() )

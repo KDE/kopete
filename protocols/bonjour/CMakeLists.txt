@@ -13,7 +13,6 @@ set(kopete_bonjour_PART_SRCS
    bonjouraccount.cpp 
    bonjouraddcontactpage.cpp 
    bonjoureditaccountwidget.cpp 
-   avahi-bonjour.cpp
    bonjourcontactconnection.cpp
 )
 

@@ -248,7 +248,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		case Kopete::OnlineStatus::Connecting:
 		{
 			QImage offlineIcon = mKopeteIcon.pixmap(22,22).toImage();
-			KIconEffect::toGray( offlineIcon, 0.85 );
+			KIconEffect::toGray( offlineIcon, 0.85f );
 			setIcon( QPixmap::fromImage( offlineIcon ) );
 			break;
 		}

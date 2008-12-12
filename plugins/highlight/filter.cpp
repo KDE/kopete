@@ -29,7 +29,7 @@ Filter::~Filter()
 QString Filter::className() const
 {
 	QString cl="filter:"+displayName;
-	return cl.replace( ' ' , "_" ).replace( '\\' , "_" ).replace( '/' , "_" )
+	return cl.replace( ' ' , '_' ).replace( '\\' , '_' ).replace( '/' , '_' )
 			.replace( QRegExp("[\\x0000-\\x002C\\x003B-\\x0040\\x005B-\\x005E\\x007B-\\x00BF]") , "-" );
 }
  

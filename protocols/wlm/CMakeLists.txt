@@ -40,7 +40,6 @@ target_link_libraries(
     ${QT_QTXML_LIBRARY} 
     ${QT_QTNETWORK_LIBRARY} 
     kopete 
-    kopete_videodevice 
     ${LIBMSN_LIBRARIES}
 )
 

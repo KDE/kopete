@@ -143,7 +143,7 @@ private slots:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 	void reset(bool all=false);
 	void processNext();

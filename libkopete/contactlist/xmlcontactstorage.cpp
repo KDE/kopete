@@ -143,7 +143,7 @@ void XmlContactStorage::load()
     QString versionString = list.attribute( QString::fromLatin1( "version" ), QString() );
     uint version = 0;
     if( QRegExp( QString::fromLatin1( "[0-9]+\\.[0-9]" ) ).exactMatch( versionString ) )
-        version = versionString.replace( QString::fromLatin1( "." ), QString() ).toUInt();
+        version = versionString.remove( QLatin1Char( '.' ) ).toUInt();
 
     if( version < Private::ContactListVersion )
     {
@@ -296,7 +296,7 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         { // custom display name, used for the custom name source
 
             //the replace is there to workaround the Bug 95444
-            metaContact->setDisplayName( contactElement.text().replace('\n',QString::fromUtf8("")) );
+            metaContact->setDisplayName( contactElement.text().remove('\n') );
 
             if ( contactElement.hasAttribute(NSCID_ELEM) && contactElement.hasAttribute(NSPID_ELEM) && contactElement.hasAttribute(NSAID_ELEM))
             {
@@ -689,7 +689,7 @@ const QDomElement XmlContactStorage::storeMetaContact( Kopete::MetaContact *meta
 
         // Store other plugin data
         const QList<QDomElement> pluginNodes = storeContactListElement( metaContact );
-        foreach ( QDomElement it , pluginNodes )
+        foreach ( const QDomElement &it , pluginNodes )
             metaContactDoc.documentElement().appendChild( metaContactDoc.importNode( it, true ) );
     }
     return metaContactDoc.documentElement();
@@ -723,7 +723,7 @@ const QDomElement XmlContactStorage::storeGroup( Kopete::Group *group ) const
 
     // Store other plugin data
     const QList<QDomElement> pluginNodes = storeContactListElement( group );
-    foreach ( QDomElement it , pluginNodes )
+    foreach ( const QDomElement &it , pluginNodes )
         groupDoc.documentElement().appendChild( groupDoc.importNode( it, true ) );
 
 

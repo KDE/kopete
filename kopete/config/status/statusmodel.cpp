@@ -236,7 +236,7 @@ QMimeData *KopeteStatusModel::mimeData( const QModelIndexList &indexes ) const
 
 	QDataStream stream( &encodedData, QIODevice::WriteOnly );
 
-	foreach ( QModelIndex index, indexes )
+	foreach ( const QModelIndex &index, indexes )
 	{
 		if ( index.isValid() && index.column() == 0 )
 		{

@@ -176,7 +176,7 @@ private:
 	ChatSessionManager( QObject* parent = 0 );
 
 	class Private;
-	Private *d;
+	Private * const d;
 
 	static ChatSessionManager *s_self;
 

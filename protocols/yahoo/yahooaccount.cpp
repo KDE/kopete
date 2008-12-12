@@ -955,7 +955,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsgText.replace( regExp, QLatin1String("" ) );
+			newMsgText.remove( regExp );
 
 		}
 	}
@@ -965,7 +965,7 @@ QString YahooAccount::prepareIncomingMessage( const QString &messageText )
 		pos = regExp.indexIn( newMsgText, pos );
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
-			newMsgText.replace( regExp, QLatin1String("" ) );
+			newMsgText.remove( regExp );
 		}
 	}
 
@@ -1098,7 +1098,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 	QString m = who;
 	QStringList myMembers;
 	myMembers.push_back( who );
-	for( QStringList::const_iterator it = ++members.constBegin(); it != members.constEnd(); it++ )
+	for( QStringList::const_iterator it = ++members.constBegin(); it != members.constEnd(); ++it )
 	{
 		if( *it != m_session->userId() )
 		{

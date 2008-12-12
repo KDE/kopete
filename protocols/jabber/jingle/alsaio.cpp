@@ -58,7 +58,7 @@ QList<Item> getAlsaItems()
 
 	QList<AlsaItem> items;
 	QStringList devices_lines = read_proc_as_lines("/proc/asound/devices");
-	foreach(QString line, devices_lines)
+	foreach(const QString &line, devices_lines)
 	{
 		// get the fields we care about
 		QString devbracket, devtype;
@@ -114,7 +114,7 @@ QList<Item> getAlsaItems()
 
 	// try to get the friendly names
 	QStringList pcm_lines = read_proc_as_lines("/proc/asound/pcm");
-	foreach(QString line, pcm_lines)
+	foreach(const QString &line, pcm_lines)
 	{
 		QString devnumbers, devname;
 		int x = line.indexOf(": ");

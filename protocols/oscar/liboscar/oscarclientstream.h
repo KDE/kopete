@@ -93,7 +93,7 @@ private Q_SLOTS:
 	
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 	void processNext();
 };

@@ -75,7 +75,7 @@ protected slots:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 	void initialize();
 
