@@ -1,34 +1,52 @@
 # cmake macro to test LiboRTP
 
 # Copyright (c) 2008, Detlev Casanova <detlev.casanova @ gmail.com>
+# Copyright (c) 2008, Pino Toscano <pino@kde.org>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 INCLUDE( FindPackageHandleStandardArgs )
-
-FIND_PATH( LIBORTP_INCLUDE_DIR ortp/ortp.h ${KDE4_INCLUDE_DIR} )
-
-FIND_LIBRARY( LIBORTP_LIBRARY NAMES ortp )
+include( FindPkgConfig )
 
 SET( LIBORTP_FOUND FALSE )
 
+pkg_check_modules(ortp ortp)
+
+FIND_PATH( LIBORTP_INCLUDE_DIR
+           ortp/ortp.h
+           PATHS ${ortp_INCLUDEDIR} ${KDE4_INCLUDE_DIR}
+)
+
+FIND_LIBRARY( LIBORTP_LIBRARY
+              NAMES ortp
+              PATHS ${ortp_LIBDIR}
+)
+
 IF( LIBORTP_INCLUDE_DIR AND LIBORTP_LIBRARY )
-  EXECUTE_PROCESS( COMMAND gcc -o ortpversion -lortp -L${LIBORTP_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/cmake/modules/ortpversion.c OUTPUT_QUIET ERROR_QUIET RESULT_VARIABLE compileErr )
-  if ( NOT compileErr )
-    EXECUTE_PROCESS(COMMAND ./ortpversion 0 13 RESULT_VARIABLE resultErr )
-    if ( NOT resultErr )
+  # we need to save and disable the C flags currently set, as they can conflict
+  # with ortp's requirements (c99)
+  set(save_cmake_c_flags ${CMAKE_C_FLAGS})
+  set(CMAKE_C_FLAGS)
+  try_run( run_result compile_result
+           ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/ortpversion.c
+           CMAKE_FLAGS -DINCLUDE_DIRECTORIES:STRING=${LIBORTP_INCLUDE_DIR} -DLINK_LIBRARIES=${LIBORTP_LIBRARY}
+           COMPILE_DEFINITIONS "${ortp_CFLAGS}"
+           ARGS "0 13"
+  )
+  set(CMAKE_C_FLAGS ${save_cmake_c_flags})
+
+  if ( compile_result )
+    if ( run_result EQUAL 0 )
 #     Version OK
       SET( LIBORTP_FOUND TRUE )
       MESSAGE( STATUS "Found libortp: ${LIBORTP_LIBRARY}" )
-    endif( NOT resultErr )
-  endif( NOT compileErr )
+    endif ( run_result EQUAL 0 )
+  endif( compile_result )
 ENDIF( LIBORTP_INCLUDE_DIR AND LIBORTP_LIBRARY )
 
-IF( resultErr OR compileErr )
+if( NOT LIBORTP_FOUND )
   if( LiboRTP_FIND_REQUIRED )
-    message( FATAL_ERROR "You need ortp version 0.13 minimum.\nPlease build and install it first." )
-  else ( LiboRTP_FIND_REQUIRED )
-    message( "LiboRTP not found on your system !" )
+    message( FATAL_ERROR "You need ortp, minimum version 0.13." )
   endif ( LiboRTP_FIND_REQUIRED )
-endif( resultErr OR compileErr )
+endif( NOT LIBORTP_FOUND )
