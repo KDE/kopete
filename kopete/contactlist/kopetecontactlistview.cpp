@@ -137,7 +137,7 @@ KopeteContactListView::~KopeteContactListView()
 Kopete::MetaContact* KopeteContactListView::metaContactFromIndex( const QModelIndex& index )
 {
 	QString mcUuid = index.data( Kopete::Items::UuidRole ).toString();
-	Kopete::MetaContact* mc = Kopete::ContactList::self()->metaContact( QUuid(mcUuid) );
+	return Kopete::ContactList::self()->metaContact( QUuid(mcUuid) );
 }
 
 void KopeteContactListView::contactActivated( const QModelIndex& index )
