@@ -75,6 +75,7 @@ class WlmChatSession: public Kopete::ChatSession
     void startSendKeepAlive();
     void stopSendKeepAlive();
     unsigned int generateSessionID();
+    QMap < QString, QString > emoticonsList;
 
   private slots:
     void slotMessageSent (Kopete::Message & message, Kopete::ChatSession * kmm);
