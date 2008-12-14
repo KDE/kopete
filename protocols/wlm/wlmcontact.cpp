@@ -23,6 +23,7 @@
 #include <kactioncollection.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
+#include <KToolInvocation>
 #include <KUrl>
 
 #include "kopeteaccount.h"
@@ -30,6 +31,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
 
+#include "ui_wlminfo.h"
 #include "wlmaccount.h"
 #include "wlmprotocol.h"
 
@@ -50,6 +52,9 @@ Kopete::Contact (_account, uniqueName, parent)
 
     m_actionBlockContact = new KToggleAction(KIcon("wlm_blocked"), i18n("Block Contact"), this );
     QObject::connect( m_actionBlockContact, SIGNAL(triggered(bool)), this, SLOT(blockContact(bool)) );
+
+    m_actionShowProfile = new KAction(i18n("Show Profile"), this);
+    QObject::connect(m_actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()));
 }
 
 WlmContact::~WlmContact ()
@@ -61,6 +66,12 @@ WlmContact::isReachable ()
 {
 	// always true, as we can send offline messages
     return true;
+}
+
+void
+WlmContact::slotShowProfile()
+{
+    KToolInvocation::invokeBrowser(QString::fromLatin1("http://members.msn.com/default.msnw?mem=") + contactId()) ;
 }
 
 void
@@ -125,10 +136,12 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     m_actionBlockContact->setEnabled(m_account->isConnected());
     m_actionBlockContact->setChecked(m_account->isBlocked(contactId()));
     actions->append(m_actionBlockContact);
+    actions->append(m_actionShowProfile);
 
     // temporary action collection, used to apply Kiosk policy to the actions
     KActionCollection tempCollection((QObject*)0);
     tempCollection.addAction(QLatin1String("contactBlock"), m_actionBlockContact);
+    tempCollection.addAction(QLatin1String("contactViewProfile"), m_actionShowProfile);
 
     return actions;
 }
@@ -139,6 +152,32 @@ void WlmContact::blockContact(bool block)
         return;
 
     m_account->blockContact(contactId(), block);
+}
+
+void WlmContact::slotUserInfo()
+{
+    KDialog infoDialog;
+    infoDialog.setButtons( KDialog::Close);
+    infoDialog.setDefaultButton(KDialog::Close);
+    const QString nick = property(Kopete::Global::Properties::self()->nickName()).value().toString();
+    const QString personalMessage = statusMessage().message();
+    Ui::WLMInfo info;
+    info.setupUi(infoDialog.mainWidget());
+    info.m_id->setText(contactId());
+    info.m_displayName->setText(nick);
+    info.m_personalMessage->setText(personalMessage);
+//     info.m_phh->setText(m_phoneHome); //TODO enable and fill
+//     info.m_phw->setText(m_phoneWork);
+//     info.m_phm->setText(m_phoneMobile);
+//     info.m_reversed->setChecked(m_reversed);
+
+//     connect( info.m_reversed, SIGNAL(toggled(bool)) , this, SLOT(slotUserInfoDialogReversedToggled()));
+
+    info.groupBox->setVisible(false);
+    info.m_reversed->setVisible(false);
+
+    infoDialog.setCaption(nick);
+    infoDialog.exec();
 }
 
 void

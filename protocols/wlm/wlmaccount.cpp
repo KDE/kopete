@@ -29,7 +29,9 @@
 #include <kmessagebox.h>
 #include <knotification.h>
 #include <KCodecs>
+#include <KInputDialog>
 #include <KStandardDirs>
+#include <KToolInvocation>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
@@ -74,6 +76,17 @@ clientid (0)
     clientid += MSN::SIPInvitations;
     clientid += MSN::SupportMultiPacketMessaging;
 
+    m_openInboxAction = new KAction(KIcon("mail-folder-inbox"), i18n("Open Inbo&x..."), this);
+    QObject::connect(m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()));
+
+    m_changeDNAction = new KAction(i18n("&Change Display Name..."), this);
+    QObject::connect(m_changeDNAction, SIGNAL(triggered(bool)), this, SLOT(slotChangePublicName()));
+
+//     m_startChatAction = new KAction(KIcon("mail-message-new"), i18n("&Start Chat..."), this);
+//     QObject::connect(m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()));
+    
+    m_openStatusAction = new KAction(i18n("Open MS&N service status site..."), this);
+    QObject::connect(m_openStatusAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenStatus()));
 }
 
 WlmAccount::~WlmAccount ()
@@ -85,6 +98,18 @@ void
 WlmAccount::fillActionMenu (KActionMenu * actionMenu)
 {
     Kopete::Account::fillActionMenu (actionMenu);
+    const bool connected = isConnected();
+    m_openInboxAction->setEnabled(connected);
+//     m_startChatAction->setEnabled(connected);
+    m_changeDNAction->setEnabled(connected);
+
+    actionMenu->addSeparator();
+
+    actionMenu->addAction(m_changeDNAction);
+//     actionMenu->addAction(m_startChatAction);
+
+//     actionMenu->addAction(m_openInboxAction);
+    actionMenu->addAction(m_openStatusAction);
 }
 
 bool
@@ -178,6 +203,48 @@ void
 WlmAccount::setStatusMessage (const Kopete::StatusMessage & statusMessage)
 {
     setPersonalMessage(statusMessage);
+}
+
+void
+WlmAccount::slotChangePublicName()
+{
+    if ( !isConnected() )
+    {
+        return;
+        //TODO:  change it anyway, and sync at the next connection
+    }
+
+    bool ok;
+    const QString name = KInputDialog::getText( i18n( "Change Display Name - MSN Plugin" ), //TODO rename MSN to WLM (see also following strings)
+        i18n( "Enter the new display name by which you want to be visible to your friends on MSN:" ),
+        myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), &ok );
+
+    if ( ok )
+    {
+        if ( name.length() > 387 )
+        {
+            KMessageBox::error( Kopete::UI::Global::mainWidget(),
+                i18n( "<qt>The display name you entered is too long. Please use a shorter name.\n"
+                    "Your display name has <b>not</b> been changed.</qt>" ),
+                i18n( "Change Display Name - MSN Plugin" ) );
+            return;
+        }
+
+        m_server->cb.mainConnection->setFriendlyName(name.toAscii().data(), true);
+    }
+}
+
+void
+WlmAccount::slotOpenInbox()
+{
+//     if (m_notifySocket)
+//         m_notifySocket->slotOpenInbox();
+}
+
+void
+WlmAccount::slotOpenStatus()
+{
+    KToolInvocation::invokeBrowser(QLatin1String("http://messenger.msn.com/Status.aspx")) ;
 }
 
 void
@@ -403,7 +470,7 @@ WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
     if (contact)
     {
         // TODO - handle the other fields of pInfo
-        contact->setStatusMessage(QString(pInfo.PSM.c_str()));
+        contact->setStatusMessage(Kopete::StatusMessage(QString(pInfo.PSM.c_str())));
         QString type (pInfo.mediaType.c_str ());
         if (pInfo.mediaIsEnabled && type == "Music")
         {

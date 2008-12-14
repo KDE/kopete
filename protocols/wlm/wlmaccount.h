@@ -285,9 +285,18 @@ class WlmAccount:public
 
 private slots:
     void addedInfoEventActionActivated(uint actionId);
+//     void slotStartChat();
+    void slotOpenInbox();
+    void slotChangePublicName();
+    void slotOpenStatus();
 
 private:
     Kopete::OnlineStatus temporaryStatus;
+
+    KAction *m_openInboxAction;
+//     KAction *m_startChatAction;
+    KAction *m_changeDNAction;
+    KAction *m_openStatusAction;
 
     QString
         m_pictureFilename;

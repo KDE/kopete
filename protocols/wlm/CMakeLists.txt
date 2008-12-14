@@ -14,6 +14,7 @@ set(kopete_wlm_ui_SRCS
 
 kde4_add_ui_files(kopete_wlm_ui_SRCS
     ui/wlmaddui.ui
+    ui/wlminfo.ui 
     ui/wlmaccountpreferences.ui
 )
 
