@@ -490,7 +490,7 @@ WlmChatSession::requestChatService ()
         // request a new switchboard connection
         static_cast <WlmAccount *>(account ())->server ()->
             cb.mainConnection->requestSwitchboardConnection (ctx);
-        QTimer::singleShot (15 * 1000, this,
+        QTimer::singleShot (30 * 1000, this,
                             SLOT (switchboardConnectionTimeout ()));
         return true;
     }
