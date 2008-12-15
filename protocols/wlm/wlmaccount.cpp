@@ -20,6 +20,7 @@
 #include <QFile>
 #include <QImage>
 #include <QDomDocument>
+#include <QtCore/QCryptographicHash>
 
 #include <kaction.h>
 #include <kactionmenu.h>
@@ -417,6 +418,9 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
     WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[contactId]);
     if (contact)
     {
+        // remove from pending display pictures list if applicable
+        m_pendingDisplayPictureList.remove(contactId);
+
         QFile f(filename);
         if (!f.exists () || !f.size ())
         {
@@ -437,7 +441,34 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
             if (QFile (file).exists () && file != filename)
                 QFile::remove (file);
         }
-        // check file integrity
+
+        // check file integrity (SHA1D)
+        QDomDocument xmlobj;
+        xmlobj.setContent (contact->getMsnObj());
+        QString SHA1D_orig = xmlobj.documentElement ().attribute ("SHA1D");
+
+        if (SHA1D_orig.isEmpty ())
+            return;
+
+        // open the file to generate the SHA1D
+        if (!f.open(QIODevice::ReadOnly))
+        {
+            kDebug(14140) << "Could not open avatar picture.";
+            contact->removeProperty( Kopete::Global::Properties::self()->photo() );
+            QFile::remove (filename);
+            return;
+        }
+
+        QByteArray ar = f.readAll();
+        QByteArray SHA1D = QCryptographicHash::hash(ar, QCryptographicHash::Sha1).toBase64();
+
+        // remove corrupted files
+        if(SHA1D != SHA1D_orig)
+        {
+            QFile::remove (filename);
+            return;
+        }
+
         QImage contactPhoto = QImage( filename );
         if(contactPhoto.format()!=QImage::Format_Invalid)
         {
@@ -567,7 +598,11 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
 
         // do not request all pictures at once when you are just connected
         if (isInitialList ())
+        {
+            // schedule to retrieve this picture later
+            m_pendingDisplayPictureList.insert(buddy.c_str ());
             return;
+        }
 
         if ((myself ()->onlineStatus () !=
                 WlmProtocol::protocol ()->wlmOffline)
@@ -932,6 +967,14 @@ WlmAccount::connectionCompleted ()
     QTimer::singleShot (10 * 1000, this, SLOT (disableInitialList ()));
     setPersonalMessage(myself()->statusMessage());
 
+    // download a pending picture every 20 seconds
+    m_pendingDisplayPicturesTimer = new QTimer(this);
+
+    QObject::connect(m_pendingDisplayPicturesTimer, SIGNAL(timeout()), 
+            this, SLOT(downloadPendingDisplayPicture()));
+
+    m_pendingDisplayPicturesTimer->start(30 * 1000);
+
     // manage pending list
     foreach ( const QString &contact, pendingList() )
     {
@@ -941,6 +984,38 @@ WlmAccount::connectionCompleted ()
             // fake this contact in RL to prompt the user to add it
             gotNewContact (MSN::LST_RL, contact, contact);
         }
+    }
+}
+
+void WlmAccount::downloadPendingDisplayPicture()
+{
+    if(!m_pendingDisplayPicturesTimer)
+        return;
+
+    if (m_pendingDisplayPictureList.isEmpty())
+    {
+        m_pendingDisplayPicturesTimer->stop();
+        m_pendingDisplayPicturesTimer = NULL;
+        return;
+    }
+
+    QString passport = m_pendingDisplayPictureList.toList().first();
+    m_pendingDisplayPictureList.remove(passport);
+
+    WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[passport]);
+    if(!contact)
+        return;
+
+    // we only download the display picture if we and the contact are online
+    if ((myself ()->onlineStatus () != WlmProtocol::protocol ()->wlmOffline)
+     && (myself ()->onlineStatus () != WlmProtocol::protocol ()->wlmInvisible)
+     && (myself ()->onlineStatus () != WlmProtocol::protocol ()->wlmUnknown)
+     && (contact->onlineStatus () != WlmProtocol::protocol ()->wlmOffline)
+     && (contact->onlineStatus () != WlmProtocol::protocol ()->wlmInvisible)
+     && (contact->onlineStatus () != WlmProtocol::protocol ()->wlmUnknown))
+ 
+    {
+        chatManager ()->requestDisplayPicture (passport);
     }
 }
 

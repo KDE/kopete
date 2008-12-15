@@ -228,6 +228,10 @@ class WlmAccount:public
                                           const QString & contactId);
     void
     deletedOIM(const QString& id, const bool deleted);
+
+    void
+    downloadPendingDisplayPicture();
+
   protected:
         /**
 	 * This simulates contacts going on and offline in sync with the account's status changes
@@ -326,6 +330,11 @@ private:
 
     // passport set of contacts which are on pending list
     QSet<QString> m_pendingList;
+
+    // passport set of contacts which we dont have the display picture yet
+    QSet<QString> m_pendingDisplayPictureList;
+
+    QTimer * m_pendingDisplayPicturesTimer;
 
 };
 
