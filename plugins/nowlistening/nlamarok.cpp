@@ -45,7 +45,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const MPRISPlayerStatus &stat
 	argument << status.Play << status.Random << status.RepeatCurrent << status.RepeatPlaylist;
 	argument.endStructure();
 	return argument;
-};
+}
   
 const QDBusArgument &operator>>(const QDBusArgument &argument, MPRISPlayerStatus &status)
 {
@@ -53,7 +53,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, MPRISPlayerStatus
 	argument >> status.Play >> status.Random >> status.RepeatCurrent >> status.RepeatPlaylist;
 	argument.endStructure();
 	return argument;
-};
+}
 
 NLamaroK::NLamaroK() : NLMediaPlayer()
 {
