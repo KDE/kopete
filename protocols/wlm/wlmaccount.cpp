@@ -163,16 +163,35 @@ void WlmAccount::setPersonalMessage (const Kopete::StatusMessage & reason)
     if (isConnected ())
     {
         MSN::personalInfo pInfo;
+        pInfo.mediaIsEnabled = 0;
         QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
         if (reason.message().isEmpty ())
             pInfo.PSM = "";
         else
             pInfo.PSM = reason.message().toAscii ().data ();
-//      pInfo.mediaType="Music";
-        pInfo.mediaIsEnabled = 0;
-//      pInfo.mediaFormat="{0} - {1}";
-//      pInfo.mediaLines.push_back("Artist");
-//      pInfo.mediaLines.push_back("Song");
+
+        // we have both artist and title
+        if( reason.hasMetaData("artist") && reason.hasMetaData("title") )
+        {
+            pInfo.mediaIsEnabled = 1;
+            pInfo.mediaType="Music";
+            pInfo.mediaLines.push_back( reason.metaData("artist").toString().toAscii().data() );
+            pInfo.mediaLines.push_back( reason.metaData("title").toString().toAscii().data() );
+            pInfo.mediaFormat="{0} - {1}";
+            m_server->cb.mainConnection->setPersonalStatus (pInfo);
+            return;
+        }
+    
+        // we have only the title
+        if( reason.hasMetaData("title") )
+        {
+            pInfo.mediaIsEnabled = 1;
+            pInfo.mediaType="Music";
+            pInfo.mediaFormat="{0}";
+            pInfo.mediaLines.push_back( reason.metaData("title").toString().toAscii().data() );
+            m_server->cb.mainConnection->setPersonalStatus (pInfo);
+            return;
+        }
         m_server->cb.mainConnection->setPersonalStatus (pInfo);
     }
 }
