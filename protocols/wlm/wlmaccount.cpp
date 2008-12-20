@@ -1014,6 +1014,7 @@ void WlmAccount::downloadPendingDisplayPicture()
     if (m_pendingDisplayPictureList.isEmpty())
     {
         m_pendingDisplayPicturesTimer->stop();
+        m_pendingDisplayPicturesTimer->deleteLater();
         m_pendingDisplayPicturesTimer = NULL;
         return;
     }
