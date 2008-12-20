@@ -25,6 +25,7 @@ Name[ro]=Mesager WLM
 Name[uk]=Кур’єр WLM
 Name[x-test]=xxWLM Messengerxx
 Comment=Windows Live Messenger plugin
+Comment[cs]=Modul pro Windows Live Messenger
 Comment[de]=Modul für Windows-Live-Messenger
 Comment[el]=Πρόσθετο Windows Live Messenger
 Comment[es]=Complemento de Windows Live Messenger
