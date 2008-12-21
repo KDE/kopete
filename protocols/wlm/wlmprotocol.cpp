@@ -13,6 +13,13 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "wlmprotocol.h"
+#include "wlmaccount.h"
+#include "wlmcontact.h"
+#include "wlmaddcontactpage.h"
+#include "wlmeditaccountwidget.h"
+
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <KAboutData>
@@ -21,12 +28,6 @@
 #include "kopeteappearancesettings.h"
 #include "kopeteidentity.h"
 #include "kopeteavatarmanager.h"
-
-#include "wlmaccount.h"
-#include "wlmcontact.h"
-#include "wlmprotocol.h"
-#include "wlmaddcontactpage.h"
-#include "wlmeditaccountwidget.h"
 
 static const KAboutData aboutdata ("kopete_wlm", 0, ki18n ("WLM"), "1.0");
 

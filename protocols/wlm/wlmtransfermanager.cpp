@@ -14,18 +14,17 @@
     *************************************************************************
 */
 
+#include "wlmtransfermanager.h"
+#include "wlmcontact.h"
+#include "kopetecontact.h"
+#include "kopeteuiglobal.h"
+
 #include <QObject>
 #include <kmessagebox.h>
 #include <kcodecs.h>
 #include <klocale.h>
 
 #include <kdebug.h>
-
-#include "wlmtransfermanager.h"
-#include "wlmcontact.h"
-#include "kopetecontact.h"
-#include "kopeteuiglobal.h"
-
 
 WlmTransferManager::WlmTransferManager (WlmAccount * account1) :
 m_account (account1),

@@ -31,7 +31,7 @@ public:
     MSN::NotificationServerConnection * mainConnection;
     bool main;
     bool m_isSSL;
-    WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL = false);
+    explicit WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL = false);
     ~WlmSocket ();
     bool isSSL(){ return m_isSSL; } 
 public slots:

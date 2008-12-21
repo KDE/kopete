@@ -331,7 +331,7 @@ private:
     // passport set of contacts which are on pending list
     QSet<QString> m_pendingList;
 
-    // passport set of contacts which we dont have the display picture yet
+    // passport set of contacts which we do not have the display picture yet
     QSet<QString> m_pendingDisplayPictureList;
 
     QTimer * m_pendingDisplayPicturesTimer;
