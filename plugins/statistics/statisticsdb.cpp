@@ -99,7 +99,6 @@ QStringList StatisticsDB::query ( const QString& statement, QStringList* const n
 
 	clock_t start = clock();
 
-	bool error;
 	QStringList values;
 	QSqlQuery query ( m_db );
 
