@@ -78,6 +78,10 @@ class Skype : public QObject
 		 * @param what What are we searching for
 		 */
 		void search(const QString &what);
+		/**
+		 * Fix all contact in groups
+		 */
+		void fixGroups();
 	public:
 		/**
 		 * Constructor
@@ -154,19 +158,19 @@ class Skype : public QObject
 		 * @param name Skype contact name
 		 * @return group id, where is contact
 		 */
-		QString getContactGroupID(const QString &name);
+		int getContactGroupID(const QString &name);
 		/**
 		 * Remove user from group
 		 * @param name Skype contact name
 		 * @param groupID Skype group id
 		 */
-		void removeFromGroup(const QString &name, const QString &groupID);
+		void removeFromGroup(const QString &name, int groupID);
 		/**
 		 * Add user to group
 		 * @param name Skype contact name
 		 * @param groupID Skype group id
 		 */
-		void addToGroup(const QString &name, const QString &groupID);
+		void addToGroup(const QString &name, int groupID);
 		/**
 		 * Create Skype group
 		 * @param name Group name
@@ -176,19 +180,25 @@ class Skype : public QObject
 		 * Remove Skype group
 		 * @param groupID Skype group id
 		 */
-		void deleteGroup(const QString &groupID);
+		void deleteGroup(int groupID);
+		/**
+		 * Rename Skype group
+		 * @param groupID Skype group id
+		 * @param newName New group name
+		 */
+		void renameGroup(int groupID, const QString &newName);
 		/**
 		 * Get group id
 		 * @param groupname name
 		 * @return groupID
 		 */
-		QString getGroupID(const QString &groupname);
+		int getGroupID(const QString &groupname);
 		/**
 		 * Get group name
 		 * @param groupID groupID
 		 * @return group name
 		 */
-		QString getGroupName(const QString &groupID);
+		QString getGroupName(int groupID);
 		/**
 		 * Get Skype display name
 		 * @param name Skype name
@@ -399,7 +409,7 @@ class Skype : public QObject
 		 * @param name The skype name of the user
 		 * @param groupID The skype group id, where is user
 		 */
-		void newUser(const QString &name, const QString &groupID);
+		void newUser(const QString &name, int groupID);
 		/**
 		 * All contacts should be asked to request update of their information. This is emitted after the connection to skype is made.
 		 */

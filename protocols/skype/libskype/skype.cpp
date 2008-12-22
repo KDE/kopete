@@ -27,8 +27,8 @@
 #include <kmessagebox.h>
 #include <qtimer.h>
 
-#define PROTOCOL_MAX 5
-#define PROTOCOL_MIN 5
+#define PROTOCOL_MAX 8
+#define PROTOCOL_MIN 6
 #define TEST_QUIT if (!d->connection.connected()) return;
 
 ///This one indicates, weather the Skype is connected (does not mean weather it is marked as online, just if it has connection to the site)
@@ -100,6 +100,12 @@ class SkypePrivate {
 		int waitBeforeConnect;
 		///List of alredy received messages (IDs)
 		QStringList recvMessages;
+		///Skype Groups with contacts <id, contact>
+		QMultiHash <int, QString> groupsContacts;
+		///Skype Groups names <name, id>
+		QMultiHash <QString, int> groupsNames;
+		///Timer to fix & load groups
+		QTimer *fixGroupTimer;
 };
 
 Skype::Skype(SkypeAccount &account) : QObject() {
@@ -113,18 +119,21 @@ Skype::Skype(SkypeAccount &account) : QObject() {
 	d->searchFor = "";
 	d->pings = false;
 	d->pingTimer = new QTimer;
+	d->fixGroupTimer = new QTimer;
 
 	connect(&d->connection, SIGNAL(connectionClosed(int)), this, SLOT(closed(int)));//tell me if you close/lose the connection
 	connect(&d->connection, SIGNAL(connectionDone(int, int)), this, SLOT(connectionDone(int, int)));//Do something whe he finishes connecting
 	connect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//Listen for errors
 	connect(&d->connection, SIGNAL(received(const QString&)), this, SLOT(skypeMessage(const QString&)));//Take all incoming messages
 	connect(d->pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
+	connect(d->fixGroupTimer, SIGNAL(timeout()), this, SLOT(fixGroups()));//fix & load groups to memory
 }
 
 
 Skype::~Skype() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
+	d->connection % QString("SET SILENT_MODE OFF");//try turn on (to default) all gui skype notification - this is not supported by skype yet, once it will works
 	if (d->connection.connected())
 		d->connection << QString("SET USERSTATUS OFFLINE");
 
@@ -224,6 +233,7 @@ void Skype::closed(int) {
 	emit wentOffline();//No longer connected
 	d->messageQueue.clear();//no messages will wait, it was lost
 	d->pingTimer->stop();
+	d->fixGroupTimer->stop();
 }
 
 void Skype::connectionDone(int error, int protocolVer) {
@@ -240,6 +250,13 @@ void Skype::connectionDone(int error, int protocolVer) {
 			return;//and it is all fo now
 		}
 
+		d->connection % QString("MINIMIZE");//try hide Skype to system tray
+		d->connection % QString("SET SILENT_MODE ON");//try turn off all gui skype notification - this is not supported by skype yet, once it will works
+		///TODO: Set silent mode on, when is turned off
+
+		fixGroups();//fix & load groups immediately
+		d->fixGroupTimer->start(60000);//fix & load groups to memory every minutes
+
 		while (d->messageQueue.size()) {//It isn't empty yet?
 			QStringList::iterator it = d->messageQueue.begin();//take the first one
 			d->connection << (*it);//send the message
@@ -251,7 +268,7 @@ void Skype::connectionDone(int error, int protocolVer) {
 		TEST_QUIT;//if it failed, do not continue
 		d->connection.send("GET USERSTATUS");
 		TEST_QUIT;
-		d->connection.send("GET CONNSTATUS");//
+		d->connection.send("GET CONNSTATUS");
 	} else {
 		closed(crLost);//OK, this is wrong, justclose the connection/atempt and delete the queue
 	}
@@ -315,8 +332,8 @@ void Skype::skypeMessage(const QString &message) {
 				QString name = (*it).trimmed();//get the name only
 				if (name.isEmpty())
 					continue;//just skip the empty names
-				QString groupID = getContactGroupID(name);
-				if (! groupID.isEmpty())
+				int groupID = getContactGroupID(name);
+				if ( groupID != -1 )
 					kDebug() << "Found group for user" << name << groupID << ":" << getGroupName(groupID) << endl;
 				else
 					kDebug() << "Not found group for user" << name << endl;
@@ -805,69 +822,133 @@ Skype::AuthorType Skype::getAuthor(const QString &contactId) {
 }
 
 bool Skype::ableConference() {
+	kDebug() << k_funcinfo << endl;
 	return false;
 }
 
-QString Skype::getContactGroupID(const QString &name) {
+void Skype::fixGroups() {
 	kDebug() << k_funcinfo << endl;
-	//Search group for this contact
-	QStringList groups = QString(d->connection % "SEARCH GROUPS CUSTOM").section(' ', 1).trimmed().split(",");//get all ids of group
-	for (QStringList::iterator it = groups.begin(); it != groups.end(); ++it) {
-		QStringList groupusers = QString(d->connection % QString("GET GROUP %1 USERS").arg((*it).trimmed())).section(' ', 3).trimmed().split(",");//get all user in group *(it)
-		for (QStringList::iterator user = groupusers.begin(); user != groupusers.end(); ++user) {//search for all users in group *(it)
-			if ((*user).trimmed() == name)//check if user in group is same like new user
-				return (*it).trimmed();//get user group id
+
+	d->groupsContacts.clear();//remove all contacts and groups in memory
+	d->groupsNames.clear();//remove all groups names
+
+	//Fill d->groupsNames
+	{
+		QStringList groups = QString(d->connection % "SEARCH GROUPS CUSTOM").section(' ', 1).trimmed().split(",");//get all ids of group
+
+		for ( QStringList::iterator it = groups.begin(); it != groups.end(); ++it ){
+			if ( ! (*it).trimmed().isEmpty() ){
+				int groupID = (*it).trimmed().toInt();
+				QString groupName = (d->connection % QString("GET GROUP %1 DISPLAYNAME").arg(groupID)).section(' ', 3).trimmed();
+				kDebug() << "Adding to memory group" << groupID << ":" << groupName << endl;
+				d->groupsNames.insert(groupName, groupID);
+			}
 		}
 	}
-	return "";
+
+	//Fill d->groupsContacts
+	//Remove empty groups
+	if ( d->groupsNames.count() > 0 ) {
+		QList <int> groups = d->groupsNames.values();
+		for ( QList <int>::iterator group = groups.begin(); group != groups.end(); ++group ) {
+			QStringList groupusers = QString(d->connection % QString("GET GROUP %1 USERS").arg(*group)).section(' ', 3).trimmed().split(",");//get all user in group (*group)
+			if ( groupusers.count() == 0 || groupusers.first().trimmed() == "" ) {//if group is empty, delete it
+				kDebug() << QString("Group %1 is empty, delete it").arg(*group) << endl;
+				deleteGroup(*group);
+			} else {
+				kDebug() << QString("Group %1 has users:").arg(*group) << groupusers << endl;
+				for ( QStringList::iterator user = groupusers.begin(); user != groupusers.end(); ++user ) {//search for all users in group (*group)
+					if ( ! (*user).trimmed().isEmpty() ){//if username isnt empty add it to group
+						kDebug() << "Adding user " << (*user).trimmed() << "to memory group" << *group << ":" << d->groupsNames.key(*group) << endl;
+						d->groupsContacts.insert( *group, (*user).trimmed() );//add user (*user) to group (*group)
+					}
+				}
+			}
+		}
+	}
+
+	//Check if user is only in one group
+	{
+		QStringList users = d->groupsContacts.values();//get all users from all groups
+		for ( QStringList::iterator user = users.begin(); user != users.end(); ++user ) {
+			if ( ! (*user).isEmpty() ) {
+				QList <int> groups = d->groupsContacts.keys(*user);//get groups for user (*user)
+				kDebug() << QString("User %1 is in memory groups:").arg(*user) << groups << endl;
+				if ( groups.count() > 1 ) {//if user is in more then one group, remove it from all groups except first
+					for ( QList <int>::iterator group = groups.begin()+1; group != groups.end(); ++group ){
+						kDebug() << QString("User %1 is in more then one memory groups, removing from memory group %2").arg(*user).arg(*group) << endl;
+						removeFromGroup(*user, *group);
+					}
+				}
+			}
+		}
+	}
+
+	//Check if groups doesnt have same names
+	QStringList groupsNames = d->groupsNames.keys();//get all groups names
+	for ( QStringList::iterator group = groupsNames.begin(); group != groupsNames.end(); ++group ){
+		if ( d->groupsNames.values(*group).count() > 1 ){
+			///TODO: Move all contacts from group with same name to one
+			kDebug() << "TODO: Group" << *group << "has more ides then 1, so merge all these groups" << endl;
+		}
+	}
+
 }
 
-void Skype::removeFromGroup(const QString &name, const QString &groupID) {
-	kDebug() << k_funcinfo << endl;
-	d->connection << QString("ALTER GROUP %1 REMOVEUSER %2").arg(groupID, name);
+int Skype::getContactGroupID(const QString &name) {
+	kDebug() << k_funcinfo << name << endl;
+	return d->groupsContacts.key(name, -1); //get group id from d->groupsContacts
 }
 
-void Skype::addToGroup(const QString &name, const QString &groupID) {
-	kDebug() << k_funcinfo << endl;
-	d->connection << QString("ALTER GROUP %1 ADDUSER %2").arg(groupID, name);
+void Skype::removeFromGroup(const QString &name, int groupID) {
+	kDebug() << k_funcinfo << name << groupID << endl;
+	d->connection << QString("ALTER GROUP %1 REMOVEUSER %2").arg(groupID).arg(name);
+	d->groupsContacts.remove(groupID, name);
+}
+
+void Skype::addToGroup(const QString &name, int groupID) {
+	kDebug() << k_funcinfo << name << groupID << endl;
+	d->connection << QString("ALTER GROUP %1 ADDUSER %2").arg(groupID).arg(name);
+	d->groupsContacts.insert(groupID, name);
 }
 
 void Skype::createGroup(const QString &name) {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo << name << endl;
 	d->connection << QString("CREATE GROUP %1").arg(name);
+	fixGroups();
 }
 
-void Skype::deleteGroup(const QString &groupID) {
-	kDebug() << k_funcinfo << endl;
+void Skype::deleteGroup(int groupID) {
+	kDebug() << k_funcinfo << groupID << endl;
 	d->connection << QString("DELETE GROUP %1").arg(groupID);
+	/*d->groupsNames.remove(groupID);*/ ///TODO: Remove group from d->groupsNames
+	d->groupsContacts.remove(groupID);
 }
 
-QString Skype::getGroupID(const QString &groupname) {
-	kDebug() << k_funcinfo << endl;
-	QStringList groups = QString(d->connection % "SEARCH GROUPS CUSTOM").section(' ', 1).trimmed().split(", ");//get all ids of group
-	for (QStringList::iterator it = groups.begin(); it != groups.end(); ++it) {
-		if ( groupname == QString(d->connection % QString("GET GROUP %1 DISPLAYNAME").arg((*it).trimmed())).section(' ', 3).trimmed() )
-			return (*it).trimmed();
-	}
-	return "";
+void Skype::renameGroup(int groupID, const QString &newName) {
+	kDebug() << k_funcinfo << groupID << endl;
+	d->connection << QString("SET GROUP %1 DISPLAYNAME %2").arg(groupID).arg(newName);
+	fixGroups();
 }
 
-QString Skype::getGroupName(const QString &groupID) {
-	kDebug() << k_funcinfo << endl;
+int Skype::getGroupID(const QString &groupname) {
+	kDebug() << k_funcinfo << groupname << endl;
+	kDebug() << d->groupsNames.value(groupname, -1) << endl;
+	return d->groupsNames.value(groupname, -1); //get group id from d->groupsNames
+}
 
-	if (groupID.isEmpty()) //If groupID is empty return empty name
+QString Skype::getGroupName(int groupID) {
+	kDebug() << k_funcinfo << groupID << endl;
+
+	if (groupID == -1) //If groupID is empty return empty name
 		return "";
 
-	QString groupName = QString(d->connection % QString("GET GROUP %1 DISPLAYNAME").arg(groupID)).section(' ', 3).trimmed();
-
-	if ( groupName == "Invalid group ID" ) //If groupID doesnt exist return empty name
-		return "";
-
-	return groupName;
+	kDebug() << d->groupsNames.key(groupID, "") << endl;
+	return d->groupsNames.key(groupID, ""); //get group name from d->groupsNames
 }
 
 QString Skype::getDisplayName(const QString &name) {
-	kDebug() << k_funcinfo << endl;
+	kDebug() << k_funcinfo << name << endl;
 	return (d->connection % QString("GET USER %1 DISPLAYNAME").arg(name)).section(' ', 3).trimmed();
 }
 

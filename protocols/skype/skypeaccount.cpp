@@ -150,7 +150,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	QObject::connect(&d->skype, SIGNAL(wentInvisible()), this, SLOT(wentInvisible()));
 	QObject::connect(&d->skype, SIGNAL(wentSkypeMe()), this, SLOT(wentSkypeMe()));
 	QObject::connect(&d->skype, SIGNAL(statusConnecting()), this, SLOT(statusConnecting()));
-	QObject::connect(&d->skype, SIGNAL(newUser(const QString&, const QString&)), this, SLOT(newUser(const QString&, const QString&)));
+	QObject::connect(&d->skype, SIGNAL(newUser(const QString&, int)), this, SLOT(newUser(const QString&, int)));
 	QObject::connect(&d->skype, SIGNAL(contactInfo(const QString&, const QString& )), this, SLOT(updateContactInfo(const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(receivedIM(const QString&, const QString&, const QString& )), this, SLOT(receivedIm(const QString&, const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(gotMessageId(const QString& )), this, SLOT(gotMessageId(const QString& )));//every time some ID is known inform the contacts
@@ -159,6 +159,8 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	QObject::connect(&d->skype, SIGNAL(receivedMultiIM(const QString&, const QString&, const QString&, const QString& )), this, SLOT(receiveMultiIm(const QString&, const QString&, const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(outgoingMessage(const QString&, const QString&)), this, SLOT(sentMessage(const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(groupCall(const QString&, const QString& )), this, SLOT(groupCall(const QString&, const QString& )));
+	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRemoved (Kopete::Group *)), this, SLOT(deleteGroup (Kopete::Group *) ) );
+	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRenamed (Kopete::Group *, const QString& )), this, SLOT(renameGroup (Kopete::Group *, const QString& )) );
 
 	//set values for the connection (should be updated if changed)
 	d->skype.setValues(launchType, author);
@@ -346,8 +348,8 @@ void SkypeAccount::statusConnecting() {
 	emit connectionStatus(false);
 }
 
-void SkypeAccount::newUser(const QString &name, const QString &groupID) {
-	kDebug() << k_funcinfo << QString("name = %1").arg(name) << endl;//some debug info
+void SkypeAccount::newUser(const QString &name, int groupID) {
+	kDebug() << k_funcinfo << QString("name = %1").arg(name) << QString("groupID = %1").arg(groupID) << endl;//some debug info
 
 	if (name == "echo123")// echo123 - Make Test Call has moved to Skype protocol toolbar
 		return;
@@ -356,10 +358,25 @@ void SkypeAccount::newUser(const QString &name, const QString &groupID) {
 
 	Kopete::Group * skypeGroup;
 
-	if (group.isEmpty()) // If skype group hasnt name, in kopete will be in top
+	if (group.isEmpty() || groupID == -1) // If skype group hasnt name, in kopete will be in top
 		skypeGroup = Kopete::Group::topLevel();
-	else
+	else {
 		skypeGroup = Kopete::ContactList::self()->findGroup(group); //get kopete group by skype group name. If skype group in kopete doesnt exist, create it automatically
+		if ( skypeGroup == Kopete::Group::topLevel() ){ //if group in skype has name i18n("Top Level") kopete get top level group, but in skype top level group is group without name
+			QList <Kopete::Group *> groups = Kopete::ContactList::self()->groups(); //get all groups
+			bool found = false;
+			for (QList <Kopete::Group *>::iterator it = groups.begin(); it != groups.end(); ++it ){ //search all groups, if one isnt top level and has skype group name
+				if ( (*it)->displayName() == group && (*it) != Kopete::Group::topLevel() ){
+					skypeGroup = (*it);
+					found = true; //if found skip creating new
+				}
+			}
+			if ( !found ){
+				skypeGroup = new Kopete::Group(group); //create new group with name
+				Kopete::ContactList::self()->addGroup(skypeGroup); //add this new group to contact list
+			}
+		}
+	}
 
 	if (contacts().contains(name)){
 		Kopete::Contact * contact = contacts().value(name); //get metacontact of skype contact name
@@ -939,24 +956,49 @@ QString SkypeAccount::getMyselfSkypeName() {
 void SkypeAccount::MovedBetweenGroup(SkypeContact *contact) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
-	QString newGroup = d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
-	QString oldGroup = d->skype.getContactGroupID(contact->getid());
+	int newGroup = d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
+	int oldGroup = d->skype.getContactGroupID(contact->getid());
 
-	if (! oldGroup.isEmpty()){
+	kDebug() << "oldGroup:" << oldGroup << "newGroup:" << newGroup << endl;
+
+	if ( oldGroup != -1 ){
 		kDebug() << "Removing contact" << contact->getid() << "from group" << d->skype.getContactGroupID(contact->getid()) << endl;
 		d->skype.removeFromGroup(contact->getid(), oldGroup);
 	}
 
-	if (newGroup.isEmpty()){
-		d->skype.createGroup(contact->metaContact()->groups().first()->displayName());
-		newGroup = d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
+	if ( newGroup == -1 ){
+		if ( contact->metaContact()->groups().first() != Kopete::Group::topLevel() ){
+			d->skype.createGroup(contact->metaContact()->groups().first()->displayName());
+			newGroup = d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
+		} else {
+			kDebug() << "Contact is in top level, so in no skype group, skipping" << endl;
+			return;
+		}
 	}
 
-	if (! newGroup.isEmpty()){
+	if ( newGroup != -1 ){
 		kDebug() << "Adding contact" << contact->getid() << "to group" << d->skype.getGroupID(contact->metaContact()->groups().first()->displayName()) << endl;
 		d->skype.addToGroup(contact->getid(), newGroup);
 	} else
 		kDebug() << "Error: Cant create new skype group" << contact->metaContact()->groups().first()->displayName() << endl;
+}
+
+void SkypeAccount::deleteGroup (Kopete::Group * group){
+	kDebug() << k_funcinfo << group->displayName() << endl;//some debug info
+	int groupID = d->skype.getGroupID( group->displayName() );
+	if ( groupID != -1 )
+		d->skype.deleteGroup(groupID);
+	else
+		kDebug() << "Group" << group->displayName() << "in skype doesnt exist, skipping" << endl;
+}
+
+void SkypeAccount::renameGroup (Kopete::Group * group, const QString &oldname){
+	kDebug() << k_funcinfo << "Renaming skype group" << oldname << "to" << group->displayName() << endl;//some debug info
+	int groupID = d->skype.getGroupID( group->displayName() );
+	if ( groupID != -1 )
+		d->skype.renameGroup( groupID, group->displayName() );
+	else
+		kDebug() << "Old group" << oldname << "in skype doesnt exist, skipping" << endl;
 }
 
 #include "skypeaccount.moc"

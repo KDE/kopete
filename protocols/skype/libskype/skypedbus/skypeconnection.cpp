@@ -115,7 +115,6 @@ void SkypeConnection::parseMessage(const QString &message) {
 					disconnectSkype(crLost);//lost the connection
 					return;//I have enough
 				}
-				*this % QString("MINIMIZE");//this hide Skype to system tray
 				d->protocolVer = version;//this will be the used version of protocol
 				d->fase = cfConnected;
 				emit connectionDone(seSuccess, version);//tell him that we are connected at last
@@ -226,6 +225,11 @@ QString SkypeConnection::operator %(const QString &message) {
 	QDBusMessage reply = interface.call("Invoke", message);
 
 	if ( interface.lastError().type() != QDBusError::NoError && interface.lastError().type() != QDBusError::Other ){//There was some error
+		if ( message == "PING" ){
+			emit error(i18n("Could not ping Skype"));
+			emit connectionDone(seNoSkype, 0);
+			return "";//this is enough, no more errors please..
+		}
 		emit error(i18n("Error while sending a message to skype (%1)").arg(QDBusError::errorString(interface.lastError().type())));//say there was the error
 		if (d->fase != cfConnected)
 			emit connectionDone(seUnknown, 0);//Connection attempt finished with error
@@ -238,6 +242,7 @@ QString SkypeConnection::operator %(const QString &message) {
 	if ( message == "PING" && ( replylist.isEmpty() || replylist.at(0) != "PONG" ) ){
 		emit error(i18n("Could not ping Skype"));
 		emit connectionDone(seNoSkype, 0);
+		return "";//this is enough, no more errors please..
 	}
 
 	for (QStringList::iterator it = replylist.begin(); it != replylist.end(); ++it) {

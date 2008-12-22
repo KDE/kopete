@@ -91,7 +91,7 @@ Q_OBJECT
 		 * @param name The skype name of the contact
 		 * @param group The skype group name, where is user
 		 */
-		void newUser(const QString &name, const QString &group);
+		void newUser(const QString &name, int group);
 		/**
 		 * This is used for receiving messages from skype network
 		 * @param user The user that sent it
@@ -144,6 +144,17 @@ Q_OBJECT
 		 * @param groupId What group to remove
 		 */
 		void removeCallGroup(const QString &groupId);
+		/**
+		 * Delete skype group
+		 * @param group kopete group
+		 */
+		void deleteGroup (Kopete::Group * group);
+		/**
+		 * Rename skype group
+		 * @param group kopete group
+		 * @param oldname old kopete group name
+		 */
+		void renameGroup (Kopete::Group * group, const QString &oldname );
 	protected:
 		/**
 		 * Creates new skype contact and adds it into the parentContact.
