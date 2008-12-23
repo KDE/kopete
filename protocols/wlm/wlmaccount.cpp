@@ -409,7 +409,10 @@ void WlmAccount::addedInfoEventActionActivated(uint actionId)
         blockContact(event->contactId(), false);
         break;
     case Kopete::AddedInfoEvent::BlockAction:
-        blockContact(event->contactId(), true);
+        if (isOnAllowList(event->contactId()))
+            server()->mainConnection->removeFromList(MSN::LST_AL, event->contactId().toAscii().data());
+        if(!isOnBlockList(event->contactId()))
+            server()->mainConnection->addToList(MSN::LST_BL, event->contactId().toAscii().data());
         break;
 /*    case Kopete::AddedInfoEvent::InfoAction:
         break;*/
