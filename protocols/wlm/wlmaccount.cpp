@@ -700,6 +700,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
     m_serverSideContactsPassports.clear ();
     m_allowList.clear();
     m_blockList.clear();
+    m_pendingList.clear();
 
     // local contacts which do not exist on server should be deleted
     std::map < std::string, MSN::Buddy * >::iterator it;
