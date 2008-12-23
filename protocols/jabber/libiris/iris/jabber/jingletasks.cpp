@@ -118,8 +118,6 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 	 * 	* A new JT_JingleSession is used by the JingleSession to established the connection
 	 * I'd rather use the second one, see later...
 	 */
-	qDebug() << "JT_PushJingleAction::take\n";
-	// qDebug() << "tagName : %s\n", x.firstChildElement().tagName().toLatin1().constData();
 	if (x.firstChildElement().tagName() != "jingle")
 		return false;
 	
