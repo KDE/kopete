@@ -1176,9 +1176,6 @@ WlmAccount::disconnect ()
 
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
 
-    QObject::disconnect (Kopete::ContactList::self (), 0, 0, 0);
-    QObject::disconnect (Kopete::TransferManager::transferManager (), 0, 0, 0);
-
     if (m_transferManager)
     {
         delete m_transferManager;
