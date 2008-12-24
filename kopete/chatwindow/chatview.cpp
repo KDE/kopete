@@ -152,7 +152,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	}
 
 	setFocusProxy( editPart()->widget() );
-	m_messagePart->widget()->setFocusProxy( editPart()->widget() );
+	m_messagePart->view()->setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
 
 	slotChatDisplayNameChanged();
