@@ -250,7 +250,7 @@ WlmAccount::slotChangePublicName()
             return;
         }
 
-        m_server->cb.mainConnection->setFriendlyName(name.toAscii().data());
+        m_server->cb.mainConnection->setFriendlyName(name.toAscii().data(), true);
     }
 }
 
