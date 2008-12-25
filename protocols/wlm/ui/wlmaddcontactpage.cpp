@@ -35,6 +35,7 @@ AddContactPage (parent)
 {
     m_wlmAddUI = new Ui::WlmAddUI ();
     m_wlmAddUI->setupUi (this);
+    m_wlmAddUI->m_uniqueName->setFocus();
 }
 
 WlmAddContactPage::~WlmAddContactPage ()

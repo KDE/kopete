@@ -42,6 +42,7 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
 	connect( addUI->icqRadioButton, SIGNAL(toggled(bool)), addUI->icqEdit, SLOT(setEnabled(bool)) );
 	connect( addUI->icqRadioButton, SIGNAL(toggled(bool)), addUI->searchButton, SLOT(setEnabled(bool)) );
 	connect( addUI->aimRadioButton, SIGNAL(toggled(bool)), addUI->aimEdit, SLOT(setEnabled(bool)) );
+	addUI->icqEdit->setFocus();
 }
 
 ICQAddContactPage::~ICQAddContactPage()

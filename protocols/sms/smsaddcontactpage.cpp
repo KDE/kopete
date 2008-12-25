@@ -28,6 +28,7 @@ SMSAddContactPage::SMSAddContactPage(QWidget *parent)
 	QVBoxLayout* layout = new QVBoxLayout( this );
 	smsdata = new smsAddUI(this);
 	layout->addWidget( smsdata );
+	smsdata->addNr->setFocus();
 }
 
 SMSAddContactPage::~SMSAddContactPage()

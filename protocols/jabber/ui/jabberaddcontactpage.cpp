@@ -50,6 +50,7 @@ JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * p
 		jabData = new Ui::dlgAddContact;
 		jabData->setupUi( w );
 		layout->addWidget(w);
+		jabData->addID->setFocus();
 		
 		if(transport)
 		{

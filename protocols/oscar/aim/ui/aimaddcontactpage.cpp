@@ -34,6 +34,7 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
 		m_gui->setupUi(this);
 		connect( m_gui->icqRadioButton, SIGNAL(toggled(bool)), m_gui->icqEdit, SLOT(setEnabled(bool)) );
 		connect( m_gui->aimRadioButton, SIGNAL(toggled(bool)), m_gui->aimEdit, SLOT(setEnabled(bool)) );
+		m_gui->aimEdit->setFocus();
 		canadd = true;
 	}
 	else

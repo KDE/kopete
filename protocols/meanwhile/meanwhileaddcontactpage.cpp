@@ -36,6 +36,7 @@ MeanwhileAddContactPage::MeanwhileAddContactPage(
     } else {
         ui.btnFindUser->setDisabled(true);
     }
+    ui.contactID->setFocus();
 }
 
 MeanwhileAddContactPage::~MeanwhileAddContactPage()

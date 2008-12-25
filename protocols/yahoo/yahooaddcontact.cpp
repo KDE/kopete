@@ -44,6 +44,7 @@ YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent): AddCont
 	theDialog = new Ui::YahooAddContactBase;
 	theDialog->setupUi( w );
 	theProtocol = owner;
+	theDialog->contactID->setFocus();
 }
 
 // Destructor
