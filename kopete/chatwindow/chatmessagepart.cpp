@@ -101,7 +101,7 @@ class ChatMessagePart::Private
 {
 public:
 	Private()
-	 : /*tt(0L),*/ scrollPressed(false), manager(0),
+	 : /*tt(0L),*/ scrollPressed(false), scrollToEndDelayed(false), manager(0),
 	   copyAction(0), saveAction(0), printAction(0),
 	   closeAction(0),copyURLAction(0), currentChatStyle(0),
 	   latestDirection(Kopete::Message::Inbound), latestType(Kopete::Message::TypeNormal),
@@ -120,6 +120,7 @@ public:
 
 //	ToolTip *tt;
 	bool scrollPressed;
+	bool scrollToEndDelayed;
 	Kopete::ChatSession *manager;
 
 	DOM::HTMLElement activeElement;
@@ -210,6 +211,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 			 KopeteChatWindowSettings::self()->styleName() );
 
 	kDebug(14000) << d->currentChatStyle->getStyleName();
+	connect( this, SIGNAL(completed()), this, SLOT(slotRenderingFinished()) );
 
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( false ) ;
@@ -830,10 +832,20 @@ void ChatMessagePart::slotCopyURL()
 
 void ChatMessagePart::slotScrollView()
 {
-	// NB: view()->contentsHeight() is incorrect before the view has been shown in its window.
-	// Until this happens, the geometry has not been correctly calculated, so this scrollBy call
-	// will usually scroll to the top of the view.
-	view()->scrollBy( 0, view()->contentsHeight() );
+	if ( inProgress() )
+		d->scrollToEndDelayed = true;
+	else
+		view()->scrollBy( 0, view()->contentsHeight() );
+}
+
+void ChatMessagePart::slotRenderingFinished()
+{
+	if ( d->scrollToEndDelayed )
+	{
+		d->scrollToEndDelayed = false;
+		if ( !d->scrollPressed )
+			view()->scrollBy( 0, view()->contentsHeight() );
+	}
 }
 
 void ChatMessagePart::copy(bool justselection /* default false */)
@@ -889,6 +901,7 @@ void ChatMessagePart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * event) 
 	KHTMLPart::khtmlDrawContentsEvent(event);
 	//copy(true /*selection only*/); not needed anymore.
 }
+
 void ChatMessagePart::slotCloseView( bool force )
 {
 	d->manager->view()->closeView( force );
