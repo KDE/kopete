@@ -274,11 +274,14 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 
 	if ( msg.direction() == Kopete::Message::Inbound )
 	{
-		QString nick=myself()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() &&
-			msg.plainBody().contains( QRegExp( QString::fromLatin1( "\\b(%1)\\b" ).arg( nick ), Qt::CaseInsensitive ) ) )
+		QString nick = myself()->nickName();
+		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() )
 		{
-			msg.setImportance( Kopete::Message::Highlight );
+			QString nickNameRegExp = QString::fromLatin1( "(^|[\\W])(%1)([\\W]|$)" ).arg( QRegExp::escape( nick ) );
+			if ( msg.plainBody().contains( QRegExp( nickNameRegExp, Qt::CaseInsensitive ) ) )
+			{
+				msg.setImportance( Kopete::Message::Highlight );
+			}
 		}
 
 		emit messageReceived( msg, this );
