@@ -218,6 +218,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	setMetaRefreshEnabled( false );
 	setOnlyLocalReferences( true );
 
+	// read the font for the chat
+	readChatFont();
+
 	// Write the template to KHTMLPart
 	writeTemplate();
 
@@ -267,9 +270,6 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	// read formatting override flags
 	readOverrides();
-
-	// read the font for the chat
-	readChatFont();
 }
 
 ChatMessagePart::~ChatMessagePart()
