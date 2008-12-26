@@ -24,6 +24,7 @@
 #include "buffer.h"
 #include "oscarutils.h"
 #include "oscardebug.h"
+#include <QtCore/QTextCodec>
 
 #define OSCAR_USERINFO_DEBUG
 
@@ -148,6 +149,11 @@ int UserDetails::statusMood() const
 Oscar::WORD UserDetails::iconType() const
 {
 	return m_iconType;
+}
+
+QString UserDetails::personalMessage() const
+{
+	return m_personalMessage;
 }
 
 Oscar::BYTE UserDetails::iconCheckSumType() const
@@ -395,16 +401,25 @@ void UserDetails::fill( Buffer * buffer )
 					case 0x0002:
 						if ( length > 0 )
 						{
-							m_availableMessage = QString( b.getBSTR() );
-#ifdef OSCAR_USERINFO_DEBUG
-							kDebug(OSCAR_RAW_DEBUG) << "available message:" << m_availableMessage;
-#endif
+							QByteArray personalMessageData = b.getBSTR();
+							
+							QTextCodec *codec = 0;
 							if ( b.bytesAvailable() >= 4 && b.getWord() == 0x0001 )
 							{
 								b.skipBytes( 2 );
 								QByteArray encoding = b.getBSTR();
+								codec = QTextCodec::codecForName( encoding );
 								kDebug(OSCAR_RAW_DEBUG) << "Encoding:" << encoding;
 							}
+
+							if (codec)
+								m_personalMessage = codec->toUnicode( personalMessageData );
+							else
+								m_personalMessage = QString::fromUtf8( personalMessageData );
+
+#ifdef OSCAR_USERINFO_DEBUG
+							kDebug(OSCAR_RAW_DEBUG) << "personal message:" << m_personalMessage;
+#endif
 						}
 						else
 							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message";
@@ -864,7 +879,7 @@ void UserDetails::merge( const UserDetails& ud )
 		m_md5IconHash = ud.m_md5IconHash;
 		m_iconSpecified = true;
 	}
-	m_availableMessage = ud.m_availableMessage;
+	m_personalMessage = ud.m_personalMessage;
 	m_onlineStatusMsgSupport = ud.m_onlineStatusMsgSupport;
 }
 
