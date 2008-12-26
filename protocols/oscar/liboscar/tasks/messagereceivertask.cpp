@@ -159,11 +159,7 @@ void MessageReceiverTask::handleType1Message()
 				break;
 			case 0x0003:
 			{
-				TLV offlineMessage = Oscar::findTLV( messageTLVList, 0x0006 );
-				if ( offlineMessage )
-					msg.setEncoding( Oscar::Message::UserDefined );
-				else
-					msg.setEncoding( Oscar::Message::LATIN1 );
+				msg.setEncoding( Oscar::Message::UserDefined );
 				break;
 			}
 			default: // 0x0000 should be ASCII but some clients use different encoding.
