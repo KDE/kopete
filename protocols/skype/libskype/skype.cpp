@@ -847,14 +847,14 @@ void Skype::fixGroups() {
 	}
 
 	//Fill d->groupsContacts
-	//Remove empty groups
+	//Remove empty groups - disabled
 	if ( d->groupsNames.count() > 0 ) {
 		QList <int> groups = d->groupsNames.values();
 		for ( QList <int>::iterator group = groups.begin(); group != groups.end(); ++group ) {
 			QStringList groupusers = QString(d->connection % QString("GET GROUP %1 USERS").arg(*group)).section(' ', 3).trimmed().split(",");//get all user in group (*group)
 			if ( groupusers.count() == 0 || groupusers.first().trimmed() == "" ) {//if group is empty, delete it
-				kDebug() << QString("Group %1 is empty, delete it").arg(*group) << endl;
-				deleteGroup(*group);
+				//kDebug() << QString("Group %1 is empty, delete it").arg(*group) << endl; - disabled
+				//deleteGroup(*group); - disabled
 			} else {
 				kDebug() << QString("Group %1 has users:").arg(*group) << groupusers << endl;
 				for ( QStringList::iterator user = groupusers.begin(); user != groupusers.end(); ++user ) {//search for all users in group (*group)
@@ -915,7 +915,7 @@ void Skype::addToGroup(const QString &name, int groupID) {
 void Skype::createGroup(const QString &name) {
 	kDebug() << k_funcinfo << name << endl;
 	d->connection << QString("CREATE GROUP %1").arg(name);
-	fixGroups();
+	fixGroups(); ///TODO: Create memory group too without fixGroups()
 }
 
 void Skype::deleteGroup(int groupID) {
@@ -928,7 +928,7 @@ void Skype::deleteGroup(int groupID) {
 void Skype::renameGroup(int groupID, const QString &newName) {
 	kDebug() << k_funcinfo << groupID << endl;
 	d->connection << QString("SET GROUP %1 DISPLAYNAME %2").arg(groupID).arg(newName);
-	fixGroups();
+	fixGroups(); ///TODO: Rename memory group too without fixGroups()
 }
 
 int Skype::getGroupID(const QString &groupname) {
