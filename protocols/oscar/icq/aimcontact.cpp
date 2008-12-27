@@ -101,7 +101,7 @@ QList<KAction*> *AIMContact::customContextMenuActions()
 void AIMContact::setSSIItem( const OContact& ssiItem )
 {
 	if ( ssiItem.type() != 0xFFFF && ssiItem.waitingAuth() == false &&
-	     onlineStatus() == Kopete::OnlineStatus::Unknown )
+	     onlineStatus().status() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::AIM ) );
