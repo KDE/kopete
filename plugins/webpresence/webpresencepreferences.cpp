@@ -17,15 +17,14 @@
 
 #include <kgenericfactory.h>
 #include <kurlrequester.h>
+#include <klineedit.h>
 
 #include "ui_webpresenceprefs.h"
+#include "webpresenceconfig.h"
 #include "webpresencepreferences.h"
-
-//TODO: Port to KConfigXT
 
 K_PLUGIN_FACTORY(WebPresencePreferencesFactory, registerPlugin<WebPresencePreferences>();)
 K_EXPORT_PLUGIN(WebPresencePreferencesFactory("kcm_kopete_webpresence"))
-
 
 
 WebPresencePreferences::WebPresencePreferences(QWidget *parent, const QVariantList &args)
@@ -33,39 +32,19 @@ WebPresencePreferences::WebPresencePreferences(QWidget *parent, const QVariantLi
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget;
-	preferencesDialog = new Ui::WebPresencePrefsUI;
-	preferencesDialog->setupUi( w );
+	m_preferencesDialog = new Ui::WebPresencePrefsUI;
+	m_preferencesDialog->setupUi( w );
 	l->addWidget( w );
+	
+	addConfig( WebPresenceConfig::self(), w );
 
-	preferencesDialog->uploadURL->setMode( KFile::File );
-	preferencesDialog->formatStylesheetURL->setFilter( "*.xsl" );
-
-	// KAutoConfig stuff
-// 	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
-// 	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
-// 	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
-// 	kautoconfig->addWidget(preferencesDialog, "Web Presence Plugin");
-// 	kautoconfig->retrieveSettings(true);
+	m_preferencesDialog->kcfg_uploadURL->setMode( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );
+	m_preferencesDialog->kcfg_formatStylesheetURL->setFilter( "*.xsl" );
 }
 
 WebPresencePreferences::~WebPresencePreferences()
 {
-	delete preferencesDialog;
-}
-
-void WebPresencePreferences::widgetModified()
-{
-	//emit KCModule::changed(kautoconfig->hasChanged());
-}
-
-void WebPresencePreferences::save()
-{
-// 	kautoconfig->saveSettings();
-}
-
-void WebPresencePreferences::defaults ()
-{
-// 	kautoconfig->resetSettings();
+	delete m_preferencesDialog;
 }
 
 #include "webpresencepreferences.moc"

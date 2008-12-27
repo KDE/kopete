@@ -29,7 +29,6 @@
 #include <QDateTime>
 
 #include <kdebug.h>
-#include <kconfig.h>
 #include <kgenericfactory.h>
 #include <kmessagebox.h>
 #include <ktemporaryfile.h>
@@ -50,6 +49,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 
+#include "webpresenceconfig.h"
 #include "webpresenceplugin.h"
 
 K_PLUGIN_FACTORY(WebPresencePluginFactory, registerPlugin<WebPresencePlugin>();)
@@ -67,8 +67,8 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const QVariantList& /*arg
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
 
-	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
-	loadSettings();
+	connect(this, SIGNAL(settingsChanged()), this, SLOT( slotSettingsChanged() ) );
+	slotSettingsChanged();
 	listenToAllAccounts();
 }
 
@@ -76,36 +76,29 @@ WebPresencePlugin::~WebPresencePlugin()
 {
 }
 
-void WebPresencePlugin::loadSettings()
+void WebPresencePlugin::slotSettingsChanged()
 {
-	KConfigGroup kconfig(KGlobal::config(), "Web Presence Plugin");
-
-	frequency = kconfig.readEntry("UploadFrequency", 15);
-	resultURL = kconfig.readEntry("uploadURL");
-
+	// Force reading config
+	WebPresenceConfig::self()->readConfig();
+	
 	resultFormatting = WEB_UNDEFINED;
 
-	if ( kconfig.readEntry( "formatHTML", false ) ) {
+	if ( WebPresenceConfig::self()->formatHTML() ) {
 		resultFormatting = WEB_HTML;
-	} else if ( kconfig.readEntry( "formatXHTML", false ) ) {
+	} else if ( WebPresenceConfig::self()->formatXHTML() ) {
 		resultFormatting = WEB_XHTML;
-	} else if ( kconfig.readEntry( "formatXML", false ) ) {
+	} else if ( WebPresenceConfig::self()->formatXML() ) {
 		resultFormatting = WEB_XML;
-	} else if ( kconfig.readEntry( "formatStylesheet", false ) ) {
+	} else if ( WebPresenceConfig::self()->formatStylesheet() ) {
 		resultFormatting = WEB_CUSTOM;
-		userStyleSheet = kconfig.readEntry("formatStylesheetURL", QString() );
+		userStyleSheet = WebPresenceConfig::self()->formatStylesheetURL();
 	}
 
 	// Default to HTML, if we don't get anything useful from config file.
 	if ( resultFormatting == WEB_UNDEFINED )
 		resultFormatting = WEB_HTML;
 
-	useImagesInHTML = kconfig.readEntry( "useImagesHTML", false );
-	useImName = kconfig.readEntry("showName", true);
-	userName = kconfig.readEntry("showThisName", QString());
-	showAddresses = kconfig.readEntry("includeIMAddress", false);
-
-	// Update file when settings are changed.
+	// Update file
 	slotWriteFile();
 }
 
@@ -150,7 +143,7 @@ void WebPresencePlugin::listenToAccount( Kopete::Account* account )
 void WebPresencePlugin::slotWaitMoreStatusChanges()
 {
 	if ( !m_writeScheduler->isActive() )
-		m_writeScheduler->start( frequency * 1000 );
+		m_writeScheduler->start( WebPresenceConfig::self()->uploadFrequency() * 1000 );
 }
 
 void WebPresencePlugin::slotWriteFile()
@@ -158,8 +151,8 @@ void WebPresencePlugin::slotWriteFile()
 	m_writeScheduler->stop();
 
 	// generate the (temporary) XML file representing the current contact list
-	KUrl dest( resultURL );
-	if ( resultURL.isEmpty() || !dest.isValid() )
+	const KUrl dest = WebPresenceConfig::self()->uploadURL();
+	if ( dest.isEmpty() || !dest.isValid() )
 	{
 		kDebug(14309) << "url is empty or not valid. NOT UPDATING!";
 		return;
@@ -167,7 +160,6 @@ void WebPresencePlugin::slotWriteFile()
 
 	KTemporaryFile* xml = generateFile();
 	xml->setAutoRemove( true );
-	kDebug(14309) << " " << xml->fileName();
 
 	switch( resultFormatting ) {
 	case WEB_XML:
@@ -200,7 +192,7 @@ void WebPresencePlugin::slotWriteFile()
 	KUrl src( m_output->fileName() );
 	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, KIO::Overwrite | KIO::HideProgressInfo );
 	connect( job, SIGNAL( result( KJob * ) ),
-			SLOT(  slotUploadJobResult( KJob * ) ) );
+			SLOT( slotUploadJobResult( KJob * ) ) );
 }
 
 void WebPresencePlugin::slotUploadJobResult( KJob *job )
@@ -216,7 +208,7 @@ void WebPresencePlugin::slotUploadJobResult( KJob *job )
 KTemporaryFile* WebPresencePlugin::generateFile()
 {
 	// generate the (temporary) XML file representing the current contact list
-	kDebug( 14309 ) ;
+	kDebug( 14309 );
 	QString notKnown = i18n( "Not yet known" );
 
 	QDomDocument doc;
@@ -237,7 +229,8 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 	// insert the user's name
 	QDomElement name = doc.createElement( "name" );
 	QDomText nameText;
-	if ( !useImName && !userName.isEmpty() )
+	const QString userName = WebPresenceConfig::self()->showThisName();
+	if ( !WebPresenceConfig::self()->showName() && !userName.isEmpty() )
 		nameText = doc.createTextNode( userName );
 	else
 		nameText = doc.createTextNode( notKnown );
@@ -297,7 +290,7 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 			}
 			acc.appendChild( accStatus );
 
-			if ( showAddresses )
+			if ( WebPresenceConfig::self()->includeIMAddress() )
 			{
 				QDomElement accAddress = doc.createElement( "accountaddress" );
 				QDomText addressText = doc.createTextNode( ( me )
@@ -314,7 +307,8 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 	// write the XML to a temporary file
 	KTemporaryFile* file = new KTemporaryFile();
 	file->setAutoRemove(false);
-	QTextStream stream ( file );
+	file->open();
+	QTextStream stream( file );
 	stream.setCodec(QTextCodec::codecForName("UTF-8"));
 	doc.save( stream, 4 );
 	stream.flush();
@@ -335,21 +329,21 @@ bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 		// Oops! We tried to call transform() but XML was requested.
 		return false;
 	case WEB_HTML:
-		if ( useImagesInHTML ) {
+		if ( WebPresenceConfig::self()->useImagesHTML() ) {
 			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html_images.xsl" ) );
 		} else {
 			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_html.xsl" ) );
 		}
 		break;
 	case WEB_XHTML:
-		if ( useImagesInHTML ) {
+		if ( WebPresenceConfig::self()->useImagesHTML() ) {
 			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml_images.xsl" ) );
 		} else {
 			sheet.setFileName( KStandardDirs::locate( "appdata", "webpresence/webpresence_xhtml.xsl" ) );
 		}
 		break;
 	case WEB_CUSTOM:
-		sheet.setFileName( userStyleSheet );
+		sheet.setFileName( userStyleSheet.path() );
 		break;
 	default:
 		// Shouldn't ever reach here.
@@ -397,7 +391,6 @@ bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 	}
 
 	// then it all worked!
-	dest->close();
 
 end:
 	xsltCleanupGlobals();
