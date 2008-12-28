@@ -330,7 +330,7 @@ void MessageReceiverTask::handleType4Message()
 	};
 
 	QByteArray msgText = tlv5buffer.getLELNTS();
-	if ( msgType == 0x0D || msgType == 0x0E )
+	if ( msgType == 0x0D || msgType == 0x0E || msgType == 0x04 )
 		msgText.replace( 0xFE, 0x20 );
 
 	switch ( msgFlags )
