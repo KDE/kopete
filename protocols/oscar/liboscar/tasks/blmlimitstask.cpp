@@ -58,16 +58,13 @@ bool BLMLimitsTask::take(Transfer* transfer)
 			switch ( t.type )
 			{
 				case 0x0001:
-					kDebug(OSCAR_RAW_DEBUG) << "Max BLM entries: " 
-						<< t.data << endl;
+					kDebug(OSCAR_RAW_DEBUG) << "Max BLM entries: " << t.data.toHex();
 					break;
 				case 0x0002:
-					kDebug( OSCAR_RAW_DEBUG ) << "Max watcher entries: " 
-						<< t.data << endl;
+					kDebug( OSCAR_RAW_DEBUG ) << "Max watcher entries: " << t.data.toHex();
 					break;
 				case 0x0003:
-					kDebug( OSCAR_RAW_DEBUG ) << "Max online notifications(?): "
-						<< t.data << endl;
+					kDebug( OSCAR_RAW_DEBUG ) << "Max online notifications(?): " << t.data.toHex();
 					break;
 			}
 		}
