@@ -705,11 +705,11 @@ void AIMAccount::connectWithPassword( const QString &password )
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 
 		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( pres );
-		engine()->setStatus( status, mInitialStatusMessage );
 		updateVersionUpdaterStamp();
 
 		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(16) );
+		engine()->setStatus( status, mInitialStatusMessage );
 		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
 		mInitialStatusMessage.clear();
