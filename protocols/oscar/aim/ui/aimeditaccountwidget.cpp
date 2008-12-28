@@ -85,7 +85,7 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		}
 
 		//set filetransfer stuff
-		bool configChecked = mAccount->configGroup()->readEntry( "FileProxy", false );
+		bool configChecked = mAccount->configGroup()->readEntry( "FileProxy", true );
 		mGui->chkFileProxy->setChecked( configChecked );
 		int configValue = mAccount->configGroup()->readEntry( "FirstPort", 5190 );
 		mGui->sbxFirstPort->setValue( configValue );

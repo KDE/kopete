@@ -699,7 +699,7 @@ void AIMAccount::connectWithPassword( const QString &password )
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
-		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", false ) );
+		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", true ) );
 		oscarSettings->setFirstPort( configGroup()->readEntry( "FirstPort", 5190 ) );
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );

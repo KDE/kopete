@@ -246,7 +246,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		oscarSettings->setWebAware( configGroup()->readEntry( "WebAware", false ) );
 		oscarSettings->setHideIP( configGroup()->readEntry( "HideIP", true ) );
 		oscarSettings->setRequireAuth( configGroup()->readEntry( "RequireAuth", false ) );
-		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", false ) );
+		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", true ) );
 		oscarSettings->setFirstPort( configGroup()->readEntry( "FirstPort", 5190 ) );
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
