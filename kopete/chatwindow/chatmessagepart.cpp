@@ -1150,10 +1150,16 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 	return resultHTML;
 }
 
-QString ChatMessagePart::formatTime(const QString &timeFormat, const QDateTime &dateTime)
+QString ChatMessagePart::formatTime(const QString &_timeFormat, const QDateTime &dateTime)
 {
 	char buffer[256];
-
+#ifdef Q_WS_WIN
+	QString timeFormat = _timeFormat;
+	// %e is not supported on windows
+	timeFormat = timeFormat.replace("%e", "%d");
+#else
+	const QString timeFormat = _timeFormat;
+#endif
 	// Get current time
 	time_t timeT = dateTime.toTime_t();
 	// Convert it to local time representation.
