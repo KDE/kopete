@@ -253,12 +253,12 @@ void ICQAccount::connectWithPassword( const QString &password )
 		if ( mWebAware )
 			status |= Oscar::StatusCode::WEBAWARE;
 
-		engine()->setStatus( status, mInitialStatusMessage.message(),
-		                     pres.xtrazStatus(), mInitialStatusMessage.title() );
 		updateVersionUpdaterStamp();
 
 		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(8) );
+		engine()->setStatus( status, mInitialStatusMessage.message(),
+		                     pres.xtrazStatus(), mInitialStatusMessage.title() );
 		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
 		mInitialStatusMessage = Kopete::StatusMessage();
@@ -300,9 +300,9 @@ void ICQAccount::slotToggleInvisible()
 {
 	using namespace Oscar;
 	if ( (presence().flags() & Presence::Invisible) == Presence::Invisible )
-		setPresenceFlags( presence().flags() & ~Presence::Invisible );
+		setPresenceFlags( presence().flags() & ~Presence::Invisible, myself()->statusMessage() );
 	else
-		setPresenceFlags( presence().flags() | Presence::Invisible );
+		setPresenceFlags( presence().flags() | Presence::Invisible, myself()->statusMessage() );
 }
 
 void ICQAccount::slotUserInfo()
