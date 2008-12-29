@@ -1107,6 +1107,14 @@ int VideoDevice::getImage(QImage *qimage)
 	if (qimage->width() != width() || qimage->height() != height()) 
 		*qimage = QImage(width(), height(), QImage::Format_RGB32);
 
+	if (!m_currentbuffer.data.size())
+		{
+		//there is no data so if we continue something will try access it (as in bug 161536) and crash kopete
+		//perhaps we should look at having the interface reflect when the camera isn't available? as it thinks 
+		//it is for some reason, though the data size seems to be an ok check
+		return EXIT_FAILURE;
+		}
+
 	uchar *bits=qimage->bits();
 // kDebug() << "Capturing in " << pixelFormatName(m_currentbuffer.pixelformat);
 	switch(m_currentbuffer.pixelformat)
