@@ -158,6 +158,11 @@ signals:
 	void pluginLoaded( Kopete::Plugin *plugin );
 
 	/**
+	 * @brief Signals a plugin has just been unloaded.
+	 */
+	void pluginUnloaded( const QString &pluginName );
+
+	/**
 	 * @brief All plugins have been loaded by the plugin manager.
 	 *
 	 * This signal is emitted exactly ONCE, when the plugin manager has emptied

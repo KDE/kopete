@@ -417,7 +417,9 @@ void PluginManager::slotPluginDestroyed( QObject *plugin )
 	{
 		if ( it.value() == plugin )
 		{
+			QString pluginName = it.key().pluginName();
 			_kpmp->loadedPlugins.erase( it );
+			emit pluginUnloaded( pluginName );
 			break;
 		}
 	}
