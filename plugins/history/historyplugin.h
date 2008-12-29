@@ -19,6 +19,7 @@
 #define HISTORYPLUGIN_H
 
 #include <QObject>
+#include <QPointer>
 #include <QMap>
 
 
@@ -42,7 +43,7 @@ class HistoryPlugin;
  */
 class HistoryMessageLogger : public Kopete::MessageHandler
 {
-	HistoryPlugin *history;
+	QPointer<HistoryPlugin> history;
 public:
 	HistoryMessageLogger( HistoryPlugin *history ) : history(history) {}
 	void handleMessage( Kopete::MessageEvent *event );
