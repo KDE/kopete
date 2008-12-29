@@ -73,8 +73,8 @@ bool AIMAddContactPage::validateData()
 	}
 	else if ( m_gui->aimRadioButton->isChecked() )
 	{
-		QRegExp rx("^[A-Za-z][@.\\d\\s\\w]{2,15}$");
-		if ( !rx.exactMatch( m_gui->aimEdit->text() ) )
+		QRegExp rx("^[0-9]*$");
+		if ( rx.exactMatch( m_gui->aimEdit->text() ) )
 		{
 			KMessageBox::sorry( this, i18n("You must enter a valid AOL screen name."), i18n("No Screen Name") );
 			return false;
