@@ -215,7 +215,7 @@ void JabberEditAccountWidget::reopen ()
 		}
 	}
 	
-	autoDetectIPBox->setChecked(account()->configGroup()->readEntry("JingleAutoDetectIP", true));
+	autoDetectIPBox->setChecked(account()->configGroup()->readEntry("JingleAutoDetectIP", false));
 #endif
 
 	// Privacy
