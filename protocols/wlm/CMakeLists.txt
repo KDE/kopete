@@ -5,6 +5,7 @@ ADD_SUBDIRECTORY(icons)
 include_directories(
     ${KOPETE_INCLUDES}
     ${CMAKE_CURRENT_SOURCE_DIR}/ui
+    ${LIBMSN_INCLUDE_DIR}
 )
 
 set(kopete_wlm_ui_SRCS
