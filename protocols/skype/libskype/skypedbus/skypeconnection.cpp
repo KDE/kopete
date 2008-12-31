@@ -225,12 +225,10 @@ QString SkypeConnection::operator %(const QString &message) {
 	QDBusMessage reply = interface.call("Invoke", message);
 
 	if ( interface.lastError().type() != QDBusError::NoError && interface.lastError().type() != QDBusError::Other ){//There was some error
-		if ( message == "PING" ){
-			emit error(i18n("Could not ping Skype"));
-			emit connectionDone(seNoSkype, 0);
-			return "";//this is enough, no more errors please..
-		}
-		emit error(i18n("Error while sending a message to skype (%1)").arg(QDBusError::errorString(interface.lastError().type())));//say there was the error
+		if ( message == "PING" )
+			emit error(i18n("Could not ping Skype\nError while sending a message to skype (%1)").arg(QDBusError::errorString(interface.lastError().type())));//say there was the error
+		else
+			emit error(i18n("Error while sending a message to skype (%1)").arg(QDBusError::errorString(interface.lastError().type())));//say there was the error
 		if (d->fase != cfConnected)
 			emit connectionDone(seUnknown, 0);//Connection attempt finished with error
 		disconnectSkype(crLost);//lost the connection
@@ -240,8 +238,9 @@ QString SkypeConnection::operator %(const QString &message) {
 	QStringList replylist = reply.arguments().at(0).toStringList();
 
 	if ( message == "PING" && ( replylist.isEmpty() || replylist.at(0) != "PONG" ) ){
-		emit error(i18n("Could not ping Skype"));
+		emit error(i18n("Could not ping Skype\nYou are log out from Skype, please log in!"));
 		emit connectionDone(seNoSkype, 0);
+		disconnectSkype(crLost);//lost the connection
 		return "";//this is enough, no more errors please..
 	}
 
