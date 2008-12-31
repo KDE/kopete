@@ -545,12 +545,12 @@ void SecureStream::layer_readyRead(const QByteArray &a)
 void SecureStream::layer_needWrite(const QByteArray &a)
 {
 	SecureLayer *s = (SecureLayer *)sender();
-	SecureLayerList::const_iterator it = d->layers.begin();
-	while(*it != s && it != d->layers.end())
+	SecureLayerList::const_iterator it = d->layers.constBegin();
+	while(*it != s && it != d->layers.constEnd())
 		++it;
 
 	// pass downwards
-	if ( it != d->layers.begin() ) {
+	if ( it != d->layers.constBegin() ) {
 		--it;
 		s = *it;
 		if(s)
