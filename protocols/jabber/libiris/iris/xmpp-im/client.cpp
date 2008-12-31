@@ -354,7 +354,7 @@ void Client::groupChatSetStatus(const QString &host, const QString &room, const 
 {
 	Jid jid(room + "@" + host);
 	bool found = false;
-	for(QList<GroupChat>::ConstIterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
+	for(QList<GroupChat>::ConstIterator it = d->groupChatList.constBegin(); it != d->groupChatList.constEnd(); ++it) {
 		const GroupChat &i = *it;
 		if(i.j.compare(jid, false)) {
 			found = true;

@@ -55,7 +55,7 @@ public:
 
 	Q3CString get(const Q3CString &var)
 	{
-		for(ConstIterator it = begin(); it != end(); ++it) {
+		for(ConstIterator it = constBegin(); it != constEnd(); ++it) {
 			if((*it).var == var)
 				return (*it).val;
 		}
@@ -66,7 +66,7 @@ public:
 	{
 		Q3CString str;
 		bool first = true;
-		for(ConstIterator it = begin(); it != end(); ++it) {
+		for(ConstIterator it = constBegin(); it != constEnd(); ++it) {
 			if(!first)
 				str += ',';
 			if ((*it).var == "realm" || (*it).var == "nonce" || (*it).var == "username" || (*it).var == "cnonce" || (*it).var == "digest-uri" || (*it).var == "authzid")
@@ -144,7 +144,7 @@ public:
 	int varCount(const Q3CString &var)
 	{
 		int n = 0;
-		for(ConstIterator it = begin(); it != end(); ++it) {
+		for(ConstIterator it = constBegin(); it != constEnd(); ++it) {
 			if((*it).var == var)
 				++n;
 		}
@@ -154,7 +154,7 @@ public:
 	QStringList getValues(const Q3CString &var)
 	{
 		QStringList list;
-		for(ConstIterator it = begin(); it != end(); ++it) {
+		for(ConstIterator it = constBegin(); it != constEnd(); ++it) {
 			if((*it).var == var)
 				list += (*it).val;
 		}
