@@ -418,7 +418,7 @@ ProtocolList WebPresencePlugin::allProtocols()
 
 	ProtocolList result;
 
-	for ( it = plugins.begin(); it != plugins.end(); ++it ) {
+	for ( it = plugins.constBegin(); it != plugins.constEnd(); ++it ) {
 		result.append( static_cast<Kopete::Protocol *>( *it ) );
 	}
 

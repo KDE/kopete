@@ -46,11 +46,11 @@ public:
 		QMap<QString,QString> m;
 
 		m = languages.languagesMap();
-		for ( i = m.begin(); i != m.end() ; ++i )
+		for ( i = m.constBegin(); i != m.constEnd() ; ++i )
 			preferencesDialog->myLang->insertItem( languages.languageIndex(i.key()), i.value() );
 
 		m = languages.servicesMap();
-		for ( i = m.begin(); i != m.end() ; ++i )
+		for ( i = m.constBegin(); i != m.constEnd() ; ++i )
 			preferencesDialog->Service->insertItem( languages.serviceIndex(i.key()), i.value() );
 
 		//setMainWidget( w );

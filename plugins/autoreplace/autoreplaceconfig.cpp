@@ -50,7 +50,7 @@ void AutoReplaceConfig::load()
 	{
 		k = *it;
 		++it;
-		if( it == wordsList.end() )
+		if( it == wordsList.constEnd() )
 			break;
 		v = *it;
 		m_map.insert( k, v );
