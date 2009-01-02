@@ -129,7 +129,7 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 
 OnlineStatusManager::Category OnlineStatusManager::initialStatus() const
 {
-    Kopete::OnlineStatusManager::Category statusValue;
+    Kopete::OnlineStatusManager::Category statusValue = Kopete::OnlineStatusManager::Offline;
 		switch( Kopete::BehaviorSettings::self()->initialStatus() )
 		{
 		  case Kopete::BehaviorSettings::EnumInitialStatus::Offline:
