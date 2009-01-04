@@ -162,6 +162,7 @@ private slots:
 	void slotOpenURLRequest( const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & );
 	void slotFileTransferIncomingDone( unsigned int id );
 	void slotScrollView();
+	void slotRenderingFinished();
 	void slotAppearanceChanged();
 
 	void slotScrollingTo( int y );
@@ -282,7 +283,7 @@ private:
 	void readChatFont();
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 class HTMLEventListener: public QObject, public DOM::EventListener

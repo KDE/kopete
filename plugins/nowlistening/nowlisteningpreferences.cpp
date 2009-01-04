@@ -52,7 +52,6 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QVariant
 
 	// Fill the media player listbox.
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kscd"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Noatun"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Juk"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Amarok"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kaffeine"));

@@ -53,10 +53,9 @@ IdentityManager * IdentityManager::self()
 
 
 IdentityManager::IdentityManager()
-: QObject( qApp )
+: QObject( qApp ), d(new Private())
 {
 	setObjectName( "KopeteIdentityManager" );
-	d = new Private;
 }
 
 

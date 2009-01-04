@@ -52,6 +52,7 @@
 JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Kopete::Account *account, Kopete::MetaContact * mc, const QString &legacyId)
 	: Kopete::Contact (account, legacyId.isEmpty() ? rosterItem.jid().full() : legacyId , mc )
 {
+	mSendsDeliveredEvent = false;
 	setDontSync ( false );
 	
 	JabberTransport *t=transport();
@@ -519,7 +520,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	removeProperty( protocol()->propHomePostalCode );
 	removeProperty( protocol()->propHomeCountry );
 
-	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
+	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); ++it)
 	{
 		XMPP::VCard::Address address = (*it);
 
@@ -651,21 +652,23 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		KIO::NetAccess::removeTempFile(  tempPhotoPath );
 	}
 
-	// add the entry using the avatar manager
-	Kopete::AvatarManager::AvatarEntry entry;
-	entry.name = contactId();
-	entry.image = contactPhoto;
-	entry.category = Kopete::AvatarManager::Contact;
-	entry.contact = this;	
-	entry = Kopete::AvatarManager::self()->add(entry);
-
-	// Save the image to the disk, then set the property.
-	if(!entry.path.isNull())
+	if ( !contactId().isEmpty() )
 	{
-		kDebug( JABBER_DEBUG_GLOBAL ) << "Setting photo for contact: " << contactId();
-		setProperty( protocol()->propPhoto, entry.path );
-	}
+		// add the entry using the avatar manager
+		Kopete::AvatarManager::AvatarEntry entry;
+		entry.name = contactId();
+		entry.image = contactPhoto;
+		entry.category = Kopete::AvatarManager::Contact;
+		entry.contact = this;	
+		entry = Kopete::AvatarManager::self()->add(entry);
 
+		// Save the image to the disk, then set the property.
+		if(!entry.path.isNull())
+		{
+			kDebug( JABBER_DEBUG_GLOBAL ) << "Setting photo for contact: " << contactId();
+			setProperty( protocol()->propPhoto, entry.path );
+		}
+	}
 }
 
 

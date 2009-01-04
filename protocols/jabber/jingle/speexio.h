@@ -37,7 +37,7 @@ public:
 	/**
 	 * This is the speex sampling rate :
 	 * Possible different sampling rates: 8 kHz (8000), 16 kHz (16000), and 32 kHz (32000).
-	 * These are respectively refered to as narrowband, wideband and ultra-wideband.
+	 * These are respectively referred to as narrowband, wideband and ultra-wideband.
 	 *
 	 * FIXME:should take an enum value instead of an int.
 	 */
@@ -67,7 +67,7 @@ public:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 };
 #endif

@@ -42,6 +42,9 @@
 #include "kopeteglobal.h"
 #include "kopeteview.h"
 #include "kopetecontact.h"
+#include "kopetepluginmanager.h"
+
+const int CHAIN_COUNT = 3;
 
 class KMMPrivate
 {
@@ -58,7 +61,7 @@ public:
 	QString displayName;
 	KopeteView *view;
 	bool mayInvite;
-	Kopete::MessageHandlerChain::Ptr chains[3];
+	Kopete::MessageHandlerChain::Ptr chains[CHAIN_COUNT];
 	Kopete::ChatSession::Form form;
 };
 
@@ -66,8 +69,6 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	Kopete::ContactPtrList others, Kopete::Protocol *protocol, Kopete::ChatSession::Form form )
 : QObject( user->account())
 {
-	int i;
-
 	d = new KMMPrivate;
 	d->mUser = user;
 	d->mProtocol = protocol;
@@ -79,8 +80,11 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->mayInvite = false;
 	d->form = form;
 
-	for ( i = 0; others.size() != i; i++ )
+	for ( int i = 0; others.size() != i; ++i )
 		addContact( others[i], true );
+
+	connect( Kopete::PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin*)), this, SLOT(clearChains()) );
+	connect( Kopete::PluginManager::self(), SIGNAL(pluginUnloaded(const QString&)), this, SLOT(clearChains()) );
 
 	connect( user, SIGNAL(contactDestroyed(Kopete::Contact*)), this, SLOT(slotMyselfDestroyed(Kopete::Contact*)) );
 	connect( user, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ), this,
@@ -230,9 +234,15 @@ public:
 	}
 };
 
+void Kopete::ChatSession::clearChains()
+{
+	for (int i = 0; i < CHAIN_COUNT; i++)
+		d->chains[i] = 0;
+}
+
 Kopete::MessageHandlerChain::Ptr Kopete::ChatSession::chainForDirection( Kopete::Message::MessageDirection dir )
 {
-	if( dir < 0 || dir > 2)
+	if( dir < 0 || dir >= CHAIN_COUNT)
 		kFatal(14000) << "invalid message direction " << dir;
 	if( !d->chains[dir] )
 	{
@@ -276,11 +286,14 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 
 	if ( msg.direction() == Kopete::Message::Inbound )
 	{
-		QString nick=myself()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() &&
-			msg.plainBody().contains( QRegExp( QString::fromLatin1( "\\b(%1)\\b" ).arg( nick ), Qt::CaseInsensitive ) ) )
+		QString nick = myself()->nickName();
+		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() )
 		{
-			msg.setImportance( Kopete::Message::Highlight );
+			QString nickNameRegExp = QString::fromLatin1( "(^|[\\W])(%1)([\\W]|$)" ).arg( QRegExp::escape( nick ) );
+			if ( msg.plainBody().contains( QRegExp( nickNameRegExp, Qt::CaseInsensitive ) ) )
+			{
+				msg.setImportance( Kopete::Message::Highlight );
+			}
 		}
 
 		emit messageReceived( msg, this );

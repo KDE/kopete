@@ -60,7 +60,7 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
 	if ( ssiItem.type() != 0xFFFF && ssiItem.waitingAuth() == false &&
-	     onlineStatus() == Kopete::OnlineStatus::Unknown )
+	     onlineStatus().status() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
@@ -124,6 +124,8 @@ void ICQContact::userOffline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
+
+	m_details.clear();
 
 	kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline";
 	if ( m_ssiItem.waitingAuth() )

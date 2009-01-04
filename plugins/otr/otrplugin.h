@@ -28,6 +28,7 @@
 #include "otrlchatinterface.h"
 
 #include "qvariant.h"
+#include <QPointer>
 
 /**
   * @author Michael Zanetti
@@ -39,7 +40,7 @@ class KSelectAction;
 class OtrMessageHandler : public Kopete::MessageHandler
 {
 private:
-	OTRPlugin *plugin;
+	QPointer<OTRPlugin> plugin;
 public:
 	OtrMessageHandler( OTRPlugin *plugin ) : plugin(plugin) {
 //		kdDebug() << "MessageHandler created" << endl;

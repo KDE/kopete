@@ -87,10 +87,10 @@ void PrivacyPlugin::slotSettingsChanged()
 
 void PrivacyPlugin::slotAddToWhiteList()
 {
-	QList< Kopete::Contact *> list;
-	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
+	QList<const Kopete::Contact *> list;
+	foreach( const Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
-		foreach( Kopete::Contact *contact, metacontact->contacts() )
+		foreach( const Kopete::Contact *contact, metacontact->contacts() )
 		{
 			list.append( contact );
 		}
@@ -101,10 +101,10 @@ void PrivacyPlugin::slotAddToWhiteList()
 
 void PrivacyPlugin::slotAddToBlackList()
 {
-	QList< Kopete::Contact *> list;
-	foreach( Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
+	QList<const Kopete::Contact *> list;
+	foreach( const Kopete::MetaContact *metacontact, Kopete::ContactList::self()->selectedMetaContacts() )
 	{
-		foreach( Kopete::Contact *contact, metacontact->contacts() )
+		foreach( const Kopete::Contact *contact, metacontact->contacts() )
 		{
 			list.append( contact );
 		}
@@ -113,11 +113,11 @@ void PrivacyPlugin::slotAddToBlackList()
 	addContactsToBlackList( list );
 }
 
-void PrivacyPlugin::addContactsToWhiteList( QList< Kopete::Contact *> list )
+void PrivacyPlugin::addContactsToWhiteList( QList<const Kopete::Contact *> list )
 {
 	QStringList whitelist = PrivacyConfig::whiteList();
 
-	foreach( Kopete::Contact *contact, list )
+	foreach( const Kopete::Contact *contact, list )
 	{
 		QString entry( contact->protocol()->pluginId() + ':' + contact->contactId() );
 		if( !whitelist.contains( entry ) )
@@ -128,11 +128,11 @@ void PrivacyPlugin::addContactsToWhiteList( QList< Kopete::Contact *> list )
 	PrivacyConfig::self()->writeConfig();
 }
 
-void PrivacyPlugin::addContactsToBlackList( QList< Kopete::Contact *> list )
+void PrivacyPlugin::addContactsToBlackList( QList<const Kopete::Contact *> list )
 {
 	QStringList blacklist = PrivacyConfig::blackList();
 
-	foreach( Kopete::Contact *contact, list )
+	foreach( const Kopete::Contact *contact, list )
 	{
 		QString entry( contact->protocol()->pluginId() + ':' + contact->contactId() );
 		if( !blacklist.contains( entry ) )
@@ -186,7 +186,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 	// Verify content
 	if( PrivacyConfig::content_DropIfAny() )
 	{
-		foreach(QString word, PrivacyConfig::dropIfAny().split(',') )
+		foreach(const QString &word, PrivacyConfig::dropIfAny().split(',') )
 		{
 			if( word.isEmpty() )
 				continue;
@@ -204,7 +204,7 @@ void PrivacyPlugin::slotIncomingMessage( Kopete::MessageEvent *event )
 	if( PrivacyConfig::content_DropIfAll() )
 	{
 		bool drop = true;
-		foreach(QString word, PrivacyConfig::dropIfAll().split(',') )
+		foreach(const QString &word, PrivacyConfig::dropIfAll().split(',') )
 		{
 			if( word.isEmpty() )
 				continue;

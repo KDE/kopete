@@ -95,7 +95,7 @@ protected:
 	QString taskType() const;
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }

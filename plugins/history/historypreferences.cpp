@@ -23,7 +23,6 @@
 #include <kgenericfactory.h>
 
 #include <QLayout>
-#include <Q3GroupBox>
 #include <QVBoxLayout>
 
 #include <kcolorbutton.h>

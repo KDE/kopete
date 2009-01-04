@@ -20,9 +20,7 @@
 
 #include <kcmodule.h>
 namespace Ui { class WebPresencePrefsUI; }
-//class KAutoConfig;
 
-//TODO: Port to KConfigXT
 /**
  * Preference widget for the Now Listening plugin, copied from the Cryptography plugin
  * @author Olivier Goffart
@@ -34,15 +32,8 @@ public:
 	explicit WebPresencePreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
 	~WebPresencePreferences();
 
-	virtual void save();
-	virtual void defaults();
-
 private:
-	Ui::WebPresencePrefsUI *preferencesDialog;
-	//KAutoConfig *kautoconfig;
-
-private slots: // Public slots
-	void widgetModified();
+	Ui::WebPresencePrefsUI *m_preferencesDialog;
 
 };
 

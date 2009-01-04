@@ -279,10 +279,10 @@ QString StatisticsContact::mainStatusDate(const QDate& date)
 // 	
 // }
 
-Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::StatusType& status)
+QList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::StatusType& status)
 {
 	QStringList buffer;
-	Q3ValueList<QTime> mainEvents;
+	QList<QTime> mainEvents;
 	
 	
 	QDateTime currentDateTime = QDateTime::currentDateTime();
@@ -313,7 +313,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	kDebug(14315) << "statistics: average events per day : " <<avEventsPerDay;
 	
 	// We want to work on hours
-	Q3ValueList<int> hoursValues;
+	QList<int> hoursValues;
 	for (int i=0; i<values.count(); i++)
 	{
 		QDateTime dt;
@@ -325,7 +325,7 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	//qSort(hoursValues);
 	
 	// Then we put some centroids (centroids in [0..24[)
-	Q3ValueList<int> centroids;
+	QList<int> centroids;
 	int incr=qRound((double)hoursValues.count()/(double)avEventsPerDay);
 	incr = incr ? incr : 1;
 	for (int i=0; i<hoursValues.count(); i+=incr)
@@ -352,16 +352,19 @@ Q3ValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::Sta
 	return mainEvents;
 }
 
-Q3ValueList<int> StatisticsContact::computeCentroids(const Q3ValueList<int>& centroids, const Q3ValueList<int>& values)
+QList<int> StatisticsContact::computeCentroids(const QList<int>& centroids, const QList<int>& values)
 {
 	kDebug(14315) << "statistics: enter compute centroids";
 
-	Q3ValueList<int> whichCentroid; // whichCentroid[i] = j <=> values[i] has centroid j for closest one
-	Q3ValueList<int> newCentroids;
-	for (int i=0; i<values.count(); i++)
+	QList<int> whichCentroid; // whichCentroid[i] = j <=> values[i] has centroid j for closest one
+	QList<int> newCentroids;
+
+    QList<int>::ConstIterator it = values.begin();
+    QList<int>::ConstIterator end = values.end();
+	for ( ; it != end; ++it )
 	// Iterates over the values. For each one we need to get the closest centroid.
 	{
-		int value = values[i];
+		int value = *it;
 		int distanceToNearestCentroid = abs(centroids[0]-value);
 		int nearestCentroid = 0;
 		for (int j=1; j<centroids.count(); j++)

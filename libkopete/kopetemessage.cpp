@@ -339,9 +339,9 @@ QString Message::escape( const QString &text )
 {
 	QString html = Qt::escape( text );
  	//Replace carriage returns inside the text
-	html.replace( QLatin1String( "\n" ), QLatin1String( "<br />" ) );
+	html.replace( QLatin1Char( '\n' ), QLatin1String( "<br />" ) );
 	//Replace a tab with 4 spaces
-	html.replace( QLatin1String( "\t" ), QLatin1String( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+	html.replace( QLatin1Char( '\t' ), QLatin1String( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 
 	//Replace multiple spaces with &nbsp;
 	//do not replace every space so we break the linebreak
@@ -374,7 +374,7 @@ QString Message::escapedBody() const
 		QRegExp badStuff ("<![^<>]*>|<head[^<>]*>.*</head[^<>]*>|</?html[^<>]*>|</?body[^<>]*>");
 		html = html.remove (badStuff);
 //		remove newlines that may be present, since they end up being displayed in the chat window. real newlines are represented with <br>, so we know \n's are meaningless
-		html = html.remove ("\n");
+		html = html.remove ('\n');
 		d->escapedBody = html;
 		d->escapedBodyDirty = false;
 		return html;

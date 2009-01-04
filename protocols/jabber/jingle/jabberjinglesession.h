@@ -36,6 +36,12 @@ class JabberJingleSession : public QObject
 {
 	Q_OBJECT
 public:
+	// Session states
+	enum State {
+		Pending = 0,
+		Active,
+		Ended
+	};
 	JabberJingleSession(JingleCallsManager*);
 	~JabberJingleSession();
 	
@@ -46,25 +52,26 @@ public:
 	XMPP::JingleSession *session() const {return m_jingleSession;} //FIXME:Use jingleSession()
 	MediaManager *mediaManager() const;
 	QList<JabberJingleContent*> contents() const {return jabberJingleContents;}
+
+	State state();
+
 	QTime upTime();
 
 public slots:
-	void writeRtpData(XMPP::JingleContent*);
-	void slotUptimeOut();
+	//void writeRtpData(XMPP::JingleContent*);
 	void slotSessionTerminated();
 	void slotStateChanged();
 
-
 signals:
 	void terminated();
+	void stateChanged();
 
 private:
 	XMPP::JingleSession *m_jingleSession;
 	JingleCallsManager *m_callsManager;
 	MediaManager *m_mediaManager;
 	QList<JabberJingleContent*> jabberJingleContents;
-	QTime m_timeUp;
-//	JingleRtpSession *m_rtpSession;
+	QTime m_startTime;
 };
 
 #endif

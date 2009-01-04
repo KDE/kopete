@@ -92,7 +92,7 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 	transfer->kill();
 }
 
-KUrl::List* BookmarksPlugin::extractURLsFromString( QString text )
+KUrl::List* BookmarksPlugin::extractURLsFromString( const QString &text )
 {
 	KUrl::List *list = new KUrl::List;
 	QRegExp rx("<a href=\"[^\\s\"]+\"");
@@ -109,7 +109,7 @@ KUrl::List* BookmarksPlugin::extractURLsFromString( QString text )
 	return list;
 }
 
-void BookmarksPlugin::addKopeteBookmark( KUrl url, QString sender )
+void BookmarksPlugin::addKopeteBookmark( const KUrl &url, const QString &sender )
 {
 	KBookmarkGroup group = getKopeteFolder();
 
@@ -134,7 +134,7 @@ KBookmarkGroup BookmarksPlugin::getKopeteFolder()
 	return getFolder( mgr->root(), "kopete" );
 }
 
-bool BookmarksPlugin::isURLInGroup(KUrl url, KBookmarkGroup group)
+bool BookmarksPlugin::isURLInGroup(const KUrl &url, KBookmarkGroup group)
 {
 	KBookmark bookmark = group.first();
 	
@@ -163,7 +163,7 @@ KBookmarkGroup BookmarksPlugin::getFolder( KBookmarkGroup group, QString folder 
 	return group;
 }
 
-QTextCodec* BookmarksPlugin::getPageEncoding( QByteArray data )
+QTextCodec* BookmarksPlugin::getPageEncoding( const QByteArray &data )
 {
 	QString temp = QString::fromLatin1(data);
 	QRegExp rx("<meta[^>]*(charset|CHARSET)\\s*=\\s*[^>]*>");
@@ -178,7 +178,7 @@ QTextCodec* BookmarksPlugin::getPageEncoding( QByteArray data )
 	temp = temp.mid(pos, rx.matchedLength()-1);
 	temp = temp.mid( temp.indexOf("charset", 0, Qt::CaseInsensitive)+7);
 	temp = temp.remove('=').simplified();
-	for( pos = 0 ; temp[pos].isLetterOrNumber() || temp[pos] == '-' ; pos++ );
+	for( pos = 0 ; temp[pos].isLetterOrNumber() || temp[pos] == '-' ; ++pos ) {};
 	temp = temp.left( pos );
 	//kDebug(14501) << "encoding: " << temp;
 	codec = QTextCodec::codecForName( temp.toLatin1() );

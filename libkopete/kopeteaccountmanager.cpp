@@ -77,10 +77,9 @@ AccountManager * AccountManager::self()
 
 
 AccountManager::AccountManager()
-: QObject( qApp )
+: QObject( qApp ), d(new Private())
 {
 	setObjectName( "KopeteAccountManager" );
-	d = new Private;
 	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT( networkConnected() ) );
 	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT( networkDisconnected() ) );
 }

@@ -54,6 +54,7 @@ namespace XMPP
 		enum Type {
 			Decline = 0,
 			Busy,
+			UnsupportedApplications,
 			NoReason
 		};
 		/*
@@ -154,7 +155,7 @@ namespace XMPP
 		 * Once the responder sends the acknowledgement stanza, the
 		 * signal terminated() is emitted.
 		 */
-		void terminate(const JingleReason& r = JingleReason());
+		void sessionTerminate(const JingleReason& r = JingleReason());
 
 		/*
 		 * Sends a ringing informational message.

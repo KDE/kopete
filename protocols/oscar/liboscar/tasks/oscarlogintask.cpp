@@ -18,6 +18,8 @@
 */
 #include "oscarlogintask.h"
 
+#include <QtCore/QCryptographicHash>
+
 #include <stdlib.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -25,8 +27,6 @@
 #include "oscartypes.h"
 #include "oscarutils.h"
 #include "transfer.h"
-
-#include "md5.h"
 
 using namespace Oscar;
 
@@ -155,9 +155,7 @@ void OscarLoginTask::sendLoginRequest()
 	Buffer *outbuf = new Buffer;
 	outbuf->addTLV(0x0001, client()->userId().toLatin1());
 
-	QByteArray digest;
-	digest.resize( 16 ); //apparently MD5 digests are 16 bytes long
-	encodePassword( digest );
+	QByteArray digest = encodePassword();
 
 	const Oscar::ClientVersion* version = client()->version();
 	outbuf->addTLV(0x0025, digest );
@@ -247,15 +245,14 @@ void OscarLoginTask::handleLoginResponse()
 	setSuccess( 0, QString() );
 }
 
-void OscarLoginTask::encodePassword( QByteArray& digest ) const
+QByteArray OscarLoginTask::encodePassword() const
 {
 	kDebug(OSCAR_RAW_DEBUG) ;
-	md5_state_t state;
-	md5_init( &state );
-	md5_append( &state, ( const md5_byte_t* ) m_authKey.data(), m_authKey.size() );
-	md5_append( &state, ( const md5_byte_t* ) client()->password().toLatin1().data(), client()->password().length() );
-	md5_append( &state, ( const md5_byte_t* ) AIM_MD5_STRING, strlen( AIM_MD5_STRING ) );
-	md5_finish( &state, ( md5_byte_t* ) digest.data() );
+	QCryptographicHash h(QCryptographicHash::Md5);
+	h.addData( m_authKey );
+	h.addData( client()->password().toLatin1() );
+	h.addData( AIM_MD5_STRING, strlen( AIM_MD5_STRING ) );
+	return h.result();
 }
 
 //kate: indent-mode csands; tab-width 4; replace-tabs off; indent-spaces off;

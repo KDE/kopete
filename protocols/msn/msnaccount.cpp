@@ -375,7 +375,7 @@ void MSNAccount::slotDebugRawCommand()
 	if ( result == QDialog::Accepted && m_notifySocket )
 	{
 		m_notifySocket->sendCommand( dlg->command(), dlg->params(),
-					dlg->addId(), dlg->msg().replace( "\n", "\r\n" ).toUtf8() );
+					dlg->addId(), dlg->msg().replace( '\n', "\r\n" ).toUtf8() );
 	}
 	delete dlg;
 #endif
@@ -780,7 +780,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 
 	if ( lists & 1 )	// FL
 	{
-		QStringList contactGroups = groups.split( ",", QString::SkipEmptyParts );
+		QStringList contactGroups = groups.split( ',', QString::SkipEmptyParts );
 		if ( c )
 		{
 			if( !c->metaContact() )
@@ -803,7 +803,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 
 			const QMap<QString, Kopete::Group *> oldServerGroups = c->serverGroups();
 			c->clearServerGroups();
-			for ( QStringList::ConstIterator it = contactGroups.begin(); it != contactGroups.end(); ++it )
+			for ( QStringList::ConstIterator it = contactGroups.constBegin(); it != contactGroups.constEnd(); ++it )
 			{
 				QString newServerGroupID =  *it;
 				if(m_groupList.contains(newServerGroupID))
@@ -1111,7 +1111,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		if( !groupGuidList.isEmpty() )
 		{
 			QStringList::const_iterator stringIt;
-			for( stringIt = groupGuidList.begin(); stringIt != groupGuidList.end(); ++stringIt )
+			for( stringIt = groupGuidList.constBegin(); stringIt != groupGuidList.constEnd(); ++stringIt )
 			{
 				// Contact is removed from the FL list, remove it from the group
 				if(contactRemoved != 0L)

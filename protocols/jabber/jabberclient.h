@@ -526,7 +526,7 @@ signals:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 	/**
 	 * Delete all member classes and reset the class to a predefined state.

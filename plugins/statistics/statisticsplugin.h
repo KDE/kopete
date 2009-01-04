@@ -18,14 +18,7 @@
 #ifndef STATISTICSPLUGIN_H
 #define STATISTICSPLUGIN_H
 
-#include <map>
-using namespace std;
-
-#include <qobject.h>
-#include <qmap.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <QVariantList>
+#include <QMap>
 
 #include "kopeteplugin.h"
 
@@ -159,6 +152,7 @@ public slots:
  	*/
 	void slotMetaContactAdded(Kopete::MetaContact *mc);
 
+	void slotMetaContactRemoved(Kopete::MetaContact *mc);
 
 	/*
 	 * DCOP functions 
@@ -182,12 +176,15 @@ public slots:
 	
 	Q_SCRIPTABLE QString dbusMainStatus(QString id, int timeStamp);
 
-private:	
+private:
+	StatisticsContact* findStatisticsContact(QString id) const;
+
+private:
 	StatisticsDB *m_db;
 	/** Associate a StatisticsContact to a Kopete::MetaContact id to retrieve
 	* the StatisticsContact corresponding to the MetaContact in the slots
 	*/
-	map<QString, StatisticsContact*> statisticsContactMap; 
+	QMap<Kopete::MetaContact*, StatisticsContact*> statisticsContactMap;
 
 
 	

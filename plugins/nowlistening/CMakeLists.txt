@@ -10,7 +10,6 @@ endif(XMMS_FOUND)
 set(kopete_nowlistening_PART_SRCS 
    nowlisteningplugin.cpp 
    nlkscd.cpp 
-   #nlnoatun.cpp 
    nlxmms.cpp 
    nowlisteningguiclient.cpp 
    nljuk.cpp 

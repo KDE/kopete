@@ -39,11 +39,10 @@ public:
 	~JabberJingleContent();
 
 	void setContent(XMPP::JingleContent*);
-	void startWritingRtpData();
+	//void startWritingRtpData();
+	void startStreaming();
 	QString contentName();
 	QString elementToSdp(const QDomElement&);
-	void prepareRtpInSession();
-	void prepareRtpOutSession();
 
 public slots:
 	void slotSendRtpData();
@@ -58,6 +57,9 @@ private:
 	JingleRtpSession *m_rtpInSession;
 	JingleRtpSession *m_rtpOutSession;
 	JabberJingleSession *m_jabberSession;
+	
+	void prepareRtpOutSession();
+	void prepareRtpInSession();
 };
 
 #endif

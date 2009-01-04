@@ -24,6 +24,7 @@
 #include "buffer.h"
 #include "oscarutils.h"
 #include "oscardebug.h"
+#include <QtCore/QTextCodec>
 
 #define OSCAR_USERINFO_DEBUG
 
@@ -32,11 +33,23 @@ using namespace Oscar;
 UserDetails::UserDetails()
 {
     m_capabilities.resize(CAP_LAST);
+	clear();
+}
+
+
+UserDetails::~UserDetails()
+{
+}
+
+void UserDetails::clear()
+{
+	m_capabilities.fill( false );
 	m_warningLevel = 0;
 	m_userClass = 0;
 	m_idleTime = 0;
 	m_extendedStatus = 0;
 	m_xtrazStatus = -1;
+	m_statusMood = -1;
 	m_dcPort = 0;
 	m_dcType = 0;
 	m_dcProtoVersion = 0;
@@ -56,15 +69,11 @@ UserDetails::UserDetails()
 	m_idleTimeSpecified = false;
 	m_extendedStatusSpecified = false;
 	m_xtrazStatusSpecified = false;
+	m_statusMoodSpecified = false;
 	m_capabilitiesSpecified = false;
 	m_dcOutsideSpecified = false;
 	m_dcInsideSpecified = false;
 	m_iconSpecified = false;
-}
-
-
-UserDetails::~UserDetails()
-{
 }
 
 int UserDetails::warningLevel() const
@@ -132,9 +141,19 @@ int UserDetails::xtrazStatus() const
 	return m_xtrazStatus;
 }
 
+int UserDetails::statusMood() const
+{
+	return m_statusMood;
+}
+
 Oscar::WORD UserDetails::iconType() const
 {
 	return m_iconType;
+}
+
+QString UserDetails::personalMessage() const
+{
+	return m_personalMessage;
 }
 
 Oscar::BYTE UserDetails::iconCheckSumType() const
@@ -277,8 +296,8 @@ void UserDetails::fill( Buffer * buffer )
 				break;
 			case 0x0004: //idle time
 				m_idleTime = b.getWord() * 60;
-#ifdef OSCAR_USERINFO_DEBUG
 				m_idleTimeSpecified = true;
+#ifdef OSCAR_USERINFO_DEBUG
 				kDebug(OSCAR_RAW_DEBUG) << "Idle time is " << m_idleTime;
 #endif
 				break;
@@ -382,19 +401,39 @@ void UserDetails::fill( Buffer * buffer )
 					case 0x0002:
 						if ( length > 0 )
 						{
-							m_availableMessage = QString( b.getBSTR() );
-#ifdef OSCAR_USERINFO_DEBUG
-							kDebug(OSCAR_RAW_DEBUG) << "available message:" << m_availableMessage;
-#endif
+							QByteArray personalMessageData = b.getBSTR();
+							
+							QTextCodec *codec = 0;
 							if ( b.bytesAvailable() >= 4 && b.getWord() == 0x0001 )
 							{
 								b.skipBytes( 2 );
 								QByteArray encoding = b.getBSTR();
+								codec = QTextCodec::codecForName( encoding );
 								kDebug(OSCAR_RAW_DEBUG) << "Encoding:" << encoding;
 							}
+
+							if (codec)
+								m_personalMessage = codec->toUnicode( personalMessageData );
+							else
+								m_personalMessage = QString::fromUtf8( personalMessageData );
+
+#ifdef OSCAR_USERINFO_DEBUG
+							kDebug(OSCAR_RAW_DEBUG) << "personal message:" << m_personalMessage;
+#endif
 						}
 						else
 							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message";
+						break;
+					case 0x000E:
+						if ( length > 0 )
+						{
+							QString mood( b.getBlock( length ) );
+							m_statusMood = mood.mid( 7 ).toInt();
+						}
+						m_statusMoodSpecified = true;
+#ifdef OSCAR_USERINFO_DEBUG
+						kDebug(OSCAR_RAW_DEBUG) << "status mood:" << m_statusMood;
+#endif
 						break;
 					default:
 						b.skipBytes( length );
@@ -802,6 +841,11 @@ void UserDetails::merge( const UserDetails& ud )
 		m_xtrazStatus = ud.m_xtrazStatus;
 		m_xtrazStatusSpecified = true;
 	}
+	if ( ud.m_statusMoodSpecified )
+	{
+		m_statusMood = ud.m_statusMood;
+		m_statusMoodSpecified = true;
+	}
 	if ( ud.m_capabilitiesSpecified )
 	{
 		m_capabilities = ud.m_capabilities;
@@ -835,7 +879,7 @@ void UserDetails::merge( const UserDetails& ud )
 		m_md5IconHash = ud.m_md5IconHash;
 		m_iconSpecified = true;
 	}
-	m_availableMessage = ud.m_availableMessage;
+	m_personalMessage = ud.m_personalMessage;
 	m_onlineStatusMsgSupport = ud.m_onlineStatusMsgSupport;
 }
 

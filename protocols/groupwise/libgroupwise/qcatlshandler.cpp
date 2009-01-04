@@ -32,9 +32,8 @@ public:
 };
 
 QCATLSHandler::QCATLSHandler(QCA::TLS *parent)
-:TLSHandler(parent)
+:TLSHandler(parent), d(new Private())
 {
-	d = new Private;
 	d->tls = parent;
 	connect(d->tls, SIGNAL(handshaken()), SLOT(tls_handshaken()));
 	connect(d->tls, SIGNAL(readyRead()), SLOT(tls_readyRead()));

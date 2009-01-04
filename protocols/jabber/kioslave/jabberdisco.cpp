@@ -55,7 +55,7 @@ void JabberDiscoProtocol::setHost ( const QString &host, int port, const QString
 
 	m_host = host;
 	m_port = !port ? 5222 : port;
-	m_user = QString(user).replace ( "%", "@" );
+	m_user = QString(user).replace ( '%', '@' );
 	m_password = pass;
 
 }

@@ -9,6 +9,8 @@ ${KOPETE_INCLUDES}
 set(kopete_videodevice_LIB_SRCS 
    videodevice.cpp 
    videoinput.cpp 
+   dummyvideodevice.cpp
+   videodevicevector.cpp
    videodevicepool.cpp 
    videodevicemodelpool.cpp
    bayer.cpp

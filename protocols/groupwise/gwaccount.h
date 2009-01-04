@@ -22,6 +22,7 @@
 #ifndef GW_ACCOUNT_H
 #define GW_ACCOUNT_H
 
+#include <QtCore/QList>
 #include <QtCrypto>
 
 #include <kaction.h>
@@ -32,8 +33,6 @@
 #include "gwerror.h"
 
 #include <kopetepasswordedaccount.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 
 class KActionMenu;
 
@@ -346,7 +345,7 @@ private:
 
 	QString m_password;
 	QString m_initialReason;
-	Q3ValueList<GroupWiseChatSession*> m_chatSessions;
+	QList<GroupWiseChatSession*> m_chatSessions;
 	bool m_dontSync;
 	GWContactList * m_serverListModel;
 };

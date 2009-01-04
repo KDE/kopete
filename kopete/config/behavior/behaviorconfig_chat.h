@@ -20,6 +20,8 @@
 
 #include "ui_behaviorconfig_chat.h"
 
+//TODO KDE 4.3: move Interface Preference' to General, and all other items to kcm_kopete_chatwindowconfig
+
 class BehaviorConfig_Chat : public QWidget, public Ui::BehaviorConfig_Chat
 {
 	Q_OBJECT

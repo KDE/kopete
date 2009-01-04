@@ -144,7 +144,7 @@ private slots:
 private:
 	OnlineStatusManager();
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(OnlineStatusManager::Categories)

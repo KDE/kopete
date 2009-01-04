@@ -568,7 +568,7 @@ private slots:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 } //END namespace Kopete

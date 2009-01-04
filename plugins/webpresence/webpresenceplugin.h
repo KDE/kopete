@@ -38,12 +38,7 @@ class WebPresencePlugin : public Kopete::Plugin
 	Q_OBJECT
 
 private:
-	int frequency;
-	bool showAddresses;
-	bool useImName;
-	QString userName;
-	QString userStyleSheet;
-	bool useImagesInHTML;
+	KUrl userStyleSheet;
 
 	// Is set to true when Kopete has notified us
 	// that we're about to be unloaded.
@@ -57,8 +52,6 @@ private:
 		WEB_UNDEFINED
 	} resultFormatting;
 
-	QString resultURL;
-
 public:
 	WebPresencePlugin( QObject *parent, const QVariantList &args );
 	virtual ~WebPresencePlugin();
@@ -66,8 +59,10 @@ public:
 	virtual void aboutToUnload();
 
 protected slots:
-	void loadSettings();
-	
+	/**
+	 * Called when settings were changed
+	 */
+	void slotSettingsChanged();
 	/**
 	 * Write a file to the specified location,
 	 */
@@ -108,7 +103,7 @@ protected:
 	 */
 	QString statusAsString( const Kopete::OnlineStatus &newStatus );
 	/**
-     * Schedules writes
+	 * Schedules writes
 	 */
 	QTimer* m_writeScheduler;
 

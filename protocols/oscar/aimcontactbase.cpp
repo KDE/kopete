@@ -112,8 +112,14 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	QTextCharFormat defaultCharFormat;
 	for ( QTextBlock it = doc.begin(); it != doc.end(); it = it.next() )
 	{
-		s += brMargin( it.blockFormat().topMargin(), defaultCharFormat.fontPointSize() );
+		QTextBlockFormat blockFormat = it.blockFormat();
 
+		// Plain text message has p tags without margin attributes and Qt's topMargin()
+		// returns default margins so we will end up with line break before text.
+		if ( message.format() != Qt::PlainText || it.blockNumber() != 0 )
+			s += brMargin( blockFormat.topMargin(), defaultCharFormat.fontPointSize() );
+
+		bool lastFragmentHasLineSeparator = false;
 		for ( QTextBlock::iterator it2 = it.begin(); !(it2.atEnd()); ++it2 )
 		{
 			QTextFragment currentFragment = it2.fragment();
@@ -151,13 +157,20 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 					s += ( format.hasProperty(QTextFormat::FontItalic) ) ? "<I>" : "</I>";
 				if ( format.fontUnderline() != defaultCharFormat.fontUnderline() )
 					s += ( format.hasProperty(QTextFormat::FontUnderline) ) ? "<U>" : "</U>";
-				
-				s += Qt::escape(currentFragment.text());
+
+				QString text = currentFragment.text();
+				lastFragmentHasLineSeparator = text.endsWith( QChar::LineSeparator );
+				s += Qt::escape( text );
 				defaultCharFormat = format;
 			}
 		}
-		s += brMargin( it.blockFormat().bottomMargin(), defaultCharFormat.fontPointSize(), true );
+		s += brMargin( blockFormat.bottomMargin(), defaultCharFormat.fontPointSize(), !lastFragmentHasLineSeparator );
 	}
+
+	s.replace( QChar::LineSeparator, "<BR>" );
+
+	if ( s.endsWith( "<BR>" ) )
+		s.chop(4);
 
 	if ( hasFontTag )
 		s += "</FONT>";
@@ -219,9 +232,6 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 	s.replace ( QRegExp ( QString::fromLatin1("<br[ /]*>")), QString::fromLatin1("<br>") );
 #endif
 
-	s.replace( QChar::LineSeparator, "<BR>" );
-	s.remove ( QRegExp ( QString::fromLatin1("<BR>$") ) );
-	
 	kDebug(OSCAR_GEN_DEBUG) << "sending " << s;
 	
 	// XXX Need to check for message size?
@@ -263,13 +273,13 @@ int AIMContactBase::aimFontSize( int size ) const
 		return 7;
 }
 
-QString AIMContactBase::brMargin( int margin, int fontPointSize, bool endBlock ) const
+QString AIMContactBase::brMargin( int margin, int fontPointSize, bool forceBr ) const
 {
 	int brHeight = ( fontPointSize == 0 ) ? 12 : fontPointSize;
 	int brCount = margin / brHeight;
 
 	if ( brCount <= 0 )
-		return ( endBlock ) ? "<BR>" : "";
+		return ( forceBr ) ? "<BR>" : "";
 
 	QString s;
 	while ( brCount-- > 0 )

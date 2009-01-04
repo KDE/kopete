@@ -134,7 +134,7 @@ ParamList YMSGTransfer::paramList() const
 int YMSGTransfer::paramCount( int index ) const
 {
 	int cnt = 0;
-	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
+	for (ParamList::ConstIterator it = d->data.constBegin(); it !=  d->data.constEnd(); ++it) 
 	{
 		if( (*it).first == index )
 			cnt++;
@@ -146,7 +146,7 @@ int YMSGTransfer::paramCount( int index ) const
 QByteArray YMSGTransfer::nthParam( int index, int occurrence ) const
 {
 	int cnt = 0;
-	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
+	for (ParamList::ConstIterator it = d->data.constBegin(); it !=  d->data.constEnd(); ++it) 
 	{
 		if( (*it).first == index && cnt++ == occurrence)
 			return (*it).second;
@@ -158,7 +158,7 @@ QByteArray YMSGTransfer::nthParamSeparated( int index, int occurrence, int separ
 {
 
 	int cnt = -1;
-	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
+	for (ParamList::ConstIterator it = d->data.constBegin(); it !=  d->data.constEnd(); ++it) 
 	{
 		if( (*it).first == separator )
 			cnt++;
@@ -170,7 +170,7 @@ QByteArray YMSGTransfer::nthParamSeparated( int index, int occurrence, int separ
 
 QByteArray YMSGTransfer::firstParam( int index ) const
 {
-	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
+	for (ParamList::ConstIterator it = d->data.constBegin(); it !=  d->data.constEnd(); ++it) 
 	{
 		if( (*it).first == index )
 			return (*it).second;
@@ -191,7 +191,7 @@ void YMSGTransfer::setParam( int index, int data )
 int YMSGTransfer::length() const
 {
 	int len = 0;
-	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
+	for (ParamList::ConstIterator it = d->data.constBegin(); it !=  d->data.constEnd(); ++it) 
 	{
 		len += QString::number( (*it).first ).length();
 		len += 2;
@@ -236,7 +236,7 @@ QByteArray YMSGTransfer::serialize() const
 	stream << (qint16)d->service;
 	stream << (qint32)d->status;
 	stream << (qint32)d->id;
- 	for (ParamList::ConstIterator it = d->data.begin(); it !=  d->data.end(); ++it) 
+ 	for (ParamList::ConstIterator it = d->data.constBegin(); it !=  d->data.constEnd(); ++it) 
 	{
  		kDebug(YAHOO_RAW_DEBUG) << " Serializing key " << (*it).first << " value " << (*it).second;
 		stream.writeRawData ( QString::number( (*it).first ).toLocal8Bit(), QString::number( (*it).first ).length() );

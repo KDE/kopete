@@ -165,9 +165,9 @@ void ContactManager::loadFromExisting( const QList<OContact*>& newList )
 
 bool ContactManager::hasItem( const OContact& item ) const
 {
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
 
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 	{
 		OContact s = ( *it );
 		if ( s == item )
@@ -179,9 +179,9 @@ bool ContactManager::hasItem( const OContact& item ) const
 
 OContact ContactManager::findGroup( const QString &group ) const
 {
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
 
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP && (*it ).name().toLower() == group.toLower() )
 			return ( *it );
 
@@ -191,9 +191,9 @@ OContact ContactManager::findGroup( const QString &group ) const
 
 OContact ContactManager::findGroup( int groupId ) const
 {
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
 
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP && (*it ).gid() == groupId )
 			return ( *it );
 
@@ -219,9 +219,9 @@ OContact ContactManager::findContact( const QString &contact, const QString &gro
 			", gr->bid= " << gr.bid() <<
 			", gr->type= " << gr.type() << endl;
 
-		QList<OContact>::const_iterator it, listEnd = d->contactList.end();
+		QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
 
-		for ( it = d->contactList.begin(); it != listEnd; ++it )
+		for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		{
 			if ( ( *it ).type() == ROSTER_CONTACT && (*it ).name() == contact && (*it ).gid() == gr.gid() )
 			{
@@ -243,9 +243,9 @@ OContact ContactManager::findContact( const QString &contact, const QString &gro
 OContact ContactManager::findContact( const QString &contact ) const
 {
 
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
 
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT && (*it ).name() == contact )
 			return ( *it );
 
@@ -254,9 +254,9 @@ OContact ContactManager::findContact( const QString &contact ) const
 
 OContact ContactManager::findContact( int contactId ) const
 {
-	QList<OContact>::const_iterator it,  listEnd = d->contactList.end();
+	QList<OContact>::const_iterator it,  listEnd = d->contactList.constEnd();
 
-	for ( it = d->contactList.begin(); it!= listEnd; ++it )
+	for ( it = d->contactList.constBegin(); it!= listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT && ( *it ).bid() == contactId )
 			return ( *it );
 
@@ -265,9 +265,9 @@ OContact ContactManager::findContact( int contactId ) const
 
 OContact ContactManager::findItemForIcon( QByteArray iconHash ) const
 {
-	QList<OContact>::const_iterator it,  listEnd = d->contactList.end();
+	QList<OContact>::const_iterator it,  listEnd = d->contactList.constEnd();
 
-	for ( it = d->contactList.begin(); it!= listEnd; ++it )
+	for ( it = d->contactList.constBegin(); it!= listEnd; ++it )
 	{
 		if ( ( *it ).type() == ROSTER_BUDDYICONS )
 		{
@@ -288,9 +288,9 @@ OContact ContactManager::findItemForIcon( QByteArray iconHash ) const
 
 OContact ContactManager::findItemForIconByRef( int ref ) const
 {
-	QList<OContact>::const_iterator it,  listEnd = d->contactList.end();
+	QList<OContact>::const_iterator it,  listEnd = d->contactList.constEnd();
 
-	for ( it = d->contactList.begin(); it!= listEnd; ++it )
+	for ( it = d->contactList.constBegin(); it!= listEnd; ++it )
 	{
 		if ( ( *it ).type() == ROSTER_BUDDYICONS )
 		{
@@ -306,9 +306,9 @@ OContact ContactManager::findItemForIconByRef( int ref ) const
 
 OContact ContactManager::findItem( const QString &contact, int type ) const
 {
-	QList<OContact>::const_iterator it,  listEnd = d->contactList.end();
+	QList<OContact>::const_iterator it,  listEnd = d->contactList.constEnd();
 
-	for ( it = d->contactList.begin(); it!= listEnd; ++it )
+	for ( it = d->contactList.constBegin(); it!= listEnd; ++it )
 		if ( ( *it ).type() == type && ( *it ).name() == contact )
 			return ( *it );
 
@@ -319,8 +319,8 @@ QList<OContact> ContactManager::groupList() const
 {
 	QList<OContact> list;
 
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_GROUP  )
 			list.append( ( *it ) );
 
@@ -331,8 +331,8 @@ QList<OContact> ContactManager::contactList() const
 {
 	QList<OContact> list;
 
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT  )
 			list.append( ( *it ) );
 
@@ -343,8 +343,8 @@ QList<OContact> ContactManager::visibleList() const
 {
 	QList<OContact> list;
 
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_VISIBLE  )
 			list.append( ( *it ) );
 
@@ -355,8 +355,8 @@ QList<OContact> ContactManager::invisibleList() const
 {
 	QList<OContact> list;
 
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_INVISIBLE  )
 			list.append( ( *it ) );
 
@@ -367,8 +367,8 @@ QList<OContact> ContactManager::ignoreList() const
 {
 	QList<OContact> list;
 	
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_IGNORE  )
 			list.append( ( *it ) );
 	
@@ -382,8 +382,8 @@ QList<OContact> ContactManager::contactsFromGroup( const QString &group ) const
 	OContact gr = findGroup( group );
 	if ( gr.isValid() )
 	{
-		QList<OContact>::const_iterator it, listEnd = d->contactList.end();
-		for ( it = d->contactList.begin(); it != listEnd; ++it )
+		QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
+		for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 			if ( ( *it ).type() == ROSTER_CONTACT && (*it ).gid() == gr.gid() )
 				list.append( ( *it ) );
 	}
@@ -394,8 +394,8 @@ QList<OContact> ContactManager::contactsFromGroup( int groupId ) const
 {
 	QList<OContact> list;
 
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 		if ( ( *it ).type() == ROSTER_CONTACT && (*it ).gid() == groupId  )
 			list.append( ( *it ) );
 
@@ -405,8 +405,8 @@ QList<OContact> ContactManager::contactsFromGroup( int groupId ) const
 OContact ContactManager::visibilityItem() const
 {
 	OContact item = m_dummyItem;
-	QList<OContact>::const_iterator it, listEnd = d->contactList.end();
-	for ( it = d->contactList.begin(); it != listEnd; ++it )
+	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
+	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 	{
 		if ( ( *it ).type() == 0x0004 )
 		{

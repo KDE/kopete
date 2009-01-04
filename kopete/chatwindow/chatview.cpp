@@ -74,8 +74,6 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	 : KVBox( 0l ), KopeteView( mgr, parent )
          , d(new KopeteChatViewPrivate)
 {
-	int i;
-
 	d->isActive = false;
 	d->visibleMembers = false;
 	d->sendInProgress = false;
@@ -148,13 +146,13 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 
 	// add contacts
 	slotContactAdded( mgr->myself(), true );
-	for ( i = 0; i != mgr->members().size(); i++ )
+	for ( int i = 0; i != mgr->members().size(); ++i )
 	{
 		slotContactAdded( mgr->members()[i], true );
 	}
 
 	setFocusProxy( editPart()->widget() );
-	m_messagePart->widget()->setFocusProxy( editPart()->widget() );
+	m_messagePart->view()->setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
 
 	slotChatDisplayNameChanged();
@@ -185,6 +183,15 @@ QWidget *ChatView::mainWidget()
 bool ChatView::canSend()
 {
 	return editPart()->canSend();
+}
+
+bool ChatView::canSendFile()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+	if ( contacts.count() != 1 )
+		return false;
+
+	return contacts.first()->canAcceptFiles();
 }
 
 Kopete::Message ChatView::currentMessage()
@@ -542,8 +549,14 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	if( !suppress && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.", contactName) );
 
+	if ( m_manager->members().count() == 1 )
+		connect( m_manager->members().first(), SIGNAL(canAcceptFilesChanged()), this, SIGNAL(canAcceptFilesChanged()) );
+	else
+		disconnect( m_manager->members().first(), SIGNAL(canAcceptFilesChanged()), this, SIGNAL(canAcceptFilesChanged()) );
+
 	updateChatState();
 	emit updateStatusIcon( this );
+	emit canAcceptFilesChanged();
 }
 
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format, bool suppressNotification )
@@ -583,10 +596,13 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 			else
 				sendInternalMessage( i18n( "%1 has left the chat (%2).", contactName, reason ), format);
 		}
+
+		disconnect( contact, SIGNAL(canAcceptFilesChanged()), this, SIGNAL(canAcceptFilesChanged()) );
 	}
 
 	updateChatState();
 	emit updateStatusIcon( this );
+	emit canAcceptFilesChanged();
 }
 
 QString& ChatView::caption() const
@@ -651,6 +667,17 @@ void ChatView::appendMessage(Kopete::Message &message)
 	}
 	else
 		unreadMessageFrom.clear();
+}
+
+void ChatView::sendFile()
+{
+	Kopete::ContactPtrList contacts = msgManager()->members();
+	if ( contacts.count() != 1 )
+		return;
+
+	Kopete::Contact* contact = contacts.first();
+	if ( contact->canAcceptFiles() )
+		contact->sendFile();
 }
 
 void ChatView::slotMarkMessageRead()
@@ -799,6 +826,28 @@ void ChatView::slotRemoteTypingTimeout()
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 {
+	const bool accept = isDragEventAccepted( event );
+	if ( accept )
+	{
+		event->setAccepted( true );
+		return;
+	}
+	QWidget::dragEnterEvent( event );
+}
+
+void ChatView::dragMoveEvent( QDragMoveEvent * event )
+{
+	const bool accept = isDragEventAccepted( event );
+	if ( accept )
+	{
+		event->setAccepted( true );
+		return;
+	}
+	QWidget::dragMoveEvent( event );
+}
+
+bool ChatView::isDragEventAccepted( QDragMoveEvent * event ) const
+{
 	if( event->provides( "kopete/x-contact" ) )
 	{
 		QStringList lst = QString::fromUtf8(event->encodedData ( "kopete/x-contact" )).split( QChar( 0xE000 ) , QString::SkipEmptyParts );
@@ -817,7 +866,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 			}
 
 			if(!found && contact != m_manager->myself()->contactId())
-				event->accept();
+				return true;
 		}
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
@@ -831,22 +880,21 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 				if( candidate && candidate->account() == m_manager->account() && candidate->isOnline())
 				{
 					if( candidate != m_manager->myself() &&  !m_manager->members().contains( candidate ) )
-						event->accept();
+						return true;
 				}
 			}
 		}
 	}
 	// make sure it doesn't come from the current chat view - then it's an emoticon
-	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 &&
+	else if ( KUrl::List::canDecode( event->mimeData() ) && m_manager->members().count() == 1 &&
 				 ( event->source() != (QWidget*)m_messagePart->view()->viewport() ) )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 		if ( contact && contact->canAcceptFiles() )
-			event->accept();
+			return true;
 	}
-	else
-		QWidget::dragEnterEvent(event);
+	return false;
 }
 
 void ChatView::dropEvent ( QDropEvent * event )

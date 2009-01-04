@@ -72,8 +72,8 @@ void PrivacyGUIClient::slotAddToBlackList()
 
 	QList<Kopete::Contact*> members = m_manager->members();
 
-	QList< Kopete::Contact *> list;
-	foreach( Kopete::Contact *contact, members )
+	QList<const Kopete::Contact *> list;
+	foreach( const Kopete::Contact *contact, members )
 	{
 		if( !(contact == m_manager->myself()) )
 			list.append( contact );
@@ -91,8 +91,8 @@ void PrivacyGUIClient::slotAddToWhiteList()
 
 	QList<Kopete::Contact*> members = m_manager->members();
 
-	QList< Kopete::Contact *> list;
-	foreach( Kopete::Contact *contact, members )
+	QList<const Kopete::Contact *> list;
+	foreach( const Kopete::Contact *contact, members )
 	{
 		if( !(contact == m_manager->myself()) )
 			list.append( contact );

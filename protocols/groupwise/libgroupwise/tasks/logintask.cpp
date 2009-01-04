@@ -126,7 +126,7 @@ void LoginTask::extractFolder( Field::MultiField * folderContainer )
 	current = fl.findSingleField( Field::NM_A_SZ_PARENT_ID );
 	folder.parentId = current->value().toInt();
 	
-	client()->debug( QString( "Got folder: %1, obj: %2, parent: %3, seq: %3." ).arg( folder.name ).arg(  folder.id ).arg( folder.parentId ).arg( folder.sequence ) );
+	client()->debug( QString( "Got folder: %1, obj: %2, parent: %3, seq: %4." ).arg( folder.name ).arg(  folder.id ).arg( folder.parentId ).arg( folder.sequence ) );
 	// tell the world about it
 	emit gotFolder( folder );
 }

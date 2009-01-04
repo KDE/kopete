@@ -45,17 +45,16 @@ ChatSessionManager* ChatSessionManager::self()
 }
 
 ChatSessionManager::ChatSessionManager( QObject* parent )
-	: QObject( parent )
+	: QObject( parent ), d(new Private())
 {
-	d=new Private;
 	s_self = this;
 }
 
 ChatSessionManager::~ChatSessionManager()
 {
 	s_self = 0L;
-	QList<ChatSession*>::Iterator it;
-	for ( it=d->sessions.begin() ; it!=d->sessions.end() ; ++it )
+	QList<ChatSession*>::ConstIterator it;
+	for ( it=d->sessions.constBegin() ; it!=d->sessions.constEnd() ; ++it )
 	{
 		kDebug( 14010 ) << "Unloading KMM: Why this KMM isn't yet unloaded?";
 		(*it)->deleteLater();
@@ -67,10 +66,10 @@ ChatSession* ChatSessionManager::findChatSession(const Contact *user,
 		ContactPtrList chatContacts, Protocol *protocol)
 {
 	ChatSession *result = 0L;
-	QList<ChatSession*>::Iterator it;
+	QList<ChatSession*>::ConstIterator it;
 	int i;
 
-	for ( it= d->sessions.begin(); it!=d->sessions.end() && !result ; ++it  )
+	for ( it= d->sessions.constBegin(); it!=d->sessions.constEnd() && !result ; ++it  )
 	{
 	  ChatSession* cs=(*it);
 	  if ( cs->protocol() == protocol && user == cs->myself() )

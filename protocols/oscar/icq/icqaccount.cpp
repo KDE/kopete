@@ -67,18 +67,23 @@ void ICQMyselfContact::userInfoUpdated()
 	Oscar::Presence presence = p->statusManager()->presenceOf( extendedStatus, details().userClass() );
 
 	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
-	if ( details().xtrazStatus() != -1 )
+	if ( details().statusMood() != -1 )
+	{
+		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus2 );
+		presence.setMood( details().statusMood() );
+	}
+	else if ( details().xtrazStatus() != -1 )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setXtrazStatus( details().xtrazStatus() );
 	}
-	else if ( !icqAccount->engine()->statusDescription().isEmpty() )
+	else if ( !icqAccount->engine()->statusTitle().isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
 	}
 
 	Kopete::StatusMessage statusMessage;
-	statusMessage.setTitle( icqAccount->engine()->statusDescription() );
+	statusMessage.setTitle( icqAccount->engine()->statusTitle() );
 	statusMessage.setMessage( icqAccount->engine()->statusMessage() );
 	setOnlineStatus( p->statusManager()->onlineStatusOf( presence ) );
 	setStatusMessage( statusMessage );
@@ -241,7 +246,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		oscarSettings->setWebAware( configGroup()->readEntry( "WebAware", false ) );
 		oscarSettings->setHideIP( configGroup()->readEntry( "HideIP", true ) );
 		oscarSettings->setRequireAuth( configGroup()->readEntry( "RequireAuth", false ) );
-		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", false ) );
+		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", true ) );
 		oscarSettings->setFirstPort( configGroup()->readEntry( "FirstPort", 5190 ) );
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
@@ -253,12 +258,12 @@ void ICQAccount::connectWithPassword( const QString &password )
 		if ( mWebAware )
 			status |= Oscar::StatusCode::WEBAWARE;
 
-		engine()->setStatus( status, mInitialStatusMessage.message(),
-		                     pres.xtrazStatus(), mInitialStatusMessage.title() );
 		updateVersionUpdaterStamp();
 
 		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(8) );
+		engine()->setStatus( status, mInitialStatusMessage.message(), pres.xtrazStatus(),
+		                     mInitialStatusMessage.title(), pres.mood() );
 		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
 		mInitialStatusMessage = Kopete::StatusMessage();
@@ -300,9 +305,9 @@ void ICQAccount::slotToggleInvisible()
 {
 	using namespace Oscar;
 	if ( (presence().flags() & Presence::Invisible) == Presence::Invisible )
-		setPresenceFlags( presence().flags() & ~Presence::Invisible );
+		setPresenceFlags( presence().flags() & ~Presence::Invisible, myself()->statusMessage() );
 	else
-		setPresenceFlags( presence().flags() | Presence::Invisible );
+		setPresenceFlags( presence().flags() | Presence::Invisible, myself()->statusMessage() );
 }
 
 void ICQAccount::slotUserInfo()
@@ -404,7 +409,7 @@ void ICQAccount::setPresenceTarget( const Oscar::Presence &newPres, const Kopete
 	else
 	{
 		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( newPres );
-		engine()->setStatus( status, reason.message(), newPres.xtrazStatus(), reason.title() );
+		engine()->setStatus( status, reason.message(), newPres.xtrazStatus(), reason.title(), newPres.mood() );
 	}
 }
 

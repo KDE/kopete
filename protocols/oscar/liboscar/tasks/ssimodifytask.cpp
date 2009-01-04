@@ -235,7 +235,7 @@ bool SSIModifyTask::forMe( const Transfer * transfer ) const
 		}
 		else
 		{
-			if ( subtype == 0x000E && m_id == st->snac().id )
+			if ( subtype == 0x000E && m_id == st->snacRequest() )
 				return true;
 		}
 	}
@@ -262,28 +262,28 @@ void SSIModifyTask::handleContactAck()
 			updateContactManager();
 			break;
 		case 0x0002:
-			kDebug( OSCAR_RAW_DEBUG ) << "Item to modify not found in list";
+			kWarning( OSCAR_RAW_DEBUG ) << "Item to modify not found in list";
 			setSuccess( 0, QString() );
 			break;
 		case 0x0003:
-			kDebug( OSCAR_RAW_DEBUG ) << "Item already exists in SSI";
+			kWarning( OSCAR_RAW_DEBUG ) << "Item already exists in SSI";
 			setSuccess( 0, QString() );
 			break;
 		case 0x000A:
-			kDebug( OSCAR_RAW_DEBUG ) << "Error adding item ( invalid id, already in list, invalid data )";
+			kWarning( OSCAR_RAW_DEBUG ) << "Error adding item ( invalid id, already in list, invalid data )";
 			setSuccess( 0, QString() );
 			break;
 		case 0x000C:
-			kDebug( OSCAR_RAW_DEBUG ) << "Can't add item. Limit exceeded.";
+			kWarning( OSCAR_RAW_DEBUG ) << "Can't add item. Limit exceeded.";
 			setSuccess( 0, QString() );
 			break;
 		case 0x000D:
-			kDebug( OSCAR_RAW_DEBUG ) << "Can't add ICQ item to AIM list ( and vice versa )";
+			kWarning( OSCAR_RAW_DEBUG ) << "Can't add ICQ item to AIM list ( and vice versa )";
 			setSuccess( 0, QString() );
 			break;
 		case 0x000E:
 			{
-			kDebug( OSCAR_RAW_DEBUG ) << "Can't add item because contact requires authorization";
+			kWarning( OSCAR_RAW_DEBUG ) << "Can't add item because contact requires authorization";
 			OContact groupItem = m_ssiManager->findGroup( m_newItem.gid() );
 			QString groupName = groupItem.name();
 			addContact( m_newItem.name(), groupName, true );
@@ -291,7 +291,7 @@ void SSIModifyTask::handleContactAck()
 			break;
 			}
 		default:
-			kDebug( OSCAR_RAW_DEBUG ) << "Unknown acknowledgement code";
+			kWarning( OSCAR_RAW_DEBUG ) << "Unknown acknowledgement code " << ackCode;
 			setSuccess( 0, QString() );
 			break;
 		}

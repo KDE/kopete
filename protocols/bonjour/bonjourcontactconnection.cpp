@@ -16,11 +16,8 @@
 
 #include "bonjourcontactconnection.h"
 
-#include <QAbstractSocket>
 #include <QTcpSocket>
 #include <QHostAddress>
-#include <QThread>
-#include <QTime>
 #include <QXmlStreamReader>
 
 #include "kdebug.h"

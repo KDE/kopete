@@ -40,14 +40,13 @@ bool ICQTlvInfoRequestTask::forMe( const Transfer* transfer ) const
 	if ( !st )
 		return false;
 
-	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 )
+	if ( st->snacService() != 0x0015 || st->snacSubtype() != 0x0003 || !m_contactSequenceMap.contains( st->snacRequest() ) )
 		return false;
 
 	Buffer buf( *( st->buffer() ) );
 	const_cast<ICQTlvInfoRequestTask*>( this )->parseInitialData( buf );
 
-	if ( requestType() == 0x07DA && requestSubType() == 0x0FB4
-	     && m_contactSequenceMap.contains( sequence() ) )
+	if ( requestType() == 0x07DA && requestSubType() == 0x0FB4 )
 		return true;
 
 	return false;
@@ -57,6 +56,10 @@ bool ICQTlvInfoRequestTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
 	{
+		const SnacTransfer* st = dynamic_cast<const SnacTransfer*>( transfer );
+		if ( !st )
+			return false;
+		
 		setTransfer( transfer );
 		TLV tlv1 = transfer->buffer()->getTLV();
 		Buffer buffer( tlv1.data, tlv1.length );
@@ -67,7 +70,7 @@ bool ICQTlvInfoRequestTask::take( Transfer* transfer )
 		if ( buffer.getByte() == 0x0A )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "Received user info";
-			parse( buffer.getLEBlock() );
+			parse( st->snacRequest(), buffer.getLEBlock() );
 			setSuccess( 0, QString() );
 		}
 		else
@@ -113,10 +116,11 @@ void ICQTlvInfoRequestTask::onGo()
 
 	Buffer *sendBuf = addInitialData( &b );
 
-	m_contactSequenceMap[sequence()] = m_userToRequestFor;
+	Oscar::DWORD seq = client()->snacSequence();
+	m_contactSequenceMap[seq] = m_userToRequestFor;
 
 	FLAP f = { 0x02, 0, 0 };
-	SNAC s = { 0x0015, 0x0002, 0, client()->snacSequence() };
+	SNAC s = { 0x0015, 0x0002, 0, seq };
 	Transfer* t = createTransfer( f, s, sendBuf );
 	send( t );
 }
@@ -128,13 +132,12 @@ ICQFullInfo ICQTlvInfoRequestTask::fullInfoFor( const QString& contact )
 	return info;
 }
 
-void ICQTlvInfoRequestTask::parse( const QByteArray &data )
+void ICQTlvInfoRequestTask::parse( Oscar::DWORD seq, const QByteArray &data )
 {
 	Buffer buf( data );
 
 	buf.skipBytes( 45 );
 
-	Oscar::WORD seq = sequence();
 	QString contact = m_contactSequenceMap[seq];
 
 	ICQFullInfo info;

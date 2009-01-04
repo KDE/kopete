@@ -41,7 +41,7 @@
 #include <krun.h>
 #include <kmenu.h>
 #include <kaction.h>
-#include <kactioncollection.h>
+#include <kstandardaction.h>
 
 class KListViewDateItem : public QTreeWidgetItem
 {
@@ -55,8 +55,6 @@ private:
     QDate mDate;
 	Kopete::MetaContact *mMetaContact;
 };
-
-
 
 KListViewDateItem::KListViewDateItem(QTreeWidget* parent, QDate date, Kopete::MetaContact *mc)
 : QTreeWidgetItem(parent), mDate(date), mMetaContact(mc)
@@ -124,7 +122,6 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	setMainWidget( w );
 
 	// Initializing HTML Part
-	mMainWidget->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
 	mHtmlPart = new KHTMLPart(mMainWidget->htmlFrame);
 
@@ -138,9 +135,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlView = mHtmlPart->view();
 	mHtmlView->setMarginWidth(4);
 	mHtmlView->setMarginHeight(4);
-	mHtmlView->setFocusPolicy(Qt::NoFocus);
-	mHtmlView->setSizePolicy(
-	QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	mHtmlView->setFocusPolicy(Qt::ClickFocus);
+	mHtmlView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	l->setMargin(0);
 	l->addWidget(mHtmlView);
 
@@ -164,11 +160,12 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
 
 	//initActions
-	KActionCollection* ac = new KActionCollection(this);
-	mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), ac );
-	mCopyURLAct = new KAction( KIcon("edit-copy"), i18n( "Copy Link Address" ), this );
-        ac->addAction( "mCopyURLAct", mCopyURLAct );
-	connect(mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT( slotCopyURL() ) );
+	mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), mHtmlView );
+	mHtmlView->addAction( mCopyAct );
+
+	mCopyURLAct = new KAction( KIcon("edit-copy"), i18n("Copy Link Address"), mHtmlView );
+	mHtmlView->addAction( mCopyURLAct );
+	connect( mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT(slotCopyURL()) );
 
 	resize(650, 700);
 	centerOnScreen(this);
@@ -246,7 +243,6 @@ void HistoryDialog::init(Kopete::Contact *c)
 	// Get year and month list
 	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
 	const QString contact_in_filename=c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) );
-	QFileInfo fi;
 
 	// BEGIN check if there are Kopete 0.7.x
 	QDir d1(KStandardDirs::locateLocal("data",QString("kopete/logs/")+
@@ -258,7 +254,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 	const QFileInfoList list1 = d1.entryInfoList();
 	if ( !list1.isEmpty() )
 	{
-		foreach( fi, list1 )
+		foreach( const QFileInfo &fi, list1 )
 		{
 			if(fi.fileName().contains(contact_in_filename))
 			{
@@ -285,7 +281,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 	const QFileInfoList list = d.entryInfoList();
 	if ( !list.isEmpty() )
 	{
-		foreach( fi, list )
+		foreach( const QFileInfo &fi, list )
 		{
 			if(fi.fileName().contains(contact_in_filename))
 			{

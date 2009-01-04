@@ -44,6 +44,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <kpassivepopup.h>
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <kpassworddialog.h>
@@ -379,7 +380,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 	// Set caps node information
 	m_jabberClient->setCapsNode(KOPETE_CAPS_NODE);
-	m_jabberClient->setCapsVersion(KGlobal::mainComponent().aboutData()->version() + QString("soc-jingle"));
+	m_jabberClient->setCapsVersion(KGlobal::mainComponent().aboutData()->version());
 	
 	// Set Disco Identity information
 	DiscoItem::Identity identity;
@@ -645,7 +646,7 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	{
 			xmppStatus.setIsAvailable( false );
 			kDebug (JABBER_DEBUG_GLOBAL) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
-            disconnect (Manual, xmppStatus);
+			disconnect (Manual, xmppStatus);
             return;
     }
 
@@ -852,9 +853,12 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 				case QAbstractSocket::SocketTimeoutError:
 					errorCondition = i18n("Socket timed out.");
 					break;
+				case QAbstractSocket::RemoteHostClosedError:
+					errorCondition= i18n("Remote closed connection.");
+					break;
 				default:
 					errorClass = Kopete::Account::ConnectionReset;
-					errorCondition = i18n("Sorry, something unexpected happened that I do not know more about.");
+					errorCondition = i18n("Unexpected error condition (%1).", connectorCode);
 					break;
 			}
 			if(!errorCondition.isEmpty())
@@ -986,21 +990,15 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 			break;
 	}
 
-	/*
-	 * This mustn't be queued as otherwise the reconnection
-	 * API will attempt to reconnect, queueing another
-	 * error until memory is exhausted.
-	 */
 	if(!errorText.isEmpty()) {
 		if (!additionalErrMsg.isEmpty()) {
-			KMessageBox::detailedError (Kopete::UI::Global::mainWidget (),
-					errorText,
-					additionalErrMsg,
-					i18n("Connection problem with Jabber server %1", server));
+			KPassivePopup::message( i18n("Connection problem with Jabber server %1", server),
+			                        QString ("%1\n%2").arg(errorText).arg(additionalErrMsg),
+			                        Kopete::UI::Global::mainWidget() );
 		} else {
-			KMessageBox::error (Kopete::UI::Global::mainWidget (),
-					errorText,
-					i18n("Connection problem with Jabber server %1", server));
+			KPassivePopup::message( i18n("Connection problem with Jabber server %1", server),
+			                        errorText,
+			                        Kopete::UI::Global::mainWidget() );
 		}
 	}
 
@@ -1023,10 +1021,12 @@ void JabberAccount::slotCSError ( int error )
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "Disconnecting.";
 
 		// display message to user
-		if(!m_removing) //when removing the account, connection errors are normal.
+		// when removing or disconnecting, connection errors are normal
+		if(!m_removing && (isConnected() || isConnecting()))
 			handleStreamError (error, client()->clientStream()->errorCondition (), client()->clientConnector()->errorCode (), server (), errorClass, client()->clientStream()->errorText());
 
-		disconnect ( errorClass );
+		if (isConnected() || isConnecting())
+			disconnect ( errorClass );
 		
 		/*	slotCSDisconnected  will not be called*/
 		resourcePool()->clear();

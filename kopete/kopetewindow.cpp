@@ -565,8 +565,9 @@ void KopeteWindow::loadOptions()
 
 	applyMainWindowSettings ( config->group ( "General Options" ) );
 	KConfigGroup cg ( config, "General Options" );
-	QPoint pos = cg.readEntry ( "Position", QPoint() );
-	move ( pos );
+	QPoint pos = cg.readEntry ( "Position", QPoint(-1, -1) );
+	if ( pos.x() != -1 || pos.y() != -1 )
+		move ( pos );
 
 	QSize size = cg.readEntry ( "Geometry", QSize() );
 	if ( size.isEmpty() ) // Default size
@@ -578,7 +579,7 @@ void KopeteWindow::loadOptions()
 	d->autoHideTimeout = Kopete::AppearanceSettings::self()->contactListAutoHideTimeout();
 
 
-	QString tmp = cg.readEntry ( "State", "Shown" );
+	QString tmp = cg.readEntry ( "WindowState", "Shown" );
 	if ( tmp == "Minimized" && Kopete::BehaviorSettings::self()->showSystemTray() )
 	{
 		showMinimized();
@@ -609,15 +610,15 @@ void KopeteWindow::saveOptions()
 
 	if ( isMinimized() )
 	{
-		cg.writeEntry ( "State", "Minimized" );
+		cg.writeEntry ( "WindowState", "Minimized" );
 	}
 	else if ( isHidden() )
 	{
-		cg.writeEntry ( "State", "Hidden" );
+		cg.writeEntry ( "WindowState", "Hidden" );
 	}
 	else
 	{
-		cg.writeEntry ( "State", "Shown" );
+		cg.writeEntry ( "WindowState", "Shown" );
 	}
 
 	Kopete::Identity *identity = d->identitywidget->identity();

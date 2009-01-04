@@ -11,9 +11,4 @@ set(clientstream_test_SRCS clientstream_test.cpp )
 
 kde4_add_executable(clientstream_test TEST  ${clientstream_test_SRCS})
 
-target_link_libraries(clientstream_test  ${KDE4_KDECORE_LIBS} kyahoo )
-
-
-
-
-
+target_link_libraries(clientstream_test ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBS} kyahoo )

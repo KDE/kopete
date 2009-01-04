@@ -98,7 +98,9 @@ HistoryPlugin::~HistoryPlugin()
 
 void HistoryMessageLogger::handleMessage( Kopete::MessageEvent *event )
 {
-	history->messageDisplayed( event->message() );
+	if (history)
+		history->messageDisplayed( event->message() );
+
 	MessageHandler::handleMessage( event );
 }
 

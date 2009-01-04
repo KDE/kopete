@@ -91,7 +91,7 @@ private slots:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 /**
@@ -214,7 +214,7 @@ private:
 	void operator=(const MessageHandlerFactory &);
 	
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }

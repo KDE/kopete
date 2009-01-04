@@ -59,6 +59,7 @@ public:
 		Invisible     = 0x00000200,
 		XStatus       = 0x00001000,
 		ExtStatus     = 0x00002000,
+		ExtStatus2    = 0x00004000,
 
 		FlagsMask     = 0x0000FFF0,
 		StatusTypeMask= 0x0000F000
@@ -95,15 +96,27 @@ public:
 
 	/**
 	 * Returns Xtraz status
-	 * @note If Presence::XStatus flag is not set function returns -1.
+	 * @note If Presence::XStatus or Presence::ExtStatus2 flags are not set function returns -1.
 	 */
 	int xtrazStatus() const;
+
+	/**
+	 * Sets mood (ExtStatus2 status icon)
+	 */
+	void setMood( int mood );
+
+	/**
+	 * Returns mood
+	 * @note If Presence::XStatus or Presence::ExtStatus2 flags are not set function returns -1.
+	 */
+	int mood() const;
 
 private:
 	friend class ::OscarStatusManager;
 	Presence( uint internalStatus );
 
 	uint mInternalStatus;
+	static const int moodToXtraz[];
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Presence::Flags)
 

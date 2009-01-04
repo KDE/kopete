@@ -54,8 +54,6 @@ signals:
 	
 private:
 	QList<ICQSearchResult> m_results;
-	QString m_uin;
-	quint16 m_seq;
 	SearchType m_type;
 };
 

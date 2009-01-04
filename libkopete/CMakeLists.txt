@@ -167,7 +167,6 @@ endif(Q_WS_X11 AND X11_Xss_FOUND)
 set_target_properties(kopete PROPERTIES
     VERSION ${GENERIC_LIB_VERSION}
     SOVERSION ${GENERIC_LIB_SOVERSION}
-    ${KDE4_DISABLE_PROPERTY_}LINK_INTERFACE_LIBRARIES "kdeui"
     )
 if(MSVC)
   set_target_properties(kopete PROPERTIES
@@ -188,6 +187,7 @@ install(FILES
  ui/addressbookselectorwidget.h
  ui/avatardialog.h
  ui/avatarselectorwidget.h
+ ui/contactaddednotifydialog.h
  ui/editaccountwidget.h
  ui/kopetecontactaction.h
  ui/kopeteinfodialog.h
@@ -242,6 +242,7 @@ install( FILES
   kopetegroup.h
   kopeteidentity.h
   kopeteidentitymanager.h
+  kopeteinfoevent.h
   kopetemessageevent.h
   kopetemessage.h
   kopetemessagehandlerchain.h
@@ -267,6 +268,7 @@ install( FILES
   tasks/kopetetask.h
   tasks/kopetecontacttaskbase.h
   tasks/kopetedeletecontacttask.h
+  private/kopeteemoticons.h
 DESTINATION ${INCLUDE_INSTALL_DIR}/kopete COMPONENT Devel)
 
 install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )

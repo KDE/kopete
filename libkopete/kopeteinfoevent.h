@@ -16,8 +16,9 @@
 #ifndef KOPETEINFOEVENT_H
 #define KOPETEINFOEVENT_H
 
-#include <QObject>
-#include <QMap>
+#include <QtCore/QMap>
+#include <QtCore/QObject>
+#include <QtCore/QString>
 
 #include "kopete_export.h"
 
@@ -96,6 +97,17 @@ public:
 	 */
 	void addAction( uint actionId, const QString& actionText );
 
+	/**
+	 * @return true if event should automatically be shown in contact list window
+	 */
+	bool showOnSend() const;
+
+	/**
+	 * Set if event should automatically be shown in contact list window.
+	 * @param showOnSend the show flag
+	 */
+	void setShowOnSend( bool showOnSend );
+
 public Q_SLOTS:
 	/**
 	 * Emit the event.
@@ -116,6 +128,11 @@ public Q_SLOTS:
 
 Q_SIGNALS:
 	/**
+	 * User visible data has been changed.
+	 */
+	void changed();
+
+	/**
 	 * A action has been activated. This signal is only emitted if
 	 * activate( uint ) is not replaced.
 	 * @param actionId is the id of the activated action.
@@ -129,7 +146,7 @@ Q_SIGNALS:
 
 private:
 	class Private;
-	Private *d;
+	Private * const d;
 
 };
 

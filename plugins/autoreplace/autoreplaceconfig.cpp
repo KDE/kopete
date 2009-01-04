@@ -46,11 +46,11 @@ void AutoReplaceConfig::load()
 	// we may be reloading after removing an entry from the list
 	m_map.clear();
 	QString k, v;
-	for ( QStringList::Iterator it = wordsList.begin(); it != wordsList.end(); ++it )
+	for ( QStringList::ConstIterator it = wordsList.constBegin(); it != wordsList.constEnd(); ++it )
 	{
 		k = *it;
 		++it;
-		if( it == wordsList.end() )
+		if( it == wordsList.constEnd() )
 			break;
 		v = *it;
 		m_map.insert( k, v );
@@ -65,15 +65,15 @@ void AutoReplaceConfig::load()
 QStringList AutoReplaceConfig::defaultAutoReplaceList()
 {
     return i18nc( "list_of_words_to_replace",
-			"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" ).split( ",", QString::SkipEmptyParts );
+			"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" ).split( ',', QString::SkipEmptyParts );
 }
 
 void AutoReplaceConfig::loadDefaultAutoReplaceList()
 {
-    QStringList wordsList = defaultAutoReplaceList();
+    const QStringList wordsList = defaultAutoReplaceList();
     m_map.clear();
     QString k, v;
-    for ( QStringList::Iterator it = wordsList.begin(); it != wordsList.end(); ++it )
+    for ( QStringList::ConstIterator it = wordsList.begin(); it != wordsList.end(); ++it )
     {
         k = *it;
         v = *( ++it );
@@ -138,8 +138,8 @@ void AutoReplaceConfig::save()
 	KConfigGroup config(KGlobal::config(), "AutoReplace Plugin" );
 
 	QStringList newWords;
-	WordsToReplace::Iterator it;
-	for ( it = m_map.begin(); it != m_map.end(); ++it )
+	WordsToReplace::ConstIterator it;
+	for ( it = m_map.constBegin(); it != m_map.constEnd(); ++it )
 	{
 		newWords.append( it.key() );
 		newWords.append( it.value() );

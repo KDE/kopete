@@ -172,41 +172,41 @@ void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & d
 	client()->debug( "ConferenceTask::slotReceiveUserDetails()" );
 	
 	// dequeue any events which are deliverable now we have these details 
-	Q3ValueListIterator< ConferenceEvent > end = m_pendingEvents.end();
-	Q3ValueListIterator< ConferenceEvent > it = m_pendingEvents.begin();
+	QList< ConferenceEvent >::Iterator end = m_pendingEvents.end();
+	QList< ConferenceEvent >::Iterator it = m_pendingEvents.begin();
 	while ( it != end )
 	{
-		Q3ValueListIterator< ConferenceEvent > current = it;
-		++it;
 		// if the details relate to event, try again to handle it
-		if ( details.dn == (*current).user )
+		if ( details.dn == (*it).user )
 		{
-			client()->debug( QString( " - got details for event involving %1" ).arg( (*current).user ) );
-			switch ( (*current).type )
+			client()->debug( QString( " - got details for event involving %1" ).arg( (*it).user ) );
+			switch ( (*it).type )
 			{
 				case GroupWise::ConferenceJoined:
 					client()->debug( "ConferenceJoined" );
-					emit joined( *current );
+					emit joined( *it );
 					break;
 				case GroupWise::ReceiveMessage:
 					client()->debug( "ReceiveMessage" );
-					emit message( *current );
+					emit message( *it );
 					break;
 				case GroupWise::ConferenceInvite:
 					client()->debug( "ConferenceInvite" );
-					emit invited( *current );
+					emit invited( *it );
 					break;
 				case GroupWise::ConferenceInviteNotify:
 					client()->debug( "ConferenceInviteNotify" );
-					emit otherInvited( *current );
+					emit otherInvited( *it );
 					break;
 				default:
 					client()->debug( "Queued an event while waiting for more data, but did not write a handler for the dequeue!" );
 			}
-			m_pendingEvents.remove( current );
+			it = m_pendingEvents.erase( it );
 			client()->debug( QString( "Event handled - now %1 pending events" ).arg
 			( (uint)m_pendingEvents.count() ) );
-		}
+		} else {
+			++it;
+        }
 	}
 }
 

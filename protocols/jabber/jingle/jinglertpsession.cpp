@@ -16,6 +16,7 @@
  */
 
 #include "jinglertpsession.h"
+#include "mediasession.h"
 
 #include <ortp/payloadtype.h>
 
@@ -122,12 +123,8 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 		connect(rtpSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(slotBytesWritten(qint64)));
 		rtcpSocket->connectToHost(rtpSocket->peerAddress(), rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort, QIODevice::ReadWrite);
 	}
+
 	rtp_session_set_sockets(m_rtpSession, rtpSocket->socketDescriptor(), rtcpSocket->socketDescriptor());
-	
-	//This line seem to cause problems and make data not come in properly.
-	//From netstat, I can see that the socket receives about 98000 bytes then, do nothing.
-	//Never a slot that should be called when data is received is called.
-	//This is a blocant problem as data is sent but never received.
 }
 
 /*void JingleRtpSession::bind(int rtpPort, int rtcpPort)
@@ -138,8 +135,9 @@ void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
 	rtcpSocket->bind(rtcpPort == 0 ? rtpPort + 1 : rtcpPort);
 }*/
 
-void JingleRtpSession::send(const QByteArray& outData, int ts) //TODO:There should be overloaded methods to support other data type (QString, const *char).
+void JingleRtpSession::send(const QByteArray& outData, int t) //TODO:There should be overloaded methods to support other data type (QString, const *char).
 {
+	Q_UNUSED(t)
 	//kDebug() << "Send data";
 	//kDebug() << data.size() << "bytes";
 	
@@ -153,8 +151,9 @@ void JingleRtpSession::send(const QByteArray& outData, int ts) //TODO:There shou
 	
 	//kDebug() << "Prepare a packet with" << data.size() << "bytes.";
 	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)outData.data(), outData.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
+	int ts = m_mediaSession->timeStamp();
 	
-	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts == -1 ? sendingTS : ts);
+	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts);
 	if (size == -1)
 	{
 		kDebug() << "Error sending packet";
@@ -168,20 +167,43 @@ void JingleRtpSession::send(const QByteArray& outData, int ts) //TODO:There shou
 
 void JingleRtpSession::rtpDataReady()
 {
-//	kDebug() << "Incoming data ready to be read !";
+	/*
+	 * Timestamp :
+	 * The timestamp must not be increased each time we receive data but it
+	 * must be taken from the media manager which should increase it
+	 * automatically.
+	 */
+	//kDebug() << "Incoming data ready to be read !";
 	void *buf = new uint8_t[bufSize];
 	int more;
+	//int times = 0;
 	
-	while (rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t*>(buf), bufSize, receivingTS, &more) == 0)
+	/*while (rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t*>(buf), bufSize, receivingTS, &more) == 0)
 	{
 	//	kDebug() << "No packet received.";
 		receivingTS += payloadTS; //Must be increased for unknown reason.
 		//return;
+		if (++times == 50)
+			return;
+		//FIXME:no!
+	}*/
+
+	int ts = m_mediaSession->timeStamp();
+
+	int ret = rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t*>(buf), bufSize, ts, &more);
+	if (ret == 0)
+	{
+		kDebug() << "Error receiving Rtp packet.";
+		if (more != 0)
+			kDebug() << "Still some data to read";
+
+		kDebug() << "Purging socket...";
+		QByteArray b;
+		b.resize(rtpSocket->pendingDatagramSize());
+		rtpSocket->readDatagram(b.data(), rtpSocket->pendingDatagramSize());
+		return;
 	}
 
-	//if (more != 0)
-	//	kDebug() << "Still some data to read";
-	
 	
 	inData.resize(bufSize);
 	inData = static_cast<char*>(buf);
@@ -224,4 +246,9 @@ void JingleRtpSession::slotBytesWritten(qint64 size)
 	//if (state != SendingData)
 	//	return;
 	//emit dataSent();
+}
+
+void JingleRtpSession::setMediaSession(MediaSession *sess)
+{
+	m_mediaSession = sess;
 }

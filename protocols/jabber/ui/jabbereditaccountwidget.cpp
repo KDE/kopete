@@ -199,7 +199,7 @@ void JabberEditAccountWidget::reopen ()
 	
 	for (int i = 0; i < inputDevices.count(); i++)
 	{
-		if (inputDevices.at(i).id == account()->configGroup()->readEntry("JingleInputDevice", QString()))
+		if (inputDevices.at(i).id == account()->configGroup()->readEntry("JingleInputDevice", QString("default")))
 		{
 			audioInputsCombo->setCurrentIndex(i);
 			break;
@@ -208,12 +208,14 @@ void JabberEditAccountWidget::reopen ()
 	
 	for (int i = 0; i < outputDevices.count(); i++)
 	{
-		if (outputDevices.at(i).id == account()->configGroup()->readEntry("JingleOutputDevice", QString()))
+		if (outputDevices.at(i).id == account()->configGroup()->readEntry("JingleOutputDevice", QString("default")))
 		{
 			audioOutputsCombo->setCurrentIndex(i);
 			break;
 		}
 	}
+	
+	autoDetectIPBox->setChecked(account()->configGroup()->readEntry("JingleAutoDetectIP", false));
 #endif
 
 	// Privacy
@@ -272,6 +274,8 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("JingleFirstPort", QString::number(firstPortEdit->value()));
 	account()->configGroup()->writeEntry("JingleInputDevice", inputDevices.at(audioInputsCombo->currentIndex()).id);
 	account()->configGroup()->writeEntry("JingleOutputDevice", outputDevices.at(audioOutputsCombo->currentIndex()).id);
+
+	account()->configGroup()->writeEntry("JingleAutoDetectIP", autoDetectIPBox->isChecked());
 #endif
 
 	account()->setExcludeConnect(cbAutoConnect->isChecked());

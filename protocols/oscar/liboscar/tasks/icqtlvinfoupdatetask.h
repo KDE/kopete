@@ -42,7 +42,7 @@ public:
 
 private:
 	ICQFullInfo m_info;
-	Oscar::WORD m_goSequence;
+	Oscar::DWORD m_goSequence;
 
 };
 

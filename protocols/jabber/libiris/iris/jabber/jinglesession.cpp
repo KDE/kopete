@@ -463,7 +463,7 @@ void JingleSession::addContent(const QDomElement& content)
 	connect(c, SIGNAL(dataReceived()), this, SLOT(slotReceivingData()));
 }
 
-void JingleSession::terminate(const JingleReason& r)
+void JingleSession::sessionTerminate(const JingleReason& r)
 {
 //FIXME:should Take an QDomElement as argument, the application should implement this
 //class itself and be able to return the right QDomElement when calling this method
@@ -604,6 +604,21 @@ JingleSession::State JingleSession::state() const
 	return d->state;
 }
 
+void JingleSession::slotReceivingData()
+{
+	// Whatever the sender content is, we send the same received informational message.
+	// That's from the raw-udp specification, later, we will have to do fifferent things
+	// here depending on the transport method used in the sender content.
+	
+	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
+	d->actions << rAction;
+	connect(rAction, SIGNAL(finished()), this, SLOT(slotAcked()));
+	rAction->setSession(this);
+	rAction->received();
+	rAction->go(true);
+}
+
+
 
 //--------------------------
 // JingleReason
@@ -654,19 +669,5 @@ QString JingleReason::text() const
 JingleReason::Type JingleReason::type() const
 {
 	return d->type;
-}
-
-void JingleSession::slotReceivingData()
-{
-	// Whatever the sender content is, we send the same received informational message.
-	// That's from the raw-udp specification, later, we will have to do fifferent things
-	// here depending on the transport method used in the sender content.
-	
-	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
-	d->actions << rAction;
-	connect(rAction, SIGNAL(finished()), this, SLOT(slotAcked()));
-	rAction->setSession(this);
-	rAction->received();
-	rAction->go(true);
 }
 

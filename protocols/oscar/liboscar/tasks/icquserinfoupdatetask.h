@@ -43,7 +43,7 @@ public:
 	
 private:
 	QList<ICQInfoBase*> m_infoList;
-	Oscar::WORD m_goSequence;
+	Oscar::DWORD m_goSequence;
 
 };
 #endif

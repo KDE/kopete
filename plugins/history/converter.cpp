@@ -51,9 +51,7 @@ void HistoryPlugin::convertOldHistory()
 	d.setFilter( QDir::Dirs  );
 
 	const QFileInfoList list = d.entryInfoList();
-	QFileInfo fi;
-
-	foreach(fi, list)
+	foreach(const QFileInfo &fi, list)
 	{
 		QString protocolId;
 		QString accountId;
@@ -104,17 +102,16 @@ void HistoryPlugin::convertOldHistory()
 			d2.setFilter( QDir::Files  );
 			d2.setNameFilters( QStringList("*.log") );
 			const QFileInfoList list = d2.entryInfoList();;
-			QFileInfo fi2;
 
 			progressDlg->progressBar()->reset();
 			progressDlg->progressBar()->setMaximum(d2.count());
 			progressDlg->setLabelText(i18n("Parsing the old history in %1", fi.fileName()));
 			progressDlg->show(); //if it was not already showed...
 
-			foreach(fi2, list)
+			foreach(const QFileInfo &fi2, list)
 			{
 				//we assume that all "-" are dots.  (like in hotmail.com)
-				QString contactId=fi2.fileName().replace(".log" , QString()).replace("-" , ".");
+				QString contactId=fi2.fileName().remove(".log").replace('-', '.');
 
 				if(!contactId.isEmpty() )
 				{
@@ -313,9 +310,8 @@ bool HistoryPlugin::detectOldHistory()
 	QDir d2( KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete")) );
 	d2.setFilter( QDir::Dirs  );
 	const QFileInfoList list = d2.entryInfoList();
-	QFileInfo fi;
 
-	foreach(fi, list)
+	foreach(const QFileInfo &fi, list)
 	{
 		if( dynamic_cast<Kopete::Protocol *>( Kopete::PluginManager::self()->plugin( fi.fileName() ) ) )
 			return true;

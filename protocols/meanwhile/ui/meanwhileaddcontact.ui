@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>AddContactDialog</class>
- <widget class="QDialog" name="AddContactDialog" >
+ <class>MeanwhileAddUI</class>
+ <widget class="QWidget" name="MeanwhileAddUI" >
   <property name="geometry" >
    <rect>
     <x>0</x>

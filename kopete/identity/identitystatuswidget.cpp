@@ -56,9 +56,8 @@ public:
 };
 
 IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *parent)
-: QWidget(parent)
+: QWidget(parent), d(new Private())
 {
-	d = new Private();
 	d->identity = 0;
 	
 	// animation for showing/hiding

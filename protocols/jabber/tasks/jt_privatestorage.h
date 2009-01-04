@@ -40,7 +40,7 @@ class JT_PrivateStorage : public XMPP::Task
 		
 	private:
 		class Private;
-		Private *d;
+		Private * const d;
 };
 
 #endif

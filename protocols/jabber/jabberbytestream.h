@@ -55,7 +55,7 @@ private slots:
 	void slotConnectionClosed ();
 	void slotReadyRead ();
 	void slotBytesWritten ( qint64 );
-	void slotError ( int );
+	void slotError ( QAbstractSocket::SocketError );
 
 private:
 	QTcpSocket *mSocket;

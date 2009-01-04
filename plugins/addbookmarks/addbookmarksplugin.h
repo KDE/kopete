@@ -42,12 +42,12 @@ private:
     JobsToURLsMap m_map;
     BookmarksPrefsSettings m_settings;
     
-    void addKopeteBookmark( KUrl url, QString sender );
-    KUrl::List* extractURLsFromString( QString text );
+    void addKopeteBookmark( const KUrl &url, const QString &sender );
+    KUrl::List* extractURLsFromString( const QString &text );
     KBookmarkGroup getKopeteFolder();
     KBookmarkGroup getFolder( KBookmarkGroup group, QString folder );
-    bool isURLInGroup( KUrl url, KBookmarkGroup group );
-    QTextCodec* getPageEncoding( QByteArray data );
+    bool isURLInGroup( const KUrl &url, KBookmarkGroup group );
+    QTextCodec* getPageEncoding( const QByteArray &data );
 public slots:
     void slotBookmarkURLsInMessage(Kopete::Message & msg);
     void slotReloadSettings();

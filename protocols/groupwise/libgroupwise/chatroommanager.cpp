@@ -65,9 +65,9 @@ void ChatroomManager::slotGotChatroomList()
 		if ( m_replace )
 			m_rooms.clear();
 		
-		Q3ValueList<ChatroomSearchResult> roomsFound = sct->results();
-		Q3ValueList<ChatroomSearchResult>::Iterator it = roomsFound.begin();
-		const Q3ValueList<ChatroomSearchResult>::Iterator end = roomsFound.end();
+		const QList<ChatroomSearchResult> roomsFound = sct->results();
+		QList<ChatroomSearchResult>::ConstIterator it = roomsFound.begin();
+		QList<ChatroomSearchResult>::ConstIterator end = roomsFound.end();
 		for ( ; it != end; ++it )
 		{
 			GroupWise::Chatroom c( *it );

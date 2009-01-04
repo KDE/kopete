@@ -86,12 +86,12 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 			return;
 		}
 		command.remove( 0, 12 );
-		int andSign = command.indexOf( "&" );
+		int andSign = command.indexOf( '&' );
 		if ( andSign > 0 )
 			command = command.left( andSign );
 
 		firstParam = command;
-		firstParam.replace( "+", " " );
+		firstParam.replace( '+', ' ' );
 		needContactAddition = true;
 	}
 	else
@@ -107,10 +107,10 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 			}
 
 			command.remove(0, 12);
-			int andSign = command.indexOf("&");
+			int andSign = command.indexOf('&');
 			if ( andSign > 0 )
 				command = command.left(andSign);
-			command.replace("+", " ");
+			command.replace('+', ' ');
 
 			firstParam = command;
 			needContactAddition = true;
@@ -130,7 +130,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 		command.remove( 0, 10 );
 
-		int andSign = command.indexOf("&");
+		int andSign = command.indexOf('&');
 		if (andSign > 0) // strip off anything else for now
 		{
 			firstParam = command.left(andSign);
@@ -140,7 +140,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 		command.remove( 0, 10 ); //remove "&Exchange="
 		secondParam = command;
 		kDebug(14152) << firstParam << " " << secondParam;
-		firstParam.replace("+", " ");
+		firstParam.replace('+', ' ');
 	}
 
 	Kopete::Account *account = 0;

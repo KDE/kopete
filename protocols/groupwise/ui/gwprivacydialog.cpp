@@ -17,15 +17,13 @@
     *************************************************************************
 */
 
-#include <qlabel.h>
 #include <q3listbox.h>
-#include <qpushbutton.h>
-#include <qstringlist.h>
-#include <QPainter>
 #include <q3listview.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <Q3ValueList>
+#include <QtCore/QStringList>
+#include <QtCore/QList>
+#include <QtGui/QPainter>
+#include <QtGui/QPixmap>
+#include <QtGui/QLabel>
 
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -202,9 +200,9 @@ void GroupWisePrivacyDialog::slotAddClicked()
 void GroupWisePrivacyDialog::slotSearchedForUsers()
 {
 	// create an item for each result, in the block list
-	Q3ValueList< ContactDetails > selected = m_search->selectedResults();
-	Q3ValueList< ContactDetails >::Iterator it = selected.begin();
-	const Q3ValueList< ContactDetails >::Iterator end = selected.end();
+	QList< ContactDetails > selected = m_search->selectedResults();
+	QList< ContactDetails >::Iterator it = selected.begin();
+	const QList< ContactDetails >::Iterator end = selected.end();
 	QPixmap icon = m_account->protocol()->groupwiseAvailable.iconFor( m_account, 16 );
 	for ( ; it != end; ++it )
 	{

@@ -8,6 +8,7 @@
 class QAbstractSocket;
 class QUdpSocket;
 class QDomElement;
+class MediaSession;
 
 class JingleRtpSession : public QObject
 {
@@ -60,6 +61,8 @@ public:
 	 */
 	void setPayload(const QDomElement& payload);
 
+	void setMediaSession(MediaSession *mSession);
+
 private slots:
 	/*
 	 * Called when rtp data is ready to be read from the socket, we then wait
@@ -86,6 +89,7 @@ private:
 	Direction m_direction;
 	int bufSize;
 	QByteArray inData;
+	MediaSession *m_mediaSession;
 };
 
 #endif

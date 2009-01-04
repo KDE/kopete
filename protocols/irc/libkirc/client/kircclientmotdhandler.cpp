@@ -46,7 +46,7 @@ public:
 };
 
 // FIXME: MOTD can comes from other servers, with our current implementation
-//        we say that MOTD come only from our server wich is wrong
+//        we say that MOTD come only from our server which is wrong
 
 using namespace KIrc;
 

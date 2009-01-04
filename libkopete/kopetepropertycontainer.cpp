@@ -34,10 +34,8 @@ public:
 };
 
 PropertyContainer::PropertyContainer(QObject *parent)
-: QObject(parent)
+: QObject(parent), d(new Private())
 {
-	d = new Private;
-
 }
 
 PropertyContainer::~PropertyContainer()
@@ -49,7 +47,7 @@ void PropertyContainer::serializeProperties(QMap<QString, QString> &serializedDa
 {
 
 	Kopete::Property::Map::ConstIterator it;// = d->properties.ConstIterator;
-	for (it=d->properties.begin(); it != d->properties.end(); ++it)
+	for (it=d->properties.constBegin(); it != d->properties.constEnd(); ++it)
 	{
 		if (!it.value().tmpl().persistent())
 			continue;
@@ -66,7 +64,7 @@ void PropertyContainer::deserializeProperties(
 	QMap<QString, QString> &serializedData )
 {
 	QMap<QString, QString>::ConstIterator it;
-	for ( it=serializedData.begin(); it != serializedData.end(); ++it )
+	for ( it=serializedData.constBegin(); it != serializedData.constEnd(); ++it )
 	{
 		QString key = it.key();
 

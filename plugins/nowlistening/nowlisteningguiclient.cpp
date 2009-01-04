@@ -61,7 +61,7 @@ void NowListeningGUIClient::slotAdvertToCurrentChat()
 		if ( m_msgManager && m_msgManager->view() )
 			origin = m_msgManager->view()->mainWidget();
 		KMessageBox::queuedMessageBox( origin, KMessageBox::Sorry,
-			i18n( "None of the supported media players (Amarok, KsCD, JuK, Noatun, Kaffeine, or Quod Libet) are playing anything." ),
+			i18n( "None of the supported media players (Amarok, KsCD, JuK, Kaffeine, or Quod Libet) are playing anything." ),
 			i18n( "Nothing to Send" ) );
 	}
 	else

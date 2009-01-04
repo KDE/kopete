@@ -19,11 +19,8 @@
 #ifndef KOPETEPLUGINMANAGER_H
 #define KOPETEPLUGINMANAGER_H
 
-#include <QMap>
-#include <QObject>
-
-#include <QStringList>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtCore/QList>
 #include "kopete_export.h"
 
 class KPluginInfo;
@@ -159,6 +156,11 @@ signals:
 	 * @brief Signals a new plugin has just been loaded.
 	 */
 	void pluginLoaded( Kopete::Plugin *plugin );
+
+	/**
+	 * @brief Signals a plugin has just been unloaded.
+	 */
+	void pluginUnloaded( const QString &pluginName );
 
 	/**
 	 * @brief All plugins have been loaded by the plugin manager.

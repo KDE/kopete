@@ -18,15 +18,21 @@
 #include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
 
-#include <mw_session.h>
-#include <mw_service.h>
-#include <mw_srvc_aware.h>
-#include <mw_srvc_im.h>
-#include <mw_srvc_resolve.h>
+#include <meanwhile/mw_session.h>
+#include <meanwhile/mw_service.h>
+#include <meanwhile/mw_srvc_aware.h>
+#include <meanwhile/mw_srvc_im.h>
+#include <meanwhile/mw_srvc_resolve.h>
 //Added by qt3to4:
 #include <Q3ValueList>
 
 class QTcpSocket;
+
+struct MeanwhileClientID {
+    int		id;
+    const char *name;
+};
+
 
 /**
  * A class to handle libmeanwhile session management.
@@ -53,7 +59,7 @@ public:
      * the connection process is ascychronous - a loginDone() signal will be
      * emitted when successfully logged in.
      */
-    void connect(QString host, int port, QString account, QString password);
+    void connect(QString password);
 
     /**
      * Disconnect from the server.
@@ -107,6 +113,17 @@ public:
      * @return true if the session is connecting
      */
     bool isConnecting();
+
+    /**
+     * Returns an array of well-known meanwhile client IDs
+     */
+    static const struct MeanwhileClientID *getClientIDs();
+
+    /**
+     * Get the default client ID parameters for kopete
+     */
+    static void getDefaultClientIDParams(int *clientID,
+	    int *verMajor, int *verMinor);
 
 signals:
     /**
@@ -337,6 +354,8 @@ private:
     };
     void handleStorageLoad(struct mwServiceStorage *srvc,
             guint32 result, struct mwStorageUnit *item, gpointer data);
+
+    void handleRedirect(const char *host);
 };
 
 #endif

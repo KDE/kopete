@@ -325,6 +325,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			{
 				mManager->receivedEventNotification ( i18n("Message has been delivered") );
 				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
+				mSendsDeliveredEvent = true;
 			}
 			else if (message.containsEvent ( XMPP::OfflineEvent ) )
 			{
@@ -1326,6 +1327,11 @@ void JabberContact::slotDiscoFinished( )
 }
 
 #ifdef JINGLE_SUPPORT
+void JabberContact::showSessionsGui()
+{
+	account()->jingleCallsManager()->showCallsGui();
+}
+
 void JabberContact::startJingleSession()
 {
 	startJingleVideoCall(); //Only to show the message.

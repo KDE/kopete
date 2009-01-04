@@ -4,7 +4,7 @@ AUTHOR Will Stephenson <lists@stevello.free-online.co.uk>
 
 This plugin tells chat partners what you're currently listening to. On demand, it sends them a configurable message.
 
-Caveat: It currently only works with KsCD, Xmms, Noatun, JuK and amaroK.  Other media players will be supported shortly.
+Caveat: It currently only works with KsCD, Xmms, JuK and amaroK.  Other media players will be supported shortly.
 
 Caveat 2: It relies on DCOP - I doubt much will happen if you're not running the rest of KDE.
 

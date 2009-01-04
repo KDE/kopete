@@ -112,7 +112,7 @@ private:
 	static bool dispatchToHandler( const KUrl &url, const QString &mimeType, MimeTypeHandler *handler );
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 /**

@@ -100,7 +100,7 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 	 *  To get the parent of a key, one just divide per two the number
 	 */
 
-	Private::RegisteredStatusMap protocolMap=d->registeredStatus[protocol];
+	const Private::RegisteredStatusMap protocolMap=d->registeredStatus[protocol];
 
 	int categ_nb=-1;  //the logaritm of category
 	uint category_=category;
@@ -112,8 +112,8 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 
 	do
 	{
-		Private::RegisteredStatusMap::Iterator it;
-		for ( it = protocolMap.begin(); it != protocolMap.end(); it++ )
+		Private::RegisteredStatusMap::ConstIterator it;
+		for ( it = protocolMap.begin(); it != protocolMap.end(); ++it )
 		{
 			unsigned int catgs=it.key().categories();
 			if(catgs & (1<<(categ_nb)))
@@ -129,7 +129,7 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 
 OnlineStatusManager::Category OnlineStatusManager::initialStatus() const
 {
-    Kopete::OnlineStatusManager::Category statusValue;
+    Kopete::OnlineStatusManager::Category statusValue = Kopete::OnlineStatusManager::Offline;
 		switch( Kopete::BehaviorSettings::self()->initialStatus() )
 		{
 		  case Kopete::BehaviorSettings::EnumInitialStatus::Offline:

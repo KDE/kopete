@@ -54,6 +54,7 @@ void ReceiveFileTask::onGo()
 		{
 			emit error( m_transferId, KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Could not open file for writing.") );
 			setError();
+			delete t;
 			return;
 		}
 		m_transferJob = KIO::get( m_remoteUrl, KIO::NoReload, KIO::HideProgressInfo );

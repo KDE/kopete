@@ -46,7 +46,7 @@ signals:
 
 private:
 	//! Encodes a password using MD5
-	void encodePassword( QByteArray& digest ) const;
+	QByteArray encodePassword() const;
 
 	//! Send SNAC 0x17, 0x06
 	void sendAuthStringRequest();

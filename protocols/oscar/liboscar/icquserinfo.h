@@ -24,6 +24,7 @@
 #include <QList>
 
 #include "liboscar_export.h"
+#include "oscartypes.h"
 #include "icqinfovalue.h"
 
 class Buffer;
@@ -42,11 +43,11 @@ public:
 	virtual void fill( Buffer* buffer ) = 0;
 	virtual void store( Buffer* ) {}
 	
-	void setSequenceNumber( int number ) { m_sequence = number; }
-	int sequenceNumber() { return m_sequence; }
+	void setSequenceNumber( Oscar::DWORD number ) { m_sequence = number; }
+	Oscar::DWORD sequenceNumber() { return m_sequence; }
 
 private:
-	int m_sequence;
+	Oscar::DWORD m_sequence;
 };
 
 

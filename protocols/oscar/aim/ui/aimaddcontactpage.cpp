@@ -34,6 +34,7 @@ AIMAddContactPage::AIMAddContactPage(bool connected, QWidget *parent)
 		m_gui->setupUi(this);
 		connect( m_gui->icqRadioButton, SIGNAL(toggled(bool)), m_gui->icqEdit, SLOT(setEnabled(bool)) );
 		connect( m_gui->aimRadioButton, SIGNAL(toggled(bool)), m_gui->aimEdit, SLOT(setEnabled(bool)) );
+		m_gui->aimEdit->setFocus();
 		canadd = true;
 	}
 	else
@@ -72,8 +73,8 @@ bool AIMAddContactPage::validateData()
 	}
 	else if ( m_gui->aimRadioButton->isChecked() )
 	{
-		QRegExp rx("^[A-Za-z][@.\\d\\s\\w]{2,15}$");
-		if ( !rx.exactMatch( m_gui->aimEdit->text() ) )
+		QRegExp rx("^[0-9]*$");
+		if ( rx.exactMatch( m_gui->aimEdit->text() ) )
 		{
 			KMessageBox::sorry( this, i18n("You must enter a valid AOL screen name."), i18n("No Screen Name") );
 			return false;

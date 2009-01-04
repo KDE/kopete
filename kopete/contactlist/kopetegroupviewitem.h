@@ -73,7 +73,7 @@ private:
 	unsigned int totalMemberCount;
 
 	class Private;
-	Private *d;
+	Private * const d;
 
 private slots:
 	void slotConfigChanged();

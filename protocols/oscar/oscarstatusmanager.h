@@ -106,7 +106,7 @@ private:
 	QString kosDescription( const Oscar::Presence &presence ) const;
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 #endif

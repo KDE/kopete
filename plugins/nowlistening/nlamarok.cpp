@@ -29,11 +29,38 @@
 #include "nlmediaplayer.h"
 #include "nlamarok.h"
 
+// from kvirc mpris interface
+struct MPRISPlayerStatus
+{
+          int Play;
+          int Random;
+          int RepeatCurrent;
+          int RepeatPlaylist;
+};
+Q_DECLARE_METATYPE( MPRISPlayerStatus )
+
+QDBusArgument &operator<<(QDBusArgument &argument, const MPRISPlayerStatus &status)
+{
+	argument.beginStructure();
+	argument << status.Play << status.Random << status.RepeatCurrent << status.RepeatPlaylist;
+	argument.endStructure();
+	return argument;
+}
+  
+const QDBusArgument &operator>>(const QDBusArgument &argument, MPRISPlayerStatus &status)
+{
+	argument.beginStructure();
+	argument >> status.Play >> status.Random >> status.RepeatCurrent >> status.RepeatPlaylist;
+	argument.endStructure();
+	return argument;
+}
+
 NLamaroK::NLamaroK() : NLMediaPlayer()
 {
 	m_type = Audio;
 	m_name = "amaroK";
-	m_client = new QDBusInterface("org.mpris.amarok", "/Player");
+	m_client = new QDBusInterface("org.mpris.amarok", "/Player", "org.freedesktop.MediaPlayer");
+	qDBusRegisterMetaType<MPRISPlayerStatus>();
 }
 
 NLamaroK::~NLamaroK()
@@ -51,20 +78,23 @@ void NLamaroK::update()
 	if (!m_client->isValid())
 	{
 		delete m_client;
-		m_client = new QDBusInterface("org.mpris.amarok", "/Player");
+		m_client = new QDBusInterface("org.mpris.amarok", "/Player", "org.freedesktop.MediaPlayer");
 	}
 	if( !m_client->isValid() )
 		return;
 
 	// See if amarok is currently playing.
-	QDBusReply<int> statusReply = m_client->call("PositionGet");
-	if( statusReply.isValid() )
+	QDBusReply<MPRISPlayerStatus> statusReply = m_client->call("GetStatus");
+	if(statusReply.isValid())
 	{
-		if( statusReply.value() )
-		{
+		// 0 = playing, 1 = paused, 2 = stopped
+		if(statusReply.value().Play != 2)
 			m_playing = true;
-		}
+		else
+			m_playing = false;
 	}
+	else
+		m_playing = false;
 
 	QDBusReply<QVariantMap> metaDataReply = m_client->call("GetMetadata");
 	if (!metaDataReply.isValid())

@@ -157,7 +157,7 @@ private:
 	static StatusManager *instance;
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 }

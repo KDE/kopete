@@ -70,12 +70,32 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	slotUpdateDisplayName ();
 
 #ifdef JINGLE_SUPPORT
-	KAction *jingleSession = new KAction(i18n("Start Jingle session" ), members().first());
+	KAction *jingleSessionGui = new KAction(i18n("Show audio calls"), members().first());
+	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui() ));
+	setComponentData(protocol->componentData());
+	
+	KAction *jingleSession = new KAction(i18n("Start audio call"), members().first());
 	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession() ));
 	setComponentData(protocol->componentData());
-	jingleSession->setEnabled( true ); //FIXME:Should be enabled only if supported.	
 	
-	KAction *jingleaudiocall = new KAction(i18n("Jingle Audio call" ), members().first());
+	Kopete::ContactPtrList chatMembers = members();
+	if (chatMembers.first())
+	{
+		JabberResource *bestResource = account()->resourcePool()->bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
+		if (bestResource)
+		{
+			jingleSessionGui->setEnabled( bestResource->features().canJingle() );
+			jingleSession->setEnabled( bestResource->features().canJingle() );
+		}
+		else
+		{
+			jingleSessionGui->setEnabled(false);
+			jingleSession->setEnabled(false);
+		}
+	}
+	
+
+	/*KAction *jingleaudiocall = new KAction(i18n("Jingle Audio call" ), members().first());
 	connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall() ));
 	setComponentData(protocol->componentData());
 	jingleaudiocall->setEnabled( false );
@@ -83,14 +103,13 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	KAction *jinglevideocall = new KAction(i18n("Jingle Video call" ), members().first());
 	connect(jinglevideocall, SIGNAL(triggered(bool)), SLOT (slotJingleVideoCall() ));
 	setComponentData(protocol->componentData());
-	jinglevideocall->setEnabled( false );
+	jinglevideocall->setEnabled( false );*/
 	
 	//Kopete::ContactPtrList chatMembers = members ();
 	//if ( chatMembers.first () )
 	//{
 		// Check if the current contact support Audio calls, also honor lock by default.
 		// FIXME: we should use the active ressource
-		//JabberResource *bestResource = account()->resourcePool()->bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
 		//jingleaudiocall->setEnabled( bestResource->features().canJingleAudio() );
 		//jinglevideocall->setEnabled( bestResource->features().canJingleVideo() );
 	//}
@@ -99,15 +118,11 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	//	  It should be corrected in trunk.
 	//actionCollection()->addAction( "jabberJingleaudiocall", jingleaudiocall );
 	//actionCollection()->addAction( "jabberJinglevideocall", jinglevideocall );
-	actionCollection()->addAction( "jabberSession", jingleSession );
+	actionCollection()->addAction( "jingleSession", jingleSession );
+	actionCollection()->addAction( "jingleSessionsGui", jingleSessionGui );
 
 #endif
 
-	KAction* sendFile = new KAction( this );
-	sendFile->setIcon( KIcon( "attach" ) );
-	sendFile->setText( i18n( "Send File" ) );
-	QObject::connect(sendFile, SIGNAL( triggered( bool ) ), SLOT( slotSendFile() ));
-	actionCollection()->addAction( "jabberSendFile", sendFile );
 	setXMLFile("jabberchatui.rc");
 
 }
@@ -387,7 +402,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					//  see Bug 121627
 					// Anyway, theses client that do like that are *WRONG*  considreded the example of jep-71 where there are lot of
 					// linebreak that are not interpreted.  - Olivier 2006-31-03
-					xhtmlBody.replace('\n',"");
+					xhtmlBody.remove('\n');
 					
 					//&nbsp; is not a valid XML entity
 					xhtmlBody.replace("&nbsp;" , "&#160;");
@@ -428,7 +443,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
         // send the message
 		account()->client()->sendMessage ( jabberMessage );
 
-		message.setState( Kopete::Message::StateSending );
+		if ( recipient->sendsDeliveredEvent() )
+			message.setState( Kopete::Message::StateSending );
 
 		// append the message to the manager
 		Kopete::ChatSession::appendMessage ( message );
@@ -465,6 +481,12 @@ void JabberChatSession::slotJingleVideoCall()
 {
 	QList<Kopete::Contact*> contacts = members();
 	static_cast<JabberContact *>(contacts.first())->startJingleVideoCall();
+}
+
+void JabberChatSession::slotJingleSessionGui()
+{
+	QList<Kopete::Contact*> contacts = members();
+	static_cast<JabberContact *>(contacts.first())->showSessionsGui();
 }
 
 void JabberChatSession::slotJingleSession()

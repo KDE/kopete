@@ -31,9 +31,8 @@ class JT_GetLastActivity::Private
 };
 
 JT_GetLastActivity::JT_GetLastActivity(Task *parent)
-	:Task(parent)
+	:Task(parent), d(new Private())
 {
-	d = new Private;
 }
 
 JT_GetLastActivity::~JT_GetLastActivity()

@@ -118,8 +118,6 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 	 * 	* A new JT_JingleSession is used by the JingleSession to established the connection
 	 * I'd rather use the second one, see later...
 	 */
-	qDebug() << "JT_PushJingleAction::take\n";
-	// qDebug() << "tagName : %s\n", x.firstChildElement().tagName().toLatin1().constData();
 	if (x.firstChildElement().tagName() != "jingle")
 		return false;
 	
@@ -153,7 +151,7 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 		content = jingle.firstChildElement();
 		while (!content.isNull())
 		{
-			if (content.tagName() == "content");
+			if (content.tagName() == "content")
 				d->incomingSession->addContent(content);
 			content = content.nextSiblingElement();
 		}
@@ -292,7 +290,7 @@ void JT_JingleAction::setSession(JingleSession *sess)
 bool interfaceOrder(const QHostAddress& a1, const QHostAddress& a2)
 {
 	Q_UNUSED(a2)
-	if ((a1 != QHostAddress::LocalHost) && (a1 != QHostAddress::Null))
+	if ((a1 != QHostAddress::LocalHost) && (a1 != QHostAddress::Null) && (a1.protocol() != QAbstractSocket::IPv6Protocol))
 		return true;
 	return false;
 }
@@ -321,7 +319,7 @@ void JT_JingleAction::initiate()
 			QString ip;
 
 			//Trying to get the address with the most chances to succeed.
-			if (eip != "") //deos not seem to work...
+			if (eip != "") //does not seem to work...
 			{
 				ip = eip;
 			}
@@ -442,6 +440,9 @@ void JT_JingleAction::terminate(const JingleReason& r)
 		break;
 	case JingleReason::NoReason :
 		rReason = doc()->createElement("no-error");
+		break;
+	case JingleReason::UnsupportedApplications :
+		rReason = doc()->createElement("unsupported-applications");
 		break;
 	default:
 		rReason = doc()->createElement("unknown");

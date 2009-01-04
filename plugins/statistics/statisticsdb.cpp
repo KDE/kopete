@@ -99,19 +99,18 @@ QStringList StatisticsDB::query ( const QString& statement, QStringList* const n
 
 	clock_t start = clock();
 
-	bool error;
 	QStringList values;
 	QSqlQuery query ( m_db );
 
 	// prepare query
-	if ( query.prepare ( statement ) )
+	if ( !query.prepare ( statement ) )
 	{
 		kError ( 14315 ) << "error" << query.lastError().text() << "on query:" << statement;
 		return QStringList();
 	}
 
 	// do query
-	if ( query.exec() )
+	if ( !query.exec() )
 	{
 		kError ( 14315 ) << "error" << query.lastError().text() << "on query:" << statement;
 		return QStringList();

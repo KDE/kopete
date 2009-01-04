@@ -23,7 +23,7 @@
 #include "kopeteglobal.h"
 #include "kopeteonlinestatusmanager.h"
 
-#include "mw_common.h"
+#include <meanwhile/mw_common.h>
 
 K_PLUGIN_FACTORY( MeanwhileProtocolFactory, registerPlugin<MeanwhileProtocol>(); )
 K_EXPORT_PLUGIN( MeanwhileProtocolFactory( "kopete_meanwhile" ) )

@@ -50,9 +50,8 @@ public:
 };
 
 Protocol::Protocol( const KComponentData &instance, QObject *parent )
-: Plugin( instance, parent )
+: Plugin( instance, parent ), d(new Private())
 {
-	d = new Private;
 	d->mStickLastSeen = Global::Properties::self()->lastSeen();
 	d->mStickFullName = Global::Properties::self()->fullName();
 	d->unloading = false;

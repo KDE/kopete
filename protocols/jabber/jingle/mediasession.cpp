@@ -15,6 +15,7 @@
   * *************************************************************************
   */
 #include <KDebug>
+#include <QTime>
 
 #include "mediasession.h"
 #include "mediamanager.h"
@@ -28,6 +29,7 @@ public :
 	MediaManager *mediaManager;
 	QString codecName;
 	QByteArray encodedData;
+	QTime startTime;
 	int tsValue;
 	int ts;
 };
@@ -48,6 +50,7 @@ MediaSession::MediaSession(MediaManager *mm, const QString& codecName)
 
 MediaSession::~MediaSession()
 {
+	d->mediaManager->removeSession(this);
 	delete d->plugin;
         delete d;
 	qDebug() << "Deleted Media Session";
@@ -66,11 +69,15 @@ void MediaSession::setQuality(int q)
 
 bool MediaSession::start()
 {
+	d->startTime = QTime::currentTime();
+	bool managerOk = d->mediaManager->addSession(this); //Tell the media manager te session is being started.
+	bool pluginOk = d->plugin->start();
+
 	connect((QObject*) d->mediaManager->alsaIn(), SIGNAL(readyRead()), (QObject*) this, SLOT(slotReadyRead()));
 	connect((QObject*) d->plugin, SIGNAL(encoded()), (QObject*) this, SLOT(slotEncoded()));
 	connect((QObject*) d->plugin, SIGNAL(decoded()), (QObject*) this, SLOT(slotDecoded()));
 
-	return d->mediaManager->start() && d->plugin->start();
+	return managerOk && pluginOk;
 }
 
 void MediaSession::write(const QByteArray& sData)
@@ -115,4 +122,11 @@ void MediaSession::slotDecoded()
 	//MediaManager always writes and reads from Alsa device(s)
 	//qDebug() << "rawData =" << rawData.toBase64() << "(" << rawData.size() << "bytes)";
 	d->mediaManager->write(rawData);
+}
+
+int MediaSession::timeStamp()
+{
+	int ret = d->startTime.msecsTo(QTime::currentTime());
+	//kDebug() << "Return value :" << ret;
+	return ret;
 }

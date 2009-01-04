@@ -113,7 +113,7 @@ int AIMContact::warningLevel() const
 void AIMContact::setSSIItem( const OContact& ssiItem )
 {
 	if ( ssiItem.type() != 0xFFFF && ssiItem.waitingAuth() == false &&
-	     onlineStatus() == Kopete::OnlineStatus::Unknown )
+	     onlineStatus().status() == Kopete::OnlineStatus::Unknown )
 	{
 		//make sure they're offline
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
@@ -188,6 +188,8 @@ void AIMContact::userOffline( const QString& userId )
 {
 	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
+		m_details.clear();
+
 		kDebug(OSCAR_AIM_DEBUG) << "Setting " << userId << " offline";
 		setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 		removeProperty( mProtocol->statusMessage );

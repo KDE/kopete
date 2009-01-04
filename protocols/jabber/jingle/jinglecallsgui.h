@@ -35,18 +35,22 @@ public:
 	void addSession(JabberJingleSession*);
 	void setSessions(const QList<JabberJingleSession*>&);
 	void removeSession(JabberJingleSession*);
+	void changeState(JabberJingleSession*);
+
 public slots:
 	void slotNewSession();
 	void slotAddContent();
 	void slotTerminate();
 	void slotRemove();
 	void slotClose();
+	void updateTime();
 
 private:
 	void setupActions();
 	JingleCallsManager *m_callsManager;
 	Ui::jingleCallsGui ui;
 	JingleCallsModel *model;
+	QTimer *updater;
 };
 
 
@@ -78,7 +82,7 @@ private:
 
 /*
  * TreeItem's only contain data about what they represent (session or content)
- * TODO:add a pointer ti the session or content to retreive it more easily. (Not sure it could work that way.)
+ * TODO:add a pointer ti the session or content to retrieve it more easily. (Not sure it could work that way.)
  */
 class TreeItem
 {

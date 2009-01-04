@@ -742,11 +742,18 @@ If two resources have the same priority, the messages will be sent to the one mo
            </property>
            <layout class="QVBoxLayout" name="verticalLayout" >
             <item>
+             <widget class="QCheckBox" name="autoDetectIPBox" >
+              <property name="text" >
+               <string>Auto-detect external IP address</string>
+              </property>
+             </widget>
+	    </item>
+	    <item>
              <layout class="QHBoxLayout" name="horizontalLayout" >
               <item>
                <widget class="QLabel" name="label" >
                 <property name="text" >
-                 <string>First port to use :</string>
+                 <string>First port to use:</string>
                 </property>
                </widget>
               </item>
@@ -792,7 +799,7 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
               <item>
                <widget class="QLabel" name="label_2" >
                 <property name="text" >
-                 <string>Microphone to use :</string>
+                 <string>Microphone to use:</string>
                 </property>
                </widget>
               </item>
@@ -806,7 +813,7 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
               <item>
                <widget class="QLabel" name="label_3" >
                 <property name="text" >
-                 <string>Audio output :</string>
+                 <string>Audio output:</string>
                 </property>
                </widget>
               </item>

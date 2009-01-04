@@ -75,6 +75,13 @@ public:
                     // see bug: #163535
                     return QWidget::event(event);
                 }
+                if ( (keyEvent->matches(QKeySequence::MoveToPreviousPage) || keyEvent->matches(QKeySequence::MoveToNextPage))
+                     && document()->isEmpty() )
+                {
+                    // Allow to scroll the chat if the user has not entered
+                    // some text in the KRichTextEditPart.
+                    return QWidget::event(event);
+                }
             }
         }
         return KTextEdit::event(event);
@@ -218,6 +225,8 @@ void KRichTextEditPart::setRichTextEnabled( bool enable )
 
     d->enableRichText->setEnabled( useRichText() );
     d->enableRichText->setChecked( useRichText() );
+
+    emit richTextChanged();
 }
 
 void KRichTextEditPart::setRichTextSupport(const KRichTextEditPart::RichTextSupport &support)

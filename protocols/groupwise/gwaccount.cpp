@@ -196,8 +196,8 @@ GroupWiseChatSession * GroupWiseAccount::chatSession( Kopete::ContactPtrList oth
 GroupWiseChatSession * GroupWiseAccount::findChatSessionByGuid( const GroupWise::ConferenceGuid & guid )
 {
 	GroupWiseChatSession * chatSession = 0;
-	Q3ValueList<GroupWiseChatSession *>::ConstIterator it;
-	for ( it = m_chatSessions.begin(); it != m_chatSessions.end(); ++it )
+	QList<GroupWiseChatSession *>::ConstIterator it;
+	for ( it = m_chatSessions.constBegin(); it != m_chatSessions.constEnd(); ++it )
 	{
 		if ( (*it)->guid() == guid )
 		{
@@ -1164,7 +1164,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	// record, in a folderitem, their display names and groupwise object id
 	// Set object id to 0 if not found - they do not exist on the server
 	bool topLevel = false;
-	Q3ValueList< FolderItem > folders;
+	QList< FolderItem > folders;
 	foreach ( Kopete::Group *group, parentContact->groups() )
 	{
 		if ( group->type() == Kopete::Group::TopLevel ) // no need to create it on the server
@@ -1443,7 +1443,7 @@ void GroupWiseAccount::slotLeavingConference( GroupWiseChatSession * sess )
 	kDebug() << "unregistering message manager:" << sess->guid();
 	if( isConnected () )
 		m_client->leaveConference( sess->guid() );
-	m_chatSessions.remove( sess );
+	m_chatSessions.removeAll( sess );
 	kDebug() << "m_chatSessions now contains:" << m_chatSessions.count() << " managers";
 	Kopete::ContactPtrList members = sess->members();
 	foreach( Kopete::Contact * contact, members )
@@ -1506,8 +1506,8 @@ void GroupWiseAccount::dumpManagers()
 {
 	kDebug() << " for: " << accountId()
 		<< " containing: " << m_chatSessions.count() << " managers " << endl;
-	Q3ValueList<GroupWiseChatSession *>::ConstIterator it;
-	for ( it = m_chatSessions.begin() ; it != m_chatSessions.end(); ++it )
+	QList<GroupWiseChatSession *>::ConstIterator it;
+	for ( it = m_chatSessions.constBegin() ; it != m_chatSessions.constEnd(); ++it )
 		kDebug() << "guid: " << (*it)->guid();
 }
 

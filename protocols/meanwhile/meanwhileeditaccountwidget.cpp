@@ -23,6 +23,7 @@
 #include "meanwhileprotocol.h"
 #include "meanwhileaccount.h"
 #include "meanwhileeditaccountwidget.h"
+#include "meanwhilesession.h"
 
 #define DEFAULT_SERVER "messaging.opensource.ibm.com"
 #define DEFAULT_PORT 1533
@@ -38,15 +39,32 @@ MeanwhileEditAccountWidget::MeanwhileEditAccountWidget(
 
     ui.setupUi(this);
 
+    /* setup client identifier combo box */
+    setupClientList();
+
     if (account())
     {
+	int clientID, verMajor, verMinor;
+	bool useCustomID;
+
         ui.mScreenName->setText(account()->accountId());
         ui.mScreenName->setReadOnly(true);
         ui.mPasswordWidget->load(&static_cast<MeanwhileAccount*>(account())->password());
         ui.mAutoConnect->setChecked(account()->excludeConnect());
         MeanwhileAccount *myAccount = static_cast<MeanwhileAccount *>(account());
+
+        useCustomID = myAccount->getClientIDParams(&clientID,
+                &verMajor, &verMinor);
+
         ui.mServerName->setText(myAccount->getServerName());
         ui.mServerPort->setValue(myAccount->getServerPort());
+
+        if (useCustomID) {
+            selectClientListItem(clientID);
+            ui.mClientVersionMajor->setValue(verMajor);
+            ui.mClientVersionMinor->setValue(verMinor);
+            ui.chkCustomClientID->setChecked(true);
+        }
     }
     else
     {
@@ -60,6 +78,38 @@ MeanwhileEditAccountWidget::MeanwhileEditAccountWidget(
 
 MeanwhileEditAccountWidget::~MeanwhileEditAccountWidget()
 {
+}
+
+void MeanwhileEditAccountWidget::setupClientList()
+{
+    const struct MeanwhileClientID *id;
+    int i = 0;
+
+    for (id = MeanwhileSession::getClientIDs(); id->name; id++, i++) {
+        QString name = QString("%1 (0x%2)")
+                           .arg(QString(id->name))
+                           .arg(id->id, 0, 16);
+
+	mwDebug() << "name: " << name << endl;
+
+        ui.mClientID->insertItem(i, name);
+
+        if (id->id == mwLogin_MEANWHILE)
+            ui.mClientID->setCurrentIndex(i);
+    }
+}
+
+void MeanwhileEditAccountWidget::selectClientListItem(int selectedID)
+{
+    const struct MeanwhileClientID *id;
+    int i = 0;
+
+    for (id = MeanwhileSession::getClientIDs(); id->name; id++, i++) {
+        if (id->id == selectedID) {
+            ui.mClientID->setCurrentIndex(i);
+            break;
+        }
+    }
 }
 
 
@@ -76,6 +126,16 @@ Kopete::Account* MeanwhileEditAccountWidget::apply()
 
     myAccount->setServerName(ui.mServerName->text().trimmed());
     myAccount->setServerPort(ui.mServerPort->value());
+
+    if (ui.chkCustomClientID->isChecked()) {
+        const struct MeanwhileClientID *ids = MeanwhileSession::getClientIDs();
+        myAccount->setClientID(ids[ui.mClientID->currentIndex()].id,
+	ui.mClientVersionMajor->value(),
+	ui.mClientVersionMinor->value());
+    } else {
+        myAccount->resetClientID();
+    }
+
 
     return myAccount;
 }
@@ -115,8 +175,17 @@ bool MeanwhileEditAccountWidget::validateData()
 
 void MeanwhileEditAccountWidget::slotSetServer2Default()
 {
+    int clientID, verMajor, verMinor;
+
+    MeanwhileSession::getDefaultClientIDParams(&clientID,
+            &verMajor, &verMinor);
+
     ui.mServerName->setText(DEFAULT_SERVER);
     ui.mServerPort->setValue(DEFAULT_PORT);
+    ui.chkCustomClientID->setChecked(false);
+    selectClientListItem(clientID);
+    ui.mClientVersionMajor->setValue(verMajor);
+    ui.mClientVersionMinor->setValue(verMinor);
 }
 
 #include "meanwhileeditaccountwidget.moc"

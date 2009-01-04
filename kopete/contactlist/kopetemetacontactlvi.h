@@ -23,9 +23,7 @@
 
 #include "kopetelistviewitem.h"
 
-#include <qobject.h>
-#include <qpixmap.h>
-#include <q3ptrdict.h>
+#include <QtGui/QPixmap>
 
 #include <k3listview.h>
 
@@ -139,7 +137,9 @@ private slots:
 	void slotPhotoChanged();
 
 	void slotAddToNewGroup();
-	void slotIdleStateChanged( Kopete::Contact * =0L);
+	void resetIdleTimeout();
+	void idleStateChanged();
+	void updateIdleState( Kopete::Contact* = 0L );
 
 	void slotConfigChanged();
 
@@ -173,13 +173,11 @@ private:
 
 	QTimer *mBlinkTimer;
 
-	Q3PtrDict<Kopete::Account> m_addContactActions;
-
 	bool mIsBlinkIcon;
 	int m_blinkLeft;
 
 	class Private;
-	Private *d;
+	Private * const d;
 };
 
 #endif

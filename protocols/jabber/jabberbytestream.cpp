@@ -42,9 +42,10 @@ void JabberByteStream::connect ( QString host, int port )
 
 	mSocket = KSocketFactory::connectToHost("xmpp", host, port);
 
-	QObject::connect ( mSocket, SIGNAL ( QAbstractSocket::SocketError ), this, SLOT ( slotError ( QAbstractSocket::SocketError ) ) );
+	QObject::connect ( mSocket, SIGNAL ( error(QAbstractSocket::SocketError) ),
+		this, SLOT ( slotError ( QAbstractSocket::SocketError ) ) );
 	QObject::connect ( mSocket, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
-	QObject::connect ( mSocket, SIGNAL ( closed () ), this, SLOT ( slotConnectionClosed () ) );
+	QObject::connect ( mSocket, SIGNAL ( disconnected () ), this, SLOT ( slotConnectionClosed () ) );
 	QObject::connect ( mSocket, SIGNAL ( readyRead () ), this, SLOT ( slotReadyRead () ) );
 	QObject::connect ( mSocket, SIGNAL ( bytesWritten ( qint64 ) ), this, SLOT ( slotBytesWritten ( qint64 ) ) );
 }
@@ -67,7 +68,7 @@ void JabberByteStream::close ()
              kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "socket is not null" << endl;
 	     mSocket->close();
              kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "socket closed" << endl;
-             delete mSocket;
+             mSocket->deleteLater();
              mSocket=NULL;
         }
 }
@@ -138,7 +139,7 @@ void JabberByteStream::slotBytesWritten ( qint64 bytes )
 
 }
 
-void JabberByteStream::slotError ( int code )
+void JabberByteStream::slotError ( QAbstractSocket::SocketError code )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "Socket error '" <<  mSocket->errorString() <<  "' - Code : " << code;
 	emit error ( code );

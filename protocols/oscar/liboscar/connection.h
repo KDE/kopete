@@ -145,10 +145,14 @@ public:
 	Oscar::Settings* settings() const;
 
 	/** Get the current FLAP sequence for this connection */
-	quint16 flapSequence();
+	Oscar::WORD flapSequence();
 
-	/** Get the current SNAC sequence for this connection */
-	quint32 snacSequence();
+	/** Get the current SNAC sequence for this connection
+	 * @note for historical reasons the internal counter is WORD only as we used it for
+	 * long time as WORD on many places. If should be save to change it to DWORD for our
+	 * Oscar implementation but Oscar protocol could brake especially on higher values.
+	 */
+	Oscar::DWORD snacSequence();
 
 	/** Get the cookie for this connection */
 	QByteArray cookie() const;

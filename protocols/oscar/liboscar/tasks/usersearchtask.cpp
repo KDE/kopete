@@ -61,7 +61,7 @@ bool UserSearchTask::take( Transfer* t )
 	{
 		setTransfer( t );
 		
-		quint16 seq = 0;
+		Oscar::DWORD seq = 0;
 		SnacTransfer* st = dynamic_cast<SnacTransfer*>( t );
 		if ( st )
 			seq = st->snacRequest();
@@ -117,7 +117,7 @@ void UserSearchTask::searchUserByUIN( const QString& uin )
 	
 	setRequestType( 0x07D0 ); //meta-information request
 	setRequestSubType( 0x0569 ); //subtype: META_SEARCH_BY_UIN
-	setSequence( f.sequence );
+	setSequence( s.id );
 	Buffer* tlvdata = new Buffer();
 	tlvdata->addLEWord( 0x0136 ); //tlv of type 0x0136 with length 4. all little endian
 	tlvdata->addLEWord( 0x0004 );
@@ -138,7 +138,7 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	
 	setRequestType( 0x07D0 );
 	setRequestSubType( 0x055F );
-	setSequence( f.sequence );
+	setSequence( s.id );
 	Buffer* tlvData = new Buffer();
 	/*
 		search.addLEWord(0x0533); // subtype: 1331

@@ -587,8 +587,8 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 		KUrl soundURL;
 		QDir dir;
 		dir.setFilter( QDir::Files | QDir::Readable );
-		QStringList::ConstIterator it = soundDirs.begin();
-		while ( it != soundDirs.end() ) {
+		QStringList::ConstIterator it = soundDirs.constBegin();
+		while ( it != soundDirs.constEnd() ) {
 			dir = *it;
 			if ( dir.isReadable() && dir.count() > 2 ) {
 				soundURL.setPath( *it );

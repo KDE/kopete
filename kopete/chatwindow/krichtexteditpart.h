@@ -152,6 +152,7 @@ public slots:
 
 signals:
     void toolbarToggled(bool enabled);
+    void richTextChanged();
 
 protected:
     /**
@@ -174,7 +175,7 @@ public:
 
 private:
     class Private;
-    Private *d;
+    Private * const d;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KRichTextEditPart::RichTextSupport)

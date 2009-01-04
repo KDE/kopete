@@ -128,12 +128,14 @@ public:
 	 * \param status the oscar status
 	 * \param message the status message or Xtraz status message
 	 * \param xtraz the Xtraz status
-	 * \param description the Xtraz status description
-	 * @note If you want XStatus you have to set status, message, xtraz and description,
-	 * for ExtStatus (ICQ6 status) you have to set status, message and description, xtraz have to be -1.
+	 * \param title the Xtraz status title
+	 * @note If you want XStatus you should set status, message, xtraz and title,
+	 * for ExtStatus (ICQ6 status) you should set status, message, title, xtraz have to be -1,
+	 * for ExtStatus2 (ICQ6 status with icons) you should set status, message, title and mood.
 	 * If you want normal status than you should set only status and message.
+	 * XStatus and ExtStatus2 can be set together.
 	 */
-	void setStatus( Oscar::DWORD status, const QString &message = QString(), int xtraz = -1, const QString &description = QString() );
+	void setStatus( Oscar::DWORD status, const QString &message = QString(), int xtraz = -1, const QString &title = QString(), int mood = -1 );
 
 	/** Retrieve our user info */
 	UserDetails ourInfo() const;
@@ -429,10 +431,13 @@ public:
 
 	/** The current Xtraz status */
 	int statusXtraz() const;
-	
-	/** The current Xtraz status description */
-	QString statusDescription() const;
-	
+
+	/** The current status mood */
+	int statusMood() const;
+
+	/** The current Xtraz status title */
+	QString statusTitle() const;
+
 	/** The current status message (a.k.a. away message or Xtraz message) */
 	QString statusMessage() const;
 
@@ -513,7 +518,7 @@ signals:
 
 	void receivedProfile( const QString& contact, const QString& profile );
 	void receivedAwayMessage( const QString& contact, const QString& message );
-	void receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message );
+	void receivedXStatusMessage( const QString& contact, int icon, const QString& title, const QString& message );
 	void receivedUserInfo( const QString& contact, const UserDetails& details );
 	void userReadsStatusMessage( const QString& contact );
 
@@ -571,7 +576,7 @@ protected slots:
 	void receivedIcqInfo( const QString& contact, unsigned int type );
 
 	/** we have normal user info for a contact */
-	void receivedInfo( quint16 sequence );
+	void receivedInfo( Oscar::DWORD sequence );
 
 	/** received a message of some kind */
 	void receivedMessage( const Oscar::Message& msg );

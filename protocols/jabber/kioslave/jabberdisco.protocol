@@ -42,6 +42,7 @@ Description[nn]=Ein KIO-slave for Jabber-tenesteoppdaging
 Description[pl]=Wtyczka protokołu KIO dla usługi odkrywania usług Jabbera (Jabber Service Discovery)
 Description[pt]=Um 'kioslave' para a Descoberta de Serviços do Jabber
 Description[pt_BR]=Um KIO-Slave para a descoberta de serviço do Jabber
+Description[ro]=Un sclav KIO pentru descoperirea serviciilor Jabber
 Description[ru]=Обработчик KIO для обнаружения служб Jabber
 Description[sk]=KIO otrok pre Jabber Service Discovery
 Description[sl]=KIO slave za odkrivanje storitev za Jabber

@@ -26,16 +26,16 @@ static QString typeToString(JingleContent::Type t)
 	switch (t)
 	{
 	case JingleContent::Audio :
-		return "Audio";
+		return i18n("Audio");
 		break;
 	case JingleContent::Video :
-		return "Video";
+		return i18n("Video");
 		break;
 	case JingleContent::FileTransfer :
-		return "File Transfer";
+		return i18n("File Transfer");
 		break;
 	case JingleContent::Unknown :
-		return "Unknown";
+		return i18n("Unknown");
 		break;
 	}
 	return "";
@@ -71,14 +71,14 @@ void JingleContentDialog::setContents(QList<JingleContent*> c)
 		ui.verticalLayout->insertWidget(0, cb);
 		m_checkBoxes << cb;
 	}
-	QLabel *label = new QLabel("Check the contents you wanna accept : ", this);
+	QLabel *label = new QLabel(i18n("Choose the contents you want to accept:"), this);
 	ui.verticalLayout->insertWidget(0, label);
 }
 
 void JingleContentDialog::setSession(JingleSession *s)
 {
 	m_session = s;
-	setWindowTitle(QString("New Jingle session from ") + s->to().full());
+	setWindowTitle(i18n("New Jingle session from %1",s->to().full()));
 	setContents(s->contents());
 }
 
