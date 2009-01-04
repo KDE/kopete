@@ -5,6 +5,7 @@ ADD_SUBDIRECTORY(icons)
 include_directories(
     ${KOPETE_INCLUDES}
     ${CMAKE_CURRENT_SOURCE_DIR}/ui
+    ${LIBMSN_INCLUDE_DIR}
 )
 
 set(kopete_wlm_ui_SRCS
@@ -14,6 +15,7 @@ set(kopete_wlm_ui_SRCS
 
 kde4_add_ui_files(kopete_wlm_ui_SRCS
     ui/wlmaddui.ui
+    ui/wlminfo.ui 
     ui/wlmaccountpreferences.ui
 )
 

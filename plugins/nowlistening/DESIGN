@@ -5,7 +5,7 @@ What It Does
 This plugin tells your chat buddies what media (music, ...) you are currently enjoying.  If you turn on "Now Listening" for a contact, when a new track begins, it automatically sends a user defined message.
 
 How It Does It
-Looks for running media applications (Noatun, Kscd, Xmms) using DCOP and asks them what track they are currently playing.  The current track is discovered on a periodic basis, and if it has changed, it is advertised in live chatwindows to contacts that the user has indicated should be notified.
+Looks for running media applications (Kscd, Xmms) using DCOP and asks them what track they are currently playing.  The current track is discovered on a periodic basis, and if it has changed, it is advertised in live chatwindows to contacts that the user has indicated should be notified.
 
 Fair Points
 Do we want to tell ALL chat partners what we're listening to?
@@ -18,11 +18,11 @@ Should we only advertise if the other party to the chat is online?
 - Yes
 
 Is it possible to tell whether media players are actually playing?
-- Not for KsCD, but we can and do for Noatun and xmms.
+- Not for KsCD, but we can and do for xmms.
 
 Alternative methods
 Is there a way to be notified when tracks change?
-- Not yet, but xmms and noatun seem to provide an interface to find out how long a track will be playing for. Could try and predict when a track will change.
+- Not yet, but xmms seems to provide an interface to find out how long a track will be playing for. Could try and predict when a track will change.
 Of course, if ppl change tracks before the track has ended then this prediction is no good.  To do this we would need to add a per mediaplayer timer, or at least a pointer to a timer in the plugin (ugly!).
 
 Discovering all live chatwindows

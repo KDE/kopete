@@ -1016,7 +1016,7 @@ QString Message::body(const QString &lang) const
 	else if (d->body.contains(lang))
 		return d->body[lang];
 	else
-		return d->body.begin().value();
+		return d->body.constBegin().value();
 }
 
 //! \brief Return xhtml body.
@@ -1031,7 +1031,7 @@ HTMLElement Message::html(const QString &lang) const
 		if (d->htmlElements.contains(lang))
 			return d->htmlElements[lang];
 		else
-			return d->htmlElements.begin().value();
+			return d->htmlElements.constBegin().value();
 	}
 	else
 		return HTMLElement();
@@ -1431,7 +1431,7 @@ Stanza Message::toStanza(Stream *stream) const
 		s.setLang(d->lang);
 
 	StringMap::ConstIterator it;
-	for(it = d->subject.begin(); it != d->subject.end(); ++it) {
+	for(it = d->subject.constBegin(); it != d->subject.constEnd(); ++it) {
 		const QString &str = it.data();
 		if(!str.isEmpty()) {
 			QDomElement e = s.createTextElement(s.baseNS(), "subject", str);
@@ -1440,7 +1440,7 @@ Stanza Message::toStanza(Stream *stream) const
 			s.appendChild(e);
 		}
 	}
-	for(it = d->body.begin(); it != d->body.end(); ++it) {
+	for(it = d->body.constBegin(); it != d->body.constEnd(); ++it) {
 		const QString &str = it.data();
 		if(!str.isEmpty()) {
 			QDomElement e = s.createTextElement(s.baseNS(), "body", str);
@@ -1467,7 +1467,7 @@ Stanza Message::toStanza(Stream *stream) const
 	}
 
 	// urls
-	for(QList<Url>::ConstIterator uit = d->urlList.begin(); uit != d->urlList.end(); ++uit) {
+	for(QList<Url>::ConstIterator uit = d->urlList.constBegin(); uit != d->urlList.constEnd(); ++uit) {
 		QDomElement x = s.createElement("jabber:x:oob", "x");
 		x.appendChild(s.createTextElement("jabber:x:oob", "url", (*uit).url()));
 		if(!(*uit).desc().isEmpty())
@@ -1486,7 +1486,7 @@ Stanza Message::toStanza(Stream *stream) const
 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
 		}
 
-		for(QList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
+		for(QList<MsgEvent>::ConstIterator ev = d->eventList.constBegin(); ev != d->eventList.constEnd(); ++ev) {
 			switch (*ev) {
 				case OfflineEvent:
 					x.appendChild(s.createElement("jabber:x:event", "offline"));
@@ -2498,20 +2498,20 @@ ResourceList::Iterator ResourceList::priority()
 
 ResourceList::ConstIterator ResourceList::find(const QString & _find) const
 {
-	for(ResourceList::ConstIterator it = begin(); it != end(); ++it) {
+	for(ResourceList::ConstIterator it = constBegin(); it != constEnd(); ++it) {
 		if((*it).name() == _find)
 			return it;
 	}
 
-	return end();
+	return constEnd();
 }
 
 ResourceList::ConstIterator ResourceList::priority() const
 {
-	ResourceList::ConstIterator highest = end();
+	ResourceList::ConstIterator highest = constEnd();
 
-	for(ResourceList::ConstIterator it = begin(); it != end(); ++it) {
-		if(highest == end() || (*it).priority() > (*highest).priority())
+	for(ResourceList::ConstIterator it = constBegin(); it != constEnd(); ++it) {
+		if(highest == constEnd() || (*it).priority() > (*highest).priority())
 			highest = it;
 	}
 
@@ -2564,7 +2564,7 @@ bool RosterItem::isPush() const
 
 bool RosterItem::inGroup(const QString &g) const
 {
-	for(QStringList::ConstIterator it = v_groups.begin(); it != v_groups.end(); ++it) {
+	for(QStringList::ConstIterator it = v_groups.constBegin(); it != v_groups.constEnd(); ++it) {
 		if(*it == g)
 			return true;
 	}
@@ -2630,7 +2630,7 @@ QDomElement RosterItem::toXml(QDomDocument *doc) const
 	item.setAttribute("subscription", v_subscription.toString());
 	if(!v_ask.isEmpty())
 		item.setAttribute("ask", v_ask);
-	for(QStringList::ConstIterator it = v_groups.begin(); it != v_groups.end(); ++it)
+	for(QStringList::ConstIterator it = v_groups.constBegin(); it != v_groups.constEnd(); ++it)
 		item.appendChild(textTag(doc, "group", *it));
 
 	return item;
@@ -2691,12 +2691,12 @@ Roster::Iterator Roster::find(const Jid &j)
 
 Roster::ConstIterator Roster::find(const Jid &j) const
 {
-	for(Roster::ConstIterator it = begin(); it != end(); ++it) {
+	for(Roster::ConstIterator it = constBegin(); it != constEnd(); ++it) {
 		if((*it).jid().compare(j))
 			return it;
 	}
 
-	return end();
+	return constEnd();
 }
 
 

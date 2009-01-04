@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>682</width>
-    <height>453</height>
+    <height>384</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -21,18 +21,12 @@
     <height>200</height>
    </size>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
    <property name="margin" >
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="margin" >
-      <number>0</number>
-     </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3" >
      <item>
       <widget class="QLabel" name="textLabel1" >
        <property name="sizePolicy" >
@@ -98,6 +92,12 @@
    </item>
    <item>
     <widget class="QSplitter" name="splitter" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
@@ -131,36 +131,18 @@
        </item>
       </layout>
      </widget>
-     <widget class="QFrame" name="htmlFrame" >
+     <widget class="QWidget" native="1" name="htmlFrame" >
       <property name="sizePolicy" >
-       <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-        <horstretch>10</horstretch>
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <horstretch>1</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
-      </property>
-      <property name="minimumSize" >
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="frameShape" >
-       <enum>QFrame::WinPanel</enum>
-      </property>
-      <property name="frameShadow" >
-       <enum>QFrame::Sunken</enum>
       </property>
      </widget>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="margin" >
-      <number>0</number>
-     </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
      <item>
       <widget class="QLabel" name="textLabel2" >
        <property name="text" >
@@ -184,13 +166,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="margin" >
-      <number>0</number>
-     </property>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
       <widget class="QLabel" name="statusLabel" >
        <property name="maximumSize" >

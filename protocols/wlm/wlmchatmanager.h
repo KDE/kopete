@@ -39,8 +39,6 @@ class WlmChatManager : public QObject
     }
     QMap < MSN::SwitchboardServerConnection *, WlmChatSession * >chatSessions;
 
-    QMap < QString, QString > emoticonsList;
-
     // messages waiting for emoticons to be received
     QMap < MSN::SwitchboardServerConnection *, QLinkedList<Kopete::Message *> > pendingMessages;
 

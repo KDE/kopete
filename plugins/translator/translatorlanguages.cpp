@@ -82,14 +82,14 @@ TranslatorLanguages::TranslatorLanguages()
 
 	QMap<QString,QString>::ConstIterator i;
 
-	for ( i = m_langs.begin(); i != m_langs.end() ; ++i )
+	for ( i = m_langs.constBegin(); i != m_langs.constEnd() ; ++i )
 	{
 		m_langIntKeyMap[m_lc] = i.key();
 		m_langKeyIntMap[i.key()] = m_lc;
 		m_lc++;
 	}
 
-	for ( i = m_services.begin(); i != m_services.end() ; ++i )
+	for ( i = m_services.constBegin(); i != m_services.constEnd() ; ++i )
 	{
 		m_servicesIntKeyMap[m_sc] = i.key();
 		m_servicesKeyIntMap[i.key()] = m_sc;

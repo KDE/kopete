@@ -18,9 +18,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with this program; see the file COPYING. If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
+
+#include "wlmlibmsn.h"
+#include "wlmserver.h"
+#include "wlmaccount.h"
+
+#include "kopetemessage.h"
+#include "kopetecontact.h"
+#include "kopeteuiglobal.h"
 
 // include first to not get compile errors on windows
 #include <msn/msn.h>
@@ -38,7 +47,6 @@
 #include <netdb.h>
 #include <fcntl.h>
 
-#include <msn/msn.h>
 #include <string>
 #include <iostream>
 
@@ -48,14 +56,6 @@
 #include <QList>
 #include <QEventLoop>
 #include <QSslSocket>
-
-#include "kopetemessage.h"
-#include "kopetecontact.h"
-#include "kopeteuiglobal.h"
-
-#include "wlmlibmsn.h"
-#include "wlmserver.h"
-#include "wlmaccount.h"
 
 void
 Callbacks::registerSocket (void *s, int reading, int writing, bool isSSL)
@@ -136,7 +136,7 @@ Callbacks::gotBuddyListInfo (MSN::NotificationServerConnection * conn,
     // Here you need to fill a vector with all your contacts
     // both received by the server and previous ones.
     // Next pass this vector to the function completeConnection()
-    // if you dont call completeConnection(), the service will
+    // if you do not call completeConnection(), the service will
     // not work.
     std::map < std::string, MSN::Buddy * >::iterator i =
         info->contactList.begin ();
@@ -182,7 +182,7 @@ Callbacks::gotBuddyListInfo (MSN::NotificationServerConnection * conn,
     }
 
     // this will send the ADL command to the server
-    // It is necessary. Dont forget to add *all* your contacts to allContacts,
+    // It is necessary. Do not forget to add *all* your contacts to allContacts,
     // (both Forward, allow and block lists) or you probably will
     // loose someone.
     // A contact cannot be present both on allow and block lists or the
@@ -217,10 +217,10 @@ Callbacks::gotOIMDeleteConfirmation (MSN::NotificationServerConnection * conn,
     if (success)
     {
         emit deletedOIM (id.c_str (), success);
-        std::cout << "OIM " << id << " removed sucessfully." << std::endl;
+        std::cout << "OIM " << id << " removed successfully." << std::endl;
     }
     else
-        std::cout << "OIM " << id << " not removed sucessfully." << std::endl;
+        std::cout << "OIM " << id << " not removed successfully." << std::endl;
 
 }
 
@@ -231,9 +231,9 @@ Callbacks::gotOIMSendConfirmation (MSN::NotificationServerConnection * conn,
     Q_UNUSED( conn );
 
     if (success)
-        std::cout << "OIM " << id << " sent sucessfully." << std::endl;
+        std::cout << "OIM " << id << " sent successfully." << std::endl;
     else
-        std::cout << "OIM " << id << " not sent sucessfully." << std::endl;
+        std::cout << "OIM " << id << " not sent successfully." << std::endl;
 }
 
 void

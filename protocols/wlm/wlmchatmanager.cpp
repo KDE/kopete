@@ -358,8 +358,8 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
         newMessage->setDirection (Kopete::Message::Inbound);
 
         // stolen from msn plugin
-        QMap<QString,QString>::ConstIterator it = emoticonsList.constBegin();
-        for(;it!=emoticonsList.constEnd(); ++it)
+        QMap<QString,QString>::ConstIterator it = chat->emoticonsList.constBegin();
+        for(;it!=chat->emoticonsList.constEnd(); ++it)
         {
             QString es=Qt::escape(it.key());
             QString message1=newMessage->escapedBody();
@@ -584,12 +584,12 @@ void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnecti
     QFile f(newlocation);
     if (f.exists () && f.size ())
     {
-        emoticonsList[alias] = newlocation;
+        chat->emoticonsList[alias] = newlocation;
         return;
     }
 
     // pending emoticon
-    emoticonsList[alias].clear();
+    chat->emoticonsList[alias].clear();
 
     conn->requestEmoticon(sessionID, newlocation.toAscii().constData(),
             msnobject.toAscii().constData(), alias.toAscii().constData());
@@ -603,12 +603,13 @@ WlmChatManager::slotGotEmoticonFile(MSN::SwitchboardServerConnection * conn,
 {
     Q_UNUSED( sessionID );
 
-    emoticonsList[alias] = file;
-
-    if(pendingMessages[conn].isEmpty())
+    WlmChatSession *chat = chatSessions[conn];
+    if(!chat)
         return;
 
-    if(!chatSessions[conn])
+    chat->emoticonsList[alias] = file;
+
+    if(pendingMessages[conn].isEmpty())
         return;
 
     // duplicate to avoid crashes when removing items in the next loop
@@ -618,10 +619,10 @@ WlmChatManager::slotGotEmoticonFile(MSN::SwitchboardServerConnection * conn,
     for(;it!=pendingMessages1.end(); ++it)
     {
         Kopete::Message *message = (*it);
-        QMap<QString,QString>::iterator it2 = emoticonsList.begin();
+        QMap<QString,QString>::iterator it2 = chat->emoticonsList.begin();
         bool ok = true;
         // for each emoticon in our list
-        for(;it2!=emoticonsList.end(); ++it2)
+        for(;it2!=chat->emoticonsList.end(); ++it2)
         {
             QString es=Qt::escape(it2.key());
             QString message1=message->escapedBody();

@@ -68,7 +68,7 @@ void JabberByteStream::close ()
              kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "socket is not null" << endl;
 	     mSocket->close();
              kDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "socket closed" << endl;
-             delete mSocket;
+             mSocket->deleteLater();
              mSocket=NULL;
         }
 }

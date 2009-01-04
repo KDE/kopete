@@ -495,8 +495,8 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	if ( !isOffline )
 	{
 		d->restoreStatus = newStatus;
-		d->restoreMessage.setTitle( identity()->property( Kopete::Global::Properties::self()->statusTitle() ).value().toString() );
-		d->restoreMessage.setMessage( identity()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString() );
+		d->restoreMessage.setTitle( myself()->property( Kopete::Global::Properties::self()->statusTitle() ).value().toString() );
+		d->restoreMessage.setMessage( myself()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString() );
 	}
 
 /*	kDebug(14010) << "account " << d->id << " changed status. was "

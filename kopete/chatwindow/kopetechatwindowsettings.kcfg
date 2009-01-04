@@ -30,6 +30,7 @@
 		<entry key="styleName" type="String">
 			<label>Name of a Adium/Kopete chat window style.</label>
 			<default>Kopete</default>
+			<emit signal="styleChanged" />
 		</entry>
 		<entry key="styleVariant" type="String">
 			<label>Relative path to a CSS variant for the current style.</label>

@@ -96,12 +96,14 @@ public slots:
 
     void setMsnObj (QString msnobj) { m_msnobj = msnobj; }
 
+    virtual void slotUserInfo();
     virtual void deleteContact ();
 
     virtual void sendFile (const KUrl & sourceURL = KUrl (),
               const QString & fileName = QString(), uint fileSize = 0L);
 
     void blockContact ( bool block );
+    void slotShowProfile();
 
 protected slots:
     /**
@@ -118,6 +120,7 @@ protected:
     WlmChatSession * m_msgManager;
     WlmAccount * m_account;
     KToggleAction* m_actionBlockContact;
+    KAction * m_actionShowProfile;
     KAction * m_actionPrefs;
     QString m_msnobj;
     QString m_contactSerial;

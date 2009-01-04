@@ -230,10 +230,15 @@ QMap<QString, QString> OTRPlugin::getMessageCache(){
 }
 
 void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
+	if ( !plugin ){
+		MessageHandler::handleMessage( event );
+		return;
+	}
+
 	Kopete::Message msg = event->message();
 //	Kopete::ChatSession *session = msg.manager();
-	QMap<QString, QString> messageCache = OTRPlugin::plugin()->getMessageCache();
-	
+	QMap<QString, QString> messageCache = plugin->getMessageCache();
+
 	if( msg.direction() == Kopete::Message::Inbound ){
 		QString body = msg.plainBody();
 		QString accountId = msg.manager()->account()->accountId();

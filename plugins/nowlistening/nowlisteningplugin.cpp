@@ -42,7 +42,6 @@
 #include "nowlisteningplugin.h"
 #include "nlmediaplayer.h"
 #include "nlkscd.h"
-//#include "nlnoatun.h"
 #include "nljuk.h"
 #include "nlamarok.h"
 #include "nlkaffeine.h"
@@ -110,7 +109,6 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QVariantList& /*a
 
 	// set up known media players
 	d->m_mediaPlayerList.append( new NLKscd() );
-	//d->m_mediaPlayerList.append( new NLNoatun() );
 	d->m_mediaPlayerList.append( new NLJuk() );
 	d->m_mediaPlayerList.append( new NLamaroK() );
 	d->m_mediaPlayerList.append( new NLKaffeine() );
@@ -243,10 +241,6 @@ void NowListeningPlugin::slotOutgoingMessage(Kopete::Message& msg)
 
 void NowListeningPlugin::slotAdvertCurrentMusic()
 {
-	// Do anything when statusAdvertising is off.
-	if( !NowListeningConfig::self()->statusAdvertising() && !NowListeningConfig::self()->appendStatusAdvertising() )
-		return;
-
 	// This slot is called every 5 seconds, so we check if we have a new track playing.
 	if( newTrackPlaying() )
 	{
@@ -284,11 +278,23 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 		{
 			Kopete::StatusMessage currentStatusMessage = a->myself()->statusMessage();
 
-			if(isPlaying)
+			// do not add metadata when replace/append to status is set
+			if( !NowListeningConfig::self()->statusAdvertising() && 
+				!NowListeningConfig::self()->appendStatusAdvertising() )
 			{
-				currentStatusMessage.addMetaData("title", track);
-				currentStatusMessage.addMetaData("artist", artist);
-				currentStatusMessage.addMetaData("album", album);
+				// we dont have removeMetaData(), so we create a new status
+				Kopete::StatusMessage tmpStatusMessage;
+				tmpStatusMessage.setMessage(a->myself()->statusMessage().message());
+				tmpStatusMessage.setTitle(a->myself()->statusMessage().title());
+
+				if(isPlaying)
+				{
+					tmpStatusMessage.addMetaData("title", track);
+					tmpStatusMessage.addMetaData("artist", artist);
+					tmpStatusMessage.addMetaData("album", album);
+				}
+				a->setStatusMessage(tmpStatusMessage);
+				continue;
 			}
 
 			if( NowListeningConfig::self()->appendStatusAdvertising() )

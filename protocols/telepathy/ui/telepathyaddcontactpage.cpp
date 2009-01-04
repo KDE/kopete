@@ -41,6 +41,7 @@ TelepathyAddContactPage::TelepathyAddContactPage(QWidget *parent)
  : AddContactPage(parent), d(new Private)
 {
 	d->mainUi.setupUi(this);
+	d->mainUi.textUserId->setFocus();
 }
 
 TelepathyAddContactPage::~TelepathyAddContactPage()

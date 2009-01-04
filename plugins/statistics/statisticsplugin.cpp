@@ -68,8 +68,10 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)),
 		viewMetaContactStatistics, SLOT(setEnabled(bool)));
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact*)),
-			this, SLOT(slotMetaContactAdded(Kopete::MetaContact*)));	
-
+	        this, SLOT(slotMetaContactAdded(Kopete::MetaContact*)));
+	connect(Kopete::ContactList::self(), SIGNAL(metaContactRemoved(Kopete::MetaContact*)),
+	        this, SLOT(slotMetaContactRemoved(Kopete::MetaContact*)));
+	
 	setXMLFile("statisticsui.rc");
 
 	/* Initialization reads the database, so it could be a bit time-consuming
@@ -95,18 +97,18 @@ void StatisticsPlugin::slotInitialize()
 
 StatisticsPlugin::~StatisticsPlugin()
 {
-	map<QString, StatisticsContact*>::iterator it;
-	for (it = statisticsContactMap.begin(); it != statisticsContactMap.end(); ++it)
-	{
-		delete it->second;
-		it->second = 0;
-	}
+	qDeleteAll(statisticsContactMap);
+	statisticsContactMap.clear();
 }
 
 void StatisticsPlugin::slotAboutToReceive(Kopete::Message& m)
 {
-	if (statisticsContactMap[m.from()->metaContact()->metaContactId()])
-		statisticsContactMap[m.from()->metaContact()->metaContactId()]->newMessageReceived(m);
+	if (!m.from())
+		return;
+
+	StatisticsContact *sc = statisticsContactMap.value(m.from()->metaContact()->metaContactId());
+	if (sc)
+		sc->newMessageReceived(m);
 }
 
 void StatisticsPlugin::slotViewCreated(Kopete::ChatSession* session)
@@ -120,47 +122,77 @@ void StatisticsPlugin::slotViewClosed(Kopete::ChatSession* session)
 	foreach(Kopete::Contact *contact, list)
 	{
 		// If this contact is not in other chat sessions
-		if (!contact->manager()
-				   && statisticsContactMap[contact->metaContact()->metaContactId()])
-		statisticsContactMap[contact->metaContact()->metaContactId()]->setIsChatWindowOpen(false);
+		if (!contact->manager())
+		{
+			StatisticsContact *sc = statisticsContactMap.value(contact->metaContact()->metaContactId());
+			if (sc)
+				sc->setIsChatWindowOpen(false);
+		}
 	}
 }
 
 void StatisticsPlugin::slotViewStatistics()
 {
-	Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
-	
-	kDebug(14315) << "statistics - dialog: " + m->displayName();
-	
-	if (m)
+	Kopete::MetaContact *mc = Kopete::ContactList::self()->selectedMetaContacts().first();
+
+	kDebug(14315) << "statistics - dialog: " + mc->displayName();
+
+	StatisticsContact *sc = statisticsContactMap.value(mc->metaContactId());
+	if (sc)
 	{
-		StatisticsDialog* dialog = new StatisticsDialog(statisticsContactMap[m->metaContactId()], db());
+		StatisticsDialog* dialog = new StatisticsDialog(sc, db());
 		dialog->setObjectName( QLatin1String( "StatisticsDialog" ) );
 		dialog->show();
 	}
 }
 
-void StatisticsPlugin::slotOnlineStatusChanged(Kopete::MetaContact *contact, Kopete::OnlineStatus::StatusType status)
+void StatisticsPlugin::slotOnlineStatusChanged(Kopete::MetaContact *metaContact, Kopete::OnlineStatus::StatusType status)
 {
-	if (statisticsContactMap[contact->metaContactId()])
-			statisticsContactMap[contact->metaContactId()]->onlineStatusChanged(status);
+	StatisticsContact *sc = statisticsContactMap.value(metaContact);
+	if (sc)
+		sc->onlineStatusChanged(status);
 }
 
 void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 {
-	connect(mc, SIGNAL(onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this, 		
-					SLOT(slotOnlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
-	
+	connect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
+	        SLOT(slotOnlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+
 	statisticsContactMap[mc->metaContactId()] = new StatisticsContact(mc, db());
+}
+
+void StatisticsPlugin::slotMetaContactRemoved(Kopete::MetaContact *mc)
+{
+	disconnect(mc, 0, this, 0);
+	StatisticsContact *sc = statisticsContactMap.value(mc);
+	if (sc)
+	{
+		statisticsContactMap.remove(mc);
+		delete sc;
+	}
+}
+
+StatisticsContact* StatisticsPlugin::findStatisticsContact(QString id) const
+{
+	QMapIterator<Kopete::MetaContact*, StatisticsContact*> it(statisticsContactMap);
+	while (it.hasNext())
+	{
+		it.next();
+		if (it.key()->metaContactId() == id)
+			return it.value();
+	}
+
+	return 0;
 }
 
 void StatisticsPlugin::dbusStatisticsDialog(QString id)
 {
 	kDebug(14315) << "statistics - DBus dialog :" << id;
-	
-	if (statisticsContactMap[id])
+
+	StatisticsContact *sc = findStatisticsContact(id);
+	if (sc)
 	{
-		StatisticsDialog* dialog = new StatisticsDialog(statisticsContactMap[id], db());
+		StatisticsDialog* dialog = new StatisticsDialog(sc, db());
 		dialog->setObjectName( QLatin1String("StatisticsDialog") );
 		dialog->show();
 	}	
@@ -206,9 +238,11 @@ bool StatisticsPlugin::dbusWasStatus(QString id, QDateTime dateTime, Kopete::Onl
 {
 	kDebug(14315) << "statistics - DBus wasOnline :" << id;
 	
-	if (dateTime.isValid() && statisticsContactMap[id])
+	if (dateTime.isValid())
 	{
-		return statisticsContactMap[id]->wasStatus(dateTime, status);
+		StatisticsContact *sc = findStatisticsContact(id);
+		if (sc)
+			return sc->wasStatus(dateTime, status);
 	}
 	
 	return false;	
@@ -225,24 +259,29 @@ QString StatisticsPlugin::dbusStatus(QString id, int timeStamp)
 QString StatisticsPlugin::dbusStatus(QString id, QString dateTime)
 {
 	QDateTime dt = QDateTime::fromString(dateTime);
-	
-	if (dt.isValid() && statisticsContactMap[id])
+	if (dt.isValid())
 	{
-		return statisticsContactMap[id]->statusAt(dt);
+		StatisticsContact *sc = findStatisticsContact(id);
+		if (sc)
+			return sc->statusAt(dt);
 	}
-	
+
 	return "";
 }
+
 
 QString StatisticsPlugin::dbusMainStatus(QString id, int timeStamp)
 {
 	QDateTime dt;
 	dt.setTime_t(timeStamp);
-	if (dt.isValid() && statisticsContactMap[id])
+	if (dt.isValid())
 	{
-		return statisticsContactMap[id]->mainStatusDate(dt.date());
+		StatisticsContact *sc = findStatisticsContact(id);
+		if (sc)
+			return sc->mainStatusDate(dt.date());
 	}
 	
 	return "";
 }
+
 #include "statisticsplugin.moc"

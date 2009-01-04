@@ -103,7 +103,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
                                       configValue );
 
 		//set filetransfer stuff
-		configChecked = mAccount->configGroup()->readEntry( "FileProxy", false );
+		configChecked = mAccount->configGroup()->readEntry( "FileProxy", true );
 		mAccountSettings->chkFileProxy->setChecked( configChecked );
 		configValue = mAccount->configGroup()->readEntry( "FirstPort", 5190 );
 		mAccountSettings->sbxFirstPort->setValue( configValue );

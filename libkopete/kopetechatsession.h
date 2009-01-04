@@ -392,6 +392,7 @@ public slots:
 	void raiseView();
 
 private slots:
+	void clearChains();
 	void slotUpdateDisplayName();
 	void slotViewDestroyed();
 	void slotOnlineStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );

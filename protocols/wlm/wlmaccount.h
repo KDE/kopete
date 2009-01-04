@@ -228,6 +228,10 @@ class WlmAccount:public
                                           const QString & contactId);
     void
     deletedOIM(const QString& id, const bool deleted);
+
+    void
+    downloadPendingDisplayPicture();
+
   protected:
         /**
 	 * This simulates contacts going on and offline in sync with the account's status changes
@@ -285,9 +289,18 @@ class WlmAccount:public
 
 private slots:
     void addedInfoEventActionActivated(uint actionId);
+//     void slotStartChat();
+    void slotOpenInbox();
+    void slotChangePublicName();
+    void slotOpenStatus();
 
 private:
     Kopete::OnlineStatus temporaryStatus;
+
+    KAction *m_openInboxAction;
+//     KAction *m_startChatAction;
+    KAction *m_changeDNAction;
+    KAction *m_openStatusAction;
 
     QString
         m_pictureFilename;
@@ -317,6 +330,11 @@ private:
 
     // passport set of contacts which are on pending list
     QSet<QString> m_pendingList;
+
+    // passport set of contacts which we do not have the display picture yet
+    QSet<QString> m_pendingDisplayPictureList;
+
+    QTimer * m_pendingDisplayPicturesTimer;
 
 };
 

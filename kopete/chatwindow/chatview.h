@@ -359,6 +359,7 @@ private slots:
 
 protected:
 	virtual void dragEnterEvent ( QDragEnterEvent * );
+	virtual void dragMoveEvent ( QDragMoveEvent * );
 	virtual void dropEvent ( QDropEvent * );
 
 private:
@@ -388,6 +389,8 @@ private:
 	void sendInternalMessage( const QString &msg, Qt::TextFormat format = Qt::PlainText );
 	
 	KopeteTabState currentState() const;
+
+	bool isDragEventAccepted( QDragMoveEvent * ) const;
 
 	KopeteChatViewPrivate *d;
 };

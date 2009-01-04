@@ -42,6 +42,7 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent)
 	connect( addUI->icqRadioButton, SIGNAL(toggled(bool)), addUI->icqEdit, SLOT(setEnabled(bool)) );
 	connect( addUI->icqRadioButton, SIGNAL(toggled(bool)), addUI->searchButton, SLOT(setEnabled(bool)) );
 	connect( addUI->aimRadioButton, SIGNAL(toggled(bool)), addUI->aimEdit, SLOT(setEnabled(bool)) );
+	addUI->icqEdit->setFocus();
 }
 
 ICQAddContactPage::~ICQAddContactPage()
@@ -98,8 +99,8 @@ bool ICQAddContactPage::validateData()
 	}
 	else if ( addUI->aimRadioButton->isChecked() )
 	{
-		QRegExp rx("^[A-Za-z][@.\\d\\s\\w]{2,15}$");
-		if ( !rx.exactMatch( addUI->aimEdit->text() ) )
+		QRegExp rx("^[0-9]*$");
+		if ( rx.exactMatch( addUI->aimEdit->text() ) )
 		{
 			KMessageBox::sorry( this, i18n("You must enter a valid AOL screen name."), i18n("ICQ Plugin") );
 			return false;

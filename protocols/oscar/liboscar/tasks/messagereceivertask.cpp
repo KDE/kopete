@@ -159,11 +159,7 @@ void MessageReceiverTask::handleType1Message()
 				break;
 			case 0x0003:
 			{
-				TLV offlineMessage = Oscar::findTLV( messageTLVList, 0x0006 );
-				if ( offlineMessage )
-					msg.setEncoding( Oscar::Message::UserDefined );
-				else
-					msg.setEncoding( Oscar::Message::LATIN1 );
+				msg.setEncoding( Oscar::Message::UserDefined );
 				break;
 			}
 			default: // 0x0000 should be ASCII but some clients use different encoding.
@@ -334,7 +330,7 @@ void MessageReceiverTask::handleType4Message()
 	};
 
 	QByteArray msgText = tlv5buffer.getLELNTS();
-	if ( msgType == 0x0D || msgType == 0x0E )
+	if ( msgType == 0x0D || msgType == 0x0E || msgType == 0x04 )
 		msgText.replace( 0xFE, 0x20 );
 
 	switch ( msgFlags )

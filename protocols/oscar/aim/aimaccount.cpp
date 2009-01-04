@@ -699,17 +699,17 @@ void AIMAccount::connectWithPassword( const QString &password )
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
-		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", false ) );
+		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", true ) );
 		oscarSettings->setFirstPort( configGroup()->readEntry( "FirstPort", 5190 ) );
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
 
 		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( pres );
-		engine()->setStatus( status, mInitialStatusMessage );
 		updateVersionUpdaterStamp();
 
 		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(16) );
+		engine()->setStatus( status, mInitialStatusMessage );
 		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
 		mInitialStatusMessage.clear();

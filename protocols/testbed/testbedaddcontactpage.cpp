@@ -37,6 +37,7 @@ TestbedAddContactPage::TestbedAddContactPage( QWidget* parent )
 	QWidget* w = new QWidget();
 	m_testbedAddUI.setupUi( w );
 	l->addWidget( w );
+	m_testbedAddUI.m_uniqueName->setFocus();
 }
 
 TestbedAddContactPage::~TestbedAddContactPage()

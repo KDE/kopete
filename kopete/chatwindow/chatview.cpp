@@ -152,7 +152,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	}
 
 	setFocusProxy( editPart()->widget() );
-	m_messagePart->widget()->setFocusProxy( editPart()->widget() );
+	m_messagePart->view()->setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
 
 	slotChatDisplayNameChanged();
@@ -826,6 +826,28 @@ void ChatView::slotRemoteTypingTimeout()
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 {
+	const bool accept = isDragEventAccepted( event );
+	if ( accept )
+	{
+		event->setAccepted( true );
+		return;
+	}
+	QWidget::dragEnterEvent( event );
+}
+
+void ChatView::dragMoveEvent( QDragMoveEvent * event )
+{
+	const bool accept = isDragEventAccepted( event );
+	if ( accept )
+	{
+		event->setAccepted( true );
+		return;
+	}
+	QWidget::dragMoveEvent( event );
+}
+
+bool ChatView::isDragEventAccepted( QDragMoveEvent * event ) const
+{
 	if( event->provides( "kopete/x-contact" ) )
 	{
 		QStringList lst = QString::fromUtf8(event->encodedData ( "kopete/x-contact" )).split( QChar( 0xE000 ) , QString::SkipEmptyParts );
@@ -844,7 +866,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 			}
 
 			if(!found && contact != m_manager->myself()->contactId())
-				event->accept();
+				return true;
 		}
 	}
 	else if( event->provides( "kopete/x-metacontact" ) )
@@ -858,22 +880,21 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 				if( candidate && candidate->account() == m_manager->account() && candidate->isOnline())
 				{
 					if( candidate != m_manager->myself() &&  !m_manager->members().contains( candidate ) )
-						event->accept();
+						return true;
 				}
 			}
 		}
 	}
 	// make sure it doesn't come from the current chat view - then it's an emoticon
-	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 &&
+	else if ( KUrl::List::canDecode( event->mimeData() ) && m_manager->members().count() == 1 &&
 				 ( event->source() != (QWidget*)m_messagePart->view()->viewport() ) )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 		if ( contact && contact->canAcceptFiles() )
-			event->accept();
+			return true;
 	}
-	else
-		QWidget::dragEnterEvent(event);
+	return false;
 }
 
 void ChatView::dropEvent ( QDropEvent * event )

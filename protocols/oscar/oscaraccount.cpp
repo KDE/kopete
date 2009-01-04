@@ -61,6 +61,9 @@
 #include "oscarversionupdater.h"
 #include "filetransferhandler.h"
 #include "nscainfoevent.h"
+#include "oscarpresence.h"
+#include "oscarprotocol.h"
+#include "oscarstatusmanager.h"
 
 class OscarAccountPrivate : public Client::CodecProvider
 {
@@ -185,7 +188,8 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	                     this, SLOT( ssiContactUpdated( const OContact& ) ) );
 
 	d->engine->close();
-	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
+	OscarProtocol* p = static_cast<OscarProtocol*>(protocol());
+	myself()->setOnlineStatus( p->statusManager()->onlineStatusOf( Oscar::Presence( Oscar::Presence::Offline ) ) );
 
 	d->contactAddQueue.clear();
 	d->contactChangeQueue.clear();

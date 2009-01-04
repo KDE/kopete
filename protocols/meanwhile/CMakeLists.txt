@@ -24,6 +24,7 @@ kde4_add_plugin(kopete_meanwhile ${kopete_meanwhile_PART_SRCS})
 
 target_link_libraries(kopete_meanwhile
   ${KDE4_KDECORE_LIBS} ${GLIB2_LIBRARIES} ${LIBMEANWHILE_LIBRARY}
+  ${KDE4_KDEUI_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY}
   kopete)
 
 install(TARGETS kopete_meanwhile DESTINATION ${PLUGIN_INSTALL_DIR})

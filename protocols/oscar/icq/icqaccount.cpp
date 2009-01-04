@@ -246,7 +246,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		oscarSettings->setWebAware( configGroup()->readEntry( "WebAware", false ) );
 		oscarSettings->setHideIP( configGroup()->readEntry( "HideIP", true ) );
 		oscarSettings->setRequireAuth( configGroup()->readEntry( "RequireAuth", false ) );
-		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", false ) );
+		oscarSettings->setFileProxy( configGroup()->readEntry( "FileProxy", true ) );
 		oscarSettings->setFirstPort( configGroup()->readEntry( "FirstPort", 5190 ) );
 		oscarSettings->setLastPort( configGroup()->readEntry( "LastPort", 5199 ) );
 		oscarSettings->setTimeout( configGroup()->readEntry( "Timeout", 10 ) );
@@ -258,12 +258,12 @@ void ICQAccount::connectWithPassword( const QString &password )
 		if ( mWebAware )
 			status |= Oscar::StatusCode::WEBAWARE;
 
-		engine()->setStatus( status, mInitialStatusMessage.message(),
-		                     pres.xtrazStatus(), mInitialStatusMessage.title(), pres.mood() );
 		updateVersionUpdaterStamp();
 
 		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(8) );
+		engine()->setStatus( status, mInitialStatusMessage.message(), pres.xtrazStatus(),
+		                     mInitialStatusMessage.title(), pres.mood() );
 		engine()->connectToServer( c, server, port, true /* doAuth */ );
 
 		mInitialStatusMessage = Kopete::StatusMessage();
@@ -305,9 +305,9 @@ void ICQAccount::slotToggleInvisible()
 {
 	using namespace Oscar;
 	if ( (presence().flags() & Presence::Invisible) == Presence::Invisible )
-		setPresenceFlags( presence().flags() & ~Presence::Invisible );
+		setPresenceFlags( presence().flags() & ~Presence::Invisible, myself()->statusMessage() );
 	else
-		setPresenceFlags( presence().flags() | Presence::Invisible );
+		setPresenceFlags( presence().flags() | Presence::Invisible, myself()->statusMessage() );
 }
 
 void ICQAccount::slotUserInfo()

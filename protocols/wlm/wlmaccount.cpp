@@ -20,6 +20,7 @@
 #include <QFile>
 #include <QImage>
 #include <QDomDocument>
+#include <QtCore/QCryptographicHash>
 
 #include <kaction.h>
 #include <kactionmenu.h>
@@ -29,7 +30,9 @@
 #include <kmessagebox.h>
 #include <knotification.h>
 #include <KCodecs>
+#include <KInputDialog>
 #include <KStandardDirs>
+#include <KToolInvocation>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
@@ -74,6 +77,17 @@ clientid (0)
     clientid += MSN::SIPInvitations;
     clientid += MSN::SupportMultiPacketMessaging;
 
+    m_openInboxAction = new KAction(KIcon("mail-folder-inbox"), i18n("Open Inbo&x..."), this);
+    QObject::connect(m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()));
+
+    m_changeDNAction = new KAction(i18n("&Change Display Name..."), this);
+    QObject::connect(m_changeDNAction, SIGNAL(triggered(bool)), this, SLOT(slotChangePublicName()));
+
+//     m_startChatAction = new KAction(KIcon("mail-message-new"), i18n("&Start Chat..."), this);
+//     QObject::connect(m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()));
+    
+    m_openStatusAction = new KAction(i18n("Open MS&N service status site..."), this);
+    QObject::connect(m_openStatusAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenStatus()));
 }
 
 WlmAccount::~WlmAccount ()
@@ -85,6 +99,18 @@ void
 WlmAccount::fillActionMenu (KActionMenu * actionMenu)
 {
     Kopete::Account::fillActionMenu (actionMenu);
+    const bool connected = isConnected();
+    m_openInboxAction->setEnabled(connected);
+//     m_startChatAction->setEnabled(connected);
+    m_changeDNAction->setEnabled(connected);
+
+    actionMenu->addSeparator();
+
+    actionMenu->addAction(m_changeDNAction);
+//     actionMenu->addAction(m_startChatAction);
+
+//     actionMenu->addAction(m_openInboxAction);
+    actionMenu->addAction(m_openStatusAction);
 }
 
 bool
@@ -137,16 +163,35 @@ void WlmAccount::setPersonalMessage (const Kopete::StatusMessage & reason)
     if (isConnected ())
     {
         MSN::personalInfo pInfo;
+        pInfo.mediaIsEnabled = 0;
         QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
         if (reason.message().isEmpty ())
             pInfo.PSM = "";
         else
             pInfo.PSM = reason.message().toAscii ().data ();
-//      pInfo.mediaType="Music";
-        pInfo.mediaIsEnabled = 0;
-//      pInfo.mediaFormat="{0} - {1}";
-//      pInfo.mediaLines.push_back("Artist");
-//      pInfo.mediaLines.push_back("Song");
+
+        // we have both artist and title
+        if( reason.hasMetaData("artist") && reason.hasMetaData("title") )
+        {
+            pInfo.mediaIsEnabled = 1;
+            pInfo.mediaType="Music";
+            pInfo.mediaLines.push_back( reason.metaData("artist").toString().toAscii().data() );
+            pInfo.mediaLines.push_back( reason.metaData("title").toString().toAscii().data() );
+            pInfo.mediaFormat="{0} - {1}";
+            m_server->cb.mainConnection->setPersonalStatus (pInfo);
+            return;
+        }
+    
+        // we have only the title
+        if( reason.hasMetaData("title") )
+        {
+            pInfo.mediaIsEnabled = 1;
+            pInfo.mediaType="Music";
+            pInfo.mediaFormat="{0}";
+            pInfo.mediaLines.push_back( reason.metaData("title").toString().toAscii().data() );
+            m_server->cb.mainConnection->setPersonalStatus (pInfo);
+            return;
+        }
         m_server->cb.mainConnection->setPersonalStatus (pInfo);
     }
 }
@@ -178,6 +223,48 @@ void
 WlmAccount::setStatusMessage (const Kopete::StatusMessage & statusMessage)
 {
     setPersonalMessage(statusMessage);
+}
+
+void
+WlmAccount::slotChangePublicName()
+{
+    if ( !isConnected() )
+    {
+        return;
+        //TODO:  change it anyway, and sync at the next connection
+    }
+
+    bool ok;
+    const QString name = KInputDialog::getText( i18n( "Change Display Name - MSN Plugin" ), //TODO rename MSN to WLM (see also following strings)
+        i18n( "Enter the new display name by which you want to be visible to your friends on MSN:" ),
+        myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), &ok );
+
+    if ( ok )
+    {
+        if ( name.length() > 387 )
+        {
+            KMessageBox::error( Kopete::UI::Global::mainWidget(),
+                i18n( "<qt>The display name you entered is too long. Please use a shorter name.\n"
+                    "Your display name has <b>not</b> been changed.</qt>" ),
+                i18n( "Change Display Name - MSN Plugin" ) );
+            return;
+        }
+
+        m_server->cb.mainConnection->setFriendlyName(name.toAscii().data(), true);
+    }
+}
+
+void
+WlmAccount::slotOpenInbox()
+{
+//     if (m_notifySocket)
+//         m_notifySocket->slotOpenInbox();
+}
+
+void
+WlmAccount::slotOpenStatus()
+{
+    KToolInvocation::invokeBrowser(QLatin1String("http://messenger.msn.com/Status.aspx")) ;
 }
 
 void
@@ -322,7 +409,10 @@ void WlmAccount::addedInfoEventActionActivated(uint actionId)
         blockContact(event->contactId(), false);
         break;
     case Kopete::AddedInfoEvent::BlockAction:
-        blockContact(event->contactId(), true);
+        if (isOnAllowList(event->contactId()))
+            server()->mainConnection->removeFromList(MSN::LST_AL, event->contactId().toAscii().data());
+        if(!isOnBlockList(event->contactId()))
+            server()->mainConnection->addToList(MSN::LST_BL, event->contactId().toAscii().data());
         break;
 /*    case Kopete::AddedInfoEvent::InfoAction:
         break;*/
@@ -350,6 +440,9 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
     WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[contactId]);
     if (contact)
     {
+        // remove from pending display pictures list if applicable
+        m_pendingDisplayPictureList.remove(contactId);
+
         QFile f(filename);
         if (!f.exists () || !f.size ())
         {
@@ -370,7 +463,34 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
             if (QFile (file).exists () && file != filename)
                 QFile::remove (file);
         }
-        // check file integrity
+
+        // check file integrity (SHA1D)
+        QDomDocument xmlobj;
+        xmlobj.setContent (contact->getMsnObj());
+        QString SHA1D_orig = xmlobj.documentElement ().attribute ("SHA1D");
+
+        if (SHA1D_orig.isEmpty ())
+            return;
+
+        // open the file to generate the SHA1D
+        if (!f.open(QIODevice::ReadOnly))
+        {
+            kDebug(14140) << "Could not open avatar picture.";
+            contact->removeProperty( Kopete::Global::Properties::self()->photo() );
+            QFile::remove (filename);
+            return;
+        }
+
+        QByteArray ar = f.readAll();
+        QByteArray SHA1D = QCryptographicHash::hash(ar, QCryptographicHash::Sha1).toBase64();
+
+        // remove corrupted files
+        if(SHA1D != SHA1D_orig)
+        {
+            QFile::remove (filename);
+            return;
+        }
+
         QImage contactPhoto = QImage( filename );
         if(contactPhoto.format()!=QImage::Format_Invalid)
         {
@@ -403,7 +523,7 @@ WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
     if (contact)
     {
         // TODO - handle the other fields of pInfo
-        contact->setStatusMessage(QString(pInfo.PSM.c_str()));
+        contact->setStatusMessage(Kopete::StatusMessage(QString(pInfo.PSM.c_str())));
         QString type (pInfo.mediaType.c_str ());
         if (pInfo.mediaIsEnabled && type == "Music")
         {
@@ -500,7 +620,11 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
 
         // do not request all pictures at once when you are just connected
         if (isInitialList ())
+        {
+            // schedule to retrieve this picture later
+            m_pendingDisplayPictureList.insert(buddy.c_str ());
             return;
+        }
 
         if ((myself ()->onlineStatus () !=
                 WlmProtocol::protocol ()->wlmOffline)
@@ -579,8 +703,9 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
     m_serverSideContactsPassports.clear ();
     m_allowList.clear();
     m_blockList.clear();
+    m_pendingList.clear();
 
-    // local contacts which dont exist on server should be deleted
+    // local contacts which do not exist on server should be deleted
     std::map < std::string, MSN::Buddy * >::iterator it;
     for (it = list.begin (); it != list.end (); ++it)
     {
@@ -865,6 +990,14 @@ WlmAccount::connectionCompleted ()
     QTimer::singleShot (10 * 1000, this, SLOT (disableInitialList ()));
     setPersonalMessage(myself()->statusMessage());
 
+    // download a pending picture every 20 seconds
+    m_pendingDisplayPicturesTimer = new QTimer(this);
+
+    QObject::connect(m_pendingDisplayPicturesTimer, SIGNAL(timeout()), 
+            this, SLOT(downloadPendingDisplayPicture()));
+
+    m_pendingDisplayPicturesTimer->start(30 * 1000);
+
     // manage pending list
     foreach ( const QString &contact, pendingList() )
     {
@@ -874,6 +1007,39 @@ WlmAccount::connectionCompleted ()
             // fake this contact in RL to prompt the user to add it
             gotNewContact (MSN::LST_RL, contact, contact);
         }
+    }
+}
+
+void WlmAccount::downloadPendingDisplayPicture()
+{
+    if(!m_pendingDisplayPicturesTimer)
+        return;
+
+    if (m_pendingDisplayPictureList.isEmpty())
+    {
+        m_pendingDisplayPicturesTimer->stop();
+        m_pendingDisplayPicturesTimer->deleteLater();
+        m_pendingDisplayPicturesTimer = NULL;
+        return;
+    }
+
+    QString passport = m_pendingDisplayPictureList.toList().first();
+    m_pendingDisplayPictureList.remove(passport);
+
+    WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[passport]);
+    if(!contact)
+        return;
+
+    // we only download the display picture if we and the contact are online
+    if ((myself ()->onlineStatus () != WlmProtocol::protocol ()->wlmOffline)
+     && (myself ()->onlineStatus () != WlmProtocol::protocol ()->wlmInvisible)
+     && (myself ()->onlineStatus () != WlmProtocol::protocol ()->wlmUnknown)
+     && (contact->onlineStatus () != WlmProtocol::protocol ()->wlmOffline)
+     && (contact->onlineStatus () != WlmProtocol::protocol ()->wlmInvisible)
+     && (contact->onlineStatus () != WlmProtocol::protocol ()->wlmUnknown))
+ 
+    {
+        chatManager ()->requestDisplayPicture (passport);
     }
 }
 
@@ -1009,9 +1175,6 @@ WlmAccount::disconnect ()
         m_server->WlmDisconnect ();
 
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
-
-    QObject::disconnect (Kopete::ContactList::self (), 0, 0, 0);
-    QObject::disconnect (Kopete::TransferManager::transferManager (), 0, 0, 0);
 
     if (m_transferManager)
     {

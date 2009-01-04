@@ -71,8 +71,8 @@ namespace Kopete
 		// flag used to signal something went wrong when creating a mimesource
 		bool completed = false;
 
-		QPixmap *tmpPixmap = 0;
-		QImage *tmpImage = 0;
+		QPixmap tmpPixmap;
+		QImage tmpImage;
 
 		// extract and decode arguments
 		QStringList parts = m_fileName.split(QChar(':'), QString::SkipEmptyParts);
@@ -92,7 +92,7 @@ namespace Kopete
 
 					if (contact)
 					{
-						tmpPixmap = new QPixmap(contact->onlineStatus().iconFor(contact,16));
+						tmpPixmap = QPixmap(contact->onlineStatus().iconFor(contact,16));
 						completed = true;
 					}
 					else
@@ -119,7 +119,7 @@ namespace Kopete
 
 				if (account)
 				{
-					tmpPixmap = new QPixmap(account->myself()->onlineStatus().iconFor(account->myself(),16));
+					tmpPixmap = QPixmap(account->myself()->onlineStatus().iconFor(account->myself(),16));
 					completed = true;
 				}
 				else
@@ -141,7 +141,7 @@ namespace Kopete
 
 				if (mc)
 				{
-					tmpPixmap = new QPixmap(SmallIcon(mc->statusIcon()));
+					tmpPixmap = QPixmap(SmallIcon(mc->statusIcon()));
 					completed = true;
 				}
 			}
@@ -159,7 +159,7 @@ namespace Kopete
 
 				if (mc)
 				{
-					tmpImage = new QImage(mc->picture().image());
+					tmpImage = QImage(mc->picture().image());
 					completed = true;
 				}
 			}
@@ -190,7 +190,7 @@ namespace Kopete
 
 				if (account)
 				{
-					tmpPixmap = new QPixmap(account->myself()->onlineStatus().iconFor(parts[1]));
+					tmpPixmap = QPixmap(account->myself()->onlineStatus().iconFor(parts[1]));
 					completed = true;
 				}
 				else
@@ -210,17 +210,15 @@ namespace Kopete
 		{
 			m_buffer.open(QIODevice::WriteOnly);
 
-			if (tmpImage != 0)
+			if (!tmpImage.isNull())
 			{
-				tmpImage->save(&m_buffer, "JPEG");
-				delete tmpImage;
+				tmpImage.save(&m_buffer, "JPEG");
 			}
 			else
 			{
-				if (tmpPixmap != 0)
+				if (!tmpPixmap.isNull())
 				{
-					tmpPixmap->save(&m_buffer, "PNG");
-					delete tmpPixmap;
+					tmpPixmap.save(&m_buffer, "PNG");
 				}
 				else
 				{

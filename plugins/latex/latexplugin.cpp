@@ -165,7 +165,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	messageText= msg.escapedBody();
 
 	int imagePxWidth,imagePxHeight;
-	for (QMap<QString,QString>::ConstIterator it = replaceMap.begin(); it != replaceMap.end(); ++it)
+	for (QMap<QString,QString>::ConstIterator it = replaceMap.constBegin(); it != replaceMap.constEnd(); ++it)
 	{
 		QImage theImage(*it);
 		if(theImage.isNull())
