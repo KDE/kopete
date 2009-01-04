@@ -106,7 +106,7 @@ void StatisticsPlugin::slotAboutToReceive(Kopete::Message& m)
 	if (!m.from())
 		return;
 
-	StatisticsContact *sc = statisticsContactMap.value(m.from()->metaContact()->metaContactId());
+	StatisticsContact *sc = statisticsContactMap.value(m.from()->metaContact());
 	if (sc)
 		sc->newMessageReceived(m);
 }
@@ -124,7 +124,7 @@ void StatisticsPlugin::slotViewClosed(Kopete::ChatSession* session)
 		// If this contact is not in other chat sessions
 		if (!contact->manager())
 		{
-			StatisticsContact *sc = statisticsContactMap.value(contact->metaContact()->metaContactId());
+			StatisticsContact *sc = statisticsContactMap.value(contact->metaContact());
 			if (sc)
 				sc->setIsChatWindowOpen(false);
 		}
@@ -137,7 +137,7 @@ void StatisticsPlugin::slotViewStatistics()
 
 	kDebug(14315) << "statistics - dialog: " + mc->displayName();
 
-	StatisticsContact *sc = statisticsContactMap.value(mc->metaContactId());
+	StatisticsContact *sc = statisticsContactMap.value(mc);
 	if (sc)
 	{
 		StatisticsDialog* dialog = new StatisticsDialog(sc, db());
@@ -158,7 +158,7 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 	connect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
 	        SLOT(slotOnlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
 
-	statisticsContactMap[mc->metaContactId()] = new StatisticsContact(mc, db());
+	statisticsContactMap[mc] = new StatisticsContact(mc, db());
 }
 
 void StatisticsPlugin::slotMetaContactRemoved(Kopete::MetaContact *mc)
