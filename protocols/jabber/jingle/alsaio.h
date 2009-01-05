@@ -172,6 +172,7 @@ private:
 	int pSizeBytes;
 	int times;
 	bool ready;
+	bool bufferizing;
 	
 	snd_pcm_uframes_t pSize;
 	snd_pcm_hw_params_t *hwParams;

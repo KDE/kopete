@@ -18,19 +18,11 @@
  *
  */
 
-//FIXME:Must remove all JT_JingleAction as soon as they are acknowledged !!!!!!!
-//	This bug makes kopete crash when a session is trminated and other sessions
-//	are active because JT_JingleAction keeps a pointer on the JingleSession and
-//	use it in the take() method
-
 #include <QString>
 #include <QUdpSocket>
 
 #include "jinglesession.h"
 #include "jinglesessionmanager.h"
-
-//TODO:all JT_JingleActions pointers should be kept in a list so we can delete all non-acknowledged
-//     actions when terminating the session.
 
 using namespace XMPP;
 

@@ -173,7 +173,8 @@ void JingleRtpSession::rtpDataReady()
 	 * must be taken from the media manager which should increase it
 	 * automatically.
 	 */
-	//kDebug() << "Incoming data ready to be read !";
+	
+	//kDebug() << "Incoming data ready to be read ! (" << rtpSocket->pendingDatagramSize() << "bytes pending)";
 	void *buf = new uint8_t[bufSize];
 	int more;
 	//int times = 0;
@@ -193,11 +194,11 @@ void JingleRtpSession::rtpDataReady()
 	int ret = rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t*>(buf), bufSize, ts, &more);
 	if (ret == 0)
 	{
-		kDebug() << "Error receiving Rtp packet.";
+		kDebug() << "Error receiving Rtp packet. (Most likely this timestamp has expired)";
 		if (more != 0)
 			kDebug() << "Still some data to read";
 
-		kDebug() << "Purging socket...";
+		kDebug() << "Purging the socket.";
 		QByteArray b;
 		b.resize(rtpSocket->pendingDatagramSize());
 		rtpSocket->readDatagram(b.data(), rtpSocket->pendingDatagramSize());

@@ -78,7 +78,7 @@ void JingleCallsManager::init()
 	d->client->jingleSessionManager()->setFirstPort(d->jabberAccount->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
 
 	QString filename;
-	if (d->jabberAccount->configGroup()->readEntry("JingleAutoDetectIP", true) && KIO::NetAccess::download(KUrl(ADDRESS), filename, 0))
+	if (d->jabberAccount->configGroup()->readEntry("JingleAutoDetectIP", false) && KIO::NetAccess::download(KUrl(ADDRESS), filename, 0))
 	{
 		QFile file(filename);
 		file.open(QIODevice::ReadOnly);

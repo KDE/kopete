@@ -272,10 +272,10 @@ void JingleContent::createUdpInSocket()
 
 void JingleContent::slotRawUdpDataReady()
 {
-	qDebug() << "Data arrived on the socket.";
+	qDebug() << "slotRawUdpDataReady() :: Data arrived on the socket.";
 	emit dataReceived();
 	setReceiving(true);
-	//disconnect(sender(), 0, this, 0);
+	disconnect(sender(), SIGNAL(readyRead()), this, 0);
 }
 
 QUdpSocket *JingleContent::inSocket()
@@ -383,8 +383,8 @@ void JingleContent::bind(const QHostAddress& address, int port)
 	qDebug() << "Trying to bind socket to" << address.toString() << ":" << port;
 	if (!d->inSocket)
 		d->inSocket = new QUdpSocket();
-	if (d->inSocket->bind(/*address, */port))
-		qDebug() << "Socket bound to" << /*address.toString() << ":" << */port;
+	if (d->inSocket->bind(address, port))
+		qDebug() << "Socket bound to" << address.toString() << ":" << port;
 	
 	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
 	
