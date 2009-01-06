@@ -63,10 +63,14 @@ JingleCallsManager::~JingleCallsManager()
 {
 	ortp_exit();
 
-	delete d->mediaManager;
 	delete d->gui;
-	//delete d->sessions;
-	//delete d->contentDialog; --> Will be deleted when necessary.
+	
+	for (int i = 0; i < d->sessions.count(); i++)
+	{
+		delete d->sessions[i];
+	}
+
+	delete d->mediaManager;
 
         delete d;
 }
