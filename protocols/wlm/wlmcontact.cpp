@@ -30,6 +30,7 @@
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
+#include "kopetegroup.h"
 
 #include "ui_wlminfo.h"
 #include "wlmaccount.h"
@@ -49,12 +50,63 @@ Kopete::Contact (_account, uniqueName, parent)
     setFileCapable (true);
     setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     m_contactSerial = contactSerial;
+    m_disabled = false;
+
+    if ( metaContact() )
+        m_currentGroup = metaContact()->groups().first();
 
     m_actionBlockContact = new KToggleAction(KIcon("wlm_blocked"), i18n("Block Contact"), this );
     QObject::connect( m_actionBlockContact, SIGNAL(triggered(bool)), this, SLOT(blockContact(bool)) );
 
     m_actionShowProfile = new KAction(i18n("Show Profile"), this);
     QObject::connect(m_actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()));
+}
+
+void WlmContact::setDisabled(bool disabled, bool updateServer)
+{
+    WlmAccount* acc = qobject_cast<WlmAccount*>(account());
+    if(!acc)
+        return;
+
+    if(disabled)
+    {
+        // already disabled
+        if(isDisabled())
+            return;
+
+        m_disabled = true;
+
+        if(!metaContact())
+            return;
+
+        metaContact()->setTemporary(m_disabled);
+
+        setOnlineStatus(WlmProtocol::protocol()->wlmOffline);
+
+        if(updateServer && account ()->isConnected ())
+            acc->server ()->mainConnection->disableContactOnAddressBook (
+                    m_contactSerial.toAscii().data (),
+                        contactId ().toLatin1 ().data () );
+    }
+    else
+    {
+        // already enabled
+        if(!isDisabled())
+            return;
+
+        m_disabled = false;
+
+        if(!metaContact())
+            return;
+
+        metaContact()->setTemporary(m_disabled);
+        setOnlineStatus(WlmProtocol::protocol()->wlmOffline);
+
+        if(updateServer && account ()->isConnected ())
+            acc->server ()->mainConnection->enableContactOnAddressBook (
+                    m_contactSerial.toAscii().data (),
+                        contactId ().toLatin1 ().data () );
+    }
 }
 
 WlmContact::~WlmContact ()
@@ -144,6 +196,75 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     tempCollection.addAction(QLatin1String("contactViewProfile"), m_actionShowProfile);
 
     return actions;
+}
+
+void WlmContact::sync(unsigned int flags)
+{
+    if (!account ()->isConnected ())
+        return;
+    /* 
+     * If the contact has changed groups, then we update the server.
+     */
+    if( !metaContact() )
+        return;
+
+    if ( (flags & Kopete::Contact::MovedBetweenGroup) == Kopete::Contact::MovedBetweenGroup )
+    {
+        Kopete::Group* newGroup = metaContact()->groups().first();
+        WlmAccount* acc = qobject_cast<WlmAccount*>(account());
+        if(!acc)
+            return;
+
+        // if this contact is not in the contact list, add it
+        if(!acc->isOnServerSideList(contactId()))
+        {
+            acc->createContact(
+                    contactId().toAscii().data(), metaContact());
+            m_currentGroup = newGroup;
+            return;
+        }
+
+        if(isDisabled())
+        {
+            // enable this contact and update on server side
+            setDisabled(false,true);
+        }
+
+        if(newGroup == m_currentGroup)
+            return;
+
+        if(newGroup == Kopete::Group::topLevel())
+        {
+            acc->server ()->mainConnection->removeFromGroup (
+                acc->groupToGroupId().value(m_currentGroup->displayName()).toAscii().data(), 
+                    m_contactSerial.toAscii().data ());
+            m_currentGroup = newGroup;
+            return;
+        }
+
+        // if we have both groups on server side, just move this contact
+        if(acc->groupToGroupId().contains(newGroup->displayName())
+            && acc->groupToGroupId().contains(m_currentGroup->displayName()))
+        {
+            acc->server ()->mainConnection->removeFromGroup (
+                acc->groupToGroupId().value(m_currentGroup->displayName()).toAscii().data(), 
+                    m_contactSerial.toAscii().data ());
+            acc->server ()->mainConnection->addToGroup (
+                acc->groupToGroupId().value(newGroup->displayName()).toAscii().data(), 
+                    m_contactSerial.toAscii().data ());
+            m_currentGroup = newGroup;
+            return;
+        }
+        if(m_currentGroup == Kopete::Group::topLevel() &&
+                acc->groupToGroupId().contains(newGroup->displayName()))
+        {
+            acc->server ()->mainConnection->addToGroup (
+                acc->groupToGroupId().value(newGroup->displayName()).toAscii().data(), 
+                    m_contactSerial.toAscii().data ());
+            m_currentGroup = newGroup;
+            return;
+        }
+    }
 }
 
 void WlmContact::blockContact(bool block)

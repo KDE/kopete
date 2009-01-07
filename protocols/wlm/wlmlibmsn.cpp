@@ -145,7 +145,8 @@ Callbacks::gotBuddyListInfo (MSN::NotificationServerConnection * conn,
     for (; i != info->contactList.end (); ++i)
     {
         MSN::Buddy * contact = (*i).second;
-        if (contact->lists & MSN::LST_AB)       // only if it is the address book
+        if (contact->lists & MSN::LST_AB       // only if it is the address book
+           && contact->properties["isMessengerUser"] == "true")
         {
             allContacts[contact->userName.c_str ()] = 0;
             allContacts[contact->userName.c_str ()] |= MSN::LST_AB;
