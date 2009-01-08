@@ -1,10 +1,10 @@
 /*
     identitystatuswidget.cpp  -  Kopete identity status configuration widget
 
-    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2007-2009 by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2007      by Will Stephenson <wstephenson@kde.org>
 
-    Kopete    (c) 2003-2007 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2003-2009 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -98,14 +98,27 @@ IdentityStatusWidget::~IdentityStatusWidget()
 
 void IdentityStatusWidget::setIdentity(Kopete::Identity *identity)
 {
+	if (d->identity == identity)
+		return;
+
+	if (d->identity)
+	{
+		// if we were showing an identity before, disconnect the signal to handle updates
+		disconnect( d->identity, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)),
+		            this, SLOT(slotIdentityPropertyChanged(Kopete::PropertyContainer*)) );
+		disconnect( d->identity, SIGNAL(identityChanged(Kopete::Identity*)),
+		         this, SLOT(slotIdentityChanged(Kopete::Identity*)));
+	}
 	d->identity = identity;
 	load();
 
 	if (d->identity)
 	{
-		//TODO: Handle identity changes
-		//connect( d->identity, SIGNAL(identityChanged(Kopete::Identity*)), this, SLOT(slotUpdateAccountStatus()));
-		;
+		// Handle identity changes
+		connect( d->identity, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)),
+		         this, SLOT(slotIdentityPropertyChanged(Kopete::PropertyContainer*)) );
+		connect( d->identity, SIGNAL(identityChanged(Kopete::Identity*)),
+		         this, SLOT(slotIdentityChanged(Kopete::Identity*)));
 	}
 }
 
@@ -345,6 +358,22 @@ void IdentityStatusWidget::slotIdentityUnregistered( const Kopete::Identity* ide
 		hide();
 		setIdentity( Kopete::IdentityManager::self()->defaultIdentity() );
 	}
+}
+
+void IdentityStatusWidget::slotIdentityPropertyChanged(Kopete::PropertyContainer *container)
+{
+	Kopete::Identity *identity = dynamic_cast<Kopete::Identity*>(container);
+
+	slotIdentityChanged(identity);
+}
+
+void IdentityStatusWidget::slotIdentityChanged(Kopete::Identity *identity)
+{
+	// if it is not the identity currently being shown, there is no need to update
+	if (identity != d->identity)
+		return;
+
+	load();
 }
 
 #include "identitystatuswidget.moc"
