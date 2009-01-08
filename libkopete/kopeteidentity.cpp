@@ -101,6 +101,7 @@ QString Identity::label() const
 void Identity::setLabel(const QString& label)
 {
 	d->label = label;
+	emit identityChanged(this);
 }
 
 bool Identity::excludeConnect() const
