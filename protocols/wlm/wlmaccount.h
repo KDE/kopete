@@ -126,6 +126,8 @@ class WlmAccount:public
     QSet<QString> pendingList() const { return m_pendingList; }
 
     QSet<QString> serverSideContacts() const { return m_serverSideContactsPassports; }
+    
+    QMap<QString, QString> groupToGroupId() const { return m_groupToGroupId; }
 
     public
         slots:

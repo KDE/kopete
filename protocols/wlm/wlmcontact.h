@@ -76,6 +76,8 @@ public:
     void setContactSerial (QString contactSerial) { m_contactSerial = contactSerial; }
 
     QString contactSerial () const { return m_contactSerial; }
+    Kopete::Group* currentGroup () const { return m_currentGroup; }
+    void setCurrentGroup (Kopete::Group *currentGroup) { m_currentGroup = currentGroup; }
 
 	void setOnlineStatus(const Kopete::OnlineStatus&);
 
@@ -104,6 +106,9 @@ public slots:
 
     void blockContact ( bool block );
     void slotShowProfile();
+    virtual void sync( unsigned int flags );
+    bool isDisabled() { return m_disabled; }
+    void setDisabled( bool disabled, bool updateServer );
 
 protected slots:
     /**
@@ -124,6 +129,8 @@ protected:
     KAction * m_actionPrefs;
     QString m_msnobj;
     QString m_contactSerial;
+    Kopete::Group *m_currentGroup;
+    bool m_disabled;
 };
 
 #endif
