@@ -3,6 +3,7 @@
 
     Copyright (c) 2007      by Aleix Pol              <aleixpol@gmail.com>
     Copyright (c) 2008      by Matt Rogers            <mattr@kde.org>
+    Copyright (c) 2009      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
 
     Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -286,8 +287,16 @@ Qt::ItemFlags ContactListModel::flags( const QModelIndex &index ) const
 {
 	if ( !index.isValid() )
 		return 0;
+
+	Qt::ItemFlags f(Qt::ItemIsEnabled);
+	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( index.internalPointer() );
+	Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>( cle );
 	
-	return Qt::ItemIsEnabled;
+	// if it is a contact item, add the selectable flag
+	if (mc)
+		f |= Qt::ItemIsSelectable;
+	
+	return f;
 }
 
 QModelIndex ContactListModel::parent(const QModelIndex & index) const
