@@ -289,11 +289,9 @@ Qt::ItemFlags ContactListModel::flags( const QModelIndex &index ) const
 		return 0;
 
 	Qt::ItemFlags f(Qt::ItemIsEnabled);
-	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( index.internalPointer() );
-	Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>( cle );
 	
 	// if it is a contact item, add the selectable flag
-	if (mc)
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 		f |= Qt::ItemIsSelectable;
 	
 	return f;
