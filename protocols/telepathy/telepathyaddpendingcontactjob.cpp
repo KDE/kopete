@@ -35,8 +35,6 @@
 #include "telepathyaccount.h"
 #include "telepathycontact.h"
 
-using namespace Kopete::UI;
-
 class TelepathyAddPendingContactJob::Private
 {
 public:
