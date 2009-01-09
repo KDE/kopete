@@ -272,7 +272,7 @@ void YahooChatTask::parseJoin( YMSGTransfer *t )
 	}
 
         // Yahoo sends a captcha requests before we can join the room
-        if( room == 0 && category == 0 && joinState == 1 && !comment.isEmpty() ) 
+        if( room == 0 && category == 0 && !comment.isEmpty() ) 
         {
         	kDebug(YAHOO_RAW_DEBUG) << "Showing captcha request";
 		emit chatRoomJoined( room, category, "", handle );
