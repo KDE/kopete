@@ -315,6 +315,17 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		}
 	}
 
+	// remove p-tags
+	regExp.setPattern( "<p([^>]*)>(.*)</p>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.indexIn( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsg.replace( regExp, QLatin1String("\\2") );
+		}
+	}
+
 	// convert escaped chars
 	newMsg.replace( QLatin1String( "&gt;" ), QLatin1String( ">" ) );
 	newMsg.replace( QLatin1String( "&lt;" ), QLatin1String( "<" ) );
