@@ -210,7 +210,12 @@ void Message::setForegroundOverride( bool enabled )
 
 void Message::setRichTextOverride( bool enabled )
 {
-	d->richTextOverride = enabled;
+	if ( d->richTextOverride != enabled )
+	{
+		d->richTextOverride = enabled;
+		d->escapedBodyDirty = true;
+		d->parsedBodyDirty = true;
+	}
 }
 
 void Message::setForegroundColor( const QColor &color )
@@ -364,7 +369,7 @@ QString Message::escapedBody() const
 		return d->escapedBody;
 	else {
 		QString html;
-		if ( d->format == Qt::PlainText )
+		if ( d->format == Qt::PlainText || d->richTextOverride )
 			html = Qt::convertFromPlainText( d->body->toPlainText(), Qt::WhiteSpaceNormal );
 		else
 			html = d->body->toHtml();
