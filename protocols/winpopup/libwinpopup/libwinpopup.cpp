@@ -161,7 +161,7 @@ void WinPopupLib::startReadProcess(const QString &Host)
 	// for Samba 3
 	readGroupsProcess = new QProcess;
 	QStringList args;
-	args << "-N" << "-g" << "-L" << Host << "-";
+	args << "-N" << "-g" << "-L" << Host;
 
 	connect(readGroupsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int, QProcess::ExitStatus)));
 
@@ -322,7 +322,7 @@ void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 {
 	QProcess *sender = new QProcess(this);
 	QStringList args;
-	args << "-M" << Destination << "-N" << "-";
+	args << "-M" << Destination << "-N";
 	sender->start(smbClientBin, args);
 	sender->write(Body.trimmed().toLocal8Bit());
 	sender->closeWriteChannel();

@@ -543,7 +543,8 @@ void YahooAccount::disconnect()
 	if ( isConnected() )
 	{
 		kDebug(YAHOO_GEN_DEBUG) <<  "Attempting to disconnect from Yahoo server ";
-
+		
+		disconnected( Manual );
 		m_session->close();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 
@@ -551,7 +552,6 @@ void YahooAccount::disconnect()
 		for ( it = contacts().constBegin(); it != itEnd; ++it )
 			static_cast<YahooContact *>( it.value() )->setOnlineStatus( m_protocol->Offline );
 
-		disconnected( Manual );
 	}
 	else
 	{       //make sure we set everybody else offline explicitly, just for cleanup

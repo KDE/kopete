@@ -672,6 +672,7 @@ Q_OBJECT
 		void lt_gotSessionID( uint );
 		void cs_connected();
 		void slotGotCookies();
+		void streamDisconnected();
 		
 		/**
 		 * Used by tasks to identify a response to a login attempt

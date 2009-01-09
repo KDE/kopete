@@ -201,6 +201,7 @@ AlsaIO::AlsaIO(StreamType t, QString device, Format f)
 	ready = false;
 	written = 0;
 	notifier = 0;
+	bufferizing = true;
 	int err;
 	//const char *device = (m_type == Capture ? "hw:0,0" : "default");
 
@@ -284,6 +285,7 @@ AlsaIO::AlsaIO(StreamType t, QString device, Format f)
 	kDebug() << "Sampling rate =" << samplingRate;
 
 	pSizeBytes = snd_pcm_frames_to_bytes(handle, pSize);
+	kDebug() << pSizeBytes;
 	
 	ready = true;
 }
@@ -398,20 +400,33 @@ bool AlsaIO::start()
 
 void AlsaIO::write(const QByteArray& data)
 {
-	//kDebug() << "Buffered ! (" << data.size() << "bytes )";
 	if (!ready || m_type != Playback)
 	{
-		kDebug() << "Packet dropped";
-		return; // Must delete the data before ?
+		//kDebug() << "Packet dropped";
+		return;
 	}
 
 	buf.append(data);
-	if (notifier && !notifier->isEnabled())
+
+	// Bufferize for 150 ms before playing.
+	if (bufferizing && buf.size() >= pSizeBytes * 75)
+	{
+		bufferizing = false;
+		notifier->setEnabled(true);
+	} 
+
+	// Rebuffer if there is only 50 ms left in the buffer.
+	if (buf.size() < pSizeBytes * 25)
+	{
+		bufferizing = true;
+		notifier->setEnabled(false);
+	}
+	
+	if (!bufferizing && notifier && !notifier->isEnabled())
 	{
 		//kDebug() << "Reactivating notifier.";
 		notifier->setEnabled(true);
 	}
-	//kDebug() << "Buffer size is now" << buf.size() << "bytes )";
 }
 
 bool AlsaIO::isReady()
@@ -460,6 +475,8 @@ void AlsaIO::slotReadyRead(int)
 	buf.resize(pSizeBytes);
 	size = snd_pcm_readi(handle, buf.data(), pSize);
 	buf.resize(snd_pcm_frames_to_bytes(handle, size));
+
+	//kDebug() << "Read" << buf.size() << "bytes";
 	
 	emit readyRead();
 }
@@ -485,23 +502,16 @@ void AlsaIO::slotReadyWrite(int)
 
 void AlsaIO::writeData()
 {
-	//kDebug() << "Preparing writing ! " << times++;
 	if (buf.size() < pSizeBytes)
 	{
-		//kDebug() << "No enough Data in the buffer. Waiting for more...";
 		notifier->setEnabled(false);
-		//We don't write data now as it's an empty buffer and it would make weird noises only.
 		return;
 	}
-
-	int size = snd_pcm_writei(handle, buf.data(), snd_pcm_bytes_to_frames(handle, buf.size()));
-
-	emit bytesWritten();
-
-	//kDebug() << "Written on alsa device !";
 	
-	buf.clear();
-
+	//Write pSizeBytes from the buffer and remove it from the buffer.
+	int size = snd_pcm_writei(handle, buf.left(pSizeBytes), snd_pcm_bytes_to_frames(handle, pSizeBytes));
+	buf = buf.remove(0, pSizeBytes);
+	
 	if (size < 0)
 	{
 		if (size == -EPIPE)

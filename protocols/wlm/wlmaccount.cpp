@@ -722,6 +722,25 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
         if ( b->lists & MSN::LST_PL )
             m_pendingList.insert( passport );
 
+        // disabled users (not in list)
+        if(b->properties["isMessengerUser"] == "false")
+        {
+            // disable this contact
+            WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
+            if (!contact)
+            {
+                addContact (b->userName.c_str (), QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
+                contact = qobject_cast<WlmContact*>(contacts().value( passport ));
+            }
+            if(contact)
+            {
+                contact->setContactSerial (b->properties["contactId"].c_str ());
+                contact->setCurrentGroup(Kopete::Group::topLevel());
+                contact->setDisabled(true, false);
+            }
+            continue;
+        }
+
         if ( !contacts().value( passport ) )
         {
             if (!b->friendlyName.length ())
@@ -729,15 +748,14 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 
             QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
             std::list < MSN::Group * >::iterator i = b->groups.begin ();
-            //bool ok = false;
 
             // no groups, add to top level
             if (!b->groups.size ())
             {
-                // only add users in forward list and messenger users
-                if (b->lists & MSN::LST_AB && b->properties["isMessengerUser"] == "true" )
+                // only add users in forward list
+                if (b->lists & MSN::LST_AB)
                 {
-                    metacontact = addContact (b->userName.c_str (), QString(), 0L, Kopete::Account::DontChangeKABC);
+                    metacontact = addContact (b->userName.c_str (), QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
 
                     WlmContact * newcontact = qobject_cast<WlmContact*>(contacts ()[b->userName.c_str ()]);
                     if(!newcontact)
@@ -775,6 +793,44 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                         contact->setProperty (Kopete::Global::Properties::self ()->nickName (), QString (b->friendlyName.c_str ()));
                         contact->setContactSerial (b->properties["contactId"].c_str ());
                         kDebug (14210) << "ContactID: " << b->properties["contactId"].c_str ();
+                    }
+                }
+            }
+        }
+        else
+        {
+            // check if this contact has changed groups while we were offline.
+            // users in the toplevel group on server side
+            if( b->groups.size() == 0)
+            {
+                Kopete::Group *current = contacts().value( passport )->metaContact()->groups().first();
+                // the contact has no group, so put it on top level group
+                if(current != Kopete::Group::topLevel ())
+                {
+                    contacts().value( passport )->metaContact()->
+                        moveToGroup(current, Kopete::Group::topLevel ());
+                    qobject_cast<WlmContact*>(contacts().value( passport ))->setCurrentGroup(Kopete::Group::topLevel());
+                }
+                continue;
+            }
+            // users in only one group on server side
+            if( b->groups.size() == 1)
+            {
+                // users in only one group in the local list
+                if(contacts().value( passport )->metaContact()->groups().size() == 1) 
+                {
+                    Kopete::Group *current = contacts().value( passport )->metaContact()->groups().first();
+                    Kopete::Group *newgroup = Kopete::ContactList::self ()->findGroup (
+                            QString (b->groups.front()->name.c_str()).toAscii ());
+
+                    if(!current || !newgroup)
+                        continue;
+
+                    if(current != newgroup)
+                    {
+                        contacts().value( passport )->metaContact()->
+                           moveToGroup(current, newgroup);
+                        qobject_cast<WlmContact*>(contacts().value( passport ))->setCurrentGroup(newgroup);
                     }
                 }
             }

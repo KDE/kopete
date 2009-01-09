@@ -1,10 +1,10 @@
 /*
     identitystatuswidget.h - Kopete Identity Status configuration widget
 
-    Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright (c) 2007-2009 by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2007      by Will Stephenson <wstephenson@kde.org>
 
-    Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -28,6 +28,7 @@ namespace Kopete
 class Account;
 class Contact;
 class Identity;
+class PropertyContainer;
 }
 
 /**
@@ -76,6 +77,12 @@ private slots:
 	 * Handle departing identities
 	 */
 	void slotIdentityUnregistered( const Kopete::Identity* identity );
+
+	/**
+	 * Handle property changes in identities
+	 */
+	void slotIdentityPropertyChanged(Kopete::PropertyContainer *container );
+	void slotIdentityChanged(Kopete::Identity *identity);
 
 private:
 	void addAccountItem( Kopete::Account *account );

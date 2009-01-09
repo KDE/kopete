@@ -155,6 +155,7 @@ void Client::connect( const QString &host, const uint port, const QString &userI
 	QObject::connect( d->stream, SIGNAL( connected() ), this, SLOT( cs_connected() ) );
 	QObject::connect( d->stream, SIGNAL( error(int) ), this, SLOT( streamError(int) ) );
 	QObject::connect( d->stream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
+	QObject::connect( d->stream, SIGNAL( disconnected() ), this, SLOT( streamDisconnected() ) );
 	
 	d->stream->connectToServer( host, false );
 }
@@ -195,6 +196,7 @@ void Client::close()
 	if( m_connector )
 		m_connector->deleteLater();
 	m_connector = 0L;
+	d->active = false;
 }
 
 int Client::error()
@@ -243,6 +245,12 @@ void Client::streamReadyRead()
 	// take the incoming transfer and distribute it to the task tree
 	Transfer * transfer = d->stream->read();
 	distribute( transfer );
+}
+
+void Client::streamDisconnected()
+{
+	d->active = false;
+	emit disconnected();
 }
 
 void Client::lt_loginFinished()

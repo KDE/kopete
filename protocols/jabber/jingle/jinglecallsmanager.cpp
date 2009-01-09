@@ -63,10 +63,14 @@ JingleCallsManager::~JingleCallsManager()
 {
 	ortp_exit();
 
-	delete d->mediaManager;
 	delete d->gui;
-	//delete d->sessions;
-	//delete d->contentDialog; --> Will be deleted when necessary.
+	
+	for (int i = 0; i < d->sessions.count(); i++)
+	{
+		delete d->sessions[i];
+	}
+
+	delete d->mediaManager;
 
         delete d;
 }
@@ -78,7 +82,7 @@ void JingleCallsManager::init()
 	d->client->jingleSessionManager()->setFirstPort(d->jabberAccount->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
 
 	QString filename;
-	if (d->jabberAccount->configGroup()->readEntry("JingleAutoDetectIP", true) && KIO::NetAccess::download(KUrl(ADDRESS), filename, 0))
+	if (d->jabberAccount->configGroup()->readEntry("JingleAutoDetectIP", false) && KIO::NetAccess::download(KUrl(ADDRESS), filename, 0))
 	{
 		QFile file(filename);
 		file.open(QIODevice::ReadOnly);
