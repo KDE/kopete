@@ -257,8 +257,6 @@ void YahooChatTask::parseJoin( YMSGTransfer *t )
 	comment = t->firstParam( 105 );
 	error = t->firstParam( 114 );
 
-	kDebug(YAHOO_RAW_DEBUG) << error;
-
 	if( error.startsWith( "-35" ) ) {
 		client()->notifyError( i18n("Could not join chat"), 
 				i18n("The room is full. Please choose another one."), Client::Error );
@@ -272,6 +270,14 @@ void YahooChatTask::parseJoin( YMSGTransfer *t )
 				i18n("An unknown error occurred while joining the chat room."), Client::Error );
 		return;
 	}
+
+        // Yahoo sends a captcha requests before we can join the room
+        if( room == 0 && category == 0 && joinState == 1 && !comment.isEmpty() ) 
+        {
+        	kDebug(YAHOO_RAW_DEBUG) << "Showing captcha request";
+		emit chatRoomJoined( room, category, "", handle );
+		emit chatMessageReceived( "Yahoo", comment, handle );
+        }
 
 	if( room > 0 && category > 0 )
 	{
