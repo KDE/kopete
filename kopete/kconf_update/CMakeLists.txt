@@ -15,7 +15,7 @@ set( kopeteclupdate_SRCS kopete-contactlist-v2-update.cpp )
 kde4_add_executable(kopete-contactlist-v2-updater NOGUI ${kopeteclupdate_SRCS})
 
 target_link_libraries(kopete-contactlist-v2-updater
-                      ${KDE4_KDEUI_LIBS})
+                      ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
 install( TARGETS kopete-contactlist-v2-updater DESTINATION
          ${BIN_INSTALL_DIR}/kconf_update_bin)
 install( FILES kopete-contactlist-v2-update.upd DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
