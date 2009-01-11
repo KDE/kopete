@@ -312,7 +312,7 @@ void ChatView::raise( bool activate )
 
 	//Will not activate window if user was typing
 	if ( activate )
-		KWindowSystem::activateWindow( m_mainWindow->winId() );
+		KWindowSystem::forceActiveWindow( m_mainWindow->winId() );
 
 }
 
