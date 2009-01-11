@@ -37,6 +37,10 @@ macro_optional_find_package(LibMeanwhile)
 macro_bool_to_01(LIBMEANWHILE_FOUND HAVE_LIBMEANWHILE)
 macro_log_feature(LIBMEANWHILE_FOUND "libmeanwhile" "A library for protocol support for connection to Sametime servers" "http://meanwhile.sf.net" FALSE "" "Required for the Kopete Meanwhile protocol")
 
+macro_optional_find_package(Libgadu)
+macro_bool_to_01(LIBGADU_FOUND HAVE_LIBGADU)
+macro_log_feature(LIBGADU_FOUND "libgadu" "A library providing support for Gadu-Gadu protocol" "http://toxygen.net/libgadu/" FALSE "1.8.0" "Required for Kopete Gadu-Gadu protocol")
+
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)

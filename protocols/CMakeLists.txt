@@ -1,6 +1,3 @@
-macro_optional_find_package(OpenSSL)
-macro_log_feature(OPENSSL_FOUND "OpenSSL" "A toolkit implementing the Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) protocols" "http://openssl.org" FALSE "" "Required for the Kopete Gadu-Gadu protocol.")
-
 # On Solaris, some of the name resolution functions are in libnsl;
 # this needs to be linked in if found. Copied from kdelibs.
 check_library_exists(nsl gethostbyname "" HAVE_NSL_LIBRARY)
@@ -47,9 +44,9 @@ if(NOT WIN32)
   if(WITH_winpopup)
     add_subdirectory( winpopup )
   endif(WITH_winpopup)
-  if(WITH_gadu AND OPENSSL_FOUND)
+  if(WITH_gadu AND LIBGADU_FOUND)
 	add_subdirectory( gadu )
-  endif(WITH_gadu AND OPENSSL_FOUND)
+  endif(WITH_gadu AND LIBGADU_FOUND)
   if(WITH_sms)
     add_subdirectory( sms )
   endif(WITH_sms)
