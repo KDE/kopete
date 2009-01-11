@@ -41,6 +41,7 @@ private slots:
 	void slotLast();
 	void slotNext();
 	void slotQuote();
+	void slotViewHistory();
 
 private:
 	HistoryLogger *m_logger;
