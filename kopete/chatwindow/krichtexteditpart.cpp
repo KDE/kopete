@@ -42,6 +42,8 @@
 #include <ktextedit.h>
 #include <ktoggleaction.h>
 #include <kactioncollection.h>
+#include "kopetechatwindowsettings.h"
+#include "kopeteappearancesettings.h"
 
 typedef KParts::GenericFactory<KRichTextEditPart> KRichTextEditPartFactory;
 K_EXPORT_COMPONENT_FACTORY( librichtexteditpart, KRichTextEditPartFactory )
@@ -271,6 +273,9 @@ void KRichTextEditPart::createActions()
     actionCollection()->addAction( "format_textcolor", d->actionTextColor );
     connect( d->actionTextColor, SIGNAL(triggered(bool)), this, SLOT(setTextColor()) );
 
+    connect( KopeteChatWindowSettings::self(), SIGNAL(chatwindowAppearanceChanged()),
+                 this, SLOT( updateCharFormat() ) );
+
     //Font Family
     d->action_font = new KFontAction( i18n("&Font"), actionCollection() );
     actionCollection()->addAction( "format_font", d->action_font );
@@ -375,6 +380,10 @@ void KRichTextEditPart::updateCharFormat()
         d->action_italic->setChecked( d->desiredFont.italic() );
         d->action_underline->setChecked( d->desiredFont.underline() );
     }
+    QPalette palette = d->editor->palette();
+    palette.setColor(QPalette::Active, QPalette::Base, Kopete::AppearanceSettings::self()->chatBackgroundColor().name() );
+    palette.setColor(QPalette::Inactive, QPalette::Base, Kopete::AppearanceSettings::self()->chatBackgroundColor().name() );
+    d->editor->setPalette( palette );
     d->updating = false;
 }
 
