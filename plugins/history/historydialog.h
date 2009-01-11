@@ -96,6 +96,8 @@ class HistoryDialog : public KDialog
 		void slotCopy();
 		void slotCopyURL();
 
+		void slotImportHistory();
+
 	private:
 		enum Disabled { Prev=1, Next=2 };
 		void refreshEnabled( /*Disabled*/ uint disabled );

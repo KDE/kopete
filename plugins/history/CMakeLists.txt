@@ -11,7 +11,8 @@ set(kopete_history_PART_SRCS
    historydialog.cpp 
    historylogger.cpp 
    converter.cpp 
-   historyguiclient.cpp )
+   historyguiclient.cpp
+	historyimport.cpp )
 
 kde4_add_ui_files(kopete_history_PART_SRCS historyviewer.ui )
 

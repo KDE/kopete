@@ -51,6 +51,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="importHistory" >
+       <property name="text" >
+        <string>Import History</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="textLabel1_2" >
        <property name="text" >
         <string>Message Filter:</string>
@@ -67,7 +74,7 @@
        </property>
        <property name="minimumSize" >
         <size>
-         <width>200</width>
+         <width>140</width>
          <height>0</height>
         </size>
        </property>

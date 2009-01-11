@@ -255,7 +255,9 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 		return;
 	}
 
-	QDomDocument doc=getDocument(c,0);
+	QDate date = msg.timestamp().date();
+		
+	QDomDocument doc=getDocument(c, QDate::currentDate().month() - date.month() - (QDate::currentDate().year() - date.year()) * 12);
 	QDomElement docElem = doc.documentElement();
 
 	if(docElem.isNull())
@@ -266,8 +268,8 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 		QDomElement headElem = doc.createElement( "head" );
 		docElem.appendChild( headElem );
 		QDomElement dateElem = doc.createElement( "date" );
-		dateElem.setAttribute( "year",  QString::number(QDate::currentDate().year()) );
-		dateElem.setAttribute( "month", QString::number(QDate::currentDate().month()) );
+		dateElem.setAttribute( "year",  QString::number(date.year()) );
+		dateElem.setAttribute( "month", QString::number(date.month()) );
 		headElem.appendChild(dateElem);
 		QDomElement myselfElem = doc.createElement( "contact" );
 		myselfElem.setAttribute( "type",  "myself" );
@@ -293,7 +295,7 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 	// On hight-traffic channel, saving can take lots of CPU. (because the file is big)
 	// So i wait a time proportional to the time needed to save..
 
-	const QString filename=getFileName(c,QDate::currentDate());
+	const QString filename=getFileName(c, date);
 	if(!m_toSaveFileName.isEmpty() && m_toSaveFileName != filename)
 	{ //that mean the contact or the month has changed, save it now.
 		saveToDisk();

@@ -18,6 +18,7 @@
 
 #include "historydialog.h"
 #include "historylogger.h"
+#include "historyimport.h"
 #include "ui_historyviewer.h"
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
@@ -157,6 +158,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
 	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
+	connect(mMainWidget->importHistory, SIGNAL(clicked()), this, SLOT(slotImportHistory()));
 	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
 
 	//initActions
@@ -609,6 +611,12 @@ void HistoryDialog::slotCopyURL()
 	QApplication::clipboard()->setText( mURL, QClipboard::Clipboard);
 	QApplication::clipboard()->setText( mURL, QClipboard::Selection);
 	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+}
+
+void HistoryDialog::slotImportHistory(void)
+{
+	HistoryImport importer(this);
+	importer.exec();
 }
 
 #include "historydialog.moc"
