@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="20" name="kopetechatwindow">
+<kpartgui version="21" name="kopetechatwindow">
 	<MenuBar>
 		<Menu name="tools" >
 			<text>&amp;Tools</text>
