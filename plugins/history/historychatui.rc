@@ -17,4 +17,8 @@
 		<Action name="historyQuote" />
 	</ToolBar>
 
+	<ToolBar name="chatToolBar" fullWidth="true">
+		<Action name="viewChatHistory" />
+	</ToolBar>
+
 </kpartgui>
