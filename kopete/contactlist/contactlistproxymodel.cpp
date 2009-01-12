@@ -33,6 +33,7 @@ namespace UI {
 ContactListProxyModel::ContactListProxyModel(QObject* parent)
 	: QSortFilterProxyModel(parent)
 {
+	setDynamicSortFilter(true);
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
 }
 
