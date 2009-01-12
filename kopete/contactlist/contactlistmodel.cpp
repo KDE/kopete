@@ -129,11 +129,7 @@ int ContactListModel::rowCount( const QModelIndex& parent ) const
 	
 	int cnt = 0;
 	if ( !parent.isValid() )
-	{ //Number of groups and contacts
 		cnt = m_groups.count();
-		foreach( QList<Kopete::MetaContact*> l, m_contacts.values() )
-			cnt += l.count();
-	}
 	else
 	{
 		if ( g )
