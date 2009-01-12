@@ -25,6 +25,7 @@ namespace Kopete {
 class Group;
 class Contactlist;
 class MetaContact;
+class ContactListElement;
 	
 namespace UI {
 
@@ -47,6 +48,8 @@ Q_OBJECT
 		virtual bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
 		
 		virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+		
+		QModelIndexList indexListFor ( Kopete::ContactListElement* ) const;
 	public Q_SLOTS:
 		void addMetaContact( Kopete::MetaContact* );
 		void removeMetaContact( Kopete::MetaContact* );
