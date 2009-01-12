@@ -134,14 +134,14 @@ namespace XMPP
 		/*
 		 * Before doing anything, this method must
 		 * be called to set the JingleSession pointer
-		 * so the task has all necessary informations.
+		 * so the task has all necessary information.
 		 */
 		void setSession(JingleSession*);
 		
 		/*
 		 * Send a session-initiate jingle action.
 		 * There is no argument as the JingleSession set
-		 * sooner must have all necessary informations
+		 * sooner must have all necessary information
 		 * (to, contents and sid)
 		 * In contents list, contents with raw-udp transport
 		 * must have a candidate set.

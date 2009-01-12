@@ -30,7 +30,7 @@ class QUdpSocket;
 namespace XMPP
 {
 	/*
-	 * This class contains all informations about a particular content in a jingle session.
+	 * This class contains all information about a particular content in a jingle session.
 	 * It also has the socket that will be used for streaming.
 	 */
 	//This is the Raw-udp jingle content.

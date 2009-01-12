@@ -4,7 +4,7 @@
  * Manages all Jingle sessions.
  * This class receives all incoming jingle actions and perform these
  * actions on the right jingle session.
- * It also keeps informations about protocols supported by the application (transports, payloads, profiles)
+ * It also keeps information about protocols supported by the application (transports, payloads, profiles)
  *
  * Copyright (C) 2008 - Detlev Casanova <detlev.casanova@gmail.com>
  *

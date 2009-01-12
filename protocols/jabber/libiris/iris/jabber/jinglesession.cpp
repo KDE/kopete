@@ -287,7 +287,7 @@ void JingleSession::acceptSession()
 		QList<JingleContent*> contentList;
 		for (int i = 0; i < contents().count(); i++)
 		{
-			qDebug() << "setting right informations in the content" << contents()[i]->name();
+			qDebug() << "setting right information in the content" << contents()[i]->name();
 			// First, set our supported payload-types.
 			JingleContent *c = new JingleContent();
 			c->setType(contents()[i]->type());

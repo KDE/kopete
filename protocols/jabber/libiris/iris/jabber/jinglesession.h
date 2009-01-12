@@ -1,7 +1,7 @@
 /*
  * jinglesession.cpp - Jingle session
  * 
- * This class defines a Jingle Session which contains all informations about the session.
+ * This class defines a Jingle Session which contains all information about the session.
  * This is here that the state machine is and where almost everything is done for a session.
  * 
  * Copyright (C) 2008 - Detlev Casanova <detlev.casanova@gmail.com>

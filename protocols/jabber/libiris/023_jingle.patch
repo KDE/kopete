@@ -734,7 +734,7 @@ Index: iris/jabber/jinglesession.h
 +/*
 + * jinglesession.cpp - Jingle session
 + * 
-+ * This class defines a Jingle Session which contains all informations about the session.
++ * This class defines a Jingle Session which contains all information about the session.
 + * This is here that the state machine is and where almost everything is done for a session.
 + * 
 + * Copyright (C) 2008 - Detlev Casanova <detlev.casanova@gmail.com>
@@ -1726,14 +1726,14 @@ Index: iris/jabber/jingletasks.h
 +		/*
 +		 * Before doing anything, this method must
 +		 * be called to set the JingleSession pointer
-+		 * so the task has all necessary informations.
++		 * so the task has all necessary information.
 +		 */
 +		void setSession(JingleSession*);
 +		
 +		/*
 +		 * Send a session-initiate jingle action.
 +		 * There is no argument as the JingleSession set
-+		 * sooner must have all necessary informations
++		 * sooner must have all necessary information
 +		 * (to, contents and sid)
 +		 * In contents list, contents with raw-udp transport
 +		 * must have a candidate set.
@@ -2218,7 +2218,7 @@ Index: iris/jabber/jinglecontent.h
 +namespace XMPP
 +{
 +	/*
-+	 * This class contains all informations about a particular content in a jingle session.
++	 * This class contains all information about a particular content in a jingle session.
 +	 * It also has the socket that will be used for streaming.
 +	 */
 +	//This is the Raw-udp jingle content.
@@ -2699,7 +2699,7 @@ Index: iris/jabber/jinglesession.cpp
 +		QList<JingleContent*> contentList;
 +		for (int i = 0; i < contents().count(); i++)
 +		{
-+			qDebug() << "setting right informations in the content" << contents()[i]->name();
++			qDebug() << "setting right information in the content" << contents()[i]->name();
 +			// First, set our supported payload-types.
 +			JingleContent *c = new JingleContent();
 +			c->setType(contents()[i]->type());
@@ -3085,7 +3085,7 @@ Index: iris/jabber/jinglesessionmanager.h
 + * Manages all Jingle sessions.
 + * This class receives all incoming jingle actions and perform these
 + * actions on the right jingle session.
-+ * It also keeps informations about protocols supported by the application (transports, payloads, profiles)
++ * It also keeps information about protocols supported by the application (transports, payloads, profiles)
 + *
 + * Copyright (C) 2008 - Detlev Casanova <detlev.casanova@gmail.com>
 + *
