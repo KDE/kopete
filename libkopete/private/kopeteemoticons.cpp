@@ -47,7 +47,14 @@ QList<KEmoticonsTheme::Token> Emoticons::tokenize(const QString &message, KEmoti
 {
 	if ( Kopete::AppearanceSettings::self()->useEmoticons() )
 	{
-		return Kopete::Emoticons::self()->theme().tokenize(message, mode);
+		QList<KEmoticonsTheme::Token> ret = Kopete::Emoticons::self()->theme().tokenize(message, mode);
+
+		if( !ret.size() )
+		{
+			ret.append( KEmoticonsTheme::Token( KEmoticonsTheme::Text, message ) );
+		}
+
+		return ret;
 	} else
 	{
 		QList<KEmoticonsTheme::Token> result;
