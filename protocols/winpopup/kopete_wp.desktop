@@ -25,6 +25,7 @@ Name[nn]=Vindaugsmeldingar
 Name[pt_BR]=Janela de Contexto
 Name[x-test]=xxWinPopupxx
 Comment=Sends Windows WinPopup messages
+Comment[ar]=إرسال رسائل النوافذ WinPopup
 Comment[ca]=Envia missatges de finestres emergents de Windows
 Comment[cs]=Odesílání Windows WinPopup zpráv
 Comment[da]=Sender Windows WinPopup-beskeder

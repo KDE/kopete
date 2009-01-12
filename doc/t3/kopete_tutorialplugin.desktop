@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Tutorial Plugin
+Name[ar]=ملحق التعليمات
 Name[bg]=Приставка за историята
 Name[ca]=Connector del tutelat
 Name[cs]=Výukový modul
@@ -43,6 +44,7 @@ Name[x-test]=xxTutorial Pluginxx
 Name[zh_CN]=教程插件
 Name[zh_TW]=教學外掛程式
 Comment=Demonstration plugin for teaching Kopete development
+Comment[ar]=ملحق عرض تعليم تطوير Kopete
 Comment[bg]=Приставка за демонстрация развитието на Kopete
 Comment[ca]=Connexió de demostració per ensenyar el desenvolupament del Kopete
 Comment[cs]=Demonstrační modul pro výuku vývoje pro Kopete

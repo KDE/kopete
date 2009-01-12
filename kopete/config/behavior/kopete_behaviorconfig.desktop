@@ -9,6 +9,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Behavior
+Name[ar]=السلوك
 Name[bg]=Поведение
 Name[bn]=আচরণ
 Name[br]=Emzalc'h
@@ -70,6 +71,7 @@ Name[zh_CN]=行为
 Name[zh_HK]=行為
 Name[zh_TW]=行為
 Comment=Personalize Kopete's Behavior
+Comment[ar]=تخصيص سلوكات Kopete' s
 Comment[bg]=Настройване поведението на Kopete
 Comment[ca]=Personalitzeu el comportament del Kopete
 Comment[cs]=Přizpůsobení chování Kopete

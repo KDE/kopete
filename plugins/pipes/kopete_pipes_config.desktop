@@ -9,6 +9,7 @@ X-KDE-ParentApp=kopete_pipes
 X-KDE-ParentComponents=kopete_pipes
 
 Name=Pipes
+Name[ar]=أنابيب
 Name[ca]=Canonades
 Name[cs]=Roury
 Name[de]=Umleitungen
@@ -40,6 +41,7 @@ Name[x-test]=xxPipesxx
 Name[zh_CN]=管道
 Name[zh_TW]=管線
 Comment=Pipe messages through an external program or script
+Comment[ar]=استخلص الرسائل عن طريق برنامج أو سكريبت خارجي
 Comment[ca]=Condueix els missatges cap a un programa extern o un script
 Comment[cs]=Předat zprávy pomocí roury do externího programu nebo skriptu
 Comment[da]=Videreled beskeder gennem et eksternt program eller script

@@ -14,6 +14,7 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Comment=Encrypt chat sessions with Off-The-Record encryption
+Comment[ar]=شفر جلسة الدردشة بـ تعطيل-التسجيل المشفر
 Comment[ca]=Encripta les sessions de xat amb un xifrat «Off-The-Record»
 Comment[cs]=Šifrovat rozhovory pomocí OTR
 Comment[da]=Kryptér chatsessioner med 'uofficielt'-kryptering

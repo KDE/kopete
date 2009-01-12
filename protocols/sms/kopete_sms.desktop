@@ -24,6 +24,7 @@ Name[ko]=문자 메시지
 Name[ne]=एसएमएस
 Name[x-test]=xxSMSxx
 Comment=Send SMS messages to mobile phones
+Comment[ar]=أرسل رسائل قصيرة للهواتف المتنقلة
 Comment[ca]=Envia missatges SMS a telèfons mòbils
 Comment[cs]=Poslat SMS na mobilní telefony
 Comment[da]=Send SMS-beskeder til mobiltelefoner

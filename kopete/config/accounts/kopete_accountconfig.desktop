@@ -10,6 +10,7 @@ X-KDE-ParentComponents=kopete
 X-KDE-Weight=10
 
 Name=Accounts
+Name[ar]=حسابات
 Name[bg]=Сметки
 Name[bn]=অ্যাকাউন্ট
 Name[br]=Kontoù
@@ -69,6 +70,7 @@ Name[zh_CN]=账户
 Name[zh_HK]=帳號
 Name[zh_TW]=帳號
 Comment=Manage Your Accounts and Identities
+Comment[ar]=أدِر حساباتك وعضوياتك
 Comment[ca]=Gestioneu els vostres comptes i identitats
 Comment[cs]=Správa účtů a identit
 Comment[da]=Håndtér dine konti og identiteter

@@ -10,6 +10,7 @@ X-KDE-ParentComponents=kopete
 X-KDE-Weight=200
 
 Name=Plugins
+Name[ar]=ملحقات
 Name[bg]=Приставки
 Name[br]=Lugantoù
 Name[ca]=Connectors
@@ -54,6 +55,7 @@ Name[x-test]=xxPluginsxx
 Name[zh_CN]=插件
 Name[zh_TW]=外掛程式
 Comment=Select and Configure Plugins
+Comment[ar]=تحديد و إعداد الملحقات
 Comment[ca]=Selecciona i configura els connectors
 Comment[cs]=Výběr a nastavení modulů
 Comment[da]=Vælg og indstil plugins

@@ -10,6 +10,7 @@ X-KDE-ParentApp=kopete_msn
 X-KDE-ParentComponents=kopete_msn
 
 Name=MSN Plugin
+Name[ar]=MSN ملحق
 Name[bg]=MSN
 Name[bn]=এমএসএন প্লাগিন
 Name[br]=Lugent MSN
@@ -69,6 +70,7 @@ Name[zh_CN]=MSN 插件
 Name[zh_HK]=MSN 插件
 Name[zh_TW]=MSN 外掛程式
 Comment=Microsoft Network Protocol
+Comment[ar]=ميفاق شبكة مايكروسوفت
 Comment[bg]=Протокол за връзка с Microsoft Network
 Comment[bn]=মাইক্রোসফ্ট নেটওয়ার্ক প্রোটোকল
 Comment[br]=Komenad rouedad Microsoft

@@ -9,6 +9,7 @@ X-KDE-ParentApp=kopete_nowlistening
 X-KDE-ParentComponents=kopete_nowlistening
 
 Name=Now Listening
+Name[ar]=الاستماع الآن
 Name[bg]=Инфо за песен
 Name[bn]=এখন শুনছেন
 Name[ca]=Ara s'escolta
@@ -64,6 +65,7 @@ Name[zh_CN]=现在收听
 Name[zh_HK]=現正聆聽
 Name[zh_TW]=正在收聽
 Comment=Tells your buddies what you're listening to
+Comment[ar]=أطلع رفاقك على ما تستمعه الآن
 Comment[bg]=Приставка за информиране на приятелите какво слушате
 Comment[bn]=আপনার বন্ধুদের বলে আপনি কি শুনছেন
 Comment[ca]=Li diu als vostres companys què esteu escoltant

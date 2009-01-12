@@ -9,6 +9,7 @@ X-KDE-ParentApp=kopete_alias
 X-KDE-ParentComponents=kopete_alias
 
 Name=Alias
+Name[ar]=الكنية
 Name[bg]=Запазени думи
 Name[bn]=ছদ্মনাম
 Name[br]=Lesanv
@@ -48,6 +49,7 @@ Name[zh_CN]=别名
 Name[zh_HK]=別名
 Name[zh_TW]=別名
 Comment=Adds custom aliases for commands
+Comment[ar]=أضف كنيات مخصصة للأوامر
 Comment[bg]=Приставка за добавяне на запазени думи, при въвеждането на които ще се изпълняват зададени команди
 Comment[bn]=কম্যান্ডের জন্য স্বনির্বাচিত ছদ্মনাম যোগ করে
 Comment[ca]=Afegeix àlies personalitzats als vostres comandaments

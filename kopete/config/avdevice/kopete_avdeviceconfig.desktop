@@ -10,6 +10,7 @@ X-KDE-ParentComponents=kopete
 X-KDE-Weight=180
 
 Name=Video
+Name[ar]=فيديو
 Name[ca]=Vídeo
 Name[el]=Βίντεο
 Name[es]=Vídeo
@@ -31,6 +32,7 @@ Name[x-test]=xxVideoxx
 Name[zh_CN]=视频
 Name[zh_TW]=影像
 Comment=Configure Video Devices
+Comment[ar]=اضبط أجهزة الفيديو
 Comment[ca]=Configura els dispositius de vídeo
 Comment[cs]=Nastavení video zařízení
 Comment[da]=Indstil videoenheder

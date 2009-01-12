@@ -9,6 +9,7 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Contact List
+Name[ar]=قائمة المراسَل
 Name[ca]=Llista de contactes
 Name[cs]=Seznam kontaktů
 Name[da]=Kontaktliste
@@ -47,6 +48,7 @@ Name[x-test]=xxContact Listxx
 Name[zh_CN]=联系人列表
 Name[zh_TW]=聯絡人清單
 Comment=Configure Contact List Look and Feel
+Comment[ar]=اضبط  مظهر و ملمس نافذة الدردشة
 Comment[ca]=Configura l'aparença i comportament de la llista de contactes
 Comment[cs]=Nastavení vzhledu a chování seznamu kontaktů
 Comment[da]=Indstil kontaktlistens look & feel
