@@ -151,7 +151,7 @@ WlmChatSession::sendFile (const QString & fileLocation,
     MSN::fileTransferInvite ft;
     ft.type = MSN::FILE_TRANSFER_WITHOUT_PREVIEW;
     ft.sessionId = generateSessionID();
-    ft.filename = fileLocation.toAscii ().data ();
+    ft.filename = fileLocation.toUtf8 ().data ();
     ft.friendlyname =
         QFileInfo (fileLocation).fileName ().toLatin1 ().data ();
     ft.filesize = QFile (fileLocation).size ();
