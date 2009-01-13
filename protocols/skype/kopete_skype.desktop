@@ -19,6 +19,7 @@ Name=Skype
 Name[x-test]=xxSkypexx
 Comment=Skype protocol plugin (only wrapper!)
 Comment[el]=Πρόσθετο πρωτοκόλλου Skype (μόνο περίβλημα!)
+Comment[et]=Skype protokolli plugin (ainult kestprogramm!)
 Comment[fr]=Module du protocole Skype (seulement l'encapsulation)
 Comment[gl]=Extensión para o protocolo de Skype (só é un wrapper!)
 Comment[km]=កម្មវិធី​ជំនួយ​ពិធីការ Skype (តែ wrapper ប៉ុណ្ណោះ !)
