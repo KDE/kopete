@@ -48,6 +48,8 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	setDragEnabled( true );
 	setAcceptDrops( true );
 	setAlternatingRowColors( true );
+	setAnimated( true );
+	setDropIndicatorShown( true );
 	setItemDelegate( new KopeteItemDelegate( this ) );
 
 	connect( this, SIGNAL( activated(const QModelIndex&)),

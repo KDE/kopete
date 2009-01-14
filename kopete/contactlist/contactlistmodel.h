@@ -48,6 +48,12 @@ Q_OBJECT
 		virtual bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
 		
 		virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+
+		/* drag-n-drop stuff */
+		virtual Qt::DropActions supportedDropActions() const;
+		virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
+		virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+		                          int row, int column, const QModelIndex &parent);
 		
 		QModelIndexList indexListFor ( Kopete::ContactListElement* ) const;
 	public Q_SLOTS:
@@ -56,6 +62,10 @@ Q_OBJECT
 		
 		void addGroup( Kopete::Group* );
 		void removeGroup( Kopete::Group* );
+
+		void addMetaContactToGroup( Kopete::MetaContact*, Kopete::Group* );
+		void removeMetaContactFromGroup( Kopete::MetaContact*, Kopete::Group* );
+		void moveMetaContactToGroup( Kopete::MetaContact*, Kopete::Group*, Kopete::Group*);
 	
 	private Q_SLOTS:
 		void resetModel();
