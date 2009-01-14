@@ -69,36 +69,16 @@ ContactListModel::~ContactListModel()
 void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 {
 	foreach( Kopete::Group* g, contact->groups() )
-	{
-		int pos = m_groups.indexOf( g );
-		int groupMemberCount = m_contacts[g].count();
-		QModelIndex groupIndex = index( pos, 0, QModelIndex() );
-		beginInsertRows( groupIndex, groupMemberCount, groupMemberCount );
-		m_contacts[g].append(contact);
-		endInsertRows();
-	}
-
+		addMetaContactToGroup( contact, g );
+	
 	connect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
 	         this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
 }
 
 void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
 {
-	QModelIndexList list = indexListFor(contact);
-
-	foreach(QModelIndex idx, list)
-	{
-		// get the group
-		Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>(idx.parent().internalPointer());
-		Kopete::Group *g = dynamic_cast<Kopete::Group*>(cle);
-		if (!g)
-			continue;
-		
-		// and now remove the item from the group
-		beginRemoveRows(idx.parent(), idx.row(), idx.row());
-		m_contacts[g].removeAt(idx.row());
-		endRemoveRows();
-	}
+	foreach(Kopete::Group *g, contact->groups())
+		removeMetaContactFromGroup(contact, g);
 
 	disconnect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
 	            this, SLOT(handleContactDataChange(Kopete::MetaContact*)));
@@ -106,8 +86,9 @@ void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
 
 void ContactListModel::addGroup( Kopete::Group* group )
 {
+	int pos = m_groups.count();
 	kDebug(14001) << "addGroup" << group->displayName();
-	beginInsertRows( QModelIndex(), rowCount(), rowCount() );
+	beginInsertRows( QModelIndex(), pos, pos );
 	m_groups.append( group );
 	m_contacts[group] = QList<Kopete::MetaContact*>();
 	endInsertRows();
@@ -117,7 +98,7 @@ void ContactListModel::removeGroup( Kopete::Group* group )
 {
 	int pos = m_groups.indexOf( group );
 	beginRemoveRows( QModelIndex(), pos, pos );
-	m_groups.removeAt( m_groups.indexOf( group ) );
+	m_groups.removeAt( pos );
 	m_contacts.remove( group );
 	endRemoveRows();
 }
@@ -127,6 +108,12 @@ void ContactListModel::addMetaContactToGroup( Kopete::MetaContact *mc, Kopete::G
 	int pos = m_groups.indexOf( group );
 	int offset = m_contacts[group].count();
 	
+	if (pos == -1)
+	{
+		addGroup( group );
+		pos = m_groups.indexOf( group );
+	}
+
 	// if the metacontact already belongs to the group, returns
 	if (m_contacts[group].contains(mc))
 		return;
@@ -135,6 +122,10 @@ void ContactListModel::addMetaContactToGroup( Kopete::MetaContact *mc, Kopete::G
 	beginInsertRows(idx, offset, offset);
 	m_contacts[group].append(mc);
 	endInsertRows();
+
+	// emit the dataChanged signal for the group index so that the filtering proxy
+	// can evaluate the row
+	emit dataChanged(idx, idx);
 }
 
 void ContactListModel::removeMetaContactFromGroup( Kopete::MetaContact *mc, Kopete::Group *group )
@@ -150,6 +141,10 @@ void ContactListModel::removeMetaContactFromGroup( Kopete::MetaContact *mc, Kope
 	beginRemoveRows(idx, offset, offset);
 	m_contacts[group].removeAt(offset);
 	endRemoveRows();
+
+	// emit the dataChanged signal for the group index so that the filtering proxy
+	// can evaluate if the group row should still be visible
+	emit dataChanged(idx, idx);
 }
 
 void ContactListModel::moveMetaContactToGroup( Kopete::MetaContact *mc, Kopete::Group *from, Kopete::Group *to)
@@ -457,6 +452,7 @@ bool ContactListModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
 		// Merge the metacontacts from mimedata into this one
 		Kopete::ContactList::self()->mergeMetaContacts(metaContacts, mc);
+		return true;
 	}
 	else if (parent.data( Kopete::Items::TypeRole ) == Kopete::Items::Group)
 	{
@@ -534,17 +530,17 @@ void ContactListModel::resetModel()
 
 void ContactListModel::handleContactDataChange(Kopete::MetaContact* mc)
 {
-	QModelIndexList indexList; 
-	// we need to emit the dataChanged signal to the groups this metacontact belongs to
-	// so that proxy filtering is aware of the changes
-	foreach(Kopete::Group *g, mc->groups())
-		indexList += indexListFor(g);
-
-	indexList += indexListFor(mc);
+	// get all the indexes for this metacontact
+	QModelIndexList indexList = indexListFor(mc);
 
 	// and now notify all the changes
 	foreach(QModelIndex index, indexList)
+	{
 		emit dataChanged(index, index);
+		// we need to emit the dataChanged signal to the groups this metacontact belongs to
+		// so that proxy filtering is aware of the changes
+		emit dataChanged(index.parent(), index.parent());
+	}
 }
 
 
