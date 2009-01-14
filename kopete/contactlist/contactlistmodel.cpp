@@ -342,12 +342,11 @@ Qt::ItemFlags ContactListModel::flags( const QModelIndex &index ) const
 	if ( !index.isValid() )
 		return 0;
 
-	Qt::ItemFlags f(Qt::ItemIsEnabled);
+	Qt::ItemFlags f(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 	
 	// if it is a contact item, add the selectable flag
 	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 	{
-		f |= Qt::ItemIsSelectable;
 		// TODO: for now we are only allowing drag-n-drop of a
 		// metacontact if all the accounts its contacts belong are online
 		Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>(index.internalPointer());
