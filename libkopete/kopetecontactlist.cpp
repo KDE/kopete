@@ -236,6 +236,8 @@ void ContactList::addMetaContact( MetaContact *mc )
 	connect( mc, SIGNAL( persistentDataChanged( ) ), SLOT( slotSaveLater() ) );
 	connect( mc, SIGNAL( addedToGroup( Kopete::MetaContact *, Kopete::Group * ) ), SIGNAL( metaContactAddedToGroup( Kopete::MetaContact *, Kopete::Group * ) ) );
 	connect( mc, SIGNAL( removedFromGroup( Kopete::MetaContact *, Kopete::Group * ) ), SIGNAL( metaContactRemovedFromGroup( Kopete::MetaContact *, Kopete::Group * ) ) );
+	connect( mc, SIGNAL( movedToGroup( Kopete::MetaContact*, Kopete::Group*, Kopete::Group* )),
+	             SIGNAL( metaContactMovedToGroup( Kopete::MetaContact*, Kopete::Group*, Kopete::Group* )));
 }
 
 

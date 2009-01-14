@@ -230,6 +230,11 @@ signals:
 	void metaContactRemovedFromGroup( Kopete::MetaContact *mc, Kopete::Group *from );
 
 	/**
+	 * A contact has been moved from one group to another
+	 */
+	void metaContactMovedToGroup( Kopete::MetaContact *mc, Kopete::Group *from, Kopete::Group *to );
+
+	/**
 	 * This signal is emit when the selection has changed, it is emitted after the following slot
 	 * Warning: Do not delete any contacts in slots connected to this signal.  (it is the warning in the QListView::selectionChanged() doc)
 	 */
