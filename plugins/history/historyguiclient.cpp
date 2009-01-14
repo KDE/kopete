@@ -165,7 +165,7 @@ void HistoryGUIClient::slotViewHistory()
 	//Kopete::MetaContact *m = Kopete::ChatSessionManager::self()->activeView()->msgManager()->members().first()->metaContact();
 	
 	//The same as above but with some checking
-	KopeteView::KopeteView *view= Kopete::ChatSessionManager::self()->activeView();
+	KopeteView *view= Kopete::ChatSessionManager::self()->activeView();
 	if (!view) {
 		kDebug()<<"Unable to Get Active View!";
 		return;
