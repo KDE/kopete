@@ -160,6 +160,11 @@ public slots:
 	void removeMetaContact( Kopete::MetaContact *contact );
 
 	/**
+	 * Merge one or more metacontacts into another one
+	 */
+	void mergeMetaContacts( QList<MetaContact *> src, Kopete::MetaContact *dst );
+
+	/**
 	 * Add groups
 	 * each group must be added on the list after his creation.
 	 */

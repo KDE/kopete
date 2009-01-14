@@ -269,6 +269,20 @@ void ContactList::removeMetaContact(MetaContact *m)
 	m->deleteLater();
 }
 
+void ContactList::mergeMetaContacts( QList<MetaContact *> src, Kopete::MetaContact *dst )
+{
+	// merge all metacontacts from src into dst
+
+	// TODO: add a confirmation dialog asking if this is really wanted
+	// TODO: add a Undo option for this
+	
+	foreach( Kopete::MetaContact *mc, src )
+	{
+		foreach( Kopete::Contact *c, mc->contacts() )
+			c->setMetaContact( dst );
+	}
+}
+
 void ContactList::addGroups( QList<Group *> groups )
 {
 	foreach( Group* g, groups )
