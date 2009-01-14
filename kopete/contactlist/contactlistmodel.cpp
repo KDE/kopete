@@ -455,7 +455,8 @@ bool ContactListModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 		if (!mc)
 			return false;
 
-		// TODO: handle metacontact combining
+		// Merge the metacontacts from mimedata into this one
+		Kopete::ContactList::self()->mergeMetaContacts(metaContacts, mc);
 	}
 	else if (parent.data( Kopete::Items::TypeRole ) == Kopete::Items::Group)
 	{
