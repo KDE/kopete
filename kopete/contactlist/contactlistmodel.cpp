@@ -270,6 +270,7 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 
 	QString display;
 	QImage img;
+	QString tooltip;
 	if ( g )
 	{
 		switch ( role )
@@ -326,6 +327,11 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 			break;
 		case Qt::DecorationRole:
 			return metaContactImage( mc );
+			break;
+		case Qt::ToolTipRole:
+			foreach(Kopete::Contact *c, mc->contacts())
+				tooltip += c->toolTip() + "<br>";
+			return tooltip;
 			break;
 		case Kopete::Items::TypeRole:
 			return Kopete::Items::MetaContact;
