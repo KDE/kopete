@@ -49,10 +49,20 @@ ContactListModel::ContactListModel( QObject* parent )
  : QAbstractItemModel( parent )
 {
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
+
+	// MetaContact related
 	connect( kcl, SIGNAL( metaContactAdded( Kopete::MetaContact* ) ),
 	         this, SLOT( addMetaContact( Kopete::MetaContact* ) ) );
+	connect( kcl, SIGNAL( metaContactRemoved( Kopete::MetaContact* ) ),
+	         this, SLOT( removeMetaContact( Kopete::MetaContact* ) ) );
+
+	// Group related
 	connect( kcl, SIGNAL( groupAdded( Kopete::Group* ) ),
 	         this, SLOT( addGroup( Kopete::Group* ) ) );
+	connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
+	         this, SLOT( removeGroup( Kopete::Group* ) ) );
+
+	// MetaContact and Group related
 	connect( kcl, SIGNAL(metaContactAddedToGroup(Kopete::MetaContact*, Kopete::Group*)),
 	         this, SLOT(addMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*)) );
 	connect( kcl, SIGNAL(metaContactRemovedFromGroup(Kopete::MetaContact*, Kopete::Group*)),
