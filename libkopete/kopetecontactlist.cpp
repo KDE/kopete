@@ -273,6 +273,9 @@ void ContactList::mergeMetaContacts( QList<MetaContact *> src, Kopete::MetaConta
 {
 	// merge all metacontacts from src into dst
 
+	// Note: there is no need to remove the src metacontacts, they are going to be
+	// removed when the last contact is moved to the new metacontact
+
 	// TODO: add a confirmation dialog asking if this is really wanted
 	// TODO: add a Undo option for this
 	
