@@ -45,7 +45,7 @@ ContactListProxyModel::~ContactListProxyModel()
 void ContactListProxyModel::slotConfigChanged()
 {
 	kDebug(14001) << "config changed";
-	reset();
+	invalidate();
 }
 
 bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex & sourceParent ) const
