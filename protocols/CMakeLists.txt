@@ -71,9 +71,9 @@ if(WITH_testbed)
   add_subdirectory( testbed )
 endif(WITH_testbed)
 
-if(WITH_telepathy AND TELEPATHYQT4_FOUND)
+#if(WITH_telepathy AND LIBTELEPATHYQT4_FOUND)
   add_subdirectory( telepathy )
-endif(WITH_telepathy AND TELEPATHYQT4_FOUND)
+#endif(WITH_telepathy AND LIBTELEPATHYQT4_FOUND)
 
 if(WITH_bonjour)
   add_subdirectory( bonjour )

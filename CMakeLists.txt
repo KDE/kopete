@@ -42,8 +42,8 @@ macro_bool_to_01(LIBGADU_FOUND HAVE_LIBGADU)
 macro_log_feature(LIBGADU_FOUND "libgadu" "A library providing support for Gadu-Gadu protocol" "http://toxygen.net/libgadu/" FALSE "1.8.0" "Required for Kopete Gadu-Gadu protocol")
 
 macro_optional_find_package(TelepathyQt4)
-macro_bool_to_01(TELEPATHYQT4_FOUND HAVE_TELEPATHY)
-macro_log_feature(TELEPATHYQT4_FOUND "libtelepathy-qt4" "" "" FALSE "" "")
+macro_bool_to_01(LIBTELEPATHYQT4_FOUND HAVE_TELEPATHY)
+macro_log_feature(LIBTELEPATHYQT4_FOUND "libtelepathy-qt4" "TelepathyQt4" "" FALSE "" "")
 
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
