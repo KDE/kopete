@@ -21,7 +21,7 @@
 #include <kopeteonlinestatus.h>
 #include <kopeteproperty.h>
 
-#include <QtTapioca/ContactBase>
+#include <TelepathyQt4/Constants>
 
 #define TELEPATHY_DEBUG_AREA 14400
 
@@ -63,8 +63,8 @@ public:
 
 	QString formatTelepathyConfigGroup(const QString &connectionManager, const QString &protocol, const QString &accountId);
 
-	QtTapioca::ContactBase::Presence kopeteStatusToTelepathy(const Kopete::OnlineStatus &status);
-	Kopete::OnlineStatus telepathyStatusToKopete(QtTapioca::ContactBase::Presence presence);
+	Telepathy::ConnectionPresenceType kopeteStatusToTelepathy(const Kopete::OnlineStatus &status);
+	Kopete::OnlineStatus telepathyStatusToKopete(Telepathy::ConnectionPresenceType presence);
 
 private:
 	static TelepathyProtocol *s_self;

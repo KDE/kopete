@@ -24,7 +24,7 @@
 // Kopete includes
 #include <kopetecontact.h>
 
-// QtTapioca includes
+// TelepathyQt4 includes
 #include <QtTapioca/ContactBase>
 
 class KAction;

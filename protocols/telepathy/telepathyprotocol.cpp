@@ -112,46 +112,49 @@ QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionM
 	return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(accountId);
 }
 
-QtTapioca::ContactBase::Presence TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
+Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
 {
 	QtTapioca::ContactBase::Presence telepathyPresence;
 
 	if( status == Available )
-		telepathyPresence = ContactBase::Available;
+		telepathyPresence = Telepathy::ConnectionPresenceTypeAvailable;
 	else if( status == Away )
-		telepathyPresence = ContactBase::Away;
+		telepathyPresence = Telepathy::ConnectionPresenceTypeAway;
 	else if( status == Busy )
-		telepathyPresence = ContactBase::Busy;
+		telepathyPresence = Telepathy::ConnectionPresenceTypeBusy;
 	else if( status == Hidden )
-		telepathyPresence = ContactBase::Hidden;
+		telepathyPresence = Telepathy::ConnectionPresenceTypeHidden;
 	else if( status == ExtendedAway )
-		telepathyPresence = ContactBase::XA;
+		telepathyPresence = Telepathy::ConnectionPresenceTypeExtendedAway;
 	else if( status == Offline )
-		telepathyPresence = ContactBase::Offline;
+		telepathyPresence = Telepathy::ConnectionPresenceTypeOffline;
 
 	return telepathyPresence;
 }
-Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(QtTapioca::ContactBase::Presence presence)
+Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Telepathy::ConnectionPresenceType presence)
 {
 	Kopete::OnlineStatus result;
 	switch(presence)
 	{
-		case ContactBase::Available:
+		case Telepathy::ConnectionPresenceTypeAvailable:
 			result = Available;
 			break;
-		case ContactBase::Away:
+		case Telepathy::ConnectionPresenceTypeAway:
 			result = Away;
 			break;
-		case ContactBase::Busy:
+		case Telepathy::ConnectionPresenceTypeBusy:
 			result = Busy;
 			break;
-		case ContactBase::Hidden:
+		case Telepathy::ConnectionPresenceTypeHidden:
 			result = Hidden;
 			break;
-		case ContactBase::XA:
+		case Telepathy::ConnectionPresenceTypeExtendedAway:
 			result = ExtendedAway;
 			break;
-		case ContactBase::Offline:
+		case Telepathy::ConnectionPresenceTypeOffline:
+		case Telepathy::ConnectionPresenceTypeUnset:
+		case Telepathy::ConnectionPresenceTypeUnknown:
+		case Telepathy::ConnectionPresenceTypeUnknown:
 			result = Offline;
 			break;
 	}
