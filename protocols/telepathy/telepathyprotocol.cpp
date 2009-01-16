@@ -156,7 +156,6 @@ Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Telepathy::Conne
 		case Telepathy::ConnectionPresenceTypeOffline:
 		case Telepathy::ConnectionPresenceTypeUnset:
 		case Telepathy::ConnectionPresenceTypeUnknown:
-		case Telepathy::ConnectionPresenceTypeUnknown:
 			result = Offline;
 			break;
 	}
