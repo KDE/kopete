@@ -140,7 +140,8 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 
 				QObject::connect(this, SIGNAL(telepathyConnected()), this, SLOT(slotTelepathyConnected()));
 
-				d->currentConnection->connect( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(initialStatus) );
+				// \todo: FIXME
+				//d->currentConnection->connect( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(initialStatus) );
 			}
 			else
 			{
@@ -179,7 +180,8 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 		if( d->currentConnection && d->currentConnection->userContact() )
 		{
 			kDebug(TELEPATHY_DEBUG_AREA) << "Changing online status to " << status.description();
-			d->currentConnection->userContact()->setPresence( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status) );
+			// \todo: FIXME
+			//d->currentConnection->userContact()->setPresence( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status) );
 
 			setStatusMessage( reason );
 		}

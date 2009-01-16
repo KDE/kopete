@@ -25,6 +25,7 @@
 #include <kopetecontact.h>
 
 // TelepathyQt4 includes
+#include <TelepathyQt4/Client/Account>
 #include <QtTapioca/ContactBase>
 
 class KAction;
@@ -82,7 +83,7 @@ private slots:
 	 * @param presence New presence.
 	 * @param presenceMessage New presenceMessage, if any.
 	 */
-	void telepathyPresenceUpdated(QtTapioca::ContactBase *contactBase, QtTapioca::ContactBase::Presence presence, const QString &presenceMessage);
+	void telepathyPresenceUpdated(Telepathy::Client::Account *account, const QString &presenceMessage);
 
 	/**
 	 * @brief Called when contact has changed its alias.

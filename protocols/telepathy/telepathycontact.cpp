@@ -95,7 +95,8 @@ void TelepathyContact::setInternalContact(QtTapioca::Contact *internalContact)
 	connect(d->internalContact, SIGNAL(avatarUpdated(QtTapioca::ContactBase*,QString)), this, SLOT(telepathyAvatarChanged(QtTapioca::ContactBase*,QString)));
 	connect(d->internalContact, SIGNAL(avatarReceived(QtTapioca::ContactBase*,QtTapioca::Avatar*)), this, SLOT(telepathyAvatarReceived(QtTapioca::ContactBase*,QtTapioca::Avatar*)));
 	// Set initial presence
-	TelepathyProtocol::protocol()->telepathyStatusToKopete( d->internalContact->presence() );
+	// \todo: FIXME
+	//TelepathyProtocol::protocol()->telepathyStatusToKopete( d->internalContact->presence() );
 
 	// Set nickname/alias
 	setNickName( d->internalContact->alias() );
@@ -180,11 +181,10 @@ void TelepathyContact::deleteContact()
 	account()->contactManager()->removeContact(this);
 }
 
-void TelepathyContact::telepathyPresenceUpdated(QtTapioca::ContactBase *contactBase, QtTapioca::ContactBase::Presence presence, const QString &presenceMessage)
+void TelepathyContact::telepathyPresenceUpdated(Telepathy::Client::Account *account, const QString &presenceMessage)
 {
-	Q_UNUSED(contactBase);
-
-	Kopete::OnlineStatus newStatus = TelepathyProtocol::protocol()->telepathyStatusToKopete(presence);
+	Telepathy::SimplePresence presence = account->currentPresence();
+	Kopete::OnlineStatus newStatus = TelepathyProtocol::protocol()->telepathyStatusToKopete(presence.type);
 
 	kDebug(TELEPATHY_DEBUG_AREA) << "Updating " << contactId() << " presence to " << newStatus.description();
 	kDebug(TELEPATHY_DEBUG_AREA) << "New Status Message for " << contactId() << ": " << presenceMessage;
