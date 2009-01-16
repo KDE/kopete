@@ -108,32 +108,32 @@ void PipesPlugin::doPiping ( Kopete::Message & msg, PipeOptions pipeOptions )
 
 	// poop out appropriate data
 	if ( pipeOptions.pipeContents == HtmlBody )
-		pipe.write ( msg.escapedBody().toLocal8Bit() );
+		pipe.write ( msg.escapedBody().toUtf8() );
 	else if ( pipeOptions.pipeContents == PlainBody )
-		pipe.write ( msg.plainBody().toLocal8Bit() );
+		pipe.write ( msg.plainBody().toUtf8() );
 	else if ( pipeOptions.pipeContents == Xml )
-		pipe.write ( createXml ( msg ).toLocal8Bit() );
+		pipe.write ( createXml ( msg ) );
 
 	pipe.closeWriteChannel();
 	pipe.waitForFinished();
 
-	QString pipeReturn = pipe.readAllStandardOutput();
+	QByteArray pipeReturn = pipe.readAllStandardOutput();
 
 	// set data in message to output of pipe
 	if ( pipeOptions.pipeContents == HtmlBody )
-		msg.setHtmlBody ( pipeReturn );
+		msg.setHtmlBody ( QString::fromUtf8( pipeReturn ) );
 	else if ( pipeOptions.pipeContents == PlainBody )
-		msg.setPlainBody ( pipeReturn );
+		msg.setPlainBody ( QString::fromUtf8( pipeReturn ) );
 	else if ( pipeOptions.pipeContents == Xml )
 		readXml ( pipeOptions, msg, pipeReturn );
 }
 
-QString PipesPlugin::createXml ( const Kopete::Message & msg )
+QByteArray PipesPlugin::createXml ( const Kopete::Message & msg )
 {
 	/*
 	Here's an example of what a pipee will get:
 
-	<?xml version="1.0" encoding="ISO-8859-1"?>
+	<?xml version="1.0" encoding="UTF-8"?>
 	<message subject=""
 		route="outbound"
 		importance="1"
@@ -270,13 +270,13 @@ QString PipesPlugin::createXml ( const Kopete::Message & msg )
 	body.setAttribute ( "dir", msg.plainBody().isRightToLeft() ? "rtl" : "ltr" );
 	body.appendChild ( doc.createTextNode ( msg.escapedBody() ) );
 
-	QDomNode xsdInstruction = doc.createProcessingInstruction ( "xml", "version=\"1.0\" encoding=\"ISO-8859-1\"" );
+	QDomNode xsdInstruction = doc.createProcessingInstruction ( "xml", "version=\"1.0\" encoding=\"UTF-8\"" );
 	doc.insertBefore ( xsdInstruction, doc.firstChild() );
 
-	return doc.toString();
+	return doc.toByteArray();
 }
 
-void PipesPlugin::readXml ( PipeOptions pipeOptions, Kopete::Message & msg, const QString & pipeReturn )
+void PipesPlugin::readXml ( PipeOptions pipeOptions, Kopete::Message & msg, const QByteArray & pipeReturn )
 {
 	/* modification to the following attributes/elements in the XML will be reflected back into the message:
 	- "timestamp" but *not* other time attributes
@@ -296,7 +296,7 @@ void PipesPlugin::readXml ( PipeOptions pipeOptions, Kopete::Message & msg, cons
 	int errorLine, errorCol;
 
 	// if the pipe returns bad XML, tell user and do not process.
-	if ( ! doc.setContent ( pipeReturn.toLocal8Bit(), false/*namespaceProcessing*/, &readError, &errorLine, &errorCol ) )
+	if ( ! doc.setContent ( pipeReturn, false/*namespaceProcessing*/, &readError, &errorLine, &errorCol ) )
 	{
 		KMessageBox::error ( msg.manager()->view()->mainWidget() ?
 		                     msg.manager()->view()->mainWidget() : Kopete::UI::Global::mainWidget(),
