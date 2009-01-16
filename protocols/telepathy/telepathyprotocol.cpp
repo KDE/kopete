@@ -86,6 +86,8 @@ KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Acco
 Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact, 
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData )
 {
+	Q_UNUSED(addressBookData);
+	
 	QString contactId = serializedData["contactId"];
 	QString accountId = serializedData["accountId"];
 
@@ -114,7 +116,7 @@ QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionM
 
 Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
 {
-	QtTapioca::ContactBase::Presence telepathyPresence;
+	Telepathy::ConnectionPresenceType telepathyPresence;
 
 	if( status == Available )
 		telepathyPresence = Telepathy::ConnectionPresenceTypeAvailable;
