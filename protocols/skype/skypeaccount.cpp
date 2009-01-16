@@ -703,7 +703,7 @@ void SkypeAccount::sentMessage(const QString &body, const QString &chat) {
 	const QStringList &users = d->skype.getChatUsers(chat);
 	QList<Kopete::Contact*> *recv = 0L;
 
-	if (!session)
+	if (!session) {
 		if (d->hitch) {
 			recv = constructContactList(users);
 			if (recv->count() == 1) {
@@ -717,6 +717,7 @@ void SkypeAccount::sentMessage(const QString &body, const QString &chat) {
 		} else {
 			return;
 		}
+	}
 
 	if (!recv)
 		recv = constructContactList(users);
@@ -994,7 +995,7 @@ void SkypeAccount::deleteGroup (Kopete::Group * group){
 
 void SkypeAccount::renameGroup (Kopete::Group * group, const QString &oldname){
 	kDebug() << k_funcinfo << "Renaming skype group" << oldname << "to" << group->displayName() << endl;//some debug info
-	int groupID = d->skype.getGroupID( group->displayName() );
+	int groupID = d->skype.getGroupID( oldname );
 	if ( groupID != -1 )
 		d->skype.renameGroup( groupID, group->displayName() );
 	else
