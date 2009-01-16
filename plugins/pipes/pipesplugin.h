@@ -94,13 +94,13 @@ class PipesPlugin : public Kopete::Plugin
 		 * Turn a Message into a QDomDocument, return that XML.
 		 * Info for the XML is pulled from all over Kopete.
 		 */
-		static QString createXml ( const Kopete::Message & );
+		static QByteArray createXml ( const Kopete::Message & );
 
 		/*
-		 * Take a QString containing XML, take pertinent info from
+		 * Take a QByteArray containing XML, take pertinent info from
 		 * that, and put it in the Message.
 		 */
-		static void readXml ( PipeOptions, Kopete::Message &, const QString & );
+		static void readXml ( PipeOptions, Kopete::Message &, const QByteArray & );
 
 	private:
 		static PipesPlugin* mPluginStatic;
