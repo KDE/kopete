@@ -81,7 +81,7 @@ class Skype : public QObject
 		/**
 		 * Fix all contact in groups
 		 */
-		void fixGroups();
+		void fixGroups(bool loadOnly = false);
 	public:
 		/**
 		 * Constructor

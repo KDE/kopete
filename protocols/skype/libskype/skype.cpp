@@ -826,7 +826,7 @@ bool Skype::ableConference() {
 	return false;
 }
 
-void Skype::fixGroups() {
+void Skype::fixGroups(bool loadOnly) {
 	kDebug() << k_funcinfo << endl;
 
 	d->groupsContacts.clear();//remove all contacts and groups in memory
@@ -852,7 +852,7 @@ void Skype::fixGroups() {
 		QList <int> groups = d->groupsNames.values();
 		for ( QList <int>::iterator group = groups.begin(); group != groups.end(); ++group ) {
 			QStringList groupusers = QString(d->connection % QString("GET GROUP %1 USERS").arg(*group)).section(' ', 3).trimmed().split(",");//get all user in group (*group)
-			if ( groupusers.count() == 0 || groupusers.first().trimmed() == "" ) {//if group is empty, delete it
+			if ( ( groupusers.count() == 0 || groupusers.first().trimmed() == "" ) && ! loadOnly ) {//if group is empty, delete it
 				kDebug() << QString("Group %1 is empty, delete it").arg(*group) << endl;
 				deleteGroup(*group);
 			} else {
@@ -868,7 +868,7 @@ void Skype::fixGroups() {
 	}
 
 	//Check if user is only in one group
-	{
+	if ( ! loadOnly ){
 		QStringList users = d->groupsContacts.values();//get all users from all groups
 		for ( QStringList::iterator user = users.begin(); user != users.end(); ++user ) {
 			if ( ! (*user).isEmpty() ) {
@@ -885,18 +885,20 @@ void Skype::fixGroups() {
 	}
 
 	//Check if groups doesnt have same names
-	QStringList groupsNames = d->groupsNames.keys();//get all groups names TODO: If group has more ides then one, add to List this group only one
-	for ( QStringList::iterator group = groupsNames.begin(); group != groupsNames.end(); ++group ){
-		QList <int> groupIdes = d->groupsNames.values(*group);
-		if ( groupIdes.count() > 1 ){
-			kDebug() << "Group" << *group << "has more ides then one:" << groupIdes << ", so merge all these groups to" << groupIdes.first() << endl;
-			for ( QList <int>::iterator groupID = groupIdes.begin() + 1; groupID != groupIdes.end(); ++groupID ) {
-				QStringList users = d->groupsContacts.values(*groupID);
-				for ( QStringList::iterator user = users.begin(); user != users.end(); ++user ) {
-					removeFromGroup((*user), (*groupID));
-					addToGroup((*user), groupIdes.first());
+	if ( ! loadOnly ) {
+		QStringList groupsNames = d->groupsNames.keys();//get all groups names TODO: If group has more ides then one, add to List this group only one
+		for ( QStringList::iterator group = groupsNames.begin(); group != groupsNames.end(); ++group ){
+			QList <int> groupIdes = d->groupsNames.values(*group);
+			if ( groupIdes.count() > 1 ){
+				kDebug() << "Group" << *group << "has more ides then one:" << groupIdes << ", so merge all these groups to" << groupIdes.first() << endl;
+				for ( QList <int>::iterator groupID = groupIdes.begin() + 1; groupID != groupIdes.end(); ++groupID ) {
+					QStringList users = d->groupsContacts.values(*groupID);
+					for ( QStringList::iterator user = users.begin(); user != users.end(); ++user ) {
+						removeFromGroup((*user), (*groupID));
+						addToGroup((*user), groupIdes.first());
+					}
+					///TODO: Delete this group
 				}
-				///TODO: Delete this group
 			}
 		}
 	}
@@ -923,7 +925,7 @@ void Skype::addToGroup(const QString &name, int groupID) {
 void Skype::createGroup(const QString &name) {
 	kDebug() << k_funcinfo << name << endl;
 	d->connection << QString("CREATE GROUP %1").arg(name);
-	fixGroups(); ///TODO: Create memory group too without fixGroups()
+	fixGroups(true); ///TODO: Create memory group too without fixGroups()
 }
 
 void Skype::deleteGroup(int groupID) {
