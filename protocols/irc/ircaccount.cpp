@@ -49,7 +49,8 @@
 #include <kmenu.h>
 #include <kmessagebox.h>
 #include <kdatetime.h>
-
+#include <kcomponentdata.h>
+#include <kaboutdata.h>
 
 #include <qtextcodec.h>
 #include <QTimer>
@@ -381,7 +382,10 @@ void IRCAccount::setNickName(const QString &nickName)
 
 const QString IRCAccount::partMessage() const
 {
-	return configGroup()->readEntry(QLatin1String("defaultPart"), QString());
+	return configGroup()->readEntry(QLatin1String("defaultPart"),
+									QString::fromLatin1( "Kopete %1 : http://kopete.kde.org" ).arg(  KGlobal::mainComponent().aboutData()->version() )
+
+		);
 }
 
 void IRCAccount::setPartMessage( const QString &partMessage )
@@ -391,7 +395,9 @@ void IRCAccount::setPartMessage( const QString &partMessage )
 
 const QString IRCAccount::quitMessage() const
 {
-	return configGroup()->readEntry(QLatin1String("defaultQuit"), QString());
+	return configGroup()->readEntry(QLatin1String("defaultQuit"),
+									QString::fromLatin1( "Kopete %1 : http://kopete.kde.org" ).arg(  KGlobal::mainComponent().aboutData()->version() )
+		);
 }
 
 void IRCAccount::setQuitMessage(const QString &quitMessage)
