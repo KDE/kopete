@@ -58,7 +58,7 @@ public:
 	QString clientName() const; //! Client name and version
 	bool hasCap( int capNumber ) const; //! Tell if we have this capability
 	bool onlineStatusMsgSupport() const; //! Client supports online status messages
-	QString personalMessage() const;
+	QString personalMessage() const; //! User's status (away or available) message
 
 	/** 
 	 * Fill the class with data from a buffer
@@ -135,7 +135,7 @@ private:
 	Oscar::WORD m_iconType; /// The OSCAR icon type for the buddy icon TLV 0x1D
 	Oscar::BYTE m_iconChecksumType; /// The OSCAR checksum type for the buddy icon TLV 0x1D
 	QByteArray m_md5IconHash; /// Buddy Icon MD5 Hash - TLV 0x1D
-	QString m_personalMessage; /// Message a person can have when available - TLV 0x0D
+	QString m_personalMessage; /// User's away (or available) status message - TLV 0x0D
 	bool m_onlineStatusMsgSupport; /// User's client supports online status messages - TLV 0x08
 	Guid m_identCap; /// Save guid for client identification
 

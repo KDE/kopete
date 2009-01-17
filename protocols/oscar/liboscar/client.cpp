@@ -345,7 +345,9 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 			sdcit->setIcqMood( mood );
 
 		if ( d->isIcq && statusInfoChanged )
-			sdcit->setIcqMessage( title );
+			sdcit->setStatusMessage( title );
+		if ( !d->isIcq && (status & 0xFF) == 0x00 ) //not icq and status is online
+			sdcit->setStatusMessage( message );
 
 		sdcit->go( Task::AutoDelete ); //autodelete
 
