@@ -119,30 +119,25 @@ void JabberJingleContent::startStreaming()
 	if (m_content->type() == XMPP::JingleContent::Audio)
 	{
 		m_mediaSession = new MediaSession(m_mediaManager, "speex"/*FIXME:use m_content->bestPayload()*/);
-		//m_mediaSession = m_mediaManager->createNewSession(m_content->bestPayload());
 		if (m_mediaSession == 0)
 		{
 			kDebug() << "Media Session is NULL!";
 			return;
 		}
-		connect(m_mediaSession, SIGNAL(readyRead(int)), this, SLOT(slotReadyRead(int)));
+		connect(m_mediaSession, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
 		m_mediaSession->setSamplingRate(8000 /*FIXME:use m_content->bestPayload()*/);
-		
+
 		prepareRtpOutSession();
 		prepareRtpInSession();
-		
+
 		if (!m_mediaSession->start())
 			QMessageBox::warning(0, tr("Jingle audio"), tr("Unable to start you audio device, the session will start anyway."));
-		
-		/*connect(m_mediaManager, SIGNAL(audioReadyRead()), this, SLOT(slotSendRtpData()));
-		m_mediaManager->startAudioStreaming();*/
 	}
-	//m_content->setSending(true);
 }
 
-void JabberJingleContent::slotReadyRead(int ts)
+void JabberJingleContent::slotReadyRead()
 {
-	m_rtpOutSession->send(m_mediaSession->read(), ts);
+	m_rtpOutSession->send(m_mediaSession->read());
 }
 
 QString JabberJingleContent::elementToSdp(const QDomElement& elem)

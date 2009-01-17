@@ -35,11 +35,9 @@ public:
 	//void setBitRate();
 	
 	/**
-	 * This is the speex sampling rate :
-	 * Possible different sampling rates: 8 kHz (8000), 16 kHz (16000), and 32 kHz (32000).
-	 * These are respectively referred to as narrowband, wideband and ultra-wideband.
-	 *
-	 * FIXME:should take an enum value instead of an int.
+	 * This sets the speex sampling rate :
+	 * Possible different sampling rates: 8 kHz (8000) and 16 kHz (16000).
+	 * These are respectively referred to as narrowband and wideband.
 	 */
 	void setSamplingRate(int sr);
 
@@ -52,14 +50,23 @@ public:
 	int setQuality(int q);
 
 	/**
-	 * Returns the size of a speex frame (in bytes)
+	 * Returns the size of a speex frame (in samples)
 	 */
 	int frameSize();
+	
+	/**
+	 * Returns the size of a speex frame (in bytes)
+	 */
+	virtual int frameSizeBytes();
 
+	/**
+	 * Return true if it is ready to start, false if not.
+	 */
 	virtual bool start();
 	
 	virtual void encode(const QByteArray& data);
 	virtual void decode(const QByteArray& data);
+	
 	virtual QByteArray encodedData() const;
 	virtual QByteArray decodedData() const;
 	

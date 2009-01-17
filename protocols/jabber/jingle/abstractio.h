@@ -20,6 +20,10 @@ public :
 	virtual QByteArray decodedData() const;
 	virtual int tsValue(); //FIXME:should it be const ?
 
+	// Returns the Period Size in bytes
+	// Period Size is the size of a frame which can be decoded in one time.
+	virtual int frameSizeBytes();
+
 signals:
 	void encoded();
 	void decoded();

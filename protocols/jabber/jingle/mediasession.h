@@ -40,7 +40,7 @@ public slots:
 	void slotDecoded();
 
 signals:
-	void readyRead(int);
+	void readyRead();
 
 private:
 	class Private;

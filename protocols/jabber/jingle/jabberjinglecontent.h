@@ -47,7 +47,7 @@ public:
 public slots:
 	void slotSendRtpData();
 	void slotIncomingData(const QByteArray&);
-	void slotReadyRead(int);
+	void slotReadyRead();
 
 private:
 	XMPP::JingleContent *m_content;

@@ -26,14 +26,11 @@ public :
 	SpeexBits encBits;
 	SpeexBits decBits;
 	int samplingRate;
-
-	/*
-	 * FIXME:maybe change those names...
-	 */
+	int bitRate;
+	int frameSize;
+	
 	QByteArray speexData; //encoded data
 	QByteArray rawData; //decoded date
-
-	int frameSize;
 };
 
 SpeexIO::SpeexIO()
@@ -44,6 +41,7 @@ SpeexIO::SpeexIO()
 	
 	d->samplingRate = -1;
 	d->frameSize = 0;
+	d->bitRate = 0;
 	qDebug() << "SpeexIO : created.";
 }
 
@@ -63,11 +61,11 @@ void SpeexIO::setSamplingRate(int sr)
 	if (d->samplingRate != -1)
 	{
 		//FIXME:this should simply change the current sampling rate (SPEEX_SET_SAMPLING_RATE)
+		//FIXME:is that possible ?
 		qDebug() << "Sampling rate already set... Abort";
 		return;
 	}
 	
-	SpeexMode *mode;
 	switch(sr)
 	{
 	case 8000 : 
@@ -78,10 +76,12 @@ void SpeexIO::setSamplingRate(int sr)
 		d->encoder = speex_encoder_init(&speex_wb_mode);
 		d->decoder = speex_decoder_init(&speex_wb_mode);
 		break;
-	case 32000 :
+// Currently not supported, this is not for internet payloads anyway.
+/*	case 32000 :
 		d->encoder = speex_encoder_init(&speex_uwb_mode);
 		d->decoder = speex_decoder_init(&speex_uwb_mode);
 		break;
+*/
 	default :
 		return;
 	}
@@ -107,10 +107,10 @@ int SpeexIO::setQuality(int q)
 	if (qualityEnc != qualityDec)
 		return -1;
 	
-	//d->quality = qualityDec;
 	return qualityDec;
 }
 
+// Returns a frame size in samples.
 int SpeexIO::frameSize()
 {
 	if (d->samplingRate == -1)
@@ -121,10 +121,16 @@ int SpeexIO::frameSize()
 	
 	int fs;
 	//Encoder and decoder frame size are the same.
-	if (0 != speex_decoder_ctl(d->decoder, SPEEX_GET_FRAME_SIZE, &fs))
+	if (0 != speex_encoder_ctl(d->encoder, SPEEX_GET_FRAME_SIZE, &fs))
 		return -1;
 	
-	return (d->frameSize = (d->samplingRate / 8000) * fs); //FIXME:What is (d->samplingRate / 8000) ??
+	return (d->frameSize = fs);
+}
+
+// Returns a frame size in bytes.
+int SpeexIO::frameSizeBytes()
+{
+	return (d->samplingRate == 8000 ? 160 * 2 : 320 * 2);
 }
 
 bool SpeexIO::start()
@@ -164,7 +170,6 @@ QByteArray SpeexIO::encodedData() const
 
 void SpeexIO::decode(const QByteArray& speexData)
 {
-	//kDebug() << "Decode ! (" << speexData.size() << "bytes)";
 	d->rawData.clear();
 
 	if (d->samplingRate == -1 || speexData.size() == 0)
@@ -172,10 +177,10 @@ void SpeexIO::decode(const QByteArray& speexData)
 	
 	speex_bits_read_from(&d->decBits, (char*) speexData.data(), speexData.size());
 
-	if (frameSize() == -1)
+	if (frameSizeBytes() == -1)
 		return;
 	
-	d->rawData.resize(frameSize() * sizeof (short));
+	d->rawData.resize(frameSizeBytes());
 	int ret = speex_decode_int(d->decoder, &d->decBits, (short*) d->rawData.data());
 	if (ret != 0)
 	{
@@ -183,8 +188,6 @@ void SpeexIO::decode(const QByteArray& speexData)
 		return;
 	}
 	
-	//kDebug() << "Decoded !";
-
 	emit decoded();
 }
 
@@ -195,7 +198,6 @@ QByteArray SpeexIO::decodedData() const
 
 int SpeexIO::tsValue()
 {
-	return (d->samplingRate / 1000) * 20;
-	return 160; //FIXME:Is that the right value ?
+	return d->samplingRate / 50;
 }
 

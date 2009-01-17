@@ -52,3 +52,8 @@ int AbstractIO::tsValue()
 {
 	return 0;
 }
+
+int AbstractIO::frameSizeBytes()
+{
+	return 0;
+}
