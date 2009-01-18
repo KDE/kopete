@@ -408,7 +408,7 @@ OContact ContactManager::visibilityItem() const
 	QList<OContact>::const_iterator it, listEnd = d->contactList.constEnd();
 	for ( it = d->contactList.constBegin(); it != listEnd; ++it )
 	{
-		if ( ( *it ).type() == 0x0004 )
+		if ( ( *it ).type() == 0x0004 && ( *it ).name().isEmpty() )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "Found visibility setting";
 			item = ( *it );

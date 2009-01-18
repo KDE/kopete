@@ -273,9 +273,6 @@ void ICQAccount::connectWithPassword( const QString &password )
 void ICQAccount::loginActions()
 {
 	OscarAccount::loginActions();
-
-	// Set default privacy settings to make "invisible to" and "visible to" work
-	engine()->setPrivacyTLVs( 0x04 );
 }
 
 void ICQAccount::disconnected( DisconnectReason reason )
