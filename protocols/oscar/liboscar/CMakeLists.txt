@@ -74,7 +74,6 @@ set(liboscar_SRCS
     tasks/icquserinfotask.cpp
     tasks/usersearchtask.cpp
     tasks/warningtask.cpp
-    tasks/changevisibilitytask.cpp
     tasks/typingnotifytask.cpp
     tasks/buddyicontask.cpp
     tasks/serverredirecttask.cpp
