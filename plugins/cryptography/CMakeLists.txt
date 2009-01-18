@@ -47,7 +47,7 @@ kde4_add_ui_files(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui exportkey
 
 kde4_add_plugin(kopete_cryptography ${kopete_cryptography_PART_SRCS})
 
-target_link_libraries(kopete_cryptography  ${KDE4_KDECORE_LIBS} kopete kleo ${KDE4_KABC_LIBS} ${QGPGME_LIBRARIES} )
+target_link_libraries(kopete_cryptography ${QT_QTGUI_LIBRARY}  ${KDE4_KDECORE_LIBS} kopete kleo ${KDE4_KABC_LIBS} ${QGPGME_LIBRARIES} )
 
 install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 
