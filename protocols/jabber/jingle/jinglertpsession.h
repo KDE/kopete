@@ -53,7 +53,7 @@ public:
 	 * Sends data to the remote host after wrapping it in a RTP packet.
 	 * TODO:There should be overloaded methods to support other data type (QString, const *char).
 	 */
-	void send(const QByteArray& data, int ts = -1);
+	void send(const QByteArray& data);
 
 	/*
 	 * Sets the payload type used for this session.
@@ -70,7 +70,6 @@ private slots:
 	 */
 	void rtpDataReady();
 	void rtcpDataReady(); // Maybe not used.
-	void slotBytesWritten(qint64);
 
 signals:
 	void dataSent();
@@ -80,9 +79,6 @@ private:
 	QUdpSocket *rtpSocket;
 	QUdpSocket *rtcpSocket;
 	RtpSession *m_rtpSession;
-	int receivingTS;
-	int sendingTS;
-	int payloadTS;
 	int payloadID;
 	QString payloadName;
 	enum State {SendingData = 0} state;

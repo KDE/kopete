@@ -1156,7 +1156,8 @@ QString ChatMessagePart::formatTime(const QString &_timeFormat, const QDateTime 
 #ifdef Q_WS_WIN
 	QString timeFormat = _timeFormat;
 	// %e is not supported on windows
-	timeFormat = timeFormat.replace("%e", "%d");
+	timeFormat = timeFormat.replace(QLatin1String("%e"), QLatin1String("%d"));
+	timeFormat = timeFormat.replace(QLatin1String("%T"), QLatin1String("%H:%M:%S"));
 #else
 	const QString timeFormat = _timeFormat;
 #endif

@@ -35,7 +35,6 @@
 #include "buddyicontask.h"
 #include "clientreadytask.h"
 #include "connectionhandler.h"
-#include "changevisibilitytask.h"
 #include "chatnavservicetask.h"
 #include "errortask.h"
 #include "icquserinfo.h"
@@ -307,23 +306,9 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 	{
 		if ( d->isIcq )
 		{
-			//the first connection is always the BOS connection
-			Connection* c = d->connections.connectionForFamily( 0x0013 );
-			if ( !c )
-				return; //TODO trigger an error of some sort?
-
-			ChangeVisibilityTask* cvt = new ChangeVisibilityTask( c->rootTask() );
-			if ( ( status & 0x0100 ) == 0x0100 )
-			{
-				kDebug(OSCAR_RAW_DEBUG) << "Setting invisible";
-				cvt->setVisible( false );
-			}
-			else
-			{
-				kDebug(OSCAR_RAW_DEBUG) << "Setting visible";
-				cvt->setVisible( true );
-			}
-			cvt->go( Task::AutoDelete );
+			// Set invisible/visible flag
+			Oscar::BYTE privacyByte = ( ( status & 0x0100 ) == 0x0100 ) ? 0x03 : 0x04;
+			setPrivacyTLVs( privacyByte );
 		}
 		
 		Connection* c = d->connections.connectionForFamily( 0x0002 );
@@ -345,7 +330,9 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 			sdcit->setIcqMood( mood );
 
 		if ( d->isIcq && statusInfoChanged )
-			sdcit->setIcqMessage( title );
+			sdcit->setStatusMessage( title );
+		if ( !d->isIcq && (status & 0xFF) == 0x00 ) //not icq and status is online
+			sdcit->setStatusMessage( message );
 
 		sdcit->go( Task::AutoDelete ); //autodelete
 

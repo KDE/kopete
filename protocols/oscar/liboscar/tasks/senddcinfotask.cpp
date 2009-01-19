@@ -43,7 +43,7 @@ void SendDCInfoTask::setIcqMood( int mood )
 	mSendMood = true;
 }
 
-void SendDCInfoTask::setIcqMessage( const QString &message )
+void SendDCInfoTask::setStatusMessage( const QString &message )
 {
 	mMessage = message;
 	mSendMessage = true;
