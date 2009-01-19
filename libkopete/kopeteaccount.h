@@ -113,6 +113,16 @@ public:
 	};
 
 	/**
+	 * \brief Describes what should be done when we set new OnlineStatus
+	 * @sa @ref setOnlineStatus()
+	 */
+	enum OnlineStatusOption {
+		None = 0x00,               ///< Use the online status
+		KeepSpecialFlags = 0x01    ///< Use the online status but keep special flags, e.g. Invisible
+	};
+	Q_DECLARE_FLAGS(OnlineStatusOptions, OnlineStatusOption)
+
+	/**
 	 * @param parent the protocol for this account. The account is a child object of the
 	 * protocol, so it will be automatically deleted when the protocol is.
 	 * @param accountID the unique ID of this account.
@@ -507,9 +517,12 @@ public slots:
 	 * Reimplement this function to set the online status
 	 * @param status is the new status
 	 * @param reason is the status message to set.
+	 * @param options specify how the status should be set
 	 * @note If needed, you need to connect.  if the offline status is given, you should disconnect
 	 */
-	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() ) = 0;
+	virtual void setOnlineStatus( const Kopete::OnlineStatus& status,
+	                              const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                              const OnlineStatusOptions& options = None ) = 0;
 	/**
 	 * Reimplement this function to set the status message(with metadata).
 	 * You should use this method to set the status message instead of using setOnlineStatus.
@@ -570,6 +583,7 @@ private:
 	class Private;
 	Private * const d;
 };
+Q_DECLARE_OPERATORS_FOR_FLAGS(Account::OnlineStatusOptions)
 
 } //END namespace Kopete
 

@@ -45,7 +45,8 @@ public:
 	virtual bool createContact( const QString &contactId, MetaContact *parentContact );
 	virtual void connect( const Kopete::OnlineStatus& initialStatus = OnlineStatus() );
 	virtual void disconnect();
-	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage() );
+	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(),
+	                              const OnlineStatusOptions& options = None );
 	virtual void setStatusMessage( const Kopete::StatusMessage &statusMessage );
 };
 

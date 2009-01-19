@@ -229,7 +229,7 @@ void MeanwhileAccount::setStatusMessage(const Kopete::StatusMessage &statusMessa
 }
 
 void MeanwhileAccount::setOnlineStatus(const Kopete::OnlineStatus &status,
-        const Kopete::StatusMessage &reason)
+                                       const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
 {
     HERE;
     Kopete::OnlineStatus oldstatus = myself()->onlineStatus();

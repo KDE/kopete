@@ -133,7 +133,8 @@ public slots:
 	virtual void connect(const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus());
 	virtual void disconnect();
 	
-	virtual void setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage());
+	virtual void setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                             const OnlineStatusOptions& options = None);
 	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 	
 	/**

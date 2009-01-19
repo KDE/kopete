@@ -296,7 +296,7 @@ MSNNotifySocket *MSNAccount::notifySocket()
 }
 
 
-void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const Kopete::StatusMessage &reason)
+void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
 {
 	kDebug( 14140 ) << status.description();
 

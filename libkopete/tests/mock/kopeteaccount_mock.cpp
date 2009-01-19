@@ -53,7 +53,7 @@ void Account::disconnect()
 	// do nothing
 }
 
-void Account::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &statusMessage )
+void Account::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &statusMessage, const OnlineStatusOptions& options )
 {
 	// do nothing
 }

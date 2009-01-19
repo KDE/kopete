@@ -601,7 +601,7 @@ void IRCAccount::slotJoinChannel()
 	}
 }
 
-void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
+void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus, const OnlineStatusOptions& options)
 {
 	kDebug(14120) ;
 	d->expectedOnlineStatus = status;
