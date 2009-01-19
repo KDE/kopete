@@ -184,7 +184,8 @@ void TelepathyContact::deleteContact()
 void TelepathyContact::telepathyPresenceUpdated(Telepathy::Client::Account *account, const QString &presenceMessage)
 {
 	Telepathy::SimplePresence presence = account->currentPresence();
-	Kopete::OnlineStatus newStatus = TelepathyProtocol::protocol()->telepathyStatusToKopete(presence.type);
+	Kopete::OnlineStatus newStatus 
+		= TelepathyProtocol::protocol()->telepathyStatusToKopete(static_cast<Telepathy::ConnectionPresenceType>(presence.type));
 
 	kDebug(TELEPATHY_DEBUG_AREA) << "Updating " << contactId() << " presence to " << newStatus.description();
 	kDebug(TELEPATHY_DEBUG_AREA) << "New Status Message for " << contactId() << ": " << presenceMessage;
