@@ -133,7 +133,7 @@ public:
 bool createContact( const QString &/*contactId*/, Kopete::MetaContact */*parentContact*/ ){return true;}
 void connect( const Kopete::OnlineStatus& /*initialStatus*/){}
 void disconnect(){}
-void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const Kopete::StatusMessage &/*reason*/){}
+void setOnlineStatus( const Kopete::OnlineStatus& /*status*/, const Kopete::StatusMessage &/*reason*/, const OnlineStatusOptions&/*options*/){}
 void setStatusMessage(const Kopete::StatusMessage& /*statusMessage*/){}
 
 private:

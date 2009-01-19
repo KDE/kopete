@@ -72,8 +72,8 @@ class WlmAccount:public
 	 */
     virtual void
     setOnlineStatus (const Kopete::OnlineStatus & status,
-                     const Kopete::StatusMessage & reason =
-                     Kopete::StatusMessage ());
+                     const Kopete::StatusMessage & reason = Kopete::StatusMessage (),
+                     const OnlineStatusOptions& options = None);
     virtual void
     setStatusMessage (const Kopete::StatusMessage & statusMessage);
         /**

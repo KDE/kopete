@@ -306,7 +306,7 @@ void StatusRootAction::setStatusMessage( const Kopete::StatusMessage &statusMess
 {
 	if ( d->account )
 	{	// Set status for this account only
-		d->account->setOnlineStatus( d->account->myself()->onlineStatus(), statusMessage );
+		d->account->setOnlineStatus( d->account->myself()->onlineStatus(), statusMessage, Kopete::Account::KeepSpecialFlags );
 	}
 	else
 	{	// Set global status
@@ -328,7 +328,7 @@ void StatusRootAction::changeStatus( const Kopete::Status::Status* status )
 			{
 				OnlineStatusManager *osm = OnlineStatusManager::self();
 				Kopete::OnlineStatus oStatus = osm->onlineStatus( d->account->protocol(), status->category() );
-				d->account->setOnlineStatus( oStatus, statusMessage );
+				d->account->setOnlineStatus( oStatus, statusMessage, Kopete::Account::KeepSpecialFlags );
 			}
 			else
 			{
@@ -337,7 +337,7 @@ void StatusRootAction::changeStatus( const Kopete::Status::Status* status )
 		}
 		else
 		{
-			d->account->setOnlineStatus( d->onlineStatus, statusMessage );
+			d->account->setOnlineStatus( d->onlineStatus, statusMessage, Kopete::Account::KeepSpecialFlags );
 		}
 	}
 	else

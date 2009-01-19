@@ -1803,7 +1803,7 @@ void YahooAccount::slotWebcamPaused( const QString &who )
 	kc->webcamPaused();
 }
 
-void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason)
+void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
 {
 	kDebug(YAHOO_GEN_DEBUG) ;
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&

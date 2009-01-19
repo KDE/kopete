@@ -110,7 +110,7 @@ void disconnect()
 	// do nothing
 }
 
-void setOnlineStatus( const Kopete::OnlineStatus& /*status*/ , const QString &/*reason*/)
+void setOnlineStatus( const Kopete::OnlineStatus& /*status*/, const Kopete::StatusMessage &/*reason*/, const OnlineStatusOptions&/*options*/)
 {
 	// do nothing
 }

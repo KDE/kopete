@@ -122,7 +122,8 @@ public:
 	 *
 	 * @todo FIXME: This Only Makes us go online or offline, we cannot go away
 	 */
-	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
+	virtual void setOnlineStatus(const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                             const OnlineStatusOptions& options = None);
 	virtual void setStatusMessage(const Kopete::StatusMessage& statusMessage);
 	
 	/**
