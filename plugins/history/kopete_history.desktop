@@ -47,6 +47,7 @@ Name[ko]=과거 기록
 Name[lt]=Žurnalas
 Name[lv]=Vēsture
 Name[mk]=Историја
+Name[ml]=നാള്‍വഴി
 Name[nb]=Historie
 Name[nds]=Vörgeschicht
 Name[ne]=इतिहास
@@ -62,6 +63,7 @@ Name[ru]=Журнал разговоров
 Name[se]=Historihkka
 Name[sk]=História
 Name[sl]=Zgodovina
+Name[sr]=Историјат
 Name[sv]=Historik
 Name[ta]=வரலாறு
 Name[tg]=Номнависи сӯҳбатҳо
@@ -108,6 +110,7 @@ Comment[ko]=대화를 추적할 수 있도록 모든 메시지를 기록합니�
 Comment[lt]=Įrašinėti visas žinutes ir vesti pokalbių žurnalą
 Comment[lv]=Žurnalē visus ziņojumus, lai saglabātu jūsu sarunas
 Comment[mk]=Ги зачувува сите пораки за да ги следите вашите разговори
+Comment[ml]=നിങ്ങളുടെ സംഭാഷണങ്ങള്‍ നിരീക്ഷിക്കാന്‍ എല്ലാ സന്ദേശങ്ങളും രേഖപ്പെടുത്തുക
 Comment[nb]=Logg alle meldinger for å ta vare på samtalene dine
 Comment[nds]=All Narichten för't Nakieken na't Logbook schrieven
 Comment[ne]=तपाईँको वार्तालापको ट्रयाक राख्न सबै सन्देश लग गर्नुहोस्
@@ -122,6 +125,7 @@ Comment[ru]=Сохранение всех разговоров в журнале
 Comment[se]=Vurke buot dieđáhusaid vai oaidnit du ságastallamiid
 Comment[sk]=Záznam všetkých správ, aby ste mohli sledovať vaše rozhovory
 Comment[sl]=Beleži vsa sporočila za hranjenje vaših pogovorov
+Comment[sr]=Уписује у дневник све поруке да бисте водили евиденцију о својим разговорима
 Comment[sv]=Logga alla meddelanden för att hålla ordning på samtalen
 Comment[ta]=உங்கள் உரையாடலை கவனிக்க அனைத்து செய்திகளையும் புகுபதி 
 Comment[tg]=Сабти ҳамаи пайёмҳо барои пайгардии ҳамаи сӯҳбатҳои шумо

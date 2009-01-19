@@ -39,6 +39,7 @@ Name[ko]=자동 바꾸기
 Name[lt]=Automatinis keitimas
 Name[lv]=Auto aizvietošana
 Name[mk]=Автоматска замена
+Name[ml]=യാന്ത്രികമായി മാറ്റിവെയ്ക്കുന്നു
 Name[nb]=Automatisk utskifting
 Name[nds]=Automaatsch utwesseln
 Name[ne]=स्वत: प्रतिस्थापन
@@ -53,6 +54,7 @@ Name[ru]=Автозамена
 Name[se]=Auto-buhtte
 Name[sk]=Automatické náhrady
 Name[sl]=Samo-zamenjava
+Name[sr]=Аутоматска замена
 Name[sv]=Ersätt automatiskt
 Name[ta]=தன்னியக்க மாற்றி
 Name[tg]=Ҷойивазкунии Худкор
@@ -98,6 +100,7 @@ Comment[ko]=선택한 텍스트를 자동으로 바꿉니다
 Comment[lt]=Automatiškai keičia parinktą tekstą
 Comment[lv]=Automātiski aizvieto jūsu izvēlētus tekstus
 Comment[mk]=Автоматска замена на некој текст што го избирате
+Comment[ml]=നിങ്ങള്‍ക്ക് തെരഞ്ഞെടുക്കാവുന്ന ചില പാഠങ്ങള്‍ യാന്ത്രികമായിമാറ്റിവെയ്ക്കപ്പെടുന്നു
 Comment[nb]=Skift ut en valgt tekst automatisk
 Comment[nds]=Wesselt automaatsch wat instellbor Text ut
 Comment[ne]=तपाईँ रोज्न सक्नुहुने केही पाठहरूलाई स्वत: प्रतिस्थापन गर्दछ
@@ -111,6 +114,7 @@ Comment[ru]=Автоматически заменяет выбранный ва�
 Comment[se]=Buhtte válljejuvvon teavstta automáhtalaš
 Comment[sk]=Automaticky nahradzuje text, ktorý si vyberiete
 Comment[sl]=Samodejno zamenja besedilo, ki ga lahko izberete
+Comment[sr]=Аутоматски мења неки текст који одаберете
 Comment[sv]=Ersätt automatiskt text du kan markera
 Comment[ta]=நீங்கள் தேர்வு செய்த உரையை தானாக மாற்றவும்
 Comment[tg]=Матни интихобкардаи шуморо ба таври худкор иваз мекунад
