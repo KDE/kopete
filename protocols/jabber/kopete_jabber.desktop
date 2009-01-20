@@ -18,12 +18,15 @@ Name=Jabber
 Name[hi]=जैबर
 Name[ne]=ज्याबर
 Name[pa]=ਜੱਬਰ
+Name[sr]=Џабер
 Name[ta]=ஜாபர்
 Name[x-test]=xxJabberxx
 Comment=XMPP, Jabber, Google Talk
 Comment[km]=XMPP Jabber Google Talk
 Comment[lt]=XMPP, Jabber, Google pokalbiai
 Comment[pa]=XMPP, ਜੱਬਰ, ਗੂਗਲ ਟਾਕ
+Comment[sr]=ИксМПП, џабер, Гугл‑разговор
+Comment[sr@latin]=XMPP, Jabber, Google-razgovor
 Comment[x-test]=xxXMPP, Jabber, Google Talkxx
 Comment[zh_CN]=XMPP、Jabber、Google Talk
 
