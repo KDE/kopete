@@ -67,6 +67,9 @@ Connection::Connection( ClientStream* cs, const char* name )
 
 Connection::~Connection()
 {
+	// During clientStream deletion it can emit connected signal so we disconnect signals.
+	disconnect( d->clientStream, 0, this, 0 );
+
 	delete d->rateClassManager;
 	delete d->clientStream;
 	delete d;
