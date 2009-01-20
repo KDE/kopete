@@ -638,7 +638,7 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 }
 
-void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
+void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
 {
 	XMPP::Status xmppStatus = m_protocol->kosToStatus( status, reason.message() );
 

@@ -50,7 +50,8 @@ public:
 
 public slots:
 	void loadConfig();
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason);
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason,
+	                      const OnlineStatusOptions& options = None );
    void setStatusMessage( const Kopete::StatusMessage& msg );
 
 public slots:

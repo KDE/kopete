@@ -70,7 +70,8 @@ public slots:
 	void connectWithPassword(const QString &password);
 	void disconnect( DisconnectReason );
 	void disconnect();
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                      const OnlineStatusOptions& options = None );
 	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
 	//}
 

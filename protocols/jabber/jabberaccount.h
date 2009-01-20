@@ -146,7 +146,8 @@ public slots:
     /* Disconnect with a reason, and status */
     void disconnect( Kopete::Account::DisconnectReason reason, XMPP::Status &status );
 	/* Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage());
+	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                      const OnlineStatusOptions& options = None );
 	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
 
 	void addTransport( JabberTransport *tr ,  const QString &jid);

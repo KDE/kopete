@@ -198,7 +198,8 @@ void WlmAccount::setPersonalMessage (const Kopete::StatusMessage & reason)
 
 void
 WlmAccount::setOnlineStatus (const Kopete::OnlineStatus & status,
-                             const Kopete::StatusMessage & reason)
+                             const Kopete::StatusMessage & reason,
+                             const OnlineStatusOptions& options)
 {
     kDebug (14210) << k_funcinfo;
 

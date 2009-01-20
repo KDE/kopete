@@ -97,7 +97,8 @@ public:
 
 public slots:
 	/** Reimplementation from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
+	void setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                      const OnlineStatusOptions& options = None );
 	void setStatusMessage( const Kopete::StatusMessage& statusMessage );
 	void slotEditInfo();
 
