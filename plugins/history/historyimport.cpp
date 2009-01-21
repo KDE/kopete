@@ -426,7 +426,7 @@ void HistoryImport::parsePidginTxt(QFile &file, struct Log *log, QDate date)
 		if (line[0] == '(') {
 			if (!messageText.isEmpty()) {
 				// messageText contains an unwished newline at the end
-				if (messageText.endsWith("\n"))
+				if (messageText.endsWith('\n'))
 					messageText.remove(-1, 1);
 				struct Message message;
 				message.incoming = incoming;

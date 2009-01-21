@@ -182,7 +182,7 @@ void JabberEditAccountWidget::reopen ()
 	else
 	{
 		mServer->setEnabled (false);
-		mServer->setText(mID->text().section("@", 1));
+		mServer->setText(mID->text().section('@', 1));
 	}
 
 	cbAllowPlainTextPassword->setChecked (account()->configGroup()->readEntry("AllowPlainTextPassword", true));
@@ -317,7 +317,7 @@ void JabberEditAccountWidget::updateServerField ()
 
 	if(!cbCustomServer->isChecked())
 	{
-		QString newServer = mID->text().section("@", 1);
+		QString newServer = mID->text().section('@', 1);
 		mPort->setValue(5222);
 		// check if ssl is enabled and set the port correctly
 		sslToggled(cbUseSSL->isChecked());

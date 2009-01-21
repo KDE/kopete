@@ -122,9 +122,9 @@ void YahooUserInfoDialog::slotSaveAndCloseClicked()
 	entry.privateZIP = m_genInfoWidget->zipEdit->text();
 	entry.privateCountry = m_genInfoWidget->countryEdit->text();
 	QString bi = m_genInfoWidget->birthdayEdit->text();
-	entry.birthday = QDate( bi.section("/",2,2).toInt(), bi.section("/",1,1).toInt(), bi.section("/",0,0).toInt() );
+	entry.birthday = QDate( bi.section('/',2,2).toInt(), bi.section('/',1,1).toInt(), bi.section('/',0,0).toInt() );
 	QString an = m_genInfoWidget->anniversaryEdit->text();
-	entry.anniversary = QDate( an.section("/",2,2).toInt(), an.section("/",1,1).toInt(), an.section("/",0,0).toInt() );
+	entry.anniversary = QDate( an.section('/',2,2).toInt(), an.section('/',1,1).toInt(), an.section('/',0,0).toInt() );
 	entry.additional1 = m_otherInfoWidget->note1Edit->text();
 	entry.additional2 = m_otherInfoWidget->note2Edit->text();
 	entry.additional3 = m_otherInfoWidget->note3Edit->text();
@@ -185,7 +185,7 @@ void YahooUserInfoDialog::slotUser2()
 		else
 		{
 			QString bi = m_genInfoWidget->birthdayEdit->text();
-			entry.birthday = QDate( bi.section("/",2,2).toInt(), bi.section("/",1,1).toInt(), bi.section("/",0,0).toInt() );
+			entry.birthday = QDate( bi.section('/',2,2).toInt(), bi.section('/',1,1).toInt(), bi.section('/',0,0).toInt() );
 		}
 		
 		if( m_genInfoWidget->anniversaryEdit->text().isEmpty() )
@@ -193,7 +193,7 @@ void YahooUserInfoDialog::slotUser2()
 		else
 		{
 			QString an = m_genInfoWidget->anniversaryEdit->text();
-			entry.anniversary = QDate( an.section("/",2,2).toInt(), an.section("/",1,1).toInt(), an.section("/",0,0).toInt() );
+			entry.anniversary = QDate( an.section('/',2,2).toInt(), an.section('/',1,1).toInt(), an.section('/',0,0).toInt() );
 		}
 		
 		entry.additional1 = m_otherInfoWidget->note1Edit->text().isEmpty() ? oldEntry->additional1 : m_otherInfoWidget->note1Edit->text();

@@ -293,7 +293,7 @@ void IRCAccount::clientConnect()
 			urlString = "irc://";
 		}
 
-		urlString += nickName() + "@" + host.host+":"+QString::number(host.port);
+		urlString += nickName() + '@' + host.host + ':' + QString::number(host.port);
 
 		KUrl url(urlString);
 		//TODO use the constants in kircconst.h

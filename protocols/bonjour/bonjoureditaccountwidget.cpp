@@ -63,7 +63,7 @@ BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Acc
 			login = user.loginName();
 
 			// First Get the Names from KUser
-			names = user.property(KUser::FullName).toString().split(" ");
+			names = user.property(KUser::FullName).toString().split(' ');
 		}
 
 		// Next try via the default identity
@@ -73,7 +73,7 @@ BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Acc
 		if (! ident.isNull()) {
 			// Get the full name from identity (only if not available via KUser)
 			if ( names.isEmpty() )
-				names = ident.fullName().split(" ");
+				names = ident.fullName().split(' ');
 
 			// Get the email address
 			emailAddress = ident.emailAddr();
