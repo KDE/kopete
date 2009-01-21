@@ -205,6 +205,10 @@ class Skype : public QObject
 		 * @return Skype display name
 		 */
 		QString getDisplayName(const QString &name);
+		/**
+		 * Open skype file transfer dilog to send file via skype
+		 */
+		void openFileTransfer(const QString &user, const QString &url = QString::null);
 	public slots:
 		/**
 		 * Tell the skype to go online

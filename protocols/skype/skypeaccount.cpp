@@ -1002,4 +1002,9 @@ void SkypeAccount::renameGroup (Kopete::Group * group, const QString &oldname){
 		kDebug() << "Old group" << oldname << "in skype doesnt exist, skipping" << endl;
 }
 
+void SkypeAccount::openFileTransfer(const QString &user, const QString &url) {
+	kDebug() << k_funcinfo << user << url << endl;
+	d->skype.openFileTransfer(user, url);
+}
+
 #include "skypeaccount.moc"

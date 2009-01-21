@@ -367,6 +367,10 @@ Q_OBJECT
 		 * Call it when contact move between group
 		 */
 		void MovedBetweenGroup(SkypeContact *contact);
+		/**
+		 * Open skype file transfer dilog to send file via skype
+		 */
+		void openFileTransfer(const QString &user, const QString &url = QString::null);
 	public slots:
 		/**
 		 * Sets online status for the account.

@@ -127,6 +127,8 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	setOnlineStatus(account->protocol()->Offline);
 
 	d->id = id;
+
+	setFileCapable(true); //Enable sending files
 }
 
 SkypeContact::~SkypeContact() {
@@ -453,6 +455,11 @@ void SkypeContact::block() {
 QString SkypeContact::getid() {
 	kDebug() << k_funcinfo << endl;
 	return d->id;
+}
+
+void SkypeContact::sendFile(const KUrl &, const QString &, uint) {
+	kDebug() << k_funcinfo << endl;
+	d->account->openFileTransfer(getid());
 }
 
 #include "skypecontact.moc"

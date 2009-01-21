@@ -137,10 +137,9 @@ class SkypeContact : public Kopete::Contact
 		 */
 		virtual void sync(unsigned int changed);
 		/**
-		* Transmits an outgoing message to the server
-		* Called when the chat window send button has been pressed
-		* (in response to the relevant Kopete::ChatSession signal)
-		*/
+		 * Send file
+		 */
+		virtual void sendFile(const KUrl &, const QString &, uint);
 	signals:
 		/**
 		 * There is a request to get/refresh the contact info from skype
