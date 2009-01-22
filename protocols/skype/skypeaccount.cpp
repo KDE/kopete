@@ -208,7 +208,7 @@ void SkypeAccount::setAway(bool away, const QString &reason) {
 		setOnlineStatus(d->protocol->Online, reason);
 }
 
-void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason) {
+void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	if (status == d->protocol->Online)
@@ -230,6 +230,7 @@ void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kop
 
 	///TODO: Port to kde4
 	Q_UNUSED(reason);
+	Q_UNUSED(options);
 }
 
 void SkypeAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
