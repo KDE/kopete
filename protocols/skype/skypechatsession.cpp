@@ -28,6 +28,7 @@
 #include <kopetemetacontact.h>
 #include <qstring.h>
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 
@@ -94,8 +95,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 		Kopete::ChatSession(account->myself(), constructList(contact), account->protocol(), Kopete::ChatSession::Form()) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
-	///TODO: Port to kde4
-	//setInstance(KGenericFactory<SkypeProtocol>::instance());
+	setComponentData(account->protocol()->componentData());
 
 	//create the D-pointer
 	d = new SkypeChatSessionPrivate(account->protocol(), account);
@@ -112,6 +112,8 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 	connect(contact, SIGNAL(setActionsPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
 	connect(this, SIGNAL(becameMultiChat(const QString&, SkypeChatSession* )), this, SLOT(disallowCall()));
 
+	actionCollection()->addAction("callSkypeContactFromChat", d->callAction);
+
 	d->contact = contact;
 
 	setMayInvite(true);//It is possible to invite people to chat with Skype
@@ -122,9 +124,9 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 		Kopete::ChatSession(account->myself(), users, account->protocol(), Kopete::ChatSession::Form()) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
-	///TODO: Port to kde4
-	//setInstance(KGenericFactory<SkypeProtocol>::instance());
+	setComponentData(account->protocol()->componentData());
 
+	//create the D-pointer
 	d = new SkypeChatSessionPrivate(account->protocol(), account);
 	Kopete::ChatSessionManager::self()->registerChatSession(this);
 	connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(message(Kopete::Message& )));
@@ -137,6 +139,8 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 	d->callAction->setText(i18n("Call"));
 	d->callAction->setIcon(KIcon("skype_call"));
 	connect(d->callAction, SIGNAL(triggered()), SLOT(callChatSession()));
+
+	actionCollection()->addAction("callSkypeContactFromChat", d->callAction);
 
 	disallowCall();//TODO I hope it will not be needed in future
 

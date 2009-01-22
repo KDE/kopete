@@ -29,6 +29,7 @@
 #include <qstringlist.h>
 #include <kdebug.h>
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <kshortcut.h>
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>
@@ -83,8 +84,10 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 
 	d->callContactAction = new KAction( this );
 	d->callContactAction->setIcon( (KIcon("skype_call") ) );
-	d->callContactAction->setText( i18n ("Call (by Skype)") );
+	d->callContactAction->setText( i18n ("Call") );
 	connect(d->callContactAction, SIGNAL(triggered(bool)), SLOT(callContacts()));
+
+	actionCollection()->addAction("callSkypeContact", d->callContactAction);
 
 	updateCallActionStatus();
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(updateCallActionStatus()));
