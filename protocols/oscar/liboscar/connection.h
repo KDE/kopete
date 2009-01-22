@@ -66,6 +66,8 @@ public:
 	explicit Connection( ClientStream* cs, const char* name = 0 );
 	~Connection();
 
+	static void setStartFlapSequenceList( const QList<Oscar::WORD>& seqList );
+	
 	void setClient( Client* );
 
 	void connectToServer( const QString& host, quint16 port );
@@ -222,7 +224,7 @@ private slots:
 	void streamSocketError( int );
 
 private:
-
+	static QList<Oscar::WORD> m_startFlapSequenceList;
 	ConnectionPrivate* d;
 	bool m_loggedIn;
 };
