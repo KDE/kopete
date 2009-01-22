@@ -47,7 +47,7 @@ public:
 	Task* root;
 };
 
-
+QList<Oscar::WORD> Connection::m_startFlapSequenceList;
 
 Connection::Connection( ClientStream* cs, const char* name )
 : QObject( 0 )
@@ -68,6 +68,11 @@ Connection::~Connection()
 	delete d->rateClassManager;
 	delete d->clientStream;
 	delete d;
+}
+
+void Connection::setStartFlapSequenceList( const QList<Oscar::WORD>& seqList )
+{
+	m_startFlapSequenceList = seqList;
 }
 
 void Connection::setClient( Client* c )
@@ -214,7 +219,17 @@ void Connection::forcedSend( Transfer* request ) const
 void Connection::initSequence()
 {
 	d->snacSequence = ( KRandom::random() & 0xFFFF );
-	d->flapSequence = ( KRandom::random() & 0xFFFF );
+
+	if ( m_startFlapSequenceList.size() > 0 )
+	{
+		d->flapSequence = m_startFlapSequenceList.value( qrand() % m_startFlapSequenceList.size() ) - 1;
+		kDebug(OSCAR_RAW_DEBUG) << "d->flapSequence:" << hex << (d->flapSequence + 1);
+	}
+	else
+	{
+		kWarning(OSCAR_RAW_DEBUG) << "StartFlapSequenceList empty!";
+		d->flapSequence = 0x0000;
+	}
 }
 
 void Connection::distribute( Transfer * transfer ) const
