@@ -76,6 +76,7 @@ private:
 	KAction *m_actionAccountModify;
 	KAction *m_actionAccountRemove;
 	KAction *m_actionAccountSwitchIdentity;
+	KAction *m_actionAccountSetColor;
 
 	KAction *m_actionIdentityAdd;
 	KAction *m_actionIdentityCopy;
@@ -89,6 +90,7 @@ private slots:
 	void slotAddAccount();
 	void removeAccount();
 	void slotAccountSwitchIdentity();
+	void slotAccountSetColor();
 
 	void slotAddIdentity();
 	void removeIdentity();

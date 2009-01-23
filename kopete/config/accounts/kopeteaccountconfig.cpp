@@ -39,6 +39,7 @@
 #include <kicon.h>
 #include <kaction.h>
 #include <kmenu.h>
+#include <kcolordialog.h>
 
 #include "addaccountwizard.h"
 #include "editaccountwidget.h"
@@ -210,6 +211,7 @@ void KopeteAccountConfig::slotItemSelected()
 	mButtonAccountRemove->setEnabled( accountSelected );
 	m_actionAccountSwitchIdentity->setEnabled( accountSelected && hasMultipleIdentities );
 	mButtonAccountSwitchIdentity->setEnabled( m_actionAccountSwitchIdentity->isEnabled() );
+	mButtonAccountSetColor->setEnabled( accountSelected );
 
 	bool identitySelected = selectedIdentity();
 	bool isDefaultIdentity = (identitySelected && Kopete::IdentityManager::self()->defaultIdentity() == selectedIdentity()->identity());
@@ -372,6 +374,24 @@ void KopeteAccountConfig::slotAccountSwitchIdentity()
 	load();
 }
 
+void KopeteAccountConfig::slotAccountSetColor()
+{
+	KopeteAccountLVI *lvi = selectedAccount();
+
+	if ( !lvi || !lvi->account() )
+		return;
+
+	Kopete::Account *a = lvi->account();
+
+	QColor color = a->color();
+
+	if ( KColorDialog::getColor(color, Qt::black, this) == KColorDialog::Accepted ) {
+		a->setColor(color);
+	}
+
+	load();
+}
+
 void KopeteAccountConfig::slotSetDefaultIdentity()
 {
 	KopeteIdentityLVI *lvi = selectedIdentity();
@@ -523,6 +543,12 @@ void KopeteAccountConfig::configureActions()
 	connect( m_actionAccountSwitchIdentity, SIGNAL(triggered(bool)), this, SLOT(slotAccountSwitchIdentity()) );
 	connect( mButtonAccountSwitchIdentity, SIGNAL(clicked()), m_actionAccountSwitchIdentity, SLOT(trigger()) );
 
+	// Set/clear custom color for account
+	m_actionAccountSetColor = new KAction( i18n( "Set C&olor..." ), this );
+	mButtonAccountSetColor->setText( m_actionAccountSetColor->text() );
+	connect( m_actionAccountSetColor, SIGNAL(triggered(bool)), this, SLOT(slotAccountSetColor()) );
+	connect( mButtonAccountSetColor, SIGNAL(clicked()), m_actionAccountSetColor, SLOT(trigger()) );
+
 	// Add identity
 	m_actionIdentityAdd = new KAction( i18n( "Add &Identity..." ), this );
 	m_actionIdentityAdd->setIcon( KIcon("list-add") );
@@ -568,6 +594,7 @@ void KopeteAccountConfig::configureMenus()
 	m_accountContextMenu = new KMenu ( this );
 	m_accountContextMenu->addAction( m_actionAccountModify );
 	m_accountContextMenu->addAction( m_actionAccountRemove );
+	m_accountContextMenu->addAction( m_actionAccountSetColor );
 
 	// Identity management context menu
 	m_identityContextMenu = new KMenu ( this );
