@@ -28,7 +28,7 @@ class SkypeProtocolPrivate;
 
 namespace Kopete {
 	class OnlineStatus;
-};
+}
 
 #define LAUNCH_ALLWAYS 0
 #define LAUNCH_NEEDED 1

@@ -45,7 +45,7 @@ typedef enum {
 	///It was closed by skype (reserverd for future versions of protocol, does not work yet)
 	crRemoteClosed,
 	///The connection was lost, skype does not respond for the ping command or messages can not be sent
-	crLost,
+	crLost
 } skypeCloseReason;
 
 class SkypeConnectionPrivate;
