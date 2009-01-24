@@ -18,8 +18,8 @@
 
 */
 #include "skype.h"
-#include <skypeconnection.h>
-#include <skypeaccount.h>
+#include "skypeconnection.h"
+#include "skypeaccount.h"
 
 #include <kdebug.h>
 #include <qstring.h>
@@ -254,9 +254,6 @@ void Skype::connectionDone(int error, int protocolVer) {
 		d->connection % QString("SET SILENT_MODE ON");//try turn off all gui skype notification - this is not supported by skype yet, once it will works
 		///TODO: Set silent mode on, when is turned off
 
-		fixGroups();//fix & load groups immediately
-		d->fixGroupTimer->start(60000);//fix & load groups to memory every minutes
-
 		while (d->messageQueue.size()) {//It isn't empty yet?
 			QStringList::iterator it = d->messageQueue.begin();//take the first one
 			d->connection << (*it);//send the message
@@ -264,11 +261,13 @@ void Skype::connectionDone(int error, int protocolVer) {
 			d->messageQueue.removeFirst();
 		}
 		emit updateAllContacts();//let all contacts update their information
+		fixGroups();//fix & load groups immediately
 		search("FRIENDS");//search for friends - to add them all
 		TEST_QUIT;//if it failed, do not continue
 		d->connection.send("GET USERSTATUS");
 		TEST_QUIT;
 		d->connection.send("GET CONNSTATUS");
+		d->fixGroupTimer->start(60000);//fix & load groups to memory every minutes
 	} else {
 		closed(crLost);//OK, this is wrong, justclose the connection/atempt and delete the queue
 	}
@@ -526,8 +525,8 @@ void Skype::resetStatus() {
 			emit wentOffline();//Do not care what is the user marked as, this is more importatnt
 			return;
 		case csConnecting:
-			if (d->onlineStatus == usOffline)//not connecting, user wants to be offline
-				break;
+			//if (d->onlineStatus == usOffline)//not connecting, user wants to be offline
+			//	break;
 			emit statusConnecting();//still connecting, wait a minute
 			return;
 		default://just remove the compile-time warning about not handled value
@@ -539,7 +538,7 @@ void Skype::resetStatus() {
 			emit statusConnecting();
 			break;
 		case usOffline:
-			emit wentOffline();
+			//emit wentOffline(); //We got onlineStatus usOffline too, when connStatus is csConnecting
 			break;
 		case usOnline:
 			emit wentOnline();
@@ -926,7 +925,7 @@ void Skype::addToGroup(const QString &name, int groupID) {
 void Skype::createGroup(const QString &name) {
 	kDebug() << k_funcinfo << name << endl;
 	d->connection << QString("CREATE GROUP %1").arg(name);
-	fixGroups(true); ///TODO: Create memory group too without fixGroups()
+	fixGroups(true); ///TODO: Find better way to get group id and create memory group too without fixGroups()
 }
 
 void Skype::deleteGroup(int groupID) {
@@ -945,7 +944,6 @@ void Skype::renameGroup(int groupID, const QString &newName) {
 
 int Skype::getGroupID(const QString &groupname) {
 	kDebug() << k_funcinfo << groupname << endl;
-	kDebug() << d->groupsNames.value(groupname, -1) << endl;
 	return d->groupsNames.value(groupname, -1); //get group id from d->groupsNames
 }
 
@@ -955,7 +953,6 @@ QString Skype::getGroupName(int groupID) {
 	if (groupID == -1) //If groupID is empty return empty name
 		return "";
 
-	kDebug() << d->groupsNames.key(groupID, "") << endl;
 	return d->groupsNames.key(groupID, ""); //get group name from d->groupsNames
 }
 

@@ -103,7 +103,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 
 	d->authorizeAction = new KAction( this );
 	d->authorizeAction->setText( i18n ("(Re)send Authorization To") );
-	d->authorizeAction->setIcon( (KIcon("mail-forward") ) ); // TODO: Add Skype icon
+	d->authorizeAction->setIcon( (KIcon("skype_contact_unknown") ) );
 	connect(d->authorizeAction, SIGNAL(triggered()), SLOT(authorize()));
 
 	d->disAuthorAction = new KAction( this );

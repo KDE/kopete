@@ -18,7 +18,7 @@ TODO New:
 - add multiskype account support
 - hide skype to system tray after log in - done
 - automaticly go-offline, when quit/logout user from skype - done
-- use new blue skype icons - not all (missing unknow contact icon, animated connecting icon)
+- use new blue skype icons - done
 - add "user call me" event and remove call dialog (skype has eigen dialog with webcam support)
 - add support sending SMS
 - add support recording calls
