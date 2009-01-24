@@ -27,7 +27,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QTreeWidget" name="mAccountList" >
+      <widget class="AccountTreeWidget" name="mAccountList" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
          <horstretch>0</horstretch>
@@ -237,6 +237,13 @@ these labels!</string>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>AccountTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>accounttreewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>mButtonIdentityModify</tabstop>
  </tabstops>
