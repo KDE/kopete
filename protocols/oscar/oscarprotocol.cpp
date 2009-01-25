@@ -38,58 +38,18 @@ OscarProtocol::OscarProtocol( const KComponentData &instance, QObject *parent )
 	client("client", i18n("Client"), QString(), 0),
 	protocolVersion("protocolVersion", i18n("Protocol Version"), QString(), 0)
 {
-	QList<Oscar::WORD> startFlapSequenceList;
-	
 	KConfigGroup config( KGlobal::config(), "OscarProtocol" );
 	if ( config.hasKey( "StartFlapSequences" ) )
 	{
-		kWarning(OSCAR_GEN_DEBUG) << "Overriding StartFlapSequences!";
+		kWarning(OSCAR_GEN_DEBUG) << "Overriding default start flap sequence algorithm!";
 
+		QList<Oscar::WORD> startFlapSequenceList;
 		QList<int> flapSequenceList = config.readEntry( "StartFlapSequences", QList<int>() );
 		foreach ( int flapSeq, flapSequenceList )
 			startFlapSequenceList << flapSeq;
-	}
 
-	// Use predefined sequences because ICQ blocks random start flaps
-	if ( startFlapSequenceList.isEmpty() )
-	{
-		// Default flap start sequences
-		kDebug() << "Using default StartFlapSequences.";
-
-		startFlapSequenceList << 0x0001;
-		startFlapSequenceList << 0x04E7;
-		startFlapSequenceList << 0x0704;
-		startFlapSequenceList << 0x078A;
-		startFlapSequenceList << 0x07C9;
-		startFlapSequenceList << 0x0B25;
-		startFlapSequenceList << 0x0FC5;
-		startFlapSequenceList << 0x163F;
-		startFlapSequenceList << 0x1BEA;
-		startFlapSequenceList << 0x2294;
-		startFlapSequenceList << 0x2493;
-		startFlapSequenceList << 0x25D6;
-		startFlapSequenceList << 0x25FA;
-		startFlapSequenceList << 0x26EE;
-		startFlapSequenceList << 0x2886;
-		startFlapSequenceList << 0x30CC;
-		startFlapSequenceList << 0x3303;
-		startFlapSequenceList << 0x3526;
-		startFlapSequenceList << 0x42A8;
-		startFlapSequenceList << 0x43DC;
-		startFlapSequenceList << 0x4E94;
-		startFlapSequenceList << 0x5342;
-		startFlapSequenceList << 0x5697;
-		startFlapSequenceList << 0x5A09;
-		startFlapSequenceList << 0x5C2B;
-		startFlapSequenceList << 0x5C44;
-		startFlapSequenceList << 0x5D6E;
-		startFlapSequenceList << 0x7339;
-		startFlapSequenceList << 0x7570;
-		startFlapSequenceList << 0x75A8;
-		startFlapSequenceList << 0x7A02;
-		startFlapSequenceList << 0x7F33;
+		Connection::setStartFlapSequenceList( startFlapSequenceList );
 	}
-	Connection::setStartFlapSequenceList( startFlapSequenceList );
 }
 
 OscarProtocol::~OscarProtocol()

@@ -208,6 +208,9 @@ private:
 	/** Seed the sequence numbers with random values */
 	void initSequence();
 
+	/** Generates initial flap sequence number as ICQ 6 */
+	Oscar::WORD generateInitialFlapSequence() const;
+
 	/** Distribute the transfer among the connection's tasks */
 	void distribute( Transfer* t ) const;
 
