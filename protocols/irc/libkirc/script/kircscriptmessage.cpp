@@ -32,7 +32,7 @@ QScriptValue Message_line(QScriptContext *ctx, QScriptEngine *eng)
 	return msg.line();
 }
 
-// TODO: suport copy constructor
+// TODO: support copy constructor
 static
 QScriptValue Message_constructor(QScriptContext *ctx, QScriptEngine *eng)
 {
