@@ -122,7 +122,7 @@
 
 	<!-- Element for display names -->
 	<xsd:complexType name="displayName">
-		<!-- The direction of the name, for Bidi suport. -->
+		<!-- The direction of the name, for Bidi support. -->
 		<xsd:attribute name="dir" type="bidiDirection"/>
 
 		<!-- The actual name text -->
@@ -171,7 +171,7 @@
 				     and font-weight -->
 				<xsd:attribute name="font" type="xsd:string" use="optional"/>
 
-				<!-- The direction of the message, for Bidi suport. -->
+				<!-- The direction of the message, for Bidi support. -->
 				<xsd:attribute name="dir" type="bidiDirection" use="required"/>
 			</xsd:extension>
 		</xsd:simpleContent>

@@ -254,10 +254,10 @@ void KopeteMessage_Test::testLinkParser()
 
 			// set message format for parsing according to textcase filename convention
 			Qt::TextFormat format;
-			if ( fileName.section("-", 1, 1) == QString::fromLatin1("plaintext") )
+			if ( fileName.section('-', 1, 1) == QString::fromLatin1("plaintext") )
 				format = Qt::PlainText;
 			else
-				format = Qt::RichText;		
+				format = Qt::RichText;
 	
 			QString result = Kopete::Message::parseLinks( inputData, format );
 
@@ -268,7 +268,7 @@ void KopeteMessage_Test::testLinkParser()
 			expectedData = fileName + QString::fromLatin1(": ") + expectedData;
 			// if the test case begins with broken, we expect it to fail, then use XFAIL
 			// otherwise use QCOMPARE
-			if ( fileName.section("-", 0, 0) == QString::fromLatin1("broken") )
+			if ( fileName.section('-', 0, 0) == QString::fromLatin1("broken") )
 			{
 				//kDebug() << "checking known-broken testcase: " << fileName;
 				QEXPECT_FAIL("", "Checking know-broken testcase", Continue);

@@ -1270,6 +1270,9 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 		if ( queryClose() ) {
 			e->accept();
 		}
+		else {
+			e->ignore();
+		}
 		// END of code borrowed from KMainWindow::closeEvent
 	}
 	else

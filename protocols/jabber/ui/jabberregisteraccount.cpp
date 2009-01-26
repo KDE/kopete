@@ -193,7 +193,7 @@ void JabberRegisterAccount::slotJIDInformation ()
 
 	if ( !mMainWidget->leServer->text().isEmpty () &&
 		 ( !jidRegExp.exactMatch ( mMainWidget->leJID->text () ) ||
-		 ( mMainWidget->leJID->text().section ( "@", 1 ) != mMainWidget->leServer->text () ) ) )
+		 ( mMainWidget->leJID->text().section ( '@', 1 ) != mMainWidget->leServer->text () ) ) )
 	{
 		mMainWidget->lblJIDInformation->setText ( i18n ( "Unless you know what you are doing, your JID should be of the form "
 														 "\"username@server.com\".  In your case for example \"username@%1\"." , 
@@ -335,7 +335,7 @@ void JabberRegisterAccount::slotConnected ()
 
 	XMPP::JT_Register * task = new XMPP::JT_Register (jabberClient->rootTask ());
 	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));
-	task->reg (mMainWidget->leJID->text().section("@", 0, 0), mMainWidget->lePassword->text ());
+	task->reg (mMainWidget->leJID->text().section('@', 0, 0), mMainWidget->lePassword->text ());
 	task->go (true);
 
 }

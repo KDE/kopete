@@ -66,6 +66,8 @@ public:
 	explicit Connection( ClientStream* cs, const char* name = 0 );
 	~Connection();
 
+	static void setStartFlapSequenceList( const QList<Oscar::WORD>& seqList );
+	
 	void setClient( Client* );
 
 	void connectToServer( const QString& host, quint16 port );
@@ -206,6 +208,9 @@ private:
 	/** Seed the sequence numbers with random values */
 	void initSequence();
 
+	/** Generates initial flap sequence number as ICQ 6 */
+	Oscar::WORD generateInitialFlapSequence() const;
+
 	/** Distribute the transfer among the connection's tasks */
 	void distribute( Transfer* t ) const;
 
@@ -222,7 +227,7 @@ private slots:
 	void streamSocketError( int );
 
 private:
-
+	static QList<Oscar::WORD> m_startFlapSequenceList;
 	ConnectionPrivate* d;
 	bool m_loggedIn;
 };

@@ -104,7 +104,7 @@ void NLQuodLibet::parseFile( QFile & file )
 
 void NLQuodLibet::parseLine( const QString & line )
 {
-	QStringList parts = line.split( "=", QString::KeepEmptyParts );
+	QStringList parts = line.split( '=', QString::KeepEmptyParts );
 	if ( parts.count() == 2 )
 	{
 		if ( parts[0] == "album" ) {

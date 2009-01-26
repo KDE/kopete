@@ -160,7 +160,6 @@ Index: iris/jabber/jingletasks.cpp
 +	 * 	* A new JT_JingleSession is used by the JingleSession to established the connection
 +	 * I'd rather use the second one, see later...
 +	 */
-+	qDebug() << "JT_PushJingleAction::take\n";
 +	// qDebug() << "tagName : %s\n", x.firstChildElement().tagName().toLatin1().constData();
 +	if (x.firstChildElement().tagName() != "jingle")
 +		return false;
@@ -195,7 +194,7 @@ Index: iris/jabber/jingletasks.cpp
 +		content = jingle.firstChildElement();
 +		while (!content.isNull())
 +		{
-+			if (content.tagName() == "content");
++			if (content.tagName() == "content")
 +				d->incomingSession->addContent(content);
 +			content = content.nextSiblingElement();
 +		}
@@ -334,7 +333,7 @@ Index: iris/jabber/jingletasks.cpp
 +bool interfaceOrder(const QHostAddress& a1, const QHostAddress& a2)
 +{
 +	Q_UNUSED(a2)
-+	if ((a1 != QHostAddress::LocalHost) && (a1 != QHostAddress::Null))
++	if ((a1 != QHostAddress::LocalHost) && (a1 != QHostAddress::Null) && (a1.protocol() != QAbstractSocket::IPv6Protocol))
 +		return true;
 +	return false;
 +}
@@ -484,6 +483,9 @@ Index: iris/jabber/jingletasks.cpp
 +		break;
 +	case JingleReason::NoReason :
 +		rReason = doc()->createElement("no-error");
++		break;
++	case JingleReason::UnsupportedApplications :
++		rReason = doc()->createElement("unsupported-applications");
 +		break;
 +	default:
 +		rReason = doc()->createElement("unknown");
@@ -787,6 +789,7 @@ Index: iris/jabber/jinglesession.h
 +		enum Type {
 +			Decline = 0,
 +			Busy,
++			UnsupportedApplications,
 +			NoReason
 +		};
 +		/*
@@ -887,7 +890,7 @@ Index: iris/jabber/jinglesession.h
 +		 * Once the responder sends the acknowledgement stanza, the
 +		 * signal terminated() is emitted.
 +		 */
-+		void terminate(const JingleReason& r = JingleReason());
++		void sessionTerminate(const JingleReason& r = JingleReason());
 +
 +		/*
 +		 * Sends a ringing informational message.
@@ -1350,10 +1353,10 @@ Index: iris/jabber/jinglecontent.cpp
 +
 +void JingleContent::slotRawUdpDataReady()
 +{
-+	qDebug() << "Data arrived on the socket.";
++	qDebug() << "slotRawUdpDataReady() :: Data arrived on the socket.";
 +	emit dataReceived();
 +	setReceiving(true);
-+	//disconnect(sender(), 0, this, 0);
++	disconnect(sender(), SIGNAL(readyRead()), this, 0);
 +}
 +
 +QUdpSocket *JingleContent::inSocket()
@@ -1461,8 +1464,8 @@ Index: iris/jabber/jinglecontent.cpp
 +	qDebug() << "Trying to bind socket to" << address.toString() << ":" << port;
 +	if (!d->inSocket)
 +		d->inSocket = new QUdpSocket();
-+	if (d->inSocket->bind(/*address, */port))
-+		qDebug() << "Socket bound to" << /*address.toString() << ":" << */port;
++	if (d->inSocket->bind(address, port))
++		qDebug() << "Socket bound to" << address.toString() << ":" << port;
 +	
 +	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
 +	
@@ -2003,31 +2006,53 @@ Index: iris/jabber/jinglesessionmanager.cpp
 +	JingleSession *sess = d->pjs->takeNextIncomingSession();
 +	d->sessions << sess;
 +	connect(sess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
-+	QList<QString> incompatibleContents;
-+	// This is a list of the names of the contents which have no supported transports or no supported payloads.
-+	// We have to remove all contents present in this list.
-+	// If all contents are here, reject the session because it's not possible to establish a session.
++       //QList<QString> incompatibleContents;
++
++       QList<QString> unsupportedPayloads;
++       // This is a list of the names of the contents which have no supported payloads.
++
++       QList<QString> unsupportedTransports;
++       // This is a list of the names of the contents which have no supported transports
++       // We have to remove all contents present in those lists.
++       //
++       // If no content is supported, reject the session because it's not possible to establish a session.
 +
 +	for (int i = 0; i < sess->contents().count(); i++)
 +	{
 +		JingleContent *c = sess->contents()[i];
 +
++		//Set supported payloads for this content.
++		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
++
 +		// Check payloads for the content c
 +		if (!checkSupportedPayloads(c))
 +		{
-+			incompatibleContents << c->name();
-+			//return;
++			//incompatibleContents << c->name();
++			unsupportedPayloads << c->name();
++                       continue;
 +		}
 +		
 +		if (!checkSupportedTransport(c))
 +		{
-+			incompatibleContents << c->name();
-+			//return;
++                       //incompatibleContents << c->name();
++                       unsupportedTransports << c->name();
 +		}
-+
-+		//Set supported payloads for this content.
-+		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
 +	}
++
++       if (unsupportedPayloads.count() + unsupportedTransports.count() == sess->contents().count())
++       {
++               //Reject the session.
++               JingleReason r(JingleReason::UnsupportedApplications);
++               sess->sessionTerminate(r);
++               //What happens when we receive the ack of the session-terminate ?
++               return;
++       }
++       else if (unsupportedPayloads.count() + unsupportedTransports.count() > 0)
++       {
++               //remove this contents list
++               sess->removeContent(unsupportedPayloads + unsupportedTransports);
++               return;
++       }
 +	
 +	emit newJingleSession(sess);
 +	
@@ -2038,8 +2063,10 @@ Index: iris/jabber/jinglesessionmanager.cpp
 +
 +bool JingleSessionManager::checkSupportedPayloads(JingleContent *c)
 +{
-+	/*for (int i = 0; i < c->payloadTypes().count(); i++)
++       qDebug() << "We have" << c->responderPayloads().count() << "responder payloads in this content.";
++       for (int i = 0; i < c->payloadTypes().count(); i++)
 +	{
++               qDebug() << "We have" << d->supportedAudioPayloads.count() << "supported payloads.";
 +		for (int j = 0; j < d->supportedAudioPayloads.count(); j++)
 +		{
 +			qDebug() << "compare" << c->payloadTypes().at(i).attribute("name") << "to" << d->supportedAudioPayloads.at(j).attribute("name");
@@ -2052,9 +2079,9 @@ Index: iris/jabber/jinglesessionmanager.cpp
 +			}
 +		}
 +	}
-+	qDebug() << "return false";*/
 +
-+	return true;
++       qDebug() << "return false";
++       return false;
 +}
 +
 +bool JingleSessionManager::checkSupportedTransport(JingleContent *c)
@@ -2422,11 +2449,6 @@ Index: iris/jabber/jinglesession.cpp
 + *
 + */
 +
-+//FIXME:Must remove all JT_JingleAction as soon as they are acknowledged !!!!!!!
-+//	This bug makes kopete crash when a session is trminated and other sessions
-+//	are active because JT_JingleAction keeps a pointer on the JingleSession and
-+//	use it in the take() method
-+
 +#include <QString>
 +#include <QUdpSocket>
 +
@@ -2618,7 +2640,7 @@ Index: iris/jabber/jinglesession.cpp
 +		JingleContent *c = contentWithName(content.attribute("name"));
 +		QList<QDomElement> payloads;
 +		QDomElement pType = content.firstChildElement().firstChildElement();
-+		//		    content    description         payload-type
++		//		    content    description	 payload-type
 +		while (!pType.isNull())
 +		{
 +			payloads << pType;
@@ -2867,7 +2889,7 @@ Index: iris/jabber/jinglesession.cpp
 +	connect(c, SIGNAL(dataReceived()), this, SLOT(slotReceivingData()));
 +}
 +
-+void JingleSession::terminate(const JingleReason& r)
++void JingleSession::sessionTerminate(const JingleReason& r)
 +{
 +//FIXME:should Take an QDomElement as argument, the application should implement this
 +//class itself and be able to return the right QDomElement when calling this method
@@ -3008,6 +3030,19 @@ Index: iris/jabber/jinglesession.cpp
 +	return d->state;
 +}
 +
++void JingleSession::slotReceivingData()
++{
++       // Whatever the sender content is, we send the same received informational message.
++       // That's from the raw-udp specification, later, we will have to do fifferent things
++       // here depending on the transport method used in the sender content.
++
++       JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
++       d->actions << rAction;
++       connect(rAction, SIGNAL(finished()), this, SLOT(slotAcked()));
++       rAction->setSession(this);
++       rAction->received();
++       rAction->go(true);
++}
 +
 +//--------------------------
 +// JingleReason
@@ -3058,20 +3093,6 @@ Index: iris/jabber/jinglesession.cpp
 +JingleReason::Type JingleReason::type() const
 +{
 +	return d->type;
-+}
-+
-+void JingleSession::slotReceivingData()
-+{
-+	// Whatever the sender content is, we send the same received informational message.
-+	// That's from the raw-udp specification, later, we will have to do fifferent things
-+	// here depending on the transport method used in the sender content.
-+	
-+	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
-+	d->actions << rAction;
-+	connect(rAction, SIGNAL(finished()), this, SLOT(slotAcked()));
-+	rAction->setSession(this);
-+	rAction->received();
-+	rAction->go(true);
 +}
 +
 Index: iris/jabber/jinglesessionmanager.h

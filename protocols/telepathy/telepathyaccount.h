@@ -2,7 +2,7 @@
  * telepathyaccount.h - Telepathy Kopete Account.
  *
  * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
- * 
+ *
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
  *************************************************************************
@@ -20,6 +20,8 @@
 #include <kopeteaccount.h>
 #include <QtCore/QList>
 
+#include <TelepathyQt4/Client/ConnectionManager>
+
 #include <QtTapioca/ConnectionManager>
 #include <QtTapioca/Connection>
 
@@ -32,8 +34,8 @@ namespace QtTapioca
 	class Contact;
 }
 
-namespace Kopete 
-{ 
+namespace Kopete
+{
 	class MetaContact;
 	class StatusMessage;
 }
@@ -132,11 +134,11 @@ signals:
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus());
 	virtual void disconnect();
-	
+
 	virtual void setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
 	                             const OnlineStatusOptions& options = None);
 	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
-	
+
 	/**
 	 * @brief Called from the menu to change the myself contact alias
 	 */

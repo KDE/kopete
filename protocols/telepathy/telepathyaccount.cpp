@@ -39,6 +39,10 @@
 #include <kopeteuiglobal.h>
 #include <avatardialog.h>
 
+//TelepathyQt4 includes
+#include <TelepathyQt4/Client/ConnectionManager>
+#include <TelepathyQt4/Client/PendingStringList>
+
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
 #include <QtTapioca/ContactList>
@@ -119,7 +123,7 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 		kDebug(TELEPATHY_DEBUG_AREA) << "Successfully read config.";
 		kDebug(TELEPATHY_DEBUG_AREA) << "Connecting to connection manager " << connectionManager() << " on protocol " << connectionProtocol();
 		ConnectionManager *connectionManager = d->getConnectionManager();
-		
+
 		kDebug(TELEPATHY_DEBUG_AREA) << "Actual connection manager: " << connectionManager->name();
 		if( d->currentConnection )
 		{
@@ -218,8 +222,8 @@ void TelepathyAccount::slotSetAlias()
 
 	bool ok;
 	QString newAlias = KInputDialog::getText(
-			i18n("Change alias"), 
-			i18n("Enter the new alias by which you want to be visible to your friends:"), 
+			i18n("Change alias"),
+			i18n("Enter the new alias by which you want to be visible to your friends:"),
 			currentAlias,
 			&ok );
 
@@ -237,7 +241,7 @@ bool TelepathyAccount::createContact(const QString &contactId, Kopete::MetaConta
 	if( !contacts()[contactId] )
 	{
 		TelepathyContact *contact = new TelepathyContact(this, contactId, parentMetaContact);
-		
+
 		return contact != 0;
 	}
 	else
@@ -295,7 +299,7 @@ bool TelepathyAccount::readConfig()
 						newValue = QVariant(it.value());
 // 					kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter.name() << " Value: " << newValue << "Type: " << parameter.value().typeName();
 					d->connectionParameters.append( ConnectionManager::Parameter(parameter.name(), newValue) );
-					
+
 					break;
 				}
 			}
@@ -353,7 +357,7 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::allConnectionPa
 			d->allConnectionParameters.append( newParameter );
 		}
 	}
-	
+
 	return d->allConnectionParameters;
 }
 

@@ -147,13 +147,13 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 	
 	QList<QByteArray>::const_iterator it=parts.begin();
 
-	if((*it).startsWith(":"))
+	if((*it).startsWith(':'))
 	{
 		prefix=(*it).mid(1);
 		++it;
 	}
 
-	for(;it!=parts.end()&&!(*it).startsWith(":");++it)
+	for(;it!=parts.end()&&!(*it).startsWith(':');++it)
 	{
 			args.append((*it));
 	}
@@ -162,7 +162,7 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 	{
 		for(;it!=parts.end();++it)
 		{
-			suffix=suffix+" "+(*it);
+			suffix=suffix+' '+(*it);
 		}
 		//remove " :"
 		suffix=suffix.mid(2);

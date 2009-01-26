@@ -1,15 +1,14 @@
-set( GROUPWISE_DEBUG_GLOBAL 14190 )
-add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_GLOBAL} )
 add_definitions( -DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS )
-
-add_subdirectory( icons ) 
-add_subdirectory( libgroupwise ) 
-add_subdirectory( ui )
-
 include_directories( ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise/tasks ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/ui ${QCA2_INCLUDE_DIR} )
+
+add_subdirectory( libgroupwise ) 
+add_subdirectory( icons ) 
 
 
 ########### ui parts ####################
+
+set( GROUPWISE_DEBUG_GLOBAL 14190 )
+add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_GLOBAL} )
 
 set( kopete_groupwise_ui_SRCS
 	ui/gwaddcontactpage.cpp
@@ -65,7 +64,3 @@ install(TARGETS kopete_groupwise  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install( FILES kopete_groupwise.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 install( FILES gwchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_groupwise)
-
-
-
-
