@@ -1,9 +1,10 @@
 /*
-    videodevice.cpp  -  Kopete Video Device Low-level Support
+    v4l2device.cpp  -  Kopete V4L2 Video Device Support
 
-    Copyright (c) 2005-2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2005-2009 by Cláudio da Silveira Pinheiro	<taupter@gmail.com>
+    Copyright (c) 2005-2009 by Detlev Casanova			<detlev.casanova@gmail.com>
 
-    Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009      by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,6 +17,7 @@
 */
 
 #define ENABLE_AV
+#ifdef V4L2_CAP_VIDEO_CAPTURE
 
 #ifndef KOPETE_AVVIDEODEVICELISTITEM_H
 #define KOPETE_AVVIDEODEVICELISTITEM_H
@@ -30,8 +32,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <signal.h>
-
-#if defined(__linux__) && defined(ENABLE_AV)
 
 #include <asm/types.h>
 #undef __STRICT_ANSI__
@@ -73,18 +73,9 @@ namespace AV {
 /**
 @author Kopete Developers
 */
-typedef enum
-{
-	VIDEODEV_DRIVER_NONE
-#if defined( __linux__) && defined(ENABLE_AV)
-        ,
-	VIDEODEV_DRIVER_V4L
-#ifdef V4L2_CAP_VIDEO_CAPTURE
-        ,
-	VIDEODEV_DRIVER_V4L2
-#endif
-#endif
-} videodev_driver;
+
+//TODO:If possible, clean up those messy pixelformats :
+//	pixel_format from kopete != pixelformat from v4l2...
 
 typedef enum
 {
@@ -212,10 +203,11 @@ struct rawbuffer // raw buffer
 };
 
 
-class VideoDevice{
+class V4l2Device : VideoDevice
+{
 public:
-	VideoDevice();
-	virtual ~VideoDevice();
+	V4l2Device();
+	virtual ~V4l2Device();
 	int setFileName(QString filename);
 	virtual int open();
 	virtual bool isOpen();
@@ -223,16 +215,9 @@ public:
 	int showDeviceCapabilities();
 	virtual int initDevice();
 	int inputs();
-/*	int width();
-	int minWidth();
-	int maxWidth();
-	int height();
-	int minHeight();
-	int maxHeight();*/
 	QSize frameSize();
 	virtual int setSize(QSize newSize);
 	void sortFrameSizes();
-	//static bool qSizeSort(const QSize& a, const QSize& b);
 
 	virtual pixel_format setPixelFormat(pixel_format newformat);
 	int pixelFormatCode(pixel_format pixelformat);
@@ -293,26 +278,19 @@ public:
 	int descriptor;
 
 //protected:
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 	struct v4l2_capability V4L2_capabilities;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
-	struct v4l2_fmtdesc fmtdesc; // Not sure if it must be here or inside detectPixelFormats(). Should inve
-//	struct v4l2_input m_input;
+	struct v4l2_fmtdesc fmtdesc;
 	struct v4l2_queryctrl queryctrl;
 	struct v4l2_querymenu querymenu;
 	void enumerateControls (void);
 	void enumerateMenu (void);
-#endif
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
-#endif	
 	QVector<Kopete::AV::VideoInput> m_input;
-//	QFile file;
 protected:
-//	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 
 	QVector<rawbuffer> m_rawbuffers;
 	unsigned int m_streambuffers;
@@ -350,4 +328,5 @@ protected:
 
 }
 
+#endif
 #endif

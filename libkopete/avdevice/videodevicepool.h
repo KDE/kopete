@@ -59,12 +59,14 @@ public:
 	int open(int device);
 	bool isOpen();
 	int getFrame();
+	QSize frameSize();
+	/*
 	int width();
 	int minWidth();
 	int maxWidth();
 	int height();
 	int minHeight();
-	int maxHeight();
+	int maxHeight();*/
 	int setSize( int newwidth, int newheight);
 	int close();
 	int startCapturing();

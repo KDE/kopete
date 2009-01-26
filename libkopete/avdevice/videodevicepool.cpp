@@ -63,7 +63,7 @@ VideoDevicePool::VideoDevicePool()
 : m_current_device(0)
 {
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
-    connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
+	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
 }
 
 
@@ -115,7 +115,6 @@ int VideoDevicePool::open()
  */
 int VideoDevicePool::open(int device)
 {
-    /// @todo implement me
 	kDebug() << "open(" << device << ") called.";
 	if(device >= m_videodevice.size())
 	{
@@ -143,7 +142,7 @@ int VideoDevicePool::showDeviceCapabilities(unsigned int device)
 {
 	return m_videodevice[device].showDeviceCapabilities();
 }
-
+/*
 int VideoDevicePool::width()
 {
 	return m_videodevice[currentDevice()].width();
@@ -173,11 +172,18 @@ int VideoDevicePool::maxHeight()
 {
 	return m_videodevice[currentDevice()].maxHeight();
 }
+*/
 
+QSize VideoDevicePool::frameSize()
+{
+	return m_videodevice[currentDevice()].frameSize();
+}
+
+//TODO:argument must be a QSize
 int VideoDevicePool::setSize( int newwidth, int newheight)
 {
 	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setSize(newwidth, newheight);
+		return m_videodevice[currentDevice()].setSize(QSize(newwidth, newheight));
 	else
 	{
 		kDebug() << "VideoDevicePool::setSize() fallback for no device.";
@@ -427,7 +433,7 @@ int VideoDevicePool::getFrame()
 }
 
 /*!
-    \fn VideoDevicePool::getQImage(QImage *qimage)
+    \fn VideoDevicePool::getImage(QImage *qimage)
  */
 int VideoDevicePool::getImage(QImage *qimage)
 {
@@ -439,8 +445,8 @@ int VideoDevicePool::getImage(QImage *qimage)
 		kDebug() << "VideoDevicePool::getImage() fallback for no device.";
 
 		// do NOT delete qimage here, as it is received as a parameter
-		if (qimage->width() != width() || qimage->height() != height())
-			*qimage = QImage(width(), height(), QImage::Format_RGB32);
+		if (qimage->size() != frameSize())
+			*qimage = QImage(frameSize(), QImage::Format_RGB32);
 
 		uchar *bits=qimage->bits();
 		switch(m_buffer.pixelformat)

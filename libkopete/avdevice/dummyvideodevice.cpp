@@ -35,11 +35,10 @@ DummyVideoDevice::DummyVideoDevice()
 	m_pixelformat = PIXELFORMAT_RGB32;
 	m_driver=VIDEODEV_DRIVER_NONE;
 	m_input.append(VideoInput());
-	minwidth = 160;
-	maxwidth = 1280;
-	minheight = 120;
-	maxheight = 960;
-	setSize(320, 240);
+	
+	m_frameSizes << QSize(160, 120);
+	m_frameSizes << QSize(1280, 960);
+	setSize(QSize(320, 240));
 	//let's be opened by default seeing this is a fallback 
 	opened = true;
 	}
@@ -80,32 +79,32 @@ int DummyVideoDevice::checkDevice()
 int DummyVideoDevice::initDevice()
 	{
 	//again this is just incase anything ever relies on it failing when closed
-	if(isOpen())
-		{
-		return EXIT_SUCCESS;
-		}
-	return EXIT_FAILURE;
+	return isOpen() ? EXIT_SUCCESS : EXIT_FAILURE;
 	}
 	
-int DummyVideoDevice::setSize( int newwidth, int newheight)
+int DummyVideoDevice::setSize(QSize newSize)
 	{
 	if (isOpen())
 		{
-		if(newwidth  > maxwidth ) newwidth  = maxwidth;
-		if(newheight > maxheight) newheight = maxheight;
-		if(newwidth  < minwidth ) newwidth  = minwidth;
-		if(newheight < minheight) newheight = minheight;
+		if (newSize.width() > m_frameSizes.last().width())
+			newSize.setWidth(m_frameSizes.last().width());
+		if (newSize.height() > m_frameSizes.last().height())
+			newSize.setHeight(m_frameSizes.last().height());
 
-		currentwidth  = newwidth;
-		currentheight = newheight;
-		
-		m_currentbuffer.width = currentwidth;
-		m_currentbuffer.height = currentheight;
+		if (newSize.width() < m_frameSizes.first().width())
+			newSize.setWidth(m_frameSizes.first().width());
+		if (newSize.height() < m_frameSizes.first().height())
+			newSize.setHeight(m_frameSizes.first().height());
+
+		currentFrameSize = newSize;
+
+		m_currentbuffer.width = currentFrameSize.width();
+		m_currentbuffer.height = currentFrameSize.height();
 		m_currentbuffer.pixelformat = m_pixelformat;
 		
 		//let's fill the buffer up with something
 		//TODO: replace this with an .svg that says there is no camera available
-		m_currentbuffer.data.resize(currentwidth * currentheight * 4);
+		m_currentbuffer.data.resize(currentFrameSize.width() * currentFrameSize.height() * 4);
 		for (int i=0; i<m_currentbuffer.data.size(); i++)
 			{
 			m_currentbuffer.data[i] = 255;
@@ -132,21 +131,13 @@ pixel_format DummyVideoDevice::setPixelFormat(pixel_format newformat)
 int DummyVideoDevice::startCapturing()
 	{
 	//again this is just incase anything ever relies on it failing when closed
-	if(isOpen())
-		{
-		return EXIT_SUCCESS;
-		}
-	return EXIT_FAILURE;
+	return isOpen() ? EXIT_SUCCESS : EXIT_FAILURE;
 	}
 	
 int DummyVideoDevice::getFrame()
 	{
 	//again this is just incase anything ever relies on it failing when closed
-	if(isOpen())
-		{
-		return EXIT_SUCCESS;
-		}
-	return EXIT_FAILURE;
+	return isOpen() ? EXIT_SUCCESS : EXIT_FAILURE;
 	}
 	
 int DummyVideoDevice::getFrame(imagebuffer *imgbuffer)
@@ -165,8 +156,8 @@ int DummyVideoDevice::getFrame(imagebuffer *imgbuffer)
 int DummyVideoDevice::getImage(QImage *qimage)
 	{
 	// do NOT delete qimage here, as it is received as a parameter
-	if (qimage->width() != width() || qimage->height() != height())
-		*qimage = QImage(width(), height(), QImage::Format_RGB32);
+	if (qimage->size() != frameSize())
+		*qimage = QImage(frameSize(), QImage::Format_RGB32);
 
 	uchar *bits=qimage->bits();
 	memcpy(bits,&m_currentbuffer.data[0], m_currentbuffer.data.size());
@@ -177,11 +168,7 @@ int DummyVideoDevice::getImage(QImage *qimage)
 int DummyVideoDevice::stopCapturing()
 	{
 	//again this is just incase anything ever relies on it failing when closed
-	if(isOpen())
-		{
-		return EXIT_SUCCESS;
-		}
-	return EXIT_FAILURE;
+	return isOpen() ? EXIT_SUCCESS : EXIT_FAILURE;
 	}
 	
 int DummyVideoDevice::close()

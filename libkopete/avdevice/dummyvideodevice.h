@@ -47,7 +47,7 @@ public:
 	virtual int checkDevice();
 	virtual int initDevice();
 
-	virtual int setSize( int newwidth, int newheight);
+	virtual int setSize(QSize newSize);
 
 	virtual pixel_format setPixelFormat(pixel_format newformat);
 
