@@ -32,8 +32,7 @@ namespace AV {
 DummyVideoDevice::DummyVideoDevice()
 	{
 	//need to set a bunch of defaults for members
-	m_pixelformat = PIXELFORMAT_RGB32;
-	m_driver=VIDEODEV_DRIVER_NONE;
+	m_pixelformat = V4L2_PIX_FMT_RGB32;
 	m_input.append(VideoInput());
 	
 	m_frameSizes << QSize(160, 120);
@@ -70,7 +69,6 @@ int DummyVideoDevice::checkDevice()
 		m_videoasyncio=false;
 		m_videostream=false;
 
-		m_driver=VIDEODEV_DRIVER_NONE;
 		return EXIT_SUCCESS;
 		}
 	return EXIT_FAILURE;
@@ -115,12 +113,11 @@ int DummyVideoDevice::setSize(QSize newSize)
 	return EXIT_FAILURE;
 	}
 	
-pixel_format DummyVideoDevice::setPixelFormat(pixel_format newformat)
+unsigned int DummyVideoDevice::setPixelFormat(unsigned int newformat)
 	{
-	pixel_format ret = PIXELFORMAT_NONE;
+	int ret = 0;
 	
-	if (newformat == PIXELFORMAT_RGB32)
-		{
+	if (newformat == V4L2_PIX_FMT_RGB32){
 		m_pixelformat = newformat;
 		ret = m_pixelformat;
 		}

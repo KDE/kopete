@@ -36,22 +36,22 @@ namespace AV {
 @author Kopete Developers
 */
 
-class VideoDeviceVector : public QVector<VideoDevice>
+class VideoDeviceVector : public QVector<VideoDevice*>
 {
 
 public:
-	VideoDeviceVector() {}
+	VideoDeviceVector() {fallback = new DummyVideoDevice();}
 	~VideoDeviceVector() {}
 	
-	VideoDevice& operator[] (int i);
+	VideoDevice* operator[] (int i);
 
-	const VideoDevice& operator[] (int i) const;
+	const VideoDevice* operator[] (int i) const;
 	
-	const VideoDevice& at(int i) const;
+	const VideoDevice* at(int i) const;
 	
 private:
 	
-	DummyVideoDevice fallback;
+	DummyVideoDevice *fallback;
 };
 
 }

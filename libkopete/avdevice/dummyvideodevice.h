@@ -49,7 +49,7 @@ public:
 
 	virtual int setSize(QSize newSize);
 
-	virtual pixel_format setPixelFormat(pixel_format newformat);
+	virtual unsigned int setPixelFormat(unsigned int newformat);
 
 	virtual int startCapturing();
 	virtual int getFrame();
@@ -57,7 +57,6 @@ public:
 	virtual int getImage(QImage *qimage);
 	virtual int stopCapturing();
 	virtual int close();
-	
 	
 private:
 	bool opened;

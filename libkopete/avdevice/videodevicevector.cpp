@@ -28,7 +28,7 @@ namespace Kopete {
 
 namespace AV {
 
-VideoDevice& VideoDeviceVector::operator[] (int i)
+VideoDevice* VideoDeviceVector::operator[] (int i)
 	{
 	if (i>=size())
 		{
@@ -37,15 +37,15 @@ VideoDevice& VideoDeviceVector::operator[] (int i)
 		}
 	
 	//if we've made it here then we're within range
-	return QVector<VideoDevice>::operator[](i);
+	return QVector<VideoDevice*>::operator[](i);
 	}
 	
-const VideoDevice& VideoDeviceVector::operator[] (int i) const
+const VideoDevice* VideoDeviceVector::operator[] (int i) const
 	{
 	return at(i);
 	}
 
-const VideoDevice& VideoDeviceVector::at(int i) const
+const VideoDevice* VideoDeviceVector::at(int i) const
 	{
 	if (i>=size())
 		{
@@ -54,7 +54,7 @@ const VideoDevice& VideoDeviceVector::at(int i) const
 		}
 	
 	//if we've made it here then we're within range
-	return QVector<VideoDevice>::operator[](i);
+	return QVector<VideoDevice*>::operator[](i);
 	}
 
 }

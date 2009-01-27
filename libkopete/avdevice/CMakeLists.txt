@@ -8,6 +8,8 @@ ${KOPETE_INCLUDES}
 
 set(kopete_videodevice_LIB_SRCS 
    videodevice.cpp 
+   v4l1device.cpp 
+   v4l2device.cpp 
    videoinput.cpp 
    dummyvideodevice.cpp
    videodevicevector.cpp
