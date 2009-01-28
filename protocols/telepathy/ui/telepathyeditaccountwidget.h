@@ -2,7 +2,7 @@
  * telepathyeditaccountwidget.h - UI to edit Telepathy account settings
  *
  * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
- * 
+ *               2009 by Dariusz Mikulski <dariusz.mikulski@gmail.com>
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
  *************************************************************************
@@ -62,10 +62,9 @@ private slots:
 	void connectionManagerSelectionChanged();
 	void protocolSelectionChanged();
 	void listConnectionManager();
+    void onListNames(Telepathy::Client::PendingOperation *);
 	void readConfig();
 	void writeConfig();
-
-        void showConnectionManagerInfo(Telepathy::Client::PendingOperation *);
 
 private:
 	class Private;

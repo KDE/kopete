@@ -293,21 +293,21 @@ void AuthenticationWizard::finished(bool success, bool trust){
 			if(question != NULL || rbQA->isChecked()){
 				if(initiate){
 					kDebug() << "initiate";
-					lFinal->setText(i18n("The authetication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+					lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 				} else {
 					kDebug() << "not initiate";
 					if(trust){
-						lFinal->setText(i18n("The authetication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+						lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 					} else {
 						lFinal->setText(i18n("<b>%1</b> has successfully authenticated you. You may want to authenticate this contact as well by asking your own question.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 					}
 				}
 			} else {
-				lFinal->setText(i18n("The authetication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+				lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 			}
 		} else {
 			currentPage()->setTitle(i18n("Authentication failed"));
-			lFinal->setText(i18n("The authetication with %1 failed. To make sure you aren't talking to an imposer, try again using the manual fingerprint verification method. The conversation is now insecure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+			lFinal->setText(i18n("The authentication with %1 failed. To make sure you aren't talking to an imposer, try again using the manual fingerprint verification method. The conversation is now insecure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 		}
 	}
 }
