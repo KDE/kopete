@@ -1,13 +1,15 @@
 project ( kopete-cryptography )
 
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules )
+
 find_package(KDE4 REQUIRED)
 include (KDE4Defaults)
 include (MacroLibrary)
 include(MacroOptionalAddSubdirectory)
 include (MacroEnsureVersion)
 find_package(Kopete REQUIRED)
-find_package(Kdepim REQUIRED)
 find_package(KdepimLibs REQUIRED)
+find_package(Kleopatra REQUIRED)
 find_package(QGpgme REQUIRED)
 
 
@@ -27,7 +29,7 @@ endif( _GPGMECONFIG_EXECUTABLE )
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
 include_directories (${CMAKE_SOURCE_DIR} 
-${KDE4_INCLUDES} )
+${KDE4_INCLUDES} ${KDEPIMLIBS_INCLUDE_DIR} ${KLEO_INCLUDE_DIR})
 
 
 ########### next target ###############
@@ -47,7 +49,7 @@ kde4_add_ui_files(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui exportkey
 
 kde4_add_plugin(kopete_cryptography ${kopete_cryptography_PART_SRCS})
 
-target_link_libraries(kopete_cryptography ${QT_QTGUI_LIBRARY}  ${KDE4_KDECORE_LIBS} kopete kleo ${KDE4_KABC_LIBS} ${QGPGME_LIBRARIES} )
+target_link_libraries(kopete_cryptography ${QT_QTGUI_LIBRARY}  ${KDE4_KDECORE_LIBS} kopete ${KLEO_LIBRARIES} ${KDE4_KABC_LIBS} ${QGPGME_LIBRARIES} )
 
 install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -65,7 +67,7 @@ kde4_add_plugin(kcm_kopete_cryptography ${kcm_kopete_cryptography_PART_SRCS})
 target_link_libraries(
     kcm_kopete_cryptography
     kopete
-    kleo
+    ${KLEO_LIBRARIES}
     ${KDE4_KDECORE_LIBS}
     ${KDE4_KDEUI_LIBS}
     ${KDE4_KUTILS_LIBS}
