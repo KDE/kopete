@@ -103,7 +103,7 @@ int VideoDevice::open()
 	kDebug() << "File" << full_filename << "was opened successfuly";
 
 	// Check the device.
-	if (EXIT_FAILURE == checkDevice()) //FIXME:Will it call it from this or from V4l2Device ?
+	if (EXIT_FAILURE == checkDevice())
 	{
 		kDebug() << "File " << full_filename << " could not be opened";
 		close();
@@ -125,8 +125,34 @@ bool VideoDevice::isOpen()
 
 int VideoDevice::checkDevice()
 {
-	kDebug() << "called.";
 	return EXIT_SUCCESS;
+}
+
+DeviceType VideoDevice::checkDevice(const QString& dev)
+{
+	kDebug() << "called.";
+
+#ifdef V4L2_CAP_VIDEO_CAPTURE
+	int fd = ::open (dev.toUtf8().constData(), O_RDWR);
+	if (!fd)
+		return UnknownType;
+
+	struct v4l2_capability V4L2_capabilities;
+	memset(&V4L2_capabilities, 0, sizeof (V4L2_capabilities));
+	
+	if (-1 == ioctl (fd, VIDIOC_QUERYCAP, &V4L2_capabilities))
+	{
+		::close(fd);
+		return V4l1;
+	}
+	else
+	{
+		::close(fd);
+		return V4l2;
+	}
+#else
+	return V4l1;
+#endif
 }
 
 

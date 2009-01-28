@@ -650,30 +650,27 @@ void VideoDevicePool::registerDevice( Solid::Device & device )
 			kDebug() << "Solid claims device support those drivers :" << drivers;
 			if ( drivers.contains( "video4linux" ) )
 			{
-				kDebug() << "V4L device path is" << solidVideoDevice->driverHandle( "video4linux" ).toString();
+				QString dev = solidVideoDevice->driverHandle( "video4linux" ).toString();
+				kDebug() << "V4L device path is" << dev;
 				VideoDevice *videodevice = 0;
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 				// Checking if this is V4L or V4L2
-				bool v4l = false, v4l2 = false;
-				int descriptor = ::open (QFile::encodeName(solidVideoDevice->driverHandle( "video4linux" ).toString()), O_RDWR);
-				if (!descriptor)
-					return;
-	
-				struct v4l2_capability V4L2_capabilities;
-				memset(&V4L2_capabilities, 0, sizeof (V4L2_capabilities));
-				
-				if (-1 == ioctl (descriptor, VIDIOC_QUERYCAP, &V4L2_capabilities))
-					v4l = true;
-				else
-					v4l2 = true;
+				switch (VideoDevice::checkDevice(dev))
+				{
+					case V4l1 :
+						videodevice = new V4l1Device();
+						break;
+					case V4l2 :
+						videodevice = new V4l2Device();
+						break;
+					default:
+						kDebug() << "This is not a v4l* device, there is a problem wit Solid.";
+						return;
+				}
 #else
-				v4l = true;
-#endif			
-				if (v4l)
-					videodevice = new V4l1Device();
-				else if (v4l2)
-					videodevice = new V4l2Device();
-					
+				videodevice = new V4l1Device();
+#endif
+				
 				videodevice->setUdi( device.udi() );
 				videodevice->setFileName(solidVideoDevice->driverHandle( "video4linux" ).toString());
 				kDebug() << "Found device " << videodevice->full_filename;

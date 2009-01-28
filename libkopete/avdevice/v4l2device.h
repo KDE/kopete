@@ -16,51 +16,20 @@
     *************************************************************************
 */
 
-#define ENABLE_AV
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 
 #ifndef KOPETE_AV_V4L2DEVICE_H
 #define KOPETE_AV_V4L2DEVICE_H
 
-#include <config-kopete.h>
-
-#include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <unistd.h>
-#include <signal.h>
 
-#include <asm/types.h>
-#undef __STRICT_ANSI__
-#ifndef __u64 //required by videodev.h
-#define __u64 unsigned long long
-#endif // __u64
-#ifndef __s64 //required by videodev.h
-#define __s64 signed long long
-#endif // __s64
-
-
-#ifndef pgoff_t
-#define pgoff_t unsigned long
-#endif
-
-#include <linux/fs.h>
-#include <linux/kernel.h>
 #include <linux/videodev.h>
-#define VIDEO_MODE_PAL_Nc  3
-#define VIDEO_MODE_PAL_M   4
-#define VIDEO_MODE_PAL_N   5
-#define VIDEO_MODE_NTSC_JP 6
-#define __STRICT_ANSI__
 
-
-#include <qstring.h>
-#include <qfile.h>
-#include <qimage.h>
-#include <q3valuevector.h>
+#include <QString>
+#include <QFile>
+#include <QImage>
 #include <kcombobox.h>
 
 #include "videoinput.h"
@@ -105,7 +74,6 @@ protected:
 	struct v4l2_crop crop;
 	struct v4l2_format fmt;
 	struct v4l2_fmtdesc fmtdesc; // Not sure if it must be here or inside detectPixelFormats(). Should inve
-//	struct v4l2_input m_input;
 	struct v4l2_queryctrl queryctrl;
 	struct v4l2_querymenu querymenu;
 	void enumerateControls(void);

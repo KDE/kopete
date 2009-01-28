@@ -15,8 +15,6 @@
     *************************************************************************
 */
 
-#define ENABLE_AV
-
 #include <cstdlib>
 #include <cerrno>
 #include <cstring>
@@ -35,6 +33,8 @@
 namespace Kopete {
 
 namespace AV {
+
+#ifdef V4L2_CAP_VIDEO_CAPTURE
 
 V4l2Device::V4l2Device()
 //: new VideoDevice()
@@ -58,7 +58,6 @@ void V4l2Device::sortFrameSizes()
 {
 	qSort(m_frameSizes.begin(), m_frameSizes.end(), qSizeSort);
 }
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 
 void V4l2Device::enumerateControls (void)
 {
@@ -160,7 +159,6 @@ void V4l2Device::enumerateMenu (void)
 		}
 	}
 }
-#endif
 
 int V4l2Device::checkDevice()
 {
@@ -180,8 +178,6 @@ int V4l2Device::checkDevice()
 	m_videoasyncio=false;
 	m_videostream=false;
 	
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 	CLEAR(V4L2_capabilities);
 
 	if (-1 != xioctl (VIDIOC_QUERYCAP, &V4L2_capabilities))
@@ -276,23 +272,16 @@ int V4l2Device::checkDevice()
 		kDebug() << "checkDevice(): " << full_filename << " is not a V4L2 device.";
 	}
 
-#endif
-#endif
 	m_name = m_model; // Take care about changing the name to be different from the model itself...
 	//FIXME:This comment is the opposit of the affection.
 
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 	enumerateControls();
-#endif
 	kDebug() << "checkDevice() exited successfuly.";
 
 	return EXIT_SUCCESS;
 }
 
 
-/*!
-    \fn V4l2DevicePool::initDevice()
- */
 int V4l2Device::initDevice()
 {
 	kDebug() << "initDevice() started";
@@ -303,8 +292,6 @@ int V4l2Device::initDevice()
 	}
 	
 	m_io_method = IO_METHOD_NONE;
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 	if(V4L2_capabilities.capabilities & V4L2_CAP_READWRITE)
 	{
 		m_videoread = true;
@@ -343,8 +330,6 @@ int V4l2Device::initDevice()
 			default:     break;  // Errors ignored.
 		}
 	}
-#endif
-#endif
 
 	showDeviceCapabilities();
 	kDebug() << "Exited successfuly";
@@ -373,9 +358,7 @@ int V4l2Device::setSize(QSize newSize)
 
 	currentFrameSize = newSize;
 
-// Change frame size for the video device
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
+	// Change frame size for the video device
 	CLEAR (fmt);
 	kDebug() << "fmt.fmt.pix.pixelformat =" << fmt.fmt.pix.pixelformat;
 	fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -390,7 +373,7 @@ int V4l2Device::setSize(QSize newSize)
 	}
 	else
 	{
-// Buggy driver paranoia.
+		// Buggy driver paranoia.
 		kDebug() << "VIDIOC_S_FMT worked (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height;
 		unsigned int min = fmt.fmt.pix.width * 2;
 		if (fmt.fmt.pix.bytesperline < min)
@@ -404,8 +387,6 @@ int V4l2Device::setSize(QSize newSize)
 	m_pixelformat = fmt.fmt.pix.pixelformat;
 	currentFrameSize.setWidth(fmt.fmt.pix.width);
 	currentFrameSize.setHeight(fmt.fmt.pix.height);
-#endif
-#endif
 	kDebug() << "pixelFormatDepth(m_pixelformat) = " << pixelFormatDepth(m_pixelformat);
 	m_buffer_size = frameSize().width() * frameSize().height() * pixelFormatDepth(m_pixelformat) / 8;
 	kDebug() << "------------------------- ------- -- m_buffer_size: " << m_buffer_size << " !!! -- ------- -----------------------------------------";
@@ -431,8 +412,6 @@ unsigned int V4l2Device::setPixelFormat(unsigned int newformat)
 	// Change the pixel format for the video device
 	int ret = 0;
 	kDebug() << "Setting new pixel format :" << pixelFormatName(newformat);
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 	CLEAR (fmt);
 	if (-1 == xioctl (VIDIOC_G_FMT, &fmt))
 	{
@@ -456,29 +435,20 @@ unsigned int V4l2Device::setPixelFormat(unsigned int newformat)
 			ret = m_pixelformat;
 		}
 	}
-#endif
-#endif
 	kDebug() << "New pixel format is" << pixelFormatName(m_pixelformat) << "==" << pixelFormatName(fmt.fmt.pix.pixelformat);
 	return ret;
 }
 
-/*!
-    \fn Kopete::AV::V4l2Device::selectInput(int input)
- */
 int V4l2Device::selectInput(int newinput)
 {
 	if (m_current_input >= inputs() || !isOpen())
 		return EXIT_FAILURE;
 
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 	if (-1 == ioctl (descriptor, VIDIOC_S_INPUT, &newinput))
 	{
 		perror ("VIDIOC_S_INPUT");
 		return EXIT_FAILURE;
 	}
-#endif
-#endif
 	kDebug() << "Selected input " << newinput << " (" << m_input[newinput].name << ")";
 	
 	m_current_input = newinput;
@@ -488,9 +458,6 @@ int V4l2Device::selectInput(int newinput)
 	return EXIT_SUCCESS;
 }
 
-/*!
-    \fn V4l2Device::startCapturing()
- */
 int V4l2Device::startCapturing()
 {
 
@@ -508,8 +475,6 @@ int V4l2Device::startCapturing()
 		case IO_METHOD_READ: // Nothing to do
 			break;
 		case IO_METHOD_MMAP:
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 			unsigned int loop;
 			for (loop = 0; loop < m_streambuffers; ++loop)
 			{
@@ -524,12 +489,8 @@ int V4l2Device::startCapturing()
 			type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 			if (-1 == xioctl (VIDIOC_STREAMON, &type))
 				return errnoReturn ("VIDIOC_STREAMON");
-#endif
-#endif
 			break;
 		case IO_METHOD_USERPTR:
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 			{
 				unsigned int loop;
 				for (loop = 0; loop < m_streambuffers; ++loop)
@@ -547,8 +508,6 @@ int V4l2Device::startCapturing()
 				if (-1 == xioctl (VIDIOC_STREAMON, &type))
 					return errnoReturn ("VIDIOC_STREAMON");
 			}
-#endif
-#endif
 			break;
 	}
 
@@ -556,19 +515,12 @@ int V4l2Device::startCapturing()
 	return EXIT_SUCCESS;
 }
 
-/*!
-    \fn V4l2Device::getFrame()
- */
 int V4l2Device::getFrame()
 {
 	ssize_t bytesread;
 
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 	struct v4l2_buffer v4l2buffer;
-#endif
-#endif
-// 	kDebug() << "getFrame() called.";
+	//kDebug() << "getFrame() called.";
 	if(!isOpen())
 		return EXIT_FAILURE;
 	switch (m_io_method)
@@ -577,7 +529,7 @@ int V4l2Device::getFrame()
 			return EXIT_FAILURE;
 			break;
 		case IO_METHOD_READ:
-// 		kDebug() << "Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size();
+ 			//kDebug() << "Using IO_METHOD_READ.File descriptor: " << descriptor << " Buffer address: " << &m_currentbuffer.data[0] << " Size: " << m_currentbuffer.data.size();
 			if (m_currentbuffer.data.isEmpty())
 				return EXIT_FAILURE;
 
@@ -600,8 +552,6 @@ int V4l2Device::getFrame()
 			}
 			break;
 		case IO_METHOD_MMAP:
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 			CLEAR (v4l2buffer);
 			v4l2buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 			v4l2buffer.memory = V4L2_MEMORY_MMAP;
@@ -620,21 +570,14 @@ int V4l2Device::getFrame()
 						return errnoReturn ("VIDIOC_DQBUF");
 				}
 			}
-/*			if (v4l2buffer.index < m_streambuffers)
-				return EXIT_FAILURE;*/ //it was an assert()
-// kDebug() << "m_rawbuffers[" << v4l2buffer.index << "].start: " << (void *)m_rawbuffers[v4l2buffer.index].start << "   Size: " << m_currentbuffer.data.size();
 			if (m_currentbuffer.data.isEmpty() || (unsigned int)m_rawbuffers.size() <= v4l2buffer.index)
 				return EXIT_FAILURE;
 
 			memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_currentbuffer.data.size());
 			if (-1 == xioctl (VIDIOC_QBUF, &v4l2buffer))
 				return errnoReturn ("VIDIOC_QBUF");
-#endif
-#endif
 			break;
 		case IO_METHOD_USERPTR:
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 			{
 				unsigned int i;
 				CLEAR (v4l2buffer);
@@ -662,16 +605,11 @@ int V4l2Device::getFrame()
 				if (-1 == xioctl (VIDIOC_QBUF, &v4l2buffer))
 				return errnoReturn ("VIDIOC_QBUF");
 			}
-#endif
-#endif
 			break;
 	}
 	return EXIT_SUCCESS;
 }
 
-/*!
-    \fn V4l2Device::stopCapturing()
- */
 int V4l2Device::stopCapturing()
 {
 	kDebug() << "called.";
@@ -686,7 +624,6 @@ int V4l2Device::stopCapturing()
 			break;
 		case IO_METHOD_MMAP:
 		case IO_METHOD_USERPTR:
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 			{
 				enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 				if (-1 == xioctl (VIDIOC_STREAMOFF, &type))
@@ -704,7 +641,6 @@ int V4l2Device::stopCapturing()
 					}
 				}
 			}
-#endif
 			break;
 	}
 	return EXIT_SUCCESS;
@@ -715,8 +651,6 @@ float V4l2Device::setBrightness(float brightness)
 	kDebug() << "(" << brightness << ") called.";
 	m_input[m_current_input].setBrightness(brightness); // Just to check bounds
 
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 	struct v4l2_queryctrl queryctrl;
 	struct v4l2_control control;
 
@@ -743,8 +677,6 @@ float V4l2Device::setBrightness(float brightness)
 			kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 		}
 	}
-#endif
-#endif
 	return getBrightness();
 }
 
@@ -753,8 +685,6 @@ float V4l2Device::setContrast(float contrast)
 	kDebug() << "(" << contrast << ") called.";
 	m_input[m_current_input].setContrast(contrast); // Just to check bounds
 
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 				struct v4l2_queryctrl queryctrl;
 				struct v4l2_control control;
 
@@ -785,8 +715,6 @@ float V4l2Device::setContrast(float contrast)
 						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					}
 				}
-#endif
-#endif
 	return getContrast();
 }
 
@@ -795,8 +723,6 @@ float V4l2Device::setSaturation(float saturation)
 	kDebug() << "(" << saturation << ") called.";
 	m_input[m_current_input].setSaturation(saturation); // Just to check bounds
 
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 				struct v4l2_queryctrl queryctrl;
 				struct v4l2_control control;
 
@@ -827,8 +753,6 @@ float V4l2Device::setSaturation(float saturation)
 						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					}
 				}
-#endif
-#endif
 	return getSaturation();
 }
 
@@ -837,8 +761,6 @@ float V4l2Device::setWhiteness(float whiteness)
 	kDebug() << "(" << whiteness << ") called.";
 	m_input[m_current_input].setWhiteness(whiteness); // Just to check bounds
 
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 				struct v4l2_queryctrl queryctrl;
 				struct v4l2_control control;
 
@@ -869,8 +791,6 @@ float V4l2Device::setWhiteness(float whiteness)
 						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					}
 				}
-#endif
-#endif
 	return getWhiteness();
 }
 
@@ -879,8 +799,6 @@ float V4l2Device::setHue(float hue)
 	kDebug() << "(" << hue << ") called.";
 	m_input[m_current_input].setHue(hue); // Just to check bounds
 
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 				struct v4l2_queryctrl queryctrl;
 				struct v4l2_control control;
 
@@ -911,19 +829,15 @@ float V4l2Device::setHue(float hue)
 						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					}
 				}
-#endif
-#endif
 	return getHue();
 }
 
 
 int V4l2Device::detectPixelFormats()
 {
-	//FIXME:Permissive or blocant methods ?
-	//Some check if dev is opened, some don't.
-	//The best would be to return EXIT_FAILURE if not.
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
+	if (!isOpen())
+		return EXIT_FAILURE;
+
 	fmtdesc.index = 0;
 	fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
@@ -938,25 +852,17 @@ int V4l2Device::detectPixelFormats()
 	
 	if (m_pixelFormats.isEmpty())
 		return EXIT_FAILURE;
+	
 	m_pixelformat = m_pixelFormats.first();
-//	if (0 != setPixelFormat(m_pixelFormats.first()));
-//		kDebug() << pixelFormatName(m_pixelFormats.first());
-#endif
-#endif
+	
 	return EXIT_SUCCESS;
 }
 
-/*!
-    \fn V4l2Device::detectSignalStandards()
-// this must be done once for each _input_.
- */
 int V4l2Device::detectSignalStandards()
 {
 	kDebug() << "called.";
 	if(!isOpen())
 		return EXIT_FAILURE;
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 				struct v4l2_input input;
 				struct v4l2_standard standard;
 
@@ -977,27 +883,18 @@ int V4l2Device::detectSignalStandards()
 
 				while (0 == xioctl (VIDIOC_ENUMSTD, &standard)) {
 					if (standard.id & input.std)
-//						kDebug() << standard.name;
 						kDebug() << signalStandardName(standard.id) << " (" << standard.id << ")" << V4L2_STD_NTSC;
 
 					standard.index++;
 				}
 
-/* EINVAL indicates the end of the enumeration, which cannot be
-   empty unless this device falls under the USB exception. */
-
 				if (errno != EINVAL || standard.index == 0) {
 					perror ("VIDIOC_ENUMSTD");
 					return EXIT_FAILURE;
 				}
-#endif
-#endif
 	return EXIT_SUCCESS;
 }
 
-/*!
-    \fn V4l2Device::initRead()
- */
 int V4l2Device::initRead()
 {
 	kDebug() << "called.";
@@ -1027,16 +924,17 @@ int V4l2Device::initRead()
 }
 
 
-/*!
-    \fn V4l2Device::initMmap()
- */
 int V4l2Device::initMmap()
 {
+	// A better way than QTimer to fetch images each x msec, is a notifier.
+	// Of course, it would work only for MMAP and maybe UserPtr
+	// A simple QSocketNotifier on the file descriptor would emit a signal
+	// each there is data to read, that means, each time a buffer is ready to dequeued.
+	// This notifier could be set up here and started in startCapture().
 #define BUFFERS 2
 	if(isOpen())
 	{
 		kDebug() << full_filename << " Trying to MMAP";
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 		struct v4l2_requestbuffers req;
 
 		CLEAR (req);
@@ -1091,7 +989,6 @@ int V4l2Device::initMmap()
 			if (MAP_FAILED == m_rawbuffers[m_streambuffers].start)
 			return errnoReturn ("mmap");
 		}
-#endif
 		m_currentbuffer.data.resize(m_rawbuffers[0].length); // Makes the imagesize.data buffer size equal to the rawbuffer size
 		kDebug() << full_filename << " m_currentbuffer.data.size(): " << m_currentbuffer.data.size();
 		return EXIT_SUCCESS;
@@ -1100,14 +997,10 @@ int V4l2Device::initMmap()
 }
 
 
-/*!
-    \fn V4l2Device::initUserptr()
- */
 int V4l2Device::initUserptr()
 {
 	if(isOpen())
 	{
-#ifdef V4L2_CAP_VIDEO_CAPTURE
 		struct v4l2_requestbuffers req;
 
 		CLEAR (req);
@@ -1148,7 +1041,6 @@ int V4l2Device::initUserptr()
 				return EXIT_FAILURE;
 			}
 		}
-#endif
 		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;
@@ -1157,3 +1049,5 @@ int V4l2Device::initUserptr()
 }
 
 }
+
+#endif //V4L2_CAP_VIDEO_CAPTURE

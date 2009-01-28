@@ -76,6 +76,14 @@ namespace AV {
 
 typedef enum
 {
+	V4l1 = 0,
+	V4l2,
+	UnknownType
+} DeviceType;
+
+
+typedef enum
+{
 	IO_METHOD_NONE,
 	IO_METHOD_READ,
 	IO_METHOD_MMAP,
@@ -87,9 +95,10 @@ struct imagebuffer
 	int height;
 	int width;
 	int pixelformat;
-	QVector <uchar> data; // maybe it should be a rawbuffer instead of it? It could make us avoid a memory copy
+	QVector <uchar> data;
 };
-struct rawbuffer // raw buffer
+
+struct rawbuffer
 {
 	uchar * start;
 	size_t length;
@@ -106,9 +115,11 @@ public:
 	int inputs();
 	virtual int setSize(QSize newSize);
 	QSize frameSize();
+	//virtual int detectFrameSizes();
 	virtual int detectPixelFormats();
 	virtual int detectSignalStandards();
-	virtual int checkDevice();
+	int checkDevice();
+	static DeviceType checkDevice(const QString& dev);
 	virtual int initDevice();
 	
 	int showDeviceCapabilities();
