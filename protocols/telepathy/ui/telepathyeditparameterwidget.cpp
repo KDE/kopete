@@ -32,20 +32,21 @@
 using namespace QtTapioca;
 
 /**
- * @brief Small label and line edit for a single ConnectionManager::Parameter
+ * @brief Small label and line edit for a single Telepathy::Client::ProtocolParameterList
  */
 class ParameterLineEdit : public QWidget
 {
 	// TODO Support flags
 public:
-	ParameterLineEdit(const ConnectionManager::Parameter &parameter, QWidget *parent)
+	ParameterLineEdit(Telepathy::Client::ProtocolParameter *parameter, QWidget *parent)
 	 : QWidget(parent), m_lineValue(0)
 	{
+        kDebug() << parameter->name() << " " << parameter->dbusSignature().signature() << " " << parameter->defaultValue().toString();
 		m_parameter = parameter;
 		createWidget();
 	}
 
-	ConnectionManager::Parameter parameter() const
+	Telepathy::Client::ProtocolParameter* parameter() const
 	{
 		return m_parameter;
 	}
@@ -55,12 +56,12 @@ public:
 		QVBoxLayout *mainLayout = new QVBoxLayout(this);
 		
 		// Create name label
-		mainLayout->addWidget( new QLabel(parameter().name(), this) );
+		mainLayout->addWidget( new QLabel(parameter()->name(), this) );
 
 		// Create editable value field
 		m_lineValue = new QLineEdit(this);
 		// Set a value if any
-		m_lineValue->setText( parameter().value().toString() );
+		m_lineValue->setText( parameter()->defaultValue().toString() );
 		mainLayout->addWidget(m_lineValue);
 
 		// Set a spacing item
@@ -69,7 +70,7 @@ public:
 
 	QString name() const
 	{
-		return m_parameter.name();
+		return m_parameter->name();
 	}
 
 	QString value() const
@@ -79,7 +80,7 @@ public:
 	}
 
 private:
-	ConnectionManager::Parameter m_parameter;
+	Telepathy::Client::ProtocolParameter *m_parameter;
 	QLineEdit *m_lineValue;
 };
 
@@ -95,11 +96,11 @@ public:
 	void clear();
 
 	QGridLayout *mainLayout;
-	QList<ConnectionManager::Parameter> paramList;
+	Telepathy::Client::ProtocolParameterList paramList;
 	QList<ParameterLineEdit*> lineEditList;
 };
 
-TelepathyEditParameterWidget::TelepathyEditParameterWidget(const QList<ConnectionManager::Parameter> &paramList, QWidget *parent)
+TelepathyEditParameterWidget::TelepathyEditParameterWidget(const Telepathy::Client::ProtocolParameterList &paramList, QWidget *parent)
  : QWidget(parent), d(new Private)
 {
 	d->paramList = paramList;
@@ -112,9 +113,9 @@ TelepathyEditParameterWidget::~TelepathyEditParameterWidget()
 	delete d;
 }
 
-QList<QtTapioca::ConnectionManager::Parameter> TelepathyEditParameterWidget::parameterList()
+Telepathy::Client::ProtocolParameterList TelepathyEditParameterWidget::parameterList()
 {
-	QList<ConnectionManager::Parameter> parameterList;
+	Telepathy::Client::ProtocolParameterList parameterList;
 
 	foreach(ParameterLineEdit *lineEdit, d->lineEditList)
 	{
@@ -122,14 +123,20 @@ QList<QtTapioca::ConnectionManager::Parameter> TelepathyEditParameterWidget::par
 		{
 			kDebug(TELEPATHY_DEBUG_AREA) << "WARNING: A ParameterLineEdit is null !";
 		}
-		ConnectionManager::Parameter updatedParameter(lineEdit->name(), lineEdit->value());
+		Telepathy::Client::ProtocolParameter *updatedParameter;
+        updatedParameter = new Telepathy::Client::ProtocolParameter(
+            lineEdit->name(),
+            lineEdit->parameter()->dbusSignature(),
+            lineEdit->value(),
+            Telepathy::ConnMgrParamFlagHasDefault
+            );
 		parameterList.append(updatedParameter);
 	}
 
 	return parameterList;
 }
 
-void TelepathyEditParameterWidget::setParameterList(const QList<QtTapioca::ConnectionManager::Parameter> &parameterList)
+void TelepathyEditParameterWidget::setParameterList(const Telepathy::Client::ProtocolParameterList &parameterList)
 {
 	d->clear();
 	d->paramList = parameterList;
@@ -141,14 +148,12 @@ void TelepathyEditParameterWidget::Private::init(QWidget *parent)
 	mainLayout = new QGridLayout(parent);
 
 	createWidgets(parent);
-
-// 	mainLayout->addStretch(2);
 }
 
 void TelepathyEditParameterWidget::Private::createWidgets(QWidget *parent)
 {
 	int column=0, row=0;
-	foreach(ConnectionManager::Parameter parameter, paramList)
+	foreach(Telepathy::Client::ProtocolParameter *parameter, paramList)
 	{
 		ParameterLineEdit *lineEdit = new ParameterLineEdit(parameter, parent);
 		mainLayout->addWidget(lineEdit, row, column);

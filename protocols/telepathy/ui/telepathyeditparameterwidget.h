@@ -21,24 +21,26 @@
 
 #include <QtTapioca/ConnectionManager>
 
+#include <TelepathyQt4/Client/ConnectionManager>
+
 using namespace QtTapioca;
 
 class TelepathyEditParameterWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	TelepathyEditParameterWidget(const QList<ConnectionManager::Parameter> &paramsList, QWidget *parent);
+	TelepathyEditParameterWidget(const Telepathy::Client::ProtocolParameterList &paramsList, QWidget *parent);
 	~TelepathyEditParameterWidget();
 
 	/**
-	 * @brief Get the modified parameters as a list of ConnectionManager::Paramater
+	 * @brief Get the modified parameters as a list of Telepathy::Client::ProtocolParameterList
 	 */
-	QList<QtTapioca::ConnectionManager::Parameter> parameterList();
+	Telepathy::Client::ProtocolParameterList parameterList();
 
 	/**
 	 * @brief Set the parameter read mostly from the config file.
 	 */
-	void setParameterList(const QList<QtTapioca::ConnectionManager::Parameter> &parameterList);
+	void setParameterList(const Telepathy::Client::ProtocolParameterList &parameterList);
 private:
 	class Private;
 	Private *d;

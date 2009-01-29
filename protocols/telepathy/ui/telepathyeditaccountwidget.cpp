@@ -48,8 +48,6 @@
 #include "telepathyaccount.h"
 #include "connectionmanageritem.h"
 
-using namespace QtTapioca;
-
 class TelepathyEditAccountWidget::Private
 {
 public:
@@ -59,7 +57,7 @@ public:
 
     Ui::TelepathyEditAccountWidget ui;
     TelepathyEditParameterWidget *paramWidget;
-    QList<ConnectionManager::Parameter> savedParameterList;
+    Telepathy::Client::ProtocolParameterList savedParameterList;
     Telepathy::Client::ConnectionManager *mCM;
 };
 
@@ -116,11 +114,11 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
         {
             QString newAccountId;
             // Look for a parameter that begin with "account"
-            foreach(ConnectionManager::Parameter parameter, d->savedParameterList)
+            foreach(Telepathy::Client::ProtocolParameter *parameter, d->savedParameterList)
             {
-                if( parameter.name().startsWith( QLatin1String("account") ) )
+                if( parameter->name().startsWith( QLatin1String("account") ) )
                 {
-                    newAccountId = parameter.value().toString();
+                    newAccountId = parameter->defaultValue().toString();
                     kDebug(TELEPATHY_DEBUG_AREA) << "Found account id: " << newAccountId;
                     break;
                 }
@@ -164,7 +162,8 @@ void TelepathyEditAccountWidget::readConfig()
                     // At this point, the protocol preferences tab is created
 
                     // Update the parameters in the UI
-                    d->paramWidget->setParameterList( account()->allConnectionParameters() );
+                    // \todo: FIXME
+                    //d->paramWidget->setParameterList( account()->allConnectionParameters() );
                 }
             }
         }
@@ -189,9 +188,9 @@ void TelepathyEditAccountWidget::writeConfig()
     QString telepathyGroup(TelepathyProtocol::protocol()->formatTelepathyConfigGroup(selectedConnectionManager, selectedProtocol, accountId));
     KConfigGroup telepathyConfig = KGlobal::config()->group(telepathyGroup);
 	
-    foreach(ConnectionManager::Parameter parameter, d->savedParameterList)
+    foreach(Telepathy::Client::ProtocolParameter *parameter, d->savedParameterList)
     {
-        telepathyConfig.writeEntry( parameter.name(), parameter.value() );
+        telepathyConfig.writeEntry( parameter->name(), parameter->defaultValue() );
     }
 }
 
@@ -270,15 +269,24 @@ void TelepathyEditAccountWidget::protocolSelectionChanged()
         QString protocol = protocolItem->text(0);
 
         // Use saved parameters if available
-        QList<QtTapioca::ConnectionManager::Parameter> tabParameter;
+        Telepathy::Client::ProtocolParameterList tabParameter;
         if( account() && protocol == account()->connectionProtocol() )
         {
-            tabParameter = account()->allConnectionParameters();
+// \todo: FIXME
+//            tabParameter = account()->allConnectionParameters();
         }
         else
         {
-            // \todo: FIXME ???
-            //tabParameter = cmItem->connectionManager()->protocolParameters(protocol);
+            Telepathy::Client::ProtocolInfoList protocolInfoList
+                = cmItem->connectionManager()->protocols();
+            foreach(Telepathy::Client::ProtocolInfo *protocolInfo, protocolInfoList)
+            {
+                if(protocolInfo->name() == protocol)
+                {
+                    tabParameter = protocolInfo->parameters();
+                    break;
+                }
+            }
         }
 
         d->paramWidget = new TelepathyEditParameterWidget(tabParameter, this);
