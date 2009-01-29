@@ -228,11 +228,12 @@ void TelepathyEditAccountWidget::listConnectionManager()
 void TelepathyEditAccountWidget::connectionManagerSelectionChanged()
 {
     QTreeWidgetItem *item = d->ui.treeConnectionManager->selectedItems().first();
-    ConnectionManagerItem *itemActivated = static_cast<ConnectionManagerItem*>(item);
+    ConnectionManagerItem *itemActivated = dynamic_cast<ConnectionManagerItem*>(item);
     if( itemActivated )
     {
         // Clear protocol list
         d->ui.treeProtocol->clear();
+        
         // List supported protocols by this connetion manager.
         QStringList supportedProtocols = itemActivated->connectionManager()->supportedProtocols();
         foreach(QString protocol, supportedProtocols)
@@ -244,10 +245,18 @@ void TelepathyEditAccountWidget::connectionManagerSelectionChanged()
 
 void TelepathyEditAccountWidget::protocolSelectionChanged()
 {
-    QTreeWidgetItem *connectionItem = d->ui.treeConnectionManager->selectedItems().first();
-    ConnectionManagerItem *cmItem = static_cast<ConnectionManagerItem*>(connectionItem);
+    QList<QTreeWidgetItem*> cmItems = d->ui.treeConnectionManager->selectedItems();
+    if(cmItems.isEmpty())
+        return;
 
-    QTreeWidgetItem *protocolItem = d->ui.treeProtocol->selectedItems().first();
+    QTreeWidgetItem *connectionItem = cmItems.first();
+    ConnectionManagerItem *cmItem = dynamic_cast<ConnectionManagerItem*>(connectionItem);
+
+    QList<QTreeWidgetItem*> protocolItems = d->ui.treeProtocol->selectedItems();
+    if(protocolItems.isEmpty())
+        return;
+    
+    QTreeWidgetItem *protocolItem = protocolItems.first();
     if( protocolItem && cmItem )
     {
         // Check if existing tab exists and remove it (and delete the widget)
