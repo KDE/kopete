@@ -29,7 +29,7 @@
 #include <QDomElement>
 
 #define NS_JINGLE "urn:xmpp:tmp:jingle:0"
-#define NS_JINGLE_TRANSPORTS_RAW "urn:xmpp:tmp:jingle:transports:raw-udp:0"
+#define NS_JINGLE_TRANSPORTS_RAW "urn:xmpp:tmp:jingle:transports:raw-udp:1"
 #define NS_JINGLE_TRANSPORTS_ICE "urn:xmpp:tmp:jingle:transports:ice-udp:0"
 #define NS_JINGLE_APPS_RTP "urn:xmpp:tmp:jingle:apps:rtp:0"
 

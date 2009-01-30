@@ -150,8 +150,6 @@ namespace XMPP
 		QString creator() const;
 		QString name() const;
 		QString descriptionNS() const;
-		QString iceUdpPassword();
-		QString iceUdpUFrag();
 		QUdpSocket *inSocket();
 		QUdpSocket *outSocket();
 		bool sending();

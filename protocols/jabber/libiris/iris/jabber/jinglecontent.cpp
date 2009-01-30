@@ -19,10 +19,8 @@
  */
 
 #include "jinglecontent.h"
-
 #include "jinglesession.h"
 
-#include <QTimer>
 #include <QDomElement>
 #include <QUdpSocket>
 
@@ -52,26 +50,22 @@ public:
 	bool receiving;
 	Type type;
 	bool isInitiator;
-	QTimer *outTimer;
-	int tries;
 };
 
 JingleContent::JingleContent()
 : d(new Private())
 {
 	qDebug() << "Creating JingleContent";
+
 	d->sending = false;
 	d->receiving = false;
 	d->inSocket = 0L;
 	d->outSocket = 0L;
 	d->isInitiator = false;
-	d->tries = 0;
 }
 
 JingleContent::~JingleContent()
 {
-	//delete d->inSocket;
-	//delete d->outSocket;
 	delete d;
 }
 
@@ -82,6 +76,7 @@ QDomElement JingleContent::bestPayload()
 		//Trying to update the best payload.
 		d->bestPayload = bestPayload(d->rPayloads, d->payloads);
 	}
+	
 	return d->bestPayload;
 }
 
@@ -141,6 +136,7 @@ void JingleContent::fromElement(const QDomElement& e)
 	// FIXME:tag order may not always be the same !!!
 	if (e.tagName() != "content")
 		return;
+
 	d->creator = e.attribute("creator");
 	d->name = e.attribute("name");
 	QDomElement desc = e.firstChildElement();
@@ -150,11 +146,13 @@ void JingleContent::fromElement(const QDomElement& e)
 	// This content is created from XML data, that means that it comes from the outside.
 	// So, pyloads are added as responder payloads
 	QList<QDomElement> payloads;
+	
 	while (!payload.isNull())
 	{
 		payloads << payload;
 		payload = payload.nextSiblingElement();
 	}
+	
 	setResponderPayloads(payloads);
 
 	QDomElement transport = desc.nextSiblingElement();
@@ -179,6 +177,7 @@ QDomElement JingleContent::contentElement()
 	{
 		description.appendChild(d->payloads.at(i));
 	}
+	
 	content.appendChild(description);
 	content.appendChild(d->transport);
 
@@ -198,6 +197,7 @@ QString JingleContent::descriptionNS() const
 void JingleContent::addTransportInfo(const QDomElement& e)
 {
 	QDomElement transport = e.firstChildElement();
+	
 	if (transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
 	{
 		if (d->transport.attribute("pwd") != transport.attribute("pwd"))
@@ -212,6 +212,7 @@ void JingleContent::addTransportInfo(const QDomElement& e)
 			return;
 		}
 		QDomElement child = transport.firstChildElement();
+		
 		//FIXME:Is it possible to have more than one candidate per transport-info ?
 		//	See Thread "Jingle: multiple candidates per transport-info?" on xmpp-standards.
 		if (child.tagName() == "candidate")
@@ -223,39 +224,21 @@ void JingleContent::addTransportInfo(const QDomElement& e)
 	else if (transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_RAW)
 	{
 		qDebug() << "Adding responder's candidates and connecting to it";
+		
 		d->candidates << transport.firstChildElement();
-		//TODO : Start connection to this candidate.
-		//WARNING : as Jingle specification is not clear,
-		//	    the connexion will be considered as established
-		//	    even without receiving the "received" informational
-		//	    message.
+		
 		startSending(QHostAddress(transport.firstChildElement().attribute("ip")),
 			     transport.firstChildElement().attribute("port").toInt());
 		
 	}
 }
 
-/*FIXME:this as no sense, this content is for RAW UDP only*/
-QString JingleContent::iceUdpPassword()
-{
-	if (d->transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
-		return d->transport.attribute("pwd");
-	return "";
-}
-
-/*FIXME:this as no sense, this content is for RAW UDP only*/
-QString JingleContent::iceUdpUFrag()
-{
-	if (d->transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
-		return d->transport.attribute("ufrag");
-	return "";
-}
-
 void JingleContent::createUdpInSocket()
 {
+	qDebug() << "JingleContent::createUdpInSocket()";
+
 	if (d->transport.attribute("xmlns") != NS_JINGLE_TRANSPORTS_RAW)
 		return;
-	qDebug() << "JingleContent::createUdpInSocket()";
 	
 	if (!d->inSocket)
 		d->inSocket = new QUdpSocket();
@@ -263,19 +246,15 @@ void JingleContent::createUdpInSocket()
 	QHostAddress address(d->transport.firstChildElement().attribute("ip"));
 	int port = d->transport.firstChildElement().attribute("port").toInt();
 	qDebug() << "Bind socket to" << address << ":" << port;
-	if (d->inSocket->bind(/*address, */port))
-		qDebug() << "Socket bound to" << /*address.toString() << ":" <<*/ port;
+	if (d->inSocket->bind(address, port))
+		qDebug() << "Socket bound to" << address.toString() << ":" << port;
+	else
+	{
+		qDebug() << "Unable to bind socket to" << address.toString() << ":" << port;
+		return;
+	}
 	
-	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
-	//emit inSocketReady(); --> also no need of this.
-}
-
-void JingleContent::slotRawUdpDataReady()
-{
-	qDebug() << "slotRawUdpDataReady() :: Data arrived on the socket.";
-	emit dataReceived();
 	setReceiving(true);
-	disconnect(sender(), SIGNAL(readyRead()), this, 0);
 }
 
 QUdpSocket *JingleContent::inSocket()
@@ -301,11 +280,7 @@ void JingleContent::setSending(bool s)
 		return;
 	d->sending = s;
 	
-	// We do not need to try sending anymore, we have proof that data sending is OK.
-	d->outTimer->stop();
-	delete d->outTimer;
-
-	// If we are also receiving, that's ok, this content is established.
+	// If we are also receiving, that's ok, this content's connection is established.
 	if (d->sending && d->receiving)
 	{
 		qDebug() << "setSending : emit established() SIGNAL";
@@ -322,7 +297,9 @@ void JingleContent::setReceiving(bool r)
 {
 	if (d->receiving == r)
 		return;
+
 	d->receiving = r;
+	
 	if (d->sending && d->receiving)
 	{
 		qDebug() << "setReceiving : emit established() SIGNAL";
@@ -334,38 +311,21 @@ void JingleContent::startSending()
 {
 	QHostAddress address(transport().firstChildElement().attribute("ip"));
 	int port = transport().firstChildElement().attribute("port").toInt();
+	
 	startSending(address, port);
 }
 
 void JingleContent::startSending(const QHostAddress& address, int port)
 {
-	//This correspond to the trying phase.
-	//Create udp OUT socket
+	qDebug() << "startSending()";
+	
 	if (!d->outSocket)
 		d->outSocket = new QUdpSocket();
 	d->outSocket->connectToHost(address, port);
-	//emit outSocketReady(); --> This signal has no sense anymore, we must prepare rtp sessions when the sockets are both ready.
 	
-	qDebug() << "Sending data to" << address.toString() << ":" << port;
-	//We will start sending "SYN" every 5 seconds for 1 minute until we receive a received informationnal message.
-	slotTrySending();
-	d->outTimer = new QTimer();
-	d->outTimer->setInterval(5000);
-	connect(d->outTimer, SIGNAL(timeout()), this, SLOT(slotTrySending()));
-	//setSending(true); --> set it when the received informationnal message has been received.
-}
-
-void JingleContent::slotTrySending()
-{
-	d->tries++;
-	if (d->tries == 13)
-	{
-		//This content cannot connect, what do we do ?
-		d->outTimer->stop();
-		qDebug() << "JingleContent::slotTrySending : Unable to establish the connection for content" << name();
-	}
-
-	d->outSocket->write(QByteArray("SYN"));
+	qDebug() << "Ok, we can start sending" << address.toString() << ":" << port;
+	
+	setSending(true);
 }
 
 QList<QDomElement> JingleContent::candidates() const
@@ -381,14 +341,14 @@ QString JingleContent::creator() const
 void JingleContent::bind(const QHostAddress& address, int port)
 {
 	qDebug() << "Trying to bind socket to" << address.toString() << ":" << port;
+	
 	if (!d->inSocket)
 		d->inSocket = new QUdpSocket();
+	
 	if (d->inSocket->bind(address, port))
 		qDebug() << "Socket bound to" << address.toString() << ":" << port;
 	
-	connect(d->inSocket, SIGNAL(readyRead()), this, SLOT(slotRawUdpDataReady()));
-	
-	//emit inSocketReady();
+	setReceiving(true);
 }
 
 JingleContent& JingleContent::operator=(const JingleContent &other)
@@ -417,22 +377,24 @@ QString JingleContent::typeToString(JingleContent::Type t)
 {
 	switch(t)
 	{
-	case Video :
-		return "video";
-	case Audio :
-		return "audio";
-	case FileTransfer :
-		return "file transfer";
-	default:
-		return "unknown";
+		case Video :
+			return "video";
+		case Audio :
+			return "audio";
+		case FileTransfer :
+			return "file transfer";
+		default:
+			return "unknown";
 	}
 }
 
 void JingleContent::setResponderPayloads(const QList<QDomElement>& payloads)
 {
-	qDebug() << "*******Setting responder payloads**********";
+	qDebug() << "Setting responder payloads.";
+	
 	d->rPayloads = payloads;
-	if (d->payloads.count() != 0) //No, if payloads is empty, we should get the list from the supported payloads. Actually, those payloads should be always set when creating the content.
+	
+	if (d->payloads.count() != 0)
 	{
 		//Store the best payload to use for this content.
 		//The application will just have to get it from this content.
@@ -459,17 +421,20 @@ JingleContent::Type JingleContent::stringToType(const QString& s)
 
 QDomElement JingleContent::bestPayload(const QList<QDomElement>& payload1, const QList<QDomElement>& payload2)
 {
-	//FIXME : this is not the best algorithm to determine which one is the better.
-	// |-------|
-	// | a | c |
-	// +---+---+
-	// | b | b |
-	// +---+---+
-	// | d | e |
-	// +---+---+
-	// | c | a |
-	// |-------|
-	//  --> In that case, payload a will be chosen but payload b would be the best choice.
+	/*
+	 * FIXME : this is not the best algorithm to determine which one is the better.
+	 * |-------|
+	 * | a | c |
+	 * +---+---+
+	 * | b | b |
+	 * +---+---+
+	 * | d | e |
+	 * +---+---+
+	 * | c | a |
+	 * |-------|
+	 *  --> In that case, payload a will be chosen but payload b would be the best choice.
+	 */
+	
 	for (int i = 0; i < payload1.count(); i++)
 	{
 		for (int j = 0; j < payload2.count(); j++)
@@ -478,7 +443,7 @@ QDomElement JingleContent::bestPayload(const QList<QDomElement>& payload1, const
 				return payload1[i];
 		}
 	}
-	qDebug() << "Returns QDomElement !";
+	
 	return QDomElement();
 }
 
@@ -487,8 +452,10 @@ bool JingleContent::samePayload(const QDomElement& p1, const QDomElement& p2)
 	// Checking payload-type attributes
 	if (!p1.hasAttribute("id") || !p2.hasAttribute("id"))
 		return false;
+	
 	if (p1.attribute("id") != p2.attribute("id"))
 		return false;
+	
 	int id = p1.attribute("id").toInt();
 	if ((id >= 96) && (id <= 127)) //dynamic payloads, "name" attribute must be there
 	{
@@ -497,13 +464,18 @@ bool JingleContent::samePayload(const QDomElement& p1, const QDomElement& p2)
 		if (p1.attribute("name") != p2.attribute("name"))
 			return false;
 	}
+	
 	if (p1.hasAttribute("channels") && p2.hasAttribute("channels"))
 		if (p1.attribute("channels") != p2.attribute("channels"))
 			return false;
+	
 	if (p1.hasAttribute("clockrate") && p2.hasAttribute("clockrate"))
 		if (p1.attribute("clockrate") != p2.attribute("clockrate"))
 			return false;
-	// Parameters are informative, even if they differ, the payload is stil the same.
+	
+	// Parameters are informative, even if they differ, the payload is still the same.
+	// FIXME: is that statement true ?
 	qDebug() << "Payloads are the same.";
+
 	return true;
 }
