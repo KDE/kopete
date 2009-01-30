@@ -145,6 +145,7 @@ void JabberAccount::cleanup ()
 
 #ifdef JINGLE_SUPPORT
 	delete m_jcm;
+	m_jcm = 0;
 #endif
 }
 
@@ -760,8 +761,8 @@ void JabberAccount::slotCSDisconnected ()
 	resourcePool()->clear();
 
 #ifdef JINGLE_SUPPORT
-	if (m_jcm != 0)
-		delete m_jcm;
+	delete m_jcm;
+	m_jcm = 0;
 #endif
 
 }
