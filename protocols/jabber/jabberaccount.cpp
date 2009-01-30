@@ -145,6 +145,7 @@ void JabberAccount::cleanup ()
 
 #ifdef JINGLE_SUPPORT
 	delete m_jcm;
+	m_jcm = 0L;
 #endif
 }
 
@@ -646,9 +647,9 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	{
 			xmppStatus.setIsAvailable( false );
 			kDebug (JABBER_DEBUG_GLOBAL) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
-			disconnect (Manual, xmppStatus);
-            return;
-    }
+			disconnect (Manual, xmppStatus);	
+			return;
+    	}
 
 	if( isConnecting () )
 	{
@@ -760,8 +761,8 @@ void JabberAccount::slotCSDisconnected ()
 	resourcePool()->clear();
 
 #ifdef JINGLE_SUPPORT
-	if (m_jcm != 0)
-		delete m_jcm;
+	delete m_jcm;
+	m_jcm = 0L;
 #endif
 
 }
