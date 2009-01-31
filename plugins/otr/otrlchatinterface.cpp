@@ -522,12 +522,13 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 		if( newMessage != NULL ){
 			*msg = QString::fromUtf8(newMessage);
 			otrl_message_free( newMessage );
+			msg->replace( QString('\n'), QString("<br>") );
+			return 0; // message is decrypted and ready to deliver
 		} else {
-			msg->replace( QString('<'), QString("&lt;") );
+			return 1; // message was a plaintext message. Better not touching it :)
 		}
-		msg->replace( QString('\n'), QString("<br>") );
 	}
-	return ignoremessage;
+	return 2; // internal OTR message. Ignore it.
 }
 
 KDE_EXPORT QString *OtrlChatInterface::encryptMessage( QString *msg, const QString &accountId,

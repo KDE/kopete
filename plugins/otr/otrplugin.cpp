@@ -243,10 +243,15 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		QString body = msg.plainBody();
 		QString accountId = msg.manager()->account()->accountId();
 		QString contactId = msg.from()->contactId();
-		int ignoremessage = OtrlChatInterface::self()->decryptMessage( &body, accountId, msg.manager()->account()->protocol()->displayName(), contactId, msg.manager() );
+		int retValue = OtrlChatInterface::self()->decryptMessage( &body, accountId, msg.manager()->account()->protocol()->displayName(), contactId, msg.manager() );
 		msg.setHtmlBody( body );
-		if( ignoremessage | OtrlChatInterface::self()->shouldDiscard( msg.plainBody() ) ){
+		if( retValue == 2 | OtrlChatInterface::self()->shouldDiscard( msg.plainBody() ) ){
+			// internal OTR message
 			event->discard();
+			return;
+		} else if(retValue == 1){
+			// plaintext message. Proceed with next plugin
+			MessageHandler::handleMessage( event );
 			return;
 		}
 	} else if( msg.direction() == Kopete::Message::Outbound ){
