@@ -10,7 +10,7 @@ kde4_add_kcfg_files(kopete_otr_PART_SRCS kopete_otr.kcfgc)
 
 kde4_add_plugin(kopete_otr ${kopete_otr_PART_SRCS})
 
-target_link_libraries(kopete_otr ${KDE4_KDEUI_LIBS} kopete kopete_otr_shared otr)
+target_link_libraries(kopete_otr ${KDE4_KDEUI_LIBS} kopete kopete_otr_shared ${LIBOTR_LIBRARY})
 
 install(TARGETS kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -24,7 +24,7 @@ kde4_add_kcfg_files(kcm_kopete_otr_PART_SRCS ${kotr_PART_SRCS} kopete_otr.kcfgc)
 
 kde4_add_plugin(kcm_kopete_otr ${kcm_kopete_otr_PART_SRCS})
 
-target_link_libraries(kcm_kopete_otr ${KDE4_KDEUI_LIBS} kopete kopete_otr_shared otr)
+target_link_libraries(kcm_kopete_otr ${KDE4_KDEUI_LIBS} kopete kopete_otr_shared ${LIBOTR_LIBRARY})
 
 install(TARGETS kcm_kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -40,7 +40,7 @@ kde4_add_ui_files(kopete_otr_shared_LIB_SRCS privkeypopup.ui)
 
 kde4_add_library(kopete_otr_shared SHARED ${kopete_otr_shared_LIB_SRCS})
 
-target_link_libraries(kopete_otr_shared kopete ${KDE4_KIO_LIBS} ${KDE4_KDEUI_LIBS} otr)
+target_link_libraries(kopete_otr_shared kopete ${KDE4_KIO_LIBS} ${KDE4_KDEUI_LIBS} ${LIBOTR_LIBRARY})
 
 set_target_properties(kopete_otr_shared PROPERTIES VERSION 1.0.0 SOVERSION 1)
 install(TARGETS kopete_otr_shared ${INSTALL_TARGETS_DEFAULT_ARGS})
