@@ -39,9 +39,9 @@ class JabberChatSession : public Kopete::ChatSession
 public:
 	JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 						   Kopete::ContactPtrList others, const QString &resource = "" );
-	
+
 	~JabberChatSession();
-	
+
 	/**
 	 * @brief Get the local user in the session
 	 * @return the local user in the session, same as account()->myself()
@@ -100,11 +100,13 @@ private:
 	 * Send a notification (XMPP::MsgEvent) to the members of the chatsession.
 	 * SlotSendTypingNotification uses it.
 	 * and change the state acordingly.
-	 * 
+	 *
 	 */
 	void sendNotification( Event event );
-	
+
 	QString mResource;
+
+	bool mTypingNotificationSent;
 };
 
 #endif
