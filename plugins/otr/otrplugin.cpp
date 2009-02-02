@@ -302,7 +302,7 @@ void OTRPlugin::slotSetPolicy(){
 	kDebug(14318) << "Setting contact policy";
 	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
 	if( metaContact ){
-		metaContact->setPluginData( this, "otr_policy", QString::number( otrPolicyMenu->currentItem() ) );		
+		metaContact->setPluginData( this, "otr_policy", QString::number( otrPolicyMenu->currentItem() - 1 ) ); // -1 because of the "Default" entry
 	}
 	kDebug(14318) << "Selected policy: " << otrPolicyMenu->currentItem();
 }
