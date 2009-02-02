@@ -29,8 +29,6 @@
 // Local includes
 #include "telepathyprotocol.h"
 
-using namespace QtTapioca;
-
 /**
  * @brief Small label and line edit for a single Telepathy::Client::ProtocolParameterList
  */

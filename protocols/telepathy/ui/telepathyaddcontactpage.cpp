@@ -68,7 +68,8 @@ bool TelepathyAddContactPage::apply(Kopete::Account *account, Kopete::MetaContac
 	QString newId = d->mainUi.textUserId->text();
 
 	// Add contact into Telepathy
-	QtTapioca::Contact *internalContact = tAccount->contactManager()->addContact( newId );
+/* \todo: FIXME
+    QtTapioca::Contact *internalContact = tAccount->contactManager()->addContact( newId );
 	if( internalContact )
 	{
 		// Now add contact in Kopete
@@ -83,7 +84,7 @@ bool TelepathyAddContactPage::apply(Kopete::Account *account, Kopete::MetaContac
 			return true;
 		}
 	}
-
+*/
 
 	return false;
 }

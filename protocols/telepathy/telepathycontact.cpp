@@ -178,7 +178,8 @@ void TelepathyContact::deleteContact()
 		return;
 	}
 
-	account()->contactManager()->removeContact(this);
+    // \todo: FIXME
+	//account()->contactManager()->removeContact(this);
 }
 
 void TelepathyContact::telepathyPresenceUpdated(Telepathy::Client::Account *account, const QString &presenceMessage)

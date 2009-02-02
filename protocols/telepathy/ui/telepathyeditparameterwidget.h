@@ -19,11 +19,7 @@
 
 #include <QtGui/QWidget>
 
-#include <QtTapioca/ConnectionManager>
-
 #include <TelepathyQt4/Client/ConnectionManager>
-
-using namespace QtTapioca;
 
 class TelepathyEditParameterWidget : public QWidget
 {

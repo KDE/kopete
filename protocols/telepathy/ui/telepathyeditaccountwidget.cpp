@@ -162,8 +162,7 @@ void TelepathyEditAccountWidget::readConfig()
                     // At this point, the protocol preferences tab is created
 
                     // Update the parameters in the UI
-                    // \todo: FIXME
-                    //d->paramWidget->setParameterList( account()->allConnectionParameters() );
+                    d->paramWidget->setParameterList( account()->allConnectionParameters() );
                 }
             }
         }
@@ -272,8 +271,7 @@ void TelepathyEditAccountWidget::protocolSelectionChanged()
         Telepathy::Client::ProtocolParameterList tabParameter;
         if( account() && protocol == account()->connectionProtocol() )
         {
-// \todo: FIXME
-//            tabParameter = account()->allConnectionParameters();
+            tabParameter = account()->allConnectionParameters();
         }
         else
         {

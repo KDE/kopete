@@ -44,6 +44,14 @@ class TelepathyProtocol;
 class TelepathyContactManager;
 class TelepathyContact;
 
+namespace Telepathy
+{
+    namespace Client
+    {
+        class ContactManager;
+    }
+}
+
 /**
  * @author Michaël Larouche <larouche@kde.org>
  */
@@ -90,20 +98,20 @@ public:
 	 *
 	 * @return saved connection parameters.
 	 */
-	QList<QtTapioca::ConnectionManager::Parameter> connectionParameters() const;
+	Telepathy::Client::ProtocolParameterList connectionParameters() const;
 
 	/**
 	 * @brief Get all connection parameters merged with values from the config
 	 *
 	 * @return all connection parameters.
 	 */
-	QList<QtTapioca::ConnectionManager::Parameter> allConnectionParameters();
+	Telepathy::Client::ProtocolParameterList allConnectionParameters();
 
 	/**
 	 * @brief Return the contact manager
 	 * @return the Telepathy contact manager.
 	 */
-	TelepathyContactManager *contactManager();
+	Telepathy::Client::ContactManager *contactManager();
 
 	/**
 	 * @brief Create a new chat session using the given text channel

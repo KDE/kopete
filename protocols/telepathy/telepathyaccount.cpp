@@ -42,6 +42,7 @@
 //TelepathyQt4 includes
 #include <TelepathyQt4/Client/ConnectionManager>
 #include <TelepathyQt4/Client/PendingStringList>
+#include <TelepathyQt4/Client/ContactManager>
 
 // QtTapioca includes
 #include <QtTapioca/ConnectionManagerFactory>
@@ -57,8 +58,7 @@
 #include "telepathycontact.h"
 #include "telepathycontactmanager.h"
 #include "telepathychatsession.h"
-
-using namespace QtTapioca;
+#include "common.h"
 
 class TelepathyAccount::Private
 {
@@ -67,16 +67,16 @@ public:
 	 : currentConnectionManager(0), currentConnection(0), contactManager(0)
 	{}
 
-	ConnectionManager *getConnectionManager();
+	Telepathy::Client::ConnectionManager *getConnectionManager();
 
 	QString connectionManager;
 	QString connectionProtocol;
-	QList<ConnectionManager::Parameter> connectionParameters;
-	QList<ConnectionManager::Parameter> allConnectionParameters;
-	ConnectionManager *currentConnectionManager;
-	Connection *currentConnection;
+	Telepathy::Client::ProtocolParameterList connectionParameters;
+	Telepathy::Client::ProtocolParameterList allConnectionParameters;
+	Telepathy::Client::ConnectionManager *currentConnectionManager;
+	QtTapioca::Connection *currentConnection;
 	Kopete::OnlineStatus initialStatus;
-	TelepathyContactManager *contactManager;
+	Telepathy::Client::ContactManager *contactManager;
 };
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
@@ -121,7 +121,7 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 	if( readConfig() )
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << "Successfully read config.";
-		kDebug(TELEPATHY_DEBUG_AREA) << "Connecting to connection manager " << connectionManager() << " on protocol " << connectionProtocol();
+		kDebug(TELEPATHY_DEBUG_AREA) << "Connecting to connection manager " << d->connectionManager << " on protocol " << d->connectionProtocol;
 		ConnectionManager *connectionManager = d->getConnectionManager();
 
 		kDebug(TELEPATHY_DEBUG_AREA) << "Actual connection manager: " << connectionManager->name();
@@ -130,8 +130,8 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			delete d->currentConnection;
 			d->currentConnection = 0;
 		}
-
-		if( connectionManager->isRunning() )
+/* \todo: FIXME 
+		if( connectionManager->isReady() )
 		{
 			d->currentConnection = connectionManager->requestConnection( connectionProtocol(), connectionParameters() );
 			if( d->currentConnection )
@@ -158,6 +158,7 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			kDebug(TELEPATHY_DEBUG_AREA) << connectionManager->name() << " is not running.";
 			// TODO: Shown an error message
 		}
+ */
 	}
 }
 
@@ -264,7 +265,11 @@ bool TelepathyAccount::readConfig()
 	d->connectionParameters.clear();
 
 	// Get the preferences from the connection manager to get the right types
-	QList<ConnectionManager::Parameter> tempParameters = d->getConnectionManager()->protocolParameters(d->connectionProtocol);
+    Telepathy::Client::ProtocolInfo* protocolInfo = getProtocolInfo(d->getConnectionManager(), d->connectionProtocol);
+    if(!protocolInfo)
+        return false;
+
+    Telepathy::Client::ProtocolParameterList tempParameters = protocolInfo->parameters();
 
 	// Now update the preferences
 	KSharedConfig::Ptr telepathyConfig = KGlobal::config();
@@ -272,13 +277,13 @@ bool TelepathyAccount::readConfig()
 	QMap<QString,QString>::ConstIterator it, itEnd = allEntries.constEnd();
 	for(it = allEntries.constBegin(); it != itEnd; ++it)
 	{
-		foreach(ConnectionManager::Parameter parameter, tempParameters)
+		foreach(Telepathy::Client::ProtocolParameter *parameter, tempParameters)
 		{
-			if( parameter.name() == it.key() )
+			if( parameter->name() == it.key() )
 			{
-				if( parameter.value().toString() != it.value() )
+				if( parameter->defaultValue().toString() != it.value() )
 				{
-					QVariant oldValue = parameter.value();
+					QVariant oldValue = parameter->defaultValue();
 					QVariant newValue(oldValue.type());
 					if ( oldValue.type() == QVariant::String )
 						newValue = QVariant(it.value());
@@ -298,7 +303,13 @@ bool TelepathyAccount::readConfig()
 					else
 						newValue = QVariant(it.value());
 // 					kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter.name() << " Value: " << newValue << "Type: " << parameter.value().typeName();
-					d->connectionParameters.append( ConnectionManager::Parameter(parameter.name(), newValue) );
+					d->connectionParameters.append( 
+                        new Telepathy::Client::ProtocolParameter(
+                            parameter->name(),
+                            parameter->dbusSignature(),
+                            newValue,
+                            Telepathy::ConnMgrParamFlagHasDefault
+                        ));
 
 					break;
 				}
@@ -324,32 +335,34 @@ QString TelepathyAccount::connectionProtocol() const
 	return d->connectionProtocol;
 }
 
-QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::connectionParameters() const
+Telepathy::Client::ProtocolParameterList TelepathyAccount::connectionParameters() const
 {
-	foreach(ConnectionManager::Parameter parameter, d->connectionParameters)
+	foreach(Telepathy::Client::ProtocolParameter *parameter, d->connectionParameters)
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter.name() << " Value: " << parameter.value() << "Type: " << parameter.value().typeName();
+		kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter->name() << " Value: " << parameter->defaultValue() << "Type: " << parameter->defaultValue().typeName();
 	}
 	return d->connectionParameters;
 }
 
-QList<QtTapioca::ConnectionManager::Parameter> TelepathyAccount::allConnectionParameters()
+Telepathy::Client::ProtocolParameterList TelepathyAccount::allConnectionParameters()
 {
 	if( d->allConnectionParameters.isEmpty() )
 	{
 		if( d->connectionProtocol.isEmpty() )
 			readConfig();
 
-		QList<ConnectionManager::Parameter> allParameters = d->getConnectionManager()->protocolParameters(d->connectionProtocol);
-		foreach(ConnectionManager::Parameter parameter, allParameters)
+        Telepathy::Client::ProtocolInfo *protocolInfo = getProtocolInfo(d->getConnectionManager(), d->connectionProtocol);
+		Telepathy::Client::ProtocolParameterList allParameters = protocolInfo->parameters();
+		foreach(Telepathy::Client::ProtocolParameter *parameter, allParameters)
 		{
-			ConnectionManager::Parameter newParameter = parameter;
-			foreach(ConnectionManager::Parameter connectionParameter, d->connectionParameters)
+			Telepathy::Client::ProtocolParameter *newParameter = parameter;
+			foreach(Telepathy::Client::ProtocolParameter *connectionParameter, d->connectionParameters)
 			{
 				// Use value from the saved connection parameter
-				if( parameter.name() == connectionParameter.name() )
+				if( parameter->name() == connectionParameter->name() )
 				{
-					newParameter = ConnectionManager::Parameter( parameter.name(), connectionParameter.value() );
+					newParameter = new Telepathy::Client::ProtocolParameter(
+                        parameter->name(), parameter->dbusSignature(), connectionParameter->defaultValue(), Telepathy::ConnMgrParamFlagHasDefault);
 					break;
 				}
 			}
@@ -400,7 +413,7 @@ QtTapioca::TextChannel *TelepathyAccount::createTextChannel(QtTapioca::Contact *
 void TelepathyAccount::telepathyStatusChanged(QtTapioca::Connection *connection, QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason)
 {
 	Q_UNUSED(connection);
-
+/* \todo: FIXME
 	switch(status)
 	{
 		case Connection::Connecting:
@@ -415,6 +428,7 @@ void TelepathyAccount::telepathyStatusChanged(QtTapioca::Connection *connection,
 			break;
 	}
 	//TODO: reason
+ */
 }
 
 void TelepathyAccount::telepathyChannelCreated(QtTapioca::Connection *connection, QtTapioca::Channel *channel)
@@ -445,8 +459,10 @@ void TelepathyAccount::slotTelepathyConnected()
 
 void TelepathyAccount::fetchContactList()
 {
+/* \todo: FIXME
 	contactManager()->setContactList( d->currentConnection->contactList() );
 	contactManager()->loadContacts();
+ */
 }
 
 void TelepathyAccount::slotChangeAvatar()
@@ -467,21 +483,22 @@ void TelepathyAccount::slotChangeAvatar()
 	}
 }
 
-ConnectionManager *TelepathyAccount::Private::getConnectionManager()
+Telepathy::Client::ConnectionManager *TelepathyAccount::Private::getConnectionManager()
 {
 	if( !currentConnectionManager )
 	{
-		currentConnectionManager = ConnectionManagerFactory::self()->getConnectionManagerByName(connectionManager);
+		currentConnectionManager = new Telepathy::Client::ConnectionManager(connectionManager);
 	}
 
 	return currentConnectionManager;
 }
 
-TelepathyContactManager *TelepathyAccount::contactManager()
+Telepathy::Client::ContactManager *TelepathyAccount::contactManager()
 {
 	if( !d->contactManager )
 	{
-		d->contactManager = new TelepathyContactManager(this);
+        // \todo: FIXME
+//  		d->contactManager = new Telepathy::Client::ContactManager(NULL);
 	}
 
 	return d->contactManager;
