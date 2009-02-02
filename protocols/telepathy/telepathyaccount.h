@@ -133,6 +133,13 @@ public:
 	 */
 	bool changeAlias(const QString &newAlias);
 
+	/**
+	 * @brief Check status operation validation
+	 *
+	 * @return true if it is valid
+	 */
+    bool isValidPresenceOperation() const;
+
 signals:
 	/**
 	 * Emitted when we are connected to a Telepathy connection manager.

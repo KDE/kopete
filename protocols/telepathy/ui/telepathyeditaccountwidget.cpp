@@ -90,20 +90,21 @@ TelepathyAccount *TelepathyEditAccountWidget::account()
 
 bool TelepathyEditAccountWidget::validateData()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) ;
+    kDebug(TELEPATHY_DEBUG_AREA) << "validateData() called";
     // You must fill the form to move to the next step
     if( !d->ui.treeConnectionManager->selectedItems().isEmpty() &&
     	!d->ui.treeProtocol->selectedItems().isEmpty() )
         return true;
     else
     {
-	KMessageBox::error(this, i18n("Please fill in the fields in the dialog. First select a connection manager, then select a protocol."));
-	return false;
+        KMessageBox::error(this, i18n("Please fill in the fields in the dialog. First select a connection manager, then select a protocol."));
+        return false;
     }
 }
 
 Kopete::Account *TelepathyEditAccountWidget::apply()
 {
+    kDebug(TELEPATHY_DEBUG_AREA) << "apply() called";
     // Get parameter list
     if( d->paramWidget )
     {
@@ -123,7 +124,8 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
                     break;
                 }
             }
-            setAccount( TelepathyProtocol::protocol()->createNewAccount(newAccountId) );
+            if(!newAccountId.isEmpty())
+                setAccount( TelepathyProtocol::protocol()->createNewAccount(newAccountId) );
         }
         writeConfig();
     }
@@ -171,7 +173,7 @@ void TelepathyEditAccountWidget::readConfig()
 
 void TelepathyEditAccountWidget::writeConfig()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) ;
+    kDebug(TELEPATHY_DEBUG_AREA) << "writeConfig() called";
     QString selectedConnectionManager = d->ui.treeConnectionManager->selectedItems().first()->text(0);
     QString selectedProtocol = d->ui.treeProtocol->selectedItems().first()->text(0);
     QString accountId = account()->accountId();
