@@ -141,7 +141,7 @@ public:
 	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/** Reimplemented from Kopete::Account */
-	virtual void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &statusMessage);
+	virtual void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &statusMessage,const QFlags<Kopete::Account::OnlineStatusOption>& option);
 
 	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 

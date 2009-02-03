@@ -43,9 +43,14 @@ const QRegExp sm_userStrictRegExp(QLatin1String("^([^\\s,:!@]+)!([^\\s,:!@]+)@([
 const QRegExp sm_channelRegExp(QLatin1String("^[#!+&][^\\s,]+$") );
 
 // FIXME: Implement me
-Entity::Type Entity::guessType(const QByteArray &)
+Entity::Type Entity::guessType(const QByteArray &name)
 {
-	return Unknown;
+	if ( isChannel( name ) )
+		return Channel;
+	if ( isUser( name ) )
+		return User;
+	else
+		return Unknown;
 }
 
 bool Entity::isUser( const QByteArray &name )
@@ -135,13 +140,16 @@ void Entity::setType( Entity::Type type )
 		emit updated();
 	}
 }
-/*
-EntityType Entity::guessType()
+
+Entity::Type Entity::guessType()
 {
-	setType( guessType(d->name) );
+	Q_D( Entity );
+	//If the type is already set, we don't have to guess
+	if ( type()==KIrc::Unknown )
+		setType( guessType(d->name) );
 	return type();
 }
-*/
+
 QByteArray Entity::name() const
 {
 	Q_D(const Entity);

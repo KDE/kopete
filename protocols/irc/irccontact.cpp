@@ -172,7 +172,7 @@ void IRCContact::entityUpdated()
 //		setIcon("irc_service");
 //		break;
 	case KIrc::Entity::User:
-		setIcon("irc_user");
+		setIcon("irc_online");
 		break;
 	default:
 //		setIcon("irc_unknown");
@@ -254,7 +254,7 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 	KIrc::ClientSocket *engine = kircClient();
 
 	Kopete::ChatSession *chatSession = d->chatSessions.value(type);
-	if (!chatSession)
+	if (!chatSession&&create)
 	{
 //		if (engine->status() == KIrc::ClientSocket::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
 //			account->connect();
@@ -263,8 +263,11 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 
 		if(entity()->isChannel())
 		{
+			kDebug( 14120 )<<"its a channel";
 			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) ,
 															 account->protocol(), Kopete::ChatSession::Chatroom);
+			ircAccount()->client()->joinChannel( entity()->name() );
+
 		}else
 		{
 			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) ,
@@ -454,4 +457,3 @@ void IRCContact::serialize(QMap<QString, QString> & /*serializedData*/, QMap<QSt
 {
 	addressBookData[protocol()->addressBookIndexField()] = contactId() + QChar(0xE120) + account()->accountId();
 }
-

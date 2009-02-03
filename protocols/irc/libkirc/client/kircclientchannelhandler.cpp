@@ -871,8 +871,12 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_475(KIrc::Context *con
 
 KIrc::Handler::Handled ClientChannelHandler::CMD_JOIN( KIrc::Context* context , const KIrc::Command& command, KIrc::Socket* socket )
 {
+	Q_D( ClientChannelHandler );
 	kDebug( 14121 )<<"joining channel"<<command;
-	socket->writeMessage( KIrc::StdMessages::join( command.value(1) ) );
+	if ( d->channels.contains( context->entityFromName( command.value( 1 ) ) ) )
+	  kDebug( 14121 )<<"WARNING trying to join channel twice";
+	else
+	  socket->writeMessage( KIrc::StdMessages::join( command.value(1) ) );
 //	KIrc::EntityPtr channel=KIrc::EntityPtr( context->entityFromName( channelName ) );
 //	channel->setType(KIrc::Entity::Channel);
 }

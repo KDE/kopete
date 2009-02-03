@@ -179,6 +179,7 @@ void ClientSocket::joinChannel( const QByteArray & channelName )
 {
 	Q_D( ClientSocket );
 
+	kDebug( 14121 )<<"joining "<<channelName;
 	onCommand( d->context, KIrc::Command()<<"JOIN"<<channelName );
 }
 

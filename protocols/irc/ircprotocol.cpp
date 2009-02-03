@@ -516,25 +516,29 @@ Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QS
 
 	QString contactId = serializedData[ "contactId" ];
 	QString displayName = serializedData[ "displayName" ];
+	QString accountId = serializedData[ "accountId" ];
 
 	if( displayName.isEmpty() )
 		displayName = contactId;
 
 	QList<Account*> accounts = AccountManager::self()->accounts( this );
-	if( !accounts.isEmpty() )
+	Kopete::Account* account = 0;
+	foreach( Kopete::Account* acct, accounts )
 	{
-/*		Account *a = accounts[ serializedData[ "accountId" ] ];
-		if( a )
-		{
-			a->addContact( contactId, metaContact );
-			return a->contacts()[contactId];
-		}
-		else
-			kDebug(14120) << serializedData[ "accountId" ] << " was a contact's account,"
-				" but we don't have it in the accounts list" << endl; */
+		if ( acct->accountId() == accountId )
+			account = acct;
+	}
+
+	if( account )
+	{
+		account->addContact( contactId, metaContact );
+		return account->contacts()[contactId];
 	}
 	else
-		kDebug(14120) << "No accounts loaded!";
+	{
+		kDebug(14120) << serializedData[ "accountId" ] << " was a contact's account,"
+			" but we don't have it in the accounts list" << endl;
+	}
 
 	return 0;
 }

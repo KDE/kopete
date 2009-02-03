@@ -606,7 +606,7 @@ void IRCAccount::slotJoinChannel()
 	}
 }
 
-void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
+void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus,const QFlags<Kopete::Account::OnlineStatusOption>& option)
 {
 	kDebug(14120) ;
 	d->expectedOnlineStatus = status;
@@ -638,8 +638,8 @@ void IRCAccount::setStatusMessage(const StatusMessage &messageStatus)
 
 bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 {
-	kDebug(14120) ;
-/*	if (contactId == mNickName)
+	kDebug(14120);
+	if (contactId == nickName())
 	{
 		KMessageBox::error( UI::Global::mainWidget(),
 			i18n("\"You are not allowed to add yourself to your contact list."), i18n("IRC Plugin")
@@ -647,7 +647,7 @@ bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 
 		return false;
 	}
-	IRCContact *contact = getContact(contactId, metac);
+	IRCContact *contact = getContact(contactId.toUtf8(), metac);
 
 	if (contact->metaContact() != metac )
 	{//This should NEVER happen
@@ -659,7 +659,7 @@ bool IRCAccount::createContact(const QString &contactId, MetaContact *metac)
 	}
 	else if (contact->metaContact()->isTemporary())
 		metac->setTemporary(false);
-*/
+
 	return true;
 }
 
@@ -688,8 +688,11 @@ IRCContact *IRCAccount::mySelf() const
 IRCContact *IRCAccount::getContact(const QByteArray &name, MetaContact *metac)
 {
 	kDebug(14120) << name;
-//	return getContact(d->client->entityManager()->entityByName(name), metac);
-	return 0;
+	KIrc::EntityPtr entity=d->clientContext->entityFromName(name);
+	entity->guessType();
+	kDebug( 14129 )<<"type: "<<entity->type();
+
+	return getContact(entity, metac);
 }
 
 IRCContact *IRCAccount::getContact(const KIrc::EntityPtr &entity, MetaContact *metac)
@@ -879,7 +882,7 @@ void IRCAccount::appendMessage(IRCContact* from, QList<Contact*> to,const QStrin
 
 		//If the target is the server, and the server window is not shown, drop the message, as most people
 		//won't be interested in the server's messages
-		if(appendTo==myServer()&&!myServer()->manager()->view())
+		if( appendTo==myServer()&&( !myServer()->manager() || !myServer()->manager()->view() ) )
 			continue;
 
 		appendTo->appendMessage( msg );

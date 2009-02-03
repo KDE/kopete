@@ -95,7 +95,7 @@ public:
 	bool isUser() const;
 	void setType(Entity::Type type);
 
-//	EntityType guessType();
+	Entity::Type guessType();
 
 	QTextCodec *codec() const;
 	void setCodec(QTextCodec *);
