@@ -74,7 +74,7 @@ public:
 private:
 	OtrlChatInterface();
 	static OtrlChatInterface *mSelf;
-	Fingerprint *findFingerprint( const QString &username );
+	Fingerprint *findFingerprint( Kopete::ChatSession *session );
 
 signals:
 	void goneSecure(Kopete::ChatSession* session, int state);
