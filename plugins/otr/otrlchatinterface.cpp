@@ -549,7 +549,7 @@ KDE_EXPORT QString *OtrlChatInterface::encryptMessage( QString *msg, const QStri
 			/* If fragmentation is needed libotr will send out all fragments but the last one. */
 			ConnContext *context = otrl_context_find(userstate, contactId.toLocal8Bit(), accountId.toLocal8Bit(), protocol.toLocal8Bit(), 0, NULL, NULL, NULL);
 
-			kDebug(14318) << "message to be sent out: " << newMessage;
+			//kDebug(14318) << "message to be sent out: " << newMessage;
 
 			err = otrl_message_fragment_and_send(&ui_ops, chatSession, context, newMessage,
 			OTRL_FRAGMENT_SEND_ALL_BUT_LAST, &fragment);
