@@ -32,6 +32,7 @@ namespace XMPP
 {
 	class JingleSession;
 	class JingleReason;
+	class JingleAction;
 	
 	/*
 	 * This class is a Task that received all jingle actions and give them to the JingleSessionManager
@@ -46,25 +47,28 @@ namespace XMPP
 		void onGo();
 		bool take(const QDomElement&);
 		
+		bool hasPendingAction();
+		JingleAction* takeNextPendingAction();
+		
 		/*
 		 * Returns the next incoming session, this
 		 * method should be called each time the newSessionIncoming()
 		 * SIGNAL is emitted.
 		 */
-		JingleSession *takeNextIncomingSession();
+		//JingleSession *takeNextIncomingSession();
 	signals:
 		/*
-		 * Emitted when a new session is incoming. the JingleSession
-		 * can be retrieved with takeNextIncomingSession()
+		 * Emitted when a new jingle action is incoming. The JingleAction
+		 * can be retrieved with getLastPendingAction()
 		 */
-		void newSessionIncoming();
+		void jingleActionReady();
 
 		/*
 		 * Emitted when a peer wants to remove 1 or more content(s)
 		 * from a session (content-remove action). It contains the
 		 * session id and a list of the contents to remove.
 		 */
-		void removeContent(const QString&, const QStringList&);
+		//void removeContent(const QString&, const QStringList&);
 
 		/*
 		 * Emitted when a peer sends a session information
@@ -74,7 +78,7 @@ namespace XMPP
 		 * Argument is a QDomElement containing the jingle
 		 * tag (and children).
 		 */
-		void sessionInfo(const QDomElement&);
+		//void sessionInfo(const QDomElement&);
 
 		/*
 		 * Emitted when a peer sends a transport info.
@@ -83,27 +87,27 @@ namespace XMPP
 		 * Argument is a QDomElement containing the jingle
 		 * tag (and children).
 		 */
-		void transportInfo(const QDomElement&);
+		//void transportInfo(const QDomElement&);
 
 		/*
 		 * Emitted when a peer wants to terminate a session
 		 * (session-terminate jingle action)
 		 * Arguments are the session ID and the Reason of the termination.
 		 */
-		void sessionTerminate(const QString&, const JingleReason&);
+		//void sessionTerminate(const QString&, const JingleReason&);
 
 		/*
 		 * Signal emitted when a session-accept jingle action has been received.
 		 */
-		void sessionAccepted(const QDomElement&);
+		//void sessionAccepted(const QDomElement&);
 	
 	private:
 		class Private;
 		Private *d;
 
-		/* This method is called to acknowledge the stanza's sender.
-		 * before it is called, d->id must be set to the received
-		 * stanza's id.
+		/* This method is called to acknowledge the sender it's stanza
+		 * has been received. Before it is called, d->id must be set
+		 * to the received stanza's id.
 		 */
 		void ack();
 

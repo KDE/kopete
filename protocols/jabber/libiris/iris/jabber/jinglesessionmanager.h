@@ -95,8 +95,8 @@ namespace XMPP
 		int nextRawUdpPort();
 		void setFirstPort(int);
 
-		QString externalIP() const;
-		void setExternalIP(const QString& eip);
+		//QString externalIP() const;
+		//void setExternalIP(const QString& eip);
 	signals:
 		
 		/*
@@ -113,7 +113,7 @@ namespace XMPP
 		/* 
 		 * Slots for each jingle action
 		 */
-		void slotSessionIncoming();
+		//void slotSessionIncoming();
 		void slotRemoveContent(const QString&, const QStringList&);
 		void slotSessionInfo(const QDomElement&);
 		void slotTransportInfo(const QDomElement&);
@@ -121,16 +121,26 @@ namespace XMPP
 		void slotSessionAccepted(const QDomElement&);
 
 		/*
+		 * Removes the session emitting the signal from the list.
+		 */
+		void slotRemoveSession();
+		
+		/*
+		 * Slot executed each time a Jingle action arrives.
+		 */
+		void slotJingleActionReady();
+		
+		/*
 		 * This slot is called when a session has been
 		 * terminated and should be removed from the
 		 * sessions list.
 		 */
-		void slotSessionTerminated();
+		//void slotSessionTerminated();
 
 		/*
 		 * This slot is called when the external IP has been retrieved by http
 		 */
-		void slotExternalIPDone(bool);
+		//void slotExternalIPDone(bool);
 
 	private:
 		class Private;

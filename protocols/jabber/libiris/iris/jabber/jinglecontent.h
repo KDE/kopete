@@ -172,10 +172,7 @@ namespace XMPP
 
 		QDomElement bestPayload();
 
-	public slots:
-		void slotRawUdpDataReady();
-
-		void slotTrySending();
+//	public slots:
 
 	signals:
 

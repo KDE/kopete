@@ -75,6 +75,7 @@ namespace XMPP
 	};
 
 	class JingleContent;
+	class JingleAction;
 	class JT_JingleAction;
 	class JT_PushJingleSession;
 
@@ -232,21 +233,6 @@ namespace XMPP
 		 */
 		void sessionAccepted(const QDomElement&);
 
-		// Jingle actions
-		enum JingleAction {
-			SessionInitiate = 0,
-			SessionTerminate,
-			SessionAccept,
-			SessionInfo,
-			ContentAdd,
-			ContentRemove,
-			ContentModify,
-			TransportReplace,
-			TransportAccept,
-			TransportInfo,
-			NoAction
-		};
-		
 		// Session states
 		enum State {
 			Pending = 0,
@@ -258,6 +244,11 @@ namespace XMPP
 		 * Returns the current state of the session.
 		 */
 		State state() const;
+
+		/*
+		 * Add an action to the session so it is properly processed.
+		 */
+		void appendAction(JingleAction *action);	
 
 	signals:
 		
@@ -290,31 +281,14 @@ namespace XMPP
 		void slotSessTerminated();
 
 		/*
-		 * This slot is called when data is received on the raw udp socket.
-		 */
-		void slotRawUdpDataReady();
-
-		/*
 		 * Called when a content has been established.
 		 */
 		void slotContentConnected();
 
 		/*
-		 * This slot is called when a JT_JingleAction has been acknowledged
-		 * and we just have to delete it.
-		 */
-		void slotAcked();
-
-		/*
 		 * This slot is called when the session has been accepted by the responder.
 		 */
 		void slotSessionAcceptAcked();
-
-		/*
-		 * This slot is called when a "receive" informational message has been received.
-		 * Currently, this slot simply calls setSending() on all contents.
-		 */
-		void slotReceivingData();
 
 	private:
 		class Private;
@@ -330,11 +304,6 @@ namespace XMPP
 		 * (Create socket, ask to start sending data on it)
 		 */
 		void startRawUdpConnection(JingleContent*);
-		
-		/*
-		 * Deletes an action when it is not used anymore.
-		 */
-		void deleteAction(JT_JingleAction*);
 	};
 }
 

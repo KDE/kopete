@@ -24,46 +24,17 @@
 #include <stdio.h>
 
 #include "jinglesessionmanager.h"
-
+#include "jingleaction.h" 
 #include "jingletasks.h"
+
 #include "protocol.h"
 #include "xmpp_xmlcommon.h"
 
 using namespace XMPP;
 
-JingleSession::JingleAction jingleAction(const QDomElement& x)
-{
-	QString action = x.firstChildElement().attribute("action");
-	if (action == "session-initiate")
-		return JingleSession::SessionInitiate;
-	else if (action == "session-terminate")
-		return JingleSession::SessionTerminate;
-	else if (action == "session-accept")
-		return JingleSession::SessionAccept;
-	else if (action == "session-info")
-		return JingleSession::SessionInfo;
-	else if (action == "content-add")
-		return JingleSession::ContentAdd;
-	else if (action == "content-remove")
-		return JingleSession::ContentRemove;
-	else if (action == "content-modify")
-		return JingleSession::ContentModify;
-	else if (action == "transport-replace")
-		return JingleSession::TransportReplace;
-	else if (action == "transport-accept")
-		return JingleSession::TransportAccept;
-	else if (action == "transport-info")
-		return JingleSession::TransportInfo;
-	else
-		return JingleSession::NoAction;
-}
-
-
-
 //------------------------
 // JT_PushJingleAction
 //------------------------
-//RECEIVES THE ACTIONS
 
 static JingleReason::Type stringToType(const QString& str)
 {
@@ -90,6 +61,7 @@ public:
 	QDomElement iq;
 	QString id;
 	Jid from;
+	QList<JingleAction*> actions;
 };
 
 JT_PushJingleAction::JT_PushJingleAction(Task *parent)
@@ -109,15 +81,21 @@ void JT_PushJingleAction::onGo()
 //	send(d->iq);
 }
 
+bool JT_PushJingleAction::hasPendingAction()
+{
+	return !d->actions.isEmpty();
+}
+
+JingleAction* JT_PushJingleAction::takeNextPendingAction()
+{
+	if (hasPendingAction())
+		return d->actions.takeFirst();
+	
+	return 0;
+}
+
 bool JT_PushJingleAction::take(const QDomElement &x)
 {
-	/*
-	 * We take this stanza when it is a session-initiate stanza for sure.
-	 * Now, 2 possibilities :
-	 * 	* This task is used by the JingleSession to established the connection
-	 * 	* A new JT_JingleSession is used by the JingleSession to established the connection
-	 * I'd rather use the second one, see later...
-	 */
 	if (x.firstChildElement().tagName() != "jingle")
 		return false;
 	
@@ -127,121 +105,14 @@ bool JT_PushJingleAction::take(const QDomElement &x)
 		return true;
 	}
 
-	QStringList cName;
-	QString sid = x.firstChildElement().attribute("sid");
-	d->from = Jid(x.attribute("from"));
-	QDomElement jingle;
-	QDomElement content;
-	QDomElement reason, e;
-	QString condition;
-	QString text;
-	switch(jingleAction(x))
-	{
-	case JingleSession::SessionInitiate :
-		qDebug() << "New Incoming session : " << sid;
-		d->id = x.attribute("id");
-		ack();
+	d->actions << new JingleAction(x);
+	
+	d->id = x.attribute("id");
+	ack();
 
-		//Prepare the JingleSession instance.
-		d->incomingSession = new JingleSession(parent(), Jid());
-		d->incomingSession->setTo(x.attribute("from"));
-		jingle = x.firstChildElement();
-		d->incomingSession->setInitiator(jingle.attribute("initiator"));
-		d->incomingSession->setSid(jingle.attribute("sid"));
-		content = jingle.firstChildElement();
-		while (!content.isNull())
-		{
-			if (content.tagName() == "content")
-				d->incomingSession->addContent(content);
-			content = content.nextSiblingElement();
-		}
+	emit jingleActionReady();
 
-		d->incomingSessions << d->incomingSession;
-
-		emit newSessionIncoming();
-		 /* TODO : 
-		  * 	Continue to negotiate the contents to use --> Done by the JingleSession.
-		  */
-		break;
-	case JingleSession::ContentRemove : 
-		qDebug() << "Content remove for session " << sid;
-		// Ack content-remove
-		d->id = x.attribute("id");
-		ack();
-		
-		content = x.firstChildElement().firstChildElement();
-		while (!content.isNull())
-		{
-			cName << content.attribute("name");
-			qDebug() << " * Remove : " << cName;
-			content = content.nextSiblingElement();
-		}
-		emit removeContent(sid, cName);
-		/*if (d->state == WaitContentAccept)
-		{
-			d->state = StartNegotiation;
-			 *
-			 * Content has been removed, we can take it as a content-accept.
-			 * Now, we stop ringing but the session should change it by itself depending
-			 * on the state when receiving a content-remove
-			 * After we acknowledge the responder that the content has been removed,
-			 * we must start negotiate a candidate with him (depending if we use ICE-UDP or RAW-UDP)
-			 * ADVICE: Begin with RAW-UDP, it is simpler.
-			 *
-		}*/
-		break;
-	case JingleSession::SessionInfo :
-		qDebug() << "Session Info for session " << sid;
-		// Ack session-info
-		d->id = x.attribute("id");
-		ack();
-		
-		emit sessionInfo(x.firstChildElement());
-		break;
-	case JingleSession::TransportInfo :
-		qDebug() << "Transport Info for session " << sid;
-		d->id = x.attribute("id");
-		ack();
-		
-		emit transportInfo(x.firstChildElement());
-
-		break;
-	case JingleSession::SessionTerminate :
-		qDebug() << "Transport Info for session " << sid;
-		d->id = x.attribute("id");
-		ack();
-		
-		reason = x.firstChildElement().firstChildElement();
-		e = reason.firstChildElement();
-		while(!e.isNull())
-		{
-			if (e.tagName() == "condition")
-				condition = e.firstChildElement().tagName();
-			else if (e.tagName() == "text")
-				text = e.firstChildElement().toText().data();
-
-			e = e.nextSiblingElement();
-		}
-		
-		emit sessionTerminate(sid, JingleReason(stringToType(condition), text));
-
-		break;
-	case JingleSession::SessionAccept :
-		qDebug() << "Transport Info for session " << sid;
-		d->id = x.attribute("id");
-		ack();
-
-		emit sessionAccepted(x.firstChildElement());
-		break;
-	default:
-		qDebug() << "There are some troubles with the Jingle Implementation. Be carefull that this is still low performances software.";
-	}
 	return true;
-}
-
-JingleSession *JT_PushJingleAction::takeNextIncomingSession()
-{
-	return d->incomingSessions.takeLast();
 }
 
 void JT_PushJingleAction::ack()
@@ -306,7 +177,8 @@ void JT_JingleAction::initiate()
 	jingle.setAttribute("initiator", client()->jid().full());
 	jingle.setAttribute("sid", d->session->sid());
 
-	QString eip = client()->jingleSessionManager()->externalIP();
+	QString eip = ""; //No more need of that
+	//QString eip = client()->jingleSessionManager()->externalIP();
 
 	for (int i = 0; i < d->session->contents().count(); i++)
 	{
@@ -508,7 +380,8 @@ void JT_JingleAction::transportInfo(JingleContent *c)
 	jingle.setAttribute("initiator", d->session->initiator());
 	jingle.setAttribute("sid", d->session->sid());
 	//---------This part should be in another method (createJingleIQ(...))
-	QString eip = client()->jingleSessionManager()->externalIP();
+	QString eip = "";
+	//QString eip = client()->jingleSessionManager()->externalIP();
 
 	if (e.attribute("xmlns") == NS_JINGLE_TRANSPORTS_RAW)
 	{

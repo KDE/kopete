@@ -75,22 +75,9 @@ JingleCallsManager::~JingleCallsManager()
         delete d;
 }
 
-#define ADDRESS "http://whatismyip.com/automation/n09230945.asp"
-
 void JingleCallsManager::init()
 {
 	d->client->jingleSessionManager()->setFirstPort(d->jabberAccount->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
-
-	QString filename;
-	if (d->jabberAccount->configGroup()->readEntry("JingleAutoDetectIP", false) && KIO::NetAccess::download(KUrl(ADDRESS), filename, 0))
-	{
-		QFile file(filename);
-		file.open(QIODevice::ReadOnly);
-		QString ip = file.readAll();
-		file.close();
-		kDebug() << "Setting external IP :" << ip;
-		d->client->jingleSessionManager()->setExternalIP(ip);
-	}
 
 	//Initialize oRTP library.
 	ortp_init();
@@ -107,7 +94,7 @@ void JingleCallsManager::init()
 	profiles << "RTP/AVP";
 	d->client->jingleSessionManager()->setSupportedProfiles(profiles);
 	
-	// The Media Manager should be able to give xml elements for the supported payloads.
+	// TODO:The Media Manager should be able to give xml elements for the supported payloads.
 	QDomDocument doc("");
 	
 	// Audio payloads
@@ -119,6 +106,8 @@ void JingleCallsManager::init()
 	d->audioPayloads << sPayload;
 	
 	//A-Law
+	//Do I still have implementation for that ?
+	//To remove anyway
 	QDomElement aPayload = doc.createElement("payload-type");
 	aPayload.setAttribute("id", "8");
 	aPayload.setAttribute("name", "PCMA");

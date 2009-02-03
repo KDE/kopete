@@ -39,6 +39,7 @@ iris/jabber/jinglesessionmanager.cpp
 iris/jabber/jinglesession.cpp
 iris/jabber/jingletasks.cpp
 iris/jabber/jinglecontent.cpp
+iris/jabber/jingleaction.cpp
 
 iris/xmpp-core/compress.cpp
 iris/xmpp-core/compressionhandler.cpp

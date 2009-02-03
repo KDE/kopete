@@ -20,6 +20,7 @@
 
 #include "jinglesessionmanager.h"
 #include "jingletasks.h"
+#include "jingleaction.h"
 
 #include <QHttp>
 
@@ -47,77 +48,185 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	qDebug() << "JingleSessionManager::JingleSessionManager created.";
 	d->client = c;
 	d->pjs = new JT_PushJingleAction(d->client->rootTask());
-	connect(d->pjs, SIGNAL(newSessionIncoming()),
-		this, SLOT(slotSessionIncoming()));
-	connect(d->pjs, SIGNAL(removeContent(const QString&, const QStringList&)),
-		this, SLOT(slotRemoveContent(const QString&, const QStringList&)));
-	connect(d->pjs, SIGNAL(sessionInfo(const QDomElement&)),
-		this, SLOT(slotSessionInfo(const QDomElement&)));
-	connect(d->pjs, SIGNAL(transportInfo(const QDomElement&)),
-		this, SLOT(slotTransportInfo(const QDomElement&)));
-	connect(d->pjs, SIGNAL(sessionTerminate(const QString&, const JingleReason&)),
-		this, SLOT(slotSessionTerminate(const QString&, const JingleReason&)));
-	connect(d->pjs, SIGNAL(sessionAccepted(const QDomElement&)),
-		this, SLOT(slotSessionAccepted(const QDomElement&)));
-
+	connect(d->pjs, SIGNAL(jingleActionReady()),
+		this, SLOT(slotJingleActionReady()));
+	
 	Features f = d->client->features();
 	
 	f.addFeature(NS_JINGLE);
-//	f.addFeature(NS_JINGLE_TRANSPORTS_ICE);
+//	f.addFeature(NS_JINGLE_TRANSPORTS_ICE); //Not supported yet
 	f.addFeature(NS_JINGLE_TRANSPORTS_RAW);
 	f.addFeature(NS_JINGLE_APPS_RTP);
-//	f.addFeature("urn:xmpp:tmp:jingle:apps:video-rtp");
+//	f.addFeature("urn:xmpp:tmp:jingle:apps:video-rtp"); //Not supported yet
 
 	d->client->setFeatures(f);
 
 	d->firstPort = 9000;
-	
-	//Get External IP address, This is not Standard and might not work but let's try it before we have ICE support
-	//whatismyip.org has a better interface for this
-	//d->http = new QHttp(this);
-	//d->http->setHost("www.swlink.net");
-	//connect(d->http, SIGNAL(done(bool)), this, SLOT(slotExternalIPDone(bool)));
-	//d->http->get("/~styma/REMOTE_ADDR.shtml");
 }
 
-void JingleSessionManager::slotExternalIPDone(bool err)
+void JingleSessionManager::slotJingleActionReady()
 {
-	d->ip = "";
-	if (err)
-	{
-		qDebug() << "err =" << err;
-		d->http->deleteLater(); //FIXME:Not Sure about that
-		return;
-	}
-		
-	QByteArray pageData = d->http->readAll();
-	d->ip = pageData.split('\n').at(4);
-	qDebug() << "Received External IP :" << d->ip;
-
-	QDomDocument *xmlPage = new QDomDocument();
-	QString errMess;
-	int line, col;
-	if (xmlPage->setContent(pageData, false, &errMess, &line, &col))
-	{
-		qDebug() << "Parsing Ok";
-		/*d->ip= "";*/
-	}
+	JingleAction *action = 0;
+	if (d->pjs->hasPendingAction())
+		action = d->pjs->takeNextPendingAction();
 	else
 	{
-		qDebug() << " JingleSessionManager::slotExternalIPDone : Unable to parse HTML document." << errMess << line << col;
+		qDebug() << "JingleSessionManager::slotJingleActionReady() : There is no pending action, why am I called ?";
+		return;
 	}
 	
-	delete d->http;
+	switch(action->action())
+	{
+	case JingleAction::SessionInitiate :
+	{
+		qDebug() << "New Incoming session : " << action->sid();
+
+		//Prepare the JingleSession instance.
+		JingleSession *incomingSession = new JingleSession(d->pjs->parent(), action->from());
+		connect(incomingSession, SIGNAL(destroyed()), this, SLOT(slotRemoveSession()));
+
+		incomingSession->setInitiator(action->initiator());
+		incomingSession->setSid(action->sid());
+		QDomElement content = action->data();
+		while (!content.isNull())
+		{
+			if (content.tagName() == "content")
+				incomingSession->addContent(content);
+			content = content.nextSiblingElement();
+		}
+
+		d->sessions << incomingSession;
+
+		connect(incomingSession, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
+		//QList<QString> incompatibleContents;
+		
+		QList<QString> unsupportedPayloads;
+		// This is a list of the names of the contents which have no supported payloads.
+		
+		QList<QString> unsupportedTransports;
+		// This is a list of the names of the contents which have no supported transports
+		// We have to remove all contents present in those lists.
+		//
+		// If no content is supported, reject the session because it's not possible to establish a session.
+	
+		for (int i = 0; i < incomingSession->contents().count(); i++)
+		{
+			JingleContent *c = incomingSession->contents()[i];
+			
+			//Set supported payloads for this content.
+			c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
+	
+			// Check payloads for the content c
+			if (!checkSupportedPayloads(c))
+			{
+				//incompatibleContents << c->name();
+				unsupportedPayloads << c->name();
+				continue;
+			}
+			
+			if (!checkSupportedTransport(c))
+			{
+				//incompatibleContents << c->name();
+				unsupportedTransports << c->name();
+			}
+		}
+		
+		if (unsupportedPayloads.count() + unsupportedTransports.count() == incomingSession->contents().count())
+		{
+			//Reject the session.
+			JingleReason r(JingleReason::UnsupportedApplications);
+			incomingSession->sessionTerminate(r);
+			//TODO:What happens when we receive the ack of the session-terminate ?
+			//     Session must be removed and deleted.
+			return;
+		}
+		else if (unsupportedPayloads.count() + unsupportedTransports.count() > 0)
+		{
+			//remove this contents list
+			incomingSession->removeContent(unsupportedPayloads + unsupportedTransports);
+			return;
+		}
+		
+		emit newJingleSession(incomingSession);
+		
+		d->sessions.last()->ring();
+		
+		d->sessions.last()->startNegotiation(); //FIXME:Why is that ? negotiation will automatically start when candidates are received.
+
+		break;
+	}
+	case JingleAction::ContentRemove : 
+	case JingleAction::SessionInfo :
+	case JingleAction::TransportInfo :
+	case JingleAction::SessionTerminate :
+	case JingleAction::SessionAccept :
+	case JingleAction::ContentAdd :
+	case JingleAction::ContentModify :
+	case JingleAction::TransportReplace :
+	case JingleAction::TransportAccept :
+	default :
+		session(action->sid())->appendAction(action);
+/*	
+	case JingleAction::ContentRemove : 
+		qDebug() << "Content remove for session " << sid;
+		
+		content = x.firstChildElement().firstChildElement();
+		while (!content.isNull())
+		{
+			cName << content.attribute("name");
+			qDebug() << " * Remove : " << cName;
+			content = content.nextSiblingElement();
+		}
+		emit removeContent(sid, cName);
+		break;
+	case JingleAction::SessionInfo :
+		qDebug() << "Session Info for session " << sid;
+		
+		emit sessionInfo(x.firstChildElement());
+		break;
+	case JingleAction::TransportInfo :
+		qDebug() << "Transport Info for session " << sid;
+		
+		emit transportInfo(x.firstChildElement());
+
+		break;
+	case JingleAction::SessionTerminate :
+		qDebug() << "Transport Info for session " << sid;
+		
+		reason = x.firstChildElement().firstChildElement();
+		e = reason.firstChildElement();
+		while(!e.isNull())
+		{
+			if (e.tagName() == "condition")
+				condition = e.firstChildElement().tagName();
+			else if (e.tagName() == "text")
+				text = e.firstChildElement().toText().data();
+
+			e = e.nextSiblingElement();
+		}
+		
+		emit sessionTerminate(sid, JingleReason(stringToType(condition), text));
+
+		break;
+	case JingleAction::SessionAccept :
+		qDebug() << "Transport Info for session " << sid;
+
+		emit sessionAccepted(x.firstChildElement());
+		break;*/
+	}
 }
 
-void JingleSessionManager::setExternalIP(const QString& eip)
+void JingleSessionManager::slotRemoveSession()
 {
-	d->ip = eip;
-}
-
-QString JingleSessionManager::externalIP() const
-{
-	return d->ip;
+	qDebug() << "Removing session from session manager.";
+	if (sender())
+	{
+		for (int i = 0; i < d->sessions.count(); ++i)
+		{
+			if (sender() == d->sessions[i])
+				d->sessions.removeAt(i);
+		}
+	}
 }
 
 JingleSessionManager::~JingleSessionManager()
@@ -167,79 +276,6 @@ JingleSession *JingleSessionManager::startNewSession(const Jid& toJid, const QLi
 	return session;
 }
 
-void JingleSessionManager::slotSessionTerminated()
-{
-	JingleSession* sess = static_cast<JingleSession*>(sender());
-
-	for (int i = 0; i < d->sessions.count(); i++)
-	{
-		if (d->sessions[i] == sess)
-			d->sessions.removeAt(i);
-	}
-}
-
-void JingleSessionManager::slotSessionIncoming()
-{
-	qDebug() << "JingleSessionManager::slotSessionIncoming() called.";
-	
-	JingleSession *sess = d->pjs->takeNextIncomingSession();
-	d->sessions << sess;
-	connect(sess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
-	//QList<QString> incompatibleContents;
-	
-	QList<QString> unsupportedPayloads;
-	// This is a list of the names of the contents which have no supported payloads.
-	
-	QList<QString> unsupportedTransports;
-	// This is a list of the names of the contents which have no supported transports
-	// We have to remove all contents present in those lists.
-	//
-	// If no content is supported, reject the session because it's not possible to establish a session.
-
-	for (int i = 0; i < sess->contents().count(); i++)
-	{
-		JingleContent *c = sess->contents()[i];
-		
-		//Set supported payloads for this content.
-		c->setPayloadTypes(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
-
-		// Check payloads for the content c
-		if (!checkSupportedPayloads(c))
-		{
-			//incompatibleContents << c->name();
-			unsupportedPayloads << c->name();
-			continue;
-		}
-		
-		if (!checkSupportedTransport(c))
-		{
-			//incompatibleContents << c->name();
-			unsupportedTransports << c->name();
-		}
-	}
-	
-	if (unsupportedPayloads.count() + unsupportedTransports.count() == sess->contents().count())
-	{
-		//Reject the session.
-		JingleReason r(JingleReason::UnsupportedApplications);
-		sess->sessionTerminate(r);
-		//What happens when we receive the ack of the session-terminate ?
-		return;
-	}
-	else if (unsupportedPayloads.count() + unsupportedTransports.count() > 0)
-	{
-		//remove this contents list
-		sess->removeContent(unsupportedPayloads + unsupportedTransports);
-		return;
-	}
-	
-	emit newJingleSession(sess);
-	
-	d->sessions.last()->ring();
-	
-	d->sessions.last()->startNegotiation();
-}
-
 bool JingleSessionManager::checkSupportedPayloads(JingleContent *c)
 {
 	qDebug() << "We have" << c->responderPayloads().count() << "responder payloads in this content.";
@@ -265,6 +301,7 @@ bool JingleSessionManager::checkSupportedPayloads(JingleContent *c)
 
 bool JingleSessionManager::checkSupportedTransport(JingleContent *c)
 {
+	Q_UNUSED(c)
 	/*for (int i = 0; i < d->supportedTransports.count(); i++)
 	{
 		qDebug() << "compare" << c->transport().attribute("xmlns") << "to" << d->supportedTransports.at(i);
@@ -278,11 +315,6 @@ bool JingleSessionManager::checkSupportedTransport(JingleContent *c)
 
 	return true;
 }
-
-//void JingleSessionManager::removeContent(const QString& sid, const QString& cName)
-//{
-//	for (int i = 0; i < )
-//}
 
 void JingleSessionManager::slotRemoveContent(const QString& sid, const QStringList& cNames)
 {
