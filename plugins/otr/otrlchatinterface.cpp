@@ -657,11 +657,12 @@ KDE_EXPORT void OtrlChatInterface::verifyFingerprint( Kopete::ChatSession *sessi
 	new AuthenticationWizard( session->view()->mainWidget(), context, session, true );
 }
 
-Fingerprint *OtrlChatInterface::findFingerprint( const QString &account ){
+Fingerprint *OtrlChatInterface::findFingerprint( Kopete::ChatSession *session ){
 	ConnContext *context;
 
 	for( context = userstate->context_root; context != NULL; context = context->next ){
-		if( strcmp( context->username, account.toLocal8Bit() ) == 0 ){
+		if( ( session->members().first()->contactId().toLocal8Bit() == context->username ) &&
+		    (session->account()->accountId().toLocal8Bit() == context->accountname ) ){
 			return context->active_fingerprint ? context->active_fingerprint : NULL;
 		}
 	}
@@ -673,7 +674,8 @@ QString OtrlChatInterface::findActiveFingerprint( Kopete::ChatSession *session )
 	char hash[45];
 
 	for( context = userstate->context_root; context != NULL; context = context->next ){
-		if( strcmp( context->username, session->members().first()->contactId().toLocal8Bit() ) == 0 ){
+		if( ( session->members().first()->contactId().toLocal8Bit() == context->username ) &&
+		    (session->account()->accountId().toLocal8Bit() == context->accountname ) ){
 			otrl_privkey_hash_to_human( hash, context->active_fingerprint->fingerprint );
 			return hash;
 		}
@@ -682,8 +684,9 @@ QString OtrlChatInterface::findActiveFingerprint( Kopete::ChatSession *session )
 }
 
 bool OtrlChatInterface::isVerified( Kopete::ChatSession *session ){
-	Fingerprint *fingerprint = findFingerprint( session->members().first()->contactId() );
+	Fingerprint *fingerprint = findFingerprint( session );
 
+	kDebug() << "fingerprint" << fingerprint;
 	if( fingerprint->trust && fingerprint->trust[0] != '\0' ){
 		return true;
 	} else {
@@ -715,7 +718,7 @@ void OtrlChatInterface::emitGoneSecure( Kopete::ChatSession *session, int state 
 void OtrlChatInterface::setTrust( Kopete::ChatSession *session, bool trust ){
 	Fingerprint *fingerprint;
 
-	fingerprint = findFingerprint( session->members().first()->contactId() );
+	fingerprint = findFingerprint( session );
 	if( fingerprint != 0 ){
 		if( trust ){
 			otrl_context_set_trust( fingerprint, "verified" );
