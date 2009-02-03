@@ -46,6 +46,7 @@
 #include <kopeteaccountmanager.h>
 #include <kopetemessageevent.h>
 #include <kopeteprotocol.h>
+#include <ui/kopeteview.h>
 
 
 /**
@@ -162,6 +163,8 @@ void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 		msg.setType(Kopete::Message::TypeNormal);
 		if( !msg.plainBody().isEmpty() ){
 			messageCache.insert( *encBody, cacheBody );
+		} else {
+			messageCache.insert( "!OTR:MsgDelByOTR", cacheBody );
 		}
 	}
 }
@@ -245,7 +248,7 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		QString contactId = msg.from()->contactId();
 		int retValue = OtrlChatInterface::self()->decryptMessage( &body, accountId, msg.manager()->account()->protocol()->displayName(), contactId, msg.manager() );
 		msg.setHtmlBody( body );
-		if( retValue == 2 | OtrlChatInterface::self()->shouldDiscard( msg.plainBody() ) ){
+		if( (retValue == 2) | OtrlChatInterface::self()->shouldDiscard( msg.plainBody() ) ){
 			// internal OTR message
 			event->discard();
 			return;
@@ -270,6 +273,11 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		// This prevents the empty message from being shown in our chatwindow
 		if( msg.plainBody().isEmpty() ){
 			event->discard();
+			if(messageCache.contains("!OTR:MsgDelByOTR")){
+				msg.setPlainBody(messageCache["!OTR:MsgDelByOTR"]);
+				msg.manager()->view()->setCurrentMessage(msg);
+				messageCache.remove("!OTR:MsgDelByOTR");
+			}
 			return;
 		}
 	}
@@ -292,7 +300,7 @@ void OTRPlugin::slotSelectionChanged( bool single){
 
 	bool noerr;
 	if ( !policy.isEmpty() && policy != "null" )
-		otrPolicyMenu->setCurrentItem( policy.toInt( &noerr, 10 ));
+		otrPolicyMenu->setCurrentItem( policy.toInt( &noerr, 10 ) + 1); // +1 because of the Separator
 	else
 		otrPolicyMenu->setCurrentItem( 0 );
 
@@ -302,7 +310,7 @@ void OTRPlugin::slotSetPolicy(){
 	kDebug(14318) << "Setting contact policy";
 	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->selectedMetaContacts().first();
 	if( metaContact ){
-		metaContact->setPluginData( this, "otr_policy", QString::number( otrPolicyMenu->currentItem() - 1 ) ); // -1 because of the "Default" entry
+		metaContact->setPluginData( this, "otr_policy", QString::number( otrPolicyMenu->currentItem() - 1 ) ); // -1 because of the Separator
 	}
 	kDebug(14318) << "Selected policy: " << otrPolicyMenu->currentItem();
 }
