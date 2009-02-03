@@ -1,5 +1,5 @@
 /*
- * jinglesessionmanager.cpp - Manager for Jingle sessions
+ * jinglesessionmanager.h - Manager for Jingle sessions
  *
  * Manages all Jingle sessions.
  * This class receives all incoming jingle actions and perform these
