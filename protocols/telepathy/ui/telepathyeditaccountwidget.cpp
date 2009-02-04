@@ -93,13 +93,38 @@ bool TelepathyEditAccountWidget::validateData()
     kDebug(TELEPATHY_DEBUG_AREA) << "validateData() called";
     // You must fill the form to move to the next step
     if( !d->ui.treeConnectionManager->selectedItems().isEmpty() &&
-    	!d->ui.treeProtocol->selectedItems().isEmpty() )
+    	!d->ui.treeProtocol->selectedItems().isEmpty() &&
+        validAccountData())
         return true;
     else
     {
         KMessageBox::error(this, i18n("Please fill in the fields in the dialog. First select a connection manager, then select a protocol."));
         return false;
     }
+}
+
+bool TelepathyEditAccountWidget::validAccountData()
+{
+    if( d->paramWidget )
+    {
+    	kDebug(TELEPATHY_DEBUG_AREA);
+        d->savedParameterList = d->paramWidget->parameterList();
+
+        // Look for a parameter that begin with "account"
+        foreach(Telepathy::Client::ProtocolParameter *parameter, d->savedParameterList)
+        {
+            if( parameter->name().startsWith( QLatin1String("account") ) )
+            {
+                QString accountId = parameter->defaultValue().toString();
+                if(!accountId.isEmpty())
+                {
+                    return true;
+                    break;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 Kopete::Account *TelepathyEditAccountWidget::apply()
@@ -124,8 +149,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
                     break;
                 }
             }
-            if(!newAccountId.isEmpty())
-                setAccount( TelepathyProtocol::protocol()->createNewAccount(newAccountId) );
+            setAccount( TelepathyProtocol::protocol()->createNewAccount(newAccountId) );
         }
         writeConfig();
     }

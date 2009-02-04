@@ -46,6 +46,8 @@ public:
 
 	virtual bool validateData();
 
+    bool validAccountData();
+
 	/**
 	 * Create a new account if we are in the 'add account wizard',
 	 * otherwise update the existing account.

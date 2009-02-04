@@ -84,6 +84,7 @@ public:
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
  : Kopete::Account(protocol, accountId.toLower()), d(new Private)
 {
+    kDebug(TELEPATHY_DEBUG_AREA) ;
 	setMyself( new TelepathyContact(this, accountId, Kopete::ContactList::self()->myself()) );
 
 	// Get ConnectionManager early
