@@ -86,9 +86,6 @@ TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &a
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
 	setMyself( new TelepathyContact(this, accountId, Kopete::ContactList::self()->myself()) );
-
-	// Get ConnectionManager early
-	d->getConnectionManager();
 }
 
 TelepathyAccount::~TelepathyAccount()
@@ -375,6 +372,7 @@ Telepathy::Client::ProtocolParameterList TelepathyAccount::connectionParameters(
 
 Telepathy::Client::ProtocolParameterList TelepathyAccount::allConnectionParameters()
 {
+    kDebug(TELEPATHY_DEBUG_AREA) << "allConnectionParameters() called";
 	if( d->allConnectionParameters.isEmpty() )
 	{
 		if( d->connectionProtocol.isEmpty() )
@@ -521,6 +519,7 @@ void TelepathyAccount::slotChangeAvatar()
 Telepathy::Client::ConnectionManager *TelepathyAccount::Private::getConnectionManager()
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "getConnetionManager() called" << connectionManager;
+
 	if( !currentConnectionManager )
 	{
 		currentConnectionManager = new Telepathy::Client::ConnectionManager(connectionManager);

@@ -52,13 +52,12 @@ class TelepathyEditAccountWidget::Private
 {
 public:
     Private()
-     : paramWidget(0), mCM(NULL)
+     : paramWidget(0)
     {}
 
     Ui::TelepathyEditAccountWidget ui;
     TelepathyEditParameterWidget *paramWidget;
     Telepathy::Client::ProtocolParameterList savedParameterList;
-    Telepathy::Client::ConnectionManager *mCM;
 };
 
 // TODO: Required flags for parameters.
@@ -149,6 +148,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
                     break;
                 }
             }
+            QString selectedConnectionManager = d->ui.treeConnectionManager->selectedItems().first()->text(0);
             setAccount( TelepathyProtocol::protocol()->createNewAccount(newAccountId) );
         }
         writeConfig();
