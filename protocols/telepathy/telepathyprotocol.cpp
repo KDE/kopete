@@ -63,19 +63,19 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args
 
 TelepathyProtocol *TelepathyProtocol::protocol()
 {
-    kDebug() << "protocol() called";
+    kDebug(TELEPATHY_DEBUG_AREA) << "protocol() called";
 	return s_self;
 }
 
 Kopete::Account *TelepathyProtocol::createNewAccount(const QString &accountId)
 {
-    kDebug() << "createNewAccount() called" << accountId;
+    kDebug(TELEPATHY_DEBUG_AREA) << "createNewAccount() called" << accountId;
 	return new TelepathyAccount(this, accountId);
 }
 
 AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
-    kDebug() << "createAddContactWidget() called";
+    kDebug(TELEPATHY_DEBUG_AREA) << "createAddContactWidget() called";
 	Q_UNUSED(account);
 
 	return new TelepathyAddContactPage(parent);
@@ -83,14 +83,14 @@ AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopet
 
 KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
-    kDebug() << "createEditAccountWidget() called";
+    kDebug(TELEPATHY_DEBUG_AREA) << "createEditAccountWidget() called";
 	return new TelepathyEditAccountWidget(account, parent);
 }
 
 Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact, 
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData )
 {
-    kDebug() << "deserializeContact() called";
+    kDebug(TELEPATHY_DEBUG_AREA) << "deserializeContact() called";
 	Q_UNUSED(addressBookData);
 	
 	QString contactId = serializedData["contactId"];
@@ -121,7 +121,7 @@ QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionM
 
 Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
 {
-    kDebug() << "kopeteStatusToTelepathy() called";
+    kDebug(TELEPATHY_DEBUG_AREA) << "kopeteStatusToTelepathy() called";
 	Telepathy::ConnectionPresenceType telepathyPresence;
 
 	if( status == Available )
@@ -141,7 +141,7 @@ Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(con
 }
 Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Telepathy::ConnectionPresenceType presence)
 {
-    kDebug() << "telepathyStatusToKopete() called";
+    kDebug(TELEPATHY_DEBUG_AREA) << "telepathyStatusToKopete() called";
 	Kopete::OnlineStatus result;
 	switch(presence)
 	{

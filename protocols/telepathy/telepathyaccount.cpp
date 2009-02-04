@@ -519,7 +519,7 @@ void TelepathyAccount::slotChangeAvatar()
 
 Telepathy::Client::ConnectionManager *TelepathyAccount::Private::getConnectionManager()
 {
-    kDebug() << "getConnetionManager() called" << connectionManager;
+    kDebug(TELEPATHY_DEBUG_AREA) << "getConnetionManager() called" << connectionManager;
 	if( !currentConnectionManager )
 	{
 		currentConnectionManager = new Telepathy::Client::ConnectionManager(connectionManager);

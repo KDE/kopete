@@ -201,7 +201,7 @@ void TelepathyEditAccountWidget::onListNames(Telepathy::Client::PendingOperation
     Telepathy::Client::PendingStringList *p = static_cast<Telepathy::Client::PendingStringList*>(operation);
     foreach(QString name, p->result())
     {
-        kDebug() << name;
+        kDebug(TELEPATHY_DEBUG_AREA) << name;
         new ConnectionManagerItem(name, d->ui.treeConnectionManager);
     }
 
@@ -215,11 +215,11 @@ void TelepathyEditAccountWidget::listConnectionManager()
 {
     if (!QDBusConnection::sessionBus().isConnected())
     {
-        kDebug() << "listConnectionManager(): cannot connect to session bus.";
+        kDebug(TELEPATHY_DEBUG_AREA) << "listConnectionManager(): cannot connect to session bus.";
         return;
     }
 
-    kDebug() << "Connect listNames";
+    kDebug(TELEPATHY_DEBUG_AREA) << "Connect listNames";
     connect(Telepathy::Client::ConnectionManager::listNames(),
             SIGNAL(finished(Telepathy::Client::PendingOperation *)),
             this, SLOT(onListNames(Telepathy::Client::PendingOperation *)));

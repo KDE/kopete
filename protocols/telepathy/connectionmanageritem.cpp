@@ -1,4 +1,5 @@
 #include "connectionmanageritem.h"
+#include "telepathyprotocol.h"
 
 //KDE includes
 #include <kdebug.h>
@@ -33,7 +34,7 @@ void ConnectionManagerItem::setProtocolsSize(Telepathy::Client::PendingOperation
     }
     else
     {
-        kDebug() << p->errorName() << ": " << p->errorMessage();
+        kDebug(TELEPATHY_DEBUG_AREA) << p->errorName() << ": " << p->errorMessage();
     }
     setText(1, QString::number(size));
 }

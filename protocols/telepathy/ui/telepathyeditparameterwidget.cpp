@@ -39,7 +39,7 @@ public:
 	ParameterLineEdit(Telepathy::Client::ProtocolParameter *parameter, QWidget *parent)
 	 : QWidget(parent), m_lineValue(0)
 	{
-        kDebug() << parameter->name() << " " << parameter->dbusSignature().signature() << " " << parameter->defaultValue().toString();
+        kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << " " << parameter->dbusSignature().signature() << " " << parameter->defaultValue().toString();
 		m_parameter = parameter;
 		createWidget();
 	}
