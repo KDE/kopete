@@ -206,6 +206,7 @@ private slots:
     void requestConnectionFinished(Telepathy::Client::PendingOperation *operation);
 
     void onAccountReady(Telepathy::Client::PendingOperation*);
+    void onInitConnectionManagerReady(Telepathy::Client::PendingOperation*);
     void createNewTelepathyAccount(Telepathy::Client::PendingOperation *);
 
 private:

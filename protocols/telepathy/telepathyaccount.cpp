@@ -70,7 +70,7 @@ class TelepathyAccount::Private
 public:
 	Private()
 	 : currentConnectionManager(0), currentConnection(0), contactManager(0),
-         accountManager(0), account(0)
+         accountManager(0), account(0), connectNow(false)
 	{}
 
 	Telepathy::Client::ConnectionManager *getConnectionManager();
@@ -86,6 +86,8 @@ public:
 	Telepathy::Client::ContactManager *contactManager;
     Telepathy::Client::AccountManager *accountManager;
     Telepathy::Client::Account *account;
+    bool connectNow;
+    Kopete::OnlineStatus kopeteStatus;
 };
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
@@ -125,11 +127,19 @@ TelepathyContact *TelepathyAccount::myself()
 
 void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 {
-	if( readConfig() )
+    // \brief: check if connectionManager is ready
+	ConnectionManager *connectionManager = d->getConnectionManager();
+    if(!connectionManager->isReady())
+    {
+        d->connectNow = true;
+        d->kopeteStatus = initialStatus;
+        return;
+    }
+
+    if( readConfig() )
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << "Successfully read config.";
 		kDebug(TELEPATHY_DEBUG_AREA) << "Connecting to connection manager " << d->connectionManager << " on protocol " << d->connectionProtocol;
-		ConnectionManager *connectionManager = d->getConnectionManager();
 
 		kDebug(TELEPATHY_DEBUG_AREA) << "Actual connection manager: " << connectionManager->name();
 		if( d->currentConnection )
@@ -547,6 +557,7 @@ Telepathy::Client::ConnectionManager *TelepathyAccount::Private::getConnectionMa
 	if( !currentConnectionManager )
 	{
 		currentConnectionManager = new Telepathy::Client::ConnectionManager(connectionManager);
+        currentConnectionManager->becomeReady();
 	}
 
 	return currentConnectionManager;
@@ -589,14 +600,23 @@ void TelepathyAccount::initTelepathyAccount()
 	d->connectionProtocol = accountConfig->readEntry( QLatin1String("SelectedProtocol"), QString() );
 
     // \brief: init managers early
+    Telepathy::Client::ConnectionManager *cm = d->getConnectionManager();
+    QObject::connect(cm->becomeReady(),
+                     SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+                     this,
+                     SLOT(onInitConnectionManagerReady(Telepathy::Client::PendingOperation*))
+        );
+}
+
+void TelepathyAccount::onInitConnectionManagerReady(Telepathy::Client::PendingOperation*)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << "onInitConnectionManagerReady() called";
     Telepathy::Client::AccountManager *accountManager = d->getAccountManager();
     QObject::connect(accountManager->becomeReady(),
         SIGNAL(finished(Telepathy::Client::PendingOperation*)),
     	this,
     	SLOT(onAccountReady(Telepathy::Client::PendingOperation*))
     );
-        
-    d->getConnectionManager();
 }
 
 void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation* operation)
@@ -647,6 +667,12 @@ void TelepathyAccount::createNewTelepathyAccount(Telepathy::Client::PendingOpera
     kDebug(TELEPATHY_DEBUG_AREA) << "Creating new account";
     Telepathy::Client::PendingAccount *paccount = static_cast<Telepathy::Client::PendingAccount*>(operation);
     d->account = paccount->account();
+
+    if(d->connectNow)
+    {
+        d->connectNow = false;
+        connect(d->kopeteStatus);
+    }
 }
 
 #include "telepathyaccount.moc"

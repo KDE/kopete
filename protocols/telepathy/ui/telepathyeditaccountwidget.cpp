@@ -297,10 +297,12 @@ void TelepathyEditAccountWidget::protocolSelectionChanged()
         Telepathy::Client::ProtocolParameterList tabParameter;
         if( account() && protocol == account()->connectionProtocol() )
         {
+            kDebug(TELEPATHY_DEBUG_AREA) << "protocolSelectionChanged() - saved parameters";
             tabParameter = account()->allConnectionParameters();
         }
         else
         {
+            kDebug(TELEPATHY_DEBUG_AREA) << "protocolSelectionChanged() - get protocols";
             Telepathy::Client::ProtocolInfoList protocolInfoList
                 = cmItem->connectionManager()->protocols();
             foreach(Telepathy::Client::ProtocolInfo *protocolInfo, protocolInfoList)
