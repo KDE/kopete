@@ -42,7 +42,7 @@ YahooBuddyIconLoader::~YahooBuddyIconLoader()
 
 void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int checksum )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	kDebug(YAHOO_RAW_DEBUG) << url;
 	KIO::TransferJob *transfer;
 	QString Url = url.url();
 	QString ext = Url.left( Url.lastIndexOf( "?" ) );
@@ -55,10 +55,6 @@ void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int che
 	m_jobs[transfer].url = url;
 	m_jobs[transfer].who = who;
 	m_jobs[transfer].checksum = checksum;
-	m_jobs[transfer].file = new KTemporaryFile();
-	m_jobs[transfer].file->setPrefix( "yahoobuddyicon-" );
-	m_jobs[transfer].file->setSuffix( ext );
-	m_jobs[transfer].file->open();
 
 }
 
@@ -69,8 +65,7 @@ void YahooBuddyIconLoader::slotData( KIO::Job *job, const QByteArray& data )
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
-	if( m_jobs[transfer].file )
-		m_jobs[transfer].file->write( data.data() , data.size() );
+	m_jobs[transfer].icon.append( data );
 
 }
 
@@ -88,17 +83,7 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 	}
 	else
 	{
-		if ( m_jobs[transfer].file )
-		{
-			m_jobs[transfer].file->close();
-			emit fetchedBuddyIcon( m_jobs[transfer].who, m_jobs[transfer].file, m_jobs[transfer].checksum );
-		}
-		else
-		{
-			kDebug(YAHOO_RAW_DEBUG) << "Fatal Error! IconLoadJob has an empty KTemporaryFile pointer.";
-			if( m_client )
-				m_client->notifyError( i18n( "A fatal error occurred while downloading buddy icon." ), i18n( "IconLoadJob has an empty KTemporaryFile pointer." ), Client::Info );
-		}
+		emit fetchedBuddyIcon( m_jobs[transfer].who, m_jobs[transfer].icon, m_jobs[transfer].checksum );
 	}
 
 	m_jobs.remove( transfer );

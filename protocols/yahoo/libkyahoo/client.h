@@ -532,7 +532,7 @@ Q_OBJECT
 		/**
 		 * The iconLoader has successfully downloaded a picutre
 		 */
-		void pictureDownloaded( const QString &, KTemporaryFile *, int );
+		void pictureDownloaded( const QString &, const QByteArray &, int );
 		/**
 		 * A Buddy asks for our picture
 		 */

@@ -490,8 +490,8 @@ void Client::downloadPicture(  const QString &userId, KUrl url, int checksum )
 	if( !d->iconLoader )
 	{
 		d->iconLoader = new YahooBuddyIconLoader( this );
-		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTemporaryFile*, int )),
-				SIGNAL(pictureDownloaded(const QString&, KTemporaryFile*,  int ) ) );
+		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, const QByteArray &, int )),
+				SIGNAL(pictureDownloaded(const QString&, const QByteArray &,  int ) ) );
 	}
 
 	d->iconLoader->fetchBuddyIcon( QString(userId), KUrl(url), checksum );
