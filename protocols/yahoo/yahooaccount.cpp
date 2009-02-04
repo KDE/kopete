@@ -335,7 +335,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 		QObject::connect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), SLOT(slotPictureStatusNotify( const QString&, int)));
 
-		QObject::connect(m_session, SIGNAL(pictureDownloaded(const QString&, KTemporaryFile*, int)), this, SLOT(slotGotBuddyIcon(const QString&, KTemporaryFile*, int)) );
+		QObject::connect(m_session, SIGNAL(pictureDownloaded(const QString&, const QByteArray &, int)), this, SLOT(slotGotBuddyIcon(const QString&, const QByteArray &, int)) );
 
 		QObject::connect(m_session, SIGNAL(pictureInfoNotify(const QString&, KUrl, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KUrl, int )));
 
@@ -470,7 +470,7 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 		QObject::disconnect(m_session, SIGNAL(webcamViewerRequest(const QString&)), this, SLOT(slotWebcamViewerRequest( const QString&)));
 
-		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(const QString&, KTemporaryFile*, int )), this, SLOT(slotGotBuddyIcon(const QString&, KTemporaryFile*,int )));
+		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(const QString&, const QByteArray &, int )), this, SLOT(slotGotBuddyIcon(const QString&, const QByteArray &,int )));
 
 		QObject::disconnect(m_session, SIGNAL(pictureInfoNotify(const QString&, KUrl, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KUrl, int )));
 
@@ -1627,7 +1627,7 @@ void YahooAccount::slotGotBuddyIconInfo(const QString &who, KUrl url, int checks
 		m_session->downloadPicture( who, url, checksum );
 }
 
-void YahooAccount::slotGotBuddyIcon( const QString &who, KTemporaryFile *file, int checksum )
+void YahooAccount::slotGotBuddyIcon( const QString &who, const QByteArray &data, int checksum )
 {
 	kDebug(YAHOO_GEN_DEBUG) ;
 	YahooContact *kc = contact( who );
@@ -1635,7 +1635,7 @@ void YahooAccount::slotGotBuddyIcon( const QString &who, KTemporaryFile *file, i
 		kDebug(YAHOO_GEN_DEBUG) << "contact " << who << " doesn't exist.";
 		return;
 	}
-	kc->setDisplayPicture( file, checksum );
+	kc->setDisplayPicture( data, checksum );
 }
 void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 {
