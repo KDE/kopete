@@ -41,6 +41,7 @@
 
 //TelepathyQt4 includes
 #include <TelepathyQt4/Client/AccountManager>
+#include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/ConnectionManager>
 #include <TelepathyQt4/Client/PendingStringList>
 #include <TelepathyQt4/Client/PendingConnection>
@@ -69,7 +70,7 @@ class TelepathyAccount::Private
 public:
 	Private()
 	 : currentConnectionManager(0), currentConnection(0), contactManager(0),
-         accountManager(0)
+         accountManager(0), account(0)
 	{}
 
 	Telepathy::Client::ConnectionManager *getConnectionManager();
@@ -84,6 +85,7 @@ public:
 	Kopete::OnlineStatus initialStatus;
 	Telepathy::Client::ContactManager *contactManager;
     Telepathy::Client::AccountManager *accountManager;
+    Telepathy::Client::Account *account;
 };
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
@@ -136,16 +138,20 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			d->currentConnection = 0;
 		}
 
-        if(connectionManager->isReady())
+        if(connectionManager->isReady() && d->account)
         {
-//            Telepathy::Client::PendingConnection *connection =
-//                connectionManager->requestConnection(connectionProtocol(), connectionParameters());
+            Telepathy::Client::PendingConnection *connection =
+                connectionManager->requestConnection(connectionProtocol(), d->account->parameters());
+
+            QObject::connect(connection, SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+                             this, SLOT(requestConnectionFinished(Telepathy::Client::PendingOperation *)));
         }
 	}
 }
 
 void TelepathyAccount::requestConnectionFinished(Telepathy::Client::PendingOperation *operation)
 {
+    kDebug(TELEPATHY_DEBUG_AREA) << "requestConnectionFinished() called";
 /* \todo: FIXME
 		if( connectionManager->isReady() )
 		{
@@ -602,9 +608,6 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation* opera
 		return;
 	}
 
-    QStringList pathList = d->accountManager->allAccountPaths();
-    kDebug(TELEPATHY_DEBUG_AREA) << "All Account Paths: " << pathList.size();
-
     /*
      * get a list of all the accounts that
      * are all ready there
@@ -613,14 +616,37 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation* opera
     kDebug(TELEPATHY_DEBUG_AREA) << "accounts: " << accounts.size();
 
     /*
-     * create a datasource for each
-     * of the accounts we got in the list.
+     * check if account already exist
      */
-    foreach(const QString &path, pathList)
+    foreach(Telepathy::Client::Account *account, accounts)
     {
-        //d->createAccountDataSource(path);
+        if(account->cmName() == accountId() && account->protocol() == d->connectionProtocol)
+        {
+            kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << accountId();
+            d->account = account;
+            break;
+        }
     }
 
+    if(!d->account)
+    {
+        QVariantMap parameters;
+        foreach(Telepathy::Client::ProtocolParameter *parameter, d->connectionParameters)
+        {
+            parameters[parameter->name()] = parameter->defaultValue();
+        }
+        Telepathy::Client::PendingAccount *paccount =
+            d->accountManager->createAccount(connectionManager(), connectionProtocol(), accountId(), parameters);
+        QObject::connect(paccount, SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+                         this, SLOT(createNewTelepathyAccount(Telepathy::Client::PendingOperation *)));
+    }
+}
+
+void TelepathyAccount::createNewTelepathyAccount(Telepathy::Client::PendingOperation *operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << "Creating new account";
+    Telepathy::Client::PendingAccount *paccount = static_cast<Telepathy::Client::PendingAccount*>(operation);
+    d->account = paccount->account();
 }
 
 #include "telepathyaccount.moc"

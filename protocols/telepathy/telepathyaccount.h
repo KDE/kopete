@@ -22,6 +22,7 @@
 
 #include <TelepathyQt4/Client/ConnectionManager>
 #include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/Client/PendingAccount>
 
 #include <QtTapioca/ConnectionManager>
 #include <QtTapioca/Connection>
@@ -205,6 +206,7 @@ private slots:
     void requestConnectionFinished(Telepathy::Client::PendingOperation *operation);
 
     void onAccountReady(Telepathy::Client::PendingOperation*);
+    void createNewTelepathyAccount(Telepathy::Client::PendingOperation *);
 
 private:
 	class Private;
