@@ -148,6 +148,7 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			d->currentConnection = 0;
 		}
 
+        kDebug(TELEPATHY_DEBUG_AREA) << "requestConnection" << connectionManager->isReady() << d->account;
         if(connectionManager->isReady() && d->account)
         {
             Telepathy::Client::PendingConnection *connection =
@@ -162,35 +163,39 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 void TelepathyAccount::requestConnectionFinished(Telepathy::Client::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "requestConnectionFinished() called";
-/* \todo: FIXME
-		if( connectionManager->isReady() )
+
+    if( d->getConnectionManager()->isReady() )
+	{
+        Telepathy::Client::PendingConnection *connection
+            = static_cast<Telepathy::Client::PendingConnection*>(operation);
+        
+        d->currentConnection = connection->connection();
+		if( d->currentConnection )
 		{
-			d->currentConnection = connectionManager->requestConnection( connectionProtocol(), connectionParameters() );
-			if( d->currentConnection )
-			{
-				kDebug(TELEPATHY_DEBUG_AREA) << "Got a valid connection.";
-				// Connect signals/slots
-				QObject::connect(d->currentConnection, SIGNAL(statusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)), this, SLOT(telepathyStatusChanged(QtTapioca::Connection*, QtTapioca::Connection::Status, QtTapioca::Connection::Reason)));
+            kDebug(TELEPATHY_DEBUG_AREA) << "Got a valid connection.";
+			// Connect signals/slots
+			QObject::connect(d->currentConnection, 
+                SIGNAL(statusChanged(uint, uint)),
+                this,
+                SLOT(telepathyStatusChanged(uint, uint))
+            );
+            //QObject::connect(d->currentConnection, SIGNAL(channelCreated(QtTapioca::Connection*, QtTapioca::Channel*)), this, SLOT(telepathyChannelCreated(QtTapioca::Connection*,QtTapioca::Channel*)));
+            QObject::connect(this, SIGNAL(telepathyConnected()), this, SLOT(slotTelepathyConnected()));
 
-				QObject::connect(d->currentConnection, SIGNAL(channelCreated(QtTapioca::Connection*, QtTapioca::Channel*)), this, SLOT(telepathyChannelCreated(QtTapioca::Connection*,QtTapioca::Channel*)));
-
-				QObject::connect(this, SIGNAL(telepathyConnected()), this, SLOT(slotTelepathyConnected()));
-
-				// \todo: FIXME
-				//d->currentConnection->connect( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(initialStatus) );
-			}
-			else
-			{
-				kDebug(TELEPATHY_DEBUG_AREA) << "Failed to get a valid connection.";
-				// TODO: Show an error message
-			}
-		}
+			// \todo: FIXME
+			//d->currentConnection->connect( TelepathyProtocol::protocol()->kopeteStatusToTelepathy(initialStatus) );
+        }
 		else
 		{
-			kDebug(TELEPATHY_DEBUG_AREA) << connectionManager->name() << " is not running.";
-			// TODO: Shown an error message
-		}
- */
+            kDebug(TELEPATHY_DEBUG_AREA) << "Failed to get a valid connection.";
+			// TODO: Show an error message
+        }
+    }
+	else
+	{
+        kDebug(TELEPATHY_DEBUG_AREA) << d->connectionManager << " is not running.";
+		// TODO: Shown an error message
+    }
 }
 
 void TelepathyAccount::disconnect()
@@ -474,25 +479,24 @@ QtTapioca::TextChannel *TelepathyAccount::createTextChannel(QtTapioca::Contact *
 	return 0;
 }
 
-void TelepathyAccount::telepathyStatusChanged(QtTapioca::Connection *connection, QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason)
+void TelepathyAccount::telepathyStatusChanged(uint newStatus, uint newStatusReason)
 {
-	Q_UNUSED(connection);
-/* \todo: FIXME
-	switch(status)
+	Q_UNUSED(newStatusReason);
+
+    switch(newStatus)
 	{
-		case Connection::Connecting:
+		case Telepathy::ConnectionStatusConnecting:
 			kDebug(TELEPATHY_DEBUG_AREA) << "Connecting....";
 			break;
-		case Connection::Connected:
+		case Telepathy::ConnectionStatusConnected:
 			kDebug(TELEPATHY_DEBUG_AREA) << "Connected using Telepathy :)";
 			emit telepathyConnected();
 			break;
-		case Connection::Disconnected:
+		case Telepathy::ConnectionStatusDisconnected:
 			kDebug(TELEPATHY_DEBUG_AREA) << "Disconnected :(";
 			break;
 	}
 	//TODO: reason
- */
 }
 
 void TelepathyAccount::telepathyChannelCreated(QtTapioca::Connection *connection, QtTapioca::Channel *channel)
@@ -608,15 +612,28 @@ void TelepathyAccount::initTelepathyAccount()
         );
 }
 
-void TelepathyAccount::onInitConnectionManagerReady(Telepathy::Client::PendingOperation*)
+void TelepathyAccount::onInitConnectionManagerReady(Telepathy::Client::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "onInitConnectionManagerReady() called";
-    Telepathy::Client::AccountManager *accountManager = d->getAccountManager();
-    QObject::connect(accountManager->becomeReady(),
-        SIGNAL(finished(Telepathy::Client::PendingOperation*)),
-    	this,
-    	SLOT(onAccountReady(Telepathy::Client::PendingOperation*))
-    );
+    if(operation->isError())
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error: " << operation->errorName() << operation->errorMessage();
+    }
+
+    if(readConfig())
+    {
+        Telepathy::Client::AccountManager *accountManager = d->getAccountManager();
+            QObject::connect(accountManager->becomeReady(),
+            SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+            this,
+            SLOT(onAccountReady(Telepathy::Client::PendingOperation*))
+        );
+    }
+    else
+    {
+        // \todo: So, what next ??
+        kDebug(TELEPATHY_DEBUG_AREA) << "Init connection manager failed!";
+    }
 }
 
 void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation* operation)
@@ -640,7 +657,7 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation* opera
      */
     foreach(Telepathy::Client::Account *account, accounts)
     {
-        if(account->cmName() == accountId() && account->protocol() == d->connectionProtocol)
+        if(account->displayName() == accountId() && account->protocol() == d->connectionProtocol)
         {
             kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << accountId();
             d->account = account;
@@ -653,10 +670,12 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation* opera
         QVariantMap parameters;
         foreach(Telepathy::Client::ProtocolParameter *parameter, d->connectionParameters)
         {
+            kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << parameter->defaultValue().toString();
             parameters[parameter->name()] = parameter->defaultValue();
         }
+        kDebug(TELEPATHY_DEBUG_AREA) << d->connectionManager << d->connectionProtocol << accountId();
         Telepathy::Client::PendingAccount *paccount =
-            d->accountManager->createAccount(connectionManager(), connectionProtocol(), accountId(), parameters);
+            d->accountManager->createAccount(d->connectionManager, d->connectionProtocol, accountId(), parameters);
         QObject::connect(paccount, SIGNAL(finished(Telepathy::Client::PendingOperation *)),
                          this, SLOT(createNewTelepathyAccount(Telepathy::Client::PendingOperation *)));
     }
@@ -665,9 +684,15 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation* opera
 void TelepathyAccount::createNewTelepathyAccount(Telepathy::Client::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "Creating new account";
+    if(operation->isError())
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error: " << operation->errorName() << operation->errorMessage();
+        return;
+    }
+    
     Telepathy::Client::PendingAccount *paccount = static_cast<Telepathy::Client::PendingAccount*>(operation);
     d->account = paccount->account();
-
+    kDebug(TELEPATHY_DEBUG_AREA) << d->account->cmName() << d->account->protocol() << d->account->displayName();
     if(d->connectNow)
     {
         d->connectNow = false;

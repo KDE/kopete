@@ -175,7 +175,7 @@ private slots:
 	/**
 	 * @brief State of Telepathy connection changed.
 	 */
-	void telepathyStatusChanged(QtTapioca::Connection *connection, QtTapioca::Connection::Status status, QtTapioca::Connection::Reason reason);
+	void telepathyStatusChanged(uint newStatus, uint newStatusReason);
 
 	/**
 	 * @brief Dispatch incoming channel request to the Kopete equivalent.
