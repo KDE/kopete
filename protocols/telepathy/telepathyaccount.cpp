@@ -40,8 +40,10 @@
 #include <avatardialog.h>
 
 //TelepathyQt4 includes
+#include <TelepathyQt4/Client/AccountManager>
 #include <TelepathyQt4/Client/ConnectionManager>
 #include <TelepathyQt4/Client/PendingStringList>
+#include <TelepathyQt4/Client/PendingConnection>
 #include <TelepathyQt4/Client/ContactManager>
 #include <TelepathyQt4/Client/Connection>
 #include <TelepathyQt4/Constants>
@@ -66,10 +68,12 @@ class TelepathyAccount::Private
 {
 public:
 	Private()
-	 : currentConnectionManager(0), currentConnection(0), contactManager(0)
+	 : currentConnectionManager(0), currentConnection(0), contactManager(0),
+         accountManager(0)
 	{}
 
 	Telepathy::Client::ConnectionManager *getConnectionManager();
+    Telepathy::Client::AccountManager *getAccountManager();
 
 	QString connectionManager;
 	QString connectionProtocol;
@@ -79,6 +83,7 @@ public:
 	Telepathy::Client::Connection *currentConnection;
 	Kopete::OnlineStatus initialStatus;
 	Telepathy::Client::ContactManager *contactManager;
+    Telepathy::Client::AccountManager *accountManager;
 };
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
@@ -130,7 +135,18 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			delete d->currentConnection;
 			d->currentConnection = 0;
 		}
-/* \todo: FIXME 
+
+        if(connectionManager->isReady())
+        {
+//            Telepathy::Client::PendingConnection *connection =
+//                connectionManager->requestConnection(connectionProtocol(), connectionParameters());
+        }
+	}
+}
+
+void TelepathyAccount::requestConnectionFinished(Telepathy::Client::PendingOperation *operation)
+{
+/* \todo: FIXME
 		if( connectionManager->isReady() )
 		{
 			d->currentConnection = connectionManager->requestConnection( connectionProtocol(), connectionParameters() );
@@ -159,7 +175,6 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 			// TODO: Shown an error message
 		}
  */
-	}
 }
 
 void TelepathyAccount::disconnect()
@@ -293,7 +308,10 @@ bool TelepathyAccount::readConfig()
 	// Get the preferences from the connection manager to get the right types
     Telepathy::Client::ProtocolInfo* protocolInfo = getProtocolInfo(d->getConnectionManager(), d->connectionProtocol);
     if(!protocolInfo)
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error: could not get protocol info" << d->connectionProtocol;
         return false;
+    }
 
     Telepathy::Client::ProtocolParameterList tempParameters = protocolInfo->parameters();
 
@@ -328,7 +346,7 @@ bool TelepathyAccount::readConfig()
 					}
 					else
 						newValue = QVariant(it.value());
-// 					kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter.name() << " Value: " << newValue << "Type: " << parameter.value().typeName();
+ 					kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter->name() << " Value: " << newValue << "Type: " << parameter->defaultValue().typeName();
 					d->connectionParameters.append( 
                         new Telepathy::Client::ProtocolParameter(
                             parameter->name(),
@@ -528,6 +546,17 @@ Telepathy::Client::ConnectionManager *TelepathyAccount::Private::getConnectionMa
 	return currentConnectionManager;
 }
 
+Telepathy::Client::AccountManager *TelepathyAccount::Private::getAccountManager()
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << "getAccountManager() called";
+    if( !accountManager )
+    {
+        accountManager = new Telepathy::Client::AccountManager(QDBusConnection::sessionBus());
+    }
+
+    return accountManager;
+}
+
 Telepathy::Client::ContactManager *TelepathyAccount::contactManager()
 {
 	if( !d->contactManager )
@@ -537,6 +566,61 @@ Telepathy::Client::ContactManager *TelepathyAccount::contactManager()
 	}
 
 	return d->contactManager;
+}
+
+void TelepathyAccount::setupAccount()
+{
+}
+
+void TelepathyAccount::initTelepathyAccount()
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << "initTelepathyAccount() called";
+
+    // Restore config not related to ConnectionManager parameters first
+	// so that the UI for the protocol parameters will be generated
+	KConfigGroup *accountConfig = configGroup();
+	d->connectionManager = accountConfig->readEntry( QLatin1String("ConnectionManager"), QString() );
+	d->connectionProtocol = accountConfig->readEntry( QLatin1String("SelectedProtocol"), QString() );
+
+    // \brief: init managers early
+    Telepathy::Client::AccountManager *accountManager = d->getAccountManager();
+    QObject::connect(accountManager->becomeReady(),
+        SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+    	this,
+    	SLOT(onAccountReady(Telepathy::Client::PendingOperation*))
+    );
+        
+    d->getConnectionManager();
+}
+
+void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << "onAccountReady() called";
+	if(operation->isError())
+	{
+		kDebug() << operation->errorName() << ": " << operation->errorMessage();
+		return;
+	}
+
+    QStringList pathList = d->accountManager->allAccountPaths();
+    kDebug(TELEPATHY_DEBUG_AREA) << "All Account Paths: " << pathList.size();
+
+    /*
+     * get a list of all the accounts that
+     * are all ready there
+     */
+    QList<Telepathy::Client::Account *> accounts = d->accountManager->allAccounts();
+    kDebug(TELEPATHY_DEBUG_AREA) << "accounts: " << accounts.size();
+
+    /*
+     * create a datasource for each
+     * of the accounts we got in the list.
+     */
+    foreach(const QString &path, pathList)
+    {
+        //d->createAccountDataSource(path);
+    }
+
 }
 
 #include "telepathyaccount.moc"

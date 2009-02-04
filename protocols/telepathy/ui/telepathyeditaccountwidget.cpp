@@ -148,10 +148,10 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
                     break;
                 }
             }
-            QString selectedConnectionManager = d->ui.treeConnectionManager->selectedItems().first()->text(0);
             setAccount( TelepathyProtocol::protocol()->createNewAccount(newAccountId) );
         }
         writeConfig();
+        account()->initTelepathyAccount();
     }
 
     return account();

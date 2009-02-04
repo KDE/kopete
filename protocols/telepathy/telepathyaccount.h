@@ -21,6 +21,7 @@
 #include <QtCore/QList>
 
 #include <TelepathyQt4/Client/ConnectionManager>
+#include <TelepathyQt4/Client/PendingOperation>
 
 #include <QtTapioca/ConnectionManager>
 #include <QtTapioca/Connection>
@@ -63,6 +64,8 @@ public:
 	~TelepathyAccount();
 
 	virtual void fillActionMenu( KActionMenu *actionMenu );
+
+    void initTelepathyAccount();
 
 	/**
 	 * @brief Get the casted instance of myself contact
@@ -140,6 +143,11 @@ public:
 	 */
     bool isValidPresenceOperation() const;
 
+    /**
+     * @brief Get existing account from AccountManager or create new one
+     */
+    void setupAccount();
+
 signals:
 	/**
 	 * Emitted when we are connected to a Telepathy connection manager.
@@ -190,6 +198,13 @@ private slots:
 	 * @brief Change the current avatar
 	 */
 	void slotChangeAvatar();
+
+    /**
+     * @brief finish requested connection
+     */
+    void requestConnectionFinished(Telepathy::Client::PendingOperation *operation);
+
+    void onAccountReady(Telepathy::Client::PendingOperation*);
 
 private:
 	class Private;
