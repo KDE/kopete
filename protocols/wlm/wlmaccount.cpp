@@ -1059,7 +1059,9 @@ WlmAccount::connectionCompleted ()
     foreach ( const QString &contact, pendingList() )
     {
         // if we do not have this contact yet, so ask for add it
-        if(!isOnServerSideList(contact))
+        if(!isOnServerSideList(contact) &&
+                !isOnAllowList(contact) &&
+                !isOnBlockList(contact))
         {
             // fake this contact in RL to prompt the user to add it
             gotNewContact (MSN::LST_RL, contact, contact);
