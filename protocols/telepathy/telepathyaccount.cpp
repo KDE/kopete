@@ -93,6 +93,7 @@ public:
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
  : Kopete::Account(protocol, accountId.toLower()), d(new Private)
 {
+    Telepathy::registerTypes();
     kDebug(TELEPATHY_DEBUG_AREA) ;
 	setMyself( new TelepathyContact(this, accountId, Kopete::ContactList::self()->myself()) );
 }
@@ -127,42 +128,50 @@ TelepathyContact *TelepathyAccount::myself()
 
 void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 {
-    // \brief: check if connectionManager is ready
-	ConnectionManager *connectionManager = d->getConnectionManager();
-    if(!connectionManager->isReady())
+    kDebug(TELEPATHY_DEBUG_AREA) << "connect() called";
+
+    if(!d->currentConnectionManager || !d->getConnectionManager()->isReady())
     {
         d->connectNow = true;
         d->kopeteStatus = initialStatus;
+
+        initTelepathyAccount();
         return;
     }
 
-    if( readConfig() )
+	ConnectionManager *connectionManager = d->getConnectionManager();
+
+    if(!readConfig())
+        return;
+
+    kDebug(TELEPATHY_DEBUG_AREA) << "Successfully read config.";
+	kDebug(TELEPATHY_DEBUG_AREA) << "Connecting to connection manager " << d->connectionManager << " on protocol " << d->connectionProtocol;
+
+	kDebug(TELEPATHY_DEBUG_AREA) << "Actual connection manager: " << connectionManager->name();
+	if( d->currentConnection )
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Successfully read config.";
-		kDebug(TELEPATHY_DEBUG_AREA) << "Connecting to connection manager " << d->connectionManager << " on protocol " << d->connectionProtocol;
-
-		kDebug(TELEPATHY_DEBUG_AREA) << "Actual connection manager: " << connectionManager->name();
-		if( d->currentConnection )
-		{
-			delete d->currentConnection;
-			d->currentConnection = 0;
-		}
-
-        kDebug(TELEPATHY_DEBUG_AREA) << "requestConnection" << connectionManager->isReady() << d->account;
-        if(connectionManager->isReady() && d->account)
+        if(d->currentConnection->status() == Telepathy::ConnectionStatusDisconnected)
         {
-            Telepathy::Client::PendingConnection *connection =
-                connectionManager->requestConnection(connectionProtocol(), d->account->parameters());
+            if(connectionManager->isReady() && d->account)
+            {
+                Telepathy::Client::PendingConnection *connection =
+                    connectionManager->requestConnection(connectionProtocol(), d->account->parameters());
 
-            QObject::connect(connection, SIGNAL(finished(Telepathy::Client::PendingOperation *)),
-                             this, SLOT(requestConnectionFinished(Telepathy::Client::PendingOperation *)));
+                QObject::connect(connection, SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+                    this, SLOT(requestConnectionFinished(Telepathy::Client::PendingOperation *)));
+            }
         }
-	}
+    }
 }
 
 void TelepathyAccount::requestConnectionFinished(Telepathy::Client::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "requestConnectionFinished() called";
+    if(operation->isError())
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error: " << operation->errorName() << operation->errorMessage();
+        return;
+    }
 
     if( d->getConnectionManager()->isReady() )
 	{
@@ -188,6 +197,7 @@ void TelepathyAccount::requestConnectionFinished(Telepathy::Client::PendingOpera
 		else
 		{
             kDebug(TELEPATHY_DEBUG_AREA) << "Failed to get a valid connection.";
+            disconnect();
 			// TODO: Show an error message
         }
     }
@@ -229,25 +239,21 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const
 	{
 		disconnect();
 	}
-	else
-	{
-/* \todo: FIXME!
-		if( d->currentConnection )
-		{
-			kDebug(TELEPATHY_DEBUG_AREA) << "Changing online status to " << status.description();
+	else if( d->currentConnection )
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Changing online status to " << status.description();
 
-            if(isValidPresenceOperation())
-            {
-                kDebug(TELEPATHY_DEBUG_AREA) << "Setting status message to \"" << reason.message() << "\".";
-                d->currentConnection->setSelfPresence(TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status), reason.message());
-                setStatusMessage( reason );
-            }
-            else
-            {
-                kDebug(TELEPATHY_DEBUG_AREA) << "Problem to setup online status";
-            }
-		}
- */
+        if(isValidPresenceOperation())
+        {
+            kDebug(TELEPATHY_DEBUG_AREA) << "Setting status message to \"" << reason.message() << "\".";
+            // \todo: FIXME
+            //d->currentConnection->setSelfPresence(TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status), reason.message());
+            setStatusMessage( reason );
+        }
+        else
+        {
+            kDebug(TELEPATHY_DEBUG_AREA) << "Problem to setup online status";
+        }
 	}
 }
 
@@ -561,7 +567,6 @@ Telepathy::Client::ConnectionManager *TelepathyAccount::Private::getConnectionMa
 	if( !currentConnectionManager )
 	{
 		currentConnectionManager = new Telepathy::Client::ConnectionManager(connectionManager);
-        currentConnectionManager->becomeReady();
 	}
 
 	return currentConnectionManager;
@@ -661,7 +666,7 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation* opera
         {
             kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << accountId();
             d->account = account;
-            break;
+            return;
         }
     }
 

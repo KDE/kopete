@@ -63,7 +63,6 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args
 
 TelepathyProtocol *TelepathyProtocol::protocol()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << "protocol() called";
 	return s_self;
 }
 
