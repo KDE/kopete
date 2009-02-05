@@ -5,15 +5,7 @@ find_package( KdepimLibs REQUIRED )
 include ( KDE4Defaults )
 include ( MacroLibrary )
 
-include( CheckIncludeFile )
-include( CheckIncludeFiles )
-include( CheckSymbolExists )
-include( CheckFunctionExists )
-include( CheckLibraryExists )
-include( CheckPrototypeExists )
-include( CheckTypeSize )
-include( MacroBoolTo01 )
-include( MacroOptionalAddSubdirectory )
+########### next target ###############
 
 add_definitions ( ${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
 
@@ -25,7 +17,6 @@ include_directories(
 	${KDE4_INCLUDES}
 	${KDE4_INCLUDE_DIR}/kopete
 	${KDE4_INCLUDE_DIR}/kopete/ui
-	${KOPETE_INCLUDES}
 
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/libskype
