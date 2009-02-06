@@ -4,6 +4,8 @@
 
 FIND_PACKAGE(ZLIB REQUIRED)
 
+remove_definitions(-DQT_NO_HTTP)
+
 include_directories( 
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/legacy/ 
