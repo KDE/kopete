@@ -151,7 +151,6 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
             setAccount( TelepathyProtocol::protocol()->createNewAccount(newAccountId) );
         }
         writeConfig();
-        account()->initTelepathyAccount();
     }
 
     return account();

@@ -1,7 +1,7 @@
 /*
- * telepathyaccount.h - Telepathy Kopete Account.
+ * telepathyaccount.h
  *
- * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
+ * Copyright (c) 2009 by Dariusz Mikulski <dariusz.mikulski@gmail.com>
  *
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
@@ -14,203 +14,65 @@
  *                                                                       *
  *************************************************************************
  */
+
 #ifndef TELEPATHYACCOUNT_H
 #define TELEPATHYACCOUNT_H
 
 #include <kopeteaccount.h>
-#include <QtCore/QList>
 
 #include <TelepathyQt4/Client/ConnectionManager>
 #include <TelepathyQt4/Client/PendingOperation>
 #include <TelepathyQt4/Client/PendingAccount>
 
-#include <QtTapioca/ConnectionManager>
-#include <QtTapioca/Connection>
-
-class KActionMenu;
+namespace Kopete
+{
+        class MetaContact;
+        class StatusMessage;
+}
 
 namespace QtTapioca
 {
-	class Channel;
-	class TextChannel;
-	class Contact;
-}
-
-namespace Kopete
-{
-	class MetaContact;
-	class StatusMessage;
+        class Channel;
+        class TextChannel;
+        class Contact;
 }
 
 class TelepathyProtocol;
-class TelepathyContactManager;
-class TelepathyContact;
 
-namespace Telepathy
-{
-    namespace Client
-    {
-        class ContactManager;
-    }
-}
-
-/**
- * @author Michaël Larouche <larouche@kde.org>
- */
 class TelepathyAccount : public Kopete::Account
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	TelepathyAccount(TelepathyProtocol *parent, const QString &accountId);
-	~TelepathyAccount();
+    TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId);
+    ~TelepathyAccount();
 
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+    void createTextChatSession(QtTapioca::TextChannel *newChannel);
+    QtTapioca::TextChannel *createTextChannel(QtTapioca::Contact *internalContact);
 
-    void initTelepathyAccount();
+    QString connectionManager();
+    QString connectionProtocol();
 
-	/**
-	 * @brief Get the casted instance of myself contact
-	 * @return Myself contact as TelepathyContact.
-	 */
-	TelepathyContact *myself();
-
-	/**
-	 * @brief Read the configuration for the current account.
-	 * @return true if reading went well.
-	 */
-	bool readConfig();
-
-	/**
-	 * @brief Get the name of the connection manager for this account.
-	 *
-	 * You must call readConfig() before.
-	 * @return name of the connection manager used by this account.
-	 */
-	QString connectionManager() const;
-	/**
-	 * @brief Get the current protocol used by this account.
-	 *
-	 * You must call readConfig() before.
-	 * @return name of the protocol used by this account.
-	 */
-	QString connectionProtocol() const;
-	/**
-	 * @brief Get the connection parameters read from the config.
-	 * Only needed parameters are included in the list.
-	 *
-	 * You must call readConfig() before.
-	 *
-	 * @return saved connection parameters.
-	 */
-	Telepathy::Client::ProtocolParameterList connectionParameters() const;
-
-	/**
-	 * @brief Get all connection parameters merged with values from the config
-	 *
-	 * @return all connection parameters.
-	 */
-	Telepathy::Client::ProtocolParameterList allConnectionParameters();
-
-	/**
-	 * @brief Return the contact manager
-	 * @return the Telepathy contact manager.
-	 */
-	Telepathy::Client::ContactManager *contactManager();
-
-	/**
-	 * @brief Create a new chat session using the given text channel
-	 * @param newChannel Instance of TextChannel.
-	 */
-	void createTextChatSession(QtTapioca::TextChannel *newChannel);
-
-	/**
-	 * @brief Create a new text channel to the given contacté
-	 * @param internalContact QtTapioca contact instance.
-	 */
-	QtTapioca::TextChannel *createTextChannel(QtTapioca::Contact *internalContact);
-
-	/**
-	 * @brief Change the alias of the contact if the connection manager support it
-	 *
-	 * @param newAlias New alias to give to the contact
-	 * @return true if alias was changed.
-	 */
-	bool changeAlias(const QString &newAlias);
-
-	/**
-	 * @brief Check status operation validation
-	 *
-	 * @return true if it is valid
-	 */
-    bool isValidPresenceOperation() const;
+    bool readConfig();
 
     /**
-     * @brief Get existing account from AccountManager or create new one
-     */
-    void setupAccount();
-
-signals:
-	/**
-	 * Emitted when we are connected to a Telepathy connection manager.
-	 */
-	void telepathyConnected();
+    * @brief Get all connection parameters merged with values from the config
+    *
+    * @return all connection parameters.
+    */
+    Telepathy::Client::ProtocolParameterList allConnectionParameters();
 
 public slots:
-	virtual void connect(const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus());
-	virtual void disconnect();
-
-	virtual void setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
-	                             const OnlineStatusOptions& options = None);
-	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
-
-	/**
-	 * @brief Called from the menu to change the myself contact alias
-	 */
-	void slotSetAlias();
+    virtual void connect (const Kopete::OnlineStatus &initialStatus = Kopete::OnlineStatus());
+    virtual void disconnect ();
+    virtual void setOnlineStatus (const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions& options = None);
+    virtual void setStatusMessage (const Kopete::StatusMessage &statusMessage);
 
 protected:
-	virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentMetaContact);
-
-private slots:
-	/**
-	 * @brief State of Telepathy connection changed.
-	 */
-	void telepathyStatusChanged(uint newStatus, uint newStatusReason);
-
-	/**
-	 * @brief Dispatch incoming channel request to the Kopete equivalent.
-	 *
-	 * @param connection Connection where the channel request come from
-	 * @param channel Incoming channel.
-	 */
-	void telepathyChannelCreated(QtTapioca::Connection *connection, QtTapioca::Channel *channel);
-
-	/**
-	 * @brief Do all the initialition stuff after being connection
-	 */
-	void slotTelepathyConnected();
-
-	/**
-	 * @brief Fetch the contact list.
-	 */
-	void fetchContactList();
-
-	/**
-	 * @brief Change the current avatar
-	 */
-	void slotChangeAvatar();
-
-    /**
-     * @brief finish requested connection
-     */
-    void requestConnectionFinished(Telepathy::Client::PendingOperation *operation);
-
-    void onAccountReady(Telepathy::Client::PendingOperation*);
-    void onInitConnectionManagerReady(Telepathy::Client::PendingOperation*);
-    void createNewTelepathyAccount(Telepathy::Client::PendingOperation *);
+    bool createContact (const QString &contactId, Kopete::MetaContact *parentContact);
 
 private:
-	class Private;
-	Private *d;
+    class Private;
+    Private *d;
 };
-#endif
+
+#endif //TELEPATHACCOUNT_H
