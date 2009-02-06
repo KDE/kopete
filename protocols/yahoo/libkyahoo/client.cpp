@@ -450,6 +450,10 @@ void Client::stealthContact(QString const &userId, Yahoo::StealthMode mode, Yaho
 void Client::addBuddy( const QString &userId, const QString &group, const QString &message )
 {
 	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
+	
+	QObject::connect(mbt, SIGNAL(buddyAddResult( const QString &, const QString &, bool )),
+			 SIGNAL(buddyAddResult( const QString &, const QString &, bool)));
+
 	mbt->setType( ModifyBuddyTask::AddBuddy );
 	mbt->setTarget( userId );
 	mbt->setGroup( group );
@@ -460,6 +464,10 @@ void Client::addBuddy( const QString &userId, const QString &group, const QStrin
 void Client::removeBuddy( const QString &userId, const QString &group )
 {
 	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
+
+	QObject::connect(mbt, SIGNAL(buddyRemoveResult( const QString &, const QString &, bool )),
+			 SIGNAL(buddyRemoveResult( const QString &, const QString &, bool)));
+
 	mbt->setType( ModifyBuddyTask::RemoveBuddy );
 	mbt->setTarget( userId );
 	mbt->setGroup( group );
@@ -469,6 +477,10 @@ void Client::removeBuddy( const QString &userId, const QString &group )
 void Client::moveBuddy( const QString &userId, const QString &oldGroup, const QString &newGroup )
 {
 	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
+
+	QObject::connect(mbt, SIGNAL(buddyChangeGroupResult( const QString &, const QString &, bool )),
+			 SIGNAL(buddyChangeGroupResult( const QString &, const QString &, bool)));
+
 	mbt->setType( ModifyBuddyTask::MoveBuddy );
 	mbt->setTarget( userId );
 	mbt->setOldGroup( oldGroup );
