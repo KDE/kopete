@@ -23,6 +23,8 @@
 #include <TelepathyQt4/Client/ConnectionManager>
 #include <TelepathyQt4/Client/PendingOperation>
 #include <TelepathyQt4/Client/PendingAccount>
+#include <TelepathyQt4/Client/PendingReadyAccount>
+#include <TelepathyQt4/Constants>
 
 namespace Kopete
 {
@@ -35,6 +37,15 @@ namespace QtTapioca
         class Channel;
         class TextChannel;
         class Contact;
+}
+
+namespace TelepathyQt4
+{
+    namespace Client
+    {
+        class AccountManager;
+        class Account;
+    }
 }
 
 class TelepathyProtocol;
@@ -61,6 +72,9 @@ public:
     */
     Telepathy::Client::ProtocolParameterList allConnectionParameters();
 
+    Telepathy::Client::ConnectionManager *getConnectionManager();
+    Telepathy::Client::AccountManager *getAccountManager();
+
 public slots:
     virtual void connect (const Kopete::OnlineStatus &initialStatus = Kopete::OnlineStatus());
     virtual void disconnect ();
@@ -70,9 +84,30 @@ public slots:
 protected:
     bool createContact (const QString &contactId, Kopete::MetaContact *parentContact);
 
+private slots:
+    void onConnectionManagerReady(Telepathy::Client::PendingOperation*);
+    void onAccountManagerReady(Telepathy::Client::PendingOperation*);
+    void newTelepathyAccountCreated(Telepathy::Client::PendingOperation *);
+    void onAccountReady(Telepathy::Client::PendingOperation *);
+
 private:
-    class Private;
-    Private *d;
+    void initTelepathyAccount();
+
+    Telepathy::Client::ConnectionManager *currentConnectionManager;
+    Telepathy::Client::AccountManager *currentAccountManager;
+    Telepathy::Client::Account *account;
+    Telepathy::Client::ProtocolParameterList m_allConnectionParameters;
+    Telepathy::Client::ProtocolParameterList connectionParameters;
+
+    QString connectionManagerName;
+    QString connectionProtocolName;
+
+    bool connectAfterInit;
+    bool setStatusAfterInit;
+    Kopete::OnlineStatus statusInit;
+    Kopete::StatusMessage reasonInit;
 };
 
 #endif //TELEPATHACCOUNT_H
+
+
