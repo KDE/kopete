@@ -486,6 +486,18 @@ Q_OBJECT
 		 */
 		void gotBuddy( const QString &, const QString &, const QString & );
 		/**
+		 * Notifies about adding buddies
+		 */
+		void buddyAddResult( const QString &, const QString &, bool );
+		/**
+		 * Notifies about removing buddies
+		 */
+		void buddyRemoveResult( const QString &, const QString &, bool );
+		/**
+		 * Notifies about buddies changing groups
+		 */
+		void buddyChangeGroupResult( const QString &, const QString &, bool );
+		/**
 		 * Notifies about the status of online buddies
 		 */
 		void statusChanged( const QString&, int, const QString&, int, int, int );

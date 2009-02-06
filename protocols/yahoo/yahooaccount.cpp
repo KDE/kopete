@@ -244,6 +244,15 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                 this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
 
+		QObject::connect(m_session, SIGNAL(buddyAddResult(const QString &, const QString &, bool)),
+				 this, SLOT(slotBuddyAddResult(const QString &, const QString &, bool)));
+
+		QObject::connect(m_session, SIGNAL(buddyRemoveResult(const QString &, const QString &, bool)),
+				 this, SLOT(slotBuddyRemoveResult(const QString &, const QString &, bool)));
+
+		QObject::connect(m_session, SIGNAL(buddyChangeGroupResult(const QString &, const QString &, bool)),
+				 this, SLOT(slotBuddyChangeGroupResult(const QString &, const QString &, bool)));
+
 		QObject::connect(m_session, SIGNAL(authorizationAccepted( const QString & )),
 		                 this, SLOT(slotAuthorizationAccepted( const QString & )) );
 
@@ -376,6 +385,15 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
+
+		QObject::disconnect(m_session, SIGNAL(buddyAddResult(const QString &, const QString &, bool)),
+		                    this, SLOT(slotBuddyAddResult(const QString &, const QString &, bool)));
+
+		QObject::disconnect(m_session, SIGNAL(buddyRemoveResult(const QString &, const QString &, bool)),
+		                    this, SLOT(slotBuddyRemoveResult(const QString &, const QString &, bool)));
+
+		QObject::disconnect(m_session, SIGNAL(buddyChangeGroupResult(const QString &, const QString &, bool)),
+				 this, SLOT(slotBuddyChangeGroupResult(const QString &, const QString &, bool)));
 
 		QObject::disconnect(m_session, SIGNAL(authorizationAccepted( const QString &)),
 		                 this, SLOT(slotAuthorizationAccepted( const QString &)) );
@@ -696,6 +714,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 
 		setBuddyIcon( myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString() );
 		m_session->getYABEntries( m_YABLastMerge, m_YABLastRemoteRevision );
+		IDs.clear();
 		m_lastDisconnectCode = 0;
 		theHaveContactList = true;
 		return;
@@ -804,6 +823,40 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 		Kopete::Group *g=Kopete::ContactList::self()->findGroup(group);
 		addContact(userid, alias.isEmpty() ? userid : alias, g, Kopete::Account::ChangeKABC);
 	}
+
+	kDebug(YAHOO_GEN_DEBUG) << IDs;
+}
+
+void YahooAccount::slotBuddyAddResult( const QString &userid, const QString &group, bool success )
+{
+     kDebug(YAHOO_GEN_DEBUG) << success;
+
+     if(success)
+	  IDs[userid] = QPair<QString, QString>(group, QString());
+
+     kDebug(YAHOO_GEN_DEBUG) << IDs;
+}
+
+void YahooAccount::slotBuddyRemoveResult( const QString &userid, const QString &group, bool success )
+{
+     kDebug(YAHOO_GEN_DEBUG);
+
+     // Ignore success here, the only reason this will fail is because the
+     // contact isn't on the server's list, so we shouldn't have them in our
+     // list either.
+     IDs.remove(userid);
+
+     kDebug(YAHOO_GEN_DEBUG) << IDs;
+}
+
+void YahooAccount::slotBuddyChangeGroupResult(const QString &userid, const QString &group, bool success)
+{
+     kDebug(YAHOO_GEN_DEBUG);
+     
+     if(success)
+	  IDs[userid] = QPair<QString, QString>(group, QString());
+
+     kDebug(YAHOO_GEN_DEBUG) << IDs;
 }
 
 void YahooAccount::slotAuthorizationAccepted( const QString &who )
