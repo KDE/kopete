@@ -89,6 +89,8 @@ private slots:
     void onAccountManagerReady(Telepathy::Client::PendingOperation*);
     void newTelepathyAccountCreated(Telepathy::Client::PendingOperation *);
     void onAccountReady(Telepathy::Client::PendingOperation *);
+    void onConnectionReady(Telepathy::Client::PendingOperation*);
+    void onRequestedPresence(Telepathy::Client::PendingOperation*);
 
 private:
     void initTelepathyAccount();
