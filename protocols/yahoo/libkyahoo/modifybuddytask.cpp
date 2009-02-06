@@ -103,14 +103,14 @@ void ModifyBuddyTask::addBuddy()
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceBuddyAdd);
 	t->setId( client()->sessionID() );
 	t->setParam( 65, m_group.toLocal8Bit() );
-	t->setParam( 97, 1 );
+	t->setParam( 97, 1 );           // UTF-8
 	t->setParam( 1, client()->userId().toLocal8Bit() );
 	t->setParam( 302,  319 );
 	t->setParam( 300,  319 );
 	t->setParam( 7,  m_target.toLocal8Bit() );
 	t->setParam( 334,  0 );
 	t->setParam( 301, 319 );
-	t->setParam( 303, 319 );	// UTF-8
+	t->setParam( 303, 319 );
 	send( t );
 }
 
