@@ -1195,7 +1195,7 @@ QString ChatMessagePart::formatName( const Kopete::Contact* contact, Qt::TextFor
 		return QString();
 	}
 
-	// Use metacontact display name if the metacontact exists and if its not the myself metacontact.
+	// Use metacontact display name if the metacontact exists and if it is not the myself metacontact.
 	// Myself metacontact is not a reliable source.
 	if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 	{

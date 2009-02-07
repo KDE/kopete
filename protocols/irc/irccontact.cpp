@@ -371,7 +371,7 @@ QString IRCContact::sendMessage(const QString &msg)
 		newMessage.truncate( 512 - ( entity()->name().length() + 12 ) );
 	}
 
-	if(entity()->type()==KIrc::Entity::Server) //if its a server, send raw data
+	if(entity()->type()==KIrc::Entity::Server) //if it is a server, send raw data
 		ircAccount()->client()->writeMessage( KIrc::Message::fromLine(codec()->fromUnicode(newMessage)) );
 	else
 		ircAccount()->client()->writeMessage( KIrc::StdMessages::privmsg(codec()->fromUnicode(entity()->name()),codec()->fromUnicode(newMessage)) );
