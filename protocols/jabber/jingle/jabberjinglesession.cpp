@@ -40,6 +40,7 @@ JabberJingleSession::~JabberJingleSession()
 	kDebug() << "destroyed";
 	for (int i = 0; i < jabberJingleContents.count(); i++)
 		delete jabberJingleContents[i];
+
 	delete m_jingleSession;
 }
 

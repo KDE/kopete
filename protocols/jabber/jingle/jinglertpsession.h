@@ -15,46 +15,20 @@ class JingleRtpSession : public QObject
 	Q_OBJECT
 public:
 	/*
-	 * Directions :
-	 * 	In = for data coming in.
-	 * 	Out = for data going out.
-	 */
-	enum Direction {In = 0, Out};
-	
-	/*
 	 * Creates a new RTP session with direction dir.
 	 */
-	JingleRtpSession(Direction dir);
+	JingleRtpSession();
 
 	/*
 	 * Destroys the RTP sessions and frees all allocated memory.
 	 */
 	~JingleRtpSession();
-	
-	/*
-	 * Sets the socket as RTP socket. This socket must be connected to a host.
-	 * It will create the RTCP socket on port rtcpPort if set, RTP socket port + 1 if not.
-	 */
-	void setRtpSocket(QAbstractSocket*, int rtcpPort = 0);
-	
-	/*
-	 * Create UDP sockets with the given address and ports respectively for RTP and RTCP.
-	 * If rtcpPort is not set, rtpPort + 1 will be used.
-	 */
-	void connectToHost(const QString& address, int rtpPort, int rtcpPort = 0);
-	
-	/*
-	 * Binds sockets to any address on ports rtpPort and rtcpPort for respectively RTP and RTCP.
-	 * If rtcpPort is not set, rtpPort + 1 will be used.
-	 */
-	void bind(int rtpPort, int rtcpPort = 0);
 
 	/*
-	 * Sends data to the remote host after wrapping it in a RTP packet.
-	 * TODO:There should be overloaded methods to support other data type (QString, const *char).
+	 * Prepares and set socket in oRTP.
 	 */
-	void send(const QByteArray& data);
-
+	void setRtpSockets();
+	
 	/*
 	 * Sets the payload type used for this session.
 	 * The argument is the payload type in a payload-type XML tag.
@@ -63,29 +37,77 @@ public:
 
 	void setMediaSession(MediaSession *mSession);
 
+	/* 
+	 * Returns size bytes of media data from the internal buffer.
+	 * If size = -1, the whole buffer is returned.
+	 */
+	QByteArray takeMediaData();
+	
+	/* 
+	 * Returns size bytes of RTP data from the internal buffer.
+	 * If size = -1, the whole buffer is returned.
+	 */
+	QByteArray takeRtpData();
+
+	/*
+	 * Unpack RTP data.
+	 * mediaDataReady() is emitted when it's finished.
+	 */
+	void unpackRtpData(const QByteArray& data);
+
+	/*
+	 * Pack media data.
+	 * rtpDataReady() is emitted when it's finished.
+	 */
+	void packMediaData(const QByteArray& data);
+
 private slots:
 	/*
 	 * Called when rtp data is ready to be read from the socket, we then wait
 	 * for the media data to be extracted from the RTP packet by oRTP.
 	 */
-	void rtpDataReady();
-	void rtcpDataReady(); // Maybe not used.
+	//void rtpDataReady();
+	//void rtcpDataReady(); // Maybe not used.
+	void slotA();
+	void slotB();
 
 signals:
+	/*
+	 * Emitted when rtp data has been unpacked and is ready to be read.
+	 * This is always emitted after calling unpackRtpData().
+	 */
+	void mediaDataReady();
+
+	/*
+	 * Emitted when media data has been packed and is ready to be read.
+	 * This is alway emitted after calling packMediaData().
+	 */
+	void rtpDataReady();
+
 	void dataSent();
 	void readyRead(const QByteArray&);
 
 private:
-	QUdpSocket *rtpSocket;
-	QUdpSocket *rtcpSocket;
-	RtpSession *m_rtpSession;
+	QUdpSocket *rtpInSocket;
+	QUdpSocket *rtpOutSocket;
+
+	QUdpSocket *readSocket;
+	QUdpSocket *writeSocket;
+	
+	QUdpSocket *rtcpInSocket;
+	QUdpSocket *rtcpOutSocket;
+
+	RtpSession *m_rtpInSession;
+	RtpSession *m_rtpOutSession;
+
 	int payloadID;
 	QString payloadName;
 	enum State {SendingData = 0} state;
-	Direction m_direction;
 	int bufSize;
 	QByteArray inData;
+	QByteArray mediaBuffer;
 	MediaSession *m_mediaSession;
+	int inPort, outPort;
 };
 
 #endif

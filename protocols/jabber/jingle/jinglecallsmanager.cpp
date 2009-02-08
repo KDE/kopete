@@ -18,6 +18,9 @@
 
 #include <ortp/ortp.h>
 
+#include "jinglerawcontent.h"
+#include "jingleicecontent.h"
+
 #include "jinglecallsmanager.h"
 #include "jinglecallsgui.h"
 #include "jinglecontentdialog.h"
@@ -83,11 +86,12 @@ void JingleCallsManager::init()
 	ortp_init();
 	ortp_scheduler_init();
 	ortp_set_log_file(0);
+	ortp_log_level_enabled(ORTP_ERROR | ORTP_FATAL);
 	
 	d->gui = 0L;
 	QStringList transports;
-	//transports << NS_JINGLE_TRANSPORTS_ICE;
-	transports << NS_JINGLE_TRANSPORTS_RAW;
+	transports << NS_JINGLE_TRANSPORTS_ICE;
+	//transports << NS_JINGLE_TRANSPORTS_RAW;
 	d->client->jingleSessionManager()->setSupportedTransports(transports);
 
 	QStringList profiles;
@@ -169,28 +173,25 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 			rawUdp = true;
 	}
 	QList<JingleContent*> contents;
+
+	kDebug() << iceUdp << rawUdp;
+	
 	QDomDocument doc("");
 	if (iceUdp)
 	{
 		kDebug() << "ICE-UDP supported !!!!!!!!!!!!!!!!!!";
 
 		// Create ice-udp contents.
-		QDomElement iceAudioTransport = doc.createElement("transport");
-		iceAudioTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_ICE);
-		JingleContent *iceAudio = new JingleContent();
+		JingleContent *iceAudio = new JingleIceContent(JingleContent::Initiator);
 		iceAudio->setName("audio-content");
-		iceAudio->addPayloadTypes(d->audioPayloads);
-		iceAudio->setTransport(iceAudioTransport);
+		iceAudio->addLocalPayloads(d->audioPayloads);
 		iceAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		iceAudio->setType(JingleContent::Audio);
 		iceAudio->setCreator("initiator");
 
-		QDomElement iceVideoTransport = doc.createElement("transport");
-		iceVideoTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_ICE);
-		JingleContent *iceVideo = new JingleContent();
+		JingleContent *iceVideo = new JingleIceContent(JingleContent::Initiator);
 		iceVideo->setName("video-content");
-		iceVideo->addPayloadTypes(d->videoPayloads);
-		iceVideo->setTransport(iceVideoTransport);
+		iceVideo->addLocalPayloads(d->videoPayloads);
 		iceVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		iceVideo->setType(JingleContent::Video);
 		iceVideo->setCreator("initiator");
@@ -203,22 +204,16 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		kDebug() << "ICE-UDP not supported, falling back to RAW-UDP !";
 
 		// Create raw-udp contents.
-		QDomElement rawAudioTransport = doc.createElement("transport");
-		rawAudioTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_RAW);
-		JingleContent *rawAudio = new JingleContent();
+		JingleContent *rawAudio = new JingleRawContent(JingleContent::Initiator);
 		rawAudio->setName("audio-content");
-		rawAudio->addPayloadTypes(d->audioPayloads);
-		rawAudio->setTransport(rawAudioTransport);
+		rawAudio->addLocalPayloads(d->audioPayloads);
 		rawAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		rawAudio->setType(JingleContent::Audio);
 		rawAudio->setCreator("initiator");
 
-		QDomElement rawVideoTransport = doc.createElement("transport");
-		rawVideoTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_RAW);
-		JingleContent *rawVideo = new JingleContent();
+		JingleContent *rawVideo = new JingleRawContent(JingleContent::Initiator);
 		rawVideo->setName("video-content");
-		rawVideo->addPayloadTypes(d->videoPayloads);
-		rawVideo->setTransport(rawVideoTransport);
+		rawVideo->addLocalPayloads(d->videoPayloads);
 		rawVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		rawVideo->setType(JingleContent::Video);
 		rawVideo->setCreator("initiator");
@@ -286,7 +281,6 @@ void JingleCallsManager::slotSessionTerminated()
 	}
 
 	delete sess;
-
 }
 
 void JingleCallsManager::slotUserAccepted()

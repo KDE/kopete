@@ -31,79 +31,76 @@
 JabberJingleContent::JabberJingleContent(JabberJingleSession* parent, XMPP::JingleContent* c)
  : m_content(c), m_jabberSession(parent)
 {
-	m_rtpInSession = 0;
-	m_rtpOutSession = 0;
+	m_rtpSession = 0;
 	m_mediaSession = 0;
 	m_mediaManager = m_jabberSession->mediaManager();
+	contentConnected = false;
 	if (!m_mediaManager)
 		kDebug(KDE_DEFAULT_DEBUG_AREA) << "m_mediaManager is Null !";
-	if (c == 0)
-		return;
 	
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Created a new JabberJingleContent with" << c->name();
+	if (m_content)
+	{
+	//	connect(m_content, SIGNAL(established()), this, SLOT(slotConnectionEstablished()));
+		kDebug(KDE_DEFAULT_DEBUG_AREA) << "Created a new JabberJingleContent with" << m_content->name();
+	}
 }
 
 JabberJingleContent::~JabberJingleContent()
 {
 	kDebug() << "destroyed";
-	if (m_content)
-		delete m_content;
-	if (m_rtpInSession)
-		delete m_rtpInSession;
-	if (m_rtpOutSession)
-		delete m_rtpOutSession;
-	if (m_mediaSession)
-		delete m_mediaSession;
+	//delete m_content; --> Destroyed by the XMPP::JingleSession
+	delete m_rtpSession;
+	delete m_mediaSession;
 }
 
 void JabberJingleContent::setContent(XMPP::JingleContent* content)
 {
 	m_content = content;
+
+	//if (m_content)
+	//	connect(m_content, SIGNAL(established()), this, SLOT(slotConnectionEstablished()));
 }
 
-void JabberJingleContent::prepareRtpInSession()
+void JabberJingleContent::prepareRtpSession()
 {
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Prepare RTP IN session";
-	if (m_rtpInSession == 0)
+	kDebug() << "Prepare RTP IN session";
+	if (m_rtpSession == 0)
 	{
-		if (!m_content->inSocket())
+		if (!m_content->isReady())
 		{
 			kDebug() << "Fatal : Invalid Socket !";
 			return;
 		}
-		m_rtpInSession = new JingleRtpSession(JingleRtpSession::In);
-		m_rtpInSession->setMediaSession(m_mediaSession);
-		m_rtpInSession->setPayload(m_content->bestPayload());
-		m_rtpInSession->setRtpSocket(m_content->inSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
+		m_rtpSession = new JingleRtpSession();
+		m_rtpSession->setMediaSession(m_mediaSession);
+		m_rtpSession->setPayload(m_content->bestPayload());
 		kDebug() << "Connecting m_rtpInSession readyRead signal.";
-		connect(m_rtpInSession, SIGNAL(readyRead(const QByteArray&)), this, SLOT(slotIncomingData(const QByteArray&)));
+		connect(m_rtpSession, SIGNAL(mediaDataReady()), this, SLOT(slotMediaDataReady()));
+		connect(m_rtpSession, SIGNAL(rtpDataReady()), this, SLOT(slotRtpDataReady()));
 	}
 	else
-		kDebug() << "RTP IN session already set !";
+		kDebug() << "RTP session already set !";
 }
 
-void JabberJingleContent::prepareRtpOutSession()
+void JabberJingleContent::slotMediaDataReady()
 {
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Prepare RTP OUT session";
-	if (m_rtpOutSession == 0)
+	m_mediaSession->write(m_rtpSession->takeMediaData());
+}
+
+void JabberJingleContent::slotRtpDataReady()
+{
+	if (!m_content)
 	{
-		if (!m_content->outSocket())
-		{
-			kDebug() << "Fatal : Invalid Socket !";
-			return;
-		}
-		m_rtpOutSession = new JingleRtpSession(JingleRtpSession::Out);
-		m_rtpOutSession->setMediaSession(m_mediaSession);
-		m_rtpOutSession->setPayload(m_content->bestPayload());
-		m_rtpOutSession->setRtpSocket(m_content->outSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
-		if (m_jabberSession->session()->state() == XMPP::JingleSession::Pending)
-		{
-			m_rtpOutSession->setPayload(m_content->bestPayload());
-		}
-		
+		kDebug() << "Content not set, unable to send RTP data to the remote peer.";
+		return;
 	}
-	else
-		kDebug() << "RTP OUT session already set !";
+
+	m_content->writeDatagram(m_rtpSession->takeRtpData());
+}
+
+void JabberJingleContent::slotRtpReadyRead()
+{
+	m_rtpSession->unpackRtpData(m_content->readAll());
 }
 
 void JabberJingleContent::slotIncomingData(const QByteArray& data)
@@ -112,10 +109,27 @@ void JabberJingleContent::slotIncomingData(const QByteArray& data)
 	m_mediaSession->write(data);
 }
 
+void JabberJingleContent::slotConnectionEstablished()
+{
+//	kDebug() << "called";
+//	contentConnected = true;
+
+//	startStreaming();
+}
+
 void JabberJingleContent::startStreaming()
 {
-	kDebug() << "Start Streaming";
+	kDebug() << (m_jabberSession->state() == JabberJingleSession::Active)/* << "&&" << contentConnected*/;
 
+	if (m_jabberSession->state() != JabberJingleSession::Active/* && contentConnected*/)
+	{
+		kDebug() << "Not Ready yet.";
+		return;
+	}
+	kDebug() << "Start Streaming";
+	
+	connect(m_content, SIGNAL(readyRead()), this, SLOT(slotRtpReadyRead()));
+	
 	if (m_content->type() == XMPP::JingleContent::Audio)
 	{
 		m_mediaSession = new MediaSession(m_mediaManager, "speex"/*FIXME:use m_content->bestPayload()*/);
@@ -127,8 +141,7 @@ void JabberJingleContent::startStreaming()
 		connect(m_mediaSession, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
 		m_mediaSession->setSamplingRate(8000 /*FIXME:use m_content->bestPayload()*/);
 
-		prepareRtpOutSession();
-		prepareRtpInSession();
+		prepareRtpSession();
 
 		if (!m_mediaSession->start())
 			QMessageBox::warning(0, tr("Jingle audio"), tr("Unable to start you audio device, the session will start anyway."));
@@ -137,19 +150,13 @@ void JabberJingleContent::startStreaming()
 
 void JabberJingleContent::slotReadyRead()
 {
-	m_rtpOutSession->send(m_mediaSession->read());
+	m_rtpSession->packMediaData(m_mediaSession->read());
 }
 
 QString JabberJingleContent::elementToSdp(const QDomElement& elem)
 {
 	Q_UNUSED(elem)
 	return QString();
-}
-
-/*DEPRECATED*/void JabberJingleContent::slotSendRtpData()
-{
-	//kDebug() << "Send RTP data.";
-	m_rtpOutSession->send(m_mediaSession->read());
 }
 
 QString JabberJingleContent::contentName()

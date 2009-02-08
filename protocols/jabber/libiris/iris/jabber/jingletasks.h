@@ -196,12 +196,10 @@ namespace XMPP
 		void received();
 
 		/*
-		 * Sends a transport-info jingle action for a
-		 * content's transport.
-		 * Currently, this class sends candidate(s) for
-		 * the content's transport.
+		 * Sends a transport-info jingle action for the
+		 * content contentName with the given transport.
 		 */
-		void transportInfo(JingleContent *c);
+		void transportInfo(const QString& contentName, const QDomElement& transport);
 
 		/*
 		 * Sends a session-accept jingle action.
@@ -212,6 +210,11 @@ namespace XMPP
 	private :
 		class Private;
 		Private *d;
+		/* 
+		 * Sets a jingle iq with the action provided in d->iq.
+		 */
+		void createJingleIq(const QString& action);
+
 	signals :
 		/*
 		 * This signal is emitted when the sent jingle

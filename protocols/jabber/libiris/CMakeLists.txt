@@ -11,6 +11,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/network/
 ${CMAKE_CURRENT_SOURCE_DIR}/cutestuff/util/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/iris/include/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/iris/jabber/ 
+${CMAKE_CURRENT_SOURCE_DIR}/iris/jabber/noncore/
 ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-core/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/iris/xmpp-im/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/iris/ 
@@ -39,7 +40,17 @@ iris/jabber/jinglesessionmanager.cpp
 iris/jabber/jinglesession.cpp
 iris/jabber/jingletasks.cpp
 iris/jabber/jinglecontent.cpp
+iris/jabber/jinglerawcontent.cpp
+iris/jabber/jingleicecontent.cpp
 iris/jabber/jingleaction.cpp
+
+iris/jabber/noncore/objectsession.cpp
+iris/jabber/noncore/ice176.cpp
+iris/jabber/noncore/icelocaltransport.cpp
+iris/jabber/noncore/stunallocate.cpp
+iris/jabber/noncore/stunbinding.cpp
+iris/jabber/noncore/stunmessage.cpp
+iris/jabber/noncore/stuntransaction.cpp
 
 iris/xmpp-core/compress.cpp
 iris/xmpp-core/compressionhandler.cpp
@@ -72,6 +83,15 @@ set(libiris_SRCS
 )
 
 kde4_moc_headers(iris_kopete 
+
+	iris/jabber/noncore/objectsession.h
+	iris/jabber/noncore/ice176.h
+	iris/jabber/noncore/icelocaltransport.h
+	iris/jabber/noncore/stunallocate.h
+	iris/jabber/noncore/stunbinding.h
+	iris/jabber/noncore/stunmessage.h
+	iris/jabber/noncore/stuntransaction.h
+
 #	cutestuff/legacy/ndns.h
 #	cutestuff/legacy/safedelete.h
 #	cutestuff/legacy/servsock.h

@@ -34,7 +34,7 @@ static QString typeToString(JingleContent::Type t)
 	case JingleContent::FileTransfer :
 		return i18n("File Transfer");
 		break;
-	case JingleContent::Unknown :
+	case JingleContent::NoType :
 		return i18n("Unknown");
 		break;
 	}

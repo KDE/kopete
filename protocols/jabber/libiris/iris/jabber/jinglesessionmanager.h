@@ -114,14 +114,14 @@ namespace XMPP
 		 * Slots for each jingle action
 		 */
 		//void slotSessionIncoming();
-		void slotRemoveContent(const QString&, const QStringList&);
-		void slotSessionInfo(const QDomElement&);
-		void slotTransportInfo(const QDomElement&);
-		void slotSessionTerminate(const QString&, const JingleReason&);
-		void slotSessionAccepted(const QDomElement&);
+		//void slotRemoveContent(const QString&, const QStringList&);
+		//void slotSessionInfo(const QDomElement&);
+		//void slotTransportInfo(const QDomElement&);
+		//void slotSessionTerminate(const QString&, const JingleReason&);
+		//void slotSessionAccepted(const QDomElement&);
 
 		/*
-		 * Removes the session emitting the signal from the list.
+		 * Removes the session emitting the signal to which this slot is connected from the list.
 		 */
 		void slotRemoveSession();
 		

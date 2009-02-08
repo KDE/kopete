@@ -212,7 +212,7 @@ namespace XMPP
 		 * This function is called after receiving a session initiate.
 		 * This will start negotiating a connection depending on the transport.
 		 */
-		void startNegotiation();
+		//void startNegotiation();
 		
 		/*
 		 * Returns a pointer to the first JingleContent with the name n.
@@ -249,6 +249,11 @@ namespace XMPP
 		 * Add an action to the session so it is properly processed.
 		 */
 		void appendAction(JingleAction *action);	
+
+		/*
+		 * Return true if this session has been initiated by us.
+		 */
+		bool isInitiator() const;
 
 	signals:
 		
@@ -297,13 +302,13 @@ namespace XMPP
 		/*
 		 * Sends ice udp cadidates
 		 */
-		void sendIceUdpCandidates();
+		//void sendIceUdpCandidates();
 		
 		/*
 		 * Starts a raw udp connection for this JingleContent.
 		 * (Create socket, ask to start sending data on it)
 		 */
-		void startRawUdpConnection(JingleContent*);
+		//void startRawUdpConnection(JingleContent*);
 	};
 }
 

@@ -32,14 +32,52 @@ namespace XMPP
 	/*
 	 * This class contains all information about a particular content in a jingle session.
 	 * It also has the socket that will be used for streaming.
+	 * Keep in mind that this class must be used to represent received contents from the remote peer with candidates but also, contents which will be sent.
+	 * Might be usefull, add an argument to JingleContent() which could be 'Local' or 'Remote'.
 	 */
-	//This is the Raw-udp jingle content.
+	//This is an abstract content, all different contents must inherit from this class.
+	//TODO:It would be good if the content had also a pointer to the session.
+	//	Informations like are we the initiator or the responder could be easily retrieved.
+	class Task;
+	class JingleSession;
 	class IRIS_EXPORT JingleContent : public QObject
 	{
 		Q_OBJECT
 	public:
-		JingleContent();
-		~JingleContent();
+		//FIXME:Initiator and Responder would be more accurate, actually.
+		//If it is a responder content, it means, that it has been proposed
+		//by the responder
+		enum Mode {
+			Initiator = 0, // Means, as we created it, that we are the initiator.
+			Responder, // Means, as we created it, that we are the responder.
+			Unknown // When we don't know (but we always know).
+		};
+
+		/*
+		 * This enum is used to tell contentElement() what candidates
+		 * to set in the returned QDomElement.
+		 *	None is no candidates.
+		 *	[Local|Remote]Candidate is the [Local|Remote] candidate that works for this content.
+		 *	[Local|Remote]Candidates is all [Local|Remote] candidates
+		 */
+		enum CandidateType {
+			NoCandidate = 0,
+			LocalCandidate,
+			RemoteCandidate,
+			LocalCandidates,
+			RemoteCandidates
+		};
+
+		enum PayloadType {
+			NoPayload = 0,
+			LocalPayloads,
+			RemotePayloads,
+			UsedPayload
+		};
+
+
+		JingleContent(Mode mode = Unknown, JingleSession *parent = 0, Task *rootTask = 0);
+		virtual ~JingleContent();
 
 		/**
 		 * Defines the content type, this represesent the media attribute.
@@ -48,28 +86,41 @@ namespace XMPP
 			Audio = 0,
 			Video,
 			FileTransfer,
-			Unknown
-		};
+			NoType
+		};//Not used anymore, subclassing is used.
 
 		/*
 		 * Adds a payload type to this content.
 		 */
-		void addPayloadType(const QDomElement&);
+		void addLocalPayload(const QDomElement&);
 		
 		/*
 		 * Adds a payload type list to this content.
 		 */
-		void addPayloadTypes(const QList<QDomElement>&);
+		void addLocalPayloads(const QList<QDomElement>&);
 
 		/*
 		 * Overwrite the current payload types list with this one.
 		 */
-		void setPayloadTypes(const QList<QDomElement>&);
+		void setLocalPayloads(const QList<QDomElement>&);
+		
+		/*
+		 * Returns the payload type list. those payloads are
+		 * our payloads if in Pending state or the content
+		 * used payloads if in Active state. (TODO)
+		 */
+		QList<QDomElement> localPayloads() const;
+
+		void addRemotePayload(const QDomElement&);
+		void addRemotePayloads(const QList<QDomElement>&);
+		void setRemotePayloads(const QList<QDomElement>&);
+		QList<QDomElement> remotePayloads() const;
 
 		/*
 		 * Sets the transport for this content.
+		 * Most likely, this QDomElement will contain the transport and one candidate.
 		 */
-		void setTransport(const QDomElement&);
+		void setTransport(const QDomElement&); //FIXME:How is that usefull, used classes are reimplementations of this one and the choice of reimplementation is based on this.
 
 		/*
 		 * Set the content type, this will set the "media" attribute of
@@ -81,6 +132,12 @@ namespace XMPP
 		 * Gets the type of this content.
 		 */
 		Type type() const;
+
+		/*
+		 * Returns the transport type of the content content.
+		 */
+		//FIXME:currently a QString, this could be an enum.
+		static QString transportNS(const QDomElement& elem);
 
 		/*
 		 * Set the creator of this content, the creator only accept 2 values :
@@ -103,13 +160,6 @@ namespace XMPP
 		void setDescriptionNS(const QString&);
 
 		/*
-		 * Returns the payload type list. those payloads are
-		 * our payloads if in Pending state or the content
-		 * used payloads if in Active state. (TODO)
-		 */
-		QList<QDomElement> payloadTypes() const;
-
-		/*
 		 * Returns the transport XML element for this content.
 		 */
 		QDomElement transport() const;
@@ -126,7 +176,7 @@ namespace XMPP
 		 * Return a QDomElement with the content element and all it's children
 		 * so it's ready to be sent.
 		 */
-		QDomElement contentElement();
+		QDomElement contentElement(CandidateType cType = NoCandidate, PayloadType pType = NoPayload);
 
 		/*
 		 * Returns a list with the available candidates for this content.
@@ -138,68 +188,93 @@ namespace XMPP
 		 * Adds a candidate to this content. Doing so will add this content(s)
 		 * to the transport when calling contentElement()
 		 */
-		void addCandidate(const QDomElement&);
-		
+		virtual void addCandidate(const QDomElement&);
+
 		/*
 		 * Adds transport info (mostly a candidate). Doing so will try to
 		 * connect to this candidate.
 		 */
-		void addTransportInfo(const QDomElement&);
+		virtual void addTransportInfo(const QDomElement&);
+
+		/*
+		 * Returns the transport type of this content.
+		 */
+		virtual QString transportNS() const;
+		
+		/*
+		 * Set the parent JingleSession for this content.
+		 * If you reimplement this class, you will have to call
+		 * JingleContent::setSession() in your reimplementation
+		 */
+		virtual void setSession(JingleSession *sess);
+
+		/*
+		 * This is called to write RTP data on the established stream.
+		 * TODO : what about RTCP ?
+		 */
+		virtual void writeDatagram(const QByteArray&);
+
+		/* 
+		 * Get all data available on the socket.
+		 * Usually, this will be an RTP packet.
+		 */
+		virtual QByteArray readAll();
+		
 		void createUdpInSocket();
 		
 		QString creator() const;
 		QString name() const;
 		QString descriptionNS() const;
-		QUdpSocket *inSocket();
-		QUdpSocket *outSocket();
 		bool sending();
-		void setSending(bool);
 		bool receiving();
-		void setReceiving(bool);
 
-		void startSending();
-		void startSending(const QHostAddress&, int);
-
-		void bind(const QHostAddress&, int);
-		
 		JingleContent& operator=(const JingleContent&);
 		
 		QString typeToString(Type);
 		Type stringToType(const QString& s);
 
-		void setResponderPayloads(const QList<QDomElement>&);
-		QList<QDomElement> responderPayloads() const;
-
 		QDomElement bestPayload();
+		bool isReady() const;
+		
+		QList<QDomElement> localCandidates() const;
+		QList<QDomElement> remoteCandidates() const;
 
-//	public slots:
+		void setRootTask(Task *rt);
 
 	signals:
-
-		// Emitted when the content is ready to send data to try to connect.
-		void needData(XMPP::JingleContent*);
-		
-		// Emitted when the IN socket is ready to receive data (it is bound).
-		// Can be used to prepare a rtp session with the socket.
-		void inSocketReady();
-		
-		// Emitted when the OUT socket is ready to send data (it is connected).
-		// Can be used to prepare a rtp session with the socket.
-		void outSocketReady();
-
 		/**
 		 * Emitted when sending and receiving streams have been established for this content 
 		 */
 		void established();
 
-		void dataReceived();
+		/**
+		 * emitted when rtp data is ready to be read.
+		 */
+		void readyRead();
 
+	protected:
+		/*
+		 * Those 2 methods are protected because the content must find its local candidates by itself
+		 * and remote candidates are added with Transport-info jingle action.
+		 * That means that subclasses must be able to access thos methods but it must not be used by other classes.
+		 */
+		void addLocalCandidate(const QDomElement&); //FIXME:Could be a JingleCandidate which would be subclassed in JingleRawCandidate.
+
+		virtual void addRemoteCandidate(const QDomElement&);
+
+		Task *rootTask() const;
+
+		QDomElement bestPayload(const QList<QDomElement>&, const QList<QDomElement>&);
+		bool samePayload(const QDomElement&, const QDomElement&);
+		void setSending(bool);
+		void setReceiving(bool);
+		virtual void sendCandidates();
+		JingleSession *parentSession() const;
+		Mode mode() const;
 	private:
 		class Private;
 		Private *d;
 		
-		QDomElement bestPayload(const QList<QDomElement>&, const QList<QDomElement>&);
-		bool samePayload(const QDomElement&, const QDomElement&);
 	};
 }
 

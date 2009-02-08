@@ -427,6 +427,7 @@ void AlsaIO::write(const QByteArray& data)
 		//kDebug() << "Reactivating notifier.";
 		notifier->setEnabled(true);
 	}
+	//kDebug() << "Buffer is now" << buf.count() << "bytes";
 }
 
 bool AlsaIO::isReady()
@@ -502,6 +503,7 @@ void AlsaIO::slotReadyWrite(int)
 
 void AlsaIO::writeData()
 {
+	//kDebug() << "called.";
 	if (buf.size() < pSizeBytes)
 	{
 		notifier->setEnabled(false);

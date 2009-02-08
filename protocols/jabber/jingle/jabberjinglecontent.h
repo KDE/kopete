@@ -45,21 +45,24 @@ public:
 	QString elementToSdp(const QDomElement&);
 
 public slots:
-	void slotSendRtpData();
+	//void slotSendRtpData();
 	void slotIncomingData(const QByteArray&);
 	void slotReadyRead();
+	void slotConnectionEstablished();
+	void slotMediaDataReady();
+	void slotRtpDataReady();
+	void slotRtpReadyRead();
 
 private:
 	XMPP::JingleContent *m_content;
 	XMPP::JingleSession *m_jingleSession;
 	MediaManager *m_mediaManager;
 	MediaSession *m_mediaSession;
-	JingleRtpSession *m_rtpInSession;
-	JingleRtpSession *m_rtpOutSession;
+	JingleRtpSession *m_rtpSession;
 	JabberJingleSession *m_jabberSession;
+	bool contentConnected;
 	
-	void prepareRtpOutSession();
-	void prepareRtpInSession();
+	void prepareRtpSession();
 };
 
 #endif
