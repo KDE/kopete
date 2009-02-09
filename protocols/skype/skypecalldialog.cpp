@@ -93,7 +93,7 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	d->updater->start(500);
 
 	dialog->NameLabel->setText(account->getUserLabel(userId));
-	setCaption(i18n("Call with %1").arg(account->getUserLabel(userId)));
+	setCaption(i18n("Call with %1", account->getUserLabel(userId)));
 
 	connect(dialog->AcceptButton, SIGNAL(clicked()), this, SLOT(acceptCall()));
 	connect(dialog->HangButton, SIGNAL(clicked()), this, SLOT(hangUp()));
@@ -255,7 +255,7 @@ void SkypeCallDialog::updateError(const QString &callId, const QString &message)
 		dialog->AcceptButton->setEnabled(false);
 		dialog->HangButton->setEnabled(false);
 		dialog->HoldButton->setEnabled(false);
-		dialog->StatusLabel->setText(i18n("Failed (%1)").arg(message));
+		dialog->StatusLabel->setText(i18n("Failed (%1)", message));
 		closeLater();
 		d->error = true;
 	}
@@ -275,7 +275,7 @@ void SkypeCallDialog::updateCallInfo() {
 	}
 	const QString &activeTime = KGlobal::locale()->formatTime(QTime().addSecs(d->callTime / 2), true, true);
 	const QString &totalTime = KGlobal::locale()->formatTime(QTime().addSecs(d->totalTime / 2), true, true);
-	dialog->TimeLabel->setText(i18n("%1 active\n%2 total").arg(activeTime).arg(totalTime));
+	dialog->TimeLabel->setText(i18n("%1 active\n%2 total", activeTime, totalTime));
 }
 
 void SkypeCallDialog::skypeOutInfo(int balance, const QString &currency) {

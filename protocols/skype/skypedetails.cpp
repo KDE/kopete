@@ -68,7 +68,7 @@ void SkypeDetails::changeAuthor(int item) {
 
 SkypeDetails &SkypeDetails::setNames(const QString &id, const QString &nick, const QString &name) {
 	kDebug() << k_funcinfo << endl;
-	setCaption(i18n("Details for User %1").arg(id));
+	setCaption(i18n("Details for User %1", id));
 	dialog->idEdit->setText(id);
 	dialog->nickEdit->setText(nick);
 	dialog->nameEdit->setText(name);

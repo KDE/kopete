@@ -226,9 +226,9 @@ QString SkypeConnection::operator %(const QString &message) {
 
 	if ( interface.lastError().type() != QDBusError::NoError && interface.lastError().type() != QDBusError::Other ){//There was some error
 		if ( message == "PING" )
-			emit error(i18n("Could not ping Skype\nError while sending a message to skype (%1)").arg(QDBusError::errorString(interface.lastError().type())));//say there was the error
+			emit error(i18n("Could not ping Skype\nError while sending a message to skype (%1)", QDBusError::errorString(interface.lastError().type())));//say there was the error
 		else
-			emit error(i18n("Error while sending a message to skype (%1)").arg(QDBusError::errorString(interface.lastError().type())));//say there was the error
+			emit error(i18n("Error while sending a message to skype (%1)", QDBusError::errorString(interface.lastError().type())));//say there was the error
 		if (d->fase != cfConnected)
 			emit connectionDone(seUnknown, 0);//Connection attempt finished with error
 		disconnectSkype(crLost);//lost the connection
