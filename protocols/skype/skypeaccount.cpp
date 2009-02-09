@@ -887,6 +887,7 @@ int SkypeAccount::getAuthor(const QString &contactId) {
 		case Skype::Block:
 			return 2;
 	}
+	return 0;
 }
 
 bool SkypeAccount::hasCustomStatusMenu() const {
