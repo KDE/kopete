@@ -87,7 +87,8 @@ target_link_libraries(
 	kopete_skype
 
 	kopete
-	${KDE4_KDE3SUPPORT_LIBS}
+	${KDE4_KDEUI_LIBS}
+	${QT_QT3SUPPORT_LIBRARY}
 )
 
 install( TARGETS kopete_skype DESTINATION ${PLUGIN_INSTALL_DIR} )
