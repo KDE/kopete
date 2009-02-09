@@ -62,6 +62,7 @@ signals:
 	void haveSessionID( uint );
 	void haveCookies();
 	void loginResponse( int, const QString& );
+	void buddyListReady();
 private:
 	State mState;
 	Yahoo::Status m_stateOnConnect;
