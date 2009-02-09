@@ -449,9 +449,13 @@ void ChatMessagePart::slotAppearanceChanged()
 
 void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 {
-	message.setBackgroundOverride( d->bgOverride );
-	message.setForegroundOverride( d->fgOverride );
-	message.setRichTextOverride( d->rtfOverride );
+	// Don't remove foreground color for history messages.
+	if ( !message.classes().contains("history") )
+	{
+		message.setBackgroundOverride( d->bgOverride );
+		message.setForegroundOverride( d->fgOverride );
+		message.setRichTextOverride( d->rtfOverride );
+	}
 
 #ifdef STYLE_TIMETEST
 	QTime beforeMessage = QTime::currentTime();
