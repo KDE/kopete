@@ -78,7 +78,7 @@
         <string>Skype-out credits left</string>
        </property>
        <property name="whatsThis" >
-        <string>Skype-ou credits left</string>
+        <string>Skype-out credits left</string>
        </property>
        <property name="text" >
         <string/>
@@ -142,7 +142,7 @@
         <string>Skype-out credits left</string>
        </property>
        <property name="whatsThis" >
-        <string>Skype-ou credits left</string>
+        <string>Skype-out credits left</string>
        </property>
        <property name="text" >
         <string>Skype-out credits:</string>

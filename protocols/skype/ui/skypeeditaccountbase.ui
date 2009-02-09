@@ -98,7 +98,7 @@
              <number>0</number>
             </property>
             <property name="text" >
-             <string>&lt;p align="left">This is just a bridge to external running skype. This hase some &lt;br />consequences, like you need running instance of skype and thet only &lt;br/>one skype account is possible&lt;/p></string>
+             <string>&lt;p align="left">This is just a bridge to external running skype. This has some &lt;br />consequences, like you need running instance of skype and that only &lt;br/>one skype account is possible&lt;/p></string>
             </property>
             <property name="textFormat" >
              <enum>Qt::AutoText</enum>
@@ -137,7 +137,7 @@
        <item>
         <widget class="Q3ButtonGroup" name="LaunchGroup" >
          <property name="whatsThis" >
-          <string>You can set weather and when should kopete launch skype.</string>
+          <string>You can set whether and when should kopete launch skype.</string>
          </property>
          <property name="title" >
           <string>Launch Skype</string>
@@ -246,13 +246,13 @@
           <bool>false</bool>
          </property>
          <property name="toolTip" >
-          <string>Launches DBus when not running</string>
+          <string>Launches D-Bus when not running</string>
          </property>
          <property name="whatsThis" >
-          <string>This will start session DBus if connection is set to session and it is not running. The prefered way is to set it in startup script, thought, so this if off by default.</string>
+          <string>This will start session D-Bus if connection is set to session and it is not running. The preferred way is to set it in startup script, thought, so this if off by default.</string>
          </property>
          <property name="text" >
-          <string>Laun&amp;ch DBus</string>
+          <string>Laun&amp;ch D-Bus</string>
          </property>
         </widget>
        </item>
@@ -354,7 +354,7 @@
        <item>
         <widget class="Q3GroupBox" name="groupBox3_2" >
          <property name="whatsThis" >
-          <string>Each application that wants to use skype must tell a name to it and user is asked weather to allow such application to access it.&lt;br>
+          <string>Each application that wants to use skype must tell a name to it and user is asked whether to allow such application to access it.&lt;br>
 By default, kopete provides kopete as its name, but if you suspect another application that it access skype with this name, you can set another and disallow applications that tries to log in as kopete.</string>
          </property>
          <property name="title" >
@@ -498,10 +498,10 @@ System Bus is not supported.</string>
        <item>
         <widget class="QCheckBox" name="CallCheck" >
          <property name="toolTip" >
-          <string>Show call control window for all cals</string>
+          <string>Show call control window for all calls</string>
          </property>
          <property name="whatsThis" >
-          <string>This will show a call control window for every call (both incoming and outgoing). If it is off, you can call from Kopete, byt you have to control that call from Skype.</string>
+          <string>This will show a call control window for every call (both incoming and outgoing). If it is off, you can call from Kopete, but you have to control that call from Skype.</string>
          </property>
          <property name="text" >
           <string>S&amp;how call control</string>
@@ -535,7 +535,7 @@ System Bus is not supported.</string>
             <string>Auto close the call control window</string>
            </property>
            <property name="whatsThis" >
-            <string>This will close tha call control window automatically when the call finishes</string>
+            <string>This will close the call control window automatically when the call finishes</string>
            </property>
            <property name="text" >
             <string>Autoc&amp;lose</string>
@@ -653,10 +653,10 @@ System Bus is not supported.</string>
        <item>
         <widget class="QCheckBox" name="PingsCheck" >
          <property name="toolTip" >
-          <string>If this is enabled, Kopete keeps track of wether the Skype is running.</string>
+          <string>If this is enabled, Kopete keeps track of whether the Skype is running.</string>
          </property>
          <property name="whatsThis" >
-          <string>This keeps track of wether Skype is running. Turning this off makes only sence it you're trying to get some not-flooded debug output.</string>
+          <string>This keeps track of whether Skype is running. Turning this off makes only sense it you are trying to get some not-flooded debug output.</string>
          </property>
          <property name="text" >
           <string>Pi&amp;ng Skype</string>
@@ -672,7 +672,7 @@ System Bus is not supported.</string>
           <string>Leave a chat on window exit</string>
          </property>
          <property name="whatsThis" >
-          <string>Leave a chat when it's chat window is closed. Makes difference only with multi-user chats, if it is unchecked, you will continue receiving messages from that chat even after closing the window.</string>
+          <string>Leave a chat when its chat window is closed. Makes difference only with multi-user chats, if it is unchecked, you will continue receiving messages from that chat even after closing the window.</string>
          </property>
          <property name="text" >
           <string>Leave on e&amp;xit</string>
@@ -837,7 +837,7 @@ Note that it will freeze kopete for the time.</string>
             <bool>false</bool>
            </property>
            <property name="toolTip" >
-            <string>Ususally makes no difference, just when there are some other calls on hold, it is executend only for the last ended one.</string>
+            <string>Usually makes no difference, just when there are some other calls on hold, it is executed only for the last ended one.</string>
            </property>
            <property name="text" >
             <string>Onl&amp;y for last call</string>
