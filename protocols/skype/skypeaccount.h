@@ -34,7 +34,6 @@ namespace Kopete {
 	class MetaContact;
 	class OnlineStatus;
 	class Message;
-	class Kontact;
 }
 
 #define DBUS_SESSION 0

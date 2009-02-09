@@ -21,7 +21,6 @@
 #define SKYPECONNECTION_H
 
 #include <qobject.h>
-#include <QtDBus>
 
 typedef enum {
 	///The connection was successful

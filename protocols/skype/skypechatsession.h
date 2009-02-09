@@ -22,7 +22,6 @@
 
 #include <kopetechatsession.h>
 
-class SkypeProtocol;
 class SkypeAccount;
 class SkypeContact;
 class SkypeChatSessionPrivate;

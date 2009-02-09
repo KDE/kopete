@@ -23,7 +23,6 @@
 #include <addcontactpage.h>
 
 class SkypeAddContactPrivate;
-class QString;
 class SkypeProtocol;
 class SkypeAccount;
 
