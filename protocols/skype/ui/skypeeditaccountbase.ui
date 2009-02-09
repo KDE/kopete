@@ -36,7 +36,7 @@
       </attribute>
       <layout class="QVBoxLayout" >
        <item>
-        <widget class="Q3GroupBox" name="groupBox1" >
+        <widget class="QGroupBox" name="groupBox1" >
          <property name="title" >
           <string>Account Information</string>
          </property>
@@ -75,7 +75,7 @@
         </widget>
        </item>
        <item>
-        <widget class="Q3GroupBox" name="groupBox3" >
+        <widget class="QGroupBox" name="groupBox3" >
          <property name="title" >
           <string>Important Note</string>
          </property>
@@ -352,7 +352,7 @@
       </attribute>
       <layout class="QVBoxLayout" >
        <item>
-        <widget class="Q3GroupBox" name="groupBox3_2" >
+        <widget class="QGroupBox" name="groupBox3_2" >
          <property name="whatsThis" >
           <string>Each application that wants to use skype must tell a name to it and user is asked whether to allow such application to access it.&lt;br>
 By default, kopete provides kopete as its name, but if you suspect another application that it access skype with this name, you can set another and disallow applications that tries to log in as kopete.</string>
