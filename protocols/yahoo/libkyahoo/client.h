@@ -705,6 +705,12 @@ Q_OBJECT
 		 * Send a Yahoo Ping packet to the server
 		 */
 		void sendPing();
+
+		/**
+		 * Send all queued buddy icon requests
+		 */
+		void processPictureQueue();
+
 	private:
 		void distribute( Transfer *transfer );
 		
