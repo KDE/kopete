@@ -556,6 +556,9 @@ void IRCAccount::slotPerformOnConnectCommands()
 	if (!manager)
 		return;
 
+	//Try to join again into the channels you were joined before
+	client()->onCommand(d->clientContext,"REJOIN");
+
 //	if (!d->autoConnect.isEmpty())
 //		CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/join %1").arg(d->autoConnect), manager);
 

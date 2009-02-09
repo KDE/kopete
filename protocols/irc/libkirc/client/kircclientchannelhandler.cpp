@@ -217,6 +217,8 @@ KIrc::Handler::Handled ClientChannelHandler::PART(KIrc::Context *context, const 
 
 	EntityPtr from = context->entityFromName(message.prefix());
 
+	if ( from == socket->owner() ) //we caused the event, drop it
+		return CoreHandled;
 
 	// For now lets forgot about the keys
 	EntityList to = context->entitiesFromNames(message.argAt(1));
@@ -264,6 +266,8 @@ KIrc::Handler::Handled ClientChannelHandler::QUIT(KIrc::Context *context, const 
 	kDebug( 14121 )<<"client quittting";
 
 	EntityPtr from=context->entityFromName(message.prefix());
+	if ( from == socket->owner() ) //we caused the event, drop it
+		return CoreHandled;
 
 	//Not optimal, as we have to search through every channel,
 	//but it shouldn't be that problematic, as I think nobody
@@ -871,18 +875,16 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_475(KIrc::Context *con
 
 KIrc::Handler::Handled ClientChannelHandler::CMD_JOIN( KIrc::Context* context , const KIrc::Command& command, KIrc::Socket* socket )
 {
-	Q_D( ClientChannelHandler );
 	kDebug( 14121 )<<"joining channel"<<command;
-	if ( d->channels.contains( context->entityFromName( command.value( 1 ) ) ) )
-	  kDebug( 14121 )<<"WARNING trying to join channel twice";
-	else
-	  socket->writeMessage( KIrc::StdMessages::join( command.value(1) ) );
+	socket->writeMessage( KIrc::StdMessages::join( command.value(1) ) );
 //	KIrc::EntityPtr channel=KIrc::EntityPtr( context->entityFromName( channelName ) );
 //	channel->setType(KIrc::Entity::Channel);
 }
 
 KIrc::Handler::Handled ClientChannelHandler::CMD_PART( KIrc::Context* context , const KIrc::Command& command, KIrc::Socket* socket )
 {
+	Q_D( ClientChannelHandler );
+
 	QByteArray channel;
 	QByteArray message;
 
@@ -902,6 +904,12 @@ KIrc::Handler::Handled ClientChannelHandler::CMD_PART( KIrc::Context* context , 
 	message.chop( 1 );
 
 	socket->writeMessage( KIrc::StdMessages::part( channel, message ) );
+
+	//Remove the channels we are parting from the channels list
+	KIrc::EntityList partingChannels=socket->owner()->context()->entitiesFromNames(channel);
+	foreach(KIrc::EntityPtr c,partingChannels)
+		d->channels.remove(c);
+
 
 	return KIrc::Handler::CoreHandled;
 }
@@ -932,6 +940,26 @@ Handler::Handled ClientChannelHandler::CMD_TOPIC( KIrc::Context* context, const 
 		socket->writeMessage( KIrc::StdMessages::topic(context->owner()->name()) );
 	else
 		socket->writeMessage( KIrc::StdMessages::topic(context->owner()->name(), arg ) );
+}
+
+Handler::Handled ClientChannelHandler::CMD_REJOIN(KIrc::Context* context, const KIrc::Command&command, KIrc::Socket* socket)
+{
+  Q_D(ClientChannelHandler);
+
+  if ( d->channels.isEmpty() )
+	  return CoreHandled;
+
+  KIrc::Command cmd=KIrc::Command()<<"JOIN";
+
+  QByteArray channelList;
+  foreach(KIrc::EntityPtr e,d->channels)
+	channelList+=e->name()+',';
+  channelList.chop(1); //Remove the last ','
+
+  cmd<<channelList;
+
+  d->channels.clear();
+  CMD_JOIN(context,cmd,socket);
 }
 
 KIrc::Command ClientChannelHandler::handledCommands()

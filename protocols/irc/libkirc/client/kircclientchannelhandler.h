@@ -103,6 +103,8 @@ private Q_SLOTS:
 	Handler::Handled CMD_PART(KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket);
 	Handler::Handled CMD_PRIVMSG(KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket);
 	Handler::Handled CMD_TOPIC(KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket);
+
+	Handler::Handled CMD_REJOIN(KIrc::Context* context, const KIrc::Command&command, KIrc::Socket* socket);
 };
 
 }
