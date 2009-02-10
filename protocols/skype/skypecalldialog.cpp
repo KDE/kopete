@@ -204,7 +204,7 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 			dialog->HoldButton->setEnabled(false);
 			dialog->AcceptButton->setEnabled(false);
 			dialog->HangButton->setEnabled(true);
-			dialog->StatusLabel->setText(i18n("Early media (waiting for operator...)"));
+			dialog->StatusLabel->setText(i18nc("Early media means the media played before the call is established. For example it can be a calling tone or a waiting message such as all operators are busy.", "Early media (waiting for operator...)"));
 			d->status = csNotRunning;
 		} else if (status == "UNPLACED") {//Ups, whats that, how that call got here?
 			//deleteLater();//Just give up, this one is odd
