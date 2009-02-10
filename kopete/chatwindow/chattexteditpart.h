@@ -189,9 +189,6 @@ signals:
 	void toolbarToggled(bool enabled);
 	void richTextChanged();
 
-protected:
-	bool useRichText() const;
-
 private slots:
 	/**
 	 * Called when a contact is added to the chat session.

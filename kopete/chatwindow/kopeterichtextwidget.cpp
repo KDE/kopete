@@ -132,10 +132,12 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
         connect(d->checkSpelling, SIGNAL(toggled(bool)), this, SLOT(setCheckSpellingEnabled(bool)));
     }
 
+    KopeteRichTextWidget::RichTextSupport richText = d->getProtocolRichTextSupport();
     if (!d->toggleRichText)
     {
         d->toggleRichText = new KToggleAction(KIcon("draw-freehand"), i18n("Enable &Rich Text"), actionCollection);
         actionCollection->addAction("enable_richtext", d->toggleRichText);
+        d->toggleRichText->setEnabled(richText != 0);
         connect(d->toggleRichText, SIGNAL(toggled(bool)), this, SLOT(setRichTextEnabled(bool)));
     }
 
@@ -143,6 +145,7 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
     {
         d->reset = new KAction(KIcon("format-stroke-color"), i18n("Reset Font And Color"), actionCollection);
         actionCollection->addAction("format_font_and_color_reset", d->reset);
+        d->reset->setEnabled(richText != 0);
         connect(d->reset, SIGNAL(triggered(bool)), this, SLOT(slotResetFontAndColor()));
     }
 
@@ -151,9 +154,10 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 
 void KopeteRichTextWidget::setRichTextEnabled(bool enable)
 {
-    if (enable)
+    KopeteRichTextWidget::RichTextSupport richText = d->getProtocolRichTextSupport();
+    if (enable && richText != 0)
     {
-        setRichTextSupport(d->getProtocolRichTextSupport());
+        setRichTextSupport(richText);
         enableRichTextMode();
     }
     else
@@ -376,6 +380,11 @@ void KopeteRichTextWidget::setDefaultCharFormat(const QTextCharFormat& format)
 QTextCharFormat KopeteRichTextWidget::defaultFormat() const
 {
     return d->defaultFormat;
+}
+
+bool KopeteRichTextWidget::isRichTextEnabled() const
+{
+    return (textMode() == KopeteRichTextWidget::Rich);
 }
 
 KopeteRichTextWidget::RichTextSupport KopeteRichTextWidget::Private::getProtocolRichTextSupport()

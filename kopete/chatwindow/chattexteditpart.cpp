@@ -404,7 +404,7 @@ void ChatTextEditPart::addText( const QString &text )
 
 void ChatTextEditPart::setContents( const Kopete::Message &message )
 {
-	if ( useRichText() )
+	if ( isRichTextEnabled() )
 		textEdit()->setHtml ( message.escapedBody() );
 	else
 		textEdit()->setPlainText ( message.plainBody() );
@@ -420,7 +420,7 @@ Kopete::Message ChatTextEditPart::contents()
 	Kopete::Message currentMsg( m_session->myself(), m_session->members() );
 	currentMsg.setDirection( Kopete::Message::Outbound );
 
-	if (useRichText())
+	if (isRichTextEnabled())
 	{
 		currentMsg.setHtmlBody(text());
 	
@@ -445,12 +445,6 @@ Kopete::Message ChatTextEditPart::contents()
 	else
 	{
 		currentMsg.setPlainBody(text());
-	
-		// Only necessary in plain text because this information should
-		// be explicit in the HTML of the contents in rich text mode
-		currentMsg.setForegroundColor(textEdit()->currentCharFormat().foreground().color());
-		currentMsg.setBackgroundColor(textEdit()->currentCharFormat().background().color());
-		currentMsg.setFont(textEdit()->currentFont());
 	}
 
 	return currentMsg;
@@ -508,14 +502,9 @@ bool ChatTextEditPart::checkSpellingEnabled() const
     return editor->checkSpellingEnabled();
 }
 
-bool ChatTextEditPart::useRichText() const
-{
-    return isRichTextEnabled();
-}
-
 void ChatTextEditPart::checkToolbarEnabled()
 {
-    emit toolbarToggled( useRichText() );
+	emit toolbarToggled( isRichTextEnabled() );
 }
 
 KAboutData *ChatTextEditPart::createAboutData()
@@ -584,7 +573,7 @@ QString ChatTextEditPart::text( Qt::TextFormat format ) const
 
 bool ChatTextEditPart::isRichTextEnabled() const
 {
-    return const_cast<ChatTextEditPart *>(this)->textEdit()->textMode() == KopeteRichTextWidget::Rich;
+	return editor->isRichTextEnabled();
 }
 
 void ChatTextEditPart::setTextColor()

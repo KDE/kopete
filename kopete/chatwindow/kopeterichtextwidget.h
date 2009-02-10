@@ -53,6 +53,7 @@ public:
 
     QTextCharFormat defaultFormat() const;
 
+    bool isRichTextEnabled() const;
 
 public Q_SLOTS:
     /**
