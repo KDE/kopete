@@ -71,7 +71,7 @@ class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 		///Updates an error message when some error occurred
 		void updateError(const QString &callId, const QString &status);
 		/**
-		 * Incoming skype-out balance info
+		 * Incoming SkypeOut balance info
 		 * @param balance How much of that ddoes user have
 		 * @param currency What currency is it (actually only euro-cents are used)
 		 */

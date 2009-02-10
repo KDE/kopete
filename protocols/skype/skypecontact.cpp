@@ -313,7 +313,7 @@ bool SkypeContact::isReachable() {
 
 	switch (d->status) {
 		//case osOffline://he is offline
-		case osSkypeOut://This one can not get messages, it is skype-out contact
+		case osSkypeOut://This one can not get messages, it is SkypeOut contact
 			return false;
 		default://some kind of online
 			return true;

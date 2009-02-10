@@ -75,10 +75,10 @@
      <item row="2" column="1" >
       <widget class="QLabel" name="CreditLabel" >
        <property name="toolTip" >
-        <string>Skype-out credits left</string>
+        <string>SkypeOut credits left</string>
        </property>
        <property name="whatsThis" >
-        <string>Skype-out credits left</string>
+        <string>SkypeOut credits left</string>
        </property>
        <property name="text" >
         <string/>
@@ -139,13 +139,13 @@
      <item row="2" column="0" >
       <widget class="QLabel" name="textLabel3" >
        <property name="toolTip" >
-        <string>Skype-out credits left</string>
+        <string>SkypeOut credits left</string>
        </property>
        <property name="whatsThis" >
-        <string>Skype-out credits left</string>
+        <string>SkypeOut credits left</string>
        </property>
        <property name="text" >
-        <string>Skype-out credits:</string>
+        <string>SkypeOut credits:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
