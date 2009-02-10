@@ -69,7 +69,7 @@ public:
 	bool unregisterMessage();
 #endif
 
-	void registerMessageAlias(const QByteArray &alias, const QByteArray &message);
+	void registerMessageAlias(const QByteArray &message, const QByteArray &alias);
 
 	/** returns a list of commands, that are handled by this handler and
 	 *  his subhandlers. Used to give an overview of what commands can 

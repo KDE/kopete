@@ -163,10 +163,11 @@ void Handler::unregisterMessage(Message msg)
 }
 #endif
 
-void Handler::registerMessageAlias(const QByteArray &alias, const QByteArray &message)
+void Handler::registerMessageAlias(const QByteArray &message, const QByteArray &alias)
 {
 	Q_D(Handler);
-	d->messageAliases.insert(alias.toUpper(), message.toUpper());
+	//IRC Messages are always uppercase, but lets allow mixed-case aliases(they're nicer to read)
+	d->messageAliases.insert(message.toUpper(), alias);
 }
 
 Handler::Handled Handler::onMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
