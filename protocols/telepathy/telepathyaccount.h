@@ -91,6 +91,7 @@ private slots:
     void onAccountReady(Telepathy::Client::PendingOperation *);
     void onConnectionReady(Telepathy::Client::PendingOperation*);
     void onRequestedPresence(Telepathy::Client::PendingOperation*);
+    void onConnectionConnected(Telepathy::Client::PendingOperation*);
 
 private:
     void initTelepathyAccount();
