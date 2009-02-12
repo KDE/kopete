@@ -57,16 +57,47 @@ using namespace KIrc;
 ClientChannelHandler::ClientChannelHandler(QObject* parent)
 	: Handler(new ClientChannelHandlerPrivate, parent)
 {
+	bindNumericReplies();
 }
 
 ClientChannelHandler::ClientChannelHandler( Handler * parent )
   	: Handler(new ClientChannelHandlerPrivate, parent)
 {
-  kDebug(14121);
+	kDebug(14121);
+	bindNumericReplies();
 }
 
 ClientChannelHandler::~ClientChannelHandler()
 {
+}
+
+
+/* IMPORTANT NOTE:
+ * Numeric replies always have the current nick or * as first argmuent.
+ * NOTE: * means undefined in most (all ?) of the cases.
+ */
+void ClientChannelHandler::bindNumericReplies()
+{
+	registerMessageAlias( "004", "RPL_MYINFO" );
+	registerMessageAlias( "322", "RPL_LIST" );
+	registerMessageAlias( "323", "RPL_LISTEND" );
+	registerMessageAlias( "324", "RPL_CHANNELMODEIS" );
+	registerMessageAlias( "328", "RPL_CHANNEL_URL" );
+	registerMessageAlias( "329", "RPL_CREATIONTIME" );
+	registerMessageAlias( "331", "RPL_NOTOPIC" );
+	registerMessageAlias( "332", "RPL_TOPIC" );
+	registerMessageAlias( "333", "RPL_TOPICWHOTIME" );
+	registerMessageAlias( "353", "RPL_NAMREPLY" );
+	registerMessageAlias( "366", "RPL_ENDOFNAMES" );
+
+	registerMessageAlias( "401", "ERR_NOSUCHNICK" );
+	registerMessageAlias( "404", "ERR_CANNOTSENDTOCHAN" );
+	registerMessageAlias( "406", "ERR_WASNOSUCHNICK" );
+	registerMessageAlias( "442", "ERR_NOTONCHANNEL" );
+	registerMessageAlias( "471", "ERR_CHANNELISFULL" );
+	registerMessageAlias( "473", "ERR_INVITEONLYCHAN" );
+	registerMessageAlias( "474", "ERR_BANNEDFROMCHAN" );
+	registerMessageAlias( "475", "ERR_BADCHANNELKEY" );
 }
 
 /* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
@@ -316,196 +347,19 @@ KIrc::Handler::Handled ClientChannelHandler::TOPIC(KIrc::Context *context, const
 	return KIrc::Handler::NotHandled;
 }
 
-
-/* IMPORTANT NOTE:
- * Numeric replies always have the current nick or * as first argmuent.
- * NOTE: * means undefined in most (all ?) of the cases.
- */
-/*
-void ClientChannelHandler::bindNumericReplies()
-{
-	bind(263, this, SLOT(numericReply_263(MessageEvent *&)));
-	bind(265, this, SLOT(numericReply_265(MessageEvent *&)));
-	bind(266, this, SLOT(numericReply_266(MessageEvent *&)));
-
-//	bind(305, this, SLOT(ignoreMessage(MessageEvent *&)), 0, 0 );
-//	bind(306, this, SLOT(ignoreMessage(MessageEvent *&)), 0, 0 );
-	bind(312, this, SLOT(numericReply_312(MessageEvent *&)), 3, 3);
-	bind(313, this, SLOT(numericReply_313(MessageEvent *&)), 2, 2);
-	bind(314, this, SLOT(numericReply_314(MessageEvent *&)), 5, 5);
-	bind(315, this, SLOT(numericReply_315(MessageEvent *&)), 2, 2);
-	bind(317, this, SLOT(numericReply_317(MessageEvent *&)), 3, 4);
-	bind(318, this, SLOT(numericReply_318(MessageEvent *&)), 2, 2);
-	bind(319, this, SLOT(numericReply_319(MessageEvent *&)), 2, 2);
-	bind(320, this, SLOT(numericReply_320(MessageEvent *&)), 2, 2);
-//	bind(321, this, SLOT(ignoreMessage(MessageEvent *&)), 0, 0 );
-	bind(322, this, SLOT(numericReply_322(MessageEvent *&)), 3, 3);
-	bind(323, this, SLOT(numericReply_323(MessageEvent *&)), 1, 1);
-	bind(324, this, SLOT(numericReply_324(MessageEvent *&)), 2, 4);
-	bind(328, this, SLOT(numericReply_328(MessageEvent *&)), 2, 2);
-	bind(329, this, SLOT(numericReply_329(MessageEvent *&)), 3, 3);
-//	bind(330, this, SLOT(ignoreMessage(MessageEvent *&)), 3, 3); // ???
-	bind(331, this, SLOT(numericReply_331(MessageEvent *&)), 2, 2);
-	bind(332, this, SLOT(numericReply_332(MessageEvent *&)), 2, 2);
-	bind(352, this, SLOT(numericReply_352(MessageEvent *&)), 5, 10);
-
-	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
-	bind(477, this, SLOT(receivedServerMessage(Message&)),0,0);
-}
-*/
-
 /* 004: "<servername> <version> <available user modes> <available channel modes>"
- * Gives information about the servername, version, available modes, etc.
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_004(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+ *  * Gives information about the servername, version, available modes, etc.
+ *   */
+KIrc::Handler::Handled ClientChannelHandler::RPL_MYINFO( KIrc::Context *context,  const KIrc::Message &message,  KIrc::Socket *socket )
 {
-	CHECK_ARGS(5, 5);
-	Q_D(ClientChannelHandler);
+	CHECK_ARGS( 5,  5 );
+	Q_D( ClientChannelHandler );
 
-//	emit incomingHostInfo(message.arg(1),message.arg(2),message.arg(3),message.arg(4));
-	d->modes = message.argAt(4);
+	//      emit incomingHostInfo(message.arg(1),message.arg(2),message.arg(3),message.arg(4));
+	d->modes = message.argAt( 4 );
 
 	// Pretend not handled, used by the main handler
 	return NotHandled;
-}
-
-/* 005:
- * Gives capability information. TODO: This is important!
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_005(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-//	CHECK_ARGS(?, ?);
-
-//	receivedServerMessage(context, message, socket);
-	return KIrc::Handler::NotHandled;
-}
-
-/* 254: "<integer> :channels formed"
- * Tells how many total channels there are on this network.
- *  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_254(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2);
-
-	bool ok = false;
-//	EntityPtr from d->entityFromPrefix(message.prefix());
-//	Entity::List to;
-// 	QString text = i18np("There has been %1 channel formed.", "There have been %1 channels formed.", ev->message().argAt(1).toULong(&ok));
-
-// 	if (ok)
-// 	{
-//		postEvent(ev, "ChannelsFormed", from, to, text);
-//		return CoreHandled;
-//	}
-	return NotHandled;
-}
-
-/* 255: ":I have <integer> clients and <integer> servers"
- * Tells how many clients and servers *this* server handles.
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_255(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-// 	postServerInfoEvent(ev);
-	return KIrc::Handler::NotHandled;
-}
-
-/* 263: "<command> :Please wait a while and try again."
- * Server is too busy.
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_263(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-//	Entity::Ptr from; Entity::List to;
-//	QString text = i18n("Server was too busy to execute %1.", ev->message().argAt(1));
-
-//	postEvent(ev, "ServerTooBusy", from, to, text);
-	return KIrc::Handler::NotHandled;
-}
-
-/* 265: ":Current local  users: <integer>  Max: <integer>"
- * Tells statistics about the current local server state.
- * NOT IN RFC2812
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_265(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-// 	postServerInfoEvent(ev);
-	return KIrc::Handler::NotHandled;
-}
-
-/* 266: ":Current global users: <integer>  Max: <integer>"
- * Tells statistics about the current global(the whole irc server chain) server state:
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_266(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-// 	postServerInfoEvent(ev);
-	return KIrc::Handler::NotHandled;
-}
-
-/* 301: "<nick> :<away message>"
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_301(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2);
-
-/*
-	Entity entity = message.entityFromArg(1);
-	entity->setAwayMessage(message.suffix);
-	entity->setMode("+a");
-
-	receivedServerMessage(message);
-*/
-	return KIrc::Handler::NotHandled;
-}
-
-/* 303: ":*1<nick> *(" " <nick> )"
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_303(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(1, 1);
-
-/*
-	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), message.suffix());
-	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
-	{
-		if (!(*it).trimmed().isEmpty())
-			emit incomingUserOnline(*it);
-	}
-*/
-	return KIrc::Handler::NotHandled;
-}
-
-/* 305: ":You are no longer marked as being away"
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_305(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-/*
-	Entity::Ptr self = this->self();
-	self->setAwayMessage(QString());
-//	self->setModes("-a");
-	postInfoEvent(message, i18n("You are no longer marked as being away."));
-*/
-	return KIrc::Handler::NotHandled;
-}
-
-
-/* 306: ":You have been marked as being away"
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_306(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-//	Entity::Ptr from; Entity::List to;
-
-// 	if (postEvent(ev, "YouAreAway", from, to, i18n("You have been marked as being away."))) {
-//		self->setModes("+a");
-// 	}
-	return KIrc::Handler::NotHandled;
-}
-
-/* 319: "<nick> :{[@|+]<channel><space>}"
- * Show info a channel a user is logged in (part of a /whois) in the form of:
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_319(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-//	emit incomingWhoIsChannels(message.arg(1), message.suffix());
-	return KIrc::Handler::NotHandled;
 }
 
 /* 320:
@@ -525,7 +379,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_320(KIrc::Context *con
 /* 322: "<channel> <# visible> :<topic>"
  * Received one channel from the LIST command.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_322(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_LIST(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingListedChan(message.arg(1), message.arg(2).toUInt(), message.suffix());
 	return KIrc::Handler::NotHandled;
@@ -534,7 +388,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_322(KIrc::Context *con
 /* 323: ":End of LIST"
  * End of the LIST command.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_323(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_LISTEND(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit receivedServerMessage(message);
 	return KIrc::Handler::NotHandled;
@@ -542,7 +396,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_323(KIrc::Context *con
 
 /* 324: "<channel> <mode> <mode params>"
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_324(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_CHANNELMODEIS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingChannelMode(message.arg(1), message.arg(2), message.arg(3));
 	return KIrc::Handler::NotHandled;
@@ -550,7 +404,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_324(KIrc::Context *con
 
 /* 328:
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_328(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_CHANNEL_URL(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingChannelHomePage(message.arg(1), message.suffix());
 	return KIrc::Handler::NotHandled;
@@ -560,7 +414,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_328(KIrc::Context *con
  * NOTE: What is the meaning of this arguments. DAL-ircd say it's a RPL_CREATIONTIME
  * NOT IN RFC1459 NOR RFC2812
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_329(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_CREATIONTIME(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	return KIrc::Handler::NotHandled;
 }
@@ -568,7 +422,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_329(KIrc::Context *con
 /* 331: "<channel> :No topic is set"
  * Gives the existing topic for a channel after a join.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_331(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_NOTOPIC(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	emit incomingExistingTopic(message.arg(1), suffix);
 	return KIrc::Handler::NotHandled;
@@ -577,7 +431,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_331(KIrc::Context *con
 /* 332: "<channel> :<topic>"
  * Gives the existing topic for a channel after a join.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_332(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_TOPIC(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	KIrc::EntityPtr channel=context->entityFromName( message.argAt( 2 ) );
 	channel->setTopic( message.suffix() );
@@ -592,7 +446,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_332(KIrc::Context *con
 /* 333:
  * Gives the nickname and time who changed the topic
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_333(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_TOPICWHOTIME(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(4, 4);
 
@@ -605,34 +459,10 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_333(KIrc::Context *con
 	return KIrc::Handler::CoreHandled;
 }
 
-/* 352:
- * WHO Reply
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_352(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-/*
-	QStringList suffix = QStringList::split( ' ', message.suffix() );
-
-	emit incomingWhoReply(
-		message.arg(5),
-		message.arg(1),
-		message.arg(2),
-		message.arg(3),
-		message.arg(4),
-		message.arg(6)[0] != 'H',
-		message.arg(7),
-		message.suffix().section(' ', 0, 1 ).toUInt(),
-		message.suffix().section(' ', 1 )
-	);
-*/
-	return KIrc::Handler::NotHandled;
-}
-
-
 /* 353:
  * NAMES list
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_353(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_NAMREPLY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(3, 3);
 	KIrc::EntityPtr channel=context->entityFromName(message.argAt(3)); //I don't know where the = in this message comes from
@@ -672,7 +502,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_353(KIrc::Context *con
 /* 366: "<channel> :End of NAMES list"
  * Gives a signal to indicate that the NAMES list has ended for channel.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_366(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::RPL_ENDOFNAMES(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
@@ -685,22 +515,11 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_366(KIrc::Context *con
 	return KIrc::Handler::CoreHandled;
 }
 
-/* 369: "<nick> :End of WHOWAS"
- * End of WHOWAS Request
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_369(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2);
-
-//	emit receivedServerMessage(message);
-	return KIrc::Handler::NotHandled;
-}
-
 /* 401: "<nickname> :No such nick/channel"
  * Gives a signal to indicate that the command issued failed because the person/channel not being on IRC.
  *  - Used to indicate the nickname parameter supplied to a command is currently unused.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_401(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::ERR_NOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
@@ -711,7 +530,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_401(KIrc::Context *con
 
 /* 404: "<channel name> :Cannot send to channel"
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_404(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::ERR_CANNOTSENDTOCHAN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
@@ -722,7 +541,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_404(KIrc::Context *con
 /* 406: "<nickname> :There was no such nickname"
  * Like case 401, but when there *was* no such nickname.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_406(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::ERR_WASNOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
@@ -732,34 +551,9 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_406(KIrc::Context *con
 	return KIrc::Handler::NotHandled;
 }
 
-/* 433: "<nick> :Nickname is already in use"
- * Tells us that our nickname is already in use.
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_433(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2);
-
-//	if(m_status == Authentifying)
-	{
-		// This tells us that our nickname is, but we aren't logged in.
-		// This differs because the server won't send us a response back telling us our nick changed
-		// (since we aren't logged in).
-//		m_FailedNickOnLogin = true;
-//		emit incomingFailedNickOnLogin(message.arg(1));
-	}
-//	else
-//	{
-		// And this is the signal for if someone is trying to use the /nick command or such when already logged in,
-		// but it's already in use
-//		emit incomingNickInUse(message.arg(1));
-//	}
-//	postErrorEvent(message, i18n("Nickname %1 is already in use.", message.arg(1)));
-	return KIrc::Handler::NotHandled;
-}
-
 /* 442: "<channel> :You're not on that channel"
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_442(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::ERR_NOTONCHANNEL(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2);
 
@@ -767,30 +561,10 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_442(KIrc::Context *con
 	return KIrc::Handler::NotHandled;
 }
 
-/* 464: ":Password Incorrect"
- * Bad server password
- */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_464(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(1, 1)
-
-	/* Server need pass.. Call disconnect*/
-//	Entity::Ptr from; Entity::List to;
-	QString text = i18n("Password Incorect");
-
-//	postEvent(ev, "PasswordIncorrect", from, to, text);
-
-//	emit incomingFailedServerPassword();
-	return KIrc::Handler::NotHandled;
-}
-
-/* 465: ":You are banned from this server"
- */
-
 /* 471: "<channel> :Cannot join channel (+l)"
  * Channel is Full
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_471(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::ERR_CHANNELISFULL(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2)
 
@@ -804,7 +578,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_471(KIrc::Context *con
 /* 473: "<channel> :Cannot join channel (+i)"
  * Invite Only.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_473(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::ERR_INVITEONLYCHAN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2)
 
@@ -815,7 +589,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_473(KIrc::Context *con
 /* 474: "<channel> :Cannot join channel (+b)"
  * Banned.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_474(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::ERR_BANNEDFROMCHAN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2)
 
@@ -826,7 +600,7 @@ KIrc::Handler::Handled ClientChannelHandler::numericReply_474(KIrc::Context *con
 /* 475: "<channel> :Cannot join channel (+k)"
  * Wrong Chan-key.
  */
-KIrc::Handler::Handled ClientChannelHandler::numericReply_475(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+KIrc::Handler::Handled ClientChannelHandler::ERR_BADCHANNELKEY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 	CHECK_ARGS(2, 2)
 
@@ -879,6 +653,8 @@ KIrc::Handler::Handled ClientChannelHandler::CMD_JOIN( KIrc::Context* context , 
 	socket->writeMessage( KIrc::StdMessages::join( command.value(1) ) );
 //	KIrc::EntityPtr channel=KIrc::EntityPtr( context->entityFromName( channelName ) );
 //	channel->setType(KIrc::Entity::Channel);
+
+	return KIrc::Handler::CoreHandled;
 }
 
 KIrc::Handler::Handled ClientChannelHandler::CMD_PART( KIrc::Context* context , const KIrc::Command& command, KIrc::Socket* socket )
@@ -926,6 +702,8 @@ Handler::Handled ClientChannelHandler::CMD_PRIVMSG(KIrc::Context* context, const
 	msg.chop( 1 );
 
 	socket->writeMessage( KIrc::StdMessages::privmsg(dest, msg ) );
+
+	return KIrc::Handler::CoreHandled;
 }
 
 Handler::Handled ClientChannelHandler::CMD_TOPIC( KIrc::Context* context, const KIrc::Command &command, KIrc::Socket* socket )
@@ -940,6 +718,8 @@ Handler::Handled ClientChannelHandler::CMD_TOPIC( KIrc::Context* context, const 
 		socket->writeMessage( KIrc::StdMessages::topic(context->owner()->name()) );
 	else
 		socket->writeMessage( KIrc::StdMessages::topic(context->owner()->name(), arg ) );
+
+	return KIrc::Handler::CoreHandled;
 }
 
 Handler::Handled ClientChannelHandler::CMD_REJOIN(KIrc::Context* context, const KIrc::Command&command, KIrc::Socket* socket)
@@ -960,6 +740,8 @@ Handler::Handled ClientChannelHandler::CMD_REJOIN(KIrc::Context* context, const 
 
   d->channels.clear();
   CMD_JOIN(context,cmd,socket);
+
+  return KIrc::Handler::CoreHandled;
 }
 
 KIrc::Command ClientChannelHandler::handledCommands()

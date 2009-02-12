@@ -37,6 +37,8 @@ public:
 	explicit ClientChannelHandler(QObject* parent=0);
 	explicit ClientChannelHandler(Handler* parent);
 	~ClientChannelHandler();
+	
+	void bindNumericReplies();
 
 	virtual KIrc::Command handledCommands();
 
@@ -52,50 +54,27 @@ private Q_SLOTS:
 	Handler::Handled QUIT(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled TOPIC(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
-	Handler::Handled numericReply_004(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_005(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_254(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_255(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_263(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_265(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_266(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_301(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_303(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_305(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_306(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-//	Handler::Handled numericReply_307(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-//	Handler::Handled numericReply_311(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-//	Handler::Handled numericReply_312(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-//	Handler::Handled numericReply_313(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-//	Handler::Handled numericReply_314(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-//	Handler::Handled numericReply_315(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-//	Handler::Handled numericReply_317(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-//	Handler::Handled numericReply_318(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_319(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_MYINFO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled numericReply_320(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_322(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_323(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_324(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_328(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_329(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_331(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_332(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_333(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_352(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_353(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_366(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_369(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_LIST(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_LISTEND(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_CHANNELMODEIS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_CHANNEL_URL(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_CREATIONTIME(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_NOTOPIC(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_TOPIC(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_TOPICWHOTIME(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_NAMREPLY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_ENDOFNAMES(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
-	Handler::Handled numericReply_401(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_404(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_406(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_433(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_442(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_464(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_471(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_473(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_474(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled numericReply_475(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERR_NOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERR_CANNOTSENDTOCHAN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERR_WASNOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERR_NOTONCHANNEL(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERR_CHANNELISFULL(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERR_INVITEONLYCHAN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERR_BANNEDFROMCHAN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled ERR_BADCHANNELKEY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 //Commands
 

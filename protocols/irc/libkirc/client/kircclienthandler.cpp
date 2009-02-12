@@ -76,6 +76,7 @@ void ClientEventHandler::bindNumericReplies()
 {
 	//Bind the numeric replies to their string names, described in the RFCs
 	registerMessageAlias( "001", "RPL_WELCOME" );
+	registerMessageAlias( "004", "RPL_MYINFO" );
 	registerMessageAlias( "005", "RPL_ISUPPORT" );
 	registerMessageAlias( "252", "RPL_LUSEROP" );
 	registerMessageAlias( "253", "RPL_LUSERUNKNOWN" );
@@ -110,11 +111,6 @@ void ClientEventHandler::bindNumericReplies()
 	 * NOTE: This is useful for determining the uptime of the server).
 	 */
 	registerMessageAlias( "003", "receivedServerMessage" );
-
-	/* 004: "<servername> <version> <available user modes> <available channel modes>"
-	 * Gives information about the servername, version, available modes, etc.
-	 */
-	registerMessageAlias( "004", "receivedServerMessage" );
 
 	/* 250: ":Highest connection count: <integer> (<integer> clients)
 	 *       (<integer> since server was (re)started)"
@@ -230,6 +226,16 @@ KIrc::Handler::Handled ClientEventHandler::RPL_WELCOME(KIrc::Context *context, c
 
 //	socket->owner()->setEnabled
 	return KIrc::Handler::CoreHandled;
+}
+
+/* 004: "<servername> <version> <available user modes> <available channel modes>"
+ * Gives information about the servername, version, available modes, etc.
+ */
+KIrc::Handler::Handled ClientEventHandler::RPL_MYINFO( KIrc::Context *context,  const KIrc::Message &message,  KIrc::Socket *socket )
+{
+  //TODO handle this somehow?
+
+  return KIrc::Handler::CoreHandled;
 }
 
 /* 005:
@@ -382,63 +388,6 @@ KIrc::Handler::Handled ClientEventHandler::RPL_NOWAWAY(KIrc::Context *context, c
  * RFC2812: Obsoleted.
  */
 
-
-/* 352:
- * WHO Reply
- */
-KIrc::Handler::Handled ClientEventHandler::RPL_WHOREPLY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-/*
-	QStringList suffix = QStringList::split( ' ', message.suffix() );
-
-	emit incomingWhoReply(
-		message.arg(5),
-		message.arg(1),
-		message.arg(2),
-		message.arg(3),
-		message.arg(4),
-		message.arg(6)[0] != 'H',
-		message.arg(7),
-		message.suffix().section(' ', 0, 1 ).toUInt(),
-		message.suffix().section(' ', 1 )
-	);
-*/
-	return KIrc::Handler::NotHandled;
-}
-
-
-/* 353:
- * NAMES list
- */
-KIrc::Handler::Handled ClientEventHandler::RPL_NAMREPLY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(3, 3);
-
-//	emit incomingNamesList(message.arg(2), QStringList::split(' ', message.suffix()));
-	return KIrc::Handler::NotHandled;
-}
-
-/* 366: "<channel> :End of NAMES list"
- * Gives a signal to indicate that the NAMES list has ended for channel.
- */
-KIrc::Handler::Handled ClientEventHandler::RPL_ENDOFNAMES(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2);
-
-//	emit receivedServerMessage(message);
-	return KIrc::Handler::NotHandled;
-}
-
-/* 369: "<nick> :End of WHOWAS"
- * End of WHOWAS Request
- */
-KIrc::Handler::Handled ClientEventHandler::RPL_ENDOFWHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
-{
-	CHECK_ARGS(2, 2);
-
-//	emit receivedServerMessage(message);
-	return KIrc::Handler::NotHandled;
-}
 
 /* 401: "<nickname> :No such nick/channel"
  * Gives a signal to indicate that the command issued failed because the person/channel not being on IRC.

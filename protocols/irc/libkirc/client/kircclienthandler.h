@@ -55,6 +55,7 @@ private Q_SLOTS:
 	Handler::Handled NICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 	Handler::Handled RPL_WELCOME(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	Handler::Handled RPL_MYINFO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled RPL_ISUPPORT(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled RPL_LUSEROP(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled RPL_LUSERUNKNOWN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
@@ -72,10 +73,6 @@ private Q_SLOTS:
 //	Handler::Handled numericReply_315(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 //	Handler::Handled numericReply_317(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 //	Handler::Handled numericReply_318(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled RPL_WHOREPLY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled RPL_NAMREPLY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled RPL_ENDOFNAMES(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	Handler::Handled RPL_ENDOFWHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 	Handler::Handled ERR_NOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	Handler::Handled ERR_CANNOTSENDTOCHAN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
