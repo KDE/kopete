@@ -52,7 +52,10 @@ public:
 	bool responderTrying;
 	QList<JT_JingleAction*> actions;
 	bool allContentsConnected;
+	int contentsStarted;
 	bool userAcceptedSession;
+	bool contentsReady;
+	bool canStart;
 };
 
 JingleSession::JingleSession(Task *t, const Jid &j)
@@ -66,6 +69,9 @@ JingleSession::JingleSession(Task *t, const Jid &j)
 	d->responderTrying = false;
 	d->allContentsConnected = false;
 	d->userAcceptedSession = false;
+	d->contentsReady = false;
+	d->contentsStarted = 0;
+	d->canStart = false;
 }
 
 JingleSession::~JingleSession()
@@ -77,10 +83,16 @@ JingleSession::~JingleSession()
 	delete d;
 }
 
+Task *JingleSession::rootTask() const
+{
+	return d->rootTask;
+}
+
 void JingleSession::addContent(JingleContent *c)
 {
 	qDebug() << "addContent" << c->name();
 	d->contents << c;
+	connect(c, SIGNAL(started()), this, SLOT(slotContentReady()));
 	connect(c, SIGNAL(established()), this, SLOT(slotContentConnected())); //Only do that if we are not the initiator.
 }
 
@@ -91,7 +103,7 @@ void JingleSession::addContents(const QList<JingleContent*>& l)
 	for (int i = 0; i < l.count(); i++)
 	{
 		d->contents << l[i];
-		//connect(l[i], SIGNAL(dataReceived()), this, SLOT(slotReceivingData()));
+		connect(l[i], SIGNAL(started()), this, SLOT(slotContentReady()));
 		connect(l[i], SIGNAL(established()), this, SLOT(slotContentConnected()));
 	}
 }
@@ -107,8 +119,22 @@ QList<JingleContent*> JingleSession::contents() const
 	return d->contents;
 }
 
+void JingleSession::slotContentReady()
+{
+	/*disconnect(sender(), SIGNAL(started()), this, SLOT(slotContentReady()));
+	if (++d->contentsStarted == contents().count())
+	{
+		d->contentsReady = true;
+		if (d->canStart)
+			start();
+	}*/
+}
+
 void JingleSession::start()
 {
+	/*d->canStart = true;
+	if (!d->contentsReady)
+		return;*/
 	// Generate session ID
 	d->sid = genSid();
 
@@ -122,7 +148,7 @@ void JingleSession::start()
 
 void JingleSession::slotContentConnected()
 {
-	qDebug() << "---------------- void JingleSession::slotContentConnected() : called";
+	qDebug() << "void JingleSession::slotContentConnected() called.";
 	
 	//No need for informations from this content anymore.
 	disconnect(sender(), 0, this, 0);
@@ -367,15 +393,16 @@ void JingleSession::addContent(const QDomElement& content)
 	// If the content is added from XML data, chances are it is a remote content.
 	JingleContent *c;
 	if (JingleContent::transportNS(content) == NS_JINGLE_TRANSPORTS_RAW)
-		c = new JingleRawContent(JingleContent::Responder, this, d->rootTask);
+		c = new JingleRawContent(JingleContent::Responder, this);
 	else if (JingleContent::transportNS(content) == NS_JINGLE_TRANSPORTS_ICE)
-		c = new JingleIceContent(JingleContent::Responder, this, d->rootTask);
+		c = new JingleIceContent(JingleContent::Responder, this);
 	else
 	{
 		qDebug() << "Unsupported Content. What do I do now ?";
 		return;
 	}
 	
+	connect(c, SIGNAL(started()), this, SLOT(slotContentReady()));
 	connect(c, SIGNAL(established()), this, SLOT(slotContentConnected()));
 	
 	c->fromElement(content);

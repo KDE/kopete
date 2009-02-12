@@ -41,15 +41,14 @@ namespace XMPP
 	{
 		Q_OBJECT
 	public:
-		JingleRawContent(Mode mode = Unknown, JingleSession *parent = 0, Task *rootTask = 0);
+		JingleRawContent(Mode mode, JingleSession *parent);
 		virtual ~JingleRawContent();
 		
 		virtual void addCandidate(const QDomElement&);
 		virtual void addTransportInfo(const QDomElement&);
-		virtual void setSession(JingleSession *sess);
 		virtual QString transportNS() const;
-		virtual void writeDatagram(const QByteArray&);
-		virtual QByteArray readAll();
+		virtual void writeDatagram(const QByteArray&, int channel = 0);
+		virtual QByteArray readAll(int channel = 0);
 
 //	signals:
 	protected:

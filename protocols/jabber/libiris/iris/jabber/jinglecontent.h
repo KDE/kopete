@@ -44,9 +44,12 @@ namespace XMPP
 	{
 		Q_OBJECT
 	public:
-		//FIXME:Initiator and Responder would be more accurate, actually.
-		//If it is a responder content, it means, that it has been proposed
-		//by the responder
+		//FIXME: may not feel good being here.
+		enum Channel {
+			Rtp = 0,
+			Rtcp
+		};
+
 		enum Mode {
 			Initiator = 0, // Means, as we created it, that we are the initiator.
 			Responder, // Means, as we created it, that we are the responder.
@@ -76,7 +79,7 @@ namespace XMPP
 		};
 
 
-		JingleContent(Mode mode = Unknown, JingleSession *parent = 0, Task *rootTask = 0);
+		JingleContent(Mode mode, JingleSession *parent);
 		virtual ~JingleContent();
 
 		/**
@@ -202,23 +205,16 @@ namespace XMPP
 		virtual QString transportNS() const;
 		
 		/*
-		 * Set the parent JingleSession for this content.
-		 * If you reimplement this class, you will have to call
-		 * JingleContent::setSession() in your reimplementation
+		 * This is called to write data on the established stream.
+		 * Data will be written on the channel channel (0 = RTP, 1 = RTCP)
 		 */
-		virtual void setSession(JingleSession *sess);
-
-		/*
-		 * This is called to write RTP data on the established stream.
-		 * TODO : what about RTCP ?
-		 */
-		virtual void writeDatagram(const QByteArray&);
+		virtual void writeDatagram(const QByteArray&, int channel = 0);
 
 		/* 
 		 * Get all data available on the socket.
-		 * Usually, this will be an RTP packet.
+		 * Data will be read from the channel channel (0 = RTP, 1 = RTCP)
 		 */
-		virtual QByteArray readAll();
+		virtual QByteArray readAll(int channel = 0);
 		
 		void createUdpInSocket();
 		
@@ -243,14 +239,20 @@ namespace XMPP
 
 	signals:
 		/**
+		 * Emitted when the content is set up and session-initiate Jingle action cann be sent.
+		 */
+		void started();
+
+		/**
 		 * Emitted when sending and receiving streams have been established for this content 
 		 */
 		void established();
 
 		/**
-		 * emitted when rtp data is ready to be read.
+		 * emitted when data is ready to be read.
+		 * The given argument is the channel on which data is ready (0 = RTP, 1 = RTCP)
 		 */
-		void readyRead();
+		void readyRead(int);
 
 	protected:
 		/*

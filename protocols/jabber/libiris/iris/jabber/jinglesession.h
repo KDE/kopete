@@ -255,6 +255,8 @@ namespace XMPP
 		 */
 		bool isInitiator() const;
 
+		Task *rootTask() const;
+
 	signals:
 		
 		/*
@@ -274,6 +276,10 @@ namespace XMPP
 		 */
 		void stateChanged();
 	public slots:
+		/*
+		 * Executed when a JingleContent claims it's ready to be started.
+		 */
+		void slotContentReady();
 		
 		/*
 		 * This slot is called when a content-remove has been acked.

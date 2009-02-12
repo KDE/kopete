@@ -19,6 +19,7 @@
  */
 
 #include "stunmessage.h"
+#include <stdio.h>
 
 #include <QSharedData>
 #include <QtCrypto>
@@ -325,6 +326,8 @@ static quint32 fingerprint_calc(const quint8 *buf, int size)
 
 static QByteArray message_integrity_calc(const quint8 *buf, int size, const QByteArray &key)
 {
+	if (!QCA::isSupported("hmac(sha1)"))
+		printf("QCA ssl Not installed, of course it crashes...\n");
 	QCA::MessageAuthenticationCode hmac("hmac(sha1)", key);
 	QByteArray region = QByteArray::fromRawData((const char *)buf, size);
 	QByteArray result = hmac.process(region).toByteArray();

@@ -151,8 +151,10 @@ void JingleCallsManager::init()
 
 bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 {
-	//TODO:There should be a way to start a video-only or audio-only session.
 	kDebug() << "Starting Jingle session for : " << toJid.full();
+	
+	// Create the session.
+	JingleSession* newSession = d->client->jingleSessionManager()->startNewSession(toJid);
 	
 	//Here, we parse the features to have a list of which transports can be used with the responder.
 	bool iceUdp = false, rawUdp = false;
@@ -176,25 +178,26 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 
 	kDebug() << iceUdp << rawUdp;
 	
+
 	QDomDocument doc("");
 	if (iceUdp)
 	{
 		kDebug() << "ICE-UDP supported !!!!!!!!!!!!!!!!!!";
 
 		// Create ice-udp contents.
-		JingleContent *iceAudio = new JingleIceContent(JingleContent::Initiator);
+		JingleContent *iceAudio = new JingleIceContent(JingleContent::Initiator, newSession);
 		iceAudio->setName("audio-content");
 		iceAudio->addLocalPayloads(d->audioPayloads);
 		iceAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		iceAudio->setType(JingleContent::Audio);
 		iceAudio->setCreator("initiator");
 
-		JingleContent *iceVideo = new JingleIceContent(JingleContent::Initiator);
+		/*JingleContent *iceVideo = new JingleIceContent(JingleContent::Initiator, newSession);
 		iceVideo->setName("video-content");
 		iceVideo->addLocalPayloads(d->videoPayloads);
 		iceVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		iceVideo->setType(JingleContent::Video);
-		iceVideo->setCreator("initiator");
+		iceVideo->setCreator("initiator");*/
 		
 		//contents << iceAudio << iceVideo;
 		contents << iceAudio;
@@ -204,19 +207,19 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		kDebug() << "ICE-UDP not supported, falling back to RAW-UDP !";
 
 		// Create raw-udp contents.
-		JingleContent *rawAudio = new JingleRawContent(JingleContent::Initiator);
+		JingleContent *rawAudio = new JingleRawContent(JingleContent::Initiator, newSession);
 		rawAudio->setName("audio-content");
 		rawAudio->addLocalPayloads(d->audioPayloads);
 		rawAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		rawAudio->setType(JingleContent::Audio);
 		rawAudio->setCreator("initiator");
 
-		JingleContent *rawVideo = new JingleRawContent(JingleContent::Initiator);
+		/*JingleContent *rawVideo = new JingleRawContent(JingleContent::Initiator, newSession);
 		rawVideo->setName("video-content");
 		rawVideo->addLocalPayloads(d->videoPayloads);
 		rawVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		rawVideo->setType(JingleContent::Video);
-		rawVideo->setCreator("initiator");
+		rawVideo->setCreator("initiator");*/
 		
 		//contents << rawAudio << rawVideo;
 		contents << rawAudio;
@@ -230,14 +233,18 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		return false;
 	}
 	
-	JingleSession* newSession = d->client->jingleSessionManager()->startNewSession(toJid, contents);
+	newSession->addContents(contents);
+	newSession->start();
+
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
 	connect(jabberSess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	connect(jabberSess, SIGNAL(stateChanged()), this, SLOT(slotStateChanged()));
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
 	d->sessions << jabberSess;
+	
 	if(d->gui)
 		d->gui->addSession(jabberSess);
+	
 	return true;
 }
 

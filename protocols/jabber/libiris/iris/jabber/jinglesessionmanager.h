@@ -48,7 +48,7 @@ namespace XMPP
 		 * Create a new jingle session to a Jid and with a list of contents,
 		 * starts it and returns it.
 		 */
-		XMPP::JingleSession *startNewSession(const Jid&, const QList<JingleContent*>&);
+		XMPP::JingleSession *startNewSession(const Jid&);
 		
 		/*
 		 * Set supported transports for jingle sessions.
@@ -92,7 +92,7 @@ namespace XMPP
 		 * It would be nice to be informed of the ports which are freed
 		 * when a session is terminated so we can reuse them.
 		 */
-		int nextRawUdpPort();
+		int nextUdpPort();
 		void setFirstPort(int);
 
 		//QString externalIP() const;

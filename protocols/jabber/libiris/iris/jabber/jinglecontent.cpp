@@ -55,7 +55,7 @@ public:
 	JingleSession *parent;
 };
 
-JingleContent::JingleContent(Mode mode, JingleSession *parent, Task* rootTask)
+JingleContent::JingleContent(Mode mode, JingleSession *parent)
 : d(new Private())
 {
 	if (mode == Initiator)
@@ -67,7 +67,7 @@ JingleContent::JingleContent(Mode mode, JingleSession *parent, Task* rootTask)
 
 	d->parent = parent;
 	d->mode = mode;
-	d->rootTask = rootTask;
+	d->rootTask = parent->rootTask();
 	d->sending = false;
 	d->receiving = false;
 }
@@ -593,11 +593,6 @@ QString JingleContent::transportNS(const QDomElement& c)
 	return ret;
 }
 
-void JingleContent::setSession(JingleSession *sess)
-{
-	d->parent = sess;
-}
-
 JingleSession *JingleContent::parentSession() const
 {
 	return d->parent;
@@ -641,12 +636,12 @@ JingleContent::Mode JingleContent::mode() const
 	return d->mode;
 }
 
-void JingleContent::writeDatagram(const QByteArray& ba)
+void JingleContent::writeDatagram(const QByteArray& ba, int)
 {
 	Q_UNUSED(ba)
 }
 
-QByteArray JingleContent::readAll()
+QByteArray JingleContent::readAll(int)
 {
 	return QByteArray();
 }

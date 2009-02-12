@@ -24,6 +24,7 @@
 
 #include "im.h"
 #include "jinglecontent.h"
+#include "ice176.h"
 
 class QHostAddress;
 class QDomElement;
@@ -42,7 +43,7 @@ namespace XMPP
 	{
 		Q_OBJECT
 	public:
-		JingleIceContent(Mode mode = Unknown, JingleSession *parent = 0, Task *rootTask = 0);
+		JingleIceContent(Mode mode, JingleSession *parent);
 		~JingleIceContent();
 		
 		/*
@@ -63,27 +64,42 @@ namespace XMPP
 		virtual QString transportNS() const;
 		
 		/*
-		 * Set the parent JingleSession for this content.
-		 * If you reimplement this class, you will have to call
-		 * JingleContent::setSession() in your reimplementation
-		 */
-		virtual void setSession(JingleSession *sess);
-
-		/*
 		 * This is called to write RTP data on the established stream.
 		 * TODO : what about RTCP ?
 		 */
-		virtual void writeDatagram(const QByteArray&);
+		virtual void writeDatagram(const QByteArray&, int channel = 0);
 
 		/* 
 		 * Get all data available on the socket.
 		 * Usually, this will be an RTP packet.
 		 */
-		virtual QByteArray readAll();
+		virtual QByteArray readAll(int channel = 0);
+
+		/*
+		 * Gets a list containing all local addresses.
+		 */
+		QList<Ice176::LocalAddress> getAddresses();
+
+	private slots:
+		void slotIceStarted();
+		void slotIceComponentReady(int);
+		void slotIceLocalCandidatesReady(const QList<XMPP::Ice176::Candidate>&);
 
 	private:
 		class Private;
 		Private *d;
+
+		/* 
+		 * Transforms a candidate xml element into a Ice176::Candidate.
+		 */
+		Ice176::Candidate xmlToCandidate(const QDomElement& c);
+
+		/*
+		 * Quite obvious.
+		 */
+		QDomElement candidateToXml(const Ice176::Candidate& candidate);
+
+		void sendCandidates(const QList<XMPP::Ice176::Candidate>& candidates);
 	};
 }
 

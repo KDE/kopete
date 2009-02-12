@@ -219,24 +219,14 @@ void JingleSessionManager::setSupportedProfiles(const QStringList& profiles)
 	d->supportedProfiles = profiles;
 }
 
-JingleSession *JingleSessionManager::startNewSession(const Jid& toJid, const QList<JingleContent*>& contents)
+JingleSession *JingleSessionManager::startNewSession(const Jid& toJid)
 {
 	XMPP::JingleSession *session = new XMPP::JingleSession(d->client->rootTask(), toJid.full());
 
 	session->setInitiator(d->client->jid().full());
-	for (int i = 0; i < contents.count(); i++)
-	{
-		contents[i]->setRootTask(d->client->rootTask());
-		contents[i]->setSession(session);
-		//FIXME:those 2 could be merged...
-	}
-	session->addContents(contents);
 	d->sessions << session;
 	
 	connect(session, SIGNAL(terminated()), this, SLOT(slotRemoveSession()));
-	//connect(others);
-	
-	session->start();
 	
 	return session;
 }
@@ -297,7 +287,7 @@ JingleSession *JingleSessionManager::session(const QString& sid)
 	return sess;
 }
 
-int JingleSessionManager::nextRawUdpPort()
+int JingleSessionManager::nextUdpPort()
 {
 	int lastUsed;
 	if (d->usedPorts.count() == 0)
@@ -305,7 +295,7 @@ int JingleSessionManager::nextRawUdpPort()
 	else
 		lastUsed = d->usedPorts.last();
 	d->usedPorts << lastUsed + 1 << lastUsed + 2;
-	qDebug() << "JingleSessionManager::nextRawUdpPort() returns" << (lastUsed + 1);
+	qDebug() << "JingleSessionManager::nextUdpPort() returns" << (lastUsed + 1);
 	return (lastUsed + 1);
 }
 

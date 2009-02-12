@@ -160,6 +160,8 @@ void SpeexIO::encode(const QByteArray& rawData)
 	
 	int nbBytes = speex_bits_write(&d->encBits, (char*) d->speexData.data(), maxSize);
 
+	d->speexData.resize(nbBytes);
+
 	emit encoded();
 }
 

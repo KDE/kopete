@@ -62,7 +62,7 @@ void JingleContentDialog::setContents(QList<JingleContent*> c)
 	{
 		QCheckBox *cb = new QCheckBox(typeToString(c[i]->type()), this);
 		cb->setChecked(true);
-		if (c[i]->type() == JingleContent::Unknown)
+		if (c[i]->type() == JingleContent::NoType)
 		{
 			cb->setChecked(false);
 			cb->setEnabled(false);

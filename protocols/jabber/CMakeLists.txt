@@ -10,6 +10,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/ui/
 ${CMAKE_CURRENT_SOURCE_DIR}/tasks/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/include/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/jabber/ 
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/jabber/noncore/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-core/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-im/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/util/ 

@@ -39,8 +39,8 @@ public:
 	QUdpSocket *outSocket;
 };
 
-JingleRawContent::JingleRawContent(Mode mode, JingleSession *parent, Task *rootTask)
-: JingleContent(mode, parent, rootTask), d(new Private)
+JingleRawContent::JingleRawContent(Mode mode, JingleSession *parent)
+: JingleContent(mode, parent), d(new Private)
 {
 	qDebug() << "Creating JingleRawContent";
 	if (mode == Initiator && parent != 0)
@@ -55,6 +55,8 @@ JingleRawContent::JingleRawContent(Mode mode, JingleSession *parent, Task *rootT
 	transport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_RAW);
 	setTransport(transport);
 
+	//emit started();
+
 	d->inSocket = 0L;
 	d->outSocket = 0L;
 }
@@ -62,14 +64,6 @@ JingleRawContent::JingleRawContent(Mode mode, JingleSession *parent, Task *rootT
 JingleRawContent::~JingleRawContent()
 {
 	delete d;
-}
-
-void JingleRawContent::setSession(JingleSession *sess)
-{
-	JingleContent::setSession(sess);
-
-	if (mode() == Initiator)
-		findCandidate();
 }
 
 void JingleRawContent::addCandidate(const QDomElement& c)
@@ -182,7 +176,7 @@ QDomElement JingleRawContent::findCandidate()
 	}
 	ip = ips[0].toString();
 	candidate.setAttribute("ip", ip); // ips[0] is not 127.0.0.1 if there is other adresses.
-	int port = rootTask()->client()->jingleSessionManager()->nextRawUdpPort();
+	int port = rootTask()->client()->jingleSessionManager()->nextUdpPort();
 	candidate.setAttribute("port", QString("%1").arg(port));
 	candidate.setAttribute("generation", QString("%1").arg(localCandidates().count()));
 	
@@ -214,12 +208,12 @@ QString JingleRawContent::transportNS() const
 	return NS_JINGLE_TRANSPORTS_RAW;
 }
 
-void JingleRawContent::writeDatagram(const QByteArray& ba)
+void JingleRawContent::writeDatagram(const QByteArray& ba, int channel)
 {
 	d->outSocket->write(ba);
 }
 
-QByteArray JingleRawContent::readAll()
+QByteArray JingleRawContent::readAll(int channel)
 {
 	//qDebug() << "JingleRawContent::readAll()";
 	QByteArray ret;
