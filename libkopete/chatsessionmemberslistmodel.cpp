@@ -94,7 +94,7 @@ QVariant ChatSessionMembersListModel::data(const QModelIndex &index, int role) c
 	}
 	else if (role == Qt::DecorationRole)
 	{
-		return c->onlineStatus().iconFor(c);
+		return m_session->contactOnlineStatus(c).iconFor(c);
 	}
 	else if (role == Qt::ToolTipRole)
 	{
@@ -156,4 +156,3 @@ void ChatSessionMembersListModel::slotSessionClosed()
 }
 
 }
-
