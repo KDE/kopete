@@ -396,7 +396,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			if (message.format() ==  Qt::RichText)
 			{
 				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
-				if( bestResource && bestResource->features().canXHTML() )
+				if( bestResource && bestResource->features().test(
+						QStringList("http://jabber.org/protocol/xhtml-im")) )
 				{
 					QString xhtmlBody = message.escapedBody();
 

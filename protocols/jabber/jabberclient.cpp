@@ -778,6 +778,9 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 
 	d->jabberClient->setTimeZone ( timeZoneName (), timeZoneOffset () );
 
+	// Additional features
+	d->jabberClient->setFeatures(Features("http://jabber.org/protocol/xhtml-im"));
+
 	d->jabberClient->connectToServer ( d->jabberClientStream, jid, auth );
 
 	return Ok;
