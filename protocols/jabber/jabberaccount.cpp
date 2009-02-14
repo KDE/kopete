@@ -63,7 +63,6 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaddedinfoevent.h"
 
-#include "jabberconnector.h"
 #include "jabberclient.h"
 #include "jabberprotocol.h"
 #include "jabberresourcepool.h"
@@ -349,14 +348,15 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		m_jabberClient->disconnect ();
 	}
 
-	// we need to use the old protocol for now
-	m_jabberClient->setUseXMPP09 ( true );
+	if (configGroup()->readEntry("CustomServer",false))
+	{
+		m_jabberClient->setUseXMPP09 ( configGroup()->readEntry("CustomServer",false) );
+		// override server and port (this should be dropped when using the new protocol and no direct SSL)
+		m_jabberClient->setOverrideHost ( true, server (), port () );
+	}
 
 	// set SSL flag (this should be converted to forceTLS when using the new protocol)
 	m_jabberClient->setUseSSL ( configGroup()->readEntry ( "UseSSL", false ) );
-
-	// override server and port (this should be dropped when using the new protocol and no direct SSL)
-	m_jabberClient->setOverrideHost ( true, server (), port () );
 
 	// allow plaintext password authentication or not?
 	m_jabberClient->setAllowPlainTextPassword ( configGroup()->readEntry ( "AllowPlainTextPassword", false ) );
@@ -659,9 +659,9 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	{
 			xmppStatus.setIsAvailable( false );
 			kDebug (JABBER_DEBUG_GLOBAL) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
-			disconnect (Manual, xmppStatus);
-            return;
-    }
+			disconnect (Manual, xmppStatus);	
+			return;
+    	}
 
 	if( isConnecting () )
 	{

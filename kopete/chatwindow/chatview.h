@@ -1,6 +1,7 @@
 /*
     chatview.h - Chat View
 
+    Copyright (c) 2008      by Benson Tsai           <btsai@vrwarp.com>
     Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>

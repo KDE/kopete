@@ -429,7 +429,7 @@ public:
 	 * the current quick search
 	 * @param match If true, show or hide the item as normal. If false, hide the item immediately.
 	 */
-	virtual void setSearchMatch( bool match );
+	virtual void setSearchMatch( bool match, bool searching );
 
 protected:
 	void componentAdded( Component *component );

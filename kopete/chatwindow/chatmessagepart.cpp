@@ -449,9 +449,13 @@ void ChatMessagePart::slotAppearanceChanged()
 
 void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 {
-	message.setBackgroundOverride( d->bgOverride );
-	message.setForegroundOverride( d->fgOverride );
-	message.setRichTextOverride( d->rtfOverride );
+	// Don't remove foreground color for history messages.
+	if ( !message.classes().contains("history") )
+	{
+		message.setBackgroundOverride( d->bgOverride );
+		message.setForegroundOverride( d->fgOverride );
+		message.setRichTextOverride( d->rtfOverride );
+	}
 
 #ifdef STYLE_TIMETEST
 	QTime beforeMessage = QTime::currentTime();
@@ -1195,7 +1199,7 @@ QString ChatMessagePart::formatName( const Kopete::Contact* contact, Qt::TextFor
 		return QString();
 	}
 
-	// Use metacontact display name if the metacontact exists and if its not the myself metacontact.
+	// Use metacontact display name if the metacontact exists and if it is not the myself metacontact.
 	// Myself metacontact is not a reliable source.
 	if ( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 	{

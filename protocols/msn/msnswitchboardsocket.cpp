@@ -279,7 +279,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QByteArray &bytes )
 		// Some MSN Clients (like CCMSN) don't like to stick to the rules.
 		// In case of CCMSN, it doesn't send what the content type is when
 		// sending a text message. So if it's not supplied, we'll just
-		// assume its that.
+		// assume it is that.
 
 		QColor fontColor;
 		QFont font;

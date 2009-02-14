@@ -264,7 +264,8 @@ void ICQContact::loggedIn()
 void ICQContact::slotRequestAuth()
 {
 	QString reason = KInputDialog::getText( i18n("Request Authorization"),
-	                                        i18n("Reason for requesting authorization:") );
+	                                        i18n("Reason for requesting authorization:"),
+	                                        i18n("Please authorize me so I can add you to my contact list") );
 	if ( !reason.isNull() )
 		mAccount->engine()->requestAuth( contactId(), reason );
 }

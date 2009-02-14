@@ -37,7 +37,7 @@ namespace XMPP
 	class JingleSession;
 	class JingleContent;
 	//class JingleReason;
-	class IRIS_EXPORT JingleSessionManager : public QObject
+	class /*IRIS_EXPORT*/ JingleSessionManager : public QObject
 	{
 		Q_OBJECT
 	public:

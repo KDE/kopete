@@ -37,7 +37,7 @@ namespace XMPP
 	/*
 	 * This class is a Task that received all jingle actions and give them to the JingleSessionManager
 	 */
-	class IRIS_EXPORT JT_PushJingleAction : public Task
+	class /*IRIS_EXPORT*/ JT_PushJingleAction : public Task
 	{
 		Q_OBJECT
 	public:
@@ -125,7 +125,7 @@ namespace XMPP
 	 * possible jingle action to a contact, asked by a
 	 * JingleAction.
 	 */
-	class IRIS_EXPORT JT_JingleAction : public Task
+	class /*IRIS_EXPORT*/ JT_JingleAction : public Task
 	{
 		Q_OBJECT
 	public:

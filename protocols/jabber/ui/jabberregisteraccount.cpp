@@ -43,7 +43,6 @@
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
-#include "jabberconnector.h"
 #include "jabbereditaccountwidget.h"
 #include "jabberchooseserver.h"
 #include "ui_dlgjabberregisteraccount.h"

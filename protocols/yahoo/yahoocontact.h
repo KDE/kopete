@@ -85,7 +85,7 @@ public slots:
 	void requestWebcam();
 	void inviteWebcam();
 	void buzzContact();
-	void setDisplayPicture(KTemporaryFile *f, int checksum);
+	void setDisplayPicture(const QByteArray &data, int checksum);
 	void setYABEntry( YABEntry *, bool show = false );
 
 	/**

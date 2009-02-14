@@ -40,7 +40,7 @@ namespace XMPP
 	//	Informations like are we the initiator or the responder could be easily retrieved.
 	class Task;
 	class JingleSession;
-	class IRIS_EXPORT JingleContent : public QObject
+	class /*IRIS_EXPORT*/ JingleContent : public QObject
 	{
 		Q_OBJECT
 	public:

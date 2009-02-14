@@ -37,7 +37,7 @@ namespace XMPP
 	 * TODO:use multiple candidates to establish multiple streams (RTP + RTCP).
 	 */
 	class JingleSession;
-	class IRIS_EXPORT JingleRawContent : public JingleContent
+	class /*IRIS_EXPORT*/ JingleRawContent : public JingleContent
 	{
 		Q_OBJECT
 	public:

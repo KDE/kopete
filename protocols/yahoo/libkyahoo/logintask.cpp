@@ -66,6 +66,12 @@ bool LoginTask::take(Transfer* transfer)
 
 	YMSGTransfer *t = static_cast<YMSGTransfer *>(transfer);
 
+
+	if ( t->service() == Yahoo::ServicePing) {
+		emit buddyListReady();
+		return true;
+	}
+
 	switch (mState)
 	{
 		case (InitialState):
@@ -98,6 +104,9 @@ bool LoginTask::forMe(const Transfer* transfer) const
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
+
+	if ( t->service() == Yahoo::ServicePing)
+		return true;
 
 	switch (mState)
 	{

@@ -486,6 +486,18 @@ Q_OBJECT
 		 */
 		void gotBuddy( const QString &, const QString &, const QString & );
 		/**
+		 * Notifies about adding buddies
+		 */
+		void buddyAddResult( const QString &, const QString &, bool );
+		/**
+		 * Notifies about removing buddies
+		 */
+		void buddyRemoveResult( const QString &, const QString &, bool );
+		/**
+		 * Notifies about buddies changing groups
+		 */
+		void buddyChangeGroupResult( const QString &, const QString &, bool );
+		/**
 		 * Notifies about the status of online buddies
 		 */
 		void statusChanged( const QString&, int, const QString&, int, int, int );
@@ -532,7 +544,7 @@ Q_OBJECT
 		/**
 		 * The iconLoader has successfully downloaded a picutre
 		 */
-		void pictureDownloaded( const QString &, KTemporaryFile *, int );
+		void pictureDownloaded( const QString &, const QByteArray &, int );
 		/**
 		 * A Buddy asks for our picture
 		 */
@@ -693,6 +705,12 @@ Q_OBJECT
 		 * Send a Yahoo Ping packet to the server
 		 */
 		void sendPing();
+
+		/**
+		 * Send all queued buddy icon requests
+		 */
+		void processPictureQueue();
+
 	private:
 		void distribute( Transfer *transfer );
 		

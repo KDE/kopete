@@ -44,7 +44,7 @@ namespace XMPP
 	 * This class defines a jingle reason used when sending
 	 * a session-terminate jingle action.
 	 */
-	class IRIS_EXPORT JingleReason
+	class /*IRIS_EXPORT*/ JingleReason
 	{
 	public:
 		/*
@@ -79,7 +79,7 @@ namespace XMPP
 	class JT_JingleAction;
 	class JT_PushJingleSession;
 
-	class IRIS_EXPORT JingleSession : public QObject
+	class /*IRIS_EXPORT*/ JingleSession : public QObject
 	{
 		Q_OBJECT
 	public:

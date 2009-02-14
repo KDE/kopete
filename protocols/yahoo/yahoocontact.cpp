@@ -570,19 +570,17 @@ void YahooContact::buzzContact()
 	}
 }
 
-void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
+void YahooContact::setDisplayPicture(const QByteArray &data, int checksum)
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
-	if( !f )
-		return;
-	// stolen from msncontact.cpp ;)
+	kDebug(YAHOO_GEN_DEBUG) << data.size();
+
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
 
 	Kopete::AvatarManager::AvatarEntry entry;
 	entry.name = contactId();
 	entry.category = Kopete::AvatarManager::Contact;
 	entry.contact = this;
-	entry.image = QImage(f->fileName());
+	entry.image = QImage::fromData(data);
 	entry = Kopete::AvatarManager::self()->add(entry);
 
 	if (!entry.path.isNull())
@@ -591,9 +589,6 @@ void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
 		setProperty( Kopete::Global::Properties::self()->photo() , entry.path );
 		emit displayPictureChanged();
 	}
-
-	f->setAutoRemove(true);
-	delete f;
 }
 
 

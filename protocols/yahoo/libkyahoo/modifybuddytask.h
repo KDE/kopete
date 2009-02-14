@@ -26,6 +26,7 @@ class QString;
 */
 class ModifyBuddyTask : public Task
 {
+Q_OBJECT
 public:
 	enum Type { AddBuddy, RemoveBuddy, MoveBuddy };
 	ModifyBuddyTask(Task *parent);
@@ -33,11 +34,22 @@ public:
 	
 	virtual void onGo();
 	
+	bool take(Transfer *transfer);
+
 	void setType( Type type );
 	void setMessage( const QString &text );
 	void setTarget( const QString &target );
 	void setGroup( const QString &group );
 	void setOldGroup( const QString &group );
+
+signals:
+	void buddyAddResult( const QString &, const QString &, bool );
+	void buddyRemoveResult( const QString &, const QString &, bool );
+	void buddyChangeGroupResult( const QString &, const QString &, bool );
+
+protected:
+	virtual bool forMe( const Transfer *transfer ) const;
+
 private:
 	void addBuddy();
 	void removeBuddy();

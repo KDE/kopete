@@ -1,6 +1,7 @@
 /*
     chattexteditpart.cpp - Chat Text Edit Part
 
+    Copyright (c) 2008      by Benson Tsai           <btsai@vrwarp.com>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -22,21 +23,64 @@
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 #include "kopeteglobal.h"
-#include <kopeteappearancesettings.h>
+#include "kopeteappearancesettings.h"
+#include "kopetechatwindowsettings.h"
 
+#include <kaction.h>
+#include <kactioncollection.h>
+#include <kcolordialog.h>
+#include <kconfig.h>
 #include <kcompletion.h>
 #include <kdebug.h>
-#include <ktextedit.h>
+#include <kfontaction.h>
+#include <kfontdialog.h>
+#include <kfontsizeaction.h>
+#include <kglobalsettings.h>
+#include <kcolorscheme.h>
+#include <kicon.h>
+#include <kparts/genericfactory.h>
+#include <kstandardaction.h>
+#include <ktoggleaction.h>
+#include <kxmlguifactory.h>
 
+
+// Qt includes
 #include <QtCore/QTimer>
 #include <QtCore/QRegExp>
+#include <QtCore/QEvent>
+#include <QKeyEvent>
+#include <QtGui/QTextCursor>
+#include <QtGui/QTextCharFormat>
 
-ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent )
-	: KRichTextEditPart(parent, 0, QStringList()), m_session(session)
+
+typedef KParts::GenericFactory<ChatTextEditPart> ChatTextEditPartFactory;
+K_EXPORT_COMPONENT_FACTORY( librichtexteditpart, ChatTextEditPartFactory )
+
+ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent)
+	: KParts::ReadOnlyPart( parent ), m_session(session)
 {
-	// Set rich support in the part
-	setProtocolRichTextSupport();
+	init(session, parent);
+}
 
+ChatTextEditPart::ChatTextEditPart(QWidget *parent, QObject*, const QStringList&)
+	: KParts::ReadOnlyPart( parent ), m_session()
+{
+	init(m_session, parent);
+}
+
+void ChatTextEditPart::init( Kopete::ChatSession *session, QWidget *parent)
+{
+	// we need an instance
+	setComponentData( ChatTextEditPartFactory::componentData() );
+	
+	editor = new KopeteRichTextWidget(parent, m_session->protocol()->capabilities());
+	setWidget( editor );
+	
+	editor->createActions(actionCollection());
+	
+	// TODO: Rename rc file
+	setXMLFile( "kopeterichtexteditpart/kopeterichtexteditpartfull.rc" );
+	
 	historyPos = -1;
 
 	mComplete = new KCompletion();
@@ -74,6 +118,8 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	connect( KGlobalSettings::self(), SIGNAL( kdisplayFontChanged() ),
 	         this, SLOT( slotAppearanceChanged() ) );
 
+	connect( editor, SIGNAL( richTextSupportChanged() ), this, SLOT ( slotRichTextSupportChanged() ) );
+
 	slotAppearanceChanged();
 
 	slotContactAdded( session->myself() );
@@ -95,7 +141,7 @@ void ChatTextEditPart::complete()
 	QString txt = block.text();
 	const int blockLength = block.length() - 1; // block.length includes the '\n'
 	const int blockPosition = block.position();
-    int cursorPos = textCursor.position() - blockPosition;
+	int cursorPos = textCursor.position() - blockPosition;
 
 	// TODO replace with textCursor.movePosition(QTextCursor::PreviousWord)?
 	const int startPos = txt.lastIndexOf( QRegExp( QLatin1String("\\s\\S+") ), cursorPos - 1 ) + 1;
@@ -253,9 +299,10 @@ void ChatTextEditPart::sendMessage()
 	slotStoppedTypingTimer();
 	Kopete::Message sentMessage = contents();
 	emit messageSent( sentMessage );
-	historyList.prepend( this->text( Qt::PlainText) );
+	historyList.prepend( this->text( Qt::AutoText) );
 	historyPos = -1;
-	clear();
+	textEdit()->moveCursor(QTextCursor::End);
+	textEdit()->clear();
 	emit canSendChanged( false );
 }
 
@@ -300,6 +347,7 @@ void ChatTextEditPart::historyUp()
 	// got text? save it
 	if ( !empty )
 	{
+		text = this->text(Qt::AutoText);
 		if ( historyPos == -1 )
 		{
 			historyList.prepend( text );
@@ -314,10 +362,7 @@ void ChatTextEditPart::historyUp()
 	historyPos++;
 
 	QString newText = historyList[historyPos];
-// 	TextFormat format=textEdit()->textFormat();
-// 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
-	textEdit()->setText( newText );
-// 	textEdit()->setTextFormat(format);
+	textEdit()->setTextOrHtml( newText );
 	textEdit()->moveCursor( QTextCursor::End );
 }
 
@@ -332,6 +377,7 @@ void ChatTextEditPart::historyDown()
 	// got text? save it
 	if ( !empty )
 	{
+		text = this->text(Qt::AutoText);
 		historyList[historyPos] = text;
 	}
 
@@ -340,10 +386,7 @@ void ChatTextEditPart::historyDown()
 	QString newText = ( historyPos >= 0 ? historyList[historyPos] : QString() );
 
 
-// 	TextFormat format=textEdit()->textFormat();
-// 	textEdit()->setTextFormat(AutoText); //workaround bug 115690
-	textEdit()->setText( newText );
-// 	textEdit()->setTextFormat(format);
+	textEdit()->setTextOrHtml( newText );
 	textEdit()->moveCursor( QTextCursor::End );
 }
 
@@ -361,7 +404,7 @@ void ChatTextEditPart::addText( const QString &text )
 
 void ChatTextEditPart::setContents( const Kopete::Message &message )
 {
-	if ( useRichText() )
+	if ( isRichTextEnabled() )
 		textEdit()->setHtml ( message.escapedBody() );
 	else
 		textEdit()->setPlainText ( message.plainBody() );
@@ -376,11 +419,33 @@ Kopete::Message ChatTextEditPart::contents()
 {
 	Kopete::Message currentMsg( m_session->myself(), m_session->members() );
 	currentMsg.setDirection( Kopete::Message::Outbound );
-	useRichText() ? currentMsg.setHtmlBody( text() ) : currentMsg.setPlainBody( text() );
 
-// 	currentMsg.setBackgroundColor( bgColor() );
-	currentMsg.setForegroundColor( textColor() );
-	currentMsg.setFont( font() );
+	if (isRichTextEnabled())
+	{
+		currentMsg.setHtmlBody(text());
+	
+		Kopete::Protocol::Capabilities protocolCaps = m_session->protocol()->capabilities();
+	
+		// I hate base *only* support, *waves fist at MSN*
+		if (protocolCaps & Kopete::Protocol::BaseFormatting)
+		{
+			currentMsg.setFont(textEdit()->currentCharFormat().font());
+		}
+	
+		if (protocolCaps & Kopete::Protocol::BaseFgColor)
+		{
+			currentMsg.setForegroundColor(textEdit()->currentCharFormat().foreground().color());
+		}
+	
+		if (protocolCaps & Kopete::Protocol::BaseBgColor)
+		{
+			currentMsg.setBackgroundColor(textEdit()->currentCharFormat().background().color());
+		}
+	}
+	else
+	{
+		currentMsg.setPlainBody(text());
+	}
 
 	return currentMsg;
 }
@@ -401,48 +466,135 @@ void ChatTextEditPart::slotAppearanceChanged()
 {
 	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 
-	setDefualtTextColor( settings->chatTextColor() );
-	setDefualtFont( ( settings->chatFontSelection() == 1 ) ? settings->chatFont() : KGlobalSettings::generalFont() );
+	QFont font = ( settings->chatFontSelection() == 1 ) ? settings->chatFont() : KGlobalSettings::generalFont();
+	QTextCharFormat format;
+	format.setFont(font);
+	format.setBackground(settings->chatBackgroundColor());
+	format.setForeground(settings->chatTextColor());
+
+	editor->setDefaultCharFormat(format);
 }
 
-void ChatTextEditPart::setProtocolRichTextSupport()
+void ChatTextEditPart::slotRichTextSupportChanged()
 {
-	KRichTextEditPart::RichTextSupport richText;
-	Kopete::Protocol::Capabilities protocolCaps = m_session->protocol()->capabilities();
+	editor->createActions(actionCollection());
 
-	// Check for bold
-	if( (protocolCaps & Kopete::Protocol::BaseBFormatting) || (protocolCaps & Kopete::Protocol::RichBFormatting) )
+	KXMLGUIFactory * f = factory();
+	if (f)
 	{
-		richText |= KRichTextEditPart::SupportBold;
+		f->removeClient(this);
+		f->addClient(this);
 	}
-	// Check for italic
-	if( (protocolCaps & Kopete::Protocol::BaseIFormatting) || (protocolCaps & Kopete::Protocol::RichIFormatting) )
-	{
-		richText |= KRichTextEditPart::SupportItalic;
-	}
-	// Check for underline
-	if( (protocolCaps & Kopete::Protocol::BaseUFormatting) || (protocolCaps & Kopete::Protocol::RichUFormatting) )
-	{
-		richText |= KRichTextEditPart::SupportUnderline;
-	}
-	// Check for font support
-	if( (protocolCaps & Kopete::Protocol::BaseFont) || (protocolCaps & Kopete::Protocol::RichFont) )
-	{
-		richText |= KRichTextEditPart::SupportFont;
-	}
-	// Check for text color support
-	if( (protocolCaps & Kopete::Protocol::BaseFgColor) || (protocolCaps & Kopete::Protocol::RichFgColor) )
-	{
-		richText |= KRichTextEditPart::SupportTextColor;
-	}
-	// Check for alignment
-	if( protocolCaps & Kopete::Protocol::Alignment )
-	{
-		richText |= KRichTextEditPart::SupportAlignment;
-	}
+}
 
-	// Set rich text support in KRichTextEditPart
-	setRichTextSupport( richText );
+KopeteRichTextWidget *ChatTextEditPart::textEdit()
+{
+    return editor;
+}
+
+void ChatTextEditPart::setCheckSpellingEnabled( bool enabled )
+{
+    editor->setCheckSpellingEnabled( enabled );
+}
+
+bool ChatTextEditPart::checkSpellingEnabled() const
+{
+    return editor->checkSpellingEnabled();
+}
+
+void ChatTextEditPart::checkToolbarEnabled()
+{
+	emit toolbarToggled( isRichTextEnabled() );
+}
+
+KAboutData *ChatTextEditPart::createAboutData()
+{
+    KAboutData *aboutData = new KAboutData("krichtexteditpart", 0, ki18n("ChatTextEditPart"), "0.1",
+                        ki18n("A simple rich text editor part"),
+                        KAboutData::License_LGPL );
+    aboutData->addAuthor(ki18n("Richard J. Moore"), KLocalizedString(), "rich@kde.org", "http://xmelegance.org/" );
+    aboutData->addAuthor(ki18n("Jason Keirstead"), KLocalizedString(), "jason@keirstead.org", "http://www.keirstead.org/" );
+    aboutData->addAuthor(ki18n("Michaël Larouche"), KLocalizedString(), "larouche@kde.org" "http://www.tehbisnatch.org/" );
+    aboutData->addAuthor(ki18n("Benson Tsai"), KLocalizedString(), "btsai@vrwarp.com" "http://www.vrwarp.com/" );
+
+    return aboutData;
+}
+
+void ChatTextEditPart::readConfig( KConfigGroup& config )
+{
+    kDebug() << "Loading config";
+
+    QTextCharFormat format = editor->defaultFormat();
+
+    QFont font = config.readEntry( "TextFont", format.font() );
+    QColor fg = config.readEntry( "TextFgColor", format.foreground().color() );
+    QColor bg = config.readEntry( "TextBgColor", format.background().color() );
+
+    QTextCharFormat desiredFormat = editor->currentCharFormat();
+    desiredFormat.setFont(font);
+    desiredFormat.setForeground(fg);
+    desiredFormat.setBackground(bg);
+    editor->setCurrentCharFormat(desiredFormat);
+
+    textEdit()->setAlignment(static_cast<Qt::AlignmentFlag>(config.readEntry( "EditAlignment", int(Qt::AlignLeft) )));
+}
+
+void ChatTextEditPart::writeConfig( KConfigGroup& config )
+{
+    kDebug() << "Saving config";
+
+    config.writeEntry( "TextFont", editor->currentCharFormat().font() );
+    config.writeEntry( "TextFgColor", editor->currentCharFormat().foreground().color() );
+    config.writeEntry( "TextBgColor", editor->currentCharFormat().background().color() );
+    config.writeEntry( "EditAlignment", int(editor->alignment()) );
+}
+
+void ChatTextEditPart::resetConfig( KConfigGroup& config )
+{
+    kDebug() << "Setting default font style";
+
+    editor->slotResetFontAndColor();
+
+    //action_align_left->trigger();
+
+    config.deleteEntry( "TextFont" );
+    config.deleteEntry( "TextFg" );
+    config.deleteEntry( "TextBg" );
+    config.deleteEntry( "EditAlignment" );
+}
+
+QString ChatTextEditPart::text( Qt::TextFormat format ) const
+{
+    if( (format == Qt::RichText || format == Qt::AutoText) && isRichTextEnabled() )
+        return editor->toHtml();
+    else
+        return editor->toPlainText();
+}
+
+bool ChatTextEditPart::isRichTextEnabled() const
+{
+	return editor->isRichTextEnabled();
+}
+
+void ChatTextEditPart::setTextColor()
+{
+    QColor currentTextColor = editor->currentCharFormat().foreground().color();
+    QColor foregroundColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color();
+
+    int result = KColorDialog::getColor( currentTextColor, foregroundColor);
+    if(!currentTextColor.isValid())
+        currentTextColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() ;
+    if ( result != QDialog::Accepted  )
+        return;
+
+    textEdit()->setTextColor( currentTextColor );
+}
+
+void ChatTextEditPart::setFont()
+{
+    QFont currentFont = editor->currentCharFormat().font();
+    KFontDialog::getFont( currentFont, false, editor );
+    textEdit()->setFont( currentFont );
 }
 
 #include "chattexteditpart.moc"

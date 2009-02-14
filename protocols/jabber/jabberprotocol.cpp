@@ -496,8 +496,8 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			//      iris doesn't implement groupchat yet
 			//NOTE: This code is duplicated in JabberGroupChatManager::inviteContact
 			XMPP::Message jabberMessage;
-			XMPP::Jid jid = static_cast<const JabberBaseContact*>(account->myself())->rosterItem().jid() ;
-			jabberMessage.setFrom ( jid );
+			//XMPP::Jid jid = static_cast<const JabberBaseContact*>(account->myself())->rosterItem().jid() ;
+			//jabberMessage.setFrom ( jid );
 			jabberMessage.setTo ( url.queryItemValue("jid") );
 			jabberMessage.setInvite( jid.bare() );
 			jabberMessage.setBody( i18n("You have been invited to %1", jid.bare() ) );

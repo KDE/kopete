@@ -1,73 +1,106 @@
-project(kopete)
-KDE4_NO_ENABLE_FINAL(kopete)
+project(kdenetwork)
 
-FIND_PACKAGE(Blitz REQUIRED)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
 
-# Configure checks
-include (TestBigEndian)
-TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
-check_type_size("long" SIZEOF_LONG)
-check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
+# search packages used by KDE
+find_package(KDE4 REQUIRED)
+include (KDE4Defaults)
+include (MacroLibrary)
 
-macro_optional_find_package(Xmms)
-macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
-macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System development libraries" "http://www.xmms.org" FALSE "" "Used by the Kopete nowlistening plugin to support the XMMS player.")
+include(CheckIncludeFile)
+include(CheckIncludeFiles)
+include(CheckSymbolExists)
+include(CheckFunctionExists)
+include(CheckLibraryExists)
+include(CheckPrototypeExists)
+include(CheckTypeSize)
+include(MacroBoolTo01)
+include(MacroOptionalAddSubdirectory)
 
-if(XMMS_FOUND)
-  # GLIB2_INCLUDE_DIR needed for Xmms
-  macro_optional_find_package(GLIB2)
-endif(XMMS_FOUND)
+# If definitions like -D_GNU_SOURCE are needed for these checks they
+# should be added to _KDE4_PLATFORM_DEFINITIONS when it is originally
+# defined outside this file.  Here we include these definitions in
+# CMAKE_REQUIRED_DEFINITIONS so they will be included in the build of
+# checks below.
+set(CMAKE_REQUIRED_DEFINITIONS ${_KDE4_PLATFORM_DEFINITIONS})
+if (WIN32)
+   set(CMAKE_REQUIRED_LIBRARIES ${KDEWIN32_LIBRARIES} )
+   set(CMAKE_REQUIRED_INCLUDES  ${KDEWIN32_INCLUDES} )
+endif (WIN32)
 
-macro_optional_find_package(LibXml2)
-macro_log_feature(LIBXML2_FOUND "LibXML2" "Libraries used to develop XML applications" "http://xmlsoft.org" FALSE "" "Required for the Kopete webpresence plugin.")
+find_package(KdepimLibs REQUIRED)
+# find_package(X11VidMode) not used at this time
+find_package(LiboRTP)
+find_package(Alsa)
+find_package(Speex)
+find_package(QCA2)
+find_package(JPEG)
+find_package(X11VidMode)
+find_package(Decibel)
+find_package(IDN)
+find_package(LibVNCServer)
 
-macro_optional_find_package(LibXslt)
-macro_bool_to_01(LIBXSLT_FOUND HAVE_XSLT)
-macro_log_feature(LIBXSLT_FOUND "LibXSLT" "A library to transform XML files into other XML files" "http://xmlsoft.org/XSLT" FALSE "" "Required for the Kopete webpresence plugin.")
+macro_optional_find_package(LibVNCServer)
+macro_log_feature(LIBVNCSERVER_FOUND "libvncserver" "VNC Server library" "http://libvncserver.sourceforge.net/" FALSE "0.9" "Needed to build Krfb and VNC support in Krdc")
 
-macro_optional_find_package(LibOTR)
-macro_bool_to_01(LIBOTR_FOUND HAVE_LIBOTR)
-macro_log_feature(LIBOTR_FOUND "libotr" "A library to encrypt messages with Off-the-Record encryption" "http://www.cypherpunks.ca/otr" FALSE "3.2.0" "Required for the Kopete otr plugin.")
+# NX support is not ready for KDE 4.2; disabled (uwolfer)
+# macro_optional_find_package(LibNXCL)
+# macro_log_feature(LIBNXCL_FOUND "libnxcl" "NX X compression client library" "http://svn.berlios.de/svnroot/repos/freenx/trunk/freenx-client/nxcl/" FALSE "1.0" "Needed to build Krdc with NX support")
 
-macro_optional_find_package(Libmsn)
-macro_bool_to_01(LIBMSN_FOUND HAVE_LIBMSN)
-macro_log_feature(LIBMSN_FOUND "libmsn" "A library providing support for the msn protocol" "http://sourceforge.net/projects/libmsn" FALSE "0.4.0" "Required for the Kopete wlm plugin")
+macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support in Kopete.")
 
-macro_optional_find_package(LibMeanwhile)
-macro_bool_to_01(LIBMEANWHILE_FOUND HAVE_LIBMEANWHILE)
-macro_log_feature(LIBMEANWHILE_FOUND "libmeanwhile" "A library for protocol support for connection to Sametime servers" "http://meanwhile.sf.net" FALSE "" "Required for the Kopete Meanwhile protocol")
+macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support in Kopete.")
 
-macro_optional_find_package(Libgadu)
-macro_bool_to_01(LIBGADU_FOUND HAVE_LIBGADU)
-macro_log_feature(LIBGADU_FOUND "libgadu" "A library providing support for Gadu-Gadu protocol" "http://toxygen.net/libgadu/" FALSE "1.8.0" "Required for Kopete Gadu-Gadu protocol")
+macro_optional_find_package(JPEG)
+macro_log_feature(JPEG_FOUND "libjpeg" "Development library for JPEG formatted image files" "http://www.ijg.org/" FALSE "" "Provides JPEG images in Krdc.")
 
-check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
-check_include_files(stdint.h HAVE_STDINT_H)
-check_include_files(inttypes.h HAVE_INTTYPES_H)
-macro_bool_to_01(X11_Xss_FOUND HAVE_XSCREENSAVER)
+macro_optional_find_package(QCA2)
+macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca" FALSE "2.0.0" "Needed to build Kopete's GroupWise and Jabber protocols.")
 
-# Generate config-kopete.h
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )
+macro_optional_find_package(Decibel)
+macro_log_feature(DECIBEL_FOUND "Decibel"  "KDE framework for real-time communication" "http://decibel.kde.org/" FALSE "" "Used by the Kopete telepathy protocol.")
 
-# For config-kopete.h
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+macro_optional_find_package(IDN)
+macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implemenation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
 
-set(KOPETE_INCLUDES 
-	${KDE4_INCLUDES}
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/
-	${CMAKE_BINARY_DIR}/kopete/libkopete/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/
-	${CMAKE_BINARY_DIR}/kopete/libkopete/ui/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/private/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/contactlist/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/tasks/
-)
+macro_optional_find_package(Soprano)
+macro_log_feature(Soprano_FOUND "Soprano" "Semantic Desktop Storing" "" FALSE "" "Soprano is needed for Nepomuk")
 
-add_subdirectory( libkopete )
-add_subdirectory( kopete )
-add_subdirectory( protocols )
-add_subdirectory( plugins )
-add_subdirectory( icons )
-add_subdirectory( sounds )
-add_subdirectory( styles )
+macro_optional_find_package(Nepomuk)
+macro_log_feature(Nepomuk_FOUND "Nepomuk" "Semantic Desktop" "http://nepomuk.kde.org" FALSE "" "Nepomuk is needed for the integration into KGet")
 
+macro_optional_find_package(Sqlite)
+macro_log_feature(SQLITE_FOUND "SQLite" "SQLite is a Binary-Database" "" FALSE "" "Needed for the SQLite-Backend of the KGet-History and the Kopete-Statistic-Plugin")
+
+
+add_definitions (${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES} ${KDEPIMLIBS_INCLUDE_DIR})
+
+#macro_optional_add_subdirectory(doc)
+#macro_optional_add_subdirectory(kfile-plugins)
+#macro_optional_add_subdirectory(kget)
+
+if(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND NOT NO_JINGLE)
+  set(BUILD_JINGLE TRUE)
+else(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND NOT NO_JINGLE)
+  set(BUILD_JINGLE FALSE)
+endif(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND NOT NO_JINGLE)
+macro_optional_add_subdirectory(kopete)
+
+#if(Q_WS_X11)
+#  macro_optional_add_subdirectory(krdc)
+#  macro_optional_add_subdirectory(kppp)
+#
+#  if(LIBVNCSERVER_FOUND)
+#    macro_optional_add_subdirectory(krfb)
+#  endif(LIBVNCSERVER_FOUND)
+#
+#endif(Q_WS_X11)
+
+#macro_optional_add_subdirectory(kdnssd)
+
+#if(NOT WIN32)
+#  macro_optional_add_subdirectory(filesharing)
+#endif(NOT WIN32)
+
+macro_display_feature_log()

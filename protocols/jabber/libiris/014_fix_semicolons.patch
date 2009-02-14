@@ -1,77 +1,20 @@
-Index: iris/include/xmpp.h
+Index: iris/xmpp/xmpp-im/xmpp_xmlcommon.cpp
 ===================================================================
---- iris/include/xmpp.h	(revision 770078)
-+++ iris/include/xmpp.h	(working copy)
-@@ -40,7 +40,7 @@
- namespace QCA
- {
- 	class TLS;
--};
-+}
- 
- #ifndef CS_XMPP
- class ByteStream;
-@@ -232,6 +232,6 @@
- 		class Private;
- 		Private *d;
- 	};
--};
-+}
- 
- #endif
-Index: iris/include/xmpp_xdata.h
-===================================================================
---- iris/include/xmpp_xdata.h	(revision 770078)
-+++ iris/include/xmpp_xdata.h	(working copy)
-@@ -151,6 +151,6 @@
- 		QSharedDataPointer<Private> d;
- 	};
- 
--};
-+}
- 
- #endif
-Index: iris/xmpp-im/xmpp_xmlcommon.h
-===================================================================
---- iris/xmpp-im/xmpp_xmlcommon.h	(revision 770078)
-+++ iris/xmpp-im/xmpp_xmlcommon.h	(working copy)
-@@ -69,6 +69,6 @@
- 	void readBoolAttribute(QDomElement e, const QString &name, bool *v);
- 
- 	//QString tagContent(const QDomElement &e); // obsolete;
--};
-+}
- 
- #endif
-Index: iris/xmpp-im/xmpp_xmlcommon.cpp
-===================================================================
---- iris/xmpp-im/xmpp_xmlcommon.cpp	(revision 770056)
-+++ iris/xmpp-im/xmpp_xmlcommon.cpp	(working copy)
-@@ -484,5 +484,5 @@
+--- iris/xmpp/xmpp-im/xmpp_xmlcommon.cpp	(revision 925917)
++++ iris/xmpp/xmpp-im/xmpp_xmlcommon.cpp	(working copy)
+@@ -561,5 +561,5 @@
  	}
  }
  
 -};
 +}
  
-Index: iris/xmpp-core/compress.cpp
+Index: iris/xmpp/xmpp-core/parser.cpp
 ===================================================================
---- iris/xmpp-core/compress.cpp	(revision 770056)
-+++ iris/xmpp-core/compress.cpp	(working copy)
-@@ -2,6 +2,7 @@
- #include <QObject>
- #include <QIODevice>
- #include <zlib.h>
-+#include <stdlib.h>
- 
- #include "compress.h"
- 
-Index: iris/xmpp-core/parser.cpp
-===================================================================
---- iris/xmpp-core/parser.cpp	(revision 770056)
-+++ iris/xmpp-core/parser.cpp	(working copy)
+--- iris/xmpp/xmpp-core/parser.cpp	(revision 925917)
++++ iris/xmpp/xmpp-core/parser.cpp	(working copy)
 @@ -547,7 +547,7 @@
- 		Q3PtrList<Parser::Event> eventList;
+ 		QList<Parser::Event*> eventList;
  		bool needMore;
  	};
 -};

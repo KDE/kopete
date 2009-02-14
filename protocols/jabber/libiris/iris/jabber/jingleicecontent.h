@@ -39,7 +39,7 @@ namespace XMPP
 	//This is the Ice-udp jingle content.
 	
 	class JingleSession;
-	class IRIS_EXPORT JingleIceContent : public JingleContent
+	class /*IRIS_EXPORT*/ JingleIceContent : public JingleContent
 	{
 		Q_OBJECT
 	public:

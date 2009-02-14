@@ -522,12 +522,13 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 		if( newMessage != NULL ){
 			*msg = QString::fromUtf8(newMessage);
 			otrl_message_free( newMessage );
+			msg->replace( QString('\n'), QString("<br>") );
+			return 0; // message is decrypted and ready to deliver
 		} else {
-			msg->replace( QString('<'), QString("&lt;") );
+			return 1; // message was a plaintext message. Better not touching it :)
 		}
-		msg->replace( QString('\n'), QString("<br>") );
 	}
-	return ignoremessage;
+	return 2; // internal OTR message. Ignore it.
 }
 
 KDE_EXPORT QString *OtrlChatInterface::encryptMessage( QString *msg, const QString &accountId,
@@ -548,7 +549,7 @@ KDE_EXPORT QString *OtrlChatInterface::encryptMessage( QString *msg, const QStri
 			/* If fragmentation is needed libotr will send out all fragments but the last one. */
 			ConnContext *context = otrl_context_find(userstate, contactId.toLocal8Bit(), accountId.toLocal8Bit(), protocol.toLocal8Bit(), 0, NULL, NULL, NULL);
 
-			kDebug(14318) << "message to be sent out: " << newMessage;
+			//kDebug(14318) << "message to be sent out: " << newMessage;
 
 			err = otrl_message_fragment_and_send(&ui_ops, chatSession, context, newMessage,
 			OTRL_FRAGMENT_SEND_ALL_BUT_LAST, &fragment);
@@ -656,11 +657,12 @@ KDE_EXPORT void OtrlChatInterface::verifyFingerprint( Kopete::ChatSession *sessi
 	new AuthenticationWizard( session->view()->mainWidget(), context, session, true );
 }
 
-Fingerprint *OtrlChatInterface::findFingerprint( const QString &account ){
+Fingerprint *OtrlChatInterface::findFingerprint( Kopete::ChatSession *session ){
 	ConnContext *context;
 
 	for( context = userstate->context_root; context != NULL; context = context->next ){
-		if( strcmp( context->username, account.toLocal8Bit() ) == 0 ){
+		if( ( session->members().first()->contactId().toLocal8Bit() == context->username ) &&
+		    (session->account()->accountId().toLocal8Bit() == context->accountname ) ){
 			return context->active_fingerprint ? context->active_fingerprint : NULL;
 		}
 	}
@@ -672,7 +674,8 @@ QString OtrlChatInterface::findActiveFingerprint( Kopete::ChatSession *session )
 	char hash[45];
 
 	for( context = userstate->context_root; context != NULL; context = context->next ){
-		if( strcmp( context->username, session->members().first()->contactId().toLocal8Bit() ) == 0 ){
+		if( ( session->members().first()->contactId().toLocal8Bit() == context->username ) &&
+		    (session->account()->accountId().toLocal8Bit() == context->accountname ) ){
 			otrl_privkey_hash_to_human( hash, context->active_fingerprint->fingerprint );
 			return hash;
 		}
@@ -681,8 +684,9 @@ QString OtrlChatInterface::findActiveFingerprint( Kopete::ChatSession *session )
 }
 
 bool OtrlChatInterface::isVerified( Kopete::ChatSession *session ){
-	Fingerprint *fingerprint = findFingerprint( session->members().first()->contactId() );
+	Fingerprint *fingerprint = findFingerprint( session );
 
+	kDebug() << "fingerprint" << fingerprint;
 	if( fingerprint->trust && fingerprint->trust[0] != '\0' ){
 		return true;
 	} else {
@@ -714,7 +718,7 @@ void OtrlChatInterface::emitGoneSecure( Kopete::ChatSession *session, int state 
 void OtrlChatInterface::setTrust( Kopete::ChatSession *session, bool trust ){
 	Fingerprint *fingerprint;
 
-	fingerprint = findFingerprint( session->members().first()->contactId() );
+	fingerprint = findFingerprint( session );
 	if( fingerprint != 0 ){
 		if( trust ){
 			otrl_context_set_trust( fingerprint, "verified" );
