@@ -37,7 +37,6 @@
 
 using namespace XMPP;
 
-class JabberConnector;
 namespace XMPP { class PrivacyManager; }
 
 /**
@@ -342,7 +341,7 @@ public:
 	/**
 	 * Return client connector instance.
 	 */
-	JabberConnector *clientConnector () const;
+	XMPP::AdvancedConnector *clientConnector () const;
 
 	/**
 	 * Get the root task for this connection.

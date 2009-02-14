@@ -62,7 +62,6 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaddedinfoevent.h"
 
-#include "jabberconnector.h"
 #include "jabberclient.h"
 #include "jabberprotocol.h"
 #include "jabberresourcepool.h"

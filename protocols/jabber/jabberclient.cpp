@@ -31,7 +31,6 @@
 #include <jinglesessionmanager.h>
 #include <xmpp_tasks.h>
 
-#include "jabberconnector.h"
 #include "privacymanager.h"
 
 #define JABBER_PENALTY_TIME	2
@@ -65,7 +64,7 @@ public:
 	// XMPP backend
 	XMPP::Client *jabberClient;
 	XMPP::ClientStream *jabberClientStream;
-	JabberConnector *jabberClientConnector;
+	XMPP::AdvancedConnector *jabberClientConnector;
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;
 	QCA::Initializer qcaInit;
@@ -552,7 +551,7 @@ XMPP::ClientStream *JabberClient::clientStream () const
 
 }
 
-JabberConnector *JabberClient::clientConnector () const
+XMPP::AdvancedConnector *JabberClient::clientConnector () const
 {
 
 	return d->jabberClientConnector;
@@ -625,7 +624,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	 * This class uses KDE's socket code, which in turn makes use of
 	 * the global proxy settings.
 	 */
-	d->jabberClientConnector = new JabberConnector;
+	d->jabberClientConnector = new XMPP::AdvancedConnector;
 
 	d->jabberClientConnector->setOptSSL ( useSSL () );
 
@@ -1000,13 +999,6 @@ void JabberClient::slotCSAuthenticated ()
 		if ( irisByteStream->inherits ( "BSocket" ) || irisByteStream->inherits ( "XMPP::BSocket" ) )
 		{
 			d->localAddress = ( (BSocket *)irisByteStream )->address().toString ();
-		}
-
-		// code for the KDE-type bytestream
-		JabberByteStream *kdeByteStream = dynamic_cast<JabberByteStream*>(d->jabberClientConnector->stream());
-		if ( kdeByteStream )
-		{
-			d->localAddress = kdeByteStream->socket()->peerName();
 		}
 	}
 

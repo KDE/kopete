@@ -110,8 +110,6 @@ set(kopete_jabber_PART_SRCS
    jabbertransport.cpp 
    jabberbookmarks.cpp 
    jabberclient.cpp 
-   jabberconnector.cpp 
-   jabberbytestream.cpp
 )
 
 if(BUILD_JINGLE)	
