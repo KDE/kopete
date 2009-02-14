@@ -1,0 +1,21 @@
+Index: iris/xmpp/xmpp-im/xmpp_vcard.cpp
+===================================================================
+--- iris/xmpp/xmpp-im/xmpp_vcard.cpp	(revision 925917)
++++ iris/xmpp/xmpp-im/xmpp_vcard.cpp	(working copy)
+@@ -28,6 +28,7 @@
+ #include <QImageReader>
+ #include <QImageWriter>
+ #include <QtCrypto>
++#include <QtCore/QDebug>
+ 
+ #include "xmpp_xmlcommon.h"
+ 
+@@ -60,7 +61,7 @@
+ 	if ( format.toUpper() == "JPEG" )
+ 		return "image/jpeg";
+ 
+-	qWarning(QString("WARNING! VCard::image2type: unknown format = '%1'").arg(format.isNull() ? QString("UNKNOWN") : format).toAscii());
++	qWarning() << QString("WARNING! VCard::image2type: unknown format = '%1'").arg(format.isNull() ? QString("UNKNOWN") : format).toAscii();
+ 
+ 	return "image/unknown";
+ }
