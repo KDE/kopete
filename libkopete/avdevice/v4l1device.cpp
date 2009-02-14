@@ -20,6 +20,8 @@
 #include <cstdlib>
 #include <cerrno>
 #include <cstring>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
 
 #include <kdebug.h>
 

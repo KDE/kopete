@@ -29,6 +29,7 @@
 #include "xmpp_tasks.h"
 #include "qca.h"
 #include "bsocket.h"
+#include "jinglesessionmanager.h"
 
 #include "jabberaccount.h"
 #include "jabberbookmarks.h"
@@ -605,6 +606,17 @@ void JabberAccount::slotConnected ()
 #ifdef JINGLE_SUPPORT
 	qDebug() << "Create JingleCallsManager";
 	m_jcm = new JingleCallsManager(this);
+
+	ByteStream *bs = client()->clientConnector()->stream();
+	if(bs->inherits("BSocket") || bs->inherits("XMPP::BSocket"))
+	{
+		kDebug() << "Getting IP Address from Iris.";
+		QHostAddress localAddress = ((BSocket *)bs)->address();
+		client()->client()->jingleSessionManager()->setSelfAddress(localAddress);
+	}
+	else
+		kDebug() << "Unable to get IP address.";
+
 #endif
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "Requesting roster...";

@@ -15,6 +15,7 @@
   * *************************************************************************
   */
 #include <QMessageBox>
+#include <QTcpSocket>
 
 #include <ortp/ortp.h>
 
@@ -50,6 +51,7 @@ public:
 	QList<QDomElement> audioPayloads;
 	QList<QDomElement> videoPayloads;
 	JingleContentDialog *contentDialog;
+	QTcpSocket *stunSocket;
 };
 
 JingleCallsManager::JingleCallsManager(JabberAccount* acc)
@@ -94,10 +96,6 @@ void JingleCallsManager::init()
 	//transports << NS_JINGLE_TRANSPORTS_RAW;
 	d->client->jingleSessionManager()->setSupportedTransports(transports);
 
-	QStringList profiles;
-	profiles << "RTP/AVP";
-	d->client->jingleSessionManager()->setSupportedProfiles(profiles);
-	
 	// TODO:The Media Manager should be able to give xml elements for the supported payloads.
 	QDomDocument doc("");
 	
@@ -143,10 +141,23 @@ void JingleCallsManager::init()
 	d->mediaManager = new MediaManager(inputDev, outputDev);
 	
 	d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
+	
+	// psa provides a TURN/STUN server : eu.turn.xmpp.org
+	d->stunSocket = new QTcpSocket();
+	connect(d->stunSocket, SIGNAL(connected()), this, SLOT(stunSocketConnected()));
+	d->stunSocket->connectToHost("eu.turn.xmpp.org", 3478);
+
 	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)),
 		this, SLOT(slotNewSession(XMPP::JingleSession*)));
 	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(sessionTerminate(XMPP::JingleSession*)),
 		this, SLOT(slotSessionTerminate(XMPP::JingleSession*)));
+}
+
+void JingleCallsManager::stunSocketConnected()
+{
+	d->client->jingleSessionManager()->setStunServiceAddress(d->stunSocket->peerAddress(), 3478);
+	
+	d->stunSocket->deleteLater();
 }
 
 bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)

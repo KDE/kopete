@@ -57,6 +57,7 @@ public:
 	MediaManager* mediaManager();
 
 public slots:
+	void stunSocketConnected();
 	void slotNewSession(XMPP::JingleSession*);
 	void slotSessionTerminate(XMPP::JingleSession*);
 	void slotSessionTerminated();

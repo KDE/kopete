@@ -62,6 +62,8 @@ public:
 JingleIceContent::JingleIceContent(Mode mode, JingleSession *parent)
 : JingleContent(mode, parent), d(new Private())
 {
+	//TODO:check if hmac(sha1) is supported by QCA (qca-ossl)
+	//if it is not, setting remote candidate will lead to a crash in QCA
 	qDebug() << "Creating JingleIceContent";
 
 	d->iceStarted = false;
@@ -88,10 +90,10 @@ JingleIceContent::JingleIceContent(Mode mode, JingleSession *parent)
 	d->channels << false << false;
 	d->ice176->setComponentCount(2);//RTP + RTCP, I guess.
 
-	// psa provides a TURN/STUN server : eu.turn.xmpp.org
-	QTcpSocket socket;
-	socket.connectToHost("eu.turn.xmpp.org", 3478);
-	d->ice176->setStunService(Ice176::Basic, socket.peerAddress(), 3478);
+	JingleSessionManager *manager = rootTask()->client()->jingleSessionManager();
+	
+	if ((manager->stunPort() != -1) && !manager->stunAddress().isNull())
+		d->ice176->setStunService(Ice176::Basic, manager->stunAddress(), manager->stunPort());
 
 	switch (mode)
 	{
@@ -144,8 +146,14 @@ QList<XMPP::Ice176::LocalAddress> JingleIceContent::getAddresses()
 	//TODO:implement me
 	QList<Ice176::LocalAddress> ret;
 	Ice176::LocalAddress addr;
+	
+	JingleSessionManager *manager = rootTask()->client()->jingleSessionManager();
 
-	addr.addr = "127.0.0.1";//temp.localAddress().toString(); //How do I get ip address with which I'm currently connected ?
+	if (!manager->selfAddr().isNull())
+		addr.addr = manager->selfAddr();
+	else
+		addr.addr = "127.0.0.1";
+	
 	addr.network = 0;
 
 	return ret << addr;
@@ -185,7 +193,6 @@ void JingleIceContent::sendCandidates(const QList<XMPP::Ice176::Candidate>& cand
 		tAction->transportInfo(name(), transport);
 		tAction->go(true);
 	}
-
 }
 
 QDomElement JingleIceContent::candidateToXml(const Ice176::Candidate& candidate)
@@ -248,22 +255,28 @@ void JingleIceContent::addTransportInfo(const QDomElement& elem)
 	}
 	
 	QDomElement c = t.firstChildElement();
+	QList<Ice176::Candidate> cs;
 	
-	if (c.tagName() != "candidate")
+	while (!c.isNull())
 	{
-		qDebug() << "There is no candidate here.";
-		return;
+		if (c.tagName() != "candidate")
+		{
+			qDebug() << "This is not a candidate";
+			c = c.nextSiblingElement();
+			continue;
+		}
+
+		cs << xmlToCandidate(c);
+		
+		c = c.nextSiblingElement();
 	}
 
-	QList<Ice176::Candidate> cs;
-	cs << xmlToCandidate(t.firstChildElement());
-
 	qDebug() << "I have" << cs.count() << "remote candidates coming in.";
-	
+
 	if (d->iceStarted)
-		d->ice176->addRemoteCandidates(QList<Ice176::Candidate>() << xmlToCandidate(t.firstChildElement()));
+		d->ice176->addRemoteCandidates(cs);
 	else
-		d->pendingRemoteCandidates << xmlToCandidate(t.firstChildElement());
+		d->pendingRemoteCandidates << cs;
 }
 
 Ice176::Candidate JingleIceContent::xmlToCandidate(const QDomElement& c)

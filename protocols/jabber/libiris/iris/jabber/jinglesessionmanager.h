@@ -36,7 +36,7 @@ namespace XMPP
 {
 	class JingleSession;
 	class JingleContent;
-	class JingleReason;
+	//class JingleReason;
 	class IRIS_EXPORT JingleSessionManager : public QObject
 	{
 		Q_OBJECT
@@ -76,29 +76,26 @@ namespace XMPP
 		QList<QDomElement> supportedVideoPayloads() const;
 		
 		/*
-		 * Set supported profiles for jingle sessions.
-		 */
-		void setSupportedProfiles(const QStringList&);
-
-		/*
-		 * Provides the next usable port for a raw-udp session.
+		 * Provides the next usable port for a session.
 		 * As the application should create a rtcp port with the
 		 * provided rtp socket port + 1, this method will always
 		 * give a port incremented by 2.
 		 * The first port will be 9000 by default but it can be modified
 		 * with setFirstPort().
-		 * Also, this method will share a list of used ports with the
-		 * iceUdpPort method.
 		 * It would be nice to be informed of the ports which are freed
 		 * when a session is terminated so we can reuse them.
 		 */
 		int nextUdpPort();
 		void setFirstPort(int);
 
-		//QString externalIP() const;
-		//void setExternalIP(const QString& eip);
+		void setStunServiceAddress(const QHostAddress& addr, const int port);
+		int stunPort() const;
+		QHostAddress stunAddress() const;
+
+		void setSelfAddress(const QHostAddress&);
+		QHostAddress selfAddr() const;
+
 	signals:
-		
 		/*
 		 * Emitted when a new jingle session comes.
 		 */
@@ -110,16 +107,6 @@ namespace XMPP
 		void sessionTerminate(XMPP::JingleSession*);
 	
 	public slots:
-		/* 
-		 * Slots for each jingle action
-		 */
-		//void slotSessionIncoming();
-		//void slotRemoveContent(const QString&, const QStringList&);
-		//void slotSessionInfo(const QDomElement&);
-		//void slotTransportInfo(const QDomElement&);
-		//void slotSessionTerminate(const QString&, const JingleReason&);
-		//void slotSessionAccepted(const QDomElement&);
-
 		/*
 		 * Removes the session emitting the signal to which this slot is connected from the list.
 		 */
@@ -130,18 +117,6 @@ namespace XMPP
 		 */
 		void slotJingleActionReady();
 		
-		/*
-		 * This slot is called when a session has been
-		 * terminated and should be removed from the
-		 * sessions list.
-		 */
-		//void slotSessionTerminated();
-
-		/*
-		 * This slot is called when the external IP has been retrieved by http
-		 */
-		//void slotExternalIPDone(bool);
-
 	private:
 		class Private;
 		Private *d;

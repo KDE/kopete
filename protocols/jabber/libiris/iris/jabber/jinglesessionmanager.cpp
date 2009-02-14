@@ -38,8 +38,9 @@ public:
 	QStringList supportedProfiles;
 	QList<int> usedPorts;
 	int firstPort;
-	QString ip;
-	QHttp *http;
+	QHostAddress stunAddr;
+	int stunPort;
+	QHostAddress localAddr;
 };
 
 JingleSessionManager::JingleSessionManager(Client* c)
@@ -54,13 +55,15 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	Features f = d->client->features();
 	
 	f.addFeature(NS_JINGLE);
-	f.addFeature(NS_JINGLE_TRANSPORTS_ICE);
-	f.addFeature(NS_JINGLE_TRANSPORTS_RAW);
 	f.addFeature(NS_JINGLE_APPS_RTP);
+	f.addFeature(NS_JINGLE_TRANSPORTS_RAW);
+	f.addFeature(NS_JINGLE_TRANSPORTS_ICE);
 
 	d->client->setFeatures(f);
 
 	d->firstPort = 9000;
+
+	d->stunPort = -1;
 }
 
 void JingleSessionManager::slotJingleActionReady()
@@ -214,11 +217,6 @@ QList<QDomElement> JingleSessionManager::supportedVideoPayloads() const
 	return d->supportedVideoPayloads;
 }
 
-void JingleSessionManager::setSupportedProfiles(const QStringList& profiles)
-{
-	d->supportedProfiles = profiles;
-}
-
 JingleSession *JingleSessionManager::startNewSession(const Jid& toJid)
 {
 	XMPP::JingleSession *session = new XMPP::JingleSession(d->client->rootTask(), toJid.full());
@@ -304,3 +302,29 @@ void JingleSessionManager::setFirstPort(int f)
 	d->firstPort = f;
 }
 
+void JingleSessionManager::setStunServiceAddress(const QHostAddress& addr, int port)
+{
+	qDebug() << "Set Stun address and port";
+	d->stunAddr = addr;
+	d->stunPort = port;
+}
+
+int JingleSessionManager::stunPort() const
+{
+	return d->stunPort;
+}
+
+QHostAddress JingleSessionManager::stunAddress() const
+{
+	return d->stunAddr;
+}
+
+void JingleSessionManager::setSelfAddress(const QHostAddress& addr)
+{
+	d->localAddr = addr;
+}
+
+QHostAddress JingleSessionManager::selfAddr() const
+{
+	return d->localAddr;
+}

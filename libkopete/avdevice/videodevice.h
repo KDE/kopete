@@ -15,53 +15,21 @@
     *************************************************************************
 */
 
-#define ENABLE_AV
-
 #ifndef KOPETE_AVVIDEODEVICELISTITEM_H
 #define KOPETE_AVVIDEODEVICELISTITEM_H
 
-#include <config-kopete.h>
-
-#include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <signal.h>
 
-#if defined(__linux__) && defined(ENABLE_AV)
-
-#include <asm/types.h>
-#undef __STRICT_ANSI__
-#ifndef __u64 //required by videodev.h
-#define __u64 unsigned long long
-#endif // __u64
-#ifndef __s64 //required by videodev.h
-#define __s64 signed long long
-#endif // __s64
-
-
-#ifndef pgoff_t
-#define pgoff_t unsigned long
-#endif
-
-#include <linux/fs.h>
-#include <linux/kernel.h>
 #include <linux/videodev.h>
-#define VIDEO_MODE_PAL_Nc  3
-#define VIDEO_MODE_PAL_M   4
-#define VIDEO_MODE_PAL_N   5
-#define VIDEO_MODE_NTSC_JP 6
-#define __STRICT_ANSI__
 
-#endif // __linux__
-
-#include <qstring.h>
-#include <qfile.h>
-#include <qimage.h>
-#include <q3valuevector.h>
+#include <QString>
+#include <QFile>
+#include <QImage>
 #include <kcombobox.h>
 
 #include "videoinput.h"
