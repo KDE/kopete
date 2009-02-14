@@ -71,7 +71,7 @@ This is mostly the same as Header but it is for the footer of a conversation. Th
 <varlistentry><term><filename>Status.html</filename> (Required)</term>
 <listitem>
 <para>
-This template is used to display a internal message. Internal messages such as status change, message from Kopete (&eg; Incoming File Transfert). When the style do not supply a Action template, it is used to display Action message.
+This template is used to display a internal message. Internal messages such as status change, message from Kopete (&eg; Incoming File Transfer). When the style do not supply a Action template, it is used to display Action message.
 </para>
 </listitem>
 </varlistentry>
