@@ -1068,7 +1068,7 @@ void Item::setOpacity( float opacity )
 	repaint();
 }
 
-void Item::setSearchMatch( bool match )
+void Item::setSearchMatch( bool match, bool searching )
 {
 	d->searchMatch = match;
 
@@ -1078,7 +1078,7 @@ void Item::setSearchMatch( bool match )
 	{
 		kDebug(14000) << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
 		               << ", target visibility: " << targetVisibility() << endl;
-		if ( d->visibilityTimer.isActive() )
+		if ( d->visibilityTimer.isActive() || searching )
 			mySetVisible( true );
 		else
 			mySetVisible( targetVisibility() );

@@ -25,7 +25,7 @@ namespace UI {
 namespace ListView {
 
 SearchLine::SearchLine( QWidget *parent, ListView *listView )
-	: K3ListViewSearchLine( parent, listView )
+	: K3ListViewSearchLine( parent, listView ), searchEmpty(true)
 {
 }
 
@@ -45,7 +45,8 @@ void SearchLine::updateSearch( const QString &s )
 		return;
 	
 	search = s.isNull() ? text() : s;
-	
+	searchEmpty = search.isEmpty();
+
 	// If there's a selected item that is visible, make sure that it's visible
 	// when the search changes too (assuming that it still matches).
 	
@@ -121,7 +122,7 @@ bool SearchLine::checkItemParentsVisible( Q3ListViewItem *item )
 void SearchLine::setItemVisible( Q3ListViewItem *it, bool b )
 {
 	if( Item *item = dynamic_cast<Item*>( it ) )
-		item->setSearchMatch( b );
+		item->setSearchMatch( b, !searchEmpty );
 	else
 		it->setVisible( b );
 }
