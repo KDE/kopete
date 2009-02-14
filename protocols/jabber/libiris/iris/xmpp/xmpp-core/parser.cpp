@@ -547,7 +547,7 @@ namespace XMPP
 		QList<Parser::Event*> eventList;
 		bool needMore;
 	};
-};
+}
 
 
 //----------------------------------------------------------------------------
