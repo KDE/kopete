@@ -11,7 +11,7 @@ link_directories( ${CMAKE_BINARY_DIR}/kopete/kopete/addaccountwizard ${CMAKE_BIN
 
 ########### next target ###############
 
-set(kcm_kopete_accountconfig_PART_SRCS kopeteaccountconfig.cpp )
+set(kcm_kopete_accountconfig_PART_SRCS accounttreewidget.cpp kopeteaccountconfig.cpp )
 
 
 kde4_add_ui_files(kcm_kopete_accountconfig_PART_SRCS kopeteaccountconfigbase.ui )

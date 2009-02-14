@@ -52,28 +52,6 @@
 #include "identitydialog.h"
 
 
-
-class KopeteAccountLVI : public QTreeWidgetItem
-{
-	public:
-		KopeteAccountLVI( Kopete::Account *a, QTreeWidgetItem* parent) : QTreeWidgetItem(parent) , m_account(a) { }
-		Kopete::Account *account() { return m_account; }
-
-	private:
-		//need to be guarded because some accounts may be linked (that's the case of jabber transports)
-		QPointer<Kopete::Account> m_account;
-};
-
-class KopeteIdentityLVI : public QTreeWidgetItem
-{
-	public:
-		KopeteIdentityLVI( Kopete::Identity *i, QTreeWidget* parent) : QTreeWidgetItem(parent), m_identity (i) { }
-		Kopete::Identity *identity() { return m_identity; }
-
-	private:
-		Kopete::Identity *m_identity;
-};
-
 K_PLUGIN_FACTORY( KopeteAccountConfigFactory,
 		registerPlugin<KopeteAccountConfig>(); )
 K_EXPORT_PLUGIN( KopeteAccountConfigFactory("kcm_kopete_accountconfig") )
@@ -91,6 +69,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QVariantList &a
 	configureActions();
 	configureMenus();
 
+	connect( mAccountList,  SIGNAL(itemPositionChanged()), this, SLOT(changed()) );
 	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotModify() ) );
 	connect( mAccountList,  SIGNAL( itemChanged ( QTreeWidgetItem * , int )), this, SLOT( slotItemChanged(QTreeWidgetItem*) ) );
@@ -121,17 +100,20 @@ KopeteIdentityLVI* KopeteAccountConfig::selectedIdentity()
 
 void KopeteAccountConfig::save()
 {
-	// The priority is disabled because of identities and because there is no way to edit it anymore
-	/*uint priority = mAccountList->topLevelItemCount();
-	
-	KopeteAccountLVI *i;
-	for( int j=0; j<mAccountList->topLevelItemCount(); ++j )
+	uint priority = 0;
+	for ( int i = 0; i < mAccountList->topLevelItemCount(); i++ )
+		priority += mAccountList->topLevelItem( i )->childCount();
+			
+	for ( int i = 0; i < mAccountList->topLevelItemCount(); i++ )
 	{
-		i = static_cast<KopeteAccountLVI*>( mAccountList->topLevelItem( j ) );
-		if(!i->account())
-			continue;
-		i->account()->setPriority( priority-- );
-	}*/
+		KopeteIdentityLVI* identity = dynamic_cast<KopeteIdentityLVI*>( mAccountList->topLevelItem( i ) );
+		for ( int j = 0; j < identity->childCount(); j++ )
+		{
+			KopeteAccountLVI* account = dynamic_cast<KopeteAccountLVI*>( identity->child( j ) );
+			account->account()->setIdentity( identity->identity() );
+			account->account()->setPriority( priority-- );
+		}
+	}
 
 	Kopete::AccountManager::self()->save();
 	Kopete::IdentityManager::self()->save();
@@ -140,16 +122,34 @@ void KopeteAccountConfig::save()
 	//load(); //refresh the colred accounts (in case of apply)
 }
 
+bool accountPriorityLessThan(const Kopete::Account* a, const Kopete::Account* b)
+{
+	return (a->priority() > b->priority());
+}
+
+bool identityPriorityLessThan(const Kopete::Identity* a, const Kopete::Identity* b)
+{
+	if ( a->accounts().isEmpty() )
+		return false;
+	
+	if ( b->accounts().isEmpty() && !a->accounts().isEmpty() )
+		return true;
+	
+	return (a->accounts().first()->priority() > b->accounts().first()->priority());
+}
+
 void KopeteAccountConfig::load()
 {
 	mAccountList->clear();
 
-	//FIXME: this doesn't work
-	mAccountList->invisibleRootItem()->setFlags(mAccountList->invisibleRootItem()->flags() & ~Qt::ItemIsDropEnabled);
-
 	QHash<Kopete::Identity *,QTreeWidgetItem *> identityItemHash;
 	Kopete::Identity *defaultIdentity = Kopete::IdentityManager::self()->defaultIdentity();
-	foreach(Kopete::Identity *i, Kopete::IdentityManager::self()->identities())
+
+	// Sort by priority, the priority is take from identity accounts because identity doesn't have priority
+	QList<Kopete::Identity*> identityList = Kopete::IdentityManager::self()->identities();
+	qSort( identityList.begin(), identityList.end(), identityPriorityLessThan );
+
+	foreach(Kopete::Identity *i, identityList)
 	{
 		//KopeteIdentityLVI *lvi = new KopeteIdentityLVI( i, mIdentityList );
 		QTreeWidgetItem *identityItem = new KopeteIdentityLVI( i, mAccountList );
@@ -159,8 +159,6 @@ void KopeteAccountConfig::load()
 		identityItem->setIcon( 0, KIcon( i->customIcon()) );
 		
 		identityItem->setExpanded( true );
-		
-		identityItem->setFlags( identityItem->flags() & ~Qt::ItemIsDragEnabled );
 		
 		if (i == defaultIdentity)
 		{
@@ -174,31 +172,36 @@ void KopeteAccountConfig::load()
 		identityItemHash.insert(i,identityItem);
 	}
 
-	foreach(Kopete::Account *i , Kopete::AccountManager::self()->accounts() )
+	// Sort by priority
+	QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
+	qSort( accountList.begin(), accountList.end(), accountPriorityLessThan );
+
+	foreach( Kopete::Account *account, accountList )
 	{
-		Kopete::Identity *idnt = i->identity();
+		Kopete::Identity *idnt = account->identity();
 		
 		Q_ASSERT(identityItemHash.contains(idnt));
-		KopeteAccountLVI *lvi = new KopeteAccountLVI( i, identityItemHash[idnt] );
-		lvi->setText( 0, i->accountLabel() );
-		lvi->setIcon( 0, i->myself()->onlineStatus().iconFor( i) );
+		KopeteAccountLVI *lvi = new KopeteAccountLVI( account, identityItemHash[idnt] );
+		lvi->setText( 0, account->accountLabel() );
+		lvi->setIcon( 0, account->myself()->onlineStatus().iconFor( account ) );
 		QFont font = lvi->font( 0 );
 		font.setBold( true );
 		lvi->setFont( 0, font );
 
 		lvi->setSizeHint( 0, QSize(0, 42) );
 		
-		lvi->setText( 1, i->myself()->onlineStatus().statusTypeToString(i->myself()->onlineStatus().status()) );
+		lvi->setText( 1, account->myself()->onlineStatus().statusTypeToString(account->myself()->onlineStatus().status()) );
 		lvi->setTextAlignment( 1, Qt::AlignRight | Qt::AlignVCenter );
 		lvi->setFont( 1, font );
 	
 		lvi->setFlags( (lvi->flags() & ~Qt::ItemIsDropEnabled) | Qt::ItemIsUserCheckable );
-		lvi->setCheckState ( 0, i->excludeConnect() ? Qt::Unchecked : Qt::Checked );
+		lvi->setCheckState ( 0, account->excludeConnect() ? Qt::Unchecked : Qt::Checked );
 
-		connect( i->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
+		connect( account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
 				 this, SLOT(slotOnlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)));
 	}
 
+	changed( false );
 	slotItemSelected();
 }
 
