@@ -284,10 +284,6 @@ void JabberChatSession::sendNotification( Event event )
 
 	if( !members().isEmpty() && (send_state || send_msg_event) )
 	{
-		// create JID for us as sender
-		XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
-		fromJid.setResource ( account()->resource () );
-
 		// create JID for the recipient
 		JabberContact *recipient = static_cast<JabberContact*>(members().first());
 		XMPP::Jid toJid = recipient->rosterItem().jid();
@@ -298,7 +294,6 @@ void JabberChatSession::sendNotification( Event event )
 
 		XMPP::Message message;
 
-		message.setFrom ( fromJid );
 		message.setTo ( toJid );
 		if(send_msg_event)
 		{
@@ -351,10 +346,6 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 	{
 		XMPP::Message jabberMessage;
 		JabberBaseContact *recipient = static_cast<JabberBaseContact*>(message.to().first());
-
-		XMPP::Jid jid = static_cast<const JabberBaseContact*>(message.from())->rosterItem().jid();
-		jid.setResource ( account()->configGroup()->readEntry( "Resource", QString() ) );
-		jabberMessage.setFrom ( jid );
 
 		XMPP::Jid toJid = recipient->rosterItem().jid();
 

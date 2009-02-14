@@ -607,6 +607,9 @@ private slots:
 
 	/* Incoming subscription request. */
 	void slotSubscription (const Jid & jid, const QString & type);
+	
+	/* the session task is finished */
+	void slotSessionStarted();
 
 };
 

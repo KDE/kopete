@@ -22,6 +22,8 @@
 
 #include "jabberclient.h"
 
+#include <kdebug.h>
+
 #include <QTimer>
 #include <QRegExp>
 #include <QtCrypto>
@@ -1009,11 +1011,35 @@ void JabberClient::slotCSAuthenticated ()
 		d->jabberClient->s5bManager()->setServer ( s5bServer () );
 	}
 
+	
+	//update the ressource:
+	kWarning() << "#######" << d->jabberClientStream->jid().full() <<  jid().full();
+	d->jid = d->jabberClientStream->jid();
+
 	// start the client operation
 	d->jabberClient->start ( jid().domain (), jid().node (), d->password, jid().resource () );
 
-	emit connected ();
+	if (!d->jabberClientStream->old())
+	{
+		XMPP::JT_Session *j = new XMPP::JT_Session(rootTask());
+		QObject::connect(j, SIGNAL(finished()), this, SLOT(slotSessionStarted()));
+		j->go(true);
+	}
+	else
+	{
+		emit connected();
+	}
 }
+
+void JabberClient::slotSessionStarted()
+{
+	XMPP::JT_Session *j = static_cast<XMPP::JT_Session*>(sender());
+	if ( j->success() )
+		emit connected();
+	else
+		emit csError ( -1 );
+}
+
 
 void JabberClient::slotCSDisconnected ()
 {

@@ -347,7 +347,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		m_jabberClient->disconnect ();
 	}
 
-	// we need to use the old protocol for now
+/*	// we need to use the old protocol for now
 	m_jabberClient->setUseXMPP09 ( true );
 
 	// set SSL flag (this should be converted to forceTLS when using the new protocol)
@@ -355,10 +355,9 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 	// override server and port (this should be dropped when using the new protocol and no direct SSL)
 	m_jabberClient->setOverrideHost ( true, server (), port () );
-
 	// allow plaintext password authentication or not?
 	m_jabberClient->setAllowPlainTextPassword ( configGroup()->readEntry ( "AllowPlainTextPassword", false ) );
-
+*/
 	// enable file transfer (if empty, IP will be set after connection has been established)
 	KConfigGroup config = KGlobal::config()->group ( "Jabber" );
 	m_jabberClient->setFileTransfersEnabled ( true, config.readEntry ( "LocalIP" ) );
