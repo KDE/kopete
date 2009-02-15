@@ -1,3 +1,4 @@
+
 /*
     yahoocontact.cpp - Yahoo Contact
 
@@ -268,6 +269,17 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		if ( pos >= 0 ) {
 			pos += regExp.matchedLength();
 			newMsg.replace( regExp, QLatin1String("<span\\1font-style:italic\\2>\033[2m\\3\033[x2m</span>" ) );
+		}
+	}
+
+	// find and remove background color formattings (not supported)
+	regExp.setPattern( "<span([^>]*)background-color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.indexIn( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsg.replace( regExp, QLatin1String("<span\\1\\3>\\4</span>" ) );
 		}
 	}
 
