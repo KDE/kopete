@@ -327,7 +327,7 @@ void KopeteRichTextWidget::updateTextFormat()
         d->updating = true;
         QTextCursor cursor = textCursor();
         cursor.beginEditBlock();
-        cursor.select(QTextCursor::WordUnderCursor);
+        cursor.select(QTextCursor::Document);
         cursor.mergeCharFormat(d->desiredFormat);
         mergeCurrentCharFormat(d->desiredFormat);
         cursor.endEditBlock();
