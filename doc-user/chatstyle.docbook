@@ -71,7 +71,7 @@ This is mostly the same as Header but it is for the footer of a conversation. Th
 <varlistentry><term><filename>Status.html</filename> (Required)</term>
 <listitem>
 <para>
-This template is used to display a internal message. Internal messages such as status change, message from Kopete (&eg; Incoming File Transfer). When the style do not supply a Action template, it is used to display Action message.
+This template is used to display an internal message. Internal messages such as status change, message from Kopete (&eg; Incoming File Transfer). When the style do not supply an Action template, it is used to display Action message.
 </para>
 </listitem>
 </varlistentry>
@@ -99,7 +99,7 @@ The NextContent template is a message fragment for consecutive messages. It will
               <term><filename>Outgoing/Action.html</filename> (Optional) (&kopete; Extension)</term>
 <listitem>
 <para>
-This template is a &kopete; extension to the Adium format. It is available for Incoming and Outgoing direction. Action messages are special message to tell we are doing a action. Example: "/me is installing &kopete;" would be displayed as "DarkShock is installing &kopete;".
+This template is a &kopete; extension to the Adium format. It is available for Incoming and Outgoing direction. Action messages are special message to tell we are doing an action. Example: "/me is installing &kopete;" would be displayed as "DarkShock is installing &kopete;".
 </para>
 </listitem>
 </varlistentry>

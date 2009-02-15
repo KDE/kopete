@@ -25,7 +25,7 @@ This document describes the specifics of the &xml; format, and how to write a pr
 <sect1 id="xml-output">
 <title>&xml; Output</title>
 <para>
-Here's an example of what a program will recieve in its standard input stream:
+Here's an example of what a program will receive in its standard input stream:
 <literallayout>
 &lt;?xml version="1.0" encoding="ISO-8859-1"?>
 &lt;message subject=""
@@ -79,7 +79,7 @@ There are a few things to note:
 <sect1 id="xml-input">
 <title>&xml; Input</title>
 <para>
-Your program will recieve &xml; in its standard input stream, it will have the opportunity to modify it, and then it must hand it back to &kopete; by way of its standard output stream. If your program modifies the following elements, the internal knowledge that &kopete; has of the message will be modified to reflect your changes.
+Your program will receive &xml; in its standard input stream, it will have the opportunity to modify it, and then it must hand it back to &kopete; by way of its standard output stream. If your program modifies the following elements, the internal knowledge that &kopete; has of the message will be modified to reflect your changes.
 <itemizedlist>
 <listitem><para>"message" attribute "timestamp" but not other time attributes</para></listitem>
 <listitem><para>"message" attribute "subject"</para></listitem>
