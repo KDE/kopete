@@ -95,6 +95,8 @@
 #include "kopetechatwindowstyle.h"
 #include "kopetechatwindowstylemanager.h"
 
+static const uint ConsecutiveMessageTimeout = 15 /* minutes */ * 60 /* (seconds/minute) */;
+
 class ToolTip;
 
 class ChatMessagePart::Private
@@ -105,7 +107,7 @@ public:
 	   copyAction(0), saveAction(0), printAction(0),
 	   closeAction(0),copyURLAction(0), currentChatStyle(0),
 	   latestDirection(Kopete::Message::Inbound), latestType(Kopete::Message::TypeNormal),
-	   htmlEventListener(0)
+	   latestTime(0), htmlEventListener(0)
 	{}
 
 	~Private()
@@ -136,6 +138,7 @@ public:
 	QPointer<Kopete::Contact> latestContact;
 	Kopete::Message::MessageDirection latestDirection;
 	Kopete::Message::MessageType latestType;
+	uint latestTime;
 	// Yep I know it will take memory, but I don't have choice
 	// to enable on-the-fly style changing.
 	QList<Kopete::Message> allMessages;
@@ -484,6 +487,14 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 		isConsecutiveMessage = (message.direction() == d->latestDirection && !d->latestContact.isNull()
 		                        && d->latestContact == message.from() && message.type() == d->latestType
 		                        && message.type() != Kopete::Message::TypeFileTransferRequest );
+
+		if(message.timestamp().isValid()){
+			uint next = message.timestamp().toTime_t();
+			if(isConsecutiveMessage && (next - d->latestTime) > ConsecutiveMessageTimeout){
+				isConsecutiveMessage = false;
+			}
+			d->latestTime = next;
+		}
 	}
 
 	// Don't test it in the switch to don't break consecutive messages.
