@@ -1214,7 +1214,7 @@ void S5BManager::Item::doOutgoing()
 	S5BServer *serv = m->server();
 	if(serv && serv->isActive() && !haveHost(in_hosts, m->client()->jid())) {
 		QStringList hostList = serv->hostList();
-		for(QStringList::ConstIterator it = hostList.begin(); it != hostList.end(); ++it) {
+		for(QStringList::ConstIterator it = hostList.constBegin(); it != hostList.constEnd(); ++it) {
 			StreamHost h;
 			h.setJid(m->client()->jid());
 			h.setHost(*it);
@@ -1252,7 +1252,7 @@ void S5BManager::Item::doIncoming()
 	StreamHostList list;
 	if(lateProxy) {
 		// take just the proxy streamhosts
-		for(StreamHostList::ConstIterator it = in_hosts.begin(); it != in_hosts.end(); ++it) {
+		for(StreamHostList::ConstIterator it = in_hosts.constBegin(); it != in_hosts.constEnd(); ++it) {
 			if((*it).isProxy())
 				list += *it;
 		}
@@ -1263,7 +1263,7 @@ void S5BManager::Item::doIncoming()
 		if((state == Initiator || (state == Target && fast)) && !proxy.jid().isValid()) {
 			// take just the non-proxy streamhosts
 			bool hasProxies = false;
-			for(StreamHostList::ConstIterator it = in_hosts.begin(); it != in_hosts.end(); ++it) {
+			for(StreamHostList::ConstIterator it = in_hosts.constBegin(); it != in_hosts.constEnd(); ++it) {
 				if((*it).isProxy())
 					hasProxies = true;
 				else

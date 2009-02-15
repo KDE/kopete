@@ -420,7 +420,7 @@ void JT_Roster::onGo()
 		QDomElement query = doc()->createElement("query");
 		query.setAttribute("xmlns", "jabber:iq:roster");
 		iq.appendChild(query);
-		for(QList<QDomElement>::ConstIterator it = d->itemList.begin(); it != d->itemList.end(); ++it)
+		for(QList<QDomElement>::ConstIterator it = d->itemList.constBegin(); it != d->itemList.constEnd(); ++it)
 			query.appendChild(*it);
 		send(iq);
 	}
@@ -438,7 +438,7 @@ QString JT_Roster::toString() const
 
 	QDomElement i = doc()->createElement("request");
 	i.setAttribute("type", "JT_Roster");
-	for(QList<QDomElement>::ConstIterator it = d->itemList.begin(); it != d->itemList.end(); ++it)
+	for(QList<QDomElement>::ConstIterator it = d->itemList.constBegin(); it != d->itemList.constEnd(); ++it)
 		i.appendChild(*it);
 	return lineEncode(Stream::xmlToString(i));
 	return "";
@@ -1464,7 +1464,7 @@ bool JT_ServInfo::take(const QDomElement &e)
 
 			// Client-specific features
 			QStringList clientFeatures = client()->features().list();
-			for (QStringList::ConstIterator i = clientFeatures.begin(); i != clientFeatures.end(); ++i) {
+			for (QStringList::ConstIterator i = clientFeatures.constBegin(); i != clientFeatures.constEnd(); ++i) {
 				feature = doc()->createElement("feature");
 				feature.setAttribute("var", *i);
 				query.appendChild(feature);
@@ -1473,7 +1473,7 @@ bool JT_ServInfo::take(const QDomElement &e)
 			if (node.isEmpty()) {
 				// Extended features
 				QStringList exts = client()->extensions();
-				for (QStringList::ConstIterator i = exts.begin(); i != exts.end(); ++i) {
+				for (QStringList::ConstIterator i = exts.constBegin(); i != exts.constEnd(); ++i) {
 					const QStringList& l = client()->extension(*i).list();
 					for ( QStringList::ConstIterator j = l.begin(); j != l.end(); ++j ) {
 						feature = doc()->createElement("feature");

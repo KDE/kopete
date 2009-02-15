@@ -635,7 +635,7 @@ bool JT_FT::take(const QDomElement &x)
 
 		// must be one of the offered streamtypes
 		bool found = false;
-		for(QStringList::ConstIterator it = d->streamTypes.begin(); it != d->streamTypes.end(); ++it) {
+		for(QStringList::ConstIterator it = d->streamTypes.constBegin(); it != d->streamTypes.constEnd(); ++it) {
 			if((*it) == streamtype) {
 				found = true;
 				break;

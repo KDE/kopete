@@ -510,7 +510,7 @@ QByteArray HttpProxyPost::body() const
 
 QString HttpProxyPost::getHeader(const QString &var) const
 {
-	for(QStringList::ConstIterator it = d->headerLines.begin(); it != d->headerLines.end(); ++it) {
+	for(QStringList::ConstIterator it = d->headerLines.constBegin(); it != d->headerLines.constEnd(); ++it) {
 		const QString &s = *it;
 		int n = s.indexOf(": ");
 		if(n == -1)
@@ -752,7 +752,7 @@ void HttpProxyGetStream::stop()
 
 QString HttpProxyGetStream::getHeader(const QString &var) const
 {
-	for(QStringList::ConstIterator it = d->headerLines.begin(); it != d->headerLines.end(); ++it) {
+	for(QStringList::ConstIterator it = d->headerLines.constBegin(); it != d->headerLines.constEnd(); ++it) {
 		const QString &s = *it;
 		int n = s.indexOf(": ");
 		if(n == -1)

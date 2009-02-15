@@ -910,7 +910,7 @@ void ClientStream::processNext()
 #endif
 		bool ok = d->client.processStep();
 		// deal with send/received items
-		for(QList<XmlProtocol::TransferItem>::ConstIterator it = d->client.transferItemList.begin(); it != d->client.transferItemList.end(); ++it) {
+		for(QList<XmlProtocol::TransferItem>::ConstIterator it = d->client.transferItemList.constBegin(); it != d->client.transferItemList.constEnd(); ++it) {
 			const XmlProtocol::TransferItem &i = *it;
 			if(i.isExternal)
 				continue;

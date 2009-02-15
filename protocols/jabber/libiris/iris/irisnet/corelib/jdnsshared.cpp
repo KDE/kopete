@@ -416,7 +416,7 @@ public:
 		None,            // don't muck with anything
 		FillInAddress,   // for A/AAAA
 		FillInPtrOwner6, // for PTR, IPv6
-		FillInPtrOwner4, // for PTR, IPv4
+		FillInPtrOwner4 // for PTR, IPv4
 	};
 
 	JDnsShared *q;

@@ -1411,7 +1411,7 @@ Stanza Message::toStanza(Stream *stream) const
 		s.setLang(d->lang);
 
 	StringMap::ConstIterator it;
-	for(it = d->subject.begin(); it != d->subject.end(); ++it) {
+	for(it = d->subject.constBegin(); it != d->subject.constEnd(); ++it) {
 		const QString &str = (*it);
 		if(!str.isEmpty()) {
 			QDomElement e = s.createTextElement(s.baseNS(), "subject", str);
@@ -1420,7 +1420,7 @@ Stanza Message::toStanza(Stream *stream) const
 			s.appendChild(e);
 		}
 	}
-	for(it = d->body.begin(); it != d->body.end(); ++it) {
+	for(it = d->body.constBegin(); it != d->body.constEnd(); ++it) {
 		const QString &str = (*it);
 		if(!str.isEmpty()) {
 			QDomElement e = s.createTextElement(s.baseNS(), "body", str);
@@ -1447,7 +1447,7 @@ Stanza Message::toStanza(Stream *stream) const
 	}
 
 	// urls
-	for(QList<Url>::ConstIterator uit = d->urlList.begin(); uit != d->urlList.end(); ++uit) {
+	for(QList<Url>::ConstIterator uit = d->urlList.constBegin(); uit != d->urlList.constEnd(); ++uit) {
 		QDomElement x = s.createElement("jabber:x:oob", "x");
 		x.appendChild(s.createTextElement("jabber:x:oob", "url", (*uit).url()));
 		if(!(*uit).desc().isEmpty())
@@ -1466,7 +1466,7 @@ Stanza Message::toStanza(Stream *stream) const
 				x.appendChild(s.createTextElement("jabber:x:event","id",d->eventId));
 		}
 
-		for(QList<MsgEvent>::ConstIterator ev = d->eventList.begin(); ev != d->eventList.end(); ++ev) {
+		for(QList<MsgEvent>::ConstIterator ev = d->eventList.constBegin(); ev != d->eventList.constEnd(); ++ev) {
 			switch (*ev) {
 				case OfflineEvent:
 					x.appendChild(s.createElement("jabber:x:event", "offline"));

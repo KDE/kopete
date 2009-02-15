@@ -404,7 +404,7 @@ QDomElement BasicProtocol::docElement()
 	// HACK: using attributes seems to be the only way to get additional namespaces in here
 	if(!defns.isEmpty())
 		e.setAttribute("xmlns", defns);
-	for(QStringList::ConstIterator it = list.begin(); it != list.end();) {
+	for(QStringList::ConstIterator it = list.constBegin(); it != list.constEnd();) {
 		QString prefix = *(it++);
 		QString uri = *(it++);
 		e.setAttribute(QString("xmlns:") + prefix, uri);
@@ -1267,7 +1267,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		}
 		else {
 			QDomElement mechs = doc.createElementNS(NS_SASL, "mechanisms");
-			for(QStringList::ConstIterator it = sasl_mechlist.begin(); it != sasl_mechlist.end(); ++it) {
+			for(QStringList::ConstIterator it = sasl_mechlist.constBegin(); it != sasl_mechlist.constEnd(); ++it) {
 				QDomElement m = doc.createElement("mechanism");
 				m.appendChild(doc.createTextNode(*it));
 				mechs.appendChild(m);

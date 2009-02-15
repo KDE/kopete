@@ -318,7 +318,7 @@ namespace XMPP {
 class UnixNet : public NetInterfaceProvider
 {
 	Q_OBJECT
-	Q_INTERFACES(XMPP::NetInterfaceProvider);
+	Q_INTERFACES(XMPP::NetInterfaceProvider)
 public:
 	QList<Info> info;
 	QTimer t;
@@ -406,7 +406,7 @@ public slots:
 class UnixNetProvider : public IrisNetProvider
 {
 	Q_OBJECT
-	Q_INTERFACES(XMPP::IrisNetProvider);
+	Q_INTERFACES(XMPP::IrisNetProvider)
 public:
 	virtual NetInterfaceProvider *createNetInterfaceProvider()
 	{

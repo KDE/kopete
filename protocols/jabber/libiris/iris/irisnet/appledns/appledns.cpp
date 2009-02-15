@@ -237,7 +237,7 @@ public:
 class AppleProvider : public XMPP::IrisNetProvider
 {
 	Q_OBJECT
-	Q_INTERFACES(XMPP::IrisNetProvider);
+	Q_INTERFACES(XMPP::IrisNetProvider)
 public:
 	QDnsSd dns;
 	QHash<int,QDnsSdDelegate*> delegateById;

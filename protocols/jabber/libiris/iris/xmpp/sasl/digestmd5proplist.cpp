@@ -34,7 +34,7 @@ void DIGESTMD5PropList::set(const QByteArray &var, const QByteArray &val) {
 
 QByteArray DIGESTMD5PropList::get(const QByteArray &var)
 {
-	for(ConstIterator it = begin(); it != end(); ++it) {
+	for(ConstIterator it = constBegin(); it != constEnd(); ++it) {
 		if((*it).var == var)
 			return (*it).val;
 	}
@@ -123,7 +123,7 @@ bool DIGESTMD5PropList::fromString(const QByteArray &str)
 int DIGESTMD5PropList::varCount(const QByteArray &var)
 {
 	int n = 0;
-	for(ConstIterator it = begin(); it != end(); ++it) {
+	for(ConstIterator it = constBegin(); it != constEnd(); ++it) {
 		if((*it).var == var)
 			++n;
 	}
