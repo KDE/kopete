@@ -150,6 +150,9 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-size:([^p]*)pt;([^\"]*)\"([^<]*)</style>")),
 			QString::fromLatin1("<font ptsize=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
 
+	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)background-color:([^;]*);([^\"]*)\"([^<]*)</style>")),
+	            QString::fromLatin1("<font back=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
+
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)color:([^;]*);([^\"]*)\"([^<]*)</style>")),
 			QString::fromLatin1("<font color=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
 
