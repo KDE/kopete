@@ -162,7 +162,7 @@ class KopeteMetaContactLVI::Private
 {
 public:
 	Private() : metaContactIcon( 0L ), nameText( 0L ), extraText( 0L ), contactIconBox( 0L ),
-	            currentMode( -10 ), currentIconMode( -10 ) {}
+	            currentMode( -10 ), currentIconMode( -10 ), leftAlign(false), detailedMode(false), roundedIcons(false) {}
 	ListView::ImageComponent *metaContactIcon;
 	ListView::DisplayNameComponent *nameText;
 	ListView::DisplayNameComponent *extraText;
@@ -175,6 +175,11 @@ public:
 	int contactIconSize;
 	int currentMode;
 	int currentIconMode;
+
+	bool leftAlign;
+	bool detailedMode;
+	bool iconBorders;
+	bool roundedIcons;
 
 	QList<Kopete::MessageEvent*> events;
 
@@ -563,7 +568,19 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 			if ( m_metaContact->status() == Kopete::OnlineStatus::Offline )
 				Blitz::grayscale(photoImg);
 
-			photoPixmap = QPixmap::fromImage(photoImg);
+			if(d->roundedIcons){
+				photoPixmap = QPixmap(photoImg.width(),photoImg.height());
+				photoPixmap.fill(QColor(0,0,0,0));
+				QPainter painter(&photoPixmap);
+				painter.setRenderHint(QPainter::Antialiasing);
+				painter.setPen(Qt::NoPen);
+				painter.setBrush(QBrush(photoImg));
+				painter.drawRoundedRect(0,0,photoPixmap.width()-1,photoPixmap.height()-1,25,25,Qt::RelativeSize);
+			}
+			else{
+				photoPixmap = QPixmap::fromImage(photoImg);
+			}
+
 			QPainter p(&photoPixmap);
 			QColor c = Qt::white;
 
@@ -585,11 +602,13 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 					p.fillRect(photoImg.rect(), c);
 			}
 
-			p.setPen(Qt::black);
-			p.drawLine(0, 0, photoPixmap.width()-1, 0);
-			p.drawLine(0, photoPixmap.height()-1, photoPixmap.width()-1, photoPixmap.height()-1);
-			p.drawLine(0, 0, 0, photoPixmap.height()-1);
-			p.drawLine(photoPixmap.width()-1, 0, photoPixmap.width()-1, photoPixmap.height()-1);
+			if(Kopete::AppearanceSettings::self()->contactListIconBorders()){
+				p.setPen(Qt::black);
+				p.drawLine(0, 0, photoPixmap.width()-1, 0);
+				p.drawLine(0, photoPixmap.height()-1, photoPixmap.width()-1, photoPixmap.height()-1);
+				p.drawLine(0, 0, 0, photoPixmap.height()-1);
+				p.drawLine(photoPixmap.width()-1, 0, photoPixmap.width()-1, photoPixmap.height()-1);
+			}
 		}
 		else
 		{
@@ -695,8 +714,7 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 
 void KopeteMetaContactLVI::slotConfigChanged()
 {
-    setDisplayMode( Kopete::AppearanceSettings::self()->contactListDisplayMode(),
-                    Kopete::AppearanceSettings::self()->contactListIconMode() );
+	setDisplayMode();
 
 	// create a spacer if wanted
 	delete d->spacerBox->component( 0 );
@@ -741,13 +759,27 @@ void KopeteMetaContactLVI::setMetaContactToolTipSourceForComponent( ListView::Co
 		comp->setToolTipSource( d->toolTipSource.get() );
 }
 
-void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
+void KopeteMetaContactLVI::setDisplayMode()
 {
-	if ( mode == d->currentMode && iconmode == d->currentIconMode )
+
+	int size = Kopete::AppearanceSettings::self()->contactListSize();
+	int iconmode = Kopete::AppearanceSettings::self()->contactListIconMode();
+	bool left = Kopete::AppearanceSettings::self()->contactListLeftMode();
+	bool detailed = Kopete::AppearanceSettings::self()->contactListDetailedMode();
+	bool iconBorders = Kopete::AppearanceSettings::self()->contactListIconBorders();
+	bool roundedIcons = Kopete::AppearanceSettings::self()->contactListIconRounded();
+
+	if ( size == d->currentMode && iconmode == d->currentIconMode &&
+	     left == d->leftAlign && detailed == d->detailedMode &&
+	     iconBorders == d->iconBorders && roundedIcons == d->roundedIcons)
 		return;
 
-	d->currentMode = mode;
+	d->currentMode = size;
 	d->currentIconMode = iconmode;
+	d->leftAlign = left;
+	d->detailedMode = detailed;
+	d->iconBorders = iconBorders;
+	d->roundedIcons = roundedIcons;
 
 	// empty...
 	while ( component( 0 ) )
@@ -757,10 +789,15 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 	d->extraText = 0L;
 	d->metaContactIcon = 0L;
 	d->contactIconSize = 12;
-	if (mode == Kopete::AppearanceSettings::EnumContactListDisplayMode::Detailed ) {
-		d->iconSize =  iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPic ?  KIconLoader::SizeMedium : KIconLoader::SizeLarge;
-	} else {
-		d->iconSize = iconmode == Kopete::AppearanceSettings::EnumContactListIconMode::IconPic ? IconSize( KIconLoader::Small ) :  KIconLoader::SizeMedium;
+
+	if (size == Kopete::AppearanceSettings::EnumContactListSize::Small ) {
+		d->iconSize =  KIconLoader::SizeSmall;
+	}
+	else if (size == Kopete::AppearanceSettings::EnumContactListSize::Medium ) {
+		d->iconSize =  KIconLoader::SizeMedium;
+	}
+	else{ // large
+		d->iconSize =  KIconLoader::SizeLarge;
 	}
 	disconnect( Kopete::KABCPersistence::self()->addressBook() , 0 , this , 0);
 
@@ -783,28 +820,58 @@ void KopeteMetaContactLVI::setDisplayMode( int mode, int iconmode )
 		d->metaContactIcon = new ImageComponent( hbox );
 	}
 
-	if( mode == Kopete::AppearanceSettings::EnumContactListDisplayMode::Detailed )
-	{
-		d->contactIconSize = IconSize( KIconLoader::Small );
+	if (size == Kopete::AppearanceSettings::EnumContactListSize::Small ) {
+		d->nameText = new DisplayNameComponent( hbox );
+
+		if(left){
+			d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
+		}
+
+		if(detailed){
+			Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
+			new VSpacerComponent( vbox );
+			d->extraText = new DisplayNameComponent( vbox );
+			new VSpacerComponent( vbox );
+		}
+
+		if(!left){
+			new HSpacerComponent( hbox );
+			d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
+		}
+	}
+	else if (size == Kopete::AppearanceSettings::EnumContactListSize::Medium ) {
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
-		d->nameText = new DisplayNameComponent( vbox );
-		d->extraText = new DisplayNameComponent( vbox );
 
 		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
+		d->nameText = new DisplayNameComponent( box );
+		if(!left){
+			new HSpacerComponent(box);
+		}
 		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
-	}
-	else if( mode == Kopete::AppearanceSettings::EnumContactListDisplayMode::RightAligned )       // old right-aligned contact
-	{
-		d->nameText = new DisplayNameComponent( hbox );
-		new HSpacerComponent( hbox );
-		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
-	}
-	else					       // older left-aligned contact
-	{
-		d->nameText = new DisplayNameComponent( hbox );
-		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
-	}
 
+		if(detailed){
+			d->extraText = new DisplayNameComponent( vbox );
+		}
+
+		new HSpacerComponent(vbox);
+	}
+	else{ // large
+		//d->contactIconSize = IconSize( KIconLoader::Small );
+		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
+		d->nameText = new DisplayNameComponent( vbox );
+
+		if(detailed){
+			d->extraText = new DisplayNameComponent( vbox );
+		}
+
+		Component *box = new BoxComponent( vbox, BoxComponent::Horizontal );
+		if(!left){
+			new HSpacerComponent(box);
+		}
+		d->contactIconBox = new BoxComponent( box, BoxComponent::Horizontal );
+
+		new HSpacerComponent(vbox);
+	}
 	// set some components to have the metacontact tooltip
 	setMetaContactToolTipSourceForComponent( d->metaContactIcon );
 	setMetaContactToolTipSourceForComponent( d->nameText );
@@ -1094,8 +1161,13 @@ void KopeteMetaContactLVI::updateIdleState( Kopete::Contact *c )
 	else
 	{
 		d->nameText->setDefaultColor();
-		if ( d->extraText )
-			d->extraText->setDefaultColor();
+
+		if ( d->extraText ) {
+			if(d->currentMode == Kopete::AppearanceSettings::EnumContactListSize::Large)
+				d->extraText->setDefaultColor();
+			else
+				d->extraText->setColor( Kopete::AppearanceSettings::self()->idleContactColor() );
+		}
 	}
 
 	if(d->metaContactIcon && d->currentIconMode==Kopete::AppearanceSettings::EnumContactListIconMode::IconPic)

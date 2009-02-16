@@ -107,14 +107,24 @@
 	
 	<group name="ContactList">
 		<!-- Contact list display preferences -->
-		<entry key="contactListDisplayMode" type="Enum">
-			<label>Contact list display mode</label>
+		<entry key="contactListSize" type="Enum">
+			<label>Contact list size</label>
 			<choices>
-				<choice name="Classic"/>
-				<choice name="RightAligned"/>
-				<choice name="Detailed"/>
+				<choice name="Small"/>
+				<choice name="Medium"/>
+				<choice name="Large"/>
 			</choices>
-			<default>Classic</default>
+			<default>Small</default>
+			<emit signal="contactListAppearanceChanged" />
+		</entry>
+		<entry key="contactListLeftMode" type="Bool">
+			<label>Contact list status icons are left aligned.</label>
+			<default>false</default>
+			<emit signal="contactListAppearanceChanged" />
+		</entry>
+		<entry key="contactListDetailedMode" type="Bool">
+			<label>Show detailed contact list.</label>
+			<default>false</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="contactListIconMode" type="Enum">
@@ -124,6 +134,16 @@
 				<choice name="IconPhoto" />
 			</choices>
 			<default>IconPic</default>
+			<emit signal="contactListAppearanceChanged" />
+		</entry>
+		<entry key="contactListIconBorders" type="Bool">
+			<label>Enable borders on the contact's photo.</label>
+			<default>false</default>
+			<emit signal="contactListAppearanceChanged" />
+		</entry>
+		<entry key="contactListIconRounded" type="Bool">
+			<label>Round contact photo corners.</label>
+			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="contactListTreeView" type="Bool">
