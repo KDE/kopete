@@ -21,6 +21,7 @@
 #include <kopeteaccount.h>
 
 #include <TelepathyQt4/Client/ConnectionManager>
+#include <TelepathyQt4/Client/PendingAccount>
 #include <TelepathyQt4/Constants>
 
 #include <QSharedPointer>
@@ -89,6 +90,7 @@ private slots:
     void onAccountManagerReady(Telepathy::Client::PendingOperation*);
     void newTelepathyAccountCreated(Telepathy::Client::PendingOperation *);
     void onAccountReady(Telepathy::Client::PendingOperation *);
+    void onExistingAccountReady(Telepathy::Client::PendingOperation *);
     void onConnectionReady(Telepathy::Client::PendingOperation*);
     void onRequestedPresence(Telepathy::Client::PendingOperation*);
     void onConnectionConnected(Telepathy::Client::PendingOperation*);
@@ -101,6 +103,7 @@ private:
     QSharedPointer<Telepathy::Client::Account> account;
     Telepathy::Client::ProtocolParameterList m_allConnectionParameters;
     Telepathy::Client::ProtocolParameterList connectionParameters;
+    Telepathy::Client::PendingAccount *paccount;
 
     QString connectionManagerName;
     QString connectionProtocolName;
@@ -109,6 +112,8 @@ private:
     bool setStatusAfterInit;
     Kopete::OnlineStatus statusInit;
     Kopete::StatusMessage reasonInit;
+    int existingAccountsCount;
+    int existingAccountCounter;
 };
 
 #endif //TELEPATHACCOUNT_H

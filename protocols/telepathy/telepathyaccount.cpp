@@ -51,7 +51,6 @@
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/PendingReadyConnection>
 #include <TelepathyQt4/Client/PendingOperation>
-#include <TelepathyQt4/Client/PendingAccount>
 #include <TelepathyQt4/Client/PendingReadyAccount>
 #include <TelepathyQt4/Client/PendingReadyConnectionManager>
 #include <TelepathyQt4/Client/PendingReadyAccountManager>
@@ -60,7 +59,8 @@
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
     : Kopete::Account(protocol, accountId.toLower()),
-    currentConnectionManager(0), currentAccountManager(0), account(0)
+    currentConnectionManager(0), currentAccountManager(0), account(0), existingAccountsCount(0),
+    existingAccountCounter(0)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     Telepathy::registerTypes();
@@ -403,41 +403,24 @@ void TelepathyAccount::onAccountManagerReady(Telepathy::Client::PendingOperation
      * get a list of all the accounts that
      * are all ready there
      */
-    QList<QSharedPointer<Telepathy::Client::Account> > accounts = currentAccountManager->allAccounts();
-    kDebug(TELEPATHY_DEBUG_AREA) << "accounts: " << accounts.size();
+    QStringList pathList = currentAccountManager->allAccountPaths();
+    kDebug(TELEPATHY_DEBUG_AREA) << "accounts: " << pathList.size();
+    existingAccountsCount = pathList.size();
+    if(existingAccountsCount != 0)
+        existingAccountCounter++;
 
     /*
      * check if account already exist
      */
-    foreach(QSharedPointer<Telepathy::Client::Account> a, accounts)
+    foreach(const QString &path, pathList)
     {
-        if(a->displayName() == accountId() && a->protocol() == connectionProtocolName)
-        {
-            kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << accountId();
-            account = a;
-            return;
-        }
-    }
-
-    if(!account)
-    {
-        QVariantMap parameters;
-        foreach(Telepathy::Client::ProtocolParameter *parameter, connectionParameters)
-        {
-            kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << parameter->defaultValue().toString();
-            parameters[parameter->name()] = parameter->defaultValue();
-        }
-
-        kDebug(TELEPATHY_DEBUG_AREA) << "Creating account: " << connectionManagerName << connectionProtocolName << accountId() << parameters;
-        Telepathy::Client::PendingAccount *paccount =
-            currentAccountManager->createAccount(connectionManagerName, connectionProtocolName, accountId(), parameters);
-
-        QObject::connect(paccount, SIGNAL(finished(Telepathy::Client::PendingOperation *)),
-                         this, SLOT(newTelepathyAccountCreated(Telepathy::Client::PendingOperation *)));
+        QSharedPointer<Telepathy::Client::Account> a = currentAccountManager->accountForPath(path);
+        QObject::connect(a->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+            this, SLOT(onExistingAccountReady(Telepathy::Client::PendingOperation *)));
     }
 }
 
-void TelepathyAccount::newTelepathyAccountCreated(Telepathy::Client::PendingOperation *operation)
+void TelepathyAccount::onExistingAccountReady(Telepathy::Client::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
@@ -447,12 +430,64 @@ void TelepathyAccount::newTelepathyAccountCreated(Telepathy::Client::PendingOper
 #ifdef SHOW_MESSAGEBOX_ERRORS
         KMessageBox::information(0, i18n("Error: %1\n%2", operation->errorName() , operation->errorMessage()));
 #endif
+        return;
+    }
 
+    Telepathy::Client::PendingReadyAccount *pa = dynamic_cast<Telepathy::Client::PendingReadyAccount *>(operation);
+    if(!pa)
+        return;
+
+    Telepathy::Client::Account *a = pa->account();
+
+    kDebug(TELEPATHY_DEBUG_AREA) << a->displayName() << accountId() << a->protocol() << connectionProtocolName << existingAccountCounter;
+
+    if(a->displayName() == accountId() && a->protocol() == connectionProtocolName)
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << accountId();
+        account = QSharedPointer<Telepathy::Client::Account>(a);
+
+        QObject::connect(account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+            this, SLOT(onAccountReady(Telepathy::Client::PendingOperation *)));
         
         return;
     }
 
-    Telepathy::Client::PendingAccount *paccount = static_cast<Telepathy::Client::PendingAccount *>(operation);
+    if( (existingAccountCounter == existingAccountsCount) && !account )
+    {
+        QVariantMap parameters;
+        foreach(Telepathy::Client::ProtocolParameter *parameter, connectionParameters)
+        {
+            kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << parameter->defaultValue().toString();
+            parameters[parameter->name()] = parameter->defaultValue();
+        }
+
+        kDebug(TELEPATHY_DEBUG_AREA) << "Creating account: " << connectionManagerName << connectionProtocolName << accountId() << parameters;
+        paccount = currentAccountManager->createAccount(connectionManagerName, connectionProtocolName, accountId(), parameters);
+
+        QObject::connect(paccount, SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+                         this, SLOT(newTelepathyAccountCreated(Telepathy::Client::PendingOperation *)));
+    }
+    existingAccountCounter++;
+}
+
+void TelepathyAccount::newTelepathyAccountCreated(Telepathy::Client::PendingOperation *operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    // \brief: zeroing counter
+    existingAccountCounter = 0;
+    
+    if(operation->isError())
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error: " << operation->errorName() << operation->errorMessage();
+#ifdef SHOW_MESSAGEBOX_ERRORS
+        KMessageBox::information(0, i18n("Error: %1\n%2", operation->errorName() , operation->errorMessage()));
+#endif
+        account = QSharedPointer<Telepathy::Client::Account>();
+
+        return;
+    }
+
     account = paccount->account();
 
     QObject::connect(account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
@@ -473,7 +508,7 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation *opera
         return;
     }
 
-    kDebug(TELEPATHY_DEBUG_AREA) << "New account created: " << account->cmName() << account->protocol() << account->displayName();
+    kDebug(TELEPATHY_DEBUG_AREA) << "New account: " << account->cmName() << account->protocol() << account->displayName();
 
     if(connectAfterInit)
     {
