@@ -120,9 +120,9 @@ iris/irisnet/corelib/netinterface.cpp
 iris/irisnet/corelib/jdnsshared.cpp
 iris/irisnet/corelib/objectsession.cpp
 iris/irisnet/corelib/irisnetglobal.cpp
-iris/irisnet/appledns/appledns.cpp
-iris/irisnet/appledns/qdnssd.cpp
-iris/irisnet/appledns/sdtest.cpp
+#iris/irisnet/appledns/appledns.cpp
+#iris/irisnet/appledns/qdnssd.cpp
+#iris/irisnet/appledns/sdtest.cpp
 
 # iris/libidn/profiles.c
 # iris/libidn/rfc3454.c
@@ -230,7 +230,7 @@ iris/irisnet/corelib/netnames.h
 iris/irisnet/corelib/irisnetplugin.h
 iris/irisnet/corelib/netinterface.h
 iris/irisnet/corelib/jdnsshared.h
-iris/irisnet/appledns/qdnssd.h
+#iris/irisnet/appledns/qdnssd.h
 
 iris/xmpp/jingle/jinglecontent.h
 iris/xmpp/jingle/jinglesession.h
@@ -258,7 +258,7 @@ kde4_add_library(iris_kopete STATIC ${libiris_SRCS})
 #kde4_add_executable(testapp ${testapp_SRCS})
 
 set(iris_kopete_libs ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY}
-                     ${IDN_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} ${DNSSD_LIBRARIES} -ldns_sd )
+                     ${IDN_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} )
 
 if(WIN32)
   set(iris_kopete_libs ${iris_kopete_libs} ws2_32)
