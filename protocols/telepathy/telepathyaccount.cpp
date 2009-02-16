@@ -46,10 +46,15 @@
 
 #include <QtTapioca/TextChannel>
 
-#include <TelepathyQt4/Client/ConnectionManager>
 #include <TelepathyQt4/Client/Connection>
 #include <TelepathyQt4/Client/AccountManager>
 #include <TelepathyQt4/Client/Account>
+#include <TelepathyQt4/Client/PendingReadyConnection>
+#include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/Client/PendingAccount>
+#include <TelepathyQt4/Client/PendingReadyAccount>
+#include <TelepathyQt4/Client/PendingReadyConnectionManager>
+#include <TelepathyQt4/Client/PendingReadyAccountManager>
 
 #define SHOW_MESSAGEBOX_ERRORS
 
@@ -398,13 +403,13 @@ void TelepathyAccount::onAccountManagerReady(Telepathy::Client::PendingOperation
      * get a list of all the accounts that
      * are all ready there
      */
-    QList<Telepathy::Client::Account *> accounts = currentAccountManager->allAccounts();
+    QList<QSharedPointer<Telepathy::Client::Account> > accounts = currentAccountManager->allAccounts();
     kDebug(TELEPATHY_DEBUG_AREA) << "accounts: " << accounts.size();
 
     /*
      * check if account already exist
      */
-    foreach(Telepathy::Client::Account *a, accounts)
+    foreach(QSharedPointer<Telepathy::Client::Account> a, accounts)
     {
         if(a->displayName() == accountId() && a->protocol() == connectionProtocolName)
         {
@@ -442,6 +447,8 @@ void TelepathyAccount::newTelepathyAccountCreated(Telepathy::Client::PendingOper
 #ifdef SHOW_MESSAGEBOX_ERRORS
         KMessageBox::information(0, i18n("Error: %1\n%2", operation->errorName() , operation->errorMessage()));
 #endif
+
+        
         return;
     }
 
@@ -462,7 +469,7 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation *opera
 #ifdef SHOW_MESSAGEBOX_ERRORS
         KMessageBox::information(0, i18n("Error: %1\n%2", operation->errorName() , operation->errorMessage()));
 #endif
-        account = 0;
+        account = QSharedPointer<Telepathy::Client::Account>();
         return;
     }
 

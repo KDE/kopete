@@ -21,10 +21,9 @@
 #include <kopeteaccount.h>
 
 #include <TelepathyQt4/Client/ConnectionManager>
-#include <TelepathyQt4/Client/PendingOperation>
-#include <TelepathyQt4/Client/PendingAccount>
-#include <TelepathyQt4/Client/PendingReadyAccount>
 #include <TelepathyQt4/Constants>
+
+#include <QSharedPointer>
 
 namespace Kopete
 {
@@ -39,12 +38,13 @@ namespace QtTapioca
         class Contact;
 }
 
-namespace TelepathyQt4
+namespace Telepathy
 {
     namespace Client
     {
         class AccountManager;
         class Account;
+        class PendingOperation;
     }
 }
 
@@ -98,7 +98,7 @@ private:
 
     Telepathy::Client::ConnectionManager *currentConnectionManager;
     Telepathy::Client::AccountManager *currentAccountManager;
-    Telepathy::Client::Account *account;
+    QSharedPointer<Telepathy::Client::Account> account;
     Telepathy::Client::ProtocolParameterList m_allConnectionParameters;
     Telepathy::Client::ProtocolParameterList connectionParameters;
 

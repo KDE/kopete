@@ -7,6 +7,7 @@
 //TelepathyQt4 includes
 #include <TelepathyQt4/Client/ConnectionManager>
 #include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/Client/PendingReadyConnectionManager>
 
 ConnectionManagerItem::ConnectionManagerItem(QString cmName, QTreeWidget *parent)
     : QTreeWidgetItem(parent)
