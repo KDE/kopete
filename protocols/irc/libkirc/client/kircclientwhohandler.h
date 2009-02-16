@@ -36,15 +36,18 @@ class KIRCCLIENT_EXPORT ClientWhoHandler
 	Q_DECLARE_PRIVATE(KIrc::ClientWhoHandler)
 
 public:
-	explicit ClientWhoHandler(Context *context);
+	explicit ClientWhoHandler(Handler *handler);
 	~ClientWhoHandler();
 
-public:
+private:
+	void bindNumericReplies();
+
+public Q_SLOTS:
 	KIrc::Handler::Handled WHO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	KIrc::Handler::Handled WHOIS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	KIrc::Handler::Handled WHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
-private:
+private Q_SLOTS:
 	/* WHO replies */
 	KIrc::Handler::Handled RPL_WHOREPLY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 

@@ -24,6 +24,7 @@
 #include "kircclientmotdhandler.h"
 #include "kircclientchannelhandler.h"
 #include "kircclientpingponghandler.h"
+#include "kircclientwhohandler.h"
 
 #include "kirccontext.h"
 #include "kircentity.h"
@@ -52,6 +53,7 @@ public:
 	KIrc::ClientMotdHandler *motdHandler;
 	KIrc::ClientChannelHandler *channelHandler;
 	KIrc::ClientPingPongHandler *pingPongHandler;
+	KIrc::ClientWhoHandler *whoHandler;
 };
 
 using namespace KIrc;
@@ -64,6 +66,7 @@ ClientEventHandler::ClientEventHandler(QObject* parent)
 	d->motdHandler = new KIrc::ClientMotdHandler(this);
 	d->channelHandler = new KIrc::ClientChannelHandler(this);
 	d->pingPongHandler = new KIrc::ClientPingPongHandler(this);
+	d->whoHandler = new KIrc::ClientWhoHandler(this);
 
 	bindNumericReplies();
 }

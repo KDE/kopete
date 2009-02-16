@@ -45,18 +45,44 @@ public:
 
 using namespace KIrc;
 
-ClientWhoHandler::ClientWhoHandler(Context *context)
-	: Handler(context)
+ClientWhoHandler::ClientWhoHandler(KIrc::Handler *handler)
+	: Handler(handler)
 	, d_ptr(new ClientWhoHandlerPrivate)
 {
 	Q_D(ClientWhoHandler);
 
-	d->context = context;
+	//d->context = context;
 }
 
 ClientWhoHandler::~ClientWhoHandler()
 {
 	delete d_ptr;
+}
+
+/* IMPORTANT NOTE:
+ * Numeric replies always have the current nick or * as first argmuent.
+ * NOTE: * means undefined in most (all ?) of the cases.
+ */
+void ClientWhoHandler::bindNumericReplies()
+{
+	registerMessageAlias( "352", "RPL_WHOREPLY" );
+	registerMessageAlias( "315", "RPL_ENDOFWHO" );
+
+	registerMessageAlias( "301", "RPL_AWAY" );
+	registerMessageAlias( "319", "RPL_WHOISCHANNELS" );
+	registerMessageAlias( "317", "RPL_WHOISIDLE" );
+	registerMessageAlias( "313", "RPL_WHOISOPERATOR" );
+	registerMessageAlias( "311", "RPL_WHOISUSER" );
+	registerMessageAlias( "318", "RPL_ENDOFWHOis" );
+
+	registerMessageAlias( "314", "RPL_WHOWASUSER" );
+	registerMessageAlias( "369", "RPL_ENDOFWHOWAS" );
+	registerMessageAlias( "406", "RPL_ERR_WASNOSUCHNICK" );
+
+	registerMessageAlias( "312", "RPL_WHOISSERVER" );
+	registerMessageAlias( "431", "ERR_NONICKNAMEGIVEN" );
+	registerMessageAlias( "401", "ERR_NOSUCHNICK" );
+	registerMessageAlias( "402", "ERR_NOSUCHSERVER" );
 }
 
 
@@ -80,44 +106,6 @@ KIrc::Handler::Handled ClientWhoHandler::WHOIS(KIrc::Context *context, const KIr
 KIrc::Handler::Handled ClientWhoHandler::WHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 }
-
-
-/* IMPORTANT NOTE:
- * Numeric replies always have the current nick or * as first argmuent.
- * NOTE: * means undefined in most (all ?) of the cases.
- */
-/*
-void ClientWhoHandler::bindNumericReplies()
-{
-	bind(263, this, SLOT(numericReply_263(Message *&)));
-	bind(265, this, SLOT(numericReply_265(Message *&)));
-	bind(266, this, SLOT(numericReply_266(Message *&)));
-
-//	bind(305, this, SLOT(ignoreMessage(Message *&)), 0, 0 );
-//	bind(306, this, SLOT(ignoreMessage(Message *&)), 0, 0 );
-	bind(312, this, SLOT(numericReply_312(Message *&)), 3, 3);
-	bind(313, this, SLOT(numericReply_313(Message *&)), 2, 2);
-	bind(314, this, SLOT(numericReply_314(Message *&)), 5, 5);
-	bind(315, this, SLOT(numericReply_315(Message *&)), 2, 2);
-	bind(317, this, SLOT(numericReply_317(Message *&)), 3, 4);
-	bind(318, this, SLOT(numericReply_318(Message *&)), 2, 2);
-	bind(319, this, SLOT(numericReply_319(Message *&)), 2, 2);
-	bind(320, this, SLOT(numericReply_320(Message *&)), 2, 2);
-//	bind(321, this, SLOT(ignoreMessage(Message *&)), 0, 0 );
-	bind(322, this, SLOT(numericReply_322(Message *&)), 3, 3);
-	bind(323, this, SLOT(numericReply_323(Message *&)), 1, 1);
-	bind(324, this, SLOT(numericReply_324(Message *&)), 2, 4);
-	bind(328, this, SLOT(numericReply_328(Message *&)), 2, 2);
-	bind(329, this, SLOT(numericReply_329(Message *&)), 3, 3);
-//	bind(330, this, SLOT(ignoreMessage(Message *&)), 3, 3); // ???
-	bind(331, this, SLOT(numericReply_331(Message *&)), 2, 2);
-	bind(332, this, SLOT(numericReply_332(Message *&)), 2, 2);
-	bind(352, this, SLOT(numericReply_352(Message *&)), 5, 10);
-
-	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
-	bind(477, this, SLOT(receivedServerMessage(Message&)),0,0);
-}
-*/
 
 /* 307: ":is a registered nick"
  * DALNET: Indicates that this user is identified with NICSERV.
@@ -175,6 +163,22 @@ KIrc::Handler::Handled ClientWhoHandler::RPL_WHOWASUSER(KIrc::Context *context, 
 KIrc::Handler::Handled ClientWhoHandler::RPL_ENDOFWHO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
 {
 //	receivedServerMessage(msg);
+}
+
+/* 301: "<nick> :<away message>"
+ */
+KIrc::Handler::Handled ClientWhoHandler::RPL_AWAY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+	CHECK_ARGS(2, 2);
+
+/*
+	Entity entity = message.entityFromArg(1);
+	entity->setAwayMessage(message.suffix);
+	entity->setMode("+a");
+
+	receivedServerMessage(message);
+*/
+	return KIrc::Handler::NotHandled;
 }
 
 /* RFC say: "<nick> <integer> :seconds idle"
@@ -241,5 +245,47 @@ KIrc::Handler::Handled ClientWhoHandler::RPL_ENDOFWHOWAS(KIrc::Context *context,
 
 //	emit receivedServerMessage(message);
 	return KIrc::Handler::NotHandled;
+}
+
+/* 406: "<nickname> :There was no such nickname"
+ * Like case 401, but when there *was* no such nickname.
+ */
+KIrc::Handler::Handled ClientWhoHandler::ERR_WASNOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+	CHECK_ARGS(2, 2);
+
+	#warning FIXME 406 MEANS *NEVER*, unlike 401
+//	i18n("The channel \"%1\" does not exist").arg(nick)
+//	i18n("The nickname \"%1\" does not exist").arg(nick)
+	return KIrc::Handler::NotHandled;
+}
+
+/* 431: ERR_NONICKNAMEGIVEN
+ * ":No nickname given"
+ * - Returned when a nickname parameter expected
+ *   for a command and isn't found.
+ */
+KIrc::Handler::Handled ClientWhoHandler::ERR_NONICKNAMEGIVEN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+}
+
+
+/* 401: "<nickname> :No such nick/channel"
+ * Gives a signal to indicate that the command issued failed because the person/channel not being on IRC.
+ *  - Used to indicate the nickname parameter supplied to a command is currently unused.
+ */
+KIrc::Handler::Handled ClientWhoHandler::ERR_NOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+
+}
+
+/* 402    ERR_NOSUCHSERVER
+ * "<server name> :No such server"
+ * - Used to indicate the server name given currently
+ *   does not exist.
+ */
+KIrc::Handler::Handled ClientWhoHandler::ERR_NOSUCHSERVER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket)
+{
+
 }
 
