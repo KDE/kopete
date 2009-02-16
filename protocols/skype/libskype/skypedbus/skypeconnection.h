@@ -60,6 +60,7 @@ class SkypeConnection : public QObject
 	private:
 		///The D-pointer for internal things
 		SkypeConnectionPrivate *d;
+		QString convertMessage(const QList <QVariant> messagelist);
 	private slots:
 		///This one takes care of incoming messages if they have some sence for the connection (protocol, pings and so on)
 		void parseMessage(const QString &message);

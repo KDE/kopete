@@ -136,9 +136,9 @@ bool SkypeProtocol::hasAccount() const {
 }
 
 Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &) {
-	kDebug() << k_funcinfo << "Name: " << serializedData["contactId"] << endl;//some debug info
+	kDebug() << k_funcinfo << "Name: " << serializedData["contactId"].toLower() << endl;//some debug info
 
-	QString contactID = serializedData["contactId"];//get the contact ID
+	QString contactID = serializedData["contactId"].toLower();//get the contact ID
 	QString accountId = serializedData["accountId"];
 
 	if (!d->account) {

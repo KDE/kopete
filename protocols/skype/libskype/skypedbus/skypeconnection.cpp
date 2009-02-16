@@ -21,6 +21,7 @@
 #include "clientadaptor.h"
 
 #include <QtDBus>
+#include <QVariant>
 #include <qstringlist.h>
 #include <qtimer.h>
 #include <kdebug.h>
@@ -67,6 +68,15 @@ SkypeConnection::~SkypeConnection() {
 	delete d;//Remove the D pointer
 }
 
+QString SkypeConnection::convertMessage(const QList <QVariant> messagelist) {
+	QString message;
+	for ( QList <QVariant>::const_iterator it = messagelist.begin(); it != messagelist.end(); ++it ) {
+		message.append((*it).toString());//get all messages to one string
+		message.append(" ");//separate messages with space
+	}
+	return message.trimmed();
+}
+
 void SkypeConnection::startLogOn() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
@@ -76,9 +86,9 @@ void SkypeConnection::startLogOn() {
 	}
 
 	QDBusMessage reply = QDBusInterface("com.Skype.API", "/com/Skype", "com.Skype.API").call("Invoke", "PING");
-	QStringList replylist = reply.arguments().at(0).toStringList();
+	QString replystring = convertMessage(reply.arguments());
 
-	if ( replylist.isEmpty() || replylist.at(0) != "PONG"){
+	if ( replystring != "PONG" ){
 		emit error(i18n("Could not ping Skype"));
 		disconnectSkype(crLost);
 		emit connectionDone(seNoSkype, 0);
@@ -149,10 +159,10 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 	{
 		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API");
 		QDBusMessage reply = interface.call("Invoke", "PING");
-		QStringList replylist = reply.arguments().at(0).toStringList();
+		QString replystring = convertMessage(reply.arguments());
 
 		bool started = interface.isValid();
-		bool loggedin = ! replylist.isEmpty() && replylist.at(0) == "PONG";
+		bool loggedin = replystring == "PONG";
 
 		if ( ! started || ! loggedin ){
 			if ( ! started && ! start.isEmpty() ) {//try starting Skype by the given command
@@ -235,28 +245,24 @@ QString SkypeConnection::operator %(const QString &message) {
 		return "";//this is enough, no more errors please..
 	}
 
-	QStringList replylist = reply.arguments().at(0).toStringList();
+	QString replystring = convertMessage(reply.arguments());
 
-	if ( message == "PING" && ( replylist.isEmpty() || replylist.at(0) != "PONG" ) ){
+	if ( message == "PING" && replystring != "PONG" ){
 		emit error(i18n("Could not ping Skype\nYou are log out from Skype, please log in!"));
 		emit connectionDone(seNoSkype, 0);
 		disconnectSkype(crLost);//lost the connection
 		return "";//this is enough, no more errors please..
 	}
 
-	for (QStringList::iterator it = replylist.begin(); it != replylist.end(); ++it) {
-		kDebug() << "Reply message:" << (*it) << endl;//show what we have received
-		return (*it);//ok, just return it
-	}
-
-	return "";//the skype did not respond, which is unusual but what can I do..
+	kDebug() << "Reply message:" << replystring << endl;//show what we have received
+	return replystring;//ok, just return it
 }
 
 void SkypeConnection::send(const QString &message) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	QString reply = *this % message;
-	if ( ! reply.isEmpty() && reply != "" )
+	if ( ! reply.isEmpty() )
 		emit received(reply);
 }
 
@@ -283,10 +289,10 @@ void SkypeConnection::tryConnect() {
 	{
 		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API");
 		QDBusMessage reply = interface.call("Invoke", "PING");
-		QStringList replylist = reply.arguments().at(0).toStringList();
+		QString replystring = convertMessage(reply.arguments());
 
 		bool started = interface.isValid();
-		bool loggedin = ! replylist.isEmpty() && replylist.at(0) == "PONG";
+		bool loggedin = replystring == "PONG";
 
 		if ( ! started || ! loggedin ){
 			if (--d->timeRemaining == 0) {

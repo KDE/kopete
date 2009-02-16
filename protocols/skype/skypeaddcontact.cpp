@@ -63,6 +63,8 @@ SkypeAddContact::~SkypeAddContact() {
 bool SkypeAddContact::validateData() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
+	d->widget->NameEdit->setText(d->widget->NameEdit->text().toLower());
+
 	if (!d->account->canComunicate()) {
 		KMessageBox::sorry(this, i18n("You must connect to Skype first"), i18n("Not Connected"), QFlags<KMessageBox::Option>());
 		return false;
