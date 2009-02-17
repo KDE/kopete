@@ -87,8 +87,7 @@ protected:
 
 private slots:
     void onConnectionManagerReady(Telepathy::Client::PendingOperation*);
-    void onCMConnectionFinished(Telepathy::Client::PendingOperation*);
-    void onCMConnectionReady(Telepathy::Client::PendingOperation*);
+    void onConnectionCreated(Telepathy::Client::PendingOperation*);
     void onAccountManagerReady(Telepathy::Client::PendingOperation*);
     void newTelepathyAccountCreated(Telepathy::Client::PendingOperation *);
     void onAccountReady(Telepathy::Client::PendingOperation *);
@@ -96,10 +95,12 @@ private slots:
     void onConnectionReady(Telepathy::Client::PendingOperation*);
     void onRequestedPresence(Telepathy::Client::PendingOperation*);
     void onConnectionConnected(Telepathy::Client::PendingOperation*);
+    void onRequestConnectReady(Telepathy::Client::PendingOperation*);
 
 private:
     void initTelepathyAccount();
     void createNewAccount();
+    bool isOperationError(Telepathy::Client::PendingOperation*);
 
     Telepathy::Client::ConnectionManager *currentConnectionManager;
     Telepathy::Client::AccountManager *currentAccountManager;
