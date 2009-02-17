@@ -181,6 +181,7 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	}
 
 
+	clientSetup();
 //	setAccountLabel( QString::fromLatin1("%1@%2").arg(mNickName,networkName) );
 
 
@@ -622,7 +623,6 @@ void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessag
 	if ( expected != OnlineStatus::Offline && (current == OnlineStatus::Offline || current == OnlineStatus::Unknown) )
 	{
 		kDebug(14120) << "Connecting.";
-		clientSetup();
 //		clientConnect();
 		connect();
 	}
