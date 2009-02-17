@@ -88,7 +88,8 @@ public:
 };
 
 Entity::Entity(Context *context)
-	: QObject(context)
+	: QObject()  //Don't let the Entity be a child of the context,
+	             //as the deletion will be handled by the SharedPointer
 	, d_ptr(new EntityPrivate)
 {
 	Q_D( Entity );
