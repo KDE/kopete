@@ -458,10 +458,14 @@ void TelepathyAccount::onAccountManagerReady(Telepathy::Client::PendingOperation
      * are all ready there
      */
     QStringList pathList = currentAccountManager->allAccountPaths();
-    kDebug(TELEPATHY_DEBUG_AREA) << "accounts: " << pathList.size();
+    kDebug(TELEPATHY_DEBUG_AREA) << "accounts: " << pathList.size() << pathList;
     existingAccountsCount = pathList.size();
     if(existingAccountsCount != 0)
         existingAccountCounter++;
+    else
+    {
+        createNewAccount();
+    }
 
     /*
      * check if account already exist
@@ -506,20 +510,27 @@ void TelepathyAccount::onExistingAccountReady(Telepathy::Client::PendingOperatio
 
     if( !account && (existingAccountCounter == existingAccountsCount) )
     {
-        QVariantMap parameters;
-        foreach(Telepathy::Client::ProtocolParameter *parameter, connectionParameters)
-        {
-            kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << parameter->defaultValue().toString();
-            parameters[parameter->name()] = parameter->defaultValue();
-        }
-
-        kDebug(TELEPATHY_DEBUG_AREA) << "Creating account: " << connectionManagerName << connectionProtocolName << accountId() << parameters;
-        paccount = currentAccountManager->createAccount(connectionManagerName, connectionProtocolName, accountId(), parameters);
-
-        QObject::connect(paccount, SIGNAL(finished(Telepathy::Client::PendingOperation *)),
-                         this, SLOT(newTelepathyAccountCreated(Telepathy::Client::PendingOperation *)));
+        createNewAccount();
     }
     existingAccountCounter++;
+}
+
+void TelepathyAccount::createNewAccount()
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    
+    QVariantMap parameters;
+    foreach(Telepathy::Client::ProtocolParameter *parameter, connectionParameters)
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << parameter->defaultValue().toString();
+        parameters[parameter->name()] = parameter->defaultValue();
+    }
+
+    kDebug(TELEPATHY_DEBUG_AREA) << "Creating account: " << connectionManagerName << connectionProtocolName << accountId() << parameters;
+    paccount = currentAccountManager->createAccount(connectionManagerName, connectionProtocolName, accountId(), parameters);
+
+    QObject::connect(paccount, SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+        this, SLOT(newTelepathyAccountCreated(Telepathy::Client::PendingOperation *)));
 }
 
 void TelepathyAccount::newTelepathyAccountCreated(Telepathy::Client::PendingOperation *operation)

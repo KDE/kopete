@@ -99,6 +99,7 @@ private slots:
 
 private:
     void initTelepathyAccount();
+    void createNewAccount();
 
     Telepathy::Client::ConnectionManager *currentConnectionManager;
     Telepathy::Client::AccountManager *currentAccountManager;
