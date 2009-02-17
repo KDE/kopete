@@ -87,6 +87,8 @@ protected:
 
 private slots:
     void onConnectionManagerReady(Telepathy::Client::PendingOperation*);
+    void onCMConnectionFinished(Telepathy::Client::PendingOperation*);
+    void onCMConnectionReady(Telepathy::Client::PendingOperation*);
     void onAccountManagerReady(Telepathy::Client::PendingOperation*);
     void newTelepathyAccountCreated(Telepathy::Client::PendingOperation *);
     void onAccountReady(Telepathy::Client::PendingOperation *);
@@ -101,6 +103,7 @@ private:
     Telepathy::Client::ConnectionManager *currentConnectionManager;
     Telepathy::Client::AccountManager *currentAccountManager;
     QSharedPointer<Telepathy::Client::Account> account;
+    QSharedPointer<Telepathy::Client::Connection> m_connection;
     Telepathy::Client::ProtocolParameterList m_allConnectionParameters;
     Telepathy::Client::ProtocolParameterList connectionParameters;
     Telepathy::Client::PendingAccount *paccount;

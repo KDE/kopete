@@ -51,6 +51,7 @@
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/PendingReadyConnection>
 #include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/Client/PendingConnection>
 #include <TelepathyQt4/Client/PendingReadyAccount>
 #include <TelepathyQt4/Client/PendingReadyConnectionManager>
 #include <TelepathyQt4/Client/PendingReadyAccountManager>
@@ -87,16 +88,65 @@ void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
         return;
     }
 
+    // \brief: set connection early
+    Telepathy::Client::PendingConnection *pc =
+        currentConnectionManager->requestConnection(account->protocol(), account->parameters());
+
+    QObject::connect(pc, SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+        this,
+        SLOT(onCMConnectionFinished(Telepathy::Client::PendingOperation*))
+    );
+}
+
+void TelepathyAccount::onCMConnectionFinished(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    if(operation->isError())
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
+#ifdef SHOW_MESSAGEBOX_ERRORS
+        KMessageBox::information(0, i18n("Error: %1\n%2", operation->errorName() , operation->errorMessage()));
+#endif
+        return;
+    }
+    
+    Telepathy::Client::PendingConnection *pc = dynamic_cast<Telepathy::Client::PendingConnection*>(operation);
+    if(!pc)
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error with connection.";
+        return;
+    }
+    
+    m_connection = pc->connection();
+    QObject::connect(m_connection->becomeReady(),
+        SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+        this,
+        SLOT(onCMConnectionReady(Telepathy::Client::PendingOperation*))
+    );
+}
+
+void TelepathyAccount::onCMConnectionReady(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    if(operation->isError())
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
+#ifdef SHOW_MESSAGEBOX_ERRORS
+        KMessageBox::information(0, i18n("Error: %1\n%2", operation->errorName() , operation->errorMessage()));
+#endif
+        return;
+    }
+
     // \todo: here we must add setAutomaticPresence???
     if(!account->haveConnection())
     {
         kDebug(TELEPATHY_DEBUG_AREA) << "Ups! We cant connect :(";
         return;
     }
-    
-    QSharedPointer<Telepathy::Client::Connection> connection = account->connection();
 
-    QObject::connect(connection->becomeReady(),
+    m_connection = account->connection();
+
+    QObject::connect(m_connection->becomeReady(),
         SIGNAL(finished(Telepathy::Client::PendingOperation*)),
         this,
         SLOT(onConnectionReady(Telepathy::Client::PendingOperation*))
@@ -105,6 +155,7 @@ void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
 
 void TelepathyAccount::onConnectionReady(Telepathy::Client::PendingOperation* operation)
 {
+    kDebug(TELEPATHY_DEBUG_AREA);
     if(operation->isError())
     {
         kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
@@ -129,6 +180,7 @@ void TelepathyAccount::onConnectionReady(Telepathy::Client::PendingOperation* op
 
 void TelepathyAccount::onRequestedPresence(Telepathy::Client::PendingOperation* operation)
 {
+    kDebug(TELEPATHY_DEBUG_AREA);
     if(operation->isError())
     {
         kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
@@ -320,6 +372,7 @@ Telepathy::Client::ProtocolParameterList TelepathyAccount::allConnectionParamete
 
 Telepathy::Client::ConnectionManager *TelepathyAccount::getConnectionManager()
 {
+    kDebug(TELEPATHY_DEBUG_AREA);
     if(!currentConnectionManager)
         currentConnectionManager = new Telepathy::Client::ConnectionManager(connectionManagerName);
 
@@ -328,6 +381,7 @@ Telepathy::Client::ConnectionManager *TelepathyAccount::getConnectionManager()
 
 Telepathy::Client::AccountManager *TelepathyAccount::getAccountManager()
 {
+    kDebug(TELEPATHY_DEBUG_AREA);
     if(!currentAccountManager)
         currentAccountManager = new Telepathy::Client::AccountManager(QDBusConnection::sessionBus());
 
@@ -439,11 +493,9 @@ void TelepathyAccount::onExistingAccountReady(Telepathy::Client::PendingOperatio
 
     Telepathy::Client::Account *a = pa->account();
 
-    kDebug(TELEPATHY_DEBUG_AREA) << a->displayName() << accountId() << a->protocol() << connectionProtocolName << existingAccountCounter;
-
-    if(a->displayName() == accountId() && a->protocol() == connectionProtocolName)
+    if( !account && ((a->displayName() == accountId()) && (a->protocol() == connectionProtocolName)) )
     {
-        kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << accountId();
+        kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << a->cmName() << connectionManagerName << a->displayName() << accountId() << a->protocol() << connectionProtocolName << existingAccountCounter;
         account = QSharedPointer<Telepathy::Client::Account>(a);
 
         QObject::connect(account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
@@ -452,7 +504,7 @@ void TelepathyAccount::onExistingAccountReady(Telepathy::Client::PendingOperatio
         return;
     }
 
-    if( (existingAccountCounter == existingAccountsCount) && !account )
+    if( !account && (existingAccountCounter == existingAccountsCount) )
     {
         QVariantMap parameters;
         foreach(Telepathy::Client::ProtocolParameter *parameter, connectionParameters)
