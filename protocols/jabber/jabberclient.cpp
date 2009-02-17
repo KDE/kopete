@@ -1013,7 +1013,6 @@ void JabberClient::slotCSAuthenticated ()
 
 	
 	//update the ressource:
-	kWarning() << "#######" << d->jabberClientStream->jid().full() <<  jid().full();
 	d->jid = d->jabberClientStream->jid();
 
 	// start the client operation
