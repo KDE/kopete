@@ -2,6 +2,7 @@
     kircentity.h - IRC Client
 
     Copyright (c) 2004-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2004-2007 by the Kopete developers <kopete-devel@kde.org>
 

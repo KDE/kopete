@@ -4,6 +4,7 @@
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003-2004 by Jason Keirstead <jason@keirstead.org>
     Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 

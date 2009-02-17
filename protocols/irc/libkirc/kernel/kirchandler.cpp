@@ -2,6 +2,7 @@
     kirceventhandler.cpp - IRC event handler.
 
     Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     *************************************************************************
     *                                                                       *

@@ -2,6 +2,7 @@
     kircclientwhohandler.h - IRC Client Who Handler
 
     Copyright (c) 2008      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     *************************************************************************
     *                                                                       *
