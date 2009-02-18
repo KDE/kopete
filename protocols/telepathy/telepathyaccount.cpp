@@ -103,6 +103,8 @@ void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
         return;
     }
 
+    kDebug(TELEPATHY_DEBUG_AREA) << account->parameters();
+
     // \brief: set connection early
     Telepathy::Client::PendingConnection *pc =
         currentConnectionManager->requestConnection(account->protocol(), account->parameters());
@@ -283,6 +285,7 @@ bool TelepathyAccount::readConfig()
         {
             if( parameter->name() == it.key() )
             {
+                kDebug(TELEPATHY_DEBUG_AREA) << parameter->defaultValue().toString() << it.value();
                 if( parameter->defaultValue().toString() != it.value() )
                 {
                     QVariant oldValue = parameter->defaultValue();
@@ -301,30 +304,43 @@ bool TelepathyAccount::readConfig()
                             newValue = true;
                         else
                             newValue = false;
-                        }
-                        else
-                            newValue = QVariant(it.value());
-
-                        kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter->name() << " Value: " << newValue << "Type: " << parameter->defaultValue().typeName();
-                        connectionParameters.append(
-                            new Telepathy::Client::ProtocolParameter(
-                                parameter->name(),
-                                parameter->dbusSignature(),
-                                newValue,
-                                Telepathy::ConnMgrParamFlagHasDefault
-                            ));
-                        break;
                     }
+                    else
+                        newValue = QVariant(it.value());
+
+                    kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter->name() << " Value: " << newValue << "Type: " << parameter->defaultValue().typeName();
+                    connectionParameters.append(
+                        new Telepathy::Client::ProtocolParameter(
+                            parameter->name(),
+                            parameter->dbusSignature(),
+                            newValue,
+                            Telepathy::ConnMgrParamFlagHasDefault
+                        ));
+                }
+                else
+                {
+                    kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << parameter->defaultValue();
+
+                    // \todo: is this right to add in list default values ???
+                    connectionParameters.append(
+                        new Telepathy::Client::ProtocolParameter(
+                            parameter->name(),
+                            parameter->dbusSignature(),
+                            parameter->defaultValue(),
+                            Telepathy::ConnMgrParamFlagHasDefault
+                        ));
                 }
             }
         }
+    }
 
-        if( !connectionManagerName.isEmpty() &&
-            !connectionProtocolName.isEmpty() &&
-            !connectionParameters.isEmpty() )
-                return true;
-        else
-            return false;
+    kDebug(TELEPATHY_DEBUG_AREA) << connectionManagerName << connectionProtocolName << connectionParameters;
+    if( !connectionManagerName.isEmpty() &&
+        !connectionProtocolName.isEmpty() &&
+        !connectionParameters.isEmpty() )
+            return true;
+    else
+        return false;
 }
 
 Telepathy::Client::ProtocolParameterList TelepathyAccount::allConnectionParameters()
@@ -417,8 +433,6 @@ void TelepathyAccount::onConnectionManagerReady(Telepathy::Client::PendingOperat
         kDebug(TELEPATHY_DEBUG_AREA) << "Init connection manager failed!";
         delete currentConnectionManager;
         currentConnectionManager = 0;
-        delete currentAccountManager;
-        currentAccountManager = 0;
     }
 }
 
