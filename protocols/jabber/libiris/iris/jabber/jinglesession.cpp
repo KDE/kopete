@@ -93,7 +93,7 @@ void JingleSession::addContent(JingleContent *c)
 	qDebug() << "addContent" << c->name();
 	d->contents << c;
 	connect(c, SIGNAL(started()), this, SLOT(slotContentReady()));
-	connect(c, SIGNAL(established()), this, SLOT(slotContentConnected())); //Only do that if we are not the initiator.
+	connect(c, SIGNAL(established()), this, SLOT(slotContentConnected()));
 }
 
 void JingleSession::addContents(const QList<JingleContent*>& l)
@@ -119,22 +119,8 @@ QList<JingleContent*> JingleSession::contents() const
 	return d->contents;
 }
 
-void JingleSession::slotContentReady()
-{
-	/*disconnect(sender(), SIGNAL(started()), this, SLOT(slotContentReady()));
-	if (++d->contentsStarted == contents().count())
-	{
-		d->contentsReady = true;
-		if (d->canStart)
-			start();
-	}*/
-}
-
 void JingleSession::start()
 {
-	/*d->canStart = true;
-	if (!d->contentsReady)
-		return;*/
 	// Generate session ID
 	d->sid = genSid();
 
@@ -193,33 +179,6 @@ bool JingleSession::isInitiator() const
 	return initiator() == d->rootTask->client()->jid().full();
 }
 
-/*void JingleSession::sessionAccepted(const QDomElement& x)
-{
-	qDebug() << "void JingleSession::sessionAccepted(const QDomElement& x) called";
-	QDomElement content = x.firstChildElement();
-	
-	while (!content.isNull())
-	{
-		JingleContent *c = contentWithName(content.attribute("name"));
-		QList<QDomElement> payloads;
-		QDomElement pType = content.firstChildElement().firstChildElement();
-		//		    content    description         payload-type
-		while (!pType.isNull())
-		{
-			payloads << pType;
-			pType = pType.nextSiblingElement();
-		}
-		c->setResponderPayloads(payloads);
-		qDebug() << "Best payload name :" << c->bestPayload().attribute("name");
-		content = content.nextSiblingElement();
-	}
-	d->state = Active;
-
-	qDebug() << "Ok, we switched to ACTIVE state, starting to stream.";
-	
-	emit stateChanged();
-}*/
-
 void JingleSession::slotSessionAcceptAcked()
 {
 	d->state = Active;
@@ -242,7 +201,7 @@ void JingleSession::acceptSession()
 			qDebug() << "setting right information in the content" << contents()[i]->name();
 			// First, set our supported payload-types.
 			JingleContent *c = contents()[i];
-			c->setLocalPayloads(c->type() == JingleContent::Audio ?
+			c->setLocalPayloads(c->mediaType() == JingleContent::Audio ?
 						d->jingleSessionManager->supportedAudioPayloads() :
 						d->jingleSessionManager->supportedVideoPayloads());
 		}
@@ -388,6 +347,7 @@ void JingleSession::setInitiator(const QString& init)
 
 void JingleSession::addContent(const QDomElement& content)
 {
+	//FIXME:Contents can have multiple transport methods now.
 	qDebug() << "addContent" << content.attribute("name");
 
 	// If the content is added from XML data, chances are it is a remote content.
@@ -395,10 +355,20 @@ void JingleSession::addContent(const QDomElement& content)
 	if (JingleContent::transportNS(content) == NS_JINGLE_TRANSPORTS_RAW)
 		c = new JingleRawContent(JingleContent::Responder, this);
 	else if (JingleContent::transportNS(content) == NS_JINGLE_TRANSPORTS_ICE)
+	{
+		if (!QCA::isSupported("hmac(sha1)"))
+		{
+			qDebug() << "hmac(sha1) not supported. Unable to start ICE.";
+			//Ignore that content, it won't be accepted.
+			return;
+		}
+
 		c = new JingleIceContent(JingleContent::Responder, this);
+	}
 	else
 	{
-		qDebug() << "Unsupported Content. What do I do now ?";
+		qDebug() << "Unsupported Content.";
+		//Ignore that content, it won't be accepted.
 		return;
 	}
 	
@@ -449,50 +419,6 @@ void JingleSession::slotSessTerminated()
 	emit terminated();
 }
 
-void JingleSession::addSessionInfo(const QDomElement& e)
-{
-	//FIXME:
-	//This is in a session info ? 
-	//Well, this should be managed by the JingleContent too.
-	//Anyway, protocol has changed, this does not exist anymore
-	//	1) for Raw-Udp
-	//	2) it's not a general use-case, maybe used for ICE-UDP only, but not even sure, too lazy to check now.
-	//Uncomment if necessary
-	/*QString info = e.tagName();
-	if (info == "trying")
-	{
-		d->responderTrying = true;
-	}
-	else if (info == "received")
-
-		// We consider every ports are opened, no firewall (that's the specification that tells us that.)
-		for (int i = 0; i < contents().count(); i++)
-		{
-			//We tell the content that it is able to send data.
-			contents()[i]->setSending(true);
-		}
-	}*/
-}
-
-/*void JingleSession::addTransportInfo(const QDomElement& e)
-{
-	// this should really depend on the transport used...
-	qDebug() << "Transport info for content named" << e.attribute("name");
-	
-	JingleContent *content = contentWithName(e.attribute("name"));
-	
-	qDebug() << "Found content with address" << (int*) content;
-	
-	connect(content, SIGNAL(needData(XMPP::JingleContent*)), this, SIGNAL(needData(XMPP::JingleContent*)));
-	content->addTransportInfo(e);
-	
-	//If it is a candidate, we try to connect.
-	//FIXME:is a transport-info always a candidate ? --> Currently, we consider this can only a candidate.
-	//TODO:There should be a JingleTransport Class as the transport will be used everywhere
-	//	Also, we could manipulate the QDomElement
-	QDomElement candidate = e.firstChildElement().firstChildElement(); //This is the candidate.
-}*/
-
 JingleSession::State JingleSession::state() const
 {
 	return d->state;
@@ -500,7 +426,6 @@ JingleSession::State JingleSession::state() const
 
 void JingleSession::appendAction(JingleAction *action)
 {
-	// TODO:Implement me.
 	switch (action->action())
 	{
 	case JingleAction::SessionTerminate :
@@ -557,8 +482,57 @@ void JingleSession::appendAction(JingleAction *action)
 
 		break;
 	}
-	case JingleAction::ContentRemove :
 	case JingleAction::SessionInfo :
+	{
+		QDomElement info = action->data();
+		if (info.attribute("xmlns") == "urn:xmpp:jingle:apps:rtp:info:1")
+		{
+			if (info.tagName() == "ringing")
+			{
+				d->state = Ringing;
+			
+				emit stateChanged();
+			}
+			else if (info.tagName() == "hold")
+			{
+				d->state = Hold;
+			}
+			else if (info.tagName() == "active")
+			{
+				if (info.hasAttribute("name"))
+				{
+					JingleContent *c = contentWithName(info.attribute("name"));
+					if (!c)
+					{
+						qDebug() << "Content not found.";
+						return;
+					}
+
+					c->activated();
+				}
+				else
+					d->state = Active;
+			}
+			else if (info.tagName() == "mute")
+			{
+				if (info.hasAttribute("name"))
+				{
+					JingleContent *c = contentWithName(info.attribute("name"));
+					if (!c)
+					{
+						qDebug() << "Content not found.";
+						return;
+					}
+
+					c->muted();
+				}
+				else
+					d->state = Mute;
+			}
+		}
+		break;
+	}
+	case JingleAction::ContentRemove :
 	case JingleAction::ContentAdd :
 	case JingleAction::ContentModify :
 	case JingleAction::TransportReplace :

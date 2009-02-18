@@ -130,7 +130,7 @@ void JabberJingleContent::startStreaming()
 	
 	connect(m_content, SIGNAL(readyRead()), this, SLOT(slotRtpReadyRead()));
 	
-	if (m_content->type() == XMPP::JingleContent::Audio)
+	if (m_content->mediaType() == XMPP::JingleContent::Audio)
 	{
 		m_mediaSession = new MediaSession(m_mediaManager, "speex"/*FIXME:use m_content->bestPayload()*/);
 		if (m_mediaSession == 0)

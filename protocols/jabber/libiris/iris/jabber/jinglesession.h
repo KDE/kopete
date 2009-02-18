@@ -31,7 +31,7 @@
 #define NS_JINGLE "urn:xmpp:tmp:jingle:0"
 #define NS_JINGLE_TRANSPORTS_RAW "urn:xmpp:tmp:jingle:transports:raw-udp:1"
 #define NS_JINGLE_TRANSPORTS_ICE "urn:xmpp:tmp:jingle:transports:ice-udp:0"
-#define NS_JINGLE_APPS_RTP "urn:xmpp:tmp:jingle:apps:rtp:0"
+#define NS_JINGLE_APPS_RTP "urn:xmpp:tmp:jingle:apps:rtp:1"
 
 #include "im.h"
 //#include "xmpp_client.h"
@@ -107,15 +107,6 @@ namespace XMPP
 		 * one content.
 		 */
 		void addContents(const QList<JingleContent*>&);
-
-		/* 
-		 * Adds session information to the session
-		 * (used to inform the session that a "received"
-		 * informational message has been received for eg.)
-		 * Argument is a QDomElement containing the child(s -- TODO)
-		 * of the jingle tag in a jingle stanza.
-		 */
-		void addSessionInfo(const QDomElement&);
 
 		/*
 		 * Adds transport info to the session.
@@ -208,13 +199,6 @@ namespace XMPP
 		QString initiator() const;
 		
 		/*
-		 * Start negotiation.
-		 * This function is called after receiving a session initiate.
-		 * This will start negotiating a connection depending on the transport.
-		 */
-		//void startNegotiation();
-		
-		/*
 		 * Returns a pointer to the first JingleContent with the name n.
 		 * Each content must have a unique name so returning the first
 		 * one returns the only one.
@@ -236,6 +220,9 @@ namespace XMPP
 		// Session states
 		enum State {
 			Pending = 0,
+			Ringing,
+			Hold,
+			Mute,
 			Active,
 			Ended
 		};
@@ -276,11 +263,6 @@ namespace XMPP
 		 */
 		void stateChanged();
 	public slots:
-		/*
-		 * Executed when a JingleContent claims it's ready to be started.
-		 */
-		void slotContentReady();
-		
 		/*
 		 * This slot is called when a content-remove has been acked.
 		 */

@@ -35,8 +35,8 @@ using namespace XMPP;
 class JingleRawContent::Private
 {
 public:
-	QUdpSocket *inSocket;
-	QUdpSocket *outSocket;
+	QUdpSocket* inSocket[2];
+	QUdpSocket* outSocket[2];
 };
 
 JingleRawContent::JingleRawContent(Mode mode, JingleSession *parent)
@@ -55,20 +55,15 @@ JingleRawContent::JingleRawContent(Mode mode, JingleSession *parent)
 	transport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_RAW);
 	setTransport(transport);
 
-	//emit started();
-
-	d->inSocket = 0L;
-	d->outSocket = 0L;
+	d->inSocket[0] = 0;
+	d->inSocket[1] = 0;
+	d->outSocket[0] = 0;
+	d->outSocket[1] = 0;
 }
 
 JingleRawContent::~JingleRawContent()
 {
 	delete d;
-}
-
-void JingleRawContent::addCandidate(const QDomElement& c)
-{
-	JingleContent::addCandidate(c); //FIXME:addLocalCandidate() ??
 }
 
 void JingleRawContent::addRemoteCandidate(const QDomElement& c)
@@ -87,44 +82,33 @@ void JingleRawContent::addTransportInfo(const QDomElement& e)
 	QDomElement t = e.firstChildElement();
 	
 	addRemoteCandidate(t.firstChildElement());
-	
-	//createUdpOutSocket(QHostAddress(t.firstChildElement().attribute("ip")),
-	//		   t.firstChildElement().attribute("port").toInt());
 }
 
 void JingleRawContent::createUdpInSocket()
 {
-	qDebug() << "JingleRawContent::createUdpInSocket()";
-
-	if (transport().attribute("xmlns") != NS_JINGLE_TRANSPORTS_RAW)
-		return;
-	
-	if (!d->inSocket)
-		d->inSocket = new QUdpSocket();
-	
-	QHostAddress address(transport().firstChildElement().attribute("ip"));
-	int port = transport().firstChildElement().attribute("port").toInt();
-	qDebug() << "Bind socket to" << address << ":" << port;
-	if (d->inSocket->bind(address, port))
-		qDebug() << "Socket bound to" << address.toString() << ":" << port;
-	else
-	{
-		qDebug() << "Unable to bind socket to" << address.toString() << ":" << port;
-		return;
-	}
-	
-	connect(d->inSocket, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
 	
 	setReceiving(true);
+}
+
+void JingleRawContent::slotReadyRead()
+{
+	if (sender() == d->inSocket[0])
+		emit readyRead(0);
+	else if (sender() == d->inSocket[1])
+		emit readyRead(1);
 }
 
 void JingleRawContent::createUdpOutSocket(const QHostAddress& address, int port)
 {
 	qDebug() << "createUdpOutSocket()";
 	
-	if (!d->outSocket)
-		d->outSocket = new QUdpSocket();
-	d->outSocket->connectToHost(address, port);
+	if (!d->outSocket[0])
+		d->outSocket[0] = new QUdpSocket();
+	d->outSocket[0]->connectToHost(address, port);
+	
+	if (!d->outSocket[1])
+		d->outSocket[1] = new QUdpSocket();
+	d->outSocket[1]->connectToHost(address, port + 1);
 	
 	qDebug() << "Ok, we can start sending" << address.toString() << ":" << port;
 	
@@ -135,13 +119,32 @@ void JingleRawContent::bind(const QHostAddress& address, int port)
 {
 	qDebug() << "Trying to bind socket to" << address.toString() << ":" << port;
 	
-	if (!d->inSocket)
-		d->inSocket = new QUdpSocket();
+	if (!d->inSocket[0])
+		d->inSocket[0] = new QUdpSocket();
 	
-	if (d->inSocket->bind(address, port))
+	if (!d->inSocket[1])
+		d->inSocket[1] = new QUdpSocket();
+	
+	qDebug() << "Bind socket to" << address << ":" << port;
+	
+	if (d->inSocket[0]->bind(address, port))
 		qDebug() << "Socket bound to" << address.toString() << ":" << port;
+	else
+	{
+		qDebug() << "Unable to bind socket to" << address.toString() << ":" << port;
+		return;
+	}
+
+	if (d->inSocket[1]->bind(address, port + 1))
+		qDebug() << "Socket bound to" << address.toString() << ":" << port + 1;
+	else
+	{
+		qDebug() << "Unable to bind socket to" << address.toString() << ":" << port + 1;
+		return;
+	}
 	
-	connect(d->inSocket, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
+	connect(d->inSocket[0], SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+	connect(d->inSocket[1], SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
 	
 	setReceiving(true);
 }
@@ -208,17 +211,18 @@ QString JingleRawContent::transportNS() const
 	return NS_JINGLE_TRANSPORTS_RAW;
 }
 
-void JingleRawContent::writeDatagram(const QByteArray& ba, int channel)
+void JingleRawContent::writeDatagram(const QByteArray& ba, Channel channel)
 {
-	d->outSocket->write(ba);
+	d->outSocket[(int)channel]->write(ba);
 }
 
-QByteArray JingleRawContent::readAll(int channel)
+QByteArray JingleRawContent::readAll(Channel channel)
 {
-	//qDebug() << "JingleRawContent::readAll()";
 	QByteArray ret;
-	ret.resize(d->inSocket->pendingDatagramSize());
-	d->inSocket->readDatagram(ret.data(), d->inSocket->pendingDatagramSize());
+
+	ret.resize(d->inSocket[(int)channel]->pendingDatagramSize());
+	d->inSocket[(int)channel]->readDatagram(ret.data(), d->inSocket[(int)channel]->pendingDatagramSize());
+
 	return ret;
 }
 

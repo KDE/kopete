@@ -275,7 +275,7 @@ void JT_JingleAction::sessionAccept(const QList<JingleContent*>& contents)
 	
 	for (int i = 0; i < contents.count(); i++)
 	{
-		jingle.appendChild(contents[i]->contentElement(JingleContent::RemoteCandidate, JingleContent::LocalPayloads));
+		jingle.appendChild(contents[i]->contentElement(JingleContent::UsedCandidate, JingleContent::AcceptablePayloads));
 	}
 
 	qDebug() << "Prepare to send :";

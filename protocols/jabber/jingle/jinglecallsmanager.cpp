@@ -200,14 +200,14 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		iceAudio->setName("audio-content");
 		iceAudio->addLocalPayloads(d->audioPayloads);
 		iceAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
-		iceAudio->setType(JingleContent::Audio);
+		iceAudio->setMediaType(JingleContent::Audio);
 		iceAudio->setCreator("initiator");
 
 		/*JingleContent *iceVideo = new JingleIceContent(JingleContent::Initiator, newSession);
 		iceVideo->setName("video-content");
 		iceVideo->addLocalPayloads(d->videoPayloads);
 		iceVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
-		iceVideo->setType(JingleContent::Video);
+		iceVideo->setMediaType(JingleContent::Video);
 		iceVideo->setCreator("initiator");*/
 		
 		//contents << iceAudio << iceVideo;
@@ -222,14 +222,14 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		rawAudio->setName("audio-content");
 		rawAudio->addLocalPayloads(d->audioPayloads);
 		rawAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
-		rawAudio->setType(JingleContent::Audio);
+		rawAudio->setMediaType(JingleContent::Audio);
 		rawAudio->setCreator("initiator");
 
 		/*JingleContent *rawVideo = new JingleRawContent(JingleContent::Initiator, newSession);
 		rawVideo->setName("video-content");
 		rawVideo->addLocalPayloads(d->videoPayloads);
 		rawVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
-		rawVideo->setType(JingleContent::Video);
+		rawVideo->setMediaType(JingleContent::Video);
 		rawVideo->setCreator("initiator");*/
 		
 		//contents << rawAudio << rawVideo;

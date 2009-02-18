@@ -99,8 +99,6 @@ void JingleSessionManager::slotJingleActionReady()
 
 		d->sessions << incomingSession;
 
-		//QList<QString> incompatibleContents;
-		
 		QList<QString> unsupportedPayloads;
 		// This is a list of the names of the contents which have no supported payloads.
 		
@@ -115,7 +113,7 @@ void JingleSessionManager::slotJingleActionReady()
 			JingleContent *c = incomingSession->contents()[i];
 			
 			//Set supported payloads for this content.
-			c->setLocalPayloads(c->type() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
+			c->setLocalPayloads(c->mediaType() == JingleContent::Audio ? d->supportedAudioPayloads : d->supportedVideoPayloads);
 			//FIXME:what about a setSupportedPayloads ?
 	
 			// Check payloads for the content c
@@ -153,8 +151,6 @@ void JingleSessionManager::slotJingleActionReady()
 		
 		d->sessions.last()->ring();
 		
-		//d->sessions.last()->startNegotiation(); //FIXME:Why is that ? negotiation will automatically start when candidates are received.
-
 		break;
 	}
 	case JingleAction::ContentRemove : 
@@ -167,7 +163,13 @@ void JingleSessionManager::slotJingleActionReady()
 	case JingleAction::TransportReplace :
 	case JingleAction::TransportAccept :
 	default :
-		session(action->sid())->appendAction(action);
+	{
+		JingleSession *sess = session(action->sid());
+		if (sess)
+			sess->appendAction(action);
+		else
+			qDebug() << "Session" << action->sid() << "not found.";
+	}
 	}
 }
 

@@ -37,23 +37,26 @@ namespace XMPP
 	 * TODO:use multiple candidates to establish multiple streams (RTP + RTCP).
 	 */
 	class JingleSession;
-	class /*IRIS_EXPORT*/ JingleRawContent : public JingleContent
+	class JingleRawContent : public JingleContent
 	{
 		Q_OBJECT
 	public:
 		JingleRawContent(Mode mode, JingleSession *parent);
 		virtual ~JingleRawContent();
 		
-		virtual void addCandidate(const QDomElement&);
 		virtual void addTransportInfo(const QDomElement&);
 		virtual QString transportNS() const;
-		virtual void writeDatagram(const QByteArray&, int channel = 0);
-		virtual QByteArray readAll(int channel = 0);
+		virtual void writeDatagram(const QByteArray&, Channel channel = Rtp);
+		virtual QByteArray readAll(Channel channel = Rtp);
 
 //	signals:
 	protected:
 		virtual void sendCandidates();
 		virtual void addRemoteCandidate(const QDomElement&);
+	
+	private slots:		
+		void slotReadyRead();
+	
 	private:
 		class Private;
 		Private *d;

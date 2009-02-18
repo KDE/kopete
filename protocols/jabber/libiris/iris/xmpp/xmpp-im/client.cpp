@@ -256,10 +256,8 @@ void Client::setJingleEnabled(bool b)
 			d->jingleman = new JingleSessionManager(this);
 	}
 	else {
-		if (d->jingleman) {
-			delete d->jingleman;
-			d->jingleman = 0L;
-		}
+		delete d->jingleman;
+		d->jingleman = 0L;
 	}
 }
 

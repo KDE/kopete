@@ -34,7 +34,7 @@ using namespace XMPP;
 class JingleContent::Private
 {
 public:
-	QList<QDomElement> payloads; // My payloads.
+	QList<QDomElement> lPayloads; // My payloads.
 	QList<QDomElement> rPayloads; // Remote's payloads.
 	
 	QDomElement bestPayload;
@@ -50,7 +50,7 @@ public:
 	QString descriptionNS;
 	bool sending;
 	bool receiving;
-	Type type;
+	MediaType mediaType;
 	Mode mode;
 	JingleSession *parent;
 };
@@ -82,31 +82,26 @@ QDomElement JingleContent::bestPayload()
 	if (d->bestPayload.isNull())
 	{
 		//Trying to update the best payload.
-		d->bestPayload = bestPayload(d->rPayloads, d->payloads);
+		d->bestPayload = bestPayload(d->rPayloads, d->lPayloads);
 	}
 	
 	return d->bestPayload;
 }
 
-void JingleContent::addCandidate(const QDomElement& c) //Weird..., that's only stored, never used...
-{
-	d->candidates << c;
-}
-
 void JingleContent::addLocalPayload(const QDomElement& pl)
 {
-	d->payloads << pl;
+	d->lPayloads << pl;
 }
 
 void JingleContent::addLocalPayloads(const QList<QDomElement>& pl)
 {
-	d->payloads << pl;
+	d->lPayloads << pl;
 }
 
 void JingleContent::setLocalPayloads(const QList<QDomElement>& pl)
 {
-	d->payloads.clear();
-	d->payloads = pl;
+	d->lPayloads.clear();
+	d->lPayloads = pl;
 }
 
 void JingleContent::setTransport(const QDomElement& t)
@@ -116,7 +111,7 @@ void JingleContent::setTransport(const QDomElement& t)
 
 QList<QDomElement> JingleContent::localPayloads() const
 {
-	return d->payloads;
+	return d->lPayloads;
 }
 
 QDomElement JingleContent::transport() const
@@ -141,37 +136,46 @@ void JingleContent::setDescriptionNS(const QString& desc)
 
 void JingleContent::fromElement(const QDomElement& e)
 {
-	// FIXME:tag order may not always be the same !!!
 	if (e.tagName() != "content")
 		return;
 
 	d->creator = e.attribute("creator");
 	d->name = e.attribute("name");
 	qDebug() << "name set :" << name();
-	QDomElement desc = e.firstChildElement();
-	d->descriptionNS = desc.attribute("xmlns");
-	d->type = stringToType(desc.attribute("media"));
-	QDomElement payload = desc.firstChildElement();
-	// This content is created from XML data, that means that it comes from the outside.
-	// So, pyloads are added as responder payloads
-	QList<QDomElement> payloads;
 	
-	while (!payload.isNull())
+	QDomElement elem = e.firstChildElement();
+	
+	while (!elem.isNull())
 	{
-		payloads << payload;
-		payload = payload.nextSiblingElement();
+		if (elem.tagName() == "description")
+		{
+			d->descriptionNS = elem.attribute("xmlns");
+			d->mediaType = stringToMediaType(elem.attribute("media"));
+			QDomElement payload = elem.firstChildElement();
+			QList<QDomElement> payloads;
+
+			while (!payload.isNull())
+			{
+				payloads << payload;
+				payload = payload.nextSiblingElement();
+			}
+
+			setRemotePayloads(payloads);
+		}
+		else if (elem.tagName() == "transport")
+		{
+			d->transport = elem;
+
+			if (d->transport.hasChildNodes())
+				addRemoteCandidate(d->transport.firstChildElement());
+		}
+
+		elem = elem.nextSiblingElement();
 	}
-	
-	setRemotePayloads(payloads);
-
-	QDomElement transport = desc.nextSiblingElement();
-	d->transport = transport;
-
-	if (d->transport.hasChildNodes())
-	addRemoteCandidate(d->transport.firstChildElement());
 
 	// Send candidates as soon as possible, so it's now.
-	// FIXME: is that true with all transport methods ?
+	// This isn't true for every content types or transport methods,
+	// subclassed objects can not reimplement this method.
 	sendCandidates();
 }
 
@@ -192,34 +196,38 @@ QDomElement JingleContent::contentElement(JingleContent::CandidateType cType, Ji
 	
 	QDomElement description = doc.createElement("description");
 	description.setAttribute("xmlns", d->descriptionNS);
-	description.setAttribute("media", typeToString(d->type));
+	description.setAttribute("media", mediaTypeToString(d->mediaType));
 	
 	switch (pType)
 	{
 	case LocalPayloads :
-		qDebug() << "adding local payloads.";
+		for (int i = 0; i < localPayloads().count(); i++)
+			description.appendChild(localPayloads().at(i));
+		break;
+
+	case RemotePayloads :
+		for (int i = 0; i < remotePayloads().count(); i++)
+			description.appendChild(remotePayloads().at(i));
+		break;
+
+	case UsedPayload :
+		description.appendChild(d->bestPayload);
+		break;
+
+	case AcceptablePayloads :
 		for (int i = 0; i < localPayloads().count(); i++)
 		{
-			description.appendChild(localPayloads().at(i));
+			for (int j = 0; j < remotePayloads().count(); j++)
+			{
+				if (samePayload(localPayloads()[i], remotePayloads()[j]))
+					description.appendChild(remotePayloads()[j]); //So we re-use the right ID.
+			}
 		}
-		break;
-	case RemotePayloads :
-		qDebug() << "adding remote payloads.";
-		for (int i = 0; i < remotePayloads().count(); i++)
-		{
-			description.appendChild(remotePayloads().at(i));
-		}
-		break;
-	case UsedPayload :
-		qDebug() << "adding best payload.";
-		description.appendChild(d->bestPayload);
 	default :
 		break;
 	}
 
 	QDomElement t = transport();
-	//doc.createElement("transport");
-	//transport.setAttribute("xmlns", transportNS());
 
 	switch (cType)
 	{
@@ -227,18 +235,19 @@ QDomElement JingleContent::contentElement(JingleContent::CandidateType cType, Ji
 		for (int i = 0; i < localCandidates().count(); i++)
 			t.appendChild(localCandidates().at(i));
 		break;
+
 	case RemoteCandidates :
 		for (int i = 0; i < remoteCandidates().count(); i++)
 			t.appendChild(remoteCandidates().at(i));
 		break;
-	case LocalCandidate :
-		if (localCandidates().count() > 0)
-			t.appendChild(localCandidates().at(0)); //FIXME:that should be the used candidate.
-		break;
-	case RemoteCandidate :
+
+	case UsedCandidate :
 		if (remoteCandidates().count() > 0)
-			t.appendChild(remoteCandidates().at(0)); //FIXME:idem
+			t.appendChild(remoteCandidates().at(0));
+			//FIXME:that should be the used candidate.
+			//	This is discussed currently.
 		break;
+
 	case NoCandidate :
 	default :
 		break;
@@ -259,83 +268,6 @@ QString JingleContent::descriptionNS() const
 {
 	return d->descriptionNS;
 }
-
-void JingleContent::addTransportInfo(const QDomElement& e) //virtual maybe ?
-{
-	QDomElement transport = e.firstChildElement();
-	
-/*	if (transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE)
-	{
-		if (d->transport.attribute("pwd") != transport.attribute("pwd"))
-		{
-			qDebug() << "Bad ICE Password !";
-			return;
-		}
-		
-		if (d->transport.attribute("ufrag") != transport.attribute("ufrag"))
-		{
-			qDebug() << "Bad ICE User Fragment !";
-			return;
-		}
-		QDomElement child = transport.firstChildElement();
-		
-		//FIXME:Is it possible to have more than one candidate per transport-info ?
-		//	See Thread "Jingle: multiple candidates per transport-info?" on xmpp-standards.
-		if (child.tagName() == "candidate")
-		{
-			// Just adding the Xml Element.
-			d->candidates << child;
-		}
-	}
-	else if (transport.attribute("xmlns") == NS_JINGLE_TRANSPORTS_RAW)
-	{
-		qDebug() << "Adding responder's candidates and connecting to it";
-		
-		d->candidates << transport.firstChildElement();
-		
-		startSending(QHostAddress(transport.firstChildElement().attribute("ip")),
-			     transport.firstChildElement().attribute("port").toInt());
-		
-	}
-	*/
-	// That's exactly the kind of things to avoid.
-}
-
-/*void JingleContent::createUdpInSocket()
-{
-	qDebug() << "JingleContent::createUdpInSocket()";
-
-	if (d->transport.attribute("xmlns") != NS_JINGLE_TRANSPORTS_RAW)
-		return;
-	
-	if (!d->inSocket)
-		d->inSocket = new QUdpSocket();
-	
-	QHostAddress address(d->transport.firstChildElement().attribute("ip"));
-	int port = d->transport.firstChildElement().attribute("port").toInt();
-	qDebug() << "Bind socket to" << address << ":" << port;
-	if (d->inSocket->bind(address, port))
-		qDebug() << "Socket bound to" << address.toString() << ":" << port;
-	else
-	{
-		qDebug() << "Unable to bind socket to" << address.toString() << ":" << port;
-		return;
-	}
-	
-	setReceiving(true);
-}*/
-
-/*QUdpSocket *JingleContent::inSocket() //Not used anymore, use encapsulation.
-{
-	qDebug() << "Getting IN socket from content" << name();
-	return d->inSocket;
-}*/
-
-/*QUdpSocket *JingleContent::outSocket() //Not used anymore, use encapsulation.
-{
-	qDebug() << "Getting OUT socket from content" << name();
-	return d->outSocket;
-}*/
 
 bool JingleContent::sending()
 {
@@ -375,30 +307,9 @@ void JingleContent::setReceiving(bool r)
 	}
 }
 
-/*void JingleContent::startSending() //Not used anymore.
-{
-	QHostAddress address(transport().firstChildElement().attribute("ip"));
-	int port = transport().firstChildElement().attribute("port").toInt();
-	
-	//startSending(address, port);
-}
-
-void JingleContent::startSending(const QHostAddress& address, int port) //idem
-{
-	qDebug() << "startSending()";
-	
-	if (!d->outSocket)
-		d->outSocket = new QUdpSocket();
-	d->outSocket->connectToHost(address, port);
-	
-	qDebug() << "Ok, we can start sending" << address.toString() << ":" << port;
-	
-	setSending(true);
-}*/
-
 QList<QDomElement> JingleContent::candidates() const
 {
-	return d->candidates;
+	return d->localCandidates + d->remoteCandidates;
 }
 
 QString JingleContent::creator() const
@@ -406,22 +317,10 @@ QString JingleContent::creator() const
 	return d->creator;
 }
 
-/*void JingleContent::bind(const QHostAddress& address, int port)
-{
-	qDebug() << "Trying to bind socket to" << address.toString() << ":" << port;
-	
-	if (!d->inSocket)
-		d->inSocket = new QUdpSocket();
-	
-	if (d->inSocket->bind(address, port))
-		qDebug() << "Socket bound to" << address.toString() << ":" << port;
-	
-	setReceiving(true);
-}*/
-
+//FIXME:review this operator.
 JingleContent& JingleContent::operator=(const JingleContent &other)
 {
-	d->payloads = other.localPayloads();
+	d->lPayloads = other.localPayloads();
 	d->transport = other.transport();
 	//d->candidates = other.candidates();
 	d->localCandidates = other.localCandidates();
@@ -434,17 +333,17 @@ JingleContent& JingleContent::operator=(const JingleContent &other)
 	return *this;
 }
 
-void JingleContent::setType(JingleContent::Type t)
+void JingleContent::setMediaType(JingleContent::MediaType t)
 {
-	d->type = t;
+	d->mediaType = t;
 }
 
-JingleContent::Type JingleContent::type() const
+JingleContent::MediaType JingleContent::mediaType() const
 {
-	return d->type;
+	return d->mediaType;
 }
 
-QString JingleContent::typeToString(JingleContent::Type t)
+QString JingleContent::mediaTypeToString(JingleContent::MediaType t)
 {
 	switch(t)
 	{
@@ -465,11 +364,11 @@ void JingleContent::setRemotePayloads(const QList<QDomElement>& payloads)
 	
 	d->rPayloads = payloads;
 	
-	if (d->payloads.count() != 0)
+	if (d->lPayloads.count() != 0)
 	{
 		//Store the best payload to use for this content.
 		//The application will just have to get it from this content.
-		d->bestPayload = bestPayload(d->rPayloads, d->payloads);
+		d->bestPayload = bestPayload(d->rPayloads, d->lPayloads);
 	}
 }
 
@@ -478,7 +377,7 @@ QList<QDomElement> JingleContent::remotePayloads() const
 	return d->rPayloads;
 }
 
-JingleContent::Type JingleContent::stringToType(const QString& s)
+JingleContent::MediaType JingleContent::stringToMediaType(const QString& s)
 {
 	if (s == "video")
 		return Video;
@@ -525,19 +424,22 @@ QDomElement JingleContent::bestPayload(const QList<QDomElement>& payload1, const
 
 bool JingleContent::samePayload(const QDomElement& p1, const QDomElement& p2)
 {
-	// Checking payload-type attributes
+	// Checking payload-type attributes.
 	if (!p1.hasAttribute("id") || !p2.hasAttribute("id"))
 		return false;
-	
-	if (p1.attribute("id") != p2.attribute("id"))
-		return false;
-	
+
 	int id = p1.attribute("id").toInt();
-	if ((id >= 96) && (id <= 127)) //dynamic payloads, "name" attribute must be there
+	if ((id >= 96) && (id <= 127)) //dynamic payloads, "name" attribute must be there.
 	{
 		if (!p1.hasAttribute("name") || !p2.hasAttribute("name"))
 			return false;
 		if (p1.attribute("name") != p2.attribute("name"))
+			return false;
+	}
+	else
+	{
+		// not dynamic payloads, id's must be the same.
+		if (p1.attribute("id") != p2.attribute("id"))
 			return false;
 	}
 	
@@ -549,8 +451,44 @@ bool JingleContent::samePayload(const QDomElement& p1, const QDomElement& p2)
 		if (p1.attribute("clockrate") != p2.attribute("clockrate"))
 			return false;
 	
-	// Parameters are informative, even if they differ, the payload is still the same.
-	// FIXME: is that statement true ?
+	// Parameters (if there's any) must be the same
+	if (p1.hasChildNodes() && p2.hasChildNodes())
+	{
+		QDomElement pa1 = p1.firstChildElement();
+		QDomElement pa2 = p2.firstChildElement();
+		
+		if (pa1.childNodes().count() != pa2.childNodes().count())
+			return false;
+
+		while (!pa1.isNull())
+		{
+			if (pa1.tagName() != "parameter")
+				return false;
+			
+			bool found = false;
+
+			while (!pa2.isNull())
+			{
+				if (pa2.tagName() != "parameter")
+					return false;
+
+				if (pa1 == pa2)
+					found = true;
+			
+				pa2 = pa2.nextSiblingElement();
+			}
+
+			if (!found)
+				return false;
+
+			pa1 = pa1.nextSiblingElement();
+		}
+	}
+	else if ((p1.hasChildNodes() && !p2.hasChildNodes()) || (!p1.hasChildNodes() && p2.hasChildNodes()))
+	{
+		return false;
+	}
+	
 	qDebug() << "Payloads are the same.";
 
 	return true;
@@ -559,11 +497,6 @@ bool JingleContent::samePayload(const QDomElement& p1, const QDomElement& p2)
 bool JingleContent::isReady() const
 {
 	return d->sending && d->receiving;
-}
-
-QString JingleContent::transportNS() const
-{
-	return "";
 }
 
 QString JingleContent::transportNS(const QDomElement& c)
@@ -636,12 +569,12 @@ JingleContent::Mode JingleContent::mode() const
 	return d->mode;
 }
 
-void JingleContent::writeDatagram(const QByteArray& ba, int)
+void JingleContent::activated()
 {
-	Q_UNUSED(ba)
+	
 }
 
-QByteArray JingleContent::readAll(int)
+void JingleContent::muted()
 {
-	return QByteArray();
+
 }

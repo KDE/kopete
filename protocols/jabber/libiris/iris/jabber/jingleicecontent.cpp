@@ -62,8 +62,6 @@ public:
 JingleIceContent::JingleIceContent(Mode mode, JingleSession *parent)
 : JingleContent(mode, parent), d(new Private())
 {
-	//TODO:check if hmac(sha1) is supported by QCA (qca-ossl)
-	//if it is not, setting remote candidate will lead to a crash in QCA
 	qDebug() << "Creating JingleIceContent";
 
 	d->iceStarted = false;
@@ -166,10 +164,10 @@ void JingleIceContent::slotIceLocalCandidatesReady(const QList<XMPP::Ice176::Can
 	if (!parentSession())
 		d->pendingLocalCandidates += candidates;
 	else
-		sendCandidates(candidates);
+		sendLocalCandidates(candidates);
 }
 
-void JingleIceContent::sendCandidates(const QList<XMPP::Ice176::Candidate>& candidates)
+void JingleIceContent::sendLocalCandidates(const QList<XMPP::Ice176::Candidate>& candidates)
 {
 	if (!parentSession())
 	{
@@ -237,6 +235,8 @@ void JingleIceContent::slotIceStarted()
 void JingleIceContent::addCandidate(const QDomElement& elem)
 {
 	Q_UNUSED(elem)
+	
+	qDebug() << "JingleIceContent::addCandidate called.";
 }
 
 void JingleIceContent::addTransportInfo(const QDomElement& elem)
@@ -265,6 +265,8 @@ void JingleIceContent::addTransportInfo(const QDomElement& elem)
 			c = c.nextSiblingElement();
 			continue;
 		}
+
+		addRemoteCandidate(c);
 
 		cs << xmlToCandidate(c);
 		
@@ -315,13 +317,13 @@ QString JingleIceContent::transportNS() const
 	return NS_JINGLE_TRANSPORTS_ICE;
 }
 
-void JingleIceContent::writeDatagram(const QByteArray& data, int channel)
+void JingleIceContent::writeDatagram(const QByteArray& data, Channel channel)
 {
-	d->ice176->writeDatagram(channel, data);
+	d->ice176->writeDatagram(static_cast<int>(channel), data);
 }
 
-QByteArray JingleIceContent::readAll(int channel)
+QByteArray JingleIceContent::readAll(Channel channel)
 {
-	return d->ice176->readDatagram(channel);
+	return d->ice176->readDatagram(static_cast<int>(channel));
 }
 

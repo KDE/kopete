@@ -39,7 +39,7 @@ namespace XMPP
 	//This is the Ice-udp jingle content.
 	
 	class JingleSession;
-	class /*IRIS_EXPORT*/ JingleIceContent : public JingleContent
+	class JingleIceContent : public JingleContent
 	{
 		Q_OBJECT
 	public:
@@ -65,15 +65,14 @@ namespace XMPP
 		
 		/*
 		 * This is called to write RTP data on the established stream.
-		 * TODO : what about RTCP ?
 		 */
-		virtual void writeDatagram(const QByteArray&, int channel = 0);
+		virtual void writeDatagram(const QByteArray&, Channel channel = Rtp);
 
 		/* 
 		 * Get all data available on the socket.
 		 * Usually, this will be an RTP packet.
 		 */
-		virtual QByteArray readAll(int channel = 0);
+		virtual QByteArray readAll(Channel channel = Rtp);
 
 		/*
 		 * Gets a list containing all local addresses.
@@ -99,7 +98,7 @@ namespace XMPP
 		 */
 		QDomElement candidateToXml(const Ice176::Candidate& candidate);
 
-		void sendCandidates(const QList<XMPP::Ice176::Candidate>& candidates);
+		void sendLocalCandidates(const QList<XMPP::Ice176::Candidate>& candidates);
 	};
 }
 

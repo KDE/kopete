@@ -21,7 +21,7 @@
 
 using namespace XMPP;
 
-static QString typeToString(JingleContent::Type t)
+static QString mediaTypeToString(JingleContent::MediaType t)
 {
 	switch (t)
 	{
@@ -60,9 +60,9 @@ void JingleContentDialog::setContents(QList<JingleContent*> c)
 {
 	for (int i = 0; i < c.count(); i++)
 	{
-		QCheckBox *cb = new QCheckBox(typeToString(c[i]->type()), this);
+		QCheckBox *cb = new QCheckBox(mediaTypeToString(c[i]->mediaType()), this);
 		cb->setChecked(true);
-		if (c[i]->type() == JingleContent::NoType)
+		if (c[i]->mediaType() == JingleContent::NoType)
 		{
 			cb->setChecked(false);
 			cb->setEnabled(false);
