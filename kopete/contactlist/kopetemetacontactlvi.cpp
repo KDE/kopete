@@ -575,7 +575,8 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 				painter.setRenderHint(QPainter::Antialiasing);
 				painter.setPen(Qt::NoPen);
 				painter.setBrush(QBrush(photoImg));
-				painter.drawRoundedRect(0,0,photoPixmap.width()-1,photoPixmap.height()-1,25,25,Qt::RelativeSize);
+				QRectF rectangle(0.5, 0.5, photoPixmap.width()-1, photoPixmap.height()-1);
+				painter.drawRoundedRect(rectangle, 25, 25, Qt::RelativeSize);
 			}
 			else{
 				photoPixmap = QPixmap::fromImage(photoImg);
@@ -604,10 +605,15 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 
 			if(Kopete::AppearanceSettings::self()->contactListIconBorders()){
 				p.setPen(Qt::black);
-				p.drawLine(0, 0, photoPixmap.width()-1, 0);
-				p.drawLine(0, photoPixmap.height()-1, photoPixmap.width()-1, photoPixmap.height()-1);
-				p.drawLine(0, 0, 0, photoPixmap.height()-1);
-				p.drawLine(photoPixmap.width()-1, 0, photoPixmap.width()-1, photoPixmap.height()-1);
+
+				if(d->roundedIcons) {
+					p.setRenderHint(QPainter::Antialiasing);
+					QRectF rectangle(0.5, 0.5, photoPixmap.width()-1, photoPixmap.height()-1);
+					p.drawRoundedRect(rectangle, 25, 25, Qt::RelativeSize);
+				}
+				else {
+					p.drawRect(0, 0, photoPixmap.width()-1, photoPixmap.height()-1);
+				}
 			}
 		}
 		else
@@ -1216,7 +1222,7 @@ void KopeteMetaContactLVI::slotBlink()
 	if ( mIsBlinkIcon )
 	{
 		if(d->metaContactIcon)
-			d->metaContactIcon->setPixmap( m_originalBlinkIcon );
+			d->metaContactIcon->setPixmap( m_originalBlinkIcon, false );
 		if ( !haveEvent && m_blinkLeft <= 0 )
 		{
 			mBlinkTimer->stop();
@@ -1232,12 +1238,12 @@ void KopeteMetaContactLVI::slotBlink()
 		if ( haveEvent )
 		{
 			if(d->metaContactIcon)
-				d->metaContactIcon->setPixmap( SmallIcon( "mail-unread", d->iconSize ) );
+				d->metaContactIcon->setPixmap( SmallIcon( "mail-unread", d->iconSize ), false );
 		}
 		else
 		{
 			if(d->metaContactIcon)
-				d->metaContactIcon->setPixmap( m_oldStatusIcon );
+				d->metaContactIcon->setPixmap( m_oldStatusIcon, false );
 			m_blinkLeft--;
 		}
 	}
@@ -1264,9 +1270,9 @@ void KopeteMetaContactLVI::slotEventDone( Kopete::MessageEvent *event )
 			// m_originalBlinkIcon can be null if slotEventDone is called
 			// right after catchEvent without slotBlink being executed.
 			if ( !m_originalBlinkIcon.isNull() )
-				d->metaContactIcon->setPixmap( m_originalBlinkIcon );
+				d->metaContactIcon->setPixmap( m_originalBlinkIcon, false );
 			else
-				d->metaContactIcon->setPixmap( m_oldStatusIcon );
+				d->metaContactIcon->setPixmap( m_oldStatusIcon, false );
 		}
 
 		m_originalBlinkIcon=QPixmap(); //i hope this help to reduce memory consuption
