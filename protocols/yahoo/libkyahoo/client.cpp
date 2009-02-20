@@ -275,7 +275,8 @@ void Client::slotLoginResponse( int response, const QString &msg )
 			changeStatus( d->statusOnConnect, d->statusMessageOnConnect, Yahoo::StatusTypeAway );
 		d->statusMessageOnConnect.clear();
 		setStatus( d->statusOnConnect );
-		m_pingTimer->start( 60 * 1000 );
+		/* only send a ping every hour. we get disconnected otherwise */
+		m_pingTimer->start( 60 * 60 * 1000 );
 		initTasks();
 	} else {
 		d->active = false;
