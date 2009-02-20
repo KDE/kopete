@@ -955,6 +955,13 @@ WlmAccount::connectionCompleted ()
                 Kopete::Global::Properties::self()->nickName()).value().toString();
         m_server->cb.mainConnection->setFriendlyName(nick.toAscii().data());
     }
+    else
+    {
+        // Set myself contact display name here
+        // This information come along with the address book
+        // Fix BUG 182366
+        m_server->cb.mainConnection->setFriendlyName( m_server->mainConnection->myDisplayName.c_str() );
+    }
 
     password ().setWrong (false);
 
