@@ -27,7 +27,6 @@ class WlmSocket : public QSslSocket
 {
   Q_OBJECT 
 public:
-    QSslSocket * sock;
     MSN::NotificationServerConnection * mainConnection;
     bool main;
     bool m_isSSL;
