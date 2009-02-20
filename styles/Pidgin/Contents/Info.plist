@@ -6,13 +6,13 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Gaim Kopete chat Style</string>
+	<string>Pidgin Kopete chat Style</string>
 	<key>CFBundleIdentifier</key>
-	<string>Kopete.Gaim.style</string>
+	<string>Kopete.Pidgin.style</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>CFBundleName</key>
-	<string>Gaim</string>
+	<string>Pidgin</string>
 	<key>CFBundlePackageType</key>
 	<string>KopeteChatStyle</string>
 	<key>DefaultBackgroundColor</key>
