@@ -96,6 +96,21 @@ private slots:
     void onRequestedPresence(Telepathy::Client::PendingOperation*);
     void onConnectionConnected(Telepathy::Client::PendingOperation*);
     void onRequestConnectReady(Telepathy::Client::PendingOperation*);
+    
+    void displayNameChanged (const QString &);
+    void iconChanged (const QString &);
+    void nicknameChanged (const QString &);
+    void normalizedNameChanged (const QString &);
+    void validityChanged (bool);
+    void stateChanged (bool);
+    void connectsAutomaticallyPropertyChanged (bool);
+    void parametersChanged (const QVariantMap &);
+    void automaticPresenceChanged (const Telepathy::SimplePresence &) const;
+    void currentPresenceChanged (const Telepathy::SimplePresence &) const;
+    void requestedPresenceChanged (const Telepathy::SimplePresence &) const;
+    void avatarChanged (const Telepathy::Avatar &);
+    void connectionStatusChanged (Telepathy::ConnectionStatus, Telepathy::ConnectionStatusReason);
+    void haveConnectionChanged (bool haveConnection);
 
 private:
     void initTelepathyAccount();

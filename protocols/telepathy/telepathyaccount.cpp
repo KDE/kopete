@@ -542,6 +542,35 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation *opera
 
     kDebug(TELEPATHY_DEBUG_AREA) << "New account: " << account->cmName() << account->protocol() << account->displayName();
 
+    QObject::connect(account.data(), SIGNAL(displayNameChanged(const QString &)),
+        this, SLOT(displayNameChanged(const QString &)));
+    QObject::connect(account.data(), SIGNAL(iconChanged (const QString &)),
+        this, SLOT(iconChanged (const QString &)));
+    QObject::connect(account.data(), SIGNAL(nicknameChanged (const QString &)),
+        this, SLOT(nicknameChanged (const QString &)));
+    QObject::connect(account.data(), SIGNAL(normalizedNameChanged (const QString &)),
+        this, SLOT(normalizedNameChanged (const QString &)));
+    QObject::connect(account.data(), SIGNAL(validityChanged (bool)),
+        this, SLOT(validityChanged (bool)));
+    QObject::connect(account.data(), SIGNAL(stateChanged (bool)),
+        this, SLOT(stateChanged (bool)));
+    QObject::connect(account.data(), SIGNAL(connectsAutomaticallyPropertyChanged (bool)),
+        this, SLOT(connectsAutomaticallyPropertyChanged (bool)));
+    QObject::connect(account.data(), SIGNAL(parametersChanged (const QVariantMap &)),
+        this, SLOT(parametersChanged (const QVariantMap &)));
+    QObject::connect(account.data(), SIGNAL(automaticPresenceChanged (const Telepathy::SimplePresence &)),
+        this, SLOT(automaticPresenceChanged (const Telepathy::SimplePresence &)));
+    QObject::connect(account.data(), SIGNAL(currentPresenceChanged (const Telepathy::SimplePresence &)),
+        this, SLOT(currentPresenceChanged (const Telepathy::SimplePresence &)));
+    QObject::connect(account.data(), SIGNAL(requestedPresenceChanged (const Telepathy::SimplePresence &)),
+        this, SLOT(requestedPresenceChanged (const Telepathy::SimplePresence &)));
+    QObject::connect(account.data(), SIGNAL(avatarChanged (const Telepathy::Avatar &)),
+        this, SLOT(avatarChanged (const Telepathy::Avatar &)));
+    QObject::connect(account.data(), SIGNAL(connectionStatusChanged (Telepathy::ConnectionStatus, Telepathy::ConnectionStatusReason)),
+        this, SLOT(connectionStatusChanged (Telepathy::ConnectionStatus, Telepathy::ConnectionStatusReason)));
+    QObject::connect(account.data(), SIGNAL(haveConnectionChanged (bool)),
+        this, SLOT(haveConnectionChanged (bool)));
+
     if(connectAfterInit)
     {
         connectAfterInit = false;
@@ -554,6 +583,75 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation *opera
     }
 }
 
+void TelepathyAccount::displayNameChanged (const QString &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::iconChanged (const QString &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::nicknameChanged (const QString &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::normalizedNameChanged (const QString &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::validityChanged (bool var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::stateChanged (bool var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::connectsAutomaticallyPropertyChanged (bool var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::parametersChanged (const QVariantMap &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::automaticPresenceChanged (const Telepathy::SimplePresence &var) const
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+}
+
+void TelepathyAccount::currentPresenceChanged (const Telepathy::SimplePresence &var) const
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+}
+
+void TelepathyAccount::requestedPresenceChanged (const Telepathy::SimplePresence &var) const
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+}
+
+void TelepathyAccount::avatarChanged (const Telepathy::Avatar &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+}
+
+void TelepathyAccount::connectionStatusChanged (Telepathy::ConnectionStatus var1, Telepathy::ConnectionStatusReason var2)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+}
+
+void TelepathyAccount::haveConnectionChanged (bool haveConnection)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << haveConnection;
+}
 
 
 
