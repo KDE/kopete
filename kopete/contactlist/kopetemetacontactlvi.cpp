@@ -308,7 +308,7 @@ void KopeteMetaContactLVI::movedToDifferentGroup()
 	// I assume that the safety property that allows the delete in slotConfigChanged holds here - Will
 	delete d->spacerBox->component( 0 );
 	if ( K3ListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
-	                Kopete::AppearanceSettings::self()->contactListTreeView() )
+	               ! Kopete::AppearanceSettings::self()->contactListTreeView() )
 	{
 		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
 	}
@@ -725,7 +725,7 @@ void KopeteMetaContactLVI::slotConfigChanged()
 	// create a spacer if wanted
 	delete d->spacerBox->component( 0 );
 	if ( K3ListViewItem::parent() && Kopete::AppearanceSettings::self()->contactListIndentContact() &&
-	                Kopete::AppearanceSettings::self()->contactListTreeView() )
+	               ! Kopete::AppearanceSettings::self()->contactListTreeView() )
 	{
 		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
 	}
