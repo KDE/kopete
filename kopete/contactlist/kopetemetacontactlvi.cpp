@@ -565,12 +565,28 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 			int photoSize = d->iconSize;
 
 			photoImg = photoImg.scaled( photoSize, photoSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+
 			if ( m_metaContact->status() == Kopete::OnlineStatus::Offline )
 				Blitz::grayscale(photoImg);
 
+			switch ( m_metaContact->status() )
+			{
+				case Kopete::OnlineStatus::Online:
+					break;
+				case Kopete::OnlineStatus::Away:
+					Blitz::fade(photoImg, 0.5, Qt::white);
+					break;
+				case Kopete::OnlineStatus::Offline:
+					Blitz::fade(photoImg, 0.4, Qt::white);
+					break;
+				case Kopete::OnlineStatus::Unknown:
+				default:
+					Blitz::fade(photoImg, 0.8, Qt::white);
+			}
+
 			if(d->roundedIcons){
 				photoPixmap = QPixmap(photoImg.width(),photoImg.height());
-				photoPixmap.fill(QColor(0,0,0,0));
+				photoPixmap.fill(Qt::transparent);
 				QPainter painter(&photoPixmap);
 				painter.setRenderHint(QPainter::Antialiasing);
 				painter.setPen(Qt::NoPen);
@@ -582,28 +598,9 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 				photoPixmap = QPixmap::fromImage(photoImg);
 			}
 
-			QPainter p(&photoPixmap);
-			QColor c = Qt::white;
-
-			switch ( m_metaContact->status() )
-			{
-				case Kopete::OnlineStatus::Online:
-				break;
-				case Kopete::OnlineStatus::Away:
-					c.setAlphaF(0.5);
-					p.fillRect(photoImg.rect(), c);
-				break;
-				case Kopete::OnlineStatus::Offline:
-					c.setAlphaF(0.4);
-					p.fillRect(photoImg.rect(), c);
-				break;
-				case Kopete::OnlineStatus::Unknown:
-				default:
-					c.setAlphaF(0.8);
-					p.fillRect(photoImg.rect(), c);
-			}
 
 			if(Kopete::AppearanceSettings::self()->contactListIconBorders()){
+				QPainter p(&photoPixmap);
 				p.setPen(Qt::black);
 
 				if(d->roundedIcons) {
