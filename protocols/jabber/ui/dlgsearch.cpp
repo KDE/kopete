@@ -189,7 +189,7 @@ void dlgSearch::slotSentForm()
 		for(QList<XMPP::SearchResult>::const_iterator it = task->results().begin(); it != task->results().end(); it++)
 		{
 			QTreeWidgetItem *item = new QTreeWidgetItem(0);
-			item->setText(0, (*it).jid().userHost());
+			item->setText(0, (*it).jid().bare());
 			item->setText(1, (*it).nick());
 			item->setText(2, (*it).first());
 			item->setText(3, (*it).last());

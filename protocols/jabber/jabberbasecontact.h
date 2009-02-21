@@ -76,6 +76,7 @@ public:
 	 * FIXME: implement manager version here?
 	 */
 	virtual QList<KAction*> *customContextMenuActions () = 0;
+	using Kopete::Contact::customContextMenuActions;
 
 	/**
 	 * Serialize contact

@@ -151,7 +151,7 @@ void dlgJabberChatJoin::slotChatRooomsQueryFinished()
 	{
 		const XMPP::DiscoItem &di = *it;
 		QTreeWidgetItem *item = new QTreeWidgetItem();
-		item->setText(0, di.jid().user());
+		item->setText(0, di.jid().node());
 		item->setText(1, di.name());
 		m_ui.tblChatRoomsList->addTopLevelItem(item);
 	}

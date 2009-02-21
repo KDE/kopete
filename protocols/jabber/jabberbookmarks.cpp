@@ -85,9 +85,9 @@ void JabberBookmarks::slotReceivedBookmarks( )
 							nick=m_account->myself()->nickName();
 
 						if(password.isEmpty())
-							m_account->client()->joinGroupChat(x_jid.host() , x_jid.user() , nick );
+							m_account->client()->joinGroupChat(x_jid.domain() , x_jid.node() , nick );
 						else
-							m_account->client()->joinGroupChat(x_jid.host() , x_jid.user() , nick , password);
+							m_account->client()->joinGroupChat(x_jid.domain() , x_jid.node() , nick , password);
 					}
 				}
 			}
@@ -113,7 +113,7 @@ void JabberBookmarks::insertGroupChat(const XMPP::Jid &jid)
 	
 	QDomElement conference=m_storage.createElement("conference");
 	storage_e.appendChild(conference);
-	conference.setAttribute("jid",jid.userHost());
+	conference.setAttribute("jid",jid.bare());
 	QDomElement nick=m_storage.createElement("nick");
 	conference.appendChild(nick);
 	nick.appendChild(m_storage.createTextNode(jid.resource()));
@@ -143,7 +143,7 @@ void JabberBookmarks::slotJoinChatBookmark( const QString & _jid )
 	if(!m_account->isConnected())
 		return;
 	XMPP::Jid jid(_jid);
-	m_account->client()->joinGroupChat( jid.host() , jid.user() , jid.resource() );
+	m_account->client()->joinGroupChat( jid.domain() , jid.node() , jid.resource() );
 }
 
 #include "jabberbookmarks.moc"

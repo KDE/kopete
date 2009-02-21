@@ -108,7 +108,7 @@ public:
 
 	/**
 	 * Return usable resource for a given JID
-	 * Matches by userHost(), honors locks for a JID by default
+	 * Matches by bare() (userHost), honors locks for a JID by default
 	 */
 	const XMPP::Resource &bestResource ( const XMPP::Jid &jid, bool honourLock = true );
 

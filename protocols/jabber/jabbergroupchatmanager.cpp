@@ -145,8 +145,8 @@ void JabberGroupChatManager::inviteContact( const QString & contactId )
 //		XMPP::Jid jid = static_cast<const JabberBaseContact*>(account()->myself())->rosterItem().jid() ;
 //		jabberMessage.setFrom ( jid );
 		jabberMessage.setTo ( contactId );
-		jabberMessage.setInvite( mRoomJid.userHost() );
-		jabberMessage.setBody( i18n("You have been invited to %1", mRoomJid.userHost() ) );
+		jabberMessage.setInvite( mRoomJid.bare() );
+		jabberMessage.setBody( i18n("You have been invited to %1", mRoomJid.bare() ) );
 
 		// send the message
 		account()->client()->sendMessage ( jabberMessage );

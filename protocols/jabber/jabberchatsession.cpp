@@ -152,7 +152,7 @@ void JabberChatSession::slotUpdateDisplayName ()
 	XMPP::Jid jid = static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid();
 
 	if ( !mResource.isEmpty () )
-		jid.setResource ( mResource );
+		jid.withResource ( mResource );
 
 	QString statusText = i18nc("a contact's online status in parenthesis.", " (%1)",
 							  chatMembers.first()->onlineStatus().description() );
@@ -290,7 +290,7 @@ void JabberChatSession::sendNotification( Event event )
 
 		// set resource properly if it has been selected already
 		if ( !resource().isEmpty () )
-			toJid.setResource ( resource () );
+			toJid.withResource ( resource () );
 
 		XMPP::Message message;
 
@@ -350,7 +350,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		XMPP::Jid toJid = recipient->rosterItem().jid();
 
 		if( !resource().isEmpty () )
-			toJid.setResource ( resource() );
+			toJid.withResource ( resource() );
 
 		jabberMessage.setTo ( toJid );
 

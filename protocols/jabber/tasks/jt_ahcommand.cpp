@@ -107,8 +107,9 @@ QString AHCommand::status2string(Status status)
 		return "completed";
 	case Canceled:
 		return "canceled";
+	default:
+		return "";
 	}
-	return "";
 }
 
 QString AHCommand::action2string(Action action)
@@ -123,8 +124,9 @@ QString AHCommand::action2string(Action action)
 		return "cancel";
 	case Complete:
 		return "complete";
+	default:
+		return "";
 	}
-	return "";
 }
 
 AHCommand::Action AHCommand::string2action(const QString &s)

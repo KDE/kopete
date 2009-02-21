@@ -335,7 +335,7 @@ QString JabberBaseContact::fullAddress ()
 
 	if ( jid.resource().isEmpty () )
 	{
-		jid.setResource ( account()->resourcePool()->bestResource ( jid ).name () );
+		jid.withResource ( account()->resourcePool()->bestResource ( jid ).name () );
 	}
 
 	return jid.full ();
@@ -354,7 +354,7 @@ XMPP::Jid JabberBaseContact::bestAddress ()
 
 	// construct address out of user@host and current best resource
 	XMPP::Jid jid = mRosterItem.jid ();
-	jid.setResource ( account()->resourcePool()->bestResource( mRosterItem.jid() ).name () );
+	jid.withResource ( account()->resourcePool()->bestResource( mRosterItem.jid() ).name () );
 
 	return jid;
 

@@ -38,7 +38,7 @@
  * JabberGroupContact constructor
  */
 JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
-	: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().userHost () ), account, mc) , mNick( rosterItem.jid().resource() )
+	: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().bare() ), account, mc) , mNick( rosterItem.jid().resource() )
 {
 	setIcon( "jabber_group" );
 
@@ -58,7 +58,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * Instantiate a new message manager without members.
 	 */
 	mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
-											Kopete::ContactPtrList (), XMPP::Jid ( rosterItem.jid().userHost () ) );
+											Kopete::ContactPtrList (), XMPP::Jid ( rosterItem.jid().bare() ) );
 
 	connect ( mManager, SIGNAL ( closing ( Kopete::ChatSession* ) ), this, SLOT ( slotChatSessionDeleted () ) );
 
@@ -131,7 +131,7 @@ Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFla
 	{
 		kWarning (JABBER_DEBUG_GLOBAL) << "somehow, the chat manager was removed, and the contact is still there";
 		mManager = new JabberGroupChatManager ( protocol (), mSelfContact,
-				Kopete::ContactPtrList (), XMPP::Jid ( rosterItem().jid().userHost() ) );
+				Kopete::ContactPtrList (), XMPP::Jid ( rosterItem().jid().bare() ) );
 
 		mManager->addContact ( this );
 
@@ -328,7 +328,7 @@ void JabberGroupContact::slotChatSessionDeleted ()
 
 	if ( account()->isConnected () )
 	{
-		account()->client()->leaveGroupChat ( mRosterItem.jid().host (), mRosterItem.jid().user () );
+		account()->client()->leaveGroupChat ( mRosterItem.jid().domain(), mRosterItem.jid().node() );
 	}
 
 	//deleteLater(); //we will be deleted later when the account will know we have left
@@ -352,12 +352,12 @@ void JabberGroupContact::slotStatusChanged( )
 	if( !isOnline() )
 	{
 		//HACK WORKAROUND   XMPP::client->d->groupChatList must contains us.
-		account()->client()->joinGroupChat( rosterItem().jid().host() , rosterItem().jid().user() , mNick );
+		account()->client()->joinGroupChat( rosterItem().jid().domain() , rosterItem().jid().node() , mNick );
 	}
 
 	//TODO: away message
 	XMPP::Status newStatus = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
-	account()->client()->setGroupChatStatus( rosterItem().jid().host() , rosterItem().jid().user() , newStatus );
+	account()->client()->setGroupChatStatus( rosterItem().jid().domain() , rosterItem().jid().node() , newStatus );
 }
 
 void JabberGroupContact::slotChangeNick( )
@@ -365,7 +365,7 @@ void JabberGroupContact::slotChangeNick( )
 
 	bool ok;
 	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickname - Jabber Plugin" ),
-			i18n( "Please enter the new nickname you want to have in the room <i>%1</i>" , rosterItem().jid().userHost()),
+			i18n( "Please enter the new nickname you want to have in the room <i>%1</i>" , rosterItem().jid().bare()),
 			mNick, &ok );
 	if ( !ok || !account()->isConnected())
 		return;
@@ -373,7 +373,7 @@ void JabberGroupContact::slotChangeNick( )
 	mNick=futureNewNickName;
 
 	XMPP::Status status = account()->protocol()->kosToStatus( account()->myself()->onlineStatus() );
-	account()->client()->changeGroupChatNick( rosterItem().jid().host() , rosterItem().jid().user()  , mNick , status);
+	account()->client()->changeGroupChatNick( rosterItem().jid().domain() , rosterItem().jid().node()  , mNick , status);
 
 }
 

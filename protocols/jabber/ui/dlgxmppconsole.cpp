@@ -52,7 +52,7 @@ void dlgXMPPConsole::slotOutgoingXML(const QString &msg)
 
 void dlgXMPPConsole::slotSend()
 {
-	mClient->send(ui.mTextEdit->text());
+	mClient->send(ui.mTextEdit->toPlainText());
 }
 
 void dlgXMPPConsole::slotClear()

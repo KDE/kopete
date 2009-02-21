@@ -40,7 +40,7 @@ public:
 	 : account(t_account), jid(t_jid), resource(t_resource), capsEnabled(false)
 	{
 		// Make sure the resource is always set.
-		jid.setResource(resource.name());
+		jid.withResource(resource.name());
 	}
 
 	JabberAccount *account;

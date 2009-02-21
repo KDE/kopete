@@ -396,7 +396,7 @@ void dlgJabberVCard::slotSaveVCard()
 	vCard.setPhoneList(phoneList);
 
 	// about tab
-	vCard.setDesc( m_mainWidget->teAbout->text() );
+	vCard.setDesc( m_mainWidget->teAbout->toPlainText() );
 
 	// Set contact photo as a binary value (if he has set a photo)
 	if( !m_photoPath.isEmpty() )

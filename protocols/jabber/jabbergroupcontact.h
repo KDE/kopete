@@ -42,6 +42,7 @@ public:
 	 * FIXME: implement manager version here?
 	 */
 	QList<KAction*> *customContextMenuActions ();
+	using JabberBaseContact::customContextMenuActions;
 
 	/**
 	 * Deal with an incoming message for this contact.

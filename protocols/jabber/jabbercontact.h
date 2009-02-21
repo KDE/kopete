@@ -45,6 +45,7 @@ public:
 	 * FIXME: implement manager version here?
 	 */
 	QList<KAction*> *customContextMenuActions ();
+	using JabberBaseContact::customContextMenuActions;
 
 	/**
 	 * Start a rename request.

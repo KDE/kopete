@@ -204,6 +204,7 @@ void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status, const
 {
 	Q_UNUSED(status);
 	Q_UNUSED(reason);
+	Q_UNUSED(options);
 #if 0
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
