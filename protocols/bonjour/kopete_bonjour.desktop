@@ -21,3 +21,5 @@ Name[pa]=ਬੋਨਜੁਉਰ
 Name[sr]=Бонжур
 Name[x-test]=xxBonjourxx
 Comment=Serverless Link Local XMPP Messaging
+Comment[sv]=Serverfri länk för lokal meddelandeskickning med XMPP
+Comment[uk]=Локальний обмін повідомленням XMPP з’єднанням без сервера
