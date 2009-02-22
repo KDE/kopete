@@ -30,8 +30,8 @@
 #include "bonjourprotocol.h"
 #include <kconfigdialog.h>
 #include <kuser.h>
-#include <identity.h>
-#include <identitymanager.h>
+#include <kpimidentities/identity.h>
+#include <kpimidentities/identitymanager.h>
 
 BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Account* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
