@@ -16,31 +16,28 @@
     *************************************************************************
 */
 
-#ifndef _HISTORYDIALOG_H
-#define _HISTORYDIALOG_H
+#ifndef HISTORYDIALOG_H
+#define HISTORYDIALOG_H
 
-#include <QFile>
-#include <QStringList>
-#include <QList>
+#include <QtCore/QList>
 
 #include <kdialog.h>
 #include <kurl.h>
 
 #include "kopetemessage.h"
 
+class QTreeWidgetItem;
+
 class KAction;
-
-namespace Ui { class HistoryViewer; }
-
-//class HistoryWidget;
-namespace Kopete { class MetaContact; class Contact; }
-namespace Kopete { class XSLT; }
 class KHTMLView;
 class KHTMLPart;
-
 namespace KParts { class BrowserArguments; class OpenUrlArguments; class Part; }
 
-class QTreeWidgetItem;
+namespace Kopete { class MetaContact; }
+namespace Kopete { class Contact; }
+namespace Kopete { class XSLT; }
+
+namespace Ui { class HistoryViewer; }
 
 class DMPair
 {

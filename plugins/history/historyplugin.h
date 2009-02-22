@@ -18,22 +18,14 @@
 #ifndef HISTORYPLUGIN_H
 #define HISTORYPLUGIN_H
 
-#include <QObject>
-#include <QPointer>
-#include <QMap>
-
+#include <QtCore/QPointer>
+#include <QtCore/QMap>
 
 #include "kopeteplugin.h"
-
-#include "kopetemessage.h"
 #include "kopetemessagehandler.h"
 
 class KopeteView;
-
-namespace Kopete
-{
-class ChatSession;
-}
+namespace Kopete { class ChatSession; }
 
 class HistoryGUIClient;
 class HistoryPlugin;

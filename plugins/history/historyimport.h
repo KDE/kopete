@@ -15,17 +15,22 @@
     *************************************************************************
 */
 
-
 #ifndef HISTORYIMPORT_H
 #define HISTORYIMPORT_H
 
-#include <QtGui>
+#include <QtGui/QTextCursor>
 
 #include <kdialog.h>
 
-#include "kopeteglobal.h"
-#include "kopetecontact.h"
-#include "kopetemessage.h"
+class QDir;
+class QStandardItem;
+class QTreeView;
+class QTextEdit;
+class QCheckBox;
+class QModelIndex;
+class QFile;
+
+namespace Kopete { class Contact; }
 
 /**
  * @author Timo Schluessler <timo@schluessler.org>

@@ -17,17 +17,17 @@
 */
 
 #include "historypreferences.h"
-#include "historyconfig.h"
-#include "ui_historyprefsui.h"
 
-#include <kgenericfactory.h>
-
-#include <QLayout>
-#include <QVBoxLayout>
+#include <QtGui/QLayout>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QCheckBox>
 
 #include <kcolorbutton.h>
 #include <knuminput.h>
-#include <qcheckbox.h>
+#include <kgenericfactory.h>
+
+#include "historyconfig.h"
+#include "ui_historyprefsui.h"
 
 K_PLUGIN_FACTORY( HistoryPreferencesFactory, registerPlugin<HistoryPreferences>(); )
 K_EXPORT_PLUGIN( HistoryPreferencesFactory( "kcm_kopete_history" ) )

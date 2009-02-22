@@ -19,6 +19,7 @@
 #define WEBPRESENCEPREFERENCES_H
 
 #include <kcmodule.h>
+
 namespace Ui { class WebPresencePrefsUI; }
 
 /**

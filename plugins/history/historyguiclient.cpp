@@ -14,29 +14,29 @@
     *                                                                       *
     *************************************************************************
 */
-#include "historyguiclient.h"
-#include "historylogger.h"
-#include "historyconfig.h"
-#include "historydialog.h"
-#include "historyplugin.h"
 
-#include "kopetechatsession.h"
-#include "kopetechatsessionmanager.h"
-#include "kopetecontact.h"
-#include "kopeteview.h"
+#include "historyguiclient.h"
+
+#include <QtCore/QList>
+#include <QtGui/QTextCursor>
+#include <QtGui/QTextDocument>
 
 #include <kaction.h>
 #include <kstandardaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <kicon.h>
-
-
-#include <QList>
 #include <kactioncollection.h>
 
-#include <QTextCursor>
-#include <QTextDocument>
+#include "kopetechatsession.h"
+#include "kopetechatsessionmanager.h"
+#include "kopetecontact.h"
+#include "kopeteview.h"
+
+#include "historylogger.h"
+#include "historyconfig.h"
+#include "historydialog.h"
+#include "historyplugin.h"
 
 HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 		: QObject ( parent ), KXMLGUIClient ( parent )

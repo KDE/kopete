@@ -18,18 +18,21 @@
  *************************************************************************
  */
 
-#include "config-kopete.h"
+#include <config-kopete.h> // for HAVE_XSLT
 
-#include <qdom.h>
-#include <qtimer.h>
-#include <qfile.h>
-#include <QTextCodec>
-#include <QTextStream>
-#include <QList>
-#include <QDateTime>
+#include "webpresenceplugin.h"
+
+#include <QtCore/QTimer>
+#include <QtCore/QFile>
+#include <QtCore/QTextCodec>
+#include <QtCore/QTextStream>
+#include <QtCore/QList>
+#include <QtCore/QDateTime>
+#include <QtXml/QDomDocument>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
+#include <kio/job.h>
 #include <kmessagebox.h>
 #include <ktemporaryfile.h>
 #include <kstandarddirs.h>
@@ -48,9 +51,9 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopetecontact.h"
 
 #include "webpresenceconfig.h"
-#include "webpresenceplugin.h"
 
 K_PLUGIN_FACTORY(WebPresencePluginFactory, registerPlugin<WebPresencePlugin>();)
 K_EXPORT_PLUGIN(WebPresencePluginFactory( "kopete_webpresence" ))

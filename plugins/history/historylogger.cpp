@@ -16,16 +16,14 @@
 */
 
 #include "historylogger.h"
-#include "historyconfig.h"
 
-#include <QRegExp>
-#include <QFile>
-#include <QDir>
-#include <QDateTime>
-#include <QtXml> // old qdom.h
-#include <QTimer>
-#include <QTextStream>
-#include <QList>
+#include <QtCore/QRegExp>
+#include <QtCore/QFile>
+#include <QtCore/QDir>
+#include <QtCore/QDateTime>
+#include <QtCore/QTimer>
+#include <QtCore/QTextStream>
+#include <QtCore/QList>
 #include <QtCore/QDate>
 
 #include <kdebug.h>
@@ -38,6 +36,8 @@
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
 #include "kopetechatsession.h"
+
+#include "historyconfig.h"
 
 bool messageTimestampLessThan(const Kopete::Message &m1, const Kopete::Message &m2)
 {

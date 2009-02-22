@@ -17,16 +17,16 @@
 */
 
 #include "historydialog.h"
-#include "historylogger.h"
-#include "historyimport.h"
-#include "ui_historyviewer.h"
-#include "kopetemetacontact.h"
-#include "kopeteprotocol.h"
-#include "kopeteaccount.h"
-#include "kopetecontact.h"
-#include "kopetecontactlist.h"
-#include "kopeteappearancesettings.h"
 
+#include <QtCore/QDir>
+#include <QtCore/QTextOStream>
+#include <QtGui/QClipboard>
+
+#include <kdebug.h>
+#include <krun.h>
+#include <kmenu.h>
+#include <kaction.h>
+#include <kstandardaction.h>
 #include <dom/dom_doc.h>
 #include <dom/dom_element.h>
 #include <dom/html_document.h>
@@ -34,15 +34,16 @@
 #include <khtml_part.h>
 #include <khtmlview.h>
 
-#include <QDir>
-#include <QClipboard>
-#include <QTextOStream>
+#include "kopetemetacontact.h"
+#include "kopeteprotocol.h"
+#include "kopeteaccount.h"
+#include "kopetecontact.h"
+#include "kopetecontactlist.h"
+#include "kopeteappearancesettings.h"
 
-#include <kdebug.h>
-#include <krun.h>
-#include <kmenu.h>
-#include <kaction.h>
-#include <kstandardaction.h>
+#include "historylogger.h"
+#include "historyimport.h"
+#include "ui_historyviewer.h"
 
 class KListViewDateItem : public QTreeWidgetItem
 {

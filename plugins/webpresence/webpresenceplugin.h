@@ -20,16 +20,19 @@
 #ifndef WEBPRESENCEPLUGIN_H
 #define WEBPRESENCEPLUGIN_H
 
-#include <QList>
+#include <QtCore/QList>
 
-#include <kio/job.h>
+#include <kurl.h>
 
-#include "kopetecontact.h"
-#include "kopeteonlinestatus.h"
+#include "kopeteplugin.h"
 
 class QTimer;
 class KTemporaryFile;
+class KJob;
 namespace Kopete { class MetaContact; }
+namespace Kopete { class Protocol; }
+namespace Kopete { class Account; }
+namespace Kopete { class OnlineStatus; }
 
 typedef QList<Kopete::Protocol*> ProtocolList;
 

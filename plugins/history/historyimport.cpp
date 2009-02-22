@@ -15,10 +15,21 @@
     *************************************************************************
 */
 
-
 #include "historyimport.h"
 
-#include "historylogger.h"
+#include <QtCore/QStack>
+#include <QtCore/QDir>
+#include <QtGui/QTextEdit>
+#include <QtGui/QTreeView>
+#include <QtGui/QPushButton>
+#include <QtGui/QCheckBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QProgressDialog>
+#include <QtGui/QMessageBox>
+#include <QtGui/QFileDialog>
+#include <QtGui/QApplication>
+#include <QtXml/QXmlStreamReader>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -27,6 +38,10 @@
 #include <kopetemetacontact.h>
 #include <kopeteprotocol.h>
 #include <kopeteaccount.h>
+#include <kopetecontact.h>
+#include <kopetemessage.h>
+
+#include "historylogger.h"
 
 HistoryImport::HistoryImport(QWidget *parent)
 	: KDialog(parent)
@@ -498,7 +513,7 @@ void HistoryImport::parsePidginXml(QFile &file, struct Log * log, QDate date)
 			else
 				incoming = false;
 
-			while (reader.readNext() != QXmlStreamReader::Characters);
+			while (reader.readNext() != QXmlStreamReader::Characters) { };
 
 			dateTime = extractTime(reader.text().toString(), date);
 			inMessage = true;

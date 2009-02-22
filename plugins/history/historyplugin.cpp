@@ -16,14 +16,18 @@
     *************************************************************************
 */
 
+#include "historyplugin.h"
+
+#include <QtCore/QList>
+
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
 #include <kaction.h>
 #include <kmessagebox.h>
-//#include <kconfig.h>
 #include <kplugininfo.h>
 #include <kdeversion.h>
 #include <kicon.h>
+#include <kactioncollection.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
@@ -34,13 +38,9 @@
 #include "kopeteviewplugin.h"
 
 #include "historydialog.h"
-#include "historyplugin.h"
 #include "historylogger.h"
 #include "historyguiclient.h"
 #include "historyconfig.h"
-
-#include <QList>
-#include <kactioncollection.h>
 
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
 static const KAboutData aboutdata("kopete_history", 0, ki18n("History") , "1.0" );

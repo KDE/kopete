@@ -12,13 +12,11 @@
  * the accountId, to know each protocol id, and more
  *-----------------------------------------------------------*/
 
-#include "kopetepluginmanager.h"
-#include "kopeteaccount.h"
-#include "kopeteaccountmanager.h"
-#include "kopetecontact.h"
-#include "kopetemessage.h"
-#include "kopeteprotocol.h"
-#include "kopeteuiglobal.h"
+#include <QtCore/QDir>
+#include <QtCore/QRegExp>
+#include <QtCore/QTextStream>
+#include <QtGui/QApplication>
+#include <QtXml/QDomDocument>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -28,11 +26,14 @@
 #include <kprogressdialog.h>
 #include <ksavefile.h>
 
-#include <QDir>
-#include <QtXml> // old qdom.h
-#include <QRegExp>
-#include <QTextStream>
-#include <QApplication>
+#include "kopetepluginmanager.h"
+#include "kopeteaccount.h"
+#include "kopeteaccountmanager.h"
+#include "kopetecontact.h"
+#include "kopetemessage.h"
+#include "kopeteprotocol.h"
+#include "kopeteuiglobal.h"
+
 #define CBUFLENGTH 512 // buffer length for fgets()
 
 void HistoryPlugin::convertOldHistory()

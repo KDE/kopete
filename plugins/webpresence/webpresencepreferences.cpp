@@ -15,17 +15,16 @@
     ***************************************************************************
 */
 
+#include "webpresencepreferences.h"
+
 #include <kgenericfactory.h>
 #include <kurlrequester.h>
-#include <klineedit.h>
 
 #include "ui_webpresenceprefs.h"
 #include "webpresenceconfig.h"
-#include "webpresencepreferences.h"
 
 K_PLUGIN_FACTORY(WebPresencePreferencesFactory, registerPlugin<WebPresencePreferences>();)
 K_EXPORT_PLUGIN(WebPresencePreferencesFactory("kcm_kopete_webpresence"))
-
 
 WebPresencePreferences::WebPresencePreferences(QWidget *parent, const QVariantList &args)
 		: KCModule(WebPresencePreferencesFactory::componentData(), parent, args)
