@@ -72,7 +72,7 @@ public Q_SLOTS:
     void setTextStrikeOut(bool strikeout);
 
     void slotResetFontAndColor();
-
+    void slotCheckSpellingChanged(bool b);
 signals:
     void richTextSupportChanged();
 

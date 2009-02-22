@@ -122,6 +122,11 @@ bool KopeteRichTextWidget::event(QEvent *event)
     return KRichTextWidget::event(event);
 }
 
+void KopeteRichTextWidget::slotCheckSpellingChanged(bool b)
+{
+    setCheckSpellingEnabled(b);
+}
+
 void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 {
     if (!d->checkSpelling)
@@ -129,7 +134,7 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
         d->checkSpelling = new KToggleAction(KIcon("tools-check-spelling"), i18n("Automatic Spell Checking"), actionCollection);
         actionCollection->addAction("enable_auto_spell_check", d->checkSpelling);
         d->checkSpelling->setChecked(true);
-        connect(d->checkSpelling, SIGNAL(toggled(bool)), this, SLOT(setCheckSpellingEnabled(bool)));
+        connect(d->checkSpelling, SIGNAL(toggled(bool)), this, SLOT(slotCheckSpellingChanged(bool)));
     }
 
     KopeteRichTextWidget::RichTextSupport richText = d->getProtocolRichTextSupport();
