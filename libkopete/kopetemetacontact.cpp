@@ -866,6 +866,46 @@ void MetaContact::slotPropertyChanged( PropertyContainer* _subcontact, const QSt
 			}
 		}
 	}
+
+	if ( (key == Kopete::Global::Properties::self()->statusMessage().key() ||
+	     key == Kopete::Global::Properties::self()->statusTitle().key()) && oldValue != newValue )
+	{
+		QString statusText;
+
+		bool allOffline = !this->isOnline();
+		if ( newValue.toString().isEmpty() || ( !subcontact->isOnline() && !allOffline ) )
+		{
+			// try to find a more suitable away message to be displayed when:
+			// -new away message is empty or
+			// -contact who set it is offline and there are contacts online in the metacontact
+			foreach ( Kopete::Contact *c, d->contacts )
+			{
+				QString curStatusText( c->property( key ).value().toString() );
+				if ( ( allOffline || c->isOnline() ) && !curStatusText.isEmpty() )
+				{
+					// display this contact's away message when:
+					// -this contact's away message is not empty and
+					// -this contact is online or there are no contacts online at all
+					statusText = curStatusText;
+					break;
+				}
+			}
+		}
+		else
+		{
+			// just use new away message when:
+			// -new away message is not empty and
+			// -contact who set it is online or there are no contacts online at all
+			statusText = newValue.toString();
+		}
+
+		if ( key == Kopete::Global::Properties::self()->statusMessage().key() )
+			d->statusMessage.setMessage( statusText );
+		else
+			d->statusMessage.setTitle( statusText );
+
+		emit statusMessageChanged( this );
+	}
 }
 
 void MetaContact::moveToGroup( Group *from, Group *to )
@@ -964,6 +1004,11 @@ QString MetaContact::addressBookField( Kopete::Plugin * /* p */, const QString &
 void Kopete::MetaContact::setAddressBookField( Kopete::Plugin * /* p */, const QString &app, const QString &key, const QString &value )
 {
 	d->addressBook[ app ][ key ] = value;
+}
+
+Kopete::StatusMessage MetaContact::statusMessage() const
+{
+	return d->statusMessage;
 }
 
 void MetaContact::slotPluginLoaded( Plugin *p )

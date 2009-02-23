@@ -4,8 +4,9 @@
     Copyright (c) 2007      by Aleix Pol              <aleixpol@gmail.com>
     Copyright (c) 2008      by Matt Rogers            <mattr@kde.org>
     Copyright (c) 2009      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+    Copyright     2009      by Roman Jarosz           <kedgedev@gmail.com>
 
-    Kopete    (c) 2002-2008 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -83,6 +84,8 @@ void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 	
 	connect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
 	         this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
+	connect( contact, SIGNAL(statusMessageChanged(Kopete::MetaContact*)),
+	         this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
 }
 
 void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
@@ -92,6 +95,8 @@ void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
 
 	disconnect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
 	            this, SLOT(handleContactDataChange(Kopete::MetaContact*)));
+	disconnect( contact, SIGNAL(statusMessageChanged(Kopete::MetaContact*)),
+	            this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
 }
 
 void ContactListModel::addGroup( Kopete::Group* group )
@@ -299,6 +304,9 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 		case Kopete::Items::TypeRole:
 			return Kopete::Items::Group;
 			break;
+		case Kopete::Items::ObjectRole:
+			return qVariantFromValue( (QObject*)g );
+			break;
 		case Kopete::Items::UuidRole:
 			return QUuid().toString();
 			break;
@@ -325,7 +333,7 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 			display = mc->displayName();
 			return display;
 			break;
-		case Qt::DecorationRole:
+		case Kopete::Items::MetaContactImageRole:
 			return metaContactImage( mc );
 			break;
 		case Qt::ToolTipRole:
@@ -336,12 +344,27 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 		case Kopete::Items::TypeRole:
 			return Kopete::Items::MetaContact;
 			break;
+		case Kopete::Items::ObjectRole:
+			return qVariantFromValue( (QObject*)mc );
+			break;
 		case Kopete::Items::UuidRole:
 			return mc->metaContactId().toString();
 			break;
 		case Kopete::Items::OnlineStatusRole:
 			return mc->status();
 			break;
+		case Kopete::Items::StatusMessageRole:
+			return mc->statusMessage().message();
+			break;
+		case Kopete::Items::StatusTitleRole:
+			return mc->statusMessage().title();
+			break;
+		case Kopete::Items::AccountIconsRole:
+			QList<QVariant> accountIconList;
+			foreach ( Kopete::Contact *contact, mc->contacts() )
+				accountIconList << qVariantFromValue( contact->onlineStatus().iconFor( contact ) );
+
+			return accountIconList;
 		}
 	}
 
@@ -559,71 +582,56 @@ void ContactListModel::handleContactDataChange(Kopete::MetaContact* mc)
 	}
 }
 
-
 QVariant ContactListModel::metaContactImage( Kopete::MetaContact* mc ) const
 {
 	using namespace Kopete;
-	QImage img;
-	img = mc->picture().image();
-	int displayMode = AppearanceSettings::self()->contactListDisplayMode();
+
 	int iconMode = AppearanceSettings::self()->contactListIconMode();
-	int imageSize = IconSize( KIconLoader::Small );
-	bool usePhoto = ( iconMode == AppearanceSettings::EnumContactListIconMode::IconPhoto );
-	if ( displayMode == AppearanceSettings::EnumContactListDisplayMode::Detailed )
+	if ( iconMode == AppearanceSettings::EnumContactListIconMode::IconPhoto )
 	{
-		imageSize = ( iconMode == AppearanceSettings::EnumContactListIconMode::IconPic ?
-		              KIconLoader::SizeMedium : KIconLoader::SizeLarge );
-	}
-	else
-	{
-		imageSize = ( iconMode == AppearanceSettings::EnumContactListIconMode::IconPic ?
-		              IconSize( KIconLoader::Small ) : KIconLoader::SizeMedium );
-	}
-	
-	if ( usePhoto && !img.isNull() )
-	{
-		img = img.scaled( imageSize, imageSize, Qt::KeepAspectRatio,
-		                  Qt::SmoothTransformation );
-		if ( mc->status() == Kopete::OnlineStatus::Offline )
-			Blitz::grayscale(img);
-		return img;
-	}
-	else
-	{
-		switch( mc->status() )
+		QImage img = mc->picture().image();
+		if ( !img.isNull() )
 		{
-		case OnlineStatus::Online:
-			if( mc->useCustomIcon() )
-				return SmallIcon( mc->icon( ContactListElement::Online ), imageSize );
-			else
-				return SmallIcon( QString::fromUtf8( "user-online" ), imageSize );
-			break;
-		case OnlineStatus::Away:
-			if( mc->useCustomIcon() )
-				return SmallIcon( mc->icon( ContactListElement::Away ), imageSize );
-			else
-				return SmallIcon( QString::fromUtf8( "user-away" ), imageSize );
-			break;
-		case OnlineStatus::Unknown:
-			if( mc->useCustomIcon() )
-				return SmallIcon( mc->icon( ContactListElement::Unknown ), imageSize );
-			if ( mc->contacts().isEmpty() )
-				return SmallIcon( QString::fromUtf8( "metacontact_unknown" ), imageSize );
-			else
-				return SmallIcon( QString::fromUtf8( "user-offline" ), imageSize );
-			break;
-		case OnlineStatus::Offline:
-		default:
-			if( mc->useCustomIcon() )
-				return SmallIcon( mc->icon( ContactListElement::Offline ), imageSize );
-			else
-				return SmallIcon( QString::fromUtf8( "user-offline" ), imageSize );
-			break;
+			if ( mc->status() == Kopete::OnlineStatus::Offline )
+				Blitz::grayscale(img);
+
+			return img;
 		}
 	}
-	return img;
-}
 
+	switch( mc->status() )
+	{
+	case OnlineStatus::Online:
+		if( mc->useCustomIcon() )
+			return mc->icon( ContactListElement::Online );
+		else
+			return QString::fromUtf8( "user-online" );
+		break;
+	case OnlineStatus::Away:
+		if( mc->useCustomIcon() )
+			return mc->icon( ContactListElement::Away );
+		else
+			return QString::fromUtf8( "user-away" );
+		break;
+	case OnlineStatus::Unknown:
+		if( mc->useCustomIcon() )
+			return mc->icon( ContactListElement::Unknown );
+		if ( mc->contacts().isEmpty() )
+			return QString::fromUtf8( "metacontact_unknown" );
+		else
+			return QString::fromUtf8( "user-offline" );
+		break;
+	case OnlineStatus::Offline:
+	default:
+		if( mc->useCustomIcon() )
+			return mc->icon( ContactListElement::Offline );
+		else
+			return QString::fromUtf8( "user-offline" );
+		break;
+	}
+
+	return QVariant();
+}
 
 }
 

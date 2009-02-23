@@ -31,6 +31,7 @@
 #include "kopete_export.h"
 
 #include "kopeteonlinestatus.h"
+#include "kopetestatusmessage.h"
 
 namespace Kopete {
 
@@ -395,6 +396,11 @@ public:
 	 */
 	void setAddressBookField( Plugin *p, const QString &app, const QString &key, const QString &value );
 
+	/**
+	 * @brief The status message of metacontact
+	 */
+	StatusMessage statusMessage() const;
+
 public slots:
 
 	/**
@@ -432,6 +438,10 @@ signals:
 	 */
 	void contactIdleStateChanged( Kopete::Contact *contact );
 
+	/**
+	 * Status title or message has changed
+	 */
+	void statusMessageChanged( Kopete::MetaContact *metaContact );
 
 public slots:
 

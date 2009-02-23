@@ -69,6 +69,7 @@ class  MetaContact::Private
 	// The photo cache. Reduce disk access and CPU usage.
 	Picture customPicture, contactPicture, kabcPicture;
 
+	Kopete::StatusMessage statusMessage;
 };
 
 } //END namespace Kopete

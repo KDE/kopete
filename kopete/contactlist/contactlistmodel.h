@@ -20,6 +20,8 @@
 
 #include <QAbstractItemModel>
 
+#include <kopete_export.h>
+
 namespace Kopete {
 
 class Group;
@@ -32,7 +34,7 @@ namespace UI {
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
-class ContactListModel : public QAbstractItemModel
+class KOPETE_CONTACT_LIST_EXPORT ContactListModel : public QAbstractItemModel
 {
 Q_OBJECT
 	public:

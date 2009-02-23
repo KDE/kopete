@@ -8,8 +8,9 @@
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright     2007      by Matt Rogers            <mattr@kde.org>
+    Copyright     2009      by Roman Jarosz           <kedgedev@gmail.com>
 
-    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -27,21 +28,40 @@
 
 #include <KDebug>
 #include <KIcon>
+#include <KMenu>
+#include <KStandardAction>
+#include <KActionMenu>
+#include <KActionCollection>
+#include <KXmlGuiWindow>
+#include <KLocalizedString>
+#include <kxmlguifactory.h>
 
 #include "kopeteuiglobal.h"
 #include "kopetecontactlistelement.h"
 #include "kopetemetacontact.h"
+#include "kopeteaccountmanager.h"
+#include "kopetecontact.h"
+#include "kopetegroup.h"
 #include "kopetecontactlist.h"
+#include "kopetestdaction.h"
+#include "kopetegrouplistaction.h"
+#include "kopetelviprops.h"
+#include "contactlistlayoutmanager.h"
 
 #include "contactlistmodel.h"
 #include "kopeteitembase.h"
 #include "kopeteitemdelegate.h"
 
+class KopeteContactListViewPrivate
+{
+public:
+	// HACK: Used to update the KMEnu title - DarkShock
+	QMap<KMenu*, QAction*> menuTitleMap;
+};
 
 KopeteContactListView::KopeteContactListView( QWidget *parent )
-	: QTreeView( parent )
+: QTreeView( parent ), d( new KopeteContactListViewPrivate() )
 {
-	//d = new KopeteContactListViewPrivate;
 	header()->hide();
 
 	setSelectionMode( QAbstractItemView::ExtendedSelection );
@@ -58,12 +78,14 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	         this, SLOT(itemExpanded(const QModelIndex&)));
 	connect( this, SIGNAL(collapsed(const QModelIndex&)),
 	         this, SLOT(itemCollapsed(const QModelIndex&)));
-	
+	connect( ContactList::LayoutManager::instance(), SIGNAL(activeLayoutChanged()),
+	         this, SLOT(reset()) );
+
 	setEditTriggers( NoEditTriggers );
 	// Load in the user's initial settings
 	//slotSettingsChanged();
 }
-/*
+
 void KopeteContactListView::initActions( KActionCollection *ac )
 {
 	actionUndo = KStandardAction::undo( this , SLOT( slotUndo() ) , ac );
@@ -99,8 +121,8 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionSendEmail = new KAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
 	ac->addAction( "contactSendEmail", actionSendEmail );
 	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( slotSendEmail() ) );
-	-* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*-
 
+// 	-* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*-
 	actionRename = new KAction( KIcon("edit-rename"), i18n( "Rename" ), ac );
 	ac->addAction( "contactRename", actionRename );
 	connect( actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
@@ -124,16 +146,16 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
 	ac->addAction( "contactProperties", actionProperties );
 	actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
-	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( slotProperties() ) );
+	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( showItemProperties() ) );
 
 	// Update enabled/disabled actions
-	slotViewSelectionChanged();
+	//	slotViewSelectionChanged();
 }
-*/
+
 
 KopeteContactListView::~KopeteContactListView()
 {
-	//delete d;
+	delete d;
 }
 
 Kopete::MetaContact* KopeteContactListView::metaContactFromIndex( const QModelIndex& index )
@@ -153,6 +175,12 @@ void KopeteContactListView::contactActivated( const QModelIndex& index )
 	}
 
 
+}
+
+void KopeteContactListView::reset()
+{
+	// TODO: Save/restore expand state
+	QTreeView::reset();
 }
 
 void KopeteContactListView::itemExpanded( const QModelIndex& index )
@@ -175,6 +203,136 @@ void KopeteContactListView::itemCollapsed( const QModelIndex& index )
 	}
 }
 
+void KopeteContactListView::showItemProperties()
+{
+	QModelIndex index = currentIndex();
+	if ( !index.isValid() )
+		return;
+
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+	{
+		QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+
+		KopeteMetaLVIProps *propsDialog = new KopeteMetaLVIProps( qobject_cast<Kopete::MetaContact*>(metaContactObject), 0L );
+		propsDialog->exec(); // modal
+		delete propsDialog;
+	}
+	else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+	{
+		QObject* groupObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+
+		KopeteGVIProps *propsDialog = new KopeteGVIProps( qobject_cast<Kopete::Group*>(groupObject), 0L );
+		propsDialog->exec(); // modal
+		delete propsDialog;
+	}
+}
+
+void KopeteContactListView::contextMenuEvent( QContextMenuEvent* event )
+{
+	Q_ASSERT(model());
+	QModelIndex index = indexAt( event->pos() );
+	if ( !index.isValid() )
+		return;
+
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+	{
+		QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+		metaContactPopup( qobject_cast<Kopete::MetaContact*>(metaContactObject), event->globalPos() );
+		event->accept();
+	}
+	else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+	{
+		QObject* groupObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+		groupPopup( qobject_cast<Kopete::Group*>(groupObject), event->globalPos() );
+		event->accept();
+	}
+}
+
+void KopeteContactListView::groupPopup( Kopete::Group *group, const QPoint& pos )
+{
+	Q_ASSERT(group);
+	KXmlGuiWindow *window = dynamic_cast<KXmlGuiWindow *>(topLevelWidget());
+	if ( !window )
+	{
+		kError( 14000 ) << "Main window not found, unable to display context-menu; "
+			<< "Kopete::UI::Global::mainWidget() = " << Kopete::UI::Global::mainWidget() << endl;
+		return;
+	}
+
+	KMenu *popup = dynamic_cast<KMenu *>( window->factory()->container( "group_popup", window ) );
+	if ( popup )
+	{
+		QString title = group->displayName();
+		if ( title.length() > 32 )
+			title = title.left( 30 ) + QLatin1String( "..." );
+
+		// HACK: Used to update the KMenu title -DarkShock
+		if( d->menuTitleMap.contains(popup) )
+		{
+			QAction *action = d->menuTitleMap[popup];
+			popup->removeAction( action );
+			delete action;
+		}
+		d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+		popup->popup( pos );
+	}
+}
+
+void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, const QPoint& pos )
+{
+	Q_ASSERT(metaContact);
+	KXmlGuiWindow *window = dynamic_cast<KXmlGuiWindow *>(topLevelWidget());
+	if ( !window )
+	{
+		kError( 14000 ) << "Main window not found, unable to display context-menu; "
+			<< "Kopete::UI::Global::mainWidget() = " << Kopete::UI::Global::mainWidget() << endl;
+		return;
+	}
+
+	KMenu *popup = dynamic_cast<KMenu *>( window->factory()->container( "contact_popup", window ) );
+	if ( popup )
+	{
+		QString title = i18nc( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)",
+		                       metaContact->displayName(), metaContact->statusString() );
+
+		if ( title.length() > 43 )
+			title = title.left( 40 ) + QLatin1String( "..." );
+
+		// HACK: Used to update the KMenu title -DarkShock
+		if( d->menuTitleMap.contains(popup) )
+		{
+			QAction *action = d->menuTitleMap[popup];
+			popup->removeAction( action );
+			delete action;
+		}
+		d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+
+		// Submenus for separate contact actions
+		bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
+		foreach( Kopete::Contact* c , metaContact->contacts() )
+		{
+			if( sep )
+			{
+				popup->addSeparator();
+				sep = false;
+			}
+
+			KMenu *contactMenu = c->popupMenu();
+			connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
+			QString nick = c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+			QString text = nick.isEmpty() ?  c->contactId() : i18nc( "Translators: format: '<displayName> (<id>)'", "%2 <%1>", c->contactId(), nick );
+			text=text.replace('&',"&&"); // cf BUG 115449
+
+			if ( text.length() > 41 )
+				text = text.left( 38 ) + QLatin1String( "..." );
+
+			contactMenu->setTitle(text);
+			contactMenu->setIcon(c->onlineStatus().iconFor( c ));
+			popup->addMenu( contactMenu );
+		}
+		popup->popup( pos );
+	}
+}
 
 #include "kopetecontactlistview.moc"
 

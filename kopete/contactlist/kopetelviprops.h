@@ -30,27 +30,28 @@
 
 class AddressBookLinkWidget;
 class CustomNotificationProps;
-class KopeteGroupViewItem;
-class KopeteMetaContactLVI;
 class KopeteAddressBookExport;
 class KUrlRequester;
 
 namespace KABC { class Addressee; }
-namespace Kopete { class Contact; }
+namespace Kopete {
+	class Contact;
+	class Group;
+}
 
 class KopeteGVIProps: public KDialog
 {
 	Q_OBJECT
 
 	public:
-		KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent);
+		KopeteGVIProps(Kopete::Group *group, QWidget *parent);
 		~KopeteGVIProps();
 
 	private:
 		CustomNotificationProps * mNotificationProps;
 		QWidget *mainWidget;
 		Ui::KopeteGVIPropsWidget *ui_mainWidget;
-		KopeteGroupViewItem *item;
+		Kopete::Group *mGroup;
 		bool m_dirty;
 
 	private slots:
@@ -65,7 +66,7 @@ class KopeteMetaLVIProps: public KDialog
 	Q_OBJECT
 
 	public:
-		KopeteMetaLVIProps(KopeteMetaContactLVI *gvi, QWidget *parent);
+		KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget *parent);
 		~KopeteMetaLVIProps();
 
 	private:
@@ -74,7 +75,7 @@ class KopeteMetaLVIProps: public KDialog
 		QWidget* mainWidget;
 		Ui::KopeteMetaLVIPropsWidget *ui_mainWidget;
 		AddressBookLinkWidget *linkWidget;
-		KopeteMetaContactLVI *item;
+		Kopete::MetaContact *mMetaContact;
 		KopeteAddressBookExport *mExport;
 		KABC::Sound mSound;
 		int m_countPhotoCapable;

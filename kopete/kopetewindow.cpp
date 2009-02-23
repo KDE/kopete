@@ -292,7 +292,7 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	// --------------------------------------------------------------------------------
 	initView();
 	initActions();
-	//d->contactlist->initActions ( actionCollection() );
+	d->contactlist->initActions ( actionCollection() );
 	initSystray();
 	// --------------------------------------------------------------------------------
 

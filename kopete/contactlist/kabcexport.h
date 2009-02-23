@@ -20,6 +20,8 @@
 
 #include <kassistantdialog.h>
 
+#include <kopete_export.h>
+
 #include "ui_kabcexport_page1.h"
 #include "ui_kabcexport_page2.h"
 
@@ -37,7 +39,7 @@ namespace KRES {
 	class Resource;
 }
 
-class KabcExportWizard : public KAssistantDialog
+class KOPETE_CONTACT_LIST_EXPORT KabcExportWizard : public KAssistantDialog
 {
 Q_OBJECT
 	public:
