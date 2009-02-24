@@ -87,15 +87,13 @@ protected:
 
 private slots:
     void onConnectionManagerReady(Telepathy::Client::PendingOperation*);
-    void onConnectionCreated(Telepathy::Client::PendingOperation*);
     void onAccountManagerReady(Telepathy::Client::PendingOperation*);
     void newTelepathyAccountCreated(Telepathy::Client::PendingOperation *);
     void onAccountReady(Telepathy::Client::PendingOperation *);
     void onExistingAccountReady(Telepathy::Client::PendingOperation *);
-    void onConnectionReady(Telepathy::Client::PendingOperation*);
     void onRequestedPresence(Telepathy::Client::PendingOperation*);
     void onConnectionConnected(Telepathy::Client::PendingOperation*);
-    void onRequestConnectReady(Telepathy::Client::PendingOperation*);
+    void onAccountConnecting(Telepathy::Client::PendingOperation*);
     
     void displayNameChanged (const QString &);
     void iconChanged (const QString &);

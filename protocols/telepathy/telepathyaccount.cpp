@@ -50,6 +50,7 @@
 #include <TelepathyQt4/Client/AccountManager>
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/PendingReadyConnection>
+#include <TelepathyQt4/Client/PendingReady>
 #include <TelepathyQt4/Client/PendingOperation>
 #include <TelepathyQt4/Client/PendingConnection>
 #include <TelepathyQt4/Client/PendingReadyAccount>
@@ -105,72 +106,18 @@ void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
 
     kDebug(TELEPATHY_DEBUG_AREA) << account->parameters();
 
-    // \brief: set connection early
-    Telepathy::Client::PendingConnection *pc =
-        currentConnectionManager->requestConnection(account->protocol(), account->parameters());
-
-    QObject::connect(pc, SIGNAL(finished(Telepathy::Client::PendingOperation*)),
-        this,
-        SLOT(onConnectionCreated(Telepathy::Client::PendingOperation*))
-    );
-}
-
-void TelepathyAccount::onConnectionCreated(Telepathy::Client::PendingOperation* operation)
-{
-    kDebug(TELEPATHY_DEBUG_AREA);
-
-    if(isOperationError(operation))
-        return;
-
-    Telepathy::Client::PendingConnection *pc = dynamic_cast<Telepathy::Client::PendingConnection*>(operation);
-    if(!pc)
-    {
-        kDebug(TELEPATHY_DEBUG_AREA) << "Error with connection.";
-        return;
-    }
-
-    m_connection = pc->connection();
-
-    // \brief: request connect
-    QObject::connect(m_connection->requestConnect(),
-        SIGNAL(finished(Telepathy::Client::PendingOperation*)),
-        this,
-        SLOT(onRequestConnectReady(Telepathy::Client::PendingOperation*))
-    );
-}
-
-void TelepathyAccount::onRequestConnectReady(Telepathy::Client::PendingOperation* operation)
-{
-    kDebug(TELEPATHY_DEBUG_AREA);
-
-    if(isOperationError(operation))
-        return;
-    
-    QObject::connect(m_connection->becomeReady(),
-        SIGNAL(finished(Telepathy::Client::PendingOperation*)),
-        this,
-        SLOT(onConnectionReady(Telepathy::Client::PendingOperation*))
-    );
-}
-
-void TelepathyAccount::onConnectionReady(Telepathy::Client::PendingOperation* operation)
-{
-    kDebug(TELEPATHY_DEBUG_AREA);
-
-    if(isOperationError(operation))
-        return;
-
     Telepathy::SimplePresence simplePresence;
     simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(statusInit);
+
     kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type;
+    
     simplePresence.statusMessage = reasonInit.message();
+    
     Telepathy::Client::PendingOperation *op = account->setRequestedPresence(simplePresence);
     QObject::connect(op, SIGNAL(finished(Telepathy::Client::PendingOperation*)),
         this,
         SLOT(onRequestedPresence(Telepathy::Client::PendingOperation*))
     );
-
-    // \todo: Add here connect(connection, statusChanged...)
 }
 
 void TelepathyAccount::onRequestedPresence(Telepathy::Client::PendingOperation* operation)
@@ -180,13 +127,21 @@ void TelepathyAccount::onRequestedPresence(Telepathy::Client::PendingOperation* 
     if(isOperationError(operation))
         return;
 
-    QSharedPointer<Telepathy::Client::Connection> connection = account->connection();
-
-    Telepathy::Client::PendingOperation *op = connection->requestConnect();
-    QObject::connect(op, SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+    QObject::connect(account->setConnectsAutomatically(true),
+        SIGNAL(finished(Telepathy::Client::PendingOperation*)),
         this,
-        SLOT(onConnectionConnected(Telepathy::Client::PendingOperation*))
+        SLOT(onAccountConnecting(Telepathy::Client::PendingOperation*))
     );
+}
+
+void TelepathyAccount::onAccountConnecting(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    if(isOperationError(operation))
+        return;
+
+    kDebug(TELEPATHY_DEBUG_AREA) << "Connecting...";
 }
 
 void TelepathyAccount::onConnectionConnected(Telepathy::Client::PendingOperation*)
@@ -651,6 +606,11 @@ void TelepathyAccount::connectionStatusChanged (Telepathy::ConnectionStatus var1
 void TelepathyAccount::haveConnectionChanged (bool haveConnection)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << haveConnection;
+
+    if(haveConnection)
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Account connected! :-)";
+    }
 }
 
 
