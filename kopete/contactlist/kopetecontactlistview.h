@@ -73,6 +73,11 @@ public Q_SLOTS:
 
 	void showItemProperties();
 	void mergeMetaContact();
+	void addGroup();
+	void startChat();
+	void sendFile();
+	void sendMessage();
+	void sendEmail();
 
 protected:
 	void contextMenuEvent( QContextMenuEvent* event );

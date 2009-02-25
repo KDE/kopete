@@ -34,7 +34,11 @@
 #include <KActionCollection>
 #include <KXmlGuiWindow>
 #include <KLocalizedString>
+#include <KInputDialog>
+#include <KMessageBox>
+#include <KToolInvocation>
 #include <kxmlguifactory.h>
+#include <kabc/stdaddressbook.h>
 
 #include "kopeteuiglobal.h"
 #include "kopetecontactlistelement.h"
@@ -99,9 +103,9 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( actionCreateNewGroup, SIGNAL( triggered(bool) ), this, SLOT( addGroup() ) );
 	ac->addAction( "AddGroup", actionCreateNewGroup );
 
-	actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( slotSendMessage() ), ac );
+	actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), ac );
 	ac->addAction( "contactSendMessage", actionSendMessage );
-	actionStartChat = KopeteStdAction::chat( this, SLOT( slotStartChat() ), ac );
+	actionStartChat = KopeteStdAction::chat( this, SLOT( startChat() ), ac );
 	ac->addAction( "contactStartChat", actionStartChat );
 
 	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
@@ -120,14 +124,14 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	actionSendEmail = new KAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
 	ac->addAction( "contactSendEmail", actionSendEmail );
-	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( slotSendEmail() ) );
+	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( sendEmail() ) );
 
 // 	-* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*-
 	actionRename = new KAction( KIcon("edit-rename"), i18n( "Rename" ), ac );
 	ac->addAction( "contactRename", actionRename );
 	connect( actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
 
-	actionSendFile = KopeteStdAction::sendFile( this, SLOT( slotSendFile() ), ac );
+	actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), ac );
 	ac->addAction( "contactSendFile", actionSendFile );
 
 	actionAddContact = new KActionMenu( KIcon( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
@@ -248,6 +252,60 @@ void KopeteContactListView::mergeMetaContact()
 		return;
 
 	Kopete::ContactList::self()->mergeMetaContacts( metaContactList, destMetaContact );
+}
+
+void KopeteContactListView::addGroup()
+{
+	QString groupName = KInputDialog::getText( i18n( "New Group" ),
+	                                           i18n( "Please enter the name for the new group:" ) );
+
+	if ( !groupName.isEmpty() )
+		Kopete::ContactList::self()->findGroup( groupName );
+}
+
+void KopeteContactListView::startChat()
+{
+	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
+	if ( metaContact )
+		metaContact->startChat();
+}
+
+void KopeteContactListView::sendFile()
+{
+	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
+	if ( metaContact )
+		metaContact->sendFile( KUrl() );
+}
+
+void KopeteContactListView::sendMessage()
+{
+	if ( Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() ) )
+		metaContact->sendMessage();
+	else if ( Kopete::Group* group = groupFromIndex( currentIndex() ) )
+		group->sendMessage();
+}
+
+void KopeteContactListView::sendEmail()
+{
+	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
+	if ( metaContact )
+	{
+		KABC::Addressee addressee = KABC::StdAddressBook::self()->findByUid( metaContact->kabcId() );
+		if ( !addressee.isEmpty() )
+		{
+			QString emailAddr = addressee.fullEmail();
+			
+			kDebug( 14000 ) << "Email: " << emailAddr << "!";
+			if ( !emailAddr.isEmpty() )
+				KToolInvocation::invokeMailer( emailAddr, QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+			else
+				KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "There is no email address set for this contact in the KDE address book." ), i18n( "No Email Address in Address Book" ) );
+		}
+		else
+		{
+			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "This contact was not found in the KDE address book. Check that a contact is selected in the properties dialog." ), i18n( "Not Found in Address Book" ) );
+		}
+	}
 }
 
 void KopeteContactListView::contextMenuEvent( QContextMenuEvent* event )
