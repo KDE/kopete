@@ -113,7 +113,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Make Meta Contact"), ac);
 	ac->addAction( "makeMetaContact", actionMakeMetaContact );
-	connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(slotMakeMetaContact()));
+	connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(mergeMetaContact()));
 
 	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ), ac );
 	ac->addAction( "contactRemove", actionRemove );
@@ -158,10 +158,16 @@ KopeteContactListView::~KopeteContactListView()
 	delete d;
 }
 
-Kopete::MetaContact* KopeteContactListView::metaContactFromIndex( const QModelIndex& index )
+Kopete::MetaContact* KopeteContactListView::metaContactFromIndex( const QModelIndex& index ) const
 {
-	QString mcUuid = index.data( Kopete::Items::UuidRole ).toString();
-	return Kopete::ContactList::self()->metaContact( QUuid(mcUuid) );
+	QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+	return qobject_cast<Kopete::MetaContact*>(metaContactObject);
+}
+
+Kopete::Group* KopeteContactListView::groupFromIndex( const QModelIndex& index ) const
+{
+	QObject* groupObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+	return qobject_cast<Kopete::Group*>(groupObject);
 }
 
 void KopeteContactListView::contactActivated( const QModelIndex& index )
@@ -211,41 +217,61 @@ void KopeteContactListView::showItemProperties()
 
 	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 	{
-		QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
-
-		KopeteMetaLVIProps *propsDialog = new KopeteMetaLVIProps( qobject_cast<Kopete::MetaContact*>(metaContactObject), 0L );
+		KopeteMetaLVIProps *propsDialog = new KopeteMetaLVIProps( metaContactFromIndex( index ), 0L );
 		propsDialog->exec(); // modal
 		delete propsDialog;
 	}
 	else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
 	{
-		QObject* groupObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
-
-		KopeteGVIProps *propsDialog = new KopeteGVIProps( qobject_cast<Kopete::Group*>(groupObject), 0L );
+		KopeteGVIProps *propsDialog = new KopeteGVIProps( groupFromIndex( index ), 0L );
 		propsDialog->exec(); // modal
 		delete propsDialog;
+	}
+}
+
+void KopeteContactListView::mergeMetaContact()
+{
+	// Get metaContacts as indexes could change during merge.
+	QList<Kopete::MetaContact *> metaContactList;
+	foreach ( QModelIndex index, selectedIndexes() )
+	{
+		Kopete::MetaContact* mc = metaContactFromIndex( index );
+		if ( mc )
+			metaContactList.append( mc );
+	}
+
+	if ( metaContactList.count() < 2 )
+		return;
+
+	Kopete::MetaContact* mainMetaContact = metaContactList.first();
+	for ( int i = 1; i < metaContactList.count(); i++ )
+	{
+		QList<Kopete::Contact*> contactList = metaContactList.at( i )->contacts();
+		foreach ( Kopete::Contact *contact, contactList )
+			contact->setMetaContact( mainMetaContact );
 	}
 }
 
 void KopeteContactListView::contextMenuEvent( QContextMenuEvent* event )
 {
 	Q_ASSERT(model());
-	QModelIndex index = indexAt( event->pos() );
-	if ( !index.isValid() )
+	QModelIndexList indexList = selectedIndexes();
+	if ( indexList.isEmpty() )
 		return;
 
-	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+	if ( indexList.count() > 1 )
 	{
-		QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
-		metaContactPopup( qobject_cast<Kopete::MetaContact*>(metaContactObject), event->globalPos() );
-		event->accept();
+		miscPopup( indexList, event->globalPos() );
 	}
-	else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+	else
 	{
-		QObject* groupObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
-		groupPopup( qobject_cast<Kopete::Group*>(groupObject), event->globalPos() );
-		event->accept();
+		QModelIndex index = indexList.first();
+		if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+			metaContactPopup( metaContactFromIndex( index ), event->globalPos() );
+		else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+			groupPopup( groupFromIndex( index ), event->globalPos() );
 	}
+	event->accept();
 }
 
 void KopeteContactListView::groupPopup( Kopete::Group *group, const QPoint& pos )
@@ -332,6 +358,35 @@ void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, 
 		}
 		popup->popup( pos );
 	}
+}
+
+void KopeteContactListView::miscPopup( QModelIndexList indexes, const QPoint& pos )
+{
+	Q_ASSERT(indexes.count() > 1);
+	KXmlGuiWindow *window = dynamic_cast<KXmlGuiWindow *>(topLevelWidget());
+	if ( !window )
+	{
+		kError( 14000 ) << "Main window not found, unable to display context-menu; "
+			<< "Kopete::UI::Global::mainWidget() = " << Kopete::UI::Global::mainWidget() << endl;
+		return;
+	}
+	
+	bool onlyMetaContacts = true;
+	foreach ( QModelIndex index, indexes )
+	{
+		if ( index.data( Kopete::Items::TypeRole ) != Kopete::Items::MetaContact )
+		{
+			onlyMetaContacts = false;
+			break;
+		}
+	}
+	
+	KMenu *popup = 0;
+	if ( onlyMetaContacts )
+		popup = dynamic_cast<KMenu *>( window->factory()->container( "contactlistitems_popup", window ) );
+	
+	if ( popup )
+		popup->popup( pos );
 }
 
 #include "kopetecontactlistview.moc"

@@ -72,16 +72,19 @@ public Q_SLOTS:
 	void itemCollapsed( const QModelIndex& index );
 
 	void showItemProperties();
+	void mergeMetaContact();
 
 protected:
 	void contextMenuEvent( QContextMenuEvent* event );
 
 private:
-	Kopete::MetaContact* metaContactFromIndex( const QModelIndex& index );
+	Kopete::MetaContact* metaContactFromIndex( const QModelIndex& index ) const;
+	Kopete::Group* groupFromIndex( const QModelIndex& index ) const;
 
 private:
 	void groupPopup( Kopete::Group *group, const QPoint& pos );
 	void metaContactPopup( Kopete::MetaContact *metaContact, const QPoint& pos );
+	void miscPopup( QModelIndexList indexes, const QPoint& pos );
 	QRect m_onItem;
 
 	/* ACTIONS */
