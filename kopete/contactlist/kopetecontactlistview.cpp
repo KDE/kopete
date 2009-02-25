@@ -231,25 +231,23 @@ void KopeteContactListView::showItemProperties()
 
 void KopeteContactListView::mergeMetaContact()
 {
+	Kopete::MetaContact* destMetaContact = metaContactFromIndex( currentIndex() );
+	if ( !destMetaContact )
+		return;
+
 	// Get metaContacts as indexes could change during merge.
 	QList<Kopete::MetaContact *> metaContactList;
 	foreach ( QModelIndex index, selectedIndexes() )
 	{
 		Kopete::MetaContact* mc = metaContactFromIndex( index );
-		if ( mc )
+		if ( mc && mc != destMetaContact )
 			metaContactList.append( mc );
 	}
 
-	if ( metaContactList.count() < 2 )
+	if ( metaContactList.isEmpty() )
 		return;
 
-	Kopete::MetaContact* mainMetaContact = metaContactList.first();
-	for ( int i = 1; i < metaContactList.count(); i++ )
-	{
-		QList<Kopete::Contact*> contactList = metaContactList.at( i )->contacts();
-		foreach ( Kopete::Contact *contact, contactList )
-			contact->setMetaContact( mainMetaContact );
-	}
+	Kopete::ContactList::self()->mergeMetaContacts( metaContactList, destMetaContact );
 }
 
 void KopeteContactListView::contextMenuEvent( QContextMenuEvent* event )
