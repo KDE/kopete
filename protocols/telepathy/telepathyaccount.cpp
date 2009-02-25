@@ -160,6 +160,8 @@ void TelepathyAccount::setOnlineStatus (const Kopete::OnlineStatus &status, cons
     
     kDebug(TELEPATHY_DEBUG_AREA);
 
+    myself()->setOnlineStatus(status);
+
     if(!account || !account->isReady())
     {
         initTelepathyAccount();
@@ -598,9 +600,32 @@ void TelepathyAccount::avatarChanged (const Telepathy::Avatar &var)
     kDebug(TELEPATHY_DEBUG_AREA) ;
 }
 
-void TelepathyAccount::connectionStatusChanged (Telepathy::ConnectionStatus var1, Telepathy::ConnectionStatusReason var2)
+void TelepathyAccount::connectionStatusChanged (Telepathy::ConnectionStatus status, Telepathy::ConnectionStatusReason reason)
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
+    Q_UNUSED(reason);
+
+	switch(status)
+	{
+        case Telepathy::ConnectionStatusConnecting:
+			kDebug(TELEPATHY_DEBUG_AREA) << "Connecting....";
+			break;
+        case Telepathy::ConnectionStatusConnected:
+			kDebug(TELEPATHY_DEBUG_AREA) << "Connected using Telepathy :)";
+            // Set initial status to myself contact
+            myself()->setOnlineStatus( statusInit );
+            // Set nickname to myself contact
+            //myself()->setNickName( d->currentConnection->userContact()->alias() );
+            // Load contact list
+            //fetchContactList();
+
+			break;
+        case Telepathy::ConnectionStatusDisconnected:
+			kDebug(TELEPATHY_DEBUG_AREA) << "Disconnected :(";
+			break;
+	}
+
+    // \todo: reason
 }
 
 void TelepathyAccount::haveConnectionChanged (bool haveConnection)
@@ -609,7 +634,7 @@ void TelepathyAccount::haveConnectionChanged (bool haveConnection)
 
     if(haveConnection)
     {
-        kDebug(TELEPATHY_DEBUG_AREA) << "Account connected! :-)";
+        kDebug(TELEPATHY_DEBUG_AREA) << "Have connection.";
     }
 }
 
