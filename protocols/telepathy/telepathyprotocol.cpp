@@ -19,19 +19,18 @@
 
 // KDE includes
 #include <kgenericfactory.h>
+#include <kdebug.h>
 
 // Kopete includes
 #include <kopeteaccount.h>
 #include <kopeteaccountmanager.h>
 #include <kopetemetacontact.h>
 
-// Local includes
 #include "telepathyaccount.h"
-#include "telepathycontact.h"
-#include "telepathyeditaccountwidget.h"
-#include "telepathyaddcontactpage.h"
 
-using namespace QtTapioca;
+// Local includes
+//#include "telepathyeditaccountwidget.h"
+//#include "telepathyaddcontactpage.h"
 
 K_PLUGIN_FACTORY( TelepathyProtocolFactory, registerPlugin<TelepathyProtocol>(); )
 K_EXPORT_PLUGIN( TelepathyProtocolFactory( "kopete_telepathy" ) )
@@ -69,6 +68,7 @@ TelepathyProtocol *TelepathyProtocol::protocol()
 Kopete::Account *TelepathyProtocol::createNewAccount(const QString &accountId)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "createNewAccount() called" << accountId;
+
 	return new TelepathyAccount(this, accountId);
 }
 
@@ -77,15 +77,15 @@ AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopet
     kDebug(TELEPATHY_DEBUG_AREA) << "createAddContactWidget() called";
 	Q_UNUSED(account);
 
-	return new TelepathyAddContactPage(parent);
+//	return new TelepathyAddContactPage(parent);
 }
 
 KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "createEditAccountWidget() called";
-	return new TelepathyEditAccountWidget(account, parent);
+//	return new TelepathyEditAccountWidget(account, parent);
 }
-
+/*
 Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact, 
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData )
 {
@@ -169,5 +169,5 @@ Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Telepathy::Conne
 
 	return result;
 }
-
+*/
 #include "telepathyprotocol.moc"

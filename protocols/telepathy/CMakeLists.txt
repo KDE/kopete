@@ -3,25 +3,22 @@ add_subdirectory( icons )
 
 include_directories( 
 	${KOPETE_INCLUDES}
-	${DECIBEL_INCLUDES}
 	${TELEPATHY_QT4_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/ui
 	${CMAKE_CURRENT_BINARY_dir}/ui
 )
 
-add_definitions( ${DECIBEL_DEFINITIONS} )
-
 # UI classes
 set(kopete_telepathy_ui_SRCS
-ui/telepathyeditaccountwidget.cpp
-ui/telepathyeditparameterwidget.cpp
-ui/telepathyaddcontactpage.cpp
+#ui/telepathyeditaccountwidget.cpp
+#ui/telepathyeditparameterwidget.cpp
+#ui/telepathyaddcontactpage.cpp
 )
 
 # Generated UI files
 kde4_add_ui_files(kopete_telepathy_ui_SRCS
-ui/telepathyeditaccountwidget.ui
-ui/telepathyaddcontactpage.ui
+#ui/telepathyeditaccountwidget.ui
+#ui/telepathyaddcontactpage.ui
 )
 
 # Normal protocol classes
@@ -29,20 +26,14 @@ set(kopete_telepathy_PART_SRCS
 telepathyprotocol.cpp
 telepathyaccount.cpp
 telepathycontact.cpp
-telepathycontactmanager.cpp
-telepathychatsession.cpp
-telepathyaddpendingcontactjob.cpp
-connectionmanageritem.cpp
 ${kopete_telepathy_ui_SRCS}
 )
-
 
 kde4_add_plugin(kopete_telepathy ${kopete_telepathy_PART_SRCS})
 
 target_link_libraries(kopete_telepathy
 	${KDE4_KIO_LIBS}
 	kopete
-	${DECIBEL_LIBRARIES}
 	${TELEPATHY_QT4_LIBRARIES}
 )
 

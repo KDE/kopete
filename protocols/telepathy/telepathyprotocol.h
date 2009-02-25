@@ -30,8 +30,8 @@ namespace Kopete
 	class Account;
 }
 
-class AddContactPage;
-class KopeteEditAccountWidget;
+//class AddContactPage;
+//class KopeteEditAccountWidget;
 
 /**
  * 
@@ -51,13 +51,13 @@ public:
 	const Kopete::PropertyTmpl propAvatarToken;
 
 	TelepathyProtocol(QObject *parent, const QVariantList &args);
-	
+
 	virtual Kopete::Account *createNewAccount(const QString &accountId);
 	virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
 	virtual KopeteEditAccountWidget * createEditAccountWidget(Kopete::Account *account, QWidget *parent);
 
 	static TelepathyProtocol *protocol();
-
+/*
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
@@ -65,7 +65,7 @@ public:
 
 	Telepathy::ConnectionPresenceType kopeteStatusToTelepathy(const Kopete::OnlineStatus &status);
 	Kopete::OnlineStatus telepathyStatusToKopete(Telepathy::ConnectionPresenceType presence);
-
+*/
 private:
 	static TelepathyProtocol *s_self;
 };

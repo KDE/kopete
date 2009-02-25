@@ -187,7 +187,7 @@ void TelepathyEditAccountWidget::readConfig()
                     // At this point, the protocol preferences tab is created
 
                     // Update the parameters in the UI
-                    d->paramWidget->setParameterList( account()->allConnectionParameters() );
+                    //d->paramWidget->setParameterList( account()->allConnectionParameters() );
                 }
             }
         }
@@ -297,7 +297,7 @@ void TelepathyEditAccountWidget::protocolSelectionChanged()
         if( account() && protocol == account()->connectionProtocol() )
         {
             kDebug(TELEPATHY_DEBUG_AREA) << "protocolSelectionChanged() - saved parameters";
-            tabParameter = account()->allConnectionParameters();
+//            tabParameter = account()->allConnectionParameters();
         }
         else
         {
