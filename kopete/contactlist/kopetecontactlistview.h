@@ -50,6 +50,7 @@ class Contact;
 class MetaContact;
 class Group;
 class MessageEvent;
+class Account;
 }
 
 /**
@@ -78,9 +79,16 @@ public Q_SLOTS:
 	void sendFile();
 	void sendMessage();
 	void sendEmail();
+	void addTemporaryContact();
+	void removeGroupOrMetaContact();
 
 protected:
 	void contextMenuEvent( QContextMenuEvent* event );
+
+private slots:
+	void addToAddContactMenu( Kopete::Account* account );
+	void removeToAddContactMenu( const Kopete::Account *account );
+	void addContact();
 
 private:
 	Kopete::MetaContact* metaContactFromIndex( const QModelIndex& index ) const;
@@ -90,26 +98,8 @@ private:
 	void groupPopup( Kopete::Group *group, const QPoint& pos );
 	void metaContactPopup( Kopete::MetaContact *metaContact, const QPoint& pos );
 	void miscPopup( QModelIndexList indexes, const QPoint& pos );
-	QRect m_onItem;
-
-	/* ACTIONS */
-	KAction *actionSendMessage;
-	KAction *actionStartChat;
-	KAction *actionSendFile;
-	KActionMenu *actionAddContact;
-	KAction *actionSendEmail;
-	KSelectAction *actionMove;
-	KSelectAction *actionCopy;
-	KAction *actionRename;
-	KAction *actionRemove;
-	KAction *actionAddTemporaryContact;
-	KAction *actionProperties;
-	KAction *actionUndo;
-	KAction *actionRedo;
-	KAction *actionMakeMetaContact;
 
 	KopeteContactListViewPrivate *d;
-
 };
 
 

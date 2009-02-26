@@ -51,6 +51,8 @@
 #include "kopetegrouplistaction.h"
 #include "kopetelviprops.h"
 #include "contactlistlayoutmanager.h"
+#include "kopeteaccount.h"
+#include "addcontactpage.h"
 
 #include "contactlistmodel.h"
 #include "kopeteitembase.h"
@@ -59,8 +61,28 @@
 class KopeteContactListViewPrivate
 {
 public:
+	//QRect m_onItem;
+	
 	// HACK: Used to update the KMEnu title - DarkShock
 	QMap<KMenu*, QAction*> menuTitleMap;
+
+	/* ACTIONS */
+	KAction *actionSendMessage;
+	KAction *actionStartChat;
+	KAction *actionSendFile;
+	KActionMenu *actionAddContact;
+	KAction *actionSendEmail;
+	KSelectAction *actionMove;
+	KSelectAction *actionCopy;
+	KAction *actionRename;
+	KAction *actionRemove;
+	KAction *actionAddTemporaryContact;
+	KAction *actionProperties;
+	KAction *actionUndo;
+	KAction *actionRedo;
+	KAction *actionMakeMetaContact;
+
+	QMap<KAction*, Kopete::Account*> addContactAccountMap;
 };
 
 KopeteContactListView::KopeteContactListView( QWidget *parent )
@@ -92,65 +114,69 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 
 void KopeteContactListView::initActions( KActionCollection *ac )
 {
-	actionUndo = KStandardAction::undo( this , SLOT( slotUndo() ) , ac );
-	actionRedo = KStandardAction::redo( this , SLOT( slotRedo() ) , ac );
-	actionUndo->setEnabled(false);
-	actionRedo->setEnabled(false);
+// 	d->actionUndo = KStandardAction::undo( this , SLOT( slotUndo() ) , ac );
+// 	d->actionRedo = KStandardAction::redo( this , SLOT( slotRedo() ) , ac );
+// 	d->actionUndo->setEnabled(false);
+// 	d->actionRedo->setEnabled(false);
 
 
 	KAction *actionCreateNewGroup = new KAction( i18n( "Create New Group..." ), ac );
 	actionCreateNewGroup->setIcon( KIcon( "user-group-new" ) );
-	connect( actionCreateNewGroup, SIGNAL( triggered(bool) ), this, SLOT( addGroup() ) );
+	connect( actionCreateNewGroup, SIGNAL(triggered(bool)), this, SLOT(addGroup()) );
 	ac->addAction( "AddGroup", actionCreateNewGroup );
 
-	actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), ac );
-	ac->addAction( "contactSendMessage", actionSendMessage );
-	actionStartChat = KopeteStdAction::chat( this, SLOT( startChat() ), ac );
-	ac->addAction( "contactStartChat", actionStartChat );
+	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT(sendMessage()), ac );
+	ac->addAction( "contactSendMessage", d->actionSendMessage );
+	d->actionStartChat = KopeteStdAction::chat( this, SLOT(startChat()), ac );
+	ac->addAction( "contactStartChat", d->actionStartChat );
 
-	actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
-                                                KShortcut(), this, SLOT( slotMoveToGroup() ), ac );
-	ac->addAction( "contactMove", actionMove );
-	actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "edit-copy" ),
-                                                KShortcut(), this, SLOT( slotCopyToGroup() ), ac );
-	ac->addAction( "contactCopy", actionCopy );
+// FIXME: Do we need this with drag&drop support?
+// 	d->actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
+//                                                 KShortcut(), this, SLOT( slotMoveToGroup() ), ac );
+// 	ac->addAction( "contactMove", d->actionMove );
+// 	d->actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "edit-copy" ),
+//                                                 KShortcut(), this, SLOT( slotCopyToGroup() ), ac );
+// 	ac->addAction( "contactCopy", d->actionCopy );
 
-	actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Make Meta Contact"), ac);
-	ac->addAction( "makeMetaContact", actionMakeMetaContact );
-	connect (actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(mergeMetaContact()));
+	d->actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Merge Meta Contacts"), ac);
+	ac->addAction( "makeMetaContact", d->actionMakeMetaContact );
+	connect (d->actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(mergeMetaContact()));
 
-	actionRemove = KopeteStdAction::deleteContact( this, SLOT( slotRemove() ), ac );
-	ac->addAction( "contactRemove", actionRemove );
+	d->actionRemove = KopeteStdAction::deleteContact( this, SLOT(removeGroupOrMetaContact()), ac );
+	ac->addAction( "contactRemove", d->actionRemove );
 
-	actionSendEmail = new KAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
-	ac->addAction( "contactSendEmail", actionSendEmail );
-	connect( actionSendEmail, SIGNAL( triggered(bool) ), this, SLOT( sendEmail() ) );
+	d->actionSendEmail = new KAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
+	ac->addAction( "contactSendEmail", d->actionSendEmail );
+	connect( d->actionSendEmail, SIGNAL(triggered(bool)), this, SLOT(sendEmail()) );
 
+// FIXME: Do we need this, it's in properties
 // 	-* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*-
-	actionRename = new KAction( KIcon("edit-rename"), i18n( "Rename" ), ac );
-	ac->addAction( "contactRename", actionRename );
-	connect( actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
+// 	d->actionRename = new KAction( KIcon("edit-rename"), i18n( "Rename" ), ac );
+// 	ac->addAction( "contactRename", d->actionRename );
+// 	connect( d->actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
 
-	actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), ac );
-	ac->addAction( "contactSendFile", actionSendFile );
+	d->actionSendFile = KopeteStdAction::sendFile( this, SLOT(sendFile()), ac );
+	ac->addAction( "contactSendFile", d->actionSendFile );
 
-	actionAddContact = new KActionMenu( KIcon( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
-	ac->addAction( "contactAddContact", actionAddContact );
-	actionAddContact->menu()->addTitle( i18n("Select Account") );
+	d->actionAddContact = new KActionMenu( KIcon( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
+	ac->addAction( "contactAddContact", d->actionAddContact );
+	d->actionAddContact->menu()->addTitle( i18n("Select Account") );
 
-	actionAddTemporaryContact = new KAction( KIcon("list-add-user"), i18n( "Add to Your Contact List" ), ac );
-	ac->addAction( "contactAddTemporaryContact", actionAddTemporaryContact );
-	connect( actionAddTemporaryContact, SIGNAL( triggered(bool) ), this, SLOT( slotAddTemporaryContact() ) );
+	d->actionAddTemporaryContact = new KAction( KIcon("list-add-user"), i18n( "Add to Your Contact List" ), ac );
+	ac->addAction( "contactAddTemporaryContact", d->actionAddTemporaryContact );
+	connect( d->actionAddTemporaryContact, SIGNAL(triggered(bool)), this, SLOT(slotAddTemporaryContact()) );
 
-	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
+// 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
 
-	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered( Kopete::Account* )), SLOT(slotAddSubContactActionNewAccount(Kopete::Account*)));
-	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )), SLOT(slotAddSubContactActionAccountDeleted(const Kopete::Account *)));
+	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
+	         this, SLOT(addToAddContactMenu(Kopete::Account*)) );
+	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )),
+	         this, SLOT(removeToAddContactMenu(const Kopete::Account*)) );
 
-	actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
-	ac->addAction( "contactProperties", actionProperties );
-	actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
-	connect( actionProperties, SIGNAL( triggered(bool) ), this, SLOT( showItemProperties() ) );
+	d->actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
+	ac->addAction( "contactProperties", d->actionProperties );
+	d->actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
+	connect( d->actionProperties, SIGNAL(triggered(bool)), this, SLOT(showItemProperties()) );
 
 	// Update enabled/disabled actions
 	//	slotViewSelectionChanged();
@@ -191,6 +217,7 @@ void KopeteContactListView::reset()
 {
 	// TODO: Save/restore expand state
 	QTreeView::reset();
+	expandAll();
 }
 
 void KopeteContactListView::itemExpanded( const QModelIndex& index )
@@ -263,6 +290,79 @@ void KopeteContactListView::addGroup()
 		Kopete::ContactList::self()->findGroup( groupName );
 }
 
+void KopeteContactListView::removeGroupOrMetaContact()
+{
+	QList<Kopete::MetaContact *> metaContactList;
+	QList<Kopete::Group *> groupList;
+	QStringList displayNameList;
+
+	foreach ( const QModelIndex& index, selectedIndexes() )
+	{
+		if ( Kopete::MetaContact* metaContact = metaContactFromIndex( index ) )
+		{
+			metaContactList.append( metaContact );
+
+			if( !metaContact->displayName().isEmpty() )
+				displayNameList.append( metaContact->displayName() );
+		}
+		else if ( Kopete::Group* group = groupFromIndex( index ) )
+		{
+			groupList.append( group );
+
+			if( !group->displayName().isEmpty() )
+				displayNameList.append( group->displayName() );
+		}
+	}
+
+	if ( groupList.isEmpty() && metaContactList.isEmpty() )
+		return;	
+
+	if( (groupList.count() + metaContactList.count()) == 1 )
+	{
+		QString msg;
+		if( !metaContactList.isEmpty() )
+		{
+			msg = i18n( "<qt>Are you sure you want to remove the contact <b>%1</b>" \
+			            " from your contact list?</qt>" ,
+			            metaContactList.first()->displayName() ) ;
+		}
+		else if( !groupList.isEmpty() )
+		{
+			msg = i18n( "<qt>Are you sure you want to remove the group <b>%1</b> " \
+			            "and all contacts that are contained within it?</qt>" ,
+			            groupList.first()->displayName() );
+		}
+
+		if( KMessageBox::warningContinueCancel( this, msg, i18n( "Remove" ), KGuiItem( i18n( "Remove" ), "edit-delete" ),
+		                                        KStandardGuiItem::cancel(), "askRemovingContactOrGroup" ,
+		                                        KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Continue )
+		{
+			return;
+		}
+	}
+	else
+	{
+		QString msg = groupList.isEmpty() ?
+			i18n( "Are you sure you want to remove these contacts " \
+			      "from your contact list?" ) :
+			i18n( "Are you sure you want to remove these groups and " \
+			      "contacts from your contact list?" );
+
+		if( KMessageBox::warningContinueCancelList( this, msg, displayNameList, i18n("Remove"), KGuiItem( i18n( "Remove" ), "edit-delete" ),
+		                                            KStandardGuiItem::cancel(), "askRemovingContactOrGroup",
+		                                            KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Continue )
+		{
+			return;
+		}
+	}
+
+	foreach ( Kopete::MetaContact* metaContact, metaContactList )
+		Kopete::ContactList::self()->removeMetaContact( metaContact );
+
+	foreach ( Kopete::Group* group, groupList )
+		Kopete::ContactList::self()->removeGroup( group );
+}
+
 void KopeteContactListView::startChat()
 {
 	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
@@ -308,6 +408,13 @@ void KopeteContactListView::sendEmail()
 	}
 }
 
+void KopeteContactListView::addTemporaryContact()
+{
+	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
+	if ( metaContact && metaContact->isTemporary() )
+		metaContact->setTemporary( false );
+}
+
 void KopeteContactListView::contextMenuEvent( QContextMenuEvent* event )
 {
 	Q_ASSERT(model());
@@ -328,6 +435,80 @@ void KopeteContactListView::contextMenuEvent( QContextMenuEvent* event )
 			groupPopup( groupFromIndex( index ), event->globalPos() );
 	}
 	event->accept();
+}
+
+void KopeteContactListView::addToAddContactMenu( Kopete::Account* account )
+{
+	KAction *action = new KAction( KIcon( QIcon( account->accountIcon() ) ), account->accountLabel(), this );
+	connect( action, SIGNAL(triggered(bool)), this, SLOT(addContact()) );
+	d->addContactAccountMap.insert( action, account );
+	d->actionAddContact->addAction( action );
+}
+
+void KopeteContactListView::removeToAddContactMenu( const Kopete::Account *account )
+{
+	QMapIterator<KAction *, Kopete::Account *> it( d->addContactAccountMap );
+	while ( it.hasNext() )
+	{
+		it.next();
+		if ( it.value() == account )
+		{
+			KAction *action = it.key();
+			d->addContactAccountMap.remove( action );
+			d->actionAddContact->removeAction( action );
+		}
+	}
+}
+
+void KopeteContactListView::addContact()
+{
+	if( !sender() )
+		return;
+
+	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
+	Kopete::Group *group = groupFromIndex( currentIndex() );
+	Kopete::Account *account = d->addContactAccountMap.value( dynamic_cast<KAction*>( sender() ) );
+
+	if ( (metaContact && metaContact->isTemporary() ) ||
+	     (group && group->type() == Kopete::Group::Temporary) )
+		return;
+
+	if( !account || !(metaContact || group) )
+		return;
+
+	KDialog *addDialog = new KDialog( this );
+	addDialog->setCaption( i18n( "Add Contact" ) );
+	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
+
+	AddContactPage *addContactPage = account->protocol()->createAddContactWidget( addDialog, account );
+
+	if ( !addContactPage )
+	{
+		kDebug(14000) << "Error while creating addcontactpage";
+		return;
+	}
+
+	addDialog->setMainWidget( addContactPage );
+	if( addDialog->exec() == QDialog::Accepted )
+	{
+		if( addContactPage->validateData() )
+		{
+			if( !metaContact )
+			{
+				metaContact = new Kopete::MetaContact();
+				metaContact->addToGroup( group );
+				if ( addContactPage->apply( account, metaContact ) )
+					Kopete::ContactList::self()->addMetaContact( metaContact );
+				else
+					delete metaContact;
+			}
+			else
+			{
+				addContactPage->apply( account, metaContact );
+			}
+		}
+	}
+	addDialog->deleteLater();
 }
 
 void KopeteContactListView::groupPopup( Kopete::Group *group, const QPoint& pos )
