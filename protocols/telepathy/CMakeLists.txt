@@ -10,14 +10,14 @@ include_directories(
 
 # UI classes
 set(kopete_telepathy_ui_SRCS
-#ui/telepathyeditaccountwidget.cpp
-#ui/telepathyeditparameterwidget.cpp
+ui/telepathyeditaccountwidget.cpp
+ui/telepathyeditparameterwidget.cpp
 #ui/telepathyaddcontactpage.cpp
 )
 
 # Generated UI files
 kde4_add_ui_files(kopete_telepathy_ui_SRCS
-#ui/telepathyeditaccountwidget.ui
+ui/telepathyeditaccountwidget.ui
 #ui/telepathyaddcontactpage.ui
 )
 
@@ -26,6 +26,7 @@ set(kopete_telepathy_PART_SRCS
 telepathyprotocol.cpp
 telepathyaccount.cpp
 telepathycontact.cpp
+connectionmanageritem.cpp
 ${kopete_telepathy_ui_SRCS}
 )
 

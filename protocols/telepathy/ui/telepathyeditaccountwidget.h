@@ -2,7 +2,7 @@
  * telepathyeditaccountwidget.h - UI to edit Telepathy account settings
  *
  * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
- *               2009 by Dariusz Mikulski <dariusz.mikulski@gmail.com>
+ *               2009 Collabora Ltd. <http://www.collabora.co.uk/>
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
  *************************************************************************

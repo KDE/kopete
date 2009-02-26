@@ -28,8 +28,10 @@
 
 #include "telepathyaccount.h"
 
+#include <TelepathyQt4/Types>
+
 // Local includes
-//#include "telepathyeditaccountwidget.h"
+#include "telepathyeditaccountwidget.h"
 //#include "telepathyaddcontactpage.h"
 
 K_PLUGIN_FACTORY( TelepathyProtocolFactory, registerPlugin<TelepathyProtocol>(); )
@@ -55,6 +57,8 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args
 			Kopete::OnlineStatusManager::DisabledIfOffline),
 	propAvatarToken("telepathyAvatarToken", i18n("Telepathy Avatar token"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty)
 {
+	Telepathy::registerTypes();
+
 	s_self = this;
 
 	addAddressBookField( "messaging/telepathy", Kopete::Plugin::MakeIndexField );
@@ -83,7 +87,7 @@ AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopet
 KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "createEditAccountWidget() called";
-//	return new TelepathyEditAccountWidget(account, parent);
+	return new TelepathyEditAccountWidget(account, parent);
 }
 /*
 Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact, 
@@ -112,12 +116,12 @@ Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *met
 
 	return 0;
 }
-
+*/
 QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionManager, const QString &protocol, const QString &accountId)
 {
 	return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(accountId);
 }
-
+/*
 Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "kopeteStatusToTelepathy() called";

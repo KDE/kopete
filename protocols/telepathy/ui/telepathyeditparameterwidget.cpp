@@ -168,6 +168,7 @@ void TelepathyEditParameterWidget::Private::createWidgets(QWidget *parent)
 void TelepathyEditParameterWidget::Private::clear()
 {
 	qDeleteAll(lineEditList);
+	qDeleteAll(paramList);
 }
 
 #include "telepathyeditparameterwidget.moc"

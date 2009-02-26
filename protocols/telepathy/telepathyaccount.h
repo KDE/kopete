@@ -25,6 +25,8 @@
 
 #include <kopeteaccount.h>
 
+#include <TelepathyQt4/Client/ConnectionManager>
+
 namespace Kopete
 {
     class MetaContact;
@@ -40,6 +42,10 @@ public:
     TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId);
     ~TelepathyAccount();
 
+	bool readConfig();
+	QString connectionProtocol() const;
+	Telepathy::Client::ProtocolParameterList allConnectionParameters() const;
+
 public slots:
     virtual void connect (const Kopete::OnlineStatus &initialStatus = Kopete::OnlineStatus());
     virtual void disconnect ();
@@ -48,6 +54,15 @@ public slots:
 
 protected:
     virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact );
+
+private:
+	Telepathy::Client::ProtocolInfo *getProtocolInfo(QString protocol);
+	Telepathy::Client::ConnectionManager *getConnectionManager();
+
+	QString m_connectionManagerName;
+	QString m_connectionProtocolName;
+	Telepathy::Client::ProtocolParameterList m_connectionParameters;
+	Telepathy::Client::ConnectionManager *m_connectionManager;
 };
 
 #endif // TELEPATHYACCOUNT_H_
