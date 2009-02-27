@@ -711,7 +711,7 @@ void MSNContact::setDisplayPicture(KTemporaryFile *f)
 	if (entry.path.isNull())
 		return;
 
-	setProperty( Kopete::Global::Properties::self()->photo() , entry.path );
+	setProperty( Kopete::Global::Properties::self()->photo() , entry.dataPath );
 	emit displayPictureChanged();
 }
 

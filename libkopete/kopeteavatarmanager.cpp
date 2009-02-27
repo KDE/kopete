@@ -25,6 +25,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
 #include <QtGui/QPainter>
+#include <QtGui/QImageReader>
 
 // KDE includes
 #include <kdebug.h>
@@ -121,20 +122,48 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 			break;
 	}
 
+	KUrl dataUrl(avatarUrl);
+
 	kDebug(14010) << "Base directory: " << avatarUrl.path();
 
 	// Second, open the avatar configuration in current directory.
 	KUrl configUrl = avatarUrl;
 	configUrl.addPath( AvatarConfig );
 	
-	QImage avatar;
-	if( !newEntry.path.isEmpty() && newEntry.image.isNull() )
+	QByteArray data = newEntry.data;
+	QImage avatar = newEntry.image;
+
+	if (!data.isNull())
 	{
+		avatar.loadFromData(data);
+	}
+	else if(!newEntry.dataPath.isEmpty()){
+		QFile f(newEntry.dataPath);
+		f.open(QIODevice::ReadOnly);
+		data = f.readAll();
+		f.close();
+
+		avatar.loadFromData(data);
+	}
+	else if(!avatar.isNull()){
+		QByteArray tempArray;
+		QBuffer tempBuffer(&tempArray);
+		tempBuffer.open( QIODevice::WriteOnly );
+		avatar.save(&tempBuffer, "PNG");
+
+		data = tempArray;
+	}
+	else if(!newEntry.path.isEmpty()){
 		avatar = QImage(newEntry.path);
+
+		QFile f(newEntry.path);
+		f.open(QIODevice::ReadOnly);
+		data = f.readAll();
+		f.close();
 	}
 	else
 	{
-		avatar = newEntry.image;
+		kDebug() << "Warning: No valid image source!";
 	}
 
 	// Scale avatar
@@ -169,21 +198,48 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 		kDebug(14010) << "Saving of " << avatarUrl.path() << " failed !";
 		return AvatarEntry();
 	}
-	else
+
+	QString dataFilename;
+
+	// for the contact avatar, save it with the contactId + .png
+	if (newEntry.category == AvatarManager::Contact && newEntry.contact)
 	{
-		// Save metadata of image
-		KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig), newEntry.name );
-	
-		avatarConfig.writeEntry( "Filename", avatarFilename );
-		avatarConfig.writeEntry( "Category", int(newEntry.category) );
-
-		avatarConfig.sync();
-	
-		// Add final path to the new entry for avatarAdded signal
-		newEntry.path = avatarUrl.path();
-
-		emit avatarAdded(newEntry);
+		dataFilename = newEntry.contact->contactId() + QLatin1String("_");
 	}
+
+	dataFilename += KMD5(data).hexDigest();
+
+	QBuffer buffer(&data);
+	buffer.open(QIODevice::ReadOnly);
+	QImageReader ir(&buffer);
+	dataFilename += QLatin1String(".") + QLatin1String(ir.format());
+
+	// Save (original) data on disk
+	dataUrl.addPath(dataFilename);
+	QFile f(dataUrl.path());
+	if (!f.open(QIODevice::WriteOnly))
+	{
+		kDebug(14010) << "Saving of " << dataUrl.path() << " failed !";
+		return AvatarEntry();
+	}
+	f.write(data);
+	f.flush();
+	f.close();
+
+	// Save metadata of image
+	KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig), newEntry.name );
+	
+	avatarConfig.writeEntry( "Filename", avatarFilename );
+	avatarConfig.writeEntry( "DataFilename", dataFilename );
+	avatarConfig.writeEntry( "Category", int(newEntry.category) );
+
+	avatarConfig.sync();
+	
+	// Add final path to the new entry for avatarAdded signal
+	newEntry.path = avatarUrl.path();
+	newEntry.dataPath = dataUrl.path();
+
+	emit avatarAdded(newEntry);
 
 	return newEntry;
 }
@@ -357,6 +413,11 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 			KUrl avatarPath(avatarDirectory);
 			avatarPath.addPath( filename );
 			listedEntry.path = avatarPath.path();
+
+			QString dataFilename = cg.readEntry( "DataFilename", QString() );
+			KUrl dataPath(avatarDirectory);
+			dataPath.addPath( dataFilename );
+			listedEntry.dataPath = dataPath.path();
 
 			avatarList << listedEntry;
 		}

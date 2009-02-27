@@ -595,10 +595,10 @@ void YahooContact::setDisplayPicture(const QByteArray &data, int checksum)
 	entry.image = QImage::fromData(data);
 	entry = Kopete::AvatarManager::self()->add(entry);
 
-	if (!entry.path.isNull())
+	if (!entry.dataPath.isNull())
 	{
 		setProperty( Kopete::Global::Properties::self()->photo(), QString() );
-		setProperty( Kopete::Global::Properties::self()->photo() , entry.path );
+		setProperty( Kopete::Global::Properties::self()->photo() , entry.dataPath );
 		emit displayPictureChanged();
 	}
 }

@@ -663,10 +663,10 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		entry = Kopete::AvatarManager::self()->add(entry);
 
 		// Save the image to the disk, then set the property.
-		if(!entry.path.isNull())
+		if(!entry.dataPath.isNull())
 		{
 			kDebug( JABBER_DEBUG_GLOBAL ) << "Setting photo for contact: " << contactId();
-			setProperty( protocol()->propPhoto, entry.path );
+			setProperty( protocol()->propPhoto, entry.dataPath );
 		}
 	}
 }
