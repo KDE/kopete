@@ -79,17 +79,41 @@ void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
 	kDebug(TELEPATHY_DEBUG_AREA) << m_account->parameters();
 
     Telepathy::SimplePresence simplePresence;
-//    simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(statusInit);
+    simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(m_status);
 
     kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type;
     
     simplePresence.statusMessage = m_reason.message();
-/*    
-    Telepathy::Client::PendingOperation *op = account->setRequestedPresence(simplePresence);
+    
+    Telepathy::Client::PendingOperation *op = m_account->setRequestedPresence(simplePresence);
     QObject::connect(op, SIGNAL(finished(Telepathy::Client::PendingOperation*)),
         this,
         SLOT(onRequestedPresence(Telepathy::Client::PendingOperation*))
-    );*/
+    );
+}
+
+void TelepathyAccount::onRequestedPresence(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    if(isOperationError(operation))
+        return;
+
+    QObject::connect(m_account->setConnectsAutomatically(true),
+        SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+        this,
+        SLOT(onAccountConnecting(Telepathy::Client::PendingOperation*))
+    );
+}
+
+void TelepathyAccount::onAccountConnecting(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    if(isOperationError(operation))
+        return;
+
+    kDebug(TELEPATHY_DEBUG_AREA) << "Connecting...";
 }
 
 void TelepathyAccount::disconnect ()
@@ -103,9 +127,28 @@ void TelepathyAccount::setOnlineStatus (const Kopete::OnlineStatus &status, cons
 	
 	Q_UNUSED(options);
 	
-	m_status = status;
-	m_reason = reason;
-	m_setStatusAfterInit = true;
+    if(!m_account || !m_account->isReady())
+	{
+		m_status = status;
+		m_reason = reason;
+		m_setStatusAfterInit = true;
+		initTelepathyAccount();
+		return;
+	}
+
+    Telepathy::SimplePresence simplePresence;
+    simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(m_status);
+
+    kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type << m_reason.message();
+
+    simplePresence.statusMessage = m_reason.message();
+
+    Telepathy::Client::PendingOperation *op = m_account->setRequestedPresence(simplePresence);
+    QObject::connect(op,
+		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+        this,
+		SLOT(onRequestedPresence(Telepathy::Client::PendingOperation*))
+    );
 }
 
 void TelepathyAccount::setStatusMessage (const Kopete::StatusMessage &statusMessage)

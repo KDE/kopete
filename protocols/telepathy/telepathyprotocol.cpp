@@ -78,7 +78,7 @@ Kopete::Account *TelepathyProtocol::createNewAccount(const QString &accountId)
 
 AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << "createAddContactWidget() called";
+    kDebug(TELEPATHY_DEBUG_AREA);
 	Q_UNUSED(parent);
 	Q_UNUSED(account);
 
@@ -88,7 +88,7 @@ AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopet
 
 KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << "createEditAccountWidget() called";
+    kDebug(TELEPATHY_DEBUG_AREA);
 	return new TelepathyEditAccountWidget(account, parent);
 }
 /*
@@ -126,7 +126,7 @@ QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionM
 
 Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << "kopeteStatusToTelepathy() called";
+    kDebug(TELEPATHY_DEBUG_AREA);
 	Telepathy::ConnectionPresenceType telepathyPresence = Telepathy::ConnectionPresenceTypeOffline;
 
 	if( status == Available )
