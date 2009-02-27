@@ -62,6 +62,7 @@ HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 
 	KAction *viewChatHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
 	actionCollection()->addAction( "viewChatHistory", viewChatHistory );
+	viewChatHistory->setShortcut(KShortcut (Qt::CTRL + Qt::Key_H));
 	connect(viewChatHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 
 	KAction *actionQuote = new KAction ( KIcon ( "go-last" ),i18n ( "Quote Last Message" ), this );
