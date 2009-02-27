@@ -55,6 +55,7 @@ public slots:
     virtual void disconnect ();
     virtual void setOnlineStatus (const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions& options = None);
     virtual void setStatusMessage (const Kopete::StatusMessage &statusMessage);
+	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 private slots:
 	void onAccountManagerReady(Telepathy::Client::PendingOperation*);
@@ -65,6 +66,7 @@ private slots:
 	void onRequestedPresence(Telepathy::Client::PendingOperation*);
 	void onAccountConnecting(Telepathy::Client::PendingOperation*);
 	void onRequestDisconnect(Telepathy::Client::PendingOperation*);
+	void onAliasChanged(Telepathy::Client::PendingOperation*);
 
     void displayNameChanged (const QString &);
     void iconChanged (const QString &);
@@ -80,6 +82,9 @@ private slots:
     void avatarChanged (const Telepathy::Avatar &);
     void connectionStatusChanged (Telepathy::ConnectionStatus, Telepathy::ConnectionStatusReason);
     void haveConnectionChanged (bool haveConnection);
+
+	void slotSetAlias();
+	void slotChangeAvatar();
 
 protected:
     virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact );

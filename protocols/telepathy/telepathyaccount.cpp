@@ -29,6 +29,11 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <ksharedconfig.h>
+#include <kicon.h>
+#include <klocale.h>
+#include <kaction.h>
+#include <kactionmenu.h>
+#include <kinputdialog.h>
 
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/Connection>
@@ -120,6 +125,23 @@ void TelepathyAccount::onAccountConnecting(Telepathy::Client::PendingOperation* 
     kDebug(TELEPATHY_DEBUG_AREA) << "Connecting...";
 }
 
+void TelepathyAccount::fillActionMenu( KActionMenu *actionMenu )
+{
+	Kopete::Account::fillActionMenu( actionMenu );
+
+	KAction *changeAliasAction = new KAction( KIcon("edit-rename"), i18n("&Change Alias..."), 0 );
+	changeAliasAction->setEnabled( isConnected() );
+	QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
+
+	KAction *changeAvatarAction = new KAction( KIcon("user-properties"), i18n("Change &Avatar..."), 0 );
+	changeAvatarAction->setEnabled( isConnected() );
+	QObject::connect(changeAvatarAction, SIGNAL(triggered(bool)), this, SLOT(slotChangeAvatar()));
+
+	actionMenu->addSeparator();
+	actionMenu->addAction( changeAliasAction );
+	actionMenu->addAction( changeAvatarAction );
+}
+
 void TelepathyAccount::disconnect ()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
@@ -197,10 +219,18 @@ bool TelepathyAccount::createContact( const QString &contactId, Kopete::MetaCont
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 	
-	Q_UNUSED(contactId);
-	Q_UNUSED(parentContact);
-	
-    return false;
+	if( !contacts()[contactId] )
+	{
+		TelepathyContact *contact = new TelepathyContact(this, contactId, parentContact);
+		
+		return contact != 0;
+	}
+	else
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << "Contact " << contactId << " already exists.";
+	}
+
+	return false;
 }
 
 bool TelepathyAccount::readConfig()
@@ -548,6 +578,8 @@ void TelepathyAccount::iconChanged (const QString &var)
 void TelepathyAccount::nicknameChanged (const QString &var)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << var;
+	
+	myself()->setNickName( var );
 }
 
 void TelepathyAccount::normalizedNameChanged (const QString &var)
@@ -632,3 +664,37 @@ void TelepathyAccount::haveConnectionChanged (bool haveConnection)
         kDebug(TELEPATHY_DEBUG_AREA) << "Have connection.";
     }
 }
+
+void TelepathyAccount::slotSetAlias()
+{
+	QString currentAlias = myself()->nickName();
+
+	bool ok = false;
+	QString newAlias = KInputDialog::getText(
+			i18n("Change alias"), 
+			i18n("Enter the new alias by which you want to be visible to your friends:"), 
+			currentAlias,
+			&ok );
+
+	if(!ok || !m_account)
+		return;
+	
+	QObject::connect(m_account->setNickname(newAlias), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+        this, SLOT(onAliasChanged(Telepathy::Client::PendingOperation *)));
+}
+
+void TelepathyAccount::onAliasChanged(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    if(isOperationError(operation))
+        return;
+	
+	kDebug(TELEPATHY_DEBUG_AREA) << "Alias changed.";
+}
+
+void TelepathyAccount::slotChangeAvatar()
+{
+}
+
+
