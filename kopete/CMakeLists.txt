@@ -21,7 +21,7 @@ ${BLITZ_INCLUDES}
 )
 
 link_directories( 
-${CMAKE_BINARY_DIR}/kopete/libkopete/ 
+${KOPETE_BINARY_DIR}/libkopete
 ${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard 
 ${CMAKE_CURRENT_BINARY_DIR}/identity 
 )

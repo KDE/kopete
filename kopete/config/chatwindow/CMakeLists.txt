@@ -1,8 +1,8 @@
 
 include_directories( 
 ${KOPETE_INCLUDES} 
-${CMAKE_SOURCE_DIR}/kopete/kopete/chatwindow
-${CMAKE_BINARY_DIR}/kopete/kopete/chatwindow
+${KOPETE_SOURCE_DIR}/kopete/chatwindow
+${KOPETE_BINARY_DIR}/kopete/chatwindow
 )
 
 

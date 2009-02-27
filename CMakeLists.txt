@@ -3,6 +3,9 @@ KDE4_NO_ENABLE_FINAL(kopete)
 
 FIND_PACKAGE(Blitz REQUIRED)
 
+set(KOPETE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(KOPETE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
 # Configure checks
 include (TestBigEndian)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
@@ -54,13 +57,13 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
 set(KOPETE_INCLUDES 
 	${KDE4_INCLUDES}
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/
-	${CMAKE_BINARY_DIR}/kopete/libkopete/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/ui/
-	${CMAKE_BINARY_DIR}/kopete/libkopete/ui/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/private/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/contactlist/
-	${CMAKE_SOURCE_DIR}/kopete/libkopete/tasks/
+	${KOPETE_SOURCE_DIR}/libkopete/
+	${KOPETE_BINARY_DIR}/libkopete/
+	${KOPETE_SOURCE_DIR}/libkopete/ui/
+	${KOPETE_BINARY_DIR}/libkopete/ui/
+	${KOPETE_SOURCE_DIR}/libkopete/private/
+	${KOPETE_SOURCE_DIR}/libkopete/contactlist/
+	${KOPETE_SOURCE_DIR}/libkopete/tasks/
 )
 
 add_subdirectory( libkopete )

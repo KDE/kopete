@@ -1,5 +1,5 @@
 add_definitions( -DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS )
-include_directories( ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise/tasks ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/ui ${QCA2_INCLUDE_DIR} )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/libgroupwise/tasks ${CMAKE_CURRENT_SOURCE_DIR}/libgroupwise ${CMAKE_CURRENT_SOURCE_DIR}/ui ${QCA2_INCLUDE_DIR} )
 
 add_subdirectory( libgroupwise ) 
 add_subdirectory( icons ) 
