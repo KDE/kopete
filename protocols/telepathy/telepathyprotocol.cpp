@@ -79,9 +79,11 @@ Kopete::Account *TelepathyProtocol::createNewAccount(const QString &accountId)
 AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "createAddContactWidget() called";
+	Q_UNUSED(parent);
 	Q_UNUSED(account);
 
 //	return new TelepathyAddContactPage(parent);
+	return 0;
 }
 
 KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
@@ -121,11 +123,11 @@ QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionM
 {
 	return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(accountId);
 }
-/*
+
 Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "kopeteStatusToTelepathy() called";
-	Telepathy::ConnectionPresenceType telepathyPresence;
+	Telepathy::ConnectionPresenceType telepathyPresence = Telepathy::ConnectionPresenceTypeOffline;
 
 	if( status == Available )
 		telepathyPresence = Telepathy::ConnectionPresenceTypeAvailable;
@@ -142,6 +144,7 @@ Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(con
 
 	return telepathyPresence;
 }
+/*
 Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Telepathy::ConnectionPresenceType presence)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "telepathyStatusToKopete() called";

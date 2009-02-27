@@ -44,7 +44,7 @@ class TelepathyAccount : public Kopete::Account
 
 public:
     TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId);
-    ~TelepathyAccount();
+    virtual ~TelepathyAccount();
 
 	bool readConfig();
 	QString connectionProtocol() const;

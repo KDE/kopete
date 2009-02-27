@@ -48,6 +48,9 @@ bool TelepathyContact::isReachable()
 void TelepathyContact::serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	
+	Q_UNUSED(serializedData);
+	Q_UNUSED(addressBookData);
 }
 
 QList<KAction *> *TelepathyContact::customContextMenuActions()
@@ -56,9 +59,21 @@ QList<KAction *> *TelepathyContact::customContextMenuActions()
     return new QList<KAction*>();
 }
 
+QList<KAction *> *TelepathyContact::customContextMenuActions( Kopete::ChatSession *manager )
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+	
+	Q_UNUSED(manager);
+
+    return new QList<KAction*>();
+}
+
 Kopete::ChatSession *TelepathyContact::manager( CanCreateFlags canCreate )
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	
+	Q_UNUSED(canCreate);
+	
     return 0;
 }
 

@@ -22,6 +22,7 @@
 #define TELEPATHYCONTACT_H_
 
 #include <kopetecontact.h>
+#include <kopetechatsession.h>
 
 #include <QObject>
 
@@ -38,12 +39,13 @@ class TelepathyContact : public Kopete::Contact
 
 public:
     TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent);
-    ~TelepathyContact();
+    virtual ~TelepathyContact();
 
     virtual bool isReachable();
     virtual void serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData);
 
     virtual QList<KAction *> *customContextMenuActions();
+	virtual QList<KAction *> *customContextMenuActions( Kopete::ChatSession *manager );
     virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
 };
 

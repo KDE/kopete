@@ -75,6 +75,21 @@ void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
 		initTelepathyAccount();
 		return;
 	}
+	
+	kDebug(TELEPATHY_DEBUG_AREA) << m_account->parameters();
+
+    Telepathy::SimplePresence simplePresence;
+//    simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(statusInit);
+
+    kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type;
+    
+    simplePresence.statusMessage = m_reason.message();
+/*    
+    Telepathy::Client::PendingOperation *op = account->setRequestedPresence(simplePresence);
+    QObject::connect(op, SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+        this,
+        SLOT(onRequestedPresence(Telepathy::Client::PendingOperation*))
+    );*/
 }
 
 void TelepathyAccount::disconnect ()
@@ -85,6 +100,9 @@ void TelepathyAccount::disconnect ()
 void TelepathyAccount::setOnlineStatus (const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	
+	Q_UNUSED(options);
+	
 	m_status = status;
 	m_reason = reason;
 	m_setStatusAfterInit = true;
@@ -93,11 +111,17 @@ void TelepathyAccount::setOnlineStatus (const Kopete::OnlineStatus &status, cons
 void TelepathyAccount::setStatusMessage (const Kopete::StatusMessage &statusMessage)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	
+	Q_UNUSED(statusMessage);
 }
 
 bool TelepathyAccount::createContact( const QString &contactId, Kopete::MetaContact *parentContact )
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	
+	Q_UNUSED(contactId);
+	Q_UNUSED(parentContact);
+	
     return false;
 }
 
@@ -473,22 +497,22 @@ void TelepathyAccount::parametersChanged (const QVariantMap &var)
     kDebug(TELEPATHY_DEBUG_AREA) << var;
 }
 
-void TelepathyAccount::automaticPresenceChanged (const Telepathy::SimplePresence &var) const
+void TelepathyAccount::automaticPresenceChanged (const Telepathy::SimplePresence &) const
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
 }
 
-void TelepathyAccount::currentPresenceChanged (const Telepathy::SimplePresence &var) const
+void TelepathyAccount::currentPresenceChanged (const Telepathy::SimplePresence &) const
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
 }
 
-void TelepathyAccount::requestedPresenceChanged (const Telepathy::SimplePresence &var) const
+void TelepathyAccount::requestedPresenceChanged (const Telepathy::SimplePresence &) const
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
 }
 
-void TelepathyAccount::avatarChanged (const Telepathy::Avatar &var)
+void TelepathyAccount::avatarChanged (const Telepathy::Avatar &)
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
 }
