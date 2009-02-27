@@ -28,23 +28,30 @@
 
 namespace Kopete
 {
-    namespace Items
-    {
-        /** Qt Model Role Definitions */
-        const int TypeRole = Qt::UserRole + 100;
-        const int ElementRole = Qt::UserRole + 101;
-        const int OnlineStatusRole = Qt::UserRole + 102;
-        const int IdleTimeRole = Qt::UserRole + 103;
-        const int UuidRole = Qt::UserRole + 104;
-        const int TotalCountRole = Qt::UserRole + 105;
-        const int ConnectedCountRole = Qt::UserRole + 106;
-        const int IdRole = Qt::UserRole + 107;
-            // the IdRole is used in cases where the identifier is not really a Uuid
-            // for instance, Kopete::Group::groupId is the case justifying this role
+	namespace Items
+	{
+		/** Qt Model Role Definitions */
+		const int TypeRole = Qt::UserRole + 100;
+		const int ElementRole = Qt::UserRole + 101;
+		const int OnlineStatusRole = Qt::UserRole + 102;
+		const int IdleTimeRole = Qt::UserRole + 103;
+		const int UuidRole = Qt::UserRole + 104;
+		const int TotalCountRole = Qt::UserRole + 105;
+		const int ConnectedCountRole = Qt::UserRole + 106;
+		const int IdRole = Qt::UserRole + 107;
+				// the IdRole is used in cases where the identifier is not really a Uuid
+				// for instance, Kopete::Group::groupId is the case justifying this role
+		const int MetaContactImageRole = Qt::UserRole + 108;
+				// the MetaContactImageRole can return QImage or QString. If it's QString
+				// then it contains icon name.
+		const int StatusTitleRole = Qt::UserRole + 109;
+		const int StatusMessageRole = Qt::UserRole + 110;
+		const int AccountIconsRole = Qt::UserRole + 111;
+		const int ObjectRole = Qt::UserRole + 112;
 
-        /* Item type role values */
-        enum Type { Group, MetaContact };
-    }
+		/* Item type role values */
+		enum Type { Group, MetaContact };
+	}
 }
 
 #endif

@@ -20,6 +20,8 @@
 
 #include <QSortFilterProxyModel>
 
+#include <kopete_export.h>
+
 namespace Kopete {
 
 class Group;
@@ -31,13 +33,13 @@ namespace UI {
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
-class ContactListProxyModel : public QSortFilterProxyModel
+class KOPETE_CONTACT_LIST_EXPORT ContactListProxyModel : public QSortFilterProxyModel
 {
 Q_OBJECT
 	public:
 		ContactListProxyModel(QObject* parent = 0);
 		~ContactListProxyModel();
-		
+	
 	public slots:
 		void slotConfigChanged();
 	protected:

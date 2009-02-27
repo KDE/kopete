@@ -57,6 +57,7 @@
 #include <qtabwidget.h>
 
 #include "kopeteappearancesettings.h"
+#include "contactlistlayoutwidget.h"
 
 //class AppearanceConfig;
 
@@ -80,6 +81,7 @@ public:
 	Ui::AppearanceConfig_Colors mPrfsColors;
 	Ui::AppearanceConfig_ContactList mPrfsContactList;
 	Ui::AppearanceConfig_Advanced mPrfsAdvanced;
+	ContactListLayoutWidget *contactListLayoutWidget;
 };
 
 
@@ -121,6 +123,11 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
 
 	d->mAppearanceTabCtl->addTab(advancedWidget, i18n("Advanced"));
 
+	
+	d->contactListLayoutWidget = new ContactListLayoutWidget( d->mAppearanceTabCtl );
+	connect( d->contactListLayoutWidget, SIGNAL(changed()), this, SLOT (emitChanged()) );
+	d->mAppearanceTabCtl->addTab( d->contactListLayoutWidget, i18n("Layout") );
+
 	// ==========================================================================
 
 	load();
@@ -139,6 +146,8 @@ void AppearanceConfig::save()
 	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 	settings->setContactListAutoResize (d->mPrfsAdvanced.kcfg_contactListResizeAnchor->isChecked());
 
+	d->contactListLayoutWidget->save();
+
 	settings->writeConfig();
 
 	load();
@@ -149,6 +158,7 @@ void AppearanceConfig::load()
 	KCModule::load();
 	d->mPrfsAdvanced.kcfg_contactListResizeAnchor->setChecked(Kopete::AppearanceSettings::contactListAutoResize ());
 
+	d->contactListLayoutWidget->load();
 //	kDebug(14000) << "called";
 }
 

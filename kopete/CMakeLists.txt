@@ -2,6 +2,7 @@
 add_subdirectory( addaccountwizard )
 add_subdirectory( statusmenu )
 add_subdirectory( identity )
+add_subdirectory( contactlist )
 add_subdirectory( config )
 add_subdirectory( chatwindow )
 add_subdirectory( kconf_update ) 
@@ -14,8 +15,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/statusmenu/
 ${CMAKE_CURRENT_BINARY_DIR}/statusmenu/
 ${CMAKE_CURRENT_SOURCE_DIR}/identity 
 ${CMAKE_CURRENT_BINARY_DIR}/identity
-${CMAKE_CURRENT_SOURCE_DIR}/contactlist/ 
-${CMAKE_CURRENT_BINARY_DIR}/contactlist/ 
+${CMAKE_CURRENT_SOURCE_DIR}/contactlist/
+${CMAKE_CURRENT_BINARY_DIR}/contactlist/
 ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/
 ${BLITZ_INCLUDES}
 )
@@ -23,34 +24,13 @@ ${BLITZ_INCLUDES}
 link_directories( 
 ${CMAKE_BINARY_DIR}/kopete/libkopete/ 
 ${CMAKE_CURRENT_BINARY_DIR}/addaccountwizard 
-${CMAKE_CURRENT_BINARY_DIR}/identity 
+${CMAKE_CURRENT_BINARY_DIR}/identity
+${CMAKE_CURRENT_BINARY_DIR}/contactlist
 )
 
 ########### next target ###############
 
 # Contact List
-set(kopetecontactlist_SRCS 
-#contactlist/kopetemetacontactitem.cpp 
-#contactlist/kopetestatusgroupviewitem.cpp 
-#contactlist/kopetegroupviewitem.cpp 
-contactlist/kopetecontactlistview.cpp 
-contactlist/kopetelviprops.cpp 
-contactlist/kopeteaddrbookexport.cpp 
-contactlist/customnotificationprops.cpp 
-contactlist/kopetegrouplistaction.cpp 
-contactlist/kabcexport.cpp
-contactlist/contactlistmodel.cpp
-contactlist/contactlistproxymodel.cpp
-contactlist/kopeteitemdelegate.cpp
-)
-
-kde4_add_ui_files(kopetecontactlist_SRCS
-    contactlist/kopetegvipropswidget.ui
-    contactlist/kopetemetalvipropswidget.ui
-    contactlist/kopeteaddrbookexportui.ui
-    contactlist/kabcexport_page1.ui
-    contactlist/kabcexport_page2.ui
- )
 
 set(kopete_SRCS 
    ${kopetecontactlist_SRCS}
@@ -84,6 +64,7 @@ target_link_libraries(kopete_bin
 	kopete 
 	kopeteaddaccountwizard
 	kopetestatusmenu
+	kopetecontactlist
 	kopeteidentity)
 
 install(TARGETS kopete_bin  ${INSTALL_TARGETS_DEFAULT_ARGS} )
