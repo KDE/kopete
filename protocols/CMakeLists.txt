@@ -18,6 +18,12 @@ option(WITH_irc "Enable Kopete IRC protocol" OFF)
 option(WITH_wlm "Enable Window Live Messenger support" ON)
 option(WITH_meanwhile "Enable Kopete meanwhile protocol" ON)
 
+if(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND NOT NO_JINGLE)
+  set(BUILD_JINGLE TRUE)
+else(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND NOT NO_JINGLE)
+  set(BUILD_JINGLE FALSE)
+endif(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND NOT NO_JINGLE)
+
 include_directories(${KOPETE_INCLUDES})
 
 if(WITH_wlm AND LIBMSN_FOUND)

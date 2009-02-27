@@ -1,16 +1,68 @@
 project(kopete)
-KDE4_NO_ENABLE_FINAL(kopete)
 
-FIND_PACKAGE(Blitz REQUIRED)
+if(NOT INSIDE_KDENETWORK)
+
+	message ("We aren't inside KDENetwork, Loading KDE Macros")
+	find_package(KDE4 REQUIRED)
+
+	include (KDE4Defaults)
+	include (MacroLibrary)
+
+	include(CheckIncludeFile)
+	include(CheckIncludeFiles)
+	include(CheckSymbolExists)
+	include(CheckFunctionExists)
+	include(CheckLibraryExists)
+	include(CheckPrototypeExists)
+	include(CheckTypeSize)
+	include(MacroBoolTo01)
+	include(MacroOptionalAddSubdirectory)
+
+	set(CMAKE_REQUIRED_DEFINITIONS ${_KDE4_PLATFORM_DEFINITIONS})
+	if (WIN32)
+	   set(CMAKE_REQUIRED_LIBRARIES ${KDEWIN32_LIBRARIES} )
+	   set(CMAKE_REQUIRED_INCLUDES  ${KDEWIN32_INCLUDES} )
+	endif (WIN32)
+
+	find_package(KdepimLibs REQUIRED)
+
+	macro_optional_find_package(Sqlite)
+	macro_log_feature(SQLITE_FOUND "SQLite" "SQLite is a Binary-Database" "" FALSE "" "Needed for the SQLite-Backend of the KGet-History and the Kopete-Statistic-Plugin")
+
+endif(NOT INSIDE_KDENETWORK)
 
 set(KOPETE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(KOPETE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
+#set(CMAKE_MODULE_PATH ${KOPETE_SOURCE_DIR}/cmake/modules )
+
+KDE4_NO_ENABLE_FINAL(kopete)
+
+FIND_PACKAGE(Blitz REQUIRED)
 
 # Configure checks
 include (TestBigEndian)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
 check_type_size("long" SIZEOF_LONG)
 check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
+
+macro_optional_find_package(LiboRTP)
+macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support in Kopete.")
+
+macro_optional_find_package(Speex)
+macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support in Kopete.")
+
+macro_optional_find_package(QCA2)
+macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca" FALSE "2.0.0" "Needed to build Kopete's GroupWise and Jabber protocols.")
+
+macro_optional_find_package(Decibel)
+macro_log_feature(DECIBEL_FOUND "Decibel"  "KDE framework for real-time communication" "http://decibel.kde.org/" FALSE "" "Used by the Kopete telepathy protocol.")
+
+macro_optional_find_package(IDN)
+macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implemenation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
+
+macro_optional_find_package(Alsa)
+macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed for Jingle Support in Kopete Jabber Plugin")
 
 macro_optional_find_package(Xmms)
 macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
