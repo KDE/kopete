@@ -32,12 +32,15 @@
 
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/PendingReadyAccountManager>
+#include <TelepathyQt4/Client/PendingReadyAccount>
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
     : Kopete::Account(protocol, accountId), m_connectionManager(0), m_accountManager(0),
 	m_existingAccountCounter(0), m_existingAccountsCount(0)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	
+	m_setStatusAfterInit = false;
 
     setMyself( new TelepathyContact(this, accountId, Kopete::ContactList::self()->myself()) );
 }
@@ -81,6 +84,9 @@ void TelepathyAccount::disconnect ()
 void TelepathyAccount::setOnlineStatus (const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	m_status = status;
+	m_reason = reason;
+	m_setStatusAfterInit = true;
 }
 
 void TelepathyAccount::setStatusMessage (const Kopete::StatusMessage &statusMessage)
@@ -317,10 +323,156 @@ void TelepathyAccount::newTelepathyAccountCreated(Telepathy::Client::PendingOper
         return;
 
     m_account = m_pendingAccount->account();
-/*
-    QObject::connect(account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
-        this, SLOT(onAccountReady(Telepathy::Client::PendingOperation *)));*/
+
+    QObject::connect(m_account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+        this, SLOT(onAccountReady(Telepathy::Client::PendingOperation *)));
 }
 
+void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation *operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
 
+    if(isOperationError(operation))
+        return;
 
+    kDebug(TELEPATHY_DEBUG_AREA) << "New account: " << m_account->cmName() << m_account->protocol() << m_account->displayName();
+	
+	Telepathy::Client::Account *a = m_account.data();
+
+    QObject::connect(a, SIGNAL(displayNameChanged(const QString &)),
+        this, SLOT(displayNameChanged(const QString &)));
+    QObject::connect(a, SIGNAL(iconChanged (const QString &)),
+        this, SLOT(iconChanged (const QString &)));
+    QObject::connect(a, SIGNAL(nicknameChanged (const QString &)),
+        this, SLOT(nicknameChanged (const QString &)));
+    QObject::connect(a, SIGNAL(normalizedNameChanged (const QString &)),
+        this, SLOT(normalizedNameChanged (const QString &)));
+    QObject::connect(a, SIGNAL(validityChanged (bool)),
+        this, SLOT(validityChanged (bool)));
+    QObject::connect(a, SIGNAL(stateChanged (bool)),
+        this, SLOT(stateChanged (bool)));
+    QObject::connect(a, SIGNAL(connectsAutomaticallyPropertyChanged (bool)),
+        this, SLOT(connectsAutomaticallyPropertyChanged (bool)));
+    QObject::connect(a, SIGNAL(parametersChanged (const QVariantMap &)),
+        this, SLOT(parametersChanged (const QVariantMap &)));
+    QObject::connect(a, SIGNAL(automaticPresenceChanged (const Telepathy::SimplePresence &)),
+        this, SLOT(automaticPresenceChanged (const Telepathy::SimplePresence &)));
+    QObject::connect(a, SIGNAL(currentPresenceChanged (const Telepathy::SimplePresence &)),
+        this, SLOT(currentPresenceChanged (const Telepathy::SimplePresence &)));
+    QObject::connect(a, SIGNAL(requestedPresenceChanged (const Telepathy::SimplePresence &)),
+        this, SLOT(requestedPresenceChanged (const Telepathy::SimplePresence &)));
+    QObject::connect(a, SIGNAL(avatarChanged (const Telepathy::Avatar &)),
+        this, SLOT(avatarChanged (const Telepathy::Avatar &)));
+    QObject::connect(a, SIGNAL(connectionStatusChanged (Telepathy::ConnectionStatus, Telepathy::ConnectionStatusReason)),
+        this, SLOT(connectionStatusChanged (Telepathy::ConnectionStatus, Telepathy::ConnectionStatusReason)));
+    QObject::connect(a, SIGNAL(haveConnectionChanged (bool)),
+        this, SLOT(haveConnectionChanged (bool)));
+
+	if(m_setStatusAfterInit)
+    {
+        m_setStatusAfterInit = false;
+        setOnlineStatus(m_status, m_reason);
+    }
+	else
+	{
+	    connect(m_initialStatus);
+	}
+}
+
+void TelepathyAccount::displayNameChanged (const QString &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::iconChanged (const QString &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::nicknameChanged (const QString &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::normalizedNameChanged (const QString &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::validityChanged (bool var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::stateChanged (bool var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::connectsAutomaticallyPropertyChanged (bool var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::parametersChanged (const QVariantMap &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::automaticPresenceChanged (const Telepathy::SimplePresence &var) const
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+}
+
+void TelepathyAccount::currentPresenceChanged (const Telepathy::SimplePresence &var) const
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+}
+
+void TelepathyAccount::requestedPresenceChanged (const Telepathy::SimplePresence &var) const
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+}
+
+void TelepathyAccount::avatarChanged (const Telepathy::Avatar &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+}
+
+void TelepathyAccount::connectionStatusChanged (Telepathy::ConnectionStatus status, Telepathy::ConnectionStatusReason reason)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+    Q_UNUSED(reason);
+
+	switch(status)
+	{
+        case Telepathy::ConnectionStatusConnecting:
+			kDebug(TELEPATHY_DEBUG_AREA) << "Connecting....";
+			break;
+        case Telepathy::ConnectionStatusConnected:
+			kDebug(TELEPATHY_DEBUG_AREA) << "Connected using Telepathy :)";
+            // Set initial status to myself contact
+            myself()->setOnlineStatus( m_status );
+            // Set nickname to myself contact
+            //myself()->setNickName( d->currentConnection->userContact()->alias() );
+            // Load contact list
+            //fetchContactList();
+
+			break;
+        case Telepathy::ConnectionStatusDisconnected:
+			kDebug(TELEPATHY_DEBUG_AREA) << "Disconnected :(";
+			break;
+	}
+
+    // \todo: reason
+}
+
+void TelepathyAccount::haveConnectionChanged (bool haveConnection)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << haveConnection;
+
+    if(haveConnection)
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Have connection.";
+    }
+}

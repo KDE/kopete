@@ -59,6 +59,22 @@ public slots:
 private slots:
 	void onAccountManagerReady(Telepathy::Client::PendingOperation *);
 	void newTelepathyAccountCreated(Telepathy::Client::PendingOperation *);
+	void onAccountReady(Telepathy::Client::PendingOperation *);
+
+    void displayNameChanged (const QString &);
+    void iconChanged (const QString &);
+    void nicknameChanged (const QString &);
+    void normalizedNameChanged (const QString &);
+    void validityChanged (bool);
+    void stateChanged (bool);
+    void connectsAutomaticallyPropertyChanged (bool);
+    void parametersChanged (const QVariantMap &);
+    void automaticPresenceChanged (const Telepathy::SimplePresence &) const;
+    void currentPresenceChanged (const Telepathy::SimplePresence &) const;
+    void requestedPresenceChanged (const Telepathy::SimplePresence &) const;
+    void avatarChanged (const Telepathy::Avatar &);
+    void connectionStatusChanged (Telepathy::ConnectionStatus, Telepathy::ConnectionStatusReason);
+    void haveConnectionChanged (bool haveConnection);
 
 protected:
     virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact );
@@ -82,6 +98,9 @@ private:
 	Kopete::OnlineStatus m_initialStatus;
 	uint m_existingAccountCounter;
 	uint m_existingAccountsCount;
+	bool m_setStatusAfterInit;
+	Kopete::OnlineStatus m_status;
+	Kopete::StatusMessage m_reason;
 };
 
 #endif // TELEPATHYACCOUNT_H_
