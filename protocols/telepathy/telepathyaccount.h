@@ -22,10 +22,14 @@
 #define TELEPATHYACCOUNT_H_
 
 #include <QObject>
+#include <QSharedPointer>
 
 #include <kopeteaccount.h>
 
 #include <TelepathyQt4/Client/ConnectionManager>
+#include <TelepathyQt4/Client/AccountManager>
+#include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/Client/PendingAccount>
 
 namespace Kopete
 {
@@ -52,17 +56,32 @@ public slots:
     virtual void setOnlineStatus (const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions& options = None);
     virtual void setStatusMessage (const Kopete::StatusMessage &statusMessage);
 
+private slots:
+	void onAccountManagerReady(Telepathy::Client::PendingOperation *);
+	void newTelepathyAccountCreated(Telepathy::Client::PendingOperation *);
+
 protected:
     virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact );
 
 private:
 	Telepathy::Client::ProtocolInfo *getProtocolInfo(QString protocol);
 	Telepathy::Client::ConnectionManager *getConnectionManager();
+	Telepathy::Client::AccountManager *getAccountManager();
+	void initTelepathyAccount();
+	void createNewAccount();
+	bool isOperationError(Telepathy::Client::PendingOperation*);
 
 	QString m_connectionManagerName;
 	QString m_connectionProtocolName;
 	Telepathy::Client::ProtocolParameterList m_connectionParameters;
 	Telepathy::Client::ConnectionManager *m_connectionManager;
+	Telepathy::Client::AccountManager *m_accountManager;
+	QSharedPointer<Telepathy::Client::Account> m_account;
+	Telepathy::Client::PendingAccount *m_pendingAccount;
+
+	Kopete::OnlineStatus m_initialStatus;
+	uint m_existingAccountCounter;
+	uint m_existingAccountsCount;
 };
 
 #endif // TELEPATHYACCOUNT_H_
