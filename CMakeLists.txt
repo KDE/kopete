@@ -1,5 +1,10 @@
 project(kopete)
 
+set(KOPETE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(KOPETE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
+set(CMAKE_MODULE_PATH ${KOPETE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} )
+
 if(NOT INSIDE_KDENETWORK)
 
 	message ("We aren't inside KDENetwork, Loading KDE Macros")
@@ -30,11 +35,6 @@ if(NOT INSIDE_KDENETWORK)
 	macro_log_feature(SQLITE_FOUND "SQLite" "SQLite is a Binary-Database" "" FALSE "" "Needed for the SQLite-Backend of the KGet-History and the Kopete-Statistic-Plugin")
 
 endif(NOT INSIDE_KDENETWORK)
-
-set(KOPETE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(KOPETE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
-
-#set(CMAKE_MODULE_PATH ${KOPETE_SOURCE_DIR}/cmake/modules )
 
 KDE4_NO_ENABLE_FINAL(kopete)
 
