@@ -81,6 +81,9 @@ KopeteRichTextWidget::KopeteRichTextWidget(QWidget* parent, Kopete::Protocol::Ca
         : KRichTextWidget(parent),
         d(new Private(this))
 {
+    connect(this, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
+            this, SLOT(updateCharFormat(QTextCharFormat)));
+
     connect(this, SIGNAL(textChanged()),
             this, SLOT(updateTextFormat()) );
 
@@ -179,43 +182,6 @@ void KopeteRichTextWidget::setRichTextEnabled(bool enable)
 void KopeteRichTextWidget::slotResetFontAndColor()
 {
     setCurrentCharFormat(d->defaultFormat);
-}
-
-void KopeteRichTextWidget::setTextBackgroundColor(const QColor &color)
-{
-    d->desiredFormat.setBackground(color);
-
-    if (d->protocolCaps & Kopete::Protocol::BaseBgColor)
-    {
-        QTextCharFormat format;
-        format.setBackground(color);
-        d->mergeAll(format);
-
-        QPalette palette = this->palette();
-        palette.setColor(QPalette::Active, QPalette::Base, color);
-        palette.setColor(QPalette::Inactive, QPalette::Base, color);
-        this->setPalette(palette);
-    }
-    else
-    {
-        KRichTextWidget::setTextBackgroundColor(color);
-    }
-}
-
-void KopeteRichTextWidget::setTextForegroundColor(const QColor &color)
-{
-    d->desiredFormat.setForeground(color);
-
-    if (d->protocolCaps & Kopete::Protocol::BaseFgColor)
-    {
-        QTextCharFormat format;
-        format.setForeground(color);
-        d->mergeAll(format);
-    }
-    else
-    {
-        KRichTextWidget::setTextForegroundColor(color);
-    }
 }
 
 void KopeteRichTextWidget::setFontFamily(QString family)
@@ -319,6 +285,22 @@ void KopeteRichTextWidget::setCurrentCharFormat(const QTextCharFormat & format)
 QTextCharFormat KopeteRichTextWidget::currentCharFormat() const
 {
     return d->desiredFormat;
+}
+
+void KopeteRichTextWidget::updateCharFormat(const QTextCharFormat & f){
+    if (!document()->isEmpty())
+    {
+        d->desiredFormat = f;
+
+        // set background color if only base bg color is supported
+        if (d->protocolCaps & Kopete::Protocol::BaseBgColor)
+        {
+            QPalette palette = this->palette();
+            palette.setColor(QPalette::Active, QPalette::Base, f.background().color());
+            palette.setColor(QPalette::Inactive, QPalette::Base, f.background().color());
+            this->setPalette(palette);
+        }
+    }
 }
 
 void KopeteRichTextWidget::updateTextFormat()

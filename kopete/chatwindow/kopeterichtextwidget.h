@@ -62,8 +62,6 @@ public Q_SLOTS:
     */
     void setRichTextEnabled( bool enable );
 
-    void setTextBackgroundColor(const QColor &color);
-    void setTextForegroundColor(const QColor &color);
     void setFontFamily(QString family);
     void setFontSize(int size);
     void setTextBold(bool bold);
@@ -81,6 +79,7 @@ protected:
 
 protected slots:
     void updateTextFormat();
+    void updateCharFormat(const QTextCharFormat &);
 
 
 private:
