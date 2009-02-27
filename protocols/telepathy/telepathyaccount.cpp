@@ -32,6 +32,7 @@
 
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/PendingReadyAccountManager>
+#include <TelepathyQt4/Client/PendingReadyConnectionManager>
 #include <TelepathyQt4/Client/PendingReadyAccount>
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
@@ -230,7 +231,7 @@ Telepathy::Client::ConnectionManager *TelepathyAccount::getConnectionManager()
 Telepathy::Client::ProtocolInfo *TelepathyAccount::getProtocolInfo(QString protocol)
 {
 	Telepathy::Client::ProtocolInfoList protocolList = getConnectionManager()->protocols();
-
+	kDebug(TELEPATHY_DEBUG_AREA) << protocolList.size();
     foreach(Telepathy::Client::ProtocolInfo* protocolInfo, protocolList)
     {
 		if(protocolInfo->name() == protocol)
@@ -246,6 +247,29 @@ void TelepathyAccount::initTelepathyAccount()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
+	// Restore config not related to ConnectionManager parameters first
+    // so that the UI for the protocol parameters will be generated
+    KConfigGroup *accountConfig = configGroup();
+    m_connectionManagerName = accountConfig->readEntry( QLatin1String("ConnectionManager"), QString() );
+    m_connectionProtocolName = accountConfig->readEntry( QLatin1String("SelectedProtocol"), QString() );
+	
+	// \brief: init managers early, it needed here becouse later i want 
+	//	  to get available protocols from CM
+    Telepathy::Client::ConnectionManager *cm = getConnectionManager();
+    QObject::connect(cm->becomeReady(),
+        SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+        this,
+        SLOT(onConnectionManagerReady(Telepathy::Client::PendingOperation*))
+    );
+}
+
+void TelepathyAccount::onConnectionManagerReady(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    
+    if(isOperationError(operation))
+        return;
+
     if(readConfig())
     {
         Telepathy::Client::AccountManager *accountManager = getAccountManager();
@@ -254,12 +278,11 @@ void TelepathyAccount::initTelepathyAccount()
             this,
             SLOT(onAccountManagerReady(Telepathy::Client::PendingOperation*))
         );
+		return;
     }
-    else
-    {
-        // \brief: problem with config? So here we can die.
-        kDebug(TELEPATHY_DEBUG_AREA) << "Init connection manager failed!";
-    }
+
+	// \brief: problem with config? So here we can die.
+    kDebug(TELEPATHY_DEBUG_AREA) << "Init connection manager failed!";
 }
 
 void TelepathyAccount::onAccountManagerReady(Telepathy::Client::PendingOperation* operation)
@@ -288,10 +311,41 @@ void TelepathyAccount::onAccountManagerReady(Telepathy::Client::PendingOperation
      */
     foreach(const QString &path, pathList)
     {
-/*        QSharedPointer<Telepathy::Client::Account> a = m_accountManager->accountForPath(path);
+        QSharedPointer<Telepathy::Client::Account> a = m_accountManager->accountForPath(path);
         QObject::connect(a->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
-            this, SLOT(onExistingAccountReady(Telepathy::Client::PendingOperation *)));*/
+            this, SLOT(onExistingAccountReady(Telepathy::Client::PendingOperation *)));
     }
+}
+
+void TelepathyAccount::onExistingAccountReady(Telepathy::Client::PendingOperation *operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    if(isOperationError(operation))
+        return;
+
+    Telepathy::Client::PendingReadyAccount *pa = dynamic_cast<Telepathy::Client::PendingReadyAccount *>(operation);
+    if(!pa)
+        return;
+
+    Telepathy::Client::Account *a = pa->account();
+
+    if( !m_account && ((a->displayName() == accountId()) && (a->protocol() == m_connectionProtocolName)) )
+    {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << a->cmName() << m_connectionManagerName << a->displayName() << accountId() << a->protocol() << m_connectionProtocolName << m_existingAccountCounter;
+        m_account = QSharedPointer<Telepathy::Client::Account>(a);
+
+        QObject::connect(m_account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+            this, SLOT(onAccountReady(Telepathy::Client::PendingOperation *)));
+        
+        return;
+    }
+
+    if( !m_account && (m_existingAccountCounter == m_existingAccountsCount) )
+    {
+        createNewAccount();
+    }
+    m_existingAccountCounter++;
 }
 
 void TelepathyAccount::createNewAccount()

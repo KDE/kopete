@@ -60,6 +60,8 @@ private slots:
 	void onAccountManagerReady(Telepathy::Client::PendingOperation *);
 	void newTelepathyAccountCreated(Telepathy::Client::PendingOperation *);
 	void onAccountReady(Telepathy::Client::PendingOperation *);
+	void onConnectionManagerReady(Telepathy::Client::PendingOperation *);
+	void onExistingAccountReady(Telepathy::Client::PendingOperation *);
 
     void displayNameChanged (const QString &);
     void iconChanged (const QString &);
