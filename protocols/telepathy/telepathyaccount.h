@@ -67,6 +67,7 @@ private slots:
 	void onAccountConnecting(Telepathy::Client::PendingOperation*);
 	void onRequestDisconnect(Telepathy::Client::PendingOperation*);
 	void onAliasChanged(Telepathy::Client::PendingOperation*);
+	void onAvatarChanged(Telepathy::Client::PendingOperation*);
 
     void displayNameChanged (const QString &);
     void iconChanged (const QString &);

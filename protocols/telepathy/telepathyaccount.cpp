@@ -24,6 +24,8 @@
 
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
+#include <kopeteuiglobal.h>
+#include <avatardialog.h>
 
 #include <kdebug.h>
 #include <kglobal.h>
@@ -35,11 +37,14 @@
 #include <kactionmenu.h>
 #include <kinputdialog.h>
 
+#include <TelepathyQt4/Types>
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/Connection>
 #include <TelepathyQt4/Client/PendingReadyAccountManager>
 #include <TelepathyQt4/Client/PendingReadyConnectionManager>
 #include <TelepathyQt4/Client/PendingReadyAccount>
+
+#include <QFile>
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
     : Kopete::Account(protocol, accountId), m_connectionManager(0), m_accountManager(0),
@@ -690,11 +695,37 @@ void TelepathyAccount::onAliasChanged(Telepathy::Client::PendingOperation* opera
     if(isOperationError(operation))
         return;
 	
-	kDebug(TELEPATHY_DEBUG_AREA) << "Alias changed.";
+	kDebug(TELEPATHY_DEBUG_AREA) << "Alias has changed.";
 }
 
 void TelepathyAccount::slotChangeAvatar()
 {
+	// \todo: add here some error message?
+	if(!m_account)
+		return;
+
+	QString avatarPath = Kopete::UI::AvatarDialog::getAvatar(Kopete::UI::Global::mainWidget());
+	
+	Telepathy::Avatar avatar;
+	
+	QFile avatarFile;
+    if (!avatarFile.open(QIODevice::ReadOnly))
+		return;
+	
+	avatar.avatarData = avatarFile.readAll();
+	// \todo: add here mime type for avatar
+	
+	QObject::connect(m_account->setAvatar(avatar), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+        this, SLOT(onAvatarChanged(Telepathy::Client::PendingOperation *)));
 }
 
+void TelepathyAccount::onAvatarChanged(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    if(isOperationError(operation))
+        return;
+	
+	kDebug(TELEPATHY_DEBUG_AREA) << "Avatar has changed.";
+}
 
