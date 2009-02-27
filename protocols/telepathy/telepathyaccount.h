@@ -64,6 +64,7 @@ private slots:
 	void onExistingAccountReady(Telepathy::Client::PendingOperation*);
 	void onRequestedPresence(Telepathy::Client::PendingOperation*);
 	void onAccountConnecting(Telepathy::Client::PendingOperation*);
+	void onRequestDisconnect(Telepathy::Client::PendingOperation*);
 
     void displayNameChanged (const QString &);
     void iconChanged (const QString &);
@@ -99,7 +100,6 @@ private:
 	QSharedPointer<Telepathy::Client::Account> m_account;
 	Telepathy::Client::PendingAccount *m_pendingAccount;
 
-	Kopete::OnlineStatus m_initialStatus;
 	uint m_existingAccountCounter;
 	uint m_existingAccountsCount;
 	bool m_setStatusAfterInit;

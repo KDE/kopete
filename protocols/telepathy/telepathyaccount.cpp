@@ -31,6 +31,7 @@
 #include <ksharedconfig.h>
 
 #include <TelepathyQt4/Client/Account>
+#include <TelepathyQt4/Client/Connection>
 #include <TelepathyQt4/Client/PendingReadyAccountManager>
 #include <TelepathyQt4/Client/PendingReadyConnectionManager>
 #include <TelepathyQt4/Client/PendingReadyAccount>
@@ -71,7 +72,7 @@ void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
 	
 	if(!m_account || !m_account->becomeReady())
 	{
-		m_initialStatus = initialStatus;
+		m_status = initialStatus;
 		initTelepathyAccount();
 		return;
 	}
@@ -98,6 +99,9 @@ void TelepathyAccount::onRequestedPresence(Telepathy::Client::PendingOperation* 
 
     if(isOperationError(operation))
         return;
+	
+	if(m_account->connectsAutomatically())
+		return;
 
     QObject::connect(m_account->setConnectsAutomatically(true),
         SIGNAL(finished(Telepathy::Client::PendingOperation*)),
@@ -119,6 +123,25 @@ void TelepathyAccount::onAccountConnecting(Telepathy::Client::PendingOperation* 
 void TelepathyAccount::disconnect ()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	
+	if(!m_account || !m_account->haveConnection())
+		return;
+	
+	QSharedPointer<Telepathy::Client::Connection> connection = m_account->connection();
+	
+	QObject::connect(connection->requestDisconnect(),
+		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+        this,
+		SLOT(onRequestDisconnect(Telepathy::Client::PendingOperation*))
+    );
+}
+
+void TelepathyAccount::onRequestDisconnect(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    
+    if(isOperationError(operation))
+        return;
 }
 
 void TelepathyAccount::setOnlineStatus (const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
@@ -126,36 +149,48 @@ void TelepathyAccount::setOnlineStatus (const Kopete::OnlineStatus &status, cons
     kDebug(TELEPATHY_DEBUG_AREA);
 	
 	Q_UNUSED(options);
-	
+
+	m_status = status;
+	m_reason = reason;
+
     if(!m_account || !m_account->isReady())
 	{
-		m_status = status;
-		m_reason = reason;
 		m_setStatusAfterInit = true;
 		initTelepathyAccount();
 		return;
 	}
 
-    Telepathy::SimplePresence simplePresence;
-    simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(m_status);
+	if(!isConnected())
+	{
+		connect(status);
+	}
+	else if(status.status() == Kopete::OnlineStatus::Offline)
+	{
+		disconnect();
+	}
+	else
+	{
+	    Telepathy::SimplePresence simplePresence;
+		simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status);
 
-    kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type << m_reason.message();
+	    kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type << reason.message();
 
-    simplePresence.statusMessage = m_reason.message();
+		simplePresence.statusMessage = reason.message();
 
-    Telepathy::Client::PendingOperation *op = m_account->setRequestedPresence(simplePresence);
-    QObject::connect(op,
-		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
-        this,
-		SLOT(onRequestedPresence(Telepathy::Client::PendingOperation*))
-    );
+	    Telepathy::Client::PendingOperation *op = m_account->setRequestedPresence(simplePresence);
+		QObject::connect(op,
+			SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+	        this,
+			SLOT(onRequestedPresence(Telepathy::Client::PendingOperation*))
+	    );
+	}
 }
 
-void TelepathyAccount::setStatusMessage (const Kopete::StatusMessage &statusMessage)
+void TelepathyAccount::setStatusMessage (const Kopete::StatusMessage &reason)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 	
-	Q_UNUSED(statusMessage);
+	setOnlineStatus(m_status, reason);
 }
 
 bool TelepathyAccount::createContact( const QString &contactId, Kopete::MetaContact *parentContact )
@@ -496,7 +531,7 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation *opera
     }
 	else
 	{
-	    connect(m_initialStatus);
+	    connect(m_status);
 	}
 }
 
@@ -575,7 +610,7 @@ void TelepathyAccount::connectionStatusChanged (Telepathy::ConnectionStatus stat
             // Set initial status to myself contact
             myself()->setOnlineStatus( m_status );
             // Set nickname to myself contact
-            //myself()->setNickName( d->currentConnection->userContact()->alias() );
+            myself()->setNickName( m_account->nickname() );
             // Load contact list
             //fetchContactList();
 
