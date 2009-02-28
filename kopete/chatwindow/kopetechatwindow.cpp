@@ -633,8 +633,8 @@ void KopeteChatWindow::createTabBar()
 
 		m_tabBar = new KTabWidget( mainArea );
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-		m_tabBar->setHoverCloseButton(cg.readEntry( QLatin1String("HoverClose"), false ));
-		m_tabBar->setTabReorderingEnabled(true);
+		m_tabBar->setTabsClosable(cg.readEntry( QLatin1String("HoverClose"), false ));
+		m_tabBar->setMovable(true);
 		m_tabBar->setAutomaticResizeTabs(true);
 		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
 
