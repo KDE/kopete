@@ -96,6 +96,9 @@ private:
 	Kopete::MetaContact* metaContactFromIndex( const QModelIndex& index ) const;
 	Kopete::Group* groupFromIndex( const QModelIndex& index ) const;
 
+	void saveExpandedGroups();
+	void expandGroups();
+
 private:
 	void groupPopup( Kopete::Group *group, const QPoint& pos );
 	void metaContactPopup( Kopete::MetaContact *metaContact, const QPoint& pos );

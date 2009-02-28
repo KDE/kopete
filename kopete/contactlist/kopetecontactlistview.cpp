@@ -87,6 +87,7 @@ public:
 	KAction *actionMakeMetaContact;
 
 	QMap<KAction*, Kopete::Account*> addContactAccountMap;
+	QSet<int> notExpandedGroups;
 
 	bool controlPressed;
 };
@@ -209,6 +210,29 @@ Kopete::Group* KopeteContactListView::groupFromIndex( const QModelIndex& index )
 	return qobject_cast<Kopete::Group*>(groupObject);
 }
 
+void KopeteContactListView::saveExpandedGroups()
+{
+	QModelIndex parent = rootIndex();
+	d->notExpandedGroups.clear();
+	for (int i = 0; i < model()->rowCount( parent ); ++i)
+	{
+		QModelIndex child = model()->index( i, 0, parent );
+		if ( !isExpanded( child ) )
+			d->notExpandedGroups << model()->data( child, Kopete::Items::IdRole ).toInt();
+	}
+}
+
+void KopeteContactListView::expandGroups()
+{
+	QModelIndex parent = rootIndex();
+	for (int i = 0; i < model()->rowCount( parent ); ++i)
+	{
+		QModelIndex child = model()->index( i, 0, parent );
+		int groupId = model()->data( child, Kopete::Items::IdRole ).toInt();
+		setExpanded( child, !d->notExpandedGroups.contains( groupId ) );
+	}
+}
+
 void KopeteContactListView::contactActivated( const QModelIndex& index )
 {
 	QVariant v = index.data( Kopete::Items::ElementRole );
@@ -227,9 +251,9 @@ void KopeteContactListView::contactActivated( const QModelIndex& index )
 
 void KopeteContactListView::reset()
 {
-	// TODO: Save/restore expand state
+	saveExpandedGroups();
 	QTreeView::reset();
-	expandAll();
+	expandGroups();
 }
 
 void KopeteContactListView::itemExpanded( const QModelIndex& index )
