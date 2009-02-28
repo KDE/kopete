@@ -29,6 +29,9 @@
 #include "bonjouraccount.h"
 #include "bonjourprotocol.h"
 #include <kconfigdialog.h>
+#include <kuser.h>
+#include <kpimidentities/identity.h>
+#include <kpimidentities/identitymanager.h>
 
 BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Account* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
@@ -45,6 +48,52 @@ BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Acc
 		m_preferencesWidget->kcfg_firstName->setText(group->readEntry("firstName"));
 		m_preferencesWidget->kcfg_lastName->setText(group->readEntry("lastName"));
 		m_preferencesWidget->kcfg_emailAddress->setText(group->readEntry("emailAddress"));
+	} else {
+
+		// In this block, we populate the default values
+		QString firstName, lastName, login, emailAddress;
+		QStringList names;
+
+		// Create a KUser object with default values
+		// We May be able to get username and Real Name from here
+		KUser user = KUser();
+
+		if (user.isValid()) {
+			// Get the login name from KUser
+			login = user.loginName();
+
+			// First Get the Names from KUser
+			names = user.property(KUser::FullName).toString().split(' ');
+		}
+
+		// Next try via the default identity
+		KPIMIdentities::IdentityManager manager(true);
+		KPIMIdentities::Identity ident = manager.defaultIdentity();
+
+		if (! ident.isNull()) {
+			// Get the full name from identity (only if not available via KUser)
+			if ( names.isEmpty() )
+				names = ident.fullName().split(' ');
+
+			// Get the email address
+			emailAddress = ident.emailAddr();
+		}
+
+		// Split the names array into firstName and lastName
+		if (! names.isEmpty()) {
+			firstName = names.takeFirst();
+			lastName = names.join(" ");
+		}
+
+		if (! login.isEmpty())
+			m_preferencesWidget->kcfg_username->setText(login);
+		if (! firstName.isEmpty())
+			m_preferencesWidget->kcfg_firstName->setText(firstName);
+		if (! lastName.isEmpty())
+			m_preferencesWidget->kcfg_lastName->setText(lastName);
+		if (! emailAddress.isEmpty())
+			m_preferencesWidget->kcfg_emailAddress->setText(emailAddress);
+
 	}
 }
 

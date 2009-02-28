@@ -382,7 +382,7 @@ GaduAccount::disconnect( DisconnectReason reason )
 }
 
 void
-GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason )
+GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
 {
 	kDebug(14100) << "Called";
 	changeStatus( status, reason.message() );
@@ -923,7 +923,7 @@ GaduAccount::userlist( const QString& contactsListString )
 			metaContact = contact->metaContact();
 			metaContact->removeFromGroup( Kopete::Group::topLevel() );
 			// put him in all desired groups:
-			groups = contactsList[i].group.split( ",", QString::SkipEmptyParts );
+			groups = contactsList[i].group.split( ',', QString::SkipEmptyParts );
 			for ( QStringList::Iterator groupsIterator = groups.begin(); groupsIterator != groups.end(); ++groupsIterator ) {
 				metaContact->addToGroup( Kopete::ContactList::self ()->findGroup ( *groupsIterator) );
 			}

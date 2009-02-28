@@ -48,11 +48,13 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( ki18n("Olivier Goffart"), ki18n("Lead Developer, MSN plugin maintainer"), "ogoffart@kde.org");
 	aboutData.addAuthor ( ki18n("Ollivier Lapeyre Johann"), ki18n("Artist / Developer, Artwork maintainer"), "johann.ollivierlapeyre@gmail.com" );
 	aboutData.addAuthor ( ki18n("Richard Smith"), ki18n("Developer, UI maintainer"), "kde@metafoo.co.uk" );
+	aboutData.addAuthor ( ki18n("Tiago Salem Herrmann"), ki18n("Developer, WLM plugin maintainer"), "tiagosh@gmail.com");
 	aboutData.addAuthor ( ki18n("Till Gerken"), ki18n("Developer, Jabber plugin maintainer"), "till@tantalo.net");
 	aboutData.addAuthor ( ki18n("Will Stephenson"), ki18n("Lead Developer, GroupWise maintainer"), "wstephenson@kde.org" );
 	aboutData.addAuthor ( ki18n("Rafael Fernández López"), ki18n("Developer"), "ereslibre@kde.org" );
 	aboutData.addAuthor ( ki18n("Roman Jarosz"), ki18n("Developer, AIM and ICQ"), "kedgedev@centrum.cz" );
 	aboutData.addAuthor ( ki18n("Charles Connell"), ki18n("Developer"), "charles@connells.org" );
+	aboutData.addAuthor ( ki18n("Tejas Dinkar"), ki18n("Developer, Bonjour Plugin Maintainer"), "tejas@gja.in", "http://www.gja.in" );
 
 	aboutData.addCredit ( ki18n("Vally8"), ki18n("Konki style author"), "vally8@gmail.com", "http://vally8.free.fr/" );
 	aboutData.addCredit ( ki18n("Tm_T"), ki18n("Hacker style author"), "jussi.kekkonen@gmail.com");

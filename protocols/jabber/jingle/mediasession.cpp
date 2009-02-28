@@ -70,7 +70,7 @@ void MediaSession::setQuality(int q)
 bool MediaSession::start()
 {
 	d->startTime = QTime::currentTime();
-	bool managerOk = d->mediaManager->addSession(this); //Tell the media manager te session is being started.
+	bool managerOk = d->mediaManager->addSession(this); //Tell the media manager the session is being started.
 	bool pluginOk = d->plugin->start();
 
 	connect((QObject*) d->mediaManager->alsaIn(), SIGNAL(readyRead()), (QObject*) this, SLOT(slotReadyRead()));
@@ -96,12 +96,9 @@ void MediaSession::slotReadyRead()
 void MediaSession::slotEncoded()
 {
 	//d->encodedData.clear();
-	d->encodedData = d->plugin->encodedData(); //FIXME:what about this QByteArray lifetime ?
-	//FIXME:speexData lifetime is until encode() is called again.
+	d->encodedData = d->plugin->encodedData();
 	
-	//qDebug() << "speexData =" << d->encodedData.toBase64() << "(" << d->encodedData.size() << "bytes)";
-	
-	emit readyRead(d->ts += d->tsValue); // Encoded data is ready to be read and sent over the network.
+	emit readyRead(); // Encoded data is ready to be read and sent over the network.
 }
 
 QByteArray MediaSession::read() const
@@ -119,8 +116,10 @@ void MediaSession::slotDecoded()
 		qDebug() << "rawData is NULL !";
 		return;
 	}
-	//MediaManager always writes and reads from Alsa device(s)
+	
 	//qDebug() << "rawData =" << rawData.toBase64() << "(" << rawData.size() << "bytes)";
+	
+	//FIXME: write should become writeAudio, a write Video should be created.
 	d->mediaManager->write(rawData);
 }
 

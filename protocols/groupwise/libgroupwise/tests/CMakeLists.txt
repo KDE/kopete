@@ -1,5 +1,5 @@
 
-include_directories( ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise/qca/src ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise ${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise  )
+include_directories( ${KOPETE_SOURCE_DIR}/protocols/groupwise ${KOPETE_SOURCE_DIR}/protocols/groupwise/libgroupwise ${KOPETE_SOURCE_DIR}/protocols/groupwise/libgroupwise/qca/src )
 
 
 ########### next target ###############

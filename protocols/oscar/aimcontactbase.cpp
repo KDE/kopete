@@ -143,7 +143,9 @@ void AIMContactBase::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *
 						fontTag += QString( " SIZE=%1" ).arg( aimFontSize( format.fontPointSize() ) );
 					if ( format.foreground().style() != Qt::NoBrush )
 						fontTag += QString( " COLOR=%1" ).arg( format.foreground().color().name() );
-					
+					if ( format.background().style() != Qt::NoBrush )
+						fontTag += QString( " BACK=%1" ).arg( format.background().color().name() );
+
 					if ( !fontTag.isEmpty() )
 					{
 						s += QString("<FONT%1>").arg( fontTag );

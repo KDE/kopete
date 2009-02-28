@@ -126,6 +126,7 @@ public:
 	const QStringList mimeTypes() const;
 
 	void handleURL( const QString &mimeType, const KUrl &url ) const;
+	void handleURL( const KUrl &url ) const;
 };
 
 } // Kopete

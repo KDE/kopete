@@ -101,7 +101,7 @@ void dlgJabberChatRoomsList::slotQueryFinished()
 	int row = 0;
 	for (XMPP::DiscoList::const_iterator it = items.begin(); it != items.end(); ++it)
 	{
-		QTableWidgetItem *row0 = new QTableWidgetItem( (*it).jid().user() );
+		QTableWidgetItem *row0 = new QTableWidgetItem( (*it).jid().node() );
 		QTableWidgetItem *row1 = new QTableWidgetItem( (*it).name() );
 		m_ui.tblChatRoomsList->setItem(row, 0, row0);
 		m_ui.tblChatRoomsList->setItem(row, 1, row1);

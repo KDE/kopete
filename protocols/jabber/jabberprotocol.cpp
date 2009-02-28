@@ -348,6 +348,11 @@ XMPP::Status JabberProtocol::kosToStatus( const Kopete::OnlineStatus & status , 
 #include <kmessagebox.h>
 #include <kinputdialog.h>
 
+void JabberProtocol::handleURL(const QString&, const KUrl & kurl) const
+{
+  handleURL(kurl);
+}
+
 void JabberProtocol::handleURL(const KUrl & kurl) const
 {
 	QUrl url=kurl; //QUrl has better query handling.
@@ -485,9 +490,9 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 					return;
 			}
 			if(action=="join" && url.hasQueryItem("password"))
-				account->client()->joinGroupChat( jid.host() , jid.user() , nick, url.queryItemValue("password") );
+				account->client()->joinGroupChat( jid.domain() , jid.node() , nick, url.queryItemValue("password") );
 			else
-				account->client()->joinGroupChat( jid.host() , jid.user() , nick );
+				account->client()->joinGroupChat( jid.domain() , jid.node() , nick );
 		}
 		
 		if(action=="invite" && url.hasQueryItem("jid") )
@@ -496,8 +501,8 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			//      iris doesn't implement groupchat yet
 			//NOTE: This code is duplicated in JabberGroupChatManager::inviteContact
 			XMPP::Message jabberMessage;
-			XMPP::Jid jid = static_cast<const JabberBaseContact*>(account->myself())->rosterItem().jid() ;
-			jabberMessage.setFrom ( jid );
+			//XMPP::Jid jid = static_cast<const JabberBaseContact*>(account->myself())->rosterItem().jid() ;
+			//jabberMessage.setFrom ( jid );
 			jabberMessage.setTo ( url.queryItemValue("jid") );
 			jabberMessage.setInvite( jid.bare() );
 			jabberMessage.setBody( i18n("You have been invited to %1", jid.bare() ) );

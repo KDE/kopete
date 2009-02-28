@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="35" name="kopetechatwindow">
+<kpartgui version="44" name="kopetechatwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -18,13 +18,6 @@
 		<Menu name="format" >
 			<text>&amp;Format</text>
 			<Action name="format_smiley"/>
-			<Separator lineSeparator="true"/>
-			<Action name="enable_richtext" />
-			<Action name="format_font_and_color_reset" />
-			<Separator lineSeparator="true"/>
-			<Action name="format_font" />
-			<Action name="format_fgcolor" />
-			<Action name="format_bgcolor" />
 		</Menu>
 
 		<Menu name="tabs" >
@@ -52,7 +45,8 @@
 		<text>Main Toolbar</text>
 		<Merge />
 	</ToolBar>
-    <ToolBar name="chatToolBar">
+	
+	<ToolBar name="chatToolBar">
 		<text>Chat Toolbar</text>
 		<Action name="chat_send_file" />
 		<Action name="format_smiley"/>
@@ -67,15 +61,9 @@
 	<ToolBar name="statusToolBar" hidden="true">
 		<text>Status</text>
 	</ToolBar>
-	<ToolBar name="formatToolBar" hidden="true">
+	
+	<ToolBar name="formatToolBar" hidden="true" newline="true">
 		<text>Format Toolbar</text>
-		<Action name="enable_richtext" />
-		<Action name="format_font_and_color_reset" />
-		<Separator lineSeparator="true"/>
-		<Action name="format_font" />
-		<Action name="format_fgcolor" />
-		<Action name="format_bgcolor" />
+		<Merge />
 	</ToolBar>
-
-
 </kpartgui>

@@ -1,4 +1,4 @@
-add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
+add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS -DIRIS_XMPP_JID_DEPRECATED)
 
 add_subdirectory( icons ) 
 add_subdirectory( libiris ) 
@@ -8,17 +8,10 @@ include_directories(
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/ui/
 ${CMAKE_CURRENT_SOURCE_DIR}/tasks/
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/include/
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/jabber/ 
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-core/ 
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp-im/ 
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/util/ 
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/network/ 
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/cutestuff/ 
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/ 
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/include/
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp/jingle
 ${QCA2_INCLUDE_DIR}
-/usr/include/glib-2.0/
-/usr/lib/glib-2.0/include/
 )
 
 IF(BUILD_JINGLE)
@@ -117,8 +110,6 @@ set(kopete_jabber_PART_SRCS
    jabbertransport.cpp 
    jabberbookmarks.cpp 
    jabberclient.cpp 
-   jabberconnector.cpp 
-   jabberbytestream.cpp
 )
 
 if(BUILD_JINGLE)	

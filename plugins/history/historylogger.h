@@ -18,17 +18,17 @@
 #ifndef HISTORYLOGGER_H
 #define HISTORYLOGGER_H
 
-#include <QObject>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtCore/QList>
 #include <QtCore/QMap>
 #include <QtXml/QDomDocument>
 
-#include "kopetemessage.h" //TODO: REMOVE
-
-namespace Kopete { class Contact; }
-namespace Kopete { class MetaContact; }
 class QDate;
 class QTimer;
+
+namespace Kopete { class Message; }
+namespace Kopete { class Contact; }
+namespace Kopete { class MetaContact; }
 
 /**
  * One hinstance of this class is opened for every Kopete::ChatSession,

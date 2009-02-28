@@ -110,7 +110,8 @@ public slots:
 
     /** Reimplemented from Kopete::Account */
     void setOnlineStatus(const Kopete::OnlineStatus& status,
-            const Kopete::StatusMessage &reason = Kopete::StatusMessage());
+                         const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+                         const OnlineStatusOptions& options = None);
     void setAway(bool away, const QString &reason = QString());
 
 private:

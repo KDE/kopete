@@ -19,7 +19,6 @@
 BookmarksPrefsSettings::BookmarksPrefsSettings(QObject *parent)
  : QObject(parent)
 {
-	load();
 }
 
 

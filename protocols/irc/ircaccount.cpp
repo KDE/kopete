@@ -293,7 +293,7 @@ void IRCAccount::clientConnect()
 			urlString = "irc://";
 		}
 
-		urlString += nickName() + "@" + host.host+":"+QString::number(host.port);
+		urlString += nickName() + '@' + host.host + ':' + QString::number(host.port);
 
 		KUrl url(urlString);
 		//TODO use the constants in kircconst.h
@@ -601,7 +601,7 @@ void IRCAccount::slotJoinChannel()
 	}
 }
 
-void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus)
+void IRCAccount::setOnlineStatus(const OnlineStatus& status , const StatusMessage &messageStatus, const OnlineStatusOptions& options)
 {
 	kDebug(14120) ;
 	d->expectedOnlineStatus = status;

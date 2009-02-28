@@ -1,11 +1,8 @@
-This patch makes libiris treat JIDs as not being case sensitive
-
-
-Index: iris/xmpp-core/jid.cpp
+Index: iris/xmpp/jid/jid.cpp
 ===================================================================
---- iris/xmpp-core/jid.cpp	(revision 513088)
-+++ iris/xmpp-core/jid.cpp	(working copy)
-@@ -252,6 +252,9 @@
+--- iris/xmpp/jid/jid.cpp	(revision 925917)
++++ iris/xmpp/jid/jid.cpp	(working copy)
+@@ -260,6 +260,9 @@
  		b = d;
  	else
  		b = n + '@' + d;

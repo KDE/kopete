@@ -27,7 +27,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QTreeWidget" name="mAccountList" >
+      <widget class="AccountTreeWidget" name="mAccountList" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="sizePolicy" >
         <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
          <horstretch>0</horstretch>
@@ -137,6 +143,19 @@ these labels!</string>
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="mButtonAccountSetColor" >
+          <property name="toolTip" >
+           <string>Set a custom color for this account</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Account are often differentiated by the protocol icon. But if you have severals accounts of the same protocol, you may apply a color filter to that icon to differentiate accounts from the same protocols.</string>
+          </property>
+          <property name="text" >
+           <string>Set C&amp;olor...</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
@@ -224,6 +243,13 @@ these labels!</string>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>AccountTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>accounttreewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>mButtonIdentityModify</tabstop>
  </tabstops>

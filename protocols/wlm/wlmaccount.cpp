@@ -198,7 +198,8 @@ void WlmAccount::setPersonalMessage (const Kopete::StatusMessage & reason)
 
 void
 WlmAccount::setOnlineStatus (const Kopete::OnlineStatus & status,
-                             const Kopete::StatusMessage & reason)
+                             const Kopete::StatusMessage & reason,
+                             const OnlineStatusOptions& options)
 {
     kDebug (14210) << k_funcinfo;
 
@@ -954,6 +955,13 @@ WlmAccount::connectionCompleted ()
                 Kopete::Global::Properties::self()->nickName()).value().toString();
         m_server->cb.mainConnection->setFriendlyName(nick.toAscii().data());
     }
+    else
+    {
+        // Set myself contact display name here
+        // This information come along with the address book
+        // Fix BUG 182366
+        m_server->cb.mainConnection->setFriendlyName( m_server->mainConnection->myDisplayName.c_str() );
+    }
 
     password ().setWrong (false);
 
@@ -1058,7 +1066,9 @@ WlmAccount::connectionCompleted ()
     foreach ( const QString &contact, pendingList() )
     {
         // if we do not have this contact yet, so ask for add it
-        if(!isOnServerSideList(contact))
+        if(!isOnServerSideList(contact) &&
+                !isOnAllowList(contact) &&
+                !isOnBlockList(contact))
         {
             // fake this contact in RL to prompt the user to add it
             gotNewContact (MSN::LST_RL, contact, contact);

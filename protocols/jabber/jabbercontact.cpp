@@ -309,7 +309,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 				return;
 			
 			XMPP::Jid roomjid(room);
-			account()->client()->joinGroupChat( roomjid.host() , roomjid.user() , futureNewNickName );
+			account()->client()->joinGroupChat( roomjid.domain() , roomjid.node() , futureNewNickName );
 			return;
 		}
 		else if (message.body().isEmpty())
@@ -859,7 +859,7 @@ JabberChatSession *JabberContact::manager ( Kopete::ContactPtrList chatMembers, 
 		 * will stay empty.
 		 */
 		if ( jid.resource().isEmpty () )
-			jid.setResource ( account()->resourcePool()->lockedResource ( jid ).name () );
+			jid.withResource ( account()->resourcePool()->lockedResource ( jid ).name () );
 
 		kDebug(JABBER_DEBUG_GLOBAL) << "No manager found, creating a new one with resource '" << jid.resource () << "'";
 

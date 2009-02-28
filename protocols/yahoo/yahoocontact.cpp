@@ -1,3 +1,4 @@
+
 /*
     yahoocontact.cpp - Yahoo Contact
 
@@ -271,6 +272,17 @@ QString YahooContact::prepareMessage( const QString &messageText )
 		}
 	}
 
+	// find and remove background color formattings (not supported)
+	regExp.setPattern( "<span([^>]*)background-color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.indexIn( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsg.replace( regExp, QLatin1String("<span\\1\\3>\\4</span>" ) );
+		}
+	}
+
 	// find and replace Color-formattings
 	regExp.setPattern( "<span([^>]*)color:#([0-9a-zA-Z]*)([^>]*)>(.*)</span>" );
 	pos = 0;
@@ -306,6 +318,17 @@ QString YahooContact::prepareMessage( const QString &messageText )
 
 	// remove span-tags
 	regExp.setPattern( "<span([^>]*)>(.*)</span>" );
+	pos = 0;
+	while ( pos >= 0 ) {
+		pos = regExp.indexIn( messageText, pos );
+		if ( pos >= 0 ) {
+			pos += regExp.matchedLength();
+			newMsg.replace( regExp, QLatin1String("\\2") );
+		}
+	}
+
+	// remove p-tags
+	regExp.setPattern( "<p([^>]*)>(.*)</p>" );
 	pos = 0;
 	while ( pos >= 0 ) {
 		pos = regExp.indexIn( messageText, pos );
@@ -559,30 +582,25 @@ void YahooContact::buzzContact()
 	}
 }
 
-void YahooContact::setDisplayPicture(KTemporaryFile *f, int checksum)
+void YahooContact::setDisplayPicture(const QByteArray &data, int checksum)
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
-	if( !f )
-		return;
-	// stolen from msncontact.cpp ;)
+	kDebug(YAHOO_GEN_DEBUG) << data.size();
+
 	setProperty( YahooProtocol::protocol()->iconCheckSum, checksum );
 
 	Kopete::AvatarManager::AvatarEntry entry;
 	entry.name = contactId();
 	entry.category = Kopete::AvatarManager::Contact;
 	entry.contact = this;
-	entry.image = QImage(f->fileName());
+	entry.image = QImage::fromData(data);
 	entry = Kopete::AvatarManager::self()->add(entry);
 
-	if (!entry.path.isNull())
+	if (!entry.dataPath.isNull())
 	{
 		setProperty( Kopete::Global::Properties::self()->photo(), QString() );
-		setProperty( Kopete::Global::Properties::self()->photo() , entry.path );
+		setProperty( Kopete::Global::Properties::self()->photo() , entry.dataPath );
 		emit displayPictureChanged();
 	}
-
-	f->setAutoRemove(true);
-	delete f;
 }
 
 

@@ -1,8 +1,7 @@
-
-this patch fixes format string abuse in the libs
-
---- iris/xmpp-im/xmpp_vcard.cpp
-+++ iris/xmpp-im/xmpp_vcard.cpp
+Index: iris/xmpp/xmpp-im/xmpp_vcard.cpp
+===================================================================
+--- iris/xmpp/xmpp-im/xmpp_vcard.cpp	(revision 925917)
++++ iris/xmpp/xmpp-im/xmpp_vcard.cpp	(working copy)
 @@ -28,6 +28,7 @@
  #include <QImageReader>
  #include <QImageWriter>
@@ -11,7 +10,7 @@ this patch fixes format string abuse in the libs
  
  #include "xmpp_xmlcommon.h"
  
-@@ -60,7 +61,7 @@ QString image2type(const QByteArray &ba)
+@@ -60,7 +61,7 @@
  	if ( format.toUpper() == "JPEG" )
  		return "image/jpeg";
  
@@ -20,59 +19,3 @@ this patch fixes format string abuse in the libs
  
  	return "image/unknown";
  }
---- iris/xmpp-core/compress.cpp
-+++ iris/xmpp-core/compress.cpp
-@@ -35,7 +35,7 @@ void Compressor::flush()
- 	write(QByteArray(),true);
- 	int result = deflateEnd(zlib_stream_);
- 	if (result != Z_OK) 
--		qWarning(QString("compressor.c: deflateEnd failed (%1)").arg(result).toAscii());
-+		qWarning() << QString("compressor.c: deflateEnd failed (%1)").arg(result).toAscii();
- 	
- 	flushed_ = true;
- }
-@@ -60,7 +60,7 @@ int Compressor::write(const QByteArray&
- 		zlib_stream_->next_out = (Bytef*) (output.data() + output_position);
- 		result = deflate(zlib_stream_,(flush ? Z_FINISH : Z_NO_FLUSH));
- 		if (result == Z_STREAM_ERROR) {
--			qWarning(QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii());
-+			qWarning() << QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii();
- 			return result;
- 		}
- 		output_position += CHUNK_SIZE;
-@@ -79,7 +79,7 @@ int Compressor::write(const QByteArray&
- 			zlib_stream_->next_out = (Bytef*) (output.data() + output_position);
- 			result = deflate(zlib_stream_,Z_SYNC_FLUSH);
- 			if (result == Z_STREAM_ERROR) {
--				qWarning(QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii());
-+				qWarning() << QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii();
- 				return result;
- 			}
- 			output_position += CHUNK_SIZE;
-@@ -123,7 +123,7 @@ void Decompressor::flush()
- 	write(QByteArray(),true);
- 	int result = inflateEnd(zlib_stream_);
- 	if (result != Z_OK) 
--		qWarning(QString("compressor.c: inflateEnd failed (%1)").arg(result).toAscii());
-+		qWarning() << QString("compressor.c: inflateEnd failed (%1)").arg(result).toAscii();
- 	
- 	flushed_ = true;
- }
-@@ -148,7 +148,7 @@ int Decompressor::write(const QByteArray
- 		zlib_stream_->next_out = (Bytef*) (output.data() + output_position);
- 		result = inflate(zlib_stream_,(flush ? Z_FINISH : Z_NO_FLUSH));
- 		if (result == Z_STREAM_ERROR) {
--			qWarning(QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii());
-+			qWarning() << QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii();
- 			return result;
- 		}
- 		output_position += CHUNK_SIZE;
-@@ -169,7 +169,7 @@ int Decompressor::write(const QByteArray
- 			zlib_stream_->next_out = (Bytef*) (output.data() + output_position);
- 			result = inflate(zlib_stream_,Z_SYNC_FLUSH);
- 			if (result == Z_STREAM_ERROR) {
--				qWarning(QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii());
-+				qWarning() << QString("compressor.cpp: Error ('%1')").arg(zlib_stream_->msg).toAscii();
- 				return result;
- 			}
- 			output_position += CHUNK_SIZE;

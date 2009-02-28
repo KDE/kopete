@@ -42,7 +42,7 @@ public:
 	JabberDiscoProtocol ( const QByteArray &pool_socket, const QByteArray &app_socket );
 	virtual ~JabberDiscoProtocol ();
 
-	void setHost ( const QString &host, int port, const QString &user, const QString &pass );
+	virtual void setHost(const QString& host, quint16 port, const QString& user, const QString& pass);
 
 	void openConnection ();
 	void closeConnection ();

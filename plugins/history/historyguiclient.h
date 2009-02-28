@@ -17,12 +17,15 @@
 #ifndef HISTORYGUICLIENT_H
 #define HISTORYGUICLIENT_H
 
-#include <QObject>
+#include <QtCore/QObject>
+
 #include <kxmlguiclient.h>
 
-namespace Kopete { class ChatSession; }
-class HistoryLogger;
 class KAction;
+
+namespace Kopete { class ChatSession; }
+
+class HistoryLogger;
 
 /**
  *@author Olivier Goffart
@@ -41,6 +44,7 @@ private slots:
 	void slotLast();
 	void slotNext();
 	void slotQuote();
+	void slotViewHistory();
 
 private:
 	HistoryLogger *m_logger;

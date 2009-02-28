@@ -62,7 +62,6 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaddedinfoevent.h"
 
-#include "jabberconnector.h"
 #include "jabberclient.h"
 #include "jabberprotocol.h"
 #include "jabberresourcepool.h"
@@ -145,6 +144,7 @@ void JabberAccount::cleanup ()
 
 #ifdef JINGLE_SUPPORT
 	delete m_jcm;
+	m_jcm = 0L;
 #endif
 }
 
@@ -347,14 +347,15 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		m_jabberClient->disconnect ();
 	}
 
-	// we need to use the old protocol for now
-	m_jabberClient->setUseXMPP09 ( true );
+	if (configGroup()->readEntry("CustomServer",false))
+	{
+		m_jabberClient->setUseXMPP09 ( configGroup()->readEntry("CustomServer",false) );
+		// override server and port (this should be dropped when using the new protocol and no direct SSL)
+		m_jabberClient->setOverrideHost ( true, server (), port () );
+	}
 
 	// set SSL flag (this should be converted to forceTLS when using the new protocol)
 	m_jabberClient->setUseSSL ( configGroup()->readEntry ( "UseSSL", false ) );
-
-	// override server and port (this should be dropped when using the new protocol and no direct SSL)
-	m_jabberClient->setOverrideHost ( true, server (), port () );
 
 	// allow plaintext password authentication or not?
 	m_jabberClient->setAllowPlainTextPassword ( configGroup()->readEntry ( "AllowPlainTextPassword", false ) );
@@ -638,7 +639,7 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 }
 
-void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
+void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& /* options */ )
 {
 	XMPP::Status xmppStatus = m_protocol->kosToStatus( status, reason.message() );
 
@@ -646,9 +647,9 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	{
 			xmppStatus.setIsAvailable( false );
 			kDebug (JABBER_DEBUG_GLOBAL) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
-			disconnect (Manual, xmppStatus);
-            return;
-    }
+			disconnect (Manual, xmppStatus);	
+			return;
+    	}
 
 	if( isConnecting () )
 	{
@@ -760,8 +761,8 @@ void JabberAccount::slotCSDisconnected ()
 	resourcePool()->clear();
 
 #ifdef JINGLE_SUPPORT
-	if (m_jcm != 0)
-		delete m_jcm;
+	delete m_jcm;
+	m_jcm = 0L;
 #endif
 
 }
@@ -1375,7 +1376,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 	{
 		// this is a groupchat message, forward it to the group contact
 		// (the one without resource name)
-		XMPP::Jid jid ( message.from().userHost () );
+		XMPP::Jid jid ( message.from().bare() );
 
 		// try to locate an exact match in our pool first
 		contactFrom = contactPool()->findExactMatch ( jid );
@@ -1412,7 +1413,7 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 			// NOTE: This is a stupid way to do it, but
 			// message.from().setResource("") had no
 			// effect. Iris bug?
-			XMPP::Jid jid ( message.from().userHost () );
+			XMPP::Jid jid ( message.from().bare() );
 
 			// the contact is not in our pool, add it as a temporary contact
 			kDebug (JABBER_DEBUG_GLOBAL) << jid.full () << " is unknown to us, creating temporary contact.";
@@ -1475,10 +1476,10 @@ void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 	 * by slotGroupChatPresence(), since the server will signal our own
 	 * presence back to us.
 	 */
-	resourcePool()->addResource ( XMPP::Jid ( jid.userHost () ), XMPP::Resource ( jid.resource () ) );
+	resourcePool()->addResource ( XMPP::Jid ( jid.bare() ), XMPP::Resource ( jid.resource () ) );
 
 	// lock the room to our own status
-	resourcePool()->lockToResource ( XMPP::Jid ( jid.userHost () ), jid.resource () );
+	resourcePool()->lockToResource ( XMPP::Jid ( jid.bare() ), jid.resource () );
 	
 	m_bookmarks->insertGroupChat(jid);	
 }
@@ -1489,7 +1490,7 @@ void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 	
 	// remove group contact from list
 	Kopete::Contact *contact = 
-			Kopete::ContactList::self()->findContact( protocol()->pluginId() , accountId() , jid.userHost() );
+			Kopete::ContactList::self()->findContact( protocol()->pluginId() , accountId() , jid.bare() );
 
 	if ( contact )
 	{
@@ -1501,7 +1502,7 @@ void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 	}
 
 	// now remove it from our pool, which should clean up all subcontacts as well
-	contactPool()->removeContact ( XMPP::Jid ( jid.userHost () ) );
+	contactPool()->removeContact ( XMPP::Jid ( jid.bare() ) );
 	
 }
 
@@ -1510,7 +1511,7 @@ void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::St
 	kDebug (JABBER_DEBUG_GLOBAL) << "Received groupchat presence for room " << jid.full ();
 
 	// fetch room contact (the one without resource)
-	JabberGroupContact *groupContact = dynamic_cast<JabberGroupContact *>( contactPool()->findExactMatch ( XMPP::Jid ( jid.userHost () ) ) );
+	JabberGroupContact *groupContact = dynamic_cast<JabberGroupContact *>( contactPool()->findExactMatch ( XMPP::Jid ( jid.bare() ) ) );
 
 	if ( !groupContact )
 	{

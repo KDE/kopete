@@ -111,7 +111,7 @@ void JingleCallsGui::slotTerminate()
 {
 	kDebug() << "Terminate session";
 	TreeItem *item = static_cast<TreeItem*>(ui.treeView->currentIndex().internalPointer());
-	if (item == 0 && item->session() == 0)
+	if (item == 0 || item->session() == 0)
 		return;
 	item->session()->jingleSession()->sessionTerminate(); //FIXME:Maybe ask the manager to do that...
 	removeSession(item->session());

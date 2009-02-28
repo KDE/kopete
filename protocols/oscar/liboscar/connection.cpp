@@ -49,7 +49,7 @@ public:
 	QHash<Oscar::DWORD, Oscar::MessageInfo> snacSequenceToMessageInfo;
 };
 
-
+QList<Oscar::WORD> Connection::m_startFlapSequenceList;
 
 Connection::Connection( ClientStream* cs, const char* name )
 : QObject( 0 )
@@ -67,9 +67,17 @@ Connection::Connection( ClientStream* cs, const char* name )
 
 Connection::~Connection()
 {
+	// During clientStream deletion it can emit connected signal so we disconnect signals.
+	disconnect( d->clientStream, 0, this, 0 );
+
 	delete d->rateClassManager;
 	delete d->clientStream;
 	delete d;
+}
+
+void Connection::setStartFlapSequenceList( const QList<Oscar::WORD>& seqList )
+{
+	m_startFlapSequenceList = seqList;
 }
 
 void Connection::setClient( Client* c )
@@ -235,7 +243,23 @@ void Connection::forcedSend( Transfer* request ) const
 void Connection::initSequence()
 {
 	d->snacSequence = ( KRandom::random() & 0xFFFF );
-	d->flapSequence = ( KRandom::random() & 0xFFFF );
+
+	if ( m_startFlapSequenceList.isEmpty() )
+		d->flapSequence = generateInitialFlapSequence();
+	else
+		d->flapSequence = m_startFlapSequenceList.value( qrand() % m_startFlapSequenceList.size() ) - 1;
+
+	kDebug(OSCAR_RAW_DEBUG) << "d->flapSequence:" << hex << d->flapSequence;
+}
+
+Oscar::WORD Connection::generateInitialFlapSequence() const
+{
+	// Taken from Miranda (icq_packet.cpp)
+	Oscar::DWORD n = qrand() % 0x8000;
+	Oscar::DWORD s = 0;
+	
+	for ( Oscar::DWORD i = n; i >>= 3; s += i ) {}
+	return ((((0 - s) ^ (Oscar::BYTE)n) & 7) ^ n) + 2;
 }
 
 void Connection::distribute( Transfer * transfer ) const

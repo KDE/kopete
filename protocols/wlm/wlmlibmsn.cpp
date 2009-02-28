@@ -83,6 +83,7 @@ Callbacks::closeSocket (void *s)
     {
         a->close ();
         socketList.removeAll (a);
+        a->deleteLater();
     }
 }
 

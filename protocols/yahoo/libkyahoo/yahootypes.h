@@ -72,8 +72,8 @@ namespace Yahoo
 		ServiceAuthResp = 0x54,
 		ServiceList = 85,
 		ServiceAuth = 0x57,
-		ServiceAddBuddy = 0x83,
-		ServiceRemBuddy,
+		ServiceBuddyAdd = 0x83,
+		ServiceBuddyRemove = 0x84,
 		ServiceIgnoreContact,	/* > 1, 7, 13 < 1, 66, 13, 0*/
 		ServiceRejectContact,
 		ServiceGroupRename = 0x89, /* > 1, 65(new), 66(0), 67(old) */

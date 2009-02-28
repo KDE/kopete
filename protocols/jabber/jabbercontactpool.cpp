@@ -112,7 +112,7 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 JabberBaseContact *JabberContactPool::addGroupContact ( const XMPP::RosterItem &contact, bool roomContact, Kopete::MetaContact *metaContact, bool dirty )
 {
 
-	XMPP::RosterItem mContact ( roomContact ? contact.jid().userHost () : contact.jid().full() );
+	XMPP::RosterItem mContact ( roomContact ? contact.jid().bare() : contact.jid().full() );
 
 	// see if the contact already exists
 	JabberContactPoolItem *mContactItem = findPoolItem ( mContact );
@@ -302,7 +302,7 @@ JabberBaseContact *JabberContactPool::findRelevantRecipient ( const XMPP::Jid &j
 
 	foreach(JabberContactPoolItem *mContactItem, mPool)
 	{
-		if ( mContactItem->contact()->rosterItem().jid().full().toLower () == jid.userHost().toLower () )
+		if ( mContactItem->contact()->rosterItem().jid().full().toLower () == jid.bare().toLower () )
 		{
 			return mContactItem->contact ();
 		}
@@ -318,7 +318,7 @@ QList<JabberBaseContact*> JabberContactPool::findRelevantSources ( const XMPP::J
 
 	foreach(JabberContactPoolItem *mContactItem, mPool)
 	{
-		if ( mContactItem->contact()->rosterItem().jid().userHost().toLower () == jid.userHost().toLower () )
+		if ( mContactItem->contact()->rosterItem().jid().bare().toLower () == jid.bare().toLower () )
 		{
 			list.append ( mContactItem->contact () );
 		}

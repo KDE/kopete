@@ -1,17 +1,17 @@
 
 include_directories( 
 ${KOPETE_INCLUDES} 
-${CMAKE_SOURCE_DIR}/kopete/kopete/addaccountwizard 
-${CMAKE_BINARY_DIR}/kopete/kopete/addaccountwizard 
-${CMAKE_SOURCE_DIR}/kopete/kopete/identity
-${CMAKE_BINARY_DIR}/kopete/kopete/identity
+${KOPETE_SOURCE_DIR}/kopete/addaccountwizard
+${KOPETE_BINARY_DIR}/kopete/addaccountwizard
+${KOPETE_SOURCE_DIR}/kopete/identity
+${KOPETE_BINARY_DIR}/kopete/identity
 )
 
-link_directories( ${CMAKE_BINARY_DIR}/kopete/kopete/addaccountwizard ${CMAKE_BINARY_DIR}/kopete/kopete/identity )
+link_directories( ${KOPETE_BINARY_DIR}/kopete/addaccountwizard ${KOPETE_BINARY_DIR}/kopete/identity )
 
 ########### next target ###############
 
-set(kcm_kopete_accountconfig_PART_SRCS kopeteaccountconfig.cpp )
+set(kcm_kopete_accountconfig_PART_SRCS accounttreewidget.cpp kopeteaccountconfig.cpp )
 
 
 kde4_add_ui_files(kcm_kopete_accountconfig_PART_SRCS kopeteaccountconfigbase.ui )

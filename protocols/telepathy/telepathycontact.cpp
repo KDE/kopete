@@ -238,12 +238,12 @@ void TelepathyContact::telepathyAvatarReceived(QtTapioca::ContactBase *contactBa
 
 	Kopete::AvatarManager::AvatarEntry result = Kopete::AvatarManager::self()->add( newAvatar );
 	
-	if( !result.path.isEmpty() )
+	if( !result.dataPath.isEmpty() )
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << "Setting avatar information for " << contactId();
 
 		// Set avatar in Kopete
-		setProperty( Kopete::Global::Properties::self()->photo(), result.path );
+		setProperty( Kopete::Global::Properties::self()->photo(), result.dataPath );
 		setProperty( TelepathyProtocol::protocol()->propAvatarToken, avatar->token() );
 	}
 	else

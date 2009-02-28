@@ -208,6 +208,10 @@ void WlmContact::sync(unsigned int flags)
     if( !metaContact() )
         return;
 
+    // Don't add the contact if it's myself.
+    if(contactId() == account()->accountId())
+        return;
+
     if ( (flags & Kopete::Contact::MovedBetweenGroup) == Kopete::Contact::MovedBetweenGroup )
     {
         Kopete::Group* newGroup = metaContact()->groups().first();

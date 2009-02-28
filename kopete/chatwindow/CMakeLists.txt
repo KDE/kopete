@@ -14,7 +14,7 @@ chatmessagepart.cpp
 emoticonselector.cpp 
 kopeteemoticonaction.cpp 
 chattexteditpart.cpp 
-krichtexteditpart.cpp 
+kopeterichtextwidget.cpp
 kopetechatwindowstylemanager.cpp 
 kopetechatwindowstyle.cpp )
 
@@ -27,14 +27,14 @@ install(TARGETS kopetechatwindow_shared ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### next target ###############
 
-set(krichtexteditpart_PART_SRCS krichtexteditpart.cpp )
+set(chattexteditpart_PART_SRCS chattexteditpart.cpp )
 
-kde4_add_plugin(krichtexteditpart WITH_PREFIX ${krichtexteditpart_PART_SRCS})
+kde4_add_plugin(chattexteditpart WITH_PREFIX ${chattexteditpart_PART_SRCS})
 
 
-target_link_libraries(krichtexteditpart kopete ${KDE4_KPARTS_LIBS} )
+target_link_libraries(chattexteditpart kopete kopetechatwindow_shared ${KDE4_KPARTS_LIBS} )
 
-install(TARGETS krichtexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS chattexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############

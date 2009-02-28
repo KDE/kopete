@@ -1,13 +1,12 @@
-Index: iris/xmpp-core/xmlprotocol.cpp
+Index: iris/xmpp/xmpp-core/xmlprotocol.cpp
 ===================================================================
---- iris/xmpp-core/xmlprotocol.cpp	(revision 792518)
-+++ iris/xmpp-core/xmlprotocol.cpp	(working copy)
-@@ -263,7 +263,7 @@
+--- iris/xmpp/xmpp-core/xmlprotocol.cpp	(revision 925917)
++++ iris/xmpp/xmpp-core/xmlprotocol.cpp	(working copy)
+@@ -263,7 +263,6 @@
  }
  
  XmlProtocol::XmlProtocol()
 -	: QObject(qApp)
-+	: QObject()
  {
  	init();
  }

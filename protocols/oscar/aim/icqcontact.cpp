@@ -84,16 +84,10 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );
 	setPresenceTarget( presence );
 
-	if ( presence.type() == Oscar::Presence::Online )
+	setAwayMessage( details.personalMessage() );
+	if ( presence.type() != Oscar::Presence::Online && m_details.awaySinceTime() < details.awaySinceTime() ) //prevent cyclic away message requests
 	{
-		removeProperty( mProtocol->statusMessage );
-	}
-	else
-	{
-		if ( m_details.awaySinceTime() < details.awaySinceTime() ) //prevent cyclic away message requests
-		{
-			mAccount->engine()->requestAIMAwayMessage( contactId() );
-		}
+		mAccount->engine()->requestAIMAwayMessage( contactId() );
 	}
 
 //TODO: don't know if we need this in aim

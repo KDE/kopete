@@ -257,7 +257,7 @@ void AddAccountWizard::accept()
 
 void AddAccountWizard::reject()
 {
-    // if we have a protocol plugin loaded and its not being used, unload it
+    // if we have a protocol plugin loaded and it is not being used, unload it
 	if (d->proto)
 	{
 		bool hasAccount=false;

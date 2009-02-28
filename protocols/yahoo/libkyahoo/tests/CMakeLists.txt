@@ -1,9 +1,9 @@
 set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
 
-include_directories( ${CMAKE_SOURCE_DIR}/kopete/protocols/yahoo/libkyahoo  )
+include_directories( ${KOPETE_SOURCE_DIR}/protocols/yahoo/libkyahoo )
 
-link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../ )
+link_directories( ${KOPETE_BINARY_DIR}/protocols/yahoo/libkyahoo )
 
 ########### next target ###############
 

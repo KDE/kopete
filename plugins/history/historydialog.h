@@ -16,31 +16,28 @@
     *************************************************************************
 */
 
-#ifndef _HISTORYDIALOG_H
-#define _HISTORYDIALOG_H
+#ifndef HISTORYDIALOG_H
+#define HISTORYDIALOG_H
 
-#include <QFile>
-#include <QStringList>
-#include <QList>
+#include <QtCore/QList>
 
 #include <kdialog.h>
 #include <kurl.h>
 
 #include "kopetemessage.h"
 
+class QTreeWidgetItem;
+
 class KAction;
-
-namespace Ui { class HistoryViewer; }
-
-//class HistoryWidget;
-namespace Kopete { class MetaContact; class Contact; }
-namespace Kopete { class XSLT; }
 class KHTMLView;
 class KHTMLPart;
-
 namespace KParts { class BrowserArguments; class OpenUrlArguments; class Part; }
 
-class QTreeWidgetItem;
+namespace Kopete { class MetaContact; }
+namespace Kopete { class Contact; }
+namespace Kopete { class XSLT; }
+
+namespace Ui { class HistoryViewer; }
 
 class DMPair
 {
@@ -87,14 +84,14 @@ class HistoryDialog : public KDialog
 		void slotContactChanged(int index);
 		void slotFilterChanged(int index);
 
-		void searchFirstStep();
-
 		void init();
 		void slotLoadDays();
 
 		void slotRightClick(const QString &url, const QPoint &point);
 		void slotCopy();
 		void slotCopyURL();
+
+		void slotImportHistory();
 
 	private:
 		enum Disabled { Prev=1, Next=2 };
@@ -130,20 +127,7 @@ class HistoryDialog : public KDialog
 			QList<DMPair> dateMCList; // mc for MetaContact
 		} mInit;
 
-		struct Search
-		{
-				typedef QMap<QDate, QList<Kopete::MetaContact*> > DateSearchMap;
-				DateSearchMap dateSearchMap;
-
-				int itemIndex;
-
-				int resultMatches;
-
-				bool foundPrevious;
-				QDate datePrevious;
-
-				Kopete::MetaContact *currentMetaContact;
-		} *mSearch;
+		bool mSearching;
 
 		KAction *mCopyAct;
 		KAction *mCopyURLAct;

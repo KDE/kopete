@@ -22,6 +22,8 @@
 
 #include "jabberclient.h"
 
+#include <kdebug.h>
+
 #include <QTimer>
 #include <QRegExp>
 #include <QtCrypto>
@@ -31,7 +33,6 @@
 #include <jinglesessionmanager.h>
 #include <xmpp_tasks.h>
 
-#include "jabberconnector.h"
 #include "privacymanager.h"
 
 #define JABBER_PENALTY_TIME	2
@@ -65,7 +66,7 @@ public:
 	// XMPP backend
 	XMPP::Client *jabberClient;
 	XMPP::ClientStream *jabberClientStream;
-	JabberConnector *jabberClientConnector;
+	XMPP::AdvancedConnector *jabberClientConnector;
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;
 	QCA::Initializer qcaInit;
@@ -552,7 +553,7 @@ XMPP::ClientStream *JabberClient::clientStream () const
 
 }
 
-JabberConnector *JabberClient::clientConnector () const
+XMPP::AdvancedConnector *JabberClient::clientConnector () const
 {
 
 	return d->jabberClientConnector;
@@ -625,7 +626,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	 * This class uses KDE's socket code, which in turn makes use of
 	 * the global proxy settings.
 	 */
-	d->jabberClientConnector = new JabberConnector;
+	d->jabberClientConnector = new XMPP::AdvancedConnector;
 
 	d->jabberClientConnector->setOptSSL ( useSSL () );
 
@@ -777,6 +778,9 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	d->jabberClient->setIdentity( discoIdentity() );
 
 	d->jabberClient->setTimeZone ( timeZoneName (), timeZoneOffset () );
+
+	// Additional features
+	d->jabberClient->setFeatures(Features("http://jabber.org/protocol/xhtml-im"));
 
 	d->jabberClient->connectToServer ( d->jabberClientStream, jid, auth );
 
@@ -998,13 +1002,6 @@ void JabberClient::slotCSAuthenticated ()
 		{
 			d->localAddress = ( (BSocket *)irisByteStream )->address().toString ();
 		}
-
-		// code for the KDE-type bytestream
-		JabberByteStream *kdeByteStream = dynamic_cast<JabberByteStream*>(d->jabberClientConnector->stream());
-		if ( kdeByteStream )
-		{
-			d->localAddress = kdeByteStream->socket()->peerName();
-		}
 	}
 
 	if ( fileTransfersEnabled () )
@@ -1014,11 +1011,34 @@ void JabberClient::slotCSAuthenticated ()
 		d->jabberClient->s5bManager()->setServer ( s5bServer () );
 	}
 
+	
+	//update the ressource:
+	d->jid = d->jabberClientStream->jid();
+
 	// start the client operation
 	d->jabberClient->start ( jid().domain (), jid().node (), d->password, jid().resource () );
 
-	emit connected ();
+	if (!d->jabberClientStream->old())
+	{
+		XMPP::JT_Session *j = new XMPP::JT_Session(rootTask());
+		QObject::connect(j, SIGNAL(finished()), this, SLOT(slotSessionStarted()));
+		j->go(true);
+	}
+	else
+	{
+		emit connected();
+	}
 }
+
+void JabberClient::slotSessionStarted()
+{
+	XMPP::JT_Session *j = static_cast<XMPP::JT_Session*>(sender());
+	if ( j->success() )
+		emit connected();
+	else
+		emit csError ( -1 );
+}
+
 
 void JabberClient::slotCSDisconnected ()
 {

@@ -154,10 +154,18 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kDebug(YAHOO_RAW_DEBUG) << " Parsed packet service -  This means ServiceNotify " << servicenum;
 			service = Yahoo::ServiceNotify;
 		break;
-		case (Yahoo::ServiceAddBuddy) :
-			kDebug(YAHOO_RAW_DEBUG) << " Parsed packet service -  This means ServiceAddBuddy " << servicenum;
-			service = Yahoo::ServiceAddBuddy;
+		case (Yahoo::ServiceBuddyAdd) :
+			kDebug(YAHOO_RAW_DEBUG) << " Parsed packet service -  This means ServiceBuddyAdd " << servicenum;
+			service = Yahoo::ServiceBuddyAdd;
 		break;
+        	case (Yahoo::ServiceBuddyRemove) :
+	                kDebug(YAHOO_RAW_DEBUG) << "Parsed packet service -  This means ServiceBuddyRemove " << servicenum;
+	                service = Yahoo::ServiceBuddyRemove;
+	        break;
+        	case (Yahoo::ServiceBuddyChangeGroup) :
+	                kDebug(YAHOO_RAW_DEBUG) << "Parsed packet service -  This means ServiceBuddyChangeGroup " << servicenum;
+	                service = Yahoo::ServiceBuddyChangeGroup;
+	        break;
 		case (Yahoo::ServicePictureChecksum) :
 			kDebug(YAHOO_RAW_DEBUG) << " Parsed packet service -  This means ServicePictureChecksum " << servicenum;
 			service = Yahoo::ServicePictureChecksum;

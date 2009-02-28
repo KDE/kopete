@@ -46,10 +46,11 @@
 
 JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 Kopete::ContactPtrList others, const QString &resource )
-											 : Kopete::ChatSession ( user, others, protocol )
+											 : Kopete::ChatSession ( user, others, protocol ),
+											 mTypingNotificationSent ( false )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "New message manager for " << user->contactId ();
-	
+
 	setComponentData(protocol->componentData());
 
 	// make sure Kopete knows about this instance
@@ -73,11 +74,11 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	KAction *jingleSessionGui = new KAction(i18n("Show audio calls"), members().first());
 	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui() ));
 	setComponentData(protocol->componentData());
-	
+
 	KAction *jingleSession = new KAction(i18n("Start audio call"), members().first());
 	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession() ));
 	setComponentData(protocol->componentData());
-	
+
 	Kopete::ContactPtrList chatMembers = members();
 	if (chatMembers.first())
 	{
@@ -93,7 +94,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 			jingleSession->setEnabled(false);
 		}
 	}
-	
+
 
 	/*KAction *jingleaudiocall = new KAction(i18n("Jingle Audio call" ), members().first());
 	connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall() ));
@@ -104,7 +105,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	connect(jinglevideocall, SIGNAL(triggered(bool)), SLOT (slotJingleVideoCall() ));
 	setComponentData(protocol->componentData());
 	jinglevideocall->setEnabled( false );*/
-	
+
 	//Kopete::ContactPtrList chatMembers = members ();
 	//if ( chatMembers.first () )
 	//{
@@ -113,7 +114,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 		//jingleaudiocall->setEnabled( bestResource->features().canJingleAudio() );
 		//jinglevideocall->setEnabled( bestResource->features().canJingleVideo() );
 	//}
-	
+
 	//FIXME : Toolbar does not show any action (either for MSN or XMPP)
 	//	  It should be corrected in trunk.
 	//actionCollection()->addAction( "jabberJingleaudiocall", jingleaudiocall );
@@ -151,7 +152,7 @@ void JabberChatSession::slotUpdateDisplayName ()
 	XMPP::Jid jid = static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid();
 
 	if ( !mResource.isEmpty () )
-		jid.setResource ( mResource );
+		jid.withResource ( mResource );
 
 	QString statusText = i18nc("a contact's online status in parenthesis.", " (%1)",
 							  chatMembers.first()->onlineStatus().description() );
@@ -194,14 +195,14 @@ void JabberChatSession::appendMessage ( Kopete::Message &msg, const QString &fro
 	// We send the notifications for Delivered and Displayed events. More granular management
 	// (ie.: send Displayed event when it is really displayed)
 	// of these events would require changes in the chatwindow API.
-	
+
 	if ( account()->configGroup()->readEntry ("SendEvents", true) )
 	{
 		if ( account()->configGroup()->readEntry ("SendDeliveredEvent", true) )
 		{
 			sendNotification( Delivered );
 		}
-		
+
 		if ( account()->configGroup()->readEntry ("SendDisplayedEvent", true) )
 		{
 			sendNotification( Displayed );
@@ -218,7 +219,7 @@ void JabberChatSession::sendNotification( Event event )
 	XMPP::ChatState new_state;
 	bool send_msg_event=false;
 	bool send_state=false;
-	
+
 	switch(event)
 	{
 		case Delivered:
@@ -253,7 +254,7 @@ void JabberChatSession::sendNotification( Event event )
 		default:
 			break;
 	}
-	
+
 	if(send_msg_event)
 	{
 		send_msg_event=false;
@@ -271,7 +272,7 @@ void JabberChatSession::sendNotification( Event event )
 	{
 		send_state=false;
 		foreach(JabberContact *contact , members())
-		{	
+		{
 			JabberContact *c;
 			if(contact->feature.canChatState()  )
 			{
@@ -280,24 +281,19 @@ void JabberChatSession::sendNotification( Event event )
 			}
 		}
 	}*/
-	
+
 	if( !members().isEmpty() && (send_state || send_msg_event) )
 	{
-		// create JID for us as sender
-		XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
-		fromJid.setResource ( account()->resource () );
-	
 		// create JID for the recipient
 		JabberContact *recipient = static_cast<JabberContact*>(members().first());
 		XMPP::Jid toJid = recipient->rosterItem().jid();
-	
+
 		// set resource properly if it has been selected already
 		if ( !resource().isEmpty () )
-			toJid.setResource ( resource () );
+			toJid.withResource ( resource () );
 
 		XMPP::Message message;
 
-		message.setFrom ( fromJid );
 		message.setTo ( toJid );
 		if(send_msg_event)
 		{
@@ -309,13 +305,13 @@ void JabberChatSession::sendNotification( Event event )
 		{
 			message.setChatState( new_state );
 		}
-		
+
 		if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
-		{	
+		{
 			message.setType ( "normal" );
 		}
 		else
-		{	
+		{
 			message.setType ( "chat" );
 		}
 
@@ -328,12 +324,15 @@ void JabberChatSession::sendNotification( Event event )
 void JabberChatSession::slotSendTypingNotification ( bool typing )
 {
 	if ( !account()->configGroup()->readEntry ("SendEvents", true)
-		|| !account()->configGroup()->readEntry("SendComposingEvent", true) ) 
+		|| !account()->configGroup()->readEntry("SendComposingEvent", true) )
 		return;
 
-	// create JID for us as sender
-	XMPP::Jid fromJid = static_cast<const JabberBaseContact*>(myself())->rosterItem().jid();
-	fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString() ) );
+	if ( typing && mTypingNotificationSent ) {
+		return;
+	}
+
+	// send only one Composing notification; CancelComposing and slotMessageSent reset this
+	mTypingNotificationSent = typing;
 
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "Sending out typing notification (" << typing << ") to all chat members.";
 
@@ -348,14 +347,10 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		XMPP::Message jabberMessage;
 		JabberBaseContact *recipient = static_cast<JabberBaseContact*>(message.to().first());
 
-		XMPP::Jid jid = static_cast<const JabberBaseContact*>(message.from())->rosterItem().jid();
-		jid.setResource ( account()->configGroup()->readEntry( "Resource", QString() ) );
-		jabberMessage.setFrom ( jid );
-
 		XMPP::Jid toJid = recipient->rosterItem().jid();
 
 		if( !resource().isEmpty () )
-			toJid.setResource ( resource() );
+			toJid.withResource ( resource() );
 
 		jabberMessage.setTo ( toJid );
 
@@ -389,26 +384,27 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
         {
 			// this message is not encrypted
 			jabberMessage.setBody ( message.plainBody ());
-			if (message.format() ==  Qt::RichText) 
+			if (message.format() ==  Qt::RichText)
 			{
 				JabberResource *bestResource = account()->resourcePool()->bestJabberResource(toJid);
-				if( bestResource && bestResource->features().canXHTML() )
+				if( bestResource && bestResource->features().test(
+						QStringList("http://jabber.org/protocol/xhtml-im")) )
 				{
 					QString xhtmlBody = message.escapedBody();
-					
+
 					// According to JEP-0071 8.9  it is only RECOMMENDED to replace \n with <br/>
-					//  which mean that some implementation (gaim 2 beta) may still think that \n are linebreak.  
+					//  which mean that some implementation (gaim 2 beta) may still think that \n are linebreak.
 					// and considered the fact that KTextEditor generate a well indented XHTML, we need to remove all \n from it
 					//  see Bug 121627
 					// Anyway, theses client that do like that are *WRONG*  considreded the example of jep-71 where there are lot of
 					// linebreak that are not interpreted.  - Olivier 2006-31-03
 					xhtmlBody.remove('\n');
-					
+
 					//&nbsp; is not a valid XML entity
 					xhtmlBody.replace("&nbsp;" , "&#160;");
-							
+
 					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +'>'+ xhtmlBody +"</p>";
-					
+
 					QDomDocument doc;
 					doc.setContent(xhtmlBody, true);
 					jabberMessage.setHTML( XMPP::HTMLElement( doc.documentElement() ) );
@@ -424,11 +420,11 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		// FIXME: the view() is a speedy way to solve BUG:108389. A better solution is to be found
 		// but I don't want to introduce a new bug during the bug hunt ;-).
 		if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
-		{	
+		{
 			jabberMessage.setType ( "normal" );
 		}
 		else
-		{	
+		{
 			jabberMessage.setType ( "chat" );
 		}
 
@@ -438,9 +434,9 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		jabberMessage.addEvent( DeliveredEvent );
 		jabberMessage.addEvent( DisplayedEvent );
 		jabberMessage.setChatState( XMPP::StateActive );
-		
 
-        // send the message
+
+		// send the message
 		account()->client()->sendMessage ( jabberMessage );
 
 		if ( recipient->sendsDeliveredEvent() )
@@ -451,6 +447,8 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 
 		// tell the manager that we sent successfully
 		messageSucceeded ();
+
+		mTypingNotificationSent = false;
 	}
 	else
 	{

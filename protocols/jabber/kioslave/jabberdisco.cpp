@@ -49,7 +49,7 @@ JabberDiscoProtocol::~JabberDiscoProtocol ()
 
 }
 
-void JabberDiscoProtocol::setHost ( const QString &host, int port, const QString &user, const QString &pass )
+void JabberDiscoProtocol::setHost ( const QString &host, quint16 port, const QString &user, const QString &pass )
 {
 	kDebug ( JABBER_DISCO_DEBUG ) << " Host " << host << ", port " << port << ", user " << user;
 
@@ -261,7 +261,7 @@ void JabberDiscoProtocol::slotQueryFinished ()
 		KIO::UDSEntry entry;
 		
 		atom.m_uds = KIO::UDS_NAME;
-		atom.m_str = (*it).jid().userHost ();
+		atom.m_str = (*it).jid().bare();
 		entry.prepend ( atom );
 
 		atom.m_uds = KIO::UDS_SIZE;

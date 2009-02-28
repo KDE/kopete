@@ -157,7 +157,8 @@ public slots:
 	virtual void disconnect( Kopete::Account::DisconnectReason reason );
 
 	/** Set the online status for the account. Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason = Kopete::StatusMessage(),
+	                      const OnlineStatusOptions& options = None );
 	/**
 	 * Set the status message for the account. Reimplemented from Kopete::Account
 	 */

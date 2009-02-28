@@ -1,13 +1,13 @@
 
 include_directories( 
 ${KOPETE_INCLUDES} 
-${CMAKE_SOURCE_DIR}/kopete/kopete/contactlist
-${CMAKE_BINARY_DIR}/kopete/kopete/contactlist
-${CMAKE_SOURCE_DIR}/kopete/kopete/config/appearance/layout
-${CMAKE_BINARY_DIR}/kopete/kopete/config/appearance/layout
+${KOPETE_SOURCE_DIR}/kopete/contactlist
+${KOPETE_BINARY_DIR}/kopete/contactlist
+${KOPETE_SOURCE_DIR}/kopete/config/appearance/layout
+${KOPETE_BINARY_DIR}/kopete/config/appearance/layout
 )
 
-link_directories( ${CMAKE_BINARY_DIR}/kopete/kopete/contactlist )
+link_directories( ${KOPETE_BINARY_DIR}/kopete/contactlist )
 
 
 ########### next target ###############

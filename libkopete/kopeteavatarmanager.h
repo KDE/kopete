@@ -129,6 +129,8 @@ public:
 		QString name; ///< name is a friendly name to identity the avatar
 		QString path; ///< path is the full path to the image on disk
 		QImage image; ///< image is used when adding a new avatar, AvatarManager will write the image on disk.
+		QByteArray data; ///< original data used to construct the image
+		QString dataPath; ///< path is the full path to the data on disk
 		Kopete::Contact *contact; ///< contact is used when adding a new contact avatar. AvatarManager use it to create the final url.
 		AvatarManager::AvatarCategory category; ///< category in which the avatar belong
 	} AvatarEntry;

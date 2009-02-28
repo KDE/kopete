@@ -210,7 +210,12 @@ void Message::setForegroundOverride( bool enabled )
 
 void Message::setRichTextOverride( bool enabled )
 {
-	d->richTextOverride = enabled;
+	if ( d->richTextOverride != enabled )
+	{
+		d->richTextOverride = enabled;
+		d->escapedBodyDirty = true;
+		d->parsedBodyDirty = true;
+	}
 }
 
 void Message::setForegroundColor( const QColor &color )
@@ -238,8 +243,12 @@ void Message::setHtmlBody (const QString &body)
 	doSetBody (body, Qt::RichText);
 }
 
-void Message::doSetBody (const QString &body, Qt::TextFormat f)
+void Message::doSetBody (QString body, Qt::TextFormat f)
 {
+	// Remove ObjectReplacementCharacter because otherwise html text will be empty
+	if ( body.contains( QChar( QChar::ObjectReplacementCharacter ) ) )
+		body.replace( QChar( QChar::ObjectReplacementCharacter ), QChar( ' ' ) );
+
 	if (f == Qt::PlainText)
 		d->body->setPlainText(body);
 	else
@@ -352,7 +361,10 @@ QString Message::escape( const QString &text )
 
 QString Message::plainBody() const
 {
-	return d->body->toPlainText();
+	// Remove ObjectReplacementCharacter which can be there if html text contains img tag.
+	QString plainText = d->body->toPlainText();
+	plainText.replace( QChar( QChar::ObjectReplacementCharacter ), QChar( ' ' ) );
+	return plainText;
 }
 
 QString Message::escapedBody() const
@@ -364,7 +376,7 @@ QString Message::escapedBody() const
 		return d->escapedBody;
 	else {
 		QString html;
-		if ( d->format == Qt::PlainText )
+		if ( d->format == Qt::PlainText || d->richTextOverride )
 			html = Qt::convertFromPlainText( d->body->toPlainText(), Qt::WhiteSpaceNormal );
 		else
 			html = d->body->toHtml();

@@ -17,15 +17,23 @@
 
 #ifndef CHATTEXTEDITPART_H
 #define CHATTEXTEDITPART_H
+#include <kparts/part.h>
+#include <krichtextedit.h>
+#include "kopeterichtextwidget.h"
 
-#include "krichtexteditpart.h"
+#include <QtGui/QFont>
+#include <QtGui/QColor>
+#include <QtCore/QFlags>
 #include <QtCore/QStringList>
 
+// TODO: Use kdelibs export
 #include <kopete_export.h>
 
-class QTimer;
-
+class KAboutData;
+class KTextEdit;
+class KConfigGroup;
 class KCompletion;
+class QTimer;
 
 namespace Sonnet {
 	class Highlighter;
@@ -50,12 +58,56 @@ class PropertyContainer;
  * 
  * @author Richard Smith
  */
-class KOPETECHATWINDOW_SHARED_EXPORT ChatTextEditPart : public KRichTextEditPart
+class KOPETECHATWINDOW_SHARED_EXPORT ChatTextEditPart : public KParts::ReadOnlyPart
 {
 	Q_OBJECT
 public:
 	ChatTextEditPart( Kopete::ChatSession *session, QWidget *parent);
+	ChatTextEditPart(QWidget *parent, QObject*, const QStringList&);
 	~ChatTextEditPart();
+	
+	/**
+	 * @brief Get the text in the editor in the given format.
+	 * By default if return the text using the most appropriate format.
+	 *
+	 * @param format A value in Qt::TextFormat enum.
+	 *
+	 * @return text using the given format
+	 */
+	QString text( Qt::TextFormat format = Qt::AutoText ) const;
+	
+	/**
+	 * Enable or Disable the automatic spell checking
+	 * @param enabled the state that auto spell checking should beee
+	 */
+	void setCheckSpellingEnabled( bool enabled );
+	
+	/**
+	 * Get the state of auto spell checking
+	 * @return true if auto spell checking is turned on, false otherwise
+	 */
+	bool checkSpellingEnabled() const;
+	
+	static KAboutData *createAboutData();
+	
+	/**
+	 * @brief Disable file open, because it's not used by this part.
+	 */
+	virtual bool openFile() {
+	    return false;
+	}
+	
+	/**
+	 * @brief Get the inside KTextEdit
+	 * @return instance of KTextEdit
+	 */
+	KopeteRichTextWidget *textEdit();
+	
+	/**
+	* @brief Is rich text is currently enabled
+	*/
+	bool isRichTextEnabled() const;
+	
 	
 	/**
 	 * Returns the message currently in the edit area
@@ -84,11 +136,18 @@ public:
 	 * Is the user typing right now?
 	 */
 	bool isTyping();
+	
+	void readConfig( KConfigGroup& config );
+	void resetConfig( KConfigGroup& config );
+	void writeConfig( KConfigGroup& config );
+
+	void setFont();
+	void setTextColor();
 
 public slots:
 	/**
 	 * Go up an entry in the message history.
-	 */
+	 */	
 	void historyUp();
 	
 	/**
@@ -105,6 +164,8 @@ public slots:
 	 * Sends the text currently entered into the edit area.
 	 */
 	void sendMessage();
+	
+	void checkToolbarEnabled();
 
 signals:
 	/**
@@ -124,6 +185,9 @@ signals:
 	 * @param canSend The return value of @ref canSend().
 	 */
 	void canSendChanged( bool canSend );
+	
+	void toolbarToggled(bool enabled);
+	void richTextChanged();
 
 private slots:
 	/**
@@ -173,10 +237,11 @@ private slots:
 	 */
 	void slotAppearanceChanged();
 
-private:
-	void setProtocolRichTextSupport();
+	void slotRichTextSupportChanged();
 
 private:
+	void init( Kopete::ChatSession *session, QWidget *parent);
+
 	Kopete::ChatSession *m_session;
 	
 	/**
@@ -195,6 +260,8 @@ private:
 	
 	QTimer *m_typingRepeatTimer;
 	QTimer *m_typingStopTimer;
+	
+	KopeteRichTextWidget *editor;
 };
 
 #endif

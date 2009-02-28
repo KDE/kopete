@@ -200,10 +200,11 @@ bool JabberTransport::createContact (const QString & contactId,  Kopete::MetaCon
 }
 
 
-void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status  , const Kopete::StatusMessage &reason)
+void JabberTransport::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
 {
 	Q_UNUSED(status);
 	Q_UNUSED(reason);
+	Q_UNUSED(options);
 #if 0
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{

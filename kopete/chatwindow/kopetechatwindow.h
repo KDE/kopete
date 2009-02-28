@@ -1,6 +1,7 @@
 /*
     kopetechatwindow.h - Chat Window
 
+    Copyright (c) 2008      by Benson Tsai            <btsai@vrwarp.com>
     Copyright (c) 2002      by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2004      by Martijn Klingens       <klingens@kde.org>
 
@@ -164,7 +165,6 @@ private:
 	KAction *tabDetach;
 	KAction* tabClose;
 
-	KToggleAction* toggleRichText;
 	KToggleAction* toggleAutoSpellCheck;
 
 	KopeteEmoticonAction *actionSmileyMenu;
@@ -236,9 +236,6 @@ private slots:
 	void updateChatLabel();
 
 	void enableSpellCheckAction(bool enable);
-
-	void updateRichTextAction();
-	void toggleRichTextAction( bool enable );
 
 	void updateActions();
 

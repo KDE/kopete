@@ -14,27 +14,29 @@
     *                                                                       *
     *************************************************************************
 */
-#include "historyguiclient.h"
-#include "historylogger.h"
-#include "historyconfig.h"
-#include "historyplugin.h"
 
-#include "kopetechatsession.h"
-#include "kopetecontact.h"
-#include "kopeteview.h"
+#include "historyguiclient.h"
+
+#include <QtCore/QList>
+#include <QtGui/QTextCursor>
+#include <QtGui/QTextDocument>
 
 #include <kaction.h>
 #include <kstandardaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <kicon.h>
-
-
-#include <QList>
 #include <kactioncollection.h>
 
-#include <QTextCursor>
-#include <QTextDocument>
+#include "kopetechatsession.h"
+#include "kopetechatsessionmanager.h"
+#include "kopetecontact.h"
+#include "kopeteview.h"
+
+#include "historylogger.h"
+#include "historyconfig.h"
+#include "historydialog.h"
+#include "historyplugin.h"
 
 HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 		: QObject ( parent ), KXMLGUIClient ( parent )
@@ -57,6 +59,11 @@ HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 	actionCollection()->addAction ( "historyPrevious", actionPrev );
 	actionNext = KStandardAction::forward ( this, SLOT ( slotNext() ), this );
 	actionCollection()->addAction ( "historyNext", actionNext );
+
+	KAction *viewChatHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
+	actionCollection()->addAction( "viewChatHistory", viewChatHistory );
+	viewChatHistory->setShortcut(KShortcut (Qt::CTRL + Qt::Key_H));
+	connect(viewChatHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 
 	KAction *actionQuote = new KAction ( KIcon ( "go-last" ),i18n ( "Quote Last Message" ), this );
 	actionCollection()->addAction ( "historyQuote",actionQuote );
@@ -151,6 +158,39 @@ void HistoryGUIClient::slotQuote()
 
 	msg.setPlainBody ( body );
 	m_manager->view()->setCurrentMessage ( msg );
+}
+
+void HistoryGUIClient::slotViewHistory()
+{
+	// Original Code, but this any segfault if anything in this pipe is NULL - Tejas Dinkar
+	//Kopete::MetaContact *m = Kopete::ChatSessionManager::self()->activeView()->msgManager()->members().first()->metaContact();
+	
+	//The same as above but with some checking
+	KopeteView *view= Kopete::ChatSessionManager::self()->activeView();
+	if (!view) {
+		kDebug()<<"Unable to Get Active View!";
+		return;
+	}
+
+	Kopete::ChatSession *session = view->msgManager();
+	if (!session) {
+		kDebug()<<"Unable to Get Active Session!";
+		return;
+	}
+
+	Kopete::Contact *contact = session->members().first();
+	if (!contact) {
+		kDebug()<<"Unable to get contact!";
+		return;
+	}
+
+	Kopete::MetaContact *m = contact->metaContact();
+
+	if(m)
+	{
+		HistoryDialog* dialog = new HistoryDialog(m);
+		dialog->setObjectName( QLatin1String("HistoryDialog") );
+	}
 }
 
 #include "historyguiclient.moc"

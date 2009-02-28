@@ -343,7 +343,7 @@ void StatusManager::setActive()
 				if( (*it)->isConnected() && (*it)->isAway() )
 				{
 					(*it)->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( (*it)->protocol(),
-						Kopete::OnlineStatusManager::Online ) );
+						Kopete::OnlineStatusManager::Online ), Kopete::StatusMessage(), Kopete::Account::KeepSpecialFlags );
 				}
 			}
 			d->autoAwayAccounts.clear();
@@ -374,13 +374,13 @@ void StatusManager::setAutoAway()
 				{
 					// Display a specific away message
 					(*it)->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( (*it)->protocol(),
-						Kopete::OnlineStatusManager::Idle ), d->customStatusMessage );
+						Kopete::OnlineStatusManager::Idle ), d->customStatusMessage, Kopete::Account::KeepSpecialFlags );
 				}
 				else
 				{
 					// Display the last global away message used
 					(*it)->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( (*it)->protocol(),
-						Kopete::OnlineStatusManager::Idle ), d->globalStatusMessage );
+						Kopete::OnlineStatusManager::Idle ), d->globalStatusMessage, Kopete::Account::KeepSpecialFlags );
 				}
 			}
 		}

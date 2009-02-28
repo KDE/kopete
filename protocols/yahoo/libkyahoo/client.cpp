@@ -99,6 +99,8 @@ public:
 	QString statusMessageOnConnect;
 	Yahoo::PictureStatus pictureFlag;
 	int pictureChecksum;
+	bool buddyListReady;
+	QStringList pictureRequestQueue;
 };
 
 Client::Client(QObject *par) :QObject(par)
@@ -117,12 +119,14 @@ Client::Client(QObject *par) :QObject(par)
 	d->loginTask = new LoginTask( d->root );
 	d->listTask = new ListTask( d->root );
 	d->pictureFlag = Yahoo::NoPicture;
+	d->buddyListReady = false;
 	m_connector = 0L;
 
 	m_pingTimer = new QTimer( this );
 	QObject::connect( m_pingTimer, SIGNAL( timeout() ), this, SLOT( sendPing() ) );
 
 	QObject::connect( d->loginTask, SIGNAL( haveSessionID( uint ) ), SLOT( lt_gotSessionID( uint ) ) );
+	QObject::connect( d->loginTask, SIGNAL( buddyListReady() ), SLOT( processPictureQueue() ) );
 	QObject::connect( d->loginTask, SIGNAL( loginResponse( int, const QString& ) ), 
 				SLOT( slotLoginResponse( int, const QString& ) ) );
 	QObject::connect( d->loginTask, SIGNAL( haveCookies() ), SLOT( slotGotCookies() ) );
@@ -197,6 +201,7 @@ void Client::close()
 		m_connector->deleteLater();
 	m_connector = 0L;
 	d->active = false;
+	d->buddyListReady = false;
 }
 
 int Client::error()
@@ -270,7 +275,8 @@ void Client::slotLoginResponse( int response, const QString &msg )
 			changeStatus( d->statusOnConnect, d->statusMessageOnConnect, Yahoo::StatusTypeAway );
 		d->statusMessageOnConnect.clear();
 		setStatus( d->statusOnConnect );
-		m_pingTimer->start( 60 * 1000 );
+		/* only send a ping every hour. we get disconnected otherwise */
+		m_pingTimer->start( 60 * 60 * 1000 );
 		initTasks();
 	} else {
 		d->active = false;
@@ -450,6 +456,10 @@ void Client::stealthContact(QString const &userId, Yahoo::StealthMode mode, Yaho
 void Client::addBuddy( const QString &userId, const QString &group, const QString &message )
 {
 	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
+	
+	QObject::connect(mbt, SIGNAL(buddyAddResult( const QString &, const QString &, bool )),
+			 SIGNAL(buddyAddResult( const QString &, const QString &, bool)));
+
 	mbt->setType( ModifyBuddyTask::AddBuddy );
 	mbt->setTarget( userId );
 	mbt->setGroup( group );
@@ -460,6 +470,10 @@ void Client::addBuddy( const QString &userId, const QString &group, const QStrin
 void Client::removeBuddy( const QString &userId, const QString &group )
 {
 	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
+
+	QObject::connect(mbt, SIGNAL(buddyRemoveResult( const QString &, const QString &, bool )),
+			 SIGNAL(buddyRemoveResult( const QString &, const QString &, bool)));
+
 	mbt->setType( ModifyBuddyTask::RemoveBuddy );
 	mbt->setTarget( userId );
 	mbt->setGroup( group );
@@ -469,6 +483,10 @@ void Client::removeBuddy( const QString &userId, const QString &group )
 void Client::moveBuddy( const QString &userId, const QString &oldGroup, const QString &newGroup )
 {
 	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
+
+	QObject::connect(mbt, SIGNAL(buddyChangeGroupResult( const QString &, const QString &, bool )),
+			 SIGNAL(buddyChangeGroupResult( const QString &, const QString &, bool)));
+
 	mbt->setType( ModifyBuddyTask::MoveBuddy );
 	mbt->setTarget( userId );
 	mbt->setOldGroup( oldGroup );
@@ -478,8 +496,33 @@ void Client::moveBuddy( const QString &userId, const QString &oldGroup, const QS
 
 // ***** Buddyicon handling *****
 
+void Client::processPictureQueue()
+{
+	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+	d->buddyListReady = true;
+	if( d->pictureRequestQueue.isEmpty() )
+	{
+		return;
+	}
+
+	requestPicture( d->pictureRequestQueue.front() );
+	d->pictureRequestQueue.pop_front();
+
+	
+	if( !d->pictureRequestQueue.isEmpty() )
+	{
+		QTimer::singleShot( 1000, this, SLOT(processPictureQueue()) );
+	}
+}
+
 void Client::requestPicture( const QString &userId )
 {
+	if( !d->buddyListReady )
+	{
+		d->pictureRequestQueue << userId;
+		return;
+	}
+
 	RequestPictureTask *rpt = new RequestPictureTask( d->root );
 	rpt->setTarget( userId );
 	rpt->go( true );
@@ -490,8 +533,8 @@ void Client::downloadPicture(  const QString &userId, KUrl url, int checksum )
 	if( !d->iconLoader )
 	{
 		d->iconLoader = new YahooBuddyIconLoader( this );
-		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, KTemporaryFile*, int )),
-				SIGNAL(pictureDownloaded(const QString&, KTemporaryFile*,  int ) ) );
+		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, const QByteArray &, int )),
+				SIGNAL(pictureDownloaded(const QString&, const QByteArray &,  int ) ) );
 	}
 
 	d->iconLoader->fetchBuddyIcon( QString(userId), KUrl(url), checksum );

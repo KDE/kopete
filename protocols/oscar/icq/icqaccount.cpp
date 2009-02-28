@@ -273,9 +273,6 @@ void ICQAccount::connectWithPassword( const QString &password )
 void ICQAccount::loginActions()
 {
 	OscarAccount::loginActions();
-
-	// Set default privacy settings to make "invisible to" and "visible to" work
-	engine()->setPrivacyTLVs( 0x04 );
 }
 
 void ICQAccount::disconnected( DisconnectReason reason )
@@ -427,7 +424,7 @@ void ICQAccount::setPresenceXStatus( const Xtraz::Status &xStatus )
 	setPresenceTarget( pres, statusMessage );
 }
 
-void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
+void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
 {
 	if ( status.status() == Kopete::OnlineStatus::Invisible )
 	{
@@ -446,7 +443,13 @@ void ICQAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 	}
 	else
 	{
-		setPresenceTarget( protocol()->statusManager()->presenceOf( status ), reason );
+		Oscar::Presence pres = protocol()->statusManager()->presenceOf( status );
+		if ( options & Kopete::Account::KeepSpecialFlags )
+		{
+			pres.setFlags( presence().flags() );
+			pres.setXtrazStatus( presence().xtrazStatus() );
+		}
+		setPresenceTarget( pres, reason );
 	}
 }
 

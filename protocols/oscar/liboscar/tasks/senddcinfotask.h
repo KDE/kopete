@@ -32,7 +32,7 @@ public:
 	~SendDCInfoTask();
 
 	void setIcqMood( int mood );
-	void setIcqMessage( const QString &message );
+	void setStatusMessage( const QString &message );
 
 	virtual void onGo();
 

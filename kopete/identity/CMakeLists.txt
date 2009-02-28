@@ -1,13 +1,13 @@
 
 include_directories( 
 ${KOPETE_INCLUDES}
-${CMAKE_SOURCE_DIR}/kopete/kopete/statusmenu
-${CMAKE_BINARY_DIR}/kopete/kopete/statusmenu
-${CMAKE_SOURCE_DIR}/kopete/kopete/addaccountwizard 
-${CMAKE_BINARY_DIR}/kopete/kopete/addaccountwizard
+${KOPETE_SOURCE_DIR}/kopete/statusmenu
+${KOPETE_BINARY_DIR}/kopete/statusmenu
+${KOPETE_SOURCE_DIR}/kopete/addaccountwizard
+${KOPETE_BINARY_DIR}/kopete/addaccountwizard
 )
 
-link_directories( ${CMAKE_BINARY_DIR}/kopete/kopete/addaccountwizard )
+link_directories( ${KOPETE_BINARY_DIR}/kopete/addaccountwizard )
 
 ########### next target ###############
 

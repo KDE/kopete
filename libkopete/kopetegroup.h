@@ -69,7 +69,7 @@ public:
 	 * Overloaded constructor to create a group with a display name of the specified type.
 	 */
 	explicit Group( const QString &displayName, GroupType type = Normal );
-
+	
 	~Group();
 
 	/**
@@ -127,7 +127,7 @@ public:
 	 * \return a Group pointer to the temporary group
 	 */
 	static Group *temporary();
-
+	
 	/**
 	 * @internal
 	 */
@@ -155,7 +155,7 @@ signals:
 	 */
 	void displayNameChanged( Kopete::Group *group , const QString &oldName );
 
-
+	
 private slots:
 	void sendMessage( Kopete::Message& );
 
@@ -165,14 +165,14 @@ private:
 
 	class Private;
 	Private * const d;
-
+	
 	/**
 	 * @internal  used to get reachabe contact to send message to thom.
 	 */
 	QList<MetaContact *> onlineMembers() const;
 };
 
-} //END namespace Kopete
+} //END namespace Kopete 
 
 #endif
 

@@ -150,6 +150,9 @@ void AIMMyselfContact::sendMessage( Kopete::Message& message, Kopete::ChatSessio
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)font-size:([^p]*)pt;([^\"]*)\"([^<]*)</style>")),
 			QString::fromLatin1("<font ptsize=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
 
+	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)background-color:([^;]*);([^\"]*)\"([^<]*)</style>")),
+	            QString::fromLatin1("<font back=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
+
 	s.replace ( QRegExp( QString::fromLatin1("<style>([^\"]*)color:([^;]*);([^\"]*)\"([^<]*)</style>")),
 			QString::fromLatin1("<font color=\"\\2\"><style>\\1\\3\"\\4</style></font>"));
 
@@ -385,7 +388,7 @@ void AIMAccount::setPresenceTarget( const Oscar::Presence &newPres, const QStrin
 	}
 }
 
-void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason )
+void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
 {
 	if ( status.status() == Kopete::OnlineStatus::Invisible )
 	{
@@ -404,7 +407,11 @@ void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 	}
 	else
 	{
-		setPresenceType( protocol()->statusManager()->presenceOf( status ).type(), reason.message() );
+		Oscar::Presence pres = protocol()->statusManager()->presenceOf( status );
+		if ( options & Kopete::Account::KeepSpecialFlags )
+			pres.setFlags( presence().flags() );
+
+		setPresenceTarget( pres, reason.message() );
 	}
 }
 

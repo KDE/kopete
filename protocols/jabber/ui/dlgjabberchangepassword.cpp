@@ -40,7 +40,7 @@ DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidg
 
 	m_account = account;
 
-	QWidget* w = new QWidget( this );
+	new QWidget( this );
 	m_mainWidget = new Ui::DlgChangePassword;
 	m_mainWidget->setupUi( mainWidget() );
     

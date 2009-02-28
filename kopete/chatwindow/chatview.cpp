@@ -1,8 +1,10 @@
 /*
     chatview.cpp - Chat View
 
+    Copyright (c) 2008      by Benson Tsai           <btsai@vrwarp.com>
     Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2008 by Benson Tsai                <btsai@vrwarp.com>
 
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -42,6 +44,7 @@
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
+#include <kxmlguifactory.h>
 
 #include <QTimer>
 #include <QSplitter>
@@ -250,12 +253,12 @@ void ChatView::setFont()
 
 QFont ChatView::font()
 {
-	return editPart()->font();
+	return editPart()->textEdit()->font();
 }
 
 void ChatView::setFont( const QFont &font )
 {
-	editPart()->setFont( font );
+	editPart()->textEdit()->setFont( font );
 }
 
 void ChatView::resetFontAndColor()
@@ -278,8 +281,8 @@ void ChatView::setFgColor( const QColor &newColor )
 {
     if ( newColor.isValid() )
 	{
-		editPart()->setTextColor( newColor );
-    }
+		editPart()->textEdit()->setTextColor( newColor );
+	}
 	else
 	{
 		editPart()->setTextColor();
@@ -296,11 +299,13 @@ void ChatView::raise( bool activate )
 	if ( !m_mainWindow || !m_mainWindow->isActiveWindow() || activate )
 		makeVisible();
 #ifdef Q_WS_X11
-	if ( !KWindowSystem::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
-		if( Kopete::BehaviorSettings::self()->trayflashNotifySetCurrentDesktopToChatView() && activate )
-			KWindowSystem::setCurrentDesktop( KWindowSystem::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).desktop() );
+	if (!KWindowSystem::windowInfo(m_mainWindow->winId(), NET::WMDesktop).onAllDesktops())
+	{
+		if (Kopete::BehaviorSettings::self()->trayflashNotifySetCurrentDesktopToChatView() && activate)
+			KWindowSystem::setCurrentDesktop(KWindowSystem::windowInfo(m_mainWindow->winId(), NET::WMDesktop).desktop());
 		else
-			KWindowSystem::setOnDesktop( m_mainWindow->winId(), KWindowSystem::currentDesktop() );
+			KWindowSystem::setOnDesktop(m_mainWindow->winId(), KWindowSystem::currentDesktop());
+	}
 #endif
 	if(m_mainWindow->isMinimized())
 	{
@@ -312,7 +317,7 @@ void ChatView::raise( bool activate )
 
 	//Will not activate window if user was typing
 	if ( activate )
-		KWindowSystem::activateWindow( m_mainWindow->winId() );
+		KWindowSystem::forceActiveWindow( m_mainWindow->winId() );
 
 }
 
@@ -423,7 +428,17 @@ void ChatView::updateChatState( KopeteTabState newState )
 
 void ChatView::setMainWindow( KopeteChatWindow* parent )
 {
+	if (m_mainWindow)
+	{
+		m_mainWindow->guiFactory()->removeClient(editPart());
+	}
+	
 	m_mainWindow = parent;
+	
+	if (m_mainWindow)
+	{
+		m_mainWindow->guiFactory()->addClient(editPart());
+	}
 }
 
 void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
@@ -790,7 +805,7 @@ void ChatView::loadChatSettings()
 	                           contacts.first()->metaContact()->metaContactId();
 	KConfigGroup config(KGlobal::config(), contactListGroup );
 	bool enableRichText = config.readEntry( "EnableRichText", true );
-	editPart()->setRichTextEnabled( enableRichText );
+	editPart()->textEdit()->setRichTextEnabled( enableRichText );
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
 	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", Kopete::BehaviorSettings::self()->spellCheck() );
 	emit autoSpellCheckEnabled( this, enableAutoSpell );
@@ -809,10 +824,26 @@ void ChatView::readOptions()
 void ChatView::setActive( bool value )
 {
 	d->isActive = value;
-	if ( d->isActive )
+	if (d->isActive)
 	{
-		updateChatState( Normal );
-		emit( activated( static_cast<KopeteView*>(this) ) );
+		updateChatState(Normal);
+	
+		// attach editpart back on...
+		KXMLGUIFactory * f = msgManager()->factory();
+		if (f)
+		{
+			f->addClient(m_editPart);
+		}
+	
+		emit(activated(static_cast<KopeteView*>(this)));
+	}
+	else
+	{
+		KXMLGUIFactory * f = m_editPart->factory();
+		if (f)
+		{
+			f->removeClient(m_editPart);
+		}
 	}
 }
 

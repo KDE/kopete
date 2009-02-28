@@ -19,10 +19,13 @@
 #include "oscarprotocol.h"
 
 #include <klocale.h>
+#include <kglobal.h>
+#include <kconfiggroup.h>
 
 #include "kopeteaccountmanager.h"
 
 #include "oscaraccount.h"
+#include "connection.h"
 
 OscarProtocol::OscarProtocol( const KComponentData &instance, QObject *parent )
 	: Kopete::Protocol( instance, parent ),
@@ -35,6 +38,18 @@ OscarProtocol::OscarProtocol( const KComponentData &instance, QObject *parent )
 	client("client", i18n("Client"), QString(), 0),
 	protocolVersion("protocolVersion", i18n("Protocol Version"), QString(), 0)
 {
+	KConfigGroup config( KGlobal::config(), "OscarProtocol" );
+	if ( config.hasKey( "StartFlapSequences" ) )
+	{
+		kWarning(OSCAR_GEN_DEBUG) << "Overriding default start flap sequence algorithm!";
+
+		QList<Oscar::WORD> startFlapSequenceList;
+		QList<int> flapSequenceList = config.readEntry( "StartFlapSequences", QList<int>() );
+		foreach ( int flapSeq, flapSequenceList )
+			startFlapSequenceList << flapSeq;
+
+		Connection::setStartFlapSequenceList( startFlapSequenceList );
+	}
 }
 
 OscarProtocol::~OscarProtocol()

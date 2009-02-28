@@ -47,7 +47,7 @@ MetaContact::MetaContact()
 	: ContactListElement( ContactList::self() ), d(new Private())
 {
 	d->metaContactId = QUuid::createUuid();
-	
+
 	connect( this, SIGNAL( pluginDataChanged() ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( iconChanged( Kopete::ContactListElement::IconState, const QString & ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( useCustomIconChanged( bool ) ), SIGNAL( persistentDataChanged() ) );

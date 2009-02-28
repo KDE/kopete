@@ -85,7 +85,7 @@ AuthenticationWizard *AuthenticationWizard::findWizard(Kopete::ChatSession *sess
 QWizardPage *AuthenticationWizard::createIntroPage(){
 
 	QWizardPage *page = new QWizardPage();
-	page->setTitle(i18nc("@info", "Select authentication method"));
+	page->setTitle(i18nc("@title", "Select authentication method"));
 
 	rbQA = new QRadioButton(i18n("Question and Answer"));
 	rbSS = new QRadioButton(i18n("Shared Secret"));
@@ -118,7 +118,7 @@ QWizardPage *AuthenticationWizard::createQAPage(){
 	QGridLayout *layout = new QGridLayout();
 
 	if(initiate){
-		page->setTitle(i18nc("@info", "Question and Answer"));
+		page->setTitle(i18nc("@title", "Question and Answer"));
 
 		lQuestion = new QLabel(i18nc("@info", "Enter a question that only %1 is able to answer:", session->members().first()->contactId()));
 		layout->addWidget(lQuestion);
@@ -149,11 +149,11 @@ QWizardPage *AuthenticationWizard::createSSPage(){
 	QGridLayout *layout = new QGridLayout();
 
 	if(initiate){
-		page->setTitle(i18nc("@info", "Shared Secret"));
+		page->setTitle(i18nc("@title", "Shared Secret"));
 
 		layout->addWidget(new QLabel(i18nc("@info", "Enter a secret passphrase known only to you and %1:", session->members().first()->contactId())));
 	} else {
-		page->setTitle(i18nc("@info", "Authentication with %1", session->members().first()->contactId()));
+		page->setTitle(i18nc("@title", "Authentication with %1", session->members().first()->contactId()));
 		layout->addWidget(new QLabel(i18nc("@info", "Enter the secret passphrase known only to you and %1:", session->members().first()->contactId())));
 	}
 	leSecret = new QLineEdit();
@@ -165,7 +165,7 @@ QWizardPage *AuthenticationWizard::createSSPage(){
 
 QWizardPage *AuthenticationWizard::createMVPage(){
 	QWizardPage *page = new QWizardPage();
-	page->setTitle(i18nc("@info", "Manual Verification"));
+	page->setTitle(i18nc("@title", "Manual Verification"));
 
 	QGridLayout *layout = new QGridLayout();
 
@@ -175,8 +175,8 @@ QWizardPage *AuthenticationWizard::createMVPage(){
 	layout->addWidget(new QLabel(OtrlChatInterface::self()->findActiveFingerprint(session)));
 
 	cbManualAuth = new QComboBox();
-	cbManualAuth->addItem(i18n("I have not"));
-	cbManualAuth->addItem(i18n("I have"));
+	cbManualAuth->addItem(i18nc("@item:inlistbox ...verified that", "I have not"));
+	cbManualAuth->addItem(i18nc("@item:inlistbox ...verified that", "I have"));
 	cbManualAuth->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
 	if( OtrlChatInterface::self()->isVerified(session)){
@@ -185,7 +185,7 @@ QWizardPage *AuthenticationWizard::createMVPage(){
 		cbManualAuth->setCurrentIndex(0);
 	}
 
-	QLabel *lMessage2 = new QLabel(i18nc("@info", "verified that this is in fact the correct fingerprint for %1", session->members().first()->contactId()));
+	QLabel *lMessage2 = new QLabel(i18nc("@info:label I have...", "verified that this is in fact the correct fingerprint for %1", session->members().first()->contactId()));
 	lMessage2->setWordWrap(true);
 
 	QHBoxLayout *verifyLayout = new QHBoxLayout();
@@ -293,21 +293,21 @@ void AuthenticationWizard::finished(bool success, bool trust){
 			if(question != NULL || rbQA->isChecked()){
 				if(initiate){
 					kDebug() << "initiate";
-					lFinal->setText(i18n("The authetication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+					lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 				} else {
 					kDebug() << "not initiate";
 					if(trust){
-						lFinal->setText(i18n("The authetication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+						lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 					} else {
 						lFinal->setText(i18n("<b>%1</b> has successfully authenticated you. You may want to authenticate this contact as well by asking your own question.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 					}
 				}
 			} else {
-				lFinal->setText(i18n("The authetication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+				lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 			}
 		} else {
 			currentPage()->setTitle(i18n("Authentication failed"));
-			lFinal->setText(i18n("The authetication with %1 failed. To make sure you aren't talking to an imposer, try again using the manual fingerprint verification method. The conversation is now insecure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+			lFinal->setText(i18n("The authentication with %1 failed. To make sure you aren't talking to an imposer, try again using the manual fingerprint verification method. The conversation is now insecure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 		}
 	}
 }
@@ -324,7 +324,7 @@ void AuthenticationWizard::updateInfoBox(){
 
 WaitPage::WaitPage(const QString &text){
 	canContinue = false;
-	setTitle(i18n("Authenticating contact..."));
+	setTitle(i18nc("@title","Authenticating contact..."));
 	QVBoxLayout *layout = new QVBoxLayout();
 	layout->addWidget(new QLabel(text));
 	layout->addStretch();

@@ -367,7 +367,7 @@ void UserDetails::fill( Buffer * buffer )
 				while ( b.bytesAvailable() > 0 )
 				{
 #ifdef OSCAR_USERINFO_DEBUG
-					kDebug(OSCAR_RAW_DEBUG) << "Icon and available message info";
+					kDebug(OSCAR_RAW_DEBUG) << "Icon and status message info";
 #endif
 					Oscar::WORD type2 = b.getWord();
 					Oscar::BYTE number = b.getByte();
@@ -422,7 +422,7 @@ void UserDetails::fill( Buffer * buffer )
 #endif
 						}
 						else
-							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for available message";
+							kDebug(OSCAR_RAW_DEBUG) << "not enough bytes for status message";
 						break;
 					case 0x000E:
 						if ( length > 0 )

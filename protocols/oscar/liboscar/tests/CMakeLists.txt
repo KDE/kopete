@@ -1,8 +1,8 @@
 
 include_directories(
-    ${CMAKE_SOURCE_DIR}/kopete/protocols/oscar/liboscar
-    ${CMAKE_SOURCE_DIR}/kopete/protocols/oscar/liboscar/utils
-    ${CMAKE_SOURCE_DIR}/kopete/protocols/oscar/liboscar/tasks
+    ${KOPETE_SOURCE_DIR}/protocols/oscar/liboscar
+    ${KOPETE_SOURCE_DIR}/protocols/oscar/liboscar/utils
+    ${KOPETE_SOURCE_DIR}/protocols/oscar/liboscar/tasks
    ${KOPETE_INCLUDES}
 )
 

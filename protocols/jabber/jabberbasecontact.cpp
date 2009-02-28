@@ -111,7 +111,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	// Jabber acccount jid.
 	if( metaContact() != Kopete::ContactList::self()->myself() )
 	{
-		// only update the alias if its not empty
+		// only update the alias if it is not empty
 		if ( !item.name().isEmpty () && item.name() != item.jid().bare() 
 			&& metaContact()->customDisplayName() != item.name () )
 		{
@@ -335,7 +335,7 @@ QString JabberBaseContact::fullAddress ()
 
 	if ( jid.resource().isEmpty () )
 	{
-		jid.setResource ( account()->resourcePool()->bestResource ( jid ).name () );
+		jid.withResource ( account()->resourcePool()->bestResource ( jid ).name () );
 	}
 
 	return jid.full ();
@@ -354,7 +354,7 @@ XMPP::Jid JabberBaseContact::bestAddress ()
 
 	// construct address out of user@host and current best resource
 	XMPP::Jid jid = mRosterItem.jid ();
-	jid.setResource ( account()->resourcePool()->bestResource( mRosterItem.jid() ).name () );
+	jid.withResource ( account()->resourcePool()->bestResource( mRosterItem.jid() ).name () );
 
 	return jid;
 
@@ -663,10 +663,10 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		entry = Kopete::AvatarManager::self()->add(entry);
 
 		// Save the image to the disk, then set the property.
-		if(!entry.path.isNull())
+		if(!entry.dataPath.isNull())
 		{
 			kDebug( JABBER_DEBUG_GLOBAL ) << "Setting photo for contact: " << contactId();
-			setProperty( protocol()->propPhoto, entry.path );
+			setProperty( protocol()->propPhoto, entry.dataPath );
 		}
 	}
 }

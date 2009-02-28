@@ -545,7 +545,7 @@ private:
 	 * Basically @ref setBody() without detach
 	 * @internal
 	 */
-	void doSetBody( const QString &body, Qt::TextFormat format = Qt::PlainText );
+	void doSetBody( QString body, Qt::TextFormat format = Qt::PlainText );
 
 	/**
 	 * Called internally by @ref setBody() and the constructor

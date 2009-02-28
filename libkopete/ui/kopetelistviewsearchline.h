@@ -53,6 +53,7 @@ protected:
 	
 private:
 	QString search;
+	bool searchEmpty;
 };
 
 } // end namespace ListView

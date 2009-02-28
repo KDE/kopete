@@ -40,6 +40,7 @@ public:
 	 * FIXME: implement manager version here?
 	 */
 	QList<KAction*> *customContextMenuActions ();
+	using JabberBaseContact::customContextMenuActions;
 
 	/**
 	 * Return message manager for this instance.

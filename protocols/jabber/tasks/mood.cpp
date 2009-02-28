@@ -25,7 +25,7 @@ Mood::Mood(Type aType, const QString &aText)
 	mText = aText;
 }
 
-Mood::Mood(const QDomElement &mood)
+Mood::Mood(const QDomElement &/* mood */)
 {
 
 }

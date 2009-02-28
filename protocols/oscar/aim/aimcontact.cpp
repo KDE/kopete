@@ -160,16 +160,10 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	m_mobile = ( presence.flags() & Oscar::Presence::Wireless );
 
-	if ( presence.type() == Oscar::Presence::Online )
+	setAwayMessage( details.personalMessage() );
+	if ( presence.type() != Oscar::Presence::Online && m_details.awaySinceTime() < details.awaySinceTime() ) //prevent cyclic away message requests
 	{
-		removeProperty( mProtocol->statusMessage );
-	}
-	else
-	{
-		if ( m_details.awaySinceTime() < details.awaySinceTime() ) //prevent cyclic away message requests
-		{
-			mAccount->engine()->requestAIMAwayMessage( contactId() );
-		}
+		mAccount->engine()->requestAIMAwayMessage( contactId() );
 	}
 
 	OscarContact::userInfoUpdated( contact, details );

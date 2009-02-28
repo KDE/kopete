@@ -206,8 +206,14 @@ EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
 
 void EmoticonMimeTypeHandler::handleURL( const QString &, const KUrl &url ) const
 {
-	Emoticons::self()->installTheme( url.path() );
+  handleURL(url);
 }
+
+void EmoticonMimeTypeHandler::handleURL( const KUrl &url ) const
+{
+  Emoticons::self()->installTheme( url.path() );
+}
+
 
 } // END namespace Kopete
 

@@ -162,7 +162,7 @@ void TelepathyAccount::disconnect()
 		d->currentConnection->disconnect();
 }
 
-void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason)
+void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
 {
 	if( !isConnected() )
 	{

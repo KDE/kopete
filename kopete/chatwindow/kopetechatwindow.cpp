@@ -1,6 +1,7 @@
 /*
     kopetechatwindow.cpp - Chat Window
 
+    Copyright (c) 2008      by Benson Tsai           <btsai@vrwarp.com>
     Copyright (c) 2007      by Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
     Copyright (c) 2002-2006 by Olivier Goffart       <ogoffart@kde.org>
     Copyright (c) 2003-2004 by Richard Smith         <kde@metafoo.co.uk>
@@ -421,25 +422,6 @@ void KopeteChatWindow::initActions(void)
 	KStandardAction::paste( this, SLOT(slotPaste()), coll);
 
 	KAction* action;
-	action = new KAction( KIcon("preferences-desktop-font"), i18n( "Set &Font..." ), coll );
-	coll->addAction( "format_font", action );
-	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFont()) );
-
-	action = new KAction( KIcon("format-stroke-color"), i18n( "Reset Font And Color" ), coll );
-	coll->addAction( "format_font_and_color_reset", action );
-	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotResetFontAndColor()) );
-
-	action = new KAction( KIcon("format-text-color"), i18n( "Set Text &Color..." ), coll );
-	coll->addAction( "format_fgcolor", action );
-	connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetFgColor()) );
-
-	action = new KAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
-	coll->addAction( "format_bgcolor", action );
-	connect( action, SIGNAL(triggered()), this, SLOT(slotSetBgColor()) );
-
-	toggleRichText = new KToggleAction( KIcon("draw-freehand"), i18n("Enable &Rich Text"), this );
-	coll->addAction( "enable_richtext", toggleRichText );
-	connect( toggleRichText, SIGNAL(toggled(bool)), this, SLOT(toggleRichTextAction(bool)) );
 
 	historyUp = new KAction( i18n( "Previous History" ), coll );
 	coll->addAction( "history_up", historyUp );
@@ -572,24 +554,9 @@ void KopeteChatWindow::enableSpellCheckAction(bool enable)
 	toggleAutoSpellCheck->setChecked( enable );
 }
 
-void KopeteChatWindow::updateRichTextAction()
-{
-	if ( !m_activeView )
-		return;
-
-	toggleRichText->setEnabled( m_activeView->editPart()->isRichTextAvailable() );
-	toggleRichText->setChecked( m_activeView->editPart()->isRichTextEnabled() );
-}
-
-void KopeteChatWindow::toggleRichTextAction( bool enable )
-{
-	m_activeView->editPart()->setRichTextEnabled( enable );
-}
-
 void KopeteChatWindow::updateActions()
 {
 	updateSpellCheckAction();
-	updateRichTextAction();
 	updateChatSendFileAction();
 }
 
@@ -943,7 +910,6 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	if(m_activeView)
 	{
 		disconnect( m_activeView->editWidget(), SIGNAL(checkSpellingChanged(bool)), this, SLOT(enableSpellCheckAction(bool)) );
-		disconnect( m_activeView->editPart(), SIGNAL(richTextChanged()), this, SLOT(updateRichTextAction()) );
 		disconnect( m_activeView, SIGNAL(canSendChanged(bool)), this, SLOT(slotUpdateSendEnabled()) );
 		disconnect( m_activeView, SIGNAL(canAcceptFilesChanged()), this, SLOT(updateChatSendFileAction()) );
 		guiFactory()->removeClient(m_activeView->msgManager());
@@ -966,7 +932,6 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		attachChatView( view );
 
 	connect( m_activeView->editWidget(), SIGNAL(checkSpellingChanged(bool)), this, SLOT(enableSpellCheckAction(bool)) );
-	connect( m_activeView->editPart(), SIGNAL(richTextChanged()), this, SLOT(updateRichTextAction()) );
 	connect( m_activeView, SIGNAL(canSendChanged(bool)), this, SLOT(slotUpdateSendEnabled()) );
 	connect( m_activeView, SIGNAL(canAcceptFilesChanged()), this, SLOT(updateChatSendFileAction()) );
 
@@ -1269,6 +1234,9 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 
 		if ( queryClose() ) {
 			e->accept();
+		}
+		else {
+			e->ignore();
 		}
 		// END of code borrowed from KMainWindow::closeEvent
 	}

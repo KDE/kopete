@@ -3,10 +3,8 @@ add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_LIBGW} )
 
 find_package(ZLIB REQUIRED)
 
-add_subdirectory( tasks )
-
 include_directories(
-	${CMAKE_SOURCE_DIR}/kopete/protocols/groupwise/libgroupwise/tasks
+	${CMAKE_CURRENT_SOURCE_DIR}/tasks
 	${QCA2_INCLUDE_DIR}
 )
 

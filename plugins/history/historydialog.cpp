@@ -17,15 +17,16 @@
 */
 
 #include "historydialog.h"
-#include "historylogger.h"
-#include "ui_historyviewer.h"
-#include "kopetemetacontact.h"
-#include "kopeteprotocol.h"
-#include "kopeteaccount.h"
-#include "kopetecontact.h"
-#include "kopetecontactlist.h"
-#include "kopeteappearancesettings.h"
 
+#include <QtCore/QDir>
+#include <QtCore/QTextOStream>
+#include <QtGui/QClipboard>
+
+#include <kdebug.h>
+#include <krun.h>
+#include <kmenu.h>
+#include <kaction.h>
+#include <kstandardaction.h>
 #include <dom/dom_doc.h>
 #include <dom/dom_element.h>
 #include <dom/html_document.h>
@@ -33,15 +34,16 @@
 #include <khtml_part.h>
 #include <khtmlview.h>
 
-#include <QDir>
-#include <QClipboard>
-#include <QTextOStream>
+#include "kopetemetacontact.h"
+#include "kopeteprotocol.h"
+#include "kopeteaccount.h"
+#include "kopetecontact.h"
+#include "kopetecontactlist.h"
+#include "kopeteappearancesettings.h"
 
-#include <kdebug.h>
-#include <krun.h>
-#include <kmenu.h>
-#include <kaction.h>
-#include <kstandardaction.h>
+#include "historylogger.h"
+#include "historyimport.h"
+#include "ui_historyviewer.h"
 
 class KListViewDateItem : public QTreeWidgetItem
 {
@@ -77,7 +79,8 @@ bool KListViewDateItem::operator<( const QTreeWidgetItem& other ) const
 
 
 HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
- : KDialog(parent)
+ : KDialog(parent),
+   mSearching(false)
 {
 	setAttribute (Qt::WA_DeleteOnClose, true);
 	setCaption( i18n("History for %1", mc->displayName()) );
@@ -88,8 +91,6 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 
 	kDebug(14310) << "called.";
 
-	// Class member initializations
-	mSearch = 0L;
 
 	// FIXME: Allow to show this dialog for only one contact
 	mMetaContact = mc;
@@ -157,6 +158,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
 	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
+	connect(mMainWidget->importHistory, SIGNAL(clicked()), this, SLOT(slotImportHistory()));
 	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
 
 	//initActions
@@ -179,8 +181,9 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 
 HistoryDialog::~HistoryDialog()
 {
+	// end the search function, if it's still running
+	mSearching = false;
 	delete mMainWidget;
-	delete mSearch;
 }
 
 void HistoryDialog::init()
@@ -428,115 +431,104 @@ void HistoryDialog::treeWidgetHideElements(bool s)
 	}
 }
 
-// Search initialization
+/*
+* How does the search work
+* ------------------------
+* We do the search respecting the current metacontact filter item. To do this, we iterate over the
+* elements in the KListView (KListViewDateItems) and, for each one, we iterate over its subcontacts,
+* manually searching the log files of each one. To avoid searching files twice, the months that have
+* been searched already are stored in monthsSearched. The matches are placed in the matches QMap.
+* Finally, the current date item is checked in the matches QMap, and if it is present, it is shown.
+*
+* Keyword highlighting is done in setMessages() : if the search field isn't empty, we highlight the
+* search keyword.
+*
+* The search is _not_ case sensitive
+*/
 void HistoryDialog::slotSearch()
 {
-	/*
-	* How does the search work
-	* ------------------------
-	* We do the search respecting the current metacontact filter item. So to do this, we iterate (searchFirstStep()) over
-	* the elements in the K3ListView (KListViewDateItems) and, for each one, we iterate over its subcontacts, retrieving the log
-	* files of each one, log files in which we do a fulltext search. If we match the keyword, we use dateSearchMap to mark which days
-	* in this file contain the keyword.
-	*
-	* Then, we only show the items for which there is a correct dateSearchMap
-	*
-	* Keyword highlighting is done in setMessages() : if the search field isn't empty, we highlight the search keyword.
-	*
-	* The search is _not_ case sensitive
-	* TODO: Speed up search ! Solutions : optimisations ?
-	*/
+	QRegExp rx("^ <msg.*time=\"(\\d+) \\d+:\\d+:\\d+\" >([^<]*)<");
+	QMap<QDate, QList<Kopete::MetaContact*> > monthsSearched;
+	QMap<QDate, QList<Kopete::MetaContact*> > matches;
 
-	if (mSearch)
+	// cancel button pressed
+	if (mSearching)
 	{
-		mMainWidget->searchButton->setText(i18n("&Search"));
-		delete mSearch;
-		mSearch = 0L;
-		doneProgressBar();
-		return;
+		treeWidgetHideElements(false);
+		goto searchFinished;
 	}
 
 	if (mMainWidget->dateTreeWidget->topLevelItemCount() == 0) return;
 
 	treeWidgetHideElements(true);
 
-	mSearch = new Search();
-	mSearch->itemIndex = 0;
-	mSearch->foundPrevious = false;
-
-	initProgressBar(i18n("Searching..."), mMainWidget->dateTreeWidget->topLevelItemCount() );
+	initProgressBar(i18n("Searching..."), mMainWidget->dateTreeWidget->topLevelItemCount());
 	mMainWidget->searchButton->setText(i18n("&Cancel"));
+	mSearching = true;
 
-	searchFirstStep();
-}
-
-void HistoryDialog::searchFirstStep()
-{
-	QRegExp rx("^ <msg.*time=\"(\\d+) \\d+:\\d+:\\d+\" >");
-
-	if (!mSearch)
+	// iterate over items in the date list widget
+	for(int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); ++i)
 	{
-		return;
-	}
+		qApp->processEvents();
+		if (!mSearching) return;
 
-	KListViewDateItem *item = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(mSearch->itemIndex));
-	if (item && !mSearch->dateSearchMap[item->date()].contains(item->metaContact()))
-	{
-		if (mMainWidget->contactComboBox->currentIndex() == 0
-		    || mMetaContactList.at(mMainWidget->contactComboBox->currentIndex()-1) == item->metaContact())
+		KListViewDateItem *curItem = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(i));
+		QDate month(curItem->date().year(),curItem->date().month(),1);
+		// if we haven't searched the relevant history logs, search them now
+		if (!monthsSearched[month].contains(curItem->metaContact()))
 		{
-			HistoryLogger hlog(item->metaContact());
-
-			QList<Kopete::Contact*> contacts=item->metaContact()->contacts();
-
+			monthsSearched[month].push_back(curItem->metaContact());
+			QList<Kopete::Contact*> contacts = curItem->metaContact()->contacts();
 			foreach(Kopete::Contact* contact, contacts)
 			{
-				mSearch->datePrevious = item->date();
-
-				QString fullText;
-
-				QFile file(hlog.getFileName(contact, item->date()));
+				// get filename and open file
+				QString filename(HistoryLogger::getFileName(contact, curItem->date()));
+				if (!QFile::exists(filename)) continue;
+				QFile file(filename);
 				file.open(QIODevice::ReadOnly);
 				if (!file.isOpen())
 				{
+					kWarning(14310) << k_funcinfo << "Error opening " <<
+							file.fileName() << ": " << file.errorString() << endl;
 					continue;
 				}
+
 				QTextStream stream(&file);
 				QString textLine;
-				while(!(textLine = stream.readLine()).isNull())
+				while(!stream.atEnd())
 				{
+					textLine = stream.readLine();
 					if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
 					{
-						rx.indexIn(textLine);
-						mSearch->dateSearchMap[QDate(item->date().year(),item->date().month(),rx.cap(1).toInt())].push_back(item->metaContact());
+						if(rx.indexIn(textLine) != -1)
+						{
+							// only match message body
+							if (rx.cap(2).contains(mMainWidget->searchLine->text()))
+								matches[QDate(curItem->date().year(),curItem->date().month(),rx.cap(1).toInt())].push_back(curItem->metaContact());
+						}
+						// this will happen when multiline messages are searched, properly
+						// parsing the files would fix this
+						else { }
 					}
+					qApp->processEvents();
+					if (!mSearching) return;
 				}
-
 				file.close();
 			}
 		}
-	}
 
-	if ( item && mSearch->dateSearchMap[item->date()].contains(item->metaContact()) )
-		item->setHidden(false);
+		// relevant logfiles have been searched now, check if current date matches
+		if (matches[curItem->date()].contains(curItem->metaContact()))
+			curItem->setHidden(false);
 
-	mSearch->itemIndex++;
-
-	if( mSearch->itemIndex < mMainWidget->dateTreeWidget->topLevelItemCount() )
-	{
-		// Next iteration
+		// Next date item
 		mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
-
-		QTimer::singleShot(0,this,SLOT(searchFirstStep()));
 	}
-	else
-	{
-		mMainWidget->searchButton->setText(i18n("&Search"));
 
-		delete mSearch;
-		mSearch = 0L;
-		doneProgressBar();
-	}
+searchFinished:
+	mMainWidget->searchButton->setText(i18n("Se&arch"));
+	mSearching = false;
+	doneProgressBar();
 }
 
 
@@ -609,6 +601,12 @@ void HistoryDialog::slotCopyURL()
 	QApplication::clipboard()->setText( mURL, QClipboard::Clipboard);
 	QApplication::clipboard()->setText( mURL, QClipboard::Selection);
 	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+}
+
+void HistoryDialog::slotImportHistory(void)
+{
+	HistoryImport importer(this);
+	importer.exec();
 }
 
 #include "historydialog.moc"
