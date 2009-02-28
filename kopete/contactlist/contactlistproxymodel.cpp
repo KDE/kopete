@@ -55,37 +55,40 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 // 	Kopete::MetaContact* mc = metaContactFromIndex( current );
 	bool showEmpty = Kopete::AppearanceSettings::self()->showEmptyGroups();
 	bool showOffline = Kopete::AppearanceSettings::self()->showOfflineUsers();
-	
-	if ( model->data( current, Kopete::Items::TypeRole ) ==
-	     Kopete::Items::Group )
+
+	if ( model->data( current, Kopete::Items::TypeRole ) == Kopete::Items::Group )
 	{
-		int connectedContactsCount = model->data( current,
-		                                          Kopete::Items::ConnectedCountRole ).toInt();
-		int totalContactsCount = model->data( current,
-		                                      Kopete::Items::TotalCountRole ).toInt();
-		
-		
+		int connectedContactsCount = model->data( current, Kopete::Items::ConnectedCountRole ).toInt();
+		int totalContactsCount = model->data( current, Kopete::Items::TotalCountRole ).toInt();
+
+		// TODO: Find out how to check if we should hide the group if no metaContact was found.
+		if ( !filterRegExp().isEmpty() )
+			return true;
+
 		if ( !showEmpty && totalContactsCount == 0 )
 			return false;
-		
+
 		if ( !showEmpty && !showOffline && connectedContactsCount == 0 )
 			return false;
-		
+
 		return true;
 	}
-	
-	if ( model->data( current, Kopete::Items::TypeRole ) ==
-	     Kopete::Items::MetaContact )
+
+	if ( model->data( current, Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 	{
-		int mcStatus = model->data( current,
-		                            Kopete::Items::OnlineStatusRole ).toInt();
-		if ( mcStatus <= OnlineStatus::Offline && !showOffline )
+		if ( !filterRegExp().isEmpty() )
 		{
-			return false;
+			QString mcName = model->data( current, Qt::DisplayRole ).toString();
+			return mcName.contains( filterRegExp() );
 		}
+
+		int mcStatus = model->data( current, Kopete::Items::OnlineStatusRole ).toInt();
+		if ( mcStatus <= OnlineStatus::Offline && !showOffline )
+			return false;
 		else
 			return true;
 	}
+
 	return false;
 }
 

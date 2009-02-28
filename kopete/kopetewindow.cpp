@@ -68,6 +68,7 @@
 #include <kstandardaction.h>
 #include <solid/networking.h>
 #include <kstatusbarofflineindicator.h>
+#include <kfilterproxysearchline.h>
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"
@@ -468,19 +469,11 @@ void KopeteWindow::initActions()
 	d->actionShowEmptyGroups->setCheckedState ( KGuiItem ( i18n ( "Hide Empty &Groups" ) ) );
     */
 
-	// quick search bar
-	/* disabled for now. it'll be hooked up to a QSortFilterProxyModel later
-	QLabel *searchLabel = new QLabel ( i18n ( "Se&arch:" ), 0 );
-	searchLabel->setObjectName ( QLatin1String ( "kde toolbar widget" ) );
-	QWidget *searchBar = new Kopete::UI::ListView::SearchLine ( 0, d->contactlist );
-	searchLabel->setBuddy ( searchBar );
+	KFilterProxySearchLine* searchLine = new KFilterProxySearchLine();
+	searchLine->setProxy( d->proxyModel );
 	KAction *quickSearch = new KAction ( i18n ( "Quick Search Bar" ), this );
 	actionCollection()->addAction ( "quicksearch_bar", quickSearch );
-	quickSearch->setDefaultWidget ( searchBar );
-	KAction *searchLabelAction = new KAction ( i18n ( "Search:" ), this );
-	actionCollection()->addAction ( "quicksearch_label", searchLabelAction );
-	searchLabelAction->setDefaultWidget ( searchLabel ); 
-	*/
+	quickSearch->setDefaultWidget ( searchLine );
 
 	// sync actions, config and prefs-dialog
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL ( configChanged() ), this, SLOT ( slotConfigChanged() ) );
