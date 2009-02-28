@@ -101,6 +101,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	setAnimated( true );
 	setDropIndicatorShown( true );
 	setItemDelegate( new KopeteItemDelegate( this ) );
+	setExpandsOnDoubleClick( true );
 
 	connect( this, SIGNAL( activated(const QModelIndex&)),
 	         this, SLOT( contactActivated(const QModelIndex&)));

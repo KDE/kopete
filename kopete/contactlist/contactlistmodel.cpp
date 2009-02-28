@@ -203,7 +203,7 @@ int ContactListModel::rowCount( const QModelIndex& parent ) const
 		if ( g )
 			cnt+= m_contacts[g].count();
 	}
-	
+
 	return cnt;
 }
 
@@ -521,7 +521,10 @@ QModelIndex ContactListModel::parent(const QModelIndex & index) const
 		if ( !g )
 		{
 			Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>( cle );
-			parent = createIndex( 0, 0, mc->groups().last() );
+			// WARNING: FIX THIS!!! We can't have one metaContact in more groups
+			// because we won't find correct group and item won't be updated in proxy
+			g = mc->groups().last();
+			parent = createIndex( m_groups.indexOf( g ), 0, g );
 		}
 	}
 	return parent;
@@ -576,10 +579,11 @@ void ContactListModel::handleContactDataChange(Kopete::MetaContact* mc)
 	// and now notify all the changes
 	foreach(QModelIndex index, indexList)
 	{
-		emit dataChanged(index, index);
 		// we need to emit the dataChanged signal to the groups this metacontact belongs to
-		// so that proxy filtering is aware of the changes
+		// so that proxy filtering is aware of the changes, first we have to update the parent
+		// otherwise the group won't be expandable.
 		emit dataChanged(index.parent(), index.parent());
+		emit dataChanged(index, index);
 	}
 }
 
