@@ -53,6 +53,8 @@
 #include "contactlistlayoutmanager.h"
 #include "kopeteaccount.h"
 #include "addcontactpage.h"
+#include "kopeteappearancesettings.h"
+#include "kopetebehaviorsettings.h"
 
 #include "contactlistmodel.h"
 #include "kopeteitembase.h"
@@ -111,10 +113,12 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	         this, SLOT(itemCollapsed(const QModelIndex&)));
 	connect( ContactList::LayoutManager::instance(), SIGNAL(activeLayoutChanged()),
 	         this, SLOT(reset()) );
+	connect( Kopete::BehaviorSettings::self(), SIGNAL(configChanged()), SLOT(slotSettingsChanged()) );
+	connect( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), SLOT(slotSettingsChanged()) );
 
 	setEditTriggers( NoEditTriggers );
 	// Load in the user's initial settings
-	//slotSettingsChanged();
+	slotSettingsChanged();
 }
 
 void KopeteContactListView::initActions( KActionCollection *ac )
@@ -452,6 +456,44 @@ void KopeteContactListView::mouseReleaseEvent(QMouseEvent *event)
 
 	QTreeView::mouseReleaseEvent( event );
 	d->controlPressed = false;
+}
+
+void KopeteContactListView::slotSettingsChanged()
+{
+	if ( Kopete::AppearanceSettings::self()->contactListTreeView() )
+	{
+		setRootIsDecorated( true );
+		setIndentation( 20 );
+	}
+	else
+	{
+		setRootIsDecorated( false );
+		setIndentation( Kopete::AppearanceSettings::self()->contactListIndentContact() ? 20 : 0 );
+	}
+
+// 	if( Kopete::AppearanceSettings::self()->contactListHideVerticalScrollBar() )
+// 	{
+// 		// This will disable scrollbar auto-hide feature if it's enabled
+// 		// and it will call setVScrollBarMode(Auto), so it must precede setScrollHide call
+// 		setScrollAutoHide( false );
+// 		setScrollHide( true );
+// 	}
+// 	else
+// 	{
+// 		// This will disable "always hide scrollbar" optio and call setVScrollBarMode(Auto)
+// 		// so it must precede setScrollAutoHide call
+// 		setScrollHide(false);
+// 		setScrollAutoHide( Kopete::AppearanceSettings::self()->contactListAutoHideVScroll() );
+// 	}
+
+// 	setScrollAutoHideTimeout( Kopete::AppearanceSettings::self()->contactListAutoHideTimeout() );
+// 	setMouseNavigation( Kopete::BehaviorSettings::self()->contactListMouseNavigation() );
+
+	setAnimated( Kopete::AppearanceSettings::self()->contactListAnimateChange() );
+/*	Kopete::UI::ListView::Item::setEffects( Kopete::AppearanceSettings::self()->contactListAnimateChange(),
+	                                        Kopete::AppearanceSettings::self()->contactListFading(),
+	                                        Kopete::AppearanceSettings::self()->contactListFolding() );*/
+	
 }
 
 void KopeteContactListView::addToAddContactMenu( Kopete::Account* account )

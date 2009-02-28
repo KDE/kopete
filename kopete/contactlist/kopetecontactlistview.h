@@ -87,6 +87,7 @@ protected:
 	void mouseReleaseEvent( QMouseEvent *event );
 
 private slots:
+	void slotSettingsChanged();
 	void addToAddContactMenu( Kopete::Account* account );
 	void removeToAddContactMenu( const Kopete::Account *account );
 	void addContact();

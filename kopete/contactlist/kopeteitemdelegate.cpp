@@ -25,6 +25,8 @@
 #include <QAbstractItemView>
 #include <QApplication>
 
+#include <qimageblitz.h>
+
 #include <KIconLoader>
 
 #include "kopetemetacontact.h"
@@ -163,14 +165,67 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 			{
 				metaContactImage = metaContactImage.scaled( imageSize, imageSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 
+				int metaContactStatus = index.data( Kopete::Items::OnlineStatusRole ).toInt();
+				if ( metaContactStatus == Kopete::OnlineStatus::Offline )
+					Blitz::grayscale( metaContactImage );
+
+				switch ( metaContactStatus )
+				{
+				case Kopete::OnlineStatus::Online:
+					break;
+				case Kopete::OnlineStatus::Away:
+					Blitz::fade( metaContactImage, 0.5, Qt::white );
+					break;
+				case Kopete::OnlineStatus::Offline:
+					Blitz::fade( metaContactImage, 0.4, Qt::white );
+					break;
+				case Kopete::OnlineStatus::Unknown:
+				default:
+					Blitz::fade( metaContactImage, 0.8, Qt::white );
+				}
+
+				QPixmap photoPixmap;
+				bool roundedIcons = Kopete::AppearanceSettings::self()->contactListIconRounded();
+				if ( roundedIcons )
+				{
+					photoPixmap = QPixmap( metaContactImage.width(), metaContactImage.height() );
+					photoPixmap.fill( Qt::transparent );
+					QPainter painter( &photoPixmap );
+					painter.setRenderHint( QPainter::Antialiasing );
+					painter.setPen( Qt::NoPen );
+					painter.setBrush( QBrush( metaContactImage ) );
+					QRectF rectangle( 0.5, 0.5, photoPixmap.width()-1, photoPixmap.height()-1 );
+					painter.drawRoundedRect( rectangle, 25, 25, Qt::RelativeSize );
+				}
+				else
+				{
+					photoPixmap = QPixmap::fromImage( metaContactImage );
+				}
+
+				if ( Kopete::AppearanceSettings::self()->contactListIconBorders() )
+				{
+					QPainter p( &photoPixmap );
+					p.setPen( Qt::black );
+
+					if ( roundedIcons )
+					{
+						p.setRenderHint( QPainter::Antialiasing );
+						QRectF rectangle( 0.5, 0.5, photoPixmap.width()-1, photoPixmap.height()-1 );
+						p.drawRoundedRect( rectangle, 25, 25, Qt::RelativeSize );
+					}
+					else
+					{
+						p.drawRect( 0, 0, photoPixmap.width()-1, photoPixmap.height()-1 );
+					}
+				}
 				//offset cover if non square
-				QPointF offset = centerImage( metaContactImage, nominalImageRect );
+				QPointF offset = centerImage( photoPixmap, nominalImageRect );
 				QRectF imageRect( nominalImageRect.x() + offset.x(),
 				                  nominalImageRect.y() + offset.y(),
 				                  nominalImageRect.width() - offset.x() * 2,
 				                  nominalImageRect.height() - offset.y() * 2 );
 
-				painter->drawImage( imageRect, metaContactImage, QRectF( metaContactImage.rect() ) );
+				painter->drawPixmap( imageRect, photoPixmap, QRectF( photoPixmap.rect() ) );
 			}
 		}
 		else

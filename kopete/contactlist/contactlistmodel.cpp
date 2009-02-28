@@ -26,8 +26,6 @@
 #include <QImage>
 #include <QMimeData>
 
-#include <qimageblitz.h>
-
 #include <KIcon>
 #include <KDebug>
 #include <KLocale>
@@ -595,13 +593,8 @@ QVariant ContactListModel::metaContactImage( Kopete::MetaContact* mc ) const
 	if ( iconMode == AppearanceSettings::EnumContactListIconMode::IconPhoto )
 	{
 		QImage img = mc->picture().image();
-		if ( !img.isNull() )
-		{
-			if ( mc->status() == Kopete::OnlineStatus::Offline )
-				Blitz::grayscale(img);
-
+		if ( !img.isNull() && img.width() > 0 && img.height() > 0 )
 			return img;
-		}
 	}
 
 	switch( mc->status() )
