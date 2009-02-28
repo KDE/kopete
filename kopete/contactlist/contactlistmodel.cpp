@@ -32,15 +32,19 @@
 #include <KDebug>
 #include <KLocale>
 #include <KIconLoader>
+#include <KEmoticonsTheme>
+#include <QTextDocument>
 
 #include "kopeteaccount.h"
 #include "kopetegroup.h"
 #include "kopetepicture.h"
 #include "kopetemetacontact.h"
+#include "kopeteprotocol.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteitembase.h"
 #include "kopeteappearancesettings.h"
+#include "kopeteemoticons.h"
 
 namespace Kopete {
 
@@ -275,7 +279,6 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 
 	QString display;
 	QImage img;
-	QString tooltip;
 	if ( g )
 	{
 		switch ( role )
@@ -337,9 +340,7 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 			return metaContactImage( mc );
 			break;
 		case Qt::ToolTipRole:
-			foreach(Kopete::Contact *c, mc->contacts())
-				tooltip += c->toolTip() + "<br>";
-			return tooltip;
+			return metaContactTooltip( mc );
 			break;
 		case Kopete::Items::TypeRole:
 			return Kopete::Items::MetaContact;
@@ -631,6 +632,64 @@ QVariant ContactListModel::metaContactImage( Kopete::MetaContact* mc ) const
 	}
 
 	return QVariant();
+}
+
+QString ContactListModel::metaContactTooltip( Kopete::MetaContact* metaContact ) const
+{
+	// We begin with the meta contact display name at the top of the tooltip
+	QString toolTip = QLatin1String("<qt><table cellpadding=\"0\" cellspacing=\"1\">");
+	toolTip += QLatin1String("<tr><td>");
+	
+	if ( !metaContact->picture().isNull() )
+	{
+#ifdef __GNUC__
+#warning Currently using metaContact->picture().path() but should use replacement of KopeteMimeSourceFactory
+#endif
+#if 0
+			QString photoName = QLatin1String("kopete-metacontact-photo:%1").arg( KUrl::encode_string( metaContact->metaContactId() ));
+			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
+			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
+#endif
+		toolTip += QString::fromLatin1("<img src=\"%1\">").arg( metaContact->picture().path() );
+	}
+
+	toolTip += QLatin1String("</td><td>");
+
+	QString displayName;
+	QList<KEmoticonsTheme::Token> t = Kopete::Emoticons::tokenize( metaContact->displayName());
+	QList<KEmoticonsTheme::Token>::iterator it;
+	for( it = t.begin(); it != t.end(); ++it )
+	{
+		if( (*it).type == KEmoticonsTheme::Image )
+			displayName += (*it).picHTMLCode;
+		else if( (*it).type == KEmoticonsTheme::Text )
+			displayName += Qt::escape( (*it).text );
+	}
+
+	toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg( displayName );
+
+	QList<Contact*> contacts = metaContact->contacts();
+	if ( contacts.count() == 1 )
+		return toolTip + contacts.first()->toolTip() + QLatin1String("</td></tr></table></qt>");
+
+	toolTip += QLatin1String("<table>");
+
+	// We are over a metacontact with > 1 child contacts, and not over a specific contact
+	// Iterate through children and display a summary tooltip
+	foreach ( Contact* c, contacts )
+	{
+		QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
+			.arg( QString(QUrl::toPercentEncoding( c->protocol()->pluginId() )),
+			      QString(QUrl::toPercentEncoding( c->account()->accountId() )),
+			      QString(QUrl::toPercentEncoding( c->contactId() ) )
+			    );
+
+		toolTip += i18nc("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
+		                 "<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>",
+		                 iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
+	}
+
+	return toolTip + QLatin1String("</table></td></tr></table></qt>");
 }
 
 }

@@ -61,6 +61,8 @@
 class KopeteContactListViewPrivate
 {
 public:
+	KopeteContactListViewPrivate() : controlPressed( false )
+	{}
 	//QRect m_onItem;
 	
 	// HACK: Used to update the KMEnu title - DarkShock
@@ -83,6 +85,8 @@ public:
 	KAction *actionMakeMetaContact;
 
 	QMap<KAction*, Kopete::Account*> addContactAccountMap;
+
+	bool controlPressed;
 };
 
 KopeteContactListView::KopeteContactListView( QWidget *parent )
@@ -205,9 +209,12 @@ void KopeteContactListView::contactActivated( const QModelIndex& index )
 	QVariant v = index.data( Kopete::Items::ElementRole );
 	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 	{
-		Kopete::MetaContact* mc = metaContactFromIndex( index );
-		if ( mc )
-			mc->execute();
+		if ( !d->controlPressed )
+		{
+			Kopete::MetaContact* mc = metaContactFromIndex( index );
+			if ( mc )
+				mc->execute();
+		}
 	}
 
 
@@ -435,6 +442,15 @@ void KopeteContactListView::contextMenuEvent( QContextMenuEvent* event )
 			groupPopup( groupFromIndex( index ), event->globalPos() );
 	}
 	event->accept();
+}
+
+void KopeteContactListView::mouseReleaseEvent(QMouseEvent *event)
+{
+	if ( (event->modifiers() & Qt::ControlModifier) == Qt::ControlModifier )
+		d->controlPressed = true;
+
+	QTreeView::mouseReleaseEvent( event );
+	d->controlPressed = false;
 }
 
 void KopeteContactListView::addToAddContactMenu( Kopete::Account* account )

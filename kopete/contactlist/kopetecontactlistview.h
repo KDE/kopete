@@ -84,6 +84,7 @@ public Q_SLOTS:
 
 protected:
 	void contextMenuEvent( QContextMenuEvent* event );
+	void mouseReleaseEvent( QMouseEvent *event );
 
 private slots:
 	void addToAddContactMenu( Kopete::Account* account );

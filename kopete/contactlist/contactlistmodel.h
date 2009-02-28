@@ -77,6 +77,7 @@ Q_OBJECT
 		int childCount(const QModelIndex& parent) const;
 		int countConnected(Kopete::Group* g) const;
 		QVariant metaContactImage( Kopete::MetaContact* mc ) const;
+		QString metaContactTooltip( Kopete::MetaContact* metaContact ) const;
 		
 		QList<Kopete::Group*> m_groups;
 		QMap<Kopete::Group*, QList<Kopete::MetaContact*> > m_contacts;
