@@ -34,6 +34,7 @@ ContactListProxyModel::ContactListProxyModel(QObject* parent)
 	: QSortFilterProxyModel(parent)
 {
 	setDynamicSortFilter(true);
+	sort( 0, Qt::AscendingOrder );
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
 }
 
@@ -46,6 +47,60 @@ void ContactListProxyModel::slotConfigChanged()
 {
 	kDebug(14001) << "config changed";
 	invalidate();
+}
+
+bool ContactListProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+{
+	int leftType = left.data( Kopete::Items::TypeRole ).toInt();
+	if ( leftType != right.data( Kopete::Items::TypeRole ).toInt() )
+	{
+		kWarning() << "Comparing different types!!!";
+		return false;
+	}
+
+	if ( leftType == Kopete::Items::Group )
+	{
+		switch ( Kopete::AppearanceSettings::self()->contactListGroupSorting() )
+		{
+		case Kopete::AppearanceSettings::EnumContactListGroupSorting::Manual:
+			return left.row() < right.row();
+		case Kopete::AppearanceSettings::EnumContactListGroupSorting::Name:
+		default:
+			QString leftName = left.data( Qt::DisplayRole ).toString();
+			QString rightName = right.data( Qt::DisplayRole ).toString();
+			return QString::localeAwareCompare( leftName, rightName ) < 0;
+		}
+	}
+	else if ( leftType == Kopete::Items::MetaContact )
+	{
+		switch ( Kopete::AppearanceSettings::self()->contactListMetaContactSorting() )
+		{
+		case Kopete::AppearanceSettings::EnumContactListMetaContactSorting::Manual:
+			return left.row() < right.row();
+		case Kopete::AppearanceSettings::EnumContactListMetaContactSorting::Status:
+		{
+			int leftStatus = left.data( Kopete::Items::OnlineStatusRole ).toInt();
+			int rightStatus = right.data( Kopete::Items::OnlineStatusRole ).toInt();
+			if ( leftStatus != rightStatus )
+			{
+				return !(leftStatus < rightStatus);
+			}
+			else
+			{
+				QString leftName = left.data( Qt::DisplayRole ).toString();
+				QString rightName = right.data( Qt::DisplayRole ).toString();
+				return (QString::localeAwareCompare( leftName, rightName ) < 0);
+			}
+		}
+		case Kopete::AppearanceSettings::EnumContactListMetaContactSorting::Name:
+		default:
+			QString leftName = left.data( Qt::DisplayRole ).toString();
+			QString rightName = right.data( Qt::DisplayRole ).toString();
+			return (QString::localeAwareCompare( leftName, rightName ) < 0);
+		}
+	}
+
+	return false;
 }
 
 bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex & sourceParent ) const

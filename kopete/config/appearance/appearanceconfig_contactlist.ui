@@ -1,123 +1,131 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>AppearanceConfig_ContactList</class>
- <widget class="QWidget" name="AppearanceConfig_ContactList" >
-  <property name="geometry" >
+ <widget class="QWidget" name="AppearanceConfig_ContactList">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>387</width>
-    <height>348</height>
+    <width>454</width>
+    <height>347</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Contact List Appearance</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4" >
-     <item>
-      <widget class="QLabel" name="label_2" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
-        <string>Photo size:</string>
+       <property name="text">
+        <string>Group sorting:</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QComboBox" name="kcfg_contactListSize" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+     <item row="0" column="1">
+      <widget class="QComboBox" name="kcfg_contactListGroupSorting">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <item>
-        <property name="text" >
-         <string>Small (1 line)</string>
+        <property name="text">
+         <string>Manual</string>
         </property>
        </item>
        <item>
-        <property name="text" >
-         <string>Medium (2 lines)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Large (3 lines)</string>
+        <property name="text">
+         <string>Name</string>
         </property>
        </item>
       </widget>
      </item>
-     <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+     <item row="0" column="2" rowspan="2">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>0</width>
+         <height>48</height>
         </size>
        </property>
       </spacer>
      </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Contact sorting:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="kcfg_contactListMetaContactSorting">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <item>
+        <property name="text">
+         <string>Manual</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Status</string>
+        </property>
+       </item>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_contactListLeftMode" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+    <widget class="QCheckBox" name="kcfg_contactListIconMode">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text" >
-      <string>Left-aligned status icons</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="kcfg_contactListDetailedMode" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text" >
-      <string>Detailed view</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="kcfg_contactListIconMode" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text" >
+     <property name="text">
       <string>Use contact photos &amp;when available</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6" >
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
-      <spacer name="horizontalSpacer_2" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Fixed</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>16</width>
          <height>16</height>
@@ -126,11 +134,11 @@
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="kcfg_contactListIconBorders" >
-       <property name="enabled" >
+      <widget class="QCheckBox" name="kcfg_contactListIconBorders">
+       <property name="enabled">
         <bool>true</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Borders</string>
        </property>
       </widget>
@@ -138,16 +146,16 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4" >
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Fixed</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>16</width>
          <height>16</height>
@@ -156,11 +164,11 @@
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="kcfg_contactListIconRounded" >
-       <property name="enabled" >
+      <widget class="QCheckBox" name="kcfg_contactListIconRounded">
+       <property name="enabled">
         <bool>true</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Rounded corners</string>
        </property>
       </widget>
@@ -168,42 +176,42 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_groupContactByGroup" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+    <widget class="QCheckBox" name="kcfg_groupContactByGroup">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Arrange metacontacts by &amp;group</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_contactListTreeView" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+    <widget class="QCheckBox" name="kcfg_contactListTreeView">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Show tree &amp;branch lines</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Fixed</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>16</width>
          <height>16</height>
@@ -212,17 +220,17 @@
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="kcfg_contactListIndentContact" >
-       <property name="enabled" >
+      <widget class="QCheckBox" name="kcfg_contactListIndentContact">
+       <property name="enabled">
         <bool>true</bool>
        </property>
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>In&amp;dent contacts</string>
        </property>
       </widget>
@@ -230,54 +238,54 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_contactListHideVerticalScrollBar" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+    <widget class="QCheckBox" name="kcfg_contactListHideVerticalScrollBar">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="whatsThis" >
-      <string>&lt;b>Always&lt;/b> disables the vertical scrollbar</string>
+     <property name="whatsThis">
+      <string>&lt;b&gt;Always&lt;/b&gt; disables the vertical scrollbar</string>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>&amp;Hide vertical scrollbar</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_showIdentityIcons" >
-     <property name="text" >
+    <widget class="QCheckBox" name="kcfg_showIdentityIcons">
+     <property name="text">
       <string>Show identities in status bar instead of accounts</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QPushButton" name="mEditTooltips" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+      <widget class="QPushButton" name="mEditTooltips">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Change &amp;Tooltip Contents...</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Expanding</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>16</width>
+         <width>0</width>
          <height>16</height>
         </size>
        </property>
@@ -286,14 +294,14 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -317,11 +325,11 @@
    <receiver>kcfg_contactListIndentContact</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>114</x>
      <y>116</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>137</x>
      <y>144</y>
     </hint>
@@ -333,11 +341,11 @@
    <receiver>kcfg_contactListIconBorders</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>288</x>
      <y>101</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>298</x>
      <y>129</y>
     </hint>
@@ -349,11 +357,11 @@
    <receiver>kcfg_contactListIconRounded</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>193</x>
      <y>47</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>203</x>
      <y>75</y>
     </hint>
