@@ -28,7 +28,7 @@
 #include <qintdict.h>
 #include <qptrdict.h>
 
-#include <dbus/dbus.h>
+#include "dbus/dbus.h"
 
 class QTimer;
 
@@ -60,13 +60,12 @@ namespace DBusQt
     {
       Q_OBJECT
     public:
-      Integrator( DBusConnection *connection, QObject *parent, bool tmp = FALSE );
+      Integrator( DBusConnection *connection, QObject *parent );
       Integrator( DBusServer *server, QObject *parent );
-	  virtual ~Integrator();
 
     signals:
       void readReady();
-	  void newConnection( DBusQt::Connection* );
+      void newConnection( Connection* );
 
     protected slots:
       void slotRead( int );
@@ -81,9 +80,8 @@ namespace DBusQt
       void removeTimeout( DBusTimeout* );
 
       void handleConnection( DBusConnection* );
-
-	  QIntDict<Watch> m_watches;
     private:
+      QIntDict<Watch> m_watches;
       QPtrDict<Timeout> m_timeouts;
       DBusConnection *m_connection;
       DBusServer *m_server;

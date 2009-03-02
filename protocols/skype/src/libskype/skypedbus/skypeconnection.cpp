@@ -76,7 +76,11 @@ void SkypeConnection::startLogOn() {
 		d->startTimer = 0L;
 	}
 
-	DBusQt::Message ping("com.Skype.API", "/com/Skype", "com.Skype.API", "Ping");//create a ping message
+//	DBusQt::Message ping("com.Skype.API", "/com/Skype", "com.Skype.API", "Ping");//create a ping message
+
+	DBusQt::Message ping("com.Skype.API", "/com/Skype", "com.Skype.API", "Invoke");
+	ping << QString("Ping");
+
 	ping.setAutoActivation(true);
 	DBusQt::Message reply = d->conn->sendWithReplyAndBlock(ping);//send it there
 
@@ -194,8 +198,12 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 	connect(d->conn, SIGNAL(messageArrived(const DBusQt::Message&)), this, SLOT(gotMessage(const DBusQt::Message &)));
 
 	{
-		DBusQt::Message m("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ServiceExists");
-		m << QString("com.Skype.API");
+/*		DBusQt::Message m("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ServiceExists");
+		m << QString("com.Skype.API"); */
+
+		DBusQt::Message m("com.Skype.API", "/com/Skype", "com.Skype.API", "Invoke");
+		m << QString("Ping");
+
 		m.setAutoActivation(true);
 
 		DBusQt::Message reply = d->conn->sendWithReplyAndBlock(m);
@@ -356,7 +364,7 @@ void SkypeConnection::setEnv(KProcess *, char *buffer, int length) {
 void SkypeConnection::tryConnect() {
 	kdDebug(14311) << k_funcinfo << endl;//some debug info
 
-	{
+	/*{
 		DBusQt::Message m("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ServiceExists");
 		m << QString("com.Skype.API");
 		m.setAutoActivation(true);
@@ -376,7 +384,7 @@ void SkypeConnection::tryConnect() {
 			}
 			return;//Maybe next time
 		}
-	}
+	}*/
 
 	d->startTimer->stop();
 	d->startTimer->deleteLater();

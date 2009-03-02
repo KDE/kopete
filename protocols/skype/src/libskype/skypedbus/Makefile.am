@@ -1,7 +1,7 @@
 
 noinst_LTLIBRARIES = libskypedbus.la
 
-AM_CPPFLAGS = $(all_includes) $(DBUS_INCS) -DOLD_DBUS
+AM_CPPFLAGS = $(all_includes) $(DBUS_INCS)
 METASOURCES = AUTO
 
 libskypedbus_la_SOURCES = skypeconnection.cpp message.cpp integrator.cpp connection.cpp

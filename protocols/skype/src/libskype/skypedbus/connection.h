@@ -1,5 +1,4 @@
 // -*- Mode: C++; c-basic-offset: 2; indent-tabs-mode: nil; -*-
-
 /* connection.h: Qt wrapper for DBusConnection
  *
  * Copyright (C) 2003  Zack Rusin <zack@kde.org>
@@ -21,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
 #ifndef DBUS_QT_CONNECTION_H
 #define DBUS_QT_CONNECTION_H
 
@@ -29,67 +27,74 @@
 
 #include <qobject.h>
 #include <qstring.h>
-#include <qevent.h>
-#include <dbus/dbus.h>
 
-const int DBUS_EVENT_WAKEUP = QEvent::User + 100;
+#include "dbus/dbus.h"
 
-namespace DBusQt
-{
-	namespace Internal
-	{
-		class Integrator;
-	}
+namespace DBusQt {
+  namespace Internal {
+    class Integrator;
+  }
 
-	class Connection : public QObject
-	{
-	Q_OBJECT
-	public:
-		Connection( QObject * parent = 0 );
-		Connection( const QString & host, QObject * parent = 0 );
-		Connection( DBusBusType type, QObject * parent = 0, bool temporary = FALSE );
-		virtual ~ Connection(  );
+  class Connection : public QObject
+  {
+    Q_OBJECT
+  public:
+    Connection( QObject *parent =0 );
+    Connection( const QString& host,
+                QObject *parent = 0 );
+    Connection( DBusBusType type, QObject* parent = 0 );
 
-		bool isConnected(  ) const;
-		bool isAuthenticated(  ) const;
+    bool isConnected() const;
+    bool isAuthenticated() const;
 
-		Message borrowMessage(  );
-		Message popMessage(  );
-		void stealBorrowMessage( const Message & );
-		void dbusMessage( DBusMessage * message );
-		bool error(  );
-		QString getError(  );
+    Message borrowMessage();
+    Message popMessage();
+    void stealBorrowMessage( const Message& );
+    void dbus_connection_setup_with_qt_main (DBusConnection *connection);
 
-	public slots:
-		void open( const QString & );
-		void close(  );
-		void flush(  );
-		void send( const Message & );
-		void sendWithReply( const Message & );
-		Message sendWithReplyAndBlock( const Message & );
-		bool registerObjectPath( const QString & path, const QString & service );
+/** Added for skypeconnection.cpp */
+    void dbusMessage( DBusMessage * message );
 
-	protected slots:
-		void dispatchRead(  );
+/** Added for skypeconnection.cpp */
+    bool error();
 
-	protected:
-		void init( const QString & host );
-		virtual void *virtual_hook( int id, void *data );
-		bool event( QEvent * );
+/** Added for skypeconnection.cpp */
+    QString getError();
 
-	private:
-		friend class Internal::Integrator;
-		DBusConnection *connection(  );
-		Connection( DBusConnection * connection, QObject * parent );
+  public slots:
+    void open( const QString& );
+    void close();
+    void flush();
+    void send( const Message& );
+    void sendWithReply( const Message& );
+    Message sendWithReplyAndBlock( const Message& );
 
-	private:
-		struct Private;
-		Private *d;
+/** Added for skypeconnection.cpp */
+    bool registerObjectPath( const QString & path, const QString & service );
 
-	signals:
-		void messageArrived( const DBusQt::Message & m );
-	};
+  protected slots:
+    void dispatchRead();
+
+  protected:
+    void init( const QString& host );
+    virtual void *virtual_hook( int id, void *data );
+
+  private:
+    friend class Internal::Integrator;
+    DBusConnection *connection() const;
+    Connection( DBusConnection *connection, QObject *parent );
+
+  private:
+    struct Private;
+    Private *d;
+
+/** Added for skypeconnection.cpp */
+  signals:
+    void messageArrived( const DBusQt::Message & m );
+
+  };
 
 }
+
 
 #endif

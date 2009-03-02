@@ -27,7 +27,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 
-#include <dbus/dbus.h>
+#include "dbus/dbus.h"
 
 namespace DBusQt {
 
@@ -90,11 +90,15 @@ namespace DBusQt {
 
     bool    setSender( const QString& sender );
     QString    sender() const;
-	
-	void setAutoActivation(bool aa);
-	bool autoActication();
-	
-	bool expectReply() const;
+
+/** Added for skypeconnection.cpp */
+    void setAutoActivation(bool aa);
+
+/** Added for skypeconnection.cpp */
+    bool autoActication();
+
+/** Added for skypeconnection.cpp */
+    bool expectReply() const;
 
     QString signature() const;
 

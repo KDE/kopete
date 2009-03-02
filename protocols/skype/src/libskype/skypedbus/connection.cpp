@@ -1,32 +1,25 @@
 // -*- Mode: C++; c-basic-offset: 2; indent-tabs-mode: nil; -*-
-
 /* connection.cpp: Qt wrapper for DBusConnection
-*
-* Copyright (C) 2003  Zack Rusin <zack@kde.org>
-*
-* Licensed under the Academic Free License version 2.0
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*
-*/
-
-#include <qapplication.h>
-#include <qtimer.h>
-#include <iostream>
-
-#define DBUS_API_SUBJECT_TO_CHANGE
+ *
+ * Copyright (C) 2003  Zack Rusin <zack@kde.org>
+ *
+ * Licensed under the Academic Free License version 2.0
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 #include "connection.h"
 
 using namespace DBusQt;
@@ -36,250 +29,136 @@ using Internal::Integrator;
 
 struct Connection::Private
 {
-	Private( Connection * qq );
-	~Private(  );
-	void setConnection( DBusConnection * c, bool tmp = FALSE );
-	DBusConnection *connection;
-	int connectionSlot;
-	DBusError error;
-	Integrator *integrator;
-	int timeout;
-	Connection *q;
+  Private( Connection *qq );
+  void setConnection( DBusConnection *c );
+  DBusConnection *connection;
+  int connectionSlot;
+  DBusError error;
+  Integrator *integrator;
+  int timeout;
+  Connection *q;
 };
 
-Connection::Private::Private( Connection * qq ):connection( 0 ), connectionSlot( -1 ), integrator( 0 ), timeout( -1 ), q( qq )
+Connection::Private::Private( Connection *qq )
+  : connection( 0 ), connectionSlot( 0 ), integrator( 0 ),
+    timeout( -1 ), q( qq )
 {
-	dbus_error_init( &error );
+  dbus_error_init( &error );
 }
 
-Connection::Private::~Private(  )
+void Connection::Private::setConnection( DBusConnection *c )
 {
-	delete integrator;
+  if (!c) {
+    qDebug( "error: %s, %s", error.name, error.message );
+    dbus_error_free( &error );
+    return;
+  }
+  connection = c;
+  integrator = new Integrator( c, q );
+  connect( integrator, SIGNAL(readReady()), q, SLOT(dispatchRead()) );
 }
 
-void Connection::Private::setConnection( DBusConnection * c, bool tmp )
+Connection::Connection( QObject *parent )
+  : QObject( parent )
 {
-	if ( !c )
-	{
-		return;
-	}
-
-	connection = c;
-	integrator = new Integrator( c, q, tmp );
-	connect( integrator, SIGNAL( readReady(  ) ), q, SLOT( dispatchRead(  ) ) );
+  d = new Private( this );
 }
 
-Connection::Connection( QObject * parent ):QObject( parent )
+Connection::Connection( const QString& host, QObject *parent )
+  : QObject( parent )
 {
-	d = new Private( this );
+  d = new Private( this );
 
-	dbus_error_init( &d->error );
+  if ( !host.isEmpty() )
+    init( host );
 }
 
-Connection::Connection( const QString & host, QObject * parent ):QObject( parent )
+Connection::Connection( DBusBusType type, QObject* parent )
+  : QObject( parent )
 {
-	d = new Private( this );
-
-	if ( !host.isEmpty(  ) )
-	{
-		DBusConnection *cn = dbus_connection_open( host.ascii(  ), &d->error );
-
-		if ( error(  ) )
-		{
-			qDebug( "dbus_connection_open failed." );
-			return;
-		}
-
-		d->setConnection( cn, TRUE );
-	}
+  d = new Private( this );
+  d->setConnection( dbus_bus_get(type, &d->error) );
 }
 
-Connection::Connection( DBusBusType type, QObject * parent, bool temporary ):QObject( parent )
+void Connection::init( const QString& host )
 {
-
-	qDebug( "Connection::Connection" );
-	d = new Private( this );
-	DBusConnection *cn = dbus_bus_get( type, &d->error );
-
-	if ( error(  ) )
-	{
-		qDebug( "dbus_bus_get failed." );
-		return;
-	}
-
-	d->setConnection( cn, temporary );
-
-	//QTimer *timer = new QTimer(this);
-
-	//connect(timer, SIGNAL(timeout()), this, SLOT(dispatchRead()));
-
-	//timer->start(500, FALSE);
+  d->setConnection( dbus_connection_open( host.ascii(), &d->error) );
+  //dbus_connection_allocate_data_slot( &d->connectionSlot );
+  //dbus_connection_set_data( d->connection, d->connectionSlot, 0, 0 );
 }
 
-Connection::~Connection(  )
+bool Connection::isConnected() const
 {
-	delete d->integrator;
-	d->integrator = 0L;
-
-	dbus_connection_unref( d->connection );
-	delete d;
+  return dbus_connection_get_is_connected( d->connection );
 }
 
-void Connection::init( const QString & host )
+bool Connection::isAuthenticated() const
 {
-	d->setConnection( dbus_connection_open( host.ascii(  ), &d->error ) );
-	dbus_connection_allocate_data_slot( &d->connectionSlot );
-	dbus_connection_set_data( d->connection, d->connectionSlot, 0, 0 );
+  return dbus_connection_get_is_authenticated( d->connection );
 }
 
-bool Connection::isConnected(  ) const
+void Connection::open( const QString& host )
 {
-	return dbus_connection_get_is_connected( d->connection );
+  if ( host.isEmpty() ) return;
+
+  init( host );
 }
 
-bool Connection::isAuthenticated(  ) const
+void Connection::close()
 {
-	return dbus_connection_get_is_authenticated( d->connection );
+  dbus_connection_close( d->connection );
 }
 
-void Connection::open( const QString & host )
+void Connection::flush()
 {
-	if ( host.isEmpty(  ) )
-		return;
-
-	init( host );
+  dbus_connection_flush( d->connection );
 }
 
-void Connection::close(  )
+void Connection::dispatchRead()
 {
-	dbus_connection_disconnect( d->connection );
+  while ( dbus_connection_dispatch( d->connection ) == DBUS_DISPATCH_DATA_REMAINS )
+    ;
 }
 
-void Connection::flush(  )
+DBusConnection* Connection::connection() const
 {
-	dbus_connection_flush( d->connection );
+  return d->connection;
 }
 
-bool Connection::event( QEvent * e )
+Connection::Connection( DBusConnection *connection, QObject *parent  )
+  : QObject( parent )
 {
-	if ( e->type(  ) == DBUS_EVENT_WAKEUP )
-	{
-		qDebug( "Custom event received." );
-
-		dispatchRead(  );
-
-		return TRUE;
-	}
-	else
-		return QObject::event( e );
+  d = new Private(this);
+  d->setConnection(connection);
 }
 
-void Connection::dispatchRead(  )
+void Connection::send( const Message &m )
 {
-	qDebug( "API: dispatchRead" );
-
-	//dbus_connection_flush(d->connection);
-
-	/*DBusDispatchStatus status = dbus_connection_get_dispatch_status(d->connection);
-
-	   if (status == DBUS_DISPATCH_DATA_REMAINS)
-	   dbus_connection_dispatch( d->connection );
-	 */
-
-	/*DBusDispatchStatus status = dbus_connection_get_dispatch_status(d->connection);
-
-	   switch(status)
-	   {
-	   case DBUS_DISPATCH_DATA_REMAINS:
-	   qDebug("DBUS_DISPATCH_DATA_REMAINS");
-	   break;
-	   case DBUS_DISPATCH_COMPLETE:
-	   qDebug("DBUS_DISPATCH_COMPLETE");
-	   break;
-	   case DBUS_DISPATCH_NEED_MEMORY:
-	   qDebug("DBUS_DISPATCH_NEED_MEMORY");
-	   break;
-	   default:
-	   qDebug("UNKNOWN");
-	   break;
-	   } */
-
-	while ( dbus_connection_dispatch( d->connection ) == DBUS_DISPATCH_DATA_REMAINS ) ;
-
-	// status;
-	//while(1)
-	/*
-	   do
-	   {
-	   status = dbus_connection_dispatch(d->connection);//DBUS_DISPATCH_COMPLETE;
-	   //
-
-	   switch(status)
-	   {
-	   case DBUS_DISPATCH_DATA_REMAINS:
-	   qDebug("DBUS_DISPATCH_DATA_REMAINS");
-	   break;
-	   case DBUS_DISPATCH_COMPLETE:
-	   qDebug("DBUS_DISPATCH_COMPLETE");
-	   break;
-	   case DBUS_DISPATCH_NEED_MEMORY:
-	   qDebug("DBUS_DISPATCH_NEED_MEMORY");
-	   break;
-	   default:
-	   qDebug("UNKNOWN");
-	   break;
-	   }
-
-	   if (status == DBUS_DISPATCH_DATA_REMAINS)
-	   {
-	   qDebug("dispatching ...");
-
-	   dbus_connection_dispatch(d->connection);
-	   }
-
-	   } while (status != DBUS_DISPATCH_COMPLETE);
-	 */
+    dbus_connection_send(d->connection, m.message(), 0);
 }
 
-DBusConnection *Connection::connection(  )
-{
-	return d->connection;
-}
-
-Connection::Connection( DBusConnection * connection, QObject * parent ):QObject( parent )
-{
-	d = new Private( this );
-	d->setConnection( connection );
-}
-
-void Connection::send( const Message & m )
-{
-	(void) getError();
-	dbus_connection_send( d->connection, m.message(  ), 0 );
-}
-
-void Connection::sendWithReply( const Message & )
+void Connection::sendWithReply( const Message& )
 {
 }
 
-Message Connection::sendWithReplyAndBlock( const Message & m )
+Message Connection::sendWithReplyAndBlock( const Message &m )
 {
-	(void) getError();
-	DBusMessage *reply;
-
-	reply = dbus_connection_send_with_reply_and_block( d->connection, m.message(  ), d->timeout, &d->error );
-
-	if ( error(  ) )
-		return m;
-	else
-		return Message( reply );
+  DBusMessage *reply;
+  reply = dbus_connection_send_with_reply_and_block( d->connection, m.message(), d->timeout, &d->error );
+  if (dbus_error_is_set(&d->error)) {
+      qDebug("error: %s, %s", d->error.name, d->error.message);
+      dbus_error_free(&d->error);
+  }
+  return Message( reply );
 }
 
+/** Added for skypeconnection.cpp */
 bool Connection::error(  )
 {
 	return dbus_error_is_set( &d->error );
 }
 
+/** Added for skypeconnection.cpp */
 QString Connection::getError(  )
 {
 	QString err;
@@ -293,11 +172,16 @@ QString Connection::getError(  )
 	return err;
 }
 
-void *Connection::virtual_hook( int, void * )
+void* Connection::virtual_hook( int, void*  )
 {
-	return 0;
 }
 
+void Connection::dbus_connection_setup_with_qt_main (DBusConnection *connection)
+{
+  d->setConnection( connection );
+}
+
+/** Added for skypeconnection.cpp */
 static DBusHandlerResult nm_message_handler( DBusConnection * connection, DBusMessage * message, void *user_data )
 {
 	const char *method;
@@ -348,12 +232,14 @@ static DBusHandlerResult nm_message_handler( DBusConnection * connection, DBusMe
 	return DBUS_HANDLER_RESULT_HANDLED;
 }
 
+/** Added for skypeconnection.cpp */
 static void nm_unregister_handler( DBusConnection * connection, void *user_data )
 {
 	/* do nothing */
 	qDebug( "nm_unregister_handler" );
 }
 
+/** Added for skypeconnection.cpp */
 void Connection::dbusMessage( DBusMessage * message )
 {
 	qDebug( "Connection::dbusMessage" );
@@ -372,6 +258,7 @@ void Connection::dbusMessage( DBusMessage * message )
 	emit messageArrived( *m );
 }
 
+/** Added for skypeconnection.cpp */
 bool Connection::registerObjectPath( const QString & path, const QString & service )
 {
 	DBusObjectPathVTable vtable = { &nm_unregister_handler, &nm_message_handler, NULL, NULL, NULL,
@@ -422,5 +309,9 @@ bool Connection::registerObjectPath( const QString & path, const QString & servi
 
 	return TRUE;
 }
+
+
+
+/////////////////////////////////////////////////////////
 
 #include "connection.moc"

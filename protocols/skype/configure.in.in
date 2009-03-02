@@ -18,9 +18,9 @@ if [test -r $dbus_incdir/dbus/dbus.h] && [test -r $dbus_incdir_arch_deps/dbus/db
 	DBUS_INCS="-I$dbus_incdir -I$dbus_incdir_arch_deps"
 	grep "dbus_message_get_auto_start" $dbus_incdir/dbus/*.h > /dev/null
 	if [test "$?" = "0"] ; then
-		dbus_inc=NOT_FOUND
-		dbus_too_new=true
-		echo "Too new!!"
+		dbus_inc=FOUND
+		dbus_too_new=false
+		echo "found new version - OK"
 	else
 		#yeah, we found it
 		dbus_inc=FOUND
