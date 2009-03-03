@@ -43,6 +43,7 @@
 #include <TelepathyQt4/Client/PendingReadyAccountManager>
 #include <TelepathyQt4/Client/PendingReadyConnectionManager>
 #include <TelepathyQt4/Client/PendingReadyAccount>
+#include <TelepathyQt4/Client/PendingReady>
 
 #include <QFile>
 
@@ -92,9 +93,9 @@ void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
     Telepathy::SimplePresence simplePresence;
     simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(m_status);
 
-    kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type;
-    
     simplePresence.statusMessage = m_reason.message();
+
+	kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type << "message:" << simplePresence.statusMessage;
     
     Telepathy::Client::PendingOperation *op = m_account->setRequestedPresence(simplePresence);
     QObject::connect(op, SIGNAL(finished(Telepathy::Client::PendingOperation*)),
@@ -461,11 +462,19 @@ void TelepathyAccount::onExistingAccountReady(Telepathy::Client::PendingOperatio
     if(isOperationError(operation))
         return;
 
-    Telepathy::Client::PendingReadyAccount *pa = dynamic_cast<Telepathy::Client::PendingReadyAccount *>(operation);
-    if(!pa)
+    Telepathy::Client::PendingReady *p = qobject_cast<Telepathy::Client::PendingReady *>(operation);
+    if(!p)
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << "Error: problem with casting";
         return;
+	}
 
-    Telepathy::Client::Account *a = pa->account();
+    Telepathy::Client::Account *a = qobject_cast<Telepathy::Client::Account*>(p->object());
+	if(!a)
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << "Error: problem with casting";
+		return;
+	}
 
     if( !m_account && ((a->displayName() == accountId()) && (a->protocol() == m_connectionProtocolName)) )
     {
