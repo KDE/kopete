@@ -128,19 +128,19 @@ Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(con
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 	Telepathy::ConnectionPresenceType telepathyPresence = Telepathy::ConnectionPresenceTypeOffline;
-
-	if( status == Available )
+	
+	Kopete::OnlineStatus type = status.status();
+	
+	if( type == Kopete::OnlineStatus::Online )
 		telepathyPresence = Telepathy::ConnectionPresenceTypeAvailable;
-	else if( status == Away )
+	else if( status == Kopete::OnlineStatus::Away )
 		telepathyPresence = Telepathy::ConnectionPresenceTypeAway;
-	else if( status == Busy )
-		telepathyPresence = Telepathy::ConnectionPresenceTypeBusy;
-	else if( status == Hidden )
+	else if( status == Kopete::OnlineStatus::Invisible )
 		telepathyPresence = Telepathy::ConnectionPresenceTypeHidden;
-	else if( status == ExtendedAway )
-		telepathyPresence = Telepathy::ConnectionPresenceTypeExtendedAway;
-	else if( status == Offline )
+	else if( status == Kopete::OnlineStatus::Offline )
 		telepathyPresence = Telepathy::ConnectionPresenceTypeOffline;
+	else if( status == Kopete::OnlineStatus::Unknown )
+		telepathyPresence = Telepathy::ConnectionPresenceTypeUnset;
 
 	return telepathyPresence;
 }

@@ -88,6 +88,9 @@ void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
 		return;
 	}
 	
+	if(m_account->haveConnection())
+		kDebug(TELEPATHY_DEBUG_AREA) << "Account have connection";
+	
 	kDebug(TELEPATHY_DEBUG_AREA) << m_account->parameters();
 
     Telepathy::SimplePresence simplePresence;
@@ -110,9 +113,6 @@ void TelepathyAccount::onRequestedPresence(Telepathy::Client::PendingOperation* 
 
     if(isOperationError(operation))
         return;
-	
-	if(m_account->connectsAutomatically())
-		return;
 
     QObject::connect(m_account->setConnectsAutomatically(true),
         SIGNAL(finished(Telepathy::Client::PendingOperation*)),
@@ -127,8 +127,9 @@ void TelepathyAccount::onAccountConnecting(Telepathy::Client::PendingOperation* 
 
     if(isOperationError(operation))
         return;
-
-    kDebug(TELEPATHY_DEBUG_AREA) << "Connecting...";
+	
+	if(m_account->haveConnection())
+		kDebug(TELEPATHY_DEBUG_AREA) << "Account have connection";
 }
 
 void TelepathyAccount::fillActionMenu( KActionMenu *actionMenu )

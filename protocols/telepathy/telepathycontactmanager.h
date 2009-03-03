@@ -18,40 +18,22 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHYCONTACT_H_
-#define TELEPATHYCONTACT_H_
-
-#include <kopetecontact.h>
-#include <kopetechatsession.h>
-
-#include <QObject>
-
 #include "telepathyaccount.h"
 
-namespace Kopete
-{
-    class MetaContact;
-}
+#include <TelepathyQt4/Client/Contact>
 
-class TelepathyContact : public Kopete::Contact
+#include <QObject>
+#include <QSharedPointer>
+#include <QList>
+ 
+class TelepathyContactManager : public QObject
 {
-    Q_OBJECT
-
 public:
-    TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent);
-    virtual ~TelepathyContact();
-
-    virtual bool isReachable();
-    virtual void serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData);
-
-    virtual QList<KAction *> *customContextMenuActions();
-	virtual QList<KAction *> *customContextMenuActions( Kopete::ChatSession *manager );
-    virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
-
-private:
-	class TelepathyContactPrivate;
-	TelepathyContactPrivate * d;
+	TelepathyContactManager(TelepathyAccount *account);
+	~TelepathyContactManager();
+	
+	QSharedPointer<Telepathy::Client::Contact> addContact(const QString &contactId);
+	void removeContact(QSharedPointer<Telepathy::Client::Contact> contact);
+	void setContactList(QList<QSharedPointer<Telepathy::Client::Contact> > contactList);
+	void loadContacts(); 
 };
-
-
-#endif // TELEPATHYCONTACT_H_

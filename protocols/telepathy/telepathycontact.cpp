@@ -24,25 +24,40 @@
 #include <kdebug.h>
 
 #include <kopetemetacontact.h>
+#include <kopetechatsession.h>
 
 #include "telepathyaccount.h"
 #include "telepathyprotocol.h"
 
+#include <TelepathyQt4/Client/Contact>
+
+#include <QPointer>
+#include <QSharedPointer>
+
+class TelepathyContact::TelepathyContactPrivate
+{
+public:
+	QSharedPointer<Telepathy::Client::Contact> internalContact;
+	QPointer<Kopete::ChatSession> currentChatSession;
+};
+
 TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent)
-    : Kopete::Contact(account, contactId, parent)
+    : Kopete::Contact(account, contactId, parent), d(new TelepathyContactPrivate)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	setOnlineStatus(TelepathyProtocol::protocol()->Offline);
 }
 
 TelepathyContact::~TelepathyContact()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	delete d;
 }
 
 bool TelepathyContact::isReachable()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-    return false;
+    return account()->isConnected();
 }
 
 void TelepathyContact::serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData)
