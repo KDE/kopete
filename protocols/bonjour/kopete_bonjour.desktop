@@ -23,6 +23,7 @@ Name[x-test]=xxBonjourxx
 Comment=Serverless Link Local XMPP Messaging
 Comment[el]=Τοπικά μηνύματα XMPP χωρίς εξυπηρετητή
 Comment[et]=Serverita kohalik XMPP sõnumite saatmine
+Comment[ja]=サーバを必要としないリンクローカルな XMPP メッセージング
 Comment[nds]=Link-Local-XMPP-Kortnarichten ahn Server
 Comment[pt]=Mensagens XMPP de Ligação Local sem Servidor
 Comment[pt_BR]=Mensagens XMPP com link local sem servidor
