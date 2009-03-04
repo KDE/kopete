@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef TELEPATHYCONTACTMANAGER_H_
+#define TELEPATHYCONTACTMANAGER_H_
+
 #include "telepathyaccount.h"
 
 #include <TelepathyQt4/Client/Contact>
@@ -37,3 +40,5 @@ public:
 	void setContactList(QList<QSharedPointer<Telepathy::Client::Contact> > contactList);
 	void loadContacts(); 
 };
+
+#endif //TELEPATHYCONTACTMANAGER_H_

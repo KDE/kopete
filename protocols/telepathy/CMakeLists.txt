@@ -27,6 +27,7 @@ telepathyprotocol.cpp
 telepathyaccount.cpp
 telepathycontact.cpp
 connectionmanageritem.cpp
+telepathycontactmanager.cpp
 ${kopete_telepathy_ui_SRCS}
 )
 

@@ -37,6 +37,7 @@ namespace Kopete
 }
 
 class TelepathyProtocol;
+class TelepathyContactManager;
 
 class TelepathyAccount : public Kopete::Account
 {
@@ -94,6 +95,7 @@ private:
 	Telepathy::Client::ProtocolInfo *getProtocolInfo(QString protocol);
 	Telepathy::Client::ConnectionManager *getConnectionManager();
 	Telepathy::Client::AccountManager *getAccountManager();
+	TelepathyContactManager *getContactManager();
 	void initTelepathyAccount();
 	void createNewAccount();
 	bool isOperationError(Telepathy::Client::PendingOperation*);
@@ -103,6 +105,7 @@ private:
 	Telepathy::Client::ProtocolParameterList m_connectionParameters;
 	Telepathy::Client::ConnectionManager *m_connectionManager;
 	Telepathy::Client::AccountManager *m_accountManager;
+	TelepathyContactManager *m_contactManager;
 	QSharedPointer<Telepathy::Client::Account> m_account;
 	Telepathy::Client::PendingAccount *m_pendingAccount;
 

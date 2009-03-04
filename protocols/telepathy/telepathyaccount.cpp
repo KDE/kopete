@@ -21,6 +21,7 @@
 #include "telepathyaccount.h"
 #include "telepathyprotocol.h"
 #include "telepathycontact.h"
+#include "telepathycontactmanager.h"
 
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
@@ -49,7 +50,7 @@
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
     : Kopete::Account(protocol, accountId), m_connectionManager(0), m_accountManager(0),
-	m_existingAccountCounter(0), m_existingAccountsCount(0)
+	m_existingAccountCounter(0), m_existingAccountsCount(0), m_contactManager(0)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 	
@@ -61,6 +62,8 @@ TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &a
 TelepathyAccount::~TelepathyAccount()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	if(m_contactManager)
+		delete m_contactManager;
 }
 
 bool TelepathyAccount::isOperationError(Telepathy::Client::PendingOperation* operation)
@@ -365,6 +368,14 @@ Telepathy::Client::ConnectionManager *TelepathyAccount::getConnectionManager()
 	}
 	
 	return m_connectionManager;
+}
+
+TelepathyContactManager *TelepathyAccount::getContactManager()
+{
+	if(!m_contactManager)
+		m_contactManager = new TelepathyContactManager(this);
+	
+	return m_contactManager;
 }
 
 Telepathy::Client::ProtocolInfo *TelepathyAccount::getProtocolInfo(QString protocol)

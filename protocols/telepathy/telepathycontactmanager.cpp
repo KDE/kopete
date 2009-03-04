@@ -19,9 +19,11 @@
  */
 
 #include "telepathycontactmanager.h"
+#include "telepathyaccount.h"
 
 TelepathyContactManager::TelepathyContactManager(TelepathyAccount *account)
 {
+	Q_UNUSED(account)
 }
 
 TelepathyContactManager::~TelepathyContactManager()
@@ -30,15 +32,18 @@ TelepathyContactManager::~TelepathyContactManager()
 	
 QSharedPointer<Telepathy::Client::Contact> TelepathyContactManager::addContact(const QString &contactId)
 {
+	Q_UNUSED(contactId);
 	return QSharedPointer<Telepathy::Client::Contact>();
 }
 
 void TelepathyContactManager::removeContact(QSharedPointer<Telepathy::Client::Contact> contact)
 {
+	Q_UNUSED(contact);
 }
 
 void TelepathyContactManager::setContactList(QList<QSharedPointer<Telepathy::Client::Contact> > contactList)
 {
+	Q_UNUSED(contactList);
 }
 
 void TelepathyContactManager::loadContacts()
