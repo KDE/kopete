@@ -260,7 +260,7 @@ static void gone_insecure(void *opdata, ConnContext *context){
 	OtrlChatInterface::self()->emitGoneSecure(((Kopete::ChatSession*)opdata), 0);
 	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 	Kopete::Message msg( session->members().first(), session->account()->myself() );
-	msg.setHtmlBody( i18n("<b>OTR Session ended. The conversation is now insecure!</b>") );
+	msg.setHtmlBody( i18n("<b>OTR Session ended. Note that the conversation is now insecure.</b>") );
 	msg.setDirection( Kopete::Message::Internal );
 	session->appendMessage( msg );
 }
@@ -487,7 +487,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 					AuthenticationWizard::findWizard(chatSession)->finished(true, true);
 					kDebug(14318) << "trust found";
 					Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
-					msg.setHtmlBody( i18n("<b>Authentication successful. The conversation is now secure!</b>") );
+					msg.setHtmlBody( i18n("<b>Authentication successful. The conversation is now secure.</b>") );
 					msg.setDirection( Kopete::Message::Internal );
 					chatSession->appendMessage( msg );
 					OtrlChatInterface::self()->emitGoneSecure( chatSession, 2 );
@@ -495,7 +495,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 					AuthenticationWizard::findWizard(chatSession)->finished(false, false);
 					kDebug(14318) << "trust _NOT_ found";
 					Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
-					msg.setHtmlBody( i18n("<b>Authentication failed. The conversation is now insecure!</b>") );
+					msg.setHtmlBody( i18n("<b>Authentication failed. Note that the conversation is now insecure.</b>") );
 					msg.setDirection( Kopete::Message::Internal );
 					chatSession->appendMessage( msg );
 					OtrlChatInterface::self()->emitGoneSecure( chatSession, 1 );
@@ -506,7 +506,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP_ABORT);
 		if (tlv) {
 			Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
-			msg.setHtmlBody( i18n("<b>Authentication error!</b>") );
+			msg.setHtmlBody( i18n("<b>Authentication error.</b>") );
 			msg.setDirection( Kopete::Message::Internal );
 			chatSession->appendMessage( msg );
 			context->smstate->nextExpected = OTRL_SMP_EXPECT1;
@@ -741,7 +741,7 @@ void OtrlChatInterface::abortSMP( ConnContext *context, Kopete::ChatSession *ses
 		emitGoneSecure( session, 1 );
 
 		Kopete::Message msg( session->members().first(), session->account()->myself() );
-		msg.setHtmlBody( i18n("<b>Authentication aborted. The conversation is now insecure!</b>") );
+		msg.setHtmlBody( i18n("<b>Authentication aborted. Note that the conversation is now insecure.</b>") );
 		msg.setDirection( Kopete::Message::Internal );
 		session->appendMessage( msg );
 	}

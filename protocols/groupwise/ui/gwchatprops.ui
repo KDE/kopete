@@ -417,7 +417,7 @@
      <item>
       <widget class="KPushButton" name="deleteAcl" >
        <property name="toolTip" >
-        <string>Delete a ACL entry</string>
+        <string>Delete an ACL entry</string>
        </property>
       </widget>
      </item>
