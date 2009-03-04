@@ -594,7 +594,7 @@ void ChatWindowConfig::createPreviewMessages()
 	msgOut4.setState( Kopete::Message::StateSent );
 
 	Kopete::Message msgOut5( m_myself, m_jack );
-	msgOut5.setPlainBody( i18n( "Message that can't be delivered." ) );
+	msgOut5.setPlainBody( i18n( "Message that cannot be delivered." ) );
 	msgOut5.setDirection( Kopete::Message::Outbound );
 	msgOut5.setState( Kopete::Message::StateError );
 

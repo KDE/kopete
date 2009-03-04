@@ -100,13 +100,13 @@
       <item>
        <widget class="QCheckBox" name="kcfg_queueOnlyHighlightedMessagesInGroupChats" >
         <property name="toolTip" >
-         <string>Notify only highlighted messages in groupchats</string>
+         <string>Notify only highlighted messages in group chats</string>
         </property>
         <property name="whatsThis" >
-         <string>In very active groupchats important messages can be singled out by excluding non-highlighted messages from notification.</string>
+         <string>In very active group chats, important messages can be singled out by preventing notifications for non-highlighted messages.</string>
         </property>
         <property name="text" >
-         <string>Exclude non-&amp;highlighted messages in groupchats</string>
+         <string>Exclude non-&amp;highlighted messages in group chats</string>
         </property>
        </widget>
       </item>

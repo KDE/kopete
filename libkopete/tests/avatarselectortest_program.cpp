@@ -21,7 +21,7 @@
 
 int main(int argc, char **argv)
 {
-	KAboutData aboutData( "avatarselectortest", 0, ki18n("KopeteAvatarSelectorWidgetTest"),
+	KAboutData aboutData( "avatarselectortest", 0, ki18n("Kopete Avatar Selector Widget Test"),
 		"0.1.0", ki18n("Kopete Avatar Selector Widget Test"), KAboutData::License_GPL,
 		ki18n("Michaël Larouche"), ki18n("larouche@kde.org"), "http://kopete.kde.org");
 

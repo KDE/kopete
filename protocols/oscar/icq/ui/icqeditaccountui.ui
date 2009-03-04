@@ -591,10 +591,10 @@ If you do not currently have an ICQ account, please click the button to create o
           <item>
            <widget class="QCheckBox" name="chkFileProxy" >
             <property name="toolTip" >
-             <string>Use AOL proxy server instead of direct connections. If you're behind a router that you don't control, you'll probably want this.</string>
+             <string>Use AOL proxy server instead of direct connections. If you are behind a router that you do not control, you will probably want this.</string>
             </property>
             <property name="whatsThis" >
-             <string>Use the AOL proxy server for things that would normally need a direct connection, like file transfers. You'll want this if there's a firewall or router that blocks connections to your computer and you can't get unblocked. If a direct connection fails, a proxy connection will be tried regardless of this setting.</string>
+             <string>Use the AOL proxy server for things that would normally need a direct connection, like file transfers. You will want this if there is a firewall or router that blocks connections to your computer and you cannot get unblocked. If a direct connection fails, a proxy connection will be tried regardless of this setting.</string>
             </property>
             <property name="text" >
              <string>&amp;Use proxy instead</string>
