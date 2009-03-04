@@ -19,6 +19,7 @@
 #define HISTORYIMPORT_H
 
 #include <QtGui/QTextCursor>
+#include <QHash>
 
 #include <kdialog.h>
 
