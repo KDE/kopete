@@ -22,6 +22,7 @@
 #include "telepathyprotocol.h"
 #include "telepathycontact.h"
 #include "telepathycontactmanager.h"
+#include "common.h"
 
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
@@ -50,7 +51,7 @@
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
     : Kopete::Account(protocol, accountId), m_connectionManager(0), m_accountManager(0),
-	m_existingAccountCounter(0), m_existingAccountsCount(0), m_contactManager(0)
+	m_contactManager(0), m_existingAccountCounter(0), m_existingAccountsCount(0)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 	
@@ -64,20 +65,6 @@ TelepathyAccount::~TelepathyAccount()
     kDebug(TELEPATHY_DEBUG_AREA);
 	if(m_contactManager)
 		delete m_contactManager;
-}
-
-bool TelepathyAccount::isOperationError(Telepathy::Client::PendingOperation* operation)
-{
-    if(operation->isError())
-    {
-        kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
-#ifdef SHOW_MESSAGEBOX_ERRORS
-        KMessageBox::information(0, i18n("Error: %1\n%2", operation->errorName() , operation->errorMessage()));
-#endif
-        return true;
-    }
-
-    return false;
 }
 
 void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
@@ -114,7 +101,7 @@ void TelepathyAccount::onRequestedPresence(Telepathy::Client::PendingOperation* 
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 
     QObject::connect(m_account->setConnectsAutomatically(true),
@@ -128,7 +115,7 @@ void TelepathyAccount::onAccountConnecting(Telepathy::Client::PendingOperation* 
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 	
 	if(m_account->haveConnection())
@@ -172,7 +159,7 @@ void TelepathyAccount::onRequestDisconnect(Telepathy::Client::PendingOperation* 
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 }
 
@@ -373,7 +360,7 @@ Telepathy::Client::ConnectionManager *TelepathyAccount::getConnectionManager()
 TelepathyContactManager *TelepathyAccount::getContactManager()
 {
 	if(!m_contactManager)
-		m_contactManager = new TelepathyContactManager(this);
+		m_contactManager = new TelepathyContactManager(this, m_account);
 	
 	return m_contactManager;
 }
@@ -417,7 +404,7 @@ void TelepathyAccount::onConnectionManagerReady(Telepathy::Client::PendingOperat
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 
     if(readConfig())
@@ -439,7 +426,7 @@ void TelepathyAccount::onAccountManagerReady(Telepathy::Client::PendingOperation
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 
     /*
@@ -471,7 +458,7 @@ void TelepathyAccount::onExistingAccountReady(Telepathy::Client::PendingOperatio
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 
     Telepathy::Client::PendingReady *p = qobject_cast<Telepathy::Client::PendingReady *>(operation);
@@ -531,7 +518,7 @@ void TelepathyAccount::newTelepathyAccountCreated(Telepathy::Client::PendingOper
     // \brief: zeroing counter
     m_existingAccountCounter = 0;
 
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 
     m_account = m_pendingAccount->account();
@@ -544,7 +531,7 @@ void TelepathyAccount::onAccountReady(Telepathy::Client::PendingOperation *opera
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 
     kDebug(TELEPATHY_DEBUG_AREA) << "New account: " << m_account->cmName() << m_account->protocol() << m_account->displayName();
@@ -670,7 +657,7 @@ void TelepathyAccount::connectionStatusChanged (Telepathy::ConnectionStatus stat
             // Set nickname to myself contact
             myself()->setNickName( m_account->nickname() );
             // Load contact list
-            //fetchContactList();
+            fetchContactList();
 
 			break;
         case Telepathy::ConnectionStatusDisconnected:
@@ -713,7 +700,7 @@ void TelepathyAccount::onAliasChanged(Telepathy::Client::PendingOperation* opera
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 	
 	kDebug(TELEPATHY_DEBUG_AREA) << "Alias has changed.";
@@ -744,9 +731,45 @@ void TelepathyAccount::onAvatarChanged(Telepathy::Client::PendingOperation* oper
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(isOperationError(operation))
+    if(TelepathyCommons::isOperationError(operation))
         return;
 	
 	kDebug(TELEPATHY_DEBUG_AREA) << "Avatar has changed.";
 }
+
+void TelepathyAccount::fetchContactList()
+{
+	kDebug(TELEPATHY_DEBUG_AREA);
+	
+	if(!m_account->haveConnection())
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << "Couldn't fetch contact list!";
+		return;
+	}
+
+	getContactManager()->fetchContactList();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

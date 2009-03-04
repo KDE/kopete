@@ -98,7 +98,7 @@ private:
 	TelepathyContactManager *getContactManager();
 	void initTelepathyAccount();
 	void createNewAccount();
-	bool isOperationError(Telepathy::Client::PendingOperation*);
+	void fetchContactList();
 
 	QString m_connectionManagerName;
 	QString m_connectionProtocolName;

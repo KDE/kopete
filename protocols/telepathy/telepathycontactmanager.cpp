@@ -18,12 +18,26 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "telepathyprotocol.h"
 #include "telepathycontactmanager.h"
 #include "telepathyaccount.h"
+#include "common.h"
 
-TelepathyContactManager::TelepathyContactManager(TelepathyAccount *account)
+#include <kdebug.h>
+
+#include <TelepathyQt4/Client/Contact>
+#include <TelepathyQt4/Client/ContactManager>
+#include <TelepathyQt4/Client/Connection>
+#include <TelepathyQt4/Client/Account>
+#include <TelepathyQt4/Client/PendingContacts>
+#include <TelepathyQt4/Client/PendingReady>
+
+
+TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAccount, 
+												 QSharedPointer<Telepathy::Client::Account> account)
 {
-	Q_UNUSED(account)
+	Q_UNUSED(telepathyAccount);
+	m_account = account;
 }
 
 TelepathyContactManager::~TelepathyContactManager()
@@ -49,5 +63,90 @@ void TelepathyContactManager::setContactList(QList<QSharedPointer<Telepathy::Cli
 void TelepathyContactManager::loadContacts()
 {
 }
+
+void TelepathyContactManager::fetchContactList()
+{
+	kDebug(TELEPATHY_DEBUG_AREA);
+	if(!m_account || !m_account->haveConnection())
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << "Error: Could not find active connection or account";
+	}
+	
+	m_contactManager = m_account->connection()->contactManager();
+
+	Telepathy::Client::Connection *connection = m_contactManager->connection();
+
+	QObject::connect(connection->becomeReady(),
+		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+	    this,
+		SLOT(onConnectionReady(Telepathy::Client::PendingOperation*))
+	);
+}
+
+void TelepathyContactManager::onConnectionReady(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    
+    if(TelepathyCommons::isOperationError(operation))
+        return;
+
+	Telepathy::Client::Connection *connection = m_contactManager->connection();
+
+	QList<uint> handles;
+	handles.push_back(connection->selfHandle());
+	Telepathy::UIntList UHandles(handles);
+	Telepathy::Client::PendingContacts *pc = 
+		m_contactManager->contactsForHandles(UHandles);
+	QObject::connect(pc,
+		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+	    this,
+		SLOT(onPendingContacts(Telepathy::Client::PendingOperation*))
+	);
+}
+
+void TelepathyContactManager::onPendingContacts(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    
+    if(TelepathyCommons::isOperationError(operation))
+        return;
+	
+	Telepathy::Client::PendingContacts *pc = qobject_cast<Telepathy::Client::PendingContacts*>(operation);
+	
+	if(!pc)
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << "Error: Couldn't cast PendingContacts!";
+		return;
+	}
+	
+	kDebug(TELEPATHY_DEBUG_AREA) << "PendingContact handles count:" << pc->handles().size() << pc->invalidHandles().size() << pc->identifiers();
+	
+	QList<QSharedPointer<Telepathy::Client::Contact> > contacts = pc->contacts();
+	
+	foreach(QSharedPointer<Telepathy::Client::Contact> contact, contacts)
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << "Contact id:" << contact->id();
+	}
+	
+	QList<QSharedPointer<Telepathy::Client::Contact> > contactsToUpgrade = pc->contacts();
+	
+	foreach(QSharedPointer<Telepathy::Client::Contact> contact, contactsToUpgrade)
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << "Contact id:" << contact->id();
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 

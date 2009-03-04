@@ -21,24 +21,46 @@
 #ifndef TELEPATHYCONTACTMANAGER_H_
 #define TELEPATHYCONTACTMANAGER_H_
 
-#include "telepathyaccount.h"
-
-#include <TelepathyQt4/Client/Contact>
-
 #include <QObject>
 #include <QSharedPointer>
 #include <QList>
+
+namespace Telepathy
+{
+	namespace Client
+	{
+		class Contact;
+		class Account;
+		class ContactManager;
+		class PendingOperation;
+	}
+}
+
+class TelepathyAccount;
  
 class TelepathyContactManager : public QObject
 {
+	Q_OBJECT
 public:
-	TelepathyContactManager(TelepathyAccount *account);
+	TelepathyContactManager(TelepathyAccount *telepathyAccount, QSharedPointer<Telepathy::Client::Account> account);
 	~TelepathyContactManager();
 	
 	QSharedPointer<Telepathy::Client::Contact> addContact(const QString &contactId);
 	void removeContact(QSharedPointer<Telepathy::Client::Contact> contact);
 	void setContactList(QList<QSharedPointer<Telepathy::Client::Contact> > contactList);
-	void loadContacts(); 
+	void loadContacts();
+	
+private slots: 
+	void onConnectionReady(Telepathy::Client::PendingOperation*);
+	void onPendingContacts(Telepathy::Client::PendingOperation*);
+	
+private:
+	void fetchContactList();
+	
+	QSharedPointer<Telepathy::Client::Account> m_account;
+	Telepathy::Client::ContactManager *m_contactManager;
+	
+	friend class TelepathyAccount;
 };
 
 #endif //TELEPATHYCONTACTMANAGER_H_
