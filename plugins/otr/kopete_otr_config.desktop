@@ -46,6 +46,7 @@ Comment[x-test]=xxEncrypt chat sessions with Off-The-Record encryptionxx
 Comment[zh_CN]=用非正式加密算法加密聊天会话
 Comment[zh_TW]=使用私下加密（Off-The-Record）來加密聊天階段
 Name=OTR
+Name[hne]=ओटीआर
 Name[lt]=Off-the-Record
 Name[ml]=ഓടിആര്‍
 Name[sr]=ОТР
