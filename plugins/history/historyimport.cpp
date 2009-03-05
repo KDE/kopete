@@ -297,7 +297,7 @@ void HistoryImport::importPidgin()
 				}
 			}
 			if (!found) {
-				detailsCursor.insertText(i18n("WARNING: Cannot find matching account for %1 (%2).\n").arg(accountFolder).arg(protocolFolder));
+				detailsCursor.insertText(i18n("WARNING: Cannot find matching account for %1 (%2).\n", accountFolder, protocolFolder));
 				logDir.cdUp();
 				continue;
 			}
@@ -309,7 +309,7 @@ void HistoryImport::importPidgin()
 				Kopete::Contact *other = cList->findContact(me->protocol()->pluginId(), me->account()->accountId(), chatPartner);
 				struct Log log;
 				if (!other) {
-					detailsCursor.insertText(i18n("WARNING: Cannot find %1 (%2) in your contact list. Found logs will not be imported.\n").arg(chatPartner).arg(protocolFolder));
+					detailsCursor.insertText(i18n("WARNING: Cannot find %1 (%2) in your contact list. Found logs will not be imported.\n", chatPartner, protocolFolder));
 					logDir.cdUp();
 					continue;
 				}
@@ -324,7 +324,7 @@ void HistoryImport::importPidgin()
 				foreach(logFile, logDir.entryList(filter, QDir::Files)) {
 					QFile file(logDir.filePath(logFile));
 					if (!file.open(QIODevice::ReadOnly)) {
-						detailsCursor.insertText(i18n("WARNING: Cannot open file %1. Skipping.\n").arg(logDir.filePath(logFile)));
+						detailsCursor.insertText(i18n("WARNING: Cannot open file %1. Skipping.\n", logDir.filePath(logFile)));
 						continue;
 					}
 
@@ -374,7 +374,7 @@ bool HistoryImport::isNickIncoming(const QString &nick, struct Log *log)
 	else {
 		int r = QMessageBox::question(NULL,
 			i18n("Cannot map nickname to account"),
-			i18n("Did you use \"%1\" as nickname in history?").arg(nick),
+			i18n("Did you use \"%1\" as nickname in history?", nick),
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort);
 
 		if (r == QMessageBox::Yes) {
@@ -421,7 +421,7 @@ QDateTime HistoryImport::extractTime(const QString &string, QDate ref)
 
 	// inform the user about the date problems
 	if (!dateTime.isValid())
-		detailsCursor.insertText(i18n("WARNING: Cannot parse date \"%1\". You may want to edit the file containing this date manually. (Example recognized date strings: \"05/31/2008 15:24:30\".)\n").arg(string, dateTime.toString("yyyy-MM-dd hh:mm:ss")));
+		detailsCursor.insertText(i18n("WARNING: Cannot parse date \"%1\". You may want to edit the file containing this date manually. (Example recognized date strings: \"05/31/2008 15:24:30\".)\n", string, dateTime.toString("yyyy-MM-dd hh:mm:ss")));
 
 
 	return dateTime;
@@ -547,10 +547,10 @@ void HistoryImport::parsePidginXml(QFile &file, struct Log * log, QDate date)
 			int i, pos = 0;
 			for (i=1;i<reader.lineNumber();i++)
 				pos = data.indexOf('\n', pos) + 1;
-			detailsCursor.insertText(i18n("WARNING: XML parser error in %1 at line %2, character %3: %4").
-				arg(file.fileName()).arg(reader.lineNumber()).arg(reader.columnNumber()).arg(reader.errorString()));
+			detailsCursor.insertText(i18n("WARNING: XML parser error in %1 at line %2, character %3: %4",
+				file.fileName(), reader.lineNumber(), reader.columnNumber(), reader.errorString()));
 			detailsCursor.insertBlock();
-			detailsCursor.insertText(i18n("\t%1").arg(QString(data.mid(pos, data.indexOf('\n', pos) - pos))));
+			detailsCursor.insertText(i18n("\t%1", data.mid(pos, data.indexOf('\n', pos) - pos)));
 			detailsCursor.insertBlock();
 		}
 	}
