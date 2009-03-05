@@ -550,7 +550,7 @@ void HistoryImport::parsePidginXml(QFile &file, struct Log * log, QDate date)
 			detailsCursor.insertText(i18n("WARNING: XML parser error in %1 at line %2, character %3: %4",
 				file.fileName(), reader.lineNumber(), reader.columnNumber(), reader.errorString()));
 			detailsCursor.insertBlock();
-			detailsCursor.insertText(i18n("\t%1", data.mid(pos, data.indexOf('\n', pos) - pos)));
+			detailsCursor.insertText(i18n("\t%1", QString(data.mid(pos, data.indexOf('\n', pos) - pos))));
 			detailsCursor.insertBlock();
 		}
 	}
