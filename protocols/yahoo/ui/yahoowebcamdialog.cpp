@@ -99,14 +99,16 @@ void YahooWebcamDialog::webcamClosed( int reason  )
 
 void YahooWebcamDialog::setViewer( const QStringList &viewer )
 {
-	QString s = i18n( "%1 viewer(s)", viewer.size() );
-	if( viewer.size() )
+	QString s = i18np( "1 viewer", "%1 viewers", viewer.size() );
+	if( !viewer.empty() )
 	{
-		s += ": ";
-		for ( QStringList::ConstIterator it = viewer.begin(); it != viewer.end(); ++it ) {
-			if( it != viewer.begin() )
-				s += ", ";
-			s += *it;
+		QStringList::ConstIterator it = viewer.begin();
+		const QStringList::ConstIterator itEnd = viewer.end();
+		
+		s += ": " + *it++;
+		
+		for ( ; it != itEnd; ++it ) {
+			s += ", " + *it;
 		}
 	}
 	m_Viewer->setText( s );
