@@ -633,7 +633,7 @@ void YahooContact::inviteWebcam()
 	if ( KStandardDirs::findExe("jasper").isEmpty() )
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("I cannot find the Jasper image conversion program.\nJasper is required to render the Yahoo webcam images."
+			i18n("Unable to find the Jasper image conversion program.\nJasper is required to render Yahoo webcam images."
 			"\nPlease see %1 for further information.", QString("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") ) );
 		return;
 	}
@@ -688,7 +688,7 @@ void YahooContact::requestWebcam()
 	if ( KStandardDirs::findExe("jasper").isEmpty() )
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("I cannot find the jasper image convert program.\njasper is required to render the yahoo webcam images."
+			i18n("Unable to find the Jasper image conversion program.\nJasper is required to render Yahoo webcam images."
 			"\nPlease see %1 for further information.", QString("http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support") ) );
 		return;
 	}

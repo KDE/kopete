@@ -190,7 +190,7 @@ void BonjourAccount::published(bool success)
 		kDebug()<<"Publish Failed";
 		disconnect();
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
-		i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi"));
+		i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi."));
 	}
 }
 
@@ -201,7 +201,7 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 
 	if (DNSSD::ServiceBrowser::isAvailable() != DNSSD::ServiceBrowser::Working) {
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
-		i18n("Sorry, we are unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
+		i18n("Unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
 		return;
 	}
 

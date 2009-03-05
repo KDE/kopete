@@ -298,8 +298,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			QString originalBody=message.body().isEmpty() ? QString() :
 					i18n( "The original message is : <i>\" %1 \"</i><br />" , Qt::escape(message.body()));
 			QString mes=i18n("<qt><i>%1</i> has invited you to join the conference <b>%2</b><br />%3<br />"
-					"If you want to accept and join, just <b>enter your nickname</b> and press ok<br />"
-							 "If you want to decline, press cancel</qt>",
+					"If you want to accept and join, just <b>enter your nickname</b> and press OK.<br />"
+							 "If you want to decline, press Cancel.</qt>",
 					message.from().full(), room , originalBody);
 			
 			bool ok=false;

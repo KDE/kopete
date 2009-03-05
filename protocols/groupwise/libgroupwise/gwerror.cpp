@@ -44,7 +44,7 @@ QString GroupWise::errorCodeToString( int errorCode )
 			errorString = i18n( "Attribute not found" );
 			break;
 		case NMERR_USER_DISABLED:
-			errorString = i18n( "User is disabled" );
+			errorString = i18n( "User not enabled" );
 			break;
 		case NMERR_DIRECTORY_FAILURE:
 			errorString = i18n( "Directory failure" );
