@@ -180,24 +180,24 @@ void UserDetails::parseCapabilities( Buffer &inbuf, int &xStatus )
 		bool found = false;
 		Guid cap( inbuf.getGuid() );
 		int i;
-		for ( i=0; i < CAP_LAST; i++ )
+		for ( i=0; i < CAP_LAST; ++i )
 		{
-			if ( i == CAP_KOPETE && cap.isEqual ( oscar_caps[i], 12 )   ||
-			   i == CAP_MIRANDA && cap.isEqual ( oscar_caps[i], 8 )     ||
-			   i == CAP_QIP && cap.isEqual ( oscar_caps[i], 16 )        ||
-			   i == CAP_QIPINFIUM && cap.isEqual ( oscar_caps[i], 16 )  ||
-			   i == CAP_QIPPDA && cap.isEqual ( oscar_caps[i], 16 )     ||
-			   i == CAP_QIPSYMBIAN && cap.isEqual ( oscar_caps[i], 16 ) ||
-			   i == CAP_QIPMOBILE && cap.isEqual ( oscar_caps[i], 16 )  ||
-			   i == CAP_JIMM && cap.isEqual ( oscar_caps[i], 5 )        ||
-			   i == CAP_MICQ && cap.isEqual ( oscar_caps[i], 12 )       ||
-			   i == CAP_SIMNEW && cap.isEqual ( oscar_caps[i], 12 )     ||
-			   i == CAP_SIMOLD && cap.isEqual ( oscar_caps[i], 15 )     ||
-			   i == CAP_VMICQ && cap.isEqual ( oscar_caps[i], 6 )       ||
-			   i == CAP_LICQ && cap.isEqual ( oscar_caps[i], 12 )       ||
-			   i == CAP_ANDRQ && cap.isEqual ( oscar_caps[i], 9 )       ||
-			   i == CAP_RANDQ && cap.isEqual ( oscar_caps[i], 9 )       ||
-			     i == CAP_MCHAT && cap.isEqual ( oscar_caps[i], 10 ) )
+			if ( (i == CAP_KOPETE && cap.isEqual ( oscar_caps[i], 12 ) )    ||
+			     (i == CAP_MIRANDA && cap.isEqual ( oscar_caps[i], 8 ) )    ||
+			     (i == CAP_QIP && cap.isEqual ( oscar_caps[i], 16 ) )       ||
+			     (i == CAP_QIPINFIUM && cap.isEqual ( oscar_caps[i], 16 ) ) ||
+			     (i == CAP_QIPPDA && cap.isEqual ( oscar_caps[i], 16 ) )    ||
+			     (i == CAP_QIPSYMBIAN && cap.isEqual ( oscar_caps[i], 16 ) )||
+			     (i == CAP_QIPMOBILE && cap.isEqual ( oscar_caps[i], 16 ) ) ||
+			     (i == CAP_JIMM && cap.isEqual ( oscar_caps[i], 5 ) )       ||
+			     (i == CAP_MICQ && cap.isEqual ( oscar_caps[i], 12 ) )      ||
+			     (i == CAP_SIMNEW && cap.isEqual ( oscar_caps[i], 12 ) )    ||
+			     (i == CAP_SIMOLD && cap.isEqual ( oscar_caps[i], 15 ) )    ||
+			     (i == CAP_VMICQ && cap.isEqual ( oscar_caps[i], 6 ) )      ||
+			     (i == CAP_LICQ && cap.isEqual ( oscar_caps[i], 12 ) )      ||
+			     (i == CAP_ANDRQ && cap.isEqual ( oscar_caps[i], 9 ) )      ||
+			     (i == CAP_RANDQ && cap.isEqual ( oscar_caps[i], 9 ) )      ||
+			     (i == CAP_MCHAT && cap.isEqual ( oscar_caps[i], 10 ) ) )
 			{
 				m_capabilities[i] = true;
 				dbgCaps += capName(i);
@@ -215,7 +215,7 @@ void UserDetails::parseCapabilities( Buffer &inbuf, int &xStatus )
 		}
 		if(!found && xStatus == -1)
 		{
-			for(i = 0; i < XSTAT_LAST; i++)
+			for(i = 0; i < XSTAT_LAST; ++i)
 			{
 				if(oscar_xStatus[i] == cap)
 				{
