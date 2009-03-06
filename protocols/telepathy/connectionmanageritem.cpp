@@ -6,6 +6,7 @@
 
 //TelepathyQt4 includes
 #include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/Client/PendingReady>
 #include <TelepathyQt4/Client/PendingReadyConnectionManager>
 
 ConnectionManagerItem::ConnectionManagerItem(QString cmName, QTreeWidget *parent)
@@ -16,7 +17,7 @@ ConnectionManagerItem::ConnectionManagerItem(QString cmName, QTreeWidget *parent
 
     setText(0, m_connectionManager->name());
 
-    Telepathy::Client::PendingOperation *op = m_connectionManager->becomeReady();
+    Telepathy::Client::PendingReady *op = m_connectionManager->becomeReady();
     QObject::connect(op,
 		SIGNAL(finished(Telepathy::Client::PendingOperation *)),
         this,

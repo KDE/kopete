@@ -734,7 +734,7 @@ void TelepathyAccount::onAvatarChanged(Telepathy::Client::PendingOperation* oper
     if(TelepathyCommons::isOperationError(operation))
         return;
 	
-	kDebug(TELEPATHY_DEBUG_AREA) << "Avatar has changed.";
+	kDebug(TELEPATHY_DEBUG_AREA) << "Avatar was changed";
 }
 
 void TelepathyAccount::fetchContactList()

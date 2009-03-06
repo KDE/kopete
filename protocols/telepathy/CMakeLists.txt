@@ -1,6 +1,8 @@
 
 add_subdirectory( icons )
 
+REMOVE_DEFINITIONS(-DQT_NO_STL)
+
 include_directories( 
 	${KOPETE_INCLUDES}
 	${TELEPATHY_QT4_INCLUDE_DIR}
