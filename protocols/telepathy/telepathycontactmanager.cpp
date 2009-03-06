@@ -27,7 +27,6 @@
 
 #include <TelepathyQt4/Client/Contact>
 #include <TelepathyQt4/Client/ContactManager>
-#include <TelepathyQt4/Client/Connection>
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/PendingContacts>
 #include <TelepathyQt4/Client/PendingReady>
@@ -74,9 +73,9 @@ void TelepathyContactManager::fetchContactList()
 	
 	m_contactManager = m_account->connection()->contactManager();
 
-	Telepathy::Client::Connection *connection = m_contactManager->connection();
+	m_connection = m_contactManager->connection();
 
-	QObject::connect(connection->becomeReady(),
+	QObject::connect(m_connection->becomeReady(),
 		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
 	    this,
 		SLOT(onConnectionReady(Telepathy::Client::PendingOperation*))
@@ -90,18 +89,27 @@ void TelepathyContactManager::onConnectionReady(Telepathy::Client::PendingOperat
     if(TelepathyCommons::isOperationError(operation))
         return;
 
-	Telepathy::Client::Connection *connection = m_contactManager->connection();
-
-	QList<uint> handles;
-	handles.push_back(connection->selfHandle());
-	Telepathy::UIntList UHandles(handles);
-	Telepathy::Client::PendingContacts *pc = 
-		m_contactManager->contactsForHandles(UHandles);
-	QObject::connect(pc,
+	QSet<uint> features = m_connection->requestedFeatures();
+	features << Telepathy::Client::Connection::FeatureRoster;
+	QObject::connect(m_connection->requestConnect(features),
 		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
-	    this,
-		SLOT(onPendingContacts(Telepathy::Client::PendingOperation*))
-	);
+		this,
+		SLOT(onRequestConnect(Telepathy::Client::PendingOperation*)));
+}
+
+void TelepathyContactManager::onRequestConnect(Telepathy::Client::PendingOperation *operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    
+    if(TelepathyCommons::isOperationError(operation))
+        return;
+
+	QSet<QSharedPointer<Telepathy::Client::Contact> > contacts = m_contactManager->allKnownContacts();
+	
+	foreach(QSharedPointer<Telepathy::Client::Contact> contact, contacts)
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << contact->id() << contact->alias();
+	}	
 }
 
 void TelepathyContactManager::onPendingContacts(Telepathy::Client::PendingOperation* operation)

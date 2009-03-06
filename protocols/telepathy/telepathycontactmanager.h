@@ -25,6 +25,8 @@
 #include <QSharedPointer>
 #include <QList>
 
+#include <TelepathyQt4/Client/Connection>
+
 namespace Telepathy
 {
 	namespace Client
@@ -53,12 +55,14 @@ public:
 private slots: 
 	void onConnectionReady(Telepathy::Client::PendingOperation*);
 	void onPendingContacts(Telepathy::Client::PendingOperation*);
+	void onRequestConnect(Telepathy::Client::PendingOperation*);
 	
 private:
 	void fetchContactList();
 	
 	QSharedPointer<Telepathy::Client::Account> m_account;
 	Telepathy::Client::ContactManager *m_contactManager;
+	Telepathy::Client::Connection *m_connection;
 	
 	friend class TelepathyAccount;
 };
