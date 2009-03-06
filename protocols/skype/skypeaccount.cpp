@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -960,13 +960,13 @@ void SkypeAccount::MovedBetweenGroup(SkypeContact *contact) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	int newGroup = d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
-	int oldGroup = d->skype.getContactGroupID(contact->getid());
+	int oldGroup = d->skype.getContactGroupID(contact->contactId());
 
 	kDebug() << "oldGroup:" << oldGroup << "newGroup:" << newGroup << endl;
 
 	if ( oldGroup != -1 ){
-		kDebug() << "Removing contact" << contact->getid() << "from group" << d->skype.getContactGroupID(contact->getid()) << endl;
-		d->skype.removeFromGroup(contact->getid(), oldGroup);
+		kDebug() << "Removing contact" << contact->contactId() << "from group" << d->skype.getContactGroupID(contact->contactId()) << endl;
+		d->skype.removeFromGroup(contact->contactId(), oldGroup);
 	}
 
 	if ( newGroup == -1 ){
@@ -980,8 +980,8 @@ void SkypeAccount::MovedBetweenGroup(SkypeContact *contact) {
 	}
 
 	if ( newGroup != -1 ){
-		kDebug() << "Adding contact" << contact->getid() << "to group" << d->skype.getGroupID(contact->metaContact()->groups().first()->displayName()) << endl;
-		d->skype.addToGroup(contact->getid(), newGroup);
+		kDebug() << "Adding contact" << contact->contactId() << "to group" << d->skype.getGroupID(contact->metaContact()->groups().first()->displayName()) << endl;
+		d->skype.addToGroup(contact->contactId(), newGroup);
 	} else
 		kDebug() << "Error: Cant create new skype group" << contact->metaContact()->groups().first()->displayName() << endl;
 }

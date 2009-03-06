@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -36,6 +36,7 @@ namespace Kopete {
 
 /**
  * @author Michal Vaner
+ * @author Pali Rohár
  * @short Protocol to use external skype
  * This protocol is only binding for exteral skype program. The reason to write this was I did not like the skype as it was.
  */

@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,8 +26,10 @@
 #include <kdebug.h>
 #include <kopetechatsessionmanager.h>
 #include <kopetemetacontact.h>
+#include <kopetecontactaction.h>
 #include <qstring.h>
 #include <kaction.h>
+#include <kactionmenu.h>
 #include <kactioncollection.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
@@ -80,6 +82,8 @@ class SkypeChatSessionPrivate {
 		};
 		///The action to call the user(s)
 		KAction *callAction;
+		///The action to invite the user
+		KActionMenu *inviteAction;
 		///The contact if any (and one)
 		SkypeContact *contact;
 };
@@ -116,6 +120,13 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 
 	d->contact = contact;
 
+	d->inviteAction = new KActionMenu (KIcon("system-users"), i18n ("&Invite"), this);
+	d->inviteAction->setDelayed(false);
+	d->inviteAction->setEnabled(false); //disabled, waiting for signal triggered(const QString) contact id
+	connect( d->inviteAction->menu(), SIGNAL(aboutToShow()), this, SLOT(showInviteMenu()) );
+	connect( d->inviteAction->menu(), SIGNAL(aboutToHide()), this, SLOT(hideInviteMenu()) );
+	actionCollection()->addAction("skypeInvite", d->inviteAction);
+
 	setMayInvite(true);//It is possible to invite people to chat with Skype
 	setXMLFile("skypechatui.rc");
 }
@@ -144,6 +155,13 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 
 	disallowCall();//TODO I hope it will not be needed in future
 
+	d->inviteAction = new KActionMenu (KIcon("system-users"), i18n ("&Invite"), this);
+	d->inviteAction->setDelayed(false);
+	d->inviteAction->setEnabled(false); //disabled, waiting for signal triggered(const QString) contact id
+	connect( d->inviteAction->menu(), SIGNAL(aboutToShow()), this, SLOT(showInviteMenu()) );
+	connect( d->inviteAction->menu(), SIGNAL(aboutToHide()), this, SLOT(hideInviteMenu()) );
+	actionCollection()->addAction("skypeInvite", d->inviteAction);
+
 	setMayInvite(true);//It is possible to invite people to chat with Skype
 	setXMLFile("skypechatui.rc");
 }
@@ -154,6 +172,7 @@ SkypeChatSession::~SkypeChatSession() {
 	if (d->account->leaveOnExit() && (d->isMulti))
 		emit leaveChat(d->chatId);
 	emit updateChatId(d->chatId, "", this);
+	delete d->inviteAction;//remove invite action menu
 	delete d;//remove the D pointer
 }
 
@@ -220,10 +239,10 @@ void SkypeChatSession::sentMessage(const QList<Kopete::Contact*> *recv, const QS
 void SkypeChatSession::disallowCall() {
 	d->callAction->setEnabled(false);
 
-	if (d->contact) {
+	/*if (d->contact) {
 		disconnect(d->contact, SIGNAL(setActionsPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
 		d->contact = 0L;
-	}
+	}*/
 }
 
 void SkypeChatSession::callChatSession() {
@@ -238,6 +257,31 @@ void SkypeChatSession::inviteContact(const QString &contactId) {
 	}
 
 	emit inviteUserToChat(d->chatId, contactId);
+}
+
+void SkypeChatSession::showInviteMenu() {
+	kDebug();
+
+	QHash <QString, Kopete::Contact *> contactList = account()->contacts();
+	for ( QHash <QString, Kopete::Contact *>::Iterator it = contactList.begin(); it != contactList.end(); ++it ) {
+		if ( ! members().contains(it.value()) && it.value()->isOnline() && it.value()->onlineStatus().status() != Kopete::OnlineStatus::Offline && it.value() != myself() ) {
+			KAction *a = new Kopete::UI::ContactAction(it.value(), actionCollection());
+			connect( a, SIGNAL(triggered(const QString &, bool)), this, SLOT(inviteContact(const QString &)) );
+			d->inviteAction->addAction(a);
+		}
+	}
+}
+
+void SkypeChatSession::hideInviteMenu() {
+	kDebug();
+
+	//Detele all invite actions for all contacts
+	//QList <QAction *> actions = d->inviteAction->menu()->actions();
+	//for ( QList <QAction *>::Iterator it = actions.begin(); it != actions.end(); ++it )
+	//	delete (*it);
+
+	//Clear menu
+	d->inviteAction->menu()->clear();
 }
 
 #include "skypechatsession.moc"

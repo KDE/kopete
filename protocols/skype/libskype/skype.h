@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,8 +26,9 @@ class SkypePrivate;
 class SkypeAccount;
 
 /**
- * This class is internal backend for skype. It provides slots for such things like "send a IM" and so
  * @author Kopete Developers
+ * @author Pali Rohár
+ * This class is internal backend for skype. It provides slots for such things like "send a IM" and so
  */
 class Skype : public QObject
 {
@@ -127,7 +128,7 @@ class Skype : public QObject
 		 */
 		QStringList getChatUsers(const QString &chat);
 		/**
-		 * This will return ID of the actual user this one that uses this skype)
+		 * This will return ID of the actual user this one that uses this skype
 		 */
 		QString getMyself();
 		/**

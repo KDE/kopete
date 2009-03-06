@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,13 +28,15 @@ class SkypeCallDialogPrivate;
 namespace Ui { class SkypeCallDialogBase; }
 
 /**
- * This class is a window that can control a call (show information about it, hang up, hold, ...)
  * @author Michal Vaner (Vorner)
+ * @author Pali Rohár
+ * This class is a window that can control a call (show information about it, hang up, hold, ...)
  */
 class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 {
 	Q_OBJECT
 	private:
+		///d pointer
 		SkypeCallDialogPrivate *d;
 		///Start timeout to close
 		void closeLater();
@@ -57,6 +59,7 @@ class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 	protected:
 		///I want to know when I'm closed
 		virtual void closeEvent(QCloseEvent *e);
+		///Main dialog widget
 		Ui::SkypeCallDialogBase *dialog;
 	public:
 		/**
@@ -72,7 +75,7 @@ class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 		void updateError(const QString &callId, const QString &status);
 		/**
 		 * Incoming SkypeOut balance info
-		 * @param balance How much of that ddoes user have
+		 * @param balance How much of that does user have
 		 * @param currency What currency is it (actually only euro-cents are used)
 		 */
 		void skypeOutInfo(int balance, const QString &currency);
@@ -88,7 +91,7 @@ class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 		 */
 		void hangTheCall(const QString &callId);
 		/**
-		 * Hold or resume a call (depending on its actual status
+		 * Hold or resume a call (depending on its actual status)
 		 * @param callId What call are we tlking about
 		 */
 		void toggleHoldCall(const QString &callId);

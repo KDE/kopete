@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,6 +28,7 @@ namespace Ui { class SkypeDetailsBase; }
 
 /**
  * @author Michal Vaner (VORNER) <michal.vaner@kdemail.net>
+ * @author Pali Rohár
  * Dialog that shows users details
  */
 class SkypeDetails : public KDialog, private Ui::SkypeDetailsBase {
@@ -39,6 +40,7 @@ class SkypeDetails : public KDialog, private Ui::SkypeDetailsBase {
 	protected:
 		///Make sure it is deleted after it is closed
 		void closeEvent(QCloseEvent *e);
+		///Main dialog widget
 		Ui::SkypeDetailsBase *dialog;
 	public:
 		///Just constructor

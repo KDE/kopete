@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -30,6 +30,7 @@ namespace Ui { class SkypeEditAccountBase; }
 
 /**
  * @author Michal Vaner
+ * @author Pali Rohár
  * @short Skype account edit-widget
  * This widget will be showed inside the add account wizard when adding skype account or in edit account dialog, when editing skype account.
  */
@@ -61,6 +62,7 @@ Q_OBJECT
 		 */
 		virtual Kopete::Account *apply();
 	protected:
+		///Main widget
 		Ui::SkypeEditAccountBase *widget;
 };
 

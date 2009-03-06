@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,7 +20,7 @@
 #ifndef SKYPECONFERENCE_H
 #define SKYPECONFERENCE_H
 
-#include <qdialog.h>
+#include <kdialog.h>
 
 class SkypeConferencePrivate;
 class SkypeCallDialog;
@@ -29,10 +29,11 @@ class QString;
 
 /**
  * @author Michal Vaner
+ * @author Pali Rohár
  * @short Dialog to group calls
  * This dialog can group calls that belongs
  */
-class SkypeConference : public QDialog
+class SkypeConference : public KDialog
 {
 	Q_OBJECT
 	private:

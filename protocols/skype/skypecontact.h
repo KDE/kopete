@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -34,6 +34,8 @@ class SkypeChatSession;
 
 /**
  * @author Michal Vaner (VORNER) <michal.vaner@kdemail.net>
+ * @author Pali Rohár
+ * @short Skype contact
  */
 class SkypeContact : public Kopete::Contact
 {
@@ -84,8 +86,6 @@ class SkypeContact : public Kopete::Contact
 		SkypeChatSession *getChatSession();
 		///Can this contact be called now?
 		bool canCall() const;
-		///Get skype id
-		QString getid();
 	private slots:
 		/**
 		 * Authorize the user to see if I'm online

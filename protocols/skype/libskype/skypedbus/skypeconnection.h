@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Kopete Developers <kopete-devel@kde.org>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -48,11 +48,13 @@ typedef enum {
 } skypeCloseReason;
 
 class SkypeConnectionPrivate;
+class QDBusConnection;
 
 /**
  * This class is classs wrapping DBUS so it can be used easilly to connect to skype, disconnect send and receive messages from it.
  * @author Kopete Developers
-*/
+ * @author Pali Rohár
+ */
 class SkypeConnection : public QObject
 {
 	Q_OBJECT
@@ -60,7 +62,10 @@ class SkypeConnection : public QObject
 	private:
 		///The D-pointer for internal things
 		SkypeConnectionPrivate *d;
+		///Convert all received messages from skype to one string message
 		QString convertMessage(const QList <QVariant> messagelist);
+		///Get bus type
+		QDBusConnection getBus();
 	private slots:
 		///This one takes care of incoming messages if they have some sence for the connection (protocol, pings and so on)
 		void parseMessage(const QString &message);
@@ -77,11 +82,12 @@ class SkypeConnection : public QObject
 		 * @param appName tells as what application it should authorise itself (this will user see on the "do you want to allow" dialog box)
 		 * @param protocolVer Maximal protocol version that this app manages
 		 * @param bus 0 - session bus, 1 - system bus
-		 * @param startDbus Start session DBUs if needed (etc. not running and session DBus should be used)
 		 * @param launchTimeout How long max. should wait to tell that launching skype did not work
 		 * @param waitBeforeConnect Do we need to wait a while after skype starts?
+		 * @param name login user name
+		 * @param pass login password
 		 */
-		void connectSkype(const QString &start, const QString &appName, int protocolVer, int launchTimeout, int waitBeforeConnect, const QString &name = QString(), const QString &pass = QString());
+		void connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, int launchTimeout, int waitBeforeConnect, const QString &name = QString(), const QString &pass = QString());
 		/**
 		 * Disconnects from skype
 		 * @see connectionClosed

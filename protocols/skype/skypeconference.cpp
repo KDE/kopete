@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,21 +28,20 @@
 
 class SkypeConferencePrivate {
 	public:
-		//my id
+		///my id
 		QString id;
-		//The layout
+		///The layout
 		QHBoxLayout *layout;
 };
 
-SkypeConference::SkypeConference(const QString &id) : QDialog() {
+SkypeConference::SkypeConference(const QString &id) : KDialog() {
 	kDebug() << k_funcinfo << endl;
 
 	//create the d pointer
 	d = new SkypeConferencePrivate();
 
 	//some UI
-	///TODO: Port to kde4
-	//setCaption(i18n("Conference Call"));
+	setCaption(i18n("Conference Call"));
 	d->layout = new QHBoxLayout(this);
 
 	//remember all things
@@ -70,7 +69,7 @@ void SkypeConference::embedCall(SkypeCallDialog *dialog) {
 	dialog->hide();
 	///TODO: Port to kde4
 	//insertChild(dialog);
-	//d->layout->add(dialog);
+	d->layout->addWidget(dialog);
 
 	connect(this, SIGNAL(destroyed()), dialog, SLOT(hangUp()));
 }

@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Kopete Developers <kopete-devel@kde.org>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -44,6 +44,8 @@ class SkypeConnectionPrivate {
 		QString appName;
 		///What is the protocol version used (wanted if not connected yet)
 		int protocolVer;
+		///Bus type 0 - session, 1 - system
+		int bus;
 		///This timer will keep trying until Skype starts
 		QTimer *startTimer;
 		///How much time rest? (until I say starting skype did not work)
@@ -77,6 +79,13 @@ QString SkypeConnection::convertMessage(const QList <QVariant> messagelist) {
 	return message.trimmed();
 }
 
+QDBusConnection SkypeConnection::getBus() {
+	//0 - session bus, 1 - system bus, default:0
+	if ( d->bus == 1 )
+		return QDBusConnection::systemBus();
+	return QDBusConnection::sessionBus();
+}
+
 void SkypeConnection::startLogOn() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
@@ -85,7 +94,7 @@ void SkypeConnection::startLogOn() {
 		d->startTimer = 0L;
 	}
 
-	QDBusMessage reply = QDBusInterface("com.Skype.API", "/com/Skype", "com.Skype.API").call("Invoke", "PING");
+	QDBusMessage reply = QDBusInterface("com.Skype.API", "/com/Skype", "com.Skype.API", getBus()).call("Invoke", "PING");
 	QString replystring = convertMessage(reply.arguments());
 
 	if ( replystring != "PONG" ){
@@ -144,7 +153,7 @@ void SkypeConnection::Notify(const QString &message){
 	emit received(message);
 }
 
-void SkypeConnection::connectSkype(const QString &start, const QString &appName, int protocolVer, int launchTimeout, int waitBeforeConnect, const QString &name, const QString &pass) {
+void SkypeConnection::connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, int launchTimeout, int waitBeforeConnect, const QString &name, const QString &pass) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	if (d->fase != cfNotConnected)
@@ -152,12 +161,13 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 
 	d->appName = appName;
 	d->protocolVer = protocolVer;
+	d->bus = bus;
 
 	new ClientAdaptor(this);
 	QDBusConnection::sessionBus().registerObject("/com/Skype/Client", this); //Register skype client to dbus for receiving messages to slot Notify
 
 	{
-		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API");
+		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API", getBus());
 		QDBusMessage reply = interface.call("Invoke", "PING");
 		QString replystring = convertMessage(reply.arguments());
 
@@ -231,7 +241,7 @@ QString SkypeConnection::operator %(const QString &message) {
 	if (d->fase == cfNotConnected)
 		return "";//not connected, posibly because of earlier error, do not show it again
 
-	QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API");
+	QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API", getBus());
 	QDBusMessage reply = interface.call("Invoke", message);
 
 	if ( interface.lastError().type() != QDBusError::NoError && interface.lastError().type() != QDBusError::Other ){//There was some error
@@ -287,7 +297,7 @@ void SkypeConnection::tryConnect() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	{
-		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API");
+		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API", getBus());
 		QDBusMessage reply = interface.call("Invoke", "PING");
 		QString replystring = convertMessage(reply.arguments());
 

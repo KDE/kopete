@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -27,8 +27,9 @@ class SkypeContact;
 class SkypeChatSessionPrivate;
 
 /**
- * The chat session for the Skype protocol
  * @author Michal Vaner (VORNER) <michal.vaner@kdemail.net>
+ * @author Pali Rohár
+ * The chat session for the Skype protocol
  */
 class SkypeChatSession : public Kopete::ChatSession
 {
@@ -45,6 +46,10 @@ class SkypeChatSession : public Kopete::ChatSession
 		void disallowCall();
 		///Do a call to all participants of the chat (in future, now it allows only one at onece)
 		void callChatSession();
+		///Slot to show invite menu for other user to chat
+		void showInviteMenu();
+		///Slot to hide invite menu
+		void hideInviteMenu();
 	public:
 		/**
 		 * Constructor. The chat session will be created with first message coming out.
@@ -61,11 +66,6 @@ class SkypeChatSession : public Kopete::ChatSession
 		SkypeChatSession(SkypeAccount *account, const QString &session, const Kopete::ContactPtrList &contacts);
 		///Destructor
 		~SkypeChatSession();
-		/**
-		 * Invites a contact to the chat
-		 * @param contactId What contact
-		 */
-		virtual void inviteContact(const QString &contactId);
 	public slots:
 		/**
 		 * Update the chat topic
@@ -97,6 +97,11 @@ class SkypeChatSession : public Kopete::ChatSession
 		 * @param body Text to show
 		 */
 		void sentMessage(const QList<Kopete::Contact*> *recv, const QString &body);
+		/**
+		* Invites a contact to the chat
+		* @param contactId What contact
+		*/
+		virtual void inviteContact(const QString &contactId);
 	signals:
 		/**
 		 * This is emited when it become a multi-user chat. It should be removed from the contact so when user clicks on the contact, new one with only that one should be created

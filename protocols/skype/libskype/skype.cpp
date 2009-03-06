@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2005 Michal Vaner <michal.vaner@kdemail.net>
-    Copyright (C) 2008 Pali Rohár <pali.rohar@gmail.com>
+    Copyright (C) 2008-2009 Pali Rohár <pali.rohar@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -206,7 +206,7 @@ void Skype::queueSkypeMessage(const QString &message, bool deleteQueue) {
 		if (deleteQueue)
 			d->messageQueue.clear();//delete all old messages
 		d->messageQueue << message;//add the new one
-		d->connection.connectSkype((d->start) ? d->skypeCommand : "", d->appName, PROTOCOL_MAX, d->launchTimeout, d->waitBeforeConnect);//try to connect
+		d->connection.connectSkype((d->start) ? d->skypeCommand : "", d->appName, PROTOCOL_MAX, d->bus, d->launchTimeout, d->waitBeforeConnect);//try to connect
 	}
 }
 

@@ -1,15 +1,15 @@
 project( kopete_skype )
 
+FIND_PACKAGE( Qt4 REQUIRED )
 find_package( KDE4 REQUIRED )
 find_package( KdepimLibs REQUIRED )
 include ( KDE4Defaults )
 include ( MacroLibrary )
+include ( ${QT_USE_FILE} )
 
 ########### next target ###############
 
 add_definitions ( ${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
-
-add_subdirectory( icons )
 
 include_directories(
 	${QT_QTDBUS_INCLUDE_DIR}
@@ -21,6 +21,8 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/libskype
 	${CMAKE_CURRENT_SOURCE_DIR}/libskype/skypedbus
+	${CMAKE_CURRENT_SOURCE_DIR}/skypebuttons
+	${CMAKE_CURRENT_SOURCE_DIR}/skypebuttons/qtbrowserplugin
 
 	${CMAKE_CURRENT_BUILD_DIR}
 )
@@ -91,10 +93,14 @@ target_link_libraries(
 	${QT_QT3SUPPORT_LIBRARY}
 )
 
-install( TARGETS kopete_skype DESTINATION ${PLUGIN_INSTALL_DIR} )
+########### next target ###############
+
+add_subdirectory( icons )
+# add_subdirectory( skypebuttons ) - not done all
 
 ########### install files ###############
 
+install( TARGETS kopete_skype DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES kopete_skype.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 install( FILES skypeui.rc skypechatui.rc DESTINATION ${DATA_INSTALL_DIR}/kopete_skype )
 install( PROGRAMS call_end call_start DESTINATION ${DATA_INSTALL_DIR}/kopete_skype )
