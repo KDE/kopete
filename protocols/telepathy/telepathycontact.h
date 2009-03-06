@@ -28,6 +28,8 @@
 
 #include "telepathyaccount.h"
 
+#include <TelepathyQt4/Client/Contact>
+
 namespace Kopete
 {
     class MetaContact;
@@ -47,6 +49,8 @@ public:
     virtual QList<KAction *> *customContextMenuActions();
 	virtual QList<KAction *> *customContextMenuActions( Kopete::ChatSession *manager );
     virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
+
+	void setInternalContact(QSharedPointer<Telepathy::Client::Contact> contact);
 
 private:
 	class TelepathyContactPrivate;

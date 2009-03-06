@@ -21,22 +21,24 @@
 #include "telepathyprotocol.h"
 #include "telepathycontactmanager.h"
 #include "telepathyaccount.h"
+#include "telepathycontact.h"
 #include "common.h"
 
 #include <kdebug.h>
 
-#include <TelepathyQt4/Client/Contact>
+#include <kopetemetacontact.h>
+#include <kopetecontactlist.h>
+
 #include <TelepathyQt4/Client/ContactManager>
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/PendingContacts>
 #include <TelepathyQt4/Client/PendingReady>
 
 
-TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAccount, 
-												 QSharedPointer<Telepathy::Client::Account> account)
+TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAccount)
 {
-	Q_UNUSED(telepathyAccount);
-	m_account = account;
+	m_telepathyAccount = telepathyAccount;
+	m_account = m_telepathyAccount->m_account;
 }
 
 TelepathyContactManager::~TelepathyContactManager()
@@ -89,6 +91,7 @@ void TelepathyContactManager::onConnectionReady(Telepathy::Client::PendingOperat
     if(TelepathyCommons::isOperationError(operation))
         return;
 
+	// \brief: Add new feature to existing connection to get contact list from server 
 	QSet<uint> features = m_connection->requestedFeatures();
 	features << Telepathy::Client::Connection::FeatureRoster;
 	QObject::connect(m_connection->requestConnect(features),
@@ -103,47 +106,35 @@ void TelepathyContactManager::onRequestConnect(Telepathy::Client::PendingOperati
     
     if(TelepathyCommons::isOperationError(operation))
         return;
+	
+	QObject::connect(m_contactManager,
+		SIGNAL(presencePublicationRequested(const Telepathy::Client::Contacts &)),
+		this,
+		SLOT(onPresencePublicationRequested(const Telepathy::Client::Contacts &)));
 
 	QSet<QSharedPointer<Telepathy::Client::Contact> > contacts = m_contactManager->allKnownContacts();
 	
 	foreach(QSharedPointer<Telepathy::Client::Contact> contact, contacts)
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << contact->id() << contact->alias();
+		
+		Kopete::MetaContact *metaContact = new Kopete::MetaContact();
+		TelepathyContact *newContact = new TelepathyContact(m_telepathyAccount, contact->id(), metaContact);
+		newContact->setInternalContact(contact);
+		newContact->setMetaContact(metaContact);
+		
+		Kopete::ContactList::self()->addMetaContact(metaContact);
 	}	
 }
 
-void TelepathyContactManager::onPendingContacts(Telepathy::Client::PendingOperation* operation)
+void TelepathyContactManager::onPresencePublicationRequested(const Telepathy::Client::Contacts &contacts)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
-    
-    if(TelepathyCommons::isOperationError(operation))
-        return;
-	
-	Telepathy::Client::PendingContacts *pc = qobject_cast<Telepathy::Client::PendingContacts*>(operation);
-	
-	if(!pc)
-	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Error: Couldn't cast PendingContacts!";
-		return;
-	}
-	
-	kDebug(TELEPATHY_DEBUG_AREA) << "PendingContact handles count:" << pc->handles().size() << pc->invalidHandles().size() << pc->identifiers();
-	
-	QList<QSharedPointer<Telepathy::Client::Contact> > contacts = pc->contacts();
-	
 	foreach(QSharedPointer<Telepathy::Client::Contact> contact, contacts)
 	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Contact id:" << contact->id();
-	}
-	
-	QList<QSharedPointer<Telepathy::Client::Contact> > contactsToUpgrade = pc->contacts();
-	
-	foreach(QSharedPointer<Telepathy::Client::Contact> contact, contactsToUpgrade)
-	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Contact id:" << contact->id();
-	}
-
+		kDebug(TELEPATHY_DEBUG_AREA) << contact->id() << contact->alias();
+	}	
 }
+
 
 
 

@@ -114,6 +114,9 @@ private:
 	bool m_setStatusAfterInit;
 	Kopete::OnlineStatus m_status;
 	Kopete::StatusMessage m_reason;
+
+	friend class TelepathyContactManager;
 };
 
 #endif // TELEPATHYACCOUNT_H_
+

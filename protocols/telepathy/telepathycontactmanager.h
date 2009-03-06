@@ -26,6 +26,7 @@
 #include <QList>
 
 #include <TelepathyQt4/Client/Connection>
+#include <TelepathyQt4/Client/Contact>
 
 namespace Telepathy
 {
@@ -44,7 +45,7 @@ class TelepathyContactManager : public QObject
 {
 	Q_OBJECT
 public:
-	TelepathyContactManager(TelepathyAccount *telepathyAccount, QSharedPointer<Telepathy::Client::Account> account);
+	TelepathyContactManager(TelepathyAccount *telepathyAccount);
 	~TelepathyContactManager();
 	
 	QSharedPointer<Telepathy::Client::Contact> addContact(const QString &contactId);
@@ -54,12 +55,13 @@ public:
 	
 private slots: 
 	void onConnectionReady(Telepathy::Client::PendingOperation*);
-	void onPendingContacts(Telepathy::Client::PendingOperation*);
 	void onRequestConnect(Telepathy::Client::PendingOperation*);
+	void onPresencePublicationRequested(const Telepathy::Client::Contacts &);
 	
 private:
 	void fetchContactList();
 	
+	TelepathyAccount *m_telepathyAccount;
 	QSharedPointer<Telepathy::Client::Account> m_account;
 	Telepathy::Client::ContactManager *m_contactManager;
 	Telepathy::Client::Connection *m_connection;

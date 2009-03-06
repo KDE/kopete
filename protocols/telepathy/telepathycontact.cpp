@@ -92,5 +92,10 @@ Kopete::ChatSession *TelepathyContact::manager( CanCreateFlags canCreate )
     return 0;
 }
 
+void TelepathyContact::setInternalContact(QSharedPointer<Telepathy::Client::Contact> contact)
+{
+	d->internalContact = contact;
+}
+
 
 

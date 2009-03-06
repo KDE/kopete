@@ -360,7 +360,7 @@ Telepathy::Client::ConnectionManager *TelepathyAccount::getConnectionManager()
 TelepathyContactManager *TelepathyAccount::getContactManager()
 {
 	if(!m_contactManager)
-		m_contactManager = new TelepathyContactManager(this, m_account);
+		m_contactManager = new TelepathyContactManager(this);
 	
 	return m_contactManager;
 }
