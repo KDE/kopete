@@ -40,6 +40,7 @@ namespace Telepathy
 }
 
 class TelepathyAccount;
+class TelepathyContact;
  
 class TelepathyContactManager : public QObject
 {
@@ -55,7 +56,7 @@ public:
 	
 private slots: 
 	void onConnectionReady(Telepathy::Client::PendingOperation*);
-	void onRequestConnect(Telepathy::Client::PendingOperation*);
+	void onConnectionFeaturesReady(Telepathy::Client::PendingOperation*);
 	void onPresencePublicationRequested(const Telepathy::Client::Contacts &);
 	
 private:

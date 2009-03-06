@@ -94,13 +94,13 @@ void TelepathyContactManager::onConnectionReady(Telepathy::Client::PendingOperat
 	// \brief: Add new feature to existing connection to get contact list from server 
 	QSet<uint> features = m_connection->requestedFeatures();
 	features << Telepathy::Client::Connection::FeatureRoster;
-	QObject::connect(m_connection->requestConnect(features),
+	QObject::connect(m_connection->becomeReady(features),
 		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
 		this,
-		SLOT(onRequestConnect(Telepathy::Client::PendingOperation*)));
+		SLOT(onConnectionFeaturesReady(Telepathy::Client::PendingOperation*)));
 }
 
-void TelepathyContactManager::onRequestConnect(Telepathy::Client::PendingOperation *operation)
+void TelepathyContactManager::onConnectionFeaturesReady(Telepathy::Client::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     
