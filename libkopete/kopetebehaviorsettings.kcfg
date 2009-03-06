@@ -60,6 +60,10 @@
 			<label>Queue Only Messages On Another Desktop</label>
 			<default>false</default>
 		</entry>
+		<entry key="balloonGroupMessageNotificationsPerSender" type="Bool">
+			<label>Single notification for messages from the same sender.</label>
+			<default>true</default>
+		</entry>
 		<entry key="balloonNotifyIgnoreClosesChatView" type="Bool">
 			<label>Balloon Notification Ignore Closes Chat View</label>
 			<default>false</default>

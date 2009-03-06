@@ -41,6 +41,7 @@
 #include "kopetegroup.h"
 #include "kopetepicture.h"
 #include "kopeteemoticons.h"
+#include "kopeteactivenotification.h"
 
 /**
  * Used to exrtract the message that will be shown in the notification popup.
@@ -97,8 +98,6 @@ static QString squashMessage( const Kopete::Message& msg )
 	return msgText;
 }
 
-
-
 typedef QMap<Kopete::ChatSession*,KopeteView*> ManagerMap;
 typedef QList<Kopete::MessageEvent*> EventList;
 
@@ -122,7 +121,9 @@ struct KopeteViewManagerPrivate
     bool queueOnlyHighlightedMessagesInGroupChats;
     bool queueOnlyMessagesOnAnotherDesktop;
     bool balloonNotifyIgnoreClosesChatView;
+    bool balloonGroupMessageNotificationsPerSender;
     bool foreignMessage;
+    Kopete::ActiveNotifications activeNotifications;
 };
 
 KopeteViewManager *KopeteViewManager::s_viewManager = 0L;
@@ -174,6 +175,7 @@ void KopeteViewManager::slotPrefsChanged()
     d->queueOnlyHighlightedMessagesInGroupChats = Kopete::BehaviorSettings::self()->queueOnlyHighlightedMessagesInGroupChats();
     d->queueOnlyMessagesOnAnotherDesktop = Kopete::BehaviorSettings::self()->queueOnlyMessagesOnAnotherDesktop();
     d->balloonNotifyIgnoreClosesChatView = Kopete::BehaviorSettings::self()->balloonNotifyIgnoreClosesChatView();
+    d->balloonGroupMessageNotificationsPerSender = Kopete::BehaviorSettings::self()->balloonGroupMessageNotificationsPerSender();
 }
 
 KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString &requestedPlugin )
@@ -307,7 +309,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 				msgFrom = msg.from()->contactId();
 
 			QString eventId;
-			KLocalizedString body = ki18n( "<qt>Incoming message from %1<br />\"%2\"</qt>" );
+			KLocalizedString body = ki18n( "Incoming message from %1<br />\"%2\"" );
 			switch( msg.importance() )
 			{
 				case Kopete::Message::Low:
@@ -315,7 +317,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					break;
 				case Kopete::Message::Highlight:
 					eventId = QLatin1String( "kopete_contact_highlight" );
-					body = ki18n( "<qt>A highlighted message arrived from %1<br />\"%2\"</qt>" );
+					body = ki18n( "A highlighted message arrived from %1<br />\"%2\"" );
 					break;
 				default:
 					if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop
@@ -329,28 +331,55 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					}
 			}
 
-			KNotification *notify=new KNotification(eventId, viewWidget, isActiveWindow ? KNotification::CloseOnTimeout : KNotification::Persistent);
-			notify->setText(body.subs( Qt::escape(msgFrom) ).subs( squashedMessage ).toString());
-			notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
-			notify->setActions(( QStringList() <<  i18nc("@action", "View" )  <<   i18nc("@action", "Ignore" )) );
+            bool displayNewNotification = true;
+            if ( d->balloonGroupMessageNotificationsPerSender )
+            {
+                Kopete::ActiveNotifications::iterator notifyIt = d->activeNotifications.find(msg.from()->account()->accountLabel() + msg.from()->contactId());
+                if (notifyIt != d->activeNotifications.end()) 
+                {
+                    (*notifyIt)->incrementMessages();
+                    displayNewNotification = false;
+                }
+            }
 
-			foreach(const QString& cl , msg.classes())
-				notify->addContext( qMakePair( QString::fromLatin1("class") , cl ) );
+            if (displayNewNotification) {
+                KNotification *notify = new KNotification(eventId, viewWidget, isActiveWindow ? KNotification::CloseOnTimeout : KNotification::Persistent);
+                notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
+                notify->setActions(( QStringList() <<  i18nc("@action", "View" )  <<   i18nc("@action", "Ignore" )) );
 
-			Kopete::MetaContact *mc= msg.from()->metaContact();
-			if(mc)
-			{
-				notify->addContext( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId()) );
-				foreach( Kopete::Group *g , mc->groups() )
-				{
-					notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
-				}
-			}
-			connect(notify,SIGNAL(activated()), manager , SLOT(raiseView()) );
-			connect(notify,SIGNAL(action1Activated()), manager , SLOT(raiseView()) );
-			connect(notify,SIGNAL(action2Activated()), event , SLOT(discard()) );
-			connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
-			notify->sendEvent();
+                QString bodyString = body.subs( Qt::escape(msgFrom) ).subs( squashedMessage ).toString();
+                if ( d->balloonGroupMessageNotificationsPerSender )
+                {
+                    // notify is parent, will die with it
+                    new Kopete::ActiveNotification(
+                        notify,
+                        msg.from()->account()->accountLabel() + msg.from()->contactId(),
+                        d->activeNotifications,
+                        bodyString );
+                }
+                else 
+                {
+                    notify->setText( "<qt>" + bodyString + "</qt>" );
+                }
+
+                foreach(const QString& cl , msg.classes())
+                    notify->addContext( qMakePair( QString::fromLatin1("class") , cl ) );
+
+                Kopete::MetaContact *mc= msg.from()->metaContact();
+                if(mc)
+                {
+                    notify->addContext( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId()) );
+                    foreach( Kopete::Group *g , mc->groups() )
+                    {
+                        notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
+                    }
+                }
+                connect(notify,SIGNAL(activated()), manager , SLOT(raiseView()) );
+                connect(notify,SIGNAL(action1Activated()), manager , SLOT(raiseView()) );
+                connect(notify,SIGNAL(action2Activated()), event , SLOT(discard()) );
+                connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
+                notify->sendEvent();
+            }
 		}
 
 		if (!d->useQueue)

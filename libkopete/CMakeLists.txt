@@ -14,6 +14,7 @@ set(kopete_private_SRCS
   private/kopeteemoticons.cpp
   private/kopeteutils_private.cpp
   private/kopeteviewmanager.cpp
+  private/kopeteactivenotification.cpp
 )
 
 if (Q_WS_X11)
