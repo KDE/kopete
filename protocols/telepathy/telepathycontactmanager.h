@@ -49,7 +49,7 @@ public:
 	~TelepathyContactManager();
 	
 	QSharedPointer<Telepathy::Client::Contact> addContact(const QString &contactId);
-	void removeContact(QSharedPointer<Telepathy::Client::Contact> contact);
+	void removeContact(TelepathyContact *contact);
 	void setContactList(QList<QSharedPointer<Telepathy::Client::Contact> > contactList);
 	void loadContacts();
 	

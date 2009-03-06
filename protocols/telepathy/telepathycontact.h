@@ -52,6 +52,14 @@ public:
 
 	void setInternalContact(QSharedPointer<Telepathy::Client::Contact> contact);
 
+private slots:
+	void onAliasChanged (const QString &);
+	void onAvatarTokenChanged (const QString &);
+	void onSimplePresenceChanged (const QString &, uint, const QString &);
+	void onSubscriptionStateChanged (Telepathy::Client::Contact::PresenceState);
+	void onPublishStateChanged (Telepathy::Client::Contact::PresenceState);
+	void onBlockStatusChanged (bool);
+
 private:
 	class TelepathyContactPrivate;
 	TelepathyContactPrivate * d;

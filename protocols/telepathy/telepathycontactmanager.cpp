@@ -51,9 +51,9 @@ QSharedPointer<Telepathy::Client::Contact> TelepathyContactManager::addContact(c
 	return QSharedPointer<Telepathy::Client::Contact>();
 }
 
-void TelepathyContactManager::removeContact(QSharedPointer<Telepathy::Client::Contact> contact)
+void TelepathyContactManager::removeContact(TelepathyContact *contact)
 {
-	Q_UNUSED(contact);
+	contact->deleteLater();
 }
 
 void TelepathyContactManager::setContactList(QList<QSharedPointer<Telepathy::Client::Contact> > contactList)

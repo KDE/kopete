@@ -144,7 +144,7 @@ Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(con
 
 	return telepathyPresence;
 }
-/*
+
 Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Telepathy::ConnectionPresenceType presence)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "telepathyStatusToKopete() called";
@@ -152,29 +152,27 @@ Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Telepathy::Conne
 	switch(presence)
 	{
 		case Telepathy::ConnectionPresenceTypeAvailable:
-			result = Available;
+			result = Kopete::OnlineStatus::Online;
 			break;
 		case Telepathy::ConnectionPresenceTypeAway:
-			result = Away;
-			break;
+		case Telepathy::ConnectionPresenceTypeExtendedAway:
 		case Telepathy::ConnectionPresenceTypeBusy:
-			result = Busy;
+			result = Kopete::OnlineStatus::Away;
 			break;
 		case Telepathy::ConnectionPresenceTypeHidden:
-			result = Hidden;
-			break;
-		case Telepathy::ConnectionPresenceTypeExtendedAway:
-			result = ExtendedAway;
+			result = Kopete::OnlineStatus::Invisible;
 			break;
 		case Telepathy::ConnectionPresenceTypeOffline:
+			result = Kopete::OnlineStatus::Offline;
+			break;
 		case Telepathy::ConnectionPresenceTypeUnset:
 		case Telepathy::ConnectionPresenceTypeUnknown:
 		case Telepathy::ConnectionPresenceTypeError:
-			result = Offline;
+			result = Kopete::OnlineStatus::Unknown;
 			break;
 	}
 
 	return result;
 }
-*/
+
 #include "telepathyprotocol.moc"
