@@ -246,9 +246,9 @@ QString SkypeConnection::operator %(const QString &message) {
 
 	if ( interface.lastError().type() != QDBusError::NoError && interface.lastError().type() != QDBusError::Other ){//There was some error
 		if ( message == "PING" )
-			emit error(i18n("Could not ping Skype\nError while sending a message to skype (%1)", QDBusError::errorString(interface.lastError().type())));//say there was the error
+			emit error(i18n("Could not ping Skype.\nError while sending a message to Skype (%1).", QDBusError::errorString(interface.lastError().type())));//say there was the error
 		else
-			emit error(i18n("Error while sending a message to skype (%1)", QDBusError::errorString(interface.lastError().type())));//say there was the error
+			emit error(i18n("Error while sending a message to Skype (%1).", QDBusError::errorString(interface.lastError().type())));//say there was the error
 		if (d->fase != cfConnected)
 			emit connectionDone(seUnknown, 0);//Connection attempt finished with error
 		disconnectSkype(crLost);//lost the connection
@@ -258,7 +258,7 @@ QString SkypeConnection::operator %(const QString &message) {
 	QString replystring = convertMessage(reply.arguments());
 
 	if ( message == "PING" && replystring != "PONG" ){
-		emit error(i18n("Could not ping Skype\nYou are log out from Skype, please log in!"));
+		emit error(i18n("Could not ping Skype.\nYou are logged out from Skype, please log in."));
 		emit connectionDone(seNoSkype, 0);
 		disconnectSkype(crLost);//lost the connection
 		return "";//this is enough, no more errors please..

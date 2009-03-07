@@ -39,7 +39,7 @@
       <item>
        <widget class="QLabel" name="textLabel2" >
         <property name="text" >
-         <string>Sorry, but the search function was not yet implemented.</string>
+         <string>Sorry, but the search function is not yet implemented.</string>
         </property>
         <property name="alignment" >
          <set>Qt::AlignVCenter</set>

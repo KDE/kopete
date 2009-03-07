@@ -16,7 +16,7 @@
    </sizepolicy>
   </property>
   <property name="toolTip" >
-   <string>If you have problems with arts and sound, you can use this to turn off arts for the call only. There are scripts duing this bundled with the kopete plugin (somewhere in you kde_folder/share/apps/kopete_skype) you can use.</string>
+   <string>If you have problems with arts and sound, you can use this to turn off arts for the length of the call. There are scripts bundled with the kopete plugin that you can use to do this (somewhere within your kde_folder/share/apps/kopete_skype.)</string>
   </property>
   <layout class="QVBoxLayout" >
    <item>
@@ -98,7 +98,7 @@
              <number>0</number>
             </property>
             <property name="text" >
-             <string>&lt;p align="left">This is just a bridge to external running skype. This has some &lt;br />consequences, like you need running instance of skype and that only &lt;br/>one skype account is possible&lt;/p></string>
+             <string>&lt;p align="left">The Skype plugin serves as a bridge to an externally running copy of Skype. This has some &lt;br />consequences on how it functions: you need an instance of Skype to be running, and only &lt;br/>one Skype account can be used.&lt;/p></string>
             </property>
             <property name="textFormat" >
              <enum>Qt::AutoText</enum>
@@ -137,7 +137,7 @@
        <item>
         <widget class="Q3ButtonGroup" name="LaunchGroup" >
          <property name="whatsThis" >
-          <string>You can set whether and when should kopete launch skype.</string>
+          <string>You can set whether and when should kopete launch Skype.</string>
          </property>
          <property name="title" >
           <string>Launch Skype</string>
@@ -249,7 +249,7 @@
           <string>Launches D-Bus when not running</string>
          </property>
          <property name="whatsThis" >
-          <string>This will start session D-Bus if connection is set to session and it is not running. The preferred way is to set it in startup script, thought, so this if off by default.</string>
+          <string>This will start a D-Bus session if 'Connection' is set to 'Session' and D-Bus is not running. The preferred way is to run D-Bus in a startup script, though, so this if off by default.</string>
          </property>
          <property name="text" >
           <string>Laun&amp;ch D-Bus</string>
@@ -318,7 +318,7 @@
        <item>
         <widget class="QLabel" name="textLabel2" >
          <property name="text" >
-          <string>If you get error that Skype was not found and it is running, check instructions at http://www.skype.com/community/devzone/SkypeAPIforLinux.html or use session bus.</string>
+          <string>If you get error that Skype was not found, but in fact it is running, check the instructions at http://www.skype.com/community/devzone/SkypeAPIforLinux.html, or use the Session D-Bus option.</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignVCenter</set>
@@ -354,8 +354,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox3_2" >
          <property name="whatsThis" >
-          <string>Each application that wants to use skype must tell a name to it and user is asked whether to allow such application to access it.&lt;br>
-By default, kopete provides kopete as its name, but if you suspect another application that it access skype with this name, you can set another and disallow applications that tries to log in as kopete.</string>
+          <string>Each application that wants to use Skype must provide its name to it, and the user is asked whether to allow said application to access Skype.&lt;br>By default, kopete provides kopete as its name, but if you suspect another application is accessing Skype with this name, you can change the name Kopete uses here, and then within Skype disallow applications that refer to themselves as kopete.</string>
          </property>
          <property name="title" >
           <string>Authorization</string>
@@ -384,7 +383,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
           <string>What bus do you want to use</string>
          </property>
          <property name="whatsThis" >
-          <string>What bus do you want to use to connect to Skype.&lt;br>Session: Your own, other people can not get to that. (use --use-session-dbus to start skype on that bus).&lt;br>System: This one is shared by all people on the same computer. Oddly, this one is used by default by Skype.it.&lt;br>You have to use the same as uses Skype</string>
+          <string>Which D-Bus do you want to use to connect to Skype?&lt;br>Session: Your own, other people cannot use it (use --use-session-dbus to start Skype on that bus.)&lt;br>System: Shared by all people on the same computer. This one is used by default by Skype.&lt;br>You have to specify the same D-Bus used by Skype.</string>
          </property>
          <property name="title" >
           <string>Bus</string>
@@ -419,8 +418,7 @@ By default, kopete provides kopete as its name, but if you suspect another appli
        <item>
         <widget class="QLabel" name="textLabel1_2" >
          <property name="text" >
-          <string>Note that Kopete will freeze while Skype asks you if it can let Kopete in. This is usual and if you allow it for ever (check that "Remember" checkbox on the Skype's dialog), it will not happen again.
-System Bus is not supported.</string>
+          <string>Note that Kopete will freeze while Skype asks you if it can allow Kopete to access it. This is normal, and if you allow it forever (check that "Remember" checkbox in Skype's dialog), it will not happen again. The 'System Bus' option is not supported.</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignVCenter</set>
@@ -459,10 +457,10 @@ System Bus is not supported.</string>
           <string>Show all incoming messages</string>
          </property>
          <property name="whatsThis" >
-          <string>This will show all skype incoming messages. If this is off, they are showed only if the message belongs to chat that is started by kopete.</string>
+          <string>This will show all incoming Skype messages. If this is off, they are showed only if the message belongs to chat that is started by kopete.</string>
          </property>
          <property name="text" >
-          <string>Hitchhike incoming &amp;messages</string>
+          <string>Show all incoming &amp;messages</string>
          </property>
          <property name="checked" >
           <bool>true</bool>
@@ -472,7 +470,7 @@ System Bus is not supported.</string>
        <item>
         <widget class="QCheckBox" name="MarkCheck" >
          <property name="toolTip" >
-          <string>This will mark incoming messages as read so if you have Skype set up not to automatically pop-up chats, it will not flash that exclamation icon.</string>
+          <string>This will mark incoming messages as read, so if you have Skype set up not to automatically pop-up chats, it will not flash the exclamation icon.</string>
          </property>
          <property name="text" >
           <string>Mar&amp;k as read</string>
@@ -485,7 +483,7 @@ System Bus is not supported.</string>
        <item>
         <widget class="QCheckBox" name="ScanCheck" >
          <property name="whatsThis" >
-          <string>If this is checked, Kopete will ask Skype on login, if it has any unshowed messages and show them. This is handy if you start Kopete later than Skype and Skype is configured not to show incoming messages.</string>
+          <string>If this is checked, Kopete will ask Skype on login if it has any messages that have not been shown, and if so, will show them. This is useful if you start Kopete later than Skype, and Skype is configured not to show incoming messages.</string>
          </property>
          <property name="text" >
           <string>Scan f&amp;or unread</string>
@@ -653,10 +651,10 @@ System Bus is not supported.</string>
        <item>
         <widget class="QCheckBox" name="PingsCheck" >
          <property name="toolTip" >
-          <string>If this is enabled, Kopete keeps track of whether the Skype is running.</string>
+          <string>If this is enabled, Kopete keeps track of whether or not Skype is running.</string>
          </property>
          <property name="whatsThis" >
-          <string>This keeps track of whether Skype is running. Turning this off makes only sense it you are trying to get some not-flooded debug output.</string>
+          <string>This keeps track of whether Skype is running. Turning this off only makes sense it you are trying to get non-flooded debug output.</string>
          </property>
          <property name="text" >
           <string>Pi&amp;ng Skype</string>
@@ -672,7 +670,7 @@ System Bus is not supported.</string>
           <string>Leave a chat on window exit</string>
          </property>
          <property name="whatsThis" >
-          <string>Leave a chat when its chat window is closed. Makes difference only with multi-user chats, if it is unchecked, you will continue receiving messages from that chat even after closing the window.</string>
+          <string>Leave a chat when its chat window is closed. Makes a difference only with multi-user chats: if it is unchecked, you will continue receiving messages from that chat even after closing the window.</string>
          </property>
          <property name="text" >
           <string>Leave on e&amp;xit</string>
@@ -763,11 +761,11 @@ System Bus is not supported.</string>
             <bool>false</bool>
            </property>
            <property name="toolTip" >
-            <string>This will wait before making/accepting the call for the command to finish</string>
+            <string>This will wait before making/accepting the call for the command to finish.</string>
            </property>
            <property name="whatsThis" >
             <string>This will wait for the command to finish before accepting/making the call.&lt;br>
-Note that it will freeze kopete for the time.</string>
+Note that kopete will freeze whilst waiting.</string>
            </property>
            <property name="text" >
             <string>Wait for fi&amp;nish</string>
@@ -837,7 +835,7 @@ Note that it will freeze kopete for the time.</string>
             <bool>false</bool>
            </property>
            <property name="toolTip" >
-            <string>Usually makes no difference, just when there are some other calls on hold, it is executed only for the last ended one.</string>
+            <string>Usually this makes no difference, but if there are some other calls on hold, it is executed only for the most recently ended one.</string>
            </property>
            <property name="text" >
             <string>Onl&amp;y for last call</string>
@@ -883,7 +881,7 @@ Note that it will freeze kopete for the time.</string>
        <item>
         <widget class="QLabel" name="textLabel1_6" >
          <property name="text" >
-          <string>If you have problems with arts while calling, you can use this to turn off arts for the call (I bundled scripts doing that, somewhere in kde_folder/share/apps/kopete_skype, names call_start and call_end)</string>
+          <string>If you have problems with arts while calling, you can use this to turn off arts for the length of the call. (Scripts to do this, named call_start and call_end, are found somewhere within your kde_folder/share/apps/kopete_skype folder.)</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignVCenter</set>

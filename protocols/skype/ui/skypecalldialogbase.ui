@@ -18,10 +18,10 @@
      <item row="0" column="1" >
       <widget class="QLabel" name="NameLabel" >
        <property name="toolTip" >
-        <string>Partners name</string>
+        <string>Name(s) of Participant(s)</string>
        </property>
        <property name="whatsThis" >
-        <string>Name of the other person of call (or list of names if the call is conference).</string>
+        <string>Name of the other participant in the call (or a list of names if it is a conference call.)</string>
        </property>
        <property name="text" >
         <string/>
@@ -37,7 +37,7 @@
      <item row="0" column="0" >
       <widget class="QLabel" name="textLabel1" >
        <property name="toolTip" >
-        <string>Partners</string>
+        <string>Participants</string>
        </property>
        <property name="whatsThis" >
         <string>Name</string>
@@ -56,10 +56,10 @@
      <item row="1" column="0" >
       <widget class="QLabel" name="textLabel2" >
        <property name="toolTip" >
-        <string>Time elapsed</string>
+        <string>Total time elapsed.</string>
        </property>
        <property name="whatsThis" >
-        <string>together.</string>
+        <string>Total time elapsed.</string>
        </property>
        <property name="text" >
         <string>Time:</string>
@@ -94,10 +94,10 @@
      <item row="1" column="1" >
       <widget class="QLabel" name="TimeLabel" >
        <property name="toolTip" >
-        <string>Time elapsed</string>
+        <string>Total time elapsed.</string>
        </property>
        <property name="whatsThis" >
-        <string>Total time elapsed by the call/&lt;br />time elapsed by the call and on hold together.</string>
+        <string>Total length of the call/&lt;br />(i.e. both time speaking and time on hold.)</string>
        </property>
        <property name="text" >
         <string/>
@@ -210,7 +210,7 @@
         <string>Hold the call</string>
        </property>
        <property name="whatsThis" >
-        <string>Interrupt the call for a moment and resume (or hang up) it later</string>
+        <string>Interrupt the call for a moment and resume (or hang up) later.</string>
        </property>
        <property name="text" >
         <string>H&amp;old</string>
@@ -220,10 +220,10 @@
      <item>
       <widget class="QPushButton" name="ChatButton" >
        <property name="toolTip" >
-        <string>Open chat to the person</string>
+        <string>Open chat to the person.</string>
        </property>
        <property name="whatsThis" >
-        <string>Open chat to the person you are talking with</string>
+        <string>Open chat to the person with whom you are talking.</string>
        </property>
        <property name="text" >
         <string>Chat</string>

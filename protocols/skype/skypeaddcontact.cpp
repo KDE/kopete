@@ -66,27 +66,27 @@ bool SkypeAddContact::validateData() {
 	d->widget->NameEdit->setText(d->widget->NameEdit->text().toLower());
 
 	if (!d->account->canComunicate()) {
-		KMessageBox::sorry(this, i18n("You must connect to Skype first"), i18n("Not Connected"), QFlags<KMessageBox::Option>());
+		KMessageBox::sorry(this, i18n("You must connect to Skype first."), i18n("Not Connected"), QFlags<KMessageBox::Option>());
 		return false;
 	}
 
 	if (d->widget->NameEdit->text().isEmpty()) {//He wrote nothing
-		KMessageBox::sorry(this, i18n("You must write the contact's name"), i18n("Wrong Information"));//Tell the user I don't like this at all
+		KMessageBox::sorry(this, i18n("You must write the contact's name."), i18n("Wrong Information"));//Tell the user I don't like this at all
 		return false;//and don't allow to continue
 	}
 
 	if (d->widget->NameEdit->text() == "echo123") {
-		KMessageBox::sorry(this, i18n("Contact echo123 is not needed. You can make test call in Skype protocol actions"), i18n("Wrong Information"));//Tell the user
+		KMessageBox::sorry(this, i18n("Contact echo123 is not needed. You can make test call in Skype protocol actions."), i18n("Wrong Information"));//Tell the user
 		return false;//and don't allow to continue
 	}
 
 	if (d->account->contact(d->widget->NameEdit->text())) {//this contact already exists in this account
-		KMessageBox::sorry(this, i18n("This contact already exists in this account"), i18n("Wrong Information"));//Tell the user
+		KMessageBox::sorry(this, i18n("This contact already exists in this account."), i18n("Wrong Information"));//Tell the user
 		return false;//do not proceed
 	}
 
 	if (d->account->getMyselfSkypeName() == d->widget->NameEdit->text()){
-		KMessageBox::sorry(this, i18n("You cannot add yourself contact"), i18n("Wrong Information"));//Tell the user
+		KMessageBox::sorry(this, i18n("You cannot add yourself as a contact."), i18n("Wrong Information"));//Tell the user
 		return false;//do not proceed
 	}
 

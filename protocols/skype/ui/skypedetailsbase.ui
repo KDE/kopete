@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Users Details</string>
+   <string>User's Details</string>
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
