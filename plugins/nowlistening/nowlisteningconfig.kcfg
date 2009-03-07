@@ -9,7 +9,7 @@
 	<group name="Now Listening Plugin">
 		<entry name="Header" type="String">
 			<label>Header of the message advertised.</label>
-			<default code="true">i18n("Now listening to:")</default>
+			<default code="true">i18n("Now listening to: ")</default>
 		</entry>
 
 		<entry name="PerTrack" type="String">
