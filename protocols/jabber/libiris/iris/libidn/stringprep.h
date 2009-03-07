@@ -31,7 +31,9 @@ extern "C"
 
 #include <qglobal.h>
 #if defined(Q_OS_WIN32) && !defined(Q_CC_GNU)
+#ifndef _SSIZE_T_DEFINED
 typedef int ssize_t;
+#endif
 #else
 #include <unistd.h>		/* ssize_t */
 #endif

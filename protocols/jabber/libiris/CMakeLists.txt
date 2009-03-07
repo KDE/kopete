@@ -5,7 +5,9 @@
 FIND_PACKAGE(ZLIB REQUIRED)
 
 remove_definitions(-DQT_NO_HTTP)
-add_definitions(-fPIC)
+if(NOT MSVC)
+  add_definitions(-fPIC)
+endif(NOT MSVC)
 
 include_directories(
 ${CMAKE_CURRENT_SOURCE_DIR}/iris
@@ -110,12 +112,10 @@ iris/irisnet/noncore/stunmessage.cpp
 iris/irisnet/noncore/stunbinding.cpp
 iris/irisnet/noncore/stuntransaction.cpp
 iris/irisnet/noncore/processquit.cpp
-iris/irisnet/corelib/netinterface_win.cpp
 iris/irisnet/corelib/netavailability.cpp
 iris/irisnet/corelib/netnames_jdns.cpp
 iris/irisnet/corelib/netnames.cpp
 iris/irisnet/corelib/irisnetplugin.cpp
-iris/irisnet/corelib/netinterface_unix.cpp
 iris/irisnet/corelib/netinterface.cpp
 iris/irisnet/corelib/jdnsshared.cpp
 iris/irisnet/corelib/objectsession.cpp
@@ -142,6 +142,12 @@ iris/xmpp/jingle/jingletasks.cpp
 
 
 )
+
+if(WIN32)
+  LIST(APPEND iris_SRCS iris/irisnet/corelib/netinterface_win.cpp)
+else(WIN32)
+  LIST(APPEND iris_SRCS iris/irisnet/corelib/netinterface_unix.cpp)
+endif(WIN32)
 
 set(libiris_SRCS 
     ${cutestuff_SRCS} 
@@ -252,6 +258,7 @@ iris/xmpp/jingle/jingletasks.h
 #xmpptest/xmpptest.cpp
 #)
 
+add_definitions(-DIRISNET_STATIC)
 
 kde4_add_library(iris_kopete STATIC ${libiris_SRCS})
 

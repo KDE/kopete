@@ -34,6 +34,7 @@
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
+#include <winsock2.h>
 #endif
 
 #ifdef Q_OS_UNIX
