@@ -24,6 +24,7 @@
 #include "kopeteprotocol.h"
 
 #include <krichtextwidget.h>
+#include <kopete_export.h>
 
 /**
  * @brief A KopeteRichTextWidget with overidden behaviors
@@ -35,7 +36,7 @@
  *
  * @since 4.2
  */
-class KDEUI_EXPORT KopeteRichTextWidget : public KRichTextWidget
+class KOPETECHATWINDOW_SHARED_EXPORT KopeteRichTextWidget : public KRichTextWidget
 {
     Q_OBJECT
 public:

@@ -13,7 +13,7 @@ set( kopetechatwindow_shared_SRCS
 chatmessagepart.cpp 
 emoticonselector.cpp 
 kopeteemoticonaction.cpp 
-chattexteditpart.cpp 
+chattexteditpart.cpp
 kopeterichtextwidget.cpp
 kopetechatwindowstylemanager.cpp 
 kopetechatwindowstyle.cpp )
@@ -33,6 +33,8 @@ kde4_add_plugin(chattexteditpart WITH_PREFIX ${chattexteditpart_PART_SRCS})
 
 
 target_link_libraries(chattexteditpart kopete kopetechatwindow_shared ${KDE4_KPARTS_LIBS} )
+
+set_target_properties(chattexteditpart PROPERTIES DEFINE_SYMBOL KOPETECHATWINDOW_SHARED_EXPORT="")
 
 install(TARGETS chattexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 
