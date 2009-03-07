@@ -22,7 +22,7 @@ else (IDN_INCLUDEDIR AND IDN_LIBRARIES)
     endif (NOT WIN32)
   
     if(NOT IDN_FOUND)
-        find_path(IDN_INCLUDEDIR idna.h)
+        find_path(IDN_INCLUDEDIR idna.h PATH_SUFFIXES libidn)
         find_library(IDN_LIBRARIES NAMES idn libidn idn-11 libidn-11)
         if (IDN_INCLUDEDIR AND IDN_LIBRARIES)
             SET(IDN_FOUND TRUE)
