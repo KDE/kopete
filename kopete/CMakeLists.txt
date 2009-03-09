@@ -17,7 +17,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/identity
 ${CMAKE_CURRENT_SOURCE_DIR}/contactlist/ 
 ${CMAKE_CURRENT_BINARY_DIR}/contactlist/ 
 ${CMAKE_CURRENT_SOURCE_DIR}/config/plugins/
-${BLITZ_INCLUDES}
+${QIMAGEBLITZ_INCLUDES}
 )
 
 link_directories( 
@@ -77,7 +77,7 @@ target_link_libraries(kopete_bin
 	${KDE4_KDE3SUPPORT_LIBS}
 	${KDE4_KABC_LIBS}
 	${KDE4_SOLID_LIBRARY}
-	${BLITZ_LIBRARIES}
+	${QIMAGEBLITZ_LIBRARIES}
 	kopete 
 	kopeteaddaccountwizard
 	kopetestatusmenu
