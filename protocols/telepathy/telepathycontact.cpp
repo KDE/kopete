@@ -99,6 +99,7 @@ void TelepathyContact::setInternalContact(QSharedPointer<Telepathy::Client::Cont
 	d->internalContact = contact;
 	
 	setOnlineStatus(TelepathyProtocol::protocol()->telepathyStatusToKopete(static_cast<Telepathy::ConnectionPresenceType>(contact->presenceType())));
+	setNickName(contact->alias());
 
 	QObject::connect(contact.data(),
 		SIGNAL(aliasChanged (const QString &)),
@@ -115,20 +116,21 @@ void TelepathyContact::setInternalContact(QSharedPointer<Telepathy::Client::Cont
 	QObject::connect(contact.data(),
 		SIGNAL(subscriptionStateChanged (Telepathy::Client::Contact::PresenceState)),
 		this,
-		SLOT(onsubscriptionStateChanged (Telepathy::Client::Contact::PresenceState)));
+		SLOT(onSubscriptionStateChanged (Telepathy::Client::Contact::PresenceState)));
 	QObject::connect(contact.data(),
 		SIGNAL(publishStateChanged (Telepathy::Client::Contact::PresenceState)),
 		this,
-		SLOT(onpublishStateChanged (Telepathy::Client::Contact::PresenceState)));
+		SLOT(onPublishStateChanged (Telepathy::Client::Contact::PresenceState)));
 	QObject::connect(contact.data(),
 		SIGNAL(blockStatusChanged (bool)),
 		this,
-		SLOT(onblockStatusChanged (bool)));
+		SLOT(onBlockStatusChanged (bool)));
 }
 
-void TelepathyContact::onAliasChanged (const QString &avatar)
+void TelepathyContact::onAliasChanged (const QString &alias)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << avatar;
+    kDebug(TELEPATHY_DEBUG_AREA) << alias;
+	setNickName(alias);
 }
 
 void TelepathyContact::onAvatarTokenChanged (const QString &avatarToken)
@@ -140,6 +142,7 @@ void TelepathyContact::onSimplePresenceChanged (const QString &status, uint type
 {
     kDebug(TELEPATHY_DEBUG_AREA) << status << type << presenceMessage;
 	setOnlineStatus(TelepathyProtocol::protocol()->telepathyStatusToKopete(static_cast<Telepathy::ConnectionPresenceType>(type)));
+	setStatusMessage(Kopete::StatusMessage(presenceMessage));
 }
 
 void TelepathyContact::onSubscriptionStateChanged (Telepathy::Client::Contact::PresenceState state)
@@ -160,5 +163,11 @@ void TelepathyContact::onBlockStatusChanged (bool blocked)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << blocked;
 }
+
+QSharedPointer<Telepathy::Client::Contact> TelepathyContact::internalContact()
+{
+	return d->internalContact;
+}
+
 
 

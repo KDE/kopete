@@ -25,6 +25,7 @@
 #include <kopetechatsession.h>
 
 #include <QObject>
+#include <QSharedPointer>
 
 #include "telepathyaccount.h"
 
@@ -51,6 +52,7 @@ public:
     virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
 
 	void setInternalContact(QSharedPointer<Telepathy::Client::Contact> contact);
+	QSharedPointer<Telepathy::Client::Contact> internalContact();
 
 private slots:
 	void onAliasChanged (const QString &);
