@@ -92,7 +92,7 @@ void TelepathyContactManager::onConnectionReady(Telepathy::Client::PendingOperat
         return;
 
 	// \brief: Add new feature to existing connection to get contact list from server 
-	QSet<uint> features = m_connection->requestedFeatures();
+	Telepathy::Client::Features features = m_connection->requestedFeatures();
 	features << Telepathy::Client::Connection::FeatureRoster;
 	QObject::connect(m_connection->becomeReady(features),
 		SIGNAL(finished(Telepathy::Client::PendingOperation*)),

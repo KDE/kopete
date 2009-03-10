@@ -40,11 +40,9 @@
 #include <kinputdialog.h>
 
 #include <TelepathyQt4/Types>
+#include <TelepathyQt4/Client/Feature>
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/Connection>
-#include <TelepathyQt4/Client/PendingReadyAccountManager>
-#include <TelepathyQt4/Client/PendingReadyConnectionManager>
-#include <TelepathyQt4/Client/PendingReadyAccount>
 #include <TelepathyQt4/Client/PendingReady>
 
 #include <QFile>
