@@ -59,3 +59,6 @@
 
 /* The size of a `unsigned long', as computed by sizeof. */
 #define SIZEOF_UNSIGNED_LONG ${SIZEOF_UNSIGNED_LONG}
+
+/* Define to 1 if you want libv4l support */
+#cmakedefine HAVE_LIBV4L2 1

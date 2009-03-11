@@ -56,6 +56,10 @@
 #define VIDEO_MODE_NTSC_JP 6
 #define __STRICT_ANSI__
 
+#ifdef HAVE_LIBV4L2
+#include <libv4l2.h>
+#endif // HAVE_V4L2
+
 #endif // __linux__
 
 #include <qstring.h>

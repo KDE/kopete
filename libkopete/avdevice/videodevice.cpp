@@ -147,7 +147,11 @@ int VideoDevice::xioctl(int request, void *arg)
 {
 	int r;
 
+#ifdef HAVE_LIBV4L2
+	do r = v4l2_ioctl (descriptor, request, arg);
+#else
 	do r = ioctl (descriptor, request, arg);
+#endif
 	while (-1 == r && EINTR == errno);
 	return r;
 }
@@ -185,7 +189,11 @@ int VideoDevice::open()
 		kDebug() << "Device is already open";
 		return EXIT_SUCCESS;
 	}
+#ifdef HAVE_LIBV4L2
+	descriptor = ::v4l2_open (QFile::encodeName(full_filename), O_RDWR, 0);
+#else
 	descriptor = ::open (QFile::encodeName(full_filename), O_RDWR, 0);
+#endif
 	if(isOpen())
 	{
 		kDebug() << "File " << full_filename << " was opened successfuly";
@@ -988,7 +996,11 @@ int VideoDevice::getFrame()
 				if (m_currentbuffer.data.isEmpty())
 					return EXIT_FAILURE;
 
+#ifdef HAVE_LIBV4L2
+				bytesread = v4l2_read (descriptor, &m_currentbuffer.data[0], m_currentbuffer.data.size());
+#else
 				bytesread = read (descriptor, &m_currentbuffer.data[0], m_currentbuffer.data.size());
+#endif
 				if (-1 == bytesread) // must verify this point with ov511 driver.
 				{
 					kDebug() << "IO_METHOD_READ failed.";
@@ -1434,7 +1446,11 @@ int VideoDevice::stopCapturing()
 						unsigned int loop;
 						for (loop = 0; loop < m_streambuffers; ++loop)
 						{
+#ifdef HAVE_LIBV4L2
+							if (v4l2_munmap(m_rawbuffers[loop].start,m_rawbuffers[loop].length) != 0)
+#else
 							if (munmap(m_rawbuffers[loop].start,m_rawbuffers[loop].length) != 0)
+#endif
 							{
 								kDebug() << "unable to munmap.";
 							}
@@ -1462,7 +1478,11 @@ int VideoDevice::close()
 	{
 		kDebug() << " Device is open. Trying to properly shutdown the device.";
 		stopCapturing();
+#ifdef HAVE_LIBV4L2
+		int ret = ::v4l2_close(descriptor);
+#else
 		int ret = ::close(descriptor);
+#endif
 		kDebug() << "::close() returns " << ret;
 	}
 	descriptor = -1;
@@ -2749,7 +2769,11 @@ int VideoDevice::initMmap()
 				return errnoReturn ("VIDIOC_QUERYBUF");
 
 			m_rawbuffers[m_streambuffers].length = v4l2buffer.length;
+#ifdef HAVE_LIBV4L2
+			m_rawbuffers[m_streambuffers].start = (uchar *) v4l2_mmap (NULL /* start anywhere */, v4l2buffer.length, PROT_READ | PROT_WRITE /* required */, MAP_SHARED /* recommended */, descriptor, v4l2buffer.m.offset);
+#else
 			m_rawbuffers[m_streambuffers].start = (uchar *) mmap (NULL /* start anywhere */, v4l2buffer.length, PROT_READ | PROT_WRITE /* required */, MAP_SHARED /* recommended */, descriptor, v4l2buffer.m.offset);
+#endif
 
 			if (MAP_FAILED == m_rawbuffers[m_streambuffers].start)
 			return errnoReturn ("mmap");
