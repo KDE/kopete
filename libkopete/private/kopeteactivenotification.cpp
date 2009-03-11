@@ -39,7 +39,7 @@ namespace Kopete
          * received another message from a sender with a notification
          */
         void ActiveNotification::incrementMessages() {
-            KLocalizedString append = nEventsSinceNotified == 1 ? ki18n( "+ %1 more message") : ki18n( "+ %1 more messages");
+            KLocalizedString append = ki18np( "+ %1 more message", "+ %1 more messages");
             KNotification *aParent = static_cast<KNotification *>( parent() );
             aParent->setText( QString( "<qt>" ) + body + "<br/><small><font color=\"yellow\">" + append.subs( ++nEventsSinceNotified ).toString() + "</small></font></qt>" );
         }
