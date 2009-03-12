@@ -273,8 +273,7 @@ Use 0 seconds to never abort the creation.</string>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
+  <customwidgets>
   <customwidget>
    <class>Q3GroupBox</class>
    <extends>QGroupBox</extends>
