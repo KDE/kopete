@@ -19,6 +19,7 @@ Name=Skype
 Comment=Skype protocol plugin (a wrapper)
 Comment[et]=Skype'i protokolli plugin (ainult kest)
 Comment[ga]=Breiseán phrótacal Skype (rapar)
+Comment[nds]=Skype-Protokollmoduul (en Wrapper)
 Comment[pt]='Plugin' do protocolo Skype (uma interface)
 Comment[pt_BR]=Plug-in do protocolo Skype (uma interface)
 Comment[sv]=Protokollinsticksprogram för Skype (bara omgivning)
