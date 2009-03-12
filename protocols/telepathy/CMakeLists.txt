@@ -30,6 +30,7 @@ telepathyaccount.cpp
 telepathycontact.cpp
 connectionmanageritem.cpp
 telepathycontactmanager.cpp
+telepathychatsession.cpp
 ${kopete_telepathy_ui_SRCS}
 )
 

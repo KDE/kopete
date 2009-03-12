@@ -62,7 +62,7 @@ TelepathyContactManager::~TelepathyContactManager()
 	
 	delete d;
 }
-	
+
 QSharedPointer<Telepathy::Client::Contact> TelepathyContactManager::addContact(const QString &contactId)
 {
 	Q_UNUSED(contactId);
@@ -154,6 +154,8 @@ void TelepathyContactManager::onPresencePublicationRequested(const Telepathy::Cl
 void TelepathyContactManager::createContact(QSharedPointer<Telepathy::Client::Contact> contact)
 {
 	kDebug(TELEPATHY_DEBUG_AREA) << contact->id() << contact->alias();
+	kDebug(TELEPATHY_DEBUG_AREA) << "Subscription status:" << contact->subscriptionState();
+	kDebug(TELEPATHY_DEBUG_AREA) << "Publish status:" << contact->publishState();
 		
 	Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 	TelepathyContact *newContact = new TelepathyContact(d->telepathyAccount, contact->id(), metaContact);

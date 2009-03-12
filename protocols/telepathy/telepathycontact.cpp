@@ -19,12 +19,14 @@
  */
 
 #include "telepathycontact.h"
+#include "telepathychatsession.h"
 
 #include <kaction.h>
 #include <kdebug.h>
 
 #include <kopetemetacontact.h>
 #include <kopetechatsession.h>
+#include <kopetechatsessionmanager.h>
 
 #include "telepathyaccount.h"
 #include "telepathyprotocol.h"
@@ -37,6 +39,8 @@
 class TelepathyContact::TelepathyContactPrivate
 {
 public:
+	TelepathyContactPrivate() {}
+	
 	QSharedPointer<Telepathy::Client::Contact> internalContact;
 	QPointer<Kopete::ChatSession> currentChatSession;
 };
@@ -86,10 +90,31 @@ QList<KAction *> *TelepathyContact::customContextMenuActions( Kopete::ChatSessio
 Kopete::ChatSession *TelepathyContact::manager( CanCreateFlags canCreate )
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+
+	if(d->currentChatSession.isNull())
+	{
+		kDebug(TELEPATHY_DEBUG_AREA);
+		QList<Kopete::Contact*> others;
+		others.append(this);
+		
+		// \brief: try to find existing chat session
+		Kopete::ChatSession *existingSession = Kopete::ChatSessionManager::self()->findChatSession(account()->myself(), others, account()->protocol());
+		if(existingSession)
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << "chat exist";
+			d->currentChatSession = existingSession;
+		}
+		else if(canCreate == Kopete::Contact::CanCreate)
+		{
+			kDebug(TELEPATHY_DEBUG_AREA) << "chat not exist";
+			TelepathyChatSession *newSession = new TelepathyChatSession(account()->myself(), others, account()->protocol());
+			newSession->createTextChannel(internalContact());
+			d->currentChatSession = newSession;
+		}
+	}
 	
-	Q_UNUSED(canCreate);
-	
-    return 0;
+	Q_ASSERT(d->currentChatSession != 0);
+	return d->currentChatSession;
 }
 
 void TelepathyContact::setInternalContact(QSharedPointer<Telepathy::Client::Contact> contact)
