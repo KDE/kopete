@@ -38,6 +38,12 @@
 #include "bonjourcontactconnection.h"
 
 
+static const char AvailabilityStatusAvailId[] = "avail";
+static const char AvailabilityStatusAwayId[] =  "away";
+// TODO: add this status to the account
+// static const char AvailabilityStatusDnDId[] =   "dnd";
+
+
 BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountID )
 : Kopete::Account ( parent, accountID )
 {
@@ -169,7 +175,7 @@ void BonjourAccount::startPublish()
         map.insert("last", lastName);
         map.insert("node", "kopete");
         map.insert("port.p2pj", QByteArray::number(listeningPort));	// This Number Actually Ignored
-        map.insert("status", "avail");
+        map.insert("status", AvailabilityStatusAvailId);
         map.insert("txtvers", "1");
         map.insert("vc", "!");
         map.insert("ver", "0.0.1");
@@ -333,8 +339,14 @@ void BonjourAccount::slotGoOnline ()
 
 	if (!isConnected())
 		connect();
-	else
+	else {
+		if (service) {
+			QMap <QString, QByteArray> map = service->textData();
+			map["status"] = AvailabilityStatusAvailId;
+			service->setTextData(map);
+		}
 		myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOnline );
+	}
 }
 
 void BonjourAccount::slotGoAway ()
@@ -343,6 +355,12 @@ void BonjourAccount::slotGoAway ()
 
 	if (!isConnected ())
 		connect();
+
+	if (service) {
+		QMap <QString, QByteArray> map = service->textData();
+		map["status"] = AvailabilityStatusAwayId; // "dnd" would be another option here
+		service->setTextData(map);
+	}
 
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourAway );
 }
