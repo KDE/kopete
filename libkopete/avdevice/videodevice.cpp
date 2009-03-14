@@ -125,7 +125,7 @@ void VideoDevice::enumerateMenu (void)
 	memset (&querymenu, 0, sizeof (querymenu));
 	querymenu.id = queryctrl.id;
 
-	for (querymenu.index = queryctrl.minimum; querymenu.index <= queryctrl.maximum; querymenu.index++)
+	for (querymenu.index = queryctrl.minimum; querymenu.index <= (unsigned int) queryctrl.maximum; ++querymenu.index)
 	{
 		if (0 == xioctl (VIDIOC_QUERYMENU, &querymenu))
 		{
@@ -780,7 +780,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			}
 			else
 			{
-				if (fmt.fmt.pix.pixelformat == pixelFormatCode(newformat)) // Thih "if" (not what is contained within) is a fix for a bug in sn9c102 driver.
+				if (fmt.fmt.pix.pixelformat == (unsigned int) pixelFormatCode(newformat)) // Thih "if" (not what is contained within) is a fix for a bug in sn9c102 driver.
 				{
 					m_pixelformat = newformat;
 					ret = m_pixelformat;
@@ -1042,7 +1042,9 @@ int VideoDevice::getFrame()
 /*				if (v4l2buffer.index < m_streambuffers)
 					return EXIT_FAILURE;*/ //it was an assert()
 // kDebug() << "m_rawbuffers[" << v4l2buffer.index << "].start: " << (void *)m_rawbuffers[v4l2buffer.index].start << "   Size: " << m_currentbuffer.data.size();
-				if (m_currentbuffer.data.isEmpty() || v4l2buffer.index < 0 || m_rawbuffers.size() <= v4l2buffer.index)
+				if (m_currentbuffer.data.isEmpty() ||
+//					v4l2buffer.index < 0 ||  	// is always false: v4l2buffer.index is unsigned
+					(uint) m_rawbuffers.size() <= v4l2buffer.index)
 					return EXIT_FAILURE;
 
 				memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_currentbuffer.data.size());
@@ -1070,7 +1072,7 @@ int VideoDevice::getFrame()
 								return errnoReturn ("VIDIOC_DQBUF");
 						}
 					}
-					if (m_rawbuffers.size() < m_streambuffers)
+					if ((unsigned int) m_rawbuffers.size() < m_streambuffers)
 						return EXIT_FAILURE;
 					
 					for (i = 0; i < m_streambuffers; ++i)
@@ -1367,7 +1369,7 @@ int VideoDevice::getImage(QImage *qimage)
 		int Rrange=255, Grange=255, Brange=255, Arange=255, globarange=255;
 
 // Finds minimum and maximum intensity for each color component
-		for(unsigned int loop=0;loop < qimage->numBytes();loop+=4)
+		for(unsigned int loop=0;loop < (unsigned int) qimage->numBytes();loop+=4)
 		{
 			R+=bits[loop];
 			G+=bits[loop+1];
@@ -1406,7 +1408,7 @@ int VideoDevice::getImage(QImage *qimage)
 			" Rmin: " << Rmin << " Gmin: " << Gmin << " Bmin: " << Bmin << " Amin: " << Amin << " globalmin: " << globalmin <<
 			" Rmax: " << Rmax << " Gmax: " << Gmax << " Bmax: " << Bmax << " Amax: " << Amax << " globalmax: " << globalmax ;
 
-		for(unsigned int loop=0;loop < qimage->numBytes();loop+=4)
+		for(unsigned int loop=0;loop < (unsigned int) qimage->numBytes();loop+=4)
 		{
 			bits[loop]   = (bits[loop]   - Rmin) * 255 / (Rrange);
 			bits[loop+1] = (bits[loop+1] - Gmin) * 255 / (Grange);
