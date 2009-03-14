@@ -1,8 +1,14 @@
 
+if (LIBV4L2_FOUND)
 include_directories( 
 ${KOPETE_INCLUDES} 
+${LIBV4L2_INCLUDE_DIR}
 )
-
+else (LIBV4L2_FOUND)
+include_directories(
+${KOPETE_INCLUDES}
+)
+endif (LIBV4L2_FOUND)
 
 ########### next target ###############
 
