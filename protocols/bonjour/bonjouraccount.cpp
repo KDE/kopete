@@ -67,10 +67,10 @@ BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountI
 
 void BonjourAccount::parseConfig()
 {
-	username = configGroup()->readEntry("username").toUtf8();
-	firstName = configGroup()->readEntry("firstName").toUtf8();
-	lastName = configGroup()->readEntry("lastName").toUtf8();
-	emailAddress = configGroup()->readEntry("emailAddress").toUtf8();
+	username = configGroup()->readEntry("username").toLatin1();
+	firstName = configGroup()->readEntry("firstName").toLatin1();
+	lastName = configGroup()->readEntry("lastName").toLatin1();
+	emailAddress = configGroup()->readEntry("emailAddress").toLatin1();
 }
 
 BonjourAccount::~BonjourAccount()
