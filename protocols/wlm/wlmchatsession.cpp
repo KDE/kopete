@@ -546,6 +546,12 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         MSN::Message mmsg = parseMessage(msg);
 
         int trid = getChatService ()->sendMessage (&mmsg);
+
+        // Show the message we just sent in the chat window as sending
+        msg.setState( Kopete::Message::StateSending );
+        this->appendMessage(msg);
+        this->messageSucceeded();
+
         m_messagesSentQueue[trid] = msg;
         return;
     }
@@ -575,6 +581,12 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
             messageSucceeded ();
             return;
         }
+
+        // Show the message we just sent in the chat window as sending
+        msg.setState( Kopete::Message::StateSending );
+        this->appendMessage(msg);
+        this->messageSucceeded();
+
         // put the message in a queue
         m_messagesQueue.append (msg);
         return;
@@ -582,6 +594,11 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
 
     if (isConnecting ())
     {
+        // Show the message we just sent in the chat window as sending
+        msg.setState( Kopete::Message::StateSending );
+        this->appendMessage(msg);
+        this->messageSucceeded();
+
         // put the message in the queue, we are trying to connect to the
         // switchboard server
         m_messagesQueue.append (msg);
@@ -622,7 +639,8 @@ WlmChatSession::sendTypingMsg (bool istyping)
 void
 WlmChatSession::messageSentACK (unsigned int trID)
 {
-    appendMessage (m_messagesSentQueue[trID]);
+    this->receivedMessageState(m_messagesSentQueue[trID].id(), Kopete::Message::StateSent );
+
     m_messagesSentQueue.remove (trID);
     // remove the blinking icon when there are no messages
     // waiting for delivery
