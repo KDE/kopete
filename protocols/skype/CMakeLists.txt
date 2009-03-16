@@ -1,22 +1,11 @@
 project( kopete_skype )
 
-FIND_PACKAGE( Qt4 REQUIRED )
-find_package( KDE4 REQUIRED )
 find_package( KdepimLibs REQUIRED )
-include ( KDE4Defaults )
-include ( MacroLibrary )
-include ( ${QT_USE_FILE} )
 
 ########### next target ###############
 
-add_definitions ( ${QT_DEFINITIONS} ${QT_QTDBUS_DEFINITIONS} ${KDE4_DEFINITIONS} )
-
 include_directories(
 	${QT_QTDBUS_INCLUDE_DIR}
-
-	${KDE4_INCLUDES}
-	${KDE4_INCLUDE_DIR}/kopete
-	${KDE4_INCLUDE_DIR}/kopete/ui
 
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/libskype
