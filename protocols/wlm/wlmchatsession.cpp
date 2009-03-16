@@ -381,6 +381,48 @@ WlmChatSession::setChatService (MSN::SwitchboardServerConnection * conn)
     }
 }
 
+MSN::Message WlmChatSession::parseMessage(Kopete::Message & msg)
+{
+	// send the message and wait for the ACK
+	int fontEffects = 0;
+	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
+	MSN::Message mmsg(msg.plainBody().toAscii().data());
+
+	// FIXME: Can we add FontFamily FF_DONTCARE ?
+	if (msg.format() == Qt::RichText)
+	{
+		mmsg.setFontName(msg.font().family().toAscii().data());
+		if (msg.font().bold())
+			fontEffects |= MSN::Message::BOLD_FONT;
+		if (msg.font().italic())
+			fontEffects |= MSN::Message::ITALIC_FONT;
+		if (msg.font().underline())
+			fontEffects |= MSN::Message::UNDERLINE_FONT;
+		if (msg.font().strikeOut())
+			fontEffects |= MSN::Message::STRIKETHROUGH_FONT;
+
+		mmsg.setFontEffects(fontEffects);
+		QColor color = msg.foregroundColor();
+		mmsg.setColor(color.red(), color.green(), color.blue());
+	}
+
+	// stolen from msn plugin
+	const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
+
+	// Check the list for any custom emoticons
+	for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
+	{
+		for (QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2)
+		{
+			if (msg.plainBody().contains(*itr2))
+			{
+				getChatService()->sendEmoticon((*itr2).toAscii().data(), itr.key().toAscii().data());
+			}
+		}
+	}
+	return mmsg;
+}
+
 void
 WlmChatSession::setReady (bool value)
 {
@@ -416,38 +458,7 @@ WlmChatSession::setReady (bool value)
         for (it2 = m_messagesQueue.begin (); it2 != m_messagesQueue.end ();
              ++it2)
         {
-            int fontEffects = 0;
-            QTextCodec::setCodecForCStrings (QTextCodec::
-                                             codecForName ("utf8"));
-            MSN::Message mmsg ((*it2).plainBody ().toAscii ().data ());
-            mmsg.setFontName ((*it2).font ().family ().toAscii ().data ());
-            if ((*it2).font ().bold ())
-                fontEffects |= MSN::Message::BOLD_FONT;
-            if ((*it2).font ().italic ())
-                fontEffects |= MSN::Message::ITALIC_FONT;
-            if ((*it2).font ().underline ())
-                fontEffects |= MSN::Message::UNDERLINE_FONT;
-            if ((*it2).font ().strikeOut ())
-                fontEffects |= MSN::Message::STRIKETHROUGH_FONT;
-
-            mmsg.setFontEffects (fontEffects);
-            QColor color = (*it2).foregroundColor ();
-            mmsg.setColor (color.red (), color.green (), color.blue ());
-
-            // stolen from msn plugin
-            const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
-
-            // Check the list for any custom emoticons
-            for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
-            {
-                for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
-                {
-                    if ( (*it2).plainBody().contains( *itr2 ) )
-                    {
-                        getChatService ()->sendEmoticon((*itr2).toAscii().data(), itr.key().toAscii().data());
-                    }
-                }
-            }
+            MSN::Message mmsg = parseMessage(*it2);
 
             int trid = getChatService ()->sendMessage (&mmsg);
 
@@ -532,43 +543,7 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
 
     if (isReady ())
     {
-        // send the message and wait for the ACK 
-        int fontEffects = 0;
-        QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
-        MSN::Message mmsg (msg.plainBody ().toAscii ().data ());
-
-        // FIXME: Can we add FontFamily FF_DONTCARE ?
-        if ( msg.format() == Qt::RichText )
-        {
-            mmsg.setFontName (msg.font ().family ().toAscii ().data ());
-            if (msg.font ().bold ())
-                fontEffects |= MSN::Message::BOLD_FONT;
-            if (msg.font ().italic ())
-                fontEffects |= MSN::Message::ITALIC_FONT;
-            if (msg.font ().underline ())
-                fontEffects |= MSN::Message::UNDERLINE_FONT;
-            if (msg.font ().strikeOut ())
-                fontEffects |= MSN::Message::STRIKETHROUGH_FONT;
-
-            mmsg.setFontEffects (fontEffects);
-            QColor color = msg.foregroundColor ();
-            mmsg.setColor (color.red (), color.green (), color.blue ());
-        }
-
-        // stolen from msn plugin
-        const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
-
-        // Check the list for any custom emoticons
-        for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
-        {
-            for ( QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2 )
-            {
-                if ( msg.plainBody().contains( *itr2 ) )
-                {
-                    getChatService ()->sendEmoticon((*itr2).toAscii().data(), itr.key().toAscii().data());
-                }
-            }
-        }
+        MSN::Message mmsg = parseMessage(msg);
 
         int trid = getChatService ()->sendMessage (&mmsg);
 
