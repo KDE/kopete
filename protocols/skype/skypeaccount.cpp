@@ -128,7 +128,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	d->myName = config->readEntry("MyselfName", "Skype");
 	setSkypeCommand(config->readEntry("SkypeCommand", "skype"));
 	setWaitBeforeConnect(config->readEntry("WaitBeforeConnect", 0));
-	setLeaveOnExit(config->readEntry("LeaveOnExit", true));
+	setLeaveOnExit(config->readEntry("LeaveOnExit", false));
 	setStartCallCommand(config->readEntry("StartCallCommand", ""));
 	setEndCallCommand(config->readEntry("EndCallCommand", ""));
 	setWaitForStartCallCommand(config->readEntry("WaitForStartCallCommand", false));

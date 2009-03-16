@@ -52,6 +52,8 @@ class SkypeConnectionPrivate {
 		int timeRemaining;
 		///Wait a while before we conect to just-started skype?
 		int waitBeforeConnect;
+		///Skype process
+		QProcess skypeProcess;
 };
 
 SkypeConnection::SkypeConnection() {
@@ -67,6 +69,9 @@ SkypeConnection::~SkypeConnection() {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	disconnectSkype();//disconnect before you leave
+	if ( d->skypeProcess.state() != QProcess::NotRunning )//if we started skype process kill it
+		d->skypeProcess.kill();
+	QProcess::execute("bash -c \"pkill -6 -U $USER -x skype.*\"");//try find skype process (skype, skype.real, ...) and kill it if we dont start skype or use skype.real wrapper
 	delete d;//Remove the D pointer
 }
 
@@ -176,25 +181,24 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 
 		if ( ! started || ! loggedin ){
 			if ( ! started && ! start.isEmpty() ) {//try starting Skype by the given command
-				QProcess * skype_process = new QProcess;
 				QStringList args = start.split(' ');
 				QString skypeBin = args.takeFirst();
 				if ( !name.isEmpty() && !pass.isEmpty() ){
 					args << "--pipelogin";
 				}
 				kDebug() << k_funcinfo << "Starting skype process" << skypeBin << "with parms" << args << endl;
-				skype_process->start(skypeBin, args);
+				d->skypeProcess.start(skypeBin, args);
 				if ( !name.isEmpty() && !pass.isEmpty() ){
 					kDebug() << k_funcinfo << "Sending login name:" << name << endl;
-					skype_process->write(name.trimmed().toLocal8Bit());
-					skype_process->write(" ");
+					d->skypeProcess.write(name.trimmed().toLocal8Bit());
+					d->skypeProcess.write(" ");
 					kDebug() << k_funcinfo << "Sending password" << endl;
-					skype_process->write(pass.trimmed().toLocal8Bit());
-					skype_process->closeWriteChannel();
+					d->skypeProcess.write(pass.trimmed().toLocal8Bit());
+					d->skypeProcess.closeWriteChannel();
 				}
-				skype_process->waitForStarted();
-				kDebug() << k_funcinfo << "Skype process state:" << skype_process->state() << "Skype process error:" << skype_process->error() << endl;
-				if (skype_process->state() != QProcess::Running || skype_process->error() == QProcess::FailedToStart) {
+				d->skypeProcess.waitForStarted();
+				kDebug() << k_funcinfo << "Skype process state:" << d->skypeProcess.state() << "Skype process error:" << d->skypeProcess.error() << endl;
+				if ( d->skypeProcess.state() != QProcess::Running || d->skypeProcess.error() == QProcess::FailedToStart ) {
 					emit error(i18n("Could not launch Skype"));
 					disconnectSkype(crLost);
 					emit connectionDone(seNoSkype, 0);

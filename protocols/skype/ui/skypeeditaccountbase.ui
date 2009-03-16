@@ -404,11 +404,11 @@
           </item>
           <item>
            <widget class="QRadioButton" name="radioButton5" >
-            <property name="text" >
-             <string>S&amp;ystem</string>
-            </property>
             <property name="enabled" >
              <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>S&amp;ystem</string>
             </property>
            </widget>
           </item>
@@ -673,10 +673,7 @@
           <string>Leave a chat when its chat window is closed. Makes a difference only with multi-user chats: if it is unchecked, you will continue receiving messages from that chat even after closing the window.</string>
          </property>
          <property name="text" >
-          <string>Leave on e&amp;xit</string>
-         </property>
-         <property name="checked" >
-          <bool>true</bool>
+          <string>Leave chat session when chat window is closed</string>
          </property>
         </widget>
        </item>
@@ -916,12 +913,6 @@ Note that kopete will freeze whilst waiting.</string>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>Q3ButtonGroup</class>
    <extends>Q3GroupBox</extends>

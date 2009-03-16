@@ -122,7 +122,6 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 
 	d->inviteAction = new KActionMenu (KIcon("system-users"), i18n ("&Invite"), this);
 	d->inviteAction->setDelayed(false);
-	d->inviteAction->setEnabled(false); //disabled, waiting for signal triggered(const QString) contact id
 	connect( d->inviteAction->menu(), SIGNAL(aboutToShow()), this, SLOT(showInviteMenu()) );
 	connect( d->inviteAction->menu(), SIGNAL(aboutToHide()), this, SLOT(hideInviteMenu()) );
 	actionCollection()->addAction("skypeInvite", d->inviteAction);
@@ -157,7 +156,6 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 
 	d->inviteAction = new KActionMenu (KIcon("system-users"), i18n ("&Invite"), this);
 	d->inviteAction->setDelayed(false);
-	d->inviteAction->setEnabled(false); //disabled, waiting for signal triggered(const QString) contact id
 	connect( d->inviteAction->menu(), SIGNAL(aboutToShow()), this, SLOT(showInviteMenu()) );
 	connect( d->inviteAction->menu(), SIGNAL(aboutToHide()), this, SLOT(hideInviteMenu()) );
 	actionCollection()->addAction("skypeInvite", d->inviteAction);
@@ -259,6 +257,10 @@ void SkypeChatSession::inviteContact(const QString &contactId) {
 	emit inviteUserToChat(d->chatId, contactId);
 }
 
+void SkypeChatSession::inviteContact(Kopete::Contact* contact) {
+	inviteContact(contact->contactId());
+}
+
 void SkypeChatSession::showInviteMenu() {
 	kDebug();
 
@@ -266,7 +268,7 @@ void SkypeChatSession::showInviteMenu() {
 	for ( QHash <QString, Kopete::Contact *>::Iterator it = contactList.begin(); it != contactList.end(); ++it ) {
 		if ( ! members().contains(it.value()) && it.value()->isOnline() && it.value()->onlineStatus().status() != Kopete::OnlineStatus::Offline && it.value() != myself() ) {
 			KAction *a = new Kopete::UI::ContactAction(it.value(), actionCollection());
-			connect( a, SIGNAL(triggered(const QString &, bool)), this, SLOT(inviteContact(const QString &)) );
+			connect( a, SIGNAL(triggered(Kopete::Contact*, bool)), this, SLOT(inviteContact(Kopete::Contact*)) );
 			d->inviteAction->addAction(a);
 		}
 	}
