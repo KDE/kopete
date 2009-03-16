@@ -88,6 +88,7 @@ class WlmChatSession: public Kopete::ChatSession
     void sendKeepAlive ();
 
   private:
+    MSN::Message parseMessage(Kopete::Message & msg);
 
     MSN::SwitchboardServerConnection * m_chatService;
     bool m_downloadDisplayPicture;
