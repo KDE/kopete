@@ -20,13 +20,11 @@ include_directories(
 
 set(
 	skypedbus_SRCS
-
 	libskype/skypedbus/skypeconnection.cpp
 )
 
 QT4_ADD_DBUS_ADAPTOR(
 	skypedbus_SRCS
-
 	libskype/skypedbus/com.Skype.API.Client.xml
 	libskype/skypedbus/skypeconnection.h
 	SkypeConnection
@@ -44,7 +42,6 @@ set(
 
 kde4_add_ui_files(
 	kopete_skype_ui_SRCS
-
 	ui/skypeaddcontactbase.ui
 	ui/skypecalldialogbase.ui
 	ui/skypedetailsbase.ui
@@ -53,7 +50,6 @@ kde4_add_ui_files(
 
 set(
 	kopete_skype_SRCS
-
 	${skypedbus_SRCS}
 	${libskype_SRCS}
 	${kopete_skype_ui_SRCS}
@@ -70,13 +66,11 @@ set(
 
 kde4_add_plugin(
 	kopete_skype
-
 	${kopete_skype_SRCS}
 )
 
 target_link_libraries(
 	kopete_skype
-
 	kopete
 	${KDE4_KDEUI_LIBS}
 	${QT_QT3SUPPORT_LIBRARY}
