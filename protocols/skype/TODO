@@ -30,5 +30,8 @@ TODO New:
 - show sent message imediately in chat window and show info when was delivered
 - cannot add yourself skype contact - done
 - add button for invite people - done
-- support callto: skype: tel: url action handler
+- support callto: skype: tel: url action handler and skype web buttons(from site: https://developer.skype.com/Docs/ApiDoc/Skype_URI_handler)
 - show missed call
+- add option to hide all SkypeOut contacts
+- import old history from skype
+- support call from KABC

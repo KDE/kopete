@@ -1,7 +1,5 @@
 project( kopete_skype )
 
-find_package( KdepimLibs REQUIRED )
-
 ########### next target ###############
 
 include_directories(

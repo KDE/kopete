@@ -199,14 +199,14 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 				d->skypeProcess.waitForStarted();
 				kDebug() << k_funcinfo << "Skype process state:" << d->skypeProcess.state() << "Skype process error:" << d->skypeProcess.error() << endl;
 				if ( d->skypeProcess.state() != QProcess::Running || d->skypeProcess.error() == QProcess::FailedToStart ) {
-					emit error(i18n("Could not launch Skype"));
+					emit error(i18n("Could not launch Skype\nYou need install original binary dynamic linked skype version 2.0 from http://www.skype.com"));
 					disconnectSkype(crLost);
 					emit connectionDone(seNoSkype, 0);
 					return;
 				}
 			} else {
 				if ( start.isEmpty() ){
-					emit error(i18n("Could not find Skype"));
+					emit error(i18n("Could not find Skype\nYou need install original binary dynamic linked skype version 2.0 from http://www.skype.com"));
 					disconnectSkype(crLost);
 					emit connectionDone(seNoSkype, 0);
 					return;
@@ -250,7 +250,7 @@ QString SkypeConnection::operator %(const QString &message) {
 
 	if ( interface.lastError().type() != QDBusError::NoError && interface.lastError().type() != QDBusError::Other ){//There was some error
 		if ( message == "PING" )
-			emit error(i18n("Could not ping Skype.\nError while sending a message to Skype (%1).", QDBusError::errorString(interface.lastError().type())));//say there was the error
+			emit error(i18n("Could not ping Skype.\nMaybe Skype not running.\nError while sending a message to Skype (%1).", QDBusError::errorString(interface.lastError().type())));//say there was the error
 		else
 			emit error(i18n("Error while sending a message to Skype (%1).", QDBusError::errorString(interface.lastError().type())));//say there was the error
 		if (d->fase != cfConnected)
@@ -314,9 +314,9 @@ void SkypeConnection::tryConnect() {
 				d->startTimer->deleteLater();
 				d->startTimer = 0L;
 				if ( !started )
-					emit error(i18n("Could not find Skype"));
+					emit error(i18n("Could not find Skype\nYou need install original binary dynamic linked skype version 2.0 from http://www.skype.com"));
 				else
-					emit error(i18n("User could not login to Skype"));
+					emit error(i18n("Please login to Skype first"));
 				disconnectSkype(crLost);
 				emit connectionDone(seNoSkype, 0);
 				return;

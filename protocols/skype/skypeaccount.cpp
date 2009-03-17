@@ -66,8 +66,6 @@ class SkypeAccountPrivate {
 		bool pings;
 		///What bus are we using, session (0) or system (1)?
 		int bus;
-		///Do we start DBus if needed?
-		bool startDBus;
 		///How long can I keep trying connect to newly started skype, before I give up (seconds)
 		int launchTimeout;
 		///By what command is the skype started?
@@ -121,9 +119,6 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	setCallControl(config->readEntry("CallControl", false));
 	setPings(config->readEntry("Pings", true));
 	setBus(config->readEntry("Bus", 1));
-	//setStartDBus(config->readEntry("StartDBus", false));
-	///@todo Once Dbus launching works, remove this v and uncomment this ^
-	setStartDBus(false);
 	setLaunchTimeout(config->readEntry("LaunchTimeout", 30));
 	d->myName = config->readEntry("MyselfName", "Skype");
 	setSkypeCommand(config->readEntry("SkypeCommand", "skype"));
@@ -276,7 +271,6 @@ void SkypeAccount::save() {
 	config->writeEntry("CloseWindowTimeout", d->callWindowTimeout);
 	config->writeEntry("Pings", getPings());
 	config->writeEntry("Bus", getBus());
-	config->writeEntry("StartDBus", getStartDBus());
 	config->writeEntry("LaunchTimeout", getLaunchTimeout());
 	config->writeEntry("SkypeCommand", getSkypeCommand());
 	config->writeEntry("MyselfName", d->myName);
@@ -586,15 +580,6 @@ int SkypeAccount::getBus() const {
 void SkypeAccount::setBus(int bus) {
 	d->bus = bus;
 	d->skype.setBus(bus);
-}
-
-void SkypeAccount::setStartDBus(bool enable) {
-	d->startDBus = enable;
-	d->skype.setStartDBus(enable);
-}
-
-bool SkypeAccount::getStartDBus() const {
-	return d->startDBus;
 }
 
 void SkypeAccount::setLaunchTimeout(int seconds) {

@@ -69,7 +69,6 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 		widget->CallCheck->setChecked(d->account->getCallControl());
 		widget->PingsCheck->setChecked(d->account->getPings());
 		//BusGroup->setButton(d->account->getBus());
-		widget->DBusCheck->setChecked(d->account->getStartDBus());
 		widget->LaunchSpin->setValue(d->account->getLaunchTimeout());
 		widget->CommandEdit->setText(d->account->getSkypeCommand());
 		widget->WaitSpin->setValue(d->account->getWaitBeforeConnect());
@@ -133,7 +132,6 @@ Kopete::Account *skypeEditAccount::apply() {
 	skype->setCallControl(widget->CallCheck->isChecked());
 	skype->setPings(widget->PingsCheck->isChecked());
 	skype->setBus(widget->BusGroup->selectedId());
-	skype->setStartDBus(widget->DBusCheck->isChecked());
 	skype->setLaunchTimeout(widget->LaunchSpin->value());
 	skype->setSkypeCommand(widget->CommandEdit->text());
 	skype->setWaitBeforeConnect(widget->WaitSpin->value());

@@ -1,5 +1,7 @@
 ########### next target ###############
 
+include ( ${QT_USE_FILE} )
+
 set( skypeactionhandler_SRCS
 	main.cpp
 )

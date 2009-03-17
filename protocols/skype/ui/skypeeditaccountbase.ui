@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1063</width>
+    <width>605</width>
     <height>444</height>
    </rect>
   </property>
@@ -98,13 +98,15 @@
              <number>0</number>
             </property>
             <property name="text" >
-             <string>&lt;p align="left">The Skype plugin serves as a bridge to an externally running copy of Skype. This has some &lt;br />consequences on how it functions: you need an instance of Skype to be running, and only &lt;br/>one Skype account can be used.&lt;/p></string>
+             <string>The Skype plugin serves as a bridge to an externally running copy of Skype. This has some consequences on how it functions: you need an instance of Skype to be running, and only one Skype account can be used.
+
+You need install original binary dynamic linked skype version 2.0 from http://www.skype.com</string>
             </property>
             <property name="textFormat" >
              <enum>Qt::AutoText</enum>
             </property>
             <property name="wordWrap" >
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -171,7 +173,7 @@
          <item>
           <widget class="QLabel" name="textLabel1" >
            <property name="text" >
-            <string>Command:</string>
+            <string>Command to launch Skype:</string>
            </property>
            <property name="wordWrap" >
             <bool>false</bool>
@@ -241,27 +243,11 @@
         </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="DBusCheck" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="toolTip" >
-          <string>Launches D-Bus when not running</string>
-         </property>
-         <property name="whatsThis" >
-          <string>This will start a D-Bus session if 'Connection' is set to 'Session' and D-Bus is not running. The preferred way is to run D-Bus in a startup script, though, so this if off by default.</string>
-         </property>
-         <property name="text" >
-          <string>Laun&amp;ch D-Bus</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <layout class="QHBoxLayout" >
          <item>
           <widget class="QLabel" name="textLabel2_4" >
            <property name="text" >
-            <string>Wait before connect:</string>
+            <string>Wait before try connect to Skype:</string>
            </property>
            <property name="wordWrap" >
             <bool>false</bool>
@@ -318,7 +304,9 @@
        <item>
         <widget class="QLabel" name="textLabel2" >
          <property name="text" >
-          <string>If you get error that Skype was not found, but in fact it is running, check the instructions at http://www.skype.com/community/devzone/SkypeAPIforLinux.html, or use the Session D-Bus option.</string>
+          <string>If you get error that Skype was not found, but in fact it is running, check the instructions at https://developer.skype.com/Docs/ApiDoc/Skype_API_on_Linux.
+
+Only dynamic linked Skype version is supported</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignVCenter</set>
@@ -418,7 +406,9 @@
        <item>
         <widget class="QLabel" name="textLabel1_2" >
          <property name="text" >
-          <string>Note that Kopete will freeze while Skype asks you if it can allow Kopete to access it. This is normal, and if you allow it forever (check that "Remember" checkbox in Skype's dialog), it will not happen again. The 'System Bus' option is not supported.</string>
+          <string>Note that Kopete will freeze while Skype asks you if it can allow Kopete to access it. This is normal, and if you allow it forever (check that "Remember" checkbox in Skype's dialog), it will not happen again.
+
+The 'System Bus' option is not yet supported by Skype</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignVCenter</set>
@@ -673,7 +663,7 @@
           <string>Leave a chat when its chat window is closed. Makes a difference only with multi-user chats: if it is unchecked, you will continue receiving messages from that chat even after closing the window.</string>
          </property>
          <property name="text" >
-          <string>Leave chat session when chat window is closed</string>
+          <string>Leave a chat on window exit</string>
          </property>
         </widget>
        </item>

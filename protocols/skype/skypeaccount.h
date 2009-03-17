@@ -263,11 +263,6 @@ Q_OBJECT
 		 */
 		int getBus() const;
 		/**
-		 * Is starting Dbus when it is not running enabled?
-		 * @return You guess..
-		 */
-		bool getStartDBus() const;
-		/**
 		 * How long does it try to connect to newly started skype, until it gives up (seconds)
 		 */
 		int getLaunchTimeout() const;
@@ -451,10 +446,6 @@ Q_OBJECT
 		 * @param bus 0 -> session bus, 1 -> system wide bus
 		 */
 		void setBus(int bus);
-		/**
-		 * Should be DBus started when needed?
-		 */
-		void setStartDBus(bool enabled);
 		/**
 		 * Set the timeout for giving up launching Skype
 		 */

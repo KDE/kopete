@@ -328,10 +328,6 @@ class Skype : public QObject
 		 */
 		void setBus(int bus);
 		/**
-		 * Start DBus if not wunning?
-		 */
-		void setStartDBus(bool value);
-		/**
 		 * Set the launch timeout - after that launch of Skype will be considered as unsuccessfull if connection can not be established
 		 */
 		void setLaunchTimeout(int seconds);

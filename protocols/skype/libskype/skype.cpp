@@ -90,8 +90,6 @@ class SkypePrivate {
 		QTimer *pingTimer;
 		///What bus is used now?
 		int bus;
-		///Do we start DBus as well if needed?
-		bool startDBus;
 		///The launch timeout (after that no connection -> unsuccessfull -> error)
 		int launchTimeout;
 		///By what command is skype started?
@@ -694,10 +692,6 @@ void Skype::ping() {
 
 void Skype::setBus(int bus) {
 	d->bus = bus;
-}
-
-void Skype::setStartDBus(bool enabled) {
-	d->startDBus = enabled;
 }
 
 void Skype::setLaunchTimeout(int seconds) {
