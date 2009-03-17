@@ -917,7 +917,11 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 		return;
 	}
 
-	if ( !to || groups().contains( to )  )
+	// Do nothing (same group)
+	if ( from == to )
+		return;
+
+	if ( !to || groups().contains( to ) )
 	{
 		// We're removing, not moving, because 'to' is illegal
 		removeFromGroup( from );

@@ -195,6 +195,8 @@ public slots:
 	 */
 	void load();
 
+	bool loaded() const;
+
 	void save();
 
 signals:
@@ -250,6 +252,8 @@ signals:
 	 * you can connect this signal to KAction::setEnabled if you have an action which is applied to only one contact
 	 */
 	void metaContactSelected(bool);
+
+	void contactListLoaded();
 
 private slots:
 	/**

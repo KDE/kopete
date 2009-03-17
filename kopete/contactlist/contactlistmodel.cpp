@@ -53,25 +53,11 @@ ContactListModel::ContactListModel( QObject* parent )
 {
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
 
-	// MetaContact related
-	connect( kcl, SIGNAL( metaContactAdded( Kopete::MetaContact* ) ),
-	         this, SLOT( addMetaContact( Kopete::MetaContact* ) ) );
-	connect( kcl, SIGNAL( metaContactRemoved( Kopete::MetaContact* ) ),
-	         this, SLOT( removeMetaContact( Kopete::MetaContact* ) ) );
-
-	// Group related
-	connect( kcl, SIGNAL( groupAdded( Kopete::Group* ) ),
-	         this, SLOT( addGroup( Kopete::Group* ) ) );
-	connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
-	         this, SLOT( removeGroup( Kopete::Group* ) ) );
-
-	// MetaContact and Group related
-	connect( kcl, SIGNAL(metaContactAddedToGroup(Kopete::MetaContact*, Kopete::Group*)),
-	         this, SLOT(addMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*)) );
-	connect( kcl, SIGNAL(metaContactRemovedFromGroup(Kopete::MetaContact*, Kopete::Group*)),
-	         this, SLOT(removeMetaContactFromGroup(Kopete::MetaContact*, Kopete::Group*)) );
-	connect( kcl, SIGNAL(metaContactMovedToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)),
-	         this, SLOT(moveMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)));
+	// Wait till whole contact list is loaded so we can apply manual sort.
+	if ( !kcl->loaded() )
+		connect( kcl, SIGNAL(contactListLoaded()), this, SLOT(loadContactList()) );
+	else
+		loadContactList();
 }
 
 
@@ -106,38 +92,43 @@ void ContactListModel::addGroup( Kopete::Group* group )
 	int pos = m_groups.count();
 	kDebug(14001) << "addGroup" << group->displayName();
 	beginInsertRows( QModelIndex(), pos, pos );
-	m_groups.append( group );
-	m_contacts[group] = QList<Kopete::MetaContact*>();
+	GroupModelItem* gmi = new GroupModelItem( group );
+	m_groups.append( gmi );
+	m_contacts[gmi] = QList<MetaContactModelItem*>();
 	endInsertRows();
 }
 
 void ContactListModel::removeGroup( Kopete::Group* group )
 {
-	int pos = m_groups.indexOf( group );
+	int pos = indexOfGroup( group );
 	beginRemoveRows( QModelIndex(), pos, pos );
-	m_groups.removeAt( pos );
-	m_contacts.remove( group );
+	GroupModelItem* gmi = m_groups.takeAt( pos );
+	qDeleteAll( m_contacts.value( gmi ) );
+	m_contacts.remove( gmi );
 	endRemoveRows();
 }
 
 void ContactListModel::addMetaContactToGroup( Kopete::MetaContact *mc, Kopete::Group *group )
 {
-	int pos = m_groups.indexOf( group );
-	int offset = m_contacts[group].count();
-	
+	int pos = indexOfGroup( group );
 	if (pos == -1)
 	{
 		addGroup( group );
-		pos = m_groups.indexOf( group );
+		pos = indexOfGroup( group );
 	}
 
+	GroupModelItem* groupModelItem = m_groups.at( pos );
+
 	// if the metacontact already belongs to the group, returns
-	if (m_contacts[group].contains(mc))
+	if ( indexOfMetaContact( groupModelItem, mc ) != -1 )
 		return;
 
-	QModelIndex idx = index(pos, 0);
-	beginInsertRows(idx, offset, offset);
-	m_contacts[group].append(mc);
+	int mcDesireIndex = m_contacts[groupModelItem].count();
+	MetaContactModelItem* mcModelItem = new MetaContactModelItem( groupModelItem, mc );
+
+	QModelIndex idx = index( pos, 0 );
+	beginInsertRows( idx, mcDesireIndex, mcDesireIndex );
+	m_contacts[groupModelItem].append( mcModelItem );
 	endInsertRows();
 
 	// emit the dataChanged signal for the group index so that the filtering proxy
@@ -147,16 +138,18 @@ void ContactListModel::addMetaContactToGroup( Kopete::MetaContact *mc, Kopete::G
 
 void ContactListModel::removeMetaContactFromGroup( Kopete::MetaContact *mc, Kopete::Group *group )
 {
-	int pos = m_groups.indexOf( group );
-	int offset = m_contacts[group].indexOf(mc);
+	int pos = indexOfGroup( group );
+	Q_ASSERT( pos != -1 );
 
+	GroupModelItem* groupModelItem = m_groups.at( pos );
 	// if the mc is not on the list anymore, just returns
+	int offset = indexOfMetaContact( groupModelItem, mc );
 	if (offset == -1)
 		return;
 
 	QModelIndex idx = index(pos, 0);
 	beginRemoveRows(idx, offset, offset);
-	m_contacts[group].removeAt(offset);
+	delete m_contacts[groupModelItem].takeAt(offset);
 	endRemoveRows();
 
 	// emit the dataChanged signal for the group index so that the filtering proxy
@@ -170,6 +163,27 @@ void ContactListModel::moveMetaContactToGroup( Kopete::MetaContact *mc, Kopete::
 	addMetaContactToGroup(mc, to);
 }
 
+int ContactListModel::indexOfMetaContact( const GroupModelItem* inGroup, const Kopete::MetaContact* mc ) const
+{
+	QList<MetaContactModelItem*> mcModelItemList = m_contacts.value( inGroup );
+	for ( int i = 0; i < mcModelItemList.size(); ++i )
+	{
+		if ( mcModelItemList.at( i )->metaContact() == mc )
+			return i;
+	}
+	return -1;
+}
+
+int ContactListModel::indexOfGroup( Kopete::Group* group ) const
+{
+	for ( int i = 0; i < m_groups.size(); ++i )
+	{
+		if ( m_groups.at( i )->group() == group )
+			return i;
+	}
+	return -1;
+}
+
 int ContactListModel::childCount( const QModelIndex& parent ) const
 {
 	int cnt = 0;
@@ -179,10 +193,10 @@ int ContactListModel::childCount( const QModelIndex& parent ) const
 	}
 	else
 	{
-		Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
-		Kopete::Group *g = dynamic_cast<Kopete::Group*>( cle );
-		if (g)
-			cnt = m_contacts[g].count();
+		ContactListModelItem *clmi = static_cast<ContactListModelItem*>( parent.internalPointer() );
+		GroupModelItem *gmi = dynamic_cast<GroupModelItem*>( clmi );
+		if ( gmi )
+			cnt = m_contacts[gmi].count();
 	}
 	
 	return cnt;
@@ -190,16 +204,16 @@ int ContactListModel::childCount( const QModelIndex& parent ) const
 
 int ContactListModel::rowCount( const QModelIndex& parent ) const
 {
-	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
-	Kopete::Group *g = dynamic_cast<Kopete::Group*>( cle );
-	
+	ContactListModelItem *clmi = static_cast<ContactListModelItem*>( parent.internalPointer() );
+	GroupModelItem *gmi = dynamic_cast<GroupModelItem*>( clmi );
+
 	int cnt = 0;
 	if ( !parent.isValid() )
 		cnt = m_groups.count();
 	else
 	{
-		if ( g )
-			cnt+= m_contacts[g].count();
+		if ( gmi )
+			cnt+= m_contacts[gmi].count();
 	}
 
 	return cnt;
@@ -207,19 +221,19 @@ int ContactListModel::rowCount( const QModelIndex& parent ) const
 
 bool ContactListModel::hasChildren( const QModelIndex& parent ) const
 {
-	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
-	Kopete::Group *g = dynamic_cast<Kopete::Group*>( cle );
+	ContactListModelItem *clmi = static_cast<ContactListModelItem*>( parent.internalPointer() );
+	GroupModelItem *gmi = dynamic_cast<GroupModelItem*>( clmi );
 	
 	bool res = false;
 	if ( !parent.isValid() )
 		res=!m_groups.isEmpty();
 	else
 	{
-		if ( g )
+		if ( gmi )
 		{
 			int row = parent.row();
-			Kopete::Group *g = m_groups[row];
-			res = !m_contacts[g].isEmpty();
+			GroupModelItem *gmi = m_groups[row];
+			res = !m_contacts[gmi].isEmpty();
 		}
 	}
 	return res;
@@ -232,31 +246,28 @@ QModelIndex ContactListModel::index( int row, int column, const QModelIndex & pa
 		return QModelIndex();
 	}
 
-	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
-	Kopete::Group *g = dynamic_cast<Kopete::Group*>(cle);
+	ContactListModelItem *clmi = static_cast<ContactListModelItem*>( parent.internalPointer() );
+	GroupModelItem *gmi = dynamic_cast<GroupModelItem*>(clmi);
 	
 	QModelIndex idx;
-	Kopete::ContactListElement *itemPtr=0;
 	if( !parent.isValid() )
-		itemPtr = m_groups[row];
-	else
-	{
-		if ( g )
-			itemPtr = m_contacts[g][row];
-	}
-	idx = createIndex( row, column, itemPtr );
+		idx = createIndex( row, column, m_groups[row] );
+	else if ( gmi )
+		idx = createIndex( row, column, m_contacts[gmi][row] );
+
 	return idx;
 }
 
-int ContactListModel::countConnected(Kopete::Group* g) const
+int ContactListModel::countConnected( GroupModelItem* gmi ) const
 {
 	int onlineCount = 0;
-	QList<Kopete::MetaContact*> metaContactList = m_contacts.value(g);
-	QList<Kopete::MetaContact*>::const_iterator it, itEnd;
+	
+	QList<MetaContactModelItem*> metaContactList = m_contacts.value(gmi);
+	QList<MetaContactModelItem*>::const_iterator it, itEnd;
 	itEnd = metaContactList.constEnd();
 	for (it = metaContactList.constBegin(); it != itEnd; ++it)
 	{
-	  if ( (*it)->isOnline() )
+	  if ( (*it)->metaContact()->isOnline() )
 		onlineCount++;
 	}
 	
@@ -271,19 +282,20 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 	using namespace Kopete;
 	
 	/* do all the casting up front. I need to profile to see how expensive this is though */
-	ContactListElement *cle = static_cast<ContactListElement*>( index.internalPointer() );
-	Group *g = qobject_cast<Group*>( cle );
-	MetaContact *mc = qobject_cast<MetaContact*>( cle );
+	ContactListModelItem *clmi = static_cast<ContactListModelItem*>( index.internalPointer() );
+	GroupModelItem *gmi = dynamic_cast<GroupModelItem*>( clmi );
+	MetaContactModelItem *mcmi = dynamic_cast<MetaContactModelItem*>( clmi );
 
 	QString display;
 	QImage img;
-	if ( g )
+	if ( gmi )
 	{
+		Kopete::Group* g = gmi->group();
 		switch ( role )
 		{
 		case Qt::DisplayRole:
-			display = i18n( "%1 (%2/%3)", g->displayName(), countConnected( g ),
-			                m_contacts[g].count() );
+			display = i18n( "%1 (%2/%3)", g->displayName(), countConnected( gmi ),
+			                m_contacts[gmi].count() );
 			return display;
 			break;
 		case Qt::DecorationRole:
@@ -315,7 +327,7 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 			return g->members().count();
 			break;
 		case Kopete::Items::ConnectedCountRole:
-			return countConnected( g );
+			return countConnected( gmi );
 			break;
 		case Kopete::Items::OnlineStatusRole:
 			return OnlineStatus::Unknown;
@@ -326,8 +338,9 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 		}
 	}
 
-	if ( mc )
+	if ( mcmi )
 	{
+		Kopete::MetaContact* mc = mcmi->metaContact();
 		switch ( role )
 		{
 		case Qt::DisplayRole:
@@ -382,12 +395,12 @@ Qt::ItemFlags ContactListModel::flags( const QModelIndex &index ) const
 	{
 		// TODO: for now we are only allowing drag-n-drop of a
 		// metacontact if all the accounts its contacts belong are online
-		Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>(index.internalPointer());
-		Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>(cle);
-		if (mc)
+		ContactListModelItem *clmi = static_cast<ContactListModelItem*>(index.internalPointer());
+		MetaContactModelItem *mcmi = dynamic_cast<MetaContactModelItem*>(clmi);
+		if (mcmi)
 		{
 			bool online = true;
-			foreach(Kopete::Contact *c, mc->contacts())
+			foreach(Kopete::Contact *c, mcmi->metaContact()->contacts())
 			{
 				if (!c->account()->isConnected())
 				{
@@ -400,7 +413,11 @@ Qt::ItemFlags ContactListModel::flags( const QModelIndex &index ) const
 		}
 	}
 	else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+	{
 		f |= Qt::ItemIsDropEnabled;
+// 		if ( Kopete::AppearanceSettings::self()->contactListGroupSorting() == Kopete::AppearanceSettings::EnumContactListGroupSorting::Manual )
+// 			f |= Qt::ItemIsDragEnabled;
+	}
 	
 	return f;
 }
@@ -420,7 +437,7 @@ QMimeData* ContactListModel::mimeData(const QModelIndexList &indexes) const
 
 	QDataStream stream(&encodedData, QIODevice::WriteOnly);
 
-	foreach (QModelIndex index, indexes) 
+	foreach (QModelIndex index, indexes)
 	{
 		if (index.isValid() && data(index, Kopete::Items::TypeRole) == Kopete::Items::MetaContact)
 		{
@@ -480,27 +497,27 @@ bool ContactListModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 		groups.append(Kopete::ContactList::self()->group( grp.toUInt() ));
 	}
 
-	Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>(parent.internalPointer());
+	ContactListModelItem *clmi = static_cast<ContactListModelItem*>(parent.internalPointer());
 	// check if the parent is a group or a metacontact
 	if (parent.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact)
 	{
-		Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>(cle);
-		if (!mc)
+		MetaContactModelItem *mcmi = dynamic_cast<MetaContactModelItem*>(clmi);
+		if ( !mcmi )
 			return false;
 
 		// Merge the metacontacts from mimedata into this one
-		Kopete::ContactList::self()->mergeMetaContacts(metaContacts, mc);
+		Kopete::ContactList::self()->mergeMetaContacts(metaContacts, mcmi->metaContact());
 		return true;
 	}
 	else if (parent.data( Kopete::Items::TypeRole ) == Kopete::Items::Group)
 	{
-		Kopete::Group *g = dynamic_cast<Kopete::Group*>(cle);
-		if (!g)
+		GroupModelItem *gmi = dynamic_cast<GroupModelItem*>(clmi);
+		if ( !gmi )
 			return false;
 
 		// if we have metacontacts on the mime data, move them to this group
 		for (int i=0; i < metaContacts.count(); ++i)
-			metaContacts[i]->moveToGroup(groups[i], g);
+			metaContacts[i]->moveToGroup( groups[i], gmi->group() );
 
 		return true;
 	}
@@ -514,24 +531,22 @@ QModelIndex ContactListModel::parent(const QModelIndex & index) const
 	
 	if(index.isValid())
 	{
-		Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( index.internalPointer() );
-		Kopete::Group *g = dynamic_cast<Kopete::Group*>( cle );
-		if ( !g )
+		ContactListModelItem *clmi = static_cast<ContactListModelItem*>( index.internalPointer() );
+		GroupModelItem *gmi = dynamic_cast<GroupModelItem*>( clmi );
+		if ( !gmi )
 		{
-			Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>( cle );
-			// WARNING: FIX THIS!!! We can't have one metaContact in more groups
-			// because we won't find correct group and item won't be updated in proxy
-			g = mc->groups().last();
-			parent = createIndex( m_groups.indexOf( g ), 0, g );
+			MetaContactModelItem *mcmi = dynamic_cast<MetaContactModelItem*>( clmi );
+			gmi = mcmi->groupModelItem();
+			parent = createIndex( m_groups.indexOf( gmi ), 0, gmi );
 		}
 	}
 	return parent;
 }
 
-QModelIndexList ContactListModel::indexListFor(Kopete::ContactListElement *ce) const
+QModelIndexList ContactListModel::indexListFor( Kopete::ContactListElement* cle ) const
 {
 	QModelIndexList indexList;
-	Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>(ce);
+	Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>(cle);
 
 	if (mc)
 	{
@@ -539,8 +554,9 @@ QModelIndexList ContactListModel::indexListFor(Kopete::ContactListElement *ce) c
 		// search for all the groups in which this contact is
 		foreach( Kopete::Group *g, mc->groups() )
 		{
-			int groupPos = m_groups.indexOf( g );
-			int mcPos = m_contacts[g].indexOf( mc );
+			int groupPos = indexOfGroup( g );
+			int mcPos = indexOfMetaContact( m_groups.at( groupPos ), mc );
+			Q_ASSERT( mcPos != -1 );
 
 			// get  the group index to be the parent for the contact search
 			QModelIndex grpIndex = index(groupPos, 0);
@@ -553,10 +569,11 @@ QModelIndexList ContactListModel::indexListFor(Kopete::ContactListElement *ce) c
 	else
 	{
 		// group handling
-		Kopete::Group *g = dynamic_cast<Kopete::Group*>(ce);
+		Kopete::Group *g = dynamic_cast<Kopete::Group*>(cle);
 		if (g)
 		{
-			int pos = m_groups.indexOf( g );
+			int pos = indexOfGroup( g );
+			Q_ASSERT( pos != -1 );
 			indexList.append(index(pos,0));
 		}
 	}
@@ -583,6 +600,40 @@ void ContactListModel::handleContactDataChange(Kopete::MetaContact* mc)
 		emit dataChanged(index.parent(), index.parent());
 		emit dataChanged(index, index);
 	}
+}
+
+void ContactListModel::loadContactList()
+{
+	Kopete::ContactList* kcl = Kopete::ContactList::self();
+	disconnect( kcl, SIGNAL(contactListLoaded()), this, SLOT(loadContactList()) );
+
+	foreach ( Kopete::Group* g, kcl->groups() )
+		addGroup( g );
+
+	foreach ( Kopete::MetaContact* mc, kcl->metaContacts() )
+		addMetaContact( mc );
+
+	//TODO: load group/mc positions of manual sort.
+
+	// MetaContact related
+	connect( kcl, SIGNAL( metaContactAdded( Kopete::MetaContact* ) ),
+	         this, SLOT( addMetaContact( Kopete::MetaContact* ) ) );
+	connect( kcl, SIGNAL( metaContactRemoved( Kopete::MetaContact* ) ),
+	         this, SLOT( removeMetaContact( Kopete::MetaContact* ) ) );
+	
+	// Group related
+	connect( kcl, SIGNAL( groupAdded( Kopete::Group* ) ),
+	         this, SLOT( addGroup( Kopete::Group* ) ) );
+	connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
+	         this, SLOT( removeGroup( Kopete::Group* ) ) );
+	
+	// MetaContact and Group related
+	connect( kcl, SIGNAL(metaContactAddedToGroup(Kopete::MetaContact*, Kopete::Group*)),
+	         this, SLOT(addMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*)) );
+	connect( kcl, SIGNAL(metaContactRemovedFromGroup(Kopete::MetaContact*, Kopete::Group*)),
+	         this, SLOT(removeMetaContactFromGroup(Kopete::MetaContact*, Kopete::Group*)) );
+	connect( kcl, SIGNAL(metaContactMovedToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)),
+	         this, SLOT(moveMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)));
 }
 
 QVariant ContactListModel::metaContactImage( Kopete::MetaContact* mc ) const

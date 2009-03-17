@@ -344,16 +344,21 @@ void ContactList::load()
 	if( !storage->isValid() )
 	{
 		kDebug(14010) << "Contact list storage failed. Reason: " << storage->errorMessage();
-		d->loaded = true;
-		delete storage;
-		return;
 	}
-
-	addGroups( storage->groups() );
-	addMetaContacts( storage->contacts() );
+	else
+	{
+		addGroups( storage->groups() );
+		addMetaContacts( storage->contacts() );
+	}
 
 	d->loaded = true;
 	delete storage;
+	emit contactListLoaded();
+}
+
+bool Kopete::ContactList::loaded() const
+{
+	return d->loaded;
 }
 
 void Kopete::ContactList::save()

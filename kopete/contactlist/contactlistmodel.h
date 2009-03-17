@@ -31,6 +31,9 @@ class ContactListElement;
 	
 namespace UI {
 
+class MetaContactModelItem;
+class GroupModelItem;
+class ContactListModelItem;
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
@@ -72,15 +75,53 @@ Q_OBJECT
 	private Q_SLOTS:
 		void resetModel();
 		void handleContactDataChange(Kopete::MetaContact*);
-  
+		void loadContactList();
+
 	private:
-		int childCount(const QModelIndex& parent) const;
-		int countConnected(Kopete::Group* g) const;
+		int indexOfMetaContact( const GroupModelItem* inGroup, const Kopete::MetaContact* mc ) const;
+		int indexOfGroup( Kopete::Group* group ) const;
+
+		int childCount( const QModelIndex& parent ) const;
+		int countConnected( GroupModelItem* gmi ) const;
 		QVariant metaContactImage( Kopete::MetaContact* mc ) const;
 		QString metaContactTooltip( Kopete::MetaContact* metaContact ) const;
-		
-		QList<Kopete::Group*> m_groups;
-		QMap<Kopete::Group*, QList<Kopete::MetaContact*> > m_contacts;
+
+		QList<GroupModelItem*> m_groups;
+		QMap<const GroupModelItem*, QList<MetaContactModelItem*> > m_contacts;
+};
+
+class ContactListModelItem {
+public:
+	ContactListModelItem() {}
+	virtual ~ContactListModelItem() {}
+
+private:
+	// For dynamic cast
+	virtual void dummy() {}
+};
+
+class GroupModelItem : public ContactListModelItem {
+public:
+	GroupModelItem( Kopete::Group* group )
+		: ContactListModelItem(), mGroup( group )
+	{}
+	
+	inline Kopete::Group* group() const { return mGroup; }
+private:
+	Kopete::Group* mGroup;
+};
+
+class MetaContactModelItem : public ContactListModelItem {
+public:
+	MetaContactModelItem( GroupModelItem* groupModelItem, Kopete::MetaContact* metaContact )
+		: ContactListModelItem(), mMetaContact( metaContact ), mGroupModelItem( groupModelItem )
+	{}
+	
+	inline Kopete::MetaContact* metaContact() const { return mMetaContact; }
+	inline GroupModelItem* groupModelItem() const { return mGroupModelItem; }
+private:
+	Kopete::MetaContact* mMetaContact;
+	GroupModelItem* mGroupModelItem;
 };
 
 }
