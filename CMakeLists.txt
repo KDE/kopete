@@ -130,3 +130,6 @@ add_subdirectory( icons )
 add_subdirectory( sounds )
 add_subdirectory( styles )
 
+if(NOT INSIDE_KDENETWORK)
+	macro_display_feature_log()
+endif(NOT INSIDE_KDENETWORK)
