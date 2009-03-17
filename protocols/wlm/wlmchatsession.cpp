@@ -104,6 +104,7 @@ m_sessionID(1)
     m_actionInvite =
         new KActionMenu (KIcon ("system-users"), i18n ("&Invite"), this);
     actionCollection ()->addAction ("wlmInvite", m_actionInvite);
+    m_actionInvite->setDelayed(false);
     connect (m_actionInvite->menu (), SIGNAL (aboutToShow ()), this,
              SLOT (slotActionInviteAboutToShow ()));
 
