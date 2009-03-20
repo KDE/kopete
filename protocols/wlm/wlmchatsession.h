@@ -37,7 +37,7 @@ class WlmChatSession: public Kopete::ChatSession
     WlmChatSession (Kopete::Protocol * protocol, const Kopete::Contact * user,
                     Kopete::ContactPtrList others,
                     MSN::SwitchboardServerConnection * conn = NULL);
-     ~WlmChatSession ();
+    virtual ~WlmChatSession ();
     void setReady (bool value);
     bool isReady ();
     void setChatService (MSN::SwitchboardServerConnection * conn);
@@ -86,6 +86,7 @@ class WlmChatSession: public Kopete::ChatSession
     void slotInviteContact (Kopete::Contact * contact);
     void slotSendFile ();
     void sendKeepAlive ();
+    void messageTimeout();
 
   private:
     MSN::Message parseMessage(Kopete::Message & msg);
@@ -99,6 +100,7 @@ class WlmChatSession: public Kopete::ChatSession
     QString m_lastMsnObj;
     QLinkedList < Kopete::Message > m_messagesQueue;
     QMap < unsigned int, Kopete::Message > m_messagesSentQueue;
+    QLinkedList < int > m_messagesTimeoutQueue;
     QLinkedList < QString > m_pendingInvitations;
     QLinkedList < QString > m_pendingFiles;
     KAction * m_actionNudge;

@@ -139,8 +139,7 @@ WlmChatSession::generateSessionID()
     m_sessionID++;
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
-    return (unsigned int)(qrand() % 4294967295)+m_sessionID;
-
+    return (unsigned int) (qrand() + m_sessionID) & 0xFFFFFFFF;
 }
 
 void
@@ -523,8 +522,21 @@ WlmChatSession::switchboardConnectionTimeout ()
             return;
         }
         Kopete::Utils::notifyCannotConnect(account(), "Could not open switchboard connection");
+
+        QMap<unsigned int, Kopete::Message>::const_iterator i;
+        for (i = m_messagesSentQueue.constBegin(); i != m_messagesSentQueue.constEnd(); ++i)
+            this->receivedMessageState(i->id(), Kopete::Message::StateError );
+
         messageSucceeded ();
     }
+}
+
+void
+WlmChatSession::messageTimeout ()
+{
+    int trid = m_messagesTimeoutQueue.takeFirst();
+	if(m_messagesSentQueue.contains(trid))
+		this->receivedMessageState(m_messagesSentQueue[trid].id(), Kopete::Message::StateError );
 }
 
 void
@@ -554,6 +566,9 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         this->messageSucceeded();
 
         m_messagesSentQueue[trid] = msg;
+        m_messagesTimeoutQueue.append(trid);
+        QTimer::singleShot (60 * 1000, this,
+                            SLOT (messageTimeout()));
         return;
     }
 
