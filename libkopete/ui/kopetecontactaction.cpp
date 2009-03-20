@@ -42,7 +42,9 @@ ContactAction::ContactAction( Kopete::Contact *contact, KActionCollection* paren
 void ContactAction::slotTriggered( bool checked )
 {
 	Kopete::Contact* contact = data().value<Kopete::Contact*>();
+	const QString &id = contact->contactId();
 	emit triggered( contact, checked );
+	emit triggered( id, checked );
 }
 
 }

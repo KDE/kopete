@@ -55,6 +55,7 @@ signals:
 	 * you need to know which contact the action was triggered for
 	 */
 	void triggered( Kopete::Contact*, bool checked );
+	void triggered( const QString &, bool checked );
 
 private slots:
 	/**
