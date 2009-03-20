@@ -31,7 +31,7 @@ class KOPETECHATWINDOW_SHARED_EXPORT ChatWindowStyle
 {
 public:
 	/**
-	 * StyleVariants is a typedef to a QMap
+	 * StyleVariants is a typedef to a QHash
 	 * key = Variant Name
 	 * value = Path to variant CSS file.
 	 * Path is relative to Resources directory.
