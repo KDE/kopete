@@ -50,11 +50,6 @@ class SkypeChatSession : public Kopete::ChatSession
 		void showInviteMenu();
 		///Slot to hide invite menu
 		void hideInviteMenu();
-		/**
-		* Invites a contact to the chat
-		* @param contact What contact
-		*/
-		void inviteContact(Kopete::Contact* contact);
 	public:
 		/**
 		 * Constructor. The chat session will be created with first message coming out.
@@ -71,11 +66,6 @@ class SkypeChatSession : public Kopete::ChatSession
 		SkypeChatSession(SkypeAccount *account, const QString &session, const Kopete::ContactPtrList &contacts);
 		///Destructor
 		~SkypeChatSession();
-		/**
-		* Invites a contact to the chat
-		* @param contactId What contact
-		*/
-		virtual void inviteContact(const QString &contactId);
 	public slots:
 		/**
 		 * Update the chat topic
@@ -107,6 +97,11 @@ class SkypeChatSession : public Kopete::ChatSession
 		 * @param body Text to show
 		 */
 		void sentMessage(const QList<Kopete::Contact*> *recv, const QString &body);
+		/**
+		* Invites a contact to the chat
+		* @param contactId What contact
+		*/
+		virtual void inviteContact(const QString &contactId);
 	signals:
 		/**
 		 * This is emited when it become a multi-user chat. It should be removed from the contact so when user clicks on the contact, new one with only that one should be created

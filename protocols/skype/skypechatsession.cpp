@@ -257,10 +257,6 @@ void SkypeChatSession::inviteContact(const QString &contactId) {
 	emit inviteUserToChat(d->chatId, contactId);
 }
 
-void SkypeChatSession::inviteContact(Kopete::Contact* contact) {
-	inviteContact(contact->contactId());
-}
-
 void SkypeChatSession::showInviteMenu() {
 	kDebug();
 
@@ -268,7 +264,7 @@ void SkypeChatSession::showInviteMenu() {
 	for ( QHash <QString, Kopete::Contact *>::Iterator it = contactList.begin(); it != contactList.end(); ++it ) {
 		if ( ! members().contains(it.value()) && it.value()->isOnline() && it.value()->onlineStatus().status() != Kopete::OnlineStatus::Offline && it.value() != myself() ) {
 			KAction *a = new Kopete::UI::ContactAction(it.value(), actionCollection());
-			connect( a, SIGNAL(triggered(Kopete::Contact*, bool)), this, SLOT(inviteContact(Kopete::Contact*)) );
+			connect( a, SIGNAL(triggered(const QString &, bool)), this, SLOT(inviteContact(const QString &)) );
 			d->inviteAction->addAction(a);
 		}
 	}
