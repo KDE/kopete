@@ -99,8 +99,8 @@ namespace Yahoo
 		ServiceChatSession = 0xd4,	
 		ServiceAuthorization = 0xd6,	/* YMSG13 */
 		ServiceFileTransfer7 = 0xdc,	/* YMSG13 */
-		ServiceFileTransfer7Info,	/* YMSG13 */
-		ServiceFileTransfer7Accept,	/* YMSG13 */
+		ServiceFileTransfer7Info = 0xdd,	/* YMSG13 */
+		ServiceFileTransfer7Accept = 0xde,	/* YMSG13 */
 		ServiceBuddyChangeGroup = 0xe7,	/* YMSG13 */
 		ServiceBuddyStatus = 0xf0,
 		ServiceBuddyList = 0xf1

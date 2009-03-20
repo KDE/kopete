@@ -238,6 +238,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kDebug(YAHOO_RAW_DEBUG) << " Parsed packet service -  This means ServiceFileTransfer7Info " << servicenum;
 			service = Yahoo::ServiceFileTransfer7Info;
 		break;
+		case (Yahoo::ServiceFileTransfer7Accept) :
+			kDebug(YAHOO_RAW_DEBUG) << " Parsed packet service -  This means ServiceFileTransfer7Accept " << servicenum;
+			service = Yahoo::ServiceFileTransfer7Accept;
+		break;
 		case (Yahoo::ServicePeerToPeer) :
 			kDebug(YAHOO_RAW_DEBUG) << " Parsed packet service -  This means ServicePeerToPeer " << servicenum;
 			service = Yahoo::ServicePeerToPeer;
