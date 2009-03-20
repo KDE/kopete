@@ -178,7 +178,7 @@ bool QQEditAccountWidget::validateData()
 
 void QQEditAccountWidget::slotOpenRegister()
 {
-	KToolInvocation::invokeBrowser( "http://qqx.qq.com/"  );
+	KToolInvocation::invokeBrowser( "http://freereg.qq.com/"  );
 }
 
 #include "qqeditaccountwidget.moc"
