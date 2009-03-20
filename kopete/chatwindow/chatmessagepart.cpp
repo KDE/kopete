@@ -255,7 +255,10 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( this, SIGNAL(popupMenu(const QString &, const QPoint &)),
 	         this, SLOT(slotRightClick(const QString &, const QPoint &)) );
-	connect( view()->verticalScrollBar(), SIGNAL(sliderMoved(int)),
+
+	// setup scrollbar
+	view()->verticalScrollBar()->setTracking(true);
+	connect( view()->verticalScrollBar(), SIGNAL(valueChanged(int)),
 	         this, SLOT(slotScrollingTo(int)) );
 
 	connect( Kopete::TransferManager::transferManager(), SIGNAL(askIncomingDone(unsigned int)),
