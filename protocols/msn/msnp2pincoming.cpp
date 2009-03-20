@@ -138,7 +138,7 @@ void MSNP2PIncoming::parseMessage(MessageStruct &msgStr)
 
 			makeMSNSLPMessage(OK, content);
 
-			m_Rfile=new QFile( m_kopeteTransfer->destinationURL().path() );
+			m_Rfile=new QFile( m_kopeteTransfer->destinationURL().toLocalFile() );
 			if(!m_Rfile->open(QIODevice::WriteOnly))
 			{
 				if(m_kopeteTransfer)

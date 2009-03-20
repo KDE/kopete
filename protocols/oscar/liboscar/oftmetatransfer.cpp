@@ -118,7 +118,7 @@ bool OftMetaTransfer::validFile()
 				return 0;
 			}
 		}
-		else if ( ! QFileInfo( QFileInfo( m_file ).path() ).isWritable() )
+		else if ( ! QFileInfo( QFileInfo( m_file ).toLocalFile() ).isWritable() )
 		{ //not allowed to create it
 				emit error( KIO::ERR_CANNOT_OPEN_FOR_WRITING, m_file.fileName() );
 				return 0;

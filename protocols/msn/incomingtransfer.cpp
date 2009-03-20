@@ -109,7 +109,7 @@ void IncomingTransfer::acknowledged()
 					// should follow. Otherwise, the file transfer may start right away.
 					if(m_transfer)
 					{
-						QFile *destination = new QFile(m_transfer->destinationURL().path());
+						QFile *destination = new QFile(m_transfer->destinationURL().toLocalFile());
 						if(!destination->open(QIODevice::WriteOnly))
 						{
 							m_transfer->slotError(KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Cannot open file for writing"));
