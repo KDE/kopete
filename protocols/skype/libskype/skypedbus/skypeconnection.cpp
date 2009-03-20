@@ -199,14 +199,14 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 				d->skypeProcess.waitForStarted();
 				kDebug() << k_funcinfo << "Skype process state:" << d->skypeProcess.state() << "Skype process error:" << d->skypeProcess.error() << endl;
 				if ( d->skypeProcess.state() != QProcess::Running || d->skypeProcess.error() == QProcess::FailedToStart ) {
-					emit error(i18n("Could not launch Skype\nYou need install original binary dynamic linked skype version 2.0 from http://www.skype.com"));
+					emit error(i18n("Could not launch Skype.\nYou need to install the original dynamic linked Skype version 2.0 binary from http://www.skype.com"));
 					disconnectSkype(crLost);
 					emit connectionDone(seNoSkype, 0);
 					return;
 				}
 			} else {
 				if ( start.isEmpty() ){
-					emit error(i18n("Could not find Skype\nYou need install original binary dynamic linked skype version 2.0 from http://www.skype.com"));
+					emit error(i18n("Could not find Skype.\nYou need to install the original dynamic linked Skype version 2.0 binary from http://www.skype.com"));
 					disconnectSkype(crLost);
 					emit connectionDone(seNoSkype, 0);
 					return;
@@ -314,7 +314,7 @@ void SkypeConnection::tryConnect() {
 				d->startTimer->deleteLater();
 				d->startTimer = 0L;
 				if ( !started )
-					emit error(i18n("Could not find Skype\nYou need install original binary dynamic linked skype version 2.0 from http://www.skype.com"));
+					emit error(i18n("Could not find Skype\nYou need to install the original dynamic linked Skype version 2.0 binary from http://www.skype.com"));
 				else
 					emit error(i18n("Please login to Skype first"));
 				disconnectSkype(crLost);

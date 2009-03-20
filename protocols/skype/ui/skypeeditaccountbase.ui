@@ -100,7 +100,7 @@
             <property name="text" >
              <string>The Skype plugin serves as a bridge to an externally running copy of Skype. This has some consequences on how it functions: you need an instance of Skype to be running, and only one Skype account can be used.
 
-You need install original binary dynamic linked skype version 2.0 from http://www.skype.com</string>
+Note that you need to install the original dynamic linked Skype version 2.0 binary from http://www.skype.com</string>
             </property>
             <property name="textFormat" >
              <enum>Qt::AutoText</enum>
@@ -247,7 +247,7 @@ You need install original binary dynamic linked skype version 2.0 from http://ww
          <item>
           <widget class="QLabel" name="textLabel2_4" >
            <property name="text" >
-            <string>Wait before try connect to Skype:</string>
+            <string>Wait before trying to connect to Skype:</string>
            </property>
            <property name="wordWrap" >
             <bool>false</bool>
@@ -306,7 +306,7 @@ You need install original binary dynamic linked skype version 2.0 from http://ww
          <property name="text" >
           <string>If you get error that Skype was not found, but in fact it is running, check the instructions at https://developer.skype.com/Docs/ApiDoc/Skype_API_on_Linux.
 
-Only dynamic linked Skype version is supported</string>
+Note that only the dynamic linked Skype binary is supported.</string>
          </property>
          <property name="alignment" >
           <set>Qt::AlignVCenter</set>
