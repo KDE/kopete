@@ -357,8 +357,11 @@ void KopeteChatWindow::initActions(void)
 	chatSend = new KAction( KIcon("mail-send"), i18n( "&Send Message" ), coll );
 	coll->addAction( "chat_send", chatSend );
 	connect( chatSend, SIGNAL( triggered(bool) ), SLOT( slotSendMessage() ) );
-	//Default to 'Return' for sending messages
-	chatSend->setShortcut( QKeySequence(Qt::Key_Return) );
+	//Default to 'Return' and 'Enter' for sending messages
+	//'Return' is the key in the main part of the keyboard
+	//'Enter' is on the Numpad
+	KShortcut chatSendShortcut( QKeySequence(Qt::Key_Return), QKeySequence(Qt::Key_Enter) );
+	chatSend->setShortcut( chatSendShortcut );
 	chatSend->setEnabled( false );
 
 	chatSendFile = new KAction( KIcon("mail-attachment"), i18n( "Send File" ), coll );
