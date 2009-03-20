@@ -207,14 +207,13 @@ void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed, uint s
 	t->setId( sessionID );
 	t->setParam( 0 , sn.toLocal8Bit());
 	t->setParam( 2 , sn.toLocal8Bit());
+	t->setParam( 2, 1 ); // Both parameter 2s wind up in the packet
 	t->setParam( 6 , resp_6);
-	t->setParam( 96 , resp_96);
-// 	t->setParam( 59 , "B\\tfckeert1kk1nl&b=2" );	// ???
-	t->setParam( 135 , YMSG_PROGRAM_VERSION_STRING );	// Client version
-	t->setParam( 148 , -60 );
-	t->setParam( 192 , client()->pictureChecksum() );
-// 	t->setParam( 244 , 524223 );
-	t->setParam( 1 , sn.toLocal8Bit());
+	t->setParam( 1, sn.toLocal8Bit());
+	t->setParam( 244, 2097087 );
+	t->setParam( 135, YMSG_PROGRAM_VERSION_STRING );
+	t->setParam( 148, 480 );
+	t->setParam( 59 , "B\\tfckeert1kk1nl&b=2" );	// ???
 
 	if( !m_verificationWord.isEmpty() )
 	{
