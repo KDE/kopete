@@ -25,13 +25,17 @@
 #include <QUuid>
 #include <QImage>
 #include <QMimeData>
+#include <QFile>
+#include <QTextDocument>
+#include <QDir>
+#include <QDomDocument>
 
 #include <KIcon>
 #include <KDebug>
 #include <KLocale>
 #include <KIconLoader>
 #include <KEmoticonsTheme>
-#include <QTextDocument>
+#include <KStandardDirs>
 
 #include "kopeteaccount.h"
 #include "kopetegroup.h"
@@ -51,6 +55,11 @@ namespace UI {
 ContactListModel::ContactListModel( QObject* parent )
  : QAbstractItemModel( parent )
 {
+	AppearanceSettings* as = AppearanceSettings::self();
+	m_manualGroupSorting = (as->contactListGroupSorting() == AppearanceSettings::EnumContactListGroupSorting::Manual);
+	m_manualMetaContactSorting = (as->contactListMetaContactSorting() == AppearanceSettings::EnumContactListMetaContactSorting::Manual);
+	connect ( as, SIGNAL(configChanged()), this, SLOT(appearanceConfigChanged()) );
+
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
 
 	// Wait till whole contact list is loaded so we can apply manual sort.
@@ -60,9 +69,9 @@ ContactListModel::ContactListModel( QObject* parent )
 		loadContactList();
 }
 
-
 ContactListModel::~ContactListModel()
 {
+	savePositions();
 }
 
 void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
@@ -119,16 +128,49 @@ void ContactListModel::addMetaContactToGroup( Kopete::MetaContact *mc, Kopete::G
 
 	GroupModelItem* groupModelItem = m_groups.at( pos );
 
-	// if the metacontact already belongs to the group, returns
-	if ( indexOfMetaContact( groupModelItem, mc ) != -1 )
-		return;
-
+	int mcIndex = indexOfMetaContact( groupModelItem, mc );
 	int mcDesireIndex = m_contacts[groupModelItem].count();
-	MetaContactModelItem* mcModelItem = new MetaContactModelItem( groupModelItem, mc );
+
+	// If we use manual sorting we most likely will have possition where the metaContact should be inserted.
+	if ( m_manualMetaContactSorting )
+	{
+		QPair<const Kopete::Group*, const Kopete::MetaContact* > groupMetaContactPair( group, mc );
+		if ( m_addContactPosition.contains( groupMetaContactPair ) )
+		{
+			mcDesireIndex = m_addContactPosition.value( groupMetaContactPair );
+			m_addContactPosition.remove( groupMetaContactPair );
+		}
+	}
+
+	// Check if mcDesireIndex isn't invalid (shouldn't happen)
+	if ( mcDesireIndex < 0 || mcDesireIndex > m_contacts[groupModelItem].count() )
+		mcDesireIndex = m_contacts[groupModelItem].count();
+
+	MetaContactModelItem* mcModelItem = 0;
+	if ( mcIndex == -1 )
+	{
+		mcModelItem = new MetaContactModelItem( groupModelItem, mc );
+	}
+	else
+	{
+		// If the manual index is the same do nothing otherwise change possition
+		if ( mcIndex == mcDesireIndex )
+			return;
+
+		// We're moving metaContact so temporary remove it so model is avare of the change.
+		QModelIndex idx = index( pos, 0 );
+		beginRemoveRows( idx, mcIndex, mcIndex );
+		mcModelItem = m_contacts[groupModelItem].takeAt( mcIndex );
+		endRemoveRows();
+
+		// If mcDesireIndex was after mcIndex decrement it because we have removed metaContact
+		if ( mcIndex < mcDesireIndex )
+			mcDesireIndex--;
+	}
 
 	QModelIndex idx = index( pos, 0 );
 	beginInsertRows( idx, mcDesireIndex, mcDesireIndex );
-	m_contacts[groupModelItem].append( mcModelItem );
+	m_contacts[groupModelItem].insert( mcDesireIndex, mcModelItem );
 	endInsertRows();
 
 	// emit the dataChanged signal for the group index so that the filtering proxy
@@ -386,7 +428,7 @@ QVariant ContactListModel::data ( const QModelIndex & index, int role ) const
 Qt::ItemFlags ContactListModel::flags( const QModelIndex &index ) const
 {
 	if ( !index.isValid() )
-		return 0;
+		return (m_manualGroupSorting) ? Qt::ItemIsDropEnabled : Qt::NoItemFlags;
 
 	Qt::ItemFlags f(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 	
@@ -415,8 +457,8 @@ Qt::ItemFlags ContactListModel::flags( const QModelIndex &index ) const
 	else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
 	{
 		f |= Qt::ItemIsDropEnabled;
-// 		if ( Kopete::AppearanceSettings::self()->contactListGroupSorting() == Kopete::AppearanceSettings::EnumContactListGroupSorting::Manual )
-// 			f |= Qt::ItemIsDragEnabled;
+		if ( m_manualGroupSorting )
+			f |= Qt::ItemIsDragEnabled;
 	}
 	
 	return f;
@@ -437,24 +479,51 @@ QMimeData* ContactListModel::mimeData(const QModelIndexList &indexes) const
 
 	QDataStream stream(&encodedData, QIODevice::WriteOnly);
 
+	enum DragType { DragNone = 0x0, DragGroup = 0x1, DragMetaContact = 0x2 };
+	int dragType = DragNone;
 	foreach (QModelIndex index, indexes)
 	{
-		if (index.isValid() && data(index, Kopete::Items::TypeRole) == Kopete::Items::MetaContact)
+		if ( !index.isValid() )
+			continue;
+
+		switch ( data(index, Kopete::Items::TypeRole).toInt() )
 		{
-			// each metacontact entry will be encoded as group/uuid to
-			// make sure that when moving a metacontact from one group
-			// to another it will handle the right group
-			
-			// so get the group id
-			QString text = data(index.parent(), Kopete::Items::IdRole).toString();
-			
-			// and the metacontactid
-			text += "/" + data(index, Kopete::Items::UuidRole).toString();
-			stream << text;
+		case Kopete::Items::MetaContact:
+			{
+				dragType |= DragMetaContact;
+				// each metacontact entry will be encoded as group/uuid to
+				// make sure that when moving a metacontact from one group
+				// to another it will handle the right group
+				
+				// so get the group id
+				QString text = data(index.parent(), Kopete::Items::IdRole).toString();
+				
+				// and the metacontactid
+				text += "/" + data(index, Kopete::Items::UuidRole).toString();
+				stream << text;
+				break;
+			}
+		case Kopete::Items::Group:
+			{
+				dragType |= DragGroup;
+				// so get the group id
+				QString text = data(index, Kopete::Items::IdRole).toString();
+				stream << text;
+				break;
+			}
 		}
 	}
 
-	mdata->setData("application/kopete.metacontacts.list", encodedData);
+	if ( (dragType & (DragGroup | DragMetaContact)) == (DragGroup | DragMetaContact) )
+		return 0;
+
+	if ( (dragType & DragGroup) == DragGroup )
+		mdata->setData("application/kopete.group", encodedData);
+	else if ( (dragType & DragMetaContact) == DragMetaContact )
+		mdata->setData("application/kopete.metacontacts.list", encodedData);
+	else
+		return 0;
+
 	return mdata;
 }
 
@@ -466,60 +535,124 @@ bool ContactListModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
 	// for now only accepting drop of metacontacts
 	// TODO: support dropping of files in metacontacts to allow file transfers
-	if (!data->hasFormat("application/kopete.metacontacts.list"))
+	if (!data->hasFormat("application/kopete.metacontacts.list") && !data->hasFormat("application/kopete.group"))
 		return false;
 
 	// contactlist has only one column
 	if (column > 0)
 		return false;
-	
-	// we don't support dropping things in an empty space
-	if (!parent.isValid())
-		return false;
 
-	// decode the mime data
-	QByteArray encodedData = data->data("application/kopete.metacontacts.list");
-	QDataStream stream(&encodedData, QIODevice::ReadOnly);
-	QList<Kopete::MetaContact*> metaContacts;
-	QList<Kopete::Group*> groups; // each metacontact is linked to one group in this context
-	
-	while (!stream.atEnd()) 
+	if ( data->hasFormat("application/kopete.group") )
 	{
-		QString line;
-		stream >> line;
-
-		QStringList entry = line.split("/");
-		
-		QString grp = entry[0];
-		QString id = entry[1];
-		
-		metaContacts.append(Kopete::ContactList::self()->metaContact( QUuid(id) ));
-		groups.append(Kopete::ContactList::self()->group( grp.toUInt() ));
-	}
-
-	ContactListModelItem *clmi = static_cast<ContactListModelItem*>(parent.internalPointer());
-	// check if the parent is a group or a metacontact
-	if (parent.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact)
-	{
-		MetaContactModelItem *mcmi = dynamic_cast<MetaContactModelItem*>(clmi);
-		if ( !mcmi )
+		// we don't support dropping groups into another group
+		if ( parent.isValid() )
 			return false;
 
-		// Merge the metacontacts from mimedata into this one
-		Kopete::ContactList::self()->mergeMetaContacts(metaContacts, mcmi->metaContact());
-		return true;
+		// decode the mime data
+		QByteArray encodedData = data->data("application/kopete.group");
+		QDataStream stream(&encodedData, QIODevice::ReadOnly);
+		QList<Kopete::Group*> groups;
+		
+		while (!stream.atEnd())
+		{
+			QString groupUuid;
+			stream >> groupUuid;
+			groups.append(Kopete::ContactList::self()->group( groupUuid.toUInt() ));
+		}
+
+		for (int i=0; i < groups.count(); ++i)
+		{
+			int gIndex = indexOfGroup( groups.at( i ) );
+			Q_ASSERT( gIndex != -1 );
+
+			int gDesireIndex = row + i;
+
+			// Check if mcDesireIndex isn't invalid (shouldn't happen)
+			if ( gDesireIndex < 0 || gDesireIndex > m_groups.count() )
+				gDesireIndex = m_groups.count();
+		
+			// If the manual index is the same do nothing otherwise change possition
+			if ( gIndex == gDesireIndex )
+				continue;
+			
+			// We're moving group so temporary remove it so model is avare of the change.
+			beginRemoveRows( QModelIndex(), gIndex, gIndex );
+			GroupModelItem* gModelItem = m_groups.takeAt( gIndex );
+			endRemoveRows();
+			
+			// If gDesireIndex was after gIndex decrement it because we have removed group
+			if ( gIndex < gDesireIndex )
+				gDesireIndex--;
+
+			beginInsertRows( QModelIndex(), gDesireIndex, gDesireIndex );
+			m_groups.insert( gDesireIndex, gModelItem );
+			endInsertRows();
+		}
 	}
-	else if (parent.data( Kopete::Items::TypeRole ) == Kopete::Items::Group)
+	else if ( data->hasFormat("application/kopete.metacontacts.list") )
 	{
-		GroupModelItem *gmi = dynamic_cast<GroupModelItem*>(clmi);
-		if ( !gmi )
+		// we don't support dropping things in an empty space
+		if (!parent.isValid())
 			return false;
 
-		// if we have metacontacts on the mime data, move them to this group
-		for (int i=0; i < metaContacts.count(); ++i)
-			metaContacts[i]->moveToGroup( groups[i], gmi->group() );
+		// decode the mime data
+		QByteArray encodedData = data->data("application/kopete.metacontacts.list");
+		QDataStream stream(&encodedData, QIODevice::ReadOnly);
+		QList<Kopete::MetaContact*> metaContacts;
+		QList<Kopete::Group*> groups; // each metacontact is linked to one group in this context
 
-		return true;
+		while (!stream.atEnd())
+		{
+			QString line;
+			stream >> line;
+
+			QStringList entry = line.split("/");
+			
+			QString grp = entry[0];
+			QString id = entry[1];
+			
+			metaContacts.append(Kopete::ContactList::self()->metaContact( QUuid(id) ));
+			groups.append(Kopete::ContactList::self()->group( grp.toUInt() ));
+		}
+
+		ContactListModelItem *clmi = static_cast<ContactListModelItem*>(parent.internalPointer());
+		// check if the parent is a group or a metacontact
+		if (parent.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact)
+		{
+			MetaContactModelItem *mcmi = dynamic_cast<MetaContactModelItem*>(clmi);
+			if ( !mcmi )
+				return false;
+
+			// Merge the metacontacts from mimedata into this one
+			Kopete::ContactList::self()->mergeMetaContacts(metaContacts, mcmi->metaContact());
+			return true;
+		}
+		else if (parent.data( Kopete::Items::TypeRole ) == Kopete::Items::Group)
+		{
+			GroupModelItem *gmi = dynamic_cast<GroupModelItem*>(clmi);
+			if ( !gmi )
+				return false;
+
+			// if we have metacontacts on the mime data, move them to this group
+			for (int i=0; i < metaContacts.count(); ++i)
+			{
+				if ( m_manualMetaContactSorting )
+				{
+					QPair<const Kopete::Group*, const Kopete::MetaContact* > groupMetaContactPair( gmi->group(), metaContacts[i] );
+					m_addContactPosition.insert( groupMetaContactPair, row + i );
+					if ( groups[i] == gmi->group() )
+						addMetaContactToGroup( metaContacts[i], gmi->group() );
+					else
+						metaContacts[i]->moveToGroup(groups[i], gmi->group());
+				}
+				else if ( groups[i] != gmi->group() )
+				{
+					metaContacts[i]->moveToGroup(groups[i], gmi->group());
+				}
+			}
+
+			return true;
+		}
 	}
 
 	return false;
@@ -602,6 +735,21 @@ void ContactListModel::handleContactDataChange(Kopete::MetaContact* mc)
 	}
 }
 
+void ContactListModel::appearanceConfigChanged()
+{
+	AppearanceSettings* as = AppearanceSettings::self();
+	bool manualGroupSorting = (as->contactListGroupSorting() == AppearanceSettings::EnumContactListGroupSorting::Manual);
+	bool manualMetaContactSorting = (as->contactListMetaContactSorting() == AppearanceSettings::EnumContactListMetaContactSorting::Manual);
+
+	if ( m_manualGroupSorting != manualGroupSorting || m_manualMetaContactSorting != manualMetaContactSorting )
+	{
+		savePositions();
+		m_manualGroupSorting = manualGroupSorting;
+		m_manualMetaContactSorting = manualMetaContactSorting;
+		loadPositions();
+	}
+}
+
 void ContactListModel::loadContactList()
 {
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
@@ -613,7 +761,11 @@ void ContactListModel::loadContactList()
 	foreach ( Kopete::MetaContact* mc, kcl->metaContacts() )
 		addMetaContact( mc );
 
-	//TODO: load group/mc positions of manual sort.
+	if ( m_manualGroupSorting || m_manualMetaContactSorting )
+	{
+		loadPositions();
+		reset();
+	}
 
 	// MetaContact related
 	connect( kcl, SIGNAL( metaContactAdded( Kopete::MetaContact* ) ),
@@ -738,6 +890,235 @@ QString ContactListModel::metaContactTooltip( Kopete::MetaContact* metaContact )
 	}
 
 	return toolTip + QLatin1String("</table></td></tr></table></qt>");
+}
+
+void ContactListModel::savePositions()
+{
+	if ( !m_manualGroupSorting && !m_manualMetaContactSorting )
+		return;
+
+	QDomDocument doc;
+
+	QString fileName = KStandardDirs::locateLocal( "appdata", QLatin1String( "contactlistsort.xml" ) );
+	if ( QFile::exists( fileName ) )
+	{
+		QFile file( fileName );
+		if( !file.open( QIODevice::ReadOnly ) || !doc.setContent( &file ) )
+			kDebug() << "error opening/parsing file " << fileName;
+
+		file.close();
+	}
+
+	QDomElement rootElement = doc.firstChildElement( "Positions" );
+	if ( rootElement.isNull() )
+	{
+		rootElement = doc.createElement( "Positions" );
+		doc.appendChild( rootElement );
+	}
+
+	if ( m_manualGroupSorting )
+	{
+		QDomElement groupRootElement = rootElement.firstChildElement( "GroupPositions" );
+		if ( !groupRootElement.isNull() )
+			rootElement.removeChild( groupRootElement );
+
+		groupRootElement = doc.createElement( "GroupPositions" );
+		rootElement.appendChild( groupRootElement );
+		for ( int i = 0; i < m_groups.count(); ++i )
+		{
+			GroupModelItem* gmi = m_groups.value( i );
+			QDomElement groupElement = doc.createElement( "Group" );
+			groupElement.setAttribute( "uuid", gmi->group()->groupId() );
+			groupElement.setAttribute( "possition", i );
+			groupRootElement.appendChild( groupElement );
+		}
+	}
+	
+	if ( m_manualMetaContactSorting )
+	{
+		QString mcrType = AppearanceSettings::self()->groupContactByGroup() ? "Groups" : "Plain";
+
+		QDomElement metaContactRootElement;
+		QDomNodeList metaContactRootList = rootElement.elementsByTagName("MetaContactPositions");
+
+		for ( int index = 0; index < metaContactRootList.size(); ++index )
+		{
+			QDomElement element = metaContactRootList.item( index ).toElement();
+			if ( !element.isNull() && element.attribute( "type" ) == mcrType )
+			{
+				metaContactRootElement = element;
+				break;
+			}
+		}
+
+		if ( !metaContactRootElement.isNull() )
+			rootElement.removeChild( metaContactRootElement );
+
+		metaContactRootElement = doc.createElement( "MetaContactPositions" );
+		rootElement.appendChild( metaContactRootElement );
+		metaContactRootElement.setAttribute( "type", mcrType );
+
+		foreach( GroupModelItem* gmi, m_groups )
+		{
+			QDomElement groupElement = doc.createElement( "Group" );
+			groupElement.setAttribute( "uuid", gmi->group()->groupId() );
+			metaContactRootElement.appendChild( groupElement );
+
+			QList<MetaContactModelItem*> metaContactList = m_contacts.value( gmi );
+			for ( int i = 0; i < metaContactList.count(); ++i )
+			{
+				MetaContactModelItem* mcmi = metaContactList.value( i );
+				QDomElement metaContactElement = doc.createElement( "MetaContact" );
+				metaContactElement.setAttribute( "uuid", mcmi->metaContact()->metaContactId() );
+				metaContactElement.setAttribute( "possition", i );
+				groupElement.appendChild( metaContactElement );
+			}
+		}
+	}
+
+	QFile file( fileName );
+	if ( !file.open( QIODevice::WriteOnly | QIODevice::Text ) )
+	{
+		kDebug() << "error saving file " << fileName;
+		return;
+	}
+
+	QTextStream out( &file );
+	out << doc.toString();
+	file.close();
+}
+
+// Temporary hashes, only used for sorting when contact list is loaded.
+QHash<const GroupModelItem*, int>* _groupPosition = 0;
+QHash<const MetaContactModelItem*, int>* _metaContactPosition = 0;
+
+bool manualGroupSort( const GroupModelItem *gmi1, const GroupModelItem *gmi2 )
+{
+	return _groupPosition->value( gmi1, -1 ) < _groupPosition->value( gmi2, -1 );
+}
+
+bool manualMetaContactSort( const MetaContactModelItem *mcmi1, const MetaContactModelItem *mcmi2 )
+{
+	return _metaContactPosition->value( mcmi1, -1 ) < _metaContactPosition->value( mcmi2, -1 );
+}
+
+void ContactListModel::loadPositions()
+{
+	if ( !m_manualGroupSorting && !m_manualMetaContactSorting )
+		return;
+
+	// Temporary hash for faster item lookup
+	QHash<uint, GroupModelItem*> uuidToGroup;
+	foreach( GroupModelItem* gmi, m_groups )
+		uuidToGroup.insert( gmi->group()->groupId(), gmi );
+
+	QDomDocument doc;
+
+	QString fileName = KStandardDirs::locateLocal( "appdata", QLatin1String( "contactlistsort.xml" ) );
+	if ( QFile::exists( fileName ) )
+	{
+		QFile file( fileName );
+		if( !file.open( QIODevice::ReadOnly ) || !doc.setContent( &file ) )
+		{
+			kDebug() << "error opening/parsing file " << fileName;
+			return;
+		}
+	}
+
+	QDomElement rootElement = doc.firstChildElement( "Positions" );
+	if ( rootElement.isNull() )
+		return;
+
+	if ( m_manualGroupSorting )
+	{
+		QDomElement groupRootElement = rootElement.firstChildElement( "GroupPositions" );
+		if ( !groupRootElement.isNull() )
+		{
+			_groupPosition = new QHash<const GroupModelItem*, int>();
+			QDomNodeList groupList = groupRootElement.elementsByTagName("Group");
+
+			for ( int index = 0; index < groupList.size(); ++index )
+			{
+				QDomElement groupElement = groupList.item( index ).toElement();
+				if ( groupElement.isNull() )
+					continue;
+
+				// Put position into hash.
+				int uuid = groupElement.attribute( "uuid", "-1" ).toInt();
+				int groupPosition = groupElement.attribute( "possition", "-1" ).toInt();
+				GroupModelItem* gmi = uuidToGroup.value( uuid, 0 );
+				if ( gmi )
+					_groupPosition->insert( gmi, groupPosition++ );
+			}
+
+			qStableSort( m_groups.begin(), m_groups.end(), manualGroupSort );
+			delete _groupPosition;
+			_groupPosition = 0;
+		}
+	}
+	
+	if ( m_manualMetaContactSorting )
+	{
+		QString mcrType = AppearanceSettings::self()->groupContactByGroup() ? "Groups" : "Plain";
+		
+		QDomElement metaContactRootElement;
+		QDomNodeList metaContactRootList = rootElement.elementsByTagName("MetaContactPositions");
+		for ( int index = 0; index < metaContactRootList.size(); ++index )
+		{
+			QDomElement element = metaContactRootList.item( index ).toElement();
+			if ( !element.isNull() && element.attribute( "type" ) == mcrType )
+			{
+				metaContactRootElement = element;
+				break;
+			}
+		}
+
+		if ( !metaContactRootElement.isNull() )
+		{
+			QDomNodeList groupList = metaContactRootElement.elementsByTagName("Group");
+			
+			for ( int groupIndex = 0; groupIndex < groupList.size(); ++groupIndex )
+			{
+				QDomElement groupElement = groupList.item( groupIndex ).toElement();
+				if ( groupElement.isNull() )
+					continue;
+
+				int gUuid = groupElement.attribute( "uuid", "-1" ).toInt();
+				GroupModelItem* gmi = uuidToGroup.value( gUuid, 0 );
+				if ( !gmi )
+					continue;
+
+				// Temporary hash for faster item lookup
+				QHash<QUuid, MetaContactModelItem*> uuidToMetaContact;
+				foreach( MetaContactModelItem* mcmi, m_contacts.value( gmi ) )
+					uuidToMetaContact.insert( mcmi->metaContact()->metaContactId(), mcmi );
+
+				_metaContactPosition = new QHash<const MetaContactModelItem*, int>();
+				QDomNodeList metaContactList = groupElement.elementsByTagName("MetaContact");
+
+				for ( int index = 0; index < metaContactList.size(); ++index )
+				{
+					QDomElement metaContactElement = metaContactList.item( index ).toElement();
+					if ( metaContactElement.isNull() )
+						continue;
+
+					// Put position into hash.
+					QUuid uuid( metaContactElement.attribute( "uuid" ) );
+					int metaContactPosition = metaContactElement.attribute( "possition", "-1" ).toInt();
+					MetaContactModelItem* mcmi = uuidToMetaContact.value( uuid, 0 );
+					if ( mcmi )
+						_metaContactPosition->insert( mcmi, metaContactPosition );
+				}
+
+				QList<MetaContactModelItem*> mcList = m_contacts.value( gmi );
+				qStableSort( mcList.begin(), mcList.end(), manualMetaContactSort );
+				m_contacts.insert( gmi, mcList );
+
+				delete _metaContactPosition;
+				_metaContactPosition = 0;
+			}
+		}
+	}
 }
 
 }

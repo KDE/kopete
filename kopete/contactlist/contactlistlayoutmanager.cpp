@@ -132,20 +132,18 @@ void LayoutManager::loadLayouts( const QString &fileName, bool user )
 		return;
 	}
 
-	QFile *file = new QFile( fileName );
-	if( !file || !file->open( QIODevice::ReadOnly ) )
+	QFile file( fileName );
+	if( !file.open( QIODevice::ReadOnly ) )
 	{
 		kDebug() << "error reading file " << fileName;
 		return;
 	}
-	if ( !doc.setContent( file ) )
+	if ( !doc.setContent( &file ) )
 	{
 		kDebug() << "error parsing file " << fileName;
-		file->close();
-		return ;
+		return;
 	}
-	file->close();
-	delete file;
+	file.close();
 
 	QDomElement layouts_element = doc.firstChildElement( "contactlist_layouts" );
 	QDomNodeList layouts = layouts_element.elementsByTagName("layout");

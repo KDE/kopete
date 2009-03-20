@@ -135,6 +135,9 @@ MetaContact *ContactList::metaContact( const QString &metaContactId ) const
 
 Group * ContactList::group(unsigned int groupId) const
 {
+	if ( groupId == Group::topLevel()->groupId() )
+		return Group::topLevel();
+
 	QListIterator<Group *> it(d->groups);
 
 	while ( it.hasNext() )

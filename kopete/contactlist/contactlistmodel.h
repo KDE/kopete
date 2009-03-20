@@ -75,6 +75,7 @@ Q_OBJECT
 	private Q_SLOTS:
 		void resetModel();
 		void handleContactDataChange(Kopete::MetaContact*);
+		void appearanceConfigChanged();
 		void loadContactList();
 
 	private:
@@ -86,8 +87,15 @@ Q_OBJECT
 		QVariant metaContactImage( Kopete::MetaContact* mc ) const;
 		QString metaContactTooltip( Kopete::MetaContact* metaContact ) const;
 
+		void savePositions();
+		void loadPositions();
+
+		QHash< QPair<const Kopete::Group*, const Kopete::MetaContact* >, int > m_addContactPosition;
 		QList<GroupModelItem*> m_groups;
 		QMap<const GroupModelItem*, QList<MetaContactModelItem*> > m_contacts;
+
+		bool m_manualGroupSorting;
+		bool m_manualMetaContactSorting;
 };
 
 class ContactListModelItem {
