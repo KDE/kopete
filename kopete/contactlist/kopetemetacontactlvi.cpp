@@ -22,6 +22,7 @@
 #include <qtimer.h>
 #include <qvariant.h>
 #include <qmime.h>
+#include <QTextDocumentFragment>
 #include <QTextDocument>
 #include <QPixmap>
 #include <QList>
@@ -934,7 +935,7 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::PropertyContainer
 					// -this contact's away message is not empty and
 					// -this contact is online or there are no contacts online at all
 					allAwayMessagesEmpty = false;
-					d->extraText->setText( awayMessage );
+					d->extraText->setText( QTextDocumentFragment::fromHtml(awayMessage).toPlainText() );
 					break;
 				}
 			}
@@ -946,7 +947,7 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( Kopete::PropertyContainer
 			// just use new away message when:
 			// -new away message is not empty and
 			// -contact who set it is online or there are no contacts online at all
-			d->extraText->setText( newVal.toString() );
+			d->extraText->setText( QTextDocumentFragment::fromHtml(newVal.toString()).toPlainText() );
 		}
 	} // wtf? KopeteMetaContact also connects this signals and emits photoChanged! why no connect photoChanged to slotPhotoChanged?
 	/*else if ( key == QLatin1String("photo") && (m_metaContact->photoSourceContact() == contact) && (m_metaContact->photoSource() == Kopete::MetaContact::SourceContact))
