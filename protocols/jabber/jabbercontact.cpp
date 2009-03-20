@@ -51,6 +51,7 @@
 #include "kopetechatsessionmanager.h"
 #include "kopeteaccountmanager.h"
 #include "kopetemetacontact.h"
+#include "kopetepluginmanager.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -392,9 +393,15 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		QString body = message.body ();
 		if( !message.xencrypted().isEmpty() )
 		{
-			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received encrypted message";
+			if (Kopete::PluginManager::self()->plugin("kopete_cryptography"))
+			{
+				kDebug( JABBER_DEBUG_GLOBAL ) << "Kopete cryptography plugin loaded";
+				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
+			}
 		}
-		else if( message.containsHTML() )
+
+		if( message.containsHTML() )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received a xHTML message";
 			newMessage = new Kopete::Message ( this, contactList );
