@@ -106,7 +106,7 @@ void CryptographyGUIClient::slotSignToggled()
 	if ( m_signAction->isChecked() ) {
 		if ( CryptographySettings::privateKeyFingerprint().isEmpty() ) {
 			KMessageBox::sorry ( Kopete::UI::Global::mainWidget(),
-			                     i18nc ( "@info", "You have not selected a private key for yourself, so signing is not possible. Please select a private key in the Cryptography preferences dialog" ),
+			                     i18nc ( "@info", "You have not selected a private key for yourself, so signing is not possible. Please select a private key in the Cryptography preferences dialog." ),
 			                     i18n ( "No Private Key" ) );
 			m_signAction->setChecked ( false );
 		}
