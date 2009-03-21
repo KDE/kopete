@@ -439,6 +439,8 @@ void KopeteContactListView::mouseReleaseEvent(QMouseEvent *event)
 
 void KopeteContactListView::rowsInserted( const QModelIndex &parent, int start, int end )
 {
+	QTreeView::rowsInserted( parent, start, end );
+
 	const int delta = end - start + 1;
 	for (int i = 0; i < delta; ++i)
 	{
@@ -446,8 +448,6 @@ void KopeteContactListView::rowsInserted( const QModelIndex &parent, int start, 
 		if ( index.isValid() && index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
 			setExpanded( index , index.data( Kopete::Items::ExpandStateRole ).toBool() );
 	}
-
-	QTreeView::rowsInserted( parent, start, end );
 }
 
 void KopeteContactListView::reexpandGroups()

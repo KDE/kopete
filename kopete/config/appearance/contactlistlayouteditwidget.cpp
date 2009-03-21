@@ -42,6 +42,7 @@ LayoutEditWidget::LayoutEditWidget( QWidget *parent )
 	connect( m_dragstack, SIGNAL(changed()), this, SIGNAL(changed()) );
 	
 	m_showIconCheckBox = new QCheckBox( i18n( "Show Icon" ) , this );
+	connect( m_showIconCheckBox, SIGNAL(toggled(bool)), this, SIGNAL(changed()) );
 }
 
 
