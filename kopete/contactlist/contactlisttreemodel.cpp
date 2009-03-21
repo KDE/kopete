@@ -278,6 +278,27 @@ int ContactListTreeModel::countConnected( GroupModelItem* gmi ) const
 	return onlineCount;
 }
 
+bool ContactListTreeModel::setData( const QModelIndex & index, const QVariant & value, int role )
+{
+	if ( !index.isValid() )
+		return false;
+
+	if ( role == Kopete::Items::ExpandStateRole )
+	{
+		ContactListTreeModelItem *clmi = static_cast<ContactListTreeModelItem*>( index.internalPointer() );
+		GroupModelItem *gmi = dynamic_cast<GroupModelItem*>( clmi );
+
+		if ( gmi )
+		{
+			gmi->group()->setExpanded( value.toBool() );
+			emit dataChanged( index, index );
+			return true;
+		}
+	}
+
+	return false;
+}
+
 QVariant ContactListTreeModel::data ( const QModelIndex & index, int role ) const
 {
 	if ( !index.isValid() )
@@ -334,6 +355,9 @@ QVariant ContactListTreeModel::data ( const QModelIndex & index, int role ) cons
 			break;
 		case Kopete::Items::IdRole:
 			return QString::number(g->groupId());
+			break;
+		case Kopete::Items::ExpandStateRole:
+			return g->isExpanded();
 			break;
 		}
 	}

@@ -45,6 +45,7 @@ public:
 	ContactListTreeModel(QObject* parent = 0);
 	~ContactListTreeModel();
 
+	virtual bool setData ( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
 	virtual QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 	virtual QModelIndex index ( int row, int column, const QModelIndex & parent = QModelIndex() ) const;
 

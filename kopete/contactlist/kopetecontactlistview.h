@@ -69,8 +69,6 @@ public:
 public Q_SLOTS:
 	virtual void reset();
 	void contactActivated( const QModelIndex& index );
-	void itemExpanded( const QModelIndex& index );
-	void itemCollapsed( const QModelIndex& index );
 
 	void showItemProperties();
 	void mergeMetaContact();
@@ -86,7 +84,14 @@ protected:
 	void contextMenuEvent( QContextMenuEvent* event );
 	void mouseReleaseEvent( QMouseEvent *event );
 
+protected slots:
+	virtual void rowsInserted( const QModelIndex &parent, int start, int end );
+
 private slots:
+	void reexpandGroups();
+	void itemExpanded( const QModelIndex& index );
+	void itemCollapsed( const QModelIndex& index );
+
 	void slotSettingsChanged();
 	void addToAddContactMenu( Kopete::Account* account );
 	void removeToAddContactMenu( const Kopete::Account *account );
@@ -95,9 +100,6 @@ private slots:
 private:
 	Kopete::MetaContact* metaContactFromIndex( const QModelIndex& index ) const;
 	Kopete::Group* groupFromIndex( const QModelIndex& index ) const;
-
-	void saveExpandedGroups();
-	void expandGroups();
 
 private:
 	void groupPopup( Kopete::Group *group, const QPoint& pos );

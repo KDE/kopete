@@ -122,6 +122,11 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	slotSettingsChanged();
 }
 
+KopeteContactListView::~KopeteContactListView()
+{
+	delete d;
+}
+
 void KopeteContactListView::initActions( KActionCollection *ac )
 {
 // 	d->actionUndo = KStandardAction::undo( this , SLOT( slotUndo() ) , ac );
@@ -192,12 +197,6 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	//	slotViewSelectionChanged();
 }
 
-
-KopeteContactListView::~KopeteContactListView()
-{
-	delete d;
-}
-
 Kopete::MetaContact* KopeteContactListView::metaContactFromIndex( const QModelIndex& index ) const
 {
 	QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
@@ -208,29 +207,6 @@ Kopete::Group* KopeteContactListView::groupFromIndex( const QModelIndex& index )
 {
 	QObject* groupObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
 	return qobject_cast<Kopete::Group*>(groupObject);
-}
-
-void KopeteContactListView::saveExpandedGroups()
-{
-	QModelIndex parent = rootIndex();
-	d->notExpandedGroups.clear();
-	for (int i = 0; i < model()->rowCount( parent ); ++i)
-	{
-		QModelIndex child = model()->index( i, 0, parent );
-		if ( !isExpanded( child ) )
-			d->notExpandedGroups << model()->data( child, Kopete::Items::IdRole ).toInt();
-	}
-}
-
-void KopeteContactListView::expandGroups()
-{
-	QModelIndex parent = rootIndex();
-	for (int i = 0; i < model()->rowCount( parent ); ++i)
-	{
-		QModelIndex child = model()->index( i, 0, parent );
-		int groupId = model()->data( child, Kopete::Items::IdRole ).toInt();
-		setExpanded( child, !d->notExpandedGroups.contains( groupId ) );
-	}
 }
 
 void KopeteContactListView::contactActivated( const QModelIndex& index )
@@ -251,29 +227,8 @@ void KopeteContactListView::contactActivated( const QModelIndex& index )
 
 void KopeteContactListView::reset()
 {
-	saveExpandedGroups();
 	QTreeView::reset();
-	expandGroups();
-}
-
-void KopeteContactListView::itemExpanded( const QModelIndex& index )
-{
-	Q_ASSERT(model());
-	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
-	{
-		model()->setData( index, KIcon(KOPETE_GROUP_DEFAULT_OPEN_ICON),
-	                      Qt::DecorationRole );
-	}
-}
-
-void KopeteContactListView::itemCollapsed( const QModelIndex& index )
-{
-	Q_ASSERT(model());
-	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
-	{
-		model()->setData( index, KIcon(KOPETE_GROUP_DEFAULT_CLOSED_ICON),
-		                  Qt::DecorationRole );
-	}
+	reexpandGroups();
 }
 
 void KopeteContactListView::showItemProperties()
@@ -480,6 +435,45 @@ void KopeteContactListView::mouseReleaseEvent(QMouseEvent *event)
 
 	QTreeView::mouseReleaseEvent( event );
 	d->controlPressed = false;
+}
+
+void KopeteContactListView::rowsInserted( const QModelIndex &parent, int start, int end )
+{
+	const int delta = end - start + 1;
+	for (int i = 0; i < delta; ++i)
+	{
+		QModelIndex index = model()->index( i + start, 0, parent );
+		if ( index.isValid() && index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+			setExpanded( index , index.data( Kopete::Items::ExpandStateRole ).toBool() );
+	}
+
+	QTreeView::rowsInserted( parent, start, end );
+}
+
+void KopeteContactListView::reexpandGroups()
+{
+	// Set expanded state of groups
+	QModelIndex parent = rootIndex();
+	for (int i = 0; i < model()->rowCount( parent ); ++i)
+	{
+		QModelIndex index = model()->index( i, 0, parent );
+		if ( index.isValid() && index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+			setExpanded( index, model()->data( index, Kopete::Items::ExpandStateRole ).toBool() );
+	}
+}
+
+void KopeteContactListView::itemExpanded( const QModelIndex& index )
+{
+	Q_ASSERT(model());
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+		model()->setData( index, true, Kopete::Items::ExpandStateRole );
+}
+
+void KopeteContactListView::itemCollapsed( const QModelIndex& index )
+{
+	Q_ASSERT(model());
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+		model()->setData( index, false, Kopete::Items::ExpandStateRole );
 }
 
 void KopeteContactListView::slotSettingsChanged()

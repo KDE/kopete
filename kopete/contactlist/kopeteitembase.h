@@ -48,6 +48,7 @@ namespace Kopete
 		const int StatusMessageRole = Qt::UserRole + 110;
 		const int AccountIconsRole = Qt::UserRole + 111;
 		const int ObjectRole = Qt::UserRole + 112;
+		const int ExpandStateRole = Qt::UserRole + 113;
 
 		/* Item type role values */
 		enum Type { Group, MetaContact };
