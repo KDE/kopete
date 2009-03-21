@@ -17,6 +17,8 @@ customnotificationprops.cpp
 kopetegrouplistaction.cpp
 kabcexport.cpp
 contactlistmodel.cpp
+contactlisttreemodel.cpp
+contactlistplainmodel.cpp
 contactlistproxymodel.cpp
 kopeteitemdelegate.cpp
 contactlistlayoutmanager.cpp

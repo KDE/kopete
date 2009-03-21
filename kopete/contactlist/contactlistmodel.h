@@ -2,8 +2,9 @@
     Kopete Contactlist Model
 
     Copyright (c) 2007      by Aleix Pol              <aleixpol@gmail.com>
+    Copyright     2009      by Roman Jarosz           <kedgedev@gmail.com>
 
-    Kopete    (c) 2002-2007 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,116 +23,63 @@
 
 #include <kopete_export.h>
 
+class QDomDocument;
+class QDomElement;
+
 namespace Kopete {
 
 class Group;
-class Contactlist;
 class MetaContact;
-class ContactListElement;
 	
 namespace UI {
 
-class MetaContactModelItem;
-class GroupModelItem;
-class ContactListModelItem;
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
 class KOPETE_CONTACT_LIST_EXPORT ContactListModel : public QAbstractItemModel
 {
 Q_OBJECT
-	public:
-		ContactListModel(QObject* parent = 0);
-		~ContactListModel();
-		
-		virtual int columnCount ( const QModelIndex & parent = QModelIndex() ) const { return 1; }
-		virtual QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
-		virtual QModelIndex index ( int row, int column, const QModelIndex & parent = QModelIndex() ) const;
-		
-		virtual QModelIndex parent ( const QModelIndex & index ) const;
-		virtual int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
-		virtual bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
-		
-		virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-
-		/* drag-n-drop stuff */
-		virtual Qt::DropActions supportedDropActions() const;
-		virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
-		virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-		                          int row, int column, const QModelIndex &parent);
-		
-		QModelIndexList indexListFor ( Kopete::ContactListElement* ) const;
-	public Q_SLOTS:
-		void addMetaContact( Kopete::MetaContact* );
-		void removeMetaContact( Kopete::MetaContact* );
-		
-		void addGroup( Kopete::Group* );
-		void removeGroup( Kopete::Group* );
-
-		void addMetaContactToGroup( Kopete::MetaContact*, Kopete::Group* );
-		void removeMetaContactFromGroup( Kopete::MetaContact*, Kopete::Group* );
-		void moveMetaContactToGroup( Kopete::MetaContact*, Kopete::Group*, Kopete::Group*);
-	
-	private Q_SLOTS:
-		void resetModel();
-		void handleContactDataChange(Kopete::MetaContact*);
-		void appearanceConfigChanged();
-		void loadContactList();
-
-	private:
-		int indexOfMetaContact( const GroupModelItem* inGroup, const Kopete::MetaContact* mc ) const;
-		int indexOfGroup( Kopete::Group* group ) const;
-
-		int childCount( const QModelIndex& parent ) const;
-		int countConnected( GroupModelItem* gmi ) const;
-		QVariant metaContactImage( Kopete::MetaContact* mc ) const;
-		QString metaContactTooltip( Kopete::MetaContact* metaContact ) const;
-
-		void savePositions();
-		void loadPositions();
-
-		QHash< QPair<const Kopete::Group*, const Kopete::MetaContact* >, int > m_addContactPosition;
-		QList<GroupModelItem*> m_groups;
-		QMap<const GroupModelItem*, QList<MetaContactModelItem*> > m_contacts;
-
-		bool m_manualGroupSorting;
-		bool m_manualMetaContactSorting;
-};
-
-class ContactListModelItem {
 public:
-	ContactListModelItem() {}
-	virtual ~ContactListModelItem() {}
+	ContactListModel(QObject* parent = 0);
 
-private:
-	// For dynamic cast
-	virtual void dummy() {}
+	void init();
+
+	virtual int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
+
+	/* drag-n-drop stuff */
+	virtual Qt::DropActions supportedDropActions() const;
+	virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
+
+	bool loadModelSettings( const QString& modelType );
+	bool saveModelSettings( const QString& modelType );
+
+public Q_SLOTS:
+	virtual void addMetaContact( Kopete::MetaContact* );
+	virtual void removeMetaContact( Kopete::MetaContact* );
+
+	virtual void addGroup( Kopete::Group* );
+	virtual void removeGroup( Kopete::Group* );
+
+	virtual void addMetaContactToGroup( Kopete::MetaContact*, Kopete::Group* );
+	virtual void removeMetaContactFromGroup( Kopete::MetaContact*, Kopete::Group* );
+	virtual void moveMetaContactToGroup( Kopete::MetaContact*, Kopete::Group*, Kopete::Group*);
+
+protected Q_SLOTS:
+	virtual void appearanceConfigChanged() = 0;
+	virtual void handleContactDataChange(Kopete::MetaContact*) = 0;
+	virtual void loadContactList();
+
+protected:
+	QVariant metaContactData( const Kopete::MetaContact* mc, int role ) const;
+	QVariant metaContactImage( const Kopete::MetaContact* mc ) const;
+	QString metaContactTooltip( const Kopete::MetaContact* metaContact ) const;
+
+	virtual void loadModelSettingsImpl( QDomElement& rootElement ) = 0;
+	virtual void saveModelSettingsImpl( QDomDocument& doc, QDomElement& rootElement ) = 0;
+
+	bool m_manualGroupSorting;
+	bool m_manualMetaContactSorting;
 };
-
-class GroupModelItem : public ContactListModelItem {
-public:
-	GroupModelItem( Kopete::Group* group )
-		: ContactListModelItem(), mGroup( group )
-	{}
-	
-	inline Kopete::Group* group() const { return mGroup; }
-private:
-	Kopete::Group* mGroup;
-};
-
-class MetaContactModelItem : public ContactListModelItem {
-public:
-	MetaContactModelItem( GroupModelItem* groupModelItem, Kopete::MetaContact* metaContact )
-		: ContactListModelItem(), mMetaContact( metaContact ), mGroupModelItem( groupModelItem )
-	{}
-	
-	inline Kopete::MetaContact* metaContact() const { return mMetaContact; }
-	inline GroupModelItem* groupModelItem() const { return mGroupModelItem; }
-private:
-	Kopete::MetaContact* mMetaContact;
-	GroupModelItem* mGroupModelItem;
-};
-
 }
 
 }

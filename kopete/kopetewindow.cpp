@@ -101,7 +101,8 @@
 #include "kopeteemoticons.h"
 #include "kopeteinfoeventmanager.h"
 #include "infoeventwidget.h"
-#include "contactlistmodel.h"
+#include "contactlisttreemodel.h"
+#include "contactlistplainmodel.h"
 #include "contactlistproxymodel.h"
 #include "kopeteitemdelegate.h"
 #include "kopetemetacontact.h"
@@ -352,7 +353,13 @@ void KopeteWindow::initView()
 	QWidget *w = new QWidget ( this );
 	QVBoxLayout *l = new QVBoxLayout ( w );
  	d->contactlist = new KopeteContactListView ( w );
-	d->model = new Kopete::UI::ContactListModel( this );
+
+	if ( Kopete::AppearanceSettings::self()->groupContactByGroup() )
+		d->model = new Kopete::UI::ContactListTreeModel( this );
+	else
+		d->model = new Kopete::UI::ContactListPlainModel( this );
+
+	d->model->init();
 	d->proxyModel = new Kopete::UI::ContactListProxyModel( this );
 	d->proxyModel->setSourceModel( d->model );
 	d->contactlist->setModel( d->proxyModel );
@@ -658,6 +665,20 @@ void KopeteWindow::slotToggleShowEmptyGroups()
 
 void KopeteWindow::slotConfigChanged()
 {
+	bool groupContactByGroupModel = qobject_cast<Kopete::UI::ContactListTreeModel*>( d->model );
+	if ( groupContactByGroupModel != Kopete::AppearanceSettings::self()->groupContactByGroup() )
+	{
+		Kopete::UI::ContactListModel* oldModel = d->model;
+		if ( Kopete::AppearanceSettings::self()->groupContactByGroup() )
+			d->model = new Kopete::UI::ContactListTreeModel( this );
+		else
+			d->model = new Kopete::UI::ContactListPlainModel( this );
+
+		d->model->init();
+		d->proxyModel->setSourceModel( d->model );
+		oldModel->deleteLater();
+	}
+
 	if ( isHidden() && !Kopete::BehaviorSettings::self()->showSystemTray() ) // user disabled systray while kopete is hidden, show it!
 		show();
 
