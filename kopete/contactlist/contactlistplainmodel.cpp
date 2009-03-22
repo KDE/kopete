@@ -196,19 +196,23 @@ bool ContactListPlainModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
 	// for now only accepting drop of metacontacts
 	// TODO: support dropping of files in metacontacts to allow file transfers
-	if ( !data->hasFormat("application/kopete.metacontacts.list") )
+	if ( !data->hasFormat("application/kopete.metacontacts.list") && !data->hasUrls() )
 		return false;
 
 	// contactlist has only one column
 	if (column > 0)
 		return false;
 
-	if ( data->hasFormat("application/kopete.metacontacts.list") )
+	if ( data->hasUrls() )
+	{
+		return dropUrl( data, row, parent );
+	}
+	else if ( data->hasFormat("application/kopete.metacontacts.list") )
 	{
 		// decode the mime data
 		QByteArray encodedData = data->data("application/kopete.metacontacts.list");
 		QDataStream stream(&encodedData, QIODevice::ReadOnly);
-		QList<Kopete::MetaContact*> metaContacts;
+		QList<GroupMetaContactPair> items;
 
 		while (!stream.atEnd())
 		{
@@ -217,35 +221,41 @@ bool ContactListPlainModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
 			QStringList entry = line.split("/");
 
-			// We ignore groups
+			QString grp = entry[0];
 			QString id = entry[1];
-			metaContacts.append(Kopete::ContactList::self()->metaContact( QUuid(id) ));
-			
+
+			GroupMetaContactPair pair;
+			pair.first = Kopete::ContactList::self()->group( grp.toUInt() );
+			pair.second = Kopete::ContactList::self()->metaContact( QUuid(id) );
+			items.append( pair );
 		}
 
-		if ( !parent.isValid() )
+		return dropMetaContacts( row, parent, items );
+	}
+
+	return false;
+}
+
+bool ContactListPlainModel::dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items )
+{
+	if ( items.isEmpty() )
+		return false;
+
+	if ( ContactListModel::dropMetaContacts( row, parent, items ) )
+	     return true;
+
+	if ( !parent.isValid() )
+	{
+		for ( int i = 0; i < items.count(); ++i )
 		{
-			for ( int i = 0; i < metaContacts.count(); ++i )
+			if ( m_manualMetaContactSorting )
 			{
-				if ( m_manualMetaContactSorting )
-				{
-					m_addContactPosition.insert( metaContacts[i], row + i );
-					addMetaContactImpl( metaContacts[i] );
-				}
+				GroupMetaContactPair pair = items.at( i );
+				m_addContactPosition.insert( pair.second, row + i );
+				addMetaContactImpl( pair.second );
 			}
-			return true;
 		}
-		else if (parent.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact)
-		{
-			Kopete::ContactListElement *cle = static_cast<Kopete::ContactListElement*>( parent.internalPointer() );
-			Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>(cle);
-			if ( !mc )
-				return false;
-
-			// Merge the metacontacts from mimedata into this one
-			Kopete::ContactList::self()->mergeMetaContacts(metaContacts, mc);
-			return true;
-		}
+		return true;
 	}
 
 	return false;

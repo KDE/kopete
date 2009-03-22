@@ -27,6 +27,7 @@
 
 #include <KDebug>
 #include <KEmoticonsTheme>
+#include <KMessageBox>
 
 #include "kopeteaccount.h"
 #include "kopetepicture.h"
@@ -37,6 +38,10 @@
 #include "kopeteitembase.h"
 #include "kopeteappearancesettings.h"
 #include "kopeteemoticons.h"
+#include "kopetemessage.h"
+#include "kopetechatsession.h"
+#include "kopeteaccountmanager.h"
+#include "kopeteuiglobal.h"
 
 namespace Kopete {
 
@@ -70,15 +75,23 @@ int ContactListModel::columnCount ( const QModelIndex& ) const
 
 Qt::DropActions ContactListModel::supportedDropActions() const
 {
-	return QAbstractItemModel::supportedDropActions();
-	return Qt::MoveAction;
+	return (Qt::DropActions)(Qt::CopyAction | Qt::MoveAction);
+}
+
+QStringList ContactListModel::mimeTypes() const
+{
+	QStringList types;
+
+	types << "application/kopete.group";
+	types << "application/kopete.metacontacts.list";
+	types << "text/uri-list";
+
+	return types;
 }
 
 QMimeData* ContactListModel::mimeData(const QModelIndexList &indexes) const
 {
-	// the mimeData encoded by QAbstractItemView is required for the
-	// drop indicators to work on QTreeView
-	QMimeData *mdata = QAbstractItemModel::mimeData(indexes);
+	QMimeData *mdata = new QMimeData();
 	QByteArray encodedData;
 
 	QDataStream stream(&encodedData, QIODevice::WriteOnly);
@@ -298,6 +311,99 @@ void ContactListModel::loadContactList()
 	         this, SLOT(removeMetaContactFromGroup(Kopete::MetaContact*, Kopete::Group*)) );
 	connect( kcl, SIGNAL(metaContactMovedToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)),
 	         this, SLOT(moveMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)));
+}
+
+bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelIndex &parent )
+{
+	// we don't support dropping things in an empty space
+	if ( !parent.isValid() || parent.data( Kopete::Items::TypeRole ) != Kopete::Items::MetaContact )
+		return false;
+
+	QObject* metaContactObject = qVariantValue<QObject*>( parent.data( Kopete::Items::ObjectRole ) );
+	Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
+
+	KUrl::List urlList = KUrl::List::fromMimeData( data );
+	for ( KUrl::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+	{
+		KUrl url = (*it);
+		if( url.protocol() == QLatin1String( "kopetemessage" ) )
+		{
+			//Add a contact
+			QString protocolId = url.queryItem( "protocolId" );
+			QString accountId = url.queryItem( "accountId" );
+			QString contactId = url.host();
+
+			kDebug() << "protocolId=" << protocolId << ", accountId=" << accountId << ", contactId=" << contactId;
+			Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId, accountId );
+			if( account && account->contacts().contains( contactId ) )
+			{
+				Kopete::Contact *source_contact = account->contacts()[ contactId ];
+				if( source_contact )
+				{
+					if( source_contact->metaContact()->isTemporary() )
+					{
+						GroupMetaContactPair pair;
+						pair.first = source_contact->metaContact()->groups().first();
+						pair.second = source_contact->metaContact();
+
+						QList<GroupMetaContactPair> items;
+						items << pair;
+						return dropMetaContacts( row, parent, items );
+					}
+					else
+					{
+						KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
+						                               i18n( "<qt>This contact is already on your contact list. It is a child contact of <b>%1</b></qt>",
+						                                     source_contact->metaContact()->displayName() )
+						                               );
+					}
+				}
+			}
+		}
+		else if ( metaContact )
+		{
+			if( url.isLocalFile() )
+			{
+				metaContact->sendFile( url );
+			}
+			else
+			{
+				//this is a URL, send the URL in a message
+				Kopete::Contact *contact = metaContact->execute();
+				Kopete::Message msg( contact->account()->myself(), contact );
+				msg.setPlainBody( url.url() );
+				msg.setDirection( Kopete::Message::Outbound );
+
+				contact->manager( Kopete::Contact::CanCreate )->sendMessage( msg );
+			}
+		}
+	}
+	return true;
+}
+
+bool ContactListModel::dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items )
+{
+	if ( items.isEmpty() || !parent.isValid() )
+		return false;
+
+	if ( parent.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+	{
+		QObject* metaContactObject = qVariantValue<QObject*>( parent.data( Kopete::Items::ObjectRole ) );
+		Kopete::MetaContact* destMetaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
+		if ( !destMetaContact )
+			return false;
+
+		QList<Kopete::MetaContact*> metaContacts;
+		QListIterator<GroupMetaContactPair> it( items );
+		while ( it.hasNext() )
+			metaContacts << it.next().second;
+
+		// Merge the metacontacts from mimedata into this one
+		Kopete::ContactList::self()->mergeMetaContacts( metaContacts, destMetaContact );
+		return true;
+	}
+
+	return false;
 }
 
 QVariant ContactListModel::metaContactData( const Kopete::MetaContact* mc, int role ) const

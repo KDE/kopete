@@ -100,6 +100,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 
 	setSelectionMode( QAbstractItemView::ExtendedSelection );
 	setDragEnabled( true );
+	setDragDropMode( QAbstractItemView::DragDrop );
 	setAcceptDrops( true );
 	setAlternatingRowColors( true );
 	setAnimated( true );
@@ -180,7 +181,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	d->actionAddTemporaryContact = new KAction( KIcon("list-add-user"), i18n( "Add to Your Contact List" ), ac );
 	ac->addAction( "contactAddTemporaryContact", d->actionAddTemporaryContact );
-	connect( d->actionAddTemporaryContact, SIGNAL(triggered(bool)), this, SLOT(slotAddTemporaryContact()) );
+	connect( d->actionAddTemporaryContact, SIGNAL(triggered(bool)), this, SLOT(addTemporaryContact()) );
 
 // 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
 

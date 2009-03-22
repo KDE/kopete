@@ -55,8 +55,8 @@ public:
 
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-								int row, int column, const QModelIndex &parent);
+	virtual bool dropMimeData( const QMimeData *data, Qt::DropAction action,
+	                           int row, int column, const QModelIndex &parent );
 
 public Q_SLOTS:
 	virtual void addMetaContact( Kopete::MetaContact* );
@@ -77,6 +77,8 @@ protected:
 	virtual void loadModelSettingsImpl( QDomElement& rootElement );
 	virtual void saveModelSettingsImpl( QDomDocument& doc, QDomElement& rootElement );
 
+	virtual bool dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items );
+
 private:
 	QModelIndexList indexListFor ( Kopete::ContactListElement* ) const;
 	int indexOfMetaContact( const GroupModelItem* inGroup, const Kopete::MetaContact* mc ) const;
@@ -87,7 +89,7 @@ private:
 	QVariant metaContactImage( Kopete::MetaContact* mc ) const;
 	QString metaContactTooltip( Kopete::MetaContact* metaContact ) const;
 
-	QHash< QPair<const Kopete::Group*, const Kopete::MetaContact* >, int > m_addContactPosition;
+	QHash<GroupMetaContactPair, int> m_addContactPosition;
 	QList<GroupModelItem*> m_groups;
 	QMap<const GroupModelItem*, QList<MetaContactModelItem*> > m_contacts;
 };

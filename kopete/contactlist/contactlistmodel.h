@@ -49,6 +49,7 @@ public:
 	/* drag-n-drop stuff */
 	virtual Qt::DropActions supportedDropActions() const;
 	virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
+	virtual QStringList mimeTypes() const;
 
 	bool loadModelSettings( const QString& modelType );
 	bool saveModelSettings( const QString& modelType );
@@ -70,6 +71,10 @@ protected Q_SLOTS:
 	virtual void loadContactList();
 
 protected:
+	bool dropUrl( const QMimeData *data, int row, const QModelIndex &parent );
+	typedef QPair<Kopete::Group*, Kopete::MetaContact*> GroupMetaContactPair;
+	virtual bool dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items );
+
 	QVariant metaContactData( const Kopete::MetaContact* mc, int role ) const;
 	QVariant metaContactImage( const Kopete::MetaContact* mc ) const;
 	QString metaContactTooltip( const Kopete::MetaContact* metaContact ) const;

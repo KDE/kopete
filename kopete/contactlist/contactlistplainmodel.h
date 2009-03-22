@@ -70,6 +70,8 @@ protected:
 	virtual void loadModelSettingsImpl( QDomElement& rootElement );
 	virtual void saveModelSettingsImpl( QDomDocument& doc, QDomElement& rootElement );
 
+	virtual bool dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items );
+
 private:
 	void addMetaContactImpl( Kopete::MetaContact *mc );
 	QModelIndexList indexListFor( Kopete::ContactListElement* ) const;
