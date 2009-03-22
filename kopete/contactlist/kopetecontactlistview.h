@@ -86,12 +86,15 @@ protected:
 
 protected slots:
 	virtual void rowsInserted( const QModelIndex &parent, int start, int end );
+	virtual void selectionChanged( const QItemSelection& selected, const QItemSelection& deselected );
 
 private slots:
 	void reexpandGroups();
 	void itemExpanded( const QModelIndex& index );
 	void itemCollapsed( const QModelIndex& index );
 
+	void updateActions();
+	void updateMetaContactActions();
 	void slotSettingsChanged();
 	void addToAddContactMenu( Kopete::Account* account );
 	void removeToAddContactMenu( const Kopete::Account *account );

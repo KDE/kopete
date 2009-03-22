@@ -88,6 +88,7 @@ public:
 
 	QMap<KAction*, Kopete::Account*> addContactAccountMap;
 	QSet<int> notExpandedGroups;
+	QPointer<Kopete::MetaContact> selectedMetaContact;
 
 	bool controlPressed;
 };
@@ -450,6 +451,42 @@ void KopeteContactListView::rowsInserted( const QModelIndex &parent, int start, 
 	}
 }
 
+void KopeteContactListView::selectionChanged( const QItemSelection& selected, const QItemSelection& deselected )
+{
+	QTreeView::selectionChanged( selected, deselected );
+
+	QSet<Kopete::MetaContact*> contacts;
+	QSet<Kopete::Group*> groups;
+
+	foreach ( const QModelIndex& index, selected.indexes() )
+	{
+		if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+			contacts.insert( metaContactFromIndex( index ) );
+		else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+			groups.insert( groupFromIndex( index ) );
+	}
+
+	Kopete::ContactList::self()->setSelectedItems( contacts.toList(), groups.toList() );
+
+	updateActions();
+
+	if ( d->selectedMetaContact )
+	{ // Delete previous connection
+		disconnect( d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		            this, SLOT(updateMetaContactActions()) );
+		d->selectedMetaContact = 0;
+	}
+
+	if ( contacts.count() == 1 && groups.empty() )
+	{
+		d->selectedMetaContact = contacts.values().first();
+		connect( d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		         this, SLOT(updateMetaContactActions()) );
+	}
+
+	updateMetaContactActions();
+}
+
 void KopeteContactListView::reexpandGroups()
 {
 	// Set expanded state of groups
@@ -474,6 +511,88 @@ void KopeteContactListView::itemCollapsed( const QModelIndex& index )
 	Q_ASSERT(model());
 	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
 		model()->setData( index, false, Kopete::Items::ExpandStateRole );
+}
+
+void KopeteContactListView::updateActions()
+{
+	QModelIndexList selected = selectedIndexes();
+
+	bool singleContactSelected = (selected.count() == 1 && selected.first().data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact);
+	bool singleGroupSelected = (selected.count() == 1 && selected.first().data( Kopete::Items::TypeRole ) == Kopete::Items::Group);
+	Kopete::MetaContact* metaContact = ( singleContactSelected ) ? metaContactFromIndex( selected.first() ) : 0;
+	Kopete::Group* group = ( singleGroupSelected ) ? groupFromIndex( selected.first() ) : 0;
+
+	bool inkabc = false;
+	if ( singleContactSelected )
+	{
+		QString kabcid = metaContact->kabcId();
+		inkabc = !kabcid.isEmpty() && !kabcid.contains(":");
+	}
+	d->actionSendEmail->setEnabled( inkabc );
+
+	if ( singleContactSelected )
+	{
+// 		d->actionRename->setText( i18n("Rename Contact") );
+		d->actionRemove->setText( i18n("Remove Contact") );
+		d->actionSendMessage->setText( i18n("Send Single Message...") );
+// 		d->actionRename->setEnabled( true );
+		d->actionRemove->setEnabled( true );
+		d->actionAddContact->setText( i18n("&Add Subcontact") );
+		d->actionAddContact->setEnabled( !metaContact->isTemporary() );
+	}
+	else if ( singleGroupSelected )
+	{
+// 		d->actionRename->setText( i18n("Rename Group") );
+		d->actionRemove->setText( i18n("Remove Group") );
+		d->actionSendMessage->setText( i18n("Send Message to Group") );
+// 		d->actionRename->setEnabled( true );
+		d->actionRemove->setEnabled( true );
+		d->actionSendMessage->setEnabled( true );
+		d->actionAddContact->setText( i18n("&Add Contact to Group") );
+		d->actionAddContact->setEnabled( group->type() == Kopete::Group::Normal );
+	}
+	else
+	{
+// 		d->actionRename->setText( i18n("Rename") );
+		d->actionRemove->setText( i18n("Remove") );
+// 		d->actionRename->setEnabled( false );
+		d->actionRemove->setEnabled( !selected.isEmpty() );
+		d->actionAddContact->setEnabled( false );
+		d->actionMakeMetaContact->setText( i18n("Make Meta Contact") );
+
+		bool hasContactInSelection = false;
+		foreach ( const QModelIndex& index, selected )
+		{
+			if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+			{
+				hasContactInSelection = true;
+				break;
+			}
+		}
+		d->actionMakeMetaContact->setEnabled( hasContactInSelection ); // Specifically for multiple contacts, not groups.
+	}
+
+	d->actionProperties->setEnabled( selected.count() == 1 );
+}
+
+void KopeteContactListView::updateMetaContactActions()
+{
+	bool reachable = false;
+
+	if( d->selectedMetaContact )
+	{
+		reachable = d->selectedMetaContact->isReachable();
+		d->actionAddTemporaryContact->setEnabled( d->selectedMetaContact->isTemporary() );
+		d->actionSendFile->setEnabled( reachable && d->selectedMetaContact->canAcceptFiles() );
+	}
+	else
+	{
+		d->actionAddTemporaryContact->setEnabled( false );
+		d->actionSendFile->setEnabled( false );
+	}
+
+	d->actionSendMessage->setEnabled( reachable );
+	d->actionStartChat->setEnabled( reachable );
 }
 
 void KopeteContactListView::slotSettingsChanged()
