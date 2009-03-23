@@ -149,7 +149,7 @@ protected:
 
 	void updateVersionUpdaterStamp();
 
-	virtual QString sanitizedMessage( const QString& message ) const = 0;
+	virtual QString sanitizedMessage( const QString& message ) const;
 
 protected slots:
 
@@ -194,6 +194,12 @@ private:
 
 	/** Updates buddy icon item in ssi */
 	void updateBuddyIconInSSI();
+
+	QString makeWellFormedXML( const QString& message ) const;
+
+	QString addQuotesAroundAttributes( QString message ) const;
+
+	QString sanitizedPlainMessage( const QString& message ) const;
 
 private slots:
 	/** Handler from socket errors from a connection */
