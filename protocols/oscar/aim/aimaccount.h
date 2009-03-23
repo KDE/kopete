@@ -125,16 +125,12 @@ protected:
 	*/
 	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const OContact& ssiItem );
 
-	virtual QString sanitizedMessage( const QString& message ) const;
-
 private:
 	Oscar::Presence presence();
 
 	void setPresenceFlags( Oscar::Presence::Flags flags, const QString &message = QString() );
 	void setPresenceType( Oscar::Presence::Type, const QString &awayMessage = QString() );
 	void setPresenceTarget( const Oscar::Presence &presence, const QString &message = QString() );
-
-	QString addQuotesAroundAttributes( QString message ) const;
 
     AIMJoinChatUI* m_joinChatDialog;
 	QString mInitialStatusMessage;
