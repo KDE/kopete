@@ -1737,7 +1737,7 @@ void KopeteContactListView::slotRemove()
 			if(mc->groups().count()==1)
 				Kopete::ContactList::self()->removeMetaContact(mc);
 			else
-				mc->removeFromGroup((*it));
+				mc->removeFromGroup((*git));
 		}
 
 		if( !(*git)->members().isEmpty() )
