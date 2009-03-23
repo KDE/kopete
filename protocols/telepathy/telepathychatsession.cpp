@@ -20,12 +20,17 @@
 
 #include "telepathychatsession.h"
 #include "telepathyprotocol.h"
+#include "common.h"
 
 #include <kopetechatsessionmanager.h>
 
 #include <kdebug.h>
 
 #include <TelepathyQt4/Client/Contact>
+#include <TelepathyQt4/Client/Connection>
+#include <TelepathyQt4/Client/ContactManager>
+#include <TelepathyQt4/Client/PendingChannel>
+#include <TelepathyQt4/Client/TextChannel>
 
 TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol)
 	: Kopete::ChatSession(user, others, protocol)
@@ -45,12 +50,48 @@ void TelepathyChatSession::createTextChannel(QSharedPointer<Telepathy::Client::C
 {
 	kDebug(TELEPATHY_DEBUG_AREA);
 	m_contact = contact;
+	
+	Telepathy::Client::Connection *connection = contact->manager()->connection();
+	
+    QVariantMap request;
+    request.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"),
+                   TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT);
+    request.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandleType"),
+                   Telepathy::HandleTypeContact);
+    request.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandle"),
+                   connection->selfHandle());
+	
+	QObject::connect(connection->createChannel(request),
+		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+		this,
+		SLOT(createChannelFinished(Telepathy::Client::PendingOperation*)));
 }
 
 void TelepathyChatSession::sendMessage(Kopete::Message &message)
 {
 	kDebug(TELEPATHY_DEBUG_AREA);
 }
+
+void TelepathyChatSession::createChannelFinished(Telepathy::Client::PendingOperation* operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    
+    if(TelepathyCommons::isOperationError(operation))
+        return;
+	
+	kDebug(TELEPATHY_DEBUG_AREA) << m_contact->manager()->connection()->objectPath();
+//	m_textChannel = new Telepathy::Client::TextChannel(m_contact->manager()->connection(), , QVariantMap(), this);
+	//Telepathy::Features features = Telepathy::Features() << 
+}
+
+
+
+
+
+
+
+
+
 
 
 

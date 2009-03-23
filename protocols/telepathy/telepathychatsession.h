@@ -24,11 +24,15 @@
 
 #include <QSharedPointer>
 
+#include <TelepathyQt4/Client/PendingOperation>
+
 namespace Telepathy
 {
 	namespace Client
 	{
 		class Contact;
+		class Channel;
+		class TextChannel;
 	}
 }
 
@@ -44,7 +48,10 @@ public:
 
 private slots:
 	void sendMessage(Kopete::Message &);
+	void createChannelFinished(Telepathy::Client::PendingOperation*);
 
 private:
 	QSharedPointer<Telepathy::Client::Contact> m_contact;
+	QSharedPointer<Telepathy::Client::TextChannel> m_channel;
+	Telepathy::Client::TextChannel *m_textChannel;
 };

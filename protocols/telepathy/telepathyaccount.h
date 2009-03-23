@@ -106,7 +106,7 @@ private:
 	Telepathy::Client::ConnectionManager *m_connectionManager;
 	Telepathy::Client::AccountManager *m_accountManager;
 	TelepathyContactManager *m_contactManager;
-	QSharedPointer<Telepathy::Client::Account> m_account;
+	Telepathy::Client::AccountPtr m_account;
 	Telepathy::Client::PendingAccount *m_pendingAccount;
 
 	uint m_existingAccountCounter;

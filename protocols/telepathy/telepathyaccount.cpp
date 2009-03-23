@@ -144,7 +144,7 @@ void TelepathyAccount::disconnect ()
 	if(!m_account || !m_account->haveConnection())
 		return;
 	
-	QSharedPointer<Telepathy::Client::Connection> connection = m_account->connection();
+	Telepathy::Client::ConnectionPtr connection = m_account->connection();
 	
 	QObject::connect(connection->requestDisconnect(),
 		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
@@ -446,7 +446,7 @@ void TelepathyAccount::onAccountManagerReady(Telepathy::Client::PendingOperation
      */
     foreach(const QString &path, pathList)
     {
-        QSharedPointer<Telepathy::Client::Account> a = m_accountManager->accountForPath(path);
+        Telepathy::Client::AccountPtr a = m_accountManager->accountForPath(path);
         QObject::connect(a->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
             this, SLOT(onExistingAccountReady(Telepathy::Client::PendingOperation *)));
     }
@@ -476,7 +476,7 @@ void TelepathyAccount::onExistingAccountReady(Telepathy::Client::PendingOperatio
     if( !m_account && ((a->displayName() == accountId()) && (a->protocol() == m_connectionProtocolName)) )
     {
         kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << a->cmName() << m_connectionManagerName << a->displayName() << accountId() << a->protocol() << m_connectionProtocolName << m_existingAccountCounter;
-        m_account = QSharedPointer<Telepathy::Client::Account>(a);
+        m_account = Telepathy::Client::AccountPtr(a);
 
         QObject::connect(m_account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
             this, SLOT(onAccountReady(Telepathy::Client::PendingOperation *)));

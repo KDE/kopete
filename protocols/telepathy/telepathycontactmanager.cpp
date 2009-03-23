@@ -39,7 +39,7 @@ class TelepathyContactManager::TelepathyContactManagerPrivate
 {
 public:
 	TelepathyAccount *telepathyAccount;
-	QSharedPointer<Telepathy::Client::Account> account;
+	Telepathy::Client::AccountPtr account;
 	Telepathy::Client::ContactManager *contactManager;
 	Telepathy::Client::Connection *connection;
 	
