@@ -975,6 +975,7 @@ void MetaContact::addToGroup( Group *to )
 	if ( d->temporary && to->type() != Group::Temporary )
 		return;
 
+	// FIXME: This breaks copying MC with drag&drop from topLevel group
 	if ( d->groups.contains( Group::topLevel() ) )
 	{
 		d->groups.removeAll( Group::topLevel() );
@@ -1094,9 +1095,9 @@ QString MetaContact::kabcId() const
 	return d->kabcId;
 }
 
-void MetaContact::setKabcId( const QString& newMetaContactId )
+void MetaContact::setKabcId( const QString& newKabcId )
 {
-	if(newMetaContactId == d->kabcId)
+	if(newKabcId == d->kabcId)
 		return;
 
 	// 1) Check the Id is not already used by another contact
@@ -1108,7 +1109,7 @@ void MetaContact::setKabcId( const QString& newMetaContactId )
 
 	// Don't remove IM addresses from kabc if we are changing contacts;
 	// other programs may have written that data and depend on it
-	d->kabcId = newMetaContactId;
+	d->kabcId = newKabcId;
 	if ( loading() )
 	{
 		slotUpdateAddressBookPicture();

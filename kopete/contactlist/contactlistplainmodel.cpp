@@ -205,7 +205,7 @@ bool ContactListPlainModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
 	if ( data->hasUrls() )
 	{
-		return dropUrl( data, row, parent );
+		return dropUrl( data, row, parent, action );
 	}
 	else if ( data->hasFormat("application/kopete.metacontacts.list") )
 	{
@@ -230,18 +230,18 @@ bool ContactListPlainModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 			items.append( pair );
 		}
 
-		return dropMetaContacts( row, parent, items );
+		return dropMetaContacts( row, parent, action, items );
 	}
 
 	return false;
 }
 
-bool ContactListPlainModel::dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items )
+bool ContactListPlainModel::dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items )
 {
 	if ( items.isEmpty() )
 		return false;
 
-	if ( ContactListModel::dropMetaContacts( row, parent, items ) )
+	if ( ContactListModel::dropMetaContacts( row, parent, action, items ) )
 	     return true;
 
 	if ( !parent.isValid() )

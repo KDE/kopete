@@ -424,12 +424,12 @@ bool ContactListTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction ac
 
 	if ( data->hasUrls() )
 	{
-		return dropUrl( data, row, parent );
+		return dropUrl( data, row, parent, action );
 	}
 	else if ( data->hasFormat("application/kopete.group") )
 	{
-		// we don't support dropping groups into another group
-		if ( parent.isValid() )
+		// we don't support dropping groups into another group or copying groups
+		if ( parent.isValid() || action != Qt::MoveAction )
 			return false;
 
 		// decode the mime data
@@ -500,7 +500,7 @@ bool ContactListTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction ac
 			items.append( pair );
 		}
 
-		return dropMetaContacts( row, parent, items );
+		return dropMetaContacts( row, parent, action, items );
 	}
 
 	return false;
@@ -524,12 +524,12 @@ QModelIndex ContactListTreeModel::parent(const QModelIndex & index) const
 	return parent;
 }
 
-bool ContactListTreeModel::dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items )
+bool ContactListTreeModel::dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items )
 {
 	if ( items.isEmpty() )
 		return false;
 
-	if ( ContactListModel::dropMetaContacts( row, parent, items ) )
+	if ( ContactListModel::dropMetaContacts( row, parent, action, items ) )
 		return true;
 
 	if ( parent.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
@@ -546,12 +546,17 @@ bool ContactListTreeModel::dropMetaContacts( int row, const QModelIndex &parent,
 				m_addContactPosition.insert( pair, row + i );
 				if ( pair.first == group )
 					addMetaContactToGroup( pair.second, group );
-				else
+				else if ( action == Qt::MoveAction )
 					pair.second->moveToGroup( pair.first, group );
+				else if ( action == Qt::CopyAction )
+					pair.second->addToGroup( group );
 			}
 			else if ( pair.first != group )
 			{
-				pair.second->moveToGroup( pair.first, group );
+				if ( action == Qt::MoveAction )
+					pair.second->moveToGroup( pair.first, group );
+				else if ( action == Qt::CopyAction )
+					pair.second->addToGroup( group );
 			}
 		}
 		return true;

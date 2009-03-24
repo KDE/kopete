@@ -300,6 +300,10 @@ void KopeteContactListView::removeGroupOrMetaContact()
 		}
 		else if ( Kopete::Group* group = groupFromIndex( index ) )
 		{
+			// Can't remove topLevel group
+			if ( group == Kopete::Group::topLevel() )
+				continue;
+
 			groupList.append( group );
 
 			if( !group->displayName().isEmpty() )
@@ -437,6 +441,91 @@ void KopeteContactListView::mouseReleaseEvent(QMouseEvent *event)
 
 	QTreeView::mouseReleaseEvent( event );
 	d->controlPressed = false;
+}
+
+void KopeteContactListView::startDrag( Qt::DropActions supportedActions )
+{
+	QModelIndexList indexes = selectedIndexes();
+	for ( int i = indexes.count() - 1 ; i >= 0; --i )
+	{
+		if ( !(model()->flags( indexes.at(i) ) & Qt::ItemIsDragEnabled) )
+			indexes.removeAt(i);
+	}
+
+	if (indexes.count() > 0)
+	{
+		QMimeData *data = model()->mimeData( indexes );
+		if ( !data )
+			return;
+
+		QDrag *drag = new QDrag( this );
+		drag->setMimeData( data );
+
+		Qt::DropAction defaultDropAction = Qt::MoveAction;
+		drag->exec( supportedActions, defaultDropAction );
+	}
+}
+
+void KopeteContactListView::dragMoveEvent ( QDragMoveEvent * event )
+{
+	const QMimeData *data = event->mimeData();
+
+	QTreeView::dragMoveEvent ( event );
+	if ( !event->isAccepted() )
+		return;
+
+	QModelIndex index;
+	switch ( dropIndicatorPosition() )
+	{
+	case QAbstractItemView::AboveItem:
+	case QAbstractItemView::BelowItem:
+		index = indexAt( event->pos() ).parent();
+		break;
+	case QAbstractItemView::OnItem:
+		index = indexAt( event->pos() );
+		break;
+	case QAbstractItemView::OnViewport:
+		index = rootIndex();
+		break;
+	default: // Should not happen
+		event->ignore();
+		return;
+	}
+	
+	Kopete::AppearanceSettings* as = Kopete::AppearanceSettings::self();
+	bool groupContactByGroup = as->groupContactByGroup();
+
+	bool accept = false;
+	if ( data->hasFormat( "application/kopete.metacontacts.list" ) )
+	{
+		if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+			accept = (event->proposedAction() & Qt::MoveAction); // MetaContact merge (copy&merge not supported)
+		else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
+			accept = (event->proposedAction() & (Qt::MoveAction | Qt::CopyAction)); // Move/copy between groups
+		else if ( !groupContactByGroup && !index.isValid() )
+			accept = (event->proposedAction() & Qt::MoveAction); // In plain view metaContact can only be moved
+		else if ( groupContactByGroup && !index.isValid() )
+			accept = false; // Can't add metaContact to topLevel if groups are shown TODO: Remove this constraint
+	}
+	else if ( data->hasFormat( "application/kopete.group" ) )
+	{
+		if ( !groupContactByGroup )
+			accept = false; // Plain view doesn't support groups
+		else if ( !index.isValid() )
+			accept = (event->proposedAction() & Qt::MoveAction); // In tree view groups can only be moved
+		else
+			accept = false;
+	}
+	else
+		accept = true; // Accept by default (e.g. urls)
+
+	if ( !accept )
+	{
+		event->ignore();
+		return;
+	}
+
+	event->acceptProposedAction();
 }
 
 void KopeteContactListView::rowsInserted( const QModelIndex &parent, int start, int end )

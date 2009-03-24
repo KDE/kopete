@@ -81,8 +81,10 @@ public Q_SLOTS:
 	void removeGroupOrMetaContact();
 
 protected:
-	void contextMenuEvent( QContextMenuEvent* event );
-	void mouseReleaseEvent( QMouseEvent *event );
+	virtual void contextMenuEvent( QContextMenuEvent* event );
+	virtual void mouseReleaseEvent( QMouseEvent *event );
+	virtual void startDrag( Qt::DropActions supportedActions );
+	virtual void dragMoveEvent ( QDragMoveEvent * event );
 
 protected slots:
 	virtual void rowsInserted( const QModelIndex &parent, int start, int end );

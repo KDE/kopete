@@ -313,7 +313,7 @@ void ContactListModel::loadContactList()
 	         this, SLOT(moveMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)));
 }
 
-bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelIndex &parent )
+bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelIndex &parent, Qt::DropAction action )
 {
 	// we don't support dropping things in an empty space
 	if ( !parent.isValid() || parent.data( Kopete::Items::TypeRole ) != Kopete::Items::MetaContact )
@@ -348,7 +348,7 @@ bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelInde
 
 						QList<GroupMetaContactPair> items;
 						items << pair;
-						return dropMetaContacts( row, parent, items );
+						return dropMetaContacts( row, parent, action, items );
 					}
 					else
 					{
@@ -381,8 +381,11 @@ bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelInde
 	return true;
 }
 
-bool ContactListModel::dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items )
+bool ContactListModel::dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items )
 {
+	Q_UNUSED( row );
+	Q_UNUSED( action );
+
 	if ( items.isEmpty() || !parent.isValid() )
 		return false;
 

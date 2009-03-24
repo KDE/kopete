@@ -1319,7 +1319,7 @@ void KopeteWindow::showAddContactDialog ( Kopete::Account * account )
 			{
 				Kopete::MetaContact * metacontact = new Kopete::MetaContact();
 				metacontact->addToGroup ( groupItems[ ui_groupKABC.groupCombo->currentText() ] );
-				metacontact->setMetaContactId ( ui_groupKABC.widAddresseeLink->uid() );
+				metacontact->setKabcId ( ui_groupKABC.widAddresseeLink->uid() );
 				if ( addContactPage->apply ( account, metacontact ) )
 				{
 					Kopete::ContactList::self()->addMetaContact ( metacontact );

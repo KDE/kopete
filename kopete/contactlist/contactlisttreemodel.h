@@ -77,7 +77,7 @@ protected:
 	virtual void loadModelSettingsImpl( QDomElement& rootElement );
 	virtual void saveModelSettingsImpl( QDomDocument& doc, QDomElement& rootElement );
 
-	virtual bool dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items );
+	virtual bool dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items );
 
 private:
 	QModelIndexList indexListFor ( Kopete::ContactListElement* ) const;

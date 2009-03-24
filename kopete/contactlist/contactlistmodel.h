@@ -71,9 +71,9 @@ protected Q_SLOTS:
 	virtual void loadContactList();
 
 protected:
-	bool dropUrl( const QMimeData *data, int row, const QModelIndex &parent );
+	bool dropUrl( const QMimeData *data, int row, const QModelIndex &parent, Qt::DropAction action );
 	typedef QPair<Kopete::Group*, Kopete::MetaContact*> GroupMetaContactPair;
-	virtual bool dropMetaContacts( int row, const QModelIndex &parent, const QList<GroupMetaContactPair> &items );
+	virtual bool dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items );
 
 	QVariant metaContactData( const Kopete::MetaContact* mc, int role ) const;
 	QVariant metaContactImage( const Kopete::MetaContact* mc ) const;

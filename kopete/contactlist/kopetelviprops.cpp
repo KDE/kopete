@@ -238,7 +238,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 
 	ui_mainWidget->widAddresseeLink->setMetaContact( mMetaContact );
 
-	mAddressBookUid = mMetaContact->metaContactId();
+	mAddressBookUid = mMetaContact->kabcId();
 
 	mExport = 0L;
 
@@ -454,7 +454,7 @@ Kopete::Contact* KopeteMetaLVIProps::selectedPhotoSourceContact() const
 void KopeteMetaLVIProps::slotOkClicked()
 {
 	// update meta contact's UID
-	mMetaContact->setMetaContactId( mAddressBookUid );
+	mMetaContact->setKabcId( mAddressBookUid );
 	//this has to be done first, in the case something is synced with KABC   (see bug 109494)
 	
 	// set custom display name
@@ -535,7 +535,7 @@ void KopeteMetaLVIProps::slotAddresseeChanged( const KABC::Addressee & a )
 
 void KopeteMetaLVIProps::slotExportClicked()
 {
-	mMetaContact->setMetaContactId( mAddressBookUid );
+	mMetaContact->setKabcId( mAddressBookUid );
 	delete mExport;
 	mExport = new KopeteAddressBookExport( this, mMetaContact );
 	if ( mExport->showDialog() == QDialog::Accepted )
@@ -544,7 +544,7 @@ void KopeteMetaLVIProps::slotExportClicked()
 
 void KopeteMetaLVIProps::slotImportClicked()
 {
-	mMetaContact->setMetaContactId( mAddressBookUid );
+	mMetaContact->setKabcId( mAddressBookUid );
 	if ( Kopete::KABCPersistence::self()->syncWithKABC( mMetaContact ) )
 		KMessageBox::queuedMessageBox( this, KMessageBox::Information,
 																	 i18n( "No contacts were imported from the address book." ),
