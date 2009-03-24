@@ -49,14 +49,20 @@ public:
 TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAccount)
 	: d(new TelepathyContactManagerPrivate)
 {
+	kDebug(TELEPATHY_DEBUG_AREA);
+	
 	d->telepathyAccount = telepathyAccount;
 	d->account = d->telepathyAccount->m_account;
 }
 
 TelepathyContactManager::~TelepathyContactManager()
 {
+	kDebug(TELEPATHY_DEBUG_AREA);
+	
 	foreach(TelepathyContact *contact, d->contactList)
 	{
+		Kopete::MetaContact *metaContact = contact->metaContact();
+		Kopete::ContactList::self()->removeMetaContact(metaContact);
 		delete contact;
 	}
 	
@@ -65,12 +71,16 @@ TelepathyContactManager::~TelepathyContactManager()
 
 QSharedPointer<Telepathy::Client::Contact> TelepathyContactManager::addContact(const QString &contactId)
 {
+	kDebug(TELEPATHY_DEBUG_AREA);
+	
 	Q_UNUSED(contactId);
 	return QSharedPointer<Telepathy::Client::Contact>();
 }
 
 void TelepathyContactManager::removeContact(TelepathyContact *contact)
 {
+	kDebug(TELEPATHY_DEBUG_AREA);
+	
 	if(contact->internalContact())
 	{
 		
@@ -80,16 +90,20 @@ void TelepathyContactManager::removeContact(TelepathyContact *contact)
 
 void TelepathyContactManager::setContactList(QList<QSharedPointer<Telepathy::Client::Contact> > contactList)
 {
+	kDebug(TELEPATHY_DEBUG_AREA);
+	
 	Q_UNUSED(contactList);
 }
 
 void TelepathyContactManager::loadContacts()
 {
+	kDebug(TELEPATHY_DEBUG_AREA);
 }
 
 void TelepathyContactManager::fetchContactList()
 {
 	kDebug(TELEPATHY_DEBUG_AREA);
+	
 	if(!d->account || !d->account->haveConnection())
 	{
 		kDebug(TELEPATHY_DEBUG_AREA) << "Error: Could not find active connection or account";
@@ -145,6 +159,7 @@ void TelepathyContactManager::onConnectionFeaturesReady(Telepathy::Client::Pendi
 void TelepathyContactManager::onPresencePublicationRequested(const Telepathy::Client::Contacts &contacts)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+	
 	foreach(QSharedPointer<Telepathy::Client::Contact> contact, contacts)
 	{
 		createContact(contact);

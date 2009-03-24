@@ -30,7 +30,6 @@
 #include <TelepathyQt4/Client/Connection>
 #include <TelepathyQt4/Client/ContactManager>
 #include <TelepathyQt4/Client/PendingChannel>
-#include <TelepathyQt4/Client/TextChannel>
 
 TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol)
 	: Kopete::ChatSession(user, others, protocol)
@@ -39,6 +38,7 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
 	Kopete::ChatSessionManager::self()->registerChatSession(this);
 	
 	QObject::connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(sendMessage(Kopete::Message&)));
+	QObject::connect(this, SIGNAL(closing(Kopete::ChatSession *)), this, SLOT(closingChatSession(Kopete::ChatSession *)));
 }
 
 TelepathyChatSession::~TelepathyChatSession()
@@ -70,6 +70,11 @@ void TelepathyChatSession::createTextChannel(QSharedPointer<Telepathy::Client::C
 void TelepathyChatSession::sendMessage(Kopete::Message &message)
 {
 	kDebug(TELEPATHY_DEBUG_AREA);
+	
+	if(!m_textChannel)
+		return;
+	
+	m_textChannel->send(message.parsedBody());
 }
 
 void TelepathyChatSession::createChannelFinished(Telepathy::Client::PendingOperation* operation)
@@ -79,13 +84,41 @@ void TelepathyChatSession::createChannelFinished(Telepathy::Client::PendingOpera
     if(TelepathyCommons::isOperationError(operation))
         return;
 	
-	kDebug(TELEPATHY_DEBUG_AREA) << m_contact->manager()->connection()->objectPath();
-//	m_textChannel = new Telepathy::Client::TextChannel(m_contact->manager()->connection(), , QVariantMap(), this);
-	//Telepathy::Features features = Telepathy::Features() << 
+	Telepathy::Client::PendingChannel *pc = qobject_cast<Telepathy::Client::PendingChannel*>(operation);
+	
+	if(!pc)
+	{
+		kDebug(TELEPATHY_DEBUG_AREA) << "Error PendingChannel casting!";
+		return;
+	}
+
+	m_textChannel = pc->channel();
 }
 
+void TelepathyChatSession::closingChatSession(Kopete::ChatSession *kmm)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+	
+	Q_UNUSED(kmm);
+	
+	if(!m_textChannel)
+		return;
+	
+	QObject::connect(m_textChannel->requestClose(),
+		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+		this,
+		SLOT(chatSessionRequestClose(Telepathy::Client::PendingOperation*)));
+}
 
-
+void TelepathyChatSession::chatSessionRequestClose(Telepathy::Client::PendingOperation *operation)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    
+    if(TelepathyCommons::isOperationError(operation))
+        return;
+	
+    kDebug(TELEPATHY_DEBUG_AREA) << "Chat session closed";
+}
 
 
 

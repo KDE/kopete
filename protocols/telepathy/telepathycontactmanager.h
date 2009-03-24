@@ -35,7 +35,7 @@ class TelepathyContactManager : public QObject
 	Q_OBJECT
 public:
 	TelepathyContactManager(TelepathyAccount *telepathyAccount);
-	~TelepathyContactManager();
+	virtual ~TelepathyContactManager();
 	
 	QSharedPointer<Telepathy::Client::Contact> addContact(const QString &contactId);
 	void removeContact(TelepathyContact *contact);

@@ -25,6 +25,7 @@
 #include <QSharedPointer>
 
 #include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/Client/TextChannel>
 
 namespace Telepathy
 {
@@ -32,7 +33,6 @@ namespace Telepathy
 	{
 		class Contact;
 		class Channel;
-		class TextChannel;
 	}
 }
 
@@ -42,16 +42,22 @@ class TelepathyChatSession : public Kopete::ChatSession
 
 public:
 	TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol);
-	~TelepathyChatSession();
+	virtual ~TelepathyChatSession();
 
 	void createTextChannel(QSharedPointer<Telepathy::Client::Contact>);
 
 private slots:
 	void sendMessage(Kopete::Message &);
 	void createChannelFinished(Telepathy::Client::PendingOperation*);
+	void chatSessionRequestClose(Telepathy::Client::PendingOperation*);
+	void closingChatSession(Kopete::ChatSession *);
 
 private:
 	QSharedPointer<Telepathy::Client::Contact> m_contact;
 	QSharedPointer<Telepathy::Client::TextChannel> m_channel;
-	Telepathy::Client::TextChannel *m_textChannel;
+	Telepathy::Client::TextChannelPtr m_textChannel;
 };
+
+
+
+

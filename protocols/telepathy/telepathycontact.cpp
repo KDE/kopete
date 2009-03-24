@@ -54,19 +54,18 @@ TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &con
 
 TelepathyContact::~TelepathyContact()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
 	delete d;
 }
 
 bool TelepathyContact::isReachable()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    //kDebug(TELEPATHY_DEBUG_AREA);
     return account()->isConnected();
 }
 
 void TelepathyContact::serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    //kDebug(TELEPATHY_DEBUG_AREA);
 	
 	Q_UNUSED(serializedData);
 	Q_UNUSED(addressBookData);
