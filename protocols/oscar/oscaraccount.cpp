@@ -47,6 +47,7 @@
 #include <klocale.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>
+#include <kdialog.h>
 #include <kpassivepopup.h>
 #include <kstandarddirs.h>
 
@@ -62,6 +63,7 @@
 #include "kopeteversion.h"
 #include "oscarversionupdater.h"
 #include "filetransferhandler.h"
+#include "chatroomhandler.h"
 #include "nscainfoevent.h"
 #include "oscarpresence.h"
 #include "oscarprotocol.h"
@@ -152,6 +154,8 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( slotSendBuddyIcon() ) );
 	QObject::connect( d->engine, SIGNAL(incomingFileTransfer(FileTransferHandler*)),
 	                  this, SLOT(incomingFileTransfer(FileTransferHandler*)) );
+	QObject::connect( d->engine, SIGNAL(chatroomRequest(ChatRoomHandler*)),
+	                  this, SLOT(chatroomRequest(ChatRoomHandler*)) );
 
 	Kopete::TransferManager *tm = Kopete::TransferManager::transferManager();
 	QObject::connect( tm, SIGNAL(refused(const Kopete::FileTransferInfo&)),
@@ -442,6 +446,41 @@ void OscarAccount::nonServerAddContactDialogClosed()
 	
     d->olnscDialog->deleteLater();
     d->olnscDialog = 0L;
+}
+
+void OscarAccount::chatroomRequest( ChatRoomHandler* handler )
+{
+	KGuiItem buttonYes( KStandardGuiItem::yes() );
+	KGuiItem buttonNo( KStandardGuiItem::no() );
+	buttonYes.setText( i18nc( "@action:button filter-yes", "%1", KStandardGuiItem::yes().text() ) );
+	buttonNo.setText( i18nc( "@action:button filter-no", "%1", KStandardGuiItem::no().text() ) );
+	i18nc( "@action:button post-filter", "." );
+
+	KDialog *dialog = new KDialog( NULL, Qt::Dialog );
+	dialog->setCaption( i18n( "Chat Room Invitation" ) );
+	dialog->setButtons( KDialog::Yes | KDialog::No );
+	dialog->setObjectName( "questionYesNoCancel" );
+	dialog->setModal( false );
+	dialog->showButtonSeparator( true );
+	dialog->setButtonGuiItem( KDialog::Yes, buttonYes );
+	dialog->setButtonGuiItem( KDialog::No, buttonNo );
+	dialog->setDefaultButton( KDialog::Yes );
+	dialog->setEscapeButton( KDialog::No );
+
+	QObject::connect( dialog, SIGNAL( yesClicked() ),
+	                  handler, SLOT( accept() ) );
+	QObject::connect( dialog, SIGNAL( noClicked() ),
+	                  handler, SLOT( reject() ) );
+	QObject::connect( handler, SIGNAL( joinChatRoom( const QString&, int ) ),
+	                  engine(), SLOT( joinChatRoom( const QString&, int ) ) );
+
+	KMessageBox::createKMessageBox( dialog, QMessageBox::Question,
+	                                ( handler->contact() + ": " + handler->invite() ), QStringList(),
+	                                QString(), NULL, KMessageBox::NoExec );
+
+	dialog->show();
+	dialog->raise();
+	dialog->activateWindow();
 }
 
 void OscarAccount::incomingFileTransfer( FileTransferHandler* ftHandler )

@@ -185,6 +185,8 @@ protected slots:
 	void fileTransferRefused( const Kopete::FileTransferInfo& info );
 	void fileTransferAccept( Kopete::Transfer* t , const QString& fileName );
 
+	void chatroomRequest( ChatRoomHandler* handler );
+
 signals:
 
 	void accountDisconnected( Kopete::Account::DisconnectReason reason );

@@ -127,6 +127,8 @@ void ProfileTask::sendProfileUpdate()
 		capBuf.addGuid( oscar_caps[CAP_BUDDYICON] ); //can you take my picture?
 		capBuf.addGuid( oscar_caps[CAP_INTEROPERATE] ); //AIM can communicate with ICQ users and ICQ with AIM users.
 
+		capBuf.addGuid( oscar_caps[CAP_CHAT] );
+
 		kDebug(OSCAR_RAW_DEBUG) << "adding capabilities, size=" << capBuf.length();
 		buffer->addTLV(0x0005, capBuf.buffer());
 	}

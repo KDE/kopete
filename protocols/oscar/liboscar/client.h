@@ -43,6 +43,7 @@ class QString;
 class Task;
 class QTextCodec;
 class FileTransferHandler;
+class ChatRoomHandler;
 
 namespace Kopete
 {
@@ -366,8 +367,6 @@ public:
 	//! Start uploading a buddy icon
 	void sendBuddyIcon( const QByteArray& imageData );
 
-    void joinChatRoom( const QString& roomName, int exchange );
-
 	void setIgnore( const QString& user, bool ignore );
 	
 	void setVisibleTo( const QString& user, bool visible );
@@ -457,6 +456,9 @@ public:
 	/** Notify that a socket error has occurred */
 	void notifySocketError( int errCode, const QString& msg );
 
+public slots:
+	void joinChatRoom( const QString& roomName, int exchange );
+
 signals:
 	/** CONNECTION EVENTS */
 
@@ -543,6 +545,7 @@ signals:
     void chatRoomConnected( Oscar::WORD, const QString& );
     void userJoinedChat( Oscar::WORD, const QString& room, const QString& contact );
     void userLeftChat( Oscar::WORD, const QString& room, const QString& contact );
+	void chatroomRequest( ChatRoomHandler* handler );
 
 	/* service redirection */
 	void redirectionFinished( Oscar::WORD );
@@ -587,6 +590,9 @@ protected slots:
 	/** rendezvous message for a filetransfer task */
 	void gotFileMessage( int, const QString, const QByteArray, Buffer );
 
+	/** rendezvous message for a chatroom task */
+	void gotChatRoomMessage( const Oscar::Message & msg, const QByteArray & cookie );
+
 	void offlineUser( const QString&, const UserDetails& );
 
 	void haveServerForRedirect( const QString& host, const QByteArray& cookie, Oscar::WORD family );
@@ -598,12 +604,12 @@ protected slots:
      * Set the list of chat room exchanges we have
      */
     void setChatExchangeList( const QList<int>& exchanges );
-    
+
     /**
      * set up the connection to a chat room
      */
     void setupChatConnection( Oscar::WORD, QByteArray, Oscar::WORD, const QString& );
-    
+
     void determineDisconnection( int, const QString& );
 
 	void nextICQAwayMessageRequest();
