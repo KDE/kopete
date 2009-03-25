@@ -152,6 +152,10 @@ Kopete::OnlineStatusManager::Categories KopeteDBusInterfacePrivate::status2Value
         statusValue = Kopete::OnlineStatusManager::Busy;
     } else if ( status.toLower() == QLatin1String("away") ) {
         statusValue = Kopete::OnlineStatusManager::Away;
+    } else if ( status.toLower() == QLatin1String("invisible") ) {
+        statusValue = Kopete::OnlineStatusManager::Invisible;
+    } else if ( status.toLower() == QLatin1String("offline") ) {
+        statusValue = Kopete::OnlineStatusManager::Offline;
     }
 
     return statusValue;
