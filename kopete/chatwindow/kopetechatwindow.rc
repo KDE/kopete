@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="44" name="kopetechatwindow">
+<kpartgui version="45" name="kopetechatwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -11,6 +11,7 @@
 			<Action name="contacts_menu"/>
 			<Merge/>
 			<Separator lineSeparator="true"/>
+			<Action name="tabs_close_others"/>
 			<Action name="tabs_close"/>
 			<Action name="file_quit" />
 		</Menu>
