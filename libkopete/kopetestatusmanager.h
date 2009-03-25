@@ -126,6 +126,11 @@ public Q_SLOTS:
 	 * Undo auto away
 	 */
 	void setActive();
+
+	/**
+	 * Confirm with the user, then set auto away
+	 */
+	void askAndSetActive();
 	
 	/**
 	 * Set all online account to auto away status

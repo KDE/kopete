@@ -20,6 +20,7 @@
 
 #include <ksavefile.h>
 #include <kstandarddirs.h>
+#include <kmessagebox.h>
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
@@ -329,6 +330,16 @@ Kopete::StatusMessage StatusManager::globalStatusMessage() const
 	return d->globalStatusMessage;
 }
 
+void StatusManager::askAndSetActive()
+{
+	kDebug(14010) << "Found Activity. Confirming if we should go active";
+	int response = KMessageBox::questionYesNo(NULL, i18n("Do You Want to Become Available"),
+			i18n("Kopete"));
+
+	if (response == KMessageBox::Yes)
+		setActive();
+}
+
 void StatusManager::setActive()
 {
 	kDebug(14010) << "Found activity on desktop, setting accounts online";
@@ -429,8 +440,12 @@ void StatusManager::loadBehaviorSettings()
 	Kopete::IdleTimer* idleTimer = Kopete::IdleTimer::self();
 	idleTimer->unregisterTimeout( this );
 	
-	if ( Kopete::BehaviorSettings::self()->useAutoAway() )
-		idleTimer->registerTimeout( d->awayTimeout, this, SLOT(setActive()), SLOT(setAutoAway()) );
+	if ( Kopete::BehaviorSettings::self()->useAutoAway() ) {
+		if (Kopete::BehaviorSettings::self()->autoAwayAskAvailable())
+			idleTimer->registerTimeout( d->awayTimeout, this, SLOT(askAndSetActive()), SLOT(setAutoAway()) );
+		else
+			idleTimer->registerTimeout( d->awayTimeout, this, SLOT(setActive()), SLOT(setAutoAway()) );
+	}
 }
 
 }
