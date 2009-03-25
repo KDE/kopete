@@ -148,6 +148,10 @@
 			<label>Go available after detecting an activity.</label>
 			<default>true</default>
 		</entry>
+		<entry key="autoAwayAskAvailable" type="Bool">
+			<label>Confirm Before Coming Back from Auto Away</label>
+			<default>true</default>
+		</entry>
 		<entry key="useLastAwayMessage" type="Bool">
 			<label>When seting the auto away message, use the latest away message.</label>
 			<default>true</default>
