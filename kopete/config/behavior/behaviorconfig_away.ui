@@ -113,7 +113,7 @@
            <bool>false</bool>
           </property>
           <property name="text" >
-           <string>Confirm Before Becoming Available</string>
+           <string>Confirm before becoming available</string>
           </property>
          </widget>
         </item>
