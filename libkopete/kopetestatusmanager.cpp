@@ -17,11 +17,14 @@
 
 #include <QtCore/QFile>
 #include <QtXml/QDomElement>
+#include <QtCore/QTimer>
 
 #include <ksavefile.h>
 #include <kstandarddirs.h>
+#include <kdialog.h>
 #include <kmessagebox.h>
 
+#include "kopeteuiglobal.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
@@ -333,11 +336,25 @@ Kopete::StatusMessage StatusManager::globalStatusMessage() const
 void StatusManager::askAndSetActive()
 {
 	kDebug(14010) << "Found Activity. Confirming if we should go active";
-	int response = KMessageBox::questionYesNo(NULL, i18n("Do You Want to Become Available"),
-			i18n("Kopete"));
 
-	if (response == KMessageBox::Yes)
-		setActive();
+	// First Create a Dialog
+	KDialog *dialog = new KDialog(Kopete::UI::Global::mainWidget());
+	dialog->setCaption(i18n("Going Online - Kopete"));
+	dialog->setButtons(KDialog::Yes | KDialog::No);
+	dialog->setDefaultButton(KDialog::Yes);
+	dialog->setEscapeButton(KDialog::No);
+	dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+
+	// Set the Text in the Dialog
+	KMessageBox::createKMessageBox(dialog, QMessageBox::Question,
+		i18n("Do You Want to Change Status to Available?"),
+		QStringList(), QString::null, NULL, KMessageBox::NoExec);
+
+	// If yes is clicked, go online
+	connect(dialog, SIGNAL(yesClicked()), this, SLOT(setActive()));
+
+	// Show the Dialog
+	dialog->show();
 }
 
 void StatusManager::setActive()
