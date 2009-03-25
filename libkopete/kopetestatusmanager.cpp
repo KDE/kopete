@@ -353,6 +353,9 @@ void StatusManager::askAndSetActive()
 	// If yes is clicked, go online
 	connect(dialog, SIGNAL(yesClicked()), this, SLOT(setActive()));
 
+	// If the user does not click something by the time we go away, kill the dialog
+	QTimer::singleShot(Kopete::BehaviorSettings::self()->autoAwayTimeout() * 1000, dialog, SLOT(close()));
+
 	// Show the Dialog
 	dialog->show();
 }
