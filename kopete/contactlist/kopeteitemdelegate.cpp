@@ -30,6 +30,7 @@
 #include <KIconLoader>
 
 #include "kopetemetacontact.h"
+#include "kopetecontact.h"
 #include "kopeteappearancesettings.h"
 #include "contactlistlayoutmanager.h"
 #include "contactlistproxymodel.h"
@@ -90,6 +91,24 @@ QSize KopeteItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMo
 		return QStyledItemDelegate::sizeHint( option, index );
 }
 
+Kopete::Contact* KopeteItemDelegate::contactAt( const QStyleOptionViewItem& option, const QModelIndex& index, const QPoint& point ) const
+{
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
+	{
+		ContactList::ContactListLayout layout = ContactList::LayoutManager::instance()->activeLayout();
+		QList< QPair<QRect, Kopete::Contact*> > contactPositionList;
+		paintItem( layout.layout(), 0, option, index, &contactPositionList );
+
+		QPoint delegatePoint = point - option.rect.topLeft();
+		for ( int i = 0; i < contactPositionList.size(); ++i )
+		{
+			if ( contactPositionList.at(i).first.contains( delegatePoint ) )
+				return contactPositionList.at(i).second;
+		}
+	}
+	return 0;
+}
+
 void KopeteItemDelegate::paint( QPainter* painter, 
 								const QStyleOptionViewItem& option,
 								const QModelIndex& index ) const
@@ -122,7 +141,7 @@ void KopeteItemDelegate::paint( QPainter* painter,
 		else
 			painter->setPen( option.palette.color( QPalette::Normal, QPalette::Text ) );
 
-		paintItem( layout.layout(), painter, option, index );
+		paintItem( layout.layout(), painter, option, index, 0 );
 
 		painter->restore();
 	}
@@ -139,7 +158,8 @@ void KopeteItemDelegate::paint( QPainter* painter,
 }
 
 void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPainter* painter,
-                                    const QStyleOptionViewItem& option, const QModelIndex& index ) const
+                                    const QStyleOptionViewItem& option, const QModelIndex& index,
+                                    QList<QPair<QRect, Kopete::Contact*> >* contactPositionList ) const
 {
 	int rowCount = config.rows();
 	if ( rowCount == 0 )
@@ -154,95 +174,99 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 	if ( config.showIcon() )
 	{
 		int imageSize = option.rect.height() - hBorderMargin;
-		QRectF nominalImageRect( rowOffsetX, rowOffsetY, imageSize, imageSize );
-		
-		QVariant metaContactPicture = index.data( Kopete::Items::MetaContactImageRole );
-		if ( metaContactPicture.type() == QVariant::Image )
+
+		if ( painter )
 		{
-			// We have contact photo
-			QImage metaContactImage = metaContactPicture.value<QImage>();
-			if ( !metaContactImage.isNull() )
+			QRectF nominalImageRect( rowOffsetX, rowOffsetY, imageSize, imageSize );
+
+			QVariant metaContactPicture = index.data( Kopete::Items::MetaContactImageRole );
+			if ( metaContactPicture.type() == QVariant::Image )
 			{
-				metaContactImage = metaContactImage.scaled( imageSize, imageSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
-
-				int metaContactStatus = index.data( Kopete::Items::OnlineStatusRole ).toInt();
-				if ( metaContactStatus == Kopete::OnlineStatus::Offline )
-					Blitz::grayscale( metaContactImage );
-
-				switch ( metaContactStatus )
+				// We have contact photo
+				QImage metaContactImage = metaContactPicture.value<QImage>();
+				if ( !metaContactImage.isNull() )
 				{
-				case Kopete::OnlineStatus::Online:
-					break;
-				case Kopete::OnlineStatus::Away:
-					Blitz::fade( metaContactImage, 0.5, Qt::white );
-					break;
-				case Kopete::OnlineStatus::Offline:
-					Blitz::fade( metaContactImage, 0.4, Qt::white );
-					break;
-				case Kopete::OnlineStatus::Unknown:
-				default:
-					Blitz::fade( metaContactImage, 0.8, Qt::white );
-				}
+					metaContactImage = metaContactImage.scaled( imageSize, imageSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 
-				QPixmap photoPixmap;
-				bool roundedIcons = Kopete::AppearanceSettings::self()->contactListIconRounded();
-				if ( roundedIcons )
-				{
-					photoPixmap = QPixmap( metaContactImage.width(), metaContactImage.height() );
-					photoPixmap.fill( Qt::transparent );
-					QPainter painter( &photoPixmap );
-					painter.setRenderHint( QPainter::Antialiasing );
-					painter.setPen( Qt::NoPen );
-					painter.setBrush( QBrush( metaContactImage ) );
-					QRectF rectangle( 0.5, 0.5, photoPixmap.width()-1, photoPixmap.height()-1 );
-					painter.drawRoundedRect( rectangle, 25, 25, Qt::RelativeSize );
-				}
-				else
-				{
-					photoPixmap = QPixmap::fromImage( metaContactImage );
-				}
+					int metaContactStatus = index.data( Kopete::Items::OnlineStatusRole ).toInt();
+					if ( metaContactStatus == Kopete::OnlineStatus::Offline )
+						Blitz::grayscale( metaContactImage );
 
-				if ( Kopete::AppearanceSettings::self()->contactListIconBorders() )
-				{
-					QPainter p( &photoPixmap );
-					p.setPen( Qt::black );
+					switch ( metaContactStatus )
+					{
+					case Kopete::OnlineStatus::Online:
+						break;
+					case Kopete::OnlineStatus::Away:
+						Blitz::fade( metaContactImage, 0.5, Qt::white );
+						break;
+					case Kopete::OnlineStatus::Offline:
+						Blitz::fade( metaContactImage, 0.4, Qt::white );
+						break;
+					case Kopete::OnlineStatus::Unknown:
+					default:
+						Blitz::fade( metaContactImage, 0.8, Qt::white );
+					}
 
+					QPixmap photoPixmap;
+					bool roundedIcons = Kopete::AppearanceSettings::self()->contactListIconRounded();
 					if ( roundedIcons )
 					{
+						photoPixmap = QPixmap( metaContactImage.width(), metaContactImage.height() );
+						photoPixmap.fill( Qt::transparent );
+						QPainter p( &photoPixmap );
 						p.setRenderHint( QPainter::Antialiasing );
+						p.setPen( Qt::NoPen );
+						p.setBrush( QBrush( metaContactImage ) );
 						QRectF rectangle( 0.5, 0.5, photoPixmap.width()-1, photoPixmap.height()-1 );
 						p.drawRoundedRect( rectangle, 25, 25, Qt::RelativeSize );
 					}
 					else
 					{
-						p.drawRect( 0, 0, photoPixmap.width()-1, photoPixmap.height()-1 );
+						photoPixmap = QPixmap::fromImage( metaContactImage );
 					}
+
+					if ( Kopete::AppearanceSettings::self()->contactListIconBorders() )
+					{
+						QPainter p( &photoPixmap );
+						p.setPen( Qt::black );
+
+						if ( roundedIcons )
+						{
+							p.setRenderHint( QPainter::Antialiasing );
+							QRectF rectangle( 0.5, 0.5, photoPixmap.width()-1, photoPixmap.height()-1 );
+							p.drawRoundedRect( rectangle, 25, 25, Qt::RelativeSize );
+						}
+						else
+						{
+							p.drawRect( 0, 0, photoPixmap.width()-1, photoPixmap.height()-1 );
+						}
+					}
+					//offset cover if non square
+					QPointF offset = centerImage( photoPixmap, nominalImageRect );
+					QRectF imageRect( nominalImageRect.x() + offset.x(),
+									nominalImageRect.y() + offset.y(),
+									nominalImageRect.width() - offset.x() * 2,
+									nominalImageRect.height() - offset.y() * 2 );
+
+					painter->drawPixmap( imageRect, photoPixmap, QRectF( photoPixmap.rect() ) );
 				}
-				//offset cover if non square
-				QPointF offset = centerImage( photoPixmap, nominalImageRect );
-				QRectF imageRect( nominalImageRect.x() + offset.x(),
-				                  nominalImageRect.y() + offset.y(),
-				                  nominalImageRect.width() - offset.x() * 2,
-				                  nominalImageRect.height() - offset.y() * 2 );
-
-				painter->drawPixmap( imageRect, photoPixmap, QRectF( photoPixmap.rect() ) );
 			}
-		}
-		else
-		{
-			// We have icon
-			QString metaContactImageName = metaContactPicture.value<QString>();
-			QPixmap metaContactImage = SmallIcon( metaContactImageName, imageSize );
-			if ( !metaContactImage.isNull() )
+			else
 			{
-				//offset cover if non square
-				QPointF offset = centerImage( metaContactImage, nominalImageRect );
-				QRectF imageRect( nominalImageRect.x() + offset.x(),
-				                  nominalImageRect.y() + offset.y(),
-				                  nominalImageRect.width() - offset.x() * 2,
-				                  nominalImageRect.height() - offset.y() * 2 );
+				// We have icon
+				QString metaContactImageName = metaContactPicture.value<QString>();
+				QPixmap metaContactImage = SmallIcon( metaContactImageName, imageSize );
+				if ( !metaContactImage.isNull() )
+				{
+					//offset cover if non square
+					QPointF offset = centerImage( metaContactImage, nominalImageRect );
+					QRectF imageRect( nominalImageRect.x() + offset.x(),
+									nominalImageRect.y() + offset.y(),
+									nominalImageRect.width() - offset.x() * 2,
+									nominalImageRect.height() - offset.y() * 2 );
 
-				painter->drawPixmap( imageRect, metaContactImage, QRectF( metaContactImage.rect() ) );
+					painter->drawPixmap( imageRect, metaContactImage, QRectF( metaContactImage.rect() ) );
+				}
 			}
 		}
 
@@ -288,7 +312,8 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 			QFont font( ( element.small() ) ? small : normal );
 			font.setBold( element.bold() );
 			font.setItalic( element.italic() );
-			painter->setFont( font );
+			if ( painter )
+				painter->setFont( font );
 
 			QRectF elementBox;
 
@@ -305,15 +330,18 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 				//special case for painting the ProtocolIcons...
 				if ( value == ContactList::LayoutManager::ProtocolIcons )
 				{
-					QList<QVariant> iconList = ( role > -1 ) ? index.data( role ).toList() : QList<QVariant>();
-					if ( iconList.size() > 0 )
+					QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+					Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
+
+					QList<Kopete::Contact*> contactList = metaContact->contacts();
+					if ( contactList.size() > 0 )
 					{
 						const qreal IconMarginH = 2.0;
 						const qreal IconMarginV = 1.0;
 						const qreal IconSize = rowHeight - 2 * IconMarginV;
-						qreal iconsWidth = iconList.size() * IconSize;
-						if ( iconList.size() > 1 )
-							iconsWidth += (iconList.size() - 1) * IconMarginH;
+						qreal iconsWidth = contactList.size() * IconSize;
+						if ( contactList.size() > 1 )
+							iconsWidth += (contactList.size() - 1) * IconMarginH;
 
 						if (iconsWidth > itemWidth)
 							iconsWidth = itemWidth;
@@ -323,30 +351,39 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 							drawingRect.moveRight( currentItemX + itemWidth );
 						else if ( (alignment & Qt::AlignHCenter) == Qt::AlignHCenter )
 							drawingRect.moveLeft( currentItemX + (itemWidth - iconsWidth) / 2.0 );
-						
+
 						double offsetX = 0;
-						foreach ( const QVariant& variant, iconList )
+						foreach ( Kopete::Contact *contact, contactList )
 						{
-							QIcon contactIcon = qVariantValue<QIcon>( variant );
+							QIcon contactIcon = contact->onlineStatus().iconFor( contact );
 							if ( contactIcon.isNull() )
 								continue;
 
-							QPixmap contactPixmap = contactIcon.pixmap( IconSize, IconSize );
 							QRectF pixmapRect( drawingRect.x() + offsetX, drawingRect.y(),
 							                   IconSize, IconSize );
 
+							if ( contactPositionList )
+								contactPositionList->append( QPair<QRect, Kopete::Contact*>( pixmapRect.toRect(), contact ) );
+
+							if ( painter )
+							{
+								QPixmap contactPixmap = contactIcon.pixmap( IconSize, IconSize );
+								painter->drawPixmap( pixmapRect, contactPixmap, QRectF( contactPixmap.rect() ) );
+							}
+
 							offsetX += IconSize + IconMarginH;
-							pixmapRect = pixmapRect.intersected(pixmapRect);
-							painter->drawPixmap( pixmapRect, contactPixmap, QRectF( contactPixmap.rect() ) );
 						}
 					}
 				}
 				else
 				{
-					QString text = ( role > -1 ) ? index.data( role ).toString() : QString();
-					text = element.prefix() + text + element.suffix();
-					text = QFontMetricsF( font ).elidedText( text, Qt::ElideRight, itemWidth );
-					painter->drawText( currentItemX, rowOffsetY, itemWidth, rowHeight, alignment, text );
+					if ( painter )
+					{
+						QString text = ( role > -1 ) ? index.data( role ).toString() : QString();
+						text = element.prefix() + text + element.suffix();
+						text = QFontMetricsF( font ).elidedText( text, Qt::ElideRight, itemWidth );
+						painter->drawText( currentItemX, rowOffsetY, itemWidth, rowHeight, alignment, text );
+					}
 				}
 
 				currentItemX += itemWidth;

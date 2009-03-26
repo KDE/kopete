@@ -90,6 +90,7 @@ public:
 	QSet<int> notExpandedGroups;
 	QPointer<Kopete::MetaContact> selectedMetaContact;
 
+	QPointer<Kopete::Contact> pressedContact;
 	bool controlPressed;
 };
 
@@ -218,9 +219,16 @@ void KopeteContactListView::contactActivated( const QModelIndex& index )
 	{
 		if ( !d->controlPressed )
 		{
-			Kopete::MetaContact* mc = metaContactFromIndex( index );
-			if ( mc )
-				mc->execute();
+			if ( d->pressedContact )
+			{
+				d->pressedContact->execute();
+			}
+			else
+			{
+				Kopete::MetaContact* mc = metaContactFromIndex( index );
+				if ( mc )
+					mc->execute();
+			}
 		}
 	}
 
@@ -427,7 +435,19 @@ void KopeteContactListView::contextMenuEvent( QContextMenuEvent* event )
 	{
 		QModelIndex index = indexList.first();
 		if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
-			metaContactPopup( metaContactFromIndex( index ), event->globalPos() );
+		{
+			Kopete::Contact* contact = contactAt( event->pos() );
+			if ( contact )
+			{
+				KMenu *menu = contact->popupMenu();
+				connect( menu, SIGNAL(aboutToHide()), menu, SLOT(deleteLater()) );
+				menu->popup( event->globalPos() );
+			}
+			else
+			{
+				metaContactPopup( metaContactFromIndex( index ), event->globalPos() );
+			}
+		}
 		else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
 			groupPopup( groupFromIndex( index ), event->globalPos() );
 	}
@@ -439,7 +459,10 @@ void KopeteContactListView::mouseReleaseEvent(QMouseEvent *event)
 	if ( (event->modifiers() & Qt::ControlModifier) == Qt::ControlModifier )
 		d->controlPressed = true;
 
+	d->pressedContact = contactAt( event->pos() );
+
 	QTreeView::mouseReleaseEvent( event );
+	d->pressedContact = 0;
 	d->controlPressed = false;
 }
 
@@ -910,6 +933,25 @@ void KopeteContactListView::miscPopup( QModelIndexList indexes, const QPoint& po
 	
 	if ( popup )
 		popup->popup( pos );
+}
+
+Kopete::Contact* KopeteContactListView::contactAt( const QPoint& point ) const
+{
+	QModelIndex index = indexAt( point );
+	if ( !index.isValid() )
+		return 0;
+
+	QRect rect = visualRect( index );
+	if ( rect.width() <= 0 || rect.height() <= 0 )
+		return 0;
+
+	KopeteItemDelegate* delegate = dynamic_cast<KopeteItemDelegate*>(itemDelegate( index ));
+	if ( !delegate )
+		return 0;
+
+	QStyleOptionViewItem option = viewOptions();
+	option.rect = rect;
+	return delegate->contactAt( option, index, point );
 }
 
 #include "kopetecontactlistview.moc"

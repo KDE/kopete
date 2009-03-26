@@ -29,6 +29,8 @@
 class QPainter;
 class QAbstractItemView;
 
+namespace Kopete { class Contact; }
+
 class KOPETE_CONTACT_LIST_EXPORT KopeteItemDelegate : public QStyledItemDelegate
 {
 public:
@@ -43,9 +45,12 @@ public:
 	                     const QModelIndex & index ) const;
 	virtual QSize sizeHint ( const QStyleOptionViewItem & option,
 	                         const QModelIndex & index ) const;
+
+	Kopete::Contact* contactAt( const QStyleOptionViewItem& option, const QModelIndex& index, const QPoint& point ) const;
 private:
 	void paintItem( ContactList::LayoutItemConfig config, QPainter* painter,
-	                const QStyleOptionViewItem& option, const QModelIndex& index ) const;
+	                const QStyleOptionViewItem& option, const QModelIndex& index,
+	                QList<QPair<QRect, Kopete::Contact*> >* contactPositionList ) const;
 
 	QPointF centerImage( const QImage& image, const QRectF& rect ) const;
 	QPointF centerImage( const QPixmap& pixmap, const QRectF& rect ) const;

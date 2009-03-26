@@ -56,7 +56,7 @@ LayoutManager::LayoutManager()
 	m_tokens << ContactListTokenConfig( Qt::DisplayRole, "Name", i18n("Name"), "filename-space-amarok" );
 	m_tokens << ContactListTokenConfig( Kopete::Items::StatusTitleRole, "StatusTitle", i18n("Status Title"), "filename-space-amarok" );
 	m_tokens << ContactListTokenConfig( Kopete::Items::StatusMessageRole, "StatusMessage", i18n("Status Message"), "filename-space-amarok" );
-	m_tokens << ContactListTokenConfig( Kopete::Items::AccountIconsRole, "ProtocolIcons", i18n("Protocol Icons"), "filename-space-amarok" );
+	m_tokens << ContactListTokenConfig( -1, "ProtocolIcons", i18n("Protocol Icons"), "filename-space-amarok" );
 
 	loadDefaultLayouts();
 	loadUserLayouts();
