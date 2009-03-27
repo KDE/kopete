@@ -42,6 +42,7 @@ set(liboscar_SRCS
     xtrazxtraznotify.cpp
     xtrazxrandomizerservice.cpp
     filetransferhandler.cpp
+    chatroomhandler.cpp
     tasks/task.cpp
     tasks/logintask.cpp
     tasks/oscarlogintask.cpp
@@ -84,6 +85,7 @@ set(liboscar_SRCS
     tasks/icqchangepasswordtask.cpp
     tasks/icqtlvinforequesttask.cpp
     tasks/icqtlvinfoupdatetask.cpp
+    tasks/chatroomtask.cpp
     utils/rtf.cc
 )
 

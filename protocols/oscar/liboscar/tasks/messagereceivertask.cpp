@@ -20,6 +20,7 @@
 #include <qtextcodec.h>
 #include <QList>
 #include <QByteArray>
+#include <QRegExp>
 #include <kdebug.h>
 #include "transfer.h"
 #include "buffer.h"
@@ -209,6 +210,8 @@ void MessageReceiverTask::handleType2Message()
 	kDebug(14151) << "Received Type 2 message. Trying to handle it...";
 
 	Oscar::Message msg;
+	msg.setSender( m_fromUser );
+	msg.setReceiver( client()->userId() );
 	QList<TLV> messageTLVList = transfer()->buffer()->getTLVList();
 	TLV t = Oscar::findTLV( messageTLVList, 0x0005 );
 	if ( !t )
@@ -222,6 +225,7 @@ void MessageReceiverTask::handleType2Message()
 	// request type
 	int requestType = messageBuffer.getWord();
 	kDebug(14151) << "Request type (0 - request, 1 - cancel, 2 - accept): " << requestType;
+	msg.setRequestType( requestType );
 
 	// skip the message id cookie, already handled above
 	messageBuffer.skipBytes( 8 );
@@ -233,6 +237,12 @@ void MessageReceiverTask::handleType2Message()
 		kDebug(14151) << "**************this is a filetransfer message************";
 		emit fileMessage( requestType, m_fromUser, m_icbmCookie, messageBuffer);
 		return;
+	}
+
+	if ( g == oscar_caps[CAP_CHAT] )
+	{
+		kDebug(14151) << "**************this is a chat message************";
+		msg.setMessageType( Oscar::MessageType::Chat );
 	}
 
 	while( messageBuffer.bytesAvailable() > 0 )
@@ -256,6 +266,11 @@ void MessageReceiverTask::handleType2Message()
 			kDebug(OSCAR_RAW_DEBUG) << "Got unknown TLV 0x000B: "
 				<< tlv.length << " data: " << tlv.data << endl;
 			break;
+		case 0x000C:
+			kDebug(OSCAR_RAW_DEBUG) << "Got chat invitation message: "
+				<< tlv.length << " data: " << tlv.data << endl;
+			msg.setTextArray(tlv.data);
+			break;
 		case 0x000F:
 			kDebug(OSCAR_RAW_DEBUG) << "Got unknown empty TLV 0x000F";
 			break;
@@ -264,22 +279,26 @@ void MessageReceiverTask::handleType2Message()
 			kDebug(OSCAR_RAW_DEBUG) << "Got a TLV 2711";
 			Buffer tlv2711Buffer( tlv.data );
 			parseRendezvousData( &tlv2711Buffer, &msg );
-			switch ( requestType )
+			if(msg.messageType() == Oscar::MessageType::Chat)
+				emit chatroomMessage( msg, m_icbmCookie );
+			else
 			{
-			case 0x00: // some request
-				emit receivedMessage( msg );
-				break;
-			case 0x01:
-				kDebug(OSCAR_RAW_DEBUG) << "Received Abort Mesage";
-				break;
-			case 0x02:
-				kDebug(OSCAR_RAW_DEBUG) << "Received OK Message";
-				break;
-			default:
-			kDebug(OSCAR_RAW_DEBUG) << "Received unknown request type: " << requestType;
-				break;
+				switch ( requestType )
+				{
+				case 0x00: // some request
+					emit receivedMessage( msg );
+					break;
+				case 0x01:
+					kDebug(OSCAR_RAW_DEBUG) << "Received Abort Mesage";
+					break;
+				case 0x02:
+					kDebug(OSCAR_RAW_DEBUG) << "Received OK Message";
+					break;
+				default:
+				kDebug(OSCAR_RAW_DEBUG) << "Received unknown request type: " << requestType;
+					break;
+				}
 			}
-
 			break;
 		} //end case
 		default:
@@ -382,6 +401,35 @@ void MessageReceiverTask::handleAutoResponse()
 
 void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 {
+	// Do chat stuff
+	if ( msg->messageType() == Oscar::MessageType::Chat )
+	{
+		// unknown, maybe it is always 00 04 23 21
+		b->skipBytes( 4 );
+
+		QString joinString( b->getBlock( b->length() - 4 ) );
+
+		QRegExp rx( "aol://2719:(\\d+)-(\\d+)-(\\w+)" );
+		if ( rx.exactMatch( joinString ) )
+		{
+			bool okay = true;
+			Oscar::WORD num = rx.cap( 1 ).toUShort( &okay, 10 );
+			Oscar::WORD exchange = rx.cap( 2 ).toUShort( &okay, 10 );
+			QString chatroom = rx.cap( 3 );
+
+			if ( num != 10 )
+				kDebug() << "Warning: Expecting 10 but got " << num;
+
+			msg->setExchange( exchange );
+			msg->setChatRoom( chatroom );
+			return;
+		}
+
+		kDebug() << "Error: Join string '" << joinString << "' did not match the regex.";
+
+		return;
+	}
+
 	int length1 =  b->getLEWord();
 	if ( length1 != 0x001B )
 	{	// all real messages (actually their header) seem to have length 0x1B

@@ -217,8 +217,8 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	mInitialStatusMessage.clear();
 
 	m_joinChatDialog = 0;
-	QObject::connect( engine(), SIGNAL( chatRoomConnected( WORD, const QString& ) ),
-			this, SLOT( connectedToChatRoom( WORD, const QString& ) ) );
+	QObject::connect( engine(), SIGNAL( chatRoomConnected( Oscar::WORD, const QString& ) ),
+	                  this, SLOT( connectedToChatRoom( Oscar::WORD, const QString& ) ) );
 
 	QObject::connect( engine(), SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ),
 			this, SLOT( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ) );
