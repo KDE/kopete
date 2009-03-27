@@ -184,6 +184,13 @@ public:
 	 */
 	Form form() const;
 
+	/**
+	 * say if kopete show warning message, when you closing window of group chat
+	 * @see setWarnGroupChat()
+	 * @return true if kopete show warning message
+	 */
+	bool warnGroupChat() const;
+
 signals:
 	/**
 	 * @brief the KMM will be deleted
@@ -414,6 +421,13 @@ protected:
 	 * @see mayInvite()
 	 */
 	void setMayInvite(bool);
+
+	/**
+	 * set if kopete show warning message, when you closing window of group chat
+	 * By default, it is set to true
+	 * @see warnGroupChat()
+	 */
+	void setWarnGroupChat(bool);
 
 private:
 	KMMPrivate *d;

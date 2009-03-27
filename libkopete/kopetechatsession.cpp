@@ -63,6 +63,7 @@ public:
 	bool mayInvite;
 	Kopete::MessageHandlerChain::Ptr chains[CHAIN_COUNT];
 	Kopete::ChatSession::Form form;
+	bool warnGroupChat;
 };
 
 Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
@@ -79,6 +80,7 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->customDisplayName = false;
 	d->mayInvite = false;
 	d->form = form;
+	d->warnGroupChat = true;
 
 	for ( int i = 0; others.size() != i; ++i )
 		addContact( others[i], true );
@@ -541,6 +543,15 @@ void Kopete::ChatSession::raiseView()
 Kopete::ChatSession::Form Kopete::ChatSession::form() const
 {
 	return d->form;
+}
+bool Kopete::ChatSession::warnGroupChat() const
+{
+	return d->warnGroupChat;
+}
+
+void Kopete::ChatSession::setWarnGroupChat( bool b )
+{
+	d->warnGroupChat=b;
 }
 
 #include "kopetechatsession.moc"

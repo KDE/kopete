@@ -70,6 +70,7 @@ public:
 	bool isActive;
 	bool sendInProgress;
 	bool visibleMembers;
+	bool warnGroupChat;
 	QSplitter * splitter;
 };
 
@@ -86,6 +87,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	m_mainWindow = 0L;
 	m_tabState = Normal;
 
+	d->warnGroupChat = mgr->warnGroupChat();
 
 	//FIXME: don't widgets start off hidden anyway?
 	hide();
@@ -360,7 +362,7 @@ bool ChatView::closeView( bool force )
 
 	if ( !force )
 	{
-		if ( m_manager->members().count() > 1 )
+		if ( m_manager->members().count() > 1 && ! d->warnGroupChat )
 		{
 			QString shortCaption = d->captionText;
 			shortCaption = KStringHandler::rsqueeze( shortCaption );
