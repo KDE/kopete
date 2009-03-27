@@ -26,6 +26,8 @@
 
 #include <TelepathyQt4/Client/PendingOperation>
 #include <TelepathyQt4/Client/TextChannel>
+#include <TelepathyQt4/Client/Message>
+#include <TelepathyQt4/Constants>
 
 namespace Telepathy
 {
@@ -51,6 +53,10 @@ private slots:
 	void createChannelFinished(Telepathy::Client::PendingOperation*);
 	void chatSessionRequestClose(Telepathy::Client::PendingOperation*);
 	void closingChatSession(Kopete::ChatSession *);
+	void messageSent (const Telepathy::Client::Message &message, Telepathy::MessageSendingFlags flags, const QString &sentMessageToken);
+	void messageReceived (const Telepathy::Client::ReceivedMessage &message);
+	void pendingMessageRemoved (const Telepathy::Client::ReceivedMessage &message);
+
 
 private:
 	QSharedPointer<Telepathy::Client::Contact> m_contact;

@@ -74,7 +74,7 @@ void TelepathyChatSession::sendMessage(Kopete::Message &message)
 	if(!m_textChannel)
 		return;
 	
-	m_textChannel->send(message.parsedBody());
+//	m_textChannel->send(message);
 }
 
 void TelepathyChatSession::createChannelFinished(Telepathy::Client::PendingOperation* operation)
@@ -93,6 +93,19 @@ void TelepathyChatSession::createChannelFinished(Telepathy::Client::PendingOpera
 	}
 
 	m_textChannel = pc->channel();
+	
+	QObject::connect(m_textChannel.data(),
+		SIGNAL(messageSent(const Telepathy::Client::Message &, Telepathy::MessageSendingFlags, const QString &)),
+		this,
+		SLOT(messageSent(const Telepathy::Client::Message &, Telepathy::MessageSendingFlags, const QString &)));
+	QObject::connect(m_textChannel.data(),
+		SIGNAL(messageReveiced(const Telepathy::Client::ReceivedMessage &)),
+		this,
+		SLOT(messageReveiced(const Telepathy::Client::ReceivedMessage &)));
+	QObject::connect(m_textChannel.data(),
+		SIGNAL(pendingMessageReceived(const Telepathy::Client::ReceivedMessage &)),
+		this,
+		SLOT(pendingMessageReceived(const Telepathy::Client::ReceivedMessage &)));
 }
 
 void TelepathyChatSession::closingChatSession(Kopete::ChatSession *kmm)
@@ -120,6 +133,27 @@ void TelepathyChatSession::chatSessionRequestClose(Telepathy::Client::PendingOpe
     kDebug(TELEPATHY_DEBUG_AREA) << "Chat session closed";
 }
 
+void TelepathyChatSession::messageSent (const Telepathy::Client::Message &message, Telepathy::MessageSendingFlags flags, const QString &sentMessageToken)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+	
+	Kopete::Message::MessageType messageType = Kopete::Message::TypeNormal;
+	
+	if(message.messageType() == Telepathy::Client::ChannelTypeMessageAction)
+	{
+		messageType = Kopete::Message::TypeAction;
+	}
+	
+	Kopete::Message newMessage(members.first(), myself());
+}
+
+void TelepathyChatSession::messageReceived (const Telepathy::Client::ReceivedMessage &message)
+{
+}
+
+void TelepathyChatSession::pendingMessageRemoved (const Telepathy::Client::ReceivedMessage &message)
+{
+}
 
 
 
