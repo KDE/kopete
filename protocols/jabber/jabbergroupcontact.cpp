@@ -32,6 +32,7 @@
 #include "jabbergroupmembercontact.h"
 #include "jabbercontactpool.h"
 #include "kopetemetacontact.h"
+#include "kopetepluginmanager.h"
 #include "xmpp_tasks.h"
 
 /**
@@ -181,7 +182,11 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 
 		if( !message.xencrypted().isEmpty () )
 		{
-			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
+			if (Kopete::PluginManager::self()->plugin("kopete_cryptography"))
+			{
+				kDebug( JABBER_DEBUG_GLOBAL ) << "Kopete cryptography plugin loaded";
+				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
+			}
 		}
 
 		// locate the originating contact
