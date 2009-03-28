@@ -39,6 +39,7 @@ ContactListLayoutWidget::ContactListLayoutWidget( QWidget *parent )
 
 	connect( layoutEdit, SIGNAL(changed()), this, SLOT(emitChanged()) );
 	connect( previewButton, SIGNAL(clicked()), this, SLOT(preview()) );
+	connect( removeButton, SIGNAL(clicked()), this, SLOT(remove()) );
 	connect( layoutComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLayout(const QString&)) );
 	connect( LayoutManager::instance(), SIGNAL(layoutListChanged()), this, SLOT(reloadLayoutList()) );
 }
@@ -82,7 +83,7 @@ void ContactListLayoutWidget::setLayout( const QString &layoutName )
 		return;
 
 	QString layoutNameTmp = mCurrentLayoutName;
-	if ( !saveLayoutData( layoutNameTmp, true ) )
+	if ( !layoutNameTmp.isEmpty() && !saveLayoutData( layoutNameTmp, true ) )
 	{
 		int index = layoutComboBox->findText( mCurrentLayoutName );
 		if ( index != -1 )
@@ -93,6 +94,7 @@ void ContactListLayoutWidget::setLayout( const QString &layoutName )
 
 	mLoading = true;
 	mCurrentLayoutName = layoutName;
+	removeButton->setEnabled( !LayoutManager::instance()->isDefaultLayout( layoutName ) );
 	ContactListLayout layout = LayoutManager::instance()->layout( layoutName );
 	layoutEdit->readLayout( layout.layout() );
 	mLoading = false;
@@ -113,7 +115,15 @@ void ContactListLayoutWidget::reloadLayoutList()
 	layoutComboBox->addItems( LayoutManager::instance()->layouts() );
 	int index = layoutComboBox->findText( layoutName );
 	if ( index != -1 )
+	{
 		layoutComboBox->setCurrentIndex( index );
+	}
+	else
+	{
+		mCurrentLayoutName.clear();
+		setLayout( layoutComboBox->currentText() );
+		LayoutManager::instance()->setActiveLayout( layoutComboBox->currentText() );
+	}
 
 	connect( layoutComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLayout(const QString&)) );
 }
@@ -123,6 +133,12 @@ void ContactListLayoutWidget::preview()
 	ContactListLayout layout;
 	layout.setLayout( layoutEdit->config() );
 	LayoutManager::instance()->setPreviewLayout( layout );
+}
+
+void ContactListLayoutWidget::remove()
+{
+	if ( !LayoutManager::instance()->isDefaultLayout( mCurrentLayoutName ) )
+		LayoutManager::instance()->deleteLayout( mCurrentLayoutName );
 }
 
 bool ContactListLayoutWidget::saveLayoutData( QString& layoutName, bool showPrompt )

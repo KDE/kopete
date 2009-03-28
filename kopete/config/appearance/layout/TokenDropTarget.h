@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-#ifndef DRAGSTACK_H
-#define DRAGSTACK_H
+#ifndef TOKENDROPTARGET_H
+#define TOKENDROPTARGET_H
 
 #include <QWidget>
 
@@ -29,11 +29,11 @@ class Token;
 class TokenDragger;
 class TokenFactory;
 
-class DragStack : public QWidget
+class TokenDropTarget : public QWidget
 {
     Q_OBJECT
 public:
-    DragStack( const QString &mimeType, QWidget *parent = 0);
+    TokenDropTarget( const QString &mimeType, QWidget *parent = 0);
 
     QWidget *childAt( const QPoint &pos ) const;
     void clear();
@@ -73,4 +73,4 @@ private:
     TokenFactory *m_tokenFactory;
 };
 
-#endif //DRAGSTACK_H
+#endif

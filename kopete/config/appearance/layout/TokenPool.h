@@ -15,22 +15,23 @@
  * You should have received a copy of the GNU General Public License          *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.      *
  ******************************************************************************/
-#ifndef TOKENLISTWIDGET_H
-#define TOKENLISTWIDGET_H
+
+#ifndef TOKENPOOL_H
+#define TOKENPOOL_H
 
 #include "Token.h"
 
 #include <KListWidget>
 #include <QMap>
 
-//Holds a number of icons representing parts of the filename that will become tokens when dropped on the FilenameLayoutWidget.
-class TokenListWidget : public KListWidget
+//Holds a number of icons representing parts of the filename that will become tokens when dropped on the TokenLayoutWidget.
+class TokenPool : public KListWidget
 {
     Q_OBJECT
     Q_PROPERTY(QString mimeType READ mimeType WRITE setMimeType)
     
     public:
-        TokenListWidget( QWidget *parent = 0 );
+        TokenPool( QWidget *parent = 0 );
         void addToken( Token * token );
     
         QString mimeType() const;
@@ -44,7 +45,7 @@ class TokenListWidget : public KListWidget
         void dropEvent( QDropEvent *event );
 
     signals:
-        void onDoubleClick( Token *token );     //connects to FilenameLayoutWidget::addToken( QString )
+        void onDoubleClick( Token *token );     //connects to TokenLayoutWidget::addToken( QString )
     
     private:
         void performDrag( QMouseEvent *event );
@@ -54,5 +55,5 @@ class TokenListWidget : public KListWidget
         QMap<QListWidgetItem*,Token*> m_itemTokenMap;
 };
 
-#endif    //TOKENLISTWIDGET_H
+#endif
 

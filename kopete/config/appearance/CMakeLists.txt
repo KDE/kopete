@@ -18,9 +18,9 @@ set(kcm_kopete_appearanceconfig_PART_SRCS
    contactlistlayouteditwidget.cpp
    contactlisttoken.cpp
    tooltipeditdialog.cpp
-   layout/DragStack.cpp
+   layout/TokenDropTarget.cpp
    layout/Token.cpp
-   layout/TokenListWidget.cpp
+   layout/TokenPool.cpp
    layout/TokenWithLayout.cpp )
 
 kde4_add_ui_files(kcm_kopete_appearanceconfig_PART_SRCS 

@@ -39,6 +39,7 @@ private slots:
 	void setLayout( const QString &layoutName );
 	void reloadLayoutList();
 	void preview();
+	void remove();
 
 private:
 	bool saveLayoutData( QString& layoutName, bool showPrompt = false );

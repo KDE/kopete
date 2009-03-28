@@ -24,7 +24,7 @@
 #include <QPainter>
 #include <QPen>
 
-#include "DragStack.h"
+#include "TokenDropTarget.h"
 
 Token * TokenFactory::createToken(const QString & text, const QString & iconName, int value, QWidget * parent)
 {
@@ -42,7 +42,7 @@ Token::Token( const QString &name, const QString &iconName, int value, QWidget *
     setAttribute( Qt::WA_Hover );
     if ( parent )
     {
-        if ( DragStack *editWidget = qobject_cast<DragStack*>( parent ) )
+        if ( TokenDropTarget *editWidget = qobject_cast<TokenDropTarget*>( parent ) )
             connect( this, SIGNAL(changed()), editWidget, SIGNAL(changed()) );
     }
 
@@ -98,6 +98,8 @@ QString Token::iconName() const
 
 void Token::paintEvent(QPaintEvent *pe)
 {
+    Q_UNUSED( pe )
+
     QPainter p( this );
     p.setBrush( Qt::NoBrush );
     p.setRenderHint( QPainter::Antialiasing );

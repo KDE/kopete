@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include "contactlistlayouteditwidget.h"
-#include "DragStack.h"
+#include "TokenDropTarget.h"
 #include "contactlistlayoutmanager.h"
 #include "contactlisttoken.h"
 
@@ -36,10 +36,10 @@ LayoutEditWidget::LayoutEditWidget( QWidget *parent )
 : KVBox(parent)
 {
 	m_tokenFactory = new ContactListTokenFactory;
-	m_dragstack = new DragStack( "application/x-kopete-contactlist-token", this );
-	m_dragstack->setCustomTokenFactory( m_tokenFactory );
-	connect( m_dragstack, SIGNAL(focussed(QWidget*)), this, SIGNAL(focussed(QWidget*)) );
-	connect( m_dragstack, SIGNAL(changed()), this, SIGNAL(changed()) );
+	m_tokenDropTarget = new TokenDropTarget( "application/x-kopete-contactlist-token", this );
+	m_tokenDropTarget->setCustomTokenFactory( m_tokenFactory );
+	connect( m_tokenDropTarget, SIGNAL(focussed(QWidget*)), this, SIGNAL(focussed(QWidget*)) );
+	connect( m_tokenDropTarget, SIGNAL(changed()), this, SIGNAL(changed()) );
 	
 	m_showIconCheckBox = new QCheckBox( i18n( "Show Icon" ) , this );
 	connect( m_showIconCheckBox, SIGNAL(toggled(bool)), this, SIGNAL(changed()) );
@@ -57,7 +57,7 @@ void LayoutEditWidget::readLayout( ContactList::LayoutItemConfig config )
 
 	m_showIconCheckBox->setChecked( config.showIcon() );
 
-	m_dragstack->clear();
+	m_tokenDropTarget->clear();
 
 	for( int i = 0; i < rowCount; i++ )
 	{
@@ -73,12 +73,12 @@ void LayoutEditWidget::readLayout( ContactList::LayoutItemConfig config )
 		{
 			ContactList::LayoutItemConfigRowElement element = rowConfig.element( j );
 			ContactList::ContactListTokenConfig clToken = ContactList::LayoutManager::instance()->token( element.value() );
-			ContactListToken *token =  new ContactListToken( clToken.mName, clToken.mIconName, element.value(), m_dragstack );
+			ContactListToken *token =  new ContactListToken( clToken.mName, clToken.mIconName, element.value(), m_tokenDropTarget );
 			token->setBold( element.bold() );
 			token->setSmall( element.small() );
 			token->setItalic( element.italic() );
 			token->setAlignment( element.alignment() );
-			m_dragstack->insertToken( token, i, j );
+			m_tokenDropTarget->insertToken( token, i, j );
 			token->setWidth( element.size() * 100.0 );
 		}
 
@@ -91,14 +91,14 @@ ContactList::LayoutItemConfig LayoutEditWidget::config()
 	LayoutItemConfig config;
 	config.setShowIcon( m_showIconCheckBox->isChecked() );
 	
-	int noOfRows = m_dragstack->rows();
+	int noOfRows = m_tokenDropTarget->rows();
 
 	for( int i = 0; i < noOfRows; i++ )
 	{
 
 		LayoutItemConfigRow currentRowConfig;
 
-		QList<Token *> tokens = m_dragstack->drags( i );
+		QList<Token *> tokens = m_tokenDropTarget->drags( i );
 
 		foreach( Token * token, tokens ) {
 			if ( ContactListToken *twl = dynamic_cast<ContactListToken *>( token ) )

@@ -28,7 +28,7 @@
 class KHBox;
 class QCheckBox;
 class QSpinBox;
-class DragStack;
+class TokenDropTarget;
 class ContactListTokenFactory;
 
 /**
@@ -55,7 +55,7 @@ signals:
 
 private:
 	QCheckBox *m_showIconCheckBox;
-	DragStack *m_dragstack;
+	TokenDropTarget *m_tokenDropTarget;
 	ContactListTokenFactory *m_tokenFactory;
 };
 

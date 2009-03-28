@@ -46,6 +46,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="removeButton">
+       <property name="text">
+        <string>Remove</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="previewButton">
        <property name="text">
         <string>Preview</string>
@@ -55,7 +62,7 @@
     </layout>
    </item>
    <item>
-    <widget class="TokenListWidget" name="tokenPool">
+    <widget class="TokenPool" name="tokenPool">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -135,9 +142,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TokenListWidget</class>
+   <class>TokenPool</class>
    <extends>QListWidget</extends>
-   <header>layout/TokenListWidget.h</header>
+   <header>layout/TokenPool.h</header>
   </customwidget>
   <customwidget>
    <class>ContactList::LayoutEditWidget</class>
