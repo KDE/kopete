@@ -26,7 +26,6 @@
 namespace Kopete {
 
 class Group;
-class Contactlist;
 class MetaContact;
 class ContactListElement;
 	
@@ -34,7 +33,7 @@ namespace UI {
 
 class MetaContactModelItem;
 class GroupModelItem;
-class ContactListTreeModelItem;
+class ContactListModelItem;
 /**
 @author Aleix Pol <aleixpol@gmail.com>
 */
@@ -80,52 +79,19 @@ protected:
 	virtual bool dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items );
 
 private:
+	ContactListModelItem* itemFor( const QModelIndex& index ) const;
+	QModelIndex indexFor( ContactListModelItem* modelItem ) const;
 	QModelIndexList indexListFor ( Kopete::ContactListElement* ) const;
-	int indexOfMetaContact( const GroupModelItem* inGroup, const Kopete::MetaContact* mc ) const;
-	int indexOfGroup( Kopete::Group* group ) const;
 
-	int childCount( const QModelIndex& parent ) const;
 	int countConnected( GroupModelItem* gmi ) const;
 	QVariant metaContactImage( Kopete::MetaContact* mc ) const;
 	QString metaContactTooltip( Kopete::MetaContact* metaContact ) const;
 
 	QHash<GroupMetaContactPair, int> m_addContactPosition;
-	QList<GroupModelItem*> m_groups;
-	QMap<const GroupModelItem*, QList<MetaContactModelItem*> > m_contacts;
-};
 
-class ContactListTreeModelItem {
-public:
-	ContactListTreeModelItem() {}
-	virtual ~ContactListTreeModelItem() {}
-
-private:
-	// For dynamic cast
-	virtual void dummy() {}
-};
-
-class GroupModelItem : public ContactListTreeModelItem {
-public:
-	GroupModelItem( Kopete::Group* group )
-		: ContactListTreeModelItem(), mGroup( group )
-	{}
-	
-	inline Kopete::Group* group() const { return mGroup; }
-private:
-	Kopete::Group* mGroup;
-};
-
-class MetaContactModelItem : public ContactListTreeModelItem {
-public:
-	MetaContactModelItem( GroupModelItem* groupModelItem, Kopete::MetaContact* metaContact )
-		: ContactListTreeModelItem(), mMetaContact( metaContact ), mGroupModelItem( groupModelItem )
-	{}
-	
-	inline Kopete::MetaContact* metaContact() const { return mMetaContact; }
-	inline GroupModelItem* groupModelItem() const { return mGroupModelItem; }
-private:
-	Kopete::MetaContact* mMetaContact;
-	GroupModelItem* mGroupModelItem;
+	GroupModelItem* m_topLevelGroup;
+	QHash<Kopete::Group*, GroupModelItem*> m_groups;
+	QMap<GroupMetaContactPair, MetaContactModelItem*> m_metaContacts;
 };
 
 }

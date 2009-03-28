@@ -396,10 +396,25 @@ bool ContactListModel::dropMetaContacts( int row, const QModelIndex &parent, Qt:
 		if ( !destMetaContact )
 			return false;
 
+		QStringList displayNames;
+		displayNames << destMetaContact->displayName();
+
 		QList<Kopete::MetaContact*> metaContacts;
 		QListIterator<GroupMetaContactPair> it( items );
 		while ( it.hasNext() )
-			metaContacts << it.next().second;
+		{
+			Kopete::MetaContact* mc = it.next().second;
+			metaContacts << mc;
+			displayNames << mc->displayName();
+		}
+
+		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
+		                                i18n( "<qt>Are you sure you want to merge meta contacts?\n<b>%1</b>", displayNames.join( ", " ) ),
+		                                i18n( "Meta Contact Merge" ), KStandardGuiItem::yes(), KStandardGuiItem::no(),
+		                                "askDDMergeMetaContacts", KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Yes )
+		{
+			return false;
+		}
 
 		// Merge the metacontacts from mimedata into this one
 		Kopete::ContactList::self()->mergeMetaContacts( metaContacts, destMetaContact );

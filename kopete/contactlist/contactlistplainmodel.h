@@ -75,7 +75,6 @@ protected:
 private:
 	void addMetaContactImpl( Kopete::MetaContact *mc );
 	QModelIndexList indexListFor( Kopete::ContactListElement* ) const;
-	int childCount( const QModelIndex& parent ) const;
 
 	void savePositions();
 	void loadPositions();

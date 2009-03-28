@@ -53,10 +53,7 @@ bool ContactListProxyModel::lessThan(const QModelIndex &left, const QModelIndex 
 {
 	int leftType = left.data( Kopete::Items::TypeRole ).toInt();
 	if ( leftType != right.data( Kopete::Items::TypeRole ).toInt() )
-	{
-		kWarning() << "Comparing different types!!!";
-		return false;
-	}
+		return (leftType == Kopete::Items::MetaContact); // MetaContacts are always on top.
 
 	if ( leftType == Kopete::Items::Group )
 	{

@@ -104,14 +104,6 @@ void ContactListPlainModel::removeMetaContact( Kopete::MetaContact *mc )
 	endRemoveRows();
 }
 
-int ContactListPlainModel::childCount( const QModelIndex& parent ) const
-{
-	if ( !parent.isValid() )
-		return m_contacts.count();
-	else
-		return 0;
-}
-
 int ContactListPlainModel::rowCount( const QModelIndex& parent ) const
 {
 	if ( !parent.isValid() )
@@ -130,7 +122,7 @@ bool ContactListPlainModel::hasChildren( const QModelIndex& parent ) const
 
 QModelIndex ContactListPlainModel::index( int row, int column, const QModelIndex & parent ) const
 {
-	if ( row < 0 || row >= childCount( parent ) )
+	if ( row < 0 || row >= rowCount( parent ) )
 		return QModelIndex();
 
 	QModelIndex idx;

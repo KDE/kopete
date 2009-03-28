@@ -238,6 +238,10 @@ void KopeteContactListView::contactActivated( const QModelIndex& index )
 void KopeteContactListView::reset()
 {
 	QTreeView::reset();
+
+	if ( Kopete::AppearanceSettings::self()->groupContactByGroup() )
+		setRootIndex( model()->index( 0, 0 ) );
+
 	reexpandGroups();
 }
 
@@ -527,14 +531,14 @@ void KopeteContactListView::dragMoveEvent ( QDragMoveEvent * event )
 			accept = (event->proposedAction() & (Qt::MoveAction | Qt::CopyAction)); // Move/copy between groups
 		else if ( !groupContactByGroup && !index.isValid() )
 			accept = (event->proposedAction() & Qt::MoveAction); // In plain view metaContact can only be moved
-		else if ( groupContactByGroup && !index.isValid() )
-			accept = false; // Can't add metaContact to topLevel if groups are shown TODO: Remove this constraint
+		else
+			accept = false;
 	}
 	else if ( data->hasFormat( "application/kopete.group" ) )
 	{
 		if ( !groupContactByGroup )
 			accept = false; // Plain view doesn't support groups
-		else if ( !index.isValid() )
+		else if ( !index.parent().isValid() )
 			accept = (event->proposedAction() & Qt::MoveAction); // In tree view groups can only be moved
 		else
 			accept = false;
