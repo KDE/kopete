@@ -241,8 +241,11 @@ bool ContactListTreeModel::setData( const QModelIndex & index, const QVariant & 
 
 		if ( gmi )
 		{
-			gmi->group()->setExpanded( value.toBool() );
-			emit dataChanged( index, index );
+			if ( gmi->group()->isExpanded() != value.toBool() )
+			{
+				gmi->group()->setExpanded( value.toBool() );
+				emit dataChanged( index, index );
+			}
 			return true;
 		}
 	}

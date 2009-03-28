@@ -235,6 +235,17 @@ void KopeteContactListView::contactActivated( const QModelIndex& index )
 
 }
 
+void KopeteContactListView::setModel( QAbstractItemModel *newModel )
+{
+	if ( model() )
+		disconnect( model(), SIGNAL(layoutChanged()), this, SLOT(reexpandGroups()) );
+
+	QTreeView::setModel( newModel );
+
+	// TODO: This is not the best approach as this is emitted often, find a better way.
+	connect( newModel, SIGNAL(layoutChanged()), this, SLOT(reexpandGroups()) );
+}
+
 void KopeteContactListView::reset()
 {
 	QTreeView::reset();

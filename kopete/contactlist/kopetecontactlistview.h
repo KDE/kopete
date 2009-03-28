@@ -65,6 +65,7 @@ public:
 	~KopeteContactListView();
 
 	void initActions( KActionCollection *ac );
+	virtual void setModel( QAbstractItemModel *newModel );
 
 public Q_SLOTS:
 	virtual void reset();
