@@ -105,11 +105,11 @@
         <item>
          <widget class="QLabel" name="textLabel7" >
           <property name="toolTip" >
-                                <string>The display name of the contact.  Leave it empty to use the contact nickname</string>
+                                <string>The display name of the contact.  Leave it empty to use the contact's nickname.</string>
                             </property>
           <property name="whatsThis" >
-                                <string>Enter the contact display name. This is how the contact will appear in the contactlist.
-Leave it empty if you want to see the contact nickname as display name.</string>
+                                <string>Enter the contact's display name. This is how the contact will appear in the contact list.
+Leave it empty if you want to see the contact's nickname as their display name.</string>
                             </property>
           <property name="text" >
            <string>Display name:</string>
@@ -119,11 +119,11 @@ Leave it empty if you want to see the contact nickname as display name.</string>
         <item>
          <widget class="KLineEdit" name="m_displayNameEdit" >
           <property name="toolTip" >
-                                <string>The display name of the contact.  Leave it empty to use the contact nickname</string>
+                                <string>The display name of the contact.  Leave it empty to use the contact's nickname.</string>
                             </property>
           <property name="whatsThis" >
-                                <string>Enter the contact display name. This is how the contact will appears in the contactlist.
-Leave it empty if you want to see the contact nickname as display name.</string>
+                                <string>Enter the contact's display name. This is how the contact will appears in the contact list.
+Leave it empty if you want to see the contact's nickname as their display name.</string>
                             </property>
                         </widget>
         </item>
@@ -225,8 +225,7 @@ Leave it empty if you want to see the contact nickname as display name.</string>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
+  <customwidgets>
   <customwidget>
    <class>KComboBox</class>
    <extends></extends>

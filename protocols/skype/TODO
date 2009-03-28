@@ -1,0 +1,37 @@
+Port to KDE4:
+- add/edit accout dialog - done
+- call dialog - done
+- add contact dialog - done
+- contact details dialog - done
+- fix sending/receiving messages from Skype throw QDBus - done
+- support automaticly start skype - done
+- add Call button in chat window and on toolbars - done
+- start process/script before/after call - done
+- support conference call
+- support system dbus type - done (but is not supported by skype)
+
+TODO New:
+- display correct special language chars - done
+- show more details about contact
+- edit details in yourself accout
+- support automaticly start skype and login with given name and password - not added to add/edit accout dialog
+- store skype password in kwalet
+- add multiskype account support
+- hide skype to system tray after log in - done
+- automaticly go-offline, when quit/logout user from skype - done
+- use new blue skype icons - done
+- add "user call me" event and remove call dialog (skype has eigen dialog with webcam support)
+- add support sending SMS
+- add support recording calls
+- remove contact echo123 and add button "Make Test Call" in Skype protocol toolbar - done
+- add group support - done
+- add support searching contacts
+- add support for file transfer - not all (only send file)
+- show sent message imediately in chat window and show info when was delivered
+- cannot add yourself skype contact - done
+- add button for invite people - done
+- support callto: skype: tel: url action handler and skype web buttons(from site: https://developer.skype.com/Docs/ApiDoc/Skype_URI_handler)
+- show missed call
+- add option to hide all SkypeOut contacts
+- import old history from skype
+- support call from KABC

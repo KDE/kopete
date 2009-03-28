@@ -73,6 +73,8 @@
 #include "icqtlvinforequesttask.h"
 #include "icqtlvinfoupdatetask.h"
 #include "filetransferhandler.h"
+#include "chatroomtask.h"
+#include "chatroomhandler.h"
 
 
 namespace
@@ -592,7 +594,7 @@ void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
         if ( !c )
             return;
 
-        kDebug(OSCAR_RAW_DEBUG) << "sending message to chat room";
+	    kDebug(OSCAR_RAW_DEBUG) << "sending message to chat room: " << msg.chatRoom() << " on exchange " << msg.exchange();
         ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), msg.exchange(), msg.chatRoom() );
         cst->setMessage( msg );
         cst->setEncoding( d->codecProvider->codecForAccount()->name() );
@@ -822,6 +824,8 @@ void Client::initializeStaticTasks()
 	         this, SLOT( receivedMessage( const Oscar::Message& ) ) );
 	connect( d->messageReceiverTask, SIGNAL( fileMessage( int, const QString, const QByteArray, Buffer ) ),
 	         this, SLOT( gotFileMessage( int, const QString, const QByteArray, Buffer ) ) );
+	connect( d->messageReceiverTask, SIGNAL( chatroomMessage( const Oscar::Message&, const QByteArray & ) ),
+	         this, SLOT( gotChatRoomMessage( const Oscar::Message&, const QByteArray & ) ) );
 
 	connect( d->messageAckTask, SIGNAL(messageAck(const QString&, uint)),
 	         this, SIGNAL(messageAck(const QString&, uint)) );
@@ -1599,10 +1603,10 @@ void Client::serverRedirectFinished()
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "setting up chat connection";
 			ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
-			connect( cst, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
-			         this, SIGNAL( userJoinedChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
-			connect( cst, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ),
-			         this, SIGNAL( userLeftChat( Oscar::Oscar::WORD, const QString&, const QString& ) ) );
+			connect( cst, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ),
+			         this, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ) );
+			connect( cst, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
+			         this, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
 			connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
 			         this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
 		}
@@ -1765,6 +1769,17 @@ FileTransferHandler* Client::createFileTransfer( const QString& contact, const Q
 	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
 
 	return new FileTransferHandler(ft);
+}
+
+void Client::gotChatRoomMessage( const Oscar::Message & msg, const QByteArray & cookie )
+{
+	Connection* c = d->connections.connectionForFamily( 0x0004 );
+	if ( msg.requestType() == 0 )
+	{
+		ChatRoomTask *task = new ChatRoomTask( c->rootTask(), msg.sender(), msg.receiver(), cookie, msg.text( QTextCodec::codecForName( "UTF-8" ) ), msg.exchange(), msg.chatRoom() );
+		task->go( Task::AutoDelete );
+		emit chatroomRequest( new ChatRoomHandler( task ) );
+	}
 }
 
 void Client::gotFileMessage( int type, const QString from, const QByteArray cookie, Buffer buf)

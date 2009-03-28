@@ -74,7 +74,7 @@ void ChatServiceTask::onGo()
     TLV type2, type3, type1;
 
     type2.type = 0x0002;
-    type2.length = 0x0008;
+    type2.length = m_encoding.length();
     type2.data = m_encoding;
 
     type3.type = 0x0003;

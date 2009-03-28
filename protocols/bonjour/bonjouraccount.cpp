@@ -38,6 +38,12 @@
 #include "bonjourcontactconnection.h"
 
 
+static const char AvailabilityStatusAvailId[] = "avail";
+static const char AvailabilityStatusAwayId[] =  "away";
+// TODO: add this status to the account
+// static const char AvailabilityStatusDnDId[] =   "dnd";
+
+
 BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountID )
 : Kopete::Account ( parent, accountID )
 {
@@ -61,10 +67,10 @@ BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountI
 
 void BonjourAccount::parseConfig()
 {
-	username = configGroup()->readEntry("username").toUtf8();
-	firstName = configGroup()->readEntry("firstName").toUtf8();
-	lastName = configGroup()->readEntry("lastName").toUtf8();
-	emailAddress = configGroup()->readEntry("emailAddress").toUtf8();
+	username = configGroup()->readEntry("username").toLatin1();
+	firstName = configGroup()->readEntry("firstName").toLatin1();
+	lastName = configGroup()->readEntry("lastName").toLatin1();
+	emailAddress = configGroup()->readEntry("emailAddress").toLatin1();
 }
 
 BonjourAccount::~BonjourAccount()
@@ -169,7 +175,7 @@ void BonjourAccount::startPublish()
         map.insert("last", lastName);
         map.insert("node", "kopete");
         map.insert("port.p2pj", QByteArray::number(listeningPort));	// This Number Actually Ignored
-        map.insert("status", "avail");
+        map.insert("status", AvailabilityStatusAvailId);
         map.insert("txtvers", "1");
         map.insert("vc", "!");
         map.insert("ver", "0.0.1");
@@ -190,7 +196,7 @@ void BonjourAccount::published(bool success)
 		kDebug()<<"Publish Failed";
 		disconnect();
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
-		i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi"));
+		i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi."));
 	}
 }
 
@@ -201,7 +207,7 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 
 	if (DNSSD::ServiceBrowser::isAvailable() != DNSSD::ServiceBrowser::Working) {
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
-		i18n("Sorry, we are unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
+		i18n("Unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
 		return;
 	}
 
@@ -333,8 +339,14 @@ void BonjourAccount::slotGoOnline ()
 
 	if (!isConnected())
 		connect();
-	else
+	else {
+		if (service) {
+			QMap <QString, QByteArray> map = service->textData();
+			map["status"] = AvailabilityStatusAvailId;
+			service->setTextData(map);
+		}
 		myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOnline );
+	}
 }
 
 void BonjourAccount::slotGoAway ()
@@ -343,6 +355,12 @@ void BonjourAccount::slotGoAway ()
 
 	if (!isConnected ())
 		connect();
+
+	if (service) {
+		QMap <QString, QByteArray> map = service->textData();
+		map["status"] = AvailabilityStatusAwayId; // "dnd" would be another option here
+		service->setTextData(map);
+	}
 
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourAway );
 }

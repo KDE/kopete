@@ -65,12 +65,6 @@ clientid (0)
                            Kopete::ContactList::self ()->myself ()));
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     clientid += MSN::MSNC7;
-    clientid += MSN::MSNC6;
-    clientid += MSN::MSNC5;
-    clientid += MSN::MSNC4;
-    clientid += MSN::MSNC3;
-    clientid += MSN::MSNC2;
-    clientid += MSN::MSNC1;
     clientid += MSN::SupportWinks;
     clientid += MSN::VoiceClips;
     clientid += MSN::InkGifSupport;

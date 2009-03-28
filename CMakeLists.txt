@@ -38,7 +38,7 @@ endif(NOT INSIDE_KDENETWORK)
 
 KDE4_NO_ENABLE_FINAL(kopete)
 
-FIND_PACKAGE(Blitz REQUIRED)
+FIND_PACKAGE(QImageBlitz REQUIRED)
 
 # Configure checks
 include (TestBigEndian)
@@ -96,6 +96,10 @@ macro_optional_find_package(Libgadu)
 macro_bool_to_01(LIBGADU_FOUND HAVE_LIBGADU)
 macro_log_feature(LIBGADU_FOUND "libgadu" "A library providing support for Gadu-Gadu protocol" "http://toxygen.net/libgadu/" FALSE "1.8.0" "Required for Kopete Gadu-Gadu protocol")
 
+macro_optional_find_package(LibV4L2)
+macro_bool_to_01(LIBV4L2_FOUND HAVE_LIBV4L2)
+macro_log_feature(LIBV4L2_FOUND "libv4l2" "Collection of video4linux support libraries" "http://hansdegoede.livejournal.com/3636.html" FALSE "" "Required for better webcam support")
+
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
@@ -126,3 +130,6 @@ add_subdirectory( icons )
 add_subdirectory( sounds )
 add_subdirectory( styles )
 
+if(NOT INSIDE_KDENETWORK)
+	macro_display_feature_log()
+endif(NOT INSIDE_KDENETWORK)

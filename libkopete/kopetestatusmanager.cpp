@@ -17,10 +17,14 @@
 
 #include <QtCore/QFile>
 #include <QtXml/QDomElement>
+#include <QtCore/QTimer>
 
 #include <ksavefile.h>
 #include <kstandarddirs.h>
+#include <kdialog.h>
+#include <kmessagebox.h>
 
+#include "kopeteuiglobal.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
@@ -329,6 +333,33 @@ Kopete::StatusMessage StatusManager::globalStatusMessage() const
 	return d->globalStatusMessage;
 }
 
+void StatusManager::askAndSetActive()
+{
+	kDebug(14010) << "Found Activity. Confirming if we should go active";
+
+	// First Create a Dialog
+	KDialog *dialog = new KDialog(Kopete::UI::Global::mainWidget());
+	dialog->setCaption(i18n("Going Online - Kopete"));
+	dialog->setButtons(KDialog::Yes | KDialog::No);
+	dialog->setDefaultButton(KDialog::Yes);
+	dialog->setEscapeButton(KDialog::No);
+	dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+
+	// Set the Text in the Dialog
+	KMessageBox::createKMessageBox(dialog, QMessageBox::Question,
+		i18n("Do You Want to Change Status to Available?"),
+		QStringList(), QString::null, NULL, KMessageBox::NoExec);
+
+	// If yes is clicked, go online
+	connect(dialog, SIGNAL(yesClicked()), this, SLOT(setActive()));
+
+	// If the user does not click something by the time we go away, kill the dialog
+	QTimer::singleShot(Kopete::BehaviorSettings::self()->autoAwayTimeout() * 1000, dialog, SLOT(close()));
+
+	// Show the Dialog
+	dialog->show();
+}
+
 void StatusManager::setActive()
 {
 	kDebug(14010) << "Found activity on desktop, setting accounts online";
@@ -429,8 +460,12 @@ void StatusManager::loadBehaviorSettings()
 	Kopete::IdleTimer* idleTimer = Kopete::IdleTimer::self();
 	idleTimer->unregisterTimeout( this );
 	
-	if ( Kopete::BehaviorSettings::self()->useAutoAway() )
-		idleTimer->registerTimeout( d->awayTimeout, this, SLOT(setActive()), SLOT(setAutoAway()) );
+	if ( Kopete::BehaviorSettings::self()->useAutoAway() ) {
+		if (Kopete::BehaviorSettings::self()->autoAwayAskAvailable())
+			idleTimer->registerTimeout( d->awayTimeout, this, SLOT(askAndSetActive()), SLOT(setAutoAway()) );
+		else
+			idleTimer->registerTimeout( d->awayTimeout, this, SLOT(setActive()), SLOT(setAutoAway()) );
+	}
 }
 
 }

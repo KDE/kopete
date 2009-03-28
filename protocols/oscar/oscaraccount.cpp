@@ -37,14 +37,17 @@
 #include <qtextcodec.h>
 #include <qimage.h>
 #include <qfile.h>
+#include <qdom.h>
 #include <QHash>
 #include <QtNetwork/QTcpSocket>
+#include <QtGui/QTextDocument> // Qt::escape
 
 #include <kdebug.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>
+#include <kdialog.h>
 #include <kpassivepopup.h>
 #include <kstandarddirs.h>
 
@@ -60,6 +63,7 @@
 #include "kopeteversion.h"
 #include "oscarversionupdater.h"
 #include "filetransferhandler.h"
+#include "chatroomhandler.h"
 #include "nscainfoevent.h"
 #include "oscarpresence.h"
 #include "oscarprotocol.h"
@@ -150,6 +154,8 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	                  this, SLOT( slotSendBuddyIcon() ) );
 	QObject::connect( d->engine, SIGNAL(incomingFileTransfer(FileTransferHandler*)),
 	                  this, SLOT(incomingFileTransfer(FileTransferHandler*)) );
+	QObject::connect( d->engine, SIGNAL(chatroomRequest(ChatRoomHandler*)),
+	                  this, SLOT(chatroomRequest(ChatRoomHandler*)) );
 
 	Kopete::TransferManager *tm = Kopete::TransferManager::transferManager();
 	QObject::connect( tm, SIGNAL(refused(const Kopete::FileTransferInfo&)),
@@ -442,6 +448,41 @@ void OscarAccount::nonServerAddContactDialogClosed()
     d->olnscDialog = 0L;
 }
 
+void OscarAccount::chatroomRequest( ChatRoomHandler* handler )
+{
+	KGuiItem buttonYes( KStandardGuiItem::yes() );
+	KGuiItem buttonNo( KStandardGuiItem::no() );
+	buttonYes.setText( i18nc( "@action:button filter-yes", "%1", KStandardGuiItem::yes().text() ) );
+	buttonNo.setText( i18nc( "@action:button filter-no", "%1", KStandardGuiItem::no().text() ) );
+	i18nc( "@action:button post-filter", "." );
+
+	KDialog *dialog = new KDialog( NULL, Qt::Dialog );
+	dialog->setCaption( i18n( "Chat Room Invitation" ) );
+	dialog->setButtons( KDialog::Yes | KDialog::No );
+	dialog->setObjectName( "questionYesNoCancel" );
+	dialog->setModal( false );
+	dialog->showButtonSeparator( true );
+	dialog->setButtonGuiItem( KDialog::Yes, buttonYes );
+	dialog->setButtonGuiItem( KDialog::No, buttonNo );
+	dialog->setDefaultButton( KDialog::Yes );
+	dialog->setEscapeButton( KDialog::No );
+
+	QObject::connect( dialog, SIGNAL( yesClicked() ),
+	                  handler, SLOT( accept() ) );
+	QObject::connect( dialog, SIGNAL( noClicked() ),
+	                  handler, SLOT( reject() ) );
+	QObject::connect( handler, SIGNAL( joinChatRoom( const QString&, int ) ),
+	                  engine(), SLOT( joinChatRoom( const QString&, int ) ) );
+
+	KMessageBox::createKMessageBox( dialog, QMessageBox::Question,
+	                                ( handler->contact() + ": " + handler->invite() ), QStringList(),
+	                                QString(), NULL, KMessageBox::NoExec );
+
+	dialog->show();
+	dialog->raise();
+	dialog->activateWindow();
+}
+
 void OscarAccount::incomingFileTransfer( FileTransferHandler* ftHandler )
 {
 	QString sender = Oscar::normalize( ftHandler->contact() );
@@ -604,6 +645,60 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	chatMessage.setDirection( Kopete::Message::Inbound );
 
 	chatSession->appendMessage( chatMessage );
+}
+
+QString OscarAccount::sanitizedMessage( const QString& message ) const
+{
+	QDomDocument doc;
+	QString domError;
+	int errLine = 0, errCol = 0;
+
+	QString msg = addQuotesAroundAttributes(message);
+	msg = makeWellFormedXML( msg ); // Official clients send crap so we have to sort it out.
+	msg.replace( "<BR>", "<BR/>", Qt::CaseInsensitive );
+
+	doc.setContent( msg, false, &domError, &errLine, &errCol );
+	if ( !domError.isEmpty() ) //error parsing, do nothing
+	{
+		kDebug(OSCAR_AIM_DEBUG) << "error from dom document conversion: "
+			<< domError << "line:" << errLine << "col:" << errCol;
+		return sanitizedPlainMessage( message );
+	}
+	else
+	{
+		kDebug(OSCAR_AIM_DEBUG) << "conversion to dom document successful."
+			<< "looking for font tags" << endl;
+		QDomNodeList fontTagList = doc.elementsByTagName( "FONT" );
+		if ( fontTagList.count() == 0 )
+		{
+			kDebug(OSCAR_AIM_DEBUG) << "No font tags found. Returning normal message";
+			return sanitizedPlainMessage( message );
+		}
+		else
+		{
+			kDebug(OSCAR_AIM_DEBUG) << "Found font tags. Attempting replacement";
+			uint numFontTags = fontTagList.count();
+			for ( uint i = 0; i < numFontTags; i++ )
+			{
+				QDomNode fontNode = fontTagList.item(i);
+				QDomElement fontEl;
+				if ( !fontNode.isNull() && fontNode.isElement() )
+					fontEl = fontTagList.item(i).toElement();
+				else
+					continue;
+				if ( fontEl.hasAttribute( "BACK" ) )
+				{
+					QString backgroundColor = fontEl.attribute( "BACK" );
+					backgroundColor.insert( 0, "background-color: " );
+					backgroundColor.append( ';' );
+					fontEl.setAttribute( "style", backgroundColor );
+					fontEl.removeAttribute( "BACK" );
+				}
+			}
+		}
+	}
+	kDebug(OSCAR_AIM_DEBUG) << "sanitized message is " << doc.toString();
+	return doc.toString();
 }
 
 void OscarAccount::setServerAddress(const QString &server)
@@ -1199,6 +1294,142 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 		break;
 	}
 	return reason;
+}
+
+QString OscarAccount::makeWellFormedXML( const QString& message ) const
+{
+	// QList<QPair<tagName, data>>, if tagName isn't empty then data is <tag ....>
+	// otherwise data is normal text which is between tags.
+	QList< QPair<QString, QString> > tagsAndText;
+
+	QRegExp tagRegExp( QString::fromLatin1("<([/]?[\\w]+).*>") );
+	tagRegExp.setMinimal( true );
+	int index = 0;
+
+	while ( tagRegExp.indexIn( message, index ) != -1 )
+	{
+		if ( index < tagRegExp.pos() )
+		{
+			// Append text which was between tags
+			QPair<QString, QString> pair;
+			pair.second = message.mid( index, tagRegExp.pos() - index );
+			tagsAndText.append( pair );
+		}
+
+		// Add tag
+		QPair<QString, QString> pair;
+		pair.first = tagRegExp.cap( 1 );
+		pair.second = message.mid( tagRegExp.pos(), tagRegExp.matchedLength() );
+		tagsAndText.append( pair );
+		index = tagRegExp.pos() + tagRegExp.matchedLength();
+	}
+
+	if ( index < message.length() )
+	{
+		// Add text which was at end
+		QPair<QString, QString> pair;
+		pair.second = message.mid( index, message.length() - index );
+		tagsAndText.append( pair );
+	}
+
+	// Make the list well-formed
+	QStack<QString> openTags;
+	const int tagsAndTextCount = tagsAndText.count();
+	for ( int i = 0; i < tagsAndTextCount; ++i )
+	{
+		QPair<QString, QString> pair = tagsAndText.at( i );
+		if ( pair.first.isEmpty() ) // We don't move text
+			continue;
+		
+		bool endTag = pair.first.startsWith( "/" );
+		if ( !endTag )
+		{
+			openTags.push( pair.first );
+		}
+		else if ( !openTags.isEmpty() )
+		{
+			QString desiredTag = "/" + openTags.pop();
+			if ( pair.first != desiredTag )
+			{
+				// Find desired end tag and insert it into correct position
+				for ( int j = i + 1; j < tagsAndTextCount; ++j )
+				{
+					QPair<QString, QString> pair2 = tagsAndText.at( j );
+					if ( pair2.first.isEmpty() )
+					{
+						// Text is between desired tag so we can't move it
+						qWarning() << "Can't make well-formed XML!";
+						return message;
+					}
+
+					if ( pair2.first == desiredTag )
+					{
+						// Move tag to correct position
+						tagsAndText.removeAt( j );
+						tagsAndText.insert( i, pair2 );
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	QString wellFormedMessage;
+	for ( int i = 0; i < tagsAndTextCount; ++i )
+		wellFormedMessage += tagsAndText.at( i ).second;
+
+	return wellFormedMessage;
+}
+
+QString OscarAccount::addQuotesAroundAttributes( QString message ) const
+{
+	int sIndex = 0;
+	int eIndex = 0;
+	int searchIndex = 0;
+
+	QRegExp attrRegExp( "[\\d\\w]*=[^\"'/>\\s]+" );
+	QString attrValue( "\"%1\"" );
+
+	sIndex = message.indexOf( "<", eIndex );
+	eIndex = message.indexOf( ">", sIndex );
+
+	if ( sIndex == -1 || eIndex == -1 )
+		return message;
+
+	while ( attrRegExp.indexIn( message, searchIndex ) != -1 )
+	{
+		int startReplace = message.indexOf( "=", attrRegExp.pos() ) + 1;
+		int replaceLength = attrRegExp.pos() + attrRegExp.matchedLength() - startReplace;
+
+		while ( eIndex != -1 && sIndex != -1 && startReplace + replaceLength > eIndex )
+		{
+			sIndex = message.indexOf( "<", eIndex );
+			eIndex = message.indexOf( ">", sIndex );
+		}
+
+		if ( sIndex == -1 || eIndex == -1 )
+			return message;
+
+		searchIndex = attrRegExp.pos() + attrRegExp.matchedLength();
+		if ( startReplace <= sIndex )
+			continue;
+
+		QString replaceText = attrValue.arg( message.mid( startReplace, replaceLength ) );
+		message.replace( startReplace, replaceLength, replaceText );
+
+		searchIndex += 2;
+		eIndex += 2;
+	}
+
+	return message;
+}
+
+QString OscarAccount::sanitizedPlainMessage( const QString& message ) const
+{
+	// FIXME: messages from AIM to ICQ shouldn't be escaped, we need to redesign this
+	QString sanitizedMsg = (d->engine->isIcq()) ? Qt::escape( message ) : message;
+	sanitizedMsg.replace( QRegExp(QString::fromLatin1("[\r]?[\n]")), QString::fromLatin1("<br />") );
+	return sanitizedMsg;
 }
 
 #include "oscaraccount.moc"

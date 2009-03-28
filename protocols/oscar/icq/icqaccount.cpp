@@ -25,8 +25,6 @@
 #include <knotification.h>
 #include <ktoggleaction.h>
 
-#include  <QtGui/QTextDocument> // Qt::escape
-
 #include "kopetemessage.h"
 #include "kopetecontactlist.h"
 #include "kopeteuiglobal.h"
@@ -477,15 +475,6 @@ OscarContact *ICQAccount::createNewContact( const QString &contactId, Kopete::Me
 
 		return contact;
 	}
-}
-
-QString ICQAccount::sanitizedMessage( const QString& message ) const
-{
-	QString sanitizedMsg = Qt::escape( message );
-
-	sanitizedMsg.replace( QRegExp(QString::fromLatin1("[\r]?[\n]")), QString::fromLatin1("<br />") );
-
-	return sanitizedMsg;
 }
 
 void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reason )

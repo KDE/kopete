@@ -37,7 +37,7 @@
 #include <QUrl>
 #include <QTimer>
 #include "safedelete.h"
-#include <libidn/idna.h>
+#include <idna.h>
 
 #include "ndns.h"
 

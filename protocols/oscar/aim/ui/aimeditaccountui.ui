@@ -229,7 +229,7 @@
           <item>
            <widget class="QCheckBox" name="mAutoLogon" >
             <property name="whatsThis" >
-             <string>If you enable this option, this account will not be connected when you press the "Connect All" button, nor at startup even if you have enabled automaic connection at startup</string>
+             <string>If you enable this option, this account will not be connected when you press the "Connect All" button, nor at startup even if you have enabled automatic connection at startup.</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -503,10 +503,10 @@
           <item>
            <widget class="QCheckBox" name="chkFileProxy" >
             <property name="toolTip" >
-             <string>Use AOL proxy server instead of direct connections. If you are behind a router that you do not control, you'll probably want this.</string>
+             <string>Use AOL proxy server instead of direct connections. If you are behind a router that you do not control, you will probably want this.</string>
             </property>
             <property name="whatsThis" >
-             <string>Use the AOL proxy server for things that would normally need a direct connection, like file transfers. You'll want this if there's a firewall or router that blocks connections to your computer and you cannot get unblocked. If a direct connection fails, a proxy connection will be tried regardless of this setting.</string>
+             <string>Use the AOL proxy server for things that would normally need a direct connection, like file transfers. You will want this if there is a firewall or router that blocks connections to your computer and you cannot get unblocked. If a direct connection fails, a proxy connection will be tried regardless of this setting.</string>
             </property>
             <property name="text" >
              <string>&amp;Use proxy instead</string>

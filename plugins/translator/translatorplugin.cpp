@@ -80,7 +80,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args
 	m_actionLanguage = new KSelectAction( KIcon("preferences-desktop-locale"), i18n( "Set &Language" ), this );
         actionCollection()->addAction( "contactLanguage", m_actionLanguage );
 	m_actionLanguage->setItems( keys );
-	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage() ) );
+	connect( m_actionLanguage, SIGNAL( triggered(bool) ), this, SLOT(slotSetLanguage() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
 
 	setXMLFile( "translatorui.rc" );

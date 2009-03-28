@@ -42,6 +42,7 @@ public:
 signals:
 	
 	void receivedMessage( const Oscar::Message& );
+	void chatroomMessage( const Oscar::Message&, const QByteArray & );
 	void fileMessage( int, const QString, const QByteArray, Buffer );
 	
 private:

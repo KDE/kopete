@@ -163,7 +163,8 @@ private:
 	KAction *tabLeft;
 	KAction *tabRight;
 	KAction *tabDetach;
-	KAction* tabClose;
+	KAction *tabClose;
+	KAction *tabCloseAllOthers;
 
 	KToggleAction* toggleAutoSpellCheck;
 
@@ -215,6 +216,7 @@ private slots:
 	void slotNextActiveTab();
 	void slotDetachChat(QAction* = 0);
 	void slotPlaceTabs( QAction* );
+	void slotCloseAllOtherTabs();
 
 	void slotEnableUpdateBg() { updateBg = true; }
 

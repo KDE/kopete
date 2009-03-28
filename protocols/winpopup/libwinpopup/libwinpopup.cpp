@@ -262,7 +262,7 @@ void WinPopupLib::slotReadMessages(const KFileItemList &items)
 	KFileItem tmpItem;
 	foreach (tmpItem, items) {
 		if (tmpItem.isFile()) {
-			QFile messageFile(tmpItem.url().path());
+			QFile messageFile(tmpItem.url().toLocalFile());
 
 			if (messageFile.open(QIODevice::ReadOnly)) {
 				QTextStream stream(&messageFile);
@@ -299,7 +299,7 @@ void WinPopupLib::slotReadMessages(const KFileItemList &items)
 																   "Fix this (may require the root password)?"),
 					                                          QString::fromLatin1("Winpopup"), KGuiItem(i18n("Fix")), KGuiItem(i18n("Do Not Fix")));
 					if (tmpYesNo == KMessageBox::Yes) {
-						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem.url().path()));
+						QStringList kdesuArgs = QStringList(QString("-c chmod 0666 " + tmpItem.url().toLocalFile()));
 						if (KToolInvocation::kdeinitExecWait("kdesu", kdesuArgs) == 0) {
 							if (!messageFile.remove())
 								KMessageBox::error(Kopete::UI::Global::mainWidget(), i18n("Still cannot remove it; please fix it manually."));

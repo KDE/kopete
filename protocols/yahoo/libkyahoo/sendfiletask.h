@@ -38,6 +38,8 @@ public:
 	
 	virtual void onGo();
 	
+	bool take(Transfer *transfer);
+
 	void setTarget( const QString &to );
 	void setMessage( const QString &msg );
 	void setFileUrl( KUrl url );
@@ -48,8 +50,17 @@ signals:
 	void complete( unsigned int );
 	void error( unsigned int, int, const QString & );
 
+	void declined();
+
+protected:
+	bool forMe( const Transfer *transfer ) const;
+	void sendFileTransferInfo();
+	void parseFileTransfer( const Transfer *transfer );
+	void parseTransferAccept(const Transfer *transfer);
+
+	QString newYahooTransferId();
+
 private slots:
-	void initiateUpload();
 	void connectSucceeded();
 	void connectFailed( int );
 	void transmitData();
@@ -63,6 +74,10 @@ private:
 	unsigned int m_transferId;
 	unsigned int m_transmitted;
 	KNetwork::KStreamSocket *m_socket;
+
+	QString m_relayHost;
+	QString m_token;
+	QString m_yahooTransferId;
 };
 
 #endif

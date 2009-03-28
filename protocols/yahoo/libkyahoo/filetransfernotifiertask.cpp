@@ -62,9 +62,10 @@ bool FileTransferNotifierTask::forMe( const Transfer *transfer ) const
 
 
 	if( t->service() == Yahoo::ServiceP2PFileXfer ||
-		t->service() == Yahoo::ServicePeerToPeer ||
-		t->service() == Yahoo::ServiceFileTransfer ||
-		t->service() == Yahoo::ServiceFileTransfer7
+	    t->service() == Yahoo::ServicePeerToPeer ||
+	    t->service() == Yahoo::ServiceFileTransfer ||
+	    (t->service() == Yahoo::ServiceFileTransfer7 &&
+	     t->firstParam(222).toInt() == 1)
 	)
 		return true;
 	else

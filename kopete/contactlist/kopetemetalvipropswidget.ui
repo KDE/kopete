@@ -138,7 +138,7 @@
           <item row="0" column="0" colspan="4" >
            <widget class="QRadioButton" name="radioNameKABC" >
             <property name="text" >
-             <string>Use addressbook &amp;name (needs addressbook link)</string>
+             <string>Use address book &amp;name (needs address book link)</string>
             </property>
            </widget>
           </item>
@@ -216,7 +216,7 @@
           <item row="0" column="0" >
            <widget class="QRadioButton" name="radioPhotoKABC" >
             <property name="text" >
-             <string>U&amp;se addressbook photo (needs addressbook link)</string>
+             <string>U&amp;se address book photo (needs address book link)</string>
             </property>
            </widget>
           </item>

@@ -157,8 +157,7 @@ Do not include the '/' in the command (if you do it will be stripped off anyway)
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
+  <customwidgets>
   <customwidget>
    <class>K3ListView</class>
    <extends>Q3ListView</extends>

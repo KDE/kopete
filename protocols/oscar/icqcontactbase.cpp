@@ -18,6 +18,8 @@
 
 #include "icqcontactbase.h"
 
+#include <QtGui/QTextDocument> // Qt::escape
+
 #include "kopetechatsessionmanager.h"
 
 #include "oscaraccount.h"
@@ -71,6 +73,12 @@ void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* ses
 	bool allowUCS2 = !isOnline() || !(m_details.userClass() & Oscar::CLASS_ICQ) || m_details.hasCap( CAP_UTF8 );
 
 	QString msgText( msg.plainBody() );
+
+	// Official clients don't check if icq support richtext so we
+	// have to escape our plain messages if contact is in AIM account
+	if ( !account()->engine()->isIcq() )
+		msgText = Qt::escape( msgText );
+
 	// TODO: More intelligent handling of message length.
 	const int chunk_length = 1274;
 	int msgPosition = 0;

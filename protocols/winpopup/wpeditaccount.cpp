@@ -102,7 +102,7 @@ bool WPEditAccount::validateData()
 		return false;
 	}
 
-	QFile smbc(mSmbcPath->url().path());
+	QFile smbc(mSmbcPath->url().toLocalFile());
 	if (!smbc.exists()) {
 		KMessageBox::sorry(this, i18n("<qt>You must enter a valid smbclient path.</qt>"), i18n("WinPopup"));
 		return false;
@@ -114,7 +114,7 @@ bool WPEditAccount::validateData()
 void WPEditAccount::writeConfig()
 {
 	KConfigGroup group = KGlobal::config()->group("WinPopup");
-	group.writeEntry("SmbcPath", mSmbcPath->url().path());
+	group.writeEntry("SmbcPath", mSmbcPath->url().toLocalFile());
 	group.writeEntry("HostCheckFreq", mHostCheckFreq->text());
 }
 

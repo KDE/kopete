@@ -338,8 +338,7 @@ in place of your status message.</string>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
+  <customwidgets>
   <customwidget>
    <class>K3ListBox</class>
    <extends></extends>

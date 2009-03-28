@@ -60,6 +60,10 @@
 			<label>Queue Only Messages On Another Desktop</label>
 			<default>false</default>
 		</entry>
+		<entry key="balloonGroupMessageNotificationsPerSender" type="Bool">
+			<label>Single notification for messages from the same sender.</label>
+			<default>true</default>
+		</entry>
 		<entry key="balloonNotifyIgnoreClosesChatView" type="Bool">
 			<label>Balloon Notification Ignore Closes Chat View</label>
 			<default>false</default>
@@ -143,6 +147,10 @@
 		<entry key="autoAwayGoAvailable" type="Bool">
 			<label>Go available after detecting an activity.</label>
 			<default>true</default>
+		</entry>
+		<entry key="autoAwayAskAvailable" type="Bool">
+			<label>Confirm Before Coming Back from Auto Away</label>
+			<default>false</default>
 		</entry>
 		<entry key="useLastAwayMessage" type="Bool">
 			<label>When seting the auto away message, use the latest away message.</label>

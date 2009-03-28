@@ -1,0 +1,13 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="1" name="kopetechatwindow">
+	<MenuBar>
+		<Menu name="tools" >
+			<text>&amp;Tools</text>
+			<Action name="callSkypeContactFromChat" />
+		</Menu>
+	</MenuBar>
+	<ToolBar name="chatToolBar" fullWidth="true">
+		<Action name="callSkypeContactFromChat" />
+		<Action name="skypeInvite" />
+	</ToolBar>
+</kpartgui>

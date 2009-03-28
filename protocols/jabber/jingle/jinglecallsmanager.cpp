@@ -95,6 +95,8 @@ void JingleCallsManager::init()
 	//Initialize oRTP library.
 	ortp_init();
 	ortp_scheduler_init();
+	ortp_set_log_level_mask(ORTP_ERROR | ORTP_FATAL);
+
 	ortp_set_log_file(0);
 	
 	d->gui = 0L;

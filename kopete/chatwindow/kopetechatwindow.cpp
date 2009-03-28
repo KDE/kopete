@@ -336,6 +336,7 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 	popup->addAction( actionTabPlacementMenu );
 	popup->addAction( tabDetach );
 	popup->addAction( actionDetachMenu );
+	popup->addAction( tabCloseAllOthers );
 	popup->addAction( tabClose );
 	popup->exec( pos );
 
@@ -357,8 +358,11 @@ void KopeteChatWindow::initActions(void)
 	chatSend = new KAction( KIcon("mail-send"), i18n( "&Send Message" ), coll );
 	coll->addAction( "chat_send", chatSend );
 	connect( chatSend, SIGNAL( triggered(bool) ), SLOT( slotSendMessage() ) );
-	//Default to 'Return' for sending messages
-	chatSend->setShortcut( QKeySequence(Qt::Key_Return) );
+	//Default to 'Return' and 'Enter' for sending messages
+	//'Return' is the key in the main part of the keyboard
+	//'Enter' is on the Numpad
+	KShortcut chatSendShortcut( QKeySequence((int)Qt::Key_Return), QKeySequence((int)Qt::Key_Enter) );
+	chatSend->setShortcut( chatSendShortcut );
 	chatSend->setEnabled( false );
 
 	chatSendFile = new KAction( KIcon("mail-attachment"), i18n( "Send File" ), coll );
@@ -402,6 +406,11 @@ void KopeteChatWindow::initActions(void)
 	coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
 	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT( slotDetachChat() ));
+
+	tabCloseAllOthers = new KAction( KIcon("tab-close"), i18n( "Close &All But This Tab" ), coll );
+	coll->addAction( "tabs_close_others", tabCloseAllOthers );
+	tabCloseAllOthers->setEnabled( true );
+	connect( tabCloseAllOthers, SIGNAL(triggered(bool)), this, SLOT( slotCloseAllOtherTabs() ));
 
 	actionDetachMenu = new KActionMenu( KIcon("tab-detach"), i18n( "&Move Tab to Window" ), coll );
 	coll->addAction( "tabs_detachmove", actionDetachMenu );
@@ -633,8 +642,8 @@ void KopeteChatWindow::createTabBar()
 
 		m_tabBar = new KTabWidget( mainArea );
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-		m_tabBar->setHoverCloseButton(cg.readEntry( QLatin1String("HoverClose"), false ));
-		m_tabBar->setTabReorderingEnabled(true);
+		m_tabBar->setTabsClosable(cg.readEntry( QLatin1String("HoverClose"), false ));
+		m_tabBar->setMovable(true);
 		m_tabBar->setAutomaticResizeTabs(true);
 		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
 
@@ -760,6 +769,7 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 void KopeteChatWindow::checkDetachEnable()
 {
 	bool haveTabs = (chatViewList.count() > 1);
+	tabCloseAllOthers->setEnabled( haveTabs );
 	tabDetach->setEnabled( haveTabs );
 	tabLeft->setEnabled( haveTabs );
 	tabRight->setEnabled( haveTabs );
@@ -840,6 +850,21 @@ void KopeteChatWindow::slotDetachChat( QAction *action )
 
 	detachChatView( detachedView );
 	newWindow->attachChatView( detachedView );
+}
+
+void KopeteChatWindow::slotCloseAllOtherTabs()
+{
+	ChatView *detachedView;
+
+	if( m_popupView )
+		detachedView = m_popupView;
+	else
+		detachedView = m_activeView;
+
+	foreach(ChatView *view, chatViewList) {
+		if (view != detachedView)
+			view->closeView();
+	}
 }
 
 void KopeteChatWindow::slotPreviousTab()

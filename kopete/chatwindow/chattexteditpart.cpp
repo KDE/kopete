@@ -509,7 +509,7 @@ void ChatTextEditPart::checkToolbarEnabled()
 
 KAboutData *ChatTextEditPart::createAboutData()
 {
-    KAboutData *aboutData = new KAboutData("krichtexteditpart", 0, ki18n("ChatTextEditPart"), "0.1",
+    KAboutData *aboutData = new KAboutData("krichtexteditpart", 0, ki18n("Chat Text Edit Part"), "0.1",
                         ki18n("A simple rich text editor part"),
                         KAboutData::License_LGPL );
     aboutData->addAuthor(ki18n("Richard J. Moore"), KLocalizedString(), "rich@kde.org", "http://xmelegance.org/" );

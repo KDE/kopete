@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>455</width>
-    <height>377</height>
+    <height>417</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2" >
@@ -88,6 +88,36 @@
          <string>Become available when detecting activity again</string>
         </property>
        </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout" >
+        <item>
+         <spacer name="horizontalSpacer" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="kcfg_autoAwayAskAvailable" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Confirm before becoming available</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -230,22 +260,6 @@
   <connection>
    <sender>kcfg_useAutoAway</sender>
    <signal>toggled(bool)</signal>
-   <receiver>kcfg_autoAwayGoAvailable</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>90</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>83</x>
-     <y>134</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kcfg_useAutoAway</sender>
-   <signal>toggled(bool)</signal>
    <receiver>groupBox_3</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -266,12 +280,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>116</x>
-     <y>242</y>
+     <x>129</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>190</x>
-     <y>277</y>
+     <x>279</x>
+     <y>302</y>
     </hint>
    </hints>
   </connection>
@@ -283,11 +297,43 @@
    <hints>
     <hint type="sourcelabel" >
      <x>249</x>
-     <y>228</y>
+     <y>259</y>
     </hint>
     <hint type="destinationlabel" >
      <x>261</x>
      <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_useAutoAway</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_autoAwayGoAvailable</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>90</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>83</x>
+     <y>134</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_autoAwayGoAvailable</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_autoAwayAskAvailable</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>148</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>172</x>
+     <y>148</y>
     </hint>
    </hints>
   </connection>

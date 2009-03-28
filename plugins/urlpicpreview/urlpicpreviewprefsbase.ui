@@ -40,11 +40,11 @@
       <item>
        <widget class="QCheckBox" name="restrictPreviews" >
         <property name="whatsThis" >
-         <string>If checked, only the selected amount of pictures are downloaded and displayed as previews.
-If not checked an unlimited number of previews are generated.</string>
+         <string>If checked, only the selected number of pictures are downloaded and displayed as previews.
+Otherwise, an unlimited number of previews are generated.</string>
         </property>
         <property name="text" >
-         <string>&amp;Restrict amount of previews</string>
+         <string>&amp;Restrict number of previews</string>
         </property>
         <property name="checked" >
          <bool>true</bool>
@@ -54,7 +54,7 @@ If not checked an unlimited number of previews are generated.</string>
       <item>
        <widget class="KIntSpinBox" name="previewAmount" >
         <property name="whatsThis" >
-         <string>The maximum amount of pictures to download and preview.</string>
+         <string>The maximum number of pictures to download and preview.</string>
         </property>
         <property name="value" >
          <number>2</number>
@@ -108,7 +108,7 @@ If not checked an unlimited number of previews are generated.</string>
         </property>
         <property name="whatsThis" >
          <string>If checked, preview images get scaled down to the width specified.
-If not checked, the images get not scaled at all and appear in their original size.</string>
+Otherwise, the images are not scaled at all and appear in their original size.</string>
         </property>
         <property name="text" >
          <string>Scale &amp;to</string>
@@ -121,7 +121,7 @@ If not checked, the images get not scaled at all and appear in their original si
       <item>
        <widget class="KIntSpinBox" name="previewScaleWidth" >
         <property name="whatsThis" >
-         <string>The width to which images should get scaled down. Smaller images will not get scaled and appear in the original size.</string>
+         <string>The width to which images should be scaled down. Smaller images will appear in their original size.</string>
         </property>
         <property name="suffix" >
          <string> pixel</string>
@@ -170,7 +170,7 @@ If not checked, the images get not scaled at all and appear in their original si
         <item>
          <widget class="QCheckBox" name="enableLinkPreview" >
           <property name="whatsThis" >
-           <string>Creates an preview picture of the link.</string>
+           <string>Creates a preview picture of the link.</string>
           </property>
           <property name="text" >
            <string>Enable Lin&amp;k Preview</string>
@@ -216,7 +216,7 @@ If not checked, the images get not scaled at all and appear in their original si
            <bool>false</bool>
           </property>
           <property name="whatsThis" >
-           <string>After the specified amount of seconds the creation of the preview is aborted automatically.
+           <string>After the specified number of seconds the creation of the preview is aborted automatically.
 Use 0 seconds to never abort the creation.</string>
           </property>
           <property name="value" >
@@ -273,8 +273,7 @@ Use 0 seconds to never abort the creation.</string>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
+  <customwidgets>
   <customwidget>
    <class>Q3GroupBox</class>
    <extends>QGroupBox</extends>

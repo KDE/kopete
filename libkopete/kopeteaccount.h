@@ -48,13 +48,11 @@ class PropertyContainer;
 
 /**
  * The Kopete::Account class handles one account.
- * Each protocol should subclass this class in its own custom accounts class.
- * There are few pure virtual method that the protocol must implement. Examples are:
+ * Each protocol implementation should subclass this class in its own custom account class.
+ * There are a few pure virtual methods that must be implemented. Examples are:
  * \li \ref connect()
  * \li \ref disconnect()
  * \li \ref createContact()
- *
- * If your account requires a password, derive from @ref PasswordedAccount instead of this class.
  *
  * The accountId is an @em constant unique id, which represents the login.
  * The @ref myself() contact is one of the most important contacts, which represents
@@ -123,12 +121,18 @@ public:
 	Q_DECLARE_FLAGS(OnlineStatusOptions, OnlineStatusOption)
 
 	/**
+	 * Constructor for the Account object.
+	 * 
 	 * @param parent the protocol for this account. The account is a child object of the
 	 * protocol, so it will be automatically deleted when the protocol is.
 	 * @param accountID the unique ID of this account.
 	 * @param name the name of this QObject.
 	 */
 	Account(Protocol *parent, const QString &accountID);
+
+	/**
+	 * Destroy the Account object.
+	 */
 	~Account();
 
 	/**
@@ -142,7 +146,10 @@ public:
 	QString accountId() const;
 
 	/**
-	 * \return The label of this account, for the GUI
+	 * The label for this account.
+	 *
+	 * This is used in the GUI.
+	 * \return The label of this account
 	 */
 	QString accountLabel() const;
 
