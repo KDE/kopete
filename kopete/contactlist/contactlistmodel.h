@@ -30,7 +30,8 @@ namespace Kopete {
 
 class Group;
 class MetaContact;
-	
+class MessageEvent;
+
 namespace UI {
 
 /**
@@ -67,8 +68,10 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
 	virtual void appearanceConfigChanged() = 0;
-	virtual void handleContactDataChange(Kopete::MetaContact*) = 0;
+	virtual void handleContactDataChange( Kopete::MetaContact* ) = 0;
 	virtual void loadContactList();
+	void newMessageEvent( Kopete::MessageEvent *event );
+	void newMessageEventDone( Kopete::MessageEvent *event );
 
 protected:
 	bool dropUrl( const QMimeData *data, int row, const QModelIndex &parent, Qt::DropAction action );
@@ -84,6 +87,9 @@ protected:
 
 	bool m_manualGroupSorting;
 	bool m_manualMetaContactSorting;
+
+private:
+	QHash< const Kopete::MetaContact*, QSet<Kopete::MessageEvent*> > m_newMessageMetaContactSet;
 };
 }
 

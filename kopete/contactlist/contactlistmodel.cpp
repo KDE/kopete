@@ -41,6 +41,8 @@
 #include "kopetemessage.h"
 #include "kopetechatsession.h"
 #include "kopeteaccountmanager.h"
+#include "kopetemessageevent.h"
+#include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
 
 namespace Kopete {
@@ -54,6 +56,10 @@ ContactListModel::ContactListModel( QObject* parent )
 	m_manualGroupSorting = (as->contactListGroupSorting() == AppearanceSettings::EnumContactListGroupSorting::Manual);
 	m_manualMetaContactSorting = (as->contactListMetaContactSorting() == AppearanceSettings::EnumContactListMetaContactSorting::Manual);
 	connect ( AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(appearanceConfigChanged()) );
+
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(newEvent(Kopete::MessageEvent*)),
+	         this, SLOT(newMessageEvent(Kopete::MessageEvent*)) );
+	
 }
 
 // Can't be in constructor because we can't call virtual method loadContactList from constructor
@@ -257,6 +263,8 @@ void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
 	            this, SLOT(handleContactDataChange(Kopete::MetaContact*)));
 	disconnect( contact, SIGNAL(statusMessageChanged(Kopete::MetaContact*)),
 	            this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
+
+	m_newMessageMetaContactSet.remove( contact );
 }
 
 void ContactListModel::addGroup( Kopete::Group* group )
@@ -311,6 +319,45 @@ void ContactListModel::loadContactList()
 	         this, SLOT(removeMetaContactFromGroup(Kopete::MetaContact*, Kopete::Group*)) );
 	connect( kcl, SIGNAL(metaContactMovedToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)),
 	         this, SLOT(moveMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)));
+}
+
+void ContactListModel::newMessageEvent( Kopete::MessageEvent *event )
+{
+	Kopete::Message msg = event->message();
+
+	//only for single chat
+	if ( msg.from() && msg.to().count() == 1 )
+	{
+		Kopete::MetaContact *mc = msg.from()->metaContact();
+		if( !mc )
+			return;
+
+		connect( event, SIGNAL(done(Kopete::MessageEvent*)),
+		         this, SLOT(newMessageEventDone(Kopete::MessageEvent*)) );
+
+		bool firstEvent = m_newMessageMetaContactSet[mc].isEmpty();
+		m_newMessageMetaContactSet[mc].insert( event );
+		if ( firstEvent )
+			handleContactDataChange( mc );
+	}
+}
+
+void ContactListModel::newMessageEventDone( Kopete::MessageEvent *event )
+{
+	Kopete::Message msg = event->message();
+
+	Q_ASSERT( msg.from() );
+
+	Kopete::MetaContact *mc = msg.from()->metaContact();
+	if( !mc )
+		return;
+
+	m_newMessageMetaContactSet[mc].remove( event );
+	if ( m_newMessageMetaContactSet[mc].isEmpty() )
+	{
+		m_newMessageMetaContactSet.remove( mc );
+		handleContactDataChange( mc );
+	}
 }
 
 bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelIndex &parent, Qt::DropAction action )
@@ -456,11 +503,15 @@ QVariant ContactListModel::metaContactData( const Kopete::MetaContact* mc, int r
 		return mc->statusMessage().title();
 		break;
 	case Kopete::Items::AccountIconsRole:
+		{
 		QList<QVariant> accountIconList;
 		foreach ( Kopete::Contact *contact, mc->contacts() )
 			accountIconList << qVariantFromValue( contact->onlineStatus().iconFor( contact ) );
 
 		return accountIconList;
+		}
+	case Kopete::Items::HasNewMessageRole:
+		return m_newMessageMetaContactSet.contains( mc );
 	}
 
 	return QVariant();

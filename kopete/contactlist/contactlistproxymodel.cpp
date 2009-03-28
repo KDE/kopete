@@ -104,12 +104,15 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 {
 	QAbstractItemModel* model = sourceModel();
 	QModelIndex current = model->index(sourceRow, 0, sourceParent);
-// 	Kopete::MetaContact* mc = metaContactFromIndex( current );
 	bool showEmpty = Kopete::AppearanceSettings::self()->showEmptyGroups();
 	bool showOffline = Kopete::AppearanceSettings::self()->showOfflineUsers();
 
 	if ( model->data( current, Kopete::Items::TypeRole ) == Kopete::Items::Group )
 	{
+		QObject* groupObject = qVariantValue<QObject*>( model->data( current, Kopete::Items::ObjectRole ) );
+		if ( qobject_cast<Kopete::Group*>(groupObject) == Kopete::Group::topLevel() )
+			return true;
+
 		int connectedContactsCount = model->data( current, Kopete::Items::ConnectedCountRole ).toInt();
 		int totalContactsCount = model->data( current, Kopete::Items::TotalCountRole ).toInt();
 

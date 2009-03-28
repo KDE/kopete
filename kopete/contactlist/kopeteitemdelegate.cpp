@@ -179,7 +179,12 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 		{
 			QRectF nominalImageRect( rowOffsetX, rowOffsetY, imageSize, imageSize );
 
-			QVariant metaContactPicture = index.data( Kopete::Items::MetaContactImageRole );
+			QVariant metaContactPicture;
+			if ( index.data( Kopete::Items::HasNewMessageRole ).toBool() )
+				metaContactPicture = QString::fromUtf8( "mail-unread" );
+			else
+				metaContactPicture = index.data( Kopete::Items::MetaContactImageRole );
+
 			if ( metaContactPicture.type() == QVariant::Image )
 			{
 				// We have contact photo
