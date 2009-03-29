@@ -25,6 +25,7 @@
 #include "kopetecontactlistview.h"
 
 #include <QHeaderView>
+#include <QScrollBar>
 
 #include <KDebug>
 #include <KIcon>
@@ -63,7 +64,13 @@
 class KopeteContactListViewPrivate
 {
 public:
-	KopeteContactListViewPrivate() : controlPressed( false )
+	KopeteContactListViewPrivate()
+		: controlPressed( false ),
+		  scrollAutoHideTimer(0),
+		  scrollAutoHideCounter(10),
+		  scrollAutoHideTimeout(10),
+		  scrollAutoHide(false),
+		  scrollHide(false)
 	{}
 	//QRect m_onItem;
 	
@@ -92,6 +99,17 @@ public:
 
 	QPointer<Kopete::Contact> pressedContact;
 	bool controlPressed;
+
+	//! The timer that will manage scroll bar auto-hiding
+	int scrollAutoHideTimer;
+	//! Timeout counter for scroll bar auto-hiding
+	int scrollAutoHideCounter;
+	//! Timeout for scroll bar auto-hiding
+	int scrollAutoHideTimeout;
+	//! State of scroll auto hide
+	bool scrollAutoHide;
+	//! State of always hide scrollbar feature
+	bool scrollHide;
 };
 
 KopeteContactListView::KopeteContactListView( QWidget *parent )
@@ -566,6 +584,44 @@ void KopeteContactListView::dragMoveEvent ( QDragMoveEvent * event )
 	event->acceptProposedAction();
 }
 
+void KopeteContactListView::timerEvent( QTimerEvent *event )
+{
+	QTreeView::timerEvent( event );
+
+	if ( event->timerId() == d->scrollAutoHideTimer )
+	{
+		if ( !d->scrollAutoHideCounter-- )
+			setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+	}
+}
+
+bool KopeteContactListView::eventFilter( QObject *object, QEvent *event )
+{
+	if ( d->scrollAutoHide && object == verticalScrollBar() )
+	{
+		if ( event->type() == QEvent::MouseMove )
+			d->scrollAutoHideCounter = 9999;
+		else if ( event->type() == QEvent::Enter )
+			d->scrollAutoHideCounter = 9999;
+		else if ( event->type() == QEvent::Leave )
+			d->scrollAutoHideCounter = d->scrollAutoHideTimeout;
+	}
+	else if ( d->scrollAutoHide && object == viewport() )
+	{
+		if ( event->type() == QEvent::MouseMove )
+		{
+			setVerticalScrollBarPolicy( Qt::ScrollBarAsNeeded );
+			d->scrollAutoHideCounter = 9999;	// Mouse is on the contact list, so don't hide it
+		}
+		else if ( event->type() == QEvent::Leave )
+		{
+			d->scrollAutoHideCounter = d->scrollAutoHideTimeout; // Mouse left the contact list, hide it after timeout
+		}
+	}
+
+	return QTreeView::eventFilter( object, event );
+}
+
 void KopeteContactListView::rowsInserted( const QModelIndex &parent, int start, int end )
 {
 	QTreeView::rowsInserted( parent, start, end );
@@ -736,22 +792,18 @@ void KopeteContactListView::slotSettingsChanged()
 		setIndentation( Kopete::AppearanceSettings::self()->contactListIndentContact() ? 20 : 0 );
 	}
 
-// 	if( Kopete::AppearanceSettings::self()->contactListHideVerticalScrollBar() )
-// 	{
-// 		// This will disable scrollbar auto-hide feature if it's enabled
-// 		// and it will call setVScrollBarMode(Auto), so it must precede setScrollHide call
-// 		setScrollAutoHide( false );
-// 		setScrollHide( true );
-// 	}
-// 	else
-// 	{
-// 		// This will disable "always hide scrollbar" optio and call setVScrollBarMode(Auto)
-// 		// so it must precede setScrollAutoHide call
-// 		setScrollHide(false);
-// 		setScrollAutoHide( Kopete::AppearanceSettings::self()->contactListAutoHideVScroll() );
-// 	}
+	if( Kopete::AppearanceSettings::self()->contactListHideVerticalScrollBar() )
+	{
+		setScrollAutoHide( false );
+		setScrollHide( true );
+	}
+	else
+	{
+		setScrollHide( false );
+		setScrollAutoHide( Kopete::AppearanceSettings::self()->contactListAutoHideVScroll() );
+	}
 
-// 	setScrollAutoHideTimeout( Kopete::AppearanceSettings::self()->contactListAutoHideTimeout() );
+	d->scrollAutoHideTimeout = Kopete::AppearanceSettings::self()->contactListAutoHideTimeout();
 // 	setMouseNavigation( Kopete::BehaviorSettings::self()->contactListMouseNavigation() );
 
 	setAnimated( Kopete::AppearanceSettings::self()->contactListAnimateChange() );
@@ -968,6 +1020,53 @@ Kopete::Contact* KopeteContactListView::contactAt( const QPoint& point ) const
 	option.rect = rect;
 	return delegate->contactAt( option, index, point );
 }
+
+
+void KopeteContactListView::setScrollAutoHide( bool autoHide )
+{
+	if ( d->scrollAutoHide == autoHide )
+		return;
+
+	if ( autoHide )
+	{
+		viewport()->installEventFilter( this );
+		viewport()->setMouseTracking( true );
+		verticalScrollBar()->installEventFilter( this );
+		verticalScrollBar()->setMouseTracking( true );
+
+		// Set scrollbar auto-hiding state true
+		d->scrollAutoHide = true;
+		// Turn of the bar now
+		setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+		// Start the timer to handle auto-hide
+		killTimer( d->scrollAutoHideTimer );
+		d->scrollAutoHideTimer = startTimer( 1000 );
+	}
+	else
+	{
+		viewport()->removeEventFilter( this );
+		viewport()->setMouseTracking( false );
+		verticalScrollBar()->removeEventFilter( this );
+		verticalScrollBar()->setMouseTracking( false );
+
+		d->scrollAutoHide = false;
+		setVerticalScrollBarPolicy( Qt::ScrollBarAsNeeded );
+		killTimer( d->scrollAutoHideTimer );
+	}
+}
+
+void KopeteContactListView::setScrollHide( bool hide )
+{
+	if ( d->scrollHide == hide )
+		return;
+
+	d->scrollHide = hide;
+	if ( hide )
+		setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+	else
+		setVerticalScrollBarPolicy( Qt::ScrollBarAsNeeded );
+}
+
 
 #include "kopetecontactlistview.moc"
 
