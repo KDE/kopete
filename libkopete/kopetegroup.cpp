@@ -24,6 +24,7 @@
 #include "kopetecontact.h"
 #include "kopetechatsession.h"
 
+#include <KIcon>
 #include <klocale.h>
 
 namespace Kopete {
@@ -149,7 +150,7 @@ void Group::setUniqueGroupId(uint uniqueGroupId)
 void Group::sendMessage()
 {
 	Kopete::Contact *c;
-	
+
 	if(onlineMembers().isEmpty())
 		return;
 	c = onlineMembers().first()->preferredContact();
@@ -170,7 +171,7 @@ void Group::sendMessage( Message& msg )
 	}
 	else
 		return;
-	
+
 	if(list.isEmpty())
 		return;
 	list.removeAll( msg.to().first()->metaContact() );
@@ -202,15 +203,15 @@ QList<MetaContact *> Group::onlineMembers() const
 	QList<MetaContact *>::iterator it=list.begin();
 	while ( it!=list.end() )
 	{
-		if( (*it)->isReachable() && (*it)->isOnline() ) 
-			++it; 
-		else   
-			it=list.erase(it); 
+		if( (*it)->isReachable() && (*it)->isOnline() )
+			++it;
+		else
+			it=list.erase(it);
 	}
 	return list;
 }
 
-} //END namespace Kopete 
+} //END namespace Kopete
 
 
 #include "kopetegroup.moc"

@@ -1,15 +1,15 @@
 /*
-    kopetecontactlistview.h
-
-    Kopete Contactlist GUI
+    Kopete Contact List View
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Nick Betcher <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn <metz@gehn.net>
     Copyright (c) 2002-2005 by Olivier Goffart <ogoffart@kde.org>
     Copyright (c) 2004      by Richard Smith <kde@metafoo.co.uk>
+    Copyright     2007-2008 by Matt Rogers <mattr@kde.org>
+    Copyright     2009      by Roman Jarosz <kedgedev@gmail.com>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -24,9 +24,7 @@
 #ifndef KOPETE_CONTACTLISTVIEW_H
 #define KOPETE_CONTACTLISTVIEW_H
 
-#include "kopetelistview.h"
-#include "kopetemetacontact.h"
-#include <kopetegroup.h>
+#include <QTreeView>
 
 #include <QPixmap>
 #include <QList>
@@ -37,8 +35,8 @@
 #include <QMouseEvent>
 #include <QDropEvent>
 
-class KopeteMetaContactLVI;
-class KopeteGroupViewItem;
+#include <kopete_export.h>
+
 class KActionCollection;
 class KAction;
 class KSelectAction;
@@ -52,12 +50,13 @@ class Contact;
 class MetaContact;
 class Group;
 class MessageEvent;
+class Account;
 }
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class KopeteContactListView : public Kopete::UI::ListView::ListView
+class KOPETE_CONTACT_LIST_EXPORT KopeteContactListView : public QTreeView
 {
 	Q_OBJECT
 
@@ -65,194 +64,67 @@ public:
 	KopeteContactListView( QWidget *parent = 0 );
 	~KopeteContactListView();
 
-	/**
-	 * Init MetaContact related actions
-	 */
-	void initActions(KActionCollection*);
+	void initActions( KActionCollection *ac );
+	virtual void setModel( QAbstractItemModel *newModel );
 
-	/**
-	 * Add a given group name and return it
-	 */
-	void addGroup( const QString &groupName );
+	int visibleContentHeight() const;
 
-	/**
-	 * Are we displaying as a tree view (true), or in a flat list (false)?
-	 * @todo make this an enum
-	 */
-	bool showAsTree() { return mShowAsTree; }
+public Q_SLOTS:
+	virtual void reset();
+	void contactActivated( const QModelIndex& index );
 
-public slots:
-	/**
-	 * Remove all KopeteMetaContactLVI of a metaContact
-	 */
-	void removeContact( Kopete::MetaContact *contact );
-
-	/**
-	 * Prompt the user for the group name (slot)
-	 */
+	void showItemProperties();
+	void mergeMetaContact();
 	void addGroup();
+	void startChat();
+	void sendFile();
+	void sendMessage();
+	void sendEmail();
+	void addTemporaryContact();
+	void removeGroupOrMetaContact();
+
+Q_SIGNALS:
+	void visibleContentHeightChanged();
 
 protected:
-	virtual void contentsMousePressEvent( QMouseEvent *e );
+	virtual void contextMenuEvent( QContextMenuEvent* event );
+	virtual void mouseReleaseEvent( QMouseEvent *event );
+	virtual void startDrag( Qt::DropActions supportedActions );
+	virtual void dragMoveEvent( QDragMoveEvent *event );
+	virtual void timerEvent( QTimerEvent *event );
+	virtual bool eventFilter( QObject *object, QEvent *event );
 
-	virtual bool acceptDrag(QDropEvent *e) const;
-
-	/**
-	 * Start a drag operation
-	 * @return a KMultipleDrag containing: 1) A QStoredDrag of type "application/x-qlistviewitem", 2) If the MC is associated with a KABC entry, i) a QTextDrag containing their email address, and ii) their vCard representation.
-	 */
-	virtual Q3DragObject *dragObject();
-
-	/**
-	 * Since KDE 3.1.1 ,  the original find Drop return 0L for afterme if the group is open.
-	 * This woraround allow us to keep the highlight of the item, and give always a correct position
-	 */
-	virtual void findDrop(const QPoint &pos, Q3ListViewItem *&parent, Q3ListViewItem *&after);
-
-	/**
-	 * The selected items have changed; update our actions to show what's possible.
-	 */
-	void updateActionsForSelection( QList<Kopete::MetaContact*> contacts, QList<Kopete::Group*> groups );
+protected slots:
+	virtual void rowsInserted( const QModelIndex &parent, int start, int end );
+	virtual void selectionChanged( const QItemSelection& selected, const QItemSelection& deselected );
 
 private slots:
-	/**
-	 * When an account is added, so we add it to the menu action
-	 */
-	void slotAddSubContactActionNewAccount(Kopete::Account*);
-	/**
-	 * When an account is destroyed, the child add subcontact action is deleted
-	 * so we remove it from the menu action
-	 */
-	void slotAddSubContactActionAccountDeleted(const Kopete::Account *);
+	void reexpandGroups();
+	void itemExpanded( const QModelIndex& index );
+	void itemCollapsed( const QModelIndex& index );
 
-	void slotViewSelectionChanged();
-	void slotListSelectionChanged();
-	void slotContextMenu(K3ListView*,Q3ListViewItem *item, const QPoint &point );
-	void slotExpanded( Q3ListViewItem *item );
-	void slotCollapsed( Q3ListViewItem *item );
-
-	void slotSettingsChanged( void );
-	void slotUpdateAllGroupIcons();
-	void slotExecuted( Q3ListViewItem *item, const QPoint &pos, int c );
-
-	void slotAddedToGroup( Kopete::MetaContact *mc, Kopete::Group *to );
-	void slotRemovedFromGroup( Kopete::MetaContact *mc, Kopete::Group *from );
-	void slotMovedToGroup( Kopete::MetaContact *mc, Kopete::Group *from, Kopete::Group *to );
-
-	/**
-	 * A meta contact was added to the contact list - update the view
-	 */
-	void slotMetaContactAdded( Kopete::MetaContact *mc );
-	void slotMetaContactDeleted( Kopete::MetaContact *mc );
-	void slotMetaContactSelected( bool sel );
-	void slotUpdateMetaContactActions();
-
-	void slotGroupAdded(Kopete::Group *);
-
-	void slotContactStatusChanged( Kopete::MetaContact *mc );
-
-	void slotDropped(QDropEvent *e, Q3ListViewItem *parent, Q3ListViewItem*);
-
-	void slotShowAddContactDialog();
-	void slotNewMessageEvent(Kopete::MessageEvent *);
-
-	/**
-	 * Handle renamed items by renaming the meta contact
-	 */
-	void slotItemRenamed( Q3ListViewItem *item );
-
-	/** Actions related slots **/
-	void slotSendMessage();
-	void slotStartChat();
-	void slotSendFile();
-	void slotSendEmail();
-	void slotMoveToGroup();
-	void slotCopyToGroup();
-	void slotRemove();
-	void slotRename();
-	void slotAddContact();
-	void slotAddTemporaryContact();
-	void slotProperties();
-	void slotUndo();
-	void slotRedo();
-
-	void slotTimeout();
-
-	void slotMakeMetaContact();
+	void updateActions();
+	void updateMetaContactActions();
+	void slotSettingsChanged();
+	void addToAddContactMenu( Kopete::Account* account );
+	void removeToAddContactMenu( const Kopete::Account *account );
+	void addContact();
 
 private:
-	bool mShowAsTree;
+	Kopete::MetaContact* metaContactFromIndex( const QModelIndex& index ) const;
+	Kopete::Group* groupFromIndex( const QModelIndex& index ) const;
 
-	typedef QList<KopeteMetaContactLVI*> MetaContactLVIList;
-	typedef QList<KopeteGroupViewItem*> GroupViewItemList;
-	// TODO: do we really need to store these?
-	MetaContactLVIList m_selectedContacts;
-	GroupViewItemList m_selectedGroups;
+	void groupPopup( Kopete::Group *group, const QPoint& pos );
+	void metaContactPopup( Kopete::MetaContact *metaContact, const QPoint& pos );
+	void miscPopup( QModelIndexList indexes, const QPoint& pos );
+	Kopete::Contact* contactAt( const QPoint& point ) const;
+	
+	void setScrollAutoHide( bool autoHide );
+	void setScrollHide( bool hide );
 
-	QPointer<Kopete::MetaContact> m_selectedMetaContact;
-
-	bool mSortByGroup;
-
-	QRect m_onItem;
-
-	QPoint m_startDragPos;
-
-	/* ACTIONS */
-	KAction *actionSendMessage;
-	KAction *actionStartChat;
-	KAction *actionSendFile;
-	KAction *actionSendEmail;
-	KSelectAction *actionMove;
-	KSelectAction *actionCopy;
-	KAction *actionRename;
-	KAction *actionRemove;
-	KAction *actionAddTemporaryContact;
-	KAction *actionProperties;
-	KAction *actionUndo;
-	KAction *actionRedo;
-	KAction *actionMakeMetaContact;
+	int visibleContentHeight( const QModelIndex& parent ) const;
 
 	KopeteContactListViewPrivate *d;
-
-	void moveDraggedContactToGroup( Kopete::MetaContact *contact, Kopete::Group *from, Kopete::Group *to );
-	void addDraggedContactToGroup( Kopete::MetaContact *contact, Kopete::Group *group );
-	void addDraggedContactToMetaContact( Kopete::Contact *contact, Kopete::MetaContact *parent );
-	void addDraggedContactByInfo( const QString &protocolId, const QString &accountId,
-		const QString &contactId, Q3ListViewItem *after );
-
-public:
-	struct UndoItem;
-	UndoItem *m_undo;
-	UndoItem *m_redo;
-	void insertUndoItem(UndoItem *u);
-	QTimer undoTimer;
-
-public:
-	// This is public so the chatwinodw can handle sub actions
-	// FIXME: do we not believe in accessor functions any more?
-	KActionMenu *actionAddContact;
-	QMap<KAction *, Kopete::Account *> m_addContactAccountMap;
-};
-
-struct KopeteContactListView::UndoItem
-{
-	enum Type { MetaContactAdd, MetaContactRemove , MetaContactCopy , MetaContactRename, MetaContactChange, ContactAdd, GroupRename } type;
-	QStringList args;
-	QPointer<Kopete::MetaContact> metacontact;
-	QPointer<Kopete::Group> group;
-	UndoItem *next;
-	bool isStep;
-	Kopete::MetaContact::PropertySource nameSource;
-
-	UndoItem() : isStep(true) {}
-	UndoItem(Type t, Kopete::MetaContact *m=0L, Kopete::Group *g=0L)
-	{
-		isStep=true;
-		type=t;
-		metacontact=m;
-		group=g;
-		next=0L;
-	}
 };
 
 

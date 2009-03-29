@@ -34,6 +34,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="acceptDrops" >
         <bool>true</bool>
        </property>

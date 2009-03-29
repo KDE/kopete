@@ -39,7 +39,7 @@ class  MetaContact::Private
 	~Private()
 	{}
 
-
+	QUuid metaContactId;
 	// property sources
 	PropertySource photoSource;
 	PropertySource displayNameSource;
@@ -49,7 +49,7 @@ class  MetaContact::Private
 	Contact *photoSourceContact;
 
 	// used when source is kabc
-	QString metaContactId;
+	QString kabcId;
 
 	// used when source is custom
 	QString displayName;
@@ -68,6 +68,8 @@ class  MetaContact::Private
 
 	// The photo cache. Reduce disk access and CPU usage.
 	Picture customPicture, contactPicture, kabcPicture;
+
+	Kopete::StatusMessage statusMessage;
 };
 
 } //END namespace Kopete

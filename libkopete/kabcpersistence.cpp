@@ -106,7 +106,7 @@ void KABCPersistence::write( MetaContact * mc )
 
 	kDebug( 14010 ) << "looking up Addressee for " << mc->displayName() << "...";
 	// Look up the address book entry
-	KABC::Addressee theAddressee = ab->findByUid( mc->metaContactId() );
+	KABC::Addressee theAddressee = ab->findByUid( mc->kabcId() );
 	// Check that if addressee is not deleted or if the link is spurious
 	// (inherited from Kopete < 0.8, where all metacontacts had random ids)
 	if ( theAddressee.isEmpty() )
@@ -222,17 +222,17 @@ void KABCPersistence::removeKABC( MetaContact *)
 	emit aboutToSave(this);
 
 	// If the metacontact is linked to a kabc entry
-	if ( !d->metaContactId.isEmpty() )
+	if ( !d->kabcId().isEmpty() )
 	{
 		//kDebug( 14010 ) << "looking up Addressee for " << displayName() << "...";
 		// Look up the address book entry
-		KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
+		KABC::Addressee theAddressee = ab->findByUid( d->kabcId() );
 
 		if ( theAddressee.isEmpty() )
 		{
 			// remove the link
 			//kDebug( 14010 ) << "...not found.";
-			d->metaContactId.clear();
+			d->kabcId.clear();
 		}
 		else
 		{
@@ -263,7 +263,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 	bool contactAdded = false;
 	// check whether the dontShowAgain was checked
 		KABC::AddressBook* ab = addressBook();
-		KABC::Addressee addr  = ab->findByUid( mc->metaContactId() );
+		KABC::Addressee addr  = ab->findByUid( mc->kabcId() );
 
 		if ( !addr.isEmpty() ) // if we are associated with KABC
 		{

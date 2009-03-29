@@ -21,12 +21,13 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
+#include <QtGui/QStandardItemModel>
 
-#include <kurl.h>
+#include <KUrl>
 
 #include "kopete_export.h"
 
-namespace Kopete 
+namespace Kopete
 {
 
 class MetaContact;
@@ -69,7 +70,7 @@ public:
 	 * changing those *will* have the expected result :-)
 	 */
 	QList<MetaContact *> metaContacts() const;
-	
+
 	/**
 	 * @return all groups
 	 */
@@ -85,8 +86,8 @@ public:
 	 * return the group with the given unique id. if none is found return 0L
 	 */
 	Group * group(unsigned int groupId) const;
-	
-	
+
+
 	/**
 	 * @brief find a contact in the contact list.
 	 * Browse in each metacontact of the list to find the contact with the given ID.
@@ -159,6 +160,11 @@ public slots:
 	void removeMetaContact( Kopete::MetaContact *contact );
 
 	/**
+	 * Merge one or more metacontacts into another one
+	 */
+	void mergeMetaContacts( QList<MetaContact *> src, Kopete::MetaContact *dst );
+
+	/**
 	 * Add groups
 	 * each group must be added on the list after his creation.
 	 */
@@ -189,6 +195,8 @@ public slots:
 	 */
 	void load();
 
+	bool loaded() const;
+
 	void save();
 
 signals:
@@ -198,7 +206,7 @@ signals:
 	 * the newly added contacts.
 	 */
 	void metaContactAdded( Kopete::MetaContact *mc );
-	
+
 	/**
 	 * A metacontact has just been removed.  and will be soon deleted
 	 */
@@ -208,12 +216,12 @@ signals:
 	 * A group has just been added
 	 */
 	void groupAdded( Kopete::Group * );
-	
+
 	/**
 	 * A group has just been removed
 	 */
 	void groupRemoved( Kopete::Group * );
-	
+
 	/**
 	 * A group has just been renamed
 	 */
@@ -229,6 +237,11 @@ signals:
 	void metaContactRemovedFromGroup( Kopete::MetaContact *mc, Kopete::Group *from );
 
 	/**
+	 * A contact has been moved from one group to another
+	 */
+	void metaContactMovedToGroup( Kopete::MetaContact *mc, Kopete::Group *from, Kopete::Group *to );
+
+	/**
 	 * This signal is emit when the selection has changed, it is emitted after the following slot
 	 * Warning: Do not delete any contacts in slots connected to this signal.  (it is the warning in the QListView::selectionChanged() doc)
 	 */
@@ -239,6 +252,8 @@ signals:
 	 * you can connect this signal to KAction::setEnabled if you have an action which is applied to only one contact
 	 */
 	void metaContactSelected(bool);
+
+	void contactListLoaded();
 
 private slots:
 	/**

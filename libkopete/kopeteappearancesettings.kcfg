@@ -107,24 +107,23 @@
 	
 	<group name="ContactList">
 		<!-- Contact list display preferences -->
-		<entry key="contactListSize" type="Enum">
-			<label>Contact list size</label>
+		<entry key="contactListGroupSorting" type="Enum">
+			<label>Contact list group sorting</label>
 			<choices>
-				<choice name="Small"/>
-				<choice name="Medium"/>
-				<choice name="Large"/>
+				<choice name="Manual"/>
+				<choice name="Name"/>
 			</choices>
-			<default>Small</default>
+			<default>Name</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
-		<entry key="contactListLeftMode" type="Bool">
-			<label>Contact list status icons are left aligned.</label>
-			<default>false</default>
-			<emit signal="contactListAppearanceChanged" />
-		</entry>
-		<entry key="contactListDetailedMode" type="Bool">
-			<label>Show detailed contact list.</label>
-			<default>false</default>
+		<entry key="contactListMetaContactSorting" type="Enum">
+			<label>Contact list group sorting</label>
+			<choices>
+				<choice name="Manual"/>
+				<choice name="Name"/>
+				<choice name="Status"/>
+			</choices>
+			<default>Status</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="contactListIconMode" type="Enum">

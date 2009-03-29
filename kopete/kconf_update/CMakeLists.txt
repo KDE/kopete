@@ -10,5 +10,3 @@ install( PROGRAMS kopete-pluginloader.pl
 	kopete-account-0.10.pl kopete-initialstatus.pl DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
 
 
-#TODO kconf_program ?
-

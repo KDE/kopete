@@ -125,7 +125,7 @@ MetaContact *ContactList::metaContact( const QString &metaContactId ) const
 	while ( it.hasNext() )
 	{
 		MetaContact *mc = it.next();
-		if( mc->metaContactId() == metaContactId )
+		if( mc->metaContactId() == QUuid( metaContactId ) )
 			return mc;
 	}
 
@@ -135,8 +135,11 @@ MetaContact *ContactList::metaContact( const QString &metaContactId ) const
 
 Group * ContactList::group(unsigned int groupId) const
 {
+	if ( groupId == Group::topLevel()->groupId() )
+		return Group::topLevel();
+
 	QListIterator<Group *> it(d->groups);
-	
+
 	while ( it.hasNext() )
 	{
 		Group *curr = it.next();
@@ -236,6 +239,8 @@ void ContactList::addMetaContact( MetaContact *mc )
 	connect( mc, SIGNAL( persistentDataChanged( ) ), SLOT( slotSaveLater() ) );
 	connect( mc, SIGNAL( addedToGroup( Kopete::MetaContact *, Kopete::Group * ) ), SIGNAL( metaContactAddedToGroup( Kopete::MetaContact *, Kopete::Group * ) ) );
 	connect( mc, SIGNAL( removedFromGroup( Kopete::MetaContact *, Kopete::Group * ) ), SIGNAL( metaContactRemovedFromGroup( Kopete::MetaContact *, Kopete::Group * ) ) );
+	connect( mc, SIGNAL( movedToGroup( Kopete::MetaContact*, Kopete::Group*, Kopete::Group* )),
+	             SIGNAL( metaContactMovedToGroup( Kopete::MetaContact*, Kopete::Group*, Kopete::Group* )));
 }
 
 
@@ -265,6 +270,23 @@ void ContactList::removeMetaContact(MetaContact *m)
 	d->contacts.removeAll( m );
 	emit metaContactRemoved( m );
 	m->deleteLater();
+}
+
+void ContactList::mergeMetaContacts( QList<MetaContact *> src, Kopete::MetaContact *dst )
+{
+	// merge all metacontacts from src into dst
+
+	// Note: there is no need to remove the src metacontacts, they are going to be
+	// removed when the last contact is moved to the new metacontact
+
+	// TODO: add a confirmation dialog asking if this is really wanted
+	// TODO: add a Undo option for this
+	
+	foreach( Kopete::MetaContact *mc, src )
+	{
+		foreach( Kopete::Contact *c, mc->contacts() )
+			c->setMetaContact( dst );
+	}
 }
 
 void ContactList::addGroups( QList<Group *> groups )
@@ -319,22 +341,27 @@ void ContactList::load()
 {
 	// don't save when we're in the middle of this...
 	d->loaded = false;
-	
+
 	Kopete::ContactListStorage *storage = new Kopete::XmlContactStorage();
 	storage->load();
 	if( !storage->isValid() )
 	{
 		kDebug(14010) << "Contact list storage failed. Reason: " << storage->errorMessage();
-		d->loaded = true;
-		delete storage;
-		return;
 	}
-
-	addGroups( storage->groups() );
-	addMetaContacts( storage->contacts() );
+	else
+	{
+		addGroups( storage->groups() );
+		addMetaContacts( storage->contacts() );
+	}
 
 	d->loaded = true;
 	delete storage;
+	emit contactListLoaded();
+}
+
+bool Kopete::ContactList::loaded() const
+{
+	return d->loaded;
 }
 
 void Kopete::ContactList::save()

@@ -21,6 +21,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QMap>
+#include <QtGui/QStandardItem>
 
 #include "kopete_export.h"
 #include "kopetepropertycontainer.h"
@@ -43,7 +44,7 @@ class Plugin;
  * It also allow to store an icon for this element.
  */
 class KOPETE_EXPORT ContactListElement
-	: public PropertyContainer  /* public KopeteNotifyDataObject */
+	: public PropertyContainer
 {
 	Q_OBJECT
 
@@ -78,7 +79,7 @@ public:
 	 *          that takes a single field as parameter.
 	 */
 	void setPluginData( Plugin *plugin, const QMap<QString, QString> &value );
-	
+
 	void setPluginData( const QString &pluginId, const QMap<QString, QString> &pluginData );
 
 	/**
@@ -108,9 +109,9 @@ public:
 	 * constructors).
 	 */
 	QString pluginData( Plugin *plugin, const QString &key ) const;
-	
+
 	typedef QMap<QString, QMap<QString, QString> > PluginDataMap;
-	
+
 	/**
 	 * return plugin-specific data for all plugins
 	 */
@@ -123,7 +124,7 @@ public:
 	 */
 	enum IconState { None, Open, Closed, Online, Away, Offline, Unknown };
 	typedef QMap<IconState, QString> IconMap;
-	
+
 	/**
 	 * return all registered icons
 	 */

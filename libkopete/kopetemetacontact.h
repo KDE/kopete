@@ -24,12 +24,14 @@
 #include "kopetecontactlistelement.h"
 
 #include <QtCore/QList>
+#include <QtCore/QUuid>
 
 #include <kdemacros.h>
 #include <kurl.h>
 #include "kopete_export.h"
 
 #include "kopeteonlinestatus.h"
+#include "kopetestatusmessage.h"
 
 namespace Kopete {
 
@@ -61,7 +63,7 @@ class KOPETE_EXPORT MetaContact : public ContactListElement
 	Q_PROPERTY( bool isTemporary READ isTemporary )
 	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
 	//Q_PROPERTY( ulong idleTime READ idleTime )
-	Q_PROPERTY( QString metaContactId READ metaContactId WRITE setMetaContactId )
+	Q_PROPERTY( QUuid metaContactId READ metaContactId WRITE setMetaContactId )
 	Q_PROPERTY( bool photoSyncedWithKABC READ isPhotoSyncedWithKABC WRITE setPhotoSyncedWithKABC )
 
 public:
@@ -88,16 +90,28 @@ public:
 	/**
 	 * @brief Returns this metacontact's ID.
 	 *
-	 * Every metacontact has a unique id, set by  when creating the contact, or reading the contact list
-	 * TODO: make it real
+	 * Every metacontact has a unique id, set when creating the contact, 
+	 * or reading the contactlist
 	 */
-	QString metaContactId() const;
+	QUuid metaContactId() const;
+  
+	/**
+	 * @internal
+	 * Set the meta contact id for this meta contact to use. It should only
+	 * be used by the contact list loading mechanism
+	 */
+	void setMetaContactId( const QUuid& newMetaContactId );
 
 	/**
-	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.
-	 * FIXME: Use with care.  You could create 1 to many relationships with the current implementation
+	 * @brief Get the KABC id for this metacontact
 	 */
-	void setMetaContactId( const QString& newMetaContactId );
+	QString kabcId() const;
+
+	/**
+	 * @brief Set the KABC id for this metacontact
+	 * Use with care! You could create a one to many relationship
+	 */
+	void setKabcId( const QString& newKabcId );
 
 	/**
 	 * @brief Retrieve the list of contacts that are part of the meta contact
@@ -348,7 +362,7 @@ public:
 	/**
 	 * return the time in second the contact is idle.
 	 */
-	unsigned long int idleTime() const;
+	quint32 idleTime() const;
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
@@ -381,6 +395,11 @@ public:
 	 * @param value The value of the address book field to set
 	 */
 	void setAddressBookField( Plugin *p, const QString &app, const QString &key, const QString &value );
+
+	/**
+	 * @brief The status message of metacontact
+	 */
+	StatusMessage statusMessage() const;
 
 public slots:
 
@@ -419,6 +438,10 @@ signals:
 	 */
 	void contactIdleStateChanged( Kopete::Contact *contact );
 
+	/**
+	 * Status title or message has changed
+	 */
+	void statusMessageChanged( Kopete::MetaContact *metaContact );
 
 public slots:
 

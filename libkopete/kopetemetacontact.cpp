@@ -46,6 +46,8 @@ namespace Kopete {
 MetaContact::MetaContact()
 	: ContactListElement( ContactList::self() ), d(new Private())
 {
+	d->metaContactId = QUuid::createUuid();
+
 	connect( this, SIGNAL( pluginDataChanged() ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( iconChanged( Kopete::ContactListElement::IconState, const QString & ) ), SIGNAL( persistentDataChanged() ) );
 	connect( this, SIGNAL( useCustomIconChanged( bool ) ), SIGNAL( persistentDataChanged() ) );
@@ -63,11 +65,22 @@ MetaContact::MetaContact()
 	addToGroup( Group::topLevel() );
 			 // I'm not sure this is correct -Olivier
 			 // we probably should do the check in groups() instead
+
 }
 
 MetaContact::~MetaContact()
 {
 	delete d;
+}
+
+QUuid MetaContact::metaContactId() const
+{
+	return d->metaContactId;
+}
+
+void MetaContact::setMetaContactId( const QUuid& newUuid)
+{
+	d->metaContactId = newUuid;
 }
 
 void MetaContact::addContact( Contact *c )
@@ -81,7 +94,6 @@ void MetaContact::addContact( Contact *c )
 		const QString oldDisplayName = displayName();
 
 		d->contacts.append( c );
-
 		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 			SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
@@ -155,7 +167,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		QString currDisplayName = displayName();
 
 		d->contacts.removeAll( c );
-		
+
 		// if the contact was a source of property data, clean
 		if (displayNameSourceContact() == c)
 			setDisplayNameSourceContact(0L);
@@ -413,7 +425,7 @@ Contact *MetaContact::execute()
 	return 0L;
 }
 
-unsigned long int MetaContact::idleTime() const
+quint32 MetaContact::idleTime() const
 {
 	unsigned long int time = 0;
 	QListIterator<Contact *> it( d->contacts );
@@ -487,7 +499,8 @@ bool MetaContact::isOnline() const
 	QListIterator<Contact *> it( d->contacts );
 	while ( it.hasNext() )
 	{
-		if( it.next()->isOnline() )
+		Contact* c = it.next();
+		if( c && c->isOnline() )
 			return true;
 	}
 	return false;
@@ -596,7 +609,6 @@ void MetaContact::setDisplayName( const QString &name )
 		while (  it.hasNext() )
 			( it.next() )->sync(Contact::DisplayNameChanged);
 	}
-
 }
 
 QString MetaContact::customDisplayName() const
@@ -611,8 +623,8 @@ QString MetaContact::displayName() const
 	{
 		// kabc source, try to get from addressbook
 		// if the metacontact has a kabc association
-		if ( !metaContactId().isEmpty() )
-			return nameFromKABC(metaContactId());
+		if ( !kabcId().isEmpty() )
+			return nameFromKABC(kabcId());
 	}
 	else if ( source == SourceContact || d->displayName.isEmpty())
 	{
@@ -774,9 +786,7 @@ void MetaContact::setDisplayNameSourceContact( Contact *contact )
 	Contact *old = d->displayNameSourceContact;
 	d->displayNameSourceContact = contact;
 	if ( displayNameSource() == SourceContact )
-	{
 		emit displayNameChanged( nameFromContact(old), nameFromContact(contact));
-	}
 }
 
 void MetaContact::setPhotoSourceContact( Contact *contact )
@@ -790,7 +800,7 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 		if ( contact->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
 		{
 			photoProp = contact->property( Kopete::Global::Properties::self()->photo().key() ).value();
-		
+
 			if(photoProp.canConvert( QVariant::Image ))
 			{
 				d->contactPicture.setPicture( photoProp.value<QImage>() );
@@ -845,16 +855,56 @@ void MetaContact::slotPropertyChanged( PropertyContainer* _subcontact, const QSt
 				// as the current one is null, lets use this new one
 				if (picture().isNull())
 					setPhotoSourceContact(subcontact);
-					
+
 			}
 			else if(photoSourceContact() == subcontact)
 			{
 				if(d->photoSyncedWithKABC)
 					setPhotoSyncedWithKABC(true);
-					
+
 				setPhotoSourceContact(subcontact);
 			}
 		}
+	}
+
+	if ( (key == Kopete::Global::Properties::self()->statusMessage().key() ||
+	     key == Kopete::Global::Properties::self()->statusTitle().key()) && oldValue != newValue )
+	{
+		QString statusText;
+
+		bool allOffline = !this->isOnline();
+		if ( newValue.toString().isEmpty() || ( !subcontact->isOnline() && !allOffline ) )
+		{
+			// try to find a more suitable away message to be displayed when:
+			// -new away message is empty or
+			// -contact who set it is offline and there are contacts online in the metacontact
+			foreach ( Kopete::Contact *c, d->contacts )
+			{
+				QString curStatusText( c->property( key ).value().toString() );
+				if ( ( allOffline || c->isOnline() ) && !curStatusText.isEmpty() )
+				{
+					// display this contact's away message when:
+					// -this contact's away message is not empty and
+					// -this contact is online or there are no contacts online at all
+					statusText = curStatusText;
+					break;
+				}
+			}
+		}
+		else
+		{
+			// just use new away message when:
+			// -new away message is not empty and
+			// -contact who set it is online or there are no contacts online at all
+			statusText = newValue.toString();
+		}
+
+		if ( key == Kopete::Global::Properties::self()->statusMessage().key() )
+			d->statusMessage.setMessage( statusText );
+		else
+			d->statusMessage.setTitle( statusText );
+
+		emit statusMessageChanged( this );
 	}
 }
 
@@ -867,7 +917,11 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 		return;
 	}
 
-	if ( !to || groups().contains( to )  )
+	// Do nothing (same group)
+	if ( from == to )
+		return;
+
+	if ( !to || groups().contains( to ) )
 	{
 		// We're removing, not moving, because 'to' is illegal
 		removeFromGroup( from );
@@ -921,6 +975,7 @@ void MetaContact::addToGroup( Group *to )
 	if ( d->temporary && to->type() != Group::Temporary )
 		return;
 
+	// FIXME: This breaks copying MC with drag&drop from topLevel group
 	if ( d->groups.contains( Group::topLevel() ) )
 	{
 		d->groups.removeAll( Group::topLevel() );
@@ -956,6 +1011,11 @@ void Kopete::MetaContact::setAddressBookField( Kopete::Plugin * /* p */, const Q
 	d->addressBook[ app ][ key ] = value;
 }
 
+Kopete::StatusMessage MetaContact::statusMessage() const
+{
+	return d->statusMessage;
+}
+
 void MetaContact::slotPluginLoaded( Plugin *p )
 {
 	if( !p )
@@ -978,7 +1038,7 @@ void MetaContact::slotAllPluginsLoaded()
 void MetaContact::slotUpdateAddressBookPicture()
 {
 	KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
-	QString id = metaContactId();
+	QString id = kabcId();
 	if ( !id.isEmpty() && !id.contains(':') )
 	{
 		KABC::Addressee theAddressee = ab->findByUid(id);
@@ -1021,9 +1081,9 @@ void MetaContact::setTemporary( bool isTemporary, Group *group )
 		moveToGroup(temporaryGroup, group ? group : Group::topLevel());
 }
 
-QString MetaContact::metaContactId() const
+QString MetaContact::kabcId() const
 {
-	if(d->metaContactId.isEmpty())
+	if(d->kabcId.isEmpty())
 	{
 		if(d->contacts.isEmpty())
 			return QString();
@@ -1032,12 +1092,12 @@ QString MetaContact::metaContactId() const
 			return QString();
 		return c->protocol()->pluginId()+QString::fromUtf8(":")+c->account()->accountId()+QString::fromUtf8(":") + c->contactId() ;
 	}
-	return d->metaContactId;
+	return d->kabcId;
 }
 
-void MetaContact::setMetaContactId( const QString& newMetaContactId )
+void MetaContact::setKabcId( const QString& newKabcId )
 {
-	if(newMetaContactId == d->metaContactId)
+	if(newKabcId == d->kabcId)
 		return;
 
 	// 1) Check the Id is not already used by another contact
@@ -1049,7 +1109,7 @@ void MetaContact::setMetaContactId( const QString& newMetaContactId )
 
 	// Don't remove IM addresses from kabc if we are changing contacts;
 	// other programs may have written that data and depend on it
-	d->metaContactId = newMetaContactId;
+	d->kabcId = newKabcId;
 	if ( loading() )
 	{
 		slotUpdateAddressBookPicture();
@@ -1094,9 +1154,9 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 				return;
 		}
 
-		if ( !d->metaContactId.isEmpty() && !newValue.isNull())
+		if ( !d->kabcId.isEmpty() && !newValue.isNull())
 		{
-			KABC::Addressee theAddressee = KABCPersistence::self()->addressBook()->findByUid( metaContactId() );
+			KABC::Addressee theAddressee = KABCPersistence::self()->addressBook()->findByUid( kabcId() );
 
 			if ( !theAddressee.isEmpty() )
 			{

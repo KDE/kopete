@@ -68,6 +68,7 @@
 #include <kstandardaction.h>
 #include <solid/networking.h>
 #include <kstatusbarofflineindicator.h>
+#include <kfilterproxysearchline.h>
 
 #include "addcontactpage.h"
 #include "addressbooklinkwidget.h"
@@ -82,7 +83,6 @@
 #include "kopetebehaviorsettings.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
-#include "kopetecontactlistview.h"
 #include "kopetegroup.h"
 #include "kopeteidentity.h"
 #include "kopeteidentitymanager.h"
@@ -101,6 +101,12 @@
 #include "kopeteemoticons.h"
 #include "kopeteinfoeventmanager.h"
 #include "infoeventwidget.h"
+#include "contactlisttreemodel.h"
+#include "contactlistplainmodel.h"
+#include "contactlistproxymodel.h"
+#include "kopeteitemdelegate.h"
+#include "kopetemetacontact.h"
+#include "kopetecontactlistview.h"
 
 
 //BEGIN GlobalStatusMessageIconLabel
@@ -153,7 +159,7 @@ class KopeteWindow::Private
 {
 	public:
 		Private()
-				: contactlist ( 0 ), identitywidget ( 0 ), infoEventWidget ( 0 ), actionAddContact ( 0 ), actionDisconnect ( 0 ),
+				: contactlist ( 0 ), model(0), proxyModel(0), identitywidget ( 0 ), infoEventWidget ( 0 ), actionAddContact ( 0 ), actionDisconnect ( 0 ),
 				actionExportContacts ( 0 ), actionStatusMenu ( 0 ), actionDockMenu ( 0 ), actionSetAway ( 0 ),
 				actionSetBusy ( 0 ), actionSetAvailable ( 0 ), actionSetInvisible ( 0 ), actionPrefs ( 0 ),
 				actionQuit ( 0 ), actionSave ( 0 ), menubarAction ( 0 ), statusbarAction ( 0 ),
@@ -168,6 +174,8 @@ class KopeteWindow::Private
 		{}
 
 		KopeteContactListView *contactlist;
+		Kopete::UI::ContactListModel* model;
+		Kopete::UI::ContactListProxyModel* proxyModel;
 
 		IdentityStatusWidget *identitywidget;
 		InfoEventWidget *infoEventWidget;
@@ -311,7 +319,7 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	          this, SLOT ( slotAccountUnregistered ( const Kopete::Account* ) ) );
 
 	connect ( d->autoHideTimer, SIGNAL ( timeout() ), this, SLOT ( slotAutoHide() ) );
-	connect ( d->contactlist, SIGNAL ( visibleSizeChanged() ), this, SLOT ( slotStartAutoResizeTimer() ) );
+	connect ( d->contactlist, SIGNAL( visibleContentHeightChanged() ), this, SLOT ( slotStartAutoResizeTimer() ) );
 	connect ( d->autoResizeTimer, SIGNAL ( timeout() ), this, SLOT ( slotUpdateSize() ) );
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL ( contactListAppearanceChanged() ),
 	          this, SLOT ( slotContactListAppearanceChanged() ) );
@@ -344,7 +352,17 @@ void KopeteWindow::initView()
 {
 	QWidget *w = new QWidget ( this );
 	QVBoxLayout *l = new QVBoxLayout ( w );
-	d->contactlist = new KopeteContactListView ( w );
+ 	d->contactlist = new KopeteContactListView ( w );
+
+	if ( Kopete::AppearanceSettings::self()->groupContactByGroup() )
+		d->model = new Kopete::UI::ContactListTreeModel( this );
+	else
+		d->model = new Kopete::UI::ContactListPlainModel( this );
+
+	d->model->init();
+	d->proxyModel = new Kopete::UI::ContactListProxyModel( this );
+	d->proxyModel->setSourceModel( d->model );
+	d->contactlist->setModel( d->proxyModel );
 	l->addWidget ( d->contactlist );
 	l->setSpacing ( 0 );
 	l->setContentsMargins ( 0,0,0,0 );
@@ -458,17 +476,11 @@ void KopeteWindow::initActions()
 	d->actionShowEmptyGroups->setCheckedState ( KGuiItem ( i18n ( "Hide Empty &Groups" ) ) );
     */
 
-	// quick search bar
-	QLabel *searchLabel = new QLabel ( i18n ( "Se&arch:" ), 0 );
-	searchLabel->setObjectName ( QLatin1String ( "kde toolbar widget" ) );
-	QWidget *searchBar = new Kopete::UI::ListView::SearchLine ( 0, d->contactlist );
-	searchLabel->setBuddy ( searchBar );
+	KFilterProxySearchLine* searchLine = new KFilterProxySearchLine();
+	searchLine->setProxy( d->proxyModel );
 	KAction *quickSearch = new KAction ( i18n ( "Quick Search Bar" ), this );
 	actionCollection()->addAction ( "quicksearch_bar", quickSearch );
-	quickSearch->setDefaultWidget ( searchBar );
-	KAction *searchLabelAction = new KAction ( i18n ( "Search:" ), this );
-	actionCollection()->addAction ( "quicksearch_label", searchLabelAction );
-	searchLabelAction->setDefaultWidget ( searchLabel );
+	quickSearch->setDefaultWidget ( searchLine );
 
 	// sync actions, config and prefs-dialog
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL ( configChanged() ), this, SLOT ( slotConfigChanged() ) );
@@ -653,6 +665,20 @@ void KopeteWindow::slotToggleShowEmptyGroups()
 
 void KopeteWindow::slotConfigChanged()
 {
+	bool groupContactByGroupModel = qobject_cast<Kopete::UI::ContactListTreeModel*>( d->model );
+	if ( groupContactByGroupModel != Kopete::AppearanceSettings::self()->groupContactByGroup() )
+	{
+		Kopete::UI::ContactListModel* oldModel = d->model;
+		if ( Kopete::AppearanceSettings::self()->groupContactByGroup() )
+			d->model = new Kopete::UI::ContactListTreeModel( this );
+		else
+			d->model = new Kopete::UI::ContactListPlainModel( this );
+
+		d->model->init();
+		d->proxyModel->setSourceModel( d->model );
+		oldModel->deleteLater();
+	}
+
 	if ( isHidden() && !Kopete::BehaviorSettings::self()->showSystemTray() ) // user disabled systray while kopete is hidden, show it!
 		show();
 
@@ -1293,7 +1319,7 @@ void KopeteWindow::showAddContactDialog ( Kopete::Account * account )
 			{
 				Kopete::MetaContact * metacontact = new Kopete::MetaContact();
 				metacontact->addToGroup ( groupItems[ ui_groupKABC.groupCombo->currentText() ] );
-				metacontact->setMetaContactId ( ui_groupKABC.widAddresseeLink->uid() );
+				metacontact->setKabcId ( ui_groupKABC.widAddresseeLink->uid() );
 				if ( addContactPage->apply ( account, metacontact ) )
 				{
 					Kopete::ContactList::self()->addMetaContact ( metacontact );
@@ -1331,7 +1357,7 @@ void KopeteWindow::slotUpdateSize()
 
 	// desired height is height of full contents of contact list tree, as well as
 	// some buffer for other elements in the main window
-	int height = d->contactlist->contentsHeight();
+	int height = d->contactlist->visibleContentHeight();
 	newGeometry.setHeight ( height + amountWindowBiggerThanContactList );
 
 	if ( height ) {

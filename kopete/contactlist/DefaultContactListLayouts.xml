@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contactlist_layouts>
+	<layout name="Default" show_metacontact_icon="true" >
+		<row>
+			<element small="false" size="0" bold="true" alignment="left" value="DisplayName" italic="false" />
+			<element small="false" size="0.2" bold="false" alignment="right" value="ContactIcons" italic="false" />
+		</row>
+		<row>
+			<element small="true" size="1" bold="false" alignment="left" value="StatusMessage" italic="false" />
+		</row>
+	</layout>
+</contactlist_layouts>

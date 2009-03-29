@@ -320,6 +320,13 @@ void Contact::changeMetaContact()
 		if(chkCreateNew->isChecked())
 		{
 			mc=new Kopete::MetaContact();
+
+			if ( metaContact() )
+			{	// Add new metaContact to old groups so we don't move it to Top Level group
+				foreach ( Kopete::Group* group, metaContact()->groups() )
+					mc->addToGroup( group );
+			}
+
 			Kopete::ContactList::self()->addMetaContact(mc);
 		}
 		if( mc )

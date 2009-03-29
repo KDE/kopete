@@ -148,7 +148,7 @@ MetaContact *ContactAddedNotifyDialog::addContact() const
 	if(!metacontact)
 		return 0L;
 
-	metacontact->setMetaContactId(d->addressbookId);
+	metacontact->setKabcId(d->addressbookId);
 
 	return metacontact;
 }
