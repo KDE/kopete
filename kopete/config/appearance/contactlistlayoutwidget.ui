@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>300</height>
+    <width>454</width>
+    <height>331</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,20 +105,11 @@
      <property name="layoutMode">
       <enum>QListView::Batched</enum>
      </property>
-     <property name="gridSize">
-      <size>
-       <width>72</width>
-       <height>64</height>
-      </size>
-     </property>
      <property name="viewMode">
       <enum>QListView::IconMode</enum>
      </property>
      <property name="modelColumn">
       <number>0</number>
-     </property>
-     <property name="uniformItemSizes">
-      <bool>false</bool>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

@@ -332,8 +332,8 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 			{
 				itemWidth = rowWidth * size;
 
-				//special case for painting the ProtocolIcons...
-				if ( value == ContactList::LayoutManager::ProtocolIcons )
+				//special case for painting the ContactIcons...
+				if ( value == ContactList::LayoutManager::ContactIcons )
 				{
 					QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
 					Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
@@ -373,12 +373,17 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 							if ( painter )
 							{
 								QPixmap contactPixmap = contactIcon.pixmap( IconSize, IconSize );
+								painter->setClipRect( pixmapRect.intersected( drawingRect ) );
 								painter->drawPixmap( pixmapRect, contactPixmap, QRectF( contactPixmap.rect() ) );
 							}
 
 							offsetX += IconSize + IconMarginH;
 						}
 					}
+				}
+				else if ( ContactList::LayoutManager::PlaceHolder )
+				{
+					// Do nothing
 				}
 				else
 				{
@@ -387,7 +392,9 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 						QString text = ( role > -1 ) ? index.data( role ).toString() : QString();
 						text = element.prefix() + text + element.suffix();
 						text = QFontMetricsF( font ).elidedText( text, Qt::ElideRight, itemWidth );
-						painter->drawText( currentItemX, rowOffsetY, itemWidth, rowHeight, alignment, text );
+						QRectF drawRect( currentItemX, rowOffsetY, itemWidth, rowHeight );
+						painter->setClipRect( drawRect );
+						painter->drawText( drawRect, alignment, text );
 					}
 				}
 

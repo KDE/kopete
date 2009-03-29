@@ -71,10 +71,10 @@ public:
 
 	enum TokenTypes {
 		PlaceHolder = 0,
-		Name = 1,
+		DisplayName = 1,
 		StatusTitle = 2,
 		StatusMessage = 3,
-		ProtocolIcons = 4
+		ContactIcons = 4
 	};
 
 	QList<ContactListTokenConfig> tokens() const { return m_tokens; }

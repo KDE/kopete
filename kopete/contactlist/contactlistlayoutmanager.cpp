@@ -52,11 +52,11 @@ LayoutManager * LayoutManager::instance()
 LayoutManager::LayoutManager()
 	: QObject()
 {
-	m_tokens << ContactListTokenConfig( -1, "placeholder", i18n("Placeholder"), "filename-space-amarok" );
-	m_tokens << ContactListTokenConfig( Qt::DisplayRole, "Name", i18n("Name"), "filename-space-amarok" );
-	m_tokens << ContactListTokenConfig( Kopete::Items::StatusTitleRole, "StatusTitle", i18n("Status Title"), "filename-space-amarok" );
-	m_tokens << ContactListTokenConfig( Kopete::Items::StatusMessageRole, "StatusMessage", i18n("Status Message"), "filename-space-amarok" );
-	m_tokens << ContactListTokenConfig( -1, "ProtocolIcons", i18n("Protocol Icons"), "filename-space-amarok" );
+	m_tokens << ContactListTokenConfig( -1, "Placeholder", i18n("Placeholder"), "" );
+	m_tokens << ContactListTokenConfig( Qt::DisplayRole, "DisplayName", i18n("Display Name"), "user-identity" );
+	m_tokens << ContactListTokenConfig( Kopete::Items::StatusTitleRole, "StatusTitle", i18n("Status Title"), "im-status-message-edit" );
+	m_tokens << ContactListTokenConfig( Kopete::Items::StatusMessageRole, "StatusMessage", i18n("Status Message"), "im-status-message-edit" );
+	m_tokens << ContactListTokenConfig( -1, "ContactIcons", i18n("Contact Icons"), "user-online" );
 
 	loadDefaultLayouts();
 	loadUserLayouts();
@@ -190,17 +190,20 @@ LayoutItemConfig LayoutManager::parseItemConfig( const QDomElement &elem )
 			QDomNode elementNode = elements.item( index2 );
 			index2++;
 
-			int value = -1;
-			QString configName = elementNode.toElement().attribute( "value", "placeholder" );
-			for ( int i = 0; i < m_tokens.size(); i++)
+			int value = 0; // Placeholder as default
+			QString configName = elementNode.toElement().attribute( "value" );
+			if ( !configName.isEmpty() )
 			{
-				if ( m_tokens.at(i).mConfigName == configName )
+				for ( int i = 0; i < m_tokens.size(); i++)
 				{
-					kDebug() << m_tokens.at(i).mConfigName;
-					value = i;
-					break;
+					if ( m_tokens.at(i).mConfigName == configName )
+					{
+						value = i;
+						break;
+					}
 				}
 			}
+			
 
 			QString prefix = elementNode.toElement().attribute( "prefix", QString() );
 			QString sufix = elementNode.toElement().attribute( "suffix", QString() );
