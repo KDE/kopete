@@ -256,12 +256,28 @@ void KopeteContactListView::contactActivated( const QModelIndex& index )
 void KopeteContactListView::setModel( QAbstractItemModel *newModel )
 {
 	if ( model() )
+	{
 		disconnect( model(), SIGNAL(layoutChanged()), this, SLOT(reexpandGroups()) );
+		disconnect( model(), SIGNAL(layoutChanged()), this, SIGNAL(visibleContentHeightChanged()) );
+	}
 
 	QTreeView::setModel( newModel );
 
 	// TODO: This is not the best approach as this is emitted often, find a better way.
 	connect( newModel, SIGNAL(layoutChanged()), this, SLOT(reexpandGroups()) );
+	connect( newModel, SIGNAL(layoutChanged()), this, SIGNAL(visibleContentHeightChanged()) );
+}
+
+int KopeteContactListView::visibleContentHeight() const
+{
+	QModelIndex parent = rootIndex();
+
+	int height = 0;
+	int rows = model()->rowCount( parent );
+	for ( int i = 0; i < rows; ++i )
+		height += visibleContentHeight( model()->index( i, 0, parent ) );
+
+	return height;
 }
 
 void KopeteContactListView::reset()
@@ -272,6 +288,7 @@ void KopeteContactListView::reset()
 		setRootIndex( model()->index( 0, 0 ) );
 
 	reexpandGroups();
+	emit visibleContentHeightChanged();
 }
 
 void KopeteContactListView::showItemProperties()
@@ -804,6 +821,8 @@ void KopeteContactListView::slotSettingsChanged()
 	}
 
 	d->scrollAutoHideTimeout = Kopete::AppearanceSettings::self()->contactListAutoHideTimeout();
+
+	//FIXME: I don't see it in any UI
 // 	setMouseNavigation( Kopete::BehaviorSettings::self()->contactListMouseNavigation() );
 
 	setAnimated( Kopete::AppearanceSettings::self()->contactListAnimateChange() );
@@ -1067,6 +1086,21 @@ void KopeteContactListView::setScrollHide( bool hide )
 		setVerticalScrollBarPolicy( Qt::ScrollBarAsNeeded );
 }
 
+int KopeteContactListView::visibleContentHeight( const QModelIndex& parent ) const
+{
+	if ( !parent.isValid() )
+		return 0;
+
+	int height = rowHeight( parent );
+	if ( height <= 0 ) // Assume that items is invisible
+		return 0;
+
+	int rows = model()->rowCount( parent );
+	for ( int i = 0; i < rows; ++i )
+		height += visibleContentHeight( model()->index( i, 0, parent ) );
+
+	return height;
+}
 
 #include "kopetecontactlistview.moc"
 

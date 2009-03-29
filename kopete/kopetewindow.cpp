@@ -319,7 +319,7 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	          this, SLOT ( slotAccountUnregistered ( const Kopete::Account* ) ) );
 
 	connect ( d->autoHideTimer, SIGNAL ( timeout() ), this, SLOT ( slotAutoHide() ) );
-	connect ( d->contactlist, SIGNAL ( visibleSizeChanged() ), this, SLOT ( slotStartAutoResizeTimer() ) );
+	connect ( d->contactlist, SIGNAL( visibleContentHeightChanged() ), this, SLOT ( slotStartAutoResizeTimer() ) );
 	connect ( d->autoResizeTimer, SIGNAL ( timeout() ), this, SLOT ( slotUpdateSize() ) );
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL ( contactListAppearanceChanged() ),
 	          this, SLOT ( slotContactListAppearanceChanged() ) );
@@ -1357,7 +1357,7 @@ void KopeteWindow::slotUpdateSize()
 
 	// desired height is height of full contents of contact list tree, as well as
 	// some buffer for other elements in the main window
-	int height = d->contactlist->contentsRect().height();
+	int height = d->contactlist->visibleContentHeight();
 	newGeometry.setHeight ( height + amountWindowBiggerThanContactList );
 
 	if ( height ) {

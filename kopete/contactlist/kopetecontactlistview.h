@@ -67,6 +67,8 @@ public:
 	void initActions( KActionCollection *ac );
 	virtual void setModel( QAbstractItemModel *newModel );
 
+	int visibleContentHeight() const;
+
 public Q_SLOTS:
 	virtual void reset();
 	void contactActivated( const QModelIndex& index );
@@ -80,6 +82,9 @@ public Q_SLOTS:
 	void sendEmail();
 	void addTemporaryContact();
 	void removeGroupOrMetaContact();
+
+Q_SIGNALS:
+	void visibleContentHeightChanged();
 
 protected:
 	virtual void contextMenuEvent( QContextMenuEvent* event );
@@ -116,6 +121,8 @@ private:
 	
 	void setScrollAutoHide( bool autoHide );
 	void setScrollHide( bool hide );
+
+	int visibleContentHeight( const QModelIndex& parent ) const;
 
 	KopeteContactListViewPrivate *d;
 };
