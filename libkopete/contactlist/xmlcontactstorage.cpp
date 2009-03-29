@@ -147,10 +147,17 @@ void XmlContactStorage::load()
 
     if( version < Private::ContactListVersion )
     {
-        contactListFile.close();
-		kWarning(14010) << "The contact list on disk is older than expected."
-		                << "No contact list will be loaded";
-	return;
+        bool contactListUpdated = false;
+        if ( version == 10 )
+            contactListUpdated = updateFrom10( list );
+
+        if ( !contactListUpdated )
+        {
+            contactListFile.close();
+            kWarning(14010) << "The contact list on disk is older than expected."
+                            << "No contact list will be loaded";
+            return;
+        }
     }
 
 //TODO: Add to internal contact list item list.
@@ -804,6 +811,29 @@ const QList<QDomElement> XmlContactStorage::storeContactListElement( Kopete::Con
         pluginNodes.append( iconsElement );
     }
     return pluginNodes;
+}
+
+bool XmlContactStorage::updateFrom10( QDomElement &rootElement ) const
+{
+    QDomNodeList metaContactElements = rootElement.elementsByTagName( QLatin1String( "meta-contact" ) );
+    for ( int i = 0; i < metaContactElements.count(); ++i )
+    {
+        QDomNode node = metaContactElements.at( i );
+        QDomElement element = node.toElement();
+        if ( element.hasAttribute( QLatin1String("contactId") ) )
+        {
+            QString kabcId;
+            QString contactId = element.attribute( "contactId" );
+            QUuid newContactId = QUuid::createUuid();
+
+            if ( !contactId.contains( ':' ) )
+                element.setAttribute( QLatin1String("kabcId"), contactId );
+
+            element.setAttribute( QLatin1String("contactId"), newContactId.toString() );
+        }
+    }
+    rootElement.setAttribute( QString("version"), "1.1" );
+    return true;
 }
 
 QString XmlContactStorage::sourceToString( Kopete::MetaContact::PropertySource source ) const

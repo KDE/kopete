@@ -64,6 +64,8 @@ protected:
     const QDomElement storeGroup( Kopete::Group *group ) const;
     const QList<QDomElement> storeContactListElement( Kopete::ContactListElement *contactListElement ) const;
 
+    bool updateFrom10( QDomElement &rootElement ) const;
+
 private:
     /**
      * Convert the contact list from an older version
