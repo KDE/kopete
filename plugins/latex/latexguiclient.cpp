@@ -61,7 +61,7 @@ void LatexGUIClient::slotPreview()
 	QString messageText = msg.plainBody();
 	if(!messageText.contains("$$")) //we haven't found any latex strings
 	{
-		KMessageBox::sorry(m_manager->view()->mainWidget() , i18n("The message you are typing does not contain any LaTeX.  A LaTeX formula must surrounded by two pairs of dollar signs: $$formula$$ "), i18n("No LaTeX Formula") );
+		KMessageBox::sorry(m_manager->view()->mainWidget() , i18n("The message you are typing does not contain any LaTeX.  A LaTeX formula must be enclosed within two pairs of dollar signs: $$formula$$ "), i18n("No LaTeX Formula") );
 		return;
 	}
 

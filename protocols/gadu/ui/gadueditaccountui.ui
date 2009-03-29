@@ -680,7 +680,7 @@ If you do not currently have an account, please click the button to create one.<
               <item>
                <widget class="QLabel" name="textLabel1_5" >
                 <property name="text" >
-                 <string>Name:</string>
+                 <string>Forename:</string>
                 </property>
                </widget>
               </item>
