@@ -35,12 +35,16 @@ public:
 	bool small() const;
 	void setSmall( bool small );
 
+	bool optimalSize() const;
+	void setOptimalSize( bool optimalSize );
+
 protected:
 	virtual void fillMenu( QMenu * menu );
 	virtual void menuExecuted( const QAction* action );
 
 private:
 	bool m_small;
+	bool m_optimalSize;
 };
 
 #endif

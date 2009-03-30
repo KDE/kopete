@@ -76,6 +76,7 @@ void LayoutEditWidget::readLayout( ContactList::LayoutItemConfig config )
 			ContactListToken *token =  new ContactListToken( clToken.mName, clToken.mIconName, element.value(), m_tokenDropTarget );
 			token->setBold( element.bold() );
 			token->setSmall( element.small() );
+			token->setOptimalSize( element.optimalSize() );
 			token->setItalic( element.italic() );
 			token->setAlignment( element.alignment() );
 			m_tokenDropTarget->insertToken( token, i, j );
@@ -108,7 +109,7 @@ ContactList::LayoutItemConfig LayoutEditWidget::config()
 					width = twl->width();
 				}
 				currentRowConfig.addElement( LayoutItemConfigRowElement( twl->value(), width, twl->bold(), twl->italic(), twl->small(),
-				                                                         twl->alignment(), twl->prefix(), twl->suffix() ) );
+				                                                         twl->optimalSize(), twl->alignment(), twl->prefix(), twl->suffix() ) );
 			}
 		}
 

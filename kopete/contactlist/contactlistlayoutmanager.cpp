@@ -211,6 +211,7 @@ LayoutItemConfig LayoutManager::parseItemConfig( const QDomElement &elem )
 			bool bold = ( elementNode.toElement().attribute( "bold", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
 			bool italic = ( elementNode.toElement().attribute( "italic", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
 			bool small = ( elementNode.toElement().attribute( "small", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
+			bool optimalSize = ( elementNode.toElement().attribute( "optimalSize", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
 			QString alignmentString = elementNode.toElement().attribute( "alignment", "left" );
 			Qt::Alignment alignment;
 			
@@ -222,7 +223,7 @@ LayoutItemConfig LayoutManager::parseItemConfig( const QDomElement &elem )
 			else
 				alignment = Qt::AlignCenter| Qt::AlignVCenter;
 
-			row.addElement( LayoutItemConfigRowElement( value, size, bold, italic, small, alignment, prefix, sufix ) );
+			row.addElement( LayoutItemConfigRowElement( value, size, bold, italic, small, optimalSize, alignment, prefix, sufix ) );
 		}
 
 		config.addRow( row );
@@ -289,6 +290,7 @@ QDomElement LayoutManager::createItemElement( QDomDocument doc, const QString &n
 			elementElement.setAttribute ( "bold", element.bold() ? "true" : "false" );
 			elementElement.setAttribute ( "italic", element.italic() ? "true" : "false" );
 			elementElement.setAttribute ( "small", element.small() ? "true" : "false" );
+			elementElement.setAttribute ( "optimalSize", element.optimalSize() ? "true" : "false" );
 
 			QString alignmentString;
 			if ( element.alignment() & Qt::AlignLeft )

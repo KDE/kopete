@@ -24,6 +24,7 @@
 #include <QModelIndex>
 #include <QAbstractItemView>
 #include <QApplication>
+#include <QVector>
 
 #include <qimageblitz.h>
 
@@ -166,7 +167,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 		return;
 
 	const int hBorderMargin = MARGIN * 2;
-	const int hMargins = hBorderMargin + ( rowCount - 1 ) * PADDING;
+	//const int hMargins = hBorderMargin + ( rowCount - 1 ) * PADDING;
 
 	int rowOffsetX = MARGIN;
 	int rowOffsetY = MARGIN;
@@ -292,45 +293,151 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 		QRectF rowBox( itemOffsetX, rowOffsetY, rowWidth, rowHeight );
 		int currentItemX = itemOffsetX;
 
-		//we need to do a quick pass to figure out how much space is left for auto sizing elements
-		qreal spareSpace = 1.0;
-		int autoSizeElemCount = 0;
-		for ( int k = 0; k < elementCount; ++k )
-		{
-			spareSpace -= row.element( k ).size();
-			if ( row.element( k ).size() < 0.001 )
-				autoSizeElemCount++;
-		}
+		const qreal IconMarginH = 2.0;
+		const qreal IconMarginV = 1.0;
+		const qreal IconSize = rowHeight - 2 * IconMarginV;
 
-		qreal spacePerAutoSizeElem = spareSpace / (qreal) autoSizeElemCount;
+		QVector<DynamicLayoutItem> dynamicLayoutData( elementCount );
+		bool hasFixedTypeItem = false;
+
+		// Figure out width of items
 		for ( int j = 0; j < elementCount; ++j )
 		{
 			ContactList::LayoutItemConfigRowElement element = row.element( j );
-
 			const int value = element.value();
-			const int role = ContactList::LayoutManager::instance()->token( value ).mModelRole;
+			DynamicLayoutItem& dlItem = dynamicLayoutData[j];
 
-			qreal itemWidth = 0.0;
-
-			int alignment = element.alignment();
-
-			QFont font( ( element.small() ) ? small : normal );
-			font.setBold( element.bold() );
-			font.setItalic( element.italic() );
-			if ( painter )
-				painter->setFont( font );
-
-			QRectF elementBox;
-
-			qreal size;
-			if ( element.size() > 0.0001 )
-				size = element.size();
-			else
-				size = spacePerAutoSizeElem;
-
-			if ( size > 0.0001 )
+			dlItem.dirty = true;
+			if ( value != ContactList::LayoutManager::ContactIcons && value != ContactList::LayoutManager::PlaceHolder )
 			{
-				itemWidth = rowWidth * size;
+				dlItem.font = QFont( ( element.small() ) ? small : normal );
+				dlItem.font.setBold( element.bold() );
+				dlItem.font.setItalic( element.italic() );
+
+				const int role = ContactList::LayoutManager::instance()->token( value ).mModelRole;
+				QString text = ( role > -1 ) ? index.data( role ).toString() : QString();
+				dlItem.text = element.prefix() + text + element.suffix();
+			}
+
+			if ( element.optimalSize() )
+			{
+				qreal idealWidth = 0;
+				if ( value == ContactList::LayoutManager::ContactIcons )
+				{
+					QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+					Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
+					const int contactListSize = metaContact->contacts().size();
+					idealWidth = contactListSize * IconSize;
+					if ( contactListSize > 1 )
+						idealWidth += (contactListSize - 1) * IconMarginH;
+
+					hasFixedTypeItem = true;
+					dlItem.type = LayoutFixed;
+				}
+				else if ( ContactList::LayoutManager::PlaceHolder )
+				{
+					dlItem.type = LayoutNormal;
+				}
+				else
+				{
+					QFontMetricsF fm( dlItem.font );
+					idealWidth = fm.width( dlItem.text );
+					dlItem.type = LayoutNormal;
+				}
+
+				if ( element.size() >= 0.001 )
+				{
+					const qreal maxWidth = rowWidth * element.size();
+					if ( maxWidth < idealWidth)
+						idealWidth = maxWidth;
+				}
+				dlItem.width = idealWidth;
+			}
+			else
+			{
+				if ( element.size() >= 0.001 )
+				{
+					dlItem.type = LayoutNormal;
+					dlItem.width = rowWidth * element.size();
+				}
+				else
+				{
+					dlItem.type = LayoutAuto;
+					dlItem.width = 0;
+				}
+			}
+		}
+
+		// Check width of fixed items
+		qreal availableWidth = rowWidth;
+		if ( hasFixedTypeItem )
+		{
+			for ( int j = 0; j < elementCount; ++j )
+			{
+				DynamicLayoutItem& dlItem = dynamicLayoutData[j];
+				if ( dlItem.type == LayoutFixed )
+				{
+					availableWidth -= dlItem.width;
+					dlItem.dirty = false;
+					if ( availableWidth < 0 )
+					{
+						dlItem.width += availableWidth;
+						availableWidth = 0;
+						break;
+					}
+				}
+			}
+		}
+
+		// Check width of normal items and count auto items
+		int layoutAutoItemCount = 0;
+		if ( availableWidth > 0 )
+		{
+			for ( int j = 0; j < elementCount; ++j )
+			{
+				DynamicLayoutItem& dlItem = dynamicLayoutData[j];
+				if ( dlItem.type == LayoutAuto )
+				{
+					layoutAutoItemCount++;
+				}
+				else if ( dlItem.dirty )
+				{
+					dlItem.dirty = false;
+					availableWidth -= dlItem.width;
+					if ( availableWidth < 0 )
+					{
+						dlItem.width += availableWidth;
+						availableWidth = 0;
+						break;
+					}
+				}
+			}
+		}
+
+		const qreal layoutAutoItemWidth = ( layoutAutoItemCount > 0 ) ? (availableWidth / (qreal)layoutAutoItemCount) : 0;
+		for ( int j = 0; j < elementCount; ++j )
+		{
+			// Set auto items width
+			DynamicLayoutItem& dlItem = dynamicLayoutData[j];
+			if ( dlItem.dirty )
+			{
+				if ( availableWidth > 0 )
+					dlItem.width = layoutAutoItemWidth;
+				else
+					dlItem.width = 0;
+			}
+
+			qreal itemWidth = dlItem.width;
+			if ( itemWidth > 0 )
+			{
+				ContactList::LayoutItemConfigRowElement element = row.element( j );
+
+				const int value = element.value();
+				//const int role = ContactList::LayoutManager::instance()->token( value ).mModelRole;
+				const int alignment = element.alignment();
+
+				if ( painter )
+					painter->setFont( dlItem.font );
 
 				//special case for painting the ContactIcons...
 				if ( value == ContactList::LayoutManager::ContactIcons )
@@ -389,9 +496,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 				{
 					if ( painter )
 					{
-						QString text = ( role > -1 ) ? index.data( role ).toString() : QString();
-						text = element.prefix() + text + element.suffix();
-						text = QFontMetricsF( font ).elidedText( text, Qt::ElideRight, itemWidth );
+						QString text = QFontMetricsF( dlItem.font ).elidedText( dlItem.text, Qt::ElideRight, itemWidth );
 						QRectF drawRect( currentItemX, rowOffsetY, itemWidth, rowHeight );
 						painter->setClipRect( drawRect );
 						painter->drawText( drawRect, alignment, text );

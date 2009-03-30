@@ -30,28 +30,30 @@ namespace ContactList {
 
 class KOPETE_CONTACT_LIST_EXPORT LayoutItemConfigRowElement
 {
-	public:
-		LayoutItemConfigRowElement( int value, qreal size, bool bold, bool italic, bool small,
-		                            Qt::Alignment alignment, const QString &prefix = QString(),
-		                            const QString &suffix = QString() );
+public:
+	LayoutItemConfigRowElement( int value, qreal size, bool bold, bool italic, bool small, bool optimalSize,
+	                            Qt::Alignment alignment, const QString &prefix = QString(),
+	                            const QString &suffix = QString() );
 
-		int value() const;
-		qreal size() const;
-		bool bold() const;
-		bool italic() const;
-		Qt::Alignment alignment() const;
-		QString prefix() const;
-		QString suffix() const;
-		bool small() const { return m_small; }
-	
-	private:
-		int m_value;
-		qreal m_size;
-		bool m_bold;
-		bool m_italic;
-		bool m_small;
-		Qt::Alignment m_alignment;
-		QString m_prefix, m_suffix;
+	inline int value() const { return m_value; }
+	inline qreal size() const { return m_size; }
+	inline bool bold() const { return m_bold; }
+	inline bool italic() const { return m_italic; }
+	inline Qt::Alignment alignment() const { return m_alignment; }
+	inline QString prefix() const { return m_prefix; }
+	inline QString suffix() const { return m_suffix; }
+	inline bool small() const { return m_small; }
+	inline bool optimalSize() const { return m_optimalSize; }
+
+private:
+	int m_value;
+	qreal m_size;
+	bool m_bold;
+	bool m_italic;
+	bool m_small;
+	bool m_optimalSize;
+	Qt::Alignment m_alignment;
+	QString m_prefix, m_suffix;
 };
 
 class KOPETE_CONTACT_LIST_EXPORT LayoutItemConfigRow

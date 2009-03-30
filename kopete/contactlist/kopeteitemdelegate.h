@@ -55,6 +55,17 @@ private:
 	QPointF centerImage( const QImage& image, const QRectF& rect ) const;
 	QPointF centerImage( const QPixmap& pixmap, const QRectF& rect ) const;
 	qreal calculateRowHeight( const ContactList::LayoutItemConfigRow &row, const QFont &normal, const QFont &small ) const;
+
+	enum LayoutType { LayoutAuto = 0, LayoutNormal, LayoutFixed };
+	struct DynamicLayoutItem {
+		bool dirty;
+		LayoutType type;
+		qreal width;
+
+		// Caching
+		QString text;
+		QFont font;
+	};
 };
 
 #endif

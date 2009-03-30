@@ -22,52 +22,18 @@
 
 namespace ContactList {
 
-	LayoutItemConfigRowElement::LayoutItemConfigRowElement( int value, qreal size, bool bold, bool italic, bool small,
-	                                                        Qt::Alignment alignment, const QString &prefix, const QString &suffix )
+LayoutItemConfigRowElement::LayoutItemConfigRowElement( int value, qreal size, bool bold, bool italic, bool small, bool optimalSize,
+                                                        Qt::Alignment alignment, const QString &prefix, const QString &suffix )
 	: m_value( value )
 	, m_size( size )
 	, m_bold( bold )
 	, m_italic( italic )
 	, m_small( small )
+	, m_optimalSize( optimalSize )
 	, m_alignment( alignment )
 	, m_prefix( prefix )
 	, m_suffix( suffix )
 {
-}
-
-int LayoutItemConfigRowElement::value() const
-{
-	return m_value;
-}
-
-qreal LayoutItemConfigRowElement::size() const
-{
-	return m_size;
-}
-
-bool LayoutItemConfigRowElement::bold() const
-{
-	return m_bold;
-}
-
-bool ContactList::LayoutItemConfigRowElement::italic() const
-{
-	return m_italic;
-}
-
-Qt::Alignment LayoutItemConfigRowElement::alignment() const
-{
-	return m_alignment;
-}
-
-QString LayoutItemConfigRowElement::prefix() const
-{
-	return m_prefix;
-}
-
-QString LayoutItemConfigRowElement::suffix() const
-{
-	return m_suffix;
 }
 
 //////////////////////////////////////////////
