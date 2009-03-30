@@ -74,7 +74,7 @@ void TelepathyChatSession::sendMessage(Kopete::Message &message)
 	if(!m_textChannel)
 		return;
 	
-//	m_textChannel->send(message);
+	m_textChannel->send(message.plainBody());
 }
 
 void TelepathyChatSession::createChannelFinished(Telepathy::Client::PendingOperation* operation)
@@ -138,17 +138,33 @@ void TelepathyChatSession::messageSent (const Telepathy::Client::Message &messag
     kDebug(TELEPATHY_DEBUG_AREA);
 	
 	Kopete::Message::MessageType messageType = Kopete::Message::TypeNormal;
-	
+/*
 	if(message.messageType() == Telepathy::Client::ChannelTypeMessageAction)
 	{
 		messageType = Kopete::Message::TypeAction;
 	}
+*/
+	Kopete::Message newMessage(myself(), members());
+	newMessage.setPlainBody(message.text());
+	newMessage.setDirection(Kopete::Message::Outbound);
+	newMessage.setType(messageType);
 	
-	Kopete::Message newMessage(members.first(), myself());
+	appendMessage(newMessage);
+	messageSucceeded();
 }
 
 void TelepathyChatSession::messageReceived (const Telepathy::Client::ReceivedMessage &message)
 {
+    kDebug(TELEPATHY_DEBUG_AREA);
+	
+	Kopete::Message::MessageType messageType = Kopete::Message::TypeNormal;
+	
+	Kopete::Message newMessage(members().first(), myself());
+	newMessage.setPlainBody(message.text());
+	newMessage.setDirection(Kopete::Message::Inbound);
+	newMessage.setType(messageType);
+	
+	appendMessage(newMessage);
 }
 
 void TelepathyChatSession::pendingMessageRemoved (const Telepathy::Client::ReceivedMessage &message)
