@@ -434,7 +434,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		case JabberClient::NoTLS:
 			// no SSL support, at the connecting stage this means the problem is client-side
 			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
-								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.", 
+								i18n ("SSL support could not be initialized for account %1. This is most likely because TLS support for QCA is not available.",
 								myself()->contactId()),
 								i18n ("Jabber SSL Error"));
 			break;
