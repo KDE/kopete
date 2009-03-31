@@ -94,7 +94,6 @@ public:
 	KAction *actionMakeMetaContact;
 
 	QMap<KAction*, Kopete::Account*> addContactAccountMap;
-	QSet<int> notExpandedGroups;
 	QPointer<Kopete::MetaContact> selectedMetaContact;
 
 	QPointer<Kopete::Contact> pressedContact;
