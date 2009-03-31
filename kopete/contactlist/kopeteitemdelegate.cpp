@@ -39,7 +39,7 @@
 #include "contactlistproxymodel.h"
 
 const qreal MARGIN = 2.0;
-const qreal MARGINH = 6.0;
+const qreal MARGINH = 4.0;
 const qreal PADDING = 1.0;
 
 KopeteItemDelegate::KopeteItemDelegate( QAbstractItemView* parent )
@@ -310,7 +310,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 		const int rowHeight = calculateRowHeight( row, normal, small );
 		qreal itemOffsetX = rowOffsetX;
 		const int elementCount = row.count();
-		qreal rowWidth = option.rect.width() - ( rowOffsetX + MARGINH );
+		qreal rowWidth = option.rect.width() - ( rowOffsetX + MARGIN );
 
 		QRectF rowBox( itemOffsetX, rowOffsetY, rowWidth, rowHeight );
 		int currentItemX = itemOffsetX;
