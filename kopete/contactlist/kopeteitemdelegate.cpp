@@ -248,7 +248,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 									nominalImageRect.width() - offset.x() * 2,
 									nominalImageRect.height() - offset.y() * 2 );
 
-					painter->drawPixmap( imageRect, photoPixmap, QRectF( photoPixmap.rect() ) );
+					painter->drawPixmap( imageRect.topLeft(), photoPixmap );
 				}
 			}
 			else
@@ -265,7 +265,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 									nominalImageRect.width() - offset.x() * 2,
 									nominalImageRect.height() - offset.y() * 2 );
 
-					painter->drawPixmap( imageRect, metaContactImage, QRectF( metaContactImage.rect() ) );
+					painter->drawPixmap( imageRect.topLeft(), metaContactImage );
 				}
 			}
 		}
@@ -475,7 +475,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 							{
 								QPixmap contactPixmap = contactIcon.pixmap( IconSize, IconSize );
 								painter->setClipRect( pixmapRect.intersected( drawingRect ) );
-								painter->drawPixmap( pixmapRect, contactPixmap, QRectF( contactPixmap.rect() ) );
+								painter->drawPixmap( pixmapRect.topLeft(), contactPixmap );
 							}
 
 							offsetX += IconSize + IconMarginH;
