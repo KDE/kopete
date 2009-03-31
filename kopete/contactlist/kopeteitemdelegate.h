@@ -33,6 +33,7 @@ namespace Kopete { class Contact; }
 
 class KOPETE_CONTACT_LIST_EXPORT KopeteItemDelegate : public QStyledItemDelegate
 {
+	Q_OBJECT
 public:
 	KopeteItemDelegate( QAbstractItemView* parent = 0 );
 	~KopeteItemDelegate();
@@ -47,6 +48,10 @@ public:
 	                         const QModelIndex & index ) const;
 
 	Kopete::Contact* contactAt( const QStyleOptionViewItem& option, const QModelIndex& index, const QPoint& point ) const;
+
+public slots:
+	bool helpEvent( QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index );
+
 private:
 	void paintItem( ContactList::LayoutItemConfig config, QPainter* painter,
 	                const QStyleOptionViewItem& option, const QModelIndex& index,

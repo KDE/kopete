@@ -25,6 +25,8 @@
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QVector>
+#include <QHelpEvent>
+#include <QToolTip>
 
 #include <qimageblitz.h>
 
@@ -108,6 +110,32 @@ Kopete::Contact* KopeteItemDelegate::contactAt( const QStyleOptionViewItem& opti
 		}
 	}
 	return 0;
+}
+
+bool KopeteItemDelegate::helpEvent( QHelpEvent* event, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& index )
+{
+	if ( !event || !view )
+		return false;
+
+	if ( event->type() == QEvent::ToolTip )
+	{
+		Kopete::Contact* contact = contactAt( option, index, event->pos() );
+		if ( contact )
+		{
+			QToolTip::showText( event->globalPos(), contact->toolTip(), view );
+			return true;
+		}
+
+		QVariant tooltip = index.data( Qt::ToolTipRole );
+		if ( qVariantCanConvert<QString>(tooltip) )
+		{
+			QToolTip::showText( event->globalPos(), tooltip.toString(), view );
+			return true;
+		}
+		return false;
+	}
+
+	return QStyledItemDelegate::helpEvent(event, view, option, index);
 }
 
 void KopeteItemDelegate::paint( QPainter* painter, 
@@ -549,3 +577,5 @@ qreal KopeteItemDelegate::calculateRowHeight( const ContactList::LayoutItemConfi
 	}
 	return rowHeight;
 }
+
+#include "kopeteitemdelegate.moc"
