@@ -512,6 +512,8 @@ QVariant ContactListModel::metaContactData( const Kopete::MetaContact* mc, int r
 		}
 	case Kopete::Items::HasNewMessageRole:
 		return m_newMessageMetaContactSet.contains( mc );
+	case Kopete::Items::IdleTimeRole:
+		return mc->idleTime();
 	}
 
 	return QVariant();

@@ -120,14 +120,6 @@ void KopeteItemDelegate::paint( QPainter* painter,
 	
 	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 	{
-		//check the idle state of the metacontact and apply the appropriate color
-		QVariant v = index.data( Kopete::Items::IdleTimeRole );
-		if ( Kopete::AppearanceSettings::self()->greyIdleMetaContacts() && v.toInt() > 0 )
-		{
-			QColor idleColor( Kopete::AppearanceSettings::self()->idleContactColor() );
-			opt.palette.setColor( QPalette::Text, idleColor );
-		}
-
 		ContactList::ContactListLayout layout = ContactList::LayoutManager::instance()->activeLayout();
 
 		painter->save();
@@ -137,7 +129,9 @@ void KopeteItemDelegate::paint( QPainter* painter,
 
 		painter->translate( option.rect.topLeft() );
 
-		if ( option.state & QStyle::State_Selected )
+		if ( Kopete::AppearanceSettings::self()->greyIdleMetaContacts() && index.data( Kopete::Items::IdleTimeRole ).toInt() > 0 )
+			painter->setPen( Kopete::AppearanceSettings::self()->idleContactColor() ); //apply the appropriate idle color
+		else if ( option.state & QStyle::State_Selected )
 			painter->setPen( option.palette.color( QPalette::Normal, QPalette::HighlightedText ) );
 		else
 			painter->setPen( option.palette.color( QPalette::Normal, QPalette::Text ) );
