@@ -1512,6 +1512,7 @@ float VideoDevice::setBrightness(float brightness)
 					CLEAR (control);
 					control.id = V4L2_CID_BRIGHTNESS;
 					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getBrightness());
+					control.value += queryctrl.minimum;
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
@@ -1582,6 +1583,7 @@ float VideoDevice::setContrast(float contrast)
 					CLEAR (control);
 					control.id = V4L2_CID_CONTRAST;
 					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getContrast());
+					control.value += queryctrl.minimum;
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
@@ -1652,6 +1654,7 @@ float VideoDevice::setSaturation(float saturation)
 					CLEAR (control);
 					control.id = V4L2_CID_SATURATION;
 					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getSaturation());
+					control.value += queryctrl.minimum;
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
@@ -1722,6 +1725,7 @@ float VideoDevice::setWhiteness(float whiteness)
 					CLEAR (control);
 					control.id = V4L2_CID_WHITENESS;
 					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getWhiteness());
+					control.value += queryctrl.minimum;
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
@@ -1792,6 +1796,7 @@ float VideoDevice::setHue(float hue)
 					CLEAR (control);
 					control.id = V4L2_CID_HUE;
 					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getHue());
+					control.value += queryctrl.minimum;
 
 					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
 					{
