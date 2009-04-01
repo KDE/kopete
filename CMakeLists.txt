@@ -55,9 +55,6 @@ macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex
 macro_optional_find_package(QCA2)
 macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca" FALSE "2.0.0" "Needed to build Kopete's GroupWise and Jabber protocols.")
 
-macro_optional_find_package(Decibel)
-macro_log_feature(DECIBEL_FOUND "Decibel"  "KDE framework for real-time communication" "http://decibel.kde.org/" FALSE "" "Used by the Kopete telepathy protocol.")
-
 macro_optional_find_package(IDN)
 macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implemenation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
 
