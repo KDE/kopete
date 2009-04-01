@@ -568,7 +568,7 @@ QVariant ContactListModel::metaContactImage( const Kopete::MetaContact* mc ) con
 QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaContact ) const
 {
 	// We begin with the meta contact display name at the top of the tooltip
-	QString toolTip = QLatin1String("<qt><table cellpadding=\"0\" cellspacing=\"1\">");
+	QString toolTip = QLatin1String("<qt><table>");
 	toolTip += QLatin1String("<tr><td>");
 	
 	if ( !metaContact->picture().isNull() )
@@ -581,7 +581,7 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
 #endif
-		toolTip += QString::fromLatin1("<img src=\"%1\">").arg( metaContact->picture().path() );
+		toolTip += QString::fromLatin1("<img src=\"%1\">&nbsp;").arg( metaContact->picture().path() );
 	}
 
 	toolTip += QLatin1String("</td><td>");
@@ -597,11 +597,11 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 			displayName += Qt::escape( (*it).text );
 	}
 
-	toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg( displayName );
+	toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br>").arg( displayName );
 
 	QList<Contact*> contacts = metaContact->contacts();
 	if ( contacts.count() == 1 )
-		return toolTip + contacts.first()->toolTip() + QLatin1String("</td></tr></table></qt>");
+		return toolTip + "<br>" + contacts.first()->toolTip() + QLatin1String("</td></tr></table></qt>");
 
 	toolTip += QLatin1String("<table>");
 
@@ -615,9 +615,29 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 			      QString(QUrl::toPercentEncoding( c->contactId() ) )
 			    );
 
+		QString name = Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString());
+
+		QString message = c->statusMessage().message();
+
+		// try harder!
+		if(message.isEmpty())
+			message = c->property(Kopete::Global::Properties::self()->statusMessage()).value().toString();
+
 		toolTip += i18nc("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
-		                 "<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>",
-		                 iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
+		                 "<tr style='white-space:pre'><td>"
+		                         "<img src=\"%1\">&nbsp;"
+		                 "</td><td>"
+		                         "<b>%2</b>&nbsp;(%3)"
+		                 "</td><td align=\"right\">"
+		                         "%4"
+		                 "</td></tr>",
+		                 iconName, name, c->contactId(), c->onlineStatus().description());
+
+		if(!message.isEmpty()){
+			toolTip += i18nc("<tr><td><small><i>STATUS MESSAGE</i></small></td></tr>",
+			                 "<tr><td>&nbsp;</td><td colspan='2'><small><i>%1</i></small></td></tr>",
+			                 message);
+		}
 	}
 
 	return toolTip + QLatin1String("</table></td></tr></table></qt>");
