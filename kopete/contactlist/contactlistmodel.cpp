@@ -615,10 +615,20 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 			      QString(QUrl::toPercentEncoding( c->contactId() ) )
 			    );
 
+		QString name = Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString());
+
 		toolTip += i18nc("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
-		                 "<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>",
-		                 iconName, Kopete::Emoticons::parseEmoticons(c->property(Kopete::Global::Properties::self()->nickName()).value().toString()) , c->contactId(), c->onlineStatus().description() );
+		                 "<tr><td>"
+		                         "<nobr><img src=\"%1\">&nbsp;<b>%2</b>&nbsp;(%3)</nobr>"
+		                 "</td><td>"
+		                         "<i>%5</i>"
+		                 "</td><td align=\"right\">"
+		                         "<nobr>%4</nobr>"
+		                 "</td></tr>",
+		                 iconName, name, c->contactId(), c->onlineStatus().description(), c->statusMessage().message());
+		kDebug() << "contact " << c->contactId() << " away msg: " << c->statusMessage().message();
 	}
+	kDebug() << "meta " << metaContact->displayName() << " away msg: " << metaContact->statusMessage().message();
 
 	return toolTip + QLatin1String("</table></td></tr></table></qt>");
 }

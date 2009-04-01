@@ -180,6 +180,22 @@ void KopeteItemDelegate::paint( QPainter* painter,
 	}
 }
 
+QList<Kopete::Contact*> KopeteItemDelegate::filterContacts( const QList<Kopete::Contact*> contacts ) const
+{
+	if ( Kopete::AppearanceSettings::self()->showOfflineUsers() )
+		return contacts;
+
+	QList<Kopete::Contact*> filtered;
+
+	foreach( Kopete::Contact *contact, contacts )
+	{
+		if ( contact->isOnline() )
+			filtered << contact;
+	}
+
+	return filtered;
+}
+
 void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPainter* painter,
                                     const QStyleOptionViewItem& option, const QModelIndex& index,
                                     QList<QPair<QRect, Kopete::Contact*> >* contactPositionList ) const
@@ -304,6 +320,10 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 	QFont normal = normalFont( option.font );
 	QFont small = smallFont( option.font );
 
+	QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+	Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
+	QList<Kopete::Contact*> contactList = filterContacts( metaContact->contacts() );
+
 	for ( int i = 0; i < rowCount; i++ )
 	{
 		ContactList::LayoutItemConfigRow row = config.row( i );
@@ -346,9 +366,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 				qreal idealWidth = 0;
 				if ( value == ContactList::LayoutManager::ContactIcons )
 				{
-					QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
-					Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
-					const int contactListSize = metaContact->contacts().size();
+					const int contactListSize = contactList.size();
 					idealWidth = contactListSize * IconSize;
 					if ( contactListSize > 1 )
 						idealWidth += (contactListSize - 1) * IconMarginH;
@@ -464,10 +482,6 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 				//special case for painting the ContactIcons...
 				if ( value == ContactList::LayoutManager::ContactIcons )
 				{
-					QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
-					Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
-
-					QList<Kopete::Contact*> contactList = metaContact->contacts();
 					if ( contactList.size() > 0 )
 					{
 						const qreal IconMarginH = 2.0;
