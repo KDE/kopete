@@ -69,6 +69,8 @@ public:
 
 	int visibleContentHeight() const;
 
+	virtual void keyboardSearch( const QString &search );
+
 public Q_SLOTS:
 	virtual void reset();
 	void contactActivated( const QModelIndex& index );

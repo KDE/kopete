@@ -279,6 +279,14 @@ int KopeteContactListView::visibleContentHeight() const
 	return height;
 }
 
+void KopeteContactListView::keyboardSearch( const QString &search )
+{
+	// FIXME: Why QTreeView::keyboardSearch updates selection only when selectionMode is SingleSelection?
+	setSelectionMode( QAbstractItemView::SingleSelection );
+	QTreeView::keyboardSearch( search );
+	setSelectionMode( QAbstractItemView::ExtendedSelection );
+}
+
 void KopeteContactListView::reset()
 {
 	QTreeView::reset();
