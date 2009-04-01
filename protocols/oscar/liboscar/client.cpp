@@ -1771,6 +1771,14 @@ FileTransferHandler* Client::createFileTransfer( const QString& contact, const Q
 	return new FileTransferHandler(ft);
 }
 
+void Client::inviteToChatRoom( const QString& contact, Oscar::WORD exchange, const QString& room, QString msg)
+{
+	Connection* c = d->connections.connectionForFamily( 0x0004 );
+	ChatRoomTask *chatRoomTask = new ChatRoomTask( c->rootTask(), contact, ourInfo().userId(), msg, exchange, room);
+	chatRoomTask->go( Task::AutoDelete );
+	chatRoomTask->doInvite();
+}
+
 void Client::gotChatRoomMessage( const Oscar::Message & msg, const QByteArray & cookie )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0004 );

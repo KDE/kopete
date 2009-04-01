@@ -34,7 +34,7 @@ AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtr
     setObjectName( QLatin1String("AIMChatSession") );
     Kopete::ChatSessionManager::self()->registerChatSession( this );
     setComponentData( protocol->componentData() );
-    setMayInvite( false );
+    setMayInvite( true );
     m_exchange = exchange;
     m_roomName = room;
     m_engine = 0;
@@ -43,6 +43,11 @@ AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtr
 AIMChatSession::~AIMChatSession()
 {
     m_engine->disconnectChatRoom( m_exchange, m_roomName );
+}
+
+void AIMChatSession::inviteContact(const QString& contactId)
+{
+	m_engine->inviteToChatRoom( contactId, m_exchange, m_roomName );
 }
 
 void AIMChatSession::setEngine( Client* engine )

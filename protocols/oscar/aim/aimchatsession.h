@@ -67,6 +67,13 @@ public:
      */
     void setExchange( Oscar::WORD exchange );
 
+    /**
+     * this method is called when a contact is dragged to the contact list.
+     * @p contactId is the id of the contact. the contact is supposed to be of the same account as
+     * the @ref account() but we can't be sure the Kopete::Contact is really on the contact list
+     */
+    virtual void inviteContact(const QString &contactId);
+
 private:
     QString m_roomName;
     Oscar::WORD m_exchange;

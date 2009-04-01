@@ -402,6 +402,8 @@ public:
 	 */
 	FileTransferHandler* createFileTransfer( const QString& contact, const QStringList& files );
 
+	void inviteToChatRoom( const QString& contact, Oscar::WORD exchange, const QString& room, QString msg="Join me in this Chat." );
+
 	/*************
 	  INTERNAL (FOR USE BY TASKS OR CONNECTIONS) METHODS
 	 *************/

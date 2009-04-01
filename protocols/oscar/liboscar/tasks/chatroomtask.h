@@ -44,6 +44,8 @@ Q_OBJECT
 public:
 	/** create an incoming chatroom request */
 	ChatRoomTask( Task* parent, const QString& contact, const QString& self, QByteArray cookie, const QString& msg, const Oscar::WORD exchange, const QString& room );
+	/** create an outgoing chatroom request */
+	ChatRoomTask( Task* parent, const QString& contact, const QString& self, const QString& msg, const Oscar::WORD exchange, const QString& room );
 	~ChatRoomTask();
 
 	QString internalId() const;
@@ -59,6 +61,7 @@ protected:
 	virtual void onGo();
 
 public slots:
+	void doInvite();
 	void doReject();
 	void doAccept();
 
