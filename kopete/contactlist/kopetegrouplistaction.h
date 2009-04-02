@@ -34,8 +34,6 @@ public:
 
 protected slots:
 	void slotUpdateList();
-private:
-	QStringList m_groupList;
 };
 
 #endif // KOPETEGROUPLISTACTION_H

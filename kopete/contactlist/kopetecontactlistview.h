@@ -84,6 +84,8 @@ public Q_SLOTS:
 	void sendEmail();
 	void addTemporaryContact();
 	void removeGroupOrMetaContact();
+	void moveToGroup();
+	void copyToGroup();
 
 Q_SIGNALS:
 	void visibleContentHeightChanged();

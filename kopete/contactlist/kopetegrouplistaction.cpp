@@ -49,21 +49,31 @@ KopeteGroupListAction::~KopeteGroupListAction()
 
 void KopeteGroupListAction::slotUpdateList()
 {
-	QStringList groupList;
+	QMap<QString, uint> groupMap;
 
-	// Add groups to our list
-	QList<Kopete::Group*> groups = Kopete::ContactList::self()->groups();
-	QList<Kopete::Group*>::iterator it, itEnd = groups.end();
-	for ( it = groups.begin(); it != itEnd; ++it )
+	// Add groups to our map
+	foreach ( const Kopete::Group* group, Kopete::ContactList::self()->groups() )
 	{
-		if((*it)->type() == Kopete::Group::Normal)
-			groupList.append( (*it)->displayName() );
+		if( group->type() == Kopete::Group::Normal )
+			groupMap.insertMulti( group->displayName(), group->groupId() ); // Use insertMulti to be safer
 	}
 
-	groupList.sort();
-	groupList.prepend(QString::null); //add a separator;	//krazy:exclude=nullstrassign for old broken gcc
-	groupList.prepend( i18n("Top Level") ); //the top-level group, with the id 0
-	setItems( groupList );
+	clear();
+
+	KAction* topLevelAction = addAction( Kopete::Group::topLevel()->displayName() );
+	topLevelAction->setData( Kopete::Group::topLevel()->groupId() );
+
+	QAction* separator = new QAction( this );
+	separator->setSeparator( true );
+	addAction( separator );
+
+	QMapIterator<QString, uint> it( groupMap );
+	while ( it.hasNext() )
+	{
+		it.next();
+		QAction* action = addAction( it.key() );
+		action->setData( it.value() );
+	}
 }
 
 #include "kopetegrouplistaction.moc"

@@ -317,7 +317,12 @@ QVariant ContactListTreeModel::data ( const QModelIndex & index, int role ) cons
 	}
 
 	if ( mcmi )
-		return metaContactData( mcmi->metaContact(), role );
+	{
+		if ( role == Kopete::Items::MetaContactGroupRole )
+			return qVariantFromValue( (QObject*)mcmi->parent()->group() );
+		else
+			return metaContactData( mcmi->metaContact(), role );
+	}
 
 	return QVariant();
 }

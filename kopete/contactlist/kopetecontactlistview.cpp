@@ -165,13 +165,12 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	d->actionStartChat = KopeteStdAction::chat( this, SLOT(startChat()), ac );
 	ac->addAction( "contactStartChat", d->actionStartChat );
 
-// FIXME: Do we need this with drag&drop support?
-// 	d->actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
-//                                                 KShortcut(), this, SLOT( slotMoveToGroup() ), ac );
-// 	ac->addAction( "contactMove", d->actionMove );
-// 	d->actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "edit-copy" ),
-//                                                 KShortcut(), this, SLOT( slotCopyToGroup() ), ac );
-// 	ac->addAction( "contactCopy", d->actionCopy );
+	d->actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
+                                                KShortcut(), this, SLOT( moveToGroup() ), ac );
+	ac->addAction( "contactMove", d->actionMove );
+	d->actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "edit-copy" ),
+                                                KShortcut(), this, SLOT( copyToGroup() ), ac );
+	ac->addAction( "contactCopy", d->actionCopy );
 
 	d->actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Merge Meta Contacts"), ac);
 	ac->addAction( "makeMetaContact", d->actionMakeMetaContact );
@@ -423,6 +422,69 @@ void KopeteContactListView::removeGroupOrMetaContact()
 
 	foreach ( Kopete::Group* group, groupList )
 		Kopete::ContactList::self()->removeGroup( group );
+}
+
+void KopeteContactListView::moveToGroup()
+{
+	Q_ASSERT(model());
+	QModelIndexList indexList = selectedIndexes();
+	if ( indexList.count() != 1 )
+		return;
+
+	QModelIndex index = indexList.first();
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact && d->actionMove->currentAction() )
+	{
+		Kopete::MetaContact* metaContact = metaContactFromIndex( index );
+		foreach( Kopete::Contact *c, metaContact->contacts() )
+		{
+			if ( !c->account()->isConnected() )
+				return; // Some contact is offline we can't move it
+		}
+
+		bool ok = false;
+		uint groupId = d->actionMove->currentAction()->data().toUInt( &ok );
+		if ( !ok )
+			return;
+
+		Kopete::Group *toGroup = Kopete::ContactList::self()->group( groupId );
+		if ( !toGroup )
+			return;
+
+		QObject* groupObject = qVariantValue<QObject*>( index.data( Kopete::Items::MetaContactGroupRole ) );
+		Kopete::Group* fromGroup = qobject_cast<Kopete::Group*>(groupObject);
+
+		metaContact->moveToGroup( fromGroup, toGroup );
+	}
+}
+
+void KopeteContactListView::copyToGroup()
+{
+	Q_ASSERT(model());
+	QModelIndexList indexList = selectedIndexes();
+	if ( indexList.count() != 1 )
+		return;
+
+	QModelIndex index = indexList.first();
+	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact && d->actionCopy->currentAction() )
+	{
+		Kopete::MetaContact* metaContact = metaContactFromIndex( index );
+		foreach( Kopete::Contact *c, metaContact->contacts() )
+		{
+			if ( !c->account()->isConnected() )
+				return; // Some contact is offline we can't copy it
+		}
+
+		bool ok = false;
+		uint groupId = d->actionCopy->currentAction()->data().toUInt( &ok );
+		if ( !ok )
+			return;
+
+		Kopete::Group *toGroup = Kopete::ContactList::self()->group( groupId );
+		if ( !toGroup )
+			return;
+
+		metaContact->addToGroup( toGroup );
+	}
 }
 
 void KopeteContactListView::startChat()
