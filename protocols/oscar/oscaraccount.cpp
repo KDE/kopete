@@ -654,7 +654,7 @@ QString OscarAccount::sanitizedMessage( const QString& message ) const
 	int errLine = 0, errCol = 0;
 
 	QString msg = addQuotesAroundAttributes(message);
-	msg = makeWellFormedXML( msg ); // Official clients send crap so we have to sort it out.
+	msg = makeWellFormedXML( msg ); // Official AIM client send crap so we have to sort it out.
 	msg.replace( "<BR>", "<BR/>", Qt::CaseInsensitive );
 
 	doc.setContent( msg, false, &domError, &errLine, &errCol );
@@ -671,8 +671,11 @@ QString OscarAccount::sanitizedMessage( const QString& message ) const
 		QDomNodeList fontTagList = doc.elementsByTagName( "FONT" );
 		if ( fontTagList.count() == 0 )
 		{
-			kDebug(OSCAR_AIM_DEBUG) << "No font tags found. Returning normal message";
-			return sanitizedPlainMessage( message );
+			if ( message.indexOf( QRegExp( "[\\s]*<[\\s]*HTML[\\s]*>[\\s]*<[\\s]*BODY", Qt::CaseInsensitive ) ) != 0 )
+			{
+				kDebug(OSCAR_AIM_DEBUG) << "No html tags found. Returning normal message";
+				return sanitizedPlainMessage( message );
+			}
 		}
 		else
 		{

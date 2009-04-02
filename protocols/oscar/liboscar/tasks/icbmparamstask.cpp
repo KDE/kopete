@@ -115,14 +115,15 @@ void ICBMParamsTask::sendMessageParams( int channel )
 	buffer->addWord( channel );
 	
 	const Oscar::DWORD OFFLINE_MESSAGES = 0x00000100;
-	
+	const Oscar::DWORD RTF_MESSAGES = 0x00000600; // Maybe something more
+
 	//these are all read-write
 	// channel-flags
 	// bit 1 : messages allowed (always 1 or you cannot send IMs)
 	// bit 2 : missed call notifications enabled
 	// bit 4 : typing notifications enabled
 	if ( channel == 1 )
-		buffer->addDWord(0x0000000B | OFFLINE_MESSAGES);
+		buffer->addDWord(0x0000000B | OFFLINE_MESSAGES | RTF_MESSAGES);
 	else
 		buffer->addDWord(0x00000003);
 	

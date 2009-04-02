@@ -158,11 +158,8 @@ protected:
 	int m_warningLevel;
 	QString m_clientFeatures;
 
-private:
-	void initActions();
-
 protected slots:
-	virtual void slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session) = 0;
+	virtual void slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session);
 	
 private slots:
 	void changeEncodingDialogClosed( int );
@@ -173,6 +170,9 @@ private slots:
 	
 private:
 	QString filterAwayMessage( const QString &message ) const;
+	int oscarFontSize( int size ) const;
+	QString brMargin( int margin, int fontPointSize, bool forceBr = false ) const;
+
 	bool m_buddyIconDirty;
 
 	OscarEncodingSelectionDialog* m_oesd;

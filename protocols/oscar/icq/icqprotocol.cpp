@@ -171,6 +171,8 @@ ICQProtocol::ICQProtocol(QObject *parent, const QVariantList&)
 	// must be done after protocolStatic_ is set...
 	statusManager_ = new ICQStatusManager;
 
+	setCapabilities( Kopete::Protocol::FullRTF ); // setting capabilities
+	kDebug(14153) << "capabilities set to FullRTF";
 	addAddressBookField("messaging/icq", Kopete::Plugin::MakeIndexField);
 
 	initGenders();

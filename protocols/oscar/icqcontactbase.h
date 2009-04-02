@@ -41,9 +41,6 @@ public:
 	            const QString& icon = QString() );
 	virtual ~ICQContactBase();
 
-protected slots:
-	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
-
 private slots:
 	void receivedXStatusMessage( const QString& contact, int icon, const QString& description, const QString& message );
 

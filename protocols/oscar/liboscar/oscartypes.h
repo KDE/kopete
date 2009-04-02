@@ -432,7 +432,7 @@ struct ClientVersion
 };
 
 	/* ICQ Version Characteristics */
-	const unsigned char ICQ_TCP_VERSION 	= 0x0008;
+	const unsigned char ICQ_TCP_VERSION 	= 0x0009; // 9 for rtf support
 
 	/* AIM Version Characteristics */
 	const char AIM_MD5_STRING[]     = "AOL Instant Messenger (SM)";

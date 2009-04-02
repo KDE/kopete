@@ -18,8 +18,6 @@
 
 #include "icqcontactbase.h"
 
-#include <QtGui/QTextDocument> // Qt::escape
-
 #include "kopetechatsessionmanager.h"
 
 #include "oscaraccount.h"
@@ -59,60 +57,6 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle );
 
 	setAwayMessage( message );
-}
-
-void ICQContactBase::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
-{
-	//Why is this unused?
-	Q_UNUSED( session );
-
-	QTextCodec* codec = contactCodec();
-
-	int messageChannel = 0x01;
-	// Allow UCS2 because official AIM client doesn't sets the CAP_UTF8 anymore!
-	bool allowUCS2 = !isOnline() || !(m_details.userClass() & Oscar::CLASS_ICQ) || m_details.hasCap( CAP_UTF8 );
-
-	QString msgText( msg.plainBody() );
-
-	// Official clients don't check if icq support richtext so we
-	// have to escape our plain messages if contact is in AIM account
-	if ( !account()->engine()->isIcq() )
-		msgText = Qt::escape( msgText );
-
-	// TODO: More intelligent handling of message length.
-	const int chunk_length = 1274;
-	int msgPosition = 0;
-
-	do
-	{
-		QString msgChunk( msgText.mid( msgPosition, chunk_length ) );
-		// Try to split on space if needed
-		if ( msgChunk.length() == chunk_length )
-		{
-			for ( int i = 0; i < 100; i++ )
-			{
-				if ( msgChunk[chunk_length - i].isSpace() )
-				{
-					msgChunk = msgChunk.left( chunk_length - i );
-					msgPosition++;
-				}
-			}
-		}
-		msgPosition += msgChunk.length();
-
-		Oscar::Message message;
-		message.setId( msg.id() );
-		message.setText( Oscar::Message::encodingForText( msgChunk, allowUCS2 ), msgChunk, codec );
-		message.setChannel( messageChannel );
-		message.setTimestamp( msg.timestamp() );
-		message.setSender( mAccount->accountId() );
-		message.setReceiver( mName );
-		mAccount->engine()->sendMessage( message );
-	} while ( msgPosition < msgText.length() );
-
-	msg.setState( Kopete::Message::StateSending );
-	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
-	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
 #include "icqcontactbase.moc"

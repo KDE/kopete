@@ -45,16 +45,10 @@ public:
 	/** Sends an auto response to this contact */
 	virtual void sendAutoResponse(Kopete::Message& msg);
 
-protected slots:
-	virtual void slotSendMsg(Kopete::Message& message, Kopete::ChatSession *);
-
 protected:
 	bool m_mobile; // Is this user mobile (i.e. do they have message forwarding on, or mobile AIM)
 
 private:
-	int aimFontSize( int size ) const;
-	QString brMargin( int margin, int fontPointSize, bool forceBr = false ) const;
-
 	QDateTime m_lastAutoresponseTime;
 	
 };

@@ -21,6 +21,11 @@
 #include <qapplication.h>
 #include <qtextcodec.h>
 #include <qtimer.h>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomNodeList>
+#include <QtGui/QTextDocument>
+#include <QtGui/QTextCharFormat>
+#include <QtGui/QTextBlock>
 
 #include <kaction.h>
 #include <kdebug.h>
@@ -411,6 +416,125 @@ void OscarContact::requestAuthorization()
 		mAccount->engine()->requestAuth( contactId(), reason );
 }
 
+void OscarContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
+{
+	if (message.plainBody().isEmpty()) // no text, do nothing
+		return;
+	//okay, now we need to change the message.escapedBody from real HTML to aimhtml.
+	//looking right now for docs on that "format".
+	//looks like everything except for alignment codes comes in the format of spans
+
+	//font-style:italic -> <i>
+	//font-weight:600 -> <b> (anything > 400 should be <b>, 400 is not bold)
+	//text-decoration:underline -> <u>
+	//font-family: -> <font face="">
+	//font-size:xxpt -> <font ptsize=xx>
+
+	QTextDocument doc;
+	doc.setHtml( message.escapedBody() );
+
+	QString rtfText = QString( "<HTML><BODY dir=\"%1\">" ).arg( message.isRightToLeft() ? "rtl" : "ltr" );
+
+	bool hasFontTag = false;
+	QTextCharFormat defaultCharFormat;
+	for ( QTextBlock it = doc.begin(); it != doc.end(); it = it.next() )
+	{
+		QTextBlockFormat blockFormat = it.blockFormat();
+
+		// Plain text message has p tags without margin attributes and Qt's topMargin()
+		// returns default margins so we will end up with line break before text.
+		if ( message.format() != Qt::PlainText || it.blockNumber() != 0 )
+			rtfText += brMargin( blockFormat.topMargin(), defaultCharFormat.fontPointSize() );
+
+		bool lastFragmentHasLineSeparator = false;
+		for ( QTextBlock::iterator it2 = it.begin(); !(it2.atEnd()); ++it2 )
+		{
+			QTextFragment currentFragment = it2.fragment();
+			if ( currentFragment.isValid() )
+			{
+				QTextCharFormat format = currentFragment.charFormat();
+				if ( format.fontFamily() != defaultCharFormat.fontFamily() ||
+				     format.foreground() != defaultCharFormat.foreground() ||
+				     oscarFontSize(format.fontPointSize()) != oscarFontSize(defaultCharFormat.fontPointSize()) )
+				{
+					if ( hasFontTag )
+					{
+						rtfText += "</FONT>";
+						hasFontTag = false;
+					}
+
+					QString fontTag;
+					if ( !format.fontFamily().isEmpty() )
+						fontTag += QString( " FACE=\"%1\"" ).arg( format.fontFamily() );
+					if ( format.fontPointSize() > 0 )
+						fontTag += QString( " SIZE=%1" ).arg( oscarFontSize( format.fontPointSize() ) );
+					if ( format.foreground().style() != Qt::NoBrush )
+						fontTag += QString( " COLOR=%1" ).arg( format.foreground().color().name() );
+					if ( format.background().style() != Qt::NoBrush )
+						fontTag += QString( " BACK=%1" ).arg( format.background().color().name() );
+
+					if ( !fontTag.isEmpty() )
+					{
+						rtfText += QString("<FONT%1>").arg( fontTag );
+						hasFontTag = true;
+					}
+				}
+
+				if ( format.font().bold() != defaultCharFormat.font().bold() )
+					rtfText += ( format.font().bold() ) ? "<B>" : "</B>";
+				if ( format.fontItalic() != defaultCharFormat.fontItalic() )
+					rtfText += ( format.hasProperty(QTextFormat::FontItalic) ) ? "<I>" : "</I>";
+				if ( format.fontUnderline() != defaultCharFormat.fontUnderline() )
+					rtfText += ( format.hasProperty(QTextFormat::FontUnderline) ) ? "<U>" : "</U>";
+
+				QString text = currentFragment.text();
+				lastFragmentHasLineSeparator = text.endsWith( QChar::LineSeparator );
+				rtfText += Qt::escape( text );
+				defaultCharFormat = format;
+			}
+		}
+		rtfText += brMargin( blockFormat.bottomMargin(), defaultCharFormat.fontPointSize(), !lastFragmentHasLineSeparator );
+	}
+
+	rtfText.replace( QChar::LineSeparator, "<BR>" );
+
+	if ( rtfText.endsWith( "<BR>" ) )
+		rtfText.chop(4);
+
+	if ( hasFontTag )
+		rtfText += "</FONT>";
+	if ( defaultCharFormat.font().bold() )
+		rtfText += "</B>";
+	if ( defaultCharFormat.hasProperty( QTextFormat::FontItalic ) )
+		rtfText += "</I>";
+	if ( defaultCharFormat.hasProperty( QTextFormat::FontUnderline ) )
+		rtfText += "</U>";
+
+	rtfText += "</BODY></HTML>";
+
+	kDebug(OSCAR_GEN_DEBUG) << "sending: " << rtfText;
+
+	// TODO: Need to check for message size?
+
+	Oscar::Message msg;
+	// Allow UCS2 because official AIM client doesn't sets the CAP_UTF8 anymore!
+	bool allowUCS2 = !isOnline() || !(m_details.userClass() & Oscar::CLASS_ICQ) || m_details.hasCap( CAP_UTF8 );
+	msg.setText( Oscar::Message::encodingForText( rtfText, allowUCS2 ), rtfText, contactCodec() );
+
+	msg.setId( message.id() );
+	msg.setReceiver(mName);
+	msg.setSender( mAccount->accountId() );
+	msg.setTimestamp(message.timestamp());
+	msg.setChannel(0x01);
+
+	mAccount->engine()->sendMessage(msg);
+
+	message.setState( Kopete::Message::StateSending );
+	// Show the message we just sent in the chat window
+	manager(Kopete::Contact::CanCreate)->appendMessage(message);
+	manager(Kopete::Contact::CanCreate)->messageSucceeded();
+}
+
 void OscarContact::changeEncodingDialogClosed( int result )
 {
 	if ( result == QDialog::Accepted )
@@ -489,6 +613,41 @@ QString OscarContact::filterAwayMessage( const QString &message ) const
 	while ( filteredMessage.indexOf( fontRemover ) != -1 )
 		filteredMessage.replace( fontRemover, QString::fromLatin1("\\1") );
 	return filteredMessage;
+}
+
+int OscarContact::oscarFontSize( int size ) const
+{
+	if ( size <= 0 )
+		return 0;
+	else if ( 1 <= size && size <= 9 )
+		return 1;
+	else if ( 10 <= size && size <= 11 )
+		return 2;
+	else if ( 12 <= size && size <= 13 )
+		return 3;
+	else if ( 14 <= size && size <= 16 )
+		return 4;
+	else if ( 17 <= size && size <= 22 )
+		return 5;
+	else if ( 23 <= size && size <= 29 )
+		return 6;
+	else
+		return 7;
+}
+
+QString OscarContact::brMargin( int margin, int fontPointSize, bool forceBr ) const
+{
+	int brHeight = ( fontPointSize == 0 ) ? 12 : fontPointSize;
+	int brCount = margin / brHeight;
+	
+	if ( brCount <= 0 )
+		return ( forceBr ) ? "<BR>" : "";
+	
+	QString s;
+	while ( brCount-- > 0 )
+		s += "<BR>";
+	
+	return s;
 }
 
 #include "oscarcontact.moc"

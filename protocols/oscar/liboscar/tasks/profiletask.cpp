@@ -112,7 +112,6 @@ void ProfileTask::sendProfileUpdate()
 		{
 			capBuf.addGuid( oscar_caps[CAP_ICQSERVERRELAY] ); // we support type-2 messages
 			capBuf.addGuid( oscar_caps[CAP_DIRECT_ICQ_COMMUNICATION] ); // we support direct communication
-			//capBuf.addGuid( oscar_caps[CAP_RTFMSGS] ); // we do incoming RTF messages
 			capBuf.addGuid( oscar_caps[CAP_XTRAZ] ); // we support xtraz
 
 			if ( m_xtrazStatus > -1 )
