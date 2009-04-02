@@ -97,6 +97,7 @@ protected:
 	virtual void dragMoveEvent( QDragMoveEvent *event );
 	virtual void timerEvent( QTimerEvent *event );
 	virtual bool eventFilter( QObject *object, QEvent *event );
+	virtual bool viewportEvent( QEvent *event );
 
 protected slots:
 	virtual void rowsInserted( const QModelIndex &parent, int start, int end );

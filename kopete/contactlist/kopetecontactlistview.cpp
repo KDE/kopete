@@ -708,6 +708,16 @@ bool KopeteContactListView::eventFilter( QObject *object, QEvent *event )
 	return QTreeView::eventFilter( object, event );
 }
 
+bool KopeteContactListView::viewportEvent( QEvent *event )
+{
+	// FIXME: Fix for crash, easily reproducible by assigning shortcut to show offline users action
+	// and holding down that action and moving mouse over contact list.
+	// Is this a Qt bug or are we using invalidate() in ContactListProxyModel wrongly?
+	// The same crash was in KTorrent bug 172198.
+	executeDelayedItemsLayout();
+	return QTreeView::viewportEvent( event );
+}
+
 void KopeteContactListView::rowsInserted( const QModelIndex &parent, int start, int end )
 {
 	QTreeView::rowsInserted( parent, start, end );
