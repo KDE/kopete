@@ -88,7 +88,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect(m_openInboxAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenInbox() ) );
-	m_openYABAction = new KAction( KIcon("x-office-address-book"), i18n( "Open &Addressbook..." ), this );
+	m_openYABAction = new KAction( KIcon("x-office-address-book"), i18n( "Open &Address book..." ), this );
         //, "m_openYABAction" );
 	QObject::connect(m_openYABAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenYAB() ) );
 	m_editOwnYABEntry = new KAction( KIcon("document-properties"), i18n( "&Edit my contact details..."), this );

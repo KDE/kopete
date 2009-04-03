@@ -350,7 +350,7 @@
        <item>
         <widget class="QCheckBox" name="chkSyncPhoto" >
          <property name="text" >
-          <string>S&amp;ync photo to addressbook</string>
+          <string>S&amp;ync photo to address book</string>
          </property>
         </widget>
        </item>

@@ -86,7 +86,7 @@ void AddressBookLinkWidget::slotSelectAddressee()
 	{
 		assocDisplayText = mMetaContact->kabcId();
 	}
-	Kopete::UI::AddressBookSelectorDialog dialog( i18n("Addressbook Association"), message,
+	Kopete::UI::AddressBookSelectorDialog dialog( i18n("Address Book Association"), message,
 	                                              assocDisplayText, this );
 	int result = dialog.exec();
 
