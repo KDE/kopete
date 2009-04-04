@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 X-Kopete-Version=1000900
-Icon=pipe
+Icon=mail-message
 X-KDE-Library=kopete_pipes
 X-KDE-ServiceTypes=Kopete/Plugin
 X-KDE-PluginInfo-Author=Charles Connell
