@@ -72,6 +72,7 @@ private slots:
 	void slotConfGlobalKeys();
 	void slotShowHide();
 	void slotToggleAway();
+	void slotNewInfoEvent();
 
 
 	void setStatusMessage( const Kopete::StatusMessage& );

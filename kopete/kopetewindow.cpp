@@ -4,7 +4,7 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2001-2002 by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart at kde.org>
+    Copyright (c) 2002-2009 by Olivier Goffart        <ogoffart at kde.org>
     Copyright (c) 2005-2006 by Will Stephenson        <wstephenson@kde.org>
     Copyright (c) 2008      by Roman Jarosz           <kedgedev@centrum.cz>
 
@@ -272,6 +272,7 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	connect ( infoLabel, SIGNAL(clicked()), this, SLOT(slotInfoIconClicked()) );
 	statusBarMessageLayout->addWidget ( infoLabel );
 	statusBarMessageLayout->addSpacing ( 1 );
+	connect( Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent*)), this, SLOT(slotNewInfoEvent()) );
 
 	d->globalStatusMessage = new KSqueezedTextLabel ( statusBarMessage );
 	connect ( Kopete::StatusManager::self(), SIGNAL ( globalStatusChanged() ),
@@ -1360,6 +1361,19 @@ void KopeteWindow::slotUpdateSize()
 	}
 }
 
+
+void KopeteWindow::slotNewInfoEvent()
+{
+	if ( !d->infoEventWidget->isVisible() )
+	{
+		if ( d->identitywidget->isVisible() )
+		{
+			d->identitywidget->setIdentity( 0 );
+			d->identitywidget->setVisible( false );
+		}
+		d->infoEventWidget->setVisible( true );
+	}
+}
 
 #include "kopetewindow.moc"
 // vim: set noet ts=4 sts=4 sw=4:
