@@ -95,7 +95,7 @@ KabcExportWizard::KabcExportWizard( QWidget *parent )
 	// if there were no writable address books, tell the user
 	if ( counter == 0 )
 	{
-		m_page1.addrBooks->addItem( i18n( "No writeable addressbook resource found." ) );
+		m_page1.addrBooks->addItem( i18n( "No writeable address book resource found." ) );
 		m_page1.addrBooks->addItem( i18n( "Add or enable one using the KDE Control Center." ) );
 		m_page1.addrBooks->setEnabled( false );
 	}
