@@ -1,7 +1,7 @@
 project(kopete)
 KDE4_NO_ENABLE_FINAL(kopete)
 
-FIND_PACKAGE(Blitz REQUIRED)
+FIND_PACKAGE(QImageBlitz REQUIRED)
 
 # Configure checks
 include (TestBigEndian)
