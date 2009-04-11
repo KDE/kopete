@@ -11,10 +11,10 @@
 
 	<!-- Define the available signals to emit -->
 	<signal name="appearanceChanged">
-		<label>Emitted when the font and colors settings has changed.</label>
+		<label>Emitted when the font and colors settings have changed.</label>
 	</signal>
 	<signal name="messageOverridesChanged">
-		<label>Emitted when the message overrides settings has changed.</label>
+		<label>Emitted when the message overrides settings have changed.</label>
 	</signal>
 	<signal name="contactListAppearanceChanged">
 		<label>Emitted when the contact list appearance has changed.</label>
@@ -93,7 +93,7 @@
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="greyIdleMetaContacts" type="Bool">
-			<label>Display a different color for idle contact.</label>
+			<label>Whether to use a different color for idle contacts.</label>
 			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
@@ -209,17 +209,17 @@
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="contactListAnimateChange" type="Bool">
-			<label>Animate contact list on contactlist changes.</label>
+			<label>Animate contact list on contact list changes.</label>
 			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="contactListFading" type="Bool">
-			<label>Fade-in/Fade-out on contact status change.</label>
+			<label>Fade-in/Fade-out on contact status changes.</label>
 			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
 		<entry key="contactListFolding" type="Bool">
-			<label>Fold-in/Fold-out on contact status change.</label>
+			<label>Fold-in/Fold-out on contact status changes.</label>
 			<default>true</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>

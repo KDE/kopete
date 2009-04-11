@@ -153,11 +153,11 @@
 			<default>false</default>
 		</entry>
 		<entry key="useLastAwayMessage" type="Bool">
-			<label>When seting the auto away message, use the latest away message.</label>
+			<label>When setting the auto away message, use the latest away message.</label>
 			<default>true</default>
 		</entry>
 		<entry key="useCustomAwayMessage" type="Bool">
-			<label>When seting the auto away message, use the custom away message.</label>
+			<label>When setting the auto away message, use a custom away message.</label>
 			<default>false</default>
 		</entry>
 		<entry key="autoAwayCustomTitle" type="String">

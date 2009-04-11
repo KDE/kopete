@@ -4,7 +4,7 @@
   <kcfgfile name="kopeterc"/> 
   <group name="URLPicPreview Plugin"> 
     <entry name="PreviewAmount" type="UInt"> 
-      <label>Maximum amount of Previews</label> 
+      <label>Maximum number of Previews</label> 
       <default>2</default>
     </entry> 
     <entry name="Scaling" type="Bool"> 
@@ -12,7 +12,7 @@
       <default>true</default>
     </entry> 
     <entry name="PreviewRestriction" type="Bool"> 
-      <label>Should the amount of previews be restricted?</label> 
+      <label>Should the number of previews be restricted?</label> 
       <default>true</default>
     </entry> 
     <entry name="PreviewScaleWidth" type="Int"> 
