@@ -1,53 +1,52 @@
 # - try to find Kleopatra
 # Once done this will define
 #
-#  KLEO_FOUND - system has Kleopatra
-#  KLEO_INCLUDE_DIRS - Include dirs for Kleopatra
-#  KLEO_LIBRARIES - Link these to use Kleopatra
+#  KLEOPATRA_FOUND - system has Kleopatra
+#  KLEOPATRA_INCLUDE_DIRS - Include dirs for Kleopatra
+#  KLEOPATRA_LIBRARIES - Link these to use Kleopatra
 #
 # Copyright (c) 2009, Christophe Giboudeaux, <cgiboudeaux@gmail.com>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
  
-if (KLEO_INCLUDE_DIR AND KLEO_LIBRARIES)
+if (KLEOPATRA_INCLUDE_DIR AND KLEOPATRA_LIBRARIES)
 
   # Already in cache
-  set (KLEO_FOUND TRUE)
+  set (KLEOPATRA_FOUND TRUE)
 
-else (KLEO_INCLUDE_DIR AND KLEO_LIBRARIES)
+else (KLEOPATRA_INCLUDE_DIR AND KLEOPATRA_LIBRARIES)
 
-  FIND_PATH(KLEO_INCLUDE_DIR
+  FIND_PATH(KLEOPATRA_INCLUDE_DIR
   NAMES kleo/kleo_export.h
   )
-
-  FIND_LIBRARY(KLEO_LIBRARIES
+  
+  FIND_LIBRARY(KLEOPATRA_LIBRARIES
   NAMES kleo
   )
-  message ("KLEO_LIBRARIES= ${KLEO_LIBRARIES}") #Testing
-  
-  if(KLEO_INCLUDE_DIR AND KLEO_LIBRARIES)
-    set(KLEO_FOUND TRUE)
-  endif(KLEO_INCLUDE_DIR AND KLEO_LIBRARIES)
+    
+  if(KLEOPATRA_INCLUDE_DIR AND KLEOPATRA_LIBRARIES)
+    set(KLEOPATRA_FOUND TRUE)
+  endif(KLEOPATRA_INCLUDE_DIR AND KLEOPATRA_LIBRARIES)
 
-  if(KLEO_FOUND)
-    message(STATUS "Found Kleopatra: ${KLEO_LIBRARIES}")
-  else(KLEO_FOUND)
+  if(KLEOPATRA_FOUND)
+    message(STATUS "Found Kleopatra: ${KLEOPATRA_LIBRARIES}")
+  else(KLEOPATRA_FOUND)
     if(Kleopatra_FIND_REQUIRED)
-      if(NOT KLEO_INCLUDE_DIR)
+      if(NOT KLEOPATRA_INCLUDE_DIR)
         message(FATAL_ERROR "Could not find Kleopatra includes.")
-      endif(NOT KLEO_INCLUDE_DIR)
-      if(NOT KLEO_LIBRARIES)
+      endif(NOT KLEOPATRA_INCLUDE_DIR)
+      if(NOT KLEOPATRA_LIBRARIES)
         message(FATAL_ERROR "Could not find Kleopatra library.")
-      endif(NOT KLEO_LIBRARIES)
+      endif(NOT KLEOPATRA_LIBRARIES)
     else(Kleopatra_FIND_REQUIRED)
-      if(NOT KLEO_INCLUDE_DIR)
+      if(NOT KLEOPATRA_INCLUDE_DIR)
         message(STATUS "Could not find Kleopatra includes.")
-      endif(NOT KLEO_INCLUDE_DIR)
-      if(NOT KLEO_LIBRARIES)
+      endif(NOT KLEOPATRA_INCLUDE_DIR)
+      if(NOT KLEOPATRA_LIBRARIES)
         message(STATUS "Could not find Kleopatra library.")
-      endif(NOT KLEO_LIBRARIES)
+      endif(NOT KLEOPATRA_LIBRARIES)
     endif(Kleopatra_FIND_REQUIRED)
-  endif(KLEO_FOUND)
+  endif(KLEOPATRA_FOUND)
 
-endif (KLEO_INCLUDE_DIR AND KLEO_LIBRARIES)
+endif (KLEOPATRA_INCLUDE_DIR AND KLEOPATRA_LIBRARIES)
