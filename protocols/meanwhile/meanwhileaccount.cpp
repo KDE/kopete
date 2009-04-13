@@ -274,7 +274,7 @@ void MeanwhileAccount::slotSessionStateChange(Kopete::OnlineStatus status)
 
     if (status.isDefinitelyOnline() != oldstatus.isDefinitelyOnline()) {
         if (status.isDefinitelyOnline())
-            m_session->addContacts(contacts());
+            m_session->addContacts(contacts()); // FIXME: what about myself??
         emit isConnectedChanged();
     }
 }

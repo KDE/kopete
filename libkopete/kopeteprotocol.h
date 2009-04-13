@@ -153,6 +153,11 @@ public:
 	Capabilities capabilities() const;
 
 	/**
+	 * @brief true if account can add own contact into a contact list
+	 */
+	bool canAddMyself() const;
+	
+	/**
 	 * @brief Returns the status used for contacts when accounts of this protocol are offline
 	 */
 	Kopete::OnlineStatus accountOfflineStatus() const;
@@ -166,7 +171,7 @@ protected:
 	 * @param parent The protocol's parent object
 	 * @param name The protocol's name
 	 */
-	Protocol( const KComponentData &instance, QObject *parent );
+	Protocol( const KComponentData &instance, QObject *parent, bool canAddMyself = false );
 
 	/**
 	 * @brief Sets the capabilities of this protcol.

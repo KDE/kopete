@@ -521,7 +521,7 @@ void ICQAccount::addedInfoEventActionActivated( uint actionId )
 	case Kopete::AddedInfoEvent::InfoAction:
 		{
 			ICQUserInfoWidget* info = 0;
-			ICQContact *ct = dynamic_cast<ICQContact*>(contacts().value( event->contactId(), 0 ));
+			ICQContact *ct = dynamic_cast<ICQContact*>(contacts().value( event->contactId() ));
 			if ( ct )
 				info = new ICQUserInfoWidget( ct, Kopete::UI::Global::mainWidget() );
 			else

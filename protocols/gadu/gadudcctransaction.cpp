@@ -346,10 +346,10 @@ GaduDCCTransaction::watcher() {
 			}
 
 			if ( !peer ) {
-				contact = static_cast<GaduContact*> (account->contacts()[ QString::number( dccSock_->peer_uin ) ]);
+				contact = static_cast<GaduContact*> (account->contacts().value( QString::number( dccSock_->peer_uin ) ));
 			}
 			else {
-				contact = static_cast<GaduContact*> (account->contacts()[ QString::number( peer ) ]);
+				contact = static_cast<GaduContact*> (account->contacts().value( QString::number( peer ) ));
 			}
 
 			if ( contact == NULL ) {

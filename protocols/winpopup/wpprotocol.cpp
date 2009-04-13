@@ -100,13 +100,13 @@ Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContac
 		return 0;
 	}
 
-	if(theAccount->contacts()[contactId]) {
+	if(theAccount->contacts().value(contactId)) {
 		kDebug(14170) << "User " << contactId << " already in contacts map";
 		return 0;
 	}
 
 	theAccount->addContact(contactId, metaContact, Kopete::Account::DontChangeKABC);
-	return theAccount->contacts()[contactId];
+	return theAccount->contacts().value(contactId);
 }
 
 KopeteEditAccountWidget *WPProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
@@ -156,8 +156,7 @@ void WPProtocol::slotReceivedMessage(const QString &Body, const QDateTime &Time,
 	QList<Kopete::Account*> Accounts = Kopete::AccountManager::self()->accounts(protocol());
 	Kopete::Account *theAccount = 0;
 	foreach(Kopete::Account *account, Accounts) {
-		QHash<QString, Kopete::Contact*> Contacts = account->contacts();
-		Kopete::Contact *theContact = Contacts[From];
+		Kopete::Contact *theContact = account->contacts().value(From);
 		if (theContact) {
 			foundContact = true;
 			theAccount = account;

@@ -160,7 +160,7 @@ Contact *ContactList::findContact( const QString &protocolId,
 		kDebug( 14010 ) << "Account not found";
 		return 0L;
 	}
-	return i->contacts()[contactId];
+	return i->contacts().value( contactId );
 }
 
 
@@ -183,7 +183,7 @@ MetaContact* ContactList::findMetaContactByContactId( const QString &contactId )
 	while ( it.hasNext() )
 	{
 		a = it.next();
-		Contact *c=a->contacts()[contactId];
+		Contact *c=a->contacts().value( contactId );
 		if(c && c->metaContact())
 			return c->metaContact();
 	}

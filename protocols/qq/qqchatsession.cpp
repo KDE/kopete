@@ -288,7 +288,7 @@ void QQChatSession::slotActionInviteAboutToShow()
 	QHash<QString, Kopete::Contact*>::const_iterator it;
 	for ( it = account()->contacts().constBegin(); it != account()->contacts().constEnd(); it++ )
 	{
-		if( !members().contains( it.value() ) && it.value()->isOnline() && it.value() != myself() )
+		if( !members().contains( it.value() ) && it.value()->isOnline() )
 		{
 			KAction *a = new Kopete::UI::ContactAction( it.value(), actionCollection() );
 			m_actionInvite->addAction( a );
@@ -331,7 +331,7 @@ void QQChatSession::slotInviteContact( Kopete::Contact * contact )
 
 void QQChatSession::inviteContact( const QString &contactId )
 {
-	Kopete::Contact * contact = account()->contacts()[ contactId ];
+	Kopete::Contact * contact = account()->contacts().value( contactId );
 	if ( contact )
 		slotInviteContact( contact );
 }

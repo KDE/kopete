@@ -270,7 +270,7 @@ void SkypeChatSession::showInviteMenu() {
 
 	QHash <QString, Kopete::Contact *> contactList = account()->contacts();
 	for ( QHash <QString, Kopete::Contact *>::Iterator it = contactList.begin(); it != contactList.end(); ++it ) {
-		if ( ! members().contains(it.value()) && it.value()->isOnline() && it.value()->onlineStatus().status() != Kopete::OnlineStatus::Offline && it.value() != myself() ) {
+		if ( ! members().contains(it.value()) && it.value()->isOnline() && it.value()->onlineStatus().status() != Kopete::OnlineStatus::Offline ) {
 			KAction *a = new Kopete::UI::ContactAction(it.value(), actionCollection());
 			connect( a, SIGNAL(triggered(const QString &, bool)), this, SLOT(inviteContact(const QString &)) );
 			d->inviteAction->addAction(a);

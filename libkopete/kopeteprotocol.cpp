@@ -39,6 +39,7 @@ class Protocol::Private
 public:
 	bool unloading;
 	Protocol::Capabilities capabilities;
+	bool canAddMyself;
 	/*
 	 * Make sure we always have a lastSeen and a fullname property as long as
 	 * a protocol is loaded
@@ -49,9 +50,10 @@ public:
 	Kopete::OnlineStatus accountNotConnectedStatus;
 };
 
-Protocol::Protocol( const KComponentData &instance, QObject *parent )
+Protocol::Protocol( const KComponentData &instance, QObject *parent, bool canAddMyself )
 : Plugin( instance, parent ), d(new Private())
 {
+	d->canAddMyself = canAddMyself;
 	d->mStickLastSeen = Global::Properties::self()->lastSeen();
 	d->mStickFullName = Global::Properties::self()->fullName();
 	d->unloading = false;
@@ -84,6 +86,10 @@ void Protocol::setCapabilities( Protocol::Capabilities capabilities )
 	d->capabilities = capabilities;
 }
 
+bool Protocol::canAddMyself() const
+{
+	return d->canAddMyself;
+}
 
 Kopete::OnlineStatus Protocol::accountOfflineStatus() const
 {
@@ -296,7 +302,7 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		// myself was allowed in the contact list in old version of kopete.
 		// But if one keep it on the contact list now, it may conflict witht he myself metacontact.
 		// So ignore it
-		if(accountId == sd[ QString::fromLatin1( "contactId" ) ] )
+		if( !d->canAddMyself && accountId == sd[ QString::fromLatin1( "contactId" ) ] )
 		{
 			kDebug( 14010 ) << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it";
 			continue;

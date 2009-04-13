@@ -370,7 +370,7 @@ void ChatMessagePart::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlA
 	kDebug(14000) << "url=" << url.url();
 	if ( url.protocol() == QLatin1String("kopetemessage") )
 	{
-		Kopete::Contact *contact = d->manager->account()->contacts()[ url.host() ];
+		Kopete::Contact *contact = d->manager->account()->contacts().value( url.host() );
 		if ( contact )
 			contact->execute();
 	}

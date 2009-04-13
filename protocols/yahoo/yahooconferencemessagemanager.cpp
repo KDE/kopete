@@ -97,10 +97,9 @@ void YahooConferenceChatSession::slotInviteOthers()
 	QStringList buddies;
 
 	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = account()->contacts().constEnd();
-	Kopete::Contact *myself = account()->myself();
 	for( it = account()->contacts().constBegin(); it != itEnd; ++it )
 	{
-		if( it.value() != myself && !members().contains( it.value() ) )
+		if( !members().contains( it.value() ) )
 			buddies.push_back( it.value()->contactId() );
 	}
 

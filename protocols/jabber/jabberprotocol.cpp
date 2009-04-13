@@ -299,7 +299,7 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 		transport->account()->addContact ( jid.isEmpty() ? contactId : jid ,  metaContact);
 	else
 		account->addContact (contactId,  metaContact);
-	return account->contacts()[contactId];
+	return account->contacts().value(contactId);
 }
 
 XMPP::Status JabberProtocol::kosToStatus( const Kopete::OnlineStatus & status , const QString & message )

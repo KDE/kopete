@@ -332,7 +332,7 @@ void QQAccount::slotNewContactList()
 
 		// clear all date information which will be received.
 		// if the information is not anymore on the server, it will not be received
-		foreach ( Kopete::Contact *kc , contacts() )
+		foreach ( Kopete::Contact *kc , contacts() ) // FIXME: what about myself??
 		{
 			QQContact *c = static_cast<QQContact *>( kc );
 			c->setBlocked( false );
@@ -353,7 +353,7 @@ void QQAccount::slotContactInGroup(const int qqId, const char type, const int gr
 
 	kDebug ( 14210 ) ;
 	QString id = QString::number( qqId );
-	QQContact *c = static_cast<QQContact *>( contacts()[ id ] );
+	QQContact *c = static_cast<QQContact *>( contacts().value( id ) );
 	if( c )
 		; // exited contact.
 	else
@@ -375,7 +375,7 @@ void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
 	if ( id == accountId() )
 		return;
 
-	QQContact *c = static_cast<QQContact *>( contacts()[ id ] );
+	QQContact *c = static_cast<QQContact *>( contacts().value( id ) );
 	if( c )
 		; // exited contact.
 	else
@@ -401,7 +401,7 @@ void QQAccount::slotContactStatusChanged(const Eva::ContactStatus& cs)
 {
 	kDebug(14210) << "qqId = " << cs.qqId << " from " << cs.ip << ":" << cs.port << " status = " << cs.status;
 
-	QQContact* c = static_cast<QQContact*> (contacts()[ QString::number( cs.qqId ) ]);
+	QQContact* c = static_cast<QQContact*> (contacts().value( QString::number( cs.qqId ) ));
 	kDebug( 14140 ) << "get the status from " << cs.qqId;
 	if (c)
 		c->setOnlineStatus( fromEvaStatus(cs.status) );
@@ -434,7 +434,7 @@ Kopete::OnlineStatus QQAccount::fromEvaStatus( char es )
 
 void QQAccount::updateContactStatus()
 {
-	QHashIterator<QString, Kopete::Contact*>itr( contacts() );
+	QHashIterator<QString, Kopete::Contact*>itr( contacts() ); // FIXME: what about myself??
 	for ( ; itr.hasNext(); ) {
 		itr.next();
 		itr.value()->setOnlineStatus( myself()->onlineStatus() );
@@ -449,7 +449,7 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 	QDateTime timestamp;
 	timestamp.setTime_t(header.timestamp);
 
-	QQContact* sender = static_cast<QQContact*>( contacts()[from] );
+	QQContact* sender = static_cast<QQContact*>( contacts().value(from) );
 	Kopete::ContactPtrList contactList;
 	contactList.append( sender );
 	QString guid = to +  ':' + from;
@@ -469,7 +469,7 @@ void QQAccount::slotMessageReceived( const Eva::MessageHeader& header, const Eva
 void QQAccount::slotContactDetailReceived( const QString& id, const QMap<const char*, QByteArray>& map)
 {
 	kDebug(14140) << "contact:" << id;
-	QQContact* contact = dynamic_cast<QQContact*>(contacts()[id]);
+	QQContact* contact = dynamic_cast<QQContact*>(contacts().value(id));
 	if(! contact )
 	{
 		kDebug(14140) << "unknown contact:" << id;

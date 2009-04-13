@@ -315,7 +315,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 
 	foreach( Kopete::Contact * contact, account()->contacts() )
 	{
-		if( !members().contains( contact ) && contact->isOnline() && contact != myself() )
+		if( !members().contains( contact ) && contact->isOnline() )
 		{
 			KAction *a = new Kopete::UI::ContactAction( contact,
 			                                            actionCollection() );

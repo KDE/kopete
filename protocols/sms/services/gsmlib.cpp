@@ -423,7 +423,7 @@ void GSMLib::customEvent(QCustomEvent* e)
 			QString text = ge->Text;
 
 			// Locate a contact
-			SMSContact* contact = static_cast<SMSContact*>( m_account->contacts().find( nr ));
+			SMSContact* contact = static_cast<SMSContact*>( m_account->contacts().value( nr ));
 			if ( contact==NULL )
 			{
 				// No contact found, make a new one

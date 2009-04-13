@@ -125,7 +125,7 @@ GaduAddContactPage::apply( Kopete::Account* a , Kopete::MetaContact* mc )
 		if ( !a->addContact( userid,  mc, Kopete::Account::ChangeKABC )  ) {
 			return false;
 		}
-		GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
+		GaduContact *contact = static_cast<GaduContact*>( a->contacts().value( userid ) );
 
 		contact->setProperty( GaduProtocol::protocol()->propEmail, addUI_->emailEdit_->text().trimmed() );
 		contact->setProperty( GaduProtocol::protocol()->propFirstName, addUI_->fornameEdit_->text().trimmed() );

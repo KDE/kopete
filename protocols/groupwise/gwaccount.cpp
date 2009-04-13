@@ -210,7 +210,7 @@ GroupWiseChatSession * GroupWiseAccount::findChatSessionByGuid( const GroupWise:
 
 GroupWiseContact * GroupWiseAccount::contactForDN( const QString & dn )
 {
-	QHashIterator<QString, Kopete::Contact*> i( contacts() );
+	QHashIterator<QString, Kopete::Contact*> i( contacts() ); // FIXME: what about myself??
 	// check if we have a DN for them
 	while ( i.hasNext() )
 	{
@@ -522,8 +522,6 @@ void GroupWiseAccount::reconcileOfflineChanges()
 	while( it.hasNext() )
 	{
 		it.next();
-		if ( it.value() == myself() )
-			continue;
 
 		GroupWiseContact * c = static_cast< GroupWiseContact *>( it.value() );
 		kDebug() << "  reconciling changes for: '" << c->contactId() << "'";

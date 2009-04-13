@@ -128,7 +128,7 @@ WlmChatSession::inviteContact (const QString & passport)
         requestChatService ();
         return;
     }
-    WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts ()[passport]);
+	WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts().value(passport));
     if (c)
         slotInviteContact (c);
 }
@@ -258,14 +258,13 @@ WlmChatSession::slotActionInviteAboutToShow ()
     m_actionInvite->menu ()->clear ();
 
 
-    QHash < QString, Kopete::Contact * >contactList = account ()->contacts ();
+    QHash < QString, Kopete::Contact * >contactList = account ()->contacts();
     QHash < QString, Kopete::Contact * >::Iterator it, itEnd =
         contactList.end ();
     for (it = contactList.begin (); it != itEnd; ++it)
     {
         if (!members ().contains (it.value ()) && it.value ()->isOnline ()
-            && it.value ()->onlineStatus ().status () ==
-            Kopete::OnlineStatus::Online && it.value () != myself ())
+            && it.value ()->onlineStatus ().status () == Kopete::OnlineStatus::Online)
         {
             KAction *a =
                 new Kopete::UI::ContactAction (it.value (),
@@ -447,7 +446,7 @@ WlmChatSession::setReady (bool value)
         for (it = m_pendingInvitations.begin ();
              it != m_pendingInvitations.end (); ++it)
         {
-            WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts ()[(*it)]);
+	        WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts().value(*it));
             if (c)
                 slotInviteContact (c);
         }
@@ -682,7 +681,7 @@ WlmChatSession::stopSendKeepAlive()
 void
 WlmChatSession::receivedNudge (QString passport)
 {
-    WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts ()[passport]);
+	WlmContact * c = qobject_cast<WlmContact*>(account ()->contacts().value(passport));
     if (!c)
         c = qobject_cast<WlmContact*>(members ().first ());
 

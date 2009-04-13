@@ -88,7 +88,7 @@ namespace Kopete
 
 				if (account)
 				{
-					Contact *contact = account->contacts()[ parts[3] ];
+					Contact *contact = account->contacts().value( parts[3] );
 
 					if (contact)
 					{

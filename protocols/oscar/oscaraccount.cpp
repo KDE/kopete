@@ -979,18 +979,16 @@ void OscarAccount::ssiContactUpdated( const OContact& item )
 	Kopete::Contact* contact = contacts().value( item.name() );
 	if ( !contact )
 		return;
-	else
-	{
-		kDebug(OSCAR_RAW_DEBUG) << "Updating SSI Item";
-		OscarContact* oc = static_cast<OscarContact*>( contact );
-		oc->setSSIItem( item );
-	}
+		
+	kDebug(OSCAR_RAW_DEBUG) << "Updating SSI Item";
+	OscarContact* oc = static_cast<OscarContact*>( contact );
+	oc->setSSIItem( item );
 }
 
 void OscarAccount::userStartedTyping( const QString & contact )
 {
 	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
-	if ( ct && contact != accountId() )
+	if ( ct )
 	{
 		OscarContact * oc = static_cast<OscarContact *>( ct );
 		oc->startedTyping();
@@ -1000,7 +998,7 @@ void OscarAccount::userStartedTyping( const QString & contact )
 void OscarAccount::userStoppedTyping( const QString & contact )
 {
 	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
-	if ( ct && contact != accountId() )
+	if ( ct )
 	{
 		OscarContact * oc = static_cast<OscarContact *>( ct );
 		oc->stoppedTyping();

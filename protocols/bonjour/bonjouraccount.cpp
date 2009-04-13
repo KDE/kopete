@@ -276,7 +276,7 @@ void BonjourAccount::goingOffline(DNSSD::RemoteService::Ptr pointer)
 	pointer->resolve();
 
 	// In case we have lost connection, this may return NULL
-	Kopete::Contact *c = contacts()[pointer->serviceName()];
+	Kopete::Contact *c = contacts().value( pointer->serviceName() );
 
 	if (c)
 		c->setOnlineStatus(Kopete::OnlineStatus::Offline);
@@ -381,7 +381,7 @@ void BonjourAccount::receivedMessage( const QString &message )
 	BonjourContact* messageSender;
 
 	from = message.section( ':', 0, 0 );
-	Kopete::Contact* contact = contacts()[from];
+	Kopete::Contact* contact = contacts().value(from);
 	messageSender = dynamic_cast<BonjourContact *>( contact );
 }
 
@@ -495,10 +495,10 @@ void BonjourAccount::usernameNotInStream(BonjourContactConnection *conn)
 BonjourContact *BonjourAccount::verifyUser(BonjourContactConnection *conn, const QString &user)
 {
 	// First Check the User Exists
-	if (! contacts().keys().contains(user))
+	if (!contacts().value(user))
 		return NULL;
 
-	BonjourContact *c = (BonjourContact *) contacts()[user];
+	BonjourContact *c = (BonjourContact *) contacts().value(user);
 
 	if (c->getremoteAddress() != conn->getHostAddress())
 		return NULL;

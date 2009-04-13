@@ -285,7 +285,7 @@ public:
 	virtual bool hasCustomStatusMenu() const;
 
 	/**
-	 * @brief Retrieve the list of contacts for this account
+	 * @brief Retrieve the list of contacts for this account (except myself contact)
 	 *
 	 * The list is guaranteed to contain only contacts for this account,
 	 * so you can safely use static_cast to your own derived contact class

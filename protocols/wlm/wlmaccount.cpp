@@ -368,7 +368,7 @@ WlmAccount::gotNewContact (const MSN::ContactList & list,
         kDebug() << "contact " << passport << " added to allow list";
         m_blockList.remove(passport);
         m_allowList.insert(passport);
-        WlmContact * ct = qobject_cast<WlmContact*>(contacts().value(passport));
+	    WlmContact * ct = qobject_cast<WlmContact*>(contacts().value(passport));
         if(ct)
             ct->setOnlineStatus(ct->onlineStatus());
     }
@@ -432,7 +432,7 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
                                const QString & filename)
 {
     kDebug (14210) << k_funcinfo;
-    WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[contactId]);
+	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(contactId));
     if (contact)
     {
         // remove from pending display pictures list if applicable
@@ -514,7 +514,7 @@ WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
                                     const MSN::personalInfo & pInfo)
 {
     kDebug (14210) << k_funcinfo;
-    WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[fromPassport.c_str ()]);
+	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(fromPassport.c_str()));
     if (contact)
     {
         // TODO - handle the other fields of pInfo
@@ -550,7 +550,7 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
     Q_UNUSED( clientID );
 
     kDebug (14210) << k_funcinfo;
-    WlmContact *contact = qobject_cast<WlmContact*>(contacts ()[buddy.c_str ()]);
+	WlmContact *contact = qobject_cast<WlmContact*>(contacts().value(buddy.c_str()));
     if (contact)
     {
         contact->setProperty (Kopete::Global::Properties::self ()->
@@ -637,7 +637,7 @@ void
 WlmAccount::contactDisconnected (const MSN::Passport & buddy)
 {
     kDebug (14210) << k_funcinfo;
-    WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[buddy.c_str ()]);
+	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(buddy.c_str()));
     if (contact)
     {
         contact->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
@@ -721,11 +721,11 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
         if(b->properties["isMessengerUser"] == "false")
         {
             // disable this contact
-            WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
+	        WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
             if (!contact)
             {
                 addContact (b->userName.c_str (), QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
-                contact = qobject_cast<WlmContact*>(contacts().value( passport ));
+	            contact = qobject_cast<WlmContact*>(contacts().value( passport ));
             }
             if(contact)
             {
@@ -736,7 +736,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             continue;
         }
 
-        if ( !contacts().value( passport ) )
+	    if ( !contacts().value( passport ) )
         {
             if (!b->friendlyName.length ())
                 b->friendlyName = b->userName;
@@ -752,7 +752,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                 {
                     metacontact = addContact (b->userName.c_str (), QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
 
-                    WlmContact * newcontact = qobject_cast<WlmContact*>(contacts ()[b->userName.c_str ()]);
+	                WlmContact * newcontact = qobject_cast<WlmContact*>(contacts().value(b->userName.c_str()));
                     if(!newcontact)
                         return;
 
@@ -761,7 +761,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 
                 if (metacontact)
                 {
-                    WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
+	                WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
                     if (contact)
                     {
                         contact->setContactSerial (b->properties["contactId"].c_str ());
@@ -782,7 +782,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 
                 if (metacontact)
                 {
-                    WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
+	                WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
                     if (contact)
                     {
                         contact->setProperty (Kopete::Global::Properties::self ()->nickName (), QString (b->friendlyName.c_str ()));
@@ -798,13 +798,13 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             // users in the toplevel group on server side
             if( b->groups.size() == 0)
             {
-                Kopete::Group *current = contacts().value( passport )->metaContact()->groups().first();
+	            Kopete::Group *current = contacts().value( passport )->metaContact()->groups().first();
                 // the contact has no group, so put it on top level group
                 if(current != Kopete::Group::topLevel ())
                 {
-                    contacts().value( passport )->metaContact()->
+	                contacts().value( passport )->metaContact()->
                         moveToGroup(current, Kopete::Group::topLevel ());
-                    qobject_cast<WlmContact*>(contacts().value( passport ))->setCurrentGroup(Kopete::Group::topLevel());
+	                qobject_cast<WlmContact*>(contacts().value( passport ))->setCurrentGroup(Kopete::Group::topLevel());
                 }
                 continue;
             }
@@ -814,7 +814,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                 // users in only one group in the local list
                 if(contacts().value( passport )->metaContact()->groups().size() == 1) 
                 {
-                    Kopete::Group *current = contacts().value( passport )->metaContact()->groups().first();
+	                Kopete::Group *current = contacts().value( passport )->metaContact()->groups().first();
                     Kopete::Group *newgroup = Kopete::ContactList::self ()->findGroup (
                             QString (b->groups.front()->name.c_str()).toAscii ());
 
@@ -823,9 +823,9 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 
                     if(current != newgroup)
                     {
-                        contacts().value( passport )->metaContact()->
+	                    contacts().value( passport )->metaContact()->
                            moveToGroup(current, newgroup);
-                        qobject_cast<WlmContact*>(contacts().value( passport ))->setCurrentGroup(newgroup);
+	                    qobject_cast<WlmContact*>(contacts().value( passport ))->setCurrentGroup(newgroup);
                     }
                 }
             }
@@ -1086,7 +1086,7 @@ void WlmAccount::downloadPendingDisplayPicture()
     QString passport = m_pendingDisplayPictureList.toList().first();
     m_pendingDisplayPictureList.remove(passport);
 
-    WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[passport]);
+	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(passport));
     if(!contact)
         return;
 
@@ -1165,7 +1165,7 @@ WlmAccount::gotAddedContactToAddressBook (bool added, const QString & passport, 
         m_serverSideContactsPassports.insert (passport);
         addContact (passport, QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
 
-        WlmContact * newcontact = qobject_cast <WlmContact *>(contacts ()[passport]);
+	    WlmContact * newcontact = qobject_cast <WlmContact *>(contacts().value(passport));
         if (!newcontact)
             return;
 
@@ -1386,7 +1386,7 @@ WlmAccount::receivedOIM (const QString & id, const QString & message)
 {
     kDebug (14210) << k_funcinfo;
     QString contactId = m_oimList[id];
-    WlmContact * contact = qobject_cast<WlmContact*>(contacts ()[contactId]);
+	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value( contactId));
 
     Kopete::Message msg = Kopete::Message (contact, myself ());
     msg.setPlainBody (message);

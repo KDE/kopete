@@ -82,7 +82,7 @@ bool WPAccount::createContact(const QString &contactId, Kopete::MetaContact *par
 {
 //	kDebug(14170) << "[WPAccount::createContact] contactId: " << contactId;
 
-	if (!contacts()[contactId]) {
+	if (!contacts().value(contactId)) {
 		WPContact *newContact = new WPContact(this, contactId, parentContact->displayName(), parentContact);
 		return newContact != 0;
 	} else {
@@ -111,10 +111,10 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 
 	if (isConnected()) {
 		if (!isAway()) {
-			if(!contacts()[From]) {
+			if(!contacts().value(From)) {
 				addContact(From, From, 0, Kopete::Account::DontChangeKABC);
 			}
-			static_cast<WPContact *>(contacts()[From])->slotNewMessage(Body, Arrival);
+			static_cast<WPContact *>(contacts().value(From))->slotNewMessage(Body, Arrival);
 		}
 		else {
 			if (!theAwayMessage.isEmpty()) mProtocol->sendMessage(theAwayMessage, From);

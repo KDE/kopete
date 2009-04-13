@@ -279,7 +279,7 @@ GaduAccount::fillActionMenu( KActionMenu *actionMenu )
 		p->friendsModeAction->setEnabled( false );
 	}
 
-	if ( contacts().count() > 1 ) {
+	if ( !contacts().isEmpty() ) {
 		if ( p->saveListDialog ) {
 			p->listToFileAction->setEnabled( false );
 		}
@@ -638,7 +638,7 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 		return;
 	}
 
-	contact = static_cast<GaduContact*> ( contacts()[ QString::number( gaduMessage->sender_id ) ] );
+	contact = static_cast<GaduContact*> ( contacts().value( QString::number( gaduMessage->sender_id ) ) );
 
 	if ( !contact ) {
 		if ( p->ignoreAnons == true ) {
@@ -668,7 +668,7 @@ GaduAccount::ackReceived( unsigned int recipient  )
 {
 	GaduContact* contact;
 
-	contact = static_cast<GaduContact*> ( contacts()[ QString::number( recipient ) ] );
+	contact = static_cast<GaduContact*> ( contacts().value( QString::number( recipient ) ) );
 	if ( contact ) {
 		kDebug(14100) << "####" << "Received an ACK from " << contact->uin();
 		contact->messageAck();
@@ -685,7 +685,7 @@ GaduAccount::contactStatusChanged( KGaduNotify* gaduNotify )
 
 	GaduContact* contact;
 
-	contact = static_cast<GaduContact*>( contacts()[ QString::number( gaduNotify->contact_id ) ] );
+	contact = static_cast<GaduContact*>( contacts().value( QString::number( gaduNotify->contact_id ) ) );
 	if( !contact ) {
 		kDebug(14100) << "Notify not in the list " << gaduNotify->contact_id;
 		return;
@@ -796,7 +796,7 @@ GaduAccount::slotIncomingDcc( unsigned int uin )
 		return;
 	}
 
-	contact = static_cast<GaduContact*>( contacts()[ QString::number( uin ) ] );
+	contact = static_cast<GaduContact*>( contacts().value( QString::number( uin ) ) );
 
 	if ( !contact ) {
 	  kDebug(14100) << "attempt to make dcc connection from unknown uin " << uin;
@@ -837,14 +837,14 @@ void
 GaduAccount::startNotify()
 {
 	int i = 0;
-	if ( !contacts().count() ) {
+	if ( contacts().isEmpty() ) { // FIXME: what about myself??
 		return;
 	}
 
 	uin_t* userlist = 0;
 	userlist = new uin_t[ contacts().count() ];
 
-	QHashIterator<QString, Kopete::Contact*> it(contacts());
+	QHashIterator<QString, Kopete::Contact*> it(contacts()); // FIXME: what about myself??
 	for(  i=0 ; it.hasNext() ; ) {
 		it.next();
 		userlist[i++] = static_cast<GaduContact*> (it.value())->uin();
@@ -897,7 +897,7 @@ GaduAccount::userlist( const QString& contactsListString )
 			continue;
 		}
 
-		if ( contacts()[ contactsList[i].uin ] ) {
+		if ( contacts().value( contactsList[i].uin ) ) {
 			kDebug(14100) << "UIN already exists in contacts "<< contactsList[i].uin;
 		}
 		else {
@@ -908,7 +908,7 @@ GaduAccount::userlist( const QString& contactsListString )
 				continue;
 			}
 		}
-		contact = static_cast<GaduContact*>( contacts()[ contactsList[i].uin ] );
+		contact = static_cast<GaduContact*>( contacts().value( contactsList[i].uin ) );
 		if ( contact == NULL ) {
 			kDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \"" << contactsList[i].uin << "\"";
 			continue;
@@ -1071,7 +1071,7 @@ GaduAccount::userlist()
 	GaduContact* contact;
 	GaduContactsList* contactsList = new GaduContactsList();
 
-	if ( !contacts().count() ) {
+	if ( contacts().isEmpty() ) {
 		return contactsList;
 	}
 
@@ -1080,9 +1080,7 @@ GaduAccount::userlist()
 	for( ; contactsIterator.hasNext() ; ) {
 		contactsIterator.next();
 		contact = static_cast<GaduContact*>( contactsIterator.value() );
-		if ( contact->uin() != static_cast<GaduContact*>( myself() )->uin() ) {
-			contactsList->addContact( *contact->contactDetails() );
-		}
+		contactsList->addContact( *contact->contactDetails() );
 	}
 
 	return contactsList;

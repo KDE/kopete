@@ -223,7 +223,7 @@ void AIMProtocolHandler::handleURL(const KUrl &url) const
 
 
 AIMProtocol::AIMProtocol(QObject *parent, const QVariantList &)
-: OscarProtocol( AIMProtocolFactory::componentData(), parent ),
+: OscarProtocol( AIMProtocolFactory::componentData(), parent, true ),
 	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::PropertyTmpl::RichTextProperty)
 {
 	if (protocolStatic_)

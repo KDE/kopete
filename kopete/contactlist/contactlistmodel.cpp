@@ -382,9 +382,9 @@ bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelInde
 
 			kDebug() << "protocolId=" << protocolId << ", accountId=" << accountId << ", contactId=" << contactId;
 			Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId, accountId );
-			if( account && account->contacts().contains( contactId ) )
+			if( account && account->contacts().value( contactId ) )
 			{
-				Kopete::Contact *source_contact = account->contacts()[ contactId ];
+				Kopete::Contact *source_contact = account->contacts().value( contactId );
 				if( source_contact )
 				{
 					if( source_contact->metaContact()->isTemporary() )

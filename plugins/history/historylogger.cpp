@@ -382,10 +382,10 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 				{ //parse only if we don't hide it
 
 					QString f=msgElem2.attribute("from" );
-					const Kopete::Contact *from=f.isNull()? 0L : contact->account()->contacts()[f];
+					const Kopete::Contact *from=f.isNull()? 0L : contact->account()->contacts().value( f );
 
 					if(!from)
-						from= dir==Kopete::Message::Inbound ? contact : contact->account()->myself();
+						from = (dir == Kopete::Message::Inbound) ? contact : contact->account()->myself();
 
 					Kopete::ContactPtrList to;
 					to.append( dir==Kopete::Message::Inbound ? contact->account()->myself() : contact );
@@ -586,10 +586,10 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
 				{
 					Q_ASSERT(currentContact);
 					QString f=msgElem.attribute("from" );
-					const Kopete::Contact *from=f.isNull() ? 0L : currentContact->account()->contacts()[f];
+					const Kopete::Contact *from=f.isNull() ? 0L : currentContact->account()->contacts().value(f);
 
-					if(!from)
-						from= dir==Kopete::Message::Inbound ? currentContact : currentContact->account()->myself();
+					if( !from )
+						from = (dir == Kopete::Message::Inbound) ? currentContact : currentContact->account()->myself();
 
 					Kopete::ContactPtrList to;
 					to.append( dir==Kopete::Message::Inbound ? currentContact->account()->myself() : const_cast<Kopete::Contact*>(currentContact) );

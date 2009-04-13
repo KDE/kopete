@@ -570,6 +570,7 @@ void YahooAccount::disconnect()
 		for ( it = contacts().constBegin(); it != itEnd; ++it )
 			static_cast<YahooContact *>( it.value() )->setOnlineStatus( m_protocol->Offline );
 
+		static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Offline );
 	}
 	else
 	{       //make sure we set everybody else offline explicitly, just for cleanup
@@ -579,6 +580,8 @@ void YahooAccount::disconnect()
 		QHash<QString,Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
 		for ( it = contacts().constBegin(); it != itEnd; ++it )
 			static_cast<YahooContact*>( it.value() )->setOnlineStatus( m_protocol->Offline );
+
+		static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Offline );
 	}
 
 	initConnectionSignals( DeleteConnections );
@@ -640,7 +643,7 @@ void YahooAccount::fillActionMenu( KActionMenu *actionMenu )
 
 YahooContact *YahooAccount::contact( const QString &id )
 {
-	return static_cast<YahooContact *>(contacts()[id]);
+	return static_cast<YahooContact *>(contacts().value( id ));
 }
 
 bool YahooAccount::createContact(const QString &contactId, Kopete::MetaContact *parentContact )
@@ -1207,8 +1210,7 @@ void YahooAccount::prepareConference( const QString &who )
 	QHash<QString,Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
 	for( it = contacts().constBegin(); it != itEnd; ++it )
 	{
-		if( it.value() != myself() )
-			buddies.push_back( it.value()->contactId() );
+		buddies.push_back( it.value()->contactId() );
 	}
 
 	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );

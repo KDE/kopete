@@ -405,7 +405,6 @@ void MeanwhileSession::syncContactsToServer()
 
         /* Find the group that the metacontact is in */
         Kopete::MetaContact *mc = contact->metaContact();
-        /* myself doesn't have a metacontact */
         if (!mc)
             continue;
 
@@ -565,15 +564,14 @@ MeanwhileContact *MeanwhileSession::conversationContact(
     }
     QString user(target->user);
 
-    MeanwhileContact *contact =
-        static_cast<MeanwhileContact *>(account->contacts()[user]);
+    MeanwhileContact *contact = static_cast<MeanwhileContact *>(account->contacts().value(user));
 
     struct mwLoginInfo *logininfo = mwConversation_getTargetInfo(conv);
     QString name = getNickName(logininfo);
 
     if (!contact) {
 	account->addContact(user, name, 0L, Kopete::Account::Temporary);
-        contact = static_cast<MeanwhileContact *>(account->contacts()[user]);
+	    contact = static_cast<MeanwhileContact *>(account->contacts().value(user));
     } else
         contact->setNickName(name);
 
@@ -746,7 +744,7 @@ void MeanwhileSession::handleAwareListAware(struct mwAwareSnapshot *snapshot)
 {
     HERE;
     MeanwhileContact *contact = static_cast<MeanwhileContact *>
-        (account->contacts()[snapshot->id.user]);
+		(account->contacts().value(snapshot->id.user));
 
     if (contact == 0L)
         return;
@@ -953,7 +951,7 @@ void MeanwhileSession::handleStorageLoad(struct mwServiceStorage * /* srvc */,
             struct mwSametimeUser *stuser = (struct mwSametimeUser *)cl->data;
 
             MeanwhileContact *contact = static_cast<MeanwhileContact *>
-                (account->contacts()[mwSametimeUser_getUser(stuser)]);
+		        (account->contacts().value(mwSametimeUser_getUser(stuser)));
 
             if (contact != 0L)
                 continue;

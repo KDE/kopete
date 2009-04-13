@@ -243,7 +243,7 @@ void SkypeAccount::disconnect() {
 SkypeContact *SkypeAccount::contact(const QString &id) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
-	return static_cast<SkypeContact *>(contacts()[id]);//get the contact and convert it into the skype contact, there are no other contacts anyway
+	return static_cast<SkypeContact *>(contacts().value(id));//get the contact and convert it into the skype contact, there are no other contacts anyway
 }
 
 void SkypeAccount::connect(const Kopete::OnlineStatus &Status) {
@@ -373,8 +373,8 @@ void SkypeAccount::newUser(const QString &name, int groupID) {
 		}
 	}
 
-	if (contacts().contains(name)){
-		Kopete::Contact * contact = contacts().value(name); //get metacontact of skype contact name
+	Kopete::Contact * contact = contacts().value(name);
+	if (contact){
 		if (skypeGroup != contact->metaContact()->groups().first()){ // if skype Group is different like kopete group, move metacontact to skype group
 			kDebug() << "Moving contact" << name << "to group" << group << endl;
 			contact->metaContact()->moveToGroup(contact->metaContact()->groups().first(), skypeGroup);

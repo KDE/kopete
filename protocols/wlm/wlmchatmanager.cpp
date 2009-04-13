@@ -209,7 +209,7 @@ WlmChatManager::leftConversation (MSN::SwitchboardServerConnection * conn,
 
     if (chat)
     {
-        WlmContact * contact = qobject_cast<WlmContact*>(account ()->contacts ()[passport]);
+	    WlmContact * contact = qobject_cast<WlmContact*>(account ()->contacts().value(passport));
         if (!contact)
             return;
         chat->removeContact (contact);
@@ -243,13 +243,12 @@ WlmChatManager::createChat (MSN::SwitchboardServerConnection * conn)
     std::list < MSN::Passport >::iterator users = conn->users.begin ();
     for (; users != conn->users.end (); ++users)
     {
-        Kopete::Contact * contact =
-            account ()->contacts ()[(*users).c_str ()];
+        Kopete::Contact * contact = account ()->contacts().value((*users).c_str());
         if (!contact)
         {
             account ()->addContact ((*users).c_str (), QString(), 0L,
                                     Kopete::Account::Temporary);
-            contact = account ()->contacts ()[(*users).c_str ()];
+            contact = account ()->contacts().value((*users).c_str());
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
         }
         chatmembers.append (contact);
@@ -277,12 +276,12 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
     Q_UNUSED( friendlyname );
 
     Kopete::ContactPtrList chatmembers;
-    Kopete::Contact * contact = account ()->contacts ()[passport];
+	Kopete::Contact * contact = account ()->contacts().value(passport);
     if (!contact)
     {
         account ()->addContact (passport, QString(), 0L,
                                 Kopete::Account::Temporary);
-        contact = account ()->contacts ()[passport];
+	    contact = account ()->contacts().value(passport);
         contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
     }
     // populate chatmembers from SwitchboardServerConnection
@@ -290,12 +289,12 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
     for (; users != conn->users.end (); ++users)
     {
         Kopete::Contact * contact =
-            account ()->contacts ()[(*users).c_str ()];
+		    account ()->contacts().value((*users).c_str());
         if (!contact)
         {
             account ()->addContact ((*users).c_str (), QString(), 0L,
                                     Kopete::Account::Temporary);
-            contact = account ()->contacts ()[(*users).c_str ()];
+	        contact = account ()->contacts().value((*users).c_str());
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
         }
         chatmembers.append (contact);
@@ -343,12 +342,12 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
     // Pass it on to the contact to process and display via a KMM
     if (chat)
     {
-        Kopete::Contact * contact = account ()->contacts ()[from];
+	    Kopete::Contact * contact = account ()->contacts().value(from);
         if(!contact)
         {
             account ()->addContact (from, QString(), 0L,
                                             Kopete::Account::Temporary);
-            contact = account ()->contacts ()[from];
+	        contact = account ()->contacts().value(from);
         }
         Kopete::Message * newMessage =
             new Kopete::Message (contact, chat->members ());
@@ -457,7 +456,7 @@ WlmChatManager::messageSentACK (MSN::SwitchboardServerConnection * conn,
 void
 WlmChatManager::requestDisplayPicture (QString contactId)
 {
-    Kopete::Contact * contact = account ()->contacts ()[contactId];
+	Kopete::Contact * contact = account ()->contacts().value(contactId);
 
     if (!contact)
         return;
@@ -474,7 +473,7 @@ void
 WlmChatManager::receivedTypingNotification (MSN::SwitchboardServerConnection *
                                             conn, const QString & contactId)
 {
-    Kopete::Contact * contact = account ()->contacts ()[contactId];
+	Kopete::Contact * contact = account ()->contacts().value(contactId);
 
     if (!contact)
         return;
@@ -517,12 +516,12 @@ WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn,
     {
         return;
     }
-    Kopete::Contact * contact = account ()->contacts ()[from.c_str()];
+	Kopete::Contact * contact = account ()->contacts().value(from.c_str());
     if(!contact)
     {
         account ()->addContact (from.c_str(), QString(), 0L,
                                         Kopete::Account::Temporary);
-        contact = account ()->contacts ()[from.c_str()];
+	    contact = account ()->contacts().value(from.c_str());
     }
     if(!contact)
         return;

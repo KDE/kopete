@@ -100,7 +100,10 @@ Contact::Contact( Account *account, const QString &contactId,
 	// (ex: for unit tests or chat window style preview)
 	if ( account )
 	{
-		account->registerContact( this );
+		// Don't register myself contacts because otherwise we can't have own contact in contact list.
+		if ( d->metaContact != Kopete::ContactList::self()->myself() )
+			account->registerContact( this );
+
 		connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
 	}
 

@@ -272,9 +272,10 @@ void AccountManager::removeAccount( Account *account )
 	for ( it = contactList.constBegin(); it != itEnd; ++it )
 	{
 		Contact* c = it.value();
-		MetaContact* mc = c->metaContact();
-		if ( mc == ContactList::self()->myself() )
+		if ( !c )
 			continue;
+
+		MetaContact* mc = c->metaContact();
 		mc->removeContact( c );
 		c->deleteLater();
 		if ( mc->contacts().count() == 0 ) //we can delete the metacontact

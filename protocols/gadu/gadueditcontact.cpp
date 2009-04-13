@@ -174,7 +174,7 @@ GaduEditContact::slotApply()
 			kDebug(14100) << "There was a problem adding UIN "<< cl_->uin << "to users list";
 			return;
 		}
-		contact_ = static_cast<GaduContact*>( account_->contacts()[ cl_->uin ] );
+		contact_ = static_cast<GaduContact*>( account_->contacts().value( cl_->uin ) );
 		if ( contact_ == NULL ) {
 			kDebug(14100) << "oops, no Kopete::Contact in contacts()[] for some reason, for \"" << cl_->uin << "\"";
 			return;

@@ -302,13 +302,19 @@ void JabberTransport::removeAllContacts( )
 	*/ //we don't really care, we remove everithing anyway.
 
 	kDebug(JABBER_DEBUG_GLOBAL) << "delete all contacts of the transport";
-	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd(); 
+	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contacts().constEnd();
 	for( it = contacts().constBegin(); it != itEnd; ++it )
 	{
 		XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
 		rosterTask->remove ( static_cast<JabberBaseContact*>(it.value())->rosterItem().jid() );
 		rosterTask->go ( true );
 	}
+
+	// Remove myself
+	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
+	rosterTask->remove ( static_cast<JabberBaseContact*>(myself())->rosterItem().jid() );
+	rosterTask->go ( true );
+
 	m_status = Removing; //in theory that's already our status
 	Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
@@ -344,7 +350,7 @@ void JabberTransport::eatContacts( )
 	for( it = cts.constBegin(); it != itEnd; ++it )
 	{
 		JabberContact *contact=dynamic_cast<JabberContact*>(it.value());
-		if( contact && !contact->transport() && contact->rosterItem().jid().domain() == myself()->contactId() && contact != account()->myself())
+		if( contact && !contact->transport() && contact->rosterItem().jid().domain() == myself()->contactId())
 		{
 			XMPP::RosterItem item=contact->rosterItem();
 			Kopete::MetaContact *mc=contact->metaContact();

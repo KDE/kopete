@@ -90,7 +90,7 @@ WlmTransferManager::fileTransferInviteResponse (MSN::SwitchboardServerConnection
     {
         transferSessionData tfd = transferSessions[sessionID];
         Kopete::ContactPtrList chatmembers;
-        chatmembers.append (account ()->contacts ()[tfd.to]);
+	    chatmembers.append (account ()->contacts().value(tfd.to));
         WlmChatSession *_manager =
             qobject_cast <WlmChatSession *>(Kopete::ChatSessionManager::self ()->
               findChatSession (account ()->myself (), chatmembers,
@@ -121,8 +121,7 @@ void
 WlmTransferManager::incomingFileTransfer (MSN::SwitchboardServerConnection * conn,
                                           const MSN::fileTransferInvite & ft)
 {
-    Kopete::Contact * contact =
-        account ()->contacts ()[ft.userPassport.c_str ()];
+    Kopete::Contact * contact = account ()->contacts().value(ft.userPassport.c_str());
 
     if(!contact)
 	    return;
@@ -192,7 +191,7 @@ WlmTransferManager::slotAccepted (Kopete::Transfer * ft,
         return;
 
     // find an existent session, or create a new one
-    chatmembers.append (account ()->contacts ()[from]);
+	chatmembers.append (account ()->contacts().value(from));
     WlmChatSession *_manager = qobject_cast <WlmChatSession *>
         (Kopete::ChatSessionManager::self ()->
           findChatSession (account ()->myself (), chatmembers,
@@ -275,12 +274,9 @@ WlmTransferManager::gotFileTransferSucceeded (MSN::SwitchboardServerConnection *
         Kopete::ContactPtrList chatmembers;
         if (transfer->info ().direction () ==
             Kopete::FileTransferInfo::Incoming)
-            chatmembers.append (account ()->
-                                contacts ()[transferSessions[sessionID].
-                                            from]);
+            chatmembers.append (account ()->contacts().value(transferSessions[sessionID].from));
         else
-            chatmembers.append (account ()->
-                                contacts ()[transferSessions[sessionID].to]);
+	        chatmembers.append (account ()->contacts().value(transferSessions[sessionID].to));
 
         WlmChatSession *_manager = qobject_cast <WlmChatSession *>
             (Kopete::ChatSessionManager::self ()->
@@ -314,9 +310,9 @@ WlmTransferManager::slotCanceled ()
 
     Kopete::ContactPtrList chatmembers;
     if (ft->info ().direction () == Kopete::FileTransferInfo::Incoming)
-        chatmembers.append (account ()->contacts ()[session.from]);
+	    chatmembers.append (account ()->contacts().value(session.from));
     else
-        chatmembers.append (account ()->contacts ()[session.to]);
+	    chatmembers.append (account ()->contacts().value(session.to));
 
     WlmChatSession *_manager = qobject_cast <WlmChatSession *>
         (Kopete::ChatSessionManager::self ()->

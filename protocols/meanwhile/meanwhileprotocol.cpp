@@ -110,7 +110,7 @@ Kopete::Contact *MeanwhileProtocol::deserializeContact(
     }
 
     theAccount->addContact(contactId, metaContact, Kopete::Account::DontChangeKABC);
-    return theAccount->contacts()[contactId];
+	return theAccount->contacts().value(contactId);
 }
 
 const Kopete::OnlineStatus MeanwhileProtocol::accountOfflineStatus()

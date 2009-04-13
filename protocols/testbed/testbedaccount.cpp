@@ -166,7 +166,7 @@ void TestbedAccount::receivedMessage( const QString &message )
 	TestbedContact* messageSender;
 
 	from = message.section( ':', 0, 0 );
-	Kopete::Contact* contact = contacts()[from];
+	Kopete::Contact* contact = contacts().value(from);
 	messageSender = dynamic_cast<TestbedContact *>( contact );
 
 	kDebug( 14210 ) << " got a message from " << from << ", " << messageSender << ", is: " << message;

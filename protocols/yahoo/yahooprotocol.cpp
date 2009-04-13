@@ -184,7 +184,7 @@ Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaCon
 	}
 
 	theAccount->addContact(contactId,  metaContact, Kopete::Account::DontChangeKABC);
-	return theAccount->contacts()[contactId];
+	return theAccount->contacts().value(contactId);
 }
 
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , Kopete::Account* )

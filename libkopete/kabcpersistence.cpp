@@ -317,7 +317,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 						{
 							if( act->protocol() != proto )
 								continue;
-							Kopete::Contact *c= act->contacts()[*it];
+							Kopete::Contact *c= act->contacts().value(*it);
 							if(c)
 							{
 								otherMc=c->metaContact();

@@ -112,7 +112,6 @@ Account::Account( Protocol *parent, const QString &accountId )
 
 Account::~Account()
 {
-	d->contacts.remove( d->myself->contactId() );
 	// Delete all registered child contacts first
 	foreach (Contact* c, d->contacts) QObject::disconnect(c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, 0);
 	qDeleteAll(d->contacts);
@@ -244,7 +243,9 @@ bool Account::excludeConnect() const
 
 void Account::registerContact( Contact *c )
 {
-	if ( d->contacts.value( c->contactId(), 0 ) )
+	Q_ASSERT ( c->metaContact() != Kopete::ContactList::self()->myself() );
+
+	if ( d->contacts.value( c->contactId() ) )
 	{
 		kWarning(14010) << "Contact already exists!!! accountId: " << c->account() << " contactId: " << c->contactId();
 		return;
@@ -270,7 +271,7 @@ const QHash<QString, Contact*>& Account::contacts()
 Kopete::MetaContact* Account::addContact( const QString &contactId, const QString &displayName , Group *group, AddMode mode  )
 {
 
-	if ( contactId == d->myself->contactId() )
+	if ( !protocol()->canAddMyself() && contactId == d->myself->contactId() )
 	{
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.", contactId, accountId()), i18n("Error Creating Contact")
@@ -280,7 +281,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 
 	bool isTemporary = mode == Temporary;
 
-	Contact *c = d->contacts[ contactId ];
+	Contact *c = d->contacts.value( contactId );
 
 	if(!group)
 		group=Group::topLevel();
@@ -336,7 +337,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 
 bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode mode )
 {
-	if ( contactId == myself()->contactId() )
+	if ( !protocol()->canAddMyself() && contactId == myself()->contactId() )
 	{
 	    	KMessageBox::error( Kopete::UI::Global::mainWidget(),
 			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.", contactId, accountId()), i18n("Error Creating Contact")
@@ -345,7 +346,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 	}
 
 	bool isTemporary= parent->isTemporary();
-	Contact *c = d->contacts[ contactId ];
+	Contact *c = d->contacts.value( contactId );
 	if ( c && c->metaContact() )
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
@@ -447,28 +448,16 @@ Contact * Account::myself() const
 
 void Account::setMyself( Contact *myself )
 {
-	//FIXME  does it make sens to change the myself contact to another ?   - Olivier 2005-11-21
-
-	bool wasConnected = isConnected();
-
-	if ( d->myself )
-	{
-		QObject::disconnect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-		QObject::disconnect( d->myself, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) );
-	}
+	Q_ASSERT( !d->myself );
 
 	d->myself = myself;
-
-//	d->contacts.remove( myself->contactId() );
 
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
 		this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) );
 
-	if ( isConnected() != wasConnected )
+	if ( isConnected() )
 		emit isConnectedChanged();
 }
 
@@ -517,7 +506,7 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 		it.next();
 
 		Contact *c = it.value();
-		if ( c && c != d->myself )
+		if ( c )
 			c->setOnlineStatus( status );
 	}
 }
