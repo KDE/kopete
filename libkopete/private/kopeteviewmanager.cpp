@@ -368,7 +368,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
                 Kopete::MetaContact *mc= msg.from()->metaContact();
                 if(mc)
                 {
-                    notify->addContext( qMakePair( QString::fromLatin1("metacontact") , mc->metaContactId().toString()) );
+                    notify->addContext( qMakePair( QString::fromLatin1("contact") , mc->metaContactId().toString()) );
                     foreach( Kopete::Group *g , mc->groups() )
                     {
                         notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
