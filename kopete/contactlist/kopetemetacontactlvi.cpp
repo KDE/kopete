@@ -479,7 +479,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 				notify->setPixmap(QPixmap::fromImage(m_metaContact->picture().image()));
 				connect(notify, SIGNAL(activated(unsigned int )) , this, SLOT( execute() ) );
 
-				notify->addContext( qMakePair( QString::fromLatin1("metacontact") , m_metaContact->metaContactId()) );
+				notify->addContext( qMakePair( QString::fromLatin1("contact") , m_metaContact->metaContactId()) );
 				foreach( Kopete::Group *g , m_metaContact->groups() )
 				{
 					notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
