@@ -20,6 +20,8 @@
 #define KOPETE_UI_CONTACTLISTMODEL_H
 
 #include <QAbstractItemModel>
+#include <QPair>
+#include <QHash>
 
 #include <kopete_export.h>
 
