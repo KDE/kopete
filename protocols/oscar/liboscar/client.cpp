@@ -625,6 +625,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 		Oscar::Message response ( msg );
 		if ( msg.hasProperty( Oscar::Message::StatusMessageRequest ) )
 		{
+			kDebug( OSCAR_RAW_DEBUG ) << "Away message request";
 			QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
 			response.setText( Oscar::Message::UserDefined, statusMessage(), codec );
 			emit userReadsStatusMessage( msg.sender() );
@@ -656,8 +657,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 			{
 				Buffer buffer;
 
-				QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
-				buffer.addLEDBlock( codec->fromUnicode( statusMessage() ) );
+				buffer.addLEDBlock( statusMessage().toUtf8() );
 				//TODO: Change this to text/x-aolrtf
 				buffer.addLEDBlock( "text/plain" );
 
@@ -713,8 +713,7 @@ void Client::receivedMessage( const Oscar::Message& msg )
 				// we got a response to a status message request.
 				Buffer buffer( msg.plugin()->data() );
 
-				QTextCodec* codec = d->codecProvider->codecForContact( msg.sender() );
-				QString awayMessage = codec->toUnicode( buffer.getLEDBlock() );
+				QString awayMessage = QString::fromUtf8( buffer.getLEDBlock() );
 				kDebug( OSCAR_RAW_DEBUG ) << "Received an away message: " << awayMessage;
 				emit receivedAwayMessage( msg.sender(), awayMessage );
 			}
