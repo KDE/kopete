@@ -272,7 +272,6 @@ Use 0 seconds to never abort the creation.</string>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
   <customwidgets>
   <customwidget>
    <class>Q3GroupBox</class>

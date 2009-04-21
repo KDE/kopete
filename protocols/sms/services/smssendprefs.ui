@@ -179,7 +179,6 @@
     <tabstop>program</tabstop>
     <tabstop>provider</tabstop>
 </tabstops>
-<layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kurlrequester.h</includehint>
     <includehint>klineedit.h</includehint>

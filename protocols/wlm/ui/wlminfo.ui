@@ -152,8 +152,6 @@ If not, the user has not added you to their list, or has removed you.</string>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>m_id</tabstop>
   <tabstop>m_displayName</tabstop>

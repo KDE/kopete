@@ -212,8 +212,6 @@ Choosing Offline status will disconnect you, with given description.</string>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>Q3ButtonGroup</class>

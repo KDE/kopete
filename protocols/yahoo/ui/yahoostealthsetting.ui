@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>YahooStealthSetting</class>
  <widget class="QWidget" name="YahooStealthSetting" >
   <property name="geometry" >
@@ -72,8 +69,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>radioOnline</tabstop>
  </tabstops>

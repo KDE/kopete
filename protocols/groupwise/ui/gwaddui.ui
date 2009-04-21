@@ -137,8 +137,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>m_tabWidget</tabstop>
   <tabstop>rb_userName</tabstop>

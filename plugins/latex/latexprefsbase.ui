@@ -104,7 +104,6 @@ This plugin requires that the ImageMagick convert program be installed in order 
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
   <customwidgets>
   <customwidget>
    <class>KIntNumInput</class>

@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>WPEditAccountBase</class>
  <widget class="QWidget" name="WPEditAccountBase" >
   <property name="geometry" >
@@ -376,8 +373,6 @@ However, the recommended way is to ask your administrator to create this directo
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>KIntSpinBox</class>

@@ -54,8 +54,6 @@
   <zorder>icon_theme_list</zorder>
   <zorder>btnManageThemes</zorder>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <resources/>
  <connections>
   <connection>

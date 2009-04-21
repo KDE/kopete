@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>MetaContactSelectorWidget_Base</class>
  <widget class="QWidget" name="MetaContactSelectorWidget_Base" >
   <property name="geometry" >
@@ -78,8 +75,6 @@
    </item>
   </layout>
         </widget>
- <layoutdefault spacing="6" margin="11" />
- <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
   <customwidgets>
 	<customwidget>
 		<class>Kopete::UI::ListView::ListView</class>

@@ -993,7 +993,6 @@ If you do not currently have an account, please click the button to create one.<
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
  <customwidgets>
   <customwidget>
    <class>KLineEdit</class>

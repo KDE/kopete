@@ -212,8 +212,6 @@ If not activated, all chat windows except the active one will notify you that an
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>kcfg_trayflashNotify</tabstop>
   <tabstop>kcfg_trayflashNotifyLeftClickOpensMessage</tabstop>

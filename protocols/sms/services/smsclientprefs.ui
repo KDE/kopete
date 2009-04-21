@@ -123,7 +123,6 @@
         </widget>
     </vbox>
 </widget>
-<layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kurlrequester.h</includehint>
     <includehint>klineedit.h</includehint>

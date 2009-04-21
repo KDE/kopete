@@ -940,7 +940,6 @@ If you do not currently have an ICQ account, please click the button to create o
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
  <customwidgets>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
