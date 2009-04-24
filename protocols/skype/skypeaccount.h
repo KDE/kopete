@@ -527,6 +527,10 @@ Q_OBJECT
 		 * @param userId what user
 		 */
 		void blockUser(const QString &userId);
+		/**
+		 * Listen commands of SkypeActionHandler for web SkypeButtons
+		 */
+		void SkypeActionHandler(const QString &message);
 	signals:
 		/**
 		 * This is emited when the message has been sent by skype

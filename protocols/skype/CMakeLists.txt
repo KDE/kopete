@@ -62,6 +62,13 @@ set(
 	skypeprotocol.cpp
 )
 
+QT4_ADD_DBUS_ADAPTOR(
+	kopete_skype_SRCS
+	org.kde.kopete.SkypeActionHandler.xml
+	skypeaccount.h
+	SkypeAccount
+)
+
 kde4_add_plugin(
 	kopete_skype
 	${kopete_skype_SRCS}
@@ -77,7 +84,7 @@ target_link_libraries(
 ########### next target ###############
 
 add_subdirectory( icons )
-# add_subdirectory( skypebuttons ) - not done all
+add_subdirectory( skypebuttons )
 
 ########### install files ###############
 

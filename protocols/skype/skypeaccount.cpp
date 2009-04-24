@@ -25,6 +25,7 @@
 #include "skypecalldialog.h"
 #include "skypechatsession.h"
 #include "skypeconference.h"
+#include "skypeactionhandleradaptor.h"
 
 #include <qstring.h>
 #include <kopetemetacontact.h>
@@ -156,6 +157,10 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	QObject::connect(&d->skype, SIGNAL(groupCall(const QString&, const QString& )), this, SLOT(groupCall(const QString&, const QString& )));
 	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRemoved (Kopete::Group *)), this, SLOT(deleteGroup (Kopete::Group *) ) );
 	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRenamed (Kopete::Group *, const QString& )), this, SLOT(renameGroup (Kopete::Group *, const QString& )) );
+
+	//Set SkypeActionHandler for web SkypeButtons
+	new KopeteAdaptor(this);
+	QDBusConnection::sessionBus().registerObject("/SkypeActionHandler", this);
 
 	//set values for the connection (should be updated if changed)
 	d->skype.setValues(launchType, author);
@@ -484,8 +489,7 @@ void SkypeAccount::makeCall(const QString &users) {
 }
 
 void SkypeAccount::makeTestCall() {
-	startCall();
-	d->skype.makeCall("echo123");
+	makeCall("echo123");
 }
 
 bool SkypeAccount::getCallControl() const {
@@ -992,6 +996,54 @@ void SkypeAccount::renameGroup (Kopete::Group * group, const QString &oldname){
 void SkypeAccount::openFileTransfer(const QString &user, const QString &url) {
 	kDebug() << k_funcinfo << user << url << endl;
 	d->skype.openFileTransfer(user, url);
+}
+
+void SkypeAccount::SkypeActionHandler(const QString &message) {
+	kDebug() << message;
+
+	if ( message.isEmpty() )
+		return;//Empty message
+
+	QString command;
+	QString user;
+
+	if ( message.startsWith("callto:", Qt::CaseInsensitive) ) {
+		command = "call";
+		user = message.section(":", -1).section("/", -1).trimmed();
+	} else if ( message.startsWith("tel:", Qt::CaseInsensitive) ) {
+		command = "chat";
+		user = message.section(":", -1).section("/", -1).trimmed();
+	} else if ( message.startsWith("skype:", Qt::CaseInsensitive) ) {
+		command = message.section("?", -1).trimmed();
+		user = message.section(":", -1).section("?", 0, 0).trimmed();
+	} else
+		return;//Unknow message
+
+	if ( command.isEmpty() || user.isEmpty() )
+		return;//Unknow message
+
+	kDebug() << "user:" << user << "command:" << command;
+
+	if ( command == "add" ) {
+		//TODO: Open add user dialog
+	} else if ( command == "call" ) {
+		makeCall(user);//Start call with user
+	} else if ( command == "chat" ) {
+		chatUser(user);//Open chat window
+	} else if ( command == "sendfile" ) {
+		openFileTransfer(user);//Open file transfer dialog
+	} else if ( command == "userinfo" ) {//TODO: Open option dialog (with all thisa options instead userinfo) and support unknow contacts who arent in contact list
+		if ( ! contact(user) ) {
+			addContact(user, QString::null, 0L, Temporary);//create a temporary contact
+			if ( ! contact(user) )
+				return;//contact arent in contact list - skip it
+		}
+		contact(user)->slotUserInfo();//Open user info dialog
+		//TODO: dont use slot, it freeze dbus, better create new signal
+	} else {
+		kDebug() << "Unknow command";
+		return;//Unknow command
+	}
 }
 
 #include "skypeaccount.moc"

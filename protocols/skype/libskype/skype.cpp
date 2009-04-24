@@ -955,9 +955,12 @@ QString Skype::getDisplayName(const QString &name) {
 	return (d->connection % QString("GET USER %1 DISPLAYNAME").arg(name)).section(' ', 3).trimmed();
 }
 
-void Skype::openFileTransfer(const QString &user, const QString &url) {
+bool Skype::openFileTransfer(const QString &user, const QString &url) {
 	kDebug() << k_funcinfo << user << url << endl;
-	d->connection << QString("OPEN FILETRANSFER %1 IN %2").arg(user).arg(url);
+	if ( (d->connection % QString("OPEN FILETRANSFER %1 IN %2").arg(user).arg(url)).trimmed() == "OK" )
+		return true;
+	else
+		return false;
 }
 
 #include "skype.moc"

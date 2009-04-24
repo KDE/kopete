@@ -209,7 +209,7 @@ class Skype : public QObject
 		/**
 		 * Open skype file transfer dilog to send file via skype
 		 */
-		void openFileTransfer(const QString &user, const QString &url = QString::null);
+		bool openFileTransfer(const QString &user, const QString &url = QString::null);
 	public slots:
 		/**
 		 * Tell the skype to go online

@@ -454,7 +454,7 @@ void SkypeContact::block() {
 
 void SkypeContact::sendFile(const KUrl &, const QString &, uint) {
 	kDebug() << k_funcinfo << endl;
-	d->account->openFileTransfer(contactId());
+	d->account->openFileTransfer(contactId()); //TODO: open KUrl location
 }
 
 #include "skypecontact.moc"
