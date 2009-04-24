@@ -440,6 +440,5 @@ KopeteUnixSerialPort::~KopeteUnixSerialPort()
 		close(_fd);
 }
 
-#include "kopete_unix_serial.moc"
 
 #endif
