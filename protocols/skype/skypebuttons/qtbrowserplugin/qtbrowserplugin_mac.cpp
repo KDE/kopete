@@ -86,7 +86,6 @@ public:
 
     ~QMacBrowserRoot() { }
 };
-#include "qtbrowserplugin_mac.moc"
 
 struct key_sym
 {
