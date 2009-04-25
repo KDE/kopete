@@ -59,6 +59,7 @@
 #include <kopetechatwindowstylemanager.h>
 #include <kopetechatwindowstyle.h>
 #include <chatmessagepart.h>
+#include <kopetecontactlist.h>
 
 
 // Things we fake to get the message preview to work
@@ -143,7 +144,7 @@ private:
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args ),
 		m_currentStyle (0L), m_loading(false),
-		m_previewProtocol(0L), m_previewAccount(0L), m_myselfMetaContact(0L),
+		m_previewProtocol(0L), m_previewAccount(0L),
 		m_jackMetaContact(0L), m_myself(0L), m_jack(0L)
 {
 	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
@@ -232,7 +233,6 @@ ChatWindowConfig::~ChatWindowConfig()
 	// Deleting the account will delete jack and myself
 	delete m_previewAccount;
 
-	delete m_myselfMetaContact;
 	delete m_jackMetaContact;
 
  	delete m_previewProtocol;
@@ -539,13 +539,7 @@ void ChatWindowConfig::createPreviewChatSession()
 	m_previewProtocol = new FakeProtocol( KComponentData(QByteArray("kopete-preview-chatwindowstyle")), 0 ); m_previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
 	m_previewAccount = new FakeAccount(m_previewProtocol, QString("previewaccount"));
 
-	// Create fake meta/contacts
-	m_myselfMetaContact = new Kopete::MetaContact();
-	m_myselfMetaContact->setTemporary();
-	m_myselfMetaContact->setDisplayName(i18n("Myself"));
-	m_myselfMetaContact->setDisplayNameSource(Kopete::MetaContact::SourceCustom);
-
-	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), m_myselfMetaContact);
+	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), Kopete::ContactList::self()->myself());
 	m_myself->setNickName(i18nc("This is the myself preview contact nickname", "Myself"));
 
 	m_jackMetaContact = new Kopete::MetaContact();

@@ -84,7 +84,6 @@ private:
 	// For style preview
 	FakeProtocol *m_previewProtocol;
 	FakeAccount *m_previewAccount;
-	Kopete::MetaContact *m_myselfMetaContact;
 	Kopete::MetaContact *m_jackMetaContact;
 	FakeContact *m_myself;
 	FakeContact *m_jack;
