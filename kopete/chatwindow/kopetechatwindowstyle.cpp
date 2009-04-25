@@ -95,6 +95,12 @@ ChatWindowStyle::~ChatWindowStyle()
 	delete d;
 }
 
+bool ChatWindowStyle::isValid() const
+{
+	return ( !d->statusHtml.isEmpty() && !d->fileTransferIncomingHtml.isEmpty() && !d->nextIncomingHtml.isEmpty()
+	         && !d->incomingHtml.isEmpty() && !d->nextOutgoingHtml.isEmpty() && !d->outgoingHtml.isEmpty() );
+}
+
 ChatWindowStyle::StyleVariants ChatWindowStyle::getVariants()
 {
 	// If the variantList is empty, list available variants.

@@ -32,6 +32,7 @@
 #include "kopetecontactlist.h"
 #include "kopeteviewmanager.h"
 #include "kopetebehaviorsettings.h"
+#include "kopetechatwindowstylemanager.h"
 
 #include <kconfig.h>
 #include <ktabwidget.h>
@@ -55,7 +56,10 @@ K_EXPORT_PLUGIN( ChatWindowPluginFactory( "kopete_chatwindow" ) )
 
 ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QVariantList &) :
 	Kopete::ViewPlugin( ChatWindowPluginFactory::componentData(), parent )
-{}
+{
+	// Load styles to make style fallback work
+	ChatWindowStyleManager::self();
+}
 
 KopeteView* ChatWindowPlugin::createView( Kopete::ChatSession *manager )
 {

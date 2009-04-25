@@ -368,6 +368,10 @@ void ChatWindowConfig::slotChatStyleSelected(const QString &styleName)
 
 		emitChanged();
 	}
+	else {
+		m_styleUi.variantList->clear();
+		slotUpdateChatPreview();
+	}
 }
 
 void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
@@ -379,6 +383,9 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 	// form
 	QString styleName = m_styleUi.styleList->currentItem()->text();
 	m_currentStyle = ChatWindowStyleManager::self()->getStyleFromPool( styleName );
+	if ( !m_currentStyle )
+		return;
+
 	if ( m_styleUi.variantList->currentIndex() == 0 ) {
 		m_styleUi.kcfg_useCompact->setEnabled(m_currentStyle->hasCompact( "" ) );
 	}
@@ -656,7 +663,7 @@ void ChatWindowConfig::createPreviewMessages()
 
 void ChatWindowConfig::slotUpdateChatPreview()
 {
-	if(m_loading || !m_currentStyle)
+	if(m_loading)
 		return;
 
 	// Update the preview

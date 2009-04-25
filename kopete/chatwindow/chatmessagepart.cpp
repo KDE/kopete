@@ -210,10 +210,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 {
 	d->manager = mgr;
 
-	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(
+	d->currentChatStyle = ChatWindowStyleManager::self()->getValidStyleFromPool(
 			 KopeteChatWindowSettings::self()->styleName() );
 
-	kDebug(14000) << d->currentChatStyle->getStyleName();
 	connect( this, SIGNAL(completed()), this, SLOT(slotRenderingFinished()) );
 
 	//Security settings, we don't need this stuff
@@ -407,7 +406,7 @@ void ChatMessagePart::readOverrides()
 void ChatMessagePart::setStyle( const QString &styleName )
 {
 	// Create a new ChatWindowStyle
-	d->currentChatStyle = ChatWindowStyleManager::self()->getStyleFromPool(styleName);
+	d->currentChatStyle = ChatWindowStyleManager::self()->getValidStyleFromPool(styleName);
 
 	// Do the actual style switch
 	// Wait for the event loop before switching the style
@@ -455,6 +454,9 @@ void ChatMessagePart::slotAppearanceChanged()
 
 void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 {
+	if ( !d->currentChatStyle )
+		return;
+
 	// Don't remove foreground color for history messages.
 	if ( !message.classes().contains("history") )
 	{
@@ -933,6 +935,9 @@ void ChatMessagePart::emitTooltipEvent(  const QString &textUnderMouse, QString 
 // Style formatting for messages(incoming, outgoing, status)
 QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const Kopete::Message &_message )
 {
+	if ( !d->currentChatStyle )
+		return QString();
+
 	Kopete::Message message=_message; //we will eventually need to modify it before showing it.
 	QString resultHTML = sourceHTML;
 	QString nick, contactId, service, protocolIcon, nickLink;
@@ -1299,37 +1304,44 @@ void ChatMessagePart::writeTemplate()
 	// baseStyle: Import the main.css from the Chat Window Style
 	// mainStyle: Currrent variant CSS url.
 
-	// FIXME: Maybe this string should be load from a file, then parsed for args.
 	QString xhtmlBase;
-	xhtmlBase += QString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-		"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
-		"\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
-		"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
-    	"<head>\n"
-        "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\n\" />\n"
-        "<base href=\"%1\">\n"
-		"<style id=\"KopeteStyle\" type=\"text/css\" media=\"screen,print\">\n"
-		"	%5\n"
-		"</style>\n"
-		"<style id=\"baseStyle\" type=\"text/css\" media=\"screen,print\">\n"
-		"	@import url(\"main.css\");\n"
-		"	*{ word-wrap:break-word; }\n"
-		"</style>\n"
-		"<style id=\"mainStyle\" type=\"text/css\" media=\"screen,print\">\n"
-		"	@import url(\"%4\");\n"
-        "</style>\n"
-		"</head>\n"
-		"<body>\n"
-		"%2\n"
-		"<div id=\"Chat\">\n</div>\n"
-		"%3\n"
-		"</body>"
-		"</html>"
-		).arg( d->currentChatStyle->getStyleBaseHref() )
-		.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
-		.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
-		.arg( adjustStyleVariantForChatSession( KopeteChatWindowSettings::self()->styleVariant() ) )
-		.arg( styleHTML() );
+	if ( d->currentChatStyle )
+	{
+		// FIXME: Maybe this string should be load from a file, then parsed for args.
+		xhtmlBase += QString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+			"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n"
+			"\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
+			"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+			"<head>\n"
+			"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\n\" />\n"
+			"<base href=\"%1\">\n"
+			"<style id=\"KopeteStyle\" type=\"text/css\" media=\"screen,print\">\n"
+			"	%5\n"
+			"</style>\n"
+			"<style id=\"baseStyle\" type=\"text/css\" media=\"screen,print\">\n"
+			"	@import url(\"main.css\");\n"
+			"	*{ word-wrap:break-word; }\n"
+			"</style>\n"
+			"<style id=\"mainStyle\" type=\"text/css\" media=\"screen,print\">\n"
+			"	@import url(\"%4\");\n"
+			"</style>\n"
+			"</head>\n"
+			"<body>\n"
+			"%2\n"
+			"<div id=\"Chat\">\n</div>\n"
+			"%3\n"
+			"</body>"
+			"</html>"
+			).arg( d->currentChatStyle->getStyleBaseHref() )
+			.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
+			.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
+			.arg( adjustStyleVariantForChatSession( KopeteChatWindowSettings::self()->styleVariant() ) )
+			.arg( styleHTML() );
+	}
+	else
+	{
+		xhtmlBase = i18n( "Chat style wasn't found or is invalid!" );
+	}
 	write(xhtmlBase);
 	end();
 #ifdef STYLE_TIMETEST
@@ -1376,7 +1388,7 @@ void ChatMessagePart::resendMessage( uint messageId )
 
 QString ChatMessagePart::adjustStyleVariantForChatSession( const QString & styleVariant ) const
 {
-	if ( d->manager->form() == Kopete::ChatSession::Chatroom
+	if ( d->currentChatStyle && d->manager->form() == Kopete::ChatSession::Chatroom
 			&& KopeteChatWindowSettings::self()->useCompact() ) {
 		return d->currentChatStyle->compact( styleVariant );
 	}
@@ -1433,6 +1445,9 @@ void ChatMessagePart::disableFileTransferButtons( unsigned int id )
 
 void ChatMessagePart::changeMessageStateElement( uint id, Kopete::Message::MessageState state )
 {
+	if ( !d->currentChatStyle )
+		return;
+
 	QString elementId = QString( "msST%1" ).arg( id );
 	DOM::HTMLElement element = document().getElementById( elementId );
 	if ( element.isNull() )

@@ -54,6 +54,11 @@ public:
 	~ChatWindowStyle();
 
 	/**
+	 * Checks if the style is valid
+	 */
+	bool isValid() const;
+
+	/**
 	 * Get the list of all variants for this theme.
 	 * If the variant aren't listed, it call the lister
 	 * before returning the list of the Variants.

@@ -321,6 +321,32 @@ bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 	}
 }
 
+ChatWindowStyle *ChatWindowStyleManager::getValidStyleFromPool(const QString &styleName)
+{
+	ChatWindowStyle *style = 0;
+	style = getStyleFromPool( styleName );
+	if ( style )
+		return style;
+
+	kDebug(14000) << "Trying default style";
+	// Try default style
+	style = getStyleFromPool( "Kopete" );
+	if ( style )
+		return style;
+
+	kDebug(14000) << "Trying first valid style";
+	// Try first valid style
+	foreach ( const QString& name, d->availableStyles )
+	{
+		style = getStyleFromPool( name );
+		if ( style )
+			return style;
+	}
+
+	kDebug(14000) << "Valid style not found!";
+	return 0;
+}
+
 ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &styleName)
 {
 	if( d->stylePool.contains(styleName) )
@@ -339,18 +365,20 @@ ChatWindowStyle *ChatWindowStyleManager::getStyleFromPool(const QString &styleNa
 
 		return d->stylePool[styleName];
 	}
-	else
+
+	// Build a chat window style and list its variants, then add it to the pool.
+	ChatWindowStyle *style = new ChatWindowStyle(styleName, ChatWindowStyle::StyleBuildNormal);
+	if ( !style->isValid() )
 	{
-		// Build a chat window style and list its variants, then add it to the pool.
-		ChatWindowStyle *style = new ChatWindowStyle(styleName, ChatWindowStyle::StyleBuildNormal);
-		d->stylePool.insert(styleName, style);
-
-		kDebug(14000) << styleName << " is just created";
-
-		return style;
+		kDebug(14000) << styleName << " is invalid style!";
+		delete style;
+		return 0;
 	}
 
-	return 0;
+	d->stylePool.insert(styleName, style);
+	kDebug(14000) << styleName << " is just created";
+
+	return style;
 }
 
 void ChatWindowStyleManager::slotNewStyles(const KFileItemList &dirList)

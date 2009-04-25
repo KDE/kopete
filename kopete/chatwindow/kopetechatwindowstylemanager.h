@@ -104,9 +104,23 @@ public slots:
 	 *
 	 * @param styleName name for the specified style. If style with this name
 	 *        exists in both global and user directories, the user one will be returned
-	 * @return the instance of ChatWindow for the specified style. DO NOT DELETE IT.
+	 * @return the instance of ChatWindow for the specified style or 0 if valid style
+	 *         wasn't found. DO NOT DELETE IT.
 	 */
 	ChatWindowStyle *getStyleFromPool(const QString &styleName);
+
+	/**
+	 * Get a instance of a ChatWindowStyle from the pool.
+	 * If they are no instance for the specified style, it gets created.
+	 * If the style doesn't exists or is invalid default style is returned or 0.
+	 * DO NOT DELETE the resulting pointer, it is handled by this class.
+	 *
+	 * @param styleName name for the specified style. If style with this name
+	 *        exists in both global and user directories, the user one will be returned
+	 * @return the instance of ChatWindow for the specified style or 0 if valid style
+	 *         wasn't found. DO NOT DELETE IT.
+	 */
+	ChatWindowStyle *getValidStyleFromPool(const QString &styleName);
 
 signals:
 	/**
