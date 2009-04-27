@@ -84,10 +84,7 @@ target_link_libraries(
 ########### next target ###############
 
 add_subdirectory( icons )
-
-if ( NOT Q_WS_MAC ) # temporarily disabling the buttons on mac: it is broken
-    add_subdirectory( skypebuttons )
-endif( NOT Q_WS_MAC )
+add_subdirectory( skypebuttons )
 
 ########### install files ###############
 

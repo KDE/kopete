@@ -30,18 +30,8 @@ message( STATUS "Mozilla plugin install dir is \"${MOZPLUGIN_INSTALL_DIR}\" to c
 set( skypebuttons_SRCS
 	skypebuttons.cpp
 	qtbrowserplugin/qtbrowserplugin.cpp
+	qtbrowserplugin/qtbrowserplugin_x11.cpp
 )
-
-if( Q_WS_X11 )
-	set (qtbrowserplugin_SRC qtbrowserplugin/qtbrowserplugin_x11.cpp)
-endif( Q_WS_X11 )
-if( Q_WS_MAC )
-	set (qtbrowserplugin_SRC qtbrowserplugin/qtbrowserplugin_mac.cpp)
-endif( Q_WS_MAC )
-if( Q_WS_WIN )
-	set (qtbrowserplugin_SRC qtbrowserplugin/qtbrowserplugin_win.cpp)
-endif( Q_WS_WIN )
-
 
 QT4_GENERATE_MOC( ${CMAKE_CURRENT_SOURCE_DIR}/skypebuttons.cpp ${CMAKE_CURRENT_BINARY_DIR}/skypebuttons.moc )
 
