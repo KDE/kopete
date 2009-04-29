@@ -1340,7 +1340,7 @@ void ChatMessagePart::writeTemplate()
 	}
 	else
 	{
-		xhtmlBase = i18n( "Chat style wasn't found or is invalid!" );
+		xhtmlBase = i18n( "Chat style could not be found, or is invalid." );
 	}
 	write(xhtmlBase);
 	end();
