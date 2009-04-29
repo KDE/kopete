@@ -660,19 +660,26 @@ QString OscarAccount::sanitizedMessage( const QString& message ) const
 	doc.setContent( msg, false, &domError, &errLine, &errCol );
 	if ( !domError.isEmpty() ) //error parsing, do nothing
 	{
-		kDebug(OSCAR_AIM_DEBUG) << "error from dom document conversion: "
-			<< domError << "line:" << errLine << "col:" << errCol;
-		return sanitizedPlainMessage( message );
+		kDebug(OSCAR_AIM_DEBUG) << "error from dom document conversion: " << domError << "line:" << errLine << "col:" << errCol;
+
+		// HACK: for trillian which sends totaly mangled html (there are not ended font tags)
+		if ( message.indexOf( QRegExp( "[\\s]*<[\\s]*HTML[\\s]*>[\\s]*<[\\s]*BODY", Qt::CaseInsensitive ) ) != 0 )
+			return sanitizedPlainMessage( message );
+		else
+			return message;
 	}
 	else
 	{
 		kDebug(OSCAR_AIM_DEBUG) << "conversion to dom document successful."
 			<< "looking for font tags" << endl;
-		QDomNodeList fontTagList = doc.elementsByTagName( "FONT" );
+		QList<QDomNode> fontTagList = getElementsByTagNameCI( doc, "FONT" );
 		if ( fontTagList.count() == 0 )
 		{
-			kDebug(OSCAR_AIM_DEBUG) << "No font tags found. Returning normal message";
-			return sanitizedPlainMessage( message );
+			if ( message.indexOf( QRegExp( "[\\s]*<[\\s]*HTML[\\s]*>[\\s]*<[\\s]*BODY", Qt::CaseInsensitive ) ) != 0 )
+			{
+				kDebug(OSCAR_AIM_DEBUG) << "No html tags found. Returning normal message";
+				return sanitizedPlainMessage( message );
+			}
 		}
 		else
 		{
@@ -680,10 +687,10 @@ QString OscarAccount::sanitizedMessage( const QString& message ) const
 			uint numFontTags = fontTagList.count();
 			for ( uint i = 0; i < numFontTags; i++ )
 			{
-				QDomNode fontNode = fontTagList.item(i);
+				QDomNode fontNode = fontTagList.at(i);
 				QDomElement fontEl;
 				if ( !fontNode.isNull() && fontNode.isElement() )
-					fontEl = fontTagList.item(i).toElement();
+					fontEl = fontNode.toElement();
 				else
 					continue;
 				if ( fontEl.hasAttribute( "BACK" ) )
@@ -1430,6 +1437,22 @@ QString OscarAccount::sanitizedPlainMessage( const QString& message ) const
 	QString sanitizedMsg = (d->engine->isIcq()) ? Qt::escape( message ) : message;
 	sanitizedMsg.replace( QRegExp(QString::fromLatin1("[\r]?[\n]")), QString::fromLatin1("<br />") );
 	return sanitizedMsg;
+}
+
+QList<QDomNode> OscarAccount::getElementsByTagNameCI( const QDomNode& node, const QString& tagName ) const
+{
+	QList<QDomNode> nodeList;
+
+	QDomNode childNode = node.firstChild();
+	while ( !childNode.isNull() )
+	{
+		nodeList.append( getElementsByTagNameCI( childNode, tagName ) );
+		if ( childNode.isElement() && childNode.nodeName().compare( tagName, Qt::CaseInsensitive ) == 0 )
+			nodeList.append( childNode );
+
+		childNode = childNode.nextSibling();
+	}
+	return nodeList;
 }
 
 #include "oscaraccount.moc"
