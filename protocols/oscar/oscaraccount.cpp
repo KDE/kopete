@@ -1446,7 +1446,7 @@ QList<QDomNode> OscarAccount::getElementsByTagNameCI( const QDomNode& node, cons
 	QDomNode childNode = node.firstChild();
 	while ( !childNode.isNull() )
 	{
-		nodeList.append( getElementsByTagNameCI( childNode, tagName ) );
+		nodeList << getElementsByTagNameCI( childNode, tagName );
 		if ( childNode.isElement() && childNode.nodeName().compare( tagName, Qt::CaseInsensitive ) == 0 )
 			nodeList.append( childNode );
 
