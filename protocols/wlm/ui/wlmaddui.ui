@@ -20,7 +20,7 @@
       <string>The account name of the account you would like to add.</string>
      </property>
      <property name="text">
-      <string>&amp;WLM Passport:</string>
+      <string>&amp;WLM passport:</string>
      </property>
      <property name="wordWrap">
       <bool>false</bool>

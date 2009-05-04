@@ -74,7 +74,7 @@
           <item>
            <widget class="QLabel" name="label" >
             <property name="text" >
-             <string>Name</string>
+             <string>Name:</string>
             </property>
            </widget>
           </item>
@@ -88,7 +88,7 @@
           <item>
            <widget class="QLabel" name="label_3" >
             <property name="text" >
-             <string>First Name</string>
+             <string>First name:</string>
             </property>
            </widget>
           </item>
@@ -102,7 +102,7 @@
           <item>
            <widget class="QLabel" name="label_4" >
             <property name="text" >
-             <string>Email Address</string>
+             <string>Email address:</string>
             </property>
            </widget>
           </item>
@@ -116,7 +116,7 @@
           <item>
            <widget class="QLabel" name="label_2" >
             <property name="text" >
-             <string>Last Name</string>
+             <string>Last name:</string>
             </property>
            </widget>
           </item>

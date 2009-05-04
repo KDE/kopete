@@ -25,7 +25,7 @@
    <item row="0" column="0" >
     <widget class="QRadioButton" name="aimRadioButton" >
      <property name="text" >
-      <string>AOL Screen Name:</string>
+      <string>AOL screen name:</string>
      </property>
      <property name="checked" >
       <bool>true</bool>
@@ -45,7 +45,7 @@
    <item row="2" column="0" >
     <widget class="QRadioButton" name="icqRadioButton" >
      <property name="text" >
-      <string>ICQ Number:</string>
+      <string>ICQ number:</string>
      </property>
     </widget>
    </item>

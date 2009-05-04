@@ -232,7 +232,7 @@
                <bool>false</bool>
               </property>
               <property name="text" >
-               <string>Client identifier</string>
+               <string>Client identifier:</string>
               </property>
               <property name="wordWrap" >
                <bool>false</bool>
@@ -288,7 +288,7 @@
                <bool>false</bool>
               </property>
               <property name="text" >
-               <string>Client version (major.minor)</string>
+               <string>Client version (major.minor):</string>
               </property>
               <property name="wordWrap" >
                <bool>false</bool>

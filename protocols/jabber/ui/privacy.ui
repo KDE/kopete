@@ -86,14 +86,14 @@
       <item row="1" column="0" >
        <widget class="QLabel" name="label_2" >
         <property name="text" >
-         <string>Default List (all sessions):</string>
+         <string>Default list (all sessions):</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0" >
        <widget class="QLabel" name="label" >
         <property name="text" >
-         <string>Active List (current session):</string>
+         <string>Active list (current session):</string>
         </property>
        </widget>
       </item>

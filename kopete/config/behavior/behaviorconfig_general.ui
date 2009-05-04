@@ -123,7 +123,7 @@
    <item>
 	  <widget class="QGroupBox" name="initialStatusGroup" >
 	  <property name="title" >
-		  <string>Initial status</string>
+		  <string>Initial Status</string>
 	  </property>
 	  <layout class="QVBoxLayout" >
 		<property name="spacing" >

@@ -418,7 +418,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
-          <string>Phone numbers</string>
+          <string>Phone Numbers</string>
          </property>
          <layout class="QVBoxLayout" >
           <property name="spacing" >

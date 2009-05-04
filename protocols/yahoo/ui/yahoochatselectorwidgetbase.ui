@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Choose a Chat room:</string>
+   <string>Choose Chat Room</string>
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >

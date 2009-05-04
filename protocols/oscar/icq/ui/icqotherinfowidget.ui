@@ -25,7 +25,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
-      <string>Email addresses</string>
+      <string>Email Addresses</string>
      </property>
      <layout class="QVBoxLayout" >
       <property name="spacing" >
@@ -109,7 +109,7 @@
       <item>
        <widget class="QCheckBox" name="sendInfoCheck" >
         <property name="text" >
-         <string>Send updates and ICQ promotional info to my primary email.</string>
+         <string>Send updates and ICQ promotional info to my primary email</string>
         </property>
        </widget>
       </item>
@@ -129,7 +129,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
-      <string>Contact notes</string>
+      <string>Contact Notes</string>
      </property>
      <layout class="QVBoxLayout" >
       <property name="spacing" >

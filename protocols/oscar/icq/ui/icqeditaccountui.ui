@@ -541,7 +541,7 @@ If you do not currently have an ICQ account, please click the button to create o
                <string>The ports to use when listening for direct connections. These must not be blocked by a firewall or router.</string>
               </property>
               <property name="text" >
-               <string>Po&amp;rt Range:</string>
+               <string>Po&amp;rt range:</string>
               </property>
               <property name="buddy" >
                <cstring>sbxFirstPort</cstring>

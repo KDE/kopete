@@ -162,7 +162,7 @@
         </sizepolicy>
        </property>
        <property name="text" >
-        <string>First Name:</string>
+        <string>First name:</string>
        </property>
        <property name="buddy" >
         <cstring>firstName</cstring>
@@ -181,7 +181,7 @@
         </sizepolicy>
        </property>
        <property name="text" >
-        <string>Last Name:</string>
+        <string>Last name:</string>
        </property>
        <property name="buddy" >
         <cstring>lastName</cstring>

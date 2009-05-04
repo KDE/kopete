@@ -152,7 +152,7 @@
      <item row="3" column="2" >
       <widget class="QLabel" name="textLabel11_2_2" >
        <property name="text" >
-        <string>Maximum Users:</string>
+        <string>Maximum users:</string>
        </property>
        <property name="wordWrap" >
         <bool>false</bool>
@@ -327,7 +327,7 @@
          <string>General permission to read messages in the chatroom</string>
         </property>
         <property name="text" >
-         <string>Read Message</string>
+         <string>Read message</string>
         </property>
         <property name="shortcut" >
          <string/>
@@ -340,7 +340,7 @@
          <string>General permission to write messages in the chatroom</string>
         </property>
         <property name="text" >
-         <string>Write Message</string>
+         <string>Write message</string>
         </property>
         <property name="shortcut" >
          <string/>
@@ -353,7 +353,7 @@
          <string>General permission to modify the chatroom's access control list</string>
         </property>
         <property name="text" >
-         <string>Modify Access</string>
+         <string>Modify access</string>
         </property>
         <property name="shortcut" >
          <string/>

@@ -168,7 +168,7 @@ Leave it empty if you want to see the contact's nickname as their display name.<
       <item>
        <widget class="QLabel" name="textLabel6" >
         <property name="text" >
-                        <string>Address Book link:</string>
+                        <string>Address book link:</string>
                     </property>
                 </widget>
       </item>

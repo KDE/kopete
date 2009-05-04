@@ -28,17 +28,17 @@
        <widget class="QComboBox" name="kcfg_protocolStatusMenuType" >
         <item>
          <property name="text" >
-          <string>As global status menu</string>
+          <string>As Global Status Menu</string>
          </property>
         </item>
         <item>
          <property name="text" >
-          <string>Only statuses with matching category</string>
+          <string>Only Statuses With Matching Category</string>
          </property>
         </item>
         <item>
          <property name="text" >
-          <string>All statuses with parent category</string>
+          <string>All Statuses With Parent Category</string>
          </property>
         </item>
        </widget>

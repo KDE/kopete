@@ -44,7 +44,7 @@
                <string>The account name of your account.</string>
               </property>
               <property name="text">
-               <string>WLM Passport:</string>
+               <string>WLM passport:</string>
               </property>
               <property name="wordWrap">
                <bool>false</bool>

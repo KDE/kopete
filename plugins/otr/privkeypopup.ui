@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Please wait</string>
+   <string>Please Wait</string>
   </property>
   <layout class="QGridLayout" >
    <property name="leftMargin" >

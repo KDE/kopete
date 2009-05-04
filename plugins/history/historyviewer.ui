@@ -60,7 +60,7 @@
      <item>
       <widget class="QLabel" name="textLabel1_2" >
        <property name="text" >
-        <string>Message Filter:</string>
+        <string>Message filter:</string>
        </property>
       </widget>
      </item>
@@ -80,17 +80,17 @@
        </property>
        <item>
         <property name="text" >
-         <string>All messages</string>
+         <string>All Messages</string>
         </property>
        </item>
        <item>
         <property name="text" >
-         <string>Only incoming</string>
+         <string>Only Incoming</string>
         </property>
        </item>
        <item>
         <property name="text" >
-         <string>Only outgoing</string>
+         <string>Only Outgoing</string>
         </property>
        </item>
       </widget>

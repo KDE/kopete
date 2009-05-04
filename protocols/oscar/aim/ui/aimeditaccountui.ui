@@ -453,7 +453,7 @@
                <string>The ports to use when listening for direct connections. These must not be blocked by a firewall or router.</string>
               </property>
               <property name="text" >
-               <string>Po&amp;rt Range:</string>
+               <string>Po&amp;rt range:</string>
               </property>
               <property name="buddy" >
                <cstring>sbxFirstPort</cstring>
@@ -660,7 +660,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_4" >
          <property name="title" >
-          <string>Visibility settings</string>
+          <string>Visibility Settings</string>
          </property>
          <layout class="QGridLayout" >
           <property name="leftMargin" >

@@ -27,7 +27,7 @@
      <item>
       <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>Server</string>
+        <string>Server:</string>
        </property>
       </widget>
      </item>

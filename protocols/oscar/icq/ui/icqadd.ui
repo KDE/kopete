@@ -11,7 +11,7 @@
   </property>
   <layout class="QGridLayout" >
    <property name="leftMargin" >
-    <number>0</number>
+    <ic>0</number>
    </property>
    <property name="topMargin" >
     <number>0</number>
@@ -31,7 +31,7 @@
    <item row="0" column="0" >
     <widget class="QRadioButton" name="icqRadioButton" >
      <property name="text" >
-      <string>ICQ Number:</string>
+      <string>ICQ number:</string>
      </property>
      <property name="checked" >
       <bool>true</bool>
@@ -81,7 +81,7 @@
    <item row="3" column="0" >
     <widget class="QRadioButton" name="aimRadioButton" >
      <property name="text" >
-      <string>AOL Screen Name:</string>
+      <string>AOL screen name:</string>
      </property>
     </widget>
    </item>

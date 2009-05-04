@@ -31,7 +31,7 @@
    <item row="0" column="0" >
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
-      <string>Filter by sender</string>
+      <string>Filter by Sender</string>
      </property>
      <layout class="QGridLayout" >
       <property name="leftMargin" >
@@ -209,7 +209,7 @@
    <item row="1" column="0" >
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
-      <string>Filter by content (separate multiple words by commas)</string>
+      <string>Filter by Content (separate multiple words by commas)</string>
      </property>
      <layout class="QGridLayout" >
       <property name="leftMargin" >

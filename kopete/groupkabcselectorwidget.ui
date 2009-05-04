@@ -28,7 +28,7 @@
      <item row="0" column="0" >
       <widget class="QLabel" name="groupLabel" >
        <property name="text" >
-        <string>&amp;Group</string>
+        <string>&amp;Group:</string>
        </property>
        <property name="buddy" >
         <cstring>groupCombo</cstring>

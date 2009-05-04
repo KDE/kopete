@@ -90,14 +90,14 @@
        <item>
         <widget class="QCheckBox" name="ck_presenceOut" >
          <property name="text" >
-          <string>Outgoing Presence</string>
+          <string>Outgoing presence</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="ck_presenceIn" >
          <property name="text" >
-          <string>Incoming Presence</string>
+          <string>Incoming presence</string>
          </property>
         </widget>
        </item>

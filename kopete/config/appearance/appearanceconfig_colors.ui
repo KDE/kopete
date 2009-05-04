@@ -86,7 +86,7 @@
          </sizepolicy>
         </property>
         <property name="text" >
-         <string>Tint &amp;Idle Contacts:</string>
+         <string>Tint &amp;idle contacts:</string>
         </property>
        </widget>
       </item>
@@ -128,7 +128,7 @@
          </sizepolicy>
         </property>
         <property name="text" >
-         <string>&amp;Group Names:</string>
+         <string>&amp;Group names:</string>
         </property>
         <property name="buddy" >
          <cstring>kcfg_groupNameColor</cstring>

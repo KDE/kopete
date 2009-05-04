@@ -173,7 +173,7 @@ Otherwise, the images are not scaled at all and appear in their original size.</
            <string>Creates a preview picture of the link.</string>
           </property>
           <property name="text" >
-           <string>Enable Lin&amp;k Preview</string>
+           <string>Enable lin&amp;k preview</string>
           </property>
          </widget>
         </item>
