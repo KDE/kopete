@@ -11,7 +11,7 @@
   </property>
   <layout class="QGridLayout" >
    <property name="leftMargin" >
-    <ic>0</number>
+    <number>0</number>
    </property>
    <property name="topMargin" >
     <number>0</number>
