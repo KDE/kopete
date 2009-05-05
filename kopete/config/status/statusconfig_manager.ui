@@ -1,8 +1,9 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <author>Roman Jarosz</author>
  <class>StatusConfig_Manager</class>
- <widget class="QWidget" name="StatusConfig_Manager" >
-  <property name="geometry" >
+ <widget class="QWidget" name="StatusConfig_Manager">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,64 +11,64 @@
     <height>335</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QSplitter" name="splitter" >
-     <property name="orientation" >
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" native="1" name="widget" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+     <widget class="QWidget" name="widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>2</verstretch>
        </sizepolicy>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout" >
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="StatusTreeView" name="statusView" >
-         <property name="dragDropMode" >
+        <widget class="StatusTreeView" name="statusView">
+         <property name="dragDropMode">
           <enum>QAbstractItemView::InternalMove</enum>
          </property>
-         <property name="alternatingRowColors" >
+         <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
-         <property name="headerHidden" >
+         <property name="headerHidden">
           <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
+        <layout class="QHBoxLayout">
          <item>
-          <widget class="QPushButton" name="pbAddStatus" >
-           <property name="text" >
+          <widget class="QPushButton" name="pbAddStatus">
+           <property name="text">
             <string>Add</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pbRemove" >
-           <property name="text" >
+          <widget class="QPushButton" name="pbRemove">
+           <property name="text">
             <string>Remove</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pbAddGroup" >
-           <property name="text" >
+          <widget class="QPushButton" name="pbAddGroup">
+           <property name="text">
             <string>Add Group</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
-             <width>463</width>
+             <width>0</width>
              <height>27</height>
             </size>
            </property>
@@ -77,65 +78,64 @@
        </item>
       </layout>
      </widget>
-     <widget class="QGroupBox" name="statusGroupBox" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+     <widget class="QGroupBox" name="statusGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
       </property>
-      <property name="title" >
+      <property name="title">
        <string/>
       </property>
-      <property name="flat" >
+      <property name="flat">
        <bool>false</bool>
       </property>
-      <layout class="QFormLayout" name="formLayout" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
           <string>Title:</string>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>leStatusTitle</cstring>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QLineEdit" name="leStatusTitle" />
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="leStatusTitle"/>
        </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
           <string>Category:</string>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>cbStatusCategory</cstring>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" >
-        <widget class="QComboBox" name="cbStatusCategory" />
+       <item row="1" column="1">
+        <widget class="QComboBox" name="cbStatusCategory"/>
        </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="lblStatusMessage" >
-         <property name="text" >
+       <item row="2" column="0">
+        <widget class="QLabel" name="lblStatusMessage">
+         <property name="text">
           <string>Message:</string>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>teStatusMessage</cstring>
          </property>
         </widget>
        </item>
-       <item row="2" column="1" >
-        <widget class="QTextEdit" name="teStatusMessage" />
+       <item row="2" column="1">
+        <widget class="QTextEdit" name="teStatusMessage"/>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
   </layout>
-  <zorder>splitter</zorder>
  </widget>
  <customwidgets>
   <customwidget>

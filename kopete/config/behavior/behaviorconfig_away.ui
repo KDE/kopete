@@ -1,77 +1,72 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>BehaviorConfig_Away</class>
- <widget class="QWidget" name="BehaviorConfig_Away" >
-  <property name="geometry" >
+ <widget class="QWidget" name="BehaviorConfig_Away">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>455</width>
-    <height>417</height>
+    <height>513</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
       <string>Auto Away</string>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <property name="margin" >
-       <number>9</number>
-      </property>
+     <layout class="QVBoxLayout">
       <item>
-       <widget class="QCheckBox" name="kcfg_useAutoAway" >
-        <property name="text" >
+       <widget class="QCheckBox" name="kcfg_useAutoAway">
+        <property name="text">
          <string>&amp;Use auto away</string>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
-        <property name="margin" >
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="label_2" >
-          <property name="enabled" >
+         <widget class="QLabel" name="label_2">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Become away after</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="mAutoAwayTimeout" >
-          <property name="enabled" >
+         <widget class="QSpinBox" name="mAutoAwayTimeout">
+          <property name="enabled">
            <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_3" >
-          <property name="enabled" >
+         <widget class="QLabel" name="label_3">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>minutes of inactivity</string>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>0</width>
             <height>20</height>
            </size>
           </property>
@@ -80,26 +75,26 @@
        </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="kcfg_autoAwayGoAvailable" >
-        <property name="enabled" >
+       <widget class="QCheckBox" name="kcfg_autoAwayGoAvailable">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Become available when detecting activity again</string>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" >
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <spacer name="horizontalSpacer" >
-          <property name="orientation" >
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
+          <property name="sizeType">
            <enum>QSizePolicy::Fixed</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
             <height>20</height>
@@ -108,11 +103,11 @@
          </spacer>
         </item>
         <item>
-         <widget class="QCheckBox" name="kcfg_autoAwayAskAvailable" >
-          <property name="enabled" >
+         <widget class="QCheckBox" name="kcfg_autoAwayAskAvailable">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Confirm before becoming available</string>
           </property>
          </widget>
@@ -123,51 +118,51 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
       <string>Auto Away Message</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout" >
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QRadioButton" name="kcfg_useLastAwayMessage" >
-        <property name="text" >
+       <widget class="QRadioButton" name="kcfg_useLastAwayMessage">
+        <property name="text">
          <string>Display the &amp;last away message used</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="kcfg_useCustomAwayMessage" >
-        <property name="text" >
+       <widget class="QRadioButton" name="kcfg_useCustomAwayMessage">
+        <property name="text">
          <string>Display the &amp;following away message:</string>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QFormLayout" name="formLayout" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label" >
-          <property name="text" >
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
            <string>Title:</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
-         <widget class="KLineEdit" name="kcfg_autoAwayCustomTitle" >
-          <property name="enabled" >
+        <item row="0" column="1">
+         <widget class="KLineEdit" name="kcfg_autoAwayCustomTitle">
+          <property name="enabled">
            <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="label_4" >
-          <property name="text" >
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
            <string>Message:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1" >
-         <widget class="QPlainTextEdit" name="mAutoAwayCustomMessage" >
-          <property name="enabled" >
+        <item row="1" column="1">
+         <widget class="QPlainTextEdit" name="mAutoAwayCustomMessage">
+          <property name="enabled">
            <bool>false</bool>
           </property>
          </widget>
@@ -179,12 +174,12 @@
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>437</width>
+       <width>20</width>
        <height>0</height>
       </size>
      </property>
@@ -215,11 +210,11 @@
    <receiver>label_2</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>106</x>
      <y>67</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>124</x>
      <y>104</y>
     </hint>
@@ -231,11 +226,11 @@
    <receiver>mAutoAwayTimeout</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>160</x>
      <y>67</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>228</x>
      <y>104</y>
     </hint>
@@ -247,11 +242,11 @@
    <receiver>label_3</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>230</x>
      <y>67</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>377</x>
      <y>104</y>
     </hint>
@@ -263,11 +258,11 @@
    <receiver>groupBox_3</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>60</x>
      <y>67</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>44</x>
      <y>208</y>
     </hint>
@@ -279,11 +274,11 @@
    <receiver>kcfg_autoAwayCustomTitle</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>129</x>
      <y>267</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>279</x>
      <y>302</y>
     </hint>
@@ -295,11 +290,11 @@
    <receiver>mAutoAwayCustomMessage</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>249</x>
      <y>259</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>261</x>
      <y>333</y>
     </hint>
@@ -311,11 +306,11 @@
    <receiver>kcfg_autoAwayGoAvailable</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>90</x>
      <y>67</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>83</x>
      <y>134</y>
     </hint>
@@ -327,11 +322,11 @@
    <receiver>kcfg_autoAwayAskAvailable</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>148</x>
      <y>127</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>172</x>
      <y>148</y>
     </hint>

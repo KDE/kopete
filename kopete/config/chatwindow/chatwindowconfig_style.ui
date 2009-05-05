@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ChatWindowConfig_Style</class>
- <widget class="QWidget" name="ChatWindowConfig_Style" >
-  <property name="geometry" >
+ <widget class="QWidget" name="ChatWindowConfig_Style">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,46 +10,40 @@
     <height>417</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Chat Window Appearance</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" >
-    <layout class="QGridLayout" >
-     <property name="margin" >
+  <layout class="QGridLayout">
+   <item row="0" column="0">
+    <layout class="QGridLayout">
+     <property name="margin">
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="spacing">
       <number>6</number>
      </property>
-     <item row="1" column="0" >
-      <widget class="QGroupBox" name="groupBox" >
-       <property name="title" >
+     <item row="1" column="0">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
         <string>Display</string>
        </property>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
-         <widget class="QCheckBox" name="kcfg_groupConsecutiveMessages" >
-          <property name="text" >
+         <widget class="QCheckBox" name="kcfg_groupConsecutiveMessages">
+          <property name="text">
            <string>Group consecuti&amp;ve messages</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="kcfg_useCompact" >
-          <property name="text" >
+         <widget class="QCheckBox" name="kcfg_useCompact">
+          <property name="text">
            <string>Co&amp;mpact style in chatrooms</string>
           </property>
          </widget>
@@ -56,35 +51,35 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="0" >
-      <widget class="QGroupBox" name="stylesGroupBox" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="stylesGroupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="title" >
+       <property name="title">
         <string>Styles</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout" >
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3" >
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QListWidget" name="styleList" />
+           <widget class="QListWidget" name="styleList"/>
           </item>
           <item>
-           <widget class="QFrame" name="htmlFrame" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+           <widget class="QFrame" name="htmlFrame">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>1</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="frameShape" >
+            <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
-            <property name="frameShadow" >
+            <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
            </widget>
@@ -92,18 +87,18 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2" >
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QLabel" name="textLabel1" >
-            <property name="text" >
+           <widget class="QLabel" name="textLabel1">
+            <property name="text">
              <string>Style variant:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="variantList" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+           <widget class="QComboBox" name="variantList">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -113,48 +108,48 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" >
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="KPushButton" name="btnGetStyles" >
-            <property name="enabled" >
+           <widget class="KPushButton" name="btnGetStyles">
+            <property name="enabled">
              <bool>true</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Get new Chat Window styles over the Internet</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>&amp;Get New...</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="KPushButton" name="installButton" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <widget class="KPushButton" name="installButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>&amp;Install...</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="KPushButton" name="deleteButton" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <widget class="KPushButton" name="deleteButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>&amp;Delete</string>
             </property>
            </widget>

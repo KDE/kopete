@@ -1,75 +1,76 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ChatWindowConfig_Colors</class>
- <widget class="QWidget" name="ChatWindowConfig_Colors" >
-  <property name="geometry" >
+ <widget class="QWidget" name="ChatWindowConfig_Colors">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>564</width>
-    <height>443</height>
+    <height>406</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="KButtonGroup" name="kcfg_chatFontSelection" >
-     <property name="title" >
+    <widget class="KButtonGroup" name="kcfg_chatFontSelection">
+     <property name="title">
       <string>Fonts</string>
      </property>
-     <property name="current" stdset="0" >
+     <property name="current" stdset="0">
       <number>0</number>
      </property>
-     <layout class="QGridLayout" name="gridLayout" >
-      <item row="0" column="0" >
-       <widget class="QLabel" name="textLabel3_2" >
-        <property name="toolTip" >
-         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="textLabel3_2">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Base font in the chat window&lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Base font in the chat window&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Base &amp;font:</string>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>kcfg_chatTextColor</cstring>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" colspan="2" >
-       <widget class="QRadioButton" name="radioButton" >
-        <property name="text" >
+      <item row="0" column="1" colspan="2">
+       <widget class="QRadioButton" name="radioButton">
+        <property name="text">
          <string>Use system font</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QRadioButton" name="radioButton_2" >
-        <property name="text" >
+      <item row="1" column="1">
+       <widget class="QRadioButton" name="radioButton_2">
+        <property name="text">
          <string>Use custom font:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
-       <widget class="KFontRequester" name="kcfg_chatFont" >
-        <property name="enabled" >
+      <item row="1" column="2">
+       <widget class="KFontRequester" name="kcfg_chatFont">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="focusPolicy" >
+        <property name="focusPolicy">
          <enum>Qt::StrongFocus</enum>
         </property>
-        <property name="toolTip" >
-         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Base font in the chat window&lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Base font in the chat window&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -77,83 +78,83 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="title" >
+     <property name="title">
       <string>Colors</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2" >
-      <item row="0" column="0" >
-       <widget class="QLabel" name="textLabel3" >
-        <property name="toolTip" >
-         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="textLabel3">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Base font in the chat window&lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Base font in the chat window&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Base &amp;font:</string>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>kcfg_chatTextColor</cstring>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" >
-       <widget class="KColorButton" name="kcfg_chatTextColor" >
-        <property name="toolTip" >
+      <item row="0" column="1">
+       <widget class="KColorButton" name="kcfg_chatTextColor">
+        <property name="toolTip">
          <string>Base font color for the chat window</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="0" column="2" >
-       <widget class="QLabel" name="textLabel2" >
-        <property name="text" >
+      <item row="0" column="2">
+       <widget class="QLabel" name="textLabel2">
+        <property name="text">
          <string>&amp;Highlight foreground:</string>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>kcfg_highlightForegroundColor</cstring>
         </property>
        </widget>
       </item>
-      <item row="0" column="3" >
-       <widget class="KColorButton" name="kcfg_highlightForegroundColor" >
-        <property name="toolTip" >
+      <item row="0" column="3">
+       <widget class="KColorButton" name="kcfg_highlightForegroundColor">
+        <property name="toolTip">
          <string>Foreground color for highlighted messages</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="textLabel2_2" >
-        <property name="text" >
+      <item row="1" column="0">
+       <widget class="QLabel" name="textLabel2_2">
+        <property name="text">
          <string>&amp;Background color:</string>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>kcfg_chatBackgroundColor</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="KColorButton" name="kcfg_chatBackgroundColor" >
-        <property name="toolTip" >
+      <item row="1" column="1">
+       <widget class="KColorButton" name="kcfg_chatBackgroundColor">
+        <property name="toolTip">
          <string>Color for the background of the chat window</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string/>
         </property>
-        <property name="color" >
+        <property name="color">
          <color>
           <red>255</red>
           <green>255</green>
@@ -162,45 +163,45 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
-       <widget class="QLabel" name="textLabel1" >
-        <property name="text" >
+      <item row="1" column="2">
+       <widget class="QLabel" name="textLabel1">
+        <property name="text">
          <string>Highlight bac&amp;kground:</string>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>kcfg_highlightBackgroundColor</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="3" >
-       <widget class="KColorButton" name="kcfg_highlightBackgroundColor" >
-        <property name="toolTip" >
+      <item row="1" column="3">
+       <widget class="KColorButton" name="kcfg_highlightBackgroundColor">
+        <property name="toolTip">
          <string>Background color for highlighted messages</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="textLabel1_3" >
-        <property name="text" >
+      <item row="2" column="0">
+       <widget class="QLabel" name="textLabel1_3">
+        <property name="text">
          <string>&amp;Link color:</string>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>kcfg_chatLinkColor</cstring>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" >
-       <widget class="KColorButton" name="kcfg_chatLinkColor" >
-        <property name="toolTip" >
+      <item row="2" column="1">
+       <widget class="KColorButton" name="kcfg_chatLinkColor">
+        <property name="toolTip">
          <string>Color used for links in chats</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string/>
         </property>
-        <property name="color" >
+        <property name="color">
          <color>
           <red>0</red>
           <green>85</green>
@@ -213,34 +214,28 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
       <string>Formatting Overrides</string>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <property name="margin" >
-       <number>9</number>
-      </property>
+     <layout class="QVBoxLayout">
       <item>
-       <widget class="QCheckBox" name="kcfg_chatBgOverride" >
-        <property name="text" >
+       <widget class="QCheckBox" name="kcfg_chatBgOverride">
+        <property name="text">
          <string>Do not show user specified back&amp;ground color</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="kcfg_chatFgOverride" >
-        <property name="text" >
+       <widget class="QCheckBox" name="kcfg_chatFgOverride">
+        <property name="text">
          <string>&amp;Do not show user specified foreground color</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="kcfg_chatRtfOverride" >
-        <property name="text" >
+       <widget class="QCheckBox" name="kcfg_chatRtfOverride">
+        <property name="text">
          <string>Do not show user specified &amp;rich text</string>
         </property>
        </widget>
@@ -250,13 +245,13 @@ p, li { white-space: pre-wrap; }
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -300,11 +295,11 @@ p, li { white-space: pre-wrap; }
    <receiver>kcfg_chatFont</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>169</x>
      <y>76</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>274</x>
      <y>78</y>
     </hint>
