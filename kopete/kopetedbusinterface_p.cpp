@@ -177,6 +177,10 @@ Kopete::MetaContact *KopeteDBusInterfacePrivate::findContact(
     }
 
     if ( !contact ) {
+        contact = Kopete::ContactList::self()->metaContact(nameOrId);
+    }
+
+    if ( !contact ) {
         contact = Kopete::ContactList::self()->findMetaContactByContactId(
                 nameOrId);
     }
