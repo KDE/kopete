@@ -79,6 +79,8 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QVariantList &a
 	// this ensures that newly created accounts are assigned to the selected identity
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)), this, SLOT(slotAccountAdded(Kopete::Account *)) );
 
+	mAccountList->installEventFilter( this );
+
 	setButtons( Help );
 	load();
 }
@@ -498,19 +500,26 @@ void KopeteAccountConfig::slotItemChanged(QTreeWidgetItem* item)
 	}
 }
 
-void KopeteAccountConfig::contextMenuEvent ( QContextMenuEvent * event )
-{	
-	KopeteIdentityLVI *ilvi = selectedIdentity();
-	if ( ilvi && ilvi->identity() )
+bool KopeteAccountConfig::eventFilter( QObject *obj, QEvent *event )
+{
+	if ( obj == mAccountList && event->type() == QEvent::ContextMenu )
 	{
-		m_identityContextMenu->popup(event->globalPos());
+		QContextMenuEvent *cmEvent = static_cast<QContextMenuEvent *>(event);
+		KopeteIdentityLVI *ilvi = selectedIdentity();
+		if ( ilvi && ilvi->identity() )
+		{
+			m_identityContextMenu->popup(cmEvent->globalPos());
+		}
+
+		KopeteAccountLVI *alvi = selectedAccount();
+		if ( alvi && alvi->account() )
+		{
+			m_accountContextMenu->popup(cmEvent->globalPos());
+		}
+		return true;
 	}
 
-	KopeteAccountLVI *alvi = selectedAccount();
-	if ( alvi && alvi->account() )
-	{
-		m_accountContextMenu->popup(event->globalPos());
-	}
+	return QObject::eventFilter( obj, event );
 }
 
 void KopeteAccountConfig::configureActions()

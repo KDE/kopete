@@ -52,7 +52,7 @@ public:
 	KopeteAccountConfig(QWidget *parent, const QVariantList &args );
 
 protected:
-	virtual void contextMenuEvent ( QContextMenuEvent * event );
+	virtual bool eventFilter( QObject *obj, QEvent *event );
 
 public slots:
 	virtual void save();
