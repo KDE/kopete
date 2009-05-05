@@ -102,8 +102,12 @@
 			<default>OpenNewWindow</default>
 		</entry>
 		<entry key="spellCheck" type="Bool">
-			<label>Enable spell checking.</label>
+			<label>Enable spell checking by default.</label>
 			<default>true</default>
+		</entry>
+		<entry key="richTextByDefault" type="Bool">
+			<label>Enable rich text by default.</label>
+			<default>false</default>
 		</entry>
 		<entry key="chatWindowShowSendButton" type="Bool">
 			<label>Show send button in Chat Window.</label>

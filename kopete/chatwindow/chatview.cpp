@@ -794,8 +794,18 @@ void ChatView::saveChatSettings()
 	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           mc->metaContactId();
     KConfigGroup config = KGlobal::config()->group(contactListGroup);
-	config.writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
-	config.writeEntry( "EnableAutoSpellCheck", editPart()->checkSpellingEnabled() );
+
+	// If settings are the same as default delete entry from config. This will propagate global setting change.
+	if ( editPart()->isRichTextEnabled() != Kopete::BehaviorSettings::self()->richTextByDefault() )
+		config.writeEntry( "EnableRichText", editPart()->isRichTextEnabled() );
+	else
+		config.deleteEntry( "EnableRichText" );
+
+	if ( editPart()->checkSpellingEnabled() != Kopete::BehaviorSettings::self()->spellCheck() )
+		config.writeEntry( "EnableAutoSpellCheck", editPart()->checkSpellingEnabled() );
+	else
+		config.deleteEntry( "EnableAutoSpellCheck" );
+
 	editPart()->writeConfig( config );
 	config.sync();
 }
@@ -810,7 +820,7 @@ void ChatView::loadChatSettings()
 	QString contactListGroup = QLatin1String("chatwindow_") +
 	                           contacts.first()->metaContact()->metaContactId();
 	KConfigGroup config(KGlobal::config(), contactListGroup );
-	bool enableRichText = config.readEntry( "EnableRichText", true );
+	bool enableRichText = config.readEntry( "EnableRichText", Kopete::BehaviorSettings::self()->richTextByDefault() );
 	editPart()->textEdit()->setRichTextEnabled( enableRichText );
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
 	bool enableAutoSpell = config.readEntry( "EnableAutoSpellCheck", Kopete::BehaviorSettings::self()->spellCheck() );
