@@ -399,7 +399,7 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void ChatWindowConfig::slotInstallChatStyle()
 {
-	KUrl styleUrl = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose a Chat Window Style to install") );
+	KUrl styleUrl = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window Style to Install") );
 
 	if ( styleUrl.isEmpty() ) // dialog got canceled
 		return;
@@ -410,26 +410,26 @@ void ChatWindowConfig::slotInstallChatStyle()
 	{
 		case ChatWindowStyleManager::StyleCannotOpen:
 		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is a valid ZIP or TAR archive."), i18n("Cannot open archive") );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive cannot be opened.\nMake sure that the archive is a valid ZIP or TAR archive."), i18n("Cannot Open Archive") );
 			break;
 		}
 		case ChatWindowStyleManager::StyleNoDirectoryValid:
 		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the Chat Window Style."), i18n("Cannot find styles directory") );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Could not find a suitable place to install the chat window style."), i18n("Cannot Find Styles Directory") );
 			break;
 		}
 		case ChatWindowStyleManager::StyleNotValid:
-			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive does not contain a valid Chat Window Style."), i18n("Invalid Style") );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("The specified archive does not contain a valid chat window style."), i18n("Invalid Style") );
 			break;
 		case ChatWindowStyleManager::StyleInstallOk:
 		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The Chat Window Style was successfully installed."), i18n("Install successful") );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n("The chat window style was successfully installed."), i18n("Install Successful") );
 			break;
 		}
 		case ChatWindowStyleManager::StyleUnknow:
 		default:
 		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("An unknown error occurred while trying to install the Chat Window Style."), i18n("Unknown error") );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("An unknown error occurred while trying to install the chat window style."), i18n("Unknown Error") );
 			break;
 		}
 	}

@@ -233,7 +233,7 @@
           <item row="1" column="1" >
            <widget class="QPushButton" name="btnChangePassword" >
             <property name="text" >
-             <string>Change &amp;Your Password</string>
+             <string>Change &amp;Your Password...</string>
             </property>
            </widget>
           </item>

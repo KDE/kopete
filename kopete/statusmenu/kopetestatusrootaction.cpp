@@ -169,7 +169,7 @@ void StatusRootAction::addToolsActions()
 	if ( d->statusAction )
 		return;
 
-	KActionMenu *messageMenu = new KActionMenu( i18n( "Change message" ), this );
+	KActionMenu *messageMenu = new KActionMenu( i18n( "Change Message" ), this );
 
 	d->statusAction = new Kopete::UI::StatusEditAction( this );
 
@@ -181,7 +181,7 @@ void StatusRootAction::addToolsActions()
 	messageMenu->addAction( d->statusAction );
 	d->menu->insertAction( d->insertBefore, messageMenu );
 
-	QAction *action = new QAction( i18n("Edit statuses..."), this );
+	QAction *action = new QAction( i18n("Edit Statuses..."), this );
 	connect( action, SIGNAL(triggered( bool )), this, SLOT(editStatuses()) );
 	d->menu->insertAction( d->insertBefore, action );
 }

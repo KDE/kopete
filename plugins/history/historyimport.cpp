@@ -50,7 +50,7 @@ HistoryImport::HistoryImport(QWidget *parent)
 	// set dialog settings
 	setButtons(KDialog::Ok | KDialog::Details | KDialog::Cancel);
 	setWindowTitle(KDialog::makeStandardCaption(i18n("Import History")));
-	setButtonText(KDialog::Ok, i18n("Import listed logs"));
+	setButtonText(KDialog::Ok, i18n("Import Listed Logs"));
 
 	// create widgets
 	QWidget *w = new QWidget(this);
@@ -60,7 +60,7 @@ HistoryImport::HistoryImport(QWidget *parent)
 	display->setReadOnly(true);
 	treeView = new QTreeView(w);
 
-	QPushButton *fromPidgin = new QPushButton(i18n("Get history from &Pidgin"), w);
+	QPushButton *fromPidgin = new QPushButton(i18n("Get History From &Pidgin..."), w);
 	
 	l->addWidget(treeView, 0, 0, 1, 3);
 	l->addWidget(display, 0, 4, 1, 10);
@@ -258,7 +258,7 @@ void HistoryImport::importPidgin()
 {
 	if (pidginImported) {
 		if (QMessageBox::question(this,
-		 i18n("Are you sure?"),
+		 i18n("Are You Sure?"),
 		 i18n("You already imported logs from pidgin. If you do it twice, each message is imported twice.\nAre you sure you want to continue?"),
 		 QMessageBox::Yes | QMessageBox::No,
 		 QMessageBox::No) != QMessageBox::Yes)
@@ -268,7 +268,7 @@ void HistoryImport::importPidgin()
 
 	QDir logDir = QDir::homePath();
 	if (selectByHand->isChecked() || !logDir.cd(".purple/logs"))
-		logDir = QFileDialog::getExistingDirectory(mainWidget(), i18n("Select log directory"), QDir::homePath());
+		logDir = QFileDialog::getExistingDirectory(mainWidget(), i18n("Select Log Directory"), QDir::homePath());
 
 	int total = countLogs(logDir, 3);
 	QProgressDialog progress(i18n("Parsing history from pidgin ..."), i18n("Abort parsing"), 0, total, mainWidget());
@@ -373,7 +373,7 @@ bool HistoryImport::isNickIncoming(const QString &nick, struct Log *log)
 		incoming = knownNicks.value(nick);
 	else {
 		int r = QMessageBox::question(NULL,
-			i18n("Cannot map nickname to account"),
+			i18n("Cannot Map Nickname to Account"),
 			i18n("Did you use \"%1\" as nickname in history?", nick),
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort);
 

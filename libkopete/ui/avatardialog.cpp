@@ -47,7 +47,7 @@ AvatarDialog::AvatarDialog(QWidget *parent)
  : KDialog(parent), d(new Private)
 {
 	showButtonSeparator(true);
-	setCaption( i18n("Select an avatar") );
+	setCaption( i18n("Select Avatar") );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 
 	d->mainWidget = new Kopete::UI::AvatarSelectorWidget(this);

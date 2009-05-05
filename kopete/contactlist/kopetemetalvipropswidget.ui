@@ -325,7 +325,7 @@
             <item>
              <widget class="QPushButton" name="btnChoosePhoto" >
               <property name="text" >
-               <string>Choose</string>
+               <string>Choose...</string>
               </property>
              </widget>
             </item>

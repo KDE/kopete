@@ -225,7 +225,7 @@
       <item row="1" column="0" >
        <widget class="QLabel" name="occupationLabel" >
         <property name="text" >
-         <string>Occupation</string>
+         <string>Occupation:</string>
         </property>
         <property name="buddy" >
          <cstring>occupationCombo</cstring>

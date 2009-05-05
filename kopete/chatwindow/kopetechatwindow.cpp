@@ -365,7 +365,7 @@ void KopeteChatWindow::initActions(void)
 	chatSend->setShortcut( chatSendShortcut );
 	chatSend->setEnabled( false );
 
-	chatSendFile = new KAction( KIcon("mail-attachment"), i18n( "Send File" ), coll );
+	chatSendFile = new KAction( KIcon("mail-attachment"), i18n( "Send File..." ), coll );
 	coll->addAction( "chat_send_file", chatSendFile );
 	connect( chatSendFile, SIGNAL( triggered(bool) ), SLOT( slotSendFile() ) );
 	chatSendFile->setEnabled( false );

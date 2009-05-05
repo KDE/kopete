@@ -30,7 +30,7 @@
    <item>
     <widget class="QRadioButton" name="radioAddExistingMetaContact" >
      <property name="text" >
-      <string>Add an existing Metacontact</string>
+      <string>Add an existing metacontact:</string>
      </property>
      <property name="checked" >
       <bool>true</bool>
@@ -43,7 +43,7 @@
    <item>
     <widget class="QRadioButton" name="radioAnotherContact" >
      <property name="text" >
-      <string>Specify another contact</string>
+      <string>Specify another contact:</string>
      </property>
     </widget>
    </item>

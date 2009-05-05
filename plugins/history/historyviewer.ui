@@ -53,7 +53,7 @@
      <item>
       <widget class="QPushButton" name="importHistory" >
        <property name="text" >
-        <string>Import History</string>
+        <string>Import History...</string>
        </property>
       </widget>
      </item>

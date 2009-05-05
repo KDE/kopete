@@ -44,7 +44,7 @@
 Otherwise, an unlimited number of previews are generated.</string>
         </property>
         <property name="text" >
-         <string>&amp;Restrict number of previews</string>
+         <string>&amp;Restrict number of previews:</string>
         </property>
         <property name="checked" >
          <bool>true</bool>
@@ -111,7 +111,7 @@ Otherwise, an unlimited number of previews are generated.</string>
 Otherwise, the images are not scaled at all and appear in their original size.</string>
         </property>
         <property name="text" >
-         <string>Scale &amp;to</string>
+         <string>Scale &amp;to:</string>
         </property>
         <property name="checked" >
          <bool>true</bool>

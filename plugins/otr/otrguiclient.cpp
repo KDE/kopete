@@ -65,11 +65,11 @@ OtrGUIClient::OtrGUIClient( Kopete::ChatSession *parent )
 	actionCollection()->addAction("otr_settings", otrActionMenu);
 
 
-	actionEnableOtr = new KAction( KIcon("object-locked"), i18n( "Start OTR session" ), this);
+	actionEnableOtr = new KAction( KIcon("object-locked"), i18n( "Start OTR Session" ), this);
 	actionCollection()->addAction( "enableOtr", actionEnableOtr );
 	connect(actionEnableOtr, SIGNAL(triggered(bool)), this, SLOT(slotEnableOtr()));
 
-	actionDisableOtr = new KAction( KIcon("object-unlocked"), i18n( "End OTR session" ), this);
+	actionDisableOtr = new KAction( KIcon("object-unlocked"), i18n( "End OTR Session" ), this);
 	actionCollection()->addAction( "disableOtr", actionDisableOtr );
 	connect(actionDisableOtr, SIGNAL(triggered(bool)), this, SLOT(slotDisableOtr()));
 
@@ -115,25 +115,25 @@ void OtrGUIClient::encryptionEnabled(Kopete::ChatSession *session, int state){
 		switch(state){
 			case 0:
 				otrActionMenu->setIcon(KIcon("object-unlocked"));
-				actionEnableOtr->setText( i18n("Start OTR session") );
+				actionEnableOtr->setText( i18n("Start OTR Session") );
 				actionDisableOtr->setEnabled(false);
 				actionVerifyFingerprint->setEnabled(false);
 				break;
 			case 1:
 				otrActionMenu->setIcon(KIcon("object-locked-unverified"));
-				actionEnableOtr->setText( i18n("Refresh OTR session") );
+				actionEnableOtr->setText( i18n("Refresh OTR Session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(true);
 				break;
 			case 2:
 				otrActionMenu->setIcon(KIcon("object-locked-verified"));
-				actionEnableOtr->setText( i18n("Refresh OTR session") );
+				actionEnableOtr->setText( i18n("Refresh OTR Session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(true);
 				break;
 			case 3:
 				otrActionMenu->setIcon(KIcon("object-locked-finished"));
-				actionEnableOtr->setText( i18n("Start OTR session") );
+				actionEnableOtr->setText( i18n("Start OTR Session") );
 				actionDisableOtr->setEnabled(true);
 				actionVerifyFingerprint->setEnabled(false);
 				break;

@@ -35,7 +35,7 @@
      <item>
       <widget class="KPushButton" name="addButton" >
        <property name="text" >
-        <string comment="verb" >&amp;Add</string>
+        <string comment="verb" >&amp;Add...</string>
        </property>
       </widget>
      </item>

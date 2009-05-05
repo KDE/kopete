@@ -209,7 +209,7 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 	action->setEnabled( isConnected() );
 	actionMenu->addAction( action );
 
-	KActionMenu *mMoodMenu = new KActionMenu(i18n("Set mood..."), actionMenu);
+	KActionMenu *mMoodMenu = new KActionMenu(i18n("Set Mood"), actionMenu);
 	for(int i = 0; i <= Mood::Worried; i++)
 	{
 		action = new KAction(mMoodMenu);

@@ -266,7 +266,7 @@ void KopeteEmailWindow::initActions(void)
 	d->anim->setPixmap( d->normalIcon );
 
 	KAction *spacerAction = new KToolBarSpacerAction( this );
-	spacerAction->setText( i18n( "Spacer for animation" ) );
+	spacerAction->setText( i18n( "Spacer for Animation" ) );
 	coll->addAction( "toolbar_spacer", spacerAction );
 
 	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );

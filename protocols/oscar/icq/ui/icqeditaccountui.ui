@@ -241,7 +241,7 @@ If you do not currently have an ICQ account, please click the button to create o
              </sizepolicy>
             </property>
             <property name="text" >
-             <string>Change Your Password</string>
+             <string>Change Your Password...</string>
             </property>
            </widget>
           </item>

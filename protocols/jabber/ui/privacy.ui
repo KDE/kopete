@@ -175,7 +175,7 @@
         <item>
          <widget class="KPushButton" name="pb_newList" >
           <property name="text" >
-           <string>New List</string>
+           <string>New List...</string>
           </property>
          </widget>
         </item>
@@ -239,7 +239,7 @@
            <item>
             <widget class="KPushButton" name="pb_add" >
              <property name="text" >
-              <string>Add</string>
+              <string>Add...</string>
              </property>
             </widget>
            </item>
@@ -267,7 +267,7 @@
            <item>
             <widget class="KPushButton" name="pb_edit" >
              <property name="text" >
-              <string>Edit ...</string>
+              <string>Edit...</string>
              </property>
             </widget>
            </item>
