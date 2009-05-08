@@ -54,7 +54,7 @@ if(NOT WIN32)
   endif(WITH_sms)
   if(NOT APPLE AND WITH_skype)
     add_subdirectory( skype )
-  endif(WITH_skype)
+  endif(NOT APPLE AND WITH_skype)
 endif(NOT WIN32)
 
 if(QCA2_FOUND)
