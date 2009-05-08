@@ -608,25 +608,9 @@ void KopeteChatWindow::slotPaste()
 	m_activeView->paste();
 }
 
-
-void KopeteChatWindow::slotSetFont()
-{
-	m_activeView->setFont();
-}
-
 void KopeteChatWindow::slotResetFontAndColor()
 {
 	m_activeView->resetFontAndColor();
-}
-
-void KopeteChatWindow::slotSetFgColor()
-{
-	m_activeView->setFgColor();
-}
-
-void KopeteChatWindow::slotSetBgColor()
-{
-	m_activeView->setBgColor();
 }
 
 void KopeteChatWindow::setStatus(const QString &text)
@@ -710,11 +694,9 @@ void KopeteChatWindow::setPrimaryChatView( ChatView *view )
 {
 	//TODO figure out what else we have to save here besides the font
 	//reparent clears a lot of stuff out
-	QFont savedFont = view->font();
 	view->setParent( mainArea );
 	view->setWindowFlags( 0 );
 	view->move( QPoint() );
-	view->setFont( savedFont );
 	view->show();
 
 	mainLayout->addWidget( view );

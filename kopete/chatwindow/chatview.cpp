@@ -246,27 +246,6 @@ void ChatView::clear()
 	messagePart()->clear();
 }
 
-void ChatView::setBgColor( const QColor &newColor )
-{
-	Q_UNUSED(newColor);
-// 	editPart()->setBackgroundColorColor( newColor );
-}
-
-void ChatView::setFont()
-{
-	editPart()->setFont();
-}
-
-QFont ChatView::font()
-{
-	return editPart()->textEdit()->font();
-}
-
-void ChatView::setFont( const QFont &font )
-{
-	editPart()->textEdit()->setFont( font );
-}
-
 void ChatView::resetFontAndColor()
 {
 	Kopete::ContactPtrList contacts = msgManager()->members();
@@ -281,18 +260,6 @@ void ChatView::resetFontAndColor()
 	KConfigGroup config = KGlobal::config()->group(contactListGroup);
 	editPart()->resetConfig( config );
 	config.sync();
-}
-
-void ChatView::setFgColor( const QColor &newColor )
-{
-    if ( newColor.isValid() )
-	{
-		editPart()->textEdit()->setTextColor( newColor );
-	}
-	else
-	{
-		editPart()->setTextColor();
-    }
 }
 
 void ChatView::raise( bool activate )

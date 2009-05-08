@@ -188,39 +188,9 @@ public slots:
 	void nickComplete();
 
 	/**
-	 * Sets the foreground color of the entry area, and outgoing messages
-	 * @param newColor The new foreground color. If this is QColor(), then
-	 * a color chooser dialog is opened
-	 */
-	void setFgColor( const QColor &newColor = QColor() );
-
-	/**
-	 * Sets the font of the edit area and outgoing messages to the specified value.
-	 * @param newFont The new font to use.
-	 */
-	void setFont( const QFont &newFont );
-
-	/**
-	 * show a Font dialog and set the font selected by the user
-	 */
-	void setFont();
-
-	/**
-	 * Get the font used in the format toolbar for Rich Text formatting
-	 */
-	QFont font();
-
-	/**
 	 * Reset font and color of the edit area and outgoing messages.
 	 */
 	void resetFontAndColor();
-
-	/**
-	 * Sets the background color of the entry area, and outgoing messages
-	 * @param newColor The new background color. If this is QColor(), then
-	 * a color chooser dialog is opened
-	 */
-	void setBgColor( const QColor &newColor = QColor() );
 
 	/**
 	 * Sends the text currently entered into the edit area

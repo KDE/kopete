@@ -141,9 +141,6 @@ public:
 	void resetConfig( KConfigGroup& config );
 	void writeConfig( KConfigGroup& config );
 
-	void setFont();
-	void setTextColor();
-
 public slots:
 	/**
 	 * Go up an entry in the message history.

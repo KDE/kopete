@@ -1,4 +1,5 @@
-/* 
+/*
+   Copyright (C) 2009 Roman Jarosz <kedgedev@gmail.com>
    Copyright (C) 2009 Benson Tsai <btsai@vrwarp.com>
    Copyright (C) 2006 Michaël Larouche <larouche@kde.org>
    Copyright (C) 2003 Richard Moore <rich@kde.org>
@@ -28,6 +29,7 @@
 #include <kactionmenu.h>
 #include <klocalizedstring.h>
 #include <ktoggleaction.h>
+#include <kcolorscheme.h>
 
 // Qt includes
 #include <QUrl>
@@ -47,82 +49,82 @@
 class KopeteRichTextWidget::Private
 {
 public:
-    Private(KopeteRichTextWidget *parent)
-            : q(parent), defaultFormat(), desiredFormat(), empty(true), updating(false),
-              checkSpelling(0), toggleRichText(0), reset(0), protocolCaps()
+    Private(KopeteRichTextWidget *parent, KActionCollection *ac, Kopete::Protocol::Capabilities caps)
+        : q(parent), actionCollection(ac), protocolCaps(caps), resettingCharFormat(false), empty(true), updating(false), changingTextMode(false),
+        checkSpelling(0), toggleRichText(0), reset(0)
     {
-        desiredFormat.setBackground(QColor("white"));
-        desiredFormat.setForeground(QColor("black"));
-
-        defaultFormat = desiredFormat;
     }
 
     KopeteRichTextWidget *q;
+    KActionCollection *actionCollection;
+    const Kopete::Protocol::Capabilities protocolCaps;
 
-    QTextCharFormat defaultFormat;
-    QTextCharFormat desiredFormat;
+    QTextCharFormat defaultPlainFormat;
+    QTextCharFormat defaultRichFormat;
+    QTextCharFormat currentRichFormat;
+
+    QTextCharFormat lastCharFormat;
+    bool resettingCharFormat;
 
     bool empty;
     bool updating;
+
+    bool changingTextMode;
 
     KToggleAction* checkSpelling;
     KToggleAction* toggleRichText;
     KAction* reset;
 
-    Kopete::Protocol::Capabilities protocolCaps;
-
-    void setProtocolRichTextSupport();
-    KopeteRichTextWidget::RichTextSupport getProtocolRichTextSupport();
     void mergeAll(const QTextCharFormat& format);
 };
 //@endcond
 
-KopeteRichTextWidget::KopeteRichTextWidget(QWidget* parent, Kopete::Protocol::Capabilities protocolCaps)
+KopeteRichTextWidget::KopeteRichTextWidget(QWidget* parent, Kopete::Protocol::Capabilities protocolCaps, KActionCollection *actionCollection)
         : KRichTextWidget(parent),
-        d(new Private(this))
+        d(new Private(this, actionCollection, protocolCaps))
 {
-    connect(this, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
-            this, SLOT(updateCharFormat(QTextCharFormat)));
+    connect(this, SIGNAL(textModeChanged(KRichTextEdit::Mode)),
+            this, SLOT(slotTextModeChanged(KRichTextEdit::Mode)));
+
+    KopeteRichTextWidget::RichTextSupport richText = getProtocolRichTextSupport();
+
+    // Default plaintext setup
+    setRichTextSupport(KopeteRichTextWidget::DisableRichText);
+    d->changingTextMode = true;
+    switchToPlainText();
+    d->changingTextMode = false;
+    createActions(d->actionCollection);
+    setCurrentPlainCharFormat(d->defaultPlainFormat);
+
+    connect(this, SIGNAL(currentCharFormatChanged(const QTextCharFormat&)),
+            this, SLOT(updateCharFormat(const QTextCharFormat&)));
 
     connect(this, SIGNAL(textChanged()),
-            this, SLOT(updateTextFormat()) );
-
-    d->protocolCaps = protocolCaps;
-
-    d->setProtocolRichTextSupport();
+            this, SLOT(updateTextFormat()));
 }
 
-bool KopeteRichTextWidget::event(QEvent *event)
+KopeteRichTextWidget::~KopeteRichTextWidget()
 {
-    if (event->type() == QEvent::ShortcutOverride)
+    delete d;
+}
+
+void KopeteRichTextWidget::setTextOrHtml(const QString &text)
+{
+    if (Qt::mightBeRichText(text))
     {
-        QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
-        if (keyEvent)
+        if (isRichTextEnabled())
+            setHtml(text);
+        else
         {
-            if (keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter)
-            {
-                // Enter is the default shortcut for sending a message,
-                // therefore it should not be handled by a textedit
-                return QWidget::event(event);
-            }
-            if (keyEvent->matches(QKeySequence::Copy) && !textCursor().hasSelection())
-            {
-                // The copy shortcut has to be handled outside of
-                // the textedit because otherwise you cannot use it
-                // to copy a selection in the chatmessagepart
-                // see bug: #163535
-                return QWidget::event(event);
-            }
-            if ((keyEvent->matches(QKeySequence::MoveToPreviousPage) || keyEvent->matches(QKeySequence::MoveToNextPage))
-                    && document()->isEmpty())
-            {
-                // Allow to scroll the chat if the user has not entered
-                // some text in the KRichTextEditPart.
-                return QWidget::event(event);
-            }
+            QTextDocument doc;
+            doc.setHtml(text);
+            setPlainText(doc.toPlainText());
         }
     }
-    return KRichTextWidget::event(event);
+    else
+    {
+        setPlainText(text);
+    }
 }
 
 void KopeteRichTextWidget::slotCheckSpellingChanged(bool b)
@@ -140,53 +142,84 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
         connect(d->checkSpelling, SIGNAL(toggled(bool)), this, SLOT(slotCheckSpellingChanged(bool)));
     }
 
-    KopeteRichTextWidget::RichTextSupport richText = d->getProtocolRichTextSupport();
-    if (!d->toggleRichText)
+    bool richTextSupport = (getProtocolRichTextSupport() != KopeteRichTextWidget::DisableRichText);
+    if (!d->toggleRichText && richTextSupport)
     {
         d->toggleRichText = new KToggleAction(KIcon("draw-freehand"), i18n("Enable &Rich Text"), actionCollection);
         actionCollection->addAction("enable_richtext", d->toggleRichText);
-        d->toggleRichText->setEnabled(richText != 0);
+        d->toggleRichText->setChecked(isRichTextEnabled());
         connect(d->toggleRichText, SIGNAL(toggled(bool)), this, SLOT(setRichTextEnabled(bool)));
     }
+    else if (d->toggleRichText && !richTextSupport)
+    {
+        actionCollection->removeAction(d->toggleRichText);
+        d->toggleRichText = 0;
+    }
 
-    if (!d->reset)
+    if (!d->reset && isRichTextEnabled())
     {
         d->reset = new KAction(KIcon("format-stroke-color"), i18n("Reset Font And Color"), actionCollection);
         actionCollection->addAction("format_font_and_color_reset", d->reset);
-        d->reset->setEnabled(richText != 0);
         connect(d->reset, SIGNAL(triggered(bool)), this, SLOT(slotResetFontAndColor()));
+    }
+    else if (d->reset && !isRichTextEnabled())
+    {
+        actionCollection->removeAction(d->reset);
+        d->reset = 0;
     }
 
     KRichTextWidget::createActions(actionCollection);
+
+    // FIXME: Really ugly hack, but we reset format in updateCharFormat and if we don't disconnect this
+    //        then actions will have old values and not the resetted.
+    disconnect(this, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
+               this, SLOT(_k_updateCharFormatActions(const QTextCharFormat &)));
 }
 
 void KopeteRichTextWidget::setRichTextEnabled(bool enable)
 {
-    KopeteRichTextWidget::RichTextSupport richText = d->getProtocolRichTextSupport();
-    if (enable && richText != 0)
+    if (isRichTextEnabled() == enable)
+        return;
+
+    KopeteRichTextWidget::RichTextSupport richText = getProtocolRichTextSupport();
+    if (enable && richText != KopeteRichTextWidget::DisableRichText)
     {
         setRichTextSupport(richText);
+        d->changingTextMode = true;
         enableRichTextMode();
+        d->changingTextMode = false;
+        createActions(d->actionCollection);
+        setCurrentRichCharFormat(d->currentRichFormat);
     }
     else
     {
         setRichTextSupport(KopeteRichTextWidget::DisableRichText);
+        d->changingTextMode = true;
         switchToPlainText();
+        d->changingTextMode = false;
+        createActions(d->actionCollection);
+        setCurrentPlainCharFormat(d->defaultPlainFormat);
     }
 
-    d->toggleRichText->setChecked(enable);
+    if (d->toggleRichText)
+        d->toggleRichText->setChecked(isRichTextEnabled());
+
+    if (d->reset)
+        d->reset->setEnabled(isRichTextEnabled());
 
     emit richTextSupportChanged();
 }
 
 void KopeteRichTextWidget::slotResetFontAndColor()
 {
-    setCurrentCharFormat(d->defaultFormat);
+    setCurrentRichCharFormat(d->defaultRichFormat);
 }
 
 void KopeteRichTextWidget::setFontFamily(QString family)
 {
-    d->desiredFormat.setFontFamily(family);
+    d->currentRichFormat.setFontFamily(family);
+    if (!isRichTextEnabled())
+        return;
 
     if (d->protocolCaps & Kopete::Protocol::BaseFont)
     {
@@ -202,7 +235,9 @@ void KopeteRichTextWidget::setFontFamily(QString family)
 
 void KopeteRichTextWidget::setFontSize(int size)
 {
-    d->desiredFormat.setFontPointSize(size);
+    d->currentRichFormat.setFontPointSize(size);
+    if (!isRichTextEnabled())
+        return;
 
     if (d->protocolCaps & Kopete::Protocol::BaseFont)
     {
@@ -218,14 +253,17 @@ void KopeteRichTextWidget::setFontSize(int size)
 
 void KopeteRichTextWidget::setTextBold(bool bold)
 {
-    QFont font = d->desiredFormat.font();
+    QFont font = d->currentRichFormat.font();
     font.setBold(bold);
-    d->desiredFormat.setFont(font);
+    d->currentRichFormat.setFont(font);
+
+    if (!isRichTextEnabled())
+        return;
 
     if (d->protocolCaps & Kopete::Protocol::BaseBFormatting)
     {
         QTextCharFormat format;
-        format.setFontWeight(d->desiredFormat.fontWeight());
+        format.setFontWeight(d->currentRichFormat.fontWeight());
         d->mergeAll(format);
     }
     else
@@ -236,7 +274,9 @@ void KopeteRichTextWidget::setTextBold(bool bold)
 
 void KopeteRichTextWidget::setTextItalic(bool italic)
 {
-    d->desiredFormat.setFontItalic(italic);
+    d->currentRichFormat.setFontItalic(italic);
+    if (!isRichTextEnabled())
+        return;
 
     if (d->protocolCaps & Kopete::Protocol::BaseIFormatting)
     {
@@ -252,7 +292,9 @@ void KopeteRichTextWidget::setTextItalic(bool italic)
 
 void KopeteRichTextWidget::setTextUnderline(bool underline)
 {
-    d->desiredFormat.setFontUnderline(underline);
+    d->currentRichFormat.setFontUnderline(underline);
+    if (!isRichTextEnabled())
+        return;
 
     if (d->protocolCaps & Kopete::Protocol::BaseUFormatting)
     {
@@ -273,39 +315,59 @@ void KopeteRichTextWidget::setTextStrikeOut(bool)
 
 void KopeteRichTextWidget::setCurrentCharFormat(const QTextCharFormat & format)
 {
-    d->desiredFormat = format;
+    d->lastCharFormat = format;
     KRichTextWidget::setCurrentCharFormat(format);
-
-    if (d->protocolCaps & (Kopete::Protocol::BaseFormatting | Kopete::Protocol::BaseColor))
-    {
-        d->mergeAll(format);
-    }
 }
 
-QTextCharFormat KopeteRichTextWidget::currentCharFormat() const
+void KopeteRichTextWidget::updateCharFormat(const QTextCharFormat & f)
 {
-    return d->desiredFormat;
-}
+    // TODO: This should go to KRichTextWidget or KRichTextEdit
+    if (d->resettingCharFormat)
+        return;
 
-void KopeteRichTextWidget::updateCharFormat(const QTextCharFormat & f){
-    if (!document()->isEmpty())
+    if (f != QTextCharFormat() || !document()->isEmpty())
     {
-        d->desiredFormat = f;
+        d->lastCharFormat = f;
+        bool bOpaque = d->lastCharFormat.foreground().isOpaque();
+        bool fOpaque = d->lastCharFormat.background().isOpaque();
 
-        // set background color if only base bg color is supported
-        if (d->protocolCaps & Kopete::Protocol::BaseBgColor)
+        if (!fOpaque)
+            d->lastCharFormat.setForeground(palette().color(QPalette::Active, QPalette::Text));
+        if (!bOpaque)
+            d->lastCharFormat.setBackground(palette().color(QPalette::Active, QPalette::Base));
+
+        if (!fOpaque || !bOpaque)
         {
-            QPalette palette = this->palette();
-            palette.setColor(QPalette::Active, QPalette::Base, f.background().color());
-            palette.setColor(QPalette::Inactive, QPalette::Base, f.background().color());
-            this->setPalette(palette);
+            d->resettingCharFormat = true;
+            KRichTextWidget::setCurrentCharFormat(d->lastCharFormat);
+            d->resettingCharFormat = false;
+        }
+
+        if (isRichTextEnabled() && d->currentRichFormat != d->lastCharFormat)
+        {
+            d->currentRichFormat = d->lastCharFormat;
+
+            if (d->protocolCaps & Kopete::Protocol::BaseBgColor)
+            {
+                QPalette palette = this->palette();
+                palette.setColor(QPalette::Active, QPalette::Base, d->lastCharFormat.background().color());
+                palette.setColor(QPalette::Inactive, QPalette::Base, d->lastCharFormat.background().color());
+                this->setPalette(palette);
+            }
         }
     }
+    else
+    {
+        d->resettingCharFormat = true;
+        KRichTextWidget::setCurrentCharFormat(d->lastCharFormat);
+        d->resettingCharFormat = false;
+    }
+    updateActionStates();
 }
 
 void KopeteRichTextWidget::updateTextFormat()
 {
-    if (d->updating)
+    if (d->updating || !isRichTextEnabled())
         return;
 
     bool empty = document()->isEmpty();
@@ -315,8 +377,8 @@ void KopeteRichTextWidget::updateTextFormat()
         QTextCursor cursor = textCursor();
         cursor.beginEditBlock();
         cursor.select(QTextCursor::Document);
-        cursor.mergeCharFormat(d->desiredFormat);
-        mergeCurrentCharFormat(d->desiredFormat);
+        cursor.mergeCharFormat(d->currentRichFormat);
+        mergeCurrentCharFormat(d->currentRichFormat);
         cursor.endEditBlock();
         d->updating = false;
     }
@@ -351,11 +413,52 @@ void KopeteRichTextWidget::insertFromMimeData(const QMimeData * source)
     KRichTextWidget::insertFromMimeData(source);
 }
 
-void KopeteRichTextWidget::setDefaultCharFormat(const QTextCharFormat& format)
+bool KopeteRichTextWidget::event(QEvent *event)
 {
-    d->defaultFormat = format;
+    if (event->type() == QEvent::ShortcutOverride)
+    {
+        QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
+        if (keyEvent)
+        {
+            if (keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter)
+            {
+                // Enter is the default shortcut for sending a message,
+                // therefore it should not be handled by a textedit
+                return QWidget::event(event);
+            }
+            if (keyEvent->matches(QKeySequence::Copy) && !textCursor().hasSelection())
+            {
+                // The copy shortcut has to be handled outside of
+                // the textedit because otherwise you cannot use it
+                // to copy a selection in the chatmessagepart
+                // see bug: #163535
+                return QWidget::event(event);
+            }
+            if ((keyEvent->matches(QKeySequence::MoveToPreviousPage) || keyEvent->matches(QKeySequence::MoveToNextPage))
+                && document()->isEmpty())
+            {
+                // Allow to scroll the chat if the user has not entered
+                // some text in the KRichTextEditPart.
+                return QWidget::event(event);
+            }
+        }
+    }
+    return KRichTextWidget::event(event);
+}
+
+void KopeteRichTextWidget::setDefaultPlainCharFormat(const QTextCharFormat& format)
+{
+    d->defaultPlainFormat = format;
+    setCurrentPlainCharFormat(d->defaultPlainFormat);
+}
+
+void KopeteRichTextWidget::setCurrentPlainCharFormat(const QTextCharFormat & format)
+{
+    if (isRichTextEnabled())
+        return;
 
     setCurrentCharFormat(format);
+    d->mergeAll(format);
 
     // set background color to match
     QPalette palette = this->palette();
@@ -364,9 +467,53 @@ void KopeteRichTextWidget::setDefaultCharFormat(const QTextCharFormat& format)
     this->setPalette(palette);
 }
 
-QTextCharFormat KopeteRichTextWidget::defaultFormat() const
+void KopeteRichTextWidget::setDefaultRichCharFormat(const QTextCharFormat& format)
 {
-    return d->defaultFormat;
+    bool usingDefaultFormat = (d->defaultRichFormat == d->currentRichFormat);
+
+    d->defaultRichFormat = format;
+    if (usingDefaultFormat)
+        setCurrentRichCharFormat(d->defaultRichFormat);
+}
+
+void KopeteRichTextWidget::setCurrentRichCharFormat(const QTextCharFormat & format)
+{
+    d->currentRichFormat = format;
+
+    if (isRichTextEnabled())
+    {
+        setCurrentCharFormat(format);
+        if (d->protocolCaps & (Kopete::Protocol::BaseFormatting | Kopete::Protocol::BaseColor))
+        {
+            d->mergeAll(format);
+        }
+
+        QColor color;
+        if (d->protocolCaps & Kopete::Protocol::BaseBgColor)
+            color = format.background().color();
+        else
+            color = KColorScheme(QPalette::Active, KColorScheme::View).background().color();
+
+        QPalette palette = this->palette();
+        palette.setColor(QPalette::Active, QPalette::Base, color);
+        palette.setColor(QPalette::Inactive, QPalette::Base, color);
+        this->setPalette(palette);
+    }
+}
+
+QTextCharFormat KopeteRichTextWidget::defaultPlainFormat() const
+{
+    return d->defaultPlainFormat;
+}
+
+QTextCharFormat KopeteRichTextWidget::defaultRichFormat() const
+{
+    return d->defaultRichFormat;
+}
+
+QTextCharFormat KopeteRichTextWidget::currentRichFormat() const
+{
+    return d->currentRichFormat;
 }
 
 bool KopeteRichTextWidget::isRichTextEnabled() const
@@ -374,69 +521,56 @@ bool KopeteRichTextWidget::isRichTextEnabled() const
     return (textMode() == KopeteRichTextWidget::Rich);
 }
 
-KopeteRichTextWidget::RichTextSupport KopeteRichTextWidget::Private::getProtocolRichTextSupport()
+void KopeteRichTextWidget::slotTextModeChanged(KRichTextEdit::Mode)
 {
-    KopeteRichTextWidget::RichTextSupport richText = 0;
+    if (d->changingTextMode == false)
+    {
+        kWarning() << "Unexpected text mode change!!!";
+        kWarning() << kBacktrace();
+    }
+}
+
+KopeteRichTextWidget::RichTextSupport KopeteRichTextWidget::getProtocolRichTextSupport() const
+{
+    KopeteRichTextWidget::RichTextSupport richText = KopeteRichTextWidget::DisableRichText;
 
     // Check for bold
-    if ((protocolCaps & Kopete::Protocol::BaseBFormatting) || (protocolCaps & Kopete::Protocol::RichBFormatting))
+    if ((d->protocolCaps & Kopete::Protocol::BaseBFormatting) || (d->protocolCaps & Kopete::Protocol::RichBFormatting))
     {
         richText |= KopeteRichTextWidget::SupportBold;
     }
     // Check for italic
-    if ((protocolCaps & Kopete::Protocol::BaseIFormatting) || (protocolCaps & Kopete::Protocol::RichIFormatting))
+    if ((d->protocolCaps & Kopete::Protocol::BaseIFormatting) || (d->protocolCaps & Kopete::Protocol::RichIFormatting))
     {
         richText |= KopeteRichTextWidget::SupportItalic;
     }
     // Check for underline
-    if ((protocolCaps & Kopete::Protocol::BaseUFormatting) || (protocolCaps & Kopete::Protocol::RichUFormatting))
+    if ((d->protocolCaps & Kopete::Protocol::BaseUFormatting) || (d->protocolCaps & Kopete::Protocol::RichUFormatting))
     {
         richText |= KopeteRichTextWidget::SupportUnderline;
     }
     // Check for font support
-    if ((protocolCaps & Kopete::Protocol::BaseFont) || (protocolCaps & Kopete::Protocol::RichFont))
+    if ((d->protocolCaps & Kopete::Protocol::BaseFont) || (d->protocolCaps & Kopete::Protocol::RichFont))
     {
         richText |= KopeteRichTextWidget::SupportFontFamily | KopeteRichTextWidget::SupportFontSize;
     }
     // Check for text color support
-    if ((protocolCaps & Kopete::Protocol::BaseFgColor) || (protocolCaps & Kopete::Protocol::RichFgColor))
+    if ((d->protocolCaps & Kopete::Protocol::BaseFgColor) || (d->protocolCaps & Kopete::Protocol::RichFgColor))
     {
         richText |= KopeteRichTextWidget::SupportTextForegroundColor;
     }
     // Check for background color support
-    if ((protocolCaps & Kopete::Protocol::BaseBgColor) || (protocolCaps & Kopete::Protocol::RichBgColor))
+    if ((d->protocolCaps & Kopete::Protocol::BaseBgColor) || (d->protocolCaps & Kopete::Protocol::RichBgColor))
     {
         richText |= KopeteRichTextWidget::SupportTextBackgroundColor;
     }
     // Check for alignment
-    if (protocolCaps & Kopete::Protocol::Alignment)
+    if (d->protocolCaps & Kopete::Protocol::Alignment)
     {
         richText |= KopeteRichTextWidget::SupportAlignment;
     }
 
     return richText;
-}
-
-void KopeteRichTextWidget::Private::setProtocolRichTextSupport()
-{
-    KopeteRichTextWidget::RichTextSupport richText = getProtocolRichTextSupport();
-
-    // Set editor support
-    q->setRichTextSupport(richText);
-
-    // Set the toggles if possible
-    if (toggleRichText)
-    {
-        toggleRichText->setEnabled(richText != 0);
-        if (q->textMode() == KopeteRichTextWidget::Rich)
-        {
-            toggleRichText->setChecked(true);
-        }
-        else
-        {
-            toggleRichText->setChecked(false);
-        }
-    }
 }
 
 void KopeteRichTextWidget::Private::mergeAll(const QTextCharFormat& format)

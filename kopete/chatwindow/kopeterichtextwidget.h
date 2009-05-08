@@ -1,4 +1,5 @@
-/* 
+/*
+   Copyright (C) 2009 Roman Jarosz <kedgedev@gmail.com>
    Copyright 2009 Benson Tsai <btsai@vrwarp.com>
    Copyright (C) 2006 Michaël Larouche <larouche@kde.org>
    Copyright (C) 2003 Richard Moore <rich@kde.org>
@@ -32,6 +33,10 @@
  * This class overrides the default behavior of fonts when cleared, pasted, etc
  * to match the expected behavior of the user.
  *
+ * @note Make sure to use only text format setters from this class and not parent
+ * otherwise you most likely will accidentally enable richtext.
+ * KRichTextWidget changes mode to richtext automatically if you change text format.
+ *
  * @author Benson Tsai <btsai@vrwarp.com>
  *
  * @since 4.2
@@ -40,19 +45,21 @@ class KOPETECHATWINDOW_SHARED_EXPORT KopeteRichTextWidget : public KRichTextWidg
 {
     Q_OBJECT
 public:
-    explicit KopeteRichTextWidget(QWidget *parent, Kopete::Protocol::Capabilities protocolCaps);
+    explicit KopeteRichTextWidget(QWidget *parent, Kopete::Protocol::Capabilities protocolCaps, KActionCollection *actionCollection);
+    ~KopeteRichTextWidget();
 
-    bool event(QEvent *event);
+    void setTextOrHtml(const QString &text);
 
-    void setCurrentCharFormat(const QTextCharFormat & format);
-
-    QTextCharFormat currentCharFormat() const;
-
+public:
     virtual void createActions(KActionCollection *actionCollection);
 
-    void setDefaultCharFormat( const QTextCharFormat& format );
+    void setDefaultPlainCharFormat(const QTextCharFormat& format);
+    void setDefaultRichCharFormat(const QTextCharFormat& format);
+    void setCurrentRichCharFormat(const QTextCharFormat & format);
 
-    QTextCharFormat defaultFormat() const;
+    QTextCharFormat defaultPlainFormat() const;
+    QTextCharFormat defaultRichFormat() const;
+    QTextCharFormat currentRichFormat() const;
 
     bool isRichTextEnabled() const;
 
@@ -61,7 +68,7 @@ public Q_SLOTS:
     * enable/disable rich text support
     * @param enable
     */
-    void setRichTextEnabled( bool enable );
+    void setRichTextEnabled(bool enable);
 
     void setFontFamily(QString family);
     void setFontSize(int size);
@@ -77,11 +84,20 @@ signals:
 
 protected:
     virtual void insertFromMimeData(const QMimeData * source);
+    virtual bool event(QEvent *event);
 
 protected slots:
     void updateTextFormat();
     void updateCharFormat(const QTextCharFormat &);
+    void slotTextModeChanged(KRichTextEdit::Mode mode);
 
+private:
+    void setCurrentPlainCharFormat(const QTextCharFormat & format);
+
+    // Leave it in private secion, you should call setCurrentRichCharFormat or setDefaultPlainCharFormat.
+    void setCurrentCharFormat(const QTextCharFormat & format);
+
+    KopeteRichTextWidget::RichTextSupport getProtocolRichTextSupport() const;
 
 private:
     //@cond PRIVATE

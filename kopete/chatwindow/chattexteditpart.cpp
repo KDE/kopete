@@ -73,11 +73,9 @@ void ChatTextEditPart::init( Kopete::ChatSession *session, QWidget *parent)
 	// we need an instance
 	setComponentData( ChatTextEditPartFactory::componentData() );
 	
-	editor = new KopeteRichTextWidget(parent, m_session->protocol()->capabilities());
+	editor = new KopeteRichTextWidget(parent, m_session->protocol()->capabilities(), actionCollection());
 	setWidget( editor );
-	
-	editor->createActions(actionCollection());
-	
+
 	// TODO: Rename rc file
 	setXMLFile( "kopeterichtexteditpart/kopeterichtexteditpartfull.rc" );
 	
@@ -89,9 +87,6 @@ void ChatTextEditPart::init( Kopete::ChatSession *session, QWidget *parent)
 
 	// set params on the edit widget
 	textEdit()->setMinimumSize( QSize( 75, 20 ) );
-//	textEdit()->setWordWrap( Q3TextEdit::WidgetWidth );
-//	textEdit()->setWrapPolicy( Q3TextEdit::AtWhiteSpace );
-//	textEdit()->setAutoFormatting( Q3TextEdit::AutoNone );
 
 	// some signals and slots connections
 	connect( textEdit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
@@ -394,7 +389,16 @@ void ChatTextEditPart::addText( const QString &text )
 {
 	if( Qt::mightBeRichText(text) )
 	{
-		textEdit()->insertHtml( text );
+		if ( textEdit()->isRichTextEnabled() )
+		{
+			textEdit()->insertHtml( text );
+		}
+		else
+		{
+			QTextDocument doc;
+			doc.setHtml( text );
+			textEdit()->insertPlainText( doc.toPlainText() );
+		}
 	}
 	else
 	{
@@ -409,10 +413,6 @@ void ChatTextEditPart::setContents( const Kopete::Message &message )
 	else
 		textEdit()->setPlainText ( message.plainBody() );
 	textEdit()->moveCursor ( QTextCursor::End );
-
-// 	setFont( message.font() );
-// 	setTextColor( message.foregroundColor() );
-// 	setBackgroundColorColor( message.backgroundColor() );
 }
 
 Kopete::Message ChatTextEditPart::contents()
@@ -429,17 +429,17 @@ Kopete::Message ChatTextEditPart::contents()
 		// I hate base *only* support, *waves fist at MSN*
 		if (protocolCaps & Kopete::Protocol::BaseFormatting)
 		{
-			currentMsg.setFont(textEdit()->currentCharFormat().font());
+			currentMsg.setFont(textEdit()->currentRichFormat().font());
 		}
 	
 		if (protocolCaps & Kopete::Protocol::BaseFgColor)
 		{
-			currentMsg.setForegroundColor(textEdit()->currentCharFormat().foreground().color());
+			currentMsg.setForegroundColor(textEdit()->currentRichFormat().foreground().color());
 		}
 	
 		if (protocolCaps & Kopete::Protocol::BaseBgColor)
 		{
-			currentMsg.setBackgroundColor(textEdit()->currentCharFormat().background().color());
+			currentMsg.setBackgroundColor(textEdit()->currentRichFormat().background().color());
 		}
 	}
 	else
@@ -472,13 +472,12 @@ void ChatTextEditPart::slotAppearanceChanged()
 	format.setBackground(settings->chatBackgroundColor());
 	format.setForeground(settings->chatTextColor());
 
-	editor->setDefaultCharFormat(format);
+	editor->setDefaultPlainCharFormat(format);
+	editor->setDefaultRichCharFormat(format);
 }
 
 void ChatTextEditPart::slotRichTextSupportChanged()
 {
-	editor->createActions(actionCollection());
-
 	KXMLGUIFactory * f = factory();
 	if (f)
 	{
@@ -524,17 +523,17 @@ void ChatTextEditPart::readConfig( KConfigGroup& config )
 {
     kDebug() << "Loading config";
 
-    QTextCharFormat format = editor->defaultFormat();
+    QTextCharFormat format = editor->defaultRichFormat();
 
     QFont font = config.readEntry( "TextFont", format.font() );
     QColor fg = config.readEntry( "TextFgColor", format.foreground().color() );
     QColor bg = config.readEntry( "TextBgColor", format.background().color() );
 
-    QTextCharFormat desiredFormat = editor->currentCharFormat();
+	QTextCharFormat desiredFormat = editor->currentRichFormat();
     desiredFormat.setFont(font);
     desiredFormat.setForeground(fg);
     desiredFormat.setBackground(bg);
-    editor->setCurrentCharFormat(desiredFormat);
+    editor->setCurrentRichCharFormat(desiredFormat);
 
     textEdit()->setAlignment(static_cast<Qt::AlignmentFlag>(config.readEntry( "EditAlignment", int(Qt::AlignLeft) )));
 }
@@ -543,9 +542,9 @@ void ChatTextEditPart::writeConfig( KConfigGroup& config )
 {
     kDebug() << "Saving config";
 
-    config.writeEntry( "TextFont", editor->currentCharFormat().font() );
-    config.writeEntry( "TextFgColor", editor->currentCharFormat().foreground().color() );
-    config.writeEntry( "TextBgColor", editor->currentCharFormat().background().color() );
+	config.writeEntry( "TextFont", editor->currentRichFormat().font() );
+	config.writeEntry( "TextFgColor", editor->currentRichFormat().foreground().color() );
+	config.writeEntry( "TextBgColor", editor->currentRichFormat().background().color() );
     config.writeEntry( "EditAlignment", int(editor->alignment()) );
 }
 
@@ -574,27 +573,6 @@ QString ChatTextEditPart::text( Qt::TextFormat format ) const
 bool ChatTextEditPart::isRichTextEnabled() const
 {
 	return editor->isRichTextEnabled();
-}
-
-void ChatTextEditPart::setTextColor()
-{
-    QColor currentTextColor = editor->currentCharFormat().foreground().color();
-    QColor foregroundColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color();
-
-    int result = KColorDialog::getColor( currentTextColor, foregroundColor);
-    if(!currentTextColor.isValid())
-        currentTextColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color() ;
-    if ( result != QDialog::Accepted  )
-        return;
-
-    textEdit()->setTextColor( currentTextColor );
-}
-
-void ChatTextEditPart::setFont()
-{
-    QFont currentFont = editor->currentCharFormat().font();
-    KFontDialog::getFont( currentFont, false, editor );
-    textEdit()->setFont( currentFont );
 }
 
 #include "chattexteditpart.moc"
