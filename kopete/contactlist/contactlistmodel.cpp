@@ -255,6 +255,10 @@ void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 	         this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
 	connect( contact, SIGNAL(statusMessageChanged(Kopete::MetaContact*)),
 	         this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
+	connect( contact, SIGNAL(displayNameChanged(const QString&, const QString&)),
+	         this, SLOT(handleContactDataChange()) );
+	connect( contact, SIGNAL(photoChanged()),
+	         this, SLOT(handleContactDataChange()) );
 }
 
 void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
@@ -263,6 +267,10 @@ void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
 	            this, SLOT(handleContactDataChange(Kopete::MetaContact*)));
 	disconnect( contact, SIGNAL(statusMessageChanged(Kopete::MetaContact*)),
 	            this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
+	disconnect( contact, SIGNAL(displayNameChanged(const QString&, const QString&)),
+	            this, SLOT(handleContactDataChange()) );
+	disconnect( contact, SIGNAL(photoChanged()),
+	            this, SLOT(handleContactDataChange()) );
 
 	m_newMessageMetaContactSet.remove( contact );
 }
@@ -319,6 +327,13 @@ void ContactListModel::loadContactList()
 	         this, SLOT(removeMetaContactFromGroup(Kopete::MetaContact*, Kopete::Group*)) );
 	connect( kcl, SIGNAL(metaContactMovedToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)),
 	         this, SLOT(moveMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)));
+}
+
+void ContactListModel::handleContactDataChange()
+{
+	Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(sender());
+	if ( metaContact )
+		handleContactDataChange( metaContact );
 }
 
 void ContactListModel::newMessageEvent( Kopete::MessageEvent *event )

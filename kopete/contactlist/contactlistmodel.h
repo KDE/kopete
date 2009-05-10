@@ -72,6 +72,7 @@ protected Q_SLOTS:
 	virtual void appearanceConfigChanged() = 0;
 	virtual void handleContactDataChange( Kopete::MetaContact* ) = 0;
 	virtual void loadContactList();
+	void handleContactDataChange();
 	void newMessageEvent( Kopete::MessageEvent *event );
 	void newMessageEventDone( Kopete::MessageEvent *event );
 
