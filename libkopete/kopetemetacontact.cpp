@@ -813,7 +813,19 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 			{
 				d->contactPicture.setPicture(photoProp.toString());
 			}
+			else
+			{
+				d->contactPicture.clear();
+			}
 		}
+		else
+		{
+			d->contactPicture.clear();
+		}
+	}
+	else
+	{
+		d->contactPicture.clear();
 	}
 
 	if ( photoSource() == SourceContact )
