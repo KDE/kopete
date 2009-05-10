@@ -431,72 +431,49 @@ void
 WlmAccount::gotDisplayPicture (const QString & contactId,
                                const QString & filename)
 {
+    // FIXME: Why we get local file and not just QByteArray data?
     kDebug (14210) << k_funcinfo;
-	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(contactId));
+    WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(contactId));
     if (contact)
     {
         // remove from pending display pictures list if applicable
         m_pendingDisplayPictureList.remove(contactId);
-
-        QFile f(filename);
-        if (!f.exists () || !f.size ())
-        {
-            f.remove ();
-            contact->removeProperty (Kopete::Global::Properties::self ()->
-                                     photo ());
-            //dynamic_cast < WlmContact * >(contact)->setMsnObj ("0");
-            return;
-        }
-        // remove old picture
-        if (contact->
-            hasProperty (Kopete::Global::Properties::self()->photo ().key ()))
-        {
-            QString file =
-                contact->property (
-			Kopete::Global::Properties::self ()->photo()).value ().toString ();
-            contact->removeProperty (Kopete::Global::Properties::self ()->photo ());
-            if (QFile (file).exists () && file != filename)
-                QFile::remove (file);
-        }
 
         // check file integrity (SHA1D)
         QDomDocument xmlobj;
         xmlobj.setContent (contact->getMsnObj());
         QString SHA1D_orig = xmlobj.documentElement ().attribute ("SHA1D");
 
-        if (SHA1D_orig.isEmpty ())
-            return;
-
-        // open the file to generate the SHA1D
-        if (!f.open(QIODevice::ReadOnly))
+        QFile f(filename);
+        QByteArray avatarData;
+        if (f.exists() && f.size() > 0 && f.open(QIODevice::ReadOnly))
         {
-            kDebug(14140) << "Could not open avatar picture.";
-            contact->removeProperty( Kopete::Global::Properties::self()->photo() );
-            QFile::remove (filename);
-            return;
+            avatarData = f.readAll();
+            f.close();
         }
+        QFile::remove(filename);
 
-        QByteArray ar = f.readAll();
-        QByteArray SHA1D = QCryptographicHash::hash(ar, QCryptographicHash::Sha1).toBase64();
-
-        // remove corrupted files
-        if(SHA1D != SHA1D_orig)
+        if (!avatarData.isEmpty() && !SHA1D_orig.isEmpty() &&
+            SHA1D_orig == QCryptographicHash::hash(avatarData, QCryptographicHash::Sha1).toBase64())
         {
-            QFile::remove (filename);
-            return;
-        }
+            QImage img;
+            img.loadFromData(avatarData);
 
-        QImage contactPhoto = QImage( filename );
-        if(contactPhoto.format()!=QImage::Format_Invalid)
-        {
-            contact->setProperty (Kopete::Global::Properties::self ()->photo (),
-                              filename);
+            Kopete::AvatarManager::AvatarEntry entry;
+            entry.name = contact->contactId();
+            entry.category = Kopete::AvatarManager::Contact;
+            entry.contact = contact;
+            entry.image = img;
+            entry = Kopete::AvatarManager::self()->add(entry);
+            if (!entry.dataPath.isNull())
+            {
+                contact->removeProperty(Kopete::Global::Properties::self()->photo());
+                contact->setProperty(Kopete::Global::Properties::self()->photo(), entry.dataPath);
+            }
         }
         else
         {
-            f.remove();
-            contact->removeProperty (Kopete::Global::Properties::self ()->
-                                     photo ());
+            contact->removeProperty(Kopete::Global::Properties::self()->photo());
         }
     }
 }
@@ -580,16 +557,8 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
 
         if (msnobject.isEmpty () || msnobject == "0")   // no picture
         {
-            if (contact && contact->
-                hasProperty (Kopete::Global::Properties::self()->photo ().key ()))
-            {
-                QString file = contact->property (
-                    Kopete::Global::Properties::self ()->
-                        photo()).value ().toString ();
-                contact->removeProperty (Kopete::Global::Properties::self ()->photo ());
-                if (QFile (file).exists ())
-                    QFile::remove (file);
-            }
+            if (contact && contact->hasProperty(Kopete::Global::Properties::self()->photo().key()))
+                contact->removeProperty(Kopete::Global::Properties::self()->photo());
             return;
         }
 
