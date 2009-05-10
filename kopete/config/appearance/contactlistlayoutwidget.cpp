@@ -59,13 +59,15 @@ void ContactListLayoutWidget::load()
 	mChanged = false;
 }
 
-void ContactListLayoutWidget::save()
+bool ContactListLayoutWidget::save()
 {
 	QString layoutName = mCurrentLayoutName;
-	saveLayoutData( layoutName );
+	if ( !saveLayoutData( layoutName ) )
+		return false;
 
 	LayoutManager::instance()->setActiveLayout( layoutName );
 	mChanged = false;
+	return true;
 }
 
 void ContactListLayoutWidget::emitChanged()
@@ -168,7 +170,7 @@ bool ContactListLayoutWidget::saveLayoutData( QString& layoutName, bool showProm
 
 		ContactListLayout layout;
 		layout.setLayout( layoutEdit->config() );
-		LayoutManager::instance()->addUserLayout( layoutName, layout );
+		return LayoutManager::instance()->addUserLayout( layoutName, layout );
 	}
 	return true;
 }

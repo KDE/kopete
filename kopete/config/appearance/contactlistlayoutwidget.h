@@ -29,7 +29,7 @@ public:
 	ContactListLayoutWidget( QWidget *parent = 0 );
 
 	void load();
-	void save();
+	bool save();
 
 signals:
 	void changed();

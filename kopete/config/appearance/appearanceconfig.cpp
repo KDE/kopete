@@ -145,12 +145,12 @@ void AppearanceConfig::save()
 
 	Kopete::AppearanceSettings *settings = Kopete::AppearanceSettings::self();
 	settings->setContactListAutoResize (d->mPrfsAdvanced.kcfg_contactListResizeAnchor->isChecked());
-
-	d->contactListLayoutWidget->save();
-
 	settings->writeConfig();
 
-	load();
+	if ( d->contactListLayoutWidget->save() )
+		load();
+	else
+		QTimer::singleShot( 0, this, SLOT(emitChanged()) );
 }
 
 void AppearanceConfig::load()

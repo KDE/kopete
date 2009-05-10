@@ -29,6 +29,7 @@
 #include <KDebug>
 #include <KLocale>
 #include <KStandardDirs>
+#include <kio/global.h>
 
 #include <QDir>
 #include <QDomDocument>
@@ -40,6 +41,8 @@
 namespace ContactList {
 
 LayoutManager * LayoutManager::s_instance = 0;
+
+const QString DefaultStyleName = "Default";
 
 LayoutManager * LayoutManager::instance()
 {
@@ -62,7 +65,11 @@ LayoutManager::LayoutManager()
 	loadUserLayouts();
 
 	KConfigGroup config( KGlobal::config(), "ContactList Layout" );
-	m_activeLayout = config.readEntry( "CurrentLayout", "Default" );
+	m_activeLayout = config.readEntry( "CurrentLayout", DefaultStyleName );
+
+	// Fallback to default
+	if ( !m_layouts.contains( m_activeLayout ) )
+		setActiveLayout( DefaultStyleName );
 }
 
 LayoutManager::~LayoutManager()
@@ -237,10 +244,9 @@ ContactListLayout LayoutManager::layout( const QString &layout )
 	return m_layouts.value( layout );
 }
 
-void LayoutManager::addUserLayout( const QString &name, ContactListLayout layout )
+bool LayoutManager::addUserLayout( const QString &name, ContactListLayout layout )
 {
 	layout.setIsEditable( true );
-	m_layouts.insert( name, layout );
 
 	QDomDocument doc( "layouts" );
 	QDomElement layouts_element = doc.createElement( "contactlist_layouts" );
@@ -250,21 +256,33 @@ void LayoutManager::addUserLayout( const QString &name, ContactListLayout layout
 	doc.appendChild( layouts_element );
 	layouts_element.appendChild( newLayout );
 
-	emit( layoutListChanged() );
-
-	kDebug() << doc.toString();
-	QDir layoutsDir = QDir( KStandardDirs::locateLocal( "appdata", QString::fromUtf8("contactlistlayouts") ) );
+	QString dirName = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("contactlistlayouts") );
+	QDir layoutsDir = QDir( dirName );
 
 	//make sure that this dir exists
 	if ( !layoutsDir.exists() )
-		layoutsDir.mkpath( KStandardDirs::locateLocal( "appdata", QString::fromUtf8("contactlistlayouts") ) );
+	{
+		if ( !layoutsDir.mkpath( dirName ) )
+		{
+			KMessageBox::sorry( 0, KIO::buildErrorString( KIO::ERR_COULD_NOT_MKDIR, dirName ) );
+			return false;
+		}
+	}
 
 	QFile file( layoutsDir.filePath( name + ".xml" ) );
 	if ( !file.open(QIODevice::WriteOnly | QIODevice::Text) )
-		return;
+	{
+		KMessageBox::sorry( 0, KIO::buildErrorString( KIO::ERR_CANNOT_OPEN_FOR_WRITING, file.fileName() ) );
+		return false;
+	}
 
 	QTextStream out( &file );
 	out << doc.toString();
+	file.close();
+	
+	m_layouts.insert( name, layout );
+	emit( layoutListChanged() );
+	return true;
 }
 
 QDomElement LayoutManager::createItemElement( QDomDocument doc, const QString &name, const LayoutItemConfig & item ) const
@@ -322,7 +340,7 @@ QString LayoutManager::activeLayoutName()
 	return m_activeLayout;
 }
 
-void LayoutManager::deleteLayout( const QString & layout )
+bool LayoutManager::deleteLayout( const QString & layout )
 {
 	//check if layout is editable
 	if ( m_layouts.value( layout ).isEditable() )
@@ -332,17 +350,23 @@ void LayoutManager::deleteLayout( const QString & layout )
 		kDebug() << "deleting file: " << xmlFile;
 
 		if ( !QFile::remove( xmlFile ) )
-			kDebug() << "error deleting file....";
+		{
+			KMessageBox::sorry( 0, KIO::buildErrorString( KIO::ERR_CANNOT_DELETE, xmlFile ) );
+			return false;
+		}
 
 		m_layouts.remove( layout );
 		emit( layoutListChanged() );
 
 		if ( layout == m_activeLayout )
-			setActiveLayout( "Default" );
+			setActiveLayout( DefaultStyleName );
+
+		return true;
 	}
-	else
-		KMessageBox::sorry( 0, i18n( "The layout '%1' is one of the default layouts and cannot be deleted.", layout ),
-		                    i18n( "Cannot Delete Default Layouts" ) );
+
+	KMessageBox::sorry( 0, i18n( "The layout '%1' is one of the default layouts and cannot be deleted.", layout ),
+	                    i18n( "Cannot Delete Default Layouts" ) );
+	return false;
 }
 
 } //namespace ContactList

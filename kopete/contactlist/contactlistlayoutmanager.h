@@ -66,8 +66,8 @@ public:
 
 	bool isDefaultLayout( const QString &layout ) const;
 
-	void addUserLayout( const QString &name, ContactListLayout layout );
-	void deleteLayout( const QString &layout );
+	bool addUserLayout( const QString &name, ContactListLayout layout );
+	bool deleteLayout( const QString &layout );
 
 	enum TokenTypes {
 		PlaceHolder = 0,
