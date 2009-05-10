@@ -1137,6 +1137,7 @@ void KopeteWindow::slotTrayAboutToShowMenu ( KMenu * popup )
 	foreach ( Kopete::Account *account, accountList )
 	{
 		KActionMenu *menu = new KActionMenu ( account->accountId(), account );
+		menu->setIcon( account->myself()->onlineStatus().iconFor( account ) );
 
 		if ( !account->hasCustomStatusMenu() )
 			Kopete::StatusRootAction::createAccountStatusActions ( account, menu );
