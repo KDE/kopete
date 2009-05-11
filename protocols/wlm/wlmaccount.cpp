@@ -18,6 +18,7 @@
 
 #include <QTextCodec>
 #include <QFile>
+#include <QFileInfo>
 #include <QImage>
 #include <QDomDocument>
 #include <QtCore/QCryptographicHash>
@@ -469,10 +470,12 @@ WlmAccount::gotDisplayPicture (const QString & contactId,
             {
                 contact->removeProperty(Kopete::Global::Properties::self()->photo());
                 contact->setProperty(Kopete::Global::Properties::self()->photo(), entry.dataPath);
+                contact->setProperty(WlmProtocol::protocol()->displayPhotoSHA1, SHA1D_orig);
             }
         }
         else
         {
+            contact->removeProperty(WlmProtocol::protocol()->displayPhotoSHA1);
             contact->removeProperty(Kopete::Global::Properties::self()->photo());
         }
     }
@@ -557,8 +560,8 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
 
         if (msnobject.isEmpty () || msnobject == "0")   // no picture
         {
-            if (contact && contact->hasProperty(Kopete::Global::Properties::self()->photo().key()))
-                contact->removeProperty(Kopete::Global::Properties::self()->photo());
+            contact->removeProperty(WlmProtocol::protocol()->displayPhotoSHA1);
+            contact->removeProperty(Kopete::Global::Properties::self()->photo());
             return;
         }
 
@@ -571,16 +574,10 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
         if (SHA1D.isEmpty ())
             return;
 
-        QString newlocation =
-            KGlobal::dirs ()->locateLocal ("appdata",
-                                           "wlmpictures/" +
-                                           QString (SHA1D.replace ('/', '_')));
-        QFile f(newlocation);
-        if (f.exists () && f.size ())
-        {
-            gotDisplayPicture (contact->contactId (), newlocation);
+        QString currentSHA1D = contact->property(WlmProtocol::protocol()->displayPhotoSHA1).value().toString();
+        QString photoPath = contact->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
+        if (SHA1D == currentSHA1D && QFileInfo(photoPath).size() > 0)
             return;
-        }
 
         // do not request all pictures at once when you are just connected
         if (isInitialList ())

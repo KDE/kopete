@@ -90,6 +90,8 @@ class WlmProtocol: public Kopete::Protocol
 
     const Kopete::PropertyTmpl currentSong;
 
+	const Kopete::PropertyTmpl displayPhotoSHA1;
+
   protected:
     static WlmProtocol * s_protocol;
 };

@@ -69,7 +69,9 @@ wlmUnknown (Kopete::OnlineStatus::Unknown, 25, this, 0,
             QStringList ("status_unknown"), i18n ("Status not available")),
 wlmConnecting (Kopete::OnlineStatus::Connecting, 2, this, 10,
                QStringList ("wlm_connecting"), i18n ("Connecting")),
-currentSong ("currentSong", i18nc ("This is used in the tooltip of a contact", "Listening To"))
+currentSong ("currentSong", i18nc ("This is used in the tooltip of a contact", "Listening To")),
+displayPhotoSHA1("displayPhotoSHA1", "Display Photo SHA-1 Hash", QString(),
+                 Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty)
 {
     kDebug (14210) << k_funcinfo;
 

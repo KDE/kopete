@@ -721,17 +721,10 @@ WlmChatSession::requestDisplayPicture ()
     if (SHA1D.isEmpty ())
         return;
 
-    QString newlocation =
-        KGlobal::dirs ()->locateLocal ("appdata",
-                                       "wlmpictures/" +
-                                       QString (SHA1D.replace ('/', '_')));
-    QFile f(newlocation);
-    if (f.exists () && f.size ())
-    {
-        qobject_cast <WlmAccount *>(account ())->gotDisplayPicture (contact->contactId (),
-                                              newlocation);
+    QString currentSHA1D = contact->property(WlmProtocol::protocol()->displayPhotoSHA1).value().toString();
+    QString photoPath = contact->property(Kopete::Global::Properties::self()->photo().key()).value().toString();
+    if (SHA1D == currentSHA1D && QFileInfo(photoPath).size() > 0)
         return;
-    }
 
     // request switchboard connection
     // and ask for the display picture
@@ -743,10 +736,9 @@ WlmChatSession::requestDisplayPicture ()
     }
     if (isReady ())
     {
-        getChatService ()->requestDisplayPicture (generateSessionID(),
-                                              newlocation.toLatin1 ().constData (),
-                                              contact->getMsnObj ().
-                                              toAscii ().constData ());
+        QString newlocation = KGlobal::dirs()->locateLocal("appdata", "wlmpictures/" + QString(SHA1D.replace ('/', '_')));
+        getChatService()->requestDisplayPicture(generateSessionID(), newlocation.toLatin1().constData(),
+                                                contact->getMsnObj().toAscii().constData());
         setDownloadDisplayPicture (false);
     }
 }
