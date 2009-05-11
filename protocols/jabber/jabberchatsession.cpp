@@ -146,7 +146,7 @@ void JabberChatSession::slotUpdateDisplayName ()
 	Kopete::ContactPtrList chatMembers = members ();
 
 	// make sure we do have members in the chat
-	if ( !chatMembers.first () )
+	if ( chatMembers.isEmpty () || !chatMembers.first () )
 		return;
 
 	XMPP::Jid jid = static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid();
