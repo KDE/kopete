@@ -197,7 +197,8 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
 	{
 		OscarProtocol *p = static_cast<OscarProtocol*>(protocol());
-		if ( property( p->buddyIconHash ).value().toByteArray() != details.buddyIconHash() )
+		QString photoPath = property( Kopete::Global::Properties::self()->photo() ).value().toString();
+		if ( property( p->buddyIconHash ).value().toByteArray() != details.buddyIconHash() || QFileInfo(photoPath).size() == 0 )
 		{
 			m_buddyIconDirty = true;
 			
@@ -575,11 +576,11 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 		entry.image = img;
 		entry = Kopete::AvatarManager::self()->add(entry);
 
-		setProperty( static_cast<OscarProtocol*>(protocol())->buddyIconHash, m_details.buddyIconHash() );
 		if (!entry.dataPath.isNull())
 		{
 			removeProperty( Kopete::Global::Properties::self()->photo() );
 			setProperty( Kopete::Global::Properties::self()->photo(), entry.dataPath );
+			setProperty( static_cast<OscarProtocol*>(protocol())->buddyIconHash, m_details.buddyIconHash() );
 		}
 
 		m_buddyIconDirty = false;
@@ -587,6 +588,7 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 	else
 	{
 		kDebug(14153) << "Buddy icon hash does not match!";
+		removeProperty( static_cast<OscarProtocol*>(protocol())->buddyIconHash );
 		removeProperty( Kopete::Global::Properties::self()->photo() );
 	}
 }

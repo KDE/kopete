@@ -27,6 +27,8 @@
 #include "contact.h"
 #include "kopete_export.h"
 
+class QDomNode;
+
 namespace Kopete
 {
 class Contact;
@@ -202,6 +204,8 @@ private:
 	QString addQuotesAroundAttributes( QString message ) const;
 
 	QString sanitizedPlainMessage( const QString& message ) const;
+
+	QList<QDomNode> getElementsByTagNameCI( const QDomNode& node, const QString& tagName ) const;
 
 private slots:
 	/** Handler from socket errors from a connection */
