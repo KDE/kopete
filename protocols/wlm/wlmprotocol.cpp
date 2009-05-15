@@ -38,7 +38,7 @@ K_PLUGIN_FACTORY (WlmProtocolFactory, registerPlugin < WlmProtocol > ();
     WlmProtocol::WlmProtocol (QObject * parent,
                               const QVariantList & /*args */ )
     :
-Kopete::Protocol (WlmProtocolFactory::componentData (), parent),
+Kopete::Protocol(WlmProtocolFactory::componentData (), parent, true),
 wlmOnline (Kopete::OnlineStatus::Online, 25, this, 1, QStringList (),
            i18n ("Online"), i18n ("O&nline"),
            Kopete::OnlineStatusManager::Online),
