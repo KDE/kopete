@@ -41,7 +41,7 @@ ${KDE4_KNOTIFYCONFIG_LIBS}
 ${QIMAGEBLITZ_LIBRARIES})
 set_target_properties( kopetecontactlist PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopetecontactlist ${INSTALL_TARGETS_DEFAULT_ARGS})
-install( FILES DefaultContactListLayouts.xml  DESTINATION ${DATA_INSTALL_DIR}/kopete)
+install( FILES DefaultContactListLayouts.xml CompactContactListLayouts.xml DESTINATION ${DATA_INSTALL_DIR}/kopete)
 ########### install files ###############
 
 

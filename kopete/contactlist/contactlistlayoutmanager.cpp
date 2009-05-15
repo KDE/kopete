@@ -127,6 +127,7 @@ void LayoutManager::loadUserLayouts()
 void LayoutManager::loadDefaultLayouts()
 {
 	loadLayouts( KStandardDirs::locate( "data", "kopete/DefaultContactListLayouts.xml" ), false );
+	loadLayouts( KStandardDirs::locate( "data", "kopete/CompactContactListLayouts.xml" ), false );
 }
 
 
