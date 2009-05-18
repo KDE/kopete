@@ -221,7 +221,7 @@ void KopeteMessage_Test::testLinkParser()
 	QDir testCasesDir(basePath);
 	
 	QStringList inputFileNames = testCasesDir.entryList(QStringList(QLatin1String("*.input")));
-	for ( QStringList::ConstIterator it = inputFileNames.begin(); it != inputFileNames.end(); ++it)
+	for ( QStringList::ConstIterator it = inputFileNames.constBegin(); it != inputFileNames.constEnd(); ++it)
 	{
 		QString fileName = *it;
 		QString outputFileName = fileName;
