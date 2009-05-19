@@ -14,9 +14,7 @@
 #include <qapplication.h>
 #include <qtimer.h>
 
-#include "oscarclientstream.h"
 #include "client.h"
-#include "connection.h"
 #include "coreprotocol.h"
 
 #define QT_FATAL_ASSERT 1
@@ -41,9 +39,7 @@ public slots:
 	//void slotsend(int layer);
 
 private:
-	ClientStream *myTestObject;
 	Client* myClient;
-	Connection* myConnection;
 	
 	bool connected;
 };

@@ -120,6 +120,7 @@ set(kopete_LIB_SRCS
    kopeteinfoeventmanager.cpp
    kopeteinfoevent.cpp
    kopeteaddedinfoevent.cpp
+   kopetesockettimeoutwatcher.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp

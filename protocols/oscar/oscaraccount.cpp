@@ -68,6 +68,8 @@
 #include "oscarpresence.h"
 #include "oscarprotocol.h"
 #include "oscarstatusmanager.h"
+#include <kopetesockettimeoutwatcher.h>
+
 
 class OscarAccountPrivate : public Client::CodecProvider
 {
@@ -115,6 +117,7 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 
 	d = new OscarAccountPrivate( *this );
 	d->engine = new Client( this );
+	QObject::connect( d->engine, SIGNAL(createClientStream(ClientStream**)), this, SLOT(createClientStream(ClientStream**)) );
 	d->engine->setIsIcq( isICQ );
 	// Set version capability
 	// last 4 bytes determine version
@@ -240,7 +243,7 @@ void OscarAccount::loginActions()
 	}
 
 	kDebug(OSCAR_RAW_DEBUG) << "sending request for icon service";
-	d->engine->requestServerRedirect( 0x0010 );
+	d->engine->connectToIconServer();
 
 	if ( d->buddyIconDirty )
 		updateBuddyIconInSSI();
@@ -822,18 +825,6 @@ bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QStrin
 	
 	return true;
 }
-
-Connection* OscarAccount::setupConnection()
-{
-	//set up the clientstream
-	ClientStream* cs = new ClientStream( new QTcpSocket(), 0 );
-
-	Connection* c = new Connection( cs, "AUTHORIZER" );
-	c->setClient( d->engine );
-
-	return c;
-}
-
 
 bool OscarAccount::createContact(const QString &contactId,
 	Kopete::MetaContact *parentContact)
@@ -1451,6 +1442,16 @@ QList<QDomNode> OscarAccount::getElementsByTagNameCI( const QDomNode& node, cons
 		childNode = childNode.nextSibling();
 	}
 	return nodeList;
+}
+
+void OscarAccount::createClientStream( ClientStream **clientStream )
+{
+	QTcpSocket* tcpSocket = new QTcpSocket();
+	ClientStream *cs = new ClientStream( tcpSocket, 0 );
+	
+	Kopete::SocketTimeoutWatcher* timeoutWatcher = new Kopete::SocketTimeoutWatcher(tcpSocket);
+	QObject::connect( timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)), cs, SLOT(socketError(QAbstractSocket::SocketError)) );
+	*clientStream = cs;
 }
 
 #include "oscaraccount.moc"

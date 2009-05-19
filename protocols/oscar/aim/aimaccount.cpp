@@ -658,10 +658,9 @@ void AIMAccount::connectWithPassword( const QString &password )
 		Oscar::DWORD status = protocol()->statusManager()->oscarStatusOf( pres );
 		updateVersionUpdaterStamp();
 
-		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(16) );
 		engine()->setStatus( status, mInitialStatusMessage );
-		engine()->connectToServer( c, server, port, true /* doAuth */ );
+		engine()->connectToServer( server, port );
 
 		mInitialStatusMessage.clear();
 	}

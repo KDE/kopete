@@ -5,15 +5,10 @@
 
 LoginTest::LoginTest(int argc, char ** argv) : QApplication( argc, argv )
 {
-	// set up client stream
-	myTestObject = new ClientStream( new QTcpSocket(), 0 );
-	
 	// notify when the transport layer is connected
 	//connect( myTestObject, SIGNAL( connected() ), SLOT( slotConnected() ) );
 	myClient = new Client();
 
-	myConnection = new Connection( myTestObject, "AUTHORIZER" );
-	myConnection->setClient( myClient );
 	// do test once the event loop is running
 	QTimer::singleShot( 0, this, SLOT( slotDoTest() ) );
 	connected = false;
@@ -33,7 +28,7 @@ void LoginTest::slotDoTest()
 
 	myClient->setIsIcq( true );
 	myClient->start( server, 5190, "userid", "password" );
-	myClient->connectToServer( myConnection, server, 5190, true );
+	myClient->connectToServer( server, 5190 );
 	connected = true;
 }
 

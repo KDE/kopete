@@ -72,6 +72,9 @@ public:
 Q_SIGNALS:
 	void connected();
 
+public Q_SLOTS:
+	void socketError( QAbstractSocket::SocketError );
+
 private Q_SLOTS:
 	/**
 	 * collects wire ready outgoing data from the core protocol and sends
@@ -84,7 +87,6 @@ private Q_SLOTS:
 
 	void socketConnected();
 	void socketDisconnected();
-	void socketError( QAbstractSocket::SocketError );
 	void socketReadyRead();
 	void socketBytesWritten( qint64 );
 

@@ -224,17 +224,15 @@ Oscar::Settings* Client::clientSettings() const
 	return d->settings;
 }
 
-void Client::connectToServer( Connection *c, const QString& host, quint16 port, bool auth )
+void Client::connectToServer( const QString& host, quint16 port )
 {
-	d->connections.append( c );
-	if ( auth == true )
-	{
-		d->loginTask = new StageOneLoginTask( c->rootTask() );
-		connect( d->loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
-	}
+	ClientStream* cs = createClientStream();
+	Connection* c = new Connection( cs, "AUTHORIZER" );
+	c->setClient( this );
 
-	connect( c, SIGNAL( socketError( int, const QString& ) ), this, SLOT( determineDisconnection( int, const QString& ) ) );
-	c->connectToServer( host, port );
+	d->loginTask = new StageOneLoginTask( c->rootTask() );
+	connect( d->loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+	connectToServer( c, host, port );
 }
 
 void Client::start( const QString &host, const uint port, const QString &userId, const QString &pass )
@@ -460,7 +458,7 @@ void Client::startStageTwo()
 
 	//connect
 	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
-	connectToServer( c, d->host, d->port, false ) ;
+	connectToServer( c, d->host, d->port ) ;
 
 }
 
@@ -1420,7 +1418,6 @@ void Client::connectToIconServer()
 		return;
 
 	requestServerRedirect( 0x0010 );
-	return;
 }
 
 void Client::setIgnore( const QString& user, bool ignore )
@@ -1551,7 +1548,7 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 	QObject::connect( d->loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
 
 	//connect
-	connectToServer( c, realHost, realPort.toInt(), false );
+	connectToServer( c, realHost, realPort.toInt() );
   	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
 
     if ( srt )
@@ -1714,9 +1711,26 @@ void Client::disconnectChatRoom( Oscar::WORD exchange, const QString& room )
     c = 0;
 }
 
+void Client::connectToServer( Connection* c, const QString& host, quint16 port )
+{
+	d->connections.append( c );
+	connect( c, SIGNAL( socketError( int, const QString& ) ), this, SLOT( determineDisconnection( int, const QString& ) ) );
+	c->connectToServer( host, port );
+}
+
+ClientStream* Client::createClientStream()
+{
+	ClientStream* cs = 0;
+	emit createClientStream( &cs );
+	if ( !cs )
+		cs = new ClientStream( new QTcpSocket(), 0 );
+
+	return cs;
+}
+
 Connection* Client::createConnection()
 {
-	ClientStream* cs = new ClientStream( new QTcpSocket(), 0 );
+	ClientStream* cs = createClientStream();
 	cs->setNoopTime( 60000 );
 	Connection* c = new Connection( cs, "BOS" );
 	cs->setConnection( c );

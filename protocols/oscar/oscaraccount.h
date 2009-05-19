@@ -37,7 +37,7 @@ class FileTransferInfo;
 }
 
 class Client;
-class Connection;
+class ClientStream;
 class OscarContact;
 class OscarAccountPrivate;
 class QTextCodec;
@@ -129,11 +129,6 @@ public slots:
 
 protected:
 	/**
-	 * Setup a connection for a derived account
-	 */
-	Connection* setupConnection();
-
-	/**
 	 * Adds a contact to a meta contact
 	 */
 	friend class OscarProtocol;
@@ -220,6 +215,11 @@ private slots:
 	/** Identity's property changed */
 	void slotIdentityPropertyChanged( Kopete::PropertyContainer *container, const QString &key,
 	                                  const QVariant &oldValue, const QVariant &newValue );
+
+	/**
+	 * Setup a ClientStream for engine
+	 */
+	void createClientStream( ClientStream **clientStream );
 
 private:
 	OscarAccountPrivate *d;

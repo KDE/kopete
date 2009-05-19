@@ -258,11 +258,10 @@ void ICQAccount::connectWithPassword( const QString &password )
 
 		updateVersionUpdaterStamp();
 
-		Connection* c = setupConnection();
 		engine()->start( server, port, accountId(), password.left(8) );
 		engine()->setStatus( status, mInitialStatusMessage.message(), pres.xtrazStatus(),
 		                     mInitialStatusMessage.title(), pres.mood() );
-		engine()->connectToServer( c, server, port, true /* doAuth */ );
+		engine()->connectToServer( server, port );
 
 		mInitialStatusMessage = Kopete::StatusMessage();
 	}

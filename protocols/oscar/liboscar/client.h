@@ -37,6 +37,7 @@
 #include "contact.h"
 
 class Connection;
+class ClientStream;
 class ContactManager;
 class UserDetails;
 class QString;
@@ -104,14 +105,12 @@ public:
 	Oscar::Settings* clientSettings() const;
 
 	/**
-	 * Start a connection to the server using the supplied @ref ClientStream.
+	 * Start a connection to the server
 	 * This is only a transport layer connection.
-	 * @param s initialised connection object to use for the connection.
 	 * @param host the host name of server to connect to
 	 * @param port the port of server to connect to
-	 * @param auth indicate whether we're connecting to the authorizer or the bos server
 	 */
-	void connectToServer( Connection *c, const QString& host, quint16 port, bool auth = true );
+	void connectToServer( const QString& host, quint16 port );
 
 	/**
 	 * Start the login process for Oscar
@@ -464,6 +463,12 @@ public slots:
 signals:
 	/** CONNECTION EVENTS */
 
+	/** Notifies that we want to create new stream.
+	 * If to clientStream wasn't assigned new ClientStream or this signal isn't
+	 * connected to anything default stream will be created.
+	 */
+	void createClientStream( ClientStream **clientStream );
+
 	/** Notifies that the login process has succeeded. */
 	void loggedIn();
 
@@ -627,6 +632,10 @@ private:
 	/** Delete the static tasks */
 	void deleteStaticTasks();
 
+	/** Start a connection */
+	void connectToServer( Connection *c, const QString& host, quint16 port );
+
+	ClientStream* createClientStream();
 	Connection* createConnection();
 
 	/**
