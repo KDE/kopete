@@ -39,6 +39,7 @@
 
 // Kopete includes
 #include <kopetecontact.h>
+#include <kopeteprotocol.h>
 #include <kopeteaccount.h>
 
 namespace Kopete
@@ -114,6 +115,9 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 			if( newEntry.contact && newEntry.contact->account() )
 			{
 				QString accountName = newEntry.contact->account()->accountId();
+				QString protocolName = newEntry.contact->account()->protocol()->pluginId();                                
+				avatarUrl.addPath( protocolName );
+				d->createDirectory( avatarUrl );
 				avatarUrl.addPath( accountName );
 				d->createDirectory( avatarUrl );
 			}
