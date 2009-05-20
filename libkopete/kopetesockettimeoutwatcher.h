@@ -33,13 +33,15 @@ class KOPETE_EXPORT SocketTimeoutWatcher : public QObject
 Q_OBJECT
 public:
 	/**
+	 * Returns new SocketTimeoutWatcher or 0 if SocketTimeoutWatcher was already created for this socket
+	 *
 	 * SocketTimeoutWatcher watches if outgoing data has been sent out.
 	 * The implementation check if ACK was received after data has been sent
 	 * and emits error(QAbstractSocket::SocketError) if ACK hasn't been
 	 * received before @p msecTimeout milliseconds.
 	 * @note abort is called on socket when timeout is reached.
 	 */
-	SocketTimeoutWatcher( QAbstractSocket* socket, quint32 msecTimeout = 15000 );
+	static SocketTimeoutWatcher* watch( QAbstractSocket* socket, quint32 msecTimeout = 15000 );
 
 	~SocketTimeoutWatcher();
 
@@ -49,12 +51,16 @@ signals:
 	 * @note socketError is always QAbstractSocket::RemoteHostClosedError
 	 */
 	void error( QAbstractSocket::SocketError socketError );
+	void errorInt( int socketError );
 
 private slots:
 	void bytesWritten();
 	void ackTimeoutCheck();
 
 private:
+	SocketTimeoutWatcher( QAbstractSocket* socket, quint32 msecTimeout );
+
+	static QSet<QAbstractSocket*> watchedSocketSet;
 	QAbstractSocket* mSocket;
 	QTimer* mAckCheckTimer;
 	bool mActive;

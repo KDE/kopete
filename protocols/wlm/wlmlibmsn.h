@@ -445,6 +445,11 @@ class Callbacks:public QObject,
 
     void
     wrongPassword ();
+
+    void socketError( int error );
+
+private slots:
+    void emitSocketError( QAbstractSocket::SocketError error );
 };
 
 #endif

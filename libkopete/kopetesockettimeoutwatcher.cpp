@@ -30,9 +30,23 @@
 namespace Kopete
 {
 
+QSet<QAbstractSocket*> SocketTimeoutWatcher::watchedSocketSet;
+
+SocketTimeoutWatcher* SocketTimeoutWatcher::watch( QAbstractSocket* socket, quint32 msecTimeout )
+{
+	if (watchedSocketSet.contains(socket))
+	{
+		kDebug() << "Socket is already being watched " << socket;
+		return 0;
+	}
+
+	return new Kopete::SocketTimeoutWatcher( socket, msecTimeout );
+}
+
 SocketTimeoutWatcher::SocketTimeoutWatcher( QAbstractSocket* socket, quint32 msecTimeout )
 : QObject(socket), mSocket(socket), mActive(true), mTimeoutThreshold(msecTimeout)
 {
+	watchedSocketSet.insert( mSocket );
 	mAckCheckTimer = new QTimer();
 
 	connect( socket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten()) );
@@ -45,6 +59,7 @@ SocketTimeoutWatcher::SocketTimeoutWatcher( QAbstractSocket* socket, quint32 mse
 
 SocketTimeoutWatcher::~SocketTimeoutWatcher()
 {
+	watchedSocketSet.remove( mSocket );
 	delete mAckCheckTimer;
 }
 
@@ -71,7 +86,7 @@ void SocketTimeoutWatcher::ackTimeoutCheck()
 	const int sDesc = mSocket->socketDescriptor();
 	if ( sDesc != -1 )
 	{
-#ifdef Q_WS_X11
+#ifdef Q_OS_LINUX
 		struct tcp_info info;
 		int info_length = sizeof(info);
 		if ( getsockopt( sDesc, SOL_TCP, TCP_INFO, (void*)&info, (socklen_t*)&info_length ) == 0 )
@@ -81,6 +96,7 @@ void SocketTimeoutWatcher::ackTimeoutCheck()
 				kWarning() << "Connection timeout for " << mSocket->peerAddress();
 				mAckCheckTimer->stop();
 				emit error( QAbstractSocket::RemoteHostClosedError );
+				emit errorInt( QAbstractSocket::RemoteHostClosedError );
 				mSocket->abort();
 			}
 			else if ( info.tcpi_last_ack_recv < info.tcpi_last_data_sent )

@@ -20,21 +20,25 @@
 #include "wlmlibmsn.h"
 
 class WlmAccount;
-class WlmServer:public QObject
+
+class WlmServer : public QObject
 {
-  Q_OBJECT public:
+  Q_OBJECT
+public:
+    WlmServer( WlmAccount * account, QString & m_accountID, QString & m_password );
+    ~WlmServer ();
+
+    void WlmConnect( const QString& server, uint port );
+    void WlmDisconnect();
+
     WlmAccount * m_account;
     QString m_accountID;
     QString m_password;
     Callbacks cb;
-      WlmServer (WlmAccount * account, QString & m_accountID,
-                 QString & m_password);
-     ~WlmServer ();
-    void WlmConnect ( const QString& server, uint port );
-    void WlmDisconnect ();
-      MSN::NotificationServerConnection * mainConnection;
-      std::string myFriendlyName;
-      std::string myUsername;
+
+    MSN::NotificationServerConnection * mainConnection;
+    std::string myFriendlyName;
+    std::string myUsername;
 };
 
 #endif

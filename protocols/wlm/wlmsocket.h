@@ -32,7 +32,8 @@ public:
     bool m_isSSL;
     explicit WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL = false);
     ~WlmSocket ();
-    bool isSSL(){ return m_isSSL; } 
+    bool isSSL(){ return m_isSSL; }
+
 public slots:
     void incomingData ();
     void connectionReady ();

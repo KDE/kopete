@@ -295,6 +295,8 @@ WlmAccount::connectWithPassword (const QString & pass)
                       this, SLOT (connectionCompleted ()));
     QObject::connect (&m_server->cb, SIGNAL (connectionFailed ()),
                       this, SLOT (connectionFailed ()));
+    QObject::connect (&m_server->cb, SIGNAL(socketError(int)),
+                      this, SLOT(error(int)));
     QObject::connect (&m_server->cb,
                       SIGNAL (gotDisplayName (const QString &)), this,
                       SLOT (gotDisplayName (const QString &)));
@@ -1193,14 +1195,30 @@ WlmAccount::NotificationServerConnectionTerminated (MSN::
     }
 }
 
-void
-WlmAccount::disconnect ()
+void WlmAccount::disconnect()
+{
+    logOff( Kopete::Account::Manual );
+}
+
+void WlmAccount::error( int errCode )
+{
+    logOff( Kopete::Account::ConnectionReset );
+}
+
+
+void WlmAccount::logOff( Kopete::Account::DisconnectReason reason )
 {
     kDebug (14210) << k_funcinfo;
     if (m_server)
         m_server->WlmDisconnect ();
 
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
+
+    foreach ( Kopete::Contact *kc , contacts() )
+    {
+        WlmContact *c = static_cast<WlmContact *>( kc );
+        c->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
+    }
 
     if (m_transferManager)
     {
@@ -1218,10 +1236,11 @@ WlmAccount::disconnect ()
         delete m_server;
         m_server = NULL;
     }
+
+    disconnected( reason );
 }
 
-WlmServer *
-WlmAccount::server ()
+WlmServer *WlmAccount::server ()
 {
     return m_server;
 }
@@ -1311,17 +1330,8 @@ WlmAccount::slotGoOffline ()
 {
     kDebug (14210) << k_funcinfo;
 
-    if (isConnected ()
-        || myself ()->onlineStatus ().status () ==
-        Kopete::OnlineStatus::Connecting)
-        disconnect ();
-    myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
-
-    foreach ( Kopete::Contact *kc , contacts() )
-    {
-        WlmContact *c = static_cast<WlmContact *>( kc );
-        c->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
-    }
+    if ( isConnected() || myself ()->onlineStatus ().status () == Kopete::OnlineStatus::Connecting )
+        disconnect();
 }
 
 void

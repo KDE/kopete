@@ -1449,8 +1449,13 @@ void OscarAccount::createClientStream( ClientStream **clientStream )
 	QTcpSocket* tcpSocket = new QTcpSocket();
 	ClientStream *cs = new ClientStream( tcpSocket, 0 );
 	
-	Kopete::SocketTimeoutWatcher* timeoutWatcher = new Kopete::SocketTimeoutWatcher(tcpSocket);
-	QObject::connect( timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)), cs, SLOT(socketError(QAbstractSocket::SocketError)) );
+	Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch(tcpSocket);
+	if ( timeoutWatcher )
+	{
+		QObject::connect( timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)),
+		                  cs, SLOT(socketError(QAbstractSocket::SocketError)) );
+	}
+
 	*clientStream = cs;
 }
 

@@ -30,6 +30,7 @@
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopeteuiglobal.h"
+#include "kopetesockettimeoutwatcher.h"
 
 // include first to not get compile errors on windows
 #include <msn/msn.h>
@@ -49,6 +50,7 @@
 
 #include <string>
 #include <iostream>
+#include <kdebug.h>
 
 #include <QObject>
 #include <QApplication>
@@ -679,8 +681,12 @@ Callbacks::connectToServer (std::string hostname, int port, bool * connected, bo
     if(!a)
         return NULL;
 
-    connect( a, SIGNAL( sslErrors(const QList<QSslError> &) ), a, SLOT(
-                      ignoreSslErrors() ) );
+    connect( a, SIGNAL(sslErrors(const QList<QSslError> &)), a, SLOT(ignoreSslErrors()) );
+    connect( a, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(emitSocketError(QAbstractSocket::SocketError)) );
+
+    Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch( a );
+    if ( timeoutWatcher )
+        connect( timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(emitSocketError(QAbstractSocket::SocketError)) );
 
     if(!isSSL)
         a->connectToHost (hostname.c_str (), port);
@@ -888,6 +894,11 @@ void Callbacks::gotEmoticonFile(MSN::SwitchboardServerConnection * conn, unsigne
 void Callbacks::gotWinkFile(MSN::SwitchboardServerConnection * conn, unsigned int sessionID, std::string file)
 {
     emit slotGotWinkFile(conn, sessionID, QString(file.c_str()));
+}
+
+void Callbacks::emitSocketError( QAbstractSocket::SocketError error )
+{
+    emit socketError( error );
 }
 
 #include "wlmlibmsn.moc"
