@@ -17,28 +17,36 @@
 #ifndef WLMSOCKET_H
 #define WLMSOCKET_H
 
-#include <QObject>
-
 #include <QSslSocket>
 
 #include <msn/msn.h>
+
+class QTimer;
 
 class WlmSocket : public QSslSocket
 {
   Q_OBJECT 
 public:
-    MSN::NotificationServerConnection * mainConnection;
-    bool main;
-    bool m_isSSL;
-    explicit WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL = false);
-    ~WlmSocket ();
-    bool isSSL(){ return m_isSSL; }
+    explicit WlmSocket( MSN::NotificationServerConnection * mainConnection, bool isSSL = false );
+    ~WlmSocket();
+
+    bool isSSL() const { return mIsSSL; }
 
 public slots:
-    void incomingData ();
-    void connectionReady ();
-    void connectionFinished ();
+    void incomingData();
+    void connectionReady();
+    void connectionFinished();
     void connectionEncryptedReady();
 
+private slots:
+    void resetPing();
+    void pingTimeout();
+
+private:
+    void initPingTimer();
+
+    MSN::NotificationServerConnection * mMainConnection;
+    bool mIsSSL;
+    QTimer* mPingTimer;
 };
 #endif

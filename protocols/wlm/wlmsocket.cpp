@@ -16,108 +16,137 @@
 
 #include "wlmsocket.h"
 
-#include <QObject>
+#include <QTimer>
 
-WlmSocket::WlmSocket (MSN::NotificationServerConnection * mainConnection, bool isSSL) :
-    m_isSSL(isSSL)
+WlmSocket::WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL)
+: mMainConnection(mainConnection), mIsSSL(isSSL), mPingTimer(0)
 {
-    main = false;
-    this->mainConnection = mainConnection;
-
-    QObject::connect (this, SIGNAL (connected ()), this,
-                      SLOT (connectionReady ()));
-    QObject::connect (this, SIGNAL (disconnected ()), this, 
-                      SLOT (connectionFinished ()));
-    QObject::connect (this, SIGNAL (encrypted ()), this, 
-                      SLOT (connectionEncryptedReady()));
-
+    QObject::connect( this, SIGNAL(connected()), this, SLOT(connectionReady()) );
+    QObject::connect( this, SIGNAL(disconnected()), this, SLOT(connectionFinished()) );
+    QObject::connect( this, SIGNAL(encrypted()), this, SLOT(connectionEncryptedReady()) );
+    QObject::connect( this, SIGNAL(bytesWritten(qint64)), this, SLOT(resetPing()) );
 }
 
-void
-WlmSocket::connectionEncryptedReady()
+WlmSocket::~WlmSocket()
+{
+    if ( mPingTimer )
+        delete mPingTimer;
+}
+
+void WlmSocket::connectionEncryptedReady()
 {
     MSN::Connection * c;
     
-    if (!mainConnection)
+    if ( !mMainConnection )
         return;
     // Retrieve the connection associated with the
     // socket's file handle on which the event has
     // occurred.
-    c = mainConnection->connectionWithSocket ((void*)this);
+    c = mMainConnection->connectionWithSocket( (void*)this );
 
     // if this is a libmsn socket
     if (c != NULL)
     {
-        if (c->isConnected () == false)
+        if ( c->isConnected() == false )
         {
-            c->socketConnectionCompleted ();
+            c->socketConnectionCompleted();
         }
         // If this event is due to new data becoming available 
-        c->socketIsWritable ();
+        c->socketIsWritable();
     }
 
+    if ( c == mMainConnection )
+        initPingTimer();
 }
 
-void
-WlmSocket::connectionReady ()
+void WlmSocket::connectionReady()
 {
     MSN::Connection * c;
     
     // ssl is connected when encrypted() is raised
-    if(isSSL())
+    if( isSSL() )
         return;
 
-    if (!mainConnection)
+    if ( !mMainConnection )
         return;
     // Retrieve the connection associated with the
     // socket's file handle on which the event has
     // occurred.
-    c = mainConnection->connectionWithSocket ((void*)this);
+    c = mMainConnection->connectionWithSocket( (void*)this );
 
     // if this is a libmsn socket
     if (c != NULL)
     {
-        if (c->isConnected () == false)
+        if (c->isConnected() == false)
         {
-            c->socketConnectionCompleted ();
+            c->socketConnectionCompleted();
         }
         // If this event is due to new data becoming available 
-        c->socketIsWritable ();
+        c->socketIsWritable();
+    }
+
+    if ( c == mMainConnection )
+        initPingTimer();
+}
+
+void WlmSocket::connectionFinished()
+{
+    if ( mPingTimer )
+    {
+        delete mPingTimer;
+        mPingTimer = 0;
     }
 }
 
-void
-WlmSocket::connectionFinished ()
-{
-}
-
-void
-WlmSocket::incomingData ()
+void WlmSocket::incomingData()
 {
     MSN::Connection * c;
 
-    if (!mainConnection)
+    if ( !mMainConnection )
         return;
 
     // Retrieve the connection associated with the
     // socket's file handle on which the event has
     // occurred.
-    c = mainConnection->connectionWithSocket ((void*)this);
+    c = mMainConnection->connectionWithSocket((void*)this);
 
     // if this is a libmsn socket
     if (c != NULL)
     {
-        if (c->isConnected () == false)
+        if (c->isConnected() == false)
         {
-            c->socketConnectionCompleted ();
+            c->socketConnectionCompleted();
         }
         // If this event is due to new data becoming available 
-        c->dataArrivedOnSocket ();
+        c->dataArrivedOnSocket();
     }
 }
 
-WlmSocket::~WlmSocket ()
+void WlmSocket::resetPing()
 {
+    if ( mPingTimer )
+        mPingTimer->start();
+}
+
+void WlmSocket::pingTimeout()
+{
+    if ( !mMainConnection || !mMainConnection->isConnected() )
+        return;
+
+    MSN::Connection *c = mMainConnection->connectionWithSocket((void*)this);
+    if ( c == mMainConnection )
+        mMainConnection->sendPing();
+}
+
+void WlmSocket::initPingTimer()
+{
+    if ( !mPingTimer )
+    {
+        mPingTimer = new QTimer();
+        QObject::connect( mPingTimer, SIGNAL(timeout()), this, SLOT( pingTimeout()) );
+        mPingTimer->setInterval( 50000 );
+    }
+    mPingTimer->start();
 }
 
 #include "wlmsocket.moc"
