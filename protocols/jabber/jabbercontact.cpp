@@ -1327,7 +1327,6 @@ void JabberContact::slotDiscoFinished( )
 		if(!Kopete::AccountManager::self()->registerAccount( transport ))
 			return;
 		
-		transport->setIdentity( parentAccount->identity() );
 		transport->myself()->setOnlineStatus( status ); //push back the online status
 		return;
 	}

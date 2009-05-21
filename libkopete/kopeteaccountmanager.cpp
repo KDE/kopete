@@ -218,6 +218,21 @@ Account* AccountManager::registerAccount( Account *account )
 
 	connect(account, SIGNAL(accountDestroyed(const Kopete::Account *)) , this, SLOT( unregisterAccount(const Kopete::Account *) ));
 
+	if ( !account->identity() )
+	{
+		// the account's Identity must be set here instead of in the Kopete::Account ctor, because there the
+		// identity cannot pick up any state set in the derived Account ctor
+		Identity *identity = Kopete::IdentityManager::self()->findIdentity( account->configGroup()->readEntry("Identity", QString()) );
+		// if the identity was not found, use the default one which will for sure exist
+		// FIXME: get rid of this, the account's identity should always exist at this point
+		if (!identity)
+		{
+			kWarning( 14010 ) << "No identity for account " << account->accountId() << ": falling back to default";
+			identity = Kopete::IdentityManager::self()->defaultIdentity();
+		}
+		account->setIdentity( identity );
+	}
+
 	emit accountRegistered( account );
 	return account;
 }
@@ -394,17 +409,6 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
 		}
-		// the account's Identity must be set here instead of in the Kopete::Account ctor, because there the
-		// identity cannot pick up any state set in the derived Account ctor
-		Identity *identity = Kopete::IdentityManager::self()->findIdentity( account->configGroup()->readEntry("Identity", QString()) );
-		// if the identity was not found, use the default one which will for sure exist
-		// FIXME: get rid of this, the account's identity should always exist at this point
-		if (!identity)
-		{
-			kWarning( 14010 ) << "No identity for account " << accountId << ": falling back to default";
-			identity = Kopete::IdentityManager::self()->defaultIdentity();
-		}
-		account->setIdentity( identity );
 	}
 }
 
