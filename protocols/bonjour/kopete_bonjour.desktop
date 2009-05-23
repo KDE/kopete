@@ -22,6 +22,7 @@ Name[pa]=ਬੋਨਜੁਉਰ
 Name[sr]=Бонжур
 Name[x-test]=xxBonjourxx
 Comment=Serverless Link Local XMPP Messaging
+Comment[ca]=Enllaç local de missatgeria XMPP sense servidor
 Comment[el]=Τοπικά μηνύματα XMPP χωρίς εξυπηρετητή
 Comment[et]=Serverita kohalik XMPP sõnumite saatmine
 Comment[ga]=Cur teachtaireachtaí logánta XMPP gan freastalaí
