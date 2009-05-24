@@ -23,6 +23,8 @@
 
 #include <kdebug.h>
 
+#include "kopetesockettimeoutwatcher.h"
+
 #include "gwerror.h"
 
 KNetworkByteStream::KNetworkByteStream ( QObject *parent )
@@ -41,6 +43,13 @@ bool KNetworkByteStream::connect ( QString host, QString service )
 {
 	kDebug () << "Connecting to " << host << ", service " << service;
 	mSocket = KSocketFactory::connectToHost( "gwims", host, service.toUInt(), this );
+
+	Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch( mSocket );
+	if ( timeoutWatcher )
+	{
+		QObject::connect( timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)),
+		                  this, SLOT(slotError(QAbstractSocket::SocketError)) );
+	}
 
 	QObject::connect( mSocket, SIGNAL(error(QAbstractSocket::SocketError)),
 			this, SLOT(slotError(QAbstractSocket::SocketError)) );

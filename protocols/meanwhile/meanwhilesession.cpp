@@ -26,6 +26,7 @@
 #include <kopetechatsession.h>
 #include <kopetegroup.h>
 #include <kopetecontactlist.h>
+#include <kopetesockettimeoutwatcher.h>
 #include "meanwhilesession.h"
 #include "meanwhileprotocol.h"
 
@@ -194,6 +195,10 @@ void MeanwhileSession::connect(QString password)
 
 
     QTcpSocket *sock = new QTcpSocket(this);
+    Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch(sock);
+    if (timeoutWatcher)
+        QObject::connect(timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotSocketAboutToClose()));
+
     sock->connectToHost(host, quint16(port));
 
     // TODO - make asynchronous
@@ -593,6 +598,11 @@ void MeanwhileSession::handleRedirect(const char *host)
     }
 
     QTcpSocket *sock = new QTcpSocket(this);
+
+    Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch(sock);
+    if (timeoutWatcher)
+        QObject::connect(timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotSocketAboutToClose()));
+
     sock->connectToHost(host, quint16(account->getServerPort()));
 
     if (!sock->waitForConnected()) {

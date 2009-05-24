@@ -25,6 +25,7 @@
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopeteaccount.h"
+#include "kopetesockettimeoutwatcher.h"
 
 // Declare the tokenTable
 BonjourContactConnection::TokenTable BonjourContactConnection::tokenTable;
@@ -47,6 +48,8 @@ void BonjourContactConnection::setSocket(QTcpSocket *aSocket)
 
 	socket->setParent(this);
 	parser.setDevice(socket);
+
+	Kopete::SocketTimeoutWatcher::watch( socket );
 
 	connect(socket, SIGNAL(readyRead()), this, SLOT(dataInSocket()));
 	connect(socket, SIGNAL(disconnected()), this, SLOT(socketDisconnected()));
