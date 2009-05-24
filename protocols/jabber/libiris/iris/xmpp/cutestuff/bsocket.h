@@ -42,6 +42,7 @@ public:
 
 	void connectToHost(const QString &host, quint16 port);
 	void connectToServer(const QString &srv, const QString &type);
+	virtual QAbstractSocket* abstractSocket() const;
 	int socket() const;
 	void setSocket(int);
 	int state() const;

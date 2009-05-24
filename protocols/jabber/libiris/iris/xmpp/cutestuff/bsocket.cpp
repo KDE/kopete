@@ -194,6 +194,11 @@ void BSocket::connectToServer(const QString &srv, const QString &type)
 	d->srv.resolve(srv, type, "tcp");
 }
 
+QAbstractSocket* BSocket::abstractSocket() const
+{
+	return d->qsock;
+}
+
 int BSocket::socket() const
 {
 	if(d->qsock)

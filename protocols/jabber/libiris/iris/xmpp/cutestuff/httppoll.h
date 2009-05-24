@@ -33,6 +33,8 @@ public:
 	HttpPoll(QObject *parent=0);
 	~HttpPoll();
 
+	virtual QAbstractSocket* abstractSocket() const;
+
 	void setAuth(const QString &user, const QString &pass="");
 	void connectToUrl(const QString &url);
 	void connectToHost(const QString &proxyHost, int proxyPort, const QString &url);
@@ -74,6 +76,8 @@ public:
 	enum Error { ErrConnectionRefused, ErrHostNotFound, ErrSocket, ErrProxyConnect, ErrProxyNeg, ErrProxyAuth };
 	HttpProxyPost(QObject *parent=0);
 	~HttpProxyPost();
+
+	QAbstractSocket* abstractSocket() const;
 
 	void setAuth(const QString &user, const QString &pass="");
 	bool isActive() const;

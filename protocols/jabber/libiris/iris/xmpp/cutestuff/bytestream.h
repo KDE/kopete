@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QByteArray>
 
+class QAbstractSocket;
 // CS_NAMESPACE_BEGIN
 
 // CS_EXPORT_BEGIN
@@ -44,6 +45,8 @@ public:
 
 	static void appendArray(QByteArray *a, const QByteArray &b);
 	static QByteArray takeArray(QByteArray *from, int size=0, bool del=true);
+
+	virtual QAbstractSocket* abstractSocket() const { return 0; }
 
 signals:
 	void connectionClosed();

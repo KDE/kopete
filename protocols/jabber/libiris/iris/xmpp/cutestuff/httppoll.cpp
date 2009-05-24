@@ -106,6 +106,11 @@ HttpPoll::~HttpPoll()
 	delete d;
 }
 
+QAbstractSocket* HttpPoll::abstractSocket() const
+{
+	return d->http.abstractSocket();
+}
+
 void HttpPoll::reset(bool clear)
 {
 	if(d->http.isActive())
@@ -457,6 +462,11 @@ HttpProxyPost::~HttpProxyPost()
 {
 	reset(true);
 	delete d;
+}
+
+QAbstractSocket* HttpProxyPost::abstractSocket() const
+{
+	return d->sock.abstractSocket();
 }
 
 void HttpProxyPost::reset(bool clear)
