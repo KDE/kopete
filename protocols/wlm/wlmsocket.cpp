@@ -18,6 +18,8 @@
 
 #include <QTimer>
 
+#include "kopetesockettimeoutwatcher.h"
+
 WlmSocket::WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL)
 : mMainConnection(mainConnection), mIsSSL(isSSL), mPingTimer(0)
 {
@@ -25,6 +27,10 @@ WlmSocket::WlmSocket(MSN::NotificationServerConnection * mainConnection, bool is
     QObject::connect( this, SIGNAL(disconnected()), this, SLOT(connectionFinished()) );
     QObject::connect( this, SIGNAL(encrypted()), this, SLOT(connectionEncryptedReady()) );
     QObject::connect( this, SIGNAL(bytesWritten(qint64)), this, SLOT(resetPing()) );
+
+    Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch( this );
+    if ( timeoutWatcher )
+        connect( timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)), this, SIGNAL(error(QAbstractSocket::SocketError)) );
 }
 
 WlmSocket::~WlmSocket()

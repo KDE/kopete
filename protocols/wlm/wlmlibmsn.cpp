@@ -30,7 +30,6 @@
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopeteuiglobal.h"
-#include "kopetesockettimeoutwatcher.h"
 
 // include first to not get compile errors on windows
 #include <msn/msn.h>
@@ -684,10 +683,6 @@ Callbacks::connectToServer (std::string hostname, int port, bool * connected, bo
     connect( a, SIGNAL(sslErrors(const QList<QSslError> &)), a, SLOT(ignoreSslErrors()) );
     connect( a, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(emitSocketError(QAbstractSocket::SocketError)) );
 
-    Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch( a );
-    if ( timeoutWatcher )
-        connect( timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(emitSocketError(QAbstractSocket::SocketError)) );
-
     if(!isSSL)
         a->connectToHost (hostname.c_str (), port);
     else
@@ -898,7 +893,20 @@ void Callbacks::gotWinkFile(MSN::SwitchboardServerConnection * conn, unsigned in
 
 void Callbacks::emitSocketError( QAbstractSocket::SocketError error )
 {
-    emit socketError( error );
+    if ( !mainConnection )
+        return;
+
+    WlmSocket* socket = qobject_cast<WlmSocket*>(sender());
+    Q_ASSERT( socket );
+
+    MSN::Connection *c = mainConnection->connectionWithSocket((void*)socket);
+    if ( !c )
+        return;
+
+    if ( c == mainConnection )
+        emit socketError( error );
+    else
+        c->disconnect();
 }
 
 #include "wlmlibmsn.moc"
