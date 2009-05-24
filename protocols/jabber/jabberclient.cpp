@@ -23,8 +23,10 @@
 #include "jabberclient.h"
 
 #include <kdebug.h>
+#include "kopetesockettimeoutwatcher.h"
 
 #include <QTimer>
+#include <QTcpSocket>
 #include <QRegExp>
 #include <QtCrypto>
 
@@ -674,6 +676,8 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 				   this, SLOT ( slotCSWarning (int) ) );
 		QObject::connect ( d->jabberClientStream, SIGNAL ( error (int) ),
 				   this, SLOT ( slotCSError (int) ) );
+		QObject::connect ( d->jabberClientStream, SIGNAL ( connected() ),
+		                   this, SLOT ( slotCSConnected() ) );
 	}
 
 	d->jabberClientStream->setOldOnly ( useXMPP09 () );
@@ -1090,6 +1094,18 @@ void JabberClient::slotCSError ( int error )
 
 	emit csError ( error );
 
+}
+
+void JabberClient::slotCSConnected ()
+{
+	Kopete::SocketTimeoutWatcher* timeoutWatcher = 0;
+
+	ByteStream *irisByteStream = d->jabberClientConnector->stream ();
+	if ( irisByteStream->abstractSocket () )
+		timeoutWatcher = Kopete::SocketTimeoutWatcher::watch ( irisByteStream->abstractSocket () );
+
+	if ( timeoutWatcher )
+		QObject::connect( timeoutWatcher, SIGNAL(errorInt(int)), this, SLOT(slotCSError(int)) );
 }
 
 void JabberClient::slotRosterRequestFinished ( bool success, int /*statusCode*/, const QString &/*statusString*/ )

@@ -567,6 +567,9 @@ private slots:
 	/* Called from Psi: alerts us to a protocol error. */
 	void slotCSError (int);
 
+	/* Called from Psi: tells us when we're connected. */
+	void slotCSConnected ();
+
 	/* Called from Psi: report certificate status */
 	void slotTLSHandshaken ();
 
