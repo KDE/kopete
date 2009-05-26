@@ -313,6 +313,16 @@ void ContactList::removeGroup( Group *g )
 		setSelectedItems( d->selectedMetaContacts, d->selectedGroups );
 	}
 
+	// Remove metaContacts from group or delete the metaContact if it isn't in any other group
+	foreach ( MetaContact * metaContact, g->members() )
+	{
+		const QList<Group *> mcGroups = metaContact->groups();
+		if ( (mcGroups.count() == 1 && mcGroups.contains( g )) || mcGroups.isEmpty() )
+			removeMetaContact( metaContact );
+		else
+			metaContact->removeFromGroup( g );
+	}
+
 	d->groups.removeAll( g );
 	emit groupRemoved( g );
 	g->deleteLater();
