@@ -1,0 +1,12 @@
+ClassName=BehaviorSettings
+File=kopetebehaviorsettings.kcfg
+GlobalEnums=false
+Inherits=KConfigSkeleton
+ItemAccessors=true
+MemberVariables=private
+Mutators=true
+NameSpace=Kopete
+SetUserTexts=false
+Singleton=true
+Visibility=KOPETE_EXPORT
+IncludeFiles=kopete_export.h,klocale.h
