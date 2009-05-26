@@ -23,3 +23,4 @@ set(KOPETE_INCLUDES
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )
 
 add_subdirectory(libkopete)
+add_subdirectory(chatwindow)
