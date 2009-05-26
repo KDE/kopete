@@ -1,0 +1,11 @@
+ClassName=KopeteChatWindowSettings
+File=kopetechatwindowsettings.kcfg
+GlobalEnums=false
+Inherits=KConfigSkeleton
+ItemAccessors=true
+MemberVariables=private
+Mutators=true
+SetUserTexts=false
+Singleton=true
+Visibility=KOPETECHATWINDOW_SHARED_EXPORT
+IncludeFiles=kopete_export.h
