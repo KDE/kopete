@@ -64,11 +64,11 @@
 #include <ktoggleaction.h>
 #include <kactionmenu.h>
 #include <ktoolbarspaceraction.h>
+#include <kuniqueapplication.h>
 
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
 #include "chatview.h"
-#include "kopeteapplication.h"
 #include "kopetebehaviorsettings.h"
 #include "kopetechatwindow.h"
 #include "kopeteemoticonaction.h"
@@ -1213,12 +1213,9 @@ bool KopeteChatWindow::queryClose()
 
 bool KopeteChatWindow::queryExit()
 {
-	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
+        KUniqueApplication *app = static_cast<KUniqueApplication *>( kapp );
  	if ( app->sessionSaving()
-		|| app->isShuttingDown() /* only set if KopeteApplication::quitKopete() or
-									KopeteApplication::commitData() called */
-		|| !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
-		|| isHidden() )
+                || isHidden() )
 	{
 		Kopete::PluginManager::self()->shutdown();
 		return true;
@@ -1231,8 +1228,8 @@ void KopeteChatWindow::closeEvent( QCloseEvent * e )
 {
 	// if there's a system tray applet and we are not shutting down then just do what needs to be done if a
 	// window is closed.
-	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
-	if ( Kopete::BehaviorSettings::self()->showSystemTray() && !app->isShuttingDown() && !app->sessionSaving() ) {
+        KUniqueApplication *app = static_cast<KUniqueApplication *>( kapp );
+        if ( Kopete::BehaviorSettings::self()->showSystemTray() && !app->sessionSaving() ) {
 //		hide();
 		// BEGIN of code borrowed from KMainWindow::closeEvent
 		// Save settings if auto-save is enabled, and settings have changed
