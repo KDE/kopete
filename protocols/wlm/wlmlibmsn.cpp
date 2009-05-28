@@ -49,6 +49,7 @@
 
 #include <string>
 #include <iostream>
+#include <kdebug.h>
 
 #include <QObject>
 #include <QApplication>
@@ -679,8 +680,8 @@ Callbacks::connectToServer (std::string hostname, int port, bool * connected, bo
     if(!a)
         return NULL;
 
-    connect( a, SIGNAL( sslErrors(const QList<QSslError> &) ), a, SLOT(
-                      ignoreSslErrors() ) );
+    connect( a, SIGNAL(sslErrors(const QList<QSslError> &)), a, SLOT(ignoreSslErrors()) );
+    connect( a, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(emitSocketError(QAbstractSocket::SocketError)) );
 
     if(!isSSL)
         a->connectToHost (hostname.c_str (), port);
@@ -888,6 +889,24 @@ void Callbacks::gotEmoticonFile(MSN::SwitchboardServerConnection * conn, unsigne
 void Callbacks::gotWinkFile(MSN::SwitchboardServerConnection * conn, unsigned int sessionID, std::string file)
 {
     emit slotGotWinkFile(conn, sessionID, QString(file.c_str()));
+}
+
+void Callbacks::emitSocketError( QAbstractSocket::SocketError error )
+{
+    if ( !mainConnection )
+        return;
+
+    WlmSocket* socket = qobject_cast<WlmSocket*>(sender());
+    Q_ASSERT( socket );
+
+    MSN::Connection *c = mainConnection->connectionWithSocket((void*)socket);
+    if ( !c )
+        return;
+
+    if ( c == mainConnection )
+        emit socketError( error );
+    else
+        c->disconnect();
 }
 
 #include "wlmlibmsn.moc"

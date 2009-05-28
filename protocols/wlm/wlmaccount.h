@@ -84,9 +84,12 @@ class WlmAccount:public
 	 * Disconnect from the server.  Only sets myself() offline.
 	 */
     virtual void disconnect ();
-        /**
-	 * Return a reference to the server stub
-	 */
+
+    void logOff( Kopete::Account::DisconnectReason reason );
+
+    /**
+     * Return a reference to the server stub
+     */
     virtual void connectWithPassword (const QString & password);
 
     QString serverName() const;
@@ -129,12 +132,14 @@ class WlmAccount:public
     
     QMap<QString, QString> groupToGroupId() const { return m_groupToGroupId; }
 
-    public
-        slots:
-        /**
-	 * Called by the server when it has a message for us.
-	 * This identifies the sending Kopete::Contact and passes it a Kopete::Message
-	 */
+public slots:
+
+    void error( int errCode );
+
+    /**
+     * Called by the server when it has a message for us.
+     * This identifies the sending Kopete::Contact and passes it a Kopete::Message
+     */
         void
     contactChangedStatus (const MSN::Passport & buddy,
                           const QString & friendlyname,
@@ -233,6 +238,8 @@ class WlmAccount:public
 
     void
     downloadPendingDisplayPicture();
+
+	
 
   protected:
         /**
