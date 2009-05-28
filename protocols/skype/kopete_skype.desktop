@@ -19,6 +19,7 @@ Name=Skype
 Name[x-test]=xxSkypexx
 Comment=Skype protocol plugin (a wrapper)
 Comment[ca]=Connector de protocol Skype (un embolcall)
+Comment[da]=Plugin til Skype-protokollen (en "wrapper")
 Comment[el]=Πρόσθετο πρωτοκόλλου Skype (περίβλημα)
 Comment[et]=Skype'i protokolli plugin (ainult kest)
 Comment[eu]=Skype protokoloaren plugina (bilduki bat)
