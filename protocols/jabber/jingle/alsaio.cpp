@@ -203,7 +203,6 @@ AlsaIO::AlsaIO(StreamType t, QString device, Format f)
 	notifier = 0;
 	bufferizing = true;
 	int err;
-	//const char *device = (m_type == Capture ? "hw:0,0" : "default");
 
 	if ((err = snd_pcm_open(&handle, device.toUtf8().data(), m_type == Capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0)
 	{
