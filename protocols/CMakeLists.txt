@@ -17,11 +17,13 @@ option(WITH_wlm "Enable Window Live Messenger support" ON)
 option(WITH_meanwhile "Enable Kopete meanwhile protocol" ON)
 option(WITH_skype "Enable Kopete Skype protocol" ON)
 
-if(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND NOT NO_JINGLE)
+if(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
+  message(STATUS "Building jingle support")
   set(BUILD_JINGLE TRUE)
-else(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND NOT NO_JINGLE)
+else(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
+  message(STATUS "Not building jingle support (recommanded)")
   set(BUILD_JINGLE FALSE)
-endif(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND NOT NO_JINGLE)
+endif(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
 
 include_directories(${KOPETE_INCLUDES})
 
