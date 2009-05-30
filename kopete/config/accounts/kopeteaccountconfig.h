@@ -98,6 +98,7 @@ private slots:
 
 	void slotCopyIdentity();
 	void slotAccountAdded(Kopete::Account *);
+	void slotAccountRemoved(const Kopete::Account *);
 	void slotItemSelected();
 	void slotOnlineStatusChanged( Kopete::Contact *contact,
 			                      const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );

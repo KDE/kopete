@@ -78,6 +78,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QVariantList &a
 
 	// this ensures that newly created accounts are assigned to the selected identity
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)), this, SLOT(slotAccountAdded(Kopete::Account *)) );
+    connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)), this, SLOT(slotAccountRemoved(const Kopete::Account *)) );
 
 	mAccountList->installEventFilter( this );
 
@@ -315,7 +316,6 @@ void KopeteAccountConfig::removeAccount()
 					QString(), KMessageBox::Notify | KMessageBox::Dangerous ) == KMessageBox::Continue )
 		{
 			Kopete::AccountManager::self()->removeAccount( i );
-			delete lvi;
 		}
 	}
 }
@@ -482,6 +482,21 @@ void KopeteAccountConfig::slotAccountAdded( Kopete::Account * account )
 {
 	save();
 	load();
+}
+
+void KopeteAccountConfig::slotAccountRemoved( const Kopete::Account * account )
+{
+	QList<QTreeWidgetItem*> items = mAccountList->findItems("", Qt::MatchContains | Qt::MatchRecursive);
+	QList<QTreeWidgetItem*>::iterator it;
+	for (it = items.begin(); it != items.end(); ++it)
+	{
+		KopeteAccountLVI *lvi = dynamic_cast<KopeteAccountLVI*>(*it);
+		if ( lvi && lvi->account() == account)
+		{
+			delete lvi;
+			break;
+		}
+	}
 }
 
 void KopeteAccountConfig::slotItemChanged(QTreeWidgetItem* item)
