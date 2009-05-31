@@ -109,7 +109,7 @@ class WlmAccount:public
     // TODO: Check BPL
     bool blockUnknownUsers() const { return true; }
 
-    bool isBlocked(const QString& passport) const;
+    bool isContactBlocked(const QString& passport) const;
 
     void blockContact(const QString& passport, bool block);
 

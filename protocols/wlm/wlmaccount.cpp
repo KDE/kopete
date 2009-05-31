@@ -1245,14 +1245,14 @@ WlmServer *WlmAccount::server ()
     return m_server;
 }
 
-bool WlmAccount::isBlocked(const QString& passport) const
+bool WlmAccount::isContactBlocked(const QString& passport) const
 {
     return (isOnBlockList(passport) || (blockUnknownUsers() && !isOnAllowList(passport)));
 }
 
 void WlmAccount::blockContact(const QString& passport, bool block)
 {
-    if (!isConnected() || isBlocked(passport) == block)
+    if (!isConnected() || isContactBlocked(passport) == block)
         return;
 
     if (block)

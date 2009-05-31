@@ -186,7 +186,7 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     QList<KAction*> *actions = new QList<KAction*>();
 
     m_actionBlockContact->setEnabled(m_account->isConnected());
-    m_actionBlockContact->setChecked(m_account->isBlocked(contactId()));
+    m_actionBlockContact->setChecked(m_account->isContactBlocked(contactId()));
     actions->append(m_actionBlockContact);
     actions->append(m_actionShowProfile);
 
