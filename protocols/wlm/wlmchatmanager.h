@@ -40,7 +40,16 @@ class WlmChatManager : public QObject
     QMap < MSN::SwitchboardServerConnection *, WlmChatSession * >chatSessions;
 
     // messages waiting for emoticons to be received
-    QMap < MSN::SwitchboardServerConnection *, QLinkedList<Kopete::Message *> > pendingMessages;
+    class PendingMessage {
+    public:
+        PendingMessage( Kopete::Message* msg )
+            : receiveTime(QTime::currentTime()), message(msg)
+        {}
+
+        QTime receiveTime;
+        Kopete::Message* message;
+    };
+    QMap <MSN::SwitchboardServerConnection*, QLinkedList<PendingMessage> > pendingMessages;
 
     void requestDisplayPicture (QString contactId);
 
@@ -106,8 +115,13 @@ class WlmChatManager : public QObject
                                     const QString & alias,
                                     const QString & msnobject);
 
-  private:
+protected:
+    virtual void timerEvent(QTimerEvent *event);
+    bool fillEmoticons(WlmChatSession *chat, Kopete::Message* message);
+
+private:
     WlmAccount * m_account;
+    int m_emoticonsTimeoutTimerId;
 };
 
 #endif

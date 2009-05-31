@@ -25,6 +25,7 @@
 #include <QRegExp>
 #include <QDomDocument>
 #include <QTextDocument>
+#include <QTimerEvent>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -50,9 +51,11 @@
 #include "wlmprotocol.h"
 #include "wlmaccount.h"
 
+const int EmoticonsTimeoutCheckInterval = 2; //seconds
+const int EmoticonsTimeoutThreshold = 5; //seconds
 
 WlmChatManager::WlmChatManager (WlmAccount * account1):
-m_account (account1)
+m_account (account1), m_emoticonsTimeoutTimerId(0)
 {
     QObject::connect (&account ()->server ()->cb,
                       SIGNAL (messageReceived
@@ -356,37 +359,12 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
         newMessage->setForegroundColor (message.foregroundColor ());
         newMessage->setDirection (Kopete::Message::Inbound);
 
-        // stolen from msn plugin
-        QMap<QString,QString>::ConstIterator it = chat->emoticonsList.constBegin();
-        for(;it!=chat->emoticonsList.constEnd(); ++it)
+        if (!fillEmoticons(chat, newMessage))
         {
-            QString es=Qt::escape(it.key());
-            QString message1=newMessage->escapedBody();
-            if(message1.contains(es))
-            {
-                QFile f(it.value());
-                if(!f.exists())
-                {
-                    // an emoticon is still missing, so wait for it
-                    QLinkedList<Kopete::Message*> msgs = pendingMessages[conn];
-                    newMessage->setHtmlBody(message1);
-                    msgs.append(newMessage);
-                    pendingMessages[conn] = msgs;
-                    return;
-                }
-                QImage iconImage = QImageReader(it.value()).read();
-
-                message1.replace( QRegExp(QString::fromLatin1("%1(?![^><]*>)").arg(QRegExp::escape(es))),
-                        QString::fromLatin1("<img align=\"center\" width=\"") +
-                        QString::number(iconImage.width()) +
-                        QString::fromLatin1("\" height=\"") +
-                        QString::number(iconImage.height()) +
-                        QString::fromLatin1("\" src=\"") + it.value() +
-                        QString::fromLatin1("\" title=\"") + es +
-                        QString::fromLatin1("\" alt=\"") + es +
-                        QString::fromLatin1( "\"/>" ) ); 
-                newMessage->setHtmlBody(message1);
-            }
+            pendingMessages[conn].append(PendingMessage(newMessage));
+            if (m_emoticonsTimeoutTimerId == 0)
+                m_emoticonsTimeoutTimerId = startTimer(EmoticonsTimeoutCheckInterval * 1000);
+            return;
         }
         // Add it to the manager
         chat->appendMessage (*newMessage);
@@ -572,7 +550,6 @@ void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnecti
 
     // track display pictures by SHA1D field
     QString SHA1D = xmlobj.documentElement ().attribute ("SHA1D");
-
     if (SHA1D.isEmpty ())
         return;
 
@@ -608,58 +585,23 @@ WlmChatManager::slotGotEmoticonFile(MSN::SwitchboardServerConnection * conn,
 
     chat->emoticonsList[alias] = file;
 
-    if(pendingMessages[conn].isEmpty())
+    if(pendingMessages.value(conn).isEmpty())
         return;
 
-    // duplicate to avoid crashes when removing items in the next loop
-    QLinkedList<Kopete::Message *> pendingMessages1 = pendingMessages[conn];
-
-    QLinkedList<Kopete::Message *>::iterator it = pendingMessages1.begin();
-    for(;it!=pendingMessages1.end(); ++it)
+    QMutableLinkedListIterator<PendingMessage> it(pendingMessages[conn]);
+    while (it.hasNext())
     {
-        Kopete::Message *message = (*it);
-        QMap<QString,QString>::iterator it2 = chat->emoticonsList.begin();
-        bool ok = true;
-        // for each emoticon in our list
-        for(;it2!=chat->emoticonsList.end(); ++it2)
+        PendingMessage pendingMsg = it.next();
+        if (fillEmoticons(chat, pendingMsg.message))
         {
-            QString es=Qt::escape(it2.key());
-            QString message1=message->escapedBody();
-            if(message1.contains(es))
-            {
-                QFile f(it2.value());
-                if(!f.exists())
-                {
-                    // an emoticon is still missing, so wait for it
-                    QLinkedList<Kopete::Message*> pmsgs = pendingMessages[conn];
-                    message->setHtmlBody(message1);
-                    pmsgs.removeOne((*it));
-                    pmsgs.append((*it));
-                    pendingMessages[conn] = pmsgs;
-                    ok = false;
-                    break;
-                }
-                QImage iconImage = QImageReader(it2.value()).read();
-
-                message1.replace( QRegExp(QString::fromLatin1("%1(?![^><]*>)").arg(QRegExp::escape(es))),
-                        QString::fromLatin1("<img align=\"center\" width=\"") +
-                        QString::number(iconImage.width()) +
-                        QString::fromLatin1("\" height=\"") +
-                        QString::number(iconImage.height()) +
-                        QString::fromLatin1("\" src=\"") + it2.value() +
-                        QString::fromLatin1("\" title=\"") + es +
-                        QString::fromLatin1("\" alt=\"") + es +
-                        QString::fromLatin1( "\"/>" ) ); 
-                message->setHtmlBody(message1);
-            }
-        }
-        if(ok)
-        {
-            chatSessions[conn]->appendMessage (*message);
-            pendingMessages[conn].removeOne(message);
-            delete message;
+            chat->appendMessage(*pendingMsg.message);
+            it.remove();
+            delete pendingMsg.message;
         }
     }
+
+    if (pendingMessages.value(conn).isEmpty())
+        pendingMessages.remove(conn);
 }
 
 void 
@@ -672,4 +614,74 @@ WlmChatManager::slotGotWinkFile(MSN::SwitchboardServerConnection * conn,
     Q_UNUSED( file );
 }
 
+void WlmChatManager::timerEvent(QTimerEvent *event)
+{
+    if (m_emoticonsTimeoutTimerId == event->timerId() )
+    {
+        QTime thresholdTime = QTime::currentTime().addSecs(-EmoticonsTimeoutThreshold);
+        QMutableMapIterator<MSN::SwitchboardServerConnection*, QLinkedList<PendingMessage> > connIt(pendingMessages);
+        while (connIt.hasNext())
+        {
+            connIt.next();
+
+            QMutableLinkedListIterator<PendingMessage> it(connIt.value());
+            while (it.hasNext())
+            {
+                PendingMessage pendingMsg = it.next();
+                if (pendingMsg.receiveTime < thresholdTime)
+                {
+                    kDebug(14210) << "Did not get emoticons in time!";
+                    WlmChatSession *chat = chatSessions[connIt.key()];
+                    if (chat)
+                        chat->appendMessage(*pendingMsg.message);
+
+                    it.remove();
+                    delete pendingMsg.message;
+                }
+            }
+            if (connIt.value().isEmpty())
+                connIt.remove();
+        }
+
+        if (pendingMessages.isEmpty())
+        {
+            killTimer(m_emoticonsTimeoutTimerId);
+            m_emoticonsTimeoutTimerId = 0;
+        }
+    }
+}
+
+bool WlmChatManager::fillEmoticons(WlmChatSession *chat, Kopete::Message* message)
+{
+    QString escapedMessage = message->escapedBody();
+
+    // for each emoticon in our list
+    QMap<QString,QString>::iterator it2 = chat->emoticonsList.begin();
+    for (;it2!=chat->emoticonsList.end(); ++it2)
+    {
+        QString es = Qt::escape(it2.key());
+        if (escapedMessage.contains(es))
+        {
+            if (!QFile::exists(it2.value()))
+            {   // an emoticon is still missing, so wait for it
+                message->setHtmlBody(escapedMessage);
+                return false;
+            }
+
+            QImage iconImage = QImageReader(it2.value()).read();
+
+            escapedMessage.replace( QRegExp(QString::fromLatin1("%1(?![^><]*>)").arg(QRegExp::escape(es))),
+                                    QString::fromLatin1("<img align=\"center\" width=\"") +
+                                    QString::number(iconImage.width()) +
+                                    QString::fromLatin1("\" height=\"") +
+                                    QString::number(iconImage.height()) +
+                                    QString::fromLatin1("\" src=\"") + it2.value() +
+                                    QString::fromLatin1("\" title=\"") + es +
+                                    QString::fromLatin1("\" alt=\"") + es +
+                                    QString::fromLatin1( "\"/>" ) );
+        }
+    }
+    message->setHtmlBody(escapedMessage);
+    return true;
+}
 #include "wlmchatmanager.moc"
