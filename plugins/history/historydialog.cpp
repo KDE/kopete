@@ -526,7 +526,7 @@ void HistoryDialog::slotSearch()
 	}
 
 searchFinished:
-	mMainWidget->searchButton->setText(i18n("Se&arch"));
+	mMainWidget->searchButton->setText(i18n("&Search"));
 	mSearching = false;
 	doneProgressBar();
 }

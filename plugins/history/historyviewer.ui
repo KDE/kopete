@@ -166,7 +166,7 @@
         <bool>false</bool>
        </property>
        <property name="text" >
-        <string>Se&amp;arch</string>
+        <string>&amp;Search</string>
        </property>
       </widget>
      </item>
