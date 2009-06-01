@@ -27,7 +27,7 @@ aa=1
 extra_header="$HOME/.tex2im_header"
 
 if [ -f ~/.tex2imrc ]; then
-	source ~/.tex2imrc
+	. ~/.tex2imrc
 fi
 
 OPTERR=0
