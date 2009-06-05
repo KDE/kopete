@@ -119,9 +119,9 @@ set(KOPETE_INCLUDES
 	${KOPETE_SOURCE_DIR}/libkopete/tasks/
 )
 
-#add_subdirectory( libkopete )
-#add_subdirectory( kopete )
-#add_subdirectory( protocols )
+add_subdirectory( libkopete )
+add_subdirectory( kopete )
+add_subdirectory( protocols )
 add_subdirectory( plugins )
 #add_subdirectory( icons )
 #add_subdirectory( sounds )
