@@ -1,0 +1,66 @@
+See the Development team section of http://kopete.kde.org
+for an updated list of Kopete team!
+
+Core Developers
+===============
+
+Duncan Mac-Vicar Prett <duncan@kde.org> (irc: duncanmv)
+- Original author, main app work & design, original MSN Plugin, hacks in all plugins
+
+Martijn Klingens <klingens@kde.org> (irc: spaze)
+- Kopete API and main application core developer, co-maintainer of the MSN plugin,
+  misc changes and fixes in the other plugins
+
+Matt Rogers <matt.rogers@kdemail.net> irc: mattr)
+- Kopete seperate release coordinator, OSCAR/AIM maintainer, general maintainer of stuff
+
+Olivier Goffart <ogoffart@tiscalinet.be> (irc: Gof)
+- Kopete API and main application core developer, primary maintainer of the
+  MSN plugin, misc changes and fixes in the other plugins
+
+Will Stephenson <lists@stevello.free-online.co.uk> (irc: bille)
+- Core developer, KAddressBook integration, nowlistening and webpresence plugin
+  maintainer, Testbed testing plugin
+
+Other developers
+================
+
+Andy Goossens <andygoossens@telenet.be> (irc: gandy)
+- Bugfixes, cleanups and maintainer of our stable branches (backporting patches)
+
+Casey Allen Shobe <cshobe@softhome.net> (irc: sigthor)
+- Testing, Quality Assurance and usability improvements
+
+Ladislav Strojil <ladislav@strojil.cz> (irc: bwian)
+- Bugfixes, testing and keeping Kopete running on KDE 3.1
+
+Plugin Developers
+=================
+
+Gav Wood <gjw102@york.ac.uk> (irc: emmCee)
+- Winpopup and SMS maintainer, several contributions to the Yahoo plugin
+
+Grzegorz Jaskiewicz <gj@pointblue.com.pl> (irc: gregj)
+- Gadu-Gadu maintainer
+
+Michel Hermier <michel.hermier@wanadoo.fr> (irc: slayer)
+- IRC plugin maintainer
+
+Till Gerken <till@tantalo.net> (irc: tigloo)
+- Jabber maintainer
+
+Other contributors. Thanks!
+===========================
+
+This list is too long too mention. If you want to have an idea of all the
+various contributions we've got, please check the CVS commit logs. If we
+would attempt to list the people here other people would surely be forgotten
+and feel left out.
+
+Let's leave it at telling you that several hundreds of people have
+contributed code, helpful information, documentation, translations or
+useful bug reports to Kopete, making Kopete what it is now.
+
+If you contributed to Kopete, you know who you are, and many thanks for
+the work you've done!
+

@@ -1,0 +1,111 @@
+These are random snippets that should give developers a clue of what we have
+to fix before the next release.
+
+Beware: It's totally unsorted ;)
+
+================================================================================
+- windows only: Reenable Webcam support
+- Once and for all fix the way displayName is used in KopeteContact. With
+  serverside contact lists it's now impossible to rename contacts on the server
+  because some people (e.g. Olivier) want to see the nickname that a user
+  assigned and others (e.g. Martijn) want to ALWAYS see the display name of the
+  meta contact.
+  displayName and nickName should be split and depending on the user's prefs
+  displayName() should return either MC->displayName() or nickName().
+
+- Add a way to detect when a protocol goes offline involuntary. In that case
+  try a reconnect first and only leave the protocol offline if the reconnect
+  fails. Alternatively, retry reconnecting with increasing intervals.
+  -> PARTLY DONE, see KopeteAccount::disconnect() functions
+
+- Prevent attempting to send while offline where appropriate
+
+- First time wizard
+
+- Save the account order in the config file (IMPORTANT)
+
+- Interface for application invitations, and better filetransfers support
+
+- KAB integration
+  -> DONE?
+
+
+================================================================================
+
+
+OSCAR ICQ/AIM TODO ITEMS
+
+	OSCAR in general========================================================
+	- somehow sync server and local list, this is not as trivial as everybody
+	  always thinks it is because you cannot sure if local changes or
+	  serverside-changes caused the difference (think about two clients being used
+	  for the same account, one at home and one at work).
+	  Update: Actually it might be possible by saving two timestamp/size values
+	  for the account. Serverside and local values.
+	  Also I'm much in favor of hindering the user from offline editing the
+	  contactlist.
+	X save groupID in KopeteGroups
+	X make renaming serverside contacts possible
+	  (should work if kopete groupname == serverside groupname)
+	X Base Buffer class on something like QDataStream (if possible),
+	  I don't like all the pointer stuff in here
+	X get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
+
+	ICQ specific ===========================================================
+	X support simple icq type-2 messages so we can send/receive away
+	  messages (yes, I even see this as a point for not releasing 0.7, away
+	  messages ARE important or else I could take out away modes altogether)
+	X prevent passwords longer than 8 chars, it upsets the server
+	- general support for SNAC (0x15,y)
+	X read away reasons
+	X own away-reasons
+	- Support RTF
+	X honor encodings for both sides (done but incomplete)
+	- Option: Allow access from contacts on my contact list only
+	- group handling
+	  (signals: KopeteMetaContact::movedToGroup, addedToGroup, removedToGroup)
+	  I'm not sure what this item means, none of the other protocols listen to
+	  these signals.
+	- ignore lists (needs proper group-handling)
+	- invisible list (needs proper group-handling)
+	- support sending all of your own icq userinfo to the server,
+	  it's easy to do but a lot of of boring work
+
+	AIM specific ===========================================================
+	- Nothing in here yet, I'd appreciate somebody with more extensive use
+	  of AIM to take over just that part of the plugin.
+
+
+================================================================================
+
+
+ MSN TODO  (for the Kopete 1.0 release)
+---------------------------------------
+
+	- Handle the MSN PLUS! color codes
+	- Show internals messages in chat window when filetransfers (go with
+	  the new interface for invitation in libkopete)
+
+	- Search for an MSN User (not for Kopete 1.0)
+
+================================================================================
+
+
+PORTING TO QT4 / KDE4
+
+	User Interface =========================================================
+	- Check that Ui::{DesignerWidget} variables allocated on the heap are 
+	  always deleted in the destructor.
+	- Go through all the ui4 files and set the tab order
+        - Some Ui files contained icon data, which is no longer embedded in
+          designer4 file. Use kde icons or Qt's resource system instead.
+
+	General ================================================================
+	- K Replacement for QTreeWidget, QTreeWidgetItem?
+	- Remove const char* argument from plugin constructors
+	  (needs changed KParts::ComponentsFactory)
+	- Go through the debug ouput and look for failed QObject::connect()
+	- Eliminate as many setObjectName() calls as necessary
+
+
+=================================================================================

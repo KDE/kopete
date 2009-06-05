@@ -1,0 +1,551 @@
+Address book integration notes 26/08/03
+
+Premise:
+KDE captures the real life relation between IM Contacts and KABC contacts; both represent people with whom we communicate electronically - so there's no need to separate them
+Goals:
+*) Duplicate Information may be removed.
+*) This enables PIM apps like KMail to use a KDE IM service (Kopete) to display IM status or perform IM actions (chatting)
+*) Or games, desktop sharing
+*) Ability to put IM-delivered contact data into the KDE addressbook
+*) send vcards via kopete
+
+What does Kopete get out of the association?
+*) Ability to view KABC information on that metacontact
+*) Use information in the KABC such as GPG key?
+*) Can store/use KABC information in the metacontact like contact photo
+
+
+Spaze's goals
+1. Share data with the other PIM apps. Notably groups, display names, GPG keys, email addresses and other IM UIDs
+2. Allow other apps to retrieve all IM-enabled contacts and their online status for e.g. presence display in kmail or invitations for desktop sharing
+3. Allow other IM apps to share the same data that Kopete uses in a standardized way
+4. Allow other apps to start a chat with selected persons in a standardized way _regardless of client used_
+5. in the longer run i would like to add,say, an ICQ UIN from kaddressbook and Kopete automatically picks up the change, adds it to the server side contact list and does all other kind of syncing of changes made in kaddressbook as well. for the short term one way kopete->kabc is ok, but the API should be prepared for full bidi comms. ideally kopete, libkabc and all server side contact lists are always 100% in sync as much as possible for each.
+
+mETz' goals
+1. well, I just think Kopete should never edit my addressbook without me knowing
+
+Gof's goals
+1. my goal is to have the kopete contactlist a kind of address book  (i.e. i want to view and modify kabc entry from kopete, like if i am in the kab interface.  i do not want to open KAB
+2. and i want to share fields (gpg key) with other application, like kmail
+3.  technicaly, i think that should be transparent.
+Goals (-ve):
+*) don't store information that's not worth sharing in the address book
+
+gregj's goals
+kopete should not replace  server side data with kabc derived data nor upload information that wasn't present on the server before. 
+E.g. we know someones telephone nr. but we don't want to put this information back on server if it was not present there before. Update IMO is ok.  
+
+brunes goals
+the only points I wanted to make were 
+1. I think the MSN / OSCAR picture support should somehow integrate with / use the picture in kaddressbook, and
+2. we need to get the KAB guys to add >1 field for IM account in KAB, and all the contacts for a MC should have their accounts there
+
+Syncing policies
+KABC->kopete ok, what about server side metadata
+
+Display Name
+
+Priority: Goals for 3.2
+ONLY the actual linking and one-way storage from kopete in kabc and retrieval of display name and address book data
+Also ability to add kabc contained contacts to kopete ( selected ones only )
+
+Linking
+use KMC UID to store KABC uid, QString::null if no link.
+Establish the link using KMC Props dialog (mETz: Alt+return shortcut to open pls).
+Policy:
+One way kopete->kabc contacts
+, achieve bidi later
+<Bille> what about the sync policy between IM contacts contained in kabc and in kopete
+<spaze> mETz: alt-enter doesn't work? report a bug to klistview/qlistview, that sucks :( </ot>
+<gregj> hyhy
+<spaze> Bille: implied i'd say
+<Bille> for example - in Addressee A I already have 3 IM id's added with another client - if i associate him with a Kopete MC
+<Gof> first, we need to do the link (almost done?)  after, we will see
+<spaze> Bille: oh, that
+<Bille> do i want to add those contacts to the MC?
+<spaze> ugh..
+<Gof> and the wizzard iontegration is in the link
+<Gof> now, it has no sense  to provide a link if we don't use it at all
+<spaze> Bille: I think Gof is right. first we just ignore what's in libkabc and do it one-way
+<spaze> Bille: once that works we can do it bidi
+<Bille> ok
+<spaze> Bille: we have the luxury to be the first so no need to be compatible :)
+<spaze> Bille: as for bidi, that's still kde 3.2, at least partly
+<spaze> Bille: I think we should should a list of all these contacts and ask what to do
+<spaze> Bille: like
+<Gof> spaze: for kde 3.2, if we provide a link, we need to sync at least some stuff
+<spaze> (x) Add all contacts
+<Bille> spaze: but then, how do you remember what was chosen the next time the props dialog comes up
+<spaze> ( ) Add only these contacts
+<Gof> if not, the link is useless, and it's better no link at all
+<Bille> spaze: agreed
+<spaze> not even conditional, just always, if you say you want to use kabc
+<spaze> that's our first test case
+<spaze> once that works we can do the addressbook fields
+<Bille> gregj: what is your take on syncing display name to addressee name?
+<spaze> first store-and-retrieve, assuming nobody messes with it
+<gregj> hmm
+<spaze> third will be to detect changes made to address book fields outside kopete
+<gregj> yes
+
+***
+
+<Gof> spaze: ( )  add all contact    is not good imo  (i don't want to add irc channels)  and also, it would make a lot of duplicate entities
+<gregj> i want kabc to provide me storage, and give back just what i stored
+<gregj> nothing more
+<Bille> gregj: what if it changes the Kopete displayname (that is not sent to the server)?
+<gregj> if i didn't provide email, i don't want email back
+<gregj> and so on
+<spaze> Gof: eh, we're talking different things now
+<Gof> maybe
+<gregj> Bille: hmm, this is hard to say now
+<gregj> Bille: i am retriving all information on connect from server
+<spaze> Gof: I'm talking about the fields to IMPORT from libkabc when we start kopete and kabc was changed by another app, i.e. someone was added there
+<gregj> Bille: as long as uid matches, this should be ok
+<Bille> gregj: ok
+<gregj> if someone changes uid in kabc, then it is his problem
+<spaze> Gof: but you pointed out a nice flaw in the current addressBookFields API :(
+ samppa Singularity spaze STiAT|off 
+<spaze> gregj: i'm talking about adding new entries, not modifying
+<Bille> spaze: pls expand on that
+<Gof> spaze: what one?
+<spaze> Bille: the flaw?
+<gregj> spaze: oh
+<Bille> yup
+<gregj> spaze: than it is ok to me
+<gregj> spaze: i will have to synchronize it with server than
+<spaze> Bille: we now assume addressbook fields are either all stored in kabc or all stored in xml
+
+SEMANTICS OF KABC KEYS
+ ok, one question, it is already dual-key based (app, key)
+<spaze> so that's perfect
+<Bille> yeah, what's that Key about?
+<Bille> i wasn't sure what that's for
+<spaze> Bille: what kabc is "supposed" to be used like is as follows:
+<spaze> addCustomField( "kopete", "myCustomKey", "myValue" )
+<spaze> BUT
+<spaze> we use kabc for data that is NOT app-specific
+<Bille> in our semantics, what's the All mean, all messaging apps incl kopete? :)
+<spaze> so we 'abuse' app as key and are stuck with a key that we don't use
+<-- cdr has quit (Client Quit)
+<gregj> spaze: maybe there should be a category in kabc
+<spaze> Bille: oh... that's another 'abuse' of the sematics
+<spaze> Bille: that's only for contact id's
+<gregj> spaze: category for IM related info, emails, and so on
+<spaze> Bille: "messaging/msn" is the protocol
+<spaze> Bille: but suppose i have 2 msn accounts under a single KABC entry
+<gregj> so we can use category IM
+<Bille> spaze: oic
+<gregj> which is shared with other im apps
+<spaze> how are you going to tell that you want msn@martijn.homeip.net to be contacted by your main account
+<Bille> gregj: that's what the messaging/ part of the key we already use signifies
+<spaze> and msntest@.. with your debug account
+<gregj> Bille: got it :D
+<spaze> Bille: "All" means that all YOUR accounts can access MY account
+
+************************************************
+Use cases
+
+1) Add new metacontact + contacts using Add Contact Wizard
+	Decide whether to associate or not if using mandatory association.
+    a) Matching addressbook entry already exists
+	- Need to choose kabc entry in ACW?
+	- Check if kabc entry already contains IM information (old install of Kopete or from another client)
+	b) No matching entry exists
+	- Need to add new one
+
+2) Someone adds you - protocol notifies and creates (temporary?) MC.
+	(Martijn says this becomes the same as 1) when the MC is made permanent)
+
+3)  All new Kopete (first run / no existing configs or contactlist)
+	Add accounts
+	Server Side Contact List (SSCL) fetched, lots of permanent contacts are created.
+*)  Consider if 2 accounts are added and there are contacts from different accounts such that they represent the same person.  They belong in the same MC.  MC merging should take place prior to kabc association.
+
+4)  An existing Kopete config is present and we upgrade to a version of Kopete supporting kabc.
+
+5a)  After abandoning Kopete, users start using a different KDE IM client, and would like to use the IM address details stored in the KDE address book.
+
+5b)  The user used another KDE IM Client.  But he finally discovers Kopete,which is the best, decides to use it, and he would like to use information already existing in KABC
+
+6)  Protocols may deliver contact data that users may want to aggregate into the kabc entry.
+
+7)  A contact adds a new IM account, either the user decides to add the new account to the MC manually, or the contact messages the user first, we get a temporary contact Kopete side, add them to the MC.
+
+8) The user no longer wishes to have a particular contact (or even metacontact) in Kopete, and deletes the object.
+
+9) A contact changes accounts (msn:foo@uncool.org -> foo@cool.org).  This is the same as 7) then 8).
+
+Implementation notes
+--------------------
+1) New MC.  Need dialogs to ask if association needed. Association dialog allows to select/search kabc contacts.  We need to write the kabc data sooner than closing Kopete!
+
+2) Same as 1)
+
+3) Not an issue given optional participation
+*) is orthogonal and can be dealt with separately.
+
+4) Deferred association
+
+5a) We don't want any Kopete specific data in the kabc.  Entries should be usable by other KDE IM apps.
+
+5b) The reverse case, therefore we should agree standard entry format with other apps.
+    We should also make using this info really easy in the Add Contact Wizard (see below).
+
+6) Question: how to combine all contacts in an MCs' data before saving this to kabc.
+
+7) First do dupe check or 'im-info-in-kabc-not-in-kopete' check in case this information already exists in KABC.  Once added to a MC, if already associated, we can add the new contact information to kabc immediately, otherwise Deferred association accessed via MC properties dialog.
+
+8) Don't remove the kabc fields, other IM clients might be using them.  So we just remove them from the Kopete contact list.  Dupe contact on the MC add contact thingy will catch if the contact is added again.  (and the user might still want to have other data like the phone number) * See the kabc section
+
+Therefore we need an Association Dialog accessed in wizard and from the MC properties dialog.  Note, this name sucks, don't write any classes using it.
+
+Side Issues
+-----------
+
+It's not possible to add >1 contact per protocol using the ACW.  Martijn: >1 contact per MC is for power users, they can add extra contacts using the MC's context menu. Change to an iterative ACW would fix this.
+
+
+Possible ACW order including kabc
+---------------------------------
+1) Welcome :P
+2) Choose Account
+3) Fill in protocol details
+4) Select Group
+5) Select kabc contact from list | create new | create none
+
+6) - if the user selected to create a new entry in the KAB, show the page showed when you add normaly a new KAB entry (if possible where some fields are
+   - if the user selected to search in the existing KABC database, show a nice widget to search one user.
+       (I hope there is nice KParts in KABC)
+
+( 5) could come after the welcome but this might be too different for users to swallow... Will)
+        agreed - Olivier
+        yup - Matt
+If we delay the KABC assoc question until after contacts are added, we cannot use any IM information
+that is already present in KABC.  And if different contacts are in the KABC, this might surprise the user when
+the KMC appears in the contactlist with extra contacts.·
+
+So it would be better if we performed this check before adding any contacts, in the ACW
+
+Olivier: I think a step (the first?) should be to ask a displayname for the metacontact.
+
+wow wow wow...  this make a big ACW, but a quick add feature would still be desired by people like this:
+Bug 53062: Adding contacts more quickly
+
+
+--Will's try--
+1) Welcome :P
+2) Do you want to use the KDE Addressbook for this contact, or restrict it to Kopete?
+   ( Could have a 'remember my choice and don't ask again option' ).
+( or else goto A )
+3) Choose addressee or add new addressee.
+   (Check that the addressee is not already associated with an MC)
+   (Mark the contact as 'In KABC' or can we just use valid vs invalid KABC UIDs to show relation?
+   (Chances are next time the user adds a KABC addressee it will coincide with an existing Kopete UID).
+3.5) Select groups and ask for a displayname
+4) (Check to see if IM fields are already present in KABC)
+5a)"The addressbook already contained the following IM information..
+(goto C)
+
+A) How would you like to IM XXX?
+B) Fill in contact details
+   (Add duplicate check after validity check)
+C) Use another protocol?
+
+D) Finish screen
+
+NB) Better to move to a iterative selection of protocols (Select protocol -> fill in details -> Select protocol or done ...).
+This way power users can add +1 contact per protocol without complicating the ACW for simple users.
+
+
+
+--Olivier's 2nd try--
+1) Welcome :P    do you want  to add this contact to KAB?   ( we need to choose a good default, or using the last selected one )
+	(.) Yes / search in KAB fo an existing entry  	 => goto A
+	(.) Yes / and create a new KAB entry        	 => goto B
+	(.) No / Do not add this contact to KAB      	 => goto 3
+( This would require the user to remember if an appropriate KAB entry exists.
+  It would be better to allow the user to select/search KAB entries OR create a new one
+  from the same screen, if they can't find an entry - Will)
+A) use a KPart from KAB to search an user an select one. if one exist => goto 3    the user still can shoose to create one  => goto B
+B) use a KPart from KAB to show the widget showed when adding new KAB entried => goto 3
+
+3) select groups, and ask the displayName (let empty to use the serverside one)  (show the KAB displayname by default)
+4) select account to use  (select by default account where a KAB entry exist)
+5) fill the account data (if a KAB entry exist, show as default)
+6) (.) another account (and select it)    => goto 5
+   (.) finish
+7) Finish screen  (is that possible to merge this screen with the previous one?
+
+This try to do all in as few step as possible.
+I can't count very well, but AFAICS your suggestion is equal or greater:
+
+Step Count		No IM in kabc	1 IM in kabc (new entry) + n new
+Will    			7				6 +  3 * n = 9
+Gof     			6 				5 +  2 * n = 7
+
+
+
+ KAB Widget in Kopete
+=========================
+
+ in the metacontact popup menu:
+A)  "Add to KAB"         if the metacontact don't use KAB yet
+B)  "View information"   if the metacontact is already in KAB
+
+
+A)  show the step  2 and A/B  of my addcontactwizard  (Olivier)
+
+B) KParts showing the KAddressBook entries information, and allow to edit it of
+course
+
+
+so kopete becomes in fact a addressbook itself
+
+
+
+Adding fields to kabc
+~~~~~~~~~~~~~~~~~~~~~
+Either - all new addressee, no IM + new IM to add | existing address, no IM + new IM to add
+| existing addressee, no IM + new IM to add | existing addressee, existing IM + new IM to add | existing addressee, existing IM + nothing to add
+
+I think we're going to need a more complex data structure to tell KCL::addMetaContact what it has to do.
+
+   I don't understand this <p>  -Olivier
+
+Fields to put in kabc
+~~~~~~~~~~~~~~~~~~~~~
+Relation between kabc entries and kopete metacontacts could be 1:1 or 1:many.  1:1 is neatest.
+
+In Kopete contact list:
+include UID from related kabc entry
+
+In kabc
+Something like X-MESSAGING-MSN:bob@hotmail.com for each protocol account that contact uses.
+
+We should keep the extra stuff in kabc to a minimum.  We can store nicknames in contactlist.xml.
+
+We should allow plugins to save some data:
+Some protocol allow to reach phone numbers, or more (see the ICQ info page)
+It would be useful if KABC could remember what application writes an entry. so when ICQ try to modify an e-mail, only the "icq-email" is affected
+
+Or like the language or the PGP public key
+
+It is too complex to store the phone number according to icq as well as the kabc phone number and every other protocol's idea of phone.  The fields would be of no use to any app other than the inserting program or else we would have to update the world.  We *should* have a facility to insert information obtained from protocols into the common kabc fields but this is a hard problem to solve neatly.
+ - - I think it is not, ICQ phone number ~should~ be the same as all others one.  storing it here is just a way to *centralise* all information about someone.  Then, when you want to know his phone number, you look only there, and not at every place
+ 		*problem: how to trust the information? that's why kabc could handle a source of the information
+
+
+KABC Participation modes
+------------------------
+
+Participation in the relation can be optional or mandatory.
+
+Optional
+~~~~~~~~
+Scenario 1:
+1) New Kopete install or account
+2) Ask 'New contacts added, associate with KDE Address book?'
+3) Yes: Pop up association dialog
+   No:  Do nothing
+
+Scenario 2:
+1) New Kopete install or account
+2) Do nothing
+3) Deferreed association - user performs associate when they want to
+
+-- For/In Favour
+.) easier to code
+.) easier migration
+.) doesn't disturb people who don't want it
+.) unobtrusive
+
+-- Against
+.) less consistent
+	(can someone explain me this? -Olivier)
+	Yes, I need more explanation on what consistent means. - Matt
+.) may confuse user?
+	how?
+
+Mandatory
+~~~~~~~~~
+Scenario 1
+1) When fetching SSCL, automatically create synthetic kabc entries.
+Scenario 2
+1) Fetch SSCL, ask user to create kabc entry normally.
+Hybrid 1-2
+1) Fetch SSCL
+2) Match SS contacts with kabc entries and associate automatically.  Unmatched contacts are associated with synthetic kabc entries.
+
+-- For
+.) Can integrate with kabc contacts without disturbing user
+
+-- Against
+.) User has control of address book, this removes that control.
+.) Synthetic entries may be duplicates of existing user added entries and user will have to reassociate MCs with correct entries and throw out the synthetic entries.
+.) Hybrid approach may be too complex for user to comprehend.
+.) this will be slow to add hundred of contacts when syncing the contactlist for the first time
+
+Conclusion
+~~~~~~~~~~
+I think the Optional is the best solution. all i describe in the other part of this file are using this solution (Olivier)
+
+
+
+KDE PIM Apps' use of Kopete
+--------------------------
+
+Use cases
+
+1) Email client or contact management app displays email sender's IM status if known.
+
+2) Email client or contact management app wants to use Kopete as transport for something (vCard?).
+
+Notes
+
+Client would need to identify addressbook entries that are IM contactable, and obtain status information from an IM app or library.
+
+David Faure says it's possible to do loose lazy binding to the app responsible for providing status information as in 1).  Something to do with KTrader and DCOP.  We would need some DCOP to return status info to the client from the IM app.
+
+Showing the IM status of a contact in KMail, in KAddressBook....
+A "reply-by-IM" action in KMail
+
+such as things could be done. but how?
+
+The application could know if this user is registered to an IM by looking at messaging fields
+But how to use such as information available only at runtime, like the Status.
+
+1) Saving the status to KABC
+   --the problem is that the status can not be reseted to offline if kopete crashed
+
+2) KMail could contact Kopete via DCop
+   --too bad if i want to use another IM Client?
+
+3) add an interface in kabc (or other) which could contact Kopete, or the IM which is actualy running.  This is in effect what dfaure suggested above.
+
+KDE Games/Desktop sharing use of Kopete
+---------------------------------------
+Use cases
+
+1) Program wants to use Kopete as transport for game/desktop sharing invitation.
+
+Notes
+
+As above, client must identify IM contactable addressbook entries, obtain status information and get the IM app to send the invite (inline/file transfer).  Some protocols may not support file transfer though.  Do we need a capabilities interface on the IM apps, or just use the lowest common denominator?
+
+On receipt of the invitation, IM app needs to recognize the invite and relay it to the recipient (similar lazy loose binding?).  In Kopete we could do this in a plugin, quite neatly.
+
+Some problem:
+  Each protocol does that in a different way.  The Game/Application  need to know some protocol specific stuff (the MSN application ID for example)
+
+  I was thinking about Atlantik, and other games that are protocol independent.  "Protocol games" are protocols' problems.
+
+
+
+ 'myself' integration
+=======================
+
+Some protocols allow to send some personal information like real name, phone number, address, ...   (see icq user info)
+It would be cool if theses information about the users itself could be obtained from KAB.
+
+see also Bug 63297: "meta-contact" global(local) display nickname for all accounts
+
+Notes: some user might not want to export their info to the server.
+
+Yes this would be cool.  I think we need a general UI to control the flow of contact information between kabc and kopete.  The myself issue is the same as the metacontacts issue.
+
+
+What about the API?
+=====================
+
+ In KABC
+---------
+The actual add to kabc could be performed in KopeteContactList::addMetaContact()
+
+ACW::accept() -> KopeteContactList::adddMetaContact()
+
+Here is a suggestion. I don't know if that already works like that in KABC.
+AFAIK by reading the KABC API documentation, it use somme different c++ function to access/modify some stuff.
+With this implementation, it is not possible to make that transparent for plugin.  That mean the PGP plugin need to call directly the KABC API (with Addressee::pgpKey()) for example.
+
+My idea is to give for each fields a String, like for MIME-Type
+so fields could be application/pgp-public-key    (do you see what i mean?)
+We can even add the possibility to have several entries for one field (StringList)  (several emails for example)
+
+Theses key could be stendardized (freedesktop.org ?)
+
+ In Kopete:
+------------
+
+I think we will need to change the xml format of the contactlist, and the whole pluginData thing.
+
+The idea is to have the same fields in Kopete than in KABC.
+Gof: This was not our idea, we intend not to pollute the KABC with any more extra fields than necessary.  Kopete's info may not be useful to other IM apps (Will)
+
+so for example, the pgp plugin will request the public key:
+metacontact->data("application/pgp-public-key");
+
+if the contact is in KABC, then libkopete will request info from kabc. Else, it will take the data stored internaly in the contactlist.xml (Gof)
+
+This is a good question.  I think since we have the constraint that we have to keep kabc clean, this is the way to do it. (Will)
+
+for contacts same things.
+Anyway? what if we have several contact in one metacontact.
+for example:
+
+messenging/msn         =>   xxx@msn.com ; yyy@msn.com   (it's a StringList)
+messenging/nickname    =>    Mr. X ; Mr. Y
+
+that looks fine, but how to make sure than Mr. X is for xxx@msn.com, imagine if we have icq contact, or other? (Gof)
+We should never store nicknames in kabc.  The metacontact name should be taken from the kabc formatted name (Will)
+
+Of course every fields shouldn't be stored in KABC (for example: MSN's groups, or others)
+to know what can be saved or not in kabc, i see two ways:
+1) KopeteMetaContact::setData( QString key , QString data , bool saveToKAB);
+2) if the key is or not recognized by KABC. example, if i save  "messaging/msn-groups"  KAB is not able to store it, so don't store it in KABC
+
+
+Syncing contactlist info currently takes place when Kopete exits.  other kabc apps write kabc during their runs.  We will have to make changes to do this and to make sure that we don't try to write 200 kabc entries simultaneously with individual tickets after fetching the SSCL for a new account.
+
+I don't think that syncing the KAB on an SSCL fetch is necessary. The only information we get when we fetch the SSCL is the contact name of that person who is on our SSCL, it's not until later, perhaps when we request the user info that we update the KAB. (Matt)
+
+
+
+
+|How to share data when multiple contact in a metacontact?|
++---------------------------------------------------------+
+
+The problem is that there are several sources of the information. example: if i have two msn contact ion the metacontact, i have maybe two pictures.
+
+Currently, two solution has been mentioned:
+1) use a per-contact value + a metacontact one. If there is only one contact, we automaticaly track the child contact one (exepted if the user selected himself the metacontact value). If not, we let the user choose what to use.
+     (like we already does for displayname)
+
+2) Use the account / contact priority to determine the value.
+
+
+
+KABC Association
+----------------
+Association creates a 1:1 relationship between KMC and Addressee.  If we assume IM apps incl Kopete put IM addresses in the KABC (Messaging/msn etc) then whenever an association is made or changed, there will have to be a sync between Kopete's idea of IM addresses and those stored in KABC.  Changes to KABC data could happen while Kopete is offline so this sync check needs to take place when Kopete starts.  Potential problems if another IM client changes the data whilst Kopete is running or vice versa - addressees aren't locked while an apps is running, only while writing.
+
+Association with existing contact: 1) No messaging information 2) Some messaging entries already exist.  Possible courses of action - add (only in KABC) accounts to MC - ask (how do we remember what the user wanted the next time we read the KABC)
+
+What if a related kabc entry is deleted while Kopete is running?
+
+Deserialising contact from contactlist.xml - do we try to check the kabc entries and create any accounts that we find there but not in the contactlist.xml?
+
+When to update KABC
+-------------------
+Kopete writes its contactlist.xml at app close.  This is sufficient for kopete as the data is held in memory and not shared.  Data Kopete puts in KABC is shared, however, and users will expect to be able to use that data immediately.  Hence, data that will be put in KABC should be put there immediately.
+This should happen when the KABC-exposed data changes - when an MC's set of contacts changes
+NOT when starting kopete and the MC is filled with contacts!
+*) When adding a new contact (Use case: A new contact messages me, I add them to my contact list, and then I want to play a game with them, and invite them using IM, for example)
+   KopeteContactList::addMetaContact()
+*) When linking an existing contact to KABC (so other apps gain the benefit of the new link)
+   handle this in KMC::setMetaContactId() - remember issues if a link is changed, do we delete the kabc fields?
+*) When adding new contacts to a KMC.
+	KMC::addContact()
+*) When moving contacts between KMCs. KC::setMetaContact()?
+*) When a MC's KABC association is changed. - KsetMetaContact

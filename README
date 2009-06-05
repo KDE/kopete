@@ -1,0 +1,29 @@
+Kopete, The KDE Messenger
+Duncan Mac-Vicar Prett <duncan@kde.org>, and a cast of thousands.
+http://kopete.kde.org
+----------------------------------------------------------------------
+
+Kopete is an Instant Messaging client designed to be modular and plugin based.
+
+It requires the KDE Desktop, version 3.3 or higher.
+
+Kopete ships with a lot of protocol plugins, supporting nine different messaging
+systems.  All plugins have seen numerous enhancements and bugfixes since the
+last release and should bring your Kopete experience to a whole new level.
+
+Additionally a lot of work has gone into cleaning up the core Kopete API and
+GUI with several important usability-, stability- and performance-improvements.
+
+The Kopete team consists now of several active developers, working on the
+various plugins and the core API. However, Kopete wouldn't be in the shape
+in which it is now without the various contributions from KDE developers
+all over the world and the high-quality bug reports from active users.
+Thanks to all of you for your support and your interest in Kopete!
+
+As always, more bug reports and patches are welcome.
+Please use http://bugs.kde.org.
+
+The Kopete main developers can be contacted on our mailing list,
+kopete-devel@kde.org, and on IRC in #kopete, on irc.freenode.net.
+We always welcome new contributors.
+

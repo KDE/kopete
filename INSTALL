@@ -1,0 +1,82 @@
+Basic Installation
+==================
+
+        KDE uses the cmake build system. The simple instructions for
+building kdenetwork are these commands (starting in kdenetwork source directory):
+
+                        mkdir ../kdenetwork-build && cd ../kdenetwork-build
+                        cmake ../kdenetwork
+                        make
+                        make install
+
+        This will not work unless necessary prerequisites are met. These are,
+in the order in which they should be built:
+
+                        kdesupport
+                        kdelibs
+                        kdepimlibs
+                        kdebase/runtime
+
+        Various components of kdenetwork and the KDE modules listed above have
+other dependencies as well. If these are not met when the 'cmake' command is
+run, those components will not be built. The output of 'cmake' should make it
+clear what these dependencies are and how to meet them.
+
+	Arguments can be given to cmake similar to those given to a traditional
+configure script, like the install prefix. See 'cmake --help-full' for more
+information. For example, 'configure --prefix=/usr/lib' translates to
+'cmake -DCMAKE_INSTALL_PREFIX=/usr/lib'.
+
+Finding Plugins
+===============
+If you don't see any "plugins" listed in the Configure Plugins
+dialog, or the list of messaging protocols in the Add Account Wizard
+is empty after installing, Kopete you may have installed it in a
+directory where KDE doesn't look for additional resources like plugins.
+
+It's also possible that you've just been too impatient :)
+
+Kopete installs several .desktop files that have to be processed by a
+KDE application called 'kbuildsycoca4'. If you run Kopete directly
+after installing it this process might still be running and Kopete
+doesn't see the new plugins yet. Try running 'kbuildsycoca4' from a
+console and restart Kopete when it finishes. If that doesn't help,
+please read on.
+
+KDE applications by default look in all directories listed in the
+/etc/kderc file, the $KDEDIRS environment variable, in $KDEDIR if
+this variable doesn't exist, and ultimately in the directory where
+kdelibs is installed. Unless you take special precautions applications
+will _NOT_ look in other directories, even if you install additional
+software (like Kopete) there.
+
+The best solution is to add the following to /etc/kderc (create the file
+if it doesn't exist yet):
+
+    [Directories]
+    prefixes=/the/prefix/I/used/for/kopete
+
+If you don't have write access to /etc/kderc, or if you want to use more
+parallel builds of KDE and/or Kopete you need to rely on the environment
+variables instead.
+
+If $KDEDIRS currently points to /opt/kde4 and you installed Kopete
+to /usr/local then you need to set $KDEDIRS to '/opt/kde4:/usr/local'.
+You need to store this change in a file that is picked up by all shells
+and for all users, like /etc/profile. The name of the preferred version
+varies from system to system.
+
+As a last resort you can simply install Kopete in the same directory as
+where your KDE resides by adding a flag to configure like
+
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/lib
+
+if KDE is installed in /opt/kde4. The downside is that you'll probably
+end up installing Kopete into directories used by your distribution,
+instead of a separate path for your own packages like the /usr/local/
+tree. Whether or not your package manager has problems with that and
+whether or not you'll accept those problems should they occur is of
+course up to you to decide, but we strongly recommend to not install
+source-compiled packages like Kopete in directories that are managed
+by a package manager and only use the KDE prefix if you compiled all
+of KDE from source yourself.

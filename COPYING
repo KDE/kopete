@@ -1,0 +1,18 @@
+Kopete, The KDE Instant Messenger License
+=========================================
+
+Kopete is licensed under the GNU General Public License version 2 
+or later. The text of the GNU General Public License can be viewed at
+http://www.gnu.org/licenses/gpl.html
+
+The Kopete library (libkopete) is licensed under the GNU Lesser 
+General Public License so plugin licenses are not restricted to be 
+free software. The text of the GNU Lesser General Public License can
+be viewed at http://www.gnu.org/copyleft/lesser.html
+
+As a special exception, you have permission to link this program
+with the following libraries and distribute executables, as long as you
+follow the requirements of the GNU GPL in regard to all of the
+software in the executable aside from the following libraries: 
+- OpenSSL (http://www.openssl.org)
+

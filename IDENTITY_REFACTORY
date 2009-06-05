@@ -1,0 +1,32 @@
+This file contains some TODO items for the identity refactory being done on 
+kopete:
+
+- Make all Kopete::Account reimplementations read info from the identity. It
+  should still be discussed what will be the approach for synchronization   with 
+  server-side information.
+
+- The accounts might be able to write identity properties when the identity has
+  only one account assigned to it.
+
+- Remove all protocol-specific user info dialogs, and keep only dialogs to show
+  contact's info (and those should probably be set as read-only even if the
+  protocol supports writing contact's info to make this simpler. 
+
+- Handle status changes and port the identity stuff to the new status manager
+  implementation.
+
+- Properly handle identity's property changes in the Kopete::Account derived classes
+
+X Merge the account config and identity config dialogs into a single dialog (as
+  suggested and started to be implemented by Gof).
+
+X Evaluate alternatives to the text links on the identity widget (as suggested by
+  Bille)
+
+X Try to figure out the slow down seen by Gof on the identity widget (from the logs
+  it seems something related to FileEngine, but not sure)
+
+- Check if there is something interesting on
+  http://www.pidgin.im/~seanegan/cgi-bin/pyblosxom.cgi/identity.html
+
+X Make the identity widget a bit smaller (as suggested by Matt)
