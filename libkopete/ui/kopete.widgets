@@ -1,0 +1,24 @@
+[Global]
+PluginName=KopeteWidgets
+Includes=kcomponentdata.h
+Init=new KComponentData("kopetewidgets");
+
+[Kopete::UI::ListView::ListView]
+ToolTip=List View (Kopete)
+WhatsThis=A component capable list view widget.
+IncludeFile=kopetelistview.h
+Group=Views (Kopete)
+
+[Kopete::UI::ListView::SearchLine]
+ToolTip=List View Search Line (Kopete)
+WhatsThis=Search line able to use Kopete custom list View.
+IncludeFile=kopetelistviewsearchline.h
+ConstructorArgs=(parent, 0, name)
+Group=Input (Kopete)
+
+[Kopete::UI::AddressBookLinkWidget]
+ToolTip=Address Book Link Widget (Kopete)
+WhatsThis=KABC::Addressee display/selector
+IncludeFile=addressbooklinkwidget.h
+ConstructorArgs=(parent, name)
+Group=Input (Kopete)

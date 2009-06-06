@@ -1,0 +1,690 @@
+<ui version="4.0" >
+ <author>Olivier Goffart</author>
+ <class>QQEditAccountUI</class>
+ <widget class="QWidget" name="QQEditAccountUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>856</width>
+    <height>611</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Account Preferences - QQ</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>9</number>
+   </property>
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget3" >
+     <property name="tabShape" >
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_connection" >
+      <attribute name="title" >
+       <string>&amp;Basic Setup</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="m_accountInfo" >
+         <property name="title" >
+          <string>Account Information</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="TextLabel1_3" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip" >
+               <string>The user ID of the QQ contact you would like to use.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The user ID of the QQ contact you would like to use.  This should be in the form of a valid E-mail address.</string>
+              </property>
+              <property name="text" >
+               <string>&amp;QQ ID:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>m_login</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="m_login" >
+              <property name="toolTip" >
+               <string>The user ID of the QQ contact you would like to use.</string>
+              </property>
+              <property name="whatsThis" >
+               <string>The user ID of the QQ contact you would like to use.  This should be in the form of a valid E-mail address.</string>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Kopete::UI::PasswordWidget" native="1" name="m_password" />
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" >
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="m_autologin" >
+                <property name="whatsThis" >
+                 <string>If you check this checkbox, the account will not be connected when you press the "Connect All" button, or at startup when automatic connection at startup is enabled.</string>
+                </property>
+                <property name="text" >
+                 <string>E&amp;xclude from connect all</string>
+                </property>
+                <property name="checked" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="buttonVCard" >
+              <property name="text" >
+               <string>View &amp;&amp; Update my vCard</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="title" >
+          <string>Registration</string>
+         </property>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="textLabel6" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text" >
+             <string>To connect to the QQ network, you will need a QQ ID.
+
+If you do not currently have an ID, please create one.</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="buttonRegister" >
+            <property name="text" >
+             <string>Re&amp;gister New Account</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>146</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
+       <string>Accou&amp;nt Preferences</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="title" >
+          <string>Connection Preferences</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="optionOverrideServer" >
+            <property name="text" >
+             <string>&amp;Override default server information</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
+             <number>6</number>
+            </property>
+            <item row="0" column="1" >
+             <layout class="QHBoxLayout" >
+              <property name="spacing" >
+               <number>3</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="labelServer" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>Ser&amp;ver /</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>m_serverName</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="labelPort" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>po&amp;rt:</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>m_serverPort</cstring>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="0" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>16</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="3" >
+             <widget class="QSpinBox" name="m_serverPort" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="toolTip" >
+               <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+              </property>
+              <property name="whatsThis" >
+               <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+              </property>
+              <property name="minimum" >
+               <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>65535</number>
+              </property>
+              <property name="value" >
+               <number>80</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLineEdit" name="m_serverName" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip" >
+               <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+              </property>
+              <property name="whatsThis" >
+               <string>Only modify these values if you want to use a special IM proxy server, like SIMP</string>
+              </property>
+              <property name="text" >
+               <string>tcpconn.tencent.com</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="global_settings_page" >
+         <property name="title" >
+          <string>Global QQ Options</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="textLabel1_3" >
+            <property name="text" >
+             <string>&lt;qt>&lt;b>Note:&lt;/b> These settings are applicable to all QQ accounts</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="NotifyNewChat" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="whatsThis" >
+             <string>This option will notify you when a contact starts typing their message, before the message is sent or finished.</string>
+            </property>
+            <property name="text" >
+             <string>Au&amp;tomatically open a chat window when someone starts a conversation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="textLabel1_4" >
+              <property name="whatsThis" >
+               <string>&lt;qt>&lt;p>Indicate when Kopete will download the display pictures of contacts&lt;/p>
+&lt;dl>&lt;dt>Only manually&lt;/dt>&lt;dd>The picture is not downloaded automatically. It is only downloaded when the user requests it&lt;/dd>
+&lt;dt>When a chat is open&lt;/dt>&lt;dd>The picture is downloaded when a conversation socket is opened, i.e. when you open a chat window&lt;/dd>
+&lt;dt>Automatically&lt;/dt>&lt;dd>Always try to download the picture if the contact has one.  &lt;b>Note:&lt;/b> this will open a socket, and let the user know you are downloading their picture.&lt;/dd>&lt;/dl></string>
+              </property>
+              <property name="text" >
+               <string>Download the QQ picture:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="DownloadPicture" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="whatsThis" >
+               <string>&lt;qt>&lt;p>Indicate when Kopete will download the pictures of contacts&lt;/p>
+&lt;dl>&lt;dt>Only manually&lt;/dt>&lt;dd>The picture is not downloaded automatically. It is only downloaded when the user requests it&lt;/dd>
+&lt;dt>When a chat is open&lt;/dt>&lt;dd>The picture is downloaded when a conversation socket is opened, i.e. when you open a chat window&lt;/dd>
+&lt;dt>Automatically&lt;/dt>&lt;dd>Always try to download the picture if the contact has one.  &lt;b>Note:&lt;/b> this will open a socket, and let the user know you are downloading their picture.&lt;/dd>&lt;/dl></string>
+              </property>
+              <property name="currentIndex" >
+               <number>1</number>
+              </property>
+              <item>
+               <property name="text" >
+                <string>Only Manually</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>When a Chat is Open (default)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Automatically (read help)</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="useCustomEmoticons" >
+            <property name="whatsThis" >
+             <string>QQ Messenger allows users to download and use custom emoticons. If this option is enabled, Kopete will download and display such emoticons.</string>
+            </property>
+            <property name="text" >
+             <string>&amp;Download and show custom emoticons</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="exportEmoticons" >
+            <property name="whatsThis" >
+             <string>Export all the emoticon themes as custom emoticons (only works for emoticons in the PNG format).</string>
+            </property>
+            <property name="text" >
+             <string>E&amp;xport the current emoticon theme to users</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>21</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelStatusMessage" >
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Kopete::UI::PasswordWidget</class>
+   <extends></extends>
+   <header>kopetepasswordwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget3</tabstop>
+  <tabstop>m_login</tabstop>
+  <tabstop>m_autologin</tabstop>
+  <tabstop>buttonVCard</tabstop>
+  <tabstop>buttonRegister</tabstop>
+  <tabstop>optionOverrideServer</tabstop>
+  <tabstop>m_serverName</tabstop>
+  <tabstop>m_serverPort</tabstop>
+  <tabstop>NotifyNewChat</tabstop>
+  <tabstop>DownloadPicture</tabstop>
+  <tabstop>useCustomEmoticons</tabstop>
+  <tabstop>exportEmoticons</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>optionOverrideServer</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>m_serverName</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>244</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>250</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionOverrideServer</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>m_serverPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>769</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>776</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

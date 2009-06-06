@@ -1,0 +1,98 @@
+<ui version="4.0" >
+ <class>dlgAddContact</class>
+ <widget class="QWidget" name="dlgAddContact" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>384</width>
+    <height>94</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Add Contacts</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="lblID" >
+       <property name="toolTip" >
+        <string>The Jabber ID for the account you would like to add.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The Jabber ID for the account you would like to add.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;Jabber ID:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignTop</set>
+       </property>
+       <property name="buddy" >
+        <cstring>addID</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KLineEdit" name="addID" >
+       <property name="toolTip" >
+        <string>The Jabber ID for the account you would like to add.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The Jabber ID for the account you would like to add.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="textLabel1" >
+     <property name="text" >
+      <string>&lt;i>(for example: joe@jabber.org)&lt;/i></string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

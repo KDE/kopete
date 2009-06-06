@@ -1,0 +1,24 @@
+<ui version="4.0" >
+ <class>TutorialPrefsUI</class>
+ <widget class="QWidget" name="TutorialPrefsUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>155</width>
+    <height>44</height>
+   </rect>
+  </property>
+  <layout class="QHBoxLayout" >
+   <item>
+    <widget class="QCheckBox" name="fastLearner" >
+     <property name="text" >
+      <string>I am a fast learner</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

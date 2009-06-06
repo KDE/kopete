@@ -1,0 +1,194 @@
+This is the oscar HACKING file. It details the current coding style that is being
+used in this plugin. Thanks to Scott Wheeler for providing the skeleton I based this
+file on
+
+================================================================================
+Code Documentation
+================================================================================
+
+Please add doxygen comments to the header files where appropriate. I don't expect
+anyone to add comments for functions that they're overriding from the base class
+but comments everywhere would be good.
+
+Please comment parts of the code that might be unclear, need more thinking about,
+reimplementing, etc. It will help people look for things to do if they want to help
+out.
+
+Please don't remove the kDebug lines from any of the source files. If they're
+excessive, either wrap them in an ifdef and put the ifdef in the soon to be
+created oscardebug.h file so that they can be enabled and disabled at the will of
+other developers or users. I also tend to use kDebug statements to document
+my code in the place of comments for the simpler sections. 
+
+================================================================================
+Indentation
+================================================================================
+
+I use tabs to indent everything. When I say tabs, I mean the 'tab' character. Please
+don't use 8 spaces to indent. Just hit the 'tab' key, and make sure that space indentation
+is turned off in whatever editor you use. However, the exception to the indentation
+rule is anything that's inside of a namespace block should not be indented.
+
+
+static void foo()
+{
+	if ( bar() ) <-- 1 tab
+        	baz(); <-- 2 tabs
+}
+
+namespace
+{
+class Foo
+{
+Q_OBJECT
+public:
+	Foo();
+	~Foo();
+};
+}
+
+
+
+
+vim or kate modelines that modify the way tabs are displayed are encouraged, as
+long as they don't actually change the way tabs are saved to a file.
+
+================================================================================
+Braces
+================================================================================
+
+Braces opening classes, structs, namespaces, functions, and conditionals should be
+on their own line. Here's an example: 
+
+class Foo
+{
+    // stuff
+};
+
+if ( foo == bar )
+{
+    // stuff
+}
+
+while ( foo == bar &&
+      baz == quux &&
+      flop == pop )
+{
+    // stuff
+}
+
+static void foo()
+{
+    // stuff
+}
+
+Also conditionals / loops that only contiain one line in their body (but where
+the conditional statement fits onto one line) should omit braces:
+
+if ( foo == bar )
+    baz();
+
+But:
+
+if ( baz == quux &&
+   ralf == spot )
+{
+    bar();
+}
+
+================================================================================
+Spaces
+================================================================================
+
+Spaces should be used between the conditional / loop type and the
+conditional statement.  They should also not be used after parenthesis.  However
+the should be to mark of mathematical or comparative operators.
+
+if ( foo == bar )
+  ^ ^          ^
+
+is correct. However:
+
+if(foo == bar)
+
+is not.
+
+================================================================================
+Header Organization
+================================================================================
+
+Member variables should always be private and prefixed with "m_".  Accessors may
+not be inline in the headers.  The organization of the members in a class should be
+roughly as follows:
+
+public:
+public slots:
+protected:
+protected slots:
+signals:
+private: // member funtions
+private slots:
+private: // member variables
+
+If there are no private slots there is no need for two private sections, however
+private functions and private variables should be clearly separated.
+
+The implementations files -- .cpp files -- should follow (when possible) the
+same order of function declarations as the header files.
+
+Virtual functions should always be marked as such even in derived classes where
+it is not strictly necessary.
+
+================================================================================
+Whitespace
+================================================================================
+
+Whitespace should be used liberally.  When blocks of code are logically distinct
+I tend to put a blank line between them.  This is difficult to explain
+systematically but after looking a bit at the current code organization this
+ideally will be somewhat clear.
+
+Parenthesis should be padded by spaces on one side. This is easier to illustrate in
+an example:
+
+void Client::foo() //correct
+void Client::foo3( int, int, int ) //correct
+
+void Client::foo(int, int, int) //incorrect
+void Client::foo(int,int,int) //also incorrect
+
+Operators should be padded by spaces in conditionals. Again, more examples to
+illustrate
+
+if (foo==bar)
+m+=(n*2)-3;
+
+should be:
+
+if ( foo == bar )
+m += ( n * 2 ) - 3;
+
+================================================================================
+Pointer and Reference Operators
+================================================================================
+
+This one is pretty simple.  I prefer "Foo* f" to "Foo *f" in function signatures
+and declarations.  The same goes for "Foo& f" over "Foo &f".
+
+================================================================================
+
+There are likely things missing here and I'll try to add them over time as I
+notice things that are often missed.  Please let me know if specific points are
+ambiguous.
+
+Also, please note that since this library is based heavily off of Kopete's 
+libgroupwise library that the coding style in certain files may not match what's
+written in this document. Those files that don't match will be corrected eventually.
+
+To make things easier on you, kate modelines are provided at the end of certain files
+to help enforce the coding style. If you're using the new C S&S Indenter that will be in
+KDE 3.4, I can provide a patch that will automatically implement the space padding around
+parenthesis. Please mail me so I can send it to you.
+
+Matt Rogers <mattr@kde.org>
+

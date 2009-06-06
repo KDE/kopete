@@ -1,0 +1,17 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="1" name="kopete_groupwise_chat">
+	<MenuBar>
+		<Menu noMerge="1" name="file">
+			<text>&amp;Chat</text>
+			<Action name="gwInvite" />
+		</Menu>
+	</MenuBar>
+
+
+	<ToolBar name="statusToolBar">
+		<Action name="gwSecureChat" />
+		<Action name="gwLoggingChat" />
+	</ToolBar>
+
+
+</kpartgui>

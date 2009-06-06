@@ -1,0 +1,117 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>SMSUserPrefsUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>SMSUserPrefsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>252</width>
+            <height>144</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>title</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Some One</string>
+            </property>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line10</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout11</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Telephone number:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>telNumber</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The telephone number of the contact.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The telephone number of the contact.  This should be a number with SMS service available.</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit">
+                    <property name="name">
+                        <cstring>telNumber</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The telephone number of the contact.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The telephone number of the contact.  This should be a number with SMS service available.</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer11</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<includehints>
+    <includehint>klineedit.h</includehint>
+</includehints>
+</UI>

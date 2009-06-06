@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: Michaël Larouche-->
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+	<kcfgfile name="kopeterc"/>
+
+	<group name="Now Listening Plugin">
+		<entry name="Header" type="String">
+			<label>Header of the message advertised.</label>
+			<default code="true">i18n("Now listening to: ")</default>
+		</entry>
+
+		<entry name="PerTrack" type="String">
+			<label>Core of the message advertised.</label>
+			<default code="true">i18n("%track( by %artist)( on %album)")</default>
+		</entry>
+
+		<entry name="Conjunction" type="String">
+			<label>Conjunction when multiple track are playing.</label>
+			<default code="true">i18n(", and ")</default>
+		</entry>
+
+		<entry name="ExplicitAdvertising" type="Bool">
+			<label>Show explicitly the current music listened via a menu or /media command.</label>
+			<default>true</default>
+		</entry>
+
+		<entry name="ChatAdvertising" type="Bool">
+			<label>Show the current music listened in chat window.</label>
+			<default>false</default>
+		</entry>
+
+		<entry name="StatusAdvertising" type="Bool">
+			<label>Show the current music listened in place of your status message.</label>
+			<default>false</default>
+		</entry>
+
+		<entry name="AppendStatusAdvertising" type="Bool">
+			<label>Show the current music listened appended to your status message.</label>
+			<default>false</default> 
+		</entry>
+	
+		<entry name="UseSpecifiedMediaPlayer" type="Bool">
+			<label>Use the specified media player.</label>
+			<default>false</default>
+		</entry>
+		
+		<entry name="SelectedMediaPlayer" type="Int">
+			<label>Selected Media Player for source of listening advertising.</label>
+		</entry>
+	</group>
+</kcfg>

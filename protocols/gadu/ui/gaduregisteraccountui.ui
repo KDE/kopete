@@ -1,0 +1,403 @@
+<ui version="4.0" >
+ <class>GaduRegisterAccountUI</class>
+ <widget class="QWidget" name="GaduRegisterAccountUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>745</width>
+    <height>287</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Register Account - Gadu-Gadu</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item row="0" column="0" >
+      <widget class="QLabel" name="pixmapEmailAddress" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>0</hsizetype>
+         <vsizetype>0</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>32767</width>
+         <height>32767</height>
+        </size>
+       </property>
+       <property name="scaledContents" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QLabel" name="labelPasswordVerify" >
+       <property name="enabled" >
+        <bool>true</bool>
+       </property>
+       <property name="toolTip" >
+        <string>A confirmation of the password you would like to use.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>A confirmation of the password you would like to use for this account.</string>
+       </property>
+       <property name="text" >
+        <string>Repeat pass&amp;word:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>valuePasswordVerify</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2" >
+      <widget class="KLineEdit" name="valuePassword" >
+       <property name="toolTip" >
+        <string>The password you would like to use.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The password you would like to use for this account.</string>
+       </property>
+       <property name="echoMode" >
+        <enum>QLineEdit::Password</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" >
+      <widget class="KLineEdit" name="valueEmailAddress" >
+       <property name="toolTip" >
+        <string>Your E-mail address.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The E-mail address you would like to use to register this account.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QLabel" name="pixmapVerificationSequence" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>0</hsizetype>
+         <vsizetype>0</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>32767</width>
+         <height>32767</height>
+        </size>
+       </property>
+       <property name="scaledContents" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QLabel" name="labelEmailAddress" >
+       <property name="toolTip" >
+        <string>Your E-mail address.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The E-mail address you would like to use to register this account.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;E-Mail address:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>valueEmailAddress</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="pixmapPasswordVerify" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>0</hsizetype>
+         <vsizetype>0</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>32767</width>
+         <height>32767</height>
+        </size>
+       </property>
+       <property name="scaledContents" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="QLabel" name="labelVerificationSequence" >
+       <property name="enabled" >
+        <bool>true</bool>
+       </property>
+       <property name="toolTip" >
+        <string>The text from the image below.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The text from the image below.  This is used to prevent abusive automated registration scripts.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;Verification sequence:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>valueVerificationSequence</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2" >
+      <widget class="QLineEdit" name="valueVerificationSequence" >
+       <property name="toolTip" >
+        <string>The text from the image below.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The text from the image below.  This is used to prevent abusive automated registration scripts.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="pixmapPassword" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>0</hsizetype>
+         <vsizetype>0</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>32767</width>
+         <height>32767</height>
+        </size>
+       </property>
+       <property name="scaledContents" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QLabel" name="labelPassword" >
+       <property name="toolTip" >
+        <string>The password you would like to use.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The password you would like to use for this account.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;Password:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>valuePassword</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2" >
+      <widget class="KLineEdit" name="valuePasswordVerify" >
+       <property name="toolTip" >
+        <string>A confirmation of the password you would like to use.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>A confirmation of the password you would like to use for this account.</string>
+       </property>
+       <property name="echoMode" >
+        <enum>QLineEdit::Password</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>23</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="pixmapToken" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>0</hsizetype>
+         <vsizetype>0</vsizetype>
+         <horstretch>20</horstretch>
+         <verstretch>13</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>256</width>
+         <height>64</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>256</width>
+         <height>64</height>
+        </size>
+       </property>
+       <property name="toolTip" >
+        <string>Gadu-Gadu registration token.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>This field contains an image showing a number that you need to type into the &lt;b>Verification Sequence&lt;/b> field above.</string>
+       </property>
+       <property name="frameShape" >
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow" >
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="scaledContents" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>22</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelInstructions" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>3</hsizetype>
+       <vsizetype>3</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>&lt;i>Type the letters and numbers shown in the image above into the &lt;b>Verification Sequence&lt;/b> field.  This is used to prevent automated registration abuse.&lt;/i></string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelStatusMessage" >
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>valueEmailAddress</tabstop>
+  <tabstop>valuePassword</tabstop>
+  <tabstop>valuePasswordVerify</tabstop>
+  <tabstop>valueVerificationSequence</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

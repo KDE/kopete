@@ -1,0 +1,141 @@
+<ui version="4.0" >
+ <class>ircAddUI</class>
+ <widget class="QWidget" name="ircAddUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>389</width>
+    <height>350</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget3" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>381</width>
+        <height>318</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>&amp;Add Contact</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="margin" >
+        <number>6</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="TextLabel1" >
+           <property name="toolTip" >
+            <string>The name of the IRC contact or channel you would like to add.</string>
+           </property>
+           <property name="whatsThis" >
+            <string>The name of the IRC contact or channel you would like to add.  You can type a person's nickname, or a channel name, preceded by a pound sign ('#').</string>
+           </property>
+           <property name="text" >
+            <string>N&amp;ickname/channel to add:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>addID</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="addID" >
+           <property name="toolTip" >
+            <string>The name of the IRC contact or channel you would like to add.</string>
+           </property>
+           <property name="whatsThis" >
+            <string>The name of the IRC contact or channel you would like to add.  You can type a person's nickname, or a channel name, preceded by a pound sign ('#').</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="textLabel3" >
+         <property name="text" >
+          <string>&lt;i>(for example: joe_bob or #somechannel)&lt;/i></string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>110</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>381</width>
+        <height>318</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>&amp;Search Channels</string>
+      </attribute>
+      <layout class="QHBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QWidget" native="1" name="hbox" />
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>addID</tabstop>
+  <tabstop>tabWidget3</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

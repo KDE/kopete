@@ -1,0 +1,6 @@
+File=urlpicpreview.kcfg
+ClassName=URLPicPreviewConfig
+Singleton=true
+Mutators=true
+MemberVariables=private
+GlobalEnums=true

@@ -1,0 +1,52 @@
+Now Listening Plugin
+
+What It Does
+
+This plugin tells your chat buddies what media (music, ...) you are currently enjoying.  If you turn on "Now Listening" for a contact, when a new track begins, it automatically sends a user defined message.
+
+How It Does It
+Looks for running media applications (Kscd, Xmms) using DCOP and asks them what track they are currently playing.  The current track is discovered on a periodic basis, and if it has changed, it is advertised in live chatwindows to contacts that the user has indicated should be notified.
+
+Fair Points
+Do we want to tell ALL chat partners what we're listening to?
+- The operation of the plugin is configurable for each contact, using a context menu item.
+
+IRC chats probably DON'T want extraneous bumf.
+- Yes, by using KMM::protocol() we can discover which protocol a chat uses and squelch messages to it.  Would need something like a view of QCheckListItems to change the user's per protocol preferences in the Config.
+
+Should we only advertise if the other party to the chat is online?
+- Yes
+
+Is it possible to tell whether media players are actually playing?
+- Not for KsCD, but we can and do for xmms.
+
+Alternative methods
+Is there a way to be notified when tracks change?
+- Not yet, but xmms seems to provide an interface to find out how long a track will be playing for. Could try and predict when a track will change.
+Of course, if ppl change tracks before the track has ended then this prediction is no good.  To do this we would need to add a per mediaplayer timer, or at least a pointer to a timer in the plugin (ugly!).
+
+Discovering all live chatwindows
+KopeteMessageManagerFactory::factory()->sessions(), or Kopete::sessionFactory() until that is implemented?
+- Done
+
+OOOH - HOW ABOUT SEEING IF XMMS-KDE HAS DCOP IN IT?
+NO IT DOESN'T
+
+How contact specific plugin data works
+Each metacontact has a method pluginData(KopetePlugin *).  This takes a pointer to a plugin, and returns a QStringList containing the metacontact's data for that plugin. A corresponding setPluginData() method changes this.  Who is responsible for making sure this data persists?
+
+What about custom actions?
+KopetePlugin::custom[Chat|ContextMenuActions] both return a set of KActions that the plugin wants to have added to the UI.  Looking at contactnotes, it seems that this set is recreated every time thses methods are called and they change the state of the plugin (currentContact).  Is this so that the context menu is generated individually for each MC, so that the method that is called when the men item is clicked know which MC it applies to?
+
+Choosing whether to advertise to all contacts
+We can either advertise periodically to (some) contacts, or we could just add an Action to advertise what we're currently listening to.
+DONE
+
+Maybe need a per-contact toggle, and a per-chat button to advertise.
+DONE
+
+Customising the advert message
+DONE
+Maybe provide substitution as in "Now listening to %track by %artist (on %album)".  Here () indicates substitute whole clause only if enclosed variable is set.
+
+Change so action inserts text in current message?

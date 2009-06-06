@@ -1,0 +1,366 @@
+<ui version="4.0" >
+ <class>NowListeningPrefsUI</class>
+ <widget class="QWidget" name="NowListeningPrefsUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>445</width>
+    <height>386</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Now Listening</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="advertiseNewMediaToBuddiesLabel" >
+     <property name="text" >
+      <string>&lt;b>Share Your Musical Taste&lt;/b></string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="advertiseNewMediaToBuddiesHLine" >
+     <property name="frameShape" >
+      <enum>QFrame::HLine</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget2" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="TabPage" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>433</width>
+        <height>298</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>Messa&amp;ge</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="useThisMessageLabel" >
+           <property name="text" >
+            <string>Use this message when advertising:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="helperLabel" >
+           <property name="text" >
+            <string>%track, %artist, %album, %player will be substituted if known.
+Expressions in brackets depend on a substitution being made.</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="m_headerLabel" >
+             <property name="text" >
+              <string>Start with:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring>m_header</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="kcfg_Header" >
+             <property name="text" >
+              <string>Now Listening To: </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="m_perTrackLabel" >
+             <property name="text" >
+              <string>For each track:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring>m_perTrack</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="kcfg_PerTrack" >
+             <property name="text" >
+              <string>%track (by %artist)(on %album)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="m_conjunctionLabel" >
+             <property name="text" >
+              <string>Conjunction (if >1 track):</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring>m_conjunction</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="kcfg_Conjunction" >
+             <property name="text" >
+              <string>, and </string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>433</width>
+        <height>298</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>A&amp;dvertising Mode</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <item>
+        <widget class="QRadioButton" name="kcfg_ExplicitAdvertising" >
+         <property name="text" >
+          <string>Explicit &amp;via "Tools->Send Media Info",
+or by typing "/media" in the chat
+window edit area.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="kcfg_ChatAdvertising" >
+         <property name="text" >
+          <string>&amp;Show in chat window (automatic)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="kcfg_StatusAdvertising" >
+         <property name="text" >
+          <string>Show &amp;the music you are listening to 
+in place of your status message.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="kcfg_AppendStatusAdvertising" >
+         <property name="text" >
+          <string>Appe&amp;nd to your status message</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>80</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>433</width>
+        <height>298</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>Media Pla&amp;yer</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="kcfg_UseSpecifiedMediaPlayer" >
+           <property name="text" >
+            <string>Use &amp;specified media player</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="K3ListBox" native="1" name="kcfg_SelectedMediaPlayer" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="variableHeight" stdset="0" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+  <customwidgets>
+  <customwidget>
+   <class>K3ListBox</class>
+   <extends></extends>
+   <header>k3listbox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>kcfg_UseSpecifiedMediaPlayer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_SelectedMediaPlayer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>128</x>
+     <y>94</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>185</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

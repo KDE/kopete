@@ -1,0 +1,9 @@
+Id=kopete0.7/r1
+File=kopeterc
+Script=kopete-account-kconf_update.sh,sh
+
+#remove the PluginData_ProtocolID_ prefix from config keys
+Id=kopete0.10/r1
+File=kopeterc
+Script=kopete-account-0.10.pl,perl
+

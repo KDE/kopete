@@ -1,0 +1,23 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kopete_privacy" version="1">	
+	<MenuBar>
+		<Menu name="edit">
+			<Menu name="privacyMenu"><text>Privacy</text>
+				<Action name="addToWhiteList" />
+				<Action name="addToBlackList" />
+			</Menu>
+		</Menu>
+	</MenuBar>
+	<Menu name="contact_popup">
+		<Menu name="privacyMenu"><text>Privacy</text>
+			<Action name="addToWhiteList" />
+			<Action name="addToBlackList" />
+		</Menu>
+	</Menu>
+	<Menu name="contactlistitems_popup">
+		<Menu name="privacyMenu"><text>Privacy</text>
+			<Action name="addToWhiteList" />
+			<Action name="addToBlackList" />
+		</Menu>
+	</Menu>
+</kpartgui>

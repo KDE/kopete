@@ -1,0 +1,61 @@
+.KopeteMessage
+{
+	margin: 5px;
+}
+
+.inIntro
+{
+	font-weight: bold;
+	color: blue;
+}
+
+.inMetacontact
+{
+	font-weight: bold;
+	color: blue;
+}
+
+.inMessage
+{
+	padding-left: 10px;
+}
+
+.inAction
+{
+	font-style: italic;
+	color: blue;
+}
+
+.outIntro
+{
+	font-weight: bold;
+	color: red;
+}
+
+.outMetacontact
+{
+	font-weight: bold;
+	color: red;
+}
+
+.outMessage
+{
+	padding-left: 10px;
+}
+
+.outAction
+{
+	font-style: italic;
+	color: red;
+}
+
+.statusMessage
+{
+	color: #333333;
+}
+
+.outState
+{
+	float: right;
+	height: 16px;
+}

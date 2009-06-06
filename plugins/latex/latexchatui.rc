@@ -1,0 +1,9 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="1" name="kopete_latexchat">
+	<MenuBar>
+		<Menu name="tools">
+			<text>&amp;Tools</text>
+			<Action name="latexPreview" />
+		</Menu>
+	</MenuBar>
+</kpartgui>

@@ -1,0 +1,175 @@
+<ui version="4.0" >
+ <class>WPUserInfoWidget</class>
+ <widget class="QWidget" name="WPUserInfoWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>278</width>
+    <height>160</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="lblComputerName" >
+     <property name="toolTip" >
+      <string>The host name of this contact's computer.</string>
+     </property>
+     <property name="whatsThis" >
+      <string>The host name of this contact's computer.</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Computer name:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>sComment</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QLabel" name="sComputerName" >
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text" >
+      <string>Computer Name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="textLabel2_2" >
+     <property name="text" >
+      <string>Comment:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QLabel" name="sComment" >
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text" >
+      <string>Looking</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="textLabel2" >
+     <property name="toolTip" >
+      <string>The workgroup or domain containing this contact's computer.</string>
+     </property>
+     <property name="whatsThis" >
+      <string>The workgroup or domain containing this contact's computer.</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Workgroup/domain:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>sComment</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QLabel" name="sWorkgroup" >
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text" >
+      <string>Looking</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="textLabel3" >
+     <property name="toolTip" >
+      <string>The operating system running on this contact's computer.</string>
+     </property>
+     <property name="whatsThis" >
+      <string>The operating system running on this contact's computer.</string>
+     </property>
+     <property name="text" >
+      <string>Operating s&amp;ystem:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>sComment</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QLabel" name="sOS" >
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text" >
+      <string>Looking</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="textLabel1" >
+     <property name="toolTip" >
+      <string>The software running on this contact's computer.</string>
+     </property>
+     <property name="whatsThis" >
+      <string>The software running on this contact's computer.</string>
+     </property>
+     <property name="text" >
+      <string>Ser&amp;ver software:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>sComment</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="QLabel" name="sServer" >
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text" >
+      <string>Looking</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::MinimumExpanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>258</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

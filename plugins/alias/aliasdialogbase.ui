@@ -1,0 +1,102 @@
+<ui version="4.0" >
+ <class>AliasDialogBase</class>
+ <widget class="QWidget" name="AliasDialogBase" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>602</width>
+    <height>424</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" colspan="3" >
+    <widget class="K3ListView" name="aliasList" >
+     <property name="whatsThis" >
+      <string>This is the list of custom aliases and the commands that you have already added</string>
+     </property>
+     <property name="selectionMode" >
+      <enum>Q3ListView::Extended</enum>
+     </property>
+     <property name="allColumnsShowFocus" >
+      <bool>true</bool>
+     </property>
+     <property name="fullWidth" >
+      <bool>false</bool>
+     </property>
+     <property name="itemsMovable" >
+      <bool>false</bool>
+     </property>
+     <column>
+      <property name="text" >
+       <string>Alias</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Command</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Protocols</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="KPushButton" name="addButton" >
+     <property name="text" >
+      <string>&amp;Add New Alias...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <widget class="KPushButton" name="deleteButton" >
+     <property name="text" >
+      <string>&amp;Delete Selected</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="KPushButton" name="editButton" >
+     <property name="text" >
+      <string>Edit Alias...</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+  <customwidgets>
+  <customwidget>
+   <class>K3ListView</class>
+   <extends>Q3ListView</extends>
+   <header>k3listview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

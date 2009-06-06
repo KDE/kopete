@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" 
+        "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Pidgin Kopete chat Style</string>
+	<key>CFBundleIdentifier</key>
+	<string>Kopete.Pidgin.style</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>CFBundleName</key>
+	<string>Pidgin</string>
+	<key>CFBundlePackageType</key>
+	<string>KopeteChatStyle</string>
+	<key>DefaultBackgroundColor</key>
+	<string>FFFFFF</string>
+	<key>DefaultFontFamily</key>
+	<string>DejaVu Sans Mono</string>
+	<key>DefaultFontSize</key>
+	<integer>12</integer>
+	<key>DisableCustomBackground</key>
+	<false/>
+	<key>DisplayNameForNoVariant</key>
+	<string>grays</string>
+	<key>ShowsUserIcons</key>
+	<false/>
+</dict>
+</plist>

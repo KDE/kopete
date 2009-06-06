@@ -1,0 +1,24 @@
+Index: iris/xmpp/xmpp-im/xmpp_xmlcommon.cpp
+===================================================================
+--- iris/xmpp/xmpp-im/xmpp_xmlcommon.cpp	(revision 925917)
++++ iris/xmpp/xmpp-im/xmpp_xmlcommon.cpp	(working copy)
+@@ -561,5 +561,5 @@
+ 	}
+ }
+ 
+-};
++}
+ 
+Index: iris/xmpp/xmpp-core/parser.cpp
+===================================================================
+--- iris/xmpp/xmpp-core/parser.cpp	(revision 925917)
++++ iris/xmpp/xmpp-core/parser.cpp	(working copy)
+@@ -547,7 +547,7 @@
+ 		QList<Parser::Event*> eventList;
+ 		bool needMore;
+ 	};
+-};
++}
+ 
+ 
+ //----------------------------------------------------------------------------

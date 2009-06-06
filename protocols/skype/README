@@ -1,0 +1,5 @@
+Kopete Skype
+This adds Skype protocol support to Kopete.
+You need install original binary dynamic linked skype version 2.0 from http://www.skype.com
+
+It install automatically with kopete

@@ -1,0 +1,22 @@
+In order to have Jingle support in Kopete, you must install 1 library :
+	* oRTP >= 0.13.1 (http://www.linphone.org/index.php/eng/code_review/ortp)
+
+* To compile and install oRTP :
+
+  1. Download the tar archive :
+	kde-devel $ wget http://download.savannah.gnu.org/releases/linphone/ortp/sources/ortp-0.13.1.tar.gz
+
+  2. Untar :
+ 	kde-devel $ tar xzf ortp-0.13.1.tar.gz
+
+  3. Compile :
+ 	kde-devel $ cd ortp-0.13.1/
+	kde-devel $ ./configure --prefix=$KDEDIR
+	kde-devel $ make
+
+  4. Install
+ 	kde-devel $ make install
+
+
+Detlev Casanova <detlev.casanova@gmail.com>
+Last update : 29/05/2009

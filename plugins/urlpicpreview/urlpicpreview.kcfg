@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
+<kcfg> 
+  <kcfgfile name="kopeterc"/> 
+  <group name="URLPicPreview Plugin"> 
+    <entry name="PreviewAmount" type="UInt"> 
+      <label>Maximum number of Previews</label> 
+      <default>2</default>
+    </entry> 
+    <entry name="Scaling" type="Bool"> 
+      <label>Should the image be scaled</label> 
+      <default>true</default>
+    </entry> 
+    <entry name="PreviewRestriction" type="Bool"> 
+      <label>Should the number of previews be restricted?</label> 
+      <default>true</default>
+    </entry> 
+    <entry name="PreviewScaleWidth" type="Int"> 
+      <label>Scale images to the width</label> 
+      <default>256</default>
+    </entry> 
+  </group> 
+</kcfg>

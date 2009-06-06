@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: Andre Duffeck -->
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+	<kcfgfile name="kopeterc"/>
+
+	<group name="Privacy Plugin">
+		<entry name="Sender_AllowAll" type="Bool">
+			<label>Allow everyone to send you messages.</label>
+			<default>true</default>
+		</entry>
+		<entry name="Sender_AllowNoneButWhiteList" type="Bool">
+			<label>Allow nobody to send you messages, except the contacts on the whitelist.</label>
+			<default>false</default>
+		</entry>
+		<entry name="Sender_AllowAllButBlackList" type="Bool">
+			<label>Allow everyone to send you messages, except the contacts on the blacklist.</label>
+			<default>false</default>
+		</entry>
+		<entry name="Sender_AllowNoneButContactList" type="Bool">
+			<label>Allow everyone to send you messages, except the contacts on the blacklist.</label>
+			<default>false</default>
+		</entry>
+		<entry name="WhiteList" type="StringList">
+			<label>Contacts on the whitelist.</label>
+			<default></default>
+		</entry>
+		<entry name="BlackList" type="StringList">
+			<label>Contacts on the blacklist.</label>
+			<default></default>
+		</entry>
+		<entry name="Content_DropIfAny" type="Bool">
+			<label>Drop messages that contain at least one of the following words.</label>
+			<default>false</default>
+		</entry>
+		<entry name="DropIfAny" type="String">
+			<label>Words to look for.</label>
+			<default></default>
+		</entry>
+		<entry name="Content_DropIfAll" type="Bool">
+			<label>Drop messages that contain all of the following words.</label>
+			<default>false</default>
+		</entry>
+		<entry name="DropIfAll" type="String">
+			<label>Words to look for.</label>
+			<default></default>
+		</entry>
+	</group>
+</kcfg>

@@ -1,0 +1,9 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="1" name="kopete_translatorchat">
+	<MenuBar>
+		<Menu name="tools">
+			<text>&amp;Tools</text>
+			<Action name="translateCurrentMessage" />
+		</Menu>
+	</MenuBar>
+</kpartgui>

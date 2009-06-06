@@ -1,0 +1,4 @@
+Id=kopete0.8/r1
+File=kopeterc
+Script=kopete-pluginloader2.sh,sh
+

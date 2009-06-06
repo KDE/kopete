@@ -1,0 +1,161 @@
+<ui version="4.0" >
+ <class>AddressBookExportUI</class>
+ <widget class="QWidget" name="AddressBookExportUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>598</width>
+    <height>651</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Merge with Address Book</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="mLblFirstName" >
+     <property name="text" >
+      <string>First name:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>comboBox1</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="mLblHomePhone" >
+     <property name="text" >
+      <string>Home phone:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>mPhones</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" >
+    <widget class="K3ListBox" name="mWorkPhones" >
+     <property name="selectionMode" >
+      <enum>Q3ListBox::Extended</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" >
+    <widget class="K3ListBox" name="mMobilePhones" >
+     <property name="selectionMode" >
+      <enum>Q3ListBox::Extended</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="K3ListBox" name="mHomePhones" >
+     <property name="selectionMode" >
+      <enum>Q3ListBox::Extended</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" >
+    <widget class="QLabel" name="mLblWorkPhone" >
+     <property name="text" >
+      <string>Work phone:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>mPhones_2</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" >
+    <widget class="QLabel" name="mLblMobilePhone" >
+     <property name="text" >
+      <string>Mobile phone:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>mPhones_3</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="mLblUrl" >
+     <property name="text" >
+      <string>URL:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>comboBox4</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QComboBox" name="mUrl" />
+   </item>
+   <item row="0" column="1" >
+    <widget class="QComboBox" name="mFirstName" />
+   </item>
+   <item row="1" column="1" >
+    <widget class="QComboBox" name="mLastName" />
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="mLblLastName" >
+     <property name="text" >
+      <string>Last name:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>comboBox2</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="K3ListBox" name="mEmails" >
+     <property name="selectionMode" >
+      <enum>Q3ListBox::Extended</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="mLblEmail" >
+     <property name="text" >
+      <string>Email:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>mEmails</cstring>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>K3ListBox</class>
+   <extends>Q3ListBox</extends>
+   <header>k3listbox.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>mFirstName</tabstop>
+  <tabstop>mLastName</tabstop>
+  <tabstop>mEmails</tabstop>
+  <tabstop>mUrl</tabstop>
+  <tabstop>mHomePhones</tabstop>
+  <tabstop>mWorkPhones</tabstop>
+  <tabstop>mMobilePhones</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

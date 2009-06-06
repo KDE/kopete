@@ -1,0 +1,85 @@
+<ui version="4.0" >
+ <class>AddressBookLinkWidgetBase</class>
+ <widget class="QWidget" name="AddressBookLinkWidgetBase" >
+  <property name="geometry" >
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>350</width>
+            <height>31</height>
+        </rect>
+    </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+            <number>0</number>
+        </property>
+   <property name="spacing" >
+    <number>6</number>
+                    </property>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+                    </property>
+     <property name="spacing" >
+      <number>6</number>
+                    </property>
+     <item>
+      <widget class="KLineEdit" name="edtAddressee" >
+       <property name="toolTip" >
+                        <string>The KDE Address Book entry associated with this Kopete Contact</string>
+                    </property>
+       <property name="text" >
+        <string/>
+                    </property>
+       <property name="readOnly" >
+        <bool>true</bool>
+                    </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KPushButton" name="btnClear" >
+       <property name="toolTip" >
+                        <string>Clear</string>
+                    </property>
+       <property name="text" >
+        <string/>
+                    </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSelectAddressee" >
+       <property name="enabled" >
+                        <bool>true</bool>
+                    </property>
+       <property name="toolTip" >
+                        <string>Select an address book entry</string>
+                    </property>
+       <property name="text" >
+        <string>C&amp;hange...</string>
+       </property>
+                </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+        </widget>
+  <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends></extends>
+   <header>kpushbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
+<kcfg>
+<kcfgfile name="kopete_otr"/> 
+	<group name="Policy">
+		<entry name="rbAlways" type="Bool">
+			<label>Always encrypt outgoing messages</label>
+			<default>false</default>			
+		</entry>
+		<entry name="rbOpportunistic" type="Bool">
+			<label>Automatically encrypt messages if the other side supports OTR</label>
+			<default>true</default>
+		</entry>		
+		<entry name="rbManual" type="Bool">
+			<label>Encrypt messages if the other side requests an OTR connection</label>
+			<default>false</default>
+		</entry>
+		<entry name="rbNever" type="Bool">
+			<label>Never encrypt outgoing messages</label>
+			<default>false</default>
+		</entry>
+	</group> 
+</kcfg>

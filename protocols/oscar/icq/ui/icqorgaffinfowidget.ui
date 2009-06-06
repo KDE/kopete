@@ -1,0 +1,180 @@
+<ui version="4.0" >
+ <class>ICQOrgAffInfoWidget</class>
+ <widget class="QWidget" name="ICQOrgAffInfoWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>394</width>
+    <height>262</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Organization Type</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="InfoComboBox" name="org1CategoryCombo" />
+      </item>
+      <item row="0" column="1" >
+       <widget class="QLineEdit" name="org1KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="InfoComboBox" name="org2CategoryCombo" />
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="org2KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="InfoComboBox" name="org3CategoryCombo" />
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="org3KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Past Affiliation</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="InfoComboBox" name="aff1CategoryCombo" />
+      </item>
+      <item row="0" column="1" >
+       <widget class="QLineEdit" name="aff1KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="InfoComboBox" name="aff2CategoryCombo" />
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="aff2KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="InfoComboBox" name="aff3CategoryCombo" />
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="aff3KeywordEdit" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>241</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>InfoComboBox</class>
+   <extends>QComboBox</extends>
+   <header>infocombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>org1CategoryCombo</tabstop>
+  <tabstop>org1KeywordEdit</tabstop>
+  <tabstop>org2CategoryCombo</tabstop>
+  <tabstop>org2KeywordEdit</tabstop>
+  <tabstop>org3CategoryCombo</tabstop>
+  <tabstop>org3KeywordEdit</tabstop>
+  <tabstop>aff1CategoryCombo</tabstop>
+  <tabstop>aff1KeywordEdit</tabstop>
+  <tabstop>aff2CategoryCombo</tabstop>
+  <tabstop>aff2KeywordEdit</tabstop>
+  <tabstop>aff3CategoryCombo</tabstop>
+  <tabstop>aff3KeywordEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,129 @@
+<ui version="4.0" >
+ <class>ICQInterestInfoWidget</class>
+ <widget class="QWidget" name="ICQInterestInfoWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>376</width>
+    <height>167</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Interests</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="InfoComboBox" name="topic1Combo" />
+      </item>
+      <item row="0" column="1" >
+       <widget class="QLineEdit" name="desc1" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="InfoComboBox" name="topic2Combo" />
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="desc2" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="InfoComboBox" name="topic3Combo" />
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="desc3" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="InfoComboBox" name="topic4Combo" />
+      </item>
+      <item row="3" column="1" >
+       <widget class="QLineEdit" name="desc4" >
+        <property name="readOnly" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>281</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>InfoComboBox</class>
+   <extends>QComboBox</extends>
+   <header>infocombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>topic1Combo</tabstop>
+  <tabstop>desc1</tabstop>
+  <tabstop>topic2Combo</tabstop>
+  <tabstop>desc2</tabstop>
+  <tabstop>topic3Combo</tabstop>
+  <tabstop>desc3</tabstop>
+  <tabstop>topic4Combo</tabstop>
+  <tabstop>desc4</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,56 @@
+[Desktop Entry]
+Type=Service
+Icon=mail-encrypt
+
+ServiceTypes=KCModule
+X-KDE-Library=kcm_kopete_otr
+X-KDE-FactoryName=kcm_kopete_otr
+X-KDE-ParentApp=kopete_otr
+X-KDE-ParentComponents=kopete_otr
+
+Comment=Encrypt chat sessions with Off-The-Record encryption
+Comment[ar]=شفر جلسة الدردشة بـ تعطيل-التسجيل المشفر
+Comment[ca]=Encripta les sessions de xat amb un xifrat «Off-The-Record»
+Comment[cs]=Šifrovat rozhovory pomocí OTR
+Comment[da]=Kryptér chatsessioner med 'uofficielt'-kryptering
+Comment[de]=Chatsitzung mit Off-The-Record-Verschlüsselung sichern
+Comment[el]=Κρυπτογράφηση συνομιλιών με ανεπίσημη κρυπτογράφηση
+Comment[es]=Cifrar las conversaciones con el cifrado «Off-The-Record»
+Comment[et]=Vestlusseansside krüptimine Off-The-Record krüptimisega
+Comment[eu]=Enkriptatu berriketa saioa Off-The-Record enkriptazioarekin
+Comment[fr]=Protéger les sessions de discussions avec le chiffrement Off-The-Record
+Comment[ga]=Criptigh seisiúin chomhráite le criptiú Off-The-Record
+Comment[gl]=Cifra as sesións de conversa mediante cifraxe non rexistrada
+Comment[hu]=A csevegések titkosítása Off-The-Record kódolással
+Comment[it]=Cifra le sessioni di chat con la cifratura Off-The-Record
+Comment[ja]=OTR (Off-the-Record) プロトコルでチャットセッションを暗号化します
+Comment[km]=អ៊ិនគ្រីប​សម័យ​ជជែក​កំសាន្ត​ជា​មួយ​នឹង​កា​របិទ​កា​រអ៊ិនគ្រីប​ថត
+Comment[ko]=Off-The-Record 암호화를 사용하여 대화 세션을 암호화합니다
+Comment[lt]=Pokalbio seansus šifruoti Off-the-Record kodu
+Comment[lv]=Šifrēt tērzēšanas sesijas ar Off-the-Record šifrēšanu
+Comment[ml]=സംഭാഷണവേളകള്‍ രേഖപ്പെടുത്താതെ കോഡീകരിച്ച് രഹസ്യ‌മാക്കിവെക്കുക
+Comment[nb]=Krypter prateøkter med Off-The-Record-kryptering
+Comment[nds]=Verslötelt Klööntörns mit "Off-The-Record"- (engl. Buten-Protokoll-)Verslöteln
+Comment[nl]=Versleutel gesprekken met Off-The-Record-versleuteling
+Comment[nn]=Krypter prateøkter med Off-The-Record-kryptering
+Comment[pl]=Szyfrowanie sesji czata za pomocą Off-The-Record
+Comment[pt]=Encriptar as sessões de conversão com encriptação OTR (Off-The-Record - Não Oficial)
+Comment[pt_BR]=Encriptar sessões de bate-papo com encriptação Off-The_Record
+Comment[ro]=Criptează sesiunile de discuție cu criptare Off-The-Record
+Comment[sl]=Šifriranje klepetov s pomočjo Off-The-Record
+Comment[sr]=Шифрујте сесије ћаскања оф‑д‑рекордом
+Comment[sr@latin]=Šifrujte sesije ćaskanja Off‑The‑Recordom
+Comment[sv]=Kryptera chattsessioner med Off-The-Record kryptering
+Comment[tr]=Oturumları Off-The-Record (Kayıt Dışı) şifrelemesi ile şifrele
+Comment[uk]=Зашифрувати сеанси балачок шифруванням Off-The-Record
+Comment[x-test]=xxEncrypt chat sessions with Off-The-Record encryptionxx
+Comment[zh_CN]=用非正式加密算法加密聊天会话
+Comment[zh_TW]=使用私下加密（Off-The-Record）來加密聊天階段
+Name=OTR
+Name[hne]=ओटीआर
+Name[lt]=Off-the-Record
+Name[ml]=ഓടിആര്‍
+Name[sr]=ОТР
+Name[x-test]=xxOTRxx
+Name[zh_CN]=非正式加密
+

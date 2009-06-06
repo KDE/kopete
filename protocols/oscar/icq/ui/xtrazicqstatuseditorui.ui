@@ -1,0 +1,74 @@
+<ui version="4.0" >
+ <class>XtrazICQStatusEditorUI</class>
+ <widget class="QWidget" name="XtrazICQStatusEditorUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>431</width>
+    <height>196</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="3" column="1" >
+    <widget class="QPushButton" name="buttonAdd" >
+     <property name="text" >
+      <string>Add</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="QPushButton" name="buttonDelete" >
+     <property name="text" >
+      <string>Delete</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QPushButton" name="buttonUp" >
+     <property name="text" >
+      <string>Up</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QPushButton" name="buttonDown" >
+     <property name="text" >
+      <string>Down</string>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="5" row="0" column="0" >
+    <widget class="QTableView" name="statusView" />
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>statusView</tabstop>
+  <tabstop>buttonUp</tabstop>
+  <tabstop>buttonDown</tabstop>
+  <tabstop>buttonAdd</tabstop>
+  <tabstop>buttonDelete</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,12 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kopete_statistics" version="1">
+	<MenuBar>
+		<Menu name="edit">
+			<text>&amp;Edit</text>
+			<Action name="viewMetaContactStatistics" />
+		</Menu>
+	</MenuBar>
+	<Menu name="contact_popup">
+		<Action name="viewMetaContactStatistics" />
+  	</Menu>
+</kpartgui>

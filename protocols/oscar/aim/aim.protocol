@@ -1,0 +1,13 @@
+[Protocol]
+exec=kopete "%u"
+protocol=aim
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false
+URIMode=rawuri
+Icon=aim_icon

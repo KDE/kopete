@@ -1,0 +1,11 @@
+[Protocol]
+exec=skype-action-handler "%u"
+protocol=tel
+input=none
+output=none
+helper=true
+listing=false
+reading=false
+writing=false
+makedir=false
+deleting=false

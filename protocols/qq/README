@@ -1,0 +1,141 @@
+=============
+Introduction
+=============
+
+QQ protocol plugin aims to develop the a compaticable protocol for Tencent's QQ client, which is common used among teenager and students in China based on reverse-engineering work, (Eva and OpenQ).
+
+QQ supports three network transportation: UDP, TCP and HTTP to meet different working environment. The official client prefers UDP to relieve the burdent of the server. HTTP is specially designed for mobile user with wap data plan. This approach takes TCP, so we don't need to maintain the pool of incoming, outgoing message any longer.
+
+==========
+Protocol
+==========
+
+The protocol details are encapsulated in Eva namespace.(libeva.h, libeva.cpp). As far as I know, there is another gtkmm based project is in the progress in the community. To reuse the wheel, libeva depends on STL only[1]. A QByteArray alternative, Eva::ByteArray is developed as the default container. If the client need a specific QQ packet, just call the corresponding libeva function.
+
+The state machine of QQ is maintained in QQNotifySocket, in fact it is stateless, when the incoming packet arrives, QQNotifySocket::handleIncomingPacket get the last request from the header, and drive actions regardless the context.
+
+Here is the detail of the communication,
+
+Login
+=======
+
+The client request a login token from the server first, which is 16 byte key used to identify the login procedure. QQ account encrypt the password with MD5 twice to generate the 16 byte passwordKey, then use this key to encrypt the 16 byte zero-filled array as the header. The login text then append some magic number, the login token and eventually encrypted with 16 byte 0x01 initKey.
+
+There are 3 returned value from the server, success, failure and redirect. Redirect package includes another destination server IP:Port, so as for the workload balance. The returned package also includes a sessionKey, which is used as encrypt/decrypt the following conversation.
+
+Then we need to require another key, transferKey. Was Tencent once a vault manufacturer before she went to IT? This key is used to identify a text message/file transfer converation.
+
+End of the Login.
+
+Update Myself
+==============
+
+We need to fetch the meta data stored in the server and update the properites when we logged in. This is ContactInfo packet. 
+-- Still working on this
+
+List the Buddies
+=================
+
+QQ supports two kinds of lists. List online buddies and list all budies. The returned result is a brief of ContactInfo packet.
+QQ also supports GroupInfo and GroupNames functions. The former is the contactId-GroupId table, the latter is the name of ordered groups.
+
+Finding contacts
+==========
+
+Teenagers and students are QQ's main target market, they still believe cyber love, they would like to find some stranger to talk, then start an affair. The exposed meta data is essentail to narrow the search process, please check contactDetailIndex to find out the full list of meta data:
+		"qqId",
+		"nickName",
+		"country",
+		"state",
+		"zipcode",
+		"address",
+		"phone", 
+		"age",
+		"gender",
+		"name",
+		... ...
+
+The contact data is serialized in QQContact, inspired by MSNContact:
+AccountId, ContactId -- account/contact pair is a unique identification.
+Meta data -- include all QQ specific information
+Group list -- TBD
+
+
+Find user supports to find a user via: QQ number or browse the online user.
+
+TBD
+
+Conversation
+=============
+
+This is the fundamental functionality of QQ. QQ suppors offline IM. 
+
+There are two types of conversation: 
+1 to 1 talk, aka Conversation mode; more than 2 contacts are invovled in, Conference mode. The system assign an unique identification for the latter talk, which can be regardes as the ID of chatSession. To mimic the behavior, the conversation mode is assigned "m_qqId:contactId" as the chatSession ID. This is reasonable since there is only one conversation between two QQ account if any at all the time.
+
+In fact, there is another service for the premium user, you know what premium means, right, it is called Qun in Chinese, here is named Special Interest Group, SIP. It can be regarded as the named conference mode compared to the previous one.
+
+QQ also support voice/video conversation.
+
+By all means, these are not implemented yet right now, current implementation just works for the text message in conversation mode.
+
+
+Text Message
+=============
+
+QQ's text message use its own customized, the whold paragraph can be rendered with different fonts and colors as a whole. You can also embed some emotion picture inside it. The extra format information is tailed after the original text message.
+
+When a client receives a text message, it needs to send a receipt to the server to indicate this message has been accepted.
+
+Heartbeat
+==========
+
+We also need to send heartbeat packet to the server to indicate we are still alive.
+
+
+
+
+=========
+Appendix
+=========
+
+UDP server listens on port 8000, available servers include:
+-------------------------------
+URL: sz.tencent.com
+URL:sz2.tencent.com
+URL:sz3.tencent.com
+URL:sz4.tencent.com
+URL:sz5.tencent.com
+URL:sz6.tencent.com
+URL:sz7.tencent.com
+URL:sz8.tencent.com
+URL:sz9.tencent.com
+IP: 202.96.170.164
+
+
+TCP server listens on port 80, available servers include:
+--------------------------------
+URL: tcpconn.tencent.com
+URL:tcpconn2.tencent.com
+URL:tcpconn3.tencent.com
+URL:tcpconn4.tencent.com
+URL:tcpconn5.tencent.com
+URL:tcpconn6.tencent.com
+
+HTTP server listens on port 443, available servers are unknown.
+
+
+==========
+Reference
+==========
+
+[1] libeva is named after Eva project, since it is almost a re-writen Eva library. 
+
+======
+NOTE
+======
+Rename CGT to  GroupInfo
+Rename cgts to groupInfos
+Add contactDetail skeleton.
+Rename userInfo to contactInfo, but still using UserInfo as the command. Shall we use Eva::Command::ContactInfo instead?
+

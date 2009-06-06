@@ -1,0 +1,18 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kopete_skype" version="1">
+	<MenuBar>
+		<Menu name="edit">
+			<text>&amp;Edit</text>
+			<Action name="callSkypeContact" />
+		</Menu>
+	</MenuBar>
+	<Menu name="contact_popup">
+		<Action name="callSkypeContact" />
+  	</Menu>
+	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1"><Text>Main Toolbar</Text>
+                <Action name="callSkypeContact"/>
+        </ToolBar>
+	<Menu name="contactlistitems_popup">
+		<Action name="callSkypeContact" />
+	</Menu>
+</kpartgui>

@@ -1,0 +1,5 @@
+Id=kopete0.70.85/r1
+File=kopeterc
+Group=Appearance
+Options=overwrite
+Script=kopete-gaim_to_pidgin_style.pl,perl

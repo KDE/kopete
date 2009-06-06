@@ -1,0 +1,514 @@
+<ui version="4.0" >
+ <class>GaduPublicDirectory</class>
+ <widget class="QWidget" name="GaduPublicDirectory" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>540</width>
+    <height>355</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2" >
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="Q3WidgetStack" name="pubsearch" >
+     <widget class="QWidget" name="page" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>540</width>
+        <height>305</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="Q3ButtonGroup" name="buttonGroup2" >
+         <property name="title" >
+          <string/>
+         </property>
+         <property name="flat" >
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="radioByData" >
+            <property name="text" >
+             <string>Search by specified data:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="frameShape" >
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow" >
+             <enum>QFrame::Raised</enum>
+            </property>
+            <property name="lineWidth" >
+             <number>0</number>
+            </property>
+            <layout class="QGridLayout" >
+             <property name="margin" >
+              <number>0</number>
+             </property>
+             <property name="spacing" >
+              <number>0</number>
+             </property>
+             <item row="0" column="0" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>16</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="2" >
+              <layout class="QVBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLineEdit" name="nameS" />
+               </item>
+               <item>
+                <widget class="QLineEdit" name="surname" />
+               </item>
+               <item>
+                <widget class="QLineEdit" name="nick" />
+               </item>
+               <item>
+                <widget class="QLineEdit" name="cityS" />
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="1" >
+              <layout class="QVBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="textLabel1a" >
+                 <property name="text" >
+                  <string>Forename:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="textLabel1_2" >
+                 <property name="text" >
+                  <string>Surname:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="textLabel1_3a" >
+                 <property name="text" >
+                  <string>Nick:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="textLabel1_3_2a" >
+                 <property name="text" >
+                  <string>City:</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="1" colspan="2" >
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="textLabel1_2_2a" >
+                 <property name="text" >
+                  <string>Age from:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="ageFrom" >
+                 <property name="cursor" >
+                  <cursorShape>ArrowCursor</cursorShape>
+                 </property>
+                 <property name="buttonSymbols" >
+                  <enum>QAbstractSpinBox::PlusMinus</enum>
+                 </property>
+                 <property name="minimum" >
+                  <number>0</number>
+                 </property>
+                 <property name="maximum" >
+                  <number>120</number>
+                 </property>
+                 <property name="value" >
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="textLabel1_2_4" >
+                 <property name="text" >
+                  <string>to:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="ageTo" >
+                 <property name="cursor" >
+                  <cursorShape>ArrowCursor</cursorShape>
+                 </property>
+                 <property name="buttonSymbols" >
+                  <enum>QAbstractSpinBox::PlusMinus</enum>
+                 </property>
+                 <property name="minimum" >
+                  <number>0</number>
+                 </property>
+                 <property name="maximum" >
+                  <number>120</number>
+                 </property>
+                 <property name="value" >
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>297</width>
+                   <height>21</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="2" column="1" colspan="2" >
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="textLabel1_4a" >
+                 <property name="text" >
+                  <string>Gender:</string>
+                 </property>
+                 <property name="textFormat" >
+                  <enum>Qt::PlainText</enum>
+                 </property>
+                 <property name="scaledContents" >
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="gender" >
+                 <property name="focusPolicy" >
+                  <enum>Qt::TabFocus</enum>
+                 </property>
+                 <item>
+                  <property name="text" >
+                   <string/>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text" >
+                   <string>Male</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text" >
+                   <string>Female</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioByUin" >
+            <property name="text" >
+             <string>Request information about user:</string>
+            </property>
+            <property name="autoRepeat" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0" >
+               <size>
+                <width>16</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="uin_static" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>User number:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KRestrictedLine" name="UIN" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QCheckBox" name="onlyOnline" >
+              <property name="text" >
+               <string>Lookup only those that are currently online</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0" >
+               <size>
+                <width>224</width>
+                <height>21</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>532</width>
+        <height>305</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout" >
+       <item row="0" column="0" >
+        <widget class="K3ListView" name="listFound" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>512</width>
+           <height>256</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>640</width>
+           <height>512</height>
+          </size>
+         </property>
+         <property name="lineWidth" >
+          <number>2</number>
+         </property>
+         <property name="resizePolicy" >
+          <enum>Q3ScrollView::AutoOneFit</enum>
+         </property>
+         <property name="selectionMode" >
+          <enum>Q3ListView::Extended</enum>
+         </property>
+         <property name="allColumnsShowFocus" >
+          <bool>true</bool>
+         </property>
+         <property name="showSortIndicator" >
+          <bool>true</bool>
+         </property>
+         <property name="resizeMode" >
+          <enum>Q3ListView::NoColumn</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>K3ListView</class>
+   <extends>Q3ListView</extends>
+   <header>k3listview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KRestrictedLine</class>
+   <extends>KLineEdit</extends>
+   <header>krestrictedline.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Q3WidgetStack</class>
+   <extends>Q3WidgetStack</extends>
+   <header>q3widgetstack.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Q3ButtonGroup</class>
+   <extends>Q3GroupBox</extends>
+   <header>Qt3Support/Q3ButtonGroup</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>radioByData</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frame</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>112</x>
+     <y>31</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>45</x>
+     <y>85</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioByUin</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>uin_static</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>83</x>
+     <y>195</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>80</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioByUin</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>UIN</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>287</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>287</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

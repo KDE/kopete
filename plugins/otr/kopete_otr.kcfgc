@@ -1,0 +1,7 @@
+File=kopete_otr.kcfg
+ClassName=KopeteOtrKcfg
+Singleton=true
+Mutators=true
+MemberVariables=private
+ItemAccessors=true
+GlobalEnums=true

@@ -1,0 +1,59 @@
+<ui version="4.0" >
+ <class>IdentityDetailed</class>
+ <widget class="QWidget" name="IdentityDetailed" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>457</width>
+    <height>98</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Detailed Info</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="emailLabel" >
+     <property name="text" >
+      <string>E-mail: </string>
+     </property>
+     <property name="buddy" >
+      <cstring>email</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QLineEdit" name="email" />
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="phoneLabel" >
+     <property name="text" >
+      <string>Private phone:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>privatePhone</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QLineEdit" name="privatePhone" />
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="mobileLabel" >
+     <property name="text" >
+      <string>Mobile phone:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>mobilePhone</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QLineEdit" name="mobilePhone" />
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

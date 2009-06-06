@@ -1,0 +1,53 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.kopete.Statistics">
+    <method name="dbusStatisticsDialog">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="dbusWasOnline">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+    <method name="dbusWasOnline">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="dt" type="s" direction="in"/>
+    </method>
+    <method name="dbusWasAway">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+    <method name="dbusWasAway">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="dt" type="s" direction="in"/>
+    </method>
+    <method name="dbusWasOffline">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+    <method name="dbusWasOffline">
+      <arg type="b" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="dt" type="s" direction="in"/>
+    </method>
+    <method name="dbusStatus">
+      <arg type="s" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="dateTime" type="s" direction="in"/>
+    </method>
+    <method name="dbusStatus">
+      <arg type="s" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+    <method name="dbusMainStatus">
+      <arg type="s" direction="out"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="timeStamp" type="i" direction="in"/>
+    </method>
+  </interface>
+</node>

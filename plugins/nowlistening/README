@@ -1,0 +1,41 @@
+README for Now Listening Plugin
+
+AUTHOR Will Stephenson <lists@stevello.free-online.co.uk>
+
+This plugin tells chat partners what you're currently listening to. On demand, it sends them a configurable message.
+
+Caveat: It currently only works with KsCD, Xmms, JuK and amaroK.  Other media players will be supported shortly.
+
+Caveat 2: It relies on DCOP - I doubt much will happen if you're not running the rest of KDE.
+
+Caveat 3: There's no escaping of the substituted strings, so you might get it stuck in a loop...
+
+REQUIREMENTS
+Requires XMMS remote control header xmmsctrl.h
+(can be found in:
+* SuSE's base xmms rpm
+* Mandrake's libxmms1-devel rpm
+* RedHat, TurboLinux, Conectiva: xmms-devel )
+Which in turn requires glib-devel and gtk-devel to build.
+
+IF CONFIGURE GIVES AN ERROR, OR IT DOESN'T WORK WITH XMMS, CHECK THESE ARE INSTALLED!
+
+Configure test doesn't tell us that this is why it bails.
+
+Rerun make -f Makefile.cvs && ./configure - or any subset of that which will
+reconfigure the new part of the tree.
+
+make
+
+USE
+
+Enable the plugin in Settings->Configure Plugins.  You may wish to change the default message.
+
+You can force a notification by typing the string "/media" at the start of a new message, which will be substituted, or by using the Chat->Actions->Send Media Info menu item.
+
+BUGS
+
+Please report to bugs.kde.org.  If you need help contact me at lists@stevello.free-online.co.uk.
+
+TODO
+More media players!

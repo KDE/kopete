@@ -1,0 +1,77 @@
+<ui version="4.0" >
+ <class>YahooStealthSetting</class>
+ <widget class="QWidget" name="YahooStealthSetting" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>195</width>
+    <height>103</height>
+   </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>195</width>
+    <height>75</height>
+   </size>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Show Me As</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QRadioButton" name="radioOnline" >
+        <property name="text" >
+         <string>&amp;Online</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioOffline" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="text" >
+         <string>Off&amp;line</string>
+        </property>
+        <property name="checked" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioPermOffline" >
+        <property name="text" >
+         <string>Perma&amp;nently offline</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>radioOnline</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

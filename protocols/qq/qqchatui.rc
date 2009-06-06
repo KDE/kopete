@@ -1,0 +1,17 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="1" name="kopete_qq_chat">
+	<MenuBar>
+		<Menu noMerge="1" name="file">
+			<text>&amp;Chat</text>
+			<Action name="qqInvite" />
+		</Menu>
+	</MenuBar>
+
+
+	<ToolBar name="statusToolBar">
+		<Action name="qqSecureChat" />
+		<Action name="qqLoggingChat" />
+	</ToolBar>
+
+
+</kpartgui>

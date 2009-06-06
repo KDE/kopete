@@ -1,0 +1,325 @@
+<ui version="4.0" >
+ <class>WebPresencePrefsUI</class>
+ <widget class="QWidget" name="WebPresencePrefsUI" >
+  <property name="enabled" >
+   <bool>true</bool>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>404</width>
+    <height>494</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Uploading</string>
+     </property>
+     <layout class="QHBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="textLabel1" >
+        <property name="frameShape" >
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow" >
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="text" >
+         <string>Uplo&amp;ad to:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>kcfg_uploadURL</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="KUrlRequester" name="kcfg_uploadURL" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="formatHTML" >
+     <property name="title" >
+      <string>Formatting</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <item>
+       <widget class="QRadioButton" name="kcfg_formatHTML" >
+        <property name="toolTip" >
+         <string>HTML 4.01 Transitional using the ISO-8859-1 (aka. Latin 1) character set encoding.</string>
+        </property>
+        <property name="whatsThis" >
+         <string>HTML 4.01 Transitional formatting using ISO-8859-1 (aka. Latin 1) character set encoding.
+
+This version should be easily opened by most web browsers.</string>
+        </property>
+        <property name="text" >
+         <string>HTML (simple loo&amp;k)</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="kcfg_formatXHTML" >
+        <property name="toolTip" >
+         <string>XHTML 1.0 Strict</string>
+        </property>
+        <property name="whatsThis" >
+         <string>The resulting page will be formatted using the XHTML 1.0 Strict W3C Recommendation. The character set encoding is UTF-8.
+
+Note that some web browsers do not support XHTML. You should also make sure your web server serves it out with the correct mime type, such as application/xhtml+xml.</string>
+        </property>
+        <property name="text" >
+         <string>XHTML (simple look)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="kcfg_formatXML" >
+        <property name="toolTip" >
+         <string>Save the output in XML format using UTF-8 character set.</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Save the output in XML format using the UTF-8 encoding.</string>
+        </property>
+        <property name="text" >
+         <string>&amp;XML</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="kcfg_formatStylesheet" >
+        <property name="text" >
+         <string>XML transformation &amp;using this XSLT sheet:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>30</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="KUrlRequester" name="kcfg_formatStylesheetURL" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="kcfg_useImagesHTML" >
+        <property name="toolTip" >
+         <string>Replaces the protocol names, such as MSN and IRC, with images.</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Replaces the protocol names, such as MSN and IRC, with images.
+
+Note that you have to manually copy the PNG files into place.
+
+The following files are used by default:
+
+images/msn_protocol.png
+images/icq_protocol.png
+images/jabber_protocol.png
+images/yahoo_protocol.png
+images/aim_protocol.png
+images/irc_protocol.png
+images/sms_protocol.png
+images/gadu_protocol.png
+images/winpopup_protocol.png</string>
+        </property>
+        <property name="text" >
+         <string>Repla&amp;ce protocol text with images in (X)HTML</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Display Name</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="kcfg_showName" >
+        <property name="text" >
+         <string>Use one of &amp;your IM names</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QCheckBox" name="kcfg_includeIMAddress" >
+        <property name="text" >
+         <string>Include &amp;IM addresses</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="kcfg_showAnotherName" >
+        <property name="text" >
+         <string>Use another &amp;name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>30</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="kcfg_showThisName" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>404</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+  <customwidgets>
+  <customwidget>
+   <class>KUrlRequester</class>
+   <extends>QFrame</extends>
+   <header>kurlrequester.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>kcfg_uploadURL</tabstop>
+  <tabstop>formatHTML</tabstop>
+  <tabstop>kcfg_formatStylesheetURL</tabstop>
+  <tabstop>kcfg_useImagesHTML</tabstop>
+  <tabstop>kcfg_showName</tabstop>
+  <tabstop>kcfg_showThisName</tabstop>
+  <tabstop>kcfg_includeIMAddress</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>kcfg_formatStylesheet</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_formatStylesheetURL</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>149</x>
+     <y>231</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>147</x>
+     <y>247</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kcfg_showAnotherName</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_showThisName</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>100</x>
+     <y>366</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>97</x>
+     <y>388</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

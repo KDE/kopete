@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+	<kcfgfile name="kopeterc"/>
+
+	<group name="Web Presence Plugin">
+		<entry name="UploadFrequency" type="Int">
+			<label>Delay in seconds before updating the file</label>
+			<default>15</default>
+		</entry>
+
+		<entry name="uploadURL" type="Url">
+			<label>The URL where the file should be uploaded to</label>
+		</entry>
+
+		<entry name="formatHTML" type="Bool">
+			<label>HTML formatting</label>
+			<default>true</default>
+		</entry>
+
+		<entry name="formatXHTML" type="Bool">
+			<label>XHTML formatting</label>
+			<default>false</default>
+		</entry>
+
+		<entry name="formatXML" type="Bool">
+			<label>XML formatting</label>
+			<default>false</default>
+		</entry>
+
+		<entry name="formatStylesheet" type="Bool">
+			<label>XML transformation with a XSLT sheet</label>
+			<default>false</default>
+		</entry>
+
+		<entry name="formatStylesheetURL" type="Url">
+			<label>XSLT sheet</label>
+		</entry>
+	
+		<entry name="useImagesHTML" type="Bool">
+			<label>Replace protocol text with images in (X)HTML</label>
+			<default>false</default>
+		</entry>
+		
+		<entry name="showName" type="Bool">
+			<label>Use one of your IM names as display name</label>
+			<default>true</default>
+		</entry>
+		
+		<entry name="showAnotherName" type="Bool">
+			<label>Use another name as display name</label>
+			<default>false</default>
+		</entry>
+		
+		<entry name="showThisName" type="String">
+			<label>Desired display name</label>
+		</entry>
+		
+		<entry name="includeIMAddress" type="Bool">
+			<label>Include IM addresses</label>
+			<default>false</default>
+		</entry>
+	</group>
+</kcfg>

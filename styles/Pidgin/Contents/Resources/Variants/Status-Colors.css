@@ -1,0 +1,9 @@
+@import url(../main.css);
+
+.inContentTime, .inMetacontact {
+	color: #000000;
+}
+
+.outContentTime, .outMetacontact {
+	color: #000000;
+}

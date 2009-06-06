@@ -1,0 +1,49 @@
+This is the TODO file for the OSCAR plugin.
+
+====== Possible refactorings =====
+
+- Unify status handling for ICQ and AIM? I like the ICQ::Presence thing, that's cool
+- Do delayed contact creation like on MSN so that when we actually get a good status
+  code back from the SSI manipulation, we create the contact then rather than hoping
+  it all works out.
+- serialize all the ssi information, either via properties for via the
+  Contact::serialize() method. We need to load it back to support proper auth handling
+
+
+====== Catching up to OscarSocket =====
+
+- Add preferences for "Requires Auth", "Web Aware", etc.
+
+
+====== Adding new features not in oscarsocket ======
+
+Support direct connections
+Support file transfers
+A bunch of other stuff i'm probably forgetting.
+
+Add support for the many privacy options OSCAR has
+
+
+====== Left Over from the previous TODO ======
+There is some overlap here, and this is some of the stuff
+that was done in oscarsocket, that will need redoing in liboscar
+
+- general support for SNAC (0x15, *)
+- fix adding contacts for both addcontactwizard and serverside list
+- support encoding-settings for RTF-messages
+- use RTF in outgoing messages
+- keepalive for connection to server (icq has ping packets)
+- Keep users from adding their own UIN to their userlist
+- honor encodings for both sides (I need more knowledge about this!)
+- Option: Allow access from contacts on my contact list only
+- group handling in general
+- error handling on channel 0x04 messages. properly disconnect and emit a
+  signal in oscarsocket.
+- save groupID in KopeteGroups
+- somehow sync server and local list, this is not as trivial as everybody
+  always thinks it is because you cannot sure if local changes or
+  serverside-changes caused the difference (think about two clients being used
+  for the same account, one at home and one at work).
+- make renaming serverside contacts possible (function is there but fails due
+  to massive contactlist bugs caused by above mentioned classes)
+

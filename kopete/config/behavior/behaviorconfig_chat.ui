@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BehaviorConfig_Chat</class>
+ <widget class="QWidget" name="BehaviorConfig_Chat">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>590</width>
+    <height>424</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Chat</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QCheckBox" name="kcfg_showEvents">
+     <property name="text">
+      <string>Show events in chat &amp;window</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_highlightEnabled">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>High&amp;light messages containing your nickname</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_spellCheck">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>E&amp;nable automatic spell checking by default</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_richTextByDefault">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>E&amp;nable rich text by default</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_AlwaysShowTabs">
+     <property name="text">
+      <string>&amp;Always show tabs</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="interfaceGroup">
+     <property name="title">
+      <string>&amp;Interface Preference</string>
+     </property>
+     <layout class="QHBoxLayout">
+      <item>
+       <widget class="QComboBox" name="viewPlugin"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="chatWindowGroup">
+     <property name="title">
+      <string>Chat Window Grouping &amp;Policy</string>
+     </property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QComboBox" name="kcfg_chatWindowGroupPolicy">
+        <property name="whatsThis">
+         <string>Every chat will have its own window.</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>Open All Messages in New Chat Window</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Group Messages From Same Account in Same Chat Window</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Group All Messages in Same Chat Window</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Group Messages From Contacts in Same Group in Same Chat Window</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Group Messages From Same Metacontact in Same Chat Window</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_showDates">
+     <property name="text">
+      <string>Show message dates</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QCheckBox" name="kcfg_truncateContactName">
+       <property name="text">
+        <string>&amp;Truncate contact name with more characters than:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="kcfg_truncateContactNameLength">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimum">
+        <number>5</number>
+       </property>
+       <property name="value">
+        <number>20</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="txtChatViewBufferSize">
+       <property name="whatsThis">
+        <string>Limit the maximum number of lines visible in a chat window to improve speed for complex layouts.</string>
+       </property>
+       <property name="text">
+        <string>Ma&amp;ximum number of chat window lines:</string>
+       </property>
+       <property name="buddy">
+        <cstring>kcfg_chatWindowBufferViewSize</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="kcfg_chatWindowBufferViewSize">
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="maximum">
+        <number>9000</number>
+       </property>
+       <property name="value">
+        <number>250</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>30</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>kcfg_showEvents</tabstop>
+  <tabstop>kcfg_highlightEnabled</tabstop>
+  <tabstop>kcfg_spellCheck</tabstop>
+  <tabstop>kcfg_AlwaysShowTabs</tabstop>
+  <tabstop>viewPlugin</tabstop>
+  <tabstop>kcfg_chatWindowGroupPolicy</tabstop>
+  <tabstop>kcfg_truncateContactName</tabstop>
+  <tabstop>kcfg_truncateContactNameLength</tabstop>
+  <tabstop>kcfg_chatWindowBufferViewSize</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>kcfg_truncateContactName</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_truncateContactNameLength</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>222</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

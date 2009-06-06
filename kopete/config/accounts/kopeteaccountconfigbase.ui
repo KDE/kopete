@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Olivier Goffart</author>
+ <class>KopeteAccountConfigBase</class>
+ <widget class="QWidget" name="KopeteAccountConfigBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>550</width>
+    <height>505</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Manage Accounts</string>
+  </property>
+  <layout class="QHBoxLayout">
+   <item>
+    <layout class="QVBoxLayout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="AccountTreeWidget" name="mAccountList">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="acceptDrops">
+        <bool>true</bool>
+       </property>
+       <property name="whatsThis">
+        <string>This widget shows your identities and accounts in a hierarchical view. Each configured identity shows its associated accounts.</string>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
+       <property name="allColumnsShowFocus">
+        <bool>true</bool>
+       </property>
+       <column>
+        <property name="text">
+         <string>Account ID</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Status</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string comment="second-person command">&lt;span style=&quot; font-style:italic;&quot;&gt;Check to Include in Global Connection&lt;/span&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="whatsThis">
+        <string>Use drag &amp; drop to increase or decrease the priority of accounts, accounts at the top of the list have highest priority.
+
+The priority is used to determine which contact to use when you click on a metacontact: Kopete will use the contact of the account with the greatest priority (if all contacts have the same online status).</string>
+       </property>
+       <property name="text">
+        <string>&lt;span style=&quot; font-style:italic;&quot;&gt;Accounts at the top of the list have highest priority&lt;/span&gt;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout">
+     <item>
+      <widget class="QGroupBox" name="mGroupBoxAccounts">
+       <property name="title">
+        <string>Accounts</string>
+       </property>
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QPushButton" name="mButtonAccountAdd">
+          <property name="toolTip">
+           <string>Add a new account</string>
+          </property>
+          <property name="text">
+           <string>Add Account
+KAction replaces
+these labels!</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonAccountRemove">
+          <property name="toolTip">
+           <string>Remove selected account</string>
+          </property>
+          <property name="whatsThis">
+           <string>Remove selected account</string>
+          </property>
+          <property name="text">
+           <string>&amp;Remove Account</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonAccountModify">
+          <property name="toolTip">
+           <string>Modify selected account</string>
+          </property>
+          <property name="whatsThis">
+           <string>Lets you edit the account's properties.</string>
+          </property>
+          <property name="text">
+           <string>&amp;Modify Account...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonAccountSwitchIdentity">
+          <property name="toolTip">
+           <string>Associate the selected account with another identity</string>
+          </property>
+          <property name="whatsThis">
+           <string>Each account is associated with exactly one identity. You can use this button to change the association and switch an account to a different identity</string>
+          </property>
+          <property name="text">
+           <string>Switch &amp;Identity...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonAccountSetColor">
+          <property name="toolTip">
+           <string>Set a custom color for this account</string>
+          </property>
+          <property name="whatsThis">
+           <string>Account are often differentiated by the protocol icon. But if you have severals accounts of the same protocol, you may apply a color filter to that icon to differentiate accounts from the same protocols.</string>
+          </property>
+          <property name="text">
+           <string>Set C&amp;olor...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="mGroupBoxIdentities">
+       <property name="title">
+        <string>Identities</string>
+       </property>
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QPushButton" name="mButtonIdentityAdd">
+          <property name="toolTip">
+           <string>Add a new identity</string>
+          </property>
+          <property name="text">
+           <string>A&amp;dd Identity...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonIdentityCopy">
+          <property name="toolTip">
+           <string>Create a new identity based on an existing one</string>
+          </property>
+          <property name="text">
+           <string>&amp;Copy Identity...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonIdentityRemove">
+          <property name="toolTip">
+           <string>Remove selected identity</string>
+          </property>
+          <property name="whatsThis">
+           <string>Remove selected identity</string>
+          </property>
+          <property name="text">
+           <string>R&amp;emove</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonIdentityModify">
+          <property name="toolTip">
+           <string>Modify selected identity</string>
+          </property>
+          <property name="whatsThis">
+           <string>Let you edit the account's properties.</string>
+          </property>
+          <property name="text">
+           <string>M&amp;odify Identity...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mButtonIdentitySetDefault">
+          <property name="toolTip">
+           <string>Set the selected identity as default identity</string>
+          </property>
+          <property name="text">
+           <string>&amp;Set Default</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AccountTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>accounttreewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>mButtonIdentityModify</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

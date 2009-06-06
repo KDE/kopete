@@ -1,0 +1,67 @@
+<ui version="4.0" >
+ <class>GroupKABCSelectorWidget</class>
+ <widget class="QWidget" name="GroupKABCSelectorWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>487</width>
+    <height>80</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="Line" name="line1" >
+     <property name="frameShape" >
+      <enum>QFrame::HLine</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="groupLabel" >
+       <property name="text" >
+        <string>&amp;Group:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>groupCombo</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QComboBox" name="groupCombo" />
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="kabcLabel" >
+       <property name="text" >
+        <string>Address book entry:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kabcCombo</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="Kopete::UI::AddressBookLinkWidget" native="1" name="widAddresseeLink" />
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Kopete::UI::AddressBookLinkWidget</class>
+   <extends></extends>
+   <header>addressbooklinkwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

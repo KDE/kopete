@@ -1,0 +1,5 @@
+This source code links against libmsn.
+You can get it here:
+svn co https://libmsn.svn.sourceforge.net/svnroot/libmsn/trunk libmsn
+
+Salem

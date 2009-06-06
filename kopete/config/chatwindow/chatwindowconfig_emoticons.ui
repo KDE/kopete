@@ -1,0 +1,76 @@
+<ui version="4.0" >
+ <class>ChatWindowConfig_Emoticons</class>
+ <widget class="QWidget" name="ChatWindowConfig_Emoticons" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>535</width>
+    <height>333</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" colspan="2" >
+    <widget class="QCheckBox" name="kcfg_useEmoticons" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="whatsThis" >
+      <string>If this is checked, the text representation of emoticons in messages will be replaced by an image</string>
+     </property>
+     <property name="text" >
+      <string>U&amp;se the following emoticon theme:</string>
+     </property>
+     <property name="checked" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <widget class="QListWidget" name="icon_theme_list" >
+     <property name="alternatingRowColors" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QPushButton" name="btnManageThemes" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>&amp;Manage Emoticons...</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <zorder>kcfg_useEmoticons</zorder>
+  <zorder>icon_theme_list</zorder>
+  <zorder>btnManageThemes</zorder>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>kcfg_useEmoticons</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>icon_theme_list</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>267</x>
+     <y>160</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

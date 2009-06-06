@@ -1,0 +1,10 @@
+
+These files are the base documents for an IRC developer.
+The Request For Comments (RFC) are available at http://www.ietf.org, but can be provided here for legal reasons.
+
+1st IRC protocol RFC : 1459.
+
+2nd IRC protocol RFC : 2810, 2811, 2812, 2813.
+
+They should be readed as a guide but not as an absolute reference because some servers use non standars extentions.
+

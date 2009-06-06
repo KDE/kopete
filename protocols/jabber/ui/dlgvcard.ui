@@ -1,0 +1,592 @@
+<ui version="4.0" >
+ <class>dlgVCard</class>
+ <widget class="QWidget" name="dlgVCard" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>382</width>
+    <height>499</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_3" >
+   <item row="1" column="0" >
+    <widget class="QLabel" name="lblStatus" >
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QTabWidget" name="tabWidget3" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>&amp;General</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <layout class="QFormLayout" name="formLayout_5" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="lblNick" >
+           <property name="text" >
+            <string>Nickname:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLineEdit" name="leNick" />
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="lblName" >
+           <property name="text" >
+            <string>Full name:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QLineEdit" name="leName" >
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="lblJID" >
+           <property name="text" >
+            <string>Jabber ID:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QLineEdit" name="leJID" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" >
+          <widget class="QLabel" name="lblHomepage" >
+           <property name="text" >
+            <string>Homepage:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" >
+          <widget class="QStackedWidget" name="wsHomepage" >
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="page_2" >
+            <layout class="QHBoxLayout" name="horizontalLayout" >
+             <property name="margin" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="KUrlLabel" name="urlHomepage" />
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_3" >
+            <layout class="QVBoxLayout" name="verticalLayout_3" >
+             <property name="margin" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLineEdit" name="leHomepage" />
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+         <item row="4" column="0" >
+          <widget class="QLabel" name="lblBirthday" >
+           <property name="text" >
+            <string>Birthday:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" >
+          <widget class="QLineEdit" name="leBirthday" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" >
+          <widget class="QLabel" name="lblTimezone" >
+           <property name="text" >
+            <string>Timezone:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" >
+          <widget class="QLineEdit" name="leTimezone" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox1" >
+         <property name="title" >
+          <string>Photo</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout" >
+          <item row="0" column="0" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="1" colspan="2" >
+           <widget class="QLabel" name="lblPhoto" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>96</width>
+              <height>96</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>96</width>
+              <height>96</height>
+             </size>
+            </property>
+            <property name="frameShape" >
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="scaledContents" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0" colspan="2" >
+           <widget class="QPushButton" name="btnSelectPhoto" >
+            <property name="text" >
+             <string>&amp;Select Photo...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" colspan="2" >
+           <widget class="QPushButton" name="btnClearPhoto" >
+            <property name="text" >
+             <string>Clear Pho&amp;to</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>362</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>&amp;Home Address</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_4" >
+       <item row="0" column="0" >
+        <widget class="QLabel" name="lblStreet" >
+         <property name="text" >
+          <string>Street:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLineEdit" name="leHomeStreet" />
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="leHomeExtAddr" />
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="lblPOBox" >
+         <property name="text" >
+          <string>PO box:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLineEdit" name="leHomePOBox" />
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="lblCity" >
+         <property name="text" >
+          <string>City:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QLineEdit" name="leHomeCity" />
+       </item>
+       <item row="4" column="0" >
+        <widget class="QLabel" name="lblState" >
+         <property name="text" >
+          <string>Postal code:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" >
+        <widget class="QLineEdit" name="leHomePostalCode" />
+       </item>
+       <item row="5" column="0" >
+        <widget class="QLabel" name="lblCountry" >
+         <property name="text" >
+          <string>Country:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" >
+        <widget class="QLineEdit" name="leHomeCountry" />
+       </item>
+       <item row="6" column="0" >
+        <widget class="QLabel" name="lblEmail" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text" >
+          <string>Email:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" >
+        <widget class="QStackedWidget" name="wsHomeEmail" >
+         <property name="currentIndex" >
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="page_4" >
+          <layout class="QVBoxLayout" name="verticalLayout_4" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="KUrlLabel" name="urlHomeEmail" />
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_5" >
+          <layout class="QVBoxLayout" name="verticalLayout_5" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="leHomeEmail" />
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>&amp;Work Address</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_3" >
+       <item row="0" column="0" >
+        <widget class="QLabel" name="lblStreet_2" >
+         <property name="text" >
+          <string>Street:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLineEdit" name="leWorkStreet" />
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="leWorkExtAddr" />
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="lblPOBox_2" >
+         <property name="text" >
+          <string>PO box:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLineEdit" name="leWorkPOBox" />
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="lblCity_2" >
+         <property name="text" >
+          <string>City:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QLineEdit" name="leWorkCity" />
+       </item>
+       <item row="4" column="0" >
+        <widget class="QLabel" name="lblState_2" >
+         <property name="text" >
+          <string>Postal code:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" >
+        <widget class="QLineEdit" name="leWorkPostalCode" />
+       </item>
+       <item row="5" column="0" >
+        <widget class="QLabel" name="lblCountry_2" >
+         <property name="text" >
+          <string>Country:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" >
+        <widget class="QLineEdit" name="leWorkCountry" />
+       </item>
+       <item row="6" column="0" >
+        <widget class="QLabel" name="lblEmail_2" >
+         <property name="text" >
+          <string>Email:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" >
+        <widget class="QStackedWidget" name="wsWorkEmail" >
+         <property name="currentIndex" >
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="page_6" >
+          <layout class="QVBoxLayout" name="verticalLayout_6" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="KUrlLabel" name="urlWorkEmail" />
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_7" >
+          <layout class="QVBoxLayout" name="verticalLayout_7" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="leWorkEmail" />
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Wor&amp;k Information</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_2" >
+       <item row="0" column="0" >
+        <widget class="QLabel" name="lblCompany" >
+         <property name="text" >
+          <string>Company:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLineEdit" name="leCompany" />
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="lblDepartment" >
+         <property name="text" >
+          <string>Department:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="leDepartment" />
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="lblPosition" >
+         <property name="text" >
+          <string>Position:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLineEdit" name="lePosition" />
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="lblRole" >
+         <property name="text" >
+          <string>Role:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QLineEdit" name="leRole" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Phone &amp;Numbers</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout" >
+       <item row="0" column="0" >
+        <widget class="QLabel" name="lblPhoneHome" >
+         <property name="text" >
+          <string>Home:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLineEdit" name="lePhoneHome" />
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="lblPhoneWork" >
+         <property name="text" >
+          <string>Work:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="lePhoneWork" />
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="lblPhoneFax" >
+         <property name="text" >
+          <string>Fax:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLineEdit" name="lePhoneFax" />
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="lblPhoneCell" >
+         <property name="text" >
+          <string>Cell:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QLineEdit" name="lePhoneCell" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>A&amp;bout</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item>
+        <widget class="KTextEdit" name="teAbout" />
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>ktextedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KUrlLabel</class>
+   <extends>QLabel</extends>
+   <header>kurllabel.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget3</tabstop>
+  <tabstop>leNick</tabstop>
+  <tabstop>leName</tabstop>
+  <tabstop>leJID</tabstop>
+  <tabstop>leBirthday</tabstop>
+  <tabstop>leTimezone</tabstop>
+  <tabstop>btnSelectPhoto</tabstop>
+  <tabstop>btnClearPhoto</tabstop>
+  <tabstop>leHomeStreet</tabstop>
+  <tabstop>leHomeExtAddr</tabstop>
+  <tabstop>leHomePOBox</tabstop>
+  <tabstop>leHomeCity</tabstop>
+  <tabstop>leHomePostalCode</tabstop>
+  <tabstop>leHomeCountry</tabstop>
+  <tabstop>leWorkStreet</tabstop>
+  <tabstop>leWorkExtAddr</tabstop>
+  <tabstop>leWorkPOBox</tabstop>
+  <tabstop>leWorkCity</tabstop>
+  <tabstop>leWorkPostalCode</tabstop>
+  <tabstop>leWorkCountry</tabstop>
+  <tabstop>leCompany</tabstop>
+  <tabstop>leDepartment</tabstop>
+  <tabstop>lePosition</tabstop>
+  <tabstop>leRole</tabstop>
+  <tabstop>lePhoneHome</tabstop>
+  <tabstop>lePhoneWork</tabstop>
+  <tabstop>lePhoneFax</tabstop>
+  <tabstop>lePhoneCell</tabstop>
+  <tabstop>leWorkEmail</tabstop>
+  <tabstop>leHomepage</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,875 @@
+<ui version="4.0" >
+ <author>Hui Jin</author>
+ <class>QQVCard</class>
+ <widget class="QWidget" name="QQVCard" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>611</width>
+    <height>461</height>
+   </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>50</width>
+    <height>0</height>
+   </size>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>9</number>
+   </property>
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>General</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <item>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item rowspan="2" row="0" column="2" >
+          <widget class="QLabel" name="label" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>96</width>
+             <height>96</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>96</width>
+             <height>96</height>
+            </size>
+           </property>
+           <property name="frameShape" >
+            <enum>QFrame::Panel</enum>
+           </property>
+           <property name="text" >
+            <string>Picture</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLineEdit" name="leQQId" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="lblNick" >
+           <property name="text" >
+            <string>Nickname:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QLineEdit" name="leNick" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="lblQQId" >
+           <property name="text" >
+            <string>QQ ID:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>10</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="lblName" >
+           <property name="text" >
+            <string>Full name:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="leName" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblAge" >
+           <property name="text" >
+            <string>Age:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="leAge" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>60</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblGender" >
+           <property name="text" >
+            <string>Gender:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbGender" >
+           <item>
+            <property name="text" >
+             <string>Male</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Female</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>N/A</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="1" column="1" >
+          <widget class="QTextEdit" name="teSignature" >
+           <property name="minimumSize" >
+            <size>
+             <width>120</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2" >
+          <widget class="QLabel" name="lblSignature" >
+           <property name="text" >
+            <string>Signature:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>Contact</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="title" >
+          <string>Home Address</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <item>
+           <layout class="QGridLayout" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
+             <number>6</number>
+            </property>
+            <item row="1" column="2" >
+             <widget class="QLineEdit" name="leCity" />
+            </item>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="lblStreet" >
+              <property name="text" >
+               <string>Street:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2" >
+             <widget class="QLineEdit" name="leZipcode" />
+            </item>
+            <item row="3" column="0" colspan="2" >
+             <widget class="QLabel" name="lblZip" >
+              <property name="text" >
+               <string>Zip code:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" >
+             <widget class="QLabel" name="lblCountry" >
+              <property name="text" >
+               <string>Country:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2" >
+             <widget class="QLineEdit" name="leState" />
+            </item>
+            <item row="4" column="2" >
+             <widget class="QLineEdit" name="leCountry" />
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="lblState" >
+              <property name="text" >
+               <string>State:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2" >
+             <widget class="QLabel" name="lblCity" >
+              <property name="text" >
+               <string>City:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLineEdit" name="leStreet" />
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="title" >
+          <string>Phone Numbers</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <item>
+           <layout class="QGridLayout" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
+             <number>6</number>
+            </property>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="lblPhoneHome" >
+              <property name="text" >
+               <string>Home:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="lblPhoneCell" >
+              <property name="text" >
+               <string>Cell:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="lblPhoneQQ" >
+              <property name="text" >
+               <string>QQ:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLineEdit" name="lePhoneCell" />
+            </item>
+            <item row="0" column="1" >
+             <widget class="QLineEdit" name="lePhoneHome" />
+            </item>
+            <item row="2" column="1" >
+             <widget class="QLineEdit" name="lePhoneQQ" />
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_9" >
+      <attribute name="title" >
+       <string>About</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <item>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="3" >
+          <widget class="QComboBox" name="cbZodiac" >
+           <item>
+            <property name="text" >
+             <string>Rat</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Ox</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Tiger</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Rabbit</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Dragon</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Snake</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Horse</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Ram</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Monkey</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Rooster</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Dog</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Pig</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string/>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="0" >
+          <widget class="QLabel" name="lblHomepage" >
+           <property name="text" >
+            <string>Homepage:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="lblOccupation" >
+           <property name="text" >
+            <string>Occupation:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_2" >
+           <property name="text" >
+            <string>Graduate:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QLabel" name="lblZodiac" >
+           <property name="text" >
+            <string>Zodiac:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QLineEdit" name="leGraduate" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="lblEmail" >
+           <property name="text" >
+            <string>Email:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3" >
+          <widget class="QComboBox" name="cbHoroscope" >
+           <item>
+            <property name="text" >
+             <string>Aries</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Taurus</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Gemini</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Cancer</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Leo</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Virgo</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Libra</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Scorpio</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Sagittarius</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Capricorn</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Aquarius</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Pisces</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QLabel" name="lblHoroscope" >
+           <property name="text" >
+            <string>Horoscope:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLineEdit" name="leOccupation" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="3" >
+          <widget class="QLineEdit" name="leHomepage" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="3" >
+          <widget class="QLineEdit" name="leEmail" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="1" column="1" >
+          <widget class="QTextEdit" name="teIntroduction" />
+         </item>
+         <item row="0" column="0" colspan="2" >
+          <widget class="QLabel" name="lblIntroduction" >
+           <property name="text" >
+            <string>Introduction:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lblStatus" >
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>leQQId</tabstop>
+  <tabstop>leNick</tabstop>
+  <tabstop>leName</tabstop>
+  <tabstop>leAge</tabstop>
+  <tabstop>cbGender</tabstop>
+  <tabstop>teSignature</tabstop>
+  <tabstop>leStreet</tabstop>
+  <tabstop>leCity</tabstop>
+  <tabstop>leState</tabstop>
+  <tabstop>leZipcode</tabstop>
+  <tabstop>leCountry</tabstop>
+  <tabstop>lePhoneHome</tabstop>
+  <tabstop>lePhoneCell</tabstop>
+  <tabstop>lePhoneQQ</tabstop>
+  <tabstop>leOccupation</tabstop>
+  <tabstop>cbZodiac</tabstop>
+  <tabstop>leGraduate</tabstop>
+  <tabstop>cbHoroscope</tabstop>
+  <tabstop>leEmail</tabstop>
+  <tabstop>leHomepage</tabstop>
+  <tabstop>teIntroduction</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

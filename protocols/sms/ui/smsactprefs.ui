@@ -1,0 +1,437 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>smsActPrefsUI</class>
+<author>Richard Lärkäng</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>smsActPrefsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>465</width>
+            <height>437</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="windowTitle">
+        <string>Account Preferences - SMS</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>0</number>
+        </property>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>middleFrame</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Raised</enum>
+            </property>
+            <property name="lineWidth">
+                <number>0</number>
+            </property>
+        </widget>
+        <widget class="QTabWidget">
+            <property name="name">
+                <cstring>tabWidget9</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>B&amp;asic Setup</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox61</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Account Information</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>textLabel2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Account name:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>accountId</cstring>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>A unique name for this SMS account.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>A unique name for this SMS account.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;SMS delivery service:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>serviceName</cstring>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>The delivery service that you would like to use.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>The delivery service that you would like to use.  Note that you will need to have this software installed prior to using this account.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="0" column="1">
+                                <property name="name">
+                                    <cstring>accountId</cstring>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>A unique name for this SMS account.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget" row="1" column="1">
+                                <property name="name">
+                                    <cstring>layout35</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QComboBox">
+                                        <property name="name">
+                                            <cstring>serviceName</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>5</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The delivery service that you would like to use.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The delivery service that you would like to use.  Note that you will need to have this software installed prior to using this account.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QPushButton">
+                                        <property name="name">
+                                            <cstring>descButton</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Description</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Description of the SMS delivery service.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Description of the SMS delivery service, including download locations.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox22</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Information</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel12</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>1</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>To use SMS, you will need an account with a delivery service.</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>Qt::AlignTop</set>
+                                </property>
+                                <property name="wordWrap">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer25</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>181</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>A&amp;ccount Preferences</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox62</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Messaging Preferences</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout119</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>textLabel2_2</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>If the message is too &amp;long:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>ifMessageTooLong</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>What should happen if you type a message that is too long to fit in a single SMS message.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>What should happen if you type a message that is too long to fit in a single SMS message.  You can either choose to break it up into smaller messages automatically, cancel the message from being sent entirely, or have Kopete prompt you each time you enter a message that is too long.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QComboBox">
+                                        <item>
+                                            <property name="text">
+                                                <string>Prompt (recommended)</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>Break Into Multiple</string>
+                                            </property>
+                                        </item>
+                                        <item>
+                                            <property name="text">
+                                                <string>Cancel Sending</string>
+                                            </property>
+                                        </item>
+                                        <property name="name">
+                                            <cstring>ifMessageTooLong</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>What should happen if you type a message that is too long to fit in a single SMS message.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>What should happen if you type a message that is too long to fit in a single SMS message.  You can either choose to break it up into smaller messages automatically, cancel the message from being sent entirely, or have Kopete prompt you each time you enter a message that is too long.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>subEnable</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Enable phone number internationalization</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Check if you would like to enable phone number internationalization.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check if you would like to enable phone number internationalization.  Without this option, you will only be able to use SMS for accounts within your country.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout56</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>textLabel2_3</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>5</hsizetype>
+                                                <vsizetype>5</vsizetype>
+                                                <horstretch>1</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string>Substitute leading &amp;zero with code:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>subCode</cstring>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                         <string>Whatever you want to substitute for a leading zero.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                         <string>Whatever you want to substitute for a leading zero.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KRestrictedLine">
+                                        <property name="name">
+                                            <cstring>subCode</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>5</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="text">
+                                            <string>+</string>
+                                        </property>
+                                        <property name="validChars">
+                                            <string>1234567890+</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                         <string>Whatever you want to substitute for a leading zero.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                         <string>Whatever you want to substitute for a leading zero.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer27</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>Qt::AlignCenter</set>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>subEnable</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel2_3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>subEnable</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>subCode</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>tabWidget9</tabstop>
+    <tabstop>accountId</tabstop>
+    <tabstop>serviceName</tabstop>
+    <tabstop>descButton</tabstop>
+    <tabstop>ifMessageTooLong</tabstop>
+    <tabstop>subEnable</tabstop>
+    <tabstop>subCode</tabstop>
+</tabstops>
+<includes>
+    <include location="global" impldecl="in implementation">knuminput.h</include>
+</includes>
+<includehints>
+    <includehint>krestrictedline.h</includehint>
+</includehints>
+</UI>

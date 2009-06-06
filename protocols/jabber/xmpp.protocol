@@ -1,0 +1,13 @@
+[Protocol]
+exec=kopete "%u"
+protocol=xmpp
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false
+URIMode=rawuri
+Icon=jabber_icon

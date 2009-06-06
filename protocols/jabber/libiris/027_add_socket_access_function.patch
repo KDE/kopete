@@ -1,0 +1,128 @@
+Index: iris/xmpp/cutestuff/bsocket.h
+===================================================================
+--- iris/xmpp/cutestuff/bsocket.h	(revision 972379)
++++ iris/xmpp/cutestuff/bsocket.h	(working copy)
+@@ -42,6 +42,7 @@
+ 
+ 	void connectToHost(const QString &host, quint16 port);
+ 	void connectToServer(const QString &srv, const QString &type);
++	virtual QAbstractSocket* abstractSocket() const;
+ 	int socket() const;
+ 	void setSocket(int);
+ 	int state() const;
+Index: iris/xmpp/cutestuff/socks.cpp
+===================================================================
+--- iris/xmpp/cutestuff/socks.cpp	(revision 972379)
++++ iris/xmpp/cutestuff/socks.cpp	(working copy)
+@@ -473,6 +473,11 @@
+ 	delete d;
+ }
+ 
++QAbstractSocket* SocksClient::abstractSocket() const
++{
++	return d->sock.abstractSocket();
++}
++
+ void SocksClient::reset(bool clear)
+ {
+ 	if(d->sock.state() != BSocket::Idle)
+Index: iris/xmpp/cutestuff/bytestream.h
+===================================================================
+--- iris/xmpp/cutestuff/bytestream.h	(revision 972379)
++++ iris/xmpp/cutestuff/bytestream.h	(working copy)
+@@ -24,6 +24,7 @@
+ #include <QObject>
+ #include <QByteArray>
+ 
++class QAbstractSocket;
+ // CS_NAMESPACE_BEGIN
+ 
+ // CS_EXPORT_BEGIN
+@@ -45,6 +46,8 @@
+ 	static void appendArray(QByteArray *a, const QByteArray &b);
+ 	static QByteArray takeArray(QByteArray *from, int size=0, bool del=true);
+ 
++	virtual QAbstractSocket* abstractSocket() const { return 0; }
++
+ signals:
+ 	void connectionClosed();
+ 	void delayedCloseFinished();
+Index: iris/xmpp/cutestuff/httppoll.cpp
+===================================================================
+--- iris/xmpp/cutestuff/httppoll.cpp	(revision 972379)
++++ iris/xmpp/cutestuff/httppoll.cpp	(working copy)
+@@ -106,6 +106,11 @@
+ 	delete d;
+ }
+ 
++QAbstractSocket* HttpPoll::abstractSocket() const
++{
++	return d->http.abstractSocket();
++}
++
+ void HttpPoll::reset(bool clear)
+ {
+ 	if(d->http.isActive())
+@@ -459,6 +464,11 @@
+ 	delete d;
+ }
+ 
++QAbstractSocket* HttpProxyPost::abstractSocket() const
++{
++	return d->sock.abstractSocket();
++}
++
+ void HttpProxyPost::reset(bool clear)
+ {
+ 	if(d->sock.state() != BSocket::Idle)
+Index: iris/xmpp/cutestuff/socks.h
+===================================================================
+--- iris/xmpp/cutestuff/socks.h	(revision 972379)
++++ iris/xmpp/cutestuff/socks.h	(working copy)
+@@ -63,6 +63,8 @@
+ 	SocksClient(int, QObject *parent=0);
+ 	~SocksClient();
+ 
++	virtual QAbstractSocket* abstractSocket() const;
++
+ 	bool isIncoming() const;
+ 
+ 	// outgoing
+Index: iris/xmpp/cutestuff/bsocket.cpp
+===================================================================
+--- iris/xmpp/cutestuff/bsocket.cpp	(revision 972379)
++++ iris/xmpp/cutestuff/bsocket.cpp	(working copy)
+@@ -194,6 +194,11 @@
+ 	d->srv.resolve(srv, type, "tcp");
+ }
+ 
++QAbstractSocket* BSocket::abstractSocket() const
++{
++	return d->qsock;
++}
++
+ int BSocket::socket() const
+ {
+ 	if(d->qsock)
+Index: iris/xmpp/cutestuff/httppoll.h
+===================================================================
+--- iris/xmpp/cutestuff/httppoll.h	(revision 972379)
++++ iris/xmpp/cutestuff/httppoll.h	(working copy)
+@@ -33,6 +33,8 @@
+ 	HttpPoll(QObject *parent=0);
+ 	~HttpPoll();
+ 
++	virtual QAbstractSocket* abstractSocket() const;
++
+ 	void setAuth(const QString &user, const QString &pass="");
+ 	void connectToUrl(const QString &url);
+ 	void connectToHost(const QString &proxyHost, int proxyPort, const QString &url);
+@@ -75,6 +77,8 @@
+ 	HttpProxyPost(QObject *parent=0);
+ 	~HttpProxyPost();
+ 
++	QAbstractSocket* abstractSocket() const;
++
+ 	void setAuth(const QString &user, const QString &pass="");
+ 	bool isActive() const;
+ 	void post(const QString &proxyHost, int proxyPort, const QString &url, const QByteArray &data, bool asProxy=true);
