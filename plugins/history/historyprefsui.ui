@@ -1,0 +1,304 @@
+<ui version="4.0" >
+ <author>Olivier Goffart</author>
+ <class>HistoryPrefsUI</class>
+ <widget class="QWidget" name="HistoryPrefsUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>523</width>
+    <height>482</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Chat History</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="2" column="0" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>16</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QLabel" name="lblNoLinesPerPage" >
+        <property name="whatsThis" >
+         <string>The number of messages that are shown when browsing history in the chat window</string>
+        </property>
+        <property name="text" >
+         <string>Number of messages per page:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLabel" name="colorLabel" >
+        <property name="whatsThis" >
+         <string>Color of history messages in the chat window</string>
+        </property>
+        <property name="text" >
+         <string>Color of messages:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>History_color</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLabel" name="numberLabel" >
+        <property name="whatsThis" >
+         <string>This is the number of messages that will be added automatically in the chat window when opening a new chat.</string>
+        </property>
+        <property name="text" >
+         <string>Number of messages to show:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>Number_Auto_chatwindow</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="KColorButton" name="History_color" >
+        <property name="whatsThis" >
+         <string>Color of history messages in the chat window</string>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="color" >
+         <color>
+          <red>170</red>
+          <green>170</green>
+          <blue>127</blue>
+         </color>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="KIntSpinBox" name="Number_Auto_chatwindow" >
+        <property name="whatsThis" >
+         <string>This is the number of messages that will be added automatically in the chat window when opening a new chat.</string>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>32768</number>
+        </property>
+        <property name="value" >
+         <number>7</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" >
+       <widget class="KIntSpinBox" name="Number_ChatWindow" >
+        <property name="whatsThis" >
+         <string>The number of message that are shown when borwsing history in the chat window</string>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>32768</number>
+        </property>
+        <property name="value" >
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="3" >
+       <widget class="QCheckBox" name="chkShowPrevious" >
+        <property name="whatsThis" >
+         <string>When a new chat is opened, automatically add the last few messages between you and that contact.</string>
+        </property>
+        <property name="text" >
+         <string>Show chat history in new chats</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>341</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+  <customwidgets>
+  <customwidget>
+   <class>KColorButton</class>
+   <extends>QPushButton</extends>
+   <header>kcolorbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>chkShowPrevious</tabstop>
+  <tabstop>Number_Auto_chatwindow</tabstop>
+  <tabstop>History_color</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>chkShowPrevious</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>numberLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>88</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>88</x>
+     <y>65</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowPrevious</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Number_Auto_chatwindow</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>379</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>379</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowPrevious</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>140</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>120</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowPrevious</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>History_color</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>409</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>442</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowPrevious</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lblNoLinesPerPage</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>208</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>191</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowPrevious</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Number_ChatWindow</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>320</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>330</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
