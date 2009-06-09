@@ -77,7 +77,7 @@ void AutoReplacePlugin::slotInterceptMessage( Kopete::Message &msg )
 
 		// replaces all matched words --> try to find a more 'economic' way
 		// "\\b(%1)\\b" doesn't work when substituting /me.
-		QString match = "(^|\\s|\\.|\\;|\\,|\\:)(%1)(\\b)";
+		const QString match = "(^|\\s|\\.|\\;|\\,|\\:)(%1)(\\b)";
 		AutoReplaceConfig::WordsToReplace::Iterator it;
 		bool isReplaced=false;
 		for ( it = map.begin(); it != map.end(); ++it )

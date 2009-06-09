@@ -134,7 +134,7 @@ void OTRPreferences::fillFingerprints(){
 	int j = 0;
 
 //	preferencesDialog->tbFingerprints->setSortingEnabled(false);
-	for( it = list.begin(); it != list.end(); ++it ){
+	for( it = list.constBegin(); it != list.constEnd(); ++it ){
 		preferencesDialog->tbFingerprints->setRowCount( preferencesDialog->tbFingerprints->rowCount() +1 );
  		preferencesDialog->tbFingerprints->setItem(j, 0,new QTableWidgetItem(OtrlChatInterface::self()->formatContact((*it)[j*5])));
 		for( int i = 1; i < 5; i++ ){ 	

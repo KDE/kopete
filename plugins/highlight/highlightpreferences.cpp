@@ -194,7 +194,7 @@ void HighlightPreferences::slotRenameFilter()
 		return;
 
 	bool ok;
-	QString newname = KInputDialog::getText(
+	const QString newname = KInputDialog::getText(
 		i18n( "Rename Filter" ), i18n( "Please enter the new name for the filter:" ), current->displayName, &ok );
 	if( !ok )
 		return;
@@ -281,6 +281,7 @@ void HighlightPreferences::slotConfigureNotifications()
 
 	w->setApplication(QString(), "class" , current->className() );
 	dialog->exec();
+	delete dialog;
 }
 
 

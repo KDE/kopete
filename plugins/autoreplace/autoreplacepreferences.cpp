@@ -149,8 +149,8 @@ void AutoReplacePreferences::slotAddCouple()
 // edit the selected item
 void AutoReplacePreferences::slotEditCouple()
 {
-	QString k = preferencesDialog->m_key->text();
-	QString v = preferencesDialog->m_value->text();
+	const QString k = preferencesDialog->m_key->text();
+	const QString v = preferencesDialog->m_value->text();
 	Q3ListViewItem * lvi;
 	if ( ( lvi = preferencesDialog->m_list->selectedItem() ) && !k.isEmpty() && !k.isNull() && !v.isEmpty() && !v.isNull() )
 	{

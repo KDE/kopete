@@ -73,7 +73,7 @@ void AutoReplaceConfig::loadDefaultAutoReplaceList()
     const QStringList wordsList = defaultAutoReplaceList();
     m_map.clear();
     QString k, v;
-    for ( QStringList::ConstIterator it = wordsList.begin(); it != wordsList.end(); ++it )
+    for ( QStringList::ConstIterator it = wordsList.constBegin(); it != wordsList.constEnd(); ++it )
     {
         k = *it;
         v = *( ++it );

@@ -126,7 +126,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		
 		if (pos >= 0 )
 		{
-			QString match = rg.cap(0);
+			const QString match = rg.cap(0);
 			pos += rg.matchedLength();
 
 			QString formul=match;
@@ -137,7 +137,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 			if (formul.isEmpty() || !securityCheck(formul))
 				continue;
 			
-			QString fileName = handleLatex(formul);
+			const QString fileName = handleLatex(formul);
 			
 			// get the image and encode it with base64
 			#if ENCODED_IMAGE_MODE

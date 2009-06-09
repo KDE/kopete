@@ -68,8 +68,8 @@ void ContactNotesPlugin::slotEditInfo()
 	if(!m)
 		return;
 	ContactNotesEdit *e=new ContactNotesEdit(m,this);
-	connect( e, SIGNAL( notesChanged( const QString, Kopete::MetaContact*) ),this,
-			SLOT( setNotes( const QString, Kopete::MetaContact * ) ) );
+	connect( e, SIGNAL( notesChanged( const QString&, Kopete::MetaContact*) ),this,
+			SLOT( setNotes( const QString&, Kopete::MetaContact * ) ) );
 	e->show();
 }
 
@@ -79,7 +79,7 @@ QString ContactNotesPlugin::notes(Kopete::MetaContact *m)
 	return m->pluginData( this, "notes" );
 }
 
-void ContactNotesPlugin::setNotes( const QString n, Kopete::MetaContact *m )
+void ContactNotesPlugin::setNotes( const QString &n, Kopete::MetaContact *m )
 {
 	m->setPluginData( this, "notes", n );
 }

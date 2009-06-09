@@ -63,7 +63,7 @@ void PipesDelegate::setEditorData ( QWidget *editor, const QModelIndex &index ) 
 {
 	if ( index.column() == ContentsColumn )
 	{
-		int value = index.model()->data ( index, Qt::DisplayRole ).toInt();
+		const int value = index.model()->data ( index, Qt::DisplayRole ).toInt();
 		KComboBox *comboBox = static_cast<KComboBox*> ( editor );
 		switch ( value )
 		{
@@ -87,7 +87,7 @@ void PipesDelegate::setEditorData ( QWidget *editor, const QModelIndex &index ) 
 	}
 	else if ( index.column() == EnabledColumn )
 	{
-		int value = index.model()->data ( index, Qt::CheckStateRole ).toInt();
+		const int value = index.model()->data ( index, Qt::CheckStateRole ).toInt();
 		QCheckBox *checkBox = static_cast<QCheckBox*> ( editor );
 		checkBox->setCheckState ( ( Qt::CheckState ) value );
 	}
@@ -100,7 +100,7 @@ void PipesDelegate::setModelData ( QWidget *editor, QAbstractItemModel *model, c
 	if (  index.column() == ContentsColumn )
 	{
 		KComboBox *comboBox = static_cast<KComboBox*> ( editor );
-		int value = comboBox->currentIndex();
+		const int value = comboBox->currentIndex();
 		switch ( value )
 		{
 			// translate combobox indexes into enums
@@ -112,7 +112,7 @@ void PipesDelegate::setModelData ( QWidget *editor, QAbstractItemModel *model, c
 	else if ( index.column() == DirectionColumn )
 	{
 		KComboBox *comboBox = static_cast<KComboBox*> ( editor );
-		int value = comboBox->currentIndex();
+		const int value = comboBox->currentIndex();
 		switch ( value )
 		{
 			// translate combobox indexes into enums
@@ -124,7 +124,7 @@ void PipesDelegate::setModelData ( QWidget *editor, QAbstractItemModel *model, c
 	else if ( index.column() == EnabledColumn )
 	{
 		QCheckBox *checkBox = static_cast<QCheckBox*> ( editor );
-		int value = checkBox->isChecked();
+		const int value = checkBox->isChecked();
 		model->setData ( index, value, Qt::CheckStateRole);
 	}
 	else

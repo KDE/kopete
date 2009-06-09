@@ -58,14 +58,14 @@ void LatexGUIClient::slotPreview()
 		return;
 
 	Kopete::Message msg = m_manager->view()->currentMessage();
-	QString messageText = msg.plainBody();
+	const QString messageText = msg.plainBody();
 	if(!messageText.contains("$$")) //we haven't found any latex strings
 	{
 		KMessageBox::sorry(m_manager->view()->mainWidget() , i18n("The message you are typing does not contain any LaTeX.  A LaTeX formula must be enclosed within two pairs of dollar signs: $$formula$$ "), i18n("No LaTeX Formula") );
 		return;
 	}
 
-	QString oldBody = msg.plainBody();
+	const QString oldBody = msg.plainBody();
 	msg=Kopete::Message( msg.from() , msg.to() );
 	msg.setHtmlBody( i18n("<b>Preview of the LaTeX message :</b> <br />%1", oldBody) );
 	msg.setDirection( Kopete::Message::Internal );

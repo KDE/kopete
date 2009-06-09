@@ -49,7 +49,7 @@ private:
 protected slots: // Protected slots
 	virtual void slotButtonClicked(int buttonCode);
 signals: // Signals
-	void notesChanged(const QString, Kopete::MetaContact*);
+	void notesChanged(const QString&, Kopete::MetaContact*);
 };
 
 #endif

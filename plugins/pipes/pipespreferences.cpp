@@ -82,7 +82,7 @@ void PipesPreferences::save()
 // then pass it to the file.
 void PipesPreferences::slotAdd()
 {
-	QString filePath = KFileDialog::getOpenFileName( KUrl ("kfiledialog:///pipesplugin"), QString(), this, i18n ("Select Program or Script to Pipe Messages Through"));
+	const QString filePath = KFileDialog::getOpenFileName( KUrl ("kfiledialog:///pipesplugin"), QString(), this, i18n ("Select Program or Script to Pipe Messages Through"));
 	if (filePath.isEmpty())
 		return;
 	PipesPlugin::PipeOptions pipe;

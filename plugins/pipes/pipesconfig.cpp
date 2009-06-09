@@ -62,7 +62,7 @@ void PipesConfig::save ()
 void PipesConfig::load ()
 {
 	KConfigGroup config (KGlobal::config(), "PipesPlugin_Pipes");
-	QStringList uidList = config.readEntry ("Pipes", QStringList());
+	const QStringList uidList = config.readEntry ("Pipes", QStringList());
 	
 	PipesPlugin::PipeOptions pipeOptions;
 	PipesPlugin::PipeOptionsList pipesList;
