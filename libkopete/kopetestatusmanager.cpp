@@ -76,8 +76,7 @@ StatusManager::StatusManager()
 
 StatusManager::~StatusManager()
 {
-	if ( d->idleTimer )
-		delete d->idleTimer;
+	delete d->idleTimer;
 
 	delete d->root;
 	delete d;
@@ -102,13 +101,12 @@ void StatusManager::saveXML()
 
 void StatusManager::loadXML()
 {
-	if ( d->root )
-		delete d->root;
+	delete d->root;
 
 	d->uidHash.clear();
 	d->root = 0;
 
-	QString filename = KStandardDirs::locateLocal( "data", QLatin1String( "kopete/statuses.xml" ) );
+	const QString filename = KStandardDirs::locateLocal( "data", QLatin1String( "kopete/statuses.xml" ) );
 
 	QDomDocument doc;
 	QFile file( filename );
@@ -150,8 +148,7 @@ void StatusManager::setRootGroup( Kopete::Status::StatusGroup *rootGroup )
 	if ( !rootGroup || rootGroup == d->root )
 		return;
 
-	if ( d->root )
-		delete d->root;
+	delete d->root;
 
 	d->uidHash.clear();
 	d->root = rootGroup;
