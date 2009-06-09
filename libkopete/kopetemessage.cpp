@@ -295,9 +295,9 @@ QString Message::unescape( const QString &xml )
 
 		// Take the part between < and >, and extract the element name from that
 		int matchWidth = endPos - pos + 1;
-		QString match = data.mid( pos + 1, matchWidth - 2 ).simplified();
+		const QString match = data.mid( pos + 1, matchWidth - 2 ).simplified();
 		int elemEndPos = match.indexOf( ' ' );
-		QString elem = ( elemEndPos == -1 ? match.toLower() : match.left( elemEndPos ).toLower() );
+		const QString elem = ( elemEndPos == -1 ? match.toLower() : match.left( elemEndPos ).toLower() );
 		if ( elem == QLatin1String( "img" ) )
 		{
 			// Replace smileys with their original text'

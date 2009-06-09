@@ -108,7 +108,7 @@ void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage
 	kDebug() << "category: " << category;
 	OnlineStatusManager::Categories categories
 		= (OnlineStatusManager::Categories)category;
-	bool onlyChangeConnectedAccounts = isAnyAccountConnected();
+	const bool onlyChangeConnectedAccounts = isAnyAccountConnected();
 
 	foreach( Account *account, d->accounts )
 	{
@@ -379,8 +379,8 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 	// Iterate over all groups that start with "Account_" as those are accounts
 	// and parse them if they are from this protocol
 	KSharedConfig::Ptr config = KGlobal::config();
-	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
-	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
+	const QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
+	for ( QStringList::ConstIterator it = accountGroups.constBegin(); it != accountGroups.constEnd(); ++it )
 	{
 		KConfigGroup cg( config, *it );
 

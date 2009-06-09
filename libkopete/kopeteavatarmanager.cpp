@@ -308,7 +308,7 @@ QImage AvatarManager::Private::scaleImage(const QImage &source)
 	// scale and center the image
 	if( source.width() > 96 || source.height() > 96 )
 	{
-		QImage scaled = source.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+		const QImage scaled = source.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 
 		x = (96 - scaled.width()) / 2.0;
 		y = (96 - scaled.height()) / 2.0;
@@ -373,8 +373,8 @@ void AvatarQueryJob::start()
 		KUrl contactUrl(d->baseDir);
 		contactUrl.addPath( ContactDir );
 
-		QDir contactDir(contactUrl.path());
-		QStringList subdirsList = contactDir.entryList( QDir::AllDirs | QDir::NoDotAndDotDot );
+		const QDir contactDir(contactUrl.path());
+		const QStringList subdirsList = contactDir.entryList( QDir::AllDirs | QDir::NoDotAndDotDot );
 		foreach(const QString &subdir, subdirsList)
 		{
 			d->listAvatarDirectory( ContactDir + QDir::separator() + subdir );
@@ -404,7 +404,7 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 	{
 		KConfig *avatarConfig = new KConfig( avatarConfigUrl.path(), KConfig::SimpleConfig);
 		// Each avatar entry in configuration is a group
-		QStringList groupEntryList = avatarConfig->groupList();
+		const QStringList groupEntryList = avatarConfig->groupList();
 		foreach(const QString &groupEntry, groupEntryList)
 		{
 			KConfigGroup cg(avatarConfig, groupEntry);
@@ -413,12 +413,12 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 			listedEntry.name = groupEntry;
 			listedEntry.category = static_cast<Kopete::AvatarManager::AvatarCategory>( cg.readEntry("Category", 0) );
 
-			QString filename = cg.readEntry( "Filename", QString() );
+			const QString filename = cg.readEntry( "Filename", QString() );
 			KUrl avatarPath(avatarDirectory);
 			avatarPath.addPath( filename );
 			listedEntry.path = avatarPath.path();
 
-			QString dataFilename = cg.readEntry( "DataFilename", QString() );
+			const QString dataFilename = cg.readEntry( "DataFilename", QString() );
 			KUrl dataPath(avatarDirectory);
 			dataPath.addPath( dataFilename );
 			listedEntry.dataPath = dataPath.path();
