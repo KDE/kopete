@@ -279,7 +279,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 		return false;
 	}
 
-	bool isTemporary = mode == Temporary;
+	bool isTemporary = (mode == Temporary);
 
 	Contact *c = d->contacts.value( contactId );
 
@@ -345,7 +345,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		return 0L;
 	}
 
-	bool isTemporary= parent->isTemporary();
+	const bool isTemporary= parent->isTemporary();
 	Contact *c = d->contacts.value( contactId );
 	if ( c && c->metaContact() )
 	{
@@ -366,7 +366,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		return false; //(the contact is not in the correct metacontact, so false)
 	}
 
-	bool success = createContact(contactId, parent);
+	const bool success = createContact(contactId, parent);
 
 	if ( success && mode == ChangeKABC )
 	{
@@ -464,8 +464,8 @@ void Account::setMyself( Contact *myself )
 void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	const OnlineStatus &newStatus, const OnlineStatus &oldStatus )
 {
-	bool wasOffline = !oldStatus.isDefinitelyOnline();
-	bool isOffline  = !newStatus.isDefinitelyOnline();
+	const bool wasOffline = !oldStatus.isDefinitelyOnline();
+	const bool isOffline  = !newStatus.isDefinitelyOnline();
 
 	if ( wasOffline || newStatus.status() == OnlineStatus::Offline )
 	{
@@ -567,8 +567,10 @@ void Account::editAccount(QWidget *parent)
 
 	KopeteEditAccountWidget *m_accountWidget = protocol()->createEditAccountWidget( this, editDialog );
 	if ( !m_accountWidget )
+	{
+		delete editDialog;
 		return;
-
+	}
 	// FIXME: Why the #### is EditAccountWidget not a QWidget?!? This sideways casting
 	//        is braindead and error-prone. Looking at MSN the only reason I can see is
 	//        because it allows direct subclassing of designer widgets. But what is
@@ -577,8 +579,10 @@ void Account::editAccount(QWidget *parent)
 	//        class should at least be renamed to EditAccountIface instead - Martijn
 	QWidget *w = dynamic_cast<QWidget *>( m_accountWidget );
 	if ( !w )
+	{
+		delete editDialog;
 		return;
-
+	}
 	editDialog->setMainWidget( w );
 	if ( editDialog->exec() == QDialog::Accepted )
 	{
