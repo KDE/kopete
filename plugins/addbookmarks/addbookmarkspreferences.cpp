@@ -109,10 +109,10 @@ void BookmarksPreferences::load()
 	QItemSelectionModel *selectionModel = p_dialog->contactList->selectionModel();
 	selectionModel->clearSelection();
 
-	QStringList selectedContactsList = m_settings.getContactsList();
+	const QStringList selectedContactsList = m_settings.getContactsList();
 	foreach( const QString &contact, selectedContactsList )
 	{
-		int row = contactsList.indexOf( contact );
+		const int row = contactsList.indexOf( contact );
 		if ( row != -1 )
 		{
 			QModelIndex index = p_contactsListModel->index( row, 0, QModelIndex() );

@@ -49,9 +49,8 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 	//kDebug(14501) << "received message:" << endl << msg.parsedBody();
 	if(msg.direction() != Kopete::Message::Inbound)
 		return;
-	KUrl::List *URLsList;
 	KUrl::List::iterator it;
-	URLsList = extractURLsFromString( msg.parsedBody() );
+	KUrl::List *URLsList = extractURLsFromString( msg.parsedBody() );
 	if (!URLsList->empty()) {
 		for( it = URLsList->begin() ; it != URLsList->end() ; ++it){
 			if( msg.from()->metaContact() ) {
@@ -70,12 +69,12 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArray &data )
 {
 	QTextCodec *codec = getPageEncoding( data );
-	QString htmlpage = codec->toUnicode( data );
+	const QString htmlpage = codec->toUnicode( data );
 	QRegExp rx("<(?:title|TITLE)>([^<]*)</(?:title|TITLE)>");
 	int pos = rx.indexIn( htmlpage );
 	KBookmarkManager *mgr = KBookmarkManager::userBookmarksManager();
 	KBookmarkGroup group = getKopeteFolder();
-	QString sender = m_map[(KIO::TransferJob*)transfer].sender;
+	const QString sender = m_map[(KIO::TransferJob*)transfer].sender;
 	
 	if ( m_settings.useSubfolderForContact( sender ) )
 		group = getFolder( group, sender );
