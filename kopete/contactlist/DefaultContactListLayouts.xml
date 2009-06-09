@@ -2,7 +2,7 @@
 <contactlist_layouts>
 	<layout name="Default" show_metacontact_icon="true" >
 		<row>
-			<element small="false" size="0" bold="true" alignment="left" optimalSize="false" value="DisplayName" italic="false" />
+			<element small="false" size="0" bold="false" alignment="left" optimalSize="false" value="DisplayName" italic="false" />
 			<element small="false" size="0" bold="false" alignment="right" optimalSize="true" value="ContactIcons" italic="false" />
 		</row>
 		<row>
