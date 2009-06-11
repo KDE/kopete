@@ -109,7 +109,7 @@
       <bool>true</bool>
      </property>
      <property name="mimeType" stdset="0">
-      <string>application/x-kopete-contactlist-token</string>
+      <string comment="KDE::DoNotExtract">application/x-kopete-contactlist-token</string>
      </property>
     </widget>
    </item>
