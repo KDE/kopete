@@ -120,7 +120,7 @@ Leave it empty if you want to see the contact's nickname as their display name.<
                                 <string>The display name of the contact.  Leave it empty to use the contact's nickname.</string>
                             </property>
           <property name="whatsThis" >
-                                <string>Enter the contact's display name. This is how the contact will appears in the contact list.
+                                <string>Enter the contact's display name. This is how the contact will appear in the contact list.
 Leave it empty if you want to see the contact's nickname as their display name.</string>
                             </property>
                         </widget>
