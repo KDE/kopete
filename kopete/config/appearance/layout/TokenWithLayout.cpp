@@ -133,7 +133,7 @@ void TokenWithLayout::fillMenu( QMenu * menu )
                         spareWidth -= twl->width() * 100.0;
                 }
             }
-            slider->setMaximum( qMax( spareWidth, 0.0 ) );
+            slider->setMaximum( qMax<qreal>( spareWidth, 0.0 ) );
         }
     }
     slider->setValue( m_width * 100.0 );
