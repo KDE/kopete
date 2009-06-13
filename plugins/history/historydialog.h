@@ -23,7 +23,7 @@
 
 #include <kdialog.h>
 #include <kurl.h>
-
+#include <Akonadi/Collection>
 #include "kopetemessage.h"
 
 class QTreeWidgetItem;
@@ -132,6 +132,9 @@ class HistoryDialog : public KDialog
 		KAction *mCopyAct;
 		KAction *mCopyURLAct;
 		QString mURL;
+		
+		Akonadi::Collection m_baseCollection;
+		QMap<QString ,Akonadi::Collection > m_collectionMap;
 };
 
 #endif

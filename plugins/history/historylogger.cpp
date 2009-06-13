@@ -1127,7 +1127,7 @@ QList<History> HistoryLogger::getHistorylist(const Kopete::Contact* c, QDate dat
 	  }
       } else qDebug() << "collection fetch job not executed";  
 
-  if(collfound= true)
+  if(collfound== true)
   {
     Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
     itemjob->fetchScope().fetchFullPayload();

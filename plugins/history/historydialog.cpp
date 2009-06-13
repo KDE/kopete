@@ -262,40 +262,11 @@ void HistoryDialog::init(Kopete::MetaContact *mc)
 void HistoryDialog::init(Kopete::Contact *c)
 {
   kDebug() << " entered init contact";
-  
-/*	// Get year and month list
-	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
-	const QString contact_in_filename=c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) );
 
-	QString logDir = KStandardDirs::locateLocal("data",QString("kopete/logs/")+
-			c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-")) +
-					QString::fromLatin1( "/" ) +
-					c->account()->accountId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )
-								);
-	QDir d(logDir);
-	d.setFilter( QDir::Files | QDir::NoSymLinks );
-	d.setSorting( QDir::Name );
-	const QFileInfoList list = d.entryInfoList();
-	if ( !list.isEmpty() )
-	{
-		foreach( const QFileInfo &fi, list )
-		{
-			if(fi.fileName().contains(contact_in_filename))
-			{
-
-				rx.indexIn(fi.fileName());
-
-				// We search for an item in the list view with the same year. If then we add the month
-				QDate cDate = QDate(rx.cap(1).toInt(), rx.cap(2).toInt(), 1);
-
-				DMPair pair(cDate, c->metaContact());
-				mInit.dateMCList.append(pair);
-			}
-		}
-	}
-*/
       bool collfound=false;
       Akonadi::Collection coll,collcontact;
+   if( !m_baseCollection.isValid() )
+   {
       Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
       if ( job->exec()  )
       {
@@ -306,27 +277,33 @@ void HistoryDialog::init(Kopete::Contact *c)
 	      if ( collection.name() == "kopeteChat" )
 	      {
                 coll = collection;
+		m_baseCollection=collection;
 	      }
 	  }
-      } else qDebug() << "collection fetch job not executed";
+      } else kDebug() << "collection fetch job not executed";
+   } else kDebug() <<"m_baseCollection is valid";
 
-      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( coll , Akonadi::CollectionFetchJob::FirstLevel );
+   if (m_collectionMap.isEmpty() )
+   {
+     kDebug()<< " m_collection map is empty";
+      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( m_baseCollection , Akonadi::CollectionFetchJob::FirstLevel );
       if ( job2->exec()  )
       {
 	  Akonadi::Collection::List collections = job2->collections();
 	  foreach( const Akonadi::Collection &collection, collections )
 	  {
-	      if ( collection.name() == c->contactId() )
-	      {
-		  collfound = true;
-		  collcontact = collection;
-		  kDebug() << " collection for this contact already exists";
-		  break;
-	      }
+	      m_collectionMap.insert(collection.name() , collection );
 	  }
       } else kDebug() << "collection fetch job not executed";
+   }
       
-      
+  if ( m_collectionMap.contains(c->contactId()) )
+  {
+    kDebug()<<"m_collectio manp contains contact";
+    collfound = true;
+    collcontact = m_collectionMap[c->contactId()];
+  }
+  
   if(collfound==true)
   {
     Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
