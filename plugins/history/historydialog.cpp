@@ -45,6 +45,8 @@
 #include "historylogger.h"
 #include "historyimport.h"
 #include "ui_historyviewer.h"
+#include <akonadi/collectionfetchjob.h>
+#include <akonadi/itemfetchjob.h>
 
 class KListViewDateItem : public QTreeWidgetItem
 {
@@ -211,7 +213,7 @@ void HistoryDialog::init()
 
 void HistoryDialog::slotLoadDays()
 {
-  kDebug() << "entered slot for days";
+  kDebug() << "entered slot load days";
   
 	if(mInit.dateMCList.isEmpty())
 	{
@@ -243,7 +245,7 @@ void HistoryDialog::slotLoadDays()
 
 	mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
 	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
-	kDebug() << " exiting slot for days";
+	kDebug() << " exiting slot load days";
 }
 
 void HistoryDialog::init(Kopete::MetaContact *mc)
@@ -261,7 +263,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 {
   kDebug() << " entered init contact";
   
-	// Get year and month list
+/*	// Get year and month list
 	QRegExp rx( "\\.(\\d\\d\\d\\d)(\\d\\d)" );
 	const QString contact_in_filename=c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) );
 
@@ -291,7 +293,64 @@ void HistoryDialog::init(Kopete::Contact *c)
 			}
 		}
 	}
+*/
+      bool collfound=false;
+      Akonadi::Collection coll,collcontact;
+      Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
+      if ( job->exec()  )
+      {
+	  qDebug()<<" collection fetch job for root ececuted";
+	  Akonadi::Collection::List collections = job->collections();
+	  foreach( const Akonadi::Collection &collection, collections )
+	  {
+	      if ( collection.name() == "kopeteChat" )
+	      {
+                coll = collection;
+	      }
+	  }
+      } else qDebug() << "collection fetch job not executed";
+
+      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( coll , Akonadi::CollectionFetchJob::FirstLevel );
+      if ( job2->exec()  )
+      {
+	  Akonadi::Collection::List collections = job2->collections();
+	  foreach( const Akonadi::Collection &collection, collections )
+	  {
+	      if ( collection.name() == c->contactId() )
+	      {
+		  collfound = true;
+		  collcontact = collection;
+		  kDebug() << " collection for this contact already exists";
+		  break;
+	      }
+	  }
+      } else kDebug() << "collection fetch job not executed";
+      
+      
+  if(collfound==true)
+  {
+    Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
+    if ( itemjob->exec() )
+    {
+        Akonadi::Item::List items = itemjob->items();
+        if ( !items.isEmpty() )
+        {
+            kDebug() << "item list is not empty";
+            foreach( const Akonadi::Item &item, items )
+            {
+	      QDate cDate = QDate(item.modificationTime().date().year(),item.modificationTime().date().month(), 1);
+	      DMPair pair(cDate, c->metaContact());
+	      mInit.dateMCList.append(pair);
+	      kDebug() <<"cDate="<<cDate;
+            }
+	}
+        else
+	  kDebug() << " item list empty.";
+    }
+    else kDebug() << "item fetch job failed";
+  }
 }
+
 
 void HistoryDialog::dateSelected(QTreeWidgetItem* it)
 {
@@ -483,39 +542,23 @@ void HistoryDialog::slotSearch()
 			QList<Kopete::Contact*> contacts = curItem->metaContact()->contacts();
 			foreach(Kopete::Contact* contact, contacts)
 			{
-				// get filename and open file
-				QString filename(HistoryLogger::getFileName(contact, curItem->date()));
-				if (!QFile::exists(filename)) continue;
-				QFile file(filename);
-				file.open(QIODevice::ReadOnly);
-				if (!file.isOpen())
-				{
-					kWarning(14310) << k_funcinfo << "Error opening " <<
-							file.fileName() << ": " << file.errorString() << endl;
-					continue;
-				}
-
-				QTextStream stream(&file);
+			  QList<History> historylist = HistoryLogger::getHistorylist(contact, curItem->date());
+			  if (historylist.isEmpty()) continue;
+			  foreach(History his, historylist)
+			  {
+			    foreach(History::Message message, his.messages() )
+			    {
 				QString textLine;
-				while(!stream.atEnd())
-				{
-					textLine = stream.readLine();
+				textLine = message.text();
+				
 					if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
 					{
-						if(rx.indexIn(textLine) != -1)
-						{
-							// only match message body
-							if (rx.cap(2).contains(mMainWidget->searchLine->text()))
-								matches[QDate(curItem->date().year(),curItem->date().month(),rx.cap(1).toInt())].push_back(curItem->metaContact());
-						}
-						// this will happen when multiline messages are searched, properly
-						// parsing the files would fix this
-						else { }
+					  matches[QDate(curItem->date().year(), curItem->date().month(),message.timestamp().date().day())].push_back(curItem->metaContact());
 					}
 					qApp->processEvents();
 					if (!mSearching) return;
 				}
-				file.close();
+			  }
 			}
 		}
 

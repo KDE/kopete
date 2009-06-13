@@ -207,7 +207,7 @@ History HistoryLogger::getHistory(const Kopete::Contact *contact, const QDate da
             *contain=false;
         return History();
     }
-    kDebug()<<"**just before getfilename in getdoc2";
+    kDebug()<<"**just before getfilename in gethistory2";
 ///////////////////////////////////////////////
 //    QString FileName = getFileName(c, date);
 //    QByteArray FileNameFlag;
@@ -1089,11 +1089,76 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
     return dayList;
 }
 
-QString HistoryLogger::getFileName(const Kopete::Contact* c, QDate date)
+QList<History> HistoryLogger::getHistorylist(const Kopete::Contact* c, QDate date)
 {
-  QString a;
-  return a;
+  QList<History> listHistory;
+
+  Akonadi::Collection coll,collcontact;
+      Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
+      if ( job->exec()  )
+      {
+	  qDebug()<<" collection fetch job for root ececuted";
+	  Akonadi::Collection::List collections = job->collections();
+	  foreach( const Akonadi::Collection &collection, collections )
+	  {
+	      if ( collection.name() == "kopeteChat" )
+	      {
+                coll = collection;
+	      }
+	  }
+      } else qDebug() << "collection fetch job not executed";
+
+    bool collfound= false;
+  
+      //fetch the collection which belongs to my contact
+      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( coll , Akonadi::CollectionFetchJob::FirstLevel );
+      if ( job2->exec()  )
+      {
+	  Akonadi::Collection::List collections = job2->collections();
+	  foreach( const Akonadi::Collection &collection, collections )
+	  {
+	      if ( collection.name() == c->contactId() )
+	      {
+		  collfound = true;
+		  collcontact = collection;
+		  kDebug() << " collection for this contact already exists";
+		  break;
+	      }
+	  }
+      } else qDebug() << "collection fetch job not executed";  
+
+  if(collfound= true)
+  {
+    Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
+    itemjob->fetchScope().fetchFullPayload();
+    if ( itemjob->exec() )
+    {
+        Akonadi::Item::List items = itemjob->items();
+        if ( !items.isEmpty() )
+        {
+	    History history;
+            kDebug() << "item list is not empty";
+            foreach( const Akonadi::Item &item, items )
+            {
+	      if (item.hasPayload<History>() )
+	      {
+		     history = item.payload< History >();
+	      }
+	      listHistory.append(history);
+	    }
+	}
+        else
+        {
+            kDebug() << " item list empty. ";
+	}
+    }
+    else kDebug() << "item fetch job failed";
+  } kDebug() <<"collection not found";
+  
+  return listHistory;
+
 }
+
 
 
 

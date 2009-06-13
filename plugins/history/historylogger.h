@@ -128,7 +128,9 @@ public:
 	 * contact in the specified @param date. Specify @param date in order to get the filename for
 	 * the given date.year() date.month().
 	 */
-	static QString getFileName(const Kopete::Contact* , QDate date);
+//	static QString getFileName(const Kopete::Contact* , QDate date);
+
+	static QList<History> getHistorylist(const Kopete::Contact* , const QDate date);
 
 private:
 	bool m_hideOutgoing;
@@ -215,14 +217,6 @@ private:
 	 */
 	int m_realMonth;
 
-	/*
-	 * FIXME:
-	 * WORKAROUND
-	 * due to a bug in QT, i have to keep the document element in the memory to
-	 * prevent crashes
-	 */
-	// @roide i dont think i need this worksaround
-//	QList<History::Message> workaround;
 
 private slots:
 	/**
