@@ -203,6 +203,13 @@ private slots:
 	 */
 	void unregisterAccount( const Kopete::Account *account );
 
+	void removeAccountConnectedChanged();
+
+	/**
+	 * Remove account and its contacts.
+	 */
+	void removeAccountInternal();
+
 private:
 	bool isAnyAccountConnected() const;
 	static AccountManager *s_self;
