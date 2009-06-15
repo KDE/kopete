@@ -307,6 +307,9 @@ void ContactList::addGroup( Group * g )
 
 void ContactList::removeGroup( Group *g )
 {
+	if ( g == Group::topLevel() )
+		return;
+
 	if ( d->selectedGroups.contains( g ) )
 	{
 		d->selectedGroups.removeAll( g );
