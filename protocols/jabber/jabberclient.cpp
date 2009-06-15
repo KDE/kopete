@@ -1101,7 +1101,7 @@ void JabberClient::slotCSConnected ()
 	Kopete::SocketTimeoutWatcher* timeoutWatcher = 0;
 
 	ByteStream *irisByteStream = d->jabberClientConnector->stream ();
-	if ( irisByteStream->abstractSocket () )
+	if ( irisByteStream && irisByteStream->abstractSocket () )
 		timeoutWatcher = Kopete::SocketTimeoutWatcher::watch ( irisByteStream->abstractSocket () );
 
 	if ( timeoutWatcher )
