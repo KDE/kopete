@@ -24,6 +24,7 @@
 #include <kdialog.h>
 #include <kurl.h>
 #include <Akonadi/Collection>
+#include "history.h"
 #include "kopetemessage.h"
 
 class QTreeWidgetItem;
@@ -63,6 +64,10 @@ class HistoryDialog : public KDialog
 	public:
 		explicit HistoryDialog(Kopete::MetaContact *mc, QWidget* parent=0);
 		~HistoryDialog();
+
+		
+		QList<History> getHistorylist(const Kopete::Contact* , const QDate date);
+		void mapContactCollection();
 
 		/**
 		 * Calls init(Kopete::Contact *c) for each subcontact of the metacontact

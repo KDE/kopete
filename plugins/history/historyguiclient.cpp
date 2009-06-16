@@ -1,3 +1,4 @@
+
 /*
     historyguiclient.cpp
 
@@ -41,7 +42,6 @@
 HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 		: QObject ( parent ), KXMLGUIClient ( parent )
 {
-	kDebug() << "\n\n\n\n\n\n***historyguiclient.cpp class constructor\n\n";
 	setComponentData ( KGenericFactory<HistoryPlugin>::componentData() );
 
 	m_manager = parent;
@@ -52,9 +52,7 @@ HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 
 	QList<Kopete::Contact*> mb=m_manager->members();
 
-	kDebug()<<"\n\n\njust before historyloggerdeeclatration in GUIclient";
 	m_logger=new HistoryLogger ( mb.first() , this );
-	kDebug()<<"\n\n\nafter historyloggerdeclarations GUI client";
 
 	actionLast = new KAction ( KIcon ( "go-last" ), i18n ( "Latest History" ), this );
 	actionCollection()->addAction ( "historyLast", actionLast );
@@ -92,7 +90,6 @@ HistoryGUIClient::~HistoryGUIClient()
 
 void HistoryGUIClient::slotPrevious()
 {
-	kDebug() << "\n\nHistoryGUIClient::slotPrevious() \n\n";
 	KopeteView *m_currentView = m_manager->view ( true );
 	m_currentView->clear();
 
@@ -110,7 +107,6 @@ void HistoryGUIClient::slotPrevious()
 
 void HistoryGUIClient::slotLast()
 {
-	kDebug() << "HistoryGUIClient::slotlast() \n\n";
 	KopeteView *m_currentView = m_manager->view ( true );
 	m_currentView->clear();
 
@@ -130,7 +126,6 @@ void HistoryGUIClient::slotLast()
 
 void HistoryGUIClient::slotNext()
 {
-	kDebug() << "\nHistoryGUIClient::slotnext() \n\n";
 	KopeteView *m_currentView = m_manager->view ( true );
 	m_currentView->clear();
 
@@ -148,7 +143,6 @@ void HistoryGUIClient::slotNext()
 
 void HistoryGUIClient::slotQuote()
 {
-	kDebug() << "HistoryGUIClient::slotquote() \n\n";
 	KopeteView *m_currentView = m_manager->view ( true );
 
 	if ( !m_currentView )
@@ -177,7 +171,6 @@ void HistoryGUIClient::slotViewHistory()
 	//Kopete::MetaContact *m = Kopete::ChatSessionManager::self()->activeView()->msgManager()->members().first()->metaContact();
 	
 	//The same as above but with some checking
-	kDebug() << "HistoryGUIClient::slotviewhistory() \n\n";
 	KopeteView *view= Kopete::ChatSessionManager::self()->activeView();
 	if (!view) {
 		kDebug()<<"Unable to Get Active View!";

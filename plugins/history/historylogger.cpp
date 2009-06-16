@@ -37,6 +37,7 @@
 #include <kstandarddirs.h>
 #include <ksavefile.h>
 #include <Akonadi/Collection>
+#include <KRandom>
 
 #include "kopeteglobal.h"
 #include "kopetecontact.h"
@@ -46,11 +47,10 @@
 #include "kopetechatsession.h"
 
 #include "historyconfig.h"
-#include <akonadi/collectionfetchjob.h>
+#include <Akonadi/CollectionFetchJob>
 
 bool messageTimestampLessThan(const Kopete::Message &m1, const Kopete::Message &m2)
 {
-    kDebug() << "\n\nHistorylogger.cpp messagetimestamplessthan \n\n";
     return m1.timestamp() < m2.timestamp();
 }
 
@@ -58,7 +58,6 @@ bool messageTimestampLessThan(const Kopete::Message &m1, const Kopete::Message &
 HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent )
         : QObject(parent)
 {
-    kDebug() << "\n\nHistorylogger.cpp constructor1 \n\n";
     m_hideOutgoing=false;
     m_filterCaseSensitive=Qt::CaseSensitive;
     m_filterRegExp=false;
@@ -70,6 +69,9 @@ HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent )
     m_cachedMonth=-1;
     m_oldSens=Default;
 
+    //calling a function that initializes the qmap between collection name and colletion
+    mapContactCollection();
+    
     //the contact may be destroyed, for example, if the contact changes its metacontact
     connect(m_metaContact , SIGNAL(destroyed(QObject *)) , this , SLOT(slotMCDeleted()));
 
@@ -80,7 +82,6 @@ HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent )
 HistoryLogger::HistoryLogger( Kopete::Contact *c,  QObject *parent )
         : QObject(parent)
 {
-    kDebug() << "***Historylogger.cpp constructor2 ( Kopete::Contact *c,  QObject *parent )\n\n";
     m_saveTimer=0L;
     m_saveTimerTime=0;
     m_cachedMonth=-1;
@@ -91,6 +92,9 @@ HistoryLogger::HistoryLogger( Kopete::Contact *c,  QObject *parent )
     m_filterCaseSensitive=Qt::CaseSensitive;
     m_filterRegExp=false;
 
+    //calling a function that initializes the qmap between collection name and colletion
+    mapContactCollection();
+    
     //the contact may be destroyed, for example, if the contact changes its metacontact
     connect(m_metaContact , SIGNAL(destroyed(QObject *)) , this , SLOT(slotMCDeleted()));
 
@@ -104,10 +108,42 @@ HistoryLogger::~HistoryLogger()
         modifyItem();
 }
 
+void HistoryLogger::mapContactCollection()
+{
+    if ( !m_baseCollection.isValid() )
+    {
+      kDebug() << "m_base collection is invalid so getting base collection";
+      Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
+      if ( job->exec()  )
+      {
+	  Akonadi::Collection::List collections = job->collections();
+	  foreach( const Akonadi::Collection collection, collections )
+	  {
+	      if ( collection.name() == "kopeteChat" )
+		m_baseCollection = collection;
+	  }
+      } else kDebug() << "collection fetch job not executed";
+    }else kDebug() << "root collection is lareadythere";
+  
+    if ( m_collectionMap.isEmpty() )
+    {
+      kDebug() <<"m_collection map is empty";
+      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( m_baseCollection , Akonadi::CollectionFetchJob::FirstLevel );
+      if ( job2->exec()  )
+      {
+	  Akonadi::Collection::List collections = job2->collections();
+	  foreach( const Akonadi::Collection collection, collections )
+	  {
+	    m_collectionMap.insert(collection.name() , collection);
+	    kDebug() <<collection.name();
+	  }
+      } else kDebug() << "collection fetch job not executed";
+    }
+    
+}
 
 void HistoryLogger::setPositionToLast()
 {
-    kDebug() << "***Historylogger.cpp setpositiontolast \n\n";
     setCurrentMonth(0);
     m_oldSens = AntiChronological;
     m_oldMonth=0;
@@ -117,7 +153,6 @@ void HistoryLogger::setPositionToLast()
 
 void HistoryLogger::setPositionToFirst()
 {
-    kDebug() << "Historylogger.cpp setposition to first \n\n";
     setCurrentMonth( getFirstMonth() );
     m_oldSens = Chronological;
     m_oldMonth=m_currentMonth;
@@ -127,7 +162,6 @@ void HistoryLogger::setPositionToFirst()
 
 void HistoryLogger::setCurrentMonth(int month)
 {
-    kDebug() << "***Historylogger.cpp setcurrentmonth \n\n";
     m_currentMonth = month;
     m_currentElements.clear();
 }
@@ -135,7 +169,6 @@ void HistoryLogger::setCurrentMonth(int month)
 
 History HistoryLogger::getHistory(const Kopete::Contact *c, unsigned int month , bool canLoad , bool* contain)
 {
-    kDebug() << "\n\n***Historylogger.cpp getdocument1 \n\n";
     if (m_realMonth!=QDate::currentDate().month())
     { //We changed month, our index is not correct anymore, clean memory.
         // or we will see what i called "the 31 midnight bug"(TM) :-)  -Olivier
@@ -165,7 +198,6 @@ History HistoryLogger::getHistory(const Kopete::Contact *c, unsigned int month ,
     QMap<unsigned int , History> monthHistory = m_history[c];
     if (monthHistory.contains(month))
     {
-        kDebug()<<"\n\n** returning documetns[month] which was no expected";
         return monthHistory[month];
     }
  
@@ -174,17 +206,15 @@ History HistoryLogger::getHistory(const Kopete::Contact *c, unsigned int month ,
     monthHistory.insert(month, his);
     m_history[c]=monthHistory;
 
-    kDebug()<<"\n\n***reached end of getHisotry1. now returning";
     return his;
 
 }
 
 History HistoryLogger::getHistory(const Kopete::Contact *contact, const QDate date , bool canLoad , bool* contain)
 {
-    kDebug() << "***Historylogger.cpp getdocument2 \n\n";
-    //"founditem" to check if the item for a contact exists or not.
-    bool founditem = false;
-
+    kDebug() << "GET HISTORY";
+    bool itemfound=false;
+        
     Kopete::Contact *c = const_cast<Kopete::Contact*>(contact);
     if (!m_metaContact)
     { //this may happen if the contact has been moved, and the MC deleted
@@ -207,129 +237,49 @@ History HistoryLogger::getHistory(const Kopete::Contact *contact, const QDate da
             *contain=false;
         return History();
     }
-    kDebug()<<"**just before getfilename in gethistory2";
-///////////////////////////////////////////////
-//    QString FileName = getFileName(c, date);
-//    QByteArray FileNameFlag;
-//    FileNameFlag.append(FileName);
 
-    Akonadi::Collection coll, collcontact;
-    //fetch my kopete base collection
-    //once they are fetched, and saved in, dont need to search again. 
-    //but this is search with every instance of chat, TODO i dont need to search for every instance.
-    if ( !m_baseCollection.isValid() )
+    if ( m_collectionMap.contains( c->contactId() ) )
     {
-      Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job->exec()  )
-      {
-	  qDebug()<<" collection fetch job for root ececuted";
-	  Akonadi::Collection::List collections = job->collections();
-	  foreach( const Akonadi::Collection &collection, collections )
-	  {
-	      if ( collection.name() == "kopeteChat" )
-	      {
-                coll = collection;
-		m_baseCollection = collection;
-	      }
-	  }
-      } else qDebug() << "collection fetch job not executed";
-    }else kDebug() << "root collection is lareadythere";
-
-    bool collfound= false;
-  
-    if ( m_tosaveInCollection.name() != c->contactId() )
-    {
-      //fetch the collection which belongs to my contact
-      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( coll , Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job2->exec()  )
-      {
-	  Akonadi::Collection::List collections = job2->collections();
-	  foreach( const Akonadi::Collection &collection, collections )
-	  {
-	      if ( collection.name() == c->contactId() )
-	      {
-		  collfound = true;
-		  collcontact = collection;
-		  m_tosaveInCollection= collcontact;
-		  kDebug() << " collection for this contact already exists";
-		  break;
-	      }
-	  }
-      } else qDebug() << "collection fetch job not executed";
-      //if collection for that contact dont exist ceate it
-      if ( !collfound )
-      {
-	  qDebug() << " collection doesnt exist. creating one";
-	  Akonadi::Collection collection;
-	  collection.setParent( coll );
-	  collection.setName( c->contactId() );
-  
-	  QStringList mimeTypes;
-	  mimeTypes  << "application/x-vnd.kde.kopetechathistory";
-	  collection.setContentMimeTypes( mimeTypes );
-
-
-	  Akonadi::CollectionCreateJob *jobcreatecoll = new Akonadi::CollectionCreateJob( collection  );
-	  if ( jobcreatecoll->exec() )
-	  {
-	      collcontact = jobcreatecoll->collection();
-	      m_tosaveInCollection = collcontact;
-	      kDebug() << "Created successfully";
-	  } else kDebug() << "Error occurred in making a collection ***";
-      }
-    } else kDebug() << "collection for contact is also there";
-
-    //fetch the item in that collection
-    //fetch the item which has lest modifitacion time
-    History history;
-    Akonadi::Item fileItem;
-    Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( m_tosaveInCollection );
-    itemjob->fetchScope().fetchFullPayload();
-    if ( itemjob->exec() )
-    {
-        Akonadi::Item::List items = itemjob->items();
-        if ( !items.isEmpty() )
-        {
-            kDebug() << "item list is not empty";
-            foreach( const Akonadi::Item &item, items )
-            {
-                if ( item.modificationTime().toString("MMyyyy")== date.toString("MMyyyy") )
-                {
-                    fileItem = item ;
-                    founditem=true;
-                    kDebug() << " found item with matching time";
-		    break;
-                }
-            }
-            m_tosaveInItem=fileItem;
-	    if (fileItem.hasPayload<History>() )
-	    {
-		     history = fileItem.payload< History >();
-	    }
-
-	}
-        else
-        {
-            kDebug() << " item list empty. item will be created while saving";
-            Akonadi::Item i;
-            m_tosaveInItem = i; //the item now point to a null collection
-
-        }
+      m_tosaveInCollection = m_collectionMap[c->contactId()];
+      kDebug() << "collection found in m_collection map";
     }
-    else qDebug() << "item fetch job failed";
+    else
+    {
+      kDebug() << " making m_tosave in collection null";
+      m_tosaveInCollection = Akonadi::Collection::Collection();
+    }
 
-    //TODO // this has been done above
-    //now we laready have an item in the collection.
-    //we check if the last modification time of item = current month,year.
-    //if not create a new item. Lets do that in saving. lets check it there.
-
-//    QDomDocument doc( "Kopete-History" );
+    History history;
+    Akonadi::Item itemx;
+    if( m_tosaveInCollection.isValid() )
+    {
+      kDebug() <<"m_tosave in collection is valid";
+      Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( m_tosaveInCollection );
+      itemjob->fetchScope().fetchFullPayload();
+      if ( itemjob->exec() )
+      {
+	Akonadi::Item::List items = itemjob->items();
+	foreach( const Akonadi::Item &item, items )
+	{
+	  if ( item.modificationTime().toString("MMyyyy")== date.toString("MMyyyy") )
+	  {
+	      itemx = item ;
+	      itemfound=true;
+	      kDebug() << " found item with matching time";
+	      break;
+	    }
+	  }
+	  m_tosaveInItem=itemx;
+	  
+	  if (itemx.hasPayload<History>() )
+	    history = itemx.payload< History >();
+	}
+	else kDebug() << " item fetch job failed";
+      }  else kDebug() << "invalid collection, so no item ";  
       
-      
-    if ( founditem )
+    if ( itemfound )
     {
         kDebug() << "item has been found";
-
         if ( !m_tosaveInItem.hasPayload() )
         {
             if (contain)
@@ -337,14 +287,18 @@ History HistoryLogger::getHistory(const Kopete::Contact *contact, const QDate da
             return history;
         }
     }
-    kDebug() << " leaving function getDocment";
-    return history;
+    else 
+    {
+      kDebug() << " since item was not found, making m_tosave in item null";
+      m_tosaveInItem = Akonadi::Item::Item(); //the item now point to a null collection
+    }
+
+  return history;
 }
 
 
 void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Contact *ct )
 {
-    kDebug() << "\n\n\n***Historylogger.cpp appendmessage \n\n";
     if (!msg.from())
         return;
 
@@ -389,12 +343,10 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
     }
 
      QDate date = msg.timestamp().date();
-
-//    QDomDocument doc=getDocument(c, QDate::currentDate().month() - date.month() - (QDate::currentDate().year() - date.year()) * 12);
       
      History history = getHistory(c, QDate::currentDate().month() - date.month() - (QDate::currentDate().year() - date.year()) * 12);
   
-     kDebug()<<"\n*nothin important**\n the date part="<<(QDate::currentDate().month() - date.month() - (QDate::currentDate().year() - date.year()) * 12);
+//     kDebug()<<"\n*nothin important**\n the date part="<<(QDate::currentDate().month() - date.month() - (QDate::currentDate().year() - date.year()) * 12);
 
      if ( !history.date().isValid() ) 
        history.setDate(QDate::currentDate());
@@ -415,11 +367,11 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
      monthHistory.insert(QDate::currentDate().month() - history.date().month() - (QDate::currentDate().year() - history.date().year()) * 12, history);
      m_history[c]=monthHistory;
      
-     QBuffer buff;
-     buff.open(QBuffer::ReadWrite);
-     HistoryXmlIo::writeHistoryToXml(history,&buff);
-     kDebug()<<buff.data();
-     buff.close();
+//     QBuffer buff;
+//     buff.open(QBuffer::ReadWrite);
+//     HistoryXmlIo::writeHistoryToXml(history,&buff);
+//     kDebug()<<buff.data();
+//     buff.close();
 
       // I'm temporizing the save.
       // On hight-traffic channel, saving can take lots of CPU. (because the file is big)
@@ -436,9 +388,6 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
         kDebug()<<" ***\n\n\nof contact change or month change called:";
 	modifyItem();
      }
-//    modifyItem();
-//    m_toSaveFileName=filename;
-//    m_toSaveDocument=doc;
   
      m_toSaveHistory=history;
 
@@ -456,88 +405,124 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 
 void HistoryLogger::modifyItem()
 {
-    kDebug() << "***Historylogger.cpp smodifyItem \n\n";
+    kDebug() << "***Historylogger.cpp MODIFY ITEM()";
 
     bool itemOnlyModify=true;
 //    bool itemCreate = false;
 
     if (m_saveTimer)
         m_saveTimer->stop();
-//    if ( m_toSaveDocument.isNull() ) {;}
-      //  return;
-
     QTime t;
     t.start(); //mesure the time needed to save.
 
-    //entering here means the item is not existing, so createone.
-    if (!m_tosaveInItem.isValid() )
+    kDebug() << m_baseCollection.remoteId();
+    
+    //Create a new collection, as well as new item.
+    if( !m_tosaveInCollection.isValid() || m_tosaveInItem.modificationTime().date().toString("MMyyyy") != QDateTime::currentDateTime().date().toString("MMyyyy")  )
     {
-	kDebug() << " tosave in item is invalid";
-        Akonadi::Item itemToCreate;
-        itemToCreate.setMimeType("application/x-vnd.kde.kopetechathistory" );
+      itemOnlyModify=false;
+      if (!m_tosaveInCollection.isValid() )
+      {
+	  kDebug() << " collection doesnt exist. creating one";
+	  Akonadi::Collection collection;
+	  collection.setParent( m_baseCollection );
+	  collection.setName( m_toSaveHistory.remoteContactId() ); 
+	  QStringList mimeTypes;
+	  mimeTypes  << "application/x-vnd.kde.kopetechathistory"<< "inode/directory";;
+	  collection.setContentMimeTypes( mimeTypes );
+	  
+	  Akonadi::CollectionCreateJob *jobcreatecoll = new Akonadi::CollectionCreateJob( collection  );
+	  if ( jobcreatecoll->exec() )
+	  {
+	      m_tosaveInCollection = jobcreatecoll->collection();
+	      m_collectionMap.insert(m_tosaveInCollection.name() , m_tosaveInCollection);
+	      kDebug() << "\n\n**collection Created successfully YOU NEVER KNOW";
+	    
+	  } else kDebug() << "**Error occurred in making a collection ***";
+      }
+      
+      if ( m_tosaveInItem.modificationTime().date().toString("MMyyyy") != QDateTime::currentDateTime().date().toString("MMyyyy") )
+	kDebug() <<"date time problem";
+	  //entering here means the item is not existing, so create one
+	  kDebug() << " before creating item";
+	  if (!m_tosaveInCollection.isValid() ) kDebug() << "m_tosave in colllecion is invalid";
+	  
+//	  Akonadi::Item itemToCreate;
+	  m_tosaveInItem.setMimeType("application/x-vnd.kde.kopetechathistory" );
+	  m_tosaveInItem.setModificationTime(QDateTime::currentDateTime());
+	  m_tosaveInItem.setPayload<History>(m_toSaveHistory);
 
-        Akonadi::ItemCreateJob *createitem = new Akonadi::ItemCreateJob( itemToCreate, m_tosaveInCollection);
-        if ( createitem->exec() )
-        {
-            m_tosaveInItem = createitem->item();
-            m_tosaveInItem.setModificationTime(QDateTime::currentDateTime());
-            m_tosaveInItem.setPayload<History>(m_toSaveHistory);
-            Akonadi::ItemModifyJob *modifyjob = new Akonadi::ItemModifyJob(m_tosaveInItem);
-            if ( modifyjob->exec() )
-            {
-                qDebug() << "Item modified successfully";
-                itemOnlyModify=false;
+	  Akonadi::ItemCreateJob *createitem = new Akonadi::ItemCreateJob( m_tosaveInItem, m_tosaveInCollection);  
+	  if ( createitem->exec() )
+	  {
+		kDebug() <<"new collection remote id2 ="<<m_tosaveInCollection.remoteId();
+		m_tosaveInItem = createitem->item();	      
+
+		kDebug() << "Item modiCREATED successfully--or in progresss";
                 m_saveTimerTime=qMin(t.elapsed()*1000, 300000);
-                kDebug(14310) << m_tosaveInCollection.name() << " saved in " << t.elapsed() << " ms ";
-            } else kDebug() << " failed";
-	} else kDebug() << " failed in creating a new item";
+                kDebug(14310) << m_tosaveInCollection.name() << " saved in " << t.elapsed() << " ms "<<"\n"<<m_tosaveInItem.remoteId();;
+
+	  } else kDebug() << " failed in creating a new item";
+	  
+	  Akonadi::ItemFetchJob *itemfetchJob2 = new Akonadi::ItemFetchJob( m_tosaveInItem) ;
+	  itemfetchJob2->fetchScope().fetchFullPayload();
+	  
+	  if( itemfetchJob2->exec() )
+	  {
+	    kDebug() << "item has been created, now fetching";
+	    m_tosaveInItem = itemfetchJob2->items().first();
+	  }
+	  else kDebug() <<"fetch here failes";
+	  kDebug() << m_tosaveInItem.modificationTime();
     }
 
     //enter here if u needtomify item is true, and change in month.
-    if ( itemOnlyModify && m_tosaveInItem.modificationTime().date().toString("MMyyyy") != QDateTime::currentDateTime().date().toString("MMyyyy") )
+/*    if ( itemOnlyModify && m_tosaveInItem.modificationTime().date().toString("MMyyyy") != QDateTime::currentDateTime().date().toString("MMyyyy") )
     {
+	if (!m_tosaveInItem.isValid() ) kDebug() <<"m_tosace in item is invalid";
+	  else kDebug() <<"m_to savin item is valid";
+	  
         itemOnlyModify=false;
         kDebug() << "item date="<<m_tosaveInItem.modificationTime().date().toString("MMyyyy");
         kDebug() << "curent date= " << QDateTime::currentDateTime().date().toString("MMyyyy");
-        kDebug() << " date time problem for item creating one";
+        kDebug() << " date time difference for item creating one";
         Akonadi::Item itemnew;
         itemnew.setMimeType("application/x-vnd.kde.kopetechathistory") ;
         Akonadi::ItemCreateJob *createItem = new Akonadi::ItemCreateJob(itemnew, m_tosaveInCollection);
         if ( createItem->exec() )
         {
-            qDebug() << " since datetime problem creating new item";
+            qDebug() << " since datetime difference creating new item";
             m_tosaveInItem = createItem->item();
             m_tosaveInItem.setModificationTime(QDateTime::currentDateTime());
             m_tosaveInItem.setPayload<History>(m_toSaveHistory);
-
-            Akonadi::ItemModifyJob *modifyjob = new Akonadi::ItemModifyJob(m_tosaveInItem);
-            if ( modifyjob->exec() )
-            {
-                qDebug() << "Item modified successfully";
-                m_saveTimerTime=qMin(t.elapsed()*1000, 300000);
-                kDebug(14310) << m_tosaveInCollection.name() << " saved in " << t.elapsed() << " ms ";
-            } else kDebug() << " failed";
+            qDebug() << "Item modified successfully";
+            m_saveTimerTime=qMin(t.elapsed()*1000, 300000);
+            kDebug(14310) << m_tosaveInCollection.name() << " saved in " << t.elapsed() << " ms ";
 
         } else kDebug() << "create item in modification time failed";
     }
-
+*/
     //enters here if u have not created newitem, no change in month. so item only modify it true.
     if ( itemOnlyModify)
     {
+          if( !m_tosaveInItem.isValid() ) kDebug() << "m_tosave in item is invalid";
+	  else kDebug() << " m_tosave in item is valid";
+
         Akonadi::ItemFetchJob *fetchjob = new Akonadi::ItemFetchJob(m_tosaveInItem);
         fetchjob->fetchScope().fetchFullPayload();
         if ( fetchjob->exec() )
         {
             Akonadi::Item itemx = fetchjob->items().first();
+	    
+	    if( !itemx.isValid() ) kDebug() <<"itemx is invalid";
+	    else kDebug() << " itemx is valid processin--fetch job";
 
             itemx.setPayload< History>(m_toSaveHistory);
             itemx.setModificationTime( QDateTime::currentDateTime() );
-//      if ( !item.hasFlag ( m_toSaveFileNameFlag ) ) item.setFlag( m_toSaveFileNameFlag );
-            // Store back modified item
             Akonadi::ItemModifyJob *modifyJob = new Akonadi::ItemModifyJob( itemx );
             if ( modifyJob->exec() )
             {
-                qDebug() << "Item modified successfully";
+                kDebug() << " preocsssing--Item modify successfully";
                 m_saveTimerTime=qMin(t.elapsed()*1000, 300000);
                 //a time 1000 times supperior to the time needed to save.  but with a upper limit of 5 minutes
                 //on a my machine, (2.4Ghz, but old HD) it should take about 10 ms to save the file.
@@ -547,13 +532,11 @@ void HistoryLogger::modifyItem()
 
             }
             else
-                qDebug() << "Error occurred in modification during saving to akonadi";
+                kDebug() << "ERROR item modify job--inside fetch job";
         }
-        else kDebug() << "in save item fetch failing";
+        else kDebug() << "fet job not executed";
 
     }
-//    m_toSaveFileName.clear();
-//    m_toSaveDocument=QDomDocument();
     m_toSaveHistory = History::History();
 }
 
@@ -561,7 +544,6 @@ void HistoryLogger::modifyItem()
 //this function has been used in history dialog, to show messages by date.
 QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 {
-    kDebug() << "\n\nHistorylogger.cpp readMessages(QDate) \n\n";
     QRegExp rxTime("(\\d+) (\\d+):(\\d+)($|:)(\\d*)"); //(with a 0.7.x compatibility)
     QList<Kopete::Message> messages;
     QList<Kopete::Contact*> ct=m_metaContact->contacts();
@@ -679,20 +661,15 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
             { //we loop over each contact. we are searching the contact with the next message with the smallest date,
                 // it will becomes our current contact, and the contact with the mext message with the second smallest
                 // date, this date will bocomes the limit.
-                kDebug() << "for each loop in action";
-
 		History his;
                 if (m_currentElements.contains(contact))
                     his=m_currentElements[contact];
                 else  //there is not yet "next message" register, so we will take the first  (for the current month)
                 {
-                    kDebug() << "calling getDocument c,date";
                     his=getHistory(contact,m_currentMonth);
-                    kDebug() <<"else part";
                 }
                 if ( !his.messages().isEmpty() )
                 {
-                    kDebug() << " !his.messages.empty ";
 		    rxTime.indexIn( ((sens== Chronological)? his.messages().first().timestamp().toString("d h:m:s") 
 							     : his.messages().last().timestamp().toString("d h:m:s")) );
 		    QDate d=QDate::currentDate().addMonths(0-m_currentMonth);
@@ -715,40 +692,30 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
         }
         else  //we don't have to merge the history. just take the next item in the contact
         {
-            kDebug() << "entered else part as expected";
             if (m_currentElements.contains(currentContact)) //TODO need to take a look in this if
                 history=m_currentElements[currentContact];
             else
             {
-                kDebug() << "m_current element dosent contain the currentcontact";
-		kDebug() << " executing getHisotry";
 		History his=getHistory(currentContact,m_currentMonth);
 		index =0;
                 if ( !his.messages().isEmpty())
 		{
-		  kDebug() << " his.messages is not empty,inserting into current elements";
 		  m_currentElements[currentContact]=his;
 		  history=his;
 		}
-		else kDebug() << "count==1, !his.message.empty";
-		
-		kDebug() << " exitinf else part";
             }
-	    kDebug() <<" end of else part";
         }
 	
-	kDebug()  <<" hellllllllllllll";
-//this is the point where the esearch is over, no we feed onto our search
-//TODO will do this later. not required at the moment.
-//we don't find ANY messages in any contact for this month. so we change the month
-        kDebug() << "before change month index ="<<index;
+
+    //we don't find ANY messages in any contact for this month. so we change the month
+//        kDebug() << "before change month index ="<<index;
         if (history.messages().isEmpty() || index >= history.messages().count() || index < 0) 
 	{   if (index <0 ) kDebug() <<"inside  change month, index <0";
             if (sens==Chronological)
             {	kDebug() << "m_currentmonth="<<m_currentMonth;
                 if (m_currentMonth <= 0)
 		{
-                    kDebug() <<"chrono his.messages.isempty current month="<<m_currentMonth;
+  //                  kDebug() <<"chrono his.messages.isempty current month="<<m_currentMonth;
 		    break;
 		}
 		setCurrentMonth(m_currentMonth-1);
@@ -758,39 +725,37 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
             {
                 if (m_currentMonth >= getFirstMonth(c))
                 {
-		  kDebug() << "m_current month="<<m_currentMonth << " getfirstmonth="<<getFirstMonth(c)<<"breaking";
+//		  kDebug() << "m_current month="<<m_currentMonth << " getfirstmonth="<<getFirstMonth(c)<<"breaking";
                     break; //we don't have any other messages to show
                 }
-                kDebug() <<"inchrono else currntmonth="<<m_currentMonth;
+//                kDebug() <<"inchrono else currntmonth="<<m_currentMonth;
 		setCurrentMonth(m_currentMonth+1);
 		
             }
-            kDebug()<<" continuing form the top";
+//            kDebug()<<" continuing form the top";
 	    continue; //begin the loop from the bottom, and find currentContact and timeLimit again
 	    
         }
 
 
 //this is another border line. //in place of !msgElem.isnull() 
-      kDebug() << "\n\n****before foreach loop timestamp="<<timestamp <<"timelimit="<<timeLimit;
-      kDebug() <<"reverse order="<<reverseOrder;
-      kDebug() << " sens="<<Chronological;
-      kDebug() <<history.messages().count();
-//      reverseOrder = !reverseOrder;
+//      kDebug() << "\n\n****before foreach loop timestamp="<<timestamp <<"timelimit="<<timeLimit;
+//      kDebug() <<"reverse order="<<reverseOrder;
+//      kDebug() << " sens="<<Chronological;
+//      kDebug() <<history.messages().count();
+
       History::Message msgElem;
       kDebug() << "index="<<index;
       
       if  (index == 0 )
 	(sens!=Chronological)? index = history.messages().count() -1 : index=0 ;
       
-      for ( index ;
+      for ( ;
 	  (sens==Chronological)? index>=0: index < history.messages().count()  ;
 	  (sens=Chronological)? index-- : index++ 
 	  )
       {
-	kDebug()<<" entered for each loop index=="<< index;
 	msgElem = history.messages().at(index);
-	kDebug() << " before if";
 	if ( !(messages.count() < lines) ) break;
 	
         if (
@@ -804,7 +769,6 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
             // if there are no more messages for this contact, or if we reached
             // the timeLimit msgElem is the next message, still not parsed, so
             // we parse it now
-            kDebug() << " entered if part";
 
             Kopete::Message::MessageDirection dir = (msgElem.in() == "1") ?
                                                     Kopete::Message::Inbound : Kopete::Message::Outbound;
@@ -827,7 +791,6 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
                     rxTime.indexIn(msgElem.timestamp().toString("d h:m:s"));
                     QDate d=QDate::currentDate().addMonths(0-m_currentMonth);
                     timestamp=QDateTime( QDate(d.year() , d.month() , rxTime.cap(1).toUInt()), QTime( rxTime.cap(2).toUInt() , rxTime.cap(3).toUInt() , rxTime.cap(5).toUInt() ) );
-		    kDebug() << "timestamp of message="<<timestamp;
 		   
                     Kopete::Message msg(from, to);
                     msg.setTimestamp( timestamp );
@@ -887,64 +850,30 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 
     bool collfound=false;
     Akonadi::Collection coll,collcontact;
-    if ( !m_baseCollection.isValid() )
-    {
-      Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job->exec()  )
-      {
-	  qDebug()<<" collection fetch job for root ececuted";
-	  Akonadi::Collection::List collections = job->collections();
-	  foreach( const Akonadi::Collection &collection, collections )
-	  {
-	      if ( collection.name() == "kopeteChat" )
-	      {
-                coll = collection;
-		m_baseCollection = collection;
-	      }
-	  }
-      } else qDebug() << "collection fetch job not executed";
-    }else kDebug() << "root collection is lareadythere";
-  
-    if ( m_tosaveInCollection.name() != c->contactId() || !m_tosaveInCollection.isValid())
-    {
-      //fetch the collection which belongs to my contact
-      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( coll , Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job2->exec()  )
-      {
-	  Akonadi::Collection::List collections = job2->collections();
-	  foreach( const Akonadi::Collection &collection, collections )
-	  {
-	      if ( collection.name() == c->contactId() )
-	      {
-		  collfound = true;
-		  collcontact = collection;
-		  m_tosaveInCollection= collcontact;
-		  kDebug() << " collection for this contact already exists";
-		  break;
-	      }
-	  }
-      } else kDebug() << "collection fetch job not executed";
-    } else kDebug() << "m_tosaveincollection name error/already exists collectioname="<< m_tosaveInCollection.name();
 
-    if (m_tosaveInCollection.name() == c->contactId() ) collfound = true;
-    
-  if (collfound)
-  {
-    Akonadi::Item itemx;
-    Akonadi::ItemFetchJob *job2 = new Akonadi::ItemFetchJob( m_tosaveInCollection );
-    if ( job2->exec() )
+    if (m_collectionMap.contains(c->contactId()) ) 
     {
-        kDebug() << " in get month. job2 executed to to calculate resule";
-        Akonadi::Item::List items = job2->items();
-        if ( items.isEmpty() )
-            return 0;
-        itemx=items.first();
-        foreach( const Akonadi::Item &item, items )
-        {
-            if ( item.modificationTime() <= itemx.modificationTime() )
-                itemx=item;
-        }
-        int result = 12*(QDate::currentDate().year() - itemx.modificationTime().date().year()) + QDate::currentDate().month() - itemx.modificationTime().date().month();
+      collfound = true;
+      m_tosaveInCollection=m_collectionMap[c->contactId()];
+    }
+    
+    if (collfound)
+    {
+      Akonadi::Item itemx;
+      Akonadi::ItemFetchJob *job2 = new Akonadi::ItemFetchJob( m_tosaveInCollection );
+      if ( job2->exec() )
+      {
+	kDebug() << " in get month. job2 executed to to calculate resule";
+	Akonadi::Item::List items = job2->items();
+	if ( items.isEmpty() )
+	  return 0;
+	itemx=items.first();
+	foreach( const Akonadi::Item &item, items )
+	{
+	  if ( item.modificationTime() <= itemx.modificationTime() )
+	    itemx=item;
+	}
+	int result = 12*(QDate::currentDate().year() - itemx.modificationTime().date().year()) + QDate::currentDate().month() - itemx.modificationTime().date().month();
         if (result < 0)
         {
             kWarning(14310) << "Kopete only found log file made in the future. Check your date!";
@@ -952,7 +881,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
         }
         kDebug() << " returning result ="<<result;;
         return result;
-    } else kDebug() << "item fetch job failed";
+      } else kDebug() << "item fetch job failed";
   }
     return 0;
 }
@@ -1020,27 +949,9 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
     QList<Kopete::Contact*> contacts = m_metaContact->contacts();
 
     int lastDay=0;
-    if ( !m_baseCollection.isValid() )
-    {
-        kDebug() << " invalid base collection lets find the valid one";
-        Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
-        if ( job->exec()  )
-        {
-            qDebug()<<" collection fetch job for root ececuted";
-            Akonadi::Collection::List collections = job->collections();
-            foreach( const Akonadi::Collection &collection, collections )
-            {
-                if ( collection.name() == "kopeteChat" )
-                    m_baseCollection = collection;
-            }
-        }
-        else qDebug() << "collection fetch job not executed";
-    }
-
+    
     foreach(Kopete::Contact *contact, contacts)
     {
-        if ( !m_baseCollection.isValid() ) kDebug() << "invalid base collection";
-
         Akonadi::CollectionFetchJob * collFetch = new Akonadi::CollectionFetchJob( m_baseCollection );
         if ( collFetch->exec() )
         {
@@ -1088,78 +999,5 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
     } //end of for reach conact loop
     return dayList;
 }
-
-QList<History> HistoryLogger::getHistorylist(const Kopete::Contact* c, QDate date)
-{
-  QList<History> listHistory;
-
-  Akonadi::Collection coll,collcontact;
-      Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job->exec()  )
-      {
-	  qDebug()<<" collection fetch job for root ececuted";
-	  Akonadi::Collection::List collections = job->collections();
-	  foreach( const Akonadi::Collection &collection, collections )
-	  {
-	      if ( collection.name() == "kopeteChat" )
-	      {
-                coll = collection;
-	      }
-	  }
-      } else qDebug() << "collection fetch job not executed";
-
-    bool collfound= false;
-  
-      //fetch the collection which belongs to my contact
-      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( coll , Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job2->exec()  )
-      {
-	  Akonadi::Collection::List collections = job2->collections();
-	  foreach( const Akonadi::Collection &collection, collections )
-	  {
-	      if ( collection.name() == c->contactId() )
-	      {
-		  collfound = true;
-		  collcontact = collection;
-		  kDebug() << " collection for this contact already exists";
-		  break;
-	      }
-	  }
-      } else qDebug() << "collection fetch job not executed";  
-
-  if(collfound== true)
-  {
-    Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
-    itemjob->fetchScope().fetchFullPayload();
-    if ( itemjob->exec() )
-    {
-        Akonadi::Item::List items = itemjob->items();
-        if ( !items.isEmpty() )
-        {
-	    History history;
-            kDebug() << "item list is not empty";
-            foreach( const Akonadi::Item &item, items )
-            {
-	      if (item.hasPayload<History>() )
-	      {
-		     history = item.payload< History >();
-	      }
-	      listHistory.append(history);
-	    }
-	}
-        else
-        {
-            kDebug() << " item list empty. ";
-	}
-    }
-    else kDebug() << "item fetch job failed";
-  } kDebug() <<"collection not found";
-  
-  return listHistory;
-
-}
-
-
-
 
 #include "historylogger.moc"

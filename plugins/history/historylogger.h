@@ -130,8 +130,6 @@ public:
 	 */
 //	static QString getFileName(const Kopete::Contact* , QDate date);
 
-	static QList<History> getHistorylist(const Kopete::Contact* , const QDate date);
-
 private:
 	bool m_hideOutgoing;
 	Qt::CaseSensitivity m_filterCaseSensitive;
@@ -155,6 +153,7 @@ private:
 	 */
 //	QMap<const Kopete::Contact*, QDomElement>  m_currentElements;
 	QMap<const Kopete::Contact*, History>  m_currentElements;
+	QMap<QString, Akonadi::Collection > m_collectionMap;
 
 	/**
 	 * Get the document, open it is @param canload is true, contain is set to false if the document
@@ -166,7 +165,8 @@ private:
 	History getHistory(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
 	History getHistory(const Kopete::Contact *c, const QDate date, bool canLoad=true, bool* contain=0L);
 
-	
+	//this function is called in constructor, and it initializes the values in the m_collectionMap.
+	void mapContactCollection();
 	
 	/**
 	 * look over files to get the last month for this contact

@@ -34,6 +34,7 @@
 #include <dom/html_element.h>
 #include <khtml_part.h>
 #include <khtmlview.h>
+#include <Akonadi/ItemFetchScope>
 
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
@@ -84,9 +85,7 @@ bool KListViewDateItem::operator<( const QTreeWidgetItem& other ) const
 HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
  : KDialog(parent),
    mSearching(false)
-{
-  kDebug() << " entered history dialog";
-  
+{ 
 	setAttribute (Qt::WA_DeleteOnClose, true);
 	setCaption( i18n("History for %1", mc->displayName()) );
 	setButtons(KDialog::Close);
@@ -95,6 +94,7 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	QString fontStyle;
 
 	kDebug(14310) << "called.";
+	mapContactCollection();
 
 
 	// FIXME: Allow to show this dialog for only one contact
@@ -191,10 +191,40 @@ HistoryDialog::~HistoryDialog()
 	delete mMainWidget;
 }
 
+void HistoryDialog::mapContactCollection()
+{
+    if ( !m_baseCollection.isValid() )
+    {
+      Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
+      if ( job->exec()  )
+      {
+	  Akonadi::Collection::List collections = job->collections();
+	  foreach( const Akonadi::Collection collection, collections )
+	  {
+	      if ( collection.name() == "kopeteChat" )
+		m_baseCollection = collection;
+	  }
+      } else kDebug() << "collection fetch job not executed";
+    }
+  
+    if ( m_collectionMap.isEmpty() )
+    {
+      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( m_baseCollection , Akonadi::CollectionFetchJob::FirstLevel );
+      if ( job2->exec()  )
+      {
+	  Akonadi::Collection::List collections = job2->collections();
+	  foreach( const Akonadi::Collection collection, collections )
+	  {
+	    m_collectionMap.insert(collection.name() , collection);
+	  }
+      } else kDebug() << "collection fetch job not executed";
+    }
+    
+}
+
+
 void HistoryDialog::init()
 {
-  kDebug() << " entered init()";
-  
 	if(mMetaContact)
 	{
 		init(mMetaContact);
@@ -213,25 +243,17 @@ void HistoryDialog::init()
 
 void HistoryDialog::slotLoadDays()
 {
-  kDebug() << "entered slot load days";
-  
 	if(mInit.dateMCList.isEmpty())
 	{
-	  kDebug() << " slotfordays if entered dateMCList is empty ";
 		if (!mMainWidget->searchLine->text().isEmpty())
 			QTimer::singleShot(0, this, SLOT(slotSearch()));
 		doneProgressBar();
 		kDebug() << " now returning";
 		return;
 	}
-	else kDebug() << " date mclistis not empty";
-	
-	kDebug() << " before dmpair";
 	
 	DMPair pair(mInit.dateMCList.first());
 	mInit.dateMCList.pop_front();
-	
-	kDebug() << " before historylogger hlog";
 
 	HistoryLogger hlog(pair.metaContact());
 
@@ -245,12 +267,10 @@ void HistoryDialog::slotLoadDays()
 
 	mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
 	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
-	kDebug() << " exiting slot load days";
 }
 
 void HistoryDialog::init(Kopete::MetaContact *mc)
 {
-  kDebug() << " entered init metacontact";
 	QList<Kopete::Contact*> contacts=mc->contacts();
 
 	foreach(Kopete::Contact *contact, contacts)
@@ -261,49 +281,14 @@ void HistoryDialog::init(Kopete::MetaContact *mc)
 
 void HistoryDialog::init(Kopete::Contact *c)
 {
-  kDebug() << " entered init contact";
+  bool collfound=false;
+  Akonadi::Collection coll,collcontact;
 
-      bool collfound=false;
-      Akonadi::Collection coll,collcontact;
-   if( !m_baseCollection.isValid() )
-   {
-      Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job->exec()  )
-      {
-	  qDebug()<<" collection fetch job for root ececuted";
-	  Akonadi::Collection::List collections = job->collections();
-	  foreach( const Akonadi::Collection &collection, collections )
-	  {
-	      if ( collection.name() == "kopeteChat" )
-	      {
-                coll = collection;
-		m_baseCollection=collection;
-	      }
-	  }
-      } else kDebug() << "collection fetch job not executed";
-   } else kDebug() <<"m_baseCollection is valid";
-
-   if (m_collectionMap.isEmpty() )
-   {
-     kDebug()<< " m_collection map is empty";
-      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( m_baseCollection , Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job2->exec()  )
-      {
-	  Akonadi::Collection::List collections = job2->collections();
-	  foreach( const Akonadi::Collection &collection, collections )
-	  {
-	      m_collectionMap.insert(collection.name() , collection );
-	  }
-      } else kDebug() << "collection fetch job not executed";
-   }
-      
-  if ( m_collectionMap.contains(c->contactId()) )
+  if( m_collectionMap.contains(c->contactId()) )
   {
-    kDebug()<<"m_collectio manp contains contact";
     collfound = true;
     collcontact = m_collectionMap[c->contactId()];
   }
-  
   if(collfound==true)
   {
     Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
@@ -312,7 +297,6 @@ void HistoryDialog::init(Kopete::Contact *c)
         Akonadi::Item::List items = itemjob->items();
         if ( !items.isEmpty() )
         {
-            kDebug() << "item list is not empty";
             foreach( const Akonadi::Item &item, items )
             {
 	      QDate cDate = QDate(item.modificationTime().date().year(),item.modificationTime().date().month(), 1);
@@ -321,8 +305,6 @@ void HistoryDialog::init(Kopete::Contact *c)
 	      kDebug() <<"cDate="<<cDate;
             }
 	}
-        else
-	  kDebug() << " item list empty.";
     }
     else kDebug() << "item fetch job failed";
   }
@@ -331,8 +313,6 @@ void HistoryDialog::init(Kopete::Contact *c)
 
 void HistoryDialog::dateSelected(QTreeWidgetItem* it)
 {
-  kDebug() <<" entered date selected";
-  
 	kDebug(14310) ;
 
 	KListViewDateItem *item = static_cast<KListViewDateItem*>(it);
@@ -346,8 +326,6 @@ void HistoryDialog::dateSelected(QTreeWidgetItem* it)
 
 void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 {
-  kDebug() << " entered set messages";
-  
 	kDebug(14310) ;
 
 	// Clear View
@@ -429,15 +407,11 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 
 void HistoryDialog::slotFilterChanged(int /*index*/)
 {
-  kDebug() << " entered slot filterchanged";
-  
 	dateSelected(mMainWidget->dateTreeWidget->currentItem());
 }
 
 void HistoryDialog::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {
-  kDebug() << " entered slot openUrlRequestDelayed";
-  
 	kDebug(14310) << "url=" << url.url();
 	new KRun(url, 0, false); // false = non-local files
 }
@@ -466,6 +440,50 @@ void HistoryDialog::treeWidgetHideElements(bool s)
 			item->setHidden(s);
 	}
 }
+
+
+
+
+
+QList<History> HistoryDialog::getHistorylist(const Kopete::Contact* c, QDate date)
+{
+  kDebug() <<"entered get historylist";
+  QList<History> listHistory;
+
+  Akonadi::Collection collcontact;
+  bool collfound= false;
+  if (m_collectionMap.isEmpty()) kDebug()<<"m_collectionmapis empty :(";
+  
+   if(m_collectionMap.contains(c->contactId()) )
+   {
+     collfound=true;
+     collcontact = m_collectionMap[c->contactId()] ;
+   }
+   
+   if(collfound== true)
+   {
+     Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
+     itemjob->fetchScope().fetchFullPayload();
+     if ( itemjob->exec() )
+     {
+        Akonadi::Item::List items = itemjob->items();
+        if ( !items.isEmpty() )
+        {
+	    History history;
+            foreach( const Akonadi::Item &item, items )
+            {
+	      if (item.hasPayload<History>() )
+		     history = item.payload< History >();
+	      listHistory.append(history);
+	    }
+	} else kDebug() << " item list empty. ";
+     } else kDebug() << "item fetch job failed";
+   } else kDebug() <<"collection not found";
+  
+  return listHistory;
+
+}
+
 
 /*
 * How does the search work
@@ -519,7 +537,7 @@ void HistoryDialog::slotSearch()
 			QList<Kopete::Contact*> contacts = curItem->metaContact()->contacts();
 			foreach(Kopete::Contact* contact, contacts)
 			{
-			  QList<History> historylist = HistoryLogger::getHistorylist(contact, curItem->date());
+			  QList<History> historylist = HistoryDialog::getHistorylist(contact, curItem->date());
 			  if (historylist.isEmpty()) continue;
 			  foreach(History his, historylist)
 			  {
@@ -558,8 +576,6 @@ searchFinished:
 // When a contact is selected in the combobox. Item 0 is All contacts.
 void HistoryDialog::slotContactChanged(int index)
 {
-  kDebug() << " slot contact cnaged";
-  
 	mMainWidget->dateTreeWidget->clear();
 	if (index == 0)
 	{
