@@ -99,7 +99,7 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
                      this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
         }
     }
-    kDebug()<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n****exiting KKKKKKKKKKKKKKKKKKK constructor\n\n\n";
+    kDebug()<<"\n****exiting KKKKKKKKKKKKKKKKKKK constructor\n\n\n";
 }
 
 
