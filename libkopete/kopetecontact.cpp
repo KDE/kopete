@@ -96,13 +96,14 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->idleTime = 0;
 	d->icon = icon;
 
+	bool duplicate = false;
 	// If can happend that a MetaContact may be used without a account
 	// (ex: for unit tests or chat window style preview)
 	if ( account )
 	{
 		// Don't register myself contacts because otherwise we can't have own contact in contact list.
 		if ( d->metaContact != Kopete::ContactList::self()->myself() )
-			account->registerContact( this );
+			duplicate = !account->registerContact( this );
 
 		connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
 	}
@@ -110,7 +111,10 @@ Contact::Contact( Account *account, const QString &contactId,
 	// Need to check this because myself() may have no parent
 	// Maybe too the metaContact doesn't have a valid protocol()
 	// (ex: for unit tests or chat window style preview)
-	if( parent && protocol() )
+
+	// if alreadyRegistered is true (which mean that this is duplicate contact) we will not add
+	// parent and the contact will die out on next Kopete restart.
+	if( !duplicate && parent && protocol() )
 	{
 		connect( parent, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );

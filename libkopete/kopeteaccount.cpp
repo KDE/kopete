@@ -241,19 +241,21 @@ bool Account::excludeConnect() const
 	return d->excludeconnect;
 }
 
-void Account::registerContact( Contact *c )
+bool Account::registerContact( Contact *c )
 {
 	Q_ASSERT ( c->metaContact() != Kopete::ContactList::self()->myself() );
 
 	if ( d->contacts.value( c->contactId() ) )
 	{
 		kWarning(14010) << "Contact already exists!!! accountId: " << c->account() << " contactId: " << c->contactId();
-		return;
+		return false;
 	}
 
 	d->contacts.insert( c->contactId(), c );
 	QObject::connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 		SLOT( contactDestroyed( Kopete::Contact * ) ) );
+
+	return true;
 }
 
 void Account::contactDestroyed( Contact *c )
