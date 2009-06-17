@@ -151,7 +151,8 @@ WlmProtocol::protocol ()
 
 bool WlmProtocol::validContactId (const QString& contactId)
 {
-    return( contactId.count("@") == 1 && contactId.count(".") >= 1 );
+    QRegExp rx("[^@\\s]+@([^@\\.\\s]+\\.)+[^@\\.\\s]+");
+    return ( rx.exactMatch( contactId ) );
 }
 
 #include "wlmprotocol.moc"

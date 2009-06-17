@@ -119,7 +119,7 @@ WlmEditAccountWidget::~WlmEditAccountWidget ()
 Kopete::Account * WlmEditAccountWidget::apply ()
 {
     if ( !account() )
-        setAccount( new WlmAccount( WlmProtocol::protocol (), m_preferencesWidget->m_passport->text () ) );
+        setAccount( new WlmAccount( WlmProtocol::protocol(), m_preferencesWidget->m_passport->text().trimmed() ) );
 
     KConfigGroup *config = account()->configGroup();
     WlmAccount* wlmAccount = static_cast<WlmAccount*>(account());
@@ -167,7 +167,7 @@ Kopete::Account * WlmEditAccountWidget::apply ()
 
 bool WlmEditAccountWidget::validateData ()
 {
-    QString contactId = m_preferencesWidget->m_passport->text();
+    QString contactId = m_preferencesWidget->m_passport->text().trimmed();
     if ( WlmProtocol::validContactId( contactId ) )
         return true;
 

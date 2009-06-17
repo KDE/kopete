@@ -46,14 +46,14 @@ WlmAddContactPage::~WlmAddContactPage ()
 bool
 WlmAddContactPage::apply (Kopete::Account *account, Kopete::MetaContact * metaContact)
 {
-   QString contactId = m_wlmAddUI->m_uniqueName->text();
+   QString contactId = m_wlmAddUI->m_uniqueName->text().trimmed();
    return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
 }
 
 bool
 WlmAddContactPage::validateData ()
 {
-    QString contactId = m_wlmAddUI->m_uniqueName->text();
+    QString contactId = m_wlmAddUI->m_uniqueName->text().trimmed();
     if (WlmProtocol::validContactId(contactId))
         return true;
 
