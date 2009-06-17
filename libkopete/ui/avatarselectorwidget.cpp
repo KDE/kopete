@@ -193,7 +193,8 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 
 		Kopete::AvatarManager::AvatarEntry newEntry;
 		// Remove extension from filename
-		newEntry.name = imageName.left( imageName.lastIndexOf('.') );
+		const int extIndex = imageName.lastIndexOf('.');
+		newEntry.name = ( extIndex > 0 ) ? imageName.left( extIndex ) : imageName;
 		newEntry.image = avatar;
 		newEntry.category = Kopete::AvatarManager::User;
 
