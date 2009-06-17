@@ -16,12 +16,7 @@
 
 include (FindLibraryWithDebug)
 
-if (LIBGADU_INCLUDE_DIR AND LIBGADU_LIBRARIES)
-
-    # in cache already
-    set (LIBGADU_FOUND TRUE)
-
-else (LIBGADU_INCLUDE_DIR AND LIBGADU_LIBRARIES)
+if (NOT LIBGADU_INCLUDE_DIR OR NOT LIBGADU_LIBRARIES)
 
     if (NOT WIN32)
 
@@ -68,5 +63,30 @@ else (LIBGADU_INCLUDE_DIR AND LIBGADU_LIBRARIES)
     find_package_handle_standard_args (LIBGADU DEFAULT_MSG LIBGADU_LIBRARIES LIBGADU_INCLUDE_DIR)
 
     mark_as_advanced (LIBGADU_INCLUDE_DIR LIBGADU_LIBRARIES)
+
+endif (NOT LIBGADU_INCLUDE_DIR OR NOT LIBGADU_LIBRARIES)
+    
+if (LIBGADU_INCLUDE_DIR AND LIBGADU_LIBRARIES)
+
+    if (NOT WIN32)
+
+        execute_process ( COMMAND grep "#define GG_CONFIG_HAVE_PTHREAD" ${LIBGADU_INCLUDE_DIR}/libgadu.h RESULT_VARIABLE LIBGADU_PTHREADS )
+    
+        if (${LIBGADU_PTHREADS} GREATER 0)
+
+            MESSAGE(STATUS "libgadu must be compiled with pthreads support")
+            set (LIBGADU_FOUND FALSE)
+
+        else (${LIBGADU_PTHREADS} GREATER 0)
+
+            set (LIBGADU_FOUND TRUE)
+
+        endif (${LIBGADU_PTHREADS} GREATER 0)
+
+    else (NOT WIN32)
+
+        set (LIBGADU_FOUND TRUE)
+
+    endif (NOT WIN32)
 
 endif (LIBGADU_INCLUDE_DIR AND LIBGADU_LIBRARIES)
