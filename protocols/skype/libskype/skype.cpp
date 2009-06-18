@@ -410,7 +410,7 @@ void Skype::skypeMessage(const QString &message) {
 				if ((d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).trimmed().toUpper() == "SAID") {
 					emit gotMessageId(messageId);
 				}
-			} else if (value == "SENT") {//Sendign out some message, that means it is a new one
+			} else if (value == "SENT") {//Sending out some message, that means it is a new one
 				if ((d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).trimmed().toUpper() == "SAID")//it is some message I'm interested in
 					emit gotMessageId(messageId);//Someone may be interested in its ID
 					if (d->recvMessages.indexOf(messageId) != d->recvMessages.lastIndexOf(QRegExp(messageId)))
@@ -429,7 +429,10 @@ void Skype::skypeMessage(const QString &message) {
 				QString Id = (*it).trimmed();
 				if (Id.isEmpty())
 					continue;
-				skypeMessage(QString("CHATMESSAGE %1 STATUS RECEIVED").arg(Id));//simulate incoming message notification
+				if ( (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(Id)).section(' ', 3, 3).trimmed().toUpper() == getMyself().toUpper() )
+					skypeMessage(QString("CHATMESSAGE %1 STATUS SENT").arg(Id));//this message is from current user, so it is outcomming
+				else
+					skypeMessage(QString("CHATMESSAGE %1 STATUS RECEIVED").arg(Id));//simulate incoming message notification
 			}
 		}
 	} else if (messageType == "CALL") {
@@ -601,7 +604,7 @@ void Skype::hitchHike(const QString &messageId) {
 
 	if ((chatType == "LEGACY_DIALOG") || (chatType == "DIALOG")) {
 
-		const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).trimmed();//ask skyp for a sender of that message and filter out the blouat around (like CHATMESSAGE 123...)
+		const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).trimmed();//ask skype for a sender of that message and filter out the blouat around (like CHATMESSAGE 123...)
 
 		if ((d->hitch) || (d->account.userHasChat(user))) {//it can be read eather if the hitchhiking non-chat messages is enabled or if the user already has opened a chat
 			emit receivedIM(user, (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3), messageId);//ask skype for the body and filter out the bload, we want only the text and make everyone aware that we received a message
