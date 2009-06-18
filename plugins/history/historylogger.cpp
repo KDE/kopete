@@ -476,32 +476,6 @@ void HistoryLogger::modifyItem()
 	  kDebug() << m_tosaveInItem.modificationTime();
     }
 
-    //enter here if u needtomify item is true, and change in month.
-/*    if ( itemOnlyModify && m_tosaveInItem.modificationTime().date().toString("MMyyyy") != QDateTime::currentDateTime().date().toString("MMyyyy") )
-    {
-	if (!m_tosaveInItem.isValid() ) kDebug() <<"m_tosace in item is invalid";
-	  else kDebug() <<"m_to savin item is valid";
-	  
-        itemOnlyModify=false;
-        kDebug() << "item date="<<m_tosaveInItem.modificationTime().date().toString("MMyyyy");
-        kDebug() << "curent date= " << QDateTime::currentDateTime().date().toString("MMyyyy");
-        kDebug() << " date time difference for item creating one";
-        Akonadi::Item itemnew;
-        itemnew.setMimeType("application/x-vnd.kde.kopetechathistory") ;
-        Akonadi::ItemCreateJob *createItem = new Akonadi::ItemCreateJob(itemnew, m_tosaveInCollection);
-        if ( createItem->exec() )
-        {
-            qDebug() << " since datetime difference creating new item";
-            m_tosaveInItem = createItem->item();
-            m_tosaveInItem.setModificationTime(QDateTime::currentDateTime());
-            m_tosaveInItem.setPayload<History>(m_toSaveHistory);
-            qDebug() << "Item modified successfully";
-            m_saveTimerTime=qMin(t.elapsed()*1000, 300000);
-            kDebug(14310) << m_tosaveInCollection.name() << " saved in " << t.elapsed() << " ms ";
-
-        } else kDebug() << "create item in modification time failed";
-    }
-*/
     //enters here if u have not created newitem, no change in month. so item only modify it true.
     if ( itemOnlyModify)
     {
