@@ -2,6 +2,7 @@
     Adium(and Kopete) ChatWindowStyle format rendering test suite
 
     Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
+	Copyright (c) 2009      by Pierre-Alexandre St-Jean <pierrealexandre.stjean@gmail.com>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -14,33 +15,33 @@
     *                                                                       *
     *************************************************************************
 */
+
 #ifndef CHATWINDOWSTYLERENDERING_TEST_H
 #define CHATWINDOWSTYLERENDERING_TEST_H
 
-#include <kunittest/tester.h>
+#include <QtTest>
 
 // HACK: Needed to access private methods of ChatMessagePart.
 #define private public
 #include <chatmessagepart.h>
-
 #undef private
 
-class ChatWindowStyleRendering_Test : public KUnitTest::Tester
+class ChatWindowStyleRendering_Test : public QtTest
 {
-public:
-	ChatWindowStyleRendering_Test();
-	~ChatWindowStyleRendering_Test();
 
-	void allTests();
-public slots:
+	Q_OBJECT;
+
+private slots:
+	void initTestCase();
 	void testHeaderRendering();
 	void testMessageRendering();
 	void testStatusRendering();
 	void testFullRendering();
+	void cleanupTestCase();
+
 private:
 	class Private;
 	Private * const d;
 
-	ChatMessagePart *chatPart;
-};
+}
 #endif
