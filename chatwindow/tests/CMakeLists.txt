@@ -5,6 +5,13 @@ set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
 set( CHATWINDOW_TEST_LIBRARIES ${KDE4_KDECORE_LIBS} ${QT_QTTEST_LIBRARY} kopetechatwindow  )
 
+
+include_directories( 
+${KOPETE_INCLUDES}
+${CMAKE_CURRENT_SOURCE_DIR}/../ 
+${CMAKE_CURRENT_SOURCE_DIR}/../../ 
+)
+
 ########### next target ###############
 set(chatwindowstylerendering_test_SRCS chatwindowstylerendering_test.cpp )
 

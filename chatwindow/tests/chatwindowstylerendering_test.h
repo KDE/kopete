@@ -26,7 +26,7 @@
 #include <chatmessagepart.h>
 #undef private
 
-class ChatWindowStyleRendering_Test : public QtTest
+class ChatWindowStyleRendering_Test : public QObject
 {
 
 	Q_OBJECT;
@@ -43,5 +43,5 @@ private:
 	class Private;
 	Private * const d;
 
-}
+};
 #endif
