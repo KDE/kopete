@@ -2,6 +2,7 @@
     Adium(and Kopete) ChatWindowStyle format rendering test suite
 
     Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
+	Copyright (c) 2009      by Pierre-Alexandre St-Jean <pierrealexandre.stjean@gmail.com>
 
     Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -15,24 +16,9 @@
     *************************************************************************
 */
 
-
 #include "chatwindowstylerendering_test.h"
 
-#include <stdlib.h>
-
-// Qt includes
-#include <qdir.h>
-#include <qfile.h>
-#include <qdatetime.h>
-#include <qtextstream.h>
-
-// KDE includes
-#include <kunittest/module.h>
-#include <kcomponentdata.h>
-#include <kdebug.h>
-#include <kglobal.h>
-#include <klocale.h>
-
+// ChatWindow Includes
 #include <kopetechatwindowstyle.h>
 
 // Libkopete includes
@@ -43,10 +29,8 @@
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
 
-using namespace Kopete;
 
-KUNITTEST_MODULE( kunittest_chatwindowstylerendering_test, "KopeteChatWindowTestSuite");
-KUNITTEST_MODULE_REGISTER_TESTER( ChatWindowStyleRendering_Test );
+using namespace Kopete;
 
 // Reimplement Kopete::Contact and its abstract method
 class FakeContact : public Kopete::Contact
@@ -165,20 +149,9 @@ public:
 	QString resultHTML;
 };
 
-
-
-ChatWindowStyleRendering_Test::ChatWindowStyleRendering_Test()
+void ChatWindowStyleRendering_Test::initTestCase()
 {
 	d = new Private;
-}
-
-ChatWindowStyleRendering_Test::~ChatWindowStyleRendering_Test()
-{
-	delete d;
-}
-
-void ChatWindowStyleRendering_Test::allTests()
-{
 	// change user data dir to avoid messing with user's .kde dir
 	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
@@ -192,6 +165,11 @@ void ChatWindowStyleRendering_Test::allTests()
 	testMessageRendering();
 	testStatusRendering();
 	//testFullRendering();
+}
+
+void ChatWindowStyleRendering_Test::cleanupTestCase()
+{
+	delete d;
 }
 
 void ChatWindowStyleRendering_Test::testHeaderRendering()
@@ -325,4 +303,6 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 	}
 
 	CHECK(resultHtml, expectedFullHtml);
+{
 }
+
