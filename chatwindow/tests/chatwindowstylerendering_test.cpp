@@ -18,6 +18,19 @@
 
 #include "chatwindowstylerendering_test.h"
 
+// Qt includes
+#include <qdir.h>
+#include <qfile.h>
+#include <qdatetime.h>
+#include <qtextstream.h>
+
+// KDE includes
+ #include <kunittest/module.h>
+ #include <kcomponentdata.h>
+ #include <kdebug.h>
+ #include <kglobal.h>
+ #include <klocale.h>
+
 // ChatWindow Includes
 #include <kopetechatwindowstyle.h>
 
