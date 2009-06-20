@@ -296,7 +296,7 @@ void SkypeConnection::tryConnect() {
 				d->startTimer->deleteLater();
 				d->startTimer = 0L;
 				if ( !started )
-					emit error(i18n("Could not find Skype\nYou need to install the original dynamic linked Skype version 2.0 binary from http://www.skype.com"));
+					emit error(i18n("Could not find Skype.\nYou need to install the original dynamic linked Skype version 2.0 binary from http://www.skype.com"));
 				else
 					emit error(i18n("Please login to Skype first"));
 				disconnectSkype(crLost);
