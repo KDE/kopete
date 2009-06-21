@@ -23,16 +23,13 @@
 #include <QPointer>
 #include <QTreeWidgetItem>
 
-#include <TelepathyQt4/Client/ConnectionManager>
+#include <TelepathyQt4/ConnectionManager>
 
 class QTreeWidget;
 
-namespace Telepathy
+namespace Tp
 {
-    namespace Client
-    {
-        class PendingOperation;
-    }
+    class PendingOperation;
 }
 
 class ConnectionManagerItem : public QObject, public QTreeWidgetItem
@@ -41,16 +38,16 @@ class ConnectionManagerItem : public QObject, public QTreeWidgetItem
 public:
     ConnectionManagerItem(QString cmName, QTreeWidget *parent);
 
-	Telepathy::Client::ProtocolInfoList getProtocolInfoList() const;
+	Tp::ProtocolInfoList getProtocolInfoList() const;
 	QStringList getSupportedProtocols() const;
 
 private slots:
-    void setProtocolsSize(Telepathy::Client::PendingOperation *p);
+    void setProtocolsSize(Tp::PendingOperation *p);
 
 private:
-    QPointer<Telepathy::Client::ConnectionManager> m_connectionManager;
+    Tp::ConnectionManagerPtr m_connectionManager;
 	QStringList m_supportedProtocols;
-	Telepathy::Client::ProtocolInfoList m_protocolInfoList;
+	Tp::ProtocolInfoList m_protocolInfoList;
 };
 
 #endif	/* _CONNECTIONMANAGERITEM_H */

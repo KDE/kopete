@@ -5,26 +5,26 @@
 #include <kdebug.h>
 
 //TelepathyQt4 includes
-#include <TelepathyQt4/Client/PendingOperation>
-#include <TelepathyQt4/Client/PendingReady>
+#include <TelepathyQt4/PendingOperation>
+#include <TelepathyQt4/PendingReady>
 
 ConnectionManagerItem::ConnectionManagerItem(QString cmName, QTreeWidget *parent)
     : QTreeWidgetItem(parent)
 {
 	kDebug(TELEPATHY_DEBUG_AREA) ;
-    m_connectionManager = new Telepathy::Client::ConnectionManager(cmName);
+    m_connectionManager = Tp::ConnectionManager::create(cmName);
 
     setText(0, m_connectionManager->name());
 
-    Telepathy::Client::PendingReady *op = m_connectionManager->becomeReady();
+    Tp::PendingReady *op = m_connectionManager->becomeReady();
     QObject::connect(op,
-		SIGNAL(finished(Telepathy::Client::PendingOperation *)),
+		SIGNAL(finished(Tp::PendingOperation *)),
         this,
-		SLOT(setProtocolsSize(Telepathy::Client::PendingOperation *))
+		SLOT(setProtocolsSize(Tp::PendingOperation *))
 	);
 }
 
-Telepathy::Client::ProtocolInfoList ConnectionManagerItem::getProtocolInfoList() const
+Tp::ProtocolInfoList ConnectionManagerItem::getProtocolInfoList() const
 {
 	return m_protocolInfoList;
 }
@@ -34,7 +34,7 @@ QStringList ConnectionManagerItem::getSupportedProtocols() const
 	return m_supportedProtocols;
 }
 
-void ConnectionManagerItem::setProtocolsSize(Telepathy::Client::PendingOperation *operation)
+void ConnectionManagerItem::setProtocolsSize(Tp::PendingOperation *operation)
 {
 	kDebug(TELEPATHY_DEBUG_AREA) ;
 	if(operation->isError())
@@ -42,7 +42,7 @@ void ConnectionManagerItem::setProtocolsSize(Telepathy::Client::PendingOperation
 		kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
 		return;
 	}
-	
+
     int size = m_connectionManager->supportedProtocols().size();
 	m_supportedProtocols = m_connectionManager->supportedProtocols();
 	m_protocolInfoList = m_connectionManager->protocols();

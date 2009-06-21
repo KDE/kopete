@@ -19,24 +19,24 @@
 
 #include <QtGui/QWidget>
 
-#include <TelepathyQt4/Client/ConnectionManager>
+#include <TelepathyQt4/ConnectionManager>
 
 class TelepathyEditParameterWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	TelepathyEditParameterWidget(const Telepathy::Client::ProtocolParameterList &paramsList, QWidget *parent);
+	TelepathyEditParameterWidget(const Tp::ProtocolParameterList &paramsList, QWidget *parent);
 	~TelepathyEditParameterWidget();
 
 	/**
-	 * @brief Get the modified parameters as a list of Telepathy::Client::ProtocolParameterList
+	 * @brief Get the modified parameters as a list of Tp::ProtocolParameterList
 	 */
-	Telepathy::Client::ProtocolParameterList parameterList();
+	Tp::ProtocolParameterList parameterList();
 
 	/**
 	 * @brief Set the parameter read mostly from the config file.
 	 */
-	void setParameterList(const Telepathy::Client::ProtocolParameterList &parameterList);
+	void setParameterList(const Tp::ProtocolParameterList &parameterList);
 private:
 	class Private;
 	Private *d;

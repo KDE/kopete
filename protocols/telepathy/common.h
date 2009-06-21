@@ -22,14 +22,14 @@
 #define COMMON_H_
 
 #include <kdebug.h>
-#include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/PendingOperation>
 
 //#define SHOW_MESSAGEBOX_ERRORS
 
 class TelepathyCommons
 {
 public:
-	static bool isOperationError(Telepathy::Client::PendingOperation* operation)
+	static bool isOperationError(Tp::PendingOperation* operation)
 	{
 	    if(operation->isError())
 		{

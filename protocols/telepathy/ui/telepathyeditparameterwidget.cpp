@@ -2,7 +2,7 @@
  * telepathyeditparameterwidget.cpp - UI to edit Telepathy connection parameter
  *
  * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
- * 
+ *
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
  *************************************************************************
@@ -30,13 +30,13 @@
 #include "telepathyprotocol.h"
 
 /**
- * @brief Small label and line edit for a single Telepathy::Client::ProtocolParameterList
+ * @brief Small label and line edit for a single Tp::ProtocolParameterList
  */
 class ParameterLineEdit : public QWidget
 {
 	// TODO Support flags
 public:
-	ParameterLineEdit(Telepathy::Client::ProtocolParameter *parameter, QWidget *parent)
+	ParameterLineEdit(Tp::ProtocolParameter *parameter, QWidget *parent)
 	 : QWidget(parent), m_lineValue(0)
 	{
         kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << " " << parameter->dbusSignature().signature() << " " << parameter->defaultValue().toString();
@@ -44,7 +44,7 @@ public:
 		createWidget();
 	}
 
-	Telepathy::Client::ProtocolParameter* parameter() const
+	Tp::ProtocolParameter* parameter() const
 	{
 		return m_parameter;
 	}
@@ -52,7 +52,7 @@ public:
 	void createWidget()
 	{
 		QVBoxLayout *mainLayout = new QVBoxLayout(this);
-		
+
 		// Create name label
 		mainLayout->addWidget( new QLabel(parameter()->name(), this) );
 
@@ -78,7 +78,7 @@ public:
 	}
 
 private:
-	Telepathy::Client::ProtocolParameter *m_parameter;
+	Tp::ProtocolParameter *m_parameter;
 	QLineEdit *m_lineValue;
 };
 
@@ -94,11 +94,11 @@ public:
 	void clear();
 
 	QGridLayout *mainLayout;
-	Telepathy::Client::ProtocolParameterList paramList;
+	Tp::ProtocolParameterList paramList;
 	QList<ParameterLineEdit*> lineEditList;
 };
 
-TelepathyEditParameterWidget::TelepathyEditParameterWidget(const Telepathy::Client::ProtocolParameterList &paramList, QWidget *parent)
+TelepathyEditParameterWidget::TelepathyEditParameterWidget(const Tp::ProtocolParameterList &paramList, QWidget *parent)
  : QWidget(parent), d(new Private)
 {
 	d->paramList = paramList;
@@ -111,9 +111,9 @@ TelepathyEditParameterWidget::~TelepathyEditParameterWidget()
 	delete d;
 }
 
-Telepathy::Client::ProtocolParameterList TelepathyEditParameterWidget::parameterList()
+Tp::ProtocolParameterList TelepathyEditParameterWidget::parameterList()
 {
-	Telepathy::Client::ProtocolParameterList parameterList;
+	Tp::ProtocolParameterList parameterList;
 
 	foreach(ParameterLineEdit *lineEdit, d->lineEditList)
 	{
@@ -121,12 +121,12 @@ Telepathy::Client::ProtocolParameterList TelepathyEditParameterWidget::parameter
 		{
 			kDebug(TELEPATHY_DEBUG_AREA) << "WARNING: A ParameterLineEdit is null !";
 		}
-		Telepathy::Client::ProtocolParameter *updatedParameter;
-        updatedParameter = new Telepathy::Client::ProtocolParameter(
+		Tp::ProtocolParameter *updatedParameter;
+        updatedParameter = new Tp::ProtocolParameter(
             lineEdit->name(),
             lineEdit->parameter()->dbusSignature(),
             lineEdit->value(),
-            Telepathy::ConnMgrParamFlagHasDefault
+            Tp::ConnMgrParamFlagHasDefault
             );
 		parameterList.append(updatedParameter);
 	}
@@ -134,7 +134,7 @@ Telepathy::Client::ProtocolParameterList TelepathyEditParameterWidget::parameter
 	return parameterList;
 }
 
-void TelepathyEditParameterWidget::setParameterList(const Telepathy::Client::ProtocolParameterList &parameterList)
+void TelepathyEditParameterWidget::setParameterList(const Tp::ProtocolParameterList &parameterList)
 {
 	d->clear();
 	d->paramList = parameterList;
@@ -151,12 +151,12 @@ void TelepathyEditParameterWidget::Private::init(QWidget *parent)
 void TelepathyEditParameterWidget::Private::createWidgets(QWidget *parent)
 {
 	int column=0, row=0;
-	foreach(Telepathy::Client::ProtocolParameter *parameter, paramList)
+	foreach(Tp::ProtocolParameter *parameter, paramList)
 	{
 		ParameterLineEdit *lineEdit = new ParameterLineEdit(parameter, parent);
 		mainLayout->addWidget(lineEdit, row, column);
 		lineEditList.append(lineEdit);
-	
+
 		if( ++row >= 5 )
 		{
 			column++;

@@ -63,8 +63,8 @@ public:
 */
 	QString formatTelepathyConfigGroup(const QString &connectionManager, const QString &protocol, const QString &accountId);
 
-	Telepathy::ConnectionPresenceType kopeteStatusToTelepathy(const Kopete::OnlineStatus &status);
-	Kopete::OnlineStatus telepathyStatusToKopete(Telepathy::ConnectionPresenceType presence);
+	Tp::ConnectionPresenceType kopeteStatusToTelepathy(const Kopete::OnlineStatus &status);
+	Kopete::OnlineStatus telepathyStatusToKopete(Tp::ConnectionPresenceType presence);
 
 private:
 	static TelepathyProtocol *s_self;

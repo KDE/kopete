@@ -26,10 +26,10 @@
 
 #include <kopeteaccount.h>
 
-#include <TelepathyQt4/Client/ConnectionManager>
-#include <TelepathyQt4/Client/AccountManager>
-#include <TelepathyQt4/Client/PendingOperation>
-#include <TelepathyQt4/Client/PendingAccount>
+#include <TelepathyQt4/ConnectionManager>
+#include <TelepathyQt4/AccountManager>
+#include <TelepathyQt4/PendingOperation>
+#include <TelepathyQt4/PendingAccount>
 
 namespace Kopete
 {
@@ -49,7 +49,7 @@ public:
 
 	bool readConfig();
 	QString connectionProtocol() const;
-	Telepathy::Client::ProtocolParameterList allConnectionParameters() const;
+	Tp::ProtocolParameterList allConnectionParameters() const;
 
 public slots:
     virtual void connect (const Kopete::OnlineStatus &initialStatus = Kopete::OnlineStatus());
@@ -59,16 +59,16 @@ public slots:
 	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 private slots:
-	void onAccountManagerReady(Telepathy::Client::PendingOperation*);
-	void newTelepathyAccountCreated(Telepathy::Client::PendingOperation*);
-	void onAccountReady(Telepathy::Client::PendingOperation*);
-	void onConnectionManagerReady(Telepathy::Client::PendingOperation*);
-	void onExistingAccountReady(Telepathy::Client::PendingOperation*);
-	void onRequestedPresence(Telepathy::Client::PendingOperation*);
-	void onAccountConnecting(Telepathy::Client::PendingOperation*);
-	void onRequestDisconnect(Telepathy::Client::PendingOperation*);
-	void onAliasChanged(Telepathy::Client::PendingOperation*);
-	void onAvatarChanged(Telepathy::Client::PendingOperation*);
+	void onAccountManagerReady(Tp::PendingOperation*);
+	void newTelepathyAccountCreated(Tp::PendingOperation*);
+	void onAccountReady(Tp::PendingOperation*);
+	void onConnectionManagerReady(Tp::PendingOperation*);
+	void onExistingAccountReady(Tp::PendingOperation*);
+	void onRequestedPresence(Tp::PendingOperation*);
+	void onAccountConnecting(Tp::PendingOperation*);
+	void onRequestDisconnect(Tp::PendingOperation*);
+	void onAliasChanged(Tp::PendingOperation*);
+	void onAvatarChanged(Tp::PendingOperation*);
 
     void displayNameChanged (const QString &);
     void iconChanged (const QString &);
@@ -78,11 +78,11 @@ private slots:
     void stateChanged (bool);
     void connectsAutomaticallyPropertyChanged (bool);
     void parametersChanged (const QVariantMap &);
-    void automaticPresenceChanged (const Telepathy::SimplePresence &) const;
-    void currentPresenceChanged (const Telepathy::SimplePresence &) const;
-    void requestedPresenceChanged (const Telepathy::SimplePresence &) const;
-    void avatarChanged (const Telepathy::Avatar &);
-    void connectionStatusChanged (Telepathy::ConnectionStatus, Telepathy::ConnectionStatusReason);
+    void automaticPresenceChanged (const Tp::SimplePresence &) const;
+    void currentPresenceChanged (const Tp::SimplePresence &) const;
+    void requestedPresenceChanged (const Tp::SimplePresence &) const;
+    void avatarChanged (const Tp::Avatar &);
+    void connectionStatusChanged (Tp::ConnectionStatus, Tp::ConnectionStatusReason);
     void haveConnectionChanged (bool haveConnection);
 
 	void slotSetAlias();
@@ -92,9 +92,9 @@ protected:
     virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact );
 
 private:
-	Telepathy::Client::ProtocolInfo *getProtocolInfo(QString protocol);
-	Telepathy::Client::ConnectionManager *getConnectionManager();
-	Telepathy::Client::AccountManager *getAccountManager();
+	Tp::ProtocolInfo *getProtocolInfo(QString protocol);
+	Tp::ConnectionManagerPtr getConnectionManager();
+	Tp::AccountManagerPtr getAccountManager();
 	TelepathyContactManager *getContactManager();
 	void initTelepathyAccount();
 	void createNewAccount();
@@ -102,12 +102,12 @@ private:
 
 	QString m_connectionManagerName;
 	QString m_connectionProtocolName;
-	Telepathy::Client::ProtocolParameterList m_connectionParameters;
-	Telepathy::Client::ConnectionManager *m_connectionManager;
-	Telepathy::Client::AccountManager *m_accountManager;
+	Tp::ProtocolParameterList m_connectionParameters;
+	Tp::ConnectionManagerPtr m_connectionManager;
+	Tp::AccountManagerPtr m_accountManager;
 	TelepathyContactManager *m_contactManager;
-	Telepathy::Client::AccountPtr m_account;
-	Telepathy::Client::PendingAccount *m_pendingAccount;
+	Tp::AccountPtr m_account;
+	Tp::PendingAccount *m_pendingAccount;
 
 	uint m_existingAccountCounter;
 	uint m_existingAccountsCount;

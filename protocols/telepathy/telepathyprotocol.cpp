@@ -2,7 +2,7 @@
  * telepathyprotocol.cpp - Telepathy protocol definition.
  *
  * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
- * 
+ *
  * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
  *
  *************************************************************************
@@ -48,7 +48,7 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args
 			i18n( "Away From Computer" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
 	Busy(Kopete::OnlineStatus::Away, 20, this, 2, QStringList(),
 			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage),
-	Hidden(Kopete::OnlineStatus::Invisible, 3, this, 8, QStringList(QString::fromLatin1("contact_invisible_overlay")), 
+	Hidden(Kopete::OnlineStatus::Invisible, 3, this, 8, QStringList(QString::fromLatin1("contact_invisible_overlay")),
 			i18n( "Invisible" ), i18n( "&Hidden" ), Kopete::OnlineStatusManager::Invisible),
 	ExtendedAway(Kopete::OnlineStatus::Away, 15, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
 			i18n( "Extended Away" ), i18n( "&Extended Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
@@ -57,7 +57,7 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args
 			Kopete::OnlineStatusManager::DisabledIfOffline),
 	propAvatarToken("telepathyAvatarToken", i18n("Telepathy Avatar token"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty)
 {
-	Telepathy::registerTypes();
+	Tp::registerTypes();
 
 	s_self = this;
 
@@ -92,12 +92,12 @@ KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Acco
 	return new TelepathyEditAccountWidget(account, parent);
 }
 /*
-Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact, 
+Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData )
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "deserializeContact() called";
 	Q_UNUSED(addressBookData);
-	
+
 	QString contactId = serializedData["contactId"];
 	QString accountId = serializedData["accountId"];
 
@@ -124,50 +124,50 @@ QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionM
 	return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(accountId);
 }
 
-Telepathy::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
+Tp::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(const Kopete::OnlineStatus &status)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-	Telepathy::ConnectionPresenceType telepathyPresence = Telepathy::ConnectionPresenceTypeOffline;
-	
+	Tp::ConnectionPresenceType telepathyPresence = Tp::ConnectionPresenceTypeOffline;
+
 	Kopete::OnlineStatus type = status.status();
-	
+
 	if( type == Kopete::OnlineStatus::Online )
-		telepathyPresence = Telepathy::ConnectionPresenceTypeAvailable;
+		telepathyPresence = Tp::ConnectionPresenceTypeAvailable;
 	else if( status == Kopete::OnlineStatus::Away )
-		telepathyPresence = Telepathy::ConnectionPresenceTypeAway;
+		telepathyPresence = Tp::ConnectionPresenceTypeAway;
 	else if( status == Kopete::OnlineStatus::Invisible )
-		telepathyPresence = Telepathy::ConnectionPresenceTypeHidden;
+		telepathyPresence = Tp::ConnectionPresenceTypeHidden;
 	else if( status == Kopete::OnlineStatus::Offline )
-		telepathyPresence = Telepathy::ConnectionPresenceTypeOffline;
+		telepathyPresence = Tp::ConnectionPresenceTypeOffline;
 	else if( status == Kopete::OnlineStatus::Unknown )
-		telepathyPresence = Telepathy::ConnectionPresenceTypeUnset;
+		telepathyPresence = Tp::ConnectionPresenceTypeUnset;
 
 	return telepathyPresence;
 }
 
-Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Telepathy::ConnectionPresenceType presence)
+Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Tp::ConnectionPresenceType presence)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "telepathyStatusToKopete() called";
 	Kopete::OnlineStatus result;
 	switch(presence)
 	{
-		case Telepathy::ConnectionPresenceTypeAvailable:
+		case Tp::ConnectionPresenceTypeAvailable:
 			result = Kopete::OnlineStatus::Online;
 			break;
-		case Telepathy::ConnectionPresenceTypeAway:
-		case Telepathy::ConnectionPresenceTypeExtendedAway:
-		case Telepathy::ConnectionPresenceTypeBusy:
+		case Tp::ConnectionPresenceTypeAway:
+		case Tp::ConnectionPresenceTypeExtendedAway:
+		case Tp::ConnectionPresenceTypeBusy:
 			result = Kopete::OnlineStatus::Away;
 			break;
-		case Telepathy::ConnectionPresenceTypeHidden:
+		case Tp::ConnectionPresenceTypeHidden:
 			result = Kopete::OnlineStatus::Invisible;
 			break;
-		case Telepathy::ConnectionPresenceTypeOffline:
+		case Tp::ConnectionPresenceTypeOffline:
 			result = Kopete::OnlineStatus::Offline;
 			break;
-		case Telepathy::ConnectionPresenceTypeUnset:
-		case Telepathy::ConnectionPresenceTypeUnknown:
-		case Telepathy::ConnectionPresenceTypeError:
+		case Tp::ConnectionPresenceTypeUnset:
+		case Tp::ConnectionPresenceTypeUnknown:
+		case Tp::ConnectionPresenceTypeError:
 			result = Kopete::OnlineStatus::Unknown;
 			break;
 	}

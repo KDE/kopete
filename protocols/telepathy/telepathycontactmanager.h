@@ -25,7 +25,7 @@
 #include <QSharedPointer>
 #include <QList>
 
-#include <TelepathyQt4/Client/Contact>
+#include <TelepathyQt4/Contact>
 
 class TelepathyAccount;
 class TelepathyContact;
@@ -37,19 +37,19 @@ public:
 	TelepathyContactManager(TelepathyAccount *telepathyAccount);
 	virtual ~TelepathyContactManager();
 	
-	QSharedPointer<Telepathy::Client::Contact> addContact(const QString &contactId);
+	QSharedPointer<Tp::Contact> addContact(const QString &contactId);
 	void removeContact(TelepathyContact *contact);
-	void setContactList(QList<QSharedPointer<Telepathy::Client::Contact> > contactList);
+	void setContactList(QList<QSharedPointer<Tp::Contact> > contactList);
 	void loadContacts();
 	
 private slots: 
-	void onConnectionReady(Telepathy::Client::PendingOperation*);
-	void onConnectionFeaturesReady(Telepathy::Client::PendingOperation*);
-	void onPresencePublicationRequested(const Telepathy::Client::Contacts &);
+	void onConnectionReady(Tp::PendingOperation*);
+	void onConnectionFeaturesReady(Tp::PendingOperation*);
+	void onPresencePublicationRequested(const Tp::Contacts &);
 	
 private:
 	void fetchContactList();
-	void createContact(QSharedPointer<Telepathy::Client::Contact> contact);
+	void createContact(QSharedPointer<Tp::Contact> contact);
 	
 	class TelepathyContactManagerPrivate;
 	TelepathyContactManagerPrivate *d;

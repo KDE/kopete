@@ -29,7 +29,7 @@
 
 #include "telepathyaccount.h"
 
-#include <TelepathyQt4/Client/Contact>
+#include <TelepathyQt4/Contact>
 
 namespace Kopete
 {
@@ -51,15 +51,15 @@ public:
 	virtual QList<KAction *> *customContextMenuActions( Kopete::ChatSession *manager );
     virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
 
-	void setInternalContact(QSharedPointer<Telepathy::Client::Contact> contact);
-	QSharedPointer<Telepathy::Client::Contact> internalContact();
+	void setInternalContact(QSharedPointer<Tp::Contact> contact);
+	QSharedPointer<Tp::Contact> internalContact();
 
 private slots:
 	void onAliasChanged (const QString &);
 	void onAvatarTokenChanged (const QString &);
 	void onSimplePresenceChanged (const QString &, uint, const QString &);
-	void onSubscriptionStateChanged (Telepathy::Client::Contact::PresenceState);
-	void onPublishStateChanged (Telepathy::Client::Contact::PresenceState);
+	void onSubscriptionStateChanged (Tp::Contact::PresenceState);
+	void onPublishStateChanged (Tp::Contact::PresenceState);
 	void onBlockStatusChanged (bool);
 
 private:

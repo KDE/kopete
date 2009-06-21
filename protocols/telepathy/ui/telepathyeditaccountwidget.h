@@ -20,7 +20,7 @@
 #include <QtGui/QWidget>
 #include <editaccountwidget.h>
 
-#include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/PendingOperation>
 
 namespace Ui
 {
@@ -64,7 +64,7 @@ private slots:
 	void connectionManagerSelectionChanged();
 	void protocolSelectionChanged();
 	void listConnectionManager();
-    void onListNames(Telepathy::Client::PendingOperation *);
+    void onListNames(Tp::PendingOperation *);
 	void readConfig();
 	void writeConfig();
 
