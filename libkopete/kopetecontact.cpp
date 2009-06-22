@@ -115,12 +115,7 @@ Contact::Contact( Account *account, const QString &contactId,
 	// if alreadyRegistered is true (which mean that this is duplicate contact) we will not add
 	// parent and the contact will die out on next Kopete restart.
 	if( !duplicate && parent && protocol() )
-	{
-		connect( parent, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
-			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
-
 		parent->addContact( this );
-	}
 }
 
 Contact::~Contact()
@@ -354,8 +349,6 @@ void Contact::setMetaContact( MetaContact *m )
 	if( old )
 	{
 		old->removeContact( this );
-		disconnect( old, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
-			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 
 		if(old->contacts().isEmpty())
 		{
@@ -366,7 +359,7 @@ void Contact::setMetaContact( MetaContact *m )
 		{
 			d->metaContact = m; //i am forced to do that now if i want the next line works
 			//remove cached data for this protocol which will not be removed since we disconnected
-			protocol()->slotMetaContactAboutToSave( old );
+			protocol()->serialize( old );
 		}
 	}
 
@@ -380,8 +373,6 @@ void Contact::setMetaContact( MetaContact *m )
 		// between adding completely new contacts (which should be written to kabc) and restoring upon restart
 		// (where no write is needed).
 		KABCPersistence::self()->write( m );
-		connect( d->metaContact, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
-		protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 	}
 	sync();
 }

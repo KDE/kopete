@@ -1,3 +1,4 @@
+
 /*
     kopeteplugindataobject.cpp - Kopete Plugin Data Object
 
@@ -31,6 +32,7 @@ class ContactListElement::Private
 {
 public:
 	ContactListElement::PluginDataMap pluginData;
+	QMap<QString, ContactListElement::ContactDataList> pluginContactData;
 	ContactListElement::IconMap icons;
 	bool useCustomIcon;
 	bool loading;
@@ -105,6 +107,51 @@ QString ContactListElement::pluginData( Plugin *plugin, const QString &key ) con
 const ContactListElement::PluginDataMap ContactListElement::pluginData() const
 {
 	return d->pluginData;
+}
+
+QMap<QString, ContactListElement::ContactDataList > ContactListElement::pluginContactData() const
+{
+	return d->pluginContactData;
+}
+
+ContactListElement::ContactDataList ContactListElement::pluginContactData( Plugin *plugin ) const
+{
+	if ( !d->pluginContactData.contains( plugin->pluginId() ) )
+		return ContactDataList();
+
+	return d->pluginContactData[ plugin->pluginId() ];
+}
+
+void ContactListElement::clearPluginContactData()
+{
+	d->pluginContactData.clear();
+}
+
+void ContactListElement::setPluginContactData( Plugin *plugin, const ContactListElement::ContactDataList &dataList )
+{
+	QString pluginId = plugin->pluginId();
+	if ( dataList.isEmpty() )
+	{
+		d->pluginContactData.remove( pluginId );
+		return;
+	}
+
+	d->pluginContactData[ pluginId ] = dataList;
+
+	emit pluginDataChanged();
+}
+
+void ContactListElement::appendPluginContactData( const QString &pluginId, const ContactData &data )
+{
+	if ( data.isEmpty() )
+	{
+		d->pluginContactData.remove( pluginId );
+		return;
+	}
+
+	d->pluginContactData[ pluginId ].append( data );
+
+	emit pluginDataChanged();
 }
 
 const ContactListElement::IconMap ContactListElement::icons() const

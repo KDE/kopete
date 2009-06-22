@@ -172,14 +172,9 @@ void Protocol::aboutToUnload()
 
 
 
-void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
+void Protocol::serialize( MetaContact *metaContact )
 {
-	QMap<QString, QString> serializedData, sd;
-	QMap<QString, QString> addressBookData, ad;
-	QMap<QString, QString>::Iterator it;
-
-	//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName();
-
+	QList< QMap<QString, QString> > serializedDataList;
 	QListIterator<Contact *> cit(metaContact->contacts());
 	while ( cit.hasNext() )
 	{
@@ -187,8 +182,8 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 		if( c->protocol()->pluginId() != pluginId() )
 			continue;
 
-		sd.clear();
-		ad.clear();
+		QMap<QString, QString> sd;
+		QMap<QString, QString> ad;
 
 		// Preset the contactId and displayName, if the plugin doesn't want to save
 		// them, or use its own format, it can call clear() on the provided list
@@ -206,34 +201,14 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 		c->serializeProperties( sd );
 		c->serialize( sd, ad );
 
-		// Merge the returned fields with what we already (may) have
-		for( it = sd.begin(); it != sd.end(); ++it )
-		{
-			// The Unicode chars E000-F800 are non-printable and reserved for
-			// private use in applications. For more details, see also
-			// http://www.unicode.org/charts/PDF/UE000.pdf.
-			// Inside libkabc the use of QChar( 0xE000 ) has been standardized
-			// as separator for the string lists, use this also for the 'normal'
-			// serialized data.
-			if( serializedData.contains( it.key() ) )
-				serializedData[ it.key() ] = serializedData[ it.key() ] + QChar( 0xE000 ) + it.value();
-			else
-				serializedData[ it.key() ] = it.value();
-		}
-
-		for( it = ad.begin(); it != ad.end(); ++it )
-		{
-			if( addressBookData.contains( it.key() ) )
-				addressBookData[ it.key() ] = addressBookData[ it.key() ] + QChar( 0xE000 ) + it.value();
-			else
-				addressBookData[ it.key() ] = it.value();
-		}
+		serializedDataList.append( sd );
 	}
 
-	// Pass all returned fields to the contact list
-	//if( !serializedData.isEmpty() ) //even if we are empty, that mean there are no contact, so remove old value
-	metaContact->setPluginData( this, serializedData );
+	// Pass all returned fields to the contact list even if empty (will remove the old one)
+	metaContact->setPluginContactData( this, serializedDataList );
 
+#if 0
+	// FIXME: This isn't used anywhere right now.
 	for( it = addressBookData.begin(); it != addressBookData.end(); ++it )
 	{
 		//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data();
@@ -252,62 +227,20 @@ void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 		else
 			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.value() );
 	}
+#endif
 }
 
-void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QString> &data )
+void Protocol::deserializeContactList( MetaContact *metaContact, const QList< QMap<QString, QString> > &dataList )
 {
-	/*kDebug( 14010 ) << "Protocol::deserialize: protocol " <<
-		pluginId() << ": deserializing " << metaContact->displayName() << endl;*/
-	
-	QMap<QString, QStringList> serializedData;
-	QMap<QString, QStringList::Iterator> serializedDataIterators;
-	QMap<QString, QString>::ConstIterator it;
-	for( it = data.begin(); it != data.end(); ++it )
+	foreach ( const ContactListElement::ContactData &sd, dataList )
 	{
-		serializedData[ it.key() ] = it.value().split( QChar( 0xE000 ), QString::KeepEmptyParts );
-		serializedDataIterators[ it.key() ] = serializedData[ it.key() ].begin();
-	}
-
-	int count = serializedData[QString::fromLatin1("contactId")].count();
-
-	// Prepare the independent entries to pass to the plugin's implementation
-	for( int i = 0; i < count ; i++ )
-	{
-		QMap<QString, QString> sd;
-#ifdef __GNUC__
-#warning  write this properly
-#endif
-#if 0	
-		QMap<QString, QStringList::Iterator>::Iterator serializedDataIt;
-		for( serializedDataIt = serializedDataIterators.begin(); serializedDataIt != serializedDataIterators.end(); ++serializedDataIt )
-		{
-			sd[ serializedDataIt.key() ] = *( serializedDataIt.data() );
-			++( serializedDataIt.data() );
-		}
-		
-#else
-		QMap<QString, QStringList>::Iterator serializedDataIt;
-		QMap<QString, QStringList>::Iterator serializedDataItEnd = serializedData.end();
-		for( serializedDataIt = serializedData.begin(); serializedDataIt != serializedDataItEnd; ++serializedDataIt )
-		{
-			QStringList sl=serializedDataIt.value();
-			if(sl.count()>i)
-				sd[ serializedDataIt.key() ] = sl[i];
-		}
-	
-	
-#endif
-
-		const QString& accountId=sd[ QString::fromLatin1( "accountId" ) ];
-		// myself was allowed in the contact list in old version of kopete.
-		// But if one keep it on the contact list now, it may conflict witht he myself metacontact.
-		// So ignore it
+		const QString& accountId = sd[ QString::fromLatin1( "accountId" ) ];
 		if( !d->canAddMyself && accountId == sd[ QString::fromLatin1( "contactId" ) ] )
 		{
 			kDebug( 14010 ) << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it";
 			continue;
 		}
-
+	
 		// FIXME: This code almost certainly breaks when having more than
 		//        one contact in a meta contact. There are solutions, but
 		//        they are all hacky and the API needs revision anyway (see
@@ -318,8 +251,6 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 		//        book data in the deserializer yet, only when serializing.
 		//        - Martijn
 		QMap<QString, QString> ad;
-		
-
 #if 0
 		QStringList kabcFields = addressBookFields();
 		for( QStringList::Iterator fieldIt = kabcFields.begin(); fieldIt != kabcFields.end(); ++fieldIt )
@@ -347,19 +278,24 @@ void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QStrin
 			else
 			{
 				kWarning( 14010 ) <<
-					"No account available and account not set in " \
-					"contactlist.xml either!" << endl
+	"No account available and account not set in " \
+	"contactlist.xml either!" << endl
 					<< "Not deserializing this contact." << endl;
 				return;
 			}
 		}
 #endif
 
-
 		Contact *c = deserializeContact( metaContact, sd, ad );
 		if (c) // should never be null but I do not like crashes
 			c->deserializeProperties( sd );
 	}
+}
+
+void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QString> &data )
+{
+	Q_UNUSED( metaContact )
+	Q_UNUSED( data )
 }
 
 Contact *Protocol::deserializeContact(

@@ -235,6 +235,11 @@ public:
 	virtual void deserialize( MetaContact *metaContact, const QMap<QString, QString> &serializedData );
 
 	/**
+	 * @brief Deserialize the plugin data for a meta contact's contacts.
+	 */
+	virtual void deserializeContactList( MetaContact *metaContact, const QList< QMap<QString, QString> > &dataList );
+
+	/**
 	 * @brief Deserialize a single contact.
 	 *
 	 * This method is called by @ref deserialize() for each separate contact,
@@ -291,15 +296,15 @@ KJob* JabberProtocol::createProtocolTask(const QString &taskType)
 	 */
 	 virtual bool validatePassword( const QString & password ) const;
 
-public slots:
+public:
 	/**
-	 * A meta contact is about to save.
+	 * Serialize meta contact into the metacontact's plugin data
 	 * Call serialize() for all contained contacts for this protocol.
 	 * @internal
 	 *   it's public because for example, Contact::setMetaContact uses it.
 	 * @todo we probably should think to another way to save the contacltist.
 	 */
-	void slotMetaContactAboutToSave( Kopete::MetaContact *metaContact );
+	void serialize( Kopete::MetaContact *metaContact );
 
 
 private:

@@ -43,6 +43,7 @@
 #include <kservicetypetrader.h>
 
 #include "kopeteplugin.h"
+#include "kopeteprotocol.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
 
@@ -387,6 +388,10 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 		kDebug( 14010 ) << "Successfully loaded plugin '" << pluginId << "'";
 
 		emit pluginLoaded( plugin );
+
+		Protocol* protocol = dynamic_cast<Protocol*>( plugin );
+		if ( protocol )
+			emit protocolLoaded( protocol );
 	}
 	else
 	{

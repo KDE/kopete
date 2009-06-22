@@ -557,9 +557,20 @@ void MetaContact::sendFile( const KUrl &sourceURL, const QString &altFileName, u
 	contact->sendFile( sourceURL, altFileName, fileSize );
 }
 
-void MetaContact::emitAboutToSave()
+void MetaContact::serialize()
 {
-	emit aboutToSave( this );
+	clearPluginContactData();
+
+	QSet<Kopete::Protocol*> protocolSet;
+	foreach ( Kopete::Contact* c, contacts() )
+	{
+		Kopete::Protocol* protocol = c->protocol();
+		if ( !protocolSet.contains( protocol ) )
+		{
+			protocolSet.insert( protocol );
+			protocol->serialize( this );
+		}
+	}
 }
 
 void MetaContact::slotContactStatusChanged( Contact * c, const OnlineStatus &status, const OnlineStatus &/*oldstatus*/  )
@@ -1038,6 +1049,16 @@ void MetaContact::slotPluginLoaded( Plugin *p )
 	{
 		p->deserialize(this,map);
 	}
+}
+
+void MetaContact::slotProtocolLoaded( Protocol *p )
+{
+	if( !p )
+		return;
+
+	ContactDataList dataList = pluginContactData( p );
+	if ( !dataList.isEmpty() )
+		p->deserializeContactList( this, dataList );
 }
 
 void MetaContact::slotAllPluginsLoaded()

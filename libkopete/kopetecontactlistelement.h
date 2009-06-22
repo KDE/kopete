@@ -112,6 +112,39 @@ public:
 
 	typedef QMap<QString, QMap<QString, QString> > PluginDataMap;
 
+	typedef QMap<QString, QString> ContactData;
+	typedef QList<ContactData> ContactDataList;
+
+	/**
+	 * Get the settings as stored previously by calls to @ref setPluginContactData()
+	 * Note that plugins shouldn't use this method
+	 */
+	QMap<QString, ContactDataList > pluginContactData() const;
+
+	/**
+	 * Get the settings as stored previously by calls to @ref setPluginContactData() for a @p plugin
+	 * Note that plugins shouldn't use this method
+	 */
+	ContactDataList pluginContactData( Plugin *plugin ) const;
+
+	/**
+	 * Clear all plugin specific data.
+	 * Note that plugins shouldn't use this method
+	 */
+	void clearPluginContactData();
+
+	/**
+	 * Set plugin specific data for each contact.
+	 * Note that plugins shouldn't use this method
+	 */
+	void setPluginContactData( Plugin *plugin, const ContactDataList &dataList );
+
+	/**
+	 * Convenience method to append plugin specific data for single contact
+	 * Note that plugins shouldn't use this method
+	 */
+	void appendPluginContactData( const QString &pluginId, const ContactData &data );
+
 	/**
 	 * return plugin-specific data for all plugins
 	 */
