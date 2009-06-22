@@ -78,6 +78,8 @@ Kopete::Group * ContactListStorage::findGroup( const QString& displayName, int t
 {
     if( type == Kopete::Group::Temporary )
         return Kopete::Group::temporary();
+    if( type == Kopete::Group::TopLevel )
+        return Kopete::Group::topLevel();
 
     foreach( Kopete::Group * group, d->groupList )
     {
@@ -85,7 +87,7 @@ Kopete::Group * ContactListStorage::findGroup( const QString& displayName, int t
             return group;
     }
 
-    Kopete::Group *newGroup = new Kopete::Group( displayName, (Kopete::Group::GroupType)type );
+    Kopete::Group *newGroup = new Kopete::Group( displayName );
     addGroup( newGroup );
     return  newGroup;
 }

@@ -163,16 +163,34 @@ void XmlContactStorage::load()
             contactListFile.close();
             kWarning(14010) << "The contact list on disk is older than expected or cannot be updated!"
                             << "No contact list will be loaded";
+            d->isValid = false;
+            d->isBusy = false;
             return;
         }
     }
 
-//TODO: Add to internal contact list item list.
-#if 0
-    addGroup( Kopete::Group::topLevel() );
-#endif
-
+    // First load all groups so we can assign them to metaContacts
     QDomElement element = list.firstChild().toElement();
+    while( !element.isNull() )
+    {
+        if( element.tagName() == QString::fromLatin1("kopete-group") )
+        {
+            Kopete::Group *group = new Kopete::Group();
+            if( !parseGroup( group, element ) )
+            {
+                delete group;
+                group = 0;
+            }
+            else
+            {
+                addGroup( group );
+            }
+        }
+        element = element.nextSibling().toElement();
+    }
+
+    // Load metaContacts
+    element = list.firstChild().toElement();
     while( !element.isNull() )
     {
         if( element.tagName() == QString::fromLatin1("meta-contact") )
@@ -188,27 +206,15 @@ void XmlContactStorage::load()
                 addMetaContact( metaContact );
             }
         }
-        else if( element.tagName() == QString::fromLatin1("kopete-group") )
+        else if( element.tagName() != QString::fromLatin1("kopete-group") )
         {
-            Kopete::Group *group = new Kopete::Group();
-            if( !parseGroup( group, element ) )
-            {
-                delete group;
-                group = 0;
-            }
-            else
-            {
-                addGroup( group );
-            }
-        }
-        else
-        {
-            kWarning(14010) 
-                    << "Unknown element '" << element.tagName()
-                    << "' in XML contact list storage!" << endl;
+            kWarning(14010) << "Unknown element '" << element.tagName() << "' in XML contact list storage!" << endl;
         }
         element = element.nextSibling().toElement();
     }
+
+    checkGroupIds();
+
     contactListFile.close();
     d->isValid = true;
     d->isBusy = false;
@@ -245,6 +251,8 @@ void XmlContactStorage::save()
     doc.documentElement().setAttribute( QLatin1String("version"), QLatin1String("1.2"));
 
     // Save group information. ie: Open/Closed, pehaps later icons? Who knows.
+    doc.documentElement().appendChild( doc.importNode( storeGroup( Kopete::Group::topLevel() ), true ) );
+
     Kopete::Group::List groupList = Kopete::ContactList::self()->groups();
     foreach( Kopete::Group *group, groupList )
     {
@@ -517,10 +525,6 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
                 return false;
             }
         }
-        else
-        {
-            group->setType( Kopete::Group::Normal );
-        }
     }
 
     QString view = element.attribute( QLatin1String( "view" ), QLatin1String( "expanded" ) );
@@ -741,7 +745,8 @@ const QDomElement XmlContactStorage::storeGroup( Kopete::Group *group ) const
         case Kopete::Group::Temporary:
             type = QLatin1String( "temporary" );
             break;
-        case Kopete::Group::TopLevel:type = QLatin1String( "top-level" );
+        case Kopete::Group::TopLevel:
+            type = QLatin1String( "top-level" );
             break;
         default:
             type = QLatin1String( "standard" ); // == Normal
@@ -999,6 +1004,45 @@ Kopete::MetaContact::PropertySource XmlContactStorage::stringToSource( const QSt
         return Kopete::MetaContact::SourceContact;
     else // recovery
         return Kopete::MetaContact::SourceCustom;
+}
+
+void XmlContactStorage::checkGroupIds()
+{
+    // HACK: Check if we don't have duplicate groupIds => broken contactlist.xml,
+    // if so reset all groupIds so there are unique.
+    // Will break manual group sorting but we want consistent contactlist.
+
+    QSet<uint> groupIdSet;
+
+    groupIdSet.insert( Kopete::Group::topLevel()->groupId() );
+
+    bool idsUnique = !groupIdSet.contains( Kopete::Group::temporary()->groupId() );
+    groupIdSet.insert( Kopete::Group::temporary()->groupId() );
+
+    if ( idsUnique )
+    {
+        foreach( Kopete::Group * group, groups() )
+        {
+            if ( groupIdSet.contains( group->groupId() ) )
+            {
+                idsUnique = false;
+                break;
+            }
+            groupIdSet.insert( group->groupId() );
+        }
+    }
+
+    if ( !idsUnique )
+    {
+        uint uniqueGroupId = 0;
+        Kopete::Group::topLevel()->setGroupId( ++uniqueGroupId );
+        Kopete::Group::temporary()->setGroupId( ++uniqueGroupId );
+
+        foreach( Kopete::Group * group, groups() )
+            group->setGroupId( ++uniqueGroupId );
+
+        Kopete::Group::topLevel()->setUniqueGroupId( uniqueGroupId );
+    }
 }
 
 }

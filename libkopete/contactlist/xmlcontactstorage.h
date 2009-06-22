@@ -78,6 +78,8 @@ private:
     QString sourceToString( Kopete::MetaContact::PropertySource source ) const;
     Kopete::MetaContact::PropertySource stringToSource( const QString &name ) const;
 
+    void checkGroupIds();
+
     class Private;
     Private* d;
 };

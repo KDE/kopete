@@ -194,6 +194,8 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 {
 	if( type == Group::Temporary )
 		return Group::temporary();
+	if( type == Group::TopLevel )
+		return Group::topLevel();
 	
 	if ( displayName == i18n ("Top Level") )
 		return Group::topLevel();
@@ -206,7 +208,7 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 			return curr;
 	}
 
-	Group *newGroup = new Group( displayName, (Group::GroupType)type );
+	Group *newGroup = new Group( displayName );
 	addGroup( newGroup );
 	return  newGroup;
 }
