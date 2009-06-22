@@ -128,6 +128,16 @@ public:
 	 * called when the account is removed in the config ui
 	*/
 	virtual bool removeAccount();
+
+	/**
+	 * return if kopete show all messges from all resources to one session
+	 */
+	bool mergeMessages();
+
+	/**
+	 * set if kopete will merge all messages to one session
+	 */
+	void setMergeMessages(bool b);
 	
 #ifdef JINGLE_SUPPORT
 	JingleCallsManager *jingleCallsManager() const {return m_jcm;}

@@ -1720,6 +1720,16 @@ void JabberAccount::slotUnregisterFinished( )
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
 
+void JabberAccount::setMergeMessages(bool b)
+{
+	configGroup()->writeEntry("MergeMessages", b);
+}
+
+bool JabberAccount::mergeMessages()
+{
+	return configGroup()->readEntry("MergeMessages", true);
+}
+
 /*
 JabberMoodAction::JabberMoodAction(const Mood::Type type, QObject *parent):
 KAction(parent)
