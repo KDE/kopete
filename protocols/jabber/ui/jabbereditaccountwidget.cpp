@@ -226,8 +226,6 @@ void JabberEditAccountWidget::reopen ()
 	cbSendGoneEvent->setChecked( account()->configGroup()->readEntry("SendGoneEvent", true) );
 
 	cbHideSystemInfo->setChecked( account()->configGroup()->readEntry("HideSystemInfo", false) );
-
-	mergeMessages->setChecked(account()->mergeMessages());
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
@@ -297,8 +295,6 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("SendGoneEvent", cbSendGoneEvent->isChecked());
 	
 	account()->configGroup()->writeEntry("HideSystemInfo", cbHideSystemInfo->isChecked());
-
-	account()->setMergeMessages(mergeMessages->isChecked());
 }
 
 bool JabberEditAccountWidget::validateData ()
