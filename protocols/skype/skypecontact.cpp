@@ -29,6 +29,7 @@
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
 #include <kopeteproperty.h>
+#include <kopetemetacontact.h>
 #include <kaction.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -435,6 +436,9 @@ void SkypeContact::sync(unsigned int changed) {
 
 	if (changed == MovedBetweenGroup)
 		d->account->MovedBetweenGroup(this);
+
+//	if (changed == DisplayNameChanged)
+		d->account->setDisplayName(contactId(), metaContact()->displayName());
 }
 
 void SkypeContact::authorize() {

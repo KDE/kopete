@@ -953,9 +953,14 @@ QString Skype::getGroupName(int groupID) {
 	return d->groupsNames.key(groupID, ""); //get group name from d->groupsNames
 }
 
-QString Skype::getDisplayName(const QString &name) {
-	kDebug() << k_funcinfo << name << endl;
-	return (d->connection % QString("GET USER %1 DISPLAYNAME").arg(name)).section(' ', 3).trimmed();
+QString Skype::getDisplayName(const QString &user) {
+	kDebug() << k_funcinfo << user << endl;
+	return (d->connection % QString("GET USER %1 DISPLAYNAME").arg(user)).section(' ', 3).trimmed();
+}
+
+void Skype::setDisplayName(const QString &user, const QString &name) {
+	kDebug();
+	d->connection << QString("SET USER %1 DISPLAYNAME %2").arg(user).arg(name);
 }
 
 bool Skype::openFileTransfer(const QString &user, const QString &url) {

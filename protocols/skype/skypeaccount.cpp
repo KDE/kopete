@@ -998,6 +998,11 @@ void SkypeAccount::openFileTransfer(const QString &user, const QString &url) {
 	d->skype.openFileTransfer(user, url);
 }
 
+void SkypeAccount::setDisplayName(const QString &user, const QString &name) {
+	kDebug() << user << name;
+	d->skype.setDisplayName(user, name);
+}
+
 void SkypeAccount::SkypeActionHandler(const QString &message) {
 	kDebug() << message;
 
