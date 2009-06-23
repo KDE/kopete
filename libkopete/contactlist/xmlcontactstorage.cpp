@@ -811,7 +811,7 @@ const QList<QDomElement> XmlContactStorage::storeContactListElement( Kopete::Con
                 pluginElement.setAttribute( QLatin1String( "plugin-id" ), pluginIt.key()  );
 
                 QMap<QString, QString>::ConstIterator it;
-                for ( it = dataItem.begin(); it != dataItem.end(); ++it )
+                for ( it = dataItem.constBegin(); it != dataItem.constEnd(); ++it )
                 {
                     QDomElement pluginDataField = pluginData.createElement( QLatin1String( "plugin-data-field" ) );
                     pluginDataField.setAttribute( QLatin1String( "key" ), it.key()  );
@@ -958,7 +958,7 @@ bool XmlContactStorage::updateFrom11to12( QDomElement &rootElement ) const
             pluginElement.setAttribute( QLatin1String( "plugin-id" ), pdp.first  );
 
             QMap<QString, QString>::ConstIterator it;
-            for ( it = pdp.second.begin(); it != pdp.second.end(); ++it )
+            for ( it = pdp.second.constBegin(); it != pdp.second.constEnd(); ++it )
             {
                 QDomElement pluginDataField = metaContactElement.ownerDocument().createElement( QLatin1String( "plugin-data-field" ) );
                 pluginDataField.setAttribute( QLatin1String( "key" ), it.key()  );
