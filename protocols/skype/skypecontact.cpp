@@ -438,7 +438,8 @@ void SkypeContact::sync(unsigned int changed) {
 		d->account->MovedBetweenGroup(this);
 
 //	if (changed == DisplayNameChanged)
-		d->account->setDisplayName(contactId(), metaContact()->displayName());
+	//If user move skype contact to other metacontact, skype display name may change, todo: dont change it always
+	d->account->setDisplayName(contactId(), metaContact()->displayName());
 }
 
 void SkypeContact::authorize() {
