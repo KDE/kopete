@@ -848,7 +848,7 @@ void Skype::fixGroups(bool loadOnly) {
 		QList <int> groups = d->groupsNames.values();
 		for ( QList <int>::iterator group = groups.begin(); group != groups.end(); ++group ) {
 			QStringList groupusers = QString(d->connection % QString("GET GROUP %1 USERS").arg(*group)).section(' ', 3).trimmed().split(",");//get all user in group (*group)
-			if ( ( groupusers.count() == 0 || groupusers.first().trimmed() == "" ) && ! loadOnly ) {//if group is empty, delete it
+			if ( ( groupusers.count() == 0 || groupusers.first().trimmed().isEmpty() ) && ! loadOnly ) {//if group is empty, delete it
 				kDebug() << QString("Group %1 is empty, delete it").arg(*group) << endl;
 				deleteGroup(*group);
 			} else {
