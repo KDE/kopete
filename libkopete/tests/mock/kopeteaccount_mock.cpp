@@ -17,7 +17,6 @@
 
 #include "kopeteaccount_mock.h"
 #include "kopetemetacontact.h"
-#include "kopeteaccount_mock.h"
 #include "kopetestatusmessage.h"
 
 namespace Kopete

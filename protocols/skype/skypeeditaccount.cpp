@@ -29,7 +29,6 @@
 #include <klocale.h>
 #include <kopeteaccountmanager.h>
 #include <qcheckbox.h>
-#include <qlineedit.h>
 #include <kdebug.h>
 #include <qbuttongroup.h>
 #include <qspinbox.h>
