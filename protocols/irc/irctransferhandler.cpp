@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#include "irccontact.h"
 #include "irctransferhandler.h"
+#include "irccontact.h"
 
 #include "kirctransfer.h"
 #include "kirctransferhandler.h"

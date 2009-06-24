@@ -24,13 +24,14 @@
     *************************************************************************
 */
 
+#include "qqnotifysocket.h"
+
 #include <kdebug.h>
 #include <QHostAddress>
 
 #include "kopetestatusmessage.h"
 #include "libeva.h"
 
-#include "qqnotifysocket.h"
 #include "qqaccount.h"
 
 QQNotifySocket::QQNotifySocket( QQAccount *account, const QString &password )

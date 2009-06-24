@@ -18,6 +18,7 @@
 #include <QLabel>
 #include <Q3ValueList>
 #include <QList>
+#include <QDateTime>
 #include <kopetemessage.h>
 #include <kopetechatsession.h>
 

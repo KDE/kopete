@@ -1,5 +1,5 @@
 /*
-    kbytearrayescaper.h - A small class that allow to (un)escape a QByteArray using custom escape sequences.
+    kircbytearrayescaper.h - A small class that allow to (un)escape a QByteArray using custom escape sequences.
 
     Copyright (c) 2005-2007 by Michel Hermier <michel.hermier@gmail.com>
 
@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef KBYTEARRAYESCAPER_H
-#define KBYTEARRAYESCAPER_H
+#ifndef KIRCBYTEARRAYESCAPER_H
+#define KIRCBYTEARRAYESCAPER_H
 
 #include "kirc_export.h"
 

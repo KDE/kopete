@@ -13,8 +13,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCCLIENTEVENTHANDLER_H
-#define KIRCCLIENTEVENTHANDLER_H
+#ifndef KIRCCLIENTHANDLER_H
+#define KIRCCLIENTHANDLER_H
 
 #include "kirchandler.h"
 #include "kircmessage.h"

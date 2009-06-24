@@ -1,5 +1,5 @@
 /*
-    kircclienthandler.h - IRC Client Handler
+    kircclientpingponghandler.h - IRC Client Handler
 
     Copyright (c) 2008      by Michel Hermier <michel.hermier@wanadoo.fr>
 
@@ -13,8 +13,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCCLIENTEVENTHANDLER_H
-#define KIRCCLIENTEVENTHANDLER_H
+#ifndef KIRCCLIENTPINGPONGHANDLER_H
+#define KIRCCLIENTPINGPONGHANDLER_H
 
 #include "kirchandler.h"
 #include "kircmessage.h"

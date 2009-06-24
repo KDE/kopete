@@ -18,6 +18,8 @@
 #define TESTBEDPROTOCOL_H
 
 #include <kopeteprotocol.h>
+#include <QVariant>
+
 
 
 /**

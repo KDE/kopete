@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef KIRCCLIENTCOMMANDS_H
-#define KIRCCLIENTCOMMANDS_H
+#ifndef KIRCCTCPPLUGIN_H
+#define KIRCCTCPPLUGIN_H
 
 #include "kircmessage.h"
 #include "kircevent.h"

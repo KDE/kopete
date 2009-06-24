@@ -13,6 +13,9 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "testbedprotocol.h"
+
 #include <QList>
 #include <kgenericfactory.h>
 #include <kdebug.h>
@@ -20,7 +23,6 @@
 #include "kopeteaccountmanager.h"
 #include "testbedaccount.h"
 #include "testbedcontact.h"
-#include "testbedprotocol.h"
 #include "testbedaddcontactpage.h"
 #include "testbededitaccountwidget.h"
 

@@ -18,6 +18,8 @@
 
 */
 
+#include "skypecalldialog.h"
+
 #include <qstring.h>
 #include <kdebug.h>
 #include <qlabel.h>
@@ -27,7 +29,6 @@
 #include <kglobal.h>
 #include <qdatetime.h>
 
-#include "skypecalldialog.h"
 #include "skypeaccount.h"
 
 typedef enum {
