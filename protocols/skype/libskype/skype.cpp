@@ -960,7 +960,7 @@ QString Skype::getDisplayName(const QString &user) {
 
 void Skype::setDisplayName(const QString &user, const QString &name) {
 	kDebug();
-	d->connection << QString("SET USER %1 DISPLAYNAME %2").arg(user).arg(name);
+	d->connection % QString("SET USER %1 DISPLAYNAME %2").arg(user).arg(name);
 }
 
 bool Skype::openFileTransfer(const QString &user, const QString &url) {
