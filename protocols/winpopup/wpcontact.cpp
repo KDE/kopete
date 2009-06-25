@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "wpcontact.h"
+
 // Qt Includes
 #include <qregexp.h>
 //Added by qt3to4:
@@ -26,7 +28,6 @@
 // Kopete Includes
 
 // Local Includes
-#include "wpcontact.h"
 #include "wpaccount.h"
 
 WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const QString &nickName, Kopete::MetaContact *metaContact)

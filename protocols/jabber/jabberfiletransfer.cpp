@@ -15,11 +15,11 @@
   * *************************************************************************
   */
 
+#include "jabberfiletransfer.h"
 #include <QBuffer>
 #include <kdebug.h>
 #include <im.h>
 #include <xmpp.h>
-#include "jabberfiletransfer.h"
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kconfig.h>

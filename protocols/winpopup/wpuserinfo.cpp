@@ -18,6 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "wpuserinfo.h"
+
 // QT Includes
 #include <QRegExp>
 
@@ -28,7 +30,6 @@
 #include <KConfig>
 
 // Local Includes
-#include "wpuserinfo.h"
 #include "wpaccount.h"
 #include "wpcontact.h"
 #include "ui_wpuserinfowidget.h"

@@ -18,10 +18,10 @@
  *
  */
  
+#include "privacylistmodel.h"
 #include <QAbstractListModel>
 
 #include "privacylist.h"
-#include "privacylistmodel.h"
 #include "privacyruledlg.h"
 
 PrivacyListModel::PrivacyListModel(const PrivacyList& list, QObject* parent) : QAbstractListModel(parent), list_(list)

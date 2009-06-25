@@ -18,6 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "wpeditaccount.h"
+
 // Standard Unix Includes
 #include <unistd.h>
 
@@ -42,7 +44,6 @@
 
 // Local Includes
 #include "wpaccount.h"
-#include "wpeditaccount.h"
 #include "wpprotocol.h"
 
 WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)

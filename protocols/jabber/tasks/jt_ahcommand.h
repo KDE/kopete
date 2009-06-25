@@ -13,8 +13,8 @@
     *************************************************************************
  */
 
-#ifndef JT_PRIVATESTORAGE_H
-#define JT_PRIVATESTORAGE_H
+#ifndef JT_AHCOMMAND_H
+#define JT_AHCOMMAND_H
 
 #include <QSet>
 

@@ -17,6 +17,7 @@
     *************************************************************************
 */
 
+#include "gwprivacydialog.h"
 #include <q3listbox.h>
 #include <q3listview.h>
 #include <QtCore/QStringList>
@@ -37,7 +38,6 @@
 #include "gwsearch.h"
 #include "privacymanager.h"
 #include "userdetailsmanager.h"
-#include "gwprivacydialog.h"
 
 class PrivacyLBI : public Q3ListBoxPixmap
 {

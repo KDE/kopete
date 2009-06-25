@@ -14,6 +14,8 @@
   *************************************************************************
 */
 
+#include "smsclient.h"
+
 #include <QComboBox>
 #include <QGridLayout>
 #include <QLayout>
@@ -28,7 +30,6 @@
 #include "kopeteaccount.h"
 #include "kopeteuiglobal.h"
 
-#include "smsclient.h"
 #include "smsclientprefs.h"
 #include "smsprotocol.h"
 

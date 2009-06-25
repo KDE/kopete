@@ -22,6 +22,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "jabberaccount.h"
 #include <config-kopete.h>
 #include "im.h"
 #include "filetransfer.h"
@@ -30,7 +31,6 @@
 #include "qca.h"
 #include "bsocket.h"
 
-#include "jabberaccount.h"
 #include "jabberbookmarks.h"
 
 #include <time.h>
@@ -81,8 +81,6 @@
 #ifdef JINGLE_SUPPORT
 #include "jinglecallsmanager.h"
 #endif
-
-#include <sys/utsname.h>
 
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
 

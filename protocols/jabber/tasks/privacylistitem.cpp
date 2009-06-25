@@ -18,10 +18,10 @@
  *
  */
  
+#include "privacylistitem.h"
 #include <QDomElement>
 #include <QObject>
 
-#include "privacylistitem.h"
 #include "xmpp_xmlcommon.h"
 #include "xmpp_jid.h"
 

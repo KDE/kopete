@@ -17,6 +17,7 @@
   * *************************************************************************
   */
 
+#include "jabberprotocol.h"
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kconfig.h>
@@ -46,7 +47,6 @@
 
 #include "jabbercontact.h"
 #include "jabberaddcontactpage.h"
-#include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabbereditaccountwidget.h"
 #include "jabbercapabilitiesmanager.h"

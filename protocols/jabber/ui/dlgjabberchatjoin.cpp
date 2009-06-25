@@ -16,6 +16,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "dlgjabberchatjoin.h"
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -26,8 +27,6 @@
 #include "jabberclient.h"
 
 #include "xmpp_tasks.h"
-
-#include "dlgjabberchatjoin.h"
 
 dlgJabberChatJoin::dlgJabberChatJoin(JabberAccount *account, QWidget* parent) 
 : KDialog(parent), m_account(account)

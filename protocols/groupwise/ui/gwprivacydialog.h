@@ -21,6 +21,7 @@
 #define GWPRIVACYDIALOG_H
 
 #include <kdialog.h>
+#include "gwsearch.h"
 #include "ui_gwprivacy.h"
 
 class GroupWiseAccount;

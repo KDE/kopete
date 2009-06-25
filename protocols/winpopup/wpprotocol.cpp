@@ -18,6 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "wpprotocol.h"
+
 // QT Includes
 #include <QMap>
 #include <QList>
@@ -36,7 +38,6 @@
 #include "kopeteuiglobal.h"
 
 // Local Includes
-#include "wpprotocol.h"
 #include "wpeditaccount.h"
 #include "wpaccount.h"
 #include "wpcontact.h"

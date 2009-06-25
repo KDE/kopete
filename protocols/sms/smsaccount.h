@@ -17,6 +17,7 @@
 #ifndef SMSACCOUNT_H
 #define SMSACCOUNT_H
 
+#include "smsprotocol.h"
 #include "kopeteaccount.h"
 
 class KActionMenu;

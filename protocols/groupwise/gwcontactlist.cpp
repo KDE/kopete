@@ -16,11 +16,11 @@
     *************************************************************************
 */
 
+#include "gwcontactlist.h"
 #include <qobject.h>
 
 #include <kdebug.h>
 
-#include "gwcontactlist.h"
 #include "gwerror.h" //debug area
 
 GWContactList::GWContactList( QObject * parent )

@@ -9,6 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "dlgjabberchatroomslist.h"
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -18,7 +19,6 @@
 #include <qpushbutton.h>
 #include <qlabel.h>
 
-#include "dlgjabberchatroomslist.h"
 #include "jabberprotocol.h"
 
 dlgJabberChatRoomsList::dlgJabberChatRoomsList(JabberAccount* account, const QString& server, const QString &nick, QWidget *parent) 

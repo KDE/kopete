@@ -18,6 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 
+// Local Includes
+#include "wpaccount.h"
+
 // QT Includes
 #include <qregexp.h>
 #include <QIcon>
@@ -32,8 +35,6 @@
 
 // Kopete Includes
 
-// Local Includes
-#include "wpaccount.h"
 
 class KMenu;
 

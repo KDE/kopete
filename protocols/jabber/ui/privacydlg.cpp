@@ -19,11 +19,11 @@
  *
  */
  
+#include "privacydlg.h"
 #include <QListView>
 #include <KInputDialog>
 #include <KMessageBox>
 
-#include "privacydlg.h"
 #include "jabberaccount.h"
 #include "kopetecontact.h"
 #include "privacylist.h"

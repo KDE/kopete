@@ -22,6 +22,7 @@
 
 #include <kdialog.h>
 
+#include "gwaccount.h"
 #include "ui_gwshowinvitation.h"
 
 /**

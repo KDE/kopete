@@ -20,6 +20,7 @@
     *                                                                       *
     *************************************************************************
 */
+#include "gwprotocol.h"
 #include <qregexp.h>
 #include <qstringlist.h>
 //Added by qt3to4:
@@ -36,7 +37,6 @@
 #include "gwaccount.h"
 #include "gwerror.h"
 #include "gwcontact.h"
-#include "gwprotocol.h"
 #include "ui/gwaddcontactpage.h"
 #include "ui/gweditaccountwidget.h"
 

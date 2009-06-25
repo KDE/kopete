@@ -16,6 +16,8 @@
   * *************************************************************************
   */
 
+#include "jabberbasecontact.h"
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -30,8 +32,6 @@
 #include <kopetegroup.h>
 #include <kopetecontactlist.h>
 #include <kopeteavatarmanager.h>
-
-#include "jabberbasecontact.h"
 
 #include "xmpp_tasks.h"
 

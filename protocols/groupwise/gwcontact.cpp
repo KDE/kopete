@@ -26,6 +26,7 @@
     *************************************************************************
 */
 
+#include "gwcontact.h"
 #include <qmap.h>
 
 #include <kaction.h>
@@ -45,8 +46,6 @@
 #include "userdetailsmanager.h"
 #include "tasks/updatecontacttask.h"
 #include "ui/gwcontactproperties.h"
-
-#include "gwcontact.h"
 
 using namespace GroupWise;
 

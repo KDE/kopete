@@ -15,6 +15,7 @@
   * *************************************************************************
   */
 
+#include "jabberformtranslator.h"
 #include <qlabel.h>
 //Added by qt3to4:
 #include <Q3VBoxLayout>
@@ -23,7 +24,6 @@
 #include <kdebug.h>
 
 #include "jabberformlineedit.h"
-#include "jabberformtranslator.h"
 
 JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * parent) : QWidget (parent)
 {

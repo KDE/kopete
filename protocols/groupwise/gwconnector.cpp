@@ -17,11 +17,11 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "gwconnector.h"
 #include <k3bufferedsocket.h>
 #include <kdebug.h>
 #include <k3resolver.h>
 
-#include "gwconnector.h"
 #include "gwerror.h"
 #include "gwbytestream.h"
 

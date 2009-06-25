@@ -14,9 +14,6 @@
   * *                                                                       *
   * *************************************************************************
   */
-#include <QMessageBox>
-
-#include <ortp/ortp.h>
 
 #include "jinglecallsmanager.h"
 #include "jinglecallsgui.h"
@@ -33,6 +30,8 @@
 #include <KDebug>
 #include <KUrl>
 #include <kio/netaccess.h>
+#include <QMessageBox>
+#include <ortp/ortp.h>
 
 //using namespace XMPP;
 

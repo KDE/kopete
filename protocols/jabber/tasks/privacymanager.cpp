@@ -17,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "privacymanager.h"
 #include "xmpp_xmlcommon.h"
 #include "xmpp_jid.h"
-#include "privacymanager.h"
 
 #include <kdebug.h>
 #include "jabberprotocol.h"

@@ -14,6 +14,8 @@
   *************************************************************************
 */
 
+#include "smsprotocol.h"
+
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <kconfig.h>
@@ -21,7 +23,6 @@
 
 #include "kopeteaccountmanager.h"
 #include "kopeteonlinestatusmanager.h"
-#include "smsprotocol.h"
 #include "smseditaccountwidget.h"
 #include "smscontact.h"
 #include "smsaddcontactpage.h"

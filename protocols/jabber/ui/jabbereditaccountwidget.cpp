@@ -17,6 +17,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "jabbereditaccountwidget.h"
 #include <kdebug.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
@@ -42,7 +43,6 @@
 #include "kopetepasswordwidget.h"
 
 #include "jabberclient.h"
-#include "jabbereditaccountwidget.h"
 #include "jabberregisteraccount.h"
 #include "dlgjabberchangepassword.h"
 #include "privacydlg.h"

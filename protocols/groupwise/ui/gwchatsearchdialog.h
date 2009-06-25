@@ -24,6 +24,7 @@ class GroupWiseAccount;
 
 #include "gwchatrooms.h"
 #include "ui_gwchatsearch.h"
+#include "client.h"
 
 #include <kdialog.h>
 

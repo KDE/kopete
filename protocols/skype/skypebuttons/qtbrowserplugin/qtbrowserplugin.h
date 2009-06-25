@@ -20,8 +20,8 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
-#ifndef QTNETSCAPE_H
-#define QTNETSCAPE_H
+#ifndef QTBROWSERPLUGIN_H
+#define QTBROWSERPLUGIN_H
 
 #include <QtCore/QMetaObject>
 #include <QtCore/QFile>
@@ -157,4 +157,4 @@ QtNPFactory *qtns_instantiate() { return new QtNPClassList; } \
 #define QTNPFACTORY_EXPORT(Class) \
 QtNPFactory *qtns_instantiate() { return new Class; }
 
-#endif  // QTNETSCAPE_H
+#endif  // QTBROWSERPLUGIN_H

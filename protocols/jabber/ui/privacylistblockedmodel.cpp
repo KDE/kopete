@@ -18,9 +18,9 @@
  *
  */
 
+#include "privacylistblockedmodel.h"
 #include <QSortFilterProxyModel>
 
-#include "privacylistblockedmodel.h"
 #include "privacylistmodel.h"
 
 PrivacyListBlockedModel::PrivacyListBlockedModel(QObject* parent) : QSortFilterProxyModel(parent)

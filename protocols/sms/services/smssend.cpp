@@ -14,6 +14,8 @@
   *************************************************************************
 */
 
+#include "smssend.h"
+
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -29,7 +31,6 @@
 #include "kopeteaccount.h"
 #include "kopeteuiglobal.h"
 
-#include "smssend.h"
 #include "smssendprefs.h"
 #include "smssendprovider.h"
 #include "smsprotocol.h"

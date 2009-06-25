@@ -14,11 +14,12 @@
   * *                                                                       *
   * *************************************************************************
   */
-#include <KDebug>
 
 #include "mediamanager.h"
 #include "mediasession.h"
 #include "alsaio.h"
+
+#include <KDebug>
 
 class MediaManager::Private
 {

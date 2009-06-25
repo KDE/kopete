@@ -14,8 +14,6 @@
   * *                                                                       *
   * *************************************************************************
   */
-#include <KDebug>
-#include <QMessageBox>
 
 //Kopete
 #include "jabberjinglecontent.h"
@@ -27,6 +25,9 @@
 //Iris
 #include "jinglecontent.h"
 #include "jinglesession.h"
+
+#include <KDebug>
+#include <QMessageBox>
 
 JabberJingleContent::JabberJingleContent(JabberJingleSession* parent, XMPP::JingleContent* c)
  : m_content(c), m_jabberSession(parent)

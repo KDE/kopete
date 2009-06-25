@@ -14,13 +14,14 @@
   * *                                                                       *
   * *************************************************************************
   */
-#include <KDebug>
-#include <QTime>
 
 #include "mediasession.h"
 #include "mediamanager.h"
 #include "abstractio.h"
 #include "speexio.h"
+
+#include <KDebug>
+#include <QTime>
 
 class MediaSession::Private
 {

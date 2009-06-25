@@ -14,13 +14,13 @@
   *************************************************************************
 */
 
-#include "config-kopete.h"
+#include "serviceloader.h"
+#include <config-kopete.h>
 
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdebug.h>
 
-#include "serviceloader.h"
 #include "smssend.h"
 #include "smsclient.h"
 #ifdef INCLUDE_SMSGSM

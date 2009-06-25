@@ -21,6 +21,7 @@
 #define GWSEARCH_H
 #include <QList>
 #include "ui_gwcontactsearch.h"
+#include "gwaccount.h"
 
 
 class GroupWiseContactSearchModel;

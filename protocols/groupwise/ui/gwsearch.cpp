@@ -17,6 +17,7 @@
     *************************************************************************
 */
 
+#include "gwsearch.h"
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QComboBox>
 #include <QtGui/QHeaderView>
@@ -37,8 +38,6 @@
 #include "gwcontactproperties.h"
 #include "gwprotocol.h"
 #include "tasks/searchusertask.h"
-
-#include "gwsearch.h"
 
 //#include "../modeltest.h"
 

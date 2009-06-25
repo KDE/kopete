@@ -14,6 +14,8 @@
   * *                                                                       *
   * *************************************************************************
   */
+
+#include "alsaio.h"
 #include <alsa/asoundlib.h>
 
 #include <QObject>
@@ -22,7 +24,6 @@
 
 #include <KDebug>
 
-#include "alsaio.h"
 
 // taken from netinterface_unix (changed the split to KeepEmptyParts)
 static QStringList read_proc_as_lines(const char *procfile)

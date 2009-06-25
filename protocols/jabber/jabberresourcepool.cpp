@@ -16,9 +16,10 @@
   * *************************************************************************
   */
 
+#include "jabberresourcepool.h"
+
 #include <kdebug.h>
 
-#include "jabberresourcepool.h"
 #include "jabberresource.h"
 #include "jabbercontactpool.h"
 #include "jabberbasecontact.h"

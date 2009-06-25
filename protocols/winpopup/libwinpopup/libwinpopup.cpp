@@ -15,6 +15,9 @@
  *                                                                         *
  ***************************************************************************/
 
+// Local Includes
+#include "libwinpopup.h"
+
 // QT Includes
 #include <QDir>
 #include <QFileInfo>
@@ -30,9 +33,6 @@
 
 // Kopete Includes
 #include "kopeteuiglobal.h"
-
-// Local Includes
-#include "libwinpopup.h"
 
 WinPopupLib::WinPopupLib(const QString &smbClient, int groupFreq)
 	: smbClientBin(smbClient), groupCheckFreq(groupFreq)

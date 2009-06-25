@@ -16,6 +16,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "dlgjabberregister.h"
 #include <qpushbutton.h>
 
 #include <kmessagebox.h>
@@ -24,7 +25,6 @@
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
 #include "jabberclient.h"
-#include "dlgjabberregister.h"
 
 dlgJabberRegister::dlgJabberRegister (JabberAccount *account, const XMPP::Jid & jid, QWidget * parent) : QWidget (parent)
 {

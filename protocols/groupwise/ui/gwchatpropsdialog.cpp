@@ -17,6 +17,7 @@
     *************************************************************************
 */
 
+#include "gwchatpropsdialog.h"
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
@@ -27,8 +28,6 @@
 #include <kpushbutton.h>
 #include <klocale.h>
 #include "gwerror.h"
-
-#include "gwchatpropsdialog.h"
 
 GroupWiseChatPropsDialog::GroupWiseChatPropsDialog( QWidget * parent )
  : KDialog( parent ), m_dirty( false )

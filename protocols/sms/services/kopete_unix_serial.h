@@ -14,7 +14,7 @@
 #ifndef KOPETE_UNIX_SERIAL_H
 #define KOPETE_UNIX_SERIAL_H
 
-#include "config-kopete.h"
+#include <config-kopete.h>
 #ifdef INCLUDE_SMSGSM
 
 #include <string>
