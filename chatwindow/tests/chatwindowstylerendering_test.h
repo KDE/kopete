@@ -41,7 +41,9 @@ private slots:
 
 private:
 	class Private;
-	Private * const d;
+	Private * d;
+	
+	ChatMessagePart *chatPart;
 
 };
 #endif

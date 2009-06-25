@@ -25,12 +25,12 @@
 #include <qtextstream.h>
 
 // KDE includes
- #include <kunittest/module.h>
+// #include <kunittest/module.h>
  #include <kcomponentdata.h>
  #include <kdebug.h>
  #include <kglobal.h>
  #include <klocale.h>
-
+#include <kapplication.h>
 // ChatWindow Includes
 #include <kopetechatwindowstyle.h>
 
@@ -82,7 +82,7 @@ KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, 
 class FakeAccount : public Kopete::Account
 {
 public:
-FakeAccount(Kopete::Protocol *parent, const QString &accountID, const char *name) : Kopete::Account(parent, accountID, name)
+FakeAccount(Kopete::Protocol *parent, const QString &accountID) : Kopete::Account(parent, accountID)
 {
 
 }
@@ -111,6 +111,10 @@ void setOnlineStatus( const Kopete::OnlineStatus& /*status*/, const Kopete::Stat
 {
 	// do nothing
 }
+void setStatusMessage( const Kopete::StatusMessage & )
+{
+      // do nothing
+}
 };
 
 class ChatWindowStyleRendering_Test::Private
@@ -118,8 +122,8 @@ class ChatWindowStyleRendering_Test::Private
 public:
 	Private()
 	{
-		protocol = new FakeProtocol( KComponentData(QCString("test-kopete-message")), 0L, "test-kopete-message");
-		account = new FakeAccount(protocol, QString("testaccount"), 0);
+		protocol = new FakeProtocol( KComponentData(), 0L, "test-kopete-message");
+		account = new FakeAccount(protocol, QString("testaccount"));
 
 		// Create fake meta/contacts
 		myselfMetaContact = new Kopete::MetaContact();
@@ -172,7 +176,7 @@ void ChatWindowStyleRendering_Test::initTestCase()
 	//KCmdLineArgs::init(argc,argv,"testkopetemessage", 0, KLocalizedString(), 0, KLocalizedString());
 	KApplication app;
 
-	chatPart = new ChatMessagePart(d->fakeChatSession, 0, 0);
+	chatPart = new ChatMessagePart(d->fakeChatSession, 0);
 
 	testHeaderRendering();
 	testMessageRendering();
@@ -205,7 +209,7 @@ void ChatWindowStyleRendering_Test::testHeaderRendering()
 
 	kDebug(14000) << "Result HTML: " << resultHtml;
 
-	CHECK(resultHtml, expectedHtml);
+	QCOMPARE(resultHtml, expectedHtml);
 }
 
 void ChatWindowStyleRendering_Test::testMessageRendering()
@@ -240,22 +244,27 @@ void ChatWindowStyleRendering_Test::testMessageRendering()
 	QString tempHtml;
 	QString resultHtml;
 	
-	Kopete::Message msgIn(d->other, d->myself, QString::fromUtf8("Test"), Kopete::Message::Inbound );
-	Kopete::Message msgOut(d->myself, d->other, QString::fromUtf8("Hello there"), Kopete::Message::Outbound);
+	Kopete::Message msgIn(d->other, d->myself);
+	msgIn.setDirection(Kopete::Message::Inbound);
+	msgIn.setPlainBody(QString::fromUtf8("Test"));
+
+	Kopete::Message msgOut(d->myself, d->other);
+	msgOut.setDirection(Kopete::Message::Outbound);
+	msgOut.setPlainBody(QString::fromUtf8("Hello there"));
 
 	tempHtml = d->testStyle->getIncomingHtml();
 	resultHtml = chatPart->formatStyleKeywords(tempHtml, msgIn);
 
 	kDebug(14000) << "Message incoming HTML: " << resultHtml;
 
-	CHECK(resultHtml, expectedIncomingHtml);
+	QCOMPARE(resultHtml, expectedIncomingHtml);
 
 	tempHtml = d->testStyle->getOutgoingHtml();
 	resultHtml = chatPart->formatStyleKeywords(tempHtml, msgOut);
 
 	kDebug(14000) << "Message outgoing HTML: " << resultHtml;
 
-	CHECK(resultHtml, expectedOutgoingHtml);
+	QCOMPARE(resultHtml, expectedOutgoingHtml);
 }
 
 void ChatWindowStyleRendering_Test::testStatusRendering()
@@ -269,11 +278,14 @@ void ChatWindowStyleRendering_Test::testStatusRendering()
 
 	QString statusHtml = d->testStyle->getStatusHtml();
 	QString resultHtml;
-	
-	Kopete::Message msgStatus(0,0, QString::fromUtf8("A contact went offline."), Kopete::Message::Internal);
+
+	Kopete::Message msgStatus(0,0);
+	msgStatus.setPlainBody(QString::fromUtf8("A contact went offline."));
+	msgStatus.setDirection(Kopete::Message::Internal);
+
 	resultHtml = chatPart->formatStyleKeywords(statusHtml, msgStatus);
 
-	CHECK(resultHtml, expectedStatusHtml);
+	QCOMPARE(resultHtml, expectedStatusHtml);
 }
 
 void ChatWindowStyleRendering_Test::testFullRendering()
@@ -281,14 +293,37 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 	QString expectedFullHtml;
 	QString resultHtml;
 
-	Kopete::Message msgIn1(d->myself, d->other, QString("Hello there !"), Kopete::Message::Inbound);
-	Kopete::Message msgIn2(d->myself, d->other, QString("How are you doing ?"), Kopete::Message::Inbound);
-	Kopete::Message msgOut1(d->other, d->myself, QString("Fine and you ?"), Kopete::Message::Outbound);
-	Kopete::Message msgStatus1(d->myself,d->other, QString("You are now marked as away."), Kopete::Message::Internal);
-	Kopete::Message msgStatus2(d->myself,d->other, QString("You are now marked as online."), Kopete::Message::Internal);
-	Kopete::Message msgIn3(d->myself, d->other, QString("Well, doing some tests."), Kopete::Message::Internal);
-	Kopete::Message msgOut2(d->other, d->myself, QString("All your bases are belong to us."), Kopete::Message::Outbound);
-	Kopete::Message msgOut3(d->other, d->myself, QString("You are on the way to destruction"), Kopete::Message::Outbound);
+	Kopete::Message msgIn1(d->myself, d->other);
+	msgIn1.setPlainBody(QString("Hello there !"));
+	msgIn1.setDirection(Kopete::Message::Inbound);
+
+	Kopete::Message msgIn2(d->myself, d->other);
+	msgIn2.setPlainBody(QString("How are you doing ?"));
+	msgIn2.setDirection(Kopete::Message::Inbound);
+
+	Kopete::Message msgOut1(d->other, d->myself);
+	msgOut1.setPlainBody(QString("Fine and you ?"));
+	msgOut1.setDirection(Kopete::Message::Outbound);
+
+	Kopete::Message msgStatus1(d->myself,d->other);
+	msgStatus1.setPlainBody( QString("You are now marked as away."));
+	msgStatus1.setDirection(Kopete::Message::Internal);
+
+	Kopete::Message msgStatus2(d->myself,d->other);
+	msgStatus2.setPlainBody(QString("You are now marked as online."));
+	msgStatus2.setDirection(Kopete::Message::Internal);
+
+	Kopete::Message msgIn3(d->myself, d->other);
+	msgIn3.setPlainBody(QString("Well, doing some tests."));
+	msgIn3.setDirection(Kopete::Message::Inbound);
+
+	Kopete::Message msgOut2(d->other, d->myself);
+	msgOut2.setPlainBody( QString("All your bases are belong to us."));
+	msgOut2.setDirection(Kopete::Message::Outbound);
+
+	Kopete::Message msgOut3(d->other, d->myself);
+	msgOut3.setPlainBody( QString("You are on the way to destruction"));
+	msgOut3.setDirection(Kopete::Message::Outbound);
 
 	// Change style on the fly in ChatMessagePart so this test would run
 	chatPart->setStyle(d->testStyle);
@@ -310,12 +345,12 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 	if(sampleHtml.open(QIODevice::ReadOnly))
 	{
 		QTextStream stream(&sampleHtml);
-		stream.setEncoding(QTextStream::UnicodeUTF8);
+		stream.setCodec("UTF-8");
 		expectedFullHtml = stream.read();
 		sampleHtml.close();
 	}
 
-	CHECK(resultHtml, expectedFullHtml);
-{
+	QCOMPARE(resultHtml, expectedFullHtml);
+
 }
 
