@@ -143,7 +143,7 @@ private:
 	QMap<const Kopete::Contact*,QMap<unsigned int, History> > m_history;
 	History m_historyx;
 	
-	QMap<const Kopete::Contact*,QMap<unsigned int , QDomDocument> > m_documents;
+//	QMap<const Kopete::Contact*,QMap<unsigned int , QDomDocument> > m_documents;
 
 	/**
 	 * Contains the current message.
@@ -153,7 +153,7 @@ private:
 	 */
 //	QMap<const Kopete::Contact*, QDomElement>  m_currentElements;
 	QMap<const Kopete::Contact*, History>  m_currentElements;
-	QMap<QString, Akonadi::Collection > m_collectionMap;
+	static QMap<QString, Akonadi::Collection > m_collectionMap;
 
 	/**
 	 * Get the document, open it is @param canload is true, contain is set to false if the document

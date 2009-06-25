@@ -108,6 +108,8 @@ HistoryLogger::~HistoryLogger()
         modifyItem();
 }
 
+QMap<QString, Akonadi::Collection > HistoryLogger::m_collectionMap;
+
 void HistoryLogger::mapContactCollection()
 {
     if ( !m_baseCollection.isValid() )
@@ -125,7 +127,7 @@ void HistoryLogger::mapContactCollection()
       } else kDebug() << "collection fetch job not executed";
     }else kDebug() << "root collection is lareadythere";
   
-    if ( m_collectionMap.isEmpty() )
+    if ( HistoryLogger::m_collectionMap.isEmpty() )
     {
       kDebug() <<"m_collection map is empty";
       Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( m_baseCollection , Akonadi::CollectionFetchJob::FirstLevel );
@@ -134,7 +136,7 @@ void HistoryLogger::mapContactCollection()
 	  Akonadi::Collection::List collections = job2->collections();
 	  foreach( const Akonadi::Collection collection, collections )
 	  {
-	    m_collectionMap.insert(collection.name() , collection);
+	    HistoryLogger::m_collectionMap.insert(collection.name() , collection);
 	    kDebug() <<collection.name();
 	  }
       } else kDebug() << "collection fetch job not executed";
@@ -238,7 +240,7 @@ History HistoryLogger::getHistory(const Kopete::Contact *contact, const QDate da
         return History();
     }
 
-    if ( m_collectionMap.contains( c->contactId() ) )
+    if ( HistoryLogger::m_collectionMap.contains( c->contactId() ) )
     {
       m_tosaveInCollection = m_collectionMap[c->contactId()];
       kDebug() << "collection found in m_collection map";
