@@ -338,7 +338,7 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 	chatPart->appendMessage(msgOut2);
 	chatPart->appendMessage(msgOut3);
 
-	resultHtml = chatPart->htmlDocument().toHTML();
+        resultHtml = chatPart->documentSource();
 
 	// Read the expected(sample) HTML from file.
 	QFile sampleHtml(QString(SRCDIR)+"sample.html");
@@ -346,11 +346,14 @@ void ChatWindowStyleRendering_Test::testFullRendering()
 	{
 		QTextStream stream(&sampleHtml);
 		stream.setCodec("UTF-8");
-		expectedFullHtml = stream.read();
+                expectedFullHtml = stream.readAll();
 		sampleHtml.close();
 	}
 
 	QCOMPARE(resultHtml, expectedFullHtml);
 
 }
+
+QTEST_MAIN(ChatWindowStyleRendering_Test)
+#include "chatwindowstylerendering_test.moc"
 

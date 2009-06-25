@@ -4,7 +4,7 @@ ADD_DEFINITIONS(-DSRCDIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
-set( CHATWINDOW_TEST_LIBRARIES ${KDE4_KDECORE_LIBS} ${QT_QTTEST_LIBRARY} kopetechatwindow  )
+set( CHATWINDOW_TEST_LIBRARIES ${KDE4_KDECORE_LIBS} ${QT_QTTEST_LIBRARY} kopete_chatwindow  )
 
 
 include_directories( 
@@ -13,6 +13,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../
 ${CMAKE_CURRENT_SOURCE_DIR}/../../ 
 )
 
+link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../ )
 ########### next target ###############
 set(chatwindowstylerendering_test_SRCS chatwindowstylerendering_test.cpp )
 
