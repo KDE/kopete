@@ -4,9 +4,9 @@ if(NOT WIN32)
 endif(NOT WIN32)
 
 
-install( FILES kopete-pluginloader.upd  kopete-nameTracking.upd  kopete-initialstatus.upd  kopete-gaim_to_pidgin_style.upd  DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
+install( FILES kopete-pluginloader.upd  kopete-nameTracking.upd  kopete-initialstatus.upd  kopete-gaim_to_pidgin_style.upd kopete-update_yahoo_server.upd  DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
 
-install( PROGRAMS kopete-pluginloader.pl
+install( PROGRAMS kopete-pluginloader.pl kopete-update_yahoo_server.pl
 	kopete-account-0.10.pl kopete-initialstatus.pl kopete-gaim_to_pidgin_style.pl
   DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
 
