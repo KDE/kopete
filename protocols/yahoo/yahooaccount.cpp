@@ -539,7 +539,7 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 		return;
 	}
 
-	QString server = configGroup()->readEntry( "Server", "scs.msg.yahoo.com" );
+	QString server = configGroup()->readEntry( "Server", "scsa.msg.yahoo.com" );
 	int port = configGroup()->readEntry( "Port", 5050 );
 
 	initConnectionSignals( MakeConnections );
