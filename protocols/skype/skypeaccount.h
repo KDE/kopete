@@ -365,7 +365,7 @@ Q_OBJECT
 		/**
 		 * Open skype file transfer dilog to send file via skype
 		 */
-		void openFileTransfer(const QString &user, const QString &url = QString::null);
+		void openFileTransfer(const QString &user, const QString &url = QString());
 		/**
 		 * Set Skype display name
 		 * @param user Skype user

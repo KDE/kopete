@@ -345,7 +345,7 @@ void StatusManager::askAndSetActive()
 	// Set the Text in the Dialog
 	KMessageBox::createKMessageBox(dialog, QMessageBox::Question,
 		i18n("Do You Want to Change Status to Available?"),
-		QStringList(), QString::null, NULL, KMessageBox::NoExec);
+		QStringList(), QString(), NULL, KMessageBox::NoExec);
 
 	// If yes is clicked, go online
 	connect(dialog, SIGNAL(yesClicked()), this, SLOT(setActive()));

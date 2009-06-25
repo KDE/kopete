@@ -87,7 +87,7 @@ class SkypeContactPrivate {
 };
 
 SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::MetaContact *parent, bool user)
-	: Kopete::Contact(account, id, parent, QString::null) {
+	: Kopete::Contact(account, id, parent, QString()) {
 	kDebug() << k_funcinfo << endl;//some debug info
 
 	d = new SkypeContactPrivate;//create the insides
