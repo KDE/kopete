@@ -143,17 +143,17 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 	QList<QByteArray> parts=line.trimmed().split(' ');
 
 	//	remove the trailling \r\n if any(there must be in fact)
-	parts.last()=parts.last().replace("\r\n", QByteArray());
+	parts.last()=parts.last().replace("\r\n","");
 	
 	QList<QByteArray>::const_iterator it=parts.begin();
 
-	if((*it).startsWith(':'))
+	if((*it).startsWith(":"))
 	{
 		prefix=(*it).mid(1);
 		++it;
 	}
 
-	for(;it!=parts.end()&&!(*it).startsWith(':');++it)
+	for(;it!=parts.end()&&!(*it).startsWith(":");++it)
 	{
 			args.append((*it));
 	}
@@ -162,7 +162,7 @@ Message Message::fromLine(const QByteArray &line, bool *ok)
 	{
 		for(;it!=parts.end();++it)
 		{
-			suffix=suffix+' '+(*it);
+			suffix=suffix+" "+(*it);
 		}
 		//remove " :"
 		suffix=suffix.mid(2);

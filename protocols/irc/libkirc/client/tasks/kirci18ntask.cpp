@@ -708,7 +708,7 @@ void I18nTask::numericReply_401(Event *e)
  */
 void I18nTask::numericReply_404(Event *e)
 {
-	postServerEvent(e, i18n("You cannot send messages to channel %1.", e->message().arg(1)));
+	postServerEvent(e, i18n("You cannot send message to channel %1.", e->message().arg(1)));
 }
 
 /* 406: "<nickname> :There was no such nickname"

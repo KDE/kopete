@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003-2008 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
@@ -155,7 +156,12 @@ void ClientSocket::socketStateChanged(QAbstractSocket::SocketState newstate)
 		writeMessage( StdMessages::user( url.userName().toLatin1(), "127.0.0.1", url.host().toLatin1(), url.queryItemValue("realname").toLatin1() ) );
 		writeMessage( StdMessages::nick( url.queryItemValue("nickname").toLatin1() ) );
 
+		owner()->setName(url.queryItemValue("nickname").toLatin1());
+
 		break;
+	case QAbstractSocket::ClosingState:
+		owner()->setStatus(KIrc::Unknown);
+		server()->setStatus(KIrc::Unknown);
 	default:
 		Socket::socketStateChanged(newstate);
 		break;
@@ -164,14 +170,46 @@ void ClientSocket::socketStateChanged(QAbstractSocket::SocketState newstate)
 
 void ClientSocket::setAuthentified()
 {
+	owner()->setStatus(KIrc::Online);
+	server()->setStatus(KIrc::Online);
+
 	setConnectionState( Socket::Authentified );
 }
 
-KIrc::EntityPtr ClientSocket::joinChannel( const QByteArray & channelName )
+void ClientSocket::joinChannel( const QByteArray & channelName )
 {
 	Q_D( ClientSocket );
-	writeMessage( KIrc::StdMessages::join( channelName ) );
-    KIrc::EntityPtr channel=KIrc::EntityPtr( d->context->entityFromName( channelName ) );
 
-	return channel;
+	kDebug( 14121 )<<"joining "<<channelName;
+	onCommand( d->context, KIrc::Command()<<"JOIN"<<channelName );
 }
+
+
+void ClientSocket::quit( const QByteArray & quitMessage )
+{
+	Q_D( ClientSocket );
+
+	onCommand( d->context, KIrc::Command()<< "QUIT"<<quitMessage  );
+	//disconnect
+	socket()->close();
+}
+
+void ClientSocket::part( KIrc::EntityPtr channel, const QByteArray & partMessage )
+{
+	Q_D( ClientSocket );
+
+	onCommand( channel->context(), KIrc::Command()<<"PART"<<channel->name()<<partMessage );
+}
+
+void ClientSocket::onCommand( KIrc::Context* context, const QByteArray& command )
+{
+	onCommand( context, command.split( ' ' ) );
+}
+
+void ClientSocket::onCommand( KIrc::Context* context, const KIrc::Command& command )
+{
+	Q_D( ClientSocket );
+	kDebug( 14121 )<<"executing command "<<command;
+	d->context->onCommand( context, command, this );
+}
+

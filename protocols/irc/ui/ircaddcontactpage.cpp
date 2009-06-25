@@ -35,18 +35,20 @@ IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a )
 {
 	setupUi(this);
 
+//TODO: port searching functionality
 // 	d->search = new ChannelList( hbox, a->client() );
 // 	QVBoxLayout *layout = new QVBoxLayout( hbox );
 // 	hbox->setLayout(layout);
 // 	layout->addWidget(d->search);
 
 	d->account = a;
-
+/*
 	connect( d->search, SIGNAL( channelSelected( const QString & ) ),
 		this, SLOT( slotChannelSelected( const QString & ) ) );
 
 	connect( d->search, SIGNAL( channelDoubleClicked( const QString & ) ),
 		this, SLOT( slotChannelDoubleClicked( const QString & ) ) );
+*/
 }
 
 IRCAddContactPage::~IRCAddContactPage()

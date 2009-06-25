@@ -2,6 +2,7 @@
     kircclientwhohandler.h - IRC Client Who Handler
 
     Copyright (c) 2008      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -36,42 +37,45 @@ class KIRCCLIENT_EXPORT ClientWhoHandler
 	Q_DECLARE_PRIVATE(KIrc::ClientWhoHandler)
 
 public:
-	explicit ClientWhoHandler(Context *context);
+	explicit ClientWhoHandler(Handler *handler);
 	~ClientWhoHandler();
 
-public:
-	void WHO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	void WHOIS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	void WHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-
 private:
-	/* WHO replies */
-	void RPL_WHOREPLY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	void bindNumericReplies();
 
-	void RPL_ENDOFWHO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+public Q_SLOTS:
+	KIrc::Handler::Handled WHO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled WHOIS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled WHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+
+private Q_SLOTS:
+	/* WHO replies */
+	KIrc::Handler::Handled RPL_WHOREPLY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+
+	KIrc::Handler::Handled RPL_ENDOFWHO(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 	/* WHOIS replies */
-	void RPL_AWAY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	void RPL_WHOISCHANNELS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	void RPL_WHOISIDLE(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	void RPL_WHOISOPERATOR(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	void RPL_WHOISUSER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled RPL_AWAY(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled RPL_WHOISCHANNELS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled RPL_WHOISIDLE(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled RPL_WHOISOPERATOR(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled RPL_WHOISUSER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
-	void RPL_ENDOFWHOIS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled RPL_ENDOFWHOIS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 	/* WHOWAS replies */
-	void RPL_WHOWASUSER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled RPL_WHOWASUSER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
-	void RPL_ENDOFWHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled RPL_ENDOFWHOWAS(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 	
-	void ERR_WASNOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled ERR_WASNOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 	/* Common replies */
-	void RPL_WHOISSERVER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled RPL_WHOISSERVER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
-	void ERR_NONICKNAMEGIVEN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	void ERR_NOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
-	void ERR_NOSUCHSERVER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled ERR_NONICKNAMEGIVEN(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled ERR_NOSUCHNICK(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
+	KIrc::Handler::Handled ERR_NOSUCHSERVER(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 private:
 	Q_DISABLE_COPY(ClientWhoHandler)

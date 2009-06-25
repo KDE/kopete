@@ -132,6 +132,7 @@
    </item>
   </layout>
  </widget>
+ <layoutdefault spacing="6" margin="11" />
  <tabstops>
   <tabstop>addID</tabstop>
   <tabstop>tabWidget3</tabstop>

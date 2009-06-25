@@ -336,7 +336,7 @@
           <item row="1" column="0" >
            <widget class="QCheckBox" name="autoConnect" >
             <property name="whatsThis" >
-             <string>If you enable this option, this account will not be connected when you press the "Connect All" button, nor at startup even if you have enabled automatic connection at startup.</string>
+             <string>If you enable this option, this account will not be connected when you press the "Connect All" button, nor at startup even if you have enabled automaic connection at startup</string>
             </property>
             <property name="text" >
              <string>E&amp;xclude from connect all</string>
@@ -833,6 +833,7 @@
    </item>
   </layout>
  </widget>
+ <layoutdefault spacing="6" margin="11" />
  <tabstops>
   <tabstop>tabWidget2</tabstop>
   <tabstop>nickNames</tabstop>

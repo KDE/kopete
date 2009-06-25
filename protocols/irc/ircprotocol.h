@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2008-2009      by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -21,6 +22,7 @@
 
 #include "kircentity.h"
 #include "kircglobal.h"
+#include "kirccontext.h"
 
 #include "kopetemessage.h"
 #include "kopeteonlinestatus.h"
@@ -88,7 +90,9 @@ public:
 
 //	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
-	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity);
+	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity,  KIrc::Context* relativeTo=0 );
+	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity, Kopete::OnlineStatusManager::Categories categories, KIrc::Context* relativeTo=0 );
+	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityStatus status, Kopete::OnlineStatusManager::Categories categories);
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
@@ -104,13 +108,15 @@ private slots:
 	void slotQuoteCommand(const QString &args, Kopete::ChatSession *manager );
 	void slotRawCommand(const QString &args, Kopete::ChatSession *manager );
 
+	void slotNativeKIrcCommand( const QString& args, Kopete::ChatSession* manager );
+
 	void slotViewCreated(KopeteView *);
 
 private:
 	void initOnlineStatus();
 	void simpleModeChange(const QString &, Kopete::ChatSession *, const QString &mode);
 
-	//QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
+	QMap<KIrc::EntityStatus, Kopete::OnlineStatus> m_statusMap;
 //	const Kopete::OnlineStatus m_connecting;
 	const Kopete::OnlineStatus m_StatusUnknown;
 

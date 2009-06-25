@@ -169,7 +169,7 @@ void Engine::numericReply_251(Message &msg)
  */
 void Engine::numericReply_252(Message &msg)
 {
-	receivedServerMessage(msg, i18np("There is one operator online", "There are %1 operators online.", msg.arg(1)));
+	receivedServerMessage(msg, i18n("There are %1 operators online.", msg.arg(1)));
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -177,7 +177,7 @@ void Engine::numericReply_252(Message &msg)
  */
 void Engine::numericReply_253(Message &msg)
 {
-	receivedServerMessage(msg, i18np("There is one unknown connection", "There are %1 unknown connections.", msg.arg(1)));
+	receivedServerMessage(msg, i18n("There are %1 unknown connections.", msg.arg(1)));
 }
 
 /* 254: "<integer> :channels formed"
@@ -185,7 +185,7 @@ void Engine::numericReply_253(Message &msg)
  *  */
 void Engine::numericReply_254(Message &msg)
 {
-	receivedServerMessage(msg, i18np("There has been one channel formed", "There have been %1 channels formed.", msg.arg(1)));
+	receivedServerMessage(msg, i18n("There have been %1 channels formed.", msg.arg(1)));
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
@@ -510,7 +510,7 @@ void Engine::numericReply_401(Message &msg)
  */
 void Engine::numericReply_404(Message &msg)
 {
-	receivedServerMessage(msg, i18n("You cannot send messages to channel %1.", msg.arg(1)));
+	receivedServerMessage(msg, i18n("You cannot send message to channel %1.", msg.arg(1)));
 }
 
 /* 406: "<nickname> :There was no such nickname"

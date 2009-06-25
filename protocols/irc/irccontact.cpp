@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2004-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -85,11 +86,14 @@ IRCContact::IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity, MetaC
 
 	// KIRC stuff
 	connect(client, SIGNAL(connectionStateChanged(KIrc::Socket::ConnectionState)),
-		this, SLOT(updateStatus()));
-/*
-	connect(entity, SIGNAL(updated()),
+			this, SLOT(updateStatus()));
+
+	connect(d->entity.data(), SIGNAL(updated()),
 		this, SLOT(entityUpdated()));
-*/
+
+	//Delete the contact, if the matching entity does no longer exist in the IRC network
+	connect(d->entity.data(), SIGNAL(aboutToBeDestroyed(KIrc::Entity*)), this, SLOT(deleteLater() ) );
+
 	entityUpdated();
 }
 
@@ -102,6 +106,8 @@ IRCContact::~IRCContact()
 	emit destroyed(this);
 
 	delete d;
+
+	kDebug( 14120 );
 }
 
 void IRCContact::deleteContact()
@@ -142,6 +148,7 @@ void IRCContact::entityUpdated()
 
 	// Basic entity properties.
 	setProperty(prop->nickName(), d->entity->name());
+
 //	setProperty(???->serverName(), d->entity->server());
 //	setProperty(???->type(), d->entity->type());
 
@@ -151,9 +158,9 @@ void IRCContact::entityUpdated()
 //	setProperty(???->topic(), d->entity->topic());
 
 	// Contact properties
-/*
+
 	// Update Icon properties
-	switch(m_entity->type())
+	switch(d->entity->type())
 	{
 //	case KIrc::Entity::Unknown: // Use default
 	case KIrc::Entity::Server:
@@ -166,14 +173,14 @@ void IRCContact::entityUpdated()
 //		setIcon("irc_service");
 //		break;
 	case KIrc::Entity::User:
-		setIcon("irc_user");
+		setIcon("irc_online");
 		break;
 	default:
 //		setIcon("irc_unknown");
 		setIcon(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
 		break;
 	}
-*/
+
 	updateStatus();
 }
 
@@ -192,14 +199,7 @@ QString IRCContact::caption() const
 
 void IRCContact::updateStatus()
 {
-	//setOnlineStatus(Kopete::OnlineStatus::Online);
-	//setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
-
-	//TODO: temporary until the real status handling is resurrected
-	if(account()->isConnected())
-		setOnlineStatus(Kopete::OnlineStatus::Online);
-	else
-		setOnlineStatus(Kopete::OnlineStatus::Offline);
+	setOnlineStatus(IRCProtocol::self()->onlineStatusFor(d->entity));
 }
 
 bool IRCContact::isReachable()
@@ -255,20 +255,31 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 	KIrc::ClientSocket *engine = kircClient();
 
 	Kopete::ChatSession *chatSession = d->chatSessions.value(type);
-	if (!chatSession)
+	if (!chatSession&&create)
 	{
 //		if (engine->status() == KIrc::ClientSocket::Idle && dynamic_cast<IRCServerContact*>(this) == 0)
 //			account->connect();
 
 		kDebug(14120)<<"creating new ChatSession";
 
-		chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , account->protocol());
+		if(entity()->isChannel())
+		{
+			kDebug( 14120 )<<"its a channel";
+			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) ,
+															 account->protocol(), Kopete::ChatSession::Chatroom);
+			ircAccount()->client()->joinChannel( entity()->name() );
+
+		}else
+		{
+			chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) ,
+															 account->protocol(), Kopete::ChatSession::Small);
+		}
 		chatSession->setDisplayName(caption());
 
 		connect(chatSession, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
 			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::ChatSession *)));
-		connect(chatSession, SIGNAL(closing(ChatSession *)),
-			this, SLOT(chatSessionDestroyed(ChatSession *)));
+		connect(chatSession, SIGNAL(closing(Kopete::ChatSession *)),
+			this, SLOT(chatSessionDestroyed(Kopete::ChatSession *)));
 
 		d->chatSessions.insert(type, chatSession);
 	}
@@ -276,9 +287,11 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 	return chatSession;
 }
 
-void IRCContact::chatSessionDestroyed(ChatSession *chatSession)
+void IRCContact::chatSessionDestroyed(Kopete::ChatSession *chatSession)
 {
 //	m_chatSession = 0; // d->chatSessions.remove(chatSession);
+	if ( entity()->isChannel() )
+		kircClient()->part( entity(), ircAccount()->codec()->fromUnicode( ircAccount()->partMessage() ) );
 
 	if (metaContact()->isTemporary() && !isChatting())
 		deleteLater();
@@ -371,10 +384,12 @@ QString IRCContact::sendMessage(const QString &msg)
 		newMessage.truncate( 512 - ( entity()->name().length() + 12 ) );
 	}
 
-	if(entity()->type()==KIrc::Entity::Server) //if it is a server, send raw data
+
+	if(entity()->type()==KIrc::Entity::Server) //if its a server, send raw data
 		ircAccount()->client()->writeMessage( KIrc::Message::fromLine(codec()->fromUnicode(newMessage)) );
 	else
-		ircAccount()->client()->writeMessage( KIrc::StdMessages::privmsg(codec()->fromUnicode(entity()->name()),codec()->fromUnicode(newMessage)) );
+		ircAccount()->client()->onCommand( entity()->context(),
+										   KIrc::Command()<<"PRIVMSG "<<codec()->fromUnicode(entity()->name())<<codec()->fromUnicode(newMessage) );
 
 	return newMessage;
 }
@@ -443,4 +458,3 @@ void IRCContact::serialize(QMap<QString, QString> & /*serializedData*/, QMap<QSt
 {
 	addressBookData[protocol()->addressBookIndexField()] = contactId() + QChar(0xE120) + account()->accountId();
 }
-

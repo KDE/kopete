@@ -52,7 +52,7 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 
 	if( account() )
 	{
-		QString nickName = account()->mySelf()->nickName();
+		QString nickName = account()->nickName();
 		QString serverInfo = account()->accountId();
 
 		nickNames->setText( nickName );

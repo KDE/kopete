@@ -2,6 +2,7 @@
     kircentity.cpp - IRC Client
 
     Copyright (c) 2004-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2004-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -31,21 +32,26 @@ using namespace KIrc;
  * where user and host are optional.
  * NOTE: If changes are done to the regexp string, update also the sm_userStrictRegExp regexp string.
  */
-//const QRegExp Entity::sm_userRegExp(QLatin1String("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
+const QRegExp sm_userRegExp(QLatin1String("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
 
 /**
  * Regexp to match strictly the complete user definition:
  * nick!user@host
  * NOTE: If changes are done to the regexp string, update also the sm_userRegExp regexp string.
  */
-//const QRegExp Entity::sm_userStrictRegExp(QLatin1String("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
+const QRegExp sm_userStrictRegExp(QLatin1String("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
 
-//const QRegExp Entity::sm_channelRegExp(QLatin1String("^[#!+&][^\\s,]+$") );
-/*
+const QRegExp sm_channelRegExp(QLatin1String("^[#!+&][^\\s,]+$") );
+
 // FIXME: Implement me
-EntityType Entity::guessType(const QByteArray &)
+Entity::Type Entity::guessType(const QByteArray &name)
 {
-	return Unknown;
+	if ( isChannel( name ) )
+		return Channel;
+	if ( isUser( name ) )
+		return User;
+	else
+		return Unknown;
 }
 
 bool Entity::isUser( const QByteArray &name )
@@ -57,7 +63,7 @@ bool Entity::isChannel( const QByteArray &name )
 {
 	return sm_channelRegExp.exactMatch(name);
 }
-*/
+
 class KIrc::EntityPrivate
 {
 public:
@@ -69,6 +75,7 @@ public:
 	QPointer<Context> context;
 
 	Entity::Type type;
+	EntityStatus status;
 
 	QByteArray name;
 	QByteArray host;
@@ -81,13 +88,17 @@ public:
 };
 
 Entity::Entity(Context *context)
-	: QObject(context)
+	: QObject()  //Don't let the Entity be a child of the context,
+	             //as the deletion will be handled by the SharedPointer
 	, d_ptr(new EntityPrivate)
 {
+	Q_D( Entity );
+	d->context=context;
 }
 
 Entity::~Entity()
 {
+	kDebug(14121);
 	delete d_ptr;
 }
 
@@ -119,16 +130,28 @@ void Entity::setType( Entity::Type type )
 	if ( d->type != type )
 	{
 		d->type = type;
+
+		if(type==Channel) //Create a new Context, representing this channel
+		{
+			kDebug(14121)<<"creating a new context for the channel "<<name()<<"  "<<this;
+			d->context=new Context(this);
+			d->context->setOwner( KIrc::EntityPtr( this ) );
+
+			d->status=d->status|KIrc::Channel;
+		}
 		emit updated();
 	}
 }
-/*
-EntityType Entity::guessType()
+
+Entity::Type Entity::guessType()
 {
-	setType( guessType(d->name) );
+	Q_D( Entity );
+	//If the type is already set, we don't have to guess
+	if ( type()==KIrc::Unknown )
+		setType( guessType(d->name) );
 	return type();
 }
-*/
+
 QByteArray Entity::name() const
 {
 	Q_D(const Entity);
@@ -197,3 +220,32 @@ void Entity::setCodec(QTextCodec *codec)
 	}
 }
 
+QPointer<Context> Entity::context() const
+{
+	Q_D(const Entity);
+	return d->context;
+}
+
+EntityStatus Entity::status() const
+{
+	Q_D(const Entity);
+	return d->status;
+}
+
+void Entity::setStatus(const EntityStatus& status)
+{
+	Q_D(Entity);
+	d->status=status;
+	emit updated();
+}
+
+void Entity::free()
+{
+	emit aboutToBeDestroyed( this );
+}
+
+void Entity::setTopic( const QByteArray& topic )
+{
+	Q_D( Entity );
+	d->topic=topic;
+}

@@ -92,6 +92,31 @@ private:
 	QString m_text;
 };
 
+
+/**
+   Simple class for Events that don't contain any text, but require a reaction from the application.
+   For example the CHANNEL_UPDATED event
+*/
+class KIRC_EXPORT ControlEvent
+	: public QEvent
+{
+public:
+	static const QEvent::Type Type;
+
+	ControlEvent(const QString &eventId, const KIrc::EntityPtr &src)
+		: QEvent(Type), m_eventId(eventId), m_src(src)
+	{
+
+	}
+
+	QString eventId() const { return m_eventId; }
+	KIrc::EntityPtr src() const { return m_src; }
+
+private:
+	QString m_eventId;
+	KIrc::EntityPtr m_src;
+};
+
 }
 
 #endif

@@ -2,6 +2,7 @@
     kirccontext.h - IRC Context
 
     Copyright (c) 2005-2007 by Michel Hermier <michel.hermier@gmail.com>
+    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2005-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -51,6 +52,11 @@ public:
 
 //	Entity::List anonymous();
 
+	//The entity, this context belongs to. Its the server, for the root context,
+	//or the channel for channel-contexts
+	KIrc::EntityPtr owner() const;
+	void setOwner(KIrc::EntityPtr entity);
+
 	KIrc::EntityList entities() const;
 //	Entity::List entitiesByHost(...) const;
 //	Entity::List entitiesByServer(...) const;
@@ -62,6 +68,9 @@ public:
 
 	KIrc::EntityList entitiesFromNames(const QByteArray &names, char sep = ',');
 
+	KIrc::EntityStatus statusOf(EntityPtr entity) const;
+	void setStatus(EntityPtr entity, KIrc::EntityStatus s);
+	void addStatus(EntityPtr entity, KIrc::EntityStatus s);
 public Q_SLOTS:
 	void add(EntityPtr entity);
 	void remove(EntityPtr entity);
@@ -79,6 +88,8 @@ public:
 //	Status SET();
 
 //	Status execute();
+private Q_SLOTS:
+	void onEntityAboutToBeDestroyed(KIrc::Entity* entity);
 
 protected:
 	ContextPrivate * const d_ptr;
