@@ -527,9 +527,17 @@ WlmChatManager::slotGotVoiceClipFile(MSN::SwitchboardServerConnection * conn,
                                 const unsigned int & sessionID, 
                                 const QString & file)
 {
-    Q_UNUSED( conn );
     Q_UNUSED( sessionID );
-    Q_UNUSED( file );
+
+    WlmChatSession *chat = chatSessions[conn];
+    if(!chat)
+        return;
+
+    Kopete::Message kmsg( chat->members().first(), chat->members() );
+    kmsg.setType(Kopete::Message::TypeVoiceClipRequest);
+    kmsg.setDirection( Kopete::Message::Inbound );
+    kmsg.setFileName(file);
+    chat->appendMessage ( kmsg );
 }
 
 void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
