@@ -48,6 +48,7 @@ public:
 	QString actionIncomingHtml;
 	QString actionOutgoingHtml;
 	QString fileTransferIncomingHtml;
+	QString voiceClipIncomingHtml;
 	QString outgoingStateSendingHtml;
 	QString outgoingStateErrorHtml;
 	QString outgoingStateSentHtml;
@@ -171,6 +172,11 @@ QString ChatWindowStyle::getFileTransferIncomingHtml() const
 	return d->fileTransferIncomingHtml;
 }
 
+QString ChatWindowStyle::getVoiceClipIncomingHtml() const
+{
+	return d->voiceClipIncomingHtml;
+}
+
 QString ChatWindowStyle::getOutgoingStateSendingHtml() const
 {
 	return d->outgoingStateSendingHtml;
@@ -238,6 +244,7 @@ void ChatWindowStyle::readStyleFiles()
 	QString actionIncomingFile = d->baseHref + QString("Incoming/Action.html");
 	QString actionOutgoingFile = d->baseHref + QString("Outgoing/Action.html");
 	QString fileTransferIncomingFile = d->baseHref + QString("Incoming/FileTransferRequest.html");
+	QString voiceClipIncomingFile = d->baseHref + QString("Incoming/voiceClipRequest.html");
 	QString outgoingStateUnknownFile = d->baseHref + QString("Outgoing/StateUnknown.html");
 	QString outgoingStateSendingFile = d->baseHref + QString("Outgoing/StateSending.html");
 	QString outgoingStateSentFile = d->baseHref + QString("Outgoing/StateSent.html");
@@ -376,6 +383,39 @@ void ChatWindowStyle::readStyleFiles()
 		                           "</div>" )
 		                           .arg( i18n( "Download" ), i18n( "Cancel" ) );
 		d->fileTransferIncomingHtml.replace( QLatin1String("%message%"), message );
+	}
+
+	// Load VoiceClip Incoming file
+	if( QFile::exists(voiceClipIncomingFile) )
+	{
+		fileAccess.setFileName(voiceClipIncomingFile);
+		fileAccess.open(QIODevice::ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
+		d->voiceClipIncomingHtml = headerStream.readAll();
+		kDebug(14000) << "voiceClipIncoming HTML: " << d->voiceClipIncomingHtml;
+		fileAccess.close();
+	}
+
+	if ( d->voiceClipIncomingHtml.isEmpty() ||
+	     ( !d->voiceClipIncomingHtml.contains( "playVoiceHandlerId" ) &&
+	       !d->voiceClipIncomingHtml.contains( "saveAsVoiceHandlerId" ) ) )
+	{	// Create default html
+		d->voiceClipIncomingHtml = d->incomingHtml;
+		QString message = QString( "%message%\n"
+		                           "<div>\n"
+		                           " <div style=\"width:37px; float:left;\">\n"
+		                           "  <img src=\"%fileIconPath%\" style=\"width:32px; height:32px; vertical-align:middle;\" />\n"
+		                           " </div>\n"
+		                           " <div>\n"
+		                           "  <span>\n"
+		                           "   <input id=\"%playVoiceHandlerId%\" type=\"button\" value=\"%1\">\n"
+		                           "   <input id=\"%saveAsVoiceHandlerId%\" type=\"button\" value=\"%2\">\n"
+		                           "  </span>\n"
+		                           " </div>\n"
+		                           "</div>" )
+		                           .arg( i18n( "Play" ), i18n( "Save as" ) );
+		d->voiceClipIncomingHtml.replace( QLatin1String("%message%"), message );
 	}
 
 	// Load outgoing file

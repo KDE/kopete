@@ -103,6 +103,8 @@ public:
 
 	QString getFileTransferIncomingHtml() const;
 
+	QString getVoiceClipIncomingHtml() const;
+
 	QString getOutgoingStateSendingHtml() const;
 	QString getOutgoingStateSentHtml() const;
 	QString getOutgoingStateErrorHtml() const;
