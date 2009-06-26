@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="mainTabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -374,6 +374,156 @@
             </item>
            </layout>
           </item>
+          <item>
+           <widget class="QCheckBox" name="optionEnableProxy">
+            <property name="text">
+             <string>Enable Proxy</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,0,0,0">
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>28</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <item>
+               <widget class="QLabel" name="m_labelProxyHost">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Host /</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="m_labelProxyPort">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>port:</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="m_proxyHost">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="cursorPosition">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="m_proxyPort">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+              <property name="value">
+               <number>8080</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QRadioButton" name="m_radioProxyHttp">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>HTTP</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="m_radioProxySocks5">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Socks5</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="m_labelProxyUsername">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Username:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="m_proxyUsername">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="m_labelProxyPassword">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Password:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="m_proxyPassword">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="echoMode">
+               <enum>QLineEdit::Password</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>
@@ -484,6 +634,166 @@
     <hint type="destinationlabel">
      <x>507</x>
      <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_labelProxyHost</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>75</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_labelProxyPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>115</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_proxyHost</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_proxyPort</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>630</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_radioProxyHttp</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>48</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_radioProxySocks5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>115</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_proxyUsername</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_proxyPassword</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>571</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_labelProxyUsername</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>191</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_labelProxyPassword</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>447</x>
+     <y>191</y>
     </hint>
    </hints>
   </connection>

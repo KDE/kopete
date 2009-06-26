@@ -334,6 +334,37 @@ uint WlmAccount::serverPort() const
     return configGroup()->readEntry( "serverPort" , 1863 );
 }
 
+QString WlmAccount::proxyUsername() const
+{
+    return configGroup()->readEntry( "proxyUsername" );
+}
+
+QString WlmAccount::proxyPassword() const
+{
+    return configGroup()->readEntry( "proxyPassword" );
+}
+
+QString WlmAccount::proxyHost() const
+{
+    return configGroup()->readEntry( "proxyHost" );
+}
+
+uint WlmAccount::proxyType() const
+{
+    return configGroup()->readEntry( "proxyType", 0 );
+}
+
+uint WlmAccount::proxyPort() const
+{
+    return configGroup()->readEntry( "proxyPort", 8080 );
+}
+
+bool WlmAccount::isProxyEnabled() const
+{
+    return configGroup()->readEntry( "enableProxy", false );
+}
+
+
 void
 WlmAccount::gotNewContact (const MSN::ContactList & list,
                            const QString & passport,

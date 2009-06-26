@@ -17,10 +17,14 @@
 #include "wlmsocket.h"
 
 #include <QTimer>
+#include <QNetworkProxy>
 
 #include "kopetesockettimeoutwatcher.h"
+#include "kopeteaccount.h"
+#include "wlmaccount.h"
+#include "wlmserver.h"
 
-WlmSocket::WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL)
+WlmSocket::WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL, WlmServer* server)
 : mMainConnection(mainConnection), mIsSSL(isSSL), mPingTimer(0)
 {
     QObject::connect( this, SIGNAL(connected()), this, SLOT(connectionReady()) );
@@ -31,6 +35,20 @@ WlmSocket::WlmSocket(MSN::NotificationServerConnection * mainConnection, bool is
     Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch( this );
     if ( timeoutWatcher )
         connect( timeoutWatcher, SIGNAL(error(QAbstractSocket::SocketError)), this, SIGNAL(error(QAbstractSocket::SocketError)) );
+
+    if (server && server->m_account)
+    {
+        WlmAccount *acc= server->m_account;
+        if(acc->isProxyEnabled())
+        {
+            QString proxyHost = acc->proxyHost();
+            uint proxyPort = acc->proxyPort();
+            QNetworkProxy::ProxyType proxyType = (QNetworkProxy::ProxyType) acc->proxyType();
+            QString proxyUsername = acc->proxyUsername();
+            QString proxyPassword = acc->proxyPassword();
+            setProxy(QNetworkProxy(proxyType, proxyHost, proxyPort, proxyUsername, proxyPassword));
+        }
+    }
 }
 
 WlmSocket::~WlmSocket()

@@ -676,7 +676,7 @@ Callbacks::writeDataToSocket (void *sock, char *data, size_t size)
 void *
 Callbacks::connectToServer (std::string hostname, int port, bool * connected, bool isSSL)
 {
-    WlmSocket *a = new WlmSocket (mainConnection, isSSL);
+    WlmSocket *a = new WlmSocket (mainConnection, isSSL, m_server);
     if(!a)
         return NULL;
 

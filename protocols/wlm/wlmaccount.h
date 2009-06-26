@@ -95,6 +95,13 @@ class WlmAccount:public
     QString serverName() const;
     uint serverPort() const;
 
+    bool isProxyEnabled() const;
+    QString proxyHost() const;
+    uint proxyPort() const;
+    QString proxyUsername() const;
+    QString proxyPassword() const;
+    uint proxyType() const;
+
     WlmServer * server ();
 
     WlmChatManager * chatManager ()
