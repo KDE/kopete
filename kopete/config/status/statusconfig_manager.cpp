@@ -60,6 +60,8 @@ StatusConfig_Manager::StatusConfig_Manager( QWidget *parent )
 	cbStatusCategory->addItem( icon, i18n("Extended Away"), Kopete::OnlineStatusManager::ExtendedAway );
 	icon = Kopete::OnlineStatusManager::pixmapForCategory( Kopete::OnlineStatusManager::Busy );
 	cbStatusCategory->addItem( icon, i18n("Busy"), Kopete::OnlineStatusManager::Busy );
+	icon = Kopete::OnlineStatusManager::pixmapForCategory( Kopete::OnlineStatusManager::Idle );
+	cbStatusCategory->addItem( icon, i18n("Idle"), Kopete::OnlineStatusManager::Idle );
 	icon = Kopete::OnlineStatusManager::pixmapForCategory( Kopete::OnlineStatusManager::Invisible );
 	cbStatusCategory->addItem( icon, i18n("Invisible"), Kopete::OnlineStatusManager::Invisible );
 	icon = Kopete::OnlineStatusManager::pixmapForCategory( Kopete::OnlineStatusManager::Offline );
