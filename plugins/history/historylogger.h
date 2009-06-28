@@ -21,7 +21,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtCore/QMap>
-#include <QtXml/QDomDocument>
+//#include <QtXml/QDomDocument>
 #include <akonadi/item.h>
 #include <Akonadi/Collection>
 #include <QDateTime>
@@ -205,12 +205,12 @@ private:
 //	QDomDocument m_toSaveDocument;
 	//roide
 	History m_toSaveHistory;
-	QString m_toSaveFileName;
+//	QString m_toSaveFileName;
 	unsigned int m_saveTimerTime; //time in ms between each save
 	
 	Akonadi::Item m_tosaveInItem;
 	Akonadi::Collection m_tosaveInCollection;
-	Akonadi::Collection m_baseCollection;
+	static Akonadi::Collection m_baseCollection;
 	/**
 	 * workaround for the 31 midnight bug.
 	 * it contains the number of the current month.
