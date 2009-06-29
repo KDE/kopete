@@ -105,10 +105,13 @@ void InfoEventWidget::nextInfoEvent()
 void InfoEventWidget::closeInfoEvent()
 {
 	Kopete::InfoEventManager* ie = Kopete::InfoEventManager::self();
-	Kopete::InfoEvent* event = ie->event( d->currentEventIndex );
+	if ( ie->eventCount() > 0 )
+	{
+		Kopete::InfoEvent* event = ie->event( d->currentEventIndex );
 
-	Q_ASSERT( event );
-	event->close();
+		Q_ASSERT( event );
+		event->close();
+	}
 
 	if ( ie->eventCount() == 0 )
 		setVisible( false );
@@ -160,14 +163,12 @@ void InfoEventWidget::updateInfo()
 		d->ui.lblEvent->setText( "0/0" );
 		d->ui.buttonPrev->setEnabled( false );
 		d->ui.buttonNext->setEnabled( false );
-		d->ui.buttonClose->setEnabled( false );
 		return;
 	}
 
 	if ( d->currentEventIndex >= ie->eventCount() )
 		d->currentEventIndex = ie->eventCount() - 1;
 
-	d->ui.buttonClose->setEnabled( true );
 	d->ui.buttonPrev->setEnabled( (d->currentEventIndex > 0) );
 	d->ui.buttonNext->setEnabled( (d->currentEventIndex + 1 < ie->eventCount()) );
 
