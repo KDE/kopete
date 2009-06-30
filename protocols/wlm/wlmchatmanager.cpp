@@ -517,6 +517,7 @@ WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn,
     kmsg.setHtmlBody( msg );
     kmsg.setDirection( Kopete::Message::Inbound );
     chat->appendMessage ( kmsg );
+    chat->addFileToRemove(inkImage->fileName());
 
     inkImage = 0l;
 
