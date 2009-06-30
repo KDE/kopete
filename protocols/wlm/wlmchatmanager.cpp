@@ -468,9 +468,20 @@ WlmChatManager::slotGotVoiceClipNotification (MSN::SwitchboardServerConnection *
                                 const MSN::Passport & from,
                                 const QString & msnobject)
 {
-    Q_UNUSED( conn );
     Q_UNUSED( from );
-    Q_UNUSED( msnobject );
+    WlmChatSession *chat = chatSessions[conn];
+    if (!chat)
+        return;
+    unsigned int sessionID = chat->generateSessionID();
+
+    KTemporaryFile voiceClip;
+    voiceClip.setPrefix("kopete_voiceclip-");
+    voiceClip.setSuffix(".wav");
+    voiceClip.setAutoRemove(false);
+    voiceClip.open();
+    chat->addFileToRemove(voiceClip.fileName());
+    conn->requestVoiceClip(sessionID, voiceClip.fileName().toAscii().data(), 
+            msnobject.toAscii().data());
 }
 
 void
