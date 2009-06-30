@@ -347,6 +347,14 @@ WlmChatSession::~WlmChatSession ()
         delete getChatService ();
         setChatService(NULL);
     }
+    for (int i = 0; i < m_filesToRemove.size(); ++i)
+        QFile::remove(m_filesToRemove.at(i));
+}
+
+void
+WlmChatSession::addFileToRemove (QString path)
+{
+    m_filesToRemove << path;
 }
 
 bool

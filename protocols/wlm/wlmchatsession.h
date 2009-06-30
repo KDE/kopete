@@ -40,6 +40,7 @@ class WlmChatSession: public Kopete::ChatSession
     virtual ~WlmChatSession ();
     void setReady (bool value);
     bool isReady ();
+    void addFileToRemove(QString path);
     void setChatService (MSN::SwitchboardServerConnection * conn);
 	bool isConnecting();
     MSN::SwitchboardServerConnection * getChatService ()
@@ -107,6 +108,7 @@ class WlmChatSession: public Kopete::ChatSession
     KActionMenu * m_actionInvite;
     QList < KAction* > m_inviteactions;
     QTimer * m_keepalivetimer;
+    QStringList m_filesToRemove;
 };
 
 #endif
