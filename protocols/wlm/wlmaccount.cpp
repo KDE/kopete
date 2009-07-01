@@ -560,14 +560,15 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
                                   const unsigned int &clientID,
                                   const QString & msnobject)
 {
-    Q_UNUSED( clientID );
-
     kDebug (14210) << k_funcinfo;
 	WlmContact *contact = qobject_cast<WlmContact*>(contacts().value(buddy.c_str()));
     if (contact)
     {
         contact->setProperty (Kopete::Global::Properties::self ()->
                               nickName (), friendlyname);
+
+        // set contact properties
+        contact->setProperty (WlmProtocol::protocol ()->contactCapabilities, QString::number(clientID));
 
         if (state == MSN::STATUS_AWAY)
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmAway);

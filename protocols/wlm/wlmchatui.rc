@@ -11,5 +11,6 @@
 	<ToolBar name="chatToolBar">
 		<Action name="wlmSendNudge" />
 		<Action name="wlmInvite" />
+		<Action name="wlmSendInk" />
 	</ToolBar>
 </kpartgui>

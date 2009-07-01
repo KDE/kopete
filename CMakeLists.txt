@@ -85,6 +85,11 @@ macro_optional_find_package(Libmsn)
 macro_bool_to_01(LIBMSN_FOUND HAVE_LIBMSN)
 macro_log_feature(LIBMSN_FOUND "libmsn" "A library providing support for the msn protocol" "http://sourceforge.net/projects/libmsn" FALSE "0.4.0" "Required for the Kopete wlm plugin")
 
+include(CheckStructMember)
+macro_optional_find_package(GIF)
+macro_bool_to_01(GIF_FOUND HAVE_GIFLIB)
+macro_log_feature( GIF_FOUND "giflib" "Handwriting messages support for WLM" "http://sourceforge.net/projects/giflib/" FALSE "" "Required for the Kopete WLM protocol")
+
 macro_optional_find_package(LibMeanwhile)
 macro_bool_to_01(LIBMEANWHILE_FOUND HAVE_LIBMEANWHILE)
 macro_log_feature(LIBMEANWHILE_FOUND "libmeanwhile" "A library for protocol support for connection to Sametime servers" "http://meanwhile.sf.net" FALSE "" "Required for the Kopete Meanwhile protocol")

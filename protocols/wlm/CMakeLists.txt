@@ -2,7 +2,7 @@ project(wlm)
 
 ADD_SUBDIRECTORY(icons)
 
-include_directories(
+set(kopete_wlm_include_DIRS
     ${KOPETE_INCLUDES}
     ${CMAKE_CURRENT_SOURCE_DIR}/ui
     ${LIBMSN_INCLUDE_DIR}
@@ -17,6 +17,7 @@ kde4_add_ui_files(kopete_wlm_ui_SRCS
     ui/wlmaddui.ui
     ui/wlminfo.ui 
     ui/wlmaccountpreferences.ui
+    ui/wlmchatsessioninkpopup.ui
 )
 
 set(kopete_wlm_PART_SRCS
@@ -29,13 +30,14 @@ set(kopete_wlm_PART_SRCS
    wlmserver.cpp
    wlmchatmanager.cpp
    wlmchatsession.cpp
+   wlmchatsessioninkarea.cpp
+   wlmchatsessioninkaction.cpp
    wlmtransfermanager.cpp
 )
 
 kde4_add_plugin(kopete_wlm ${kopete_wlm_PART_SRCS})
 
-target_link_libraries(
-    kopete_wlm 
+set(kopete_wlm_link_LIBS
     ${KDE4_KDEUI_LIBS} 
     ${KDE4_KUTILS_LIBS}
     ${KDE4_KIO_LIBRARY} 
@@ -44,6 +46,15 @@ target_link_libraries(
     kopete 
     ${LIBMSN_LIBRARIES}
 )
+
+if(HAVE_GIFLIB)
+    set(kopete_wlm_link_LIBS ${kopete_wlm_link_LIBS} ${GIF_LIBRARIES})
+    set(kopete_wlm_include_DIRS ${kopete_wlm_include_DIRS} ${GIF_INCLUDE_DIR})
+    add_definitions(-DHAVE_GIFLIB)
+endif(HAVE_GIFLIB)
+
+include_directories(${kopete_wlm_include_DIRS})
+target_link_libraries(kopete_wlm ${kopete_wlm_link_LIBS})
 
 install(TARGETS kopete_wlm  DESTINATION ${PLUGIN_INSTALL_DIR})
 

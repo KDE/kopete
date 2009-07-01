@@ -19,6 +19,7 @@
 
 #include <QLinkedList>
 #include <QMap>
+#include <QWidgetAction>
 #include <QTimer>
 
 #include <kaction.h>
@@ -26,6 +27,8 @@
 #include <KMenu>
 
 #include "kopetechatsession.h"
+#include "wlmchatsessioninkaction.h"
+
 #include <msn/msn.h>
 
 class WlmContact;
@@ -77,6 +80,7 @@ class WlmChatSession: public Kopete::ChatSession
     void stopSendKeepAlive();
     unsigned int generateSessionID();
     QMap < QString, QString > emoticonsList;
+    void convertToGif( const QPixmap & ink, QString filename);
 
   private slots:
     void slotMessageSent (Kopete::Message & message, Kopete::ChatSession * kmm);
@@ -85,6 +89,7 @@ class WlmChatSession: public Kopete::ChatSession
     void switchboardConnectionTimeout ();
     void slotActionInviteAboutToShow ();
     void slotInviteContact (Kopete::Contact * contact);
+    void slotSendInk ( const QPixmap &);
     void slotSendFile ();
     void sendKeepAlive ();
     void messageTimeout();
@@ -104,7 +109,9 @@ class WlmChatSession: public Kopete::ChatSession
     QLinkedList < int > m_messagesTimeoutQueue;
     QLinkedList < QString > m_pendingInvitations;
     QLinkedList < QString > m_pendingFiles;
+    QLinkedList < QString > m_pendingInks;
     KAction * m_actionNudge;
+    WlmChatSessionInkAction * m_actionInk;
     KActionMenu * m_actionInvite;
     QList < KAction* > m_inviteactions;
     QTimer * m_keepalivetimer;

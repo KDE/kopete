@@ -27,6 +27,7 @@
 #include <QFileInfo>
 #include <QBuffer>
 #include <QPainter>
+#include <QStringList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -44,6 +45,7 @@
 #include <kcomponentdata.h>
 #include <kemoticons.h>
 #include <kcodecs.h>
+#include <KTemporaryFile>
 
 #include "kopetecontactaction.h"
 #include "kopeteonlinestatus.h"
@@ -59,7 +61,10 @@
 #include "wlmcontact.h"
 #include "wlmprotocol.h"
 #include "wlmaccount.h"
-
+#include "wlmchatsessioninkaction.h"
+#ifdef HAVE_GIFLIB
+#include <gif_lib.h>
+#endif
 
 WlmChatSession::WlmChatSession (Kopete::Protocol * protocol,
                                 const Kopete::Contact * user,
@@ -107,6 +112,20 @@ m_sessionID(1)
     m_actionInvite->setDelayed(false);
     connect (m_actionInvite->menu (), SIGNAL (aboutToShow ()), this,
              SLOT (slotActionInviteAboutToShow ()));
+
+    unsigned int userCaps = qobject_cast<WlmContact*>(members ().first ())->property(WlmProtocol::protocol()->contactCapabilities).value().toString().toUInt();
+
+    // if the official client supports Isf, for some reason it won't accept gif's.
+    if(userCaps & MSN::InkGifSupport &&
+       !(userCaps & MSN::InkIsfSupport))
+    {
+        m_actionInk = new WlmChatSessionInkAction;
+#ifdef HAVE_GIFLIB
+        actionCollection ()->addAction ("wlmSendInk", m_actionInk);
+#endif
+        m_actionInk->setDelayed(false);
+        connect(m_actionInk, SIGNAL(sendInk(const QPixmap &)), this, SLOT(slotSendInk(const QPixmap &)));
+    }
 
     setXMLFile ("wlmchatui.rc");
     setMayInvite (true);
@@ -244,6 +263,139 @@ WlmChatSession::slotInviteContact (Kopete::Contact * contact)
     // finally if we have a connection in progress, only add this user to be invited later
     if (isConnecting ())
         m_pendingInvitations.append (contact->contactId ());
+}
+
+/* stolen from kpaint write_to_gif() */
+void
+WlmChatSession::convertToGif( const QPixmap & ink, QString filename)
+{
+#ifdef HAVE_GIFLIB
+    int i, status;
+    GifFileType *GifFile;
+    ColorMapObject *screenColourmap;
+    ColorMapObject *imageColourmap;
+    QImage img = ink.toImage().convertToFormat(QImage::Format_Indexed8);
+
+    imageColourmap= MakeMapObject(256, NULL);
+    if (!imageColourmap) {
+        return;
+    }
+
+    screenColourmap= MakeMapObject(256, NULL);
+    if (!screenColourmap) {
+        return;
+    }
+
+    for (i= 0; i < 256; i++) {
+        if (i <img.numColors()) {
+            imageColourmap->Colors[i].Red= qRed(img.color(i));
+            imageColourmap->Colors[i].Green= qGreen(img.color(i));
+            imageColourmap->Colors[i].Blue= qBlue(img.color(i));
+        }
+        else {
+            imageColourmap->Colors[i].Red= 0;
+            imageColourmap->Colors[i].Green= 0;
+            imageColourmap->Colors[i].Blue= 0;
+        }
+    }
+
+    for (i= 0; i < 256; i++) {
+        if (i <img.numColors()) {
+            screenColourmap->Colors[i].Red= qRed(img.color(i));
+            screenColourmap->Colors[i].Green= qGreen(img.color(i));
+            screenColourmap->Colors[i].Blue= qBlue(img.color(i));
+        }
+        else {
+            screenColourmap->Colors[i].Red= 0;
+            screenColourmap->Colors[i].Green= 0;
+            screenColourmap->Colors[i].Blue= 0;
+        }
+    }
+
+    GifFile= EGifOpenFileName(filename.toAscii().data(), 0);
+    if (!GifFile) {
+        FreeMapObject(imageColourmap);
+        FreeMapObject(screenColourmap);
+        return;
+    }
+
+    status= EGifPutScreenDesc(GifFile,
+                img.width(),
+                img.height(),
+                256,
+                0,
+                screenColourmap);
+
+    if (status != GIF_OK) {
+        EGifCloseFile(GifFile);
+        return;
+    }
+
+    status= EGifPutImageDesc(GifFile,
+               0, 0,
+               img.width(),
+               img.height(),
+               0,
+               imageColourmap);
+
+    if (status != GIF_OK) {
+        return;
+    }
+
+    for (i = 0; status && (i < img.height()); i++) {
+        status= EGifPutLine(GifFile, 
+            img.scanLine(i),
+            img.width());
+    }
+
+    if (status != GIF_OK) {
+        PrintGifError();
+        EGifCloseFile(GifFile);
+        return;
+    }
+
+    if (EGifCloseFile(GifFile) != GIF_OK) {
+        PrintGifError();
+        return;
+    }
+    return;
+#endif
+}
+
+void
+WlmChatSession::slotSendInk ( const QPixmap & ink)
+{
+    KTemporaryFile inkImage;
+    inkImage.setPrefix("inkformatgif-");
+    inkImage.setSuffix(".gif");
+    inkImage.open();
+    // if we autoremove the image, it will be deleted before
+    // khtml have the chance to show it on the screen.
+    inkImage.setAutoRemove(false);
+    QString name = inkImage.fileName();
+    addFileToRemove(name);
+    convertToGif(ink, name);
+
+    // encode to base64 and send it to libmsn
+    const std::string draw = QString::fromUtf8(KCodecs::base64Encode(inkImage.readAll())).toAscii().data();
+    if(!isReady() && !isConnecting())
+    {
+        m_pendingInks << QString(draw.c_str());
+        requestChatService ();
+    }
+    else if (isConnecting ())
+        m_pendingInks << QString(draw.c_str());
+    else
+        getChatService ()->sendInk(draw);
+
+    QString msg=QString ("<img src=\"%1\" />").arg ( name );
+
+    Kopete::Message kmsg( myself(), members() );
+    kmsg.setHtmlBody( msg );
+    kmsg.setDirection( Kopete::Message::Outbound );
+    appendMessage ( kmsg );
+
+    inkImage.deleteLater();
 }
 
 void
@@ -481,6 +633,15 @@ WlmChatSession::setReady (bool value)
             sendFile ((*it3), 0);
         }
         m_pendingFiles.clear ();
+
+        QLinkedList < QString >::iterator it4;
+        for (it4 = m_pendingInks.begin (); it4 != m_pendingInks.end ();
+             ++it4)
+        {
+            getChatService ()->sendInk((*it4).toAscii().data());
+        }
+        m_pendingInks.clear ();
+
     }
     else
     {

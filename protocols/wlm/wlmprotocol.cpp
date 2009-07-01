@@ -70,6 +70,8 @@ wlmUnknown (Kopete::OnlineStatus::Unknown, 25, this, 0,
 wlmConnecting (Kopete::OnlineStatus::Connecting, 2, this, 10,
                QStringList ("wlm_connecting"), i18n ("Connecting")),
 currentSong ("currentSong", i18nc ("This is used in the tooltip of a contact", "Listening To")),
+contactCapabilities ("contactCapabilities", "Used to keep track of the contact capabilites", QString(), 
+		 Kopete::PropertyTmpl::PrivateProperty),
 displayPhotoSHA1("displayPhotoSHA1", "Display Photo SHA-1 Hash", QString(),
                  Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty)
 {
