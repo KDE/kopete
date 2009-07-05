@@ -64,6 +64,9 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
         m_preferencesWidget->m_proxyUsername->setText( m_wlmAccount->proxyUsername() );
         m_preferencesWidget->m_proxyPassword->setText( m_wlmAccount->proxyPassword() );
 
+        m_preferencesWidget->m_doNotSendEmoticons->setChecked( m_wlmAccount->doNotSendEmoticons() );
+        m_preferencesWidget->m_doNotRequestEmoticons->setChecked( m_wlmAccount->doNotRequestEmoticons() );
+
         if(m_wlmAccount->proxyType() == QNetworkProxy::Socks5Proxy )
             m_preferencesWidget->m_radioProxySocks5->setChecked( true );
         else
@@ -165,6 +168,11 @@ Kopete::Account * WlmEditAccountWidget::apply ()
         config->writeEntry( "enableProxy", false );
     }
 
+    config->writeEntry( "doNotSendEmoticons", 
+            m_preferencesWidget->m_doNotSendEmoticons->isChecked());
+
+    config->writeEntry( "doNotRequestEmoticons", 
+            m_preferencesWidget->m_doNotRequestEmoticons->isChecked());
 
     if ( wlmAccount->isConnected() )
     {

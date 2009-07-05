@@ -565,20 +565,27 @@ MSN::Message WlmChatSession::parseMessage(Kopete::Message & msg)
 		mmsg.setColor(color.red(), color.green(), color.blue());
 	}
 
-	// stolen from msn plugin
-	const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
+    WlmAccount *acc = qobject_cast < WlmAccount * >(account ());
+    if(!acc)
+        return mmsg;
 
-	// Check the list for any custom emoticons
-	for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
-	{
-		for (QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2)
-		{
-			if (msg.plainBody().contains(*itr2))
-			{
-				getChatService()->sendEmoticon((*itr2).toAscii().data(), itr.key().toAscii().data());
-			}
-		}
-	}
+    if(!acc->doNotSendEmoticons())
+    {
+        // stolen from msn plugin
+        const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
+
+        // Check the list for any custom emoticons
+        for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
+        {
+            for (QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2)
+            {
+                if (msg.plainBody().contains(*itr2))
+                {
+                    getChatService()->sendEmoticon((*itr2).toAscii().data(), itr.key().toAscii().data());
+                }
+            }
+        }
+    }
 	return mmsg;
 }
 

@@ -364,6 +364,15 @@ bool WlmAccount::isProxyEnabled() const
     return configGroup()->readEntry( "enableProxy", false );
 }
 
+bool WlmAccount::doNotRequestEmoticons() const
+{
+    return configGroup()->readEntry( "doNotRequestEmoticons", false );
+}
+
+bool WlmAccount::doNotSendEmoticons() const
+{
+    return configGroup()->readEntry( "doNotSendEmoticons", false );
+}
 
 void
 WlmAccount::gotNewContact (const MSN::ContactList & list,

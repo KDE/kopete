@@ -559,6 +559,9 @@ void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnecti
 {
     Q_UNUSED( buddy );
 
+    if(m_account->doNotRequestEmoticons())
+        return;
+
     WlmChatSession *chat = chatSessions[conn];
     if(!chat)
         return;

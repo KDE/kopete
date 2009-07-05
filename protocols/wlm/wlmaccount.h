@@ -101,6 +101,8 @@ class WlmAccount:public
     QString proxyUsername() const;
     QString proxyPassword() const;
     uint proxyType() const;
+    bool doNotRequestEmoticons() const;
+    bool doNotSendEmoticons() const;
 
     WlmServer * server ();
 
