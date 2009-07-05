@@ -21,6 +21,7 @@
 #include "kopetemetacontact.h"
 #include "kopetemetacontact_p.h"
 
+#include <QTextDocument>
 
 #include <kabc/addressbook.h>
 #include <kabc/addressee.h>
@@ -29,6 +30,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kdeversion.h>
+#include <knotification.h>
 
 #include "kabcpersistence.h"
 #include "kopetecontactlist.h"
@@ -40,6 +42,8 @@
 #include "kopetegroup.h"
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
+#include "kopetebehaviorsettings.h"
+#include "kopeteemoticons.h"
 
 namespace Kopete {
 
@@ -150,7 +154,6 @@ void MetaContact::updateOnlineStatus()
 		emit onlineStatusChanged( this, d->onlineStatus );
 	}
 }
-
 
 void MetaContact::removeContact(Contact *c, bool deleted)
 {
@@ -433,7 +436,7 @@ quint32 MetaContact::idleTime() const
 	{
 		Contact *c = it.next();
 		unsigned long int i = c->idleTime();
-		if( c->isOnline() && i < time || time == 0 )
+		if( (c->isOnline() && i < time) || time == 0 )
 		{
 			time = i;
 		}
@@ -577,6 +580,9 @@ void MetaContact::slotContactStatusChanged( Contact * c, const OnlineStatus &sta
 {
 	updateOnlineStatus();
 	emit contactStatusChanged( c, status );
+
+	if ( c != c->account()->myself() )
+		onlineStatusNotification( c );
 }
 
 void MetaContact::setDisplayName( const QString &name )
@@ -1228,6 +1234,103 @@ QList<Contact *> MetaContact::contacts() const
 	return d->contacts;
 }
 
+void MetaContact::onlineStatusNotification( Kopete::Contact * c )
+{
+	// comparing the status of the previous and new preferred contact is the determining factor in deciding to notify
+	Kopete::OnlineStatus newNotifyOnlineStatus;
+
+	Kopete::Contact * pc = preferredContact();
+	if ( pc )
+		newNotifyOnlineStatus = pc->onlineStatus();
+	else // the last child contact has gone offline or otherwise unreachable, so take the changed contact's online status
+		newNotifyOnlineStatus = c->onlineStatus();
+
+	// ensure we are not suppressing notifications, because connecting or disconnected
+	if ( !c->account()->suppressStatusNotification() && c->account()->isConnected()
+	     && c->account()->myself()->onlineStatus().status() != OnlineStatus::Connecting
+	     && (Kopete::BehaviorSettings::self()->enableEventsWhileAway() || !c->account()->isAway()) )
+	{
+		// figure out what's happened
+		enum ChangeType { noChange, noEvent, signedIn, changedStatus, signedOut };
+		ChangeType t = noChange;
+
+		// first, exclude changes due to blocking or subscription changes at the protocol level
+		if ( d->notifyOnlineStatus.status() == Kopete::OnlineStatus::Unknown || newNotifyOnlineStatus.status() == Kopete::OnlineStatus::Unknown )
+		{
+			t = noEvent; // This means the contact's changed from or to unknown - due to a protocol state change, not a contact state change
+		}
+		else
+		{ // we're dealing with a genuine contact state change
+			if ( d->notifyOnlineStatus.status() == Kopete::OnlineStatus::Offline )
+			{
+				if ( newNotifyOnlineStatus.status() != Kopete::OnlineStatus::Offline )
+				{
+					t = signedIn;	// contact has gone from offline to something else, it's a sign-in
+				}
+			}
+			else if ( d->notifyOnlineStatus.status() == Kopete::OnlineStatus::Online
+			          || d->notifyOnlineStatus.status() == Kopete::OnlineStatus::Away
+			          || d->notifyOnlineStatus.status() == Kopete::OnlineStatus::Invisible)
+			{
+				if ( newNotifyOnlineStatus.status() == Kopete::OnlineStatus::Offline )
+				{
+					t = signedOut;	// contact has gone from an online state to an offline state, it's a sign out
+				}
+				else if ( d->notifyOnlineStatus > newNotifyOnlineStatus || d->notifyOnlineStatus < newNotifyOnlineStatus ) // operator!= is useless because it's an identity operator, not an equivalence operator
+				{
+					// contact has changed online states, it's a status change,
+					// and the preferredContact changed status, or there is a new preferredContacat
+					// so it's worth notifying
+					t = changedStatus;
+				}
+			}
+			else if ( d->notifyOnlineStatus != newNotifyOnlineStatus )
+			{
+				// catch-all for any other status change we don't know about
+				t = noEvent;
+			}
+		}
+
+		// now issue the appropriate notification
+		KNotification *notify = 0;
+		switch ( t )
+		{
+		case noEvent:
+		case noChange:
+			break;
+		case signedIn:
+			notify = new KNotification( QString("kopete_contact_online"), Kopete::UI::Global::mainWidget() );
+			notify->setActions( QStringList( i18nc("@action", "Chat") ) );
+			break;
+		case changedStatus:
+			notify = new KNotification( QString("kopete_contact_status_change"), Kopete::UI::Global::mainWidget() );
+			notify->setActions( QStringList( i18nc("@action", "Chat") ) );
+			break;
+		case signedOut:
+			notify = new KNotification( QString("kopete_contact_offline"), Kopete::UI::Global::mainWidget() );
+			break;
+		}
+
+		if( notify )
+		{
+			QString text = i18n( "<qt><i>%1</i> is now %2.</qt>",
+			                     Kopete::Emoticons::parseEmoticons( Qt::escape( displayName() ) ),
+			                     Qt::escape( c->onlineStatus().description() ) );
+
+			notify->setText( text );
+			notify->setPixmap( QPixmap::fromImage( picture().image() ) );
+			connect( notify, SIGNAL(activated(unsigned int)) , this, SLOT(execute()) );
+
+			notify->addContext( qMakePair( QString::fromLatin1("contact"), metaContactId().toString() ) );
+			foreach( Kopete::Group *g , groups() )
+			{
+				notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number( g->groupId() ) ) );
+			}
+			notify->sendEvent();
+		}
+	}
+	d->notifyOnlineStatus = newNotifyOnlineStatus;
+}
 
 
 } //END namespace Kopete
