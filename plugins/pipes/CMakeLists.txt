@@ -7,7 +7,7 @@ add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
 include_directories ( ${KOPETE_INCLUDES} )
 
-add_subdirectory ( tests )
+#add_subdirectory ( tests )
 
 ########### next target ###############
 
