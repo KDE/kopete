@@ -357,7 +357,7 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 			QString body = msg.parsedBody();
 
 			if (!mMainWidget->searchLine->text().isEmpty())
-			// If there is a search, then we hightlight the keywords
+			// If there is a search, then we highlight the keywords
 			{
 				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", Qt::CaseInsensitive);
 			}

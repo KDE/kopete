@@ -46,12 +46,12 @@
 		
 		<!-- Hightlight preferences -->
 		<entry key="highlightForegroundColor" type="Color">
-			<label>Text color used when hightlighting</label>
+			<label>Text color used when highlighting.</label>
 			<default code="true">KColorScheme(QPalette::Active, KColorScheme::Selection).foreground().color()</default>
 			<emit signal="chatwindowAppearanceChanged" />
 		</entry>
 		<entry key="highlightBackgroundColor" type="Color">
-			<label>Background color used when hightlighting.</label>
+			<label>Background color used when highlighting.</label>
 			<default code="true">KColorScheme(QPalette::Active, KColorScheme::Selection).background().color()</default>
 			<emit signal="chatwindowAppearanceChanged" />
 		</entry>

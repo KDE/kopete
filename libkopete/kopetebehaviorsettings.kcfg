@@ -122,7 +122,7 @@
 			<default>false</default>
 		</entry>
 		<entry key="truncateContactNameLength" type="Int">
-			<label>Truncate contat name max length.</label>
+			<label>Truncate contact name max length.</label>
 			<default>20</default>
 		</entry>
 		<entry key="chatWindowBufferViewSize" type="Int">
