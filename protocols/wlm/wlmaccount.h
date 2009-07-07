@@ -128,6 +128,8 @@ class WlmAccount:public
 
     bool isOnPendingList(const QString& passport) const { return m_pendingList.contains( passport ); }
     
+    bool isOnReverseList(const QString& passport) const { return m_reverseList.contains( passport ); }
+    
     // forward list (or also called address book)
     bool isOnServerSideList(const QString& passport) const { return m_serverSideContactsPassports.contains( passport ); }
 
@@ -348,6 +350,9 @@ private:
 
     // passport set of contacts which are on pending list
     QSet<QString> m_pendingList;
+
+    // passport set of contacts which are on reverse list
+    QSet<QString> m_reverseList;
 
     // passport set of contacts which we do not have the display picture yet
     QSet<QString> m_pendingDisplayPictureList;

@@ -367,20 +367,41 @@ void
 WlmContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 {
 	bool isBlocked = qobject_cast <WlmAccount *>(account())->isOnBlockList(contactId());
+	bool isOnForwardList = qobject_cast <WlmAccount *>(account())->isOnServerSideList(contactId());
+	bool isOnReverseList = qobject_cast <WlmAccount *>(account())->isOnReverseList(contactId());
 	
 	// if this contact is blocked, and currently has a regular status,
 	// create a custom status and add wlm_blocked to ovelayIcons
-	if(isBlocked && status.internalStatus() < 15)
+	if(isBlocked || (isOnForwardList && !isOnReverseList))
 	{
+		QStringList overelayIconsList;
+		QString reason;
+		if(isOnForwardList && !isOnReverseList)
+		{
+			overelayIconsList << "wlm_fakefriend";
+			reason = i18n("This contact does not have you in his/her list");
+		}
+
+		if(isBlocked)
+		{
+			overelayIconsList << "wlm_blocked";
+			if(reason.isEmpty())
+				reason = i18n("This contact is blocked");
+			else
+				reason = i18n("This contact does not have you in his/her list and is blocked");
+		}
+		// set the new status
 		Kopete::Contact::setOnlineStatus(
 				Kopete::OnlineStatus(status.status() ,
 				(status.weight()==0) ? 0 : (status.weight() -1),
 				protocol(),
 				status.internalStatus()+15,
-				status.overlayIcons() + QStringList("wlm_blocked"),
-				i18n("%1|Blocked", status.description() ) ) );
+				status.overlayIcons() + overelayIconsList,
+				reason ) );
+		return;
 	}
-	else if (!isBlocked && status.internalStatus() >= 15)
+
+	if (status.internalStatus() >= 15)
 	{
 		// if this contact was previously blocked, set a regular status again
 		switch(status.internalStatus()-15)

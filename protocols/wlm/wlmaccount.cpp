@@ -382,6 +382,8 @@ WlmAccount::gotNewContact (const MSN::ContactList & list,
     kDebug() << "contact " << passport;
     if (list == MSN::LST_RL)
     {
+        kDebug() << "contact " << passport << " added to reverse list";
+        m_reverseList.insert(passport);
         Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent(passport, this);
         QObject::connect(event, SIGNAL(actionActivated(uint)), this, SLOT(addedInfoEventActionActivated(uint)));
 
@@ -429,6 +431,15 @@ void WlmAccount::gotRemovedContactFromList (const MSN::ContactList & list, const
     {
         kDebug() << "contact " << contact << " removed from allow list";
         m_allowList.remove( contact );
+    }
+    else if (list == MSN::LST_RL)
+    {
+        kDebug() << "contact " << contact << " removed from reverse list";
+        m_reverseList.remove( contact );
+        // force overlayIcons to be updated
+	    WlmContact * ct = qobject_cast<WlmContact*>(contacts().value( contact ));
+        if(ct)
+            ct->setOnlineStatus(ct->onlineStatus());
     }
 }
 
@@ -708,6 +719,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
     m_allowList.clear();
     m_blockList.clear();
     m_pendingList.clear();
+    m_reverseList.clear();
 
     // local contacts which do not exist on server should be deleted
     std::map < std::string, MSN::Buddy * >::iterator it;
@@ -725,6 +737,8 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             m_blockList.insert( passport );
         if ( b->lists & MSN::LST_PL )
             m_pendingList.insert( passport );
+        if ( b->lists & MSN::LST_RL )
+            m_reverseList.insert(passport);
 
         // disabled users (not in list)
         if(b->properties["isMessengerUser"] == "false")
@@ -933,6 +947,14 @@ void
 WlmAccount::connectionCompleted ()
 {
     kDebug (14210) << k_funcinfo;
+
+    // set all users as offline
+    foreach ( Kopete::Contact *kc , contacts() )
+    {
+        WlmContact *c = static_cast<WlmContact *>( kc );
+        c->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
+    }
+
     if (identity ()->
         hasProperty (Kopete::Global::Properties::self ()->photo ().key()))
     {
