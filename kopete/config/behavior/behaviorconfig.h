@@ -13,8 +13,8 @@
     *************************************************************************
 */
 
-#ifndef __BEHAVIOR_H
-#define __BEHAVIOR_H
+#ifndef BEHAVIORCONFIG_H
+#define BEHAVIORCONFIG_H
 
 #define KDE3_SUPPORT
 #include <kcmodule.h>

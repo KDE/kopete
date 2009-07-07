@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef __ACCOUNTCONFIG_H
-#define __ACCOUNTCONFIG_H
+#ifndef KOPETEACCOUNTCONFIG_H
+#define KOPETEACCOUNTCONFIG_H
 
 #define KDE3_SUPPORT
 #include <kcmodule.h>

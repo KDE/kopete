@@ -13,8 +13,8 @@
     *                                                                       *
     *************************************************************************
 */
-#ifndef WLMCHATSESSSIONINKAREA_H
-#define WLMCHATSESSSIONINKAREA_H
+#ifndef WLMCHATSESSIONINKAREA_H
+#define WLMCHATSESSIONINKAREA_H
 
 #include <QWidget>
 #include <QMouseEvent>

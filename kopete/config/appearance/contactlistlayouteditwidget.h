@@ -18,8 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-#ifndef CONTACTLISTLAYOUTITEMEDITWIDGET_H
-#define CONTACTLISTLAYOUTITEMEDITWIDGET_H
+#ifndef CONTACTLISTLAYOUTEDITWIDGET_H
+#define CONTACTLISTLAYOUTEDITWIDGET_H
 
 #include "contactlistlayoutitemconfig.h"
 
