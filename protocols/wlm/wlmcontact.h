@@ -106,6 +106,7 @@ public slots:
 
     void blockContact ( bool block );
     void slotShowProfile();
+    void slotUpdateDisplayPicture();
     virtual void sync( unsigned int flags );
     bool isDisabled() { return m_disabled; }
     void setDisabled( bool disabled, bool updateServer );
@@ -126,6 +127,7 @@ protected:
     WlmAccount * m_account;
     KToggleAction* m_actionBlockContact;
     KAction * m_actionShowProfile;
+    KAction * m_actionUpdateDisplayPicture;
     KAction * m_actionPrefs;
     QString m_msnobj;
     QString m_contactSerial;

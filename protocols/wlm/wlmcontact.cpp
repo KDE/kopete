@@ -60,6 +60,9 @@ Kopete::Contact (_account, uniqueName, parent)
 
     m_actionShowProfile = new KAction(i18n("Show Profile"), this);
     QObject::connect(m_actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()));
+
+    m_actionUpdateDisplayPicture = new KAction(i18n("Update Photo"), this);
+    QObject::connect(m_actionUpdateDisplayPicture, SIGNAL(triggered(bool)), this, SLOT(slotUpdateDisplayPicture()));
 }
 
 void WlmContact::setDisabled(bool disabled, bool updateServer)
@@ -127,6 +130,25 @@ WlmContact::slotShowProfile()
 }
 
 void
+WlmContact::slotUpdateDisplayPicture()
+{
+    if(!account()->isConnected())
+        return;
+
+	WlmAccount* acc = qobject_cast<WlmAccount*>(account());
+    if(!acc)
+        return;
+
+    if ((onlineStatus() != WlmProtocol::protocol ()->wlmOffline)
+           && (onlineStatus() != WlmProtocol::protocol ()->wlmInvisible)
+           && (onlineStatus() != WlmProtocol::protocol ()->wlmUnknown))
+    {
+        acc->chatManager ()->requestDisplayPicture (contactId());
+    }
+
+}
+
+void
 WlmContact::sendFile (const KUrl & sourceURL, const QString & fileName,
                       uint fileSize)
 {
@@ -189,11 +211,13 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     m_actionBlockContact->setChecked(m_account->isContactBlocked(contactId()));
     actions->append(m_actionBlockContact);
     actions->append(m_actionShowProfile);
+    actions->append(m_actionUpdateDisplayPicture);
 
     // temporary action collection, used to apply Kiosk policy to the actions
     KActionCollection tempCollection((QObject*)0);
     tempCollection.addAction(QLatin1String("contactBlock"), m_actionBlockContact);
     tempCollection.addAction(QLatin1String("contactViewProfile"), m_actionShowProfile);
+    tempCollection.addAction(QLatin1String("updateDisplayPicture"), m_actionUpdateDisplayPicture);
 
     return actions;
 }
