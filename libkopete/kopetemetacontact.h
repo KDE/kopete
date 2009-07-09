@@ -606,6 +606,8 @@ protected:
 	//QString nameFromContact( Kopete::Contact *c) const;
 	//QString nameFromKABC( const QString &id ) const;
 
+	void onlineStatusNotification( Kopete::Contact * c );
+
 private:
 	class Private;
 	Private * const d;
