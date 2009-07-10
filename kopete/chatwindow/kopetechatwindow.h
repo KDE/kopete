@@ -187,6 +187,8 @@ public slots:
 
 private slots:
 //	void slotPrepareSmileyMenu();
+	void testCanDecode(const QDragMoveEvent *, bool &);
+	void receivedDropEvent( QWidget *, QDropEvent * );
 	void slotPrepareContactMenu();
 	void slotPrepareDetachMenu();
 	void slotPreparePlacementMenu();

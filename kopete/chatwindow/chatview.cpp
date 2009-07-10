@@ -860,7 +860,7 @@ void ChatView::dragMoveEvent( QDragMoveEvent * event )
 	QWidget::dragMoveEvent( event );
 }
 
-bool ChatView::isDragEventAccepted( QDragMoveEvent * event ) const
+bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 {
 	if( event->provides( "kopete/x-contact" ) )
 	{

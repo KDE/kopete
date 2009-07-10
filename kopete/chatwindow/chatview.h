@@ -227,6 +227,9 @@ public slots:
 
 	virtual bool closeView( bool force = false );
 	
+	virtual void dropEvent ( QDropEvent * );
+	bool isDragEventAccepted( const QDragMoveEvent * ) const;
+
 	/** Retrieves the tab state. */
 	KopeteTabState tabState() const;
 
@@ -331,7 +334,6 @@ private slots:
 protected:
 	virtual void dragEnterEvent ( QDragEnterEvent * );
 	virtual void dragMoveEvent ( QDragMoveEvent * );
-	virtual void dropEvent ( QDropEvent * );
 
 private:
 	// widget stuff
@@ -360,8 +362,6 @@ private:
 	void sendInternalMessage( const QString &msg, Qt::TextFormat format = Qt::PlainText );
 	
 	KopeteTabState currentState() const;
-
-	bool isDragEventAccepted( QDragMoveEvent * ) const;
 
 	KopeteChatViewPrivate *d;
 };

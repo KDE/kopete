@@ -84,6 +84,7 @@
 
 #include <qtoolbutton.h>
 #include <kxmlguifactory.h>
+#include <KTabBar>
 
 typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
 typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
@@ -618,6 +619,21 @@ void KopeteChatWindow::setStatus(const QString &text)
 	m_status_text->setText(text);
 }
 
+void KopeteChatWindow::testCanDecode(const QDragMoveEvent *event, bool &accept)
+{
+	if (chatViewList[static_cast<KTabBar*>(m_tabBar->childAt( event->pos()))->selectTab( event->pos() )]->isDragEventAccepted( event )) {
+		accept = true;
+	} else {
+		accept = false;
+	}
+}
+
+void KopeteChatWindow::receivedDropEvent( QWidget *w, QDropEvent *e )
+{
+	m_tabBar->setCurrentWidget( w );
+	activeView()->dropEvent( e );
+}
+
 void KopeteChatWindow::createTabBar()
 {
 	if( !m_tabBar )
@@ -644,6 +660,8 @@ void KopeteChatWindow::createTabBar()
 		for( ChatViewList::iterator it = chatViewList.begin(); it != chatViewList.end(); ++it )
 			addTab( *it );
 
+		connect ( m_tabBar, SIGNAL(testCanDecode(const QDragMoveEvent *, bool &)), this, SLOT(testCanDecode(const QDragMoveEvent *, bool &)) );
+		connect ( m_tabBar, SIGNAL(receivedDropEvent( QWidget *, QDropEvent * )), this, SLOT(receivedDropEvent( QWidget *, QDropEvent * )) );
 		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
 		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
 
