@@ -2,8 +2,9 @@
     ChatWindowStyle test suite
 
     Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
+    Copyright (c) 2009      by Pierre-Alexandre St-Jean       <pierrealexandre.stjean@gmail.com>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,19 +18,22 @@
 #ifndef CHATWINDOWSTYLE_TEST_H
 #define CHATWINDOWSTYLE_TEST_H
 
-#include <kunittest/tester.h>
+#include <QtTest>
 
 class ChatWindowStyle;
 
-class ChatWindowStyle_Test : public KUnitTest::Tester
+class ChatWindowStyle_Test : public QObject
 {
-public:
-	void allTests();
+		Q_OBJECT;
 
-public slots:
+private slots:
+	void initTestCase();
+	void cleanupTestCase();
+
 	void testPaths();
 	void testHtml();
 	void testVariants();
+	void testAction()
 	
 private:
 	ChatWindowStyle *testStyle;
