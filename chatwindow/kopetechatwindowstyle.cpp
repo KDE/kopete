@@ -69,30 +69,45 @@ ChatWindowStyle::ChatWindowStyle(const QString &styleName, const QString &varian
 	init(styleName, styleBuildMode);
 }
 
-void ChatWindowStyle::init(const QString &styleName, StyleBuildMode styleBuildMode)
+ChatWindowStyle::~ChatWindowStyle()
 {
-	QStringList styleDirs = KGlobal::dirs()->findDirs("appdata", QString("styles/%1/Contents/Resources/").arg(styleName));
-	if(styleDirs.isEmpty())
+	kDebug(14000) ;
+	delete d;
+}
+
+void ChatWindowStyle::init(const QString &styleName, StyleBuildMode
+styleBuildMode)
+{
+	d->styleName = styleName;
+	
+	QStringList styleDirs = getStyleDirs(styleName);
+	if( styleDirs.count() == 0 )
 	{
-		kDebug(14000) << "Failed to find style" << styleName;
 		return;
 	}
-	d->styleName = styleName;
-	if(styleDirs.count() > 1)
-		kDebug(14000) << "found several styles with the same name. using first";
+
 	d->baseHref = styleDirs.at(0);
 	kDebug(14000) << "Using style:" << d->baseHref;
+
 	readStyleFiles();
+
 	if(styleBuildMode & StyleBuildNormal)
 	{
 		listVariants();
 	}
 }
 
-ChatWindowStyle::~ChatWindowStyle()
+QStringList ChatWindowStyle::getStyleDirs(const QString &styleName) const
 {
-	kDebug(14000) ;
-	delete d;
+	QStringList styleDirs = KGlobal::dirs()->findDirs("appdata",
+	QString("styles/%1/Contents/Resources/").arg(styleName));
+	if( styleDirs.isEmpty() )
+	{
+		kDebug(14000) << "Failed to find style" << styleName;
+		return QStringList();
+	}
+
+	return styleDirs;
 }
 
 bool ChatWindowStyle::isValid() const
@@ -198,32 +213,58 @@ bool ChatWindowStyle::hasActionTemplate() const
 
 void ChatWindowStyle::listVariants()
 {
-	QString variantDirPath = d->baseHref + QString::fromUtf8("Variants/");
-	QDir variantDir(variantDirPath);
+	QDir variantDir( getVariantDirPath() );
 
 	QStringList variantList = variantDir.entryList( QStringList("*.css") );
 	QStringList::ConstIterator it, itEnd = variantList.constEnd();
+
 	QLatin1String compactVersionPrefix("_compact_");
 	for(it = variantList.constBegin(); it != itEnd; ++it)
 	{
-		QString variantName = *it, variantPath;
+		QString variantName = *it;
+
 		// Retrieve only the file name.
 		variantName = variantName.left(variantName.lastIndexOf("."));
-		if ( variantName.startsWith( compactVersionPrefix ) ) {
-			if ( variantName == compactVersionPrefix ) {
-				d->compactVariants.insert( "", true );
-			}
-			continue;
+
+		if( variantName.startsWith( compactVersionPrefix ) )
+		{
+			addCompactVariantIfPresent(variantName,compactVersionPrefix);
 		}
-		QString compactVersionFilename = *it;
-		QString compactVersionPath = variantDirPath + compactVersionFilename.prepend( compactVersionPrefix );
-		if ( QFile::exists( compactVersionPath )) {
-			d->compactVariants.insert( variantName, true );
+		else
+		{
+			addVariant(variantName);
 		}
-		// variantPath is relative to baseHref.
-		variantPath = QString("Variants/%1").arg(*it);
-		d->variantsList.insert(variantName, variantPath);
 	}
+}
+
+QString ChatWindowStyle::getVariantDirPath() const
+{
+	return d->baseHref + QString::fromUtf8("Variants/");
+}
+
+void ChatWindowStyle::addCompactVariantIfPresent(const QString &variantName,const QLatin1String compactVersionPrefix)
+{
+	if( variantName.startsWith( compactVersionPrefix ) )
+	{
+		if( variantName == compactVersionPrefix )
+		{
+			d->compactVariants.insert( "", true );
+		}
+	}
+
+	QString compactVersionFilename = variantName;
+	QString compactVersionPath = getVariantDirPath() + compactVersionFilename.prepend( compactVersionPrefix );
+	if( QFile::exists( compactVersionPath ))
+	{
+		d->compactVariants.insert( variantName, true );
+	}
+}
+
+void ChatWindowStyle::addVariant(const QString &name)
+{
+	// variantPath is relative to baseHref.
+	QString variantPath = QString("Variants/%1").arg(name);
+	d->variantsList.insert(name, variantPath);
 }
 
 void ChatWindowStyle::readStyleFiles()
