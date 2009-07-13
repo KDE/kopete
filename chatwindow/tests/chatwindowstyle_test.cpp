@@ -33,14 +33,16 @@ void ChatWindowStyle_Test::initTestCase()
 	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
 }
-void ChatWindowStyle_Test::cleanupTestCase();
+void ChatWindowStyle_Test::cleanupTestCase()
+{
+}
 
 void ChatWindowStyle_Test::testPaths()
 {
 	QString expectedStylePath = SRCDIR + QString::fromUtf8("/TestStyle");
 	QString expectedBaseHref = expectedStylePath + QString::fromUtf8("/Contents/Resources/");
 
-	QCOMPARE(testStyle->getStylePath(), expectedStylePath);
+	QCOMPARE(testStyle->getStyleName(), expectedStylePath);
 	QCOMPARE(testStyle->getStyleBaseHref(), expectedBaseHref);
 }
 
@@ -118,9 +120,12 @@ void ChatWindowStyle_Test::testVariants()
 	for(it = variantList.constBegin(); it != variantList.constEnd(); ++it)
 	{
 		variantNameList.append(it.key());
-		variantPathList.append(it.data());
+		variantPathList.append(it.value());
 	}	
 	
 	QCOMPARE(variantNameList.join(";"), expectedNameResult);
 	QCOMPARE(variantPathList.join(";"), expectedPathResult);
 }
+
+QTEST_MAIN(ChatWindowStyle_Test)
+#include "chatwindowstyle_test.moc"
