@@ -144,10 +144,14 @@ private:
 	 * List available variants for the current style.
 	 */
 	void listVariants();
-QStringList getStyleDirs(const QString &styleName) const;
-QString getVariantDirPath() const;
-void addCompactVariantIfPresent(const QString &variantName,const QLatin1String compactVersionPrefix);
-void addVariant(const QString &name);
+
+	QStringList getStyleDirs(const QString &styleName) const;
+	QString getVariantDirPath() const;
+	void addCompactVariantIfPresent(const QString &variantName,const QLatin1String compactVersionPrefix);
+	void addVariant(const QString &name);
+	void loadStyleFile(QString &styleType, const QString &fileName);
+	void setDefaultFileTransferIncomingHtml();
+
 private:
 	class Private;
 	Private * const d;

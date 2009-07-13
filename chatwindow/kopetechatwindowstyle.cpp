@@ -266,7 +266,20 @@ void ChatWindowStyle::addVariant(const QString &name)
 	QString variantPath = QString("Variants/%1").arg(name);
 	d->variantsList.insert(name, variantPath);
 }
-
+void ChatWindowStyle::loadStyleFile(QString &styleType, const QString &fileName)
+{
+	QFile fileAccess;
+	if( QFile::exists(fileName) )
+	{
+		fileAccess.setFileName(fileName);
+		fileAccess.open(QIODevice::ReadOnly);
+		QTextStream headerStream(&fileAccess);
+		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
+		styleType = headerStream.readAll();
+		kDebug(14000) << fileName << d->headerHtml;
+		fileAccess.close();
+	}
+}
 void ChatWindowStyle::readStyleFiles()
 {
 	QString headerFile = d->baseHref + QString("Header.html");
@@ -285,118 +298,37 @@ void ChatWindowStyle::readStyleFiles()
 	QString outgoingStateErrorFile = d->baseHref + QString("Outgoing/StateError.html");
 
 	QFile fileAccess;
+
 	// First load header file.
-	if( QFile::exists(headerFile) )
-	{
-		fileAccess.setFileName(headerFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->headerHtml = headerStream.readAll();
-		kDebug(14000) << "Header HTML: " << d->headerHtml;
-		fileAccess.close();
-	}
+	loadStyleFile(d->headerHtml,headerFile);
 	// Load Footer file
-	if( QFile::exists(footerFile) )
-	{
-		fileAccess.setFileName(footerFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->footerHtml = headerStream.readAll();
-		kDebug(14000) << "Footer HTML: " << d->footerHtml;
-		fileAccess.close();
-	}
+	loadStyleFile(d->footerHtml,footerFile);
 	// Load incoming file
-	if( QFile::exists(incomingFile) )
-	{
-		fileAccess.setFileName(incomingFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->incomingHtml = headerStream.readAll();
-		kDebug(14000) << "Incoming HTML: " << d->incomingHtml;
-		fileAccess.close();
-	}
+	loadStyleFile(d->incomingHtml,incomingFile);
 	// Load next Incoming file
-	if( QFile::exists(nextIncomingFile) )
-	{
-		fileAccess.setFileName(nextIncomingFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->nextIncomingHtml = headerStream.readAll();
-		kDebug(14000) << "NextIncoming HTML: " << d->nextIncomingHtml;
-		fileAccess.close();
-	}
+	loadStyleFile(d->nextIncomingHtml,nextIncomingFile);
 	// Load outgoing file
-	if( QFile::exists(outgoingFile) )
-	{
-		fileAccess.setFileName(outgoingFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->outgoingHtml = headerStream.readAll();
-		kDebug(14000) << "Outgoing HTML: " << d->outgoingHtml;
-		fileAccess.close();
-	}
+	loadStyleFile(d->outgoingHtml,outgoingFile);
 	// Load next outgoing file
-	if( QFile::exists(nextOutgoingFile) )
-	{
-		fileAccess.setFileName(nextOutgoingFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->nextOutgoingHtml = headerStream.readAll();
-		kDebug(14000) << "NextOutgoing HTML: " << d->nextOutgoingHtml;
-		fileAccess.close();
-	}
+	loadStyleFile(d->nextOutgoingHtml,nextOutgoingFile);
 	// Load status file
-	if( QFile::exists(statusFile) )
-	{
-		fileAccess.setFileName(statusFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->statusHtml = headerStream.readAll();
-		kDebug(14000) << "Status HTML: " << d->statusHtml;
-		fileAccess.close();
-	}
-	
+	loadStyleFile(d->statusHtml,statusFile);
 	// Load Action Incoming file
-	if( QFile::exists(actionIncomingFile) )
-	{
-		fileAccess.setFileName(actionIncomingFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->actionIncomingHtml = headerStream.readAll();
-		kDebug(14000) << "ActionIncoming HTML: " << d->actionIncomingHtml;
-		fileAccess.close();
-	}
+	loadStyleFile(d->actionIncomingHtml,actionIncomingFile);
 	// Load Action Outgoing file
-	if( QFile::exists(actionOutgoingFile) )
-	{
-		fileAccess.setFileName(actionOutgoingFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->actionOutgoingHtml = headerStream.readAll();
-		kDebug(14000) << "ActionOutgoing HTML: " << d->actionOutgoingHtml;
-		fileAccess.close();
-	}
+	loadStyleFile(d->actionOutgoingHtml,actionOutgoingFile);
 	// Load FileTransfer Incoming file
-	if( QFile::exists(fileTransferIncomingFile) )
-	{
-		fileAccess.setFileName(fileTransferIncomingFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->fileTransferIncomingHtml = headerStream.readAll();
-		kDebug(14000) << "fileTransferIncoming HTML: " << d->fileTransferIncomingHtml;
-		fileAccess.close();
-	}
-	
+	loadStyleFile(d->fileTransferIncomingHtml,fileTransferIncomingFile);
+	setDefaultFileTransferIncomingHtml();
+	// Load outgoing file
+	loadStyleFile(d->outgoingStateUnknownHtml,outgoingStateUnknownFile);
+	loadStyleFile(d->outgoingStateSendingHtml,outgoingStateSendingFile);
+	loadStyleFile(d->outgoingStateSentHtml,outgoingStateSentFile);
+	loadStyleFile(d->outgoingStateErrorHtml,outgoingStateErrorFile);
+}
+
+void ChatWindowStyle::setDefaultFileTransferIncomingHtml()
+{
 	if ( d->fileTransferIncomingHtml.isEmpty() ||
 	     ( !d->fileTransferIncomingHtml.contains( "saveFileHandlerId" ) &&
 	       !d->fileTransferIncomingHtml.contains( "saveFileAsHandlerId" ) ) )
@@ -419,50 +351,6 @@ void ChatWindowStyle::readStyleFiles()
 		d->fileTransferIncomingHtml.replace( QLatin1String("%message%"), message );
 	}
 
-	// Load outgoing file
-	if( QFile::exists(outgoingStateUnknownFile) )
-	{
-		fileAccess.setFileName(outgoingStateUnknownFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->outgoingStateUnknownHtml = headerStream.readAll();
-		kDebug(14000) << "Outgoing StateUnknown HTML: " << d->outgoingStateUnknownHtml;
-		fileAccess.close();
-	}
-
-	if( QFile::exists(outgoingStateSendingFile) )
-	{
-		fileAccess.setFileName(outgoingStateSendingFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->outgoingStateSendingHtml = headerStream.readAll();
-		kDebug(14000) << "Outgoing StateSending HTML: " << d->outgoingStateSendingHtml;
-		fileAccess.close();
-	}
-
-	if( QFile::exists(outgoingStateSentFile) )
-	{
-		fileAccess.setFileName(outgoingStateSentFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->outgoingStateSentHtml = headerStream.readAll();
-		kDebug(14000) << "Outgoing StateSent HTML: " << d->outgoingStateSentHtml;
-		fileAccess.close();
-	}
-
-	if( QFile::exists(outgoingStateErrorFile) )
-	{
-		fileAccess.setFileName(outgoingStateErrorFile);
-		fileAccess.open(QIODevice::ReadOnly);
-		QTextStream headerStream(&fileAccess);
-		headerStream.setCodec(QTextCodec::codecForName("UTF-8"));
-		d->outgoingStateErrorHtml = headerStream.readAll();
-		kDebug(14000) << "Outgoing StateError HTML: " << d->outgoingStateErrorHtml;
-		fileAccess.close();
-	}
 }
 
 void ChatWindowStyle::reload()
