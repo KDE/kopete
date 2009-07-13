@@ -4,6 +4,7 @@
    Copyright (C) 2006 Michaël Larouche <larouche@kde.org>
    Copyright (C) 2003 Richard Moore <rich@kde.org>
    Copyright (c) 2003-2005 Jason Keirstead <jason@keirstead.org>
+   Copyright (c) 2009 Pierre-Alexandre St-Jean <pierrealexandre.stjean@gmail.com>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
