@@ -34,7 +34,7 @@ kde4_add_plugin(chattexteditpart WITH_PREFIX ${chattexteditpart_PART_SRCS})
 
 target_link_libraries(chattexteditpart kopete kopetechatwindow_shared ${KDE4_KPARTS_LIBS} )
 
-set_target_properties(chattexteditpart PROPERTIES DEFINE_SYMBOL KOPETECHATWINDOW_SHARED_EXPORT="")
+set_target_properties(chattexteditpart PROPERTIES COMPILE_FLAGS -DKOPETECHATWINDOW_SHARED_EXPORT="")
 
 install(TARGETS chattexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -54,7 +54,7 @@ install(TARGETS kopete_chatwindow  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### next target ###############
 
-set(kopete_emailwindow_PART_SRCS kopeteemailwindow.cpp )
+set(kopete_emailwindow_PART_SRCS kopeteemailwindow.cpp)
 
 
 kde4_add_plugin(kopete_emailwindow ${kopete_emailwindow_PART_SRCS})
