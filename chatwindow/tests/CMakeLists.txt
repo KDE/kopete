@@ -30,3 +30,13 @@ kde4_add_unit_test(kopeterichtextwidget_test TESTNAME kopete-kopeterichtextwidge
 target_link_libraries(kopeterichtextwidget_test  ${CHATWINDOW_TEST_LIBRARIES})
 
 ########### next target ###############
+
+set(chatwindowstyle_test_SRCS chatwindowstyle_test.cpp )
+
+kde4_add_unit_test(chatwindowstyle_test TESTNAME
+kopete-chatwindowstyle_test ${chatwindowstyle_test_SRCS})
+
+target_link_libraries(chatwindowstyle_test  ${CHATWINDOW_TEST_LIBRARIES})
+
+
+########### next target ###############

@@ -4,7 +4,7 @@
 
 	Copyright (c) 2009      by Pierre-Alexandre St-Jean <pierrealexandre.stjean@gmail.com>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
