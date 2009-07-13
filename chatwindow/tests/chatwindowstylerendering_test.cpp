@@ -178,10 +178,6 @@ void ChatWindowStyleRendering_Test::initTestCase()
 
 	chatPart = new ChatMessagePart(d->fakeChatSession, 0);
 
-	testHeaderRendering();
-	testMessageRendering();
-	testStatusRendering();
-	//testFullRendering();
 }
 
 void ChatWindowStyleRendering_Test::cleanupTestCase()
