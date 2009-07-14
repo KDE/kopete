@@ -135,7 +135,7 @@ public:
 	 *
 	 * @param initialStatus FIXME: This is pretty much ignored
 	 */
-	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus::OnlineStatus() );
+	virtual void connect( const Kopete::OnlineStatus& initialStatus = Kopete::OnlineStatus() );
 
 	/**
 	 * @brief Disconnect from the service.
