@@ -68,7 +68,7 @@ class SkypeCallDialogPrivate {
 };
 
 SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account) : KDialog() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	setButtons( KDialog::None ); //dont add any buttons
 	setDefaultButton( KDialog::None );
@@ -104,7 +104,7 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 
 
 SkypeCallDialog::~SkypeCallDialog(){
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	emit callFinished(d->callId);
 	d->endCall();
@@ -115,7 +115,7 @@ SkypeCallDialog::~SkypeCallDialog(){
 }
 
 void SkypeCallDialog::updateStatus(const QString &callId, const QString &status) {
-	kDebug() << k_funcinfo << "Status: " << status << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Status: " << status;
 
 	if (callId == d->callId) {
 		if (status == "CANCELLED") {
@@ -234,13 +234,13 @@ void SkypeCallDialog::closeEvent(QCloseEvent *) {
 }
 
 void SkypeCallDialog::deathTimeout() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	deleteLater();//OK, the death is here :-)
 }
 
 void SkypeCallDialog::closeLater() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->endCall();
 
@@ -251,7 +251,7 @@ void SkypeCallDialog::closeLater() {
 }
 
 void SkypeCallDialog::updateError(const QString &callId, const QString &message) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	if (callId == d->callId) {
 		dialog->AcceptButton->setEnabled(false);
 		dialog->HangButton->setEnabled(false);

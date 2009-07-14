@@ -27,7 +27,7 @@
 #include <qcombobox.h>
 
 SkypeDetails::SkypeDetails() : KDialog() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	setButtons( KDialog::Close ); //add only close button
 	setDefaultButton( KDialog::Close );
@@ -42,17 +42,17 @@ SkypeDetails::SkypeDetails() : KDialog() {
 
 
 SkypeDetails::~SkypeDetails() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	delete dialog;
 }
 
 void SkypeDetails::closeEvent(QCloseEvent *) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	deleteLater();
 }
 
 void SkypeDetails::changeAuthor(int item) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	switch (item) {
 		case 0:
 			account->authorizeUser(dialog->idEdit->text());
@@ -67,7 +67,7 @@ void SkypeDetails::changeAuthor(int item) {
 }
 
 SkypeDetails &SkypeDetails::setNames(const QString &id, const QString &nick, const QString &name) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	setCaption(i18n("Details for User %1", id));
 	dialog->idEdit->setText(id);
 	dialog->nickEdit->setText(nick);
@@ -76,7 +76,7 @@ SkypeDetails &SkypeDetails::setNames(const QString &id, const QString &nick, con
 }
 
 SkypeDetails &SkypeDetails::setPhones(const QString &priv, const QString &mobile, const QString &work) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	dialog->privatePhoneEdit->setText(priv);
 	dialog->mobilePhoneEdit->setText(mobile);
 	dialog->workPhoneEdit->setText(work);
@@ -84,20 +84,20 @@ SkypeDetails &SkypeDetails::setPhones(const QString &priv, const QString &mobile
 }
 
 SkypeDetails &SkypeDetails::setHomepage(const QString &homepage) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	dialog->homepageEdit->setText(homepage);
 	return *this;
 }
 
 SkypeDetails &SkypeDetails::setAuthor(int author, SkypeAccount *account) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	dialog->authorCombo->setCurrentIndex(author);
 	this->account = account;
 	return *this;
 }
 
 SkypeDetails &SkypeDetails::setSex(const QString &sex) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	dialog->sexEdit->setText(sex);
 	return *this;
 }

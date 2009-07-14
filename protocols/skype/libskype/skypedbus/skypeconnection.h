@@ -20,12 +20,16 @@
 #ifndef SKYPECONNECTION_H
 #define SKYPECONNECTION_H
 
+#ifndef SKYPE_DEBUG_GLOBAL
+	#define SKYPE_DEBUG_GLOBAL 14311
+#endif
+
 #include <qobject.h>
 
 typedef enum {
 	///The connection was successful
 	seSuccess = 0,
-	///No runnign DBUS found
+	///No running DBUS found
 	seNoDBus,
 	///No running skype found and launching disabled or did not worked
 	seNoSkype,

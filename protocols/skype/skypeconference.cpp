@@ -20,6 +20,7 @@
 
 #include "skypeconference.h"
 #include "skypecalldialog.h"
+#include "skypeaccount.h"
 
 #include <qstring.h>
 #include <qlayout.h>
@@ -35,7 +36,7 @@ class SkypeConferencePrivate {
 };
 
 SkypeConference::SkypeConference(const QString &id) : KDialog() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	//create the d pointer
 	d = new SkypeConferencePrivate();
@@ -52,7 +53,7 @@ SkypeConference::SkypeConference(const QString &id) : KDialog() {
 }
 
 SkypeConference::~SkypeConference() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	//free all memory
 	delete d->layout;

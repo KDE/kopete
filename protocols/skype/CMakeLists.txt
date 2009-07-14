@@ -26,6 +26,8 @@ QT4_ADD_DBUS_ADAPTOR(
 	libskype/skypedbus/com.Skype.API.Client.xml
 	libskype/skypedbus/skypeconnection.h
 	SkypeConnection
+	skypeadaptor
+	SkypeAdaptor
 )
 
 set(
@@ -67,6 +69,8 @@ QT4_ADD_DBUS_ADAPTOR(
 	org.kde.kopete.SkypeActionHandler.xml
 	skypeaccount.h
 	SkypeAccount
+	skypeactionhandleradaptor
+	SkypeActionHandlerAdaptor
 )
 
 kde4_add_plugin(

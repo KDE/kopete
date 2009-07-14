@@ -88,7 +88,7 @@ class SkypeContactPrivate {
 
 SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::MetaContact *parent, bool user)
 	: Kopete::Contact(account, id, parent, QString()) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d = new SkypeContactPrivate;//create the insides
 	d->session = 0L;//no session yet
@@ -133,14 +133,14 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 }
 
 SkypeContact::~SkypeContact() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	//free memory
 	delete d;
 }
 
 Kopete::ChatSession *SkypeContact::manager(Kopete::Contact::CanCreateFlags CanCreate) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if ((!d->session) && (CanCreate)) {//It is not there and I can create it
 		d->session = new SkypeChatSession(d->account, this);
@@ -152,21 +152,20 @@ Kopete::ChatSession *SkypeContact::manager(Kopete::Contact::CanCreateFlags CanCr
 }
 
 void SkypeContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	serializedData["contactId"] = contactId();//save the ID
 }
 
 void SkypeContact::requestInfo() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->user)
 		emit infoRequest(contactId());//just ask for the info
 }
 
 void SkypeContact::setInfo(const QString &change) {
-	kDebug() << k_funcinfo << endl;//some debug info
-	kDebug() << "info is: " << change << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "info is: " << change;
 
 	const QString &receivedProperty = change.section(' ', 0, 0).trimmed().toUpper();//get the first part
 	if (receivedProperty == "FULLNAME") {
@@ -252,7 +251,7 @@ QString SkypeContact::formattedName() const {
 }
 
 void SkypeContact::resetStatus() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	SkypeProtocol * protocol = d->account->protocol();//get the protocol
 
@@ -298,7 +297,7 @@ void SkypeContact::resetStatus() {
 }
 
 bool SkypeContact::isReachable() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	const Kopete::OnlineStatus &st = d->account->myself()->onlineStatus();
 	if ((st == d->account->protocol()->Offline) || (st == d->account->protocol()->Connecting))
@@ -322,7 +321,7 @@ bool SkypeContact::isReachable() {
 }
 
 void SkypeContact::removeChat() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->session = 0L;//it exists no more or it is no longer of this contact
 }
@@ -332,7 +331,7 @@ bool SkypeContact::hasChat() const {
 }
 
 void SkypeContact::receiveIm(const QString &message, const QString &chat) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (!hasChat()) {
 		manager(CanCreate);//create it
@@ -348,7 +347,7 @@ void SkypeContact::receiveIm(const QString &message, const QString &chat) {
 }
 
 QList<KAction*> *SkypeContact::customContextMenuActions() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->account->myself() == this)
 		return 0L;
@@ -391,7 +390,7 @@ void SkypeContact::statusChanged() {
 }
 
 void SkypeContact::call() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->account->makeCall(this);
 }
@@ -416,19 +415,19 @@ bool SkypeContact::canCall() const {
 }
 
 void SkypeContact::slotUserInfo() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	(new SkypeDetails)->setNames(contactId(), nickName(), formattedName()).setPhones(d->privatePhone, d->privateMobile, d->workPhone).setHomepage(d->homepage).setAuthor(d->account->getAuthor(contactId()), d->account).setSex(d->sex).exec();
 }
 
 void SkypeContact::deleteContact() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->account->removeContact(contactId());
 	deleteLater();
 }
 
 void SkypeContact::sync(unsigned int changed) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (changed & MovedBetweenGroup) {
 		d->account->registerContact(contactId());
@@ -443,22 +442,22 @@ void SkypeContact::sync(unsigned int changed) {
 }
 
 void SkypeContact::authorize() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->account->authorizeUser(contactId());
 }
 
 void SkypeContact::disAuthor() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->account->disAuthorUser(contactId());
 }
 
 void SkypeContact::block() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->account->blockUser(contactId());
 }
 
 void SkypeContact::sendFile(const KUrl &, const QString &, uint) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->account->openFileTransfer(contactId()); //TODO: open KUrl location
 }
 

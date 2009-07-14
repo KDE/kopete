@@ -100,7 +100,7 @@ class SkypeAccountPrivate {
 };
 
 SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : Kopete::Account(protocol, accountID ) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	//keep track of what accounts the protocol has
 	protocol->registerAccount(this);
@@ -159,7 +159,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRenamed (Kopete::Group *, const QString& )), this, SLOT(renameGroup (Kopete::Group *, const QString& )) );
 
 	//Set SkypeActionHandler for web SkypeButtons
-	new KopeteAdaptor(this);
+	new SkypeActionHandlerAdaptor(this);
 	QDBusConnection::sessionBus().registerObject("/SkypeActionHandler", this);
 
 	//set values for the connection (should be updated if changed)
@@ -175,7 +175,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 
 
 SkypeAccount::~SkypeAccount() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	save();
 
@@ -186,21 +186,21 @@ SkypeAccount::~SkypeAccount() {
 }
 
 bool SkypeAccount::createContact(const QString &contactID, Kopete::MetaContact *parentContact) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (!contact(contactID)) {//check weather it is not used already
 		SkypeContact *newContact = new SkypeContact(this, contactID, parentContact);//create the contact
 
 		return newContact != 0L;//test weather it was created
 	} else {
-		kDebug() << k_funcinfo << "Contact already exists:" << contactID << endl;//Tell that it is not OK
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Contact already exists:" << contactID;//Tell that it is not OK
 
 		return false;
 	}
 }
 
 void SkypeAccount::setAway(bool away, const QString &reason) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (away)
 		setOnlineStatus(d->protocol->Away, reason);
@@ -209,7 +209,7 @@ void SkypeAccount::setAway(bool away, const QString &reason) {
 }
 
 void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (status == d->protocol->Online)
 		d->skype.setOnline();//Go online
@@ -226,7 +226,7 @@ void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kop
 	else if (status == d->protocol->SkypeMe)
 		d->skype.setSkypeMe();
 	else
-		kDebug() << "Unknown online status" << endl;//Just a warning that I do not know that status
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown online status";//Just a warning that I do not know that status
 
 	///TODO: Port to kde4
 	Q_UNUSED(reason);
@@ -240,19 +240,19 @@ void SkypeAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 }
 
 void SkypeAccount::disconnect() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	setOnlineStatus(d->protocol->Offline, Kopete::StatusMessage());
 }
 
 SkypeContact *SkypeAccount::contact(const QString &id) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	return static_cast<SkypeContact *>(contacts().value(id));//get the contact and convert it into the skype contact, there are no other contacts anyway
 }
 
 void SkypeAccount::connect(const Kopete::OnlineStatus &Status) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if ((Status != d->protocol->Online) && (Status != d->protocol->Away) &&
 		(Status != d->protocol->NotAvailable) && (Status != d->protocol->DoNotDisturb) &&
@@ -264,7 +264,7 @@ void SkypeAccount::connect(const Kopete::OnlineStatus &Status) {
 }
 
 void SkypeAccount::save() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	KConfigGroup *config = configGroup();//get the config
 	config->writeEntry("Authorization", author);//write the authorization name
@@ -292,7 +292,7 @@ void SkypeAccount::save() {
 }
 
 void SkypeAccount::wentOnline() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	myself()->setOnlineStatus(d->protocol->Online);//just set the icon
 	d->skype.enablePings(d->pings);
@@ -300,56 +300,56 @@ void SkypeAccount::wentOnline() {
 }
 
 void SkypeAccount::wentOffline() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	myself()->setOnlineStatus(d->protocol->Offline);//just change the icon
 	emit connectionStatus(false);
 }
 
 void SkypeAccount::wentAway() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	myself()->setOnlineStatus(d->protocol->Away);//just change the icon
 	emit connectionStatus(true);
 }
 
 void SkypeAccount::wentNotAvailable() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	myself()->setOnlineStatus(d->protocol->NotAvailable);
 	emit connectionStatus(true);
 }
 
 void SkypeAccount::wentDND() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	myself()->setOnlineStatus(d->protocol->DoNotDisturb);
 	emit connectionStatus(true);
 }
 
 void SkypeAccount::wentInvisible() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	myself()->setOnlineStatus(d->protocol->Invisible);
 	emit connectionStatus(true);
 }
 
 void SkypeAccount::wentSkypeMe() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	myself()->setOnlineStatus(d->protocol->SkypeMe);
 	emit connectionStatus(true);
 }
 
 void SkypeAccount::statusConnecting() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	myself()->setOnlineStatus(d->protocol->Connecting);
 	emit connectionStatus(false);
 }
 
 void SkypeAccount::newUser(const QString &name, int groupID) {
-	kDebug() << k_funcinfo << QString("name = %1").arg(name) << QString("groupID = %1").arg(groupID) << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << QString("name = %1").arg(name) << QString("groupID = %1").arg(groupID);
 
 	if (name == "echo123")// echo123 - Make Test Call has moved to Skype protocol toolbar
 		return;
@@ -381,7 +381,7 @@ void SkypeAccount::newUser(const QString &name, int groupID) {
 	Kopete::Contact * contact = contacts().value(name);
 	if (contact){
 		if (skypeGroup != contact->metaContact()->groups().first()){ // if skype Group is different like kopete group, move metacontact to skype group
-			kDebug() << "Moving contact" << name << "to group" << group << endl;
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Moving contact" << name << "to group" << group;
 			contact->metaContact()->moveToGroup(contact->metaContact()->groups().first(), skypeGroup);
 		}
 		return;
@@ -391,7 +391,7 @@ void SkypeAccount::newUser(const QString &name, int groupID) {
 }
 
 void SkypeAccount::prepareContact(SkypeContact *contact) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	QObject::connect(&d->skype, SIGNAL(updateAllContacts()), contact, SLOT(requestInfo()));//all contacts will know that
 	QObject::connect(contact, SIGNAL(infoRequest(const QString& )), &d->skype, SLOT(getContactInfo(const QString& )));//How do we ask for info?
@@ -400,7 +400,7 @@ void SkypeAccount::prepareContact(SkypeContact *contact) {
 }
 
 void SkypeAccount::updateContactInfo(const QString &contact, const QString &change) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	SkypeContact *cont = static_cast<SkypeContact *> (contacts().value(contact));//get the contact
 	if (cont)
@@ -424,7 +424,7 @@ SkypeProtocol * SkypeAccount::protocol() {
 }
 
 void SkypeAccount::sendMessage(Kopete::Message &message, const QString &chat) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (chat.isEmpty()) {
 		const QString &user = message.to().at(0)->contactId();//get id of the first contact, messages to multiple people are not yet possible
@@ -466,7 +466,7 @@ bool SkypeAccount::userHasChat(const QString &userId) {
 }
 
 void SkypeAccount::receivedIm(const QString &user, const QString &message, const QString &messageId) {
-	kDebug() << k_funcinfo << "User: " << user << ", message: " << message << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "User: " << user << ", message: " << message;
 	getContact(user)->receiveIm(message, getMessageChat(messageId));//let the contact show the message
 }
 
@@ -501,7 +501,7 @@ void SkypeAccount::setCallControl(bool value) {
 }
 
 void SkypeAccount::newCall(const QString &callId, const QString &userId) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->callControl) {//Show the skype call control window
 		SkypeCallDialog *dialog = new SkypeCallDialog(callId, userId, this);//It should free itself when it is closed
@@ -522,7 +522,7 @@ void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 	}
 
 	if ((!d->incommingCommand.isEmpty()) && (d->skype.isCallIncoming(callId))) {
-		kDebug() << "Running ring command" << endl;
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Running ring command";
 		QProcess *proc = new QProcess();
 		QStringList args = d->incommingCommand.split(' ');
 		QString bin = args.takeFirst();
@@ -531,7 +531,7 @@ void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 }
 
 bool SkypeAccount::isCallIncoming(const QString &callId) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	return d->skype.isCallIncoming(callId);
 }
@@ -545,7 +545,7 @@ int SkypeAccount::closeCallWindowTimeout() const {
 }
 
 QString SkypeAccount::getUserLabel(const QString &userId) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (userId.indexOf(' ') != -1) {//there are more people than just one
 		QStringList users = userId.split(' ');
@@ -687,7 +687,7 @@ void SkypeAccount::gotMessageId(const QString &messageId) {
 }
 
 void SkypeAccount::sentMessage(const QString &body, const QString &chat) {
-	kDebug() << k_funcinfo << "chat: " << chat << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "chat: " << chat;
 
 	SkypeChatSession *session = d->sessions.find(chat);
 	const QStringList &users = d->skype.getChatUsers(chat);
@@ -726,7 +726,7 @@ QList<Kopete::Contact*> *SkypeAccount::constructContactList(const QStringList &u
 }
 
 void SkypeAccount::groupCall(const QString &callId, const QString &groupId) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	//TODO: Find out a way to embet qdialog into another one after creation
 	return;
@@ -746,12 +746,12 @@ void SkypeAccount::groupCall(const QString &callId, const QString &groupId) {
 }
 
 void SkypeAccount::removeCall(const QString &callId) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->calls.remove(callId);
 }
 
 void SkypeAccount::removeCallGroup(const QString &groupId) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->conferences.remove(groupId);
 }
 
@@ -805,7 +805,7 @@ bool SkypeAccount::endCallCommandOnlyLast() const {
 }
 
 void SkypeAccount::startCall() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	QProcess *proc = new QProcess();
 	QStringList args = d->startCallCommand.split(' ');
@@ -818,7 +818,7 @@ void SkypeAccount::startCall() {
 }
 
 void SkypeAccount::endCall() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if ((--d->callCount == 0) || (!d->endCallCommandOnlyLats)) {
 		QProcess *proc = new QProcess();
@@ -839,7 +839,7 @@ QString SkypeAccount::incomingCommand() const {
 }
 
 void SkypeAccount::registerContact(const QString &contactId) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d -> skype.addContact(contactId);
 }
 
@@ -880,12 +880,12 @@ int SkypeAccount::getAuthor(const QString &contactId) {
 }
 
 bool SkypeAccount::hasCustomStatusMenu() const {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	return true;
 }
 
 void SkypeAccount::fillActionMenu( KActionMenu *actionMenu ) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	actionMenu->setIcon( myself()->onlineStatus().iconFor(this) );
 	actionMenu->menu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("Skype (%1)", accountId()));
@@ -941,20 +941,20 @@ void SkypeAccount::fillActionMenu( KActionMenu *actionMenu ) {
 }
 
 QString SkypeAccount::getMyselfSkypeName() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	return d->skype.getMyself();
 }
 
 void SkypeAccount::MovedBetweenGroup(SkypeContact *contact) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	int newGroup = d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
 	int oldGroup = d->skype.getContactGroupID(contact->contactId());
 
-	kDebug() << "oldGroup:" << oldGroup << "newGroup:" << newGroup << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << "oldGroup:" << oldGroup << "newGroup:" << newGroup;
 
 	if ( oldGroup != -1 ){
-		kDebug() << "Removing contact" << contact->contactId() << "from group" << d->skype.getContactGroupID(contact->contactId()) << endl;
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Removing contact" << contact->contactId() << "from group" << d->skype.getContactGroupID(contact->contactId());
 		d->skype.removeFromGroup(contact->contactId(), oldGroup);
 	}
 
@@ -963,51 +963,53 @@ void SkypeAccount::MovedBetweenGroup(SkypeContact *contact) {
 			d->skype.createGroup(contact->metaContact()->groups().first()->displayName());
 			newGroup = d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
 		} else {
-			kDebug() << "Contact is in top level, so in no skype group, skipping" << endl;
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Contact is in top level, so in no skype group, skipping";
 			return;
 		}
 	}
 
 	if ( newGroup != -1 ){
-		kDebug() << "Adding contact" << contact->contactId() << "to group" << d->skype.getGroupID(contact->metaContact()->groups().first()->displayName()) << endl;
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Adding contact" << contact->contactId() << "to group" << d->skype.getGroupID(contact->metaContact()->groups().first()->displayName());
 		d->skype.addToGroup(contact->contactId(), newGroup);
 	} else
-		kDebug() << "Error: Cant create new skype group" << contact->metaContact()->groups().first()->displayName() << endl;
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Error: Cant create new skype group" << contact->metaContact()->groups().first()->displayName();
 }
 
 void SkypeAccount::deleteGroup (Kopete::Group * group){
-	kDebug() << k_funcinfo << group->displayName() << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << group->displayName();
 	int groupID = d->skype.getGroupID( group->displayName() );
 	if ( groupID != -1 )
 		d->skype.deleteGroup(groupID);
 	else
-		kDebug() << "Group" << group->displayName() << "in skype doesnt exist, skipping" << endl;
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Group" << group->displayName() << "in skype doesnt exist, skipping";
 }
 
 void SkypeAccount::renameGroup (Kopete::Group * group, const QString &oldname){
-	kDebug() << k_funcinfo << "Renaming skype group" << oldname << "to" << group->displayName() << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Renaming skype group" << oldname << "to" << group->displayName();
 	int groupID = d->skype.getGroupID( oldname );
 	if ( groupID != -1 )
 		d->skype.renameGroup( groupID, group->displayName() );
 	else
-		kDebug() << "Old group" << oldname << "in skype doesnt exist, skipping" << endl;
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Old group" << oldname << "in skype doesnt exist, skipping";
 }
 
 void SkypeAccount::openFileTransfer(const QString &user, const QString &url) {
-	kDebug() << k_funcinfo << user << url << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << user << url;
 	d->skype.openFileTransfer(user, url);
 }
 
 void SkypeAccount::setDisplayName(const QString &user, const QString &name) {
-	kDebug() << user << name;
+	kDebug(SKYPE_DEBUG_GLOBAL) << user << name;
 	d->skype.setDisplayName(user, name);
 }
 
 void SkypeAccount::SkypeActionHandler(const QString &message) {
-	kDebug() << message;
+	kDebug(SKYPE_DEBUG_GLOBAL) << message;
 
-	if ( message.isEmpty() )
+	if ( message.isEmpty() ) {
+		KMessageBox::error(0L, i18n("Unknow action from SkypeActionHandler"), i18n("Skype protocol"));
 		return;//Empty message
+	}
 
 	QString command;
 	QString user;
@@ -1021,13 +1023,17 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 	} else if ( message.startsWith("skype:", Qt::CaseInsensitive) ) {
 		command = message.section("?", -1).trimmed();
 		user = message.section(":", -1).section("?", 0, 0).trimmed();
-	} else
+	} else {
+		KMessageBox::error(0L, i18n("Unknow action from SkypeActionHandler"), i18n("Skype protocol"));
 		return;//Unknow message
+	}
 
-	if ( command.isEmpty() || user.isEmpty() )
+	if ( command.isEmpty() || user.isEmpty() ) {
+		KMessageBox::error(0L, i18n("Unknow action from SkypeActionHandler"), i18n("Skype protocol"));
 		return;//Unknow message
+	}
 
-	kDebug() << "user:" << user << "command:" << command;
+	kDebug(SKYPE_DEBUG_GLOBAL) << "user:" << user << "command:" << command;
 
 	if ( command == "add" ) {
 		//TODO: Open add user dialog
@@ -1040,13 +1046,16 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 	} else if ( command == "userinfo" ) {//TODO: Open option dialog (with all thisa options instead userinfo) and support unknow contacts who arent in contact list
 		if ( ! contact(user) ) {
 			addContact(user, QString(), 0L, Temporary);//create a temporary contact
-			if ( ! contact(user) )
+			if ( ! contact(user) ) {
+				KMessageBox::error(0L, i18n("Contact are not in contact list"), i18n("Skype protocol"));
 				return;//contact arent in contact list - skip it
+			}
 		}
 		contact(user)->slotUserInfo();//Open user info dialog
 		//TODO: dont use slot, it freeze dbus, better create new signal
 	} else {
-		kDebug() << "Unknow command";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknow command";
+		KMessageBox::error(0L, i18n("Unknow action from SkypeActionHandler"), i18n("Skype protocol"));
 		return;//Unknow command
 	}
 }

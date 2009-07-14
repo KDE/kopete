@@ -38,7 +38,7 @@ class SkypeAddContactPrivate {
 };
 
 SkypeAddContact::SkypeAddContact(SkypeProtocol *protocol, QWidget *parent, SkypeAccount *account, const char *) : AddContactPage(parent) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d = new SkypeAddContactPrivate();//create the d ponter
 	d->protocol = protocol;//remember the protocol
@@ -53,7 +53,7 @@ SkypeAddContact::SkypeAddContact(SkypeProtocol *protocol, QWidget *parent, Skype
 
 
 SkypeAddContact::~SkypeAddContact() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	//free everything
 	delete d->widget;
@@ -61,7 +61,7 @@ SkypeAddContact::~SkypeAddContact() {
 }
 
 bool SkypeAddContact::validateData() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->widget->NameEdit->setText(d->widget->NameEdit->text().toLower());
 
@@ -94,7 +94,7 @@ bool SkypeAddContact::validateData() {
 }
 
 bool SkypeAddContact::apply(Kopete::Account *, Kopete::MetaContact *metaContact) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->account->registerContact(d->widget->NameEdit->text());
 	d->account->addContact(d->widget->NameEdit->text(), metaContact, Kopete::Account::ChangeKABC);
