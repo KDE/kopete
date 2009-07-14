@@ -467,13 +467,25 @@ void TelepathyAccount::createNewAccount()
     kDebug(TELEPATHY_DEBUG_AREA);
 
     QVariantMap parameters;
-    foreach(Tp::ProtocolParameter *parameter, m_connectionParameters) {
+    foreach (Tp::ProtocolParameter *parameter, m_connectionParameters) {
         kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << parameter->defaultValue().toString();
-        parameters[parameter->name()] = parameter->defaultValue();
-    }
 
-    kDebug(TELEPATHY_DEBUG_AREA) << "Creating account: " << m_connectionManagerName << m_connectionProtocolName << accountId() << parameters;
-    m_pendingAccount = m_accountManager->createAccount(m_connectionManagerName, m_connectionProtocolName, accountId(), parameters);
+        // Don't add empty parameters to avoid hitting an assert in qdbus.
+        if (parameter->defaultValue() != QVariant()) {
+            parameters[parameter->name()] = parameter->defaultValue();
+        }
+    }
+    
+    kDebug(TELEPATHY_DEBUG_AREA) << "Creating account: "
+                                 << m_connectionManagerName
+                                 << m_connectionProtocolName
+                                 << accountId()
+                                 << parameters;
+
+    m_pendingAccount = m_accountManager->createAccount(m_connectionManagerName,
+                                                       m_connectionProtocolName,
+                                                       accountId(),
+                                                       parameters);
 
     QObject::connect(m_pendingAccount, SIGNAL(finished(Tp::PendingOperation *)),
                      this, SLOT(newTelepathyAccountCreated(Tp::PendingOperation *)));
