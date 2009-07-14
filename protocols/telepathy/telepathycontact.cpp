@@ -122,6 +122,7 @@ void TelepathyContact::setInternalContact(QSharedPointer<Tp::Contact> contact)
 
     setOnlineStatus(TelepathyProtocol::protocol()->telepathyStatusToKopete(static_cast<Tp::ConnectionPresenceType>(contact->presenceType())));
     setNickName(contact->alias());
+    setStatusMessage(contact->presenceMessage());
 
     QObject::connect(contact.data(),
                      SIGNAL(aliasChanged(const QString &)),
@@ -158,6 +159,8 @@ void TelepathyContact::onAliasChanged(const QString &alias)
 void TelepathyContact::onAvatarTokenChanged(const QString &avatarToken)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << avatarToken;
+
+    // TODO: Implement me!
 }
 
 void TelepathyContact::onSimplePresenceChanged(const QString &status, uint type, const QString &presenceMessage)
@@ -172,6 +175,9 @@ void TelepathyContact::onSubscriptionStateChanged(Tp::Contact::PresenceState sta
     kDebug(TELEPATHY_DEBUG_AREA);
 
     Q_UNUSED(state);
+
+    // TODO: Implement me!
+
 }
 
 void TelepathyContact::onPublishStateChanged(Tp::Contact::PresenceState state)
@@ -179,11 +185,17 @@ void TelepathyContact::onPublishStateChanged(Tp::Contact::PresenceState state)
     kDebug(TELEPATHY_DEBUG_AREA);
 
     Q_UNUSED(state);
+
+    // TODO: Implement me!
+
 }
 
 void TelepathyContact::onBlockStatusChanged(bool blocked)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << blocked;
+
+    // TODO: Implement me!
+
 }
 
 QSharedPointer<Tp::Contact> TelepathyContact::internalContact()
