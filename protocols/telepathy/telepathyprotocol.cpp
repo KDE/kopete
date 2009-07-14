@@ -174,4 +174,6 @@ Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Tp::ConnectionPr
     return result;
 }
 
+
 #include "telepathyprotocol.moc"
+

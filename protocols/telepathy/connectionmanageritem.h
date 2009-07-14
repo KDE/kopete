@@ -50,5 +50,6 @@ private:
     Tp::ProtocolInfoList m_protocolInfoList;
 };
 
+
 #endif /* _CONNECTIONMANAGERITEM_H */
 

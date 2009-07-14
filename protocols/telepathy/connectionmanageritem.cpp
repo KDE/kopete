@@ -48,6 +48,6 @@ void ConnectionManagerItem::setProtocolsSize(Tp::PendingOperation *operation)
     setText(1, QString::number(size));
 }
 
-#include "connectionmanageritem.moc"
 
+#include "connectionmanageritem.moc"
 

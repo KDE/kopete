@@ -118,5 +118,6 @@ private:
     friend class TelepathyContactManager;
 };
 
+
 #endif // TELEPATHYACCOUNT_H_
 

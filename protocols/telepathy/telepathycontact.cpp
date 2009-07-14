@@ -189,5 +189,3 @@ QSharedPointer<Tp::Contact> TelepathyContact::internalContact()
     return d->internalContact;
 }
 
-
-
