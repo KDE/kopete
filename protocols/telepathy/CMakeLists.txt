@@ -4,7 +4,8 @@ add_subdirectory( icons )
 REMOVE_DEFINITIONS(-DQT_NO_STL)
 
 include_directories( 
-	${KOPETE_INCLUDES}
+        ${KDE4_INCLUDES}
+        ${KOPETE_INCLUDES}
 	${TELEPATHY_QT4_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/ui
 	${CMAKE_CURRENT_BINARY_dir}/ui

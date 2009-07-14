@@ -18,7 +18,7 @@
 #define TELEPATHYEDITACCOUNTWIDGET_H
 
 #include <QtGui/QWidget>
-#include <editaccountwidget.h>
+#include <ui/editaccountwidget.h>
 
 #include <TelepathyQt4/PendingOperation>
 

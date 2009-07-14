@@ -27,7 +27,7 @@
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
 #include <kopeteuiglobal.h>
-#include <avatardialog.h>
+#include <ui/avatardialog.h>
 
 #include <kdebug.h>
 #include <kglobal.h>
