@@ -170,20 +170,3 @@ void TelepathyChatSession::pendingMessageRemoved(const Tp::ReceivedMessage &mess
 {
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -69,4 +69,7 @@ public:
 private:
     static TelepathyProtocol *s_self;
 };
-#endif
+
+
+#endif  //header guard
+

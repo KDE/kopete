@@ -161,4 +161,6 @@ void TelepathyEditParameterWidget::Private::clear()
     qDeleteAll(paramList);
 }
 
+
 #include "telepathyeditparameterwidget.moc"
+

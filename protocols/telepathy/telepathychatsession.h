@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCHATSESSION_H
+#define KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCHATSESSION_H
+
 #include <kopetechatsession.h>
 #include <kopetecontact.h>
 #include <kopetemessage.h>
@@ -64,5 +67,5 @@ private:
 };
 
 
-
+#endif  // Header guard
 

@@ -73,4 +73,6 @@ private:
     Private *d;
 };
 
-#endif
+
+#endif  // header guard
+

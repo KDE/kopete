@@ -305,4 +305,6 @@ void TelepathyEditAccountWidget::protocolSelectionChanged()
     }
 }
 
+
 #include "telepathyeditaccountwidget.moc"
+

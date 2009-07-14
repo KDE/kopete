@@ -712,26 +712,3 @@ void TelepathyAccount::fetchContactList()
     getContactManager()->fetchContactList();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -41,4 +41,7 @@ private:
     class Private;
     Private *d;
 };
-#endif
+
+
+#endif  // header guard
+
