@@ -40,7 +40,6 @@ class TelepathyContactManager::TelepathyContactManagerPrivate
 public:
     TelepathyAccount *telepathyAccount;
     Tp::AccountPtr account;
-    Tp::ContactManager *contactManager;
     Tp::ConnectionPtr connection;
 
     QList<TelepathyContact*> contactList;
@@ -111,44 +110,25 @@ void TelepathyContactManager::fetchContactList()
 
     Tp::Features features;
     features << Tp::Connection::FeatureCore
-             << Tp::Connection::FeatureRoster
-             << Tp::Connection::FeatureSelfContact
-             << Tp::Connection::FeatureSimplePresence;
+             << Tp::Connection::FeatureRoster;
 
     connect(d->connection->becomeReady(features),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onConnectionReady(Tp::PendingOperation*)));
 }
 
-void TelepathyContactManager::onConnectionReady(Tp::PendingOperation* operation)
+void TelepathyContactManager::onConnectionReady(Tp::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
     if (TelepathyCommons::isOperationError(operation))
         return;
 
-    // \brief: Add new feature to existing connection to get contact list from server
-    Tp::Features features = d->connection->requestedFeatures();
-    features << Tp::Connection::FeatureRoster;
-    QObject::connect(d->connection->becomeReady(features),
-                     SIGNAL(finished(Tp::PendingOperation*)),
-                     this,
-                     SLOT(onConnectionFeaturesReady(Tp::PendingOperation*)));
-}
-
-void TelepathyContactManager::onConnectionFeaturesReady(Tp::PendingOperation *operation)
-{
-    kDebug(TELEPATHY_DEBUG_AREA);
-
-    if (TelepathyCommons::isOperationError(operation))
-        return;
-
-    QObject::connect(d->contactManager,
+    QObject::connect(d->connection->contactManager(),
                      SIGNAL(presencePublicationRequested(const Tp::Contacts &)),
-                     this,
                      SLOT(onPresencePublicationRequested(const Tp::Contacts &)));
 
-    QSet<QSharedPointer<Tp::Contact> > contacts = d->contactManager->allKnownContacts();
+    QSet<QSharedPointer<Tp::Contact> > contacts = d->connection->contactManager()->allKnownContacts();
 
     foreach(QSharedPointer<Tp::Contact> contact, contacts) {
         createContact(contact);
