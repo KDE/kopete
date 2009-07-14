@@ -43,7 +43,7 @@ class SkypeEditAccountPrivate {
 };
 
 skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *account, QWidget *parent) : QWidget(parent), KopeteEditAccountWidget(account) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	QVBoxLayout *layout = new QVBoxLayout( this );
 	QWidget *w = new QWidget( this );
@@ -94,14 +94,14 @@ skypeEditAccount::skypeEditAccount(SkypeProtocol *protocol, Kopete::Account *acc
 }
 
 skypeEditAccount::~skypeEditAccount() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	delete widget;
 	delete d;
 }
 
 bool skypeEditAccount::validateData() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->protocol->hasAccount() && (!account())) {//he wants to create some account witch name is already used
 		KMessageBox::sorry(this, i18n("You can have only one skype account"), i18n("Wrong Information"));//Tell him to use something other
@@ -112,7 +112,7 @@ bool skypeEditAccount::validateData() {
 }
 
 Kopete::Account *skypeEditAccount::apply() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	//first, I need a pointer to that account
 	if (!account()) //it does not exist

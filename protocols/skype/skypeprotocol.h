@@ -19,6 +19,10 @@
 #ifndef SKYPEPROTOCOL_H
 #define SKYPEPROTOCOL_H
 
+#ifndef SKYPE_DEBUG_GLOBAL
+	#define SKYPE_DEBUG_GLOBAL 14311
+#endif
+
 #include "kopeteprotocol.h"
 #include "kopeteproperty.h"
 #include <qstring.h>
