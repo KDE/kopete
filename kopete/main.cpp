@@ -55,7 +55,6 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( ki18n("Roman Jarosz"), ki18n("Developer, AIM and ICQ"), "kedgedev@centrum.cz" );
 	aboutData.addAuthor ( ki18n("Charles Connell"), ki18n("Developer"), "charles@connells.org" );
 	aboutData.addAuthor ( ki18n("Tejas Dinkar"), ki18n("Developer, Bonjour Plugin Maintainer"), "tejas@gja.in", "http://www.gja.in" );
-	aboutData.addAuthor ( ki18n("Pali Rohár"), ki18n("Developer, Skype plugin maintainer"), "pali.rohar@gmail.com" );
 
 	aboutData.addCredit ( ki18n("Vally8"), ki18n("Konki style author"), "vally8@gmail.com", "http://vally8.free.fr/" );
 	aboutData.addCredit ( ki18n("Tm_T"), ki18n("Hacker style author"), "jussi.kekkonen@gmail.com");
