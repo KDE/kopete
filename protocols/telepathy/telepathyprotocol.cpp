@@ -129,18 +129,23 @@ Tp::ConnectionPresenceType TelepathyProtocol::kopeteStatusToTelepathy(const Kope
     kDebug(TELEPATHY_DEBUG_AREA);
     Tp::ConnectionPresenceType telepathyPresence = Tp::ConnectionPresenceTypeOffline;
 
-    Kopete::OnlineStatus type = status.status();
+    Kopete::OnlineStatusManager::Categories categories = status.categories();
 
-    if (type == Kopete::OnlineStatus::Online)
-        telepathyPresence = Tp::ConnectionPresenceTypeAvailable;
-    else if (status == Kopete::OnlineStatus::Away)
+    if (categories == Kopete::OnlineStatusManager::Idle ||
+        categories == Kopete::OnlineStatusManager::Away) {
         telepathyPresence = Tp::ConnectionPresenceTypeAway;
-    else if (status == Kopete::OnlineStatus::Invisible)
+    } else if (categories == Kopete::OnlineStatusManager::ExtendedAway) {
+        telepathyPresence = Tp::ConnectionPresenceTypeExtendedAway;
+    } else if (categories == Kopete::OnlineStatusManager::Invisible) {
         telepathyPresence = Tp::ConnectionPresenceTypeHidden;
-    else if (status == Kopete::OnlineStatus::Offline)
+    } else if (categories == Kopete::OnlineStatusManager::Offline) {
         telepathyPresence = Tp::ConnectionPresenceTypeOffline;
-    else if (status == Kopete::OnlineStatus::Unknown)
-        telepathyPresence = Tp::ConnectionPresenceTypeUnset;
+    } else if (categories == Kopete::OnlineStatusManager::FreeForChat ||
+               categories == Kopete::OnlineStatusManager::Online) {
+        telepathyPresence = Tp::ConnectionPresenceTypeAvailable;
+    } else if (categories == Kopete::OnlineStatusManager::Busy) {
+        telepathyPresence = Tp::ConnectionPresenceTypeBusy;
+    }
 
     return telepathyPresence;
 }
