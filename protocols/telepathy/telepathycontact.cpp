@@ -100,7 +100,9 @@ Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
         if (existingSession) {
             kDebug(TELEPATHY_DEBUG_AREA) << "chat exist";
             d->currentChatSession = existingSession;
-        } else if (canCreate == Kopete::Contact::CanCreate) {
+        // See API-Docs for libkopete. If no message manager exists, we must create one anyway.
+        // } else if (canCreate == Kopete::Contact::CanCreate) {
+        } else {
             kDebug(TELEPATHY_DEBUG_AREA) << "chat not exist";
             TelepathyChatSession *newSession = new TelepathyChatSession(account()->myself(), others, account()->protocol());
             newSession->createTextChannel(internalContact());
