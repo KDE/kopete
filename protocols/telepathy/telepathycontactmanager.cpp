@@ -150,6 +150,22 @@ void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
     kDebug(TELEPATHY_DEBUG_AREA) << "Subscription status:" << contact->subscriptionState();
     kDebug(TELEPATHY_DEBUG_AREA) << "Publish status:" << contact->publishState();
 
+    // Only create this contact if it isn't already in the list.
+    foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
+        foreach (Kopete::Contact *c, mc->contacts()) {
+            TelepathyContact *tpc = qobject_cast<TelepathyContact*>(c);
+            if (tpc) {
+                if((tpc->account() == d->telepathyAccount) &&
+                   (tpc->contactId() == contact->id()))
+                {
+                    // Contact is already in the contact list. Return.
+                    kDebug(TELEPATHY_DEBUG_AREA) << "Contact is already in list. Don't add it.";
+                    return;
+                }
+            }
+        }
+    }
+
     Kopete::MetaContact *metaContact = new Kopete::MetaContact();
     TelepathyContact *newContact = new TelepathyContact(d->telepathyAccount, contact->id(), metaContact);
     newContact->setInternalContact(contact);
