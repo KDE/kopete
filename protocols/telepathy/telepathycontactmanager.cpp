@@ -103,18 +103,21 @@ void TelepathyContactManager::fetchContactList()
     kDebug(TELEPATHY_DEBUG_AREA);
 
     if (!d->account || !d->account->haveConnection()) {
-        kDebug(TELEPATHY_DEBUG_AREA) << "Error: Could not find active connection or account";
+        kWarning(TELEPATHY_DEBUG_AREA) << "Error: Could not find active connection or account";
+        return;
     }
 
-    d->contactManager = d->account->connection()->contactManager();
+    d->connection = d->account->connection();
 
-    d->connection = d->contactManager->connection();
+    Tp::Features features;
+    features << Tp::Connection::FeatureCore
+             << Tp::Connection::FeatureRoster
+             << Tp::Connection::FeatureSelfContact
+             << Tp::Connection::FeatureSimplePresence;
 
-    QObject::connect(d->connection->becomeReady(),
-                     SIGNAL(finished(Tp::PendingOperation*)),
-                     this,
-                     SLOT(onConnectionReady(Tp::PendingOperation*))
-                    );
+    connect(d->connection->becomeReady(features),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onConnectionReady(Tp::PendingOperation*)));
 }
 
 void TelepathyContactManager::onConnectionReady(Tp::PendingOperation* operation)
