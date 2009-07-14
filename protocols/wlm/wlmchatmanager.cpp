@@ -359,12 +359,19 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
         newMessage->setForegroundColor (message.foregroundColor ());
         newMessage->setDirection (Kopete::Message::Inbound);
 
-        if (!fillEmoticons(chat, newMessage))
-        {
-            pendingMessages[conn].append(PendingMessage(newMessage));
-            if (m_emoticonsTimeoutTimerId == 0)
-                m_emoticonsTimeoutTimerId = startTimer(EmoticonsTimeoutCheckInterval * 1000);
+        WlmContact *contact_from = qobject_cast<WlmContact*>(contact);
+        if(!contact_from)
             return;
+
+        if(!contact_from->dontShowEmoticons())
+        {
+            if (!fillEmoticons(chat, newMessage))
+            {
+                pendingMessages[conn].append(PendingMessage(newMessage));
+                if (m_emoticonsTimeoutTimerId == 0)
+                    m_emoticonsTimeoutTimerId = startTimer(EmoticonsTimeoutCheckInterval * 1000);
+                return;
+            }
         }
         // Add it to the manager
         chat->appendMessage (*newMessage);
@@ -559,7 +566,12 @@ void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnecti
 {
     Q_UNUSED( buddy );
 
-    if(m_account->doNotRequestEmoticons())
+    WlmContact *contact = qobject_cast<WlmContact*>(m_account->contacts().value(QString(buddy.c_str())));
+
+    if(!contact)
+        return;
+
+    if(m_account->doNotRequestEmoticons() || contact->dontShowEmoticons())
         return;
 
     WlmChatSession *chat = chatSessions[conn];

@@ -51,6 +51,7 @@ Kopete::Contact (_account, uniqueName, parent)
     setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     m_contactSerial = contactSerial;
     m_disabled = false;
+    m_dontShowEmoticons = false;
 
     if ( metaContact() )
         m_currentGroup = metaContact()->groups().first();
@@ -63,7 +64,23 @@ Kopete::Contact (_account, uniqueName, parent)
 
     m_actionUpdateDisplayPicture = new KAction(i18n("Update Photo"), this);
     QObject::connect(m_actionUpdateDisplayPicture, SIGNAL(triggered(bool)), this, SLOT(slotUpdateDisplayPicture()));
+
+    m_actionDontShowEmoticons = new KToggleAction (KIcon ("wlm_fakefriend"), 
+           i18n ("&Block custom emoticons"), this);
+    QObject::connect (m_actionDontShowEmoticons, SIGNAL(triggered(bool)), this, SLOT(slotDontShowEmoticons(bool)));
 }
+
+void WlmContact::slotDontShowEmoticons(bool block)
+{
+    m_actionDontShowEmoticons->setChecked(block);
+    m_dontShowEmoticons = block;
+}
+
+bool WlmContact::dontShowEmoticons()
+{
+    return m_dontShowEmoticons;
+}
+
 
 void WlmContact::setDisabled(bool disabled, bool updateServer)
 {
@@ -182,6 +199,7 @@ WlmContact::serialize (QMap < QString, QString > &serializedData,
         property (Kopete::Global::Properties::self ()->photo ()).value ().
         toString ();
     serializedData["contactSerial"] = m_contactSerial;
+    serializedData["dontShowEmoticons"] = m_dontShowEmoticons ? "true" : "false";
 }
 
 Kopete::ChatSession *
@@ -212,12 +230,14 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     actions->append(m_actionBlockContact);
     actions->append(m_actionShowProfile);
     actions->append(m_actionUpdateDisplayPicture);
+    actions->append(m_actionDontShowEmoticons);
 
     // temporary action collection, used to apply Kiosk policy to the actions
     KActionCollection tempCollection((QObject*)0);
     tempCollection.addAction(QLatin1String("contactBlock"), m_actionBlockContact);
     tempCollection.addAction(QLatin1String("contactViewProfile"), m_actionShowProfile);
     tempCollection.addAction(QLatin1String("updateDisplayPicture"), m_actionUpdateDisplayPicture);
+    tempCollection.addAction(QLatin1String("dontShowEmoticons"), m_actionDontShowEmoticons);
 
     return actions;
 }

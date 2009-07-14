@@ -104,6 +104,7 @@ Kopete::Contact * WlmProtocol::deserializeContact (Kopete::MetaContact *
     QString contactSerial = serializedData["contactSerial"];
     QString accountId = serializedData["accountId"];
     QString displayName = serializedData["displayName"];
+    QString dontShowEmoticons = serializedData["dontShowEmoticons"];
 
     QList <Kopete::Account*>accounts =
         Kopete::AccountManager::self ()->accounts (this);
@@ -121,6 +122,10 @@ Kopete::Contact * WlmProtocol::deserializeContact (Kopete::MetaContact *
     }
     WlmContact * c = new WlmContact (account, contactId, contactSerial,
                         displayName, metaContact);
+
+    if(dontShowEmoticons == "true")
+        c->slotDontShowEmoticons(true);
+
     return c;
 }
 
