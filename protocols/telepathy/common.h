@@ -29,19 +29,17 @@
 class TelepathyCommons
 {
 public:
-	static bool isOperationError(Tp::PendingOperation* operation)
-	{
-	    if(operation->isError())
-		{
-    		kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
+    static bool isOperationError(Tp::PendingOperation* operation) {
+        if (operation->isError()) {
+            kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
 #ifdef SHOW_MESSAGEBOX_ERRORS
-	        KMessageBox::information(0, i18n("Error: %1\n%2", operation->errorName() , operation->errorMessage()));
+            KMessageBox::information(0, i18n("Error: %1\n%2", operation->errorName() , operation->errorMessage()));
 #endif
-		    return true;
-		}
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 };
 
 #endif //COMMON_H_

@@ -33,7 +33,7 @@
 
 namespace Kopete
 {
-    class MetaContact;
+class MetaContact;
 }
 
 class TelepathyContact : public Kopete::Contact
@@ -48,23 +48,23 @@ public:
     virtual void serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData);
 
     virtual QList<KAction *> *customContextMenuActions();
-	virtual QList<KAction *> *customContextMenuActions( Kopete::ChatSession *manager );
-    virtual Kopete::ChatSession *manager( CanCreateFlags canCreate = CannotCreate );
+    virtual QList<KAction *> *customContextMenuActions(Kopete::ChatSession *manager);
+    virtual Kopete::ChatSession *manager(CanCreateFlags canCreate = CannotCreate);
 
-	void setInternalContact(QSharedPointer<Tp::Contact> contact);
-	QSharedPointer<Tp::Contact> internalContact();
+    void setInternalContact(QSharedPointer<Tp::Contact> contact);
+    QSharedPointer<Tp::Contact> internalContact();
 
 private slots:
-	void onAliasChanged (const QString &);
-	void onAvatarTokenChanged (const QString &);
-	void onSimplePresenceChanged (const QString &, uint, const QString &);
-	void onSubscriptionStateChanged (Tp::Contact::PresenceState);
-	void onPublishStateChanged (Tp::Contact::PresenceState);
-	void onBlockStatusChanged (bool);
+    void onAliasChanged(const QString &);
+    void onAvatarTokenChanged(const QString &);
+    void onSimplePresenceChanged(const QString &, uint, const QString &);
+    void onSubscriptionStateChanged(Tp::Contact::PresenceState);
+    void onPublishStateChanged(Tp::Contact::PresenceState);
+    void onBlockStatusChanged(bool);
 
 private:
-	class TelepathyContactPrivate;
-	TelepathyContactPrivate * d;
+    class TelepathyContactPrivate;
+    TelepathyContactPrivate * d;
 };
 
 

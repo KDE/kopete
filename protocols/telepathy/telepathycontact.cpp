@@ -39,22 +39,22 @@
 class TelepathyContact::TelepathyContactPrivate
 {
 public:
-	TelepathyContactPrivate() {}
+    TelepathyContactPrivate() {}
 
-	QSharedPointer<Tp::Contact> internalContact;
-	QPointer<Kopete::ChatSession> currentChatSession;
+    QSharedPointer<Tp::Contact> internalContact;
+    QPointer<Kopete::ChatSession> currentChatSession;
 };
 
 TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent)
-    : Kopete::Contact(account, contactId, parent), d(new TelepathyContactPrivate)
+        : Kopete::Contact(account, contactId, parent), d(new TelepathyContactPrivate)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-	setOnlineStatus(TelepathyProtocol::protocol()->Offline);
+    setOnlineStatus(TelepathyProtocol::protocol()->Offline);
 }
 
 TelepathyContact::~TelepathyContact()
 {
-	delete d;
+    delete d;
 }
 
 bool TelepathyContact::isReachable()
@@ -67,8 +67,8 @@ void TelepathyContact::serialize(QMap< QString, QString >& serializedData, QMap<
 {
     //kDebug(TELEPATHY_DEBUG_AREA);
 
-	Q_UNUSED(serializedData);
-	Q_UNUSED(addressBookData);
+    Q_UNUSED(serializedData);
+    Q_UNUSED(addressBookData);
 }
 
 QList<KAction *> *TelepathyContact::customContextMenuActions()
@@ -77,120 +77,116 @@ QList<KAction *> *TelepathyContact::customContextMenuActions()
     return new QList<KAction*>();
 }
 
-QList<KAction *> *TelepathyContact::customContextMenuActions( Kopete::ChatSession *manager )
+QList<KAction *> *TelepathyContact::customContextMenuActions(Kopete::ChatSession *manager)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	Q_UNUSED(manager);
+    Q_UNUSED(manager);
 
     return new QList<KAction*>();
 }
 
-Kopete::ChatSession *TelepathyContact::manager( CanCreateFlags canCreate )
+Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	if(d->currentChatSession.isNull())
-	{
-		kDebug(TELEPATHY_DEBUG_AREA);
-		QList<Kopete::Contact*> others;
-		others.append(this);
+    if (d->currentChatSession.isNull()) {
+        kDebug(TELEPATHY_DEBUG_AREA);
+        QList<Kopete::Contact*> others;
+        others.append(this);
 
-		// \brief: try to find existing chat session
-		Kopete::ChatSession *existingSession = Kopete::ChatSessionManager::self()->findChatSession(account()->myself(), others, account()->protocol());
-		if(existingSession)
-		{
-			kDebug(TELEPATHY_DEBUG_AREA) << "chat exist";
-			d->currentChatSession = existingSession;
-		}
-		else if(canCreate == Kopete::Contact::CanCreate)
-		{
-			kDebug(TELEPATHY_DEBUG_AREA) << "chat not exist";
-			TelepathyChatSession *newSession = new TelepathyChatSession(account()->myself(), others, account()->protocol());
-			newSession->createTextChannel(internalContact());
-			d->currentChatSession = newSession;
-		}
-	}
+        // \brief: try to find existing chat session
+        Kopete::ChatSession *existingSession = Kopete::ChatSessionManager::self()->findChatSession(account()->myself(), others, account()->protocol());
+        if (existingSession) {
+            kDebug(TELEPATHY_DEBUG_AREA) << "chat exist";
+            d->currentChatSession = existingSession;
+        } else if (canCreate == Kopete::Contact::CanCreate) {
+            kDebug(TELEPATHY_DEBUG_AREA) << "chat not exist";
+            TelepathyChatSession *newSession = new TelepathyChatSession(account()->myself(), others, account()->protocol());
+            newSession->createTextChannel(internalContact());
+            d->currentChatSession = newSession;
+        }
+    }
 
-	Q_ASSERT(d->currentChatSession != 0);
-	return d->currentChatSession;
+    Q_ASSERT(d->currentChatSession != 0);
+    return d->currentChatSession;
 }
 
 void TelepathyContact::setInternalContact(QSharedPointer<Tp::Contact> contact)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	d->internalContact = contact;
+    d->internalContact = contact;
 
-	setOnlineStatus(TelepathyProtocol::protocol()->telepathyStatusToKopete(static_cast<Tp::ConnectionPresenceType>(contact->presenceType())));
-	setNickName(contact->alias());
+    setOnlineStatus(TelepathyProtocol::protocol()->telepathyStatusToKopete(static_cast<Tp::ConnectionPresenceType>(contact->presenceType())));
+    setNickName(contact->alias());
 
-	QObject::connect(contact.data(),
-		SIGNAL(aliasChanged (const QString &)),
-		this,
-		SLOT(onAliasChanged (const QString &)));
-	QObject::connect(contact.data(),
-		SIGNAL(avatarTokenChanged (const QString &)),
-		this,
-		SLOT(onAvatarTokenChanged (const QString &)));
-	QObject::connect(contact.data(),
-		SIGNAL(simplePresenceChanged (const QString &, uint, const QString &)),
-		this,
-		SLOT(onSimplePresenceChanged (const QString &, uint, const QString &)));
-	QObject::connect(contact.data(),
-		SIGNAL(subscriptionStateChanged (Tp::Contact::PresenceState)),
-		this,
-		SLOT(onSubscriptionStateChanged (Tp::Contact::PresenceState)));
-	QObject::connect(contact.data(),
-		SIGNAL(publishStateChanged (Tp::Contact::PresenceState)),
-		this,
-		SLOT(onPublishStateChanged (Tp::Contact::PresenceState)));
-	QObject::connect(contact.data(),
-		SIGNAL(blockStatusChanged (bool)),
-		this,
-		SLOT(onBlockStatusChanged (bool)));
+    QObject::connect(contact.data(),
+                     SIGNAL(aliasChanged(const QString &)),
+                     this,
+                     SLOT(onAliasChanged(const QString &)));
+    QObject::connect(contact.data(),
+                     SIGNAL(avatarTokenChanged(const QString &)),
+                     this,
+                     SLOT(onAvatarTokenChanged(const QString &)));
+    QObject::connect(contact.data(),
+                     SIGNAL(simplePresenceChanged(const QString &, uint, const QString &)),
+                     this,
+                     SLOT(onSimplePresenceChanged(const QString &, uint, const QString &)));
+    QObject::connect(contact.data(),
+                     SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
+                     this,
+                     SLOT(onSubscriptionStateChanged(Tp::Contact::PresenceState)));
+    QObject::connect(contact.data(),
+                     SIGNAL(publishStateChanged(Tp::Contact::PresenceState)),
+                     this,
+                     SLOT(onPublishStateChanged(Tp::Contact::PresenceState)));
+    QObject::connect(contact.data(),
+                     SIGNAL(blockStatusChanged(bool)),
+                     this,
+                     SLOT(onBlockStatusChanged(bool)));
 }
 
-void TelepathyContact::onAliasChanged (const QString &alias)
+void TelepathyContact::onAliasChanged(const QString &alias)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << alias;
-	setNickName(alias);
+    setNickName(alias);
 }
 
-void TelepathyContact::onAvatarTokenChanged (const QString &avatarToken)
+void TelepathyContact::onAvatarTokenChanged(const QString &avatarToken)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << avatarToken;
 }
 
-void TelepathyContact::onSimplePresenceChanged (const QString &status, uint type, const QString &presenceMessage)
+void TelepathyContact::onSimplePresenceChanged(const QString &status, uint type, const QString &presenceMessage)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << status << type << presenceMessage;
-	setOnlineStatus(TelepathyProtocol::protocol()->telepathyStatusToKopete(static_cast<Tp::ConnectionPresenceType>(type)));
-	setStatusMessage(Kopete::StatusMessage(presenceMessage));
+    setOnlineStatus(TelepathyProtocol::protocol()->telepathyStatusToKopete(static_cast<Tp::ConnectionPresenceType>(type)));
+    setStatusMessage(Kopete::StatusMessage(presenceMessage));
 }
 
-void TelepathyContact::onSubscriptionStateChanged (Tp::Contact::PresenceState state)
+void TelepathyContact::onSubscriptionStateChanged(Tp::Contact::PresenceState state)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	Q_UNUSED(state);
+    Q_UNUSED(state);
 }
 
-void TelepathyContact::onPublishStateChanged (Tp::Contact::PresenceState state)
+void TelepathyContact::onPublishStateChanged(Tp::Contact::PresenceState state)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	Q_UNUSED(state);
+    Q_UNUSED(state);
 }
 
-void TelepathyContact::onBlockStatusChanged (bool blocked)
+void TelepathyContact::onBlockStatusChanged(bool blocked)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << blocked;
 }
 
 QSharedPointer<Tp::Contact> TelepathyContact::internalContact()
 {
-	return d->internalContact;
+    return d->internalContact;
 }
 
 

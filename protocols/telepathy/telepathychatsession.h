@@ -31,37 +31,36 @@
 
 namespace Telepathy
 {
-	namespace Client
-	{
-		class Contact;
-		class Channel;
-	}
+namespace Client {
+class Contact;
+class Channel;
+}
 }
 
 class TelepathyChatSession : public Kopete::ChatSession
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol);
-	virtual ~TelepathyChatSession();
+    TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol);
+    virtual ~TelepathyChatSession();
 
-	void createTextChannel(QSharedPointer<Tp::Contact>);
+    void createTextChannel(QSharedPointer<Tp::Contact>);
 
 private slots:
-	void sendMessage(Kopete::Message &);
-	void createChannelFinished(Tp::PendingOperation*);
-	void chatSessionRequestClose(Tp::PendingOperation*);
-	void closingChatSession(Kopete::ChatSession *);
-	void messageSent (const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &sentMessageToken);
-	void messageReceived (const Tp::ReceivedMessage &message);
-	void pendingMessageRemoved (const Tp::ReceivedMessage &message);
+    void sendMessage(Kopete::Message &);
+    void createChannelFinished(Tp::PendingOperation*);
+    void chatSessionRequestClose(Tp::PendingOperation*);
+    void closingChatSession(Kopete::ChatSession *);
+    void messageSent(const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &sentMessageToken);
+    void messageReceived(const Tp::ReceivedMessage &message);
+    void pendingMessageRemoved(const Tp::ReceivedMessage &message);
 
 
 private:
-	QSharedPointer<Tp::Contact> m_contact;
-	QSharedPointer<Tp::TextChannel> m_channel;
-	Tp::TextChannelPtr m_textChannel;
+    QSharedPointer<Tp::Contact> m_contact;
+    QSharedPointer<Tp::TextChannel> m_channel;
+    Tp::TextChannelPtr m_textChannel;
 };
 
 

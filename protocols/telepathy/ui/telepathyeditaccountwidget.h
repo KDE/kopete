@@ -24,12 +24,12 @@
 
 namespace Ui
 {
-	class TelepathyEditAccountWidget;
+class TelepathyEditAccountWidget;
 }
 
 namespace Kopete
 {
-	class Account;
+class Account;
 }
 
 class TelepathyAccount;
@@ -39,38 +39,38 @@ class TelepathyAccount;
  */
 class TelepathyEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit TelepathyEditAccountWidget(Kopete::Account *account, QWidget *parent = 0);
-	~TelepathyEditAccountWidget();
+    explicit TelepathyEditAccountWidget(Kopete::Account *account, QWidget *parent = 0);
+    ~TelepathyEditAccountWidget();
 
-	virtual bool validateData();
+    virtual bool validateData();
 
     bool validAccountData();
 
-	/**
-	 * Create a new account if we are in the 'add account wizard',
-	 * otherwise update the existing account.
-	 */
-	virtual Kopete::Account *apply();
+    /**
+     * Create a new account if we are in the 'add account wizard',
+     * otherwise update the existing account.
+     */
+    virtual Kopete::Account *apply();
 
 protected:
-	/**
-	 * @brief Reimplement account() to access TelepathyAccount specific methods.
-	 */
-	TelepathyAccount *account();
+    /**
+     * @brief Reimplement account() to access TelepathyAccount specific methods.
+     */
+    TelepathyAccount *account();
 
 private slots:
-	void connectionManagerSelectionChanged();
-	void protocolSelectionChanged();
-	void listConnectionManager();
+    void connectionManagerSelectionChanged();
+    void protocolSelectionChanged();
+    void listConnectionManager();
     void onListNames(Tp::PendingOperation *);
-	void readConfig();
-	void writeConfig();
+    void readConfig();
+    void writeConfig();
 
 private:
-	class Private;
-	Private *d;
+    class Private;
+    Private *d;
 };
 
 #endif

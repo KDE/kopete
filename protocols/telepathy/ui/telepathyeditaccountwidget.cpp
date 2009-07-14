@@ -52,8 +52,7 @@ class TelepathyEditAccountWidget::Private
 {
 public:
     Private()
-     : paramWidget(0)
-    {}
+            : paramWidget(0) {}
 
     Ui::TelepathyEditAccountWidget ui;
     TelepathyEditParameterWidget *paramWidget;
@@ -62,9 +61,9 @@ public:
 
 // TODO: Required flags for parameters.
 TelepathyEditAccountWidget::TelepathyEditAccountWidget(Kopete::Account *account, QWidget *parent)
- : QWidget(parent), KopeteEditAccountWidget(account), d(new Private)
+        : QWidget(parent), KopeteEditAccountWidget(account), d(new Private)
 {
-	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA);
     d->ui.setupUi(this);
 
     // Setup signal/slot connection
@@ -83,20 +82,19 @@ TelepathyEditAccountWidget::~TelepathyEditAccountWidget()
 
 TelepathyAccount *TelepathyEditAccountWidget::account()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) ;
-    return static_cast<TelepathyAccount*>( KopeteEditAccountWidget::account() );
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+    return static_cast<TelepathyAccount*>(KopeteEditAccountWidget::account());
 }
 
 bool TelepathyEditAccountWidget::validateData()
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "validateData() called";
     // You must fill the form to move to the next step
-    if( !d->ui.treeConnectionManager->selectedItems().isEmpty() &&
-    	!d->ui.treeProtocol->selectedItems().isEmpty() &&
-        validAccountData())
+    if (!d->ui.treeConnectionManager->selectedItems().isEmpty() &&
+            !d->ui.treeProtocol->selectedItems().isEmpty() &&
+            validAccountData())
         return true;
-    else
-    {
+    else {
         KMessageBox::error(this, i18n("Please fill in the fields in the dialog. First select a connection manager, then select a protocol."));
         return false;
     }
@@ -104,20 +102,16 @@ bool TelepathyEditAccountWidget::validateData()
 
 bool TelepathyEditAccountWidget::validAccountData()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) ;
-    if( d->paramWidget )
-    {
-    	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+    if (d->paramWidget) {
+        kDebug(TELEPATHY_DEBUG_AREA);
         d->savedParameterList = d->paramWidget->parameterList();
 
         // Look for a parameter that begin with "account"
-        foreach(Tp::ProtocolParameter *parameter, d->savedParameterList)
-        {
-            if( parameter->name().startsWith( QLatin1String("account") ) )
-            {
+        foreach(Tp::ProtocolParameter *parameter, d->savedParameterList) {
+            if (parameter->name().startsWith(QLatin1String("account"))) {
                 QString accountId = parameter->defaultValue().toString();
-                if(!accountId.isEmpty())
-                {
+                if (!accountId.isEmpty()) {
                     return true;
                     break;
                 }
@@ -131,25 +125,21 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "apply() called";
     // Get parameter list
-    if( d->paramWidget )
-    {
-    	kDebug(TELEPATHY_DEBUG_AREA) ;
+    if (d->paramWidget) {
+        kDebug(TELEPATHY_DEBUG_AREA) ;
         d->savedParameterList = d->paramWidget->parameterList();
 
-        if( !account() )
-        {
+        if (!account()) {
             QString newAccountId;
             // Look for a parameter that begin with "account"
-            foreach(Tp::ProtocolParameter *parameter, d->savedParameterList)
-            {
-                if( parameter->name().startsWith( QLatin1String("account") ) )
-                {
+            foreach(Tp::ProtocolParameter *parameter, d->savedParameterList) {
+                if (parameter->name().startsWith(QLatin1String("account"))) {
                     newAccountId = parameter->defaultValue().toString();
                     kDebug(TELEPATHY_DEBUG_AREA) << "Found account id: " << newAccountId;
                     break;
                 }
             }
-            setAccount( TelepathyProtocol::protocol()->createNewAccount(newAccountId) );
+            setAccount(TelepathyProtocol::protocol()->createNewAccount(newAccountId));
         }
         writeConfig();
     }
@@ -162,28 +152,24 @@ void TelepathyEditAccountWidget::readConfig()
     kDebug(TELEPATHY_DEBUG_AREA) ;
     // Restore config not related to ConnectionManager parameters first
     // so that the UI for the protocol parameters will be generated
-    if( account()->readConfig() )
-    {
+    if (account()->readConfig()) {
         QString readConnectionManager;// = account()->connectionManager();
         QString readProtocol;// = account()->connectionProtocol();
 
         // Do nothing if the config return empty values
-        if( !readConnectionManager.isEmpty() && !readProtocol.isEmpty() )
-        {
+        if (!readConnectionManager.isEmpty() && !readProtocol.isEmpty()) {
             // Look for the connection manager in the tree widget
-            QList<QTreeWidgetItem*> availableConnectionManager = d->ui.treeConnectionManager->findItems( readConnectionManager, Qt::MatchStartsWith );
-            if( !availableConnectionManager.isEmpty() )
-            {
+            QList<QTreeWidgetItem*> availableConnectionManager = d->ui.treeConnectionManager->findItems(readConnectionManager, Qt::MatchStartsWith);
+            if (!availableConnectionManager.isEmpty()) {
                 // Select the connection manager to generate the protocol list
-                d->ui.treeConnectionManager->setCurrentItem( availableConnectionManager.first() );
+                d->ui.treeConnectionManager->setCurrentItem(availableConnectionManager.first());
 
                 // At this point, the protocol tree widget is filled
 
                 // Look for the protocol in the tree widget
-                QList<QTreeWidgetItem*> availableProtocol = d->ui.treeProtocol->findItems( readProtocol, Qt::MatchStartsWith );
-                if( !availableProtocol.isEmpty() )
-                {
-                    d->ui.treeProtocol->setCurrentItem( availableProtocol.first() );
+                QList<QTreeWidgetItem*> availableProtocol = d->ui.treeProtocol->findItems(readProtocol, Qt::MatchStartsWith);
+                if (!availableProtocol.isEmpty()) {
+                    d->ui.treeProtocol->setCurrentItem(availableProtocol.first());
 
                     // At this point, the protocol preferences tab is created
 
@@ -202,78 +188,72 @@ void TelepathyEditAccountWidget::writeConfig()
     QString selectedProtocol = d->ui.treeProtocol->selectedItems().first()->text(0);
     QString accountId = account()->accountId();
 
-    KMessageBox::information(this, i18n("ConnectionManager: %1\nProtocol: %2\nAccount: %3",selectedConnectionManager,selectedProtocol,accountId) );
+    KMessageBox::information(this, i18n("ConnectionManager: %1\nProtocol: %2\nAccount: %3", selectedConnectionManager, selectedProtocol, accountId));
 
     // Write config not related to ConnectionManager Parameters
     KConfigGroup *accountConfig = account()->configGroup();
-    accountConfig->writeEntry( QLatin1String("ConnectionManager"), selectedConnectionManager );
-    accountConfig->writeEntry( QLatin1String("SelectedProtocol"), selectedProtocol );
+    accountConfig->writeEntry(QLatin1String("ConnectionManager"), selectedConnectionManager);
+    accountConfig->writeEntry(QLatin1String("SelectedProtocol"), selectedProtocol);
 
     // Write config related to ConnectionManager Parameter
     QString telepathyGroup(TelepathyProtocol::protocol()->formatTelepathyConfigGroup(selectedConnectionManager, selectedProtocol, accountId));
     KConfigGroup telepathyConfig = KGlobal::config()->group(telepathyGroup);
 
-    foreach(Tp::ProtocolParameter *parameter, d->savedParameterList)
-    {
-        telepathyConfig.writeEntry( parameter->name(), parameter->defaultValue() );
+    foreach(Tp::ProtocolParameter *parameter, d->savedParameterList) {
+        telepathyConfig.writeEntry(parameter->name(), parameter->defaultValue());
     }
 }
 
 void TelepathyEditAccountWidget::listConnectionManager()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) ;
-    if (!QDBusConnection::sessionBus().isConnected())
-    {
+    kDebug(TELEPATHY_DEBUG_AREA) ;
+    if (!QDBusConnection::sessionBus().isConnected()) {
         kDebug(TELEPATHY_DEBUG_AREA) << "listConnectionManager(): cannot connect to session bus.";
         return;
     }
 
     kDebug(TELEPATHY_DEBUG_AREA) << "Connect listNames";
     QObject::connect(Tp::ConnectionManager::listNames(),
-            SIGNAL(finished(Tp::PendingOperation *)),
-            this,
-			SLOT(onListNames(Tp::PendingOperation *)));
+                     SIGNAL(finished(Tp::PendingOperation *)),
+                     this,
+                     SLOT(onListNames(Tp::PendingOperation *)));
 }
 
 void TelepathyEditAccountWidget::onListNames(Tp::PendingOperation *operation)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) ;
+    kDebug(TELEPATHY_DEBUG_AREA) ;
 
-	if(operation->isError())
-	{
-		kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
-		return;
-	}
+    if (operation->isError()) {
+        kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
+        return;
+    }
 
     // List all available connection managers in the tree widget
     Tp::PendingStringList *p = dynamic_cast<Tp::PendingStringList*>(operation);
 
-    foreach(QString name, p->result())
-    {
+    foreach(QString name, p->result()) {
         kDebug(TELEPATHY_DEBUG_AREA) << name;
         new ConnectionManagerItem(name, d->ui.treeConnectionManager);
     }
 
     // Read config if account() return true
     // FIXME: Shouldn't be called here
-    if( account() )
+    if (account())
         readConfig();
 }
 
 void TelepathyEditAccountWidget::connectionManagerSelectionChanged()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) ;
+    kDebug(TELEPATHY_DEBUG_AREA) ;
     QTreeWidgetItem *item = d->ui.treeConnectionManager->selectedItems().first();
     ConnectionManagerItem *itemActivated = dynamic_cast<ConnectionManagerItem*>(item);
-    if( itemActivated )
-    {
+    if (itemActivated) {
         // Clear protocol list
         d->ui.treeProtocol->clear();
 
         // List supported protocols by this connetion manager.
         QStringList supportedProtocols = itemActivated->getSupportedProtocols();
-        foreach(QString protocol, supportedProtocols)
-        {
+        foreach(QString protocol, supportedProtocols) {
             new QTreeWidgetItem(d->ui.treeProtocol, QStringList(protocol));
         }
     }
@@ -281,24 +261,22 @@ void TelepathyEditAccountWidget::connectionManagerSelectionChanged()
 
 void TelepathyEditAccountWidget::protocolSelectionChanged()
 {
-	kDebug(TELEPATHY_DEBUG_AREA) ;
+    kDebug(TELEPATHY_DEBUG_AREA) ;
     QList<QTreeWidgetItem*> cmItems = d->ui.treeConnectionManager->selectedItems();
-    if(cmItems.isEmpty())
+    if (cmItems.isEmpty())
         return;
 
     QTreeWidgetItem *connectionItem = cmItems.first();
     ConnectionManagerItem *cmItem = dynamic_cast<ConnectionManagerItem*>(connectionItem);
 
     QList<QTreeWidgetItem*> protocolItems = d->ui.treeProtocol->selectedItems();
-    if(protocolItems.isEmpty())
+    if (protocolItems.isEmpty())
         return;
 
     QTreeWidgetItem *protocolItem = protocolItems.first();
-    if( protocolItem && cmItem )
-    {
+    if (protocolItem && cmItem) {
         // Check if existing tab exists and remove it (and delete the widget)
-        if( d->paramWidget )
-        {
+        if (d->paramWidget) {
             d->ui.tabWidget->removeTab(1);
             d->paramWidget->deleteLater();
         }
@@ -308,19 +286,14 @@ void TelepathyEditAccountWidget::protocolSelectionChanged()
 
         // Use saved parameters if available
         Tp::ProtocolParameterList tabParameter;
-        if( account() && protocol == account()->connectionProtocol() )
-        {
+        if (account() && protocol == account()->connectionProtocol()) {
             kDebug(TELEPATHY_DEBUG_AREA) << "protocolSelectionChanged() - saved parameters";
             tabParameter = account()->allConnectionParameters();
-        }
-        else
-        {
+        } else {
             kDebug(TELEPATHY_DEBUG_AREA) << "protocolSelectionChanged() - get protocols";
             Tp::ProtocolInfoList protocolInfoList = cmItem->getProtocolInfoList();
-            foreach(Tp::ProtocolInfo *protocolInfo, protocolInfoList)
-            {
-                if(protocolInfo->name() == protocol)
-                {
+            foreach(Tp::ProtocolInfo *protocolInfo, protocolInfoList) {
+                if (protocolInfo->name() == protocol) {
                     tabParameter = protocolInfo->parameters();
                     break;
                 }

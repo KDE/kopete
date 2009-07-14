@@ -22,17 +22,17 @@
 
 class TelepathyAddContactPage : public AddContactPage
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	TelepathyAddContactPage(QWidget *parent = 0);
-	~TelepathyAddContactPage();
+    TelepathyAddContactPage(QWidget *parent = 0);
+    ~TelepathyAddContactPage();
 
-	virtual bool validateData();
-	virtual bool apply(Kopete::Account *account, Kopete::MetaContact *parentMetaContact);
+    virtual bool validateData();
+    virtual bool apply(Kopete::Account *account, Kopete::MetaContact *parentMetaContact);
 
 private:
-	class Private;
-	Private *d;
+    class Private;
+    Private *d;
 };
 
 #endif

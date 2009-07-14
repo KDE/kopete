@@ -48,184 +48,174 @@
 #include <QFile>
 
 TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId)
-    : Kopete::Account(protocol, accountId), m_connectionManager(0), m_accountManager(0),
-	m_contactManager(0), m_existingAccountCounter(0), m_existingAccountsCount(0)
+        : Kopete::Account(protocol, accountId), m_connectionManager(0), m_accountManager(0),
+        m_contactManager(0), m_existingAccountCounter(0), m_existingAccountsCount(0)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	m_setStatusAfterInit = false;
+    m_setStatusAfterInit = false;
 
-    setMyself( new TelepathyContact(this, accountId, Kopete::ContactList::self()->myself()) );
+    setMyself(new TelepathyContact(this, accountId, Kopete::ContactList::self()->myself()));
 }
 
 TelepathyAccount::~TelepathyAccount()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-	if(m_contactManager)
-		delete m_contactManager;
+    if (m_contactManager)
+        delete m_contactManager;
 }
 
-void TelepathyAccount::connect (const Kopete::OnlineStatus &initialStatus)
+void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	if(!m_account || !m_account->becomeReady())
-	{
-		m_status = initialStatus;
-		initTelepathyAccount();
-		return;
-	}
+    if (!m_account || !m_account->becomeReady()) {
+        m_status = initialStatus;
+        initTelepathyAccount();
+        return;
+    }
 
-	if(m_account->haveConnection())
-		kDebug(TELEPATHY_DEBUG_AREA) << "Account have connection";
+    if (m_account->haveConnection())
+        kDebug(TELEPATHY_DEBUG_AREA) << "Account have connection";
 
-	kDebug(TELEPATHY_DEBUG_AREA) << m_account->parameters();
+    kDebug(TELEPATHY_DEBUG_AREA) << m_account->parameters();
 
     Tp::SimplePresence simplePresence;
     simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(m_status);
 
     simplePresence.statusMessage = m_reason.message();
 
-	kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type << "message:" << simplePresence.statusMessage;
+    kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type << "message:" << simplePresence.statusMessage;
 
     Tp::PendingOperation *op = m_account->setRequestedPresence(simplePresence);
     QObject::connect(op, SIGNAL(finished(Tp::PendingOperation*)),
-        this,
-        SLOT(onRequestedPresence(Tp::PendingOperation*))
-    );
+                     this,
+                     SLOT(onRequestedPresence(Tp::PendingOperation*))
+                    );
 }
 
 void TelepathyAccount::onRequestedPresence(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
     QObject::connect(m_account->setConnectsAutomatically(true),
-        SIGNAL(finished(Tp::PendingOperation*)),
-        this,
-        SLOT(onAccountConnecting(Tp::PendingOperation*))
-    );
+                     SIGNAL(finished(Tp::PendingOperation*)),
+                     this,
+                     SLOT(onAccountConnecting(Tp::PendingOperation*))
+                    );
 }
 
 void TelepathyAccount::onAccountConnecting(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
-	if(m_account->haveConnection())
-		kDebug(TELEPATHY_DEBUG_AREA) << "Account have connection";
+    if (m_account->haveConnection())
+        kDebug(TELEPATHY_DEBUG_AREA) << "Account have connection";
 }
 
-void TelepathyAccount::fillActionMenu( KActionMenu *actionMenu )
+void TelepathyAccount::fillActionMenu(KActionMenu *actionMenu)
 {
-	Kopete::Account::fillActionMenu( actionMenu );
+    Kopete::Account::fillActionMenu(actionMenu);
 
-	KAction *changeAliasAction = new KAction( KIcon("edit-rename"), i18n("&Change Alias..."), 0 );
-	changeAliasAction->setEnabled( isConnected() );
-	QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
+    KAction *changeAliasAction = new KAction(KIcon("edit-rename"), i18n("&Change Alias..."), 0);
+    changeAliasAction->setEnabled(isConnected());
+    QObject::connect(changeAliasAction, SIGNAL(triggered(bool)), this, SLOT(slotSetAlias()));
 
-	KAction *changeAvatarAction = new KAction( KIcon("user-properties"), i18n("Change &Avatar..."), 0 );
-	changeAvatarAction->setEnabled( isConnected() );
-	QObject::connect(changeAvatarAction, SIGNAL(triggered(bool)), this, SLOT(slotChangeAvatar()));
+    KAction *changeAvatarAction = new KAction(KIcon("user-properties"), i18n("Change &Avatar..."), 0);
+    changeAvatarAction->setEnabled(isConnected());
+    QObject::connect(changeAvatarAction, SIGNAL(triggered(bool)), this, SLOT(slotChangeAvatar()));
 
-	actionMenu->addSeparator();
-	actionMenu->addAction( changeAliasAction );
-	actionMenu->addAction( changeAvatarAction );
+    actionMenu->addSeparator();
+    actionMenu->addAction(changeAliasAction);
+    actionMenu->addAction(changeAvatarAction);
 }
 
-void TelepathyAccount::disconnect ()
+void TelepathyAccount::disconnect()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	if(!m_account || !m_account->haveConnection())
-		return;
+    if (!m_account || !m_account->haveConnection())
+        return;
 
-	Tp::ConnectionPtr connection = m_account->connection();
+    Tp::ConnectionPtr connection = m_account->connection();
 
-	QObject::connect(connection->requestDisconnect(),
-		SIGNAL(finished(Tp::PendingOperation*)),
-        this,
-		SLOT(onRequestDisconnect(Tp::PendingOperation*))
-    );
+    QObject::connect(connection->requestDisconnect(),
+                     SIGNAL(finished(Tp::PendingOperation*)),
+                     this,
+                     SLOT(onRequestDisconnect(Tp::PendingOperation*))
+                    );
 }
 
 void TelepathyAccount::onRequestDisconnect(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 }
 
-void TelepathyAccount::setOnlineStatus (const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
+void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	Q_UNUSED(options);
+    Q_UNUSED(options);
 
-	m_status = status;
-	m_reason = reason;
+    m_status = status;
+    m_reason = reason;
 
-    if(!m_account || !m_account->isReady())
-	{
-		m_setStatusAfterInit = true;
-		initTelepathyAccount();
-		return;
-	}
+    if (!m_account || !m_account->isReady()) {
+        m_setStatusAfterInit = true;
+        initTelepathyAccount();
+        return;
+    }
 
-	if(!isConnected())
-	{
-		connect(status);
-	}
-	else if(status.status() == Kopete::OnlineStatus::Offline)
-	{
-		disconnect();
-	}
-	else
-	{
-	    Tp::SimplePresence simplePresence;
-		simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status);
+    if (!isConnected()) {
+        connect(status);
+    } else if (status.status() == Kopete::OnlineStatus::Offline) {
+        disconnect();
+    } else {
+        Tp::SimplePresence simplePresence;
+        simplePresence.type = TelepathyProtocol::protocol()->kopeteStatusToTelepathy(status);
 
-	    kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type << reason.message();
+        kDebug(TELEPATHY_DEBUG_AREA) << "Requested Presence status: " << simplePresence.type << reason.message();
 
-		simplePresence.statusMessage = reason.message();
+        simplePresence.statusMessage = reason.message();
 
-	    Tp::PendingOperation *op = m_account->setRequestedPresence(simplePresence);
-		QObject::connect(op,
-			SIGNAL(finished(Tp::PendingOperation*)),
-	        this,
-			SLOT(onRequestedPresence(Tp::PendingOperation*))
-	    );
-	}
+        Tp::PendingOperation *op = m_account->setRequestedPresence(simplePresence);
+        QObject::connect(op,
+                         SIGNAL(finished(Tp::PendingOperation*)),
+                         this,
+                         SLOT(onRequestedPresence(Tp::PendingOperation*))
+                        );
+    }
 }
 
-void TelepathyAccount::setStatusMessage (const Kopete::StatusMessage &reason)
+void TelepathyAccount::setStatusMessage(const Kopete::StatusMessage &reason)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	setOnlineStatus(m_status, reason);
+    setOnlineStatus(m_status, reason);
 }
 
-bool TelepathyAccount::createContact( const QString &contactId, Kopete::MetaContact *parentContact )
+bool TelepathyAccount::createContact(const QString &contactId, Kopete::MetaContact *parentContact)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	if( !contacts()[contactId] )
-	{
-		TelepathyContact *contact = new TelepathyContact(this, contactId, parentContact);
+    if (!contacts()[contactId]) {
+        TelepathyContact *contact = new TelepathyContact(this, contactId, parentContact);
 
-		return contact != 0;
-	}
-	else
-	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Contact " << contactId << " already exists.";
-	}
+        return contact != 0;
+    } else {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Contact " << contactId << " already exists.";
+    }
 
-	return false;
+    return false;
 }
 
 bool TelepathyAccount::readConfig()
@@ -235,19 +225,18 @@ bool TelepathyAccount::readConfig()
     // Restore config not related to ConnectionManager parameters first
     // so that the UI for the protocol parameters will be generated
     KConfigGroup *accountConfig = configGroup();
-    m_connectionManagerName = accountConfig->readEntry( QLatin1String("ConnectionManager"), QString() );
-	// setup CM early
-	getConnectionManager();
+    m_connectionManagerName = accountConfig->readEntry(QLatin1String("ConnectionManager"), QString());
+    // setup CM early
+    getConnectionManager();
 
-    m_connectionProtocolName = accountConfig->readEntry( QLatin1String("SelectedProtocol"), QString() );
+    m_connectionProtocolName = accountConfig->readEntry(QLatin1String("SelectedProtocol"), QString());
 
     // Clear current connection parameters
     m_connectionParameters.clear();
 
     // Get the preferences from the connection manager to get the right types
     Tp::ProtocolInfo* protocolInfo = getProtocolInfo(m_connectionProtocolName);
-    if(!protocolInfo)
-    {
+    if (!protocolInfo) {
         kDebug(TELEPATHY_DEBUG_AREA) << "Error: could not get protocol info" << m_connectionProtocolName;
         return false;
     }
@@ -256,35 +245,29 @@ bool TelepathyAccount::readConfig()
 
     // Now update the preferences
     KSharedConfig::Ptr telepathyConfig = KGlobal::config();
-    QMap<QString,QString> allEntries = telepathyConfig->entryMap( TelepathyProtocol::protocol()->formatTelepathyConfigGroup(m_connectionManagerName, m_connectionProtocolName, accountId()));
-    QMap<QString,QString>::ConstIterator it, itEnd = allEntries.constEnd();
-    for(it = allEntries.constBegin(); it != itEnd; ++it)
-    {
-        foreach(Tp::ProtocolParameter *parameter, tempParameters)
-        {
-            if( parameter->name() == it.key() )
-            {
+    QMap<QString, QString> allEntries = telepathyConfig->entryMap(TelepathyProtocol::protocol()->formatTelepathyConfigGroup(m_connectionManagerName, m_connectionProtocolName, accountId()));
+    QMap<QString, QString>::ConstIterator it, itEnd = allEntries.constEnd();
+    for (it = allEntries.constBegin(); it != itEnd; ++it) {
+        foreach(Tp::ProtocolParameter *parameter, tempParameters) {
+            if (parameter->name() == it.key()) {
                 kDebug(TELEPATHY_DEBUG_AREA) << parameter->defaultValue().toString() << it.value();
-                if( parameter->defaultValue().toString() != it.value() )
-                {
+                if (parameter->defaultValue().toString() != it.value()) {
                     QVariant oldValue = parameter->defaultValue();
                     QVariant newValue(oldValue.type());
-                    if ( oldValue.type() == QVariant::String )
+                    if (oldValue.type() == QVariant::String)
                         newValue = QVariant(it.value());
-                    else if( oldValue.type() == QVariant::Int )
+                    else if (oldValue.type() == QVariant::Int)
                         newValue = QVariant(it.value()).toInt();
-                    else if( oldValue.type() == QVariant::UInt )
+                    else if (oldValue.type() == QVariant::UInt)
                         newValue = QVariant(it.value()).toUInt();
-                    else if( oldValue.type() == QVariant::Double )
+                    else if (oldValue.type() == QVariant::Double)
                         newValue = QVariant(it.value()).toDouble();
-                    else if( oldValue.type() == QVariant::Bool)
-                    {
-                        if( it.value().toLower() == "true")
+                    else if (oldValue.type() == QVariant::Bool) {
+                        if (it.value().toLower() == "true")
                             newValue = true;
                         else
                             newValue = false;
-                    }
-                    else
+                    } else
                         newValue = QVariant(it.value());
 
                     kDebug(TELEPATHY_DEBUG_AREA) << "Name: " << parameter->name() << " Value: " << newValue << "Type: " << parameter->defaultValue().typeName();
@@ -295,9 +278,7 @@ bool TelepathyAccount::readConfig()
                             newValue,
                             Tp::ConnMgrParamFlagHasDefault
                         ));
-                }
-                else
-                {
+                } else {
                     kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << parameter->defaultValue();
 
                     m_connectionParameters.append(
@@ -313,10 +294,10 @@ bool TelepathyAccount::readConfig()
     }
 
     kDebug(TELEPATHY_DEBUG_AREA) << m_connectionManagerName << m_connectionProtocolName << m_connectionParameters;
-    if( !m_connectionManagerName.isEmpty() &&
-        !m_connectionProtocolName.isEmpty() &&
-        !m_connectionParameters.isEmpty() )
-            return true;
+    if (!m_connectionManagerName.isEmpty() &&
+            !m_connectionProtocolName.isEmpty() &&
+            !m_connectionParameters.isEmpty())
+        return true;
     else
         return false;
 }
@@ -324,20 +305,20 @@ bool TelepathyAccount::readConfig()
 QString TelepathyAccount::connectionProtocol() const
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-	return m_connectionProtocolName;
+    return m_connectionProtocolName;
 }
 
 Tp::ProtocolParameterList TelepathyAccount::allConnectionParameters() const
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-	return m_connectionParameters;
+    return m_connectionParameters;
 }
 
 Tp::AccountManagerPtr TelepathyAccount::getAccountManager()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-    if(!m_accountManager)
-	m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus());
+    if (!m_accountManager)
+        m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus());
 
     return m_accountManager;
 }
@@ -345,78 +326,74 @@ Tp::AccountManagerPtr TelepathyAccount::getAccountManager()
 Tp::ConnectionManagerPtr TelepathyAccount::getConnectionManager()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-	if(!m_connectionManager)
-	{
-		m_connectionManager = Tp::ConnectionManager::create(m_connectionManagerName);
-		// dont need wait until operation finished
-		m_connectionManager->becomeReady();
-	}
+    if (!m_connectionManager) {
+        m_connectionManager = Tp::ConnectionManager::create(m_connectionManagerName);
+        // dont need wait until operation finished
+        m_connectionManager->becomeReady();
+    }
 
-	return m_connectionManager;
+    return m_connectionManager;
 }
 
 TelepathyContactManager *TelepathyAccount::getContactManager()
 {
-	if(!m_contactManager)
-		m_contactManager = new TelepathyContactManager(this);
+    if (!m_contactManager)
+        m_contactManager = new TelepathyContactManager(this);
 
-	return m_contactManager;
+    return m_contactManager;
 }
 
 Tp::ProtocolInfo *TelepathyAccount::getProtocolInfo(QString protocol)
 {
-	Tp::ProtocolInfoList protocolList = getConnectionManager()->protocols();
-	kDebug(TELEPATHY_DEBUG_AREA) << protocolList.size();
-    foreach(Tp::ProtocolInfo* protocolInfo, protocolList)
-    {
-		if(protocolInfo->name() == protocol)
-		{
-			kDebug(TELEPATHY_DEBUG_AREA) << protocolInfo->name();
-	        return protocolInfo;
-		}
+    Tp::ProtocolInfoList protocolList = getConnectionManager()->protocols();
+    kDebug(TELEPATHY_DEBUG_AREA) << protocolList.size();
+    foreach(Tp::ProtocolInfo* protocolInfo, protocolList) {
+        if (protocolInfo->name() == protocol) {
+            kDebug(TELEPATHY_DEBUG_AREA) << protocolInfo->name();
+            return protocolInfo;
+        }
     }
-	return NULL;
+    return NULL;
 }
 
 void TelepathyAccount::initTelepathyAccount()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	// Restore config not related to ConnectionManager parameters first
+    // Restore config not related to ConnectionManager parameters first
     // so that the UI for the protocol parameters will be generated
     KConfigGroup *accountConfig = configGroup();
-    m_connectionManagerName = accountConfig->readEntry( QLatin1String("ConnectionManager"), QString() );
-    m_connectionProtocolName = accountConfig->readEntry( QLatin1String("SelectedProtocol"), QString() );
+    m_connectionManagerName = accountConfig->readEntry(QLatin1String("ConnectionManager"), QString());
+    m_connectionProtocolName = accountConfig->readEntry(QLatin1String("SelectedProtocol"), QString());
 
-	// \brief: init managers early, it needed here becouse later i want
-	//	  to get available protocols from CM
+    // \brief: init managers early, it needed here becouse later i want
+    //   to get available protocols from CM
     Tp::ConnectionManagerPtr cm = getConnectionManager();
     QObject::connect(cm->becomeReady(),
-        SIGNAL(finished(Tp::PendingOperation*)),
-        this,
-        SLOT(onConnectionManagerReady(Tp::PendingOperation*))
-    );
+                     SIGNAL(finished(Tp::PendingOperation*)),
+                     this,
+                     SLOT(onConnectionManagerReady(Tp::PendingOperation*))
+                    );
 }
 
 void TelepathyAccount::onConnectionManagerReady(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
-    if(readConfig())
-    {
+    if (readConfig()) {
         Tp::AccountManagerPtr accountManager = getAccountManager();
-            QObject::connect(accountManager->becomeReady(),
-            SIGNAL(finished(Tp::PendingOperation*)),
-            this,
-            SLOT(onAccountManagerReady(Tp::PendingOperation*))
-        );
-		return;
+        QObject::connect(accountManager->becomeReady(),
+                         SIGNAL(finished(Tp::PendingOperation*)),
+                         this,
+                         SLOT(onAccountManagerReady(Tp::PendingOperation*))
+                        );
+        return;
     }
 
-	// \brief: problem with config? So here we can die.
+    // \brief: problem with config? So here we can die.
     kDebug(TELEPATHY_DEBUG_AREA) << "Init connection manager failed!";
 }
 
@@ -424,7 +401,7 @@ void TelepathyAccount::onAccountManagerReady(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
     /*
@@ -434,21 +411,19 @@ void TelepathyAccount::onAccountManagerReady(Tp::PendingOperation* operation)
     QStringList pathList = m_accountManager->allAccountPaths();
     kDebug(TELEPATHY_DEBUG_AREA) << "accounts: " << pathList.size() << pathList;
     m_existingAccountsCount = pathList.size();
-    if(m_existingAccountsCount != 0)
+    if (m_existingAccountsCount != 0)
         m_existingAccountCounter++;
-    else
-    {
+    else {
         createNewAccount();
     }
 
     /*
      * check if account already exist
      */
-    foreach(const QString &path, pathList)
-    {
+    foreach(const QString &path, pathList) {
         Tp::AccountPtr a = m_accountManager->accountForPath(path);
         QObject::connect(a->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
-            this, SLOT(onExistingAccountReady(Tp::PendingOperation *)));
+                         this, SLOT(onExistingAccountReady(Tp::PendingOperation *)));
     }
 }
 
@@ -456,36 +431,32 @@ void TelepathyAccount::onExistingAccountReady(Tp::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
     Tp::PendingReady *p = qobject_cast<Tp::PendingReady *>(operation);
-    if(!p)
-	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Error: problem with casting";
+    if (!p) {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error: problem with casting";
         return;
-	}
+    }
 
     Tp::Account *a = qobject_cast<Tp::Account*>(p->object());
-	if(!a)
-	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Error: problem with casting";
-		return;
-	}
+    if (!a) {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error: problem with casting";
+        return;
+    }
 
-    if( !m_account && ((a->displayName() == accountId()) && (a->protocol() == m_connectionProtocolName)) )
-    {
+    if (!m_account && ((a->displayName() == accountId()) && (a->protocol() == m_connectionProtocolName))) {
         kDebug(TELEPATHY_DEBUG_AREA) << "Account already exist " << a->cmName() << m_connectionManagerName << a->displayName() << accountId() << a->protocol() << m_connectionProtocolName << m_existingAccountCounter;
         m_account = Tp::AccountPtr(a);
 
         QObject::connect(m_account->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
-            this, SLOT(onAccountReady(Tp::PendingOperation *)));
+                         this, SLOT(onAccountReady(Tp::PendingOperation *)));
 
         return;
     }
 
-    if( !m_account && (m_existingAccountCounter == m_existingAccountsCount) )
-    {
+    if (!m_account && (m_existingAccountCounter == m_existingAccountsCount)) {
         createNewAccount();
     }
     m_existingAccountCounter++;
@@ -496,8 +467,7 @@ void TelepathyAccount::createNewAccount()
     kDebug(TELEPATHY_DEBUG_AREA);
 
     QVariantMap parameters;
-    foreach(Tp::ProtocolParameter *parameter, m_connectionParameters)
-    {
+    foreach(Tp::ProtocolParameter *parameter, m_connectionParameters) {
         kDebug(TELEPATHY_DEBUG_AREA) << parameter->name() << parameter->defaultValue().toString();
         parameters[parameter->name()] = parameter->defaultValue();
     }
@@ -506,7 +476,7 @@ void TelepathyAccount::createNewAccount()
     m_pendingAccount = m_accountManager->createAccount(m_connectionManagerName, m_connectionProtocolName, accountId(), parameters);
 
     QObject::connect(m_pendingAccount, SIGNAL(finished(Tp::PendingOperation *)),
-        this, SLOT(newTelepathyAccountCreated(Tp::PendingOperation *)));
+                     this, SLOT(newTelepathyAccountCreated(Tp::PendingOperation *)));
 }
 
 void TelepathyAccount::newTelepathyAccountCreated(Tp::PendingOperation *operation)
@@ -516,236 +486,230 @@ void TelepathyAccount::newTelepathyAccountCreated(Tp::PendingOperation *operatio
     // \brief: zeroing counter
     m_existingAccountCounter = 0;
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
     m_account = m_pendingAccount->account();
 
     QObject::connect(m_account->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
-        this, SLOT(onAccountReady(Tp::PendingOperation *)));
+                     this, SLOT(onAccountReady(Tp::PendingOperation *)));
 }
 
 void TelepathyAccount::onAccountReady(Tp::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
     kDebug(TELEPATHY_DEBUG_AREA) << "New account: " << m_account->cmName() << m_account->protocol() << m_account->displayName();
 
-	Tp::Account *a = m_account.data();
+    Tp::Account *a = m_account.data();
 
     QObject::connect(a, SIGNAL(displayNameChanged(const QString &)),
-        this, SLOT(displayNameChanged(const QString &)));
-    QObject::connect(a, SIGNAL(iconChanged (const QString &)),
-        this, SLOT(iconChanged (const QString &)));
-    QObject::connect(a, SIGNAL(nicknameChanged (const QString &)),
-        this, SLOT(nicknameChanged (const QString &)));
-    QObject::connect(a, SIGNAL(normalizedNameChanged (const QString &)),
-        this, SLOT(normalizedNameChanged (const QString &)));
-    QObject::connect(a, SIGNAL(validityChanged (bool)),
-        this, SLOT(validityChanged (bool)));
-    QObject::connect(a, SIGNAL(stateChanged (bool)),
-        this, SLOT(stateChanged (bool)));
-    QObject::connect(a, SIGNAL(connectsAutomaticallyPropertyChanged (bool)),
-        this, SLOT(connectsAutomaticallyPropertyChanged (bool)));
-    QObject::connect(a, SIGNAL(parametersChanged (const QVariantMap &)),
-        this, SLOT(parametersChanged (const QVariantMap &)));
-    QObject::connect(a, SIGNAL(automaticPresenceChanged (const Tp::SimplePresence &)),
-        this, SLOT(automaticPresenceChanged (const Tp::SimplePresence &)));
-    QObject::connect(a, SIGNAL(currentPresenceChanged (const Tp::SimplePresence &)),
-        this, SLOT(currentPresenceChanged (const Tp::SimplePresence &)));
-    QObject::connect(a, SIGNAL(requestedPresenceChanged (const Tp::SimplePresence &)),
-        this, SLOT(requestedPresenceChanged (const Tp::SimplePresence &)));
-    QObject::connect(a, SIGNAL(avatarChanged (const Tp::Avatar &)),
-        this, SLOT(avatarChanged (const Tp::Avatar &)));
-    QObject::connect(a, SIGNAL(connectionStatusChanged (Tp::ConnectionStatus, Tp::ConnectionStatusReason)),
-        this, SLOT(connectionStatusChanged (Tp::ConnectionStatus, Tp::ConnectionStatusReason)));
-    QObject::connect(a, SIGNAL(haveConnectionChanged (bool)),
-        this, SLOT(haveConnectionChanged (bool)));
+                     this, SLOT(displayNameChanged(const QString &)));
+    QObject::connect(a, SIGNAL(iconChanged(const QString &)),
+                     this, SLOT(iconChanged(const QString &)));
+    QObject::connect(a, SIGNAL(nicknameChanged(const QString &)),
+                     this, SLOT(nicknameChanged(const QString &)));
+    QObject::connect(a, SIGNAL(normalizedNameChanged(const QString &)),
+                     this, SLOT(normalizedNameChanged(const QString &)));
+    QObject::connect(a, SIGNAL(validityChanged(bool)),
+                     this, SLOT(validityChanged(bool)));
+    QObject::connect(a, SIGNAL(stateChanged(bool)),
+                     this, SLOT(stateChanged(bool)));
+    QObject::connect(a, SIGNAL(connectsAutomaticallyPropertyChanged(bool)),
+                     this, SLOT(connectsAutomaticallyPropertyChanged(bool)));
+    QObject::connect(a, SIGNAL(parametersChanged(const QVariantMap &)),
+                     this, SLOT(parametersChanged(const QVariantMap &)));
+    QObject::connect(a, SIGNAL(automaticPresenceChanged(const Tp::SimplePresence &)),
+                     this, SLOT(automaticPresenceChanged(const Tp::SimplePresence &)));
+    QObject::connect(a, SIGNAL(currentPresenceChanged(const Tp::SimplePresence &)),
+                     this, SLOT(currentPresenceChanged(const Tp::SimplePresence &)));
+    QObject::connect(a, SIGNAL(requestedPresenceChanged(const Tp::SimplePresence &)),
+                     this, SLOT(requestedPresenceChanged(const Tp::SimplePresence &)));
+    QObject::connect(a, SIGNAL(avatarChanged(const Tp::Avatar &)),
+                     this, SLOT(avatarChanged(const Tp::Avatar &)));
+    QObject::connect(a, SIGNAL(connectionStatusChanged(Tp::ConnectionStatus, Tp::ConnectionStatusReason)),
+                     this, SLOT(connectionStatusChanged(Tp::ConnectionStatus, Tp::ConnectionStatusReason)));
+    QObject::connect(a, SIGNAL(haveConnectionChanged(bool)),
+                     this, SLOT(haveConnectionChanged(bool)));
 
-	if(m_setStatusAfterInit)
-    {
+    if (m_setStatusAfterInit) {
         m_setStatusAfterInit = false;
         setOnlineStatus(m_status, m_reason);
+    } else {
+        connect(m_status);
     }
-	else
-	{
-	    connect(m_status);
-	}
 }
 
-void TelepathyAccount::displayNameChanged (const QString &var)
+void TelepathyAccount::displayNameChanged(const QString &var)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << var;
 }
 
-void TelepathyAccount::iconChanged (const QString &var)
+void TelepathyAccount::iconChanged(const QString &var)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << var;
 }
 
-void TelepathyAccount::nicknameChanged (const QString &var)
+void TelepathyAccount::nicknameChanged(const QString &var)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << var;
 
-	myself()->setNickName( var );
+    myself()->setNickName(var);
 }
 
-void TelepathyAccount::normalizedNameChanged (const QString &var)
-{
-    kDebug(TELEPATHY_DEBUG_AREA) << var;
-}
-
-void TelepathyAccount::validityChanged (bool var)
+void TelepathyAccount::normalizedNameChanged(const QString &var)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << var;
 }
 
-void TelepathyAccount::stateChanged (bool var)
+void TelepathyAccount::validityChanged(bool var)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << var;
 }
 
-void TelepathyAccount::connectsAutomaticallyPropertyChanged (bool var)
+void TelepathyAccount::stateChanged(bool var)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << var;
 }
 
-void TelepathyAccount::parametersChanged (const QVariantMap &var)
+void TelepathyAccount::connectsAutomaticallyPropertyChanged(bool var)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << var;
 }
 
-void TelepathyAccount::automaticPresenceChanged (const Tp::SimplePresence &) const
+void TelepathyAccount::parametersChanged(const QVariantMap &var)
+{
+    kDebug(TELEPATHY_DEBUG_AREA) << var;
+}
+
+void TelepathyAccount::automaticPresenceChanged(const Tp::SimplePresence &) const
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
 }
 
-void TelepathyAccount::currentPresenceChanged (const Tp::SimplePresence &) const
+void TelepathyAccount::currentPresenceChanged(const Tp::SimplePresence &) const
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
 }
 
-void TelepathyAccount::requestedPresenceChanged (const Tp::SimplePresence &) const
+void TelepathyAccount::requestedPresenceChanged(const Tp::SimplePresence &) const
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
 }
 
-void TelepathyAccount::avatarChanged (const Tp::Avatar &)
+void TelepathyAccount::avatarChanged(const Tp::Avatar &)
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
 }
 
-void TelepathyAccount::connectionStatusChanged (Tp::ConnectionStatus status, Tp::ConnectionStatusReason reason)
+void TelepathyAccount::connectionStatusChanged(Tp::ConnectionStatus status, Tp::ConnectionStatusReason reason)
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
     Q_UNUSED(reason);
 
-	switch(status)
-	{
-        case Tp::ConnectionStatusConnecting:
-			kDebug(TELEPATHY_DEBUG_AREA) << "Connecting....";
-			break;
-        case Tp::ConnectionStatusConnected:
-			kDebug(TELEPATHY_DEBUG_AREA) << "Connected using Telepathy :)";
-            // Set initial status to myself contact
-            myself()->setOnlineStatus( m_status );
-            // Set nickname to myself contact
-            myself()->setNickName( m_account->nickname() );
-            // Load contact list
-            fetchContactList();
+    switch (status) {
+    case Tp::ConnectionStatusConnecting:
+        kDebug(TELEPATHY_DEBUG_AREA) << "Connecting....";
+        break;
+    case Tp::ConnectionStatusConnected:
+        kDebug(TELEPATHY_DEBUG_AREA) << "Connected using Telepathy :)";
+        // Set initial status to myself contact
+        myself()->setOnlineStatus(m_status);
+        // Set nickname to myself contact
+        myself()->setNickName(m_account->nickname());
+        // Load contact list
+        fetchContactList();
 
-			break;
-        case Tp::ConnectionStatusDisconnected:
-			kDebug(TELEPATHY_DEBUG_AREA) << "Disconnected :(";
-			break;
-	}
+        break;
+    case Tp::ConnectionStatusDisconnected:
+        kDebug(TELEPATHY_DEBUG_AREA) << "Disconnected :(";
+        break;
+    }
 
     // \todo: reason
 }
 
-void TelepathyAccount::haveConnectionChanged (bool haveConnection)
+void TelepathyAccount::haveConnectionChanged(bool haveConnection)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << haveConnection;
 
-    if(haveConnection)
-    {
+    if (haveConnection) {
         kDebug(TELEPATHY_DEBUG_AREA) << "Have connection.";
     }
 }
 
 void TelepathyAccount::slotSetAlias()
 {
-	QString currentAlias = myself()->nickName();
+    QString currentAlias = myself()->nickName();
 
-	bool ok = false;
-	QString newAlias = KInputDialog::getText(
-			i18n("Change alias"),
-			i18n("Enter the new alias by which you want to be visible to your friends:"),
-			currentAlias,
-			&ok );
+    bool ok = false;
+    QString newAlias = KInputDialog::getText(
+                           i18n("Change alias"),
+                           i18n("Enter the new alias by which you want to be visible to your friends:"),
+                           currentAlias,
+                           &ok);
 
-	if(!ok || !m_account)
-		return;
+    if (!ok || !m_account)
+        return;
 
-	QObject::connect(m_account->setNickname(newAlias), SIGNAL(finished(Tp::PendingOperation *)),
-        this, SLOT(onAliasChanged(Tp::PendingOperation *)));
+    QObject::connect(m_account->setNickname(newAlias), SIGNAL(finished(Tp::PendingOperation *)),
+                     this, SLOT(onAliasChanged(Tp::PendingOperation *)));
 }
 
 void TelepathyAccount::onAliasChanged(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
-	kDebug(TELEPATHY_DEBUG_AREA) << "Alias has changed.";
+    kDebug(TELEPATHY_DEBUG_AREA) << "Alias has changed.";
 }
 
 void TelepathyAccount::slotChangeAvatar()
 {
-	// \todo: add here some error message?
-	if(!m_account)
-		return;
+    // \todo: add here some error message?
+    if (!m_account)
+        return;
 
-	QString avatarPath = Kopete::UI::AvatarDialog::getAvatar(Kopete::UI::Global::mainWidget());
+    QString avatarPath = Kopete::UI::AvatarDialog::getAvatar(Kopete::UI::Global::mainWidget());
 
-	Tp::Avatar avatar;
+    Tp::Avatar avatar;
 
-	QFile avatarFile;
+    QFile avatarFile;
     if (!avatarFile.open(QIODevice::ReadOnly))
-		return;
+        return;
 
-	avatar.avatarData = avatarFile.readAll();
-	// \todo: add here mime type for avatar
+    avatar.avatarData = avatarFile.readAll();
+    // \todo: add here mime type for avatar
 
-	QObject::connect(m_account->setAvatar(avatar), SIGNAL(finished(Tp::PendingOperation *)),
-        this, SLOT(onAvatarChanged(Tp::PendingOperation *)));
+    QObject::connect(m_account->setAvatar(avatar), SIGNAL(finished(Tp::PendingOperation *)),
+                     this, SLOT(onAvatarChanged(Tp::PendingOperation *)));
 }
 
 void TelepathyAccount::onAvatarChanged(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
-	kDebug(TELEPATHY_DEBUG_AREA) << "Avatar was changed";
+    kDebug(TELEPATHY_DEBUG_AREA) << "Avatar was changed";
 }
 
 void TelepathyAccount::fetchContactList()
 {
-	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-	if(!m_account->haveConnection())
-	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Couldn't fetch contact list!";
-		return;
-	}
+    if (!m_account->haveConnection()) {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Couldn't fetch contact list!";
+        return;
+    }
 
-	getContactManager()->fetchContactList();
+    getContactManager()->fetchContactList();
 }
 
 

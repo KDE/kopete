@@ -29,32 +29,32 @@
 
 class TelepathyAccount;
 class TelepathyContact;
- 
+
 class TelepathyContactManager : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	TelepathyContactManager(TelepathyAccount *telepathyAccount);
-	virtual ~TelepathyContactManager();
-	
-	QSharedPointer<Tp::Contact> addContact(const QString &contactId);
-	void removeContact(TelepathyContact *contact);
-	void setContactList(QList<QSharedPointer<Tp::Contact> > contactList);
-	void loadContacts();
-	
-private slots: 
-	void onConnectionReady(Tp::PendingOperation*);
-	void onConnectionFeaturesReady(Tp::PendingOperation*);
-	void onPresencePublicationRequested(const Tp::Contacts &);
-	
+    TelepathyContactManager(TelepathyAccount *telepathyAccount);
+    virtual ~TelepathyContactManager();
+
+    QSharedPointer<Tp::Contact> addContact(const QString &contactId);
+    void removeContact(TelepathyContact *contact);
+    void setContactList(QList<QSharedPointer<Tp::Contact> > contactList);
+    void loadContacts();
+
+private slots:
+    void onConnectionReady(Tp::PendingOperation*);
+    void onConnectionFeaturesReady(Tp::PendingOperation*);
+    void onPresencePublicationRequested(const Tp::Contacts &);
+
 private:
-	void fetchContactList();
-	void createContact(QSharedPointer<Tp::Contact> contact);
-	
-	class TelepathyContactManagerPrivate;
-	TelepathyContactManagerPrivate *d;
-	
-	friend class TelepathyAccount;
+    void fetchContactList();
+    void createContact(QSharedPointer<Tp::Contact> contact);
+
+    class TelepathyContactManagerPrivate;
+    TelepathyContactManagerPrivate *d;
+
+    friend class TelepathyAccount;
 };
 
 #endif //TELEPATHYCONTACTMANAGER_H_

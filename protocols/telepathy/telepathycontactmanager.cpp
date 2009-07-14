@@ -38,148 +38,143 @@
 class TelepathyContactManager::TelepathyContactManagerPrivate
 {
 public:
-	TelepathyAccount *telepathyAccount;
-	Tp::AccountPtr account;
-	Tp::ContactManager *contactManager;
-	Tp::ConnectionPtr connection;
+    TelepathyAccount *telepathyAccount;
+    Tp::AccountPtr account;
+    Tp::ContactManager *contactManager;
+    Tp::ConnectionPtr connection;
 
-	QList<TelepathyContact*> contactList;
+    QList<TelepathyContact*> contactList;
 };
 
 TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAccount)
-	: d(new TelepathyContactManagerPrivate)
+        : d(new TelepathyContactManagerPrivate)
 {
-	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-	d->telepathyAccount = telepathyAccount;
-	d->account = d->telepathyAccount->m_account;
+    d->telepathyAccount = telepathyAccount;
+    d->account = d->telepathyAccount->m_account;
 }
 
 TelepathyContactManager::~TelepathyContactManager()
 {
-	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-	foreach(TelepathyContact *contact, d->contactList)
-	{
-		Kopete::MetaContact *metaContact = contact->metaContact();
-		Kopete::ContactList::self()->removeMetaContact(metaContact);
-		delete contact;
-	}
+    foreach(TelepathyContact *contact, d->contactList) {
+        Kopete::MetaContact *metaContact = contact->metaContact();
+        Kopete::ContactList::self()->removeMetaContact(metaContact);
+        delete contact;
+    }
 
-	delete d;
+    delete d;
 }
 
 QSharedPointer<Tp::Contact> TelepathyContactManager::addContact(const QString &contactId)
 {
-	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-	Q_UNUSED(contactId);
-	return QSharedPointer<Tp::Contact>();
+    Q_UNUSED(contactId);
+    return QSharedPointer<Tp::Contact>();
 }
 
 void TelepathyContactManager::removeContact(TelepathyContact *contact)
 {
-	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-	if(contact->internalContact())
-	{
+    if (contact->internalContact()) {
 
-	}
-	contact->deleteLater();
+    }
+    contact->deleteLater();
 }
 
 void TelepathyContactManager::setContactList(QList<QSharedPointer<Tp::Contact> > contactList)
 {
-	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-	Q_UNUSED(contactList);
+    Q_UNUSED(contactList);
 }
 
 void TelepathyContactManager::loadContacts()
 {
-	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA);
 }
 
 void TelepathyContactManager::fetchContactList()
 {
-	kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-	if(!d->account || !d->account->haveConnection())
-	{
-		kDebug(TELEPATHY_DEBUG_AREA) << "Error: Could not find active connection or account";
-	}
+    if (!d->account || !d->account->haveConnection()) {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error: Could not find active connection or account";
+    }
 
-	d->contactManager = d->account->connection()->contactManager();
+    d->contactManager = d->account->connection()->contactManager();
 
-	d->connection = d->contactManager->connection();
+    d->connection = d->contactManager->connection();
 
-	QObject::connect(d->connection->becomeReady(),
-		SIGNAL(finished(Tp::PendingOperation*)),
-	    this,
-		SLOT(onConnectionReady(Tp::PendingOperation*))
-	);
+    QObject::connect(d->connection->becomeReady(),
+                     SIGNAL(finished(Tp::PendingOperation*)),
+                     this,
+                     SLOT(onConnectionReady(Tp::PendingOperation*))
+                    );
 }
 
 void TelepathyContactManager::onConnectionReady(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
-	// \brief: Add new feature to existing connection to get contact list from server
-	Tp::Features features = d->connection->requestedFeatures();
-	features << Tp::Connection::FeatureRoster;
-	QObject::connect(d->connection->becomeReady(features),
-		SIGNAL(finished(Tp::PendingOperation*)),
-		this,
-		SLOT(onConnectionFeaturesReady(Tp::PendingOperation*)));
+    // \brief: Add new feature to existing connection to get contact list from server
+    Tp::Features features = d->connection->requestedFeatures();
+    features << Tp::Connection::FeatureRoster;
+    QObject::connect(d->connection->becomeReady(features),
+                     SIGNAL(finished(Tp::PendingOperation*)),
+                     this,
+                     SLOT(onConnectionFeaturesReady(Tp::PendingOperation*)));
 }
 
 void TelepathyContactManager::onConnectionFeaturesReady(Tp::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if(TelepathyCommons::isOperationError(operation))
+    if (TelepathyCommons::isOperationError(operation))
         return;
 
-	QObject::connect(d->contactManager,
-		SIGNAL(presencePublicationRequested(const Tp::Contacts &)),
-		this,
-		SLOT(onPresencePublicationRequested(const Tp::Contacts &)));
+    QObject::connect(d->contactManager,
+                     SIGNAL(presencePublicationRequested(const Tp::Contacts &)),
+                     this,
+                     SLOT(onPresencePublicationRequested(const Tp::Contacts &)));
 
-	QSet<QSharedPointer<Tp::Contact> > contacts = d->contactManager->allKnownContacts();
+    QSet<QSharedPointer<Tp::Contact> > contacts = d->contactManager->allKnownContacts();
 
-	foreach(QSharedPointer<Tp::Contact> contact, contacts)
-	{
-		createContact(contact);
-	}
+    foreach(QSharedPointer<Tp::Contact> contact, contacts) {
+        createContact(contact);
+    }
 }
 
 void TelepathyContactManager::onPresencePublicationRequested(const Tp::Contacts &contacts)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-	foreach(QSharedPointer<Tp::Contact> contact, contacts)
-	{
-		createContact(contact);
-	}
+    foreach(QSharedPointer<Tp::Contact> contact, contacts) {
+        createContact(contact);
+    }
 }
 
 void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
 {
-	kDebug(TELEPATHY_DEBUG_AREA) << contact->id() << contact->alias();
-	kDebug(TELEPATHY_DEBUG_AREA) << "Subscription status:" << contact->subscriptionState();
-	kDebug(TELEPATHY_DEBUG_AREA) << "Publish status:" << contact->publishState();
+    kDebug(TELEPATHY_DEBUG_AREA) << contact->id() << contact->alias();
+    kDebug(TELEPATHY_DEBUG_AREA) << "Subscription status:" << contact->subscriptionState();
+    kDebug(TELEPATHY_DEBUG_AREA) << "Publish status:" << contact->publishState();
 
-	Kopete::MetaContact *metaContact = new Kopete::MetaContact();
-	TelepathyContact *newContact = new TelepathyContact(d->telepathyAccount, contact->id(), metaContact);
-	newContact->setInternalContact(contact);
-	newContact->setMetaContact(metaContact);
+    Kopete::MetaContact *metaContact = new Kopete::MetaContact();
+    TelepathyContact *newContact = new TelepathyContact(d->telepathyAccount, contact->id(), metaContact);
+    newContact->setInternalContact(contact);
+    newContact->setMetaContact(metaContact);
 
-	Kopete::ContactList::self()->addMetaContact(metaContact);
+    Kopete::ContactList::self()->addMetaContact(metaContact);
 
-	d->contactList.push_back(newContact);
+    d->contactList.push_back(newContact);
 }
 
 

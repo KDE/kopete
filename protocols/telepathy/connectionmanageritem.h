@@ -17,7 +17,7 @@
  */
 
 #ifndef _CONNECTIONMANAGERITEM_H
-#define	_CONNECTIONMANAGERITEM_H
+#define _CONNECTIONMANAGERITEM_H
 
 #include <QObject>
 #include <QPointer>
@@ -29,7 +29,7 @@ class QTreeWidget;
 
 namespace Tp
 {
-    class PendingOperation;
+class PendingOperation;
 }
 
 class ConnectionManagerItem : public QObject, public QTreeWidgetItem
@@ -38,17 +38,17 @@ class ConnectionManagerItem : public QObject, public QTreeWidgetItem
 public:
     ConnectionManagerItem(QString cmName, QTreeWidget *parent);
 
-	Tp::ProtocolInfoList getProtocolInfoList() const;
-	QStringList getSupportedProtocols() const;
+    Tp::ProtocolInfoList getProtocolInfoList() const;
+    QStringList getSupportedProtocols() const;
 
 private slots:
     void setProtocolsSize(Tp::PendingOperation *p);
 
 private:
     Tp::ConnectionManagerPtr m_connectionManager;
-	QStringList m_supportedProtocols;
-	Tp::ProtocolInfoList m_protocolInfoList;
+    QStringList m_supportedProtocols;
+    Tp::ProtocolInfoList m_protocolInfoList;
 };
 
-#endif	/* _CONNECTIONMANAGERITEM_H */
+#endif /* _CONNECTIONMANAGERITEM_H */
 
