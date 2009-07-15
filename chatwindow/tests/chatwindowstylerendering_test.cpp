@@ -144,7 +144,7 @@ public:
 		fakeChatSession->setDisplayName("Test Session");
 
 		// Create testStyle
-		testStyle = new ChatWindowStyle(QString(SRCDIR)+QString("/TestStyle"));
+		testStyle = new ChatWindowStyle(QString(KDESRCDIR)+QString("/TestStyle"));
 	}
 	~Private()
 	{
@@ -337,7 +337,7 @@ void ChatWindowStyleRendering_Test::testFullRendering()
         resultHtml = chatPart->documentSource();
 
 	// Read the expected(sample) HTML from file.
-	QFile sampleHtml(QString(SRCDIR)+"sample.html");
+	QFile sampleHtml(QString(KDESRCDIR)+"sample.html");
 	if(sampleHtml.open(QIODevice::ReadOnly))
 	{
 		QTextStream stream(&sampleHtml);
