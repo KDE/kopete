@@ -1,10 +1,9 @@
-/*
-    Test RichTextBox Component
+ /*
+    kopetechatwindowstylearchivefactory.h - Load Archive Depending on mimetype
 
+    Copyright (c) 2009      by Pierre-Alexandre St-Jean     <pierrealexandre.stjean@gmail.com>
 
-	Copyright (c) 2009      by Pierre-Alexandre St-Jean <pierrealexandre.stjean@gmail.com>
-
-    Kopete    (c) 2002-2009 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,21 +15,15 @@
     *************************************************************************
 */
 
-#include "kopeterichtextwidget_test.h"
+#ifndef KOPETECHATWINDOWSTYLEARCHIVEFACTORY_H
+#define KOPETECHATWINDOWSTYLEARCHIVEFACTORY_H
 
-void KopeteRichTextWidget_Test::initTestCase()
+#include <karchive.h>
+
+class KopeteChatWindowStyleArchiveFactory
 {
-}
+	public:
+	  static KArchive* getKArchive(const QString &path);
+};
 
-void KopeteRichTextWidget_Test::cleanupTestCase()
-{
-}
-
-void KopeteRichTextWidget_Test::testIt()
-{
-	KopeteRichTextWidget tw(0,0,0);
-}
-
-QTEST_MAIN(KopeteRichTextWidget_Test)
-#include "kopeterichtextwidget_test.moc"
-
+#endif

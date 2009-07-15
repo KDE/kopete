@@ -2,8 +2,9 @@
     kopetechatwindowstylemanager.cpp - Manager all chat window styles
 
     Copyright (c) 2005      by Michaël Larouche     <larouche@kde.org>
+    Copyright (c) 2009      by Pierre-Alexandre St-Jean     <pierrealexandre.stjean@gmail.com>
 
-    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -36,6 +37,7 @@
 #include <kconfiggroup.h>
 
 #include "kopetechatwindowstyle.h"
+#include "kopetechatwindowstylearchivefactory.h"
 
 class ChatWindowStyleManager::Private
 {
@@ -109,7 +111,7 @@ QStringList ChatWindowStyleManager::getAvailableStyles() const
 	return d->availableStyles;
 }
 
-int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
+QString ChatWindowStyleManager::findWritableStyleDirs()
 {
 	QString localStyleDir;
 	QStringList chatStyles = KGlobal::dirs()->findDirs( "appdata", QLatin1String( "styles" ) );
@@ -118,10 +120,15 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	{
 		if(QFileInfo(styleDir).isWritable())
 		{
-			localStyleDir = styleDir;
-			break;
+			return styleDir;
 		}
 	}
+	return localStyleDir;
+}
+
+int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
+{
+	QString localStyleDir = findWritableStyleDirs();
 	if( localStyleDir.isEmpty() ) // none of dirs is writable
 	{
 		return StyleNoDirectoryValid;
@@ -131,17 +138,8 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	KArchiveDirectory* currentDir = 0L;
 	KArchive *archive = 0L;
 
-	// Find mimetype for current bundle. ZIP and KTar need separate constructor
-	QString currentBundleMimeType = KMimeType::findByPath(styleBundlePath, 0, false)->name();
-	if(currentBundleMimeType == "application/zip")
-	{
-		archive = new KZip(styleBundlePath);
-	}
-	else if( currentBundleMimeType == "application/x-compressed-tar" || currentBundleMimeType == "application/x-bzip-compressed-tar" || currentBundleMimeType == "application/x-gzip" || currentBundleMimeType == "application/x-bzip" )
-	{
-		archive = new KTar(styleBundlePath);
-	}
-	else
+	archive = KopeteChatWindowStyleArchiveFactory::getKArchive(styleBundlePath);
+	if(archive==0L)
 	{
 		return StyleCannotOpen;
 	}

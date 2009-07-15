@@ -15,15 +15,14 @@
     *                                                                       *
     *************************************************************************
 */
-#ifndef KOPETERICHTEXTWIDGET_TEST_H
-#define KOPETERICHTEXTWIDGET_TEST_H
+#ifndef ARCHIVEFACTORY_TEST_H
+#define ARCHIVEFACTORY_TEST_H
 
-#include <QtGui>
 #include <QtTest>
 
-#include "kopeterichtextwidget.h"
 
-class KopeteRichTextWidget_Test : public QObject
+
+class ArchiveFactory_Test : public QObject
 {
 
 	Q_OBJECT;
@@ -32,7 +31,9 @@ private slots:
 	void initTestCase();
 	void cleanupTestCase();
 
-	void testIt();
+	void testTar();
+	void testZip();
+	void testBadArchive();
 
 private:
 

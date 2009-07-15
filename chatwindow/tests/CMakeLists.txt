@@ -14,6 +14,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../
 )
 
 link_directories( ${CMAKE_CURRENT_BINARY_DIR}/../ )
+
 ########### next target ###############
 set(chatwindowstylerendering_test_SRCS chatwindowstylerendering_test.cpp )
 
@@ -23,11 +24,11 @@ target_link_libraries(chatwindowstylerendering_test  ${CHATWINDOW_TEST_LIBRARIES
 
 ########### next target ###############
 
-set(kopeterichtextwidget_test_SRCS kopeterichtextwidget_test.cpp )
+set(archivefactory_test_SRCS archivefactory_test.cpp )
 
-kde4_add_unit_test(kopeterichtextwidget_test TESTNAME kopete-kopeterichtextwidget_test ${kopeterichtextwidget_test_SRCS})
+kde4_add_unit_test(archivefactory_test TESTNAME kopete-archivefactory_test ${archivefactory_test_SRCS})
 
-target_link_libraries(kopeterichtextwidget_test  ${CHATWINDOW_TEST_LIBRARIES})
+target_link_libraries(archivefactory_test  ${CHATWINDOW_TEST_LIBRARIES})
 
 ########### next target ###############
 
