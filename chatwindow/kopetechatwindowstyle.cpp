@@ -2,8 +2,9 @@
     kopetechatwindowstyle.cpp - A Chat Window Style.
 
     Copyright (c) 2005      by Michaël Larouche     <larouche@kde.org>
+    Copyright (c) 2009      by Pierre-Alexandre St-Jean     <pierrealexandre.stjean@gmail.com>
 
-    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

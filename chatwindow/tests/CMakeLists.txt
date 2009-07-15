@@ -38,5 +38,5 @@ kopete-chatwindowstyle_test ${chatwindowstyle_test_SRCS})
 
 target_link_libraries(chatwindowstyle_test  ${CHATWINDOW_TEST_LIBRARIES})
 
-
 ########### next target ###############
+

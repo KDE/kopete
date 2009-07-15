@@ -22,14 +22,15 @@
 
 #include <qdir.h>
 #include <qfile.h>
+#include <kdebug.h>
 
 #include <kopetechatwindowstyle.h>
 
 void ChatWindowStyle_Test::initTestCase()
 {
-	testStyle = new ChatWindowStyle(QString(SRCDIR)+QString("/TestStyle"));
+	testStyle = new ChatWindowStyle(QString(KDESRCDIR)+QString("TestStyle"));
 
-	// change user data dir to avoid messing with user's .kde dir
+  // change user data dir to avoid messing with user's .kde dir
 	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
 }
@@ -39,7 +40,7 @@ void ChatWindowStyle_Test::cleanupTestCase()
 
 void ChatWindowStyle_Test::testPaths()
 {
-	QString expectedStylePath = SRCDIR + QString::fromUtf8("/TestStyle");
+	QString expectedStylePath = KDESRCDIR + QString::fromUtf8("TestStyle");
 	QString expectedBaseHref = expectedStylePath + QString::fromUtf8("/Contents/Resources/");
 
 	QCOMPARE(testStyle->getStyleName(), expectedStylePath);
