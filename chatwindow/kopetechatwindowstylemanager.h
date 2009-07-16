@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QHash>
 
+#include <karchive.h>
 #include <kfileitem.h>
 #include <kopete_export.h>
 
@@ -151,7 +152,7 @@ private:
 	class Private;
 	Private * const d;
 
-	
+	bool archiveIsValid(const KArchiveDirectory* rootDir);
 	QString findWritableStyleDirs();
 };
 

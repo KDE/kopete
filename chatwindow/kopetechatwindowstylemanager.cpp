@@ -153,15 +153,74 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 
 	const KArchiveDirectory* rootDir = archive->directory();
 
+	const QStringList entries = rootDir->entries();
+	// Will be reused later.
+	QStringList::ConstIterator entriesIt, entriesItEnd = entries.end();
+
+	// The archive is a valid style bundle.
+	if(archiveIsValid(rootDir))
+	{
+		bool installOk = false;
+		for(entriesIt = entries.begin(); entriesIt != entries.end(); ++entriesIt)
+		{
+			currentEntry = const_cast<KArchiveEntry*>(rootDir->entry(*entriesIt));
+			if(currentEntry && currentEntry->isDirectory())
+			{
+				// Ignore this MacOS X "garbage" directory in zip.
+				if(currentEntry->name() == QString::fromUtf8("__MACOSX"))
+				{
+					continue;
+				}
+				else
+				{
+					currentDir = dynamic_cast<KArchiveDirectory*>(currentEntry);
+					if(currentDir)
+					{
+						currentDir->copyTo(localStyleDir + currentDir->name());
+						installOk = true;
+					}
+				}
+			}
+		}
+
+		archive->close();
+		delete archive;
+
+		if(installOk)
+			return StyleInstallOk;
+		else
+			return StyleUnknow;
+	}
+	else
+	{
+		archive->close();
+		delete archive;
+
+		return StyleNotValid;
+	}
+
+	if(archive)
+	{
+		archive->close();
+		delete archive;
+	}
+
+	return StyleUnknow;
+}
+bool ChatWindowStyleManager::archiveIsValid(const KArchiveDirectory* rootDir)
+{
+
 	// Ok where we go to check if the archive is valid.
 	// Each time we found a correspondance to a theme bundle, we add a point to validResult.
 	// A valid style bundle must have:
 	// -a Contents, Contents/Resources, Co/Res/Incoming, Co/Res/Outgoing dirs
 	// main.css, Footer.html, Header.html, Status.html files in Contents/Resources.
 	// So for a style bundle to be valid, it must have a result greather than 8, because we test for 8 required entry.
+	KArchiveEntry *currentEntry = 0L;
+	KArchiveDirectory* currentDir = 0L;
 	int validResult = 0;
 	const QStringList entries = rootDir->entries();
-	// Will be reused later.
+
 	QStringList::ConstIterator entriesIt, entriesItEnd = entries.end();
 	for(entriesIt = entries.begin(); entriesIt != entries.end(); ++entriesIt)
 	{
@@ -225,58 +284,15 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 			}
 		}
 	}
-// 	kDebug() << "Valid result: " << QString::number(validResult);
-	// The archive is a valid style bundle.
-	if(validResult >= 8)
+	if(validResult>8)
 	{
-		bool installOk = false;
-		for(entriesIt = entries.begin(); entriesIt != entries.end(); ++entriesIt)
-		{
-			currentEntry = const_cast<KArchiveEntry*>(rootDir->entry(*entriesIt));
-			if(currentEntry && currentEntry->isDirectory())
-			{
-				// Ignore this MacOS X "garbage" directory in zip.
-				if(currentEntry->name() == QString::fromUtf8("__MACOSX"))
-				{
-					continue;
-				}
-				else
-				{
-					currentDir = dynamic_cast<KArchiveDirectory*>(currentEntry);
-					if(currentDir)
-					{
-						currentDir->copyTo(localStyleDir + currentDir->name());
-						installOk = true;
-					}
-				}
-			}
-		}
-
-		archive->close();
-		delete archive;
-
-		if(installOk)
-			return StyleInstallOk;
-		else
-			return StyleUnknow;
+		return true;
 	}
 	else
 	{
-		archive->close();
-		delete archive;
-
-		return StyleNotValid;
+		return false;
 	}
-
-	if(archive)
-	{
-		archive->close();
-		delete archive;
-	}
-
-	return StyleUnknow;
 }
-
 bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 {
 	kDebug(14000) << styleName;
