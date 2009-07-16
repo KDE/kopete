@@ -15,5 +15,9 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Telepathy
+Name[x-test]=xxTelepathyxx
 Comment=Messaging using Telepathy connection managers.
+Comment[pt]=Mensagens através dos gestores de ligações do Telepathy.
+Comment[pt_BR]=Mensagens através dos gestores de ligações do Telepathy.
+Comment[x-test]=xxMessaging using Telepathy connection managers.xx
 
