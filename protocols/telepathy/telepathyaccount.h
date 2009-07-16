@@ -65,7 +65,6 @@ private slots:
     void onConnectionManagerReady(Tp::PendingOperation*);
     void onExistingAccountReady(Tp::PendingOperation*);
     void onRequestedPresence(Tp::PendingOperation*);
-    void onAccountConnecting(Tp::PendingOperation*);
     void onRequestDisconnect(Tp::PendingOperation*);
     void onAliasChanged(Tp::PendingOperation*);
     void onAvatarChanged(Tp::PendingOperation*);

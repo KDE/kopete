@@ -57,6 +57,8 @@ TelepathyAccount::TelepathyAccount(TelepathyProtocol *protocol, const QString &a
     m_setStatusAfterInit = false;
 
     setMyself(new TelepathyContact(this, accountId, Kopete::ContactList::self()->myself()));
+
+    initTelepathyAccount();
 }
 
 TelepathyAccount::~TelepathyAccount()
@@ -72,6 +74,7 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 
     if (!m_account || !m_account->becomeReady()) {
         m_status = initialStatus;
+        m_setStatusAfterInit = true;
         initTelepathyAccount();
         return;
     }
@@ -101,23 +104,6 @@ void TelepathyAccount::onRequestedPresence(Tp::PendingOperation* operation)
 
     if (TelepathyCommons::isOperationError(operation))
         return;
-
-    QObject::connect(m_account->setConnectsAutomatically(true),
-                     SIGNAL(finished(Tp::PendingOperation*)),
-                     this,
-                     SLOT(onAccountConnecting(Tp::PendingOperation*))
-                    );
-}
-
-void TelepathyAccount::onAccountConnecting(Tp::PendingOperation* operation)
-{
-    kDebug(TELEPATHY_DEBUG_AREA);
-
-    if (TelepathyCommons::isOperationError(operation))
-        return;
-
-    if (m_account->haveConnection())
-        kDebug(TELEPATHY_DEBUG_AREA) << "Account have connection";
 }
 
 void TelepathyAccount::fillActionMenu(KActionMenu *actionMenu)
@@ -552,7 +538,11 @@ void TelepathyAccount::onAccountReady(Tp::PendingOperation *operation)
         m_setStatusAfterInit = false;
         setOnlineStatus(m_status, m_reason);
     } else {
-        connect(m_status);
+        myself()->setOnlineStatus(
+                TelepathyProtocol::protocol()->telepathyStatusToKopete(
+                        static_cast<Tp::ConnectionPresenceType>(m_account->currentPresence().type)));
+        myself()->setNickName(m_account->nickname());
+        fetchContactList();
     }
 }
 
@@ -606,6 +596,10 @@ void TelepathyAccount::automaticPresenceChanged(const Tp::SimplePresence &) cons
 void TelepathyAccount::currentPresenceChanged(const Tp::SimplePresence &) const
 {
     kDebug(TELEPATHY_DEBUG_AREA) ;
+
+    myself()->setOnlineStatus(
+            TelepathyProtocol::protocol()->telepathyStatusToKopete(
+                    static_cast<Tp::ConnectionPresenceType>(m_account->currentPresence().type)));
 }
 
 void TelepathyAccount::requestedPresenceChanged(const Tp::SimplePresence &) const
