@@ -18,16 +18,16 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TELEPATHYCONTACT_H_
-#define TELEPATHYCONTACT_H_
+#ifndef KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCONTACT_H
+#define KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCONTACT_H
+
+#include "telepathyaccount.h"
 
 #include <kopetecontact.h>
 #include <kopetechatsession.h>
 
 #include <QObject>
 #include <QSharedPointer>
-
-#include "telepathyaccount.h"
 
 #include <TelepathyQt4/Contact>
 
@@ -41,11 +41,13 @@ class TelepathyContact : public Kopete::Contact
     Q_OBJECT
 
 public:
-    TelepathyContact(TelepathyAccount *account, const QString &contactId, Kopete::MetaContact *parent);
+    TelepathyContact(TelepathyAccount *account, const QString &contactId,
+                     Kopete::MetaContact *parent);
     virtual ~TelepathyContact();
 
     virtual bool isReachable();
-    virtual void serialize(QMap< QString, QString >& serializedData, QMap< QString, QString >& addressBookData);
+    virtual void serialize(QMap< QString, QString >& serializedData,
+                           QMap< QString, QString >& addressBookData);
 
     virtual QList<KAction *> *customContextMenuActions();
     virtual QList<KAction *> *customContextMenuActions(Kopete::ChatSession *manager);
@@ -68,4 +70,5 @@ private:
 };
 
 
-#endif // TELEPATHYCONTACT_H_
+#endif // Header guard
+
