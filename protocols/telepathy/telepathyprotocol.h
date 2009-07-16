@@ -58,10 +58,11 @@ public:
                                                               QWidget *parent);
 
     static TelepathyProtocol *protocol();
-    /*
-     virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
-      const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
-    */
+
+    virtual Kopete::Contact *deserializeContact(Kopete::MetaContact *metaContact,
+                                                const QMap<QString,
+                                                QString> &serializedData,
+                                                const QMap<QString, QString> &addressBookData);
     QString formatTelepathyConfigGroup(const QString &connectionManager,
                                        const QString &protocol,
                                        const QString &accountId);

@@ -19,6 +19,7 @@
 
 #include "telepathyaccount.h"
 //#include "telepathyaddcontactpage.h"
+#include "telepathycontact.h"
 #include "telepathyeditaccountwidget.h"
 
 #include <kgenericfactory.h>
@@ -98,34 +99,31 @@ KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Acco
     kDebug(TELEPATHY_DEBUG_AREA);
     return new TelepathyEditAccountWidget(account, parent);
 }
-/*
-Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *metaContact,
-  const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData )
+
+Kopete::Contact *TelepathyProtocol::deserializeContact(Kopete::MetaContact *metaContact,
+                                                       const QMap<QString, QString> &serializedData,
+                                                       const QMap<QString, QString> &addressBookData)
 {
     kDebug(TELEPATHY_DEBUG_AREA) << "deserializeContact() called";
- Q_UNUSED(addressBookData);
+    Q_UNUSED(addressBookData);
 
- QString contactId = serializedData["contactId"];
- QString accountId = serializedData["accountId"];
+    QString contactId = serializedData["contactId"];
+    QString accountId = serializedData["accountId"];
 
- // Find the account
- QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
+    // Find the account
+    QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts(this);
 
- Kopete::Account *account = 0;
- foreach( account, accounts )
- {
-  if(account->accountId() == accountId)
-   break;
- }
+    foreach (Kopete::Account *account, accounts) {
+        if (account->accountId() == accountId) {
+            return new TelepathyContact(static_cast<TelepathyAccount*>(account),
+                                        contactId,
+                                        metaContact);
+        }
+    }
 
- if( account )
- {
-  return new TelepathyContact( static_cast<TelepathyAccount*>(account), contactId, metaContact);
- }
-
- return 0;
+    return 0;
 }
-*/
+
 QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionManager,
                                                       const QString &protocol,
                                                       const QString &accountId)
