@@ -156,18 +156,22 @@ Kopete::OnlineStatus TelepathyProtocol::telepathyStatusToKopete(Tp::ConnectionPr
     Kopete::OnlineStatus result;
     switch (presence) {
     case Tp::ConnectionPresenceTypeAvailable:
-        result = Kopete::OnlineStatus::Online;
+        result = Available;
         break;
     case Tp::ConnectionPresenceTypeAway:
+        result = Away;
+        break;
     case Tp::ConnectionPresenceTypeExtendedAway:
+        result = ExtendedAway;
+        break;
     case Tp::ConnectionPresenceTypeBusy:
-        result = Kopete::OnlineStatus::Away;
+        result = Busy;
         break;
     case Tp::ConnectionPresenceTypeHidden:
-        result = Kopete::OnlineStatus::Invisible;
+        result = Hidden;
         break;
     case Tp::ConnectionPresenceTypeOffline:
-        result = Kopete::OnlineStatus::Offline;
+        result = Offline;
         break;
     case Tp::ConnectionPresenceTypeUnset:
     case Tp::ConnectionPresenceTypeUnknown:
