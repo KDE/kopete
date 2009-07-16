@@ -17,22 +17,18 @@
 
 #include "telepathyprotocol.h"
 
-// KDE includes
+#include "telepathyaccount.h"
+//#include "telepathyaddcontactpage.h"
+#include "telepathyeditaccountwidget.h"
+
 #include <kgenericfactory.h>
 #include <kdebug.h>
 
-// Kopete includes
 #include <kopeteaccount.h>
 #include <kopeteaccountmanager.h>
 #include <kopetemetacontact.h>
 
-#include "telepathyaccount.h"
-
 #include <TelepathyQt4/Types>
-
-// Local includes
-#include "telepathyeditaccountwidget.h"
-//#include "telepathyaddcontactpage.h"
 
 K_PLUGIN_FACTORY(TelepathyProtocolFactory, registerPlugin<TelepathyProtocol>();)
 K_EXPORT_PLUGIN(TelepathyProtocolFactory("kopete_telepathy"))
@@ -43,19 +39,29 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args
         : Kopete::Protocol(TelepathyProtocolFactory::componentData(), parent),
         // Create Kopete::OnlineStatus
         Available(Kopete::OnlineStatus::Online, 25, this, 1, QStringList(),
-                  i18n("Available"), i18n("A&vailable"), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage),
-        Away(Kopete::OnlineStatus::Away, 18, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
-             i18n("Away From Computer"), i18n("&Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
+                  i18n("Available"), i18n("A&vailable"), Kopete::OnlineStatusManager::Online,
+                  Kopete::OnlineStatusManager::HasStatusMessage),
+        Away(Kopete::OnlineStatus::Away, 18, this, 4,
+             QStringList(QString::fromLatin1("contact_away_overlay")),
+             i18n("Away From Computer"), i18n("&Away"), Kopete::OnlineStatusManager::Away,
+             Kopete::OnlineStatusManager::HasStatusMessage),
         Busy(Kopete::OnlineStatus::Away, 20, this, 2, QStringList(),
-             i18n("Busy"), i18n("&Busy"), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage),
-        Hidden(Kopete::OnlineStatus::Invisible, 3, this, 8, QStringList(QString::fromLatin1("contact_invisible_overlay")),
+             i18n("Busy"), i18n("&Busy"), Kopete::OnlineStatusManager::Busy,
+             Kopete::OnlineStatusManager::HasStatusMessage),
+        Hidden(Kopete::OnlineStatus::Invisible, 3, this, 8,
+               QStringList(QString::fromLatin1("contact_invisible_overlay")),
                i18n("Invisible"), i18n("&Hidden"), Kopete::OnlineStatusManager::Invisible),
-        ExtendedAway(Kopete::OnlineStatus::Away, 15, this, 4, QStringList(QString::fromLatin1("contact_away_overlay")),
-                     i18n("Extended Away"), i18n("&Extended Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
+        ExtendedAway(Kopete::OnlineStatus::Away, 15, this, 4,
+                     QStringList(QString::fromLatin1("contact_away_overlay")),
+                     i18n("Extended Away"), i18n("&Extended Away"),
+                     Kopete::OnlineStatusManager::Away,
+                     Kopete::OnlineStatusManager::HasStatusMessage),
         Offline(Kopete::OnlineStatus::Offline, 0, this, 7, QStringList(),
                 i18n("Offline"), i18n("&Offline"), Kopete::OnlineStatusManager::Offline,
                 Kopete::OnlineStatusManager::DisabledIfOffline),
-        propAvatarToken("telepathyAvatarToken", i18n("Telepathy Avatar token"), QString(), Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty)
+        propAvatarToken("telepathyAvatarToken", i18n("Telepathy Avatar token"),
+                        QString(), Kopete::PropertyTmpl::PersistentProperty |
+                        Kopete::PropertyTmpl::PrivateProperty)
 {
     Tp::registerTypes();
 
@@ -86,7 +92,8 @@ AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopet
     return 0;
 }
 
-KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
+KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account,
+                                                                    QWidget *parent)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     return new TelepathyEditAccountWidget(account, parent);
@@ -119,7 +126,9 @@ Kopete::Contact *TelepathyProtocol::deserializeContact( Kopete::MetaContact *met
  return 0;
 }
 */
-QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionManager, const QString &protocol, const QString &accountId)
+QString TelepathyProtocol::formatTelepathyConfigGroup(const QString &connectionManager,
+                                                      const QString &protocol,
+                                                      const QString &accountId)
 {
     return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(accountId);
 }
