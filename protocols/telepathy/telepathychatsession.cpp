@@ -132,9 +132,14 @@ void TelepathyChatSession::chatSessionRequestClose(Tp::PendingOperation *operati
     kDebug(TELEPATHY_DEBUG_AREA) << "Chat session closed";
 }
 
-void TelepathyChatSession::messageSent(const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &sentMessageToken)
+void TelepathyChatSession::messageSent(const Tp::Message &message,
+                                       Tp::MessageSendingFlags flags,
+                                       const QString &sentMessageToken)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+
+    Q_UNUSED(flags);
+    Q_UNUSED(sentMessageToken);
 
     Kopete::Message::MessageType messageType = Kopete::Message::TypeNormal;
     /*
@@ -168,5 +173,8 @@ void TelepathyChatSession::messageReceived(const Tp::ReceivedMessage &message)
 
 void TelepathyChatSession::pendingMessageRemoved(const Tp::ReceivedMessage &message)
 {
+    Q_UNUSED(message);
+
+    // TODO: Implement me!
 }
 

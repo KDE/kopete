@@ -54,14 +54,17 @@ public:
 
     virtual Kopete::Account *createNewAccount(const QString &accountId);
     virtual AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
-    virtual KopeteEditAccountWidget * createEditAccountWidget(Kopete::Account *account, QWidget *parent);
+    virtual KopeteEditAccountWidget * createEditAccountWidget(Kopete::Account *account,
+                                                              QWidget *parent);
 
     static TelepathyProtocol *protocol();
     /*
      virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
       const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
     */
-    QString formatTelepathyConfigGroup(const QString &connectionManager, const QString &protocol, const QString &accountId);
+    QString formatTelepathyConfigGroup(const QString &connectionManager,
+                                       const QString &protocol,
+                                       const QString &accountId);
 
     Tp::ConnectionPresenceType kopeteStatusToTelepathy(const Kopete::OnlineStatus &status);
     Kopete::OnlineStatus telepathyStatusToKopete(Tp::ConnectionPresenceType presence);
