@@ -45,7 +45,7 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args
              QStringList(QString::fromLatin1("contact_away_overlay")),
              i18n("Away From Computer"), i18n("&Away"), Kopete::OnlineStatusManager::Away,
              Kopete::OnlineStatusManager::HasStatusMessage),
-        Busy(Kopete::OnlineStatus::Away, 20, this, 2, QStringList(),
+        Busy(Kopete::OnlineStatus::Away, 20, this, 2, QStringList("contact_busy_overlay"),
              i18n("Busy"), i18n("&Busy"), Kopete::OnlineStatusManager::Busy,
              Kopete::OnlineStatusManager::HasStatusMessage),
         Hidden(Kopete::OnlineStatus::Invisible, 3, this, 8,
