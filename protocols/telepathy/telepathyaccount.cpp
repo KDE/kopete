@@ -19,9 +19,10 @@
  */
 
 #include "telepathyaccount.h"
-#include "telepathyprotocol.h"
+
 #include "telepathycontact.h"
 #include "telepathycontactmanager.h"
+#include "telepathyprotocol.h"
 #include "common.h"
 
 #include <kopetemetacontact.h>
@@ -634,14 +635,13 @@ void TelepathyAccount::connectionStatusChanged(Tp::ConnectionStatus status, Tp::
         myself()->setNickName(m_account->nickname());
         // Load contact list
         fetchContactList();
-
         break;
     case Tp::ConnectionStatusDisconnected:
         kDebug(TELEPATHY_DEBUG_AREA) << "Disconnected :(";
+        myself()->setOnlineStatus(TelepathyProtocol::protocol()->Offline);
         break;
     }
 
-    // \todo: reason
 }
 
 void TelepathyAccount::haveConnectionChanged(bool haveConnection)
