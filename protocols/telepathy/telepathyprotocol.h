@@ -47,6 +47,7 @@ public:
     const Kopete::OnlineStatus Hidden;
     const Kopete::OnlineStatus ExtendedAway;
     const Kopete::OnlineStatus Offline;
+    const Kopete::OnlineStatus Connecting;
 
     const Kopete::PropertyTmpl propAvatarToken;
 

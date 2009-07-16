@@ -626,6 +626,7 @@ void TelepathyAccount::connectionStatusChanged(Tp::ConnectionStatus status, Tp::
     switch (status) {
     case Tp::ConnectionStatusConnecting:
         kDebug(TELEPATHY_DEBUG_AREA) << "Connecting....";
+        myself()->setOnlineStatus(TelepathyProtocol::protocol()->Connecting);
         break;
     case Tp::ConnectionStatusConnected:
         kDebug(TELEPATHY_DEBUG_AREA) << "Connected using Telepathy :)";
