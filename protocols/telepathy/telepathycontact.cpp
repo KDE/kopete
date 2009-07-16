@@ -60,8 +60,10 @@ TelepathyContact::~TelepathyContact()
 
 bool TelepathyContact::isReachable()
 {
-    //kDebug(TELEPATHY_DEBUG_AREA);
-    return account()->isConnected();
+    bool ret = account()->isConnected() && (!internalContact().isNull());
+    kDebug(TELEPATHY_DEBUG_AREA) << ret;
+
+    return account()->isConnected() && (!internalContact().isNull());
 }
 
 void TelepathyContact::serialize(QMap< QString, QString >& serializedData,
@@ -92,34 +94,37 @@ Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    Q_UNUSED(canCreate);
+    Kopete::ContactPtrList members;
+    members << this;
+
+    return manager(members, canCreate);
+}
+
+Kopete::ChatSession *TelepathyContact::manager(Kopete::ContactPtrList members, CanCreateFlags canCreate)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
 
     if (d->currentChatSession.isNull()) {
         kDebug(TELEPATHY_DEBUG_AREA);
-        QList<Kopete::Contact*> others;
-        others.append(this);
 
-        // \brief: try to find existing chat session
+        // Try to find existing chat session
         Kopete::ChatSession *existingSession =
                 Kopete::ChatSessionManager::self()->findChatSession(account()->myself(),
-                                                                    others,
+                                                                    members,
                                                                     account()->protocol());
         if (existingSession) {
             kDebug(TELEPATHY_DEBUG_AREA) << "chat exist";
             d->currentChatSession = existingSession;
-        // See API-Docs for libkopete. If no message manager exists, we must create one anyway.
-        // } else if (canCreate == Kopete::Contact::CanCreate) {
-        } else {
+        } else if (canCreate == Kopete::Contact::CanCreate) {
             kDebug(TELEPATHY_DEBUG_AREA) << "chat not exist";
             TelepathyChatSession *newSession = new TelepathyChatSession(account()->myself(),
-                                                                        others,
+                                                                        members,
                                                                         account()->protocol());
             newSession->createTextChannel(internalContact());
             d->currentChatSession = newSession;
         }
     }
 
-    Q_ASSERT(d->currentChatSession != 0);
     return d->currentChatSession;
 }
 

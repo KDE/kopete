@@ -52,6 +52,8 @@ public:
     virtual QList<KAction *> *customContextMenuActions();
     virtual QList<KAction *> *customContextMenuActions(Kopete::ChatSession *manager);
     virtual Kopete::ChatSession *manager(CanCreateFlags canCreate = CannotCreate);
+    virtual Kopete::ChatSession *manager(Kopete::ContactPtrList members,
+                                         CanCreateFlags canCreate = CannotCreate);
 
     void setInternalContact(QSharedPointer<Tp::Contact> contact);
     QSharedPointer<Tp::Contact> internalContact();
