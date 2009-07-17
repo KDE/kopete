@@ -21,6 +21,7 @@
 #include <kopeteonlinestatus.h>
 #include <kopeteproperty.h>
 
+#include <TelepathyQt4/ClientRegistrar>
 #include <TelepathyQt4/Constants>
 
 #define TELEPATHY_DEBUG_AREA 14400
@@ -73,6 +74,7 @@ public:
 
 private:
     static TelepathyProtocol *s_self;
+    Tp::ClientRegistrarPtr m_clientRegistrar;
 };
 
 
