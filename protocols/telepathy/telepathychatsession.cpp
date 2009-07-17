@@ -195,3 +195,8 @@ Tp::ChannelRequestPtr TelepathyChatSession::channelRequest()
     return m_channelRequest;
 }
 
+void TelepathyChatSession::setTextChannel(Tp::TextChannelPtr textChannel)
+{
+    m_textChannel = textChannel;
+}
+

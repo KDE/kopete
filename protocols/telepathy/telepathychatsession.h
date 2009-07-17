@@ -52,6 +52,7 @@ public:
     void createTextChannel(QSharedPointer<Tp::Contact>);
 
     Tp::ChannelRequestPtr channelRequest();
+    void setTextChannel(Tp::TextChannelPtr textChannel);
 
 private slots:
     void sendMessage(Kopete::Message &);
