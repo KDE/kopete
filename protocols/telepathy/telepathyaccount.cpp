@@ -719,3 +719,8 @@ void TelepathyAccount::fetchContactList()
     getContactManager()->fetchContactList();
 }
 
+Tp::AccountPtr TelepathyAccount::account()
+{
+    return m_account;
+}
+

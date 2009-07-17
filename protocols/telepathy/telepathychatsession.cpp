@@ -19,6 +19,8 @@
  */
 
 #include "telepathychatsession.h"
+
+#include "telepathyaccount.h"
 #include "telepathyprotocol.h"
 #include "common.h"
 
@@ -29,7 +31,7 @@
 #include <TelepathyQt4/Contact>
 #include <TelepathyQt4/Connection>
 #include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/PendingChannel>
+#include <TelepathyQt4/PendingChannelRequest>
 
 TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol)
         : Kopete::ChatSession(user, others, protocol)
@@ -51,20 +53,26 @@ void TelepathyChatSession::createTextChannel(QSharedPointer<Tp::Contact> contact
     kDebug(TELEPATHY_DEBUG_AREA);
     m_contact = contact;
 
-    Tp::ConnectionPtr connection = contact->manager()->connection();
+    QString preferredHandler("org.freedesktop.Telepathy.Client.KopetePlugin");
 
-    QVariantMap request;
-    request.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"),
-                   TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT);
-    request.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandleType"),
-                   Tp::HandleTypeContact);
-    request.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandle"),
-                   connection->selfHandle());
+    TelepathyAccount *telepathyAccount = qobject_cast<TelepathyAccount*>(account());
+    if (!telepathyAccount) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Null telepathy account. Fail.";
+        return;
+    }
 
-    QObject::connect(connection->createChannel(request),
-                     SIGNAL(finished(Tp::PendingOperation*)),
-                     this,
-                     SLOT(createChannelFinished(Tp::PendingOperation*)));
+    Tp::AccountPtr account = telepathyAccount->account();
+    if (account.isNull()) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Null account. Fail.";
+        return;
+    }
+
+    Tp::PendingOperation *op =
+            account->ensureTextChat(contact, QDateTime::currentDateTime(), preferredHandler);
+
+    connect(op,
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onEnsureChannelFinished(Tp::PendingOperation*)));
 }
 
 void TelepathyChatSession::sendMessage(Kopete::Message &message)
@@ -77,10 +85,10 @@ void TelepathyChatSession::sendMessage(Kopete::Message &message)
     m_textChannel->send(message.plainBody());
 }
 
-void TelepathyChatSession::createChannelFinished(Tp::PendingOperation* operation)
+void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-
+/* FIXME: GG 16/7/09
     if (TelepathyCommons::isOperationError(operation))
         return;
 
@@ -105,6 +113,7 @@ void TelepathyChatSession::createChannelFinished(Tp::PendingOperation* operation
                      SIGNAL(pendingMessageReceived(const Tp::ReceivedMessage &)),
                      this,
                      SLOT(pendingMessageReceived(const Tp::ReceivedMessage &)));
+                     */
 }
 
 void TelepathyChatSession::closingChatSession(Kopete::ChatSession *kmm)

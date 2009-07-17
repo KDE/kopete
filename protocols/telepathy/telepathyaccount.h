@@ -26,6 +26,7 @@
 
 #include <kopeteaccount.h>
 
+#include <TelepathyQt4/Account>
 #include <TelepathyQt4/ConnectionManager>
 #include <TelepathyQt4/AccountManager>
 #include <TelepathyQt4/PendingOperation>
@@ -50,6 +51,7 @@ public:
     bool readConfig();
     QString connectionProtocol() const;
     Tp::ProtocolParameterList allConnectionParameters() const;
+    Tp::AccountPtr account();
 
 public slots:
     virtual void connect(const Kopete::OnlineStatus &initialStatus = Kopete::OnlineStatus());
