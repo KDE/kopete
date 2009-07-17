@@ -34,7 +34,8 @@
 #include <TelepathyQt4/PendingChannelRequest>
 
 TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol)
-        : Kopete::ChatSession(user, others, protocol)
+        : Kopete::ChatSession(user, others, protocol),
+        m_pendingChannelRequest(0)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     Kopete::ChatSessionManager::self()->registerChatSession(this);
@@ -67,13 +68,13 @@ void TelepathyChatSession::createTextChannel(QSharedPointer<Tp::Contact> contact
         return;
     }
 
-    Tp::PendingChannelRequest *op =
+    m_pendingChannelRequest =
             account->ensureTextChat(contact, QDateTime::currentDateTime(), preferredHandler);
 
-    m_channelRequest = op->channelRequest();
+    m_channelRequest = m_pendingChannelRequest->channelRequest();
     kDebug(TELEPATHY_DEBUG_AREA) << "m_channelRequest:" << m_channelRequest.data();
 
-    connect(op,
+    connect(m_pendingChannelRequest,
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onEnsureChannelFinished(Tp::PendingOperation*)));
 }
@@ -94,6 +95,9 @@ void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* operati
 
     if (TelepathyCommons::isOperationError(operation))
         return;
+
+    m_channelRequest = m_pendingChannelRequest->channelRequest();
+    m_pendingChannelRequest = 0;
 
     //m_textChannel = pc->channel();
 /*
@@ -193,5 +197,10 @@ void TelepathyChatSession::setTextChannel(Tp::TextChannelPtr textChannel)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     m_textChannel = textChannel;
+}
+
+Tp::PendingChannelRequest *TelepathyChatSession::pendingChannelRequest()
+{
+    return m_pendingChannelRequest;
 }
 

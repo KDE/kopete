@@ -102,10 +102,10 @@ void TelepathyChannelHandler::handleChannels(const Tp::MethodInvocationContextPt
             foreach (Tp::ChannelRequestPtr crp, requestsSatisfied) {
                 kDebug(TELEPATHY_DEBUG_AREA) << "Channel Request Pointer:" << crp.data();
                 kDebug(TELEPATHY_DEBUG_AREA) << "Telepathy Chat Session:" << tpc;
-                kDebug(TELEPATHY_DEBUG_AREA) << "Session CRP:" << tpc->channelRequest().data();
-                if (tpc->channelRequest()) {
+                kDebug(TELEPATHY_DEBUG_AREA) << "Session CRP:" << tpc->pendingChannelRequest()->channelRequest().data();
+                if (tpc->pendingChannelRequest()->channelRequest()) {
                     kDebug(TELEPATHY_DEBUG_AREA) << "TPC NON_NULL";
-                    if (tpc->channelRequest()->userActionTime() == crp->userActionTime()) {
+                    if (tpc->pendingChannelRequest()->channelRequest()->userActionTime() == crp->userActionTime()) {
                         tpc->setTextChannel(Tp::TextChannelPtr(textChannel));
                         break;
                     }
