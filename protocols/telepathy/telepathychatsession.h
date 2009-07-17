@@ -31,6 +31,7 @@
 #include <TelepathyQt4/TextChannel>
 #include <TelepathyQt4/Message>
 #include <TelepathyQt4/Constants>
+#include <TelepathyQt4/ChannelRequest>
 
 namespace Telepathy
 {
@@ -50,6 +51,8 @@ public:
 
     void createTextChannel(QSharedPointer<Tp::Contact>);
 
+    Tp::ChannelRequestPtr channelRequest();
+
 private slots:
     void sendMessage(Kopete::Message &);
     void onEnsureChannelFinished(Tp::PendingOperation*);
@@ -63,6 +66,7 @@ private slots:
 private:
     QSharedPointer<Tp::Contact> m_contact;
     QSharedPointer<Tp::TextChannel> m_channel;
+    Tp::ChannelRequestPtr m_channelRequest;
     Tp::TextChannelPtr m_textChannel;
 };
 

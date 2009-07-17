@@ -67,7 +67,7 @@ void TelepathyChatSession::createTextChannel(QSharedPointer<Tp::Contact> contact
         return;
     }
 
-    Tp::PendingOperation *op =
+    Tp::PendingChannelRequest *op =
             account->ensureTextChat(contact, QDateTime::currentDateTime(), preferredHandler);
 
     connect(op,
@@ -88,17 +88,20 @@ void TelepathyChatSession::sendMessage(Kopete::Message &message)
 void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-/* FIXME: GG 16/7/09
+
     if (TelepathyCommons::isOperationError(operation))
         return;
 
-    Tp::PendingChannel *pc = qobject_cast<Tp::PendingChannel*>(operation);
+    Tp::PendingChannelRequest *pendingChannelRequest =
+            qobject_cast<Tp::PendingChannelRequest*>(operation);
 
-    if (!pc) {
-        kDebug(TELEPATHY_DEBUG_AREA) << "Error PendingChannel casting!";
+    if (!pendingChannelRequest) {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Error PendingChannelRequest casting!";
         return;
     }
 
+    m_channelRequest = pendingChannelRequest->channelRequest();
+/*
     //m_textChannel = pc->channel();
 
     QObject::connect(m_textChannel.data(),
@@ -185,5 +188,10 @@ void TelepathyChatSession::pendingMessageRemoved(const Tp::ReceivedMessage &mess
     Q_UNUSED(message);
 
     // TODO: Implement me!
+}
+
+Tp::ChannelRequestPtr TelepathyChatSession::channelRequest()
+{
+    return m_channelRequest;
 }
 
