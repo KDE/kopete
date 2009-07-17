@@ -32,6 +32,7 @@
 #include <TelepathyQt4/Connection>
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/PendingChannelRequest>
+#include <TelepathyQt4/PendingReady>
 
 TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol)
         : Kopete::ChatSession(user, others, protocol),
@@ -98,22 +99,6 @@ void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* operati
 
     m_channelRequest = m_pendingChannelRequest->channelRequest();
     m_pendingChannelRequest = 0;
-
-    //m_textChannel = pc->channel();
-/*
-    QObject::connect(m_textChannel.data(),
-                     SIGNAL(messageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &)),
-                     this,
-                     SLOT(messageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &)));
-    QObject::connect(m_textChannel.data(),
-                     SIGNAL(messageReveiced(const Tp::ReceivedMessage &)),
-                     this,
-                     SLOT(messageReveiced(const Tp::ReceivedMessage &)));
-    QObject::connect(m_textChannel.data(),
-                     SIGNAL(pendingMessageReceived(const Tp::ReceivedMessage &)),
-                     this,
-                     SLOT(pendingMessageReceived(const Tp::ReceivedMessage &)));
-                     */
 }
 
 void TelepathyChatSession::closingChatSession(Kopete::ChatSession *kmm)
@@ -197,6 +182,36 @@ void TelepathyChatSession::setTextChannel(Tp::TextChannelPtr textChannel)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     m_textChannel = textChannel;
+
+    // We must get the text channel ready with the required features.
+    Tp::Features features;
+    features << Tp::TextChannel::FeatureCore
+             << Tp::TextChannel::FeatureMessageCapabilities
+             << Tp::TextChannel::FeatureMessageQueue
+             << Tp::TextChannel::FeatureMessageSentSignal;
+
+    connect(m_textChannel->becomeReady(features),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onTextChannelReady(Tp::PendingOperation*)));
+}
+
+void TelepathyChatSession::onTextChannelReady(Tp::PendingOperation *op)
+{
+    if (TelepathyCommons::isOperationError(op))
+        return;
+
+    QObject::connect(m_textChannel.data(),
+                     SIGNAL(messageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &)),
+                     this,
+                     SLOT(messageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &)));
+    QObject::connect(m_textChannel.data(),
+                     SIGNAL(messageReceived(const Tp::ReceivedMessage &)),
+                     this,
+                     SLOT(messageReceived(const Tp::ReceivedMessage &)));
+    QObject::connect(m_textChannel.data(),
+                     SIGNAL(pendingMessageRemoved(const Tp::ReceivedMessage &)),
+                     this,
+                     SLOT(pendingMessageRemoved(const Tp::ReceivedMessage &)));
 }
 
 Tp::PendingChannelRequest *TelepathyChatSession::pendingChannelRequest()

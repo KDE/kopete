@@ -64,6 +64,7 @@ private slots:
     void messageSent(const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &sentMessageToken);
     void messageReceived(const Tp::ReceivedMessage &message);
     void pendingMessageRemoved(const Tp::ReceivedMessage &message);
+    void onTextChannelReady(Tp::PendingOperation *op);
 
 
 private:
