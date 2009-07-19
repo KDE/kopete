@@ -2,6 +2,7 @@
     historyguiclient.h
 
     Copyright (c) 2003 by Olivier Goffart        <ogoffart@kde.org>
+    Copyright (c) 2009 by Kaushik Saurabh        <roideuniverse@gmailcom>
 
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 

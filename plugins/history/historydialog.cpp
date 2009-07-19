@@ -3,6 +3,7 @@
 
     Copyright (c) 2002 by  Richard Stellingwerff <remenic@linuxfromscratch.org>
     Copyright (c) 2004 by  Stefan Gehn <metz AT gehn.net>
+    Copyright (c) 2009 by Kaushik Saurabh        <roideuniverse@gmailcom>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 

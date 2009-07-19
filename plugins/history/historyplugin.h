@@ -3,6 +3,7 @@
 
     Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart at kde.org>
               (c) 2003 by Stefan Gehn                 <metz AT gehn.net>
+	      (c) 2009 by Kaushik Saurabh        <roideuniverse@gmailcom>
     Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
