@@ -25,7 +25,10 @@
 #include <akonadi/item.h>
 #include <Akonadi/Collection>
 #include <QDateTime>
+#include "kopetecontact.h"
+#include "kopetemessage.h"
 #include "history.h"
+#include <KJob>
 
 class QDate;
 class QTimer;
@@ -91,9 +94,11 @@ public:
 	 * read @param lines message from the current position
 	 * from Kopete::Contact @param c in the given @param sens
 	 */
-	QList<Kopete::Message> readMessages(int lines,
+	void readMessages(int lines,
 		const Kopete::Contact *c=0, Sens sens=Default,
 		bool reverseOrder=false, bool colorize=true);
+		
+	QList<Kopete::Message> retrunReadMessages();
 
 	/** 
 	 * Same as the following, but for one date. I did'nt reuse the above function
@@ -161,7 +166,7 @@ private:
 	 */
 //	QDomDocument getDocument(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
 //	QDomDocument getDocument(const Kopete::Contact *c, const QDate date, bool canLoad=true, bool* contain=0L);
-
+	void getHistoryx(const Kopete::Contact *c, unsigned int month, bool canLoad=true , bool* contain=0L);
 	History getHistory(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
 	History getHistory(const Kopete::Contact *c, const QDate date, bool canLoad=true, bool* contain=0L);
 
@@ -216,6 +221,22 @@ private:
 	 * it contains the number of the current month.
 	 */
 	int m_realMonth;
+	
+	//for the append message function
+	History m_getHistory;
+	Kopete::Message m_message;
+	const Kopete::Contact * m_contact;
+	unsigned int m_month;
+	
+	//for the read message function
+	QList<Kopete::Message> m_readmessages;
+	History m_readmessagesHistory;
+	int m_lines;
+	const Kopete::Contact *m_readmessagesContact;
+	const Kopete::Contact *m_currentContact;
+	Sens m_readmessagesSens;
+	bool m_reverseOrder;
+	bool m_colorize;
 
 
 private slots:
@@ -229,6 +250,19 @@ private slots:
 	 * connected to the m_saveTimer signal
 	 */
 	void modifyItem();
+	
+	void emperimentalSlot(KJob*);
+	void appendMessage2();
+	
+	void readmessagesBlock2();
+	void readmessagesBlock3();
+	void readmessagesBlock31();
+	void readMessagesBlock4();
+	void readMessagesBlock5();
+  signals:
+	void readMessagesDoneSignal();
+	void appendMessageDoneSignal();
+	void getHistoryxDone();
 	
 };
 

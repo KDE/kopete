@@ -24,9 +24,12 @@
 #include <kdebug.h>
 #include "kopeteplugin.h"
 #include "kopetemessagehandler.h"
+#include "historylogger.h"
 
 class KopeteView;
-namespace Kopete { class ChatSession; }
+namespace Kopete {
+class ChatSession;
+}
 
 class HistoryGUIClient;
 class HistoryPlugin;
@@ -36,31 +39,44 @@ class HistoryPlugin;
  */
 class HistoryMessageLogger : public Kopete::MessageHandler
 {
-	QPointer<HistoryPlugin> history;
+    QPointer<HistoryPlugin> history;
+    QPointer<Kopete::MessageEvent> m_event;
 public:
-	HistoryMessageLogger( HistoryPlugin *history ) : history(history) {}
-	void handleMessage( Kopete::MessageEvent *event );
+    HistoryMessageLogger( HistoryPlugin *history ) : history(history)
+    {
+        kDebug() <<"\n history message logger constructor";
+    }
+    void handleMessage( Kopete::MessageEvent *event );
+//	void handleMessage2();
+private:
+    Q_OBJECT
+signals:
+    void handleMessageSignal();
+private slots:
+    void handleMessage2();
 };
 
 class HistoryMessageLoggerFactory : public Kopete::MessageHandlerFactory
 {
-	HistoryPlugin *history;
+    HistoryPlugin *history;
 public:
-	explicit HistoryMessageLoggerFactory( HistoryPlugin *history ) : history(history) {}
+    explicit HistoryMessageLoggerFactory( HistoryPlugin *history ) : history(history) {
+        kDebug() <<"\n history message logger factory constructor";
+    }
 
-	Kopete::MessageHandler *create( Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction )
-	{
-		kDebug()<<"\n\n\n\n\n**** as expected you have ENTERED the Message handle create\n\n";
-		if( direction != Kopete::Message::Inbound )
-			return 0;
-		kDebug()<<"\n\n\n\n\n***returning new histor(HistoryMessageLogger)  instance";
-		return new HistoryMessageLogger(history);
-	}
-	int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
-	{
-		 kDebug()<<"\n\n\n\n\n\n*** filterPosition function entered";
-		return Kopete::MessageHandlerFactory::InStageToSent+5;
-	}
+    Kopete::MessageHandler *create( Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction )
+    {
+        kDebug()<<"\n**** as expected you have ENTERED the Message handle create\n\n";
+        if ( direction != Kopete::Message::Inbound )
+            return 0;
+        kDebug()<<"\n***returning new histor(HistoryMessageLogger)  instance";
+        return new HistoryMessageLogger(history);
+    }
+    int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
+    {
+        kDebug()<<"\n*** filterPosition function entered";
+        return Kopete::MessageHandlerFactory::InStageToSent+5;
+    }
 };
 
 /**
@@ -68,34 +84,42 @@ public:
   */
 class HistoryPlugin : public Kopete::Plugin
 {
-	Q_OBJECT
-	public:
-		HistoryPlugin( QObject *parent, const QStringList &args );
-		~HistoryPlugin();
+    Q_OBJECT
+public:
+    HistoryPlugin( QObject *parent, const QStringList &args );
+    ~HistoryPlugin();
 
-		/**
-		 * convert the Kopete 0.6 / 0.5 history to the new format
-		 */
-		static void convertOldHistory();
-		/**
-		 * return true if an old history has been detected, and no new ones
-		 */
-		static bool detectOldHistory();
-		
-		void messageDisplayed(const Kopete::Message &msg);
-		
-	private slots:
-		void slotViewCreated( KopeteView* );
-		void slotViewHistory();
-		void slotKMMClosed( Kopete::ChatSession* );
-		void slotSettingsChanged();
+    /**
+     * convert the Kopete 0.6 / 0.5 history to the new format
+     */
+    static void convertOldHistory();
+    /**
+     * return true if an old history has been detected, and no new ones
+     */
+    static bool detectOldHistory();
 
-	private:
-		HistoryMessageLoggerFactory m_loggerFactory;
-		QMap<Kopete::ChatSession*,HistoryGUIClient*> m_loggers;
-		Kopete::Message m_lastmessage;
+    void messageDisplayed(const Kopete::Message &msg);
 
-		void m();
+private slots:
+    void slotViewCreated( KopeteView* );
+    void slotViewCreated2();
+    void slotViewHistory();
+    void slotKMMClosed( Kopete::ChatSession* );
+    void slotSettingsChanged();
+
+private:
+    HistoryMessageLoggerFactory m_loggerFactory;
+    QMap<Kopete::ChatSession*,HistoryGUIClient*> m_loggers;
+    Kopete::Message m_lastmessage;
+    
+    HistoryLogger *m_loggerx;
+    Kopete::ChatSession *m_currentChatSessionx;
+    KopeteView *m_currentViewx;
+
+    void m();
+signals:
+    void messageDisplayedDoneSignal();
+
 };
 
 #endif

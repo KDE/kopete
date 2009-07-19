@@ -49,7 +49,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  
 HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
         : Kopete::Plugin( HistoryPluginFactory::componentData(), parent ), m_loggerFactory( this )
 {
-    kDebug() << "********History Plugin Constructor\n\n ";
+    kDebug() << "\n********History Plugin Constructor\n\n ";
 
     KAction *viewMetaContactHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
 
@@ -93,13 +93,13 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
     {
         if (!m_loggers.contains(*it))
         {
-            kDebug()<<"\n***\n\n********\n*******still inin historyplugin constructor before new historyGUIClinet \n\n";
+            kDebug()<<"\n*still in historyplugin constructor before new historyGUIClinet \n\n";
             m_loggers.insert(*it, new HistoryGUIClient( *it ) );
             connect( *it, SIGNAL(closing(Kopete::ChatSession*)),
                      this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
         }
     }
-    kDebug()<<"\n****exiting KKKKKKKKKKKKKKKKKKK constructor\n\n\n";
+    kDebug()<<"\n****exiting KKKKKKKKKKKKKKKKKKK constructor";
 }
 
 
@@ -110,45 +110,64 @@ HistoryPlugin::~HistoryPlugin()
 
 void HistoryMessageLogger::handleMessage( Kopete::MessageEvent *event )
 {
-    kDebug() << "\n\n\n\n***historyplugin.cpp HistoryMessageLogger::handleMessage\n\n ";
+    kDebug() << "\n***historyplugin.cpp HistoryMessageLogger::handleMessage\n\n ";
     kDebug()<<"\n*from the event a copy of message is passed to message displayed function of historyPlugin\n";
-
+    connect(history,SIGNAL(messageDisplayedDoneSignal()), this, SLOT(handleMessage2()) );
+    m_event=event;
     if (history)
         history->messageDisplayed( event->message() );
+    
+//    MessageHandler::handleMessage( m_event );
 
-    kDebug()<<"\n\n\nBefore *** MessageHnadle::handleMessage(event) executed";
-    MessageHandler::handleMessage( event );
-    kDebug()<<"*** MessageHnadle::handleMessage(event) executed \n";
+}
+
+void HistoryMessageLogger::handleMessage2()
+{
+    disconnect(history,SIGNAL(messageDisplayedDoneSignal()),this,SLOT(handleMessage2()));
+    kDebug()<<"\nBefore *** MessageHnadle::handleMessage(event) executed";
+    if (!m_event.isNull() )
+      MessageHandler::handleMessage( m_event );
+    
+    kDebug()<<"\n*** MessageHnadle::handleMessage(event) executed \n";
+    
+//    m_event= Kopete::MessageEvent::Nothing;
+//    disconnect(history,SIGNAL(messageDisplayedDoneSignal()),0,0);
 }
 
 void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
 {
-    kDebug() << "\n\n*** entered the function messageDisplayed\n\n";
+    kDebug() << "\n\n*** entered the function messageDisplayed";
     if (m.direction()==Kopete::Message::Internal || !m.manager() ||
             (m.type() == Kopete::Message::TypeFileTransferRequest && m.plainBody().isEmpty()) )
         return;
 
     if (!m_loggers.contains(m.manager()))
     {
-        kDebug()<<"*** m_loggers(qmap-session-GUIclient) has no manager(==chat session)\n\nso insert it";
-        kDebug()<<"insertion of manager means a new session-> a GUIClinet is born";
+        kDebug()<<"\n*** m_loggers(qmap-session-GUIclient) has no manager(==chat session)*so insert it";
+        kDebug()<<"\ninsertion of manager means a new session-> a GUIClinet is born";
         m_loggers.insert(m.manager() , new HistoryGUIClient( m.manager() ) );
 
-        kDebug()<<"\n\n\nmanager has been inserted\n a GUIclient has been born";
+        kDebug()<<"\nmanager has been inserted\n a GUIclient has been born";
 
         connect(m.manager(), SIGNAL(closing(Kopete::ChatSession*)),
                 this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
     }
-
+    
+    m_lastmessage=m;
+    
     HistoryLogger *l=m_loggers[m.manager()]->logger();
+//    kDebug() << "disconnect(l, SIGNAL(appendMessageDoneSignal()), 0,0)";
+//    disconnect(l, SIGNAL(appendMessageDoneSignal()), 0,0) ;
     if (l)
     {
 
         QList<Kopete::Contact*> mb = m.manager()->members();
+	kDebug() <<"\n calling append message";
+	connect (l,SIGNAL(appendMessageDoneSignal()), this, SIGNAL(messageDisplayedDoneSignal()) );
         l->appendMessage(m,mb.first());
+
     }
 
-    m_lastmessage=m;
 }
 
 
@@ -180,6 +199,9 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 
     KopeteView *m_currentView = v;
     Kopete::ChatSession *m_currentChatSession = v->msgManager();
+    
+    m_currentChatSessionx=m_currentChatSession;
+    m_currentViewx=m_currentView;
 
     if (!m_currentChatSession)
         return; //i am sorry
@@ -187,7 +209,7 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
     const Kopete::ContactPtrList& mb = m_currentChatSession->members();
 
     if (!m_loggers.contains(m_currentChatSession))
-    {
+    {	kDebug() << "m_logger dosent contain current chat session, so inserting";
         m_loggers.insert(m_currentChatSession , new HistoryGUIClient( m_currentChatSession ) );
         connect( m_currentChatSession, SIGNAL(closing(Kopete::ChatSession*)),
                  this , SLOT(slotKMMClosed(Kopete::ChatSession*)));
@@ -197,21 +219,28 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
         return;
 
     HistoryLogger *logger = m_loggers[m_currentChatSession]->logger();
+    m_loggerx=logger;
 
     logger->setPositionToLast();
-
-    QList<Kopete::Message> msgs = logger->readMessages(nbAutoChatWindow,
-                                  mb.first(), HistoryLogger::AntiChronological, true, true);
-
+    kDebug() << "\ncalling readmessages and connectin with sig";
+    connect(logger,SIGNAL(readMessagesDoneSignal()), this,SLOT(slotViewCreated2()));
+    logger->readMessages(nbAutoChatWindow,mb.first(), HistoryLogger::AntiChronological, true, true);
+    
+}
+void HistoryPlugin::slotViewCreated2()
+{
+    disconnect(m_loggerx,SIGNAL(readMessagesDoneSignal()), this,SLOT(slotViewCreated2()));
+    kDebug()<<"slot view created2 disconnected";
+    QList<Kopete::Message> msgs = m_loggerx->retrunReadMessages();
     // make sure the last message is not the one which will be appened right
     // after the view is created (and which has just been logged in)
     if (!msgs.isEmpty() && (msgs.last().plainBody() == m_lastmessage.plainBody()) &&
-            (m_lastmessage.manager() == m_currentChatSession))
+            (m_lastmessage.manager() == m_currentChatSessionx))
     {
         msgs.takeLast();
     }
 
-    m_currentView->appendMessages( msgs );
+    m_currentViewx->appendMessages( msgs );
 }
 
 

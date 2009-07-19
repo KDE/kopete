@@ -94,9 +94,10 @@ void HistoryGUIClient::slotPrevious()
 	m_currentView->clear();
 
 	QList<Kopete::Contact*> mb = m_manager->members();
-	QList<Kopete::Message> msgs = m_logger->readMessages (
+	m_logger->readMessages (
 	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 	                                  HistoryLogger::AntiChronological, true );
+	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
 
 	actionPrev->setEnabled ( msgs.count() == HistoryConfig::number_ChatWindow() );
 	actionNext->setEnabled ( true );
@@ -112,10 +113,10 @@ void HistoryGUIClient::slotLast()
 
 	QList<Kopete::Contact*> mb = m_manager->members();
 	m_logger->setPositionToLast();
-	QList<Kopete::Message> msgs = m_logger->readMessages (
+	m_logger->readMessages (
 	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 	                                  HistoryLogger::AntiChronological, true );
-
+	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
 	actionPrev->setEnabled ( true );
 	actionNext->setEnabled ( false );
 	actionLast->setEnabled ( false );
@@ -130,10 +131,10 @@ void HistoryGUIClient::slotNext()
 	m_currentView->clear();
 
 	QList<Kopete::Contact*> mb = m_manager->members();
-	QList<Kopete::Message> msgs = m_logger->readMessages (
+	m_logger->readMessages (
 	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 	                                  HistoryLogger::Chronological, false );
-
+	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
 	actionPrev->setEnabled ( true );
 	actionNext->setEnabled ( msgs.count() == HistoryConfig::number_ChatWindow() );
 	actionLast->setEnabled ( msgs.count() == HistoryConfig::number_ChatWindow() );
@@ -149,10 +150,11 @@ void HistoryGUIClient::slotQuote()
 		return;
 
 	m_logger->setPositionToLast();
-	QList<Kopete::Message> msgs = m_logger->readMessages (
+	m_logger->readMessages (
 	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
 	                                  HistoryLogger::AntiChronological, true );
-
+	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
+	
 	Kopete::Message msg = m_manager->view()->currentMessage();
 	QString body = msgs.isEmpty() ? "" : msgs.last().plainBody();
 	kDebug(14310) << "Quoting last message " << body;
