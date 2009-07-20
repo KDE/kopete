@@ -93,7 +93,8 @@ private slots:
 
     void onPendingContactsForAddingReady(Tp::PendingOperation *op);
     void onContactAdded(Tp::PendingOperation *op);
-    void onContactDeleteFinished(Tp::PendingOperation *op);
+    void onContactDeleteRemoveSubscriptionFinished(Tp::PendingOperation *op);
+    void onContactDeleteRemovePublicationFinished(Tp::PendingOperation *op);
 
 protected:
     virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);

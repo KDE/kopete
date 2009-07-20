@@ -224,7 +224,9 @@ void TelepathyContact::deleteContact()
         return;
     }
 
-    tAccount->deleteContact(d->internalContact);
+    if (d->internalContact) {
+        tAccount->deleteContact(d->internalContact);
+    }
 }
 
 

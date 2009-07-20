@@ -772,15 +772,35 @@ void TelepathyAccount::onContactAdded(Tp::PendingOperation *op)
 void TelepathyAccount::deleteContact(Tp::ContactPtr contact)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-    QObject::connect(contact->removePresenceSubscription(), SIGNAL(finished(Tp::PendingOperation*)),
-                     this, SLOT(onContactDeleteFinished(Tp::PendingOperation*)));
+
+    // When we delete a contact, remove from subscribe and publish lists.
+    if (contact->subscriptionState() == Tp::Contact::PresenceStateYes) {
+        QObject::connect(contact->removePresenceSubscription(), SIGNAL(finished(Tp::PendingOperation*)),
+                         this, SLOT(onContactDeleteRemoveSubscriptionFinished(Tp::PendingOperation*)));
+    }
+
+    if (contact->publishState() == Tp::Contact::PresenceStateYes) {
+        QObject::connect(contact->removePresencePublication(), SIGNAL(finished(Tp::PendingOperation*)),
+                         this, SLOT(onContactDeleteRemovePublicationFinished(Tp::PendingOperation*)));
+    }
 }
 
-void TelepathyAccount::onContactDeleteFinished(Tp::PendingOperation *op)
+void TelepathyAccount::onContactDeleteRemoveSubscriptionFinished(Tp::PendingOperation *op)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     if (op->isError()) {
-        kWarning(TELEPATHY_DEBUG_AREA) << "Deleting contact failed:" << op->errorName()
+        kWarning(TELEPATHY_DEBUG_AREA) << "Deleting contact (removing subscription) failed:"
+                                       << op->errorName()
+                                       << op->errorMessage();
+    }
+}
+
+void TelepathyAccount::onContactDeleteRemovePublicationFinished(Tp::PendingOperation *op)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    if (op->isError()) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Deleting contact (removing publication) failed:"
+                                       << op->errorName()
                                        << op->errorMessage();
     }
 }

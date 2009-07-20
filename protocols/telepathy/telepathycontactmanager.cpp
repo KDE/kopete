@@ -131,7 +131,10 @@ void TelepathyContactManager::onConnectionReady(Tp::PendingOperation *operation)
     QSet<QSharedPointer<Tp::Contact> > contacts = d->connection->contactManager()->allKnownContacts();
 
     foreach(QSharedPointer<Tp::Contact> contact, contacts) {
-        createContact(contact);
+        if ((contact->publishState() == Tp::Contact::PresenceStateYes) ||
+            (contact->subscriptionState() == Tp::Contact::PresenceStateYes) ) {
+            createContact(contact);
+        }
     }
 }
 
