@@ -58,6 +58,9 @@ public:
     void setInternalContact(QSharedPointer<Tp::Contact> contact);
     QSharedPointer<Tp::Contact> internalContact();
 
+public Q_SLOTS:
+    virtual void deleteContact();
+
 private slots:
     void onAliasChanged(const QString &);
     void onAvatarTokenChanged(const QString &);

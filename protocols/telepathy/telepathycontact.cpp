@@ -213,6 +213,20 @@ QSharedPointer<Tp::Contact> TelepathyContact::internalContact()
     return d->internalContact;
 }
 
+void TelepathyContact::deleteContact()
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    TelepathyAccount *tAccount = qobject_cast<TelepathyAccount*>(account());
+
+    if (!tAccount) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Account is not a TelepathyAccount.";
+        return;
+    }
+
+    tAccount->deleteContact(d->internalContact);
+}
+
 
 #include "telepathycontact.moc"
 

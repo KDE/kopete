@@ -53,6 +53,7 @@ public:
     Tp::ProtocolParameterList allConnectionParameters() const;
     Tp::AccountPtr account();
     void addNewContact(const QString &id);
+    void deleteContact(Tp::ContactPtr contact);
 
 public slots:
     virtual void connect(const Kopete::OnlineStatus &initialStatus = Kopete::OnlineStatus());
@@ -92,6 +93,7 @@ private slots:
 
     void onPendingContactsForAddingReady(Tp::PendingOperation *op);
     void onContactAdded(Tp::PendingOperation *op);
+    void onContactDeleteFinished(Tp::PendingOperation *op);
 
 protected:
     virtual bool createContact(const QString &contactId, Kopete::MetaContact *parentContact);

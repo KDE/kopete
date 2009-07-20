@@ -769,3 +769,19 @@ void TelepathyAccount::onContactAdded(Tp::PendingOperation *op)
     fetchContactList();
 }
 
+void TelepathyAccount::deleteContact(Tp::ContactPtr contact)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    QObject::connect(contact->removePresenceSubscription(), SIGNAL(finished(Tp::PendingOperation*)),
+                     this, SLOT(onContactDeleteFinished(Tp::PendingOperation*)));
+}
+
+void TelepathyAccount::onContactDeleteFinished(Tp::PendingOperation *op)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    if (op->isError()) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Deleting contact failed:" << op->errorName()
+                                       << op->errorMessage();
+    }
+}
+
