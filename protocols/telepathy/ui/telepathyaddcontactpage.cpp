@@ -15,21 +15,24 @@
  *************************************************************************
  */
 #include "telepathyaddcontactpage.h"
+
 #include "ui_telepathyaddcontactpage.h"
 
-// KDE includes
-#include <kmessagebox.h>
-#include <kdebug.h>
-#include <klocale.h>
-
-// QtTapioca includes
-#include <QtTapioca/Contact>
-
-// Local includes
 #include "telepathyaccount.h"
 #include "telepathycontact.h"
 #include "telepathycontactmanager.h"
 #include "telepathyprotocol.h"
+
+#include <kmessagebox.h>
+#include <kdebug.h>
+#include <klocale.h>
+
+#include <TelepathyQt4/Account>
+#include <TelepathyQt4/Connection>
+#include <TelepathyQt4/Contact>
+#include <TelepathyQt4/ContactManager>
+#include <TelepathyQt4/PendingContacts>
+#include <TelepathyQt4/PendingOperation>
 
 class TelepathyAddContactPage::Private
 {
@@ -63,32 +66,28 @@ bool TelepathyAddContactPage::apply(Kopete::Account *account, Kopete::MetaContac
     }
     TelepathyAccount *tAccount = static_cast<TelepathyAccount*>(account);
 
+    Tp::ConnectionPtr connection = tAccount->account()->connection();
+
+    if (!connection) {
+        KMessageBox::error(this, i18n("You must be connected to add a contact."), i18n("Telepathy plugin"));
+        kWarning(TELEPATHY_DEBUG_AREA) << "TelepathyAccount->account()->connection() is null.";
+        return false;
+    }
+
+    if (connection->status() != Tp::ConnectionStatusConnected) {
+        KMessageBox::error(this, i18n("You must be connected to add a contact."), i18n("Telepathy plugin"));
+        kWarning(TELEPATHY_DEBUG_AREA) << "connection.status() is not Connected.";
+        return false;
+    }
+
     // Get new id.
     QString newId = d->mainUi.textUserId->text();
+    tAccount->addNewContact(newId);
+    tAccount->addContact(newId, parentMetaContact);
 
-    // Add contact into Telepathy
-
-
-
-    /* \todo: FIXME
-        QtTapioca::Contact *internalContact = tAccount->contactManager()->addContact( newId );
-     if( internalContact )
-     {
-      // Now add contact in Kopete
-      if( tAccount->addContact( newId, parentMetaContact ) )
-      {
-       // Add the internal contact to the Kopete contact
-       TelepathyContact *newContact = static_cast<TelepathyContact*>( tAccount->contacts()[newId] );
-       newContact->setInternalContact( internalContact );
-       // Subsribe to contact status.
-       internalContact->subscribe(true);
-
-       return true;
-      }
-     }
-    */
-
-    return false;
+    return true;
 }
 
+
 #include "telepathyaddcontactpage.moc"
+

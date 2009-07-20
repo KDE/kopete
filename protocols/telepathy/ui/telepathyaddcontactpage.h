@@ -17,8 +17,9 @@
 #ifndef TELEPATHY_ADDCONTACTPAGE_H
 #define TELEPATHY_ADDCONTACTPAGE_H
 
-// Kopete includes
 #include <ui/addcontactpage.h>
+
+#include <TelepathyQt4/PendingOperation>
 
 class TelepathyAddContactPage : public AddContactPage
 {

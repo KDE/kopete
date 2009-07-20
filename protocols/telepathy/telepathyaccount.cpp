@@ -44,6 +44,9 @@
 #include <TelepathyQt4/Feature>
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/Connection>
+#include <TelepathyQt4/ContactManager>
+#include <TelepathyQt4/PendingContacts>
+#include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/PendingReady>
 
 #include <QFile>
@@ -722,5 +725,47 @@ void TelepathyAccount::fetchContactList()
 Tp::AccountPtr TelepathyAccount::account()
 {
     return m_account;
+}
+
+void TelepathyAccount::addNewContact(const QString &id)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    Tp::ConnectionPtr connection = account()->connection();
+
+    if (!connection) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "TelepathyAccount->account()->connection() is null.";
+        return;
+    }
+
+    if (connection->status() != Tp::ConnectionStatusConnected) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "connection.status() is not Connected.";
+        return;
+    }
+
+    Tp::ContactManager *contactManager = connection->contactManager();
+
+    Tp::PendingOperation *op = contactManager->contactsForIdentifiers(QStringList() << id);
+
+    QObject::connect(op,
+            SIGNAL(finished(Tp::PendingOperation*)), this,
+            SLOT(onPendingContactsForAddingReady(Tp::PendingOperation*)));
+}
+
+void TelepathyAccount::onPendingContactsForAddingReady(Tp::PendingOperation *op)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    Tp::PendingContacts *pendingContacts = qobject_cast<Tp::PendingContacts*>(op);
+
+    QList<Tp::ContactPtr> contacts = pendingContacts->contacts();
+
+    Tp::PendingOperation *opadd = contacts.at(0)->manager()->requestPresenceSubscription(contacts);
+    QObject::connect(opadd, SIGNAL(finished(Tp::PendingOperation*)),
+                     this, SLOT(onContactAdded(Tp::PendingOperation*)));
+}
+
+void TelepathyAccount::onContactAdded(Tp::PendingOperation *op)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    fetchContactList();
 }
 
