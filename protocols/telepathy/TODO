@@ -1,42 +1,9 @@
 Kopete Telepathy plugin TODO
 ----------------------------
-Latest update: 18 December 2006 by Michaël Larouche <larouche@kde.org>
+Last Update by George Goldberg <george.goldberg@collabora.co.uk> 2009-07-20
 
-This file is the list of things todo accross all project needed for Kopete Telepathy plugin to work. It is also
-a list of question that I will need to answer later.
+Implement everything!!! :)
 
-CHART:
----------
-- : to do
-+ : done
-# : in progress
-! : cancelled or postponed
+The Telepthy plugin is moving very fast at the moment, so it doesn't really make sense to list
+things that need doing in this file. Just try it out and see what doesn't work and fix it.
 
-Telepathy Spec
---------------
--File transfer
--Emoticon upload/download
-
-QtTapioca
----------
--Buddy group list
--Find out a better way to set connection parameters
--Implement parts of Telepathy spec not done yet.
--Multi-user chat(MUC and IRC)
--Do not block interface when negociate the connection object path on D-BUS
-
-Kopete plugin
--------------
-#Manage contact list
- +List contact
- +Add contact
- +Remove contact
- +Manage local and remove pending contact list
- -Ensure integrity
-+Manage presence
-+Manage text channel i.e ChatSession
-+Manage aliasing
-+Receive avatar
-+Send avatar
--Show the specific protocol in a overlay (like Jabber transport)
--Improve account property UI
