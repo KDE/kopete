@@ -1,26 +1,26 @@
-HOWTO: Compile Telepathy/Tapioca qt
+HOWTO: Get a working Telepathy setup on your system:
+----------------------------------------------------
 
-1 - Get Gabble connection Manager
+Install the following packages from your distribution:
+======================================================
+- telepathy-gabble (Jabber Connection Manager)
+- Optionally, other Connection Managers for other protocols (none tested yet)
 
-  http://telepathy.freedesktop.org/releases/telepathy-gabble/
+Install the following packages from source:
+===========================================
 
-Use glib and LoudMouth
+- telepathy-mission-control (version 5):
+    http://telepathy.freedesktop.org/releases/telepathy-mission-control/
 
-For Kubuntu/Ubuntu users do:
- apt-get install libloudmouth1-dev
+- telepathy-qt4 (version >= 0.1.8):
+    http://telepathy.freedesktop.org/releases/telepathy-qt4/
 
-For latest loudmouth:
- http://ftp.imendio.com/pub/imendio/loudmouth/src/
+Both are built using the normal autotools dance:
 
-start Gabble like this
- GABBLE_PERSIST=1 telepathy-gabble &
+    ./configure
+    make
+    make install
 
-Also setting TELEPATHY_DATA_PATH helps:
- TELEPATHY_DATA_PATH=/usr/share/telepathy/managers/
+You should now be able to build the Kopete Telepathy protocol plugin using the usual KDE cmake
+commands.
 
-2 - Get Tapioca-qt and Telepathy-qt
-
-svn co https://tapioca-voip.svn.sourceforge.net/svnroot/tapioca-voip/trunk/telepathy-qt
-svn co https://tapioca-voip.svn.sourceforge.net/svnroot/tapioca-voip/trunk/tapioca-qt
-
-Both use CMake so it's the same way to compile a KDE module.
