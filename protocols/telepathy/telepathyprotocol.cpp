@@ -18,7 +18,7 @@
 #include "telepathyprotocol.h"
 
 #include "telepathyaccount.h"
-//#include "telepathyaddcontactpage.h"
+#include "ui/telepathyaddcontactpage.h"
 #include "telepathychannelhandler.h"
 #include "telepathycontact.h"
 #include "telepathyeditaccountwidget.h"
@@ -102,8 +102,7 @@ AddContactPage *TelepathyProtocol::createAddContactWidget(QWidget *parent, Kopet
     Q_UNUSED(parent);
     Q_UNUSED(account);
 
-// return new TelepathyAddContactPage(parent);
-    return 0;
+    return new TelepathyAddContactPage(parent);
 }
 
 KopeteEditAccountWidget *TelepathyProtocol::createEditAccountWidget(Kopete::Account *account,

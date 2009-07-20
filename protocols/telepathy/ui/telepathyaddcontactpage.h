@@ -18,7 +18,7 @@
 #define TELEPATHY_ADDCONTACTPAGE_H
 
 // Kopete includes
-#include <addcontactpage.h>
+#include <ui/addcontactpage.h>
 
 class TelepathyAddContactPage : public AddContactPage
 {
