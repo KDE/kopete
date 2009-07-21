@@ -74,10 +74,7 @@ public:
 	 */
 	virtual void serialize(QMap< QString, QString >& serializedData,
 			QMap< QString, QString >& addressBookData);
-	/**
-	 * Return the actions for this contact
-	 */
-	virtual QList<KAction *> *customContextMenuActions();
+
 	/**
 	 * @brief Returns a Kopete::ChatSession associated with this contact
 	 *
@@ -177,8 +174,6 @@ protected slots:
 	
 protected:
 	Kopete::ChatSession* m_msgManager;
-	KActionCollection* m_actionCollection;
-	KAction* m_actionPrefs;
 };
 
 #endif
