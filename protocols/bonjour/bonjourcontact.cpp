@@ -35,17 +35,12 @@
 // This shouldn't be necessary
 BonjourContact::BonjourContact( Kopete::Account* _account, const QString &uniqueName,
 		const QString &displayName, Kopete::MetaContact *parent )
-: Kopete::Contact( _account, uniqueName, parent, QString("bonjour_protocol") )
+: Kopete::Contact( _account, uniqueName, parent, QString("bonjour_protocol") ), connection(NULL), 
+	remoteHostName(), remoteAddress(), remotePort(0), m_msgManager(NULL)
 {
 	kDebug()<< " uniqueName: " << uniqueName << ", displayName: " << displayName;
 
-	// FIXME: ? setDisplayName( displayName );
-	m_msgManager = 0L;
-
 	setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
-
-	connection = NULL;
-	remotePort = 0;
 }
 
 BonjourContact::~BonjourContact()
