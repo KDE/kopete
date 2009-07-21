@@ -1007,7 +1007,7 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << message;
 
 	if ( message.isEmpty() ) {
-		KMessageBox::error(0L, i18n("Unknow action from SkypeActionHandler"), i18n("Skype protocol"));
+		KMessageBox::error(0L, i18n("Unknown action from SkypeActionHandler"), i18n("Skype protocol"));
 		return;//Empty message
 	}
 
@@ -1024,13 +1024,13 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 		command = message.section("?", -1).trimmed();
 		user = message.section(":", -1).section("?", 0, 0).trimmed();
 	} else {
-		KMessageBox::error(0L, i18n("Unknow action from SkypeActionHandler"), i18n("Skype protocol"));
-		return;//Unknow message
+		KMessageBox::error(0L, i18n("Unknown action from SkypeActionHandler"), i18n("Skype protocol"));
+		return;//Unknown message
 	}
 
 	if ( command.isEmpty() || user.isEmpty() ) {
-		KMessageBox::error(0L, i18n("Unknow action from SkypeActionHandler"), i18n("Skype protocol"));
-		return;//Unknow message
+		KMessageBox::error(0L, i18n("Unknown action from SkypeActionHandler"), i18n("Skype protocol"));
+		return;//Unknown message
 	}
 
 	kDebug(SKYPE_DEBUG_GLOBAL) << "user:" << user << "command:" << command;
@@ -1049,7 +1049,7 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 	} else if ( command == "voicemail" ) {
 		//TODO: Send voicemail
 		KMessageBox::error(0L, i18n("Send voicemail from SkypeActionHandler is not supported yet"), i18n("Skype protocol"));
-	} else if ( command == "userinfo" ) {//TODO: Open option dialog (with all thisa options instead userinfo) and support unknow contacts who arent in contact list
+	} else if ( command == "userinfo" ) {//TODO: Open option dialog (with all thisa options instead userinfo) and support unknown contacts who arent in contact list
 		if ( ! contact(user) ) {
 			addContact(user, QString(), 0L, Temporary);//create a temporary contact
 			if ( ! contact(user) ) {
@@ -1060,8 +1060,8 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 		contact(user)->slotUserInfo();//Open user info dialog
 		//TODO: dont use slot, it freeze dbus, better create new signal
 	} else {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknow command";
-		KMessageBox::error(0L, i18n("Unknow action from SkypeActionHandler"), i18n("Skype protocol"));
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown command";
+		KMessageBox::error(0L, i18n("Unknown action from SkypeActionHandler"), i18n("Skype protocol"));
 		return;//Unknow command
 	}
 }
