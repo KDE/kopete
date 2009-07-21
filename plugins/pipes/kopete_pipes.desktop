@@ -79,6 +79,7 @@ Comment[pl]=Przekazuje wiadomości potokami do zewnętrznego programu lub skrypt
 Comment[pt]=Encaminhar as mensagens por um programa externo
 Comment[pt_BR]=Fazer pipe através de um programa externo ou script
 Comment[ro]=Canalizează mesajele printr-un program sau script
+Comment[ru]=Пропустить сообщения через конвейер используя внешнюю программу или сценарий
 Comment[sl]=Preusmerjanje sporočil skozi zunanji program ali skript
 Comment[sr]=Шаље поруке кроз спољашњи програм или скрипту
 Comment[sr@latin]=Šalje poruke kroz spoljašnji program ili skriptu
