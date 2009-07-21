@@ -1037,12 +1037,18 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 
 	if ( command == "add" ) {
 		//TODO: Open add user dialog
+		KMessageBox::error(0L, i18n("Add contact from SkypeActionHandler is not supported yet"), i18n("Skype protocol"));
 	} else if ( command == "call" ) {
+		//TODO: Add support for conference call
 		makeCall(user);//Start call with user
 	} else if ( command == "chat" ) {
+		//TODO: Add support for multichat
 		chatUser(user);//Open chat window
 	} else if ( command == "sendfile" ) {
 		openFileTransfer(user);//Open file transfer dialog
+	} else if ( command == "voicemail" ) {
+		//TODO: Send voicemail
+		KMessageBox::error(0L, i18n("Send voicemail from SkypeActionHandler is not supported yet"), i18n("Skype protocol"));
 	} else if ( command == "userinfo" ) {//TODO: Open option dialog (with all thisa options instead userinfo) and support unknow contacts who arent in contact list
 		if ( ! contact(user) ) {
 			addContact(user, QString(), 0L, Temporary);//create a temporary contact
