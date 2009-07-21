@@ -53,11 +53,9 @@ void BonjourContactConnection::setSocket(QTcpSocket *aSocket)
 }
 
 BonjourContactConnection::BonjourContactConnection(QTcpSocket *aSocket, 
-		QObject *parent) : QObject(parent)
+		QObject *parent) : QObject(parent), connectionState(BonjourConnectionNewIncoming), socket(aSocket), parser(),
+					local(), remote()
 {
-	setSocket(aSocket);
-	
-	connectionState = BonjourConnectionNewIncoming;
 }
 
 BonjourContactConnection::BonjourContactConnection(const QHostAddress &address, short int port,

@@ -39,16 +39,12 @@
 
 
 BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountID )
-: Kopete::Account ( parent, accountID )
+: Kopete::Account ( parent, accountID ), username(), firstName(), emailAddress(), lastName(),
+	service(NULL), localServer(NULL), listeningPort(0), bonjourGroup(NULL), browser(NULL), unknownConnections()
 {
 	// Init the myself contact
 	setMyself( new BonjourContact( this, accountId(), accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
-
-	service = NULL;
-	localServer = NULL;
-	listeningPort = 0;
-	browser = NULL;
 
 	// All Contacts Go To The Bonjour Group
 	bonjourGroup = Kopete::ContactList::self()->findGroup("Bonjour");
