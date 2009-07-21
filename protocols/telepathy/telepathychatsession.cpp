@@ -21,6 +21,7 @@
 #include "telepathychatsession.h"
 
 #include "telepathyaccount.h"
+#include "telepathychannelmanager.h"
 #include "telepathyprotocol.h"
 #include "common.h"
 
@@ -178,7 +179,7 @@ Tp::ChannelRequestPtr TelepathyChatSession::channelRequest()
     return m_channelRequest;
 }
 
-void TelepathyChatSession::setTextChannel(Tp::TextChannelPtr textChannel)
+void TelepathyChatSession::setTextChannel(const Tp::TextChannelPtr &textChannel)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     m_textChannel = textChannel;
@@ -190,6 +191,12 @@ void TelepathyChatSession::setTextChannel(Tp::TextChannelPtr textChannel)
              << Tp::TextChannel::FeatureMessageQueue
              << Tp::TextChannel::FeatureMessageSentSignal;
 
+    if (m_textChannel->isReady(features)) {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Already ready.";
+    } else {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Not already ready.";
+    }
+
     connect(m_textChannel->becomeReady(features),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onTextChannelReady(Tp::PendingOperation*)));
@@ -197,6 +204,7 @@ void TelepathyChatSession::setTextChannel(Tp::TextChannelPtr textChannel)
 
 void TelepathyChatSession::onTextChannelReady(Tp::PendingOperation *op)
 {
+    kDebug(TELEPATHY_DEBUG_AREA);
     if (TelepathyCommons::isOperationError(op))
         return;
 
@@ -212,6 +220,11 @@ void TelepathyChatSession::onTextChannelReady(Tp::PendingOperation *op)
                      SIGNAL(pendingMessageRemoved(const Tp::ReceivedMessage &)),
                      this,
                      SLOT(pendingMessageRemoved(const Tp::ReceivedMessage &)));
+
+    // Check for messages already there in the message queue.
+    foreach (Tp::ReceivedMessage message, m_textChannel->messageQueue()) {
+        messageReceived(message);
+    }
 }
 
 Tp::PendingChannelRequest *TelepathyChatSession::pendingChannelRequest()

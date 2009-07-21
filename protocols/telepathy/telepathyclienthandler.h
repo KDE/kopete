@@ -18,19 +18,16 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCHANNELHANDLER_H
-#define KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCHANNELHANDLER_H
-
-#include <QtCore/QObject>
+#ifndef KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCLIENTHANDLER_H
+#define KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCLIENTHANDLER_H
 
 #include <TelepathyQt4/AbstractClientHandler>
 
-class TelepathyChannelHandler : public Tp::AbstractClientHandler
+class TelepathyClientHandler : public Tp::AbstractClientHandler
 {
 public:
-    static TelepathyChannelHandler *instance();
-
-    virtual ~TelepathyChannelHandler();
+    TelepathyClientHandler();
+    virtual ~TelepathyClientHandler();
 
     virtual bool bypassApproval() const;
     virtual void handleChannels(const Tp::MethodInvocationContextPtr<> & context,
@@ -41,12 +38,31 @@ public:
                                 const QDateTime & userActionTime,
                                 const QVariantMap & handlerInfo);
 
-protected:
+    struct HandleChannelsData {
+        const Tp::MethodInvocationContextPtr<> context;
+        const Tp::AccountPtr account;
+        const Tp::ConnectionPtr connection;
+        const QList<Tp::ChannelPtr> channels;
+        const QList<Tp::ChannelRequestPtr> requestsSatisfied;
+        const QDateTime userActionTime;
+        const QVariantMap handlerInfo;
 
-private:
-    TelepathyChannelHandler(QObject *parent = 0);
-    static TelepathyChannelHandler *s_self;
-
+        HandleChannelsData(const Tp::MethodInvocationContextPtr<> & _context,
+                                const Tp::AccountPtr & _account,
+                                const Tp::ConnectionPtr & _connection,
+                                const QList<Tp::ChannelPtr> & _channels,
+                                const QList<Tp::ChannelRequestPtr> & _requestsSatisfied,
+                                const QDateTime & _userActionTime,
+                                const QVariantMap & _handlerInfo)
+          : context(_context),
+            account(_account),
+            connection(_connection),
+            channels(_channels),
+            requestsSatisfied(_requestsSatisfied),
+            userActionTime(_userActionTime),
+            handlerInfo(_handlerInfo)
+        { }
+    };
 };
 
 

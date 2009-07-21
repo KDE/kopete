@@ -19,9 +19,11 @@
 
 #include "telepathyaccount.h"
 #include "ui/telepathyaddcontactpage.h"
-#include "telepathychannelhandler.h"
+#include "telepathychannelmanager.h"
+#include "telepathychatsession.h"
 #include "telepathycontact.h"
 #include "telepathyeditaccountwidget.h"
+#include "common.h"
 
 #include <kgenericfactory.h>
 #include <kdebug.h>
@@ -70,18 +72,14 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args
                         Kopete::PropertyTmpl::PrivateProperty)
 {
     Tp::registerTypes();
-    Tp::enableDebug(true);
+   // Tp::enableDebug(true);
 
     s_self = this;
 
     addAddressBookField("messaging/telepathy", Kopete::Plugin::MakeIndexField);
 
-    // Set up the ClientHandler.
-    m_clientRegistrar = Tp::ClientRegistrar::create();
-    TelepathyChannelHandler *handler = TelepathyChannelHandler::instance();
-    m_clientRegistrar->registerClient(
-            Tp::AbstractClientPtr(dynamic_cast<Tp::AbstractClient*>(handler)), "KopetePluginHandler");
-
+    // Set up the ChannelManager
+    TelepathyChannelManager *channelManager = TelepathyChannelManager::instance();
 }
 
 TelepathyProtocol *TelepathyProtocol::protocol()

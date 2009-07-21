@@ -54,7 +54,7 @@ public:
 
     Tp::ChannelRequestPtr channelRequest();
     Tp::PendingChannelRequest *pendingChannelRequest();
-    void setTextChannel(Tp::TextChannelPtr textChannel);
+    void setTextChannel(const Tp::TextChannelPtr &textChannel);
 
 private slots:
     void sendMessage(Kopete::Message &);
