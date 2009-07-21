@@ -356,6 +356,12 @@ void TelepathyAccount::initTelepathyAccount()
     m_connectionManagerName = accountConfig->readEntry(QLatin1String("ConnectionManager"), QString());
     m_connectionProtocolName = accountConfig->readEntry(QLatin1String("SelectedProtocol"), QString());
 
+    // Abort if config has not yet been written because it's a new account.
+    if (m_connectionManagerName.isEmpty()) {
+        kDebug(TELEPATHY_DEBUG_AREA) << "Config not yet written of new acocunt. Cancel initTelepathyAccount().";
+        return;
+    }
+
     // \brief: init managers early, it needed here becouse later i want
     //   to get available protocols from CM
     Tp::ConnectionManagerPtr cm = getConnectionManager();
