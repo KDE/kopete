@@ -17,6 +17,7 @@
 #ifndef WLMACCOUNT_H
 #define WLMACCOUNT_H
 
+#include <ktemporaryfile.h>
 #include <kopeteaccount.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetepasswordedaccount.h"
@@ -250,7 +251,16 @@ public slots:
     void
     downloadPendingDisplayPicture();
 
-	
+    void
+    slotInitialEmailNotification(const int unread_inbox);
+
+    void
+    slotNewEmailNotification(const QString from, const QString subject);
+
+#ifdef LIBMSN_INBOX_URL_ENABLED
+    void
+    slotInboxUrl(MSN::hotmailInfo & info);
+#endif
 
   protected:
         /**
@@ -313,6 +323,7 @@ private slots:
     void slotOpenInbox();
     void slotChangePublicName();
     void slotOpenStatus();
+    void slotRemoveTmpMailFile();
 
 private:
     Kopete::OnlineStatus temporaryStatus;
@@ -359,6 +370,9 @@ private:
 
     QTimer * m_pendingDisplayPicturesTimer;
 
+    KTemporaryFile *tmpMailFile;
+
+    QTimer * m_tmpMailFileTimer;
 };
 
 #endif

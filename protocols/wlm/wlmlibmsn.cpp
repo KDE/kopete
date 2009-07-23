@@ -50,6 +50,7 @@
 #include <string>
 #include <iostream>
 #include <kdebug.h>
+#include <kmime/kmime_util.h>
 
 #include <QObject>
 #include <QApplication>
@@ -554,18 +555,11 @@ Callbacks::gotInitialEmailNotification (MSN::NotificationServerConnection *
 {
     Q_UNUSED( conn );
     Q_UNUSED( msgs_inbox );
-    Q_UNUSED( unread_inbox );
     Q_UNUSED( msgs_folders );
     Q_UNUSED( unread_folders );
-/*
-    if (unread_inbox > 0)
-        printf ("You have %d new messages in your Inbox. Total: %d\n",
-                unread_inbox, msgs_inbox);
 
-    if (unread_folders > 0)
-        printf ("You have %d new messages in other folders. Total: %d\n",
-                unread_folders, msgs_folders);
-*/
+    if (unread_inbox > 0)
+        emit initialEmailNotification (unread_inbox);
 }
 
 void
@@ -573,11 +567,20 @@ Callbacks::gotNewEmailNotification (MSN::NotificationServerConnection * conn,
                                     std::string from, std::string subject)
 {
     Q_UNUSED( conn );
-    Q_UNUSED( from );
-    Q_UNUSED( subject );
-//    printf ("New e-mail has arrived from %s.\nSubject: %s\n", from.c_str (),
-//            subject.c_str ());
+#ifdef LIBMSN_INBOX_URL_ENABLED
+    emit newEmailNotification (QString(from.c_str()), KMime::decodeRFC2047String(subject.c_str()));
+#endif
 }
+
+#ifdef LIBMSN_INBOX_URL_ENABLED
+void
+Callbacks::gotInboxUrl (MSN::NotificationServerConnection * conn,
+                        MSN::hotmailInfo info)
+{
+    Q_UNUSED( conn );
+    emit inboxUrl (info);
+}
+#endif
 
 void
 Callbacks::fileTransferProgress (MSN::SwitchboardServerConnection * conn,

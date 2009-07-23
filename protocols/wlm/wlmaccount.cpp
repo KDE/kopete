@@ -34,6 +34,7 @@
 #include <KInputDialog>
 #include <KStandardDirs>
 #include <KToolInvocation>
+#include <krun.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
@@ -83,10 +84,16 @@ clientid (0)
     
     m_openStatusAction = new KAction(i18n("Open MS&N service status site..."), this);
     QObject::connect(m_openStatusAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenStatus()));
+
+    tmpMailFile = 0L;
+    m_tmpMailFileTimer = new QTimer();
+    QObject::connect(m_tmpMailFileTimer, SIGNAL(timeout()), this, SLOT(slotRemoveTmpMailFile()));
 }
 
 WlmAccount::~WlmAccount ()
 {
+    slotRemoveTmpMailFile();
+    delete m_tmpMailFileTimer;
     disconnect ();
 }
 
@@ -104,7 +111,9 @@ WlmAccount::fillActionMenu (KActionMenu * actionMenu)
     actionMenu->addAction(m_changeDNAction);
 //     actionMenu->addAction(m_startChatAction);
 
-//     actionMenu->addAction(m_openInboxAction);
+#ifdef LIBMSN_INBOX_URL_ENABLED
+    actionMenu->addAction(m_openInboxAction);
+#endif
     actionMenu->addAction(m_openStatusAction);
 }
 
@@ -253,8 +262,10 @@ WlmAccount::slotChangePublicName()
 void
 WlmAccount::slotOpenInbox()
 {
-//     if (m_notifySocket)
-//         m_notifySocket->slotOpenInbox();
+#ifdef LIBMSN_INBOX_URL_ENABLED
+    if (isConnected ())
+        m_server->cb.mainConnection->getInboxUrl ();
+#endif
 }
 
 void
@@ -320,6 +331,14 @@ WlmAccount::connectWithPassword (const QString & pass)
                             (MSN::NotificationServerConnection *)));
     QObject::connect (&m_server->cb, SIGNAL (wrongPassword ()), this,
                       SLOT (wrongPassword ()));
+#ifdef LIBMSN_INBOX_URL_ENABLED
+    QObject::connect (&m_server->cb, SIGNAL (initialEmailNotification(int)), this,
+                      SLOT (slotInitialEmailNotification(int)));
+    QObject::connect (&m_server->cb, SIGNAL (newEmailNotification(QString, QString)), this,
+                      SLOT (slotNewEmailNotification(QString, QString)));
+    QObject::connect (&m_server->cb, SIGNAL (inboxUrl(MSN::hotmailInfo &)), this,
+                      SLOT (slotInboxUrl(MSN::hotmailInfo &)));
+#endif
 
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmConnecting);
 }
@@ -1132,6 +1151,98 @@ void WlmAccount::downloadPendingDisplayPicture()
     {
         chatManager ()->requestDisplayPicture (passport);
     }
+}
+
+void
+WlmAccount::slotInitialEmailNotification (const int unread_inbox)
+{
+    KNotification *notification= new KNotification ("msn_mail");
+
+    notification->setText(i18np( "You have one unread message in your Hotmail inbox.",
+                                 "You have %1 unread messages in your Hotmail inbox.", unread_inbox));
+    notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Ignore" )) );
+    notification->setFlags(KNotification::Persistent);
+    QObject::connect(notification,SIGNAL(activated()), this , SLOT(slotOpenInbox()) );
+    QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(slotOpenInbox()) );
+    QObject::connect(notification,SIGNAL(action2Activated()), notification, SLOT(close()) );
+    QObject::connect(notification,SIGNAL(ignored()), notification, SLOT(close()) );
+    notification->sendEvent();
+}
+
+void
+WlmAccount::slotNewEmailNotification (const QString from, const QString subject)
+{
+    KNotification *notification= new KNotification ("msn_mail");
+
+    notification->setText(i18n( "New message from %1 in your Hotmail inbox.<p>Subject: %2", from, subject));
+    notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Ignore" )) );
+    notification->setFlags(KNotification::Persistent);
+    QObject::connect(notification,SIGNAL(activated()), this , SLOT(slotOpenInbox()) );
+    QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(slotOpenInbox()) );
+    QObject::connect(notification,SIGNAL(action2Activated()), notification, SLOT(close()) );
+    QObject::connect(notification,SIGNAL(ignored()), notification, SLOT(close()) );
+    notification->sendEvent();
+}
+
+#ifdef LIBMSN_INBOX_URL_ENABLED
+void
+WlmAccount::slotInboxUrl (MSN::hotmailInfo & info)
+{
+    //write the tmp file
+    QString UserID = accountId();
+
+    QString hotmailRequest = "<html>\n"
+        "<head>\n"
+            "<noscript>\n"
+                "<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n"
+            "</noscript>\n"
+        "</head>\n"
+        "<body onload=\"document.pform.submit(); \">\n"
+            "<form name=\"pform\" action=\"" + QString(info.url.c_str()) + "\" method=\"POST\">\n"
+                "<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n"
+                "<input type=\"hidden\" name=\"login\" value=\"" + UserID.left( UserID.indexOf('@') ) + "\">\n"
+                "<input type=\"hidden\" name=\"username\" value=\"" + UserID + "\">\n"
+                "<input type=\"hidden\" name=\"sid\" value=\"" + QString(info.sid.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"kv\" value=\"" + QString(info.kv.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"id\" value=\""+ QString(info.id.c_str()) +"\">\n"
+                "<input type=\"hidden\" name=\"sl\" value=\"" + QString(info.sl.c_str()) +"\">\n"
+                "<input type=\"hidden\" name=\"rru\" value=\"" + QString(info.rru.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"auth\" value=\"" + QString(info.MSPAuth.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"creds\" value=\"" + QString(info.creds.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n"
+                "<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
+            "</form></body>\n</html>\n";
+
+    slotRemoveTmpMailFile();
+    tmpMailFile = new KTemporaryFile();
+    tmpMailFile->setSuffix(".html");
+
+    if (tmpMailFile->open())
+    {
+        tmpMailFile->write(hotmailRequest.toAscii());
+        tmpMailFile->flush();
+
+        /* tmpMailFile->close() erases tmpMailFile->fileName property(), so use it before closing file. */
+        KRun *runner = new KRun( tmpMailFile->fileName(), 0, 0, true ); // false = non-local files
+        runner->setRunExecutables( false ); //security
+        tmpMailFile->close();
+        m_tmpMailFileTimer->start(30000);
+        m_tmpMailFileTimer->setSingleShot(true);
+    }
+    else
+        kDebug(14140) << "Error opening temporary file";
+}
+#endif
+
+void WlmAccount::slotRemoveTmpMailFile()
+{
+    if (tmpMailFile)
+    {
+        delete tmpMailFile;
+        tmpMailFile = 0L;
+    }
+
+    m_tmpMailFileTimer->stop();
 }
 
 void WlmAccount::gotAddedGroup (bool added,

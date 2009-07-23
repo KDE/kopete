@@ -41,6 +41,7 @@ set(kopete_wlm_link_LIBS
     ${KDE4_KDEUI_LIBS} 
     ${KDE4_KUTILS_LIBS}
     ${KDE4_KIO_LIBRARY} 
+    ${KDE4_KMIME_LIBS}
     ${QT_QTXML_LIBRARY} 
     ${QT_QTNETWORK_LIBRARY} 
     kopete 
