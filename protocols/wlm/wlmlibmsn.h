@@ -459,8 +459,10 @@ class Callbacks:public QObject,
     void
     newEmailNotification(const QString from, const QString subject);
 
+#ifdef LIBMSN_INBOX_URL_ENABLED
     void
     inboxUrl(MSN::hotmailInfo & info);
+#endif
 
 private slots:
     void emitSocketError( QAbstractSocket::SocketError error );
