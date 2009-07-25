@@ -57,6 +57,9 @@ public:
 
     KopeteRichTextWidget *q;
     KActionCollection *actionCollection;
+
+    QKeySequence sendKeySequence;
+
     const Kopete::Protocol::Capabilities protocolCaps;
 
     QTextCharFormat defaultPlainFormat;
@@ -420,12 +423,6 @@ bool KopeteRichTextWidget::event(QEvent *event)
         QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
         if (keyEvent)
         {
-            if (keyEvent->key() ==  Qt::Key_Return || keyEvent->key() == Qt::Key_Enter)
-            {
-                // Enter is the default shortcut for sending a message,
-                // therefore it should not be handled by a textedit
-                return QWidget::event(event);
-            }
             if (keyEvent->matches(QKeySequence::Copy) && !textCursor().hasSelection())
             {
                 // The copy shortcut has to be handled outside of
@@ -443,7 +440,24 @@ bool KopeteRichTextWidget::event(QEvent *event)
             }
         }
     }
+    if (event->type() == QEvent::ShortcutOverride || event->type() == QEvent::KeyRelease || event->type() == QEvent::KeyPress){
+        QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
+        if (keyEvent)
+        {
+            QKeySequence keyEventSequance(keyEvent->modifiers() + keyEvent->key());
+            if (keyEventSequance.matches(d->sendKeySequence))
+            {
+                // Don't handle the shortcut for sending text in the textedit
+                return false;// QWidget::event(event);
+            }
+        }
+    }
     return KRichTextWidget::event(event);
+}
+
+void KopeteRichTextWidget::setSendKeySequence(QKeySequence keySequence)
+{
+        d->sendKeySequence = keySequence;
 }
 
 void KopeteRichTextWidget::setDefaultPlainCharFormat(const QTextCharFormat& format)
