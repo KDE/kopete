@@ -50,7 +50,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  
 HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
         : Kopete::Plugin( HistoryPluginFactory::componentData(), parent ), m_loggerFactory( this )
 {
-    kDebug() << "\n********History Plugin Constructor\n\n ";
+    kDebug(14310) << "\n********History Plugin Constructor\n\n ";
 
     KAction *viewMetaContactHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
 
@@ -100,7 +100,7 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
                      this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
         }
     }
-    kDebug()<<"\n****exiting KKKKKKKKKKKKKKKKKKK constructor";
+    kDebug(14310)<<"\n****exiting KKKKKKKKKKKKKKKKKKK constructor";
 }
 
 
@@ -111,8 +111,8 @@ HistoryPlugin::~HistoryPlugin()
 
 void HistoryMessageLogger::handleMessage( Kopete::MessageEvent *event )
 {
-    kDebug() << "\n***historyplugin.cpp HistoryMessageLogger::handleMessage\n\n ";
-    kDebug()<<"\n*from the event a copy of message is passed to message displayed function of historyPlugin\n";
+    kDebug(14310) << "\n***historyplugin.cpp HistoryMessageLogger::handleMessage\n\n ";
+    kDebug(14310)<<"\n*from the event a copy of message is passed to message displayed function of historyPlugin\n";
     connect(history,SIGNAL(messageDisplayedDoneSignal()), this, SLOT(handleMessage2()) );
     m_event=event;
     if (history)
@@ -137,14 +137,14 @@ void HistoryMessageLogger::handleMessage2()
 
 void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
 {
-    kDebug() << "\n\n*** entered the function messageDisplayed";
+    kDebug(14310) << "\n\n*** entered the function messageDisplayed";
     if (m.direction()==Kopete::Message::Internal || !m.manager() ||
             (m.type() == Kopete::Message::TypeFileTransferRequest && m.plainBody().isEmpty()) )
         return;
 
     if (!m_loggers.contains(m.manager()))
     {
-        kDebug()<<"\n*** m_loggers(qmap-session-GUIclient) has no manager(==chat session)*so insert it";
+        kDebug(14310)<<"\n*** m_loggers(qmap-session-GUIclient) has no manager(==chat session)*so insert it";
         kDebug()<<"\ninsertion of manager means a new session-> a GUIClinet is born";
         m_loggers.insert(m.manager() , new HistoryGUIClient( m.manager() ) );
 
@@ -191,7 +191,7 @@ void HistoryPlugin::slotViewHistory()
 
 void HistoryPlugin::slotViewCreated( KopeteView* v )
 {
-    kDebug() << "***HistoryPlugin::slotViewCreated\n\n";
+    kDebug(14310) << "***HistoryPlugin::slotViewCreated\n\n";
     if (v->plugin()->pluginInfo().pluginName() != QString::fromLatin1("kopete_chatwindow") )
         return;  //Email chat windows are not supported.
 
@@ -247,7 +247,7 @@ void HistoryPlugin::slotViewCreated2()
 
 void HistoryPlugin::slotKMMClosed( Kopete::ChatSession* kmm)
 {
-    kDebug() << "\n\nHistoryPlugin::slotKMMClosed\n\n";
+    kDebug(14310) << "\n\nHistoryPlugin::slotKMMClosed\n\n";
     m_loggers[kmm]->deleteLater();
     m_loggers.remove(kmm);
 }

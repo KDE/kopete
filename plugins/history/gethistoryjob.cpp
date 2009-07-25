@@ -50,6 +50,7 @@ void GetHistoryJob::itemsReceivedSlot(Akonadi::Item::List itemList)
   {
     if ( item.modificationTime().toLocalTime().toString("MMyyyy")== m_date.toString("MMyyyy") )
     {
+      kDebug()<<"~~ITEM FOUND^^";
       m_item=item;
       if(item.hasPayload<History>() )
 	m_history = item.payload<History>();

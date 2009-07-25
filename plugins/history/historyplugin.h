@@ -45,7 +45,7 @@ class HistoryMessageLogger : public Kopete::MessageHandler
 public:
     HistoryMessageLogger( HistoryPlugin *history ) : history(history)
     {
-        kDebug() <<"\n history message logger constructor";
+        kDebug(14310) <<"\n history message logger constructor";
     }
     void handleMessage( Kopete::MessageEvent *event );
 //	void handleMessage2();
@@ -116,6 +116,8 @@ private:
     HistoryLogger *m_loggerx;
     Kopete::ChatSession *m_currentChatSessionx;
     KopeteView *m_currentViewx;
+    
+    Kopete::ChatSession * m_kmm;
 
     void m();
 signals:

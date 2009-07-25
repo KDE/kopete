@@ -135,6 +135,7 @@ public:
 	 * the given date.year() date.month().
 	 */
 //	static QString getFileName(const Kopete::Contact* , QDate date);
+	void ModifyItem(HistoryLogger *historylogger);
 
 private:
 	bool m_hideOutgoing;
@@ -238,7 +239,12 @@ private:
 	Sens m_readmessagesSens;
 	bool m_reverseOrder;
 	bool m_colorize;
-
+	
+	//for the getmonth function
+	unsigned int m_result;
+	
+	//in modifyitem
+	QTime m_t;
 
 private slots:
 	/**
@@ -259,11 +265,26 @@ private slots:
 	void readmessagesBlock3();
 	void readmessagesBlock31();
 	void readMessagesBlock4();
+	void readMessagesBlock41();
 	void readMessagesBlock5();
+	
+	void getMonthExperimental(Akonadi::Item::List);
+	
+	void collectionCreateDone(KJob*);
+	void itemCreateDone(KJob*);
+	void itemsReceivedDone(Akonadi::Item::List);
+	void itemModifiedDone(KJob*);
+	void deleteHistoryInstance(HistoryLogger *);
+	
   signals:
 	void readMessagesDoneSignal();
 	void appendMessageDoneSignal();
 	void getHistoryxDone();
+	void getfirstmonthwithcontactDoneSignal();
+	
+	void collectionCreatedSignal();
+	
+	void itemModifiedSignal(HistoryLogger *);
 	
 };
 
