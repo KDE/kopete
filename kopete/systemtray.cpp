@@ -282,54 +282,5 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	}
 }
 
-
-QString KopeteSystemTray::squashMessage( const Kopete::Message& msg )
-{
-	QString msgText = msg.parsedBody();
-
-	QRegExp rx( "(<a.*>((http://)?(.+))</a>)" );
-	rx.setMinimal( true );
-	if ( rx.indexIn( msgText ) == -1 )
-	{
-		// no URLs in text, just pick the first 30 chars of
-		// the parsed text if necessary. We used parsed text
-		// so that things like "<knuff>" show correctly
-		//  Escape it after snipping it to not snip entities
-		msgText =msg.plainBody() ;
-		if( msgText.length() > 30 )
-			msgText = msgText.left( 30 ) + QLatin1String( " ..." );
-		msgText=Kopete::Message::escape(msgText);
-	}
-	else
-	{
-		QString plainText = msg.plainBody();
-		if ( plainText.length() > 30 )
-		{
-			QString fullUrl = rx.cap( 2 );
-			QString shorterUrl;
-			if ( fullUrl.length() > 30 )
-			{
-				QString urlWithoutProtocol = rx.cap( 4 );
-				shorterUrl = urlWithoutProtocol.left( 27 )
-						+ QLatin1String( "... " );
-			}
-			else
-			{
-				shorterUrl = fullUrl.left( 27 )
-						+ QLatin1String( "... " );
-			}
-			// remove message text
-			msgText = QLatin1String( "... " ) +
-					rx.cap( 1 ) +
-					QLatin1String( " ..." );
-			// find last occurrence of URL (the one inside the <a> tag)
-			int revUrlOffset = msgText.lastIndexOf( fullUrl );
-			msgText.replace( revUrlOffset,
-						fullUrl.length(), shorterUrl );
-		}
-	}
-	return msgText;
-}
-
 #include "systemtray.moc"
 // vim: set noet ts=4 sts=4 sw=4:
