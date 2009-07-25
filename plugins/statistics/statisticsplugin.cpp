@@ -54,6 +54,7 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*
 	: Kopete::Plugin( StatisticsPluginFactory::componentData(), parent )
 {
 
+	kDebug() << "\n\n\n\n STATSCS";
 	KAction *viewMetaContactStatistics = new KAction( KIcon("view-statistics"), i18n("View &Statistics" ),
 		this );
 	actionCollection()->addAction ( "viewMetaContactStatistics", viewMetaContactStatistics );
