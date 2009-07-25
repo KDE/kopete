@@ -166,6 +166,8 @@ private:
 	KAction *tabClose;
 	KAction *tabCloseAllOthers;
 
+	QAction *sendMessage;
+
 	KToggleAction* toggleAutoSpellCheck;
 
 	KopeteEmoticonAction *actionSmileyMenu;
@@ -218,6 +220,7 @@ private slots:
 	void slotEnableUpdateBg() { updateBg = true; }
 
 	void updateChatSendFileAction();
+	void updateSendKeySequence();
 
 	void toggleAutoSpellChecking();
 	void slotAutoSpellCheckEnabled( ChatView*, bool );

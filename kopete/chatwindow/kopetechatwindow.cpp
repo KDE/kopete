@@ -349,6 +349,11 @@ ChatView *KopeteChatWindow::activeView()
 	return m_activeView;
 }
 
+void KopeteChatWindow::updateSendKeySequence()
+{
+	m_activeView->editPart()->textEdit()->setSendKeySequence( sendMessage->shortcut() );
+}
+
 void KopeteChatWindow::initActions(void)
 {
 	KActionCollection *coll = actionCollection();
@@ -356,7 +361,9 @@ void KopeteChatWindow::initActions(void)
 	createStandardStatusBarAction();
 
 	chatSend = new KAction( KIcon("mail-send"), i18n( "&Send Message" ), coll );
-	coll->addAction( "chat_send", chatSend );
+	//Recuperate the qAction for later
+	sendMessage = coll->addAction( "chat_send", chatSend );
+
 	connect( chatSend, SIGNAL( triggered(bool) ), SLOT( slotSendMessage() ) );
 	//Default to 'Return' and 'Enter' for sending messages
 	//'Return' is the key in the main part of the keyboard
@@ -974,6 +981,9 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	updateActions();
 	slotUpdateSendEnabled();
 	m_activeView->loadChatSettings();
+	m_activeView->editPart()->textEdit()->setSendKeySequence( sendMessage->shortcut() );
+	//Set up change signal in case the user changer the shortcut later
+	connect( sendMessage, SIGNAL(changed()), SLOT(updateSendKeySequence()) );
 
 	emit chatSessionChanged(m_activeView->msgManager());
 }

@@ -76,6 +76,7 @@ public Q_SLOTS:
     void setTextItalic(bool italic);
     void setTextUnderline(bool underline);
     void setTextStrikeOut(bool strikeout);
+    void setSendKeySequence(QKeySequence keySequence);
 
     void slotResetFontAndColor();
     void slotCheckSpellingChanged(bool b);
