@@ -109,7 +109,7 @@ void ICQUserInfoWidget::init()
 	m_genInfoWidget->setupUi( genInfo );
 	KPageWidgetItem *genInfoItem = addPage( genInfo, i18n("General Info") );
 	genInfoItem->setHeader( i18n("General ICQ Information") );
-	genInfoItem->setIcon( KIcon("identity") );
+	genInfoItem->setIcon( KIcon("user-identity") );
 	
 	QWidget* homeInfo = new QWidget(this);
 	m_homeInfoWidget = new Ui::ICQHomeInfoWidget;
@@ -123,28 +123,28 @@ void ICQUserInfoWidget::init()
 	m_workInfoWidget->setupUi( workInfo );
 	KPageWidgetItem *workInfoItem = addPage( workInfo, i18n("Work Info") );
 	workInfoItem->setHeader( i18n( "Work Information" ) );
-	workInfoItem->setIcon( KIcon("attach") );
+	workInfoItem->setIcon( KIcon("applications-engineering") );
 	
 	QWidget *otherInfo = new QWidget(this);
 	m_otherInfoWidget = new Ui::ICQOtherInfoWidget();
 	m_otherInfoWidget->setupUi( otherInfo );
 	KPageWidgetItem *otherInfoItem = addPage( otherInfo, i18n("Other Info") );
 	otherInfoItem->setHeader( i18n( "Other ICQ Information" ) );
-	otherInfoItem->setIcon( KIcon("email") );
+	otherInfoItem->setIcon( KIcon("internet-mail") );
 	
 	QWidget *interestInfo = new QWidget(this);
 	m_interestInfoWidget = new Ui::ICQInterestInfoWidget();
 	m_interestInfoWidget->setupUi( interestInfo );
 	KPageWidgetItem *interestInfoItem = addPage( interestInfo, i18n("Interest Info") );
 	interestInfoItem->setHeader( i18n( "Interest Information" ) );
-	interestInfoItem->setIcon( KIcon("email") );
+	interestInfoItem->setIcon( KIcon("applications-games") );
 	
 	QWidget *orgAffInfo = new QWidget(this);
 	m_orgAffInfoWidget = new Ui::ICQOrgAffInfoWidget();
 	m_orgAffInfoWidget->setupUi( orgAffInfo );
 	KPageWidgetItem *orgAffInfoItem = addPage( orgAffInfo, i18n("Org & Aff Info") );
 	orgAffInfoItem->setHeader( i18n( "Organization & Affiliation Information" ) );
-	orgAffInfoItem->setIcon( KIcon("kontact_contacts") );
+	orgAffInfoItem->setIcon( KIcon("preferences-web-browser-identification") );
 	
 	m_emailModel = new QStandardItemModel();
 	QStandardItem *modelItem = new QStandardItem( "Type" );
