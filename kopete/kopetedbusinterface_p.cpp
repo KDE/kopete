@@ -74,7 +74,7 @@ void ContactStalker::messageAppended(Kopete::Message &message,
         Kopete::ChatSession *session)
 {
     Q_UNUSED(session);
-    if(!m_contact)
+    if(!m_contact || !message.from())
     {
     	return;
     }
