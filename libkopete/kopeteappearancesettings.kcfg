@@ -88,7 +88,7 @@
 		
 		<!-- Idle contact preferences -->
 		<entry key="idleContactColor" type="Color">
-			<label>Color used to identity idle contacts.</label>
+			<label>Color used to identify idle contacts.</label>
 			<default code="true">Qt::darkGray</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
