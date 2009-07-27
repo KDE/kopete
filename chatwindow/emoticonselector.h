@@ -26,7 +26,6 @@
 #include <QMovie>
 //Added by qt3to4:
 #include <QMouseEvent>
-//Added by qt3to4:
 #include <QHideEvent>
 #include <QShowEvent>
 #include <QList>

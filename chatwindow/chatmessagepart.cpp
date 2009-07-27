@@ -148,62 +148,6 @@ public:
 
 	QFont chatFont;
 };
-/*
-class ChatMessagePart::ToolTip : public Q3ToolTip
-{
-public:
-	ToolTip( ChatMessagePart *c ) : Q3ToolTip( c->view()->viewport() )
-	{
-		m_chat = c;
-	}
-
-	void maybeTip( const QPoint &p )
-	{
-		// FIXME: it's wrong to look for the node under the mouse - this makes too many
-		//        assumptions about how tooltips work. but there is no nodeAtPoint.
-		DOM::Node node = m_chat->nodeUnderMouse();
-		Kopete::Contact *contact = m_chat->contactFromNode( node );
-		QString toolTipText;
-
-		if(node.isNull())
-			return;
-
-		// this tooltip is attached to the viewport widget, so translate the node's rect
-		// into its coordinates.
-		QRect rect = node.getRect();
-		rect = QRect( m_chat->view()->contentsToViewport( rect.topLeft() ),
-			      m_chat->view()->contentsToViewport( rect.bottomRight() ) );
-
-		if( contact )
-		{
-			toolTipText = contact->toolTip();
-		}
-		else
-		{
-			m_chat->emitTooltipEvent( m_chat->textUnderMouse(), toolTipText );
-
-			if( toolTipText.isEmpty() )
-			{
-				//Fall back to the title attribute
-				for( DOM::HTMLElement element = node; !element.isNull(); element = element.parentNode() )
-				{
-					if( element.hasAttribute( "title" ) )
-					{
-						toolTipText = element.getAttribute( "title" ).string();
-						break;
-					}
-				}
-			}
-		}
-
-		if( !toolTipText.isEmpty() )
-			tip( rect, toolTipText );
-	}
-
-private:
-	ChatMessagePart *m_chat;
-};
-*/
 
 ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	: KHTMLPart( parent ), d( new Private )

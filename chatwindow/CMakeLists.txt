@@ -32,42 +32,31 @@ set(chattexteditpart_PART_SRCS chattexteditpart.cpp )
 
 kde4_add_plugin(chattexteditpart WITH_PREFIX ${chattexteditpart_PART_SRCS})
 
-
 target_link_libraries(chattexteditpart kopete kopetechatwindow_shared ${KDE4_KPARTS_LIBS} )
 
 set_target_properties(chattexteditpart PROPERTIES DEFINE_SYMBOL KOPETECHATWINDOW_SHARED_EXPORT="")
 
 install(TARGETS chattexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 
-
 ########### next target ###############
 
 set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslistview.cpp)
 
-
 kde4_add_plugin(kopete_chatwindow ${kopete_chatwindow_PART_SRCS})
-
 
 target_link_libraries(kopete_chatwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared ${KDE4_KHTML_LIBS} ${QT_QT3SUPPORT_LIBRARY})
 
 install(TARGETS kopete_chatwindow  DESTINATION ${PLUGIN_INSTALL_DIR})
 
-
 ########### next target ###############
 
 set(kopete_emailwindow_PART_SRCS kopeteemailwindow.cpp )
 
-
 kde4_add_plugin(kopete_emailwindow ${kopete_emailwindow_PART_SRCS})
-
 
 target_link_libraries(kopete_emailwindow  ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS} ${KDE4_KHTML_LIBS} kopete kopetechatwindow_shared)
 
 install(TARGETS kopete_emailwindow  DESTINATION ${PLUGIN_INSTALL_DIR})
-
-
-########### next target ###############
-
 
 ########### install files ###############
 
