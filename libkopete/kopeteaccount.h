@@ -497,7 +497,7 @@ public:
 	 * Register a new Contact with the account. This should be called @em only from the
 	 * @ref Contact constructor, not from anywhere else (not even a derived class).
 	 */
-	void registerContact( Contact *c );
+	bool registerContact( Contact *c );
 
 public slots:
 	/**

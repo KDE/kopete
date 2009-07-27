@@ -96,13 +96,14 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->idleTime = 0;
 	d->icon = icon;
 
+	bool duplicate = false;
 	// If can happend that a MetaContact may be used without a account
 	// (ex: for unit tests or chat window style preview)
 	if ( account )
 	{
 		// Don't register myself contacts because otherwise we can't have own contact in contact list.
 		if ( d->metaContact != Kopete::ContactList::self()->myself() )
-			account->registerContact( this );
+			duplicate = !account->registerContact( this );
 
 		connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
 	}
@@ -110,13 +111,11 @@ Contact::Contact( Account *account, const QString &contactId,
 	// Need to check this because myself() may have no parent
 	// Maybe too the metaContact doesn't have a valid protocol()
 	// (ex: for unit tests or chat window style preview)
-	if( parent && protocol() )
-	{
-		connect( parent, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
-			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 
+	// if alreadyRegistered is true (which mean that this is duplicate contact) we will not add
+	// parent and the contact will die out on next Kopete restart.
+	if( !duplicate && parent && protocol() )
 		parent->addContact( this );
-	}
 }
 
 Contact::~Contact()
@@ -141,7 +140,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 	if( status == d->onlineStatus )
 		return;
 
-	bool oldCanAcceptFiles = canAcceptFiles();
+	const bool oldCanAcceptFiles = canAcceptFiles();
 	OnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
 
@@ -228,7 +227,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	KMenu *menu = new KMenu();
 
 	QString titleText;
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	const QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( nick.isEmpty() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
 	else
@@ -245,8 +244,8 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	}
 
 	// FIXME: After KDE 3.2 we should make isReachable do the isConnected call so it can be removed here - Martijn
-	bool reach = account()->isConnected() && isReachable();
-	bool myself = (this == account()->myself());
+	const bool reach = account()->isConnected() && isReachable();
+	const bool myself = (this == account()->myself());
 
 	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), menu );
 	actionSendMessage->setEnabled( reach && !myself );
@@ -350,8 +349,6 @@ void Contact::setMetaContact( MetaContact *m )
 	if( old )
 	{
 		old->removeContact( this );
-		disconnect( old, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
-			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 
 		if(old->contacts().isEmpty())
 		{
@@ -362,7 +359,7 @@ void Contact::setMetaContact( MetaContact *m )
 		{
 			d->metaContact = m; //i am forced to do that now if i want the next line works
 			//remove cached data for this protocol which will not be removed since we disconnected
-			protocol()->slotMetaContactAboutToSave( old );
+			protocol()->serialize( old );
 		}
 	}
 
@@ -376,8 +373,6 @@ void Contact::setMetaContact( MetaContact *m )
 		// between adding completely new contacts (which should be written to kabc) and restoring upon restart
 		// (where no write is needed).
 		KABCPersistence::self()->write( m );
-		connect( d->metaContact, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
-		protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
 	}
 	sync();
 }
@@ -546,7 +541,7 @@ QString Contact::toolTip() const
 {
 	Kopete::Property p;
 	QString tip;
-	QStringList shownProps = Kopete::AppearanceSettings::self()->toolTipContents();
+	const QStringList shownProps = Kopete::AppearanceSettings::self()->toolTipContents();
 
 	// --------------------------------------------------------------------------
 	// Fixed part of tooltip
@@ -589,11 +584,11 @@ QString Contact::toolTip() const
 	// Configurable part of tooltip
 
 	// FIXME: It shouldn't use QString to identity the properties. Instead it should use PropertyTmpl::key()
-	for(QStringList::Iterator it=shownProps.begin(); it!=shownProps.end(); ++it)
+	for(QStringList::ConstIterator it=shownProps.constBegin(); it!=shownProps.constEnd(); ++it)
 	{
 		if((*it) == Kopete::Global::Properties::self()->fullName().key())
 		{
-			QString name = formattedName();
+			const QString name = formattedName();
 			if(!name.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted name",
@@ -602,7 +597,7 @@ QString Contact::toolTip() const
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->idleTime().key())
 		{
-			QString time = formattedIdleTime();
+			const QString time = formattedIdleTime();
 			if(!time.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted idle time",
@@ -611,7 +606,7 @@ QString Contact::toolTip() const
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
 		{
-			QString url = property(*it).value().toString();
+			const QString url = property(*it).value().toString();
 			if(!url.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted url",
@@ -621,7 +616,7 @@ QString Contact::toolTip() const
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusTitle().key() )
 		{
-			QString statusTitle = property(*it).value().toString();
+			const QString statusTitle = property(*it).value().toString();
 			if(!statusTitle.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted status title",
@@ -630,7 +625,7 @@ QString Contact::toolTip() const
 		}
 		else if ((*it) == Kopete::Global::Properties::self()->statusMessage().key() )
 		{
-			QString statusmsg = property(*it).value().toString();
+			const QString statusmsg = property(*it).value().toString();
 			if(!statusmsg.isEmpty())
 			{
 				tip += i18nc("@label:textbox formatted status message",
@@ -766,13 +761,13 @@ void Kopete::Contact::slotUnblock()
 
 void Kopete::Contact::setNickName( const QString &name )
 {
-	QString oldNickName = nickName();
+	const QString oldNickName = nickName();
 	setProperty( Kopete::Global::Properties::self()->nickName(), name );
 }
 
 QString Kopete::Contact::nickName() const
 {
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	const QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	if( !nick.isEmpty() )
 		return nick;
 

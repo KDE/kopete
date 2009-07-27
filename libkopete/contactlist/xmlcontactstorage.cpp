@@ -61,18 +61,19 @@ class XmlContactStorage::Private
 {
 public:
     Private()
-    : isBusy(false), isValid(false)
+    : isBusy(false), isValid(false), version(0)
     {}
 
     bool isBusy;
     bool isValid;
     QString xmlFilename;
     QString errorMessage;
+    uint version;
 
     /**
      * Current contact list version * 10 ( i.e. '10' is version '1.0' )
      */
-    static const uint ContactListVersion = 11;
+    static const uint ContactListVersion = 12;
 };
 
 
@@ -140,32 +141,56 @@ void XmlContactStorage::load()
 
     QDomElement list = contactList.documentElement();
 
-    QString versionString = list.attribute( QString::fromLatin1( "version" ), QString() );
-    uint version = 0;
-    if( QRegExp( QString::fromLatin1( "[0-9]+\\.[0-9]" ) ).exactMatch( versionString ) )
-        version = versionString.remove( QLatin1Char( '.' ) ).toUInt();
-
-    if( version < Private::ContactListVersion )
+    d->version = readVersion( list );
+    if( d->version < Private::ContactListVersion )
     {
-        bool contactListUpdated = false;
-        if ( version == 10 )
-            contactListUpdated = updateFrom10( list );
+        QFile::copy( filename, filename + QString::fromLatin1(".bak_v%1").arg( d->version ) );
 
-        if ( !contactListUpdated )
+        bool contactListUpdated = false;
+        if ( d->version == 10 )
+        {
+            contactListUpdated = updateFrom10to11( list );
+            d->version = readVersion( list );
+        }
+        if ( d->version == 11 )
+        {
+            contactListUpdated = updateFrom11to12( list );
+            d->version = readVersion( list );
+        }
+
+        if ( d->version < Private::ContactListVersion )
         {
             contactListFile.close();
-            kWarning(14010) << "The contact list on disk is older than expected."
+            kWarning(14010) << "The contact list on disk is older than expected or cannot be updated!"
                             << "No contact list will be loaded";
+            d->isValid = false;
+            d->isBusy = false;
             return;
         }
     }
 
-//TODO: Add to internal contact list item list.
-#if 0
-    addGroup( Kopete::Group::topLevel() );
-#endif
-
+    // First load all groups so we can assign them to metaContacts
     QDomElement element = list.firstChild().toElement();
+    while( !element.isNull() )
+    {
+        if( element.tagName() == QString::fromLatin1("kopete-group") )
+        {
+            Kopete::Group *group = new Kopete::Group();
+            if( !parseGroup( group, element ) )
+            {
+                delete group;
+                group = 0;
+            }
+            else
+            {
+                addGroup( group );
+            }
+        }
+        element = element.nextSibling().toElement();
+    }
+
+    // Load metaContacts
+    element = list.firstChild().toElement();
     while( !element.isNull() )
     {
         if( element.tagName() == QString::fromLatin1("meta-contact") )
@@ -181,27 +206,15 @@ void XmlContactStorage::load()
                 addMetaContact( metaContact );
             }
         }
-        else if( element.tagName() == QString::fromLatin1("kopete-group") )
+        else if( element.tagName() != QString::fromLatin1("kopete-group") )
         {
-            Kopete::Group *group = new Kopete::Group();
-            if( !parseGroup( group, element ) )
-            {
-                delete group;
-                group = 0;
-            }
-            else
-            {
-                addGroup( group );
-            }
-        }
-        else
-        {
-            kWarning(14010) 
-                    << "Unknown element '" << element.tagName()
-                    << "' in XML contact list storage!" << endl;
+            kWarning(14010) << "Unknown element '" << element.tagName() << "' in XML contact list storage!" << endl;
         }
         element = element.nextSibling().toElement();
     }
+
+    checkGroupIds();
+
     contactListFile.close();
     d->isValid = true;
     d->isBusy = false;
@@ -235,9 +248,11 @@ void XmlContactStorage::save()
 
     QDomDocument doc;
     doc.appendChild( doc.createElement( QLatin1String("kopete-contact-list") ) );
-    doc.documentElement().setAttribute( QLatin1String("version"), QLatin1String("1.1"));
+    doc.documentElement().setAttribute( QLatin1String("version"), QLatin1String("1.2"));
 
     // Save group information. ie: Open/Closed, pehaps later icons? Who knows.
+    doc.documentElement().appendChild( doc.importNode( storeGroup( Kopete::Group::topLevel() ), true ) );
+
     Kopete::Group::List groupList = Kopete::ContactList::self()->groups();
     foreach( Kopete::Group *group, groupList )
     {
@@ -461,8 +476,10 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
     metaContact->setDisplayNameSource( nameSourcePID, nameSourceAID, nameSourceCID );
 
     // If a plugin is loaded, load data cached
-    QObject::connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded(Kopete::Plugin*) ),
-                      metaContact, SLOT( slotPluginLoaded(Kopete::Plugin*) ) );
+    QObject::connect( Kopete::PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin*)),
+                      metaContact, SLOT(slotPluginLoaded(Kopete::Plugin*)) );
+    QObject::connect( Kopete::PluginManager::self(), SIGNAL(protocolLoaded(Kopete::Protocol*)),
+                      metaContact, SLOT(slotProtocolLoaded(Kopete::Protocol*)) );
 
     // All plugins are already loaded, call manually the contact setting slot.
     if( Kopete::PluginManager::self()->isAllPluginsLoaded() )
@@ -507,10 +524,6 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
                 parseGroup( Kopete::Group::topLevel(), element );
                 return false;
             }
-        }
-        else
-        {
-            group->setType( Kopete::Group::Normal );
         }
     }
 
@@ -580,6 +593,24 @@ bool XmlContactStorage::parseContactListElement( Kopete::ContactListElement *con
         }
         contactListElement->setPluginData( pluginId, pluginData );
     }
+    else if ( element.tagName() == QLatin1String( "plugin-contact-data" ) )
+    {
+        QMap<QString, QString> pluginData;
+        QString pluginId = element.attribute( QLatin1String( "plugin-id" ), QString() );
+
+        QDomNode field = element.firstChild();
+        while( !field.isNull() )
+        {
+            QDomElement fieldElement = field.toElement();
+            if ( fieldElement.tagName() == QLatin1String( "plugin-data-field" ) )
+            {
+                pluginData.insert( fieldElement.attribute( QLatin1String( "key" ),
+                                   QLatin1String( "undefined-key" ) ), fieldElement.text() );
+            }
+            field = field.nextSibling();
+        }
+        contactListElement->appendPluginContactData( pluginId, pluginData );
+    }
     else if ( element.tagName() == QLatin1String( "custom-icons" ) )
     {
         contactListElement->setUseCustomIcon( element.attribute( QLatin1String( "use" ), QLatin1String( "1" ) ) == QLatin1String( "1" ) );
@@ -622,7 +653,7 @@ bool XmlContactStorage::parseContactListElement( Kopete::ContactListElement *con
 const QDomElement XmlContactStorage::storeMetaContact( Kopete::MetaContact *metaContact, bool minimal ) const
 {
     // This causes each Kopete::Protocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
-    metaContact->emitAboutToSave();
+    metaContact->serialize();
 
     QDomDocument metaContactDoc;
     metaContactDoc.appendChild( metaContactDoc.createElement( QString::fromUtf8( "meta-contact" ) ) );
@@ -714,7 +745,8 @@ const QDomElement XmlContactStorage::storeGroup( Kopete::Group *group ) const
         case Kopete::Group::Temporary:
             type = QLatin1String( "temporary" );
             break;
-        case Kopete::Group::TopLevel:type = QLatin1String( "top-level" );
+        case Kopete::Group::TopLevel:
+            type = QLatin1String( "top-level" );
             break;
         default:
             type = QLatin1String( "standard" ); // == Normal
@@ -767,6 +799,32 @@ const QList<QDomElement> XmlContactStorage::storeContactListElement( Kopete::Con
         }
     }
 
+    const QMap<QString, Kopete::ContactListElement::ContactDataList > pluginsContactData = contactListElement->pluginContactData();
+    if ( !pluginsContactData.isEmpty() )
+    {
+        QMap<QString, Kopete::ContactListElement::ContactDataList >::ConstIterator pluginIt, pluginItEnd = pluginsContactData.end();
+        for ( pluginIt = pluginsContactData.begin(); pluginIt != pluginItEnd; ++pluginIt )
+        {
+            foreach ( Kopete::ContactListElement::ContactData dataItem, pluginIt.value() )
+            {
+                QDomElement pluginElement = pluginData.createElement( QLatin1String( "plugin-contact-data" ) );
+                pluginElement.setAttribute( QLatin1String( "plugin-id" ), pluginIt.key()  );
+
+                QMap<QString, QString>::ConstIterator it;
+                for ( it = dataItem.constBegin(); it != dataItem.constEnd(); ++it )
+                {
+                    QDomElement pluginDataField = pluginData.createElement( QLatin1String( "plugin-data-field" ) );
+                    pluginDataField.setAttribute( QLatin1String( "key" ), it.key()  );
+                    pluginDataField.appendChild( pluginData.createTextNode(  it.value()  ) );
+                    pluginElement.appendChild( pluginDataField );
+                }
+
+                pluginData.documentElement().appendChild( pluginElement );
+                pluginNodes.append( pluginElement );
+            }
+        }
+    }
+
     const Kopete::ContactListElement::IconMap icons = contactListElement->icons();
     if ( !icons.isEmpty() )
     {
@@ -813,7 +871,7 @@ const QList<QDomElement> XmlContactStorage::storeContactListElement( Kopete::Con
     return pluginNodes;
 }
 
-bool XmlContactStorage::updateFrom10( QDomElement &rootElement ) const
+bool XmlContactStorage::updateFrom10to11( QDomElement &rootElement ) const
 {
     QDomNodeList metaContactElements = rootElement.elementsByTagName( QLatin1String( "meta-contact" ) );
     for ( int i = 0; i < metaContactElements.count(); ++i )
@@ -834,6 +892,94 @@ bool XmlContactStorage::updateFrom10( QDomElement &rootElement ) const
     }
     rootElement.setAttribute( QString("version"), "1.1" );
     return true;
+}
+
+bool XmlContactStorage::updateFrom11to12( QDomElement &rootElement ) const
+{
+    QDomNodeList metaContactElementList = rootElement.elementsByTagName( QLatin1String( "meta-contact" ) );
+    for ( int i = 0; i < metaContactElementList.count(); ++i )
+    {
+        typedef QMap<QString, QString> PluginData;
+        typedef QPair<QString, PluginData> ProtocolIdDataPair;
+
+        QList<QDomElement> removeList;
+        QList<ProtocolIdDataPair> newList;
+
+        QDomElement metaContactElement = metaContactElementList.at( i ).toElement();
+        QDomNodeList pluginElementList = metaContactElement.elementsByTagName( QLatin1String( "plugin-data" ) );
+        for ( int j = 0; j < pluginElementList.count(); ++j )
+        {
+            QDomElement element = pluginElementList.at( j ).toElement();
+            QString pluginId = element.attribute( QLatin1String( "plugin-id" ), QString() );
+            if ( !pluginId.endsWith( "Protocol" ) )
+                continue;
+
+            QMap<QString, QStringList> serializedData;
+
+            // Read data to serializedData
+            QDomNode field = element.firstChild();
+            while ( !field.isNull() )
+            {
+                QDomElement fieldElement = field.toElement();
+                if ( fieldElement.tagName() == QLatin1String( "plugin-data-field" ) )
+                {
+                    QString key = fieldElement.attribute( QLatin1String( "key" ), QLatin1String( "undefined-key" ) );
+                    serializedData[key] = fieldElement.text().split( QChar( 0xE000 ), QString::KeepEmptyParts );
+                }
+                field = field.nextSibling();
+            }
+
+            // Split serializedData by contact
+            int count = serializedData[QLatin1String("contactId")].count();
+            for ( int i = 0; i < count ; i++ )
+            {
+                QMap<QString, QString> sd;
+
+                QMap<QString, QStringList>::Iterator it;
+                QMap<QString, QStringList>::Iterator itEnd = serializedData.end();
+                for ( it = serializedData.begin(); it != itEnd; ++it )
+                {
+                    QStringList sl = it.value();
+                    if( sl.count() > i)
+                        sd[it.key()] = sl.value( i );
+                }
+                newList.append( ProtocolIdDataPair( pluginId, sd ) );
+            }
+
+            removeList.append( element );
+        }
+
+        foreach( QDomElement e, removeList )
+            metaContactElement.removeChild( e );
+
+        foreach( ProtocolIdDataPair pdp, newList )
+        {
+            QDomElement pluginElement = metaContactElement.ownerDocument().createElement( QLatin1String( "plugin-contact-data" ) );
+            pluginElement.setAttribute( QLatin1String( "plugin-id" ), pdp.first  );
+
+            QMap<QString, QString>::ConstIterator it;
+            for ( it = pdp.second.constBegin(); it != pdp.second.constEnd(); ++it )
+            {
+                QDomElement pluginDataField = metaContactElement.ownerDocument().createElement( QLatin1String( "plugin-data-field" ) );
+                pluginDataField.setAttribute( QLatin1String( "key" ), it.key()  );
+                pluginDataField.appendChild( metaContactElement.ownerDocument().createTextNode(  it.value()  ) );
+                pluginElement.appendChild( pluginDataField );
+            }
+
+            metaContactElement.appendChild( pluginElement );
+        }
+    }
+    rootElement.setAttribute( QString("version"), "1.2" );
+    return true;
+}
+
+uint XmlContactStorage::readVersion( QDomElement &rootElement ) const
+{
+    QString versionString = rootElement.attribute( QString::fromLatin1( "version" ), QString() );
+    if( QRegExp( QString::fromLatin1( "[0-9]+\\.[0-9]" ) ).exactMatch( versionString ) )
+        return versionString.remove( QLatin1Char( '.' ) ).toUInt();
+    else
+        return 0;
 }
 
 QString XmlContactStorage::sourceToString( Kopete::MetaContact::PropertySource source ) const
@@ -858,6 +1004,45 @@ Kopete::MetaContact::PropertySource XmlContactStorage::stringToSource( const QSt
         return Kopete::MetaContact::SourceContact;
     else // recovery
         return Kopete::MetaContact::SourceCustom;
+}
+
+void XmlContactStorage::checkGroupIds()
+{
+    // HACK: Check if we don't have duplicate groupIds => broken contactlist.xml,
+    // if so reset all groupIds so there are unique.
+    // Will break manual group sorting but we want consistent contactlist.
+
+    QSet<uint> groupIdSet;
+
+    groupIdSet.insert( Kopete::Group::topLevel()->groupId() );
+
+    bool idsUnique = !groupIdSet.contains( Kopete::Group::temporary()->groupId() );
+    groupIdSet.insert( Kopete::Group::temporary()->groupId() );
+
+    if ( idsUnique )
+    {
+        foreach( Kopete::Group * group, groups() )
+        {
+            if ( groupIdSet.contains( group->groupId() ) )
+            {
+                idsUnique = false;
+                break;
+            }
+            groupIdSet.insert( group->groupId() );
+        }
+    }
+
+    if ( !idsUnique )
+    {
+        uint uniqueGroupId = 0;
+        Kopete::Group::topLevel()->setGroupId( ++uniqueGroupId );
+        Kopete::Group::temporary()->setGroupId( ++uniqueGroupId );
+
+        foreach( Kopete::Group * group, groups() )
+            group->setGroupId( ++uniqueGroupId );
+
+        Kopete::Group::topLevel()->setUniqueGroupId( uniqueGroupId );
+    }
 }
 
 }

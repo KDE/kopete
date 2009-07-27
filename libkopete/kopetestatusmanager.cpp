@@ -76,8 +76,7 @@ StatusManager::StatusManager()
 
 StatusManager::~StatusManager()
 {
-	if ( d->idleTimer )
-		delete d->idleTimer;
+	delete d->idleTimer;
 
 	delete d->root;
 	delete d;
@@ -102,13 +101,12 @@ void StatusManager::saveXML()
 
 void StatusManager::loadXML()
 {
-	if ( d->root )
-		delete d->root;
+	delete d->root;
 
 	d->uidHash.clear();
 	d->root = 0;
 
-	QString filename = KStandardDirs::locateLocal( "data", QLatin1String( "kopete/statuses.xml" ) );
+	const QString filename = KStandardDirs::locateLocal( "data", QLatin1String( "kopete/statuses.xml" ) );
 
 	QDomDocument doc;
 	QFile file( filename );
@@ -150,8 +148,7 @@ void StatusManager::setRootGroup( Kopete::Status::StatusGroup *rootGroup )
 	if ( !rootGroup || rootGroup == d->root )
 		return;
 
-	if ( d->root )
-		delete d->root;
+	delete d->root;
 
 	d->uidHash.clear();
 	d->root = rootGroup;
@@ -348,7 +345,7 @@ void StatusManager::askAndSetActive()
 	// Set the Text in the Dialog
 	KMessageBox::createKMessageBox(dialog, QMessageBox::Question,
 		i18n("Do You Want to Change Status to Available?"),
-		QStringList(), QString::null, NULL, KMessageBox::NoExec);
+		QStringList(), QString(), NULL, KMessageBox::NoExec);
 
 	// If yes is clicked, go online
 	connect(dialog, SIGNAL(yesClicked()), this, SLOT(setActive()));

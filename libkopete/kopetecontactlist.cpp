@@ -194,6 +194,8 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 {
 	if( type == Group::Temporary )
 		return Group::temporary();
+	if( type == Group::TopLevel )
+		return Group::topLevel();
 	
 	if ( displayName == i18n ("Top Level") )
 		return Group::topLevel();
@@ -206,7 +208,7 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 			return curr;
 	}
 
-	Group *newGroup = new Group( displayName, (Group::GroupType)type );
+	Group *newGroup = new Group( displayName );
 	addGroup( newGroup );
 	return  newGroup;
 }
@@ -307,10 +309,23 @@ void ContactList::addGroup( Group * g )
 
 void ContactList::removeGroup( Group *g )
 {
+	if ( g == Group::topLevel() )
+		return;
+
 	if ( d->selectedGroups.contains( g ) )
 	{
 		d->selectedGroups.removeAll( g );
 		setSelectedItems( d->selectedMetaContacts, d->selectedGroups );
+	}
+
+	// Remove metaContacts from group or delete the metaContact if it isn't in any other group
+	foreach ( MetaContact * metaContact, g->members() )
+	{
+		const QList<Group *> mcGroups = metaContact->groups();
+		if ( (mcGroups.count() == 1 && mcGroups.contains( g )) || mcGroups.isEmpty() )
+			removeMetaContact( metaContact );
+		else
+			metaContact->removeFromGroup( g );
 	}
 
 	d->groups.removeAll( g );

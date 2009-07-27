@@ -288,10 +288,10 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 
 	if ( msg.direction() == Kopete::Message::Inbound )
 	{
-		QString nick = myself()->nickName();
+		const QString nick = myself()->nickName();
 		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() )
 		{
-			QString nickNameRegExp = QString::fromLatin1( "(^|[\\W])(%1)([\\W]|$)" ).arg( QRegExp::escape( nick ) );
+			const QString nickNameRegExp = QString::fromLatin1( "(^|[\\W])(%1)([\\W]|$)" ).arg( QRegExp::escape( nick ) );
 			if ( msg.plainBody().contains( QRegExp( nickNameRegExp, Qt::CaseInsensitive ) ) )
 			{
 				msg.setImportance( Kopete::Message::Highlight );

@@ -29,6 +29,7 @@ namespace Kopete
 {
 
 class Plugin;
+class Protocol;
 typedef QList<Plugin*> PluginList;
 class PluginManagerPrivate;
 
@@ -161,6 +162,12 @@ signals:
 	 * @brief Signals a plugin has just been unloaded.
 	 */
 	void pluginUnloaded( const QString &pluginName );
+
+	/**
+	 * @brief Signals a new protocol has just been loaded.
+	 * @note pluginLoaded is also emitted before this signal
+	 */
+	void protocolLoaded( Kopete::Protocol *protocol );
 
 	/**
 	 * @brief All plugins have been loaded by the plugin manager.

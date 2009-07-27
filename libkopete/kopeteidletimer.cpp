@@ -81,8 +81,7 @@ Kopete::IdleTimer *Kopete::IdleTimer::self()
 
 Kopete::IdleTimer::~IdleTimer()
 {
-	if ( d->platform )
-		delete d->platform;
+	delete d->platform;
 
 	delete d;
 }

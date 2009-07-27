@@ -61,6 +61,7 @@ class  MetaContact::Private
 
 	OnlineStatus::StatusType onlineStatus;
 	bool photoSyncedWithKABC;
+	OnlineStatus notifyOnlineStatus;
 
 	// Used to set contact source at load.
 	QString nameSourcePID, nameSourceAID, nameSourceCID;

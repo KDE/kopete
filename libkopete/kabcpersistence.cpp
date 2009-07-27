@@ -45,15 +45,15 @@ namespace Kopete
 /**
  * utility function to merge two QStrings containing individual elements separated by 0xE000
  */
-static QString unionContents( QString arg1, QString arg2 )
+static QString unionContents( const QString& arg1, const QString& arg2 )
 {
-	QChar separator( 0xE000 );
+	const QChar separator( 0xE000 );
 	QStringList outList = arg1.split( separator, QString::SkipEmptyParts );
-	QStringList arg2List = arg2.split( separator, QString::SkipEmptyParts );
-	for ( QStringList::iterator it = arg2List.begin(); it != arg2List.end(); ++it )
+	const QStringList arg2List = arg2.split( separator, QString::SkipEmptyParts );
+	for ( QStringList::ConstIterator it = arg2List.constBegin(); it != arg2List.constEnd(); ++it )
 		if ( !outList.contains( *it ) )
 			outList.append( *it );
-	QString out = outList.join( QString( separator ) );
+	const QString out = outList.join( QString( separator ) );
 	return out;
 }
 
@@ -133,13 +133,13 @@ void KABCPersistence::write( MetaContact * mc )
 		for ( ; it != addressMap.constEnd(); ++it )
 		{
 			// read existing data for this key
-			QString currentCustomForProtocol = theAddressee.custom( it.key(), QLatin1String( "All" ) );
+			const QString currentCustomForProtocol = theAddressee.custom( it.key(), QLatin1String( "All" ) );
 			// merge without duplicating
-			QString toWrite = unionContents( currentCustomForProtocol, it.value().join( QString( QChar( 0xE000 ) ) ) );
+			const QString toWrite = unionContents( currentCustomForProtocol, it.value().join( QString( QChar( 0xE000 ) ) ) );
 			// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
 			kDebug( 14010 ) << "Writing: " << it.key() << ", " << "All" << ", " << toWrite;
 			theAddressee.insertCustom( it.key(), QLatin1String( "All" ), toWrite );
-			QString check = theAddressee.custom( it.key(), QLatin1String( "All" ) );
+			const QString check = theAddressee.custom( it.key(), QLatin1String( "All" ) );
 		}
 		ab->insertAddressee( theAddressee );
 		writeAddressBook( theAddressee.resource() );
@@ -432,7 +432,7 @@ void KABCPersistence::splitField( const QString &str, QString &app, QString &nam
 {
 	int colon = str.indexOf( ':' );
 	if ( colon != -1 ) {
-		QString tmp = str.left( colon );
+		const QString tmp = str.left( colon );
 		value = str.mid( colon + 1 );
 
 		int dash = tmp.indexOf( '-' );

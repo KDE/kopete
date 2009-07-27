@@ -99,7 +99,8 @@ public:
 	{
 		TypeNormal, ///< A typical message
 		TypeAction, ///< An IRC-style action.
-		TypeFileTransferRequest ///< A incoming file transfer request message
+		TypeFileTransferRequest, ///< A incoming file transfer request message
+		TypeVoiceClipRequest ///< A incoming voice clip message
 	};
 
 	/**

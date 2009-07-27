@@ -60,8 +60,7 @@ void PropertyContainer::serializeProperties(QMap<QString, QString> &serializedDa
 	} // end for()
 } // end serializeProperties()
 
-void PropertyContainer::deserializeProperties(
-	QMap<QString, QString> &serializedData )
+void PropertyContainer::deserializeProperties( const QMap<QString, QString> &serializedData )
 {
 	QMap<QString, QString>::ConstIterator it;
 	for ( it=serializedData.constBegin(); it != serializedData.constEnd(); ++it )

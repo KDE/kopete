@@ -413,6 +413,8 @@ KIcon OnlineStatusManager::pixmapForCategory( Categories category )
 		return KIcon("user-online");
 	case Kopete::OnlineStatusManager::Away:
 		return KIcon("user-away");
+	case Kopete::OnlineStatusManager::Idle:
+		return KIcon("user-away");
 	case Kopete::OnlineStatusManager::ExtendedAway:
 		return KIcon("user-away-extended");
 	case Kopete::OnlineStatusManager::Busy:

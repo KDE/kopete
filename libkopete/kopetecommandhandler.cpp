@@ -191,7 +191,7 @@ Kopete::CommandHandler *Kopete::CommandHandler::commandHandler()
 void Kopete::CommandHandler::registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
 	const QString &help, uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 {
-	QString lowerCommand = command.toLower();
+	const QString lowerCommand = command.toLower();
 
 	Kopete::Command *mCommand = new Kopete::Command( parent, lowerCommand, handlerSlot, help,
 		Normal, QString::null, minArgs, maxArgs, cut, pix);	//krazy:exclude=nullstrassign for old broken gcc
@@ -207,7 +207,7 @@ void Kopete::CommandHandler::unregisterCommand( QObject *parent, const QString &
 void Kopete::CommandHandler::registerAlias( QObject *parent, const QString &alias, const QString &formatString,
 	const QString &help, CommandType type, uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 {
-	QString lowerAlias = alias.toLower();
+	const QString lowerAlias = alias.toLower();
 
 	Kopete::Command *mCommand = new Kopete::Command( parent, lowerAlias, 0L, help, type,
 		formatString, minArgs, maxArgs, cut, pix );
@@ -254,7 +254,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 
 bool Kopete::CommandHandler::processMessage( Kopete::Message &msg, Kopete::ChatSession *manager )
 {
-	QString messageBody = msg.plainBody();
+	const QString messageBody = msg.plainBody();
 
 	return processMessage( messageBody, manager );
 }
@@ -282,7 +282,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 	}
 	else
 	{
-		QString command = parseArguments( args ).front().toLower();
+		const QString command = parseArguments( args ).front().toLower();
 		Kopete::Command *c = commands( manager->myself()->protocol() ).value( command );
 		if( c && !c->help().isNull() )
 			output = c->help();
@@ -358,7 +358,7 @@ void Kopete::CommandHandler::slotPartCommand( const QString &, Kopete::ChatSessi
 
 void Kopete::CommandHandler::slotAwayCommand( const QString &args, Kopete::ChatSession *manager )
 {
-	bool goAway = !manager->account()->isAway();
+	const bool goAway = !manager->account()->isAway();
 
 	if( args.isEmpty() )
 		manager->account()->setOnlineStatus( OnlineStatusManager::self()->onlineStatus(manager->account()->protocol() , goAway ? OnlineStatusManager::Away : OnlineStatusManager::Online) );
@@ -415,8 +415,8 @@ QStringList Kopete::CommandHandler::parseArguments( const QString &args )
 			arguments.append( quotedArgs.cap(i) );
 	}
 
-	QStringList otherArgs = args.section( quotedArgs, 0 ).split( QRegExp(QString::fromLatin1("\\s+")), QString::SkipEmptyParts);
-	for( QStringList::Iterator it = otherArgs.begin(); it != otherArgs.end(); ++it )
+	const QStringList otherArgs = args.section( quotedArgs, 0 ).split( QRegExp(QString::fromLatin1("\\s+")), QString::SkipEmptyParts);
+	for( QStringList::ConstIterator it = otherArgs.constBegin(); it != otherArgs.constEnd(); ++it )
 		arguments.append( *it );
 
 	return arguments;

@@ -164,7 +164,7 @@ public:
 
 	void processRequest()
 	{
-		QString result = grabPassword();
+		const QString result = grabPassword();
 		if ( mSource == Kopete::Password::FromUser || result.isNull() )
 			doPasswordDialog();
 		else
@@ -352,7 +352,7 @@ void Kopete::Password::readConfig()
 {
 	KConfigGroup config(KGlobal::config(), d->configGroup );
 
-	QString passwordCrypted = config.readEntry( "Password", QString() );
+	const QString passwordCrypted = config.readEntry( "Password", QString() );
 	if ( passwordCrypted.isNull() )
 		d->passwordFromKConfig.clear();
 	else

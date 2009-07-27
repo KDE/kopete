@@ -63,6 +63,7 @@ class AccountManager::Private
 {
 public:
 	QList<Account *> accounts;
+	QList<Account *> accountsToBeRemoved;
 };
 
 AccountManager * AccountManager::s_self = 0L;
@@ -108,7 +109,7 @@ void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage
 	kDebug() << "category: " << category;
 	OnlineStatusManager::Categories categories
 		= (OnlineStatusManager::Categories)category;
-	bool onlyChangeConnectedAccounts = isAnyAccountConnected();
+	const bool onlyChangeConnectedAccounts = isAnyAccountConnected();
 
 	foreach( Account *account, d->accounts )
 	{
@@ -273,59 +274,20 @@ Account * AccountManager::findAccount( const QString &protocolId, const QString 
 
 void AccountManager::removeAccount( Account *account )
 {
-	if(!account->removeAccount())
+	if( !account->removeAccount() )
 		return;
 
-	Protocol *protocol = account->protocol();
-
-	KConfigGroup *configgroup = account->configGroup();
-
-	// Clean up the contact list
-	const QHash<QString, Kopete::Contact*> contactList = account->contacts();
-	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contactList.constEnd();
-
-	for ( it = contactList.constBegin(); it != itEnd; ++it )
+	if ( !account->isConnected() )
 	{
-		Contact* c = it.value();
-		if ( !c )
-			continue;
-
-		MetaContact* mc = c->metaContact();
-		mc->removeContact( c );
-		c->deleteLater();
-		if ( mc->contacts().count() == 0 ) //we can delete the metacontact
-		{
-			//get the first group and it's members
-			Group* group = mc->groups().first();
-			MetaContact::List groupMembers = group->members();
-			ContactList::self()->removeMetaContact( mc );
-			if ( groupMembers.count() == 1 && groupMembers.indexOf( mc ) != -1 )
-				ContactList::self()->removeGroup( group );
-		}
+		d->accountsToBeRemoved.append( account );
+		QTimer::singleShot( 0, this, SLOT(removeAccountInternal()) );
 	}
-
-	// Clean up the account list
-	d->accounts.removeAll( account );
-
-	// Clean up configuration
-	configgroup->deleteGroup();
-	configgroup->sync();
-
-	delete account;
-
-	foreach( Account *account , d->accounts )
+	else
 	{
-		if( account->protocol() == protocol )
-			return;
+		kDebug( 14010 ) << account->accountId() << " is still connected, disconnecting...";
+		connect( account, SIGNAL(isConnectedChanged()), this, SLOT(removeAccountConnectedChanged()) );
+		account->disconnect();
 	}
-	//there is nomore account from the protocol,  we can unload it
-
-	// FIXME: pluginId() should return the internal name and not the class name, so
-	//        we can get rid of this hack - Olivier/Martijn
-	QString protocolName = protocol->pluginId().remove( QString::fromLatin1( "Protocol" ) ).toLower();
-
-	PluginManager::self()->setPluginEnabled( protocolName, false );
-	PluginManager::self()->unloadPlugin( protocolName );
 }
 
 void AccountManager::save()
@@ -379,8 +341,8 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 	// Iterate over all groups that start with "Account_" as those are accounts
 	// and parse them if they are from this protocol
 	KSharedConfig::Ptr config = KGlobal::config();
-	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
-	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
+	const QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
+	for ( QStringList::ConstIterator it = accountGroups.constBegin(); it != accountGroups.constEnd(); ++it )
 	{
 		KConfigGroup cg( config, *it );
 
@@ -439,6 +401,84 @@ void AccountManager::networkConnected()
 void AccountManager::networkDisconnected()
 {
 	setOnlineStatus( Kopete::OnlineStatusManager::Offline );
+}
+
+void AccountManager::removeAccountConnectedChanged()
+{
+	Account *account = qobject_cast<Account*>(sender());
+	Q_ASSERT( account );
+
+	if ( !account->isConnected() )
+	{
+		disconnect( account, SIGNAL(isConnectedChanged()), this, SLOT(removeAccountConnectedChanged()) );
+		// Use singleShot so we don't delete the account when we use it.
+		d->accountsToBeRemoved.append( account );
+		QTimer::singleShot( 0, this, SLOT(removeAccountInternal()) );
+	}
+}
+
+void AccountManager::removeAccountInternal()
+{
+	if ( d->accountsToBeRemoved.isEmpty() )
+		return;
+
+	Account* account = d->accountsToBeRemoved.takeFirst();
+	if ( account->isConnected() )
+	{
+		kWarning( 14010 ) << "Error, trying to remove connected account " << account->accountId();
+		return;
+	}
+
+	Protocol *protocol = account->protocol();
+
+	KConfigGroup *configgroup = account->configGroup();
+
+	// Clean up the contact list
+	const QHash<QString, Kopete::Contact*> contactList = account->contacts();
+	QHash<QString, Kopete::Contact*>::ConstIterator it, itEnd = contactList.constEnd();
+
+	for ( it = contactList.constBegin(); it != itEnd; ++it )
+	{
+		Contact* c = it.value();
+		if ( !c )
+			continue;
+
+		MetaContact* mc = c->metaContact();
+		mc->removeContact( c );
+		c->deleteLater();
+		if ( mc->contacts().count() == 0 ) //we can delete the metacontact
+		{
+			//get the first group and it's members
+			Group* group = mc->groups().first();
+			MetaContact::List groupMembers = group->members();
+			ContactList::self()->removeMetaContact( mc );
+			if ( groupMembers.count() == 1 && groupMembers.indexOf( mc ) != -1 )
+				ContactList::self()->removeGroup( group );
+		}
+	}
+
+	// Clean up the account list
+	d->accounts.removeAll( account );
+
+	// Clean up configuration
+	configgroup->deleteGroup();
+	configgroup->sync();
+
+	delete account;
+
+	foreach( Account *account , d->accounts )
+	{
+		if( account->protocol() == protocol )
+			return;
+	}
+	//there is nomore account from the protocol,  we can unload it
+
+	// FIXME: pluginId() should return the internal name and not the class name, so
+	//        we can get rid of this hack - Olivier/Martijn
+	QString protocolName = protocol->pluginId().remove( QString::fromLatin1( "Protocol" ) ).toLower();
+
+	PluginManager::self()->setPluginEnabled( protocolName, false );
+	PluginManager::self()->unloadPlugin( protocolName );
 }
 
 } //END namespace Kopete
