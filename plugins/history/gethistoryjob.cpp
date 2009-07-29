@@ -17,21 +17,21 @@
 */
 
 #include "gethistoryjob.h"
-#include <KJob>
+//#include <KJob>
 #include <kdebug.h>
 #include <Akonadi/ItemFetchJob>
 #include <Akonadi/ItemFetchScope>
 #include <Akonadi/Collection>
 
 
-GetHistoryJob::GetHistoryJob(const Akonadi::Collection coll , const QDate date, QObject* parent): KJob(parent)
+GetHistoryJob::GetHistoryJob(const Akonadi::Collection coll , const QDate date, QObject* parent): Akonadi::Job(parent)
 {
   m_collection= coll;
   m_date = date;
   kDebug() << "constructor"<<m_date<<m_collection.name();
 }
 
-void GetHistoryJob::start()
+void GetHistoryJob::doStart()
 {
   kDebug() <<"start";
   Akonadi::ItemFetchJob *fetchjob = new Akonadi::ItemFetchJob(m_collection);

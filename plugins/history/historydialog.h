@@ -63,12 +63,12 @@ class HistoryDialog : public KDialog
 	Q_OBJECT
 
 	public:
-		explicit HistoryDialog(Kopete::MetaContact *mc, QWidget* parent=0);
+		explicit HistoryDialog(Kopete::MetaContact *mc,QHash<QString,Akonadi::Collection> &collMap , QWidget* parent=0);
 		~HistoryDialog();
 
 		
 		QList<History> getHistorylist(const Kopete::Contact* , const QDate date);
-		void mapContactCollection();
+//		void mapContactCollection();
 
 		/**
 		 * Calls init(Kopete::Contact *c) for each subcontact of the metacontact
@@ -98,6 +98,12 @@ class HistoryDialog : public KDialog
 		void slotCopyURL();
 
 		void slotImportHistory();
+		
+		/**
+		 * Show the messages in the HTML View
+		 */
+		void setMessages(QList<Kopete::Message>);
+
 
 	private:
 		enum Disabled { Prev=1, Next=2 };
@@ -107,11 +113,6 @@ class HistoryDialog : public KDialog
 		void doneProgressBar();
 		void init(Kopete::MetaContact *mc);
 		void init(Kopete::Contact *c);
-
-		/**
-		 * Show the messages in the HTML View
-		 */
-		void setMessages(QList<Kopete::Message> m);
 
 		void treeWidgetHideElements(bool s);
 
@@ -139,8 +140,7 @@ class HistoryDialog : public KDialog
 		KAction *mCopyURLAct;
 		QString mURL;
 		
-		Akonadi::Collection m_baseCollection;
-		QMap<QString ,Akonadi::Collection > m_collectionMap;
+		QHash<QString ,Akonadi::Collection > m_collectionMap;
 };
 
 #endif

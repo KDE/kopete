@@ -62,20 +62,20 @@ class HistoryMessageLoggerFactory : public Kopete::MessageHandlerFactory
     HistoryPlugin *history;
 public:
     explicit HistoryMessageLoggerFactory( HistoryPlugin *history ) : history(history) {
-        kDebug() <<"\n history message logger factory constructor";
+        qDebug() <<"\n history message logger factory constructor";
     }
 
     Kopete::MessageHandler *create( Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction )
     {
-        kDebug()<<"\n**** as expected you have ENTERED the Message handle create\n\n";
+        qDebug()<<"\n**** as expected you have ENTERED the Message handle create\n\n";
         if ( direction != Kopete::Message::Inbound )
             return 0;
-        kDebug()<<"\n***returning new histor(HistoryMessageLogger)  instance";
+        qDebug()<<"\n***returning new histor(HistoryMessageLogger)  instance";
         return new HistoryMessageLogger(history);
     }
     int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
     {
-        kDebug()<<"\n*** filterPosition function entered";
+        qDebug()<<"\n*** filterPosition function entered";
         return Kopete::MessageHandlerFactory::InStageToSent+5;
     }
 };
@@ -107,6 +107,10 @@ private slots:
     void slotViewHistory();
     void slotKMMClosed( Kopete::ChatSession* );
     void slotSettingsChanged();
+    
+    void collectionFetch(Akonadi::Collection::List);
+    void monitorCollection(Akonadi::Collection);
+    void slotJobDone(KJob *);
 
 private:
     HistoryMessageLoggerFactory m_loggerFactory;
@@ -118,6 +122,9 @@ private:
     KopeteView *m_currentViewx;
     
     Kopete::ChatSession * m_kmm;
+    
+    Akonadi::Collection m_baseCollection;
+    QHash<QString, Akonadi::Collection> m_mapContactCollection;
 
     void m();
 signals:

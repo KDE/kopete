@@ -17,16 +17,17 @@
 #ifndef GETHISTORYJOB_H
 #define GETHISTORYJOB_H
 
-#include <KJob>
+//#include <KJob>
 #include "history.h"
 #include <Akonadi/Collection>
 #include <QDate>
 #include <akonadi/item.h>
+#include <Akonadi/Job>
 
 namespace Kopete { class Contact; }
 
 
-class GetHistoryJob : public KJob
+class GetHistoryJob : public Akonadi::Job
 {
   Q_OBJECT
   
@@ -35,9 +36,11 @@ class GetHistoryJob : public KJob
     
     virtual ~GetHistoryJob();
     
-    void start();
     History returnHistory();
     Akonadi::Item returnItem();
+    
+  protected:
+    virtual void doStart();
     
   private slots:
     void itemsReceivedSlot(Akonadi::Item::List );

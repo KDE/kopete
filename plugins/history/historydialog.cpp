@@ -83,7 +83,7 @@ bool KListViewDateItem::operator<( const QTreeWidgetItem& other ) const
 }
 
 
-HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
+HistoryDialog::HistoryDialog(Kopete::MetaContact *mc,QHash<QString,Akonadi::Collection> &collMap ,QWidget* parent)
  : KDialog(parent),
    mSearching(false)
 { 
@@ -95,7 +95,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	QString fontStyle;
 
 	kDebug(14310) << "called.";
-	mapContactCollection();
+
+	m_collectionMap = collMap;
 
 
 	// FIXME: Allow to show this dialog for only one contact
@@ -192,38 +193,6 @@ HistoryDialog::~HistoryDialog()
 	delete mMainWidget;
 }
 
-void HistoryDialog::mapContactCollection()
-{
-    if ( !m_baseCollection.isValid() )
-    {
-      Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job->exec()  )
-      {
-	  Akonadi::Collection::List collections = job->collections();
-	  foreach( const Akonadi::Collection collection, collections )
-	  {
-	      if ( collection.name() == "kopeteChat" )
-		m_baseCollection = collection;
-	  }
-      } else kDebug() << "collection fetch job not executed";
-    }
-  
-    if ( m_collectionMap.isEmpty() )
-    {
-      Akonadi::CollectionFetchJob *job2 = new Akonadi::CollectionFetchJob( m_baseCollection , Akonadi::CollectionFetchJob::FirstLevel );
-      if ( job2->exec()  )
-      {
-	  Akonadi::Collection::List collections = job2->collections();
-	  foreach( const Akonadi::Collection collection, collections )
-	  {
-	    m_collectionMap.insert(collection.name() , collection);
-	  }
-      } else kDebug() << "collection fetch job not executed";
-    }
-    
-}
-
-
 void HistoryDialog::init()
 {
 	if(mMetaContact)
@@ -256,9 +225,10 @@ void HistoryDialog::slotLoadDays()
 	DMPair pair(mInit.dateMCList.first());
 	mInit.dateMCList.pop_front();
 
-	HistoryLogger hlog(pair.metaContact());
+	HistoryLogger hlog(pair.metaContact(), m_collectionMap);
 
 	QList<int> dayList = hlog.getDaysForMonth(pair.date());
+	
 	for (int i=0; i<dayList.count(); i++)
 	{
 		QDate c2Date(pair.date().year(),pair.date().month(),dayList[i]);
@@ -315,6 +285,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 void HistoryDialog::dateSelected(QTreeWidgetItem* it)
 {
 	kDebug(14310) ;
+	qDebug() <<"void HistoryDialog::dateSelected(QTreeWidgetItem* it)";
 
 	KListViewDateItem *item = static_cast<KListViewDateItem*>(it);
 
@@ -322,7 +293,10 @@ void HistoryDialog::dateSelected(QTreeWidgetItem* it)
 
 	QDate chosenDate = item->date();
 
-	setMessages(HistoryLogger(item->metaContact()).readMessages(chosenDate));
+	HistoryLogger logger(item->metaContact(), m_collectionMap);
+	connect(&logger,SIGNAL(readMessagesByDateDoneSignal(QList<Kopete::Message>)), this, SLOT(setMessages(QList<Kopete::Message>)) );
+	logger.readMessages(chosenDate);
+//	setMessages(HistoryLogger(item->metaContact(),m_collectionMap).readMessages(chosenDate));
 }
 
 void HistoryDialog::setMessages(QList<Kopete::Message> msgs)

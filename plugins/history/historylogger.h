@@ -58,8 +58,8 @@ public:
 	/**
 	 * Constructor, takes the contact, and the color of messages
 	 */
-	explicit HistoryLogger( Kopete::MetaContact *m , QObject *parent = 0 );
-	explicit HistoryLogger( Kopete::Contact *c , QObject *parent = 0 );
+	explicit HistoryLogger(Kopete::MetaContact *m ,QHash<QString,Akonadi::Collection> &collMap, QObject *parent = 0 );
+	explicit HistoryLogger(Akonadi::Collection &coll, Kopete::Contact *c , QObject *parent = 0 );
 
 
 	~HistoryLogger();
@@ -89,13 +89,13 @@ public:
 	 * log a message
 	 * @param c add a presision to the contact to use, if null, autodetect.
 	 */
-	void appendMessage( const Kopete::Message &msg , const Kopete::Contact *c=0L );
+	void appendMessage( const Kopete::Message &msg , Akonadi::Collection &coll,Akonadi::Collection &baseColl, const Kopete::Contact *c=0L  );
 
 	/**
 	 * read @param lines message from the current position
 	 * from Kopete::Contact @param c in the given @param sens
 	 */
-	void readMessages(int lines,
+	void readMessages(int lines, Akonadi::Collection &coll,
 		const Kopete::Contact *c=0, Sens sens=Default,
 		bool reverseOrder=false, bool colorize=true);
 		
@@ -106,7 +106,8 @@ public:
 	 * because its structure is really different.
 	 * Read all the messages for the given @param date
 	 */
-	QList<Kopete::Message> readMessages(QDate date);
+//	QList<Kopete::Message> 
+	void readMessages(QDate date);
 
 	/**
 	 * The position is set to the last message
@@ -148,7 +149,7 @@ private:
 	 *contais all QDomDocument, for a KC, for a specified Month
 	 */
 	QMap<const Kopete::Contact*,QMap<unsigned int, History> > m_history;
-	History m_historyx;
+//	History m_historyx;
 	
 //	QMap<const Kopete::Contact*,QMap<unsigned int , QDomDocument> > m_documents;
 
@@ -160,7 +161,6 @@ private:
 	 */
 //	QMap<const Kopete::Contact*, QDomElement>  m_currentElements;
 	QMap<const Kopete::Contact*, History>  m_currentElements;
-	static QMap<QString, Akonadi::Collection > m_collectionMap;
 
 	/**
 	 * Get the document, open it is @param canload is true, contain is set to false if the document
@@ -169,11 +169,11 @@ private:
 //	QDomDocument getDocument(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
 //	QDomDocument getDocument(const Kopete::Contact *c, const QDate date, bool canLoad=true, bool* contain=0L);
 	void getHistoryx(const Kopete::Contact *c, unsigned int month, bool canLoad=true , bool* contain=0L);
-	History getHistory(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
-	History getHistory(const Kopete::Contact *c, const QDate date, bool canLoad=true, bool* contain=0L);
+//	History getHistory(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
+//	History getHistory(const Kopete::Contact *c, const QDate date, bool canLoad=true, bool* contain=0L);
 
 	//this function is called in constructor, and it initializes the values in the m_collectionMap.
-	void mapContactCollection();
+//	void mapContactCollection();
 	
 	/**
 	 * look over files to get the last month for this contact
@@ -218,6 +218,7 @@ private:
 	Akonadi::Item m_tosaveInItem;
 	Akonadi::Collection m_tosaveInCollection;
 	static Akonadi::Collection m_baseCollection;
+	QHash<QString, Akonadi::Collection> m_collectionMap;
 	/**
 	 * workaround for the 31 midnight bug.
 	 * it contains the number of the current month.
@@ -245,6 +246,11 @@ private:
 	
 	//in modifyitem
 	QTime m_t;
+	//in readMessages(qdate)
+//	QList<History> m_fetchedHistories;
+	QDate m_readMessagesDate;
+	QList<Kopete::Message> m_readMessagesDateList;
+	QHash<Kopete::Contact *,History> m_historyContact;
 
 private slots:
 	/**
@@ -273,8 +279,11 @@ private slots:
 	void collectionCreateDone(KJob*);
 	void itemCreateDone(KJob*);
 	void itemsReceivedDone(Akonadi::Item::List);
-	void itemModifiedDone(KJob*);
-	void deleteHistoryInstance(HistoryLogger *);
+	void itemModifiedDone(KJob*);	
+	
+	//slot for readmessages(date)
+	void getHistoryJobDone(KJob*);
+	void transactionDone(KJob* );
 	
   signals:
 	void readMessagesDoneSignal();
@@ -284,7 +293,7 @@ private slots:
 	
 	void collectionCreatedSignal();
 	
-	void itemModifiedSignal(HistoryLogger *);
+	void readMessagesByDateDoneSignal( QList<Kopete::Message> );
 	
 };
 

@@ -40,20 +40,24 @@
 #include "historydialog.h"
 #include "historyplugin.h"
 
-HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
+HistoryGUIClient::HistoryGUIClient ( QHash<QString,Akonadi::Collection> &collmap,Kopete::ChatSession *parent )
 		: QObject ( parent ), KXMLGUIClient ( parent )
 {
 	setComponentData ( KGenericFactory<HistoryPlugin>::componentData() );
 
 	m_manager = parent;
-
+	m_collectionmap=collmap;
 	// Refuse to build this client, it is based on wrong parameters
 	if ( !m_manager || m_manager->members().isEmpty() )
 		deleteLater();
 
 	QList<Kopete::Contact*> mb=m_manager->members();
-
-	m_logger=new HistoryLogger ( mb.first() , this );
+	Kopete::Contact *con = mb.first();
+	Akonadi::Collection coll;
+	if (m_collectionmap.contains(con->contactId()) )
+	  coll = m_collectionmap.value(con->contactId());	
+	
+	m_logger=new HistoryLogger (coll, mb.first() , this );
 
 	actionLast = new KAction ( KIcon ( "go-last" ), i18n ( "Latest History" ), this );
 	actionCollection()->addAction ( "historyLast", actionLast );
@@ -95,9 +99,9 @@ void HistoryGUIClient::slotPrevious()
 	m_currentView->clear();
 
 	QList<Kopete::Contact*> mb = m_manager->members();
-	m_logger->readMessages (
-	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
-	                                  HistoryLogger::AntiChronological, true );
+//	m_logger->readMessages (
+//	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
+//	                                  HistoryLogger::AntiChronological, true );
 	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
 
 	actionPrev->setEnabled ( msgs.count() == HistoryConfig::number_ChatWindow() );
@@ -114,9 +118,9 @@ void HistoryGUIClient::slotLast()
 
 	QList<Kopete::Contact*> mb = m_manager->members();
 	m_logger->setPositionToLast();
-	m_logger->readMessages (
-	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
-	                                  HistoryLogger::AntiChronological, true );
+//	m_logger->readMessages (
+//	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
+//	                                  HistoryLogger::AntiChronological, true );
 	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
 	actionPrev->setEnabled ( true );
 	actionNext->setEnabled ( false );
@@ -132,9 +136,9 @@ void HistoryGUIClient::slotNext()
 	m_currentView->clear();
 
 	QList<Kopete::Contact*> mb = m_manager->members();
-	m_logger->readMessages (
-	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
-	                                  HistoryLogger::Chronological, false );
+//	m_logger->readMessages (
+//	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
+//	                                  HistoryLogger::Chronological, false );
 	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
 	actionPrev->setEnabled ( true );
 	actionNext->setEnabled ( msgs.count() == HistoryConfig::number_ChatWindow() );
@@ -151,9 +155,9 @@ void HistoryGUIClient::slotQuote()
 		return;
 
 	m_logger->setPositionToLast();
-	m_logger->readMessages (
-	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
-	                                  HistoryLogger::AntiChronological, true );
+//	m_logger->readMessages (
+//	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
+//	                                  HistoryLogger::AntiChronological, true );
 	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
 	
 	Kopete::Message msg = m_manager->view()->currentMessage();
@@ -196,7 +200,7 @@ void HistoryGUIClient::slotViewHistory()
 
 	if(m)
 	{
-		HistoryDialog* dialog = new HistoryDialog(m);
+		HistoryDialog* dialog = new HistoryDialog(m, m_collectionmap);
 		dialog->setObjectName( QLatin1String("HistoryDialog") );
 	}
 }

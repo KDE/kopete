@@ -38,7 +38,7 @@ if (WITH_texteffect)
   add_subdirectory( texteffect )
 endif (WITH_texteffect)
 if (WITH_highlight)
-  add_subdirectory( highlight )
+ add_subdirectory( highlight )
 endif (WITH_highlight)
 #Disabled since it doesn't do anything
 #if (WITH_alias)

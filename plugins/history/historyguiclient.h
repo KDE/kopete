@@ -21,6 +21,7 @@
 #include <QtCore/QObject>
 
 #include <kxmlguiclient.h>
+#include <Akonadi/Collection>
 
 class KAction;
 
@@ -35,7 +36,7 @@ class HistoryGUIClient : public QObject , public KXMLGUIClient
 {
 Q_OBJECT
 public:
-	HistoryGUIClient(Kopete::ChatSession *parent = 0);
+	HistoryGUIClient(QHash<QString,Akonadi::Collection> &collmap , Kopete::ChatSession *parent = 0);
 	~HistoryGUIClient();
 
 	HistoryLogger *logger() const { return m_logger; }
@@ -50,6 +51,7 @@ private slots:
 private:
 	HistoryLogger *m_logger;
 	Kopete::ChatSession *m_manager;
+	QHash<QString,Akonadi::Collection> m_collectionmap;
 	//bool m_autoChatWindow;
 	//int m_nbAutoChatWindow;
 	//unsigned int m_nbChatWindow;

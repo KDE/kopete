@@ -116,7 +116,8 @@ void HistoryImport::save(void)
 	Log log;
 
 	foreach (log, logs) {
-		HistoryLogger logger(log.other, this);
+		Akonadi::Collection coll;
+		HistoryLogger logger(coll,log.other, this);
 		Message message;
 		foreach (message, log.messages) {
 			Kopete::Message kMessage;
@@ -129,7 +130,7 @@ void HistoryImport::save(void)
 			}
 			kMessage.setPlainBody(message.text);
 			kMessage.setTimestamp(message.timestamp);
-			logger.appendMessage(kMessage, log.other);
+//			logger.appendMessage(kMessage, log.other);
 			
 			progress.setValue(progress.value()+1);
 			qApp->processEvents();
