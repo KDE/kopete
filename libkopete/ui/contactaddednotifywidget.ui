@@ -1,0 +1,257 @@
+<ui version="4.0" >
+ <author>Olivier Goffart</author>
+ <class>ContactAddedNotifyWidget</class>
+ <widget class="QWidget" name="ContactAddedNotifyWidget" >
+  <property name="geometry" >
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>466</width>
+            <height>342</height>
+        </rect>
+    </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>11</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="m_label" >
+     <property name="text" >
+                <string>The contact XXX has added you to his/her contactlist</string>
+            </property>
+     <property name="alignment" >
+      <set>Qt::AlignVCenter</set>
+            </property>
+        </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+            </property>
+     <property name="spacing" >
+      <number>6</number>
+                </property>
+     <item>
+                <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+                    </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+                    </property>
+       <property name="sizeHint" >
+                        <size>
+                            <width>151</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+     </item>
+     <item>
+      <widget class="KPushButton" name="m_infoButton" >
+       <property name="text" >
+                        <string>Read More Info About This Contact</string>
+                    </property>
+                </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="m_authorizeCb" >
+     <property name="text" >
+                <string>Authorize this contact to see my status</string>
+            </property>
+     <property name="checked" >
+                <bool>true</bool>
+            </property>
+        </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="m_addCb" >
+     <property name="text" >
+                <string>Add this contact in my contactlist</string>
+            </property>
+     <property name="checked" >
+                <bool>true</bool>
+            </property>
+        </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="m_contactInfoBox" >
+     <property name="title" >
+      <string/>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>11</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="textLabel7" >
+          <property name="toolTip" >
+                                <string>The display name of the contact.  Leave it empty to use the contact's nickname.</string>
+                            </property>
+          <property name="whatsThis" >
+                                <string>Enter the contact's display name. This is how the contact will appear in the contact list.
+Leave it empty if you want to see the contact's nickname as their display name.</string>
+                            </property>
+          <property name="text" >
+           <string>Display name:</string>
+                            </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="KLineEdit" name="m_displayNameEdit" >
+          <property name="toolTip" >
+                                <string>The display name of the contact.  Leave it empty to use the contact's nickname.</string>
+                            </property>
+          <property name="whatsThis" >
+                                <string>Enter the contact's display name. This is how the contact will appear in the contact list.
+Leave it empty if you want to see the contact's nickname as their display name.</string>
+                            </property>
+                        </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="textLabel5" >
+          <property name="whatsThis" >
+           <string>Enter the group where the contact should be added. Leave it empty to add it in the top level group.</string>
+                            </property>
+          <property name="text" >
+                                <string>In the group:</string>
+                            </property>
+                        </widget>
+        </item>
+        <item>
+         <widget class="KComboBox" name="m_groupList" >
+          <property name="sizePolicy" >
+                                <sizepolicy>
+                                    <hsizetype>3</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+          <property name="whatsThis" >
+                                <string>Enter the group where the contact should be added. Leave it empty to add it to the top level group.</string>
+                            </property>
+          <property name="editable" >
+           <bool>true</bool>
+                    </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="textLabel6" >
+        <property name="text" >
+                        <string>Address book link:</string>
+                    </property>
+                </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+                        </property>
+        <property name="spacing" >
+         <number>6</number>
+                            </property>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+                            </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+                            </property>
+          <property name="sizeHint" >
+                                <size>
+                                    <width>51</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+        </item>
+        <item>
+         <widget class="Kopete::UI::AddressBookLinkWidget" name="widAddresseeLink" />
+        </item>
+       </layout>
+      </item>
+     </layout>
+        </widget>
+   </item>
+   <item>
+        <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+            </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+            </property>
+     <property name="sizeHint" >
+                <size>
+                    <width>21</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+   </item>
+  </layout>
+ </widget>
+  <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends></extends>
+   <header>kcombobox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+    <customwidget>
+           <class>Kopete::UI::AddressBookLinkWidget</class>
+   <extends></extends>
+	   <header>addressbooklinkwidget.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends></extends>
+   <header>kpushbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+    </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

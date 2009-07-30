@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:annotation>
+		<xsd:documentation xml:lang="en">
+		<![CDATA[
+		This is the XSD schema of a Kopete message in XML form. This is both the
+		format that the XSL stylesheets will expect, as well as the format that
+		results from saving the chatwindow contents. This is *not* the same as
+		the format of the history plugin.
+
+		The XML format has one other little quirk - you can pass flags into the
+		engine as XML processing instructions. For example, if you add this
+		instruction to your document:
+
+			<?Kopete Flag:TransformAllMessages>
+
+		... it will instruct the Kopete XSL engine that you want the entire contents
+		of the chat window to be re-drawn each time a new message is appended. This
+		is not the normal procedure, and is only required for special situations
+		(see the Adium style for an example).
+
+		TransformAllMessages is the only flag currently defined.
+		]]>
+		</xsd:documentation>
+	</xsd:annotation>
+
+	<!-- This is defined if we save a chat with multiple messages -->
+	<xsd:element name="document">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="message" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- The main message element -->
+	<xsd:element name="message">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="from" type="metaContact" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="to" type="metaContact" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="body" type="messageBody" minOccurs="1" maxOccurs="1"/>
+			</xsd:sequence>
+
+			<!-- The time only. eg 12:00 pm -->
+			<xsd:attribute name="time" type="xsd:string" use="required"/>
+
+			<!-- Full timestamp. eg Tue Feb  8 19:04:49 AST 2005 -->
+			<xsd:attribute name="timestamp" type="xsd:string" use="required"/>
+
+			<!-- Formatted timestamp. eg 12:00:57 pm -->
+			<xsd:attribute name="formattedTimestamp" type="xsd:string" use="required"/>
+
+			<!-- Message subject. Used by Jabber Email. -->
+			<xsd:attribute name="subject" type="xsd:string" use="required"/>
+
+			<!-- Message direction (Inbound, Outbound, Internal).
+			     This is deprecated. Use @type and @route -->
+			<xsd:attribute name="direction" type="direction" use="required"/>
+
+			<!-- Message route (inbound, outbound, internal).-->
+			<xsd:attribute name="route" type="route" use="required"/>
+
+			<!-- Message type (normal, action).-->
+			<xsd:attribute name="type" type="type" use="required"/>
+
+			<!-- Message importance.-->
+			<xsd:attribute name="importance" type="importance" use="required"/>
+
+			<!-- This is the main contact Id - the other person in the
+			     converation besides you. If it is a group chat, it is the first
+			     person who was being spoken to, or the group chat name. -->
+			<xsd:attribute name="mainContactId" type="xsd:string" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- Enumeration for message direction
+	     (this is deprecated - use the route/type) -->
+	<xsd:simpleType name="direction">
+		<xsd:restriction base="xsd:integer">
+		    <xsd:enumeration value="0"/> <!-- Inbound -->
+		    <xsd:enumeration value="1"/> <!-- Outbound -->
+		    <xsd:enumeration value="2"/> <!-- Internal -->
+		    <xsd:enumeration value="3"/> <!-- Action -->
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- Enumeration for message route -->
+	<xsd:simpleType name="route">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="inbound"/>
+			<xsd:enumeration value="outbound"/>
+			<xsd:enumeration value="internal"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- Enumeration for message type -->
+	<xsd:simpleType name="type">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="normal"/>
+			<xsd:enumeration value="action"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- Enumeration for message importance -->
+	<xsd:simpleType name="importance">
+		<xsd:restriction base="xsd:integer">
+			<xsd:enumeration value="0"/> <!-- Low -->
+			<xsd:enumeration value="1"/> <!-- Normal -->
+			<xsd:enumeration value="2"/> <!-- Highlight -->
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- Enumeration for bidi direction -->
+	<xsd:simpleType name="bidiDirection">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ltr"/>
+			<xsd:enumeration value="rtl"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- Element for display names -->
+	<xsd:complexType name="displayName">
+		<!-- The direction of the name, for Bidi support. -->
+		<xsd:attribute name="dir" type="bidiDirection"/>
+
+		<!-- The actual name text -->
+		<xsd:attribute name="text" type="xsd:string"/>
+	</xsd:complexType>
+
+	<!-- The contact element -->
+	<xsd:complexType name="metaContact">
+		<xsd:sequence>
+			<xsd:element name="contact">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="contactDisplayName" type="displayName" minOccurs="1" maxOccurs="1"/>
+						<xsd:element name="metaContactDisplayName" type="displayName" minOccurs="1" maxOccurs="1"/>
+					</xsd:sequence>
+
+					<!-- The contact's id -->
+					<xsd:attribute name="contactId" type="xsd:string" use="required"/>
+
+					<!-- The contact's custom color -->
+					<xsd:attribute name="color" type="xsd:string" use="required"/>
+
+					<!-- The contact's photo. This file name only remains valid
+					while the message is in transit -->
+					<xsd:attribute name="userPhoto" type="xsd:string" use="optional"/>
+
+					<!-- The contact's protocol icon -->
+					<xsd:attribute name="protocolIcon" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- The message body element -->
+	<xsd:complexType name="messageBody">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<!-- The foreground color of the message -->
+				<xsd:attribute name="color" type="xsd:string" use="optional"/>
+
+				<!-- The background color of the message -->
+				<xsd:attribute name="bgcolor" type="xsd:string" use="optional"/>
+
+				<!-- The font of the message. This is a CSS string
+				     describing the font-family, font-size, text-decoration,
+				     and font-weight -->
+				<xsd:attribute name="font" type="xsd:string" use="optional"/>
+
+				<!-- The direction of the message, for Bidi support. -->
+				<xsd:attribute name="dir" type="bidiDirection" use="required"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+</xsd:schema>

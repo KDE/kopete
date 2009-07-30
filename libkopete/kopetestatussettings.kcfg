@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: Roman Jarosz-->
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+	<kcfgfile name="kopeterc"/>
+
+	<group name="Status">
+		<!-- General Status -->
+		<entry key="protocolStatusMenuType" type="Enum">
+			<label>Protocol's status menu type.</label>
+			<choices>
+				<choice name="StatusesNotFiltered" />
+				<choice name="StatusesWithSameCategory" />
+				<choice name="UseParentStatusCategory" />
+			</choices>
+			<default>StatusesNotFiltered</default>
+		</entry>
+	</group>
+</kcfg>
