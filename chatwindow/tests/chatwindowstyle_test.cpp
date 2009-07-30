@@ -2,8 +2,9 @@
     ChatWindowStyle test suite
 
     Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
+    Copyright (c) 2009      by Pierre-Alexandre St-Jean       <pierrealexandre.stjean@gmail.com>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,39 +16,35 @@
     *************************************************************************
 */
 
-#include <kunittest/module.h>
 #include "chatwindowstyle_test.h"
 
 #include <stdlib.h>
 
 #include <qdir.h>
 #include <qfile.h>
+#include <kdebug.h>
 
 #include <kopetechatwindowstyle.h>
 
-KUNITTEST_MODULE( kunittest_chatwindowstyle_test, "KopeteChatWindowTestSuite");
-KUNITTEST_MODULE_REGISTER_TESTER( ChatWindowStyle_Test );
-
-void ChatWindowStyle_Test::allTests()
+void ChatWindowStyle_Test::initTestCase()
 {
-	testStyle = new ChatWindowStyle(QString(SRCDIR)+QString("/TestStyle"));
+	testStyle = new ChatWindowStyle(QString(KDESRCDIR)+QString("TestStyle"));
 
-	// change user data dir to avoid messing with user's .kde dir
+  // change user data dir to avoid messing with user's .kde dir
 	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
-	testPaths();
-	testHtml();
-	testVariants();
-	testAction();
+}
+void ChatWindowStyle_Test::cleanupTestCase()
+{
 }
 
 void ChatWindowStyle_Test::testPaths()
 {
-	QString expectedStylePath = SRCDIR + QString::fromUtf8("/TestStyle");
+	QString expectedStylePath = KDESRCDIR + QString::fromUtf8("TestStyle");
 	QString expectedBaseHref = expectedStylePath + QString::fromUtf8("/Contents/Resources/");
 
-	CHECK(testStyle->getStylePath(), expectedStylePath);
-	CHECK(testStyle->getStyleBaseHref(), expectedBaseHref);
+	QCOMPARE(testStyle->getStyleName(), expectedStylePath);
+	QCOMPARE(testStyle->getStyleBaseHref(), expectedBaseHref);
 }
 
 void ChatWindowStyle_Test::testHtml()
@@ -97,18 +94,18 @@ void ChatWindowStyle_Test::testHtml()
 "<div>%time%</div>\n"
 "<div>%time{%H:%M}%</div>");
 
-	CHECK(testStyle->getHeaderHtml(), exceptedHeader);
-	CHECK(testStyle->getFooterHtml(), exceptedFooter);
-	CHECK(testStyle->getIncomingHtml(), exceptedIncoming);
-	CHECK(testStyle->getNextIncomingHtml(), exceptedNextIncoming);
-	CHECK(testStyle->getOutgoingHtml(), exceptedOutgoing);
-	CHECK(testStyle->getNextOutgoingHtml(), exceptedNextOutgoing);
-	CHECK(testStyle->getStatusHtml(), exceptedStatus);
+	QCOMPARE(testStyle->getHeaderHtml(), exceptedHeader);
+	QCOMPARE(testStyle->getFooterHtml(), exceptedFooter);
+	QCOMPARE(testStyle->getIncomingHtml(), exceptedIncoming);
+	QCOMPARE(testStyle->getNextIncomingHtml(), exceptedNextIncoming);
+	QCOMPARE(testStyle->getOutgoingHtml(), exceptedOutgoing);
+	QCOMPARE(testStyle->getNextOutgoingHtml(), exceptedNextOutgoing);
+	QCOMPARE(testStyle->getStatusHtml(), exceptedStatus);
 }
 
 void ChatWindowStyle_Test::testAction()
 {
-	CHECK(testStyle->hasActionTemplate(), false);
+	QCOMPARE(testStyle->hasActionTemplate(), false);
 }
 
 void ChatWindowStyle_Test::testVariants()
@@ -124,9 +121,12 @@ void ChatWindowStyle_Test::testVariants()
 	for(it = variantList.constBegin(); it != variantList.constEnd(); ++it)
 	{
 		variantNameList.append(it.key());
-		variantPathList.append(it.data());
+		variantPathList.append(it.value());
 	}	
 	
-	CHECK(variantNameList.join(";"), expectedNameResult);
-	CHECK(variantPathList.join(";"), expectedPathResult);
+	QCOMPARE(variantNameList.join(";"), expectedNameResult);
+	QCOMPARE(variantPathList.join(";"), expectedPathResult);
 }
+
+QTEST_MAIN(ChatWindowStyle_Test)
+#include "chatwindowstyle_test.moc"

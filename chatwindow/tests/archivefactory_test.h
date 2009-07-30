@@ -1,10 +1,10 @@
 /*
-    Adium(and Kopete) ChatWindowStyle format rendering test suite
+    Test RichTextBox Component
 
-    Copyright (c) 2005      by Michaël Larouche       <larouche@kde.org>
+
 	Copyright (c) 2009      by Pierre-Alexandre St-Jean <pierrealexandre.stjean@gmail.com>
 
-    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,35 +15,28 @@
     *                                                                       *
     *************************************************************************
 */
-
-#ifndef CHATWINDOWSTYLERENDERING_TEST_H
-#define CHATWINDOWSTYLERENDERING_TEST_H
+#ifndef ARCHIVEFACTORY_TEST_H
+#define ARCHIVEFACTORY_TEST_H
 
 #include <QtTest>
 
-// HACK: Needed to access private methods of ChatMessagePart.
-#define private public
-#include <chatmessagepart.h>
-#undef private
 
-class ChatWindowStyleRendering_Test : public QObject
+
+class ArchiveFactory_Test : public QObject
 {
 
 	Q_OBJECT;
 
 private slots:
 	void initTestCase();
-	void testHeaderRendering();
-	void testMessageRendering();
-	void testStatusRendering();
-	void testFullRendering();
 	void cleanupTestCase();
 
+	void testTar();
+	void testZip();
+	void testBadArchive();
+
 private:
-	class Private;
-	Private * d;
-	
-	ChatMessagePart *chatPart;
 
 };
+
 #endif
