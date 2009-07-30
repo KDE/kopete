@@ -16,7 +16,8 @@ kopeteemoticonaction.cpp
 chattexteditpart.cpp
 kopeterichtextwidget.cpp
 kopetechatwindowstylemanager.cpp 
-kopetechatwindowstyle.cpp )
+kopetechatwindowstyle.cpp
+kopetechatwindowstylearchivefactory.cpp )
 
 
 kde4_add_kcfg_files(kopetechatwindow_shared_SRCS GENERATE_MOC kopetechatwindowsettings.kcfgc )
