@@ -981,6 +981,36 @@ void ChatView::dropEvent ( QDropEvent * event )
 	else
 		QWidget::dropEvent(event);
 
+    //Connections to the manager and the ViewManager that every view should have
+    connect( this, SIGNAL( closing( KopeteView * ) ),
+         KopeteViewManager::viewManager(), SLOT( slotViewDestroyed( KopeteView * ) ) );
+    connect( this, SIGNAL( activated( KopeteView * ) ),
+         KopeteViewManager::viewManager(), SLOT( slotViewActivated( KopeteView * ) ) );
+    connect( this, SIGNAL( messageSent(Kopete::Message &) ),
+         mgr, SLOT( sendMessage(Kopete::Message &) ) );
+    connect( mgr, SIGNAL( messageSuccess() ),
+         this, SLOT( messageSentSuccessfully() ));
+
+    //Connections to the manager and the ViewManager that every view should have
+    connect( this, SIGNAL( closing( KopeteView * ) ),
+         KopeteViewManager::viewManager(), SLOT( slotViewDestroyed( KopeteView * ) ) );
+    connect( this, SIGNAL( activated( KopeteView * ) ),
+         KopeteViewManager::viewManager(), SLOT( slotViewActivated( KopeteView * ) ) );
+    connect( this, SIGNAL( messageSent(Kopete::Message &) ),
+         mgr, SLOT( sendMessage(Kopete::Message &) ) );
+    connect( mgr, SIGNAL( messageSuccess() ),
+         this, SLOT( messageSentSuccessfully() ));
+
+    //Connections to the manager and the ViewManager that every view should have
+    connect( this, SIGNAL( closing( KopeteView * ) ),
+         KopeteViewManager::viewManager(), SLOT( slotViewDestroyed( KopeteView * ) ) );
+    connect( this, SIGNAL( activated( KopeteView * ) ),
+         KopeteViewManager::viewManager(), SLOT( slotViewActivated( KopeteView * ) ) );
+    connect( this, SIGNAL( messageSent(Kopete::Message &) ),
+         mgr, SLOT( sendMessage(Kopete::Message &) ) );
+    connect( mgr, SIGNAL( messageSuccess() ),
+         this, SLOT( messageSentSuccessfully() ));
+
 }
 
 void ChatView::registerContextMenuHandler( QObject *target, const char* slot )
