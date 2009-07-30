@@ -2,8 +2,9 @@
     kopetechatwindowstyle.h - A Chat Window Style.
 
     Copyright (c) 2005      by Michaël Larouche     <larouche@kde.org>
+    Copyright (c) 2009      by Pierre-Alexandre St-Jean     <pierrealexandre.stjean@gmail.com>
 
-    Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2009 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -146,6 +147,13 @@ private:
 	 * List available variants for the current style.
 	 */
 	void listVariants();
+
+	QStringList getStyleDirs(const QString &styleName) const;
+	QString getVariantDirPath() const;
+	void addCompactVariantIfPresent(const QString &variantName,const QLatin1String compactVersionPrefix);
+	void addVariant(const QString &name);
+	void loadStyleFile(QString &styleType, const QString &fileName);
+	void setDefaultFileTransferIncomingHtml();
 
 private:
 	class Private;
