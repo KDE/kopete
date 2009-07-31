@@ -667,7 +667,13 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
                && (myself ()->onlineStatus () !=
                    WlmProtocol::protocol ()->wlmUnknown))
         {
-            chatManager ()->requestDisplayPicture (buddy.c_str ());
+            // do not open many switchboards in a short period of time
+            if(!m_recentDPRequests.contains(buddy.c_str ()))
+            {
+                m_recentDPRequests.append(buddy.c_str ());
+                QTimer::singleShot(10 * 1000, this, SLOT(slotRemoveRecentDPRequests()));
+                chatManager ()->requestDisplayPicture (buddy.c_str ());
+            }
         }
     }
 }
@@ -1149,7 +1155,13 @@ void WlmAccount::downloadPendingDisplayPicture()
      && (contact->onlineStatus () != WlmProtocol::protocol ()->wlmUnknown))
  
     {
-        chatManager ()->requestDisplayPicture (passport);
+        // do not open many switchboards in a short period of time
+        if(!m_recentDPRequests.contains(passport))
+        {
+            m_recentDPRequests.append(passport);
+            QTimer::singleShot(10 * 1000, this, SLOT(slotRemoveRecentDPRequests()));
+            chatManager ()->requestDisplayPicture (passport);
+        }
     }
 }
 
@@ -1547,6 +1559,11 @@ WlmAccount::receivedOIM (const QString & id, const QString & message)
 
     m_oimList.remove (id);
     m_server->cb.mainConnection->delete_oim (id.toLatin1 ().data ());
+}
+
+void WlmAccount::slotRemoveRecentDPRequests()
+{
+    m_recentDPRequests.pop_front();
 }
 
 #include "wlmaccount.moc"

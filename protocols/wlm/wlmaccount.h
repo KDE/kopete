@@ -324,6 +324,7 @@ private slots:
     void slotChangePublicName();
     void slotOpenStatus();
     void slotRemoveTmpMailFile();
+    void slotRemoveRecentDPRequests();
 
 private:
     Kopete::OnlineStatus temporaryStatus;
@@ -373,6 +374,8 @@ private:
     KTemporaryFile *tmpMailFile;
 
     QTimer * m_tmpMailFileTimer;
+
+    QStringList m_recentDPRequests;
 };
 
 #endif
