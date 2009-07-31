@@ -52,7 +52,7 @@ void GetHistoryJob::itemsReceivedSlot(Akonadi::Item::List itemList)
   {
     if ( item.modificationTime().toLocalTime().toString("MMyyyy")== m_date.toString("MMyyyy") )
     {
-      qDebug()<<"getjob ~~ITEM FOUND^^";
+      qDebug()<<"----------------------------------------------------------------from job item found^^";
       m_item=item;
       if(item.hasPayload<History>() )
 	m_history = item.payload<History>();
@@ -68,7 +68,6 @@ GetHistoryJob::~GetHistoryJob()
 
 void GetHistoryJob::itemJobDone(KJob* job)
 {
-  qDebug() <<"getjob-itemjobdone";
   if (job->error())
     qDebug() << "gethistoryjob job failed"<<job->errorString();
   emit emitResult();
@@ -83,17 +82,3 @@ Akonadi::Item GetHistoryJob::returnItem()
 {
   return m_item;
 }
-
-/*
-void GetHistoryJob::setContact(kopeteContact con)
-{
-  m_c = con;
-}
-
-kopeteContact GetHistoryJob::getContact() const
-{
-  return m_c;
-}
-*/
-
-//#include "gethistoryjob.moc"

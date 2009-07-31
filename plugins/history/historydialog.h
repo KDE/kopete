@@ -24,6 +24,7 @@
 
 #include <kdialog.h>
 #include <kurl.h>
+#include <QList>
 #include <Akonadi/Collection>
 #include "history.h"
 #include "kopetemessage.h"
@@ -55,6 +56,19 @@ class DMPair
 		Kopete::MetaContact *mc;
 };
 
+class CHPair
+{	
+	public:
+	      CHPair(Kopete::MetaContact *c, History &his) { m_c =c; m_h=his;}
+	      Kopete::MetaContact * contact () const { return m_c; }
+	      History history() const { return m_h;}
+	
+	private:
+		History m_h;
+		Kopete::MetaContact * m_c;
+};
+	
+
 /**
  * @author Richard Stellingwerff <remenic@linuxfromscratch.org>
  * @author Stefan Gehn <metz AT gehn.net>
@@ -68,7 +82,7 @@ class HistoryDialog : public KDialog
 		~HistoryDialog();
 
 		
-		QList<History> getHistorylist(const Kopete::Contact* , const QDate date);
+//		QList<History> getHistorylist(const Kopete::Contact* , const QDate date);
 //		void mapContactCollection();
 
 		/**
@@ -92,6 +106,10 @@ class HistoryDialog : public KDialog
 		void slotFilterChanged(int index);
 
 		void init();
+		//int init item job slotContactChanged
+		void initItemJobDone(KJob*);
+		void progressBarSlot(KJob*);
+
 		void slotLoadDays();
 		void slotLoadDays2(QList<int>);
 
@@ -100,6 +118,11 @@ class HistoryDialog : public KDialog
 		void slotCopyURL();
 
 		void slotImportHistory();
+		
+		//in method search, slot when get history job is doneProgressBar
+		void getHistoryJobDone(KJob*);
+		void searchFinished();
+		void transactionDone(KJob*);
 		
 		/**
 		 * Show the messages in the HTML View
@@ -113,8 +136,8 @@ class HistoryDialog : public KDialog
 
 		void initProgressBar(const QString& text, int nbSteps);
 		void doneProgressBar();
-		void init(Kopete::MetaContact *mc);
-		void init(Kopete::Contact *c);
+//		void init(Kopete::MetaContact *mc);
+//		void init(Kopete::Contact *c);
 
 		void treeWidgetHideElements(bool s);
 
@@ -144,6 +167,9 @@ class HistoryDialog : public KDialog
 		
 		QHash<QString ,Akonadi::Collection > m_collectionMap;
 		HistoryLogger *m_hlogger;
+		QMap<QDate, QList<CHPair> > m_dateHistoryList;
 };
+
+Q_DECLARE_METATYPE(Kopete::MetaContact *)
 
 #endif

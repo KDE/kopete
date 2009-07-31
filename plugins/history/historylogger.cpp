@@ -184,6 +184,7 @@ void HistoryLogger::getHistoryx(const Kopete::Contact *c, unsigned int month , b
     if (!m_tosaveInCollection.isValid()) 
     {
       qDebug() <<"in gethistoryx-m_tosave in coll is invalid, returning";
+      emit getHistoryxDone();
       return;
     }
 
@@ -212,96 +213,6 @@ void HistoryLogger::emperimentalSlot(KJob* job )
 
 
 }
-
-//TODO : i dont need this function. :-)
-/*
-History HistoryLogger::getHistory(const Kopete::Contact *contact, const QDate date , bool canLoad , bool* contain)
-{
-    qDebug() << "GET HISTORY";
-    bool itemfound=false;
-
-    Kopete::Contact *c = const_cast<Kopete::Contact*>(contact);
-    if (!m_metaContact)
-    { //this may happen if the contact has been moved, and the MC deleted
-        if (c && c->metaContact())
-            m_metaContact=c->metaContact();
-        else
-            return History();
-    }
-
-    if (!m_metaContact->contacts().contains(c))
-    {
-        if (contain)
-            *contain=false;
-        return History();
-    }
-
-    if (!canLoad)
-    {
-        if (contain)
-            *contain=false;
-        return History();
-    }
-
-    if ( m_tosaveInCollection.isValid() )
-    {
-        qDebug() << "collection found in m_collection map";
-    }
-    else
-    {
-        qDebug() << " making m_tosave in collection null";
-        m_tosaveInCollection = Akonadi::Collection::Collection();
-    }
-
-    History history;
-    Akonadi::Item itemx;
-    if ( m_tosaveInCollection.isValid() && m_toSaveHistory.messages().isEmpty())
-    {
-        qDebug() <<"m_tosave in collection is valid";
-        Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( m_tosavenCollection );
-        itemjob->fetchScope().fetchFullPayload();
-
-        if ( itemjob->exec() )
-        {
-            Akonadi::Item::List items = itemjob->items();
-            foreach( const Akonadi::Item &item, items )
-            {
-                if ( item.modificationTime().toLocalTime().toString("MMyyyy")== date.toString("MMyyyy") )
-                {
-                    itemx = item ;
-                    itemfound=true;
-                    qDebug() << " found item with matching time";
-                    break;
-                }
-            }
-            m_tosaveInItem=itemx;
-I
-            if (itemx.hasPayload<History>() )
-                history = itemx.payload< History >();
-        }
-        else qDebug() << " item fetch job failed";
-    }  else qDebug() << "invalid collection, so no item ";
-
-    if ( itemfound )
-    {
-        qDebug() << "item has been found";
-        if ( !m_tosaveInItem.hasPayload() )
-        {
-            if (contain)
-                *contain=false;
-            return history;
-        }
-    }
-    else
-    {
-        qDebug() << " since item was not found, making m_tosave in item null";
-        m_tosaveInItem = Akonadi::Item::Item(); //the item now point to a null collection
-    }
-
-    return history;
-}
-
-*/
 
 void HistoryLogger::appendMessage( const Kopete::Message &msg , Akonadi::Collection &coll ,Akonadi::Collection &baseColl, const Kopete::Contact *ct)
 {
@@ -1147,56 +1058,5 @@ void HistoryLogger::getDaysForMonthSlot(KJob* job)
     emit getDaysForMonthSignal(dayList);
   }
 }
-    /*
-    foreach(Kopete::Contact *contact, contacts)
-    {
-        Akonadi::CollectionFetchJob * collFetch = new Akonadi::CollectionFetchJob( m_baseCollection );
-        if ( collFetch->exec() )
-        {
-            Akonadi::Collection::List collections = collFetch->collections();
-            foreach( const Akonadi::Collection &collection, collections )
-            {
-                if ( collection.name() == contact->contactId() )
-                {
-                    Akonadi::ItemFetchJob *itemFetch = new Akonadi::ItemFetchJob( collection );
-                    itemFetch->fetchScope().fetchFullPayload();
-                    if (itemFetch->exec() )
-                    {
-                        Akonadi::Item::List items = itemFetch->items();
-                        foreach ( const Akonadi::Item &item , items)
-                        {
-                            if ( item.modificationTime().toLocalTime().toString("yyyyMM") == date.toString("yyyyMM") )
-                            {
-                                QByteArray data= item.payloadData();
-                                QBuffer buff;
-                                buff.open(QIODevice::ReadWrite);
-                                buff.write(data);
-                                buff.reset();
-
-                                QTextStream stream(&buff);
-                                QString fullText = stream.readAll();
-                                buff.close();
-
-                                int pos = 0;
-                                while ( (pos = rxTime.indexIn(fullText, pos)) != -1)
-                                {
-                                    pos += rxTime.matchedLength();
-                                    int day=rxTime.capturedTexts()[1].toInt();
-                                    if ( day !=lastDay && dayList.indexOf(day) == -1) // avoid duplicates
-                                    {
-                                        dayList.append(rxTime.capturedTexts()[1].toInt());
-                                        lastDay=day;
-                                    }
-                                }
-                            }//end of if itemmodification time
-                        }
-                    }	else qDebug() << " item fetch failed"<<itemFetch->errorString();
-                }
-            }
-        } else qDebug() << "collection fetch failed"<<collFetch->errorString();
-    } //end of for reach conact loop
-    
-    return dayList;
-} */
 
 #include "historylogger.moc"
