@@ -60,7 +60,9 @@ public:
 	 */
 	explicit HistoryLogger(Kopete::MetaContact *m ,QHash<QString,Akonadi::Collection> &collMap, QObject *parent = 0 );
 	explicit HistoryLogger(Akonadi::Collection &coll, Kopete::Contact *c , QObject *parent = 0 );
-
+//	explicit HistoryLogger(QObject *parent=0);
+	
+//	void Initialize(Kopete::MetaContact *m ,QHash<QString,Akonadi::Collection> &collMap);
 
 	~HistoryLogger();
 
@@ -128,7 +130,7 @@ public:
 	 * @return The list of the days for which there is a log for m_metaContact for month of
 	 * @param date (don't care of the day)
 	 */
-	QList<int> getDaysForMonth(QDate date);
+	void getDaysForMonth(QDate date);
 
 	/**
 	 * Get the filename of the xml file which contains the history from the
@@ -251,6 +253,9 @@ private:
 	QDate m_readMessagesDate;
 	QList<Kopete::Message> m_readMessagesDateList;
 	QHash<Kopete::Contact *,History> m_historyContact;
+	
+	//used in getdays for month
+	QList<History> m_historyList;
 
 private slots:
 	/**
@@ -285,6 +290,9 @@ private slots:
 	void getHistoryJobDone(KJob*);
 	void transactionDone(KJob* );
 	
+	//for getDaysForMonth
+	void getDaysForMonthSlot(KJob*);
+	
   signals:
 	void readMessagesDoneSignal();
 	void appendMessageDoneSignal();
@@ -295,6 +303,10 @@ private slots:
 	
 	void readMessagesByDateDoneSignal( QList<Kopete::Message> );
 	
+	void getDaysForMonthSignal(QList<int>);
+	
 };
+
+Q_DECLARE_METATYPE(Kopete::Contact *)
 
 #endif

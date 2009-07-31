@@ -27,6 +27,7 @@
 #include <Akonadi/Collection>
 #include "history.h"
 #include "kopetemessage.h"
+#include "historylogger.h"
 
 class QTreeWidgetItem;
 
@@ -92,6 +93,7 @@ class HistoryDialog : public KDialog
 
 		void init();
 		void slotLoadDays();
+		void slotLoadDays2(QList<int>);
 
 		void slotRightClick(const QString &url, const QPoint &point);
 		void slotCopy();
@@ -141,6 +143,7 @@ class HistoryDialog : public KDialog
 		QString mURL;
 		
 		QHash<QString ,Akonadi::Collection > m_collectionMap;
+		HistoryLogger *m_hlogger;
 };
 
 #endif

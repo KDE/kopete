@@ -17,7 +17,7 @@
 #ifndef GETHISTORYJOB_H
 #define GETHISTORYJOB_H
 
-//#include <KJob>
+#include <KJob>
 #include "history.h"
 #include <Akonadi/Collection>
 #include <QDate>
@@ -25,11 +25,12 @@
 #include <Akonadi/Job>
 
 namespace Kopete { class Contact; }
-
+typedef Kopete::Contact* kopeteContact;
 
 class GetHistoryJob : public Akonadi::Job
 {
   Q_OBJECT
+//  Q_PROPERTY(kopeteContact contact READ getContact WRITE setContact);
   
   public:
     explicit GetHistoryJob( const Akonadi::Collection , const QDate date , QObject *parent = 0 );
@@ -39,8 +40,11 @@ class GetHistoryJob : public Akonadi::Job
     History returnHistory();
     Akonadi::Item returnItem();
     
-  protected:
-    virtual void doStart();
+//  protected:
+    void doStart();
+    
+//    void setContact(kopeteContact con);
+//    kopeteContact getContact() const;
     
   private slots:
     void itemsReceivedSlot(Akonadi::Item::List );
@@ -51,6 +55,7 @@ class GetHistoryJob : public Akonadi::Job
     Akonadi::Collection m_collection;
     Akonadi::Item m_item;
     QDate m_date;
+    kopeteContact m_c;
     
 };
 

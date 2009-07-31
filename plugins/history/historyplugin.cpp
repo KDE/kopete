@@ -189,12 +189,12 @@ void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
 
 void HistoryPlugin::slotViewHistory()
 {
-    qDebug() << "HistoryPlugin::slotViewHistory\n\n";
+    qDebug() << "\nHistoryPlugin::slotViewHistory";
     Kopete::MetaContact *m=Kopete::ContactList::self()->selectedMetaContacts().first();
     if (m)
     {
         //int lines = HistoryConfig::number_ChatWindow();
-
+	qDebug() <<"slotviewhistory -- entered if (m)";
         // TODO: Keep track of open dialogs and raise instead of
         // opening a new (duplicated) one
         HistoryDialog* dialog = new HistoryDialog(m,m_mapContactCollection);

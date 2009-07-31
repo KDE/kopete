@@ -53,367 +53,396 @@
 class KListViewDateItem : public QTreeWidgetItem
 {
 public:
-	KListViewDateItem(QTreeWidget* parent, QDate date, Kopete::MetaContact *mc);
-	QDate date() const { return mDate; }
-	Kopete::MetaContact *metaContact() const { return mMetaContact; }
+    KListViewDateItem(QTreeWidget* parent, QDate date, Kopete::MetaContact *mc);
+    QDate date() const {
+        return mDate;
+    }
+    Kopete::MetaContact *metaContact() const {
+        return mMetaContact;
+    }
 
-	virtual bool operator<( const QTreeWidgetItem& other ) const;
+    virtual bool operator<( const QTreeWidgetItem& other ) const;
 private:
     QDate mDate;
-	Kopete::MetaContact *mMetaContact;
+    Kopete::MetaContact *mMetaContact;
 };
 
 KListViewDateItem::KListViewDateItem(QTreeWidget* parent, QDate date, Kopete::MetaContact *mc)
-: QTreeWidgetItem(parent), mDate(date), mMetaContact(mc)
+        : QTreeWidgetItem(parent), mDate(date), mMetaContact(mc)
 {
-	setText( 0, mDate.toString(Qt::ISODate) );
-	setText( 1, mMetaContact->displayName() );
+    setText( 0, mDate.toString(Qt::ISODate) );
+    setText( 1, mMetaContact->displayName() );
 }
 
 bool KListViewDateItem::operator<( const QTreeWidgetItem& other ) const
 {
-	QTreeWidget *tw = treeWidget();
-	int column =  tw ? tw->sortColumn() : 0;
-	if ( column > 0 )
-		return text(column) < other.text(column);
+    QTreeWidget *tw = treeWidget();
+    int column =  tw ? tw->sortColumn() : 0;
+    if ( column > 0 )
+        return text(column) < other.text(column);
 
-	//compare dates - do NOT use ascending var here
-	const KListViewDateItem* item = static_cast<const KListViewDateItem*>(&other);
-	return ( mDate < item->date() );
+    //compare dates - do NOT use ascending var here
+    const KListViewDateItem* item = static_cast<const KListViewDateItem*>(&other);
+    return ( mDate < item->date() );
 }
 
 
 HistoryDialog::HistoryDialog(Kopete::MetaContact *mc,QHash<QString,Akonadi::Collection> &collMap ,QWidget* parent)
- : KDialog(parent),
-   mSearching(false)
-{ 
-	setAttribute (Qt::WA_DeleteOnClose, true);
-	setCaption( i18n("History for %1", mc->displayName()) );
-	setButtons(KDialog::Close);
-	QString fontSize;
-	QString htmlCode;
-	QString fontStyle;
+        : KDialog(parent),
+        mSearching(false)
+{
+    qDebug() << "\nHistoryDialog::HistoryDialog--constructor";
+    setAttribute (Qt::WA_DeleteOnClose, true);
+    setCaption( i18n("History for %1", mc->displayName()) );
+    setButtons(KDialog::Close);
+    QString fontSize;
+    QString htmlCode;
+    QString fontStyle;
 
-	kDebug(14310) << "called.";
-
-	m_collectionMap = collMap;
-
-
-	// FIXME: Allow to show this dialog for only one contact
-	mMetaContact = mc;
+    kDebug(14310) << "called.";
+    m_collectionMap = collMap;
 
 
-
-	// Widgets initializations
-	QWidget* w = new QWidget( this );
-	mMainWidget = new Ui::HistoryViewer();
-	mMainWidget->setupUi( w );
-	mMainWidget->searchLine->setFocus();
-	mMainWidget->searchLine->setTrapReturnKey (true);
-	mMainWidget->searchLine->setClearButtonShown(true);
-
-	mMainWidget->contactComboBox->addItem(i18n("All"));
-	mMetaContactList = Kopete::ContactList::self()->metaContacts();
-
-	foreach(Kopete::MetaContact *metaContact, mMetaContactList)
-	{
-		mMainWidget->contactComboBox->addItem(metaContact->displayName());
-	}
+    // FIXME: Allow to show this dialog for only one contact
+    mMetaContact = mc;
 
 
-	if (mMetaContact)
-		mMainWidget->contactComboBox->setCurrentIndex(mMetaContactList.indexOf(mMetaContact)+1);
 
-	mMainWidget->dateSearchLine->setTreeWidget(mMainWidget->dateTreeWidget);
-	mMainWidget->dateTreeWidget->sortItems(0, Qt::DescendingOrder); //newest-first
+    // Widgets initializations
+    QWidget* w = new QWidget( this );
+    mMainWidget = new Ui::HistoryViewer();
+    mMainWidget->setupUi( w );
+    mMainWidget->searchLine->setFocus();
+    mMainWidget->searchLine->setTrapReturnKey (true);
+    mMainWidget->searchLine->setClearButtonShown(true);
 
-	setMainWidget( w );
+    mMainWidget->contactComboBox->addItem(i18n("All"));
+    mMetaContactList = Kopete::ContactList::self()->metaContacts();
 
-	// Initializing HTML Part
-	QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
-	mHtmlPart = new KHTMLPart(mMainWidget->htmlFrame);
-
-	//Security settings, we don't need this stuff
-	mHtmlPart->setJScriptEnabled(false);
-	mHtmlPart->setJavaEnabled(false);
-	mHtmlPart->setPluginsEnabled(false);
-	mHtmlPart->setMetaRefreshEnabled(false);
-	mHtmlPart->setOnlyLocalReferences(true);
-
-	mHtmlView = mHtmlPart->view();
-	mHtmlView->setMarginWidth(4);
-	mHtmlView->setMarginHeight(4);
-	mHtmlView->setFocusPolicy(Qt::ClickFocus);
-	mHtmlView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-	l->setMargin(0);
-	l->addWidget(mHtmlView);
-
-	QTextStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
-	fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + Kopete::AppearanceSettings::self()->chatFont().family() + "; color: " + Kopete::AppearanceSettings::self()->chatTextColor().name() + "; }</style>";
-
-	mHtmlPart->begin();
-	htmlCode = "<html><head>" + fontStyle + "</head><body class=\"hf\"></body></html>";
-	mHtmlPart->write( QString::fromLatin1( htmlCode.toLatin1() ) );
-	mHtmlPart->end();
+    foreach(Kopete::MetaContact *metaContact, mMetaContactList)
+    {
+        mMainWidget->contactComboBox->addItem(metaContact->displayName());
+    }
 
 
-	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)),
-		this, SLOT(slotOpenURLRequest(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)));
-	connect(mMainWidget->dateTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(dateSelected(QTreeWidgetItem*)));
-	connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
-	connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
-	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
-	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
-	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
-	connect(mMainWidget->importHistory, SIGNAL(clicked()), this, SLOT(slotImportHistory()));
-	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
+    if (mMetaContact)
+        mMainWidget->contactComboBox->setCurrentIndex(mMetaContactList.indexOf(mMetaContact)+1);
 
-	//initActions
-	mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), mHtmlView );
-	mHtmlView->addAction( mCopyAct );
+    mMainWidget->dateSearchLine->setTreeWidget(mMainWidget->dateTreeWidget);
+    mMainWidget->dateTreeWidget->sortItems(0, Qt::DescendingOrder); //newest-first
 
-	mCopyURLAct = new KAction( KIcon("edit-copy"), i18n("Copy Link Address"), mHtmlView );
-	mHtmlView->addAction( mCopyURLAct );
-	connect( mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT(slotCopyURL()) );
+    setMainWidget( w );
 
-	resize(650, 700);
-	centerOnScreen(this);
+    // Initializing HTML Part
+    QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
+    mHtmlPart = new KHTMLPart(mMainWidget->htmlFrame);
 
-	// show the dialog before people get impatient
-	show();
+    //Security settings, we don't need this stuff
+    mHtmlPart->setJScriptEnabled(false);
+    mHtmlPart->setJavaEnabled(false);
+    mHtmlPart->setPluginsEnabled(false);
+    mHtmlPart->setMetaRefreshEnabled(false);
+    mHtmlPart->setOnlyLocalReferences(true);
 
-	// Load history dates in the listview
-	init();
+    mHtmlView = mHtmlPart->view();
+    mHtmlView->setMarginWidth(4);
+    mHtmlView->setMarginHeight(4);
+    mHtmlView->setFocusPolicy(Qt::ClickFocus);
+    mHtmlView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+
+    l->setMargin(0);
+    l->addWidget(mHtmlView);
+
+    QTextStream( &fontSize ) << Kopete::AppearanceSettings::self()->chatFont().pointSize();
+    fontStyle = "<style>.hf { font-size:" + fontSize + ".0pt; font-family:" + Kopete::AppearanceSettings::self()->chatFont().family() + "; color: " + Kopete::AppearanceSettings::self()->chatTextColor().name() + "; }</style>";
+
+    mHtmlPart->begin();
+    htmlCode = "<html><head>" + fontStyle + "</head><body class=\"hf\"></body></html>";
+    mHtmlPart->write( QString::fromLatin1( htmlCode.toLatin1() ) );
+    mHtmlPart->end();
+
+
+    connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)),
+            this, SLOT(slotOpenURLRequest(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)));
+    connect(mMainWidget->dateTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(dateSelected(QTreeWidgetItem*)));
+    connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
+    connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
+    connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
+    connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
+    connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
+    connect(mMainWidget->importHistory, SIGNAL(clicked()), this, SLOT(slotImportHistory()));
+    connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
+
+    //initActions
+    mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), mHtmlView );
+    mHtmlView->addAction( mCopyAct );
+
+    mCopyURLAct = new KAction( KIcon("edit-copy"), i18n("Copy Link Address"), mHtmlView );
+    mHtmlView->addAction( mCopyURLAct );
+    connect( mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT(slotCopyURL()) );
+
+    resize(650, 700);
+    centerOnScreen(this);
+
+    // show the dialog before people get impatient
+    show();
+
+    // Load history dates in the listview
+    init();
 }
 
 HistoryDialog::~HistoryDialog()
 {
-	// end the search function, if it's still running
-	mSearching = false;
-	delete mMainWidget;
+    qDebug() <<"HistoryDialog distructor";
+    // end the search function, if it's still running
+    mSearching = false;
+    delete mMainWidget;
 }
 
 void HistoryDialog::init()
 {
-	if(mMetaContact)
-	{
-		init(mMetaContact);
-	}
-	else
-	{
-		foreach(Kopete::MetaContact *metaContact, mMetaContactList)
-		{
-			init(metaContact);
-		}
-	}
+    qDebug() <<"HistoryDialog::init()";
 
-	initProgressBar(i18n("Loading..."),mInit.dateMCList.count());
-	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
+    if (mMetaContact)
+    {
+        init(mMetaContact);
+    }
+    else
+    {
+        foreach(Kopete::MetaContact *metaContact, mMetaContactList)
+        {
+            init(metaContact);
+        }
+    }
+
+    initProgressBar(i18n("Loading..."),mInit.dateMCList.count());
+    QTimer::singleShot(0,this,SLOT(slotLoadDays()));
 }
 
 void HistoryDialog::slotLoadDays()
 {
-	if(mInit.dateMCList.isEmpty())
-	{
-		if (!mMainWidget->searchLine->text().isEmpty())
-			QTimer::singleShot(0, this, SLOT(slotSearch()));
-		doneProgressBar();
-		kDebug() << " now returning";
-		return;
-	}
-	
-	DMPair pair(mInit.dateMCList.first());
-	mInit.dateMCList.pop_front();
+    qDebug() <<"HistoryDialog::slotLoadDays";
 
-	HistoryLogger hlog(pair.metaContact(), m_collectionMap);
+    if (mInit.dateMCList.isEmpty())
+    {
+        if (!mMainWidget->searchLine->text().isEmpty())
+            QTimer::singleShot(0, this, SLOT(slotSearch()));
+        doneProgressBar();
+        kDebug() << " now returning";
+        return;
+    }
 
-	QList<int> dayList = hlog.getDaysForMonth(pair.date());
-	
-	for (int i=0; i<dayList.count(); i++)
-	{
-		QDate c2Date(pair.date().year(),pair.date().month(),dayList[i]);
-		if (mInit.dateMCList.indexOf(pair) == -1)
-			new KListViewDateItem(mMainWidget->dateTreeWidget, c2Date, pair.metaContact());
-	}
+    DMPair pair(mInit.dateMCList.first());
+//    mInit.dateMCList.pop_front();
 
-	mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
-	QTimer::singleShot(0,this,SLOT(slotLoadDays()));
+    HistoryLogger *hlog = new HistoryLogger::HistoryLogger(pair.metaContact(), m_collectionMap);
+    m_hlogger=hlog;
+    connect(hlog,SIGNAL(getDaysForMonthSignal(QList<int>)),this,SLOT(slotLoadDays2(QList<int>)) );
+    hlog->getDaysForMonth(pair.date());
+}
+
+void HistoryDialog::slotLoadDays2(QList<int> dayList)
+{
+    disconnect(m_hlogger,SIGNAL(getDaysForMonthSignal(QList<int>)),this,SLOT(slotLoadDays2(QList<int>)) );
+    qDebug() << "slot load days 2";
+    DMPair pair(mInit.dateMCList.first());
+    mInit.dateMCList.pop_front();
+    
+    for (int i=0; i<dayList.count(); i++)
+    {
+        QDate c2Date(pair.date().year(),pair.date().month(),dayList[i]);
+        if (mInit.dateMCList.indexOf(pair) == -1)
+            new KListViewDateItem(mMainWidget->dateTreeWidget, c2Date, pair.metaContact());
+    }
+
+    mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
+    QTimer::singleShot(0,this,SLOT(slotLoadDays()));
+    m_hlogger->deleteLater();
 }
 
 void HistoryDialog::init(Kopete::MetaContact *mc)
 {
-	QList<Kopete::Contact*> contacts=mc->contacts();
+    qDebug() <<"HistoryDialog::init(Kopete::MetaContact *mc)";
 
-	foreach(Kopete::Contact *contact, contacts)
-	{
-		init(contact);
-	}
+    QList<Kopete::Contact*> contacts=mc->contacts();
+
+    foreach(Kopete::Contact *contact, contacts)
+    {
+        init(contact);
+    }
 }
 
 void HistoryDialog::init(Kopete::Contact *c)
 {
-  bool collfound=false;
-  Akonadi::Collection coll,collcontact;
+    qDebug() <<"HistoryDialog::init(Kopete::Contact *c)";
 
-  if( m_collectionMap.contains(c->contactId()) )
-  {
-    collfound = true;
-    collcontact = m_collectionMap[c->contactId()];
-  }
-  if(collfound==true)
-  {
-    Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
-    if ( itemjob->exec() )
+    bool collfound=false;
+    Akonadi::Collection coll,collcontact;
+
+    if ( m_collectionMap.contains(c->contactId()) )
     {
-        Akonadi::Item::List items = itemjob->items();
-        if ( !items.isEmpty() )
-        {
-            foreach( const Akonadi::Item &item, items )
-            {
-	      QDate cDate = QDate(item.modificationTime().date().year(),item.modificationTime().date().month(), 1);
-	      DMPair pair(cDate, c->metaContact());
-	      mInit.dateMCList.append(pair);
-	      kDebug() <<"cDate="<<cDate;
-            }
-	}
+        collfound = true;
+        collcontact = m_collectionMap[c->contactId()];
     }
-    else kDebug() << "item fetch job failed";
-  }
+    if (collfound==true)
+    {
+        Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
+        if ( itemjob->exec() )
+        {
+            Akonadi::Item::List items = itemjob->items();
+            if ( !items.isEmpty() )
+            {
+                foreach( const Akonadi::Item &item, items )
+                {
+                    QDate cDate = QDate(item.modificationTime().date().year(),item.modificationTime().date().month(), 1);
+                    DMPair pair(cDate, c->metaContact());
+                    mInit.dateMCList.append(pair);
+                    kDebug() <<"cDate="<<cDate;
+                }
+            }
+        }
+        else kDebug() << "item fetch job failed";
+    }
 }
 
 
 void HistoryDialog::dateSelected(QTreeWidgetItem* it)
 {
-	kDebug(14310) ;
-	qDebug() <<"void HistoryDialog::dateSelected(QTreeWidgetItem* it)";
+    kDebug(14310) ;
+    qDebug() <<"void HistoryDialog::dateSelected(QTreeWidgetItem* it)";
 
-	KListViewDateItem *item = static_cast<KListViewDateItem*>(it);
+    KListViewDateItem *item = static_cast<KListViewDateItem*>(it);
 
-	if (!item) return;
+    if (!item) return;
 
-	QDate chosenDate = item->date();
+    QDate chosenDate = item->date();
 
-	HistoryLogger logger(item->metaContact(), m_collectionMap);
-	connect(&logger,SIGNAL(readMessagesByDateDoneSignal(QList<Kopete::Message>)), this, SLOT(setMessages(QList<Kopete::Message>)) );
-	logger.readMessages(chosenDate);
-//	setMessages(HistoryLogger(item->metaContact(),m_collectionMap).readMessages(chosenDate));
+//    m_hlogger.Initialize(item->metaContact(), m_collectionMap);
+    HistoryLogger *l = new HistoryLogger::HistoryLogger(item->metaContact(), m_collectionMap);
+    m_hlogger=l;
+    connect(m_hlogger,SIGNAL(readMessagesByDateDoneSignal(QList<Kopete::Message>)), this, SLOT(setMessages(QList<Kopete::Message>)) );
+    m_hlogger->readMessages(chosenDate);
 }
 
 void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 {
-	kDebug(14310) ;
 
-	// Clear View
-	DOM::HTMLElement htmlBody = mHtmlPart->htmlDocument().body();
-	while(htmlBody.hasChildNodes())
-		htmlBody.removeChild(htmlBody.childNodes().item(htmlBody.childNodes().length() - 1));
-	// ----
+    disconnect(m_hlogger,SIGNAL(readMessagesByDateDoneSignal(QList<Kopete::Message>)), this, SLOT(setMessages(QList<Kopete::Message>)) );
 
-	QString dir = (QApplication::isRightToLeft() ? QString::fromLatin1("rtl") :
-		QString::fromLatin1("ltr"));
+    kDebug(14310) ;
+    qDebug()<<"HistoryDialog::setMessages(QList<Kopete::Message> msgs)";
+    m_hlogger->deleteLater();
+    // Clear View
+    DOM::HTMLElement htmlBody = mHtmlPart->htmlDocument().body();
+    while (htmlBody.hasChildNodes())
+        htmlBody.removeChild(htmlBody.childNodes().item(htmlBody.childNodes().length() - 1));
+    // ----
 
-	QString accountLabel;
-	QString date = msgs.isEmpty() ? "" : msgs.front().timestamp().date().toString();
-	QString resultHTML = "<b><font color=\"red\">" + date + "</font></b><br/>";
+    QString dir = (QApplication::isRightToLeft() ? QString::fromLatin1("rtl") :
+                   QString::fromLatin1("ltr"));
 
-	DOM::HTMLElement newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
-	newNode.setAttribute(QString::fromLatin1("dir"), dir);
-	newNode.setInnerHTML(resultHTML);
-	mHtmlPart->htmlDocument().body().appendChild(newNode);
+    QString accountLabel;
+    QString date = msgs.isEmpty() ? "" : msgs.front().timestamp().date().toString();
+    QString resultHTML = "<b><font color=\"red\">" + date + "</font></b><br/>";
 
-	// Populating HTML Part with messages
-	foreach(const Kopete::Message& msg, msgs)
-	{
-		if ( mMainWidget->messageFilterBox->currentIndex() == 0
-			|| ( mMainWidget->messageFilterBox->currentIndex() == 1 && msg.direction() == Kopete::Message::Inbound )
-			|| ( mMainWidget->messageFilterBox->currentIndex() == 2 && msg.direction() == Kopete::Message::Outbound ) )
-		{
-			resultHTML.clear();
+    DOM::HTMLElement newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
+    newNode.setAttribute(QString::fromLatin1("dir"), dir);
+    newNode.setInnerHTML(resultHTML);
+    mHtmlPart->htmlDocument().body().appendChild(newNode);
 
-			if (accountLabel.isEmpty() || accountLabel != msg.from()->account()->accountLabel())
-			// If the message's account is new, just specify it to the user
-			{
-				if (!accountLabel.isEmpty())
-					resultHTML += "<br/><br/><br/>";
-				resultHTML += "<b><font color=\"blue\">" + msg.from()->account()->accountLabel() + "</font></b><br/>";
-			}
-			accountLabel = msg.from()->account()->accountLabel();
+    // Populating HTML Part with messages
+    foreach(const Kopete::Message& msg, msgs)
+    {
+        if ( mMainWidget->messageFilterBox->currentIndex() == 0
+                || ( mMainWidget->messageFilterBox->currentIndex() == 1 && msg.direction() == Kopete::Message::Inbound )
+                || ( mMainWidget->messageFilterBox->currentIndex() == 2 && msg.direction() == Kopete::Message::Outbound ) )
+        {
+            resultHTML.clear();
 
-			QString body = msg.parsedBody();
+            if (accountLabel.isEmpty() || accountLabel != msg.from()->account()->accountLabel())
+                // If the message's account is new, just specify it to the user
+            {
+                if (!accountLabel.isEmpty())
+                    resultHTML += "<br/><br/><br/>";
+                resultHTML += "<b><font color=\"blue\">" + msg.from()->account()->accountLabel() + "</font></b><br/>";
+            }
+            accountLabel = msg.from()->account()->accountLabel();
 
-			if (!mMainWidget->searchLine->text().isEmpty())
-			// If there is a search, then we hightlight the keywords
-			{
-				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", Qt::CaseInsensitive);
-			}
+            QString body = msg.parsedBody();
 
-			QString name;
-			if ( msg.from()->metaContact() && msg.from()->metaContact() != Kopete::ContactList::self()->myself() )
-			{
-				name = msg.from()->metaContact()->displayName();
-			}
-			else
-			{
-				name = msg.from()->nickName();
-			}
+            if (!mMainWidget->searchLine->text().isEmpty())
+                // If there is a search, then we hightlight the keywords
+            {
+                body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", Qt::CaseInsensitive);
+            }
 
-			QString fontColor;
-			if (msg.direction() == Kopete::Message::Outbound)
-			{
-				fontColor = Kopete::AppearanceSettings::self()->chatTextColor().dark().name();
-			}
-			else
-			{
-				fontColor = Kopete::AppearanceSettings::self()->chatTextColor().light(200).name();
-			}
+            QString name;
+            if ( msg.from()->metaContact() && msg.from()->metaContact() != Kopete::ContactList::self()->myself() )
+            {
+                name = msg.from()->metaContact()->displayName();
+            }
+            else
+            {
+                name = msg.from()->nickName();
+            }
 
-			QString messageTemplate = "<b>%1&nbsp;<font color=\"%2\">%3</font></b>&nbsp;%4";
-			resultHTML += messageTemplate.arg( msg.timestamp().time().toString(),
-				fontColor, name, body );
+            QString fontColor;
+            if (msg.direction() == Kopete::Message::Outbound)
+            {
+                fontColor = Kopete::AppearanceSettings::self()->chatTextColor().dark().name();
+            }
+            else
+            {
+                fontColor = Kopete::AppearanceSettings::self()->chatTextColor().light(200).name();
+            }
 
-			newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
-			newNode.setAttribute(QString::fromLatin1("dir"), dir);
-			newNode.setInnerHTML(resultHTML);
+            QString messageTemplate = "<b>%1&nbsp;<font color=\"%2\">%3</font></b>&nbsp;%4";
+            resultHTML += messageTemplate.arg( msg.timestamp().time().toString(),
+                                               fontColor, name, body );
 
-			mHtmlPart->htmlDocument().body().appendChild(newNode);
-		}
-	}
+            newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
+            newNode.setAttribute(QString::fromLatin1("dir"), dir);
+            newNode.setInnerHTML(resultHTML);
+
+            mHtmlPart->htmlDocument().body().appendChild(newNode);
+        }
+    }
 }
 
 void HistoryDialog::slotFilterChanged(int /*index*/)
 {
-	dateSelected(mMainWidget->dateTreeWidget->currentItem());
+    dateSelected(mMainWidget->dateTreeWidget->currentItem());
 }
 
 void HistoryDialog::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {
-	kDebug(14310) << "url=" << url.url();
-	new KRun(url, 0, false); // false = non-local files
+    kDebug(14310) << "url=" << url.url();
+    new KRun(url, 0, false); // false = non-local files
 }
 
 // Disable search button if there is no search text
 void HistoryDialog::slotSearchTextChanged(const QString& searchText)
 {
-	if (searchText.isEmpty())
-	{
-		mMainWidget->searchButton->setEnabled(false);
-		treeWidgetHideElements(false);
-	}
-	else
-	{
-		mMainWidget->searchButton->setEnabled(true);
-	}
+    if (searchText.isEmpty())
+    {
+        mMainWidget->searchButton->setEnabled(false);
+        treeWidgetHideElements(false);
+    }
+    else
+    {
+        mMainWidget->searchButton->setEnabled(true);
+    }
 }
 
 void HistoryDialog::treeWidgetHideElements(bool s)
 {
-	KListViewDateItem *item;
-	for ( int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); i++ )
-	{
-		item = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(i));
-		if ( item )
-			item->setHidden(s);
-	}
+    KListViewDateItem *item;
+    for ( int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); i++ )
+    {
+        item = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(i));
+        if ( item )
+            item->setHidden(s);
+    }
 }
 
 
@@ -422,40 +451,40 @@ void HistoryDialog::treeWidgetHideElements(bool s)
 
 QList<History> HistoryDialog::getHistorylist(const Kopete::Contact* c, QDate date)
 {
-  kDebug() <<"entered get historylist";
-  QList<History> listHistory;
+    qDebug() <<"entered get historylist";
+    QList<History> listHistory;
 
-  Akonadi::Collection collcontact;
-  bool collfound= false;
-  if (m_collectionMap.isEmpty()) kDebug()<<"m_collectionmapis empty :(";
-  
-   if(m_collectionMap.contains(c->contactId()) )
-   {
-     collfound=true;
-     collcontact = m_collectionMap[c->contactId()] ;
-   }
-   
-   if(collfound== true)
-   {
-     Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
-     itemjob->fetchScope().fetchFullPayload();
-     if ( itemjob->exec() )
-     {
-        Akonadi::Item::List items = itemjob->items();
-        if ( !items.isEmpty() )
+    Akonadi::Collection collcontact;
+    bool collfound= false;
+    if (m_collectionMap.isEmpty()) kDebug()<<"m_collectionmapis empty :(";
+
+    if (m_collectionMap.contains(c->contactId()) )
+    {
+        collfound=true;
+        collcontact = m_collectionMap[c->contactId()] ;
+    }
+
+    if (collfound== true)
+    {
+        Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
+        itemjob->fetchScope().fetchFullPayload();
+        if ( itemjob->exec() )
         {
-	    History history;
-            foreach( const Akonadi::Item &item, items )
+            Akonadi::Item::List items = itemjob->items();
+            if ( !items.isEmpty() )
             {
-	      if (item.hasPayload<History>() )
-		     history = item.payload< History >();
-	      listHistory.append(history);
-	    }
-	} else kDebug() << " item list empty. ";
-     } else kDebug() << "item fetch job failed";
-   } else kDebug() <<"collection not found";
-  
-  return listHistory;
+                History history;
+                foreach( const Akonadi::Item &item, items )
+                {
+                    if (item.hasPayload<History>() )
+                        history = item.payload< History >();
+                    listHistory.append(history);
+                }
+            } else kDebug() << " item list empty. ";
+        } else kDebug() << "item fetch job failed";
+    } else kDebug() <<"collection not found";
+
+    return listHistory;
 
 }
 
@@ -476,74 +505,74 @@ QList<History> HistoryDialog::getHistorylist(const Kopete::Contact* c, QDate dat
 */
 void HistoryDialog::slotSearch()
 {
-  kDebug() << " netered slot search";
-  
-	QRegExp rx("^ <msg.*time=\"(\\d+) \\d+:\\d+:\\d+\" >([^<]*)<");
-	QMap<QDate, QList<Kopete::MetaContact*> > monthsSearched;
-	QMap<QDate, QList<Kopete::MetaContact*> > matches;
+    qDebug() << " netered slot search";
 
-	// cancel button pressed
-	if (mSearching)
-	{
-		treeWidgetHideElements(false);
-		goto searchFinished;
-	}
+    QRegExp rx("^ <msg.*time=\"(\\d+) \\d+:\\d+:\\d+\" >([^<]*)<");
+    QMap<QDate, QList<Kopete::MetaContact*> > monthsSearched;
+    QMap<QDate, QList<Kopete::MetaContact*> > matches;
 
-	if (mMainWidget->dateTreeWidget->topLevelItemCount() == 0) return;
+    // cancel button pressed
+    if (mSearching)
+    {
+        treeWidgetHideElements(false);
+        goto searchFinished;
+    }
 
-	treeWidgetHideElements(true);
+    if (mMainWidget->dateTreeWidget->topLevelItemCount() == 0) return;
 
-	initProgressBar(i18n("Searching..."), mMainWidget->dateTreeWidget->topLevelItemCount());
-	mMainWidget->searchButton->setText(i18n("&Cancel"));
-	mSearching = true;
+    treeWidgetHideElements(true);
 
-	// iterate over items in the date list widget
-	for(int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); ++i)
-	{
-		qApp->processEvents();
-		if (!mSearching) return;
+    initProgressBar(i18n("Searching..."), mMainWidget->dateTreeWidget->topLevelItemCount());
+    mMainWidget->searchButton->setText(i18n("&Cancel"));
+    mSearching = true;
 
-		KListViewDateItem *curItem = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(i));
-		QDate month(curItem->date().year(),curItem->date().month(),1);
-		// if we haven't searched the relevant history logs, search them now
-		if (!monthsSearched[month].contains(curItem->metaContact()))
-		{
-			monthsSearched[month].push_back(curItem->metaContact());
-			QList<Kopete::Contact*> contacts = curItem->metaContact()->contacts();
-			foreach(Kopete::Contact* contact, contacts)
-			{
-			  QList<History> historylist = HistoryDialog::getHistorylist(contact, curItem->date());
-			  if (historylist.isEmpty()) continue;
-			  foreach(History his, historylist)
-			  {
-			    foreach(History::Message message, his.messages() )
-			    {
-				QString textLine;
-				textLine = message.text();
-				
-					if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
-					{
-					  matches[QDate(curItem->date().year(), curItem->date().month(),message.timestamp().date().day())].push_back(curItem->metaContact());
-					}
-					qApp->processEvents();
-					if (!mSearching) return;
-				}
-			  }
-			}
-		}
+    // iterate over items in the date list widget
+    for (int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); ++i)
+    {
+        qApp->processEvents();
+        if (!mSearching) return;
 
-		// relevant logfiles have been searched now, check if current date matches
-		if (matches[curItem->date()].contains(curItem->metaContact()))
-			curItem->setHidden(false);
+        KListViewDateItem *curItem = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(i));
+        QDate month(curItem->date().year(),curItem->date().month(),1);
+        // if we haven't searched the relevant history logs, search them now
+        if (!monthsSearched[month].contains(curItem->metaContact()))
+        {
+            monthsSearched[month].push_back(curItem->metaContact());
+            QList<Kopete::Contact*> contacts = curItem->metaContact()->contacts();
+            foreach(Kopete::Contact* contact, contacts)
+            {
+                QList<History> historylist = HistoryDialog::getHistorylist(contact, curItem->date());
+                if (historylist.isEmpty()) continue;
+                foreach(History his, historylist)
+                {
+                    foreach(History::Message message, his.messages() )
+                    {
+                        QString textLine;
+                        textLine = message.text();
 
-		// Next date item
-		mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
-	}
+                        if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
+                        {
+                            matches[QDate(curItem->date().year(), curItem->date().month(),message.timestamp().date().day())].push_back(curItem->metaContact());
+                        }
+                        qApp->processEvents();
+                        if (!mSearching) return;
+                    }
+                }
+            }
+        }
+
+        // relevant logfiles have been searched now, check if current date matches
+        if (matches[curItem->date()].contains(curItem->metaContact()))
+            curItem->setHidden(false);
+
+        // Next date item
+        mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
+    }
 
 searchFinished:
-	mMainWidget->searchButton->setText(i18n("Se&arch"));
-	mSearching = false;
-	doneProgressBar();
+    mMainWidget->searchButton->setText(i18n("Se&arch"));
+    mSearching = false;
+    doneProgressBar();
 }
 
 
@@ -551,77 +580,77 @@ searchFinished:
 // When a contact is selected in the combobox. Item 0 is All contacts.
 void HistoryDialog::slotContactChanged(int index)
 {
-	mMainWidget->dateTreeWidget->clear();
-	if (index == 0)
-	{
+    mMainWidget->dateTreeWidget->clear();
+    if (index == 0)
+    {
         setCaption(i18n("History for All Contacts"));
         mMetaContact = 0;
-		init();
-	}
-	else
-	{
-		mMetaContact = mMetaContactList.at(index-1);
+        init();
+    }
+    else
+    {
+        mMetaContact = mMetaContactList.at(index-1);
         setCaption(i18n("History for %1", mMetaContact->displayName()));
-		init();
-	}
+        init();
+    }
 }
 
 void HistoryDialog::initProgressBar(const QString& text, int nbSteps)
 {
-		mMainWidget->searchProgress->setMaximum(nbSteps);
-		mMainWidget->searchProgress->setValue(0);
-		mMainWidget->searchProgress->show();
-		mMainWidget->statusLabel->setText(text);
+    mMainWidget->searchProgress->setMaximum(nbSteps);
+    mMainWidget->searchProgress->setValue(0);
+    mMainWidget->searchProgress->show();
+    mMainWidget->statusLabel->setText(text);
 }
 
 void HistoryDialog::doneProgressBar()
 {
-		mMainWidget->searchProgress->hide();
-		mMainWidget->statusLabel->setText(i18n("Ready"));
+    mMainWidget->searchProgress->hide();
+    mMainWidget->statusLabel->setText(i18n("Ready"));
 }
 
 void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
 {
-	KMenu *chatWindowPopup = 0L;
-	chatWindowPopup = new KMenu();
+    KMenu *chatWindowPopup = 0L;
+    chatWindowPopup = new KMenu();
 
-	if ( !url.isEmpty() )
-	{
-		mURL = url;
-		chatWindowPopup->addAction( mCopyURLAct );
-		chatWindowPopup->addSeparator();
-	}
-	mCopyAct->setEnabled( mHtmlPart->hasSelection() );
-	chatWindowPopup->addAction( mCopyAct );
+    if ( !url.isEmpty() )
+    {
+        mURL = url;
+        chatWindowPopup->addAction( mCopyURLAct );
+        chatWindowPopup->addSeparator();
+    }
+    mCopyAct->setEnabled( mHtmlPart->hasSelection() );
+    chatWindowPopup->addAction( mCopyAct );
 
-	connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
-	chatWindowPopup->popup(point);
+    connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
+    chatWindowPopup->popup(point);
 }
 
 void HistoryDialog::slotCopy()
 {
-	QString qsSelection;
-	qsSelection = mHtmlPart->selectedText();
-	if ( qsSelection.isEmpty() ) return;
+    QString qsSelection;
+    qsSelection = mHtmlPart->selectedText();
+    if ( qsSelection.isEmpty() ) return;
 
-	disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
-	QApplication::clipboard()->setText(qsSelection, QClipboard::Clipboard);
-	QApplication::clipboard()->setText(qsSelection, QClipboard::Selection);
-	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+    disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+    QApplication::clipboard()->setText(qsSelection, QClipboard::Clipboard);
+    QApplication::clipboard()->setText(qsSelection, QClipboard::Selection);
+    connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 }
 
 void HistoryDialog::slotCopyURL()
 {
-	disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
-	QApplication::clipboard()->setText( mURL, QClipboard::Clipboard);
-	QApplication::clipboard()->setText( mURL, QClipboard::Selection);
-	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+    disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+    QApplication::clipboard()->setText( mURL, QClipboard::Clipboard);
+    QApplication::clipboard()->setText( mURL, QClipboard::Selection);
+    connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 }
 
 void HistoryDialog::slotImportHistory(void)
 {
-	HistoryImport importer(this);
-	importer.exec();
+    HistoryImport importer(this);
+    importer.exec();
 }
 
 #include "historydialog.moc"
