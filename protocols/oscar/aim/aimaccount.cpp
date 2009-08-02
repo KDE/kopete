@@ -453,7 +453,7 @@ void AIMAccount::disconnected( DisconnectReason reason )
 	myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( pres ) );
 
 	QHash<QString, Kopete::Contact*> contactList = contacts();
-	foreach( Kopete::Contact* c, contactList.values() )
+	foreach( Kopete::Contact* c, contactList )
 	{
 		OscarContact* oc = dynamic_cast<OscarContact*>( c );
 		if ( oc )
