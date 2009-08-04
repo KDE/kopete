@@ -61,7 +61,9 @@ public:
 	~PluginManagerPrivate()
 	{
 		if ( shutdownMode != DoneShutdown )
+		{
 			kWarning( 14010 ) << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
+		}
 
 		// Clean up loadedPlugins manually, because PluginManager can't access our global
 		// static once this destructor has started.
