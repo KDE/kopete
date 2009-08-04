@@ -32,16 +32,21 @@ Protocol::Protocol( const KComponentData &instance, QObject *parent )
 
 Account* Protocol::createNewAccount( const QString &accountId )
 {
+	Q_UNUSED( accountId )
 	return 0L;
 }
 
 AddContactPage* Protocol::createAddContactWidget( QWidget *parent, Kopete::Account *account )
 {
+	Q_UNUSED( parent )
+	Q_UNUSED( account )
 	return 0L;
 }
 
 KopeteEditAccountWidget* Protocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
+	Q_UNUSED( account )
+	Q_UNUSED( parent )
 	return 0L;
 }
 
