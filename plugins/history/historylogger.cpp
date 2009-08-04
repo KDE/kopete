@@ -333,7 +333,7 @@ void HistoryLogger::appendMessage2()
 }
 
 HistoryLogger::~HistoryLogger()
-{
+{//TODO check for date here as well, in case when i started the chat before the month and closed the chat window
     qDebug() <<"~history logger DISTRUCTOR";
     if (m_saveTimer && m_saveTimer->isActive())
     {
@@ -605,7 +605,9 @@ void HistoryLogger::transactionDone(KJob *job)
 
 QList< Kopete::Message > HistoryLogger::retrunReadMessages()
 {
-  return m_readmessages;
+  QList<Kopete::Message> msg=m_readmessages;
+  m_readmessages.clear();
+  return msg;
 }
 
 
@@ -614,7 +616,6 @@ void HistoryLogger::readMessages(int lines, Akonadi::Collection &coll,
                                  const Kopete::Contact *c, Sens sens, bool reverseOrder, bool colorize)
 {
     qDebug() << "readMessages2 (Kopete::Contact *c, Sens sens, bool reverseOrder, bool colorize)";
-//    QList<Kopete::Message> messages;
 
     m_lines=lines;
     m_readmessagesContact = c;
@@ -622,7 +623,15 @@ void HistoryLogger::readMessages(int lines, Akonadi::Collection &coll,
     m_reverseOrder = reverseOrder;
     m_colorize = colorize;
 
-    m_tosaveInCollection = coll;
+    if (!m_tosaveInCollection.isValid() )
+    {
+      m_tosaveInCollection = coll;
+      qDebug() <<"readMessages, m_to save in coll is invalid";
+    }
+    if (!coll.isValid() )
+    {
+      qDebug() <<"the passed collection coll is invalid";
+    }
     
     if (!m_metaContact)
     { //this may happen if the contact has been moved, and the MC deleted
@@ -667,36 +676,93 @@ void HistoryLogger::readMessages(int lines, Akonadi::Collection &coll,
             m_readmessages.clear();
         return;
     }
-    //TODO this is the end of first block.
     if (!c && m_metaContact->contacts().count()>1)
         readmessagesBlock2();
     else
         readmessagesBlock3();
 }
 
-//TODO: this block 2 needs to be reimplemented(
 void HistoryLogger::readmessagesBlock2()
 {
     qDebug() << "HistoryLogger::readmessagesBlock2()";
-    // A regexp useful for this function
-    QRegExp rxTime("(\\d+) (\\d+):(\\d+)($|:)(\\d*)"); //(with a 0.7.x compatibility)
 
-    History history;
-    //enter this only when no of meta contacts is greaterthan one. TODO need to check this
+    //TODO need to test this
     if ( (!m_readmessagesContact) && m_metaContact->contacts().count()>1)
     { //we have to merge the differents subcontact history
         QList<Kopete::Contact*> ct=m_metaContact->contacts();
 
+	Akonadi::TransactionSequence *transaction = new Akonadi::TransactionSequence;
         foreach(Kopete::Contact *contact, ct)
         {
-            History his;
             if (m_currentElements.contains(contact))
+	    {
+		History his;
                 his=m_currentElements[contact];
+		m_contact_history.insert(contact,his);
+	    }
             else  //there is not yet "next message" register, so we will take the first  (for the current month)
             {
 		//TODO : this needs to be fixed here
-//                his=getHistory(contact,m_currentMonth);
-            }
+               // his=getHistory(contact,m_currentMonth);
+		QMap<unsigned int , History> monthHistory = m_history[contact];
+		if (monthHistory.contains(m_currentMonth))
+		{
+		  History his;
+		  his = monthHistory[m_currentMonth];
+		  m_contact_history.insert(contact, his);
+		}
+		else
+		{
+		  //Kopete::Contact *con = const_cast<Kopete::Contact*>(c);
+		  if (m_collectionMap.contains(contact->contactId()))
+		  {
+		    if( !m_tosaveInCollection.isValid() )
+		      m_tosaveInCollection = m_collectionMap.value(contact->contactId());
+		    QVariant v;
+		    v.setValue<Kopete::Contact *>(contact);
+		    GetHistoryJob *getjob= new GetHistoryJob(m_tosaveInCollection,QDate::currentDate().addMonths(0-m_currentMonth), transaction);
+		    getjob->setProperty("contact", v);
+		    connect(getjob, SIGNAL(result(KJob*)), SLOT(GetJobInReadMessage2Done(KJob*)));
+		  }
+		}
+	    }
+	}// end of for loop for each cotact
+	connect(transaction,SIGNAL(KJob*),this,SLOT(transaction_in_read_message_block_2_done(KJob*)) );
+	transaction->start();
+    }// end of if
+}
+void HistoryLogger::GetJobDoneInReadMessage2Done(KJob* job)
+{
+  GetHistoryJob *getJob = static_cast<GetHistoryJob *>(job);
+  if ( job->error())
+    kDebug() <<" get history job failed. reson"<<job->errorString();
+  else
+  {
+    QVariant v;
+    History his = getJob->returnHistory();
+    v= getJob->property("contact");
+    Kopete::Contact *c = v.value<Kopete::Contact *>();
+    m_contact_history.insert(c,his);
+  }
+}
+void HistoryLogger::transaction_in_read_message_block_2_done(KJob *job)
+{
+  QRegExp rxTime("(\\d+) (\\d+):(\\d+)($|:)(\\d*)"); //(with a 0.7.x compatibility)
+
+  if (job->error() )
+  {
+    kDebug() << "transaction_in_read_message_block 2 failed"<<job->errorString();
+  }
+  else  
+  {
+    QMapIterator<Kopete::Contact *, History> i(m_contact_history);
+    History history;
+    while (i.hasNext())
+    {
+	    History his;
+	    i.next();
+	    Kopete::Contact *contact = i.key();
+	    his = i.value();
             if ( !his.messages().isEmpty() )
             {
                 rxTime.indexIn( ((m_readmessagesSens== Chronological)? his.messages().first().timestamp().toString("d h:m:s")
@@ -714,18 +780,22 @@ void HistoryLogger::readmessagesBlock2()
                 {
                     timeLimit=dt;
                 }
-
-                break;
             }
         }
+	m_readmessagesHistory = history;
     }
+    readMessagesBlock4();
 }
 
 void HistoryLogger::readmessagesBlock3()
 {
     qDebug()<<"read messages block 3\n"<<"m_currentmonth="<<m_currentMonth;
     if (m_currentElements.contains(m_currentContact)) //TODO need to take a look in this if
+    {
+	qDebug() <<"m_currentElementscontains";
         m_readmessagesHistory=m_currentElements[m_currentContact];
+	readmessagesBlock31();
+    }
     else
     {
         connect(this,SIGNAL(getHistoryxDone()),SLOT(readmessagesBlock31()) );
@@ -892,7 +962,7 @@ void HistoryLogger::readMessagesBlock5()
       
       qDebug() << "index="<<index;
     
-    emit readMessagesDoneSignal();
+    emit readMessagesDoneSignal(m_readmessages);
 }
 
 
