@@ -270,6 +270,7 @@ void Identity::updateOnlineStatus()
 void Identity::slotSaveProperty( Kopete::PropertyContainer *container, const QString &key,
 		                const QVariant &oldValue, const QVariant &newValue )
 {
+	Q_UNUSED(container);
 	if ( !newValue.isValid() ) // the property was removed, remove the config entry also
 	{
 		QString cfgGrpKey = QString::fromLatin1("prop_%1_%2").arg(QString::fromLatin1(oldValue.typeName()), key );
