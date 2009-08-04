@@ -136,7 +136,7 @@ void PropertyContainer::setProperty(const Kopete::PropertyTmpl &tmpl,
 		return;
 	}
 
-	if(value.isNull() || value.canConvert(QVariant::String) && value.toString().isEmpty())
+	if(value.isNull() || (value.canConvert(QVariant::String) && value.toString().isEmpty()))
 	{
 		removeProperty(tmpl);
 	}
