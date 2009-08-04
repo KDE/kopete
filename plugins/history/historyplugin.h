@@ -103,7 +103,7 @@ public:
 
 private slots:
     void slotViewCreated( KopeteView* );
-    void slotViewCreated2();
+    void slotViewCreated2(QList<Kopete::Message>);
     void slotViewHistory();
     void slotKMMClosed( Kopete::ChatSession* );
     void slotSettingsChanged();

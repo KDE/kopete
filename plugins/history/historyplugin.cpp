@@ -244,16 +244,16 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
     logger->setPositionToLast();
     qDebug() << "\ncalling readmessages and connectin with sig";
     
-    connect(logger,SIGNAL(readMessagesDoneSignal()), this,SLOT(slotViewCreated2()));
+    connect(logger,SIGNAL(readMessagesDoneSignal(QList<Kopete::Message>)), this,SLOT(slotViewCreated2(QList<Kopete::Message>)));
     
     logger->readMessages(nbAutoChatWindow,coll,mb.first(), HistoryLogger::AntiChronological, true, true);
     
 }
-void HistoryPlugin::slotViewCreated2()
+void HistoryPlugin::slotViewCreated2(QList<Kopete::Message> msgsx)
 {
-    disconnect(m_loggerx,SIGNAL(readMessagesDoneSignal()), this,SLOT(slotViewCreated2()));
+    disconnect(m_loggerx,SIGNAL(readMessagesDoneSignal(QList<Kopete::Message>)), this,SLOT(slotViewCreated2(QList<Kopete::Message>)));
     qDebug()<<"slot view created2 disconnected";
-    QList<Kopete::Message> msgs = m_loggerx->retrunReadMessages();
+    QList<Kopete::Message> msgs =msgsx;
     // make sure the last message is not the one which will be appened right
     // after the view is created (and which has just been logged in)
     if (!msgs.isEmpty() && (msgs.last().plainBody() == m_lastmessage.plainBody()) &&
@@ -281,11 +281,11 @@ void HistoryPlugin::slotSettingsChanged()
     HistoryConfig::self()->readConfig();
 }
 
+//TODO :: reimplement htis collection fetch, and monitor collection slot
 void HistoryPlugin::collectionFetch(Akonadi::Collection::List collectionList)
 {
   qDebug()<<"History plugin, collectinfetched slot";
   Akonadi::Collection::Id baseId;
-//  Akonadi::Collection baseCollection;
   foreach( const Akonadi::Collection collection, collectionList )
   {
     if ( collection.name() == "KopeteChat" )

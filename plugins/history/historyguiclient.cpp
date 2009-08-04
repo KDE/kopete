@@ -95,14 +95,24 @@ HistoryGUIClient::~HistoryGUIClient()
 
 void HistoryGUIClient::slotPrevious()
 {
+	qDebug() <<"\n HistoryGUIClient::Slot previous";
+//	KopeteView *m_currentView = m_manager->view ( true );
+
+	QList<Kopete::Contact*> mb = m_manager->members();
+	connect(m_logger,SIGNAL(readMessagesDoneSignal()),this,SLOT(slotPrevious2(QList<Kopete::Message>)) );
+	Akonadi::Collection coll;
+	m_logger->readMessages (
+	                                  HistoryConfig::number_ChatWindow(),coll, /*mb.first()*/ 0L,
+	                                  HistoryLogger::AntiChronological, true );
+}
+void HistoryGUIClient::slotPrevious2(QList<Kopete::Message> msgsx)
+{
+	disconnect(m_logger,SIGNAL(readMessagesDoneSignal()),this,SLOT(slotPrevious2(QList<Kopete::Message>)) );
+	qDebug() <<"slot previous2";
 	KopeteView *m_currentView = m_manager->view ( true );
 	m_currentView->clear();
 
-	QList<Kopete::Contact*> mb = m_manager->members();
-//	m_logger->readMessages (
-//	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
-//	                                  HistoryLogger::AntiChronological, true );
-	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
+	QList<Kopete::Message> msgs = msgsx;
 
 	actionPrev->setEnabled ( msgs.count() == HistoryConfig::number_ChatWindow() );
 	actionNext->setEnabled ( true );
@@ -113,15 +123,25 @@ void HistoryGUIClient::slotPrevious()
 
 void HistoryGUIClient::slotLast()
 {
-	KopeteView *m_currentView = m_manager->view ( true );
-	m_currentView->clear();
+	qDebug() <<"HistoryGUIClient::slot last";
+//	KopeteView *m_currentView = m_manager->view ( true );
 
 	QList<Kopete::Contact*> mb = m_manager->members();
 	m_logger->setPositionToLast();
-//	m_logger->readMessages (
-//	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
-//	                                  HistoryLogger::AntiChronological, true );
-	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
+	Akonadi::Collection coll;
+	connect(m_logger,SIGNAL(readMessagesDoneSignal()), this, SLOT(slotLast2(QList<Kopete::Message>)) );
+	m_logger->readMessages (
+	                                  HistoryConfig::number_ChatWindow(),coll, /*mb.first()*/ 0L,
+	                                  HistoryLogger::AntiChronological, true );
+}
+void HistoryGUIClient::slotLast2(QList<Kopete::Message> msgsx)
+{
+	disconnect(m_logger,SIGNAL(readMessagesDoneSignal()), this, SLOT(slotLast2(QList<Kopete::Message>)) );
+	qDebug() <<"slotLast2";
+	KopeteView *m_currentView = m_manager->view ( true );
+	m_currentView->clear();
+
+	QList<Kopete::Message> msgs = msgsx;
 	actionPrev->setEnabled ( true );
 	actionNext->setEnabled ( false );
 	actionLast->setEnabled ( false );
@@ -132,14 +152,24 @@ void HistoryGUIClient::slotLast()
 
 void HistoryGUIClient::slotNext()
 {
-	KopeteView *m_currentView = m_manager->view ( true );
-	m_currentView->clear();
+	qDebug() <<"\nHistoryGUIClient::slotNext";
+//	KopeteView *m_currentView = m_manager->view ( true );
+	Akonadi::Collection coll;
 
 	QList<Kopete::Contact*> mb = m_manager->members();
-//	m_logger->readMessages (
-//	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
-//	                                  HistoryLogger::Chronological, false );
-	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
+	connect(m_logger,SIGNAL(readMessagesDoneSignal()), this, SLOT(slotNext2(QList<Kopete::Message>)) );
+	m_logger->readMessages (
+	                                  HistoryConfig::number_ChatWindow(),coll, /*mb.first()*/ 0L,
+	                                  HistoryLogger::Chronological, false );
+}
+void HistoryGUIClient::slotNext2(QList<Kopete::Message> msgsx )
+{	
+	qDebug() <<"slotnext2";
+	disconnect(m_logger,SIGNAL(readMessagesDoneSignal()), this, SLOT(slotNext2(QList<Kopete::Message>)) );
+	KopeteView *m_currentView = m_manager->view ( true );
+	m_currentView->clear();
+	
+	QList<Kopete::Message> msgs = msgsx;
 	actionPrev->setEnabled ( true );
 	actionNext->setEnabled ( msgs.count() == HistoryConfig::number_ChatWindow() );
 	actionLast->setEnabled ( msgs.count() == HistoryConfig::number_ChatWindow() );
@@ -149,16 +179,24 @@ void HistoryGUIClient::slotNext()
 
 void HistoryGUIClient::slotQuote()
 {
+	qDebug() <<"HistoryGUIClient::slotQuote";
 	KopeteView *m_currentView = m_manager->view ( true );
 
 	if ( !m_currentView )
 		return;
 
 	m_logger->setPositionToLast();
-//	m_logger->readMessages (
-//	                                  HistoryConfig::number_ChatWindow(), /*mb.first()*/ 0L,
-//	                                  HistoryLogger::AntiChronological, true );
-	QList<Kopete::Message> msgs = m_logger->retrunReadMessages();
+	connect(m_logger,SIGNAL(readMessagesDoneSignal()), this, SLOT(slotQuote2(QList<Kopete::Message>)) );
+	Akonadi:: Collection coll;
+	m_logger->readMessages (
+	                                  HistoryConfig::number_ChatWindow(), coll, /*mb.first()*/ 0L,
+	                                  HistoryLogger::AntiChronological, true );
+}
+void HistoryGUIClient::slotQuote2(QList<Kopete::Message> msgsx)
+{
+	qDebug() <<"slot quote2";
+	disconnect(m_logger,SIGNAL(readMessagesDoneSignal()), this, SLOT(slotQuote2(QList<Kopete::Message>)) );
+	QList<Kopete::Message> msgs = msgsx;
 	
 	Kopete::Message msg = m_manager->view()->currentMessage();
 	QString body = msgs.isEmpty() ? "" : msgs.last().plainBody();
@@ -174,6 +212,7 @@ void HistoryGUIClient::slotQuote()
 
 void HistoryGUIClient::slotViewHistory()
 {
+	qDebug() <<"HistoryGUIClient::slotViewHistory";
 	// Original Code, but this any segfault if anything in this pipe is NULL - Tejas Dinkar
 	//Kopete::MetaContact *m = Kopete::ChatSessionManager::self()->activeView()->msgManager()->members().first()->metaContact();
 	

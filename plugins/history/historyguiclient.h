@@ -22,11 +22,12 @@
 
 #include <kxmlguiclient.h>
 #include <Akonadi/Collection>
+#include <QList>
 
 class KAction;
 
 namespace Kopete { class ChatSession; }
-
+namespace Kopete { class Message; }
 class HistoryLogger;
 
 /**
@@ -43,9 +44,13 @@ public:
 
 private slots:
 	void slotPrevious();
+	void slotPrevious2(QList<Kopete::Message>);
 	void slotLast();
+	void slotLast2(QList<Kopete::Message> );
 	void slotNext();
+	void slotNext2(QList<Kopete::Message>);
 	void slotQuote();
+	void slotQuote2(QList<Kopete::Message>);
 	void slotViewHistory();
 
 private:
