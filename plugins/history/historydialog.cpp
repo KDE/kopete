@@ -467,50 +467,6 @@ void HistoryDialog::treeWidgetHideElements(bool s)
     }
 }
 
-
-
-
-/*
-QList<History> HistoryDialog::getHistorylist(const Kopete::Contact* c, QDate date)
-{
-    qDebug() <<"\n\n@@@ENTERED GETHISTORY LIST~~~~";
-    QList<History> listHistory;
-
-    Akonadi::Collection collcontact;
-    bool collfound= false;
-    if (m_collectionMap.isEmpty()) kDebug()<<"m_collectionmapis empty :(";
-
-    if (m_collectionMap.contains(c->contactId()) )
-    {
-        collfound=true;
-        collcontact = m_collectionMap[c->contactId()] ;
-    }
-
-    if (collfound== true)
-    {
-        Akonadi::ItemFetchJob *itemjob = new Akonadi::ItemFetchJob( collcontact );
-        itemjob->fetchScope().fetchFullPayload();
-        if ( itemjob->exec() )
-        {
-            Akonadi::Item::List items = itemjob->items();
-            if ( !items.isEmpty() )
-            {
-                History history;
-                foreach( const Akonadi::Item &item, items )
-                {
-                    if (item.hasPayload<History>() )
-                        history = item.payload< History >();
-                    listHistory.append(history);
-                }
-            } else kDebug() << " item list empty. ";
-        } else kDebug() << "item fetch job failed";
-    } else kDebug() <<"collection not found";
-
-    return listHistory;
-
-}
-*/
-
 /*
 * How does the search work
 * ------------------------
@@ -529,7 +485,6 @@ void HistoryDialog::slotSearch()
 {
     qDebug() << "netered slot search";
 
-//    QRegExp rx("^ <msg.*time=\"(\\d+) \\d+:\\d+:\\d+\" >([^<]*)<");
     QMap<QDate, QList<Kopete::MetaContact*> > monthsSearched;
 
     // cancel button pressed
