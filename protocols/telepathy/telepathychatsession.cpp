@@ -43,7 +43,6 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
     Kopete::ChatSessionManager::self()->registerChatSession(this);
 
     QObject::connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(sendMessage(Kopete::Message&)));
-    QObject::connect(this, SIGNAL(closing(Kopete::ChatSession *)), this, SLOT(closingChatSession(Kopete::ChatSession *)));
 }
 
 TelepathyChatSession::~TelepathyChatSession()
@@ -91,8 +90,11 @@ void TelepathyChatSession::sendMessage(Kopete::Message &message)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (!m_textChannel)
+    if (!m_textChannel) {
+        kWarning() << "Message not sent because channel does not yet exist.";
+        // FIXME: Notify the user the message was not delivered.
         return;
+    }
 
     m_textChannel->send(message.plainBody());
 }
@@ -106,31 +108,6 @@ void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* operati
 
     m_channelRequest = m_pendingChannelRequest->channelRequest();
     m_pendingChannelRequest = 0;
-}
-
-void TelepathyChatSession::closingChatSession(Kopete::ChatSession *kmm)
-{
-    kDebug(TELEPATHY_DEBUG_AREA);
-
-    Q_UNUSED(kmm);
-
-    if (!m_textChannel)
-        return;
-
-    QObject::connect(m_textChannel->requestClose(),
-                     SIGNAL(finished(Tp::PendingOperation*)),
-                     this,
-                     SLOT(chatSessionRequestClose(Tp::PendingOperation*)));
-}
-
-void TelepathyChatSession::chatSessionRequestClose(Tp::PendingOperation *operation)
-{
-    kDebug(TELEPATHY_DEBUG_AREA);
-
-    if (TelepathyCommons::isOperationError(operation))
-        return;
-
-    kDebug(TELEPATHY_DEBUG_AREA) << "Chat session closed";
 }
 
 void TelepathyChatSession::messageSent(const Tp::Message &message,

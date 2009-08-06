@@ -59,8 +59,6 @@ public:
 private slots:
     void sendMessage(Kopete::Message &);
     void onEnsureChannelFinished(Tp::PendingOperation*);
-    void chatSessionRequestClose(Tp::PendingOperation*);
-    void closingChatSession(Kopete::ChatSession *);
     void messageSent(const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &sentMessageToken);
     void messageReceived(const Tp::ReceivedMessage &message);
     void pendingMessageRemoved(const Tp::ReceivedMessage &message);
