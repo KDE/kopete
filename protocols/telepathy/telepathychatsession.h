@@ -22,24 +22,20 @@
 #define KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCHATSESSION_H
 
 #include <kopetechatsession.h>
-#include <kopetecontact.h>
-#include <kopetemessage.h>
 
-#include <QSharedPointer>
-
-#include <TelepathyQt4/PendingOperation>
-#include <TelepathyQt4/TextChannel>
-#include <TelepathyQt4/Message>
-#include <TelepathyQt4/Constants>
 #include <TelepathyQt4/ChannelRequest>
+#include <TelepathyQt4/Contact>
+#include <TelepathyQt4/Message>
 #include <TelepathyQt4/PendingChannelRequest>
+#include <TelepathyQt4/TextChannel>
 
-namespace Telepathy
-{
-namespace Client {
-class Contact;
-class Channel;
+namespace Kopete {
+    class Contact;
+    class Message;
 }
+
+namespace Tp {
+    class PendingOperation;
 }
 
 class TelepathyChatSession : public Kopete::ChatSession
@@ -50,24 +46,25 @@ public:
     TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol);
     virtual ~TelepathyChatSession();
 
-    void createTextChannel(QSharedPointer<Tp::Contact>);
+    void createTextChannel(Tp::ContactPtr);
 
     Tp::ChannelRequestPtr channelRequest();
     Tp::PendingChannelRequest *pendingChannelRequest();
+
     void setTextChannel(const Tp::TextChannelPtr &textChannel);
 
 private slots:
-    void sendMessage(Kopete::Message &);
-    void onEnsureChannelFinished(Tp::PendingOperation*);
-    void messageSent(const Tp::Message &message, Tp::MessageSendingFlags flags, const QString &sentMessageToken);
-    void messageReceived(const Tp::ReceivedMessage &message);
-    void pendingMessageRemoved(const Tp::ReceivedMessage &message);
+    void onEnsureChannelFinished(Tp::PendingOperation *op);
     void onTextChannelReady(Tp::PendingOperation *op);
 
+    void sendMessage(Kopete::Message &);
+    void messageSent(const Tp::Message &message,
+                     Tp::MessageSendingFlags flags,
+                     const QString &sentMessageToken);
+    void messageReceived(const Tp::ReceivedMessage &message);
 
 private:
-    QSharedPointer<Tp::Contact> m_contact;
-    QSharedPointer<Tp::TextChannel> m_channel;
+    Tp::ContactPtr m_contact;
     Tp::ChannelRequestPtr m_channelRequest;
     Tp::TextChannelPtr m_textChannel;
     Tp::PendingChannelRequest *m_pendingChannelRequest;

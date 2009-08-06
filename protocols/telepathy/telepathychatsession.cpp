@@ -21,18 +21,13 @@
 #include "telepathychatsession.h"
 
 #include "telepathyaccount.h"
-#include "telepathychannelmanager.h"
 #include "telepathyprotocol.h"
 #include "common.h"
 
 #include <kopetechatsessionmanager.h>
 
-#include <kdebug.h>
+#include <KDebug>
 
-#include <TelepathyQt4/Contact>
-#include <TelepathyQt4/Connection>
-#include <TelepathyQt4/ContactManager>
-#include <TelepathyQt4/PendingChannelRequest>
 #include <TelepathyQt4/PendingReady>
 
 TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol)
@@ -49,6 +44,8 @@ TelepathyChatSession::~TelepathyChatSession()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
+    // When the ChatSession is closed, we should close the channel so that a new one is launched if
+    // the same contact tries to contact us again.
     if (!m_textChannel.isNull()) {
         m_textChannel->requestClose();
         // FIXME: Can we connect the signal that this is done to the parent slot somewhere for error
@@ -56,7 +53,7 @@ TelepathyChatSession::~TelepathyChatSession()
     }
 }
 
-void TelepathyChatSession::createTextChannel(QSharedPointer<Tp::Contact> contact)
+void TelepathyChatSession::createTextChannel(Tp::ContactPtr contact)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
     m_contact = contact;
@@ -86,6 +83,19 @@ void TelepathyChatSession::createTextChannel(QSharedPointer<Tp::Contact> contact
             SLOT(onEnsureChannelFinished(Tp::PendingOperation*)));
 }
 
+void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* op)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    if (op->isError()) {
+        kWarning() << "Ensuring Channel Failed:" << op->errorName() << op->errorMessage();
+        return;
+    }
+
+    m_channelRequest = m_pendingChannelRequest->channelRequest();
+    m_pendingChannelRequest = 0;
+}
+
 void TelepathyChatSession::sendMessage(Kopete::Message &message)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
@@ -99,17 +109,6 @@ void TelepathyChatSession::sendMessage(Kopete::Message &message)
     m_textChannel->send(message.plainBody());
 }
 
-void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* operation)
-{
-    kDebug(TELEPATHY_DEBUG_AREA);
-
-    if (TelepathyCommons::isOperationError(operation))
-        return;
-
-    m_channelRequest = m_pendingChannelRequest->channelRequest();
-    m_pendingChannelRequest = 0;
-}
-
 void TelepathyChatSession::messageSent(const Tp::Message &message,
                                        Tp::MessageSendingFlags flags,
                                        const QString &sentMessageToken)
@@ -118,6 +117,8 @@ void TelepathyChatSession::messageSent(const Tp::Message &message,
 
     Q_UNUSED(flags);
     Q_UNUSED(sentMessageToken);
+
+    // FIXME: We need to process outgoing messages better, so we can display when they fail etc
 
     Kopete::Message::MessageType messageType = Kopete::Message::TypeNormal;
     /*
@@ -151,13 +152,6 @@ void TelepathyChatSession::messageReceived(const Tp::ReceivedMessage &message)
     // Acknowledge the receipt of this message, so it won't be redespatched to us when we close
     // the channel.
     m_textChannel->acknowledge(QList<Tp::ReceivedMessage>() << message);
-}
-
-void TelepathyChatSession::pendingMessageRemoved(const Tp::ReceivedMessage &message)
-{
-    Q_UNUSED(message);
-
-    // TODO: Implement me!
 }
 
 Tp::ChannelRequestPtr TelepathyChatSession::channelRequest()
@@ -203,10 +197,6 @@ void TelepathyChatSession::onTextChannelReady(Tp::PendingOperation *op)
                      SIGNAL(messageReceived(const Tp::ReceivedMessage &)),
                      this,
                      SLOT(messageReceived(const Tp::ReceivedMessage &)));
-    QObject::connect(m_textChannel.data(),
-                     SIGNAL(pendingMessageRemoved(const Tp::ReceivedMessage &)),
-                     this,
-                     SLOT(pendingMessageRemoved(const Tp::ReceivedMessage &)));
 
     // Check for messages already there in the message queue.
     foreach (const Tp::ReceivedMessage &message, m_textChannel->messageQueue()) {
