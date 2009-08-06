@@ -49,6 +49,12 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
 TelepathyChatSession::~TelepathyChatSession()
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+
+    if (!m_textChannel.isNull()) {
+        m_textChannel->requestClose();
+        // FIXME: Can we connect the signal that this is done to the parent slot somewhere for error
+        // handling?
+    }
 }
 
 void TelepathyChatSession::createTextChannel(QSharedPointer<Tp::Contact> contact)
@@ -164,6 +170,10 @@ void TelepathyChatSession::messageReceived(const Tp::ReceivedMessage &message)
     newMessage.setType(messageType);
 
     appendMessage(newMessage);
+
+    // Acknowledge the receipt of this message, so it won't be redespatched to us when we close
+    // the channel.
+    m_textChannel->acknowledge(QList<Tp::ReceivedMessage>() << message);
 }
 
 void TelepathyChatSession::pendingMessageRemoved(const Tp::ReceivedMessage &message)
