@@ -1,307 +1,545 @@
 /*
- * telepathyeditaccountwidget.h - UI to edit Telepathy account settings
+ * This file is part of Kopete
  *
- * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
- *               2009 by Dariusz Mikulski <dariusz.mikulski@gmail.com>
+ * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
  *
- * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- *************************************************************************
- *                                                                       *
- * This program is free software; you can redistribute it and/or modify  *
- * it under the terms of the GNU General Public License as published by  *
- * the Free Software Foundation; either version 2 of the License, or     *
- * (at your option) any later version.                                   *
- *                                                                       *
- *************************************************************************
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 #include "telepathyeditaccountwidget.h"
-#include "ui_telepathyeditaccountwidget.h"
 
-// Qt includes
-#include <QtCore/QTimer>
-#include <QtCore/QLatin1String>
-#include <QtCore/QStringList>
-#include <QtCore/QPointer>
-#include <QtCore/QMap>
-#include <QtGui/QTreeWidgetItem>
-
-// KDE includes
-#include <kmessagebox.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <kconfiggroup.h>
-#include <kdebug.h>
-#include <kglobal.h>
-
-//TelepathyQt4 includes
-#include <TelepathyQt4/ConnectionManager>
-#include <TelepathyQt4/PendingStringList>
-#include <TelepathyQt4/ConnectionInterface>
-
-// Kopete includes
-#include <kopeteaccount.h>
-
-// Local includes
-#include "telepathyeditparameterwidget.h"
+#include "connection-manager-item.h"
+#include "mandatory-parameter-edit-widget.h"
+#include "optional-parameter-edit-widget.h"
+#include "plugin-manager.h"
+#include "protocol-select-widget.h"
+#include "protocol-item.h"
 #include "telepathyprotocol.h"
 #include "telepathyaccount.h"
-#include "connectionmanageritem.h"
+
+#include <KCMTelepathyAccounts/AbstractAccountUi>
+#include <KCMTelepathyAccounts/AbstractAccountUi>
+
+#include <KDebug>
+#include <KGlobal>
+#include <KLocale>
+#include <KSharedConfig>
+#include <KTabWidget>
+
+#include <kopeteaccount.h>
+
+#include <QtGui/QGridLayout>
+
+#include <TelepathyQt4/ConnectionManager>
+#include <TelepathyQt4/PendingStringList>
 
 class TelepathyEditAccountWidget::Private
 {
 public:
     Private()
-            : paramWidget(0) {}
+     : tabWidget(0),
+       protocolSelectWidget(0),
+       mandatoryParametersWidget(0),
+       mainLayout(0)
+    {
+        kDebug(TELEPATHY_DEBUG_AREA);
+    }
 
-    Ui::TelepathyEditAccountWidget ui;
-    TelepathyEditParameterWidget *paramWidget;
-    Tp::ProtocolParameterList savedParameterList;
+    KTabWidget *tabWidget;
+    ProtocolSelectWidget *protocolSelectWidget;
+    AbstractAccountParametersWidget *mandatoryParametersWidget;
+    QList<AbstractAccountParametersWidget*> optionalParametersWidgets;
+    QGridLayout *mainLayout;
 };
 
-// TODO: Required flags for parameters.
 TelepathyEditAccountWidget::TelepathyEditAccountWidget(Kopete::Account *account, QWidget *parent)
-        : QWidget(parent), KopeteEditAccountWidget(account), d(new Private)
+ : QWidget(parent),
+   KopeteEditAccountWidget(account),
+   d(new Private)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-    d->ui.setupUi(this);
 
-    // Setup signal/slot connection
-    connect(d->ui.treeConnectionManager, SIGNAL(itemSelectionChanged()), this, SLOT(connectionManagerSelectionChanged()));
-    connect(d->ui.treeProtocol, SIGNAL(itemSelectionChanged()), this, SLOT(protocolSelectionChanged()));
-
-    // List connection manager after the constructor.
-    QTimer::singleShot(0, this, SLOT(listConnectionManager()));
+    // When account is 0, we are creating a new account.
+    if (!account) {
+        // Add account UI
+        setupAddAccountUi();
+    } else {
+        // Edit account UI
+        setupEditAccountUi();
+    }
 }
 
 TelepathyEditAccountWidget::~TelepathyEditAccountWidget()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) ;
+    kDebug(TELEPATHY_DEBUG_AREA);
+
     delete d;
 }
 
 TelepathyAccount *TelepathyEditAccountWidget::account()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) ;
-    return static_cast<TelepathyAccount*>(KopeteEditAccountWidget::account());
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    return qobject_cast<TelepathyAccount*>(KopeteEditAccountWidget::account());
 }
 
 bool TelepathyEditAccountWidget::validateData()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << "validateData() called";
-    // You must fill the form to move to the next step
-    if (!d->ui.treeConnectionManager->selectedItems().isEmpty() &&
-            !d->ui.treeProtocol->selectedItems().isEmpty() &&
-            validAccountData())
-        return true;
-    else {
-        KMessageBox::error(this, i18n("Please fill in the fields in the dialog. First select a connection manager, then select a protocol."));
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    // Check there is a mandatory parameters widget. If not, then fail.
+    if (!d->mandatoryParametersWidget) {
         return false;
     }
-}
 
-bool TelepathyEditAccountWidget::validAccountData()
-{
-    kDebug(TELEPATHY_DEBUG_AREA) ;
-    if (d->paramWidget) {
-        kDebug(TELEPATHY_DEBUG_AREA);
-        d->savedParameterList = d->paramWidget->parameterList();
+    // Check all widgets validate OK.
+    if (!d->mandatoryParametersWidget->validateParameterValues()) {
+        kDebug() << "A widget failed parameter validation. Not accepting wizard.";
+        return false;
+    }
 
-        // Look for a parameter that begin with "account"
-        foreach(Tp::ProtocolParameter *parameter, d->savedParameterList) {
-            if (parameter->name().startsWith(QLatin1String("account"))) {
-                QString accountId = parameter->defaultValue().toString();
-                if (!accountId.isEmpty()) {
-                    return true;
-                    break;
-                }
-            }
+    foreach (AbstractAccountParametersWidget *w, d->optionalParametersWidgets) {
+        if (!w->validateParameterValues()) {
+            kDebug() << "A widget failed parameter validation. Not accepting wizard.";
+            return false;
         }
     }
-    return false;
+
+    return true;
 }
 
 Kopete::Account *TelepathyEditAccountWidget::apply()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << "apply() called";
-    // Get parameter list
-    if (d->paramWidget) {
-        kDebug(TELEPATHY_DEBUG_AREA) ;
-        d->savedParameterList = d->paramWidget->parameterList();
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-        if (!account()) {
-            QString newAccountId;
-            // Look for a parameter that begin with "account"
-            foreach(Tp::ProtocolParameter *parameter, d->savedParameterList) {
-                if (parameter->name().startsWith(QLatin1String("account"))) {
-                    newAccountId = parameter->defaultValue().toString();
-                    kDebug(TELEPATHY_DEBUG_AREA) << "Found account id: " << newAccountId;
-                    break;
-                }
-            }
-            setAccount(TelepathyProtocol::protocol()->createNewAccount(newAccountId));
-        }
-        writeConfig();
+    // Check if we are applying an added account or edited account.
+    if (account()) {
+        // Edited an account.
+        return applyEditedAccount();
     }
+
+    // Added an account.
+    return applyAddedAccount();
+}
+
+Kopete::Account *TelepathyEditAccountWidget::applyAddedAccount()
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+    
+    // Get the mandatory parameters.
+    QMap<Tp::ProtocolParameter*, QVariant> mandatoryParameterValues;
+    mandatoryParameterValues = d->mandatoryParametersWidget->parameterValues();
+
+    // Get the optional properties
+    QMap<Tp::ProtocolParameter*, QVariant> optionalParameterValues;
+
+    foreach (AbstractAccountParametersWidget *w, d->optionalParametersWidgets) {
+        QMap<Tp::ProtocolParameter*, QVariant> parameters = w->parameterValues();
+        QMap<Tp::ProtocolParameter*, QVariant>::const_iterator i = parameters.constBegin();
+        while (i != parameters.constEnd()) {
+            if (!optionalParameterValues.contains(i.key())) {
+                optionalParameterValues.insert(i.key(), i.value());
+            } else {
+                kWarning() << "Parameter:" << i.key()->name() << "is already in the map.";
+            }
+
+            ++i;
+        }
+        continue;
+    }
+
+    // Get the ProtocolItem that was selected and the corresponding ConnectionManagerItem.
+    ProtocolItem *protocolItem = d->protocolSelectWidget->selectedProtocol();
+    ConnectionManagerItem *connectionManagerItem = qobject_cast<ConnectionManagerItem*>(protocolItem->parent());
+
+    if (!connectionManagerItem) {
+        kWarning() << "Invalid ConnectionManager item.";
+        return 0;
+    }
+
+    // Merge the parameters into a QVariantMap for submitting to the Telepathy AM.
+    QVariantMap parameters;
+
+    foreach (Tp::ProtocolParameter *pp, mandatoryParameterValues.keys()) {
+        QVariant value = mandatoryParameterValues.value(pp);
+
+        // Don't try and add empty parameters.
+        if (!value.isNull()) {
+            parameters.insert(pp->name(), value);
+        }
+    }
+
+    foreach (Tp::ProtocolParameter *pp, optionalParameterValues.keys()) {
+        QVariant value = optionalParameterValues.value(pp);
+
+        // Don't try and add empty parameters.
+        if (!value.isNull()) {
+            parameters.insert(pp->name(), value);
+        }
+    }
+
+    setAccount(TelepathyProtocol::protocol()->createNewAccount(parameters.value("account").toString()));
+
+    writeConfig(connectionManagerItem->connectionManager()->name(),
+                protocolItem->protocol(),
+                parameters);
 
     return account();
 }
 
-void TelepathyEditAccountWidget::readConfig()
+Kopete::Account *TelepathyEditAccountWidget::applyEditedAccount()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) ;
-    // Restore config not related to ConnectionManager parameters first
-    // so that the UI for the protocol parameters will be generated
-    if (account()->readConfig()) {
-        QString readConnectionManager;// = account()->connectionManager();
-        QString readProtocol;// = account()->connectionProtocol();
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-        // Do nothing if the config return empty values
-        if (!readConnectionManager.isEmpty() && !readProtocol.isEmpty()) {
-            // Look for the connection manager in the tree widget
-            QList<QTreeWidgetItem*> availableConnectionManager = d->ui.treeConnectionManager->findItems(readConnectionManager, Qt::MatchStartsWith);
-            if (!availableConnectionManager.isEmpty()) {
-                // Select the connection manager to generate the protocol list
-                d->ui.treeConnectionManager->setCurrentItem(availableConnectionManager.first());
+    // Use the code from KCM to get the parameters and values and unset ones.
+    // Get the mandatory parameters.
+    QMap<Tp::ProtocolParameter*, QVariant> mandatoryParameterValues;
+    mandatoryParameterValues = d->mandatoryParametersWidget->parameterValues();
 
-                // At this point, the protocol tree widget is filled
+    // Get the optional parameters.
+    QMap<Tp::ProtocolParameter*, QVariant> optionalParameterValues;
 
-                // Look for the protocol in the tree widget
-                QList<QTreeWidgetItem*> availableProtocol = d->ui.treeProtocol->findItems(readProtocol, Qt::MatchStartsWith);
-                if (!availableProtocol.isEmpty()) {
-                    d->ui.treeProtocol->setCurrentItem(availableProtocol.first());
-
-                    // At this point, the protocol preferences tab is created
-
-                    // Update the parameters in the UI
-                    //d->paramWidget->setParameterList( account()->allConnectionParameters() );
-                }
+    foreach (AbstractAccountParametersWidget *w, d->optionalParametersWidgets) {
+        QMap<Tp::ProtocolParameter*, QVariant> parameters = w->parameterValues();
+        QMap<Tp::ProtocolParameter*, QVariant>::const_iterator i = parameters.constBegin();
+        while (i != parameters.constEnd()) {
+            if (!optionalParameterValues.contains(i.key())) {
+                optionalParameterValues.insert(i.key(), i.value());
+            } else {
+                kWarning() << "Parameter:" << i.key()->name() << "is already in the map.";
             }
+
+            ++i;
         }
+        continue;
     }
+
+    // Merge the parameters into a QVariantMap for submitting to the Telepathy AM.
+    QVariantMap parameters;
+    QVariantMap allParameters;
+    QStringList unsetParameters;
+
+    foreach (Tp::ProtocolParameter *pp, mandatoryParameterValues.keys()) {
+        QVariant value = mandatoryParameterValues.value(pp);
+
+        allParameters.insert(pp->name(), value);
+
+        // Unset empty parameters.
+        if (!value.isNull()) {
+            parameters.insert(pp->name(), value);
+            continue;
+        }
+
+        unsetParameters.append(pp->name());
+    }
+
+    foreach (Tp::ProtocolParameter *pp, optionalParameterValues.keys()) {
+        QVariant value = optionalParameterValues.value(pp);
+
+        allParameters.insert(pp->name(), value);
+
+        // Unset empty parameters.
+        if (!value.isNull()) {
+            parameters.insert(pp->name(), value);
+            continue;
+        }
+
+        unsetParameters.append(pp->name());
+    }
+
+    // Write the kopete config file.
+    writeConfig(account()->account()->cmName(), account()->account()->protocol(), allParameters);
+
+    // Tell the account to update with these parameters.
+    account()->accountEdited(parameters, unsetParameters);
+
+    return account();
 }
 
-void TelepathyEditAccountWidget::writeConfig()
+void TelepathyEditAccountWidget::writeConfig(const QString &connectionManager,
+                                             const QString &protocol,
+                                             const QVariantMap &parameters)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << "writeConfig() called";
-    QString selectedConnectionManager = d->ui.treeConnectionManager->selectedItems().first()->text(0);
-    QString selectedProtocol = d->ui.treeProtocol->selectedItems().first()->text(0);
+    kDebug(TELEPATHY_DEBUG_AREA);
+
     QString accountId = account()->accountId();
 
-    KMessageBox::information(this, i18n("ConnectionManager: %1\nProtocol: %2\nAccount: %3", selectedConnectionManager, selectedProtocol, accountId));
+    // Write basic account configuration
+    KConfigGroup *basicConfig = account()->configGroup();
+    basicConfig->writeEntry(QLatin1String("ConnectionManager"), connectionManager);
+    basicConfig->writeEntry(QLatin1String("TelepathyProtocol"), protocol);
 
-    // Write config not related to ConnectionManager Parameters
-    KConfigGroup *accountConfig = account()->configGroup();
-    accountConfig->writeEntry(QLatin1String("ConnectionManager"), selectedConnectionManager);
-    accountConfig->writeEntry(QLatin1String("SelectedProtocol"), selectedProtocol);
+    // Write config related to ConnectionManager Parameters
+    KConfigGroup parametersConfig = 
+            KGlobal::config()->group(TelepathyProtocol::protocol()->
+                                     formatTelepathyConfigGroup(connectionManager, 
+                                                                protocol, 
+                                                                accountId));
 
-    // Write config related to ConnectionManager Parameter
-    QString telepathyGroup(TelepathyProtocol::protocol()->formatTelepathyConfigGroup(selectedConnectionManager, selectedProtocol, accountId));
-    KConfigGroup telepathyConfig = KGlobal::config()->group(telepathyGroup);
-
-    foreach(Tp::ProtocolParameter *parameter, d->savedParameterList) {
-        telepathyConfig.writeEntry(parameter->name(), parameter->defaultValue());
+    QVariantMap::const_iterator i = parameters.constBegin();
+    while (i != parameters.constEnd()) {
+        parametersConfig.writeEntry(i.key(), i.value());
+        ++i;
     }
 }
 
-void TelepathyEditAccountWidget::listConnectionManager()
+void TelepathyEditAccountWidget::setupAddAccountUi()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) ;
-    if (!QDBusConnection::sessionBus().isConnected()) {
-        kDebug(TELEPATHY_DEBUG_AREA) << "listConnectionManager(): cannot connect to session bus.";
-        return;
-    }
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-    kDebug(TELEPATHY_DEBUG_AREA) << "Connect listNames";
-    QObject::connect(Tp::ConnectionManager::listNames(),
-                     SIGNAL(finished(Tp::PendingOperation *)),
-                     this,
-                     SLOT(onListNames(Tp::PendingOperation *)));
+    // Set up the Add Account UI.
+    d->tabWidget = new KTabWidget(this);
+    d->mainLayout = new QGridLayout(this);
+    d->mainLayout->addWidget(d->tabWidget);
+
+    d->protocolSelectWidget = new ProtocolSelectWidget(d->tabWidget);
+    d->tabWidget->addTab(d->protocolSelectWidget, i18n("Select Protocol"));
+
+    connect(d->protocolSelectWidget, SIGNAL(selectedProtocolChanged(ProtocolItem*)),
+            SLOT(onSelectedProtocolChanged(ProtocolItem*)));
 }
 
-void TelepathyEditAccountWidget::onListNames(Tp::PendingOperation *operation)
+void TelepathyEditAccountWidget::setupEditAccountUi()
 {
-    kDebug(TELEPATHY_DEBUG_AREA) ;
+    kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (operation->isError()) {
-        kDebug(TELEPATHY_DEBUG_AREA) << operation->errorName() << operation->errorMessage();
-        return;
-    }
+    // Set up the Edit Account UI.
+    d->tabWidget = new KTabWidget(this);
+    d->mainLayout = new QGridLayout(this);
+    d->mainLayout->addWidget(d->tabWidget);
+    resize(400, 480);
 
-    // List all available connection managers in the tree widget
-    Tp::PendingStringList *p = dynamic_cast<Tp::PendingStringList*>(operation);
+    // Get the protocol's parameters.
+    Tp::ProtocolInfo *protocolInfo = account()->account()->protocolInfo();
+    Tp::ProtocolParameterList protocolParameters = protocolInfo->parameters();
 
-    foreach(QString name, p->result()) {
-        kDebug(TELEPATHY_DEBUG_AREA) << name;
-        new ConnectionManagerItem(name, d->ui.treeConnectionManager);
-    }
+    Tp::ProtocolParameterList optionalProtocolParameters;
+    Tp::ProtocolParameterList mandatoryProtocolParameters;
 
-    // Read config if account() return true
-    // FIXME: Shouldn't be called here
-    if (account())
-        readConfig();
-}
-
-void TelepathyEditAccountWidget::connectionManagerSelectionChanged()
-{
-    kDebug(TELEPATHY_DEBUG_AREA) ;
-    QTreeWidgetItem *item = d->ui.treeConnectionManager->selectedItems().first();
-    ConnectionManagerItem *itemActivated = dynamic_cast<ConnectionManagerItem*>(item);
-    if (itemActivated) {
-        // Clear protocol list
-        d->ui.treeProtocol->clear();
-
-        // List supported protocols by this connetion manager.
-        QStringList supportedProtocols = itemActivated->getSupportedProtocols();
-        foreach(QString protocol, supportedProtocols) {
-            new QTreeWidgetItem(d->ui.treeProtocol, QStringList(protocol));
-        }
-    }
-}
-
-void TelepathyEditAccountWidget::protocolSelectionChanged()
-{
-    kDebug(TELEPATHY_DEBUG_AREA) ;
-    QList<QTreeWidgetItem*> cmItems = d->ui.treeConnectionManager->selectedItems();
-    if (cmItems.isEmpty())
-        return;
-
-    QTreeWidgetItem *connectionItem = cmItems.first();
-    ConnectionManagerItem *cmItem = dynamic_cast<ConnectionManagerItem*>(connectionItem);
-
-    QList<QTreeWidgetItem*> protocolItems = d->ui.treeProtocol->selectedItems();
-    if (protocolItems.isEmpty())
-        return;
-
-    QTreeWidgetItem *protocolItem = protocolItems.first();
-    if (protocolItem && cmItem) {
-        // Check if existing tab exists and remove it (and delete the widget)
-        if (d->paramWidget) {
-            d->ui.tabWidget->removeTab(1);
-            d->paramWidget->deleteLater();
-        }
-
-        // Add new tab
-        QString protocol = protocolItem->text(0);
-
-        // Use saved parameters if available
-        Tp::ProtocolParameterList tabParameter;
-        if (account() && protocol == account()->connectionProtocol()) {
-            kDebug(TELEPATHY_DEBUG_AREA) << "protocolSelectionChanged() - saved parameters";
-            tabParameter = account()->allConnectionParameters();
+    foreach (Tp::ProtocolParameter *parameter, protocolParameters) {
+        if (parameter->isRequired()) {
+            mandatoryProtocolParameters.append(parameter);
         } else {
-            kDebug(TELEPATHY_DEBUG_AREA) << "protocolSelectionChanged() - get protocols";
-            Tp::ProtocolInfoList protocolInfoList = cmItem->getProtocolInfoList();
-            foreach(Tp::ProtocolInfo *protocolInfo, protocolInfoList) {
-                if (protocolInfo->name() == protocol) {
-                    tabParameter = protocolInfo->parameters();
-                    break;
+            optionalProtocolParameters.append(parameter);
+        }
+    }
+
+    // Get the parameter values.
+    QVariantMap parameterValues = account()->account()->parameters();
+
+    // Get the AccountsUi for the plugin, and get the optional parameter widgets for it.
+    AbstractAccountUi *ui = PluginManager::instance()->accountUiForProtocol(account()->account()->cmName(),
+                                                                            account()->account()->protocol());
+
+    // Set up the Mandatory Parameters page
+    Tp::ProtocolParameterList mandatoryParametersLeft = mandatoryProtocolParameters;
+
+    // Create the custom UI or generic UI depending on available parameters.
+    if (ui) {
+        // UI does exist, set it up.
+        AbstractAccountParametersWidget *widget = ui->mandatoryParametersWidget(mandatoryProtocolParameters,
+                                                                                account()->account()->parameters());
+        QMap<QString, QVariant::Type> manParams = ui->supportedMandatoryParameters();
+        QMap<QString, QVariant::Type>::const_iterator manIter = manParams.constBegin();
+        while(manIter != manParams.constEnd()) {
+            foreach (Tp::ProtocolParameter *parameter, mandatoryProtocolParameters) {
+                // If the parameter is not
+                if ((parameter->name() == manIter.key()) &&
+                    (parameter->type() == manIter.value())) {
+                    mandatoryParametersLeft.removeAll(parameter);
                 }
             }
+
+            ++manIter;
         }
 
-        d->paramWidget = new TelepathyEditParameterWidget(tabParameter, this);
-        d->ui.tabWidget->addTab(d->paramWidget, i18n("Protocol Parameters"));
+        if (mandatoryParametersLeft.isEmpty()) {
+            d->mandatoryParametersWidget = widget;
+        } else {
+            // FIXME: At the moment, if the custom widget can't handle all the mandatory
+            // parameters we fall back to the generic one for all of them. It might be nicer
+            // to have the custom UI for as many as possible, and stick a small generic one
+            // underneath for those parameters it doesn't handle.
+            widget->deleteLater();
+            widget = 0;
+        }
+    }
+
+    if (!d->mandatoryParametersWidget) {
+        d->mandatoryParametersWidget = new MandatoryParameterEditWidget(
+                mandatoryProtocolParameters,
+                account()->account()->parameters(),
+                d->tabWidget);
+    }
+
+    d->tabWidget->addTab(d->mandatoryParametersWidget, i18n("Mandatory Parameters"));
+
+    // Get the list of parameters
+    Tp::ProtocolParameterList optionalParametersLeft = optionalProtocolParameters;
+
+    // Check if the AbstractAccountUi exists. If not then we use the autogenerated UI for
+    // everything.
+    if (ui) {
+        // UI Does exist, set it up.
+        QList<AbstractAccountParametersWidget*> widgets = ui->optionalParametersWidgets(
+                optionalProtocolParameters,
+                account()->account()->parameters());
+
+        // Remove all handled parameters from the optionalParameters list.
+        QMap<QString, QVariant::Type> opParams = ui->supportedOptionalParameters();
+        QMap<QString, QVariant::Type>::const_iterator opIter = opParams.constBegin();
+        while(opIter != opParams.constEnd()) {
+            foreach (Tp::ProtocolParameter *parameter, optionalProtocolParameters) {
+                // If the parameter is not
+                if ((parameter->name() == opIter.key()) &&
+                    (parameter->type() == opIter.value())) {
+                    optionalParametersLeft.removeAll(parameter);
+                }
+            }
+
+            ++opIter;
+        }
+
+        foreach (AbstractAccountParametersWidget *widget, widgets) {
+            d->optionalParametersWidgets.append(widget);
+            d->tabWidget->addTab(widget, i18n("Optional Parameters"));
+        }
+    }
+
+    // Show the generic UI if optionalParameters is not empty.
+    if (optionalParametersLeft.size() > 0) {
+        OptionalParameterEditWidget *opew =
+                new OptionalParameterEditWidget(optionalParametersLeft,
+                                                account()->account()->parameters(),
+                                                d->tabWidget);
+        d->optionalParametersWidgets.append(opew);
+        d->tabWidget->addTab(opew, i18n("Optional Parameters"));
+    }
+}
+
+void TelepathyEditAccountWidget::onSelectedProtocolChanged(ProtocolItem *item)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    // Delete any existing parameters widgets
+    if (d->mandatoryParametersWidget) {
+        d->tabWidget->removePage(d->mandatoryParametersWidget);
+        d->mandatoryParametersWidget->deleteLater();
+        d->mandatoryParametersWidget = 0;
+    }
+
+    foreach (AbstractAccountParametersWidget *w, d->optionalParametersWidgets) {
+        if (w) {
+            d->tabWidget->removePage(w);
+            w->deleteLater();
+        }
+    }
+    d->optionalParametersWidgets.clear();
+
+    ConnectionManagerItem *cmItem = qobject_cast<ConnectionManagerItem*>(item->parent());
+    if (!cmItem) {
+        kWarning() << "cmItem is invalid.";
+    }
+
+    QString connectionManager = cmItem->connectionManager()->name();
+    QString protocol = item->protocol();
+
+    // Get the AccountsUi for the plugin, and get the optional parameter widgets for it.
+    AbstractAccountUi *ui = PluginManager::instance()->accountUiForProtocol(connectionManager,
+                                                                            protocol);
+
+    // Set up the Mandatory Parameters page
+    Tp::ProtocolParameterList mandatoryParameters = item->mandatoryParameters();
+    Tp::ProtocolParameterList mandatoryParametersLeft = item->mandatoryParameters();
+
+    // Create the custom UI or generic UI depending on available parameters.
+    if (ui) {
+        // UI does exist, set it up.
+        AbstractAccountParametersWidget *widget = ui->mandatoryParametersWidget(mandatoryParameters);
+        QMap<QString, QVariant::Type> manParams = ui->supportedMandatoryParameters();
+        QMap<QString, QVariant::Type>::const_iterator manIter = manParams.constBegin();
+        while(manIter != manParams.constEnd()) {
+            foreach (Tp::ProtocolParameter *parameter, mandatoryParameters) {
+                // If the parameter is not
+                if ((parameter->name() == manIter.key()) &&
+                    (parameter->type() == manIter.value())) {
+                    mandatoryParametersLeft.removeAll(parameter);
+                }
+            }
+
+            ++manIter;
+        }
+
+        if (mandatoryParametersLeft.isEmpty()) {
+            d->mandatoryParametersWidget = widget;
+        } else {
+            // FIXME: At the moment, if the custom widget can't handle all the mandatory
+            // parameters we fall back to the generic one for all of them. It might be nicer
+            // to have the custom UI for as many as possible, and stick a small generic one
+            // underneath for those parameters it doesn't handle.
+            widget->deleteLater();
+            widget = 0;
+        }
+    }
+
+    if (!d->mandatoryParametersWidget) {
+        d->mandatoryParametersWidget = new MandatoryParameterEditWidget(
+                item->mandatoryParameters(), QVariantMap(), d->tabWidget);
+    }
+
+    d->tabWidget->addTab(d->mandatoryParametersWidget, i18n("Mandatory Parameters"));
+
+    // Get the list of parameters
+    Tp::ProtocolParameterList optionalParameters = item->optionalParameters();
+    Tp::ProtocolParameterList optionalParametersLeft = item->optionalParameters();
+
+    // Check if the AbstractAccountUi exists. If not then we use the autogenerated UI for
+    // everything.
+    if (ui) {
+        // UI Does exist, set it up.
+        QList<AbstractAccountParametersWidget*> widgets = ui->optionalParametersWidgets(optionalParameters);
+
+        // Remove all handled parameters from the optionalParameters list.
+        QMap<QString, QVariant::Type> opParams = ui->supportedOptionalParameters();
+        QMap<QString, QVariant::Type>::const_iterator opIter = opParams.constBegin();
+        while(opIter != opParams.constEnd()) {
+            foreach (Tp::ProtocolParameter *parameter, optionalParameters) {
+                // If the parameter is not
+                if ((parameter->name() == opIter.key()) &&
+                    (parameter->type() == opIter.value())) {
+                    optionalParametersLeft.removeAll(parameter);
+                }
+            }
+
+            ++opIter;
+        }
+
+        foreach (AbstractAccountParametersWidget *widget, widgets) {
+            d->optionalParametersWidgets.append(widget);
+            d->tabWidget->addTab(widget, i18n("Optional Parameters"));
+        }
+    }
+
+    // Show the generic UI if optionalParameters is not empty.
+    if (optionalParametersLeft.size() > 0) {
+        OptionalParameterEditWidget *opew =
+                new OptionalParameterEditWidget(optionalParametersLeft,
+                                                QVariantMap(),
+                                                d->tabWidget);
+        d->optionalParametersWidgets.append(opew);
+        d->tabWidget->addTab(opew, i18n("Optional Parameters"));
     }
 }
 

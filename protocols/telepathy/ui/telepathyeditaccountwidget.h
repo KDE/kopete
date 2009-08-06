@@ -1,74 +1,66 @@
 /*
- * telepathyeditaccountwidget.h - UI to edit Telepathy account settings
+ * This file is part of Kopete
  *
- * Copyright (c) 2006 by Michaël Larouche <larouche@kde.org>
- *               2009 Collabora Ltd. <http://www.collabora.co.uk/>
- * Kopete    (c) 2002-2006 by the Kopete developers  <kopete-devel@kde.org>
+ * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
  *
- *************************************************************************
- *                                                                       *
- * This program is free software; you can redistribute it and/or modify  *
- * it under the terms of the GNU General Public License as published by  *
- * the Free Software Foundation; either version 2 of the License, or     *
- * (at your option) any later version.                                   *
- *                                                                       *
- *************************************************************************
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef TELEPATHYEDITACCOUNTWIDGET_H
-#define TELEPATHYEDITACCOUNTWIDGET_H
 
-#include <QtGui/QWidget>
+#ifndef KOPETE_PROTOCOL_TELEPATHY_TELEPATHYEDITACCOUNTWIDGET_H
+#define KOPETE_PROTOCOL_TELEPATHY_TELEPATHYEDITACCOUNTWIDGET_H
+
 #include <ui/editaccountwidget.h>
 
-#include <TelepathyQt4/PendingOperation>
+#include <QtCore/QVariantMap>
+#include <QtGui/QWidget>
 
-namespace Ui
-{
-class TelepathyEditAccountWidget;
+namespace Kopete {
+    class Account;
 }
 
-namespace Kopete
-{
-class Account;
-}
-
+class ProtocolItem;
 class TelepathyAccount;
-/**
- * @brief Edit Telepathy account settings.
- * @author Michaël Larouche <larouche@kde.org>
- */
+
 class TelepathyEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
     Q_OBJECT
+
 public:
     explicit TelepathyEditAccountWidget(Kopete::Account *account, QWidget *parent = 0);
     ~TelepathyEditAccountWidget();
 
     virtual bool validateData();
-
-    bool validAccountData();
-
-    /**
-     * Create a new account if we are in the 'add account wizard',
-     * otherwise update the existing account.
-     */
     virtual Kopete::Account *apply();
 
 protected:
-    /**
-     * @brief Reimplement account() to access TelepathyAccount specific methods.
-     */
     TelepathyAccount *account();
 
 private slots:
-    void connectionManagerSelectionChanged();
-    void protocolSelectionChanged();
-    void listConnectionManager();
-    void onListNames(Tp::PendingOperation *);
-    void readConfig();
-    void writeConfig();
+    void writeConfig(const QString &connectionManager,
+                     const QString &protocol,
+                     const QVariantMap &parameters);
+
+    void onSelectedProtocolChanged(ProtocolItem *item);
 
 private:
+    void setupAddAccountUi();
+    void setupEditAccountUi();
+
+    Kopete::Account *applyAddedAccount();
+    Kopete::Account *applyEditedAccount();
+
     class Private;
     Private *d;
 };

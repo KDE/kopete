@@ -219,7 +219,7 @@ bool TelepathyAccount::readConfig()
     // setup CM early
     getConnectionManager();
 
-    m_connectionProtocolName = accountConfig->readEntry(QLatin1String("SelectedProtocol"), QString());
+    m_connectionProtocolName = accountConfig->readEntry(QLatin1String("TelepathyProtocol"), QString());
 
     // Clear current connection parameters
     m_connectionParameters.clear();
@@ -354,7 +354,7 @@ void TelepathyAccount::initTelepathyAccount()
     // so that the UI for the protocol parameters will be generated
     KConfigGroup *accountConfig = configGroup();
     m_connectionManagerName = accountConfig->readEntry(QLatin1String("ConnectionManager"), QString());
-    m_connectionProtocolName = accountConfig->readEntry(QLatin1String("SelectedProtocol"), QString());
+    m_connectionProtocolName = accountConfig->readEntry(QLatin1String("TelepathyProtocol"), QString());
 
     // Abort if config has not yet been written because it's a new account.
     if (m_connectionManagerName.isEmpty()) {
@@ -418,7 +418,11 @@ void TelepathyAccount::onAccountManagerReady(Tp::PendingOperation* operation)
      */
     foreach(const QString &path, pathList) {
         Tp::AccountPtr a = m_accountManager->accountForPath(path);
-        QObject::connect(a->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
+        Tp::Features features;
+        features << Tp::Account::FeatureCore
+                 << Tp::Account::FeatureAvatar
+                 << Tp::Account::FeatureProtocolInfo;
+        QObject::connect(a->becomeReady(features), SIGNAL(finished(Tp::PendingOperation *)),
                          this, SLOT(onExistingAccountReady(Tp::PendingOperation *)));
     }
 }
@@ -811,3 +815,11 @@ void TelepathyAccount::onContactDeleteRemovePublicationFinished(Tp::PendingOpera
     }
 }
 
+void TelepathyAccount::accountEdited(const QVariantMap &setParameters,
+                                     const QStringList &unsetParameters)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    // FIXME: Handle operation results
+    account()->updateParameters(setParameters, unsetParameters);
+}

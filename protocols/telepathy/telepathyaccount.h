@@ -61,6 +61,7 @@ public slots:
     virtual void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason = Kopete::StatusMessage(), const OnlineStatusOptions& options = None);
     virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
     virtual void fillActionMenu(KActionMenu *actionMenu);
+    void accountEdited(const QVariantMap &setParameters, const QStringList &unsetParameters);
 
 private slots:
     void onAccountManagerReady(Tp::PendingOperation*);
