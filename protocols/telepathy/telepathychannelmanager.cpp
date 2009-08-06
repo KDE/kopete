@@ -1,7 +1,7 @@
 /*
  * This file is part of Kopete
  *
- * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2009 Collabora Ltd. <info@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -141,13 +141,16 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
     }
 
     kDebug(TELEPATHY_DEBUG_AREA) << "Check if the context is finished.";
-    int count = 0;
-    foreach (Tp::PendingReady *pr, m_channelToHandleChannelData.keys()) {
-        TelepathyClientHandler::HandleChannelsData *caseData = m_channelToHandleChannelData.value(pr).second;
 
-        if(caseData->context.data() == data->context.data()) {
-            count++;
+    int count = 0;
+    QMap<Tp::PendingReady*, QPair<Tp::TextChannelPtr, TelepathyClientHandler::HandleChannelsData*> >::const_iterator i =
+            m_channelToHandleChannelData.constBegin();
+
+    while (i != m_channelToHandleChannelData.constEnd()) {
+        if (i.value().second->context.data() == data->context.data()) {
+            ++count;
         }
+        ++i;
     }
 
     if (count == 0) {
@@ -203,13 +206,15 @@ void TelepathyChannelManager::onChannelReady(Tp::PendingOperation *op)
             QHash<QString, Kopete::Contact*> contacts = tpAccount->contacts();
             Kopete::ContactPtrList others;
 
-            foreach (Kopete::Contact *contact, contacts.values()) {
+            QHash<QString, Kopete::Contact*>::const_iterator contactIterator = contacts.constBegin();
+            while (contactIterator != contacts.constEnd()) {
 
                 // Check its a tp contact
-                TelepathyContact *other = qobject_cast<TelepathyContact*>(contact);
+                TelepathyContact *other = qobject_cast<TelepathyContact*>(contactIterator.value());
 
                 if (!other) {
                     kWarning(TELEPATHY_DEBUG_AREA) << "Not a TelepathyContact";
+                    ++contactIterator;
                     continue;
                 }
 
@@ -218,6 +223,7 @@ void TelepathyChannelManager::onChannelReady(Tp::PendingOperation *op)
                 // a crash.
                 if (!other->internalContact()) {
                     kWarning(TELEPATHY_DEBUG_AREA) << "Skipping over contact in Kopete contact list which is not in telepathy roster.";
+                    ++contactIterator;
                     continue;
                 }
 
@@ -226,6 +232,8 @@ void TelepathyChannelManager::onChannelReady(Tp::PendingOperation *op)
                     kDebug(TELEPATHY_DEBUG_AREA) << "Found the remote contact.";
                     others << (other);
                 }
+
+                ++contactIterator;
             }
 
             Kopete::ChatSession * _manager =
@@ -247,12 +255,14 @@ void TelepathyChannelManager::onChannelReady(Tp::PendingOperation *op)
 
             // Decide whether to set the context as finished.
             int count = 0;
-            foreach (Tp::PendingReady *pr, m_channelToHandleChannelData.keys()) {
-                TelepathyClientHandler::HandleChannelsData *caseData = m_channelToHandleChannelData.value(pr).second;
+            QMap<Tp::PendingReady*, QPair<Tp::TextChannelPtr, TelepathyClientHandler::HandleChannelsData*> >::const_iterator i =
+                    m_channelToHandleChannelData.constBegin();
 
-                if(caseData->context.data() == data->context.data()) {
-                    count++;
+            while (i != m_channelToHandleChannelData.constEnd()) {
+                if (i.value().second->context.data() == data->context.data()) {
+                    ++count;
                 }
+                ++i;
             }
 
             if (count == 0) {

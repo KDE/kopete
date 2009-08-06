@@ -1,7 +1,7 @@
 /*
  * This file is part of Kopete
  *
- * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2009 Collabora Ltd. <info@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,13 +18,14 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "telepathyprotocol.h"
 #include "telepathycontactmanager.h"
+
 #include "telepathyaccount.h"
 #include "telepathycontact.h"
+#include "telepathyprotocol.h"
 #include "common.h"
 
-#include <kdebug.h>
+#include <KDebug>
 
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>

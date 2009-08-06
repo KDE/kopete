@@ -1,7 +1,7 @@
 /*
  * This file is part of Kopete
  *
- * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2009 Collabora Ltd. <info@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -222,7 +222,7 @@ void TelepathyChatSession::onTextChannelReady(Tp::PendingOperation *op)
                      SLOT(pendingMessageRemoved(const Tp::ReceivedMessage &)));
 
     // Check for messages already there in the message queue.
-    foreach (Tp::ReceivedMessage message, m_textChannel->messageQueue()) {
+    foreach (const Tp::ReceivedMessage &message, m_textChannel->messageQueue()) {
         messageReceived(message);
     }
 }

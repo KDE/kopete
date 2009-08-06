@@ -1,7 +1,7 @@
 /*
  * This file is part of Kopete
  *
- * Copyright (C) 2009 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2009 Collabora Ltd. <info@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -319,7 +319,7 @@ Tp::ConnectionManagerPtr TelepathyAccount::getConnectionManager()
     kDebug(TELEPATHY_DEBUG_AREA);
     if (!m_connectionManager) {
         m_connectionManager = Tp::ConnectionManager::create(m_connectionManagerName);
-        // dont need wait until operation finished
+        // Do not need wait until operation finished
         m_connectionManager->becomeReady();
     }
 
