@@ -82,8 +82,9 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
         return;
     }
 
-    if (m_account->haveConnection())
+    if (m_account->haveConnection()) {
         kDebug(TELEPATHY_DEBUG_AREA) << "Account have connection";
+    }
 
     kDebug(TELEPATHY_DEBUG_AREA) << m_account->parameters();
 
@@ -776,6 +777,10 @@ void TelepathyAccount::onPendingContactsForAddingReady(Tp::PendingOperation *op)
 void TelepathyAccount::onContactAdded(Tp::PendingOperation *op)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+
+    // FIXME: Handle the case that the operation didn't finish successfully.
+    Q_UNUSED(op);
+
     fetchContactList();
 }
 
@@ -823,3 +828,7 @@ void TelepathyAccount::accountEdited(const QVariantMap &setParameters,
     // FIXME: Handle operation results
     account()->updateParameters(setParameters, unsetParameters);
 }
+
+
+#include "telepathyaccount.moc"
+

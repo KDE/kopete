@@ -78,8 +78,8 @@ TelepathyProtocol::TelepathyProtocol(QObject *parent, const QVariantList &/*args
 
     addAddressBookField("messaging/telepathy", Kopete::Plugin::MakeIndexField);
 
-    // Set up the ChannelManager
-    TelepathyChannelManager *channelManager = TelepathyChannelManager::instance();
+    // Ensure the ChannelManager singleton is constructed.
+    TelepathyChannelManager::instance();
 }
 
 TelepathyProtocol *TelepathyProtocol::protocol()

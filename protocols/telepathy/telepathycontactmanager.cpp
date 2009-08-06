@@ -189,3 +189,6 @@ void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
     d->contactList.push_back(newContact);
 }
 
+
+#include "telepathycontactmanager.moc"
+

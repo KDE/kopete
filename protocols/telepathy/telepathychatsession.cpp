@@ -232,3 +232,6 @@ Tp::PendingChannelRequest *TelepathyChatSession::pendingChannelRequest()
     return m_pendingChannelRequest;
 }
 
+
+#include "telepathychatsession.moc"
+
