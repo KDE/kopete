@@ -102,7 +102,13 @@ void TelepathyChatSession::sendMessage(Kopete::Message &message)
 
     if (!m_textChannel) {
         kWarning() << "Message not sent because channel does not yet exist.";
-        // FIXME: Notify the user the message was not delivered.
+
+        // Indicate that the message sending failed.
+        message.setState(Kopete::Message::StateError);
+        appendMessage(message);
+
+        // FIXME: Only call messageSucceeded() if there are no messages in the process of being sent.
+        messageSucceeded();
         return;
     }
 
