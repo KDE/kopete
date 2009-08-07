@@ -28,7 +28,7 @@
 #include <QDateTime>
 #include "kopetecontact.h"
 #include "kopetemessage.h"
-#include "history.h"
+#include <history/history.h>
 #include <KJob>
 
 class QDate;
@@ -277,19 +277,22 @@ private slots:
      */
     void modifyItem();
 
-    void emperimentalSlot(KJob*);
+    void getJobDoneSlot(KJob*);
     void appendMessage2();
 
-    void readmessagesBlock2();
+    void getHistoryForMetacontacts();;
     void GetJobDoneInReadMessage2Done(KJob* job);
     void transaction_in_read_message_block_2_done(KJob*);
-    void readmessagesBlock3();
-    void readmessagesBlock31();
-    void readMessagesBlock4();
-    void readMessagesBlock41();
-    void readMessagesBlock5();
+    
+    void getHistoryForGivenContact();
+    void getHistoryDone();
+    
+    void changeMonth();
+    void changeMonth2();
+    
+    void readMessagesDone();
 
-    void getMonthExperimental(Akonadi::Item::List);
+    void getMonthSlot(Akonadi::Item::List);
 
     void collectionCreateDone(KJob*);
     void itemCreateDone(KJob*);

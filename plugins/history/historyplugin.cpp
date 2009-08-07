@@ -281,35 +281,42 @@ void HistoryPlugin::slotSettingsChanged()
     HistoryConfig::self()->readConfig();
 }
 
-//TODO :: reimplement htis collection fetch, and monitor collection slot
 void HistoryPlugin::collectionFetch(Akonadi::Collection::List collectionList)
 {
-  qDebug()<<"History plugin, collectinfetched slot";
-  Akonadi::Collection::Id baseId;
-  foreach( const Akonadi::Collection collection, collectionList )
-  {
-    if ( collection.name() == "KopeteChat" )
+    qDebug()<<"History plugin, collectinfetched slot";
+    Akonadi::Collection::Id baseId;
+    if ( !m_mapContactCollection.contains("KopeteChat") )
     {
-      m_baseCollection = collection;
-      baseId = collection.id();
-      if (!m_mapContactCollection.contains(collection.name()) )
-      {
-	m_mapContactCollection.insert(collection.name(),collection);
-	qDebug() <<collection.name();
-      }
+	foreach( const Akonadi::Collection collection, collectionList )
+	{
+	    if ( collection.name() == "KopeteChat" )
+	    {
+		m_baseCollection = collection;
+		baseId = collection.id();
+		if (!m_mapContactCollection.contains(collection.name()) )
+		{
+		    m_mapContactCollection.insert(collection.name(),collection);
+		    qDebug() <<collection.name();
+		}
+	    }
+	}
     }
-  }
-  foreach( const Akonadi::Collection collection, collectionList)
-  {
-    if (collection.parent() ==baseId )
+    else {
+	baseId = m_mapContactCollection.value("KopeteContact").id();
+    }
+    
+    foreach( const Akonadi::Collection collection, collectionList)
     {
-      if ( !m_mapContactCollection.contains(collection.name()) )
-      {
-	  m_mapContactCollection.insert(collection.name(), collection);
-	  qDebug()<<collection.name();
-      }
+	if (collection.parent() ==baseId )
+	{
+	    if ( !m_mapContactCollection.contains(collection.name()) )
+	    {
+		m_mapContactCollection.insert(collection.name(), collection);
+		qDebug()<<collection.name();
+	    }
+	}
     }
-  }
+    
 }
 
 void HistoryPlugin::monitorCollection(Akonadi::Collection coll)

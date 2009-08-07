@@ -26,7 +26,7 @@
 #include <kurl.h>
 #include <QList>
 #include <Akonadi/Collection>
-#include "history.h"
+#include <history/history.h>
 #include "kopetemessage.h"
 #include "historylogger.h"
 

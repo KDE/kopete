@@ -14,7 +14,6 @@ set(kopete_history_PART_SRCS
    converter.cpp 
    historyguiclient.cpp
    historyimport.cpp
-   history.cpp
    gethistoryjob.cpp
 )
 
@@ -26,7 +25,8 @@ kde4_add_kcfg_files(kopete_history_PART_SRCS historyconfig.kcfgc )
 kde4_add_plugin(kopete_history ${kopete_history_PART_SRCS})
 
 
-target_link_libraries(kopete_history  ${KDE4_KHTML_LIBS} ${KDE4_AKONADI_LIBS} ${KDE4_AKONADI_KMIME_LIBS} kopete )
+target_link_libraries(kopete_history  ${KDE4_KHTML_LIBS} ${KDE4_AKONADI_LIBS} ${KDE4_AKONADI_KMIME_LIBS} 
+		      kopete history)
 
 install(TARGETS kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 

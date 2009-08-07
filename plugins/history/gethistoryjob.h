@@ -18,14 +18,13 @@
 #define GETHISTORYJOB_H
 
 #include <KJob>
-#include "history.h"
 #include <Akonadi/Collection>
 #include <QDate>
+#include <history/history.h>
 #include <akonadi/item.h>
 #include <Akonadi/Job>
 
 namespace Kopete { class Contact; }
-typedef Kopete::Contact* kopeteContact;
 
 class GetHistoryJob : public Akonadi::Job
 {
@@ -55,7 +54,7 @@ class GetHistoryJob : public Akonadi::Job
     Akonadi::Collection m_collection;
     Akonadi::Item m_item;
     QDate m_date;
-    kopeteContact m_c;
+    Kopete::Contact * m_c;
     
 };
 
