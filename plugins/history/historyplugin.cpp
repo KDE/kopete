@@ -126,8 +126,8 @@ HistoryPlugin::~HistoryPlugin()
 
 void HistoryMessageLogger::handleMessage( Kopete::MessageEvent *event )
 {
-    qDebug() << "\n***historyplugin.cpp HistoryMessageLogger::handleMessage";
-    qDebug()<<"\n*from the event a copy of message is passed to message displayed function of historyPlugin";
+//    qDebug() << "\n***historyplugin.cpp HistoryMessageLogger::handleMessage";
+//    qDebug()<<"\n*from the event a copy of message is passed to message displayed function of historyPlugin";
     connect(history,SIGNAL(messageDisplayedDoneSignal()), this, SLOT(handleMessage2()) );
     m_event=event;
     if (history)
@@ -137,11 +137,11 @@ void HistoryMessageLogger::handleMessage( Kopete::MessageEvent *event )
 void HistoryMessageLogger::handleMessage2()
 {
     disconnect(history,SIGNAL(messageDisplayedDoneSignal()),this,SLOT(handleMessage2()));
-    qDebug()<<"\nBefore *** MessageHnadle::handleMessage(event) executed";
+//    qDebug()<<"\nBefore *** MessageHnadle::handleMessage(event) executed";
     if (!m_event.isNull() )
       MessageHandler::handleMessage( m_event );
     
-    qDebug()<<"\nMessageHnadle::handleMessage(event) executed ";
+//    qDebug()<<"\nMessageHnadle::handleMessage(event) executed ";
 }
 
 void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
@@ -159,12 +159,12 @@ void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
     
     if (!m_loggers.contains(m.manager()))
     {
-        qDebug()<<"\n*** m_loggers(qmap-session-GUIclient) has no manager(==chat session)*so insert it";
-        qDebug()<<"insertion of manager means a new session-> a GUIClinet is born";
+//        qDebug()<<"\n*** m_loggers(qmap-session-GUIclient) has no manager(==chat session)*so insert it";
+//        qDebug()<<"insertion of manager means a new session-> a GUIClinet is born";
 
 	m_loggers.insert(m.manager() , new HistoryGUIClient(m_mapContactCollection, m.manager() ) );
 
-        qDebug()<<"manager has been inserted\n a GUIclient has been born";
+//        qDebug()<<"manager has been inserted\n a GUIclient has been born";
 
         connect(m.manager(), SIGNAL(closing(Kopete::ChatSession*)),
                 this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
@@ -177,7 +177,7 @@ void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
     {
 
         QList<Kopete::Contact*> mb = m.manager()->members();
-	qDebug() <<"\n calling append message";
+	qDebug() <<"calling append message";
 	connect (l,SIGNAL(appendMessageDoneSignal()), this, SIGNAL(messageDisplayedDoneSignal()) );
 	
         l->appendMessage(m,coll,m_baseCollection,mb.first());
@@ -226,7 +226,19 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
     Akonadi::Collection coll;
     Kopete::Contact *con=mb.first();
     if (m_mapContactCollection.contains(con->contactId()) )
+    {
       coll = m_mapContactCollection[con->contactId()];
+      qDebug() << " qmap contains the collection";
+    }
+    
+    QHashIterator<QString, Akonadi::Collection> i(m_mapContactCollection);
+    while (i.hasNext() )
+    {
+      i.next();
+      Akonadi::Collection collec;
+      collec = i.value();
+      qDebug() << "Collection name="<<collec.name()<<collec.id();
+    }
     
     if (!m_loggers.contains(m_currentChatSession))
     {	qDebug() << "m_logger dosent contain current chat session, so inserting";
@@ -243,6 +255,7 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 
     logger->setPositionToLast();
     qDebug() << "\ncalling readmessages and connectin with sig";
+    if (!coll.isValid() ) qDebug() <<" the collection passed is invalid";
     
     connect(logger,SIGNAL(readMessagesDoneSignal(QList<Kopete::Message>)), this,SLOT(slotViewCreated2(QList<Kopete::Message>)));
     
@@ -287,6 +300,7 @@ void HistoryPlugin::collectionFetch(Akonadi::Collection::List collectionList)
     Akonadi::Collection::Id baseId;
     if ( !m_mapContactCollection.contains("KopeteChat") )
     {
+	qDebug()<<"m_collection map dosent contains kopete chat";
 	foreach( const Akonadi::Collection collection, collectionList )
 	{
 	    if ( collection.name() == "KopeteChat" )
@@ -302,17 +316,20 @@ void HistoryPlugin::collectionFetch(Akonadi::Collection::List collectionList)
 	}
     }
     else {
-	baseId = m_mapContactCollection.value("KopeteContact").id();
+	baseId = m_mapContactCollection.value("KopeteChat").id();
+	qDebug() << "base id="<<baseId;
     }
     
     foreach( const Akonadi::Collection collection, collectionList)
     {
 	if (collection.parent() ==baseId )
 	{
+	    qDebug() << " collection with parent found";
 	    if ( !m_mapContactCollection.contains(collection.name()) )
 	    {
+		qDebug() <<"inserting in map, collection";
 		m_mapContactCollection.insert(collection.name(), collection);
-		qDebug()<<collection.name();
+		qDebug()<<collection.name()<<collection.id();
 	    }
 	}
     }
@@ -321,7 +338,7 @@ void HistoryPlugin::collectionFetch(Akonadi::Collection::List collectionList)
 
 void HistoryPlugin::monitorCollection(Akonadi::Collection coll)
 {
-  qDebug() << "\n\n\n\n\n\n\n********slot HistoryPling:: monitorcollection"<<coll.name();
+  qDebug() << "\n\n********slot HistoryPling:: monitorcollection"<<coll.name()<<coll.remoteId()<<coll.id();
   
   Akonadi::CollectionFetchJob *fetchJob = new Akonadi::CollectionFetchJob( Akonadi::Collection::root(), Akonadi::CollectionFetchJob::Recursive );
   connect(fetchJob,SIGNAL(collectionsReceived(Akonadi::Collection::List)),this,SLOT(collectionFetch(Akonadi::Collection::List)) );
@@ -333,9 +350,9 @@ void HistoryPlugin::monitorCollection(Akonadi::Collection coll)
 void HistoryPlugin::slotJobDone(KJob * job)
 {
   if (job->error() )
-    qDebug() << "from monitorCollection to slot job done" << job->errorString();
+    qDebug() << "**from monitorCollection to slot job done" << job->errorString();
   else 
-    qDebug() <<"job has been successful";
+    qDebug() <<"HistoryPlugin::slotJobDone -job has been successful result of monitor";
 }
 
 #include "historyplugin.moc"
