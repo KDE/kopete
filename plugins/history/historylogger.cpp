@@ -383,19 +383,20 @@ void HistoryLogger::modifyItem()
 	}
 
         if ( m_tosaveInItem.modificationTime().toLocalTime().date().toString("MMyyyy") != QDateTime::currentDateTime().date().toString("MMyyyy") )
-            qDebug() <<"date time problem";
-        //entering here means the item is not existing, so create one
-        qDebug() << " before creating item";
-        if (!m_tosaveInCollection.isValid() ) qDebug() << "m_tosave in colllecion is invalid";
-
-//	  Akonadi::Item itemToCreate;
-        m_tosaveInItem.setMimeType("application/x-vnd.kde.kopetechathistory" );
-        m_tosaveInItem.setModificationTime(QDateTime::currentDateTime());
-        m_tosaveInItem.setPayload<History>(m_toSaveHistory);
-
-        Akonadi::ItemCreateJob *createitem = new Akonadi::ItemCreateJob( m_tosaveInItem, m_tosaveInCollection);
-	connect(createitem,SIGNAL(result(KJob*)), SLOT(itemCreateDone(KJob*)) );
-	createitem->start();
+	{
+	    qDebug() <<"date time problem";
+	    //entering here means the item is not existing, so create one
+	    qDebug() << " before creating item";
+	    if (!m_tosaveInCollection.isValid() ) qDebug() << "m_tosave in colllecion is invalid";
+	    //	  Akonadi::Item itemToCreate;
+	    m_tosaveInItem.setMimeType("application/x-vnd.kde.kopetechathistory" );
+	    m_tosaveInItem.setModificationTime(QDateTime::currentDateTime());
+	    m_tosaveInItem.setPayload<History>(m_toSaveHistory);
+	    
+	    Akonadi::ItemCreateJob *createitem = new Akonadi::ItemCreateJob( m_tosaveInItem, m_tosaveInCollection);
+	    connect(createitem,SIGNAL(result(KJob*)), SLOT(itemCreateDone(KJob*)) );
+	    createitem->start();
+	}
     }
     if ( itemOnlyModify)
     {
@@ -445,17 +446,29 @@ void HistoryLogger::collectionCreateDone(KJob *job)
   else
   {
     m_tosaveInCollection= createJob->collection();
-    qDebug() << "\n\n**collection Created successfully YOU NEVER KNOW"<<m_tosaveInCollection.remoteId();
+    if (m_tosaveInCollection.isValid() )
+      qDebug() << "\n\n**collection Created successfully YOU NEVER KNOW"<<m_tosaveInCollection.remoteId();
+    else qDebug() << "collection created is invalid";
 
+    Akonadi::CollectionFetchJob *fetchjob = new Akonadi::CollectionFetchJob(m_tosaveInCollection);
+    connect (fetchjob, SIGNAL(collectionsReceived(Akonadi::Collection::List)), this, SLOT(collectionFetchDone(Akonadi::Collection::List)));
+    fetchjob->start();
+  }
+}
+void HistoryLogger::collectionFetchDone(Akonadi::Collection::List colllist)
+{
+    m_tosaveInCollection = colllist.first();
+    
     m_tosaveInItem.setMimeType("application/x-vnd.kde.kopetechathistory" );
     m_tosaveInItem.setModificationTime(QDateTime::currentDateTime());
     m_tosaveInItem.setPayload<History>(m_toSaveHistory);
 
-    Akonadi::ItemCreateJob *createJob = new Akonadi::ItemCreateJob(m_tosaveInItem,m_tosaveInCollection);
-    connect(createJob,SIGNAL(result(KJob * )),this ,SLOT(itemCreateDone(KJob*)));
-    createJob->start();
-    
-  }
+    if (m_tosaveInItem.hasPayload<History>() )
+    {
+	  Akonadi::ItemCreateJob *createJob = new Akonadi::ItemCreateJob(m_tosaveInItem,m_tosaveInCollection);
+	  connect(createJob,SIGNAL(result(KJob * )),this ,SLOT(itemCreateDone(KJob*)));
+	  createJob->start();
+    }
 }
 void HistoryLogger::itemCreateDone(KJob* job)
 {

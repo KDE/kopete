@@ -305,6 +305,8 @@ private slots:
 
     //for getDaysForMonth
     void getDaysForMonthSlot(KJob*);
+    
+    void collectionFetchDone(Akonadi::Collection::List);
 
 signals:
     void readMessagesDoneSignal(QList<Kopete::Message>);
