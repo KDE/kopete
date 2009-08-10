@@ -21,8 +21,6 @@ ui/telepathyaddcontactpage.cpp
 # Generated UI files
 kde4_add_ui_files(kopete_telepathy_ui_SRCS
 ui/telepathyaddcontactpage.ui
-                   accounts_kcm/protocol-select-widget.ui
-                   accounts_kcm/defaultaccountui/parameter-edit-widget.ui
 )
 
 # Normal protocol classes
