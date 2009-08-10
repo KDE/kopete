@@ -65,7 +65,7 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 	Connecting(Kopete::OnlineStatus::Connecting, 0, this, 8, QStringList("skype_connecting"), i18n("Connecting")),
 	NotInList(Kopete::OnlineStatus::Offline, 0, this, 9, QStringList("skype_contact_unknown"), i18n("Not in Skype list")),
 	NoAuth(Kopete::OnlineStatus::Offline, 0, this, 10, QStringList("skype_contact_unknown"), i18n("Not authorized")),
-	Phone(Kopete::OnlineStatus::Online, 0, this, 11, QStringList("skype_contact_skypeout"), i18n("SkypeOut contact")),
+	Phone(Kopete::OnlineStatus::Offline, 0, this, 11, QStringList("skype_contact_skypeout"), i18n("SkypeOut contact")), //Skype Out contact permanently offline TODO: add option for changing
 	/** Contact property templates */
 	propFullName(Kopete::Global::Properties::self()->fullName()),
 	propPrivatePhone(Kopete::Global::Properties::self()->privatePhone()),
