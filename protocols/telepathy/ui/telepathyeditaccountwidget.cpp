@@ -20,17 +20,17 @@
 
 #include "telepathyeditaccountwidget.h"
 
-#include "connection-manager-item.h"
-#include "mandatory-parameter-edit-widget.h"
-#include "optional-parameter-edit-widget.h"
-#include "plugin-manager.h"
-#include "protocol-select-widget.h"
-#include "protocol-item.h"
 #include "telepathyprotocol.h"
 #include "telepathyaccount.h"
 
 #include <KCMTelepathyAccounts/AbstractAccountUi>
 #include <KCMTelepathyAccounts/AbstractAccountUi>
+#include <KCMTelepathyAccounts/ConnectionManagerItem>
+#include <KCMTelepathyAccounts/MandatoryParameterEditWidget>
+#include <KCMTelepathyAccounts/OptionalParameterEditWidget>
+#include <KCMTelepathyAccounts/PluginManager>
+#include <KCMTelepathyAccounts/ProtocolItem>
+#include <KCMTelepathyAccounts/ProtocolSelectWidget>
 
 #include <KDebug>
 #include <KGlobal>

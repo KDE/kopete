@@ -10,10 +10,6 @@ include_directories(
         ${TELEPATHY_QT4_INCLUDE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/ui
         ${CMAKE_CURRENT_BINARY_dir}/ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/accounts_kcm
-        ${CMAKE_CURRENT_BINARY_DIR}/accounts_kcm
-        ${CMAKE_CURRENT_SOURCE_DIR}/accounts_kcm/defaultaccountui
-        ${CMAKE_CURRENT_BINARY_DIR}/accounts_kcm/defaultaccountui
 )
 
 # UI classes
@@ -39,20 +35,6 @@ telepathychatsession.cpp
 telepathyclienthandler.cpp
 telepathychannelmanager.cpp
 ${kopete_telepathy_ui_SRCS}
-     accounts_kcm/protocol-select-widget.cpp
-     accounts_kcm/protocol-list-model.cpp
-     accounts_kcm/connection-manager-item.cpp
-     accounts_kcm/protocol-item.cpp
-     accounts_kcm/defaultaccountui/parameter-edit-widget.cpp
-     accounts_kcm/defaultaccountui/parameter-edit-delegate.cpp
-     accounts_kcm/defaultaccountui/parameter-edit-model.cpp
-     accounts_kcm/defaultaccountui/parameter-item.cpp
-     accounts_kcm/defaultaccountui/integer-edit.cpp
-     accounts_kcm/defaultaccountui/unsigned-integer-edit.cpp
-     accounts_kcm/defaultaccountui/mandatory-parameter-edit-widget.cpp
-     accounts_kcm/defaultaccountui/optional-parameter-edit-widget.cpp
-     accounts_kcm/dictionary.cpp
-     accounts_kcm/plugin-manager.cpp
 )
 
 kde4_add_plugin(kopete_telepathy ${kopete_telepathy_PART_SRCS})
