@@ -33,6 +33,7 @@
 #include <TelepathyQt4/Connection>
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/Account>
+#include <TelepathyQt4/Contact>
 #include <TelepathyQt4/PendingContacts>
 #include <TelepathyQt4/PendingReady>
 
@@ -129,9 +130,35 @@ void TelepathyContactManager::onConnectionReady(Tp::PendingOperation *operation)
                      SIGNAL(presencePublicationRequested(const Tp::Contacts &)),
                      SLOT(onPresencePublicationRequested(const Tp::Contacts &)));
 
-    QSet<QSharedPointer<Tp::Contact> > contacts = d->connection->contactManager()->allKnownContacts();
+    QSet<Tp::ContactPtr> contacts = d->connection->contactManager()->allKnownContacts();
 
-    foreach(QSharedPointer<Tp::Contact> contact, contacts) {
+    QSet<Tp::Contact::Feature> features;
+    features << Tp::Contact::FeatureAlias
+             << Tp::Contact::FeatureAvatarToken
+             << Tp::Contact::FeatureSimplePresence;
+
+    QObject::connect(d->connection->contactManager()->upgradeContacts(contacts.toList(), features),
+                     SIGNAL(finished(Tp::PendingOperation*)),
+                     SLOT(onContactsUpgraded(Tp::PendingOperation*)));
+}
+
+void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    if (op->isError()) {
+        kWarning() << "Upgrading contacts failed:" << op->errorName() << op->errorMessage();
+        return;
+    }
+
+    Tp::PendingContacts *pendingContacts = qobject_cast<Tp::PendingContacts*>(op);
+
+    if (!pendingContacts) {
+        kWarning() << "Slot called with incorrect type.";
+        return;
+    }
+
+    foreach(Tp::ContactPtr contact, pendingContacts->contacts()) {
         if ((contact->publishState() == Tp::Contact::PresenceStateYes) ||
             (contact->subscriptionState() == Tp::Contact::PresenceStateYes) ) {
             createContact(contact);
@@ -143,9 +170,14 @@ void TelepathyContactManager::onPresencePublicationRequested(const Tp::Contacts 
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    foreach(QSharedPointer<Tp::Contact> contact, contacts) {
-        createContact(contact);
-    }
+    QSet<Tp::Contact::Feature> features;
+    features << Tp::Contact::FeatureAlias
+             << Tp::Contact::FeatureAvatarToken
+             << Tp::Contact::FeatureSimplePresence;
+
+    QObject::connect(d->connection->contactManager()->upgradeContacts(contacts.toList(), features),
+                     SIGNAL(finished(Tp::PendingOperation*)),
+                     SLOT(onContactsUpgraded(Tp::PendingOperation*)));
 }
 
 void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)

@@ -44,6 +44,7 @@ public:
 
 private slots:
     void onConnectionReady(Tp::PendingOperation*);
+    void onContactsUpgraded(Tp::PendingOperation *op);
     void onPresencePublicationRequested(const Tp::Contacts &);
 
 private:
