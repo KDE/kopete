@@ -517,6 +517,20 @@ void TelepathyAccount::onAccountReady(Tp::PendingOperation *operation)
 
     kDebug(TELEPATHY_DEBUG_AREA) << "New account: " << m_account->cmName() << m_account->protocol() << m_account->displayName();
 
+    // We shoudl enable the account
+    QObject::connect(m_account->setEnabled(true),
+                     SIGNAL(finished(Tp::PendingOperation*)),
+                     SLOT(onSetEnabledFinished(Tp::PendingOperation*)));
+}
+
+void TelepathyAccount::onSetEnabledFinished(Tp::PendingOperation *op)
+{
+    if (op->isError()) {
+        // TODO: User feedback here.
+        kWarning() << "Enabling account failed:" << op->errorName() << op->errorMessage();
+        return;
+    }
+
     Tp::Account *a = m_account.data();
 
     QObject::connect(a, SIGNAL(displayNameChanged(const QString &)),
