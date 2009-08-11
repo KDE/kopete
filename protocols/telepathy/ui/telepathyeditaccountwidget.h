@@ -52,7 +52,7 @@ private slots:
                      const QString &protocol,
                      const QVariantMap &parameters);
 
-    void onSelectedProtocolChanged(ProtocolItem *item);
+    void onProtocolGotSelected(bool selected);
 
 private:
     void setupAddAccountUi();

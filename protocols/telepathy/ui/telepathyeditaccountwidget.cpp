@@ -354,8 +354,8 @@ void TelepathyEditAccountWidget::setupAddAccountUi()
     d->protocolSelectWidget = new ProtocolSelectWidget(d->tabWidget);
     d->tabWidget->addTab(d->protocolSelectWidget, i18n("Select Protocol"));
 
-    connect(d->protocolSelectWidget, SIGNAL(selectedProtocolChanged(ProtocolItem*)),
-            SLOT(onSelectedProtocolChanged(ProtocolItem*)));
+    connect(d->protocolSelectWidget, SIGNAL(protocolGotSelected(bool)),
+            SLOT(onProtocolGotSelected(bool)));
 }
 
 void TelepathyEditAccountWidget::setupEditAccountUi()
@@ -476,9 +476,23 @@ void TelepathyEditAccountWidget::setupEditAccountUi()
     }
 }
 
-void TelepathyEditAccountWidget::onSelectedProtocolChanged(ProtocolItem *item)
+void TelepathyEditAccountWidget::onProtocolGotSelected(bool selected)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
+
+    // If protocol was not selected, return.
+    if (!selected) {
+        kWarning() << "Protocol unselected.";
+        return;
+    }
+
+    // Get the ProtocolItem and check it is valid.
+    ProtocolItem *item = d->protocolSelectWidget->selectedProtocol();
+
+    if (!item) {
+        kWarning() << "Selected protocol is not valid.";
+        return;
+    }
 
     // Delete any existing parameters widgets
     if (d->mandatoryParametersWidget) {
