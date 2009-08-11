@@ -172,11 +172,20 @@ Kopete::Account *TelepathyEditAccountWidget::applyAddedAccount()
     // Merge the parameters into a QVariantMap for submitting to the Telepathy AM.
     QVariantMap parameters;
 
+
     foreach (Tp::ProtocolParameter *pp, mandatoryParameterValues.keys()) {
         QVariant value = mandatoryParameterValues.value(pp);
 
-        // Don't try and add empty parameters.
-        if (!value.isNull()) {
+        // Don't try and add empty parameters or ones where the default value is still set.
+        if ((!value.isNull()) && (value != pp->defaultValue())) {
+
+            // Check for params where they are empty and the default is null.
+            if (pp->type() == QVariant::String) {
+                if ((pp->defaultValue() == QVariant()) && (value.toString().isEmpty())) {
+                    continue;
+                }
+            }
+
             parameters.insert(pp->name(), value);
         }
     }
@@ -184,8 +193,16 @@ Kopete::Account *TelepathyEditAccountWidget::applyAddedAccount()
     foreach (Tp::ProtocolParameter *pp, optionalParameterValues.keys()) {
         QVariant value = optionalParameterValues.value(pp);
 
-        // Don't try and add empty parameters.
-        if (!value.isNull()) {
+        // Don't try and add empty parameters or ones where the default value is still set.
+        if ((!value.isNull()) && (value != pp->defaultValue())) {
+
+            // Check for params where they are empty and the default is null.
+            if (pp->type() == QVariant::String) {
+                if ((pp->defaultValue() == QVariant()) && (value.toString().isEmpty())) {
+                    continue;
+                }
+            }
+
             parameters.insert(pp->name(), value);
         }
     }
@@ -236,13 +253,28 @@ Kopete::Account *TelepathyEditAccountWidget::applyEditedAccount()
 
         allParameters.insert(pp->name(), value);
 
-        // Unset empty parameters.
-        if (!value.isNull()) {
-            parameters.insert(pp->name(), value);
+       // Unset null parameters.
+        if (value.isNull()) {
+            unsetParameters.append(pp->name());
             continue;
         }
 
-        unsetParameters.append(pp->name());
+        // Unset any parameters where the default value is equal to the current value.
+        if (pp->defaultValue() == value) {
+            unsetParameters.append(pp->name());
+            continue;
+        }
+
+        // Unset any strings where the default is empty, and the value is an empty string
+        if (pp->type() == QVariant::String) {
+            if ((pp->defaultValue().isNull()) && value.toString().isEmpty()) {
+                unsetParameters.append(pp->name());
+                continue;
+            }
+        }
+
+        // Parameter has a valid value, so set it.
+        parameters.insert(pp->name(), value);
     }
 
     foreach (Tp::ProtocolParameter *pp, optionalParameterValues.keys()) {
@@ -250,13 +282,28 @@ Kopete::Account *TelepathyEditAccountWidget::applyEditedAccount()
 
         allParameters.insert(pp->name(), value);
 
-        // Unset empty parameters.
-        if (!value.isNull()) {
-            parameters.insert(pp->name(), value);
+       // Unset null parameters.
+        if (value.isNull()) {
+            unsetParameters.append(pp->name());
             continue;
         }
 
-        unsetParameters.append(pp->name());
+        // Unset any parameters where the default value is equal to the current value.
+        if (pp->defaultValue() == value) {
+            unsetParameters.append(pp->name());
+            continue;
+        }
+
+        // Unset any strings where the default is empty, and the value is an empty string
+        if (pp->type() == QVariant::String) {
+            if ((pp->defaultValue().isNull()) && value.toString().isEmpty()) {
+                unsetParameters.append(pp->name());
+                continue;
+            }
+        }
+
+        // Parameter has a valid value, so set it.
+        parameters.insert(pp->name(), value);
     }
 
     // Write the kopete config file.
