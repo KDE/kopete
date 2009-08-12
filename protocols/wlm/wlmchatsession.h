@@ -31,6 +31,13 @@
 
 #include <msn/msn.h>
 
+#ifdef HAVE_MEDIASTREAMER
+#include <mediastreamer2/msfilter.h>
+#include <mediastreamer2/mssndcard.h>
+#include <mediastreamer2/msticker.h>
+#include <mediastreamer2/msfilerec.h>
+#endif
+
 class WlmContact;
 
 class WlmChatSession: public Kopete::ChatSession
@@ -90,6 +97,11 @@ class WlmChatSession: public Kopete::ChatSession
     void slotActionInviteAboutToShow ();
     void slotInviteContact (Kopete::Contact * contact);
     void slotSendInk ( const QPixmap &);
+#ifdef HAVE_MEDIASTREAMER
+    void slotSendVoiceStartRec();
+    void slotSendVoiceStopRec();
+    void slotSendVoiceStopRecTimeout();
+#endif
     void slotSendFile ();
     void sendKeepAlive ();
     void messageTimeout();
@@ -116,6 +128,19 @@ class WlmChatSession: public Kopete::ChatSession
     QList < KAction* > m_inviteactions;
     QTimer * m_keepalivetimer;
     QStringList m_filesToRemove;
+
+#ifdef HAVE_MEDIASTREAMER
+    KActionMenu * m_actionVoice;
+    QString m_currentVoiceClipName;
+    QTimer *m_voiceTimer;
+    QLinkedList < QString > m_pendingVoices;
+
+    MSFilter *m_voiceFilter;
+    MSSndCard *m_voiceCardCapture;
+    MSTicker *m_voiceTicker;
+    MSFilter *m_voiceRecorder;
+#endif
+
 };
 
 #endif

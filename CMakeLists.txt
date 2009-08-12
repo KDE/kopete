@@ -47,7 +47,7 @@ check_type_size("long" SIZEOF_LONG)
 check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
 
 macro_optional_find_package(LiboRTP)
-macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support in Kopete.")
+macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support and voice clips in WLM.")
 
 macro_optional_find_package(Speex)
 macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support in Kopete.")
@@ -89,6 +89,10 @@ include(CheckStructMember)
 macro_optional_find_package(GIF)
 macro_bool_to_01(GIF_FOUND HAVE_GIFLIB)
 macro_log_feature( GIF_FOUND "giflib" "Handwriting messages support for WLM" "http://sourceforge.net/projects/giflib/" FALSE "" "Required for the Kopete WLM protocol")
+
+macro_optional_find_package(Mediastreamer)
+macro_bool_to_01(MEDIASTREAMER_FOUND HAVE_MEDIASTREAMER)
+macro_log_feature( MEDIASTREAMER_FOUND "mediastreamer" "A streaming engine specialized for voice/video telephony applications" "http://www.linphone.org/index.php/eng/code_review/mediastreamer2" FALSE "" "Required to enable voice clips support in WLM plugin")
 
 macro_optional_find_package(LibMeanwhile)
 macro_bool_to_01(LIBMEANWHILE_FOUND HAVE_LIBMEANWHILE)

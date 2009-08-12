@@ -48,6 +48,12 @@ set(kopete_wlm_link_LIBS
     ${LIBMSN_LIBRARIES}
 )
 
+if(MEDIASTREAMER_FOUND AND LIBORTP_FOUND)
+    set(kopete_wlm_link_LIBS ${kopete_wlm_link_LIBS} ${MEDIASTREAMER_LIBRARIES} ${LIBORTP_LIBRARY})
+    set(kopete_wlm_include_DIRS ${kopete_wlm_include_DIRS} ${MEDIASTREAMER_INCLUDE_DIR})
+    add_definitions(-DHAVE_MEDIASTREAMER)
+endif(MEDIASTREAMER_FOUND AND LIBORTP_FOUND)
+
 if(HAVE_GIFLIB)
     set(kopete_wlm_link_LIBS ${kopete_wlm_link_LIBS} ${GIF_LIBRARIES})
     set(kopete_wlm_include_DIRS ${kopete_wlm_include_DIRS} ${GIF_INCLUDE_DIR})

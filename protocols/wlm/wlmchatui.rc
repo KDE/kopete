@@ -12,5 +12,6 @@
 		<Action name="wlmSendNudge" />
 		<Action name="wlmInvite" />
 		<Action name="wlmSendInk" />
+		<Action name="wlmSendVoice" />
 	</ToolBar>
 </kpartgui>
