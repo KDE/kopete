@@ -97,11 +97,9 @@ class WlmChatSession: public Kopete::ChatSession
     void slotActionInviteAboutToShow ();
     void slotInviteContact (Kopete::Contact * contact);
     void slotSendInk ( const QPixmap &);
-#ifdef HAVE_MEDIASTREAMER
     void slotSendVoiceStartRec();
     void slotSendVoiceStopRec();
     void slotSendVoiceStopRecTimeout();
-#endif
     void slotSendFile ();
     void sendKeepAlive ();
     void messageTimeout();

@@ -269,10 +269,10 @@ WlmChatSession::sendFile (const QString & fileLocation,
     }
 }
 
-#ifdef HAVE_MEDIASTREAMER
 void
 WlmChatSession::slotSendVoiceStartRec ()
 {
+#ifdef HAVE_MEDIASTREAMER
     if (members ().count () < 0)
         return;
 
@@ -331,11 +331,13 @@ WlmChatSession::slotSendVoiceStartRec ()
         connect(m_voiceTimer, SIGNAL(timeout()), this, SLOT(slotSendVoiceStopRecTimeout()));
         m_voiceTimer->start (15 * 1000);
     }
+#endif
 }
 
 void
 WlmChatSession::slotSendVoiceStopRecTimeout()
 {
+#ifdef HAVE_MEDIASTREAMER
     if(m_voiceTimer)
     {
         Kopete::Message msg = Kopete::Message ();
@@ -344,11 +346,13 @@ WlmChatSession::slotSendVoiceStopRecTimeout()
         appendMessage (msg);
         slotSendVoiceStopRec();
     }
+#endif
 }
 
 void
 WlmChatSession::slotSendVoiceStopRec()
 {
+#ifdef HAVE_MEDIASTREAMER
     if(m_actionVoice)
         m_actionVoice->menu()->hide();
     if(m_voiceTimer)
@@ -426,8 +430,8 @@ WlmChatSession::slotSendVoiceStopRec()
         m_pendingVoices.append (m_currentVoiceClipName);
     }
     m_currentVoiceClipName = QString();
-}
 #endif
+}
 
 void
 WlmChatSession::slotSendFile ()
