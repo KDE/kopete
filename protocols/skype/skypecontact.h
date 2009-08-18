@@ -139,7 +139,7 @@ class SkypeContact : public Kopete::Contact
 		/**
 		 * Send file
 		 */
-		virtual void sendFile(const KUrl &, const QString &, uint);
+		virtual void sendFile(const KUrl &url, const QString &, uint);
 	signals:
 		/**
 		 * There is a request to get/refresh the contact info from skype

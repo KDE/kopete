@@ -20,10 +20,6 @@
 #ifndef SKYPECONNECTION_H
 #define SKYPECONNECTION_H
 
-#ifndef SKYPE_DEBUG_GLOBAL
-	#define SKYPE_DEBUG_GLOBAL 14311
-#endif
-
 #include <qobject.h>
 
 typedef enum {

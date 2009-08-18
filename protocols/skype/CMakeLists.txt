@@ -14,6 +14,8 @@ include_directories(
 	${CMAKE_CURRENT_BUILD_DIR}
 )
 
+add_definitions(-DSKYPE_DEBUG_GLOBAL=14311)
+
 ########### next target ###############
 
 set(

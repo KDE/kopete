@@ -505,7 +505,7 @@ void SkypeAccount::setCallControl(bool value) {
 void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	if (d->callControl) {//Show the skype call control window
+	if (d->callControl) {//Show the kopete call control window
 		SkypeCallDialog *dialog = new SkypeCallDialog(callId, userId, this);//It should free itself when it is closed
 
 		QObject::connect(&d->skype, SIGNAL(callStatus(const QString&, const QString& )), dialog, SLOT(updateStatus(const QString&, const QString& )));
@@ -560,7 +560,7 @@ QString SkypeAccount::getUserLabel(const QString &userId) {
 	Kopete::Contact *cont = contact(userId);
 
 	if (!cont) {
-		addContact(userId, QString::null, 0L, Temporary);//create a temporary contact
+		addContact(userId, d->skype.getDisplayName(userId), 0L, Temporary);//create a temporary contact
 
 		cont = (contacts().value(userId));//It should be there now
 		if (!cont)
@@ -623,7 +623,7 @@ int SkypeAccount::getWaitBeforeConnect() const {
 SkypeContact *SkypeAccount::getContact(const QString &userId) {
 	SkypeContact *cont = static_cast<SkypeContact *> (contacts().value(userId));//get the contact
 	if (!cont) {//We do not know such contact
-		addContact(userId, QString::null, 0L, Temporary);//create a temporary contact
+		addContact(userId, d->skype.getDisplayName(userId), 0L, Temporary);//create a temporary contact
 
 		cont = static_cast<SkypeContact *> (contacts().value(userId));//It should be there now
 	}
@@ -1041,7 +1041,7 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 		openFileTransfer(user);//Open file transfer dialog
 	} else if ( command == "userinfo" ) {//TODO: Open option dialog (with all thisa options instead userinfo) and support unknow contacts who arent in contact list
 		if ( ! contact(user) ) {
-			addContact(user, QString::null, 0L, Temporary);//create a temporary contact
+			addContact(user, d->skype.getDisplayName(user), 0L, Temporary);//create a temporary contact
 			if ( ! contact(user) )
 				return;//contact arent in contact list - skip it
 		}
