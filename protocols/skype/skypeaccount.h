@@ -20,10 +20,6 @@
 #ifndef SKYPEACCOUNT_H
 #define SKYPEACCOUNT_H
 
-#ifndef SKYPE_DEBUG_GLOBAL
-	#define SKYPE_DEBUG_GLOBAL 14311
-#endif
-
 #include <kopeteaccount.h>
 #include <kactionmenu.h>
 #include <kmenu.h>

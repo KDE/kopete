@@ -72,7 +72,8 @@ SkypeConnection::~SkypeConnection() {
 	disconnectSkype();//disconnect before you leave
 	if ( d->skypeProcess.state() != QProcess::NotRunning )//if we started skype process kill it
 		d->skypeProcess.kill();
-	QProcess::execute("bash -c \"pkill -6 -U $USER -x skype.*\"");//try find skype process (skype, skype.real, ...) and kill it if we dont start skype or use skype.real wrapper
+	QProcess::execute("bash -c \"pkill -6 -U $USER -x ^skype.*$\"");//try find skype process (skype, skype.real, ...) and kill it if we dont start skype or use skype.real wrapper
+	QProcess::execute("bash -c \"pkill -6 -U $USER -x skype\"");
 	delete d;//Remove the D pointer
 }
 
@@ -154,7 +155,12 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 
 	new SkypeAdaptor(this);
 	QDBusConnection busConn = BUS;
-	busConn.registerObject("/com/Skype/Client", this); //Register skype client to dbus for receiving messages to slot Notify
+	bool registred = busConn.registerObject("/com/Skype/Client", this); //Register skype client to dbus for receiving messages to slot Notify
+
+	if ( ! registred ) {
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant register Skype communication for Kopete on DBus";
+		return;
+	}
 
 	{
 		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API", BUS);
@@ -211,6 +217,9 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 
 void SkypeConnection::disconnectSkype(skypeCloseReason reason) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
+
+	QDBusConnection busConn = BUS;
+	busConn.unregisterObject("/com/Skype/Client");
 
 	if (d->startTimer) {
 		d->startTimer->stop();

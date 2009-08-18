@@ -20,7 +20,6 @@
 
 #include "skypeconference.h"
 #include "skypecalldialog.h"
-#include "skypeaccount.h"
 
 #include <qstring.h>
 #include <qlayout.h>

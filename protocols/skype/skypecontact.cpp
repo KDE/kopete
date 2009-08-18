@@ -52,8 +52,6 @@ typedef enum {
 
 class SkypeContactPrivate {
 	public:
-		///Full name of the contact
-		QString fullName;
 		///Acount that this contact belongs to
 		SkypeAccount *account;
 		///Is it some user or is it something special (myself contact or such)
@@ -122,8 +120,6 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)
 		emit infoRequest(contactId());//retrieve information
-
-	setNickName(id);//Just default, should be replaced later by something..
 
 	setOnlineStatus(account->protocol()->Offline);
 
@@ -247,7 +243,7 @@ void SkypeContact::setInfo(const QString &change) {
 QString SkypeContact::formattedName() const {
 	if (!d->user)
 		return nickName();
-	return d->fullName;
+	return property( Kopete::Global::Properties::self()->fullName() ).value().toString();
 }
 
 void SkypeContact::resetStatus() {
@@ -456,9 +452,9 @@ void SkypeContact::block() {
 	d->account->blockUser(contactId());
 }
 
-void SkypeContact::sendFile(const KUrl &, const QString &, uint) {
+void SkypeContact::sendFile(const KUrl &url, const QString &, uint) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
-	d->account->openFileTransfer(contactId()); //TODO: open KUrl location
+	d->account->openFileTransfer(contactId(), url.toLocalFile());
 }
 
 #include "skypecontact.moc"

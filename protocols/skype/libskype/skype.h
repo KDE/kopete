@@ -214,6 +214,9 @@ class Skype : public QObject
 		void setDisplayName(const QString &user, const QString &name);
 		/**
 		 * Open skype file transfer dilog to send file via skype
+		 * @param user Skype user
+		 * @url url of local file
+		 * @return true if transfer opened
 		 */
 		bool openFileTransfer(const QString &user, const QString &url = QString());
 	public slots:
