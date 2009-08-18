@@ -219,6 +219,12 @@ class Skype : public QObject
 		 * @return true if transfer opened
 		 */
 		bool openFileTransfer(const QString &user, const QString &url = QString());
+		/**
+		 * Search for skype contacts
+		 * @param string skype user name or email (with "@")
+		 * @return all users for string string
+		 */
+		QStringList searchUsers(const QString &string);
 	public slots:
 		/**
 		 * Tell the skype to go online

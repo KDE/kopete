@@ -605,6 +605,9 @@ void Skype::hitchHike(const QString &messageId) {
 
 	const QString &chatType = (d->connection % QString("GET CHAT %1 STATUS").arg(chat)).section(' ', 3, 3).trimmed().toUpper();
 
+	const QString &timeStamp = (d->connection % QString("GET CHATMESSAGE %1 TIMESTAMP").arg(messageId)).section(' ', 3, 3).trimmed();
+	//TODO: convert UNIX timestamp to QTimeDate and use it
+
 	if ((chatType == "LEGACY_DIALOG") || (chatType == "DIALOG")) {
 
 		const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).trimmed();//ask skype for a sender of that message and filter out the blouat around (like CHATMESSAGE 123...)
@@ -972,6 +975,10 @@ bool Skype::openFileTransfer(const QString &user, const QString &url) {
 		return true;
 	else
 		return false;
+}
+
+QStringList Skype::searchUsers(const QString &string) {
+	return (d->connection % QString("SEARCH USERS %1").arg(string)).section(' ', 1).trimmed().split(' ');
 }
 
 #include "skype.moc"

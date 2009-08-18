@@ -37,7 +37,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kconfigbase.h>
-#include <Q3Dict>
+#include <QHash>
 #include <kopetemessage.h>
 #include <qprocess.h>
 
@@ -76,13 +76,13 @@ class SkypeAccountPrivate {
 		///Do we wait before connecting?
 		int waitBeforeConnect;
 		///List of chat all chat sessions
-		Q3Dict<SkypeChatSession> sessions;
+		QHash<QString, SkypeChatSession*> sessions;
 		///Last used chat session
 		SkypeChatSession *lastSession;
 		///List of the conference calls
-		Q3Dict<SkypeConference> conferences;
+		QHash<QString, SkypeConference*> conferences;
 		///List of existing calls
-		Q3Dict<SkypeCallDialog> calls;
+		QHash<QString, SkypeCallDialog*> calls;
 		///Shall chat window leave the chat whenit is closed
 		bool leaveOnExit;
 		///Executed before making the call
@@ -107,8 +107,6 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 
 	//the d pointer
 	d = new SkypeAccountPrivate(*this);
-	d->calls.setAutoDelete(false);
-	d->conferences.setAutoDelete(false);
 	//remember the protocol, it will be needed
 	d->protocol = protocol;
 
@@ -120,7 +118,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	setCallControl(config->readEntry("CallControl", false));
 	setPings(config->readEntry("Pings", true));
 	setBus(config->readEntry("Bus", 1));
-	setLaunchTimeout(config->readEntry("LaunchTimeout", 30));
+	setLaunchTimeout(config->readEntry("LaunchTimeout", 70));
 	d->myName = config->readEntry("MyselfName", "Skype");
 	setSkypeCommand(config->readEntry("SkypeCommand", "skype"));
 	setWaitBeforeConnect(config->readEntry("WaitBeforeConnect", 0));
@@ -168,7 +166,6 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	setMarkRead(config->readEntry("MarkRead", true));//read the modes of account
 	d->callWindowTimeout = config->readEntry("CloseWindowTimeout", 4);
 	setPings(config->readEntry("Pings", true));
-	d->sessions.setAutoDelete(false);
 	d->lastSession = 0L;
 	d->callCount = 0;
 }
@@ -648,11 +645,11 @@ void SkypeAccount::setChatId(const QString &oldId, const QString &newId, SkypeCh
 }
 
 bool SkypeAccount::chatExists(const QString &chat) {
-	return d->sessions.find(chat);
+	return d->sessions.value(chat);
 }
 
 void SkypeAccount::receiveMultiIm(const QString &chatId, const QString &body, const QString &messageId, const QString &user) {
-	SkypeChatSession *session = d->sessions.find(chatId);
+	SkypeChatSession *session = d->sessions.value(chatId);
 
 	if (!session) {
 		QStringList users = d->skype.getChatUsers(chatId);
@@ -691,7 +688,7 @@ void SkypeAccount::gotMessageId(const QString &messageId) {
 void SkypeAccount::sentMessage(const QString &body, const QString &chat) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << "chat: " << chat;
 
-	SkypeChatSession *session = d->sessions.find(chat);
+	SkypeChatSession *session = d->sessions.value(chat);
 	const QStringList &users = d->skype.getChatUsers(chat);
 	QList<Kopete::Contact*> *recv = 0L;
 
@@ -737,14 +734,14 @@ void SkypeAccount::groupCall(const QString &callId, const QString &groupId) {
 		return;
 
 	SkypeConference *conf;
-	if (!(conf = d->conferences[groupId])) {//does it already exist?
+	if (!(conf = d->conferences.value(groupId))) {//does it already exist?
 		conf = new SkypeConference(groupId);//no, create one then..
 		d->conferences.insert(groupId, conf);
 
 		QObject::connect(conf, SIGNAL(removeConference(const QString& )), this, SLOT(removeCallGroup(const QString& )));
 	}
 
-	conf->embedCall(d->calls[callId]);
+	conf->embedCall(d->calls.value(callId));
 }
 
 void SkypeAccount::removeCall(const QString &callId) {

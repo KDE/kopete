@@ -40,6 +40,13 @@ Q_OBJECT
 	private:
 		///Some internal things
 		SkypeEditAccountPrivate *d;
+	private slots:
+		/**
+		 * Configure Skype client:
+		 * Disable Skype client sound and visible notifications
+		 * Set up english language
+		 */
+		void configureSkypeClient();
 	public:
 		/**
 		 * Constructor.

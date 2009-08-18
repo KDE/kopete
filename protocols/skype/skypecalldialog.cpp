@@ -19,6 +19,7 @@
 */
 
 #include "skypecalldialog.h"
+#include "skypewindow.h"
 
 #include <qstring.h>
 #include <kdebug.h>
@@ -65,6 +66,8 @@ class SkypeCallDialogPrivate {
 				account->endCall();
 			}
 		};
+		///Skype window manager
+		SkypeWindow * skypeWindow;
 };
 
 SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account) : KDialog() {
@@ -88,6 +91,7 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	d->totalTime = 0;
 	d->callTime = 0;
 	d->callEnded = false;
+	d->skypeWindow = new SkypeWindow;
 
 	d->updater = new QTimer();
 	connect(d->updater, SIGNAL(timeout()), this, SLOT(updateCallInfo()));
@@ -100,6 +104,8 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	connect(dialog->HangButton, SIGNAL(clicked()), this, SLOT(hangUp()));
 	connect(dialog->HoldButton, SIGNAL(clicked()), this, SLOT(holdCall()));
 	connect(dialog->ChatButton, SIGNAL(clicked()), this, SLOT(chatUser()));
+
+	d->skypeWindow->hideCallDialog(userId);
 }
 
 
@@ -108,7 +114,9 @@ SkypeCallDialog::~SkypeCallDialog(){
 
 	emit callFinished(d->callId);
 	d->endCall();
+	d->skypeWindow->deleteCallDialog(d->userId);
 
+	delete d->skypeWindow;
 	delete d->updater;
 	delete d;
 	delete dialog;
@@ -243,6 +251,7 @@ void SkypeCallDialog::closeLater() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->endCall();
+	d->skypeWindow->deleteCallDialog(d->userId);
 
 	if ((d->account->closeCallWindowTimeout()) && (d->status != csShuttingDown)) {
 		QTimer::singleShot(1000 * d->account->closeCallWindowTimeout(), this, SLOT(deathTimeout()));
