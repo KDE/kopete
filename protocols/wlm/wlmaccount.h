@@ -371,7 +371,7 @@ private:
 
     QTimer * m_pendingDisplayPicturesTimer;
 
-    KTemporaryFile *tmpMailFile;
+    KTemporaryFile * tmpMailFile;
 
     QTimer * m_tmpMailFileTimer;
 
