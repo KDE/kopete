@@ -358,9 +358,11 @@ void SkypeAccount::newUser(const QString &name, int groupID) {
 
 	Kopete::Group * skypeGroup;
 
-	if (group.isEmpty() || groupID == -1) // If skype group hasnt name, in kopete will be in top
+	bool root = false;
+	if (group.isEmpty() || groupID == -1) { // If skype group hasnt name, in kopete will be in top
 		skypeGroup = Kopete::Group::topLevel();
-	else {
+		root = true;
+	} else {
 		skypeGroup = Kopete::ContactList::self()->findGroup(group); //get kopete group by skype group name. If skype group in kopete doesnt exist, create it automatically
 		if ( skypeGroup == Kopete::Group::topLevel() ){ //if group in skype has name i18n("Top Level") kopete get top level group, but in skype top level group is group without name
 			QList <Kopete::Group *> groups = Kopete::ContactList::self()->groups(); //get all groups
@@ -380,7 +382,7 @@ void SkypeAccount::newUser(const QString &name, int groupID) {
 
 	Kopete::Contact * contact = contacts().value(name);
 	if (contact){
-		if (skypeGroup != contact->metaContact()->groups().first()){ // if skype Group is different like kopete group, move metacontact to skype group
+		if (!root && skypeGroup != contact->metaContact()->groups().first()){ //if skype Group is different like kopete group (and skype group isnt root), move metacontact to skype group
 			kDebug(SKYPE_DEBUG_GLOBAL) << "Moving contact" << name << "to group" << group;
 			contact->metaContact()->moveToGroup(contact->metaContact()->groups().first(), skypeGroup);
 		}
