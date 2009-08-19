@@ -193,6 +193,8 @@ Kopete::Account *TelepathyEditAccountWidget::applyAddedAccount()
     foreach (Tp::ProtocolParameter *pp, optionalParameterValues.keys()) {
         QVariant value = optionalParameterValues.value(pp);
 
+        kDebug() << "Op Param:" << pp->name() << value;
+
         // Don't try and add empty parameters or ones where the default value is still set.
         if ((!value.isNull()) && (value != pp->defaultValue())) {
 

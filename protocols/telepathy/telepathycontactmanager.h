@@ -46,6 +46,11 @@ private slots:
     void onConnectionReady(Tp::PendingOperation*);
     void onContactsUpgraded(Tp::PendingOperation *op);
     void onPresencePublicationRequested(const Tp::Contacts &);
+    void onRequestingContactsUpgraded(Tp::PendingOperation *op);
+    void onAddedInfoEventActionActivated(uint);
+    void onContactSubscriptionStateChanged(Tp::Contact::PresenceState state);
+    void onContactPublishStateChanged(Tp::Contact::PresenceState state);
+    void onContactBlockStatusChanged(bool blocked);
 
 private:
     void fetchContactList();

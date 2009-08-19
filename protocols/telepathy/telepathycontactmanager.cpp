@@ -21,14 +21,15 @@
 #include "telepathycontactmanager.h"
 
 #include "telepathyaccount.h"
+#include "telepathyaddedinfoevent.h"
 #include "telepathycontact.h"
 #include "telepathyprotocol.h"
 #include "common.h"
 
 #include <KDebug>
 
-#include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
+#include <kopetemetacontact.h>
 
 #include <TelepathyQt4/Connection>
 #include <TelepathyQt4/ContactManager>
@@ -45,6 +46,7 @@ public:
     Tp::ConnectionPtr connection;
 
     QList<TelepathyContact*> contactList;
+    QList<Tp::ContactPtr> contacts;
 };
 
 TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAccount)
@@ -158,12 +160,55 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
         return;
     }
 
+    d->contacts = pendingContacts->contacts();
+
     foreach(Tp::ContactPtr contact, pendingContacts->contacts()) {
         if ((contact->publishState() == Tp::Contact::PresenceStateYes) ||
             (contact->subscriptionState() == Tp::Contact::PresenceStateYes) ) {
             createContact(contact);
         }
+
+        connect(contact.data(),
+                SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
+                SLOT(onContactSubscriptionStateChanged(Tp::Contact::PresenceState)));
+        connect(contact.data(),
+                SIGNAL(publishStateChanged(Tp::Contact::PresenceState)),
+                SLOT(onContactPublishStateChanged(Tp::Contact::PresenceState)));
+        connect(contact.data(),
+                SIGNAL(blockStatusChanged(bool)),
+                SLOT(onContactBlockStatusChanged(bool)));
     }
+}
+
+void TelepathyContactManager::onContactSubscriptionStateChanged(Tp::Contact::PresenceState state)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    // TODO: Implement me!
+}
+
+void TelepathyContactManager::onContactPublishStateChanged(Tp::Contact::PresenceState state)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    // TODO: Implement me!
+}
+
+void TelepathyContactManager::onContactBlockStatusChanged(bool blocked)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    // Get the callee Tp::Contact.
+    Tp::Contact *pContact = qobject_cast<Tp::Contact*>(sender());
+
+    if (!pContact) {
+        kWarning() << "Slot called by non-Tp::Contact object.";
+        return;
+    }
+
+    Tp::ContactPtr contact = Tp::ContactPtr(pContact);
+
+    // TODO: Implement me!
 }
 
 void TelepathyContactManager::onPresencePublicationRequested(const Tp::Contacts &contacts)
@@ -177,7 +222,89 @@ void TelepathyContactManager::onPresencePublicationRequested(const Tp::Contacts 
 
     QObject::connect(d->connection->contactManager()->upgradeContacts(contacts.toList(), features),
                      SIGNAL(finished(Tp::PendingOperation*)),
-                     SLOT(onContactsUpgraded(Tp::PendingOperation*)));
+                     SLOT(onRequestingContactsUpgraded(Tp::PendingOperation*)));
+}
+
+void TelepathyContactManager::onRequestingContactsUpgraded(Tp::PendingOperation *op)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    if (op->isError()) {
+        kWarning() << "Upgrading contacts failed:" << op->errorName() << op->errorMessage();
+        return;
+    }
+
+    Tp::PendingContacts *pendingContacts = qobject_cast<Tp::PendingContacts*>(op);
+
+    if (!pendingContacts) {
+        kWarning() << "Slot called with incorrect type.";
+        return;
+    }
+
+    foreach (Tp::ContactPtr contact, pendingContacts->contacts()) {
+        Kopete::Contact *kContact = 0;
+        Kopete::MetaContact *kMetaContact = 0;
+
+        // Check if the telepathy contact is already in the list
+        foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
+            foreach (Kopete::Contact *c, mc->contacts()) {
+                if ((c->account() == d->telepathyAccount) &&
+                    (c->contactId() == contact->id())) {
+
+                    // Contact is already in the list.
+                    kContact = c;
+                    kMetaContact = mc;
+                    break;
+                }
+            }
+
+            if (kContact) {
+                break;
+            }
+        }
+
+        Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+     //   actions |= Kopete::AddedInfoEvent::BlockAction;
+        // FIXME: Add blocking support, then add the block action above.
+
+        if (!kMetaContact || kMetaContact->isTemporary()) {
+            actions |= Kopete::AddedInfoEvent::AddAction;
+        }
+
+        TelepathyAddedInfoEvent* event = new TelepathyAddedInfoEvent(contact, d->telepathyAccount);
+
+        connect(event,
+                SIGNAL(actionActivated(uint)),
+                SLOT(onAddedInfoEventActionActivated(uint)));
+
+        event->showActions(actions);
+        event->sendEvent();
+    }
+}
+
+void TelepathyContactManager::onAddedInfoEventActionActivated(uint actionId)
+{
+    kDebug(TELEPATHY_DEBUG_AREA);
+
+    TelepathyAddedInfoEvent *event = qobject_cast<TelepathyAddedInfoEvent*>(sender());
+
+    if (!event) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Method not called by a TelepathyAddedInfoEvent. Aborting.";
+        return;
+    }
+
+    if (actionId == Kopete::AddedInfoEvent::AuthorizeAction) {
+        // Authorize the contact to view our presence.
+        QList<Tp::ContactPtr> contacts;
+        contacts << event->contact();
+        d->connection->contactManager()->authorizePresencePublication(contacts);
+        // FIXME: Handle the completion of the above Tp::PendingOperation
+    } else if (actionId == Kopete::AddedInfoEvent::AddContactAction) {
+        // Add the contact
+        event->addContact();
+    } else {
+        kWarning() << "Unknown button pressed.";
+    }
 }
 
 void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)

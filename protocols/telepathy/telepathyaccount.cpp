@@ -253,6 +253,8 @@ bool TelepathyAccount::readConfig()
                         newValue = QVariant(it.value()).toUInt();
                     else if (oldValue.type() == QVariant::Double)
                         newValue = QVariant(it.value()).toDouble();
+                    else if (oldValue.type() == QVariant::StringList)
+                        newValue = QVariant(it.value()).toStringList();
                     else if (oldValue.type() == QVariant::Bool) {
                         if (it.value().toLower() == "true")
                             newValue = true;
@@ -802,16 +804,17 @@ void TelepathyAccount::deleteContact(Tp::ContactPtr contact)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
+    // FIXME: Why do we sometimes not delete from the right lists when these conditions exist?
     // When we delete a contact, remove from subscribe and publish lists.
-    if (contact->subscriptionState() == Tp::Contact::PresenceStateYes) {
+   // if (contact->subscriptionState() == Tp::Contact::PresenceStateYes) {
         QObject::connect(contact->removePresenceSubscription(), SIGNAL(finished(Tp::PendingOperation*)),
                          this, SLOT(onContactDeleteRemoveSubscriptionFinished(Tp::PendingOperation*)));
-    }
+   // }
 
-    if (contact->publishState() == Tp::Contact::PresenceStateYes) {
+   // if (contact->publishState() == Tp::Contact::PresenceStateYes) {
         QObject::connect(contact->removePresencePublication(), SIGNAL(finished(Tp::PendingOperation*)),
                          this, SLOT(onContactDeleteRemovePublicationFinished(Tp::PendingOperation*)));
-    }
+   // }
 }
 
 void TelepathyAccount::onContactDeleteRemoveSubscriptionFinished(Tp::PendingOperation *op)
