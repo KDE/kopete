@@ -938,8 +938,7 @@ void ChatMessagePart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * event) 
 
 void ChatMessagePart::slotCloseView( bool force )
 {
-	if (d->manager && d->manager->view())
-		d->manager->view()->closeView( force );
+	d->manager->view()->closeView( force );
 }
 
 void ChatMessagePart::emitTooltipEvent(  const QString &textUnderMouse, QString &toolTip )
