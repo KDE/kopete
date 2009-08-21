@@ -25,7 +25,8 @@
 #include <kdebug.h>
 #include "kopeteplugin.h"
 #include "kopetemessagehandler.h"
-#include "historylogger.h"
+#include <Akonadi/Collection>
+//#include "historylogger.h"
 
 class KopeteView;
 namespace Kopete {
@@ -34,6 +35,9 @@ class ChatSession;
 
 class HistoryGUIClient;
 class HistoryPlugin;
+class HistoryLogger;
+class KJob;
+
 
 /**
  * @author Richard Smith
@@ -62,20 +66,16 @@ class HistoryMessageLoggerFactory : public Kopete::MessageHandlerFactory
     HistoryPlugin *history;
 public:
     explicit HistoryMessageLoggerFactory( HistoryPlugin *history ) : history(history) {
-        qDebug() <<"\n history message logger factory constructor";
     }
 
     Kopete::MessageHandler *create( Kopete::ChatSession * /*manager*/, Kopete::Message::MessageDirection direction )
     {
-        qDebug()<<"\n**** as expected you have ENTERED the Message handle create\n\n";
         if ( direction != Kopete::Message::Inbound )
             return 0;
-        qDebug()<<"\n***returning new histor(HistoryMessageLogger)  instance";
         return new HistoryMessageLogger(history);
     }
     int filterPosition( Kopete::ChatSession *, Kopete::Message::MessageDirection )
     {
-        qDebug()<<"\n*** filterPosition function entered";
         return Kopete::MessageHandlerFactory::InStageToSent+5;
     }
 };
@@ -100,6 +100,8 @@ public:
     static bool detectOldHistory();
 
     void messageDisplayed(const Kopete::Message &msg);
+    
+    Akonadi::Collection getCollection(QString myId = QString() , QString contactId = QString() );
 
 private slots:
     void slotViewCreated( KopeteView* );
@@ -108,9 +110,13 @@ private slots:
     void slotKMMClosed( Kopete::ChatSession* );
     void slotSettingsChanged();
     
-    void collectionFetch(Akonadi::Collection::List);
-    void monitorCollection(Akonadi::Collection);
+    void collectionFetch(KJob *);
     void slotJobDone(KJob *);
+    
+    void collectionAddedSlot(Akonadi::Collection,Akonadi::Collection);
+    void collectionRemovedSlot(Akonadi::Collection);
+    
+    void list();
 
 private:
     HistoryMessageLoggerFactory m_loggerFactory;
@@ -123,8 +129,9 @@ private:
     
     Kopete::ChatSession * m_kmm;
     
-    Akonadi::Collection m_baseCollection;
-    QHash<QString, Akonadi::Collection> m_mapContactCollection;
+    Akonadi::Collection m_kopeteChat;
+    QHash<QString, Akonadi::Collection> m_collectionHash;
+    QHash<Akonadi::Collection::Id , QList<Akonadi::Collection> > m_idCollectionHash; 
 
     void m();
 signals:

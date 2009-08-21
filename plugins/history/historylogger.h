@@ -19,10 +19,10 @@
 #ifndef HISTORYLOGGER_H
 #define HISTORYLOGGER_H
 
+#include "historyplugin.h"
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtCore/QMap>
-//#include <QtXml/QDomDocument>
 #include <akonadi/item.h>
 #include <Akonadi/Collection>
 #include <QDateTime>
@@ -44,6 +44,7 @@ namespace Kopete {
 class MetaContact;
 }
 
+
 /**
  * One hinstance of this class is opened for every Kopete::ChatSession,
  * or for the history dialog
@@ -64,8 +65,8 @@ public:
     /**
      * Constructor, takes the contact, and the color of messages
      */
-    explicit HistoryLogger(Kopete::MetaContact *m ,QHash<QString,Akonadi::Collection> &collMap, QObject *parent = 0 );
-    explicit HistoryLogger(Akonadi::Collection &coll, Kopete::Contact *c , QObject *parent = 0 );
+    explicit HistoryLogger(HistoryPlugin* hPlugin, Kopete::MetaContact *m , QObject *parent = 0 );
+    explicit HistoryLogger(HistoryPlugin* hPlugin, Kopete::Contact *c , QObject *parent = 0 );
 //	explicit HistoryLogger(QObject *parent=0);
 
 //	void Initialize(Kopete::MetaContact *m ,QHash<QString,Akonadi::Collection> &collMap);
@@ -99,7 +100,7 @@ public:
      * log a message
      * @param c add a presision to the contact to use, if null, autodetect.
      */
-    void appendMessage( const Kopete::Message &msg , Akonadi::Collection &coll,Akonadi::Collection &baseColl, const Kopete::Contact *c=0L  );
+    void appendMessage( const Kopete::Message &msg , const Kopete::Contact *c=0L  );
 
     /**
      * read @param lines message from the current position
@@ -224,8 +225,8 @@ private:
 
     Akonadi::Item m_tosaveInItem;
     Akonadi::Collection m_tosaveInCollection;
-    static Akonadi::Collection m_baseCollection;
-    QHash<QString, Akonadi::Collection> m_collectionMap;
+    Akonadi::Collection m_parentCollection;
+    Akonadi::Collection m_kopeteChat;
     /**
      * workaround for the 31 midnight bug.
      * it contains the number of the current month.
@@ -264,6 +265,8 @@ private:
 
     //used in getdays for month
     QList<History> m_historyList;
+    
+    QPointer<HistoryPlugin> m_hPlugin;
 
 private slots:
     /**
@@ -307,6 +310,8 @@ private slots:
     void getDaysForMonthSlot(KJob*);
     
     void collectionFetchDone(Akonadi::Collection::List);
+    
+    void parentCollCreated(KJob*);
 
 signals:
     void readMessagesDoneSignal(QList<Kopete::Message>);

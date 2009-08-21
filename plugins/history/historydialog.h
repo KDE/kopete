@@ -29,6 +29,7 @@
 #include <history/history.h>
 #include "kopetemessage.h"
 #include "historylogger.h"
+#include "historyplugin.h"
 
 class QTreeWidgetItem;
 
@@ -78,7 +79,7 @@ class HistoryDialog : public KDialog
 	Q_OBJECT
 
 	public:
-		explicit HistoryDialog(Kopete::MetaContact *mc,QHash<QString,Akonadi::Collection> &collMap , QWidget* parent=0);
+		explicit HistoryDialog(HistoryPlugin* hPlugin, Kopete::MetaContact *mc, QWidget* parent=0);
 		~HistoryDialog();
 
 		
@@ -165,9 +166,10 @@ class HistoryDialog : public KDialog
 		KAction *mCopyURLAct;
 		QString mURL;
 		
-		QHash<QString ,Akonadi::Collection > m_collectionMap;
-		HistoryLogger *m_hlogger;
+		QPointer<HistoryLogger> m_hlogger;
 		QMap<QDate, QList<CHPair> > m_dateHistoryList;
+		
+		QPointer<HistoryPlugin> m_hPlugin;
 };
 
 Q_DECLARE_METATYPE(Kopete::MetaContact *)

@@ -116,8 +116,8 @@ void HistoryImport::save(void)
 	Log log;
 
 	foreach (log, logs) {
-		Akonadi::Collection coll;
-		HistoryLogger logger(coll,log.other, this);
+		HistoryPlugin *p;
+		HistoryLogger logger(p ,log.other, this);
 		Message message;
 		foreach (message, log.messages) {
 			Kopete::Message kMessage;

@@ -29,30 +29,30 @@ GetHistoryJob::GetHistoryJob(const Akonadi::Collection coll , const QDate date, 
 {
   m_collection= coll;
   m_date = date;
-//  qDebug() << "gethistory jobconstructor"<<m_date<<m_collection.name();
+//  kDebug() << "gethistory jobconstructor"<<m_date<<m_collection.name();
 }
 
 void GetHistoryJob::doStart()
 {
-//  qDebug() <<"doStart";
+//  kDebug() <<"doStart";
   Akonadi::ItemFetchJob *fetchjob = new Akonadi::ItemFetchJob(m_collection,this);
   fetchjob->fetchScope().fetchFullPayload();
   
   connect (fetchjob, SIGNAL(itemsReceived(Akonadi::Item::List)), this,SLOT(itemsReceivedSlot(Akonadi::Item::List)) );
   connect( fetchjob, SIGNAL(result(KJob* )), this,SLOT(itemJobDone(KJob*)) );
-//  qDebug() <<"before fetch job start";
+//  kDebug() <<"before fetch job start";
   fetchjob->start();
  
 }
 
 void GetHistoryJob::itemsReceivedSlot(Akonadi::Item::List itemList)
 {
-  qDebug() << "get job itemsReceivedslot";
+  kDebug() << "get job itemsReceivedslot";
   foreach( const Akonadi::Item &item, itemList)
   {
     if ( item.modificationTime().toLocalTime().toString("MMyyyy")== m_date.toString("MMyyyy") )
     {
-      qDebug()<<"----------------------------------------------------------------from job item found^^";
+      kDebug()<<"----------------------------------------------------------------from job item found^^";
       m_item=item;
       if(item.hasPayload<History>() )
 	m_history = item.payload<History>();
@@ -69,7 +69,7 @@ GetHistoryJob::~GetHistoryJob()
 void GetHistoryJob::itemJobDone(KJob* job)
 {
   if (job->error())
-    qDebug() << "gethistoryjob job failed"<<job->errorString();
+    kDebug() << "gethistoryjob job failed"<<job->errorString();
   emit emitResult();
 }
 

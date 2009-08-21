@@ -23,6 +23,7 @@
 #include <kxmlguiclient.h>
 #include <Akonadi/Collection>
 #include <QList>
+#include "historyplugin.h"
 
 class KAction;
 
@@ -37,7 +38,7 @@ class HistoryGUIClient : public QObject , public KXMLGUIClient
 {
 Q_OBJECT
 public:
-	HistoryGUIClient(QHash<QString,Akonadi::Collection> &collmap , Kopete::ChatSession *parent = 0);
+	HistoryGUIClient(HistoryPlugin* hPlugin , Kopete::ChatSession *parent = 0);
 	~HistoryGUIClient();
 
 	HistoryLogger *logger() const { return m_logger; }
@@ -54,9 +55,10 @@ private slots:
 	void slotViewHistory();
 
 private:
-	HistoryLogger *m_logger;
+	QPointer<HistoryPlugin> m_hPlugin;
+	QPointer<HistoryLogger> m_logger;
 	Kopete::ChatSession *m_manager;
-	QHash<QString,Akonadi::Collection> m_collectionmap;
+
 	//bool m_autoChatWindow;
 	//int m_nbAutoChatWindow;
 	//unsigned int m_nbChatWindow;
