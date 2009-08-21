@@ -486,7 +486,7 @@ list_t *list_new()
 	return l;
 }
 
-void list_delete(list_t *l)
+static void list_delete(list_t *l)
 {
 	int n;
 	if(!l)

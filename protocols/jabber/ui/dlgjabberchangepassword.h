@@ -40,6 +40,7 @@ public:
 private slots:
 	void slotOk ();
 	void slotCancel ();
+	void slotTextChanged ();
 	void slotChangePassword ();
 	void slotChangePasswordDone ();
 

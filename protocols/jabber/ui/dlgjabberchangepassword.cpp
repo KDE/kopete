@@ -36,6 +36,7 @@ DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidg
 	setCaption( i18n("Change Jabber Password") );
 	setButtons( KDialog::Ok | KDialog::Cancel );
 	setDefaultButton( KDialog::Ok );
+	enableButtonOk(false);
 	showButtonSeparator( true );
 
 	m_account = account;
@@ -47,6 +48,13 @@ DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidg
     m_mainWidget->peNewPassword1->setPasswordMode( true );
     m_mainWidget->peNewPassword2->setPasswordMode( true );
     m_mainWidget->peCurrentPassword->setPasswordMode( true );
+
+    m_mainWidget->kled->off();
+    m_mainWidget->kled_2->off();
+    m_mainWidget->kled_3->off();
+    
+    connect(m_mainWidget->peNewPassword1, SIGNAL(userTextChanged()), SLOT(slotTextChanged()));
+    connect(m_mainWidget->peNewPassword2, SIGNAL(userTextChanged()), SLOT(slotTextChanged()));
     connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
     connect(this,SIGNAL(cancelClicked()),this,SLOT(slotCancel()));
 }
@@ -56,32 +64,42 @@ DlgJabberChangePassword::~DlgJabberChangePassword()
 	delete m_mainWidget;
 }
 
-void DlgJabberChangePassword::slotOk ()
+void DlgJabberChangePassword::slotTextChanged()
 {
+	bool ok = true;
 	if ( m_account->password().cachedValue () != m_mainWidget->peCurrentPassword->text() )
 	{
-		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry,
-							 i18n ( "You entered your current password incorrectly." ),
-							 i18n ( "Password Incorrect" ) );
-		return;
+		ok = false;
+    		m_mainWidget->kled->off();
 	}
-
-	if ( m_mainWidget->peNewPassword1->text() !=  m_mainWidget->peNewPassword2->text() )
+	else
 	{
-		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry,
-							 i18n ( "Your new passwords do not match. Please enter them again." ),
-							 i18n ( "Password Incorrect" ) );
-		return;
+    		m_mainWidget->kled->on();
 	}
 
-	if ( m_mainWidget->peNewPassword1->text().isEmpty() ) 
+	if (m_mainWidget->peNewPassword1->text().isEmpty() || m_mainWidget->peNewPassword2->text().isEmpty()) 
 	{
-		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry,
-							 i18n ( "For security reasons, you are not allowed to set an empty password." ),
-							 i18n ( "Password Incorrect" ) );
-		return;
+		ok = false;
+    		m_mainWidget->kled_2->off();
+    		m_mainWidget->kled_3->off();
+	}
+	else if ( m_mainWidget->peNewPassword1->text() !=  m_mainWidget->peNewPassword2->text() )
+	{
+		ok = false;
+    		m_mainWidget->kled_2->on();
+    		m_mainWidget->kled_3->off();
+	}
+	else
+	{
+    		m_mainWidget->kled_2->on();
+    		m_mainWidget->kled_3->on();
 	}
 
+	enableButtonOk(ok);
+}
+
+void DlgJabberChangePassword::slotOk ()
+{
 	if ( !m_account->isConnected () )
 	{
 		if ( KMessageBox::questionYesNo ( this,
