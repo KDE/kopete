@@ -204,7 +204,7 @@ KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *par
 	updateBg = true;
 	m_tabBar = 0L;
 
-	m_participantsWidget = new QDockWidget(this);
+	m_participantsWidget = new QDockWidget(i18n("Participants"), this);
 	m_participantsWidget->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
 	m_participantsWidget->setFeatures(QDockWidget::DockWidgetClosable);
 	m_participantsWidget->setTitleBarWidget(0L);
@@ -1317,15 +1317,14 @@ void KopeteChatWindow::updateChatTooltip( ChatView* cv )
 
 void KopeteChatWindow::updateChatLabel()
 {
-	const ChatView* cv = dynamic_cast<const ChatView*>( sender() );
-	if ( !cv || !m_tabBar )
+	ChatView* chat = dynamic_cast<ChatView*>( sender() );
+	if ( !chat || !m_tabBar )
 		return;
 
-	ChatView* chat  = const_cast<ChatView*>( cv );
 	if ( m_tabBar )
 	{
 		m_tabBar->setTabText( m_tabBar->indexOf( chat ), chat->caption() );
-		if ( m_tabBar->count() < 2 || m_tabBar->currentWidget() == static_cast<const QWidget *>(cv) )
+		if ( m_tabBar->count() < 2 || m_tabBar->currentWidget() == chat )
 			setCaption( chat->caption() );
 	}
 }

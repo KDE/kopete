@@ -40,7 +40,6 @@ class KToggleAction;
 class KActionMenu;
 class KTemporaryFile;
 class QPixmap;
-class QTabWidget;
 class KSqueezedTextLabel;
 class KPushButton;
 class QVBoxLayout;
@@ -49,7 +48,6 @@ class KTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
 class ChatView;
-class SidebarWidget;
 class QDockWidget;
 
 namespace Kopete
