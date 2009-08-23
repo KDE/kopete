@@ -610,8 +610,7 @@ WlmChatSession::slotActionInviteAboutToShow ()
         contactList.end ();
     for (it = contactList.begin (); it != itEnd; ++it)
     {
-        if (!members ().contains (it.value ()) && it.value ()->isOnline ()
-            && it.value ()->onlineStatus ().status () == Kopete::OnlineStatus::Online)
+        if (!members ().contains (it.value ()) && it.value ()->isOnline ())
         {
             KAction *a =
                 new Kopete::UI::ContactAction (it.value (),
