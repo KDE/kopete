@@ -285,26 +285,26 @@ KopeteChatWindow::~KopeteChatWindow()
 
 	for( AccountMap::Iterator it = accountMap.begin(); it != accountMap.end(); )
 	{
-		AccountMap::Iterator mayDeleteIt = it;
-		++it;
-		if( mayDeleteIt.value() == this )
-			accountMap.remove( mayDeleteIt.key() );
+		if( it.value() == this )
+			it=accountMap.erase( it );
+		else
+			++it;
 	}
 
 	for( GroupMap::Iterator it = groupMap.begin(); it != groupMap.end(); )
 	{
-		GroupMap::Iterator mayDeleteIt = it;
-		++it;
-		if( mayDeleteIt.value() == this )
-			groupMap.remove( mayDeleteIt.key() );
+		if( it.value() == this )
+			it=groupMap.erase( it );
+		else
+			++it;
 	}
 
 	for( MetaContactMap::Iterator it = mcMap.begin(); it != mcMap.end(); )
 	{
-		MetaContactMap::Iterator mayDeleteIt = it;
-		++it;
-		if( mayDeleteIt.value() == this )
-			mcMap.remove( mayDeleteIt.key() );
+		if( it.value() == this )
+			it=mcMap.erase( it );
+		else
+			++it;
 	}
 
 	windows.removeAt( windows.indexOf( this ) );
@@ -330,18 +330,17 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 {
 	m_popupView = static_cast<ChatView*>( tab );
 
-	KMenu *popup = new KMenu;
-	popup->addTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
-	popup->addAction( actionContactMenu );
-	popup->addSeparator();
-	popup->addAction( actionTabPlacementMenu );
-	popup->addAction( tabDetach );
-	popup->addAction( actionDetachMenu );
-	popup->addAction( tabCloseAllOthers );
-	popup->addAction( tabClose );
-	popup->exec( pos );
+	KMenu popup;
+	popup.addTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
+	popup.addAction( actionContactMenu );
+	popup.addSeparator();
+	popup.addAction( actionTabPlacementMenu );
+	popup.addAction( tabDetach );
+	popup.addAction( actionDetachMenu );
+	popup.addAction( tabCloseAllOthers );
+	popup.addAction( tabClose );
+	popup.exec( pos );
 
-	delete popup;
 	m_popupView = 0;
 }
 
