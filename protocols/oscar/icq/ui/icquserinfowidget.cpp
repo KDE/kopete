@@ -147,9 +147,9 @@ void ICQUserInfoWidget::init()
 	orgAffInfoItem->setIcon( KIcon("preferences-web-browser-identification") );
 	
 	m_emailModel = new QStandardItemModel();
-	QStandardItem *modelItem = new QStandardItem( "Type" );
+	QStandardItem *modelItem = new QStandardItem( i18n( "Type" ) );
 	m_emailModel->setHorizontalHeaderItem( 0, modelItem );
-	modelItem = new QStandardItem( "Publish Email/Email" );
+	modelItem = new QStandardItem( i18n( "Publish Email/Email" ) );
 	m_emailModel->setHorizontalHeaderItem( 1, modelItem );
 
 	m_otherInfoWidget->emailTableView->setModel( m_emailModel );
