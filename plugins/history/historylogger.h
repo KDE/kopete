@@ -253,7 +253,7 @@ private:
     QMap< Kopete::Contact *, History> m_contact_history;
 
     //for the getmonth function
-    unsigned int m_result;
+//    unsigned int m_result;
 
     //in modifyitem
     QTime m_t;
@@ -267,6 +267,8 @@ private:
     QList<History> m_historyList;
     
     QPointer<HistoryPlugin> m_hPlugin;
+    
+    Akonadi::Item::List m_contactsItems;
 
 private slots:
     /**
@@ -291,11 +293,11 @@ private slots:
     void getHistoryDone();
     
     void changeMonth();
-    void changeMonth2();
+//    void changeMonth2();
     
     void readMessagesDone();
 
-    void getMonthSlot(Akonadi::Item::List);
+//    void getMonthSlot(Akonadi::Item::List);
 
     void collectionCreateDone(KJob*);
     void itemCreateDone(KJob*);
@@ -309,9 +311,13 @@ private slots:
     //for getDaysForMonth
     void getDaysForMonthSlot(KJob*);
     
-    void collectionFetchDone(Akonadi::Collection::List);
+    void createItem();
     
     void parentCollCreated(KJob*);
+    
+    
+    void fetchItemHeaderSlot(KJob*);
+    void itemFetchSlot(KJob*);
 
 signals:
     void readMessagesDoneSignal(QList<Kopete::Message>);

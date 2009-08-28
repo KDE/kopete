@@ -95,7 +95,7 @@ HistoryDialog::HistoryDialog(HistoryPlugin* hPlugin, Kopete::MetaContact *mc, QW
         mSearching(false)
 {
     kDebug() << "\nHistoryDialog::HistoryDialog--constructor";
-    
+
     setAttribute (Qt::WA_DeleteOnClose, true);
     setCaption( i18n("History for %1", mc->displayName()) );
     setButtons(KDialog::Close);
@@ -211,82 +211,82 @@ void HistoryDialog::init()
     if (mMetaContact)
     {
 //        init(mMetaContact);
-	QList<Kopete::Contact *> contacts = mMetaContact->contacts();
-	
-	foreach(Kopete::Contact *contact, contacts)
-	 {        //init(contact);
-	    Akonadi::Collection c = m_hPlugin->getCollection(contact->account()->accountId(), contact->contactId()) ;
-	    if ( c.isValid() )
-	    {
-	      QVariant v;
-	      v.setValue<Kopete::Contact *>(contact);
-	      Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(c , transaction);
-	      fetchJob->setProperty("contact",v);
-	      connect(fetchJob,SIGNAL(result(KJob*)),
-		      this,SLOT(initItemJobDone(KJob *)));
-	  }
-	 }
+        QList<Kopete::Contact *> contacts = mMetaContact->contacts();
+
+        foreach(Kopete::Contact *contact, contacts)
+        {        //init(contact);
+            Akonadi::Collection c = m_hPlugin->getCollection(contact->account()->accountId(), contact->contactId()) ;
+            if ( c.isValid() )
+            {
+                QVariant v;
+                v.setValue<Kopete::Contact *>(contact);
+                Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(c , transaction);
+                fetchJob->setProperty("contact",v);
+                connect(fetchJob,SIGNAL(result(KJob*)),
+                        this,SLOT(initItemJobDone(KJob *)));
+            }
+        }
     }
     else
     {
         foreach(Kopete::MetaContact *metaContactx, mMetaContactList)
-	{
-	  QList<Kopete::Contact *> contacts = metaContactx->contacts();
-	  
-	  foreach(Kopete::Contact *contact, contacts)
-	  {        //init(contact);
-	      Akonadi::Collection c = m_hPlugin->getCollection(contact->account()->accountId(), 
-							       contact->contactId());
-	      if ( c.isValid() )
-	      {
-		  QVariant v;
-		  v.setValue<Kopete::Contact *>(contact);
-		  Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(c , transaction);
-		  fetchJob->setProperty("contact",v);
-		  connect(fetchJob,SIGNAL(result(KJob*)),
-			  this,SLOT(initItemJobDone(KJob *)));
-	    }	
-	  }
-	}
+        {
+            QList<Kopete::Contact *> contacts = metaContactx->contacts();
+
+            foreach(Kopete::Contact *contact, contacts)
+            {        //init(contact);
+                Akonadi::Collection c = m_hPlugin->getCollection(contact->account()->accountId(),
+                                        contact->contactId());
+                if ( c.isValid() )
+                {
+                    QVariant v;
+                    v.setValue<Kopete::Contact *>(contact);
+                    Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(c , transaction);
+                    fetchJob->setProperty("contact",v);
+                    connect(fetchJob,SIGNAL(result(KJob*)),
+                            this,SLOT(initItemJobDone(KJob *)));
+                }
+            }
+        }
     }
-    
+
     transaction->start();
 }
 
 void HistoryDialog::progressBarSlot(KJob *job)
 {
-  if (job->error())
-    kDebug() <<"in progress bar, transaction failed";
-  else
-  {
-    //TODO: since the above method goes asynchronous the codes below should 
-    //	     execute after the jobs are done.
-    initProgressBar(i18n("Loading..."),mInit.dateMCList.count());
-    QTimer::singleShot(0,this,SLOT(slotLoadDays()));
-  }
+    if (job->error())
+        kDebug() <<"in progress bar, transaction failed";
+    else
+    {
+        //TODO: since the above method goes asynchronous the codes below should
+        //	     execute after the jobs are done.
+        initProgressBar(i18n("Loading..."),mInit.dateMCList.count());
+        QTimer::singleShot(0,this,SLOT(slotLoadDays()));
+    }
 }
 
 void HistoryDialog::initItemJobDone(KJob *job)
 {
-  Akonadi::ItemFetchJob *fetchJob = static_cast<Akonadi::ItemFetchJob*>(job);
-  Akonadi::Item::List itemList= fetchJob->items(); 
-  if (job->error())
-    kDebug() <<"fetch job failed--initItemJobDone"<<job->error();
-  else if (itemList.isEmpty() ) {
-    kDebug() << "item list is empty";
-  }
-  else {
-    QVariant v;
-    v= fetchJob->property("contact");
-    Kopete::Contact *c= v.value<Kopete::Contact*>();
-    foreach(const Akonadi::Item &item, itemList)
-    {
-      QDate cDate = QDate(item.modificationTime().toLocalTime().date().year(),item.modificationTime().toLocalTime().date().month(), 1);
-      DMPair pair(cDate, c->metaContact());
-      mInit.dateMCList.append(pair);
-      kDebug() <<cDate;
+    Akonadi::ItemFetchJob *fetchJob = static_cast<Akonadi::ItemFetchJob*>(job);
+    Akonadi::Item::List itemList= fetchJob->items();
+    if (job->error())
+        kDebug() <<"fetch job failed--initItemJobDone"<<job->error();
+    else if (itemList.isEmpty() ) {
+        kDebug() << "item list is empty";
     }
-  }
+    else {
+        QVariant v;
+        v= fetchJob->property("contact");
+        Kopete::Contact *c= v.value<Kopete::Contact*>();
+        foreach(const Akonadi::Item &item, itemList)
+        {
+            QDate cDate = QDate(item.modificationTime().toLocalTime().date().year(),item.modificationTime().toLocalTime().date().month(), 1);
+            DMPair pair(cDate, c->metaContact());
+            mInit.dateMCList.append(pair);
+            kDebug() <<cDate;
+        }
+    }
 }
 
 
@@ -318,7 +318,7 @@ void HistoryDialog::slotLoadDays2(QList<int> dayList)
     kDebug() << "slot load days 2";
     DMPair pair(mInit.dateMCList.first());
     mInit.dateMCList.pop_front();
-    
+
     for (int i=0; i<dayList.count(); i++)
     {
         QDate c2Date(pair.date().year(),pair.date().month(),dayList[i]);
@@ -509,7 +509,7 @@ void HistoryDialog::slotSearch()
     // iterate over items in the date list widget
     for (int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); ++i)
     {
-	kDebug() << "\n------------------ for loop"<<i;
+        kDebug() << "\n------------------ for loop"<<i;
 //        qApp->processEvents();
         if (!mSearching) return;
 
@@ -521,22 +521,22 @@ void HistoryDialog::slotSearch()
             monthsSearched[month].push_back(curItem->metaContact());
             QList<Kopete::Contact*> contacts = curItem->metaContact()->contacts();
             foreach(Kopete::Contact* contact, contacts)
-            { 
-		Akonadi::Collection c = m_hPlugin->getCollection(contact->account()->accountId(), 
-								 contact->contactId()) ;
-		if ( c.isValid() )
-		{
-		    Akonadi::Collection coll( c );
-		    QVariant v,v1;
-		    v.setValue<Kopete::MetaContact *>(curItem->metaContact());
-		    v1.setValue<QDate>(month);
-		    kDebug() <<"bef his job"<<coll.id()<<month<<v;
-		    GetHistoryJob *historyJob = new GetHistoryJob(coll,month,transaction);
-		    historyJob->setProperty("date",month);
-		    historyJob->setProperty("metaContact",v);
-		    connect(historyJob, SIGNAL(result(KJob*)), this, SLOT(getHistoryJobDone(KJob *)));
-		}
-	    }
+            {
+                Akonadi::Collection c = m_hPlugin->getCollection(contact->account()->accountId(),
+                                        contact->contactId()) ;
+                if ( c.isValid() )
+                {
+                    Akonadi::Collection coll( c );
+                    QVariant v,v1;
+                    v.setValue<Kopete::MetaContact *>(curItem->metaContact());
+                    v1.setValue<QDate>(month);
+                    kDebug() <<"bef his job"<<coll.id()<<month<<v;
+                    GetHistoryJob *historyJob = new GetHistoryJob(coll,month,transaction);
+                    historyJob->setProperty("date",month);
+                    historyJob->setProperty("metaContact",v);
+                    connect(historyJob, SIGNAL(result(KJob*)), this, SLOT(getHistoryJobDone(KJob *)));
+                }
+            }
         }
     }
     kDebug() <<"starting transaction";
@@ -551,81 +551,81 @@ void HistoryDialog::searchFinished()
 
 void HistoryDialog::getHistoryJobDone(KJob *job)
 {
-  kDebug() <<"HistoryDialog::getHistoryJobDone(KJob *job)";
-  if (job->error() )
-    kDebug() <<"eror in Historydialog::gethistoryjob"<<job->errorString();
-  else
-  {
-    GetHistoryJob * historyJob= static_cast<GetHistoryJob*>(job);
-    
-    History his= historyJob->returnHistory();
-    QDate d;
-    QVariant v,v1;
-    
-    v=historyJob->property("metaContact");
-    v1=historyJob->property("date");
-    
-    Kopete::MetaContact *c=v.value<Kopete::MetaContact *>();
-    d=v1.value<QDate>();
-    
-    QList<CHPair> contHis;
-    kDebug()<<d<<"HistoryDialog::getHistoryJobDone metaContact"<<c->customDisplayName() ;
-    CHPair chpair(c,his);
-    
-    if (m_dateHistoryList.contains(d) )
-    { 
-      contHis = m_dateHistoryList.value(d);
+    kDebug() <<"HistoryDialog::getHistoryJobDone(KJob *job)";
+    if (job->error() )
+        kDebug() <<"eror in Historydialog::gethistoryjob"<<job->errorString();
+    else
+    {
+        GetHistoryJob * historyJob= static_cast<GetHistoryJob*>(job);
+
+        History his= historyJob->returnHistory();
+        QDate d;
+        QVariant v,v1;
+
+        v=historyJob->property("metaContact");
+        v1=historyJob->property("date");
+
+        Kopete::MetaContact *c=v.value<Kopete::MetaContact *>();
+        d=v1.value<QDate>();
+
+        QList<CHPair> contHis;
+        kDebug()<<d<<"HistoryDialog::getHistoryJobDone metaContact"<<c->customDisplayName() ;
+        CHPair chpair(c,his);
+
+        if (m_dateHistoryList.contains(d) )
+        {
+            contHis = m_dateHistoryList.value(d);
+        }
+
+        contHis.append(chpair);
+
+        m_dateHistoryList.insert(d,contHis);
     }
-    
-    contHis.append(chpair);
-    
-    m_dateHistoryList.insert(d,contHis);
-  }
 }
 
 void HistoryDialog::transactionDone(KJob* job)
 {
-  kDebug() <<"transactionDone method";
-  QMap<QDate, QList<Kopete::MetaContact*> > matches;
-  qApp->processEvents();
-  if (!mSearching) return;
-  
-  if (job->error())
-    kDebug() << "failed-HistoryDialog:transactionDone"<<job->errorString();
-  else
-  {
-    QMapIterator<QDate, QList<CHPair> > i(m_dateHistoryList);
-    while(i.hasNext())
+    kDebug() <<"transactionDone method";
+    QMap<QDate, QList<Kopete::MetaContact*> > matches;
+    qApp->processEvents();
+    if (!mSearching) return;
+
+    if (job->error())
+        kDebug() << "failed-HistoryDialog:transactionDone"<<job->errorString();
+    else
     {
-      kDebug() <<"while";
-      i.next();
-      QDate month = i.key();
-      QList<CHPair> chpair= i.value();
-      foreach( const CHPair &chp, chpair)
-      {
-	  Kopete::MetaContact * mc = chp.contact();
-	  History his = chp.history();
-	  foreach( const History::Message &msg, his.messages())
-	  {
-	      QString textLine =msg.text();
-	      if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
-	      {
-		  matches[QDate(month.year(), month.month(),msg.timestamp().date().day())].push_back(mc);
-	      }
-	  }
-      }
-      qApp->processEvents();
-      if (!mSearching) return;
+        QMapIterator<QDate, QList<CHPair> > i(m_dateHistoryList);
+        while (i.hasNext())
+        {
+            kDebug() <<"while";
+            i.next();
+            QDate month = i.key();
+            QList<CHPair> chpair= i.value();
+            foreach( const CHPair &chp, chpair)
+            {
+                Kopete::MetaContact * mc = chp.contact();
+                History his = chp.history();
+                foreach( const History::Message &msg, his.messages())
+                {
+                    QString textLine =msg.text();
+                    if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
+                    {
+                        matches[QDate(month.year(), month.month(),msg.timestamp().date().day())].push_back(mc);
+                    }
+                }
+            }
+            qApp->processEvents();
+            if (!mSearching) return;
+        }
+        for (int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); ++i)
+        {
+            KListViewDateItem *curItem = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(i));
+            if (matches[curItem->date()].contains(curItem->metaContact()))
+                curItem->setHidden(false);
+            mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
+        }
+        searchFinished();
     }
-    for (int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); ++i)
-    {
-      KListViewDateItem *curItem = static_cast<KListViewDateItem*>(mMainWidget->dateTreeWidget->topLevelItem(i));
-      if (matches[curItem->date()].contains(curItem->metaContact()))
-	curItem->setHidden(false);
-      mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
-    }
-    searchFinished();
-  }
 }
 
 // When a contact is selected in the combobox. Item 0 is All contacts.

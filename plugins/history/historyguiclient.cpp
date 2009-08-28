@@ -44,6 +44,7 @@
 HistoryGUIClient::HistoryGUIClient ( HistoryPlugin *hPlugin,Kopete::ChatSession *parent )
 		: QObject ( parent ), KXMLGUIClient ( parent ) , m_hPlugin(hPlugin) , m_manager(parent)
 {
+	kDebug() << "  ";
 	setComponentData ( KGenericFactory<HistoryPlugin>::componentData() );
 
 	// Refuse to build this client, it is based on wrong parameters
