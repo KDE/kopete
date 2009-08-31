@@ -38,7 +38,7 @@ namespace Tp {
     class PendingOperation;
 }
 
-class TelepathyChatSession : public Kopete::ChatSession
+class KOPETE_EXPORT TelepathyChatSession : public Kopete::ChatSession
 {
     Q_OBJECT
 
