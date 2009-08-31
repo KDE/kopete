@@ -18,13 +18,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "telepathycontactmanager.h"
+#include <KopeteTelepathy/telepathycontactmanager.h>
 
-#include "telepathyaccount.h"
-#include "telepathyaddedinfoevent.h"
-#include "telepathycontact.h"
-#include "telepathyprotocol.h"
-#include "common.h"
+#include <KopeteTelepathy/telepathyaccount.h>
+#include <KopeteTelepathy/telepathyaddedinfoevent.h>
+#include <KopeteTelepathy/telepathycontact.h>
+#include <KopeteTelepathy/telepathyprotocol.h>
 
 #include <KDebug>
 
@@ -125,8 +124,12 @@ void TelepathyContactManager::onConnectionReady(Tp::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning() << "Readying connection failed:"
+                   << operation->errorName()
+                   << operation->errorMessage();
         return;
+    }
 
     QObject::connect(d->connection->contactManager(),
                      SIGNAL(presencePublicationRequested(const Tp::Contacts &)),

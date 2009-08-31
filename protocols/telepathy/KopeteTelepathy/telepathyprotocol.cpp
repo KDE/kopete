@@ -15,15 +15,14 @@
  *************************************************************************
  */
 
-#include "telepathyprotocol.h"
+#include <KopeteTelepathy/telepathyprotocol.h>
 
-#include "telepathyaccount.h"
-#include "ui/telepathyaddcontactpage.h"
-#include "telepathychannelmanager.h"
-#include "telepathychatsession.h"
-#include "telepathycontact.h"
-#include "telepathyeditaccountwidget.h"
-#include "common.h"
+#include <KopeteTelepathy/telepathyaccount.h>
+#include <KopeteTelepathy/ui/telepathyaddcontactpage.h>
+#include <KopeteTelepathy/telepathychannelmanager.h>
+#include <KopeteTelepathy/telepathychatsession.h>
+#include <KopeteTelepathy/telepathycontact.h>
+#include <KopeteTelepathy/ui/telepathyeditaccountwidget.h>
 
 #include <kgenericfactory.h>
 #include <kdebug.h>

@@ -18,10 +18,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "telepathyeditaccountwidget.h"
+#include <KopeteTelepathy/ui/telepathyeditaccountwidget.h>
 
-#include "telepathyprotocol.h"
-#include "telepathyaccount.h"
+#include <KopeteTelepathy/telepathyprotocol.h>
+#include <KopeteTelepathy/telepathyaccount.h>
 
 #include <KCMTelepathyAccounts/AbstractAccountUi>
 #include <KCMTelepathyAccounts/AbstractAccountUi>

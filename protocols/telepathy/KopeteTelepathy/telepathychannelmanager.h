@@ -21,7 +21,7 @@
 #ifndef KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCHANNELMANAGER_H
 #define KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCHANNELMANAGER_H
 
-#include "telepathyclienthandler.h"
+#include <KopeteTelepathy/telepathyclienthandler.h>
 
 #include <QtCore/QMap>
 #include <QtCore/QObject>

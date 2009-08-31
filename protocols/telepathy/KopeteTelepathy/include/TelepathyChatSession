@@ -1,0 +1,7 @@
+#ifndef LIB_KOPETE_TELEPATHY_TELEPATHY_CHAT_SESSION_PRETTY_H
+#define LIB_KOPETE_TELEPATHY_TELEPATHY_CHAT_SESSION_PRETTY_H
+
+#include <KopeteTelepathy/telepathychatsession.h>
+
+#endif
+

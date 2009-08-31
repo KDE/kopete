@@ -14,14 +14,14 @@
  *                                                                       *
  *************************************************************************
  */
-#include "telepathyaddcontactpage.h"
+#include <KopeteTelepathy/ui/telepathyaddcontactpage.h>
 
 #include "ui_telepathyaddcontactpage.h"
 
-#include "telepathyaccount.h"
-#include "telepathycontact.h"
-#include "telepathycontactmanager.h"
-#include "telepathyprotocol.h"
+#include <KopeteTelepathy/telepathyaccount.h>
+#include <KopeteTelepathy/telepathycontact.h>
+#include <KopeteTelepathy/telepathycontactmanager.h>
+#include <KopeteTelepathy/telepathyprotocol.h>
 
 #include <kmessagebox.h>
 #include <kdebug.h>

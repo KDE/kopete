@@ -18,16 +18,13 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCONTACT_H
-#define KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCONTACT_H
+#ifndef LIB_KOPETE_TELEPATHY_TELEPATHYCONTACT_H
+#define LIB_KOPETE_TELEPATHY_TELEPATHYCONTACT_H
 
-#include "telepathyaccount.h"
+#include <KopeteTelepathy/telepathyaccount.h>
 
 #include <kopetecontact.h>
 #include <kopetechatsession.h>
-
-#include <QObject>
-#include <QSharedPointer>
 
 #include <TelepathyQt4/Contact>
 
@@ -55,8 +52,8 @@ public:
     virtual Kopete::ChatSession *manager(Kopete::ContactPtrList members,
                                          CanCreateFlags canCreate = CannotCreate);
 
-    void setInternalContact(QSharedPointer<Tp::Contact> contact);
-    QSharedPointer<Tp::Contact> internalContact();
+    void setInternalContact(Tp::ContactPtr contact);
+    Tp::ContactPtr internalContact();
 
 public Q_SLOTS:
     virtual void deleteContact();

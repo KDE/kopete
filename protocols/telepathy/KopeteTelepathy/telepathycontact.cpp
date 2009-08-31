@@ -18,30 +18,29 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "telepathycontact.h"
-#include "telepathychatsession.h"
+#include <KopeteTelepathy/telepathycontact.h>
 
-#include <kaction.h>
-#include <kdebug.h>
+#include <KopeteTelepathy/telepathyaccount.h>
+#include <KopeteTelepathy/telepathychatsession.h>
+#include <KopeteTelepathy/telepathyprotocol.h>
 
-#include <kopetemetacontact.h>
+#include <KAction>
+#include <KDebug>
+
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
-
-#include "telepathyaccount.h"
-#include "telepathyprotocol.h"
+#include <kopetemetacontact.h>
 
 #include <TelepathyQt4/Contact>
 
-#include <QPointer>
-#include <QSharedPointer>
+#include <QtCore/QPointer>
 
 class TelepathyContact::TelepathyContactPrivate
 {
 public:
     TelepathyContactPrivate() {}
 
-    QSharedPointer<Tp::Contact> internalContact;
+    Tp::ContactPtr internalContact;
     QPointer<Kopete::ChatSession> currentChatSession;
 };
 
@@ -128,7 +127,7 @@ Kopete::ChatSession *TelepathyContact::manager(Kopete::ContactPtrList members, C
     return d->currentChatSession;
 }
 
-void TelepathyContact::setInternalContact(QSharedPointer<Tp::Contact> contact)
+void TelepathyContact::setInternalContact(Tp::ContactPtr contact)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
@@ -208,7 +207,7 @@ void TelepathyContact::onBlockStatusChanged(bool blocked)
 
 }
 
-QSharedPointer<Tp::Contact> TelepathyContact::internalContact()
+Tp::ContactPtr TelepathyContact::internalContact()
 {
     return d->internalContact;
 }

@@ -18,14 +18,13 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "telepathychannelmanager.h"
+#include <KopeteTelepathy/telepathychannelmanager.h>
 
-#include "telepathyaccount.h"
-#include "telepathychatsession.h"
-#include "telepathyclienthandler.h"
-#include "telepathycontact.h"
-#include "telepathyprotocol.h"
-#include "common.h"
+#include <KopeteTelepathy/telepathyaccount.h>
+#include <KopeteTelepathy/telepathychatsession.h>
+#include <KopeteTelepathy/telepathyclienthandler.h>
+#include <KopeteTelepathy/telepathycontact.h>
+#include <KopeteTelepathy/telepathyprotocol.h>
 
 #include <KDebug>
 
@@ -162,7 +161,7 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
 
 void TelepathyChannelManager::onChannelReady(Tp::PendingOperation *op)
 {
-    if (TelepathyCommons::isOperationError(op)) {
+    if (op->isError()) {
         kDebug(TELEPATHY_DEBUG_AREA) << "Argh badgers!" << op->errorName() <<op->errorMessage();
         return;
     }

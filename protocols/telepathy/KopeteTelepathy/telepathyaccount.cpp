@@ -18,12 +18,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "telepathyaccount.h"
+#include <KopeteTelepathy/telepathyaccount.h>
 
-#include "telepathycontact.h"
-#include "telepathycontactmanager.h"
-#include "telepathyprotocol.h"
-#include "common.h"
+#include <KopeteTelepathy/telepathycontactmanager.h>
+
+#include <KopeteTelepathy/telepathycontact.h>
+#include <KopeteTelepathy/telepathyprotocol.h>
 
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
@@ -106,8 +106,11 @@ void TelepathyAccount::onRequestedPresence(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning() << "Setting requested presence failed:" << operation->errorName()
+                   << operation->errorMessage();
         return;
+    }
 }
 
 void TelepathyAccount::fillActionMenu(KActionMenu *actionMenu)
@@ -147,8 +150,11 @@ void TelepathyAccount::onRequestDisconnect(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning() << "Request Disconnect failed:" << operation->errorName()
+                   << operation->errorMessage();
         return;
+    }
 }
 
 void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
@@ -379,8 +385,11 @@ void TelepathyAccount::onConnectionManagerReady(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning() << "Readying Connection Manager failed:" << operation->errorName()
+                   << operation->errorMessage();
         return;
+    }
 
     if (readConfig()) {
         Tp::AccountManagerPtr accountManager = getAccountManager();
@@ -400,8 +409,12 @@ void TelepathyAccount::onAccountManagerReady(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning() << "Readying Account Manager failed:"
+                   << operation->errorName()
+                   << operation->errorMessage();
         return;
+    }
 
     /*
      * get a list of all the accounts that
@@ -434,8 +447,12 @@ void TelepathyAccount::onExistingAccountReady(Tp::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning() << "Readying existing account failed:"
+                   << operation->errorName()
+                   << operation->errorMessage();
         return;
+    }
 
     Tp::PendingReady *p = qobject_cast<Tp::PendingReady *>(operation);
     if (!p) {
@@ -501,8 +518,12 @@ void TelepathyAccount::newTelepathyAccountCreated(Tp::PendingOperation *operatio
     // \brief: zeroing counter
     m_existingAccountCounter = 0;
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Creating new account failed:"
+                                       << operation->errorName()
+                                       << operation->errorMessage();
         return;
+    }
 
     m_account = m_pendingAccount->account();
 
@@ -514,8 +535,12 @@ void TelepathyAccount::onAccountReady(Tp::PendingOperation *operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Readying account failed:"
+                                       << operation->errorName()
+                                       << operation->errorMessage();
         return;
+    }
 
     kDebug(TELEPATHY_DEBUG_AREA) << "New account: " << m_account->cmName() << m_account->protocol() << m_account->displayName();
 
@@ -700,8 +725,12 @@ void TelepathyAccount::onAliasChanged(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Alias Changing Failed:"
+                                       << operation->errorName()
+                                       << operation->errorMessage();
         return;
+    }
 
     kDebug(TELEPATHY_DEBUG_AREA) << "Alias has changed.";
 }
@@ -731,8 +760,12 @@ void TelepathyAccount::onAvatarChanged(Tp::PendingOperation* operation)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
 
-    if (TelepathyCommons::isOperationError(operation))
+    if (operation->isError()) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Changing Avatar failed:"
+                                       << operation->errorName()
+                                       << operation->errorMessage();
         return;
+    }
 
     kDebug(TELEPATHY_DEBUG_AREA) << "Avatar was changed";
 }

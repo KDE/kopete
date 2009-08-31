@@ -18,11 +18,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "telepathychatsession.h"
+#include <KopeteTelepathy/telepathychatsession.h>
 
-#include "telepathyaccount.h"
-#include "telepathyprotocol.h"
-#include "common.h"
+#include <KopeteTelepathy/telepathyaccount.h>
+#include <KopeteTelepathy/telepathyprotocol.h>
 
 #include <kopetechatsessionmanager.h>
 
@@ -192,8 +191,12 @@ void TelepathyChatSession::setTextChannel(const Tp::TextChannelPtr &textChannel)
 void TelepathyChatSession::onTextChannelReady(Tp::PendingOperation *op)
 {
     kDebug(TELEPATHY_DEBUG_AREA);
-    if (TelepathyCommons::isOperationError(op))
+    if (op->isError()) {
+        kWarning(TELEPATHY_DEBUG_AREA) << "Text channel failed to become ready:"
+                                       << op->errorName()
+                                       << op->errorMessage();
         return;
+    }
 
     QObject::connect(m_textChannel.data(),
                      SIGNAL(messageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &)),

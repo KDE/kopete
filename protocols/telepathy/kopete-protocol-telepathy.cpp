@@ -1,0 +1,2 @@
+#include <KopeteTelepathy/telepathyprotocol.h>
+
