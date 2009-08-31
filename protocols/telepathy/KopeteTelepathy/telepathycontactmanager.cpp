@@ -51,7 +51,7 @@ public:
 TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAccount)
         : d(new TelepathyContactManagerPrivate)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     d->telepathyAccount = telepathyAccount;
     d->account = d->telepathyAccount->m_account;
@@ -59,7 +59,7 @@ TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAcco
 
 TelepathyContactManager::~TelepathyContactManager()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     foreach(TelepathyContact *contact, d->contactList) {
         Kopete::MetaContact *metaContact = contact->metaContact();
@@ -72,7 +72,7 @@ TelepathyContactManager::~TelepathyContactManager()
 
 QSharedPointer<Tp::Contact> TelepathyContactManager::addContact(const QString &contactId)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     Q_UNUSED(contactId);
     return QSharedPointer<Tp::Contact>();
@@ -80,7 +80,7 @@ QSharedPointer<Tp::Contact> TelepathyContactManager::addContact(const QString &c
 
 void TelepathyContactManager::removeContact(TelepathyContact *contact)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     if (contact->internalContact()) {
 
@@ -90,22 +90,22 @@ void TelepathyContactManager::removeContact(TelepathyContact *contact)
 
 void TelepathyContactManager::setContactList(QList<QSharedPointer<Tp::Contact> > contactList)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     Q_UNUSED(contactList);
 }
 
 void TelepathyContactManager::loadContacts()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 }
 
 void TelepathyContactManager::fetchContactList()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     if (!d->account || !d->account->haveConnection()) {
-        kWarning(TELEPATHY_DEBUG_AREA) << "Error: Could not find active connection or account";
+        kWarning() << "Error: Could not find active connection or account";
         return;
     }
 
@@ -122,7 +122,7 @@ void TelepathyContactManager::fetchContactList()
 
 void TelepathyContactManager::onConnectionReady(Tp::PendingOperation *operation)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     if (operation->isError()) {
         kWarning() << "Readying connection failed:"
@@ -149,7 +149,7 @@ void TelepathyContactManager::onConnectionReady(Tp::PendingOperation *operation)
 
 void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     if (op->isError()) {
         kWarning() << "Upgrading contacts failed:" << op->errorName() << op->errorMessage();
@@ -185,21 +185,21 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
 
 void TelepathyContactManager::onContactSubscriptionStateChanged(Tp::Contact::PresenceState state)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // TODO: Implement me!
 }
 
 void TelepathyContactManager::onContactPublishStateChanged(Tp::Contact::PresenceState state)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // TODO: Implement me!
 }
 
 void TelepathyContactManager::onContactBlockStatusChanged(bool blocked)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // Get the callee Tp::Contact.
     Tp::Contact *pContact = qobject_cast<Tp::Contact*>(sender());
@@ -216,7 +216,7 @@ void TelepathyContactManager::onContactBlockStatusChanged(bool blocked)
 
 void TelepathyContactManager::onPresencePublicationRequested(const Tp::Contacts &contacts)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     QSet<Tp::Contact::Feature> features;
     features << Tp::Contact::FeatureAlias
@@ -230,7 +230,7 @@ void TelepathyContactManager::onPresencePublicationRequested(const Tp::Contacts 
 
 void TelepathyContactManager::onRequestingContactsUpgraded(Tp::PendingOperation *op)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     if (op->isError()) {
         kWarning() << "Upgrading contacts failed:" << op->errorName() << op->errorMessage();
@@ -287,12 +287,12 @@ void TelepathyContactManager::onRequestingContactsUpgraded(Tp::PendingOperation 
 
 void TelepathyContactManager::onAddedInfoEventActionActivated(uint actionId)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     TelepathyAddedInfoEvent *event = qobject_cast<TelepathyAddedInfoEvent*>(sender());
 
     if (!event) {
-        kWarning(TELEPATHY_DEBUG_AREA) << "Method not called by a TelepathyAddedInfoEvent. Aborting.";
+        kWarning() << "Method not called by a TelepathyAddedInfoEvent. Aborting.";
         return;
     }
 
@@ -312,9 +312,9 @@ void TelepathyContactManager::onAddedInfoEventActionActivated(uint actionId)
 
 void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << contact->id() << contact->alias();
-    kDebug(TELEPATHY_DEBUG_AREA) << "Subscription status:" << contact->subscriptionState();
-    kDebug(TELEPATHY_DEBUG_AREA) << "Publish status:" << contact->publishState();
+    kDebug() << contact->id() << contact->alias();
+    kDebug() << "Subscription status:" << contact->subscriptionState();
+    kDebug() << "Publish status:" << contact->publishState();
 
     // Only create this contact if it isn't already in the list.
     foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
@@ -325,11 +325,11 @@ void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
                 // Contact is already in the contact list. Check if it has a internalContact, and
                 // if it doesn't, add one (this is the case if it is one that was deserialized
                 // from contactlist.xml file).
-                kDebug(TELEPATHY_DEBUG_AREA) << "Contact is already in list. Don't add it.";
+                kDebug() << "Contact is already in list. Don't add it.";
 
                 TelepathyContact *tpc = qobject_cast<TelepathyContact*>(c);
                 if (!c) {
-                    kDebug(TELEPATHY_DEBUG_AREA) << "Contact is not of type TelepathyContact.";
+                    kDebug() << "Contact is not of type TelepathyContact.";
                     return;
                 }
 

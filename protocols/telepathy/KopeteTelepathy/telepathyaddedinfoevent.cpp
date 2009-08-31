@@ -28,12 +28,12 @@ TelepathyAddedInfoEvent::TelepathyAddedInfoEvent(Tp::ContactPtr contact, Kopete:
  : Kopete::AddedInfoEvent(contact->id(), account),
    m_contact(contact)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 }
 
 TelepathyAddedInfoEvent::~TelepathyAddedInfoEvent()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 }
 
 Tp::ContactPtr TelepathyAddedInfoEvent::contact() const

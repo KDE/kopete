@@ -24,7 +24,7 @@
 #include <KopeteTelepathy/telepathychatsession.h>
 #include <KopeteTelepathy/telepathyclienthandler.h>
 #include <KopeteTelepathy/telepathycontact.h>
-#include <KopeteTelepathy/telepathyprotocol.h>
+#include <KopeteTelepathy/telepathyprotocolinternal.h>
 
 #include <KDebug>
 
@@ -44,7 +44,7 @@ TelepathyChannelManager::TelepathyChannelManager(QObject *parent)
  : QObject(parent),
    m_clientHandler(new TelepathyClientHandler)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // Set up the singleton instance
     s_self = this;
@@ -59,7 +59,7 @@ TelepathyChannelManager::TelepathyChannelManager(QObject *parent)
 
 TelepathyChannelManager::~TelepathyChannelManager()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // Delete the DBus adaptors
     delete m_clientHandler;
@@ -70,7 +70,7 @@ TelepathyChannelManager::~TelepathyChannelManager()
 
 TelepathyChannelManager *TelepathyChannelManager::instance()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // Construct the singleton if hasn't been already
     if (!s_self) {
@@ -85,7 +85,7 @@ TelepathyChannelManager *TelepathyChannelManager::instance()
 // and the following one get rearchitected to be made of less fail.
 void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChannelsData *data)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // This method is called by TelepathyClientHandler::handleChannels() when there are channels
     // to be handled, with the HandleChannelsData struct containing shared pointers for all the
@@ -99,7 +99,7 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
                 Tp::TextChannelPtr(qobject_cast<Tp::TextChannel*>(channel.data()));
 
         if (!textChannel) {
-            kDebug(TELEPATHY_DEBUG_AREA) << "Channel is of non-text type. Ignoring.";
+            kDebug() << "Channel is of non-text type. Ignoring.";
             continue;
         }
 
@@ -108,7 +108,7 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
         // Check to see if this channel satisfies a request that was made by this program, or if
         // it was initiated by the contact at the other end.
         if (data->requestsSatisfied.size() == 0) {
-            kDebug(TELEPATHY_DEBUG_AREA) << "Text Channel initiated by remote contact.";
+            kDebug() << "Text Channel initiated by remote contact.";
 
             // Get the text channel ready
             Tp::PendingReady *pr = textChannel->becomeReady(Tp::Channel::FeatureCore);
@@ -120,7 +120,7 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
             continue;
         }
 
-        kDebug(TELEPATHY_DEBUG_AREA) << "Channel initiated locally.";
+        kDebug() << "Channel initiated locally.";
 
         foreach (Kopete::ChatSession *session, Kopete::ChatSessionManager::self()->sessions()) {
             TelepathyChatSession *tpc = qobject_cast<TelepathyChatSession*>(session);
@@ -139,7 +139,7 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
         }
     }
 
-    kDebug(TELEPATHY_DEBUG_AREA) << "Check if the context is finished.";
+    kDebug() << "Check if the context is finished.";
 
     int count = 0;
     QMap<Tp::PendingReady*, QPair<Tp::TextChannelPtr, TelepathyClientHandler::HandleChannelsData*> >::const_iterator i =
@@ -153,45 +153,45 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
     }
 
     if (count == 0) {
-        kDebug(TELEPATHY_DEBUG_AREA) << "Count is 0. Destroy data object.";
+        kDebug() << "Count is 0. Destroy data object.";
         data->context->setFinished();
     }
-    kDebug(TELEPATHY_DEBUG_AREA) << "handleCHannels finished.";
+    kDebug() << "handleCHannels finished.";
 }
 
 void TelepathyChannelManager::onChannelReady(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kDebug(TELEPATHY_DEBUG_AREA) << "Argh badgers!" << op->errorName() <<op->errorMessage();
+        kDebug() << "Argh badgers!" << op->errorName() <<op->errorMessage();
         return;
     }
 
     Tp::TextChannelPtr textChannel =
             m_channelToHandleChannelData.value(qobject_cast<Tp::PendingReady*>(op)).first;
     if (!textChannel) {
-        kWarning(TELEPATHY_DEBUG_AREA) << "Not a TextChannel.";
+        kWarning() << "Not a TextChannel.";
         return;
     }
 
     TelepathyClientHandler::HandleChannelsData *data = m_channelToHandleChannelData.value(qobject_cast<Tp::PendingReady*>(op)).second;
     m_channelToHandleChannelData.remove(qobject_cast<Tp::PendingReady*>(op));
 
-    kDebug(TELEPATHY_DEBUG_AREA) << data->account
+    kDebug() << data->account
                                  << data->userActionTime
                                  << data->connection;
 
-    kDebug(TELEPATHY_DEBUG_AREA) << data;
+    kDebug() << data;
 
-    kDebug(TELEPATHY_DEBUG_AREA) << "Case:" << textChannel;
+    kDebug() << "Case:" << textChannel;
 
     if (!data) {
-        kWarning(TELEPATHY_DEBUG_AREA) << "Argh badgers.";
+        kWarning() << "Argh badgers.";
     }
 
-    kDebug(TELEPATHY_DEBUG_AREA) << "Other side started this channel.";
+    kDebug() << "Other side started this channel.";
 
     QList<Kopete::Account*> kAccounts =
-            Kopete::AccountManager::self()->accounts(TelepathyProtocol::protocol());
+            Kopete::AccountManager::self()->accounts(TelepathyProtocolInternal::protocolInternal()->protocol());
     foreach (Kopete::Account *kAccount, kAccounts) {
         TelepathyAccount *tpAccount = qobject_cast<TelepathyAccount*>(kAccount);
 
@@ -212,7 +212,7 @@ void TelepathyChannelManager::onChannelReady(Tp::PendingOperation *op)
                 TelepathyContact *other = qobject_cast<TelepathyContact*>(contactIterator.value());
 
                 if (!other) {
-                    kWarning(TELEPATHY_DEBUG_AREA) << "Not a TelepathyContact";
+                    kWarning() << "Not a TelepathyContact";
                     ++contactIterator;
                     continue;
                 }
@@ -221,14 +221,14 @@ void TelepathyChannelManager::onChannelReady(Tp::PendingOperation *op)
                 // roster, we will have a null internalContact(), so skip over them here to avoid
                 // a crash.
                 if (!other->internalContact()) {
-                    kWarning(TELEPATHY_DEBUG_AREA) << "Skipping over contact in Kopete contact list which is not in telepathy roster.";
+                    kWarning() << "Skipping over contact in Kopete contact list which is not in telepathy roster.";
                     ++contactIterator;
                     continue;
                 }
 
                 // See if it is in the list of contacts for this channel.
                 if (other->internalContact()->alias() == textChannel->initiatorContact()->alias()) {
-                    kDebug(TELEPATHY_DEBUG_AREA) << "Found the remote contact.";
+                    kDebug() << "Found the remote contact.";
                     others << (other);
                 }
 

@@ -48,12 +48,12 @@ static inline Tp::ChannelClassList channelClassList()
 TelepathyClientHandler::TelepathyClientHandler()
  : Tp::AbstractClientHandler(channelClassList(), false)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 }
 
 TelepathyClientHandler::~TelepathyClientHandler()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 }
 
 void TelepathyClientHandler::handleChannels(const Tp::MethodInvocationContextPtr<> & context,

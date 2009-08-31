@@ -18,10 +18,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <KopeteTelepathy/ui/telepathyeditaccountwidget.h>
+#include "ui/telepathyeditaccountwidget.h"
 
-#include <KopeteTelepathy/telepathyprotocol.h>
+#include "telepathyprotocol.h"
+
 #include <KopeteTelepathy/telepathyaccount.h>
+#include <KopeteTelepathy/telepathyprotocolinternal.h>
 
 #include <KCMTelepathyAccounts/AbstractAccountUi>
 #include <KCMTelepathyAccounts/AbstractAccountUi>
@@ -54,7 +56,7 @@ public:
        mandatoryParametersWidget(0),
        mainLayout(0)
     {
-        kDebug(TELEPATHY_DEBUG_AREA);
+        kDebug();
     }
 
     KTabWidget *tabWidget;
@@ -69,7 +71,7 @@ TelepathyEditAccountWidget::TelepathyEditAccountWidget(Kopete::Account *account,
    KopeteEditAccountWidget(account),
    d(new Private)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // When account is 0, we are creating a new account.
     if (!account) {
@@ -83,21 +85,21 @@ TelepathyEditAccountWidget::TelepathyEditAccountWidget(Kopete::Account *account,
 
 TelepathyEditAccountWidget::~TelepathyEditAccountWidget()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     delete d;
 }
 
 TelepathyAccount *TelepathyEditAccountWidget::account()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     return qobject_cast<TelepathyAccount*>(KopeteEditAccountWidget::account());
 }
 
 bool TelepathyEditAccountWidget::validateData()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // Check there is a mandatory parameters widget. If not, then fail.
     if (!d->mandatoryParametersWidget) {
@@ -122,7 +124,7 @@ bool TelepathyEditAccountWidget::validateData()
 
 Kopete::Account *TelepathyEditAccountWidget::apply()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // Check if we are applying an added account or edited account.
     if (account()) {
@@ -136,7 +138,7 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 
 Kopete::Account *TelepathyEditAccountWidget::applyAddedAccount()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
     
     // Get the mandatory parameters.
     QMap<Tp::ProtocolParameter*, QVariant> mandatoryParameterValues;
@@ -220,7 +222,7 @@ Kopete::Account *TelepathyEditAccountWidget::applyAddedAccount()
 
 Kopete::Account *TelepathyEditAccountWidget::applyEditedAccount()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // Use the code from KCM to get the parameters and values and unset ones.
     // Get the mandatory parameters.
@@ -321,7 +323,7 @@ void TelepathyEditAccountWidget::writeConfig(const QString &connectionManager,
                                              const QString &protocol,
                                              const QVariantMap &parameters)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     QString accountId = account()->accountId();
 
@@ -332,7 +334,7 @@ void TelepathyEditAccountWidget::writeConfig(const QString &connectionManager,
 
     // Write config related to ConnectionManager Parameters
     KConfigGroup parametersConfig = 
-            KGlobal::config()->group(TelepathyProtocol::protocol()->
+            KGlobal::config()->group(TelepathyProtocolInternal::protocolInternal()->
                                      formatTelepathyConfigGroup(connectionManager, 
                                                                 protocol, 
                                                                 accountId));
@@ -346,7 +348,7 @@ void TelepathyEditAccountWidget::writeConfig(const QString &connectionManager,
 
 void TelepathyEditAccountWidget::setupAddAccountUi()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // Set up the Add Account UI.
     d->tabWidget = new KTabWidget(this);
@@ -362,7 +364,7 @@ void TelepathyEditAccountWidget::setupAddAccountUi()
 
 void TelepathyEditAccountWidget::setupEditAccountUi()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // Set up the Edit Account UI.
     d->tabWidget = new KTabWidget(this);
@@ -480,7 +482,7 @@ void TelepathyEditAccountWidget::setupEditAccountUi()
 
 void TelepathyEditAccountWidget::onProtocolGotSelected(bool selected)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // If protocol was not selected, return.
     if (!selected) {

@@ -40,12 +40,12 @@ class MetaContact;
 class TelepathyProtocol;
 class TelepathyContactManager;
 
-class TelepathyAccount : public Kopete::Account
+class KOPETE_EXPORT TelepathyAccount : public Kopete::Account
 {
     Q_OBJECT
 
 public:
-    TelepathyAccount(TelepathyProtocol *protocol, const QString &accountId);
+    TelepathyAccount(Kopete::Protocol *protocol, const QString &accountId);
     virtual ~TelepathyAccount();
 
     bool readConfig();

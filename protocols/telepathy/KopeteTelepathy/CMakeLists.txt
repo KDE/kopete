@@ -19,9 +19,7 @@ set (libkopetetelepathy_SRCS
      telepathyclienthandler.cpp
      telepathycontact.cpp
      telepathycontactmanager.cpp
-     telepathyprotocol.cpp
-     ui/telepathyaddcontactpage.cpp
-     ui/telepathyeditaccountwidget.cpp
+     telepathyprotocolinternal.cpp
 )
 
 set (libkopetetelepathy_HDRS
@@ -32,7 +30,7 @@ set (libkopetetelepathy_HDRS
      telepathyclienthandler.h
      telepathycontact.h
      telepathycontactmanager.h
-     telepathyprotocol.h
+     telepathyprotocolinternal.h
 )
 
 set (libkopetetelepathy_PRETTY_HDRS
@@ -46,15 +44,9 @@ set (libkopetetelepathy_PRETTY_HDRS
      include/TelepathyProtocol
 )
 
-kde4_add_ui_files (libkopetetelepathy_UI_SRCS
-                   ui/telepathyaddcontactpage.ui
-)
-
 kde4_add_library (kopetetelepathy
                   SHARED
-                  ${libkopetetelepathy_UI_SRCS}                  
-                  ${libkopetetelepathy_SRCS}
-                  
+                  ${libkopetetelepathy_SRCS}                 
 )
 
 target_link_libraries (kopetetelepathy

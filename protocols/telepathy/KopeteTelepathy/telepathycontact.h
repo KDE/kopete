@@ -33,7 +33,7 @@ namespace Kopete
 class MetaContact;
 }
 
-class TelepathyContact : public Kopete::Contact
+class KOPETE_EXPORT TelepathyContact : public Kopete::Contact
 {
     Q_OBJECT
 

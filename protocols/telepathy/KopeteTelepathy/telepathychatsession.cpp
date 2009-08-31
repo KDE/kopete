@@ -21,7 +21,6 @@
 #include <KopeteTelepathy/telepathychatsession.h>
 
 #include <KopeteTelepathy/telepathyaccount.h>
-#include <KopeteTelepathy/telepathyprotocol.h>
 
 #include <kopetechatsessionmanager.h>
 
@@ -33,7 +32,7 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
         : Kopete::ChatSession(user, others, protocol),
         m_pendingChannelRequest(0)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
     Kopete::ChatSessionManager::self()->registerChatSession(this);
 
     QObject::connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(sendMessage(Kopete::Message&)));
@@ -41,7 +40,7 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
 
 TelepathyChatSession::~TelepathyChatSession()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     // When the ChatSession is closed, we should close the channel so that a new one is launched if
     // the same contact tries to contact us again.
@@ -54,20 +53,20 @@ TelepathyChatSession::~TelepathyChatSession()
 
 void TelepathyChatSession::createTextChannel(Tp::ContactPtr contact)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
     m_contact = contact;
 
     QString preferredHandler("org.freedesktop.Telepathy.Client.KopetePlugin");
 
     TelepathyAccount *telepathyAccount = qobject_cast<TelepathyAccount*>(account());
     if (!telepathyAccount) {
-        kWarning(TELEPATHY_DEBUG_AREA) << "Null telepathy account. Fail.";
+        kWarning() << "Null telepathy account. Fail.";
         return;
     }
 
     Tp::AccountPtr account = telepathyAccount->account();
     if (account.isNull()) {
-        kWarning(TELEPATHY_DEBUG_AREA) << "Null account. Fail.";
+        kWarning() << "Null account. Fail.";
         return;
     }
 
@@ -75,7 +74,7 @@ void TelepathyChatSession::createTextChannel(Tp::ContactPtr contact)
             account->ensureTextChat(contact, QDateTime::currentDateTime(), preferredHandler);
 
     m_channelRequest = m_pendingChannelRequest->channelRequest();
-    kDebug(TELEPATHY_DEBUG_AREA) << "m_channelRequest:" << m_channelRequest.data();
+    kDebug() << "m_channelRequest:" << m_channelRequest.data();
 
     connect(m_pendingChannelRequest,
             SIGNAL(finished(Tp::PendingOperation*)),
@@ -84,7 +83,7 @@ void TelepathyChatSession::createTextChannel(Tp::ContactPtr contact)
 
 void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* op)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     if (op->isError()) {
         kWarning() << "Ensuring Channel Failed:" << op->errorName() << op->errorMessage();
@@ -97,7 +96,7 @@ void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* op)
 
 void TelepathyChatSession::sendMessage(Kopete::Message &message)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     if (!m_textChannel) {
         kWarning() << "Message not sent because channel does not yet exist.";
@@ -118,7 +117,7 @@ void TelepathyChatSession::messageSent(const Tp::Message &message,
                                        Tp::MessageSendingFlags flags,
                                        const QString &sentMessageToken)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     Q_UNUSED(flags);
     Q_UNUSED(sentMessageToken);
@@ -143,7 +142,7 @@ void TelepathyChatSession::messageSent(const Tp::Message &message,
 
 void TelepathyChatSession::messageReceived(const Tp::ReceivedMessage &message)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     Kopete::Message::MessageType messageType = Kopete::Message::TypeNormal;
 
@@ -161,13 +160,13 @@ void TelepathyChatSession::messageReceived(const Tp::ReceivedMessage &message)
 
 Tp::ChannelRequestPtr TelepathyChatSession::channelRequest()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
     return m_channelRequest;
 }
 
 void TelepathyChatSession::setTextChannel(const Tp::TextChannelPtr &textChannel)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
     m_textChannel = textChannel;
 
     // We must get the text channel ready with the required features.
@@ -178,9 +177,9 @@ void TelepathyChatSession::setTextChannel(const Tp::TextChannelPtr &textChannel)
              << Tp::TextChannel::FeatureMessageSentSignal;
 
     if (m_textChannel->isReady(features)) {
-        kDebug(TELEPATHY_DEBUG_AREA) << "Already ready.";
+        kDebug() << "Already ready.";
     } else {
-        kDebug(TELEPATHY_DEBUG_AREA) << "Not already ready.";
+        kDebug() << "Not already ready.";
     }
 
     connect(m_textChannel->becomeReady(features),
@@ -190,9 +189,9 @@ void TelepathyChatSession::setTextChannel(const Tp::TextChannelPtr &textChannel)
 
 void TelepathyChatSession::onTextChannelReady(Tp::PendingOperation *op)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
     if (op->isError()) {
-        kWarning(TELEPATHY_DEBUG_AREA) << "Text channel failed to become ready:"
+        kWarning() << "Text channel failed to become ready:"
                                        << op->errorName()
                                        << op->errorMessage();
         return;

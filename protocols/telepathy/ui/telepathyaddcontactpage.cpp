@@ -14,14 +14,15 @@
  *                                                                       *
  *************************************************************************
  */
-#include <KopeteTelepathy/ui/telepathyaddcontactpage.h>
+#include "ui/telepathyaddcontactpage.h"
 
 #include "ui_telepathyaddcontactpage.h"
+
+#include "telepathyprotocol.h"
 
 #include <KopeteTelepathy/telepathyaccount.h>
 #include <KopeteTelepathy/telepathycontact.h>
 #include <KopeteTelepathy/telepathycontactmanager.h>
-#include <KopeteTelepathy/telepathyprotocol.h>
 
 #include <kmessagebox.h>
 #include <kdebug.h>
@@ -70,13 +71,13 @@ bool TelepathyAddContactPage::apply(Kopete::Account *account, Kopete::MetaContac
 
     if (!connection) {
         KMessageBox::error(this, i18n("You must be connected to add a contact."), i18n("Telepathy plugin"));
-        kWarning(TELEPATHY_DEBUG_AREA) << "TelepathyAccount->account()->connection() is null.";
+        kWarning() << "TelepathyAccount->account()->connection() is null.";
         return false;
     }
 
     if (connection->status() != Tp::ConnectionStatusConnected) {
         KMessageBox::error(this, i18n("You must be connected to add a contact."), i18n("Telepathy plugin"));
-        kWarning(TELEPATHY_DEBUG_AREA) << "connection.status() is not Connected.";
+        kWarning() << "connection.status() is not Connected.";
         return false;
     }
 

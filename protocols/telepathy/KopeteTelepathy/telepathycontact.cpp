@@ -22,7 +22,7 @@
 
 #include <KopeteTelepathy/telepathyaccount.h>
 #include <KopeteTelepathy/telepathychatsession.h>
-#include <KopeteTelepathy/telepathyprotocol.h>
+#include <KopeteTelepathy/telepathyprotocolinternal.h>
 
 #include <KAction>
 #include <KDebug>
@@ -48,8 +48,8 @@ TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &con
                                    Kopete::MetaContact *parent)
         : Kopete::Contact(account, contactId, parent), d(new TelepathyContactPrivate)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
-    setOnlineStatus(TelepathyProtocol::protocol()->Offline);
+    kDebug();
+    setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->Offline);
 }
 
 TelepathyContact::~TelepathyContact()
@@ -60,7 +60,7 @@ TelepathyContact::~TelepathyContact()
 bool TelepathyContact::isReachable()
 {
     bool ret = account()->isConnected() && (!internalContact().isNull());
-    kDebug(TELEPATHY_DEBUG_AREA) << ret;
+    kDebug() << ret;
 
     return account()->isConnected() && (!internalContact().isNull());
 }
@@ -68,7 +68,7 @@ bool TelepathyContact::isReachable()
 void TelepathyContact::serialize(QMap< QString, QString >& serializedData,
                                  QMap< QString, QString >& addressBookData)
 {
-    //kDebug(TELEPATHY_DEBUG_AREA);
+    //kDebug();
 
     Q_UNUSED(serializedData);
     Q_UNUSED(addressBookData);
@@ -76,13 +76,13 @@ void TelepathyContact::serialize(QMap< QString, QString >& serializedData,
 
 QList<KAction *> *TelepathyContact::customContextMenuActions()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
     return new QList<KAction*>();
 }
 
 QList<KAction *> *TelepathyContact::customContextMenuActions(Kopete::ChatSession *manager)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     Q_UNUSED(manager);
 
@@ -91,7 +91,7 @@ QList<KAction *> *TelepathyContact::customContextMenuActions(Kopete::ChatSession
 
 Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     Kopete::ContactPtrList members;
     members << this;
@@ -101,10 +101,10 @@ Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
 
 Kopete::ChatSession *TelepathyContact::manager(Kopete::ContactPtrList members, CanCreateFlags canCreate)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     if (d->currentChatSession.isNull()) {
-        kDebug(TELEPATHY_DEBUG_AREA);
+        kDebug();
 
         // Try to find existing chat session
         Kopete::ChatSession *existingSession =
@@ -112,10 +112,10 @@ Kopete::ChatSession *TelepathyContact::manager(Kopete::ContactPtrList members, C
                                                                     members,
                                                                     account()->protocol());
         if (existingSession) {
-            kDebug(TELEPATHY_DEBUG_AREA) << "chat exist";
+            kDebug() << "chat exist";
             d->currentChatSession = existingSession;
         } else if (canCreate == Kopete::Contact::CanCreate) {
-            kDebug(TELEPATHY_DEBUG_AREA) << "chat not exist";
+            kDebug() << "chat not exist";
             TelepathyChatSession *newSession = new TelepathyChatSession(account()->myself(),
                                                                         members,
                                                                         account()->protocol());
@@ -129,11 +129,11 @@ Kopete::ChatSession *TelepathyContact::manager(Kopete::ContactPtrList members, C
 
 void TelepathyContact::setInternalContact(Tp::ContactPtr contact)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     d->internalContact = contact;
 
-    setOnlineStatus(TelepathyProtocol::protocol()->telepathyStatusToKopete(
+    setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->telepathyStatusToKopete(
             static_cast<Tp::ConnectionPresenceType>(contact->presenceType())));
     setNickName(contact->alias());
     setStatusMessage(contact->presenceMessage());
@@ -160,28 +160,28 @@ void TelepathyContact::setInternalContact(Tp::ContactPtr contact)
 
 void TelepathyContact::onAliasChanged(const QString &alias)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << alias;
+    kDebug() << alias;
     setNickName(alias);
 }
 
 void TelepathyContact::onAvatarTokenChanged(const QString &avatarToken)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << avatarToken;
+    kDebug() << avatarToken;
 
     // TODO: Implement me!
 }
 
 void TelepathyContact::onSimplePresenceChanged(const QString &status, uint type, const QString &presenceMessage)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << status << type << presenceMessage;
-    setOnlineStatus(TelepathyProtocol::protocol()->telepathyStatusToKopete(
+    kDebug() << status << type << presenceMessage;
+    setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->telepathyStatusToKopete(
             static_cast<Tp::ConnectionPresenceType>(type)));
     setStatusMessage(Kopete::StatusMessage(presenceMessage));
 }
 
 void TelepathyContact::onSubscriptionStateChanged(Tp::Contact::PresenceState state)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     Q_UNUSED(state);
 
@@ -191,7 +191,7 @@ void TelepathyContact::onSubscriptionStateChanged(Tp::Contact::PresenceState sta
 
 void TelepathyContact::onPublishStateChanged(Tp::Contact::PresenceState state)
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     Q_UNUSED(state);
 
@@ -201,7 +201,7 @@ void TelepathyContact::onPublishStateChanged(Tp::Contact::PresenceState state)
 
 void TelepathyContact::onBlockStatusChanged(bool blocked)
 {
-    kDebug(TELEPATHY_DEBUG_AREA) << blocked;
+    kDebug() << blocked;
 
     // TODO: Implement me!
 
@@ -214,12 +214,12 @@ Tp::ContactPtr TelepathyContact::internalContact()
 
 void TelepathyContact::deleteContact()
 {
-    kDebug(TELEPATHY_DEBUG_AREA);
+    kDebug();
 
     TelepathyAccount *tAccount = qobject_cast<TelepathyAccount*>(account());
 
     if (!tAccount) {
-        kWarning(TELEPATHY_DEBUG_AREA) << "Account is not a TelepathyAccount.";
+        kWarning() << "Account is not a TelepathyAccount.";
         return;
     }
 

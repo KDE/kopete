@@ -22,6 +22,9 @@
 #define KOPETE_PROTOCOL_TELEPATHY_TELEPATHYCLIENTHANDLER_H
 
 #include <TelepathyQt4/AbstractClientHandler>
+#include <TelepathyQt4/Account>
+#include <TelepathyQt4/Channel>
+#include <TelepathyQt4/ChannelRequest>
 
 class TelepathyClientHandler : public Tp::AbstractClientHandler
 {
