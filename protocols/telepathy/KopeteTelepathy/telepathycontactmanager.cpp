@@ -23,7 +23,7 @@
 #include <KopeteTelepathy/telepathyaccount.h>
 #include <KopeteTelepathy/telepathyaddedinfoevent.h>
 #include <KopeteTelepathy/telepathycontact.h>
-#include <KopeteTelepathy/telepathyprotocol.h>
+#include <KopeteTelepathy/telepathyprotocolinternal.h>
 
 #include <KDebug>
 

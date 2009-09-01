@@ -21,7 +21,7 @@
 #include <KopeteTelepathy/telepathyclienthandler.h>
 
 #include <KopeteTelepathy/telepathychannelmanager.h>
-#include <KopeteTelepathy/telepathyprotocol.h>
+#include <KopeteTelepathy/telepathyprotocolinternal.h>
 
 #include <KDebug>
 

@@ -20,7 +20,7 @@
 
 #include <KopeteTelepathy/telepathyaddedinfoevent.h>
 
-#include <KopeteTelepathy/telepathyprotocol.h>
+#include <KopeteTelepathy/telepathyprotocolinternal.h>
 
 #include <KDebug>
 
