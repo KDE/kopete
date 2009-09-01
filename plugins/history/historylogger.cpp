@@ -166,7 +166,6 @@ void HistoryLogger::getHistoryx(const Kopete::Contact *c, unsigned int month , b
         if (contain)
             *contain=false;
         m_getHistory = History::History();
-        kDebug() << "GENERATING SIGNAL";
         emit getHistoryxDone();
         return;
     }
@@ -187,6 +186,36 @@ void HistoryLogger::getHistoryx(const Kopete::Contact *c, unsigned int month , b
     {
 	emit getHistoryxDone();
 	return;
+    }
+    
+    Akonadi::Item _item;
+    QDate d(QDate::currentDate().addMonths(0-month));
+    
+    if ( !m_contactsItems.isEmpty() && !m_tosaveInItem.isValid() )
+    {
+	foreach ( const Akonadi::Item &item, m_contactsItems)
+	{
+	    History his;
+	    if ( item.hasPayload<History>() )
+		his = item.payload<History>() ;
+	     if ( his.date().year() == d.year() && his.date().month() == d.month())
+	     {
+		  _item = item;
+		  break;
+	     }
+	}
+	if ( _item.isValid() )
+	{
+	    Akonadi::ItemFetchJob *f = new Akonadi::ItemFetchJob( _item );
+	    f->fetchScope().fetchFullPayload();
+	    connect(f,SIGNAL(finished(KJob*)), SLOT(itemFetchSlot(KJob*)) );
+	    return;
+	}
+	else
+	{
+	    emit getHistoryxDone();
+	    return;
+	}
     }
     
     QVariant v;
@@ -229,6 +258,12 @@ void HistoryLogger::fetchItemHeaderSlot(KJob* job )
 	    m_tosaveInItem = item;
 	    break;
 	}
+    }
+    
+    if ( !m_tosaveInItem.isValid() )
+    {	
+	emit getHistoryxDone();
+	return;
     }
     
     Akonadi::ItemFetchJob * fetchJob = new Akonadi::ItemFetchJob( m_tosaveInItem );
@@ -749,6 +784,8 @@ void HistoryLogger::readMessages(int lines, Akonadi::Collection &coll,
       m_tosaveInCollection = coll;
       kDebug() <<"readMessages, m_to save in coll is invalid";
     }
+    else
+      kDebug() << "\n\n\n\n\n\n The collection is Valid";
     if (!coll.isValid() )
     {
       kDebug() <<"the passed collection coll is invalid";

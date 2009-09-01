@@ -248,7 +248,6 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 
     logger->setPositionToLast();
     kDebug() << "\ncalling readmessages and connectin with sig";
-    if (!coll.isValid() ) kDebug() <<" the collection passed is invalid";
     
     connect(logger,SIGNAL(readMessagesDoneSignal(QList<Kopete::Message>)), this,SLOT(slotViewCreated2(QList<Kopete::Message>)));
     
