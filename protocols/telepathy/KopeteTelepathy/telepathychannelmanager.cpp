@@ -129,11 +129,13 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
             }
 
             foreach (Tp::ChannelRequestPtr crp, data->requestsSatisfied) {
-                if (tpc->pendingChannelRequest()->channelRequest()) {
-                    if (tpc->pendingChannelRequest()->channelRequest()->userActionTime() == crp->userActionTime()) {
-                        tpc->setTextChannel(textChannel);
-                        break;
-                    }
+		if (tpc->pendingChannelRequest()) {
+                    if (tpc->pendingChannelRequest()->channelRequest()) {
+                        if (tpc->pendingChannelRequest()->channelRequest()->userActionTime() == crp->userActionTime()) {
+                            tpc->setTextChannel(textChannel);
+                            break;
+                        }
+		    }
                 }
             }
         }
@@ -227,7 +229,7 @@ void TelepathyChannelManager::onChannelReady(Tp::PendingOperation *op)
                 }
 
                 // See if it is in the list of contacts for this channel.
-                if (other->internalContact()->alias() == textChannel->initiatorContact()->alias()) {
+                if (other->internalContact()->id() == textChannel->initiatorContact()->id()) {
                     kDebug() << "Found the remote contact.";
                     others << (other);
                 }
