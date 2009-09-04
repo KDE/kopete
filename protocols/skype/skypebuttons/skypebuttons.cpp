@@ -23,7 +23,7 @@
 class SkypeButtons : public QWidget
 {
 	Q_OBJECT
-	Q_CLASSINFO("MIME", "application/x-skype:skype:Skype Buttons")
+	Q_CLASSINFO("MIME", "application/x-skype::Skype Buttons")
 };
 
 #include "skypebuttons.moc"
