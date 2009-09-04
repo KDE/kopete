@@ -69,7 +69,7 @@
           <item>
            <widget class="QLabel" name="textLabel3">
             <property name="text">
-             <string>The Skype plugin serves as a bridge to an externally running copy of Skype. This has some consequences on how it functions: you need an instance of Skype to be running, and only one Skype account can be used.&lt;br /&gt;&lt;br /&gt;Note that you need to install the original dynamic linked Skype version 2.0 binary from &lt;a href=&quot;http://www.skype.com&quot;&gt;http://www.skype.com&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;This plugin only work if language in Skype client set to english. Kopete show notifications (incomming call, message, ...), so you can turn off Skype notifications</string>
+             <string>The Skype plugin serves as a bridge to an externally running copy of Skype. This has some consequences on how it functions: you need an instance of Skype to be running, and only one Skype account can be used.&lt;br /&gt;&lt;br /&gt;Note that you need to install the original dynamic linked Skype version 2.0 or 2.1 from &lt;a href=&quot;http://www.skype.com&quot;&gt;http://www.skype.com&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;This plugin only work if language in Skype client set to english. Kopete show notifications (incomming call, message, ...), so you can turn off Skype notifications</string>
             </property>
             <property name="textFormat">
              <enum>Qt::RichText</enum>

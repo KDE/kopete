@@ -63,9 +63,9 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 	DoNotDisturb(Kopete::OnlineStatus::Away, 0, this, 6, QStringList("skype_contact_dnd"), i18n("Do Not Disturb"), i18n("Do Not Disturb"), Kopete::OnlineStatusManager::Busy),
 	Invisible(Kopete::OnlineStatus::Invisible, 0, this, 7, QStringList("skype_contact_invisible"), i18n("Invisible"), i18n("Invisible"), Kopete::OnlineStatusManager::Invisible),
 	Connecting(Kopete::OnlineStatus::Connecting, 0, this, 8, QStringList("skype_connecting"), i18n("Connecting")),
-	NotInList(Kopete::OnlineStatus::Offline, 0, this, 9, QStringList("skype_contact_unknown"), i18n("Not in Skype list")),
-	NoAuth(Kopete::OnlineStatus::Offline, 0, this, 10, QStringList("skype_contact_unknown"), i18n("Not authorized")),
-	Phone(Kopete::OnlineStatus::Offline, 0, this, 11, QStringList("skype_contact_skypeout"), i18n("SkypeOut contact")), //Skype Out contact permanently offline TODO: add option for changing
+	NotInList(Kopete::OnlineStatus::Unknown, 0, this, 9, QStringList("skype_contact_unknown"), i18n("Not in Skype list")),
+	NoAuth(Kopete::OnlineStatus::Unknown, 0, this, 10, QStringList("skype_contact_unknown"), i18n("Not authorized")),
+	Phone(Kopete::OnlineStatus::Unknown, 3, this, 11, QStringList("skype_contact_skypeout"), i18n("SkypeOut contact")), //Skype Out contact permanently offline TODO: add option for changing
 	/** Contact property templates */
 	propFullName(Kopete::Global::Properties::self()->fullName()),
 	propPrivatePhone(Kopete::Global::Properties::self()->privatePhone()),

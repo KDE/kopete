@@ -98,6 +98,7 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	d->updater->start(500);
 
 	dialog->NameLabel->setText(account->getUserLabel(userId));
+	dialog->StatusLabel->setText(i18n("Connecting"));
 	setCaption(i18n("Call with %1", account->getUserLabel(userId)));
 
 	connect(dialog->AcceptButton, SIGNAL(clicked()), this, SLOT(acceptCall()));
@@ -216,8 +217,11 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 			dialog->StatusLabel->setText(i18nc("Early media means the media played before the call is established. For example it can be a calling tone or a waiting message such as all operators are busy.", "Early media (waiting for operator...)"));
 			d->status = csNotRunning;
 		} else if (status == "UNPLACED") {//Ups, whats that, how that call got here?
+			//TODO: What here? Skype sometimes send message unplaced when call is active
+			//temporary disabled, do nothing in active call
+
 			//deleteLater();//Just give up, this one is odd
-			dialog->StatusLabel->setText(i18n("Unplaced (please wait...)"));
+			//dialog->StatusLabel->setText(i18n("Unplaced (please wait...)"));
 			//it is when user create call after hangup, so dont close dialog and wait
 		}
 	}
