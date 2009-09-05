@@ -51,6 +51,7 @@ class WPUserInfo : public KDialog
 
 		QString Comment, Workgroup, OS, Software;
 		QProcess *detailsProcess;
+		bool noComment;
 };
 
 #endif

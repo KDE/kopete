@@ -46,7 +46,7 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID)
 
 	// we need this before initActions
 	Kopete::MetaContact *myself = Kopete::ContactList::self()->myself();
-	setMyself( new WPContact(this, accountID, myself->displayName(), myself) );
+	setMyself( new WPContact(this, accountID, QString(), myself) );
 
 //	if (excludeConnect()) connect(Kopete::OnlineStatus::Online); // ??
 }
