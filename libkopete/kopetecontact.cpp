@@ -236,7 +236,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		KAction *actionAddContact = new KAction( KIcon("add-user"), i18n( "&Add to Your Contact List" ), menu );
+		KAction *actionAddContact = new KAction( KIcon("list-add-user"), i18n( "&Add to Your Contact List" ), menu );
 		connect( actionAddContact, SIGNAL(triggered(bool)), this, SLOT( slotAddContact() ) );
 
 		menu->addAction(actionAddContact);
