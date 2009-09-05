@@ -86,6 +86,8 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 		mSmbcPath->setUrl(tmpSmbcPath);
 	}
 
+	connect ( doInstallSamba, SIGNAL(clicked()), this, SLOT(installSamba()) );
+
 	show();
 }
 

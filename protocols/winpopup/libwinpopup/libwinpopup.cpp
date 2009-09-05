@@ -30,6 +30,7 @@
 #include <KLocale>
 #include <KDirLister>
 #include <KToolInvocation>
+#include <kdefakes.h> // gethostname
 
 // Kopete Includes
 #include "kopeteuiglobal.h"
@@ -161,7 +162,7 @@ void WinPopupLib::startReadProcess(const QString &Host)
 	// for Samba 3
 	readGroupsProcess = new QProcess;
 	QStringList args;
-	args << "-N" << "-g" << "-L" << Host;
+	args << "-N" << "-g" << "-L" << Host << "-I" << Host;
 
 	connect(readGroupsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int, QProcess::ExitStatus)));
 
@@ -179,7 +180,7 @@ void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 		if (!outputData.isEmpty()) {
 			QString outputString = QString::fromUtf8(outputData.data());
 			QStringList outputList = outputString.split('\n');
-			QRegExp group("Workgroup\\|(.[^\\|]+)\\|(.+)"), host("Server\\|(.[^\\|]+)\\|(.+)"),
+			QRegExp group("Workgroup\\|(.[^\\|]+)\\|(.+)"), host("Server\\|(.[^\\|]+)\\|(.*)"),
 					info("Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]"),
 					error("Connection.*failed");
 			foreach (QString line, outputList) {
@@ -222,6 +223,29 @@ void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 
 		} else {
 			passedInitialHost = true;
+			if ( currentGroups.isEmpty() && currentHost.toUpper() == "LOCALHOST" ) {
+				kDebug(14170) << "Cant get workgroup for localhost";
+				//Samba on localhost in up but doesnt receive workgroups or security in smb.conf in not share
+				//Sometimes samba recive workgroups in 2min.
+				//TODO: Fix it better
+
+				//try get host name
+				QString theHostName;
+				char *tmp = new char[255];
+
+				if (tmp != 0) {
+					gethostname(tmp, 255);
+					theHostName = tmp;
+					if (theHostName.contains('.') != 0) theHostName.remove(theHostName.indexOf('.'), theHostName.length());
+					theHostName = theHostName.toUpper();
+				}
+
+				if ( theHostName.isEmpty() )
+					theHostName = "LOCALHOST";
+
+				//add localhost to currentGroups with unknow workgroup
+				currentGroups["WORKGROUP"] = theHostName;
+			}
 			if (!currentGroups.isEmpty()) {
 				foreach (QString groupMaster, currentGroups) {
 					todo += groupMaster;
@@ -232,6 +256,8 @@ void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 									i18n("Connection to localhost failed.\n"
 											"Is your samba server running?"),
 									QString::fromLatin1("Winpopup"));
+				else
+					kDebug(14170) << "Unknow error";
 			}
 		}
 	}
@@ -322,10 +348,13 @@ void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 {
 	QProcess *sender = new QProcess(this);
 	QStringList args;
-	args << "-M" << Destination << "-N";
+	args << "-M" << Destination << "-N" << "-I" << Destination;
 	sender->start(smbClientBin, args);
-	sender->write(Body.trimmed().toLocal8Bit());
+	sender->waitForStarted();
+	//TODO: check if we can write message
+	sender->write(Body.toLocal8Bit());
 	sender->closeWriteChannel();
+	connect(sender, SIGNAL(finished(int, QProcess::ExitStatus)), sender, SLOT(deleteLater()));
 }
 
 void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq)

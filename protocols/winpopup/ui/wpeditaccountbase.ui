@@ -94,6 +94,9 @@
               <property name="whatsThis" >
                <string>Install support into Samba to enable this service.</string>
               </property>
+              <property name="text" >
+               <string>I&amp;nstall Into Samba</string>
+              </property>
              </widget>
             </item>
            </layout>
