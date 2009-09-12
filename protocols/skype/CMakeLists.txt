@@ -90,7 +90,7 @@ target_link_libraries(
 ########### next target ###############
 
 add_subdirectory( icons )
-add_subdirectory( skypebuttons )
+macro_optional_add_subdirectory( skypebuttons )
 
 ########### install files ###############
 
