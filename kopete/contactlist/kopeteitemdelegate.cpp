@@ -241,6 +241,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 					case Kopete::OnlineStatus::Online:
 						break;
 					case Kopete::OnlineStatus::Away:
+					case Kopete::OnlineStatus::Busy:
 						Blitz::fade( metaContactImage, 0.5, Qt::white );
 						break;
 					case Kopete::OnlineStatus::Offline:

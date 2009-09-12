@@ -60,7 +60,7 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 	SkypeMe(Kopete::OnlineStatus::Online, 0, this, 3, QStringList("skype_contact_skypeme"), i18n("Skype Me"), i18n("Skype Me"), Kopete::OnlineStatusManager::FreeForChat),
 	Away(Kopete::OnlineStatus::Away, 2, this, 4, QStringList("skype_contact_away"), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away),
 	NotAvailable(Kopete::OnlineStatus::Away, 1, this, 5, QStringList("skype_contact_not_available"), i18n("Not Available"), i18n("Not Available"), Kopete::OnlineStatusManager::Away),
-	DoNotDisturb(Kopete::OnlineStatus::Away, 0, this, 6, QStringList("skype_contact_dnd"), i18n("Do Not Disturb"), i18n("Do Not Disturb"), Kopete::OnlineStatusManager::Busy),
+	DoNotDisturb(Kopete::OnlineStatus::Busy, 0, this, 6, QStringList("skype_contact_dnd"), i18n("Do Not Disturb"), i18n("Do Not Disturb"), Kopete::OnlineStatusManager::Busy),
 	Invisible(Kopete::OnlineStatus::Invisible, 0, this, 7, QStringList("skype_contact_invisible"), i18n("Invisible"), i18n("Invisible"), Kopete::OnlineStatusManager::Invisible),
 	Connecting(Kopete::OnlineStatus::Connecting, 0, this, 8, QStringList("skype_connecting"), i18n("Connecting")),
 	NotInList(Kopete::OnlineStatus::Unknown, 0, this, 9, QStringList("skype_contact_unknown"), i18n("Not in Skype list")),

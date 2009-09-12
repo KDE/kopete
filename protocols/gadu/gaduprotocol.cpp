@@ -62,10 +62,10 @@ GaduProtocol::GaduProtocol( QObject* parent, const QVariantList& )
 					QString( QLatin1String("contact_away_overlay|gg_description_overlay") ).split('|'), 
 					i18n( "Offline" ), i18n( "A&way" ) , Kopete::OnlineStatusManager::Offline ),
 			
-			gaduStatusBusy_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY, this, 
+			gaduStatusBusy_(Kopete::OnlineStatus::Busy, GG_STATUS_BUSY, this,
 					GG_STATUS_BUSY, QStringList( QLatin1String("contact_away_overlay") ), 
 					i18n( "Busy" ) , i18n( "B&usy" ) , Kopete::OnlineStatusManager::Busy ),
-			gaduStatusBusyDescr_(Kopete::OnlineStatus::Away, GG_STATUS_BUSY_DESCR, this, GG_STATUS_BUSY_DESCR,
+			gaduStatusBusyDescr_(Kopete::OnlineStatus::Busy, GG_STATUS_BUSY_DESCR, this, GG_STATUS_BUSY_DESCR,
 					QString( QLatin1String("contact_away_overlay|gg_description_overlay") ).split('|'), i18n( "Busy" ) , 
 					i18n( "B&usy" ) , Kopete::OnlineStatusManager::Idle ),
 			

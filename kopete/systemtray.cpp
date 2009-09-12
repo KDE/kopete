@@ -241,45 +241,44 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		}
 	}
 
+	QPixmap statusOverlay;
+	QPixmap statusIcon=mKopeteIcon.pixmap(22,22);
 	switch ( highestStatus.status() )
 	{
 		case Kopete::OnlineStatus::Unknown:
 		case Kopete::OnlineStatus::Offline:
 		case Kopete::OnlineStatus::Connecting:
 		{
-			QImage offlineIcon = mKopeteIcon.pixmap(22,22).toImage();
+			QImage offlineIcon = statusIcon.toImage();
 			KIconEffect::toGray( offlineIcon, 0.85f );
-			setIcon( QPixmap::fromImage( offlineIcon ) );
+			statusIcon = QPixmap::fromImage( offlineIcon );
 			break;
 		}
 		case Kopete::OnlineStatus::Invisible:
 		{
-			QPixmap statusOverlay = loadIcon("user-invisible").pixmap(11,11);
-			QPixmap statusIcon = mKopeteIcon.pixmap(22,22);
-			if (!statusIcon.isNull() && !statusOverlay.isNull())
-			{
-				QPainter painter(&statusIcon);
-				painter.drawPixmap(QPoint(11,11), statusOverlay);
-			}
-			setIcon( statusIcon );
+			statusOverlay = loadIcon("user-invisible").pixmap(11,11);
 			break;
 		}
 		case Kopete::OnlineStatus::Away:
 		{
-			QPixmap statusOverlay = loadIcon("user-away").pixmap(11,11);
-			QPixmap statusIcon = mKopeteIcon.pixmap(22,22);
-			if (!statusIcon.isNull() && !statusOverlay.isNull())
-			{
-				QPainter painter(&statusIcon);
-				painter.drawPixmap(QPoint(11,11), statusOverlay);
-			}
-			setIcon( statusIcon );
+			statusOverlay = loadIcon("user-away").pixmap(11,11);
+			break;
+		}
+		case Kopete::OnlineStatus::Busy:
+		{
+			statusOverlay = loadIcon("user-busy").pixmap(11,11);
 			break;
 		}
 		case Kopete::OnlineStatus::Online:
-			setIcon( mKopeteIcon );
 			break;
 	}
+
+	if (!statusIcon.isNull() && !statusOverlay.isNull())
+	{
+		QPainter painter(&statusIcon);
+		painter.drawPixmap(QPoint(11,11), statusOverlay);
+	}
+	setIcon( statusIcon );
 }
 
 #include "systemtray.moc"

@@ -418,8 +418,11 @@ bool Account::isConnected() const
 
 bool Account::isAway() const
 {
-	return d->myself && ( d->myself->onlineStatus().status() == Kopete::OnlineStatus::Away );
+	//We might want to change the method name here.
+	return d->myself && ( d->myself->onlineStatus().status() == Kopete::OnlineStatus::Away ||
+					d->myself->onlineStatus().status() == Kopete::OnlineStatus::Busy );
 }
+
 Identity * Account::identity() const
 {
 	return d->identity;

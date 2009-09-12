@@ -560,6 +560,12 @@ QVariant ContactListModel::metaContactImage( const Kopete::MetaContact* mc ) con
 		else
 			return QString::fromUtf8( "user-away" );
 		break;
+	case OnlineStatus::Busy:
+		if( mc->useCustomIcon() )
+			return mc->icon( ContactListElement::Away );
+		else
+			return QString::fromUtf8( "user-busy" );
+		break;
 	case OnlineStatus::Unknown:
 		if( mc->useCustomIcon() )
 			return mc->icon( ContactListElement::Unknown );

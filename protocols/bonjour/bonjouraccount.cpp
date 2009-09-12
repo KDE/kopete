@@ -102,7 +102,8 @@ void BonjourAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const K
 			myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
 		slotGoOnline();
 	else if (status.status() == Kopete::OnlineStatus::Online &&
-			myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
+			(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away ||
+				myself()->onlineStatus().status() == Kopete::OnlineStatus::Away) )
 		setAway( false, reason.message() );
 	else if ( status.status() == Kopete::OnlineStatus::Offline )
 		slotGoOffline();

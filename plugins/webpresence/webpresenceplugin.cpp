@@ -279,7 +279,8 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 			if ( !shuttingDown ) {
 
 				// Add away message as an attribute, if one exists.
-				if ( me->onlineStatus().status() == Kopete::OnlineStatus::Away &&
+				if ( (me->onlineStatus().status() == Kopete::OnlineStatus::Away ||
+						me->onlineStatus().status() == Kopete::OnlineStatus::Busy) &&
 						!me->property("awayMessage").value().toString().isEmpty() ) {
 					accStatus.setAttribute( "awayreason",
 							me->property("awayMessage").value().toString() );
@@ -441,6 +442,9 @@ QString WebPresencePlugin::statusAsString( const Kopete::OnlineStatus &newStatus
 		break;
 	case Kopete::OnlineStatus::Away:
 		status = "AWAY";
+		break;
+	case Kopete::OnlineStatus::Busy:
+		status = "BUSY";
 		break;
 	case Kopete::OnlineStatus::Offline:
 	case Kopete::OnlineStatus::Invisible:

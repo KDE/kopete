@@ -121,6 +121,16 @@ QStringList KopeteDBusInterface::contactsByFilter(const QString &filter) const
 			}
 		}
 	}
+	else if ( filter.toLower() == QLatin1String("busy") )
+	{
+		foreach(contact, completeList)
+		{
+			if( contact->status() == Kopete::OnlineStatus::Busy )
+			{
+				filteredList << contact;
+			}
+		}
+	}
 
 	return d->listContact(filteredList);
 }

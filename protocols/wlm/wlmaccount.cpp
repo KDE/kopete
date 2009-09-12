@@ -220,7 +220,8 @@ WlmAccount::setOnlineStatus (const Kopete::OnlineStatus & status,
         slotGoOffline ();
     else if (status == WlmProtocol::protocol ()->wlmInvisible)
         slotGoInvisible ();
-    else if (status.status () == Kopete::OnlineStatus::Away)
+    else if (status.status () == Kopete::OnlineStatus::Away ||
+              status.status () == Kopete::OnlineStatus::Busy)
         slotGoAway (status);
 }
 

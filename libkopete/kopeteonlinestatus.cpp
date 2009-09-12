@@ -108,7 +108,8 @@ static struct
 	{ OnlineStatus::Connecting, "Connecting" },
 	{ OnlineStatus::Invisible, "Invisible" },
 	{ OnlineStatus::Online, "Online"},
-	{ OnlineStatus::Away, "Away" } };
+	{ OnlineStatus::Away, "Away" } ,
+	{ OnlineStatus::Busy, "Busy" } };
 
 OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protocol,
 	unsigned internalStatus, const QStringList &overlayIcons,  const QString &description )

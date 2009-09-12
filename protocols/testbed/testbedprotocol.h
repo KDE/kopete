@@ -66,6 +66,10 @@ public:
 	 */
 	const Kopete::OnlineStatus testbedAway;
 	/**
+	 * Represents contacts that are Busy
+	 */
+	const Kopete::OnlineStatus testbedBusy;
+	/**
 	 * Represents contacts that are Offline
 	 */
 	const Kopete::OnlineStatus testbedOffline;

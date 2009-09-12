@@ -200,7 +200,9 @@ void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)
 {
 	kDebug(14170) << "WPAccount::slotSendMessage(" << Body << ", " << Destination << ")";
 
-	if (myself()->onlineStatus().status() == Kopete::OnlineStatus::Away) myself()->setOnlineStatus(mProtocol->WPOnline);
+	if (myself()->onlineStatus().status() == Kopete::OnlineStatus::Away ||
+		myself()->onlineStatus().status() == Kopete::OnlineStatus::Busy)
+		myself()->setOnlineStatus(mProtocol->WPOnline);
 	mProtocol->sendMessage(Body, Destination);
 }
 
@@ -218,7 +220,8 @@ void WPAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
 	if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Online)
 		setAway( false, statusMessage.message() );
-	else if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away)
+	else if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away ||
+		myself()->onlineStatus().status() == Kopete::OnlineStatus::Busy)
 		setAway( true, statusMessage.message() );
 }
 #include "wpaccount.moc"

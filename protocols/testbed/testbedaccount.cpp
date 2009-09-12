@@ -81,12 +81,15 @@ void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const K
 			myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
 		slotGoOnline();
 	else if (status.status() == Kopete::OnlineStatus::Online &&
-			myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
+			(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away || 
+				myself()->onlineStatus().status() == Kopete::OnlineStatus::Busy) )
 		setAway( false, reason.message() );
 	else if ( status.status() == Kopete::OnlineStatus::Offline )
 		slotGoOffline();
 	else if ( status.status() == Kopete::OnlineStatus::Away )
 		slotGoAway( /* reason */ );
+	else if ( status.status() == Kopete::OnlineStatus::Busy )
+		slotGoBusy( /* reason */ );
 }
 
 void TestbedAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
@@ -134,6 +137,17 @@ void TestbedAccount::slotGoAway ()
 		connect();
 
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedAway );
+	updateContactStatus();
+}
+
+void TestbedAccount::slotGoBusy ()
+{
+	kDebug ( 14210 ) ;
+
+	if (!isConnected ())
+		connect();
+
+	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedBusy );
 	updateContactStatus();
 }
 

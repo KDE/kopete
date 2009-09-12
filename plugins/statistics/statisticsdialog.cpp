@@ -312,6 +312,8 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 			totalOnlineTime += dateTime1.secsTo ( dateTime2 );
 		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Away )
 			totalAwayTime += dateTime1.secsTo ( dateTime2 );
+		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Busy )
+			totalAwayTime += dateTime1.secsTo ( dateTime2 );
 		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Offline )
 			totalOfflineTime += dateTime1.secsTo ( dateTime2 );
 
@@ -333,6 +335,8 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 			hoursOnline[dateTime1.time().hour() ] += tempHour;
 		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Away )
 			hoursAway[dateTime1.time().hour() ] += tempHour;
+		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Busy )
+			hoursAway[dateTime1.time().hour() ] += tempHour;
 		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Offline )
 			hoursOffline[dateTime1.time().hour() ] += tempHour;
 
@@ -342,6 +346,8 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 			if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Online )
 				hoursOnline[j%24] += 3600;
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Away )
+				hoursAway[j%24] += 3600;
+			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Busy )
 				hoursAway[j%24] += 3600;
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Offline )
 				hoursOffline[j%24] += 3600;
@@ -359,6 +365,8 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 				hoursOnline[dateTime2.time().hour() ] += tempHour;
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Away )
 				hoursAway[dateTime2.time().hour() ] += tempHour;
+			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Busy )
+				hoursAway[dateTime2.time().hour() ] += tempHour;
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Offline )
 				hoursOffline[dateTime2.time().hour() ] += tempHour;
 
@@ -371,6 +379,8 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 			if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Online )
 				status = i18n ( "Online" );
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Away )
+				status = i18n ( "Away" );
+			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Busy )
 				status = i18n ( "Away" );
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Offline )
 				status = i18n ( "Offline" );
@@ -618,6 +628,8 @@ void StatisticsDialog::fillCalendarCells()
 			color = m_onlineColor;
 		else if ( statuses.at ( i ) == Kopete::OnlineStatus::Away )
 			color = m_awayColor;
+		else if ( statuses.at ( i ) == Kopete::OnlineStatus::Busy )
+			color = m_awayColor;
 		else if ( statuses.at ( i ) == Kopete::OnlineStatus::Offline )
 			color = m_offlineColor;
 
@@ -660,6 +672,8 @@ void StatisticsDialog::generateOneDayStats ()
 		if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Online )
 			status = i18n ( "Online" );
 		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Away )
+			status = i18n ( "Away" );
+		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Busy )
 			status = i18n ( "Away" );
 		else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Offline )
 			status = i18n ( "Offline" );

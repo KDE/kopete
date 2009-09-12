@@ -458,6 +458,11 @@ QString MetaContact::statusIcon() const
 				return icon( ContactListElement::Away );
 			else
 				return QString::fromUtf8( "user-away" );
+		case OnlineStatus::Busy:
+			if( useCustomIcon() )
+				return icon( ContactListElement::Away ); //Might want to create custom for busy too
+			else
+				return QString::fromUtf8( "user-busy" );
 
 		case OnlineStatus::Unknown:
 			if( useCustomIcon() )
@@ -484,6 +489,8 @@ QString MetaContact::statusString() const
 			return i18n( "Online" );
 		case OnlineStatus::Away:
 			return i18n( "Away" );
+		case OnlineStatus::Busy:
+			return i18n( "Busy" );
 		case OnlineStatus::Offline:
 			return i18n( "Offline" );
 		case OnlineStatus::Unknown:
@@ -1268,9 +1275,7 @@ void MetaContact::onlineStatusNotification( Kopete::Contact * c )
 					t = signedIn;	// contact has gone from offline to something else, it's a sign-in
 				}
 			}
-			else if ( d->notifyOnlineStatus.status() == Kopete::OnlineStatus::Online
-			          || d->notifyOnlineStatus.status() == Kopete::OnlineStatus::Away
-			          || d->notifyOnlineStatus.status() == Kopete::OnlineStatus::Invisible)
+			else if ( d->notifyOnlineStatus.isDefinitelyOnline()) //Is that correct?
 			{
 				if ( newNotifyOnlineStatus.status() == Kopete::OnlineStatus::Offline )
 				{
