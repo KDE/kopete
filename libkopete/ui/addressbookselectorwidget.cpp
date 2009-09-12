@@ -75,7 +75,7 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 
 	//We should add a clear KAction here.  But we can't really do that with a designer file :\  this sucks
 
-	addresseeListView->setColumnText(2, KIcon(QLatin1String("email")), i18n("Email"));
+	addresseeListView->setColumnText(2, KIcon(QLatin1String("internet-mail")), i18n("Email"));
 
 	kListViewSearchLine->setListView(addresseeListView);
 	slotLoadAddressees();
