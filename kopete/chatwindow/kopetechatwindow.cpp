@@ -1128,19 +1128,27 @@ void KopeteChatWindow::slotPreparePlacementMenu()
 
 	action = placementMenu->addAction( i18n("Bottom") );
 	action->setData( 1 );
+
+	action = placementMenu->addAction( i18n("Left") );
+	action->setData( 2 );
+
+	action = placementMenu->addAction( i18n("Right") );
+	action->setData( 3 );
 }
 
 void KopeteChatWindow::slotPlaceTabs( QAction *action )
 {
 	int placement = action->data().toInt();
+
 	if( m_tabBar )
 	{
-
-		if( placement == 0 )
-			m_tabBar->setTabPosition( QTabWidget::North );
-		else
-			m_tabBar->setTabPosition( QTabWidget::South );
-
+		switch( placement )
+		{
+		case 1 : m_tabBar->setTabPosition( QTabWidget::South ); break;
+		case 2 : m_tabBar->setTabPosition( QTabWidget::West  ); break;
+		case 3 : m_tabBar->setTabPosition( QTabWidget::East  ); break;
+		default: m_tabBar->setTabPosition( QTabWidget::North );
+		}
 		saveOptions();
 	}
 }
