@@ -293,6 +293,7 @@ bool AvatarManager::exists(const QString &avatarName)
 	configUrl.addPath( AvatarConfig );
 
 	KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig ), avatarName );
+	kDebug(14010) << "Checking if an avatar exists: " << avatarName;
 	if(!avatarConfig.exists()){
 		return false;
 	}
