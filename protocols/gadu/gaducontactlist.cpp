@@ -61,12 +61,18 @@ GaduContactsList::GaduContactsList( QString sList )
 
 		strList  = cline.split( QChar( ';' ), QString::KeepEmptyParts );
 
-		if ( strList.size() < 7 ) {
+		stringIterator = strList.begin();
+
+		if ((*stringIterator) == "GG70ExportString,") {
+			// since it doesn't matter for neither kopete nor ggserver
+			// its just list of current groups but may spoil contact list
+			kDebug( 14100 ) << "Ignoring GG70ExportSting contact list member";
+			break;
+		} else if ( strList.size() < 7 ) {
 			kDebug( 14100 ) << "Malformed entry, too short! Ignoring entry: " << strList;
 			break;
 		}
 
-		stringIterator = strList.begin();
 		
 		if ( strList.count() >= 12 ) {
 			email = true;
