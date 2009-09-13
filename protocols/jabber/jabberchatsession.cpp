@@ -72,10 +72,12 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 #ifdef JINGLE_SUPPORT
 	KAction *jingleSessionGui = new KAction(i18n("Show audio calls"), members().first());
+	jingleSessionGui->setIcon(KIcon("voicecall"));
 	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui() ));
 	setComponentData(protocol->componentData());
 
 	KAction *jingleSession = new KAction(i18n("Start audio call"), members().first());
+	jingleSession->setIcon(KIcon("voicecall"));
 	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession() ));
 	setComponentData(protocol->componentData());
 
