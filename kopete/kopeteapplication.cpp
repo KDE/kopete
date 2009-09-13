@@ -35,6 +35,8 @@
 #include "kabcpersistence.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
+#include "kopetestatusmanager.h"
+#include "kopetestatusitems.h"
 #include "kopetebehaviorsettings.h"
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
@@ -219,14 +221,35 @@ void KopeteApplication::slotAllPluginsLoaded()
 	// --noconnect not specified?
 
 	Kopete::OnlineStatusManager::Category initStatus = Kopete::OnlineStatusManager::self()->initialStatus();
+	Kopete::OnlineStatusManager::Category setStatus;
 
 	if ( args->isSet( "connect" )  &&  initStatus != Kopete::OnlineStatusManager::Offline &&
 			( Solid::Networking::status() == Solid::Networking::Unknown ||
 			  Solid::Networking::status() == Solid::Networking::Connected ) ){
 
 		Kopete::AccountManager::self()->setOnlineStatus( initStatus, QString(), Kopete::AccountManager::ConnectIfOffline );
+		setStatus = initStatus;
 
-	 }
+	} else {
+		setStatus = Kopete::OnlineStatusManager::Offline;
+	}
+
+	QList <Kopete::Status::StatusItem *> statusList = Kopete::StatusManager::self()->getRootGroup()->childList();
+	QString message, title;
+	bool found = false;
+
+	//find first Status for OnlineStatus
+	for ( QList <Kopete::Status::StatusItem *>::ConstIterator it = statusList.begin(); it != statusList.end(); ++it ) {
+		if ( ! (*it)->isGroup() && (*it)->category() == setStatus ) {
+			title = (*it)->title();
+			message = (static_cast <Kopete::Status::Status*> (*it))->message(); //if it is not group, it status
+			found = true;
+			break;
+		}
+	}
+
+	if ( found )
+		Kopete::StatusManager::self()->setGlobalStatus(setStatus, Kopete::StatusMessage(title, message));
 
  	kDebug(14000)<< "initial status set in config: " << initStatus;
 

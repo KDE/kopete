@@ -330,6 +330,11 @@ Kopete::StatusMessage StatusManager::globalStatusMessage() const
 	return d->globalStatusMessage;
 }
 
+uint StatusManager::globalStatusCategory() const
+{
+	return d->globalStatusCategory;
+}
+
 void StatusManager::askAndSetActive()
 {
 	kDebug(14010) << "Found Activity. Confirming if we should go active";

@@ -112,6 +112,11 @@ public:
 	Kopete::StatusMessage globalStatusMessage() const;
 
 	/**
+	 * Get current global status category
+	 */
+	uint globalStatusCategory() const;
+
+	/**
 	 * Returns true if auto away status was set
 	 */
 	bool autoAway();
