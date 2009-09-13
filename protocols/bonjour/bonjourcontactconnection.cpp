@@ -189,6 +189,14 @@ void BonjourContactConnection::dataInSocket()
 			getStreamTag(token);
 			break;
 	}
+
+	if (moreTokensAvailable())
+		dataInSocket();
+}
+
+bool BonjourContactConnection::moreTokensAvailable()
+{
+	return ! parser.atEnd();
 }
 
 void BonjourContactConnection::getStreamTag(BonjourXmlToken &token)
