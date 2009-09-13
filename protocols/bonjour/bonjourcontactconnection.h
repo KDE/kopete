@@ -80,6 +80,9 @@ class BonjourContactConnection : public QObject {
 	// Set the Socket
 	void setSocket(QTcpSocket *socket);
 
+	// Determine if there is more data available
+	bool moreTokensAvailable();
+
 	/**
 	 * @brief Description of A Token
 	 *
