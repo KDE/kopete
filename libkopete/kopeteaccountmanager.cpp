@@ -401,7 +401,7 @@ void AccountManager::networkConnected()
 		bool found = false;
 
 		//find first Status for OnlineStatus
-		for ( QList <Kopete::Status::StatusItem *>::ConstIterator it = statusList.begin(); it != statusList.end(); ++it ) {
+		for ( QList <Kopete::Status::StatusItem *>::ConstIterator it = statusList.constBegin(); it != statusList.constEnd(); ++it ) {
 			if ( ! (*it)->isGroup() && (*it)->category() == initStatus ) {
 				title = (*it)->title();
 				message = (static_cast <Kopete::Status::Status*> (*it))->message(); //if it is not group, it status
