@@ -82,7 +82,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	setComponentData(protocol->componentData());
 
 	Kopete::ContactPtrList chatMembers = members();
-	if (chatMembers.first())
+	if (!chatMembers.isEmpty())
 	{
 		JabberResource *bestResource = account()->resourcePool()->bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
 		if (bestResource)
@@ -148,7 +148,7 @@ void JabberChatSession::slotUpdateDisplayName ()
 	Kopete::ContactPtrList chatMembers = members ();
 
 	// make sure we do have members in the chat
-	if ( !chatMembers.first () )
+	if ( chatMembers.isEmpty() )
 		return;
 
 	XMPP::Jid jid = static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid();
