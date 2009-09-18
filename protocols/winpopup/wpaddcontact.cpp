@@ -17,6 +17,9 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+#include "wpaddcontact.h"
+
 // QT Includes
 #include <qlayout.h>
 //Added by qt3to4:
@@ -36,7 +39,6 @@
 // Local Includes
 #include "ui_wpaddcontactbase.h"
 #include "wpaccount.h"
-#include "wpaddcontact.h"
 
 WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount) : AddContactPage(parent)
 {

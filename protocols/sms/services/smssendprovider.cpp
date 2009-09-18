@@ -14,6 +14,7 @@
   *************************************************************************
 */
 
+#include "smssendprovider.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -29,7 +30,6 @@
 #include "kopeteaccount.h"
 #include "kopeteuiglobal.h"
 
-#include "smssendprovider.h"
 #include "smsprotocol.h"
 #include "smscontact.h"
 

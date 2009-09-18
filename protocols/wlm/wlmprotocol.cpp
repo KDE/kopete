@@ -44,12 +44,12 @@ wlmOnline (Kopete::OnlineStatus::Online, 25, this, 1, QStringList (),
            Kopete::OnlineStatusManager::Online),
 wlmAway (Kopete::OnlineStatus::Away, 18, this, 2, QStringList ("contact_away_overlay"),
          i18n ("Away"), i18n ("&Away"), Kopete::OnlineStatusManager::Away),
-wlmBusy (Kopete::OnlineStatus::Away, 20, this, 3, QStringList ("wlm_busy"),
+wlmBusy (Kopete::OnlineStatus::Busy, 20, this, 3, QStringList ("wlm_busy"),
          i18n ("Busy"), i18n ("&Busy"), Kopete::OnlineStatusManager::Busy),
 wlmBeRightBack (Kopete::OnlineStatus::Away, 22, this, 4,
                 QStringList ("wlm_brb"), i18n ("Be Right Back"),
                 i18n ("Be &Right Back"), 0),
-wlmOnThePhone (Kopete::OnlineStatus::Away, 12, this, 5,
+wlmOnThePhone (Kopete::OnlineStatus::Busy, 12, this, 5,
                QStringList ("contact_phone_overlay"), i18n ("On the Phone"),
                i18n ("On The &Phone"), 0),
 wlmOutToLunch (Kopete::OnlineStatus::Away, 15, this, 6,
@@ -70,6 +70,8 @@ wlmUnknown (Kopete::OnlineStatus::Unknown, 25, this, 0,
 wlmConnecting (Kopete::OnlineStatus::Connecting, 2, this, 10,
                QStringList ("wlm_connecting"), i18n ("Connecting")),
 currentSong ("currentSong", i18nc ("This is used in the tooltip of a contact", "Listening To")),
+contactCapabilities ("contactCapabilities", "Used to keep track of the contact capabilites", QString(), 
+		 Kopete::PropertyTmpl::PrivateProperty),
 displayPhotoSHA1("displayPhotoSHA1", "Display Photo SHA-1 Hash", QString(),
                  Kopete::PropertyTmpl::PersistentProperty | Kopete::PropertyTmpl::PrivateProperty)
 {
@@ -102,6 +104,7 @@ Kopete::Contact * WlmProtocol::deserializeContact (Kopete::MetaContact *
     QString contactSerial = serializedData["contactSerial"];
     QString accountId = serializedData["accountId"];
     QString displayName = serializedData["displayName"];
+    QString dontShowEmoticons = serializedData["dontShowEmoticons"];
 
     QList <Kopete::Account*>accounts =
         Kopete::AccountManager::self ()->accounts (this);
@@ -119,6 +122,10 @@ Kopete::Contact * WlmProtocol::deserializeContact (Kopete::MetaContact *
     }
     WlmContact * c = new WlmContact (account, contactId, contactSerial,
                         displayName, metaContact);
+
+    if(dontShowEmoticons == "true")
+        c->slotDontShowEmoticons(true);
+
     return c;
 }
 

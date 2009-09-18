@@ -66,10 +66,10 @@ public:
 	/**
 	 * \brief Create a group of the specified type
 	 *
-	 * Overloaded constructor to create a group with a display name of the specified type.
+	 * Overloaded constructor to create a group with a display name and Normal type.
 	 */
-	explicit Group( const QString &displayName, GroupType type = Normal );
-	
+	explicit Group( const QString &displayName );
+
 	~Group();
 
 	/**
@@ -88,11 +88,6 @@ public:
 	 * \return the group type
 	 */
 	GroupType type() const;
-
-	/**
-	 * \brief Set the group type
-	 */
-	void setType( GroupType newType );
 
 	/**
 	 * \return the unique id for this group
@@ -160,6 +155,11 @@ private slots:
 	void sendMessage( Kopete::Message& );
 
 private:
+	/**
+	 * \brief Create a group of the specified type
+	 */
+	Group( const QString &displayName, GroupType type );
+
 	static Group *s_topLevel;
 	static Group *s_temporary;
 

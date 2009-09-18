@@ -16,6 +16,8 @@
 
 #undef KDE_NO_COMPAT
 
+#include "smsaccount.h"
+
 #include <kconfigbase.h>
 #include <kaction.h>
 #include <kmenu.h>
@@ -29,7 +31,6 @@
 
 #include "serviceloader.h"
 
-#include "smsaccount.h"
 #include "smsprotocol.h"
 #include "smscontact.h"
 

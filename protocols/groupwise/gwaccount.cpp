@@ -19,6 +19,7 @@
     *************************************************************************
 */
 
+#include "gwaccount.h"
 #include <sys/utsname.h>
 
 #include <qvalidator.h>
@@ -62,8 +63,6 @@
 #include "ui_gwprivacy.h"
 #include "ui/gwprivacydialog.h"
 #include "ui/gwreceiveinvitationdialog.h"
-
-#include "gwaccount.h"
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
 : Kopete::PasswordedAccount ( parent, accountID )

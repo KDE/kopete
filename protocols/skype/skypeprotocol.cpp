@@ -60,12 +60,12 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 	SkypeMe(Kopete::OnlineStatus::Online, 0, this, 3, QStringList("skype_contact_skypeme"), i18n("Skype Me"), i18n("Skype Me"), Kopete::OnlineStatusManager::FreeForChat),
 	Away(Kopete::OnlineStatus::Away, 2, this, 4, QStringList("skype_contact_away"), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away),
 	NotAvailable(Kopete::OnlineStatus::Away, 1, this, 5, QStringList("skype_contact_not_available"), i18n("Not Available"), i18n("Not Available"), Kopete::OnlineStatusManager::Away),
-	DoNotDisturb(Kopete::OnlineStatus::Away, 0, this, 6, QStringList("skype_contact_dnd"), i18n("Do Not Disturb"), i18n("Do Not Disturb"), Kopete::OnlineStatusManager::Busy),
+	DoNotDisturb(Kopete::OnlineStatus::Busy, 0, this, 6, QStringList("skype_contact_dnd"), i18n("Do Not Disturb"), i18n("Do Not Disturb"), Kopete::OnlineStatusManager::Busy),
 	Invisible(Kopete::OnlineStatus::Invisible, 0, this, 7, QStringList("skype_contact_invisible"), i18n("Invisible"), i18n("Invisible"), Kopete::OnlineStatusManager::Invisible),
 	Connecting(Kopete::OnlineStatus::Connecting, 0, this, 8, QStringList("skype_connecting"), i18n("Connecting")),
-	NotInList(Kopete::OnlineStatus::Offline, 0, this, 9, QStringList("skype_contact_unknown"), i18n("Not in Skype list")),
-	NoAuth(Kopete::OnlineStatus::Offline, 0, this, 10, QStringList("skype_contact_unknown"), i18n("Not authorized")),
-	Phone(Kopete::OnlineStatus::Online, 0, this, 11, QStringList("skype_contact_skypeout"), i18n("SkypeOut contact")),
+	NotInList(Kopete::OnlineStatus::Unknown, 0, this, 9, QStringList("skype_contact_unknown"), i18n("Not in Skype list")),
+	NoAuth(Kopete::OnlineStatus::Unknown, 0, this, 10, QStringList("skype_contact_unknown"), i18n("Not authorized")),
+	Phone(Kopete::OnlineStatus::Unknown, 3, this, 11, QStringList("skype_contact_skypeout"), i18n("SkypeOut contact")), //Skype Out contact permanently offline TODO: add option for changing
 	/** Contact property templates */
 	propFullName(Kopete::Global::Properties::self()->fullName()),
 	propPrivatePhone(Kopete::Global::Properties::self()->privatePhone()),
@@ -74,7 +74,7 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 	propLastSeen(Kopete::Global::Properties::self()->lastSeen())
 
 {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	//create the d pointer
 	d = new SkypeProtocolPrivate();
 	//add address book field
@@ -96,58 +96,58 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 }
 
 SkypeProtocol::~SkypeProtocol() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	//release the memory
 	delete d;
 }
 
 Kopete::Account *SkypeProtocol::createNewAccount(const QString & accountID) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	//just create one
 	return new SkypeAccount(this, accountID);
 }
 
 AddContactPage *SkypeProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	return new SkypeAddContact(this, parent, (SkypeAccount *)account, 0L);
 }
 
 KopeteEditAccountWidget *SkypeProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	return new skypeEditAccount(this, account, parent);//create the widget and return it
 }
 
 void SkypeProtocol::registerAccount(SkypeAccount *account) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->account = account;
 }
 
 void SkypeProtocol::unregisterAccount() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->account = 0L;//forget everything about the account
 }
 
 bool SkypeProtocol::hasAccount() const {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	return (d->account);
 }
 
 Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &) {
-	kDebug() << k_funcinfo << "Name: " << serializedData["contactId"].toLower() << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Name: " << serializedData["contactId"].toLower();
 
 	QString contactID = serializedData["contactId"].toLower();//get the contact ID
 	QString accountId = serializedData["accountId"];
 
 	if (!d->account) {
-		kDebug() << "Account does not exists, skiping contact creation" << endl;//write error for debugging
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Account does not exists, skiping contact creation";//write error for debugging
 		return 0L;//create nothing
 	}
 
-	if (d->account->contact(contactID)){
-		kDebug() << "Contact" << contactID << "exists in contact list, skipping contact creation" << endl;
+	if (d->account->contact(contactID)) {
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Contact" << contactID << "exists in contact list, skipping contact creation";
 		return 0L;
 	}
 
@@ -155,7 +155,7 @@ Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaCont
 }
 
 void SkypeProtocol::updateCallActionStatus() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	bool enab = false;
 
@@ -183,7 +183,7 @@ void SkypeProtocol::updateCallActionStatus() {
 }
 
 void SkypeProtocol::callContacts() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	QString list;
 

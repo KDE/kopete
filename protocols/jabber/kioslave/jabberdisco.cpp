@@ -17,9 +17,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kdebug.h>
-
 #include "jabberdisco.h"
+
+#include <kdebug.h>
 
 #include <stdlib.h>
 #include <q3cstring.h>

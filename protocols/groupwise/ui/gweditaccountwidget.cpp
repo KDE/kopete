@@ -20,6 +20,7 @@
     *************************************************************************
 */
 
+#include "gweditaccountwidget.h"
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -38,8 +39,6 @@
 #include "gwaccount.h"
 #include "gwerror.h"
 #include "gwprotocol.h"
-
-#include "gweditaccountwidget.h"
 
 GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete::Account* theAccount)
 : QWidget( parent ), KopeteEditAccountWidget( theAccount )

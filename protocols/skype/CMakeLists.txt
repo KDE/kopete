@@ -14,6 +14,8 @@ include_directories(
 	${CMAKE_CURRENT_BUILD_DIR}
 )
 
+add_definitions(-DSKYPE_DEBUG_GLOBAL=14311)
+
 ########### next target ###############
 
 set(
@@ -26,12 +28,15 @@ QT4_ADD_DBUS_ADAPTOR(
 	libskype/skypedbus/com.Skype.API.Client.xml
 	libskype/skypedbus/skypeconnection.h
 	SkypeConnection
+	skypeadaptor
+	SkypeAdaptor
 )
 
 set(
 	libskype_SRCS
 
 	libskype/skype.cpp
+	libskype/skypewindow.cpp
 )
 
 set(
@@ -67,6 +72,8 @@ QT4_ADD_DBUS_ADAPTOR(
 	org.kde.kopete.SkypeActionHandler.xml
 	skypeaccount.h
 	SkypeAccount
+	skypeactionhandleradaptor
+	SkypeActionHandlerAdaptor
 )
 
 kde4_add_plugin(
@@ -78,17 +85,24 @@ target_link_libraries(
 	kopete_skype
 	kopete
 	${KDE4_KDEUI_LIBS}
-	${QT_QT3SUPPORT_LIBRARY}
+	${X11_X11_LIB}
 )
 
 ########### next target ###############
 
 add_subdirectory( icons )
-add_subdirectory( skypebuttons )
+macro_optional_add_subdirectory( skypebuttons )
 
 ########### install files ###############
 
 install( TARGETS kopete_skype DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES kopete_skype.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 install( FILES skypeui.rc skypechatui.rc DESTINATION ${DATA_INSTALL_DIR}/kopete_skype )
-install( PROGRAMS call_end call_start DESTINATION ${DATA_INSTALL_DIR}/kopete_skype )
+
+#Enable this for system bus dbus type communication with skype public api
+#Linux skype client (version 2.0.0.72) still doesnt support it, so we doesnt need it now maybe in new skype version
+#if (DBUS_SYSTEM_POLICY_DIR)
+#	install( FILES libskype/skypedbus/com.Skype.API.Client.conf DESTINATION ${DBUS_SYSTEM_POLICY_DIR})
+#else (DBUS_SYSTEM_POLICY_DIR)
+#	message(STATUS "It is necessary to specify the directory where the client policy file for com.Skype.API.Client.conf is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
+#endif (DBUS_SYSTEM_POLICY_DIR)

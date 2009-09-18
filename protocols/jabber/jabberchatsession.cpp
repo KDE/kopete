@@ -72,15 +72,17 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 #ifdef JINGLE_SUPPORT
 	KAction *jingleSessionGui = new KAction(i18n("Show audio calls"), members().first());
+	jingleSessionGui->setIcon(KIcon("voicecall"));
 	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui() ));
 	setComponentData(protocol->componentData());
 
 	KAction *jingleSession = new KAction(i18n("Start audio call"), members().first());
+	jingleSession->setIcon(KIcon("voicecall"));
 	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession() ));
 	setComponentData(protocol->componentData());
 
 	Kopete::ContactPtrList chatMembers = members();
-	if (chatMembers.first())
+	if (!chatMembers.isEmpty())
 	{
 		JabberResource *bestResource = account()->resourcePool()->bestJabberResource( static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid() );
 		if (bestResource)
@@ -146,7 +148,7 @@ void JabberChatSession::slotUpdateDisplayName ()
 	Kopete::ContactPtrList chatMembers = members ();
 
 	// make sure we do have members in the chat
-	if ( !chatMembers.first () )
+	if ( chatMembers.isEmpty() )
 		return;
 
 	XMPP::Jid jid = static_cast<JabberBaseContact*>(chatMembers.first())->rosterItem().jid();

@@ -421,17 +421,12 @@ public slots:
 		unsigned long fileSize = 0L );
 
 	/**
-	 * Emit aboutToSave signal to notify plugins that this metaContact is going to be saved
+	 * Serialize this metaContact
+	 * This causes each Kopete::Protocol subclass to serialise its contacts' data into the metacontact's plugin data
 	 */
-	void emitAboutToSave();
+	void serialize();
 
 signals:
-	/**
-	 * This metaContact is going to be saved to the contact list. Plugins should
-	 * connect to this signal to update data with setPluginData()
-	 */
-	void aboutToSave( Kopete::MetaContact *metaContact );
-
 	/**
 	 * One of the subcontacts' idle status has changed.  As with online status,
 	 * this can occur without the metacontact changing idle state
@@ -511,6 +506,11 @@ public slots:
 	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
 	void slotPluginLoaded( Kopete::Plugin *plugin );
+
+	/**
+	 * If a protocol is loaded, deserialize cached data
+	 */
+	void slotProtocolLoaded( Kopete::Protocol *p );
 
 signals:
 	/**
@@ -605,6 +605,8 @@ protected:
 	QImage photoFromCustom() const;
 	//QString nameFromContact( Kopete::Contact *c) const;
 	//QString nameFromKABC( const QString &id ) const;
+
+	void onlineStatusNotification( Kopete::Contact * c );
 
 private:
 	class Private;

@@ -11,6 +11,8 @@
 //
 //
 
+#include "qqchatsession.h"
+
 #include <qlabel.h>
 #include <qvalidator.h>
 //Added by qt3to4:
@@ -38,7 +40,6 @@
 #include "qqaccount.h"
 #include "qqcontact.h"
 #include "qqprotocol.h"
-#include "qqchatsession.h"
 #include <kactioncollection.h>
 
 QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const QString& guid) : Kopete::ChatSession(user, others, protocol), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )

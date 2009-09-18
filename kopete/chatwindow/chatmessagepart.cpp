@@ -44,6 +44,12 @@
 #include <QtGui/QScrollBar>
 #include <QMimeData>
 #include <QApplication>
+#include <QFileDialog>
+
+#include <Phonon/MediaObject>
+#include <Phonon/Path>
+#include <Phonon/AudioOutput>
+#include <Phonon/Global>
 
 // KHTML::DOM includes
 #include <dom/dom_doc.h>
@@ -530,6 +536,10 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	{
 		formattedMessageHtml = d->currentChatStyle->getFileTransferIncomingHtml();
 	}
+	else if(message.type() == Kopete::Message::TypeVoiceClipRequest)
+	{
+		formattedMessageHtml = d->currentChatStyle->getVoiceClipIncomingHtml();
+	}
 	else
 	{
 		switch(message.direction())
@@ -601,6 +611,10 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 			disableFileTransferButtons( message.id() );
 		else
 			addFileTransferButtonsEventListener( message.id() );
+	}
+	else if ( message.type() == Kopete::Message::TypeVoiceClipRequest )
+	{
+		addVoiceClipsButtonsEventListener( message.id() );
 	}
 
 	// Keep the direction to see on next message
@@ -924,7 +938,8 @@ void ChatMessagePart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * event) 
 
 void ChatMessagePart::slotCloseView( bool force )
 {
-	d->manager->view()->closeView( force );
+	if (d->manager && d->manager->view())
+		d->manager->view()->closeView( force );
 }
 
 void ChatMessagePart::emitTooltipEvent(  const QString &textUnderMouse, QString &toolTip )
@@ -1104,6 +1119,19 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		resultHTML.replace( QLatin1String("%saveFileHandlerId%"), QString( "ftSV%1" ).arg( message.id() ) );
 		resultHTML.replace( QLatin1String("%saveFileAsHandlerId%"), QString( "ftSA%1" ).arg( message.id() ) );
 		resultHTML.replace( QLatin1String("%cancelRequestHandlerId%"), QString( "ftCC%1" ).arg( message.id() ) );
+	}
+
+	if ( message.type() == Kopete::Message::TypeVoiceClipRequest )
+	{
+		QString fileIcon;
+
+		QString iconName = KMimeType::iconNameForUrl( message.fileName() );
+		fileIcon = KIconLoader::global()->iconPath( iconName, -KIconLoader::SizeMedium );
+
+		resultHTML.replace( QLatin1String("%fileIconPath%"), fileIcon );
+
+		resultHTML.replace( QLatin1String("%playVoiceHandlerId%"), QString( "vcPL%1" ).arg( message.id() ) );
+		resultHTML.replace( QLatin1String("%saveAsVoiceHandlerId%"), QString( "vcSA%1" ).arg( message.id() ) );
 	}
 
 	if ( message.type() == Kopete::Message::TypeNormal && message.direction() == Kopete::Message::Outbound )
@@ -1386,6 +1414,47 @@ void ChatMessagePart::resendMessage( uint messageId )
 	}
 }
 
+void ChatMessagePart::saveVoiceClip( uint messageId )
+{
+	QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+	for ( it = d->allMessages.constBegin(); it != itEnd; ++it )
+	{
+		if ( (*it).id() == messageId )
+		{
+			if(!(*it).fileName().isEmpty())
+			{
+				QString newFileName = QFileDialog::getSaveFileName(NULL,
+						i18n("Save File as"), QString(), i18n("Wav file (*.wav)"), &QString("*.wav"));
+				if(!newFileName.isEmpty())
+					QFile::copy((*it).fileName(), newFileName);
+			}
+			break;
+		}
+	}
+}
+
+void ChatMessagePart::playVoiceClip( uint messageId )
+{
+	QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+	for ( it = d->allMessages.constBegin(); it != itEnd; ++it )
+	{
+		if ( (*it).id() == messageId )
+		{
+			if(!(*it).fileName().isEmpty())
+			{
+				Phonon::MediaObject *media = new Phonon::MediaObject(this);
+				Phonon::AudioOutput *audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
+				connect(media, SIGNAL(finished()), media, SLOT(deleteLater()));
+				connect(media, SIGNAL(finished()), audioOutput, SLOT(deleteLater()));
+				createPath(media, audioOutput);
+				media->setCurrentSource((*it).fileName());
+				media->play();
+			}
+			break;
+		}
+	}
+}
+
 QString ChatMessagePart::adjustStyleVariantForChatSession( const QString & styleVariant ) const
 {
 	if ( d->currentChatStyle && d->manager->form() == Kopete::ChatSession::Chatroom
@@ -1424,6 +1493,16 @@ void ChatMessagePart::addFileTransferButtonsEventListener( unsigned int id )
 	elementId = QString( "ftCC%1" ).arg( id );
 	registerClickEventListener( document().getElementById( elementId ) );
 }
+
+void ChatMessagePart::addVoiceClipsButtonsEventListener( unsigned int id )
+{
+	QString elementId = QString( "vcSA%1" ).arg( id );
+	registerClickEventListener( document().getElementById( elementId ) );
+
+	elementId = QString( "vcPL%1" ).arg( id );
+	registerClickEventListener( document().getElementById( elementId ) );
+}
+
 
 void ChatMessagePart::disableFileTransferButtons( unsigned int id )
 {
@@ -1486,6 +1565,8 @@ void ChatMessagePart::registerClickEventListener( DOM::HTMLElement element )
 	{
 		d->htmlEventListener = new HTMLEventListener();
 		connect( d->htmlEventListener, SIGNAL(resendMessage(uint)), this, SLOT(resendMessage(uint)) );
+		connect( d->htmlEventListener, SIGNAL(playVoiceClip(uint)), this, SLOT(playVoiceClip(uint)) );
+		connect( d->htmlEventListener, SIGNAL(saveVoiceClip(uint)), this, SLOT(saveVoiceClip(uint)) );
 	}
 	element.addEventListener( "click", d->htmlEventListener, false );
 }
@@ -1515,6 +1596,10 @@ void HTMLEventListener::handleEvent( DOM::Event &event )
 			Kopete::TransferManager::transferManager()->cancelIncomingTransfer( messageId );
 		else if ( idType == QLatin1String( "msRS" ) )
 			emit resendMessage( messageId );
+		else if ( idType == QLatin1String( "vcPL" ) )
+			emit playVoiceClip( messageId );
+		else if ( idType == QLatin1String( "vcSA" ) )
+			emit saveVoiceClip( messageId );
 	}
 }
 

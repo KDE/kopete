@@ -117,7 +117,8 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 		 */
 		if ( account()->myself()->onlineStatus().isDefinitelyOnline() )
 		{
-			slotGetTimedVCard ();
+			mVCardUpdateInProgress = true;
+			QTimer::singleShot ( 1000, this, SLOT ( slotGetTimedVCard () ) );
 		}
 	}
 
@@ -341,7 +342,10 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 					m.setPlainBody( i18n("%1 has ended his/her participation in the chat session.", metaContact()->displayName()) );
 					m.setDirection( Kopete::Message::Internal );
 
-					mManager->appendMessage ( m, message.from().resource () );
+					if ( account()->mergeMessages() )
+						mManager->appendMessage ( m, QString() );
+					else
+						mManager->appendMessage ( m, message.from().resource () );
 				}
 			}
 		}
@@ -426,7 +430,10 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// append message to (eventually new) manager and preselect the originating resource
 	if ( newMessage )
 	{
-		mManager->appendMessage ( *newMessage, message.from().resource () );
+		if ( account()->mergeMessages() )
+			mManager->appendMessage ( *newMessage, QString() );
+		else
+			mManager->appendMessage ( *newMessage, message.from().resource () );
 
 		delete newMessage;
 	}
@@ -450,7 +457,10 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		msg.setDirection( Kopete::Message::Inbound );
 		msg.setRequestedPlugin( viewPlugin );
 
-		mManager->appendMessage ( msg, message.from().resource () );
+		if ( account()->mergeMessages() )
+			mManager->appendMessage ( msg, QString() );
+		else
+			mManager->appendMessage ( msg, message.from().resource () );
 	}
 }
 

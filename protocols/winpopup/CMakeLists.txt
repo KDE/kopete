@@ -45,7 +45,7 @@ install(TARGETS kopete_wp  DESTINATION ${PLUGIN_INSTALL_DIR})
 ########### install files ###############
 
 install( FILES kopete_wp.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install(PROGRAMS winpopup-send.sh winpopup-install.sh  DESTINATION ${BIN_INSTALL_DIR})
+install(PROGRAMS winpopup-send winpopup-install  DESTINATION ${BIN_INSTALL_DIR})
 
 
 

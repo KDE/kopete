@@ -17,6 +17,7 @@
     *************************************************************************
 */
 
+#include "gwcontactproperties.h"
 #include <qclipboard.h>
 #include <q3header.h>
 #include <qlabel.h>
@@ -38,8 +39,6 @@
 
 #include "gwcontact.h"
 #include "gwprotocol.h"
-
-#include "gwcontactproperties.h"
 
 GroupWiseContactProperties::GroupWiseContactProperties( GroupWiseContact * contact, QWidget *parent )
  : QObject(parent)

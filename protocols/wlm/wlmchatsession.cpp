@@ -27,6 +27,7 @@
 #include <QFileInfo>
 #include <QBuffer>
 #include <QPainter>
+#include <QStringList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -44,6 +45,7 @@
 #include <kcomponentdata.h>
 #include <kemoticons.h>
 #include <kcodecs.h>
+#include <KTemporaryFile>
 
 #include "kopetecontactaction.h"
 #include "kopeteonlinestatus.h"
@@ -59,7 +61,10 @@
 #include "wlmcontact.h"
 #include "wlmprotocol.h"
 #include "wlmaccount.h"
-
+#include "wlmchatsessioninkaction.h"
+#ifdef HAVE_GIFLIB
+#include <gif_lib.h>
+#endif
 
 WlmChatSession::WlmChatSession (Kopete::Protocol * protocol,
                                 const Kopete::Contact * user,
@@ -73,6 +78,14 @@ m_tries (0),
 m_oimid (1),
 m_sessionID(1)
 {
+#ifdef HAVE_MEDIASTREAMER
+    m_voiceFilter = NULL;
+    m_voiceCardCapture = NULL;
+    m_voiceTicker = NULL;
+    m_voiceRecorder = NULL;
+    m_voiceTimer = NULL;
+#endif
+
     Kopete::ChatSessionManager::self ()->registerChatSession (this);
 
     setComponentData (protocol->componentData ());
@@ -107,6 +120,44 @@ m_sessionID(1)
     m_actionInvite->setDelayed(false);
     connect (m_actionInvite->menu (), SIGNAL (aboutToShow ()), this,
              SLOT (slotActionInviteAboutToShow ()));
+
+    unsigned int userCaps = qobject_cast<WlmContact*>(members ().first ())->property(WlmProtocol::protocol()->contactCapabilities).value().toString().toUInt();
+
+    // if the official client supports Isf, for some reason it won't accept gif's.
+    if(userCaps & MSN::InkGifSupport &&
+       !(userCaps & MSN::InkIsfSupport))
+    {
+        m_actionInk = new WlmChatSessionInkAction;
+#ifdef HAVE_GIFLIB
+        actionCollection ()->addAction ("wlmSendInk", m_actionInk);
+#endif
+        m_actionInk->setDelayed(false);
+        connect(m_actionInk, SIGNAL(sendInk(const QPixmap &)), this, SLOT(slotSendInk(const QPixmap &)));
+    }
+
+#ifdef HAVE_MEDIASTREAMER
+    if(userCaps & MSN::VoiceClips)
+    {
+        m_actionVoice = new KActionMenu (KIcon ("preferences-desktop-sound"), i18n ("Send &Voice"), this);
+        actionCollection ()->addAction ("wlmSendVoice", m_actionVoice);
+        ms_init();
+        m_voiceCardCapture = ms_snd_card_manager_get_default_capture_card(ms_snd_card_manager_get());
+        if (!m_voiceCardCapture)
+        {
+            actionCollection()->action("wlmSendVoice")->setEnabled(false);
+            actionCollection()->action("wlmSendVoice")->setToolTip(i18n("Sound card not detected"));
+        }
+        connect (m_actionVoice->menu(), SIGNAL (aboutToShow ()), this,
+                 SLOT (slotSendVoiceStartRec ()));
+
+        connect (m_actionVoice->menu(), SIGNAL (aboutToHide ()), this,
+                 SLOT (slotSendVoiceStopRec ()));
+
+        KAction *stopRec = new  KAction(KIcon("wlm_fakefriend"), i18n("Stop &recording"), actionCollection ());
+        m_actionVoice->addAction (stopRec);
+        m_actionVoice->setDelayed(false);
+    }
+#endif
 
     setXMLFile ("wlmchatui.rc");
     setMayInvite (true);
@@ -218,6 +269,169 @@ WlmChatSession::sendFile (const QString & fileLocation,
     }
 }
 
+void
+WlmChatSession::slotSendVoiceStartRec ()
+{
+#ifdef HAVE_MEDIASTREAMER
+    if (members ().count () < 0)
+        return;
+
+    if(members ().first ()->onlineStatus () ==
+        WlmProtocol::protocol ()->wlmOffline ||
+        members ().first ()->onlineStatus () ==
+        WlmProtocol::protocol ()->wlmUnknown)
+    {
+        Kopete::Message msg = Kopete::Message ();
+        msg.setPlainBody (i18n ("The other contact needs to be online to receive voice clips."));
+        msg.setDirection (Kopete::Message::Internal);
+        appendMessage (msg);
+        // we cannot call hide() directly because the menu is not shown yet.
+        QTimer::singleShot(0, m_actionVoice->menu(), SLOT(hide()));
+        return;
+    }
+
+    if(myself()->onlineStatus () ==
+        WlmProtocol::protocol ()->wlmInvisible)
+    {
+        Kopete::Message msg = Kopete::Message ();
+        msg.setPlainBody (i18n ("You cannot send voice clips in invisible status"));
+        msg.setDirection (Kopete::Message::Internal);
+        appendMessage (msg);
+        // we cannot call hide() directly because the menu is not shown yet.
+        QTimer::singleShot(0, m_actionVoice->menu(), SLOT(hide()));
+        return;
+    }
+
+    KTemporaryFile voiceClip;
+    voiceClip.setPrefix("kopete_voiceClip-");
+    voiceClip.setSuffix(".wav");
+    voiceClip.open();
+    voiceClip.setAutoRemove(false);
+    m_currentVoiceClipName = voiceClip.fileName();
+    addFileToRemove(m_currentVoiceClipName);
+
+    int rate = 16000;
+    
+    m_voiceFilter=ms_snd_card_create_reader(m_voiceCardCapture);
+
+    ms_filter_call_method (m_voiceFilter, MS_FILTER_SET_SAMPLE_RATE, &rate);
+    m_voiceTicker=ms_ticker_new();
+
+    m_voiceRecorder = ms_filter_new(MS_FILE_REC_ID);
+    ms_filter_call_method(m_voiceRecorder,MS_FILE_REC_OPEN,m_currentVoiceClipName.toLatin1 ().data ());
+    ms_filter_call_method_noarg(m_voiceRecorder,MS_FILE_REC_START);
+    ms_filter_call_method (m_voiceRecorder, MS_FILTER_SET_SAMPLE_RATE, &rate);
+
+    ms_filter_link(m_voiceFilter,0,m_voiceRecorder,0);
+
+    ms_ticker_attach(m_voiceTicker,m_voiceFilter);
+    if(!m_voiceTimer)
+    {
+        m_voiceTimer = new QTimer(this);
+        connect(m_voiceTimer, SIGNAL(timeout()), this, SLOT(slotSendVoiceStopRecTimeout()));
+        m_voiceTimer->start (15 * 1000);
+    }
+#endif
+}
+
+void
+WlmChatSession::slotSendVoiceStopRecTimeout()
+{
+#ifdef HAVE_MEDIASTREAMER
+    if(m_voiceTimer)
+    {
+        Kopete::Message msg = Kopete::Message ();
+        msg.setPlainBody (i18n ("The maximum recording time is 15 seconds"));
+        msg.setDirection (Kopete::Message::Internal);
+        appendMessage (msg);
+        slotSendVoiceStopRec();
+    }
+#endif
+}
+
+void
+WlmChatSession::slotSendVoiceStopRec()
+{
+#ifdef HAVE_MEDIASTREAMER
+    if(m_actionVoice)
+        m_actionVoice->menu()->hide();
+    if(m_voiceTimer)
+    {
+        m_voiceTimer->stop();
+        m_voiceTimer->deleteLater();
+        m_voiceTimer = NULL;
+    }
+    if(m_voiceRecorder)
+        ms_filter_call_method_noarg(m_voiceRecorder,MS_FILE_REC_CLOSE);
+    if(m_voiceTicker && m_voiceFilter)
+        ms_ticker_detach(m_voiceTicker,m_voiceFilter);
+    if(m_voiceFilter && m_voiceRecorder)
+        ms_filter_unlink(m_voiceFilter,0,m_voiceRecorder,0);
+    if(m_voiceFilter)
+        ms_filter_destroy(m_voiceFilter);
+    if(m_voiceTicker)
+       ms_ticker_destroy(m_voiceTicker);
+    if(m_voiceRecorder)
+        ms_filter_destroy(m_voiceRecorder);
+
+    m_voiceRecorder=NULL;
+    m_voiceTicker=NULL;
+    m_voiceFilter=NULL;
+
+    if(m_currentVoiceClipName.isEmpty())
+        return;
+    
+    // average size of a 0.5 second voice clip
+    if(QFile(m_currentVoiceClipName).size() < 15000)
+    {
+        Kopete::Message msg = Kopete::Message ();
+        msg.setPlainBody (i18n ("The voice clip must be longer"));
+        msg.setDirection (Kopete::Message::Internal);
+        appendMessage (msg);
+        m_currentVoiceClipName = QString();
+        return;
+    }
+
+    if(getChatService () && isReady())
+    {
+        std::string obj;
+
+        // keep a local file without the conversion to siren.
+        // we use KTemporaryFile to generate a random file name
+        KTemporaryFile voiceClip;
+        voiceClip.setPrefix("kopete_voiceClip-");
+        voiceClip.setSuffix(".wav");
+        voiceClip.setAutoRemove(false);
+        voiceClip.open();
+        QString localVoice = voiceClip.fileName();
+        addFileToRemove(voiceClip.fileName());
+        voiceClip.close();
+        // copy will not overwrite the file, so we need to delete it
+        voiceClip.remove();
+        QFile::copy(m_currentVoiceClipName, localVoice);
+
+        getChatService ()->myNotificationServer()->msnobj.addMSNObject(m_currentVoiceClipName.toLatin1 ().data (),11);
+        getChatService ()->myNotificationServer()->msnobj.getMSNObjectXML(m_currentVoiceClipName.toLatin1 ().data (), 11, obj);
+        getChatService ()->sendVoiceClip(obj);
+
+        Kopete::Message kmsg( myself(), members() );
+        kmsg.setType(Kopete::Message::TypeVoiceClipRequest);
+        kmsg.setDirection( Kopete::Message::Outbound );
+        kmsg.setFileName(localVoice);
+        appendMessage ( kmsg );
+    }
+    else if (!isReady () && !isConnecting ())
+    {
+        m_pendingVoices.append (m_currentVoiceClipName);
+        requestChatService ();
+    }
+    else if(isConnecting ())
+    {
+        m_pendingVoices.append (m_currentVoiceClipName);
+    }
+    m_currentVoiceClipName = QString();
+#endif
+}
 
 void
 WlmChatSession::slotSendFile ()
@@ -246,6 +460,139 @@ WlmChatSession::slotInviteContact (Kopete::Contact * contact)
         m_pendingInvitations.append (contact->contactId ());
 }
 
+/* stolen from kpaint write_to_gif() */
+void
+WlmChatSession::convertToGif( const QPixmap & ink, QString filename)
+{
+#ifdef HAVE_GIFLIB
+    int i, status;
+    GifFileType *GifFile;
+    ColorMapObject *screenColourmap;
+    ColorMapObject *imageColourmap;
+    QImage img = ink.toImage().convertToFormat(QImage::Format_Indexed8);
+
+    imageColourmap= MakeMapObject(256, NULL);
+    if (!imageColourmap) {
+        return;
+    }
+
+    screenColourmap= MakeMapObject(256, NULL);
+    if (!screenColourmap) {
+        return;
+    }
+
+    for (i= 0; i < 256; i++) {
+        if (i <img.numColors()) {
+            imageColourmap->Colors[i].Red= qRed(img.color(i));
+            imageColourmap->Colors[i].Green= qGreen(img.color(i));
+            imageColourmap->Colors[i].Blue= qBlue(img.color(i));
+        }
+        else {
+            imageColourmap->Colors[i].Red= 0;
+            imageColourmap->Colors[i].Green= 0;
+            imageColourmap->Colors[i].Blue= 0;
+        }
+    }
+
+    for (i= 0; i < 256; i++) {
+        if (i <img.numColors()) {
+            screenColourmap->Colors[i].Red= qRed(img.color(i));
+            screenColourmap->Colors[i].Green= qGreen(img.color(i));
+            screenColourmap->Colors[i].Blue= qBlue(img.color(i));
+        }
+        else {
+            screenColourmap->Colors[i].Red= 0;
+            screenColourmap->Colors[i].Green= 0;
+            screenColourmap->Colors[i].Blue= 0;
+        }
+    }
+
+    GifFile= EGifOpenFileName(filename.toAscii().data(), 0);
+    if (!GifFile) {
+        FreeMapObject(imageColourmap);
+        FreeMapObject(screenColourmap);
+        return;
+    }
+
+    status= EGifPutScreenDesc(GifFile,
+                img.width(),
+                img.height(),
+                256,
+                0,
+                screenColourmap);
+
+    if (status != GIF_OK) {
+        EGifCloseFile(GifFile);
+        return;
+    }
+
+    status= EGifPutImageDesc(GifFile,
+               0, 0,
+               img.width(),
+               img.height(),
+               0,
+               imageColourmap);
+
+    if (status != GIF_OK) {
+        return;
+    }
+
+    for (i = 0; status && (i < img.height()); i++) {
+        status= EGifPutLine(GifFile, 
+            img.scanLine(i),
+            img.width());
+    }
+
+    if (status != GIF_OK) {
+        PrintGifError();
+        EGifCloseFile(GifFile);
+        return;
+    }
+
+    if (EGifCloseFile(GifFile) != GIF_OK) {
+        PrintGifError();
+        return;
+    }
+    return;
+#endif
+}
+
+void
+WlmChatSession::slotSendInk ( const QPixmap & ink)
+{
+    KTemporaryFile inkImage;
+    inkImage.setPrefix("inkformatgif-");
+    inkImage.setSuffix(".gif");
+    inkImage.open();
+    // if we autoremove the image, it will be deleted before
+    // khtml have the chance to show it on the screen.
+    inkImage.setAutoRemove(false);
+    QString name = inkImage.fileName();
+    addFileToRemove(name);
+    convertToGif(ink, name);
+
+    // encode to base64 and send it to libmsn
+    const std::string draw = QString::fromUtf8(KCodecs::base64Encode(inkImage.readAll())).toAscii().data();
+    if(!isReady() && !isConnecting())
+    {
+        m_pendingInks << QString(draw.c_str());
+        requestChatService ();
+    }
+    else if (isConnecting ())
+        m_pendingInks << QString(draw.c_str());
+    else
+        getChatService ()->sendInk(draw);
+
+    QString msg=QString ("<img src=\"%1\" />").arg ( name );
+
+    Kopete::Message kmsg( myself(), members() );
+    kmsg.setHtmlBody( msg );
+    kmsg.setDirection( Kopete::Message::Outbound );
+    appendMessage ( kmsg );
+
+    inkImage.deleteLater();
+}
+
 void
 WlmChatSession::slotActionInviteAboutToShow ()
 {
@@ -263,8 +610,7 @@ WlmChatSession::slotActionInviteAboutToShow ()
         contactList.end ();
     for (it = contactList.begin (); it != itEnd; ++it)
     {
-        if (!members ().contains (it.value ()) && it.value ()->isOnline ()
-            && it.value ()->onlineStatus ().status () == Kopete::OnlineStatus::Online)
+        if (!members ().contains (it.value ()) && it.value ()->isOnline ())
         {
             KAction *a =
                 new Kopete::UI::ContactAction (it.value (),
@@ -347,6 +693,14 @@ WlmChatSession::~WlmChatSession ()
         delete getChatService ();
         setChatService(NULL);
     }
+    for (int i = 0; i < m_filesToRemove.size(); ++i)
+        QFile::remove(m_filesToRemove.at(i));
+}
+
+void
+WlmChatSession::addFileToRemove (QString path)
+{
+    m_filesToRemove << path;
 }
 
 bool
@@ -405,20 +759,27 @@ MSN::Message WlmChatSession::parseMessage(Kopete::Message & msg)
 		mmsg.setColor(color.red(), color.green(), color.blue());
 	}
 
-	// stolen from msn plugin
-	const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
+    WlmAccount *acc = qobject_cast < WlmAccount * >(account ());
+    if(!acc)
+        return mmsg;
 
-	// Check the list for any custom emoticons
-	for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
-	{
-		for (QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2)
-		{
-			if (msg.plainBody().contains(*itr2))
-			{
-				getChatService()->sendEmoticon((*itr2).toAscii().data(), itr.key().toAscii().data());
-			}
-		}
-	}
+    if(!acc->doNotSendEmoticons())
+    {
+        // stolen from msn plugin
+        const QHash<QString, QStringList> emap = Kopete::Emoticons::self()->theme().emoticonsMap();
+
+        // Check the list for any custom emoticons
+        for (QHash<QString, QStringList>::const_iterator itr = emap.begin(); itr != emap.end(); ++itr)
+        {
+            for (QStringList::const_iterator itr2 = itr.value().constBegin(); itr2 != itr.value().constEnd(); ++itr2)
+            {
+                if (msg.plainBody().contains(*itr2))
+                {
+                    getChatService()->sendEmoticon((*itr2).toAscii().data(), itr.key().toAscii().data());
+                }
+            }
+        }
+    }
 	return mmsg;
 }
 
@@ -473,6 +834,48 @@ WlmChatSession::setReady (bool value)
             sendFile ((*it3), 0);
         }
         m_pendingFiles.clear ();
+
+        QLinkedList < QString >::iterator it4;
+        for (it4 = m_pendingInks.begin (); it4 != m_pendingInks.end ();
+             ++it4)
+        {
+            getChatService ()->sendInk((*it4).toAscii().data());
+        }
+        m_pendingInks.clear ();
+
+#ifdef HAVE_MEDIASTREAMER
+        QLinkedList < QString >::iterator it5;
+        for (it5 = m_pendingVoices.begin (); it5 != m_pendingVoices.end ();
+             ++it5)
+        {
+            std::string obj;
+
+            // keep a local file without the conversion to siren.
+            KTemporaryFile voiceClip;
+            voiceClip.setPrefix("kopete_voiceClip-");
+            voiceClip.setSuffix(".wav");
+            voiceClip.setAutoRemove(false);
+            voiceClip.open();
+            addFileToRemove(voiceClip.fileName());
+            QString localVoice = voiceClip.fileName();
+            voiceClip.close();
+            // copy will not overwrite the file, so we need to delete it
+            voiceClip.remove();
+            QFile::copy((*it5), localVoice);
+
+            getChatService ()->myNotificationServer()->msnobj.addMSNObject((*it5).toLatin1 ().data (),11);
+            getChatService ()->myNotificationServer()->msnobj.getMSNObjectXML((*it5).toLatin1 ().data (), 11, obj);
+            getChatService ()->sendVoiceClip(obj);
+
+            Kopete::Message kmsg( myself(), members() );
+            kmsg.setType(Kopete::Message::TypeVoiceClipRequest);
+            kmsg.setDirection( Kopete::Message::Outbound );
+            kmsg.setFileName(localVoice);
+            appendMessage ( kmsg );
+        }
+        m_pendingVoices.clear ();
+        m_currentVoiceClipName = QString();
+#endif
     }
     else
     {

@@ -21,7 +21,6 @@
 #define SAFEDELETE_H
 
 #include<qobject.h>
-#include<qobject.h>
 
 class SafeDelete;
 class SafeDeleteLock

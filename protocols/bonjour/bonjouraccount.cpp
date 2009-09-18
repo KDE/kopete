@@ -45,16 +45,12 @@ static const char AvailabilityStatusAwayId[] =  "away";
 
 
 BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountID )
-: Kopete::Account ( parent, accountID )
+: Kopete::Account ( parent, accountID ), username(), firstName(), emailAddress(), lastName(),
+	service(NULL), localServer(NULL), listeningPort(0), bonjourGroup(NULL), browser(NULL), unknownConnections()
 {
 	// Init the myself contact
 	setMyself( new BonjourContact( this, accountId(), accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
-
-	service = NULL;
-	localServer = NULL;
-	listeningPort = 0;
-	browser = NULL;
 
 	// All Contacts Go To The Bonjour Group
 	bonjourGroup = Kopete::ContactList::self()->findGroup("Bonjour");
@@ -106,7 +102,8 @@ void BonjourAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const K
 			myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
 		slotGoOnline();
 	else if (status.status() == Kopete::OnlineStatus::Online &&
-			myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
+			(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away ||
+				myself()->onlineStatus().status() == Kopete::OnlineStatus::Away) )
 		setAway( false, reason.message() );
 	else if ( status.status() == Kopete::OnlineStatus::Offline )
 		slotGoOffline();

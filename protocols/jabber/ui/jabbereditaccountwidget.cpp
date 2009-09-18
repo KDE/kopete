@@ -17,6 +17,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "jabbereditaccountwidget.h"
 #include <kdebug.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
@@ -42,7 +43,6 @@
 #include "kopetepasswordwidget.h"
 
 #include "jabberclient.h"
-#include "jabbereditaccountwidget.h"
 #include "jabberregisteraccount.h"
 #include "dlgjabberchangepassword.h"
 #include "privacydlg.h"
@@ -226,6 +226,8 @@ void JabberEditAccountWidget::reopen ()
 	cbSendGoneEvent->setChecked( account()->configGroup()->readEntry("SendGoneEvent", true) );
 
 	cbHideSystemInfo->setChecked( account()->configGroup()->readEntry("HideSystemInfo", false) );
+
+	mergeMessages->setChecked(account()->mergeMessages());
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
@@ -295,6 +297,8 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("SendGoneEvent", cbSendGoneEvent->isChecked());
 	
 	account()->configGroup()->writeEntry("HideSystemInfo", cbHideSystemInfo->isChecked());
+
+	account()->setMergeMessages(mergeMessages->isChecked());
 }
 
 bool JabberEditAccountWidget::validateData ()

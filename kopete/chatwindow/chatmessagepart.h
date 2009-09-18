@@ -191,6 +191,10 @@ private slots:
 	
 	void resendMessage( uint messageId );
 
+	void playVoiceClip( uint messageId );
+
+	void saveVoiceClip( uint messageId );
+
 protected:
 	virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
 
@@ -276,6 +280,8 @@ private:
 
 	void disableFileTransferButtons( unsigned int id );
 
+	void addVoiceClipsButtonsEventListener( unsigned int id );
+
 	void changeMessageStateElement( uint id, Kopete::Message::MessageState state );
 
 	void registerClickEventListener( DOM::HTMLElement element );
@@ -293,6 +299,8 @@ public:
 	virtual void handleEvent( DOM::Event &event );
 Q_SIGNALS:
 	void resendMessage( uint messageId );
+	void playVoiceClip( uint messageId );
+	void saveVoiceClip( uint messageId );
 };
 
 #endif

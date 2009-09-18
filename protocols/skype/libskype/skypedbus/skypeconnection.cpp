@@ -18,7 +18,7 @@
 
 */
 #include "skypeconnection.h"
-#include "clientadaptor.h"
+#include "skypeadaptor.h"
 
 #include <QtDBus>
 #include <QVariant>
@@ -26,7 +26,6 @@
 #include <qtimer.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <unistd.h>
 
 #define BUS d->bus == 1 ? QDBusConnection::systemBus() : QDBusConnection::sessionBus() //0 - session bus, 1 - system bus, default:0
 
@@ -59,7 +58,7 @@ class SkypeConnectionPrivate {
 };
 
 SkypeConnection::SkypeConnection() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d = new SkypeConnectionPrivate;//create the d pointer
 	d->fase = cfNotConnected;//not connected yet
@@ -68,17 +67,18 @@ SkypeConnection::SkypeConnection() {
 }
 
 SkypeConnection::~SkypeConnection() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	disconnectSkype();//disconnect before you leave
 	if ( d->skypeProcess.state() != QProcess::NotRunning )//if we started skype process kill it
 		d->skypeProcess.kill();
-	QProcess::execute("bash -c \"pkill -6 -U $USER -x skype.*\"");//try find skype process (skype, skype.real, ...) and kill it if we dont start skype or use skype.real wrapper
+	QProcess::execute("bash -c \"pkill -6 -U $USER -x ^skype.*$\"");//try find skype process (skype, skype.real, ...) and kill it if we dont start skype or use skype.real wrapper
+	QProcess::execute("bash -c \"pkill -6 -U $USER -x skype\"");
 	delete d;//Remove the D pointer
 }
 
 void SkypeConnection::startLogOn() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->startTimer) {
 		d->startTimer->deleteLater();
@@ -99,7 +99,7 @@ void SkypeConnection::startLogOn() {
 }
 
 void SkypeConnection::parseMessage(const QString &message) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	switch (d->fase) {
 		case cfNameSent: {
@@ -139,12 +139,12 @@ void SkypeConnection::parseMessage(const QString &message) {
 }
 
 void SkypeConnection::Notify(const QString &message){
-	kDebug() << k_funcinfo << "Got message:" << message << endl;//show what we have got
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Got message:" << message;//show what we have got
 	emit received(message);
 }
 
 void SkypeConnection::connectSkype(const QString &start, const QString &appName, int protocolVer, int bus, int launchTimeout, int waitBeforeConnect, const QString &name, const QString &pass) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->fase != cfNotConnected)
 		return;
@@ -153,9 +153,15 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 	d->protocolVer = protocolVer;
 	d->bus = bus;
 
-	new ClientAdaptor(this);
+	new SkypeAdaptor(this);
 	QDBusConnection busConn = BUS;
-	busConn.registerObject("/com/Skype/Client", this); //Register skype client to dbus for receiving messages to slot Notify
+	bool registred = busConn.registerObject("/com/Skype/Client", this); //Register skype client to dbus for receiving messages to slot Notify
+
+	if ( ! registred ) {
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant register Skype communication for Kopete on DBus";
+		emit error(i18n("Cant register Skype communication for Kopete on DBus"));
+		return;
+	}
 
 	{
 		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API", BUS);
@@ -171,18 +177,18 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 				if ( !name.isEmpty() && !pass.isEmpty() ){
 					args << "--pipelogin";
 				}
-				kDebug() << k_funcinfo << "Starting skype process" << skypeBin << "with parms" << args << endl;
+				kDebug(SKYPE_DEBUG_GLOBAL) << "Starting skype process" << skypeBin << "with parms" << args;
 				d->skypeProcess.start(skypeBin, args);
 				if ( !name.isEmpty() && !pass.isEmpty() ){
-					kDebug() << k_funcinfo << "Sending login name:" << name << endl;
+					kDebug(SKYPE_DEBUG_GLOBAL) << "Sending login name:" << name;
 					d->skypeProcess.write(name.trimmed().toLocal8Bit());
 					d->skypeProcess.write(" ");
-					kDebug() << k_funcinfo << "Sending password" << endl;
+					kDebug(SKYPE_DEBUG_GLOBAL) << "Sending password";
 					d->skypeProcess.write(pass.trimmed().toLocal8Bit());
 					d->skypeProcess.closeWriteChannel();
 				}
 				d->skypeProcess.waitForStarted();
-				kDebug() << k_funcinfo << "Skype process state:" << d->skypeProcess.state() << "Skype process error:" << d->skypeProcess.error() << endl;
+				kDebug(SKYPE_DEBUG_GLOBAL) << "Skype process state:" << d->skypeProcess.state() << "Skype process error:" << d->skypeProcess.error();
 				if ( d->skypeProcess.state() != QProcess::Running || d->skypeProcess.error() == QProcess::FailedToStart ) {
 					emit error(i18n("Could not launch Skype.\nYou need to install the original dynamic linked Skype version 2.0 binary from http://www.skype.com"));
 					disconnectSkype(crLost);
@@ -211,7 +217,10 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 }
 
 void SkypeConnection::disconnectSkype(skypeCloseReason reason) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
+
+	QDBusConnection busConn = BUS;
+	busConn.unregisterObject("/com/Skype/Client");
 
 	if (d->startTimer) {
 		d->startTimer->stop();
@@ -225,10 +234,10 @@ void SkypeConnection::disconnectSkype(skypeCloseReason reason) {
 }
 
 QString SkypeConnection::operator %(const QString &message) {
-	kDebug() << k_funcinfo << "Send message:" << message << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Send message:" << message;
 
 	if (d->fase == cfNotConnected)
-		return "";//not connected, posibly because of earlier error, do not show it again
+		return QString();//not connected, posibly because of earlier error, do not show it again
 
 	QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API", BUS);
 	QDBusReply <QString> reply = interface.call("Invoke", message);
@@ -241,22 +250,22 @@ QString SkypeConnection::operator %(const QString &message) {
 		if (d->fase != cfConnected)
 			emit connectionDone(seUnknown, 0);//Connection attempt finished with error
 		disconnectSkype(crLost);//lost the connection
-		return "";//this is enough, no more errors please..
+		return QString();//this is enough, no more errors please..
 	}
 
 	if ( message == "PING" && reply.value() != "PONG" ){
 		emit error(i18n("Could not ping Skype.\nYou are logged out from Skype, please log in."));
 		emit connectionDone(seNoSkype, 0);
 		disconnectSkype(crLost);//lost the connection
-		return "";//this is enough, no more errors please..
+		return QString();//this is enough, no more errors please..
 	}
 
-	kDebug() << "Reply message:" << reply.value() << endl;//show what we have received
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Reply message:" << reply.value();//show what we have received
 	return reply.value();//ok, just return it
 }
 
 void SkypeConnection::send(const QString &message) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	QString reply = *this % message;
 	if ( ! reply.isEmpty() )
@@ -269,19 +278,19 @@ SkypeConnection &SkypeConnection::operator <<(const QString &message) {
 }
 
 bool SkypeConnection::connected() const {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	return d->fase == cfConnected;
 }
 
 int SkypeConnection::protocolVer() const {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	return d->protocolVer;//just give him the protocol version
 }
 
 void SkypeConnection::tryConnect() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	{
 		QDBusInterface interface("com.Skype.API", "/com/Skype", "com.Skype.API", BUS);

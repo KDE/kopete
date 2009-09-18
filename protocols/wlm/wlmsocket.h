@@ -22,12 +22,13 @@
 #include <msn/msn.h>
 
 class QTimer;
+class WlmServer;
 
 class WlmSocket : public QSslSocket
 {
   Q_OBJECT 
 public:
-    explicit WlmSocket( MSN::NotificationServerConnection * mainConnection, bool isSSL = false );
+    explicit WlmSocket( MSN::NotificationServerConnection * mainConnection, bool isSSL = false, WlmServer* server = NULL );
     ~WlmSocket();
 
     bool isSSL() const { return mIsSSL; }

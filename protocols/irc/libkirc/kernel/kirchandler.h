@@ -2,7 +2,6 @@
     kirchandler.h - IRC handler.
 
     Copyright (c) 2008      by Michel Hermier <michel.hermier@gmail.com>
-    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -70,15 +69,10 @@ public:
 	bool unregisterMessage();
 #endif
 
-	void registerMessageAlias(const QByteArray &message, const QByteArray &alias);
+	void registerMessageAlias(const QByteArray &alias, const QByteArray &message);
 
-	/** returns a list of commands, that are handled by this handler and
-	 *  his subhandlers. Used to give an overview of what commands can 
-	 *  be invoked by the user
-	 */
-	virtual KIrc::Command handledCommands();
 public Q_SLOTS:
-	virtual KIrc::Handler::Handled onCommand(KIrc::Context *context, const KIrc::Command &command/*, KIrc::Entity::Ptr from*/, KIrc::Socket* socket);
+	virtual KIrc::Handler::Handled onCommand(KIrc::Context *context, const QList<QByteArray> &command/*, KIrc::Entity::Ptr from*/);
 	virtual KIrc::Handler::Handled onMessage(KIrc::Context *context, const KIrc::Message &message, KIrc::Socket *socket);
 
 Q_SIGNALS:

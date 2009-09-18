@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef __APPEARANCE_H
-#define __APPEARANCE_H
+#ifndef APPEARANCECONFIG_H
+#define APPEARANCECONFIG_H
 
 #define KDE3_SUPPORT
 #include <kcmodule.h>

@@ -13,8 +13,8 @@
   *************************************************************************
 */
 
-#include "smsadd.h"
 #include "smsaddcontactpage.h"
+#include "smsadd.h"
 #include "kopeteaccount.h"
 
 #include <qlayout.h>

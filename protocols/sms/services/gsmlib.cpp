@@ -13,7 +13,8 @@
   *************************************************************************
 */
 
-#include "config-kopete.h"
+#include "gsmlib.h"
+#include <config-kopete.h>
 #ifdef INCLUDE_SMSGSM
 
 #include <qcombobox.h>
@@ -47,7 +48,6 @@
 #include "kopetecontactlist.h"
 #include "kopetechatsessionmanager.h"
 
-#include "gsmlib.h"
 #include "gsmlibprefs.h"
 #include "smsprotocol.h"
 #include "smscontact.h"

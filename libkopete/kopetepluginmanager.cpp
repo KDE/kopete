@@ -43,6 +43,7 @@
 #include <kservicetypetrader.h>
 
 #include "kopeteplugin.h"
+#include "kopeteprotocol.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
 
@@ -60,7 +61,9 @@ public:
 	~PluginManagerPrivate()
 	{
 		if ( shutdownMode != DoneShutdown )
+		{
 			kWarning( 14010 ) << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
+		}
 
 		// Clean up loadedPlugins manually, because PluginManager can't access our global
 		// static once this destructor has started.
@@ -387,6 +390,10 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 		kDebug( 14010 ) << "Successfully loaded plugin '" << pluginId << "'";
 
 		emit pluginLoaded( plugin );
+
+		Protocol* protocol = dynamic_cast<Protocol*>( plugin );
+		if ( protocol )
+			emit protocolLoaded( protocol );
 	}
 	else
 	{

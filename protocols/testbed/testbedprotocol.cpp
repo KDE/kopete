@@ -13,6 +13,9 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "testbedprotocol.h"
+
 #include <QList>
 #include <kgenericfactory.h>
 #include <kdebug.h>
@@ -20,7 +23,6 @@
 #include "kopeteaccountmanager.h"
 #include "testbedaccount.h"
 #include "testbedcontact.h"
-#include "testbedprotocol.h"
 #include "testbedaddcontactpage.h"
 #include "testbededitaccountwidget.h"
 
@@ -31,11 +33,13 @@ TestbedProtocol *TestbedProtocol::s_protocol = 0L;
 
 TestbedProtocol::TestbedProtocol( QObject* parent, const QVariantList &/*args*/ )
 	: Kopete::Protocol( TestbedProtocolFactory::componentData(), parent ),
-	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
+	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),
 			  i18n( "Online" ),   i18n( "O&nline" ), Kopete::OnlineStatusManager::Online ),
-	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  
+	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),
 			  i18n( "Away" ),   i18n( "&Away" ), Kopete::OnlineStatusManager::Away ),
-	  testbedOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString()), 
+	  testbedBusy(  Kopete::OnlineStatus::Busy, 25, this, 1, QStringList(QLatin1String("msn_busy")),
+			  i18n( "Busy" ),   i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy ),
+	  testbedOffline(  Kopete::OnlineStatus::Offline, 25, this, 2,  QStringList(QString()),
 			  i18n( "Offline" ),   i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline )
 
 {

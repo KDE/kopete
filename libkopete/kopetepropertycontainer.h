@@ -63,7 +63,7 @@ public:
 	/**
 	 * @brief Deserialize the contacts persistent properties
 	 */
-	void deserializeProperties(QMap<QString, QString> &serializedData);
+	void deserializeProperties(const QMap<QString, QString> &serializedData);
 
 	/**
 	 * @return A QStringList containing all property keys

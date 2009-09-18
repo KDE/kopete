@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#ifndef __KOPETEIDENTITYDIALOG_H
-#define __KOPETEIDENTITYDIALOG_H
+#ifndef IDENTITYDIALOG_H
+#define IDENTITYDIALOG_H
 
 #include <kopeteinfodialog.h>
 #include <kopete_export.h>

@@ -107,7 +107,7 @@ class SkypePrivate {
 };
 
 Skype::Skype(SkypeAccount &account) : QObject() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d = new SkypePrivate(account);//create the d-pointer
 
@@ -129,7 +129,7 @@ Skype::Skype(SkypeAccount &account) : QObject() {
 
 
 Skype::~Skype() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->connection.connected())
 		d->connection << QString("SET USERSTATUS OFFLINE");
@@ -141,7 +141,7 @@ Skype::~Skype() {
 }
 
 void Skype::setOnline() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->showDeadMessage = true;
 
 	if ((d->onlineStatus == usOnline) && (d->connStatus == csOnline) && (d->connection.connected()))
@@ -151,7 +151,7 @@ void Skype::setOnline() {
 }
 
 void Skype::setOffline() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->showDeadMessage = false;
 
 	d->connection << QString("SET USERSTATUS OFFLINE");//this one special, do not connect to skype because of that
@@ -160,42 +160,42 @@ void Skype::setOffline() {
 }
 
 void Skype::setAway() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS AWAY", true);
 }
 
 void Skype::setNotAvailable() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS NA", true);
 }
 
 void Skype::setDND() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS DND", true);
 }
 
 void Skype::setInvisible() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS INVISIBLE", true);
 }
 
 void Skype::setSkypeMe() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->showDeadMessage = true;
 
 	queueSkypeMessage("SET USERSTATUS SKYPEME", true);
 }
 
 void Skype::queueSkypeMessage(const QString &message, bool deleteQueue) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->connection.connected()) {//we are connected, so just send it
 		d->connection << message;//just send it
@@ -209,7 +209,7 @@ void Skype::queueSkypeMessage(const QString &message, bool deleteQueue) {
 }
 
 void Skype::setValues(int launchType, const QString &appName) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->appName = appName;
 	if (d->appName.isEmpty()) //The defaut one?
@@ -226,7 +226,7 @@ void Skype::setValues(int launchType, const QString &appName) {
 }
 
 void Skype::closed(int) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	emit wentOffline();//No longer connected
 	d->messageQueue.clear();//no messages will wait, it was lost
@@ -235,7 +235,7 @@ void Skype::closed(int) {
 }
 
 void Skype::connectionDone(int error, int protocolVer) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->pings) {
 		d->pingTimer->start(1000);
@@ -272,7 +272,7 @@ void Skype::connectionDone(int error, int protocolVer) {
 }
 
 void Skype::error(const QString &message) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	disconnect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//One arror at a time is enough, stop flooding the user
 
@@ -283,7 +283,7 @@ void Skype::error(const QString &message) {
 }
 
 void Skype::skypeMessage(const QString &message) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	QString messageType = message.section(' ', 0, 0).trimmed().toUpper();//get the first part of the message
 	if (messageType == "CONNSTATUS") {//the connection status
@@ -324,16 +324,16 @@ void Skype::skypeMessage(const QString &message) {
 		QString theRest = message.section(' ', 1).trimmed();//take the rest
 		if (d->searchFor == "FRIENDS") {//it was initial search for al users
 			QStringList names = theRest.split(",");//divide it into names by comas
-			kDebug() << "Names: " << names << endl;//write what you have done with that
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Names: " << names;//write what you have done with that
 			for (QStringList::iterator it = names.begin(); it != names.end(); ++it) {//run trough the names
 				QString name = (*it).trimmed();//get the name only
 				if (name.isEmpty())
 					continue;//just skip the empty names
 				int groupID = getContactGroupID(name);
 				if ( groupID != -1 )
-					kDebug() << "Found group for user" << name << groupID << ":" << getGroupName(groupID) << endl;
+					kDebug(SKYPE_DEBUG_GLOBAL) << "Found group for user" << name << groupID << ":" << getGroupName(groupID);
 				else
-					kDebug() << "Not found group for user" << name << endl;
+					kDebug(SKYPE_DEBUG_GLOBAL) << "Not found group for user" << name;
 				emit newUser(name, groupID);//add the user to list
 			}
 			if (d->scanForUnread)
@@ -348,14 +348,15 @@ void Skype::skypeMessage(const QString &message) {
 			(type == "ONLINESTATUS") || (type == "BUDDYSTATUS") || (type == "HOMEPAGE")) {
 			const QString &info = message.section(' ', 2);//and the rest is just the message for that contact
 			emit contactInfo(contactId, info);//and let the contact know
-		} else if ( type == "ISBLOCKED" || type == "ISAUTHORIZED" )
+		} else if ( type == "ISBLOCKED" || type == "ISAUTHORIZED" ) {
 			/// TODO: Implement status ISBLOCKED and ISAUTHORIZED
-			kDebug() << "Status ISBLOCKED and ISAUTHORIZED is not implemented for contact, ignored" << endl;
-		else if ( type == "ABOUT" )
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Status ISBLOCKED and ISAUTHORIZED is not implemented for contact, ignored";
+		} else if ( type == "ABOUT" ) {
 			/// TODO: Implement info ABOUT
-			kDebug() << "Info ABOUT is not implemented for contact, ignored" << endl;
-		else
-			kDebug() << "Unknown message for contact, ignored" << endl;
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Info ABOUT is not implemented for contact, ignored";
+		} else {
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown message for contact, ignored";
+		}
 	} else if (messageType == "CHATMESSAGE") {//something with message, maebe incoming/sent
 		QString messageId = message.section(' ', 1, 1).trimmed();//get the second part of message - it is the message ID
 		QString type = message.section(' ', 2, 2).trimmed().toUpper();//This part significates what about the message are we talking about (status, body, etc..)
@@ -508,17 +509,19 @@ void Skype::skypeMessage(const QString &message) {
 		if (name.isEmpty())
 			name = user;
 		emit setMyselfName(name);
+	} else {
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknow message" << message;
 	}
 }
 
 void Skype::getContactBuddy(const QString &contact) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection << QString("GET USER %1 BUDDYSTATUS").arg(contact);//just make a message asking for the buddystatus of user and send it
 }
 
 void Skype::resetStatus() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	switch (d->connStatus) {
 		case csOffline:
@@ -563,14 +566,14 @@ void Skype::resetStatus() {
 }
 
 void Skype::search(const QString &what) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->searchFor = what.section(' ', 0, 0).trimmed().toUpper();
 	d->connection << QString("SEARCH %1").arg(what.toUpper());//search for that
 }
 
 void Skype::getContactInfo(const QString &contact) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection << QString("GET USER %1 FULLNAME").arg(contact)//ask for full name
 	<< QString("GET USER %1 SEX").arg(contact)//ask for sex
@@ -596,11 +599,14 @@ void Skype::setMarkMode(bool value) {
 }
 
 void Skype::hitchHike(const QString &messageId) {
-	kDebug() << k_funcinfo << "Message: " << messageId << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Message: " << messageId;
 
 	const QString &chat = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).trimmed();
 
 	const QString &chatType = (d->connection % QString("GET CHAT %1 STATUS").arg(chat)).section(' ', 3, 3).trimmed().toUpper();
+
+	const QString &timeStamp = (d->connection % QString("GET CHATMESSAGE %1 TIMESTAMP").arg(messageId)).section(' ', 3, 3).trimmed();
+	//TODO: convert UNIX timestamp to QTimeDate and use it
 
 	if ((chatType == "LEGACY_DIALOG") || (chatType == "DIALOG")) {
 
@@ -622,7 +628,7 @@ void Skype::hitchHike(const QString &messageId) {
 }
 
 void Skype::send(const QString &user, const QString &message) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection << QString("MESSAGE %1 %2").arg(user).arg(message);//just ask skype to send it
 }
@@ -632,25 +638,25 @@ void Skype::setScanForUnread(bool value) {
 }
 
 void Skype::makeCall(const QString &userId) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection << QString("CALL %1").arg(userId);
 }
 
 void Skype::acceptCall(const QString &callId) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection << QString("SET CALL %1 STATUS INPROGRESS").arg(callId);
 }
 
 void Skype::hangUp(const QString &callId) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection << QString("SET CALL %1 STATUS FINISHED").arg(callId);
 }
 
 void Skype::toggleHoldCall(const QString &callId) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	const QString &status = (d->connection % QString("GET CALL %1 STATUS").arg(callId)).section(' ', 3, 3).trimmed().toUpper();
 	if ((status == "ONHOLD") || (status == "LOCALHOLD"))
@@ -675,7 +681,7 @@ void Skype::getSkypeOut() {
 }
 
 void Skype::enablePings(bool enabled) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->pings = enabled;
 
@@ -710,7 +716,7 @@ void Skype::setWaitConnect(int value) {
 }
 
 void Skype::sendToChat(const QString &chat, const QString &message) {
-	kDebug() << k_funcinfo <<  endl;//some debug info`
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->connection.protocolVer() <= 4) {//Not able to handle it by the API, let Skype do it for me
 		d->connection << QString("OPEN CHAT %1 %2").arg(chat).arg(message);
@@ -721,19 +727,19 @@ void Skype::sendToChat(const QString &chat, const QString &message) {
 }
 
 void Skype::getTopic(const QString &chat) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	emit setTopic(chat, (d->connection % QString("GET CHAT %1 FRIENDLYNAME").arg(chat)).section(' ', 3).trimmed());
 }
 
 QString Skype::getMessageChat(const QString &message) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	return (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(message)).section(' ', 3, 3).trimmed();
 }
 
 QStringList Skype::getChatUsers(const QString &chat) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	const QString &me = getMyself();
 	const QString &rawUsers = (d->connection % QString("GET CHAT %1 MEMBERS").arg(chat)).section(' ', 3).trimmed();
@@ -753,7 +759,7 @@ QString Skype::getMyself() {
 }
 
 void Skype::inviteUser(const QString &chatId, const QString &userId) {
-	kDebug() << k_funcinfo << " " << chatId << " " << userId << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << chatId << userId;
 
 	if (d->connection.protocolVer() <= 4) {
 		KMessageBox::error(0L, i18n("This version of Skype does not support adding users to chat."), i18n("Skype Protocol"));
@@ -764,33 +770,33 @@ void Skype::inviteUser(const QString &chatId, const QString &userId) {
 }
 
 QString Skype::createChat(const QString &users) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	const QString &chatDesc = d->connection % QString("CHAT CREATE %1").arg(users);
-	kDebug() << "New chat ID: " << chatDesc.section(' ', 1, 1) << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << "New chat ID: " << chatDesc.section(' ', 1, 1);
 	return chatDesc.section(' ', 1, 1);
 }
 
 void Skype::leaveChat(const QString &chatId) {
-	kDebug() << k_funcinfo <<  endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection << QString("ALTER CHAT %1 LEAVE").arg(chatId);
 }
 
 void Skype::removeContact(const QString &contactId) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection << QString("SET USER %1 BUDDYSTATUS 1").arg(contactId);
 }
 
 void Skype::addContact(const QString &contactId) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection % QString("SET USER %1 BUDDYSTATUS 2").arg(contactId);//do NOT parse this so the contact won't be created automatically
 }
 
 void Skype::setAuthor(const QString &contactId, AuthorType author) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	switch (author) {
 		case Author:
@@ -808,7 +814,7 @@ void Skype::setAuthor(const QString &contactId, AuthorType author) {
 }
 
 Skype::AuthorType Skype::getAuthor(const QString &contactId) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	if ((d->connection % QString("GET USER %1 ISBLOCKED").arg(contactId)).section(' ', 3, 3).trimmed().toUpper() == "TRUE")
 		return Block;
 	else if ((d->connection % QString("GET USER %1 ISAUTHORIZED").arg(contactId)).section(' ', 3, 3).trimmed().toUpper() == "TRUE")
@@ -818,12 +824,12 @@ Skype::AuthorType Skype::getAuthor(const QString &contactId) {
 }
 
 bool Skype::ableConference() {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	return false;
 }
 
 void Skype::fixGroups(bool loadOnly) {
-	kDebug() << k_funcinfo << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->groupsContacts.clear();//remove all contacts and groups in memory
 	d->groupsNames.clear();//remove all groups names
@@ -836,7 +842,7 @@ void Skype::fixGroups(bool loadOnly) {
 			if ( ! (*it).trimmed().isEmpty() ){
 				int groupID = (*it).trimmed().toInt();
 				QString groupName = (d->connection % QString("GET GROUP %1 DISPLAYNAME").arg(groupID)).section(' ', 3).trimmed();
-				kDebug() << "Adding to memory group" << groupID << ":" << groupName << endl;
+				kDebug(SKYPE_DEBUG_GLOBAL) << "Adding to memory group" << groupID << ":" << groupName;
 				d->groupsNames.insert(groupName, groupID);
 			}
 		}
@@ -848,14 +854,14 @@ void Skype::fixGroups(bool loadOnly) {
 		QList <int> groups = d->groupsNames.values();
 		for ( QList <int>::iterator group = groups.begin(); group != groups.end(); ++group ) {
 			QStringList groupusers = QString(d->connection % QString("GET GROUP %1 USERS").arg(*group)).section(' ', 3).trimmed().split(",");//get all user in group (*group)
-			if ( ( groupusers.count() == 0 || groupusers.first().trimmed() == "" ) && ! loadOnly ) {//if group is empty, delete it
-				kDebug() << QString("Group %1 is empty, delete it").arg(*group) << endl;
+			if ( ( groupusers.count() == 0 || groupusers.first().trimmed().isEmpty() ) && ! loadOnly ) {//if group is empty, delete it
+				kDebug(SKYPE_DEBUG_GLOBAL) << QString("Group %1 is empty, delete it").arg(*group);
 				deleteGroup(*group);
 			} else {
-				kDebug() << QString("Group %1 has users:").arg(*group) << groupusers << endl;
+				kDebug(SKYPE_DEBUG_GLOBAL) << QString("Group %1 has users:").arg(*group) << groupusers;
 				for ( QStringList::iterator user = groupusers.begin(); user != groupusers.end(); ++user ) {//search for all users in group (*group)
 					if ( ! (*user).trimmed().isEmpty() ){//if username isnt empty add it to group
-						kDebug() << "Adding user " << (*user).trimmed() << "to memory group" << *group << ":" << d->groupsNames.key(*group) << endl;
+						kDebug(SKYPE_DEBUG_GLOBAL) << "Adding user " << (*user).trimmed() << "to memory group" << *group << ":" << d->groupsNames.key(*group);
 						d->groupsContacts.insert( *group, (*user).trimmed() );//add user (*user) to group (*group)
 					}
 				}
@@ -869,10 +875,10 @@ void Skype::fixGroups(bool loadOnly) {
 		for ( QStringList::iterator user = users.begin(); user != users.end(); ++user ) {
 			if ( ! (*user).isEmpty() ) {
 				QList <int> groups = d->groupsContacts.keys(*user);//get groups for user (*user)
-				kDebug() << QString("User %1 is in memory groups:").arg(*user) << groups << endl;
+				kDebug(SKYPE_DEBUG_GLOBAL) << QString("User %1 is in memory groups:").arg(*user) << groups;
 				if ( groups.count() > 1 ) {//if user is in more then one group, remove it from all groups except first
 					for ( QList <int>::iterator group = groups.begin()+1; group != groups.end(); ++group ){
-						kDebug() << QString("User %1 is in more then one memory groups, removing from memory group %2").arg(*user).arg(*group) << endl;
+						kDebug(SKYPE_DEBUG_GLOBAL) << QString("User %1 is in more then one memory groups, removing from memory group %2").arg(*user).arg(*group);
 						removeFromGroup(*user, *group);
 					}
 				}
@@ -886,7 +892,7 @@ void Skype::fixGroups(bool loadOnly) {
 		for ( QStringList::iterator group = groupsNames.begin(); group != groupsNames.end(); ++group ){
 			QList <int> groupIdes = d->groupsNames.values(*group);
 			if ( groupIdes.count() > 1 ){
-				kDebug() << "Group" << *group << "has more ides then one:" << groupIdes << ", so merge all these groups to" << groupIdes.last() << endl;
+				kDebug(SKYPE_DEBUG_GLOBAL) << "Group" << *group << "has more ides then one:" << groupIdes << ", so merge all these groups to" << groupIdes.last();
 				for ( QList <int>::iterator groupID = groupIdes.begin(); groupID != groupIdes.end() - 1; ++groupID ) {
 					QStringList users = d->groupsContacts.values(*groupID);
 					for ( QStringList::iterator user = users.begin(); user != users.end(); ++user ) {
@@ -903,67 +909,76 @@ void Skype::fixGroups(bool loadOnly) {
 }
 
 int Skype::getContactGroupID(const QString &name) {
-	kDebug() << k_funcinfo << name << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << name;
 	return d->groupsContacts.key(name, -1); //get group id from d->groupsContacts
 }
 
 void Skype::removeFromGroup(const QString &name, int groupID) {
-	kDebug() << k_funcinfo << name << groupID << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << name << groupID;
 	d->connection << QString("ALTER GROUP %1 REMOVEUSER %2").arg(groupID).arg(name);
 	d->groupsContacts.remove(groupID, name);
 }
 
 void Skype::addToGroup(const QString &name, int groupID) {
-	kDebug() << k_funcinfo << name << groupID << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << name << groupID;
 	d->connection << QString("ALTER GROUP %1 ADDUSER %2").arg(groupID).arg(name);
 	d->groupsContacts.insert(groupID, name);
 }
 
 void Skype::createGroup(const QString &name) {
-	kDebug() << k_funcinfo << name << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << name;
 	d->connection << QString("CREATE GROUP %1").arg(name);
 	fixGroups(true); ///TODO: Find better way to get group id and create memory group too without fixGroups()
 }
 
 void Skype::deleteGroup(int groupID) {
-	kDebug() << k_funcinfo << groupID << ":" << d->groupsNames.key(groupID) << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << groupID << ":" << d->groupsNames.key(groupID);
 	d->connection << QString("DELETE GROUP %1").arg(groupID);
 	d->groupsNames.remove(d->groupsNames.key(groupID), groupID);
 	d->groupsContacts.remove(groupID);
 }
 
 void Skype::renameGroup(int groupID, const QString &newName) {
-	kDebug() << k_funcinfo << groupID << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << groupID;
 	d->connection << QString("SET GROUP %1 DISPLAYNAME %2").arg(groupID).arg(newName);
 	d->groupsNames.remove(d->groupsNames.key(groupID));
 	d->groupsNames.insert(newName, groupID);
 }
 
 int Skype::getGroupID(const QString &groupname) {
-	kDebug() << k_funcinfo << groupname << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << groupname;
 	return d->groupsNames.value(groupname, -1); //get group id from d->groupsNames
 }
 
 QString Skype::getGroupName(int groupID) {
-	kDebug() << k_funcinfo << groupID << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << groupID;
 
 	if (groupID == -1) //If groupID is empty return empty name
-		return "";
+		return QString();
 
-	return d->groupsNames.key(groupID, ""); //get group name from d->groupsNames
+	return d->groupsNames.key(groupID, QString()); //get group name from d->groupsNames
 }
 
-QString Skype::getDisplayName(const QString &name) {
-	kDebug() << k_funcinfo << name << endl;
-	return (d->connection % QString("GET USER %1 DISPLAYNAME").arg(name)).section(' ', 3).trimmed();
+QString Skype::getDisplayName(const QString &user) {
+	kDebug(SKYPE_DEBUG_GLOBAL) << user;
+	return (d->connection % QString("GET USER %1 DISPLAYNAME").arg(user)).section(' ', 3).trimmed();
+}
+
+void Skype::setDisplayName(const QString &user, const QString &name) {
+	kDebug(SKYPE_DEBUG_GLOBAL);
+	d->connection % QString("SET USER %1 DISPLAYNAME %2").arg(user).arg(name);
 }
 
 bool Skype::openFileTransfer(const QString &user, const QString &url) {
-	kDebug() << k_funcinfo << user << url << endl;
+	kDebug(SKYPE_DEBUG_GLOBAL) << user << url;
 	if ( (d->connection % QString("OPEN FILETRANSFER %1 IN %2").arg(user).arg(url)).trimmed() == "OK" )
 		return true;
 	else
 		return false;
+}
+
+QStringList Skype::searchUsers(const QString &string) {
+	return (d->connection % QString("SEARCH USERS %1").arg(string)).section(' ', 1).trimmed().split(' ');
 }
 
 #include "skype.moc"

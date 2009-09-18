@@ -25,8 +25,8 @@ if(NOT INSIDE_KDENETWORK)
 
 	set(CMAKE_REQUIRED_DEFINITIONS ${_KDE4_PLATFORM_DEFINITIONS})
 	if (WIN32)
-	   set(CMAKE_REQUIRED_LIBRARIES ${KDEWIN32_LIBRARIES} )
-	   set(CMAKE_REQUIRED_INCLUDES  ${KDEWIN32_INCLUDES} )
+	   set(CMAKE_REQUIRED_LIBRARIES ${KDEWIN_LIBRARIES} )
+	   set(CMAKE_REQUIRED_INCLUDES  ${KDEWIN_INCLUDES} )
 	endif (WIN32)
 
 	find_package(KdepimLibs REQUIRED)
@@ -47,7 +47,7 @@ check_type_size("long" SIZEOF_LONG)
 check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
 
 macro_optional_find_package(LiboRTP)
-macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support in Kopete.")
+macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support and voice clips in WLM.")
 
 macro_optional_find_package(Speex)
 macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support in Kopete.")
@@ -84,6 +84,15 @@ macro_log_feature(LIBOTR_FOUND "libotr" "A library to encrypt messages with Off-
 macro_optional_find_package(Libmsn)
 macro_bool_to_01(LIBMSN_FOUND HAVE_LIBMSN)
 macro_log_feature(LIBMSN_FOUND "libmsn" "A library providing support for the msn protocol" "http://sourceforge.net/projects/libmsn" FALSE "0.4.0" "Required for the Kopete wlm plugin")
+
+include(CheckStructMember)
+macro_optional_find_package(GIF)
+macro_bool_to_01(GIF_FOUND HAVE_GIFLIB)
+macro_log_feature( GIF_FOUND "giflib" "Handwriting messages support for WLM" "http://sourceforge.net/projects/giflib/" FALSE "" "Required for the Kopete WLM protocol")
+
+macro_optional_find_package(Mediastreamer)
+macro_bool_to_01(MEDIASTREAMER_FOUND HAVE_MEDIASTREAMER)
+macro_log_feature( MEDIASTREAMER_FOUND "mediastreamer" "A streaming engine specialized for voice/video telephony applications" "http://www.linphone.org/index.php/eng/code_review/mediastreamer2" FALSE "" "Required to enable voice clips support in WLM plugin")
 
 macro_optional_find_package(LibMeanwhile)
 macro_bool_to_01(LIBMEANWHILE_FOUND HAVE_LIBMEANWHILE)

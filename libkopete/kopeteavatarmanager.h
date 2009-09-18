@@ -188,6 +188,18 @@ public Q_SLOTS:
 	 */
 	bool remove(Kopete::AvatarManager::AvatarEntry entryToRemove);
 
+	/**
+	 * @brief Check if an avatar exists
+	 * @param entryToCheck Avatar entry to check
+	 */
+	bool exists(Kopete::AvatarManager::AvatarEntry avatarToCheck);
+
+	/**
+	 * @brief Check if an avatar exists by his name
+	 * @param avatarName Avatar entry to check
+	 */
+	bool exists(const QString &avatarName);
+
 private:
 	/**
 	 * @internal

@@ -52,8 +52,8 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	d->general.selectPhoto->setIcon(KIcon("view-preview"));
 	d->general.clearPhoto->setIcon(KIcon("edit-clear-locationbar-rtl"));
 	d->general.photo->setText( QString("<qt><a href=\"selectPhoto\">"
-											"<p align=\"center\">No Photo</p>"
-										"</a>").arg( i18n("No Photo") ));
+										"<p align=\"center\">%1</p>"
+										"</a></qt>").arg( i18n("No Photo") ));
 
 	connect(d->general.selectPhoto, SIGNAL(clicked(bool)),
 			this, SLOT(slotSelectPhoto()));

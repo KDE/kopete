@@ -18,6 +18,7 @@
  *
  */
  
+#include "privacylist.h"
 #include <QDomElement>
 #include <QString>
 #include <QStringList>
@@ -25,8 +26,6 @@
 
 #include <kdebug.h>
 #include "jabberprotocol.h"
-
-#include "privacylist.h"
 
 #define ORDER_INCREMENT 10
 

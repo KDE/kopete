@@ -202,14 +202,29 @@ class Skype : public QObject
 		QString getGroupName(int groupID);
 		/**
 		 * Get Skype display name
-		 * @param name Skype name
+		 * @param user Skype user
 		 * @return Skype display name
 		 */
-		QString getDisplayName(const QString &name);
+		QString getDisplayName(const QString &user);
+		/**
+		 * Set Skype display name
+		 * @param user Skype user
+		 * @param name new Skype display name (empty string is default display name)
+		 */
+		void setDisplayName(const QString &user, const QString &name);
 		/**
 		 * Open skype file transfer dilog to send file via skype
+		 * @param user Skype user
+		 * @url url of local file
+		 * @return true if transfer opened
 		 */
-		bool openFileTransfer(const QString &user, const QString &url = QString::null);
+		bool openFileTransfer(const QString &user, const QString &url = QString());
+		/**
+		 * Search for skype contacts
+		 * @param string skype user name or email (with "@")
+		 * @return all users for string string
+		 */
+		QStringList searchUsers(const QString &string);
 	public slots:
 		/**
 		 * Tell the skype to go online

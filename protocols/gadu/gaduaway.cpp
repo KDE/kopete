@@ -29,7 +29,6 @@
 #include <ktextedit.h>
 #include <klocale.h>
 
-#include <q3buttongroup.h>
 #include <qradiobutton.h>
 #include <qlineedit.h>
 
@@ -49,18 +48,25 @@ GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
 	ui_->setupUi( w );
 	setMainWidget( w );
 
+	ui_->buttonGroup_->setId(ui_->onlineButton_, GG_STATUS_AVAIL_DESCR);
+	ui_->buttonGroup_->setId(ui_->awayButton_, GG_STATUS_BUSY_DESCR);
+	ui_->buttonGroup_->setId(ui_->invisibleButton_, GG_STATUS_INVISIBLE_DESCR);
+	ui_->buttonGroup_->setId(ui_->offlineButton_, GG_STATUS_NOT_AVAIL_DESCR);
+	
+	
 	ks = account->myself()->onlineStatus();
 	s  = GaduProtocol::protocol()->statusToWithDescription( ks );
 
+
 	if ( s == GG_STATUS_NOT_AVAIL_DESCR ) {
-		ui_->statusGroup_->find( GG_STATUS_NOT_AVAIL_DESCR )->setDisabled( true );
-		ui_->statusGroup_->setButton( GG_STATUS_AVAIL_DESCR );
+		ui_->buttonGroup_->button( GG_STATUS_NOT_AVAIL_DESCR )->setDisabled( true );
+		ui_->buttonGroup_->button( GG_STATUS_AVAIL_DESCR)->setChecked(true);
 	}
 	else {
-		ui_->statusGroup_->setButton( s );
+		ui_->buttonGroup_->button( s )->setChecked(true);
 	}
 
-	ui_->textEdit_->setText( account->myself()->property( "awayMessage" ).value().toString() );
+	ui_->textEdit_->setText( account->myself()->property( "statusMessage" ).value().toString() );
 	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
 }
 
@@ -72,7 +78,7 @@ GaduAway::~GaduAway()
 int
 GaduAway::status() const
 {
-	return ui_->statusGroup_->id( ui_->statusGroup_->selected() );
+	return ui_->buttonGroup_->checkedId();
 }
 
 QString

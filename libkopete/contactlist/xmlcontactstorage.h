@@ -64,7 +64,10 @@ protected:
     const QDomElement storeGroup( Kopete::Group *group ) const;
     const QList<QDomElement> storeContactListElement( Kopete::ContactListElement *contactListElement ) const;
 
-    bool updateFrom10( QDomElement &rootElement ) const;
+    bool updateFrom10to11( QDomElement &rootElement ) const;
+    bool updateFrom11to12( QDomElement &rootElement ) const;
+
+    uint readVersion( QDomElement &rootElement ) const;
 
 private:
     /**
@@ -74,6 +77,8 @@ private:
 
     QString sourceToString( Kopete::MetaContact::PropertySource source ) const;
     Kopete::MetaContact::PropertySource stringToSource( const QString &name ) const;
+
+    void checkGroupIds();
 
     class Private;
     Private* d;

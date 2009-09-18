@@ -241,94 +241,44 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		}
 	}
 
+	QPixmap statusOverlay;
+	QPixmap statusIcon=mKopeteIcon.pixmap(22,22);
 	switch ( highestStatus.status() )
 	{
 		case Kopete::OnlineStatus::Unknown:
 		case Kopete::OnlineStatus::Offline:
 		case Kopete::OnlineStatus::Connecting:
 		{
-			QImage offlineIcon = mKopeteIcon.pixmap(22,22).toImage();
+			QImage offlineIcon = statusIcon.toImage();
 			KIconEffect::toGray( offlineIcon, 0.85f );
-			setIcon( QPixmap::fromImage( offlineIcon ) );
+			statusIcon = QPixmap::fromImage( offlineIcon );
 			break;
 		}
 		case Kopete::OnlineStatus::Invisible:
 		{
-			QPixmap statusOverlay = loadIcon("user-invisible").pixmap(11,11);
-			QPixmap statusIcon = mKopeteIcon.pixmap(22,22);
-			if (!statusIcon.isNull() && !statusOverlay.isNull())
-			{
-				QPainter painter(&statusIcon);
-				painter.drawPixmap(QPoint(11,11), statusOverlay);
-			}
-			setIcon( statusIcon );
+			statusOverlay = loadIcon("user-invisible").pixmap(11,11);
 			break;
 		}
 		case Kopete::OnlineStatus::Away:
 		{
-			QPixmap statusOverlay = loadIcon("user-away").pixmap(11,11);
-			QPixmap statusIcon = mKopeteIcon.pixmap(22,22);
-			if (!statusIcon.isNull() && !statusOverlay.isNull())
-			{
-				QPainter painter(&statusIcon);
-				painter.drawPixmap(QPoint(11,11), statusOverlay);
-			}
-			setIcon( statusIcon );
+			statusOverlay = loadIcon("user-away").pixmap(11,11);
+			break;
+		}
+		case Kopete::OnlineStatus::Busy:
+		{
+			statusOverlay = loadIcon("user-busy").pixmap(11,11);
 			break;
 		}
 		case Kopete::OnlineStatus::Online:
-			setIcon( mKopeteIcon );
 			break;
 	}
-}
 
-
-QString KopeteSystemTray::squashMessage( const Kopete::Message& msg )
-{
-	QString msgText = msg.parsedBody();
-
-	QRegExp rx( "(<a.*>((http://)?(.+))</a>)" );
-	rx.setMinimal( true );
-	if ( rx.indexIn( msgText ) == -1 )
+	if (!statusIcon.isNull() && !statusOverlay.isNull())
 	{
-		// no URLs in text, just pick the first 30 chars of
-		// the parsed text if necessary. We used parsed text
-		// so that things like "<knuff>" show correctly
-		//  Escape it after snipping it to not snip entities
-		msgText =msg.plainBody() ;
-		if( msgText.length() > 30 )
-			msgText = msgText.left( 30 ) + QLatin1String( " ..." );
-		msgText=Kopete::Message::escape(msgText);
+		QPainter painter(&statusIcon);
+		painter.drawPixmap(QPoint(11,11), statusOverlay);
 	}
-	else
-	{
-		QString plainText = msg.plainBody();
-		if ( plainText.length() > 30 )
-		{
-			QString fullUrl = rx.cap( 2 );
-			QString shorterUrl;
-			if ( fullUrl.length() > 30 )
-			{
-				QString urlWithoutProtocol = rx.cap( 4 );
-				shorterUrl = urlWithoutProtocol.left( 27 )
-						+ QLatin1String( "... " );
-			}
-			else
-			{
-				shorterUrl = fullUrl.left( 27 )
-						+ QLatin1String( "... " );
-			}
-			// remove message text
-			msgText = QLatin1String( "... " ) +
-					rx.cap( 1 ) +
-					QLatin1String( " ..." );
-			// find last occurrence of URL (the one inside the <a> tag)
-			int revUrlOffset = msgText.lastIndexOf( fullUrl );
-			msgText.replace( revUrlOffset,
-						fullUrl.length(), shorterUrl );
-		}
-	}
-	return msgText;
+	setIcon( statusIcon );
 }
 
 #include "systemtray.moc"

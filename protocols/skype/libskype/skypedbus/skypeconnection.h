@@ -25,7 +25,7 @@
 typedef enum {
 	///The connection was successful
 	seSuccess = 0,
-	///No runnign DBUS found
+	///No running DBUS found
 	seNoDBus,
 	///No running skype found and launching disabled or did not worked
 	seNoSkype,

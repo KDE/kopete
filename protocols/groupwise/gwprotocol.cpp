@@ -20,6 +20,7 @@
     *                                                                       *
     *************************************************************************
 */
+#include "gwprotocol.h"
 #include <qregexp.h>
 #include <qstringlist.h>
 //Added by qt3to4:
@@ -36,7 +37,6 @@
 #include "gwaccount.h"
 #include "gwerror.h"
 #include "gwcontact.h"
-#include "gwprotocol.h"
 #include "ui/gwaddcontactpage.h"
 #include "ui/gweditaccountwidget.h"
 
@@ -52,7 +52,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*arg
 			i18n( "Offline" ), i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline ),
 	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, GroupWise::Available, QStringList(), 
 			i18n( "Online" ), i18n( "A&vailable" ), Kopete::OnlineStatusManager::Online ),
-	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    18, this, GroupWise::Busy, QStringList( "contact_busy_overlay" ),
+	  groupwiseBusy       ( Kopete::OnlineStatus::Busy,    18, this, GroupWise::Busy, QStringList( "contact_busy_overlay" ),
 			i18n( "Busy" ), i18n( "&Busy" ), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage ),
 	  groupwiseAway       ( Kopete::OnlineStatus::Away,    20, this, GroupWise::Away, QStringList( "contact_away_overlay" ),
 			i18n( "Away" ), i18n( "&Away" ), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage ),

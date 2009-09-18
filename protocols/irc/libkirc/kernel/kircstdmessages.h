@@ -81,8 +81,7 @@ namespace StdMessages
 	 */
 	KIRC_EXPORT KIrc::Message quit(const QByteArray &reason);
 
-	KIRC_EXPORT KIrc::Message topic(const QByteArray &channel, const QByteArray &topic);
-	KIRC_EXPORT KIrc::Message topic(const QByteArray &channel);
+	KIrc::Message topic(const QByteArray &channel, const QByteArray &topic);
 
 	KIRC_EXPORT KIrc::Message user(const QByteArray &user, const QByteArray &hostname, const QByteArray &servername, const QByteArray &realName);
 

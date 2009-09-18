@@ -61,7 +61,7 @@ class SkypeChatSessionPrivate {
 		 * @param _account Reference to the account this chat belongs to
 		 */
 		SkypeChatSessionPrivate(SkypeProtocol *_protocol, SkypeAccount *_account) {
-			kDebug() << k_funcinfo << endl;//some debug info
+			kDebug(SKYPE_DEBUG_GLOBAL);
 			//save given values
 			account = _account;
 			protocol = _protocol;
@@ -97,7 +97,7 @@ static Kopete::ContactPtrList constructList(SkypeContact *contact) {
 
 SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact) :
 		Kopete::ChatSession(account->myself(), constructList(contact), account->protocol(), Kopete::ChatSession::Form()) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	setComponentData(account->protocol()->componentData());
 
@@ -136,7 +136,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 
 SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session, const Kopete::ContactPtrList &users) :
 		Kopete::ChatSession(account->myself(), users, account->protocol(), Kopete::ChatSession::Form()) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	setComponentData(account->protocol()->componentData());
 
@@ -173,7 +173,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 }
 
 SkypeChatSession::~SkypeChatSession() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->account->leaveOnExit() && (d->isMulti))
 		emit leaveChat(d->chatId);
@@ -183,7 +183,7 @@ SkypeChatSession::~SkypeChatSession() {
 }
 
 void SkypeChatSession::message(Kopete::Message &message) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->account->registerLastSession(this);
 	d->account->sendMessage(message, (d->isMulti) ? (d->chatId) : "");//send it
@@ -197,7 +197,7 @@ void SkypeChatSession::setTopic(const QString &chat, const QString &topic) {
 }
 
 void SkypeChatSession::joinUser(const QString &chat, const QString &userId) {
-	kDebug() << k_funcinfo << "Chat: " << chat << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Chat: " << chat;
 
 	if (chat == d->chatId) {
 		addContact(d->account->getContact(userId));
@@ -207,7 +207,7 @@ void SkypeChatSession::joinUser(const QString &chat, const QString &userId) {
 }
 
 void SkypeChatSession::leftUser(const QString &chat, const QString &userId, const QString &reason) {
-	kDebug() << "User: " << userId<< k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "User: " << userId;
 
 	if (chat == d->chatId) {
 		removeContact(d->account->getContact(userId), reason);
@@ -215,7 +215,7 @@ void SkypeChatSession::leftUser(const QString &chat, const QString &userId, cons
 }
 
 void SkypeChatSession::setChatId(const QString &chatId) {
-	kDebug() << k_funcinfo << "ID: " << chatId << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "ID: " << chatId;
 
 	if (d->chatId != chatId) {
 		emit updateChatId(d->chatId, chatId, this);
@@ -266,7 +266,7 @@ void SkypeChatSession::inviteContact(const QString &contactId) {
 }
 
 void SkypeChatSession::showInviteMenu() {
-	kDebug();
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	QHash <QString, Kopete::Contact *> contactList = account()->contacts();
 	for ( QHash <QString, Kopete::Contact *>::Iterator it = contactList.begin(); it != contactList.end(); ++it ) {
@@ -279,7 +279,7 @@ void SkypeChatSession::showInviteMenu() {
 }
 
 void SkypeChatSession::hideInviteMenu() {
-	kDebug();
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	//Detele all invite actions for all contacts
 	//QList <QAction *> actions = d->inviteAction->menu()->actions();

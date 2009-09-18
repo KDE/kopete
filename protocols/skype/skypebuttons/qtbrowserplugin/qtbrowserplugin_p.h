@@ -20,6 +20,10 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
+
+#ifndef QTBROWSERPLUGIN_P_H
+#define QTBROWSERPLUGIN_P_H
+
 #include <QtCore/QVariant>
 #include <QtCore/QMutexLocker>
 #include <QtGui/QWidget>
@@ -76,3 +80,4 @@ struct QtNPInstance
         }
 
 };
+#endif // QTBROWSERPLUGIN_P_H

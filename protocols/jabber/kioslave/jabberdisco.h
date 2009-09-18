@@ -17,8 +17,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef _JABBERDISCO_H_
-#define _JABBERDISCO_H_
+#ifndef JABBERDISCO_H
+#define JABBERDISCO_H
 
 #include <qobject.h>
 #include <qstring.h>

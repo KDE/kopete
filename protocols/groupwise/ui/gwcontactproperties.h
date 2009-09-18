@@ -22,6 +22,7 @@
 
 #include <QHash>
 #include <QObject>
+#include "gwcontact.h"
 #include "ui_gwcontactprops.h"
 
 namespace Ui { class GroupWiseContactPropsWidget; }

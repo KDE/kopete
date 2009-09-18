@@ -18,6 +18,9 @@
 
 */
 
+#include "skypecalldialog.h"
+#include "skypewindow.h"
+
 #include <qstring.h>
 #include <kdebug.h>
 #include <qlabel.h>
@@ -27,7 +30,6 @@
 #include <kglobal.h>
 #include <qdatetime.h>
 
-#include "skypecalldialog.h"
 #include "skypeaccount.h"
 
 typedef enum {
@@ -64,10 +66,12 @@ class SkypeCallDialogPrivate {
 				account->endCall();
 			}
 		};
+		///Skype window manager
+		SkypeWindow * skypeWindow;
 };
 
 SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account) : KDialog() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	setButtons( KDialog::None ); //dont add any buttons
 	setDefaultButton( KDialog::None );
@@ -87,34 +91,40 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	d->totalTime = 0;
 	d->callTime = 0;
 	d->callEnded = false;
+	d->skypeWindow = new SkypeWindow;
 
 	d->updater = new QTimer();
 	connect(d->updater, SIGNAL(timeout()), this, SLOT(updateCallInfo()));
 	d->updater->start(500);
 
 	dialog->NameLabel->setText(account->getUserLabel(userId));
+	dialog->StatusLabel->setText(i18n("Connecting"));
 	setCaption(i18n("Call with %1", account->getUserLabel(userId)));
 
 	connect(dialog->AcceptButton, SIGNAL(clicked()), this, SLOT(acceptCall()));
 	connect(dialog->HangButton, SIGNAL(clicked()), this, SLOT(hangUp()));
 	connect(dialog->HoldButton, SIGNAL(clicked()), this, SLOT(holdCall()));
 	connect(dialog->ChatButton, SIGNAL(clicked()), this, SLOT(chatUser()));
+
+	d->skypeWindow->hideCallDialog(userId);
 }
 
 
 SkypeCallDialog::~SkypeCallDialog(){
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	emit callFinished(d->callId);
 	d->endCall();
+	d->skypeWindow->deleteCallDialog(d->userId);
 
+	delete d->skypeWindow;
 	delete d->updater;
 	delete d;
 	delete dialog;
 }
 
 void SkypeCallDialog::updateStatus(const QString &callId, const QString &status) {
-	kDebug() << k_funcinfo << "Status: " << status << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Status: " << status;
 
 	if (callId == d->callId) {
 		if (status == "CANCELLED") {
@@ -207,8 +217,11 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 			dialog->StatusLabel->setText(i18nc("Early media means the media played before the call is established. For example it can be a calling tone or a waiting message such as all operators are busy.", "Early media (waiting for operator...)"));
 			d->status = csNotRunning;
 		} else if (status == "UNPLACED") {//Ups, whats that, how that call got here?
+			//TODO: What here? Skype sometimes send message unplaced when call is active
+			//temporary disabled, do nothing in active call
+
 			//deleteLater();//Just give up, this one is odd
-			dialog->StatusLabel->setText(i18n("Unplaced (please wait...)"));
+			//dialog->StatusLabel->setText(i18n("Unplaced (please wait...)"));
 			//it is when user create call after hangup, so dont close dialog and wait
 		}
 	}
@@ -233,15 +246,16 @@ void SkypeCallDialog::closeEvent(QCloseEvent *) {
 }
 
 void SkypeCallDialog::deathTimeout() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	deleteLater();//OK, the death is here :-)
 }
 
 void SkypeCallDialog::closeLater() {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->endCall();
+	d->skypeWindow->deleteCallDialog(d->userId);
 
 	if ((d->account->closeCallWindowTimeout()) && (d->status != csShuttingDown)) {
 		QTimer::singleShot(1000 * d->account->closeCallWindowTimeout(), this, SLOT(deathTimeout()));
@@ -250,7 +264,7 @@ void SkypeCallDialog::closeLater() {
 }
 
 void SkypeCallDialog::updateError(const QString &callId, const QString &message) {
-	kDebug() << k_funcinfo << endl;//some debug info
+	kDebug(SKYPE_DEBUG_GLOBAL);
 	if (callId == d->callId) {
 		dialog->AcceptButton->setEnabled(false);
 		dialog->HangButton->setEnabled(false);

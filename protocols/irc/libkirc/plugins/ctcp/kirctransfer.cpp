@@ -15,14 +15,13 @@
     *************************************************************************
 */
 
+#include "kirctransfer.h"
 #include <kdebug.h>
 #include <kextsock.h>
 #include <klocale.h>
 
 #include <qfile.h>
 #include <qtimer.h>
-
-#include "kirctransfer.h"
 
 using namespace KIrc;
 

@@ -110,12 +110,16 @@ public:
 		/**
 		 * Refers to a state where you can be technically reached, but
 		 * for one reason or another it is often not useful to do so.
-		 * This can be because you really aren't behind the computer
-		 * ('Away' or 'Idle') or because you have other things to do
+		 * This will be because you are not in front of the computer
+		 * or because the client detected you don't interact.
+		 */
+		Away=40,
+		/**
+		 * Means that you have other things to do
 		 * and don't want to get involved in messaging ('Busy' or 'Do
 		 * not Disturb' for example).
 		 */
-		Away=40,
+		Busy=45,
 		/**
 		 * Refers to a true online state, i.e. you can be contacted by
 		 * others both technically and practically. This also applies

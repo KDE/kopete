@@ -987,6 +987,10 @@ void KopeteWindow::slotIdentityStatusIconChanged ( Kopete::Identity *identity )
 			pm = SmallIcon ( "user-identity", 0, KIconLoader::DefaultState,
 			                 QStringList() << QString() << "user-away" );
 			break;
+		case Kopete::OnlineStatus::Busy:
+			pm = SmallIcon ( "user-identity", 0, KIconLoader::DefaultState,
+			                 QStringList() << QString() << "user-busy" );
+			break;
 		case Kopete::OnlineStatus::Online:
 			pm = SmallIcon ( "user-identity", 0, KIconLoader::DefaultState,
 			                 QStringList() << QString() << "user-online" );

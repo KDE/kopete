@@ -590,6 +590,13 @@ If two resources have the same priority, the messages will be sent to the one mo
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="mergeMessages">
+         <property name="text">
+         <string>Merge all messages from all resources to one window/tab</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>

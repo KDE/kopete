@@ -514,6 +514,7 @@ void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )
 
 void Kopete::ChatSession::slotMyselfDestroyed( Kopete::Contact *contact )
 {
+	Q_UNUSED(contact);
 	d->mUser = 0;
 	deleteLater();
 }

@@ -18,6 +18,8 @@
 #define TESTBEDPROTOCOL_H
 
 #include <kopeteprotocol.h>
+#include <QVariant>
+
 
 
 /**
@@ -63,6 +65,10 @@ public:
 	 * Represents contacts that are Away
 	 */
 	const Kopete::OnlineStatus testbedAway;
+	/**
+	 * Represents contacts that are Busy
+	 */
+	const Kopete::OnlineStatus testbedBusy;
 	/**
 	 * Represents contacts that are Offline
 	 */

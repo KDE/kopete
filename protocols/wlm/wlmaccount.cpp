@@ -34,6 +34,7 @@
 #include <KInputDialog>
 #include <KStandardDirs>
 #include <KToolInvocation>
+#include <krun.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
@@ -83,10 +84,16 @@ clientid (0)
     
     m_openStatusAction = new KAction(i18n("Open MS&N service status site..."), this);
     QObject::connect(m_openStatusAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenStatus()));
+
+    tmpMailFile = 0L;
+    m_tmpMailFileTimer = new QTimer();
+    QObject::connect(m_tmpMailFileTimer, SIGNAL(timeout()), this, SLOT(slotRemoveTmpMailFile()));
 }
 
 WlmAccount::~WlmAccount ()
 {
+    slotRemoveTmpMailFile();
+    delete m_tmpMailFileTimer;
     disconnect ();
 }
 
@@ -104,7 +111,9 @@ WlmAccount::fillActionMenu (KActionMenu * actionMenu)
     actionMenu->addAction(m_changeDNAction);
 //     actionMenu->addAction(m_startChatAction);
 
-//     actionMenu->addAction(m_openInboxAction);
+#ifdef LIBMSN_INBOX_URL_ENABLED
+    actionMenu->addAction(m_openInboxAction);
+#endif
     actionMenu->addAction(m_openStatusAction);
 }
 
@@ -211,7 +220,8 @@ WlmAccount::setOnlineStatus (const Kopete::OnlineStatus & status,
         slotGoOffline ();
     else if (status == WlmProtocol::protocol ()->wlmInvisible)
         slotGoInvisible ();
-    else if (status.status () == Kopete::OnlineStatus::Away)
+    else if (status.status () == Kopete::OnlineStatus::Away ||
+              status.status () == Kopete::OnlineStatus::Busy)
         slotGoAway (status);
 }
 
@@ -253,8 +263,10 @@ WlmAccount::slotChangePublicName()
 void
 WlmAccount::slotOpenInbox()
 {
-//     if (m_notifySocket)
-//         m_notifySocket->slotOpenInbox();
+#ifdef LIBMSN_INBOX_URL_ENABLED
+    if (isConnected ())
+        m_server->cb.mainConnection->getInboxUrl ();
+#endif
 }
 
 void
@@ -320,6 +332,14 @@ WlmAccount::connectWithPassword (const QString & pass)
                             (MSN::NotificationServerConnection *)));
     QObject::connect (&m_server->cb, SIGNAL (wrongPassword ()), this,
                       SLOT (wrongPassword ()));
+#ifdef LIBMSN_INBOX_URL_ENABLED
+    QObject::connect (&m_server->cb, SIGNAL (initialEmailNotification(int)), this,
+                      SLOT (slotInitialEmailNotification(int)));
+    QObject::connect (&m_server->cb, SIGNAL (newEmailNotification(QString, QString)), this,
+                      SLOT (slotNewEmailNotification(QString, QString)));
+    QObject::connect (&m_server->cb, SIGNAL (inboxUrl(MSN::hotmailInfo &)), this,
+                      SLOT (slotInboxUrl(MSN::hotmailInfo &)));
+#endif
 
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmConnecting);
 }
@@ -334,6 +354,46 @@ uint WlmAccount::serverPort() const
     return configGroup()->readEntry( "serverPort" , 1863 );
 }
 
+QString WlmAccount::proxyUsername() const
+{
+    return configGroup()->readEntry( "proxyUsername" );
+}
+
+QString WlmAccount::proxyPassword() const
+{
+    return configGroup()->readEntry( "proxyPassword" );
+}
+
+QString WlmAccount::proxyHost() const
+{
+    return configGroup()->readEntry( "proxyHost" );
+}
+
+uint WlmAccount::proxyType() const
+{
+    return configGroup()->readEntry( "proxyType", 0 );
+}
+
+uint WlmAccount::proxyPort() const
+{
+    return configGroup()->readEntry( "proxyPort", 8080 );
+}
+
+bool WlmAccount::isProxyEnabled() const
+{
+    return configGroup()->readEntry( "enableProxy", false );
+}
+
+bool WlmAccount::doNotRequestEmoticons() const
+{
+    return configGroup()->readEntry( "doNotRequestEmoticons", false );
+}
+
+bool WlmAccount::doNotSendEmoticons() const
+{
+    return configGroup()->readEntry( "doNotSendEmoticons", false );
+}
+
 void
 WlmAccount::gotNewContact (const MSN::ContactList & list,
                            const QString & passport,
@@ -342,6 +402,8 @@ WlmAccount::gotNewContact (const MSN::ContactList & list,
     kDebug() << "contact " << passport;
     if (list == MSN::LST_RL)
     {
+        kDebug() << "contact " << passport << " added to reverse list";
+        m_reverseList.insert(passport);
         Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent(passport, this);
         QObject::connect(event, SIGNAL(actionActivated(uint)), this, SLOT(addedInfoEventActionActivated(uint)));
 
@@ -389,6 +451,15 @@ void WlmAccount::gotRemovedContactFromList (const MSN::ContactList & list, const
     {
         kDebug() << "contact " << contact << " removed from allow list";
         m_allowList.remove( contact );
+    }
+    else if (list == MSN::LST_RL)
+    {
+        kDebug() << "contact " << contact << " removed from reverse list";
+        m_reverseList.remove( contact );
+        // force overlayIcons to be updated
+	    WlmContact * ct = qobject_cast<WlmContact*>(contacts().value( contact ));
+        if(ct)
+            ct->setOnlineStatus(ct->onlineStatus());
     }
 }
 
@@ -529,14 +600,15 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
                                   const unsigned int &clientID,
                                   const QString & msnobject)
 {
-    Q_UNUSED( clientID );
-
     kDebug (14210) << k_funcinfo;
 	WlmContact *contact = qobject_cast<WlmContact*>(contacts().value(buddy.c_str()));
     if (contact)
     {
         contact->setProperty (Kopete::Global::Properties::self ()->
                               nickName (), friendlyname);
+
+        // set contact properties
+        contact->setProperty (WlmProtocol::protocol ()->contactCapabilities, QString::number(clientID));
 
         if (state == MSN::STATUS_AWAY)
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmAway);
@@ -596,7 +668,13 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
                && (myself ()->onlineStatus () !=
                    WlmProtocol::protocol ()->wlmUnknown))
         {
-            chatManager ()->requestDisplayPicture (buddy.c_str ());
+            // do not open many switchboards in a short period of time
+            if(!m_recentDPRequests.contains(buddy.c_str ()))
+            {
+                m_recentDPRequests.append(buddy.c_str ());
+                QTimer::singleShot(10 * 1000, this, SLOT(slotRemoveRecentDPRequests()));
+                chatManager ()->requestDisplayPicture (buddy.c_str ());
+            }
         }
     }
 }
@@ -667,6 +745,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
     m_allowList.clear();
     m_blockList.clear();
     m_pendingList.clear();
+    m_reverseList.clear();
 
     // local contacts which do not exist on server should be deleted
     std::map < std::string, MSN::Buddy * >::iterator it;
@@ -684,6 +763,8 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             m_blockList.insert( passport );
         if ( b->lists & MSN::LST_PL )
             m_pendingList.insert( passport );
+        if ( b->lists & MSN::LST_RL )
+            m_reverseList.insert(passport);
 
         // disabled users (not in list)
         if(b->properties["isMessengerUser"] == "false")
@@ -892,6 +973,14 @@ void
 WlmAccount::connectionCompleted ()
 {
     kDebug (14210) << k_funcinfo;
+
+    // set all users as offline
+    foreach ( Kopete::Contact *kc , contacts() )
+    {
+        WlmContact *c = static_cast<WlmContact *>( kc );
+        c->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
+    }
+
     if (identity ()->
         hasProperty (Kopete::Global::Properties::self ()->photo ().key()))
     {
@@ -1067,8 +1156,106 @@ void WlmAccount::downloadPendingDisplayPicture()
      && (contact->onlineStatus () != WlmProtocol::protocol ()->wlmUnknown))
  
     {
-        chatManager ()->requestDisplayPicture (passport);
+        // do not open many switchboards in a short period of time
+        if(!m_recentDPRequests.contains(passport))
+        {
+            m_recentDPRequests.append(passport);
+            QTimer::singleShot(10 * 1000, this, SLOT(slotRemoveRecentDPRequests()));
+            chatManager ()->requestDisplayPicture (passport);
+        }
     }
+}
+
+void
+WlmAccount::slotInitialEmailNotification (const int unread_inbox)
+{
+    KNotification *notification= new KNotification ("msn_mail");
+
+    notification->setText(i18np( "You have one unread message in your Hotmail inbox.",
+                                 "You have %1 unread messages in your Hotmail inbox.", unread_inbox));
+    notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Ignore" )) );
+    notification->setFlags(KNotification::Persistent);
+    QObject::connect(notification,SIGNAL(activated()), this , SLOT(slotOpenInbox()) );
+    QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(slotOpenInbox()) );
+    QObject::connect(notification,SIGNAL(action2Activated()), notification, SLOT(close()) );
+    QObject::connect(notification,SIGNAL(ignored()), notification, SLOT(close()) );
+    notification->sendEvent();
+}
+
+void
+WlmAccount::slotNewEmailNotification (const QString from, const QString subject)
+{
+    KNotification *notification= new KNotification ("msn_mail");
+
+    notification->setText(i18n( "New message from %1 in your Hotmail inbox.<p>Subject: %2", from, subject));
+    notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Ignore" )) );
+    notification->setFlags(KNotification::Persistent);
+    QObject::connect(notification,SIGNAL(activated()), this , SLOT(slotOpenInbox()) );
+    QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(slotOpenInbox()) );
+    QObject::connect(notification,SIGNAL(action2Activated()), notification, SLOT(close()) );
+    QObject::connect(notification,SIGNAL(ignored()), notification, SLOT(close()) );
+    notification->sendEvent();
+}
+
+#ifdef LIBMSN_INBOX_URL_ENABLED
+void
+WlmAccount::slotInboxUrl (MSN::hotmailInfo & info)
+{
+    //write the tmp file
+    QString UserID = accountId();
+
+    QString hotmailRequest = "<html>\n"
+        "<head>\n"
+            "<noscript>\n"
+                "<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n"
+            "</noscript>\n"
+        "</head>\n"
+        "<body onload=\"document.pform.submit(); \">\n"
+            "<form name=\"pform\" action=\"" + QString(info.url.c_str()) + "\" method=\"POST\">\n"
+                "<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n"
+                "<input type=\"hidden\" name=\"login\" value=\"" + UserID.left( UserID.indexOf('@') ) + "\">\n"
+                "<input type=\"hidden\" name=\"username\" value=\"" + UserID + "\">\n"
+                "<input type=\"hidden\" name=\"sid\" value=\"" + QString(info.sid.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"kv\" value=\"" + QString(info.kv.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"id\" value=\""+ QString(info.id.c_str()) +"\">\n"
+                "<input type=\"hidden\" name=\"sl\" value=\"" + QString(info.sl.c_str()) +"\">\n"
+                "<input type=\"hidden\" name=\"rru\" value=\"" + QString(info.rru.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"auth\" value=\"" + QString(info.MSPAuth.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"creds\" value=\"" + QString(info.creds.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n"
+                "<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
+            "</form></body>\n</html>\n";
+
+    slotRemoveTmpMailFile();
+    tmpMailFile = new KTemporaryFile();
+    tmpMailFile->setSuffix(".html");
+
+    if (tmpMailFile->open())
+    {
+        tmpMailFile->write(hotmailRequest.toAscii());
+        tmpMailFile->flush();
+
+        /* tmpMailFile->close() erases tmpMailFile->fileName property(), so use it before closing file. */
+        KRun *runner = new KRun( tmpMailFile->fileName(), 0, 0, true ); // false = non-local files
+        runner->setRunExecutables( false ); //security
+        tmpMailFile->close();
+        m_tmpMailFileTimer->start(30000);
+        m_tmpMailFileTimer->setSingleShot(true);
+    }
+    else
+        kDebug(14140) << "Error opening temporary file";
+}
+#endif
+
+void WlmAccount::slotRemoveTmpMailFile()
+{
+    if (tmpMailFile)
+    {
+        delete tmpMailFile;
+        tmpMailFile = 0L;
+    }
+
+    m_tmpMailFileTimer->stop();
 }
 
 void WlmAccount::gotAddedGroup (bool added,
@@ -1373,6 +1560,11 @@ WlmAccount::receivedOIM (const QString & id, const QString & message)
 
     m_oimList.remove (id);
     m_server->cb.mainConnection->delete_oim (id.toLatin1 ().data ());
+}
+
+void WlmAccount::slotRemoveRecentDPRequests()
+{
+    m_recentDPRequests.pop_front();
 }
 
 #include "wlmaccount.moc"

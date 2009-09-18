@@ -19,7 +19,7 @@ if [ "$KOPETE_RUNNING" = "x" ]; then
 
     if [ "$2" != "$THIS_SERVER" ]; then
         echo -e "Kopete is currently not running.\nYour message was not delivered!" \
-            | smbclient -N -M $2
+            | smbclient -N -M $2 -I $2
     fi
 
 else

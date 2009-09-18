@@ -13,6 +13,8 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "qqprotocol.h"
 #include <QList>
 #include <kgenericfactory.h>
 #include <kdebug.h>
@@ -20,7 +22,6 @@
 #include "kopeteaccountmanager.h"
 #include "qqaccount.h"
 #include "qqcontact.h"
-#include "qqprotocol.h"
 #include "qqaddcontactpage.h"
 #include "ui/qqeditaccountwidget.h"
 

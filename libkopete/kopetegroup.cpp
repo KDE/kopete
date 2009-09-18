@@ -49,6 +49,15 @@ Group * Group::temporary()
 
 uint Group::Private::uniqueGroupId = 0;
 
+Group::Group( const QString &_name )
+	: ContactListElement( ContactList::self() ), d(new Private())
+{
+	d->displayName = _name;
+	d->type = Normal;
+	d->expanded = true;
+	d->groupId = 0;
+}
+
 Group::Group( const QString &_name, GroupType _type )
 	: ContactListElement( ContactList::self() ), d(new Private())
 {
@@ -107,11 +116,6 @@ QString Group::displayName() const
 Group::GroupType Group::type() const
 {
 	return d->type;
-}
-
-void Group::setType( GroupType t )
-{
-	d->type = t;
 }
 
 void Group::setExpanded( bool isExpanded )

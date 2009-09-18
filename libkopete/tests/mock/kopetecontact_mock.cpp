@@ -36,6 +36,7 @@ Contact::~Contact()
 
 Kopete::ChatSession* Contact::manager( CanCreateFlags canCreate)
 {
+	Q_UNUSED( canCreate )
 	return 0L;
 }
 

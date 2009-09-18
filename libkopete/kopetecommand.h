@@ -88,7 +88,7 @@ public:
 	 /**
 	  * Returns the type of the command
 	  */
-	 const CommandHandler::CommandType type() const { return m_type; }
+	 CommandHandler::CommandType type() const { return m_type; }
 
 signals:
 	/**

@@ -45,7 +45,7 @@ MeanwhileProtocol::MeanwhileProtocol(QObject* parent, const QVariantList &/*args
             Kopete::OnlineStatusManager::Away,
 	    Kopete::OnlineStatusManager::HasStatusMessage),
 
-    statusBusy(Kopete::OnlineStatus::Away, 25, this, mwStatus_BUSY,
+    statusBusy(Kopete::OnlineStatus::Busy, 25, this, mwStatus_BUSY,
             QStringList(QLatin1String("meanwhile_dnd")), i18n("Busy"), i18n("Busy"),
           Kopete::OnlineStatusManager::Busy,
 	  Kopete::OnlineStatusManager::HasStatusMessage),

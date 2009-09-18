@@ -26,6 +26,12 @@
 
 class QString;
 class YMSGTransfer;
+class KJob;
+
+namespace KIO
+{
+	class Job;
+}
 
 /**
 @author Duncan Mac-Vicar
@@ -58,6 +64,15 @@ protected:
 	void sendAuthResp_pre_0x0b(const QString &sn, const QString &seed);
 	void handleAuthResp(YMSGTransfer *transfer);
 	void parseCookies( YMSGTransfer *transfer );
+	void sendAuthSixteenStage1(const QString& sn, const QString& seed);
+	void sendAuthSixteenStage2(const QString& token);
+	void sendAuthSixteenStage3(const QString& cryptString);
+protected Q_SLOTS:
+	void handleAuthSixteenStage1Data(KIO::Job*, const QByteArray& data);
+	void handleAuthSixteenStage1Result(KJob*);
+	void handleAuthSixteenStage2Data(KIO::Job*, const QByteArray& data);
+	void handleAuthSixteenStage2Result(KJob*);
+
 signals:
 	void haveSessionID( uint );
 	void haveCookies();
@@ -71,6 +86,10 @@ private:
 	QString m_cCookie;
 	QString m_loginCookie;
 	QString m_verificationWord;
+	QString m_stage1Data;
+	QString m_stage2Data;
+	QString m_challengeString;
+	uint m_sessionID;
 };
 
 #endif

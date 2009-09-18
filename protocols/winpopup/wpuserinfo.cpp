@@ -18,6 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "wpuserinfo.h"
+
 // QT Includes
 #include <QRegExp>
 
@@ -28,7 +30,6 @@
 #include <KConfig>
 
 // Local Includes
-#include "wpuserinfo.h"
 #include "wpaccount.h"
 #include "wpcontact.h"
 #include "ui_wpuserinfowidget.h"
@@ -57,6 +58,7 @@ WPUserInfo::WPUserInfo( WPContact *contact, QWidget *parent )
 
 	connect( this, SIGNAL( closeClicked() ), this, SLOT( slotCloseClicked() ) );
 
+	noComment = true;
 	startDetailsProcess(m_contact->contactId());
 }
 
@@ -72,9 +74,12 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 	KConfigGroup group = KGlobal::config()->group("WinPopup");
 	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
+	if ( host == "LOCALHOST" ) //dont cycle
+		noComment = false;
+
 	detailsProcess = new QProcess(this);
 	QStringList args;
-	args << "-N" << "-g" << "-L" << host << "-";
+	args << "-N" << "-g" << "-L" << host << "-I" << host;
 
 	connect(detailsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int, QProcess::ExitStatus)));
 
@@ -92,17 +97,19 @@ void WPUserInfo::slotDetailsProcessFinished(int, QProcess::ExitStatus)
 		QString output = QString::fromUtf8(outputData.data());
 		QStringList outputList = output.split('\n');
 		foreach (QString line, outputList) {
-			if (info.indexIn(line) != -1) {
+			if (info.indexIn(line) != -1 && noComment) {
 				Workgroup = info.cap(1);
 				OS = info.cap(2);
 				Software = info.cap(3);
 			}
 			if (host.indexIn(line) != -1) {
 				Comment = host.cap(1);
+				noComment = false;
 			}
 		}
 	}
 
+	disconnect(detailsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int, QProcess::ExitStatus)));
 	delete detailsProcess;
 	detailsProcess = 0;
 
@@ -110,6 +117,9 @@ void WPUserInfo::slotDetailsProcessFinished(int, QProcess::ExitStatus)
 	m_mainWidget->sWorkgroup->setText(Workgroup);
 	m_mainWidget->sOS->setText(OS);
 	m_mainWidget->sServer->setText(Software);
+
+	if ( noComment )
+		startDetailsProcess("LOCALHOST"); //smbclient get comment sometime from localhost
 }
 
 void WPUserInfo::slotCloseClicked()

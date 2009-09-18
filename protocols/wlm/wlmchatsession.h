@@ -19,6 +19,7 @@
 
 #include <QLinkedList>
 #include <QMap>
+#include <QWidgetAction>
 #include <QTimer>
 
 #include <kaction.h>
@@ -26,7 +27,16 @@
 #include <KMenu>
 
 #include "kopetechatsession.h"
+#include "wlmchatsessioninkaction.h"
+
 #include <msn/msn.h>
+
+#ifdef HAVE_MEDIASTREAMER
+#include <mediastreamer2/msfilter.h>
+#include <mediastreamer2/mssndcard.h>
+#include <mediastreamer2/msticker.h>
+#include <mediastreamer2/msfilerec.h>
+#endif
 
 class WlmContact;
 
@@ -40,6 +50,7 @@ class WlmChatSession: public Kopete::ChatSession
     virtual ~WlmChatSession ();
     void setReady (bool value);
     bool isReady ();
+    void addFileToRemove(QString path);
     void setChatService (MSN::SwitchboardServerConnection * conn);
 	bool isConnecting();
     MSN::SwitchboardServerConnection * getChatService ()
@@ -76,6 +87,7 @@ class WlmChatSession: public Kopete::ChatSession
     void stopSendKeepAlive();
     unsigned int generateSessionID();
     QMap < QString, QString > emoticonsList;
+    void convertToGif( const QPixmap & ink, QString filename);
 
   private slots:
     void slotMessageSent (Kopete::Message & message, Kopete::ChatSession * kmm);
@@ -84,6 +96,10 @@ class WlmChatSession: public Kopete::ChatSession
     void switchboardConnectionTimeout ();
     void slotActionInviteAboutToShow ();
     void slotInviteContact (Kopete::Contact * contact);
+    void slotSendInk ( const QPixmap &);
+    void slotSendVoiceStartRec();
+    void slotSendVoiceStopRec();
+    void slotSendVoiceStopRecTimeout();
     void slotSendFile ();
     void sendKeepAlive ();
     void messageTimeout();
@@ -103,10 +119,26 @@ class WlmChatSession: public Kopete::ChatSession
     QLinkedList < int > m_messagesTimeoutQueue;
     QLinkedList < QString > m_pendingInvitations;
     QLinkedList < QString > m_pendingFiles;
+    QLinkedList < QString > m_pendingInks;
     KAction * m_actionNudge;
+    WlmChatSessionInkAction * m_actionInk;
     KActionMenu * m_actionInvite;
     QList < KAction* > m_inviteactions;
     QTimer * m_keepalivetimer;
+    QStringList m_filesToRemove;
+
+#ifdef HAVE_MEDIASTREAMER
+    KActionMenu * m_actionVoice;
+    QString m_currentVoiceClipName;
+    QTimer *m_voiceTimer;
+    QLinkedList < QString > m_pendingVoices;
+
+    MSFilter *m_voiceFilter;
+    MSSndCard *m_voiceCardCapture;
+    MSTicker *m_voiceTicker;
+    MSFilter *m_voiceRecorder;
+#endif
+
 };
 
 #endif

@@ -18,6 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 
+// Local Includes
+#include "wpaccount.h"
+
 // QT Includes
 #include <qregexp.h>
 #include <QIcon>
@@ -32,8 +35,6 @@
 
 // Kopete Includes
 
-// Local Includes
-#include "wpaccount.h"
 
 class KMenu;
 
@@ -46,7 +47,7 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID)
 
 	// we need this before initActions
 	Kopete::MetaContact *myself = Kopete::ContactList::self()->myself();
-	setMyself( new WPContact(this, accountID, myself->displayName(), myself) );
+	setMyself( new WPContact(this, accountID, QString(), myself) );
 
 //	if (excludeConnect()) connect(Kopete::OnlineStatus::Online); // ??
 }
@@ -199,7 +200,9 @@ void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)
 {
 	kDebug(14170) << "WPAccount::slotSendMessage(" << Body << ", " << Destination << ")";
 
-	if (myself()->onlineStatus().status() == Kopete::OnlineStatus::Away) myself()->setOnlineStatus(mProtocol->WPOnline);
+	if (myself()->onlineStatus().status() == Kopete::OnlineStatus::Away ||
+		myself()->onlineStatus().status() == Kopete::OnlineStatus::Busy)
+		myself()->setOnlineStatus(mProtocol->WPOnline);
 	mProtocol->sendMessage(Body, Destination);
 }
 
@@ -217,7 +220,8 @@ void WPAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
 	if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Online)
 		setAway( false, statusMessage.message() );
-	else if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away)
+	else if(myself()->onlineStatus().status() == Kopete::OnlineStatus::Away ||
+		myself()->onlineStatus().status() == Kopete::OnlineStatus::Busy)
 		setAway( true, statusMessage.message() );
 }
 #include "wpaccount.moc"

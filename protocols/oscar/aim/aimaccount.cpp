@@ -453,7 +453,7 @@ void AIMAccount::disconnected( DisconnectReason reason )
 	myself()->setOnlineStatus( protocol()->statusManager()->onlineStatusOf( pres ) );
 
 	QHash<QString, Kopete::Contact*> contactList = contacts();
-	foreach( Kopete::Contact* c, contactList.values() )
+	foreach( Kopete::Contact* c, contactList )
 	{
 		OscarContact* oc = dynamic_cast<OscarContact*>( c );
 		if ( oc )
@@ -475,7 +475,8 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 		// Might be duplicate code from the parent class to get some needed information
 		// Perhaps a refactoring is needed.
 		kDebug(14152) << "Checking to see if I'm online..";
-		if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
+		if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away ||
+			myself()->onlineStatus().status() == Kopete::OnlineStatus::Busy)
 		{
 			QString sender = Oscar::normalize( message.sender() );
 			AIMContact* aimSender = dynamic_cast<AIMContact *> ( contacts().value( sender ) ); //should exist now

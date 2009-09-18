@@ -60,8 +60,7 @@ void PropertyContainer::serializeProperties(QMap<QString, QString> &serializedDa
 	} // end for()
 } // end serializeProperties()
 
-void PropertyContainer::deserializeProperties(
-	QMap<QString, QString> &serializedData )
+void PropertyContainer::deserializeProperties( const QMap<QString, QString> &serializedData )
 {
 	QMap<QString, QString>::ConstIterator it;
 	for ( it=serializedData.constBegin(); it != serializedData.constEnd(); ++it )
@@ -137,7 +136,7 @@ void PropertyContainer::setProperty(const Kopete::PropertyTmpl &tmpl,
 		return;
 	}
 
-	if(value.isNull() || value.canConvert(QVariant::String) && value.toString().isEmpty())
+	if(value.isNull() || (value.canConvert(QVariant::String) && value.toString().isEmpty()))
 	{
 		removeProperty(tmpl);
 	}

@@ -17,6 +17,7 @@
     *************************************************************************
 */
 
+#include "gwchatsearchdialog.h"
 #include <qmap.h>
 
 #include <k3listview.h>
@@ -31,8 +32,6 @@
 #include "gwaccount.h"
 #include "gwprotocol.h"
 #include "gwchatpropsdialog.h"
-
-#include "gwchatsearchdialog.h"
 
 GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
 	: KDialog(  parent),

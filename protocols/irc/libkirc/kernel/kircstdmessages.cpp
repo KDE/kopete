@@ -195,13 +195,6 @@ Message StdMessages::topic(const QByteArray &channel, const QByteArray &topic)
 	return msg;
 }
 
-Message StdMessages::topic(const QByteArray &channel )
-{
-	Message msg;
-	msg<< TOPIC <<channel;
-	return msg;
-}
-
 /* RFC1459: "<username> <hostname> <servername> <realname>"
  * The USER command is used at the beginning of connection to specify
  * the username, hostname and realname of a new user.

@@ -14,6 +14,8 @@
   *************************************************************************
 */
 
+#include "smseditaccountwidget.h"
+
 #include <qlayout.h>
 #include <qcombobox.h>
 #include <qpushbutton.h>
@@ -29,7 +31,6 @@
 
 #include "kopeteuiglobal.h"
 
-#include "smseditaccountwidget.h"
 #include "smsactprefs.h"
 #include "serviceloader.h"
 #include "smsprotocol.h"

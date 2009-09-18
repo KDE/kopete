@@ -4,7 +4,6 @@
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
     Copyright (c) 2003-2007 by Michel Hermier <michel.hermier@gmail.com>
-    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -142,7 +141,8 @@ public:
 	virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/** Reimplemented from Kopete::Account */
-	virtual void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &statusMessage,const QFlags<Kopete::Account::OnlineStatusOption>& option);
+	virtual void setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &statusMessage,
+	                             const OnlineStatusOptions& options = None);
 
 	virtual void setStatusMessage(const Kopete::StatusMessage &statusMessage);
 
@@ -169,7 +169,7 @@ protected:
 private slots:
 	void clientConnectionStateChanged(KIrc::Socket::ConnectionState newstate);
 
-	void destroyed(QObject *contact);
+	void destroyed(IRCContact *contact);
 
 	void receivedEvent(QEvent *event);
 
@@ -182,8 +182,7 @@ private slots:
 private:
 	void clientSetup();
 	void clientConnect();
-	void appendMessage(IRCContact* from, QList<Kopete::Contact*> to,const QString& text, 
-					   Kopete::Message::MessageType type, Kopete::Message::MessageImportance importance);
+	void appendMessage(IRCContact* from, QList<Kopete::Contact*> to,const QString& text, Kopete::Message::MessageType type);
 private:
 	Q_DISABLE_COPY(IRCAccount)
 

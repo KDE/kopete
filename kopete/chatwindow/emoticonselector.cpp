@@ -86,7 +86,7 @@ EmoticonSelector::EmoticonSelector(QWidget *parent)
 			this, SLOT(mouseOverItem(QListWidgetItem*)));
 	connect(m_emoticonList, SIGNAL(itemSelectionChanged()),
 			this, SLOT(currentChanged()));
-	connect(m_emoticonList, SIGNAL(itemActivated(QListWidgetItem*)),
+  connect(m_emoticonList, SIGNAL(itemClicked(QListWidgetItem*)),
 			this, SLOT(emoticonClicked(QListWidgetItem*)));
 
 }

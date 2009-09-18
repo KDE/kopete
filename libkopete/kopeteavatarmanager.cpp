@@ -279,6 +279,27 @@ bool AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
 	return false;
 }
 
+bool AvatarManager::exists(Kopete::AvatarManager::AvatarEntry entryToCheck)
+{
+	if( entryToCheck.name.isEmpty() )
+		return false;
+	return exists(entryToCheck.name);
+}
+
+bool AvatarManager::exists(const QString &avatarName)
+{
+	KUrl configUrl(d->baseDir);
+	configUrl.addPath( UserDir );
+	configUrl.addPath( AvatarConfig );
+
+	KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig ), avatarName );
+	kDebug(14010) << "Checking if an avatar exists: " << avatarName;
+	if(!avatarConfig.exists()){
+		return false;
+	}
+	return true;
+}
+
 void AvatarManager::Private::createDirectory(const KUrl &directory)
 {
 	if( !QFile::exists(directory.path()) )

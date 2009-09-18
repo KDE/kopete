@@ -25,6 +25,7 @@
 
 #include <qwidget.h>
 #include <editaccountwidget.h>
+#include "gwaccount.h"
 #include "ui_gwaccountpreferences.h"
 
 class QVBoxLayout;

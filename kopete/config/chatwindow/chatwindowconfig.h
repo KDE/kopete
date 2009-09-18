@@ -17,8 +17,8 @@
     *************************************************************************
 */
 
-#ifndef CHATWINCONF_H
-#define CHATWINCONF_H
+#ifndef CHATWINDOWCONFIG_H
+#define CHATWINDOWCONFIG_H
 
 #define KDE3_SUPPORT
 #include <kcmodule.h>

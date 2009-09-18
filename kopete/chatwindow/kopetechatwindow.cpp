@@ -84,6 +84,7 @@
 
 #include <qtoolbutton.h>
 #include <kxmlguifactory.h>
+#include <KTabBar>
 
 typedef QMap<Kopete::Account*,KopeteChatWindow*> AccountMap;
 typedef QMap<Kopete::Group*,KopeteChatWindow*> GroupMap;
@@ -203,7 +204,7 @@ KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *par
 	updateBg = true;
 	m_tabBar = 0L;
 
-	m_participantsWidget = new QDockWidget(this);
+	m_participantsWidget = new QDockWidget(i18n("Participants"), this);
 	m_participantsWidget->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
 	m_participantsWidget->setFeatures(QDockWidget::DockWidgetClosable);
 	m_participantsWidget->setTitleBarWidget(0L);
@@ -284,26 +285,26 @@ KopeteChatWindow::~KopeteChatWindow()
 
 	for( AccountMap::Iterator it = accountMap.begin(); it != accountMap.end(); )
 	{
-		AccountMap::Iterator mayDeleteIt = it;
-		++it;
-		if( mayDeleteIt.value() == this )
-			accountMap.remove( mayDeleteIt.key() );
+		if( it.value() == this )
+			it=accountMap.erase( it );
+		else
+			++it;
 	}
 
 	for( GroupMap::Iterator it = groupMap.begin(); it != groupMap.end(); )
 	{
-		GroupMap::Iterator mayDeleteIt = it;
-		++it;
-		if( mayDeleteIt.value() == this )
-			groupMap.remove( mayDeleteIt.key() );
+		if( it.value() == this )
+			it=groupMap.erase( it );
+		else
+			++it;
 	}
 
 	for( MetaContactMap::Iterator it = mcMap.begin(); it != mcMap.end(); )
 	{
-		MetaContactMap::Iterator mayDeleteIt = it;
-		++it;
-		if( mayDeleteIt.value() == this )
-			mcMap.remove( mayDeleteIt.key() );
+		if( it.value() == this )
+			it=mcMap.erase( it );
+		else
+			++it;
 	}
 
 	windows.removeAt( windows.indexOf( this ) );
@@ -329,24 +330,28 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 {
 	m_popupView = static_cast<ChatView*>( tab );
 
-	KMenu *popup = new KMenu;
-	popup->addTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
-	popup->addAction( actionContactMenu );
-	popup->addSeparator();
-	popup->addAction( actionTabPlacementMenu );
-	popup->addAction( tabDetach );
-	popup->addAction( actionDetachMenu );
-	popup->addAction( tabCloseAllOthers );
-	popup->addAction( tabClose );
-	popup->exec( pos );
+	KMenu popup;
+	popup.addTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
+	popup.addAction( actionContactMenu );
+	popup.addSeparator();
+	popup.addAction( actionTabPlacementMenu );
+	popup.addAction( tabDetach );
+	popup.addAction( actionDetachMenu );
+	popup.addAction( tabCloseAllOthers );
+	popup.addAction( tabClose );
+	popup.exec( pos );
 
-	delete popup;
 	m_popupView = 0;
 }
 
 ChatView *KopeteChatWindow::activeView()
 {
 	return m_activeView;
+}
+
+void KopeteChatWindow::updateSendKeySequence()
+{
+	m_activeView->editPart()->textEdit()->setSendKeySequence( sendMessage->shortcut() );
 }
 
 void KopeteChatWindow::initActions(void)
@@ -356,7 +361,9 @@ void KopeteChatWindow::initActions(void)
 	createStandardStatusBarAction();
 
 	chatSend = new KAction( KIcon("mail-send"), i18n( "&Send Message" ), coll );
-	coll->addAction( "chat_send", chatSend );
+	//Recuperate the qAction for later
+	sendMessage = coll->addAction( "chat_send", chatSend );
+
 	connect( chatSend, SIGNAL( triggered(bool) ), SLOT( slotSendMessage() ) );
 	//Default to 'Return' and 'Enter' for sending messages
 	//'Return' is the key in the main part of the keyboard
@@ -618,6 +625,21 @@ void KopeteChatWindow::setStatus(const QString &text)
 	m_status_text->setText(text);
 }
 
+void KopeteChatWindow::testCanDecode(const QDragMoveEvent *event, bool &accept)
+{
+	if (chatViewList[static_cast<KTabBar*>(m_tabBar->childAt( event->pos()))->selectTab( event->pos() )]->isDragEventAccepted( event )) {
+		accept = true;
+	} else {
+		accept = false;
+	}
+}
+
+void KopeteChatWindow::receivedDropEvent( QWidget *w, QDropEvent *e )
+{
+	m_tabBar->setCurrentWidget( w );
+	activeView()->dropEvent( e );
+}
+
 void KopeteChatWindow::createTabBar()
 {
 	if( !m_tabBar )
@@ -644,6 +666,8 @@ void KopeteChatWindow::createTabBar()
 		for( ChatViewList::iterator it = chatViewList.begin(); it != chatViewList.end(); ++it )
 			addTab( *it );
 
+		connect ( m_tabBar, SIGNAL(testCanDecode(const QDragMoveEvent *, bool &)), this, SLOT(testCanDecode(const QDragMoveEvent *, bool &)) );
+		connect ( m_tabBar, SIGNAL(receivedDropEvent( QWidget *, QDropEvent * )), this, SLOT(receivedDropEvent( QWidget *, QDropEvent * )) );
 		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
 		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
 
@@ -974,6 +998,9 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	updateActions();
 	slotUpdateSendEnabled();
 	m_activeView->loadChatSettings();
+	m_activeView->editPart()->textEdit()->setSendKeySequence( sendMessage->shortcut() );
+	//Set up change signal in case the user changer the shortcut later
+	connect( sendMessage, SIGNAL(changed()), SLOT(updateSendKeySequence()) );
 
 	emit chatSessionChanged(m_activeView->msgManager());
 }
@@ -1101,19 +1128,27 @@ void KopeteChatWindow::slotPreparePlacementMenu()
 
 	action = placementMenu->addAction( i18n("Bottom") );
 	action->setData( 1 );
+
+	action = placementMenu->addAction( i18n("Left") );
+	action->setData( 2 );
+
+	action = placementMenu->addAction( i18n("Right") );
+	action->setData( 3 );
 }
 
 void KopeteChatWindow::slotPlaceTabs( QAction *action )
 {
 	int placement = action->data().toInt();
+
 	if( m_tabBar )
 	{
-
-		if( placement == 0 )
-			m_tabBar->setTabPosition( QTabWidget::North );
-		else
-			m_tabBar->setTabPosition( QTabWidget::South );
-
+		switch( placement )
+		{
+		case 1 : m_tabBar->setTabPosition( QTabWidget::South ); break;
+		case 2 : m_tabBar->setTabPosition( QTabWidget::West  ); break;
+		case 3 : m_tabBar->setTabPosition( QTabWidget::East  ); break;
+		default: m_tabBar->setTabPosition( QTabWidget::North );
+		}
 		saveOptions();
 	}
 }
@@ -1289,15 +1324,14 @@ void KopeteChatWindow::updateChatTooltip( ChatView* cv )
 
 void KopeteChatWindow::updateChatLabel()
 {
-	const ChatView* cv = dynamic_cast<const ChatView*>( sender() );
-	if ( !cv || !m_tabBar )
+	ChatView* chat = dynamic_cast<ChatView*>( sender() );
+	if ( !chat || !m_tabBar )
 		return;
 
-	ChatView* chat  = const_cast<ChatView*>( cv );
 	if ( m_tabBar )
 	{
 		m_tabBar->setTabText( m_tabBar->indexOf( chat ), chat->caption() );
-		if ( m_tabBar->count() < 2 || m_tabBar->currentWidget() == static_cast<const QWidget *>(cv) )
+		if ( m_tabBar->count() < 2 || m_tabBar->currentWidget() == chat )
 			setCaption( chat->caption() );
 	}
 }

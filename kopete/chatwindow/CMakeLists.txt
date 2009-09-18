@@ -21,7 +21,7 @@ kopetechatwindowstyle.cpp )
 
 kde4_add_kcfg_files(kopetechatwindow_shared_SRCS GENERATE_MOC kopetechatwindowsettings.kcfgc )
 kde4_add_library(kopetechatwindow_shared SHARED ${kopetechatwindow_shared_SRCS})
-target_link_libraries(kopetechatwindow_shared kopete ${KDE4_KHTML_LIBS} ${KDE4_KUTILS_LIBS} )
+target_link_libraries(kopetechatwindow_shared kopete ${KDE4_PHONON_LIBS} ${KDE4_KHTML_LIBS} ${KDE4_KUTILS_LIBS} )
 set_target_properties(kopetechatwindow_shared PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopetechatwindow_shared ${INSTALL_TARGETS_DEFAULT_ARGS})
 
@@ -34,7 +34,7 @@ kde4_add_plugin(chattexteditpart WITH_PREFIX ${chattexteditpart_PART_SRCS})
 
 target_link_libraries(chattexteditpart kopete kopetechatwindow_shared ${KDE4_KPARTS_LIBS} )
 
-set_target_properties(chattexteditpart PROPERTIES DEFINE_SYMBOL KOPETECHATWINDOW_SHARED_EXPORT="")
+set_target_properties(chattexteditpart PROPERTIES COMPILE_FLAGS -DKOPETECHATWINDOW_SHARED_EXPORT="")
 
 install(TARGETS chattexteditpart  DESTINATION ${PLUGIN_INSTALL_DIR})
 

@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "wpcontact.h"
+
 // Qt Includes
 #include <qregexp.h>
 //Added by qt3to4:
@@ -26,7 +28,6 @@
 // Kopete Includes
 
 // Local Includes
-#include "wpcontact.h"
 #include "wpaccount.h"
 
 WPContact::WPContact(Kopete::Account *account, const QString &newHostName, const QString &nickName, Kopete::MetaContact *metaContact)
@@ -162,6 +163,7 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
 	Kopete::Message msg(this, contactList);
 	msg.setDirection( Kopete::Message::Inbound );
+	msg.setTimestamp(Arrival);
 
 	if(subj.indexIn(Body) == -1) {
 		msg.setPlainBody( Body );
@@ -180,7 +182,7 @@ void WPContact::slotSendMessage( Kopete::Message& message )
 	// Warning: this could crash
 	kDebug(14170) << message.to().first() << " is " << dynamic_cast<WPContact *>( message.to().first() )->contactId();
 
-	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + '\n' : QString("")) + message.plainBody();
+	QString Message = QString((!message.subject().isEmpty() ? "Subject: " + message.subject() + '\n' : QString()) + message.plainBody()).trimmed();
 	WPAccount *acct = dynamic_cast<WPAccount *>(account());
 	WPContact *contact = dynamic_cast<WPContact *>( message.to().first() );
 	if (acct && contact) {

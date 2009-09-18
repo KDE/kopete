@@ -49,7 +49,6 @@ public:
 	 */
 	virtual bool validateData();
 protected:
-	Kopete::Account *m_account;
 	Ui::BonjourAccountPreferences *m_preferencesWidget;
 	KConfigGroup *group;
 };

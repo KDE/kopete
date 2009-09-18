@@ -89,6 +89,8 @@ class WlmProtocol: public Kopete::Protocol
     const Kopete::OnlineStatus wlmConnecting;
 
     const Kopete::PropertyTmpl currentSong;
+    
+    const Kopete::PropertyTmpl contactCapabilities;
 
 	const Kopete::PropertyTmpl displayPhotoSHA1;
 

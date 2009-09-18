@@ -19,6 +19,7 @@
     *************************************************************************
 */
 
+#include "gwmessagemanager.h"
 #include <qlabel.h>
 #include <qvalidator.h>
 #include <QList>
@@ -49,8 +50,6 @@
 #include "gwerror.h"
 #include "gwprotocol.h"
 #include "gwsearch.h"
-
-#include "gwmessagemanager.h"
 
 GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id ): Kopete::ChatSession( user, others, protocol ), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {

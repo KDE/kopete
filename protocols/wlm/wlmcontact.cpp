@@ -51,6 +51,7 @@ Kopete::Contact (_account, uniqueName, parent)
     setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     m_contactSerial = contactSerial;
     m_disabled = false;
+    m_dontShowEmoticons = false;
 
     if ( metaContact() )
         m_currentGroup = metaContact()->groups().first();
@@ -60,7 +61,26 @@ Kopete::Contact (_account, uniqueName, parent)
 
     m_actionShowProfile = new KAction(i18n("Show Profile"), this);
     QObject::connect(m_actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()));
+
+    m_actionUpdateDisplayPicture = new KAction(i18n("Update Photo"), this);
+    QObject::connect(m_actionUpdateDisplayPicture, SIGNAL(triggered(bool)), this, SLOT(slotUpdateDisplayPicture()));
+
+    m_actionDontShowEmoticons = new KToggleAction (KIcon ("wlm_fakefriend"), 
+           i18n ("&Block custom emoticons"), this);
+    QObject::connect (m_actionDontShowEmoticons, SIGNAL(triggered(bool)), this, SLOT(slotDontShowEmoticons(bool)));
 }
+
+void WlmContact::slotDontShowEmoticons(bool block)
+{
+    m_actionDontShowEmoticons->setChecked(block);
+    m_dontShowEmoticons = block;
+}
+
+bool WlmContact::dontShowEmoticons()
+{
+    return m_dontShowEmoticons;
+}
+
 
 void WlmContact::setDisabled(bool disabled, bool updateServer)
 {
@@ -127,6 +147,25 @@ WlmContact::slotShowProfile()
 }
 
 void
+WlmContact::slotUpdateDisplayPicture()
+{
+    if(!account()->isConnected())
+        return;
+
+	WlmAccount* acc = qobject_cast<WlmAccount*>(account());
+    if(!acc)
+        return;
+
+    if ((onlineStatus() != WlmProtocol::protocol ()->wlmOffline)
+           && (onlineStatus() != WlmProtocol::protocol ()->wlmInvisible)
+           && (onlineStatus() != WlmProtocol::protocol ()->wlmUnknown))
+    {
+        acc->chatManager ()->requestDisplayPicture (contactId());
+    }
+
+}
+
+void
 WlmContact::sendFile (const KUrl & sourceURL, const QString & fileName,
                       uint fileSize)
 {
@@ -160,6 +199,7 @@ WlmContact::serialize (QMap < QString, QString > &serializedData,
         property (Kopete::Global::Properties::self ()->photo ()).value ().
         toString ();
     serializedData["contactSerial"] = m_contactSerial;
+    serializedData["dontShowEmoticons"] = m_dontShowEmoticons ? "true" : "false";
 }
 
 Kopete::ChatSession *
@@ -189,11 +229,15 @@ QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
     m_actionBlockContact->setChecked(m_account->isContactBlocked(contactId()));
     actions->append(m_actionBlockContact);
     actions->append(m_actionShowProfile);
+    actions->append(m_actionUpdateDisplayPicture);
+    actions->append(m_actionDontShowEmoticons);
 
     // temporary action collection, used to apply Kiosk policy to the actions
     KActionCollection tempCollection((QObject*)0);
     tempCollection.addAction(QLatin1String("contactBlock"), m_actionBlockContact);
     tempCollection.addAction(QLatin1String("contactViewProfile"), m_actionShowProfile);
+    tempCollection.addAction(QLatin1String("updateDisplayPicture"), m_actionUpdateDisplayPicture);
+    tempCollection.addAction(QLatin1String("dontShowEmoticons"), m_actionDontShowEmoticons);
 
     return actions;
 }
@@ -367,20 +411,41 @@ void
 WlmContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 {
 	bool isBlocked = qobject_cast <WlmAccount *>(account())->isOnBlockList(contactId());
+	bool isOnForwardList = qobject_cast <WlmAccount *>(account())->isOnServerSideList(contactId());
+	bool isOnReverseList = qobject_cast <WlmAccount *>(account())->isOnReverseList(contactId());
 	
 	// if this contact is blocked, and currently has a regular status,
 	// create a custom status and add wlm_blocked to ovelayIcons
-	if(isBlocked && status.internalStatus() < 15)
+	if(isBlocked || (isOnForwardList && !isOnReverseList))
 	{
+		QStringList overelayIconsList;
+		QString reason;
+		if(isOnForwardList && !isOnReverseList)
+		{
+			overelayIconsList << "wlm_fakefriend";
+			reason = i18n("This contact does not have you in his/her list");
+		}
+
+		if(isBlocked)
+		{
+			overelayIconsList << "wlm_blocked";
+			if(reason.isEmpty())
+				reason = i18n("This contact is blocked");
+			else
+				reason = i18n("This contact does not have you in his/her list and is blocked");
+		}
+		// set the new status
 		Kopete::Contact::setOnlineStatus(
 				Kopete::OnlineStatus(status.status() ,
 				(status.weight()==0) ? 0 : (status.weight() -1),
 				protocol(),
 				status.internalStatus()+15,
-				status.overlayIcons() + QStringList("wlm_blocked"),
-				i18n("%1|Blocked", status.description() ) ) );
+				status.overlayIcons() + overelayIconsList,
+				reason ) );
+		return;
 	}
-	else if (!isBlocked && status.internalStatus() >= 15)
+
+	if (status.internalStatus() >= 15)
 	{
 		// if this contact was previously blocked, set a regular status again
 		switch(status.internalStatus()-15)

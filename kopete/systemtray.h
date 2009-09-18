@@ -71,7 +71,6 @@ private Q_SLOTS:
 
 private:
 	KopeteSystemTray( QWidget* parent );
-	QString squashMessage( const Kopete::Message& msgText );
 
 	QTimer *mBlinkTimer;
 	QIcon mKopeteIcon;

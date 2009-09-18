@@ -359,12 +359,19 @@ WlmChatManager::receivedMessage (MSN::SwitchboardServerConnection * conn,
         newMessage->setForegroundColor (message.foregroundColor ());
         newMessage->setDirection (Kopete::Message::Inbound);
 
-        if (!fillEmoticons(chat, newMessage))
-        {
-            pendingMessages[conn].append(PendingMessage(newMessage));
-            if (m_emoticonsTimeoutTimerId == 0)
-                m_emoticonsTimeoutTimerId = startTimer(EmoticonsTimeoutCheckInterval * 1000);
+        WlmContact *contact_from = qobject_cast<WlmContact*>(contact);
+        if(!contact_from)
             return;
+
+        if(!contact_from->dontShowEmoticons())
+        {
+            if (!fillEmoticons(chat, newMessage))
+            {
+                pendingMessages[conn].append(PendingMessage(newMessage));
+                if (m_emoticonsTimeoutTimerId == 0)
+                    m_emoticonsTimeoutTimerId = startTimer(EmoticonsTimeoutCheckInterval * 1000);
+                return;
+            }
         }
         // Add it to the manager
         chat->appendMessage (*newMessage);
@@ -468,9 +475,20 @@ WlmChatManager::slotGotVoiceClipNotification (MSN::SwitchboardServerConnection *
                                 const MSN::Passport & from,
                                 const QString & msnobject)
 {
-    Q_UNUSED( conn );
     Q_UNUSED( from );
-    Q_UNUSED( msnobject );
+    WlmChatSession *chat = chatSessions[conn];
+    if (!chat)
+        return;
+    unsigned int sessionID = chat->generateSessionID();
+
+    KTemporaryFile voiceClip;
+    voiceClip.setPrefix("kopete_voiceclip-");
+    voiceClip.setSuffix(".wav");
+    voiceClip.setAutoRemove(false);
+    voiceClip.open();
+    chat->addFileToRemove(voiceClip.fileName());
+    conn->requestVoiceClip(sessionID, voiceClip.fileName().toAscii().data(), 
+            msnobject.toAscii().data());
 }
 
 void
@@ -517,6 +535,7 @@ WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn,
     kmsg.setHtmlBody( msg );
     kmsg.setDirection( Kopete::Message::Inbound );
     chat->appendMessage ( kmsg );
+    chat->addFileToRemove(inkImage->fileName());
 
     inkImage = 0l;
 
@@ -527,9 +546,17 @@ WlmChatManager::slotGotVoiceClipFile(MSN::SwitchboardServerConnection * conn,
                                 const unsigned int & sessionID, 
                                 const QString & file)
 {
-    Q_UNUSED( conn );
     Q_UNUSED( sessionID );
-    Q_UNUSED( file );
+
+    WlmChatSession *chat = chatSessions[conn];
+    if(!chat)
+        return;
+
+    Kopete::Message kmsg( chat->members().first(), chat->members() );
+    kmsg.setType(Kopete::Message::TypeVoiceClipRequest);
+    kmsg.setDirection( Kopete::Message::Inbound );
+    kmsg.setFileName(file);
+    chat->appendMessage ( kmsg );
 }
 
 void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
@@ -538,6 +565,14 @@ void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnecti
                                 const QString & msnobject)
 {
     Q_UNUSED( buddy );
+
+    WlmContact *contact = qobject_cast<WlmContact*>(m_account->contacts().value(QString(buddy.c_str())));
+
+    if(!contact)
+        return;
+
+    if(m_account->doNotRequestEmoticons() || contact->dontShowEmoticons())
+        return;
 
     WlmChatSession *chat = chatSessions[conn];
     if(!chat)

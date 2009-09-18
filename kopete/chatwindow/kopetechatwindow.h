@@ -40,7 +40,6 @@ class KToggleAction;
 class KActionMenu;
 class KTemporaryFile;
 class QPixmap;
-class QTabWidget;
 class KSqueezedTextLabel;
 class KPushButton;
 class QVBoxLayout;
@@ -49,7 +48,6 @@ class KTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
 class ChatView;
-class SidebarWidget;
 class QDockWidget;
 
 namespace Kopete
@@ -166,6 +164,8 @@ private:
 	KAction *tabClose;
 	KAction *tabCloseAllOthers;
 
+	QAction *sendMessage;
+
 	KToggleAction* toggleAutoSpellCheck;
 
 	KopeteEmoticonAction *actionSmileyMenu;
@@ -187,6 +187,8 @@ public slots:
 
 private slots:
 //	void slotPrepareSmileyMenu();
+	void testCanDecode(const QDragMoveEvent *, bool &);
+	void receivedDropEvent( QWidget *, QDropEvent * );
 	void slotPrepareContactMenu();
 	void slotPrepareDetachMenu();
 	void slotPreparePlacementMenu();
@@ -218,6 +220,7 @@ private slots:
 	void slotEnableUpdateBg() { updateBg = true; }
 
 	void updateChatSendFileAction();
+	void updateSendKeySequence();
 
 	void toggleAutoSpellChecking();
 	void slotAutoSpellCheckEnabled( ChatView*, bool );

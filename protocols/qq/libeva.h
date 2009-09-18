@@ -1,5 +1,5 @@
-#ifndef __LIB_EVA_H__
-#define __LIB_EVA_H__
+#ifndef LIB_EVA_H
+#define LIB_EVA_H
 
 #include <string.h>
 #include <stdlib.h>

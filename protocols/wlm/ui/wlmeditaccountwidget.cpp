@@ -20,6 +20,7 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QSet>
+#include <QNetworkProxy>
 
 #include <kdebug.h>
 #include <kmessagebox.h>
@@ -54,6 +55,22 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
 
         m_preferencesWidget->m_serverName->setText( m_wlmAccount->serverName() );
         m_preferencesWidget->m_serverPort->setValue( m_wlmAccount->serverPort() );
+
+        if ( m_wlmAccount->isProxyEnabled() )
+            m_preferencesWidget->optionEnableProxy->setChecked( true );
+
+        m_preferencesWidget->m_proxyHost->setText( m_wlmAccount->proxyHost() );
+        m_preferencesWidget->m_proxyPort->setValue( m_wlmAccount->proxyPort() );
+        m_preferencesWidget->m_proxyUsername->setText( m_wlmAccount->proxyUsername() );
+        m_preferencesWidget->m_proxyPassword->setText( m_wlmAccount->proxyPassword() );
+
+        m_preferencesWidget->m_doNotSendEmoticons->setChecked( m_wlmAccount->doNotSendEmoticons() );
+        m_preferencesWidget->m_doNotRequestEmoticons->setChecked( m_wlmAccount->doNotRequestEmoticons() );
+
+        if(m_wlmAccount->proxyType() == QNetworkProxy::Socks5Proxy )
+            m_preferencesWidget->m_radioProxySocks5->setChecked( true );
+        else
+            m_preferencesWidget->m_radioProxyHttp->setChecked( true );
 
         bool connected = account->isConnected();
         if ( connected )
@@ -135,6 +152,27 @@ Kopete::Account * WlmEditAccountWidget::apply ()
         config->writeEntry( "serverName", "messenger.hotmail.com" );
         config->writeEntry( "serverPort", "1863" );
     }
+
+    if (m_preferencesWidget->optionEnableProxy->isChecked() ) {
+        config->writeEntry( "enableProxy", true );
+        config->writeEntry( "proxyHost", m_preferencesWidget->m_proxyHost->text().trimmed() );
+        config->writeEntry( "proxyPort", m_preferencesWidget->m_proxyPort->value()  );
+        config->writeEntry( "proxyUsername", m_preferencesWidget->m_proxyUsername->text() );
+        config->writeEntry( "proxyPassword", m_preferencesWidget->m_proxyPassword->text() );
+        if(m_preferencesWidget->m_radioProxyHttp->isChecked())
+            config->writeEntry( "proxyType", (uint)QNetworkProxy::HttpProxy );
+        else
+            config->writeEntry( "proxyType", (uint)QNetworkProxy::Socks5Proxy );
+    }
+    else {
+        config->writeEntry( "enableProxy", false );
+    }
+
+    config->writeEntry( "doNotSendEmoticons", 
+            m_preferencesWidget->m_doNotSendEmoticons->isChecked());
+
+    config->writeEntry( "doNotRequestEmoticons", 
+            m_preferencesWidget->m_doNotRequestEmoticons->isChecked());
 
     if ( wlmAccount->isConnected() )
     {

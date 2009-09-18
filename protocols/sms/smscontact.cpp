@@ -14,6 +14,7 @@
   *************************************************************************
 */
 
+#include "smscontact.h"
 
 #undef KDE_NO_COMPAT
 #include <kconfigbase.h>
@@ -27,7 +28,6 @@
 #include "kopeteaccount.h"
 #include "kopeteuiglobal.h"
 
-#include "smscontact.h"
 #include "smsprotocol.h"
 #include "smsservice.h"
 #include "smsaccount.h"

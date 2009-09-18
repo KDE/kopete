@@ -56,11 +56,10 @@ void BonjourContactConnection::setSocket(QTcpSocket *aSocket)
 }
 
 BonjourContactConnection::BonjourContactConnection(QTcpSocket *aSocket, 
-		QObject *parent) : QObject(parent)
+		QObject *parent) : QObject(parent), connectionState(BonjourConnectionNewIncoming), parser(),
+					local(), remote()
 {
 	setSocket(aSocket);
-	
-	connectionState = BonjourConnectionNewIncoming;
 }
 
 BonjourContactConnection::BonjourContactConnection(const QHostAddress &address, short int port,
@@ -190,6 +189,14 @@ void BonjourContactConnection::dataInSocket()
 			getStreamTag(token);
 			break;
 	}
+
+	if (moreTokensAvailable())
+		dataInSocket();
+}
+
+bool BonjourContactConnection::moreTokensAvailable()
+{
+	return ! parser.atEnd();
 }
 
 void BonjourContactConnection::getStreamTag(BonjourXmlToken &token)

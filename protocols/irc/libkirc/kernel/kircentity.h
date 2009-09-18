@@ -2,7 +2,6 @@
     kircentity.h - IRC Client
 
     Copyright (c) 2004-2007 by Michel Hermier <michel.hermier@gmail.com>
-    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2004-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -20,12 +19,10 @@
 #define KIRCENTITY_H
 
 #include "kirc_export.h"
-#include "kircglobal.h"
 
 #include <QtCore/QList>
 #include <QtCore/QObject>
 #include <QtCore/QSharedData>
-#include <QtCore/QPointer>
 
 class QTextCodec;
 
@@ -63,11 +60,11 @@ public:
 		Channel,
 		Server
 	};
-
-	static Type guessType(const QByteArray &name);
+/*
+	static EntityType guessType(const QByteArray &name);
 	static bool isChannel( const QByteArray &name );
 	static bool isUser( const QByteArray &name );
-
+*/
 	Entity(KIrc::Context *context);
 	virtual ~Entity();
 
@@ -85,29 +82,22 @@ public slots: // Write attributes accessors
 	QByteArray setModes(const QByteArray &);
 	void setName(const QByteArray &);
 //	void setNick(const QByteArray &);
-	void setTopic(const QByteArray &);
+//	void setTopic(const QByteArray &);
 //	void setUser(const QByteArray &);
 
-	//Reimplement this, to emit the aboutToBeDestroyed signal before deleting
-	void free();
 public:
 	Entity::Type type() const;
 	bool isChannel() const;
 	bool isUser() const;
 	void setType(Entity::Type type);
 
-	Entity::Type guessType();
+//	EntityType guessType();
 
 	QTextCodec *codec() const;
 	void setCodec(QTextCodec *);
 
-	QPointer<Context> context() const;
-
-	EntityStatus status() const;
-	void setStatus(const EntityStatus& status);
-
 signals:
-	void aboutToBeDestroyed(KIrc::Entity* self);
+	void destroyed(Entity *self);
 
 	void updated();
 

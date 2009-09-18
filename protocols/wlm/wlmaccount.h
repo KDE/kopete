@@ -17,6 +17,7 @@
 #ifndef WLMACCOUNT_H
 #define WLMACCOUNT_H
 
+#include <ktemporaryfile.h>
 #include <kopeteaccount.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetepasswordedaccount.h"
@@ -95,6 +96,15 @@ class WlmAccount:public
     QString serverName() const;
     uint serverPort() const;
 
+    bool isProxyEnabled() const;
+    QString proxyHost() const;
+    uint proxyPort() const;
+    QString proxyUsername() const;
+    QString proxyPassword() const;
+    uint proxyType() const;
+    bool doNotRequestEmoticons() const;
+    bool doNotSendEmoticons() const;
+
     WlmServer * server ();
 
     WlmChatManager * chatManager ()
@@ -118,6 +128,8 @@ class WlmAccount:public
     bool isOnBlockList(const QString& passport) const { return m_blockList.contains( passport ); }
 
     bool isOnPendingList(const QString& passport) const { return m_pendingList.contains( passport ); }
+    
+    bool isOnReverseList(const QString& passport) const { return m_reverseList.contains( passport ); }
     
     // forward list (or also called address book)
     bool isOnServerSideList(const QString& passport) const { return m_serverSideContactsPassports.contains( passport ); }
@@ -239,7 +251,16 @@ public slots:
     void
     downloadPendingDisplayPicture();
 
-	
+    void
+    slotInitialEmailNotification(const int unread_inbox);
+
+    void
+    slotNewEmailNotification(const QString from, const QString subject);
+
+#ifdef LIBMSN_INBOX_URL_ENABLED
+    void
+    slotInboxUrl(MSN::hotmailInfo & info);
+#endif
 
   protected:
         /**
@@ -302,6 +323,8 @@ private slots:
     void slotOpenInbox();
     void slotChangePublicName();
     void slotOpenStatus();
+    void slotRemoveTmpMailFile();
+    void slotRemoveRecentDPRequests();
 
 private:
     Kopete::OnlineStatus temporaryStatus;
@@ -340,11 +363,19 @@ private:
     // passport set of contacts which are on pending list
     QSet<QString> m_pendingList;
 
+    // passport set of contacts which are on reverse list
+    QSet<QString> m_reverseList;
+
     // passport set of contacts which we do not have the display picture yet
     QSet<QString> m_pendingDisplayPictureList;
 
     QTimer * m_pendingDisplayPicturesTimer;
 
+    KTemporaryFile * tmpMailFile;
+
+    QTimer * m_tmpMailFileTimer;
+
+    QStringList m_recentDPRequests;
 };
 
 #endif

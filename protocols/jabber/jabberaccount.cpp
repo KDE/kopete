@@ -22,6 +22,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "jabberaccount.h"
 #include <config-kopete.h>
 #include "im.h"
 #include "filetransfer.h"
@@ -30,7 +31,6 @@
 #include "qca.h"
 #include "bsocket.h"
 
-#include "jabberaccount.h"
 #include "jabberbookmarks.h"
 
 #include <time.h>
@@ -81,8 +81,6 @@
 #ifdef JINGLE_SUPPORT
 #include "jinglecallsmanager.h"
 #endif
-
-#include <sys/utsname.h>
 
 #define KOPETE_CAPS_NODE "http://kopete.kde.org/jabber/caps"
 
@@ -1718,6 +1716,16 @@ void JabberAccount::slotUnregisterFinished( )
 	}
 	if(m_removing)  //it may be because this is now the timer.
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
+}
+
+void JabberAccount::setMergeMessages(bool b)
+{
+	configGroup()->writeEntry("MergeMessages", b);
+}
+
+bool JabberAccount::mergeMessages()
+{
+	return configGroup()->readEntry("MergeMessages", true);
 }
 
 /*

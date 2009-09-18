@@ -35,17 +35,18 @@ class BonjourAddContactPage : public AddContactPage
 {
 	Q_OBJECT
 public:
-    BonjourAddContactPage( QWidget* parent = 0 );
-    ~BonjourAddContactPage();
-	
-    /**
+	BonjourAddContactPage( QWidget* parent = 0 );
+	~BonjourAddContactPage();
+
+    	/**
 	 * Make a contact out of the entered data
 	 */
 	virtual bool apply(Kopete::Account* a, Kopete::MetaContact* m);
+
 	/**
 	 * Is the data correct?
 	 */
-    virtual bool validateData();
+	virtual bool validateData();
 
 protected:
 	Ui::BonjourAddUI m_bonjourAddUI;

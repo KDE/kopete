@@ -17,6 +17,7 @@
     *************************************************************************
 */
 
+#include "gwreceiveinvitationdialog.h"
 #include <qcheckbox.h>
 #include <qlabel.h>
 
@@ -31,8 +32,6 @@
 #include "gwcontact.h"
 #include "gwerror.h"
 #include "gwprotocol.h"
-
-#include "gwreceiveinvitationdialog.h"
 
 ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, const ConferenceEvent & event, QWidget *parent, const char *name)
  : KDialog(  parent )

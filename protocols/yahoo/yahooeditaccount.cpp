@@ -63,9 +63,9 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		mAutoConnect->setChecked(acct->excludeConnect());
 		mPasswordWidget->load( &acct->password() );
 
-		QString pagerServer = account()->configGroup()->readEntry("Server", "scs.msg.yahoo.com");
+		QString pagerServer = account()->configGroup()->readEntry("Server", "scsa.msg.yahoo.com");
 		int pagerPort = account()->configGroup()->readEntry("Port", 5050);
-		if( pagerServer != "scs.msg.yahoo.com" || pagerPort != 5050 )
+		if( pagerServer != "scsa.msg.yahoo.com" || pagerPort != 5050 )
 			optionOverrideServer->setChecked( true );
 		else
 			optionOverrideServer->setChecked( false );
@@ -133,7 +133,7 @@ Kopete::Account *YahooEditAccount::apply()
 	}
 	else
 	{
-		yahooAccount->setServer( "scs.msg.yahoo.com" );
+		yahooAccount->setServer( "scsa.msg.yahoo.com" );
 		yahooAccount->setPort( 5050 );
 	}
 

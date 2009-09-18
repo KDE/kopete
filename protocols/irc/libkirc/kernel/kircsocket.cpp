@@ -54,7 +54,7 @@ void SocketPrivate::socketReadyRead()
 	Q_Q(Socket);
 
 	// The caller can also be self so lets check the socket still exist
-
+	
 	if (socket && socket->canReadLine())
 	{
 		bool ok = false;
@@ -86,8 +86,6 @@ Socket::Socket(Context *context, SocketPrivate *socketp)
 	Q_D(Socket);
 	d->context = context;
 	d->owner = new Entity(context);
-	d->context->add(d->owner);
-	d->context->setOwner( d->owner );
 }
 
 Socket::~Socket()

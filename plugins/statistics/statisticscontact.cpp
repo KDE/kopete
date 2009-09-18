@@ -189,7 +189,9 @@ void StatisticsContact::onlineStatusChanged(Kopete::OnlineStatus::StatusType sta
 				"VALUES('%1', '%2', '%3', '%4'" ");").arg(m_metaContact->metaContactId()).arg(Kopete::OnlineStatus::statusTypeToString(m_oldStatus)).arg(QString::number(m_oldStatusDateTime.toTime_t())).arg(QString::number(currentDateTime.toTime_t())));
 	}
 	
-	if (m_oldStatus == Kopete::OnlineStatus::Online || m_oldStatus == Kopete::OnlineStatus::Away)
+	if (m_oldStatus == Kopete::OnlineStatus::Online
+		|| m_oldStatus == Kopete::OnlineStatus::Away
+		|| m_oldStatus == Kopete::OnlineStatus::Busy)
 	// If the last status was Online or Away, the last time contact was present is the time he goes offline
 	{
 		m_lastPresent = currentDateTime;
@@ -239,7 +241,7 @@ QString StatisticsContact::mainStatusDate(const QDate& date)
 	kDebug(14315) << request;
 	QStringList values = m_db->query(request);
 	
-	unsigned int online = 0, offline = 0, away = 0;
+	unsigned int online = 0, offline = 0, away = 0, busy = 0;
 	for(int i=0; i<values.count(); i+=4)
 	{
 		unsigned int datetimebegin = values[i+1].toInt(), datetimeend = values[i+2].toInt();
@@ -253,15 +255,18 @@ QString StatisticsContact::mainStatusDate(const QDate& date)
 			online += datetimeend - datetimebegin;
 		else if (values[i]==Kopete::OnlineStatus::statusTypeToString(Kopete::OnlineStatus::Away))
 			away += datetimeend - datetimebegin;
+		else if (values[i]==Kopete::OnlineStatus::statusTypeToString(Kopete::OnlineStatus::Busy))
+			busy += datetimeend - datetimebegin;
 		else if (values[i]==Kopete::OnlineStatus::statusTypeToString(Kopete::OnlineStatus::Offline))
 			offline += datetimeend - datetimebegin;
 	}
+
+	if (online > away && online > offline && online > busy) return i18n("Online");
+	else if (away > online && away > offline && away > busy) return i18n("Away");
+	else if (offline > online && offline > away && offline > busy) return i18n("Offline");
+	else if (busy > online && busy > offline && busy > away) return i18n("Busy");
 	
-	if (online > away && online > offline) return i18n("Online");
-	else if (away > online && away > offline) return i18n("Away");
-	else if (offline > online && offline > away) return i18n("Offline");
-	
-	return "";
+	return QString();
 }
 
 // QDateTime StatisticsContact::nextOfflineEvent()

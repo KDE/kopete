@@ -335,7 +335,9 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 
 	// NOTE: overlayIcons car be empty
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )
+	{
 		kWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible.";
+	}
 
 	QPixmap* basis = new QPixmap( KIcon(baseIcon).pixmap(size) );
 
@@ -412,6 +414,8 @@ KIcon OnlineStatusManager::pixmapForCategory( Categories category )
 	case Kopete::OnlineStatusManager::FreeForChat:
 		return KIcon("user-online");
 	case Kopete::OnlineStatusManager::Away:
+		return KIcon("user-away");
+	case Kopete::OnlineStatusManager::Idle:
 		return KIcon("user-away");
 	case Kopete::OnlineStatusManager::ExtendedAway:
 		return KIcon("user-away-extended");

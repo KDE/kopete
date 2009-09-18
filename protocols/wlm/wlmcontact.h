@@ -106,9 +106,12 @@ public slots:
 
     void blockContact ( bool block );
     void slotShowProfile();
+    void slotUpdateDisplayPicture();
     virtual void sync( unsigned int flags );
     bool isDisabled() { return m_disabled; }
     void setDisabled( bool disabled, bool updateServer );
+    void slotDontShowEmoticons(bool block);
+    bool dontShowEmoticons();
 
 protected slots:
     /**
@@ -125,12 +128,15 @@ protected:
     WlmChatSession * m_msgManager;
     WlmAccount * m_account;
     KToggleAction* m_actionBlockContact;
+    KToggleAction* m_actionDontShowEmoticons;
     KAction * m_actionShowProfile;
+    KAction * m_actionUpdateDisplayPicture;
     KAction * m_actionPrefs;
     QString m_msnobj;
     QString m_contactSerial;
     Kopete::Group *m_currentGroup;
     bool m_disabled;
+    bool m_dontShowEmoticons;
 };
 
 #endif

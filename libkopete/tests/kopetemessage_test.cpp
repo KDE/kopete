@@ -37,7 +37,6 @@
 #include "kopeteprotocol_mock.h"
 #include "kopetecontact_mock.h"
 #include "kopetemetacontact_mock.h"
-#include "kopeteaccount_mock.h"
 
 QTEST_KDEMAIN( KopeteMessage_Test, NoGUI )
 

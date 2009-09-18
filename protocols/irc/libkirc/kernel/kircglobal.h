@@ -22,7 +22,6 @@
 #include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
 #include <QtCore/QSet>
-#include <QtCore/QFlags>
 
 namespace KIrc
 {
@@ -31,21 +30,6 @@ class Entity;
 typedef QExplicitlySharedDataPointer<KIrc::Entity> EntityPtr;
 typedef QList<EntityPtr> EntityList;
 typedef QSet<EntityPtr> EntitySet;
-
-enum EntityStatusFlag{
-	Unknown = 0x0,
-	Online = 0x1,
-	Operator = 0x2,
-	Voiced = 0x4,
-	Away = 0x8,
-	Invisible = 0x10,
-	Channel = 0x20
-};
-Q_DECLARE_FLAGS(EntityStatus,EntityStatusFlag);
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(KIrc::EntityStatus);
-
-typedef QList<QByteArray> Command;
 
 typedef struct
 {
@@ -67,6 +51,5 @@ QSet<T> &operator << (QSet<T> &set, const QList<T> &list)
 { Q_FOREACH(const T &item, list) set << item; return set; }
 
 };
-
 
 #endif

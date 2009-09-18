@@ -84,35 +84,17 @@ QVariant ChatSessionMembersListModel::data(const QModelIndex &index, int role) c
 	if (!c)
 		return QVariant();
 
-	if (role == Qt::DisplayRole)
+	switch(role)
 	{
-		QString nick = c->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
-		if ( nick.isEmpty() )
-			nick = c->contactId();
-		
-		return nick;
+		case Qt::DisplayRole:
+			return c->nickName();
+		case Qt::DecorationRole:
+			return m_session->contactOnlineStatus(c).iconFor(c);
+		case Qt::ToolTipRole:
+			return c->toolTip();
+		default:
+			return QVariant();
 	}
-	else if (role == Qt::DecorationRole)
-	{
-		return m_session->contactOnlineStatus(c).iconFor(c);
-	}
-	else if (role == Qt::ToolTipRole)
-	{
-		return c->toolTip();
-	}
-	else
-		return QVariant();
-}
-
-QVariant ChatSessionMembersListModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-	if (role != Qt::DisplayRole)
-		return QVariant();
-
-	if (orientation == Qt::Horizontal)
-		return QString("Column %1").arg(section);
-	else
-		return QString("Row %1").arg(section);
 }
 
 void ChatSessionMembersListModel::slotContactAdded( const Kopete::Contact *contact )

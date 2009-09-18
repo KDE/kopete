@@ -2,7 +2,6 @@
     kirccontext.cpp - IRC Context
 
     Copyright (c) 2005-2007 by Michel Hermier <michel.hermier@gmail.com>
-    Copyright (c) 2008-2009 by Alexander Rieder <alexanderrieder@gmail.com>
 
     Kopete    (c) 2005-2007 by the Kopete developers <kopete-devel@kde.org>
 
@@ -21,9 +20,6 @@
 #include "kircentity.h"
 
 #include <QtCore/QEvent>
-#include <QtCore/QHash>
-
-#include <kdebug.h>
 
 using namespace KIrc;
 
@@ -34,12 +30,7 @@ public:
 		: defaultCodec(0)
 	{ }
 
-	KIrc::EntityPtr entity;
-
 	KIrc::EntityList entities;
-
-	//Keeps Status information about the entities, relative to this context (e.g. Operators of a Channel)
-	QHash<KIrc::EntityPtr, KIrc::EntityStatus> statusMap;
 
 	QTextCodec *defaultCodec;
 };
@@ -60,23 +51,11 @@ QList<KIrc::Entity *> Context::anonymous() const
 
 }
 */
-
-KIrc::EntityPtr Context::owner() const
-{
-	Q_D( const Context );
-	return d->entity;
-}
-
-void Context::setOwner(KIrc::EntityPtr entity)
-{
-	Q_D( Context );
-	d->entity=entity;
-}
-
 KIrc::EntityList Context::entities() const
 {
-	Q_D(const Context);
-	return d->entities;
+	#warning implement me
+	//return findChildren<EntityPtr>();
+	return EntityList();
 }
 
 KIrc::EntityPtr Context::entityFromName(const QByteArray &name)
@@ -106,7 +85,6 @@ KIrc::EntityPtr Context::entityFromName(const QByteArray &name)
 	{
 		entity = new Entity(this);
 		entity->setName(nick);
-		entity->setStatus(KIrc::Online);
 		add( entity );
 	}
 
@@ -163,47 +141,21 @@ void Context::add(EntityPtr entity)
 	if (!d->entities.contains(entity))
 	{
 		d->entities.append(entity);
-		connect(entity.data(), SIGNAL(aboutToBeDestroyed( KIrc::Entity* )),
-				this, SLOT(onEntityAboutToBeDestroyed(KIrc::Entity* )));
+		connect(entity.data(), SIGNAL(destroyed(KIrc::Entity *)),
+			this, SLOT(remove(KIrc::Entity *)));
 	}
 }
 
 void Context::remove(EntityPtr entity)
 {
 	Q_D(Context);
-
-	d->entities.removeAll( entity );
-	d->statusMap.remove( entity );
-	disconnect(entity.data());
+	d->entities.removeAll(entity);
+//	disconnect(entity);
 }
 
-EntityStatus Context::statusOf(EntityPtr e) const
-{
-	Q_D(const Context);
-	return e->status()|d->statusMap.value(e);
-}
-
-void Context::setStatus(EntityPtr entity, KIrc::EntityStatus s)
-{
-	Q_D(Context);
-	d->statusMap[entity]=s;
-}
-
-void Context::addStatus(EntityPtr entity, KIrc::EntityStatus s)
-{
-	Q_D(Context);
-	d->statusMap[entity]|=s;
-}
 
 #if 0
 Status Context::SET()
 {
 }
 #endif
-
-
-void Context::onEntityAboutToBeDestroyed( KIrc::Entity* entity )
-{
-	remove( KIrc::EntityPtr( entity ) );
-}
-

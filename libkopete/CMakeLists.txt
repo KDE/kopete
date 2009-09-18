@@ -204,6 +204,7 @@ install( FILES
   kabcpersistence.h
   kopeteaccount.h
   kopeteaccountmanager.h
+  kopeteaddedinfoevent.h
   kopeteavatarmanager.h
   kopeteblacklister.h
   kopetechatsession.h

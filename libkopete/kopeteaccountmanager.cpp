@@ -37,6 +37,7 @@
 #include "kopetecontactlist.h"
 #include "kopeteidentitymanager.h"
 #include "kopetepluginmanager.h"
+#include "kopetestatusitems.h"
 #include "kopeteonlinestatus.h"
 #include "kopeteonlinestatusmanager.h"
 #include "kopetemetacontact.h"
@@ -120,8 +121,8 @@ void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage
 			continue;
 		}
 		
-		if ( onlyChangeConnectedAccounts ) {
-			if ( account->isConnected() || ( (flags & ConnectIfOffline) && !account->excludeConnect() ) )
+		if ( onlyChangeConnectedAccounts ) { //If global status is offline, change all account to new status
+			if ( account->isConnected() || ( ( (flags & ConnectIfOffline) || Kopete::StatusManager::self()->globalStatusCategory() == Kopete::OnlineStatusManager::Offline ) && !account->excludeConnect() ) )
 				account->setOnlineStatus( status, statusMessage );
 		}
 		else {
@@ -394,6 +395,23 @@ void AccountManager::networkConnected()
 			  Solid::Networking::status() == Solid::Networking::Connected ){
 
 		Kopete::AccountManager::self()->setOnlineStatus( initStatus, QString(), Kopete::AccountManager::ConnectIfOffline );
+
+		QList <Kopete::Status::StatusItem *> statusList = Kopete::StatusManager::self()->getRootGroup()->childList();
+		QString message, title;
+		bool found = false;
+
+		//find first Status for OnlineStatus
+		for ( QList <Kopete::Status::StatusItem *>::ConstIterator it = statusList.constBegin(); it != statusList.constEnd(); ++it ) {
+			if ( ! (*it)->isGroup() && (*it)->category() == initStatus ) {
+				title = (*it)->title();
+				message = (static_cast <Kopete::Status::Status*> (*it))->message(); //if it is not group, it status
+				found = true;
+				break;
+			}
+		}
+
+		if ( found )
+			Kopete::StatusManager::self()->setGlobalStatus(initStatus, Kopete::StatusMessage(title, message));
 	}
 }
 

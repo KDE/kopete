@@ -14,12 +14,13 @@
   *************************************************************************
 */
 
+#include "smsuserpreferences.h"
+
 #include <qlabel.h>
 
 #include <klocale.h>
 #include <klineedit.h>
 
-#include "smsuserpreferences.h"
 #include "smsuserprefs.h"
 #include "smscontact.h"
 
