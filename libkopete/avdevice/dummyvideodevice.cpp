@@ -39,9 +39,9 @@ DummyVideoDevice::DummyVideoDevice()
 	maxwidth = 1280;
 	minheight = 120;
 	maxheight = 960;
-	setSize(320, 240);
 	//let's be opened by default seeing this is a fallback 
 	opened = true;
+	setSize(320, 240);
 	}
 
 int DummyVideoDevice::open()
