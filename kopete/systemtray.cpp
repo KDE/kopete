@@ -55,21 +55,19 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 }
 
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
-	: KSystemTrayIcon(parent)
+	: KNotificationItem(parent)
 	, mMovie(0)
 {
 	kDebug(14010) ;
-	setToolTip(KGlobal::mainComponent().aboutData()->shortDescription());
+    setCategory(Communications);
+	setToolTip("kopete", "Kopete", KGlobal::mainComponent().aboutData()->shortDescription());
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;
 	mBlinkTimer = new QTimer(this);
 	mBlinkTimer->setObjectName("mBlinkTimer");
 
-	mKopeteIcon = loadIcon("kopete");
-
-	// Hack which allow us to disable window restoring or hiding when we should process event (BUG:157663)
-	disconnect( this, SIGNAL(activated( QSystemTrayIcon::ActivationReason )), 0 ,0 );
+	mKopeteIcon = "kopete";
 
 	connect(contextMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowMenu()));
 
@@ -94,9 +92,9 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	quit->disconnect();
 	KopeteWindow *myParent = static_cast<KopeteWindow *>( parent );
 	connect( quit, SIGNAL( activated() ), myParent, SLOT( slotQuit() ) );
-	connect( this, SIGNAL( activated( QSystemTrayIcon::ActivationReason ) ), SLOT( slotActivated( QSystemTrayIcon::ActivationReason ) ) );
 
-	setIcon(mKopeteIcon);
+	setIconByName(mKopeteIcon);
+    setAttentionMovie(KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Panel ));
 	slotReevaluateAccountStates();
 	slotConfigChanged();
 }
@@ -112,22 +110,17 @@ void KopeteSystemTray::slotAboutToShowMenu()
 	emit aboutToShowMenu(qobject_cast<KMenu *>(contextMenu()));
 }
 
-void KopeteSystemTray::slotActivated( QSystemTrayIcon::ActivationReason reason )
+void KopeteSystemTray::activate(const QPoint &pos)
 {
-	bool shouldProcessEvent(
-		reason == QSystemTrayIcon::MiddleClick
-		|| reason == QSystemTrayIcon::DoubleClick
-		|| ( reason == QSystemTrayIcon::Trigger
-			&& Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage()));
-	if ( isBlinking() && shouldProcessEvent )
+	if ( isBlinking() &&  Kopete::BehaviorSettings::self()->trayflashNotifyLeftClickOpensMessage() )
 	{
 		if ( !mEventList.isEmpty() )
 			mEventList.first()->apply();
 	}
-	else if ( reason == QSystemTrayIcon::Trigger )
-	{
-		toggleActive();
-	}
+    else
+    {
+        KNotificationItem::activate(pos);
+    }
 }
 
 // void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
@@ -136,12 +129,8 @@ void KopeteSystemTray::slotActivated( QSystemTrayIcon::ActivationReason reason )
 // 	emit aboutToShowMenu( me );
 // }
 
-void KopeteSystemTray::startBlink( const QString &icon )
-{
-	startBlink( loadIcon( icon ) );
-}
 
-void KopeteSystemTray::startBlink( const QIcon &icon )
+void KopeteSystemTray::startBlink( const QString &icon )
 {
 	mBlinkIcon = icon;
 	if ( mBlinkTimer->isActive() == false )
@@ -163,18 +152,13 @@ void KopeteSystemTray::startBlink( const QIcon &icon )
 
 void KopeteSystemTray::startBlink()
 {
-	if ( !mMovie )
-		mMovie = KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Panel );
-	// KIconLoader already checked isValid()
-	if ( !mMovie) return;
-
-	if (!movie())
-		setMovie( mMovie );
-	mMovie->start();
+    setStatus(NeedsAttention);
 }
 
 void KopeteSystemTray::stopBlink()
 {
+    setStatus(Passive);
+    
 	if ( mMovie )
 		kDebug( 14010 ) << "stopping movie.";
 	else if ( mBlinkTimer->isActive() )
@@ -191,7 +175,7 @@ void KopeteSystemTray::stopBlink()
 
 void KopeteSystemTray::slotBlink()
 {
-	setIcon( mIsBlinkIcon ? mKopeteIcon : mBlinkIcon );
+	setIconByName( mIsBlinkIcon ? mKopeteIcon : mBlinkIcon );
 
 	mIsBlinkIcon = !mIsBlinkIcon;
 }
@@ -218,11 +202,13 @@ void KopeteSystemTray::slotEventDone(Kopete::MessageEvent *event)
 
 void KopeteSystemTray::slotConfigChanged()
 {
+#if 0
 //	kDebug(14010) << "called.";
 	if ( Kopete::BehaviorSettings::self()->showSystemTray() )
 		show();
 	else
 		hide(); // for users without kicker or a similar docking app
+#endif
 }
 
 void KopeteSystemTray::slotReevaluateAccountStates()
@@ -241,44 +227,38 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		}
 	}
 
-	QPixmap statusOverlay;
-	QPixmap statusIcon=mKopeteIcon.pixmap(22,22);
 	switch ( highestStatus.status() )
 	{
 		case Kopete::OnlineStatus::Unknown:
 		case Kopete::OnlineStatus::Offline:
+        {
+            setIconByName("kopete-offline");
+            break;
+        }
 		case Kopete::OnlineStatus::Connecting:
 		{
-			QImage offlineIcon = statusIcon.toImage();
-			KIconEffect::toGray( offlineIcon, 0.85f );
-			statusIcon = QPixmap::fromImage( offlineIcon );
-			break;
+            setIconByName("user-connecting");
+            break;
 		}
 		case Kopete::OnlineStatus::Invisible:
 		{
-			statusOverlay = loadIcon("user-invisible").pixmap(11,11);
+			setOverlayIconByName("user-invisible");
 			break;
 		}
 		case Kopete::OnlineStatus::Away:
 		{
-			statusOverlay = loadIcon("user-away").pixmap(11,11);
+			setOverlayIconByName("user-away");
 			break;
 		}
 		case Kopete::OnlineStatus::Busy:
 		{
-			statusOverlay = loadIcon("user-busy").pixmap(11,11);
+			setOverlayIconByName("user-busy");
 			break;
 		}
 		case Kopete::OnlineStatus::Online:
+            setOverlayIconByName(QString());
 			break;
 	}
-
-	if (!statusIcon.isNull() && !statusOverlay.isNull())
-	{
-		QPainter painter(&statusIcon);
-		painter.drawPixmap(QPoint(11,11), statusOverlay);
-	}
-	setIcon( statusIcon );
 }
 
 #include "systemtray.moc"

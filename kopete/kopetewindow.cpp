@@ -1024,7 +1024,7 @@ void KopeteWindow::makeTrayToolTip()
 			              QString ( QUrl::toPercentEncoding ( a->accountId() ) ), self->onlineStatus().description() );
 		}
 		tt += QLatin1String ( "</qt>" );
-		d->tray->setToolTip ( tt );
+		d->tray->setToolTip ( "kopete", i18n("Kopete"), tt );
 	}
 }
 

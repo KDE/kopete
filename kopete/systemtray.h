@@ -23,7 +23,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QMovie>
 
-#include <KSystemTrayIcon>
+#include <KNotificationItem>
 
 #include "kopetemessageevent.h"
 
@@ -36,7 +36,7 @@ class KMenu;
  * NOTE: This class is for use ONLY in libkopete! It is not public API, and
  *       is NOT supposed to remain binary compatible in the future!
  */
-class KopeteSystemTray : public KSystemTrayIcon
+class KopeteSystemTray : public KNotificationItem
 {
 	Q_OBJECT
 
@@ -50,18 +50,17 @@ public:
 
 	// One method, multiple interfaces :-)
 	void startBlink( const QString &icon );
-	void startBlink( const QIcon &icon );
 	void startBlink();
 
 	void stopBlink();
-	bool isBlinking() const { return mIsBlinking || (movie() &&  movie()->state() == QMovie::Running); }
+	bool isBlinking() const { return mIsBlinking || (status() == NeedsAttention); }
 
 Q_SIGNALS:
 	void aboutToShowMenu(KMenu *am);
 
 private Q_SLOTS:
 	void slotAboutToShowMenu();
-	void slotActivated( QSystemTrayIcon::ActivationReason reason );
+	void activate(const QPoint &pos=QPoint());
 
 	void slotBlink();
 	void slotNewEvent(Kopete::MessageEvent*);
@@ -73,8 +72,8 @@ private:
 	KopeteSystemTray( QWidget* parent );
 
 	QTimer *mBlinkTimer;
-	QIcon mKopeteIcon;
-	QIcon mBlinkIcon;
+	QString mKopeteIcon;
+	QString mBlinkIcon;
 	QMovie *mMovie;
 
 	bool mIsBlinkIcon;
