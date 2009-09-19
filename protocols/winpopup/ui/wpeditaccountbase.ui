@@ -182,7 +182,7 @@
             <property name="text" >
              <string>"Install into Samba" is a simple method to create the directory for the temporary message files and configure your samba server.&lt;br>
 However, the recommended way is to ask your administrator to create this directory ('mkdir -p -m 0777 /var/lib/winpopup') and for you to add
-'message command = _PATH_TO_/winpopup-send.sh %s %m %t &amp;' (substitute _PATH_TO_ by the real path) to the [global] section in your smb.conf.</string>
+'message command = _PATH_TO_/winpopup-send %s %m %t &amp;' (substitute _PATH_TO_ by the real path) to the [global] section in your smb.conf.</string>
             </property>
             <property name="textFormat" >
              <enum>Qt::RichText</enum>
