@@ -116,6 +116,14 @@ public slots:
 	bool ignoreAnons();
 	void setIgnoreAnons( bool );
 
+	// export list on change
+	bool exportListOnChange();
+	void setExportListOnChange( bool );
+
+	// import list on startup
+	bool importListOnLogin();
+	void setImportListOnLogin( bool );
+
 	// forFriends
 	bool loadFriendsMode();
 	void saveFriendsMode( bool );
@@ -127,6 +135,9 @@ protected:
 	//{
 	bool createContact( const QString& contactId,
 			Kopete::MetaContact* parentContact );
+	bool loadImportListOnLogin();
+	bool loadExportListOnChange();
+	void userListNotification(QString what);
 	//}
 
 private slots:
@@ -140,6 +151,8 @@ private slots:
 	void slotExportContactsList();
 	void slotExportContactsListToFile();
 	void slotImportContactsFromFile();
+	void slotImportContactsList();
+	void slotDeleteContactsList();
 	void slotFriendsMode();
 
 	void userlist( const QString& contacts );
@@ -156,6 +169,7 @@ private slots:
 
 	void slotSearchResult( const SearchResult& result, unsigned int seq );
 	void userListExportDone();
+	void userListDeleteDone();
 
 	void slotIncomingDcc( unsigned int );
 

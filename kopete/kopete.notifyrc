@@ -2586,3 +2586,12 @@ Comment[zh_TW]=收到一個服務訊息（例如認證請求）
 Action=Popup
 Sound=
 
+[Event/kopete_gadu_contactslist]
+Name=GaduGadu contacts list
+Name[pl]=Lista kontaktów GaduGadu
+Name[x-test]=xxGaduGadu contacts listxx
+Comment=Contacts list have been received/exported/deleted
+Comment[pl]=Lita kontaktów została pobrana, wysłana lub skasowana z serwera
+Comment[x-test]=xxContact list have been received/exported/deletedxx
+Action=Popup
+Sound=

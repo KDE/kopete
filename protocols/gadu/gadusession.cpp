@@ -42,9 +42,9 @@
 #include <netinet/in.h>
 
 GaduSession::GaduSession( QObject* parent )
-: QObject( parent ), session_( 0 ), searchSeqNr_( 0 )
+: QObject( parent ), session_( 0 ), searchSeqNr_( 0 ), deletingUserList( false )
 {
-	textcodec = QTextCodec::codecForName( "CP1250" );
+	textcodec = QTextCodec::codecForName( "Windows-1250" );
 	rtf = new GaduRichTextFormat;
 }
 
@@ -173,7 +173,7 @@ GaduSession::login( KGaduLoginParams* loginp )
 	params_.status		= loginp->status | ( loginp->forFriends ? GG_STATUS_FRIENDS_MASK : 0 );
 	params_.async		= 1;
 	params_.tls		= loginp->useTls;
-	params_ .server_addr	= loginp->server;
+	params_.server_addr	= loginp->server;
 	params_.client_addr	= loginp->client_addr;
 	params_.client_port	= loginp->client_port;
 
@@ -521,7 +521,6 @@ GaduSession::requestContacts()
 	kDebug( 14100 ) << "Contacts list import..started ";
 }
 
-
 void
 GaduSession::exportContactsOnServer( GaduContactsList* contactsList )
 {
@@ -531,16 +530,36 @@ GaduSession::exportContactsOnServer( GaduContactsList* contactsList )
 		kDebug( 14100 ) << "you need to connect to export Contacts list ";
 		return;
 	}
-
+	if ( deletingUserList) {
+		kDebug( 14100 ) << "you are currently deleting list ";
+		return;
+	}
 	plist = textcodec->fromUnicode( contactsList->asString() );
 	kDebug(14100) <<"--------------------userlists\n" << plist;
 	kDebug(14100) << "----------------------------";
-
 	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.data() ) == -1 ) {
 		kDebug( 14100 ) << "export contact list failed ";
 		return;
 	}
 	kDebug( 14100 ) << "Contacts list export..started ";
+}
+
+
+void
+GaduSession::deleteContactsOnServer( )
+{
+
+	if ( !session_ || session_->state != GG_STATE_CONNECTED ) {
+		kDebug( 14100 ) << "you need to connect to delete Contacts list ";
+		return;
+	}
+
+	if ( gg_userlist_request( session_, GG_USERLIST_PUT, " " ) == -1 ) {
+		kDebug( 14100 ) << "delete contact list failed ";
+		return;
+	}
+	deletingUserList=true;
+	kDebug( 14100 ) << "Contacts list delete... started ";
 }
 
 
@@ -562,8 +581,15 @@ GaduSession::handleUserlist( gg_event* event )
 			break;
 
 		case GG_USERLIST_PUT_REPLY:
-			kDebug( 14100 ) << "Contacts list exported  OK ";
-			emit userListExported();
+			if ( deletingUserList ) {
+				deletingUserList = false;
+				kDebug( 14100 ) << "Contacts list deleted  OK ";
+				emit userListDeleted();
+			}
+			else {
+				kDebug( 14100 ) << "Contacts list exported  OK ";
+				emit userListExported();
+			}
 			break;
 
 	}

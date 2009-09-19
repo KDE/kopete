@@ -67,13 +67,15 @@ GaduContactsList::GaduContactsList( QString sList )
 			// since it doesn't matter for neither kopete nor ggserver
 			// its just list of current groups but may spoil contact list
 			kDebug( 14100 ) << "Ignoring GG70ExportSting contact list member";
-			break;
+			++lni;
+			continue;
 		} else if ( strList.size() < 7 ) {
 			kDebug( 14100 ) << "Malformed entry, too short! Ignoring entry: " << strList;
-			break;
+			++lni;
+			continue;
 		}
 
-		
+
 		if ( strList.count() >= 12 ) {
 			email = true;
 		}
@@ -84,7 +86,7 @@ GaduContactsList::GaduContactsList( QString sList )
 
 //each line ((firstname);(secondname);(nickname);(altnick);(tel);(group);(uin);
 // new stuff attached at the end:
-// email;aliveSoundfile;notifyType;msgSoundType;messageSound;offlineTo;homePhone;
+// email;aliveSoundfile;notifyType;msgSoundType;messageSound;offlineTo;homePhone
 		stringIterator = strList.begin();
 
 		cl.firstname		= (*stringIterator);
@@ -126,7 +128,7 @@ GaduContactsList::GaduContactsList( QString sList )
 
 		++lni;
 
-		if ( cl.uin.isNull() ) {
+		if(cl.uin.isEmpty()) {
 			continue;
 		}
 
@@ -182,10 +184,10 @@ GaduContactsList::asString()
 
 	for (  it = cList.begin(); it != cList.end(); ++it ) {
 		if ( (*it).ignored ) {
-			contacts += "i;;;;;;" + (*it).uin + '\n';
+			contacts += "i;;;;;;" + (*it).uin + "\r\n";
 		}
 		else {
-//	name;surname;nick;displayname;telephone;group(s);uin;email;;0;0;;offlineTo;homePhone;
+//	name;surname;nick;displayname;telephone;group(s);uin;email;0;;0;;offlineTo;homePhone
 			contacts +=
 				(*it).firstname + ';'+
 				(*it).surname + ';'+
@@ -195,11 +197,11 @@ GaduContactsList::asString()
 				(*it).group + ';'+
 				(*it).uin + ';'+
 				(*it).email +
-				";;0;0;;" +
+				";0;;0;;" +
 				((*it).offlineTo == true ? '1' : '0')
 				+ ';' +
 				(*it).landline +
-				";\r\n";
+				"\r\n";
 		}
 	}
 	return contacts;

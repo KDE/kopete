@@ -82,6 +82,8 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 		dccCheck_->setChecked( account_->dccEnabled() );
 		useTls_->setCurrentIndex( isSsl ? ( account_->useTls() ) : 2 );
 		ignoreCheck_->setChecked( account_->ignoreAnons() );
+		exportCheck_->setChecked( account_->exportListOnChange() );
+		importCheck_->setChecked( account_->importListOnLogin() );
 
 		connect( account(), SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int ) ),
 					SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
@@ -252,8 +254,11 @@ GaduEditAccount::apply()
 
 	account_->setExcludeConnect( autoLoginCheck_->isChecked() );
 	account_->setUseTls( (GaduAccount::tlsConnection) useTls_->currentIndex() );
+	account_->setExportListOnChange(exportCheck_->isChecked());
+	account_->setImportListOnLogin(importCheck_->isChecked());
+
 	account_->setIgnoreAnons( ignoreCheck_->isChecked() );
-	
+
 	if ( account_->setDcc( dccCheck_->isChecked() ) == false ) {
 		KMessageBox::sorry( this, i18n( "<b>Starting DCC listening socket failed; dcc is not working now.</b>" ), i18n( "Gadu-Gadu" ) );
 	}

@@ -1,149 +1,114 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>GaduAccountEditUI</class>
- <widget class="QWidget" name="GaduAccountEditUI" >
-  <property name="geometry" >
+ <widget class="QWidget" name="GaduAccountEditUI">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>674</width>
-    <height>816</height>
+    <width>563</width>
+    <height>474</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Account Preferences - Gadu-Gadu</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="spacing" >
+  <layout class="QVBoxLayout">
+   <property name="spacing">
     <number>6</number>
    </property>
-   <property name="leftMargin" >
-    <number>9</number>
-   </property>
-   <property name="topMargin" >
-    <number>9</number>
-   </property>
-   <property name="rightMargin" >
-    <number>9</number>
-   </property>
-   <property name="bottomMargin" >
+   <property name="margin">
     <number>9</number>
    </property>
    <item>
-    <widget class="QLabel" name="labelStatusMessage" >
-     <property name="text" >
+    <widget class="QLabel" name="labelStatusMessage">
+     <property name="text">
       <string/>
      </property>
-     <property name="alignment" >
+     <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QTabWidget" name="tabWidget4" >
-     <property name="enabled" >
+    <widget class="QTabWidget" name="tabWidget4">
+     <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="currentIndex" >
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
        <string>B&amp;asic Setup</string>
       </attribute>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
+       <property name="margin">
         <number>9</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="groupBox" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
           <string>Account Information</string>
          </property>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
+         <layout class="QVBoxLayout">
+          <property name="spacing">
            <number>6</number>
           </property>
-          <property name="leftMargin" >
-           <number>9</number>
-          </property>
-          <property name="topMargin" >
-           <number>9</number>
-          </property>
-          <property name="rightMargin" >
-           <number>9</number>
-          </property>
-          <property name="bottomMargin" >
+          <property name="margin">
            <number>9</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="textLabel1" >
-              <property name="toolTip" >
+             <widget class="QLabel" name="textLabel1">
+              <property name="toolTip">
                <string>The user ID of your Gadu-Gadu account.</string>
               </property>
-              <property name="whatsThis" >
+              <property name="whatsThis">
                <string>The user ID of your Gadu-Gadu account.  This should be in the form of a number (no decimals, no spaces).</string>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Gadu-Gadu &amp;UIN:</string>
               </property>
-              <property name="buddy" >
+              <property name="buddy">
                <cstring>loginEdit_</cstring>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="KLineEdit" name="loginEdit_" >
-              <property name="enabled" >
+             <widget class="KLineEdit" name="loginEdit_">
+              <property name="enabled">
                <bool>true</bool>
               </property>
-              <property name="toolTip" >
+              <property name="toolTip">
                <string>The user ID of your Gadu-Gadu account.</string>
               </property>
-              <property name="whatsThis" >
+              <property name="whatsThis">
                <string>The user ID of your Gadu-Gadu account.  This should be in the form of a number (no decimals, no spaces).</string>
               </property>
-              <property name="maxLength" >
+              <property name="maxLength">
                <number>16</number>
               </property>
-              <property name="modified" >
+              <property name="modified">
                <bool>true</bool>
               </property>
-              <property name="dragEnabled" >
+              <property name="dragEnabled">
                <bool>false</bool>
               </property>
              </widget>
@@ -151,9 +116,9 @@
            </layout>
           </item>
           <item>
-           <widget class="Kopete::UI::PasswordWidget" native="1" name="passwordWidget_" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+           <widget class="Kopete::UI::PasswordWidget" name="passwordWidget_" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -161,14 +126,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="autoLoginCheck_" >
-            <property name="toolTip" >
+           <widget class="QCheckBox" name="autoLoginCheck_">
+            <property name="toolTip">
              <string/>
             </property>
-            <property name="whatsThis" >
+            <property name="whatsThis">
              <string>Check to disable automatic connection. When checked, you may connect to this account manually via the icon in the bottom of the main Kopete window.</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>E&amp;xclude from connect all</string>
             </property>
            </widget>
@@ -177,80 +142,68 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
           <string>Registration</string>
          </property>
-         <layout class="QGridLayout" >
-          <property name="leftMargin" >
+         <layout class="QGridLayout">
+          <property name="margin">
            <number>9</number>
           </property>
-          <property name="topMargin" >
-           <number>9</number>
-          </property>
-          <property name="rightMargin" >
-           <number>9</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>9</number>
-          </property>
-          <property name="horizontalSpacing" >
+          <property name="spacing">
            <number>6</number>
           </property>
-          <property name="verticalSpacing" >
-           <number>6</number>
-          </property>
-          <item row="0" column="0" colspan="3" >
-           <widget class="QLabel" name="textLabel6" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
+          <item row="0" column="0" colspan="3">
+           <widget class="QLabel" name="textLabel6">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimumSize" >
+            <property name="minimumSize">
              <size>
               <width>0</width>
               <height>0</height>
              </size>
             </property>
-            <property name="text" >
-             <string>To connect to the Gadu-Gadu network, you will need a Gadu-Gadu account.&lt;br>&lt;br>
+            <property name="text">
+             <string>To connect to the Gadu-Gadu network, you will need a Gadu-Gadu account.&lt;br&gt;&lt;br&gt;
 If you do not currently have an account, please click the button to create one.</string>
             </property>
-            <property name="alignment" >
+            <property name="alignment">
              <set>Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QPushButton" name="registerNew" >
-            <property name="enabled" >
+          <item row="1" column="1">
+           <widget class="QPushButton" name="registerNew">
+            <property name="enabled">
              <bool>true</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Register a new account on this network.</string>
             </property>
-            <property name="whatsThis" >
+            <property name="whatsThis">
              <string>Register a new account on this network.</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Re&amp;gister New Account</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="2" >
+          <item row="1" column="2">
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
               <height>20</height>
@@ -258,12 +211,12 @@ If you do not currently have an account, please click the button to create one.<
             </property>
            </spacer>
           </item>
-          <item row="1" column="0" >
+          <item row="1" column="0">
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
               <height>20</height>
@@ -276,13 +229,13 @@ If you do not currently have an account, please click the button to create one.<
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>80</height>
@@ -292,154 +245,147 @@ If you do not currently have an account, please click the button to create one.<
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
        <string>A&amp;ccount Preferences</string>
       </attribute>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
+       <property name="margin">
         <number>9</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="groupBox_3" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
           <string>Connection Preferences</string>
          </property>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <property name="leftMargin" >
-           <number>9</number>
-          </property>
-          <property name="topMargin" >
-           <number>9</number>
-          </property>
-          <property name="rightMargin" >
-           <number>9</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>9</number>
-          </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QCheckBox" name="cacheServersCheck__" >
-            <property name="enabled" >
+           <widget class="QCheckBox" name="cacheServersCheck__">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Cache connection information for each server connected to in case the main load-balancing server fails.</string>
             </property>
-            <property name="whatsThis" >
+            <property name="whatsThis">
              <string>This option is used whenever the primary Gadu-Gadu load-balancing server fails.  If this is checked, Kopete will try to connect to the actual servers directly using cached information about them.  This prevents connection errors when the main load-balancing server does not answer. In practice it only helps very rarely.</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>C&amp;ache server information</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="dccCheck_" >
-            <property name="enabled" >
+           <widget class="QCheckBox" name="dccCheck_">
+            <property name="enabled">
              <bool>true</bool>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>&amp;Use direct connections (DCC)</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="ignoreCheck_" >
-            <property name="enabled" >
+           <widget class="QCheckBox" name="exportCheck_">
+            <property name="toolTip">
+             <string>Keep your local and server side contact list in sync. Any change in local list will result in exporting your list to server.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Export contact list on change</string>
+            </property>
+            <property name="checked">
              <bool>true</bool>
             </property>
-            <property name="text" >
-             <string>Ignore people not on your contact list</string>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="importCheck_">
+            <property name="toolTip">
+             <string>On each connection Kopete will import your list </string>
             </property>
-            <property name="shortcut" >
+            <property name="text">
+             <string>I&amp;mport contact list on startup</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="ignoreCheck_">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>&amp;Ignore people not on your contact list</string>
+            </property>
+            <property name="shortcut">
              <string/>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>false</bool>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="textLabel1_2" >
-              <property name="toolTip" >
+             <widget class="QLabel" name="textLabel1_2">
+              <property name="toolTip">
                <string>Whether or not you want to enable SSL encrypted communication with the server.</string>
               </property>
-              <property name="whatsThis" >
+              <property name="whatsThis">
                <string>Whether or not you want to enable SSL encrypted communication with the server.  Note that this is not end-to-end encryption, but rather encrypted communication with the server.</string>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Use protocol encr&amp;yption (SSL):</string>
               </property>
-              <property name="buddy" >
+              <property name="buddy">
                <cstring>useTls_</cstring>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="useTls_" >
-              <property name="toolTip" >
+             <widget class="QComboBox" name="useTls_">
+              <property name="toolTip">
                <string>Whether or not you want to enable SSL encrypted communication with the server.</string>
               </property>
-              <property name="whatsThis" >
+              <property name="whatsThis">
                <string>Whether or not you want to enable SSL encrypted communication with the server.  Note that this is not end-to-end encryption, but rather encrypted communication with the server.</string>
               </property>
-              <property name="autoCompletion" >
+              <property name="autoCompletion">
                <bool>false</bool>
               </property>
-              <property name="duplicatesEnabled" >
+              <property name="duplicatesEnabled">
                <bool>false</bool>
               </property>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>If Available</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>Required</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>Do Not Use</string>
                </property>
               </item>
@@ -447,10 +393,10 @@ If you do not currently have an account, please click the button to create one.<
             </item>
             <item>
              <spacer>
-              <property name="orientation" >
+              <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>40</width>
                 <height>20</height>
@@ -465,13 +411,13 @@ If you do not currently have an account, please click the button to create one.<
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>160</height>
@@ -481,104 +427,65 @@ If you do not currently have an account, please click the button to create one.<
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage" >
-      <attribute name="title" >
+     <widget class="QWidget" name="TabPage">
+      <attribute name="title">
        <string>U&amp;ser Information</string>
       </attribute>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
+       <property name="margin">
         <number>9</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="userInformation" >
-         <property name="title" >
+        <widget class="QGroupBox" name="userInformation">
+         <property name="title">
           <string>User Information</string>
          </property>
-         <layout class="QGridLayout" >
-          <property name="leftMargin" >
+         <layout class="QGridLayout">
+          <property name="margin">
            <number>9</number>
           </property>
-          <property name="topMargin" >
-           <number>9</number>
-          </property>
-          <property name="rightMargin" >
-           <number>9</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>9</number>
-          </property>
-          <property name="horizontalSpacing" >
+          <property name="spacing">
            <number>6</number>
           </property>
-          <property name="verticalSpacing" >
-           <number>6</number>
-          </property>
-          <item row="4" column="0" >
-           <widget class="QLabel" name="connectLabel" >
-            <property name="enabled" >
+          <item row="4" column="0">
+           <widget class="QLabel" name="connectLabel">
+            <property name="enabled">
              <bool>true</bool>
             </property>
-            <property name="text" >
-             <string>&lt;p align="center">You must be connected to change your Personal Information.&lt;/p></string>
+            <property name="text">
+             <string>&lt;p align=&quot;center&quot;&gt;You must be connected to change your Personal Information.&lt;/p&gt;</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0" >
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
+          <item row="3" column="0">
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
+             <layout class="QVBoxLayout">
+              <property name="spacing">
                <number>6</number>
               </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
+              <property name="margin">
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="textLabel1_5_3_2_4" >
-                <property name="text" >
+               <widget class="QLabel" name="textLabel1_5_3_2_4">
+                <property name="text">
                  <string>Maiden name:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="textLabel1_5_3_2_4_3" >
-                <property name="text" >
+               <widget class="QLabel" name="textLabel1_5_3_2_4_3">
+                <property name="text">
                  <string>City of origin:</string>
                 </property>
                </widget>
@@ -586,32 +493,23 @@ If you do not currently have an account, please click the button to create one.<
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
+             <layout class="QVBoxLayout">
+              <property name="spacing">
                <number>6</number>
               </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
+              <property name="margin">
                <number>0</number>
               </property>
               <item>
-               <widget class="QLineEdit" name="uiMeiden" >
-                <property name="enabled" >
+               <widget class="QLineEdit" name="uiMeiden">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="uiOrgin" >
-                <property name="enabled" >
+               <widget class="QLineEdit" name="uiOrgin">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
@@ -620,22 +518,22 @@ If you do not currently have an account, please click the button to create one.<
             </item>
            </layout>
           </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="textLabel1_5_3_2_4_2" >
-            <property name="text" >
+          <item row="2" column="0">
+           <widget class="QLabel" name="textLabel1_5_3_2_4_2">
+            <property name="text">
              <string>The values below will be used in the search, but will not appear in the results.</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
+          <item row="1" column="0">
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
-            <property name="sizeType" >
+            <property name="sizeType">
              <enum>QSizePolicy::Expanding</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
               <height>30</height>
@@ -643,78 +541,60 @@ If you do not currently have an account, please click the button to create one.<
             </property>
            </spacer>
           </item>
-          <item row="0" column="0" >
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
+          <item row="0" column="0">
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
+             <layout class="QVBoxLayout">
+              <property name="spacing">
                <number>6</number>
               </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
+              <property name="margin">
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="textLabel1_5" >
-                <property name="text" >
+               <widget class="QLabel" name="textLabel1_5">
+                <property name="text">
                  <string>Forename:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="uiSurnamea" >
-                <property name="text" >
+               <widget class="QLabel" name="uiSurnamea">
+                <property name="text">
                  <string>Surname:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="textLabel1_5_3" >
-                <property name="text" >
+               <widget class="QLabel" name="textLabel1_5_3">
+                <property name="text">
                  <string>Your nickname:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="textLabel1_5_3_2" >
-                <property name="text" >
+               <widget class="QLabel" name="textLabel1_5_3_2">
+                <property name="text">
                  <string>Gender:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="textLabel1_5_3_2_2" >
-                <property name="text" >
+               <widget class="QLabel" name="textLabel1_5_3_2_2">
+                <property name="text">
                  <string>Year of birth:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="textLabel1_5_3_2_3" >
-                <property name="text" >
+               <widget class="QLabel" name="textLabel1_5_3_2_3">
+                <property name="text">
                  <string>City:</string>
                 </property>
                </widget>
@@ -722,75 +602,66 @@ If you do not currently have an account, please click the button to create one.<
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
+             <layout class="QVBoxLayout">
+              <property name="spacing">
                <number>6</number>
               </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
+              <property name="margin">
                <number>0</number>
               </property>
               <item>
-               <widget class="QLineEdit" name="uiName" >
-                <property name="enabled" >
+               <widget class="QLineEdit" name="uiName">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="uiSurname" >
-                <property name="enabled" >
+               <widget class="QLineEdit" name="uiSurname">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="nickName" >
-                <property name="enabled" >
+               <widget class="QLineEdit" name="nickName">
+                <property name="enabled">
                  <bool>true</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="uiGender" >
-                <property name="enabled" >
+               <widget class="QComboBox" name="uiGender">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string/>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>Female</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>Male</string>
                  </property>
                 </item>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="uiYOB" >
-                <property name="enabled" >
+               <widget class="QLineEdit" name="uiYOB">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="uiCity" >
-                <property name="enabled" >
+               <widget class="QLineEdit" name="uiCity">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
                </widget>
@@ -804,87 +675,60 @@ If you do not currently have an account, please click the button to create one.<
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage" >
-      <attribute name="title" >
+     <widget class="QWidget" name="TabPage">
+      <attribute name="title">
        <string>&amp;File Transfer</string>
       </attribute>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
+       <property name="margin">
         <number>9</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="dcc" >
-         <property name="title" >
+        <widget class="QGroupBox" name="dcc">
+         <property name="title">
           <string>Global DCC Options</string>
          </property>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
+         <layout class="QVBoxLayout">
+          <property name="spacing">
            <number>6</number>
           </property>
-          <property name="leftMargin" >
-           <number>9</number>
-          </property>
-          <property name="topMargin" >
-           <number>9</number>
-          </property>
-          <property name="rightMargin" >
-           <number>9</number>
-          </property>
-          <property name="bottomMargin" >
+          <property name="margin">
            <number>9</number>
           </property>
           <item>
-           <widget class="QLabel" name="textLabel1_4" >
-            <property name="text" >
-             <string>&lt;qt>&lt;p align="center">&lt;font color="#ff0000">These options affect &lt;b>all&lt;/b> Gadu-Gadu accounts.&lt;/font>&lt;/p>&lt;/qt></string>
+           <widget class="QLabel" name="textLabel1_4">
+            <property name="text">
+             <string>&lt;qt&gt;&lt;p align=&quot;center&quot;&gt;&lt;font color=&quot;#ff0000&quot;&gt;These options affect &lt;b&gt;all&lt;/b&gt; Gadu-Gadu accounts.&lt;/font&gt;&lt;/p&gt;&lt;/qt&gt;</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="optionOverrideDCC" >
-            <property name="text" >
+           <widget class="QCheckBox" name="optionOverrideDCC">
+            <property name="text">
              <string>&amp;Override default configuration</string>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
+           <layout class="QHBoxLayout">
+            <property name="spacing">
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
              <spacer>
-              <property name="orientation" >
+              <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeType" >
+              <property name="sizeType">
                <enum>QSizePolicy::Fixed</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>16</width>
                 <height>20</height>
@@ -893,44 +737,35 @@ If you do not currently have an account, please click the button to create one.<
              </spacer>
             </item>
             <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
+             <layout class="QHBoxLayout">
+              <property name="spacing">
                <number>3</number>
               </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
+              <property name="margin">
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="textLabel2" >
-                <property name="enabled" >
+               <widget class="QLabel" name="textLabel2">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="text" >
+                <property name="text">
                  <string>Local &amp;IP address /</string>
                 </property>
-                <property name="buddy" >
+                <property name="buddy">
                  <cstring>ipAddress</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="textLabel2_3" >
-                <property name="enabled" >
+               <widget class="QLabel" name="textLabel2_3">
+                <property name="enabled">
                  <bool>false</bool>
                 </property>
-                <property name="text" >
+                <property name="text">
                  <string>po&amp;rt:</string>
                 </property>
-                <property name="buddy" >
+                <property name="buddy">
                  <cstring>dccPort</cstring>
                 </property>
                </widget>
@@ -938,30 +773,30 @@ If you do not currently have an account, please click the button to create one.<
              </layout>
             </item>
             <item>
-             <widget class="KRestrictedLine" name="ipAddress" >
-              <property name="enabled" >
+             <widget class="KRestrictedLine" name="ipAddress">
+              <property name="enabled">
                <bool>false</bool>
               </property>
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>0.0.0.0</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="dccPort" >
-              <property name="enabled" >
+             <widget class="QSpinBox" name="dccPort">
+              <property name="enabled">
                <bool>false</bool>
               </property>
-              <property name="maximum" >
+              <property name="maximum">
                <number>65535</number>
               </property>
-              <property name="value" >
+              <property name="value">
                <number>8010</number>
               </property>
              </widget>
@@ -973,13 +808,13 @@ If you do not currently have an account, please click the button to create one.<
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType" >
+         <property name="sizeType">
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>180</height>
@@ -1017,7 +852,6 @@ If you do not currently have an account, please click the button to create one.<
   <tabstop>registerNew</tabstop>
   <tabstop>cacheServersCheck__</tabstop>
   <tabstop>dccCheck_</tabstop>
-  <tabstop>ignoreCheck_</tabstop>
   <tabstop>useTls_</tabstop>
   <tabstop>uiName</tabstop>
   <tabstop>uiSurname</tabstop>
@@ -1039,13 +873,13 @@ If you do not currently have an account, please click the button to create one.<
    <receiver>textLabel2</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>67</x>
-     <y>122</y>
+    <hint type="sourcelabel">
+     <x>94</x>
+     <y>155</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>70</x>
-     <y>147</y>
+    <hint type="destinationlabel">
+     <x>121</x>
+     <y>189</y>
     </hint>
    </hints>
   </connection>
@@ -1055,13 +889,13 @@ If you do not currently have an account, please click the button to create one.<
    <receiver>textLabel2_3</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>157</x>
-     <y>130</y>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>155</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>153</x>
-     <y>149</y>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>189</y>
     </hint>
    </hints>
   </connection>
@@ -1071,13 +905,13 @@ If you do not currently have an account, please click the button to create one.<
    <receiver>ipAddress</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>289</x>
-     <y>130</y>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>155</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>289</x>
-     <y>143</y>
+    <hint type="destinationlabel">
+     <x>491</x>
+     <y>190</y>
     </hint>
    </hints>
   </connection>
@@ -1087,13 +921,13 @@ If you do not currently have an account, please click the button to create one.<
    <receiver>dccPort</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>622</x>
-     <y>131</y>
+    <hint type="sourcelabel">
+     <x>637</x>
+     <y>155</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>619</x>
-     <y>145</y>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>190</y>
     </hint>
    </hints>
   </connection>

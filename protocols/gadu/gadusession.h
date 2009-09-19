@@ -134,8 +134,9 @@ public slots:
 	*/
 	void pubDirSearchClose();
 	void exportContactsOnServer( GaduContactsList* );
+	void deleteContactsOnServer( );
 	bool publishPersonalInformation( ResLine& );
-		
+
 signals:
 	void error( const QString&, const QString& );
 	void messageReceived( KGaduMessage* );
@@ -148,6 +149,7 @@ signals:
 	void pubDirSearchResult( const SearchResult&, unsigned int );
 	void userListRecieved( const QString& );
 	void userListExported();
+	void userListDeleted();
 	void incomingCtcp( unsigned int );
 
 protected slots:
@@ -171,6 +173,7 @@ private:
 	gg_login_params		params_;
 	QTextCodec*		textcodec;
 	int			searchSeqNr_;
+	bool			deletingUserList;
 	GaduRichTextFormat*	rtf;
 };
 
