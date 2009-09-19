@@ -243,7 +243,17 @@ void ChatView::addText( const QString &text )
 
 void ChatView::clear()
 {
-	messagePart()->clear();
+	int response = KMessageBox::Continue;
+
+	if ( !unreadMessageFrom.isNull() )
+	{
+		response = KMessageBox::warningContinueCancel( this, i18n("<qt>You have received a message from <b>%1</b> in the last "
+			"second. Are you sure you want to clear this chat?</qt>", unreadMessageFrom ), i18n( "Unread Message" ),
+			KGuiItem( i18nc( "@action:button", "Clear Chat" ) ), KStandardGuiItem::cancel(), QLatin1String("AskClearChatRecentMessage" ) );
+	}
+
+	if ( response == KMessageBox::Continue )
+		messagePart()->clear();
 }
 
 void ChatView::resetFontAndColor()
