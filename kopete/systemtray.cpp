@@ -61,6 +61,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	kDebug(14010) ;
     setCategory(Communications);
 	setToolTip("kopete", "Kopete", KGlobal::mainComponent().aboutData()->shortDescription());
+	setStatus(Active);
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;
