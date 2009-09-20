@@ -158,7 +158,7 @@ void KopeteSystemTray::startBlink()
 
 void KopeteSystemTray::stopBlink()
 {
-    setStatus(Passive);
+    setStatus(Active);
     
 	if ( mMovie )
 		kDebug( 14010 ) << "stopping movie.";
