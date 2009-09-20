@@ -67,7 +67,7 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const QVariantList& /*arg
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
-	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(Kopete::Account*)),
+	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 				this, SLOT( listenToAllAccounts() ) );
 
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( slotSettingsChanged() ) );
