@@ -122,6 +122,17 @@ public:
 	const QString displayName();
 
 	/**
+	* sets lastUrl for current ChatSession
+	*/
+	void setLastUrl( const QString &verylastUrl );
+
+	/**
+	* returns lastUrl for current ChatSession
+	* can be empty
+	*/
+	const QString lastUrl();
+
+	/**
 	 * @brief change the displayname
 	 *
 	 * change the display name of the chat
@@ -190,6 +201,31 @@ public:
 	 * @return true if kopete show warning message
 	 */
 	bool warnGroupChat() const;
+
+	/**
+	 * finds proper file with lasturls for current
+	 * contact ChatSession->members().first()
+	 * then sets lasturl for current ChatSession
+	 * if there is no file, lasturl will be set to empty string
+	 */
+	QString initLastUrl( const Kopete::Contact* c );
+
+	/**
+	* returns file name where urls for this contact supposed to be
+	*/
+	static QString getUrlsFileName(const Kopete::Contact*);
+
+	/**
+	* prosesses every sent/appended message
+	* looks for urls, if found: sets current lastUrl and save it to proper file
+	*/
+	void urlSearch( const Kopete::Message &msg );
+
+	/**
+	 * finds all urls in the current message (if there are many)
+	 * sorts them as they are in the meassage QStringList[0] - is the earliest
+	 */
+	QStringList findUrls(const Kopete::Message &msg );
 
 signals:
 	/**

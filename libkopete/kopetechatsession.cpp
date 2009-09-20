@@ -23,6 +23,7 @@
 #include "kopetechatsession.h"
 
 #include <qapplication.h>
+#include <qfile.h>
 #include <qregexp.h>
 
 #include <kdebug.h>
@@ -31,6 +32,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <knotification.h>
+#include <kstandarddirs.h>
 
 #include "kopeteaccount.h"
 #include "kopetebehaviorsettings.h"
@@ -43,6 +45,7 @@
 #include "kopeteview.h"
 #include "kopetecontact.h"
 #include "kopetepluginmanager.h"
+#include "kopeteprotocol.h"
 
 const int CHAIN_COUNT = 3;
 
@@ -59,6 +62,7 @@ public:
 	bool customDisplayName;
 	QDateTime awayTime;
 	QString displayName;
+	QString lastUrl;
 	KopeteView *view;
 	bool mayInvite;
 	Kopete::MessageHandlerChain::Ptr chains[CHAIN_COUNT];
@@ -81,6 +85,7 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->mayInvite = false;
 	d->form = form;
 	d->warnGroupChat = true;
+	d->lastUrl = initLastUrl( others.first() );
 
 	for ( int i = 0; others.size() != i; ++i )
 		addContact( others[i], true );
@@ -132,6 +137,16 @@ const Kopete::OnlineStatus Kopete::ChatSession::contactOnlineStatus( const Kopet
 		return d->contactStatus[ contact ];
 
 	return contact->onlineStatus();
+}
+
+void Kopete::ChatSession::setLastUrl( const QString &verylastUrl )
+{
+	  d->lastUrl = verylastUrl;
+}
+
+const QString Kopete::ChatSession::lastUrl()
+{
+	return d->lastUrl;
 }
 
 const QString Kopete::ChatSession::displayName()
@@ -309,7 +324,99 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 		chainDirection = Kopete::Message::Inbound;
 
 	chainForDirection( chainDirection )->processMessage( msg );
+
+	//looking for urls in the message
+	urlSearch( msg );
 //	emit messageAppended( msg, this );
+}
+
+void Kopete::ChatSession::urlSearch( const Kopete::Message &msg )
+{
+	//if there are any urls in the message
+	QStringList lasturls = findUrls(msg);
+	if ( !lasturls.empty() ) {
+		//set lasturl for message's chatsession
+		msg.manager()->setLastUrl( lasturls.last() );
+		//saving new url(s) found in message //file named contactId.lasturls.txt in proper folder
+		QString urlfilename = Kopete::ChatSession::getUrlsFileName( msg.manager()->members().first() );
+		QFile file( urlfilename );
+		file.open( QIODevice::Append );
+		QTextStream stream( &file );
+
+		for (int i = 0; i < lasturls.size(); ++i)
+			stream << lasturls.at(i) << "\n";
+		file.close();
+	}
+}
+
+QStringList Kopete::ChatSession::findUrls(const Kopete::Message &msg )
+{
+	Kopete::Message message = msg;
+	//we check the message for every pattern
+	QString tempstr = message.plainBody();
+	QStringList regexppatterns = message.regexpPatterns();
+	QRegExp linkregexp;
+	QMap<int,QString> mapUrl;
+
+	for (int i = 0; i < regexppatterns.size(); ++i) {
+	  linkregexp.setPattern(regexppatterns[i]);
+	  int pos = 0;
+	  while ((pos = linkregexp.indexIn(tempstr, pos)) != -1) {
+	    mapUrl.insert(pos,linkregexp.cap(0));
+	    pos += linkregexp.matchedLength(); }
+	}
+	//we use QMap to sort links as they are in the message (if there are many links in one message)
+	//lasturllist[0] - is the earliest
+	QStringList lasturllist;
+	QMapIterator< int, QString > i(mapUrl);
+	while (i.hasNext()) { i.next(); lasturllist << i.value(); }
+	lasturllist.replaceInStrings(" ", "");
+	//add "http://" to link if needed to open it with a browser
+	lasturllist.replaceInStrings(QRegExp( regexppatterns[1] ), QLatin1String("\\1http://\\2\\3" ));
+
+	return lasturllist;
+}
+
+QString Kopete::ChatSession::initLastUrl( const Kopete::Contact* c )
+{
+	QString urlfilename = getUrlsFileName(c);
+	if ( !urlfilename.isEmpty() )
+	{
+		QFile file( urlfilename );
+		QString lastUrl;
+		if ( file.exists() ) {
+			if ( file.open(QIODevice::ReadOnly) ) {
+				QTextStream stream( &file );
+				while ( !stream.atEnd() )
+					lastUrl = stream.readLine();
+				file.close(); }
+			else {
+				kDebug(14310) << "cant open lasturls file for " << c->contactId();
+			}
+		}
+		if ( !lastUrl.isEmpty() )
+			return lastUrl;
+		else return "";
+	}
+	else
+	{
+		kDebug(14310) << "cant find lasturls file for " << c->contactId();
+		return "";
+	}
+}
+
+QString Kopete::ChatSession::getUrlsFileName(const Kopete::Contact* c)
+{
+	QString name = c->protocol()->pluginId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
+		QString::fromLatin1( "/" ) +
+		c->account()->accountId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
+		QString::fromLatin1( "/" ) +
+	c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
+		QString::fromLatin1( ".lasturls" );
+
+	QString filename = KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name + QString::fromLatin1( ".txt" ) ) ;
+
+	return filename;
 }
 
 void Kopete::ChatSession::addContact( const Kopete::Contact *c, const Kopete::OnlineStatus &initialStatus, bool suppress )

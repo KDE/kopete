@@ -191,6 +191,7 @@ class KOPETE_EXPORT CommandHandler : public QObject
 		void slotClearCommand( const QString & args, Kopete::ChatSession *manager );
 		void slotPartCommand( const QString & args, Kopete::ChatSession *manager );
 		void slotCloseCommand( const QString & args, Kopete::ChatSession *manager );
+		void slotOpenLastUrl( const QString & args, Kopete::ChatSession *manager );
 		//void slotMeCommand( const QString & args, Kopete::ChatSession *manager );
 		void slotExecCommand( const QString & args, Kopete::ChatSession *manager );
 		void slotAwayCommand( const QString & args, Kopete::ChatSession *manager );

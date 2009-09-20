@@ -25,6 +25,7 @@
 #include <qdom.h>
 #include <kauthorized.h>
 #include <kactioncollection.h>
+#include <ktoolinvocation.h>
 #ifndef Q_OS_WIN
 #include <k3process.h>
 #else
@@ -129,6 +130,9 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 
 	registerCommand( this, QString::fromLatin1("help"), SLOT( slotHelpCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /help [<command>] - Used to list available commands, or show help for a specified command." ), 0, 1 );
+
+	registerCommand( this, QString::fromLatin1("url"), SLOT( slotOpenLastUrl( const QString &, Kopete::ChatSession * ) ),
+		i18n( "USAGE: /url - Opens last URL for current chat in default browser." ) );
 
 	registerCommand( this, QString::fromLatin1("close"), SLOT( slotCloseCommand( const QString &, Kopete::ChatSession * ) ),
 		i18n( "USAGE: /close - Closes the current view." ) );
@@ -373,6 +377,15 @@ void Kopete::CommandHandler::slotAwayAllCommand( const QString &args, Kopete::Ch
 	}
 	else {
 		Kopete::AccountManager::self()->setOnlineStatus( Kopete::OnlineStatusManager::Away, args );
+	}
+}
+
+void Kopete::CommandHandler::slotOpenLastUrl( const QString &, Kopete::ChatSession *manager )
+{
+	QString tempstr = manager->lastUrl();
+	if ( !tempstr.isEmpty() ) {
+	//now there is no difference whether it is a brwserUrl or a mailtoUrl
+		KToolInvocation::invokeBrowser( tempstr );
 	}
 }
 

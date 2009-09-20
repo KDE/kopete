@@ -413,6 +413,20 @@ static QString makeRegExp( const char *pattern )
 	return boundaryStart + QLatin1String(pattern) + boundaryEnd;
 }
 
+const QStringList Message::regexpPatterns()
+{
+        const QString name = QLatin1String( "[\\w\\+\\-=_\\.]+" );
+        const QString userAndPassword = QString( "(?:%1(?::%1)?\\@)" ).arg( name );
+        const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
+        const QString urlSection = QString( "[%1]+" ).arg( urlChar );
+        const QString domain = QLatin1String( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
+        QStringList patternList;
+        patternList << makeRegExp("\\w+://%1?\\w%2").arg( userAndPassword, urlSection )
+                    << makeRegExp("%1?www\\.%2%3").arg( userAndPassword, domain, urlSection )
+                    << makeRegExp("%1@%2").arg( name, domain );
+        return patternList;
+}
+
 QString Message::parseLinks( const QString &message, Qt::TextFormat format )
 {
 	if ( format & Qt::RichText )

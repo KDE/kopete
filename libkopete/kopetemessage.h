@@ -259,6 +259,12 @@ public:
 	bool isRightToLeft() const;
 
 	/**
+	* returns QStringList with regexp patterns
+	* will be used to look for links in the message
+	*/
+	const QStringList regexpPatterns();
+
+	/**
 	 * @brief Accessor method for the font of the message
 	 * @return The message's font
 	 */
