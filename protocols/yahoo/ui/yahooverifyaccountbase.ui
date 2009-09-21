@@ -113,9 +113,6 @@
          <height>75</height>
         </size>
        </property>
-       <property name="pixmap" >
-        <pixmap/>
-       </property>
        <property name="scaledContents" >
         <bool>true</bool>
        </property>
