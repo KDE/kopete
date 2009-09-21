@@ -323,8 +323,9 @@ void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
                (c->contactId() == contact->id()))
             {
                 // Contact is already in the contact list. Check if it has a internalContact, and
-                // if it doesn't, add one (this is the case if it is one that was deserialized
-                // from contactlist.xml file).
+                // if it doesn't (or if the current one is invalid), add one
+                // (this is the case if it is one that was deserialized from contactlist.xml file),
+                // or we are reconnecting.
                 kDebug() << "Contact is already in list. Don't add it.";
 
                 TelepathyContact *tpc = qobject_cast<TelepathyContact*>(c);
@@ -333,7 +334,8 @@ void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
                     return;
                 }
 
-                if (tpc->internalContact().isNull()) {
+                if (tpc->internalContact().isNull() ||
+                    !tpc->internalContact()->manager()->connection()->isValid()) {
                     tpc->setInternalContact(contact);
                 }
 
