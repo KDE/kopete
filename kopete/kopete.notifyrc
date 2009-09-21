@@ -2588,6 +2588,14 @@ Sound=
 
 [Event/kopete_gadu_contactslist]
 Name=GaduGadu contacts list
+Name[pt]=Lista de contactos do GaduGadu
+Name[sv]=GaduGadu kontaktlista
+Name[uk]=Список контактів GaduGadu
+Name[x-test]=xxGaduGadu contacts listxx
 Comment=Contacts list have been received/exported/deleted
+Comment[pt]=A lista de contactos foi recebida/exportada/removida
+Comment[sv]=Kontaktlista har tagits emot, exporterats eller tagits bort
+Comment[uk]=Список контактів було отримано/експортовано/вилучено
+Comment[x-test]=xxContacts list have been received/exported/deletedxx
 Action=Popup
 Sound=
