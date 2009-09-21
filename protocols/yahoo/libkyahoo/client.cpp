@@ -159,7 +159,7 @@ void Client::connect( const QString &host, const uint port, const QString &userI
 	QObject::connect( d->stream, SIGNAL( connected() ), this, SLOT( cs_connected() ) );
 	QObject::connect( d->stream, SIGNAL( error(int) ), this, SLOT( streamError(int) ) );
 	QObject::connect( d->stream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
-	QObject::connect( d->stream, SIGNAL( disconnected() ), this, SLOT( streamDisconnected() ) );
+	QObject::connect( d->stream, SIGNAL( connectionClosed() ), this, SLOT( streamDisconnected() ) );
 	
 	d->stream->connectToServer( host, false );
 }
