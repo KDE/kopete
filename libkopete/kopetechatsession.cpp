@@ -85,7 +85,9 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 	d->mayInvite = false;
 	d->form = form;
 	d->warnGroupChat = true;
-	d->lastUrl = initLastUrl( others.first() );
+	if ( !others.isEmpty() ) {
+		d->lastUrl = initLastUrl( others.first() );
+	}
 
 	for ( int i = 0; others.size() != i; ++i )
 		addContact( others[i], true );
@@ -524,7 +526,7 @@ void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 void Kopete::ChatSession::receivedTypingMsg( const QString &contactId, bool t )
 {
 	int i;
-	
+
 	// FIXME: this needs better design. We can't iterate through List to find out who got what ID
 	// hash will be better for that, right ?
 	for ( i=0; i != d->mContactList.size(); i++ )
