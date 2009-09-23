@@ -752,8 +752,13 @@ void TelepathyAccount::slotChangeAvatar()
     kDebug() << avatarPath;
 
     if (!avatarPath.isNull() &&
-        !avatarPath.isEmpty() &&
-        QFile::exists(avatarPath)) {
+        !avatarPath.isEmpty()) {
+
+        if (!QFile::exists(avatarPath)) {
+            kWarning() << "Avatar file doesn't exist";
+            return;
+        }
+
         Tp::Avatar avatar;
 
         QFile avatarFile(avatarPath);
@@ -765,6 +770,8 @@ void TelepathyAccount::slotChangeAvatar()
         // Load the image data
         avatar.avatarData = avatarFile.readAll();
 
+        avatarFile.close();
+
         QString avatarMimeType = KMimeType::findByUrl(KUrl(avatarPath))->name();
 
         // Let's try to get the image mimetype
@@ -775,6 +782,21 @@ void TelepathyAccount::slotChangeAvatar()
 
         QObject::connect(m_account->setAvatar(avatar), SIGNAL(finished(Tp::PendingOperation *)),
                          this, SLOT(onAvatarChanged(Tp::PendingOperation *)));
+    }
+    else {
+        Tp::ConnectionPtr connection = account()->connection();
+
+        if (!connection) {
+            kWarning() << "account()->connection() is null.";
+            return;
+        }
+
+        Tp::Client::ConnectionInterfaceAvatarsInterface *avatarIface = connection->avatarsInterface();
+
+        if (avatarIface) {
+            kDebug() << "Removing avatar";
+            avatarIface->ClearAvatar();
+        }
     }
 }
 
