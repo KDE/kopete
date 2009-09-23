@@ -39,6 +39,7 @@
 #include <kaction.h>
 #include <kactionmenu.h>
 #include <kinputdialog.h>
+#include <kmimetype.h>
 
 #include <TelepathyQt4/Types>
 #include <TelepathyQt4/Feature>
@@ -739,23 +740,42 @@ void TelepathyAccount::onAliasChanged(Tp::PendingOperation* operation)
 
 void TelepathyAccount::slotChangeAvatar()
 {
-    // \todo: add here some error message?
-    if (!m_account)
+    kDebug();
+
+    if (!m_account) {
+        kWarning() << "Invalid telepathy account";
         return;
+    }
 
     QString avatarPath = Kopete::UI::AvatarDialog::getAvatar(Kopete::UI::Global::mainWidget());
 
-    Tp::Avatar avatar;
+    kDebug() << avatarPath;
 
-    QFile avatarFile;
-    if (!avatarFile.open(QIODevice::ReadOnly))
-        return;
+    if (!avatarPath.isNull() &&
+        !avatarPath.isEmpty() &&
+        QFile::exists(avatarPath)) {
+        Tp::Avatar avatar;
 
-    avatar.avatarData = avatarFile.readAll();
-    // \todo: add here mime type for avatar
+        QFile avatarFile(avatarPath);
+        if (!avatarFile.open(QIODevice::ReadOnly)) {
+            kWarning() << "Error reading user defined avatar";
+            return;
+        }
 
-    QObject::connect(m_account->setAvatar(avatar), SIGNAL(finished(Tp::PendingOperation *)),
-                     this, SLOT(onAvatarChanged(Tp::PendingOperation *)));
+        // Load the image data
+        avatar.avatarData = avatarFile.readAll();
+
+        QString avatarMimeType = KMimeType::findByUrl(KUrl(avatarPath))->name();
+
+        // Let's try to get the image mimetype
+        if (!avatarMimeType.isEmpty()) {
+            kDebug() << avatarMimeType;
+            avatar.MIMEType = avatarMimeType;
+        }
+
+        QObject::connect(m_account->setAvatar(avatar), SIGNAL(finished(Tp::PendingOperation *)),
+                         this, SLOT(onAvatarChanged(Tp::PendingOperation *)));
+    }
 }
 
 void TelepathyAccount::onAvatarChanged(Tp::PendingOperation* operation)
