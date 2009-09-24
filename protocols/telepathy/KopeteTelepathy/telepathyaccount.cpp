@@ -751,6 +751,8 @@ void TelepathyAccount::slotChangeAvatar()
 
     kDebug() << avatarPath;
 
+    Tp::Avatar avatar;
+
     if (!avatarPath.isNull() &&
         !avatarPath.isEmpty()) {
 
@@ -758,8 +760,6 @@ void TelepathyAccount::slotChangeAvatar()
             kWarning() << "Avatar file doesn't exist";
             return;
         }
-
-        Tp::Avatar avatar;
 
         QFile avatarFile(avatarPath);
         if (!avatarFile.open(QIODevice::ReadOnly)) {
@@ -779,25 +779,10 @@ void TelepathyAccount::slotChangeAvatar()
             kDebug() << avatarMimeType;
             avatar.MIMEType = avatarMimeType;
         }
-
-        QObject::connect(m_account->setAvatar(avatar), SIGNAL(finished(Tp::PendingOperation *)),
-                         this, SLOT(onAvatarChanged(Tp::PendingOperation *)));
     }
-    else {
-        Tp::ConnectionPtr connection = account()->connection();
 
-        if (!connection) {
-            kWarning() << "account()->connection() is null.";
-            return;
-        }
-
-        Tp::Client::ConnectionInterfaceAvatarsInterface *avatarIface = connection->avatarsInterface();
-
-        if (avatarIface) {
-            kDebug() << "Removing avatar";
-            avatarIface->ClearAvatar();
-        }
-    }
+    QObject::connect(m_account->setAvatar(avatar), SIGNAL(finished(Tp::PendingOperation *)),
+                     this, SLOT(onAvatarChanged(Tp::PendingOperation *)));
 }
 
 void TelepathyAccount::onAvatarChanged(Tp::PendingOperation* operation)
