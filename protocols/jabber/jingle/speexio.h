@@ -71,6 +71,9 @@ public:
 	virtual QByteArray decodedData() const;
 	
 	virtual int tsValue();
+	int periodTime() const;
+
+	virtual int encodedFrameSize() const;
 
 private:
 	class Private;

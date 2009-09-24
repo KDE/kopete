@@ -95,7 +95,7 @@ public:
 	 * create and configure the alsa handle for the stream type t, the device
 	 * dev and the sample format f
 	 */
-	AlsaIO(StreamType t, QString dev, Format f);
+	AlsaIO(StreamType t, QString dev = QString("default"), Format f = Signed16Le);
 	~AlsaIO();
 
 	/*

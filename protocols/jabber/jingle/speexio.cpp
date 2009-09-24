@@ -16,7 +16,7 @@
   */
 
 #include "speexio.h"
-#include <KDebug>
+#include <QDebug>
 
 class SpeexIO::Private
 {
@@ -53,7 +53,7 @@ SpeexIO::~SpeexIO()
 	speex_bits_destroy(&d->decBits);
 	speex_decoder_destroy(d->decoder);
         delete d;
-	kDebug() << "Destroyed SpeexIO";
+	qDebug() << "Destroyed SpeexIO";
 }
 
 void SpeexIO::setSamplingRate(int sr)
@@ -89,6 +89,21 @@ void SpeexIO::setSamplingRate(int sr)
 	d->samplingRate = sr;
 
 	qDebug() << "encoder and decoder initiated.";
+}
+
+int SpeexIO::encodedFrameSize() const
+{
+	switch(d->samplingRate)
+	{
+	case 8000 :
+		return 35;
+
+	case 16000 :
+		return 70;
+
+	default :
+		return -1;
+	}
 }
 
 int SpeexIO::setQuality(int q)
@@ -158,14 +173,19 @@ void SpeexIO::encode(const QByteArray& rawData)
 	int maxSize = speex_bits_nbytes(&d->encBits);
 	d->speexData.resize(maxSize);
 	
-	int nbBytes = speex_bits_write(&d->encBits, (char*) d->speexData.data(), maxSize);
+	/*int nbBytes = */speex_bits_write(&d->encBits, (char*) d->speexData.data(), maxSize);
 
-	emit encoded();
+	//emit encoded();
 }
 
 QByteArray SpeexIO::encodedData() const
 {
 	return d->speexData;
+}
+
+int SpeexIO::periodTime() const
+{
+	return 20000; //Always that for Speex.
 }
 
 void SpeexIO::decode(const QByteArray& speexData)
@@ -188,7 +208,7 @@ void SpeexIO::decode(const QByteArray& speexData)
 		return;
 	}
 	
-	emit decoded();
+	//emit decoded();
 }
 
 QByteArray SpeexIO::decodedData() const

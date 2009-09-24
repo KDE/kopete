@@ -24,9 +24,12 @@ public :
 	// Period Size is the size of a frame which can be decoded in one time.
 	virtual int frameSizeBytes();
 
-signals:
+	virtual int periodTime() const = 0;
+	virtual int encodedFrameSize() const = 0;
+
+/*signals:
 	void encoded();
-	void decoded();
+	void decoded();*/
 };
 
 #endif

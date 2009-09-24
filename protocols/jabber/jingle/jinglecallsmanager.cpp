@@ -74,22 +74,9 @@ JingleCallsManager::~JingleCallsManager()
         delete d;
 }
 
-#define ADDRESS "http://whatismyip.com/automation/n09230945.asp"
-
 void JingleCallsManager::init()
 {
 	d->client->jingleSessionManager()->setFirstPort(d->jabberAccount->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
-
-	QString filename;
-	if (d->jabberAccount->configGroup()->readEntry("JingleAutoDetectIP", false) && KIO::NetAccess::download(KUrl(ADDRESS), filename, 0))
-	{
-		QFile file(filename);
-		file.open(QIODevice::ReadOnly);
-		QString ip = file.readAll();
-		file.close();
-		kDebug() << "Setting external IP :" << ip;
-		d->client->jingleSessionManager()->setExternalIP(ip);
-	}
 
 	//Initialize oRTP library.
 	ortp_init();

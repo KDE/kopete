@@ -132,7 +132,11 @@ void JabberJingleContent::startStreaming()
 		prepareRtpInSession();
 
 		if (!m_mediaSession->start())
-			QMessageBox::warning(0, tr("Jingle audio"), tr("Unable to start you audio device, the session will start anyway."));
+		{
+			QMessageBox::warning(0, tr("Jingle audio"), tr("Unable to start you audio device, terminating the session."));
+			//m_content->parentSession()->terminate();
+		}
+			
 	}
 }
 

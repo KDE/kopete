@@ -20,6 +20,7 @@
 #include <QObject>
 
 class MediaManager;
+class QTimer;
 class MediaSession : public QObject
 {
 	Q_OBJECT
@@ -30,19 +31,23 @@ public:
 	void setSamplingRate(int sr);
 	void setQuality(int q);
 	bool start();
-	void write(const QByteArray& sData);
+	//void write(const QByteArray& sData);
 	QByteArray read() const;
 	int timeStamp();
 
 public slots:
+	void write(const QByteArray&);
+
+private slots:
 	void slotReadyRead();
-	void slotEncoded();
-	void slotDecoded();
+	void pluginCompress();
 
 signals:
 	void readyRead();
 
 private:
+	static QByteArray resample(QByteArray data, int endSize);
+
 	class Private;
 	Private * const d;
 };

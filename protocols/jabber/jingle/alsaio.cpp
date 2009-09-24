@@ -14,16 +14,15 @@
   * *                                                                       *
   * *************************************************************************
   */
-
-#include "alsaio.h"
 #include <alsa/asoundlib.h>
 
 #include <QObject>
 #include <QSocketNotifier>
 #include <QStringList>
 
-#include <KDebug>
+#include <QDebug>
 
+#include "alsaio.h"
 
 // taken from netinterface_unix (changed the split to KeepEmptyParts)
 static QStringList read_proc_as_lines(const char *procfile)
@@ -207,41 +206,41 @@ AlsaIO::AlsaIO(StreamType t, QString device, Format f)
 
 	if ((err = snd_pcm_open(&handle, device.toUtf8().data(), m_type == Capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0)
 	{
-		kDebug() << "cannot open audio device" << device;
-		kDebug() << "trying default";
+		qDebug() << "cannot open audio device" << device;
+		qDebug() << "trying default";
 		if ((err = snd_pcm_open(&handle, "default", m_type == Capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK)) < 0)
 		{
-			kDebug() << "cannot open audio device default";
+			qDebug() << "cannot open audio device default";
 			return;
 		}
 	}
 
 	if ((err = snd_pcm_hw_params_malloc(&hwParams)) < 0)
 	{
-		kDebug() << "cannot allocate hardware parameter structure" ;
+		qDebug() << "cannot allocate hardware parameter structure" ;
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params_any(handle, hwParams)) < 0)
 	{
-		kDebug() << "cannot initialize hardware parameter structure" ;
+		qDebug() << "cannot initialize hardware parameter structure" ;
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params_set_access(handle, hwParams, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0)
 	{
-		kDebug() << "cannot set access type" ;
+		qDebug() << "cannot set access type" ;
 		return;
 	}
 
 	snd_pcm_format_t fmt = static_cast<snd_pcm_format_t>(f);
 	if ((err = snd_pcm_hw_params_set_format(handle, hwParams, fmt)) < 0)
 	{
-		kDebug() << "cannot set sample format";
-		kDebug() << "Setting first format...";
+		qDebug() << "cannot set sample format";
+		qDebug() << "Setting first format...";
 		if ((err = snd_pcm_hw_params_set_format_first(handle, hwParams, &fmt)) < 0)
 		{
-			kDebug() << "cannot set first sample format !";
+			qDebug() << "cannot set first sample format !";
 			return;
 		}
 	}
@@ -253,39 +252,40 @@ AlsaIO::AlsaIO(StreamType t, QString device, Format f)
 	unsigned int p = 20000;
 	if ((err = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &p, 0)) < 0)
 	{
-		kDebug() << "cannot set period time near to 20 ms";
+		qDebug() << "cannot set period time near to 20 ms";
 		return;
 	}
+	qDebug() << "Period time =" << p;
 
-	samplingRate = 8000;
+	samplingRate = 16000;
 	if ((err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &samplingRate, 0)) < 0)
 	{
-		kDebug() << "cannot set sample rate";
+		qDebug() << "cannot set sample rate";
 		//Don't return now, could work without that.
 		//return;
 	}
 	
 	if ((err = snd_pcm_hw_params_set_channels(handle, hwParams, 1)) < 0)
 	{
-		kDebug() << "cannot set channel 1";
+		qDebug() << "cannot set channel 1";
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params(handle, hwParams)) < 0)
 	{
-		kDebug() << "cannot set parameters";
+		qDebug() << "cannot set parameters";
 		return;
 	}
 	
 	snd_pcm_hw_params_get_period_size(hwParams, &pSize, 0);
-	kDebug() << "Period size =" << pSize;
+	qDebug() << "Period size =" << pSize;
 	snd_pcm_hw_params_get_period_time(hwParams, &pTime, 0);
-	kDebug() << "Period time =" << pTime;
+	qDebug() << "Period time =" << pTime;
 	snd_pcm_hw_params_get_rate (hwParams, &samplingRate, 0);
-	kDebug() << "Sampling rate =" << samplingRate;
+	qDebug() << "Sampling rate =" << samplingRate;
 
 	pSizeBytes = snd_pcm_frames_to_bytes(handle, pSize);
-	kDebug() << pSizeBytes;
+	qDebug() << pSizeBytes;
 	
 	ready = true;
 }
@@ -304,7 +304,7 @@ AlsaIO::~AlsaIO()
 		snd_pcm_close(handle);
 	}
 	
-	kDebug() << "DESTROYED";
+	qDebug() << "DESTROYED";
 }
 
 AlsaIO::StreamType AlsaIO::type() const
@@ -314,7 +314,7 @@ AlsaIO::StreamType AlsaIO::type() const
 
 bool AlsaIO::start()
 {
-	kDebug() << "start()";
+	qDebug() << "start()";
 	if (ready)
 	{
 		//This is done here so we can modify parameters before starting.
@@ -322,7 +322,7 @@ bool AlsaIO::start()
 
 		if (snd_pcm_prepare(handle) < 0)
 		{
-			kDebug() << "cannot prepare audio interface for use" ;
+			qDebug() << "cannot prepare audio interface for use" ;
 			ready = false;
 		}
 	}
@@ -331,12 +331,12 @@ bool AlsaIO::start()
 	{
 		if (m_type == Capture)
 		{
-			kDebug() << "Device is not ready, no packet will be sent.";
+			qDebug() << "Device is not ready, no packet will be sent.";
 			return false;
 		}
 		else if (m_type == Playback)
 		{
-			kDebug() << "Device is not ready, we will simply drop packets. --> NO PLAYBACK";
+			qDebug() << "Device is not ready, we will simply drop packets. --> NO PLAYBACK";
 			return false;
 		}
 	}
@@ -345,7 +345,7 @@ bool AlsaIO::start()
 	
 	if (fdCount <= 0)
 	{
-		kDebug() << "No poll fd... WEIRD!";
+		qDebug() << "No poll fd... WEIRD!";
 		return false;
 	}
 
@@ -353,15 +353,15 @@ bool AlsaIO::start()
 	int err = snd_pcm_poll_descriptors(handle, ufds, fdCount);
 	if (err < 0)
 	{
-		kDebug() << "Error retrieving fd.";
+		qDebug() << "Error retrieving fd.";
 		return false;
 	}
 	
-	kDebug() << "Retrieved" << fdCount << "file descriptors.";
+	qDebug() << "Retrieved" << fdCount << "file descriptors.";
 
 	if (m_type == Capture)
 	{
-		kDebug() << "Setting up Capture";
+		qDebug() << "Setting up Capture";
 		//Always use the first pollfd
 		notifier = new QSocketNotifier(ufds[0].fd, QSocketNotifier::Read, this);
 		notifier->setEnabled(true);
@@ -370,30 +370,30 @@ bool AlsaIO::start()
 	}
 	else if (m_type == Playback)
 	{
-		kDebug() << "Setting up Playback";
+		qDebug() << "Setting up Playback";
 		//Always use the first pollfd
 		QSocketNotifier::Type type;
 		switch (ufds[0].events & (POLLIN | POLLPRI | POLLOUT))
 		{
 		case POLLIN:
-			kDebug() << "QSocketNotifier::Read";
+			qDebug() << "QSocketNotifier::Read";
 			type = QSocketNotifier::Read;
 			break;
 		case POLLOUT:
-			kDebug() << "QSocketNotifier::Write";
+			qDebug() << "QSocketNotifier::Write";
 			type = QSocketNotifier::Write;
 			break;
 		default:
-			kDebug() << "Unsupported poll events";
+			qDebug() << "Unsupported poll events";
 			return false;
 		}
 
 		notifier = new QSocketNotifier(ufds[0].fd, type);
 		notifier->setEnabled(false); //Will be activated as soon as data comes in
 		connect(notifier, SIGNAL(activated(int)), this, SLOT(slotReadyWrite(int)));
-		kDebug() << "Time stamp =" << timeStamp();
+		qDebug() << "Time stamp =" << timeStamp();
 	}
-	kDebug() << "started.";
+	qDebug() << "started.";
 
 	return true;
 }
@@ -402,31 +402,15 @@ void AlsaIO::write(const QByteArray& data)
 {
 	if (!ready || m_type != Playback)
 	{
-		//kDebug() << "Packet dropped";
+		//qDebug() << "Packet dropped";
 		return;
 	}
 
 	buf.append(data);
+	//buf.fill('\0', buf.count() + pSizeBytes);
 
-	// Bufferize for 150 ms before playing.
-	if (bufferizing && buf.size() >= pSizeBytes * 75)
-	{
-		bufferizing = false;
+	if (!notifier->isEnabled())
 		notifier->setEnabled(true);
-	} 
-
-	// Rebuffer if there is only 50 ms left in the buffer.
-	if (buf.size() < pSizeBytes * 25)
-	{
-		bufferizing = true;
-		notifier->setEnabled(false);
-	}
-	
-	if (!bufferizing && notifier && !notifier->isEnabled())
-	{
-		//kDebug() << "Reactivating notifier.";
-		notifier->setEnabled(true);
-	}
 }
 
 bool AlsaIO::isReady()
@@ -451,7 +435,7 @@ unsigned int AlsaIO::sRate() const
 QByteArray AlsaIO::data()
 {
 	//QByteArray data = buf;
-	//kDebug() << "data.size() =" << data.size();
+	//qDebug() << "data.size() =" << data.size();
 	//buf.clear();
 	return buf;
 }
@@ -459,31 +443,31 @@ QByteArray AlsaIO::data()
 unsigned int AlsaIO::timeStamp()
 {
 	unsigned int wps = sRate()/8;	// Bytes per second
-	kDebug() << "Bytes per second =" << wps;
+	qDebug() << "Bytes per second =" << wps;
 	unsigned int wpms = wps/1000;		// Bytes per milisecond
-	kDebug() << "Bytes per millisecond =" << wpms;
+	qDebug() << "Bytes per millisecond =" << wpms;
 	unsigned int ts = wpms * periodTime();		// Time stamp
-	kDebug() << "Time stamp =" << ts;
+	qDebug() << "Time stamp =" << ts;
 	return ts;
 }
 
 void AlsaIO::slotReadyRead(int)
 {
-	//kDebug() << "Data arrived. (Alsa told me !)";
+	//qDebug() << "Data arrived. (Alsa told me !)";
 	size_t size;
 	
 	buf.resize(pSizeBytes);
 	size = snd_pcm_readi(handle, buf.data(), pSize);
 	buf.resize(snd_pcm_frames_to_bytes(handle, size));
 
-	//kDebug() << "Read" << buf.size() << "bytes";
+	//qDebug() << "Read" << buf.size() << "bytes";
 	
 	emit readyRead();
 }
 
 void AlsaIO::slotReadyWrite(int)
 {
-	//kDebug() << "started since" << (times * periodTime()) / 1000 << "sec.";
+	//qDebug() << "started since" << (times * periodTime()) / 1000 << "sec.";
 	//times++;
 	unsigned short revents;
 	
@@ -495,32 +479,27 @@ void AlsaIO::slotReadyWrite(int)
 	else
 	{
 		notifier->setEnabled(false);
-		kDebug() << "poll returned no event (" << revents << ", " << ufds[0].revents << ") ?";	
+		qDebug() << "poll returned no event (" << revents << ", " << ufds[0].revents << ") ?";	
 	}
 
 }
 
 void AlsaIO::writeData()
 {
-	if (buf.size() < pSizeBytes)
-	{
-		notifier->setEnabled(false);
-		return;
-	}
-	
 	//Write pSizeBytes from the buffer and remove it from the buffer.
 	int size = snd_pcm_writei(handle, buf.left(pSizeBytes), snd_pcm_bytes_to_frames(handle, pSizeBytes));
-	buf = buf.remove(0, pSizeBytes);
+	buf.remove(0, pSizeBytes);
+	//buf.clear();
 	
 	if (size < 0)
 	{
 		if (size == -EPIPE)
 		{
-			kDebug() << "buffer underrun";
+			qDebug() << "buffer underrun";
 			prepare();
 			return;
 		}
-		kDebug() << "An error occurred while writing data on the device. (" << snd_strerror(size) << ")";
+		qDebug() << "An error occurred while writing data on the device. (" << snd_strerror(size) << ")";
 	}
 }
 
@@ -528,10 +507,10 @@ bool AlsaIO::prepare()
 {
 	int err;
 
-	kDebug() << "prepare()";
+	qDebug() << "prepare()";
 	if ((err = snd_pcm_prepare(handle)) < 0)
 	{
-		kDebug() << "cannot prepare audio interface for use" ;
+		qDebug() << "cannot prepare audio interface for use" ;
 		return false;
 	}
 
@@ -544,7 +523,7 @@ void AlsaIO::setFormat(Format f)
 
 	if (snd_pcm_hw_params_set_format(handle, hwParams, format) < 0)
 	{
-		kDebug() << "cannot set sample format";
+		qDebug() << "cannot set sample format";
 		return;
 	}
 
