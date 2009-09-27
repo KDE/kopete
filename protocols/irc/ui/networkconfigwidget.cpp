@@ -80,13 +80,12 @@ IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, Qt::WindowFlags 
 		d->m_networks.insert( net.name, net );
 	}
 
-//	m_host->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), this ) );
 	upButton->setIcon( KIcon( "go-up" )  );
 	downButton->setIcon( KIcon( "go-down" ) );
 
-	connect(m_networkList, SIGNAL(selectionChanged()),
+	connect(m_networkList, SIGNAL(itemSelectionChanged()),
 		this, SLOT(slotUpdateNetworkConfig()));
-	connect(m_hostList, SIGNAL(selectionChanged()),
+	connect(m_hostList, SIGNAL(itemSelectionChanged()),
 		this, SLOT(slotUpdateNetworkHostConfig()));
 
 	connect(this, SIGNAL(accepted()),
@@ -111,6 +110,9 @@ IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, Qt::WindowFlags 
 
 	connect(port, SIGNAL(valueChanged(int)),
 		this, SLOT(slotHostPortChanged(int)));
+	
+	connect(useSSL, SIGNAL(stateChanged(int)),
+		this, SLOT(slotUseSSLChanged(int)));
 }
 
 IRCNetworkConfigWidget::~IRCNetworkConfigWidget()
@@ -119,72 +121,59 @@ IRCNetworkConfigWidget::~IRCNetworkConfigWidget()
 
 void IRCNetworkConfigWidget::editNetworks(const QString &networkName)
 {
-	disconnect(m_networkList, SIGNAL(selectionChanged()),
+	disconnect(m_networkList, SIGNAL(itemSelectionChanged()),
 		this, SLOT(slotUpdateNetworkConfig()));
-	disconnect(m_hostList, SIGNAL(selectionChanged()),
+	disconnect(m_hostList, SIGNAL(itemSelectionChanged()),
 		this, SLOT(slotUpdateNetworkHostConfig()));
 
 	m_networkList->clear();
 
 	foreach( const IRC::Network & net, d->m_networks)
 	{
-		m_networkList->insertItem( net.name );
+		m_networkList->addItem( net.name );
 	}
 
-	m_networkList->sort();
+	m_networkList->sortItems();
 
-	connect(m_networkList, SIGNAL(selectionChanged()),
+	connect(m_networkList, SIGNAL(itemSelectionChanged()),
 		this, SLOT(slotUpdateNetworkConfig()));
-	connect(m_hostList, SIGNAL(selectionChanged()),
+	connect(m_hostList, SIGNAL(itemSelectionChanged()),
 		this, SLOT(slotUpdateNetworkHostConfig()));
 
-	if( !networkName.isEmpty() )
-		m_networkList->setSelected(m_networkList->findItem(networkName), true);
-
-	//slotUpdateNetworkConfig(); // unnecessary, setSelected emits selectionChanged
+	QList<QListWidgetItem *> t_items = m_networkList->findItems(networkName, Qt::MatchStartsWith);
+	if(!networkName.isEmpty() && (t_items.count() > 0))
+		m_networkList->setCurrentItem(t_items.at(0));
 }
-/*
-void IRCNetworkConfigWidget::updateNetworkList()
-{
-	networkList->clear();
-	for(QValueList<IRC::Network>::ConstIterator it = m_networks.begin(); it != m_networks.end(); ++it)
-		networkList->insertItem( (*it).name );
-	networkList->sort();
 
-//	if (!networkName.isEmpty())
-//		networkList->setSelected(networkList->findItem(networkName), true);
-}
-*/
 void IRCNetworkConfigWidget::slotUpdateNetworkConfig()
 {
-	kDebug(14120)<<"updating network config";
+	//kDebug(14120)<<"updating network config";
 	// update the data structure of the previous selection from the UI
 	storeCurrentNetwork();
 
 	// record the current selection
-	d->m_uiCurrentNetworkSelection = m_networkList->currentText();
+	d->m_uiCurrentNetworkSelection = m_networkList->currentItem()->text();
 
 	// update the UI from the data for the current selection
-
-	if (d->m_networks.contains( m_networkList->currentText() ) )
+	if (d->m_networks.contains( m_networkList->currentItem()->text() ) )
 	{
-		IRC::Network net=d->m_networks[ m_networkList->currentText() ];
+		IRC::Network net = d->m_networks[ m_networkList->currentItem()->text() ];
 		m_description->setText( net.description );
 		m_hostList->clear();
-		d->m_uiCurrentHostSelectionIndex=-1;
+		d->m_uiCurrentHostSelectionIndex = -1;
 
 		for( QList<IRC::Host>::Iterator it = net.hosts.begin(); it != net.hosts.end(); ++it )
-			m_hostList->insertItem( (*it).host + QString::fromLatin1(":") + QString::number((*it).port) );
+			m_hostList->addItem( (*it).host + QString::fromLatin1(":") + QString::number((*it).port) );
 
 		// prevent nested event loop crash
-		disconnect(m_hostList, SIGNAL(selectionChanged()),
+		disconnect(m_hostList, SIGNAL(itemSelectionChanged()),
 			this, SLOT( slotUpdateNetworkHostConfig() ) );
 
-		m_hostList->setCurrentItem( 0 );
+		m_hostList->setCurrentRow( 0 );
 		slotUpdateNetworkHostConfig();
-		d->m_uiCurrentHostSelectionIndex=0;
+		d->m_uiCurrentHostSelectionIndex = 0;
 
-		connect(m_hostList, SIGNAL(selectionChanged()),
+		connect(m_hostList, SIGNAL(itemSelectionChanged()),
 			this, SLOT(slotUpdateNetworkHostConfig()));
 	}
 
@@ -192,7 +181,6 @@ void IRCNetworkConfigWidget::slotUpdateNetworkConfig()
 
 void IRCNetworkConfigWidget::storeCurrentNetwork()
 {
-	storeCurrentHost();
 	if ( !d->m_uiCurrentNetworkSelection.isEmpty() )
 	{
 		if ( d->m_networks.contains( d->m_uiCurrentNetworkSelection ) )
@@ -206,49 +194,33 @@ void IRCNetworkConfigWidget::storeCurrentNetwork()
 	}
 }
 
-void IRCNetworkConfigWidget::storeCurrentHost()
-{
-	if ( !d->m_uiCurrentNetworkSelection.isEmpty() && d->m_uiCurrentHostSelectionIndex!=-1  )
-	{
-		kDebug( 14120 ) <<"storing host id= "<<d->m_uiCurrentHostSelectionIndex;
-		IRC::Host &host = d->m_networks[ d->m_uiCurrentNetworkSelection ].hosts[ d->m_uiCurrentHostSelectionIndex ];
-		kDebug( 14120 ) <<"old: "<<host.host<<" "<<host.port<<" "<<host.ssl;
-
-		if(!m_host->text().isEmpty())
-		{
-			host.host = m_host->text();
-// 		host.password = password->text();
-			host.port = port->text().toInt();
-			host.ssl = useSSL->isChecked();
-		}
-
-		kDebug( 14120 ) <<"new: "<<host.host<<" "<<host.port<<" "<<host.ssl;
-	}
-}
-
 void IRCNetworkConfigWidget::slotHostPortChanged( int value )
 {
-	QString entryText = m_hostList->text( d->m_uiCurrentHostSelectionIndex );
-	entryText=entryText.left(entryText.lastIndexOf(':'));  //Cut away the old port
-	entryText+=QString::fromLatin1(":") + QString::number( value );
-	// changeItem causes a take() and insert, and we don't want a selectionChanged() signal that sets all this off again.
-	disconnect(m_hostList, SIGNAL(selectionChanged()),
+	QString entryText = m_hostList->currentItem()->text();
+	entryText = entryText.left(entryText.lastIndexOf(':'));  //Cut away the old port
+	entryText += QString::fromLatin1(":") + QString::number( value );
+	
+	disconnect(m_hostList, SIGNAL(itemSelectionChanged()),
 		this, SLOT( slotUpdateNetworkHostConfig() ) );
 
-	m_hostList->changeItem(entryText, m_hostList->currentItem());
+	m_hostList->currentItem()->setText(entryText);
 
-	connect(m_hostList, SIGNAL(selectionChanged()),
+	connect(m_hostList, SIGNAL(itemSelectionChanged()),
 		this, SLOT(slotUpdateNetworkHostConfig()));
+	
+	d->m_networks[d->m_uiCurrentNetworkSelection].hosts[d->m_uiCurrentHostSelectionIndex].port = value;
+}
 
+void IRCNetworkConfigWidget::slotUseSSLChanged(int state)
+{
+	d->m_networks[d->m_uiCurrentNetworkSelection].hosts[d->m_uiCurrentHostSelectionIndex].ssl = (state == Qt::Checked);
 }
 
 void IRCNetworkConfigWidget::slotUpdateNetworkHostConfig()
 {
-	storeCurrentHost();
-
-	if (m_hostList->currentItem()!=-1)
+	if (m_hostList->currentRow() != -1)
 	{
-		int hostIndex=m_hostList->currentItem();
+		int hostIndex = m_hostList->currentRow();
 		d->m_uiCurrentHostSelectionIndex = hostIndex;
 
 		if ( hostIndex < d->m_networks[ d->m_uiCurrentNetworkSelection ].hosts.size() )
@@ -260,8 +232,8 @@ void IRCNetworkConfigWidget::slotUpdateNetworkHostConfig()
 			port->setValue( host.port );
 			useSSL->setChecked( host.ssl );
 
-			upButton->setEnabled(m_hostList->currentItem() > 0);
-			downButton->setEnabled(m_hostList->currentItem() < (int)(m_hostList->count()-1));
+			upButton->setEnabled(m_hostList->currentRow() > 0);
+			downButton->setEnabled(m_hostList->currentRow() < (int)(m_hostList->count() - 1));
 		}
 	}
 	else
@@ -280,7 +252,7 @@ void IRCNetworkConfigWidget::slotUpdateNetworkHostConfig()
 
 void IRCNetworkConfigWidget::slotDeleteNetwork()
 {
-	QString network = m_networkList->currentText();
+	QString network = m_networkList->currentItem()->text();
 	if( KMessageBox::warningContinueCancel(
 		UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the network <b>%1</b>?<br>"
 		"Any account which use this network will have to be modified.</qt>")
@@ -288,7 +260,7 @@ void IRCNetworkConfigWidget::slotDeleteNetwork()
 		KGuiItem(i18n("&Delete Network"),"edit-delete"), KStandardGuiItem::cancel(), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
 	{
 		d->m_networks.remove( network );
-		m_networkList->removeItem(m_networkList->currentItem());
+		m_networkList->removeItemWidget(m_networkList->currentItem());
 		slotUpdateNetworkHostConfig();
 	}
 }
@@ -296,27 +268,31 @@ void IRCNetworkConfigWidget::slotDeleteNetwork()
 void IRCNetworkConfigWidget::slotDeleteHost()
 {
 	QString hostName = m_host->text();
-	if ( KMessageBox::warningContinueCancel(
-		UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>")
-		.arg(hostName), i18n("Deleting Host"),
-		KGuiItem(i18n("&Delete Host"),"edit-delete"), KStandardGuiItem::cancel(), QString::fromLatin1("AskIRCDeleteHost")) == KMessageBox::Continue )
-	{
-		if ( m_hostList->selectedItem() )
-		{
-			int hostIndex=m_hostList->currentItem();
-			IRC::Host host = d->m_networks[d->m_uiCurrentNetworkSelection].hosts[hostIndex];
-			disconnect(m_hostList, SIGNAL(selectionChanged()),
-				this, SLOT( slotUpdateNetworkHostConfig() ) );
 
-			m_hostList->removeItem(hostIndex);
+	if (KMessageBox::warningContinueCancel(
+	    UI::Global::mainWidget(),
+	    i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>").arg(hostName),
+	    i18n("Deleting Host"),
+	    KGuiItem(i18n("&Delete Host"),"edit-delete"),
+	    KStandardGuiItem::cancel(),
+	    QString::fromLatin1("AskIRCDeleteHost")) != KMessageBox::Continue)
+		return;
 
-			connect(m_hostList, SIGNAL(selectionChanged()),
-				this, SLOT(slotUpdateNetworkHostConfig()));
+	if ( !m_hostList->selectedItems().count() )
+		return;
 
-			// remove from network as well
-			d->m_networks[ d->m_uiCurrentNetworkSelection ].hosts.removeAt(hostIndex);
-		}
-	}
+	int hostIndex=m_hostList->currentRow();
+	IRC::Host host = d->m_networks[d->m_uiCurrentNetworkSelection].hosts[hostIndex];
+	disconnect(m_hostList, SIGNAL(itemSelectionChanged()),
+		this, SLOT( slotUpdateNetworkHostConfig() ) );
+
+	m_hostList->removeItemWidget(m_hostList->item(hostIndex));
+
+	connect(m_hostList, SIGNAL(itemSelectionChanged()),
+		this, SLOT(slotUpdateNetworkHostConfig()));
+
+	// remove from network as well
+	d->m_networks[ d->m_uiCurrentNetworkSelection ].hosts.removeAt(hostIndex);
 }
 
 void IRCNetworkConfigWidget::slotNewNetwork()
@@ -329,20 +305,24 @@ void IRCNetworkConfigWidget::slotNewNetwork()
 	if ( d->m_networks.contains( netName ) )
 	{
 		int newIdx = 1;
-		do {
+		
+		do
+		{
 			netName = QString::fromLatin1( "New Network #%1" ).arg( newIdx++ );
 		}
 		while ( d->m_networks.contains( netName ) && newIdx < 100 );
+		
 		if ( newIdx == 100 ) // pathological case
 			return;
 	}
 	net.name = netName;
 	// and add it to the networks dict and list
 	d->m_networks.insert(net.name, net);
-	m_networkList->insertItem(net.name);
-	Q3ListBoxItem * justAdded = m_networkList->findItem(net.name);
-	m_networkList->setSelected(justAdded, true);
-	m_networkList->setBottomItem(m_networkList->index(justAdded));
+	m_networkList->addItem(net.name);
+	//Q3ListBoxItem * justAdded = m_networkList->findItem(net.name);
+	QListWidgetItem* justAdded = m_networkList->findItems(net.name, Qt::MatchStartsWith).at(0);
+	m_networkList->setCurrentItem(justAdded);
+	//m_networkList->setBottomItem(m_networkList->index(justAdded));
 }
 
 void IRCNetworkConfigWidget::slotNewHost()
@@ -355,125 +335,141 @@ void IRCNetworkConfigWidget::slotNewHost()
 			i18n("New Host"),
 			i18n("Enter the hostname of the new server:"),
 			QString(), &ok, UI::Global::mainWidget() );
-	if ( ok )
+	if (!ok)
+		return;
+	// dupe check
+	foreach( const IRC::Host & h, d->m_networks[d->m_uiCurrentNetworkSelection].hosts )
 	{
-		// dupe check
-		foreach( const IRC::Host & h, d->m_networks[d->m_uiCurrentNetworkSelection].hosts )
+		if ( h.host == name ) //dupe found
 		{
-			if ( h.host == name ) //dupe found
-				{
-				KMessageBox::sorry(this, i18n( "A host already exists with that name" ) );
-				return;
-			}
+			KMessageBox::sorry(this, i18n( "A host already exists with that name" ) );
+			return;
 		}
-		// set defaults on others
-		host.host = name;
-		host.port = 6667;
-		host.ssl = false;
-		// add it to the network!
-		d->m_networks[ m_networkList->currentText() ].hosts.append( host );
-		// add it to the gui
-		QString entryText = host.host + QString::fromLatin1(":") + QString::number(host.port);
-		m_hostList->insertItem( entryText );
-		// select it in the gui
-		Q3ListBoxItem * justAdded = m_hostList->findItem( entryText );
-		m_hostList->setSelected( justAdded, true );
-		//hostList->setBottomItem(hostList->index(justAdded));
 	}
+
+	// set defaults on others
+	host.host = name;
+	host.port = 6667;
+	host.ssl = false;
+	// add it to the network!
+	d->m_networks[ m_networkList->currentItem()->text() ].hosts.append( host );
+	// add it to the gui
+	QString entryText = host.host + QString::fromLatin1(":") + QString::number(host.port);
+	m_hostList->addItem( entryText );
+	// select it in the gui
+	QListWidgetItem* justAdded = m_hostList->findItems(entryText, Qt::MatchStartsWith).at(0);
+	m_hostList->setCurrentItem(justAdded);
 }
 
 void IRCNetworkConfigWidget::slotRenameNetwork()
 {
-	if ( d->m_networks.contains( d->m_uiCurrentNetworkSelection ) )
+	if ( !d->m_networks.contains( d->m_uiCurrentNetworkSelection ) )
+		return;
+	
+	IRC::Network net = d-> m_networks[ d->m_uiCurrentNetworkSelection ];
+	bool ok;
+	
+	// popup up a dialog containing the current name
+	QString name = KInputDialog::getText(
+			i18n("Rename Network"),
+			i18n("Enter the new name for this network:"),
+			d->m_uiCurrentNetworkSelection, &ok,
+			UI::Global::mainWidget() );
+	if (!ok || d->m_uiCurrentNetworkSelection == name)
+		return;
+			
+	// dupe check
+	if ( d->m_networks.contains( name ) )
 	{
-		IRC::Network net =d-> m_networks[ d->m_uiCurrentNetworkSelection ];
-		bool ok;
-		// popup up a dialog containing the current name
-		QString name = KInputDialog::getText(
-				i18n("Rename Network"),
-				i18n("Enter the new name for this network:"),
-				d->m_uiCurrentNetworkSelection, &ok,
-				UI::Global::mainWidget() );
-		if ( ok )
-		{
-			if ( d->m_uiCurrentNetworkSelection != name )
-			{
-				// dupe check
-				if ( d->m_networks.contains( name ) )
-				{
-					KMessageBox::sorry(this, i18n( "A network already exists with that name" ) );
-					return;
-				}
-
-				net.name = name;
-				kDebug( 14120 )<<"changing name from "<<d->m_uiCurrentNetworkSelection<<" to "<<name;
-				// dict
-				d->m_networks.remove( d->m_uiCurrentNetworkSelection );
-				d->m_networks.insert( net.name, net );
-
-        // ui
-				int idx = m_networkList->index(m_networkList->findItem(d->m_uiCurrentNetworkSelection));
-				d->m_uiCurrentNetworkSelection = net.name;
-				m_networkList->changeItem( net.name, idx ); // changes the selection!!!
-				m_networkList->sort();
-			}
-		}
+		KMessageBox::sorry(this, i18n( "A network already exists with that name" ) );
+		return;
 	}
+
+	net.name = name;
+	kDebug( 14120 )<<"changing name from "<<d->m_uiCurrentNetworkSelection<<" to "<<name;
+	// dict
+	d->m_networks.remove( d->m_uiCurrentNetworkSelection );
+	d->m_networks.insert( net.name, net );
+
+     	// ui
+	QList<QListWidgetItem*> found = m_networkList->findItems(d->m_uiCurrentNetworkSelection, Qt::MatchStartsWith);
+	d->m_uiCurrentNetworkSelection = net.name;
+	found.at(0)->setText(net.name);
+	m_networkList->sortItems();
+	
+	m_networkList->scrollToItem(found.at(0));
 }
 
 void IRCNetworkConfigWidget::slotMoveServerUp()
 {
-	IRC::Network& selectedNetwork = d->m_networks[ m_networkList->currentText() ];
-	IRC::Host selectedHost = selectedNetwork.hosts[ m_hostList->currentItem() ];
+	IRC::Network& selectedNetwork = d->m_networks[ m_networkList->currentItem()->text() ];
+	//IRC::Host selectedHost = selectedNetwork.hosts[ m_hostList->currentRow() ];
 
 	//if( !selectedNetwork || !selectedHost )
 	//	return;
 
-	unsigned int currentPos = m_hostList->currentItem();
-	if( currentPos > 0 )
-	{
-		selectedNetwork.hosts.swap( m_hostList->currentItem(),m_hostList->currentItem()-1 );
-		
-		disconnect(m_hostList, SIGNAL(selectionChanged()),
-			this, SLOT(slotUpdateNetworkHostConfig()));
+	int currentPos = m_hostList->currentRow();
+	if( currentPos < 0 )
+		return;
+	
+	disconnect(m_hostList, SIGNAL(itemSelectionChanged()),
+		this, SLOT(slotUpdateNetworkHostConfig()));
 
-		m_hostList->removeItem( currentPos );
-		kDebug(14120) << selectedHost.host;
-		m_hostList->insertItem( selectedHost.host, --currentPos );
-		m_hostList->setSelected( currentPos, true );
-		d->m_uiCurrentHostSelectionIndex=currentPos;
+	selectedNetwork.hosts.swap(currentPos - 1, currentPos);
 
-		connect(m_hostList, SIGNAL(selectionChanged()),
-			this, SLOT(slotUpdateNetworkHostConfig()));
-	}
+	QString first = m_hostList->item(currentPos - 1)->text();
+	QString second = m_hostList->item(currentPos)->text();
+	m_hostList->item(currentPos - 1)->setText(second);
+	m_hostList->item(currentPos)->setText(first);
+	
+	/*
+	m_hostList->removeItemWidget( m_hostList->item(currentPos) );
+	kDebug(14120) << selectedHost.host;
+	m_hostList->insertItem( --currentPos, selectedHost.host);
+	m_hostList->setCurrentRow(currentPos);
+	d->m_uiCurrentHostSelectionIndex=currentPos;
+	*/
+	connect(m_hostList, SIGNAL(itemSelectionChanged()),
+		this, SLOT(slotUpdateNetworkHostConfig()));
+	
+	m_hostList->setCurrentRow(currentPos - 1);
 }
 
 void IRCNetworkConfigWidget::slotMoveServerDown()
 {
-	IRC::Network& selectedNetwork = d->m_networks[ m_networkList->currentText() ];
-	IRC::Host selectedHost = selectedNetwork.hosts[ m_hostList->currentItem() ];
+	IRC::Network& selectedNetwork = d->m_networks[ m_networkList->currentItem()->text() ];
+	//IRC::Host selectedHost = selectedNetwork.hosts[ m_hostList->currentRow() ];
 
 	//if( !selectedNetwork || !selectedHost )
 	//	return;
 
-	unsigned int currentPos = m_hostList->currentItem();
-	if( currentPos > 0 )
-	{
-		selectedNetwork.hosts.swap( m_hostList->currentItem(),m_hostList->currentItem()-1 );
-		
-		disconnect(m_hostList, SIGNAL(selectionChanged()),
-			this, SLOT(slotUpdateNetworkHostConfig()));
+	int currentPos = m_hostList->currentRow();
+	if( currentPos < 0 )
+		return;
 
-		m_hostList->removeItem( currentPos );
-		kDebug(14120) << selectedHost.host;
-		m_hostList->insertItem( selectedHost.host, --currentPos );
-		m_hostList->setSelected( currentPos, true );
-		d->m_uiCurrentHostSelectionIndex=currentPos;
+	disconnect(m_hostList, SIGNAL(itemSelectionChanged()),
+		this, SLOT(slotUpdateNetworkHostConfig()));
 
-		connect(m_hostList, SIGNAL(selectionChanged()),
-			this, SLOT(slotUpdateNetworkHostConfig()));
-	}
+	selectedNetwork.hosts.swap(currentPos, currentPos + 1);
+
+	QString first = m_hostList->item(currentPos)->text();
+	QString second = m_hostList->item(currentPos + 1)->text();
+	m_hostList->item(currentPos)->setText(second);
+	m_hostList->item(currentPos + 1)->setText(first);
+
+	/*
+	m_hostList->removeItemWidget( m_hostList->item(currentPos) );
+	kDebug(14120) << selectedHost.host;
+	m_hostList->insertItem( --currentPos, selectedHost.host);
+	m_hostList->setCurrentRow(currentPos);
+	d->m_uiCurrentHostSelectionIndex=currentPos;
+	*/
+	connect(m_hostList, SIGNAL(itemSelectionChanged()),
+		this, SLOT(slotUpdateNetworkHostConfig()));
+	
+	m_hostList->setCurrentRow(currentPos + 1);
 }
+
 
 
 void IRCNetworkConfigWidget::slotSaveNetworkConfig()
@@ -489,5 +485,9 @@ void IRCNetworkConfigWidget::slotSaveNetworkConfig()
 	IRC::Networks::self()->slotSaveNetworkConfig();
 }
 
+QString IRCNetworkConfigWidget::selectedNetwork() const
+{
+	return d->m_uiCurrentNetworkSelection;
+}
 
 #include "networkconfigwidget.moc"

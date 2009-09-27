@@ -580,12 +580,13 @@ void IRCProtocol::slotNativeKIrcCommand( const QString& args, ChatSession* manag
 								);
 }
 
-void IRCProtocol::editNetworks(const QString &networkName)
+QString IRCProtocol::editNetworks(const QString &networkName)
 {
 
 	IRCNetworkConfigWidget *netConf = new IRCNetworkConfigWidget(UI::Global::mainWidget() );
 	netConf->setAttribute( Qt::WA_DeleteOnClose );
 	netConf->editNetworks(networkName);
 	netConf->exec();
+	return netConf->selectedNetwork();
 }
 

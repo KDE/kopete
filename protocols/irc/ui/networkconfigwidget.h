@@ -35,6 +35,7 @@ public:
 	~IRCNetworkConfigWidget();
 
 	void editNetworks( const QString &networkName = QString() );
+	QString selectedNetwork() const;
 
 signals:
 	void networkSelected(const IRC::Network &network);
@@ -53,6 +54,7 @@ private slots:
 	void slotRenameNetwork();
 	void slotNewHost();
 	void slotHostPortChanged( int value );
+	void slotUseSSLChanged(int state);
 	// end of network list specific code
 	
 	// copies the altered information to the global IRCNetworks List

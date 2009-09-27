@@ -98,7 +98,7 @@ public:
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
 
 public slots:
-	void editNetworks(const QString &networkName);
+	QString editNetworks(const QString &networkName);
 
 private slots:
 	void slotMessageFilter(Kopete::Message &msg);

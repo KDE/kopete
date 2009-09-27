@@ -161,7 +161,8 @@ void IRCEditAccountWidget::slotUpdateNetworks( const QString & selectedNetwork )
 
 void IRCEditAccountWidget::slotEditNetworks()
 {
-	IRCProtocol::self()->editNetworks(network->currentText());
+	QString selected = IRCProtocol::self()->editNetworks(network->currentText());
+	slotUpdateNetworks(selected);
 }
 
 void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network )

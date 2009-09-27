@@ -60,9 +60,9 @@ void Networks::setNetworks( const IRC::NetworkList& networks )
 
 const IRC::Network& Networks::network(const QString &name)
 {
-	foreach(const Network& net,d->networks)
+	foreach(const Network& net, d->networks)
 	{
-		if(net.name==name)
+		if(net.name == name)
 		{
 			return net;
 		}
@@ -115,10 +115,10 @@ void Networks::slotReadNetworks()
 
 					network.hosts.append( host );
 //					d->hosts.insert( host->host, host );
-					server = server.nextSibling().toElement();
+					server = server.nextSiblingElement();
 				}
 			}
-			networkChild = networkChild.nextSibling().toElement();
+			networkChild = networkChild.nextSiblingElement();
 		}
 
 		d->networks.append(network);
