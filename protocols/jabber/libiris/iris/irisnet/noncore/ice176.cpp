@@ -339,6 +339,7 @@ public:
 		localUser = randomCredential(4);
 		localPass = randomCredential(22);
 
+		bool atLeastOneTransport = false;
 		for(int n = 0; n < componentCount; ++n)
 		{
 			in += QList<QByteArray>();
@@ -346,7 +347,10 @@ public:
 			for(int i = 0; i < localAddrs.count(); ++i)
 			{
 				if(localAddrs[i].addr.protocol() != QAbstractSocket::IPv4Protocol)
+				{
+					printf("warning: skipping non-ipv4 address: %s\n", qPrintable(localAddrs[i].addr.toString()));
 					continue;
+				}
 
 				LocalTransport *lt = new LocalTransport;
 				lt->sock = new IceLocalTransport(this);
@@ -364,9 +368,13 @@ public:
 				int port = (basePort != -1) ? basePort + n : -1;
 				lt->sock->start(localAddrs[i].addr, port);
 
+				atLeastOneTransport = true;
 				printf("starting transport %s:%d for component %d\n", qPrintable(localAddrs[i].addr.toString()), port, lt->componentId);
 			}
 		}
+
+		if(!atLeastOneTransport)
+			QMetaObject::invokeMethod(q, "error", Qt::QueuedConnection);
 	}
 
 	void tryFinishGather()
@@ -605,6 +613,31 @@ public slots:
 		ci.id = randomCredential(10); // FIXME: ensure unique
 		localCandidates += ci;
 
+		int extAt = -1;
+		for(int n = 0; n < extAddrs.count(); ++n)
+		{
+			if(extAddrs[n].base.addr == lt->sock->localAddress() && (extAddrs[n].portBase == -1 || extAddrs[n].portBase == lt->sock->localPort()))
+			{
+				extAt = n;
+				break;
+			}
+		}
+		if(extAt != -1)
+		{
+			CandidateInfo ci;
+			ci.addr.addr = extAddrs[extAt].addr;
+			ci.addr.port = (extAddrs[extAt].portBase != -1) ? extAddrs[extAt].portBase : lt->sock->localPort();
+			ci.type = ServerReflexiveType;
+			ci.componentId = lt->componentId;
+			ci.priority = choose_default_priority(ci.type, 65535 - lt->addrAt, lt->isVpn, ci.componentId);
+			ci.foundation = QString::number(lt->addrAt) + 'e';
+			ci.base.addr = lt->sock->localAddress();
+			ci.base.port = lt->sock->localPort();
+			ci.network = lt->network;
+			ci.id = randomCredential(10); // FIXME: ensure unique
+			localCandidates += ci;
+		}
+
 		if(!stunAddr.isNull())
 		{
 			lt->use_stun = true;
@@ -691,6 +724,9 @@ public slots:
 		// TODO
 		Q_UNUSED(e);
 		printf("lt_error\n");
+		for(int n = 0; n < localTransports.count(); ++n)
+			localTransports[n]->sock->disconnect(this);
+		emit q->error();
 	}
 
 	void lt_readyRead(XMPP::IceLocalTransport::TransmitPath path)
@@ -718,7 +754,7 @@ public slots:
 				int fromPort;
 				QByteArray buf = lt->sock->readDatagram(path, &fromAddr, &fromPort);
 
-				printf("port %d: received packet (%d bytes)\n", lt->sock->localPort(), buf.size());
+				//printf("port %d: received packet (%d bytes)\n", lt->sock->localPort(), buf.size());
 
 				QString requser = localUser + ':' + peerUser;
 				QByteArray reqkey = localPass.toUtf8();
@@ -821,7 +857,7 @@ public slots:
 						}
 
 						int componentIndex = checkList.pairs[at].local.componentId - 1;
-						printf("packet is considered to be application data for component index %d\n", componentIndex);
+						//printf("packet is considered to be application data for component index %d\n", componentIndex);
 
 						in[componentIndex] += buf;
 						emit q->readyRead(componentIndex);
