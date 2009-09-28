@@ -44,7 +44,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
-#include <kpassivepopup.h>
+#include <knotification.h>
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <kpassworddialog.h>
@@ -991,12 +991,14 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 
 	if(!errorText.isEmpty()) {
 		if (!additionalErrMsg.isEmpty()) {
-			KPassivePopup::message( i18n("Connection problem with Jabber server %1", server),
+			KNotification::event( i18n("Kopete: Connection problem with Jabber server %1", server),
 			                        QString ("%1\n%2").arg(errorText).arg(additionalErrMsg),
+                                    QPixmap(),
 			                        Kopete::UI::Global::mainWidget() );
 		} else {
-			KPassivePopup::message( i18n("Connection problem with Jabber server %1", server),
+			KNotification::event( i18n("Kopete: Connection problem with Jabber server %1", server),
 			                        errorText,
+                                    QPixmap(),
 			                        Kopete::UI::Global::mainWidget() );
 		}
 	}

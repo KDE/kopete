@@ -31,7 +31,7 @@
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpassivepopup.h>
+#include <knotification.h>
 #include <kactionmenu.h>
 
 #include <kopeteuiglobal.h>
@@ -583,7 +583,7 @@ void GroupWiseAccount::reconcileOfflineChanges()
 	} //end while, now check the next groupwise contact
 	if ( conflicts )
 		// show queuedmessagebox
-		KPassivePopup::message( i18n( "Conflicting Changes Made Offline" ), i18n( "A change happened to your GroupWise contact list while you were offline which was impossible to reconcile." ), Kopete::UI::Global::mainWidget() );
+		KNotification::event(KNotification::Warning, i18n( "Kopete: Conflicting Changes Made Offline" ), i18n( "A change happened to your GroupWise contact list while you were offline which was impossible to reconcile." ), QPixmap(), Kopete::UI::Global::mainWidget() );
 	m_dontSync = false;
 }
 
@@ -1315,7 +1315,7 @@ void GroupWiseAccount::receiveContactDeleted( const ContactItem & instance )
 
 void GroupWiseAccount::slotConnectedElsewhere()
 {
-	KPassivePopup::message( i18n ( "Signed in as %1 Elsewhere", accountId() ), i18nc(  "The parameter is the user's own account id for this protocol", "You have been disconnected from GroupWise Messenger because you signed in as %1 elsewhere", accountId() ) , Kopete::UI::Global::mainWidget() );
+	KNotification::event(KNotification::Notification, i18n ( "Kopete: Signed in as %1 Elsewhere", accountId() ), i18nc(  "The parameter is the user's own account id for this protocol", "You have been disconnected from GroupWise Messenger because you signed in as %1 elsewhere", accountId() ) , QPixmap(), Kopete::UI::Global::mainWidget() );
 	disconnect();
 }
 

@@ -48,7 +48,7 @@
 #include <kcodecs.h>
 #include <kmessagebox.h>
 #include <kdialog.h>
-#include <kpassivepopup.h>
+#include <knotification.h>
 #include <kstandarddirs.h>
 
 #include "client.h"
@@ -1003,7 +1003,7 @@ void OscarAccount::userStoppedTyping( const QString & contact )
 void OscarAccount::slotSocketError( int errCode, const QString& errString )
 {
 	Q_UNUSED( errCode );
-	KPassivePopup::message( i18nc( "account has been disconnected", "%1 disconnected", accountId() ),
+	KNotification::event( KNotification::Error, i18nc( "Account has been disconnected", "Kopete: %1 disconnected", accountId() ),
 	                        errString,
 	                        myself()->onlineStatus().protocolIcon(),
 	                        Kopete::UI::Global::mainWidget() );
@@ -1020,7 +1020,7 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 	if ( s.family == 0 && s.subtype == 0 )
 	{
 		message = getFLAPErrorMessage( code );
-		KPassivePopup::message( i18nc( "account has been disconnected", "%1 disconnected", accountId() ),
+		KNotification::event( KNotification::Error, i18nc( "Kopete: Account has been disconnected", "%1 disconnected", accountId() ),
 		                        message, myself()->onlineStatus().protocolIcon(),
 		                        Kopete::UI::Global::mainWidget() );
 		switch ( code )
@@ -1048,7 +1048,7 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 	else
 		message = i18n("There was an error in the protocol handling; automatic reconnection occurring.");
 
-	KPassivePopup::message( i18n("OSCAR Protocol error"), message, myself()->onlineStatus().protocolIcon(),
+	KNotification::event( KNotification::Error, i18n("Kopete: OSCAR Protocol error"), message, myself()->onlineStatus().protocolIcon(),
 	                        Kopete::UI::Global::mainWidget() );
 	if ( fatal )
 		logOff( Kopete::Account::ConnectionReset );
