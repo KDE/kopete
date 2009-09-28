@@ -34,7 +34,6 @@ namespace XMPP {
 	class ClientStream;
 	class Features;
 	class FileTransferManager;
-	class JingleSessionManager;
 	class IBBManager;
 	class JidLinkManager;
 	class LiveRoster;
@@ -121,9 +120,6 @@ namespace XMPP
 
 		void setFileTransferEnabled(bool b);
 		FileTransferManager *fileTransferManager() const;
-
-		void setJingleEnabled(bool b);
-		JingleSessionManager *jingleSessionManager() const;
 
 		QString groupChatPassword(const QString& host, const QString& room) const;
 		bool groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString& password = QString(), int maxchars = -1, int maxstanzas = -1, int seconds = -1, const Status& = Status());

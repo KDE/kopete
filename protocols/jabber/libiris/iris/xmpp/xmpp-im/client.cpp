@@ -81,7 +81,6 @@
 #include "s5b.h"
 #include "xmpp_ibb.h"
 #include "filetransfer.h"
-#include "jinglesessionmanager.h"
 
 /*#include <stdio.h>
 #include <stdarg.h>
@@ -141,7 +140,6 @@ public:
 	S5BManager *s5bman;
 	IBBManager *ibbman;
 	FileTransferManager *ftman;
-	JingleSessionManager *jingleman;
 	bool ftEnabled;
 	QList<GroupChat> groupChatList;
 };
@@ -172,7 +170,6 @@ Client::Client(QObject *par)
 	connect(d->ibbman, SIGNAL(incomingReady()), SLOT(ibb_incomingReady()));
 
 	d->ftman = 0;
-	d->jingleman = 0L;
 }
 
 Client::~Client()
@@ -180,7 +177,6 @@ Client::~Client()
 	close(true);
 
 	delete d->ftman;
-	delete d->jingleman;
 	delete d->ibbman;
 	delete d->s5bman;
 	delete d->root;
@@ -247,25 +243,6 @@ void Client::setFileTransferEnabled(bool b)
 FileTransferManager *Client::fileTransferManager() const
 {
 	return d->ftman;
-}
-
-void Client::setJingleEnabled(bool b)
-{
-	if (b) {
-		if (!d->jingleman)
-			d->jingleman = new JingleSessionManager(this);
-	}
-	else {
-		if (d->jingleman) {
-			delete d->jingleman;
-			d->jingleman = 0L;
-		}
-	}
-}
-
-JingleSessionManager *Client::jingleSessionManager() const
-{
-	return d->jingleman;
 }
 
 S5BManager *Client::s5bManager() const
@@ -520,7 +497,6 @@ void Client::streamReadyRead()
 
 		QString out = s.toString();
 		debug(QString("Client: incoming: [\n%1]\n").arg(out));
-		//printf("Client: incoming:\n%s\n", out.toLatin1().constData());
 		xmlIncoming(out);
 
 		QDomElement x = oldStyleNS(s.element());
