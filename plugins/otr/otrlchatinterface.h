@@ -50,7 +50,7 @@ public:
 	static OtrlChatInterface *self();
 
 	int decryptMessage( QString *msg, const QString &accountId, const QString &protocol, const QString &contactId, Kopete::ChatSession *chatSession );
-	QString *encryptMessage( QString *msg, const QString &accountId,
+	int encryptMessage( QString *msg, const QString &accountId,
 	const QString &protocol, const QString &contactId , Kopete::ChatSession *chatSession );
 	QString getDefaultQuery( const QString &accountId );
 	void disconnectSession( Kopete::ChatSession *chatSession );

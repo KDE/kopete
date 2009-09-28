@@ -531,18 +531,18 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 	return 2; // internal OTR message. Ignore it.
 }
 
-KDE_EXPORT QString *OtrlChatInterface::encryptMessage( QString *msg, const QString &accountId,
+KDE_EXPORT int OtrlChatInterface::encryptMessage( QString *msg, const QString &accountId,
 	const QString &protocol, const QString &contactId , Kopete::ChatSession *chatSession ){
 	int err;
-	char *newMessage;
-	char *fragment;
+	char *newMessage = 0;
+	char *fragment = 0;
 
 	if( otrl_proto_message_type( msg->toLocal8Bit() ) == OTRL_MSGTYPE_NOTOTR ){
-		msg->replace( QString('<'), QString("&lt;") );
+//		msg->replace( QString('<'), QString("&lt;") );
 		err = otrl_message_sending( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), msg->toUtf8(), NULL, &newMessage, NULL, NULL );
 	
 		if( err != 0 ){
-			*msg = i18n("Encryption error");
+			return -1;
 		} else if( newMessage ){
 
 			/* Fragment the message if needed */
@@ -563,15 +563,15 @@ KDE_EXPORT QString *OtrlChatInterface::encryptMessage( QString *msg, const QStri
 				otrl_message_free( newMessage );
 				otrl_message_free( fragment );
 			}
+			OtrlMessageType type = otrl_proto_message_type( msg->toLocal8Bit() );
+			if( type == OTRL_MSGTYPE_TAGGEDPLAINTEXT ){
+				return 1; // Message is still plaintext, but tagged for opportunistic mode
+			}
+			return 0; // Encrypted successfully
 		}
 	}
-	OtrlMessageType type = otrl_proto_message_type( msg->toLocal8Bit() );
-	if( type == OTRL_MSGTYPE_NOTOTR | type == OTRL_MSGTYPE_TAGGEDPLAINTEXT ){
-		msg->replace( QString("&lt;"), QString("<") );		
-	}
-
-	
-	return msg;
+    
+	return 2; // Message is still plaintext. Better not touching it
 }
 
 KDE_EXPORT QString OtrlChatInterface::getDefaultQuery( const QString &accountId ){

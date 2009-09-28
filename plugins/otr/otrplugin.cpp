@@ -153,18 +153,28 @@ void OTRPlugin::slotNewChatSessionWindow( Kopete::ChatSession *KMM )
 void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 {
 	if( msg.direction() == Kopete::Message::Outbound ){
-		QString plainBody = msg.plainBody();
-		QString cacheBody = msg.plainBody();
+//        kDebug(14318) << "Outgoing message: Plain: " << msg.plainBody() << "body:" << msg.escapedBody();
+		QString msgBody = msg.parsedBody();
+		QString cacheBody = msg.parsedBody();
 		QString accountId = msg.manager()->account()->accountId();
 		Kopete::Contact *contact = msg.to().first();
 		
-		QString *encBody = otrlChatInterface->encryptMessage( &plainBody, accountId, msg.manager()->account()->protocol()->displayName(), contact->contactId(), msg.manager() );
-		msg.setPlainBody( *encBody );
-		msg.setType(Kopete::Message::TypeNormal);
-		if( !msg.plainBody().isEmpty() ){
-			messageCache.insert( *encBody, cacheBody );
-		} else {
-			messageCache.insert( "!OTR:MsgDelByOTR", cacheBody );
+		int encryptionState = otrlChatInterface->encryptMessage( &msgBody, accountId, msg.manager()->account()->protocol()->displayName(), contact->contactId(), msg.manager() );
+		if(encryptionState == -1){
+			msg.setPlainBody(i18n("An error occured while encrypting the message."));
+		} else if(encryptionState == 0){
+//            kDebug(14318) << "Encrypted successfully";
+			msg.setPlainBody( msgBody );
+			msg.setType(Kopete::Message::TypeNormal);
+			if( !msg.plainBody().isEmpty() ){
+				messageCache.insert( msgBody, cacheBody );
+			} else {
+				messageCache.insert( "!OTR:MsgDelByOTR", cacheBody );
+			}
+		} else if(encryptionState == 1){
+//            kDebug(14318) << "Tagged plaintext!";
+			msg.setHtmlBody(msgBody);
+			messageCache.insert( msgBody, cacheBody );
 		}
 	}
 }
@@ -258,8 +268,9 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 			return;
 		}
 	} else if( msg.direction() == Kopete::Message::Outbound ){
+//        kDebug(14318) << "searching cache for" << msg.plainBody();
 		if( messageCache.contains( msg.plainBody() ) ){
-			msg.setPlainBody( messageCache[msg.plainBody()] );
+			msg.setHtmlBody( messageCache[msg.plainBody()] );
 			messageCache.remove( messageCache[msg.plainBody()] );
 			if(messageCache.count() > 5) messageCache.clear();
 		}
