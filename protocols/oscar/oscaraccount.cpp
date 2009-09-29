@@ -1003,7 +1003,7 @@ void OscarAccount::userStoppedTyping( const QString & contact )
 void OscarAccount::slotSocketError( int errCode, const QString& errString )
 {
 	Q_UNUSED( errCode );
-	KNotification::event( KNotification::Error, i18nc( "Account has been disconnected", "Kopete: %1 disconnected", accountId() ),
+	KNotification::event( KNotification::Error, i18nc( "account has been disconnected", "Kopete: %1 disconnected", accountId() ),
 	                        errString,
 	                        myself()->onlineStatus().protocolIcon(),
 	                        Kopete::UI::Global::mainWidget() );
@@ -1020,7 +1020,7 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 	if ( s.family == 0 && s.subtype == 0 )
 	{
 		message = getFLAPErrorMessage( code );
-		KNotification::event( KNotification::Error, i18nc( "Kopete: Account has been disconnected", "%1 disconnected", accountId() ),
+		KNotification::event( KNotification::Error, i18nc( "account has been disconnected", "Kopete: %1 disconnected", accountId() ),
 		                        message, myself()->onlineStatus().protocolIcon(),
 		                        Kopete::UI::Global::mainWidget() );
 		switch ( code )
