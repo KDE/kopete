@@ -18,6 +18,7 @@
     *************************************************************************
 */
 #include "avatarselectorwidget.h"
+#include "avatarfromwebcamdialog.h"
 
 // Qt includes
 #include <QListWidget>
@@ -33,6 +34,9 @@
 #include <kpixmapregionselectordialog.h>
 
 #include "ui_avatarselectorwidget.h"
+#include "avdevice/videodevicepool.h"
+
+using namespace Kopete::AV;
 
 namespace Kopete
 {
@@ -108,10 +112,25 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	// use icons on buttons
 	d->mainWidget.buttonAddAvatar->setIcon( KIcon("list-add") );
 	d->mainWidget.buttonRemoveAvatar->setIcon( KIcon("edit-delete") );
+	d->mainWidget.buttonFromWebcam->setIcon( KIcon("camera-web") );
+
+//TODO: AVdevice only have support for Linux(kernel), should we change that?
+//If not windows, check devices
+#ifndef Q_OS_WIN
+	VideoDevicePool* devicePool = VideoDevicePool::self();
+	devicePool->scanDevices();//We've to be sure that this has been done
+	if( devicePool->size() == 0 ){
+		d->mainWidget.buttonFromWebcam->hide();
+	}
+#else
+	//If windows, just hide it
+	d->mainWidget.buttonFromWebcam->hide();
+#endif
 
 	// Connect signals/slots
 	connect(d->mainWidget.buttonAddAvatar, SIGNAL(clicked()), this, SLOT(buttonAddAvatarClicked()));
 	connect(d->mainWidget.buttonRemoveAvatar, SIGNAL(clicked()), this, SLOT(buttonRemoveAvatarClicked()));
+	connect(d->mainWidget.buttonFromWebcam, SIGNAL(clicked()), this, SLOT(buttonFromWebcamClicked()));
 	connect(d->mainWidget.listUserAvatar, SIGNAL(itemClicked(QListWidgetItem*)),
 	        this, SLOT(listSelectionChanged(QListWidgetItem*)));
 	connect(Kopete::AvatarManager::self(), SIGNAL(avatarAdded(Kopete::AvatarManager::AvatarEntry)),
@@ -185,38 +204,8 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 		QPixmap pixmap( imageUrl.path() );
 		if ( pixmap.isNull() )
 			return;
-
-		// Crop the image
-		QImage avatar = KPixmapRegionSelectorDialog::getSelectedImage( pixmap, 96, 96, this );
-
 		QString imageName = imageUrl.fileName();
-
-		Kopete::AvatarManager::AvatarEntry newEntry;
-		// Remove extension from filename
-		const int extIndex = imageName.lastIndexOf('.');
-		newEntry.name = ( extIndex > 0 ) ? imageName.left( extIndex ) : imageName;
-		newEntry.image = avatar;
-		newEntry.category = Kopete::AvatarManager::User;
-
-		Kopete::AvatarManager::AvatarEntry addedEntry = Kopete::AvatarManager::self()->add( newEntry );
-		if( addedEntry.path.isEmpty() )
-		{
-			//TODO add a real error message
-			//d->mainWidget.labelErrorMessage->setText( i18n("Kopete cannot add this new avatar because it could not save the avatar image in user directory.") );
-			return;
-		}
-
-		// select the added entry and show the user tab
-		QList<QListWidgetItem *> foundItems = d->mainWidget.listUserAvatar->findItems( addedEntry.name, Qt::MatchContains );
-		if( !foundItems.isEmpty() )
-		{
-			AvatarSelectorWidgetItem *item = dynamic_cast<AvatarSelectorWidgetItem*>( foundItems.first() );
-			if ( !item )
-				return;
-			item->setSelected( true );	
-		}
-
-
+		cropAndSaveAvatar(pixmap,imageName);
 	}
 }
 
@@ -237,6 +226,55 @@ void AvatarSelectorWidget::buttonRemoveAvatarClicked()
 			}
 		}
 	}
+}
+
+void AvatarSelectorWidget::cropAndSaveAvatar(QPixmap& pixmap, const QString& imageName){
+	// Crop the image
+	QImage avatar = KPixmapRegionSelectorDialog::getSelectedImage( pixmap, 96, 96, this );
+
+	Kopete::AvatarManager::AvatarEntry newEntry;
+	// Remove extension from filename
+	const int extIndex = imageName.lastIndexOf('.');
+	newEntry.name = ( extIndex > 0 ) ? imageName.left( extIndex ) : imageName;
+	newEntry.image = avatar;
+	newEntry.category = Kopete::AvatarManager::User;
+
+	Kopete::AvatarManager::AvatarEntry addedEntry = Kopete::AvatarManager::self()->add( newEntry );
+	if( addedEntry.path.isEmpty() )
+	{
+		//TODO add a real error message
+		//d->mainWidget.labelErrorMessage->setText( i18n("Kopete cannot add this new avatar because it could not save the avatar image in user directory.") );
+		return;
+	}
+
+	// select the added entry and show the user tab
+	QList<QListWidgetItem *> foundItems = d->mainWidget.listUserAvatar->findItems( addedEntry.name, Qt::MatchContains );
+	if( !foundItems.isEmpty() )
+	{
+		AvatarSelectorWidgetItem *item = dynamic_cast<AvatarSelectorWidgetItem*>( foundItems.first() );
+		if ( !item )
+			return;
+		item->setSelected( true );	
+	}
+}
+
+void AvatarSelectorWidget::buttonFromWebcamClicked()
+{
+	Kopete::UI::AvatarFromWebcamDialog *dialog = new Kopete::UI::AvatarFromWebcamDialog();
+	int result = dialog->exec();
+	if(result == KDialog::Accepted){
+		QString avatarName("Webcam");
+		int increment = 1;
+		kDebug(14010) << "Trying with: " << avatarName;
+		while((Kopete::AvatarManager::self()->exists(avatarName))) {
+			avatarName = "Webcam_"+QString::number(increment);
+			++increment;
+			kDebug(14010) << "Trying with: " << avatarName;
+		}
+		cropAndSaveAvatar(dialog->getLastPixmap(),avatarName);
+	}
+	dialog->close();
+	delete dialog;
 }
 
 void AvatarSelectorWidget::queryJobFinished(KJob *job)

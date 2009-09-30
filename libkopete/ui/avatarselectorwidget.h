@@ -84,7 +84,13 @@ private Q_SLOTS:
 	 * Remove Avatar button was clicked
 	 */
 	void buttonRemoveAvatarClicked();
-	
+
+	/**
+	 * @internal
+	 * From Webcam button was clicked
+	 */
+	void buttonFromWebcamClicked();
+
 	/**
 	 * @internal
 	 * Avatar query job was finished
@@ -111,6 +117,14 @@ private Q_SLOTS:
 	 * @param item new selected QListWidgetItem
 	 */
 	void listSelectionChanged(QListWidgetItem *item);
+
+	/**
+	 * @internal
+	 * Crop and then save a new avatar
+	 * @param pixmap pixmap to be saved
+	 * @param imageName name of the avatar
+	 */
+	void cropAndSaveAvatar(QPixmap &pixmap, const QString &imageName);
 
 private:
 	Q_DISABLE_COPY(AvatarSelectorWidget)
