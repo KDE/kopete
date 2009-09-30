@@ -39,7 +39,7 @@ set(kopete_ui_SRCS
   ui/addressbookselectorwidget.cpp
   ui/addresseeitem.cpp
   ui/avatardialog.cpp
-  ui/avatarfromwebcamdialog.cpp
+  ui/avatarwebcamdialog.cpp
   ui/avatarselectorwidget.cpp
   ui/contactaddednotifydialog.cpp
   ui/collapsiblewidget.cpp
