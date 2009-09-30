@@ -25,6 +25,8 @@ namespace XMPP
 {
 	class JingleContent;
 	class JingleSession;
+	class JingleTransport;
+	class JingleApplication;
 }
 class JabberJingleSession;
 class MediaManager;
@@ -40,14 +42,22 @@ public:
 
 	void setContent(XMPP::JingleContent*);
 	//void startWritingRtpData();
-	void startStreaming();
 	QString contentName();
 	QString elementToSdp(const QDomElement&);
 
-public slots:
-	void slotSendRtpData();
-	void slotIncomingData(const QByteArray&);
-	void slotReadyRead();
+private slots:
+	/**
+	 * This is executed when RTP data is ready to be read from the network.
+	 * The argument specifies the channel to use (0 = RTP, 1 = RTCP)
+	 */
+	void slotReadyRead(int);
+	
+	/**
+	 * This is executed when we have RTP data ready to be sent.
+	 * The argument specifies the channel to use (0 = RTP, 1 = RTCP)
+	 */
+	void slotReadySend(int);
+	void startStreaming();
 
 private:
 	XMPP::JingleContent *m_content;
@@ -57,6 +67,9 @@ private:
 	JingleRtpSession *m_rtpInSession;
 	JingleRtpSession *m_rtpOutSession;
 	JabberJingleSession *m_jabberSession;
+
+	XMPP::JingleTransport *m_transport;
+	XMPP::JingleApplication *m_application;
 	
 	void prepareRtpOutSession();
 	void prepareRtpInSession();

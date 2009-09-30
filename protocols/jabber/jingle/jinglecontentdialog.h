@@ -23,9 +23,13 @@
 #define CONTENT_DIALOG_H
 #include "ui_jinglecontentdialog.h"
 
-#include "jingletasks.h"
-
 #include <QCheckBox>
+
+namespace XMPP
+{
+	class JingleSession;
+	class JingleContent;
+}
 
 class JingleContentDialog : public QDialog
 {
@@ -33,6 +37,7 @@ class JingleContentDialog : public QDialog
 public:
 	JingleContentDialog(QWidget* parent = 0);
 	~JingleContentDialog();
+	
 	void setContents(QList<XMPP::JingleContent*> c);
 	void setSession(XMPP::JingleSession *s);
 	XMPP::JingleSession *session();

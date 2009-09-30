@@ -93,3 +93,13 @@
  
  						in[componentIndex] += buf;
  						emit q->readyRead(componentIndex);
+--- /home/kde4/src/new_jingle/protocols/jabber/libiris/iris/irisnet/noncore/ice176.h    2009-09-18 17:23:01.000000000 +0200
++++ /home/detlev/src/iris/src/irisnet/noncore/ice176.h  2009-07-18 23:15:34.000000000 +0200
+@@ -158,6 +158,7 @@
+
+ signals:
+ 	void started();
++	void error();
+ 
+ 	void localCandidatesReady(const QList<XMPP::Ice176::Candidate> &list);
+ 	void componentReady(int index);

@@ -32,18 +32,18 @@ public:
 	void setQuality(int q);
 	bool start();
 	//void write(const QByteArray& sData);
-	QByteArray read() const;
+	QByteArray read(int c) const;
 	int timeStamp();
 
 public slots:
-	void write(const QByteArray&);
+	void write(const QByteArray&, int c);
 
 private slots:
 	void slotReadyRead();
 	void pluginCompress();
 
 signals:
-	void readyRead();
+	void readyRead(int c);
 
 private:
 	static QByteArray resample(QByteArray data, int endSize);

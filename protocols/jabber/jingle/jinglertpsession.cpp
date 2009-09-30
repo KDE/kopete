@@ -108,7 +108,7 @@ void JingleRtpSession::send(const QByteArray& outData)
 {
 	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)outData.data(), outData.size(), /*freefn*/ NULL); //the free function is managed by the bytesWritten signal
 	
-	int ts = m_mediaSession->timeStamp();
+	int ts = m_mediaSession->timeStamp(); //FIXME:Timestamp as argument !
 	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts);
 	if (size == -1)
 	{
@@ -122,7 +122,7 @@ void JingleRtpSession::rtpDataReady()
 	void *buf = new uint8_t[bufSize];
 	int more;
 	
-	int ts = m_mediaSession->timeStamp();
+	int ts = m_mediaSession->timeStamp(); //FIXME:Timestamp as argument !
 
 	int ret = rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t*>(buf), bufSize, ts, &more);
 	if (ret == 0)

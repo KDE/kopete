@@ -25,6 +25,8 @@
 //Iris
 #include "jinglecontent.h"
 #include "jinglesession.h"
+#include "jingletransport.h"
+#include "jingleapplication.h"
 
 #include <KDebug>
 #include <QMessageBox>
@@ -60,11 +62,19 @@ JabberJingleContent::~JabberJingleContent()
 void JabberJingleContent::setContent(XMPP::JingleContent* content)
 {
 	m_content = content;
+
+	if (!m_content)
+		return;
+
+	m_transport = content->transport();
+	m_application = content->application();
+
+	connect(m_content, SIGNAL(established()), SLOT(startStreaming()));
 }
 
 void JabberJingleContent::prepareRtpInSession()
 {
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Prepare RTP IN session";
+/*	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Prepare RTP IN session";
 	if (m_rtpInSession == 0)
 	{
 		if (!m_content->inSocket())
@@ -81,10 +91,12 @@ void JabberJingleContent::prepareRtpInSession()
 	}
 	else
 		kDebug() << "RTP IN session already set !";
+*/
 }
 
 void JabberJingleContent::prepareRtpOutSession()
 {
+/*
 	kDebug(KDE_DEFAULT_DEBUG_AREA) << "Prepare RTP OUT session";
 	if (m_rtpOutSession == 0)
 	{
@@ -105,56 +117,57 @@ void JabberJingleContent::prepareRtpOutSession()
 	}
 	else
 		kDebug() << "RTP OUT session already set !";
+*/
 }
 
-void JabberJingleContent::slotIncomingData(const QByteArray& data)
+void JabberJingleContent::slotReadyRead(int c)
 {
 	//kDebug() << "Receiving ! (" << data.size() << "bytes)";
-	m_mediaSession->write(data);
+	
+	m_mediaSession->write(m_transport->readAll((XMPP::JingleTransport::Channel) c), c);
 }
 
 void JabberJingleContent::startStreaming()
 {
 	kDebug() << "Start Streaming";
 
-	if (m_content->type() == XMPP::JingleContent::Audio)
+	if (m_content->application()->mediaType() == XMPP::JingleApplication::Audio)
 	{
-		m_mediaSession = new MediaSession(m_mediaManager, "speex"/*FIXME:use m_content->bestPayload()*/);
+		m_mediaSession = new /*or MediaRtpSession*/MediaSession(m_mediaManager, "speex"/*FIXME:use m_content->bestPayload()*/);
 		if (m_mediaSession == 0)
 		{
 			kDebug() << "Media Session is NULL!";
 			return;
 		}
-		connect(m_mediaSession, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+		
+		connect(m_mediaSession, SIGNAL(readyRead(int)), SLOT(slotReadySend(int)));
+		connect(m_transport, SIGNAL(readyRead(int)), SLOT(slotReadyRead(int)));
+		
 		m_mediaSession->setSamplingRate(8000 /*FIXME:use m_content->bestPayload()*/);
 
-		prepareRtpOutSession();
-		prepareRtpInSession();
+		//prepareRtpOutSession();
+		//prepareRtpInSession();
 
 		if (!m_mediaSession->start())
 		{
 			QMessageBox::warning(0, tr("Jingle audio"), tr("Unable to start you audio device, terminating the session."));
 			//m_content->parentSession()->terminate();
 		}
-			
 	}
 }
 
-void JabberJingleContent::slotReadyRead()
+void JabberJingleContent::slotReadySend(int c)
 {
-	m_rtpOutSession->send(m_mediaSession->read());
+	if (m_transport)
+		m_transport->writeDatagram(m_mediaSession->read(c), (XMPP::JingleTransport::Channel) c);
+	
+	//m_rtpOutSession->send(m_mediaSession->read());
 }
 
 QString JabberJingleContent::elementToSdp(const QDomElement& elem)
 {
 	Q_UNUSED(elem)
 	return QString();
-}
-
-/*DEPRECATED*/void JabberJingleContent::slotSendRtpData()
-{
-	//kDebug() << "Send RTP data.";
-	m_rtpOutSession->send(m_mediaSession->read());
 }
 
 QString JabberJingleContent::contentName()

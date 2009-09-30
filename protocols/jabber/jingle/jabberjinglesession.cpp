@@ -62,16 +62,16 @@ void JabberJingleSession::slotStateChanged()
 	if (m_jingleSession->state() != XMPP::JingleSession::Active)
 		return;
 
+	//FIXME:Must be done before, when the session is created.
 	for (int i = 0; i < m_jingleSession->contents().count(); i++)
 	{
 		JabberJingleContent *jContent = contentWithName(m_jingleSession->contents()[i]->name());
-		if (jContent == 0)
+		if (jContent)
 		{
-			qDebug() << "Create JabberJingleContent for content" << m_jingleSession->contents()[i]->name();
 			jContent = new JabberJingleContent(this, m_jingleSession->contents()[i]);
 			jabberJingleContents << jContent;
 		}
-		jContent->startStreaming();
+		//jContent->startStreaming(); --> don't wait for the state to change.
 	}
 	emit stateChanged();
 	
@@ -111,7 +111,7 @@ JabberJingleContent *JabberJingleSession::contentWithName(const QString& name)
 
 MediaManager *JabberJingleSession::mediaManager() const
 {
-	kDebug(KDE_DEFAULT_DEBUG_AREA) << "m_mediaManager is" << (m_mediaManager == 0 ? "Null" : "Valid");
+	kDebug() << "m_mediaManager is" << (m_mediaManager == 0 ? "Null" : "Valid");
 	return m_mediaManager;
 }
 

@@ -1,0 +1,4742 @@
+Index: xmpp/modules.pri
+===================================================================
+--- xmpp/modules.pri	(revision 684)
++++ xmpp/modules.pri	(working copy)
+@@ -4,3 +4,4 @@
+ IRIS_XMPP_BASE_MODULE = $$PWD/base/base.pri
+ IRIS_XMPP_ZLIB_MODULE = $$PWD/zlib/zlib.pri
+ IRIS_XMPP_BASE64_MODULE = $$PWD/base64/base64.pri
++IRIS_XMPP_JINGLE_MODULE = $$PWD/jingle/jingle.pri
+Index: xmpp/xmpp-im/xmpp_client.h
+===================================================================
+--- xmpp/xmpp-im/xmpp_client.h	(revision 684)
++++ xmpp/xmpp-im/xmpp_client.h	(working copy)
+@@ -34,6 +34,7 @@
+ 	class ClientStream;
+ 	class Features;
+ 	class FileTransferManager;
++	class JingleSessionManager;
+ 	class IBBManager;
+ 	class JidLinkManager;
+ 	class LiveRoster;
+@@ -121,6 +122,9 @@
+ 		void setFileTransferEnabled(bool b);
+ 		FileTransferManager *fileTransferManager() const;
+ 
++		void setJingleEnabled(bool b);
++		JingleSessionManager *jingleSessionManager() const;
++
+ 		QString groupChatPassword(const QString& host, const QString& room) const;
+ 		bool groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString& password = QString(), int maxchars = -1, int maxstanzas = -1, int seconds = -1, const Status& = Status());
+ 		void groupChatSetStatus(const QString &host, const QString &room, const Status &);
+Index: xmpp/xmpp-im/client.cpp
+===================================================================
+--- xmpp/xmpp-im/client.cpp	(revision 684)
++++ xmpp/xmpp-im/client.cpp	(working copy)
+@@ -21,6 +21,8 @@
+ #include "im.h"
+ #include "safedelete.h"
+ 
++#include <QDebug>
++
+ //! \class XMPP::Client client.h
+ //! \brief Communicates with the Jabber network.  Start here.
+ //!
+@@ -81,6 +83,7 @@
+ #include "s5b.h"
+ #include "xmpp_ibb.h"
+ #include "filetransfer.h"
++#include "jinglesessionmanager.h"
+ 
+ /*#include <stdio.h>
+ #include <stdarg.h>
+@@ -140,6 +143,7 @@
+ 	S5BManager *s5bman;
+ 	IBBManager *ibbman;
+ 	FileTransferManager *ftman;
++	JingleSessionManager *jingleman;
+ 	bool ftEnabled;
+ 	QList<GroupChat> groupChatList;
+ };
+@@ -170,6 +174,7 @@
+ 	connect(d->ibbman, SIGNAL(incomingReady()), SLOT(ibb_incomingReady()));
+ 
+ 	d->ftman = 0;
++	d->jingleman = 0;
+ }
+ 
+ Client::~Client()
+@@ -177,6 +182,7 @@
+ 	close(true);
+ 
+ 	delete d->ftman;
++	delete d->jingleman;
+ 	delete d->ibbman;
+ 	delete d->s5bman;
+ 	delete d->root;
+@@ -245,6 +251,23 @@
+ 	return d->ftman;
+ }
+ 
++void Client::setJingleEnabled(bool b)
++{
++	if (b) {
++		if (!d->jingleman)
++		d->jingleman = new JingleSessionManager(this);
++	}
++	else {
++		delete d->jingleman;
++		d->jingleman = 0;
++	}
++}
++
++JingleSessionManager *Client::jingleSessionManager() const
++{
++	return d->jingleman;
++}
++
+ S5BManager *Client::s5bManager() const
+ {
+ 	return d->s5bman;
+@@ -598,7 +621,7 @@
+ 	}
+ 
+ 	QString out = s.toString();
+-	debug(QString("Client: outgoing: [\n%1]\n").arg(out));
++	//debug(QString("Client: outgoing: [\n%1]\n").arg(out));
+ 	xmlOutgoing(out);
+ 
+ 	//printf("x[%s] x2[%s] s[%s]\n", Stream::xmlToString(x).toLatin1(), Stream::xmlToString(e).toLatin1(), s.toString().toLatin1());
+Index: xmpp/jingle/jingles5btransport.cpp
+===================================================================
+--- xmpp/jingle/jingles5btransport.cpp	(revision 0)
++++ xmpp/jingle/jingles5btransport.cpp	(revision 0)
+@@ -0,0 +1,88 @@
++/*
++ * jingles5btransport.cpp - Jingle SOCKS5 Transport
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#include "jingles5btransport.h"
++
++using namespace XMPP;
++
++class JingleS5BTransport::Private
++{
++public:
++	Private() : componentCount(0)
++	{}
++	
++	int componentCount;
++	QDomElement elem;
++	
++};
++
++JingleS5BTransport::JingleS5BTransport(Mode mode, JingleContent *parent, const QDomElement& elem)
++ : JingleTransport(mode, parent)
++{
++	d->elem = elem;
++
++	if (parent)
++		init();
++}
++
++JingleS5BTransport::~JingleS5BTransport()
++{
++	delete d;
++}
++
++void JingleS5BTransport::init()
++{
++
++}
++
++QString JingleS5BTransport::transportNS() const
++{
++	return "urn:xmpp:jingle:transports:s5b:1";
++}
++
++void JingleS5BTransport::start()
++{
++
++}
++
++void JingleS5BTransport::addTransportInfo(const QDomElement& elem)
++{
++
++}
++
++void JingleS5BTransport::setComponentCount(int n)
++{
++	d->componentCount = n;
++}
++
++QDomElement JingleS5BTransport::toXml(TransportType t)
++{
++
++}
++
++void JingleS5BTransport::writeDatagram(const QByteArray& data, Channel c)
++{
++
++}
++
++QByteArray JingleS5BTransport::readAll(Channel c)
++{
++
++}
+Index: xmpp/jingle/jingleapplication.h
+===================================================================
+--- xmpp/jingle/jingleapplication.h	(revision 0)
++++ xmpp/jingle/jingleapplication.h	(revision 0)
+@@ -0,0 +1,124 @@
++/*
++ * jingleapplication.h - Jingle Application
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#ifndef JINGLEAPPLICATION_H
++#define JINGLEAPPLICATION_H
++
++/*
++ * The form of an application is a <description> element
++ * which has childs describing the application.
++ * For Rtp sessions, this will be payloads.
++ */
++
++#include <QObject>
++#include <QDomElement>
++
++namespace XMPP
++{
++	class JingleContent;
++	class JingleApplication : public QObject
++	{
++		Q_OBJECT
++	public :
++		enum ApplicationType {
++			NoApplication = 0,
++			LocalApplication,
++			RemoteApplication,
++			Application
++			//AcceptableApplication,
++		};
++
++		/**
++		 * Defines the content type, this represesent the media attribute.
++		 */
++		enum MediaType {
++			Audio = 0,
++			Video,
++			FileTransfer,
++			NoType
++		};
++
++		JingleApplication(JingleContent *parent = 0);
++		virtual ~JingleApplication();
++
++		static JingleApplication* createFromXml(const QDomElement&, JingleContent *parent = 0);
++
++		virtual void init() = 0;
++
++		void setParent(JingleContent *c);
++		
++		/*
++		 * Set the content type, this will set the "media" attribute of
++		 * the content tag in the stanza.
++		 */
++		void setMediaType(MediaType);
++		
++		/*
++		 * Gets the type of this content.
++		 */
++		MediaType mediaType() const;
++		
++		/*
++		 * Set this content description namespace.
++		 */
++		void setDescriptionNS(const QString&);
++		
++		QString descriptionNS() const;
++		
++		QString mediaTypeToString(MediaType);
++		MediaType stringToMediaType(const QString& s);
++		
++		virtual QDomElement toXml(const ApplicationType) = 0;
++
++		/*
++		 * This method merges this application with another one and
++		 * returns the result (no JingleApplication is modified)
++		 * In the case of RTP, it will be called on the local and
++		 * the remote application and return an application which
++		 * contains the acceptable payloads.
++		 */
++		virtual JingleApplication *mergeWith(JingleApplication*) = 0;
++
++		/*
++		 * Returns true if both JingleApplication's are compatible.
++		 * For RTP, this would mean that both have the same media type
++		 * and at least one common payload type.
++		 */
++		virtual bool isCompatibleWith(JingleApplication*) = 0;
++		
++		void setEncryption(bool);
++		bool encryption() const;
++
++		void setEncryptionRequired(bool);
++		bool encryptionRequired() const;
++
++		JingleContent* parent() const;
++
++		virtual void sessionInfo(const QDomElement&) = 0;
++
++		virtual int componentCountNeeded() = 0;
++
++	private :
++		class Private;
++		Private *d;
++	};
++}
++
++#endif //JINGLEAPPLICATION_H
+Index: xmpp/jingle/jinglecontent.cpp
+===================================================================
+--- xmpp/jingle/jinglecontent.cpp	(revision 0)
++++ xmpp/jingle/jinglecontent.cpp	(revision 0)
+@@ -0,0 +1,399 @@
++/*
++ * jinglecontent.cpp - Jingle content
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#include "jinglecontent.h"
++#include "jinglesession.h"
++#include "jingleapplication.h"
++#include "jingletransport.h"
++
++#include <QDomElement>
++#include <QUdpSocket>
++#include <QDebug>
++
++//----------------------
++// JingleContent
++//----------------------
++
++using namespace XMPP;
++
++
++class JingleContent::Private
++{
++public:
++	Private() : senders(Both),
++		    established(false),
++		    parent(0),
++		    transport(0),
++		    application(0),
++		    started(false),
++		    reason(NoReason)
++	{}
++	
++	Task *rootTask;
++	QString creator;
++	Senders senders;
++	QString name;
++	bool established;
++	//Mode mode;
++	JingleSession *parent;
++
++	JingleTransport *transport;
++	QList<JingleApplication*> supportedApplications;
++	JingleApplication *application;
++
++	QList<QDomElement> pendingTransportInfo;
++	QList<QDomElement> pendingSessionInfo;
++
++	bool started;
++
++	ReasonType reason;
++};
++
++JingleContent::JingleContent(JingleSession *parent)
++: d(new Private())
++{
++	setParent(parent);
++}
++
++JingleContent::~JingleContent()
++{
++	delete d->transport;
++	delete d->application;
++	
++	delete d;
++}
++
++void JingleContent::setParent(JingleSession *parent)
++{
++	if (parent == 0)
++		return;
++
++	d->parent = parent;
++	d->rootTask = d->parent->rootTask();
++}
++
++void JingleContent::start()
++{
++	if (d->started || !d->transport || !d->application || !d->parent)
++		return;
++	
++	JingleApplication *app = d->application;
++	
++	d->transport->setComponentCount(app->componentCountNeeded());
++	d->transport->start();
++	
++	if (!d->pendingTransportInfo.isEmpty())
++	{
++		foreach (QDomElement e, d->pendingTransportInfo)
++			d->transport->addTransportInfo(e);
++
++		d->pendingTransportInfo.clear();
++	}
++
++	if (!d->pendingSessionInfo.isEmpty())
++	{
++		foreach (QDomElement e, d->pendingSessionInfo)
++			d->application->sessionInfo(e);
++		
++		d->pendingSessionInfo.clear();
++	}
++
++	d->started = true;
++}
++
++void JingleContent::stopNegotiation()
++{
++	if (d->transport && !d->transport->isConnected())
++	{
++		delete d->transport;
++		d->transport = 0;
++	}
++}
++
++void JingleContent::setTransport(JingleTransport* t)
++{
++	//FIXME:Should d->transport be deleted first ?
++	d->transport = t;
++	t->setParent(this);
++	connect(t, SIGNAL(success()), SIGNAL(established()));
++	//connect(t, SIGNAL(failure()), SLOT(transportFailure()));
++
++	start();
++}
++
++JingleSession *JingleContent::parent() const
++{
++	return d->parent;
++}
++
++void JingleContent::setCreator(const QString& c)
++{
++	d->creator = c;
++}
++
++void JingleContent::setSenders(const Senders s)
++{
++	if (d->senders == s)
++		return;
++
++	d->senders = s;
++
++	emit sendersChanged();
++}
++
++void JingleContent::setName(const QString& n)
++{
++	d->name = n;
++}
++
++/*
++ * TODO:
++ * this method could return an error value which will be used by the session
++ * to remove the content or terminate the session with the right reason.
++ */
++void JingleContent::fromElement(const QDomElement& e)
++{
++	if (e.tagName() != "content")
++		return;
++
++	d->creator = e.attribute("creator");
++	d->name = e.attribute("name");
++	
++	QDomElement elem = e.firstChildElement();
++
++	while (!elem.isNull())
++	{
++		if (elem.tagName() == "description")
++		{
++			JingleApplication *a = JingleApplication::createFromXml(elem, this);
++			if (!a)
++			{
++				qDebug() << "Application type not supported (or you don't have free memory on your computer)";
++				parent()->removeContent(this);
++				return;
++			}
++
++			foreach (JingleApplication *app, d->supportedApplications)
++			{
++				if (a->isCompatibleWith(app))
++				{
++					setApplication(a->mergeWith(app));
++					break;
++				}
++			}
++
++		}
++		else if (elem.tagName() == "transport")
++		{
++			JingleTransport *t = JingleTransport::createFromXml(elem, JingleTransport::Responder, this);
++			setTransport(t);
++		}
++
++		elem = elem.nextSiblingElement();
++	}
++
++	if (!application())
++	{
++		// No compatible payload in the application (or at least, not compatible/supported)
++		qDebug() << "Content" << name() << "is not compatible.";
++		d->reason = UnsupportedApplication;
++		parent()->removeContent(this);
++		return;
++		// No need to go further.
++	}
++	
++	if (!transport())
++	{
++		qDebug() << "Transport method not supported (or you don't have free memory on your computer)";
++		d->reason = UnsupportedTransport;
++		parent()->removeContent(this);
++		return;
++	}
++
++	start();
++}
++
++QDomElement JingleContent::contentElement(JingleTransport::TransportType tType, JingleApplication::ApplicationType aType)
++{
++	// Create the QDomElement which has to be returned.
++	QDomDocument doc("");
++
++	QDomElement content = doc.createElement("content");
++	content.setAttribute("creator", d->creator);
++	content.setAttribute("name", d->name);
++	content.setAttribute("senders", sendersToStr(d->senders));
++
++	/*switch (aType)
++	{
++	case JingleApplication::Application :*/
++	if (d->application)
++		content.appendChild(d->application->toXml(aType));
++	/*	break;
++
++	default :
++		break;
++	}*/
++	
++	if (d->transport)
++		content.appendChild(d->transport->toXml(tType));
++
++	return content;
++}
++
++QString JingleContent::name() const
++{
++	return d->name;
++}
++
++QString JingleContent::creator() const
++{
++	return d->creator;
++}
++
++JingleContent::Senders JingleContent::senders() const
++{
++	return d->senders;
++}
++
++JingleContent& JingleContent::operator=(const JingleContent &other)
++{
++	d->transport = other.transport();
++	d->creator = other.creator();
++	d->senders = other.senders();
++	d->name = other.name();
++	d->established = other.d->established;
++
++	d->supportedApplications = other.d->supportedApplications;
++	d->application = other.application();
++
++	d->pendingTransportInfo = other.d->pendingTransportInfo;
++
++	return *this;
++}
++
++bool JingleContent::isReady() const
++{
++	return d->transport->isConnected();
++}
++
++void JingleContent::setRootTask(Task *rt)
++{
++	d->rootTask = rt;
++}
++
++Task* JingleContent::rootTask() const
++{
++	return d->rootTask;
++}
++
++void JingleContent::activated()
++{
++	
++}
++
++void JingleContent::muted()
++{
++
++}
++
++void JingleContent::addTransportInfo(const QDomElement& e)
++{
++	if (d->transport)
++		d->transport->addTransportInfo(e);
++	else
++		d->pendingTransportInfo << e;
++}
++
++void JingleContent::writeDatagram(const QByteArray& data, JingleTransport::Channel c)
++{
++	d->transport->writeDatagram(data, c);
++}
++
++QByteArray JingleContent::readAll(JingleTransport::Channel c)
++{
++	return d->transport->readAll(c);
++}
++
++void JingleContent::setSupportedApplications(QList<JingleApplication*> apps)
++{
++	d->supportedApplications = apps;
++}
++
++void JingleContent::sessionInfo(const QDomElement& info)
++{
++	if (info.hasAttribute("name") && info.attribute("name") != name())
++	{
++		//This does not concerns us.
++		return;
++	}
++	
++	// SessionInfo's are for the application. Transports use TransportInfo's.
++	if (application())
++		d->application->sessionInfo(info);
++	else
++		d->pendingSessionInfo << info;
++}
++
++JingleTransport* JingleContent::transport() const
++{
++	return d->transport;
++}
++
++QString JingleContent::sendersToStr(const Senders s)
++{
++	switch (s)
++	{
++	case Both :
++		return "both";
++	case Initiator :
++		return "initiator";
++	case Responder :
++		return "responder";
++	}
++
++	return "both";
++}
++
++JingleContent::Senders JingleContent::strToSenders(const QString& s)
++{
++	if (s == "responder")
++		return Responder;
++	else if (s == "initiator")
++		return Initiator;
++	else
++		return Both;
++}
++
++void JingleContent::setApplication(JingleApplication* a)
++{
++	d->application = a;
++	d->application->setParent(this);
++	start();
++}
++
++JingleApplication* JingleContent::application() const
++{
++	return d->application;
++}
++
++JingleContent::ReasonType JingleContent::reason() const
++{
++	return d->reason;
++}
+Index: xmpp/jingle/jingles5btransport.h
+===================================================================
+--- xmpp/jingle/jingles5btransport.h	(revision 0)
++++ xmpp/jingle/jingles5btransport.h	(revision 0)
+@@ -0,0 +1,86 @@
++/*
++ * jingles5btransport.h - Jingle SOCKS5 Transport
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#ifndef JINGLE_S5B_TRANSPORT_H
++#define JINGLE_S5B_TRANSPORT_H
++
++#include "jingletransport.h"
++
++namespace XMPP
++{
++	class JingleContent;
++	class JingleS5BTransport : public JingleTransport
++	{ 
++	public:
++		JingleS5BTransport(Mode mode, JingleContent *parent, const QDomElement& elem = QDomElement());
++		~JingleS5BTransport();
++
++		/*
++		 * Called when the parent has been set so the transport can be initiated.
++		 */
++		virtual void init();
++		
++		/*
++		 * Called when the transport must be started (when negotiation can begin)
++		 */
++		virtual void start();
++
++		/*
++		 * Adds transport info (mostly a candidate). Doing so will try to
++		 * connect to this candidate.
++		 */
++		virtual void addTransportInfo(const QDomElement& e);
++
++		/*
++		 * Returns the transport namespace of this content.
++		 */
++		virtual QString transportNS() const;
++	
++		/*
++		 * Returns the transport in an Xml form so it cam be added in a stanza.
++		 * The TransportType argument tells how the transport should be generated (with candidates, with other information)
++		 * FIXME:drop the TransportType, this method should always return the XML element as sent in session-initiate.
++		 */
++		virtual QDomElement toXml(TransportType);
++
++		/*
++		 * Set the number of component that must be established by the transport. (e.g. For RTP, 2 components : RTP + RTCP)
++		 */
++		virtual void setComponentCount(int);
++		
++		/*
++		 * This method writes data one the given channel (corresponding to the component)
++		 * FIXME:review Channels/Components
++		 */
++		virtual void writeDatagram(const QByteArray& data, Channel c);
++		
++		/*
++		 * Reads the available data on the given Channel.
++		 * FIXME:review Channels/Components
++		 */
++		virtual QByteArray readAll(Channel c = Rtp);
++	
++	private:
++		class Private;
++		Private *d;
++	};
++}
++
++#endif //JINGLE_S5B_TRANSPORT_H
+Index: xmpp/jingle/jingleicetransport.cpp
+===================================================================
+--- xmpp/jingle/jingleicetransport.cpp	(revision 0)
++++ xmpp/jingle/jingleicetransport.cpp	(revision 0)
+@@ -0,0 +1,393 @@
++/*
++ * jingleicetransport.cpp - Jingle Ice Transport
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#include "jinglesession.h"
++#include "jinglesessionmanager.h"
++#include "jingleicetransport.h"
++
++#include <QDomElement>
++
++//----------------------
++// JingleIceTransport
++//----------------------
++
++using namespace XMPP;
++
++class JingleIceTransport::Private
++{
++public:
++	Private() :
++		ice176(0),
++		iceStarted(false),
++		iceStarting(false),
++		manager(0),
++		componentCount(0),
++		sentCandidates(0)
++		{}
++
++	Ice176 *ice176;
++	
++	QString remoteUfrag;
++	QString remotePassword;
++
++	bool iceStarted;
++	bool iceStarting;
++	
++	QList<Ice176::Candidate> pendingLocalCandidates;
++	QList<Ice176::Candidate> pendingRemoteCandidates;
++
++	QList<bool> channels;
++
++	JingleSessionManager *manager;
++	
++	int componentCount;
++	int sentCandidates;
++
++	QDomElement elem;
++};
++
++JingleIceTransport::JingleIceTransport(Mode mode, JingleContent *parent, const QDomElement& elem)
++: JingleTransport(mode, parent), d(new Private())
++{
++	d->elem = elem;
++	
++	if (parent != 0)
++		init();
++}
++
++void JingleIceTransport::init()
++{
++	if (d->ice176 != 0)
++		return;
++
++	qDebug() << "JingleTransport::init() called";
++	d->ice176 = new Ice176(this);
++
++	if (!d->elem.isNull())
++	{
++		// elem is a transport element.
++		d->remoteUfrag = d->elem.attribute("ufrag");
++		d->remotePassword = d->elem.attribute("pwd");
++		d->ice176->setPeerUfrag(d->remoteUfrag);
++		d->ice176->setPeerPassword(d->remotePassword);
++		QDomElement cand = d->elem.firstChildElement();
++		while (!cand.isNull())
++		{
++			if (cand.tagName() == "candidate")
++			{
++				Ice176::Candidate iceCand = xmlToCandidate(cand);
++				d->pendingRemoteCandidates << iceCand;
++			}
++
++			cand = cand.nextSiblingElement();
++		}
++	}
++
++	connect(d->ice176, SIGNAL(started()), SLOT(slotIceStarted()));
++	connect(d->ice176, SIGNAL(localCandidatesReady(const QList<XMPP::Ice176::Candidate>&)), SLOT(slotIceLocalCandidatesReady(const QList<XMPP::Ice176::Candidate>&)));
++	connect(d->ice176, SIGNAL(componentReady(int)), SLOT(slotIceComponentReady(int)));
++	connect(d->ice176, SIGNAL(readyRead(int)), SIGNAL(readyRead(int)));
++	//connect(d->ice176, SIGNAL(datagramsWritten(int, int)), SLOT(slotIceDatagramsWritten(int, int)));
++
++	d->manager = JingleSessionManager::manager();
++
++	if (d->manager && (d->manager->stunPort() != -1) && !d->manager->stunAddress().isNull())
++		d->ice176->setStunService(Ice176::Basic, d->manager->stunAddress(), d->manager->stunPort());
++
++	QList<Ice176::LocalAddress> addr = getAddresses();
++	if (addr.count() == 0)
++		return;
++	
++	d->ice176->setLocalAddresses(addr);
++}
++
++JingleIceTransport::~JingleIceTransport()
++{
++	delete d->ice176;
++	delete d;
++}
++
++void JingleIceTransport::start()
++{
++	if (d->iceStarting)
++		return;
++
++	if (d->componentCount <= 0)
++		return;
++
++	switch (mode())
++	{
++	case Initiator:
++	{
++		d->ice176->start(Ice176::Initiator);
++		break;
++	}
++	case Responder:
++	{
++		d->ice176->start(Ice176::Responder);
++		break;
++	}
++	default :
++		qDebug() << "JingleIceTransport : unable to start Ice176.";
++		return;
++	}
++
++	QDomDocument doc("");
++
++	QDomElement transport = doc.createElement("transport");
++
++	transport.setAttribute("xmlns", transportNS());
++	transport.setAttribute("pwd", d->ice176->localPassword());
++	transport.setAttribute("ufrag", d->ice176->localUfrag());
++
++	setTransport(transport);
++
++	if (parentSession())
++		sendLocalCandidates(d->pendingLocalCandidates);
++
++	d->iceStarting = true;
++}
++
++void JingleIceTransport::setComponentCount(int c)
++{
++	d->channels.clear();
++	for (int i = 0; i < c; ++i)
++		d->channels << false;
++	
++	d->componentCount = c;
++	
++	if (d->manager)
++		d->ice176->setBasePort(d->manager->nextUdpPort(c)); //FIXME:How does the next session to be started know which base port to set ?
++
++	d->ice176->setComponentCount(c);
++}
++
++void JingleIceTransport::slotIceComponentReady(int channel)
++{
++	d->channels[channel] = true;
++
++	// If not all channels are ready, we do nothing.
++	for (int i = 0; i < d->channels.count(); i++)
++	{
++		if (d->channels[i] == false)
++			return;
++	}
++
++	// All channels are ready, we are ready.
++	setConnected(true);
++	
++	emit success(); //FIXME:Should be in JingleTransport and emitted when setConnected(true); is called.
++}
++
++QList<XMPP::Ice176::LocalAddress> JingleIceTransport::getAddresses()
++{
++	QList<Ice176::LocalAddress> ret;
++	Ice176::LocalAddress addr;
++	
++	if (!d->manager->selfAddr().isNull())
++		addr.addr = d->manager->selfAddr();
++	else
++		addr.addr = "127.0.0.1";
++	
++	addr.network = 0;
++
++	return ret << addr;
++}
++
++void JingleIceTransport::slotIceLocalCandidatesReady(const QList<XMPP::Ice176::Candidate>& candidates)
++{
++	// Using mid to avoid sending local candidates already sent.
++	if (!parentSession() || !parentSession()->isStarted())
++		d->pendingLocalCandidates += candidates.mid(d->sentCandidates);
++	else
++		sendLocalCandidates(candidates.mid(d->sentCandidates));
++}
++
++void JingleIceTransport::sendLocalCandidates(const QList<XMPP::Ice176::Candidate>& candidates)
++{
++	foreach(Ice176::Candidate c, candidates)
++	{
++		//It is recommended to send each candidate in a separate iq.
++		QDomDocument doc("");
++		QDomElement transport = doc.createElement("transport");
++		transport.setAttribute("xmlns", transportNS());
++		transport.setAttribute("ufrag", d->ice176->localUfrag());
++		transport.setAttribute("pwd", d->ice176->localPassword());
++		transport.appendChild(candidateToXml(c));
++
++		JT_JingleAction *tAction = new JT_JingleAction(rootTask());
++		tAction->setSession(parentSession());
++		tAction->transportInfo(parent()->name(), transport);
++		tAction->go(true);
++	}
++
++	d->sentCandidates += candidates.count();
++}
++
++QDomElement JingleIceTransport::candidateToXml(const Ice176::Candidate& candidate)
++{
++	QDomDocument doc("");
++	QDomElement c = doc.createElement("candidate");
++
++	c.setAttribute("component", candidate.component);
++	c.setAttribute("generation", candidate.generation);
++	c.setAttribute("network", candidate.network);
++	c.setAttribute("port", candidate.port);
++	c.setAttribute("priority", candidate.priority);
++	c.setAttribute("foundation", candidate.foundation);
++	c.setAttribute("id", candidate.id);
++	c.setAttribute("protocol", candidate.protocol);
++	c.setAttribute("type", candidate.type);
++	c.setAttribute("ip", candidate.ip.toString());
++
++	if (candidate.rel_port != -1)
++		c.setAttribute("rel-port", candidate.rel_port);
++	if (candidate.rem_port != -1)
++		c.setAttribute("rem-port", candidate.rem_port);
++	if (candidate.rel_addr.toString() != "")
++		c.setAttribute("rel-addr", candidate.rel_addr.toString());
++	if (candidate.rem_addr.toString() != "")
++		c.setAttribute("rem-addr", candidate.rem_addr.toString());
++
++	return c;
++}
++
++void JingleIceTransport::slotIceStarted()
++{
++	d->iceStarted = true;
++	
++	if (!d->pendingRemoteCandidates.isEmpty())
++	{
++		d->ice176->addRemoteCandidates(d->pendingRemoteCandidates);
++		d->pendingRemoteCandidates.clear();
++	}
++	
++	emit started();
++}
++
++void JingleIceTransport::addTransportInfo(const QDomElement& elem)
++{
++	QDomElement t = elem.firstChildElement();
++
++	if (d->remoteUfrag.isNull())
++	{
++		d->remoteUfrag = t.attribute("ufrag");
++		d->ice176->setPeerUfrag(d->remoteUfrag);
++	}
++	if (d->remotePassword.isNull())
++	{
++		d->remotePassword = t.attribute("pwd");
++		d->ice176->setPeerPassword(d->remotePassword);
++	}
++	
++	QDomElement c = t.firstChildElement();
++	QList<Ice176::Candidate> cs;
++	
++	while (!c.isNull())
++	{
++		if (c.tagName() != "candidate")
++		{
++			qDebug() << "This is not a candidate";
++			c = c.nextSiblingElement();
++			continue;
++		}
++
++		//addRemoteCandidate(c); FIXME:Do we have to keep a list of candidates ?
++
++		Ice176::Candidate candidate = xmlToCandidate(c);
++		
++		if (candidate.component > d->componentCount)
++		{
++			qDebug() << "Component out of bound (component" << candidate.component << "but only" << d->componentCount << "available). Ignoring this candidate.";
++			c = c.nextSiblingElement();
++			continue;
++		}
++		
++		cs << candidate;
++
++		c = c.nextSiblingElement();
++	}
++	
++	if (d->iceStarted)
++		d->ice176->addRemoteCandidates(cs);
++	else
++		d->pendingRemoteCandidates << cs;
++}
++
++Ice176::Candidate JingleIceTransport::xmlToCandidate(const QDomElement& c)
++{
++	//FIXME:which ones are optionnal ?
++	Ice176::Candidate ret;
++	bool ok;
++
++	ret.component = c.attribute("component").toInt(&ok);
++	ret.generation = c.attribute("generation").toInt(&ok);
++	ret.network = c.attribute("network").toInt(&ok);
++	ret.port = c.attribute("port").toInt(&ok);
++	ret.priority = c.attribute("priority").toInt(&ok);
++	ret.foundation = c.attribute("foundation");
++	ret.id = c.attribute("id");
++	ret.protocol = c.attribute("protocol");
++	ret.type = c.attribute("type");
++	ret.ip = c.attribute("ip");
++	if (c.hasAttribute("rel-port"))
++		ret.rel_port = c.attribute("rel-port").toInt(&ok);
++	if (c.hasAttribute("rem-port"))
++		ret.rem_port = c.attribute("rem-port").toInt(&ok);
++	if (c.hasAttribute("rel-addr"))
++		ret.rel_addr = c.attribute("rel-addr");
++	if (c.hasAttribute("rem-addr"))
++		ret.rem_addr = c.attribute("rem-addr");
++
++	if (!ok)
++		qDebug() << "error parsing candidate";
++	
++	return ret;
++}
++
++QString JingleIceTransport::transportNS() const
++{
++	return NS_JINGLE_TRANSPORTS_ICE;
++}
++
++void JingleIceTransport::writeDatagram(const QByteArray& data, Channel channel)
++{
++	d->ice176->writeDatagram(static_cast<int>(channel), data);
++}
++
++QByteArray JingleIceTransport::readAll(Channel channel)
++{
++	return d->ice176->readDatagram(static_cast<int>(channel));
++}
++
++QDomElement JingleIceTransport::toXml(TransportType type)
++{
++	switch (type)
++	{
++	case NoCandidate :
++		return transport();
++	case LocalCandidates :
++		//candidates are sent as soon as they are ready.
++		/*Fall through*/
++	default:
++		return transport();
++	}
++}
++
+Index: xmpp/jingle/jingleaction.cpp
+===================================================================
+--- xmpp/jingle/jingleaction.cpp	(revision 0)
++++ xmpp/jingle/jingleaction.cpp	(revision 0)
+@@ -0,0 +1,142 @@
++/*
++ * jingleaction.cpp - Represent a Jingle action
++ *
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++#include "jingleaction.h"
++
++using namespace XMPP;
++
++class JingleAction::Private {
++public:
++	Action action;
++	Jid from;
++	Jid to;
++	QString id; // may not be needed;
++	QString sid;
++	QString initiator;
++	QString type;
++	QDomElement data;
++	bool valid; // True if the parsed stanza is a valid Jingle stanza, false if not.
++};
++
++JingleAction::JingleAction()
++ : d (new Private())
++{
++	d->valid = false;
++}
++
++JingleAction::JingleAction(const QDomElement& stanza)
++ : d (new Private())
++{
++	d->valid = setStanza(stanza) == EXIT_SUCCESS ? true : false;
++}
++
++JingleAction::~JingleAction()
++{
++	delete d;
++}
++
++bool JingleAction::isValid() const
++{
++	return d->valid;
++}
++
++void JingleAction::setData(const QDomElement& data)
++{
++	d->data = data;
++}
++
++int JingleAction::setStanza(const QDomElement& stanza)
++{
++	if (stanza.tagName() != "iq" || stanza.firstChildElement().tagName() != "jingle")
++		return EXIT_FAILURE;
++	
++	d->type = stanza.attribute("type");
++	d->action = jingleAction(stanza.firstChildElement().attribute("action"));
++	d->sid = stanza.firstChildElement().attribute("sid");
++	d->initiator = stanza.firstChildElement().attribute("initiator");
++	d->id = stanza.attribute("id");
++	d->from = Jid(stanza.attribute("from"));
++	d->to = Jid(stanza.attribute("to"));
++	d->data = stanza.firstChildElement();
++
++	return EXIT_SUCCESS;
++}
++
++QString JingleAction::sid() const
++{
++	return d->sid;
++}
++
++JingleAction::Action JingleAction::action() const
++{
++	return d->action;
++}
++
++QString JingleAction::id() const
++{
++	return d->id;
++}
++
++Jid JingleAction::from() const
++{
++	return d->from;
++}
++
++Jid JingleAction::to() const
++{
++	return d->to;
++}
++
++QString JingleAction::initiator() const
++{
++	return d->initiator;
++}
++
++QDomElement JingleAction::data() const
++{
++	return d->data;
++}
++
++JingleAction::Action JingleAction::jingleAction(const QString& action)
++{
++	if (action == "session-initiate")
++		return SessionInitiate;
++	else if (action == "session-terminate")
++		return SessionTerminate;
++	else if (action == "session-accept")
++		return SessionAccept;
++	else if (action == "session-info")
++		return SessionInfo;
++	else if (action == "content-add")
++		return ContentAdd;
++	else if (action == "content-remove")
++		return ContentRemove;
++	else if (action == "content-modify")
++		return ContentModify;
++	else if (action == "transport-replace")
++		return TransportReplace;
++	else if (action == "transport-accept")
++		return TransportAccept;
++	else if (action == "transport-info")
++		return TransportInfo;
++	else
++		return NoAction;
++}
++
+Index: xmpp/jingle/jinglesessionmanager.cpp
+===================================================================
+--- xmpp/jingle/jinglesessionmanager.cpp	(revision 0)
++++ xmpp/jingle/jinglesessionmanager.cpp	(revision 0)
+@@ -0,0 +1,350 @@
++/*
++ * jinglesessionmanager.cpp - Manager for Jingle sessions
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#include "jinglesessionmanager.h"
++#include "jingletasks.h"
++#include "jingleaction.h"
++#include "jingleapplication.h"
++#include "jingletransport.h"
++
++#include <QHttp>
++
++using namespace XMPP;
++
++class JingleSessionManager::Private
++{
++public:
++	Private() :
++		    firstPort(9000),
++		    lastUsed(-1),
++		    stunPort(-1),
++		    uniqueSession(false)
++	{}
++
++	JT_PushJingleAction *pjs;
++	Client *client;
++	QList<JingleSession*> sessions;
++	QStringList supportedTransports;
++	QList<JingleApplication*> supportedApplications;
++	
++	int firstPort;
++	int lastUsed;
++	
++	QHostAddress stunAddr;
++	int stunPort;
++	
++	QHostAddress localAddr;
++
++	bool uniqueSession; //Should we use a unique session for each contact (send the alternate session error).
++};
++
++JingleSessionManager *JingleSessionManager::self = 0;
++
++JingleSessionManager::JingleSessionManager(Client* c)
++: d(new Private)
++{
++	qDebug() << "JingleSessionManager::JingleSessionManager created.";
++	d->client = c;
++
++	d->pjs = new JT_PushJingleAction(d->client->rootTask());
++
++	d->supportedTransports << NS_JINGLE_TRANSPORTS_ICE;
++
++	connect(d->pjs, SIGNAL(jingleActionReady()), this, SLOT(slotJingleActionReady()));
++
++	connect(c, SIGNAL(disconnected()), SLOT(cleanup()));
++
++	Features f = d->client->features();
++
++	f.addFeature(NS_JINGLE);
++	f.addFeature(NS_JINGLE_APPS_RTP);
++	f.addFeature(NS_JINGLE_TRANSPORTS_ICE);
++
++	d->client->setFeatures(f);
++
++	d->firstPort = 9000;
++
++	d->stunPort = -1;
++
++	self = this;
++}
++
++JingleSessionManager::~JingleSessionManager()
++{
++	self = 0;
++
++	delete d->pjs;
++	
++	foreach(JingleSession* sess, d->sessions)
++	{
++		delete sess;
++	}
++	
++	d->sessions.clear();
++	
++	/*
++	foreach(JingleApplication* app, d->supportedApplications)
++	{
++		delete app;
++	}
++	That's the application's job.
++	*/
++	
++	delete d;
++}
++
++void JingleSessionManager::cleanup()
++{
++	foreach(JingleSession* sess, d->sessions)
++	{
++		delete sess;
++	}
++	
++	d->sessions.clear();
++}
++
++/*void JingleSessionManager::setSupportedFeatures(Features features)
++{
++	d->features = features;
++	
++	Features f = d->client->features();
++	
++	if (features & RTP)
++		f.addFeature(NS_JINGLE_APPS_RTP);
++		
++	if (features & FileTransfer)
++		f.addFeature(NS_JINGLE_APPS_FT);
++	
++	d->client->setFeatures(f);
++}*/
++
++JingleSessionManager *JingleSessionManager::manager()
++{
++        return self;
++}
++
++void JingleSessionManager::setUniqueSession(bool u)
++{
++	d->uniqueSession = u;
++}
++
++void JingleSessionManager::slotJingleActionReady()
++{
++	JingleAction *action = 0;
++	if (d->pjs->hasPendingAction())
++		action = d->pjs->takeNextPendingAction();
++	else
++	{
++		qDebug() << "JingleSessionManager::slotJingleActionReady() : There is no pending action, why am I called ?";
++		return;
++	}
++	
++	switch(action->action())
++	{
++	case JingleAction::SessionInitiate :
++	{
++		qDebug() << "New Incoming session : " << action->sid();
++
++		// Acknowledges the jingle action stanza.
++		d->pjs->ack(action->id(), action->from());
++
++		// Prepare the new JingleSession instance.
++		JingleSession *incomingSession = new JingleSession(d->pjs->parent(), action->from(), this);
++		connect(incomingSession, SIGNAL(terminated()), this, SLOT(slotRemoveSession()));
++		connect(incomingSession, SIGNAL(destroyed()), this, SLOT(slotRemoveSession()));
++
++		incomingSession->setInitiator(action->initiator(), false);
++		incomingSession->setResponder(action->to().full(), action->to().full() == d->client->jid().full());
++		incomingSession->setSid(action->sid());
++
++		// Check if we should send an alternate session error.
++		// FIXME:Should be done only if contents are identical.
++		// 	 For example, A file transfer should not be added to an RTP session.
++		if (d->uniqueSession)
++		{
++			foreach (JingleSession *sess, d->sessions)
++			{
++				if (sess->to() == action->from())
++				{
++					QDomDocument doc("");
++					QDomElement reason = doc.createElement("reason");
++					QDomElement alt = doc.createElement("alternative-session");
++					QDomElement sid = doc.createElement("sid");
++					QDomText txt = doc.createTextNode(sess->sid());
++					sid.appendChild(txt);
++					alt.appendChild(sid);
++					reason.appendChild(alt);
++
++					incomingSession->sessionTerminate(reason);
++
++					return;
++				}
++			}
++		}
++
++		QDomElement content = action->data().firstChildElement();
++		while (!content.isNull())
++		{
++			if (content.tagName() == "content")
++				incomingSession->addContent(content);
++
++			content = content.nextSiblingElement();
++		}
++
++		d->sessions << incomingSession;
++
++		emit newJingleSession(incomingSession);
++
++		break;
++	}
++	case JingleAction::ContentRemove : 
++	case JingleAction::SessionInfo :
++	case JingleAction::TransportInfo :
++	case JingleAction::SessionTerminate :
++	case JingleAction::SessionAccept :
++	case JingleAction::ContentAdd :
++	case JingleAction::ContentModify :
++	case JingleAction::TransportReplace :
++	case JingleAction::TransportAccept :
++	default :
++	{
++		JingleSession *sess = session(action->sid());
++		if (sess)
++		{
++			// We can acknowledge the stanza now.
++			d->pjs->ack(action->id(), action->from());
++			sess->appendAction(action);
++			
++			//if (sess->appendAction(action))
++			//	d->pjs->ack(action->id(), action->from());
++			//else
++			//	Unknown session...
++		}
++		else
++		{
++			// Unknown Session.
++			qDebug() << "Session" << action->sid() << "not found.";
++			d->pjs->unknownSession(action->id(), action->from());
++		}
++	}
++	}
++}
++
++void JingleSessionManager::slotRemoveSession()
++{
++	qDebug() << "Removing session from session manager.";
++	if (sender())
++	{
++		for (int i = 0; i < d->sessions.count(); ++i)
++		{
++			if (sender() == d->sessions[i])
++			{
++				d->sessions.removeAt(i);
++				break;
++			}
++		}
++	}
++}
++
++void JingleSessionManager::setSupportedApplications(QList<JingleApplication*>& sa)
++{
++	d->supportedApplications = sa;
++}
++
++QList<JingleApplication*> JingleSessionManager::supportedApplications() const
++{
++	return d->supportedApplications;
++}
++
++JingleSession *JingleSessionManager::createNewSession(const Jid& toJid)
++{
++	XMPP::JingleSession *session = new XMPP::JingleSession(d->client->rootTask(), toJid.full(), this);
++
++	session->setInitiator(d->client->jid().full(), true);
++	d->sessions << session;
++	
++	connect(session, SIGNAL(terminated()), this, SLOT(slotRemoveSession()));
++	connect(session, SIGNAL(destroyed()), this, SLOT(slotRemoveSession()));
++	
++	return session;
++}
++
++JingleSession *JingleSessionManager::session(const QString& sid)
++{
++	JingleSession *sess;
++	sess = 0;
++	for (int i = 0; i < d->sessions.count(); i++)
++	{
++		if (d->sessions.at(i)->sid() == sid)
++		{
++			sess = d->sessions.at(i);
++			break;
++		}
++	}
++	return sess;
++}
++
++
++/**
++ * Returns the next available UDP base port.
++ * The argument n is the number of ports that will be used with the returned base port.
++ */
++int JingleSessionManager::nextUdpPort(int n)
++{
++	if (d->lastUsed == -1)
++		d->lastUsed = d->firstPort - 1;
++
++	int ret = d->lastUsed + 1;
++	d->lastUsed += n;
++	
++	return ret;
++}
++
++void JingleSessionManager::setBasePort(int f)
++{
++	d->firstPort = f;
++}
++
++void JingleSessionManager::setStunServiceAddress(const QHostAddress& addr, int port)
++{
++	qDebug() << "Set Stun address and port";
++	d->stunAddr = addr;
++	d->stunPort = port;
++}
++
++int JingleSessionManager::stunPort() const
++{
++	return d->stunPort;
++}
++
++QHostAddress JingleSessionManager::stunAddress() const
++{
++	return d->stunAddr;
++}
++
++void JingleSessionManager::setSelfAddress(const QHostAddress& addr)
++{
++	d->localAddr = addr;
++}
++
++QHostAddress JingleSessionManager::selfAddr() const
++{
++	return d->localAddr;
++}
+Index: xmpp/jingle/jinglecontent.h
+===================================================================
+--- xmpp/jingle/jinglecontent.h	(revision 0)
++++ xmpp/jingle/jinglecontent.h	(revision 0)
+@@ -0,0 +1,199 @@
++/*
++ * jinglecontent.cpp - Jingle content
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++#ifndef JINGLE_CONTENT_H
++#define JINGLE_CONTENT_H
++
++#include <QObject>
++
++#include "im.h"
++#include "jingleapplication.h"
++#include "jingletransport.h"
++
++class QHostAddress;
++class QDomElement;
++class QUdpSocket;
++namespace XMPP
++{
++	/*
++	 * This class manages a jingle content. It is an essential part of a jingle session.
++	 * 
++	 * FIXME: when a content is removed, the only way to now it is by
++	 * connecting to the destroyed() signal because the JingleContent is deleted by the parent JingleSession.
++	 */
++	class Task;
++	class JingleSession;
++	class JingleContent : public QObject
++	{
++		Q_OBJECT
++	public:
++		enum ReasonType {
++			UnsupportedApplications = 0,
++			UnsupportedApplication = 0,
++			UnsupportedTransports,
++			UnsupportedTransport,
++			NoReason
++		};
++
++		enum Senders {
++			Both = 0,
++			Initiator,
++			Responder
++		};
++
++		JingleContent(JingleSession *parent = 0);
++		virtual ~JingleContent();
++
++		void setRootTask(Task *rt);
++
++		void setParent(JingleSession *parent);
++
++		/*
++		 * Set all the supported application.
++		 * When a session initiate comes in, if we don't find anything
++		 * compatible in the list, it means that the application is
++		 * not supported
++		 */
++		void setSupportedApplications(QList<JingleApplication*>);
++		void setApplication(JingleApplication*);
++
++		/*
++		 * Returns the currently used application.
++		 *
++		 * When the session is in the Pending state, it is the local application.
++		 * When the session is in the Active state, it is the accepted application.
++		 */
++		JingleApplication *application() const;
++
++		void setTransport(JingleTransport*);
++		JingleTransport *transport() const;
++
++		/**
++		 * Set the transport info in the transport.
++		 */
++		void addTransportInfo(const QDomElement& e);
++
++		/*
++		 * Set the creator of this content, the creator only accept 2 values :
++		 * 	* initiator
++		 * 	* responder
++		 */
++		void setCreator(const QString&);
++		
++		/*
++		 * Set the direction for this jingle content.
++		 * The direction is set by the peer(s) that send(s) data.
++		 * Values can be "initiator", "responder" or "both".
++		 */
++		void setSenders(const Senders s);
++
++		/*
++		 * Set this content's name.
++		 */
++		void setName(const QString&);
++
++		/*
++		 * Fill this content from a QDomElement.
++		 * Calling this method will automatically add the content(s)
++		 * to the remote contents list.
++		 */
++		void fromElement(const QDomElement&);
++
++		/*
++		 * Return a QDomElement with the content element and all it's children
++		 * so it's ready to be sent.
++		 */
++		QDomElement contentElement(JingleTransport::TransportType tType = JingleTransport::NoCandidate, JingleApplication::ApplicationType aType = JingleApplication::NoApplication);
++
++		/*
++		 * This is called to write data on the established stream.
++		 * Data will be written on the channel channel (0 = RTP, 1 = RTCP)
++		 */
++		void writeDatagram(const QByteArray&, JingleTransport::Channel channel = JingleTransport::Rtp);
++
++		/* 
++		 * Get all data available on the socket.
++		 * Data will be read from the channel channel (0 = RTP, 1 = RTCP)
++		 */
++		QByteArray readAll(JingleTransport::Channel channel = JingleTransport::Rtp);
++
++		void activated();
++		void muted();
++
++		QString creator() const;
++		QString name() const;
++		Senders senders() const;
++
++		bool isReady() const;
++
++		JingleContent& operator=(const JingleContent&);
++
++		JingleSession *parent() const;
++
++		Task* rootTask() const;
++
++		void sessionInfo(const QDomElement& info);
++
++		ReasonType reason() const;
++
++		static QString sendersToStr(const Senders s);
++		static Senders strToSenders(const QString& s);
++		
++		void stopNegotiation();
++		
++	signals:
++		/**
++		 * Emitted when the transport has succeeded for this content.
++		 * Data can be transferred with this content as soon as this
++		 * signal is emitted.
++		 */
++		void established();
++
++		/**
++		 * Emitted when data is ready to be read.
++		 * The given argument is the channel on which data is ready
++		 * (e.g. : 0 = RTP, 1 = RTCP)
++		 */
++		void readyRead(int);
++
++		/**
++		 * Emitted when the direction of the content has changed.
++		 * For example, when one of the peers wants to stop sending
++		 * video but keeps receiving
++		 * (both -> responder or both -> initiator, depending on
++		 * who stops sending.)
++		 */
++		void sendersChanged();
++
++	public slots:
++		/*
++		 * Starts the content. This is called when the JingleApplication,
++		 * the JingleTransport and the parent session are set.
++		 * It wil also start the transport.
++		 */
++		void start();
++		
++	private:
++		class Private;
++		Private *d;
++		
++	};
++}
++
++#endif
+Index: xmpp/jingle/jingleaction.h
+===================================================================
+--- xmpp/jingle/jingleaction.h	(revision 0)
++++ xmpp/jingle/jingleaction.h	(revision 0)
+@@ -0,0 +1,108 @@
++/*
++ * jingleaction.h - Represent a Jingle action
++ *
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++#ifndef JINGLE_ACTION_H
++#define JINGLE_ACTION_H
++
++#include <QDomElement>
++#include <QString>
++
++#include "im.h"
++
++namespace XMPP
++{
++	class JingleAction /*: public QObject*/
++	{
++	//	Q_OBJECT
++	public:
++		enum Action {
++			SessionInitiate = 0,
++			SessionTerminate,
++			SessionAccept,
++			SessionInfo,
++			ContentAdd,
++			ContentRemove,
++			ContentModify,
++			TransportReplace,
++			TransportAccept,
++			TransportInfo,
++			NoAction
++		};
++
++		/*
++		 * Construct an empty JingleAction.
++		 * Can be used to create a Jingle action.
++		 * It can also be used to create an instance of the class to
++		 * be filled with setStanza() or setData()
++		 */
++		JingleAction();
++
++		/*
++		 * Construct a JingleAction with the provided stanza.
++		 * If an error occurs, isValud will return false.
++		 */
++		JingleAction(const QDomElement& stanza);
++		~JingleAction();
++
++		/*
++		 * Return true if the action is valid (not a jingle action was given)
++		 */
++		bool isValid() const;
++		
++		/*
++		 * Convert an action attribute in an Action enumerated type.
++		 */
++		Action jingleAction(const QString& action);
++
++		/* Set the Xml stanza.
++		 *
++		 * The data must contain the whole stanza.
++		 * Returns EXIT_SUCCESS on success and EXIT_FAILURE on failure.
++		 */
++		int setStanza(const QDomElement& data);
++
++		/* Returns a stanza ready to be sent*/
++		QDomElement stanza();
++		
++		QString id() const;
++		Jid from() const;
++		Jid to() const;
++		QString initiator() const;
++		QString sid() const;
++		Action action() const;
++
++		/* Set the Xml data.
++		 *
++		 * The data must contain what is to go between <jingle> and </jingle>.
++		 * All other informations (contained in <iq> and <jingle>) are
++		 * set with appropriate methods (TODO).
++		 */
++		void setData(const QDomElement& data);
++
++		/* Returns the data contained between <jingle> and </jingle>.*/
++		QDomElement data() const;
++
++	private:
++		class Private;
++		Private *d;
++	};
++}
++
++#endif //JINGLE_ACTION_H
+Index: xmpp/jingle/jingleicetransport.h
+===================================================================
+--- xmpp/jingle/jingleicetransport.h	(revision 0)
++++ xmpp/jingle/jingleicetransport.h	(revision 0)
+@@ -0,0 +1,109 @@
++/*
++ * jingleicetransport.h
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++#ifndef JINGLE_ICE_TRANSPORT_H
++#define JINGLE_ICE_TRANSPORT_H
++
++#include <QObject>
++
++#include "im.h"
++#include "jinglecontent.h"
++#include "jingletransport.h"
++#include "ice176.h"
++
++class QHostAddress;
++class QDomElement;
++class QUdpSocket;
++
++namespace XMPP
++{
++	/*
++	 * This class contains all information about a particular transport in a jingle content.
++	 * This is the Ice-udp jingle transport.
++	 */
++	
++	class JingleContent;
++	class JingleIceTransport : public JingleTransport
++	{
++		Q_OBJECT
++	public:
++		JingleIceTransport(Mode mode, JingleContent *parent = 0, const QDomElement& elem = QDomElement());
++		~JingleIceTransport();
++
++		virtual void init();
++		
++		virtual void start();
++		virtual void setComponentCount(int);
++		
++		/*
++		 * Adds transport info (mostly a candidate). Doing so will try to
++		 * connect to this candidate.
++		 */
++		virtual void addTransportInfo(const QDomElement&);
++
++		/*
++		 * Returns the transport type of this content.
++		 */
++		virtual QString transportNS() const;
++		
++		/*
++		 * This is called to write RTP data on the established stream.
++		 */
++		virtual void writeDatagram(const QByteArray&, Channel channel = Rtp);
++
++		/* 
++		 * Get all data available on the socket.
++		 * Usually, this will be an RTP packet.
++		 */
++		virtual QByteArray readAll(Channel channel = Rtp);
++
++		/*
++		 * Gets a list containing all local addresses.
++		 */
++		QList<Ice176::LocalAddress> getAddresses();
++		
++		QDomElement toXml(TransportType type);
++		
++	private slots:
++		void slotIceStarted();
++		void slotIceComponentReady(int);
++		void slotIceLocalCandidatesReady(const QList<XMPP::Ice176::Candidate>&);
++	
++	signals:
++		void started();
++
++	private:
++		class Private;
++		Private *d;
++
++		/* 
++		 * Transforms a candidate xml element into a Ice176::Candidate.
++		 */
++		Ice176::Candidate xmlToCandidate(const QDomElement& c);
++
++		/*
++		 * Quite obvious.
++		 */
++		QDomElement candidateToXml(const Ice176::Candidate& candidate);
++
++		void sendLocalCandidates(const QList<XMPP::Ice176::Candidate>& candidates);
++	};
++}
++
++#endif
+Index: xmpp/jingle/jinglesessionmanager.h
+===================================================================
+--- xmpp/jingle/jinglesessionmanager.h	(revision 0)
++++ xmpp/jingle/jinglesessionmanager.h	(revision 0)
+@@ -0,0 +1,123 @@
++/*
++ * jinglesessionmanager.h - Manager for Jingle sessions
++ *
++ * Manages all Jingle sessions.
++ * This class receives all incoming jingle actions and perform these
++ * actions on the right jingle session.
++ * It also keeps information about protocols supported by the application (transports, payloads, profiles)
++ *
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++#ifndef JINGLE_SESSION_MANAGER
++#define JINGLE_SESSION_MANAGER
++
++//#include <QObject>
++
++#include "im.h"
++//#include "xmpp_client.h"
++//#include "xmpp_jid.h"
++
++namespace XMPP
++{
++	class JingleSession;
++	class JingleContent;
++	class JingleApplication;
++	//class JingleReason;
++	class /*IRIS_EXPORT*/ JingleSessionManager : public QObject
++	{
++		Q_OBJECT
++	public:
++		JingleSessionManager(Client*);
++		~JingleSessionManager();
++
++		static JingleSessionManager *manager();
++		
++		/*
++		 * Create a new jingle session to a Jid and with a list of contents,
++		 * starts it and returns it.
++		 */
++		XMPP::JingleSession *createNewSession(const Jid&);
++		
++		/*
++		 * Set supported transports for jingle sessions.
++		 */
++		void setSupportedTransports(const QStringList&);
++		
++		void setSupportedApplications(QList<JingleApplication*>&);
++
++		QList<JingleApplication*> supportedApplications() const;
++		
++		/*
++		 * Provides the next available UDP port.
++		 */
++		int nextUdpPort(int);
++		void setBasePort(int);
++
++		void setStunServiceAddress(const QHostAddress& addr, const int port);
++		int stunPort() const;
++		QHostAddress stunAddress() const;
++
++		void setSelfAddress(const QHostAddress&);
++		QHostAddress selfAddr() const;
++
++		/*
++		 * If set to true, contacts trying to start multiple sessions at the same time
++		 * will be asked to use the already existing session.
++		 * If set to false, multiple sessions with the same contact will be allowed.
++		 *
++		 * Default set to false.
++		 */
++		void setUniqueSession(bool u);
++
++	signals:
++		/*
++		 * Emitted when a new jingle session comes.
++		 */
++		void newJingleSession(XMPP::JingleSession*);
++
++		/*
++		 * Emitted when a session-terminate is received.
++		 */
++		void sessionTerminate(XMPP::JingleSession*);
++	
++	private slots:
++		/*
++		 * Removes the session emitting the signal to which this slot is connected from the list.
++		 */
++		void slotRemoveSession();
++		
++		/*
++		 * Slot executed each time a Jingle action arrives.
++		 */
++		void slotJingleActionReady();
++
++		void cleanup();
++		
++	private:
++		class Private;
++		Private *d;
++		/*
++		 * Returns the session with the SID sid.
++		 */
++		JingleSession *session(const QString& sid);
++
++		static JingleSessionManager *self;
++	};
++}
++
++#endif
+Index: xmpp/jingle/jinglesession.cpp
+===================================================================
+--- xmpp/jingle/jinglesession.cpp	(revision 0)
++++ xmpp/jingle/jinglesession.cpp	(revision 0)
+@@ -0,0 +1,541 @@
++/*
++ * jinglesession.cpp - Jingle session
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#include <QString>
++#include <QUdpSocket>
++
++#include "jinglesession.h"
++#include "jingleaction.h"
++#include "jinglesessionmanager.h"
++#include "jinglecontent.h"
++
++using namespace XMPP;
++
++static QString genSid()
++{
++	QString s;
++	//int id_seed = rand() % 0xffff;
++	s.sprintf("a%x%x", rand() % 0xffff, rand() % 0xffff);
++	return s;
++}
++
++class JingleSession::Private
++{
++public:
++	Private() : isInitiator(false),
++		    state(Pending)
++	{}
++
++	Jid to;
++	QList<JingleContent*> contents;
++	QList<JingleContent*> contentsToRemove;
++	QList<JingleContent*> pendingContentsToRemove;
++	Task *rootTask;
++	QString sid;
++	QString initiator;
++	QString responder;
++	
++	bool isInitiator;
++	State state;
++};
++
++JingleSession::JingleSession(Task *t, const Jid &j, JingleSessionManager *parent)
++: d(new Private)
++{
++	d->to = j;
++	d->rootTask = t;
++}
++
++JingleSession::~JingleSession()
++{
++	foreach (JingleContent *content, d->contents)
++	{
++		delete content;
++	}
++
++	delete d;
++}
++
++Task *JingleSession::rootTask() const
++{
++	return d->rootTask;
++}
++
++void JingleSession::addContent(JingleContent *c)
++{
++	c->setCreator(isInitiator() ? "initiator" : "responder");
++	c->setParent(this);
++	d->contents << c;
++	//connect(c, SIGNAL(established()), this, SLOT(slotContentConnected()));
++}
++
++void JingleSession::addContents(const QList<JingleContent*>& l)
++{
++	foreach (JingleContent *content, l)
++	{
++		content->setCreator(isInitiator() ? "initiator" : "responder");
++		content->setParent(this);
++		d->contents << content;
++	}
++}
++
++Jid JingleSession::to() const
++{
++	return d->to;
++}
++
++QList<JingleContent*> JingleSession::contents() const
++{
++	return d->contents;
++}
++
++bool JingleSession::isStarted() const
++{
++	return !d->sid.isNull();
++}
++
++void JingleSession::start()
++{
++	// Generate session ID
++	d->sid = genSid();
++	
++	foreach(JingleContent *c, d->contents)
++	{
++		c->start();
++	}
++
++	JT_JingleAction *iAction = new JT_JingleAction(d->rootTask);
++	iAction->setSession(this);
++	connect(iAction, SIGNAL(finished()), this, SLOT(slotInitiateAcked()));
++	iAction->initiate();
++	iAction->go(true);
++}
++
++void JingleSession::slotInitiateAcked()
++{
++	JT_JingleAction *action = dynamic_cast<JT_JingleAction*>(sender());
++	if (!action)
++		return;
++
++	if (!action->success())
++	{
++		emit error(action->statusCode(), action->statusString());
++	}
++
++}
++
++void JingleSession::slotContentConnected()
++{
++	//FIXME:Actually, when it is connected, the application can start streaming.
++	//	Also, this can happen on each content individually.
++	//	The signal is to be catched by the application and not here.
++	
++	//No need for information from this content anymore.
++/*	disconnect(sender(), 0, this, 0);
++	bool allOk = true;
++	
++	// Checking if all contents are connected.
++	foreach (JingleContent *content, d->contents)
++	{
++		if (!content->isReady())
++		{
++			allOk = false;
++			break;
++		}
++	}
++	
++	if (allOk)
++		d->allContentsConnected = true;
++	else
++		return;
++*/
++}
++
++bool JingleSession::isInitiator() const
++{
++	return d->isInitiator;
++}
++
++void JingleSession::slotSessionAcceptAcked()
++{
++	d->state = Active;
++	emit stateChanged();
++}
++
++void JingleSession::acceptSession()
++{
++	//Check if contents are being removed (don't leave them in session-accept)
++	QList<JingleContent*> acceptContents;
++	foreach (JingleContent *c, contents())
++	{
++		bool remove = false;
++		
++		foreach (JingleContent *r, d->pendingContentsToRemove)
++		{
++			if (c == r)
++			{
++				remove = true;
++				break;
++			}
++		}
++
++		if (!remove)
++			acceptContents << c;
++	}
++	//Accept session.
++	JT_JingleAction *sAction = new JT_JingleAction(d->rootTask);
++	sAction->setSession(this);
++	connect(sAction, SIGNAL(finished()), this, SLOT(slotSessionAcceptAcked()));
++	sAction->sessionAccept(acceptContents);
++	sAction->go(true);
++}
++
++void JingleSession::acceptContent()
++{
++	//TODO:Implement me !
++}
++
++void JingleSession::removeContent(QList<JingleContent*>& c)
++{	
++	if (d->contentsToRemove.count() != 0)
++	{
++		d->pendingContentsToRemove << c;
++		return;
++	}
++
++	// Removing only existing contents.
++	foreach (JingleContent *content, c)
++	{
++		for (int i = 0; i < d->contents.count(); i++)
++		{
++			if (content == d->contents[i])
++			{
++				content->stopNegotiation();
++				d->contentsToRemove << d->contents.takeAt(i--);
++			}
++		}
++	}
++
++	if (d->contentsToRemove.count() == 0)
++		return;
++
++	//TODO:We don't manage that here, the responder will have to terminate the session itself.
++	/*if (state() == Active && d->contents.count() == 0)
++	{
++		qDebug() << "Session terminate because there is no more contents here.";
++		//Session terminate instead.
++		//Reason will be set when konqueror can show me the jingle spec. BLOCKER
++		sessionTerminate(QDomElement());
++		return;
++	}*/
++	
++	JT_JingleAction *rAction = new JT_JingleAction(d->rootTask);
++	rAction->setSession(this);
++	connect(rAction, SIGNAL(finished()), this, SLOT(slotRemoveAcked()));
++	rAction->removeContents(d->contentsToRemove);
++	rAction->go(true);
++}
++
++void JingleSession::removeContent(JingleContent* c) // Provided for convenience.
++{
++	removeContent(QList<JingleContent*>() << c);
++}
++
++void JingleSession::slotRemoveAcked()
++{
++	// Remove contents from the d->contents list.
++	foreach (JingleContent *content, d->contentsToRemove)
++	{
++		delete content;
++	}
++
++	d->contentsToRemove.clear();
++	
++	if (d->pendingContentsToRemove.count() != 0)
++		removeContent(d->pendingContentsToRemove);
++}
++
++void JingleSession::setSid(const QString& s)
++{
++	d->sid = s;
++}
++
++QString JingleSession::sid() const
++{
++	return d->sid;
++}
++
++void JingleSession::setInitiator(const QString& init, bool isInit)
++{
++	d->initiator = init;
++	d->isInitiator = isInit;
++}
++
++void JingleSession::setResponder(const QString& resp, bool isResp)
++{
++	d->responder = resp;
++	d->isInitiator = !isResp;
++}
++
++void JingleSession::addContent(const QDomElement& content)
++{
++	JingleContent *c = new JingleContent(this);
++
++	c->setSupportedApplications(JingleSessionManager::manager()->supportedApplications());
++
++	//connect(c, SIGNAL(started()), this, SLOT(slotContentReady()));
++	//connect(c, SIGNAL(established()), this, SLOT(slotContentConnected()));
++	
++	d->contents << c;
++	
++	c->fromElement(content);
++}
++
++void JingleSession::sessionTerminate(const QDomElement& r)
++{
++	JT_JingleAction *tAction = new JT_JingleAction(d->rootTask);
++	tAction->setSession(this);
++	connect(tAction, SIGNAL(finished()), this, SLOT(slotSessTerminated()));
++	tAction->terminate(r);
++	tAction->go(true);
++}
++
++QString JingleSession::initiator() const
++{
++	return d->initiator;
++}
++
++JingleContent *JingleSession::contentWithName(const QString& n)
++{
++	foreach (JingleContent *content, d->contents)
++	{
++		if (content->name() == n)
++			return content;
++	}
++
++	return 0;
++}
++
++void JingleSession::setTo(const Jid& to)
++{
++	d->to = to;
++}
++
++void JingleSession::slotSessTerminated()
++{
++	emit terminated();
++}
++
++JingleSession::State JingleSession::state() const
++{
++	return d->state;
++}
++
++void JingleSession::appendAction(JingleAction *action)
++{
++	switch (action->action())
++	{
++	case JingleAction::SessionTerminate :
++		qDebug() << "SessionTerminate.\nThe other peer wants to terminate the session" << action->sid();
++		
++		emit terminated();
++		break;
++	case JingleAction::TransportInfo :
++	{
++		qDebug() << "TransportInfo";
++		if (action->data().firstChildElement().tagName() != "content")
++		{
++			qDebug() << "bad transport-info action";
++			return;
++		}
++		
++		JingleContent *c = contentWithName(action->data().firstChildElement().attribute("name"));
++		if (c)
++			c->addTransportInfo(action->data().firstChildElement());
++		else
++		{
++			qDebug() << "No such content :" << action->data().firstChildElement().attribute("name");
++		}
++		
++		break;
++	}
++	case JingleAction::SessionAccept :
++	{
++		qDebug() << "SessionAccept";
++		QDomElement content = action->data().firstChildElement();
++
++		while (!content.isNull())
++		{
++			//Adding application.
++			JingleContent *c = contentWithName(content.attribute("name"));
++			
++			QDomElement desc = content.firstChildElement();
++			QDomElement pApp;
++			while (!desc.isNull())
++			{
++				if (desc.tagName() == "description")
++				{
++					pApp = desc;
++					break;
++				}
++
++				desc = desc.nextSiblingElement();
++			}
++			
++			if (pApp.isNull())
++			{
++				sessionTerminate();//FIXME:Precise the reason (e.g. no application)
++				return;
++			}
++
++			JingleApplication *app = JingleApplication::createFromXml(pApp, c);
++			if (app != 0)
++			{
++				c->setApplication(app);
++			}
++			else
++			{
++				// Coming here would be weird though, Just ignoring for now.
++				qDebug() << "Application not supported";
++			}
++			
++			content = content.nextSiblingElement();
++		}
++
++		d->state = Active;
++
++		emit stateChanged();
++		break;
++	}
++	case JingleAction::SessionInfo :
++	{
++		QDomElement info = action->data().firstChildElement();
++		/*
++		 * Currently, no session-info action is to be managed by the
++		 * session itself. Passing it to contents.
++		 */
++
++		foreach (JingleContent *c, d->contents)
++		{
++			c->sessionInfo(info);
++		}
++		break;
++	}
++	case JingleAction::ContentRemove :
++	{
++		QDomElement content = action->data().firstChildElement();
++		while (!content.isNull())
++		{
++			QString name = content.attribute("name");
++
++			for (int j = 0; j < contents().count(); j++)
++			{
++				if (name == contents()[j]->name())
++				{
++					//FIXME:should it be the role of the application to delete it ?
++					//emit contentRemoved(d->contents.takeAt(j--));
++					delete d->contents.takeAt(j--);
++					break;
++				}
++			}
++
++			content = content.nextSiblingElement();
++		}
++		break;
++	}
++	case JingleAction::ContentModify :
++	{
++		if (action->data().firstChildElement().tagName() != "content")
++			break;
++
++		QDomElement content = action->data().firstChildElement();
++
++		JingleContent *c = contentWithName(content.attribute("name"));
++		
++		if (!c)
++			break;
++
++		c->setSenders(JingleContent::strToSenders(content.attribute("senders")));
++	}
++	case JingleAction::ContentAdd :
++	case JingleAction::TransportReplace :
++	case JingleAction::TransportAccept :
++	default :
++		qDebug() << "JingleSession::appendAction() : Not implemented yet !";
++		//TODO:must send "not implemented" stanza.
++		//TODO:should actually be implemented...
++	}
++}
++
++QString JingleSession::responder() const
++{
++	return d->responder;
++}
++
++//--------------------------
++// JingleReason
++//--------------------------
++
++
++class JingleReason::Private
++{
++public:
++	QString reasonText;
++	Type type;
++};
++
++JingleReason::JingleReason()
++: d(new Private)
++{
++	d->reasonText = "";
++	d->type = NoReason;
++}
++
++JingleReason::JingleReason(JingleReason::Type type, const QString& text)
++: d(new Private)
++{
++	d->reasonText = text;
++	d->type = type;
++}
++
++JingleReason::~JingleReason()
++{
++
++}
++
++void JingleReason::setText(const QString& r)
++{
++	d->reasonText = r;
++}
++
++void JingleReason::setType(JingleReason::Type t)
++{
++	d->type = t;
++}
++
++QString JingleReason::text() const
++{
++	return d->reasonText;
++}
++
++JingleReason::Type JingleReason::type() const
++{
++	return d->type;
++}
+Index: xmpp/jingle/jingletasks.cpp
+===================================================================
+--- xmpp/jingle/jingletasks.cpp	(revision 0)
++++ xmpp/jingle/jingletasks.cpp	(revision 0)
+@@ -0,0 +1,280 @@
++/*
++ * jingletasks.cpp - Tasks for the Jingle specification.
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#include <QtDebug>
++#include <QNetworkInterface>
++#include <QUdpSocket>
++#include <stdio.h>
++
++#include "jinglesessionmanager.h"
++#include "jingleaction.h" 
++#include "jingletasks.h"
++#include "jingleapplication.h"
++#include "jingletransport.h"
++
++#include "protocol.h"
++#include "xmpp_xmlcommon.h"
++
++using namespace XMPP;
++
++//------------------------
++// JT_PushJingleAction
++//------------------------
++
++static JingleReason::Type stringToType(const QString& str)
++{
++	if (str == "busy")
++	{
++		return JingleReason::Busy;
++	}
++	else if (str == "decline")
++	{
++		return JingleReason::Decline;
++	}
++	else
++	{
++		return JingleReason::NoReason;
++	}
++
++}
++
++class JT_PushJingleAction::Private
++{
++public:
++	JingleSession *incomingSession;
++	QList<JingleSession*> incomingSessions;
++	QDomElement iq;
++	//QString id;
++	//Jid from;
++	QList<JingleAction*> actions;
++};
++
++JT_PushJingleAction::JT_PushJingleAction(Task *parent)
++: Task(parent), d(new Private)
++{
++}
++
++JT_PushJingleAction::~JT_PushJingleAction()
++{
++	delete d;
++}
++
++void JT_PushJingleAction::onGo()
++{
++//	send(d->iq);
++}
++
++bool JT_PushJingleAction::hasPendingAction()
++{
++	return !d->actions.isEmpty();
++}
++
++JingleAction* JT_PushJingleAction::takeNextPendingAction()
++{
++	if (hasPendingAction())
++		return d->actions.takeFirst();
++	
++	return 0;
++}
++
++bool JT_PushJingleAction::take(const QDomElement &x)
++{
++	if (x.firstChildElement().tagName() != "jingle")
++		return false;
++	
++	d->actions << new JingleAction(x);
++
++	emit jingleActionReady();
++
++	return true;
++}
++
++void JT_PushJingleAction::ack(const QString& id, const Jid& to)
++{
++	d->iq = createIQ(doc(), "result", to.full(), id);
++	send(d->iq);
++}
++
++void JT_PushJingleAction::unknownSession(const QString& id, const Jid& to)
++{
++	d->iq = createIQ(doc(), "error", to.full(), id);
++	
++	QDomElement error = doc()->createElement("error");
++	error.setAttribute("type", "cancel");
++	QDomElement inf = doc()->createElement("item-not-found");
++	inf.setAttribute("xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
++	QDomElement us = doc()->createElement("unknown-session");
++	us.setAttribute("xmlns", NS_JINGLE_ERROR);
++
++	error.appendChild(inf);
++	error.appendChild(us);
++
++	d->iq.appendChild(error);
++
++	send(d->iq);
++}
++
++//-----------------------
++// JT_JingleAction
++//-----------------------
++
++class JT_JingleAction::Private
++{
++public :
++	JingleSession *session;
++	QDomElement iq;
++	QString sid;
++	Jid to;
++};
++
++JT_JingleAction::JT_JingleAction(Task *parent)
++: Task(parent), d(new Private())
++{
++	d->session = 0;
++}
++
++JT_JingleAction::~JT_JingleAction()
++{
++	delete d;
++}
++
++void JT_JingleAction::setSession(JingleSession *sess)
++{
++	d->session = sess;
++}
++
++void JT_JingleAction::initiate()
++{
++	createJingleIq("session-initiate");
++	
++	QDomElement jingle = d->iq.firstChildElement();
++	jingle.setAttribute("initiator", d->session->initiator());
++
++	foreach (JingleContent *content, d->session->contents())
++	{
++		jingle.appendChild(content->contentElement(JingleTransport::LocalCandidates, JingleApplication::LocalApplication));
++	}
++}
++
++void JT_JingleAction::contentAccept()
++{
++	//createJingleIq("content-accept");
++}
++
++void JT_JingleAction::sessionInfo(const QDomElement& e)
++{
++	createJingleIq("session-info");
++
++	// Adding the argument to the Jingle element.
++	d->iq.firstChildElement().appendChild(e);
++}
++
++void JT_JingleAction::terminate(const QDomElement& r)
++{
++	createJingleIq("session-terminate");
++
++	QDomElement jingle = d->iq.firstChildElement();
++
++	if (!r.isNull())
++		jingle.appendChild(r);
++	/*else
++	 * 	add an empty reason.
++	 */
++}
++
++void JT_JingleAction::removeContents(const QList<JingleContent*>& c)
++{
++	createJingleIq("content-remove");
++
++	QDomElement jingle = d->iq.firstChildElement();
++	
++	foreach (JingleContent *content, c)
++	{
++		QDomElement contentElem = doc()->createElement("content");
++		contentElem.setAttribute("name", content->name());
++		jingle.appendChild(contentElem);
++	}
++}
++
++void JT_JingleAction::transportInfo(const QString& contentName, const QDomElement& transport)
++{
++	createJingleIq("transport-info");
++	
++	QDomElement jingle = d->iq.firstChildElement();
++
++	QDomElement content = doc()->createElement("content");
++	content.setAttribute("name", contentName);
++	content.setAttribute("creator", d->session->contentWithName(contentName)->creator());
++
++	content.appendChild(transport);
++	jingle.appendChild(content);
++}
++
++void JT_JingleAction::sessionAccept(const QList<JingleContent*>& contents)
++{
++	createJingleIq("session-accept");
++	
++	QDomElement jingle = d->iq.firstChildElement();
++	jingle.setAttribute("responder", d->session->responder());
++
++	foreach (JingleContent *content, contents)
++	{
++		jingle.appendChild(content->contentElement(JingleTransport::NoCandidate, JingleApplication::Application));
++	}
++}
++
++bool JT_JingleAction::take(const QDomElement &x)
++{
++	if (!iqVerify(x, d->session->to().full(), id()))
++		return false;
++	
++	if (x.attribute("type") == "result")
++		setSuccess();
++	else
++		setError(x);
++
++	return true;
++}
++
++void JT_JingleAction::onGo()
++{
++	send(d->iq);
++}
++
++void JT_JingleAction::createJingleIq(const QString& action)
++{
++	if (d->session == 0)
++	{
++		qDebug() << "d->session is NULL, did you set it calling JT_JingleAction::setSession() ?";
++		return;
++	}
++
++	d->iq = createIQ(doc(), "set", d->session->to().full(), id());
++	d->iq.setAttribute("from", client()->jid().full());
++
++	QDomElement jingle = doc()->createElement("jingle");
++	jingle.setAttribute("xmlns", NS_JINGLE);
++	jingle.setAttribute("action", action);
++	//jingle.setAttribute("initiator", d->session->initiator());
++	jingle.setAttribute("sid", d->session->sid());
++
++	d->iq.appendChild(jingle);
++}
++
+Index: xmpp/jingle/jingle.pri
+===================================================================
+--- xmpp/jingle/jingle.pri	(revision 0)
++++ xmpp/jingle/jingle.pri	(revision 0)
+@@ -0,0 +1,26 @@
++INCLUDEPATH += $$PWD/../..
++DEPENDPATH += $$PWD/../..
++
++HEADERS += \
++	$$PWD/jingleaction.h \
++	$$PWD/jingleapplication.h \
++	$$PWD/jinglecontent.h \
++	$$PWD/jingleicetransport.h \
++	$$PWD/jingles5btransport.h \
++	$$PWD/jinglertpapplication.h \
++	$$PWD/jinglesession.h \
++	$$PWD/jinglesessionmanager.h \
++	$$PWD/jingletasks.h \
++	$$PWD/jingletransport.h \
++
++SOURCES += \
++	$$PWD/jingleaction.cpp \
++	$$PWD/jingleapplication.cpp \
++	$$PWD/jinglecontent.cpp \
++	$$PWD/jingleicetransport.cpp \
++	$$PWD/jingles5btransport.cpp \
++	$$PWD/jinglertpapplication.cpp \
++	$$PWD/jinglesession.cpp \
++	$$PWD/jinglesessionmanager.cpp \
++	$$PWD/jingletasks.cpp \
++	$$PWD/jingletransport.cpp \
+Index: xmpp/jingle/jinglesession.h
+===================================================================
+--- xmpp/jingle/jinglesession.h	(revision 0)
++++ xmpp/jingle/jinglesession.h	(revision 0)
+@@ -0,0 +1,338 @@
++/*
++ * jinglesession.cpp - Jingle session
++ * 
++ * This class defines a Jingle Session which contains all information about the session.
++ * This is here that the state machine is and where almost everything is done for a session.
++ * 
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++#ifndef JINGLE_SESSION
++#define JINGLE_SESSION
++
++#include <QObject>
++#include <QString>
++#include <QDomElement>
++
++#define NS_JINGLE			"urn:xmpp:jingle:1"
++#define NS_JINGLE_ERROR			"urn:xmpp:jingle:errors:0"
++#define NS_JINGLE_APPS_RTP		"urn:xmpp:jingle:apps:rtp:1"
++#define NS_JINGLE_APPS_RTP_INFO		"urn:xmpp:jingle:apps:rtp:info:1"
++#define NS_JINGLE_TRANSPORTS_S5B	"urn:xmpp:jingle:transports:s5b:1"
++#define NS_JINGLE_TRANSPORTS_RAW 	"urn:xmpp:jingle:transports:raw-udp:1"
++#define NS_JINGLE_TRANSPORTS_ICE 	"urn:xmpp:jingle:transports:ice-udp:1"
++
++#include "im.h"
++//#include "xmpp_client.h"
++//#include "xmpp_jid.h"
++#include "jingletasks.h"
++#include "jinglesessionmanager.h"
++#include "jinglecontent.h"
++
++namespace XMPP
++{
++	/*
++	 * This class defines a jingle reason used when sending
++	 * a session-terminate jingle action.
++	 */
++	class /*IRIS_EXPORT*/ JingleReason
++	{
++	public:
++		/*
++		 * Default constructor : create a No Reason reason with no text.
++		 */
++		JingleReason();
++		enum Type {
++			Decline = 0,
++			Busy,
++			UnsupportedApplications,
++			NoReason
++		};
++		/*
++		 * Creates a reason with a type and a text reason.
++		 */
++		JingleReason(JingleReason::Type, const QString& text = QString());
++		~JingleReason();
++		
++		//static Type stringToType(const QString&);
++
++		void setType(Type);
++		void setText(const QString&);
++		Type type() const;
++		QString text() const;
++	private:
++		class Private;
++		Private *d;
++	};
++
++	class JingleAction;
++	class JT_JingleAction;
++	class JT_PushJingleSession;
++
++	class /*IRIS_EXPORT*/ JingleSession : public QObject
++	{
++		Q_OBJECT
++	public:
++		JingleSession();
++		JingleSession(Task*, const Jid&, JingleSessionManager *parent = 0);
++		~JingleSession();
++
++		/*
++		 * Adds a content to the session.
++		 * Currently, the content is just added in the contents list.
++		 * TODO: addContent should add a content even when the session
++		 * is in ACTIVE state so the session is modified with a content-add action.
++		 */
++		void addContent(JingleContent*);
++
++		/*
++		 * Same as above but the content is in a QDomElement form.
++		 * For convenience.
++		 */
++		void addContent(const QDomElement&);
++
++		/*
++		 * Adds multiple contents to the session. It is advised
++		 * to use this method instead of addContent() even for
++		 * one content.
++		 */
++		void addContents(const QList<JingleContent*>&);
++
++		/*
++		 * Adds transport info to the session.
++		 * Mostly, it adds a candidate to the session
++		 * and the session starts to try to connect to it.
++		 * Argument is a QDomElement containing
++		 * the jingle tag in a jingle stanza.
++		 */
++		void addTransportInfo(const QDomElement&);
++
++		/*
++		 * Sends a content-accept jingle action.
++		 * Not used yet, may be removed.
++		 */
++		void acceptContent();
++
++		/*
++		 * Sends a session-accept jingle action.
++		 * Not used yet, may be removed.
++		 */
++		void acceptSession();
++
++		/*
++		 * Sends a remove-content jingle action with the content
++		 * name given as an argument.
++		 */
++		void removeContent(JingleContent* c);
++
++		/*
++		 * Sends a remove-content jingle action with the contents
++		 * name given as an argument.
++		 * Prefer this method instead of removeContent(JingleContent*);
++		 */
++		void removeContent(QList<JingleContent*>&);
++
++		/*
++		 * Sends a session-terminate jingle action with the reason r.
++		 * Once the responder sends the acknowledgement stanza, the
++		 * signal terminated() is emitted.
++		 *
++		 * If the application wants to terminate the session,
++		 * this is the method to use. There are multiple reasons
++		 * for terminating a session :
++		 * 	* Declined
++		 * 	* Normal termination
++		 * 	* Unable to start device (Webcam or audio)
++		 */
++		void sessionTerminate(const QDomElement& r = QDomElement());
++
++		/*
++		 * Returns the Jid of the other peer with whom the session is established.
++		 */
++		Jid to() const;
++
++		/*
++		 * Returns the contents of this session.
++		 * In Pending state, it should return contents sent by the other peer.
++		 * In Active state, it should return contents being used.
++		 * This is right as we know which contents we do support.
++		 */
++		QList<JingleContent*> contents() const;
++
++		
++		/*
++		 * Returns true if the session is started.
++		 * The session is started when the session-initiate has been sent.
++		 */
++		bool isStarted() const;
++
++		/*
++		 * Starts the session by sending a session-initiate jingle action.
++		 * if a SID has been set, it will be overwritten by a new generated one.
++		 */
++		void start();
++		
++		/* 
++		 * This method sets the SID.
++		 * For an incoming session, the sid must be set and not
++		 * randomly generated.
++		 * Calling the start() method after this one will reset the SID.
++		 */
++		void setSid(const QString&);
++
++		/*
++		 * Sets peer's Jid.
++		 */
++		void setTo(const Jid&);
++
++		/*
++		 * Sets the initiator Jid.
++		 * This can be already set if a session is redirected.
++		 * Session redirection is NOT supported yet.
++		 */
++		void setInitiator(const QString&, bool isInit = false);
++		void setResponder(const QString&, bool isResp = false);
++
++		/*
++		 * Return initiator Jid.
++		 */
++		QString initiator() const;
++
++		QString responder() const;
++		
++		/*
++		 * Returns a pointer to the first JingleContent with the name n.
++		 * Each content must have a unique name so returning the first
++		 * one returns the only one.
++		 */
++		JingleContent *contentWithName(const QString& n);
++		
++		/*
++		 * Returns the sid of this session.
++		 */
++		QString sid() const;
++
++		/*
++		 * Call this function when a session-accept jingle action has been received for it.
++		 * Once the session is accepted, we will get the supported payloads of the initiator
++		 * and switch to Active state, Media can begin to flow on each content's socket.
++		 */
++		void sessionAccepted(const QDomElement&);
++
++		// Session states
++		enum State {
++			Pending = 0,
++			Ringing,
++			Hold,
++			Mute,
++			Active,
++			Ended
++		};
++		
++		/*
++		 * Returns the current state of the session.
++		 */
++		State state() const;
++
++		/*
++		 * Add an action to the session so it is properly processed.
++		 */
++		void appendAction(JingleAction *action);	
++
++		/*
++		 * Return true if this session has been initiated by us.
++		 */
++		bool isInitiator() const;
++
++		Task *rootTask() const;
++
++	signals:
++		/*
++		 * Emitted when the session has been started (when session-initiate has been acked with no error)
++		 */
++		void started();
++		
++		/*
++		 * Emitted once a session-terminate has been acknowledged or received.
++		 *
++		 * Once this signal has been sent, Iris will forget about it.
++		 * It's the job of the application to delete it.
++		 */
++		void terminated();
++		
++		/**
++		 * Emitted when the session state has changed (Pending --> Active)
++		 *
++		 * If the state switched from Pending to Active, the
++		 * JingleApplication, that can be retreived with application()
++		 * on each content, will have changed if we are the initiator.
++		 */
++		void stateChanged();
++		
++		/**
++		 * Emitted when an error occured.
++		 * This way, the application is notified and can delete the session.
++		 * 
++		 * The int argument is the received error code and the QString is
++		 * the error status.
++		 */
++		void error(int, const QString&);
++
++	public slots:
++		/*
++		 * This slot is called when a content-remove has been acked.
++		 */
++		void slotRemoveAcked();
++		
++		/*
++		 * This slot is called when a session-terminate has been acked.
++		 */
++		void slotSessTerminated();
++
++		/*
++		 * Called when a content has been established.
++		 */
++		void slotContentConnected();
++
++		/*
++		 * This slot is called when the session has been accepted by the responder.
++		 */
++		void slotSessionAcceptAcked();
++
++		/*
++		 * This slot is called when the session initiate has been acked.
++		 */
++		void slotInitiateAcked();
++
++	private:
++		class Private;
++		Private *d;
++		
++		/*
++		 * Sends ice udp cadidates
++		 */
++		//void sendIceUdpCandidates();
++		
++		/*
++		 * Starts a raw udp connection for this JingleContent.
++		 * (Create socket, ask to start sending data on it)
++		 */
++		//void startRawUdpConnection(JingleContent*);
++	};
++}
++
++#endif
+Index: xmpp/jingle/jinglertpapplication.cpp
+===================================================================
+--- xmpp/jingle/jinglertpapplication.cpp	(revision 0)
++++ xmpp/jingle/jinglertpapplication.cpp	(revision 0)
+@@ -0,0 +1,368 @@
++/*
++ * jinglertpapplication.cpp - Jingle RTP Application
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++//TODO: For all XML rendering methods (this doesn't only apply to this class),
++//	an argument should be added to tell the method why it has to generate XML.
++//	This argument has to be of the form of an enum containing Jingle actions.
++//	This way, methods can generate different XML for different actions
++//	(add the usable crypto element for session-accept, ...)
++
++#include <QDomElement>
++#include <QDebug>
++
++#include "jinglertpapplication.h"
++#include "jinglesession.h"
++
++using namespace XMPP;
++
++class JingleRtpApplication::Private
++{
++public:
++	Private() : state(Active) {}
++	QList<QDomElement> payloads;
++	State state;
++	QDomElement xml;
++};
++
++JingleRtpApplication::JingleRtpApplication(JingleContent *parent)
++ : JingleApplication(parent), d(new Private)
++{
++	setDescriptionNS(NS_JINGLE_APPS_RTP);
++	
++	if (parent != 0)
++		init();
++}
++
++JingleRtpApplication::JingleRtpApplication(const QDomElement& xml, JingleContent *parent)
++ : JingleApplication(parent), d(new Private)
++{
++	setDescriptionNS(NS_JINGLE_APPS_RTP);
++	
++	d->xml = xml;
++	
++	if (parent != 0)
++		init();
++}
++
++JingleRtpApplication::~JingleRtpApplication()
++{
++	delete d;
++}
++
++void JingleRtpApplication::init()
++{
++	if (d->xml.isNull())
++		return;
++
++	// We are not the initiator, saying that it is ringing.
++	/*JingleSessionManager *manager = JingleSessionManager::manager();
++	if (!manager)
++		return;
++
++	manager->*/
++	JT_JingleAction *rja = new JT_JingleAction(parent()->rootTask());
++	rja->setSession(parent()->parent()); //FIXME:is parent()->parent() always ready at this point ?
++	QDomDocument doc("");
++	QDomElement ringing = doc.createElement("ringing");
++	ringing.setAttribute("xmlns", NS_JINGLE_APPS_RTP_INFO);
++	rja->sessionInfo(ringing);
++	rja->go(true);
++
++	fromXml(d->xml);
++}
++
++QDomElement JingleRtpApplication::bestPayload(const QList<QDomElement>& payloads1, const QList<QDomElement>& payloads2)
++{
++	/*
++	 * FIXME : this is not the best algorithm to determine which one is the best.
++	 * |-------|
++	 * | a | c |
++	 * +---+---+
++	 * | b | b |
++	 * +---+---+
++	 * | d | e |
++	 * +---+---+
++	 * | c | a |
++	 * |-------|
++	 *  --> In that case, payload a will be chosen but payload b would be the best choice.
++	 */
++	
++	foreach (QDomElement payload1, payloads1)
++	{
++		foreach (QDomElement payload2, payloads2)
++		{
++			if (samePayload(payload1, payload2))
++				return payload1;
++		}
++	}
++
++	return QDomElement();
++}
++
++void JingleRtpApplication::fromXml(const QDomElement& e)
++{
++	setDescriptionNS(e.attribute("xmlns"));
++	setMediaType(stringToMediaType(e.attribute("media")));
++	
++	QDomElement elem = e.firstChildElement();
++
++	while (!elem.isNull())
++	{
++		if (elem.tagName() == "payload-type")
++			addPayload(elem);
++
++		if (elem.tagName() == "encryption")
++		{
++			setEncryption(true);
++			if (elem.hasAttribute("required") && (elem.attribute("required") == "1" || elem.attribute("required") == "true"))
++				setEncryptionRequired(true);
++			
++			//d->srtp = new SRtp(elem.firstChildElement()); // Using only the first crypto element
++			//if (!d->srtp->isValid())
++			//{
++				if (encryptionRequired())
++				{
++					// FIXME:should only remove the content which wants to use this application.
++					//error, terminate the session because we do not support encryption yet.
++					JingleContent *c = parent();
++					if (!c)
++						return;
++					JingleSession *s = c->parent();
++					if (!s)
++						return;
++					QDomDocument doc("");
++
++					QDomElement reason = doc.createElement("reason");
++
++					QDomElement se = doc.createElement("security-error");
++
++					QDomElement ic = doc.createElement("invalid-crypto");
++					ic.setAttribute("xmlns", "urn:xmpp:jingle:apps:rtp:errors:1");
++
++					reason.appendChild(se);
++					reason.appendChild(ic);
++
++					s->sessionTerminate(reason);
++					return;
++				}
++				else
++					setEncryption(false); //continue without encryption.
++			//}
++		}
++
++		elem = elem.nextSiblingElement();
++	}
++}
++
++void JingleRtpApplication::addPayload(const QDomElement& pl)
++{
++	d->payloads << pl;
++}
++
++void JingleRtpApplication::addPayloads(const QList<QDomElement>& pl)
++{
++	d->payloads << pl;
++}
++
++void JingleRtpApplication::setPayloads(const QList<QDomElement>& pl)
++{
++	d->payloads.clear();
++	d->payloads << pl;
++}
++
++QList<QDomElement> JingleRtpApplication::payloads() const
++{
++	return d->payloads;
++}
++
++JingleApplication* JingleRtpApplication::mergeWith(JingleApplication *o)
++{
++	JingleRtpApplication *other = static_cast<JingleRtpApplication*>(o);
++
++	if (!isCompatibleWith(other))
++		return 0;
++
++	JingleRtpApplication *ret = new JingleRtpApplication(parent());
++	ret->setMediaType(mediaType());
++
++	foreach (QDomElement payload, d->payloads)
++	{
++		foreach (QDomElement otherPayload, other->payloads())
++		{
++			if (samePayload(payload, otherPayload))
++				ret->addPayload(otherPayload);
++		}
++	}
++
++	return ret;
++}
++
++bool JingleRtpApplication::isCompatibleWith(JingleApplication* o)
++{
++	JingleRtpApplication *other = dynamic_cast<JingleRtpApplication*>(o);
++	if (!other)
++		return false;
++
++	if (other->mediaType() != mediaType())
++		return false;
++	
++	bool ok = false;
++	foreach (QDomElement payload, payloads())
++	{
++		foreach (QDomElement otherPayload, other->payloads())
++		{
++			if (samePayload(payload, otherPayload))
++			{
++				ok = true;
++				break;
++			}
++		}
++	}
++
++	if (!ok)
++	{
++		qDebug() << "No compatible payload found !";
++		return false;
++	}
++
++	qDebug() << "Applications are compatible.";
++	return true;
++}
++
++bool JingleRtpApplication::samePayload(const QDomElement& p1, const QDomElement& p2)
++{
++	// Checking payload-type attributes.
++	if (!p1.hasAttribute("id") || !p2.hasAttribute("id"))
++		return false;
++
++	int id = p1.attribute("id").toInt();
++	if ((id >= 96) && (id <= 127)) //dynamic payloads, "name" attribute must be there.
++	{
++		if (!p1.hasAttribute("name") || !p2.hasAttribute("name"))
++			return false;
++		if (p1.attribute("name").toLower() != p2.attribute("name").toLower())
++			return false;
++	}
++	else
++	{
++		// not dynamic payloads, id's must be the same.
++		if (p1.attribute("id") != p2.attribute("id"))
++			return false;
++	}
++	
++	if (p1.hasAttribute("channels") && p2.hasAttribute("channels"))
++		if (p1.attribute("channels") != p2.attribute("channels"))
++			return false;
++	
++	if (p1.hasAttribute("clockrate") && p2.hasAttribute("clockrate"))
++		if (p1.attribute("clockrate") != p2.attribute("clockrate"))
++			return false;
++	
++	// Parameters (if there's any) must be the same
++	if (p1.hasChildNodes() && p2.hasChildNodes())
++	{
++		QDomElement pa1 = p1.firstChildElement();
++		QDomElement pa2 = p2.firstChildElement();
++		
++		if (pa1.childNodes().count() != pa2.childNodes().count())
++			return false;
++
++		while (!pa1.isNull())
++		{
++			if (pa1.tagName() != "parameter")
++				return false;
++			
++			bool found = false;
++
++			while (!pa2.isNull())
++			{
++				if (pa2.tagName() != "parameter")
++					return false;
++
++				if (pa1 == pa2)
++					found = true;
++			
++				pa2 = pa2.nextSiblingElement();
++			}
++
++			if (!found)
++				return false;
++
++			pa1 = pa1.nextSiblingElement();
++		}
++	}
++	else if ((p1.hasChildNodes() && !p2.hasChildNodes()) || (!p1.hasChildNodes() && p2.hasChildNodes()))
++	{
++		return false;
++	}
++	
++	return true;
++}
++
++QDomElement JingleRtpApplication::toXml(const ApplicationType t)
++{
++	Q_UNUSED(t)
++
++	QDomDocument doc("");
++	
++	QDomElement desc = doc.createElement("description");
++	desc.setAttribute("media", mediaTypeToString(mediaType()));
++	desc.setAttribute("xmlns", descriptionNS());
++	
++	foreach (QDomElement payload, payloads())
++	{
++		desc.appendChild(payload);
++	}
++
++	return desc;
++}
++	
++void JingleRtpApplication::sessionInfo(const QDomElement& info)
++{
++	if (info.attribute("xmlns") != "urn:xmpp:jingle:apps:rtp:info:1")
++		return; //This does not concern us.
++
++	if (info.tagName() == "mute" && d->state == Active)
++	{
++		d->state = Muted;
++		emit mute();
++	}
++	else if (info.tagName() == "hold" && d->state == Active)
++	{
++		d->state = Held;
++		emit hold();
++	}
++	else if ((info.tagName() == "unmute" && d->state == Muted) ||
++		 (info.tagName() == "unhold" && d->state == Held) ||
++		 (info.tagName() == "active" && d->state != Active))
++	{
++		d->state = Active;
++		emit active();
++	}
++	else if (info.tagName() == "ringing")
++	{
++		emit ringing();
++	}
++}
++
++int JingleRtpApplication::componentCountNeeded()
++{
++	return 2;
++}
+Index: xmpp/jingle/jingletasks.h
+===================================================================
+--- xmpp/jingle/jingletasks.h	(revision 0)
++++ xmpp/jingle/jingletasks.h	(revision 0)
+@@ -0,0 +1,176 @@
++/*
++ * jingletasks.cpp - Tasks for the Jingle specification.
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++#ifndef JINGLE_TASKS
++#define JINGLE_TASKS
++
++#include <QDomElement>
++#include <QUdpSocket>
++
++#include "im.h"
++#include "xmpp_task.h"
++#include "jinglesession.h"
++#include "jinglecontent.h"
++
++namespace XMPP
++{
++	class JingleSession;
++	class JingleReason;
++	class JingleAction;
++	
++	/*
++	 * This class is a Task that received all jingle actions and give them to the JingleSessionManager
++	 */
++	class /*IRIS_EXPORT*/ JT_PushJingleAction : public Task
++	{
++		Q_OBJECT
++	public:
++		JT_PushJingleAction(Task*);
++		~JT_PushJingleAction();
++
++		void onGo();
++		bool take(const QDomElement&);
++		
++		bool hasPendingAction();
++		JingleAction* takeNextPendingAction();
++		
++		/**
++		 * This method is called to acknowledge the sender (to) it's stanza
++		 * has been received.
++		 *
++		 */
++		void ack(const QString& id, const Jid& to);
++		
++		/*
++		 * This method respond with an unknown session error stanza.
++		 *
++		 * This is the job of the JingleManager to do that if a
++		 * jingle action tries to modify an unexisting session.
++		 */
++		void unknownSession(const QString& id, const Jid& to);
++
++	signals:
++		/*
++		 * Emitted when a new jingle action is incoming. The JingleAction
++		 * can be retrieved with getLastPendingAction()
++		 */
++		void jingleActionReady();
++
++	private:
++		class Private;
++		Private *d;
++	};
++
++	/*
++	 * This class is a task which is used to send all
++	 * possible jingle action to a contact, asked by a
++	 * JingleAction.
++	 */
++	class /*IRIS_EXPORT*/ JT_JingleAction : public Task
++	{
++		Q_OBJECT
++	public:
++		JT_JingleAction(Task*);
++		~JT_JingleAction();
++		
++		void onGo();
++		bool take(const QDomElement&);
++		
++		/*
++		 * Before doing anything, this method must
++		 * be called to set the JingleSession pointer
++		 * so the task has all necessary information.
++		 */
++		void setSession(JingleSession*);
++		
++		/*
++		 * Send a session-initiate jingle action.
++		 * There is no argument as the JingleSession set
++		 * sooner must have all necessary information
++		 * (to, contents and sid)
++		 * In contents list, contents with raw-udp transport
++		 * must have a candidate set.
++		 */
++		void initiate();
++
++		/*
++		 * Send a session-terminate jingle action.
++		 * A reason is given as a parameter.
++		 */
++		void terminate(const JingleReason&);
++		void terminate(const QDomElement&);
++
++		/*
++		 * Send a content-accept jingle action.
++		 * TODO:should take a list of contents to accept.
++		 * 	Contents must be what we support, not the
++		 * 	contents we received in the session-initiate
++		 * 	jingle action.
++		 * TODO:(Re)implement me!
++		 */
++		void contentAccept();
++
++		/*
++		 * Send a content-remove jingle action.
++		 * The argument is a list containing the
++		 * content names to remove.
++		 */
++		void removeContents(const QList<JingleContent*>&);
++
++		/*
++		 * Sends a transport-info jingle action for the
++		 * content contentName with the given transport.
++		 */
++		void transportInfo(const QString& contentName, const QDomElement& transport);
++
++		/**
++		 * Sends a session-info jingle action with the inforation contented in e.
++		 */
++		void sessionInfo(const QDomElement& e);
++
++		/*
++		 * Sends a session-accept jingle action.
++		 * Once acked, this will mean the session is in the ACTIVE state
++		 */
++		void sessionAccept(const QList<JingleContent*>&);
++
++		/*
++		 * Sends an iq error saying that there is no such session.
++		 */
++		void noSessionError(const QDomElement&);
++		
++	private :
++		class Private;
++		Private *d;
++		/* 
++		 * Sets a jingle iq with the action provided in d->iq.
++		 */
++		void createJingleIq(const QString& action);
++
++	signals :
++		/*
++		 * This signal is emitted when the sent jingle
++		 * action has been acknowledged
++		 */
++		void finished();
++	
++	};
++}
++
++#endif
+Index: xmpp/jingle/jingletransport.cpp
+===================================================================
+--- xmpp/jingle/jingletransport.cpp	(revision 0)
++++ xmpp/jingle/jingletransport.cpp	(revision 0)
+@@ -0,0 +1,158 @@
++/*
++ * jingletransport.cpp - Jingle Transport
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#include <QDomElement>
++#include <QDebug>
++#include <QtCrypto>
++
++#include "jinglesession.h"
++#include "jinglecontent.h"
++#include "jingletransport.h"
++#include "jingleicetransport.h"
++//#include "jingles5btransport.h"
++
++using namespace XMPP;
++
++class JingleTransport::Private
++{
++public:
++	Private() : parent(0)
++	{}
++
++	Mode mode;
++	JingleContent *parent;
++	
++	QDomElement transport;
++
++	bool connected;
++};
++
++JingleTransport::JingleTransport(Mode mode, JingleContent *parent)
++: d(new Private())
++{
++	d->mode = mode;
++	
++	if (parent == 0)
++		return;
++	
++	d->parent = parent;
++	d->connected = false;
++}
++
++JingleTransport::~JingleTransport()
++{
++	delete d;
++}
++
++void JingleTransport::setParent(JingleContent *c)
++{
++	if (c == 0)
++		return;
++	
++	d->parent = c;
++	
++	init();
++}
++
++JingleSession *JingleTransport::parentSession() const
++{
++	if (d->parent)
++		return d->parent->parent();
++	
++	return 0;
++}
++
++Task* JingleTransport::rootTask()
++{
++	if (d->parent)
++		return d->parent->rootTask();
++	
++	return 0;
++}
++
++JingleTransport::Mode JingleTransport::mode() const
++{
++	return d->mode;
++}
++
++JingleContent *JingleTransport::parent() const
++{
++	return d->parent;
++}
++
++JingleTransport* JingleTransport::createFromXml(const QDomElement& elem, Mode mode, JingleContent *parent)
++{
++	if (elem.attribute("xmlns") == NS_JINGLE_TRANSPORTS_ICE && QCA::isSupported("hmac(sha1)"))
++		return new JingleIceTransport(mode, parent, elem);
++	//else if (elem.attribute("xmlns") == "urn:xmpp:jingle:transports:s5b:1")
++	//	return new JingleS5BTransport(mode, parent, elem);
++	else
++		return NULL;
++}
++
++QString JingleTransport::transportNS(const QDomElement& c)
++{
++	QString ret;
++	QDomElement content = c;
++
++	if (content.tagName() != "content")
++	{
++		qDebug() << "This is not a content xml element.";
++		return ret;
++	}
++
++	QDomElement transport = content.firstChildElement();
++	while (!transport.isNull())
++	{
++		if (transport.tagName() == "transport")
++		{
++			ret = transport.attribute("xmlns");
++		}
++		transport = transport.nextSiblingElement();
++	}
++
++	return ret;
++}
++
++QDomElement JingleTransport::transport() const
++{
++	return d->transport;
++}
++
++void JingleTransport::setTransport(const QDomElement& t)
++{
++	d->transport = t;
++}
++
++bool JingleTransport::isConnected() const
++{
++	return d->connected;
++}
++
++JingleTransport *JingleTransport::fallbackTransport()
++{
++	return 0;
++}
++
++void JingleTransport::setConnected(bool e)
++{
++	d->connected = e;
++}
++
+Index: xmpp/jingle/jinglertpapplication.h
+===================================================================
+--- xmpp/jingle/jinglertpapplication.h	(revision 0)
++++ xmpp/jingle/jinglertpapplication.h	(revision 0)
+@@ -0,0 +1,112 @@
++/*
++ * jinglertpapplication.h - Jingle RTP Application
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#ifndef JINGLE_RTP_APPLICATION_H
++#define JINGLE_RTP_APPLICATION_H
++
++#include <QObject>
++
++#include "jingleapplication.h"
++
++namespace XMPP
++{
++	/**
++	 * The JingleRtpApplication class manages an RTP Jingle session.
++	 * 
++	 * This class will give give all information about RTP events like the
++	 * ringing part or holding and muting a session.
++	 * 
++	 * This is also the class you use to create a JingleContent which represents
++	 * an RTP session.
++	 * You can add all content types you need and want to be used by the RTP
++	 * session, in order of preference.
++	 */
++	class JingleRtpApplication : public JingleApplication
++	{
++		Q_OBJECT
++	public :
++		JingleRtpApplication(JingleContent *parent = 0);
++		JingleRtpApplication(const QDomElement&, JingleContent *parent = 0);
++		~JingleRtpApplication();
++
++		virtual void init();
++
++		/*
++		 * Adds a payload type to this content.
++		 */
++		void addPayload(const QDomElement&);
++		
++		/*
++		 * Adds a payload type list to this content.
++		 */
++		void addPayloads(const QList<QDomElement>&);
++
++		/*
++		 * Overwrite the current payload types list with this one.
++		 */
++		void setPayloads(const QList<QDomElement>&);
++		
++		/*
++		 * Returns the payload type list. Those payloads are
++		 * our payloads if in Pending state or the content
++		 * used payloads if in Active state. (TODO)
++		 */
++		QList<QDomElement> payloads() const;
++		
++		virtual JingleApplication* mergeWith(JingleApplication *other);
++		
++		virtual bool isCompatibleWith(JingleApplication*);
++
++		virtual QDomElement toXml(const ApplicationType);
++
++		static QDomElement bestPayload(const QList<QDomElement>& payload1,
++						const QList<QDomElement>& payload2);
++		static bool samePayload(const QDomElement& p1, const QDomElement& p2);
++		
++		virtual void sessionInfo(const QDomElement&);
++
++		virtual int componentCountNeeded();
++
++		enum State {
++			Active = 0,
++			Muted,
++			Held,
++			Ringing
++		};
++	
++	signals :
++		/**
++		 * Three signals emitted when the remote peer wants
++		 * to mute, hold or set active again the RTP session.
++		 */
++		void mute();
++		void hold();
++		void active();
++		void ringing();
++
++	private :
++		class Private;
++		Private *d;
++
++		void fromXml(const QDomElement&);
++	};
++}
++
++#endif //JINGLE_RTP_APPLICATION_H
+Index: xmpp/jingle/jingletransport.h
+===================================================================
+--- xmpp/jingle/jingletransport.h	(revision 0)
++++ xmpp/jingle/jingletransport.h	(revision 0)
+@@ -0,0 +1,177 @@
++/*
++ * jingletransport.h - Jingle Transport
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#ifndef JINGLETRANSPORT_H
++#define JINGLETRANSPORT_H
++
++#include <QObject>
++#include <QDomElement>
++
++namespace XMPP
++{
++	class JingleContent;
++	class JingleSession;
++	class Task;
++	class JingleTransport : public QObject
++	{
++		Q_OBJECT
++	public :
++		
++		/*
++		 * Initiator means, as we created it, that we are the initiator.
++		 * Responder means, as we created it, that we are the responder.
++		 * Unknown is used when we don't know (but we always know).
++		 */
++		enum Mode {
++			Initiator = 0,
++			Responder,
++			Unknown
++		};
++		
++		enum Channel {
++			Rtp = 0,
++			Rtcp,
++			Srtp,
++			Srtcp,
++			Socks5,
++			IBB
++		};
++		
++		JingleTransport(Mode mode, JingleContent *parent = 0);
++		virtual ~JingleTransport();
++		
++		/*
++		 * This enum is used to tell contentElement() what candidates
++		 * to set in the returned QDomElement.
++		 *	NoCandidate is for no candidates.
++		 *	[Local|Remote]Candidates is all [Local|Remote] candidates
++		 *	UsedCandidate is the candidate that works for this content.
++		 */
++		/*enum CandidateType {
++			NoCandidate = 0,
++			LocalCandidates,
++			RemoteCandidates,
++			UsedCandidate
++		};*/
++		
++		enum TransportType {
++			NoCandidate = 0,
++			LocalCandidates, // Meaning candidates
++			AcceptedCandidate // Meaning a form of the transport to accept the session.
++			//UsedTransport
++		};
++
++		/*
++		 * Set the Transport's parent. This will add the transport to the provided parent.
++		 */
++		void setParent(JingleContent *c);
++		
++		static JingleTransport* createFromXml(const QDomElement&, Mode mode, JingleContent *parent);
++
++		JingleSession *parentSession() const;
++		
++		/*
++		 * Called when the parent has been set so the transport can be initiated.
++		 */
++		virtual void init() = 0;
++		
++		/*
++		 * Called when the transport must be started (when negotiation can begin)
++		 */
++		virtual void start() = 0;
++
++		/*
++		 * Adds transport info (mostly a candidate). Doing so will try to
++		 * connect to this candidate.
++		 */
++		virtual void addTransportInfo(const QDomElement& e) = 0;
++
++		/*
++		 * Returns the transport namespace of this content.
++		 */
++		virtual QString transportNS() const = 0;
++	
++		/*
++		 * Returns the transport in an Xml form so it cam be added in a stanza.
++		 * The TransportType argument tells how the transport should be generated (with candidates, with other information)
++		 * FIXME:drop the TransportType, this method should always return the XML element as sent in session-initiate.
++		 */
++		virtual QDomElement toXml(TransportType) = 0;
++
++		/*
++		 * Set the number of component that must be established by the transport. (e.g. For RTP, 2 components : RTP + RTCP)
++		 */
++		virtual void setComponentCount(int) = 0;
++
++		/*
++		 * When the failure() signal is emitted, this method can be called to retreive a fallback transport.
++		 * Returns NULL if no fallback is possible/available.
++		 *
++		 * When subclassing JingleTransport, this method returns NULL if not reimplemented.
++		 */
++		virtual JingleTransport *fallbackTransport();
++		
++		/*
++		 * This method writes data one the given channel (corresponding to the component)
++		 * FIXME:review Channels/Components
++		 */
++		virtual void writeDatagram(const QByteArray& data, Channel c) = 0;
++		
++		/*
++		 * Reads the available data on the given Channel.
++		 * FIXME:review Channels/Components
++		 */
++		virtual QByteArray readAll(Channel c = Rtp) = 0;
++		
++		/*
++		 * Returns the transport type of the content content.
++		 */
++		//FIXME:currently a QString, this could be an enum.
++		static QString transportNS(const QDomElement& elem);
++
++		Mode mode() const;
++		JingleContent *parent() const;
++
++		QDomElement transport() const;
++		void setTransport(const QDomElement& t);
++
++		bool isConnected() const;
++		void setConnected(bool); /*Visibility to set on only subclasses*/
++
++		Task* rootTask();
++
++	signals:
++		/**
++		 * Emitted when the transport has succeeded in creating a connection.
++		 */
++		void success();
++
++		/**
++		 * Emitted when the transport was unable to create a connection.
++		 */
++		void failure();
++
++		/**
++		 * Emitted when data is ready to be read on the network.
++		 * The argument is the channel on which data has arrived (0 = RTP, 1 = RTCP).
++		 */
++		void readyRead(int);
++
++	private :
++		class Private;
++		Private *d;
++	};
++}
++#endif //JINGLETRANSPORT_H
+Index: xmpp/jingle/jingleapplication.cpp
+===================================================================
+--- xmpp/jingle/jingleapplication.cpp	(revision 0)
++++ xmpp/jingle/jingleapplication.cpp	(revision 0)
+@@ -0,0 +1,154 @@
++/*
++ * jingleapplication.cpp - Jingle Application
++ * Copyright (C) 2009 - Detlev Casanova <detlev.casanova@gmail.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ */
++
++#include <QDomElement>
++#include <QList>
++#include <QString>
++#include <QDebug>
++
++#include "jinglesession.h"
++#include "jinglecontent.h"
++#include "jingleapplication.h"
++#include "jinglertpapplication.h"
++
++using namespace XMPP;
++
++class JingleApplication::Private
++{
++public:
++	Private() : encryption(false),
++		    encryptionRequired(false),
++		    parent(0)
++	{}
++	QList<QDomElement> payloads; // My payloads.
++	
++//	Task *rootTask;
++	QString descriptionNS;
++	MediaType mediaType;
++
++	bool encryption;
++	bool encryptionRequired;
++
++	JingleContent *parent;
++};
++
++
++JingleApplication::JingleApplication(JingleContent *parent)
++ : d(new Private)
++{
++	if (parent != 0)
++		d->parent = parent;
++}
++
++JingleApplication::~JingleApplication()
++{
++	delete d;
++}
++
++JingleApplication* JingleApplication::createFromXml(const QDomElement& elem, JingleContent *parent)
++{
++	if (elem.attribute("xmlns") == NS_JINGLE_APPS_RTP)
++		return new JingleRtpApplication(elem, parent);
++	/*else if (elem.attribute("xmlns") == NS_JINGLE_APPS_FT)
++		return new JingleFTApplication(parent, elem);*/
++	else
++		return NULL;
++}
++
++void JingleApplication::setParent(JingleContent *c)
++{
++	if (c == 0)
++		return;
++	d->parent = c;
++
++	init(); //No, the subclass has not been constructed yet !
++}
++
++void JingleApplication::setMediaType(JingleApplication::MediaType t)
++{
++	d->mediaType = t;
++}
++
++JingleApplication::MediaType JingleApplication::mediaType() const
++{
++	return d->mediaType;
++}
++
++QString JingleApplication::mediaTypeToString(JingleApplication::MediaType t)
++{
++	switch(t)
++	{
++		case Video :
++			return "video";
++		case Audio :
++			return "audio";
++		case FileTransfer :
++			return "file transfer";
++		default:
++			return "unknown";
++	}
++}
++
++JingleApplication::MediaType JingleApplication::stringToMediaType(const QString& s)
++{
++	if (s == "video")
++		return Video;
++	else if (s == "audio")
++		return Audio;
++	else if (s == "file transfer")
++		return FileTransfer;
++	else
++		return NoType;
++}
++
++void JingleApplication::setDescriptionNS(const QString& desc)
++{
++	d->descriptionNS = desc;
++}
++
++QString JingleApplication::descriptionNS() const
++{
++	return d->descriptionNS;
++}
++
++void JingleApplication::setEncryption(bool b)
++{
++	d->encryption = b;
++}
++
++bool JingleApplication::encryption() const
++{
++	return d->encryption;
++}
++
++void JingleApplication::setEncryptionRequired(bool b)
++{
++	d->encryptionRequired = b;
++}
++
++bool JingleApplication::encryptionRequired() const
++{
++	return d->encryptionRequired;
++}
++
++JingleContent* JingleApplication::parent() const
++{
++	return d->parent;
++}
+Index: xmpp/xmpp.pri
+===================================================================
+--- xmpp/xmpp.pri	(revision 684)
++++ xmpp/xmpp.pri	(working copy)
+@@ -18,6 +18,7 @@
+ include($$IRIS_XMPP_ZLIB_MODULE)
+ include($$IRIS_XMPP_JID_MODULE)
+ include($$IRIS_XMPP_SASL_MODULE)
++include($$IRIS_XMPP_JINGLE_MODULE)
+ 
+ DEFINES += XMPP_TEST
+ 
+@@ -25,6 +26,7 @@
+ 	$$PWD/ \
+ 	$$PWD/.. \
+   $$PWD/xmpp-core \
++  $$PWD/jingle \
+   $$PWD/xmpp-im
+ 
+ HEADERS += \
+Index: xmpp_features.cpp
+===================================================================
+--- xmpp_features.cpp	(revision 1028935)
++++ xmpp_features.cpp	(working copy)
+@@ -129,6 +129,33 @@
+ 	return test(ns);
+ }
+ 
++#define FID_JINGLE "urn:xmpp:tmp:jingle:1"
++bool Features::canJingle() const
++{
++	QStringList ns;
++	ns << FID_JINGLE;
++
++	return test(ns);
++}
++
++#define FID_JINGLERTP "urn:xmpp:tmp:jingle:apps:rtp:1"
++bool Features::canJingleRtp() const
++{
++	QStringList ns;
++	ns << FID_JINGLERTP;
++
++	return test(ns);
++}
++
++#define FID_JINGLEICE "urn:xmpp:jingle:transports:ice-udp:1"
++bool Features::canJingleIce() const
++{
++	QStringList ns;
++	ns << FID_JINGLEICE;
++
++	return test(ns);
++}
++
+ #define FID_GATEWAY "jabber:iq:gateway"
+ bool Features::isGateway() const
+ {
+Index: xmpp_features.h
+===================================================================
+--- xmpp_features.h	(revision 1028935)
++++ xmpp_features.h	(working copy)
+@@ -45,6 +45,9 @@
+ 		bool canMulticast() const;
+ 		bool canGroupchat() const;
+ 		bool canVoice() const;
++		bool canJingle() const;
++		bool canJingleRtp() const;
++		bool canJingleIce() const;
+ 		bool canDisco() const;
+ 		bool canChatState() const;
+ 		bool canCommand() const;

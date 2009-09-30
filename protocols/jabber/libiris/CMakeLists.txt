@@ -135,10 +135,16 @@ iris/jdns/jdns_mdnsd.c
 iris/jdns/jdns_packet.c
 
 
+iris/xmpp/jingle/jingleaction.cpp
 iris/xmpp/jingle/jinglecontent.cpp
+iris/xmpp/jingle/jinglertpapplication.cpp
 iris/xmpp/jingle/jinglesession.cpp
-iris/xmpp/jingle/jinglesessionmanager.cpp
 iris/xmpp/jingle/jingletasks.cpp
+iris/xmpp/jingle/jingleapplication.cpp
+iris/xmpp/jingle/jingleicetransport.cpp
+#iris/xmpp/jingle/jingles5btransport.cpp (being developped)
+iris/xmpp/jingle/jinglesessionmanager.cpp
+iris/xmpp/jingle/jingletransport.cpp
 
 
 )
@@ -238,10 +244,16 @@ iris/irisnet/corelib/netinterface.h
 iris/irisnet/corelib/jdnsshared.h
 #iris/irisnet/appledns/qdnssd.h
 
+iris/xmpp/jingle/jingleaction.h
 iris/xmpp/jingle/jinglecontent.h
+iris/xmpp/jingle/jinglertpapplication.h
 iris/xmpp/jingle/jinglesession.h
-iris/xmpp/jingle/jinglesessionmanager.h
 iris/xmpp/jingle/jingletasks.h
+iris/xmpp/jingle/jingleapplication.h
+iris/xmpp/jingle/jingleicetransport.h
+#iris/xmpp/jingle/jingles5btransport.h (being developped)
+iris/xmpp/jingle/jinglesessionmanager.h
+iris/xmpp/jingle/jingletransport.h
 
 
  )

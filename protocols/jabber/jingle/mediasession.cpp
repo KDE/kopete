@@ -123,8 +123,9 @@ void MediaSession::slotReadyRead()
 	}
 }
 
-void MediaSession::write(const QByteArray& sData)
+void MediaSession::write(const QByteArray& sData, int c)
 {
+	Q_UNUSED(c)
 	qDebug() << "Received" << sData.count() << "bytes.";
 	
 	d->encodedData.append(sData);
@@ -161,8 +162,10 @@ void MediaSession::pluginCompress()
 	d->plugin->encode(d->rawData.left(d->pluginFSize));
 	d->rawData.remove(0, d->pluginFSize);
 	d->encodedData = d->plugin->encodedData();
-	
-	emit readyRead(); // Encoded data is ready to be read and sent over the network.
+
+	//TODO:Pack data in an RTP packet before sending.
+
+	emit readyRead(0); // Encoded data is ready to be read and sent over the network.
 	
 	//outSocket->write(coder->encodedData());
 }
@@ -225,8 +228,9 @@ QByteArray MediaSession::resample(QByteArray data, int endSize)
 	return ret;
 }
 
-QByteArray MediaSession::read() const
+QByteArray MediaSession::read(int c) const
 {
+	Q_UNUSED(c)
 	return d->encodedData;
 }
 

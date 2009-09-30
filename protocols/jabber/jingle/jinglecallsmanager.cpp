@@ -6,19 +6,23 @@
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
   * *************************************************************************
-  * *                                                                       *
+  * *								       *
   * * This program is free software; you can redistribute it and/or modify  *
   * * it under the terms of the GNU General Public License as published by  *
   * * the Free Software Foundation; either version 2 of the License, or     *
-  * * (at your option) any later version.                                   *
-  * *                                                                       *
+  * * (at your option) any later version.				   *
+  * *								       *
   * *************************************************************************
   */
+
+#include "jinglesessionmanager.h"
+#include "jinglesession.h"
+#include "jinglertpapplication.h"
+#include "jingleicetransport.h"
 
 #include "jinglecallsmanager.h"
 #include "jinglecallsgui.h"
 #include "jinglecontentdialog.h"
-#include "jinglesessionmanager.h"
 #include "mediamanager.h"
 #include "mediasession.h"
 
@@ -71,12 +75,13 @@ JingleCallsManager::~JingleCallsManager()
 
 	delete d->mediaManager;
 
-        delete d;
+	delete d;
 }
 
 void JingleCallsManager::init()
 {
-	d->client->jingleSessionManager()->setFirstPort(d->jabberAccount->configGroup()->readEntry("JingleFirstPort", QString("9000")).toInt());
+	JingleSessionManager *manager = JingleSessionManager::manager();
+	manager->setBasePort(d->jabberAccount->configGroup()->readEntry("JingleBasePort", QString("9000")).toInt());
 
 	//Initialize oRTP library.
 	ortp_init();
@@ -86,34 +91,37 @@ void JingleCallsManager::init()
 	ortp_set_log_file(0);
 	
 	d->gui = 0L;
-	QStringList transports;
-	//transports << NS_JINGLE_TRANSPORTS_ICE;
-	transports << NS_JINGLE_TRANSPORTS_RAW;
-	d->client->jingleSessionManager()->setSupportedTransports(transports);
-
-	QStringList profiles;
-	profiles << "RTP/AVP";
-	d->client->jingleSessionManager()->setSupportedProfiles(profiles);
 	
+	/*QStringList transports;
+	transports << NS_JINGLE_TRANSPORTS_ICE;
+	manager->setSupportedTransports(transports);*/
+
 	// The Media Manager should be able to give xml elements for the supported payloads.
 	QDomDocument doc("");
 	
 	// Audio payloads
-	//Speex
+	//Speex nb
 	QDomElement sPayload = doc.createElement("payload-type");
 	sPayload.setAttribute("id", "96");
 	sPayload.setAttribute("name", "speex");
 	sPayload.setAttribute("clockrate", "8000");
 	d->audioPayloads << sPayload;
 	
-	//A-Law
-	QDomElement aPayload = doc.createElement("payload-type");
-	aPayload.setAttribute("id", "8");
-	aPayload.setAttribute("name", "PCMA");
-	//aPayload.setAttribute("clockrate", "8000");
-	d->audioPayloads << aPayload;
+	//Speex wb
+	QDomElement s2Payload = doc.createElement("payload-type");
+	s2Payload.setAttribute("id", "96");
+	s2Payload.setAttribute("name", "speex");
+	s2Payload.setAttribute("clockrate", "16000");
+	d->audioPayloads << s2Payload;
+	
+	QList<JingleApplication*> sa;
 
-	d->client->jingleSessionManager()->setSupportedAudioPayloads(d->audioPayloads);
+	JingleRtpApplication *audio = new JingleRtpApplication();
+	audio->setPayloads(d->audioPayloads);
+	audio->setMediaType(JingleApplication::Audio);
+	sa << audio;
+
+	manager->setSupportedApplications(sa);
 	
 	//Video payloads
 	/*QDomElement vPayload = doc.createElement("payload-type");
@@ -137,11 +145,10 @@ void JingleCallsManager::init()
 	QString outputDev = d->jabberAccount->configGroup()->readEntry("JingleOutputDevice", QString());
 	d->mediaManager = new MediaManager(inputDev, outputDev);
 	
-	d->client->jingleSessionManager()->setSupportedVideoPayloads(d->videoPayloads);
-	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(newJingleSession(XMPP::JingleSession*)),
-		this, SLOT(slotNewSession(XMPP::JingleSession*)));
-	connect((const QObject*) d->client->jingleSessionManager(), SIGNAL(sessionTerminate(XMPP::JingleSession*)),
-		this, SLOT(slotSessionTerminate(XMPP::JingleSession*)));
+	connect(manager, SIGNAL(newJingleSession(XMPP::JingleSession*)),
+		SLOT(slotNewSession(XMPP::JingleSession*)));
+	connect(manager, SIGNAL(sessionTerminate(XMPP::JingleSession*)),
+		SLOT(slotSessionTerminate(XMPP::JingleSession*)));
 }
 
 bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
@@ -150,7 +157,7 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 	kDebug() << "Starting Jingle session for : " << toJid.full();
 	
 	//Here, we parse the features to have a list of which transports can be used with the responder.
-	bool iceUdp = false, rawUdp = false;
+	bool iceUdp = false;
 	JabberResource *bestResource = d->jabberAccount->resourcePool()->bestJabberResource( toJid );
 	if (!bestResource)
 	{
@@ -159,32 +166,32 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		kDebug() << "The contact is not online, unable to start a Jingle session";
 		return false;
 	}
+	
 	QStringList fList = bestResource->features().list();
 	for (int i = 0; i < fList.count(); i++)
 	{
 		if (fList[i] == NS_JINGLE_TRANSPORTS_ICE)
 			iceUdp = true;
-		if (fList[i] == NS_JINGLE_TRANSPORTS_RAW)
-			rawUdp = true;
 	}
+	
 	QList<JingleContent*> contents;
 	QDomDocument doc("");
 	if (iceUdp)
 	{
-		kDebug() << "ICE-UDP supported !!!!!!!!!!!!!!!!!!";
-
-		// Create ice-udp contents.
-		QDomElement iceAudioTransport = doc.createElement("transport");
-		iceAudioTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_ICE);
+		//Content
 		JingleContent *iceAudio = new JingleContent();
 		iceAudio->setName("audio-content");
-		iceAudio->addPayloadTypes(d->audioPayloads);
-		iceAudio->setTransport(iceAudioTransport);
-		iceAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
-		iceAudio->setType(JingleContent::Audio);
-		iceAudio->setCreator("initiator");
+		
+		//Application
+		JingleRtpApplication *app = new JingleRtpApplication();
+		app->setMediaType(JingleApplication::Audio);
+		app->addPayloads(d->audioPayloads); //FIXME:are they modified when doing session-accept ?
+		iceAudio->setApplication(app);
 
-		QDomElement iceVideoTransport = doc.createElement("transport");
+		// Create ice transport.
+		iceAudio->setTransport(new JingleIceTransport(JingleTransport::Initiator));
+
+		/*QDomElement iceVideoTransport = doc.createElement("transport");
 		iceVideoTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_ICE);
 		JingleContent *iceVideo = new JingleContent();
 		iceVideo->setName("video-content");
@@ -192,38 +199,10 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		iceVideo->setTransport(iceVideoTransport);
 		iceVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
 		iceVideo->setType(JingleContent::Video);
-		iceVideo->setCreator("initiator");
+		iceVideo->setCreator("initiator");*/
 		
 		//contents << iceAudio << iceVideo;
 		contents << iceAudio;
-	}
-	else if (rawUdp)
-	{
-		kDebug() << "ICE-UDP not supported, falling back to RAW-UDP !";
-
-		// Create raw-udp contents.
-		QDomElement rawAudioTransport = doc.createElement("transport");
-		rawAudioTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_RAW);
-		JingleContent *rawAudio = new JingleContent();
-		rawAudio->setName("audio-content");
-		rawAudio->addPayloadTypes(d->audioPayloads);
-		rawAudio->setTransport(rawAudioTransport);
-		rawAudio->setDescriptionNS(NS_JINGLE_APPS_RTP);
-		rawAudio->setType(JingleContent::Audio);
-		rawAudio->setCreator("initiator");
-
-		QDomElement rawVideoTransport = doc.createElement("transport");
-		rawVideoTransport.setAttribute("xmlns", NS_JINGLE_TRANSPORTS_RAW);
-		JingleContent *rawVideo = new JingleContent();
-		rawVideo->setName("video-content");
-		rawVideo->addPayloadTypes(d->videoPayloads);
-		rawVideo->setTransport(rawVideoTransport);
-		rawVideo->setDescriptionNS(NS_JINGLE_APPS_RTP);
-		rawVideo->setType(JingleContent::Video);
-		rawVideo->setCreator("initiator");
-		
-		//contents << rawAudio << rawVideo;
-		contents << rawAudio;
 	}
 	else
 	{
@@ -234,14 +213,19 @@ bool JingleCallsManager::startNewSession(const XMPP::Jid& toJid)
 		return false;
 	}
 	
-	JingleSession* newSession = d->client->jingleSessionManager()->startNewSession(toJid, contents);
+	JingleSession* newSession = JingleSessionManager::manager()->createNewSession(toJid);
+	newSession->addContents(contents);
+
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
+	jabberSess->setJingleSession(newSession);
+	d->sessions << jabberSess;
+	
 	connect(jabberSess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	connect(jabberSess, SIGNAL(stateChanged()), this, SLOT(slotStateChanged()));
-	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
-	d->sessions << jabberSess;
+	
 	if(d->gui)
 		d->gui->addSession(jabberSess);
+	
 	return true;
 }
 
@@ -259,10 +243,11 @@ void JingleCallsManager::slotNewSession(XMPP::JingleSession *newSession)
 	
 	JabberJingleSession *jabberSess = new JabberJingleSession(this);
 	jabberSess->setJingleSession(newSession); //Could be done directly in the constructor
+	d->sessions << jabberSess;
+	
 	connect(jabberSess, SIGNAL(terminated()), this, SLOT(slotSessionTerminated()));
 	connect(jabberSess, SIGNAL(stateChanged()), this, SLOT(slotStateChanged()));
 
-	d->sessions << jabberSess;
 	if (d->gui)
 		d->gui->addSession(jabberSess);
 	
@@ -277,12 +262,13 @@ void JingleCallsManager::slotSessionTerminated()
 {
 	JabberJingleSession *sess = (JabberJingleSession*) sender();
 	d->gui->removeSession(sess);
-	
-	for (int i = 0; i < d->sessions.count(); i++)
+
+	d->sessions.removeAll(sess);
+	/*for (int i = 0; i < d->sessions.count(); i++)
 	{
 		if (sess == d->sessions[i])
 			d->sessions.removeAt(i);
-	}
+	}*/
 
 	delete sess;
 
@@ -291,46 +277,45 @@ void JingleCallsManager::slotSessionTerminated()
 void JingleCallsManager::slotUserAccepted()
 {
 	kDebug() << "The user accepted the session, checking accepted contents :";
-	JingleContentDialog *contentDialog = (JingleContentDialog*) sender();
-	if (contentDialog == NULL)
-	{
-		kDebug() << "Fatal Error : sender is NULL !!!!";
+	JingleContentDialog *contentDialog = dynamic_cast<JingleContentDialog*>(sender());
+	
+	if (!contentDialog)
 		return;
-	}
+	
 	if (contentDialog->unChecked().count() == 0)
 	{
 		kDebug() << "Accept all contents !";
-		//We must not actually accept the session, we must accept the session if everything has been established
-		//if not, we must wait for everything to be established.
-		//For Raw-UDP, as soon as a content is connected, stream must be terminated and we must wait for the user
-		//to accept the session before we actually send multimedia stream and play it.
 		contentDialog->session()->acceptSession();
 	}
 	else if (contentDialog->checked().count() == 0)
 	{
 		kDebug() << "Terminate the session, no contents accepted.";
-		contentDialog->session()->sessionTerminate(JingleReason(JingleReason::Decline));
+		contentDialog->session()->sessionTerminate(/*JingleReason(JingleReason::Decline)*/);
 	}
 	else
 	{
 		kDebug() << "Accept only some contents, removing some unaccepted.";
-		contentDialog->session()->removeContent(contentDialog->unChecked());
+		//contentDialog->session()->removeContent(contentDialog->unChecked()); //FIXME:Should return a JingleContent list
+		contentDialog->session()->acceptSession();
 	}
+	
 	kDebug() << "end";
+	
 	contentDialog->close();
 	contentDialog->deleteLater();
 }
 
 void JingleCallsManager::slotUserRejected()
 {
-	JingleContentDialog *contentDialog = (JingleContentDialog*) sender();
-	if (contentDialog == NULL)
-	{
-		kDebug() << "Fatal Error : sender is NULL !!!!";
+	JingleContentDialog *contentDialog = dynamic_cast<JingleContentDialog*>(sender());
+	
+	if (!contentDialog)
 		return;
-	}
-	contentDialog->session()->sessionTerminate(JingleReason(JingleReason::Decline));
+	
+	contentDialog->session()->sessionTerminate(/*JingleReason(JingleReason::Decline)*/);
+	
 	kDebug() << "end";
+	
 	contentDialog->close();
 	contentDialog->deleteLater();
 }
@@ -342,6 +327,7 @@ void JingleCallsManager::showCallsGui()
 		d->gui = new JingleCallsGui(this);
 		d->gui->setSessions(d->sessions);
 	}
+
 	d->gui->show();
 }
 
@@ -364,11 +350,9 @@ void JingleCallsManager::slotSessionTerminate(XMPP::JingleSession* sess)
 		if (d->sessions[i]->jingleSession() == sess)
 		{
 			d->gui->removeSession(d->sessions[i]);
-			delete d->sessions[i];
-			d->sessions.removeAt(i);
+			delete d->sessions.takeAt(i);
 		}
 	}
-
 }
 
 MediaManager* JingleCallsManager::mediaManager()

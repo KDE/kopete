@@ -10,6 +10,13 @@ class QUdpSocket;
 class QDomElement;
 class MediaSession;
 
+/*
+ * TODO:The way that works is the worst !
+ * 	It should be a wrapping class.
+ * 	e.g. : QByteArray pack(const QByteArray& data); returns an RTP packet containing data.
+ * 	e.g. : QByteArray unpack(const QByteArray& data); returns media data that is contained in the RTP packet (data).
+ */
+
 class JingleRtpSession : public QObject
 {
 	Q_OBJECT
@@ -85,7 +92,7 @@ private:
 	Direction m_direction;
 	int bufSize;
 	QByteArray inData;
-	MediaSession *m_mediaSession;
+	//MediaSession *m_mediaSession; ?
 };
 
 #endif

@@ -15,26 +15,31 @@
   * *************************************************************************
   */
 #include "jinglecontentdialog.h"
+
+#include "jinglesession.h"
+#include "jinglecontent.h"
+#include "jingleapplication.h"
+
 #include <QVBoxLayout>
 #include <QLabel>
 #include <KDebug>
 
 using namespace XMPP;
 
-static QString typeToString(JingleContent::Type t)
+static QString typeToString(JingleApplication::MediaType t)
 {
 	switch (t)
 	{
-	case JingleContent::Audio :
+	case JingleApplication::Audio :
 		return i18n("Audio");
 		break;
-	case JingleContent::Video :
+	case JingleApplication::Video :
 		return i18n("Video");
 		break;
-	case JingleContent::FileTransfer :
+	case JingleApplication::FileTransfer :
 		return i18n("File Transfer");
 		break;
-	case JingleContent::Unknown :
+	case JingleApplication::NoType :
 		return i18n("Unknown");
 		break;
 	}
@@ -56,21 +61,28 @@ JingleContentDialog::~JingleContentDialog()
 	}
 }
 
-void JingleContentDialog::setContents(QList<JingleContent*> c)
+void JingleContentDialog::setContents(QList<JingleContent*> contents)
 {
-	for (int i = 0; i < c.count(); i++)
+	foreach (JingleContent *c, contents)
 	{
-		QCheckBox *cb = new QCheckBox(typeToString(c[i]->type()), this);
+		JingleApplication *app = c->application();
+		
+		if (!app)
+			continue;
+
+		QCheckBox *cb = new QCheckBox(typeToString(app->mediaType()), this);
 		cb->setChecked(true);
-		if (c[i]->type() == JingleContent::Unknown)
+		
+		if (app->mediaType() == JingleApplication::NoType)
 		{
 			cb->setChecked(false);
 			cb->setEnabled(false);
 		}
-		m_contentNames << c[i]->name();
+		m_contentNames << c->name();
 		ui.verticalLayout->insertWidget(0, cb);
 		m_checkBoxes << cb;
 	}
+	
 	QLabel *label = new QLabel(i18n("Choose the contents you want to accept:"), this);
 	ui.verticalLayout->insertWidget(0, label);
 }

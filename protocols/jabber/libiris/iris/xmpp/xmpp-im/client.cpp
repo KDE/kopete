@@ -21,6 +21,8 @@
 #include "im.h"
 #include "safedelete.h"
 
+#include <QDebug>
+
 //! \class XMPP::Client client.h
 //! \brief Communicates with the Jabber network.  Start here.
 //!
@@ -81,6 +83,7 @@
 #include "s5b.h"
 #include "xmpp_ibb.h"
 #include "filetransfer.h"
+#include "jinglesessionmanager.h"
 
 /*#include <stdio.h>
 #include <stdarg.h>
@@ -140,6 +143,7 @@ public:
 	S5BManager *s5bman;
 	IBBManager *ibbman;
 	FileTransferManager *ftman;
+	JingleSessionManager *jingleman;
 	bool ftEnabled;
 	QList<GroupChat> groupChatList;
 };
@@ -170,6 +174,7 @@ Client::Client(QObject *par)
 	connect(d->ibbman, SIGNAL(incomingReady()), SLOT(ibb_incomingReady()));
 
 	d->ftman = 0;
+	d->jingleman = 0;
 }
 
 Client::~Client()
@@ -177,6 +182,7 @@ Client::~Client()
 	close(true);
 
 	delete d->ftman;
+	delete d->jingleman;
 	delete d->ibbman;
 	delete d->s5bman;
 	delete d->root;
@@ -243,6 +249,23 @@ void Client::setFileTransferEnabled(bool b)
 FileTransferManager *Client::fileTransferManager() const
 {
 	return d->ftman;
+}
+
+void Client::setJingleEnabled(bool b)
+{
+	if (b) {
+		if (!d->jingleman)
+		d->jingleman = new JingleSessionManager(this);
+	}
+	else {
+		delete d->jingleman;
+		d->jingleman = 0;
+	}
+}
+
+JingleSessionManager *Client::jingleSessionManager() const
+{
+	return d->jingleman;
 }
 
 S5BManager *Client::s5bManager() const
@@ -598,7 +621,7 @@ void Client::send(const QDomElement &x)
 	}
 
 	QString out = s.toString();
-	debug(QString("Client: outgoing: [\n%1]\n").arg(out));
+	//debug(QString("Client: outgoing: [\n%1]\n").arg(out));
 	xmlOutgoing(out);
 
 	//printf("x[%s] x2[%s] s[%s]\n", Stream::xmlToString(x).toLatin1(), Stream::xmlToString(e).toLatin1(), s.toString().toLatin1());
