@@ -254,7 +254,7 @@ void AvatarSelectorWidget::cropAndSaveAvatar(QPixmap& pixmap, const QString& ima
 		AvatarSelectorWidgetItem *item = dynamic_cast<AvatarSelectorWidgetItem*>( foundItems.first() );
 		if ( !item )
 			return;
-		item->setSelected( true );	
+		item->setSelected( true );
 	}
 }
 
