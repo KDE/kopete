@@ -18,7 +18,7 @@
     *************************************************************************
 */
 #include "avatarselectorwidget.h"
-#include "avatarfromwebcamdialog.h"
+#include "avatarwebcamdialog.h"
 
 // Qt includes
 #include <QListWidget>
@@ -260,7 +260,7 @@ void AvatarSelectorWidget::cropAndSaveAvatar(QPixmap& pixmap, const QString& ima
 
 void AvatarSelectorWidget::buttonFromWebcamClicked()
 {
-	Kopete::UI::AvatarFromWebcamDialog *dialog = new Kopete::UI::AvatarFromWebcamDialog();
+	Kopete::UI::AvatarWebcamDialog *dialog = new Kopete::UI::AvatarWebcamDialog();
 	int result = dialog->exec();
 	if(result == KDialog::Accepted){
 		QString avatarName("Webcam");

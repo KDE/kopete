@@ -45,7 +45,7 @@ if( result == KDialog::Ok ) {
  *
  * @author Alex Fiestas <alex@eyeos.org>
  */
-class KOPETE_EXPORT AvatarFromWebcamDialog : public KDialog
+class KOPETE_EXPORT AvatarWebcamDialog : public KDialog
 {
 	Q_OBJECT
 public:
@@ -53,11 +53,11 @@ public:
 	 * Create a new AvatarFromWebcamDialog
 	 * @param parent Parent widget
 	 */
-	AvatarFromWebcamDialog(QWidget *parent = 0);
+	AvatarWebcamDialog(QWidget *parent = 0);
 	/**
 	 * Clean-up ressource of AvatarFromWebcamDialog
 	 */
-	virtual ~AvatarFromWebcamDialog();
+	virtual ~AvatarWebcamDialog();
 	/**
 	 * Return the last captured pixmap
 	 */

@@ -13,7 +13,7 @@
     *************************************************************************
 */
 
-#include "avatarfromwebcamdialog.h"
+#include "avatarwebcamdialog.h"
 #include "webcamwidget.h"
 
 // QT includes
@@ -32,7 +32,7 @@ namespace Kopete
 namespace UI
 {
 
-class AvatarFromWebcamDialog::Private
+class AvatarWebcamDialog::Private
 {
 public:
 	Private()
@@ -50,7 +50,7 @@ public:
 	QString currentPath;
 };
 
-AvatarFromWebcamDialog::AvatarFromWebcamDialog(QWidget *parent)
+AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
  : KDialog(parent), d(new Private)
 {
 	showButtonSeparator(true);
@@ -72,7 +72,7 @@ AvatarFromWebcamDialog::AvatarFromWebcamDialog(QWidget *parent)
 	setMainWidget(d->mainWidget);
 }
 
-void AvatarFromWebcamDialog::updateImage()
+void AvatarWebcamDialog::updateImage()
 {
 	QImage image = QImage();
 	d->m_devicePool->getFrame();
@@ -81,18 +81,18 @@ void AvatarFromWebcamDialog::updateImage()
 	d->mainWidget->updatePixmap(d->lastPixmap);
 }
 
-QPixmap& AvatarFromWebcamDialog::getLastPixmap()
+QPixmap& AvatarWebcamDialog::getLastPixmap()
 {
 	return d->lastPixmap;
 }
 
-void AvatarFromWebcamDialog::slotButtonClicked(int button)
+void AvatarWebcamDialog::slotButtonClicked(int button)
 {
 	d->m_devicePool->close();
 	KDialog::slotButtonClicked(button);
 }
 
-AvatarFromWebcamDialog::~AvatarFromWebcamDialog()
+AvatarWebcamDialog::~AvatarWebcamDialog()
 {
 	delete d;
 }
