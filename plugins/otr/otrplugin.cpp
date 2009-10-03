@@ -243,6 +243,12 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 	QMap<QString, QString> messageCache = plugin->getMessageCache();
 
 	if( msg.direction() == Kopete::Message::Inbound ){
+		if( msg.type() == Kopete::Message::TypeFileTransferRequest )
+		{
+			// file transfers aren't encrypted. Proceed with next plugin
+			MessageHandler::handleMessage( event );
+			return;
+		}
 		QString body = msg.plainBody();
 		QString accountId = msg.manager()->account()->accountId();
 		QString contactId = msg.from()->contactId();
