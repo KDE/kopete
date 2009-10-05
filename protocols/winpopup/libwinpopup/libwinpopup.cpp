@@ -27,7 +27,7 @@
 #include <KLocale>
 #include <KDirLister>
 #include <KToolInvocation>
-#include <kdefakes.h> // gethostname
+#include <unistd.h> // gethostname
 
 // Kopete Includes
 #include "kopeteuiglobal.h"
