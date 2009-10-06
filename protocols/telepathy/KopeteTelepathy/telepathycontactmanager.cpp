@@ -165,10 +165,20 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
 
     d->contacts = pendingContacts->contacts();
 
+    Tp::UIntList requestAvatarList;
+
     foreach(Tp::ContactPtr contact, pendingContacts->contacts()) {
         if ((contact->publishState() == Tp::Contact::PresenceStateYes) ||
             (contact->subscriptionState() == Tp::Contact::PresenceStateYes) ) {
-            createContact(contact);
+
+            TelepathyContact *tpc = createContact(contact);
+
+            if (tpc)
+                if (contact->isAvatarTokenKnown() &&
+                        (tpc->storedAvatarToken() != contact->avatarToken() ||
+                        QFile::exists(tpc->storedAvatarPath()) == false)) {
+                    requestAvatarList.append(contact->handle().takeFirst());
+                }
         }
 
         connect(contact.data(),
@@ -180,6 +190,14 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
         connect(contact.data(),
                 SIGNAL(blockStatusChanged(bool)),
                 SLOT(onContactBlockStatusChanged(bool)));
+    }
+
+    if (!requestAvatarList.isEmpty()) {
+        Tp::Client::ConnectionInterfaceAvatarsInterface *avatarIface =
+                        d->connection->avatarsInterface();
+
+        if (avatarIface)
+            avatarIface->RequestAvatars(requestAvatarList);
     }
 }
 
@@ -310,7 +328,7 @@ void TelepathyContactManager::onAddedInfoEventActionActivated(uint actionId)
     }
 }
 
-void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
+TelepathyContact * TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
 {
     kDebug() << contact->id() << contact->alias();
     kDebug() << "Subscription status:" << contact->subscriptionState();
@@ -331,7 +349,7 @@ void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
                 TelepathyContact *tpc = qobject_cast<TelepathyContact*>(c);
                 if (!c) {
                     kDebug() << "Contact is not of type TelepathyContact.";
-                    return;
+                    return NULL;
                 }
 
                 if (tpc->internalContact().isNull() ||
@@ -339,7 +357,7 @@ void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
                     tpc->setInternalContact(contact);
                 }
 
-                return;
+                return tpc;
             }
         }
     }
@@ -352,6 +370,8 @@ void TelepathyContactManager::createContact(QSharedPointer<Tp::Contact> contact)
     Kopete::ContactList::self()->addMetaContact(metaContact);
 
     d->contactList.push_back(newContact);
+
+    return newContact;
 }
 
 

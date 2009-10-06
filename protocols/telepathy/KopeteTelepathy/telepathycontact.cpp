@@ -30,8 +30,11 @@
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
 #include <kopetemetacontact.h>
+#include <kopeteavatarmanager.h>
 
 #include <TelepathyQt4/Contact>
+#include <TelepathyQt4/ContactManager>
+#include <TelepathyQt4/Connection>
 
 #include <QtCore/QPointer>
 
@@ -156,6 +159,28 @@ void TelepathyContact::setInternalContact(Tp::ContactPtr contact)
     connect(contact.data(),
             SIGNAL(blockStatusChanged(bool)),
             SLOT(onBlockStatusChanged(bool)));
+
+    Tp::Client::ConnectionInterfaceAvatarsInterface *avatarIface =
+            d->internalContact->manager()->connection()->avatarsInterface();
+
+    if (avatarIface)
+        connect(avatarIface,
+                SIGNAL(AvatarRetrieved(uint, const QString&,
+                        const QByteArray&, const QString&)),
+                SLOT(onAvatarRetrieved(uint, const QString&,
+                        const QByteArray&, const QString&)));
+}
+
+QString TelepathyContact::storedAvatarToken() const
+{
+    return property(TelepathyProtocolInternal::protocolInternal()->
+            propAvatarToken).value().toString();
+}
+
+QString TelepathyContact::storedAvatarPath() const
+{
+    return property(TelepathyProtocolInternal::protocolInternal()->
+            propPhoto).value().toString();
 }
 
 void TelepathyContact::onAliasChanged(const QString &alias)
@@ -168,7 +193,56 @@ void TelepathyContact::onAvatarTokenChanged(const QString &avatarToken)
 {
     kDebug() << avatarToken;
 
-    // TODO: Implement me!
+    if (storedAvatarToken() != avatarToken) {
+
+        Tp::Client::ConnectionInterfaceAvatarsInterface *avatarIface =
+                d->internalContact->manager()->connection()->avatarsInterface();
+
+        if (avatarIface) {
+            Tp::UIntList id;
+            id.append(d->internalContact->handle().takeFirst());
+            avatarIface->RequestAvatars(id);
+        }
+    }
+}
+
+void TelepathyContact::onAvatarRetrieved(uint contact, const QString& token,
+        const QByteArray& avatar, const QString& type)
+{
+    Q_UNUSED(type);
+
+    kDebug() << contact << token;
+
+    if (contact != d->internalContact->handle().takeFirst())
+        return;
+
+    // Is it needed? It's already checked in ContactManager
+    if (storedAvatarToken() != token ||
+        QFile::exists(storedAvatarPath()) == false) {
+
+        removeProperty(
+                TelepathyProtocolInternal::protocolInternal()->propPhoto);
+        removeProperty(
+                TelepathyProtocolInternal::protocolInternal()->propAvatarToken);
+
+        QImage contactPhoto;
+        contactPhoto.loadFromData(avatar);
+
+        Kopete::AvatarManager::AvatarEntry entry;
+        entry.name = contactId();
+        entry.image = contactPhoto;
+        entry.category = Kopete::AvatarManager::Contact;
+        entry.contact = this;
+        entry = Kopete::AvatarManager::self()->add(entry);
+
+        // Save the image to the disk, then set the property.
+        if(!entry.dataPath.isNull()) {
+            setProperty(TelepathyProtocolInternal::protocolInternal()->
+                    propPhoto, entry.dataPath);
+            setProperty(TelepathyProtocolInternal::protocolInternal()->
+                    propAvatarToken, token);
+        }
+    }
 }
 
 void TelepathyContact::onSimplePresenceChanged(const QString &status, uint type, const QString &presenceMessage)

@@ -21,6 +21,8 @@
 #include <KopeteTelepathy/telepathyprotocolinternal.h>
 
 #include <KopeteTelepathy/telepathychannelmanager.h>
+#include "kopeteglobal.h"
+
 
 #include <KDebug>
 #include <KLocale>
@@ -57,6 +59,7 @@ TelepathyProtocolInternal::TelepathyProtocolInternal(Kopete::Protocol *protocol)
     propAvatarToken("telepathyAvatarToken", i18n("Telepathy Avatar token"),
                     QString(), Kopete::PropertyTmpl::PersistentProperty |
                     Kopete::PropertyTmpl::PrivateProperty),
+    propPhoto(Kopete::Global::Properties::self()->photo()),
     m_protocol(protocol)
 {
     kDebug();

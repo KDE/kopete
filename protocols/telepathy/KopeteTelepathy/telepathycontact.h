@@ -55,12 +55,16 @@ public:
     void setInternalContact(Tp::ContactPtr contact);
     Tp::ContactPtr internalContact();
 
+    QString storedAvatarToken() const;
+    QString storedAvatarPath() const;
+
 public Q_SLOTS:
     virtual void deleteContact();
 
 private slots:
     void onAliasChanged(const QString &);
     void onAvatarTokenChanged(const QString &);
+    void onAvatarRetrieved(uint, const QString&, const QByteArray&, const QString&);
     void onSimplePresenceChanged(const QString &, uint, const QString &);
     void onSubscriptionStateChanged(Tp::Contact::PresenceState);
     void onPublishStateChanged(Tp::Contact::PresenceState);

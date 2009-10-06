@@ -45,6 +45,7 @@ public:
 
     /* Extra properties needed */
     const Kopete::PropertyTmpl propAvatarToken;
+    const Kopete::PropertyTmpl propPhoto;
 
     /* Constructor/Static Accessor */
     TelepathyProtocolInternal(Kopete::Protocol *protocol);

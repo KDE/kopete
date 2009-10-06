@@ -54,7 +54,7 @@ private slots:
 
 private:
     void fetchContactList();
-    void createContact(QSharedPointer<Tp::Contact> contact);
+    TelepathyContact *createContact(QSharedPointer<Tp::Contact> contact);
 
     class TelepathyContactManagerPrivate;
     TelepathyContactManagerPrivate *d;
