@@ -1567,7 +1567,7 @@ Name[ar]=IRC حدث
 Name[bn]=আই-আর-সি ঘটনা
 Name[ca]=Esdeveniment IRC
 Name[cs]=IRC událost
-Name[da]=IRC-begivenhed
+Name[da]=IRC-hændelse
 Name[de]=IRC-Ereignis
 Name[el]=Γεγονός IRC
 Name[en_GB]=IRC Event
@@ -1620,7 +1620,7 @@ Comment[ar]=حدث IRC وقع
 Comment[bn]=একটি আই-আর-সি ঘটনা ঘটেছে
 Comment[ca]=Ha ocorregut un esdeveniment d'IRC
 Comment[cs]=Nastala IRC událost
-Comment[da]=En IRC=begivenhed er opstået
+Comment[da]=En IRC-hændelse er forekommet
 Comment[de]=Ein IRC-Ereignis ist aufgetreten
 Comment[el]=Συνέβη ένα γεγονός IRC
 Comment[en_GB]=An IRC event has occurred
