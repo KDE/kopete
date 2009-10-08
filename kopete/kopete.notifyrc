@@ -2589,6 +2589,7 @@ Sound=
 [Event/kopete_gadu_contactslist]
 Name=GaduGadu contacts list
 Name[et]=GaduGadu kontaktide nimekiri
+Name[gl]=Lista de contactos de GaduGadu
 Name[nb]=GaduGadu kontaktliste
 Name[nds]=GaduGadu-Kontaktenlist
 Name[nl]=GaduGadu contactenlijst
@@ -2600,6 +2601,7 @@ Name[uk]=Список контактів GaduGadu
 Name[x-test]=xxGaduGadu contacts listxx
 Comment=Contacts list have been received/exported/deleted
 Comment[et]=Kontaktide nimekiri saadi/eksporditi/kustutati
+Comment[gl]=Recibíronse/Exportáronse/Elimináronse listas de contactos
 Comment[nb]=Kontaktlister er blitt mottatt/eksportert/slettet
 Comment[nds]=Kontaktenlist wöör annahmen/exporteert/wegdaan
 Comment[nl]=Contactenlijst die is ontvangen/geëxporteerd/verwijderd
