@@ -29,6 +29,7 @@
 
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>
+#include <kopetegroup.h>
 
 #include <TelepathyQt4/Connection>
 #include <TelepathyQt4/ContactManager>
@@ -55,6 +56,14 @@ TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAcco
 
     d->telepathyAccount = telepathyAccount;
     d->account = d->telepathyAccount->m_account;
+
+    QObject::connect(Kopete::ContactList::self(),
+                     SIGNAL(groupAdded(Kopete::Group *)),
+                     SLOT(onKGroupAdded(Kopete::Group *)));
+
+    QObject::connect(Kopete::ContactList::self(),
+                     SIGNAL(groupRemoved(Kopete::Group *)),
+                     SLOT(onKGroupRemoved(Kopete::Group *)));
 }
 
 TelepathyContactManager::~TelepathyContactManager()
@@ -113,7 +122,8 @@ void TelepathyContactManager::fetchContactList()
 
     Tp::Features features;
     features << Tp::Connection::FeatureCore
-             << Tp::Connection::FeatureRoster;
+             << Tp::Connection::FeatureRoster
+             << Tp::Connection::FeatureRosterGroups;
 
     connect(d->connection->becomeReady(features),
             SIGNAL(finished(Tp::PendingOperation*)),
@@ -134,6 +144,14 @@ void TelepathyContactManager::onConnectionReady(Tp::PendingOperation *operation)
     QObject::connect(d->connection->contactManager(),
                      SIGNAL(presencePublicationRequested(const Tp::Contacts &)),
                      SLOT(onPresencePublicationRequested(const Tp::Contacts &)));
+
+    QObject::connect(d->connection->contactManager(),
+                     SIGNAL(groupAdded(const QString &)),
+                     SLOT(onTpGroupAdded(const QString &)));
+
+    QObject::connect(d->connection->contactManager(),
+                     SIGNAL(groupRemoved(const QString &)),
+                     SLOT(onTpGroupRemoved(const QString &)));
 
     QSet<Tp::ContactPtr> contacts = d->connection->contactManager()->allKnownContacts();
 
@@ -325,6 +343,58 @@ void TelepathyContactManager::onAddedInfoEventActionActivated(uint actionId)
         event->addContact();
     } else {
         kWarning() << "Unknown button pressed.";
+    }
+}
+
+void TelepathyContactManager::onTpGroupAdded(const QString &group)
+{
+    kDebug() << "New tp group added:" << group;
+
+    Kopete::Group *kgroup = Kopete::ContactList::self()->findGroup(group);
+
+    if (!kgroup) {
+        kgroup = new Kopete::Group(group);
+        Kopete::ContactList::self()->addGroup(kgroup);
+    }
+}
+
+void TelepathyContactManager::onTpGroupRemoved(const QString &group)
+{
+    kDebug() << "tp Group removed:" << group;
+
+    Kopete::Group *kgroup = Kopete::ContactList::self()->findGroup(group);
+
+    if (kgroup)
+        Kopete::ContactList::self()->removeGroup(kgroup);
+}
+
+void TelepathyContactManager::onKGroupAdded(Kopete::Group *group)
+{
+    kDebug() << "Kopete group added:" << group;
+
+    if (d->connection->isReady()) {
+        Tp::ContactManager *cm = d->connection->contactManager();
+        QStringList tpGroupList = cm->allKnownGroups();
+
+        if (!tpGroupList.contains(group->displayName())) {
+            kDebug() << "Adding new group to Tp:" << group->displayName();
+            cm->addGroup(group->displayName());
+        }
+    }
+}
+
+void TelepathyContactManager::onKGroupRemoved(Kopete::Group *group)
+{
+    kDebug() << "Kopete group removed:" << group;
+
+    if (d->connection->isReady()) {
+        Tp::ContactManager *cm = d->connection->contactManager();
+        QStringList tpGroupList = cm->allKnownGroups();
+
+        if (tpGroupList.contains(group->displayName())) {
+            kDebug() << "Removing new group to Tp:" << group->displayName();
+            cm->removeGroup(group->displayName());
+        }
     }
 }
 

@@ -27,6 +27,10 @@
 
 #include <TelepathyQt4/Contact>
 
+namespace Kopete {
+    class Group;
+}
+
 class TelepathyAccount;
 class TelepathyContact;
 
@@ -51,6 +55,10 @@ private slots:
     void onContactSubscriptionStateChanged(Tp::Contact::PresenceState state);
     void onContactPublishStateChanged(Tp::Contact::PresenceState state);
     void onContactBlockStatusChanged(bool blocked);
+    void onTpGroupAdded(const QString &);
+    void onTpGroupRemoved(const QString &);
+    void onKGroupAdded(Kopete::Group *);
+    void onKGroupRemoved(Kopete::Group *);
 
 private:
     void fetchContactList();

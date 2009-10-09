@@ -31,6 +31,8 @@
 #include <kopetechatsessionmanager.h>
 #include <kopetemetacontact.h>
 #include <kopeteavatarmanager.h>
+#include <kopetecontactlist.h>
+#include <kopetegroup.h>
 
 #include <TelepathyQt4/Contact>
 #include <TelepathyQt4/ContactManager>
@@ -41,10 +43,14 @@
 class TelepathyContact::TelepathyContactPrivate
 {
 public:
-    TelepathyContactPrivate() {}
+    TelepathyContactPrivate()
+    : sync(true)
+    {
+    }
 
     Tp::ContactPtr internalContact;
     QPointer<Kopete::ChatSession> currentChatSession;
+    bool sync;
 };
 
 TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &contactId,
@@ -130,6 +136,41 @@ Kopete::ChatSession *TelepathyContact::manager(Kopete::ContactPtrList members, C
     return d->currentChatSession;
 }
 
+void TelepathyContact::sync(unsigned int flags)
+{
+    if (!account()->isConnected() ||
+        metaContact()->isTemporary() ||
+        metaContact() == Kopete::ContactList::self()->myself() ||
+        d->sync != true)
+        return;
+
+    if ((flags & Kopete::Contact::MovedBetweenGroup) ==
+        Kopete::Contact::MovedBetweenGroup) {
+        Kopete::GroupList kGroupList = metaContact()->groups();
+        QStringList rGroupList = d->internalContact->groups();
+
+        foreach (Kopete::Group *kgroup, kGroupList) {
+            if (!rGroupList.contains(kgroup->displayName()) &&
+                kgroup != Kopete::Group::topLevel()) {
+                d->internalContact->addToGroup(kgroup->displayName());
+            }
+        }
+
+        foreach (QString rgroup, rGroupList) {
+            bool found = false;
+            foreach (Kopete::Group *kgroup, kGroupList) {
+                if (kgroup->displayName() == rgroup) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+                d->internalContact->removeFromGroup(rgroup);
+        }
+    }
+}
+
 void TelepathyContact::setInternalContact(Tp::ContactPtr contact)
 {
     kDebug();
@@ -140,6 +181,9 @@ void TelepathyContact::setInternalContact(Tp::ContactPtr contact)
             static_cast<Tp::ConnectionPresenceType>(contact->presenceType())));
     setNickName(contact->alias());
     setStatusMessage(contact->presenceMessage());
+
+    /* Fetch groups from server and update local entries */
+    serverToLocalSync();
 
     connect(contact.data(),
             SIGNAL(aliasChanged(const QString &)),
@@ -302,6 +346,62 @@ void TelepathyContact::deleteContact()
     }
 }
 
+void TelepathyContact::serverToLocalSync()
+{
+    kDebug() << "synchronizing groups: server -> local";
+
+    /* Since this is a server->local sync we need to avoid
+       sending it back to server */
+    d->sync = false;
+
+    if (d->internalContact->manager()->connection()->actualFeatures().contains(
+        Tp::Connection::FeatureRosterGroups) &&
+        !metaContact()->isTemporary()) {
+
+        Kopete::GroupList groupsToRemoveFrom, groupsToAddTo;
+
+        QStringList rosterGroups = d->internalContact->groups();
+
+        foreach (Kopete::Group *kgroup, metaContact()->groups()) {
+            if (!rosterGroups.contains(kgroup->displayName()))
+                groupsToRemoveFrom.append(kgroup);
+        }
+
+        foreach (QString rgroup, rosterGroups) {
+            bool found = false;
+            foreach (Kopete::Group *kgroup, metaContact()->groups()) {
+                if (kgroup->displayName() == rgroup) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+                groupsToAddTo.append(
+                        Kopete::ContactList::self()->findGroup(rgroup));
+        }
+
+        if ((groupsToAddTo.count() == 0) &&
+                (groupsToRemoveFrom.contains(Kopete::Group::topLevel()))) {
+            groupsToRemoveFrom.removeAll(Kopete::Group::topLevel());
+        }
+
+        foreach (Kopete::Group *group, groupsToRemoveFrom) {
+            kDebug() << "Removing " << contactId() << " from group " <<
+                group->displayName();
+            metaContact()->removeFromGroup(group);
+        }
+
+        foreach (Kopete::Group *group, groupsToAddTo) {
+            kDebug() << "Adding " << contactId() << " to group " <<
+                group->displayName();
+            metaContact()->addToGroup(group);
+        }
+    }
+
+    /* Enable local->server sync again */
+    d->sync = true;
+}
 
 #include "telepathycontact.moc"
 

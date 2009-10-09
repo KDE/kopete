@@ -51,6 +51,7 @@ public:
     virtual Kopete::ChatSession *manager(CanCreateFlags canCreate = CannotCreate);
     virtual Kopete::ChatSession *manager(Kopete::ContactPtrList members,
                                          CanCreateFlags canCreate = CannotCreate);
+    virtual void sync(unsigned int flags);
 
     void setInternalContact(Tp::ContactPtr contact);
     Tp::ContactPtr internalContact();
@@ -71,6 +72,7 @@ private slots:
     void onBlockStatusChanged(bool);
 
 private:
+    void serverToLocalSync();
     class TelepathyContactPrivate;
     TelepathyContactPrivate * d;
 };
