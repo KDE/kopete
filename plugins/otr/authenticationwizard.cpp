@@ -27,9 +27,12 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kopetecontact.h>
+#include <knotification.h>
+#include <kiconloader.h>
 
 #include <QGroupBox>
 #include <QProgressBar>
+#include <kopeteview.h>
 
 QList<AuthenticationWizard*> wizardList;
 
@@ -66,6 +69,17 @@ AuthenticationWizard::AuthenticationWizard(QWidget *parent, ConnContext *context
 	updateInfoBox();
 
 	show();
+	
+	if ( !session->view()->mainWidget() || !session->view()->mainWidget()->isActiveWindow() ) {
+		KNotification *notification = new KNotification( "kopete_info_event", KNotification::CloseWhenWidgetActivated | KNotification::CloseOnTimeout );
+		notification->setText( i18n( "Incoming authentication request from %1", OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
+		notification->setPixmap( SmallIcon( "kopete" ) );
+		notification->setWidget( this );
+		notification->setActions( QStringList() << i18n( "View" ) << i18n( "Ignore" ) );
+		connect( notification, SIGNAL( activated( unsigned int ) ), SLOT( notificationActivated( unsigned int ) ) );
+		notification->sendEvent();
+	}
+	
 }
 
 
@@ -340,6 +354,17 @@ void AuthenticationWizard::updateInfoBox(){
 		infoLabel->setText(i18n("Pick a secret known only to you and %1. If the secret does not match, you may be talking to an imposter. Do not send the secret through the chat window, or this authentication method could be compromised with ease.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 	} else {
 		infoLabel->setText(i18n("Verify %1's fingerprint manually. For example via a phone call or signed (and verified) email.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+	}
+}
+
+void AuthenticationWizard::notificationActivated( unsigned int id){
+	kDebug(14318) << "notificationActivated. ButtonId" << id;
+	if( id == 1 ){
+		// raise the view to bring the chatwindow + authwizard to current desktop and on top
+		session->view()->raise( true );
+		// now grab focus and keyboard again to the auth-wizard
+		setFocus(Qt::ActiveWindowFocusReason);
+		leAnswer->grabKeyboard();
 	}
 }
 

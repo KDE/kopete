@@ -413,7 +413,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 				abortSMP( context, chatSession );
 			} else {
 				kDebug(14318) << "Update SMP state: 1Q";
-				new AuthenticationWizard( chatSession->view()->mainWidget(), context, chatSession, false, QString((char*)tlvs->data) );
+				new AuthenticationWizard( chatSession->view(true)->mainWidget(), context, chatSession, false, QString((char*)tlvs->data) );
 			}
 		}
 
@@ -424,7 +424,7 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 				abortSMP( context, chatSession );
 			} else {
 				kDebug(14318) << "Update SMP state: 1 ";
-				new AuthenticationWizard( chatSession->view()->mainWidget(), context, chatSession, false );
+				new AuthenticationWizard( chatSession->view(true)->mainWidget(), context, chatSession, false );
 			}
 		}
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP2);

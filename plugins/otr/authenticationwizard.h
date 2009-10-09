@@ -90,6 +90,7 @@ private:
 private slots:
 	void cancelVerification();
 	void updateInfoBox();
+	void notificationActivated( unsigned int );
 };
 
 
