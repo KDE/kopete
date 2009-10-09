@@ -297,7 +297,7 @@ static int max_message_size(void *opdata, ConnContext *context){
 	
 	kDebug(14318) << session->protocol()->pluginId();
 
-	if( session->protocol()->pluginId() == "MSNProtocol" ){
+	if( session->protocol()->pluginId() == "WlmProtocol" ){
 		return 1409;
 	} else if( session->protocol()->pluginId() == "ICQProtocol" ){
 		return 1274;
@@ -599,7 +599,7 @@ KDE_EXPORT bool OtrlChatInterface::shouldDiscard( const QString &message ){
 //		kDebug(14318) << otrl_proto_message_type( message.toLatin1() );
 		switch( otrl_proto_message_type( message.toLatin1() ) ){
 			case OTRL_MSGTYPE_TAGGEDPLAINTEXT:
-			case OTRL_MSGTYPE_UNKNOWN: // Fragmented messages seem to be type UNKNOWN
+//			case OTRL_MSGTYPE_UNKNOWN: // Fragmented messages seem to be type UNKNOWN
 			case OTRL_MSGTYPE_NOTOTR:
 				return false;
 			default:
