@@ -505,10 +505,15 @@ KDE_EXPORT int OtrlChatInterface::decryptMessage( QString *msg, const QString &a
 		}
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP_ABORT);
 		if (tlv) {
+			kDebug(14318) << "other end aborted SMP";
 			Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
 			msg.setHtmlBody( i18n("<b>Authentication error.</b>") );
 			msg.setDirection( Kopete::Message::Internal );
 			chatSession->appendMessage( msg );
+			AuthenticationWizard *currentWizard = AuthenticationWizard::findWizard(chatSession);
+			if(currentWizard){
+				currentWizard->aborted();
+			}
 			context->smstate->nextExpected = OTRL_SMP_EXPECT1;
 		}
 	

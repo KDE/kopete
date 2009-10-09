@@ -50,7 +50,8 @@ public:
 	static AuthenticationWizard *findWizard(Kopete::ChatSession *session);
 	void nextState();
 	void finished(bool success, bool trust);
-
+	void aborted();
+	
 protected:
 
 	virtual int nextId() const;

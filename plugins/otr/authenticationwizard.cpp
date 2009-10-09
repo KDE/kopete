@@ -141,6 +141,7 @@ QWizardPage *AuthenticationWizard::createQAPage(){
 	layout->addWidget(leAnswer);
 
 	page->setLayout(layout);
+	page->setCommitPage(true);
 	return page;
 }
 
@@ -160,6 +161,7 @@ QWizardPage *AuthenticationWizard::createSSPage(){
 	layout->addWidget(leSecret);	
 
 	page->setLayout(layout);
+	page->setCommitPage(true);
 	return page;
 }
 
@@ -239,7 +241,7 @@ int AuthenticationWizard::nextId() const{
 }
 
 bool AuthenticationWizard::validateCurrentPage(){
-	kDebug() << "currentId:" << currentId();
+	kDebug(14318) << "currentId:" << currentId();
 	switch(currentId()){
 		case 1:
 			if(initiate){
@@ -268,7 +270,7 @@ bool AuthenticationWizard::validateCurrentPage(){
 }
 
 void AuthenticationWizard::cancelVerification(){
-	kDebug() << "cancelVerification...";
+	kDebug(14318) << "cancelVerification...";
 	if(!initiate){
 		OtrlChatInterface::self()->abortSMP(context, session);
 	}
@@ -282,20 +284,20 @@ void AuthenticationWizard::nextState(){
 }
 
 void AuthenticationWizard::finished(bool success, bool trust){
-	kDebug() << "****************";
+	kDebug(14318) << "authWizard finished";
 	if(currentId() == Page_Wait2){
-		kDebug() << "Yes, in wait_page2";
+		kDebug(14318) << "Yes, in wait_page2";
 		((WaitPage*)currentPage())->ready();
 		next();
 		if(success){
-			kDebug() << "auth succeeded";
+			kDebug(14318) << "auth succeeded";
 			currentPage()->setTitle(i18n("Authentication successful"));
 			if(question != NULL || rbQA->isChecked()){
 				if(initiate){
-					kDebug() << "initiate";
+					kDebug(14318) << "initiate";
 					lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 				} else {
-					kDebug() << "not initiate";
+					kDebug(14318) << "not initiate";
 					if(trust){
 						lFinal->setText(i18n("The authentication with %1 was completed successfully. The conversation is now secure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 					} else {
@@ -310,6 +312,25 @@ void AuthenticationWizard::finished(bool success, bool trust){
 			lFinal->setText(i18n("The authentication with %1 failed. To make sure you are not talking to an imposter, try again using the manual fingerprint verification method. Note that the conversation is now insecure.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
 		}
 	}
+	
+	setOption(QWizard::NoCancelButton, true);
+	
+}
+
+void AuthenticationWizard::aborted(){
+	if(currentId() == Page_SharedSecret || currentId() == Page_QuestionAnswer){
+		next();
+	}
+	if(currentId() == Page_Wait1){
+		next();
+	}
+	if(currentId() == Page_Wait2){
+		next();
+	}
+	currentPage()->setTitle(i18n("Authentication aborted"));
+	lFinal->setText(i18n("%1 has aborted the authentication process. To make sure you are not talking to an imposter, try again using the manual fingerprint verification method.", OtrlChatInterface::self()->formatContact(session->members().first()->contactId())));
+	
+	setOption(QWizard::NoCancelButton, true);
 }
 
 void AuthenticationWizard::updateInfoBox(){
@@ -333,5 +354,6 @@ WaitPage::WaitPage(const QString &text){
 	progressBar->setMaximum(0);
 	layout->addWidget(progressBar);
 	layout->addStretch();
+	setCommitPage(true);
 	setLayout(layout);
 }
