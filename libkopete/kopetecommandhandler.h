@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#ifndef _KOPETECOMMANDHANDLER_H_
-#define _KOPETECOMMANDHANDLER_H_
+#ifndef KOPETECOMMANDHANDLER_H
+#define KOPETECOMMANDHANDLER_H
 
 #include <QtCore/QMultiHash>
 

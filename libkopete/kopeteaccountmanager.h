@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#ifndef __kopeteaccountmanager_h__
-#define __kopeteaccountmanager_h__
+#ifndef KOPETEACCOUNTMANAGER_H
+#define KOPETEACCOUNTMANAGER_H
 
 #include <QtCore/QObject>
 #include <QtGui/QColor>

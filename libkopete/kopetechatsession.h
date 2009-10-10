@@ -20,8 +20,8 @@
     *************************************************************************
 */
 
-#ifndef __KOPETECHATSESSION_H__
-#define __KOPETECHATSESSION_H__
+#ifndef KOPETECHATSESSION_H
+#define KOPETECHATSESSION_H
 
 #include <QtCore/QObject>
 

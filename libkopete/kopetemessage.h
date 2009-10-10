@@ -19,8 +19,8 @@
     *************************************************************************
 */
 
-#ifndef __KOPETE_MESSAGE_H__
-#define __KOPETE_MESSAGE_H__
+#ifndef KOPETEMESSAGE_H
+#define KOPETEMESSAGE_H
 
 #include <QtCore/QSharedData>
 #include <QtCore/QList>
