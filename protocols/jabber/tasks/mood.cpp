@@ -34,15 +34,19 @@ QDomElement Mood::toXml(QDomDocument &doc)
 {
 	QDomElement mood = doc.createElement("mood");
 	mood.setAttribute("xmlns", MOOD_NS);
-	QDomElement e = doc.createElement(MoodManager::self()->getMoodId(mType));
-	mood.appendChild(e);
-	if(!mText.isEmpty())
-	{
-		QDomElement text = doc.createElement("text");
-		QDomText t = doc.createTextNode(mText);
-		text.appendChild(t);
-		mood.appendChild(text);
-	}
+    QString moodId = MoodManager::self()->getMoodId(mType);
+    if(!moodId.isEmpty())
+    {
+        QDomElement e = doc.createElement(MoodManager::self()->getMoodId(mType));
+        mood.appendChild(e);
+        if(!mText.isEmpty())
+        {
+            QDomElement text = doc.createElement("text");
+            QDomText t = doc.createTextNode(mText);
+            text.appendChild(t);
+            mood.appendChild(text);
+        }
+    }
 	return mood;
 }
 
