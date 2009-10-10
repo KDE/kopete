@@ -1110,15 +1110,11 @@ void JabberAccount::slotSetMood()
 {
 	KAction *action = (KAction *)sender();
 	Mood::Type type = (Mood::Type)action->data().toInt();
-	if(type == Mood::None)
-	{
-	}
-	else
-	{
-		PubSubItem psi("current", Mood(type).toXml(*client()->client()->rootTask()->doc()));
-		JT_PubSubPublish *task = new JT_PubSubPublish(client()->client()->rootTask(), QString("http://jabber.org/protocol/mood"), psi);
-		task->go(true);
-	}
+
+    PubSubItem psi("current", Mood(type).toXml(*client()->client()->rootTask()->doc()));
+    JT_PubSubPublish *task = new JT_PubSubPublish(client()->client()->rootTask(), QString("http://jabber.org/protocol/mood"), psi);
+    task->go(true);
+
 }
 
 void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & type)
