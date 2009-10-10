@@ -21,7 +21,7 @@
 
 #include "kopetepluginmanager.h"
 
-#if defined(HAVE_VALGRIND_H) && !defined(NDEBUG) && defined(__i386__)
+#if defined(HAVE_VALGRIND_H) && !defined(NDEBUG)
 // We don't want the per-skin includes, so pretend we have a skin header already
 #define __VALGRIND_SOMESKIN_H
 #include <valgrind/valgrind.h>
