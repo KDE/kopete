@@ -68,7 +68,7 @@ BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Acc
 
 		// Next try via the default identity
 		KPIMIdentities::IdentityManager manager(true);
-		KPIMIdentities::Identity ident = manager.defaultIdentity();
+		const KPIMIdentities::Identity & ident = manager.defaultIdentity();
 
 		if (! ident.isNull()) {
 			// Get the full name from identity (only if not available via KUser)
