@@ -382,9 +382,14 @@ void SkypeAccount::newUser(const QString &name, int groupID) {
 
 	Kopete::Contact * contact = contacts().value(name);
 	if (contact){
-		if (!root && skypeGroup != contact->metaContact()->groups().first()){ //if skype Group is different like kopete group (and skype group isnt root), move metacontact to skype group
-			kDebug(SKYPE_DEBUG_GLOBAL) << "Moving contact" << name << "to group" << group;
-			contact->metaContact()->moveToGroup(contact->metaContact()->groups().first(), skypeGroup);
+		if (!root) {
+			if (skypeGroup != contact->metaContact()->groups().first()){ //if skype Group is different like kopete group (and skype group isnt root), move metacontact to skype group
+				kDebug(SKYPE_DEBUG_GLOBAL) << "Moving contact" << name << "to group" << group;
+				contact->metaContact()->moveToGroup(contact->metaContact()->groups().first(), skypeGroup);
+			}
+		} else { //if skype contact is in root group, move it to kopete group
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Moving contact" << name << "in skype client to kopete group";
+			MovedBetweenGroup(static_cast <SkypeContact *> (contact));
 		}
 		return;
 	}
@@ -1023,6 +1028,8 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 	} else if ( message.startsWith("skype:", Qt::CaseInsensitive) ) {
 		command = message.section("?", -1).trimmed();
 		user = message.section(":", -1).section("?", 0, 0).trimmed();
+		if ( command.isEmpty() ) //set default double click action = open chat window
+			command = "chat";
 	} else
 		return;//Unknow message
 
