@@ -252,11 +252,12 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 		if (hostAddress != QHostAddress() ) {
 			Kopete::MetaContact *mc;
 
-			// FIXME: The Standard Has Specifications on What To Do in case of a clash
-			// We Ignore them over here.
 			mc = addContact(pointer->serviceName(), display, bonjourGroup);
 
-			BonjourContact *c = (BonjourContact *) mc->contacts()[0];
+			BonjourContact *c = (BonjourContact *) mc->findContact(
+								protocol()->pluginId(),
+								accountId(),
+								pointer->serviceName());
 
 			c->setremoteHostName(hostName);
 			c->setremoteAddress(hostAddress);
