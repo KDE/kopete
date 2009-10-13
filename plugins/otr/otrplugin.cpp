@@ -161,7 +161,7 @@ void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 		
 		int encryptionState = otrlChatInterface->encryptMessage( &msgBody, accountId, msg.manager()->account()->protocol()->displayName(), contact->contactId(), msg.manager() );
 		if(encryptionState == -1){
-			msg.setPlainBody(i18n("An error occured while encrypting the message."));
+			msg.setPlainBody(i18n("An error occurred while encrypting the message."));
 		} else if(encryptionState == 0){
 //            kDebug(14318) << "Encrypted successfully";
 			msg.setPlainBody( msgBody );

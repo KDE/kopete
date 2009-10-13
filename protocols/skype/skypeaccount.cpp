@@ -1059,7 +1059,7 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 		if ( ! contact(user) ) {
 			addContact(user, d->skype.getDisplayName(user), 0L, Temporary);//create a temporary contact
 			if ( ! contact(user) ) {
-				KMessageBox::error(0L, i18n("Contact are not in contact list"), i18n("Skype protocol"));
+				KMessageBox::error(0L, i18n("Contact is not on contact list"), i18n("Skype protocol"));
 				return;//contact arent in contact list - skip it
 			}
 		}

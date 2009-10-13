@@ -194,7 +194,7 @@ Kopete::Account *skypeEditAccount::apply() {
 void skypeEditAccount::configureSkypeClient() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	const QString &skypeUser = KInputDialog::getText(i18n("Configure Skype clinet"), i18n("Please enter your skype user name")); //TODO: get from account
+	const QString &skypeUser = KInputDialog::getText(i18n("Configure Skype client"), i18n("Please enter your skype user name")); //TODO: get from account
 
 	if ( skypeUser.isEmpty() ) {
 		KMessageBox::error(this, i18n("You must enter your skype user name"), i18n("Skype protocol"));
@@ -212,7 +212,7 @@ void skypeEditAccount::configureSkypeClient() {
 
 	if ( ! sharedFile.open(QIODevice::WriteOnly) ) {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant create/open file" << sharedPath;
-		KMessageBox::error(this, i18n("Cant create/open file %1 for configuring Skype client").arg(sharedPath), i18n("Skype protocol"));
+		KMessageBox::error(this, i18n("Cannot create/open file %1 for configuring the Skype client.").arg(sharedPath), i18n("Skype protocol"));
 		return;
 	}
 
@@ -229,7 +229,7 @@ void skypeEditAccount::configureSkypeClient() {
 
 	if ( ! configFile.open(QIODevice::WriteOnly) ) {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant create/open file" << configPath;
-		KMessageBox::error(this, i18n("Cant create/open file %1 for configuring Skype client").arg(configPath), i18n("Skype protocol"));
+		KMessageBox::error(this, i18n("Cannot create/open file %1 for configuring the Skype client.").arg(configPath), i18n("Skype protocol"));
 		return;
 	}
 
@@ -237,7 +237,7 @@ void skypeEditAccount::configureSkypeClient() {
 	configFile.write("<?xml version=\"1.0\"?>\n<config version=\"1.0\" serial=\"9\" timestamp=\"0\">\n  <UI>\n    <Notifications>\n      <Enable>\n        <Birthday>0</Birthday>\n        <CallAnswered>1</CallAnswered>\n        <CallBusy>1</CallBusy>\n        <CallFailed>1</CallFailed>\n        <CallHangup>1</CallHangup>\n        <CallHold>1</CallHold>\n        <CallMissed>1</CallMissed>\n        <CallRemoteHangup>1</CallRemoteHangup>\n        <CallResume>1</CallResume>\n        <CallRingingIn>1</CallRingingIn>\n        <CallRingingOut>1</CallRingingOut>\n        <ChatIncoming>0</ChatIncoming>\n        <ChatIncomingInitial>0</ChatIncomingInitial>\n        <ChatJoined>0</ChatJoined>\n        <ChatOutgoing>0</ChatOutgoing>\n        <ChatParted>0</ChatParted>\n        <ContactAdded>0</ContactAdded>\n        <ContactDeleted>0</ContactDeleted>\n        <ContactOffline>0</ContactOffline>\n        <ContactOnline>0</ContactOnline>\n        <SkypeLogin>0</SkypeLogin>\n        <SkypeLoginFailed>0</SkypeLoginFailed>\n        <SkypeLogout>0</SkypeLogout>\n        <TransferComplete>1</TransferComplete>\n        <TransferFailed>1</TransferFailed>\n        <VoicemailReceived>1</VoicemailReceived>\n        <VoicemailSent>1</VoicemailSent>\n      </Enable>\n    </Notifications>\n  </UI>\n</config>\n"); //This only work for Linux Skype Client version 2.0.0.72 and 2.1.0.47
 	configFile.close();
 
-	KMessageBox::information(this, i18n("All ok, done\nSkype is now configured for Kopete\nYou must restart Skype client to take effect"), i18n("Skype protocol"));
+	KMessageBox::information(this, i18n("Process has completed.\nSkype is now configured for Kopete.\nYou must restart the Skype client for changes to take effect."), i18n("Skype protocol"));
 }
 
 #include "skypeeditaccount.moc"

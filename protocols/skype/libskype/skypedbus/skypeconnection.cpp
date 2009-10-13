@@ -159,7 +159,7 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 
 	if ( ! registred ) {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant register Skype communication for Kopete on DBus";
-		emit error(i18n("Cant register Skype communication for Kopete on DBus"));
+		emit error(i18n("Cannot register Skype communication for Kopete on DBus"));
 		return;
 	}
 

@@ -69,7 +69,7 @@
           <item>
            <widget class="QLabel" name="textLabel3">
             <property name="text">
-             <string>The Skype plugin serves as a bridge to an externally running copy of Skype. This has some consequences on how it functions: you need an instance of Skype to be running, and only one Skype account can be used.&lt;br /&gt;&lt;br /&gt;Note that you need to install the original dynamic linked Skype version 2.0 or 2.1 from &lt;a href=&quot;http://www.skype.com&quot;&gt;http://www.skype.com&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;This plugin only work if language in Skype client set to english. Kopete show notifications (incomming call, message, ...), so you can turn off Skype notifications</string>
+             <string>The Skype plugin serves as a bridge to an externally running copy of Skype. This has some consequences on how it functions: you need an instance of Skype to be running, and only one Skype account can be used.&lt;br /&gt;&lt;br /&gt;Note that you need to install the original dynamic linked Skype version 2.0 or 2.1 from &lt;a href=&quot;http://www.skype.com&quot;&gt;http://www.skype.com&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;This plugin will only work if the language in the Skype client set to English. Kopete shows notifications (incoming call, message, ...), so you can turn off the notifications in Skype.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::RichText</enum>
@@ -85,7 +85,7 @@
        <item>
         <widget class="QPushButton" name="configureSkypeClient">
          <property name="text">
-          <string>Disable Skype notifications and set up english language in Skype client</string>
+          <string>Disable Skype notifications and set up English language in Skype client</string>
          </property>
         </widget>
        </item>
@@ -620,13 +620,13 @@
        <item>
         <widget class="QCheckBox" name="LeaveCheck">
          <property name="toolTip">
-          <string>Dont leave a chat on window exit</string>
+          <string>Do not leave a chat on window exit</string>
          </property>
          <property name="whatsThis">
-          <string>Dont leave a chat when chat window is closed. Makes a difference only with multi-user chats: if it is checked, you will continue receiving messages from that chat even after closing the window.</string>
+          <string>Do not leave a chat when the chat window is closed. Makes a difference only with multi-user chats: if it is checked, you will continue receiving messages from that chat even after closing the window.</string>
          </property>
          <property name="text">
-          <string>Dont leave a chat on window exit</string>
+          <string>Do not leave a chat on window exit</string>
          </property>
          <property name="checked">
           <bool>true</bool>
