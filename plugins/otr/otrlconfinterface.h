@@ -28,6 +28,7 @@
 #include <qstring.h>
 #include <qthread.h>
 
+#include <kopete_export.h>
 #include <kopetechatsession.h>
 
 extern "C" {
@@ -38,7 +39,7 @@ extern "C" {
 #include <libotr/context.h>
 }
 
-class OtrlConfInterface : public QObject
+class KOPETE_OTR_SHARED_EXPORT OtrlConfInterface : public QObject
 {
 	Q_OBJECT
 public:

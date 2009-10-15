@@ -29,6 +29,7 @@
 #include <qthread.h>
 #include <qmutex.h>
 
+#include <kopete_export.h>
 #include <kopetechatsession.h>
 #include <kopeteplugin.h>
 
@@ -42,7 +43,7 @@ extern "C" {
 }
 
 
-class OtrlChatInterface: public QObject
+class KOPETE_OTR_SHARED_EXPORT OtrlChatInterface: public QObject
 {
 	Q_OBJECT
 public:
