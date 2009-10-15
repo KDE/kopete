@@ -24,7 +24,9 @@
 #include <klocale.h>
 
 // Kopete includes
+#ifndef Q_OS_WIN
 #include "avdevice/videodevicepool.h"
+#endif
 
 namespace Kopete
 {
@@ -44,7 +46,9 @@ public:
 
 	Kopete::WebcamWidget *mainWidget;
 	QTimer *m_timer;
+#ifndef Q_OS_WIN
 	Kopete::AV::VideoDevicePool *m_devicePool;
+#endif
 	QPixmap lastPixmap;
 	QString selectedPath;
 	QString currentPath;
@@ -57,11 +61,13 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 	setCaption(i18n("Take a photo"));
 	setButtons(KDialog::Ok | KDialog::Cancel);
 
+#ifndef Q_OS_WIN
 	d->m_devicePool = Kopete::AV::VideoDevicePool::self();
 	d->m_devicePool->loadConfig();
 	d->m_devicePool->open();
 	d->m_devicePool->setSize(640, 480);
 	d->m_devicePool->startCapturing();
+#endif
 
 	d->m_timer = new QTimer( this );
 	connect( d->m_timer, SIGNAL(timeout()), this, SLOT(updateImage()));
@@ -75,8 +81,10 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 void AvatarWebcamDialog::updateImage()
 {
 	QImage image = QImage();
+#ifndef Q_OS_WIN
 	d->m_devicePool->getFrame();
 	d->m_devicePool->getImage(&image);
+#endif
 	d->lastPixmap = QPixmap::fromImage(image.mirrored(false,false));//There is a better way of do this?
 	d->mainWidget->updatePixmap(d->lastPixmap);
 }
@@ -88,7 +96,9 @@ QPixmap& AvatarWebcamDialog::getLastPixmap()
 
 void AvatarWebcamDialog::slotButtonClicked(int button)
 {
+#ifndef Q_OS_WIN
 	d->m_devicePool->close();
+#endif
 	KDialog::slotButtonClicked(button);
 }
 

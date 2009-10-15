@@ -34,9 +34,11 @@
 #include <kpixmapregionselectordialog.h>
 
 #include "ui_avatarselectorwidget.h"
+#ifndef Q_OS_WIN
 #include "avdevice/videodevicepool.h"
 
 using namespace Kopete::AV;
+#endif
 
 namespace Kopete
 {
@@ -133,10 +135,12 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	connect(d->mainWidget.buttonFromWebcam, SIGNAL(clicked()), this, SLOT(buttonFromWebcamClicked()));
 	connect(d->mainWidget.listUserAvatar, SIGNAL(itemClicked(QListWidgetItem*)),
 	        this, SLOT(listSelectionChanged(QListWidgetItem*)));
+#ifndef Q_OS_WIN
 	connect(Kopete::AvatarManager::self(), SIGNAL(avatarAdded(Kopete::AvatarManager::AvatarEntry)),
 	        this, SLOT(avatarAdded(Kopete::AvatarManager::AvatarEntry)));
 	connect(Kopete::AvatarManager::self(), SIGNAL(avatarRemoved(Kopete::AvatarManager::AvatarEntry)),
 	        this, SLOT(avatarRemoved(Kopete::AvatarManager::AvatarEntry)));
+#endif
 
 	// Add a "No Avatar" option
 	Kopete::AvatarManager::AvatarEntry empty;
