@@ -137,8 +137,9 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 			return mcName.contains( filterRegExp() );
 		}
 
+		bool alwaysVisible = model->data( current, Kopete::Items::AlwaysVisible ).toBool();
 		int mcStatus = model->data( current, Kopete::Items::OnlineStatusRole ).toInt();
-		if ( mcStatus <= OnlineStatus::Offline && !showOffline )
+		if ( mcStatus <= OnlineStatus::Offline && !showOffline && !alwaysVisible )
 			return false;
 		else
 			return true;

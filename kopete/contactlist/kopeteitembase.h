@@ -51,6 +51,7 @@ namespace Kopete
 		const int ExpandStateRole = Qt::UserRole + 113;
 		const int HasNewMessageRole = Qt::UserRole + 114;
 		const int MetaContactGroupRole = Qt::UserRole + 115;
+		const int AlwaysVisible = Qt::UserRole + 116;
 
 		/* Item type role values */
 		enum Type { Group, MetaContact };

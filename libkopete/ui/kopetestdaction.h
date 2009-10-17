@@ -54,6 +54,10 @@ public:
 	 */
 	static KAction *sendFile(const QObject *recvr, const char *slot, QObject* parent );
 	/**
+	 * Standard action to toggle is the contact is visible even when offline
+	 */
+	static KAction *toggleAlwaysVisible(const QObject *recvr, const char *slot, QObject* parent );
+	/**
 	 * Standard action to change a contacts @ref Kopete::MetaContact
 	 */
 	static KAction *changeMetaContact(const QObject *recvr, const char *slot, QObject* parent );

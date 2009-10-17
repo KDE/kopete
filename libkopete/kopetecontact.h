@@ -383,6 +383,13 @@ public slots:
 	void execute();
 
 	/**
+	 * Toggle the visibility of this contact even if offline.  This function
+	 * is called by the KAction toggleAlwaysVisible that is part of the context
+	 * menu.
+	 */
+	void toggleAlwaysVisible();
+
+	/**
 	 * Changes the MetaContact that this contact is a part of.  This function
 	 * is called by the KAction changeMetaContact that is part of the context
 	 * menu.

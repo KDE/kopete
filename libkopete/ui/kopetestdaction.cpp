@@ -108,6 +108,11 @@ KAction * KopeteStdAction::addGroup( const QObject *recvr, const char *slot, QOb
 	return createAction( i18n( "&Create Group..." ), KIcon( "folder-new" ), recvr, slot, parent );
 }
 
+KAction * KopeteStdAction::toggleAlwaysVisible( const QObject *recvr, const char *slot, QObject* parent )
+{
+	return createAction( i18n( "Visible when offline" ), KIcon(), recvr, slot, parent );
+}
+
 KAction * KopeteStdAction::changeMetaContact( const QObject *recvr, const char *slot, QObject* parent )
 {
 	return createAction( i18n( "Cha&nge Meta Contact..." ), KIcon( "transform-move" ), recvr, slot, parent );

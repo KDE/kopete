@@ -123,6 +123,10 @@ namespace Global
 			 */
 			const PropertyTmpl &nickName() const;
 			/**
+			 * @return default template for a contact's visibility even if offline
+			 */
+			const PropertyTmpl &isAlwaysVisible() const;
+			/**
 			 * default template for a contact's photo.
 			 *
 			 * It could be either a QString or a QImage.

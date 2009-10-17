@@ -516,6 +516,18 @@ bool MetaContact::isOnline() const
 	return false;
 }
 
+bool MetaContact::isAlwaysVisible() const
+{
+	QListIterator<Contact *> it( d->contacts );
+	while ( it.hasNext() )
+	{
+		Contact* c = it.next();
+		if ( c && c->property( Kopete::Global::Properties::self()->isAlwaysVisible() ).value().toBool() )
+			return true;
+	}
+	return false;
+}
+
 bool MetaContact::isReachable() const
 {
 	if ( isOnline() )

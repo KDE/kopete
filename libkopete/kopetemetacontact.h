@@ -338,6 +338,11 @@ public:
 	bool isOnline() const;
 
 	/**
+	 * Returns whether this contact is visible even if offline
+	 */
+	bool isAlwaysVisible() const;
+
+	/**
 	 * Returns whether this contact can accept files
 	 * @return True if the user is online with a file capable protocol, false otherwise
 	 */

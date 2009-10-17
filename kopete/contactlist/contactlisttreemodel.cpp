@@ -222,7 +222,7 @@ int ContactListTreeModel::countConnected( GroupModelItem* gmi ) const
 	foreach ( ContactListModelItem* clmi, items )
 	{
 		MetaContactModelItem* mcmi = dynamic_cast<MetaContactModelItem*>(clmi);
-		if ( mcmi && mcmi->metaContact()->isOnline() )
+		if ( mcmi && ( mcmi->metaContact()->isOnline() || mcmi->metaContact()->isAlwaysVisible() ) )
 			onlineCount++;
 	}
 
@@ -320,6 +320,8 @@ QVariant ContactListTreeModel::data ( const QModelIndex & index, int role ) cons
 	{
 		if ( role == Kopete::Items::MetaContactGroupRole )
 			return qVariantFromValue( (QObject*)mcmi->parent()->group() );
+		else if ( role == Kopete::Items::AlwaysVisible )
+			return mcmi->metaContact()->isAlwaysVisible();
 		else
 			return metaContactData( mcmi->metaContact(), role );
 	}
