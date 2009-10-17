@@ -1,5 +1,5 @@
 [Protocol]
-exec=skype-action-handler "%u"
+exec=kopete %u
 protocol=callto
 input=none
 output=none
@@ -9,3 +9,4 @@ reading=false
 writing=false
 makedir=false
 deleting=false
+icon=skype

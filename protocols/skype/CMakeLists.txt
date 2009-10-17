@@ -67,15 +67,6 @@ set(
 	skypeprotocol.cpp
 )
 
-QT4_ADD_DBUS_ADAPTOR(
-	kopete_skype_SRCS
-	org.kde.kopete.SkypeActionHandler.xml
-	skypeaccount.h
-	SkypeAccount
-	skypeactionhandleradaptor
-	SkypeActionHandlerAdaptor
-)
-
 kde4_add_plugin(
 	kopete_skype
 	${kopete_skype_SRCS}
@@ -96,7 +87,7 @@ macro_optional_add_subdirectory( skypebuttons )
 ########### install files ###############
 
 install( TARGETS kopete_skype DESTINATION ${PLUGIN_INSTALL_DIR} )
-install( FILES kopete_skype.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+install( FILES kopete_skype.desktop skype.protocol callto.protocol tel.protocol DESTINATION ${SERVICES_INSTALL_DIR} )
 install( FILES skypeui.rc skypechatui.rc DESTINATION ${DATA_INSTALL_DIR}/kopete_skype )
 
 #Enable this for system bus dbus type communication with skype public api

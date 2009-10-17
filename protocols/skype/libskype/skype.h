@@ -277,6 +277,12 @@ class Skype : public QObject
 		 */
 		void send(const QString &user, const QString &body);
 		/**
+		 * Edit sent message
+		 * @param messageId Id of sent message
+		 * @parma newMessage Body of new message
+		 */
+		void editMessage(int messageId, const QString &newMessage);
+		/**
 		 * Send a message to a given chat
 		 * @param chat What chat to send it in
 		 * @param body Text of that message
@@ -535,6 +541,12 @@ class Skype : public QObject
 		 * Note: the group should be closed when all it's calls are closed
 		 */
 		void groupCall(const QString &callId, const QString &groupId);
+		/**
+		 * Emitted when we recive auth request
+		 * @param contactId who send request
+		 * @parma info info in request
+		 */
+		void receivedAuth(const QString &contactId, const QString &info);
 };
 
 #endif

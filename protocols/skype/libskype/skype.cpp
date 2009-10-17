@@ -354,6 +354,12 @@ void Skype::skypeMessage(const QString &message) {
 		} else if ( type == "ABOUT" ) {
 			/// TODO: Implement info ABOUT
 			kDebug(SKYPE_DEBUG_GLOBAL) << "Info ABOUT is not implemented for contact, ignored";
+		} else if ( type == "RECEIVEDAUTHREQUEST") {
+			if ( getAuthor(contactId) != Skype::Author ) {// Skype send all authorize request min 2x, filter if contact is authorized
+				const QString &info = message.section(' ', 3);
+				emit receivedAuth(contactId, info);
+				kDebug(SKYPE_DEBUG_GLOBAL) << "Received auth request from" << contactId;
+			}
 		} else {
 			kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown message for contact, ignored";
 		}
@@ -422,6 +428,17 @@ void Skype::skypeMessage(const QString &message) {
 					if (!body.isEmpty())//sometimes skype shows empty messages, just ignore them
 						emit outgoingMessage(body, chat);
 			}
+		} else if ( type == "EDITED_TIMESTAMP" ) {//timestamp of message was edited
+			///TODO: Implement this
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Timestamp of message" << messageId << "was edited, this is not implemented now";
+		} else if ( type == "EDITED_BY" ) {//this message was edited
+			///TODO: Implement this
+			QString editedBy = message.section(' ', 3, 3).trimmed();
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Message" << messageId << "was edited by" << editedBy << ", this is not implemented now";
+		} else if ( type == "BODY" ) { //This message was edited and has new body
+			///TODO: Implement this
+			QString newBody = message.section(' ', 3, 3).trimmed();
+			kDebug(SKYPE_DEBUG_GLOBAL) << "Message" << messageId << "was edited to" << newBody << ", this is not implemented now";
 		}
 	} else if (messageType == "CHATMESSAGES") {
 		if (d->searchFor == "MISSEDMESSAGES") {//Theese are messages we did not read yet
@@ -631,6 +648,10 @@ void Skype::send(const QString &user, const QString &message) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	d->connection << QString("MESSAGE %1 %2").arg(user).arg(message);//just ask skype to send it
+}
+
+void Skype::editMessage(int messageId, const QString &newMessage) {
+	d->connection << QString("CHATMESSAGE %1 BODY %2").arg(messageId).arg(newMessage);
 }
 
 void Skype::setScanForUnread(bool value) {

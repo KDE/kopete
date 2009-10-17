@@ -39,6 +39,22 @@ K_EXPORT_PLUGIN( SkypeProtocolFactory( "kopete_skype" ) )
 
 SkypeProtocol *SkypeProtocol::s_protocol = 0L;
 
+SkypeProtocolHandler::SkypeProtocolHandler() : Kopete::MimeTypeHandler(false) {
+	registerAsMimeHandler("x-skype"); //This is still not enought for javascript web buttons checker, we still need skypebuttons netscape plugin
+	registerAsProtocolHandler("callto");
+	registerAsProtocolHandler("skype");
+	registerAsProtocolHandler("tell");
+}
+
+void SkypeProtocolHandler::handleURL(const KUrl &url) const {
+	kDebug(SKYPE_DEBUG_GLOBAL);
+	if ( ! SkypeProtocol::protocol()->hasAccount() ) {
+		kDebug(SKYPE_DEBUG_GLOBAL) << "No Skype account registred";
+		return;
+	}
+	SkypeProtocol::protocol()->account()->SkypeActionHandler(url.url());
+}
+
 class SkypeProtocolPrivate {
 	private:
 	public:
@@ -51,6 +67,8 @@ class SkypeProtocolPrivate {
 			account = 0L;//no account yet
 			callContactAction = 0L;
 		}
+		///Url handler
+		SkypeProtocolHandler *handler;
 };
 
 SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
@@ -89,6 +107,8 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 
 	actionCollection()->addAction("callSkypeContact", d->callContactAction);
 
+	d->handler = new SkypeProtocolHandler;
+
 	updateCallActionStatus();
 	connect(Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(updateCallActionStatus()));
 
@@ -98,6 +118,7 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 SkypeProtocol::~SkypeProtocol() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 	//release the memory
+	delete d->handler;
 	delete d;
 }
 
@@ -133,6 +154,11 @@ bool SkypeProtocol::hasAccount() const {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	return (d->account);
+}
+
+SkypeAccount * SkypeProtocol::account() {
+	kDebug(SKYPE_DEBUG_GLOBAL);
+	return d->account;
 }
 
 Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &) {

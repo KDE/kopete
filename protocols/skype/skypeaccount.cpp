@@ -25,7 +25,6 @@
 #include "skypecalldialog.h"
 #include "skypechatsession.h"
 #include "skypeconference.h"
-#include "skypeactionhandleradaptor.h"
 
 #include <qstring.h>
 #include <kopetemetacontact.h>
@@ -40,6 +39,7 @@
 #include <QHash>
 #include <kopetemessage.h>
 #include <qprocess.h>
+#include <kopeteaddedinfoevent.h>
 
 class SkypeAccountPrivate {
 	public:
@@ -153,12 +153,9 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	QObject::connect(&d->skype, SIGNAL(receivedMultiIM(const QString&, const QString&, const QString&, const QString& )), this, SLOT(receiveMultiIm(const QString&, const QString&, const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(outgoingMessage(const QString&, const QString&)), this, SLOT(sentMessage(const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(groupCall(const QString&, const QString& )), this, SLOT(groupCall(const QString&, const QString& )));
+	QObject::connect(&d->skype, SIGNAL(receivedAuth(const QString &, const QString &)), this, SLOT(receivedAuth(const QString &, const QString &)));
 	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRemoved (Kopete::Group *)), this, SLOT(deleteGroup (Kopete::Group *) ) );
 	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRenamed (Kopete::Group *, const QString& )), this, SLOT(renameGroup (Kopete::Group *, const QString& )) );
-
-	//Set SkypeActionHandler for web SkypeButtons
-	new SkypeActionHandlerAdaptor(this);
-	QDBusConnection::sessionBus().registerObject("/SkypeActionHandler", this);
 
 	//set values for the connection (should be updated if changed)
 	d->skype.setValues(launchType, author);
@@ -1007,8 +1004,56 @@ void SkypeAccount::setDisplayName(const QString &user, const QString &name) {
 	d->skype.setDisplayName(user, name);
 }
 
+void SkypeAccount::receivedAuth(const QString &user, const QString &info) {
+	Kopete::AddedInfoEvent* event = new Kopete::AddedInfoEvent(user, this);
+
+	QObject::connect( event, SIGNAL(actionActivated(uint)), this, SLOT(authEvent(uint)) );
+
+	Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+	actions |= Kopete::AddedInfoEvent::BlockAction;
+	actions |= Kopete::AddedInfoEvent::InfoAction;
+
+	Kopete::Contact * ct = contacts().value( user );
+	if( !ct || !ct->metaContact() || ct->metaContact()->isTemporary() )
+		actions |= Kopete::AddedInfoEvent::AddAction;
+
+	if( ct )
+		event->setContactNickname( ct->nickName() );
+
+	event->showActions( actions );
+
+	event->setAdditionalText(info);
+	event->sendEvent();
+}
+
+void SkypeAccount::authEvent(uint actionId) {
+	Kopete::AddedInfoEvent *event = dynamic_cast<Kopete::AddedInfoEvent *>(sender());
+
+	if ( !event )
+		return;
+
+	switch ( actionId ) {
+		case Kopete::AddedInfoEvent::AddContactAction:
+			event->addContact();
+			break;
+		case Kopete::AddedInfoEvent::AuthorizeAction:
+			authorizeUser(event->contactId());
+			break;
+		case Kopete::AddedInfoEvent::BlockAction:
+			blockUser(event->contactId());
+			break;
+		case Kopete::AddedInfoEvent::InfoAction:
+			KMessageBox::error(0L, i18n("This is not implemented yet"), i18n("Skype protocol"));
+			//TODO: implement this
+			break;
+	}
+}
+
 void SkypeAccount::SkypeActionHandler(const QString &message) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << message;
+
+	//TODO:
+	//Add all actions from https://developer.skype.com/Docs/ApiDoc/Skype_URI_handler
 
 	if ( message.isEmpty() ) {
 		KMessageBox::error(0L, i18n("Unknown action from SkypeActionHandler"), i18n("Skype protocol"));

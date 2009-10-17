@@ -155,6 +155,20 @@ Q_OBJECT
 		 * @param oldname old kopete group name
 		 */
 		void renameGroup (Kopete::Group * group, const QString &oldname );
+
+		/**
+		 * slot for received authorization
+		 * @param user skype user
+		 * @param info message
+		 */
+		void receivedAuth(const QString &user, const QString &info);
+
+		/**
+		 * slot for authorization event action
+		 * actionId id of action
+		 */
+		void authEvent(uint actionId);
+
 	protected:
 		/**
 		 * Creates new skype contact and adds it into the parentContact.

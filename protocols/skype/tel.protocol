@@ -1,6 +1,6 @@
 [Protocol]
-exec=skype-action-handler "%u"
-protocol=skype
+exec=kopete %u
+protocol=tel
 input=none
 output=none
 helper=true
@@ -9,3 +9,4 @@ reading=false
 writing=false
 makedir=false
 deleting=false
+icon=skype

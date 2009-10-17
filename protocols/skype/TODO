@@ -29,7 +29,7 @@ TODO New:
 - add support recording calls
 - remove contact echo123 and add button "Make Test Call" in Skype protocol toolbar - done
 - add group support - done
-- add support searching contacts
+- add support searching contacts - only in libskype
 - add support for file transfer - not all (only send file)
 - show sent message imediately in chat window and show info when was delivered with correct time
 - cannot add yourself skype contact - done
@@ -40,4 +40,5 @@ TODO New:
 - import old history from skype
 - support call from KABC - using application skype-action-handler (skypebuttons) is now possible
 - add tool to configure skype client for using in kopete - done (disable all skype notification events and set up english language)
+- show event for request authorization - done
 

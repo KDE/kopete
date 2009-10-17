@@ -21,14 +21,23 @@
 
 #include "kopeteprotocol.h"
 #include "kopeteproperty.h"
+#include "kopetemimetypehandler.h"
 #include <qstring.h>
 
 class SkypeAccount;
 class SkypeProtocolPrivate;
+class KUrl;
 
 namespace Kopete {
 	class OnlineStatus;
 }
+
+class SkypeProtocolHandler : public Kopete::MimeTypeHandler
+{
+	public:
+		SkypeProtocolHandler();
+		void handleURL(const KUrl &url) const;
+};
 
 #define LAUNCH_ALLWAYS 0
 #define LAUNCH_NEEDED 1
@@ -126,6 +135,11 @@ class SkypeProtocol : public Kopete::Protocol
 		* Access the instance of this protocol
 		*/
 		static SkypeProtocol *protocol();
+		/**
+		 * Access to account (at the moment skype can have only one account)
+		 * @return account or null if account inst registred
+		 */
+		SkypeAccount * account();
 	public slots:
 		/**
 		 * This enables or disables the "Call by skype" action depending on weather a contact(s) are selected and have skype contacts
