@@ -1,15 +1,6 @@
 ########### next target ###############
 
-include( ${QT_USE_FILE} )
-add_definitions(${QT_DEFINITIONS})
-
-include_directories(
-	${QT_INCLUDE_DIR}
-	${QT_QTDBUS_INCLUDE_DIR}
-)
-
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=default" )
-add_definitions(-DQT_PLUGIN -DQT_SHARED)
 
 string( REGEX MATCHALL ^$ENV{HOME}.*$ IS_HOME ${CMAKE_INSTALL_PREFIX} )
 string( COMPARE EQUAL /usr ${CMAKE_INSTALL_PREFIX} IS_USR )
@@ -42,8 +33,8 @@ set( skypebuttons_SRCS
 
 QT4_GENERATE_MOC( ${CMAKE_CURRENT_SOURCE_DIR}/skypebuttons.cpp ${CMAKE_CURRENT_BINARY_DIR}/skypebuttons.moc )
 
-add_library( skypebuttons SHARED ${skypebuttons_SRCS} ${qtbrowserplugin_SRC})
-target_link_libraries( skypebuttons ${QT_LIBRARIES} )
+kde4_add_plugin( skypebuttons ${skypebuttons_SRCS} ${qtbrowserplugin_SRC} )
+target_link_libraries( skypebuttons ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} )
 
 ########### install files ###############
 
