@@ -1726,6 +1726,16 @@ bool JabberAccount::mergeMessages()
 	return configGroup()->readEntry("MergeMessages", true);
 }
 
+void JabberAccount::setOldEncrypted(bool b)
+{
+	configGroup()->writeEntry("OldEncrypted", b);
+}
+
+bool JabberAccount::oldEncrypted()
+{
+	return configGroup()->readEntry("OldEncrypted", false);
+}
+
 /*
 JabberMoodAction::JabberMoodAction(const Mood::Type type, QObject *parent):
 KAction(parent)

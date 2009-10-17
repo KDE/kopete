@@ -1034,6 +1034,13 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="oldEncrypted" >
+         <property name="text" >
+          <string>Use old inline PGP format for signed and encrypted messages</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>

@@ -138,6 +138,16 @@ public:
 	 * set if kopete will merge all messages to one session
 	 */
 	void setMergeMessages(bool b);
+
+	/**
+	 * return if kopete use old inline PGP format
+	 */
+	bool oldEncrypted();
+
+	/**
+	 * set if kopte use old inline PGP format
+	 */
+	void setOldEncrypted(bool b);
 	
 #ifdef JINGLE_SUPPORT
 	JingleCallsManager *jingleCallsManager() const {return m_jcm;}

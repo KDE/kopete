@@ -228,6 +228,7 @@ void JabberEditAccountWidget::reopen ()
 	cbHideSystemInfo->setChecked( account()->configGroup()->readEntry("HideSystemInfo", false) );
 
 	mergeMessages->setChecked(account()->mergeMessages());
+	oldEncrypted->setChecked(account()->oldEncrypted());
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
@@ -299,6 +300,7 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("HideSystemInfo", cbHideSystemInfo->isChecked());
 
 	account()->setMergeMessages(mergeMessages->isChecked());
+	account()->setOldEncrypted(oldEncrypted->isChecked());
 }
 
 bool JabberEditAccountWidget::validateData ()
