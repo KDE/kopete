@@ -203,7 +203,17 @@ void TelepathyChannelManager::handleFileTransferChannel(Tp::ChannelPtr channel,
     // program, or if it was initiated by the contact at the other end.
     if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"] == false) {
         kDebug() << "Incoming file transfer channel.";
-        //TODO - Implement incoming ft channel
+
+        TelepathyContact *contact = getTpContact(data->account,
+                properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString());
+
+        if (!contact) {
+            kWarning(TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER) << "Contact not found!";
+            channel->requestClose();
+            return;
+        }
+
+        (void *) new TelepathyFileTransfer(channel, contact);
     }
     else {
         kDebug() << "Outgoing file transfer channel.";
