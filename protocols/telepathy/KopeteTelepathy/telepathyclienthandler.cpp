@@ -34,15 +34,20 @@
 #include <TelepathyQt4/Connection>
 #include <TelepathyQt4/MethodInvocationContext>
 #include <TelepathyQt4/TextChannel>
+#include <TelepathyQt4/FileTransferChannel>
 
 static inline Tp::ChannelClassList channelClassList()
 {
-    QMap<QString, QDBusVariant> class1;
+    QMap<QString, QDBusVariant> class1, class2;
     class1[TELEPATHY_INTERFACE_CHANNEL ".ChannelType"] =
                                     QDBusVariant(TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT);
     class1[TELEPATHY_INTERFACE_CHANNEL ".TargetHandleType"] = QDBusVariant(Tp::HandleTypeContact);
 
-    return Tp::ChannelClassList() << Tp::ChannelClass(class1);
+    class2[TELEPATHY_INTERFACE_CHANNEL ".ChannelType"] =
+                                    QDBusVariant(TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER);
+    class2[TELEPATHY_INTERFACE_CHANNEL ".TargetHandleType"] = QDBusVariant(Tp::HandleTypeContact);
+
+    return Tp::ChannelClassList() << Tp::ChannelClass(class1) << Tp::ChannelClass(class2);
 }
 
 TelepathyClientHandler::TelepathyClientHandler()
