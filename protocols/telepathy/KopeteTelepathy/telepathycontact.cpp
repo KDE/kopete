@@ -23,9 +23,12 @@
 #include <KopeteTelepathy/telepathyaccount.h>
 #include <KopeteTelepathy/telepathychatsession.h>
 #include <KopeteTelepathy/telepathyprotocolinternal.h>
+#include <KopeteTelepathy/telepathyfiletransfer.h>
 
 #include <KAction>
 #include <KDebug>
+#include <KFileDialog>
+#include <KLocale>
 
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
@@ -169,6 +172,31 @@ void TelepathyContact::sync(unsigned int flags)
             if (!found)
                 d->internalContact->removeFromGroup(rgroup);
         }
+    }
+}
+
+void TelepathyContact::sendFile(const KUrl &sourceURL, const QString &fileName,
+                                uint fileSize)
+{
+    kDebug();
+
+    Q_UNUSED(fileName);
+    Q_UNUSED(fileSize);
+
+    QString filePath;
+
+    if (sourceURL.isValid())
+        filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+    else
+        filePath = KFileDialog::getOpenFileName(KUrl(), "*", 0L,
+                                                i18n("Kopete File Transfer"));
+
+    QFile file(filePath);
+
+    if (file.exists()) {
+        kDebug() << "Offering file:" << filePath;
+        (void) new TelepathyFileTransfer(d->internalContact->manager()->connection(),
+                                         this, filePath);
     }
 }
 

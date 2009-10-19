@@ -52,6 +52,9 @@ public:
     virtual Kopete::ChatSession *manager(Kopete::ContactPtrList members,
                                          CanCreateFlags canCreate = CannotCreate);
     virtual void sync(unsigned int flags);
+    virtual void sendFile(const KUrl &sourceURL = KUrl(),
+                          const QString &fileName = QString(),
+                          uint fileSize = 0L);
 
     void setInternalContact(Tp::ContactPtr contact);
     Tp::ContactPtr internalContact();
