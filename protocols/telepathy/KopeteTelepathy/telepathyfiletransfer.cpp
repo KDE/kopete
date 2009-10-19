@@ -37,11 +37,10 @@
 #include <TelepathyQt4/OutgoingFileTransferChannel>
 
 
-TelepathyFileTransfer::TelepathyFileTransfer(Tp::ConnectionPtr connection,
+TelepathyFileTransfer::TelepathyFileTransfer(Tp::ChannelPtr channel,
                                              TelepathyContact *contact,
                                              const QString &fileName)
     : QObject(contact),
-      m_conn(connection),
       m_localFile(fileName),
       m_transfer(0),
       m_contact(contact),
@@ -63,87 +62,8 @@ TelepathyFileTransfer::TelepathyFileTransfer(Tp::ConnectionPtr connection,
                     m_contact->contactId(),
                     Kopete::FileTransferInfo::Outgoing);
 
-    QObject::connect(m_conn.data(),
-                     SIGNAL(invalidated(Tp::DBusProxy *,
-                            const QString &, const QString &)),
-                     SLOT(onInvalidated()));
-
-    QObject::connect(m_conn->becomeReady(),
-                     SIGNAL(finished(Tp::PendingOperation *)),
-                     SLOT(onConnectionReady(Tp::PendingOperation *)));
-}
-
-TelepathyFileTransfer::~TelepathyFileTransfer()
-{
-    kDebug() << "Destroying file transfer";
-
-    m_localFile.close();
-}
-
-void TelepathyFileTransfer::onConnectionReady(Tp::PendingOperation *op)
-{
-    if (op->isError()) {
-        kWarning() << "Readying connection failed:"
-                   << op->errorName()
-                   << op->errorMessage();
-        m_transfer->slotError(KIO::ERR_COULD_NOT_CONNECT, op->errorMessage());
-        return;
-    }
-
-    kDebug() << "Telepathy connection is ready for file transfer";
-
-    QFileInfo fileInfo(m_localFile);
-
-    kDebug() << "Creating file transfer channel...";
-
-    QVariantMap req;
-    req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"),
-               TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER);
-    req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandleType"),
-               (uint) Tp::HandleTypeContact);
-    req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandle"),
-               m_contact->internalContact()->handle()[0]);
-    req.insert(QLatin1String(
-                TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Filename"),
-               fileInfo.fileName());
-    req.insert(QLatin1String(
-                TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Size"),
-               (qulonglong) fileInfo.size());
-    req.insert(QLatin1String(
-                TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".ContentType"),
-               "application/octet-stream");
-
-    kDebug() << "Request:" << req;
-
-    connect(m_conn->createChannel(req),
-            SIGNAL(finished(Tp::PendingOperation*)),
-            SLOT(onFileTransferChannelCreated(Tp::PendingOperation*)));
-}
-
-void TelepathyFileTransfer::onInvalidated()
-{
-    kDebug() << "Invalidated";
-
-    m_transfer->slotError(KIO::ERR_INTERNAL, "Channel invalidated");
-}
-
-void TelepathyFileTransfer::onFileTransferChannelCreated(Tp::PendingOperation *op)
-{
-    if (op->isError()) {
-        kWarning() << "Creating file transfer channel failed:"
-                   << op->errorName()
-                   << op->errorMessage();
-        m_transfer->slotError(KIO::ERR_COULD_NOT_CONNECT, op->errorMessage());
-        return;
-    }
-
-    kDebug() << "Telepathy file transfer channel created";
-
-    Tp::PendingChannel *pc = qobject_cast<Tp::PendingChannel*>(op);
-
     if (m_direction == Outgoing)
-        m_channel = Tp::OutgoingFileTransferChannelPtr::dynamicCast(
-                pc->channel());
+        m_channel = Tp::OutgoingFileTransferChannelPtr::dynamicCast(channel);
 
     QObject::connect(m_transfer,
                      SIGNAL(transferCancelled()),
@@ -162,6 +82,21 @@ void TelepathyFileTransfer::onFileTransferChannelCreated(Tp::PendingOperation *o
                 Tp::FileTransferChannel::FeatureCore),
                      SIGNAL(finished(Tp::PendingOperation *)),
                      SLOT(onFileTransferChannelReady(Tp::PendingOperation *)));
+}
+
+TelepathyFileTransfer::~TelepathyFileTransfer()
+{
+    kDebug() << "Destroying file transfer";
+
+    m_localFile.close();
+    m_channel->requestClose();
+}
+
+void TelepathyFileTransfer::onInvalidated()
+{
+    kDebug() << "Invalidated";
+
+    m_transfer->slotError(KIO::ERR_INTERNAL, "Channel invalidated");
 }
 
 void TelepathyFileTransfer::onFileTransferChannelReady(Tp::PendingOperation *op)

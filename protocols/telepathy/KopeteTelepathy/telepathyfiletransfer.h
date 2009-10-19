@@ -46,15 +46,13 @@ public:
         Outgoing = 1
     };
 
-    TelepathyFileTransfer(Tp::ConnectionPtr connection,
+    TelepathyFileTransfer(Tp::ChannelPtr channel,
                           TelepathyContact *contact,
                           const QString &fileName);
     virtual ~TelepathyFileTransfer();
 
 private slots:
-    void onConnectionReady(Tp::PendingOperation *);
     void onInvalidated();
-    void onFileTransferChannelCreated(Tp::PendingOperation*);
     void onFileTransferChannelReady(Tp::PendingOperation*);
     void onFileTransferChannelStateChanged(Tp::FileTransferState,
                                            Tp::FileTransferStateChangeReason);
@@ -64,7 +62,6 @@ private slots:
 
 
 private:
-    Tp::ConnectionPtr m_conn;
     Tp::OutgoingFileTransferChannelPtr m_channel;
     QFile m_localFile;
     Kopete::Transfer *m_transfer;
