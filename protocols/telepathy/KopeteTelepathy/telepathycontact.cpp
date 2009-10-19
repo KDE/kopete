@@ -191,12 +191,34 @@ void TelepathyContact::sendFile(const KUrl &sourceURL, const QString &fileName,
         filePath = KFileDialog::getOpenFileName(KUrl(), "*", 0L,
                                                 i18n("Kopete File Transfer"));
 
-    QFile file(filePath);
+    QFileInfo file(filePath);
 
     if (file.exists()) {
         kDebug() << "Offering file:" << filePath;
-        (void) new TelepathyFileTransfer(d->internalContact->manager()->connection(),
-                                         this, filePath);
+
+        QVariantMap req;
+        req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"),
+                   TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER);
+        req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandleType"),
+                   (uint) Tp::HandleTypeContact);
+        req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandle"),
+                   d->internalContact->handle()[0]);
+
+        // FIXME - We should not send the file path but the file basename.
+        req.insert(QLatin1String(
+                    TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Filename"),
+                    filePath);
+
+        req.insert(QLatin1String(
+                    TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Size"),
+                   (qulonglong) file.size());
+        req.insert(QLatin1String(
+                    TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".ContentType"),
+                   "application/octet-stream");
+
+        TelepathyAccount *telepathyAccount = qobject_cast<TelepathyAccount *>(account());
+        Tp::AccountPtr account = telepathyAccount->account();
+        account->ensureChannel(req, QDateTime::currentDateTime());
     }
 }
 

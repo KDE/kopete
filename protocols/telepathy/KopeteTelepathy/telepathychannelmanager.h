@@ -46,9 +46,11 @@ private:
 
     void handleTextChannel(Tp::ChannelPtr channel,
                            TelepathyClientHandler::HandleChannelsData *data);
+    void handleFileTransferChannel(Tp::ChannelPtr channel,
+                                   TelepathyClientHandler::HandleChannelsData *data);
 
     TelepathyContact *getTpContact(Tp::AccountPtr account,
-                                   Tp::ChannelPtr channel);
+                                   const QString &contactId);
     TelepathyClientHandler *m_clientHandler;
     Tp::ClientRegistrarPtr m_clientRegistrar;
 };

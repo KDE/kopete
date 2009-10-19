@@ -25,6 +25,7 @@
 #include <KopeteTelepathy/telepathyclienthandler.h>
 #include <KopeteTelepathy/telepathycontact.h>
 #include <KopeteTelepathy/telepathyprotocolinternal.h>
+#include <KopeteTelepathy/telepathyfiletransfer.h>
 
 #include <KDebug>
 
@@ -103,6 +104,12 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
             kDebug() << "Handling:" << TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT;
             handleTextChannel(channel, data);
         }
+        else if (properties[TELEPATHY_INTERFACE_CHANNEL ".ChannelType"] ==
+                 TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER) {
+
+            kDebug() << "Handling:" << TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER;
+            handleFileTransferChannel(channel, data);
+        }
     }
 
     data->context->setFinished();
@@ -127,10 +134,11 @@ void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
         kDebug() << "Text Channel initiated by remote contact.";
 
         // Get KopeteContact
-        TelepathyContact *contact = getTpContact(data->account, channel);
+        TelepathyContact *contact = getTpContact(data->account,
+                properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString());
 
         if (!contact) {
-            kWarning() << "Contact not found!";
+            kWarning(TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT) << "Contact not found!";
             channel->requestClose();
             return;
         }
@@ -184,10 +192,42 @@ void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
     }
 }
 
-TelepathyContact *TelepathyChannelManager::getTpContact(Tp::AccountPtr account,
-                                                        Tp::ChannelPtr channel)
+void TelepathyChannelManager::handleFileTransferChannel(Tp::ChannelPtr channel,
+                                                        TelepathyClientHandler::HandleChannelsData *data)
 {
-    TelepathyContact *contact = 0L;
+    kDebug();
+
+    QVariantMap properties = channel->immutableProperties();
+
+    // Check to see if this channel satisfies a request that was made by this
+    // program, or if it was initiated by the contact at the other end.
+    if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"] == false) {
+        kDebug() << "Incoming file transfer channel.";
+        //TODO - Implement incoming ft channel
+    }
+    else {
+        kDebug() << "Outgoing file transfer channel.";
+
+        TelepathyContact *contact = getTpContact(data->account,
+                properties[TELEPATHY_INTERFACE_CHANNEL ".TargetID"].toString());
+
+        if (!contact) {
+            kWarning(TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER) << "Contact not found!";
+            channel->requestClose();
+            return;
+        }
+
+        QString fileName =
+            properties[TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Filename"].toString();
+
+        (void *) new TelepathyFileTransfer(channel, contact, fileName);
+    }
+}
+
+TelepathyContact *TelepathyChannelManager::getTpContact(Tp::AccountPtr account,
+                                                        const QString &contactId)
+{
+    TelepathyContact *tpContact = 0L;
     QList<Kopete::Account*> kAccounts = Kopete::AccountManager::self()->
         accounts(TelepathyProtocolInternal::protocolInternal()->protocol());
 
@@ -209,7 +249,7 @@ TelepathyContact *TelepathyChannelManager::getTpContact(Tp::AccountPtr account,
             while (contactIterator != contacts.constEnd()) {
 
                 // Check its a tp contact
-                contact = qobject_cast<TelepathyContact*>(
+                TelepathyContact *contact = qobject_cast<TelepathyContact*>(
                         contactIterator.value());
 
                 if (!contact) {
@@ -228,12 +268,9 @@ TelepathyContact *TelepathyChannelManager::getTpContact(Tp::AccountPtr account,
                     continue;
                 }
 
-                QVariantMap properties = channel->immutableProperties();
-
-                // See if it is in the list of contacts for this channel.
-                if (contact->internalContact()->id() ==
-                    properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"]) {
+                if (contact->internalContact()->id() == contactId) {
                     kDebug() << "Found the remote contact.";
+                    tpContact = contact;
                     break;
                 }
 
@@ -242,7 +279,7 @@ TelepathyContact *TelepathyChannelManager::getTpContact(Tp::AccountPtr account,
         }
     }
 
-    return contact;
+    return tpContact;
 }
 
 #include "telepathychannelmanager.moc"
