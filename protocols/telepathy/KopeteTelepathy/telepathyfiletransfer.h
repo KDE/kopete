@@ -69,6 +69,7 @@ private:
     QFile m_localFile;
     Kopete::Transfer *m_transfer;
     TelepathyContact *m_contact;
+    TransferDirection m_direction;
 };
 
 #endif // Header guard

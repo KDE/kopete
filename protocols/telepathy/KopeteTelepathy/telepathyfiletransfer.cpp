@@ -44,10 +44,24 @@ TelepathyFileTransfer::TelepathyFileTransfer(Tp::ConnectionPtr connection,
       m_conn(connection),
       m_localFile(fileName),
       m_transfer(0),
-      m_contact(contact)
+      m_contact(contact),
+      m_direction(Outgoing)
 {
     kDebug() << "Starting new outgoing file transfer:"
              << contact->contactId() << fileName;
+
+    if (!m_localFile.open(QIODevice::ReadOnly)) {
+        kWarning() << "Unable to open file for reading";
+        deleteLater();
+        return;
+    }
+
+    m_transfer = Kopete::TransferManager::transferManager()->
+        addTransfer(m_contact,
+                    m_localFile.fileName(),
+                    m_localFile.size(),
+                    m_contact->contactId(),
+                    Kopete::FileTransferInfo::Outgoing);
 
     QObject::connect(m_conn.data(),
                      SIGNAL(invalidated(Tp::DBusProxy *,
@@ -72,18 +86,11 @@ void TelepathyFileTransfer::onConnectionReady(Tp::PendingOperation *op)
         kWarning() << "Readying connection failed:"
                    << op->errorName()
                    << op->errorMessage();
-        /* FIXME - We can't just return, so deleting */
-        deleteLater();
+        m_transfer->slotError(KIO::ERR_INTERNAL, op->errorMessage());
         return;
     }
 
     kDebug() << "Telepathy connection is ready for file transfer";
-
-    if (!m_localFile.open(QIODevice::ReadOnly)) {
-        kWarning() << "Unable to open file for reading";
-        deleteLater();
-        return;
-    }
 
     QFileInfo fileInfo(m_localFile);
 
@@ -117,7 +124,7 @@ void TelepathyFileTransfer::onInvalidated()
 {
     kDebug() << "Invalidated";
 
-    deleteLater();
+    m_transfer->slotError(KIO::ERR_INTERNAL, "Channel invalidated");
 }
 
 void TelepathyFileTransfer::onFileTransferChannelCreated(Tp::PendingOperation *op)
@@ -126,22 +133,17 @@ void TelepathyFileTransfer::onFileTransferChannelCreated(Tp::PendingOperation *o
         kWarning() << "Creating file transfer channel failed:"
                    << op->errorName()
                    << op->errorMessage();
-        /* FIXME - We can't just return, so deleting */
-        deleteLater();
+        m_transfer->slotError(KIO::ERR_INTERNAL, op->errorMessage());
         return;
     }
 
     kDebug() << "Telepathy file transfer channel created";
 
     Tp::PendingChannel *pc = qobject_cast<Tp::PendingChannel*>(op);
-    m_channel = Tp::OutgoingFileTransferChannelPtr::dynamicCast(pc->channel());
 
-    m_transfer = Kopete::TransferManager::transferManager()->
-        addTransfer(m_contact,
-                    m_localFile.fileName(),
-                    m_localFile.size(),
-                    m_contact->contactId(),
-                    Kopete::FileTransferInfo::Outgoing);
+    if (m_direction == Outgoing)
+        m_channel = Tp::OutgoingFileTransferChannelPtr::dynamicCast(
+                pc->channel());
 
     QObject::connect(m_transfer,
                      SIGNAL(transferCancelled()),
@@ -156,7 +158,8 @@ void TelepathyFileTransfer::onFileTransferChannelCreated(Tp::PendingOperation *o
                             const QString &, const QString &)),
                      SLOT(onInvalidated()));
 
-    QObject::connect(m_channel->becomeReady(Tp::FileTransferChannel::FeatureCore),
+    QObject::connect(m_channel->becomeReady(
+                Tp::FileTransferChannel::FeatureCore),
                      SIGNAL(finished(Tp::PendingOperation *)),
                      SLOT(onFileTransferChannelReady(Tp::PendingOperation *)));
 }
@@ -167,8 +170,7 @@ void TelepathyFileTransfer::onFileTransferChannelReady(Tp::PendingOperation *op)
         kWarning() << "Readying file transfer channel failed:"
                    << op->errorName()
                    << op->errorMessage();
-        /* FIXME - We can't just return, so deleting */
-        deleteLater();
+        m_transfer->slotError(KIO::ERR_INTERNAL, op->errorMessage());
         return;
     }
 
@@ -193,7 +195,8 @@ void TelepathyFileTransfer::onFileTransferChannelStateChanged(Tp::FileTransferSt
         case Tp::FileTransferStatePending:
             break;
         case Tp::FileTransferStateAccepted:
-            m_channel->provideFile(&m_localFile);
+            if (m_direction == Outgoing)
+                m_channel->provideFile(&m_localFile);
             break;
         case Tp::FileTransferStateOpen:
             break;
@@ -222,10 +225,12 @@ void TelepathyFileTransfer::onTransferCancelled()
 {
     kDebug() << "File transfer cancelled";
 
-//    deleteLater();
+    m_channel->cancel();
 }
 
 void TelepathyFileTransfer::onTransferResult()
 {
     kDebug() << "File transfer result";
+
+    deleteLater();
 }
