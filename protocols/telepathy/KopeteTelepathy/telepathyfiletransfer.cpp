@@ -35,6 +35,7 @@
 #include <TelepathyQt4/PendingChannel>
 #include <TelepathyQt4/FileTransferChannel>
 #include <TelepathyQt4/OutgoingFileTransferChannel>
+#include <TelepathyQt4/IncomingFileTransferChannel>
 
 
 TelepathyFileTransfer::TelepathyFileTransfer(Tp::ChannelPtr channel,
@@ -62,11 +63,10 @@ TelepathyFileTransfer::TelepathyFileTransfer(Tp::ChannelPtr channel,
                     m_contact->contactId(),
                     Kopete::FileTransferInfo::Outgoing);
 
-    if (m_direction == Outgoing)
-        m_channel = Tp::OutgoingFileTransferChannelPtr::dynamicCast(channel);
+    m_channel = Tp::FileTransferChannelPtr::dynamicCast(channel);
 
     QObject::connect(m_transfer,
-                     SIGNAL(transferCancelled()),
+                     SIGNAL(slotCancelled()),
                      SLOT(onTransferCancelled()));
 
     QObject::connect(m_transfer,
@@ -82,6 +82,39 @@ TelepathyFileTransfer::TelepathyFileTransfer(Tp::ChannelPtr channel,
                 Tp::FileTransferChannel::FeatureCore),
                      SIGNAL(finished(Tp::PendingOperation *)),
                      SLOT(onFileTransferChannelReady(Tp::PendingOperation *)));
+}
+
+TelepathyFileTransfer::TelepathyFileTransfer(Tp::ChannelPtr channel,
+                                             TelepathyContact *contact)
+    : QObject(contact),
+      m_localFile(""),
+      m_transfer(0),
+      m_contact(contact),
+      m_direction(Incoming),
+      m_transferId(0)
+{
+    kDebug() << "Starting new incoming file transfer:"
+             << contact->contactId();
+
+    QObject::connect(Kopete::TransferManager::transferManager(),
+                     SIGNAL(accepted(Kopete::Transfer *, const QString &)),
+                     SLOT(onIncomingTransferAccepted(Kopete::Transfer *,
+                                                     const QString &)));
+    QObject::connect(Kopete::TransferManager::transferManager(),
+                     SIGNAL(refused(const Kopete::FileTransferInfo &)),
+                     SLOT(onIncomingTransferRefused(
+                             const Kopete::FileTransferInfo &)));
+
+    m_channel = Tp::FileTransferChannelPtr::dynamicCast(channel);
+
+    QVariantMap properties = m_channel->immutableProperties();
+
+    m_transferId = Kopete::TransferManager::transferManager()->
+        askIncomingTransfer(contact,
+                            properties[TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Filename"].toString(),
+                            properties[TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Size"].toULongLong(),
+                            properties[TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Description"].toString(),
+                            QString());
 }
 
 TelepathyFileTransfer::~TelepathyFileTransfer()
@@ -119,6 +152,12 @@ void TelepathyFileTransfer::onFileTransferChannelReady(Tp::PendingOperation *op)
     QObject::connect(m_channel.data(),
                      SIGNAL(transferredBytesChanged(qulonglong)),
                      SLOT(onFileTransferChannelTransferredBytesChanged(qulonglong)));
+
+    if (m_direction == Incoming) {
+        Tp::IncomingFileTransferChannelPtr inChannel =
+            Tp::IncomingFileTransferChannelPtr::dynamicCast(m_channel);
+        inChannel->acceptFile(0, &m_localFile);
+    }
 }
 
 void TelepathyFileTransfer::onFileTransferChannelStateChanged(Tp::FileTransferState state,
@@ -130,8 +169,11 @@ void TelepathyFileTransfer::onFileTransferChannelStateChanged(Tp::FileTransferSt
         case Tp::FileTransferStatePending:
             break;
         case Tp::FileTransferStateAccepted:
-            if (m_direction == Outgoing)
-                m_channel->provideFile(&m_localFile);
+            if (m_direction == Outgoing) {
+                Tp::OutgoingFileTransferChannelPtr outChannel =
+                    Tp::OutgoingFileTransferChannelPtr::dynamicCast(m_channel);
+                outChannel->provideFile(&m_localFile);
+            }
             break;
         case Tp::FileTransferStateOpen:
             break;
@@ -169,3 +211,52 @@ void TelepathyFileTransfer::onTransferResult()
 
     deleteLater();
 }
+
+void TelepathyFileTransfer::onIncomingTransferAccepted(Kopete::Transfer *trans,
+                                                       const QString &fileName)
+{
+    kDebug() << "User has accepted the incoming file transfer";
+
+    if ((long)trans->info().transferId() != m_transferId)
+        return;
+
+    m_transfer = trans;
+    m_localFile.setFileName(fileName);
+
+    if (!m_localFile.open(QIODevice::WriteOnly)) {
+        kWarning() << "Unable to open file for reading";
+        m_transfer->slotError(KIO::ERR_COULD_NOT_WRITE, fileName);
+        return;
+    }
+
+    QObject::connect(m_transfer,
+                     SIGNAL(slotCancelled()),
+                     SLOT(onTransferCancelled()));
+
+    QObject::connect(m_transfer,
+                     SIGNAL(result(KJob *)),
+                     SLOT(onTransferResult()));
+
+    QObject::connect(m_channel.data(),
+                     SIGNAL(invalidated(Tp::DBusProxy *,
+                            const QString &, const QString &)),
+                     SLOT(onInvalidated()));
+
+    QObject::connect(m_channel->becomeReady(
+                Tp::FileTransferChannel::FeatureCore),
+                     SIGNAL(finished(Tp::PendingOperation *)),
+                     SLOT(onFileTransferChannelReady(Tp::PendingOperation *)));
+}
+
+void TelepathyFileTransfer::onIncomingTransferRefused(
+        const Kopete::FileTransferInfo &info)
+{
+    kDebug() << "User has refused the incoming file transfer:"
+             << info.file();
+
+    if ((long)info.transferId() != m_transferId)
+        return;
+
+    deleteLater();
+}
+

@@ -32,6 +32,7 @@ class PendingOperation;
 namespace Kopete
 {
 class Transfer;
+class FileTransferInfo;
 }
 
 class TelepathyFileTransfer : public QObject
@@ -49,6 +50,8 @@ public:
     TelepathyFileTransfer(Tp::ChannelPtr channel,
                           TelepathyContact *contact,
                           const QString &fileName);
+    TelepathyFileTransfer(Tp::ChannelPtr channel,
+                          TelepathyContact *contact);
     virtual ~TelepathyFileTransfer();
 
 private slots:
@@ -59,14 +62,17 @@ private slots:
     void onFileTransferChannelTransferredBytesChanged(qulonglong);
     void onTransferCancelled();
     void onTransferResult();
+    void onIncomingTransferAccepted(Kopete::Transfer *, const QString &);
+    void onIncomingTransferRefused(const Kopete::FileTransferInfo &);
 
 
 private:
-    Tp::OutgoingFileTransferChannelPtr m_channel;
+    Tp::FileTransferChannelPtr m_channel;
     QFile m_localFile;
     Kopete::Transfer *m_transfer;
     TelepathyContact *m_contact;
     TransferDirection m_direction;
+    unsigned int m_transferId;
 };
 
 #endif // Header guard
