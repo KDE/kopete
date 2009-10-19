@@ -59,6 +59,7 @@ TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &con
 {
     kDebug();
     setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->Offline);
+    setFileCapable(true);
 }
 
 TelepathyContact::~TelepathyContact()
