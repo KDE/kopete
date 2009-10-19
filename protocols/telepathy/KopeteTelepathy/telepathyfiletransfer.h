@@ -37,8 +37,15 @@ class Transfer;
 class TelepathyFileTransfer : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(TransferDirection)
 
 public:
+    enum TransferDirection
+    {
+        Incoming = 0,
+        Outgoing = 1
+    };
+
     TelepathyFileTransfer(Tp::ConnectionPtr connection,
                           TelepathyContact *contact,
                           const QString &fileName);
