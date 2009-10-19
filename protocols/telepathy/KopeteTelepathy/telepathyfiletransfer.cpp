@@ -86,7 +86,7 @@ void TelepathyFileTransfer::onConnectionReady(Tp::PendingOperation *op)
         kWarning() << "Readying connection failed:"
                    << op->errorName()
                    << op->errorMessage();
-        m_transfer->slotError(KIO::ERR_INTERNAL, op->errorMessage());
+        m_transfer->slotError(KIO::ERR_COULD_NOT_CONNECT, op->errorMessage());
         return;
     }
 
@@ -133,7 +133,7 @@ void TelepathyFileTransfer::onFileTransferChannelCreated(Tp::PendingOperation *o
         kWarning() << "Creating file transfer channel failed:"
                    << op->errorName()
                    << op->errorMessage();
-        m_transfer->slotError(KIO::ERR_INTERNAL, op->errorMessage());
+        m_transfer->slotError(KIO::ERR_COULD_NOT_CONNECT, op->errorMessage());
         return;
     }
 
@@ -170,7 +170,7 @@ void TelepathyFileTransfer::onFileTransferChannelReady(Tp::PendingOperation *op)
         kWarning() << "Readying file transfer channel failed:"
                    << op->errorName()
                    << op->errorMessage();
-        m_transfer->slotError(KIO::ERR_INTERNAL, op->errorMessage());
+        m_transfer->slotError(KIO::ERR_COULD_NOT_CONNECT, op->errorMessage());
         return;
     }
 
