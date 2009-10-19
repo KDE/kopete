@@ -23,13 +23,11 @@
 
 #include <KopeteTelepathy/telepathyclienthandler.h>
 
-#include <QtCore/QMap>
 #include <QtCore/QObject>
-#include <QtCore/QPair>
 
 #include <TelepathyQt4/ClientRegistrar>
-#include <TelepathyQt4/PendingOperation>
-#include <TelepathyQt4/PendingReady>
+
+class TelepathyContact;
 
 class TelepathyChannelManager : public QObject
 {
@@ -42,15 +40,16 @@ public:
 
     void handleChannels(TelepathyClientHandler::HandleChannelsData *data);
 
-private Q_SLOTS:
-    void onChannelReady(Tp::PendingOperation *op);
-
 private:
     TelepathyChannelManager(QObject *parent = 0);
     static TelepathyChannelManager *s_self;
 
+    void handleTextChannel(Tp::ChannelPtr channel,
+                           TelepathyClientHandler::HandleChannelsData *data);
+
+    TelepathyContact *getTpContact(Tp::AccountPtr account,
+                                   Tp::ChannelPtr channel);
     TelepathyClientHandler *m_clientHandler;
-    QMap<Tp::PendingReady*, QPair<Tp::TextChannelPtr, TelepathyClientHandler::HandleChannelsData*> > m_channelToHandleChannelData;
     Tp::ClientRegistrarPtr m_clientRegistrar;
 };
 
