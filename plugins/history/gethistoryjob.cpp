@@ -50,7 +50,9 @@ void GetHistoryJob::itemsReceivedSlot(Akonadi::Item::List itemList)
   kDebug() << "get job itemsReceivedslot";
   foreach( const Akonadi::Item &item, itemList)
   {
-    if ( item.modificationTime().toLocalTime().toString("MMyyyy")== m_date.toString("MMyyyy") )
+    History his;
+    his = item.payload<History>();
+    if ( his.date().toString("MMyyyy") == m_date.toString("MMyyyy") )
     {
       kDebug()<<"----------------------------------------------------------------from job item found^^";
       m_item=item;

@@ -18,6 +18,7 @@
 */
 
 #include "historyplugin.h"
+#include <QTimer>
 
 #include <QtCore/QList>
 
@@ -57,8 +58,6 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
         : Kopete::Plugin( HistoryPluginFactory::componentData(), parent ), m_loggerFactory( this )
 {
     kDebug(14310) << "********History Plugin Constructor\n\n ";
-    kDebug() << "Common dude KDEBUG";
-    kDebug() << "qdebug ********History Plugin Constructor\n\n ";
     
     Akonadi::CollectionFetchJob *fetch = new Akonadi::CollectionFetchJob(Akonadi::Collection::root(),Akonadi::CollectionFetchJob::Recursive);
     connect(fetch,SIGNAL(finished(KJob*)),this,SLOT(collectionFetch(KJob*)) );
@@ -244,6 +243,7 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
         return;
 
     HistoryLogger *logger = m_loggers[m_currentChatSession]->logger();
+    //TODO: @roide , i dont think you need this, m_ loggerx, 
     m_loggerx=logger;
 
     logger->setPositionToLast();
@@ -251,7 +251,8 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
     
     connect(logger,SIGNAL(readMessagesDoneSignal(QList<Kopete::Message>)), this,SLOT(slotViewCreated2(QList<Kopete::Message>)));
     
-    logger->readMessages(nbAutoChatWindow,coll,mb.first(), HistoryLogger::AntiChronological, true, true);
+    Kopete::Contact * xxx;
+    logger->readMessages(nbAutoChatWindow,xxx, HistoryLogger::AntiChronological, true, true);
     
 }
 void HistoryPlugin::slotViewCreated2(QList<Kopete::Message> msgsx)
@@ -268,6 +269,21 @@ void HistoryPlugin::slotViewCreated2(QList<Kopete::Message> msgsx)
     }
 
     m_currentViewx->appendMessages( msgs );
+
+//    QTimer *t = new QTimer(this);
+ //   connect(t,SIGNAL(timeout()),SLOT(test()) );
+ //   t->setSingleShot(true);
+ //   t->start(10000);
+
+}
+
+void HistoryPlugin::test()
+{
+    const Kopete::Contact * xxx;
+    Akonadi::Collection coll;
+    kDebug() << " \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t calling FOR METACONTACT";
+    m_loggerx->readMessages(10, xxx , HistoryLogger::AntiChronological , true, true);
+    
 }
 
 

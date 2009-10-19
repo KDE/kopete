@@ -209,7 +209,7 @@ void HistoryDialog::init()
     connect(transaction,SIGNAL(result(KJob*)), this, SLOT(progressBarSlot(KJob*) ) );
 
     if (mMetaContact)
-    {
+    {kDebug() << "inside if part";
 //        init(mMetaContact);
         QList<Kopete::Contact *> contacts = mMetaContact->contacts();
 
@@ -221,6 +221,7 @@ void HistoryDialog::init()
                 QVariant v;
                 v.setValue<Kopete::Contact *>(contact);
                 Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(c , transaction);
+		fetchJob->fetchScope().fetchPayloadPart(History::HeaderPayload);
                 fetchJob->setProperty("contact",v);
                 connect(fetchJob,SIGNAL(result(KJob*)),
                         this,SLOT(initItemJobDone(KJob *)));
@@ -228,7 +229,7 @@ void HistoryDialog::init()
         }
     }
     else
-    {
+    {kDebug() << "inside else part";
         foreach(Kopete::MetaContact *metaContactx, mMetaContactList)
         {
             QList<Kopete::Contact *> contacts = metaContactx->contacts();
@@ -242,6 +243,7 @@ void HistoryDialog::init()
                     QVariant v;
                     v.setValue<Kopete::Contact *>(contact);
                     Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(c , transaction);
+		    fetchJob->fetchScope().fetchPayloadPart(History::HeaderPayload);
                     fetchJob->setProperty("contact",v);
                     connect(fetchJob,SIGNAL(result(KJob*)),
                             this,SLOT(initItemJobDone(KJob *)));
@@ -268,6 +270,7 @@ void HistoryDialog::progressBarSlot(KJob *job)
 
 void HistoryDialog::initItemJobDone(KJob *job)
 {
+    kDebug() << " ";
     Akonadi::ItemFetchJob *fetchJob = static_cast<Akonadi::ItemFetchJob*>(job);
     Akonadi::Item::List itemList= fetchJob->items();
     if (job->error())
@@ -279,9 +282,19 @@ void HistoryDialog::initItemJobDone(KJob *job)
         QVariant v;
         v= fetchJob->property("contact");
         Kopete::Contact *c= v.value<Kopete::Contact*>();
+	kDebug() << itemList.size();
         foreach(const Akonadi::Item &item, itemList)
         {
-            QDate cDate = QDate(item.modificationTime().toLocalTime().date().year(),item.modificationTime().toLocalTime().date().month(), 1);
+	    History his;
+	    if ( item.hasPayload<History>() )
+		his = item.payload<History>() ;
+	    else 
+	    {
+		kDebug() << "not of payload type history HOW IS THIS POSSIBLE";
+		kDebug() << item.payloadData();
+		continue;
+	    }
+            QDate cDate = QDate( his.date().year() , his.date().month() , 1);
             DMPair pair(cDate, c->metaContact());
             mInit.dateMCList.append(pair);
             kDebug() <<cDate;

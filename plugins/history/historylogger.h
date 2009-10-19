@@ -67,9 +67,6 @@ public:
      */
     explicit HistoryLogger(HistoryPlugin* hPlugin, Kopete::MetaContact *m , QObject *parent = 0 );
     explicit HistoryLogger(HistoryPlugin* hPlugin, Kopete::Contact *c , QObject *parent = 0 );
-//	explicit HistoryLogger(QObject *parent=0);
-
-//	void Initialize(Kopete::MetaContact *m ,QHash<QString,Akonadi::Collection> &collMap);
 
     ~HistoryLogger();
 
@@ -106,18 +103,16 @@ public:
      * read @param lines message from the current position
      * from Kopete::Contact @param c in the given @param sens
      */
-    void readMessages(int lines, Akonadi::Collection &coll,
+    void readMessages(int lines,
                       const Kopete::Contact *c=0, Sens sens=Default,
-                      bool reverseOrder=false, bool colorize=true);
-
-    QList<Kopete::Message> retrunReadMessages();
+                      bool reverseOrder=false, bool colorize=true, bool quote=false);
 
     /**
      * Same as the following, but for one date. I did'nt reuse the above function
      * because its structure is really different.
      * Read all the messages for the given @param date
      */
-//	QList<Kopete::Message>
+    
     void readMessages(QDate date);
 
     /**
@@ -140,15 +135,7 @@ public:
      * @param date (don't care of the day)
      */
     void getDaysForMonth(QDate date);
-
-    /**
-     * Get the filename of the xml file which contains the history from the
-     * contact in the specified @param date. Specify @param date in order to get the filename for
-     * the given date.year() date.month().
-     */
-//	static QString getFileName(const Kopete::Contact* , QDate date);
-    void ModifyItem(HistoryLogger *historylogger);
-
+    
 private:
     bool m_hideOutgoing;
     Qt::CaseSensitivity m_filterCaseSensitive;
@@ -156,71 +143,62 @@ private:
     QString m_filter;
 
 
-    /*
-     *contais all QDomDocument, for a KC, for a specified Month
+    /**
+     *contais all History, for a KC, for a specified Month
      */
+    
     QMap<const Kopete::Contact*,QMap<unsigned int, History> > m_history;
-//	History m_historyx;
-
-//	QMap<const Kopete::Contact*,QMap<unsigned int , QDomDocument> > m_documents;
-
+    
     /**
-     * Contains the current message.
-     * in fact, th
-     {
-       is is the next, still not showed
+     * Get the document
      */
-//	QMap<const Kopete::Contact*, QDomElement>  m_currentElements;
-    QMap<const Kopete::Contact*, History>  m_currentElements;
+    void getHistory(const Kopete::Contact *c, unsigned int month);
 
     /**
-     * Get the document, open it is @param canload is true, contain is set to false if the document
-     * is not already contained
-     */
-//	QDomDocument getDocument(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
-//	QDomDocument getDocument(const Kopete::Contact *c, const QDate date, bool canLoad=true, bool* contain=0L);
-    void getHistoryx(const Kopete::Contact *c, unsigned int month, bool canLoad=true , bool* contain=0L);
-//	History getHistory(const Kopete::Contact *c, unsigned int month , bool canLoad=true , bool* contain=0L);
-//	History getHistory(const Kopete::Contact *c, const QDate date, bool canLoad=true, bool* contain=0L);
-
-    /**
-     * look over files to get the last month for this contact
+     * look over items fetched to get the last month for this contact
      */
     unsigned int getFirstMonth(const Kopete::Contact *c);
     unsigned int getFirstMonth();
-    /*
+    
+    /**
      * the current month
      */
     unsigned int m_currentMonth;
 
-    /*
+    /**
      * the cached getFirstMonth
      */
     int m_cachedMonth;
-    /*
+    
+    /**
      * the metacontact we are using
      */
     Kopete::MetaContact *m_metaContact;
 
-    /*
-     * keep the old position in memory, so if we change the sens, we can begin here
-     */
-    QMap<const Kopete::Contact*, History>  m_oldElements;
+    /**
+    * //TODO Y DO WE NEED these 2 Variables ??? 
+    */
     unsigned int m_oldMonth;
     Sens m_oldSens;
 
-    // the two time variables i have used in the getmessages
-    QDateTime timeLimit,timestamp;
-    int index;
+    /**
+    * The two variables in readmesage method to save the timestamp.
+    */
+    //TODO:roide you need to define these two variable properly
+    QDateTime timeLimit,m_timestamp;
+    int m_index;
+//    int m_indexPrev;
 
     /**
      * the timer used to save the file
      */
-    QTimer *m_saveTimer;
-//	QDomDocument m_toSaveDocument;
-    //roide
+    QPointer<QTimer> m_saveTimer;
+    
+    /**
+    * The history Object that stores the chat history
+    */
     History m_toSaveHistory;
-//	QString m_toSaveFileName;
+
     unsigned int m_saveTimerTime; //time in ms between each save
 
     Akonadi::Item m_tosaveInItem;
@@ -250,12 +228,16 @@ private:
     bool m_colorize;
 
     //used in read message block 2
-    QMap< Kopete::Contact *, History> m_contact_history;
+    /**
+    * When, history is fetched for meta contacts, the map that is used to save
+    * the contact and history connection
+    *
+    * @author kaushik saurabh <roideuniverse@gmail.com>
+    * IT IS A STUPID IDEA USING THIS VARIABLE, SO I AM REMOVING IT
+    */
+    QHash< Kopete::Contact *, History> m_contact_history;
 
-    //for the getmonth function
-//    unsigned int m_result;
-
-    //in modifyitem
+    
     QTime m_t;
     //in readMessages(qdate)
 //	QList<History> m_fetchedHistories;
@@ -268,7 +250,19 @@ private:
     
     QPointer<HistoryPlugin> m_hPlugin;
     
-    Akonadi::Item::List m_contactsItems;
+    /**
+    * When items are fetched, from akonadi, this saves the list of items for a contact.
+    *
+    */
+//    Akonadi::Item::List m_contactsItems;
+    
+    /**
+    * when items are fetched from akonadi server, this saves the mapping between the 
+    * contact and the list of items exist, for that contact.
+    *
+    */
+    
+    QHash<const Kopete::Contact * , Akonadi::Item::List> m_contactItemList;
 
 private slots:
     /**
@@ -282,11 +276,23 @@ private slots:
      */
     void modifyItem();
 
-    void getJobDoneSlot(KJob*);
+//    void getJobDoneSlot(KJob*);
     void appendMessage2();
 
     void getHistoryForMetacontacts();;
-    void GetJobDoneInReadMessage2Done(KJob* job);
+//    void GetJobDoneInReadMessage2Done(KJob* job);
+    
+    /**
+    * when items are fetched will full payload in readmesage, for metacontacts
+    */
+    void fetchItemFullPayloadSlot(KJob*);
+    
+    /**
+    * When in read messages, for metacontacts fetchs the items for all contacts
+    * this slot is called, when that transaction is over
+    */
+    void transationsFetchItemsDone(KJob*);
+    
     void transaction_in_read_message_block_2_done(KJob*);
     
     void getHistoryForGivenContact();
@@ -318,6 +324,11 @@ private slots:
     
     void fetchItemHeaderSlot(KJob*);
     void itemFetchSlot(KJob*);
+    
+    /**
+    * In the fetch job for metacontacts, slot to fetch items for a contacts
+    */
+    void itemFetchTestSlot(KJob*);
 
 signals:
     void readMessagesDoneSignal(QList<Kopete::Message>);

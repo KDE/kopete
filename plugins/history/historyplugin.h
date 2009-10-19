@@ -117,6 +117,7 @@ private slots:
     void collectionRemovedSlot(Akonadi::Collection);
     
     void list();
+    void test();
 
 private:
     HistoryMessageLoggerFactory m_loggerFactory;
