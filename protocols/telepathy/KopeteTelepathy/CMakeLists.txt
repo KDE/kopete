@@ -20,6 +20,7 @@ set (libkopetetelepathy_SRCS
      telepathycontact.cpp
      telepathycontactmanager.cpp
      telepathyprotocolinternal.cpp
+     telepathyfiletransfer.cpp
 )
 
 set (libkopetetelepathy_HDRS
@@ -31,6 +32,7 @@ set (libkopetetelepathy_HDRS
      telepathycontact.h
      telepathycontactmanager.h
      telepathyprotocolinternal.h
+     telepathyfiletransfer.h
 )
 
 set (libkopetetelepathy_PRETTY_HDRS
@@ -53,6 +55,7 @@ target_link_libraries (kopetetelepathy
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTGUI_LIBRARY}
                        ${KDE4_KDEUI_LIBRARY}
+                       ${KDE4_KIO_LIBRARY}
                        ${KOPETE_LIBRARIES}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KCMTELEPATHYACCOUNTS_LIBRARIES}
