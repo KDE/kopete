@@ -1282,6 +1282,14 @@ void WlmAccount::gotAddedGroup (bool added,
         kDebug() << "adding contact " << contactId;
         m_server->cb.mainConnection->addToAddressBook (contactId.toAscii().data(), contactId.toAscii().data());
     }
+
+    // Sync contact belonging to the new group
+    foreach ( Kopete::Contact *kc , contacts() )
+    {
+        WlmContact *c = static_cast<WlmContact *>( kc );
+        if ( c->metaContact()->groups().first()->displayName() == groupName )
+            c->sync( Kopete::Contact::MovedBetweenGroup );
+    }
 }
 
 void WlmAccount::gotRemovedGroup (bool removed,
