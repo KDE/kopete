@@ -19,16 +19,17 @@
 //#include "gethistoryjob.h"
 #include "historylogger.h"
 #include "historyplugin.h"
-
+/*
 #include <QtCore/QRegExp>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 #include <QtCore/QDateTime>
-#include <QtCore/QTimer>
 #include <QtCore/QTextStream>
 #include <QtCore/QList>
 #include <QtCore/QDate>
+*/
 
+#include <QtCore/QTimer>
 #include <Akonadi/CollectionCreateJob>
 #include <Akonadi/Collection>
 #include <Akonadi/TransactionSequence>
@@ -724,8 +725,8 @@ void HistoryLogger::readMessages(QDate date, int pos)
     if ( m_pos <= ct.size() )
 	contact = ct.at(m_pos);
 
-    unsigned int month = QDate::currentDate().month() - date.month() + 12*(QDate::currentDate().year() - date.year());
-    if ( month >= 0 )
+    int month = QDate::currentDate().month() - date.month() + 12*(QDate::currentDate().year() - date.year());
+    if ( month >= 0)
     {
 	kDebug() << month;
 	connect( this, SIGNAL(getHistoryxDone()), SLOT(getHistoryJobDone())); 

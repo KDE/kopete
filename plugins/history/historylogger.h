@@ -262,7 +262,7 @@ private:
     * the items from Akonadi
     */
     
-    unsigned int m_pos;
+    int m_pos;
     
     /**
     * used in the readmessages by GetdaysForMonth, to save the position of the contact, for which to fetch

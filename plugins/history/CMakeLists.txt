@@ -14,6 +14,7 @@ set(kopete_history_PART_SRCS
    converter.cpp 
    historyguiclient.cpp
    historyimport.cpp
+   migrator.cpp
  #  gethistoryjob.cpp
 )
 

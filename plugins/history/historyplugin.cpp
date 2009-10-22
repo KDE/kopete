@@ -50,6 +50,16 @@
 #include <kopeteprotocol.h>
 #include <kopeteaccount.h>
 
+//for migrator.cpp
+#include <QtCore/QDirIterator>
+#include <QtCore/QDir>
+#include <kfiledialog.h>
+#include <klocalizedstring.h>
+#include <history/historyxmlio.h>
+#include <history/history.h>
+#include <QBuffer>
+
+
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
 static const KAboutData aboutdata("kopete_history", 0, ki18n("History") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  )
@@ -189,7 +199,7 @@ void HistoryPlugin::slotViewHistory()
 	kDebug() <<"slotviewhistory -- entered if (m)";
         // TODO: Keep track of open dialogs and raise instead of
         // opening a new (duplicated) one
-        HistoryDialog* dialog = new HistoryDialog(this, m);
+        HistoryDialog* dialog = new HistoryDialog( m , this);
         dialog->setObjectName( QLatin1String("HistoryDialog") );
     }
     else kDebug() << "m not found. will not proceed";
@@ -461,6 +471,68 @@ void HistoryPlugin::list()
     }
 
 }
+
+
+
+void HistoryPlugin::migrateKopeteLogsToAkonadi()
+{
+    kDebug() << " ";
+    const QString oldPath = "/home/roide/.kde4/share/apps/kopete";
+    KUrl url;
+    if ( !oldPath.isEmpty() )
+        url = KUrl::fromPath( oldPath );
+    else
+        url = KUrl::fromPath( QDir::homePath() );
+
+    const QString title = i18nc( "@title:window", "Select a folder or file" );
+    const QString newPath = KFileDialog::getExistingDirectory( url, 0, title );    
+    QDir dir( newPath );
+    migrate(dir);
+}
+
+void HistoryPlugin::migrate(const QDir &dir )
+{
+  QDir directory( dir );
+  directory.setFilter( QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks );
+  const QFileInfoList entries = dir.entryInfoList();
+  foreach ( const QFileInfo &file ,entries )
+  {
+      if ( file.fileName() != "." && file.fileName() != ".." && file.isDir() )
+      {
+	  QDir subDir( file.absoluteFilePath() );
+	  migrate( subDir );
+      }
+  }
+  
+  QStringList filters; 
+  filters << QLatin1String( "*.xml" );
+  const QStringList fileList = directory.entryList( filters, QDir::Files );
+  foreach ( const QString &s , fileList )
+  {
+      QString path = directory.absolutePath() +"/"+ s;
+      QFile file( path );
+      
+      if ( !file.open( QFile::ReadOnly ) ) 
+      {
+	  kDebug() << "file open error"<<file.errorString();
+	  return;
+      }
+      
+      if ( file.error() != QFile::NoError )
+      {
+	  kDebug() <<"some error " << file.errorString();
+	  return;
+      }
+      
+      History history;
+      HistoryXmlIo::readHistoryFromXml(&file, history); // this is bool functio, so check if history is read or not
+      QBuffer buff;
+      buff.open(QBuffer::WriteOnly);
+      HistoryXmlIo::writeHistoryToXml(history, &buff);
+      kDebug() << buff.data();
+  }  
+}
+
 
 
 #include "historyplugin.moc"

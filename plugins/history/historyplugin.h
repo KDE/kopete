@@ -21,11 +21,13 @@
 
 #include <QtCore/QPointer>
 #include <QtCore/QMap>
+#include <QtCore/QDir>
 
 #include <kdebug.h>
 #include "kopeteplugin.h"
 #include "kopetemessagehandler.h"
 #include <Akonadi/Collection>
+
 
 class KopeteView;
 namespace Kopete {
@@ -96,6 +98,12 @@ public:
      * return true if an old history has been detected, and no new ones
      */
     static bool detectOldHistory();
+    
+    /**
+    *
+    */
+    void migrateKopeteLogsToAkonadi();
+    void migrate( const QDir &dir );
 
     void messageDisplayed(const Kopete::Message &msg);
     

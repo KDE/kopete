@@ -240,7 +240,7 @@ void HistoryGUIClient::slotViewHistory()
 
 	if(m)
 	{
-		HistoryDialog* dialog = new HistoryDialog(m_hPlugin, m);
+		HistoryDialog* dialog = new HistoryDialog(m , m_hPlugin);
 		dialog->setObjectName( QLatin1String("HistoryDialog") );
 	}
 }

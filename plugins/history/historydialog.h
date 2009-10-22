@@ -79,7 +79,7 @@ class HistoryDialog : public KDialog
 	Q_OBJECT
 
 	public:
-		explicit HistoryDialog(HistoryPlugin* hPlugin, Kopete::MetaContact *mc, QWidget* parent=0);
+		explicit HistoryDialog(Kopete::MetaContact *mc , QObject *hPlugin=0, QWidget* parent=0);
 		~HistoryDialog();
 
 		
@@ -129,6 +129,8 @@ class HistoryDialog : public KDialog
 		 * Show the messages in the HTML View
 		 */
 		void setMessages(QList<Kopete::Message>);
+		
+		void migrateLogsToAkonadi();
 
 
 	private:

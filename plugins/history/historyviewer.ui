@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>HistoryViewer</class>
- <widget class="QWidget" name="HistoryViewer" >
-  <property name="geometry" >
+ <widget class="QWidget" name="HistoryViewer">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,41 +10,41 @@
     <height>384</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="minimumSize" >
+  <property name="minimumSize">
    <size>
     <width>300</width>
     <height>200</height>
    </size>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <property name="margin" >
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QLabel" name="textLabel1" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+      <widget class="QLabel" name="textLabel1">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Contact:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KComboBox" name="contactComboBox" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+      <widget class="KComboBox" name="contactComboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -51,45 +52,61 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="importHistory" >
-       <property name="text" >
+      <widget class="QPushButton" name="MigrateToAkonadi">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="whatsThis">
+        <string extracomment="To migrate ur existing logs of kopete to Akonadi click here"/>
+       </property>
+       <property name="text">
+        <string>MigrateToAkonadi</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="importHistory">
+       <property name="text">
         <string>Import History...</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="textLabel1_2" >
-       <property name="text" >
+      <widget class="QLabel" name="textLabel1_2">
+       <property name="text">
         <string>Message filter:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="messageFilterBox" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+      <widget class="QComboBox" name="messageFilterBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize" >
+       <property name="minimumSize">
         <size>
          <width>140</width>
          <height>0</height>
         </size>
        </property>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>All Messages</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Only Incoming</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Only Outgoing</string>
         </property>
        </item>
@@ -98,39 +115,39 @@
     </layout>
    </item>
    <item>
-    <widget class="QSplitter" name="splitter" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+    <widget class="QSplitter" name="splitter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget" >
-      <layout class="QVBoxLayout" >
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout">
        <item>
-        <widget class="KTreeWidgetSearchLine" name="dateSearchLine" />
+        <widget class="KTreeWidgetSearchLine" name="dateSearchLine"/>
        </item>
        <item>
-        <widget class="QTreeWidget" name="dateTreeWidget" >
-         <property name="alternatingRowColors" >
+        <widget class="QTreeWidget" name="dateTreeWidget">
+         <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
-         <property name="rootIsDecorated" >
+         <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
-         <property name="sortingEnabled" >
+         <property name="sortingEnabled">
           <bool>true</bool>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Date</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Contact</string>
           </property>
          </column>
@@ -138,9 +155,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" native="1" name="htmlFrame" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+     <widget class="QWidget" name="htmlFrame" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>1</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -149,23 +166,23 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="textLabel2" >
-       <property name="text" >
+      <widget class="QLabel" name="textLabel2">
+       <property name="text">
         <string>Search:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KLineEdit" name="searchLine" />
+      <widget class="KLineEdit" name="searchLine"/>
      </item>
      <item>
-      <widget class="QPushButton" name="searchButton" >
-       <property name="enabled" >
+      <widget class="QPushButton" name="searchButton">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Se&amp;arch</string>
        </property>
       </widget>
@@ -173,23 +190,23 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="statusLabel" >
-       <property name="maximumSize" >
+      <widget class="QLabel" name="statusLabel">
+       <property name="maximumSize">
         <size>
          <width>16777215</width>
          <height>20</height>
         </size>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Ready</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QProgressBar" name="searchProgress" >
-       <property name="orientation" >
+      <widget class="QProgressBar" name="searchProgress">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
@@ -198,11 +215,11 @@
    </item>
   </layout>
  </widget>
-  <customwidgets>
+ <customwidgets>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KTreeWidgetSearchLine</class>
+   <extends>KLineEdit</extends>
+   <header>ktreewidgetsearchline.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
@@ -210,9 +227,9 @@
    <header>klineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>KTreeWidgetSearchLine</class>
-   <extends>KLineEdit</extends>
-   <header>ktreewidgetsearchline.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

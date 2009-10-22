@@ -90,12 +90,13 @@ bool KListViewDateItem::operator<( const QTreeWidgetItem& other ) const
 }
 
 
-HistoryDialog::HistoryDialog(HistoryPlugin* hPlugin, Kopete::MetaContact *mc, QWidget* parent)
-        : KDialog(parent), m_hPlugin(hPlugin),
-        mSearching(false)
+HistoryDialog::HistoryDialog( Kopete::MetaContact *mc, QObject *hPlugin, QWidget* parent)
+        : KDialog(parent), mSearching(false)
 {
     kDebug() << " ";
 
+    m_hPlugin = qobject_cast<HistoryPlugin*>(hPlugin);
+    
     setAttribute (Qt::WA_DeleteOnClose, true);
     setCaption( i18n("History for %1", mc->displayName()) );
     setButtons(KDialog::Close);
@@ -121,6 +122,8 @@ HistoryDialog::HistoryDialog(HistoryPlugin* hPlugin, Kopete::MetaContact *mc, QW
 
     mMainWidget->contactComboBox->addItem(i18n("All"));
     mMetaContactList = Kopete::ContactList::self()->metaContacts();
+    mMainWidget->MigrateToAkonadi->setWhatsThis("Click to Migrate ur existing logs to Akonadi") ;
+    mMainWidget->MigrateToAkonadi->setToolTip("Click to Migrate kopete logs to Akonadi") ;
 
     foreach(Kopete::MetaContact *metaContact, mMetaContactList)
     {
@@ -175,7 +178,9 @@ HistoryDialog::HistoryDialog(HistoryPlugin* hPlugin, Kopete::MetaContact *mc, QW
     connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
     connect(mMainWidget->importHistory, SIGNAL(clicked()), this, SLOT(slotImportHistory()));
     connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
+    connect(mMainWidget->MigrateToAkonadi , SIGNAL(clicked(bool) ), this, SLOT(migrateLogsToAkonadi()) );
 
+    
     //initActions
     mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), mHtmlView );
     mHtmlView->addAction( mCopyAct );
@@ -728,6 +733,12 @@ void HistoryDialog::slotImportHistory(void)
 {
     HistoryImport importer(this);
     importer.exec();
+}
+
+void HistoryDialog::migrateLogsToAkonadi()
+{
+    kDebug() << "hahaha, it was clicked";
+    m_hPlugin->migrateKopeteLogsToAkonadi();
 }
 
 #include "historydialog.moc"
