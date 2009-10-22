@@ -20,8 +20,6 @@ if(NOT INSIDE_KDENETWORK)
 	include(CheckLibraryExists)
 	include(CheckPrototypeExists)
 	include(CheckTypeSize)
-	include(MacroBoolTo01)
-	include(MacroOptionalAddSubdirectory)
 
 	set(CMAKE_REQUIRED_DEFINITIONS ${_KDE4_PLATFORM_DEFINITIONS})
 	if (WIN32)
