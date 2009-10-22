@@ -65,8 +65,8 @@ public:
     /**
      * Constructor, takes the contact, and the color of messages
      */
-    explicit HistoryLogger(HistoryPlugin* hPlugin, Kopete::MetaContact *m , QObject *parent = 0 );
-    explicit HistoryLogger(HistoryPlugin* hPlugin, Kopete::Contact *c , QObject *parent = 0 );
+    explicit HistoryLogger(Kopete::MetaContact *m , QObject *parent = 0, QObject *hPlugin = 0 );
+    explicit HistoryLogger(Kopete::Contact *c , QObject *parent = 0, QObject *hPlugin = 0 );
 
     ~HistoryLogger();
 
@@ -113,7 +113,7 @@ public:
      * Read all the messages for the given @param date
      */
     
-    void readMessages(QDate date);
+    void readMessages(QDate date, int pos=0);
 
     /**
      * The position is set to the last message
@@ -134,7 +134,7 @@ public:
      * @return The list of the days for which there is a log for m_metaContact for month of
      * @param date (don't care of the day)
      */
-    void getDaysForMonth(QDate date);
+    void getDaysForMonth(QDate date, int pos=0);
     
 private:
     bool m_hideOutgoing;
@@ -150,9 +150,10 @@ private:
     QMap<const Kopete::Contact*,QMap<unsigned int, History> > m_history;
     
     /**
-     * Get the document
+     * Get the document  //TODO: add comment
      */
     void getHistory(const Kopete::Contact *c, unsigned int month);
+    void getHistory(const Kopete::Contact *c, const QDate date );
 
     /**
      * look over items fetched to get the last month for this contact
@@ -184,10 +185,9 @@ private:
     /**
     * The two variables in readmesage method to save the timestamp.
     */
-    //TODO:roide you need to define these two variable properly
+    //TODO:add comment to these 2 variables
     QDateTime timeLimit,m_timestamp;
     int m_index;
-//    int m_indexPrev;
 
     /**
      * the timer used to save the file
@@ -243,19 +243,12 @@ private:
 //	QList<History> m_fetchedHistories;
     QDate m_readMessagesDate;
     QList<Kopete::Message> m_readMessagesDateList;
-    QHash<Kopete::Contact *,History> m_historyContact;
 
     //used in getdays for month
     QList<History> m_historyList;
     
     QPointer<HistoryPlugin> m_hPlugin;
-    
-    /**
-    * When items are fetched, from akonadi, this saves the list of items for a contact.
-    *
-    */
-//    Akonadi::Item::List m_contactsItems;
-    
+        
     /**
     * when items are fetched from akonadi server, this saves the mapping between the 
     * contact and the list of items exist, for that contact.
@@ -263,6 +256,32 @@ private:
     */
     
     QHash<const Kopete::Contact * , Akonadi::Item::List> m_contactItemList;
+    
+    /**
+    * used in the readmessages by date, to save the position of the contact, for which to fetch
+    * the items from Akonadi
+    */
+    
+    unsigned int m_pos;
+    
+    /**
+    * used in the readmessages by GetdaysForMonth, to save the position of the contact, for which to fetch
+    * the items from Akonadi
+    */
+    
+    unsigned int m_pos_GetDaysForMonth;
+    
+     /**
+    * used in the readmessages by date, to save the position of the contact, for which to fetch
+    * the items from Akonadi
+    */
+    
+    QList<int> m_dayList;
+    QDate m_dateGetDaysForMonth;
+    
+    
+   
+    
 
 private slots:
     /**
@@ -311,11 +330,11 @@ private slots:
     void itemModifiedDone(KJob*);
 
     //slot for readmessages(date)
-    void getHistoryJobDone(KJob*);
-    void transactionDone(KJob* );
+    void getHistoryJobDone();
+    void transactionDone();
 
     //for getDaysForMonth
-    void getDaysForMonthSlot(KJob*);
+    void getDaysForMonthSlot();
     
     void createItem();
     

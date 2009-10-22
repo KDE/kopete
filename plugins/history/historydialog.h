@@ -170,6 +170,7 @@ class HistoryDialog : public KDialog
 		QMap<QDate, QList<CHPair> > m_dateHistoryList;
 		
 		QPointer<HistoryPlugin> m_hPlugin;
+		QHash<const Kopete::Account*, QHash<const Kopete::Contact* , Akonadi::Item::List> > m_ItemListHash;
 };
 
 Q_DECLARE_METATYPE(Kopete::MetaContact *)

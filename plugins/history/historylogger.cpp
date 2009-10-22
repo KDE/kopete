@@ -16,7 +16,7 @@
     *************************************************************************
 */
 
-#include "gethistoryjob.h"
+//#include "gethistoryjob.h"
 #include "historylogger.h"
 #include "historyplugin.h"
 
@@ -62,20 +62,15 @@ bool messageTimestampLessThan(const Kopete::Message &m1, const Kopete::Message &
 bool func(const History::Message &m1, const History::Message &m2)
 { 
     return m1.timestamp() < m2.timestamp();
-/*  
-    if ( m1.timestamp().date().day() < m2.timestamp().date().day() )
-	return true;
-    else if ( m1.timestamp().date().day() == m2.timestamp().date().day() )
-	return m1.timestamp().time() < m2.timestamp().time();
-    
-    return false;*/
 }
 
 // -----------------------------------------------------------------------------
-HistoryLogger::HistoryLogger(HistoryPlugin* hPlugin, Kopete::MetaContact *m ,QObject *parent )
-        : QObject(parent), m_hPlugin(hPlugin)
+HistoryLogger::HistoryLogger(Kopete::MetaContact *m , QObject *parent , QObject *hPlugin )
+        : QObject(parent)
 {
     kDebug() << "historylogger-constructor-metacontact";
+    
+    m_hPlugin = qobject_cast<HistoryPlugin*>( hPlugin );
     
     m_hideOutgoing=false;
     m_filterCaseSensitive=Qt::CaseSensitive;
@@ -100,11 +95,13 @@ HistoryLogger::HistoryLogger(HistoryPlugin* hPlugin, Kopete::MetaContact *m ,QOb
 }
 
 
-HistoryLogger::HistoryLogger(HistoryPlugin* hPlugin, Kopete::Contact *c,  QObject *parent )
-        : QObject(parent), m_hPlugin(hPlugin)
+HistoryLogger::HistoryLogger(Kopete::Contact *c, QObject *parent , QObject *hPlugin )
+        : QObject(parent)
 {
     kDebug() << "historylogger-constructor-"<<c->contactId();
-    
+       
+    m_hPlugin = qobject_cast<HistoryPlugin*>(hPlugin);
+ 
     m_saveTimer=0L;
     m_saveTimerTime=0;
     m_cachedMonth=-1;
@@ -121,6 +118,7 @@ HistoryLogger::HistoryLogger(HistoryPlugin* hPlugin, Kopete::Contact *c,  QObjec
     m_tosaveInCollection = m_hPlugin->getCollection(c->account()->accountId(), c->contactId());
     m_parentCollection = m_hPlugin->getCollection(c->account()->accountId());
     m_kopeteChat = m_hPlugin->getCollection() ;
+    kDebug() << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"<<m_kopeteChat.remoteId()<<"\n\n\n\n\n----";
     
     connect(m_metaContact , SIGNAL(destroyed(QObject *)) , this , SLOT(slotMCDeleted()));
 
@@ -209,8 +207,21 @@ void HistoryLogger::getHistory(const Kopete::Contact *c, unsigned int month )
 	kDebug() << "month his size=" << monthHistory.size();
 
     if (monthHistory.contains(month))
-    {
+    {kDebug() << "contains the month";
         m_getHistory= monthHistory[month];
+	if ( !m_tosaveInItem.isValid() )
+	{
+	    kDebug() << "to save in item invalid, now setting it up";
+	    Akonadi::Item::List list = m_contactItemList.value(c);
+	    foreach ( const Akonadi::Item &item , list )
+	    {
+		if ( item.payload<History>().date().year() == QDate::currentDate().year() && item.payload<History>().date().month() == QDate::currentDate().month() )
+		{
+		      m_tosaveInItem = item;
+		      break;
+		}
+	    }
+	}
         emit getHistoryxDone();
         return;
     }
@@ -275,11 +286,7 @@ void HistoryLogger::getHistory(const Kopete::Contact *c, unsigned int month )
     fetchjob->setProperty("date", v);
     fetchjob->setProperty("contact", v1);
     connect(fetchjob, SIGNAL(finished(KJob*)), SLOT(fetchItemHeaderSlot(KJob*)));
-    
-//    GetHistoryJob *getjob= new GetHistoryJob(coll,QDate::currentDate().addMonths(0-month));
-//    connect(getjob, SIGNAL(result(KJob*)), SLOT(getJobDoneSlot(KJob*)));  //
-//    getjob->start();
-    
+        
 }
 
 
@@ -360,24 +367,6 @@ void HistoryLogger::itemFetchSlot(KJob* job)
     emit getHistoryxDone();
 }
 
-/*
-void HistoryLogger::getJobDoneSlot(KJob* job )
-{
-    GetHistoryJob *xyz = static_cast<GetHistoryJob*>(job);
-    if (job->error() )
-        kDebug()<<"gethistoryjobfailed";
-    else {
-        m_getHistory = xyz->returnHistory();
-        QMap<unsigned int , History> monthHistory= m_history[m_contact];
-        monthHistory.insert(m_month,m_getHistory);
-        m_history[m_contact] = monthHistory;
-        m_tosaveInItem = xyz->returnItem();
-        kDebug() <<"GENERATING SIGNAL";
-        emit getHistoryxDone();
-    }
-
-}
-*/
 void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Contact *ct)
 {
     kDebug() <<" ";
@@ -722,73 +711,50 @@ void HistoryLogger::itemsReceivedDone(Akonadi::Item::List itemlist)
 
 //this function has been used in history dialog, to show messages by date.
 //QList<Kopete::Message>
-void HistoryLogger::readMessages(QDate date)
+void HistoryLogger::readMessages(QDate date, int pos)
 {
     kDebug() <<"hjisLOGger::readMessages(date)";
     m_readMessagesDate= date;
-    QList<Kopete::Message> messages;
+    m_pos=pos;
+    
     QList<Kopete::Contact*> ct=m_metaContact->contacts();
-
-    Akonadi::TransactionSequence *transaction = new Akonadi::TransactionSequence;
-    connect(transaction,SIGNAL(result(KJob*)), this, SLOT(transactionDone(KJob*)));
+    kDebug() << m_pos << ct.size() ;
     
-    foreach(Kopete::Contact* contact, ct)
+    Kopete::Contact* contact;
+    if ( m_pos <= ct.size() )
+	contact = ct.at(m_pos);
+
+    unsigned int month = QDate::currentDate().month() - date.month() + 12*(QDate::currentDate().year() - date.year());
+    if ( month >= 0 )
     {
-	QVariant v;
-	v.setValue<Kopete::Contact *>(contact);
-	
-	Akonadi::Collection coll;
-	coll = m_hPlugin->getCollection( contact->account()->accountId(), contact->contactId() );
-	if ( coll.isValid() ) {
-	    GetHistoryJob *getjob = new GetHistoryJob(coll, date, transaction);
-	    connect(getjob,SIGNAL(result(KJob*)) , this, SLOT(getHistoryJobDone(KJob*)) );
-	    getjob->setProperty("contact",v);
-	}
+	kDebug() << month;
+	connect( this, SIGNAL(getHistoryxDone()), SLOT(getHistoryJobDone())); 
+	getHistory(contact, month );
     }
-    kDebug() <<"starting transaction";
-    transaction->start();
-}
-
-void HistoryLogger::getHistoryJobDone(KJob * job)
-{
-    kDebug() <<"HistoryLogger::getHistoryJobDone \n for read messages(date)";
-  
-    GetHistoryJob * getJob = static_cast<GetHistoryJob*> (job);
     
-    if (job->error() ) {
-      kDebug() << "job failed"<<job->errorString();
-    }
-    else {
-	kDebug() << "entered gethistoryjob done, elsepart";
-	QVariant v;
-	v = getJob->property("contact");
-	if (v.isValid())
-	{
-	    Kopete::Contact *contact = v.value<Kopete::Contact *>();
-	    kDebug() << "contat received"<<contact->contactId() ;
-	    History his;
-	    his=getJob->returnHistory();
-	    m_historyContact.insert( contact , his );
-	}
-	else
-	{
-	    History his=getJob->returnHistory();
-	    m_historyList.append(his);
-	}
-    }
 }
 
-void HistoryLogger::transactionDone(KJob *job)
+void HistoryLogger::getHistoryJobDone()
+{
+
+    disconnect( this, SIGNAL(getHistoryxDone()),this, SLOT(getHistoryJobDone()));     
+    QList<Kopete::Contact*> ct = m_metaContact->contacts();
+    
+    History his= m_getHistory;
+    m_getHistory = History::History();
+    m_contact_history.insert(ct.at(m_pos), his);
+    m_pos++;
+    if ( m_pos < ct.size() )
+	readMessages(m_readMessagesDate, m_pos);
+    else
+      transactionDone();
+}
+
+void HistoryLogger::transactionDone()
 {
     kDebug() << "HistoryLogger::transactionDone(KJob *job)";
-    if (job->error() )
-    { 
-	kDebug() << " transaction failed"<< job->errorString();
-    }
-    else
-    {
 	QRegExp rxTime("(\\d+) (\\d+):(\\d+)($|:)(\\d*)"); //(with a 0.7.x compatibil
-	QHashIterator<Kopete::Contact *, History> i(m_historyContact);
+	QHashIterator<Kopete::Contact *, History> i(m_contact_history);
 	kDebug() <<"before while llop";
 	while (i.hasNext())
 	{
@@ -833,7 +799,6 @@ void HistoryLogger::transactionDone(KJob *job)
 	    }
 	}
 	qSort(m_readmessages.begin(), m_readmessages.end(), messageTimestampLessThan);
-    }
     emit readMessagesByDateDoneSignal(m_readmessages);
 }
 
@@ -845,16 +810,7 @@ void HistoryLogger::readMessages(int lines,
 {
     kDebug() << " " << "\n sens= " << sens;
     if ( sens == Chronological ) kDebug() << "sens is chronological";
-    else kDebug() << "not chronological";//<<m_index<< " "<< m_indexPrev;
-    
-    if ( quote==true )
-    {
-//	m_indexPrev = m_index;
-//	m_index=0;
-    }
- //   else if ( m_indexPrev > 0 )
-   //   m_index = m_indexPrev;
-    
+    else kDebug() << "not chronological";//<<m_index<< " "<< m_indexPrev;    
 
     m_lines=lines;
     if( !m_readmessagesContact)
@@ -971,17 +927,12 @@ void HistoryLogger::getHistoryForMetacontacts()
 		else
 		{
 		    kDebug() << "dosent contain the m_current month"<<m_currentMonth;
-		    Akonadi::Collection coll;
+		    Akonadi::Collection coll; 
 		    coll = m_hPlugin->getCollection(contact->account()->accountId(), contact->contactId());
 		    if ( coll.isValid() )
 		    {
 			QVariant vContact;
 			vContact.setValue<Kopete::Contact *>(contact);
-			
-//			GetHistoryJob *getjob= new GetHistoryJob(coll,QDate::currentDate().addMonths(0-m_currentMonth), transaction);
-//			getjob->setProperty("contact", vContact);
-//			getjob->setProperty("date", vDate);
-//			connect(getjob, SIGNAL(result(KJob*)), SLOT(GetJobDoneInReadMessage2Done(KJob*)));
 			
 			//also add this to the transaction, as a parent.
 			Akonadi::ItemFetchJob *f = new Akonadi::ItemFetchJob( coll , transaction );
@@ -1109,8 +1060,8 @@ void HistoryLogger::fetchItemFullPayloadSlot(KJob* job)
     m_history[c] = monthHistory;
     m_contact_history.insert(c, history);
     
-    if ( !m_tosaveInItem.isValid() );
-	m_tosaveInItem = f->items().first();
+//    if ( !m_tosaveInItem.isValid() );
+//	m_tosaveInItem = f->items().first();
     
 
 }
@@ -1137,6 +1088,7 @@ void HistoryLogger::transaction_in_read_message_block_2_done(KJob *job)
 	    m_currentContact = contact;
 	    his = i.value();
 	    kDebug()<<"while";
+	    kDebug() << his.remoteContactId() << his.messages().size();
 	    
 	    if( m_readmessagesHistory.localContactId().isEmpty() )
 		m_readmessagesHistory.localContactId() = his.localContactId();
@@ -1534,52 +1486,51 @@ bool HistoryLogger::filterRegExp() const
     return m_filterRegExp;
 }
 
-void HistoryLogger::getDaysForMonth(QDate date)
+void HistoryLogger::getDaysForMonth(QDate date, int pos)
 {
-    kDebug() << " ";
-
+    kDebug() << " "<<date;
+    m_dateGetDaysForMonth = date;
+    m_pos_GetDaysForMonth=pos;
+    
     QList<Kopete::Contact*> contacts = m_metaContact->contacts();
-
-    int lastDay=0;
-
-    Akonadi::TransactionSequence *transaction = new Akonadi::TransactionSequence;
-
-    foreach(Kopete::Contact *contact, contacts)
+    unsigned int month = QDate::currentDate().month() - date.month() + 12*(QDate::currentDate().year() - date.year() );
+    if ( month >= 0 )
     {
-	Akonadi::Collection coll;
-	coll = m_hPlugin->getCollection(contact->account()->accountId(), contact->contactId());
-	if( coll.isValid() )
-	{
-	    GetHistoryJob *getHistory = new GetHistoryJob(coll,date,transaction);
-	    connect(getHistory,SIGNAL(result(KJob*)),this,SLOT(getHistoryJobDone(KJob*)));
-	}
-	connect(transaction,SIGNAL(result(KJob*)), this, SLOT(getDaysForMonthSlot(KJob*)));
-	transaction->start();
+	connect(this, SIGNAL(getHistoryxDone()), SLOT(getDaysForMonthSlot()) ) ;
+	getHistory(contacts.at(m_pos_GetDaysForMonth), month);
     }
 }
 
-void HistoryLogger::getDaysForMonthSlot(KJob* job)
+void HistoryLogger::getDaysForMonthSlot()
 {
-  QList<int> dayList;
-  if (job->error())
-    kDebug() << "error--getdays of month slto, transaction fils";
-  else
-  {
+
+    disconnect(this, SIGNAL(getHistoryxDone()), this, SLOT(getDaysForMonthSlot()) ) ;  
     int lastDay=0;
-    foreach( const History &his, m_historyList)
-    {
+   
+    History his = m_getHistory;
+    m_getHistory = History::History();
+    
       foreach(const History::Message &msg, his.messages() )
       {
 	int day=msg.timestamp().date().day();
 	if ( day != lastDay )
 	{
-	  dayList.append(day);
+	  if ( !m_dayList.contains(day) )
+	      m_dayList.append(day);
 	  lastDay=day;
 	}
-      }
     }
-    emit getDaysForMonthSignal(dayList);
-  }
+    m_pos_GetDaysForMonth++;
+    if ( m_pos_GetDaysForMonth < m_metaContact->contacts().size() )
+    {
+	getDaysForMonth(m_dateGetDaysForMonth, m_pos_GetDaysForMonth);
+    }
+    else
+    {
+	emit getDaysForMonthSignal(m_dayList);
+	kDebug() << m_dayList.size();
+	m_dayList.clear();
+    }
 }
 
 #include "historylogger.moc"

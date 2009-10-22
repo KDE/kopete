@@ -41,10 +41,12 @@
 #include "historyplugin.h"
 #include <kopeteaccount.h>
 
-HistoryGUIClient::HistoryGUIClient ( HistoryPlugin *hPlugin,Kopete::ChatSession *parent )
-		: QObject ( parent ), KXMLGUIClient ( parent ) , m_hPlugin(hPlugin) , m_manager(parent)
+HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent, QObject* hPlugin )
+		: QObject ( parent ), KXMLGUIClient ( parent ) , m_manager(parent)
 {
 	kDebug() << "  ";
+	m_hPlugin = qobject_cast<HistoryPlugin*>(hPlugin);
+	
 	setComponentData ( KGenericFactory<HistoryPlugin>::componentData() );
 
 	// Refuse to build this client, it is based on wrong parameters
@@ -52,12 +54,8 @@ HistoryGUIClient::HistoryGUIClient ( HistoryPlugin *hPlugin,Kopete::ChatSession 
 		deleteLater();
 
 	QList<Kopete::Contact*> mb=m_manager->members();
-	Kopete::Contact *con = mb.first();
 	
-	Akonadi::Collection coll;
-	coll = m_hPlugin->getCollection(con->account()->accountId(), con->contactId() );	
-	
-	m_logger=new HistoryLogger (m_hPlugin, mb.first() , this );
+	m_logger=new HistoryLogger ( mb.first(), this, m_hPlugin );
 
 	actionLast = new KAction ( KIcon ( "go-last" ), i18n ( "Latest History" ), this );
 	actionCollection()->addAction ( "historyLast", actionLast );

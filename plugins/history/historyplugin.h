@@ -26,7 +26,6 @@
 #include "kopeteplugin.h"
 #include "kopetemessagehandler.h"
 #include <Akonadi/Collection>
-//#include "historylogger.h"
 
 class KopeteView;
 namespace Kopete {
@@ -49,10 +48,9 @@ class HistoryMessageLogger : public Kopete::MessageHandler
 public:
     HistoryMessageLogger( HistoryPlugin *history ) : history(history)
     {
-        kDebug(14310) <<"\n history message logger constructor";
+        kDebug(14310) <<" ";
     }
     void handleMessage( Kopete::MessageEvent *event );
-//	void handleMessage2();
 private:
     Q_OBJECT
 signals:
@@ -117,7 +115,6 @@ private slots:
     void collectionRemovedSlot(Akonadi::Collection);
     
     void list();
-    void test();
 
 private:
     HistoryMessageLoggerFactory m_loggerFactory;
