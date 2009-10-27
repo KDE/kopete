@@ -11,6 +11,8 @@ include_directories (${KCMTELEPATHYACCOUNTS_INCLUDE_DIR}
 # TelepathyQt4 requires this definition removal.
 remove_definitions (-DQT_NO_STL)
 
+add_definitions (-DKDE_DEFAULT_DEBUG_AREA=14400)
+
 set (libkopetetelepathy_SRCS
      telepathyaccount.cpp
      telepathyaddedinfoevent.cpp
