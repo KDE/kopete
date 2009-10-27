@@ -7,19 +7,12 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+INCLUDE( FindPackageHandleStandardArgs )
+include( FindPkgConfig )
 
-IF (MEDIASTREAMER_INCLUDE_DIR AND MEDIASTREAMER_LIBRARIES)
-    # Already in cache, be silent
-    SET(MEDIASTREAMER_FIND_QUIETLY TRUE)
-ENDIF (MEDIASTREAMER_INCLUDE_DIR AND MEDIASTREAMER_LIBRARIES)
+SET( MEDIASTREAMER_FOUND FALSE )
 
-FIND_PATH(MEDIASTREAMER_INCLUDE_DIR mediastreamer2/mediastream.h
-    PATHS ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES mediastreamer )
-
-FIND_LIBRARY(MEDIASTREAMER_LIBRARIES NAMES mediastreamer mediastreamer
-    PATHS ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES lib)
+pkg_check_modules(MEDIASTREAMER mediastreamer>=2.3.0)
 
 if (MEDIASTREAMER_INCLUDE_DIR AND MEDIASTREAMER_LIBRARIES)
   SET(MEDIASTREAMER_FOUND TRUE)

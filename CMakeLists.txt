@@ -88,9 +88,9 @@ macro_optional_find_package(GIF)
 macro_bool_to_01(GIF_FOUND HAVE_GIFLIB)
 macro_log_feature( GIF_FOUND "giflib" "Handwriting messages support for WLM" "http://sourceforge.net/projects/giflib/" FALSE "" "Required for the Kopete WLM protocol")
 
-#macro_optional_find_package(Mediastreamer)
-#macro_bool_to_01(MEDIASTREAMER_FOUND HAVE_MEDIASTREAMER)
-#macro_log_feature( MEDIASTREAMER_FOUND "mediastreamer" "A streaming engine specialized for voice/video telephony applications" "http://www.linphone.org/index.php/eng/code_review/mediastreamer2" FALSE "" "Required to enable voice clips support in WLM plugin")
+macro_optional_find_package(Mediastreamer)
+macro_bool_to_01(MEDIASTREAMER_FOUND HAVE_MEDIASTREAMER)
+macro_log_feature( MEDIASTREAMER_FOUND "mediastreamer" "A streaming engine specialized for voice/video telephony applications" "http://www.linphone.org/index.php/eng/code_review/mediastreamer2" FALSE "2.3.0" "Required to enable voice clips support in WLM plugin")
 
 macro_optional_find_package(LibMeanwhile)
 macro_bool_to_01(LIBMEANWHILE_FOUND HAVE_LIBMEANWHILE)
