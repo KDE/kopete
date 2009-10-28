@@ -117,7 +117,8 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 		 */
 		if ( account()->myself()->onlineStatus().isDefinitelyOnline() )
 		{
-			slotGetTimedVCard ();
+			mVCardUpdateInProgress = true;
+			QTimer::singleShot ( 1000, this, SLOT ( slotGetTimedVCard () ) );
 		}
 	}
 
