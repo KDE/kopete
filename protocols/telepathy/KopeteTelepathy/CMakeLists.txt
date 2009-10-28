@@ -85,3 +85,4 @@ install (FILES
          DESTINATION ${INCLUDE_INSTALL_DIR}/KopeteTelepathy COMPONENT Devel
 )
 
+install(FILES telepathychatui.rc DESTINATION ${DATA_INSTALL_DIR}/kopete)

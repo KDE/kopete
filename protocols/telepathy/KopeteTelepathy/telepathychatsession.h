@@ -56,6 +56,8 @@ public:
 private slots:
     void onEnsureChannelFinished(Tp::PendingOperation *op);
     void onTextChannelReady(Tp::PendingOperation *op);
+    void onEnsureShareDesktop(Tp::PendingOperation *op);
+    void onShareMyDesktop();
 
     void sendMessage(Kopete::Message &);
     void messageSent(const Tp::Message &message,

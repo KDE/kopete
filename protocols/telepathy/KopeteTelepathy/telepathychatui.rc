@@ -1,0 +1,6 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kopete_telepathy_chat" version="1">
+    <ToolBar name="chatToolBar" fullWidth="true">
+        <Action name="shareMyDesktop" />
+    </ToolBar>
+</kpartgui>

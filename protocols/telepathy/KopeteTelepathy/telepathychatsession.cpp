@@ -19,14 +19,19 @@
  */
 
 #include <KopeteTelepathy/telepathychatsession.h>
-
 #include <KopeteTelepathy/telepathyaccount.h>
 
+#include <ui/kopeteview.h>
 #include <kopetechatsessionmanager.h>
 
 #include <KDebug>
+#include <KLocale>
+#include <KAction>
+#include <KActionCollection>
+#include <KMessageBox>
 
 #include <TelepathyQt4/PendingReady>
+#include <TelepathyQt4/ContactManager>
 
 TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol)
         : Kopete::ChatSession(user, others, protocol),
@@ -36,6 +41,15 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
     Kopete::ChatSessionManager::self()->registerChatSession(this);
 
     QObject::connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(sendMessage(Kopete::Message&)));
+
+    KAction *shareMyDesktop = new KAction(KIcon("krfb"), i18n("S&hare My Desktop"), this);
+    actionCollection()->addAction("shareMyDesktop", shareMyDesktop);
+    shareMyDesktop->setShortcut(KShortcut(Qt::CTRL + Qt::Key_D));
+    QObject::connect(shareMyDesktop,
+                     SIGNAL(triggered(bool)),
+                     SLOT(onShareMyDesktop()));
+
+    setXMLFile ("telepathychatui.rc");
 }
 
 TelepathyChatSession::~TelepathyChatSession()
@@ -217,6 +231,44 @@ Tp::PendingChannelRequest *TelepathyChatSession::pendingChannelRequest()
     return m_pendingChannelRequest;
 }
 
+void TelepathyChatSession::onShareMyDesktop()
+{
+    QVariantMap req;
+    req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"),
+               TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAM_TUBE);
+    req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandleType"),
+               Tp::HandleTypeContact);
+    req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".TargetHandle"),
+               m_contact->handle()[0]);
+    req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAM_TUBE ".Service"),
+               "rfb");
+
+    TelepathyAccount *telepathyAccount = qobject_cast<TelepathyAccount *>(account());
+    Tp::AccountPtr account = telepathyAccount->account();
+    QObject::connect(account->ensureChannel(req),
+                     SIGNAL(finished(Tp::PendingOperation*)),
+                     SLOT(onEnsureShareDesktop(Tp::PendingOperation*)));
+}
+
+void TelepathyChatSession::onEnsureShareDesktop(Tp::PendingOperation *op)
+{
+    if (op->isError()) {
+        kWarning() << "Ensuring channel failed:"
+                   << op->errorName()
+                   << op->errorMessage();
+
+        if (op->errorName() == TELEPATHY_ERROR_DISCONNECTED) {
+            KMessageBox::error(view()->mainWidget(),
+                               i18n("An error occurred sharing your desktop. "
+                                    "Please ensure that you have krfb installed."),
+                               i18n("Error - Share My Desktop"));
+        } else {
+            KMessageBox::error(view()->mainWidget(),
+                               i18n("An unknown error occurred sharing your desktop."),
+                               i18n("Error - Share My Desktop"));
+        }
+    }
+}
 
 #include "telepathychatsession.moc"
 
