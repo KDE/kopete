@@ -246,6 +246,13 @@ void WlmContact::sync(unsigned int flags)
             return;
         }
 
+        // if the group don't exist on server side, we create it
+        if(!acc->groupToGroupId().contains(newGroup->displayName()))
+        {
+                acc->server ()->mainConnection->addGroup(newGroup->displayName().toAscii().data());
+                return;
+        }
+
         // if we have both groups on server side, just move this contact
         if(acc->groupToGroupId().contains(newGroup->displayName())
             && acc->groupToGroupId().contains(m_currentGroup->displayName()))
