@@ -1405,7 +1405,7 @@ bool Client::updateProfile( const QList<ICQInfoBase*>& infoList )
 void Client::sendTyping( const QString & contact, bool typing )
 {
 	Connection* c = d->connections.connectionForFamily( 0x0004 );
-	if ( !c )
+	if ( !c || !d->active )
 		return;
 	d->typingNotifyTask->setParams( contact, ( typing ? TypingNotifyTask::Begin : TypingNotifyTask::Finished ) );
 	d->typingNotifyTask->go(); 	// don't delete the task after sending
