@@ -263,7 +263,8 @@ QModelIndexList ContactListPlainModel::indexListFor( Kopete::ContactListElement*
 	QModelIndexList indexList;
 	Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>(cle);
 
-	if (mc)
+	// Contact list doesn't contain myself account contact so ignore it
+	if (mc && mc != Kopete::ContactList::self()->myself())
 	{
 		int mcPos = m_contacts.indexOf( mc );
 		Q_ASSERT( mcPos != -1 );
