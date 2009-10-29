@@ -1,7 +1,0 @@
-#ifndef LIB_KOPETE_TELEPATHY_TELEPATHY_CONTACT_MANAGER_PRETTY_H
-#define LIB_KOPETE_TELEPATHY_TELEPATHY_CONTACT_MANAGER_PRETTY_H
-
-#include <KopeteTelepathy/telepathycontactmanager.h>
-
-#endif
-

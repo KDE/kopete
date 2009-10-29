@@ -21,7 +21,7 @@
 #ifndef LIB_KOPETE_TELEPATHY_TELEPATHYFILETRANSFER_H
 #define LIB_KOPETE_TELEPATHY_TELEPATHYFILETRANSFER_H
 
-#include <KopeteTelepathy/telepathycontact.h>
+#include <telepathycontact.h>
 #include <TelepathyQt4/Connection>
 
 namespace Tp

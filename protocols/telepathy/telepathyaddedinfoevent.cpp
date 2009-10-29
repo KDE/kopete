@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <KopeteTelepathy/telepathyaddedinfoevent.h>
+#include <telepathyaddedinfoevent.h>
 
-#include <KopeteTelepathy/telepathyprotocolinternal.h>
+#include <telepathyprotocolinternal.h>
 
 #include <KDebug>
 

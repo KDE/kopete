@@ -29,7 +29,7 @@
  * @brief This class is the TelepathyProtocol class which is exported in the Telepathy Protocol
  *        plugin only and is not present in the shared library. It contains only those methods which
  *        are not needed by the library to function, with the rest of what would be here in a normal
- *        Kopete Protocol Plugin located in KopeteTelepathy/telepathyprotocolinternal.h|cpp.
+ *        Kopete Protocol Plugin located in telepathyprotocolinternal.h|cpp.
  */
 class KOPETE_EXPORT TelepathyProtocol : public Kopete::Protocol
 {

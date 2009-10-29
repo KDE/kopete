@@ -21,7 +21,7 @@
 #ifndef LIB_KOPETE_TELEPATHY_TELEPATHYCONTACT_H
 #define LIB_KOPETE_TELEPATHY_TELEPATHYCONTACT_H
 
-#include <KopeteTelepathy/telepathyaccount.h>
+#include <telepathyaccount.h>
 
 #include <kopetecontact.h>
 #include <kopetechatsession.h>

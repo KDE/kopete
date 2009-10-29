@@ -18,12 +18,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <KopeteTelepathy/telepathycontactmanager.h>
+#include <telepathycontactmanager.h>
 
-#include <KopeteTelepathy/telepathyaccount.h>
-#include <KopeteTelepathy/telepathyaddedinfoevent.h>
-#include <KopeteTelepathy/telepathycontact.h>
-#include <KopeteTelepathy/telepathyprotocolinternal.h>
+#include <telepathyaccount.h>
+#include <telepathyaddedinfoevent.h>
+#include <telepathycontact.h>
+#include <telepathyprotocolinternal.h>
 
 #include <KDebug>
 

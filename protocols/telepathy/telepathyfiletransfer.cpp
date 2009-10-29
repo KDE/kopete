@@ -20,11 +20,11 @@
 
 #include <kopetetransfermanager.h>
 
-#include <KopeteTelepathy/telepathyfiletransfer.h>
+#include <telepathyfiletransfer.h>
 
-#include <KopeteTelepathy/telepathyaccount.h>
-#include <KopeteTelepathy/telepathychatsession.h>
-#include <KopeteTelepathy/telepathyprotocolinternal.h>
+#include <telepathyaccount.h>
+#include <telepathychatsession.h>
+#include <telepathyprotocolinternal.h>
 
 #include <KDebug>
 

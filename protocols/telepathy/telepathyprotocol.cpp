@@ -23,9 +23,9 @@
 #include "ui/telepathyaddcontactpage.h"
 #include "ui/telepathyeditaccountwidget.h"
 
-#include <KopeteTelepathy/telepathyaccount.h>
-#include <KopeteTelepathy/telepathycontact.h>
-#include <KopeteTelepathy/telepathyprotocolinternal.h>
+#include <telepathyaccount.h>
+#include <telepathycontact.h>
+#include <telepathyprotocolinternal.h>
 
 #include <kopeteaccountmanager.h>
 

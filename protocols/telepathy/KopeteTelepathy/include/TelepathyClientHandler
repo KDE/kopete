@@ -1,7 +1,0 @@
-#ifndef LIB_KOPETE_TELEPATHY_TELEPATHY_CLIENT_HANDLER_PRETTY_H
-#define LIB_KOPETE_TELEPATHY_TELEPATHY_CLIENT_HANDLER_PRETTY_H
-
-#include <KopeteTelepathy/telepathyclienthandler.h>
-
-#endif
-

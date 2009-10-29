@@ -18,8 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <KopeteTelepathy/telepathychatsession.h>
-#include <KopeteTelepathy/telepathyaccount.h>
+#include <telepathychatsession.h>
+#include <telepathyaccount.h>
+#include <telepathyprotocol.h>
 
 #include <ui/kopeteview.h>
 #include <kopetechatsessionmanager.h>
@@ -40,7 +41,11 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
     kDebug();
     Kopete::ChatSessionManager::self()->registerChatSession(this);
 
-    QObject::connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(sendMessage(Kopete::Message&)));
+    QObject::connect(this,
+                     SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
+                     SLOT(sendMessage(Kopete::Message&)));
+
+    setComponentData (protocol->componentData ());
 
     KAction *shareMyDesktop = new KAction(KIcon("krfb"), i18n("S&hare My Desktop"), this);
     actionCollection()->addAction("shareMyDesktop", shareMyDesktop);
