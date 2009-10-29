@@ -30,8 +30,8 @@
 #include "wlmprotocol.h"
 #include "ui_wlmaddui.h"
 
-WlmAddContactPage::WlmAddContactPage (QWidget * parent):
-AddContactPage (parent)
+WlmAddContactPage::WlmAddContactPage (Kopete::Account * account, QWidget * parent):
+AddContactPage (parent), m_account(account)
 {
     m_wlmAddUI = new Ui::WlmAddUI ();
     m_wlmAddUI->setupUi (this);
@@ -46,13 +46,19 @@ WlmAddContactPage::~WlmAddContactPage ()
 bool
 WlmAddContactPage::apply (Kopete::Account *account, Kopete::MetaContact * metaContact)
 {
-   QString contactId = m_wlmAddUI->m_uniqueName->text().trimmed();
-   return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
+    QString contactId = m_wlmAddUI->m_uniqueName->text().trimmed();
+    return account->addContact( contactId, metaContact, Kopete::Account::ChangeKABC );
 }
 
 bool
 WlmAddContactPage::validateData ()
 {
+    if (!m_account->isConnected()) {
+        KMessageBox::sorry(this, i18n ("You need to be connected to be able to add contacts."),
+                           i18n("Not Connected"), QFlags<KMessageBox::Option>());
+        return false;
+    }
+
     QString contactId = m_wlmAddUI->m_uniqueName->text().trimmed();
     if (WlmProtocol::validContactId(contactId))
         return true;

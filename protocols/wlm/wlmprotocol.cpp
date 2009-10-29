@@ -130,11 +130,10 @@ Kopete::Contact * WlmProtocol::deserializeContact (Kopete::MetaContact *
 }
 
 AddContactPage *
-WlmProtocol::createAddContactWidget (QWidget * parent,
-                                     Kopete::Account * /* account */ )
+WlmProtocol::createAddContactWidget (QWidget * parent, Kopete::Account *account)
 {
     kDebug (14210) << "Creating Add Contact Page";
-    return new WlmAddContactPage (parent);
+    return new WlmAddContactPage(account, parent);
 }
 
 KopeteEditAccountWidget *

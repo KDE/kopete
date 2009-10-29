@@ -121,6 +121,9 @@ bool
 WlmAccount::createContact (const QString & contactId,
                            Kopete::MetaContact * parentContact)
 {
+    if ( !m_server )
+        return false;
+
     kDebug() << "contact " << contactId;
     WlmContact *newContact = new WlmContact (this, contactId, QString(), parentContact->displayName (), parentContact);
 

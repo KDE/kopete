@@ -38,21 +38,23 @@ namespace Ui
 */
 class WlmAddContactPage:public AddContactPage
 {
-  Q_OBJECT public:
-    WlmAddContactPage (QWidget * parent = 0);
-     ~WlmAddContactPage ();
+	Q_OBJECT
+public:
+	WlmAddContactPage (Kopete::Account * account, QWidget * parent = 0);
+	~WlmAddContactPage ();
 
-    /**
+	/**
 	 * Make a contact out of the entered data
 	 */
-    virtual bool apply (Kopete::Account * a, Kopete::MetaContact * m);
-        /**
+	virtual bool apply (Kopete::Account * a, Kopete::MetaContact * m);
+	/**
 	 * Is the data correct?
 	 */
-    virtual bool validateData ();
+	virtual bool validateData ();
 
-  protected:
-      Ui::WlmAddUI * m_wlmAddUI;
+protected:
+	Ui::WlmAddUI * m_wlmAddUI;
+	Kopete::Account * m_account;
 };
 
 #endif
