@@ -20,9 +20,9 @@
 namespace Oscar
 {
 
-//FIXME: variables are not initialised. imho this is asking for trouble.
 Settings::Settings()
-: m_fileProxy( 0 ), m_firstPort( 5190 ), m_lastPort( 5199 ), m_timeout( 10 )
+: m_webAware(false), m_requireAuth(false), m_hideIP(false),
+  m_fileProxy( false ), m_firstPort( 5190 ), m_lastPort( 5199 ), m_timeout( 10 )
 {
 }
 
