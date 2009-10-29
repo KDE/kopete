@@ -416,7 +416,7 @@ QString Kopete::ChatSession::getUrlsFileName(const Kopete::Contact* c)
 	c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 		QString::fromLatin1( ".lasturls" );
 
-	QString filename = KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name + QString::fromLatin1( ".txt" ) ) ;
+	QString filename = KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/urls/" ) + name + QString::fromLatin1( ".txt" ) ) ;
 
 	return filename;
 }
