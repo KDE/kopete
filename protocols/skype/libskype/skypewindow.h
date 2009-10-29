@@ -62,13 +62,12 @@ class SkypeWindow : public QObject
 		 * @param otherWId Oter window Id for move
 		 * @param x, y position
 		 */
-		void moveWebcamWidget(const QString &user, WId otherWId, int x, int y);
+		void moveWebcamWidget(const QString &user, WId otherWId, int x = 0, int y = 0);
 		/**
 		 * This revert webcam stream widget back to skype call dialog
-		 * @param otherWid Other window Id with webcam stream
-		 * This function is not impelemented yet
+		 * @param user audio/video call session with this skype user name
 		 */
-		void revertWebcamWidget(WId oterWId);
+		void revertWebcamWidget(const QString &user);
 	private:
 		/**
 		 * This check if window is skype call dialog

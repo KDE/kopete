@@ -59,7 +59,7 @@ set(
 	skypeaccount.cpp
 	skypeaddcontact.cpp
 	skypecalldialog.cpp
-	skypeconference.cpp
+#	skypeconference.cpp
 	skypecontact.cpp
 	skypedetails.cpp
 	skypeeditaccount.cpp

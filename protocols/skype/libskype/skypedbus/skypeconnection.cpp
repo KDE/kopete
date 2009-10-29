@@ -135,6 +135,21 @@ void SkypeConnection::parseMessage(const QString &message) {
 			}
 			break;//Other messages are ignored, waiting for the protocol response
 		}
+		case cfNotConnected: {
+			//Why we get message, when we are not connected?
+			//Disconnect again
+			emit connectionDone(seUnknown, 0);
+			disconnectSkype(crLost);
+			break;
+		}
+		case cfWaitingStart: {
+			//Ignore this
+			break;
+		}
+		case cfConnected: {
+			//We dont need doing with message, it is handled by signal received
+			break;
+		}
 	}
 }
 

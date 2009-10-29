@@ -34,6 +34,8 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
+#include <QDateTime>
+
 typedef enum {
 	osOffline,
 	osOnline,
@@ -326,7 +328,7 @@ bool SkypeContact::hasChat() const {
 	return d->session;//does it have a chat session?
 }
 
-void SkypeContact::receiveIm(const QString &message, const QString &chat) {
+void SkypeContact::receiveIm(const QString &message, const QString &chat, const QDateTime &timeStamp) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (!hasChat()) {
@@ -338,6 +340,7 @@ void SkypeContact::receiveIm(const QString &message, const QString &chat) {
 	Kopete::Message mes(this, d->account->myself());//create the message
 	mes.setDirection(Kopete::Message::Inbound);
 	mes.setPlainBody(message);
+	mes.setTimestamp(timeStamp);
 	d->session->setChatId(chat);
 	d->session->appendMessage(mes);//add it to the session
 }
@@ -356,6 +359,10 @@ QList<KAction*> *SkypeContact::customContextMenuActions() {
 	actions->append(d->blockAction);
 
 	return actions;
+}
+
+QList<KAction*> *SkypeContact::customContextMenuActions(Kopete::ChatSession *) {
+	return customContextMenuActions();
 }
 
 void SkypeContact::enableActions(bool value) {
@@ -413,7 +420,7 @@ bool SkypeContact::canCall() const {
 void SkypeContact::slotUserInfo() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	(new SkypeDetails)->setNames(contactId(), nickName(), formattedName()).setPhones(d->privatePhone, d->privateMobile, d->workPhone).setHomepage(d->homepage).setAuthor(d->account->getAuthor(contactId()), d->account).setSex(d->sex).exec();
+	(new SkypeDetails)->setNames(contactId(), nickName(), formattedName()).setPhones(d->privatePhone, d->privateMobile, d->workPhone).setHomepage(d->homepage).setAuthor(d->account->getAuthor(contactId()), d->account).setSex(d->sex).show();
 }
 
 void SkypeContact::deleteContact() {

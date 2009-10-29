@@ -24,6 +24,7 @@
 
 class SkypePrivate;
 class SkypeAccount;
+class QDateTime;
 
 /**
  * @author Kopete Developers
@@ -225,6 +226,27 @@ class Skype : public QObject
 		 * @return all users for string string
 		 */
 		QStringList searchUsers(const QString &string);
+
+		///Video section
+
+		/**
+		 * Check if user has video support
+		 * @user for check
+		 */
+		bool supportVideo(const QString &user);
+
+		/**
+		 * Start sending video in active call
+		 * @callId id of call
+		 */
+		void startSendingVideo(const QString &callId);
+
+		/**
+		 * Stop sending video in active video call
+		 * @callId id of call
+		 */
+		void stopSendingVideo(const QString &callId);
+
 	public slots:
 		/**
 		 * Tell the skype to go online
@@ -447,16 +469,18 @@ class Skype : public QObject
 		 * @param user Contact ID of user that sent it. It is NOT guaranteed that the user is in list!
 		 * @param body The message body that was received
 		 * @param messageId ID of that message
+		 * @param timeStamp time when message was send
 		 */
-		void receivedIM(const QString &user, const QString &body, const QString &messageId);
+		void receivedIM(const QString &user, const QString &body, const QString &messageId, const QDateTime &timeStamp);
 		/**
 		 * This is emitted when a new message from multi-user chat is received
 		 * @param chat Id of the chat
 		 * @param body Tect of the message
 		 * @param messageId Id of this message to get information about it if needed
 		 * @param user Who sent it to that chat (ID)
+		 * @param timeStamp time when message was send
 		 */
-		void receivedMultiIM(const QString &chat, const QString &body, const QString &messageId, const QString &user);
+		void receivedMultiIM(const QString &chat, const QString &body, const QString &messageId, const QString &user, const QDateTime &timeStamp);
 		/**
 		 * This is emitted when an Id of the last outgoing message is known
 		 * @param id The ID of that message
@@ -547,6 +571,11 @@ class Skype : public QObject
 		 * @parma info info in request
 		 */
 		void receivedAuth(const QString &contactId, const QString &info);
+
+		///Video section
+
+		void startReceivingVideo(const QString &callId);
+		void stopReceivingVideo(const QString &callId);
 };
 
 #endif

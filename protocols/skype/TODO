@@ -9,7 +9,7 @@ Port to KDE4:
 - start process/script before/after call - done
 - support conference call
 - support system dbus type - done (but is not supported by skype)
-- setting user status message
+- setting and show user status message
 - all Qt3Support classes port to Qt 4 - done
 
 TODO New:
@@ -24,7 +24,8 @@ TODO New:
 - use new blue skype icons - done
 - add "user call me" event
 - remove skype client call dialog - done (it only unmap using Xlib and kwin)
-- move webcam stream widget to kopete call dialog
+- move webcam stream widget to kopete call dialog - only moved to new window
+- add options to control video call - done (it has some bugs, when other user close receiving webcam stream)
 - add support sending SMS
 - add support recording calls
 - remove contact echo123 and add button "Make Test Call" in Skype protocol toolbar - done
@@ -38,7 +39,7 @@ TODO New:
 - show missed call
 - add option to hide all SkypeOut contacts - now all SkypeOut contacts are offline, option missing
 - import old history from skype
-- support call from KABC - using application skype-action-handler (skypebuttons) is now possible
+- support call from KABC - using command "kopete callto://<user>"
 - add tool to configure skype client for using in kopete - done (disable all skype notification events and set up english language)
 - show event for request authorization - done
 

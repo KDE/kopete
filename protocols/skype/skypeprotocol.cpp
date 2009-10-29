@@ -55,6 +55,10 @@ void SkypeProtocolHandler::handleURL(const KUrl &url) const {
 	SkypeProtocol::protocol()->account()->SkypeActionHandler(url.url());
 }
 
+void SkypeProtocolHandler::handleURL(const QString &, const KUrl &url) const {
+	handleURL(url);
+}
+
 class SkypeProtocolPrivate {
 	private:
 	public:

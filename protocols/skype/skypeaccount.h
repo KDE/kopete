@@ -26,6 +26,7 @@
 
 class SkypeProtocol;
 class QString;
+class QDateTime;
 class SkypeAccountPrivate;
 class SkypeContact;
 class SkypeChatSession;
@@ -97,8 +98,9 @@ Q_OBJECT
 		 * @param user The user that sent it
 		 * @param message The text of the message
 		 * @param messageId Id of that message
+		 * @param timeStamp time when message was send
 		 */
-		void receivedIm(const QString &user, const QString &message, const QString &messageId);
+		void receivedIm(const QString &user, const QString &message, const QString &messageId, const QDateTime &timeStamp);
 		/**
 		 * New cal to show (or not, depending on setup) the call control window.
 		 * @param callId ID of the new call
@@ -386,6 +388,17 @@ Q_OBJECT
 		 * @param name new Skype display name (empty string is default display name)
 		 */
 		void setDisplayName(const QString &user, const QString &name);
+		/**
+		 * Show user info
+		 * @param user contact fot display
+		 */
+		void userInfo(const QString &user);
+
+		/// Video section
+
+		void startSendingVideo(const QString &callId);
+		void stopSendingVideo(const QString &callId);
+
 	public slots:
 		/**
 		 * Sets online status for the account.
@@ -489,8 +502,9 @@ Q_OBJECT
 		 * @param boty Text of that message
 		 * @param messageId ID of the received message
 		 * @param user The one who sent it
+		 * @param timeStamp time when message was send
 		 */
-		void receiveMultiIm(const QString &chatId, const QString &body, const QString &messageId, const QString &user);
+		void receiveMultiIm(const QString &chatId, const QString &body, const QString &messageId, const QString &user, const QDateTime &timeStamp);
 		/**
 		 * Set if chat window should close a chat window when you close it
 		 */

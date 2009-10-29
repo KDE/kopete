@@ -47,6 +47,8 @@ class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 		void updateCallInfo();
 		///Call the user back
 		void callBack();
+		///Hide skype call dialog
+		void hideSkype();
 	protected slots:
 		///The accept button was clicked, accept the call
 		virtual void acceptCall();
@@ -56,6 +58,8 @@ class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 		virtual void hangUp();
 		///Start chat to the user
 		virtual void chatUser();
+		///Video action: start/stop sending video
+		virtual void videoAction(bool b);
 	protected:
 		///I want to know when I'm closed
 		virtual void closeEvent(QCloseEvent *e);
@@ -79,6 +83,12 @@ class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 		 * @param currency What currency is it (actually only euro-cents are used)
 		 */
 		void skypeOutInfo(int balance, const QString &currency);
+
+		/// Video section
+
+		void startReceivingVideo(const QString &callId);
+		void stopReceivingVideo(const QString &calId);
+
 	signals:
 		/**
 		 * accept an incoming call

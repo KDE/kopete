@@ -24,6 +24,7 @@
 
 class SkypeAccount;
 class QString;
+class QDateTime;
 class SkypeContactPrivate;
 namespace Kopete {
 	class MetaContact;
@@ -81,7 +82,8 @@ class SkypeContact : public Kopete::Contact
 		///Does this contact has opened chat session?
 		bool hasChat() const;
 		///Tell kopete which actions to show in the contact pop-up menu
-		QList<KAction*> *customContextMenuActions();
+		virtual QList<KAction*> *customContextMenuActions();
+		virtual QList<KAction*> *customContextMenuActions(Kopete::ChatSession *);
 		///Give me actually existing chat session
 		SkypeChatSession *getChatSession();
 		///Can this contact be called now?
@@ -113,8 +115,9 @@ class SkypeContact : public Kopete::Contact
 		 * This one showes message in the chat session.
 		 * @param message The message to show
 		 * @param chat The chat ID of the chat the message belongs to
+		 * @param timeStamp time when message was send
 		 */
-		void receiveIm(const QString &message, const QString &chat);
+		void receiveIm(const QString &message, const QString &chat, const QDateTime &timeStamp);
 		/**
 		 * connection status changed
 		 * @param connected Are we connected now?

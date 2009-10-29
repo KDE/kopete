@@ -26,6 +26,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <qtimer.h>
+#include <QDateTime>
 
 #define PROTOCOL_MAX 8
 #define PROTOCOL_MIN 6
@@ -517,6 +518,15 @@ void Skype::skypeMessage(const QString &message) {
 				emit callError(callId, errorText);
 			}
 			emit callStatus(callId, status);
+		} else if ( message.section(' ', 2, 2).trimmed().toUpper() == "VIDEO_RECEIVE_STATUS" ) {
+			const QString &status = message.section(' ', 3, 3).trimmed().toUpper();
+			if ( status == "RUNNING" ) {
+				kDebug(SKYPE_DEBUG_GLOBAL) << "Start receiving video";
+				emit startReceivingVideo(callId);
+			} else if ( status == "STOPPING" ) {
+				kDebug(SKYPE_DEBUG_GLOBAL) << "Stop receiving video";
+				emit stopReceivingVideo(callId);
+			}
 		}
 	} else if (messageType == "CURRENTUSERHANDLE") {
 		QString user = message.section(' ', 1, 1).trimmed();
@@ -622,22 +632,26 @@ void Skype::hitchHike(const QString &messageId) {
 
 	const QString &chatType = (d->connection % QString("GET CHAT %1 STATUS").arg(chat)).section(' ', 3, 3).trimmed().toUpper();
 
-	const QString &timeStamp = (d->connection % QString("GET CHATMESSAGE %1 TIMESTAMP").arg(messageId)).section(' ', 3, 3).trimmed();
-	//TODO: convert UNIX timestamp to QTimeDate and use it
+	bool ok = false;
+	uint utime = (d->connection % QString("GET CHATMESSAGE %1 TIMESTAMP").arg(messageId)).section(' ', 3, 3).trimmed().toUInt(&ok);
+	if ( ! ok )
+		utime = QDateTime::currentDateTime().toTime_t();
+
+	const QDateTime &timeStamp = QDateTime::fromTime_t(utime);
 
 	if ((chatType == "LEGACY_DIALOG") || (chatType == "DIALOG")) {
 
 		const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).trimmed();//ask skype for a sender of that message and filter out the blouat around (like CHATMESSAGE 123...)
 
 		if ((d->hitch) || (d->account.userHasChat(user))) {//it can be read eather if the hitchhiking non-chat messages is enabled or if the user already has opened a chat
-			emit receivedIM(user, (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3), messageId);//ask skype for the body and filter out the bload, we want only the text and make everyone aware that we received a message
+			emit receivedIM(user, (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3), messageId, timeStamp);//ask skype for the body and filter out the bload, we want only the text and make everyone aware that we received a message
 			if (d->mark) //We should mark it as read
 				d->connection << QString("SET CHATMESSAGE %1 SEEN").arg(messageId);//OK, just tell skype it is read
 		}
 	} else {
 		if ((d->hitch) || (d->account.chatExists(chat))) {
 			const QString &user = (d->connection % QString("GET CHATMESSAGE %1 FROM_HANDLE").arg(messageId)).section(' ', 3, 3).trimmed();
-			emit receivedMultiIM(chat, (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3), messageId, user);
+			emit receivedMultiIM(chat, (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3), messageId, user, timeStamp);
 			if (d->mark)
 				d->connection << QString("SET CHATMESSAGE %1 SEEN").arg(messageId);
 		}
@@ -999,7 +1013,26 @@ bool Skype::openFileTransfer(const QString &user, const QString &url) {
 }
 
 QStringList Skype::searchUsers(const QString &string) {
+	kDebug(SKYPE_DEBUG_GLOBAL) << string;
 	return (d->connection % QString("SEARCH USERS %1").arg(string)).section(' ', 1).trimmed().split(' ');
+}
+
+bool Skype::supportVideo(const QString &user) {
+	kDebug(SKYPE_DEBUG_GLOBAL) << user;
+	if ( (d->connection % QString("GET USER %1 IS_VIDEO_CAPABLE").arg(user)).section(' ', 3).trimmed().toUpper() == "TRUE" )
+		return true;
+	else
+		return false;
+}
+
+void Skype::startSendingVideo(const QString &callId) {
+	kDebug(SKYPE_DEBUG_GLOBAL) << callId;
+	d->connection << QString("ALTER CALL %1 START_VIDEO_SEND").arg(callId);
+}
+
+void Skype::stopSendingVideo(const QString &callId) {
+	kDebug(SKYPE_DEBUG_GLOBAL) << callId;
+	d->connection << QString("ALTER CALL %1 STOP_VIDEO_SEND").arg(callId);
 }
 
 #include "skype.moc"

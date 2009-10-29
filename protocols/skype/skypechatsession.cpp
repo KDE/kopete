@@ -39,7 +39,7 @@ static Kopete::MetaContact *dummyContacts = new Kopete::MetaContact();
 class ChatDummyContact : public Kopete::Contact {
 	public:
 		ChatDummyContact(SkypeAccount *account, const QString &name) : Kopete::Contact(account, name, dummyContacts) {};
-		virtual Kopete::ChatSession *manager (CanCreateFlags canCreate) {return 0L;};
+		virtual Kopete::ChatSession *manager (CanCreateFlags) {return 0L;};
 };
 
 class SkypeChatSessionPrivate {

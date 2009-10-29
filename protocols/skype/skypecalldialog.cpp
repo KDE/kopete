@@ -68,6 +68,9 @@ class SkypeCallDialogPrivate {
 		};
 		///Skype window manager
 		SkypeWindow * skypeWindow;
+		///Widget for receiving video
+		///TODO: move it to Ui::SkypeCallDialogBase
+		QWidget * receivedVideo;
 };
 
 SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account) : KDialog() {
@@ -92,21 +95,22 @@ SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, S
 	d->callTime = 0;
 	d->callEnded = false;
 	d->skypeWindow = new SkypeWindow;
+	d->receivedVideo = new QWidget;
 
 	d->updater = new QTimer();
 	connect(d->updater, SIGNAL(timeout()), this, SLOT(updateCallInfo()));
 	d->updater->start(500);
 
 	dialog->NameLabel->setText(account->getUserLabel(userId));
-	dialog->StatusLabel->setText(i18n("Connecting"));
 	setCaption(i18n("Call with %1", account->getUserLabel(userId)));
 
 	connect(dialog->AcceptButton, SIGNAL(clicked()), this, SLOT(acceptCall()));
 	connect(dialog->HangButton, SIGNAL(clicked()), this, SLOT(hangUp()));
 	connect(dialog->HoldButton, SIGNAL(clicked()), this, SLOT(holdCall()));
 	connect(dialog->ChatButton, SIGNAL(clicked()), this, SLOT(chatUser()));
+	connect(dialog->VideoButton, SIGNAL(toggled(bool)), this, SLOT(videoAction(bool)));
 
-	d->skypeWindow->hideCallDialog(userId);
+	QTimer::singleShot(0, this, SLOT(hideSkype())); //We need immediately connect signal-slot in account, start this as slot
 }
 
 
@@ -316,6 +320,37 @@ void SkypeCallDialog::callBack() {
 	deleteLater();//close this window
 
 	d->account->makeCall(d->userId);
+}
+
+void SkypeCallDialog::hideSkype() {
+	d->skypeWindow->hideCallDialog(d->userId);
+}
+
+void SkypeCallDialog::videoAction(bool b) {
+	kDebug(SKYPE_DEBUG_GLOBAL) << b;
+	if ( b )
+		d->account->startSendingVideo(d->callId);
+	else
+		d->account->stopSendingVideo(d->callId);
+}
+
+void SkypeCallDialog::startReceivingVideo(const QString &callId) {
+	kDebug(SKYPE_DEBUG_GLOBAL);
+	if ( callId != d->callId )
+		return;
+	d->skypeWindow->moveWebcamWidget(d->userId, d->receivedVideo->winId(), 2, 24);
+	d->receivedVideo->resize(320+2, 240+24); //Skype has only support for 320x240 video size
+	d->receivedVideo->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed)); //TODO: fix this - do not resize this window!!!
+	d->receivedVideo->show();
+	d->receivedVideo->setFocus();
+}
+
+void SkypeCallDialog::stopReceivingVideo(const QString &callId) {
+	kDebug(SKYPE_DEBUG_GLOBAL);
+	if ( callId != d->callId )
+		return;
+	d->receivedVideo->hide();
+	d->skypeWindow->revertWebcamWidget(d->userId);
 }
 
 #include "skypecalldialog.moc"

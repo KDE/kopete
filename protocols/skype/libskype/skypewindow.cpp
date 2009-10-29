@@ -210,7 +210,8 @@ bool SkypeWindow::isWebcamWidget(WId wid) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << wid;
 	XWindowAttributes window_attributes; //window attributes
 	int status = XGetWindowAttributes(QX11Info::display(), wid, &window_attributes); //get attributes from window wid
-	if ( status == 0 && window_attributes.width == 320 && window_attributes.height == 240 ) { //if all is ok and width is 320 and height is 240 it may be webcam window
+	kDebug(SKYPE_DEBUG_GLOBAL) << "Attributes: width =" << window_attributes.width << "height =" << window_attributes.height << "status =" << status;
+	if ( status != 0 && window_attributes.width == 320 && window_attributes.height == 240 ) { //if all is ok and width is 320 and height is 240 it may be webcam window
 		kDebug(SKYPE_DEBUG_GLOBAL) << "It is webcam widget";
 		return true;
 	}
@@ -248,17 +249,46 @@ void SkypeWindow::moveWebcamWidget(const QString &user, WId otherWId, int x, int
 		return;
 	}
 	WId webcamWidgetWId = getWebcamWidgetWId(callDialogWId);
+	if ( webcamWidgetWId == 0 ) {
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find WId of skype webcam widget, maybe isnt incomming webcam stream";
+		return;
+	}
+	//get parent of webcam stream widget
+	Window root, parent;
+	Window * children;
+	unsigned int nchildren;
+	int status = XQueryTree(QX11Info::display(), webcamWidgetWId, &root, &parent, &children, &nchildren);
+	if ( status == 0 ) {
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find parent of skype webcam widget";
+		return;
+	}
+	XFree(children);
+	d->webcamStreams.insert(webcamWidgetWId, parent);
+	XReparentWindow(QX11Info::display(), webcamWidgetWId, otherWId, x, y); //move webcam widget to other window at position x, y
+	XMapWindow(QX11Info::display(), webcamWidgetWId); //map this window to show webcam stream
+	//TODO: disable right mouse click events in window webcamWidgetWId
+}
+
+void SkypeWindow::revertWebcamWidget(const QString &user) {
+	kDebug(SKYPE_DEBUG_GLOBAL) << user;
+	WId callDialogWId = getCallDialogWId(user);
+	if ( callDialogWId == 0 ) {
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find WId of skype call dialog";
+		return;
+	}
+	WId webcamWidgetWId = getWebcamWidgetWId(callDialogWId);
 	if ( callDialogWId == 0 ) {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find WId of skype webcam widget, maybe isnt incomming webcam stream";
 		return;
 	}
-	XReparentWindow(QX11Info::display(), webcamWidgetWId, otherWId, x, y); //move webcam widget to other window at position x, y
-}
-
-void SkypeWindow::revertWebcamWidget(WId otherWId) {
-	kDebug(SKYPE_DEBUG_GLOBAL) << "This function is not impelemented yet";
-	Q_UNUSED(otherWId)
-	//TODO: this
+	WId parentWId = d->webcamStreams.value(webcamWidgetWId, 0);
+	if ( parentWId == 0 ) {
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find parent of skype webcam widget";
+		return;
+	}
+	d->webcamStreams.remove(webcamWidgetWId);
+	XReparentWindow(QX11Info::display(), webcamWidgetWId, parentWId, 6+1+3+2, 6+1+3+24); //Fix correct position, it is +2+24? (6+1+3 is frame size of skype client call dialog, +2+24 is position of webcam stream)
+	XUnmapWindow(QX11Info::display(), webcamWidgetWId);
 }
 
 #include "skypewindow.moc"

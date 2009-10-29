@@ -41,6 +41,8 @@
 #include <qprocess.h>
 #include <kopeteaddedinfoevent.h>
 
+#include <QDateTime>
+
 class SkypeAccountPrivate {
 	public:
 		///The skype protocol pointer
@@ -146,11 +148,11 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	QObject::connect(&d->skype, SIGNAL(statusConnecting()), this, SLOT(statusConnecting()));
 	QObject::connect(&d->skype, SIGNAL(newUser(const QString&, int)), this, SLOT(newUser(const QString&, int)));
 	QObject::connect(&d->skype, SIGNAL(contactInfo(const QString&, const QString& )), this, SLOT(updateContactInfo(const QString&, const QString& )));
-	QObject::connect(&d->skype, SIGNAL(receivedIM(const QString&, const QString&, const QString& )), this, SLOT(receivedIm(const QString&, const QString&, const QString& )));
+	QObject::connect(&d->skype, SIGNAL(receivedIM(const QString&, const QString&, const QString&, const QDateTime&)), this, SLOT(receivedIm(const QString&, const QString&, const QString&, const QDateTime&)));
 	QObject::connect(&d->skype, SIGNAL(gotMessageId(const QString& )), this, SLOT(gotMessageId(const QString& )));//every time some ID is known inform the contacts
 	QObject::connect(&d->skype, SIGNAL(newCall(const QString&, const QString&)), this, SLOT(newCall(const QString&, const QString&)));
 	QObject::connect(&d->skype, SIGNAL(setMyselfName(const QString&)), this, SLOT(setMyselfName(const QString& )));
-	QObject::connect(&d->skype, SIGNAL(receivedMultiIM(const QString&, const QString&, const QString&, const QString& )), this, SLOT(receiveMultiIm(const QString&, const QString&, const QString&, const QString& )));
+	QObject::connect(&d->skype, SIGNAL(receivedMultiIM(const QString&, const QString&, const QString&, const QString&, const QDateTime&)), this, SLOT(receiveMultiIm(const QString&, const QString&, const QString&, const QString&, const QDateTime&)));
 	QObject::connect(&d->skype, SIGNAL(outgoingMessage(const QString&, const QString&)), this, SLOT(sentMessage(const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(groupCall(const QString&, const QString& )), this, SLOT(groupCall(const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(receivedAuth(const QString &, const QString &)), this, SLOT(receivedAuth(const QString &, const QString &)));
@@ -466,9 +468,9 @@ bool SkypeAccount::userHasChat(const QString &userId) {
 		return false;//if it does not exist it can not have a chat opened
 }
 
-void SkypeAccount::receivedIm(const QString &user, const QString &message, const QString &messageId) {
+void SkypeAccount::receivedIm(const QString &user, const QString &message, const QString &messageId, const QDateTime &timeStamp) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << "User: " << user << ", message: " << message;
-	getContact(user)->receiveIm(message, getMessageChat(messageId));//let the contact show the message
+	getContact(user)->receiveIm(message, getMessageChat(messageId), timeStamp);//let the contact show the message
 }
 
 void SkypeAccount::setScanForUnread(bool value) {
@@ -515,6 +517,8 @@ void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 		QObject::connect(&d->skype, SIGNAL(skypeOutInfo(int, const QString& )), dialog, SLOT(skypeOutInfo(int, const QString& )));
 		QObject::connect(dialog, SIGNAL(updateSkypeOut()), &d->skype, SLOT(getSkypeOut()));
 		QObject::connect(dialog, SIGNAL(callFinished(const QString& )), this, SLOT(removeCall(const QString& )));
+		QObject::connect(&d->skype, SIGNAL(startReceivingVideo(const QString &)), dialog, SLOT(startReceivingVideo(const QString &)));
+		QObject::connect(&d->skype, SIGNAL(stopReceivingVideo(const QString &)), dialog, SLOT(stopReceivingVideo(const QString &)));
 
 		dialog->show();//Show Call dialog
 
@@ -650,7 +654,7 @@ bool SkypeAccount::chatExists(const QString &chat) {
 	return d->sessions.value(chat);
 }
 
-void SkypeAccount::receiveMultiIm(const QString &chatId, const QString &body, const QString &messageId, const QString &user) {
+void SkypeAccount::receiveMultiIm(const QString &chatId, const QString &body, const QString &messageId, const QString &user, const QDateTime &timeStamp) {
 	SkypeChatSession *session = d->sessions.value(chatId);
 
 	if (!session) {
@@ -666,6 +670,7 @@ void SkypeAccount::receiveMultiIm(const QString &chatId, const QString &body, co
 	Kopete::Message mes(getContact(user), myself());
 	mes.setDirection(Kopete::Message::Inbound);
 	mes.setPlainBody(body);
+	mes.setTimestamp(timeStamp);
 	session->appendMessage(mes);
 
 	Q_UNUSED(messageId);
@@ -1043,10 +1048,29 @@ void SkypeAccount::authEvent(uint actionId) {
 			blockUser(event->contactId());
 			break;
 		case Kopete::AddedInfoEvent::InfoAction:
-			KMessageBox::error(0L, i18n("This is not implemented yet"), i18n("Skype protocol"));
-			//TODO: implement this
+			userInfo(event->contactId());
 			break;
 	}
+}
+
+void SkypeAccount::startSendingVideo(const QString &callId) {
+	d->skype.startSendingVideo(callId);
+}
+
+void SkypeAccount::stopSendingVideo(const QString &callId) {
+	d->skype.stopSendingVideo(callId);
+}
+
+void SkypeAccount::userInfo(const QString &user) {
+	kDebug(SKYPE_DEBUG_GLOBAL) << user;
+	if ( ! contact(user) ) {
+		addContact(user, d->skype.getDisplayName(user), 0L, Temporary);//create a temporary contact
+		if ( ! contact(user) ) {
+			KMessageBox::error(0L, i18n("Cannot open info about user %1", user), i18n("Skype protocol"));
+			return;//contact arent in contact list - skip it
+		}
+	}
+	contact(user)->slotUserInfo();//Open user info dialog
 }
 
 void SkypeAccount::SkypeActionHandler(const QString &message) {
@@ -1101,15 +1125,7 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 		//TODO: Send voicemail
 		KMessageBox::error(0L, i18n("Send voicemail from SkypeActionHandler is not supported yet"), i18n("Skype protocol"));
 	} else if ( command == "userinfo" ) {//TODO: Open option dialog (with all thisa options instead userinfo) and support unknown contacts who arent in contact list
-		if ( ! contact(user) ) {
-			addContact(user, d->skype.getDisplayName(user), 0L, Temporary);//create a temporary contact
-			if ( ! contact(user) ) {
-				KMessageBox::error(0L, i18n("Contact is not on contact list"), i18n("Skype protocol"));
-				return;//contact arent in contact list - skip it
-			}
-		}
-		contact(user)->slotUserInfo();//Open user info dialog
-		//TODO: dont use slot, it freeze dbus, better create new signal
+		userInfo(user);
 	} else {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown command";
 		KMessageBox::error(0L, i18n("Unknown action from SkypeActionHandler"), i18n("Skype protocol"));
