@@ -1,6 +1,6 @@
 # cmake macro to test LiboRTP
 
-# Copyright (c) 2008, Detlev Casanova <detlev.casanova @ gmail.com>
+# Copyright (c) 2008, Detlev Casanova <detlev.casanova@gmail.com>
 # Copyright (c) 2008, Pino Toscano <pino@kde.org>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
@@ -32,7 +32,7 @@ IF( LIBORTP_INCLUDE_DIR AND LIBORTP_LIBRARY )
            ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/ortpversion.c
            CMAKE_FLAGS -DINCLUDE_DIRECTORIES:STRING=${LIBORTP_INCLUDE_DIR} -DLINK_LIBRARIES=${LIBORTP_LIBRARY}
            COMPILE_DEFINITIONS "${ortp_CFLAGS}"
-           ARGS "0 13"
+           ARGS "0 16"
   )
   set(CMAKE_C_FLAGS ${save_cmake_c_flags})
 
@@ -47,6 +47,6 @@ ENDIF( LIBORTP_INCLUDE_DIR AND LIBORTP_LIBRARY )
 
 if( NOT LIBORTP_FOUND )
   if( LiboRTP_FIND_REQUIRED )
-    message( FATAL_ERROR "You need ortp, minimum version 0.13." )
+    message( FATAL_ERROR "You need ortp, minimum version 0.16." )
   endif ( LiboRTP_FIND_REQUIRED )
 endif( NOT LIBORTP_FOUND )

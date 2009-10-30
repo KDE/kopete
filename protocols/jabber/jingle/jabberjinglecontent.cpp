@@ -20,7 +20,7 @@
 #include "jabberjinglesession.h"
 #include "mediamanager.h"
 #include "mediasession.h"
-#include "jinglertpsession.h"
+#include "jinglertpmanager.h"
 
 //Iris
 #include "jinglecontent.h"

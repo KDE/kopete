@@ -118,7 +118,7 @@ if(BUILD_JINGLE)
       jingle/jinglecallsmanager.cpp
       jingle/jabberjinglesession.cpp
       jingle/jabberjinglecontent.cpp
-      jingle/jinglertpsession.cpp
+      jingle/jinglertpmanager.cpp
       jingle/mediamanager.cpp
       jingle/mediasession.cpp
       jingle/alsaio.cpp
