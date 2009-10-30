@@ -25,6 +25,7 @@
 
 #include <kurl.h>
 #include <kdemacros.h>
+#include <ktoggleaction.h>
 #include "kopeteglobal.h"
 
 #include "kopete_export.h"
@@ -499,6 +500,7 @@ signals:
 private:
 	class Private;
 	Private * const d;
+	KToggleAction* toggleAlwaysVisibleAction;
 
 
 };

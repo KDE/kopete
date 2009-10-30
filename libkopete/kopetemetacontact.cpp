@@ -954,6 +954,11 @@ void MetaContact::slotPropertyChanged( PropertyContainer* _subcontact, const QSt
 
 		emit statusMessageChanged( this );
 	}
+
+	// Here we abuse the onlineStatusChanged signal to force the contact list to refresh and hide the
+	// contact if he is offline and his isAlwaysVisible property changed to false
+	if ( key == Kopete::Global::Properties::self()->isAlwaysVisible().key() && oldValue != newValue )
+		emit onlineStatusChanged( this, d->onlineStatus );
 }
 
 void MetaContact::moveToGroup( Group *from, Group *to )
