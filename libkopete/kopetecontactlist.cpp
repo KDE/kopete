@@ -54,6 +54,7 @@ class ContactList::Private
 {public:
 	/** Flag:  do not save the contact list until she is completely loaded */
 	bool loaded ;
+	bool terminated;
 
 	QList<MetaContact *> contacts;
 	QList<Group *> groups;
@@ -86,6 +87,7 @@ ContactList::ContactList()
 
 	//no contact list loaded yet, don't save them
 	d->loaded=false;
+	d->terminated = false;
 
 	// automatically save on changes to the list
 	d->saveTimer = new QTimer( this );
@@ -381,6 +383,12 @@ bool Kopete::ContactList::loaded() const
 
 void Kopete::ContactList::save()
 {
+	if ( d->terminated )
+	{
+		kWarning(14010) << "Contact list terminated, abort saving";
+		return;
+	}
+
 	if( !d->loaded )
 	{
 		kDebug(14010) << "Contact list not loaded, abort saving";
@@ -406,8 +414,21 @@ void Kopete::ContactList::save()
 	delete storage;
 }
 
+void ContactList::shutdown()
+{
+	if ( !d->terminated )
+	{
+		save();
+		d->terminated = true;
+		d->saveTimer->stop();
+	}
+}
+
 void ContactList::slotSaveLater()
 {
+	if ( d->terminated )
+		return;
+
 	// if we already have a save scheduled, it will be cancelled. either way,
 	// start a timer to save the contact list a bit later.
 	d->saveTimer->start( 17100 /* 17,1 seconds */ );

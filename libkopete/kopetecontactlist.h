@@ -199,6 +199,12 @@ public slots:
 
 	void save();
 
+	/**
+	 * @internal
+	 * Save and shutdown the contact list
+	 */
+	void shutdown();
+
 signals:
 	/**
 	 * A meta contact was added to the contact list. Interested classes
