@@ -540,7 +540,8 @@ QModelIndexList ContactListTreeModel::indexListFor( Kopete::ContactListElement* 
 	QModelIndexList indexList;
 	Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>(cle);
 
-	if (mc)
+	// Contact list doesn't contain myself account contact so ignore it
+	if (mc && mc != Kopete::ContactList::self()->myself())
 	{
 		// metacontact handling
 		// search for all the groups in which this contact is
@@ -555,7 +556,7 @@ QModelIndexList ContactListTreeModel::indexListFor( Kopete::ContactListElement* 
 				indexList.append( mcIndex );
 		}
 	}
-	else
+	else if (!mc)
 	{
 		// group handling
 		Kopete::Group *g = dynamic_cast<Kopete::Group*>(cle);
