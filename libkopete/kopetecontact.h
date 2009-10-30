@@ -500,7 +500,6 @@ signals:
 private:
 	class Private;
 	Private * const d;
-	KToggleAction* toggleAlwaysVisibleAction;
 
 
 };

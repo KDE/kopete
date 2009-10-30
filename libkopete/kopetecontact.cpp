@@ -81,6 +81,7 @@ public:
 	unsigned long int idleTime;
 
 	Kopete::StatusMessage statusMessage;
+	KToggleAction* toggleAlwaysVisibleAction;
 };
 
 Contact::Contact( Account *account, const QString &contactId,
@@ -280,10 +281,10 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 		KAction* changeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), menu );
 		menu->addAction( changeMetaContact );
 
-		toggleAlwaysVisibleAction = new KToggleAction( i18n( "Visible when offline" ), menu );
-		toggleAlwaysVisibleAction->setChecked( property( Kopete::Global::Properties::self()->isAlwaysVisible() ).value().toBool() );
-		menu->addAction( toggleAlwaysVisibleAction );
-		connect( toggleAlwaysVisibleAction, SIGNAL( toggled(bool) ), this, SLOT( toggleAlwaysVisible() ) );
+		d->toggleAlwaysVisibleAction = new KToggleAction( i18n( "Visible when offline" ), menu );
+		d->toggleAlwaysVisibleAction->setChecked( property( Kopete::Global::Properties::self()->isAlwaysVisible() ).value().toBool() );
+		menu->addAction( d->toggleAlwaysVisibleAction );
+		connect( d->toggleAlwaysVisibleAction, SIGNAL( toggled(bool) ), this, SLOT( toggleAlwaysVisible() ) );
 	}
 
 	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), menu ) );
@@ -305,7 +306,7 @@ void Contact::toggleAlwaysVisible()
 {
 	bool alwaysVisible = property( Kopete::Global::Properties::self()->isAlwaysVisible() ).value().toBool();
 	setProperty( Kopete::Global::Properties::self()->isAlwaysVisible(), !alwaysVisible );
-	toggleAlwaysVisibleAction->setChecked( !alwaysVisible );
+	d->toggleAlwaysVisibleAction->setChecked( !alwaysVisible );
 }
 
 void Contact::changeMetaContact()
