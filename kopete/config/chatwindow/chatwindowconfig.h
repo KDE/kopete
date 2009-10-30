@@ -20,6 +20,8 @@
 #ifndef CHATWINDOWCONFIG_H
 #define CHATWINDOWCONFIG_H
 
+#include <QtCore/QPointer>
+
 #define KDE3_SUPPORT
 #include <kcmodule.h>
 #undef KDE3_SUPPORT
@@ -78,7 +80,7 @@ private:
 	ChatMessagePart *m_preview;
 
 	ChatWindowStyle::StyleVariants m_currentVariantMap;
-	ChatWindowStyle *m_currentStyle;
+	QPointer<ChatWindowStyle> m_currentStyle;
 	bool m_loading;
 	bool m_allowDownloadTheme;
 	// For style preview

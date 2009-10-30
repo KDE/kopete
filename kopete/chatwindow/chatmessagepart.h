@@ -181,6 +181,11 @@ private slots:
 	void changeStyle();
 
 	/**
+	 * Clears style when style is deleted.
+	 */
+	void clearStyle();
+
+	/**
 	 * Update the display in the header template if any.
 	 */
 	void slotUpdateHeaderDisplayName();
