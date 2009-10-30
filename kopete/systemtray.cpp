@@ -55,7 +55,7 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 }
 
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
-	: KNotificationItem(parent)
+	: KStatusNotifierItem(parent)
 	, mMovie(0)
 {
 	kDebug(14010) ;
@@ -120,7 +120,7 @@ void KopeteSystemTray::activate(const QPoint &pos)
 	}
     else
     {
-        KNotificationItem::activate(pos);
+        KStatusNotifierItem::activate(pos);
     }
 }
 

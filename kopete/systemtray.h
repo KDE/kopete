@@ -23,7 +23,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QMovie>
 
-#include <KNotificationItem>
+#include <KStatusNotifierItem>
 
 #include "kopetemessageevent.h"
 
@@ -36,7 +36,7 @@ class KMenu;
  * NOTE: This class is for use ONLY in libkopete! It is not public API, and
  *       is NOT supposed to remain binary compatible in the future!
  */
-class KopeteSystemTray : public KNotificationItem
+class KopeteSystemTray : public KStatusNotifierItem
 {
 	Q_OBJECT
 
