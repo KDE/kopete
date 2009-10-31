@@ -117,6 +117,7 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
 set(KOPETE_INCLUDES 
 	${KDE4_INCLUDES}
+        ${KDEPIMLIBS_INCLUDE_DIRS}
 	${KOPETE_SOURCE_DIR}/libkopete/
 	${KOPETE_BINARY_DIR}/libkopete/
 	${KOPETE_SOURCE_DIR}/libkopete/ui/
