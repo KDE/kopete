@@ -439,16 +439,12 @@ Kopete::MetaContact::PropertySource KopeteMetaLVIProps::selectedPhotoSource() co
 
 Kopete::Contact* KopeteMetaLVIProps::selectedNameSourceContact() const
 {
-	Kopete::Contact *c= mMetaContact->contacts().at( ui_mainWidget->cmbAccountName->currentIndex() );
-	return c ? c : 0L;
+	return mMetaContact->contacts().value( ui_mainWidget->cmbAccountName->currentIndex(), 0 );
 }
 
 Kopete::Contact* KopeteMetaLVIProps::selectedPhotoSourceContact() const
 {
-	if (m_withPhotoContacts.isEmpty())
-		return 0L;
-	Kopete::Contact *c = m_withPhotoContacts[ui_mainWidget->cmbAccountPhoto->currentIndex() ];
-	return c ? c : 0L;
+	return m_withPhotoContacts.value( ui_mainWidget->cmbAccountPhoto->currentIndex(), 0 );
 }
 
 void KopeteMetaLVIProps::slotOkClicked()
