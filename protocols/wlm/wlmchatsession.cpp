@@ -55,6 +55,7 @@
 #include "kopeteview.h"
 #include "kopeteutils.h"
 #include "private/kopeteemoticons.h"
+#include "kopetetransfermanager.h"
 
 #include "wlmcontact.h"
 #include "wlmprotocol.h"

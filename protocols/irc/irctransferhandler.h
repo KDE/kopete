@@ -18,11 +18,10 @@
 #ifndef IRCTRANSFERHANDLER_H
 #define IRCTRANSFERHANDLER_H
 
-#include <kopetetransfermanager.h>
-
 namespace Kopete
 {
 	class Transfer;
+	class FileTransferInfo;
 }
 
 namespace KIRC
