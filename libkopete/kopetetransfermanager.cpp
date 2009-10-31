@@ -90,6 +90,7 @@ public:
 Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString &localFile, bool showProgressInfo)
 	: KIO::Job(), d( new Private(kfti) )
 {
+	connect( kfti.contact(), SIGNAL(destroyed(QObject*)), this, SLOT(slotContactDestroyed()) );
 	this->setUiDelegate(new KIO::JobUiDelegate());
 	if(showProgressInfo)
 		KIO::getJobTracker()->registerJob(this);
@@ -99,16 +100,17 @@ Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString 
 	init( targ, showProgressInfo );
 }
 
-Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const Kopete::Contact *contact, bool showProgressInfo)
+Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, bool showProgressInfo)
 	: KIO::Job(), d( new Private(kfti) )
 {
+	connect( kfti.contact(), SIGNAL(destroyed(QObject*)), this, SLOT(slotContactDestroyed()) );
 	this->setUiDelegate(new KIO::JobUiDelegate());
 	if(showProgressInfo)
 		KIO::getJobTracker()->registerJob(this);
 
 	// TODO: use mInfo.url().fileName() after move to protocol-aware filetransfers
 	KUrl targ; targ.setPath( d->info.file() );
-	init( displayURL( contact, targ.fileName() ), showProgressInfo );
+	init( displayURL( d->info.contact(), targ.fileName() ), showProgressInfo );
 }
 
 void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
@@ -271,6 +273,12 @@ void Kopete::Transfer::slotResultEmitted()
 	}
 }
 
+void Kopete::Transfer::slotContactDestroyed()
+{
+	setError( KIO::ERR_USER_CANCELED );
+	emitResult();
+}
+
 void Kopete::Transfer::slotCancelled()
 {
 	stopTransferRateTimer();
@@ -281,8 +289,8 @@ void Kopete::Transfer::slotCancelled()
 
 bool Kopete::Transfer::showMessage( QString text ) const
 {
-	Kopete::ChatSession *cs = d->info.contact()->manager();
-	if (! cs)
+	Kopete::ChatSession *cs = chatSession();
+	if ( !cs )
 		return false;
 
 	Kopete::Message msg;
@@ -293,7 +301,7 @@ bool Kopete::Transfer::showMessage( QString text ) const
 
 bool Kopete::Transfer::showHtmlMessage( QString text ) const
 {
-	Kopete::ChatSession *cs = d->info.contact()->manager();
+	Kopete::ChatSession *cs = chatSession();
 	if (! cs)
 		return false;
 	
@@ -320,6 +328,12 @@ void Kopete::Transfer::stopTransferRateTimer()
 	}
 }
 
+Kopete::ChatSession* Kopete::Transfer::chatSession() const
+{
+	Kopete::Contact *c = d->info.contact();
+	return ( c ) ? c->manager() : 0;
+}
+
 /***************************
  *  Kopete::TransferManager  *
  ***************************/
@@ -344,7 +358,7 @@ Kopete::Transfer* Kopete::TransferManager::addTransfer( Kopete::Contact *contact
 	// Use message id to make file transfer id unique because we already use it for incoming file transfer.
 	uint id = Kopete::Message::nextId();
 	Kopete::FileTransferInfo info(contact, files, size, recipient, di, id);
-	Kopete::Transfer *trans = new Kopete::Transfer(info, contact);
+	Kopete::Transfer *trans = new Kopete::Transfer(info);
 	connect(trans, SIGNAL(result(KJob *)), this, SLOT(slotComplete(KJob *)));
 	mTransfersMap.insert(id, trans);
 	return trans;

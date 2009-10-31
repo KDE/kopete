@@ -21,6 +21,7 @@
 #define KOPETETRANSFERMANAGER_H
 
 #include <QtCore/QObject>
+#include <QtCore/QPointer>
 #include <QtCore/QString>
 #include <QtCore/QMap>
 
@@ -34,6 +35,7 @@ namespace Kopete
 class Transfer;
 class Contact;
 class Message;
+class ChatSession;
 
 /**
  * @author Nick Betcher. <nbetcher@kde.org>
@@ -63,7 +65,7 @@ private:
 	unsigned long mSize;
 	QString mRecipient;
 	unsigned int mId;
-	Contact *mContact;
+	QPointer<Contact> mContact;
 	QStringList mFiles;
 	QString m_intId;
 	KopeteTransferDirection mDirection;
@@ -191,7 +193,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Transfer( const FileTransferInfo &, const Contact *toUser, bool showProgressInfo = true);
+	explicit Transfer( const FileTransferInfo &, bool showProgressInfo = true);
 
 	/**
 	 * Destructor
@@ -265,11 +267,13 @@ private:
 	QString fileForMessage() const;
 
 	void stopTransferRateTimer();
+	Kopete::ChatSession* chatSession() const;
 
 	class Private;
 	Private* d;
 private slots:
 	void slotResultEmitted();
+	void slotContactDestroyed();
 };
 
 }

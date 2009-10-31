@@ -23,6 +23,8 @@
 #include "kopeteaccount.h"
 #include "wlmaccount.h"
 #include "wlmserver.h"
+#include <kopetetransfermanager.h>
+#include <kopetecontact.h>
 
 WlmSocket::WlmSocket(MSN::NotificationServerConnection * mainConnection, bool isSSL, WlmServer* server)
 : mMainConnection(mainConnection), mIsSSL(isSSL), mPingTimer(0)

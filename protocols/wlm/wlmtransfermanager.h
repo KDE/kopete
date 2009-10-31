@@ -18,10 +18,15 @@
 #define WLMTRANSFERMANAGER_H
 
 #include <QObject>
-#include "kopetetransfermanager.h"
 
 #include "wlmaccount.h"
 #include <msn/msn.h>
+
+namespace Kopete
+{
+	class Transfer;
+	class FileTransferInfo;
+}
 
 class WlmTransferManager:public QObject
 {

@@ -18,6 +18,7 @@
 #include "wlmcontact.h"
 #include "kopetecontact.h"
 #include "kopeteuiglobal.h"
+#include "kopetetransfermanager.h"
 
 #include <QObject>
 #include <kmessagebox.h>

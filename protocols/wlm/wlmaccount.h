@@ -25,7 +25,6 @@
 #include "wlmchatsession.h"
 #include "wlmtransfermanager.h"
 #include "wlmchatmanager.h"
-#include "kopetetransfermanager.h"
 
 class KActionMenu;
 namespace Kopete
