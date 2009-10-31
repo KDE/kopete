@@ -628,6 +628,13 @@ QList<KAction*> *ICQContact::customContextMenuActions()
 
 void ICQContact::slotUserInfo()
 {
+	if ( m_infoWidget )
+	{
+		m_infoWidget->showNormal();
+		m_infoWidget->activateWindow();
+		return;
+	}
+
 	m_infoWidget = new ICQUserInfoWidget( this, Kopete::UI::Global::mainWidget() );
 	QObject::connect( m_infoWidget, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
 	QObject::connect( m_infoWidget, SIGNAL(okClicked()), this, SLOT(storeUserInfoDialog()) );
