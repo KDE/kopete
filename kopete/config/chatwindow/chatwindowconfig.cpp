@@ -471,6 +471,7 @@ void ChatWindowConfig::slotDeleteChatStyle()
 	{
 		KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, i18nc("@info", "An error occurred while trying to delete the <resource>%1</resource> Chat Window Style. Your account might not have permission to remove it.", styleName));
 	}
+	slotUpdateChatPreview();
 }
 
 void ChatWindowConfig::slotGetChatStyles()

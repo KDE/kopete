@@ -133,8 +133,7 @@ public:
 	KAction *closeAction;
 	KAction *copyURLAction;
 
-	// We can't use QPointer because ChatWindowStyle is not a QObject
-	ChatWindowStyle *currentChatStyle;
+	ChatWindowStyle* currentChatStyle;
 	QPointer<Kopete::Contact> latestContact;
 	Kopete::Message::MessageDirection latestDirection;
 	Kopete::Message::MessageType latestType;
@@ -210,8 +209,9 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 {
 	d->manager = mgr;
 
-	d->currentChatStyle = ChatWindowStyleManager::self()->getValidStyleFromPool(
-			 KopeteChatWindowSettings::self()->styleName() );
+	d->currentChatStyle = ChatWindowStyleManager::self()->getValidStyleFromPool( KopeteChatWindowSettings::self()->styleName() );
+	if (d->currentChatStyle)
+		connect( d->currentChatStyle, SIGNAL(destroyed(QObject*)), this, SLOT(clearStyle()) );
 
 	connect( this, SIGNAL(completed()), this, SLOT(slotRenderingFinished()) );
 
@@ -406,21 +406,27 @@ void ChatMessagePart::readOverrides()
 void ChatMessagePart::setStyle( const QString &styleName )
 {
 	// Create a new ChatWindowStyle
-	d->currentChatStyle = ChatWindowStyleManager::self()->getValidStyleFromPool(styleName);
+	setStyle( ChatWindowStyleManager::self()->getValidStyleFromPool(styleName) );
+}
+
+void ChatMessagePart::setStyle( ChatWindowStyle *style )
+{
+	// Change the current style
+	if (d->currentChatStyle)
+		disconnect( d->currentChatStyle, SIGNAL(destroyed(QObject*)), this, SLOT(clearStyle()) );
+
+	d->currentChatStyle = style;
+	if (d->currentChatStyle)
+		connect( d->currentChatStyle, SIGNAL(destroyed(QObject*)), this, SLOT(clearStyle()) );
 
 	// Do the actual style switch
 	// Wait for the event loop before switching the style
 	QTimer::singleShot( 0, this, SLOT(changeStyle()) );
 }
 
-void ChatMessagePart::setStyle( ChatWindowStyle *style )
+void ChatMessagePart::clearStyle()
 {
-	// Change the current style
-	d->currentChatStyle = style;
-
-	// Do the actual style switch
-	// Wait for the event loop before switching the style
-	QTimer::singleShot( 0, this, SLOT(changeStyle()) );
+	setStyle( QString() );
 }
 
 void ChatMessagePart::setStyleVariant( const QString &variantPath )

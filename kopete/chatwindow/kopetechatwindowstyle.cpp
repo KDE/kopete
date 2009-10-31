@@ -57,13 +57,13 @@ public:
 };
 
 ChatWindowStyle::ChatWindowStyle(const QString &styleName, StyleBuildMode styleBuildMode)
-	: d(new Private)
+	: QObject(), d(new Private)
 {
 	init(styleName, styleBuildMode);
 }
 
 ChatWindowStyle::ChatWindowStyle(const QString &styleName, const QString &variantPath, StyleBuildMode styleBuildMode)
-	: d(new Private)
+	: QObject(), d(new Private)
 {
 	d->currentVariantPath = variantPath;
 	init(styleName, styleBuildMode);
