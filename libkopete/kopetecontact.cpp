@@ -151,7 +151,8 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 	if( oldStatus.status() == OnlineStatus::Offline &&
 		status.status() != OnlineStatus::Offline )
 	{
-		setProperty( globalProps->onlineSince(), QDateTime::currentDateTime() );
+		if ( !hasProperty( globalProps->onlineSince().key() ) )
+			setProperty( globalProps->onlineSince(), QDateTime::currentDateTime() );
 		/*kDebug(14010) << "REMOVING lastSeen property for " <<
 			d->displayName << endl;*/
 		removeProperty( globalProps->lastSeen() );
