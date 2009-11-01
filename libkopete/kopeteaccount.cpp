@@ -85,6 +85,7 @@ public:
 	Identity *identity;
 	Contact *myself;
 	QTimer suppressStatusTimer;
+	QTimer reconnectTimer;
 	bool suppressStatusNotification;
 	Kopete::BlackLister *blackList;
 	KConfigGroup *configGroup;
@@ -105,6 +106,10 @@ Account::Account( Protocol *parent, const QString &accountId )
 
 	d->restoreStatus = Kopete::OnlineStatus::Online;
 	d->restoreMessage = Kopete::StatusMessage();
+
+	d->reconnectTimer.setSingleShot( true );
+	QObject::connect( &d->reconnectTimer, SIGNAL(timeout()),
+	                  this, SLOT(reconnect()) );
 
 	QObject::connect( &d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
@@ -127,6 +132,9 @@ Account::~Account()
 
 void Account::reconnect()
 {
+	if ( isConnected() )
+		return; // Already connected
+
 	kDebug( 14010 ) << "account " << d->id << " restoreStatus " << d->restoreStatus.status()
 	                << " restoreTitle " << d->restoreMessage.title()
 	                << " restoreMessage " << d->restoreMessage.message();
@@ -137,18 +145,25 @@ void Account::disconnected( DisconnectReason reason )
 {
 	kDebug( 14010 ) << reason;
 	//reconnect if needed
-	if(reason == BadPassword )
+	if ( reason == BadPassword )
 	{
-		QTimer::singleShot(0, this, SLOT(reconnect()));
+		d->reconnectTimer.start( 0 );
 	}
 	else if ( Kopete::BehaviorSettings::self()->reconnectOnDisconnect() == true && reason > Manual )
 	{
 		d->connectionTry++;
 		//use a timer to allow the plugins to clean up after return
-		if(d->connectionTry < 3)
-			QTimer::singleShot(10000, this, SLOT(reconnect())); // wait 10 seconds before reconnect
+		if ( d->connectionTry < 3 )
+			d->reconnectTimer.start( 10000 ); // wait 10 seconds before reconnect
+		else if ( d->connectionTry <= 10 )
+			d->reconnectTimer.start( ((2 * (d->connectionTry - 2)) - 1) * 60000 ); // wait 1,3,5...15 minutes => stops after 64 min
 	}
-	if(reason== OtherClient)
+	else
+	{
+		d->reconnectTimer.stop();
+	}
+
+	if ( reason == OtherClient )
 	{
 		Kopete::Utils::notifyConnectionLost(this, i18n("You have been disconnected"), i18n( "You have connected from another client or computer to the account '%1'" , d->id), i18n("Most proprietary Instant Messaging services do not allow you to connect from more than one location. Check that nobody is using your account without your permission. If you need a service that supports connection from various locations at the same time, use the Jabber protocol."));
 	}

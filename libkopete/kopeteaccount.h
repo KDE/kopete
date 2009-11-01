@@ -564,7 +564,7 @@ private slots:
 	/**
 	 * Restore online status and status message on reconnect.
 	 */
-	virtual void reconnect(); 
+	void reconnect();
 
 	/**
 	 * Track the deletion of a Contact and clean up
