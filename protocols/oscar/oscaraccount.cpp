@@ -1260,6 +1260,7 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 				  accountId(), acctType) ;
 		}
 		break;
+	case 0x001B:
 	case 0x001C:
 		OscarVersionUpdater::self()->update( d->versionUpdaterStamp );
 		if ( !d->versionAlreadyUpdated )
