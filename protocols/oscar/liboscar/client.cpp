@@ -353,7 +353,8 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 		}
 
 		ProfileTask* pt = new ProfileTask( c->rootTask() );
-		pt->setAwayMessage( msg );
+		if ( !d->isIcq ) // Don't break EA, DND... for ICQ
+			pt->setAwayMessage( msg );
 
 		if ( d->isIcq && xtrazChanged )
 			pt->setXtrazStatus( xtraz );
