@@ -1038,6 +1038,19 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 		case 0x0011:
 			logOff( Kopete::Account::BadUserName );
 			break;
+		case 0x001B:
+		case 0x001C:
+			OscarVersionUpdater::self()->update( d->versionUpdaterStamp );
+			if ( !d->versionAlreadyUpdated )
+			{
+				logOff( Kopete::Account::Unknown );
+				d->versionAlreadyUpdated = true;
+			}
+			else
+			{
+				logOff( Kopete::Account::Manual );
+			}
+			break;	
 		default:
 			logOff( Kopete::Account::Manual );
 		}
@@ -1260,14 +1273,12 @@ QString OscarAccount::getFLAPErrorMessage( int code )
 				  accountId(), acctType) ;
 		}
 		break;
+	case 0x001B:
 	case 0x001C:
-		OscarVersionUpdater::self()->update( d->versionUpdaterStamp );
 		if ( !d->versionAlreadyUpdated )
 		{
 			reason = i18n("Sign on to %1 with your account %2 failed.",
 			              acctType, accountId() );
-			
-			d->versionAlreadyUpdated = true;
 		}
 		else
 		{
