@@ -770,7 +770,7 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 	QString errorText;
 	QString errorCondition;
 
-	errorClass = Kopete::Account::InvalidHost;
+	errorClass = Kopete::Account::Unknown;
 
 	/*
 	 * Display error to user.
