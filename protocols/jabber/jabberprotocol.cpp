@@ -250,6 +250,7 @@ Kopete::OnlineStatus JabberProtocol::resourceToKOS ( const XMPP::Resource &resou
 		}
 		else
 		{
+			status = JabberKOSOnline; // Assume that contact is online bug 210558
 			kDebug (JABBER_DEBUG_GLOBAL) << "Unknown status <show>" << resource.status ().show () << "</show> for contact. One of your contact is probably using a broken client, ask him to report a bug";
 		}
 	}
