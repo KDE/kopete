@@ -135,6 +135,7 @@ void ClientStream::reset(bool all)
 		
 		// reset connector
 		if(d->bs) {
+			disconnect(d->bs, 0, this, 0);
 			d->bs->close();
 			d->bs = 0;
 		}
@@ -296,6 +297,9 @@ void cs_dump( const QByteArray &bytes )
 
 void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 {
+	if ( !d->bs )
+		return;
+	
 	// take formatted bytes from CoreProtocol and put them on the wire
 	kDebug(YAHOO_RAW_DEBUG) << "[data size: " << outgoingBytes.size() << "]";
 	//cs_dump( outgoingBytes );
