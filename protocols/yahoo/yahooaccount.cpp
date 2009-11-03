@@ -820,7 +820,7 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 	IDs[userid] = QPair<QString, QString>(group, alias);
 
 	// Serverside -> local
-	if ( !contact( userid ) && userid != accountId() )
+	if ( !contact( userid ) )
 	{
 		kDebug(YAHOO_GEN_DEBUG) << "SS Contact " << userid << " is not in the contact list. Adding...";
 		Kopete::Group *g=Kopete::ContactList::self()->findGroup(group);

@@ -92,6 +92,7 @@ public:
 	QString customIcon;
 	Kopete::OnlineStatus restoreStatus;
 	Kopete::StatusMessage restoreMessage;
+	QDateTime lastLoginTime;
 };
 
 Account::Account( Protocol *parent, const QString &accountId )
@@ -290,9 +291,17 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 
 	if ( !protocol()->canAddMyself() && contactId == d->myself->contactId() )
 	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.", contactId, accountId()), i18n("Error Creating Contact")
-		);
+		if ( isConnected() && d->lastLoginTime.secsTo(QDateTime::currentDateTime()) > 30 )
+		{
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
+			                               i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.", contactId, accountId()), i18n("Error Creating Contact")
+			                             );
+		}
+		else
+		{
+			kWarning(14010) << "You are not allowed to add yourself to the contact list. The addition of" << contactId
+			                << "to account" << accountId() << "will not take place.";
+		}
 		return false;
 	}
 
@@ -356,9 +365,18 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 {
 	if ( !protocol()->canAddMyself() && contactId == myself()->contactId() )
 	{
-	    	KMessageBox::error( Kopete::UI::Global::mainWidget(),
-			i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.", contactId, accountId()), i18n("Error Creating Contact")
-		);
+		if ( isConnected() && d->lastLoginTime.secsTo(QDateTime::currentDateTime()) > 30 )
+		{
+			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
+			                               i18n("You are not allowed to add yourself to the contact list. The addition of \"%1\" to account \"%2\" will not take place.", contactId, accountId()), i18n("Error Creating Contact")
+			                             );
+		}
+		else
+		{
+			kWarning(14010) << "You are not allowed to add yourself to the contact list. The addition of" << contactId
+			                << "to account" << accountId() << "will not take place.";
+		}
+		
 		return 0L;
 	}
 
@@ -486,6 +504,9 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 {
 	const bool wasOffline = !oldStatus.isDefinitelyOnline();
 	const bool isOffline  = !newStatus.isDefinitelyOnline();
+
+	if (wasOffline && !isOffline)
+		d->lastLoginTime = QDateTime::currentDateTime();
 
 	if ( wasOffline || newStatus.status() == OnlineStatus::Offline )
 	{
