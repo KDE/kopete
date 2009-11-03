@@ -46,6 +46,7 @@ class Protocol;
 class OnlineStatus;
 class Account;
 class ChatSessionManager;
+class PropertyContainer;
 class MessageHandlerChain;
 class TemporaryKMMCallbackAppendMessageHandler;
 
@@ -270,12 +271,17 @@ signals:
 	/**
 	 * @brief a contact is no longer in this chat
 	 */
-	void contactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format = Qt::PlainText, bool contactRemoved = false );
+	void contactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format = Qt::PlainText, bool suppressNotification = false );
 
 	/**
 	 * @brief a contact in this chat has changed his status
 	 */
 	void onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & );
+
+	/**
+	 * @brief a contact in this chat has changed his nickname
+	 */
+	void nickNameChanged( Kopete::Contact *, const QString & );
 
 	/**
 	 * @brief The name of the chat is changed
@@ -441,6 +447,7 @@ private slots:
 	void slotOnlineStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 	void slotContactDestroyed( Kopete::Contact *contact );
 	void slotMyselfDestroyed( Kopete::Contact *contact );
+	void slotContactPropertyChanged( Kopete::PropertyContainer * contact, const QString &key, const QVariant &oldValue, const QVariant &newValue );
 
 protected:
 	/**

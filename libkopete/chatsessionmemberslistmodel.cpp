@@ -18,52 +18,143 @@
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
 #include "chatsessionmemberslistmodel.h"
+#include "kdebug.h"
+
+//own contact comparator, needs sessions contact-online-status weight
+inline bool lessThan(const Kopete::Contact *c1, int weight1, const Kopete::Contact *c2, int weight2){
+		return (weight1 > weight2 || (weight1 == weight2
+				&& c1->nickName().compare(c2->nickName(),Qt::CaseInsensitive)<=0));
+
+}
+
+//class for more sorting speed
+class ContactWrapper
+{
+public:
+	ContactWrapper(Kopete::Contact *contact, int weight){
+		this->contact = contact;
+		this->weight = weight;
+	}
+	Kopete::Contact *contact;
+	int weight;
+	bool operator <(const ContactWrapper &other) const
+	{
+		return lessThan(this->contact, weight, other.contact, other.weight);
+	}
+};
+
+class Private
+{
+public:
+	Kopete::ContactPtrList contacts;
+
+	Kopete::ChatSession *session;
+
+	QTimer *timer;
+
+	//insert into temporary efficient structure for sorting, then copy
+	void insertMultiple(Kopete::ContactPtrList contacts){
+		QMap<ContactWrapper, Kopete::Contact*> map;
+		foreach (Kopete::Contact *c,this->contacts)
+			map.insert(ContactWrapper(c,session->contactOnlineStatus(c).weight()),c);
+		foreach (Kopete::Contact *c,contacts)
+			map.insert(ContactWrapper(c,session->contactOnlineStatus(c).weight()),c);
+		this->contacts.clear();
+		foreach (Kopete::Contact *c, map)
+			this->contacts.append(c);
+	}
+
+	//get index by binary search
+	int getInsertIndex(const Kopete::Contact *contact) const
+	{
+		int weightOld;
+		int weightNew;
+		int i;
+		int min = 0;
+		int max = contacts.size();
+		int step;
+
+		while (max>0)
+		{
+			step = max/2;
+			i = min + step;
+
+			weightOld = session->contactOnlineStatus(contacts[i]).weight();
+			weightNew = session->contactOnlineStatus(contact).weight();
+
+			if (lessThan(contacts[i], weightOld, contact, weightNew))
+			{
+				min = ++i;
+				max -= step+1;
+			} else
+				max = step;
+		};
+		return min;
+	}
+};
 
 namespace Kopete
 {
 
 ChatSessionMembersListModel::ChatSessionMembersListModel(QObject * parent)
-	: QAbstractListModel(parent), m_session(0L)
+	: QAbstractListModel(parent)
 {
+	d = new Private();
+	d->session = 0L;
+}
 
+ChatSessionMembersListModel::~ChatSessionMembersListModel(){
+	delete d;
+}
+
+Kopete::ChatSession * ChatSessionMembersListModel::session(){
+	return d->session;
 }
 
 void ChatSessionMembersListModel::setChatSession(ChatSession *session)
 {
-	if ( m_session )
-		disconnect( m_session, 0, this, 0 );
+	if ( d->session )
+		disconnect( d->session, 0, this, 0 );
 
-	m_session = session;
+	d->session = session;
 
 	connect( session, SIGNAL(closing(Kopete::ChatSession*)),
-	         this, SLOT(slotSessionClosed()) );
-	connect( session, SIGNAL(contactAdded(const Kopete::Contact*, bool)),
-	         this, SLOT(slotContactAdded(const Kopete::Contact*)) );
+			 this, SLOT(slotSessionClosed()) );
+	connect( session, SIGNAL(contactAdded(const Kopete::Contact*,bool)),
+			 this, SLOT(slotContactAdded(const Kopete::Contact*)) );
 	connect( session, SIGNAL(contactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool)),
-	         this, SLOT(slotContactRemoved(const Kopete::Contact*)) );
+			 this, SLOT(slotContactRemoved(const Kopete::Contact*)) );
 	connect( session, SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
-	         this, SLOT(slotContactStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&)) );
+			 this, SLOT(slotContactStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&)) );
 	connect( session, SIGNAL(displayNameChanged()),
-	         this, SLOT(slotSessionChanged()) );
+			 this, SLOT(slotSessionChanged()) );
 	connect( session, SIGNAL(photoChanged()),
-	         this, SLOT(slotSessionChanged()) );
+			 this, SLOT(slotSessionChanged()) );
+	connect( session, SIGNAL(nickNameChanged(Kopete::Contact*,QString)),
+		 this, SLOT(slotContactNickNameChanged(Kopete::Contact*)) );
+
+	d->contacts.clear();
+	d->insertMultiple(d->session->members());
+
+	d->contacts.insert(
+			d->getInsertIndex((Contact*)d->session->myself()),
+			(Contact*)d->session->myself());
+
 	reset();
 }
 
 Kopete::Contact * ChatSessionMembersListModel::contactAt( const QModelIndex &index ) const
 {
-	if ( m_session )
+	kDebug( 14010 ) << "memberslistmodel contactat";
+	if ( d->session )
 	{
 		if (!index.isValid())
 			return 0L;
-	
-		if (index.row() >= m_session->members().size() + 1)
+
+		if (index.row() >= d->contacts.size())
 			return 0L;
 
-		if ( index.row() == 0 )
-			return const_cast<Kopete::Contact *>(m_session->myself());
-		else
-			return m_session->members().at(index.row() - 1);
+		return d->contacts.at(index.row());
 	}
 
 	return 0L;
@@ -72,67 +163,93 @@ Kopete::Contact * ChatSessionMembersListModel::contactAt( const QModelIndex &ind
 int ChatSessionMembersListModel::rowCount(const QModelIndex &parent) const
 {
 	Q_UNUSED(parent)
-	if ( m_session )
-		return m_session->members().count() + 1;
+	if ( d->session )
+		return d->contacts.size();
 	
 	return 0;
 }
 
 QVariant ChatSessionMembersListModel::data(const QModelIndex &index, int role) const
 {
-	Contact *c = contactAt(index);
+	Contact *c = d->contacts.at(index.row());
 	if (!c)
 		return QVariant();
 
-	switch(role)
+	if (role == Qt::DisplayRole)
 	{
-		case Qt::DisplayRole:
-			return c->nickName();
-		case Qt::DecorationRole:
-			return m_session->contactOnlineStatus(c).iconFor(c);
-		case Qt::ToolTipRole:
-			return c->toolTip();
-		default:
-			return QVariant();
+		
+		return c->nickName();
+
 	}
+	else if (role == Qt::DecorationRole)
+	{
+		return d->session->contactOnlineStatus(c).iconFor(c);
+	}
+	else if (role == Qt::ToolTipRole)
+	{
+		return c->toolTip();
+	}
+	else
+		return QVariant();
+}
+
+QVariant ChatSessionMembersListModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (role != Qt::DisplayRole)
+		return QVariant();
+
+	if (orientation == Qt::Horizontal)
+		return QString("Column %1").arg(section);
+	else
+		return QString("Row %1").arg(section);
 }
 
 void ChatSessionMembersListModel::slotContactAdded( const Kopete::Contact *contact )
 {
-	Q_UNUSED(contact)
-	// NOTE in the future the adding of a contact
-  // could be done just for the contact
-	reset();
+	kDebug( 14010 ) << "memberslistmodel contact added "<< contact->nickName();
+	int index = d->getInsertIndex(contact);
+	beginInsertRows(QModelIndex(),index,index);
+	d->contacts.insert(index,(Contact*)contact);
+	endInsertRows();
 }
 
 void ChatSessionMembersListModel::slotContactRemoved( const Kopete::Contact *contact )
 {
-	Q_UNUSED(contact)
-	// NOTE in the future the removal of a contact
-  // could be done just for the contact
-	reset();
+	kDebug( 14010 ) << "memberslistmodel contact removed "<< contact->nickName();
+	int index = d->contacts.indexOf((Contact*)contact);
+	beginRemoveRows(QModelIndex(),index, index);
+	d->contacts.removeAt(index);
+	endRemoveRows();
 }
 
 void ChatSessionMembersListModel::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status )
 {
-	Q_UNUSED(contact)
 	Q_UNUSED(status)
-	// NOTE in the future the change of a contact
-  // could be done just for the contact
-	reset();
+	kDebug( 14010 ) << "memberslistmodel contact status changed "<< contact->nickName();
+	slotContactRemoved(contact);
+	slotContactAdded(contact);
 }
 
 void ChatSessionMembersListModel::slotSessionChanged()
 {
+	kDebug( 14010 );
 	reset();
 }
 
+void ChatSessionMembersListModel::slotContactNickNameChanged( Kopete::Contact *contact)
+{
+	kDebug( 14010 ) << "memberslistmodel nickname changed to "<< contact->nickName();
+	slotContactRemoved(contact);
+	slotContactAdded(contact);
+}
+
+
 void ChatSessionMembersListModel::slotSessionClosed()
 {
-	if ( m_session )
+	if ( d->session )
 	{
-		disconnect( m_session, 0, this, 0 );
-		m_session = 0;
+		disconnect( d->session, 0, this, 0 );
+		d->session = 0;
 		reset();
 	}
 }
