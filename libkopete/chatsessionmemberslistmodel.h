@@ -23,6 +23,8 @@
 #include "kopetechatsession.h"
 #include "kopete_export.h"
 
+class Private;
+
 namespace Kopete
 {
 
@@ -34,11 +36,13 @@ class KOPETE_EXPORT ChatSessionMembersListModel : public QAbstractListModel
 public:
 	explicit ChatSessionMembersListModel(QObject * parent = 0);
 
+	~ChatSessionMembersListModel();
+
 	// Model methods
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role) const;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-	Kopete::ChatSession *session() { return m_session; }
+	Kopete::ChatSession *session();
 
 	Kopete::Contact *contactAt( const QModelIndex &index ) const;
 public slots:
@@ -55,12 +59,18 @@ private slots:
 	 */
 	void slotContactAdded( const Kopete::Contact *c );
 
+
 	/**
 	 * Called when a contact is removed from the chat session.
 	 * Removes this contact from the contact list view.
 	 * @param c The contact that left the chat
 	 */
 	void slotContactRemoved( const Kopete::Contact *c );
+
+	 /** Called when the nickname of a contact changed.
+	 * @param contact The contact who changed nickname
+	 */
+	void slotContactNickNameChanged( Kopete::Contact *contact);
 
 	/**
 	 * Called when a contact changes status.
@@ -81,7 +91,7 @@ private slots:
 	void slotSessionClosed();
 
 private:
-	Kopete::ChatSession *m_session;
+	Private *d;
 };
 
 

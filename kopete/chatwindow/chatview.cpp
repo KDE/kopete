@@ -533,18 +533,20 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 		this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 	}
 
-	QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
-	if( !suppress && m_manager->members().count() > 1 )
+	if( !suppress && m_manager->members().count() > 1 ) {
+		QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
 		sendInternalMessage(  i18n("%1 has joined the chat.", contactName) );
+	}
 
 	if ( m_manager->members().count() == 1 )
+	{
 		connect( m_manager->members().first(), SIGNAL(canAcceptFilesChanged()), this, SIGNAL(canAcceptFilesChanged()) );
+		updateChatState();
+		emit updateStatusIcon( this );
+		emit canAcceptFilesChanged();
+	}
 	else
 		disconnect( m_manager->members().first(), SIGNAL(canAcceptFilesChanged()), this, SIGNAL(canAcceptFilesChanged()) );
-
-	updateChatState();
-	emit updateStatusIcon( this );
-	emit canAcceptFilesChanged();
 }
 
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format, bool suppressNotification )
