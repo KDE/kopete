@@ -541,7 +541,8 @@ void KopeteWindow::initSystray()
 
 		QObject::connect ( d->tray, SIGNAL ( aboutToShowMenu ( KMenu * ) ),
 						   this, SLOT ( slotTrayAboutToShowMenu ( KMenu * ) ) );
-		QObject::connect ( d->tray, SIGNAL ( quitSelected() ), this, SLOT ( slotQuit() ) );
+		// :FIXME: The signal quitSelected does not exist on KopeteSystemTray
+		// QObject::connect ( d->tray, SIGNAL ( quitSelected() ), this, SLOT ( slotQuit() ) );
 	}
 }
 
