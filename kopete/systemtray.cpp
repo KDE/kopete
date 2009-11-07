@@ -232,14 +232,10 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 	{
 		case Kopete::OnlineStatus::Unknown:
 		case Kopete::OnlineStatus::Offline:
-        {
-            setIconByName("kopete-offline");
-            break;
-        }
 		case Kopete::OnlineStatus::Connecting:
 		{
-            setIconByName("user-connecting");
-            break;
+			setIconByName("kopete-offline");
+			break;
 		}
 		case Kopete::OnlineStatus::Invisible:
 		{
@@ -257,8 +253,11 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 			break;
 		}
 		case Kopete::OnlineStatus::Online:
-            setOverlayIconByName(QString());
+		{
+			setIconByName(mKopeteIcon);
+			setOverlayIconByName(QString());
 			break;
+		}
 	}
 }
 
