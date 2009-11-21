@@ -173,8 +173,8 @@ void SkypeConnection::connectSkype(const QString &start, const QString &appName,
 	bool registred = busConn.registerObject("/com/Skype/Client", this); //Register skype client to dbus for receiving messages to slot Notify
 
 	if ( ! registred ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant register Skype communication for Kopete on DBus";
-		emit error(i18n("Cannot register Skype communication for Kopete on DBus"));
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant register Skype communication for Kopete on D-Bus";
+		emit error(i18n("Cannot register Skype communication for Kopete on D-Bus"));
 		return;
 	}
 
