@@ -2587,7 +2587,7 @@ Action=Popup
 Sound=
 
 [Event/kopete_gadu_contactslist]
-Name=GaduGadu contacts list
+Name=Gadu-Gadu contacts list
 Name[en_GB]=GaduGadu contacts list
 Name[et]=GaduGadu kontaktide nimekiri
 Name[gl]=Lista de contactos de GaduGadu
