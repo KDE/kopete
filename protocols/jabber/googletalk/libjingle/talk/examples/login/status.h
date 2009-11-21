@@ -23,6 +23,7 @@
 #include "talk/xmpp/constants.h"
 
 #define GOOGLE_CLIENT_NODE "http://www.google.com/xmpp/client/caps"
+#define GMAIL_CLIENT_NODE "http://mail.google.com/xmpp/client/caps"
 
 namespace buzz {
 

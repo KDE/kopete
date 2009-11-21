@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <string.h>
 
 #include "talk/base/basictypes.h"
 #include "talk/base/bytebuffer.h"

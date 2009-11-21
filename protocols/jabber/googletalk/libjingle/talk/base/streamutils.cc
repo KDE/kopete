@@ -26,6 +26,7 @@
  */
 
 
+#include <string.h>
 #include "talk/base/common.h"
 #include "talk/base/streamutils.h"
 

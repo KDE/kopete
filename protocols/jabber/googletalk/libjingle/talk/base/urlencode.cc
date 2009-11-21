@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include "talk/base/urlencode.h"
 
 static int HexPairValue(const char * code) {
@@ -79,6 +81,7 @@ int UrlEncode(const char *source, char *dest, unsigned max)
       *dest++ = digits[       ch & 0x0F];
     }  
     source++;
+    len++;
   }
   *dest = 0;
   return start - dest;

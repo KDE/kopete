@@ -128,7 +128,7 @@ PresencePushTask::ProcessStart() {
 
       s.set_know_capabilities(true);
 
-      if (node == GOOGLE_CLIENT_NODE) {
+      if (node == GOOGLE_CLIENT_NODE || node == GMAIL_CLIENT_NODE) {
         s.set_is_google_client(true);
         s.set_version(ver);
         if (ListContainsToken(exts, "voice-v1")) {

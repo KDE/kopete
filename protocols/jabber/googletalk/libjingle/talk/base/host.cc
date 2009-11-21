@@ -29,6 +29,7 @@
 #include <iostream>
 #include <cassert>
 #include <errno.h>
+#include <stdlib.h>
 
 #ifdef POSIX
 extern "C" {
@@ -54,7 +55,7 @@ namespace {
 
 void FatalError(const std::string& name, int err) {
   PLOG(LERROR, err) << name;
-  std::exit(1);
+  exit(1);
 }
 
 }

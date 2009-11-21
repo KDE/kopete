@@ -17,6 +17,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 // LinphoneMediaEngine is a Linphone implementation of MediaEngine
 extern "C" {
 #include "talk/third_party/mediastreamer/mediastream.h"
@@ -63,7 +67,8 @@ LinphoneMediaChannel::LinphoneMediaChannel(LinphoneMediaEngine*eng) :
 }
 
 LinphoneMediaChannel::~LinphoneMediaChannel() {
-  audio_stream_stop(audio_stream_);
+  if (audio_stream_ != 0)
+    audio_stream_stop(audio_stream_);
 }
 
 void LinphoneMediaChannel::SetCodecs(const std::vector<Codec> &codecs) {
@@ -80,19 +85,19 @@ void LinphoneMediaChannel::SetCodecs(const std::vector<Codec> &codecs) {
     } 
 #endif
 #ifdef HAVE_SPEEX
-    if (i->name == speex_wb.mime_type && i->clockrate == speex_wb.clock_rate) {
-      rtp_profile_set_payload(&av_profile, i->id, &speex_wb);
-    } else if (i->name == speex_nb.mime_type && i->clockrate == speex_nb.clock_rate) {
-      rtp_profile_set_payload(&av_profile, i->id, &speex_nb);
+    if (i->name == payload_type_speex_wb.mime_type && i->clockrate == payload_type_speex_wb.clock_rate) {
+      rtp_profile_set_payload(&av_profile, i->id, &payload_type_speex_wb);
+    } else if (i->name == payload_type_speex_nb.mime_type && i->clockrate == payload_type_speex_nb.clock_rate) {
+      rtp_profile_set_payload(&av_profile, i->id, &payload_type_speex_nb);
     }
 #endif
 
     if (i->id == 0)
-      rtp_profile_set_payload(&av_profile, 0, &pcmu8000);
+      rtp_profile_set_payload(&av_profile, 0, &payload_type_pcmu8000);
 
-    if (i->name == telephone_event.mime_type) {
+/*    if (i->name == telephone_event.mime_type) {
       rtp_profile_set_payload(&av_profile, i->id, &telephone_event);
-    }
+    }*/
     
     if (first) {
       LOG(LS_INFO) << "Using " << i->name << "/" << i->clockrate;
@@ -114,12 +119,12 @@ void LinphoneMediaChannel::SetCodecs(const std::vector<Codec> &codecs) {
 bool LinphoneMediaEngine::FindCodec(const Codec &c) {
   if (c.id == 0)
     return true;
-  if (c.name == telephone_event.mime_type)
-    return true;
+/*  if (c.name == telephone_event.mime_type)
+    return true;*/
 #ifdef HAVE_SPEEX
-  if (c.name == speex_wb.mime_type && c.clockrate == speex_wb.clock_rate)
+  if (c.name == payload_type_speex_wb.mime_type && c.clockrate == payload_type_speex_wb.clock_rate)
     return true;
-  if (c.name == speex_nb.mime_type && c.clockrate == speex_nb.clock_rate)
+  if (c.name == payload_type_speex_nb.mime_type && c.clockrate == payload_type_speex_nb.clock_rate)
     return true;
 #endif
 #ifdef HAVE_ILBC
@@ -171,8 +176,8 @@ bool LinphoneMediaEngine::Init() {
 #ifdef HAVE_SPEEX
   ms_speex_codec_init();
 
-  codecs_.push_back(Codec(110, speex_wb.mime_type, speex_wb.clock_rate, 0, 1, 8));
-  codecs_.push_back(Codec(111, speex_nb.mime_type, speex_nb.clock_rate, 0, 1, 7));
+  codecs_.push_back(Codec(110, payload_type_speex_wb.mime_type, payload_type_speex_wb.clock_rate, 0, 1, 8));
+  codecs_.push_back(Codec(111, payload_type_speex_nb.mime_type, payload_type_speex_nb.clock_rate, 0, 1, 7));
   
 #endif
 
@@ -181,8 +186,8 @@ bool LinphoneMediaEngine::Init() {
   codecs_.push_back(Codec(102, payload_type_ilbc.mime_type, payload_type_ilbc.clock_rate, 0, 1, 4));
 #endif
 
-  codecs_.push_back(Codec(0, pcmu8000.mime_type, pcmu8000.clock_rate, 0, 1, 2));
-  codecs_.push_back(Codec(101, telephone_event.mime_type, telephone_event.clock_rate, 0, 1, 1));
+  codecs_.push_back(Codec(0, payload_type_pcmu8000.mime_type, payload_type_pcmu8000.clock_rate, 0, 1, 2));
+ // codecs_.push_back(Codec(101, telephone_event.mime_type, telephone_event.clock_rate, 0, 1, 1));
   return true;
 }
 

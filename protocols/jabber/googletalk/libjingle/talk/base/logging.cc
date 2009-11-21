@@ -33,6 +33,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <string.h>
+#include <stdio.h>
 
 #include "talk/base/logging.h"
 #include "talk/base/stream.h"
@@ -65,7 +67,7 @@ std::string ErrorName(int err, const talk_base::ConstantLabel * err_table) {
   }
   
   char buffer[16];
-  snprintf(buffer, sizeof(buffer), "0x%08lx", err);  
+  snprintf(buffer, sizeof(buffer), "0x%08lx", (long unsigned int)err);  
   return buffer;
 }
 

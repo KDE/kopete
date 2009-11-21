@@ -30,6 +30,7 @@
 #include <cfloat>
 #include <cmath>
 #include <sstream>
+#include <string.h>
 
 #ifdef POSIX
 extern "C" {

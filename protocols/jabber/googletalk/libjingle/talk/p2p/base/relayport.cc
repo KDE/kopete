@@ -34,6 +34,7 @@
 #include "talk/p2p/base/relayport.h"
 #include <iostream>
 #include <cassert>
+#include <string.h>
 #ifdef OSX
 #include <errno.h>
 #endif
@@ -215,9 +216,9 @@ bool RelayPort::HasMagicCookie(const char* data, size_t size) {
   if (size < 24 + magic_cookie_.size()) {
     return false;
   } else {
-    return 0 == std::memcmp(data + 24,
-                            magic_cookie_.c_str(),
-                            magic_cookie_.size());
+    return 0 == memcmp(data + 24,
+                       magic_cookie_.c_str(),
+                       magic_cookie_.size());
   }
 }
 
@@ -367,7 +368,7 @@ void RelayEntry::Connect() {
 
   socket_->SignalReadPacket.connect(this, &RelayEntry::OnReadPacket);
   if (socket_->Bind(local_addr_) < 0)
-    LOG(INFO) << "bind: " << std::strerror(socket_->GetError());
+    LOG(INFO) << "bind: " << strerror(socket_->GetError());
 
   for (unsigned i = 0; i < port_->options().size(); ++i)
     socket_->SetOption(port_->options()[i].first, port_->options()[i].second);
@@ -559,7 +560,7 @@ int RelayEntry::SendPacket(const void* data, size_t size) {
   }
   int sent = socket_->SendTo(data, size, ra->address);
   if (sent <= 0) {
-    LOG(LS_VERBOSE) << "sendto: " << std::strerror(socket_->GetError());
+    LOG(LS_VERBOSE) << "sendto: " << strerror(socket_->GetError());
     assert(sent < 0);
   }
   return sent;

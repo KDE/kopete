@@ -26,7 +26,8 @@
 MSMessage *msgb_2_ms_message(mblk_t* mp){
 	MSMessage *msg;
 	MSBuffer *msbuf;
-	if (mp->b_datap->ref_count!=1) return NULL; /* cannot handle properly non-unique buffers*/
+	if (mp == NULL) return NULL;
+	if (mp->b_datap->db_ref!=1) return NULL; /* cannot handle properly non-unique buffers*/
 	/* create a MSBuffer using the mblk_t buffer */
 	msg=ms_message_alloc();
 	msbuf=ms_buffer_alloc(0);
@@ -120,7 +121,7 @@ void ms_rtp_recv_process(MSRtpRecv *r)
 		gint got=0;
 		/* we are connected with queues (surely for video)*/
 		/* use the sync system time to compute a timestamp */
-		PayloadType *pt=rtp_profile_get_payload(r->rtpsession->profile,r->rtpsession->payload_type);
+		PayloadType *pt=rtp_profile_get_payload(rtp_session_get_recv_profile(r->rtpsession),rtp_session_get_recv_payload_type(r->rtpsession));
 		if (pt==NULL) {
 			ms_warning("ms_rtp_recv_process(): NULL RtpPayload- skipping.");
 			return;

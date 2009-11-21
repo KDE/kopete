@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <string.h>
 #include "talk/base/natsocketfactory.h"
 
 namespace talk_base {
@@ -187,7 +188,7 @@ private:
 	      const SocketAddress& remote_addr) {
     assert(buf_size == data_size + remote_addr.Size_());
     remote_addr.Write_(buf, (int)buf_size);
-    std::memcpy(buf + remote_addr.Size_(), data, data_size);
+    memcpy(buf + remote_addr.Size_(), data, data_size);
   }
 
   // Decodes the given packet from the NAT server into the actual remote
@@ -198,7 +199,7 @@ private:
     assert(data_size <= *buf_size + remote_addr->Size_());
     remote_addr->Read_(data, (int)data_size);
     *buf_size = data_size - remote_addr->Size_();
-    std::memcpy(buf, data + remote_addr->Size_(), *buf_size);
+    memcpy(buf, data + remote_addr->Size_(), *buf_size);
   }
 
   bool async_;

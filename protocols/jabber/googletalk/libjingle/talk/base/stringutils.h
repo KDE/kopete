@@ -36,6 +36,7 @@
 #endif  // WIN32
 
 #include <string>
+#include <string.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Generic string/memory utilities
@@ -269,7 +270,7 @@ size_t asccpyn(wchar_t* buffer, size_t buflen,
 template<>
 struct Traits<char> {
   typedef std::string string;
-  inline static const char* Traits<char>::empty_str() { return ""; }
+  inline static const char* empty_str() { return ""; }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -281,7 +282,7 @@ struct Traits<char> {
 template<>
 struct Traits<wchar_t> {
   typedef std::wstring string;
-  inline static const wchar_t* Traits<wchar_t>::empty_str() { return L""; }
+  inline static const wchar_t* empty_str() { return L""; }
 };
 
 #endif  // WIN32

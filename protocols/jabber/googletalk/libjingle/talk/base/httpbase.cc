@@ -82,6 +82,9 @@ HttpParser::process(const char* buffer, size_t len, size_t& processed,
     return false;
   }
 
+  //printf("chobits: HttpParser::process: %d\n", len);
+  total_size = len; //add by chobits
+  
   while (true) {
     if (state_ < ST_DATA) {
       size_t pos = processed;
@@ -138,6 +141,8 @@ HttpParser::process_line(const char* line, size_t len, HttpError& err) {
     break;
 
   case ST_HEADERS:
+	//printf("<HEADER %d>\n", len);
+	total_size -= len; //add by chobits
     if (len > 0) {
       const char* value = strchrn(line, len, ':');
       if (!value) {
@@ -149,13 +154,17 @@ HttpParser::process_line(const char* line, size_t len, HttpError& err) {
       do {
         value += 1;
       } while ((value < eol) && isspace(static_cast<unsigned char>(*value)));
-      size_t vlen = eol - value;
-      if (MatchHeader(line, nlen, HH_CONTENT_LENGTH)) {
-        if (sscanf(value, "%d", &data_size_) != 1) {
+      size_t vlen = eol - value;	  
+      if (MatchHeader(line, nlen, HH_CONTENT_LENGTH)) {		  
+        //if (sscanf(value, "%d", &data_size_) != 1) {
+		unsigned int data_size_temp;
+        if (sscanf(value, "%d", &data_size_temp) != 1) {
           err = HE_PROTOCOL;
           break;
         }
-      } else if (MatchHeader(line, nlen, HH_TRANSFER_ENCODING)) {
+		data_size_ = data_size_temp;
+		//printf("data_size_ %d\n", data_size_);
+      } else if (MatchHeader(line, nlen, HH_TRANSFER_ENCODING)) {		  
         if ((vlen == 7) && (_strnicmp(value, "chunked", 7) == 0)) {
           chunked_ = true;
         } else if ((vlen == 8) && (_strnicmp(value, "identity", 8) == 0)) {
@@ -168,11 +177,18 @@ HttpParser::process_line(const char* line, size_t len, HttpError& err) {
       err = onHttpRecvHeader(line, nlen, value, vlen);
     } else {
       state_ = chunked_ ? ST_CHUNKSIZE : ST_DATA;
+	  //fix: http response header does not contain content-length
+	  //add by chobits
+	  if (data_size_ == SIZE_UNKNOWN) {
+		//printf("chobits: assign data_size -> %d\n", total_size);
+		data_size_ = total_size;
+	  }
       err = onHttpRecvHeaderComplete(chunked_, data_size_);
     }
     break;
 
   case ST_CHUNKSIZE:
+	//printf("<CHUNKSIZE>%s\n", line);
     if (len > 0) {
       char* ptr = NULL;
       data_size_ = strtoul(line, &ptr, 16);

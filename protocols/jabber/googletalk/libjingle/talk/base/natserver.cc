@@ -28,6 +28,7 @@
 #include <cassert>
 #include <iostream>
 
+#include <string.h>
 #ifdef POSIX
 extern "C" {
 #include <errno.h>
@@ -161,7 +162,7 @@ void NATServer::OnExternalPacket(
   char*  real_buf  = new char[real_size];
 
   remote_addr.Write_(real_buf, real_size);
-  std::memcpy(real_buf + remote_addr.Size_(), buf, size);
+  memcpy(real_buf + remote_addr.Size_(), buf, size);
 
   server_socket_->SendTo(real_buf, real_size, iter->second->route.source());
 

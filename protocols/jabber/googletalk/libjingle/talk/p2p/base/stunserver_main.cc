@@ -29,6 +29,7 @@
 #include "talk/base/thread.h"
 #include "talk/p2p/base/stunserver.h"
 #include <iostream>
+#include <string.h>
 
 #ifdef POSIX
 extern "C" {
@@ -50,7 +51,7 @@ int main(int argc, char* argv[]) {
   
   talk_base::AsyncUDPSocket* server_socket = talk_base::CreateAsyncUDPSocket(pthMain->socketserver());
   if (server_socket->Bind(server_addr) < 0) {
-    std::cerr << "bind: " << std::strerror(errno) << std::endl;
+    std::cerr << "bind: " << strerror(errno) << std::endl;
     return 1;
   }
 

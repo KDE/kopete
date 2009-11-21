@@ -29,6 +29,7 @@
 #define _TALK_BASE_CRYPTSTRING_H_
 
 #include <string>
+#include <string.h>
 #include "talk/base/linked_ptr.h"
 #include "talk/base/scoped_ptr.h"
 

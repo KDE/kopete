@@ -56,7 +56,7 @@ void ms_buffer_destroy(MSBuffer *buf)
 		g_free(buf);
 	}
 	else {
-		g_free(buf->buffer);
+		//g_free(buf->buffer);
 		g_free(buf);
 	}
 }

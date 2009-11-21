@@ -35,7 +35,7 @@
 #include <iostream>
 
 class XmppThread:
-    public talk_base::Thread, XmppPumpNotify, talk_base::MessageHandler {
+    public talk_base::Thread, protected XmppPumpNotify, protected talk_base::MessageHandler {
 public:
   XmppThread();
   ~XmppThread();
@@ -47,7 +47,7 @@ public:
   void Login(const buzz::XmppClientSettings & xcs);
   void Disconnect();
 
-private:
+protected:
   XmppPump* pump_;
 
   void OnStateChange(buzz::XmppEngine::State state);

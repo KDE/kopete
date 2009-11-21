@@ -670,8 +670,8 @@ void FileShareSession::OnHttpRequest(talk_base::HttpServer* server,
         && !query.empty()
         && (sscanf(query.c_str(), "width=%u&height=%u",
                    &width, &height) == 2)) {
-      width = talk_base::_max<unsigned int>(1, talk_base::_min(width, kMaxPreviewSize));
-      height = talk_base::_max<unsigned int>(1, talk_base::_min(height, kMaxPreviewSize));
+      width = talk_base::_max<unsigned int>(1, talk_base::_min<unsigned int>(width, kMaxPreviewSize));
+      height = talk_base::_max<unsigned int>(1, talk_base::_min<unsigned int>(height, kMaxPreviewSize));
       std::string pathname;
       if (is_sender_) {
         talk_base::Pathname local_path;

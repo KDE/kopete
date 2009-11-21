@@ -19,6 +19,7 @@
 
 #include <time.h>
 #include <iomanip>
+#include <stdio.h>
 #include "talk/base/logging.h"
 #include "talk/base/physicalsocketserver.h"
 #include "talk/base/ssladapter.h"
@@ -231,6 +232,7 @@ int main(int argc, char **argv) {
   xcs.set_pass(talk_base::CryptString(pass));
   xcs.set_server(talk_base::SocketAddress("talk.google.com", 5222));
   printf("Logging in as %s\n", jid.Str().c_str());
+  fflush(stdout);
 
   talk_base::PhysicalSocketServer ss;
 

@@ -67,6 +67,7 @@ private:
   } state_;
   bool chunked_;
   size_t data_size_;
+  size_t total_size; //add by chobits
 };
 
 //////////////////////////////////////////////////////////////////////

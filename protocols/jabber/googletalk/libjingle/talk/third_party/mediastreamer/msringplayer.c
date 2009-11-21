@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <string.h>
+#include <stdlib.h>
 #include <errno.h>
 
 #include "waveheader.h"
@@ -33,6 +34,8 @@
 enum { PLAY_RING, PLAY_SILENCE};
 
 static int supported_freq[6]={8000,11025,16000,22050,32000,44100};
+
+gint ms_ring_player_set_property(MSRingPlayer *f,MSFilterProperty prop, void *value);
 
 gint freq_is_supported(gint freq){
 	int i;

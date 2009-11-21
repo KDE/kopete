@@ -28,6 +28,8 @@
 
 static MSReadClass *ms_read_class=NULL;
 
+gint ms_read_open(MSRead *r, gchar *name);
+
 MSFilter * ms_read_new(char *name)
 {
 	MSRead *r;

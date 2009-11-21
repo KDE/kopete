@@ -31,6 +31,7 @@
 
 #include <time.h>
 #include <errno.h>
+#include <string.h>
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -123,7 +124,7 @@ void BufferedReadAdapter::OnReadEvent(AsyncSocket * socket) {
   int len = socket_->Recv(buffer_ + data_len_, buffer_size_ - data_len_);
   if (len < 0) {
     // TODO: Do something better like forwarding the error to the user.
-    LOG(INFO) << "Recv: " << errno << " " <<  std::strerror(errno);
+    LOG(INFO) << "Recv: " << errno << " " <<  strerror(errno);
     return;
   }
 

@@ -27,6 +27,7 @@
 
 #include "talk/base/logging.h"
 #include "talk/p2p/base/stun.h"
+#include <string.h>
 #include <iostream>
 #include <cassert>
 
@@ -386,7 +387,7 @@ void StunByteStringAttribute::CopyBytes(const char* bytes) {
 
 void StunByteStringAttribute::CopyBytes(const void* bytes, uint16 length) {
   char* new_bytes = new char[length];
-  std::memcpy(new_bytes, bytes, length);
+  memcpy(new_bytes, bytes, length);
   SetBytes(new_bytes, length);
 }
 

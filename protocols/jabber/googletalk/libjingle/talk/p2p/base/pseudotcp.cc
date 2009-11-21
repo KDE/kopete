@@ -25,6 +25,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdlib.h>
 #include "talk/base/basicdefs.h"
 #include "talk/base/basictypes.h"
 #include "talk/base/byteorder.h"

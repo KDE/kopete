@@ -111,6 +111,7 @@ bool UnixFilesystem::GetTemporaryFolderI(Pathname &pathname, bool create,
     if (create)
       CreateFolder(pathname);
   }
+  return true;
 }
 
 std::string UnixFilesystem::TempFilenameI(const Pathname &dir, const std::string &prefix) {

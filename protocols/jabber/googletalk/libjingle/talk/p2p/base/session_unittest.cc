@@ -2,6 +2,7 @@
 #include <sstream>
 #include <deque>
 #include <map>
+#include <string.h>
 
 #include "talk/base/common.h"
 #include "talk/base/logging.h"
@@ -341,7 +342,7 @@ struct ChannelHandler : sigslot::has_slots<> {
     ASSERT(size <= sizeof(last_data));
     data_count += 1;
     last_size = size;
-    std::memcpy(last_data, buf, size);
+    memcpy(last_data, buf, size);
   }
 
   void Send(const char* data, size_t size) {
@@ -449,10 +450,10 @@ void TestSendRecv(ChannelHandler* chanhandler1a, ChannelHandler* chanhandler1b,
     ASSERT(chanhandler2a->last_size == strlen(dat1a));
     ASSERT(chanhandler2b->last_size == strlen(dat1b));
 
-    ASSERT(std::memcmp(chanhandler1a->last_data, dat2a, strlen(dat2a)) == 0);
-    ASSERT(std::memcmp(chanhandler1b->last_data, dat2b, strlen(dat2b)) == 0);
-    ASSERT(std::memcmp(chanhandler2a->last_data, dat1a, strlen(dat1a)) == 0);
-    ASSERT(std::memcmp(chanhandler2b->last_data, dat1b, strlen(dat1b)) == 0);
+    ASSERT(memcmp(chanhandler1a->last_data, dat2a, strlen(dat2a)) == 0);
+    ASSERT(memcmp(chanhandler1b->last_data, dat2b, strlen(dat2b)) == 0);
+    ASSERT(memcmp(chanhandler2a->last_data, dat1a, strlen(dat1a)) == 0);
+    ASSERT(memcmp(chanhandler2b->last_data, dat1b, strlen(dat1b)) == 0);
   }
 }
 

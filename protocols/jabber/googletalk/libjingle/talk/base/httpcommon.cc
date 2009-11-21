@@ -546,11 +546,13 @@ HttpResponseData::formatLeader(char* buffer, size_t size) {
 HttpError
 HttpResponseData::parseLeader(const char* line, size_t len) {
   size_t pos = 0;
+  int temp;
   uint32 vmajor, vminor;
-  if ((sscanf(line, "HTTP/%lu.%lu %lu%n", &vmajor, &vminor, &scode, &pos) != 3)
+  if ((sscanf(line, "HTTP/%lu.%lu %lu%n", &vmajor, &vminor, &scode, &temp) != 3)
       || (vmajor != 1)) {
     return HE_PROTOCOL;
   }
+  pos = temp;
   if (vminor == 0) {
     version = HVER_1_0;
   } else if (vminor == 1) {
@@ -690,7 +692,7 @@ HttpAuthResult HttpAuthenticate(
     cnonce = DIGEST_CNONCE;
 #else
     char buffer[256];
-    sprintf(buffer, "%d", time(0));
+    sprintf(buffer, "%d", (int)time(0));
     cnonce = MD5(buffer);
 #endif
     ncount = "00000001";

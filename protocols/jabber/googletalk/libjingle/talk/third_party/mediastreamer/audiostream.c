@@ -112,7 +112,7 @@ void create_duplex_rtpsession(RtpProfile *profile, int locport,char *remip,int r
 			RtpSession **recvsend){
 	RtpSession *rtpr;
 	rtpr=rtp_session_new(RTP_SESSION_SENDRECV);
-	rtp_session_max_buf_size_set(rtpr,MAX_RTP_SIZE);
+	rtp_session_set_recv_buf_size(rtpr,MAX_RTP_SIZE);
 	rtp_session_set_profile(rtpr,profile);
 	rtp_session_set_local_addr(rtpr,get_local_addr_for(remip),locport);
 	if (remport>0) rtp_session_set_remote_addr(rtpr,remip,remport);
@@ -133,7 +133,7 @@ void create_rtp_sessions(RtpProfile *profile, int locport,char *remip,int rempor
 	/* creates two rtp filters to recv send streams (remote part)*/
 	
 	rtps=rtp_session_new(RTP_SESSION_SENDONLY);
-	rtp_session_max_buf_size_set(rtps,MAX_RTP_SIZE);
+	rtp_session_set_recv_buf_size(rtps,MAX_RTP_SIZE);
 	rtp_session_set_profile(rtps,profile);
 #ifdef INET6
 	rtp_session_set_local_addr(rtps,"::",locport+2);
@@ -147,7 +147,7 @@ void create_rtp_sessions(RtpProfile *profile, int locport,char *remip,int rempor
 	rtp_session_set_jitter_compensation(rtps,jitt_comp);
 	
 	rtpr=rtp_session_new(RTP_SESSION_RECVONLY);
-	rtp_session_max_buf_size_set(rtpr,MAX_RTP_SIZE);
+	rtp_session_set_recv_buf_size(rtpr,MAX_RTP_SIZE);
 	rtp_session_set_profile(rtpr,profile);
 #ifdef INET6
 	rtp_session_set_local_addr(rtpr,"::",locport);
@@ -217,8 +217,8 @@ AudioStream * audio_stream_start_full(RtpProfile *profile, int locport,char *rem
 	ms_filter_set_property(stream->decoder,MS_FILTER_PROPERTY_FREQ,&pt->clock_rate);
 	ms_filter_set_property(stream->decoder,MS_FILTER_PROPERTY_BITRATE,&pt->normal_bitrate);
 	
-	ms_filter_set_property(stream->encoder,MS_FILTER_PROPERTY_FMTP, (void*)pt->fmtp);
-	ms_filter_set_property(stream->decoder,MS_FILTER_PROPERTY_FMTP,(void*)pt->fmtp);
+	ms_filter_set_property(stream->encoder,MS_FILTER_PROPERTY_FMTP, (void*)pt->send_fmtp);
+	ms_filter_set_property(stream->decoder,MS_FILTER_PROPERTY_FMTP,(void*)pt->recv_fmtp);
 	/* create the synchronisation source */
 	stream->timer=ms_timer_new();
 	

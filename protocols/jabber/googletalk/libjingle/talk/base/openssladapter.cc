@@ -772,7 +772,7 @@ OpenSSLAdapter::SSLVerifyCallback(int ok, X509_STORE_CTX* store) {
 
 SSL_CTX*
 OpenSSLAdapter::SetupSSLContext() {
-  SSL_CTX* ctx = SSL_CTX_new(TLSv1_client_method());
+  SSL_CTX* ctx = SSL_CTX_new(SSLv23_client_method());
   if (ctx == NULL) 
 	  return NULL;
 

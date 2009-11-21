@@ -29,6 +29,9 @@
 #include "talk/session/phone/phonesessionclient.h"
 #include "talk/xmpp/constants.h"
 #include "talk/xmllite/qname.h"
+
+#include <stdio.h>
+
 namespace {
 
 const std::string NS_PHONE("http://www.google.com/session/phone");

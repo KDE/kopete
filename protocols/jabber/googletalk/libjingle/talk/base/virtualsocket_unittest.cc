@@ -226,7 +226,7 @@ std::cout << "mean=" << sample_mean << " dev=" << sample_stddev << std::endl;
   std::cout << "PASS" << std::endl;
 }
 
-int main(int argc, char* argv) {
+int main(int argc, char** argv) {
   Thread *pthMain = Thread::Current(); 
   VirtualSocketServer* ss = new VirtualSocketServer();
   pthMain->set_socketserver(ss);

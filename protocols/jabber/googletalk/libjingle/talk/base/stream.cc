@@ -28,6 +28,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <string.h>
+#include <stdio.h>
 #include <string>
 #include "talk/base/basictypes.h"
 #include "talk/base/common.h"

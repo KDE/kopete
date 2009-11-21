@@ -28,6 +28,7 @@
 #include <iostream>
 #include <cassert>
 
+#include <string.h>
 #ifdef POSIX
 extern "C" {
 #include <errno.h>
@@ -63,7 +64,7 @@ TestClient::~TestClient() {
 void TestClient::Send(const char* buf, size_t size) {
   int result = socket_->Send(buf, size);
   if (result < 0) {
-    std::cerr << "send: " << std::strerror(errno) << std::endl;
+    std::cerr << "send: " << strerror(errno) << std::endl;
     exit(1);
   }
 }
@@ -72,7 +73,7 @@ void TestClient::SendTo(
     const char* buf, size_t size, const SocketAddress& dest) {
   int result = socket_->SendTo(buf, size, dest);
   if (result < 0) {
-    std::cerr << "sendto: " << std::strerror(errno) << std::endl;
+    std::cerr << "sendto: " << strerror(errno) << std::endl;
     exit(1);
   }
 }
@@ -132,7 +133,7 @@ void TestClient::CheckNextPacket(
   Packet* packet = NextPacket();
   assert(packet);
   assert(packet->size == size);
-  assert(std::memcmp(packet->buf, buf, size) == 0);
+  assert(memcmp(packet->buf, buf, size) == 0);
   if (addr)
     *addr = packet->addr;
 }

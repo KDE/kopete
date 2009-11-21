@@ -27,6 +27,7 @@
 
 #include "talk/base/bytebuffer.h"
 #include "talk/p2p/base/stunserver.h"
+#include <string.h>
 #include <iostream>
 
 #ifdef POSIX
@@ -154,7 +155,7 @@ void StunServer::SendResponse(
   // TODO: Allow response addr attribute if sent from another stun server.
 
   if (socket_->SendTo(buf.Data(), buf.Length(), addr) < 0)
-    std::cerr << "sendto: " << std::strerror(errno) << std::endl;
+    std::cerr << "sendto: " << strerror(errno) << std::endl;
 }
 
 } // namespace cricket

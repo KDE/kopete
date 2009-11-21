@@ -56,6 +56,7 @@ void Console::Print(const char* str) {
   printf("\n%s", str);
   if (prompting_)
     printf("\n(%s) ", prompt_.c_str());
+  fflush(stdout);
 }
 
 void Console::Print(const std::string& str) {

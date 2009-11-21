@@ -29,6 +29,8 @@
 #pragma warning(disable:4786)
 #endif
 
+#include <string.h>
+
 #include "talk/base/asynctcpsocket.h"
 #include "talk/base/byteorder.h"
 #include "talk/base/common.h"
@@ -169,7 +171,7 @@ void AsyncTCPSocket::OnReadEvent(AsyncSocket* socket) {
   if (len < 0) {
     // TODO: Do something better like forwarding the error to the user.
     if (!socket_->IsBlocking()) {
-      LOG(LS_ERROR) << "recvfrom: " << errno << " " <<  std::strerror(errno);
+      LOG(LS_ERROR) << "recvfrom: " << errno << " " <<  strerror(errno);
     }
     return;
   }

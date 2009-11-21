@@ -28,6 +28,7 @@
 #ifdef WIN32
 #include <malloc.h>
 #endif  // WIN32
+#include <stdlib.h>
 #ifdef POSIX
 #include <alloca.h>
 #define _alloca alloca

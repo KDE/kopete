@@ -263,12 +263,28 @@ void alsa_card_destroy(AlsaCard *obj)
 
 gboolean alsa_card_can_read(AlsaCard *obj)
 {
-	int frames;
+	int frames,err;
 	g_return_val_if_fail(obj->read_handle!=NULL,0);
 	if (obj->readpos!=0) return TRUE;
-	if ( frames=snd_pcm_avail_update(obj->read_handle)>=obj->frames) return 1;
+	frames=snd_pcm_avail_update(obj->read_handle);
 	//g_message("frames=%i",frames);
-	return 0;
+	if (frames==-EPIPE)
+	{/* Overrun COndition*/
+		err=snd_pcm_prepare(obj->read_handle);
+		if(err<0)
+		{
+			printf("Cant recover form XRun\n");
+			return FALSE;
+		}
+		return TRUE;/* Only Next read attempt will trigger the driver to start capturing CAN BE DONE BETTER*/
+	}else if(frames <=0)
+	{/* Opps! something seriously worng, that cant be handled by the app*/
+		return FALSE;
+	}else if(frames >= obj->frames)
+	{
+		return TRUE;
+	}
+	return FALSE;	
 }
 
 
