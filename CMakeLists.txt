@@ -45,10 +45,10 @@ check_type_size("long" SIZEOF_LONG)
 check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
 
 macro_optional_find_package(LiboRTP)
-macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support and voice clips in WLM.")
+macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support, Google Talk libjingle audio call support and voice clips in WLM.")
 
 macro_optional_find_package(Speex)
-macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support in Kopete.")
+macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support and Google Talk libjingle audio call support in Kopete.")
 
 macro_optional_find_package(QCA2)
 macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca" FALSE "2.0.0" "Needed to build Kopete's GroupWise and Jabber protocols.")
@@ -57,16 +57,16 @@ macro_optional_find_package(IDN)
 macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implemenation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
 
 macro_optional_find_package(Alsa)
-macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed for Jingle Support in Kopete Jabber Plugin")
+macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed for Jingle Support and Google Talk libjingle audio call support in Kopete Jabber Plugin")
 
 macro_optional_find_package(Xmms)
 macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
 macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System development libraries" "http://www.xmms.org" FALSE "" "Used by the Kopete nowlistening plugin to support the XMMS player.")
 
-if(XMMS_FOUND)
-  # GLIB2_INCLUDE_DIR needed for Xmms
-  macro_optional_find_package(GLIB2)
-endif(XMMS_FOUND)
+# GLIB2_INCLUDE_DIR needed for Xmms
+# TODO: Add info
+macro_optional_find_package(GLIB2)
+macro_log_feature(GLIB2_FOUND "GLib2" "" "" FALSE "" "Needed to build Google Talk libjingle support")
 
 macro_optional_find_package(LibXml2)
 macro_log_feature(LIBXML2_FOUND "LibXML2" "Libraries used to develop XML applications" "http://xmlsoft.org" FALSE "" "Required for the Kopete webpresence plugin.")
@@ -108,6 +108,18 @@ check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
 macro_bool_to_01(X11_Xss_FOUND HAVE_XSCREENSAVER)
+
+macro_optional_find_package(Expat)
+macro_log_feature(EXPAT_FOUND "Expat" "Expat is a stream oriented XML parser" "http://expat.sourceforge.net/" FALSE "" "Needed to build Google Talk libjingle support")
+
+if ( NOT WIN32 )
+	# TODO: Add info
+        macro_optional_find_package(SSL)
+        macro_log_feature(SSL_FOUND "SSL" "" "" FALSE "" "Needed to build Google Talk libjingle support")
+endif ( NOT WIN32 )
+
+macro_optional_find_package(iLBC)
+macro_log_feature(ILBC_FOUND "iLBC" "iLBC is low bitrate audio codec" "http://mirror.lihnidos.org/GNU/savannah/linphone/plugins/sources" FALSE "" "Needed to build Google Talk libjingle voice call support with iLBC codec")
 
 # Generate config-kopete.h
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )

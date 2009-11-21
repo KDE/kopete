@@ -1,0 +1,37 @@
+
+include_directories(
+   ../../third_party/mediastreamer
+   ${LIBOTR_INCLUDE_DIR}
+   ${GLIB2_INCLUDE_DIR}
+)
+
+if ( ILBC_FOUND )
+	include_directories ( ${ILBC_INCLUDE_DIR} )
+endif ( ILBC_FOUND )
+
+if ( SPEEX_FOUND )
+	include_directories ( ${SPEEX_INCLUDE_DIR} ${SPEEX_INCLUDE_DIR}/speex )
+endif ( SPEEX_FOUND )
+
+add_definitions(-D_REENTRANT -DORTP_INET6)
+
+########### next target ###############
+
+if ( BUILD_libjingle_cricketsessionphone )
+
+SET(cricketsessionphone_STAT_SRCS
+   linphonemediaengine.cc
+   audiomonitor.cc
+   channelmanager.cc
+   voicechannel.cc
+   call.cc
+   phonesessionclient.cc
+)
+
+add_library(cricketsessionphone STATIC ${cricketsessionphone_STAT_SRCS})
+
+endif ( BUILD_libjingle_cricketsessionphone )
+
+
+########### install files ###############
+
