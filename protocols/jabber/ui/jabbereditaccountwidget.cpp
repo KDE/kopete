@@ -82,6 +82,18 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	}
 #endif
 
+#ifndef GOOGLETALK_SUPPORT
+	//Remove Google Talk tab
+	for ( int i=0; i<tabWidget10->count(); ++i )
+	{
+		if ( tabWidget10->tabText(i) == "&Google Talk" )
+		{
+			tabWidget10->removeTab(i);
+			break;
+		}
+	}
+#endif
+
 	if (account())
 	{
 		// we are working with an existing account
@@ -229,6 +241,11 @@ void JabberEditAccountWidget::reopen ()
 
 	mergeMessages->setChecked(account()->mergeMessages());
 	oldEncrypted->setChecked(account()->oldEncrypted());
+
+#ifdef GOOGLETALK_SUPPORT
+	GoogleTalk->setChecked(account()->enabledGoogleTalk());
+#endif
+
 }
 
 Kopete::Account *JabberEditAccountWidget::apply ()
@@ -301,6 +318,11 @@ void JabberEditAccountWidget::writeConfig ()
 
 	account()->setMergeMessages(mergeMessages->isChecked());
 	account()->setOldEncrypted(oldEncrypted->isChecked());
+
+#ifdef GOOGLETALK_SUPPORT
+	account()->enableGoogleTalk(GoogleTalk->isChecked());
+#endif
+
 }
 
 bool JabberEditAccountWidget::validateData ()
@@ -314,6 +336,14 @@ bool JabberEditAccountWidget::validateData ()
 
 		return false;
 	}
+
+#ifdef GOOGLETALK_SUPPORT
+	if ( GoogleTalk->isChecked() && mServer->text().trimmed() != "talk.google.com" )
+	{
+		KMessageBox::sorry(this, i18n("Google Talk libjingle support is only for GTalk/Gmail account, which connect to server talk.google.com."), i18n("Invalid Google Talk"));
+		return false;
+	}
+#endif
 
 	return true;
 }

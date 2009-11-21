@@ -78,6 +78,10 @@
 
 #include <sys/utsname.h>
 
+#ifdef GOOGLETALK_SUPPORT
+#include "googletalk.h"
+#endif
+
 #ifdef JINGLE_SUPPORT
 #include "jinglecallsmanager.h"
 #endif
@@ -110,6 +114,10 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	m_initialPresence = XMPP::Status ( "", "", 5, true );
 
+#ifdef GOOGLETALK_SUPPORT
+	m_googleTalk = new GoogleTalk;
+#endif
+
 }
 
 JabberAccount::~JabberAccount ()
@@ -139,6 +147,11 @@ void JabberAccount::cleanup ()
 
 	delete m_contactPool;
 	m_contactPool = 0L;
+
+#ifdef GOOGLETALK_SUPPORT
+	delete m_googleTalk;
+	m_googleTalk = 0L;
+#endif
 
 #ifdef JINGLE_SUPPORT
 	delete m_jcm;
@@ -443,6 +456,11 @@ void JabberAccount::connectWithPassword ( const QString &password )
 
 			break;
 	}
+
+#ifdef GOOGLETALK_SUPPORT
+	m_googleTalk->setUser(myself()->contactId (), password);
+#endif
+
 }
 
 void JabberAccount::slotClientDebugMessage ( const QString &msg )
@@ -600,6 +618,11 @@ void JabberAccount::slotConnected ()
 {
 	kDebug (JABBER_DEBUG_GLOBAL) << "Connected to Jabber server.";
 
+#ifdef GOOGLETALK_SUPPORT
+	if ( enabledGoogleTalk() && ! m_googleTalk->isConnected() )
+		m_googleTalk->login();
+#endif
+
 #ifdef JINGLE_SUPPORT
 	qDebug() << "Create JingleCallsManager";
 	m_jcm = new JingleCallsManager(this);
@@ -643,6 +666,10 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
+
+		#ifdef GOOGLETALK_SUPPORT
+			m_googleTalk->logout();
+		#endif
 			xmppStatus.setIsAvailable( false );
 			kDebug (JABBER_DEBUG_GLOBAL) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
 			disconnect (Manual, xmppStatus);	
@@ -1715,6 +1742,35 @@ void JabberAccount::slotUnregisterFinished( )
 	if(m_removing)  //it may be because this is now the timer.
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
+
+#ifdef GOOGLETALK_SUPPORT
+
+bool JabberAccount::enabledGoogleTalk()
+{
+	return configGroup()->readEntry("GoogleTalk", ( server() == "talk.google.com" ? true : false ) );
+}
+
+void JabberAccount::enableGoogleTalk(bool b)
+{
+	configGroup()->writeEntry("GoogleTalk", b);
+	if ( ! b )
+		m_googleTalk->logout();
+	else if ( isConnected() )
+		m_googleTalk->login();
+}
+
+bool JabberAccount::supportGoogleTalk(const QString &user)
+{
+	return ( enabledGoogleTalk() && m_googleTalk->isOnline(user) );
+}
+
+void JabberAccount::makeGoogleTalkCall(const QString &user)
+{
+	if ( enabledGoogleTalk() )
+		m_googleTalk->makeCall(user);
+}
+
+#endif
 
 void JabberAccount::setMergeMessages(bool b)
 {

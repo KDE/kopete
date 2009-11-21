@@ -207,6 +207,11 @@ private slots:
 	 * slot received by the syncTimer.
 	 */
 	void slotDelayedSync();
+
+#ifdef GOOGLETALK_SUPPORT
+	void makeGoogleTalkCallAction();
+#endif
+
 private:
 
 	/**

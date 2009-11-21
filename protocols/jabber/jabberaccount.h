@@ -46,6 +46,11 @@ class JabberProtocol;
 class JabberTransport;
 class JabberBookmarks;
 
+
+#ifdef GOOGLETALK_SUPPORT
+class GoogleTalk;
+#endif
+
 #ifdef JINGLE_SUPPORT
 class JingleCallsManager;
 #endif
@@ -149,6 +154,13 @@ public:
 	 */
 	void setOldEncrypted(bool b);
 	
+#ifdef GOOGLETALK_SUPPORT
+	bool enabledGoogleTalk();
+	void enableGoogleTalk(bool b);
+	bool supportGoogleTalk(const QString &user);
+	void makeGoogleTalkCall(const QString &user);
+#endif
+
 #ifdef JINGLE_SUPPORT
 	JingleCallsManager *jingleCallsManager() const {return m_jcm;}
 #endif
@@ -240,7 +252,11 @@ private:
 	/* keep track if we told the user we were not able to bind the
 	   jabber transfer port, to avoid popup insanity */
 	bool m_notifiedUserCannotBindTransferPort;
-	
+
+#ifdef GOOGLETALK_SUPPORT
+	GoogleTalk * m_googleTalk;
+#endif
+
 #ifdef JINGLE_SUPPORT
 	JingleCallsManager *m_jcm;
 #endif

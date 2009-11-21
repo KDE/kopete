@@ -163,6 +163,22 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
 	actionAuthorization->addAction(removeAuthAction);
 
+#ifdef GOOGLETALK_SUPPORT
+
+	if ( account()->enabledGoogleTalk() ) {
+
+		KAction *googleTalkCallAction;
+		googleTalkCallAction = new KAction( this );
+		googleTalkCallAction->setIcon( (KIcon("voicecall") ) );
+		googleTalkCallAction->setText( i18n ("Call Google Talk contact") );
+		googleTalkCallAction->setEnabled( account()->supportGoogleTalk(contactId()) );
+		connect(googleTalkCallAction, SIGNAL(triggered(bool)), SLOT(makeGoogleTalkCallAction()));
+		actions->append(googleTalkCallAction);
+
+	}
+
+#endif
+
 	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
 
 #define KACTION(status, text, name, slot) \
@@ -1394,6 +1410,15 @@ void JabberContact::startJingleVideoCall()
 
 	//TODO:implement me !
 }
+#endif
+
+#ifdef GOOGLETALK_SUPPORT
+
+void JabberContact::makeGoogleTalkCallAction()
+{
+	account()->makeGoogleTalkCall(contactId());
+}
+
 #endif
 
 #include "jabbercontact.moc"

@@ -849,6 +849,42 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="TabPage">
+      <attribute name="title">
+       <string>&amp;Google Talk</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="_20">
+       <item>
+        <widget class="QGroupBox" name="groupBox_17">
+         <property name="title">
+          <string>Google Talk libjingle settings</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <widget class="QCheckBox" name="GoogleTalk">
+            <property name="toolTip">
+             <string>This enable Google Talk libjingle voice call</string>
+            </property>
+            <property name="text">
+             <string>Enable Google Talk libjingle support (only for GTalk/Gmail accounts)</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="TabPage" >
       <attribute name="title" >
        <string>Pri&amp;vacy</string>
