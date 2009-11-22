@@ -22,8 +22,8 @@
 
 #include "telepathyprotocol.h"
 
-#include <KopeteTelepathy/telepathyaccount.h>
-#include <KopeteTelepathy/telepathyprotocolinternal.h>
+#include <telepathyaccount.h>
+#include <telepathyprotocolinternal.h>
 
 #include <KCMTelepathyAccounts/AbstractAccountUi>
 #include <KCMTelepathyAccounts/AbstractAccountUi>

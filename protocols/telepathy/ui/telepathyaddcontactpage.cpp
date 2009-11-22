@@ -20,9 +20,9 @@
 
 #include "telepathyprotocol.h"
 
-#include <KopeteTelepathy/telepathyaccount.h>
-#include <KopeteTelepathy/telepathycontact.h>
-#include <KopeteTelepathy/telepathycontactmanager.h>
+#include <telepathyaccount.h>
+#include <telepathycontact.h>
+#include <telepathycontactmanager.h>
 
 #include <kmessagebox.h>
 #include <kdebug.h>
