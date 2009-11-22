@@ -133,21 +133,14 @@ void KopeteSystemTray::activate(const QPoint &pos)
 void KopeteSystemTray::startBlink( const QString &icon )
 {
 	mBlinkIcon = icon;
-	if ( mBlinkTimer->isActive() == false )
-	{
-		mIsBlinkIcon = true;
-		mIsBlinking = true;
-		mBlinkTimer->setSingleShot( false );
-		mBlinkTimer->start( 1000 );
-	}
-	else
+	if ( mBlinkTimer->isActive() )
 	{
 		mBlinkTimer->stop();
-		mIsBlinkIcon = true;
-		mIsBlinking = true;
-		mBlinkTimer->setSingleShot( false );
-		mBlinkTimer->start( 1000 );
 	}
+	mIsBlinkIcon = true;
+	mIsBlinking = true;
+	mBlinkTimer->setSingleShot( false );
+	mBlinkTimer->start( 1000 );
 }
 
 void KopeteSystemTray::startBlink()
