@@ -21,6 +21,7 @@
 #include <telepathychatsession.h>
 #include <telepathyaccount.h>
 #include <telepathyprotocol.h>
+#include "telepathycontact.h"
 
 #include <ui/kopeteview.h>
 #include <kopetechatsessionmanager.h>
@@ -54,6 +55,31 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
                      SIGNAL(triggered(bool)),
                      SLOT(onShareMyDesktop()));
 
+    // HACK: This breaks on 1-many chats.
+    // Set the m_contact to be the target contact's Tp::ContactPtr.
+    if (others.size() <= 0) {
+        kWarning() << "Invalid number of people in the chat. Aborting share-my-desktop.";
+        return;
+    }
+
+    if (others.size() > 1) {
+        kWarning() << "Share-My-Desktop only supports 1-1 chats at the moment.";
+        return;
+    }
+
+    // Cast the only member of the chat to a TelepathyContact.
+    TelepathyContact *tpContact = qobject_cast<TelepathyContact*>(others.at(0));
+
+    // Check the member really is a telepathy contact.
+    if (!tpContact) {
+        kWarning() << "Chat member is not a telepathy contact. Aborting share-my-desktop.";
+        return;
+    }
+
+    // Get the internal Tp::Contact and save it as a member variable.
+    m_contact = tpContact->internalContact();
+
+    // Only at this point do we allow the share-my-desktop button to be shown.
     setXMLFile ("telepathychatui.rc");
 }
 
