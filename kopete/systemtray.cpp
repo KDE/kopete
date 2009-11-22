@@ -56,7 +56,6 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent )
 
 KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	: KStatusNotifierItem(parent)
-	, mMovie(0)
 {
 	kDebug(14010) ;
     setCategory(Communications);
@@ -160,13 +159,8 @@ void KopeteSystemTray::stopBlink()
 {
     setStatus(Active);
     
-	if ( mMovie )
-		kDebug( 14010 ) << "stopping movie.";
-	else if ( mBlinkTimer->isActive() )
+	if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
-
-	if ( mMovie )
-		mMovie->setPaused(true);
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;

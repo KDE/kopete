@@ -46,7 +46,7 @@ public:
 	 */
 	static KopeteSystemTray* systemTray( QWidget* parent = 0);
 
-	~KopeteSystemTray();
+	virtual ~KopeteSystemTray();
 
 	// One method, multiple interfaces :-)
 	void startBlink( const QString &icon );
@@ -74,7 +74,6 @@ private:
 	QTimer *mBlinkTimer;
 	QString mKopeteIcon;
 	QString mBlinkIcon;
-	QMovie *mMovie;
 
 	bool mIsBlinkIcon;
 	bool mIsBlinking;
