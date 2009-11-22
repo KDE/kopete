@@ -21,20 +21,12 @@
 
 #include <qtimer.h>
 
-#include <qregexp.h>
-#include <QMouseEvent>
-#include <QPixmap>
-#include <QEvent>
-#include <QPainter>
-
 #include <kaboutdata.h>
 #include <kactioncollection.h>
 #include <kaction.h>
 #include <kmenu.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <kiconloader.h>
-#include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetebehaviorsettings.h"
 #include "kopetemetacontact.h"
@@ -42,7 +34,6 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecontact.h"
 #include "kopetewindow.h"
-#include <kiconeffect.h>
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0;
 

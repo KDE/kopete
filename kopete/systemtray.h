@@ -20,9 +20,6 @@
 #ifndef SYSTEMTRAY_H
 #define SYSTEMTRAY_H
 
-#include <QtGui/QIcon>
-#include <QtGui/QMovie>
-
 #include <KStatusNotifierItem>
 
 #include "kopetemessageevent.h"
