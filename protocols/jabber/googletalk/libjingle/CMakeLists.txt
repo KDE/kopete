@@ -39,10 +39,6 @@ configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINA
 
 ########### next target ###############
 
-if ( NOT EXPAT_FOUND AND NOT GLIB2_FOUND AND ( NOT SSL_FOUND OR NOT WIN32 ) )
-	message ( FATAL "Expat or SSl not found!" )
-endif ( NOT EXPAT_FOUND AND NOT GLIB2_FOUND AND ( NOT SSL_FOUND OR NOT WIN32 ) )
-
 if ( BUILD_libjingle_call )
 	if ( LIBORTP_FOUND AND MEDIASTREAMER_FOUND )
 		message ( STATUS "Building Google Talk libjingle voice call support, supported codecs:" )

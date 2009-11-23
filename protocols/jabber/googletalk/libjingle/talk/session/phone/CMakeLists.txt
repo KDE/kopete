@@ -1,4 +1,6 @@
 
+if ( BUILD_libjingle_cricketsessionphone )
+
 include_directories(
    ${MEDIASTREAMER_INCLUDE_DIR}
    ${LIBOTR_INCLUDE_DIR}
@@ -14,6 +16,8 @@ include_directories(
 # endif ( SPEEX_FOUND )
 
 add_definitions(-D_REENTRANT -DORTP_INET6)
+
+endif ( BUILD_libjingle_cricketsessionphone )
 
 ########### next target ###############
 
