@@ -44,6 +44,9 @@ const uint32 MSG_DISABLE = 2;
 const uint32 MSG_MUTE = 3;
 const uint32 MSG_UNMUTE = 4;
 const uint32 MSG_SETSENDCODEC = 5;
+const uint32 MSG_STARTRING_INCOMING = 6;
+const uint32 MSG_STARTRING_OUTGOING = 7;
+const uint32 MSG_STOPRING = 8;
 
 
 class ChannelManager;
@@ -113,6 +116,7 @@ private:
   // Setting the send codec based on the remote description.
   void OnSessionState(Session* session, Session::State state);
   void SetSendCodec_w();
+  void StartRing_w(bool bIncomingCall);
 
   // From TransportChannel
 

@@ -45,13 +45,14 @@ const uint32 MSG_CREATEVOICECHANNEL = 1;
 const uint32 MSG_DESTROYVOICECHANNEL = 2;
 const uint32 MSG_SETAUDIOOPTIONS = 3;
 
-ChannelManager::ChannelManager(talk_base::Thread *worker_thread) {
+ChannelManager::ChannelManager(talk_base::Thread *worker_thread, 
+                               const std::string& ringWav, const std::string& callWav) {
 #ifdef HAVE_GIPS
   media_engine_ = new GipsMediaEngine();
 #elif HAVE_GIPSLITE
   media_engine_ = new GipsLiteMediaEngine();
 #else
-  media_engine_ = new LinphoneMediaEngine();
+  media_engine_ = new LinphoneMediaEngine(ringWav, callWav);
 #endif
   worker_thread_ = worker_thread;
   initialized_ = false;

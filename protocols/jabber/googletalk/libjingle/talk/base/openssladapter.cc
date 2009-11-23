@@ -256,6 +256,7 @@ OpenSSLAdapter::StartSSL(const char* hostname, bool restartable) {
     return err;
   }
 
+  LOG(LS_VERBOSE) << "OpenSSLAdapter::StartSSL() returns 0";
   return 0;
 }
 
@@ -318,7 +319,12 @@ OpenSSLAdapter::ContinueSSL() {
   ASSERT(state_ == SSL_CONNECTING);
 
   int code = SSL_connect(ssl_);
-  switch (SSL_get_error(ssl_, code)) {
+  int err = SSL_get_error(ssl_, code);
+  if (err != SSL_ERROR_NONE)
+  {
+	LOG(LS_WARNING) << "!!! SSL_connect() returned " << err; 
+  }
+  switch (err) {
   case SSL_ERROR_NONE:
     LOG(LS_INFO) << " -- success";
 
@@ -356,6 +362,7 @@ OpenSSLAdapter::ContinueSSL() {
     return (code != 0) ? code : -1;
   }
 
+  LOG(LS_VERBOSE) << "OpenSSLAdapter::ContinueSSL() returns 0";
   return 0;
 }
 
@@ -774,7 +781,10 @@ SSL_CTX*
 OpenSSLAdapter::SetupSSLContext() {
   SSL_CTX* ctx = SSL_CTX_new(SSLv23_client_method());
   if (ctx == NULL) 
+  {
+	  LOG(LS_ERROR) << "OpenSSLAdapter::SetupSSLContext() error: ctx == NULL";
 	  return NULL;
+  }  
 
   // Add the root cert to the SSL context
 #if OPENSSL_VERSION_NUMBER >= 0x0090800fL

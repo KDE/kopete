@@ -23,14 +23,17 @@
 
 // LinphoneMediaEngine is a Linphone implementation of MediaEngine
 extern "C" {
-#include "talk/third_party/mediastreamer/mediastream.h"
-#ifdef HAVE_ILBC
-#include "talk/third_party/mediastreamer/msilbcdec.h"
-#endif
+#include <mediastreamer2/mediastream.h>
+#include <mediastreamer2/mssndcard.h>
+//#ifdef HAVE_ILBC
+//#include "talk/third_party/mediastreamer/msilbcdec.h"
+//#endif
 #ifdef HAVE_SPEEX
-#include "talk/third_party/mediastreamer/msspeexdec.h"
+#include <mediastreamer2/msfilter.h>
 #endif
 }
+
+#include <glib-2.0/glib.h>
 #include <ortp/ortp.h>
 #include <ortp/telephonyevents.h>
 #include <netdb.h>
@@ -56,7 +59,9 @@ void LinphoneMediaChannel::OnIncomingData(talk_base::AsyncSocket *s)
 LinphoneMediaChannel::LinphoneMediaChannel(LinphoneMediaEngine*eng) :
   pt_(-1),
   audio_stream_(0),
-  engine_(eng) {
+  engine_(eng), 
+  ring_stream_(0)
+ {
   
   talk_base::Thread *thread = talk_base::ThreadManager::CurrentThread();
   talk_base::SocketServer *ss = thread->socketserver();
@@ -67,13 +72,55 @@ LinphoneMediaChannel::LinphoneMediaChannel(LinphoneMediaEngine*eng) :
 }
 
 LinphoneMediaChannel::~LinphoneMediaChannel() {
-  if (audio_stream_ != 0)
-    audio_stream_stop(audio_stream_);
+
+
+  //bjd
+  fflush(stdout);
+  StopRing();
+
+  if (audio_stream_)
+      audio_stream_stop(audio_stream_);
 }
+
+void LinphoneMediaChannel::StartRing(bool bIncomingCall)
+{
+  MSSndCard *sndcard = NULL;
+  sndcard=ms_snd_card_manager_get_default_card(ms_snd_card_manager_get());
+  if (sndcard)
+  {
+    if (bIncomingCall)
+    {
+      if (engine_->GetRingWav().size() > 0)
+      {
+		 LOG(LS_VERBOSE) << "incoming ring. sound file: " << engine_->GetRingWav().c_str() << "\n";
+	     ring_stream_ = ring_start (engine_->GetRingWav().c_str(), 1, sndcard);
+      }
+    }
+    else
+    {
+      if (engine_->GetCallWav().size() > 0)
+      {
+		LOG(LS_VERBOSE) << "outgoing ring. sound file: " << engine_->GetCallWav().c_str() << "\n";  
+	    ring_stream_ = ring_start (engine_->GetCallWav().c_str(), 1, sndcard);
+      }
+    }
+  }
+}
+
+void LinphoneMediaChannel::StopRing()
+{
+	if (ring_stream_) { 
+		ring_stop(ring_stream_);
+		ring_stream_ = 0;
+	}
+}
+
 
 void LinphoneMediaChannel::SetCodecs(const std::vector<Codec> &codecs) {
  bool first = true;
  std::vector<Codec>::const_iterator i;
+
+  ortp_set_log_level_mask(ORTP_MESSAGE|ORTP_WARNING|ORTP_ERROR|ORTP_FATAL);
 
   for (i = codecs.begin(); i < codecs.end(); i++) {
 
@@ -95,23 +142,25 @@ void LinphoneMediaChannel::SetCodecs(const std::vector<Codec> &codecs) {
     if (i->id == 0)
       rtp_profile_set_payload(&av_profile, 0, &payload_type_pcmu8000);
 
-/*    if (i->name == telephone_event.mime_type) {
-      rtp_profile_set_payload(&av_profile, i->id, &telephone_event);
-    }*/
+    if (i->name == payload_type_telephone_event.mime_type) {
+      rtp_profile_set_payload(&av_profile, i->id, &payload_type_telephone_event);
+    }
     
     if (first) {
+      StopRing();
       LOG(LS_INFO) << "Using " << i->name << "/" << i->clockrate;
       pt_ = i->id;
-      audio_stream_ = audio_stream_start(&av_profile, 2000, "127.0.0.1", 3000, i->id, 250);
+      audio_stream_ = audio_stream_start(&av_profile, 2000, "127.0.0.1", 3000, i->id, 250, 0);
       first = false;
     }
   }
   
   if (first) {
+    StopRing();
     // We're being asked to set an empty list of codecs. This will only happen when
     // working with a buggy client; let's try PCMU.
-     LOG(LS_WARNING) << "Received empty list of codces; using PCMU/8000";
-    audio_stream_ = audio_stream_start(&av_profile, 2000, "127.0.0.1", 3000, 0, 250);
+    LOG(LS_WARNING) << "Received empty list of codces; using PCMU/8000";
+    audio_stream_ = audio_stream_start(&av_profile, 2000, "127.0.0.1", 3000, 0, 250, 0);
   }
  
 }
@@ -119,8 +168,8 @@ void LinphoneMediaChannel::SetCodecs(const std::vector<Codec> &codecs) {
 bool LinphoneMediaEngine::FindCodec(const Codec &c) {
   if (c.id == 0)
     return true;
-/*  if (c.name == telephone_event.mime_type)
-    return true;*/
+  if (c.name == payload_type_telephone_event.mime_type)
+    return true;
 #ifdef HAVE_SPEEX
   if (c.name == payload_type_speex_wb.mime_type && c.clockrate == payload_type_speex_wb.clock_rate)
     return true;
@@ -156,7 +205,12 @@ void LinphoneMediaChannel::SetSend(bool send) {
 
 int LinphoneMediaChannel::GetOutputLevel() {}
 
-LinphoneMediaEngine::LinphoneMediaEngine() {}
+LinphoneMediaEngine::LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav)
+    : ring_wav_(ringWav),
+      call_wav_(callWav)
+{
+}
+
 LinphoneMediaEngine::~LinphoneMediaEngine() {}
 
 static void null_log_handler(const gchar *log_domain,
@@ -174,7 +228,8 @@ bool LinphoneMediaEngine::Init() {
   ms_init();
  
 #ifdef HAVE_SPEEX
-  ms_speex_codec_init();
+  //ms_speex_codec_init();
+  //ms_filter_register(MS_FILTER_INFO(&speex_info));
 
   codecs_.push_back(Codec(110, payload_type_speex_wb.mime_type, payload_type_speex_wb.clock_rate, 0, 1, 8));
   codecs_.push_back(Codec(111, payload_type_speex_nb.mime_type, payload_type_speex_nb.clock_rate, 0, 1, 7));
@@ -182,17 +237,17 @@ bool LinphoneMediaEngine::Init() {
 #endif
 
 #ifdef HAVE_ILBC
-  ms_ilbc_codec_init();
+  //ms_ilbc_codec_init();
   codecs_.push_back(Codec(102, payload_type_ilbc.mime_type, payload_type_ilbc.clock_rate, 0, 1, 4));
 #endif
 
   codecs_.push_back(Codec(0, payload_type_pcmu8000.mime_type, payload_type_pcmu8000.clock_rate, 0, 1, 2));
- // codecs_.push_back(Codec(101, telephone_event.mime_type, telephone_event.clock_rate, 0, 1, 1));
+  codecs_.push_back(Codec(101, payload_type_telephone_event.mime_type, payload_type_telephone_event.clock_rate, 0, 1, 1));
   return true;
 }
 
 void LinphoneMediaEngine::Terminate() {
- 
+  fflush(stdout);
 }
   
 MediaChannel *LinphoneMediaEngine::CreateChannel() {

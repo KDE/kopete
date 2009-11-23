@@ -41,7 +41,7 @@ class VoiceChannel;
 
 class ChannelManager : public talk_base::MessageHandler {
 public:
-  ChannelManager(talk_base::Thread *worker_thread);
+  ChannelManager(talk_base::Thread *worker_thread, const std::string& ringWav, const std::string& callWav);
   ~ChannelManager();
 
   VoiceChannel *CreateVoiceChannel(Session *session);

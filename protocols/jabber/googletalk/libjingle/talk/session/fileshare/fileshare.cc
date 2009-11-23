@@ -1080,6 +1080,7 @@ void FileShareSession::NextDownload() {
   } else {
     talk_base::FileStream* file = new talk_base::FileStream;
     if (!file->Open(temp_name.pathname().c_str(), "wb")) {
+      std::cout << "Failed to create file at " << temp_name.pathname().c_str() << std::endl;
       delete file;
       talk_base::Filesystem::DeleteFile(temp_name);
       SetState(FS_FAILURE, false);

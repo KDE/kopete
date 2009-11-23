@@ -46,7 +46,8 @@ class PhoneSessionDescription;
 
 class PhoneSessionClient: public SessionClient, public sigslot::has_slots<> {
 public:
-  PhoneSessionClient(const buzz::Jid& jid, SessionManager *manager);
+  PhoneSessionClient(const buzz::Jid& jid, SessionManager *manager, 
+                     const std::string& ringWav = "", const std::string& callWav = "");
   ~PhoneSessionClient();
 
   const buzz::Jid &jid() const { return jid_; }

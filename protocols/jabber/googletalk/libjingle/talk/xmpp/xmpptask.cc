@@ -30,6 +30,7 @@
 #include "talk/xmpp/xmppengine.h"
 #include "talk/xmpp/constants.h"
 #include "talk/xmpp/ratelimitmanager.h"
+#include "talk/base/logging.h"
 
 namespace buzz {
 
@@ -90,6 +91,8 @@ void XmppTask::QueueStanza(const XmlElement* stanza) {
     return;
 #endif
 
+  LOG(LS_VERBOSE) << stanza->BodyText().c_str() << "\n";
+  
   stanza_queue_.push_back(new XmlElement(*stanza));
   Wake();
 }

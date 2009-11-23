@@ -58,6 +58,9 @@ class MediaChannel : public sigslot::has_slots<> {
   virtual ~MediaChannel() {};
   void SetInterface(NetworkInterface *iface) {network_interface_ = iface;}
   virtual void SetCodecs(const std::vector<Codec> &codecs) = 0;
+  virtual void StartRing(bool bIncomingCall) = 0;
+  virtual void StopRing() = 0;
+
   virtual void OnPacketReceived(const void *data, int len) = 0;
   virtual void SetPlayout(bool playout) = 0;
   virtual void SetSend(bool send) = 0;

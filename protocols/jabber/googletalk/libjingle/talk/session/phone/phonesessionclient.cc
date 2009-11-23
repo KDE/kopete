@@ -25,13 +25,12 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstdio>
+
 #include "talk/base/logging.h"
 #include "talk/session/phone/phonesessionclient.h"
 #include "talk/xmpp/constants.h"
 #include "talk/xmllite/qname.h"
-
-#include <stdio.h>
-
 namespace {
 
 const std::string NS_PHONE("http://www.google.com/session/phone");
@@ -49,13 +48,14 @@ const buzz::QName QN_PHONE_PAYLOADTYPE_CHANNELS(true, NS_EMPTY, "channels");
 namespace cricket {
 
 PhoneSessionClient::PhoneSessionClient(
-    const buzz::Jid& jid, SessionManager *manager)
+    const buzz::Jid& jid, SessionManager *manager, 
+    const std::string& ringWav, const std::string& callWav)
   : jid_(jid), session_manager_(manager) {
   // No call to start, and certainly no call with focus
   focus_call_ = NULL;
 
   // Start up the channel manager on a worker thread
-  channel_manager_ = new ChannelManager(session_manager_->worker_thread());
+  channel_manager_ = new ChannelManager(session_manager_->worker_thread(), ringWav, callWav);
 
   // Register ourselves as the handler of phone sessions.
   session_manager_->AddClient(NS_PHONE, this);

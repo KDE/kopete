@@ -337,6 +337,8 @@ bool HttpDateToSeconds(const std::string& date, unsigned long* seconds) {
   if (7 != sscanf(date.c_str(), "%*3s, %d %3s %d %d:%d:%d %5c",
                   &tval.tm_mday, month, &tval.tm_year,
                   &tval.tm_hour, &tval.tm_min, &tval.tm_sec, &zone)) {
+
+    LOG(LS_ERROR) << "HttpDateToSeconds returns false";
     return false;
   }
   switch (toupper(month[2])) {

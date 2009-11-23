@@ -8,14 +8,8 @@
 /* voice mail */
 #define FEATURE_ENABLE_VOICEMAIL 1
 
-/* Define to 1 if you have the <alsa/asoundlib.h> header file. */
-#define HAVE_ALSA_ASOUNDLIB_H 1
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
-
-/* Have GIPS Voice Engine */
-/* #undef HAVE_GIPS */
 
 /* Glib is required for oRTP code */
 #define HAVE_GLIB 1
@@ -23,26 +17,14 @@
 /* Defined when we have ilbc codec lib */
 #cmakedefine HAVE_ILBC 1
 
-/* Define to 1 if you have the <iLBC_decode.h> header file. */
-#cmakedefine HAVE_ILBC_DECODE_H 1
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
-/* oRTP provides RTP supprt */
-#cmakedefine HAVE_ORTP 1
-
 /* has speex */
 #cmakedefine HAVE_SPEEX 1
-
-/* Define to 1 if you have the <speex.h> header file. */
-/* #undef HAVE_SPEEX_H */
-
-/* Define to 1 if you have the <speex/speex.h> header file. */
-#cmakedefine HAVE_SPEEX_SPEEX_H 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -110,5 +92,3 @@
 /* Version number of package */
 #define VERSION "0.4.0"
 
-/* Defined when alsa support is enabled */
-#cmakedefine __ALSA_ENABLED__ 1

@@ -65,9 +65,17 @@ void XmppSocket::OnReadEvent(talk_base::AsyncSocket * socket) {
 }
 
 void XmppSocket::OnWriteEvent(talk_base::AsyncSocket * socket) {
+  std::string str;
+  str.insert(0, buffer_.Data(), buffer_.Length());  
+  LOG(LS_VERBOSE) << "<><><><><><> outgoing message <><><><><><>" <<
+			"\nXmppSocket::OnWriteEvent() buffer: " << str.c_str();
   // Write bytes if there are any
   while (buffer_.Length() != 0) {
     int written = cricket_socket_->Send(buffer_.Data(), buffer_.Length());
+    if (written == -1) {
+      LOG(LS_WARNING) << "XmppSocket::OnWriteEvent() : cricket_socket_->Send() failed. "
+			"cricket_socket_->Send() returns " << written;
+    }	
     if (written > 0) {
       buffer_.Shift(written);
       continue;
@@ -76,6 +84,7 @@ void XmppSocket::OnWriteEvent(talk_base::AsyncSocket * socket) {
       LOG(LS_ERROR) << "Send error: " << cricket_socket_->GetError();
     return;
   }
+  LOG(LS_VERBOSE) << "XmppSocket::OnWriteEvent() returns";  
 }
 
 void XmppSocket::OnConnectEvent(talk_base::AsyncSocket * socket) {
@@ -113,6 +122,10 @@ bool XmppSocket::Connect(const talk_base::SocketAddress& addr) {
 bool XmppSocket::Read(char * data, size_t len, size_t* len_read) {
   int read = cricket_socket_->Recv(data, len);
   if (read > 0) {
+    std::string str;
+    str.insert(0, data, len); 
+    LOG(LS_VERBOSE) << "<><><><><><> incoming message <><><><><><>" <<
+			"\nXmppSocket::Read() buffer: " << str.c_str();
     *len_read = (size_t)read;
     return true;
   }

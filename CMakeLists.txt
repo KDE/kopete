@@ -57,7 +57,7 @@ macro_optional_find_package(IDN)
 macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implemenation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
 
 macro_optional_find_package(Alsa)
-macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed for Jingle Support and Google Talk libjingle audio call support in Kopete Jabber Plugin")
+macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed for Jingle Support in Kopete Jabber Plugin")
 
 macro_optional_find_package(Xmms)
 macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
@@ -90,7 +90,7 @@ macro_log_feature( GIF_FOUND "giflib" "Handwriting messages support for WLM" "ht
 
 macro_optional_find_package(Mediastreamer)
 macro_bool_to_01(MEDIASTREAMER_FOUND HAVE_MEDIASTREAMER)
-macro_log_feature( MEDIASTREAMER_FOUND "mediastreamer" "A streaming engine specialized for voice/video telephony applications" "http://www.linphone.org/index.php/eng/code_review/mediastreamer2" FALSE "2.3.0" "Required to enable voice clips support in WLM plugin")
+macro_log_feature( MEDIASTREAMER_FOUND "mediastreamer" "A streaming engine specialized for voice/video telephony applications" "http://www.linphone.org/index.php/eng/code_review/mediastreamer2" FALSE "2.3.0" "Required to enable voice clips support in WLM plugin and needed to build Google Talk libjingle audio call support in Kopete.")
 
 macro_optional_find_package(LibMeanwhile)
 macro_bool_to_01(LIBMEANWHILE_FOUND HAVE_LIBMEANWHILE)
@@ -118,8 +118,9 @@ if ( NOT WIN32 )
         macro_log_feature(SSL_FOUND "SSL" "" "" FALSE "" "Needed to build Google Talk libjingle support")
 endif ( NOT WIN32 )
 
-macro_optional_find_package(iLBC)
-macro_log_feature(ILBC_FOUND "iLBC" "iLBC is low bitrate audio codec" "http://mirror.lihnidos.org/GNU/savannah/linphone/plugins/sources" FALSE "" "Needed to build Google Talk libjingle voice call support with iLBC codec")
+# New mediastreamer doesnt have native iLBC support - disabled
+# macro_optional_find_package(iLBC)
+# macro_log_feature(ILBC_FOUND "iLBC" "iLBC is low bitrate audio codec" "http://mirror.lihnidos.org/GNU/savannah/linphone/plugins/sources" FALSE "" "Needed to build Google Talk libjingle voice call support with iLBC codec")
 
 # Generate config-kopete.h
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )

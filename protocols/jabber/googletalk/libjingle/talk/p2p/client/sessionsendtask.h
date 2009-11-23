@@ -34,6 +34,7 @@
 #include "talk/xmpp/xmppengine.h"
 #include "talk/xmpp/xmpptask.h"
 #include "talk/p2p/base/sessionmanager.h"
+#include "talk/base/logging.h"
 
 namespace cricket {
 
@@ -76,6 +77,7 @@ public:
     } else {
       stanza_->SetAttr(buzz::QN_ID, task_id());
     }
+    LOG(LS_VERBOSE) << "sending stanza\n" << stanza_.get()->BodyText().c_str() << "\n"; 
   }
 
   sigslot::signal1<SessionSendTask *> SignalDone;

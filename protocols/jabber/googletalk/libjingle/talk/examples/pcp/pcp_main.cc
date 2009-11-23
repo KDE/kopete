@@ -263,6 +263,9 @@ class FileShareClient : public sigslot::has_slots<>, public talk_base::MessageHa
       if (send_to_jid_.BareEquals(status.jid())) {
 	std::cout << send_to_jid_.Str() << " has signed on." << std::endl;
 	cricket::FileShareSession* share = file_share_session_client_->CreateFileShareSession();
+	std::cout << "Hit enter to send the files" << std::endl;
+	std::string str;
+	std::cin >> str;
 	share->Share(status.jid(), const_cast<cricket::FileShareManifest*>(manifest_));
 	send_to_jid_ = buzz::Jid("");
       }

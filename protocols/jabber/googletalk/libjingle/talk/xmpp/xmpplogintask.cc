@@ -108,6 +108,7 @@ XmppLoginTask::Advance() {
     switch (state_) {
 
       case LOGINSTATE_INIT: {
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_INIT";
         pctx_->RaiseReset();
         pelFeatures_.reset(NULL);
 
@@ -122,17 +123,25 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_STREAMSTART_SENT: {
-        if (NULL == (element = NextStanza()))
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_STREAMSTART_SENT";  
+        if (NULL == (element = NextStanza())) {
+          LOG(LS_VERBOSE) << "XmppLoginTask::Advance() NextStanza() == NULL";
           return true;
+        }  
 
-        if (!isStart_ || !HandleStartStream(element))
+        if (!isStart_ || !HandleStartStream(element)) {
+          LOG(LS_VERBOSE) << "XmppLoginTask::Advance() !isStart_ || !HandleStartStream(element) == true";
+          LOG(LS_VERBOSE) << "isStart_=" << isStart_;  
           return Failure(XmppEngine::ERROR_VERSION);
+        }  
 
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() state_ = LOGINSTATE_STARTED_XMPP";
         state_ = LOGINSTATE_STARTED_XMPP;
         return true;
       }
 
       case LOGINSTATE_STARTED_XMPP: {
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_STARTED_XMPP";    
         if (NULL == (element = NextStanza()))
           return true;
 
@@ -155,6 +164,7 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_TLS_INIT: {
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_TLS_INIT";      
         const XmlElement * pelTls = GetFeature(QN_TLS_STARTTLS);
         if (!pelTls)
           return Failure(XmppEngine::ERROR_TLS);
@@ -166,6 +176,7 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_TLS_REQUESTED: {
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_TLS_REQUESTED";  
         if (NULL == (element = NextStanza()))
           return true;
         if (element->Name() != QN_TLS_PROCEED)
@@ -183,6 +194,7 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_AUTH_INIT: {
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_AUTH_INIT";   
         const XmlElement * pelSaslAuth = GetFeature(QN_SASL_MECHANISMS);
         if (!pelSaslAuth) {
           return Failure(XmppEngine::ERROR_AUTH);
@@ -223,6 +235,7 @@ XmppLoginTask::Advance() {
       }
         
       case LOGINSTATE_SASL_RUNNING: {
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_SASL_RUNNING";      
         if (NULL == (element = NextStanza()))
           return true;
         if (element->Name().Namespace() != NS_SASL)
@@ -251,6 +264,7 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_BIND_INIT: {
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_BIND_INIT";
         const XmlElement * pelBindFeature = GetFeature(QN_BIND_BIND);
         const XmlElement * pelSessionFeature = GetFeature(QN_SESSION_SESSION);
         if (!pelBindFeature || !pelSessionFeature)
@@ -273,6 +287,7 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_BIND_REQUESTED: {
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_BIND_REQUESTED";
         if (NULL == (element = NextStanza()))
           return true;
 
@@ -303,6 +318,7 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_SESSION_REQUESTED: {
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_SESSION_REQUESTED";
         if (NULL == (element = NextStanza()))
           return true;
         if (element->Name() != QN_IQ || element->Attr(QN_ID) != iqId_ ||
@@ -319,6 +335,7 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_DONE:
+        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_DONE";    
         return false;
     }
   }
@@ -360,6 +377,7 @@ XmppLoginTask::GetFeature(const QName & name) {
 
 bool
 XmppLoginTask::Failure(XmppEngine::Error reason) {
+  LOG(LS_ERROR) << "XmppLoginTask::Failure() " << reason;
   state_ = LOGINSTATE_DONE;
   pctx_->SignalError(reason, 0);
   return false;

@@ -23,7 +23,7 @@
 #define TALK_SESSION_PHONE_LINPHONEMEDIAENGINE_H_
 
 extern "C" {
-#include "talk/third_party/mediastreamer/mediastream.h"
+#include <mediastreamer2/mediastream.h>
 }
 #include "talk/base/asyncsocket.h"
 #include "talk/base/scoped_ptr.h"
@@ -40,6 +40,8 @@ class LinphoneMediaChannel : public MediaChannel {
 
   virtual void SetCodecs(const std::vector<Codec> &codecs);
   virtual void OnPacketReceived(const void *data, int len);
+  virtual void StartRing(bool bIncomingCall);
+  virtual void StopRing();
 
   virtual void SetPlayout(bool playout);
   virtual void SetSend(bool send);
@@ -52,6 +54,7 @@ class LinphoneMediaChannel : public MediaChannel {
   virtual void StopMediaMonitor() {}
    
  private:
+  RingStream* ring_stream_;
   LinphoneMediaEngine *engine_;
   AudioStream *audio_stream_;
   talk_base::scoped_ptr<talk_base::AsyncSocket> socket_;
@@ -63,7 +66,7 @@ class LinphoneMediaChannel : public MediaChannel {
 
 class LinphoneMediaEngine : public MediaEngine {
  public:
-  LinphoneMediaEngine();
+  LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav);
   ~LinphoneMediaEngine();
   virtual bool Init();
   virtual void Terminate();
@@ -79,8 +82,14 @@ class LinphoneMediaEngine : public MediaEngine {
   virtual std::vector<Codec, std::allocator<Codec> > codecs() {return codecs_;}
   virtual bool FindCodec(const Codec&);
 
+  std::string GetRingWav(){return ring_wav_;}
+  std::string GetCallWav(){return call_wav_;}
+
  private:
   std::vector<Codec, std::allocator<Codec> > codecs_;
+
+  std::string ring_wav_;
+  std::string call_wav_;
 };
 
 }  // namespace cricket

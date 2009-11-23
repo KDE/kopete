@@ -94,6 +94,14 @@ void VoiceChannel::OnMessage(talk_base::Message *pmsg) {
   case MSG_SETSENDCODEC:
     SetSendCodec_w();
     break;
+
+  case MSG_STARTRING_INCOMING:
+    StartRing_w(true);
+    break;
+
+  case MSG_STARTRING_OUTGOING:
+    StartRing_w(false);
+    break;
   }
 }
 
@@ -115,8 +123,14 @@ MediaChannel * VoiceChannel::channel() {
 
 void VoiceChannel::OnSessionState(Session* session, Session::State state) {
   if ((state == Session::STATE_RECEIVEDACCEPT) ||
-      (state == Session::STATE_RECEIVEDINITIATE)) {
+      (state == Session::STATE_SENTACCEPT)) {
     channel_manager_->worker_thread()->Post(this, MSG_SETSENDCODEC);
+  }
+  if (state == Session::STATE_RECEIVEDINITIATE) {
+    channel_manager_->worker_thread()->Post(this, MSG_STARTRING_INCOMING);
+  }
+  if (state == Session::STATE_SENTINITIATE) {
+    channel_manager_->worker_thread()->Post(this, MSG_STARTRING_OUTGOING);
   }
 }
 
@@ -128,6 +142,12 @@ void VoiceChannel::SetSendCodec_w() {
         session()->remote_description());
 
   media_channel_->SetCodecs(desc->codecs());
+}
+
+void VoiceChannel::StartRing_w(bool bIncomingCall) {
+  assert(channel_manager_->worker_thread() == talk_base::Thread::Current());
+
+  media_channel_->StartRing(bIncomingCall);
 }
 
 void VoiceChannel::OnWritableState(TransportChannel* channel) {

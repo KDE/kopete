@@ -197,6 +197,7 @@ void SessionManager::OnIncomingMessage(const buzz::XmlElement* stanza) {
       // If we haven't rejected, and we haven't selected a transport yet,
       // let's do it now.
       if ((session->state() != Session::STATE_SENTREJECT) &&
+          (session->state() != Session::STATE_SENTTERMINATE) &&
           (session->transport() == NULL)) {
         session->ChooseTransport(stanza);
       }

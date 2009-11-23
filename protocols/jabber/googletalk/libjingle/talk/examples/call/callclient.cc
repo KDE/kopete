@@ -35,6 +35,14 @@
 #include "talk/examples/login/presenceouttask.h"
 #include "talk/examples/login/jingleinfotask.h"
 
+#ifndef RINGWAV
+#define RINGWAV ""
+#endif
+
+#ifndef CALLWAV
+#define CALLWAV ""
+#endif
+
 namespace {
 
 const char* DescribeStatus(buzz::Status::Show show, const std::string& desc) {
@@ -242,7 +250,7 @@ void CallClient::InitPhone() {
   jit->Start();
 	  
   phone_client_ = new cricket::PhoneSessionClient(
-      xmpp_client_->jid(),session_manager_);
+      xmpp_client_->jid(),session_manager_, RINGWAV, CALLWAV);
   phone_client_->SignalCallCreate.connect(this, &CallClient::OnCallCreate);
 
   worker_thread_->Start();

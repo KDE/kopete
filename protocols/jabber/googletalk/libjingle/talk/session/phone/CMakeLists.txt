@@ -1,17 +1,17 @@
 
 include_directories(
-   ../../third_party/mediastreamer
+   ${MEDIASTREAMER_INCLUDE_DIR}
    ${LIBOTR_INCLUDE_DIR}
    ${GLIB2_INCLUDE_DIR}
 )
 
-if ( ILBC_FOUND )
-	include_directories ( ${ILBC_INCLUDE_DIR} )
-endif ( ILBC_FOUND )
+# if ( ILBC_FOUND )
+#	include_directories ( ${ILBC_INCLUDE_DIR} )
+# endif ( ILBC_FOUND )
 
-if ( SPEEX_FOUND )
-	include_directories ( ${SPEEX_INCLUDE_DIR} ${SPEEX_INCLUDE_DIR}/speex )
-endif ( SPEEX_FOUND )
+# if ( SPEEX_FOUND )
+#	include_directories ( ${SPEEX_INCLUDE_DIR} ${SPEEX_INCLUDE_DIR}/speex )
+# endif ( SPEEX_FOUND )
 
 add_definitions(-D_REENTRANT -DORTP_INET6)
 

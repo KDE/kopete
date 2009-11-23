@@ -32,6 +32,7 @@
 #include "talk/p2p/client/sessionsendtask.h"
 #include "talk/xmpp/xmppengine.h"
 #include "talk/xmpp/xmpptask.h"
+#include "talk/base/logging.h"
 
 namespace cricket {
 
@@ -66,6 +67,7 @@ class SessionManagerTask : public buzz::XmppTask {
 
  protected:
   virtual bool HandleStanza(const buzz::XmlElement *stanza) {
+    LOG(LS_VERBOSE) << "HandleStanza()\n" << stanza->BodyText().c_str() << "\n";
     if (!session_manager_->IsSessionMessage(stanza))
       return false;
     // Responses are handled by the SessionSendTask that sent the request.

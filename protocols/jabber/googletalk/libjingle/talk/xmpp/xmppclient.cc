@@ -33,6 +33,7 @@
 #include "talk/xmpp/prexmppauth.h"
 #include "talk/base/scoped_ptr.h"
 #include "talk/xmpp/plainsaslhandler.h"
+#include "talk/base/logging.h"
 
 namespace buzz {
 
@@ -337,7 +338,7 @@ XmppClient::Private::OnSocketRead() {
   size_t bytes_read;
   for (;;) {
     if (!socket_->Read(bytes, sizeof(bytes), &bytes_read)) {
-      // TODO: deal with error information
+      LOG(LS_WARNING) << "XmppClient::Private::OnSocketRead() socket_->Read() failed";
       return;
     }
 
