@@ -24,7 +24,7 @@ set_target_properties(call PROPERTIES OUTPUT_NAME googletalk-call)
 #	set ( call_link_libraries ${call_link_libraries} ${SPEEX_LIBRARY} )
 # endif ( SPEEX_FOUND )
 
-target_link_libraries(call cricketexampleslogin cricketsessionphone cricketp2pclient cricketp2pbase cricketxmpp cricketxmllite cricketbase ${EXPAT_LIBRARY} ${LIBORTP_LIBRARY} pthread ${SSL_LIBRARY} ${CRYPTO_LIBRARY} ${GLIB2_LIBRARIES} ${MEDIASTREAMER_LIBRARIES} ${call_link_libraries})
+target_link_libraries(call cricketexampleslogin cricketsessionphone cricketp2pclient cricketp2pbase cricketxmpp cricketxmllite cricketbase ${EXPAT_LIBRARY} ${LIBORTP_LIBRARY} pthread ${SSL_LIBRARY} ${CRYPTO_LIBRARY} ${MEDIASTREAMER_LIBRARIES} ${call_link_libraries})
 
 endif ( BUILD_libjingle_call )
 

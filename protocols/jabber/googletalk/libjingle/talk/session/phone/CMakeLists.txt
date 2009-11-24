@@ -4,7 +4,6 @@ if ( BUILD_libjingle_cricketsessionphone )
 include_directories(
    ${MEDIASTREAMER_INCLUDE_DIR}
    ${LIBOTR_INCLUDE_DIR}
-   ${GLIB2_INCLUDE_DIR}
 )
 
 # if ( ILBC_FOUND )

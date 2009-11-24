@@ -11,9 +11,6 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
 
-/* Glib is required for oRTP code */
-#define HAVE_GLIB 1
-
 /* Defined when we have ilbc codec lib */
 #cmakedefine HAVE_ILBC 1
 

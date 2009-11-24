@@ -33,7 +33,6 @@ extern "C" {
 #endif
 }
 
-#include <glib-2.0/glib.h>
 #include <ortp/ortp.h>
 #include <ortp/telephonyevents.h>
 #include <netdb.h>
@@ -213,17 +212,7 @@ LinphoneMediaEngine::LinphoneMediaEngine(const std::string& ringWav,  const std:
 
 LinphoneMediaEngine::~LinphoneMediaEngine() {}
 
-static void null_log_handler(const gchar *log_domain,
-	     		     GLogLevelFlags log_level,
-			     const gchar *message,
-			     gpointer user_data) {
-  LOG(LS_INFO) << log_domain << " " << message;
-}
-
 bool LinphoneMediaEngine::Init() {
-  g_log_set_handler("MediaStreamer", G_LOG_LEVEL_MASK, null_log_handler, this);
-  g_log_set_handler("oRTP", G_LOG_LEVEL_MASK, null_log_handler, this);
-  g_log_set_handler("oRTP-stats", G_LOG_LEVEL_MASK, null_log_handler, this);
   ortp_init();
   ms_init();
  

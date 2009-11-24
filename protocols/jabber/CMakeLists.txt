@@ -32,9 +32,6 @@ if(BUILD_GOOGLETALK)
   # Enabled voice call
   set ( BUILD_libjingle_call true )
 
-  #TODO: add libraries gmodule-2.0 gthread-2.0 to cmake module
-  set(GLIB2_LIBRARIES glib-2.0 gmodule-2.0 gthread-2.0 ${GLIB2_LIBRARIES})
-
   add_subdirectory(googletalk/libjingle)
 
   add_definitions(-DGOOGLETALK_SUPPORT)
