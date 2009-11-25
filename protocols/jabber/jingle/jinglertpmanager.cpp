@@ -14,11 +14,8 @@
  */
 
 #include "jinglertpmanager.h"
-//#include "mediasession.h"
 
-//#include <ortp/payloadtype.h>
 #include <ortp/ortp.h>
-//#include <ortp/rtpsession.h>
 
 #include <QUdpSocket>
 #include <QImage>
@@ -32,7 +29,6 @@ static JingleRtpManager* man = 0;
 /*
  * RtpPacket
  */
-
 RtpPacket::RtpPacket()
 {
 	m_data = NULL;
@@ -51,6 +47,7 @@ RtpPacket::RtpPacket(const QByteArray& data)
 	m_size = data.size();
 }
 
+
 /*
  * Destructor does not delete the data
  */
@@ -59,7 +56,7 @@ RtpPacket::~RtpPacket()
 	
 }
 
-char* RtpPacket::getData()
+char* RtpPacket::data()
 {
 	return m_data;
 }
@@ -125,22 +122,9 @@ void JingleRtpManager::appendSession(JingleRtpSession *sess)
 	m_sessions << sess;
 }
 
-void JingleRtpManager::fillPacket(mblk_t *p, RtpTransport *t)
+void JingleRtpManager::setMediaData(const QByteArray& data)
 {
-	JingleRtpSession *sess = sessionWithTransport(t);
-	if (!sess)
-		return;
-
-	/*FIXME:How to get payload ?*/
-	mblk_t *temp = rtp_session_create_packet_with_data(sess->rtpSession(), uint8_t *payload, int payload_size, /*void (*freefn)(void*)*/ NULL);
-	
-	/*
-	 * m_data = (char*)msg->b_rptr;
-	 * m_size = (uint8_t)(msg->b_wptr - msg->b_rptr);
-	 */
-	
-	p->b_rptr = temp->b_rtpr;
-	p->b_wptr = temp->b_wtpr;
+	m_mediaDataIn = data;
 }
 
 JingleRtpSession* JingleRtpManager::sessionWithTransport(RtpTransport *t)
@@ -152,6 +136,8 @@ JingleRtpSession* JingleRtpManager::sessionWithTransport(RtpTransport *t)
 			return s;
 		}
 	}
+
+	return 0;
 }
 
 /*
@@ -206,12 +192,16 @@ int JingleRtpSession::sendRtpTo(RtpTransport *t, mblk_t *msg , int flags, const 
 	 * 	to	to address, unused. (iris doesn't give the ip address)
 	 * 	tolen	to address length, unused.
 	 */
+
+	//FIXME:Do we have to empty the packet ?
 	
 	JingleRtpManager *manager = JingleRtpManager::manager();
-	if (manager)
-		manager->appendRtpPacketOut(new RtpPacket(msg), t);
+	if (!manager)
+		return EXIT_FAILURE;
 	
-	return 0;
+	manager->appendRtpPacketOut(new RtpPacket(msg), t);
+	
+	return EXIT_SUCCESS;
 }
 
 int JingleRtpSession::recvRtpFrom(RtpTransport *t, mblk_t *msg, int flags, struct sockaddr *from, socklen_t *fromlen)
@@ -222,19 +212,20 @@ int JingleRtpSession::recvRtpFrom(RtpTransport *t, mblk_t *msg, int flags, struc
 	Q_UNUSED(from)
 	Q_UNUSED(fromlen)
 
-	/* oRTP wants me to provide it with RTP data to unpack and use it.
+	/* oRTP wants me to provide it with Rtp data to unpack and use it.
 	 * Arguments are the same as sendRtpTo().
 	 */
-	JingleRtpManager *m = manager();
+	JingleRtpManager *m = JingleRtpManager::manager();
 	if (!m)
-		return 0;
+		return EXIT_FAILURE;
 	
-	m->fillPacket(msg, t);
+	JingleRtpSession *sess = m->sessionWithTransport(t);
+	if (!sess)
+		return EXIT_FAILURE;
+
+	m->sessionWithTransport(t)->fillRtpPacket(msg);
 	
-	//Fill the mblk_t structure.
-	
-	//msg()
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 int JingleRtpSession::sendRtcpTo(RtpTransport *t, mblk_t *msg , int flags, const struct sockaddr *to, socklen_t tolen)
@@ -245,7 +236,7 @@ int JingleRtpSession::sendRtcpTo(RtpTransport *t, mblk_t *msg , int flags, const
 	Q_UNUSED(to)
 	Q_UNUSED(tolen)
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 int JingleRtpSession::recvRtcpFrom(RtpTransport *t, mblk_t *msg, int flags, struct sockaddr *from, socklen_t *fromlen)
@@ -259,66 +250,29 @@ int JingleRtpSession::recvRtcpFrom(RtpTransport *t, mblk_t *msg, int flags, stru
 	return 0;
 }
 
-/*void JingleRtpSession::setRtpSocket(QAbstractSocket* socket, int rtcpPort)
+void JingleRtpSession::fillRtpPacket(mblk_t *p)
 {
-	kDebug() << (socket->isValid() ? "Socket ready" : "Socket not ready");
-	
-	//rtpSocket = (QUdpSocket*) socket;
-	
-	// WARNING, this is a workaround, that's not clean code.
-	// What I do here is that I create a new socket for RTP with information which are in the old one.
-	// that means we have to re-bind or re-connect it.
-	// As long as we are here, the connection is possible with that socket and
-	// UDP policy does not prevent me to do that.
-	
-	rtpSocket = new QUdpSocket(this); //Part of the workaround
-	rtcpSocket = new QUdpSocket(this);
-	
-	if (m_direction == In)
-	{
-		int localPort = socket->localPort();
-		delete socket;
-		rtpSocket->bind(localPort); // ^ Part of the workaround
+	RtpPacket *firstPacket = 0;
+	if (!rtpPacketsIn.isEmpty())
+		firstPacket = rtpPacketsIn.takeFirst();
+	else
+		return; //FIXME:what do we do if there isn't any data incoming ?
 
-		kDebug() << "Given socket is bound to :" << rtpSocket->localPort();
-		kDebug() << "RTCP socket will be bound to :" << (rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
-		connect(rtpSocket, SIGNAL(readyRead()), this, SLOT(rtpDataReady()));
-		connect(rtcpSocket, SIGNAL(readyRead()), this, SLOT(rtcpDataReady()));
-		rtcpSocket->bind(rtpSocket->localAddress(), rtcpPort == 0 ? rtpSocket->localPort() + 1 : rtcpPort);
-	}
-	else if (m_direction == Out)
-	{
-		int peerPort = socket->peerPort();
-		QHostAddress peerAddress = socket->peerAddress();
-		delete socket;
-		rtpSocket->connectToHost(peerAddress, peerPort); //Part of the workaround
+	mblk_t *temp = rtp_session_create_packet_with_data(rtpSession(),
+							   (uint8_t*) firstPacket->data(),
+							   firstPacket->size(),
+							   /*void (*freefn)(void*)*/ NULL);
 
-		kDebug() << "Given socket is connected to" << rtpSocket->peerAddress() << ":" << rtpSocket->peerPort();
-		kDebug() << "RTCP socket will be connected to" << rtpSocket->peerAddress() << ":" << (rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort);
-		rtcpSocket->connectToHost(rtpSocket->peerAddress(), rtcpPort == 0 ? rtpSocket->peerPort() + 1 : rtcpPort, QIODevice::ReadWrite);
-	}
+	p->b_rptr = temp->b_rptr;
+	p->b_wptr = temp->b_wptr;
+	//FIXME:what about using memcpy here ?
+}
 
-	rtp_session_set_sockets(m_rtpSession, rtpSocket->socketDescriptor(), rtcpSocket->socketDescriptor());
-}*/
-
-/*void JingleRtpSession::send(const QByteArray& outData)
-{
-	mblk_t *packet = rtp_session_create_packet_with_data(m_rtpSession, (uint8_t*)outData.data(), outData.size(), NULL); //the free function is managed by the bytesWritten signal
-	
-	int ts = m_mediaSession->timeStamp(); //FIXME:Timestamp as argument !
-	int size = rtp_session_sendm_with_ts(m_rtpSession, packet, ts);
-	if (size == -1)
-	{
-		kDebug() << "Error sending packet";
-		return;
-	}
-}*/
-
-QByteArray JingleRtpSession::getMediaDataReady(int ts)
+/*QByteArray JingleRtpSession::getMediaDataReady(int ts)
 {
 	Q_UNUSED(ts)
 	//FIXME : when should that code be run ?
-/*	void *buf = new uint8_t[bufSize];
+	void *buf = new uint8_t[bufSize];
 	int more;
 	
 	int ret = rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t*>(buf), bufSize, ts, &more);
@@ -343,14 +297,14 @@ QByteArray JingleRtpSession::getMediaDataReady(int ts)
 	b.resize(rtpSocket->pendingDatagramSize());
 	rtpSocket->readDatagram(b.data(), rtpSocket->pendingDatagramSize());
 	
-	emit readyRead(inData);*/
+	emit readyRead(inData);
 	return QByteArray();
-}
+}*/
 
-void JingleRtpSession::rtcpDataReady()
+/*void JingleRtpSession::rtcpDataReady()
 {
 	//kDebug() << "Received :" << rtcpSocket->readAll();
-}
+}*/
 
 void JingleRtpSession::setPayload(const QDomElement& payload)
 {
@@ -396,11 +350,6 @@ void JingleRtpSession::pack(const QByteArray& data, int ts)
 void JingleRtpSession::unpack(const QByteArray& data)
 {
 	rtpPacketsIn << new RtpPacket(data);
-	
-	/* Here, we must create a mblk_t packet and then, put it in a queue
-	 * which will be emptied by JingleRtpSession::recvRtpFrom()
-	 * (that method is called by oRTP).
-	 */
 }
 
 QByteArray JingleRtpSession::getPacked()
@@ -415,7 +364,7 @@ QByteArray JingleRtpSession::getUnpacked()
 
 void JingleRtpSession::appendRtpPacketOut(RtpPacket* p)
 {
-	emit packetOutReady(p);
+	emit packedReady(p);
 }
 
 RtpTransport* JingleRtpSession::rtpTransport() const

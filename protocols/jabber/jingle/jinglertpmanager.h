@@ -27,7 +27,7 @@ public :
 		Unknown
 	};
 	
-	char* getData();
+	char* data();
 	size_t size();
 	void setType(RtpType type);
 	RtpType type() const;
@@ -39,38 +39,36 @@ private:
 
 };
 
+class JingleRtpSession;
+
 class JingleRtpManager : public QObject
 {
 	Q_OBJECT
-	class JingleRtpSession;
-	friend JingleRtpSession;
+	friend class JingleRtpSession;
 public:
 	JingleRtpManager();
 	~JingleRtpManager();
 
 	void appendRtpPacketOut(RtpPacket*, RtpTransport*);
-	void fillPacket(RtpPacket*, RtpTransport*);
 	void appendSession(JingleRtpSession*);
-
 	static JingleRtpManager* manager();
+
+	/*
+	 * Set media data which will be packed and sent when needed by sessions.
+	 */
+	void setMediaData(const QByteArray&);
 
 private:
 	QList<JingleRtpSession*> m_sessions;
-	
+	QByteArray m_mediaDataIn;	
 	JingleRtpSession* sessionWithTransport(RtpTransport*);
 };
 
 
-/*
- * TODO:The way that works is the worst !
- * 	It should be a wrapping class.
- * 	e.g. : QByteArray pack(const QByteArray& data); returns an RTP packet containing data.
- * 	e.g. : QByteArray unpack(const QByteArray& data); returns media data that is contained in the RTP packet (data).
- */
-
 class JingleRtpSession : public QObject
 {
 	Q_OBJECT
+	friend class JingleRtpManager;
 public:
 	/*
 	 * Directions :
@@ -93,7 +91,7 @@ public:
 	 * Sets the payload type used for this session.
 	 * The argument is the payload type in a payload-type XML tag.
 	 */
-	void setPayload(const QDomElement& payload);
+	void setPayload(const QDomElement& payload); //FIXME:should not be a QDomElement anymore.
 
 	/**
 	 * Packs the data into an RTP packet ready to be sent.
@@ -103,13 +101,6 @@ public:
 	 */
 	void pack(const QByteArray&, int ts);
 	void unpack(const QByteArray&);
-
-	QByteArray getPacked();
-	QByteArray getUnpacked();
-
-	QByteArray getMediaDataReady(int); //FIXME:Should be getUnpacked
-
-	void rtcpDataReady();
 
 	RtpTransport* rtpTransport() const;
 	RtpTransport* rtcpTransport() const;
@@ -126,13 +117,16 @@ private slots:
 	//void readyRead(int);
 	//void rtcpDataReady(); // Maybe not used.
 
+public slots:
+	QByteArray getPacked();
+	QByteArray getUnpacked();
+	
 signals:
-	void dataSent();
+	//void dataSent();
+	//void packetOutReady(RtpPacket*);
 
-	void packetOutReady(RtpPacket*);
-
-	void packed();
-	void unpacked();
+	void packedReady(RtpPacket*);
+	void unpackedReady();
 
 private:
 	RtpSession *m_rtpSession;
@@ -159,6 +153,8 @@ private:
 	static int recvRtpFrom(RtpTransport *t, mblk_t *msg, int flags, struct sockaddr *from, socklen_t *fromlen);
 	static int sendRtcpTo(RtpTransport *t, mblk_t *msg, int flags, const struct sockaddr *to, socklen_t tolen);
 	static int recvRtcpFrom(RtpTransport *t, mblk_t *msg, int flags, struct sockaddr *from, socklen_t *fromlen);
+	
+	void fillRtpPacket(mblk_t*);
 };
 
 #endif //JINGLE_RTP_MANAGER
