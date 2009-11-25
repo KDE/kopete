@@ -56,9 +56,14 @@ RtpPacket::~RtpPacket()
 	
 }
 
-char* RtpPacket::data()
+char* RtpPacket::constData() const
 {
 	return m_data;
+}
+
+QByteArray RtpPacket::data()
+{
+	return QByteArray(m_data, m_size);
 }
 
 size_t RtpPacket::size()
@@ -95,26 +100,6 @@ JingleRtpManager *JingleRtpManager::manager()
 		man = new JingleRtpManager();
 
 	return man;
-}
-
-void JingleRtpManager::appendRtpPacketOut(RtpPacket* packet, RtpTransport* transport)
-{
-	foreach(JingleRtpSession *s, m_sessions)
-	{
-		if (transport == s->rtpTransport())
-		{
-			packet->setType(RtpPacket::Rtp);
-			s->appendRtpPacketOut(packet);
-			break;
-		}
-		
-		if (transport == s->rtcpTransport())
-		{
-			packet->setType(RtpPacket::Rtcp);
-			s->appendRtpPacketOut(packet);
-			break;
-		}
-	}
 }
 
 void JingleRtpManager::appendSession(JingleRtpSession *sess)
@@ -194,13 +179,17 @@ int JingleRtpSession::sendRtpTo(RtpTransport *t, mblk_t *msg , int flags, const 
 	 */
 
 	//FIXME:Do we have to empty the packet ?
-	
+
 	JingleRtpManager *manager = JingleRtpManager::manager();
 	if (!manager)
 		return EXIT_FAILURE;
-	
-	manager->appendRtpPacketOut(new RtpPacket(msg), t);
-	
+
+	JingleRtpSession *sess = manager->sessionWithTransport(t);
+	if (!sess)
+		return EXIT_FAILURE;
+
+	sess->appendRtpPacketOut(new RtpPacket(msg)); //FIXME:should be done in here, no ?
+
 	return EXIT_SUCCESS;
 }
 
@@ -223,7 +212,9 @@ int JingleRtpSession::recvRtpFrom(RtpTransport *t, mblk_t *msg, int flags, struc
 	if (!sess)
 		return EXIT_FAILURE;
 
-	m->sessionWithTransport(t)->fillRtpPacket(msg);
+	sess->fillRtpPacket(msg);
+
+	sess->unpackedReady();
 	
 	return EXIT_SUCCESS;
 }
@@ -259,7 +250,7 @@ void JingleRtpSession::fillRtpPacket(mblk_t *p)
 		return; //FIXME:what do we do if there isn't any data incoming ?
 
 	mblk_t *temp = rtp_session_create_packet_with_data(rtpSession(),
-							   (uint8_t*) firstPacket->data(),
+							   (uint8_t*) firstPacket->constData(),
 							   firstPacket->size(),
 							   /*void (*freefn)(void*)*/ NULL);
 
@@ -267,44 +258,6 @@ void JingleRtpSession::fillRtpPacket(mblk_t *p)
 	p->b_wptr = temp->b_wptr;
 	//FIXME:what about using memcpy here ?
 }
-
-/*QByteArray JingleRtpSession::getMediaDataReady(int ts)
-{
-	Q_UNUSED(ts)
-	//FIXME : when should that code be run ?
-	void *buf = new uint8_t[bufSize];
-	int more;
-	
-	int ret = rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t*>(buf), bufSize, ts, &more);
-	if (ret == 0)
-	{
-		kDebug() << "Error receiving Rtp packet. (Most likely this timestamp has expired)";
-		if (more != 0)
-			kDebug() << "Still some data to read";
-
-		kDebug() << "Purging the socket.";
-		QByteArray b;
-		b.resize(rtpSocket->pendingDatagramSize());
-		rtpSocket->readDatagram(b.data(), rtpSocket->pendingDatagramSize());
-		return;
-	}
-
-	inData.resize(bufSize);
-	inData = static_cast<char*>(buf);
-	
-	// Seems we should empty the socket...
-	QByteArray b;
-	b.resize(rtpSocket->pendingDatagramSize());
-	rtpSocket->readDatagram(b.data(), rtpSocket->pendingDatagramSize());
-	
-	emit readyRead(inData);
-	return QByteArray();
-}*/
-
-/*void JingleRtpSession::rtcpDataReady()
-{
-	//kDebug() << "Received :" << rtcpSocket->readAll();
-}*/
 
 void JingleRtpSession::setPayload(const QDomElement& payload)
 {
@@ -318,11 +271,6 @@ void JingleRtpSession::setPayload(const QDomElement& payload)
 	rtp_session_set_profile(m_rtpSession, profile);
 	rtp_session_set_payload_type(m_rtpSession, 96);
 }
-
-/*void JingleRtpSession::setMediaSession(MediaSession *sess)
-{
-	m_mediaSession = sess;
-}*/
 
 void JingleRtpSession::pack(const QByteArray& data, int ts)
 {
@@ -354,17 +302,32 @@ void JingleRtpSession::unpack(const QByteArray& data)
 
 QByteArray JingleRtpSession::getPacked()
 {
-	return QByteArray();
+	return rtpPacketOut->data();
 }
 
-QByteArray JingleRtpSession::getUnpacked()
+QByteArray JingleRtpSession::getUnpacked(int ts)
 {
-	return QByteArray();
+	void *buf = new uint8_t[bufSize];
+	int more;
+	
+	int ret = rtp_session_recv_with_ts(m_rtpSession, static_cast<uint8_t*>(buf), bufSize, ts, &more);
+	if (ret == 0)
+	{
+		kDebug() << "Error receiving Rtp packet. (Most likely this timestamp has expired)";
+		if (more != 0)
+			kDebug() << "Still some data to read";
+
+		return "";
+	}
+
+	return QByteArray(static_cast<char*>(buf), bufSize);
 }
 
 void JingleRtpSession::appendRtpPacketOut(RtpPacket* p)
 {
-	emit packedReady(p);
+	//Doesn't append actually, when data is not taken it's lost.
+	rtpPacketOut = p;
+	emit packedReady();
 }
 
 RtpTransport* JingleRtpSession::rtpTransport() const

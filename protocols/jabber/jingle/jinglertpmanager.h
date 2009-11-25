@@ -27,7 +27,8 @@ public :
 		Unknown
 	};
 	
-	char* data();
+	char* constData() const;
+	QByteArray data();
 	size_t size();
 	void setType(RtpType type);
 	RtpType type() const;
@@ -49,7 +50,6 @@ public:
 	JingleRtpManager();
 	~JingleRtpManager();
 
-	void appendRtpPacketOut(RtpPacket*, RtpTransport*);
 	void appendSession(JingleRtpSession*);
 	static JingleRtpManager* manager();
 
@@ -105,8 +105,6 @@ public:
 	RtpTransport* rtpTransport() const;
 	RtpTransport* rtcpTransport() const;
 
-	void appendRtpPacketOut(RtpPacket*);
-
 private slots:
 	/*
 	 * Called when rtp or rtcp data is ready to be read and sent on the network.
@@ -119,13 +117,13 @@ private slots:
 
 public slots:
 	QByteArray getPacked();
-	QByteArray getUnpacked();
+	QByteArray getUnpacked(int ts);
 	
 signals:
 	//void dataSent();
 	//void packetOutReady(RtpPacket*);
 
-	void packedReady(RtpPacket*);
+	void packedReady();
 	void unpackedReady();
 
 private:
@@ -155,6 +153,9 @@ private:
 	static int recvRtcpFrom(RtpTransport *t, mblk_t *msg, int flags, struct sockaddr *from, socklen_t *fromlen);
 	
 	void fillRtpPacket(mblk_t*);
+	void appendRtpPacketOut(RtpPacket*);
+
+	RtpPacket *rtpPacketOut;
 };
 
 #endif //JINGLE_RTP_MANAGER
