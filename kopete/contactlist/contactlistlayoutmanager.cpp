@@ -55,7 +55,7 @@ LayoutManager * LayoutManager::instance()
 LayoutManager::LayoutManager()
 	: QObject()
 {
-	m_tokens << ContactListTokenConfig( -1, "Placeholder", i18n("Placeholder"), "" );
+	m_tokens << ContactListTokenConfig( -1, "Placeholder", i18n("Placeholder"), "transform-move" );
 	m_tokens << ContactListTokenConfig( Qt::DisplayRole, "DisplayName", i18n("Display Name"), "user-identity" );
 	m_tokens << ContactListTokenConfig( Kopete::Items::StatusTitleRole, "StatusTitle", i18n("Status Title"), "im-status-message-edit" );
 	m_tokens << ContactListTokenConfig( Kopete::Items::StatusMessageRole, "StatusMessage", i18n("Status Message"), "im-status-message-edit" );
@@ -211,7 +211,7 @@ LayoutItemConfig LayoutManager::parseItemConfig( const QDomElement &elem )
 					}
 				}
 			}
-			
+
 
 			QString prefix = elementNode.toElement().attribute( "prefix", QString() );
 			QString sufix = elementNode.toElement().attribute( "suffix", QString() );
@@ -222,7 +222,7 @@ LayoutItemConfig LayoutManager::parseItemConfig( const QDomElement &elem )
 			bool optimalSize = ( elementNode.toElement().attribute( "optimalSize", "false" ).compare( "true", Qt::CaseInsensitive ) == 0 );
 			QString alignmentString = elementNode.toElement().attribute( "alignment", "left" );
 			Qt::Alignment alignment;
-			
+
 
 			if ( alignmentString.compare( "left", Qt::CaseInsensitive ) == 0 )
 				alignment = Qt::AlignLeft | Qt::AlignVCenter;
@@ -280,7 +280,7 @@ bool LayoutManager::addUserLayout( const QString &name, ContactListLayout layout
 	QTextStream out( &file );
 	out << doc.toString();
 	file.close();
-	
+
 	m_layouts.insert( name, layout );
 	emit( layoutListChanged() );
 	return true;
@@ -318,7 +318,7 @@ QDomElement LayoutManager::createItemElement( QDomDocument doc, const QString &n
 				alignmentString = "right";
 			else
 				alignmentString = "center";
-			
+
 			elementElement.setAttribute ( "alignment", alignmentString );
 
 			rowElement.appendChild( elementElement );
