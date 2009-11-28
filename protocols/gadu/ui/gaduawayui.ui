@@ -68,7 +68,7 @@ Choosing Offline status will disconnect you, with given description.</string>
              <string>O&amp;nline</string>
             </property>
             <attribute name="buttonGroup">
-             <string>buttonGroup_</string>
+             <string comment="KDE::DoNotExtract">buttonGroup_</string>
             </attribute>
            </widget>
           </item>
@@ -84,7 +84,7 @@ Choosing Offline status will disconnect you, with given description.</string>
              <string>&amp;Busy</string>
             </property>
             <attribute name="buttonGroup">
-             <string>buttonGroup_</string>
+             <string comment="KDE::DoNotExtract">buttonGroup_</string>
             </attribute>
            </widget>
           </item>
@@ -100,7 +100,7 @@ Choosing Offline status will disconnect you, with given description.</string>
              <string>&amp;Invisible</string>
             </property>
             <attribute name="buttonGroup">
-             <string>buttonGroup_</string>
+             <string comment="KDE::DoNotExtract">buttonGroup_</string>
             </attribute>
            </widget>
           </item>
@@ -116,7 +116,7 @@ Choosing Offline status will disconnect you, with given description.</string>
              <string>O&amp;ffline</string>
             </property>
             <attribute name="buttonGroup">
-             <string>buttonGroup_</string>
+             <string comment="KDE::DoNotExtract">buttonGroup_</string>
             </attribute>
            </widget>
           </item>
