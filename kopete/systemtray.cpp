@@ -214,16 +214,19 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		}
 		case Kopete::OnlineStatus::Invisible:
 		{
+			setIconByName(mKopeteIcon);
 			setOverlayIconByName("user-invisible");
 			break;
 		}
 		case Kopete::OnlineStatus::Away:
 		{
+			setIconByName(mKopeteIcon);
 			setOverlayIconByName("user-away");
 			break;
 		}
 		case Kopete::OnlineStatus::Busy:
 		{
+			setIconByName(mKopeteIcon);
 			setOverlayIconByName("user-busy");
 			break;
 		}
