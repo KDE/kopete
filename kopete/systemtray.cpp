@@ -54,7 +54,6 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	setStatus(Active);
 
 	mIsBlinkIcon = false;
-	mIsBlinking = false;
 	mBlinkTimer = new QTimer(this);
 	mBlinkTimer->setObjectName("mBlinkTimer");
 
@@ -129,7 +128,6 @@ void KopeteSystemTray::startBlink( const QString &icon )
 		mBlinkTimer->stop();
 	}
 	mIsBlinkIcon = true;
-	mIsBlinking = true;
 	mBlinkTimer->setSingleShot( false );
 	mBlinkTimer->start( 1000 );
 }
@@ -147,7 +145,6 @@ void KopeteSystemTray::stopBlink()
 		mBlinkTimer->stop();
 
 	mIsBlinkIcon = false;
-	mIsBlinking = false;
 	//setPixmap( mKopeteIcon );
 	slotReevaluateAccountStates();
 }
@@ -194,7 +191,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 {
 	// If there is a pending message, we don't need to refresh the system tray now.
 	// This function will even be called when the animation will stop.
-	if ( mIsBlinking )
+	if ( mBlinkTimer->isActive() )
 		return;
 
 	Kopete::OnlineStatus highestStatus;
@@ -238,6 +235,13 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		}
 	}
 }
+
+
+bool KopeteSystemTray::isBlinking() const
+{
+	return mBlinkTimer->isActive() || (status() == NeedsAttention);
+}
+
 
 #include "systemtray.moc"
 // vim: set noet ts=4 sts=4 sw=4:

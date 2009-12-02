@@ -50,7 +50,7 @@ public:
 	void startBlink();
 
 	void stopBlink();
-	bool isBlinking() const { return mIsBlinking || (status() == NeedsAttention); }
+	bool isBlinking() const;
 
 Q_SIGNALS:
 	void aboutToShowMenu(KMenu *am);
@@ -73,7 +73,6 @@ private:
 	QString mBlinkIcon;
 
 	bool mIsBlinkIcon;
-	bool mIsBlinking;
 
 	static KopeteSystemTray* s_systemTray;
 
