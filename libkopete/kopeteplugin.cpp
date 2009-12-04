@@ -65,6 +65,16 @@ KPluginInfo Plugin::pluginInfo() const
 	return PluginManager::self()->pluginInfo( this );
 }
 
+bool Plugin::showCloseWindowMessage()
+{
+	return false;
+}
+
+bool Plugin::shouldExitOnclose()
+{
+	return true;
+}
+
 void Plugin::aboutToUnload()
 {
 	// Just make the unload synchronous by default

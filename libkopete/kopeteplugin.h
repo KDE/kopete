@@ -167,6 +167,34 @@ public:
 	 */
 	virtual void aboutToUnload();
 
+	/**
+	 * Called when user is about to close the main-window.  If your plugin is
+	 * going to return false to shouldExitOnclose(), then you can show a
+	 * message here.
+	 *
+	 * Default implementation returns false.
+	 *
+	 * @return true if a message was shown (so that the user is not spammed
+	 * with further messages), false otherwise
+	 *
+	 * Not implemented as a virtual method to keep binary compatibility. You
+	 * *must* mark the method as Q_INVOKABLE for it to be called.
+	 */
+	Q_INVOKABLE bool showCloseWindowMessage();
+
+	/**
+	 * Called when the application is about to exit.
+	 * Return false if you want to prevent exit. If you do so you may want to
+	 * display an explanation message by reimplementing
+	 * showCloseWindowMessage().
+	 *
+	 * Default implementation returns true.
+	 *
+	 * Not implemented as a virtual method to keep binary compatibility. You
+	 * *must* mark the method as Q_INVOKABLE for it to be called.
+	 */
+	Q_INVOKABLE bool shouldExitOnclose();
+
 signals:
 	/**
 	 * Notify that the settings of a plugin were changed.

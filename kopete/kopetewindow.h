@@ -215,6 +215,12 @@ private:
 	virtual bool queryClose();
 	virtual bool queryExit();
 
+	/**
+	 * Returns true if the current configuration allows exiting the application
+	 * when the window is closed
+	 */
+	bool shouldExitOnClose() const;
+
 private:
 	class Private;
 	Private * const d;

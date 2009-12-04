@@ -802,10 +802,24 @@ void KopeteWindow::slotDisconnectAll()
 bool KopeteWindow::queryClose()
 {
 	KopeteApplication *app = static_cast<KopeteApplication *> ( kapp );
-	if ( !app->sessionSaving()	// if we are just closing but not shutting down
-	        && !app->isShuttingDown()
-	        && Kopete::BehaviorSettings::self()->showSystemTray()
-	        && !isHidden() )
+	if ( app->sessionSaving() || app->isShuttingDown() ) {
+		// we are shutting down, don't show any message
+		return true;
+	}
+
+	Kopete::PluginList list = Kopete::PluginManager::self()->loadedPlugins();
+	foreach ( Kopete::Plugin *plugin, list ) {
+		bool shown = false;
+		QMetaObject::invokeMethod(plugin, "showCloseWindowMessage", Qt::DirectConnection, Q_RETURN_ARG(bool, shown));
+		if ( shown ) {
+			// A message box has just been shown. Stop now, we do not want
+			// to spam the user with multiple message boxes.
+			return true;
+		}
+	}
+
+	if ( Kopete::BehaviorSettings::self()->showSystemTray()
+	     && !isHidden() )
 		// I would make this a KMessageBox::queuedMessageBox but there doesn't seem to be don'tShowAgain support for those
 		KMessageBox::information ( this,
 		                           i18n ( "<qt>Closing the main window will keep Kopete running in the "
@@ -817,13 +831,28 @@ bool KopeteWindow::queryClose()
 	return true;
 }
 
+bool KopeteWindow::shouldExitOnClose() const
+{
+	Kopete::PluginList list = Kopete::PluginManager::self()->loadedPlugins();
+	foreach ( Kopete::Plugin *plugin, list ) {
+		bool ok = true;
+		QMetaObject::invokeMethod(plugin, "shouldExitOnClose", Qt::DirectConnection, Q_RETURN_ARG(bool, ok));
+		if ( !ok ) {
+			kDebug ( 14000 ) << "plugin" << plugin->displayName() << "does not want to exit";
+			return false;
+		}
+	}
+	// If all plugins are OK, consider ourself OK only if there is no tray icon
+	return !Kopete::BehaviorSettings::self()->showSystemTray();
+}
+
 bool KopeteWindow::queryExit()
 {
 	KopeteApplication *app = static_cast<KopeteApplication *> ( kapp );
 	if ( app->sessionSaving()
 	        || app->isShuttingDown() /* only set if KopeteApplication::quitKopete() or
 									KopeteApplication::commitData() called */
-	        || !Kopete::BehaviorSettings::self()->showSystemTray() /* also close if our tray icon is hidden! */
+	        || shouldExitOnClose()
 	        || isHidden() )
 	{
 		saveOptions();
@@ -837,10 +866,10 @@ bool KopeteWindow::queryExit()
 
 void KopeteWindow::closeEvent ( QCloseEvent *e )
 {
-	// if there's a system tray applet and we are not shutting down then just do what needs to be done if a
+	// if we are not ok to exit on close and we are not shutting down then just do what needs to be done if a
 	// window is closed.
 	KopeteApplication *app = static_cast<KopeteApplication *> ( kapp );
-	if ( Kopete::BehaviorSettings::self()->showSystemTray() && !app->isShuttingDown() && !app->sessionSaving() ) {
+	if ( !shouldExitOnClose() && !app->isShuttingDown() && !app->sessionSaving() ) {
 		// BEGIN of code borrowed from KMainWindow::closeEvent
 		// Save settings if auto-save is enabled, and settings have changed
 		if ( settingsDirty() && autoSaveSettings() )
