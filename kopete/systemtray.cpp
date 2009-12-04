@@ -84,7 +84,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	connect( quit, SIGNAL( activated() ), myParent, SLOT( slotQuit() ) );
 
 	setIconByName(mKopeteIcon);
-    setAttentionMovie(KIconLoader::global()->loadMovie( QLatin1String( "newmessage" ), KIconLoader::Panel ));
+    setAttentionMovieByName( QLatin1String( "newmessage" ) );
 	slotReevaluateAccountStates();
 	slotConfigChanged();
 }
