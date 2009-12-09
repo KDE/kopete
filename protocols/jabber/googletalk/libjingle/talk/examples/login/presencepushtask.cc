@@ -131,12 +131,12 @@ PresencePushTask::ProcessStart() {
       if (node == GOOGLE_CLIENT_NODE || node == GMAIL_CLIENT_NODE) {
         s.set_is_google_client(true);
         s.set_version(ver);
-        if (ListContainsToken(exts, "voice-v1")) {
-          s.set_phone_capability(true);
-        }
-	if (ListContainsToken(exts, "share-v1")) {
-	 s.set_fileshare_capability(true);
-	}
+      }
+      if (ListContainsToken(exts, "voice-v1")) {
+        s.set_phone_capability(true);
+      }
+      if (ListContainsToken(exts, "share-v1")) {
+        s.set_fileshare_capability(true);
       }
     }
 
