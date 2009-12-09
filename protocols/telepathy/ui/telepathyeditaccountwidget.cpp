@@ -372,6 +372,12 @@ void TelepathyEditAccountWidget::setupEditAccountUi()
     d->mainLayout->addWidget(d->tabWidget);
     resize(400, 480);
 
+    if(!account()->account())
+    {
+        kDebug() << "Account not exist!";
+	return;
+    }
+
     // Get the protocol's parameters.
     Tp::ProtocolInfo *protocolInfo = account()->account()->protocolInfo();
     Tp::ProtocolParameterList protocolParameters = protocolInfo->parameters();

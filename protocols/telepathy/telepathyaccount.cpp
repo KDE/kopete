@@ -40,6 +40,7 @@
 #include <kactionmenu.h>
 #include <kinputdialog.h>
 #include <kmimetype.h>
+#include <KMessageBox>
 
 #include <TelepathyQt4/Types>
 #include <TelepathyQt4/Feature>
@@ -525,6 +526,11 @@ void TelepathyAccount::newTelepathyAccountCreated(Tp::PendingOperation *operatio
         kWarning() << "Creating new account failed:"
                                        << operation->errorName()
                                        << operation->errorMessage();
+
+        KMessageBox::error(NULL,
+	    i18n("Creating account failed. Make sure your Mission Controll keeps running."),
+            i18n("Error - Creating account"));
+
         return;
     }
 
