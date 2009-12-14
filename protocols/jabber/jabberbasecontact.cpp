@@ -335,7 +335,7 @@ QString JabberBaseContact::fullAddress ()
 
 	if ( jid.resource().isEmpty () )
 	{
-		return jid.withResource ( account()->resourcePool()->bestResource ( jid ).name () );
+		jid.withResource ( account()->resourcePool()->bestResource ( jid ).name () );
 	}
 
 	return jid.full ();
