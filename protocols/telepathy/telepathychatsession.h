@@ -34,6 +34,8 @@ namespace Kopete {
     class Message;
 }
 
+class KAction;
+
 namespace Tp {
     class PendingOperation;
 }
@@ -46,7 +48,7 @@ public:
     TelepathyChatSession(const Kopete::Contact *user, Kopete::ContactPtrList others, Kopete::Protocol *protocol);
     virtual ~TelepathyChatSession();
 
-    void createTextChannel(Tp::ContactPtr);
+    void createTextChannel(Tp::ContactPtr contact);
 
     Tp::ChannelRequestPtr channelRequest();
     Tp::PendingChannelRequest *pendingChannelRequest();
@@ -65,11 +67,15 @@ private slots:
                      const QString &sentMessageToken);
     void messageReceived(const Tp::ReceivedMessage &message);
 
+	void onContactPresenceChanged(const QString &, uint, const QString &);
+
 private:
     Tp::ContactPtr m_contact;
     Tp::ChannelRequestPtr m_channelRequest;
     Tp::TextChannelPtr m_textChannel;
     Tp::PendingChannelRequest *m_pendingChannelRequest;
+
+	KAction *shareMyDesktop;
 };
 
 

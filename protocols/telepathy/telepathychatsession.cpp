@@ -48,7 +48,7 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
 
     setComponentData (protocol->componentData ());
 
-    KAction *shareMyDesktop = new KAction(KIcon("krfb"), i18n("S&hare My Desktop"), this);
+    shareMyDesktop = new KAction(KIcon("krfb"), i18n("S&hare My Desktop"), this);
     actionCollection()->addAction("shareMyDesktop", shareMyDesktop);
     shareMyDesktop->setShortcut(KShortcut(Qt::CTRL + Qt::Key_D));
     QObject::connect(shareMyDesktop,
@@ -79,6 +79,8 @@ TelepathyChatSession::TelepathyChatSession(const Kopete::Contact *user, Kopete::
     // Get the internal Tp::Contact and save it as a member variable.
     m_contact = tpContact->internalContact();
 
+    connect(m_contact.data(), SIGNAL(simplePresenceChanged(const QString &, uint, const QString &)),
+            this, SLOT(onContactPresenceChanged(const QString &, uint, const QString &)));
     // Only at this point do we allow the share-my-desktop button to be shown.
     setXMLFile ("telepathychatui.rc");
 }
@@ -264,6 +266,7 @@ Tp::PendingChannelRequest *TelepathyChatSession::pendingChannelRequest()
 
 void TelepathyChatSession::onShareMyDesktop()
 {
+    kDebug();
     QVariantMap req;
     req.insert(QLatin1String(TELEPATHY_INTERFACE_CHANNEL ".ChannelType"),
                TELEPATHY_INTERFACE_CHANNEL_TYPE_STREAM_TUBE);
@@ -283,6 +286,7 @@ void TelepathyChatSession::onShareMyDesktop()
 
 void TelepathyChatSession::onEnsureShareDesktop(Tp::PendingOperation *op)
 {
+    kDebug();
     if (op->isError()) {
         kWarning() << "Ensuring channel failed:"
                    << op->errorName()
@@ -299,6 +303,16 @@ void TelepathyChatSession::onEnsureShareDesktop(Tp::PendingOperation *op)
                                i18n("Error - Share My Desktop"));
         }
     }
+}
+
+void TelepathyChatSession::onContactPresenceChanged(const QString &, uint type, const QString &)
+{
+    kDebug();
+
+    if(!account()->isConnected() || type == Tp::ConnectionPresenceTypeOffline)
+        shareMyDesktop->setDisabled(true);
+    else if(!shareMyDesktop->isEnabled())
+        shareMyDesktop->setDisabled(false);
 }
 
 #include "telepathychatsession.moc"
