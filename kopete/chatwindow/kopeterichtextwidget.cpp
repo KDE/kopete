@@ -58,7 +58,7 @@ public:
     KopeteRichTextWidget *q;
     KActionCollection *actionCollection;
 
-    QKeySequence sendKeySequence;
+    QList<QKeySequence> sendKeySequenceList;
 
     const Kopete::Protocol::Capabilities protocolCaps;
 
@@ -445,19 +445,22 @@ bool KopeteRichTextWidget::event(QEvent *event)
         if (keyEvent)
         {
             QKeySequence keyEventSequance(keyEvent->modifiers() + keyEvent->key());
-            if (keyEventSequance.matches(d->sendKeySequence))
+            foreach(const QKeySequence& sendKeySequence, d->sendKeySequenceList)
             {
-                // Don't handle the shortcut for sending text in the textedit
-                return false;// QWidget::event(event);
+                if (keyEventSequance.matches(sendKeySequence))
+                {
+                    // Don't handle the shortcut for sending text in the textedit
+                    return false;// QWidget::event(event);
+                }
             }
         }
     }
     return KRichTextWidget::event(event);
 }
 
-void KopeteRichTextWidget::setSendKeySequence(QKeySequence keySequence)
+void KopeteRichTextWidget::setSendKeySequenceList(const QList<QKeySequence>& keySequenceList)
 {
-        d->sendKeySequence = keySequence;
+        d->sendKeySequenceList = keySequenceList;
 }
 
 void KopeteRichTextWidget::setDefaultPlainCharFormat(const QTextCharFormat& format)

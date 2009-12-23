@@ -354,7 +354,7 @@ void KopeteChatWindow::updateSendKeySequence()
 	if ( !sendMessage || !m_activeView )
 		return;
 
-	m_activeView->editPart()->textEdit()->setSendKeySequence( sendMessage->shortcut() );
+	m_activeView->editPart()->textEdit()->setSendKeySequenceList( sendMessage->shortcuts() );
 }
 
 void KopeteChatWindow::initActions(void)
