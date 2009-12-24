@@ -1957,6 +1957,7 @@ Name[zh_TW]=無法連線
 Comment=Kopete cannot connect to the service
 Comment[ca]=El Kopete no pot connectar al servei
 Comment[da]=Kopete kan ikke forbinde til tjenesten
+Comment[de]=Kopete kann zu diesem Dienst keine Verbindung herstellen
 Comment[en_GB]=Kopete cannot connect to the service
 Comment[es]=Kopete no puede conectar al servicio
 Comment[et]=Kopetel nurjus ühendumine teenusega
