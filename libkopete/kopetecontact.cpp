@@ -92,6 +92,8 @@ Contact::Contact( Account *account, const QString &contactId,
 
 	d->contactId = contactId;
 	d->metaContact = parent;
+	connect( d->metaContact, SIGNAL(destroyed(QObject*)), this, SLOT(slotMetaContactDestroyed(QObject*)) );
+
 	d->fileCapable = false;
 	d->account = account;
 	d->idleTime = 0;
@@ -354,6 +356,14 @@ void Contact::changeMetaContact()
 	moveDialog->deleteLater();
 }
 
+void Contact::slotMetaContactDestroyed( QObject* mc )
+{
+	if (mc != d->metaContact)
+		return;
+
+	d->metaContact = 0;
+}
+
 void Contact::setMetaContact( MetaContact *m )
 {
 	MetaContact *old = d->metaContact;
@@ -363,6 +373,7 @@ void Contact::setMetaContact( MetaContact *m )
 	if( old )
 	{
 		old->removeContact( this );
+		disconnect( old, SIGNAL(destroyed(QObject*)), this, SLOT(slotMetaContactDestroyed(QObject*)) );
 
 		if(old->contacts().isEmpty())
 		{
@@ -378,11 +389,12 @@ void Contact::setMetaContact( MetaContact *m )
 	}
 
 	d->metaContact = m;
+	setParent( m );
 
 	if( m )
 	{
 		m->addContact( this );
-		setParent( m );
+		connect( m, SIGNAL(destroyed(QObject*)), this, SLOT(slotMetaContactDestroyed(QObject*)) );
 		// it is necessary to call this write here, because MetaContact::addContact() does not differentiate
 		// between adding completely new contacts (which should be written to kabc) and restoring upon restart
 		// (where no write is needed).

@@ -468,6 +468,11 @@ private slots:
 	 * The account's isConnected has changed.
 	 */
 	void slotAccountIsConnectedChanged();
+
+	/**
+	 * slot called when the metaContact was deleted.
+	 */
+	void slotMetaContactDestroyed( QObject* mc );
 signals:
 	/**
 	 * The contact's online status changed
