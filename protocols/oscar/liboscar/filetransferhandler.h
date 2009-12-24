@@ -17,6 +17,7 @@
 #define FILETRANSFERHANDLER_H
 
 #include <QtCore/QObject>
+#include <QtCore/QPointer>
 #include "oscartypes.h"
 
 #include "liboscar_export.h"
@@ -28,6 +29,7 @@ class LIBOSCAR_EXPORT FileTransferHandler : public QObject
 	Q_OBJECT
 public:
 	FileTransferHandler( FileTransferTask* fileTransferTask );
+	~FileTransferHandler();
 
 	void send();
 
@@ -53,8 +55,14 @@ Q_SIGNALS:
 	void transferNextFile( const QString& fileName, unsigned int fileSize );
 	void transferFileProcessed(unsigned int bytesSent, unsigned int fileSize );
 
+private Q_SLOTS:
+	void emitTransferCancelled();
+	void emitTransferError( int errorCode, const QString &error );
+	void emitTransferFinished();
+	
 private:
-	FileTransferTask* mFileTransferTask;
+	QPointer<FileTransferTask> mFileTransferTask;
+	bool mFileTransferDone;
 };
 
 #endif

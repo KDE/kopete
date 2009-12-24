@@ -513,11 +513,7 @@ void OscarAccount::incomingFileTransfer( FileTransferHandler* ftHandler )
 
 void OscarAccount::fileTransferDestroyed( QObject* object )
 {
-	FileTransferHandler* ftHandler = qobject_cast<FileTransferHandler*>(object);
-	if ( !ftHandler )
-		return;
-
-	uint key = d->fileTransferHandlerMap.key( ftHandler, 0 );
+	uint key = d->fileTransferHandlerMap.key( (FileTransferHandler*)object, 0 );
 	if ( key > 0 )
 		d->fileTransferHandlerMap.remove( key );
 	else

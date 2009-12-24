@@ -492,7 +492,7 @@ void FileTransferTask::fileFinishedOft( const QString& /*fileName*/, unsigned in
 
 void FileTransferTask::errorOft( int /*errorCode*/, const QString &error )
 {
-	emit transferError( KIO::ERR_USER_CANCELED, error );
+	emit transferError( KIO::ERR_CONNECTION_BROKEN, error );
 	doCancel();
 }
 

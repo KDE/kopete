@@ -124,7 +124,7 @@ void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
 
 	connect( this, SIGNAL( result( KJob* ) ), SLOT( slotResultEmitted() ) );
 
-	ui()->setAutoErrorHandlingEnabled( true );
+	ui()->setAutoErrorHandlingEnabled( false );
 }
 
 Kopete::Transfer::~Transfer()
@@ -249,6 +249,7 @@ void Kopete::Transfer::timerEvent( QTimerEvent *event )
 void Kopete::Transfer::slotComplete()
 {
 	stopTransferRateTimer();
+	setError( KJob::NoError );
 	showHtmlMessage( i18n("File transfer %1 completed.", fileForMessage() ) );
 	emitResult();
 }
@@ -282,9 +283,13 @@ void Kopete::Transfer::slotContactDestroyed()
 void Kopete::Transfer::slotCancelled()
 {
 	stopTransferRateTimer();
-	showHtmlMessage( i18n("File transfer %1 cancelled.", fileForMessage() ) );
-	emitResult();
-	//slotError( KIO::ERR_ABORTED, i18n("File transfer cancelled.") );
+
+	// If cancel button was pressed suppress notification because it was show already in slotResultEmitted()
+	if ( error() != KIO::ERR_USER_CANCELED )
+	{
+		showHtmlMessage( i18n("File transfer %1 cancelled.", fileForMessage() ) );
+		emitResult();
+	}
 }
 
 bool Kopete::Transfer::showMessage( QString text ) const

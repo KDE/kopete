@@ -18,11 +18,11 @@
 #include "filetransfertask.h"
 
 FileTransferHandler::FileTransferHandler( FileTransferTask* fileTransferTask )
-: QObject( fileTransferTask ), mFileTransferTask( fileTransferTask )
+: QObject( fileTransferTask ), mFileTransferTask( fileTransferTask ), mFileTransferDone( false )
 {
-	connect( mFileTransferTask, SIGNAL(transferFinished()), this, SIGNAL(transferFinished()) );
-	connect( mFileTransferTask, SIGNAL(transferCancelled()), this, SIGNAL(transferCancelled()) );
-	connect( mFileTransferTask, SIGNAL(transferError(int, const QString&)), this, SIGNAL(transferError(int, const QString&)) );
+	connect( mFileTransferTask, SIGNAL(transferFinished()), this, SLOT(emitTransferFinished()) );
+	connect( mFileTransferTask, SIGNAL(transferCancelled()), this, SLOT(emitTransferCancelled()) );
+	connect( mFileTransferTask, SIGNAL(transferError(int, const QString&)), this, SLOT(emitTransferError(int, const QString&)) );
 	connect( mFileTransferTask, SIGNAL(transferProcessed(unsigned int)), this, SIGNAL(transferProcessed(unsigned int)) );
 
 	connect( mFileTransferTask, SIGNAL(nextFile(const QString&, const QString&)),
@@ -33,54 +33,103 @@ FileTransferHandler::FileTransferHandler( FileTransferTask* fileTransferTask )
 	         this, SIGNAL(transferFileProcessed(unsigned int, unsigned int)) );
 }
 
+FileTransferHandler::~FileTransferHandler()
+{
+	if ( !mFileTransferDone )
+		emit transferCancelled();
+}
+
 void FileTransferHandler::send()
 {
-	mFileTransferTask->go( Task::AutoDelete );
+	if ( mFileTransferTask )
+		mFileTransferTask->go( Task::AutoDelete );
 }
 
 QString FileTransferHandler::internalId() const
 {
+	if ( !mFileTransferTask )
+		return QString();
+
 	return mFileTransferTask->internalId();
 }
 
 QString FileTransferHandler::contact() const
 {
+	if ( !mFileTransferTask )
+		return QString();
+
 	return mFileTransferTask->contactName();
 }
 
 QString FileTransferHandler::fileName() const
 {
+	if ( !mFileTransferTask )
+		return QString();
+
 	return mFileTransferTask->fileName();
 }
 
 Oscar::WORD FileTransferHandler::fileCount() const
 {
+	if ( !mFileTransferTask )
+		return 0;
+
 	return mFileTransferTask->fileCount();
 }
 
 Oscar::DWORD FileTransferHandler::totalSize() const
 {
+	if ( !mFileTransferTask )
+		return 0;
+
 	return mFileTransferTask->totalSize();
 }
 
 QString FileTransferHandler::description() const
 {
+	if ( !mFileTransferTask )
+		return QString();
+
 	return mFileTransferTask->description();
 }
 
 void FileTransferHandler::cancel()
 {
-	mFileTransferTask->doCancel();
+	if ( mFileTransferTask )
+		mFileTransferTask->doCancel();
 }
 
 void FileTransferHandler::save( const QString &directory )
 {
-	mFileTransferTask->doAccept( directory );
+	if ( mFileTransferTask )
+		mFileTransferTask->doAccept( directory );
 }
 
 void FileTransferHandler::saveAs( const QStringList &fileNames )
 {
-	mFileTransferTask->doAccept( fileNames );
+	if ( mFileTransferTask )
+		mFileTransferTask->doAccept( fileNames );
+}
+
+void FileTransferHandler::emitTransferCancelled()
+{
+	mFileTransferDone = true;
+	disconnect( mFileTransferTask, 0, this, 0 );
+	emit transferCancelled();
+}
+
+void FileTransferHandler::emitTransferError( int errorCode, const QString &error )
+{
+	mFileTransferDone = true;
+	disconnect( mFileTransferTask, 0, this, 0 );
+	emit transferError( errorCode, error );
+}
+
+void FileTransferHandler::emitTransferFinished()
+{
+	mFileTransferDone = true;
+	disconnect( mFileTransferTask, 0, this, 0 );
+	emit transferFinished();
 }
 
 #include "filetransferhandler.moc"
