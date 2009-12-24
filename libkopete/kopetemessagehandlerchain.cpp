@@ -168,7 +168,9 @@ void ProcessMessageTask::start()
 
 void ProcessMessageTask::slotDone()
 {
-	d->event->message().manager()->deref();
+	if ( d->event->message().manager() ) // In case manager was deleted during exit
+		d->event->message().manager()->deref();
+
 	emitResult();
 }
 

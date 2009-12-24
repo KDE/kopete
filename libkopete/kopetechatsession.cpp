@@ -25,6 +25,7 @@
 #include <qapplication.h>
 #include <qfile.h>
 #include <qregexp.h>
+#include <qpointer.h>
 
 #include <kdebug.h>
 #include <kdeversion.h>
@@ -225,7 +226,7 @@ Kopete::Protocol* Kopete::ChatSession::protocol() const
 // FIXME: remove this and the friend decl in KMM
 class Kopete::TemporaryKMMCallbackAppendMessageHandler : public Kopete::MessageHandler
 {
-	Kopete::ChatSession *manager;
+	QPointer<Kopete::ChatSession> manager;
 public:
 	TemporaryKMMCallbackAppendMessageHandler( Kopete::ChatSession *manager )
 	: manager(manager)
@@ -234,7 +235,10 @@ public:
 	void handleMessage( Kopete::MessageEvent *event )
 	{
 		Kopete::Message message = event->message();
-		emit manager->messageAppended( message, manager );
+
+		if ( manager )
+			emit manager->messageAppended( message, manager );
+
 		delete event;
 	}
 };
