@@ -217,6 +217,11 @@ void ChatSessionMembersListModel::slotContactRemoved( const Kopete::Contact *con
 {
 	kDebug( 14010 ) << "memberslistmodel contact removed "<< contact->nickName();
 	int index = d->contacts.indexOf((Contact*)contact);
+	if (index == -1) {
+		kDebug( 14010 ) << "Trying to remove contact '" << contact->nickName() << "' which isn't in members list model!!!";
+		return;
+	}
+
 	beginRemoveRows(QModelIndex(),index, index);
 	d->contacts.removeAt(index);
 	endRemoveRows();
