@@ -68,7 +68,7 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 	//next 8 bytes are cookie
 	char cookie[8];
 	m_din.readRawData( cookie, 8 );
-	data.cookie = cookie;
+	data.cookie = QByteArray( cookie, 8 );
 	m_din >> w;
 	if( w != 0 )
 		kWarning(OSCAR_RAW_DEBUG) << "other side wants encryption";
