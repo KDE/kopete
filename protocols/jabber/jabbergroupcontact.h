@@ -105,6 +105,7 @@ private:
 	JabberGroupChatManager *mManager;
 	JabberBaseContact *mSelfContact;
 	QString mNick;
+	bool mLeaveGroupChat;
 };
 
 #endif

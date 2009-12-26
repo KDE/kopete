@@ -32,6 +32,7 @@
 #include "jabbergroupmembercontact.h"
 #include "jabbercontactpool.h"
 #include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
 #include "kopetepluginmanager.h"
 #include "xmpp_tasks.h"
 
@@ -39,7 +40,7 @@
  * JabberGroupContact constructor
  */
 JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, JabberAccount *account, Kopete::MetaContact * mc)
-	: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().bare() ), account, mc) , mNick( rosterItem.jid().resource() )
+: JabberBaseContact ( XMPP::RosterItem ( rosterItem.jid().bare() ), account, mc) , mNick( rosterItem.jid().resource() ), mLeaveGroupChat( false )
 {
 	setIcon( "jabber_group" );
 
@@ -89,8 +90,11 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 
 JabberGroupContact::~JabberGroupContact ()
 {
-
 	kDebug ( JABBER_DEBUG_GLOBAL ) ;
+	if ( !mLeaveGroupChat && account()->isConnected () )
+	{	// In case user deleted GroupContact from contact list
+		account()->client()->leaveGroupChat ( mRosterItem.jid().domain(), mRosterItem.jid().node() );
+	}
 
 	if(mManager)
 	{
@@ -109,6 +113,12 @@ JabberGroupContact::~JabberGroupContact ()
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "Deleting KMC " << metaContact->metaContactId ();
 		metaContact->deleteLater();
+	}
+
+	if ( metaContact() && ((metaContact()->contacts().size() == 1 && metaContact()->contacts().first() == this)
+	                       || metaContact()->contacts().isEmpty()) )
+	{
+		Kopete::ContactList::self()->removeMetaContact( metaContact() );
 	}
 }
 
@@ -333,11 +343,13 @@ void JabberGroupContact::slotChatSessionDeleted ()
 
 	if ( account()->isConnected () )
 	{
+		mLeaveGroupChat = true;
 		account()->client()->leaveGroupChat ( mRosterItem.jid().domain(), mRosterItem.jid().node() );
 	}
-
-	//deleteLater(); //we will be deleted later when the account will know we have left
-
+	else
+	{
+		deleteLater(); // Fix bug 207514
+	}
 }
 
 void JabberGroupContact::slotStatusChanged( )
@@ -349,6 +361,11 @@ void JabberGroupContact::slotStatusChanged( )
 		foreach ( Kopete::Contact *contact, copy_contactlist )
 		{
 			removeSubContact( XMPP::Jid(contact->contactId()) );
+		}
+
+		if ( mLeaveGroupChat )
+		{
+			deleteLater(); // Fix bug 207514, in case jabber was disconnected when chat was closed
 		}
 		return;
 	}
@@ -385,6 +402,9 @@ void JabberGroupContact::slotChangeNick( )
 void JabberGroupContact::slotSubContactDestroyed( Kopete::Contact * deadContact )
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "cleaning dead subcontact " << deadContact->contactId() << " from room " << mRosterItem.jid().full ();
+
+	if ( mSelfContact == deadContact )
+		mSelfContact = 0;
 
 	mMetaContactList.removeAll ( deadContact->metaContact () );
 	mContactList.removeAll ( deadContact );
