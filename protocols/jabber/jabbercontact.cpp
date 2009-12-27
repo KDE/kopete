@@ -892,7 +892,7 @@ JabberChatSession *JabberContact::manager ( Kopete::ContactPtrList chatMembers, 
 		 * will stay empty.
 		 */
 		if ( jid.resource().isEmpty () )
-			jid.withResource ( account()->resourcePool()->lockedResource ( jid ).name () );
+			jid = jid.withResource ( account()->resourcePool()->lockedResource ( jid ).name () );
 
 		kDebug(JABBER_DEBUG_GLOBAL) << "No manager found, creating a new one with resource '" << jid.resource () << "'";
 
