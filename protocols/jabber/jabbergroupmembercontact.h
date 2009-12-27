@@ -52,6 +52,10 @@ public:
 	 */
 	void handleIncomingMessage ( const XMPP::Message &message );
 
+	virtual bool isContactRequestingEvent( XMPP::MsgEvent event );
+	
+	virtual QString lastReceivedMessageId () const;
+
 public slots:
 
 	/**
@@ -74,6 +78,12 @@ private slots:
 
 private:
 	JabberChatSession *mManager;
+	QString mLastReceivedMessageId;
+
+	bool mRequestComposingEvent :1;
+	bool mRequestOfflineEvent :1;
+	bool mRequestDisplayedEvent :1;
+	bool mRequestDeliveredEvent :1;
 
 };
 

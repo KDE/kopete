@@ -112,6 +112,7 @@ JabberGroupContact::~JabberGroupContact ()
 	foreach ( Kopete::MetaContact *metaContact, mMetaContactList )
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "Deleting KMC " << metaContact->metaContactId ();
+		Kopete::ContactList::self()->removeMetaContact( metaContact );
 		metaContact->deleteLater();
 	}
 
@@ -307,6 +308,8 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 
 	// remove the contact from our internal list
 	mContactList.removeAll ( subContact );
+
+	Kopete::ContactList::self()->removeMetaContact( subContact->metaContact () );
 
 	// delete the meta contact first
 	delete subContact->metaContact ();

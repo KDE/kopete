@@ -1451,6 +1451,10 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 
 			Kopete::ContactList::self ()->addMetaContact (metaContact);
 		}
+		else if ( contactFrom->inherits( (const char*)("JabberGroupMemberContact") ) )
+		{	// Add JabberGroupMemberContact to contact list because we have received private group chat message
+			Kopete::ContactList::self()->addMetaContact( contactFrom->metaContact() );
+		}
 	}
 
 	// pass the message on to the contact

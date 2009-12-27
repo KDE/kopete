@@ -66,9 +66,9 @@ public:
 	Kopete::ChatSession *manager ( Kopete::Contact::CanCreateFlags );
 	
 
-	bool isContactRequestingEvent( XMPP::MsgEvent event );
+	virtual bool isContactRequestingEvent( XMPP::MsgEvent event );
 
-	QString lastReceivedMessageId () const;
+	virtual QString lastReceivedMessageId () const;
 
 public slots:
 

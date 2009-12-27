@@ -43,6 +43,10 @@ JabberGroupMemberContact::JabberGroupMemberContact (const XMPP::RosterItem &rost
 
 	mManager = 0;
 
+	mRequestOfflineEvent = false;
+	mRequestDisplayedEvent = false;
+	mRequestDeliveredEvent = false;
+	mRequestComposingEvent = false;
 }
 
 /**
@@ -101,16 +105,87 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 
 	kDebug (JABBER_DEBUG_GLOBAL) << "Received Message Type:" << message.type ();
 
+	Kopete::ChatSession *kmm = manager( Kopete::Contact::CanCreate );
+	if(!kmm)
+		return;
+
+	if ( message.type () != "error" )
+	{
+		if (!message.invite().isEmpty())
+		{
+			/*QString room=message.invite();
+			QString originalBody=message.body().isEmpty() ? QString() :
+				i18n( "The original message is : <i>\" %1 \"</i><br />" , Qt::escape(message.body()));
+			QString mes=i18n("<qt><i>%1</i> has invited you to join the conference <b>%2</b><br />%3<br />"
+			                 "If you want to accept and join, just <b>enter your nickname</b> and press OK.<br />"
+			                 "If you want to decline, press Cancel.</qt>",
+			                 message.from().full(), room , originalBody);
+			
+			bool ok=false;
+			QString futureNewNickName = KInputDialog::getText( i18n( "Invited to a conference - Jabber Plugin" ),
+				mes, QString() , &ok , (mManager ? dynamic_cast<QWidget*>(mManager->view(false)) : 0) );
+			if ( !ok || !account()->isConnected() || futureNewNickName.isEmpty() )
+				return;
+			
+			XMPP::Jid roomjid(room);
+			account()->client()->joinGroupChat( roomjid.domain() , roomjid.node() , futureNewNickName );*/
+			return;
+		}
+		else if (message.body().isEmpty())
+		// Then here could be event notifications
+		{
+			if (message.containsEvent ( XMPP::CancelEvent ) || (message.chatState() != XMPP::StateNone && message.chatState() != XMPP::StateComposing) )
+				mManager->receivedTypingMsg ( this, false );
+			else if (message.containsEvent ( XMPP::ComposingEvent )|| message.chatState() == XMPP::StateComposing )
+				mManager->receivedTypingMsg ( this, true );
+
+			if (message.containsEvent ( XMPP::DisplayedEvent ) )
+			{
+				//mManager->receivedEventNotification ( i18n("Message has been displayed") );
+			}
+			else if (message.containsEvent ( XMPP::DeliveredEvent ) )
+			{
+				//mManager->receivedEventNotification ( i18n("Message has been delivered") );
+				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
+				mSendsDeliveredEvent = true;
+			}
+			else if (message.containsEvent ( XMPP::OfflineEvent ) )
+			{
+				//mManager->receivedEventNotification( i18n("Message stored on the server, contact offline") );
+				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
+			}
+			else if (message.chatState() == XMPP::StateGone )
+			{
+				/*if(mManager->view( Kopete::Contact::CannotCreate ))
+				{   //show an internal message if the user has not already closed his window
+					Kopete::Message m=Kopete::Message ( this, mManager->members() );
+					m.setPlainBody( i18n("%1 has ended his/her participation in the chat session.", metaContact()->displayName()) );
+					m.setDirection( Kopete::Message::Internal );
+					
+					if ( account()->mergeMessages() )
+						mManager->appendMessage ( m, QString() );
+					else
+						mManager->appendMessage ( m, message.from().resource () );
+				}*/
+			}
+		}
+		else
+		// Then here could be event notification requests
+		{
+			mRequestComposingEvent = message.containsEvent ( XMPP::ComposingEvent );
+			mRequestOfflineEvent = message.containsEvent ( XMPP::OfflineEvent );
+			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent );
+			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent);
+		}
+	}
+
 	/**
 	 * Don't display empty messages, these were most likely just carrying
 	 * event notifications or other payload.
 	 */
 	if ( message.body().isEmpty () )
 		return;
-
-	Kopete::ChatSession *kmm = manager( Kopete::Contact::CanCreate );
-	if(!kmm)
-		return;
+	
 	Kopete::ContactPtrList contactList = kmm->members();
 
 	// check for errors
@@ -126,6 +201,9 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	}
 	else
 	{
+		// store message id for outgoing notifications
+		mLastReceivedMessageId = message.id ();
+		
 		// retrieve and reformat body
 		QString body = message.body ();
 
@@ -148,6 +226,27 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 
 	delete newMessage;
 
+}
+
+bool JabberGroupMemberContact::isContactRequestingEvent( XMPP::MsgEvent event )
+{
+	if ( event == OfflineEvent )
+		return mRequestOfflineEvent;
+	else if ( event == DeliveredEvent )
+		return mRequestDeliveredEvent;
+	else if ( event == DisplayedEvent )
+		return mRequestDisplayedEvent;
+	else if ( event == ComposingEvent )
+		return mRequestComposingEvent;
+	else if ( event == CancelEvent )
+		return mRequestComposingEvent;
+	else
+		return false;
+}
+
+QString JabberGroupMemberContact::lastReceivedMessageId () const
+{
+	return mLastReceivedMessageId;
 }
 
 void JabberGroupMemberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
