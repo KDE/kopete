@@ -1353,6 +1353,8 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 		* the server's roster. As such, it is now a synchronized entry.
 		*/
 		JabberContact *contact = contactPool()->addContact ( item, metaContact, false );
+		if (!contact) // Don't crash if we have JabberContact with the same jid as JabberGroupContact, bug 204243
+			return;
 
 		/*
 		* Set authorization property

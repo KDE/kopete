@@ -70,20 +70,22 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << "Updating existing contact " << contact.jid().full() << "   -  " <<   mContactItem->contact();
 
-		// It exists, update it.
-		mContactItem->contact()->updateContact ( contact );
-		mContactItem->setDirty ( dirty );
-
 		JabberContact *retval = dynamic_cast<JabberContact *>(mContactItem->contact ());
 
 		if ( !retval )
 		{
+			kWarning(JABBER_DEBUG_GLOBAL) << "ERROR: Wrong contact: " << mContactItem->contact()->contactId() << mContactItem->contact();
 			KMessageBox::error ( Kopete::UI::Global::mainWidget (),
 								 "Fatal error in the Jabber contact pool. Please restart Kopete and submit a debug log "
 								 "of your session to http://bugs.kde.org.",
 								 "Fatal Jabber Error" );
+			return 0;
 		}
 
+		// It exists, update it.
+		mContactItem->contact()->updateContact ( contact );
+		mContactItem->setDirty ( dirty );
+		
 		return retval;
 	}
 
