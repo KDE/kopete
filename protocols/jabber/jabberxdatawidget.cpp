@@ -412,11 +412,14 @@ JabberXDataWidget::JabberXDataWidget(const XMPP::XData &data, QWidget *parent) :
 {
 	const XMPP::XData::FieldList &f = data.fields();
 	mFields.clear();
-	if(!f.count())
-		return;
+	
 	int fields = 0;
 	if(!data.instructions().isEmpty())
 		fields++;
+
+	if(f.count() == 0 && fields == 0)
+		return;
+
 	XMPP::XData::FieldList::ConstIterator it = f.begin();
 	for(; it != f.end(); ++it)
 	{
@@ -444,8 +447,6 @@ JabberXDataWidget::JabberXDataWidget(const XMPP::XData &data, QWidget *parent) :
 	{
 		QLabel *instr = new QLabel(data.instructions(), parent);
 		instr->setWordWrap(true);
-		instr->setFrameShape(QFrame::Panel);
-		instr->setFrameShadow(QFrame::Sunken);
 		instr->setScaledContents(true);
 		instr->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
 		//connect(instr, SIGNAL(linkActivated(const QString&)), SLOT(linkActivated(const QString&)));

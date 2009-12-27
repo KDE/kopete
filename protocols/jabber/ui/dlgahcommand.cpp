@@ -35,7 +35,10 @@ KDialog(parent)
 	// XData form
 	mXDataWidget = new JabberXDataWidget(r.data(), this);
 	setMainWidget(mXDataWidget);
-	setCaption(i18n("Command executing"));
+	if (!r.data().title().isEmpty())
+		setCaption(r.data().title());
+	else
+		setCaption(i18n("Command executing"));
 
 	// Buttons
 	if(!final)
@@ -73,7 +76,7 @@ KDialog(parent)
 				}
 				else
 					connect(this, SIGNAL(user1Clicked()), SLOT(slotNext()));
-				btnNext->setEnabled(true);
+
 				enableButton(User1, true);
 			}
 			else

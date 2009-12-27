@@ -47,10 +47,6 @@ private:
 	XMPP::Jid mJid;
 	XMPP::Client *mClient;
 	JabberXDataWidget *mXDataWidget;
-	QPushButton *btnPrev;
-	QPushButton *btnNext;
-	QPushButton *btnComplete;
-	QPushButton *btnCancel;
 };
 
 #endif
