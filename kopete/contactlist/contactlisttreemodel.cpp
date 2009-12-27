@@ -551,11 +551,12 @@ QModelIndexList ContactListTreeModel::indexListFor( Kopete::ContactListElement* 
 		{
 			GroupMetaContactPair groupMetaContactPair( g, mc );
 			MetaContactModelItem* mcmi = m_metaContacts.value( groupMetaContactPair );
-			Q_ASSERT( mcmi );
-
-			QModelIndex mcIndex = indexFor( mcmi );
-			if ( mcIndex.isValid() )
-				indexList.append( mcIndex );
+			if ( mcmi )
+			{
+				QModelIndex mcIndex = indexFor( mcmi );
+				if ( mcIndex.isValid() )
+					indexList.append( mcIndex );
+			}
 		}
 	}
 	else if (!mc)

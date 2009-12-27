@@ -267,11 +267,12 @@ QModelIndexList ContactListPlainModel::indexListFor( Kopete::ContactListElement*
 	if (mc && mc != Kopete::ContactList::self()->myself())
 	{
 		int mcPos = m_contacts.indexOf( mc );
-		Q_ASSERT( mcPos != -1 );
-
-		QModelIndex mcIndex = index(mcPos, 0);
-		if (mcIndex.isValid())
-				indexList.append(mcIndex);
+		if ( mcPos != -1 )
+		{
+			QModelIndex mcIndex = index(mcPos, 0);
+			if (mcIndex.isValid())
+					indexList.append(mcIndex);
+		}
 	}
 
 	return indexList;
