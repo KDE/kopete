@@ -1077,6 +1077,12 @@ int VideoDevice::getFrame()
 					(uint) m_rawbuffers.size() <= v4l2buffer.index)
 					return EXIT_FAILURE;
 
+				if (m_rawbuffers[v4l2buffer.index].length < m_currentbuffer.data.size())
+				{
+					kDebug() <<  "Buffer size mismatch: expecting raw buffer length to be" << m_currentbuffer.data.size() << "but it was" << m_rawbuffers[v4l2buffer.index].length;
+					return EXIT_FAILURE;
+				}
+
 				memcpy(&m_currentbuffer.data[0], m_rawbuffers[v4l2buffer.index].start, m_currentbuffer.data.size());
 				if (-1 == xioctl (VIDIOC_QBUF, &v4l2buffer))
 					return errnoReturn ("VIDIOC_QBUF");
