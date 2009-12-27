@@ -864,15 +864,20 @@ void KopeteContactListView::updateMetaContactActions()
 		reachable = d->selectedMetaContact->isReachable();
 		d->actionAddTemporaryContact->setEnabled( d->selectedMetaContact->isTemporary() );
 		d->actionSendFile->setEnabled( reachable && d->selectedMetaContact->canAcceptFiles() );
+		d->actionSendMessage->setEnabled( reachable );
+		d->actionStartChat->setEnabled( reachable );
 	}
 	else
 	{
+		QModelIndexList selected = selectedIndexes();
+		bool singleGroupSelected = (selected.count() == 1 && selected.first().data( Kopete::Items::TypeRole ) == Kopete::Items::Group);
+		
 		d->actionAddTemporaryContact->setEnabled( false );
 		d->actionSendFile->setEnabled( false );
+		d->actionSendMessage->setEnabled( singleGroupSelected );
+		d->actionStartChat->setEnabled( false );
 	}
 
-	d->actionSendMessage->setEnabled( reachable );
-	d->actionStartChat->setEnabled( reachable );
 }
 
 void KopeteContactListView::slotSettingsChanged()
