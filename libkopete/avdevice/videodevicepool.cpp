@@ -640,15 +640,19 @@ int VideoDevicePool::scanDevices()
 {
     /// @todo implement me
 
-	kDebug() << "called";
+	if (m_videodevice.isEmpty()) {
+		kDebug() << "called";
 #if defined(__linux__) && defined(ENABLE_AV)
-	foreach (Solid::Device device,
-			Solid::Device::listFromType(Solid::DeviceInterface::Video, QString())) {
-		registerDevice( device );
-	}
+		foreach (Solid::Device device,
+				Solid::Device::listFromType(Solid::DeviceInterface::Video, QString())) {
+			registerDevice( device );
+		}
 
 #endif
-	kDebug() << "exited successfuly";
+		kDebug() << "exited successfuly";
+	} else {
+		kDebug() << "Not scanning: initial device list already loaded";
+	}
 	return EXIT_SUCCESS;
 }
 

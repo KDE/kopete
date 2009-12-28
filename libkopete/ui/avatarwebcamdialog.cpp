@@ -65,6 +65,7 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 	d->m_devicePool = Kopete::AV::VideoDevicePool::self();
 	d->m_devicePool->loadConfig();
 	d->m_devicePool->open();
+	// NB: this may fail if the device is already in use
 	d->m_devicePool->setSize(640, 480);
 	d->m_devicePool->startCapturing();
 #endif
@@ -73,7 +74,8 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 	connect( d->m_timer, SIGNAL(timeout()), this, SLOT(updateImage()));
 
 	d->mainWidget = new Kopete::WebcamWidget(this);
-	d->mainWidget->setMinimumSize(645, 485);
+	d->mainWidget->setMinimumSize(d->m_devicePool->width() + 5,
+	                              d->m_devicePool->height() + 5);
 	d->m_timer->start(40);
 	setMainWidget(d->mainWidget);
 }

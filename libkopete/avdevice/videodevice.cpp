@@ -628,34 +628,35 @@ kDebug() << "setSize(" << newwidth << ", " << newheight << ") called.";
 // It should not be there. It must remain in a completely distict place, cause this method should not change the pixelformat.
 // It shouldn't try to find a suitable pixel format this way. It should use values discovered by - detectPixelFormats() - to choose a valid one.
 		kDebug() <<  "Trying YUY422P";
-		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV422P))
+		errno = 0;
+		if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV422P) && errno != EBUSY)
 		{
 			kDebug() <<  "Device doesn't seem to support YUV422P format. Trying YUYV.";
-			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUYV))
+			if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUYV) && errno != EBUSY)
 			{
 				kDebug() <<  "Device doesn't seem to support YUYV format. Trying UYVY.";
-				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_UYVY))
+				if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_UYVY) && errno != EBUSY)
 				{
 					kDebug() <<  "Device doesn't seem to support UYVY format. Trying YUV420P.";
-					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P))
+					if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_YUV420P) && errno != EBUSY)
 					{
 						kDebug() <<  "Device doesn't seem to support YUV420P format. Trying RGB24.";
-						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24))
+						if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB24) && errno != EBUSY)
 						{
 							kDebug() <<  "Device doesn't seem to support RGB24 format. Trying BGR24.";
-							if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24))
+							if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR24) && errno != EBUSY)
 							{
 								kDebug() <<  "Device doesn't seem to support RGB24 format. Trying RGB32.";
-								if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32))
+								if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_RGB32) && errno != EBUSY)
 								{
 									kDebug() <<  "Device doesn't seem to support RGB32 format. Trying BGR32.";
-									if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32))
+									if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_BGR32) && errno != EBUSY)
 									{
 										kDebug() <<  "Device doesn't seem to support BGR32 format. Trying SBGGR8.";
-										if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_SBGGR8))
+										if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_SBGGR8) && errno != EBUSY)
 										{
 											kDebug() <<  "Device doesn't seem to support SBGGR8 format. Trying SN9C10X.";
-											if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_SN9C10X))
+											if(PIXELFORMAT_NONE == setPixelFormat(PIXELFORMAT_SN9C10X) && errno != EBUSY)
 											{
 												kDebug() <<  "Device doesn't seem to support BGR32 format. Fallback to it is not yet implemented.";
 											}
@@ -667,6 +668,10 @@ kDebug() << "setSize(" << newwidth << ", " << newheight << ") called.";
 					}
 				}
 			}
+		}
+		if (errno == EBUSY) {
+			kDebug() << "Can't change the video size: device in use";
+			return EXIT_FAILURE;
 		}
 
 		if(newwidth  > maxwidth ) newwidth  = maxwidth;
