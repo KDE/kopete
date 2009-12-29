@@ -156,7 +156,7 @@ void WlmSocket::resetPing()
 
 void WlmSocket::pingTimeout()
 {
-    if ( !mMainConnection || !mMainConnection->isConnected() )
+    if ( !mMainConnection || (mMainConnection->connectionState() < MSN::NotificationServerConnection::NS_CONNECTED) )
         return;
 
     MSN::Connection *c = mMainConnection->connectionWithSocket((void*)this);
