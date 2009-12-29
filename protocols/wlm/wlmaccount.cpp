@@ -217,7 +217,7 @@ WlmAccount::setOnlineStatus (const Kopete::OnlineStatus & status,
     if (status == WlmProtocol::protocol ()->wlmConnecting &&
         myself ()->onlineStatus () == WlmProtocol::protocol ()->wlmOffline)
         slotGoOnline ();
-    else if (status == WlmProtocol::protocol ()->wlmOnline)
+    else if (status == WlmProtocol::protocol ()->wlmOnline || status.status () == Kopete::OnlineStatus::Online)
         slotGoOnline ();
     else if (status == WlmProtocol::protocol ()->wlmOffline)
         slotGoOffline ();
@@ -288,7 +288,6 @@ WlmAccount::connectWithPassword (const QString & pass)
     if (pass.isEmpty ())
     {
         password ().setWrong (true);
-        password ().setWrong (false);
         return;
     }
 
@@ -968,7 +967,7 @@ void
 WlmAccount::connectionFailed ()
 {
     kDebug (14210) << k_funcinfo;
-    myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
+    logOff( Kopete::Account::Unknown );
     Kopete::Utils::notifyCannotConnect (this);
 }
 
@@ -1383,13 +1382,12 @@ WlmAccount::NotificationServerConnectionTerminated (MSN::
     }
     if (password ().isWrong ())
     {
-        myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
-        QTimer::singleShot (2 * 1000, this, SLOT (scheduleConnect ()));
+        logOff( Kopete::Account::BadPassword );
         return;
     }
     if (isConnected ())
     {
-        myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
+        logOff( Kopete::Account::Unknown );
     }
 }
 
@@ -1431,7 +1429,7 @@ void WlmAccount::logOff( Kopete::Account::DisconnectReason reason )
     if (m_server)
     {
         QObject::disconnect (&m_server->cb, 0, 0, 0);
-        delete m_server;
+        m_server->deleteLater();
         m_server = NULL;
     }
 

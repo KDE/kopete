@@ -25,8 +25,8 @@ m_accountID (accountID), m_password (password), mainConnection (NULL)
 
 WlmServer::~WlmServer ()
 {
-    WlmDisconnect ();
     qDeleteAll(cb.socketList);
+    delete mainConnection;
 }
 
 void
@@ -59,12 +59,8 @@ WlmServer::WlmDisconnect ()
         }
         cb.socketList.clear ();
 
-        if (mainConnection->connectionState () !=
-            MSN::NotificationServerConnection::NS_DISCONNECTED)
-        {
-            delete mainConnection;
-            mainConnection = NULL;
-        }
+        if ( mainConnection->connectionState() != MSN::NotificationServerConnection::NS_DISCONNECTED )
+            mainConnection->disconnect();
     }
 }
 
