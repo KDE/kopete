@@ -152,6 +152,9 @@ void Account::disconnected( DisconnectReason reason )
 	}
 	else if ( Kopete::BehaviorSettings::self()->reconnectOnDisconnect() == true && reason > Manual )
 	{
+		if ( d->reconnectTimer.isActive() )
+			return; // In case protocol calls disconnected more than one time on disconnect.
+
 		d->connectionTry++;
 		//use a timer to allow the plugins to clean up after return
 		if ( d->connectionTry < 3 )
