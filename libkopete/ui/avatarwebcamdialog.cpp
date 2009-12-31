@@ -74,8 +74,10 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 	connect( d->m_timer, SIGNAL(timeout()), this, SLOT(updateImage()));
 
 	d->mainWidget = new Kopete::WebcamWidget(this);
+#ifndef Q_OS_WIN
 	d->mainWidget->setMinimumSize(d->m_devicePool->width() + 5,
 	                              d->m_devicePool->height() + 5);
+#endif
 	d->m_timer->start(40);
 	setMainWidget(d->mainWidget);
 }
