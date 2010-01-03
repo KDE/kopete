@@ -319,7 +319,7 @@ bool Kopete::Transfer::showHtmlMessage( QString text ) const
 QString Kopete::Transfer::fileForMessage() const
 {
 	if( d->info.direction() == Kopete::FileTransferInfo::Incoming )
-		return QString( "<a href=\"%1\">%2</a>" ).arg( d->localUrl.url(), Qt::escape( d->localUrl.path() ) );
+		return QString( "<a href=\"%1\">%2</a>" ).arg( d->localUrl.url(), Qt::escape( d->localUrl.toLocalFile() ) );
 	else
 		return Qt::escape( d->info.file() );
 }
@@ -434,15 +434,15 @@ void Kopete::TransferManager::saveIncomingTransfer( unsigned int id )
 		return;
 	}
 
-	const QString directory = ( info.saveToDirectory() ) ? url.path() : url.directory();
+	const QString directory = ( info.saveToDirectory() ) ? url.toLocalFile() : url.directory();
 	if( !directory.isEmpty() )
 		cg.writeEntry( "defaultPath", directory );
 
-	Kopete::Transfer *trans = new Kopete::Transfer( info, url.path() );
+	Kopete::Transfer *trans = new Kopete::Transfer( info, url.toLocalFile() );
 	connect( trans, SIGNAL(result(KJob *)), this, SLOT(slotComplete(KJob *)) );
 	mTransfersMap.insert( info.transferId(), trans );
 	emit askIncomingDone( id );
-	emit accepted( trans, url.path() );
+	emit accepted( trans, url.toLocalFile() );
 	mTransferRequestInfoMap.remove( id );
 }
 
@@ -539,7 +539,7 @@ KUrl Kopete::TransferManager::getSaveFile( const KUrl& startDir ) const
 			continue;
 		}
 
-		QFileInfo fileInfo( url.path() );
+		QFileInfo fileInfo( url.toLocalFile() );
 		if ( fileInfo.exists() )
 		{
 			if ( !fileInfo.isWritable() )
@@ -548,7 +548,7 @@ KUrl Kopete::TransferManager::getSaveFile( const KUrl& startDir ) const
 				continue;
 			}
 
-			int ret = KMessageBox::warningContinueCancel( 0, i18n( "The file '%1' already exists.\nDo you want to overwrite it ?", url.path() ),
+			int ret = KMessageBox::warningContinueCancel( 0, i18n( "The file '%1' already exists.\nDo you want to overwrite it ?", url.toLocalFile() ),
 			                                              i18n( "Overwrite File" ), KStandardGuiItem::save() );
 			if ( ret == KMessageBox::Cancel )
 				continue;
@@ -588,7 +588,7 @@ KUrl Kopete::TransferManager::getSaveDir( const KUrl& startDir ) const
 			continue;
 		}
 
-		QFileInfo dirInfo( url.path() );
+		QFileInfo dirInfo( url.toLocalFile() );
 		if ( !dirInfo.isDir() || !dirInfo.exists() )
 		{
 			KMessageBox::messageBox( 0, KMessageBox::Sorry, i18n( "The directory %1 does not exist", dirInfo.filePath() ) );

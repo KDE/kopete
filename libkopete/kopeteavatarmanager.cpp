@@ -128,7 +128,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 
 	KUrl dataUrl(avatarUrl);
 
-	kDebug(14010) << "Base directory: " << avatarUrl.path();
+	kDebug(14010) << "Base directory: " << avatarUrl.toLocalFile();
 
 	// Second, open the avatar configuration in current directory.
 	KUrl configUrl = avatarUrl;
@@ -197,9 +197,9 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	kDebug(14010) << "Saving " << avatarFilename << " on disk.";
 	avatarUrl.addPath( avatarFilename );
 
-	if( !avatar.save( avatarUrl.path(), "PNG") )
+	if( !avatar.save( avatarUrl.toLocalFile(), "PNG") )
 	{
-		kDebug(14010) << "Saving of " << avatarUrl.path() << " failed !";
+		kDebug(14010) << "Saving of " << avatarUrl.toLocalFile() << " failed !";
 		return AvatarEntry();
 	}
 
@@ -220,10 +220,10 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 
 	// Save (original) data on disk
 	dataUrl.addPath(dataFilename);
-	QFile f(dataUrl.path());
+	QFile f(dataUrl.toLocalFile());
 	if (!f.open(QIODevice::WriteOnly))
 	{
-		kDebug(14010) << "Saving of " << dataUrl.path() << " failed !";
+		kDebug(14010) << "Saving of " << dataUrl.toLocalFile() << " failed !";
 		return AvatarEntry();
 	}
 	f.write(data);
@@ -231,7 +231,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	f.close();
 
 	// Save metadata of image
-	KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig), newEntry.name );
+	KConfigGroup avatarConfig(KSharedConfig::openConfig( configUrl.toLocalFile(), KConfig::SimpleConfig), newEntry.name );
 	
 	avatarConfig.writeEntry( "Filename", avatarFilename );
 	avatarConfig.writeEntry( "DataFilename", dataFilename );
@@ -240,8 +240,8 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	avatarConfig.sync();
 	
 	// Add final path to the new entry for avatarAdded signal
-	newEntry.path = avatarUrl.path();
-	newEntry.dataPath = dataUrl.path();
+	newEntry.path = avatarUrl.toLocalFile();
+	newEntry.dataPath = dataUrl.toLocalFile();
 
 	emit avatarAdded(newEntry);
 
@@ -267,7 +267,7 @@ bool AvatarManager::remove(Kopete::AvatarManager::AvatarEntry entryToRemove)
 		configUrl.addPath( UserDir );
 		configUrl.addPath( AvatarConfig );
 
-		KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig ), entryToRemove.name );
+		KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.toLocalFile(), KConfig::SimpleConfig ), entryToRemove.name );
 		avatarConfig.deleteGroup();
 		avatarConfig.sync();
 
@@ -292,7 +292,7 @@ bool AvatarManager::exists(const QString &avatarName)
 	configUrl.addPath( UserDir );
 	configUrl.addPath( AvatarConfig );
 
-	KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.path(), KConfig::SimpleConfig ), avatarName );
+	KConfigGroup avatarConfig ( KSharedConfig::openConfig( configUrl.toLocalFile(), KConfig::SimpleConfig ), avatarName );
 	kDebug(14010) << "Checking if an avatar exists: " << avatarName;
 	if(!avatarConfig.exists()){
 		return false;
@@ -302,12 +302,12 @@ bool AvatarManager::exists(const QString &avatarName)
 
 void AvatarManager::Private::createDirectory(const KUrl &directory)
 {
-	if( !QFile::exists(directory.path()) )
+	if( !QFile::exists(directory.toLocalFile()) )
 	{
-		kDebug(14010) << "Creating directory: " << directory.path();
+		kDebug(14010) << "Creating directory: " << directory.toLocalFile();
 		if( !KIO::NetAccess::mkdir(directory,0) )
 		{
-			kDebug(14010) << "Directory " << directory.path() <<" creating failed.";
+			kDebug(14010) << "Directory " << directory.toLocalFile() <<" creating failed.";
 		}
 	}
 }
@@ -394,7 +394,7 @@ void AvatarQueryJob::start()
 		KUrl contactUrl(d->baseDir);
 		contactUrl.addPath( ContactDir );
 
-		const QDir contactDir(contactUrl.path());
+		const QDir contactDir(contactUrl.toLocalFile());
 		const QStringList subdirsList = contactDir.entryList( QDir::AllDirs | QDir::NoDotAndDotDot );
 		foreach(const QString &subdir, subdirsList)
 		{
@@ -416,14 +416,14 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 	KUrl avatarDirectory = baseDir;
 	avatarDirectory.addPath(relativeDirectory);
 
-	kDebug(14010) << "Listing avatars in " << avatarDirectory.path();
+	kDebug(14010) << "Listing avatars in " << avatarDirectory.toLocalFile();
 
 	// Look for Avatar configuration
 	KUrl avatarConfigUrl = avatarDirectory;
 	avatarConfigUrl.addPath( AvatarConfig );
-	if( QFile::exists(avatarConfigUrl.path()) )
+	if( QFile::exists(avatarConfigUrl.toLocalFile()) )
 	{
-		KConfig *avatarConfig = new KConfig( avatarConfigUrl.path(), KConfig::SimpleConfig);
+		KConfig *avatarConfig = new KConfig( avatarConfigUrl.toLocalFile(), KConfig::SimpleConfig);
 		// Each avatar entry in configuration is a group
 		const QStringList groupEntryList = avatarConfig->groupList();
 		foreach(const QString &groupEntry, groupEntryList)
@@ -437,12 +437,12 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 			const QString filename = cg.readEntry( "Filename", QString() );
 			KUrl avatarPath(avatarDirectory);
 			avatarPath.addPath( filename );
-			listedEntry.path = avatarPath.path();
+			listedEntry.path = avatarPath.toLocalFile();
 
 			const QString dataFilename = cg.readEntry( "DataFilename", QString() );
 			KUrl dataPath(avatarDirectory);
 			dataPath.addPath( dataFilename );
-			listedEntry.dataPath = dataPath.path();
+			listedEntry.dataPath = dataPath.toLocalFile();
 
 			avatarList << listedEntry;
 		}

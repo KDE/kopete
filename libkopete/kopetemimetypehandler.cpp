@@ -211,7 +211,7 @@ void EmoticonMimeTypeHandler::handleURL( const QString &, const KUrl &url ) cons
 
 void EmoticonMimeTypeHandler::handleURL( const KUrl &url ) const
 {
-  Emoticons::self()->installTheme( url.path() );
+  Emoticons::self()->installTheme( url.toLocalFile() );
 }
 
 

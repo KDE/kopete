@@ -724,7 +724,7 @@ KUrl MetaContact::customPhoto() const
 void MetaContact::setPhoto( const KUrl &url )
 {
 	d->photoUrl = url;
-	d->customPicture.setPicture(url.path());
+	d->customPicture.setPicture(url.toLocalFile());
 
 	if ( photoSource() == SourceCustom )
 	{

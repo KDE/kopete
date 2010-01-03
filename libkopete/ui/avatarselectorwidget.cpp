@@ -205,7 +205,7 @@ void AvatarSelectorWidget::buttonAddAvatarClicked()
 		if( !imageUrl.isLocalFile() )
 			return;
 
-		QPixmap pixmap( imageUrl.path() );
+		QPixmap pixmap( imageUrl.toLocalFile() );
 		if ( pixmap.isNull() )
 			return;
 		QString imageName = imageUrl.fileName();
