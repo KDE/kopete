@@ -675,7 +675,7 @@ bool YahooAccount::createChatContact(const QString &nick)
 
 void YahooAccount::sendFile( YahooContact *to, const KUrl &url )
 {
-	QFile file( url.path() );
+	QFile file( url.toLocalFile() );
 
 	Kopete::Transfer *transfer = Kopete::TransferManager::transferManager()->addTransfer ( to,
 		url.fileName(), file.size(), to->userId(), Kopete::FileTransferInfo::Outgoing );
@@ -1701,9 +1701,9 @@ void YahooAccount::slotGotBuddyIconRequest( const QString & who )
 
 void YahooAccount::setBuddyIcon( const KUrl &url )
 {
-	kDebug(YAHOO_GEN_DEBUG) << "Url: " << url.path();
-	QString s = url.path();
-	if ( url.path().isEmpty() )
+	kDebug(YAHOO_GEN_DEBUG) << "Url: " << url.toLocalFile();
+	QString s = url.toLocalFile();
+	if ( url.toLocalFile().isEmpty() )
 	{
 		myself()->removeProperty( Kopete::Global::Properties::self()->photo() );
 		myself()->removeProperty( YahooProtocol::protocol()->iconRemoteUrl );
@@ -1714,7 +1714,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 	}
 	else
 	{
-		QImage image( url.path() );
+		QImage image( url.toLocalFile() );
 		QString newlocation( KStandardDirs::locateLocal( "appdata", "yahoopictures/"+ url.fileName().toLower() ) ) ;
 		QFile iconFile( newlocation );
 		QByteArray data;

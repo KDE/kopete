@@ -547,7 +547,7 @@ void Client::uploadPicture( KUrl url )
 	spt->setType( SendPictureTask::UploadPicture );
 	spt->setFilename( url.fileName() );
 	if ( url.isLocalFile() )
-		spt->setPath( url.path() );
+		spt->setPath( url.toLocalFile() );
 	else
 		spt->setPath( url.url() );
 	spt->go( true );

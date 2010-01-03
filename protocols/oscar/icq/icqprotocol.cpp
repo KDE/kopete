@@ -64,7 +64,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 	 * LastName=
 	 */
 
-	KConfig file(url.path(), KConfig::SimpleConfig);
+	KConfig file(url.toLocalFile(), KConfig::SimpleConfig);
 	QString group_name;
 	
 	

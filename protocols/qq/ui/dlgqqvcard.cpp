@@ -296,7 +296,7 @@ void dlgQQVCard::slotSelectPhoto()
 		remoteFile = true;
 	}
 	else 
-		path = filePath.path();
+		path = filePath.toLocalFile();
 
 	QImage img( path );
 	img = KPixmapRegionSelectorDialog::getSelectedImage( QPixmap::fromImage(img), 96, 96, this );

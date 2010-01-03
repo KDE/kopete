@@ -108,7 +108,7 @@ void SendFileTask::onGo()
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
 
-	m_file.setFileName( m_url.path() );
+	m_file.setFileName( m_url.toLocalFile() );
 
 	m_yahooTransferId = newYahooTransferId();
 

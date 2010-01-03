@@ -49,7 +49,7 @@ void ReceiveFileTask::onGo()
 	switch( m_type )
 	{
 	case FileTransferAccept:
-		m_file = new QFile( m_localUrl.path() );
+		m_file = new QFile( m_localUrl.toLocalFile() );
 		if( !m_file->open( QIODevice::WriteOnly ) )
 		{
 			emit error( m_transferId, KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Could not open file for writing.") );
@@ -169,7 +169,7 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 	}
 	else if( transfer->firstParam( 249 ).toInt() == 3 )
 	{
-		m_file = new QFile( m_localUrl.path() );
+		m_file = new QFile( m_localUrl.toLocalFile() );
 		if( !m_file->open( QIODevice::WriteOnly ) )
 		{
 			emit error( m_transferId, KIO::ERR_CANNOT_OPEN_FOR_WRITING, i18n("Could not open file for writing.") );
