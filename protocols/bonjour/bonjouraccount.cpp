@@ -113,8 +113,7 @@ void BonjourAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const K
 
 void BonjourAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 {
-	Q_UNUSED(statusMessage);
-	/* Not used in bonjour */
+	setOnlineStatus( myself()->onlineStatus(), statusMessage, Kopete::Account::KeepSpecialFlags );
 }
 
 // This Function Starts a new Local Server

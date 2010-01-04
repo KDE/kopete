@@ -225,7 +225,7 @@ void MeanwhileAccount::setAway(bool away, const QString &reason)
 
 void MeanwhileAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-    /* ### TODO ! */
+    setOnlineStatus( myself()->onlineStatus(), statusMessage, Kopete::Account::KeepSpecialFlags );
 }
 
 void MeanwhileAccount::setOnlineStatus(const Kopete::OnlineStatus &status,

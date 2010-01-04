@@ -199,8 +199,7 @@ void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const Ko
 
 void SMSAccount::setStatusMessage( const Kopete::StatusMessage& msg )
 {
-   Q_UNUSED(msg);
-   return;
+	setOnlineStatus( myself()->onlineStatus(), msg, Kopete::Account::KeepSpecialFlags );
 }
 
 SMSService* SMSAccount::service()

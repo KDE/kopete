@@ -361,7 +361,7 @@ void AIMAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kope
 
 void AIMAccount::setStatusMessage( const Kopete::StatusMessage& statusMessage )
 {
-	Q_UNUSED(statusMessage);
+	setOnlineStatus( myself()->onlineStatus(), statusMessage, Kopete::Account::KeepSpecialFlags );
 }
 
 void AIMAccount::setUserProfile(const QString &profile)

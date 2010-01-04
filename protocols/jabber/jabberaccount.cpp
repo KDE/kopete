@@ -696,7 +696,7 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 
 void JabberAccount::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
-	Q_UNUSED(statusMessage);
+	setOnlineStatus( myself()->onlineStatus(), statusMessage, Kopete::Account::KeepSpecialFlags );
 }
 
 void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )

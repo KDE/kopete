@@ -161,8 +161,7 @@ void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete
 
 void QQAccount::setStatusMessage(const Kopete::StatusMessage& statusMessage)
 {
-	Q_UNUSED(statusMessage);
-	/* Not implemented in qq */
+	setOnlineStatus( myself()->onlineStatus(), statusMessage, Kopete::Account::KeepSpecialFlags );
 }
 
 
