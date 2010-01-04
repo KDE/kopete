@@ -49,12 +49,17 @@ InfoEventManager *InfoEventManager::self()
 
 void InfoEventManager::addEvent( Kopete::InfoEvent* event )
 {
-	connect( event, SIGNAL(eventClosed(Kopete::InfoEvent*)),
-	         this, SLOT(eventClosed(Kopete::InfoEvent*)) );
+	emit eventAboutToBeAdded( event );
 
-	d->eventList.append( event );
-	emit eventAdded( event );
-	emit changed();
+	if ( !event->isClosed() )
+	{
+		connect( event, SIGNAL(eventClosed(Kopete::InfoEvent*)),
+		         this, SLOT(eventClosed(Kopete::InfoEvent*)) );
+
+		d->eventList.append( event );
+		emit eventAdded( event );
+		emit changed();
+	}
 }
 
 QList<InfoEvent*> InfoEventManager::events() const

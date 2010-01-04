@@ -108,6 +108,11 @@ public:
 	 */
 	void setShowOnSend( bool showOnSend );
 
+	/**
+	 * @return true if event has been closed and is scheduled for deletion.
+	 */
+	bool isClosed() const;
+
 public Q_SLOTS:
 	/**
 	 * Emit the event.

@@ -112,6 +112,11 @@ void InfoEvent::activate( uint actionId )
 	emit actionActivated( actionId );
 }
 
+bool InfoEvent::isClosed() const
+{
+	return d->closed;
+}
+
 void InfoEvent::close()
 {
 	if ( d->closed )

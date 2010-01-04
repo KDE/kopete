@@ -72,6 +72,15 @@ Q_SIGNALS:
 	 */
 	void eventAdded( Kopete::InfoEvent* event );
 
+	/**
+	 * Emitted before new info event item is added into the InfoEventManager.
+	 * Any class can connect to this signal and call @p close() on the @p event
+	 * which will abort the adding.
+	 *
+	 * @param event the Info Event that will be added into InfoEventManager
+	 */
+	void eventAboutToBeAdded( Kopete::InfoEvent* event );
+
 protected:
 	friend class InfoEvent;
 	/**
