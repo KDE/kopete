@@ -279,10 +279,8 @@ class Callbacks:public QObject,
         std::string
     getSecureHTTPProxy ();
 
-#ifdef LIBMSN_INBOX_URL_ENABLED
     virtual void
     gotInboxUrl (MSN::NotificationServerConnection *conn, MSN::hotmailInfo info);
-#endif
 
   public:
     WlmServer * m_server;
@@ -459,10 +457,8 @@ class Callbacks:public QObject,
     void
     newEmailNotification(const QString from, const QString subject);
 
-#ifdef LIBMSN_INBOX_URL_ENABLED
     void
     inboxUrl(MSN::hotmailInfo & info);
-#endif
 
 private slots:
     void emitSocketError( QAbstractSocket::SocketError error );

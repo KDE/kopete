@@ -567,12 +567,9 @@ Callbacks::gotNewEmailNotification (MSN::NotificationServerConnection * conn,
                                     std::string from, std::string subject)
 {
     Q_UNUSED( conn );
-#ifdef LIBMSN_INBOX_URL_ENABLED
     emit newEmailNotification (QString(from.c_str()), KMime::decodeRFC2047String(subject.c_str()));
-#endif
 }
 
-#ifdef LIBMSN_INBOX_URL_ENABLED
 void
 Callbacks::gotInboxUrl (MSN::NotificationServerConnection * conn,
                         MSN::hotmailInfo info)
@@ -580,7 +577,6 @@ Callbacks::gotInboxUrl (MSN::NotificationServerConnection * conn,
     Q_UNUSED( conn );
     emit inboxUrl (info);
 }
-#endif
 
 void
 Callbacks::fileTransferProgress (MSN::SwitchboardServerConnection * conn,

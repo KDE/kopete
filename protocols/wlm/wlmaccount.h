@@ -256,10 +256,8 @@ public slots:
     void
     slotNewEmailNotification(const QString from, const QString subject);
 
-#ifdef LIBMSN_INBOX_URL_ENABLED
     void
     slotInboxUrl(MSN::hotmailInfo & info);
-#endif
 
   protected:
         /**

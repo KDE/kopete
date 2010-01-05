@@ -111,9 +111,7 @@ WlmAccount::fillActionMenu (KActionMenu * actionMenu)
     actionMenu->addAction(m_changeDNAction);
 //     actionMenu->addAction(m_startChatAction);
 
-#ifdef LIBMSN_INBOX_URL_ENABLED
     actionMenu->addAction(m_openInboxAction);
-#endif
     actionMenu->addAction(m_openStatusAction);
 }
 
@@ -266,10 +264,8 @@ WlmAccount::slotChangePublicName()
 void
 WlmAccount::slotOpenInbox()
 {
-#ifdef LIBMSN_INBOX_URL_ENABLED
     if (isConnected ())
         m_server->cb.mainConnection->getInboxUrl ();
-#endif
 }
 
 void
@@ -334,14 +330,12 @@ WlmAccount::connectWithPassword (const QString & pass)
                             (MSN::NotificationServerConnection *)));
     QObject::connect (&m_server->cb, SIGNAL (wrongPassword ()), this,
                       SLOT (wrongPassword ()));
-#ifdef LIBMSN_INBOX_URL_ENABLED
     QObject::connect (&m_server->cb, SIGNAL (initialEmailNotification(int)), this,
                       SLOT (slotInitialEmailNotification(int)));
     QObject::connect (&m_server->cb, SIGNAL (newEmailNotification(QString, QString)), this,
                       SLOT (slotNewEmailNotification(QString, QString)));
     QObject::connect (&m_server->cb, SIGNAL (inboxUrl(MSN::hotmailInfo &)), this,
                       SLOT (slotInboxUrl(MSN::hotmailInfo &)));
-#endif
 
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmConnecting);
 }
@@ -1199,7 +1193,6 @@ WlmAccount::slotNewEmailNotification (const QString from, const QString subject)
     notification->sendEvent();
 }
 
-#ifdef LIBMSN_INBOX_URL_ENABLED
 void
 WlmAccount::slotInboxUrl (MSN::hotmailInfo & info)
 {
@@ -1247,7 +1240,6 @@ WlmAccount::slotInboxUrl (MSN::hotmailInfo & info)
     else
         kDebug(14140) << "Error opening temporary file";
 }
-#endif
 
 void WlmAccount::slotRemoveTmpMailFile()
 {
