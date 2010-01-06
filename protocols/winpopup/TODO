@@ -1,1 +1,0 @@
-Port the config module to KConfigXT. It use KAutoConfig which doesn't exist anymore
