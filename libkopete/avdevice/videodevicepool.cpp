@@ -887,6 +887,7 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 {
 	kDebug() << "("<< udi << ") called";
 	int i = 0;
+	m_ready.lock();
 	foreach ( VideoDevice vd, m_videodevice )
 	{
 		if ( vd.udi() == udi )
@@ -895,12 +896,21 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 			emit deviceUnregistered( udi );
 			// not sure if this is safe but at this point the device node is gone already anyway
 			m_videodevice.remove( i );
+			if (m_current_device == i)
+			{
+				m_current_device = 0;
+			}
+			else if (m_current_device > i)
+			{
+				m_current_device--;
+			}
 		}
 		else
 		{
 			i++;
 		}
 	}
+	m_ready.unlock();
 }
 
 } // namespace AV
