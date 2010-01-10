@@ -246,7 +246,7 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 	int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentIndex();
 	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDevice() << "New device: " << newdevice;
-	if ((newdevice>=0 && newdevice < mVideoDevicePool->m_videodevice.size())&&(newdevice!=mVideoDevicePool->currentDevice()))
+	if ((newdevice >= 0 && newdevice < mVideoDevicePool->size()) && (newdevice != mVideoDevicePool->currentDevice()))
 	{
 	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. ";
 		mVideoDevicePool->open(newdevice);

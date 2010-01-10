@@ -78,8 +78,6 @@ public:
 	bool hasDevices();
 	size_t size();
 	~VideoDevicePool();
-	VideoDeviceVector m_videodevice; // Vector to be filled with found devices
-	VideoDeviceModelPool m_modelvector;  // Vector to be filled with unique device models
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	int fillStandardKComboBox(KComboBox *combobox);
@@ -114,8 +112,9 @@ protected:
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
 	int showDeviceCapabilities(unsigned int device);
-	void guessDriver();
 	int m_current_device;
+	VideoDeviceVector m_videodevice; // Vector to be filled with found devices
+	VideoDeviceModelPool m_modelvector;  // Vector to be filled with unique device models
 	struct imagebuffer m_buffer; // only used when no devices were found
 
 	QMutex m_ready;
