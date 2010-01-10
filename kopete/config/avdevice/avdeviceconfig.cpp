@@ -2,7 +2,7 @@
     avdeviceconfig.cpp  -  Kopete Video Device Configuration Panel
 
     Copyright (c) 2005-2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
-
+    Copyright (c) 2010      by Frank Schaefer                 <fschaefer.oss@googlemail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -37,10 +37,10 @@
 #include <kcombobox.h>
 #include <qimage.h>
 #include <qpixmap.h>
-
 #include <qtabwidget.h>
+#include "IdGuiElements.h"
 
-//#include "videodevice.h"
+
 K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory,
 		registerPlugin<AVDeviceConfig>(); )
 K_EXPORT_PLUGIN( KopeteAVDeviceConfigFactory("kcm_kopete_avdeviceconfig") )
@@ -60,11 +60,6 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mStandardKComboBox,            SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mBrightnessSlider,             SIGNAL(valueChanged(int)), this, SLOT(slotBrightnessSliderChanged(int)));
-	connect(mPrfsVideoDevice->mContrastSlider,               SIGNAL(valueChanged(int)), this, SLOT(slotContrastSliderChanged(int)));
-	connect(mPrfsVideoDevice->mSaturationSlider,             SIGNAL(valueChanged(int)), this, SLOT(slotSaturationSliderChanged(int)));
-	connect(mPrfsVideoDevice->mWhitenessSlider,              SIGNAL(valueChanged(int)), this, SLOT(slotWhitenessSliderChanged(int)));
-	connect(mPrfsVideoDevice->mHueSlider,                    SIGNAL(valueChanged(int)), this, SLOT(slotHueSliderChanged(int)));
 	connect(mPrfsVideoDevice->mImageAutoBrightnessContrast,  SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoBrightnessContrastChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAutoColorCorrection,     SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
 	connect(mPrfsVideoDevice->mImageAsMirror,                SIGNAL(toggled(bool)),     this, SLOT(slotImageAsMirrorChanged(bool)));
@@ -72,6 +67,8 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
+
+	setupControls();
 
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
@@ -99,8 +96,126 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 AVDeviceConfig::~AVDeviceConfig()
 {
 	mVideoDevicePool->close();
+	clearControlGUIElements();
 }
 
+
+void AVDeviceConfig::setupControls()
+{
+	int k = 0;
+	qint32 cval = 0;
+	clearControlGUIElements();
+	
+	QList<Kopete::AV::NumericVideoControl> numericCtrls;
+	QList<Kopete::AV::BooleanVideoControl> booleanCtrls;
+	QList<Kopete::AV::MenuVideoControl> menuCtrls;
+	QList<Kopete::AV::ActionVideoControl> actionCtrls;
+	numericCtrls = mVideoDevicePool->getSupportedNumericControls();
+	booleanCtrls = mVideoDevicePool->getSupportedBooleanControls();
+	menuCtrls = mVideoDevicePool->getSupportedMenuControls();
+	actionCtrls = mVideoDevicePool->getSupportedActionControls();
+
+	kDebug() << "Supported controls:" << numericCtrls.size() << "numeric," << booleanCtrls.size()
+		<< "boolean," << menuCtrls.size() << "menus," << actionCtrls.size() << "actions.";
+
+	/* SETUP GUI-elements */
+	// Numeric Controls: => Slider
+	for (k=0; k<numericCtrls.size(); k++)
+	{
+		mVideoDevicePool->getControlValue(numericCtrls.at(k).id, &cval);
+		addSliderControlElement(numericCtrls.at(k).id, numericCtrls.at(k).name, numericCtrls.at(k).value_min, numericCtrls.at(k).value_max, numericCtrls.at(k).value_step, cval);
+	}
+	// Boolean Controls: => Checkbox
+	for (k=0; k<booleanCtrls.size(); k++)
+	{
+		mVideoDevicePool->getControlValue(booleanCtrls.at(k).id, &cval);
+		addCheckBoxControlElement(booleanCtrls.at(k).id, booleanCtrls.at(k).name, cval);
+	}
+	// Menu Controls: => Combobox
+	for (k=0; k<menuCtrls.size(); k++)
+	{
+		mVideoDevicePool->getControlValue(menuCtrls.at(k).id, &cval);
+		addPopupMenuControlElement(menuCtrls.at(k).id, menuCtrls.at(k).name, menuCtrls.at(k).options, cval);
+	}
+	// Action Controls: => Button
+	for (k=0; k<actionCtrls.size(); k++)
+	{
+		mVideoDevicePool->getControlValue(actionCtrls.at(k).id, &cval);
+		addButtonControlElement(actionCtrls.at(k).id, actionCtrls.at(k).name);
+	}
+	/* TODO: check success of mVideoDevicePool->getControlValue() */
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, numericCtrls.size());
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, booleanCtrls.size() + menuCtrls.size());
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(3, actionCtrls.size());
+}
+
+
+void AVDeviceConfig::clearControlGUIElements()
+{
+	for (int k=0; k<ctrlWidgets.size(); k++)
+		delete ctrlWidgets.at(k);
+	ctrlWidgets.clear();
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, false);
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, false);
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(3, false);
+}
+
+
+void AVDeviceConfig::addSliderControlElement(int cid, QString title, int min, int max, int step, int value)
+{
+	int insert_row = mPrfsVideoDevice->sliders_gridLayout->rowCount();
+	QLabel *label = new QLabel( title + ":", mPrfsVideoDevice->VideoTabWidget );
+	mPrfsVideoDevice->sliders_gridLayout->addWidget( label, insert_row, 0 );
+	IdSlider *slider = new IdSlider(cid, Qt::Horizontal, mPrfsVideoDevice->VideoTabWidget);
+	mPrfsVideoDevice->sliders_gridLayout->addWidget( slider, insert_row, 1 );
+	slider->setMinimum( min );
+	slider->setMaximum( max );
+	slider->setSliderPosition( value );
+	slider->setTickInterval( step );
+	connect( slider, SIGNAL( valueChanged(uint, int) ), this, SLOT( changeVideoControlValue(uint, int) ) );
+	ctrlWidgets.push_back(label);
+	ctrlWidgets.push_back(slider);
+}
+
+
+void AVDeviceConfig::addCheckBoxControlElement(int cid, QString title, bool value)
+{
+	IdCheckBox *checkbox = new IdCheckBox( cid, mPrfsVideoDevice->VideoTabWidget );
+	checkbox->setText( title + ":" );
+	mPrfsVideoDevice->checkboxOptions_verticalLayout->addWidget( checkbox );
+	checkbox->setChecked( value );
+	connect( checkbox, SIGNAL( stateChanged(uint, int) ), this, SLOT( changeVideoControlValue(uint, int) ) );
+	ctrlWidgets.push_back(checkbox);
+}
+
+
+void AVDeviceConfig::addPopupMenuControlElement(int cid, QString title, QStringList options, int menuindex)
+{
+	int insert_row = mPrfsVideoDevice->menuOptions_gridLayout->rowCount();
+	QLabel *label = new QLabel( title + ":", mPrfsVideoDevice->VideoTabWidget );
+	mPrfsVideoDevice->menuOptions_gridLayout->addWidget( label, insert_row, 0 );
+	IdComboBox *combobox = new IdComboBox( cid, mPrfsVideoDevice->VideoTabWidget );
+	mPrfsVideoDevice->menuOptions_gridLayout->addWidget( combobox, insert_row, 1 );
+	combobox->addItems( options );
+	combobox->setCurrentIndex( menuindex );
+	connect( combobox, SIGNAL( currentIndexChanged(uint, int) ), this, SLOT( changeVideoControlValue(uint, int) ) );
+	ctrlWidgets.push_back(label);
+	ctrlWidgets.push_back(combobox);
+}
+
+
+void AVDeviceConfig::addButtonControlElement(int cid, QString title)
+{
+	int insert_row = mPrfsVideoDevice->actions_gridLayout->rowCount();
+	QLabel *label = new QLabel( title + ":", mPrfsVideoDevice->VideoTabWidget );
+	mPrfsVideoDevice->actions_gridLayout->addWidget( label, insert_row, 0 );
+	IdPushButton *button = new IdPushButton( cid, mPrfsVideoDevice->VideoTabWidget );
+	button->setText( i18n("Execute") );
+	mPrfsVideoDevice->actions_gridLayout->addWidget( button, insert_row, 1 );
+	connect( button, SIGNAL( pressed(uint) ), this, SLOT( changeVideoControlValue(uint) ) );
+	ctrlWidgets.push_back(label);
+	ctrlWidgets.push_back(button);
+}
 
 
 
@@ -135,11 +250,6 @@ void AVDeviceConfig::setVideoInputParameters()
 {
 	if(mVideoDevicePool->size())
 	{
-		mPrfsVideoDevice->mBrightnessSlider->setValue((int)(mVideoDevicePool->getBrightness()*65535));
-		mPrfsVideoDevice->mContrastSlider->setValue((int)(mVideoDevicePool->getContrast()*65535));
-		mPrfsVideoDevice->mSaturationSlider->setValue((int)(mVideoDevicePool->getSaturation()*65535));
-		mPrfsVideoDevice->mWhitenessSlider->setValue((int)(mVideoDevicePool->getWhiteness()*65535));
-		mPrfsVideoDevice->mHueSlider->setValue((int)(mVideoDevicePool->getHue()*65535));
 		mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(mVideoDevicePool->getAutoBrightnessContrast());
 		mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(mVideoDevicePool->getAutoColorCorrection());
 		mPrfsVideoDevice->mImageAsMirror->setChecked(mVideoDevicePool->getImageAsMirror());
@@ -158,6 +268,7 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		mVideoDevicePool->startCapturing();
 		setVideoInputParameters();
+		setupControls();
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 		emit changed( true );
 	}
@@ -170,6 +281,7 @@ void AVDeviceConfig::slotInputKComboBoxChanged(int){
 		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		setVideoInputParameters();
+		setupControls(); // NOTE: supported controls+values may be different for each input !
 		emit changed( true );
 	}
 }
@@ -181,34 +293,11 @@ void AVDeviceConfig::slotStandardKComboBoxChanged(int){
   emit changed( true );
 }
 
-void AVDeviceConfig::slotBrightnessSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotBrightnessSliderChanged(int) called. " << mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0;
-	mVideoDevicePool->setBrightness( mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0 );
-  emit changed( true );
-}
-
-void AVDeviceConfig::slotContrastSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotContrastSliderChanged(int) called. " << mPrfsVideoDevice->mContrastSlider->value() / 65535.0;
-	mVideoDevicePool->setContrast( mPrfsVideoDevice->mContrastSlider->value() / 65535.0 );
-  emit changed( true );
-}
-
-void AVDeviceConfig::slotSaturationSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotSaturationSliderChanged(int) called. " << mPrfsVideoDevice->mSaturationSlider->value() / 65535.0;
-	mVideoDevicePool->setSaturation( mPrfsVideoDevice->mSaturationSlider->value() / 65535.0);
-  emit changed( true );
-}
-
-void AVDeviceConfig::slotWhitenessSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotWhitenessSliderChanged(int) called. " << mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0;
-	mVideoDevicePool->setWhiteness( mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0);
-  emit changed( true );
-}
-
-void AVDeviceConfig::slotHueSliderChanged(int){
-	kDebug() << "kopete:config (avdevice): slotHueSliderChanged(int) called. " << mPrfsVideoDevice->mHueSlider->value() / 65535.0;
-	mVideoDevicePool->setHue( mPrfsVideoDevice->mHueSlider->value() / 65535.0 );
-  emit changed( true );
+void AVDeviceConfig::changeVideoControlValue(unsigned int id, int value)
+{
+	mVideoDevicePool->setControlValue(id, value);
+	emit changed( true );
+	/* TODO: Check success, fallback */
 }
 
 void AVDeviceConfig::slotImageAutoBrightnessContrastChanged(bool){
@@ -249,6 +338,7 @@ void AVDeviceConfig::deviceRegistered( const QString & udi )
 	mVideoDevicePool->startCapturing();
 
 	setVideoInputParameters();
+	setupControls();
 
 	qtimer.start(40);
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
@@ -263,4 +353,5 @@ void AVDeviceConfig::deviceUnregistered( const QString & udi )
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+	clearControlGUIElements();
 }

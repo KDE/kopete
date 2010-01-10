@@ -2,6 +2,7 @@
     avdeviceconfig.h  -  Kopete Video Device Configuration Panel
 
     Copyright (c) 2005-2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2010      by Frank Schaefer                 <fschaefer.oss@googlemail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -57,26 +58,29 @@ private slots:
 	void slotDeviceKComboBoxChanged(int);
 	void slotInputKComboBoxChanged(int);
 	void slotStandardKComboBoxChanged(int);
-	void slotBrightnessSliderChanged(int);
-	void slotContrastSliderChanged(int);
-	void slotSaturationSliderChanged(int);
-	void slotWhitenessSliderChanged(int);
-	void slotHueSliderChanged(int);
 	void slotImageAutoBrightnessContrastChanged(bool);
 	void slotImageAutoColorCorrectionChanged(bool);
 	void slotImageAsMirrorChanged(bool);
 	void slotUpdateImage();
+	void changeVideoControlValue(unsigned int id, int value = 0);
 	void deviceRegistered( const QString & );
 	void deviceUnregistered( const QString & );
 private:
 //	QTabWidget* mAVDeviceTabCtl;
 	Ui_AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;
 //	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
-	Kopete::AV::VideoDevicePool *mVideoDevicePool ;
+	Kopete::AV::VideoDevicePool *mVideoDevicePool;
 	QImage qimage;
 	QPixmap qpixmap;
 	QTimer qtimer;
+	QList<QWidget*> ctrlWidgets;
 	void setVideoInputParameters();
+	void setupControls();
+	void clearControlGUIElements();
+	void addSliderControlElement(int cid, QString title, int min, int max, int step, int value);
+	void addCheckBoxControlElement(int cid, QString title, bool value);
+	void addPopupMenuControlElement(int cid, QString title, QStringList options, int menuindex);
+	void addButtonControlElement(int cid, QString title);
 #ifdef HAVE_GL
 //	QGLWidget m_video_gl;
 #endif

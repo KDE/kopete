@@ -8,7 +8,7 @@ ${KOPETE_INCLUDES}
 ########### next target ###############
 
 set(kcm_kopete_avdeviceconfig_PART_SRCS
-  avdeviceconfig.cpp )
+  avdeviceconfig.cpp IdGuiElements.cpp )
 # avdeviceconfig_videodevicec.cpp )
 
 kde4_add_ui_files(kcm_kopete_avdeviceconfig_PART_SRCS avdeviceconfig_videodevice.ui )
