@@ -177,7 +177,7 @@ void AVDeviceConfig::addSliderControlElement(int cid, QString title, int min, in
 void AVDeviceConfig::addCheckBoxControlElement(int cid, QString title, bool value)
 {
 	IdCheckBox *checkbox = new IdCheckBox( cid, mPrfsVideoDevice->VideoTabWidget );
-	checkbox->setText( title + ":" );
+	checkbox->setText( title );
 	mPrfsVideoDevice->checkboxOptions_verticalLayout->addWidget( checkbox );
 	checkbox->setChecked( value );
 	connect( checkbox, SIGNAL( stateChanged(uint, int) ), this, SLOT( changeVideoControlValue(uint, int) ) );
