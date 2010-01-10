@@ -49,96 +49,6 @@ VideoDevice::~VideoDevice()
 {
 }
 
-#ifdef V4L2_CAP_VIDEO_CAPTURE
-
-void VideoDevice::enumerateControls (void)
-{
-// -----------------------------------------------------------------------------------------------------------------
-// This must turn up to be a proper method to check for controls' existence.
-	CLEAR (queryctrl);
-// v4l2_queryctrl may zero the .id in some cases, even if the IOCTL returns EXIT_SUCCESS (tested with a bttv card, when testing for V4L2_CID_AUDIO_VOLUME).
-// As of 6th Aug 2007, according to the V4L2 specification version 0.21, this behavior is undocumented, and the example 1-8 code found at
-// http://www.linuxtv.org/downloads/video4linux/API/V4L2_API/spec/x519.htm fails because of this behavior with a bttv card.
-
-	int currentid = V4L2_CID_BASE;
-
-kDebug() << "Checking CID controls";
-
-	for (currentid = V4L2_CID_BASE; currentid < V4L2_CID_LASTP1; currentid++)
-//for (queryctrl.id = 9963776; queryctrl.id < 9963800; queryctrl.id++)
-	{
-		queryctrl.id = currentid;
-		if (0 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
-		{
-			if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
-				continue;
-
-kDebug() <<  " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value;
-
-//			switch (queryctrl.type)
-//			{
-//				case V4L2_CTRL_TYPE_INTEGER : 
-//			}
-			if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
-				enumerateMenu ();
-		}
-		else
-		{
-			if (errno == EINVAL)
-				continue;
-
-			perror ("VIDIOC_QUERYCTRL");
-//			exit (EXIT_FAILURE);
-		}
-	}
-
-kDebug() << "Checking CID private controls";
-
-	for (currentid = V4L2_CID_PRIVATE_BASE;; currentid++)
-	{
-		queryctrl.id = currentid;
-		if ( 0 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
-		{
-			if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
-				continue;
-
-kDebug() << " Control: " << QString::fromLocal8Bit((const char*)queryctrl.name) << " Values from " << queryctrl.minimum << " to " << queryctrl.maximum << " with steps of " << queryctrl.step << ". Default: " << queryctrl.default_value;
-
-			if (queryctrl.type == V4L2_CTRL_TYPE_MENU)
-				enumerateMenu ();
-		}
-		else
-		{
-			if (errno == EINVAL)
-				break;
-
-			perror ("VIDIOC_QUERYCTRL");
-//			exit (EXIT_FAILURE);
-		}
-	}
-}
-
-void VideoDevice::enumerateMenu (void)
-{
-	kDebug() <<  "  Menu items:";
-
-	memset (&querymenu, 0, sizeof (querymenu));
-	querymenu.id = queryctrl.id;
-
-	for (querymenu.index = queryctrl.minimum; querymenu.index <= (unsigned int) queryctrl.maximum; ++querymenu.index)
-	{
-		if (0 == xioctl (VIDIOC_QUERYMENU, &querymenu))
-		{
-			kDebug() <<  "  " << QString::fromLocal8Bit((const char*)querymenu.name);
-                }
-		else
-		{
-			perror ("VIDIOC_QUERYMENU");
-			exit (EXIT_FAILURE);
-		}
-	}
-}
-#endif
 
 /*!
     \fn VideoDevice::xioctl(int fd, int request, void *arg)
@@ -414,9 +324,6 @@ detectSignalStandards();
 		m_name=m_model; // Take care about changing the name to be different from the model itself...
 
 		detectPixelFormats();
-#ifdef V4L2_CAP_VIDEO_CAPTURE
-		enumerateControls();
-#endif
 // TODO: Now we must execute the proper initialization according to the type of the driver.
 		kDebug() << "checkDevice() exited successfuly.";
 		return EXIT_SUCCESS;
@@ -562,6 +469,11 @@ int VideoDevice::initDevice()
 // Select video input, video standard and tune here.
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
+	struct v4l2_cropcap cropcap;
+	struct v4l2_crop crop;
+	CLEAR (cropcap);
+	CLEAR (crop);
+	
 	cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	if (-1 == xioctl (VIDIOC_CROPCAP, &cropcap))
 	{ // Errors ignored.
@@ -2341,6 +2253,7 @@ int VideoDevice::detectPixelFormats()
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
+			struct v4l2_fmtdesc fmtdesc;
 			fmtdesc.index = 0;
 			fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 

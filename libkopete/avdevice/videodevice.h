@@ -209,6 +209,7 @@ struct imagebuffer
 	pixel_format pixelformat;
 	QVector <uchar> data; // maybe it should be a rawbuffer instead of it? It could make us avoid a memory copy
 };
+
 struct rawbuffer // raw buffer
 {
 	uchar * start;
@@ -297,15 +298,8 @@ public:
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 	struct v4l2_capability V4L2_capabilities;
-	struct v4l2_cropcap cropcap;
-	struct v4l2_crop crop;
 	struct v4l2_format fmt;
-	struct v4l2_fmtdesc fmtdesc; // Not sure if it must be here or inside detectPixelFormats(). Should inve
 //	struct v4l2_input m_input;
-	struct v4l2_queryctrl queryctrl;
-	struct v4l2_querymenu querymenu;
-	void enumerateControls (void);
-	void enumerateMenu (void);
 #endif
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
