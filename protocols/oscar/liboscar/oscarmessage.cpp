@@ -36,7 +36,7 @@ public:
 		: QSharedData()
 	{
 		channel = -1;
-		properties = -1;
+		properties = 0;
 		messageType = 0;
 		requestType = 0;
 		port = 0;
@@ -284,16 +284,11 @@ int Message::properties() const
 
 void Message::addProperty( int prop )
 {
-	if ( d->properties == -1  )
-		d->properties = 0;
-
 	d->properties = d->properties | prop;
 }
 
 bool Message::hasProperty( int prop ) const
 {
-	if ( d->properties == -1 )
-		return false;
 	if ( ( d->properties & prop ) == 0 )
 		return false;
 	else
@@ -485,7 +480,7 @@ void Message::setId( uint id )
 
 Message::operator bool() const
 {
-	return d->channel != -1 && d->properties != -1;
+	return d->channel != -1;
 }
 
 }
