@@ -2,6 +2,7 @@
     videodevicepool.h  -  Kopete Multiple Video Device handler Class
 
     Copyright (c) 2005-2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2010      by Frank Schaefer                 <fschaefer.oss@googlemail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -86,6 +87,14 @@ public:
 	int currentDevice();
 	int currentInput();
 	unsigned int inputs();
+
+	QList<NumericVideoControl> getSupportedNumericControls();
+	QList<BooleanVideoControl> getSupportedBooleanControls();
+	QList<MenuVideoControl> getSupportedMenuControls();
+	QList<ActionVideoControl> getSupportedActionControls();
+
+	int getControlValue(quint32 ctrl_id, qint32 * value);
+	int setControlValue(quint32 ctrl_id, qint32 value);
 
 	float getBrightness();
 	float setBrightness(float brightness);

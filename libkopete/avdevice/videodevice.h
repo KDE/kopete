@@ -2,6 +2,7 @@
     videodevice.cpp  -  Kopete Video Device Low-level Support
 
     Copyright (c) 2005-2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2010      by Frank Schaefer                 <fschaefer.oss@googlemail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -217,6 +218,36 @@ struct rawbuffer // raw buffer
 };
 
 
+class ActionVideoControl
+{
+public:
+	quint32 id;
+	QString name;
+};
+
+class BooleanVideoControl : public ActionVideoControl
+{
+public:
+	qint32 value_default;
+};
+
+class NumericVideoControl : public BooleanVideoControl
+{
+public:
+	qint32 value_min;
+	qint32 value_max;
+	qint32 value_step;
+};
+
+class MenuVideoControl : public ActionVideoControl
+{
+public:
+	qint32 index_default;
+	QStringList options;
+};
+
+
+
 class VideoDevice{
 public:
 	VideoDevice();
@@ -258,6 +289,14 @@ public:
 	virtual int getImage(QImage *qimage);
 	virtual int stopCapturing();
 	virtual int close();
+
+	QList<NumericVideoControl> getSupportedNumericControls();
+	QList<BooleanVideoControl> getSupportedBooleanControls();
+	QList<MenuVideoControl> getSupportedMenuControls();
+	QList<ActionVideoControl> getSupportedActionControls();
+
+	int getControlValue(quint32 ctrl_id, qint32 * value);
+	int setControlValue(quint32 ctrl_id, qint32 value);
 
 	float getBrightness();
 	float setBrightness(float brightness);
@@ -307,6 +346,23 @@ public:
 	QVector<Kopete::AV::VideoInput> m_input;
 //	QFile file;
 protected:
+#if defined( __linux__) && defined(ENABLE_AV)
+	typedef enum
+	{
+		IMGCTRL_ID_V4L1_BRIGHTNESS,
+		IMGCTRL_ID_V4L1_HUE,
+		IMGCTRL_ID_V4L1_COLOR,
+		IMGCTRL_ID_V4L1_CONTRAST,
+		IMGCTRL_ID_V4L1_WHITENESS
+	} imgctrl_id;
+	/* NOTE: V4L2_CID_BASE = 0x980900 */
+#endif
+
+	QList<NumericVideoControl> m_numericCtrls;
+	QList<BooleanVideoControl> m_booleanCtrls;
+	QList<MenuVideoControl> m_menuCtrls;
+	QList<ActionVideoControl> m_actionCtrls;
+
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 
 	QVector<rawbuffer> m_rawbuffers;
@@ -326,6 +382,13 @@ protected:
 	bool m_videoasyncio;
 	bool m_videostream;
 
+	void setupControls();
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef V4L2_CAP_VIDEO_CAPTURE
+	bool getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList * options);
+	void saveV4L2ControlData(struct v4l2_queryctrl qctrl);
+#endif
+#endif
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
 	int initRead();

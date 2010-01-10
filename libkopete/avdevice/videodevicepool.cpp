@@ -1,7 +1,8 @@
 /*
-    videodevice.cpp  -  Kopete Video Device Low-level Support
+    videodevicepool.cpp  -  Kopete Video Device Low-level Support
 
     Copyright (c) 2005-2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
+    Copyright (c) 2010      by Frank Schaefer                 <fschaefer.oss@googlemail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -229,7 +230,56 @@ int VideoDevicePool::stopCapturing()
 	return EXIT_FAILURE;
 }
 
+
 // Implementation of the methods that get / set input's adjustment parameters
+QList<NumericVideoControl> VideoDevicePool::getSupportedNumericControls()
+{
+  if (currentDevice() < m_videodevice.size() )
+	return m_videodevice[currentDevice()].getSupportedNumericControls();
+  else
+	return QList<NumericVideoControl>();
+}
+
+QList<BooleanVideoControl> VideoDevicePool::getSupportedBooleanControls()
+{
+  if (currentDevice() < m_videodevice.size() )
+	return m_videodevice[currentDevice()].getSupportedBooleanControls();
+  else
+	return QList<BooleanVideoControl>();
+}
+
+QList<MenuVideoControl> VideoDevicePool::getSupportedMenuControls()
+{
+  if (currentDevice() < m_videodevice.size() )
+	return m_videodevice[currentDevice()].getSupportedMenuControls();
+  else
+	return QList<MenuVideoControl>();
+}
+
+QList<ActionVideoControl> VideoDevicePool::getSupportedActionControls()
+{
+  if (currentDevice() < m_videodevice.size() )
+	return m_videodevice[currentDevice()].getSupportedActionControls();
+  else
+	return QList<ActionVideoControl>();
+}
+
+int VideoDevicePool::getControlValue(quint32 ctrl_id, qint32 * value)
+{
+  if (currentDevice() < m_videodevice.size() )
+	return m_videodevice[currentDevice()].getControlValue(ctrl_id, value);
+  else
+	return EXIT_FAILURE;
+}
+
+int VideoDevicePool::setControlValue(quint32 ctrl_id, qint32 value)
+{
+  if (currentDevice() < m_videodevice.size() )
+	return m_videodevice[currentDevice()].setControlValue(ctrl_id, value);
+  else
+	return EXIT_FAILURE;
+}
+
 /*!
     \fn VideoDevicePool::getBrightness()
  */
