@@ -14,6 +14,7 @@ Description[ar]=تابع KIO إكتشف لخدمة جابر
 Description[bg]=A KIO slave for Jabber Service Discovery
 Description[bn]=Jabber সার্ভিস ডিসকভারির জন্য একটি কে-আই-ও স্লেভ
 Description[ca]=Un esclau KIO pel servei de de descoberta del Jabber
+Description[ca@valencia]=Un esclau KIO pel servei de de descoberta del Jabber
 Description[cs]=Pomocný protokol pro zjišťování služeb Jabber
 Description[da]=En kioslave til at opdage jabber service
 Description[de]=Ein-/Ausgabemodul zum Auffinden von Jabber-Diensten
