@@ -46,6 +46,10 @@ public:
 	QString name;
 	int  hastuner;
 	__u64 m_standards;
+	bool img_softcorr_autobrightnesscontrast;
+	bool img_softcorr_autocolor;
+	bool img_softcorr_vflip;
+	bool img_softcorr_hflip;
 	float getBrightness();
 	float setBrightness(float brightness);
 	float getContrast();

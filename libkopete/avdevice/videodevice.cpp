@@ -52,6 +52,10 @@ VideoDevice::~VideoDevice()
 
 void VideoDevice::setupControls()
 {
+#if defined(__linux__) && defined(ENABLE_AV)
+	bool driver_vflip = false;
+	bool driver_hflip = false;
+#endif
 	m_numericCtrls.clear();
 	m_booleanCtrls.clear();
 	m_menuCtrls.clear();
@@ -72,6 +76,10 @@ void VideoDevice::setupControls()
 				{
 					if (qctrl.flags & V4L2_CTRL_FLAG_DISABLED)
 						continue;
+					if (qctrl.id == V4L2_CID_VFLIP)
+						driver_vflip = true;
+					if (qctrl.id == V4L2_CID_HFLIP)
+						driver_hflip = true;
 					saveV4L2ControlData(qctrl);
 				}
 				else
@@ -103,28 +111,22 @@ void VideoDevice::setupControls()
 		VIDEODEV_DRIVER_V4L:
 			{
 				NumericVideoControl numCtrl;
-
 				numCtrl.value_min = 0;
 				numCtrl.value_max = 65535;
 				numCtrl.value_step = 1;
 				numCtrl.value_default = 32767;
-
 				numCtrl.id = IMGCTRL_ID_V4L1_BRIGHTNESS;
 				numCtrl.name = "Brightness";
 				m_numericCtrls.push_back( numCtrl );
-
 				numCtrl.id = IMGCTRL_ID_V4L1_HUE;
 				numCtrl.name = "Hue";
 				m_numericCtrls.push_back( numCtrl );
-
 				numCtrl.id = IMGCTRL_ID_V4L1_COLOR;
 				numCtrl.name = "Color";
 				m_numericCtrls.push_back( numCtrl );
-
 				numCtrl.id = IMGCTRL_ID_V4L1_CONTRAST;
 				numCtrl.name = "Contrast";
 				m_numericCtrls.push_back( numCtrl );
-
 				numCtrl.id = IMGCTRL_ID_V4L1_WHITENESS;
 				numCtrl.name = "Whiteness";
 				m_numericCtrls.push_back( numCtrl );
@@ -135,6 +137,30 @@ void VideoDevice::setupControls()
 		default:
 			break;
 	}
+	
+#if defined(__linux__) && defined(ENABLE_AV)
+	// Software controls:
+	BooleanVideoControl boolCtrl;
+	boolCtrl.value_default = 0;
+	boolCtrl.id = IMGCTRL_ID_SOFT_AUTOBRIGHTNESSCONTRASTCORR;
+	boolCtrl.name = "Automatic brightness/contrast correction";
+	m_booleanCtrls.push_back( boolCtrl );
+	boolCtrl.id = IMGCTRL_ID_SOFT_AUTOCOLORCORR;
+	boolCtrl.name = "Automatic color correction";
+	m_booleanCtrls.push_back( boolCtrl );
+	if (!driver_vflip)
+	{
+		boolCtrl.id = IMGCTRL_ID_SOFT_VFLIP;
+		boolCtrl.name = "Mirror vertically";
+		m_booleanCtrls.push_back( boolCtrl );
+	}
+	if (!driver_hflip)
+	{
+		boolCtrl.id = IMGCTRL_ID_SOFT_HFLIP;
+		boolCtrl.name = "Mirror horizontally";
+		m_booleanCtrls.push_back( boolCtrl );
+	}
+#endif
 }
 
 #if defined(__linux__) && defined(ENABLE_AV)
@@ -1482,8 +1508,11 @@ int VideoDevice::getImage(QImage *qimage)
 		case PIXELFORMAT_YYUV	: break;
 	}
 
+	if (m_current_input >= m_input.size() )
+		return EXIT_SUCCESS;
+
 // Proccesses image for automatic Brightness/Contrast/Color correction
-	if (getAutoBrightnessContrast()||getAutoColorCorrection())
+	if (m_input[m_current_input].img_softcorr_autobrightnesscontrast || m_input[m_current_input].img_softcorr_autocolor)
 	{
 		unsigned long long R=0, G=0, B=0, A=0, global=0;
 		int Rmax=0, Gmax=0, Bmax=0, Amax=0, globalmax=0;
@@ -1513,7 +1542,7 @@ int VideoDevice::getImage(QImage *qimage)
 // If no color correction should be performed, simply level all the intensities so they're just the same.
 // In fact color correction should use the R, G and B variables to detect color deviation and "bump up" the saturation,
 // but it's computationally more expensive and the current way returns better results to the user.
-		if(!getAutoColorCorrection())
+		if(!m_input[m_current_input].img_softcorr_autocolor)
 		{
 			Rmin = globalmin ; Rmax = globalmax;
 			Gmin = globalmin ; Gmax = globalmax;
@@ -1538,6 +1567,10 @@ int VideoDevice::getImage(QImage *qimage)
 //			bits[loop+3] = (bits[loop+3] - Amin) * 255 / (Arange);
 		}
 	}
+	
+	if (m_input[m_current_input].img_softcorr_vflip || m_input[m_current_input].img_softcorr_hflip)
+		*qimage = qimage->mirrored(m_input[m_current_input].img_softcorr_vflip, m_input[m_current_input].img_softcorr_hflip);
+
 	return EXIT_SUCCESS;
 }
 
@@ -1646,6 +1679,47 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 	if (!isOpen())
 		return EXIT_FAILURE;
 
+	if (ctrl_id == IMGCTRL_ID_SOFT_AUTOBRIGHTNESSCONTRASTCORR)
+	{
+		if (m_current_input < m_input.size() )
+		{
+			*value = m_input[m_current_input].img_softcorr_autobrightnesscontrast;
+			return EXIT_SUCCESS;
+		}
+		else
+			return EXIT_FAILURE;
+	}
+	else if (ctrl_id == IMGCTRL_ID_SOFT_AUTOCOLORCORR)
+	{
+		if (m_current_input < m_input.size() )
+		{
+			*value = m_input[m_current_input].img_softcorr_autocolor;
+			return EXIT_SUCCESS;
+		}
+		else
+			return EXIT_FAILURE;
+	}
+	else if (ctrl_id == IMGCTRL_ID_SOFT_VFLIP)
+	{
+		if (m_current_input < m_input.size() )
+		{
+			*value = m_input[m_current_input].img_softcorr_vflip;
+			return EXIT_SUCCESS;
+		}
+		else
+			return EXIT_FAILURE;
+	}
+	else if (ctrl_id == IMGCTRL_ID_SOFT_HFLIP)
+	{
+		if (m_current_input < m_input.size() )
+		{
+			*value = m_input[m_current_input].img_softcorr_hflip;
+			return EXIT_SUCCESS;
+		}
+		else
+			return EXIT_FAILURE;
+	}
+
 	switch(m_driver)
 	{
 #if defined(__linux__) && defined(ENABLE_AV)
@@ -1728,6 +1802,47 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 
 	if (!isOpen())
 		return EXIT_FAILURE;
+
+	if (ctrl_id == IMGCTRL_ID_SOFT_AUTOBRIGHTNESSCONTRASTCORR)
+	{
+		if (m_current_input < m_input.size() )
+		{
+			m_input[m_current_input].img_softcorr_autobrightnesscontrast = value;
+			return EXIT_SUCCESS;
+		}
+		else
+			return EXIT_FAILURE;
+	}
+	else if (ctrl_id == IMGCTRL_ID_SOFT_AUTOCOLORCORR)
+	{
+		if (m_current_input < m_input.size() )
+		{
+			m_input[m_current_input].img_softcorr_autocolor = value;
+			return EXIT_SUCCESS;
+		}
+		else
+			return EXIT_FAILURE;
+	}
+	else if (ctrl_id == IMGCTRL_ID_SOFT_VFLIP)
+	{
+		if (m_current_input < m_input.size() )
+		{
+			m_input[m_current_input].img_softcorr_vflip = value;
+			return EXIT_SUCCESS;
+		}
+		else
+			return EXIT_FAILURE;
+	}
+	else if (ctrl_id == IMGCTRL_ID_SOFT_HFLIP)
+	{
+		if (m_current_input < m_input.size() )
+		{
+			m_input[m_current_input].img_softcorr_hflip = value;
+			return EXIT_SUCCESS;
+		}
+		else
+			return EXIT_FAILURE;
+	}
 
 	switch(m_driver)
 	{
@@ -1827,7 +1942,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 		default:
 			break;
 	}
-	return false;
+	return EXIT_FAILURE;
 }
 
 
@@ -2225,7 +2340,6 @@ bool VideoDevice::setAutoBrightnessContrast(bool brightnesscontrast)
 	  }
 	else
 	  return false;
-   
 }
 
 bool VideoDevice::getAutoColorCorrection()

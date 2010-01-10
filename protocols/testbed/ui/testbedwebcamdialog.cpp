@@ -84,7 +84,7 @@ void TestbedWebcamDialog::slotUpdateImage()
 	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image";
 	mVideoDevicePool->getImage(&mImage);
-	mImageContainer->updatePixmap( QPixmap::fromImage( mImage.mirrored (mVideoDevicePool->getImageAsMirror(), false) ) );
+	mImageContainer->updatePixmap( QPixmap::fromImage( mImage ) );
 #endif
 }
 

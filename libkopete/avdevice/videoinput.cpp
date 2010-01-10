@@ -24,12 +24,18 @@ namespace AV {
 VideoInput::VideoInput()
 {
 	kDebug() << "Executing Video Input's constructor!!!";
+	img_softcorr_autobrightnesscontrast = false;
+	img_softcorr_autocolor = false;
+	img_softcorr_vflip = false;
+	img_softcorr_hflip = false;
 	m_brightness = 0.5;
 	m_contrast = 0.5;
 	m_saturation = 0.5;
 	m_hue = 0.5;
 	m_autobrightnesscontrast = false;
 	m_autocolorcorrection = false;
+	hastuner = 0;
+	m_standards = 0;
 }
 
 
