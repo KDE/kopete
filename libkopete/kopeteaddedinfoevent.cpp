@@ -96,6 +96,7 @@ void AddedInfoEvent::activate( uint actionId )
 
 			connect( d->addDialog, SIGNAL(finished()), this, SLOT(addDialogFinished()) );
 			connect( d->addDialog, SIGNAL(applyClicked(const QString&)), this, SLOT(addDialogOk()) );
+			connect( d->addDialog, SIGNAL(infoClicked(const QString&)), this, SLOT(addDialogInfo()) );
 			d->addDialog->show();
 		}
 	}
