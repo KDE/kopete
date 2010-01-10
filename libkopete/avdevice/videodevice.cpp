@@ -1020,25 +1020,6 @@ int VideoDevice::selectInput(int newinput)
 		}
 		kDebug() << "Selected input " << newinput << " (" << m_input[newinput].name << ")";
 		m_current_input = newinput;
-		setInputParameters();
-		return EXIT_SUCCESS;
-	}
-	return EXIT_FAILURE;
-}
-
-/*!
-    \fn Kopete::AV::VideoDevice::setInputParameters()
- */
-int VideoDevice::setInputParameters()
-{
-    /// @todo implement me
-	if( (isOpen()) && (m_current_input < inputs() ) )
-	{
-		setBrightness( getBrightness() );
-		setContrast( getContrast() );
-		setSaturation( getSaturation() );
-		setWhiteness( getWhiteness() );
-		setHue( getHue() );
 		return EXIT_SUCCESS;
 	}
 	return EXIT_FAILURE;
@@ -1567,10 +1548,10 @@ int VideoDevice::getImage(QImage *qimage)
 //			bits[loop+3] = (bits[loop+3] - Amin) * 255 / (Arange);
 		}
 	}
-	
+
 	if (m_input[m_current_input].img_softcorr_vflip || m_input[m_current_input].img_softcorr_hflip)
 		*qimage = qimage->mirrored(m_input[m_current_input].img_softcorr_vflip, m_input[m_current_input].img_softcorr_hflip);
-
+  
 	return EXIT_SUCCESS;
 }
 
@@ -1732,7 +1713,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 				CLEAR (queryctrl);
 				queryctrl.id = ctrl_id;
 
-				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+				if (-1 == xioctl(VIDIOC_QUERYCTRL, &queryctrl))
 				{
 					if (errno != EINVAL)
 						kDebug() << "VIDIOC_QUERYCTRL failed (" << errno << ").";
@@ -1747,7 +1728,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 				{
 					CLEAR (control);
 					control.id = ctrl_id;
-					if (-1 == xioctl (VIDIOC_G_CTRL, &control))
+					if (-1 == xioctl(VIDIOC_G_CTRL, &control))
 						kDebug() <<  "VIDIOC_G_CTRL failed (" << errno << ").";
 					else
 					{
@@ -1856,7 +1837,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 				CLEAR (queryctrl);
 				queryctrl.id = ctrl_id;
 
-				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
+				if (-1 == xioctl(VIDIOC_QUERYCTRL, &queryctrl))
 				{
 					if (errno != EINVAL)
 						kDebug() << "VIDIOC_QUERYCTRL failed (" << errno << ").";
@@ -1885,7 +1866,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 					{
 						control.value = value;
 					}
-					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
+					if (-1 == xioctl(VIDIOC_S_CTRL, &control))
 						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
 					else
 						return EXIT_SUCCESS;
@@ -1943,443 +1924,6 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 			break;
 	}
 	return EXIT_FAILURE;
-}
-
-
-float VideoDevice::getBrightness()
-{
-  if (m_current_input < m_input.size() )
-	return m_input[m_current_input].getBrightness();
-  else
-	return 0;
-}
-
-float VideoDevice::setBrightness(float brightness)
-{
-	kDebug() << "(" << brightness << ") called.";
-	m_input[m_current_input].setBrightness(brightness); // Just to check bounds
-
-	switch(m_driver)
-	{
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
-		case VIDEODEV_DRIVER_V4L2:
-			{
-				struct v4l2_queryctrl queryctrl;
-				struct v4l2_control control;
-
-				CLEAR (queryctrl);
-				queryctrl.id = V4L2_CID_BRIGHTNESS;
-
-				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
-				{
-					if (errno != EINVAL)
-					{
-						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
-					} else
-					{
-						kDebug() << "Device doesn't support the Brightness control.";
-					}
-				} else
-				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
-				{
-					kDebug() << "Brightness control is disabled.";
-				} else
-				{
-					CLEAR (control);
-					control.id = V4L2_CID_BRIGHTNESS;
-					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getBrightness());
-					control.value += queryctrl.minimum;
-
-					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
-					{
-						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
-					}
-				}
-			}
-			break;
-#endif
-		case VIDEODEV_DRIVER_V4L:
-			{
-				struct video_picture V4L_picture;
-				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-				{
-					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
-				}
-				V4L_picture.brightness = uint(65535 * getBrightness());
-				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-				{
-					kDebug() << "Device seems to not support adjusting image brightness. Fallback to it is not yet implemented.";
-				}
-			}
-			break;
-#endif
-		case VIDEODEV_DRIVER_NONE:
-		default:
-			break;
-	}
-	return getBrightness();
-}
-
-float VideoDevice::getContrast()
-{
-  if (m_current_input < m_input.size() )
-	return m_input[m_current_input].getContrast();
-  else
-	return 0;
-}
-
-float VideoDevice::setContrast(float contrast)
-{
-	kDebug() << "(" << contrast << ") called.";
-	m_input[m_current_input].setContrast(contrast); // Just to check bounds
-
-	switch(m_driver)
-	{
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
-		case VIDEODEV_DRIVER_V4L2:
-			{
-				struct v4l2_queryctrl queryctrl;
-				struct v4l2_control control;
-
-				CLEAR (queryctrl);
-				queryctrl.id = V4L2_CID_CONTRAST;
-
-				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
-				{
-					if (errno != EINVAL)
-					{
-						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
-					} else
-					{
-						kDebug() << "Device doesn't support the Contrast control.";
-					}
-				} else
-				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
-				{
-					kDebug() << "Contrast control is disabled.";
-				} else
-				{
-					CLEAR (control);
-					control.id = V4L2_CID_CONTRAST;
-					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getContrast());
-					control.value += queryctrl.minimum;
-
-					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
-					{
-						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
-					}
-				}
-			}
-			break;
-#endif
-		case VIDEODEV_DRIVER_V4L:
-			{
-				struct video_picture V4L_picture;
-				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-				{
-					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
-				}
-				V4L_picture.contrast = uint(65535*getContrast());
-				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture)) 
-				{
-					kDebug() << "Device seems to not support adjusting image contrast. Fallback to it is not yet implemented.";
-				}
-			}
-		break;
-#endif
-		case VIDEODEV_DRIVER_NONE:
-		default:
-			break;
-	}
-	return getContrast();
-}
-
-float VideoDevice::getSaturation()
-{
-  if (m_current_input < m_input.size() )
-	return m_input[m_current_input].getSaturation();
-  else
-	return 0;
-}
-
-float VideoDevice::setSaturation(float saturation)
-{
-	kDebug() << "(" << saturation << ") called.";
-	m_input[m_current_input].setSaturation(saturation); // Just to check bounds
-
-	switch(m_driver)
-	{
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
-		case VIDEODEV_DRIVER_V4L2:
-			{
-				struct v4l2_queryctrl queryctrl;
-				struct v4l2_control control;
-
-				CLEAR (queryctrl);
-				queryctrl.id = V4L2_CID_SATURATION;
-
-				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
-				{
-					if (errno != EINVAL)
-					{
-						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
-					} else
-					{
-						kDebug() << "Device doesn't support the Saturation control.";
-					}
-				} else
-				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
-				{
-					kDebug() << "Saturation control is disabled.";
-				} else
-				{
-					CLEAR (control);
-					control.id = V4L2_CID_SATURATION;
-					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getSaturation());
-					control.value += queryctrl.minimum;
-
-					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
-					{
-						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
-					}
-				}
-			}
-			break;
-#endif
-		case VIDEODEV_DRIVER_V4L:
-			{
-				struct video_picture V4L_picture;
-				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-				{
-					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
-				}
-				V4L_picture.colour = uint(65535*getSaturation());
-				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-				{
-					kDebug() << "Device seems to not support adjusting image saturation. Fallback to it is not yet implemented.";
-				}
-			}
-		break;
-#endif
-		case VIDEODEV_DRIVER_NONE:
-		default:
-			break;
-	}
-	return getSaturation();
-}
-
-float VideoDevice::getWhiteness()
-{
-  if (m_current_input < m_input.size() )
-	return m_input[m_current_input].getWhiteness();
-  else
-	return 0;
-}
-
-float VideoDevice::setWhiteness(float whiteness)
-{
-	kDebug() << "(" << whiteness << ") called.";
-	m_input[m_current_input].setWhiteness(whiteness); // Just to check bounds
-
-	switch(m_driver)
-	{
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
-		case VIDEODEV_DRIVER_V4L2:
-			{
-				struct v4l2_queryctrl queryctrl;
-				struct v4l2_control control;
-
-				CLEAR (queryctrl);
-				queryctrl.id = V4L2_CID_WHITENESS;
-
-				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
-				{
-					if (errno != EINVAL)
-					{
-						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
-					} else
-					{
-						kDebug() << "Device doesn't support the Whiteness control.";
-					}
-				} else
-				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
-				{
-					kDebug() << "Whiteness control is disabled.";
-				} else
-				{
-					CLEAR (control);
-					control.id = V4L2_CID_WHITENESS;
-					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getWhiteness());
-					control.value += queryctrl.minimum;
-
-					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
-					{
-						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
-					}
-				}
-			}
-			break;
-#endif
-		case VIDEODEV_DRIVER_V4L:
-			{
-				struct video_picture V4L_picture;
-				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-				{
-					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
-				}
-				V4L_picture.whiteness = uint(65535*getWhiteness());
-				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-				{
-					kDebug() << "Device seems to not support adjusting white level. Fallback to it is not yet implemented.";
-				}
-			}
-		break;
-#endif
-		case VIDEODEV_DRIVER_NONE:
-		default:
-			break;
-	}
-	return getWhiteness();
-}
-
-float VideoDevice::getHue()
-{
-  if (m_current_input < m_input.size() )
-	return m_input[m_current_input].getHue();
-  else
-	return 0;
-}
-
-float VideoDevice::setHue(float hue)
-{
-	kDebug() << "(" << hue << ") called.";
-	m_input[m_current_input].setHue(hue); // Just to check bounds
-
-	switch(m_driver)
-	{
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
-		case VIDEODEV_DRIVER_V4L2:
-			{
-				struct v4l2_queryctrl queryctrl;
-				struct v4l2_control control;
-
-				CLEAR (queryctrl);
-				queryctrl.id = V4L2_CID_HUE;
-
-				if (-1 == xioctl (VIDIOC_QUERYCTRL, &queryctrl))
-				{
-					if (errno != EINVAL)
-					{
-						kDebug() <<  "VIDIOC_QUERYCTRL failed (" << errno << ").";
-					} else
-					{
-						kDebug() << "Device doesn't support the Hue control.";
-					}
-				} else
-				if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
-				{
-					kDebug() << "Hue control is disabled.";
-				} else
-				{
-					CLEAR (control);
-					control.id = V4L2_CID_HUE;
-					control.value = (__s32)((queryctrl.maximum - queryctrl.minimum)*getHue());
-					control.value += queryctrl.minimum;
-
-					if (-1 == xioctl (VIDIOC_S_CTRL, &control))
-					{
-						kDebug() <<  "VIDIOC_S_CTRL failed (" << errno << ").";
-					}
-				}
-			}
-			break;
-#endif
-		case VIDEODEV_DRIVER_V4L:
-			{
-				struct video_picture V4L_picture;
-				if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
-				{
-					kDebug() << "VIDIOCGPICT failed (" << errno << ").";
-				}
-				V4L_picture.hue = uint(65535*getHue());
-				if(-1 == xioctl(VIDIOCSPICT,&V4L_picture))
-				{
-					kDebug() << "Device seems to not support adjusting image hue. Fallback to it is not yet implemented.";
-				}
-			}
-		break;
-#endif
-		case VIDEODEV_DRIVER_NONE:
-		default:
-			break;
-	}
-	return getHue();
-}
-
-
-bool VideoDevice::getAutoBrightnessContrast()
-{
-  if (m_current_input < m_input.size() )
-	return m_input[m_current_input].getAutoBrightnessContrast();
-  else
-	return false;
-}
-
-bool VideoDevice::setAutoBrightnessContrast(bool brightnesscontrast)
-{
-	kDebug() << "VideoDevice::setAutoBrightnessContrast(" << brightnesscontrast << ") called.";
-	if (m_current_input < m_input.size() ) 
-	  {
-		m_input[m_current_input].setAutoBrightnessContrast(brightnesscontrast);
-		return m_input[m_current_input].getAutoBrightnessContrast();
-	  }
-	else
-	  return false;
-}
-
-bool VideoDevice::getAutoColorCorrection()
-{
-  if (m_current_input < m_input.size() )
-	return m_input[m_current_input].getAutoColorCorrection();
-  else
-	return false;
-}
-
-bool VideoDevice::setAutoColorCorrection(bool colorcorrection)
-{
-	kDebug() << "VideoDevice::setAutoColorCorrection(" << colorcorrection << ") called.";
-	if (m_current_input < m_input.size() )
-	  {
-		m_input[m_current_input].setAutoColorCorrection(colorcorrection);
-		return m_input[m_current_input].getAutoColorCorrection();
-	  }
-	else
-	  return false;
-}
-
-bool VideoDevice::getImageAsMirror()
-{
-  if (m_current_input < m_input.size() )
-	return m_input[m_current_input].getImageAsMirror();
-  else
-	return false;
-}
-
-bool VideoDevice::setImageAsMirror(bool imageasmirror)
-{
-	kDebug() << "VideoDevice::setImageAsMirror(" << imageasmirror << ") called.";
-	if (m_current_input < m_input.size() ) 
-	  {
-		m_input[m_current_input].setImageAsMirror(imageasmirror);
-		return m_input[m_current_input].getImageAsMirror();
-	  }
-	else
-	  return false;
 }
 
 pixel_format VideoDevice::pixelFormatForPalette( int palette )

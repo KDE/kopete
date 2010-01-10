@@ -282,7 +282,6 @@ public:
 
 	int currentInput();
 	int selectInput(int input);
-	int setInputParameters();
 	virtual int startCapturing();
 	virtual int getFrame();
 	virtual int getFrame(imagebuffer *imgbuffer);
@@ -297,24 +296,6 @@ public:
 
 	int getControlValue(quint32 ctrl_id, qint32 * value);
 	int setControlValue(quint32 ctrl_id, qint32 value);
-
-	float getBrightness();
-	float setBrightness(float brightness);
-	float getContrast();
-	float setContrast(float contrast);
-	float getSaturation();
-	float setSaturation(float saturation);
-	float getWhiteness();
-	float setWhiteness(float whiteness);
-	float getHue();
-	float setHue(float Hue);
-
-	bool getAutoBrightnessContrast();
-	bool setAutoBrightnessContrast(bool brightnesscontrast);
-	bool getAutoColorCorrection();
-	bool setAutoColorCorrection(bool colorcorrection);
-	bool getImageAsMirror();
-	bool setImageAsMirror(bool imageasmirror);
 
 	bool canCapture();
 	bool canChromakey();

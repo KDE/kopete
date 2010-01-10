@@ -280,178 +280,6 @@ int VideoDevicePool::setControlValue(quint32 ctrl_id, qint32 value)
 	return EXIT_FAILURE;
 }
 
-/*!
-    \fn VideoDevicePool::getBrightness()
- */
-float VideoDevicePool::getBrightness()
-{
-  if (currentDevice() < m_videodevice.size() )
-	return m_videodevice[currentDevice()].getBrightness();
-  else
-	return 0;
-}
-
-/*!
-    \fn VideoDevicePool::setBrightness(float brightness)
- */
-float VideoDevicePool::setBrightness(float brightness)
-{
-    if (currentDevice() < m_videodevice.size() )
-	  return m_videodevice[currentDevice()].setBrightness(brightness);
-	else
-	  return 0;
-}
-
-/*!
-    \fn VideoDevicePool::getContrast()
- */
-float VideoDevicePool::getContrast()
-{
-    if (currentDevice() < m_videodevice.size() )
-	  return m_videodevice[currentDevice()].getContrast();
-	else
-	  return 0;
-}
-
-/*!
-    \fn VideoDevicePool::setContrast(float contrast)
- */
-float VideoDevicePool::setContrast(float contrast)
-{
-    if (currentDevice() < m_videodevice.size() )
-	  return m_videodevice[currentDevice()].setContrast(contrast);
-	else
-	  return 0;
-}
-
-/*!
-    \fn VideoDevicePool::getSaturation()
- */
-float VideoDevicePool::getSaturation()
-{
-    if (currentDevice() < m_videodevice.size() )
-	  return m_videodevice[currentDevice()].getSaturation();
-	else
-	  return 0;
-}
-
-/*!
-    \fn VideoDevicePool::setSaturation(float saturation)
- */
-float VideoDevicePool::setSaturation(float saturation)
-{
-    if (currentDevice() < m_videodevice.size() )
-	  return m_videodevice[currentDevice()].setSaturation(saturation);
-	else
-	  return 0;
-}
-
-/*!
-    \fn VideoDevicePool::getWhiteness()
- */
-float VideoDevicePool::getWhiteness()
-{
-    if (currentDevice() < m_videodevice.size() )
-	  return m_videodevice[currentDevice()].getWhiteness();
-	else
-	  return 0;
-}
-
-/*!
-    \fn VideoDevicePool::setWhiteness(float whiteness)
- */
-float VideoDevicePool::setWhiteness(float whiteness)
-{
-    if (currentDevice() < m_videodevice.size() )
-	  return m_videodevice[currentDevice()].setWhiteness(whiteness);
-	else
-	  return 0;
-}
-
-/*!
-    \fn VideoDevicePool::getHue()
- */
-float VideoDevicePool::getHue()
-{
-    if (currentDevice() < m_videodevice.size() )
-	  return m_videodevice[currentDevice()].getHue();
-	else
-	  return 0;
-}
-
-/*!
-    \fn VideoDevicePool::setHue(float hue)
- */
-float VideoDevicePool::setHue(float hue)
-{
-    if (currentDevice() < m_videodevice.size() )
-	  return m_videodevice[currentDevice()].setHue(hue);
-	else
-	  return 0;
-}
-
-/*!
-    \fn VideoDevicePool::getAutoBrightnessContrast()
- */
-bool VideoDevicePool::getAutoBrightnessContrast()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getAutoBrightnessContrast();
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::setAutoBrightnessContrast(bool brightnesscontrast)
- */
-bool VideoDevicePool::setAutoBrightnessContrast(bool brightnesscontrast)
-{
-	kDebug() << "VideoDevicePool::setAutoBrightnessContrast(" << brightnesscontrast << ") called.";
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setAutoBrightnessContrast(brightnesscontrast);
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::getAutoColorCorrection()
- */
-bool VideoDevicePool::getAutoColorCorrection()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getAutoColorCorrection();
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
- */
-bool VideoDevicePool::setAutoColorCorrection(bool colorcorrection)
-{
-	kDebug() << "VideoDevicePool::setAutoColorCorrection(" << colorcorrection << ") called.";
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setAutoColorCorrection(colorcorrection);
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::getIMageAsMirror()
- */
-bool VideoDevicePool::getImageAsMirror()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getImageAsMirror();
-	return false;
-}
-
-/*!
-    \fn VideoDevicePool::setImageAsMirror(bool imageasmirror)
- */
-bool VideoDevicePool::setImageAsMirror(bool imageasmirror)
-{
-	kDebug() << "VideoDevicePool::setImageAsMirror(" << imageasmirror << ") called.";
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setImageAsMirror(imageasmirror);
-	return false;
-}
 
 /*!
     \fn VideoDevicePool::getFrame()
@@ -553,17 +381,6 @@ int VideoDevicePool::selectInput(int newinput)
 		return m_videodevice[currentDevice()].selectInput(newinput);
 	else
 		return 0;
-}
-
-/*!
-    \fn Kopete::AV::VideoDevicePool::setInputParameters()
- */
-int VideoDevicePool::setInputParameters()
-{
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].setInputParameters();
-	else
-		return EXIT_FAILURE;
 }
 
 /*!
@@ -798,6 +615,8 @@ void VideoDevicePool::loadConfig()
 {
     /// @todo implement me
 	kDebug() << "called";
+kDebug() << "WARNING: loading settings is currently deactivated !";
+return;
 	if((hasDevices())&&(m_clients==0))
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
@@ -831,13 +650,13 @@ void VideoDevicePool::loadConfig()
 				const bool  autobrightnesscontrast = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
 				const bool  autocolorcorrection    = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
 				const bool  imageasmirror          = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 mageAsMirror")           .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
-				(*vditerator).setBrightness(brightness);
+/*				(*vditerator).setBrightness(brightness);
 				(*vditerator).setContrast(contrast);
 				(*vditerator).setSaturation(saturation);
 				(*vditerator).setHue(hue);
 				(*vditerator).setAutoBrightnessContrast(autobrightnesscontrast);
 				(*vditerator).setAutoColorCorrection(autocolorcorrection);
-				(*vditerator).setImageAsMirror(imageasmirror);
+				(*vditerator).setImageAsMirror(imageasmirror);*/
 				kDebug() << "Brightness:" << brightness;
 				kDebug() << "Contrast  :" << contrast;
 				kDebug() << "Saturation:" << saturation;
@@ -858,6 +677,8 @@ void VideoDevicePool::saveConfig()
 {
     /// @todo implement me
 	kDebug() << "called";
+kDebug() << "WARNING: saving settings is currently deactivated !";
+return;
 	if(hasDevices())
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
@@ -887,7 +708,7 @@ void VideoDevicePool::saveConfig()
 			const QString currentinput           = QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
 			config.writeEntry( name,                   (*vditerator).m_name);
 			config.writeEntry( currentinput,           (*vditerator).currentInput());
-
+/*
 			for (int input = 0 ; input < (*vditerator).m_input.size(); input++)
 			{
 				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Brightness: " << (*vditerator).m_input[input].getBrightness();
@@ -915,7 +736,7 @@ void VideoDevicePool::saveConfig()
 				config.writeEntry( autobrightnesscontrast, (*vditerator).m_input[input].getAutoBrightnessContrast());
 				config.writeEntry( autocolorcorrection,    (*vditerator).m_input[input].getAutoColorCorrection());
 				config.writeEntry( imageasmirror,          (*vditerator).m_input[input].getImageAsMirror());
-			}
+			}*/
 		}
 		config.sync();
 		kDebug();

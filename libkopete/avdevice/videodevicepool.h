@@ -73,7 +73,6 @@ public:
 	int readFrame();
 	int getImage(QImage *qimage);
 	int selectInput(int newinput);
-	int setInputParameters();
 	int scanDevices();
 	void registerDevice( Solid::Device & dev );
 	bool hasDevices();
@@ -95,24 +94,6 @@ public:
 
 	int getControlValue(quint32 ctrl_id, qint32 * value);
 	int setControlValue(quint32 ctrl_id, qint32 value);
-
-	float getBrightness();
-	float setBrightness(float brightness);
-	float getContrast();
-	float setContrast(float contrast);
-	float getSaturation();
-	float setSaturation(float saturation);
-	float getWhiteness();
-	float setWhiteness(float whiteness);
-	float getHue();
-	float setHue(float hue);
-
-	bool getAutoBrightnessContrast();
-	bool setAutoBrightnessContrast(bool brightnesscontrast);
-	bool getAutoColorCorrection();
-	bool setAutoColorCorrection(bool colorcorrection);
-	bool getImageAsMirror();
-	bool setImageAsMirror(bool imageasmirror);
 
 	void loadConfig(); // Load configuration parameters;
 	void saveConfig(); // Save configuretion parameters;
