@@ -620,9 +620,9 @@ void OscarAccount::messageReceived( const Oscar::Message& message )
 	}
 	else
 	{
-		if ( ( message.properties() & Oscar::Message::WWP ) == Oscar::Message::WWP )
+		if ( message.hasProperty( Oscar::Message::WWP ) )
 			ocSender->setNickName( i18n("ICQ Web Express") );
-		if ( ( message.properties() & Oscar::Message::EMail ) == Oscar::Message::EMail )
+		if ( message.hasProperty( Oscar::Message::EMail ) )
 			ocSender->setNickName( i18n("ICQ Email Express") );
 	}
 
