@@ -225,62 +225,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0" colspan="2">
-        <layout class="QVBoxLayout" name="checkboxOptions_verticalLayout">
-         <item>
-          <widget class="QCheckBox" name="mImageAutoBrightnessContrast">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Enable automatic brightness/contrast adjustment</string>
-           </property>
-           <property name="text">
-            <string>Adjust brightness/contrast</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="mImageAutoColorCorrection">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Enable automatic color correction</string>
-           </property>
-           <property name="text">
-            <string>Correct colors</string>
-           </property>
-           <property name="shortcut">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="mImageAsMirror">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Show the video input mirrored</string>
-           </property>
-           <property name="text">
-            <string>Mirror preview</string>
-           </property>
-           <property name="shortcut">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <layout class="QVBoxLayout" name="checkboxOptions_verticalLayout"/>
        </item>
        <item row="1" column="0">
         <layout class="QGridLayout" name="menuOptions_gridLayout">

@@ -60,9 +60,6 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
 	connect(mPrfsVideoDevice->mStandardKComboBox,            SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mImageAutoBrightnessContrast,  SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoBrightnessContrastChanged(bool)));
-	connect(mPrfsVideoDevice->mImageAutoColorCorrection,     SIGNAL(toggled(bool)),     this, SLOT(slotImageAutoColorCorrectionChanged(bool)));
-	connect(mPrfsVideoDevice->mImageAsMirror,                SIGNAL(toggled(bool)),     this, SLOT(slotImageAsMirrorChanged(bool)));
 
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
@@ -73,7 +70,6 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-	setVideoInputParameters();
 
 	mVideoDevicePool->startCapturing();
 
@@ -246,16 +242,6 @@ void AVDeviceConfig::slotValueChanged(int){
   emit changed( true );
 }
 
-void AVDeviceConfig::setVideoInputParameters()
-{
-	if(mVideoDevicePool->size())
-	{
-		mPrfsVideoDevice->mImageAutoBrightnessContrast->setChecked(mVideoDevicePool->getAutoBrightnessContrast());
-		mPrfsVideoDevice->mImageAutoColorCorrection->setChecked(mVideoDevicePool->getAutoColorCorrection());
-		mPrfsVideoDevice->mImageAsMirror->setChecked(mVideoDevicePool->getImageAsMirror());
-	}
-}
-
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 	int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentIndex();
@@ -267,7 +253,6 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 		mVideoDevicePool->setSize(320, 240);
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		mVideoDevicePool->startCapturing();
-		setVideoInputParameters();
 		setupControls();
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 		emit changed( true );
@@ -280,7 +265,6 @@ void AVDeviceConfig::slotInputKComboBoxChanged(int){
 	{
 		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-		setVideoInputParameters();
 		setupControls(); // NOTE: supported controls+values may be different for each input !
 		emit changed( true );
 	}
@@ -300,29 +284,11 @@ void AVDeviceConfig::changeVideoControlValue(unsigned int id, int value)
 	/* TODO: Check success, fallback */
 }
 
-void AVDeviceConfig::slotImageAutoBrightnessContrastChanged(bool){
-	kDebug() << "kopete:config (avdevice): slotImageAutoBrightnessContrastChanged(" << mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked() << ") called. ";
-	mVideoDevicePool->setAutoBrightnessContrast(mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked());
-	emit changed( true );
-}
-
-void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){
-	kDebug() << "kopete:config (avdevice): slotImageAutoColorCorrectionChanged(" << mPrfsVideoDevice->mImageAutoColorCorrection->isChecked() << ") called. ";
-	mVideoDevicePool->setAutoColorCorrection(mPrfsVideoDevice->mImageAutoColorCorrection->isChecked());
-	emit changed( true );
-}
-
-void AVDeviceConfig::slotImageAsMirrorChanged(bool){
-	kDebug() << "kopete:config (avdevice): slotImageAsMirrorChanged(" << mPrfsVideoDevice->mImageAsMirror->isChecked() << ") called. ";
-	mVideoDevicePool->setImageAsMirror(mPrfsVideoDevice->mImageAsMirror->isChecked());
-	emit changed( true );
-}
-
 void AVDeviceConfig::slotUpdateImage()
 {
 	mVideoDevicePool->getFrame();
 	mVideoDevicePool->getImage(&qimage);
-	mPrfsVideoDevice->mVideoImageLabel->setPixmap(QPixmap::fromImage(qimage.mirrored(mVideoDevicePool->getImageAsMirror(),false)));
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(QPixmap::fromImage(qimage));
 	//kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
 }
 
@@ -337,7 +303,6 @@ void AVDeviceConfig::deviceRegistered( const QString & udi )
 	mVideoDevicePool->setSize(320, 240);
 	mVideoDevicePool->startCapturing();
 
-	setVideoInputParameters();
 	setupControls();
 
 	qtimer.start(40);

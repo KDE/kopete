@@ -58,9 +58,6 @@ private slots:
 	void slotDeviceKComboBoxChanged(int);
 	void slotInputKComboBoxChanged(int);
 	void slotStandardKComboBoxChanged(int);
-	void slotImageAutoBrightnessContrastChanged(bool);
-	void slotImageAutoColorCorrectionChanged(bool);
-	void slotImageAsMirrorChanged(bool);
 	void slotUpdateImage();
 	void changeVideoControlValue(unsigned int id, int value = 0);
 	void deviceRegistered( const QString & );
@@ -74,7 +71,6 @@ private:
 	QPixmap qpixmap;
 	QTimer qtimer;
 	QList<QWidget*> ctrlWidgets;
-	void setVideoInputParameters();
 	void setupControls();
 	void clearControlGUIElements();
 	void addSliderControlElement(int cid, QString title, int min, int max, int step, int value);
