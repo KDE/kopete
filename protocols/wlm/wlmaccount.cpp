@@ -58,7 +58,8 @@ Kopete::PasswordedAccount (parent, accountID.toLower ()),
 m_server (NULL),
 m_transferManager (NULL),
 m_chatManager (NULL),
-clientid (0)
+clientid (0),
+m_lastMainConnectionError(Callbacks::NoError)
 {
     // Init the myself contact
     setMyself (new
@@ -294,6 +295,7 @@ WlmAccount::connectWithPassword (const QString & pass)
 
     enableInitialList ();
 
+    m_lastMainConnectionError = Callbacks::NoError;
     m_server = new WlmServer (this, id, pass1);
     m_server->WlmConnect ( serverName(), serverPort() );
 
@@ -307,6 +309,8 @@ WlmAccount::connectWithPassword (const QString & pass)
                       this, SLOT (connectionFailed ()));
     QObject::connect (&m_server->cb, SIGNAL(socketError(int)),
                       this, SLOT(error(int)));
+    QObject::connect (&m_server->cb, SIGNAL(mainConnectionError(int)),
+                      this, SLOT(mainConnectionError(int)));
     QObject::connect (&m_server->cb,
                       SIGNAL (gotDisplayName (const QString &)), this,
                       SLOT (gotDisplayName (const QString &)));
@@ -328,8 +332,6 @@ WlmAccount::connectWithPassword (const QString & pass)
                               (MSN::NotificationServerConnection *)), this,
                       SLOT (NotificationServerConnectionTerminated
                             (MSN::NotificationServerConnection *)));
-    QObject::connect (&m_server->cb, SIGNAL (wrongPassword ()), this,
-                      SLOT (wrongPassword ()));
     QObject::connect (&m_server->cb, SIGNAL (initialEmailNotification(int)), this,
                       SLOT (slotInitialEmailNotification(int)));
     QObject::connect (&m_server->cb, SIGNAL (newEmailNotification(QString, QString)), this,
@@ -485,10 +487,10 @@ void WlmAccount::addedInfoEventActionActivated(uint actionId)
 }
 
 void
-WlmAccount::wrongPassword ()
+WlmAccount::mainConnectionError(int errorCode)
 {
     kDebug (14210) << k_funcinfo;
-    password ().setWrong (true);
+    m_lastMainConnectionError = errorCode;
 }
 
 void
@@ -1366,21 +1368,14 @@ WlmAccount::NotificationServerConnectionTerminated (MSN::
 
     kDebug (14210) << k_funcinfo;
 
-    if (myself ()->onlineStatus () == WlmProtocol::protocol ()->wlmConnecting
-        && !password ().isWrong ())
-    {
-        connectionFailed ();
-        return;
-    }
-    if (password ().isWrong ())
-    {
+    if (m_lastMainConnectionError == Callbacks::WrongPassword)
         logOff( Kopete::Account::BadPassword );
-        return;
-    }
-    if (isConnected ())
-    {
+    else if (m_lastMainConnectionError == Callbacks::OtherClient)
+        logOff( Kopete::Account::OtherClient );
+    else if (myself ()->onlineStatus () == WlmProtocol::protocol ()->wlmConnecting)
+        connectionFailed ();
+    else if (isConnected ())
         logOff( Kopete::Account::Unknown );
-    }
 }
 
 void WlmAccount::disconnect()

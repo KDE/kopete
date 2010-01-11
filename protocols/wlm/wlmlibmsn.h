@@ -286,6 +286,12 @@ class Callbacks:public QObject,
     WlmServer * m_server;
     QList <WlmSocket*> socketList;
     MSN::NotificationServerConnection * mainConnection;
+    enum MSNErrorCode {
+        NoError = 0,
+        WrongPassword,
+        OtherClient,
+        Unknown
+    };
 
   signals:
     void
@@ -446,8 +452,7 @@ class Callbacks:public QObject,
                     const unsigned int & sessionID, 
                     const QString & file);
 
-    void
-    wrongPassword ();
+    void mainConnectionError( int error );
 
     void socketError( int error );
 

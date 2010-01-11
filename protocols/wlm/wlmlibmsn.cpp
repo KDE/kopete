@@ -350,14 +350,15 @@ Callbacks::renamedGroup (MSN::NotificationServerConnection * conn,
 void
 Callbacks::showError (MSN::Connection * conn, std::string msg)
 {
-    Q_UNUSED( conn );
     std::cout << "MSN: Error: " << msg.c_str () << std::endl;
     QString a = msg.c_str ();
-    // FIXME
-    if (a.contains ("Wrong Password"))
-    {
-        emit wrongPassword ();
-    }
+    // FIXME This is really ugly the libmsn should send some error code instead of msg
+    if (a.contains("Wrong Password"))
+        emit mainConnectionError(WrongPassword);
+    else if (a.contains("You have logged onto MSN twice at once"))
+        emit mainConnectionError(OtherClient);
+    else if (conn == mainConnection)
+        emit mainConnectionError(Unknown);
 }
 
 void
