@@ -211,8 +211,7 @@ public slots:
                                             NotificationServerConnection *
                                             conn);
 
-    void
-    wrongPassword ();
+    void mainConnectionError (int errorCode);
 
     void
     scheduleConnect ();
@@ -373,6 +372,8 @@ private:
     QTimer * m_tmpMailFileTimer;
 
     QStringList m_recentDPRequests;
+
+    int m_lastMainConnectionError;
 };
 
 #endif
