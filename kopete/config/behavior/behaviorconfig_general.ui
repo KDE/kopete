@@ -172,5 +172,22 @@
   <tabstop>kcfg_initialStatus</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>kcfg_showSystemTray</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kcfg_startDocked</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>120</x>
+     <y>77</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
