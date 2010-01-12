@@ -88,6 +88,7 @@ public:
 	YABTask *yabTask;
 	FileTransferNotifierTask *fileTransferTask;
 	YahooChatTask *yahooChatTask;
+	ReceiveFileTask *receiveFileTask;
 
 	// Connection data
 	uint sessionID;
@@ -960,6 +961,8 @@ void Client::deleteTasks()
 	d->fileTransferTask = 0;
 	d->yahooChatTask->deleteLater();
 	d->yahooChatTask = 0;
+	d->receiveFileTask->deleteLater();
+	d->receiveFileTask = 0;
 }
 
 #include "client.moc"

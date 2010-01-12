@@ -49,9 +49,11 @@ bool PictureNotifierTask::take( Transfer* transfer )
 	{	
 		case Yahoo::ServicePictureStatus:
 			parsePictureStatus( t );
+			parsePicture( t );
 		break;
 		case Yahoo::ServicePictureChecksum:
 			parsePictureChecksum( t );
+			parsePicture( t );
 		break;
 		case Yahoo::ServicePicture:
 			parsePicture( t );
@@ -127,7 +129,7 @@ void PictureNotifierTask::parsePicture( YMSGTransfer *t )
 	
 	if( type == 1 )
 		emit pictureRequest( nick );
-	else if( type == 2 )
+	else if( type == 0 )
 		emit pictureInfoNotify( nick, KUrl( url ), checksum );
 }
 
