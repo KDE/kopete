@@ -428,8 +428,7 @@ void LoginTask::parseCookies( YMSGTransfer *t )
 			m_cCookie = getcookie( cookie.toLatin1() );
 		}
     	}
-	if( !m_yCookie.isEmpty() && !m_tCookie.isEmpty() &&
-		!m_cCookie.isEmpty() )
+	if( !m_yCookie.isEmpty() && !m_tCookie.isEmpty())
 		emit haveCookies();
 }
 

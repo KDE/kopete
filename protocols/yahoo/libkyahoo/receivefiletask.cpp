@@ -200,8 +200,8 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 		QObject::connect( m_transferJob, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
 		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
 		m_transferJob->addMetaData("cookies", "manual");
-		m_transferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: T=%1; path=/; domain=.yahoo.com; Y=%2; C=%3;")
-				.arg(client()->tCookie()).arg(client()->yCookie()).arg(client()->cCookie()) );
+ 		m_transferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: T=%1; path=/; domain=.yahoo.com; Y=%2;  path=/; domain=.yahoo.com;")
+ 				.arg(client()->tCookie()).arg(client()->yCookie()) );
 	}
 }
 
