@@ -226,7 +226,7 @@ void WebcamTask::connectStage2( KStreamSocket *socket )
 	kDebug(YAHOO_RAW_DEBUG) ;
 	QByteArray data;
 	data.reserve( socket->bytesAvailable() );
-	socket->read ( data.data (), data.size () );
+	data = socket->readAll();
 	kDebug(YAHOO_RAW_DEBUG) << "Magic Byte:" << data[2];
 
 	socketMap[socket].status = ConnectedStage2;
@@ -277,7 +277,8 @@ void WebcamTask::processData( KStreamSocket *socket )
 	QByteArray data;
 	data.reserve( socket->bytesAvailable() );
 	
-	socket->read( data.data (), data.size () );
+	data = socket->readAll();
+	
 	if( data.size() <= 0 )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "No data read.";
