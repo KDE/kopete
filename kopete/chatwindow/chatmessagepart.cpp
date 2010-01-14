@@ -1429,8 +1429,9 @@ void ChatMessagePart::saveVoiceClip( uint messageId )
 		{
 			if(!(*it).fileName().isEmpty())
 			{
+				QString temporaryExtension = "*.wav";
 				QString newFileName = QFileDialog::getSaveFileName(NULL,
-						i18n("Save File as"), QString(), i18n("Wav file (*.wav)"), &QString("*.wav"));
+						i18n("Save File as"), QString(), i18n("Wav file (*.wav)"), &temporaryExtension);
 				if(!newFileName.isEmpty())
 					QFile::copy((*it).fileName(), newFileName);
 			}
