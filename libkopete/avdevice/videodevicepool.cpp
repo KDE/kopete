@@ -127,7 +127,6 @@ int VideoDevicePool::open(int device)
 	kDebug() << "open(" << device << ") Setting m_current_Device to " << device;
 	m_current_device = device;
 	kDebug() << "open(" << device << ") Calling open().";
-	saveConfig();
 
 	return open();
 }
