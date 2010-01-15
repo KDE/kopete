@@ -64,7 +64,7 @@ VideoDevicePool::VideoDevicePool()
 : m_current_device(0)
 {
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
-    connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
+	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
 }
 
 
@@ -83,29 +83,28 @@ int VideoDevicePool::open()
     /// @todo implement me
 
 	m_ready.lock();
-	if(!m_videodevice.size())
+	if (!m_videodevice.size())
 	{
 		kDebug() << "open(): No devices found. Must scan for available devices." << m_current_device;
 		scanDevices();
 	}
-	if(!m_videodevice.size())
+	if (!m_videodevice.size())
 	{
 		kDebug() << "open(): No devices found. bailing out." << m_current_device;
 		m_ready.unlock();
 		return EXIT_FAILURE;
 	}
-	if(m_current_device >= m_videodevice.size())
+	if (m_current_device >= m_videodevice.size())
 	{
 		kDebug() << "open(): Device out of scope (" << m_current_device << "). Defaulting to the first one.";
 		m_current_device = 0;
 	}
 	int isopen = m_videodevice[currentDevice()].open();
-	if ( isopen == EXIT_SUCCESS)
+	if (isopen == EXIT_SUCCESS)
 	{
 		loadConfig(); // Temporary hack. The open() seems to clean the input parameters. Need to find a way to fix it.
-		
+		m_clients++;
 	}
-	m_clients++;
 	kDebug() << "Number of clients: " << m_clients;
 	m_ready.unlock();
 	return isopen;
@@ -808,6 +807,7 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 			if (m_current_device == i)
 			{
 				m_current_device = 0;
+				m_clients = 0;
 			}
 			else if (m_current_device > i)
 			{
