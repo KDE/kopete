@@ -154,12 +154,13 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 
 void AVDeviceConfig::slotInputKComboBoxChanged(int){
 	int newinput = mPrfsVideoDevice->mInputKComboBox->currentIndex();
-	if((newinput < mVideoDevicePool->inputs()) && ( newinput !=mVideoDevicePool->currentInput()))
+	if ((newinput < mVideoDevicePool->inputs()) && (newinput != mVideoDevicePool->currentInput()))
 	{
-		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
-		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-		setVideoInputParameters();
-		emit changed( true );
+		stopCapturing();
+ 		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
+ 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+		startCapturing();
+ 		emit changed( true );
 	}
 }
 
