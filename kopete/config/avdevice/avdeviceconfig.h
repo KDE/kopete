@@ -79,6 +79,7 @@ private:
 	QString capturingDevice_udi;
 	void setVideoInputParameters();
 	void startCapturing();
+	void stopCapturing();
 #ifdef HAVE_GL
 //	QGLWidget m_video_gl;
 #endif

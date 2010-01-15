@@ -143,12 +143,10 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 	if ((newdevice>=0 && newdevice < mVideoDevicePool->m_videodevice.size())&&(newdevice!=mVideoDevicePool->currentDevice()))
 	{
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. ";
+		stopCapturing();
 		mVideoDevicePool->open(newdevice);
-		mVideoDevicePool->setSize(320, 240);
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-		mVideoDevicePool->startCapturing();
-		capturingDevice_udi = mVideoDevicePool->currentDeviceUdi();
-		setVideoInputParameters();
+		startCapturing();
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 		emit changed( true );
 	}
@@ -268,3 +266,14 @@ void AVDeviceConfig::startCapturing()
 		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
 	}
 }
+
+void AVDeviceConfig::stopCapturing()
+{
+	qtimer.stop();
+	mVideoDevicePool->stopCapturing();
+	mVideoDevicePool->close();
+	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
+	capturingDevice_udi.clear();
+}
+
