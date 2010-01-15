@@ -313,7 +313,7 @@ void AVDeviceConfig::startCapturing()
 		mVideoDevicePool->setSize(320, 240);
 		mVideoDevicePool->startCapturing();
 		setupControls();
-		// FIXME capturingDevice_udi = mVideoDevicePool->currentDeviceUdi();
+		capturingDevice_udi = mVideoDevicePool->currentDeviceUdi();
 		qtimer.start(40);
 		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
 	}

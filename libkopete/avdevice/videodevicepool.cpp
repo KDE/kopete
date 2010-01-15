@@ -623,6 +623,17 @@ int VideoDevicePool::currentDevice()
 }
 
 /*!
+    \fn Kopete::AV::VideoDevicePool::currentDeviceUdi()
+ */
+QString VideoDevicePool::currentDeviceUdi()
+{
+	if (m_videodevice.size() && (m_current_device >= 0))
+		return m_videodevice[m_current_device].udi();
+	else
+		return QString();
+}
+
+/*!
     \fn Kopete::AV::VideoDevicePool::currentInput()
  */
 int VideoDevicePool::currentInput()
