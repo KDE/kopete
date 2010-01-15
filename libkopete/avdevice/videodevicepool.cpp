@@ -896,7 +896,6 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 			kDebug() << "Video device '" << udi << "' has been removed!";
 			emit deviceUnregistered( udi );
 			// not sure if this is safe but at this point the device node is gone already anyway
-			m_videodevice.remove( i );
 			if (m_current_device == i)
 			{
 				m_current_device = 0;
@@ -905,6 +904,8 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 			{
 				m_current_device--;
 			}
+			m_modelvector.removeModel(m_videodevice[i].m_model);
+			m_videodevice.remove( i );
 		}
 		else
 		{

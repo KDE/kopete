@@ -42,13 +42,9 @@ size_t VideoDeviceModelPool::size()
 
 size_t VideoDeviceModelPool::addModel( QString newmodel )
 {
-	VideoDeviceModel newdevicemodel;
-	newdevicemodel.model=newmodel;
-	newdevicemodel.count=0;
-
 	if(m_devicemodel.size())
 	{
-		for ( int loop = 0 ; loop < m_devicemodel.size(); loop++)
+		for (int loop = 0; loop < m_devicemodel.size(); loop++)
 		if (newmodel == m_devicemodel[loop].model)
 		{
 			kDebug() << "Model " << newmodel << " already exists.";
@@ -56,12 +52,28 @@ size_t VideoDeviceModelPool::addModel( QString newmodel )
 			return m_devicemodel[loop].count;
 		}
 	}
+	VideoDeviceModel newdevicemodel;
+	newdevicemodel.model=newmodel;
+	newdevicemodel.count=0;
 	m_devicemodel.push_back(newdevicemodel);
-	m_devicemodel[m_devicemodel.size()-1].model = newmodel;
-	m_devicemodel[m_devicemodel.size()-1].count = 0;
 	return 0;
 }
 
+void VideoDeviceModelPool::removeModel( QString model )
+{
+	if(m_devicemodel.size())
+	{
+		for (int loop = 0; loop < m_devicemodel.size(); loop++)
+		if (model == m_devicemodel[loop].model)
+		{
+			kDebug() << "Model " << model << " removed.";
+			if (m_devicemodel[loop].count > 0)
+				m_devicemodel[loop].count--;
+			else
+				m_devicemodel.remove(loop);
+		}
+	}
+}
 
 }
 

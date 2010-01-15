@@ -44,6 +44,7 @@ public:
 	void clear();
 	size_t size();
 	size_t addModel(QString newmodel);
+	void removeModel(QString model);
 };
 
 }
