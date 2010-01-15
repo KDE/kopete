@@ -135,10 +135,7 @@ void AVDeviceConfig::setupControls()
 	}
 	// Action Controls: => Button
 	for (k=0; k<actionCtrls.size(); k++)
-	{
-		mVideoDevicePool->getControlValue(actionCtrls.at(k).id, &cval);
 		addButtonControlElement(actionCtrls.at(k).id, actionCtrls.at(k).name);
-	}
 	/* TODO: check success of mVideoDevicePool->getControlValue() */
 	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, numericCtrls.size());
 	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, booleanCtrls.size() + menuCtrls.size());
