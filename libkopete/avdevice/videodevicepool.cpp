@@ -784,6 +784,7 @@ void VideoDevicePool::loadConfig()
 				(*vditerator).setBrightness(brightness);
 				(*vditerator).setContrast(contrast);
 				(*vditerator).setSaturation(saturation);
+				(*vditerator).setWhiteness(whiteness);
 				(*vditerator).setHue(hue);
 				(*vditerator).setAutoBrightnessContrast(autobrightnesscontrast);
 				(*vditerator).setAutoColorCorrection(autocolorcorrection);

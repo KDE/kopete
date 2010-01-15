@@ -28,6 +28,7 @@ VideoInput::VideoInput()
 	m_contrast = 0.5;
 	m_saturation = 0.5;
 	m_hue = 0.5;
+	m_whiteness = 0.5;
 	m_autobrightnesscontrast = false;
 	m_autocolorcorrection = false;
 }
