@@ -238,12 +238,10 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int)
 	if ((newdevice >= 0 && newdevice < mVideoDevicePool->size()) && (newdevice != mVideoDevicePool->currentDevice()))
 	{
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. ";
+		stopCapturing();
 		mVideoDevicePool->open(newdevice);
-		mVideoDevicePool->setSize(320, 240);
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-		mVideoDevicePool->startCapturing();
-		setupControls();
-		capturingDevice_udi = mVideoDevicePool->currentDeviceUdi();
+		startCapturing();
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 		emit changed( true );
 	}
@@ -252,7 +250,7 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int)
 void AVDeviceConfig::slotInputKComboBoxChanged(int)
 {
 	int newinput = mPrfsVideoDevice->mInputKComboBox->currentIndex();
-	if((newinput < mVideoDevicePool->inputs()) && ( newinput !=mVideoDevicePool->currentInput()))
+	if ((newinput < mVideoDevicePool->inputs()) && (newinput != mVideoDevicePool->currentInput()))
 	{
 		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
@@ -260,9 +258,6 @@ void AVDeviceConfig::slotInputKComboBoxChanged(int)
 		emit changed( true );
 	}
 }
-
-// ATTENTION: The 65535.0 value must be used instead of 65535 because the trailing ".0" converts the resulting value to floating point number.
-// Otherwise the resulting division operation would return 0 or 1 exclusively.
 
 void AVDeviceConfig::slotStandardKComboBoxChanged(int)
 {
@@ -321,4 +316,14 @@ void AVDeviceConfig::startCapturing()
 		qtimer.start(40);
 		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
 	}
+}
+
+void AVDeviceConfig::stopCapturing()
+{
+	qtimer.stop();
+	mVideoDevicePool->stopCapturing();
+	mVideoDevicePool->close();
+	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
+	capturingDevice_udi.clear();
 }

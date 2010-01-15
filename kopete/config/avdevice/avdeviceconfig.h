@@ -79,6 +79,7 @@ private:
 	void addPopupMenuControlElement(int cid, QString title, QStringList options, int menuindex);
 	void addButtonControlElement(int cid, QString title);
 	void startCapturing();
+	void stopCapturing();
 #ifdef HAVE_GL
 //	QGLWidget m_video_gl;
 #endif
