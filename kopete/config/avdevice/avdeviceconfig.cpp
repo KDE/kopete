@@ -252,9 +252,10 @@ void AVDeviceConfig::slotInputKComboBoxChanged(int)
 	int newinput = mPrfsVideoDevice->mInputKComboBox->currentIndex();
 	if ((newinput < mVideoDevicePool->inputs()) && (newinput != mVideoDevicePool->currentInput()))
 	{
+		stopCapturing();
 		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-		setupControls(); // NOTE: supported controls+values may be different for each input !
+		startCapturing();
 		emit changed( true );
 	}
 }
