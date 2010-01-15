@@ -194,7 +194,6 @@ typedef enum
 	STANDARD_ALL		= ( STANDARD_525_60  | STANDARD_625_50)
 } signal_standard;
 
-
 typedef enum
 {
 	IO_METHOD_NONE,
@@ -218,32 +217,48 @@ struct rawbuffer // raw buffer
 };
 
 
+/*!
+    \class ActionVideoControl
+    Data structure for action-video-controls
+*/
 class ActionVideoControl
 {
 public:
-	quint32 id;
-	QString name;
+	quint32 id;		/*!< The ID of the control */
+	QString name;		/*!< The name/title of the control */
 };
 
+/*!
+    \class BooleanVideoControl
+    Data structure for boolean video-controls
+*/
 class BooleanVideoControl : public ActionVideoControl
 {
 public:
-	qint32 value_default;
+	qint32 value_default;	/*!< The default value for the control */
 };
 
+/*!
+    \class NumericVideoControl
+    Data structure for numeric video-controls
+*/
 class NumericVideoControl : public BooleanVideoControl
 {
 public:
-	qint32 value_min;
-	qint32 value_max;
-	qint32 value_step;
+	qint32 value_min;	/*!< The minimum value for the control */
+	qint32 value_max;	/*!< The maximum value allowed for the control */
+	qint32 value_step;	/*!< The step-size which has to be considered when changing the value of the control */
 };
 
+/*!
+    \class MenuVideoControl
+    Data structure for menu-video-controls
+*/
 class MenuVideoControl : public ActionVideoControl
 {
 public:
-	qint32 index_default;
-	QStringList options;
+	qint32 index_default;	/*!< The index of the default option for this control */
+	QStringList options;	/*!< The list of options provided by the control */
 };
 
 
@@ -328,6 +343,9 @@ public:
 //	QFile file;
 protected:
 #if defined( __linux__) && defined(ENABLE_AV)
+	/*!
+	    \enum VideoDevice::imgctrl_id Control-IDs used for V4L1- and software-controls
+	 */
 	typedef enum
 	{
 		IMGCTRL_ID_V4L1_BRIGHTNESS,
@@ -343,10 +361,10 @@ protected:
 	/* NOTE: V4L2_CID_BASE = 0x980900 */
 #endif
 
-	QList<NumericVideoControl> m_numericCtrls;
-	QList<BooleanVideoControl> m_booleanCtrls;
-	QList<MenuVideoControl> m_menuCtrls;
-	QList<ActionVideoControl> m_actionCtrls;
+	QList<NumericVideoControl> m_numericCtrls;	/*!< Supported muneric controls for the current input */
+	QList<BooleanVideoControl> m_booleanCtrls;	/*!< Supported boolean controls for the current input */
+	QList<MenuVideoControl> m_menuCtrls;		/*!< Supported menu-controls for the current input */
+	QList<ActionVideoControl> m_actionCtrls;	/*!< Supported action-controls for the current input */
 
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 

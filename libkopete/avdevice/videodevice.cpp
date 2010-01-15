@@ -50,6 +50,13 @@ VideoDevice::~VideoDevice()
 {
 }
 
+/*!
+    \fn void VideoDevice::setupControls()
+    \brief Sets up the supported video-controls for the current input
+    
+    Determines which video-controls are supported for the current input,
+    reads all needed informations about them and stores the data to the local members
+ */
 void VideoDevice::setupControls()
 {
 #if defined(__linux__) && defined(ENABLE_AV)
@@ -165,6 +172,14 @@ void VideoDevice::setupControls()
 
 #if defined(__linux__) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
+/*!
+    \fn bool VideoDevice::getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList * options)
+    \param id ID of the video-control
+    \param maxindex Highest menu index
+    \param options Pointer to the QStringList which will recieve the option-strings of the video-control
+    \return The success of the operation
+    \brief Reads the available options provided by a menu-video-control
+ */
 bool VideoDevice::getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList * options)
 {
 	QStringList opt;
@@ -195,6 +210,11 @@ bool VideoDevice::getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList *
 }
 
 
+/*!
+    \fn void VideoDevice::saveV4L2ControlData(struct v4l2_queryctrl qctrl)
+    \param qctrl The struct v4l2_queryctrl of the V4L2-control that should be saved
+    \brief Saves the data of a V4L2-video-control
+ */
 void VideoDevice::saveV4L2ControlData(struct v4l2_queryctrl qctrl)
 {
 	NumericVideoControl numericCtrl;
@@ -1633,26 +1653,55 @@ int VideoDevice::close()
 }
 
 
+/*!
+    \fn QList<NumericVideoControl> VideoDevice::getSupportedNumericControls()
+    \return A list of all supported numeric controls for the current input
+    \brief Returns the supported numeric controls for the current input
+ */
 QList<NumericVideoControl> VideoDevice::getSupportedNumericControls()
 {
 	return m_numericCtrls;
 }
 
+/*!
+    \fn QList<BooleanVideoControl> VideoDevice::getSupportedBooleanControls()
+    \return A list of all supported boolean controls for the current input
+    \brief Returns the supported boolean controls for the current input
+ */
 QList<BooleanVideoControl> VideoDevice::getSupportedBooleanControls()
 {
 	return m_booleanCtrls;
 }
 
+/*!
+    \fn QList<MenuVideoControl> VideoDevice::getSupportedMenuControls()
+    \return A list of all supported menu-controls for the current input
+    \brief Returns the supported menu-controls for the current input
+ */
 QList<MenuVideoControl> VideoDevice::getSupportedMenuControls()
 {
 	return m_menuCtrls;
 }
 
+/*!
+    \fn QList<ActionVideoControl> VideoDevice::getSupportedActionControls()
+    \return A list of all supported action-controls for the current input
+    \brief Returns the supported action-controls for the current input
+ */
 QList<ActionVideoControl> VideoDevice::getSupportedActionControls()
 {
 	return m_actionCtrls;
 }
 
+/*!
+    \fn int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
+    \param ctrl_id ID of the video-control
+    \param value Pointer to the variable, which recieves the value of the querried video-control.
+                 For boolean controls, the value is 0 or 1.
+                 For menu-controls, the value is the index of the currently selected option.
+    \return The result-code, currently EXIT_SUCCESS or EXIT_FAILURE
+    \brief Reads the value of a video-control
+ */
 int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 {
 	kDebug() << "Control-ID" << ctrl_id << ", Value" << &value;
@@ -1777,6 +1826,16 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 	return EXIT_FAILURE;
 }
 
+/*!
+    \fn int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
+    \param ctrl_id ID of the video-control
+    \param value The value that should be set.
+                 For boolean controls, the value must be 0 or 1.
+                 For menu-controls, the value must be the index of the option.
+                 For action-controls, the value is ignored.
+    \return The result-code, currently EXIT_SUCCESS or EXIT_FAILURE
+    \brief Sets the value of a video-control
+ */
 int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 {
 	kDebug() << "Control-ID" << ctrl_id << ", Value" << value;

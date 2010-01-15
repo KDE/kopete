@@ -232,52 +232,92 @@ int VideoDevicePool::stopCapturing()
 
 
 // Implementation of the methods that get / set input's adjustment parameters
+
+/*!
+    \fn QList<NumericVideoControl> VideoDevicePool::getSupportedNumericControls()
+    \return A list of all supported numeric controls for the current input
+    \brief Returns the supported numeric controls for the current input
+ */
 QList<NumericVideoControl> VideoDevicePool::getSupportedNumericControls()
 {
-  if (currentDevice() < m_videodevice.size() )
-	return m_videodevice[currentDevice()].getSupportedNumericControls();
-  else
-	return QList<NumericVideoControl>();
+	if (currentDevice() < m_videodevice.size() )
+		return m_videodevice[currentDevice()].getSupportedNumericControls();
+	else
+		return QList<NumericVideoControl>();
 }
 
+/*!
+    \fn QList<BooleanVideoControl> VideoDevicePool::getSupportedBooleanControls()
+    \return A list of all supported boolean controls for the current input
+    \brief Returns the supported boolean controls for the current input
+ */
 QList<BooleanVideoControl> VideoDevicePool::getSupportedBooleanControls()
 {
-  if (currentDevice() < m_videodevice.size() )
-	return m_videodevice[currentDevice()].getSupportedBooleanControls();
-  else
-	return QList<BooleanVideoControl>();
+	if (currentDevice() < m_videodevice.size() )
+		return m_videodevice[currentDevice()].getSupportedBooleanControls();
+	else
+		return QList<BooleanVideoControl>();
 }
 
+/*!
+    \fn QList<MenuVideoControl> VideoDevicePool::getSupportedMenuControls()
+    \return A list of all supported menu-controls for the current input
+    \brief Returns the supported menu-controls for the current input
+ */
 QList<MenuVideoControl> VideoDevicePool::getSupportedMenuControls()
 {
-  if (currentDevice() < m_videodevice.size() )
-	return m_videodevice[currentDevice()].getSupportedMenuControls();
-  else
-	return QList<MenuVideoControl>();
+	if (currentDevice() < m_videodevice.size() )
+		return m_videodevice[currentDevice()].getSupportedMenuControls();
+	else
+		return QList<MenuVideoControl>();
 }
 
+/*!
+    \fn QList<ActionVideoControl> VideoDevicePool::getSupportedActionControls()
+    \return A list of all supported action-controls for the current input
+    \brief Returns the supported action-controls for the current input
+ */
 QList<ActionVideoControl> VideoDevicePool::getSupportedActionControls()
 {
-  if (currentDevice() < m_videodevice.size() )
-	return m_videodevice[currentDevice()].getSupportedActionControls();
-  else
-	return QList<ActionVideoControl>();
+	if (currentDevice() < m_videodevice.size() )
+		return m_videodevice[currentDevice()].getSupportedActionControls();
+	else
+		return QList<ActionVideoControl>();
 }
 
+/*!
+    \fn int VideoDevicePool::getControlValue(quint32 ctrl_id, qint32 * value)
+    \param ctrl_id ID of the video-control
+    \param value Pointer to the variable, which recieves the value of the querried video-control.
+                 For boolean controls, the value is 0 or 1.
+                 For menu-controls, the value is the index of the currently selected option.
+    \return The result-code, currently EXIT_SUCCESS or EXIT_FAILURE
+    \brief Reads the value of a video-control
+ */
 int VideoDevicePool::getControlValue(quint32 ctrl_id, qint32 * value)
 {
-  if (currentDevice() < m_videodevice.size() )
-	return m_videodevice[currentDevice()].getControlValue(ctrl_id, value);
-  else
-	return EXIT_FAILURE;
+	if (currentDevice() < m_videodevice.size() )
+		return m_videodevice[currentDevice()].getControlValue(ctrl_id, value);
+	else
+		return EXIT_FAILURE;
 }
 
+/*!
+    \fn int VideoDevicePool::setControlValue(quint32 ctrl_id, qint32 value)
+    \param ctrl_id ID of the video-control
+    \param value The value that should be set.
+                 For boolean controls, the value must be 0 or 1.
+                 For menu-controls, the value must be the index of the option.
+                 For action-controls, the value is ignored.
+    \return The result-code, currently EXIT_SUCCESS or EXIT_FAILURE
+    \brief Sets the value of a video-control
+ */
 int VideoDevicePool::setControlValue(quint32 ctrl_id, qint32 value)
 {
-  if (currentDevice() < m_videodevice.size() )
-	return m_videodevice[currentDevice()].setControlValue(ctrl_id, value);
-  else
-	return EXIT_FAILURE;
+	if (currentDevice() < m_videodevice.size() )
+		return m_videodevice[currentDevice()].setControlValue(ctrl_id, value);
+	else
+		return EXIT_FAILURE;
 }
 
 
