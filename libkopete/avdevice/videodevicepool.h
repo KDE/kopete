@@ -55,8 +55,7 @@ class KOPETE_EXPORT VideoDevicePool : public QObject
 Q_OBJECT
 public:
 	static VideoDevicePool* self();
-	int open();
-	int open(int device);
+	int open(int device = -1);
 	bool isOpen();
 	int getFrame();
 	int width();
@@ -105,7 +104,8 @@ public:
 	bool getImageAsMirror();
 	bool setImageAsMirror(bool imageasmirror);
 
-	void loadConfig(); // Load configuration parameters;
+	void loadSelectedDevice();
+	void loadDeviceConfig(); // Load configuration parameters;
 	void saveConfig(); // Save configuretion parameters;
 
 signals:
