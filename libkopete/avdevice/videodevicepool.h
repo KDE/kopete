@@ -56,8 +56,7 @@ class KOPETE_EXPORT VideoDevicePool : public QObject
 Q_OBJECT
 public:
 	static VideoDevicePool* self();
-	int open();
-	int open(int device);
+	int open(int device = -1);
 	bool isOpen();
 	int getFrame();
 	int width();
@@ -93,8 +92,9 @@ public:
 	int getControlValue(quint32 ctrl_id, qint32 * value);
 	int setControlValue(quint32 ctrl_id, qint32 value);
 
-	void loadConfig(); // Load configuration parameters;
-	void saveConfig(); // Save configuretion parameters;
+	void loadSelectedDevice();
+	void loadDeviceConfig(); // Load configuration parameters;
+	void saveConfig(); // Save configuration parameters;
 
 signals:
 	/**
