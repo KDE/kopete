@@ -77,6 +77,9 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, mVideoDevicePool->size());
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, mVideoDevicePool->size());
+
 	connect(mVideoDevicePool, SIGNAL(deviceRegistered(const QString &) ),
 			SLOT(deviceRegistered(const QString &)) );
 	connect(mVideoDevicePool, SIGNAL(deviceUnregistered(const QString &) ),
@@ -233,6 +236,9 @@ void AVDeviceConfig::deviceRegistered( const QString & udi )
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, mVideoDevicePool->size());
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, mVideoDevicePool->size());
+
 	if (mVideoDevicePool->size() < 2) // otherwise we are already capturing
 		startCapturing();
 }
@@ -249,6 +255,9 @@ void AVDeviceConfig::deviceUnregistered( const QString & udi )
 		mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+
+		mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, mVideoDevicePool->size());
+		mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, mVideoDevicePool->size());
 
 		if (mVideoDevicePool->size())
 			startCapturing();
