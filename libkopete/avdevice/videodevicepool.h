@@ -82,6 +82,7 @@ public:
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
 	int fillStandardKComboBox(KComboBox *combobox);
+	QString currentDeviceUdi();
 	int currentDevice();
 	int currentInput();
 	unsigned int inputs();

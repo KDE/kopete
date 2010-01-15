@@ -70,15 +70,12 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	connect(mPrfsVideoDevice->mImageAsMirror,                SIGNAL(toggled(bool)),     this, SLOT(slotImageAsMirrorChanged(bool)));
 
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
-	mVideoDevicePool->open();
-	mVideoDevicePool->setSize(320, 240);
+
+	startCapturing();
 
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-	setVideoInputParameters();
-
-	mVideoDevicePool->startCapturing();
 
 	connect(mVideoDevicePool, SIGNAL(deviceRegistered(const QString &) ),
 			SLOT(deviceRegistered(const QString &)) );
@@ -86,13 +83,6 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 			SLOT(deviceUnregistered(const QString &)) );
 
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
-#define DONT_TRY_TO_GRAB 1
-#if DONT_TRY_TO_GRAB
-	if ( mVideoDevicePool->hasDevices() ) {
-		qtimer.start(40);
-		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
-	}
-#endif
 }
 
 
@@ -152,11 +142,12 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDevice() << "New device: " << newdevice;
 	if ((newdevice>=0 && newdevice < mVideoDevicePool->m_videodevice.size())&&(newdevice!=mVideoDevicePool->currentDevice()))
 	{
-	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. ";
+		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. ";
 		mVideoDevicePool->open(newdevice);
 		mVideoDevicePool->setSize(320, 240);
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 		mVideoDevicePool->startCapturing();
+		capturingDevice_udi = mVideoDevicePool->currentDeviceUdi();
 		setVideoInputParameters();
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 		emit changed( true );
@@ -243,21 +234,37 @@ void AVDeviceConfig::deviceRegistered( const QString & udi )
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 
-	// update the mVideoImageLabel to show the camera frames
-	mVideoDevicePool->open();
-	mVideoDevicePool->setSize(320, 240);
-	mVideoDevicePool->startCapturing();
-
-	setVideoInputParameters();
-
-	qtimer.start(40);
-	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
+	if (mVideoDevicePool->size() < 2) // otherwise we are already capturing
+		startCapturing();
 }
-
 
 void AVDeviceConfig::deviceUnregistered( const QString & udi )
 {
-/*	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
-	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-*/}
+	if (capturingDevice_udi == udi)
+	{
+		qtimer.stop();
+		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
+		mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
+		capturingDevice_udi.clear();
+
+		mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+
+		if (mVideoDevicePool->size())
+			startCapturing();
+	}
+}
+
+void AVDeviceConfig::startCapturing()
+{
+	if (EXIT_SUCCESS == mVideoDevicePool->open())
+	{
+		mVideoDevicePool->setSize(320, 240);
+		mVideoDevicePool->startCapturing();
+		setVideoInputParameters();
+		capturingDevice_udi = mVideoDevicePool->currentDeviceUdi();
+		qtimer.start(40);
+		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
+	}
+}

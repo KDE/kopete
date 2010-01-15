@@ -707,6 +707,17 @@ size_t VideoDevicePool::size()
 }
 
 /*!
+    \fn Kopete::AV::VideoDevicePool::currentDeviceUdi()
+ */
+QString VideoDevicePool::currentDeviceUdi()
+{
+	if (m_videodevice.size() && (m_current_device >= 0))
+		return m_videodevice[m_current_device].udi();
+	else
+		return QString();
+}
+
+/*!
     \fn Kopete::AV::VideoDevicePool::currentDevice()
  */
 int VideoDevicePool::currentDevice()
@@ -905,9 +916,6 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 	{
 		if ( vd.udi() == udi )
 		{
-			kDebug() << "Video device '" << udi << "' has been removed!";
-			emit deviceUnregistered( udi );
-			// not sure if this is safe but at this point the device node is gone already anyway
 			if (m_current_device == i)
 			{
 				m_current_device = 0;
@@ -919,6 +927,11 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 			}
 			m_modelvector.removeModel(m_videodevice[i].m_model);
 			m_videodevice.remove( i );
+			kDebug() << "Video device '" << udi << "' has been removed!";
+			m_ready.unlock();
+			emit deviceUnregistered( udi );
+			/* NOTE: do not emit deviceUnregistered( udi ) with mutex locked ! => potential deadlock ! */
+			return;
 		}
 		else
 		{

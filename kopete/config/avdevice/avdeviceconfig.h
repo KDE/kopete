@@ -76,7 +76,9 @@ private:
 	QImage qimage;
 	QPixmap qpixmap;
 	QTimer qtimer;
+	QString capturingDevice_udi;
 	void setVideoInputParameters();
+	void startCapturing();
 #ifdef HAVE_GL
 //	QGLWidget m_video_gl;
 #endif
