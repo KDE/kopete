@@ -814,7 +814,10 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 			{
 				m_current_device--;
 			}
+			m_ready.unlock();
 			emit deviceUnregistered( udi );
+			/* NOTE: do not emit deviceUnregistered( udi ) with mutex locked ! => potential deadlock ! */
+			return;
 		}
 		else
 		{
