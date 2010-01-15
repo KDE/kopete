@@ -70,6 +70,7 @@ private:
 	QImage qimage;
 	QPixmap qpixmap;
 	QTimer qtimer;
+	QString capturingDevice_udi;
 	QList<QWidget*> ctrlWidgets;
 	void setupControls();
 	void clearControlGUIElements();
@@ -77,6 +78,7 @@ private:
 	void addCheckBoxControlElement(int cid, QString title, bool value);
 	void addPopupMenuControlElement(int cid, QString title, QStringList options, int menuindex);
 	void addButtonControlElement(int cid, QString title);
+	void startCapturing();
 #ifdef HAVE_GL
 //	QGLWidget m_video_gl;
 #endif
