@@ -36,17 +36,23 @@ void SendNotifyTask::onGo()
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceNotify);
 	t->setId( client()->sessionID() );
 	t->setStatus( Yahoo::StatusNotify );
-	t->setParam( 4, client()->userId().toLocal8Bit() );
-	t->setParam( 5, m_target.toLocal8Bit() );
-	t->setParam( 14, " " );	
+
 	switch( m_type )
 	{
 	case NotifyTyping:
+		t->setParam( 4, client()->userId().toLocal8Bit() );
+		t->setParam( 5, m_target.toLocal8Bit() );
 		t->setParam( 13, m_state );
+		t->setParam( 14, " " );	
 		t->setParam( 49, "TYPING" );
 	break;
 	case NotifyWebcamInvite:
+		
+		kDebug(YAHOO_RAW_DEBUG) << "send invitation set Param";
+		t->setParam( 1, client()->userId().toLocal8Bit() );
+		t->setParam( 5, m_target.toLocal8Bit() );
 		t->setParam( 13, 0 );
+		t->setParam( 14, " " );	
 		t->setParam( 49, "WEBCAMINVITE" );		
 	break;
 	case NotifyGame:
