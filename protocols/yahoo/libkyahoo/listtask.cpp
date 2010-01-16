@@ -65,17 +65,25 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString group;
-
+	QString buddy;
 	// We need some low-level parsing here
+	
 	foreach( const Param &p, t->paramList() )
 	{
+		kDebug(YAHOO_RAW_DEBUG) << "1:" << p.first ;
+		kDebug(YAHOO_RAW_DEBUG) << "2:" << p.second ;
 		switch( p.first )
 		{
 		case 65:
 			group = p.second;
 			break;
 		case 7:
-			emit gotBuddy( p.second, QString(), group );
+			buddy = p.second;
+			break;
+		case 301:
+			if( p.second == "319"){
+				emit gotBuddy( buddy, QString(), group );
+			}
 		}
 	}
 }
