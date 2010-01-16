@@ -236,15 +236,14 @@ void LoginTask::handleAuthSixteenStage1Result(KJob* job)
 	if (error == 0)
 	{
 		QStringList responses = m_stage1Data.split("\r\n");
+		responseNumber = responses[0].toInt();
 		if (responses.count() >= 3)
 		{
-			responseNumber = responses[0].toInt();
 			token = responses[1];
 			token.remove("ymsgr=");
 			kDebug(YAHOO_RAW_DEBUG) << "response is:" << responseNumber;
 			kDebug(YAHOO_RAW_DEBUG) << "token is:" << token;
 		}
-
 		if (responseNumber != 0)
 		{
 			switch(responseNumber)
