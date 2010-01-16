@@ -118,7 +118,7 @@ void PictureNotifierTask::parsePicture( YMSGTransfer *t )
 	kDebug(YAHOO_RAW_DEBUG) ;
 
 	QString	nick;		/* key = 4 */
-	int type;		/* key = 13: 1 = request, 2 = notification */
+	int type;		/* key = 13: 1 = request, 2 = notification, 0 = Just changed */
 	QString url;		/* key = 20 */
 	int checksum;		/* key = 192  */
 
@@ -130,6 +130,8 @@ void PictureNotifierTask::parsePicture( YMSGTransfer *t )
 	if( type == 1 )
 		emit pictureRequest( nick );
 	else if( type == 0 )
+		emit pictureInfoNotify( nick, KUrl( url ), checksum );
+	else if( type == 2 )
 		emit pictureInfoNotify( nick, KUrl( url ), checksum );
 }
 
