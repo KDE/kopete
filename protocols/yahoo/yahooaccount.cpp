@@ -1562,31 +1562,23 @@ void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )
 //	kDebug(YAHOO_GEN_DEBUG) ;
 }
 
-void YahooAccount::slotMailNotify( const QString& from, const QString& /* subject */, int cnt )
+void YahooAccount::slotMailNotify( const QString& from, const QString&  subject , int cnt )
 {
-//	kDebug(YAHOO_GEN_DEBUG) << "Mail count: " << cnt;
-
-	if ( cnt > m_currentMailCount && from.isEmpty() )
+	kDebug(YAHOO_GEN_DEBUG) << "Mail count: " << cnt;
+	
+	if ( cnt > 0 && from.isEmpty() )
 	{
-#ifdef __GNUC__
-#warning Fix KNotification here
-#endif
-#if 0
 		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
 			"You have %1 unread messages in your Yahoo inbox.", cnt ), QPixmap() , 0 ),
 		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
-#endif
+
 		m_currentMailCount = cnt;
 	}
-	else if ( cnt > m_currentMailCount )
+	else if ( cnt > 0 )
 	{	kDebug(YAHOO_GEN_DEBUG) << "attempting to trigger event";
-#ifdef __GNUC__
-#warning Fix KNotification here
-#endif
-#if 0
-		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox.", from)
+	
+		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18n( "You have a message from %1 in your Yahoo inbox. <br><br>Subject: %2", from, subject )
 		                                       , QPixmap() , 0 ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
-#endif
 		m_currentMailCount = cnt;
 	}
 }
