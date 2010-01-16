@@ -79,6 +79,7 @@ class HistoryDialog : public KDialog
 		void dateSelected(QTreeWidgetItem *);
 
 		void slotSearch();
+		void searchFinished();
 
 		void slotSearchTextChanged(const QString& txt); // To enable/disable search button
 		void slotContactChanged(int index);
@@ -108,6 +109,9 @@ class HistoryDialog : public KDialog
 		void setMessages(QList<Kopete::Message> m);
 
 		void treeWidgetHideElements(bool s);
+
+		QString highlight(const QString &htmlText, const QString &highlight) const;
+		QString escapeXMLText(const QString& text) const;
 
 		/**
 		 * We show history dialog to look at the log for a metacontact. Here is this metacontact.
