@@ -19,8 +19,9 @@
 #include "historydialog.h"
 
 #include <QtCore/QDir>
-#include <QtCore/QTextOStream>
+#include <QtCore/QTextStream>
 #include <QtGui/QClipboard>
+#include <QtGui/QTextDocument>
 
 #include <kdebug.h>
 #include <krun.h>
@@ -336,6 +337,8 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 	newNode.setInnerHTML(resultHTML);
 	mHtmlPart->htmlDocument().body().appendChild(newNode);
 
+	const QString searchForEscaped = Qt::escape(mMainWidget->searchLine->text());
+	
 	// Populating HTML Part with messages
 	foreach(const Kopete::Message& msg, msgs)
 	{
@@ -356,11 +359,9 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 
 			QString body = msg.parsedBody();
 
-			if (!mMainWidget->searchLine->text().isEmpty())
 			// If there is a search, then we highlight the keywords
-			{
-				body = body.replace(mMainWidget->searchLine->text(), "<span style=\"background-color:yellow\">" + mMainWidget->searchLine->text() + "</span>", Qt::CaseInsensitive);
-			}
+			if (!searchForEscaped.isEmpty() && body.contains(searchForEscaped, Qt::CaseInsensitive))
+				body = highlight( body, searchForEscaped );
 
 			QString name;
 			if ( msg.from()->metaContact() && msg.from()->metaContact() != Kopete::ContactList::self()->myself() )
@@ -447,7 +448,7 @@ void HistoryDialog::treeWidgetHideElements(bool s)
 */
 void HistoryDialog::slotSearch()
 {
-	QRegExp rx("^ <msg.*time=\"(\\d+) \\d+:\\d+:\\d+\" >([^<]*)<");
+	QRegExp rx("^[\\s]*(\\d+)[\\s]+\\d+:\\d+:\\d+[\\s]*$");
 	QMap<QDate, QList<Kopete::MetaContact*> > monthsSearched;
 	QMap<QDate, QList<Kopete::MetaContact*> > matches;
 
@@ -455,7 +456,8 @@ void HistoryDialog::slotSearch()
 	if (mSearching)
 	{
 		treeWidgetHideElements(false);
-		goto searchFinished;
+		searchFinished();
+		return;
 	}
 
 	if (mMainWidget->dateTreeWidget->topLevelItemCount() == 0) return;
@@ -465,6 +467,15 @@ void HistoryDialog::slotSearch()
 	initProgressBar(i18n("Searching..."), mMainWidget->dateTreeWidget->topLevelItemCount());
 	mMainWidget->searchButton->setText(i18n("&Cancel"));
 	mSearching = true;
+
+	QDomDocument doc;
+
+	QString searchFor = mMainWidget->searchLine->text();
+	// We are sarching in xml file so we need escaped search text too.
+	QString searchForEscaped = escapeXMLText(searchFor);
+
+	const QString StartMsgTag("<msg");
+	const QString EndMsgTag("</msg");
 
 	// iterate over items in the date list widget
 	for(int i = 0; i < mMainWidget->dateTreeWidget->topLevelItemCount(); ++i)
@@ -495,20 +506,37 @@ void HistoryDialog::slotSearch()
 
 				QTextStream stream(&file);
 				QString textLine;
+    			QString msgItem;
 				while(!stream.atEnd())
 				{
 					textLine = stream.readLine();
-					if (textLine.contains(mMainWidget->searchLine->text(), Qt::CaseInsensitive))
+					if (!textLine.contains(StartMsgTag))
+						continue;
+
+					msgItem = textLine;
+					// Get whole message
+					while(!stream.atEnd() && !textLine.contains(EndMsgTag))
+						msgItem += textLine = stream.readLine();
+
+					if (msgItem.contains(searchForEscaped, Qt::CaseInsensitive))
 					{
-						if(rx.indexIn(textLine) != -1)
+						// Load message
+						if (doc.setContent(msgItem))
 						{
-							// only match message body
-							if (rx.cap(2).contains(mMainWidget->searchLine->text()))
-								matches[QDate(curItem->date().year(),curItem->date().month(),rx.cap(1).toInt())].push_back(curItem->metaContact());
+							// Check if only message body matches
+							if (doc.documentElement().text().contains(searchFor, Qt::CaseInsensitive))
+							{
+								if(rx.indexIn(doc.documentElement().attribute("time")) != -1)
+								{
+									QDate date(curItem->date().year(),curItem->date().month(),rx.cap(1).toInt());
+									matches[date].push_back(curItem->metaContact());
+								}
+							}
 						}
-						// this will happen when multiline messages are searched, properly
-						// parsing the files would fix this
-						else { }
+						else
+						{
+							kDebug(14310) << "Error: Cannot parse:" << msgItem;
+						}
 					}
 					qApp->processEvents();
 					if (!mSearching) return;
@@ -524,8 +552,11 @@ void HistoryDialog::slotSearch()
 		// Next date item
 		mMainWidget->searchProgress->setValue(mMainWidget->searchProgress->value()+1);
 	}
+	searchFinished();
+}
 
-searchFinished:
+void HistoryDialog::searchFinished()
+{
 	mMainWidget->searchButton->setText(i18n("&Search"));
 	mSearching = false;
 	doneProgressBar();
@@ -607,6 +638,60 @@ void HistoryDialog::slotImportHistory(void)
 {
 	HistoryImport importer(this);
 	importer.exec();
+}
+
+QString HistoryDialog::highlight(const QString &htmlText, const QString &highlight) const
+{
+	const int highlightLength = highlight.length();
+	QString highlightedText;
+	int eIndex = -1;
+	int sIndex = 0;
+	int midLen;
+
+	for (;;)
+	{
+		sIndex = htmlText.indexOf("<", eIndex + 1);
+		midLen = (sIndex == -1) ? -1 : sIndex - eIndex - 1;
+
+		//Text to highlight
+		QString body = htmlText.mid(eIndex + 1, midLen);
+		int highlightIndex = 0;
+		while ((highlightIndex = body.indexOf(highlight, highlightIndex, Qt::CaseInsensitive)) > -1)
+		{
+			QString after = QString("<span style=\"background-color:yellow\">%1</span>").arg(body.mid(highlightIndex, highlightLength));
+			body.replace(highlightIndex, highlightLength, after);
+			highlightIndex += after.length();
+		}
+		highlightedText += body;
+		
+		if (sIndex == -1)
+			break;
+
+		eIndex = htmlText.indexOf(">", sIndex);
+		midLen = (eIndex == -1) ? -1 : eIndex - sIndex + 1;
+		highlightedText += htmlText.mid(sIndex, midLen); // Tag element
+
+		if (eIndex == -1)
+			break;
+	}
+
+	return highlightedText;
+}
+
+QString HistoryDialog::escapeXMLText(const QString& text) const
+{
+	if (text.isEmpty())
+		return QString();
+
+	QDomDocument doc;
+	QDomElement tmpElement = doc.createElement("tmpElement");
+	QDomText tmpTextNode = doc.createTextNode(text);
+	tmpElement.appendChild(tmpTextNode); //We have to attach the text to element otherwise save won't work correctly
+
+	QString excapedText;
+	QTextStream stream(&excapedText, QIODevice::WriteOnly);
+	tmpTextNode.save(stream, 0);
+	return excapedText;
 }
 
 #include "historydialog.moc"
