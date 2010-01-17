@@ -10,6 +10,7 @@ X-KDE-ParentComponents=kopete_history
 
 Name=History
 Name[ar]=التاريخ
+Name[ast]=Hestorial
 Name[bg]=История
 Name[bn]=ইতিহাস
 Name[br]=Istor
@@ -82,6 +83,7 @@ Name[zh_HK]=歷程紀錄
 Name[zh_TW]=歷史
 Comment=History Plugin
 Comment[ar]=ملحق التاريخ
+Comment[ast]=Complementu d'hestorial
 Comment[bg]=Приставка за историята
 Comment[bn]=ইতিহাস প্লাগিন
 Comment[br]=Lugent an istorig

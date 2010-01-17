@@ -9,6 +9,7 @@ X-KDE-ParentComponents=kopete_autoreplace
 
 Name=Auto Replace
 Name[ar]=استبدال تلقائي
+Name[ast]=Auto Trocar
 Name[bg]=Автоматична замяна
 Name[bn]=স্বয়ংক্রীয় প্রতিস্থাপন
 Name[ca]=Auto-substitució
@@ -76,6 +77,7 @@ Name[zh_HK]=自動取代
 Name[zh_TW]=自動取代
 Comment=Autoreplaces some text you can choose
 Comment[ar]=استبدال تلقائي لبعض النصوص المختارة
+Comment[ast]=Auto troca testu que puedes escoyer
 Comment[bg]=Приставка за автоматична замяна на текст в съобщенията
 Comment[bn]=স্বয়ংক্রীয়ভাবে প্রতিস্থাপন করে কিছু টেক্সট যা আপনি বেছে নিতে পারেন
 Comment[ca]=Auto-substitueix algun text que podreu escollir

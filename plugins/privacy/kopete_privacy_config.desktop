@@ -9,6 +9,7 @@ X-KDE-ParentComponents=kopete_privacy
 
 Name=Privacy
 Name[ar]=الخصوصية
+Name[ast]=Privacidá
 Name[bg]=Поверителност
 Name[ca]=Privadesa
 Name[ca@valencia]=Privadesa
@@ -64,6 +65,7 @@ Name[zh_CN]=隐私
 Name[zh_TW]=隱私
 Comment=Privacy Plugin
 Comment[ar]=ملحق الخصوصية
+Comment[ast]=Complementu de privacidá
 Comment[bg]=Приставка за поверителност
 Comment[ca]=Connector de privacitat
 Comment[ca@valencia]=Connector de privacitat

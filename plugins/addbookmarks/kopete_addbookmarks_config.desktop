@@ -2,6 +2,7 @@
 Type=Service
 Name=Bookmarks
 Name[ar]=علامات المواقع
+Name[ast]=Marcadores
 Name[bg]=Отметки
 Name[bn]=বুকমার্ক
 Name[br]=Sinedoù
@@ -71,6 +72,7 @@ Name[zh_HK]=書籤
 Name[zh_TW]=書籤
 Comment=Automatically bookmark links in incoming messages
 Comment[ar]=علم المواقع تلقائيا في الرسائل القادمة
+Comment[ast]=Anota automáticamente los enllaces de los mensaxes entrantes
 Comment[bg]=Автоматично добавяне на връзките във входящите съобщения към отметките
 Comment[bn]=অন্তর্মুখী বার্তামধ্যস্থ লিঙ্কগুলো স্বয়ংক্রীয়ভাবে বুকমার্ক করে
 Comment[ca]=Apunta automàticament els enllaços en els missatges entrants

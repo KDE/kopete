@@ -11,6 +11,7 @@ X-KDE-Weight=10
 
 Name=Accounts
 Name[ar]=حسابات
+Name[ast]=Cuentes
 Name[bg]=Сметки
 Name[bn]=অ্যাকাউন্ট
 Name[br]=Kontoù
@@ -81,6 +82,7 @@ Name[zh_HK]=帳號
 Name[zh_TW]=帳號
 Comment=Manage Your Accounts and Identities
 Comment[ar]=أدِر حساباتك وعضوياتك
+Comment[ast]=Xestionar les tos cuentes ya identidaes
 Comment[ca]=Gestioneu els vostres comptes i identitats
 Comment[ca@valencia]=Gestioneu els vostres comptes i identitats
 Comment[cs]=Správa účtů a identit
