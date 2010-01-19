@@ -596,12 +596,12 @@ void Client::setPictureStatus( Yahoo::PictureStatus status )
 // **** Stealth Handling **** michaelacole
 void Client::processStealthQueue()
 {
-	for ( QStringList::ConstIterator it = d->unstealthedBuddies.begin(); it != d->unstealthedBuddies.end(); ++it )
+	for ( QStringList::ConstIterator it = d->unstealthedBuddies.constBegin(); it != d->unstealthedBuddies.constEnd(); ++it )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "unstealthed setting set on" << *it;
 	stealthContact( *it, Yahoo::StealthOffline , Yahoo::StealthNotActive );
 	}
-	for ( QStringList::ConstIterator it = d->stealthedBuddies.begin(); it != d->stealthedBuddies.end(); ++it )
+	for ( QStringList::ConstIterator it = d->stealthedBuddies.constBegin(); it != d->stealthedBuddies.constEnd(); ++it )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "stealthed setting set on" << *it ;
 	stealthContact( *it, Yahoo::StealthPermOffline , Yahoo::StealthActive );
