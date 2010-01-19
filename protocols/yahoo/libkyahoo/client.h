@@ -94,7 +94,7 @@ Q_OBJECT
 
 		/** Returns information about what went wrong */
 		QString errorInformation();
-
+		
 		/**
 		 * Specifies the status we connect with. 
 		 * The Yahoo protocol supports connecting into Online and Invisible state.
@@ -455,6 +455,13 @@ Q_OBJECT
 		 * Error
 		 */
 		void notifyError( const QString &info, const QString &errorString, LogLevel level );
+
+		/**
+		 * Steathed information from login..
+		 */
+		void notifyStealthedBuddies( const QStringList &buddies);
+		void notifyUnstealthedBuddies( const QStringList &buddies);
+
 	signals:
 		/** CONNECTION EVENTS */
 		/**
@@ -711,6 +718,11 @@ Q_OBJECT
 		 */
 		void processPictureQueue();
 
+		 /** 
+		 * Update all Stealth info after login
+		 */
+		void processStealthQueue();
+                
 	private:
 		void distribute( Transfer *transfer );
 		
