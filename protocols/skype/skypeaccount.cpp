@@ -206,33 +206,42 @@ void SkypeAccount::setAway(bool away, const QString &reason) {
 
 void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
-
-	if (status == d->protocol->Online)
-		d->skype.setOnline();//Go online
-	else if (status == d->protocol->Offline)
-		d->skype.setOffline();//Go offline
-	else if (status == d->protocol->Away)
-		d->skype.setAway();
-	else if (status == d->protocol->NotAvailable)
-		d->skype.setNotAvailable();
-	else if (status == d->protocol->DoNotDisturb)
-		d->skype.setDND();
-	else if (status == d->protocol->Invisible)
-		d->skype.setInvisible();
-	else if (status == d->protocol->SkypeMe)
-		d->skype.setSkypeMe();
-	else
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown online status";//Just a warning that I do not know that status
-
-	///TODO: Port to kde4
-	Q_UNUSED(reason);
 	Q_UNUSED(options);
+	if (status == d->protocol->Online){
+		d->skype.setOnline();//Go online
+		setStatusMessage(reason);
+	}
+	else if (status == d->protocol->Offline){
+		if (!reason.isEmpty()) setStatusMessage(reason);
+		d->skype.setOffline();//Go offline
+	}
+	else if (status == d->protocol->Away){
+		d->skype.setAway();
+		setStatusMessage(reason);
+	}
+	else if (status == d->protocol->NotAvailable){
+		d->skype.setNotAvailable();
+		setStatusMessage(reason);
+	}
+	else if (status == d->protocol->DoNotDisturb){
+		d->skype.setDND();
+		setStatusMessage(reason);
+	}
+	else if (status == d->protocol->Invisible){
+		d->skype.setInvisible();
+		setStatusMessage(reason);
+	}
+	else if (status == d->protocol->SkypeMe){
+		d->skype.setSkypeMe();
+		setStatusMessage(reason);
+	}
+	else
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown online status";//Just a warning that I do not know that status;
 }
 
 void SkypeAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
-	///TODO: Port to kde4
-	Q_UNUSED(statusMessage);
+	d->skype.setUserProfileRichMoodText(statusMessage.message());
 }
 
 void SkypeAccount::disconnect() {
