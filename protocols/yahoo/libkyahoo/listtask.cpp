@@ -105,7 +105,7 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
                         * so better to compile list of both now then notify kopete client.
                         */
 			loginstealthedbuddies.append( buddy );
-			loginunstealthedbuddies.removeLast();
+			loginunstealthedbuddies.removeAll( buddy );
 			};
 			break;
                 /**

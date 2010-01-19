@@ -561,7 +561,7 @@ void YahooAccount::disconnect()
 	if ( isConnected() )
 	{
 		kDebug(YAHOO_GEN_DEBUG) <<  "Attempting to disconnect from Yahoo server ";
-		
+
 		disconnected( Manual );
 		m_session->close();
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
