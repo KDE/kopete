@@ -37,6 +37,7 @@ public:
 protected:
 	virtual bool forMe( const Transfer *transfer ) const;
 	void parseMessage( YMSGTransfer *transfer );
+	void parseAnimatedAudibleIcon( YMSGTransfer *transfer );
 	void parseNotify( YMSGTransfer *transfer );
 signals:
 	void gotIm(const QString&, const QString&, long, int);
