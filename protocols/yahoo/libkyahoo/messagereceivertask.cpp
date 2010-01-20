@@ -157,7 +157,7 @@ void MessageReceiverTask::parseAnimatedAudibleIcon( YMSGTransfer *t )
 		
 		msg = "ANIMATED AUDIBLE SENT TO YOU WITH TEXT " + msg;
 		emit gotIm( from, msg, timestamp.toLong(), 0);
-		msg2 = "http://us.dl1.yimg.com//download.yahoo.com/dl/aud/aa/" + msg2 + ".swf";
+		msg2 = "http://us.dl1.yimg.com//download.yahoo.com/dl/aud/"+msg2.mid(5,2)+"/" + msg2 + ".swf";
 		emit gotIm( from, msg2,timestamp.toLong(), 0);
 
 	}
