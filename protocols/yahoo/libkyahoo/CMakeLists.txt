@@ -42,7 +42,8 @@ sendpicturetask.cpp
 webcamtask.cpp 
 conferencetask.cpp 
 sendauthresptask.cpp 
-pingtask.cpp 
+pingtask.cpp
+alivetask.cpp
 yabtask.cpp 
 yabentry.cpp 
 modifyyabtask.cpp 

@@ -46,6 +46,7 @@
 #include "conferencetask.h"
 #include "sendauthresptask.h"
 #include "pingtask.h"
+#include "alivetask.h"
 #include "yabtask.h"
 #include "modifyyabtask.h"
 #include "chatsessiontask.h"
@@ -127,7 +128,9 @@ Client::Client(QObject *par) :QObject(par)
 
 	m_pingTimer = new QTimer( this );
 	QObject::connect( m_pingTimer, SIGNAL( timeout() ), this, SLOT( sendPing() ) );
-
+	m_aliveTimer = new QTimer( this );
+	QObject::connect( m_aliveTimer, SIGNAL( timeout() ), this, SLOT( sendAlive() ) );
+	
 	QObject::connect( d->loginTask, SIGNAL( haveSessionID( uint ) ), SLOT( lt_gotSessionID( uint ) ) );
 	QObject::connect( d->loginTask, SIGNAL( buddyListReady() ), SLOT( processPictureQueue() ) );
 	QObject::connect( d->loginTask, SIGNAL( buddyListReady() ), SLOT( processStealthQueue() ) );
@@ -189,6 +192,7 @@ void Client::close()
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
 	m_pingTimer->stop();
+	m_aliveTimer->stop();
 	if( d->active )
 	{
 		LogoffTask *lt = new LogoffTask( d->root );
@@ -280,13 +284,15 @@ void Client::slotLoginResponse( int response, const QString &msg )
 			changeStatus( d->statusOnConnect, d->statusMessageOnConnect, Yahoo::StatusTypeAway );
 		d->statusMessageOnConnect.clear();
 		setStatus( d->statusOnConnect );
-		/* YM Client sends a ping every minute
+		/* YM Client sends a alert every minute
 		* If we time out and try to log out and log in
 		* we can lose messages therefore we should set this
 		* to the same as the Yahoo Messenger client
 		*. so as we dont get disconnected
+		* Also it sends a PING at every hour.
 		*/
-		m_pingTimer->start( 1 * 60 * 1000 );
+		m_aliveTimer->start( 1 * 60 * 1000 );
+		m_pingTimer->start( 59 * 60 * 1000 );
 		initTasks();
 	} else {
 		d->active = false;
@@ -452,6 +458,17 @@ void Client::sendPing()
 	pt->go( true );
 }
 
+void Client::sendAlive()
+{
+	if( !d->active )
+	{
+		kDebug(YAHOO_RAW_DEBUG) << "Disconnected. NOT sending a ALIVE.";
+		return;
+	}
+	kDebug(YAHOO_RAW_DEBUG) << "Sending a ALIVE.";
+	AliveTask *at = new AliveTask( d->root );
+	at->go( true );
+}
 // ***** Contactlist handling *****
 
 void Client::stealthContact(QString const &userId, Yahoo::StealthMode mode, Yahoo::StealthStatus state)

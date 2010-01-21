@@ -331,7 +331,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		*/
 
 		default:
-			kDebug(YAHOO_RAW_DEBUG) << "  Parsed packet service -  This means an unknown service " << servicenum;
+			kDebug(YAHOO_RAW_DEBUG) << "***************  Parsed packet service -  This means an unknown service " << servicenum;
 		break;
 	}
 	
