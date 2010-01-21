@@ -253,6 +253,10 @@ class Skype : public QObject
 		 */
 		void setOnline();
 		/**
+		 * Sets the rich text mood for the user profile
+		 */
+		void setUserProfileRichMoodText(const QString &);
+		/**
 		 * Tell the skype to go offline
 		 */
 		void setOffline();
