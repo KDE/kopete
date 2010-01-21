@@ -107,7 +107,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 	for( int i = 0; i < t->paramCount( 7 ); ++i)
 	{
 		nick = t->nthParam( 7, i );
-		state = t->nthParamSeparated( 10, i, 7 ).toInt();
+		state = t->nthParam( 10, i ).toInt();
 		flags = t->nthParamSeparated( 13, i, 7 ).toInt();
 		away = t->nthParamSeparated( 47, i, 7 ).toInt();
 		idle = t->nthParamSeparated( 137, i, 7 ).toInt();
@@ -118,7 +118,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 		else
 			message = t->nthParamSeparated( 19, i, 7 );
 
-		if( t->service() == Yahoo::ServiceLogoff || ( state != 0 && flags == 0 ) )
+		if( t->service() == Yahoo::ServiceLogoff )
 			emit statusChanged( nick, Yahoo::StatusOffline, QString(), 0, 0, 0 );
 		else
 			emit statusChanged( nick, state, message, away, idle, pictureChecksum );

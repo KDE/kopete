@@ -113,7 +113,7 @@ namespace Yahoo
 		StatusDisconnected = -1,
 		StatusAvailable = 0,
 		StatusBRB = 1,
-		StatusBusy,
+		StatusBusy = 2,
 		StatusNotAtHome,
 		StatusNotAtDesk,
 		StatusNotInOffice,
