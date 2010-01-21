@@ -591,7 +591,7 @@ void VideoDevicePool::registerDevice( Solid::Device & device )
 				{
 					kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
 					videodevice.close();
-					videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
+//					videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
 					m_videodevice.push_back(videodevice);
 				}
 			}
@@ -658,7 +658,8 @@ unsigned int VideoDevicePool::inputs()
 }
 
 /*!
-    \fn Kopete::AV::VideoDevicePool::loadSelectedDevice()
+    \fn void Kopete::AV::VideoDevicePool::loadSelectedDevice()
+    \brief Loads and selects the saved device
  */
 void VideoDevicePool::loadSelectedDevice()
 {
@@ -667,147 +668,144 @@ void VideoDevicePool::loadSelectedDevice()
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
 		QString currentdevice = config.readEntry("Current Device", QString());
-		kDebug() << "Current device: " << currentdevice;
-
-//		m_current_device = 0; // Must check this thing because of the fact that multiple loadConfig in other methodas can do bad things. Watch out!
-
-		VideoDeviceVector::iterator vditerator;
-		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
+		kDebug() << "Device name:" << config.readEntry( QString::fromLocal8Bit( "Device %1 Name" ).arg( currentdevice ), QString("NOT SAVED") );
+		if (!currentdevice.isEmpty())
 		{
-			const QString modelindex = QString::fromLocal8Bit ( "Model %1 Device %2")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex);
-			if(modelindex == currentdevice)
+			kDebug() << "Saved device:" << currentdevice;
+			VideoDeviceVector::iterator vditerator;
+			for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
 			{
-				m_current_device = std::distance (m_videodevice.begin(), vditerator);
-//				kDebug() << "This place will be used to set " << modelindex << " as the current device ( " << std::distance(m_videodevice.begin(), vditerator ) << " ).";
+				if ((*vditerator).udi() == currentdevice)
+				{
+					m_current_device = std::distance (m_videodevice.begin(), vditerator);
+					kDebug() << "Saved device is available, setting device-index to" << m_current_device;
+					return;
+				}
 			}
-			const QString name                = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), (*vditerator).m_model);
-			kDebug() << "Device name: " << name;
+			kDebug() << "Saved device is not available.";
 		}
+		else
+			kDebug() << "No device saved.";
 	}
 }
 
 /*!
-    \fn Kopete::AV::VideoDevicePool::loadDeviceConfig()
+    \fn void Kopete::AV::VideoDevicePool::loadDeviceConfig()
+    \brief Loads and applies the configuration for the currently selected device
+    
+    Loads the input and the values for all video-controls and applies them.
  */
 void VideoDevicePool::loadDeviceConfig()
 {
-    /// @todo implement me
 	kDebug() << "called";
-kDebug() << "WARNING: loading settings is currently deactivated !";
-return;
 	if (hasDevices() && (m_clients == 0))
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
-
-		VideoDeviceVector::iterator vditerator;
-		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
+		// Load input and apply
+		const QString key_currentinput = QString::fromLocal8Bit( "Device %1 Current Input" ).arg( m_videodevice[m_current_device].udi() );
+		const int currentinput = config.readEntry(key_currentinput, 0);
+		kDebug() << "Setting input to" << currentinput;
+		if (currentinput != m_videodevice[m_current_device].currentInput())
+			m_videodevice[m_current_device].selectInput(currentinput);
+		// Load video-controls and apply
+		quint32 ctrl_id;
+		qint32 ctrl_value;
+		QString ctrl_key;
+		bool ok = false;
+		const QString key_control_start = QString::fromLocal8Bit( "Device %1 Input %2 Control " ).arg( m_videodevice[m_current_device].udi() ).arg( m_videodevice[m_current_device].currentInput() );
+		QStringList ctrl_keys = config.keyList().filter(key_control_start);
+		kDebug() << "Found" << ctrl_keys.size() << "saved values for video-controls";
+		foreach (ctrl_key, ctrl_keys)
 		{
-			const QString modelindex = QString::fromLocal8Bit ( "Model %1 Device %2")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex);
-			const QString name                = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), (*vditerator).m_model);
-			const int currentinput            = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_name ) .arg ((*vditerator).m_modelindex)), 0);
-			kDebug() << "Device name: " << name;
-			kDebug() << "Device current input: " << currentinput;
-			(*vditerator).selectInput(currentinput);
-
-/*			for (int input = 0; input < (*vditerator).m_input.size(); input++)
+			ctrl_id = QString(ctrl_key).remove(key_control_start).toUInt(&ok);
+			if (ok)
 			{
-				const float brightness = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Brightness").arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
-				const float contrast   = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Contrast")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
-				const float saturation = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Saturation").arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
-				const float whiteness  = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Whiteness") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
-				const float hue        = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")       .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , 0.5 );
-				const bool  autobrightnesscontrast = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
-				const bool  autocolorcorrection    = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
-				const bool  imageasmirror          = config.readEntry((QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 ImageAsMirror")          .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input)) , false );
-				(*vditerator).setBrightness(brightness);
-				(*vditerator).setContrast(contrast);
-				(*vditerator).setSaturation(saturation);
-				(*vditerator).setWhiteness(whiteness);
-				(*vditerator).setHue(hue);
-				(*vditerator).setAutoBrightnessContrast(autobrightnesscontrast);
-				(*vditerator).setAutoColorCorrection(autocolorcorrection);
-				(*vditerator).setImageAsMirror(imageasmirror);
-				kDebug() << "Brightness:" << brightness;
-				kDebug() << "Contrast  :" << contrast;
-				kDebug() << "Saturation:" << saturation;
-				kDebug() << "Whiteness :" << whiteness;
-				kDebug() << "Hue       :" << hue;
-				kDebug() << "AutoBrightnessContrast:" << autobrightnesscontrast;
-				kDebug() << "AutoColorCorrection   :" << autocolorcorrection;
-				kDebug() << "ImageAsMirror         :" << imageasmirror;
-			}*/
+				/* NOTE: we do not read the value as int with readEntry() directly
+				  because it doesn't tell us if the saved value was valid.
+				  If not, we do NOT apply a standard value.
+				*/
+				QString tmpstr = config.readEntry(ctrl_key, QString());
+				ctrl_value = tmpstr.toInt(&ok);
+				if (ok && !tmpstr.isEmpty())
+				{
+					kDebug() << "Setting control" << ctrl_id << "to value" << ctrl_value;
+					m_videodevice[m_current_device].setControlValue(ctrl_id, ctrl_value);
+				}
+				else
+					kDebug() << "Saved value for control" << ctrl_id << "is invalid:" << tmpstr;
+			}
+			else
+				kDebug() << "Invalid key:" << ctrl_key;
 		}
 	}
 }
 
 /*!
-    \fn Kopete::AV::VideoDevicePool::saveConfig()
+    \fn void Kopete::AV::VideoDevicePool::saveConfig()
+    \brief Saves the current device configuration
+    
+    Saves the current device, the current input and the current values for all supported video-controls.
  */
 void VideoDevicePool::saveConfig()
 {
-    /// @todo implement me
 	kDebug() << "called";
-kDebug() << "WARNING: saving settings is currently deactivated !";
-return;
-	if(hasDevices())
+	if (hasDevices())
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
-
-/*		if(m_modelvector.size())
+		// Save current device:
+		kDebug() << "Current device:" << m_videodevice[m_current_device].udi();
+		config.writeEntry( "Current Device", m_videodevice[m_current_device].udi() );
+		// Save current device name (for debugging only):
+		kDebug() << "Current device name:" << m_videodevice[m_current_device].m_name;
+		const QString name = QString::fromLocal8Bit( "Device %1 Name" ).arg( m_videodevice[m_current_device].udi() );
+		config.writeEntry( name, m_videodevice[m_current_device].m_name );
+		// Save current input:
+		kDebug() << "Current input:" << m_videodevice[m_current_device].currentInput();
+		const QString key_currentinput = QString::fromLocal8Bit( "Device %1 Current Input" ).arg( m_videodevice[m_current_device].udi() );
+		config.writeEntry( key_currentinput, m_videodevice[m_current_device].currentInput() );
+		// --- Save values of the controls ---:
+		qint32 ctrl_value;
+		const QString key_control_start = QString::fromLocal8Bit( "Device %1 Input %2 Control " ).arg( m_videodevice[m_current_device].udi() ).arg( m_videodevice[m_current_device].currentInput() );
+		// Save values of the numeric controls:
+		QList<NumericVideoControl> numCtrls = m_videodevice[m_current_device].getSupportedNumericControls();
+		NumericVideoControl numCtrl;
+		foreach (numCtrl, numCtrls)
 		{
-			VideoDeviceModelPool::m_devicemodel::iterator vmiterator;
-			for( vmiterator = m_modelvector.begin(); vmiterator != m_modelvector.end(); ++vmiterator )
+			if (EXIT_SUCCESS == m_videodevice[m_current_device].getControlValue(numCtrl.id, &ctrl_value))
 			{
-				kDebug() << "Device Model: " << (*vmiterator).name;
-				kDebug() << "Device Count: " << (*vmiterator).count;
+				kDebug() << "Numeric control:" << numCtrl.id << "value" << ctrl_value;
+				config.writeEntry( key_control_start + QString::number(numCtrl.id), ctrl_value );
 			}
+			else
+				kDebug() << "Error: couldn't get current value for numeric control" << numCtrl.id;
 		}
-*/
-// Stores what is the current video device in use
-		const QString currentdevice = QString::fromLocal8Bit ( "Model %1 Device %2" ) .arg(m_videodevice[m_current_device].m_model) .arg(m_videodevice[m_current_device].m_modelindex);
-		config.writeEntry( "Current Device", currentdevice);
-
-		VideoDeviceVector::iterator vditerator;
-		for( vditerator = m_videodevice.begin(); vditerator != m_videodevice.end(); ++vditerator )
+		// Save values of the boolean controls:
+		QList<BooleanVideoControl> boolCtrls = m_videodevice[m_current_device].getSupportedBooleanControls();
+		BooleanVideoControl boolCtrl;
+		foreach (boolCtrl, boolCtrls)
 		{
-			kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Name:" << (*vditerator).m_name;
-			kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Current input:" << (*vditerator).currentInput();
-
-// Stores current input for the given video device
-			const QString name                   = QString::fromLocal8Bit ( "Model %1 Device %2 Name")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
-			const QString currentinput           = QString::fromLocal8Bit ( "Model %1 Device %2 Current input")  .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex);
-			config.writeEntry( name,                   (*vditerator).m_name);
-			config.writeEntry( currentinput,           (*vditerator).currentInput());
-/*
-			for (int input = 0 ; input < (*vditerator).m_input.size(); input++)
+			if (EXIT_SUCCESS == m_videodevice[m_current_device].getControlValue(boolCtrl.id, &ctrl_value))
 			{
-				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Brightness: " << (*vditerator).m_input[input].getBrightness();
-				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Contrast  : " << (*vditerator).m_input[input].getContrast();
-				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Saturation: " << (*vditerator).m_input[input].getSaturation();
-				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Whiteness : " << (*vditerator).m_input[input].getWhiteness();
-				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Hue       : " << (*vditerator).m_input[input].getHue();
-				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Automatic brightness / contrast: " << (*vditerator).m_input[input].getAutoBrightnessContrast();
-				kDebug() << "Model:" << (*vditerator).m_model << ":Index:" << (*vditerator).m_modelindex << ":Input:" << input << ":Automatic color correction     : " << (*vditerator).m_input[input].getAutoColorCorrection();
-
-// Stores configuration about each channel
-				const QString brightness             = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Brightness")             .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input);
-				const QString contrast               = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Contrast")               .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input);
-				const QString saturation             = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Saturation")             .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input);
-				const QString whiteness              = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Whiteness")              .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input);
-				const QString hue                    = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 Hue")                    .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input);
-				const QString autobrightnesscontrast = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoBrightnessContrast") .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input);
-				const QString autocolorcorrection    = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 AutoColorCorrection")    .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input);
-				const QString imageasmirror          = QString::fromLocal8Bit ( "Model %1 Device %2 Input %3 ImageAsMirror")          .arg ((*vditerator).m_model ) .arg ((*vditerator).m_modelindex) .arg (input);
-				config.writeEntry( brightness,             (double)(*vditerator).m_input[input].getBrightness());
-				config.writeEntry( contrast,               (double)(*vditerator).m_input[input].getContrast());
-				config.writeEntry( saturation,             (double)(*vditerator).m_input[input].getSaturation());
-				config.writeEntry( whiteness,              (double)(*vditerator).m_input[input].getWhiteness());
-				config.writeEntry( hue,                    (double)(*vditerator).m_input[input].getHue());
-				config.writeEntry( autobrightnesscontrast, (*vditerator).m_input[input].getAutoBrightnessContrast());
-				config.writeEntry( autocolorcorrection,    (*vditerator).m_input[input].getAutoColorCorrection());
-				config.writeEntry( imageasmirror,          (*vditerator).m_input[input].getImageAsMirror());
-			}*/
+				kDebug() << "Boolean control:" << boolCtrl.id << "value" << ctrl_value;
+				config.writeEntry( key_control_start + QString::number(boolCtrl.id), ctrl_value );
+			}
+			else
+				kDebug() << "Error: couldn't get current value for boolean control" << numCtrl.id;
 		}
+		// Save values of the menu controls:
+		QList<MenuVideoControl> menuCtrls = m_videodevice[m_current_device].getSupportedMenuControls();
+		MenuVideoControl menuCtrl;
+		foreach (menuCtrl, menuCtrls)
+		{
+			if (EXIT_SUCCESS == m_videodevice[m_current_device].getControlValue(menuCtrl.id, &ctrl_value))
+			{
+				kDebug() << "Menu-control:" << menuCtrl.id << "value" << ctrl_value;
+				config.writeEntry( key_control_start + QString::number(menuCtrl.id), ctrl_value );
+			}
+			else
+				kDebug() << "Error: couldn't get current value for menu-control" << numCtrl.id;
+		}
+		// NOTE: Action-video-controls don't have values, so there is nothing to save.
 		config.sync();
 		kDebug();
 	}
