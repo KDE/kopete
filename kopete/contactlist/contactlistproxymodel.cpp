@@ -19,6 +19,7 @@
 
 #include <QStandardItem>
 #include <QList>
+#include <QTimer>
 
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
@@ -31,11 +32,22 @@ namespace Kopete {
 namespace UI {
 
 ContactListProxyModel::ContactListProxyModel(QObject* parent)
-	: QSortFilterProxyModel(parent)
+	: QSortFilterProxyModel(parent), rootRowCount(0), sortScheduled(false)
 {
 	setDynamicSortFilter(true);
 	sort( 0, Qt::AscendingOrder );
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
+
+	// Workaround Qt sorting bug
+	connect( this, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
+	         this, SLOT(proxyRowsInserted(const QModelIndex&, int, int)) );
+	connect( this, SIGNAL(rowsRemoved(const QModelIndex&, int, int)),
+	         this, SLOT(proxyRowsRemoved(const QModelIndex&, int, int)) );
+	connect( this, SIGNAL(modelReset()),
+	         this, SLOT(proxyCheckSort()) );
+	connect( this, SIGNAL(layoutChanged()),
+	         this, SLOT(proxyCheckSort()) );
+	
 }
 
 ContactListProxyModel::~ContactListProxyModel()
@@ -146,6 +158,50 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 	}
 
 	return false;
+}
+
+void ContactListProxyModel::proxyRowsInserted( const QModelIndex& parent, int start, int end )
+{
+	if (parent.isValid())
+		return;
+	
+	int count = (end - start) + 1;
+	if (rootRowCount <= 0 && count > 0 && !sortScheduled)
+	{
+		sortScheduled = true;
+		QTimer::singleShot( 0, this, SLOT(forceSort()) );
+	}
+	rootRowCount += count;
+}
+
+void ContactListProxyModel::proxyRowsRemoved( const QModelIndex& parent, int start, int end )
+{
+	if (parent.isValid())
+		return;
+	
+	int count = (end - start) + 1;
+	rootRowCount -= count;
+}
+
+void ContactListProxyModel::proxyCheckSort()
+{
+	int count = rowCount();
+	if (rootRowCount <= 0 && count > 0 && !sortScheduled)
+	{
+		sortScheduled = true;
+		QTimer::singleShot( 0, this, SLOT(forceSort()) );
+	}
+	rootRowCount = count;
+}
+
+void ContactListProxyModel::forceSort()
+{
+	if (!sortScheduled)
+		return;
+
+	sortScheduled = false;
+	sort( -1, Qt::AscendingOrder );
+	sort( 0, Qt::AscendingOrder );
 }
 
 }

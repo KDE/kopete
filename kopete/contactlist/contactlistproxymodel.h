@@ -47,6 +47,14 @@ Q_OBJECT
 		bool filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const;
 		bool showOffline;
 		bool showEmptyFolders;
+		int rootRowCount;
+		bool sortScheduled;
+	private slots:
+		// Workaround Qt sorting bug
+		void proxyRowsInserted( const QModelIndex& parent, int start, int end );
+		void proxyRowsRemoved( const QModelIndex& parent, int start, int end );
+		void proxyCheckSort();
+		void forceSort();
 };
 
 }
