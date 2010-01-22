@@ -121,6 +121,7 @@ namespace Yahoo
 		StatusOnVacation,
 		StatusOutToLunch,
 		StatusSteppedOut,
+		StatusOnSMS = 10,
 		StatusInvisible = 12,
 		StatusCustom = 99,
 		StatusIdle = 999,

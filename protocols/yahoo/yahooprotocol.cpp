@@ -51,6 +51,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const QVariantList & )
 	OnVacation( Kopete::OnlineStatus::Busy,      3, this, 7, QStringList(QString::fromUtf8("contact_xa_overlay")),    i18n( "On vacation" ),  i18n( "On vacation" ) ),
 	OutToLunch( Kopete::OnlineStatus::Away,     10, this, 8, QStringList(QString::fromUtf8("contact_food_overlay")),  i18n( "Out to lunch" ), i18n( "Out to lunch" ) ),
 	SteppedOut( Kopete::OnlineStatus::Away,     14, this, 9, QStringList(QString::fromUtf8("contact_away_overlay")),  i18n( "Stepped out" ),  i18n( "Stepped out" ) ),
+	OnSMS( Kopete::OnlineStatus::Busy,     20, this, 10, QStringList(QString::fromUtf8("contact_phone_overlay")),  i18n( "I'm On SMS" ),  i18n( "I'm On SMS" ) ),
 	Invisible( Kopete::OnlineStatus::Invisible,  3, this, 12, QStringList(QString::fromUtf8("contact_invisible_overlay")),  i18n( "Invisible" ), i18n( "Invisible" ), Kopete::OnlineStatusManager::Invisible ),
 	Custom( Kopete::OnlineStatus::Away,         25, this, 99, QStringList(QString::fromUtf8("contact_busy_overlay")), i18n( "Custom" ),       i18n( "Custom" ),	0, Kopete::OnlineStatusManager::HideFromMenu ),
 	Idle( Kopete::OnlineStatus::Away,           15, this, 999, QStringList(QString::fromUtf8("yahoo_idle")),          i18n( "Idle" ),         i18n( "Idle" ),         Kopete::OnlineStatusManager::Idle ),
@@ -141,6 +142,8 @@ Kopete::OnlineStatus YahooProtocol::statusFromYahoo( int status )
 			return OutToLunch;
 		case 9:
 			return SteppedOut;
+		case 10:
+			return OnSMS;
 		case 12:
 			return Invisible;
 		case 99:

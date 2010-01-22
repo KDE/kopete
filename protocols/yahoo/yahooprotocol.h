@@ -53,6 +53,7 @@ public:
 	const Kopete::OnlineStatus OnVacation;
 	const Kopete::OnlineStatus OutToLunch;
 	const Kopete::OnlineStatus SteppedOut;
+	const Kopete::OnlineStatus OnSMS;
 	const Kopete::OnlineStatus Invisible;
 	const Kopete::OnlineStatus Custom;
 	const Kopete::OnlineStatus Idle;

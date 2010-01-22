@@ -118,6 +118,9 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 		else
 			message = t->nthParamSeparated( 19, i, 7 );
 
+		if(state == 99 && message == "I'm on SMS")
+			state = 10;
+
 		if( t->service() == Yahoo::ServiceLogoff )
 			emit statusChanged( nick, Yahoo::StatusOffline, QString(), 0, 0, 0 );
 		else
