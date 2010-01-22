@@ -591,7 +591,6 @@ void VideoDevicePool::registerDevice( Solid::Device & device )
 				{
 					kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
 					videodevice.close();
-//					videodevice.m_modelindex=m_modelvector.addModel (videodevice.m_model); // Adds device to the device list and sets model number
 					m_videodevice.push_back(videodevice);
 				}
 			}

@@ -23,7 +23,6 @@
 
 
 #include "videoinput.h"
-#include "videodevicemodelpool.h"
 #include <qstring.h>
 #include <qimage.h>
 #include <q3valuevector.h>
@@ -115,7 +114,6 @@ protected:
 	int showDeviceCapabilities(unsigned int device);
 	int m_current_device;
 	VideoDeviceVector m_videodevice; // Vector to be filled with found devices
-//	VideoDeviceModelPool m_modelvector;  // Vector to be filled with unique device models
 	struct imagebuffer m_buffer; // only used when no devices were found
 
 	QMutex m_ready;

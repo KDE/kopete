@@ -18,7 +18,6 @@ set(kopete_videodevice_LIB_SRCS
    dummyvideodevice.cpp
    videodevicevector.cpp
    videodevicepool.cpp 
-   videodevicemodelpool.cpp
    bayer.cpp
    sonix_compress.cpp )
 
