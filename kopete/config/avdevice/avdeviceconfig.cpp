@@ -208,7 +208,7 @@ void AVDeviceConfig::save()
 {
     /// @todo implement me
 	kDebug() << "kopete:config (avdevice): save() called. ";
-	mVideoDevicePool->saveConfig();
+	mVideoDevicePool->saveCurrentDeviceConfig();
 }
 
 

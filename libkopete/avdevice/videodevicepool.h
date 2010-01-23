@@ -92,9 +92,7 @@ public:
 	int getControlValue(quint32 ctrl_id, qint32 * value);
 	int setControlValue(quint32 ctrl_id, qint32 value);
 
-	void loadSelectedDevice();
-	void loadDeviceConfig(); // Load configuration parameters;
-	void saveConfig(); // Save configuration parameters;
+	void saveCurrentDeviceConfig();
 
 signals:
 	/**
@@ -102,25 +100,31 @@ signals:
 	 */
 	void deviceRegistered( const QString & udi );
 	void deviceUnregistered( const QString & udi );
+
 protected slots:
 	/**
 	 * Slot called when a new device is added to the system
 	 */
 	void deviceAdded( const QString & udi );
 	void deviceRemoved( const QString & udi );
+
 protected:
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
 	int showDeviceCapabilities(unsigned int device);
+	void loadSelectedDevice();
+	void loadDeviceConfig(); // Load configuration parameters;
+
 	int m_current_device;
 	VideoDeviceVector m_videodevice; // Vector to be filled with found devices
 	struct imagebuffer m_buffer; // only used when no devices were found
-
 	QMutex m_ready;
+
 private:
 	VideoDevicePool();
 	static VideoDevicePool* s_self;
 	static __u64 m_clients; // Number of instances
+
 };
 
 }

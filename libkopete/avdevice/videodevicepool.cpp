@@ -740,12 +740,12 @@ void VideoDevicePool::loadDeviceConfig()
 }
 
 /*!
-    \fn void Kopete::AV::VideoDevicePool::saveConfig()
+    \fn void Kopete::AV::VideoDevicePool::saveCurrentDeviceConfig()
     \brief Saves the current device configuration
     
     Saves the current device, the current input and the current values for all supported video-controls.
  */
-void VideoDevicePool::saveConfig()
+void VideoDevicePool::saveCurrentDeviceConfig()
 {
 	kDebug() << "called";
 	if (hasDevices())
