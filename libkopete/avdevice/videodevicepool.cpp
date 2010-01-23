@@ -758,6 +758,19 @@ void VideoDevicePool::saveConfig()
 		kDebug() << "Current device name:" << m_videodevice[m_current_device].m_name;
 		const QString name = QString::fromLocal8Bit( "Device %1 Name" ).arg( m_videodevice[m_current_device].udi() );
 		config.writeEntry( name, m_videodevice[m_current_device].m_name );
+		// Open device if closed:
+		bool wasClosed = false;
+		if (!m_videodevice[m_current_device].isOpen())
+		{
+			kDebug() << "Device is currently closed, will be opened.";
+			wasClosed = true;
+			if (EXIT_SUCCESS != m_videodevice[m_current_device].open())
+			{
+				kDebug() << "Failed to open the device. Saving aborted.";
+				config.sync();
+				return;
+			}
+		}
 		// Save current input:
 		kDebug() << "Current input:" << m_videodevice[m_current_device].currentInput();
 		const QString key_currentinput = QString::fromLocal8Bit( "Device %1 Current Input" ).arg( m_videodevice[m_current_device].udi() );
@@ -805,8 +818,15 @@ void VideoDevicePool::saveConfig()
 				kDebug() << "Error: couldn't get current value for menu-control" << numCtrl.id;
 		}
 		// NOTE: Action-video-controls don't have values, so there is nothing to save.
+		// Close device again (if it was closed before):
+		if (wasClosed)
+		{
+			if (EXIT_SUCCESS != m_videodevice[m_current_device].close())
+				kDebug() << "Device successfully closed.";
+			else
+				kDebug() << "Error: failed to close the device.";
+		}
 		config.sync();
-		kDebug();
 	}
 }
 
