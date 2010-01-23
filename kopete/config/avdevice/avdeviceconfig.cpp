@@ -245,19 +245,19 @@ void AVDeviceConfig::deviceRegistered( const QString & udi )
 
 void AVDeviceConfig::deviceUnregistered( const QString & udi )
 {
+	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, mVideoDevicePool->size());
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, mVideoDevicePool->size());
+
 	if (capturingDevice_udi == udi)
 	{
 		qtimer.stop();
 		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
 		mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
 		capturingDevice_udi.clear();
-
-		mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
-		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-
-		mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, mVideoDevicePool->size());
-		mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, mVideoDevicePool->size());
 
 		if (mVideoDevicePool->size())
 			startCapturing();
