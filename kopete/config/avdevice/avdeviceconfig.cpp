@@ -291,15 +291,15 @@ void AVDeviceConfig::deviceRegistered( const QString & udi )
 
 void AVDeviceConfig::deviceUnregistered( const QString & udi )
 {
+	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 	if (capturingDevice_udi == udi)
 	{
 		qtimer.stop();
 		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
 		mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
 		capturingDevice_udi.clear();
-		mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
-		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		clearControlGUIElements();
 		if (mVideoDevicePool->size())
 			startCapturing();
