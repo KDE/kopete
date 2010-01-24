@@ -821,7 +821,7 @@ void VideoDevicePool::saveCurrentDeviceConfig()
 		// Close device again (if it was closed before):
 		if (wasClosed)
 		{
-			if (EXIT_SUCCESS != m_videodevice[m_current_device].close())
+			if (EXIT_SUCCESS == m_videodevice[m_current_device].close())
 				kDebug() << "Device successfully closed.";
 			else
 				kDebug() << "Error: failed to close the device.";
