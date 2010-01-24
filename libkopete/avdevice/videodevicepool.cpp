@@ -184,20 +184,34 @@ int VideoDevicePool::setSize( int newwidth, int newheight)
 }
 
 /*!
-    \fn VideoDevicePool::close()
+    \fn int VideoDevicePool::close()
+    \return The success of the operation: EXIT_SUCCESS or EXIT_FAILURE
+    \brief Closes the device
  */
 int VideoDevicePool::close()
 {
-    /// @todo implement me
-	if(m_clients)
+	int ret = EXIT_FAILURE;
+	if (m_current_device >= m_videodevice.size())
+	{
+		kDebug() << "Current device out of range.";
+	}
+	else if (!m_clients)
+	{
+		ret = EXIT_SUCCESS;
+	}
+	else if (m_clients > 1)
+	{
+		kDebug() << "The video device is still in use.";
 		m_clients--;
-	if((currentDevice() < m_videodevice.size())&&(!m_clients))
-		return m_videodevice[currentDevice()].close();
-	if(m_clients)
-		kDebug() << "VideoDevicePool::close() The video device is still in use.";
-	if(currentDevice() >= m_videodevice.size())
-		kDebug() << "VideoDevicePool::close() Current device out of range.";
-	return EXIT_FAILURE;
+		ret = EXIT_SUCCESS;
+	}
+	else
+	{
+		ret = m_videodevice[m_current_device].close();
+		if (EXIT_SUCCESS == ret)
+			m_clients--;
+	}
+	return ret;
 }
 
 /*!
