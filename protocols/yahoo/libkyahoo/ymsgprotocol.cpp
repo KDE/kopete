@@ -326,9 +326,9 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		ServiceRejectContact,
 		ServiceGroupRename = 0x89, // > 1, 65(new), 66(0), 67(old) 
 		ServicePictureUpdate = 0xc1,
-		ServiceVisibility = 0xc5,	// YMSG13, key 13: 2 = invisible, 1 = visible 
-		ServiceStatus = 0xc6,		// YMSG13 
+		ServiceVisibility = 0xc5,	// YMSG13, key 13: 2 = invisible, 1 = visible
 		*/
+		
 
 		default:
 			kDebug(YAHOO_RAW_DEBUG) << "***************  Parsed packet service -  This means an unknown service " << servicenum;
