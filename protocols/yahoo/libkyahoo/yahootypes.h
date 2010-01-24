@@ -95,6 +95,7 @@ namespace Yahoo
 		ServiceVisibility = 0xc5,	/* YMSG13, key 13: 2 = invisible, 1 = visible */
 		ServiceStatus = 0xc6,		/* YMSG13 */
 		ServicePictureStatus = 0xc7,	/* YMSG13, key 213: 0 = none, 1 = avatar, 2 = picture */
+		ServiceAnimatedAudibleIcon = 0xd0,	/* YMSG17 * items 230 is a baseaddress, 231 is the text included,232 unknownitem  added by michaelacole*/
 		ServiceContactDetails = 0xd3,	/* YMSG13 */
 		ServiceChatSession = 0xd4,	
 		ServiceAuthorization = 0xd6,	/* YMSG13 */

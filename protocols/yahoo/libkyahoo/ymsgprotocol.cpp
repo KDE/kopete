@@ -298,6 +298,11 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 			kDebug(YAHOO_RAW_DEBUG) << " Parsed packet service -  This means ServiceBuddyList " << servicenum;
 			service = Yahoo::ServiceBuddyList;
 		break;
+		case (Yahoo::ServiceAnimatedAudibleIcon) :
+			//added by michaelacole
+			kDebug(YAHOO_RAW_DEBUG) << " Parsed packet service -  This means ServiceAnimatedAudibleIcon " << servicenum;
+			service = Yahoo::ServiceAnimatedAudibleIcon;
+		break;
 		/*
 		ServiceIdle, // 5 (placemarker)
 		ServiceMailStat,
