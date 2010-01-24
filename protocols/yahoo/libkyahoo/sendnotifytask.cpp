@@ -40,7 +40,12 @@ void SendNotifyTask::onGo()
 	switch( m_type )
 	{
 	case NotifyTyping:
-		t->setParam( 4, client()->userId().toLocal8Bit() );
+		/**
+		* TODO michaelacole
+		* Add here later a check for if stealth, only want to send if not stealted
+		* so if you start to answer and decide not to at least they dont know you are there
+		*/
+		t->setParam( 1, client()->userId().toLocal8Bit() );
 		t->setParam( 5, m_target.toLocal8Bit() );
 		t->setParam( 13, m_state );
 		t->setParam( 14, " " );	
