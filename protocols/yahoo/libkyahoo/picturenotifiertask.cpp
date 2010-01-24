@@ -102,7 +102,7 @@ void PictureNotifierTask::parsePictureStatus( YMSGTransfer *t )
 void PictureNotifierTask::parsePictureChecksum( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
-
+	parsePicture( t );
 	QString	nick;		/* key = 4 */
 	int checksum;		/* key = 192  */
 
