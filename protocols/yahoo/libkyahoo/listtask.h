@@ -37,10 +37,10 @@ public:
 protected:
 	virtual bool forMe( const Transfer *transfer ) const;
 	void parseBuddyList( YMSGTransfer *transfer );
-	void parseStealthList( YMSGTransfer *transfer );	
+
 signals:
 	void gotBuddy(const QString&, const QString&, const QString&);
-	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
+
 };
 
 #endif

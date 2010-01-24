@@ -59,6 +59,7 @@
 
 using namespace KNetwork;
 
+
 class Client::ClientPrivate
 {
 public:
@@ -74,7 +75,8 @@ public:
 	int error;
 	QString errorString;
 	QString errorInformation;
-	
+	QStringList stealthedBuddies;
+	QStringList unstealthedBuddies;
 	// tasks
 	bool tasksInitialized;
 	LoginTask * loginTask;
@@ -128,6 +130,7 @@ Client::Client(QObject *par) :QObject(par)
 
 	QObject::connect( d->loginTask, SIGNAL( haveSessionID( uint ) ), SLOT( lt_gotSessionID( uint ) ) );
 	QObject::connect( d->loginTask, SIGNAL( buddyListReady() ), SLOT( processPictureQueue() ) );
+	QObject::connect( d->loginTask, SIGNAL( buddyListReady() ), SLOT( processStealthQueue() ) );
 	QObject::connect( d->loginTask, SIGNAL( loginResponse( int, const QString& ) ), 
 				SLOT( slotLoginResponse( int, const QString& ) ) );
 	QObject::connect( d->loginTask, SIGNAL( haveCookies() ), SLOT( slotGotCookies() ) );
@@ -178,6 +181,7 @@ void Client::cs_connected()
 
 	d->loginTask->setStateOnConnect( (d->statusOnConnect == Yahoo::StatusInvisible) ? Yahoo::StatusInvisible : Yahoo::StatusAvailable );
 	d->loginTask->go();
+	processStealthQueue();
 	d->active = true;
 }
 
@@ -589,6 +593,23 @@ void Client::setPictureStatus( Yahoo::PictureStatus status )
 	spt->go( true );
 }
 
+// **** Stealth Handling **** michaelacole
+void Client::processStealthQueue()
+{
+	for ( QStringList::ConstIterator it = d->unstealthedBuddies.begin(); it != d->unstealthedBuddies.end(); ++it )
+	{
+		kDebug(YAHOO_RAW_DEBUG) << "unstealthed setting set on" << *it;
+	stealthContact( *it, Yahoo::StealthOffline , Yahoo::StealthNotActive );
+	}
+	for ( QStringList::ConstIterator it = d->stealthedBuddies.begin(); it != d->stealthedBuddies.end(); ++it )
+	{
+		kDebug(YAHOO_RAW_DEBUG) << "stealthed setting set on" << *it ;
+	stealthContact( *it, Yahoo::StealthPermOffline , Yahoo::StealthActive );
+	}
+
+}
+
+
 // ***** Webcam handling *****
 
 void Client::requestWebcam( const QString &userId )
@@ -716,6 +737,16 @@ void Client::notifyError( const QString &info, const QString & errorString, LogL
 	d->errorString = errorString;
 	d->errorInformation = info;
 	emit error( level );
+}
+
+void Client::notifyStealthedBuddies( const QStringList &buddies)
+{
+	d->stealthedBuddies = buddies;
+}
+
+void Client::notifyUnstealthedBuddies( const QStringList &buddies)
+{
+	d->unstealthedBuddies = buddies;
 }
 
 QString Client::userId()

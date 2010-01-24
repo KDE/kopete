@@ -26,12 +26,16 @@
 ListTask::ListTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
+	
 }
 
 ListTask::~ListTask()
 {
 
 }
+
+QStringList loginstealthedbuddies;
+QStringList loginunstealthedbuddies;
 
 bool ListTask::take( Transfer* transfer )
 {
@@ -41,7 +45,6 @@ bool ListTask::take( Transfer* transfer )
 	YMSGTransfer *t = static_cast<YMSGTransfer *>(transfer);
 
 	parseBuddyList( t );
-	parseStealthList( t );
 
 	return true;
 }
@@ -63,7 +66,6 @@ bool ListTask::forMe( const Transfer* transfer ) const
 void ListTask::parseBuddyList( YMSGTransfer *t )
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
-
 	QString group;
 	QString buddy;
 	// We need some low-level parsing here
@@ -83,23 +85,49 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 		case 301:
 			if( p.second == "319"){
 				emit gotBuddy( buddy, QString(), group );
+                                /**
+                                * Note: michaelacole
+                                * Since you can log in from other places and remove or add Perm Offline status
+                                * We have to reset both conditions at login
+                                * Yahoo sends this data at this time,
+                                * so better to compile list of both now then notify kopete client.
+                                */
+				loginunstealthedbuddies.append( buddy );
 			}
+			break;
+		case 317:
+			if( p.second == "2"){
+			kDebug(YAHOO_RAW_DEBUG) << "Stealthed setting on" << buddy ;
+                        /** Note: michaelacole
+                        * Since you can log in from other places and remove or add Perm Offline status
+                        * We have to reset both conditions at login
+                        * Yahoo sends this data at this time,
+                        * so better to compile list of both now then notify kopete client.
+                        */
+			loginstealthedbuddies.append( buddy );
+			loginunstealthedbuddies.removeLast();
+			};
+			break;
+                /**
+                * Note: michaelacole
+                * Other buddy codes are here for add to list and blacklist
+                * I will need to capute more codes for addition here.
+                * Blacklist is done on the server at Yahoo whereas
+                * Kopete has its own plugin for blacklisting.
+                */
 		}
 	}
+        /**
+        * Note: michaelacole
+        * Since you can log in from other places and remove or add Perm Offline status
+        * We have to reset both conditions at login
+        * Yahoo sends this data at this time,
+        * so better to compile list of both now then notify kopete client.
+        */
+        client()->notifyUnstealthedBuddies( loginunstealthedbuddies );
+        client()->notifyStealthedBuddies( loginstealthedbuddies );
 }
 
-void ListTask::parseStealthList( YMSGTransfer *t )
-{
-	kDebug(YAHOO_RAW_DEBUG) ;
 
-	QString raw;
-	raw = t->firstParam( 185 );
-
-	const QStringList buddies = raw.split( ',', QString::SkipEmptyParts );
-	for ( QStringList::ConstIterator it = buddies.begin(); it != buddies.end(); ++it )
-	{
-		emit stealthStatusChanged( *it, Yahoo::StealthActive );
-	}
-}
 
 #include "listtask.moc"
