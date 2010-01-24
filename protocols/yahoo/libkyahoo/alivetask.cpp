@@ -1,6 +1,6 @@
 /*
-    pingtask.cpp
-    Send a ping to the server
+    alivetask.cpp
+    Send a alive to the server
 
     Copyright (c) 2006 André Duffeck <duffeck@kde.org>
 
@@ -16,7 +16,7 @@
     *************************************************************************
 */
 
-#include "pingtask.h"
+#include "alivetask.h"
 #include "transfer.h"
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
@@ -24,20 +24,21 @@
 #include <qstring.h>
 #include <kdebug.h>
 
-PingTask::PingTask(Task* parent) : Task(parent)
+AliveTask::AliveTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
 }
 
-PingTask::~PingTask()
+AliveTask::~AliveTask()
 {
 }
 
-void PingTask::onGo()
+void AliveTask::onGo()
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
 
-	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePing);
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePing7);
+	t->setParam( 0, client()->userId().toLocal8Bit() );
 	t->setId( client()->sessionID() );
 	send( t );
 	

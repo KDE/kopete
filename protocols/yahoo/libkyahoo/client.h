@@ -714,6 +714,11 @@ Q_OBJECT
 		void sendPing();
 
 		/**
+		 * Send a Yahoo Alert packet to the server
+		 */
+		void sendAlive();
+
+		/**
 		 * Send all queued buddy icon requests
 		 */
 		void processPictureQueue();
@@ -741,6 +746,7 @@ Q_OBJECT
 		KNetworkConnector *m_connector;
 
 		QTimer *m_pingTimer;
+		QTimer *m_aliveTimer;
 };
 
 #endif
