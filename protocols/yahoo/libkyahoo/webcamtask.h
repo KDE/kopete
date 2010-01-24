@@ -89,6 +89,7 @@ private slots:
 	void slotConnectionFailed(int);
 	void slotRead();
 	void sendEmptyWebcamImage();
+	void doPendingInvitations();
 	void transmitWebcamImage();
 protected:
 	virtual bool forMe( const Transfer* transfer ) const;

@@ -98,13 +98,18 @@ void WebcamTask::parseWebcamInformation( YMSGTransfer *t )
 	info.dataLength = 0;
 	info.buffer = 0L;
 	info.headerRead = false;
+	if(info.sender.isEmpty()){
+		info.server = t->firstParam( 4 );
+	}
 	if( info.sender == client()->userId() )
 	{
 		transmittingData = true;
 		info.direction = Outgoing;
 	}
 	else
+	{
 		info.direction = Incoming;
+	}
 	
 	kDebug(YAHOO_RAW_DEBUG) << "Got WebcamInformation: Sender: " << info.sender << " Server: " << info.server << " Key: " << info.key;
 
@@ -115,7 +120,8 @@ void WebcamTask::parseWebcamInformation( YMSGTransfer *t )
 	connect( socket, SIGNAL( gotError(int) ), this, SLOT( slotConnectionFailed(int) ) );
 	connect( socket, SIGNAL( readyRead() ), this, SLOT( slotRead() ) );
 	
-	socket->connect();	
+	socket->connect();
+	
 }
 
 void WebcamTask::slotConnectionStage1Established()
@@ -165,7 +171,7 @@ void WebcamTask::slotConnectionStage2Established()
 	QDataStream stream( &buffer, QIODevice::WriteOnly );
 	QString s;
 
-
+	
 	if( socketMap[socket].direction == Incoming )
 	{
 		// Send <REQIMG>-Packet
@@ -278,7 +284,6 @@ void WebcamTask::processData( KStreamSocket *socket )
 	data.reserve( socket->bytesAvailable() );
 	
 	data = socket->readAll();
-	
 	if( data.size() <= 0 )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "No data read.";
@@ -350,19 +355,24 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 						info->status = SendingEmpty;
 						emit stopTransmission();
 						sendEmptyWebcamImage();
-					}
 					
-					// Send Invitation packets
+					}
+					// Send  very first Invitation packets
 					for(it = pendingInvitations.begin(); it != pendingInvitations.end(); it++)
 					{
+						kDebug(YAHOO_RAW_DEBUG) << "send primary invitation";
 						SendNotifyTask *snt = new SendNotifyTask( parent() );
 						snt->setTarget( *it );
 						snt->setType( SendNotifyTask::NotifyWebcamInvite );
 						snt->go( true );
 						it = pendingInvitations.erase( it );
 						it--;
+						info->status = SendingEmpty;
+						emit stopTransmission();
+						sendEmptyWebcamImage();
 					}
-				break;
+					
+					break;
 				case 0x07: 
 					
 					info->type = ConnectionClosed;
@@ -412,7 +422,6 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 		info->buffer = new QBuffer();
 		info->buffer->open( QIODevice::WriteOnly );
 	}
-	
 	kDebug(YAHOO_RAW_DEBUG) << "data.size() " << data.size() << " headerLength " << headerLength << " buffersize " << info->buffer->size();
 	read = headerLength + info->dataLength - info->buffer->size();
 	info->buffer->write( data.data() + headerLength, data.size() - headerLength );//info->dataLength - info->buffer->size() );
@@ -552,6 +561,7 @@ void WebcamTask::addPendingInvitation( const QString &userId )
 	kDebug(YAHOO_RAW_DEBUG) << "Inviting " << userId << " to watch the webcam.";
 	pendingInvitations.append( userId );
 	accessGranted.append( userId );
+
 }
 
 void WebcamTask::grantAccess( const QString &userId )
@@ -629,9 +639,25 @@ void WebcamTask::sendEmptyWebcamImage()
 
 	pictureBuffer.resize( 0 );
 	transmissionPending = true;
-
+	doPendingInvitations();
 	QTimer::singleShot( 1000, this, SLOT(sendEmptyWebcamImage()) );
 
+}
+
+void WebcamTask::doPendingInvitations()
+{
+	QStringList::iterator itb;
+	for(itb = pendingInvitations.begin(); itb != pendingInvitations.end(); itb++)
+		{
+		kDebug(YAHOO_RAW_DEBUG) << "send invitation when no users";
+		SendNotifyTask *snt = new SendNotifyTask( parent() );
+		snt->setTarget( *itb );
+		snt->setType( SendNotifyTask::NotifyWebcamInvite );
+		snt->go( true );
+		itb = pendingInvitations.erase( itb );
+		itb--;
+		}
+	
 }
 
 void WebcamTask::sendWebcamImage( const QByteArray &image )
@@ -641,6 +667,7 @@ void WebcamTask::sendWebcamImage( const QByteArray &image )
 	transmissionPending = true;
 	KStreamSocket *socket = 0L;
 	SocketInfoMap::Iterator it;
+	doPendingInvitations();
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
 		if( it.value().direction == Outgoing )
