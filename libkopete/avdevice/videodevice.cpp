@@ -1626,22 +1626,31 @@ int VideoDevice::stopCapturing()
 
 
 /*!
-    \fn VideoDevice::close()
+    \fn int VideoDevice::close()
+    \return The success of the operation: EXIT_SUCCESS or EXIT_FAILURE
+    \brief Closes the device
+    
+    Stops capturing, resets internal data and closes the device.
  */
 int VideoDevice::close()
 {
-    /// @todo implement me
-	kDebug() << " called.";
-	if(isOpen())
+	kDebug() << "called.";
+	if (isOpen())
 	{
-		kDebug() << " Device is open. Trying to properly shutdown the device.";
+		kDebug() << "Device is open. Trying to properly shutdown the device.";
 		stopCapturing();
 #ifdef HAVE_LIBV4L2
 		int ret = ::v4l2_close(descriptor);
 #else
 		int ret = ::close(descriptor);
 #endif
-		kDebug() << "::close() returns " << ret;
+		if (ret == -1)
+		{
+			kDebug() << "::close() failed with errno" << errno << strerror(errno);
+			return EXIT_FAILURE;
+		}
+		else
+			kDebug() << "Device successfully closed.";
 	}
 	descriptor = -1;
 	m_numericCtrls.clear();
