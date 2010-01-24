@@ -280,8 +280,13 @@ void Client::slotLoginResponse( int response, const QString &msg )
 			changeStatus( d->statusOnConnect, d->statusMessageOnConnect, Yahoo::StatusTypeAway );
 		d->statusMessageOnConnect.clear();
 		setStatus( d->statusOnConnect );
-		/* YM Client sends a ping more often than an hour set ours to every 20min. so as we dont get disconnected*/
-		m_pingTimer->start( 20 * 60 * 1000 );
+		/* YM Client sends a ping every minute
+		* If we time out and try to log out and log in
+		* we can lose messages therefore we should set this
+		* to the same as the Yahoo Messenger client
+		*. so as we dont get disconnected
+		*/
+		m_pingTimer->start( 1 * 60 * 1000 );
 		initTasks();
 	} else {
 		d->active = false;
