@@ -105,8 +105,8 @@ int VideoDevicePool::open(int device)
 	int isopen = EXIT_FAILURE;
 	if ((m_current_device != current_device) || !isOpen())
 	{
-		m_clients = 0;
 		m_videodevice[current_device].close();
+		m_clients = 0;
 		isopen = m_videodevice[m_current_device].open();
 		if (isopen == EXIT_SUCCESS)
 		{
@@ -201,8 +201,8 @@ int VideoDevicePool::close()
 	}
 	else if (m_clients > 1)
 	{
-		kDebug() << "The video device is still in use.";
 		m_clients--;
+		kDebug() << "The video device is still in use:" << m_clients << "clients";
 		ret = EXIT_SUCCESS;
 	}
 	else
