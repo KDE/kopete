@@ -63,7 +63,11 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 
-	startCapturing();
+	if (EXIT_SUCCESS == mVideoDevicePool->open())
+	{
+		setupControls();
+		startCapturing();
+	}
 
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
@@ -239,8 +243,10 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int)
 	{
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. ";
 		stopCapturing();
+		mVideoDevicePool->close();
 		mVideoDevicePool->open(newdevice);
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+		setupControls();
 		startCapturing();
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 		emit changed( true );
@@ -255,6 +261,7 @@ void AVDeviceConfig::slotInputKComboBoxChanged(int)
 		stopCapturing();
 		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+		setupControls();
 		startCapturing();
 		emit changed( true );
 	}
@@ -286,7 +293,13 @@ void AVDeviceConfig::deviceRegistered( const QString & udi )
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 	if (mVideoDevicePool->size() < 2) // otherwise we are already capturing
-		startCapturing();
+	{
+		if (EXIT_SUCCESS == mVideoDevicePool->open())
+		{
+			setupControls();
+			startCapturing();
+		}
+	}
 }
 
 void AVDeviceConfig::deviceUnregistered( const QString & udi )
@@ -302,28 +315,29 @@ void AVDeviceConfig::deviceUnregistered( const QString & udi )
 		capturingDevice_udi.clear();
 		clearControlGUIElements();
 		if (mVideoDevicePool->size())
-			startCapturing();
+		{
+			if (EXIT_SUCCESS == mVideoDevicePool->open())
+			{
+				setupControls();
+				startCapturing();
+			}
+		}
 	}
 }
 
 void AVDeviceConfig::startCapturing()
 {
-	if (EXIT_SUCCESS == mVideoDevicePool->open())
-	{
-		mVideoDevicePool->setSize(320, 240);
-		mVideoDevicePool->startCapturing();
-		setupControls();
-		capturingDevice_udi = mVideoDevicePool->currentDeviceUdi();
-		qtimer.start(40);
-		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
-	}
+	mVideoDevicePool->setSize(320, 240);
+	mVideoDevicePool->startCapturing();
+	capturingDevice_udi = mVideoDevicePool->currentDeviceUdi();
+	qtimer.start(40);
+	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(true);
 }
 
 void AVDeviceConfig::stopCapturing()
 {
 	qtimer.stop();
 	mVideoDevicePool->stopCapturing();
-	mVideoDevicePool->close();
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
 	capturingDevice_udi.clear();
