@@ -764,7 +764,7 @@ unsigned int VideoDevicePool::inputs()
 void VideoDevicePool::loadSelectedDevice()
 {
 	kDebug() << "called";
-	if (hasDevices() && (m_clients == 0))
+	if (hasDevices())
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
 		QString currentdevice = config.readEntry("Current Device", QString());
@@ -794,7 +794,7 @@ void VideoDevicePool::loadDeviceConfig()
 {
     /// @todo implement me
 	kDebug() << "called";
-	if (hasDevices() && (m_clients == 0))
+	if (hasDevices())
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
 
