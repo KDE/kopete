@@ -401,13 +401,14 @@ void UserDetails::fill( Buffer * buffer )
 					case 0x0002:
 						if ( length > 0 )
 						{
-							QByteArray personalMessageData = b.getBSTR();
+							Buffer pmBuffer( b.getBBlock( length ) );
+							QByteArray personalMessageData = pmBuffer.getBSTR();
 							
 							QTextCodec *codec = 0;
-							if ( b.bytesAvailable() >= 4 && b.getWord() == 0x0001 )
+							if ( pmBuffer.bytesAvailable() >= 4 && pmBuffer.getWord() == 0x0001 )
 							{
-								b.skipBytes( 2 );
-								QByteArray encoding = b.getBSTR();
+								pmBuffer.skipBytes( 2 );
+								QByteArray encoding = pmBuffer.getBSTR();
 								codec = QTextCodec::codecForName( encoding );
 								kDebug(OSCAR_RAW_DEBUG) << "Encoding:" << encoding;
 							}

@@ -334,8 +334,6 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 		if ( !d->isIcq && (status & 0xFF) == 0x00 ) //not icq and status is online
 			sdcit->setStatusMessage( message );
 
-		sdcit->go( Task::AutoDelete ); //autodelete
-
 		QString msg;
 		// AIM: you're away exactly when your away message isn't empty.
 		// can't use QString() as a message either; ProfileTask
@@ -353,13 +351,14 @@ void Client::setStatus( Oscar::DWORD status, const QString &message, int xtraz, 
 		}
 
 		ProfileTask* pt = new ProfileTask( c->rootTask() );
-		if ( !d->isIcq ) // Don't break EA, DND... for ICQ
-			pt->setAwayMessage( msg );
+		pt->setAwayMessage( msg );
 
 		if ( d->isIcq && xtrazChanged )
 			pt->setXtrazStatus( xtraz );
 
 		pt->go( Task::AutoDelete );
+		//Has to be sent after ProfileTask otherwise the EA, DND will be wrong
+		sdcit->go( Task::AutoDelete );
 
 		d->status.sent = true;
 	}

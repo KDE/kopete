@@ -476,7 +476,10 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 
 		kDebug(OSCAR_RAW_DEBUG) << "Message type is: " << messageType;
 
-		QByteArray msgText( b->getLELNTS() );
+		QByteArray msgText( b->getLEBlock() );
+		if (!msgText.isEmpty() && msgText.at(msgText.length() - 1) == '\0')
+			msgText.chop(1);
+		
 		Oscar::Message::Encoding encoding = Oscar::Message::UserDefined;
 
 		if ( messageType == Oscar::MessageType::Plugin )
