@@ -104,8 +104,16 @@ int VideoDevicePool::open(int device)
 	int isopen = EXIT_FAILURE;
 	if ((m_current_device != current_device) || !isOpen())
 	{
-		m_clients = 0;
-		m_videodevice[current_device].close();
+		if (isOpen())
+		{
+			if (EXIT_SUCCESS == m_videodevice[current_device].close())
+				m_clients--;
+			else
+			{
+				m_ready.unlock();
+				return EXIT_FAILURE;
+			}
+		}
 		isopen = m_videodevice[m_current_device].open();
 		if (isopen == EXIT_SUCCESS)
 		{
