@@ -37,16 +37,15 @@ namespace AV {
 
 VideoDevice::VideoDevice()
 {
-//	kDebug() << "libkopete (avdevice): VideoDevice() called";
 	descriptor = -1;
 	m_streambuffers  = 0;
 	m_current_input = 0;
-//	kDebug() << "libkopete (avdevice): VideoDevice() exited successfuly";
 }
 
 
 VideoDevice::~VideoDevice()
 {
+	close();
 }
 
 #ifdef V4L2_CAP_VIDEO_CAPTURE
