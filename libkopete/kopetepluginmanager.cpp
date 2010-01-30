@@ -251,6 +251,9 @@ void PluginManager::slotShutdownDone()
 {
 	kDebug( 14010 ) ;
 
+	if (QTextCodec::codecForCStrings())
+		kWarning(14010) << "WARNING: Some plugin set QTextCodec::setCodecForCStrings this may break protocols!!!";
+
 	_kpmp->shutdownMode = PluginManagerPrivate::DoneShutdown;
 
 	KGlobal::deref();
