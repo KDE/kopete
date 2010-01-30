@@ -158,7 +158,7 @@ void BuddyIconTask::handleUploadResponse()
 	Oscar::BYTE iconHashSize = b->getByte();
 	QByteArray hash( b->getBlock( iconHashSize ) );
 	//check the hash
-	kDebug(OSCAR_RAW_DEBUG) << "hash " << hash;
+	kDebug(OSCAR_RAW_DEBUG) << "hash " << hash.toHex();
 	setSuccess( 0, QString() );
 }
 
