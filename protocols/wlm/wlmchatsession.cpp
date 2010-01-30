@@ -195,19 +195,19 @@ WlmChatSession::generateSessionID()
 }
 
 void
-WlmChatSession::sendFile (const QString & fileLocation,
-                          long unsigned int fileSize)
+WlmChatSession::sendFile (const QString & fileLocation, long unsigned int fileSize)
 {
     Q_UNUSED( fileSize );
+
+    QFileInfo fileInfo(fileLocation);
 
     MSN::fileTransferInvite ft;
     ft.type = MSN::FILE_TRANSFER_WITHOUT_PREVIEW;
     ft.sessionId = generateSessionID();
-    ft.filename = fileLocation.toUtf8 ().data ();
-    ft.friendlyname =
-        QFileInfo (fileLocation).fileName ().toLatin1 ().data ();
-    ft.filesize = QFile (fileLocation).size ();
-    ft.userPassport = members ().first ()->contactId ().toLatin1 ().data ();
+    ft.filename = QFile::encodeName(fileLocation).constData();
+    ft.friendlyname = fileInfo.fileName().toUtf8().constData();
+    ft.filesize = fileInfo.size ();
+    ft.userPassport = members ().first ()->contactId ().toLatin1 ().constData ();
 
     // do not generate preview for big pictures
     if(ft.filesize < 2097152)
@@ -232,7 +232,7 @@ WlmChatSession::sendFile (const QString & fileLocation,
                 tryImage = temp;
             }
             tryImage.save(&buffer, "PNG"); 
-            ft.preview = QString::fromUtf8(KCodecs::base64Encode(ba)).toAscii().data();
+            ft.preview = KCodecs::base64Encode(ba).constData();
         }
     }
 
@@ -319,7 +319,7 @@ WlmChatSession::slotSendVoiceStartRec ()
     m_voiceTicker=ms_ticker_new();
 
     m_voiceRecorder = ms_filter_new(MS_FILE_REC_ID);
-    ms_filter_call_method(m_voiceRecorder,MS_FILE_REC_OPEN,m_currentVoiceClipName.toLatin1 ().data ());
+    ms_filter_call_method(m_voiceRecorder,MS_FILE_REC_OPEN, QFile::encodeName(m_currentVoiceClipName).constData ());
     ms_filter_call_method_noarg(m_voiceRecorder,MS_FILE_REC_START);
     ms_filter_call_method (m_voiceRecorder, MS_FILTER_SET_SAMPLE_RATE, &rate);
 
@@ -411,8 +411,9 @@ WlmChatSession::slotSendVoiceStopRec()
         voiceClip.remove();
         QFile::copy(m_currentVoiceClipName, localVoice);
 
-        getChatService ()->myNotificationServer()->msnobj.addMSNObject(m_currentVoiceClipName.toLatin1 ().data (),11);
-        getChatService ()->myNotificationServer()->msnobj.getMSNObjectXML(m_currentVoiceClipName.toLatin1 ().data (), 11, obj);
+        QByteArray localFileName = QFile::encodeName(m_currentVoiceClipName);
+        getChatService ()->myNotificationServer()->msnobj.addMSNObject(localFileName.constData (),11);
+        getChatService ()->myNotificationServer()->msnobj.getMSNObjectXML(localFileName.constData (), 11, obj);
         getChatService ()->sendVoiceClip(obj);
 
         Kopete::Message kmsg( myself(), members() );
@@ -446,7 +447,7 @@ WlmChatSession::slotInviteContact (Kopete::Contact * contact)
     // if we have a session, just invite the new contact
     if (isReady ())
     {
-        getChatService ()->inviteUser (contact->contactId ().toLatin1 ().data ());
+        getChatService ()->inviteUser (contact->contactId ().toLatin1 ().constData ());
         return;
     }
     // if we are not in a session or connecting, add this contact to be invited later
@@ -508,7 +509,7 @@ WlmChatSession::convertToGif( const QPixmap & ink, QString filename)
         }
     }
 
-    GifFile= EGifOpenFileName(filename.toAscii().data(), 0);
+    GifFile= EGifOpenFileName(QFile::encodeName(filename).constData(), 0);
     if (!GifFile) {
         FreeMapObject(imageColourmap);
         FreeMapObject(screenColourmap);
@@ -573,16 +574,16 @@ WlmChatSession::slotSendInk ( const QPixmap & ink)
     convertToGif(ink, name);
 
     // encode to base64 and send it to libmsn
-    const std::string draw = QString::fromUtf8(KCodecs::base64Encode(inkImage.readAll())).toAscii().data();
+    QByteArray draw = KCodecs::base64Encode(inkImage.readAll());
     if(!isReady() && !isConnecting())
     {
-        m_pendingInks << QString(draw.c_str());
+        m_pendingInks << draw;
         requestChatService ();
     }
     else if (isConnecting ())
-        m_pendingInks << QString(draw.c_str());
+        m_pendingInks << draw;
     else
-        getChatService ()->sendInk(draw);
+        getChatService ()->sendInk(draw.constData());
 
     QString msg=QString ("<img src=\"%1\" />").arg ( name );
 
@@ -739,13 +740,12 @@ MSN::Message WlmChatSession::parseMessage(Kopete::Message & msg)
 {
 	// send the message and wait for the ACK
 	int fontEffects = 0;
-	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
-	MSN::Message mmsg(msg.plainBody().toAscii().data());
+    MSN::Message mmsg(msg.plainBody().toUtf8().constData());
 
 	// FIXME: Can we add FontFamily FF_DONTCARE ?
 	if (msg.format() == Qt::RichText)
 	{
-		mmsg.setFontName(msg.font().family().toAscii().data());
+    	mmsg.setFontName(msg.font().family().toLatin1().constData());
 		if (msg.font().bold())
 			fontEffects |= MSN::Message::BOLD_FONT;
 		if (msg.font().italic())
@@ -776,7 +776,7 @@ MSN::Message WlmChatSession::parseMessage(Kopete::Message & msg)
             {
                 if (msg.plainBody().contains(*itr2))
                 {
-                    getChatService()->sendEmoticon((*itr2).toAscii().data(), itr.key().toAscii().data());
+                    getChatService()->sendEmoticon((*itr2).toUtf8().constData(), QFile::encodeName(itr.key()).constData());
                 }
             }
         }
@@ -836,11 +836,10 @@ WlmChatSession::setReady (bool value)
         }
         m_pendingFiles.clear ();
 
-        QLinkedList < QString >::iterator it4;
-        for (it4 = m_pendingInks.begin (); it4 != m_pendingInks.end ();
-             ++it4)
+        QLinkedList < QByteArray >::iterator it4;
+        for (it4 = m_pendingInks.begin (); it4 != m_pendingInks.end (); ++it4)
         {
-            getChatService ()->sendInk((*it4).toAscii().data());
+            getChatService ()->sendInk((*it4).constData());
         }
         m_pendingInks.clear ();
 
@@ -864,8 +863,9 @@ WlmChatSession::setReady (bool value)
             voiceClip.remove();
             QFile::copy((*it5), localVoice);
 
-            getChatService ()->myNotificationServer()->msnobj.addMSNObject((*it5).toLatin1 ().data (),11);
-            getChatService ()->myNotificationServer()->msnobj.getMSNObjectXML((*it5).toLatin1 ().data (), 11, obj);
+            QByteArray localFileName = QFile::encodeName( (*it5) );
+            getChatService ()->myNotificationServer()->msnobj.addMSNObject(localFileName.constData (),11);
+            getChatService ()->myNotificationServer()->msnobj.getMSNObjectXML(localFileName.constData (), 11, obj);
             getChatService ()->sendVoiceClip(obj);
 
             Kopete::Message kmsg( myself(), members() );
@@ -895,17 +895,12 @@ WlmChatSession::requestChatService ()
 
     if (!isReady () && account ()->isConnected () && !isConnecting ())
     {
-        const std::string rcpt_ =
-            members ().first ()->contactId ().toLatin1 ().data ();
+        const std::string rcpt_ = members().first()->contactId().toLatin1().constData();
         const std::string msg_ = "";
-        const std::pair < std::string,
-          std::string > *ctx = new std::pair < std::string,
-            std::string > (rcpt_, msg_);
+        const std::pair<std::string, std::string> *ctx = new std::pair<std::string, std::string>(rcpt_, msg_);
         // request a new switchboard connection
-        static_cast <WlmAccount *>(account ())->server ()->
-            cb.mainConnection->requestSwitchboardConnection (ctx);
-        QTimer::singleShot (30 * 1000, this,
-                            SLOT (switchboardConnectionTimeout ()));
+        static_cast <WlmAccount *>(account ())->server ()->cb.mainConnection->requestSwitchboardConnection (ctx);
+        QTimer::singleShot (30 * 1000, this, SLOT (switchboardConnectionTimeout ()));
         return true;
     }
     // probably we are about to connect
@@ -981,21 +976,13 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         if (!requestChatService ())
         {
             MSN::Soap::OIM oim;
-            oim.myFname =
-                myself ()->property (Kopete::Global::Properties::self ()->
-                                     nickName ()).value ().toString ().
-                toLatin1 ().data ();
-            oim.toUsername =
-                members ().first ()->contactId ().toLatin1 ().data ();
-            QTextCodec::setCodecForCStrings (QTextCodec::
-                                             codecForName ("utf8"));
-            oim.message = msg.plainBody ().toAscii ().data ();
-            oim.myUsername = myself ()->contactId ().toLatin1 ().data ();
+            oim.myFname = myself ()->property(Kopete::Global::Properties::self()->nickName()).value().toString().toUtf8().constData();
+            oim.toUsername = members ().first ()->contactId ().toLatin1 ().constData();
+            oim.message = msg.plainBody ().toUtf8 ().constData();
+            oim.myUsername = myself ()->contactId ().toLatin1 ().constData();
             oim.id = m_oimid++;
 
-            static_cast <
-                WlmAccount *
-                >(account ())->server ()->cb.mainConnection->send_oim (oim);
+            static_cast <WlmAccount *>(account ())->server ()->cb.mainConnection->send_oim (oim);
             appendMessage (msg);
             messageSucceeded ();
             return;
@@ -1141,8 +1128,8 @@ WlmChatSession::requestDisplayPicture ()
     if (isReady ())
     {
         QString newlocation = KGlobal::dirs()->locateLocal("appdata", "wlmpictures/" + QString(SHA1D.replace ('/', '_')));
-        getChatService()->requestDisplayPicture(generateSessionID(), newlocation.toLatin1().constData(),
-                                                contact->getMsnObj().toAscii().constData());
+        getChatService()->requestDisplayPicture(generateSessionID(), QFile::encodeName(newlocation).constData(),
+                                                contact->getMsnObj().toUtf8().constData());
         setDownloadDisplayPicture (false);
     }
 }

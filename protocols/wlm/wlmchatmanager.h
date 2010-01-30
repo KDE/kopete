@@ -86,16 +86,16 @@ class WlmChatManager : public QObject
                                     const QString & contactId);
 
     void slotGotVoiceClipNotification (MSN::SwitchboardServerConnection * conn, 
-                                    const MSN::Passport & from,
-                                    const QString & msnobject);
+                                       const QString & from,
+                                       const QString & msnobject);
 
     void slotGotWinkNotification (MSN::SwitchboardServerConnection * conn, 
-                                    const MSN::Passport & from,
-                                    const QString & msnobject);
+                                  const QString & from,
+                                  const QString & msnobject);
 
     void slotGotInk (MSN::SwitchboardServerConnection * conn, 
-                                    const MSN::Passport & from,
-                                    const QString & image);
+                     const QString & from,
+                     const QByteArray & image);
 
     void slotGotVoiceClipFile(MSN::SwitchboardServerConnection * conn, 
                                     const unsigned int & sessionID, 
@@ -111,9 +111,9 @@ class WlmChatManager : public QObject
                                     const QString & file);
 
     void slotGotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
-                                    const MSN::Passport & buddy, 
-                                    const QString & alias,
-                                    const QString & msnobject);
+                                      const QString & buddy,
+                                      const QString & alias,
+                                      const QString & msnobject);
 
 protected:
     virtual void timerEvent(QTimerEvent *event);

@@ -104,9 +104,7 @@ void WlmContact::setDisabled(bool disabled, bool updateServer)
         setOnlineStatus(WlmProtocol::protocol()->wlmOffline);
 
         if(updateServer && account ()->isConnected ())
-            acc->server ()->mainConnection->disableContactOnAddressBook (
-                    m_contactSerial.toAscii().data (),
-                        contactId ().toLatin1 ().data () );
+            acc->server ()->mainConnection->disableContactOnAddressBook( m_contactSerial.toLatin1().constData(), contactId ().toLatin1().constData() );
     }
     else
     {
@@ -123,9 +121,7 @@ void WlmContact::setDisabled(bool disabled, bool updateServer)
         setOnlineStatus(WlmProtocol::protocol()->wlmOffline);
 
         if(updateServer && account ()->isConnected ())
-            acc->server ()->mainConnection->enableContactOnAddressBook (
-                    m_contactSerial.toAscii().data (),
-                        contactId ().toLatin1 ().data () );
+            acc->server()->mainConnection->enableContactOnAddressBook(m_contactSerial.toLatin1().constData(), contactId().toLatin1().constData());
     }
 }
 
@@ -266,8 +262,7 @@ void WlmContact::sync(unsigned int flags)
         // if this contact is not in the contact list, add it
         if(!acc->isOnServerSideList(contactId()))
         {
-            acc->createContact(
-                    contactId().toAscii().data(), metaContact());
+            acc->createContact(contactId(), metaContact());
             m_currentGroup = newGroup;
             return;
         }
@@ -284,8 +279,8 @@ void WlmContact::sync(unsigned int flags)
         if(newGroup == Kopete::Group::topLevel())
         {
             acc->server ()->mainConnection->removeFromGroup (
-                acc->groupToGroupId().value(m_currentGroup->displayName()).toAscii().data(), 
-                    m_contactSerial.toAscii().data ());
+                acc->groupToGroupId().value(m_currentGroup->displayName()).toLatin1().constData(),
+                m_contactSerial.toLatin1().constData ());
             m_currentGroup = newGroup;
             return;
         }
@@ -293,7 +288,7 @@ void WlmContact::sync(unsigned int flags)
         // if the group don't exist on server side, we create it
         if(!acc->groupToGroupId().contains(newGroup->displayName()))
         {
-                acc->server ()->mainConnection->addGroup(newGroup->displayName().toAscii().data());
+            acc->server ()->mainConnection->addGroup(newGroup->displayName().toUtf8().constData());
                 return;
         }
 
@@ -302,11 +297,11 @@ void WlmContact::sync(unsigned int flags)
             && acc->groupToGroupId().contains(m_currentGroup->displayName()))
         {
             acc->server ()->mainConnection->removeFromGroup (
-                acc->groupToGroupId().value(m_currentGroup->displayName()).toAscii().data(), 
-                    m_contactSerial.toAscii().data ());
+                acc->groupToGroupId().value(m_currentGroup->displayName()).toLatin1().constData(),
+                m_contactSerial.toLatin1().constData ());
             acc->server ()->mainConnection->addToGroup (
-                acc->groupToGroupId().value(newGroup->displayName()).toAscii().data(), 
-                    m_contactSerial.toAscii().data ());
+                acc->groupToGroupId().value(newGroup->displayName()).toLatin1().constData(),
+                m_contactSerial.toLatin1().constData ());
             m_currentGroup = newGroup;
             return;
         }
@@ -314,8 +309,8 @@ void WlmContact::sync(unsigned int flags)
                 acc->groupToGroupId().contains(newGroup->displayName()))
         {
             acc->server ()->mainConnection->addToGroup (
-                acc->groupToGroupId().value(newGroup->displayName()).toAscii().data(), 
-                    m_contactSerial.toAscii().data ());
+                acc->groupToGroupId().value(newGroup->displayName()).toLatin1().constData(),
+                m_contactSerial.toLatin1().constData ());
             m_currentGroup = newGroup;
             return;
         }
@@ -379,8 +374,7 @@ WlmContact::deleteContact ()
     if (account ()->isConnected ())
     {
         qobject_cast <WlmAccount *>(account ())->server ()->mainConnection->
-            delFromAddressBook (m_contactSerial.toLatin1 ().data (),
-                                contactId ().toLatin1 ().data ());
+            delFromAddressBook (m_contactSerial.toLatin1 ().constData (), contactId ().toLatin1 ().constData ());
         deleteLater ();
     }
     else

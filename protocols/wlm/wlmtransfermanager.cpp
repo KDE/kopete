@@ -122,10 +122,11 @@ void
 WlmTransferManager::incomingFileTransfer (MSN::SwitchboardServerConnection * conn,
                                           const MSN::fileTransferInvite & ft)
 {
-    Kopete::Contact * contact = account ()->contacts().value(ft.userPassport.c_str());
+    QString passport = WlmUtils::passport(ft.userPassport);
+    Kopete::Contact * contact = account ()->contacts().value(passport);
 
     if(!contact)
-	    return;
+        return;
 
     if (ft.type == MSN::FILE_TRANSFER_WITH_PREVIEW
         || ft.type == MSN::FILE_TRANSFER_WITHOUT_PREVIEW)
@@ -133,13 +134,10 @@ WlmTransferManager::incomingFileTransfer (MSN::SwitchboardServerConnection * con
         QPixmap preview;
         if (ft.type == MSN::FILE_TRANSFER_WITH_PREVIEW)
         {
-            preview.
-                loadFromData (KCodecs::
-                              base64Decode (QString (ft.preview.c_str ()).
-                                            toAscii ()));
+            preview.loadFromData (KCodecs::base64Decode (ft.preview.c_str()));
         }
         transferSessionData tsd;
-        tsd.from = ft.userPassport.c_str ();
+        tsd.from = passport;
         tsd.to = account ()->myself ()->contactId ();
         tsd.ft = NULL;
         tsd.internalID = 0;
@@ -148,14 +146,8 @@ WlmTransferManager::incomingFileTransfer (MSN::SwitchboardServerConnection * con
         if(chat)
             chat->setCanBeDeleted (false);
 
-        tsd.internalID =
-            Kopete::TransferManager::transferManager ()->
-            askIncomingTransfer (contact,
-                                 ft.filename.c_str (),
-                                 ft.filesize,
-                                 "",
-                                 QString::number (ft.sessionId),
-                                 preview);
+        tsd.internalID = Kopete::TransferManager::transferManager()->askIncomingTransfer(contact,
+                WlmUtils::utf8(ft.filename), ft.filesize, "", QString::number (ft.sessionId), preview);
         transferSessions[ft.sessionId] = tsd;
     }
 }
@@ -214,8 +206,7 @@ WlmTransferManager::slotAccepted (Kopete::Transfer * ft,
 
     connect (ft, SIGNAL (transferCanceled ()), this, SLOT (slotCanceled ()));
 
-    conn->fileTransferResponse (sessionID, filename.toLatin1 ().data (),
-                                true);
+    conn->fileTransferResponse (sessionID, QFile::encodeName(filename).constData (), true);
 }
 
 void

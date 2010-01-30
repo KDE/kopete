@@ -122,35 +122,35 @@ m_account (account1), m_emoticonsTimeoutTimerId(0)
 
     QObject::connect (&account ()->server ()->cb,
                       SIGNAL (slotGotEmoticonNotification (MSN::SwitchboardServerConnection *,
-                               const MSN::Passport &, const QString &,
+                               const QString &, const QString &,
                                const QString &)), this,
                       SLOT (slotGotEmoticonNotification (MSN::SwitchboardServerConnection *,
-                               const MSN::Passport &, const QString &,
+                               const QString &, const QString &,
                                const QString &)));
 
     QObject::connect (&account ()->server ()->cb,
                       SIGNAL (slotGotVoiceClipNotification (MSN::SwitchboardServerConnection *,
-                                const MSN::Passport &,
+                                const QString &,
                                 const QString &)), this,
                       SLOT(slotGotVoiceClipNotification (MSN::SwitchboardServerConnection *,
-                                 const MSN::Passport &,
+                                 const QString &,
                                  const QString &)));
 
     QObject::connect (&account ()->server ()->cb,
                       SIGNAL(slotGotWinkNotification (MSN::SwitchboardServerConnection *,
-                                const MSN::Passport &,
+                                const QString &,
                                 const QString &)), this,
                       SLOT(slotGotWinkNotification (MSN::SwitchboardServerConnection *,
-                                const MSN::Passport &,
+                                const QString &,
                                 const QString &)));
 
     QObject::connect (&account ()->server ()->cb,
                       SIGNAL(slotGotInk (MSN::SwitchboardServerConnection *,
-                                    const MSN::Passport &,
-                                    const QString &)), this,
+                                    const QString &,
+                                    const QByteArray &)), this,
                       SLOT(slotGotInk (MSN::SwitchboardServerConnection *,
-                                    const MSN::Passport &,
-                                    const QString &)));
+                                    const QString &,
+                                    const QByteArray &)));
 
     QObject::connect (&account ()->server ()->cb,
                       SIGNAL(slotGotVoiceClipFile(MSN::SwitchboardServerConnection *,
@@ -246,12 +246,12 @@ WlmChatManager::createChat (MSN::SwitchboardServerConnection * conn)
     std::list < MSN::Passport >::iterator users = conn->users.begin ();
     for (; users != conn->users.end (); ++users)
     {
-        Kopete::Contact * contact = account ()->contacts().value((*users).c_str());
+        QString userPassport = WlmUtils::passport(*users);
+        Kopete::Contact * contact = account ()->contacts().value(userPassport);
         if (!contact)
         {
-            account ()->addContact ((*users).c_str (), QString(), 0L,
-                                    Kopete::Account::Temporary);
-            contact = account ()->contacts().value((*users).c_str());
+            account ()->addContact (userPassport, QString(), 0L, Kopete::Account::Temporary);
+            contact = account ()->contacts().value(userPassport);
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
         }
         chatmembers.append (contact);
@@ -282,8 +282,7 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
 	Kopete::Contact * contact = account ()->contacts().value(passport);
     if (!contact)
     {
-        account ()->addContact (passport, QString(), 0L,
-                                Kopete::Account::Temporary);
+        account ()->addContact (passport, QString(), 0L, Kopete::Account::Temporary);
 	    contact = account ()->contacts().value(passport);
         contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
     }
@@ -291,13 +290,12 @@ WlmChatManager::joinedConversation (MSN::SwitchboardServerConnection * conn,
     std::list < MSN::Passport >::iterator users = conn->users.begin ();
     for (; users != conn->users.end (); ++users)
     {
-        Kopete::Contact * contact =
-		    account ()->contacts().value((*users).c_str());
+        QString userPassport = WlmUtils::passport(*users);
+        Kopete::Contact * contact = account ()->contacts().value(userPassport);
         if (!contact)
         {
-            account ()->addContact ((*users).c_str (), QString(), 0L,
-                                    Kopete::Account::Temporary);
-	        contact = account ()->contacts().value((*users).c_str());
+            account ()->addContact (userPassport, QString(), 0L, Kopete::Account::Temporary);
+            contact = account ()->contacts().value(userPassport);
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmUnknown);
         }
         chatmembers.append (contact);
@@ -472,8 +470,8 @@ WlmChatManager::receivedTypingNotification (MSN::SwitchboardServerConnection *
 
 void
 WlmChatManager::slotGotVoiceClipNotification (MSN::SwitchboardServerConnection * conn, 
-                                const MSN::Passport & from,
-                                const QString & msnobject)
+                                              const QString & from,
+                                              const QString & msnobject)
 {
     Q_UNUSED( from );
     WlmChatSession *chat = chatSessions[conn];
@@ -487,14 +485,14 @@ WlmChatManager::slotGotVoiceClipNotification (MSN::SwitchboardServerConnection *
     voiceClip.setAutoRemove(false);
     voiceClip.open();
     chat->addFileToRemove(voiceClip.fileName());
-    conn->requestVoiceClip(sessionID, voiceClip.fileName().toAscii().data(), 
-            msnobject.toAscii().data());
+    conn->requestVoiceClip(sessionID, QFile::encodeName(voiceClip.fileName()).constData(),
+                           msnobject.toUtf8().constData());
 }
 
 void
 WlmChatManager::slotGotWinkNotification (MSN::SwitchboardServerConnection * conn, 
-                                const MSN::Passport & from,
-                                const QString & msnobject)
+                                         const QString & from,
+                                         const QString & msnobject)
 {
     Q_UNUSED( conn );
     Q_UNUSED( from );
@@ -503,8 +501,8 @@ WlmChatManager::slotGotWinkNotification (MSN::SwitchboardServerConnection * conn
 
 void
 WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn, 
-                                    const MSN::Passport & from,
-                                    const QString & image)
+                            const QString & from,
+                            const QByteArray & image)
 {
     QByteArray ink;
     WlmChatSession *chat = chatSessions[conn];
@@ -512,22 +510,21 @@ WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn,
     {
         return;
     }
-	Kopete::Contact * contact = account ()->contacts().value(from.c_str());
+    Kopete::Contact * contact = account ()->contacts().value(from);
     if(!contact)
     {
-        account ()->addContact (from.c_str(), QString(), 0L,
-                                        Kopete::Account::Temporary);
-	    contact = account ()->contacts().value(from.c_str());
+        account ()->addContact (from, QString(), 0L, Kopete::Account::Temporary);
+        contact = account ()->contacts().value(from);
     }
     if(!contact)
         return;
- 
-    ink = QByteArray::fromBase64(image.toUtf8());
+
+    ink = QByteArray::fromBase64(image);
     KTemporaryFile *inkImage = new KTemporaryFile();
     inkImage->setPrefix("inkformatgif-");
     inkImage->setSuffix(".gif");
     inkImage->open();
-    inkImage->write(ink.data(), ink.size());
+    inkImage->write(ink.constData(), ink.size());
     QString msg=QString ("<img src=\"%1\" />").arg ( inkImage->fileName() );
     inkImage->close();
 
@@ -560,13 +557,11 @@ WlmChatManager::slotGotVoiceClipFile(MSN::SwitchboardServerConnection * conn,
 }
 
 void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
-                                const MSN::Passport & buddy, 
+                                const QString & buddy,
                                 const QString & alias,
                                 const QString & msnobject)
 {
-    Q_UNUSED( buddy );
-
-    WlmContact *contact = qobject_cast<WlmContact*>(m_account->contacts().value(QString(buddy.c_str())));
+    WlmContact *contact = qobject_cast<WlmContact*>(m_account->contacts().value(buddy));
 
     if(!contact)
         return;
@@ -602,8 +597,8 @@ void WlmChatManager::slotGotEmoticonNotification (MSN::SwitchboardServerConnecti
     // pending emoticon
     chat->emoticonsList[alias].clear();
 
-    conn->requestEmoticon(sessionID, newlocation.toAscii().constData(),
-            msnobject.toAscii().constData(), alias.toAscii().constData());
+    conn->requestEmoticon(sessionID, QFile::encodeName(newlocation).constData(),
+                          msnobject.toUtf8().constData(), alias.toUtf8().constData());
 }
 
 void 

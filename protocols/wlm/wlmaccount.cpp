@@ -147,16 +147,16 @@ WlmAccount::createContact (const QString & contactId,
     if (groupName.isEmpty())
         return false;
 
-    m_contactAddQueue.insert(contactId.toAscii(), groupName.toAscii());
-    if (!m_groupToGroupId.contains(groupName.toAscii()))
+    m_contactAddQueue.insert(contactId, groupName);
+	if (!m_groupToGroupId.contains(groupName))
     {
         kDebug() << "group \'" << groupName << "\' not found adding group";
-        m_server->cb.mainConnection->addGroup (groupName.toAscii().data());
+        m_server->cb.mainConnection->addGroup (groupName.toUtf8().constData());
     }
     else
     {
         kDebug() << "group \'" << groupName << "\' found adding contact";
-        m_server->cb.mainConnection->addToAddressBook (contactId.toAscii().data(), contactId.toAscii().data());
+        m_server->cb.mainConnection->addToAddressBook (contactId.toLatin1().constData(), contactId.toUtf8().constData());
     }
 
 	return newContact != 0L;
@@ -170,19 +170,18 @@ void WlmAccount::setPersonalMessage (const Kopete::StatusMessage & reason)
     {
         MSN::personalInfo pInfo;
         pInfo.mediaIsEnabled = 0;
-        QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
         if (reason.message().isEmpty ())
             pInfo.PSM = "";
         else
-            pInfo.PSM = reason.message().toAscii ().data ();
+            pInfo.PSM = reason.message().toUtf8().constData();
 
         // we have both artist and title
         if( reason.hasMetaData("artist") && reason.hasMetaData("title") )
         {
             pInfo.mediaIsEnabled = 1;
             pInfo.mediaType="Music";
-            pInfo.mediaLines.push_back( reason.metaData("artist").toString().toAscii().data() );
-            pInfo.mediaLines.push_back( reason.metaData("title").toString().toAscii().data() );
+            pInfo.mediaLines.push_back( reason.metaData("artist").toString().toUtf8().constData() );
+            pInfo.mediaLines.push_back( reason.metaData("title").toString().toUtf8().constData() );
             pInfo.mediaFormat="{0} - {1}";
             m_server->cb.mainConnection->setPersonalStatus (pInfo);
             return;
@@ -194,7 +193,7 @@ void WlmAccount::setPersonalMessage (const Kopete::StatusMessage & reason)
             pInfo.mediaIsEnabled = 1;
             pInfo.mediaType="Music";
             pInfo.mediaFormat="{0}";
-            pInfo.mediaLines.push_back( reason.metaData("title").toString().toAscii().data() );
+            pInfo.mediaLines.push_back( reason.metaData("title").toString().toUtf8().constData() );
             m_server->cb.mainConnection->setPersonalStatus (pInfo);
             return;
         }
@@ -258,7 +257,7 @@ WlmAccount::slotChangePublicName()
             return;
         }
 
-        m_server->cb.mainConnection->setFriendlyName(name.toAscii().data(), true);
+        m_server->cb.mainConnection->setFriendlyName(name.toUtf8().constData(), true);
     }
 }
 
@@ -477,9 +476,9 @@ void WlmAccount::addedInfoEventActionActivated(uint actionId)
         break;
     case Kopete::AddedInfoEvent::BlockAction:
         if (isOnAllowList(event->contactId()))
-            server()->mainConnection->removeFromList(MSN::LST_AL, event->contactId().toAscii().data());
+            server()->mainConnection->removeFromList(MSN::LST_AL, event->contactId().toLatin1().constData());
         if(!isOnBlockList(event->contactId()))
-            server()->mainConnection->addToList(MSN::LST_BL, event->contactId().toAscii().data());
+            server()->mainConnection->addToList(MSN::LST_BL, event->contactId().toLatin1().constData());
         break;
 /*    case Kopete::AddedInfoEvent::InfoAction:
         break;*/
@@ -561,45 +560,42 @@ WlmAccount::gotDisplayName (const QString & displayName)
 }
 
 void
-WlmAccount::gotContactPersonalInfo (const MSN::Passport & fromPassport,
+WlmAccount::gotContactPersonalInfo (const QString & fromPassport,
                                     const MSN::personalInfo & pInfo)
 {
     kDebug (14210) << k_funcinfo;
-	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(fromPassport.c_str()));
+	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(fromPassport));
     if (contact)
     {
         // TODO - handle the other fields of pInfo
-        contact->setStatusMessage(Kopete::StatusMessage(QString(pInfo.PSM.c_str())));
-        QString type (pInfo.mediaType.c_str ());
+        contact->setStatusMessage(Kopete::StatusMessage(WlmUtils::utf8(pInfo.PSM)));
+        QString type(WlmUtils::utf8(pInfo.mediaType));
         if (pInfo.mediaIsEnabled && type == "Music")
         {
-            QString song_line (pInfo.mediaFormat.c_str ());
+            QString song_line (WlmUtils::utf8(pInfo.mediaFormat));
             int num = pInfo.mediaLines.size ();
             for (int i = 0; i < num; i++)
             {
-                song_line.replace ('{' + QString::number (i) + '}',
-                                   pInfo.mediaLines[i].c_str ());
+                song_line.replace ('{' + QString::number (i) + '}', WlmUtils::utf8(pInfo.mediaLines[i]));
             }
-            contact->setProperty (WlmProtocol::protocol ()->currentSong,
-                                  song_line.toAscii ().constData ());
+            contact->setProperty (WlmProtocol::protocol ()->currentSong, song_line);
         }
         else
         {
-            contact->setProperty (WlmProtocol::protocol ()->currentSong,
-                                  QVariant (QString()));
+            contact->removeProperty (WlmProtocol::protocol ()->currentSong);
         }
     }
 }
 
 void
-WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
+WlmAccount::contactChangedStatus (const QString & buddy,
                                   const QString & friendlyname,
                                   const MSN::BuddyStatus & state,
                                   const unsigned int &clientID,
                                   const QString & msnobject)
 {
     kDebug (14210) << k_funcinfo;
-	WlmContact *contact = qobject_cast<WlmContact*>(contacts().value(buddy.c_str()));
+	WlmContact *contact = qobject_cast<WlmContact*>(contacts().value(buddy));
     if (contact)
     {
         contact->setProperty (Kopete::Global::Properties::self ()->
@@ -628,7 +624,7 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
         else if (state == MSN::STATUS_IDLE)
             contact->setOnlineStatus (WlmProtocol::protocol ()->wlmIdle);
 
-        qobject_cast <WlmContact *>(contact)->setMsnObj (msnobject.toAscii().data());
+        qobject_cast <WlmContact *>(contact)->setMsnObj(msnobject);
 
         if (msnobject.isEmpty () || msnobject == "0")   // no picture
         {
@@ -655,7 +651,7 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
         if (isInitialList ())
         {
             // schedule to retrieve this picture later
-            m_pendingDisplayPictureList.insert(buddy.c_str ());
+            m_pendingDisplayPictureList.insert(buddy);
             return;
         }
 
@@ -667,21 +663,21 @@ WlmAccount::contactChangedStatus (const MSN::Passport & buddy,
                    WlmProtocol::protocol ()->wlmUnknown))
         {
             // do not open many switchboards in a short period of time
-            if(!m_recentDPRequests.contains(buddy.c_str ()))
+            if(!m_recentDPRequests.contains(buddy))
             {
-                m_recentDPRequests.append(buddy.c_str ());
+                m_recentDPRequests.append(buddy);
                 QTimer::singleShot(10 * 1000, this, SLOT(slotRemoveRecentDPRequests()));
-                chatManager ()->requestDisplayPicture (buddy.c_str ());
+                chatManager ()->requestDisplayPicture(buddy);
             }
         }
     }
 }
 
 void
-WlmAccount::contactDisconnected (const MSN::Passport & buddy)
+WlmAccount::contactDisconnected (const QString & buddy)
 {
     kDebug (14210) << k_funcinfo;
-	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(buddy.c_str()));
+	WlmContact * contact = qobject_cast<WlmContact*>(contacts().value(buddy));
     if (contact)
     {
         contact->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
@@ -689,8 +685,7 @@ WlmAccount::contactDisconnected (const MSN::Passport & buddy)
 }
 
 void
-WlmAccount::groupListReceivedFromServer (std::map < std::string,
-                                         MSN::Group > &list)
+WlmAccount::groupListReceivedFromServer (std::map < std::string, MSN::Group > &list)
 {
     kDebug (14210) << k_funcinfo;
     // add server groups on local list
@@ -698,16 +693,16 @@ WlmAccount::groupListReceivedFromServer (std::map < std::string,
     for (it = list.begin (); it != list.end (); ++it)   // groups from server
     {
         MSN::Group * g = &(*it).second;
-        Kopete::Group * b =
-            Kopete::ContactList::self ()->findGroup (g->name.c_str ());
-        QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
+
+        QString gName = WlmUtils::utf8(g->name);
+        Kopete::Group * b = Kopete::ContactList::self ()->findGroup(gName);
         if (!b)
         {
-            b = new Kopete::Group (QString (g->name.c_str ()).toAscii ().data ());
-            Kopete::ContactList::self ()->addGroup ( b );
+            b = new Kopete::Group(gName);
+            Kopete::ContactList::self ()->addGroup( b );
         }
 
-        m_groupToGroupId.insert (QString(g->name.c_str()), QString(g->groupID.c_str()));
+        m_groupToGroupId.insert(gName, WlmUtils::latin1(g->groupID));
     }
 /*
 	// remove local groups which are not on server
@@ -720,7 +715,7 @@ WlmAccount::groupListReceivedFromServer (std::map < std::string,
 		for ( it = list.begin(); it != list.end(); ++it ) // groups from server
 		{
 			MSN::Group *g = &(*it).second;
-			if(Kopete::ContactList::self()->findGroup(QString(g->name.c_str()).toAscii().data()))
+			if(Kopete::ContactList::self()->findGroup(WlmUtils::utf8(g->name)))
 				ok=true;
 		}
 		if(!ok)
@@ -751,10 +746,10 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
     {
         Kopete::MetaContact * metacontact = 0L;
         MSN::Buddy * b = (*it).second;
-        QString passport = (*it).first.c_str();
+        QString passport = WlmUtils::passport(b->userName);
 
         if (b->lists & MSN::LST_AB)
-            m_serverSideContactsPassports.insert (b->userName.c_str());
+            m_serverSideContactsPassports.insert(passport);
         if ( b->lists & MSN::LST_AL )
             m_allowList.insert( passport );
         if ( b->lists & MSN::LST_BL )
@@ -771,12 +766,12 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 	        WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
             if (!contact)
             {
-                addContact (b->userName.c_str (), QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
+                addContact (passport, QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
 	            contact = qobject_cast<WlmContact*>(contacts().value( passport ));
             }
             if(contact)
             {
-                contact->setContactSerial (b->properties["contactId"].c_str ());
+                contact->setContactSerial(WlmUtils::latin1(b->properties["contactId"]));
                 contact->setCurrentGroup(Kopete::Group::topLevel());
                 contact->setDisabled(true, false);
             }
@@ -788,7 +783,6 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
             if (!b->friendlyName.length ())
                 b->friendlyName = b->userName;
 
-            QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
             std::list < MSN::Group * >::iterator i = b->groups.begin ();
 
             // no groups, add to top level
@@ -797,13 +791,13 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                 // only add users in forward list
                 if (b->lists & MSN::LST_AB)
                 {
-                    metacontact = addContact (b->userName.c_str (), QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
+                    metacontact = addContact (passport, QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
 
-	                WlmContact * newcontact = qobject_cast<WlmContact*>(contacts().value(b->userName.c_str()));
+                    WlmContact * newcontact = qobject_cast<WlmContact*>(contacts().value(passport));
                     if(!newcontact)
                         return;
 
-                    newcontact->setProperty (Kopete::Global::Properties::self ()->nickName (), QString (b->friendlyName.c_str ()));
+                    newcontact->setProperty (Kopete::Global::Properties::self ()->nickName (), WlmUtils::utf8(b->friendlyName));
                 }
 
                 if (metacontact)
@@ -811,8 +805,8 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 	                WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
                     if (contact)
                     {
-                        contact->setContactSerial (b->properties["contactId"].c_str ());
-                        kDebug (14210) << "ContactID: " << b->properties["contactId"].c_str ();
+                        contact->setContactSerial(WlmUtils::latin1(b->properties["contactId"]));
+                        kDebug (14210) << "ContactID: " << WlmUtils::latin1(b->properties["contactId"]);
                     }
                 }
                 continue;
@@ -820,21 +814,21 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 
             for (; i != b->groups.end (); ++i)
             {
-                Kopete::Group * g = Kopete::ContactList::self ()->findGroup (QString ((*i)->name.c_str ()).toAscii ());
+                Kopete::Group * g = Kopete::ContactList::self ()->findGroup (WlmUtils::utf8((*i)->name));
 
                 if (g)
-                    metacontact = addContact (b->userName.c_str (), QString(), g, Kopete::Account::DontChangeKABC);
+                    metacontact = addContact (passport, QString(), g, Kopete::Account::DontChangeKABC);
                 else
-                    metacontact = addContact (b->userName.c_str (), QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
+                    metacontact = addContact (passport, QString(), Kopete::Group::topLevel (), Kopete::Account::DontChangeKABC);
 
                 if (metacontact)
                 {
 	                WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
                     if (contact)
                     {
-                        contact->setProperty (Kopete::Global::Properties::self ()->nickName (), QString (b->friendlyName.c_str ()));
-                        contact->setContactSerial (b->properties["contactId"].c_str ());
-                        kDebug (14210) << "ContactID: " << b->properties["contactId"].c_str ();
+                        contact->setProperty(Kopete::Global::Properties::self ()->nickName (), WlmUtils::utf8(b->friendlyName));
+                        contact->setContactSerial(WlmUtils::latin1(b->properties["contactId"]));
+                        kDebug (14210) << "ContactID: " << WlmUtils::latin1(b->properties["contactId"]);
                     }
                 }
             }
@@ -862,16 +856,14 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                 if(contacts().value( passport )->metaContact()->groups().size() == 1) 
                 {
 	                Kopete::Group *current = contacts().value( passport )->metaContact()->groups().first();
-                    Kopete::Group *newgroup = Kopete::ContactList::self ()->findGroup (
-                            QString (b->groups.front()->name.c_str()).toAscii ());
+                    Kopete::Group *newgroup = Kopete::ContactList::self ()->findGroup(WlmUtils::utf8(b->groups.front()->name));
 
                     if(!current || !newgroup)
                         continue;
 
                     if(current != newgroup)
                     {
-	                    contacts().value( passport )->metaContact()->
-                           moveToGroup(current, newgroup);
+	                    contacts().value( passport )->metaContact()->moveToGroup(current, newgroup);
 	                    qobject_cast<WlmContact*>(contacts().value( passport ))->setCurrentGroup(newgroup);
                     }
                 }
@@ -913,9 +905,9 @@ WlmAccount::slotGlobalIdentityChanged (Kopete::PropertyContainer *,
         if(!entry.path.isNull())
         {
             if(m_server)
-               m_server->cb.mainConnection->
-                   change_DisplayPicture (entry.path.toLatin1 ().data ());
-               myself()->setProperty(Kopete::Global::Properties::self()->photo (), entry.path);
+                m_server->cb.mainConnection->change_DisplayPicture(QFile::encodeName(entry.path).constData());
+
+            myself()->setProperty(Kopete::Global::Properties::self()->photo (), entry.path);
         }
         setOnlineStatus (myself ()->onlineStatus ());
     }
@@ -928,10 +920,8 @@ WlmAccount::slotGlobalIdentityChanged (Kopete::PropertyContainer *,
 
         if (newNick != oldNick)
         {
-            QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("utf8"));
             if(m_server && isConnected())
-                m_server->cb.mainConnection->setFriendlyName (newNick.toAscii ().
-                                                          data ());
+                m_server->cb.mainConnection->setFriendlyName (newNick.toUtf8().constData());
         }
     }
 }
@@ -979,13 +969,9 @@ WlmAccount::connectionCompleted ()
         c->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     }
 
-    if (identity ()->
-        hasProperty (Kopete::Global::Properties::self ()->photo ().key()))
+    if (identity ()->hasProperty (Kopete::Global::Properties::self ()->photo ().key()))
     {
-        m_server->cb.mainConnection->change_DisplayPicture (identity ()->
-                                                            customIcon ().
-                                                            toLatin1 ().
-                                                            data ());
+        m_server->cb.mainConnection->change_DisplayPicture(QFile::encodeName(identity()->customIcon()).constData());
         QImage contactPhoto = QImage( identity ()->customIcon() );
         Kopete::AvatarManager::AvatarEntry entry;
         entry.name = myself ()->contactId();
@@ -1002,14 +988,14 @@ WlmAccount::connectionCompleted ()
         // use the identity nickname instead of the one stored on the server side
         QString nick = identity()->property(
                 Kopete::Global::Properties::self()->nickName()).value().toString();
-        m_server->cb.mainConnection->setFriendlyName(nick.toAscii().data());
+        m_server->cb.mainConnection->setFriendlyName(nick.toUtf8().constData());
     }
     else
     {
         // Set myself contact display name here
         // This information come along with the address book
         // Fix BUG 182366
-        m_server->cb.mainConnection->setFriendlyName( m_server->mainConnection->myDisplayName.c_str() );
+        m_server->cb.mainConnection->setFriendlyName( m_server->mainConnection->myDisplayName );
     }
 
     password ().setWrong (false);
@@ -1020,18 +1006,18 @@ WlmAccount::connectionCompleted ()
 
     QObject::connect (&m_server->cb,
                       SIGNAL (contactChangedStatus
-                              (const MSN::Passport &, const QString &,
+                              (const QString &, const QString &,
                                const MSN::BuddyStatus &, const unsigned int &,
                                const QString &)), this,
                       SLOT (contactChangedStatus
-                            (const MSN::Passport &, const QString &,
+                            (const QString &, const QString &,
                              const MSN::BuddyStatus &, const unsigned int &,
                              const QString &)));
 
     QObject::connect (&m_server->cb,
-                      SIGNAL (contactDisconnected (const MSN::Passport &)),
+                      SIGNAL (contactDisconnected (const QString &)),
                       this,
-                      SLOT (contactDisconnected (const MSN::Passport &)));
+                      SLOT (contactDisconnected (const QString &)));
 
     QObject::connect (identity (),
                       SIGNAL (propertyChanged
@@ -1049,10 +1035,10 @@ WlmAccount::connectionCompleted ()
 
     QObject::connect (&m_server->cb,
                       SIGNAL (gotContactPersonalInfo
-                              (const MSN::Passport &,
+                              (const QString &,
                                const MSN::personalInfo &)),
                       SLOT (gotContactPersonalInfo
-                            (const MSN::Passport &,
+                            (const QString &,
                              const MSN::personalInfo &)));
 
     QObject::connect (&m_server->cb, SIGNAL(gotNewContact(const MSN::ContactList&, const QString&, const QString&)),
@@ -1208,17 +1194,17 @@ WlmAccount::slotInboxUrl (MSN::hotmailInfo & info)
             "</noscript>\n"
         "</head>\n"
         "<body onload=\"document.pform.submit(); \">\n"
-            "<form name=\"pform\" action=\"" + QString(info.url.c_str()) + "\" method=\"POST\">\n"
+            "<form name=\"pform\" action=\"" + WlmUtils::utf8(info.url) + "\" method=\"POST\">\n"
                 "<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n"
                 "<input type=\"hidden\" name=\"login\" value=\"" + UserID.left( UserID.indexOf('@') ) + "\">\n"
                 "<input type=\"hidden\" name=\"username\" value=\"" + UserID + "\">\n"
-                "<input type=\"hidden\" name=\"sid\" value=\"" + QString(info.sid.c_str()) + "\">\n"
-                "<input type=\"hidden\" name=\"kv\" value=\"" + QString(info.kv.c_str()) + "\">\n"
-                "<input type=\"hidden\" name=\"id\" value=\""+ QString(info.id.c_str()) +"\">\n"
-                "<input type=\"hidden\" name=\"sl\" value=\"" + QString(info.sl.c_str()) +"\">\n"
-                "<input type=\"hidden\" name=\"rru\" value=\"" + QString(info.rru.c_str()) + "\">\n"
-                "<input type=\"hidden\" name=\"auth\" value=\"" + QString(info.MSPAuth.c_str()) + "\">\n"
-                "<input type=\"hidden\" name=\"creds\" value=\"" + QString(info.creds.c_str()) + "\">\n"
+                "<input type=\"hidden\" name=\"sid\" value=\"" + WlmUtils::utf8(info.sid) + "\">\n"
+                "<input type=\"hidden\" name=\"kv\" value=\"" + WlmUtils::utf8(info.kv) + "\">\n"
+                "<input type=\"hidden\" name=\"id\" value=\""+ WlmUtils::utf8(info.id) +"\">\n"
+                "<input type=\"hidden\" name=\"sl\" value=\"" + WlmUtils::utf8(info.sl) +"\">\n"
+                "<input type=\"hidden\" name=\"rru\" value=\"" + WlmUtils::utf8(info.rru) + "\">\n"
+                "<input type=\"hidden\" name=\"auth\" value=\"" + WlmUtils::utf8(info.MSPAuth) + "\">\n"
+                "<input type=\"hidden\" name=\"creds\" value=\"" + WlmUtils::utf8(info.creds) + "\">\n"
                 "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n"
                 "<input type=\"hidden\" name=\"js\" value=\"yes\">\n"
             "</form></body>\n</html>\n";
@@ -1229,7 +1215,7 @@ WlmAccount::slotInboxUrl (MSN::hotmailInfo & info)
 
     if (tmpMailFile->open())
     {
-        tmpMailFile->write(hotmailRequest.toAscii());
+	    tmpMailFile->write(hotmailRequest.toUtf8());
         tmpMailFile->flush();
 
         /* tmpMailFile->close() erases tmpMailFile->fileName property(), so use it before closing file. */
@@ -1276,7 +1262,7 @@ void WlmAccount::gotAddedGroup (bool added,
     foreach ( const QString &contactId, contactIdList )
     {
         kDebug() << "adding contact " << contactId;
-        m_server->cb.mainConnection->addToAddressBook (contactId.toAscii().data(), contactId.toAscii().data());
+        m_server->cb.mainConnection->addToAddressBook (contactId.toLatin1().constData(), contactId.toUtf8().constData());
     }
 
     // Sync contact belonging to the new group
@@ -1332,11 +1318,11 @@ WlmAccount::gotAddedContactToAddressBook (bool added, const QString & passport, 
         newcontact->setProperty (Kopete::Global::Properties::self()->nickName(), displayName);
 
         QString groupName = m_contactAddQueue.value (passport);
-        if( !groupName.isEmpty() && m_groupToGroupId.contains (groupName.toAscii()) )
+        if( !groupName.isEmpty() && m_groupToGroupId.contains (groupName) )
         {
             kDebug() << "Adding contact \'" << passport << "\' to group \'" << groupName << "\'";
-            QString groupId = m_groupToGroupId.value (groupName.toAscii());
-            m_server->cb.mainConnection->addToGroup (groupId.toAscii().data(), guid.toAscii().data());
+            QString groupId = m_groupToGroupId.value (groupName);
+            m_server->cb.mainConnection->addToGroup (groupId.toLatin1().constData(), guid.toLatin1().constData());
         }
     }
     else
@@ -1441,16 +1427,16 @@ void WlmAccount::blockContact(const QString& passport, bool block)
     if (block)
     {
         if (isOnAllowList(passport))
-            server()->mainConnection->removeFromList(MSN::LST_AL, passport.toAscii().data());
+            server()->mainConnection->removeFromList(MSN::LST_AL, passport.toLatin1().constData());
 
-        server()->mainConnection->addToList(MSN::LST_BL, passport.toAscii().data());
+        server()->mainConnection->addToList(MSN::LST_BL, passport.toLatin1().constData());
     }
     else
     {
         if (isOnBlockList(passport))
-            server()->mainConnection->removeFromList(MSN::LST_BL, passport.toAscii().data());
+            server()->mainConnection->removeFromList(MSN::LST_BL, passport.toLatin1().constData());
 
-        server()->mainConnection->addToList(MSN::LST_AL, passport.toAscii().data());
+        server()->mainConnection->addToList(MSN::LST_AL, passport.toLatin1().constData());
     }
 }
 
@@ -1529,8 +1515,8 @@ WlmAccount::receivedOIMList (std::vector < MSN::eachOIM > &oimlist)
     std::vector < MSN::eachOIM >::iterator i = oimlist.begin ();
     for (; i != oimlist.end (); i++)
     {
-        m_oimList[(*i).id.c_str ()] = (*i).from.c_str ();
-        m_server->cb.mainConnection->get_oim ((*i).id.c_str(), true);
+        m_oimList[WlmUtils::latin1((*i).id)] = WlmUtils::passport((*i).from);
+        m_server->cb.mainConnection->get_oim((*i).id, true);
     }
 }
 
@@ -1555,7 +1541,7 @@ WlmAccount::receivedOIM (const QString & id, const QString & message)
         contact->manager (Kopete::Contact::CanCreate)->appendMessage (msg);
 
     m_oimList.remove (id);
-    m_server->cb.mainConnection->delete_oim (id.toLatin1 ().data ());
+    m_server->cb.mainConnection->delete_oim (id.toLatin1().constData ());
 }
 
 void WlmAccount::slotRemoveRecentDPRequests()

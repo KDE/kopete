@@ -59,6 +59,23 @@
 #include <QEventLoop>
 #include <QSslSocket>
 
+namespace WlmUtils {
+QString passport(const MSN::Passport& pass)
+{
+    return QString::fromLatin1(pass.c_str());
+}
+
+QString latin1(const std::string& s)
+{
+    return QString::fromLatin1(s.c_str());
+}
+
+QString utf8(const std::string& s)
+{
+    return QString::fromUtf8(s.c_str());
+}
+}
+
 void
 Callbacks::registerSocket (void *s, int reading, int writing, bool isSSL)
 {
@@ -104,8 +121,7 @@ Callbacks::gotFriendlyName (MSN::NotificationServerConnection * conn,
                             std::string friendlyname)
 {
     Q_UNUSED( conn );
-    myFriendlyName = friendlyname.c_str ();
-    emit gotDisplayName (friendlyname.c_str ());
+    emit gotDisplayName( WlmUtils::utf8(friendlyname) );
 }
 
 void
@@ -121,7 +137,7 @@ Callbacks::gotContactDisplayPicture (MSN::SwitchboardServerConnection * conn,
                                      std::string filename)
 {
     Q_UNUSED( conn );
-    emit gotDisplayPicture (passport.c_str (), filename.c_str ());
+    emit gotDisplayPicture(WlmUtils::passport(passport), WlmUtils::utf8(filename));
 }
 
 void
@@ -153,8 +169,7 @@ Callbacks::gotBuddyListInfo (MSN::NotificationServerConnection * conn,
         {
             allContacts[contact->userName.c_str ()] = 0;
             allContacts[contact->userName.c_str ()] |= MSN::LST_AB;
-            std::list < MSN::Buddy::PhoneNumber >::iterator pns =
-                contact->phoneNumbers.begin ();
+            std::list < MSN::Buddy::PhoneNumber >::iterator pns = contact->phoneNumbers.begin ();
             std::list < MSN::Group * >::iterator g = contact->groups.begin ();
         }
         if (contact->lists & MSN::LST_AL)
@@ -220,7 +235,7 @@ Callbacks::gotOIMDeleteConfirmation (MSN::NotificationServerConnection * conn,
 
     if (success)
     {
-        emit deletedOIM (id.c_str (), success);
+        emit deletedOIM (WlmUtils::latin1(id), success);
         std::cout << "OIM " << id << " removed successfully." << std::endl;
     }
     else
@@ -247,7 +262,7 @@ Callbacks::gotOIM (MSN::NotificationServerConnection * conn, bool success,
     Q_UNUSED( conn );
 
     if (success)
-        emit receivedOIM (id.c_str (), message.c_str ());
+        emit receivedOIM(WlmUtils::latin1(id), WlmUtils::utf8(message));
     else
         std::cout << "Error retreiving OIM " << id << std::endl;
 }
@@ -280,10 +295,7 @@ Callbacks::addedListEntry (MSN::NotificationServerConnection * conn,
                            std::string friendlyname)
 {
     Q_UNUSED( conn );
-    QString username1 (username.c_str ());
-    QString friendlyname1 (friendlyname.c_str ());
-
-    emit gotNewContact (list, username1, friendlyname1);
+    emit gotNewContact (list, WlmUtils::passport(username), WlmUtils::utf8(friendlyname));
     // after adding the user you need to delete it from the pending list.
     // it will be added automatically by the msn service
 
@@ -296,7 +308,7 @@ Callbacks::removedListEntry (MSN::NotificationServerConnection * conn,
                              MSN::ContactList list, MSN::Passport username)
 {
     Q_UNUSED( conn );
-    emit gotRemovedContactFromList (list, username.c_str ());
+    emit gotRemovedContactFromList (list, WlmUtils::passport(username));
 }
 
 void
@@ -310,8 +322,7 @@ Callbacks::addedGroup (MSN::NotificationServerConnection * conn, bool added,
     else
         printf ("Group (%s) was NOT added\n", groupName.c_str ());
 */
-    emit gotAddedGroup (added, QString(groupName.c_str()),
-                        QString(groupID.c_str()));
+    emit gotAddedGroup (added, WlmUtils::utf8(groupName), WlmUtils::latin1(groupID));
 }
 
 void
@@ -325,7 +336,7 @@ Callbacks::removedGroup (MSN::NotificationServerConnection * conn,
     else
         printf ("Group (%s) was NOT removed\n", groupID.c_str ());
 */
-    emit gotRemovedGroup (removed, QString(groupID.c_str()));
+    emit gotRemovedGroup (removed, WlmUtils::latin1(groupID));
 }
 
 void
@@ -351,7 +362,7 @@ void
 Callbacks::showError (MSN::Connection * conn, std::string msg)
 {
     std::cout << "MSN: Error: " << msg.c_str () << std::endl;
-    QString a = msg.c_str ();
+    QString a = WlmUtils::latin1(msg);
     // FIXME This is really ugly the libmsn should send some error code instead of msg
     if (a.contains("Wrong Password"))
         emit mainConnectionError(WrongPassword);
@@ -368,8 +379,8 @@ Callbacks::buddyChangedStatus (MSN::NotificationServerConnection * conn,
                                std::string msnobject)
 {
     Q_UNUSED( conn );
-    emit contactChangedStatus (buddy, QString(friendlyname.c_str()), status, clientID,
-                               QString(msnobject.c_str()));
+    emit contactChangedStatus (WlmUtils::passport(buddy), WlmUtils::utf8(friendlyname),
+                               status, clientID, WlmUtils::utf8(msnobject));
 }
 
 void
@@ -377,15 +388,14 @@ Callbacks::buddyOffline (MSN::NotificationServerConnection * conn,
                          MSN::Passport buddy)
 {
     Q_UNUSED( conn );
-    emit contactDisconnected (buddy);
+    emit contactDisconnected(WlmUtils::passport(buddy));
 }
 
 void
 Callbacks::gotSwitchboard (MSN::SwitchboardServerConnection * conn,
                            const void *tag)
 {
-    emit gotNewSwitchboard (dynamic_cast <
-                            MSN::SwitchboardServerConnection * >(conn), tag);
+    emit gotNewSwitchboard (dynamic_cast<MSN::SwitchboardServerConnection* >(conn), tag);
 }
 
 void
@@ -395,12 +405,8 @@ Callbacks::buddyJoinedConversation (MSN::SwitchboardServerConnection * conn,
 {
     Q_UNUSED( is_initial );
 
-    QString a (username.c_str ());
-    QString b (friendlyname.c_str ());
-    emit joinedConversation (conn, a, b);
-    const std::pair < std::string,
-      std::string > *ctx = static_cast < const std::pair < std::string,
-      std::string > *>(conn->auth.tag);
+    emit joinedConversation (conn, WlmUtils::passport(username), WlmUtils::utf8(friendlyname));
+    const std::pair<std::string, std::string> *ctx = static_cast<const std::pair<std::string, std::string> *>(conn->auth.tag);
     if (ctx)
         delete ctx;
     conn->auth.tag = NULL;
@@ -451,8 +457,7 @@ void
 Callbacks::buddyLeftConversation (MSN::SwitchboardServerConnection * conn,
                                   MSN::Passport username)
 {
-    QString a (username.c_str ());
-    emit leftConversation (conn, a);
+    emit leftConversation (conn, WlmUtils::passport(username));
 
 }
 
@@ -463,10 +468,9 @@ Callbacks::gotInstantMessage (MSN::SwitchboardServerConnection * conn,
 {
     Q_UNUSED( friendlyname );
 
-    QString a = username.c_str ();
     Kopete::Message kmsg;
-    kmsg.setPlainBody (msg->getBody ().c_str ());
-    QFont font (msg->getFontName ().c_str ());
+    kmsg.setPlainBody(WlmUtils::utf8(msg->getBody()));
+    QFont font (WlmUtils::latin1(msg->getFontName()));
     if (msg->getFontEffects () & MSN::Message::BOLD_FONT)
         font.setBold (true);
     if (msg->getFontEffects () & MSN::Message::ITALIC_FONT)
@@ -481,7 +485,7 @@ Callbacks::gotInstantMessage (MSN::SwitchboardServerConnection * conn,
     kmsg.setForegroundColor (color);
 
     kmsg.setFont (font);
-    emit messageReceived (conn, a, kmsg);
+    emit messageReceived (conn, WlmUtils::passport(username), kmsg);
 }
 
 void
@@ -489,7 +493,8 @@ Callbacks::gotEmoticonNotification (MSN::SwitchboardServerConnection * conn,
                                     MSN::Passport username, std::string alias,
                                     std::string msnobject)
 {
-    emit slotGotEmoticonNotification(conn, username, QString(alias.c_str()), QString(msnobject.c_str()));
+    emit slotGotEmoticonNotification(conn, WlmUtils::passport(username),
+                                     WlmUtils::utf8(alias), WlmUtils::utf8(msnobject));
 }
 
 void
@@ -506,8 +511,7 @@ Callbacks::buddyTyping (MSN::SwitchboardServerConnection * conn,
                         MSN::Passport username, std::string friendlyname)
 {
     Q_UNUSED( friendlyname );
-    QString userid (username.c_str ());
-    emit receivedTypingNotification (conn, userid);
+    emit receivedTypingNotification (conn, WlmUtils::passport(username));
 
 }
 
@@ -515,28 +519,28 @@ void
 Callbacks::gotNudge (MSN::SwitchboardServerConnection * conn,
                      MSN::Passport username)
 {
-    emit receivedNudge (conn, username.c_str ());
+    emit receivedNudge (conn, WlmUtils::passport(username));
 }
 
 void
 Callbacks::gotVoiceClipNotification (MSN::SwitchboardServerConnection * conn,
                          MSN::Passport username, std::string msnobject)
 {
-    emit slotGotVoiceClipNotification(conn, username, QString(msnobject.c_str()));
+    emit slotGotVoiceClipNotification(conn, WlmUtils::passport(username), WlmUtils::utf8(msnobject));
 }
 
 void
 Callbacks::gotWinkNotification (MSN::SwitchboardServerConnection * conn,
                     MSN::Passport username, std::string msnobject)
 {
-    emit slotGotWinkNotification(conn, username, QString(msnobject.c_str()));
+    emit slotGotWinkNotification(conn, WlmUtils::passport(username), WlmUtils::utf8(msnobject));
 }
 
 void
 Callbacks::gotInk (MSN::SwitchboardServerConnection * conn,
                    MSN::Passport username, std::string image)
 {
-    emit slotGotInk(conn, username, QString(image.c_str()));
+    emit slotGotInk(conn, WlmUtils::passport(username), QByteArray(image.c_str()));
 }
 
 void
@@ -568,7 +572,7 @@ Callbacks::gotNewEmailNotification (MSN::NotificationServerConnection * conn,
                                     std::string from, std::string subject)
 {
     Q_UNUSED( conn );
-    emit newEmailNotification (QString(from.c_str()), KMime::decodeRFC2047String(subject.c_str()));
+    emit newEmailNotification (WlmUtils::utf8(from), KMime::decodeRFC2047String(subject.c_str()));
 }
 
 void
@@ -620,7 +624,7 @@ Callbacks::buddyChangedPersonalInfo (MSN::NotificationServerConnection * conn,
     // MSN::personalInfo shows all the data you can grab from the contact
     //printf ("User %s Personal Message: %s\n", fromPassport.c_str (),
     //        pInfo.PSM.c_str ());
-    emit gotContactPersonalInfo (fromPassport, pInfo);
+    emit gotContactPersonalInfo (WlmUtils::passport(fromPassport), pInfo);
 }
 
 void
@@ -684,9 +688,9 @@ Callbacks::connectToServer (std::string hostname, int port, bool * connected, bo
     connect( a, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(emitSocketError(QAbstractSocket::SocketError)) );
 
     if(!isSSL)
-        a->connectToHost (hostname.c_str (), port);
+        a->connectToHost (WlmUtils::latin1(hostname), port);
     else
-        a->connectToHostEncrypted (hostname.c_str (), port);
+        a->connectToHostEncrypted (WlmUtils::latin1(hostname), port);
 
     *connected = false;
     socketList.append (a);
@@ -775,8 +779,8 @@ Callbacks::addedContactToGroup (MSN::NotificationServerConnection * conn,
         printf ("User Id (%s) NOT added to group Id (%s)\n",
                 contactId.c_str (), groupId.c_str ());
 */
-    emit gotAddedContactToGroup (added, QString(groupId.c_str()),
-                                 QString(contactId.c_str()));
+    emit gotAddedContactToGroup (added, WlmUtils::latin1(groupId),
+                                 WlmUtils::latin1(contactId));
 }
 
 void
@@ -793,8 +797,8 @@ Callbacks::removedContactFromGroup (MSN::NotificationServerConnection * conn,
         printf ("User Id (%s) NOT removed from group Id (%s)\n",
                 contactId.c_str (), groupId.c_str ());
 */
-    emit gotRemovedContactFromGroup (removed, QString(groupId.c_str()),
-                                     QString(contactId.c_str()));
+    emit gotRemovedContactFromGroup (removed, WlmUtils::latin1(groupId),
+                                     WlmUtils::latin1(contactId));
 }
 
 void
@@ -812,8 +816,8 @@ Callbacks::addedContactToAddressBook (MSN::NotificationServerConnection *
         printf ("User (%s - %s) NOT added to AddressBook.\n",
                 passport.c_str (), displayName.c_str ());
 */
-    emit gotAddedContactToAddressBook (added, QString(passport.c_str()), 
-            QString(displayName.c_str()), QString(guid.c_str()));
+    emit gotAddedContactToAddressBook (added, WlmUtils::passport(passport),
+                                       WlmUtils::utf8(displayName), WlmUtils::latin1(guid));
 }
 
 void
@@ -831,8 +835,8 @@ Callbacks::removedContactFromAddressBook (MSN::NotificationServerConnection *
         printf ("User %s NOT removed from AddressBook. Guid (%s)\n",
                 passport.c_str (), contactId.c_str ());
 */
-    emit gotRemovedContactFromAddressBook (removed, QString(passport.c_str()),
-                                           QString(contactId.c_str()));
+    emit gotRemovedContactFromAddressBook (removed, WlmUtils::passport(passport),
+                                           WlmUtils::latin1(contactId));
 }
 
 void
@@ -878,17 +882,17 @@ Callbacks::disabledContactOnAddressBook (MSN::NotificationServerConnection *
 
 void Callbacks::gotVoiceClipFile(MSN::SwitchboardServerConnection * conn, unsigned int sessionID, std::string file)
 {
-    emit slotGotVoiceClipFile(conn, sessionID, QString(file.c_str()));
+    emit slotGotVoiceClipFile(conn, sessionID, WlmUtils::utf8(file));
 }
 
 void Callbacks::gotEmoticonFile(MSN::SwitchboardServerConnection * conn, unsigned int sessionID, std::string alias, std::string file)
 {
-    emit slotGotEmoticonFile(conn, sessionID, QString(alias.c_str()), QString(file.c_str()));
+    emit slotGotEmoticonFile(conn, sessionID, WlmUtils::utf8(alias), WlmUtils::utf8(file));
 }
 
 void Callbacks::gotWinkFile(MSN::SwitchboardServerConnection * conn, unsigned int sessionID, std::string file)
 {
-    emit slotGotWinkFile(conn, sessionID, QString(file.c_str()));
+    emit slotGotWinkFile(conn, sessionID, WlmUtils::utf8(file));
 }
 
 void Callbacks::emitSocketError( QAbstractSocket::SocketError error )

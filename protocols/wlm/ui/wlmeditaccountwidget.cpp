@@ -183,21 +183,21 @@ Kopete::Account * WlmEditAccountWidget::apply ()
         {
             QString contact = m_preferencesWidget->m_AL->item(i)->text();
             if ( !allowList.contains(contact) )
-                wlmAccount->server()->mainConnection->unblockContact( contact.toAscii().data() );
+                wlmAccount->server()->mainConnection->unblockContact( contact.toLatin1().constData() );
         }
 
         for ( int i = 0; i < m_preferencesWidget->m_BL->count(); i++ )
         {
             QString contact = m_preferencesWidget->m_BL->item(i)->text();
             if ( !blockList.contains(contact) )
-                wlmAccount->server()->mainConnection->blockContact( contact.toAscii().data() );
+                wlmAccount->server()->mainConnection->blockContact( contact.toLatin1().constData() );
         }
 
         foreach ( const QString &contact, m_deletedContactsAL )
-            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_AL, contact.toAscii().data() );
+            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_AL, contact.toLatin1().constData() );
 
         foreach ( const QString &contact, m_deletedContactsBL )
-            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_BL, contact.toAscii().data() );
+            wlmAccount->server()->mainConnection->removeFromList( MSN::LST_BL, contact.toLatin1().constData() );
     }
 
     return account ();

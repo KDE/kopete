@@ -34,13 +34,13 @@ WlmServer::WlmConnect ( const QString& server, uint port )
 {
     cb.m_server = this;
     mainConnection =
-        new MSN::NotificationServerConnection (m_accountID.toLatin1 ().data (),
-                                               m_password.toLatin1 ().data (),
+        new MSN::NotificationServerConnection (m_accountID.toLatin1 ().constData (),
+                                               m_password.toUtf8().constData (),
                                                cb);
     cb.mainConnection = mainConnection;
 
     if (mainConnection)
-        mainConnection->connect (server.toLatin1().data(), port);
+        mainConnection->connect (server.toLatin1().constData(), port);
 }
 
 void

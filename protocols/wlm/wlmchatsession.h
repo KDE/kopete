@@ -119,7 +119,7 @@ class WlmChatSession: public Kopete::ChatSession
     QLinkedList < int > m_messagesTimeoutQueue;
     QLinkedList < QString > m_pendingInvitations;
     QLinkedList < QString > m_pendingFiles;
-    QLinkedList < QString > m_pendingInks;
+    QLinkedList < QByteArray > m_pendingInks;
     KAction * m_actionNudge;
     WlmChatSessionInkAction * m_actionInk;
     KActionMenu * m_actionInvite;

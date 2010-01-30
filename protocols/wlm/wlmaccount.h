@@ -151,15 +151,15 @@ public slots:
      * Called by the server when it has a message for us.
      * This identifies the sending Kopete::Contact and passes it a Kopete::Message
      */
-        void
-    contactChangedStatus (const MSN::Passport & buddy,
+    void
+    contactChangedStatus (const QString & buddy,
                           const QString & friendlyname,
                           const MSN::BuddyStatus & status,
                           const unsigned int &clientID,
                           const QString & msnobject);
 
     void
-    contactDisconnected (const MSN::Passport & buddy);
+    contactDisconnected (const QString & buddy);
 
     void
     connectionCompleted ();
@@ -203,7 +203,7 @@ public slots:
     receivedOIM (const QString & id, const QString & message);
 
     void
-    gotContactPersonalInfo (const MSN::Passport & fromPassport,
+    gotContactPersonalInfo (const QString & fromPassport,
                             const MSN::personalInfo & pInfo);
 
     void
