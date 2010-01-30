@@ -1119,6 +1119,7 @@ void KopeteWindow::slotAccountRegistered ( Kopete::Account *account )
 	KAction *action = new KAction ( KIcon ( account->accountIcon() ), account->accountLabel(), this );
 	actionCollection()->addAction ( s, action );
 	connect ( action, SIGNAL ( triggered ( bool ) ), d->addContactMapper, SLOT ( map() ) );
+	connect ( account, SIGNAL(colorChanged(const QColor&)), this, SLOT(slotAccountColorChanged()) );
 
 	d->addContactMapper->setMapping ( action, account->protocol()->pluginId() + QChar ( 0xE000 ) + account->accountId() );
 	d->actionAddContact->addAction ( action );
@@ -1130,6 +1131,18 @@ void KopeteWindow::slotAccountRegistered ( Kopete::Account *account )
 	}
 }
 
+void KopeteWindow::slotAccountColorChanged()
+{
+	Kopete::Account* account = qobject_cast<Kopete::Account*>(sender());
+	Q_ASSERT(account);
+
+	// update add contact actionmenu
+	QString s = QString( "actionAdd%1Contact" ).arg( account->accountId() );
+	QAction *action = actionCollection()->action ( s );
+	if ( action )
+		action->setIcon( KIcon( account->accountIcon() ) );
+}
+
 void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
 {
 	QList<Kopete::Account *> accounts = Kopete::AccountManager::self()->accounts();
@@ -1138,6 +1151,8 @@ void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
 //		actionConnect->setEnabled(false);
 		d->actionDisconnect->setEnabled ( false );
 	}
+
+	disconnect ( account, SIGNAL(colorChanged(const QColor&)), this, SLOT(slotAccountColorChanged()) );
 
 	// update add contact actionmenu
 	QString s = QString ( "actionAdd%1Contact" ).arg ( account->accountId() );

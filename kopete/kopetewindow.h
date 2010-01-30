@@ -154,6 +154,11 @@ private slots:
 	void slotAccountRegistered( Kopete::Account *account );
 
 	/**
+	 * This is used to change the account icon in the "Add Contact" submenu
+	 */
+	void slotAccountColorChanged();
+
+	/**
 	 * This is used to add the account to the "Add Contact" submenu
 	 */
 	void slotAccountUnregistered( const Kopete::Account *account );
