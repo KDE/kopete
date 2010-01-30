@@ -7,15 +7,16 @@ endif(XMMS_FOUND)
 
 ########### next target ###############
 
-set(kopete_nowlistening_PART_SRCS 
-   nowlisteningplugin.cpp 
-   nlkscd.cpp 
-   nlxmms.cpp 
-   nowlisteningguiclient.cpp 
-   nljuk.cpp 
-   nlamarok.cpp 
+set(kopete_nowlistening_PART_SRCS
+   nowlisteningplugin.cpp
+   nlkscd.cpp
+   nlxmms.cpp
+   nowlisteningguiclient.cpp
+   nljuk.cpp
+   nlamarok.cpp
    nlquodlibet.cpp
-   nlkaffeine.cpp )
+   nlkaffeine.cpp
+   nlqmmp.cpp)
 
 kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 
