@@ -767,6 +767,8 @@ void JabberAccount::slotCSDisconnected ()
 	 * but timers etc prevent us from doing so. Iris does
 	 * not like to be deleted from a slot.
 	 */
+	if (isConnected() || isConnecting())
+		disconnect ( Kopete::Account::Unknown );
 
 	/* It seems that we don't get offline notifications when going offline
 	 * with the protocol, so clear all resources manually. */
