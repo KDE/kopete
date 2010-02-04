@@ -1,10 +1,6 @@
 /* textonly by Mark Fickett, 2004. Poke/edit/maul, but leave credit - think GPL */
 /* Generally: naib.webhop.org Adium-related: naib.webhop.org/~markfickett/adium */
 
-body {
-	background: #ffffff;
-}
-
 div {
 	overflow: auto;
 }
