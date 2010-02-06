@@ -319,7 +319,7 @@ WlmChatSession::slotSendVoiceStartRec ()
     m_voiceTicker=ms_ticker_new();
 
     m_voiceRecorder = ms_filter_new(MS_FILE_REC_ID);
-    ms_filter_call_method(m_voiceRecorder,MS_FILE_REC_OPEN, QFile::encodeName(m_currentVoiceClipName).constData ());
+    ms_filter_call_method(m_voiceRecorder,MS_FILE_REC_OPEN, QFile::encodeName(m_currentVoiceClipName).data ());
     ms_filter_call_method_noarg(m_voiceRecorder,MS_FILE_REC_START);
     ms_filter_call_method (m_voiceRecorder, MS_FILTER_SET_SAMPLE_RATE, &rate);
 
