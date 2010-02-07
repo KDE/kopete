@@ -209,7 +209,7 @@ void BonjourContact::setConnection(BonjourContactConnection *c)
 void BonjourContact::connectionDisconnected(BonjourContactConnection *c)
 {
 	if (c == connection) {
-		delete connection;
+		connection->deleteLater();
 		connection = NULL;
 	}
 }
