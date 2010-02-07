@@ -367,6 +367,12 @@ void BonjourContactConnection::readMessage(BonjourXmlToken &token)
 	if (HTMLVersion.isEmpty() && plaintext.isEmpty())
 		return;
 
+	if (!parent()) {
+		kWarning() << "Error: Incoming message for connection without contact!";
+		kWarning() << "Message:" << plaintext;
+		return;
+	}
+
 	// We Are Now Guaranteed to have a message to show
 	message = newMessage(Kopete::Message::Inbound);
 
