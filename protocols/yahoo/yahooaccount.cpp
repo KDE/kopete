@@ -1569,7 +1569,7 @@ void YahooAccount::slotMailNotify( const QString& from, const QString&  subject 
 	if ( cnt > 0 && from.isEmpty() )
 	{
 		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
-			"%1 has %2 unread messages in your Yahoo inbox.", m_session->userId(), cnt ), QPixmap() , 0 ),
+			"You have %2 unread messages in your Yahoo inbox.", m_session->userId(), cnt ), QPixmap() , 0 ),
 		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
 
 		m_currentMailCount = cnt;
