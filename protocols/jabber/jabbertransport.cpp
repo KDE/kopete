@@ -104,7 +104,7 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 	
 	XMPP::Jid contactJID= XMPP::Jid( contactJID_s );
 	
-	m_account->addTransport( this, contactJID.bare() );
+	m_account->addTransport( this, contactJID.domain() );
 	
 	JabberContact *myContact = m_account->contactPool()->addContact ( contactJID , Kopete::ContactList::self()->myself(), false );
 	setMyself( myContact );
@@ -119,7 +119,7 @@ JabberTransport::JabberTransport( JabberAccount * parentAccount, const QString &
 
 JabberTransport::~JabberTransport ()
 {
-	m_account->removeTransport( myself()->contactId() );
+	m_account->removeTransport( XMPP::Jid( myself()->contactId() ).domain() );
 }
 
 void JabberTransport::fillActionMenu( KActionMenu *actionMenu )
