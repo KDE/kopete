@@ -22,7 +22,7 @@ if(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
   message(STATUS "Building jingle support")
   set(BUILD_JINGLE TRUE)
 else(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
-  message(STATUS "Not building jingle support (recommanded)")
+  message(STATUS "Not building jingle support (recommended)")
   set(BUILD_JINGLE FALSE)
 endif(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
 
