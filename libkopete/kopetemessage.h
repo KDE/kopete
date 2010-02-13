@@ -75,7 +75,7 @@ newMessage.setDirection( Kopete::Message::Inbound );
 Kopete::Message richTextMessage(sourceContact, destinationContactList);
 richTextMessage.setTimestamp( QDateTime::currentDateTime() );
 richTextMessage.setDirection( Kopete::Message::Outbound );
-richTextMessage.setSubjet( QString("Kopete API documentation thread") );
+richTextMessage.setSubject( QString("Kopete API documentation thread") );
 richTextMessage.setHtmlBody( QString("<b>A bold text</b>") );
  * @endcode
  */
