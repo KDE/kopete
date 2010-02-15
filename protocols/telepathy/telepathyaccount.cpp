@@ -536,7 +536,11 @@ void TelepathyAccount::newTelepathyAccountCreated(Tp::PendingOperation *operatio
 
     m_account = m_pendingAccount->account();
 
-    QObject::connect(m_account->becomeReady(), SIGNAL(finished(Tp::PendingOperation *)),
+    Tp::Features features;
+    features << Tp::Account::FeatureCore
+        << Tp::Account::FeatureAvatar
+        << Tp::Account::FeatureProtocolInfo;
+    QObject::connect(m_account->becomeReady(features), SIGNAL(finished(Tp::PendingOperation *)),
                      this, SLOT(onAccountReady(Tp::PendingOperation *)));
 }
 
