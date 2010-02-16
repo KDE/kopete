@@ -28,6 +28,7 @@
 #include <kopetemetacontact.h>
 #include <kopetecontactlist.h>
 #include <kopeteuiglobal.h>
+#include <kopeteutils.h>
 #include <ui/avatardialog.h>
 
 #include <KDebug>
@@ -682,15 +683,12 @@ void TelepathyAccount::avatarChanged(const Tp::Avatar &)
 
 void TelepathyAccount::connectionStatusChanged(Tp::ConnectionStatus status, Tp::ConnectionStatusReason reason)
 {
-    kDebug() ;
-    Q_UNUSED(reason);
+    kDebug();
 
-    switch (status) {
-    case Tp::ConnectionStatusConnecting:
+    if (status == Tp::ConnectionStatusConnecting) {
         kDebug() << "Connecting....";
         myself()->setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->Connecting);
-        break;
-    case Tp::ConnectionStatusConnected:
+    } else if (status == Tp::ConnectionStatusConnected) {
         kDebug() << "Connected using Telepathy :)";
         // Set initial status to myself contact
         myself()->setOnlineStatus(m_status);
@@ -698,13 +696,113 @@ void TelepathyAccount::connectionStatusChanged(Tp::ConnectionStatus status, Tp::
         myself()->setNickName(m_account->nickname());
         // Load contact list
         fetchContactList();
-        break;
-    case Tp::ConnectionStatusDisconnected:
+    } else if (status == Tp::ConnectionStatusDisconnected) {
         kDebug() << "Disconnected :(";
-        myself()->setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->Offline);
-        break;
-    }
 
+        /*
+         * Show information about the disconnect reason to the user
+         */
+        QString errorText;
+        switch (reason) {
+            // That's OK!
+            case Tp::ConnectionStatusReasonRequested:
+                break;
+
+            // Kopete's disconnected() already shows a popup
+            case Tp::ConnectionStatusReasonNameInUse:
+                break;
+
+            case Tp::ConnectionStatusReasonNetworkError:
+                errorText = "There was an unrecoverable network error. Check your internet connection.";
+                break;
+
+            case Tp::ConnectionStatusReasonAuthenticationFailed:
+                errorText = "There was an error authenticating. Check the username and password.";
+                break;
+
+            case Tp::ConnectionStatusReasonEncryptionError:
+                errorText = "There was an error setting up encryption.";
+                break;
+
+            case Tp::ConnectionStatusReasonCertNotProvided:
+                errorText = "The server did not provide a SSL certificate.";
+                break;
+            case Tp::ConnectionStatusReasonCertUntrusted:
+                errorText = "The server's SSL certificate is signed by an untrusted"
+                            " certifying authority.";
+                break;
+            case Tp::ConnectionStatusReasonCertExpired:
+                errorText = "The server's SSL certificate has expired.";
+                break;
+            case Tp::ConnectionStatusReasonCertNotActivated:
+                errorText = "The server's SSL certificate is not yet valid.";
+                break;
+            case Tp::ConnectionStatusReasonCertHostnameMismatch:
+                errorText = "The server's SSL certificate did not match its hostname.";
+                break;
+            case Tp::ConnectionStatusReasonCertFingerprintMismatch:
+                errorText = "The server's SSL certificate does not have the expected"
+                            " fingerprint.";
+                break;
+            case Tp::ConnectionStatusReasonCertSelfSigned:
+                errorText = "The server's SSL certificate is self-signed.";
+                break;
+            case Tp::ConnectionStatusReasonCertOtherError:
+                errorText = "There was an unspecified error validating the server's"
+                            " SSL certificate.";
+                break;
+
+            case Tp::ConnectionStatusReasonNoneSpecified:
+            default:
+                errorText = QString("There was an unknown error (code %1).").arg(reason);
+                break;
+        }
+
+        /*
+         * Map the Telepathy status reason to a Kopete disconnect reason
+         */
+        Kopete::Account::DisconnectReason kopeteReason;
+        switch (reason) {
+            case Tp::ConnectionStatusReasonNameInUse:
+                kopeteReason = Kopete::Account::OtherClient;
+                break;
+            /*
+             * Kopete is more specific than TP here - assume the incorrect
+             * setting was the password since that's the one you can't see.
+             */
+            case Tp::ConnectionStatusReasonAuthenticationFailed:
+                kopeteReason = Kopete::Account::BadPassword;
+                break;
+            case Tp::ConnectionStatusReasonRequested:
+                kopeteReason = Kopete::Account::Manual;
+                break;
+            /*
+             * Telepathy is a lot more specific than Kopete here...
+             */
+            case Tp::ConnectionStatusReasonNetworkError:
+            case Tp::ConnectionStatusReasonEncryptionError:
+            case Tp::ConnectionStatusReasonCertNotProvided:
+            case Tp::ConnectionStatusReasonCertUntrusted:
+            case Tp::ConnectionStatusReasonCertExpired:
+            case Tp::ConnectionStatusReasonCertNotActivated:
+            case Tp::ConnectionStatusReasonCertHostnameMismatch:
+            case Tp::ConnectionStatusReasonCertFingerprintMismatch:
+            case Tp::ConnectionStatusReasonCertSelfSigned:
+            case Tp::ConnectionStatusReasonCertOtherError:
+                kopeteReason = Kopete::Account::ConnectionReset;
+                break;
+            case Tp::ConnectionStatusReasonNoneSpecified:
+            default:
+                kopeteReason = Kopete::Account::Unknown;
+                break;
+        }
+
+        myself()->setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->Offline);
+        disconnected(kopeteReason);
+
+        if (!errorText.isEmpty())
+            Kopete::Utils::notifyConnectionLost(this, "You have been disconnected", errorText);
+    }
 }
 
 void TelepathyAccount::haveConnectionChanged(bool haveConnection)
