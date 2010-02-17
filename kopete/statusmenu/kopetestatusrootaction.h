@@ -151,13 +151,13 @@ private Q_SLOTS:
 	void childInserted( int i, Kopete::Status::StatusItem* child );
 	void childRemoved( Kopete::Status::StatusItem* child );
 
-	void messageMenuAboutToShow();
 	void setStatusMessage( const Kopete::StatusMessage &statusMessage );
 	void editStatuses();
+	void showEditStatusDialog();
+	void editStatusDialogFinished(int);
 	
 private:
 	void init();
-	void addToolsActions();
 	void insertChild( QAction * before, Status::StatusItem* child );
 	
 	class Private;

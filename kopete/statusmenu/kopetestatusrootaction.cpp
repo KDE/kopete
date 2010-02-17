@@ -37,7 +37,7 @@ namespace Kopete {
 class StatusRootAction::Private
 {
 public:
-	Private() : group(0), menu(0), account(0), statusAction(0),
+	Private() : group(0), menu(0), account(0), statusDialog(0),
 		statusSeparator(0), insertBefore(0)
 	{}
 	
@@ -48,7 +48,7 @@ public:
 
 	OnlineStatus onlineStatus;
 	Account *account;
-	Kopete::UI::StatusEditAction* statusAction;
+	QPointer<Kopete::UI::StatusEditDialog> statusDialog;
 	QAction *statusSeparator;
 	QAction *insertBefore;
 };
@@ -161,29 +161,40 @@ void StatusRootAction::init()
 		insertChild( d->insertBefore, child );
 
 	d->statusSeparator = d->menu->insertSeparator( d->insertBefore );
-	addToolsActions();
-}
 
-void StatusRootAction::addToolsActions()
-{
-	if ( d->statusAction )
-		return;
-
-	KActionMenu *messageMenu = new KActionMenu( i18n( "Change Message" ), this );
-
-	d->statusAction = new Kopete::UI::StatusEditAction( this );
-
-	connect( d->statusAction, SIGNAL(statusChanged(const Kopete::StatusMessage&)),
-	         this, SLOT(setStatusMessage(const Kopete::StatusMessage&)) );
-
-	connect( messageMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(messageMenuAboutToShow()) );
-
-	messageMenu->addAction( d->statusAction );
-	d->menu->insertAction( d->insertBefore, messageMenu );
+	QAction *statusAction = new QAction( i18n( "Edit Message..." ), this );
+	connect (statusAction, SIGNAL(triggered( bool )), this, SLOT(showEditStatusDialog()) );
+	d->menu->insertAction( d->insertBefore, statusAction );
 
 	QAction *action = new QAction( i18n("Edit Statuses..."), this );
 	connect( action, SIGNAL(triggered( bool )), this, SLOT(editStatuses()) );
 	d->menu->insertAction( d->insertBefore, action );
+}
+
+void StatusRootAction::showEditStatusDialog()
+{
+	if ( d->statusDialog ) {
+		d->statusDialog->activateWindow();
+		return;
+	}
+	d->statusDialog = new Kopete::UI::StatusEditDialog( Kopete::UI::Global::mainWidget() );
+	connect( d->statusDialog, SIGNAL(finished(int)), SLOT(editStatusDialogFinished(int)) );
+
+	if ( d->account ) {
+		d->statusDialog->setStatusMessage( d->account->myself()->statusMessage() );
+	} else {
+		emit updateMessage( this );
+	}
+
+	d->statusDialog->exec();
+}
+
+void StatusRootAction::editStatusDialogFinished(int code)
+{
+	if (code == QDialog::Accepted ) {
+		setStatusMessage( d->statusDialog->statusMessage() );
+	}
+	d->statusDialog->deleteLater();
 }
 
 void StatusRootAction::editStatuses()
@@ -222,8 +233,8 @@ Account *StatusRootAction::account() const
 
 void StatusRootAction::setCurrentMessage( const Kopete::StatusMessage &statusMessage )
 {
-	if ( d->statusAction )
-		d->statusAction->setStatusMessage( statusMessage );
+	if ( d->statusDialog )
+		d->statusDialog->setStatusMessage( statusMessage );
 }
 
 void StatusRootAction::childInserted( int i, Kopete::Status::StatusItem* child )
@@ -292,14 +303,6 @@ void StatusRootAction::rootChanged()
 
 	foreach( Kopete::Status::StatusItem* child, d->group->childList() )
 		insertChild( d->statusSeparator, child );
-}
-
-void StatusRootAction::messageMenuAboutToShow()
-{
-	if ( d->account ) // Set status for this account only
-		d->statusAction->setStatusMessage( d->account->myself()->statusMessage() );
-	else
-		emit updateMessage( this );
 }
 
 void StatusRootAction::setStatusMessage( const Kopete::StatusMessage &statusMessage )
