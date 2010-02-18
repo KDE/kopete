@@ -91,10 +91,8 @@ void TelepathyAccount::connect(const Kopete::OnlineStatus &initialStatus)
 
     kDebug() << m_account->parameters();
 
-    Tp::SimplePresence simplePresence;
-    simplePresence.type = TelepathyProtocolInternal::protocolInternal()->kopeteStatusToTelepathy(m_status);
-
-    simplePresence.statusMessage = m_reason.message();
+    Tp::SimplePresence simplePresence =
+        TelepathyProtocolInternal::protocolInternal()->kopeteStatusToTelepathy(m_status, m_reason);
 
     kDebug() << "Requested Presence status: " << simplePresence.type << "message:" << simplePresence.statusMessage;
 
@@ -180,12 +178,12 @@ void TelepathyAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const
     } else if (status.status() == Kopete::OnlineStatus::Offline) {
         disconnect();
     } else {
-        Tp::SimplePresence simplePresence;
-        simplePresence.type = TelepathyProtocolInternal::protocolInternal()->kopeteStatusToTelepathy(status);
+        Tp::SimplePresence simplePresence =
+            TelepathyProtocolInternal::protocolInternal()->kopeteStatusToTelepathy(status, reason);
 
-        kDebug() << "Requested Presence status: " << simplePresence.type << reason.message();
-
-        simplePresence.statusMessage = reason.message();
+        kDebug() << "Requested Presence status: " << simplePresence.status << ", "
+                                                  << simplePresence.type << ", "
+                                                  << simplePresence.statusMessage;
 
         Tp::PendingOperation *op = m_account->setRequestedPresence(simplePresence);
         QObject::connect(op,

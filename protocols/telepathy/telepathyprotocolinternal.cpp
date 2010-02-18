@@ -91,29 +91,51 @@ QString TelepathyProtocolInternal::formatTelepathyConfigGroup(const QString &con
     return QString("Telepathy_%1_%2_%3").arg(connectionManager).arg(protocol).arg(account);
 }
 
-Tp::ConnectionPresenceType TelepathyProtocolInternal::kopeteStatusToTelepathy(const Kopete::OnlineStatus &kPresence)
+Tp::SimplePresence TelepathyProtocolInternal::kopeteStatusToTelepathy(const Kopete::OnlineStatus &kPresence,
+                                                                      const Kopete::StatusMessage &reason)
 {
     kDebug();
 
-    Tp::ConnectionPresenceType tpPresence;
+    Tp::SimplePresence tpPresence;
+    tpPresence.statusMessage = reason.message();
 
-    Kopete::OnlineStatusManager::Categories categories = kPresence.categories();
+    switch (kPresence.categories()) {
+        case Kopete::OnlineStatusManager::Online:
+        case Kopete::OnlineStatusManager::FreeForChat:
+            tpPresence.type = Tp::ConnectionPresenceTypeAvailable;
+            tpPresence.status = "available";
+            break;
 
-    if ((categories == Kopete::OnlineStatusManager::FreeForChat) ||
-        (categories == Kopete::OnlineStatusManager::Online)) {
-        tpPresence = Tp::ConnectionPresenceTypeAvailable;
-    } else if ((categories == Kopete::OnlineStatusManager::Idle) ||
-               (categories == Kopete::OnlineStatusManager::Away)) {
-        tpPresence = Tp::ConnectionPresenceTypeAway;
-    } else if (categories == Kopete::OnlineStatusManager::ExtendedAway) {
-        tpPresence = Tp::ConnectionPresenceTypeExtendedAway;
-    } else if (categories == Kopete::OnlineStatusManager::Busy) {
-        tpPresence = Tp::ConnectionPresenceTypeBusy;
-    } else if (categories == Kopete::OnlineStatusManager::Invisible) {
-        tpPresence = Tp::ConnectionPresenceTypeHidden;
-    } else {
-        tpPresence = Tp::ConnectionPresenceTypeOffline;
+        case Kopete::OnlineStatusManager::Idle:
+        case Kopete::OnlineStatusManager::Away:
+        default:
+            tpPresence.type = Tp::ConnectionPresenceTypeAway;
+            tpPresence.status = "away";
+            break;
+
+        case Kopete::OnlineStatusManager::Busy:
+            tpPresence.type = Tp::ConnectionPresenceTypeBusy;
+            tpPresence.status = "busy";
+            break;
+
+        case Kopete::OnlineStatusManager::ExtendedAway:
+            tpPresence.type = Tp::ConnectionPresenceTypeExtendedAway;
+            tpPresence.status = "xa";
+            break;
+
+        case Kopete::OnlineStatusManager::Invisible:
+            tpPresence.type = Tp::ConnectionPresenceTypeHidden;
+            tpPresence.status = "hidden";
+            break;
+
+        case Kopete::OnlineStatusManager::Offline:
+            tpPresence.type = Tp::ConnectionPresenceTypeOffline;
+            tpPresence.status = "offline";
+            break;
     }
+
+    if (kPresence.categories() == Kopete::OnlineStatusManager::Idle)
+        tpPresence.status = "idle";
 
     return tpPresence;
 }

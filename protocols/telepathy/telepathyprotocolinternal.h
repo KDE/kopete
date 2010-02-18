@@ -24,6 +24,7 @@
 #include <kopeteonlinestatus.h>
 #include <kopeteprotocol.h>
 #include <kopeteproperty.h>
+#include <kopetestatusmessage.h>
 
 #include <TelepathyQt4/ClientRegistrar>
 #include <TelepathyQt4/Constants>
@@ -59,7 +60,8 @@ public:
                                        const QString &protocol,
                                        const QString &account);
 
-    Tp::ConnectionPresenceType kopeteStatusToTelepathy(const Kopete::OnlineStatus &kPresence);
+    Tp::SimplePresence kopeteStatusToTelepathy(const Kopete::OnlineStatus &kPresence,
+                                               const Kopete::StatusMessage &reason);
     Kopete::OnlineStatus telepathyStatusToKopete(Tp::ConnectionPresenceType tpPresence);    
 
 private:
