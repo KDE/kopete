@@ -701,13 +701,20 @@ void TelepathyAccount::connectionStatusChanged(Tp::ConnectionStatus status, Tp::
          * Show information about the disconnect reason to the user
          */
         QString errorText;
+        bool isDoubleRegister = false;
         switch (reason) {
             // That's OK!
             case Tp::ConnectionStatusReasonRequested:
                 break;
 
-            // Kopete's disconnected() already shows a popup
+            // Kopete's disconnected() already shows a popup, BUT! Let's show a more correct one if
+            // the error is because we're registering, and the account has already been registered.
             case Tp::ConnectionStatusReasonNameInUse:
+                if (m_account && m_account->parameters().contains("register")
+                        && m_account->parameters()["register"].toBool() == true) {
+                    errorText = "The account already exists on the server. Registration failed.";
+                    isDoubleRegister = true;
+                }
                 break;
 
             case Tp::ConnectionStatusReasonNetworkError:
@@ -796,7 +803,14 @@ void TelepathyAccount::connectionStatusChanged(Tp::ConnectionStatus status, Tp::
         }
 
         myself()->setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->Offline);
-        disconnected(kopeteReason);
+
+        // Would show a misleading error popup on double-register and we don't want the reconnect
+        // behaviour to trigger in that case anyway.
+        //
+        // Also, Kopete does endless reconnect spam on getting disconnected because of a bad
+        // password.
+        if (!isDoubleRegister && kopeteReason != Kopete::Account::BadPassword)
+            disconnected(kopeteReason);
 
         if (!errorText.isEmpty())
             Kopete::Utils::notifyConnectionLost(this, "You have been disconnected", errorText);
