@@ -319,7 +319,7 @@ bool ICQEditAccountWidget::validateData()
 
 void ICQEditAccountWidget::slotOpenRegister()
 {
-	KToolInvocation::invokeBrowser( QLatin1String("http://go.icq.com/register/") );
+	KToolInvocation::invokeBrowser( QLatin1String("https://www.icq.com/register/") );
 }
 
 void ICQEditAccountWidget::slotChangePassword()
