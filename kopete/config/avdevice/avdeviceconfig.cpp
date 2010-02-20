@@ -52,7 +52,11 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 // "Video" TAB ============================================================
 	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
 	mPrfsVideoDevice->setupUi(this);
-	
+
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, false);
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, false);
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(3, false);
+
 	// set a default image for the webcam widget, in case the user does not have a video device
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
