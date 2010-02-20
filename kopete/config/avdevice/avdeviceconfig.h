@@ -47,7 +47,6 @@ class AVDeviceConfig : public KCModule
 Q_OBJECT
 public:
 	AVDeviceConfig(QWidget *parent, const QVariantList &args);
-
 	~AVDeviceConfig();
 	virtual void save();
 	virtual void load();
@@ -62,7 +61,17 @@ private slots:
 	void changeVideoControlValue(unsigned int id, int value = 0);
 	void deviceRegistered( const QString & );
 	void deviceUnregistered( const QString & );
+
 private:
+	class VideoControlValue
+	{
+	public:
+		VideoControlValue() : id(0), value(0) {};
+		VideoControlValue(quint32 id, qint32 value) : id(id), value(value) {};
+		quint32 id;
+		qint32 value;
+	};
+
 //	QTabWidget* mAVDeviceTabCtl;
 	Ui_AVDeviceConfig_VideoDevice  *mPrfsVideoDevice;
 //	AVDeviceConfig_AudioDevice  *mPrfsAudioDevice;
@@ -72,6 +81,8 @@ private:
 	QTimer qtimer;
 	QString capturingDevice_udi;
 	QList<QWidget*> ctrlWidgets;
+	QList<VideoControlValue> ctrl_values_bak;
+
 	void setupControls();
 	void clearControlGUIElements();
 	void addSliderControlElement(int cid, QString title, int min, int max, int step, int value);

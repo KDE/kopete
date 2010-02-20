@@ -52,7 +52,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 // "Video" TAB ============================================================
 	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
 	mPrfsVideoDevice->setupUi(this);
-
+	
 	// set a default image for the webcam widget, in case the user does not have a video device
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
@@ -84,6 +84,8 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 
 AVDeviceConfig::~AVDeviceConfig()
 {
+	for (unsigned int k=0; k<ctrl_values_bak.size(); k++)
+		mVideoDevicePool->setControlValue(ctrl_values_bak.at(k).id, ctrl_values_bak.at(k).value);
 	mVideoDevicePool->close();
 	clearControlGUIElements();
 }
@@ -113,18 +115,21 @@ void AVDeviceConfig::setupControls()
 	{
 		mVideoDevicePool->getControlValue(numericCtrls.at(k).id, &cval);
 		addSliderControlElement(numericCtrls.at(k).id, numericCtrls.at(k).name, numericCtrls.at(k).value_min, numericCtrls.at(k).value_max, numericCtrls.at(k).value_step, cval);
+		ctrl_values_bak.push_back(VideoControlValue(numericCtrls.at(k).id, cval));
 	}
 	// Boolean Controls: => Checkbox
 	for (k=0; k<booleanCtrls.size(); k++)
 	{
 		mVideoDevicePool->getControlValue(booleanCtrls.at(k).id, &cval);
 		addCheckBoxControlElement(booleanCtrls.at(k).id, booleanCtrls.at(k).name, cval);
+		ctrl_values_bak.push_back(VideoControlValue(booleanCtrls.at(k).id, cval));
 	}
 	// Menu Controls: => Combobox
 	for (k=0; k<menuCtrls.size(); k++)
 	{
 		mVideoDevicePool->getControlValue(menuCtrls.at(k).id, &cval);
 		addPopupMenuControlElement(menuCtrls.at(k).id, menuCtrls.at(k).name, menuCtrls.at(k).options, cval);
+		ctrl_values_bak.push_back(VideoControlValue(booleanCtrls.at(k).id, cval));
 	}
 	// Action Controls: => Button
 	for (k=0; k<actionCtrls.size(); k++)
@@ -210,9 +215,8 @@ void AVDeviceConfig::addButtonControlElement(int cid, QString title)
  */
 void AVDeviceConfig::save()
 {
-    /// @todo implement me
-	kDebug() << "kopete:config (avdevice): save() called. ";
 	mVideoDevicePool->saveCurrentDeviceConfig();
+	ctrl_values_bak.clear();
 }
 
 
