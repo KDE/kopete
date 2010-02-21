@@ -153,9 +153,9 @@ void OTRPlugin::slotNewChatSessionWindow( Kopete::ChatSession *KMM )
 void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 {
 	if( msg.direction() == Kopete::Message::Outbound ){
-//        kDebug(14318) << "Outgoing message: Plain: " << msg.plainBody() << "body:" << msg.escapedBody();
-		QString msgBody = msg.parsedBody();
-		QString cacheBody = msg.parsedBody();
+//        kDebug(14318) << "Outgoing message: Plain: " << msg.plainBody() << "escapedBody:" << msg.escapedBody() << "parsedBody:" << msg.parsedBody();
+		QString msgBody = msg.escapedBody();
+		QString cacheBody = msg.escapedBody();
 		QString accountId = msg.manager()->account()->accountId();
 		Kopete::Contact *contact = msg.to().first();
 		
