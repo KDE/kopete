@@ -59,6 +59,7 @@ private slots:
 	void slotStandardKComboBoxChanged(int);
 	void slotUpdateImage();
 	void changeVideoControlValue(unsigned int id, int value = 0);
+	void resetControls();
 	void deviceRegistered( const QString & );
 	void deviceUnregistered( const QString & );
 

@@ -111,7 +111,7 @@ void AVDeviceConfig::setupControls()
 	actionCtrls = mVideoDevicePool->getSupportedActionControls();
 
 	kDebug() << "Supported controls:" << numericCtrls.size() << "numeric," << booleanCtrls.size()
-		<< "boolean," << menuCtrls.size() << "menus," << actionCtrls.size() << "actions.";
+		 << "boolean," << menuCtrls.size() << "menus," << actionCtrls.size() << "actions.";
 
 	/* SETUP GUI-elements */
 	// Numeric Controls: => Slider
@@ -139,9 +139,24 @@ void AVDeviceConfig::setupControls()
 	for (k=0; k<actionCtrls.size(); k++)
 		addButtonControlElement(actionCtrls.at(k).id, actionCtrls.at(k).name);
 	/* TODO: check success of mVideoDevicePool->getControlValue() */
+
+	// Button for resetting the control values:
+	if (numericCtrls.size() || booleanCtrls.size() || menuCtrls.size())
+	{
+		int insert_row = mPrfsVideoDevice->actions_gridLayout->rowCount();
+		QLabel *label = new QLabel( i18n("Reset sliders & options to default values") + ":", mPrfsVideoDevice->VideoTabWidget ); // "Reset sliders and options"
+		mPrfsVideoDevice->actions_gridLayout->addWidget( label, insert_row, 0 );
+		KPushButton *button = new KPushButton( mPrfsVideoDevice->VideoTabWidget );
+		button->setText( i18n("Execute") );
+		mPrfsVideoDevice->actions_gridLayout->addWidget( button, insert_row, 1 );
+		connect( button, SIGNAL( pressed() ), this, SLOT( resetControls() ) );
+		ctrlWidgets.push_back(label);
+		ctrlWidgets.push_back(button);
+	}
+
 	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(1, numericCtrls.size());
 	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(2, booleanCtrls.size() + menuCtrls.size());
-	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(3, actionCtrls.size());
+	mPrfsVideoDevice->VideoTabWidget->setTabEnabled(3, numericCtrls.size() || booleanCtrls.size() || menuCtrls.size() || actionCtrls.size());
 }
 
 
@@ -349,4 +364,30 @@ void AVDeviceConfig::stopCapturing()
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
 	capturingDevice_udi.clear();
+}
+
+void AVDeviceConfig::resetControls()
+{
+	unsigned int k = 0;
+	// Numeric controls:
+	QList<Kopete::AV::NumericVideoControl> numericCtrls;
+	numericCtrls = mVideoDevicePool->getSupportedNumericControls();
+	for (k=0; k<numericCtrls.size(); k++)
+		mVideoDevicePool->setControlValue(numericCtrls.at(k).id, numericCtrls.at(k).value_default);
+	// Boolean controls:
+	QList<Kopete::AV::BooleanVideoControl> booleanCtrls;
+	booleanCtrls = mVideoDevicePool->getSupportedBooleanControls();
+	for (k=0; k<booleanCtrls.size(); k++)
+		mVideoDevicePool->setControlValue(booleanCtrls.at(k).id, booleanCtrls.at(k).value_default);
+	// Menu controls:
+	QList<Kopete::AV::MenuVideoControl> menuCtrls;
+	menuCtrls = mVideoDevicePool->getSupportedMenuControls();
+	for (k=0; k<menuCtrls.size(); k++)
+		mVideoDevicePool->setControlValue(menuCtrls.at(k).id, menuCtrls.at(k).index_default);
+	// NOTE: action video controls can not be reset
+	// Adjust GUI-elements:
+	setupControls();
+	if (ctrlWidgets.size())
+		mPrfsVideoDevice->VideoTabWidget->setCurrentIndex(3);
+	// NOTE: TO BE IMPROVED
 }
