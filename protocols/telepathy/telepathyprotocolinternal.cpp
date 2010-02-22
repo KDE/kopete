@@ -102,13 +102,13 @@ Tp::SimplePresence TelepathyProtocolInternal::kopeteStatusToTelepathy(const Kope
     switch (kPresence.categories()) {
         case Kopete::OnlineStatusManager::Online:
         case Kopete::OnlineStatusManager::FreeForChat:
+        default:
             tpPresence.type = Tp::ConnectionPresenceTypeAvailable;
             tpPresence.status = "available";
             break;
 
         case Kopete::OnlineStatusManager::Idle:
         case Kopete::OnlineStatusManager::Away:
-        default:
             tpPresence.type = Tp::ConnectionPresenceTypeAway;
             tpPresence.status = "away";
             break;
@@ -136,6 +136,8 @@ Tp::SimplePresence TelepathyProtocolInternal::kopeteStatusToTelepathy(const Kope
 
     if (kPresence.categories() == Kopete::OnlineStatusManager::Idle)
         tpPresence.status = "idle";
+
+    kDebug() << "  Mapped categories" << kPresence.categories() << "to" << tpPresence.type << "-" << tpPresence.status;
 
     return tpPresence;
 }

@@ -689,7 +689,9 @@ void TelepathyAccount::connectionStatusChanged(Tp::ConnectionStatus status, Tp::
     } else if (status == Tp::ConnectionStatusConnected) {
         kDebug() << "Connected using Telepathy :)";
         // Set initial status to myself contact
-        myself()->setOnlineStatus(m_status);
+        myself()->setOnlineStatus(
+                TelepathyProtocolInternal::protocolInternal()->telepathyStatusToKopete(
+                    static_cast<Tp::ConnectionPresenceType>(m_account->currentPresence().type)));
         // Set nickname to myself contact
         myself()->setNickName(m_account->nickname());
         // Load contact list
