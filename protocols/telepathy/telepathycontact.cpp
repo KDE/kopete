@@ -295,7 +295,7 @@ void TelepathyContact::onAvatarTokenChanged(const QString &avatarToken)
 
         if (avatarIface) {
             Tp::UIntList id;
-            id.append(d->internalContact->handle().takeFirst());
+            id.append(d->internalContact->handle()[0]);
             avatarIface->RequestAvatars(id);
         }
     }
@@ -308,7 +308,7 @@ void TelepathyContact::onAvatarRetrieved(uint contact, const QString& token,
 
     kDebug() << contact << token;
 
-    if (contact != d->internalContact->handle().takeFirst())
+    if (contact != d->internalContact->handle()[0])
         return;
 
     // Is it needed? It's already checked in ContactManager

@@ -195,7 +195,7 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
                 if (contact->isAvatarTokenKnown() &&
                         (tpc->storedAvatarToken() != contact->avatarToken() ||
                         QFile::exists(tpc->storedAvatarPath()) == false)) {
-                    requestAvatarList.append(contact->handle().takeFirst());
+                    requestAvatarList.append(contact->handle()[0]);
                 }
         }
 
