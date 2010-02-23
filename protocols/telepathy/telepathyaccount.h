@@ -52,7 +52,7 @@ public:
     QString connectionProtocol() const;
     Tp::ProtocolParameterList allConnectionParameters() const;
     Tp::AccountPtr account();
-    void addNewContact(const QString &id);
+    void addNewContact(const QString &id, Kopete::MetaContact *parentContact);
     void deleteContact(Tp::ContactPtr contact);
 
 public slots:

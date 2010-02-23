@@ -287,6 +287,7 @@ void TelepathyContactManager::onRequestingContactsUpgraded(Tp::PendingOperation 
         // Check if the telepathy contact is already in the list
         foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
             foreach (Kopete::Contact *c, mc->contacts()) {
+                // FIXME: Comparing string ids is WRONG!
                 if ((c->account() == d->telepathyAccount) &&
                     (c->contactId() == contact->id())) {
 
@@ -407,6 +408,8 @@ TelepathyContact * TelepathyContactManager::createContact(QSharedPointer<Tp::Con
     // Only create this contact if it isn't already in the list.
     foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
         foreach (Kopete::Contact *c, mc->contacts()) {
+            // FIXME: Comparing the string ids is WRONG! One has to compare handles, one way or
+            // another.
             if((c->account() == d->telepathyAccount) &&
                (c->contactId() == contact->id()))
             {

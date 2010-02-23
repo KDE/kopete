@@ -278,6 +278,7 @@ TelepathyContact *TelepathyChannelManager::getTpContact(Tp::AccountPtr account,
                     continue;
                 }
 
+                // FIXME: String ID comparison is WRONG!
                 if (contact->internalContact()->id() == contactId) {
                     kDebug() << "Found the remote contact.";
                     tpContact = contact;

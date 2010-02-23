@@ -47,6 +47,7 @@
 #include <TelepathyQt4/Feature>
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/Connection>
+#include <TelepathyQt4/Contact>
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/PendingContacts>
 #include <TelepathyQt4/PendingOperation>
@@ -938,7 +939,7 @@ Tp::AccountPtr TelepathyAccount::account()
     return m_account;
 }
 
-void TelepathyAccount::addNewContact(const QString &id)
+void TelepathyAccount::addNewContact(const QString &id, Kopete::MetaContact *parentContact)
 {
     kDebug();
     Tp::ConnectionPtr connection = account()->connection();
@@ -953,9 +954,16 @@ void TelepathyAccount::addNewContact(const QString &id)
         return;
     }
 
-    Tp::ContactManager *contactManager = connection->contactManager();
+    createContact(id, parentContact);
 
-    Tp::PendingOperation *op = contactManager->contactsForIdentifiers(QStringList() << id);
+    Tp::ContactManager *contactManager = connection->contactManager();
+    QSet<Tp::Contact::Feature> features;
+
+    features << Tp::Contact::FeatureAlias
+             << Tp::Contact::FeatureAvatarToken
+             << Tp::Contact::FeatureSimplePresence;
+
+    Tp::PendingOperation *op = contactManager->contactsForIdentifiers(QStringList() << id, features);
 
     QObject::connect(op,
             SIGNAL(finished(Tp::PendingOperation*)), this,
@@ -966,12 +974,22 @@ void TelepathyAccount::onPendingContactsForAddingReady(Tp::PendingOperation *op)
 {
     kDebug();
     Tp::PendingContacts *pendingContacts = qobject_cast<Tp::PendingContacts*>(op);
+    Tp::ContactPtr contact = pendingContacts->contacts().at(0);
 
-    QList<Tp::ContactPtr> contacts = pendingContacts->contacts();
+    if (!contact) {
+        kDebug() << "Failed to retrieve contact:" << pendingContacts->errorName() << pendingContacts->errorMessage();
+        return;
+    }
 
-    Tp::PendingOperation *opadd = contacts.at(0)->manager()->requestPresenceSubscription(contacts);
+    Tp::PendingOperation *opadd = contact->manager()->requestPresenceSubscription(pendingContacts->contacts());
     QObject::connect(opadd, SIGNAL(finished(Tp::PendingOperation*)),
                      this, SLOT(onContactAdded(Tp::PendingOperation*)));
+
+    TelepathyContact *tpContact =
+        static_cast<TelepathyContact *>(contacts()[pendingContacts->identifiers().first()]);
+
+    if (tpContact && !tpContact->internalContact())
+        tpContact->setInternalContact(contact);
 }
 
 void TelepathyAccount::onContactAdded(Tp::PendingOperation *op)
