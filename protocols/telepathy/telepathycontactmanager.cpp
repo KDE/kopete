@@ -38,6 +38,8 @@
 #include <TelepathyQt4/PendingContacts>
 #include <TelepathyQt4/PendingReady>
 
+#include <QPointer>
+
 class TelepathyContactManager::TelepathyContactManagerPrivate
 {
 public:
@@ -45,7 +47,7 @@ public:
     Tp::AccountPtr account;
     Tp::ConnectionPtr connection;
 
-    QList<TelepathyContact*> contactList;
+    QList<QPointer<TelepathyContact> > contactList;
     QList<Tp::ContactPtr> contacts;
 };
 
@@ -70,10 +72,13 @@ TelepathyContactManager::~TelepathyContactManager()
 {
     kDebug();
 
-    foreach(TelepathyContact *contact, d->contactList) {
+    foreach(QPointer<TelepathyContact> contact, d->contactList) {
+        if (!contact)
+            continue;
+
         Kopete::MetaContact *metaContact = contact->metaContact();
         Kopete::ContactList::self()->removeMetaContact(metaContact);
-        delete contact;
+        contact->deleteLater();
     }
 
     delete d;
@@ -436,7 +441,7 @@ TelepathyContact * TelepathyContactManager::createContact(QSharedPointer<Tp::Con
     }
 
     Kopete::MetaContact *metaContact = new Kopete::MetaContact();
-    TelepathyContact *newContact = new TelepathyContact(d->telepathyAccount, contact->id(), metaContact);
+    QPointer<TelepathyContact> newContact = new TelepathyContact(d->telepathyAccount, contact->id(), metaContact);
     newContact->setInternalContact(contact);
     newContact->setMetaContact(metaContact);
 
