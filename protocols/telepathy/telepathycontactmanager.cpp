@@ -346,7 +346,17 @@ void TelepathyContactManager::onAddedInfoEventActionActivated(uint actionId)
         // FIXME: Handle the completion of the above Tp::PendingOperation
     } else if (actionId == Kopete::AddedInfoEvent::AddContactAction) {
         // Add the contact
-        event->addContact();
+        Kopete::MetaContact *parentContact = event->addContact();
+
+        if (!parentContact)
+            return;
+
+        QStringList groupNames;
+        foreach (Kopete::Group *group, parentContact->groups())
+            groupNames += group->displayName();
+
+        // TODO: Add to those groups too
+        d->telepathyAccount->addNewContact(event->contactId());
     } else {
         kWarning() << "Unknown button pressed.";
     }

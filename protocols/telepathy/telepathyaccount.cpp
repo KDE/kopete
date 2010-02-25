@@ -939,7 +939,7 @@ Tp::AccountPtr TelepathyAccount::account()
     return m_account;
 }
 
-void TelepathyAccount::addNewContact(const QString &id, Kopete::MetaContact *parentContact)
+void TelepathyAccount::addNewContact(const QString &id)
 {
     kDebug();
     Tp::ConnectionPtr connection = account()->connection();
@@ -953,8 +953,6 @@ void TelepathyAccount::addNewContact(const QString &id, Kopete::MetaContact *par
         kWarning() << "connection.status() is not Connected.";
         return;
     }
-
-    createContact(id, parentContact);
 
     Tp::ContactManager *contactManager = connection->contactManager();
     QSet<Tp::Contact::Feature> features;

@@ -83,7 +83,8 @@ bool TelepathyAddContactPage::apply(Kopete::Account *account, Kopete::MetaContac
 
     // Get new id.
     QString newId = d->mainUi.textUserId->text();
-    tAccount->addNewContact(newId, parentMetaContact);
+    tAccount->addContact(newId, parentMetaContact);
+    tAccount->addNewContact(newId);
 
     return true;
 }
