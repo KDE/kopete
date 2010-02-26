@@ -122,6 +122,9 @@ void MetaContact::addContact( Contact *c )
 			if ( oldDisplayName != newDisplayName )
 			{
 				emit displayNameChanged( oldDisplayName , displayName() );
+				QListIterator<Kopete::Contact *> it( d->contacts );
+				while (  it.hasNext() )
+					( it.next() )->sync(Contact::DisplayNameChanged);
 			}
 			if ( picture().isNull() )
 			{
@@ -275,8 +278,12 @@ void MetaContact::setDisplayNameSource(PropertySource source)
 	QString oldName = displayName();
 	d->displayNameSource = source;
 	QString newName = displayName();
-	if ( oldName != newName)
+	if ( oldName != newName) {
 		emit displayNameChanged( oldName, newName );
+		QListIterator<Kopete::Contact *> it( d->contacts );
+		while (  it.hasNext() )
+			( it.next() )->sync(Contact::DisplayNameChanged);
+	}
 }
 
 void MetaContact::setDisplayNameSource( const QString &nameSourcePID, const QString &nameSourceAID, const QString &nameSourceCID )
@@ -640,7 +647,7 @@ void MetaContact::setDisplayName( const QString &name )
 		const QString old = d->displayName;
 		d->displayName = name;
 
-					emit displayNameChanged( old , name );
+		emit displayNameChanged( old , name );
 		QListIterator<Kopete::Contact *> it( d->contacts );
 		while (  it.hasNext() )
 			( it.next() )->sync(Contact::DisplayNameChanged);
@@ -821,8 +828,12 @@ void MetaContact::setDisplayNameSourceContact( Contact *contact )
 {
 	Contact *old = d->displayNameSourceContact;
 	d->displayNameSourceContact = contact;
-	if ( displayNameSource() == SourceContact )
+	if ( displayNameSource() == SourceContact ) {
 		emit displayNameChanged( nameFromContact(old), nameFromContact(contact));
+		QListIterator<Kopete::Contact *> it( d->contacts );
+		while (  it.hasNext() )
+			( it.next() )->sync(Contact::DisplayNameChanged);
+	}
 }
 
 void MetaContact::setPhotoSourceContact( Contact *contact )
@@ -882,6 +893,9 @@ void MetaContact::slotPropertyChanged( PropertyContainer* _subcontact, const QSt
 			if (displayNameSourceContact() == subcontact)
 			{
 				emit displayNameChanged( oldValue.toString(), newValue.toString());
+				QListIterator<Kopete::Contact *> it( d->contacts );
+				while (  it.hasNext() )
+					( it.next() )->sync(Contact::DisplayNameChanged);
 			}
 			else
 			{
