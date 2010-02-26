@@ -202,17 +202,17 @@ class Skype : public QObject
 		 */
 		QString getGroupName(int groupID);
 		/**
-		 * Get Skype display name
+		 * Get Skype display name for contact
 		 * @param user Skype user
 		 * @return Skype display name
 		 */
-		QString getDisplayName(const QString &user);
+		QString getContactDisplayName(const QString &user);
 		/**
-		 * Set Skype display name
+		 * Set Skype display name for contact
 		 * @param user Skype user
-		 * @param name new Skype display name (empty string is default display name)
+		 * @param name new Skype display name (empty string is default display name == fullname)
 		 */
-		void setDisplayName(const QString &user, const QString &name);
+		void setContactDisplayName(const QString &user, const QString &name);
 		/**
 		 * Open skype file transfer dilog to send file via skype
 		 * @param user Skype user

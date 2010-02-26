@@ -1000,12 +1000,12 @@ QString Skype::getGroupName(int groupID) {
 	return d->groupsNames.key(groupID, QString()); //get group name from d->groupsNames
 }
 
-QString Skype::getDisplayName(const QString &user) {
+QString Skype::getContactDisplayName(const QString &user) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << user;
 	return (d->connection % QString("GET USER %1 DISPLAYNAME").arg(user)).section(' ', 3).trimmed();
 }
 
-void Skype::setDisplayName(const QString &user, const QString &name) {
+void Skype::setContactDisplayName(const QString &user, const QString &name) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 	d->connection % QString("SET USER %1 DISPLAYNAME %2").arg(user).arg(name);
 }

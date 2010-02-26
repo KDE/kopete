@@ -383,11 +383,11 @@ Q_OBJECT
 		 */
 		void openFileTransfer(const QString &user, const QString &url = QString());
 		/**
-		 * Set Skype display name
+		 * Set Skype display name for contact
 		 * @param user Skype user
-		 * @param name new Skype display name (empty string is default display name)
+		 * @param name new Skype display name (empty string is default display name == fullname)
 		 */
-		void setDisplayName(const QString &user, const QString &name);
+		void setContactDisplayName(const QString &user, const QString &name);
 		/**
 		 * Show user info
 		 * @param user contact fot display
