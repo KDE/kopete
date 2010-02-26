@@ -644,9 +644,10 @@ void ICQContact::slotUserInfo()
 void ICQContact::storeUserInfoDialog()
 {
 	QString alias = m_infoWidget->getAlias();
-	mAccount->engine()->changeContactAlias( contactId(), alias );
 	if ( alias.isEmpty() )
 		requestShortInfoDelayed( 5000 );
+	else if ( nickName() == contactId() )
+		mAccount->engine()->changeContactAlias( contactId(), alias );
 }
 
 void ICQContact::closeUserInfoDialog()

@@ -187,7 +187,12 @@ void OscarContact::sync(unsigned int flags)
 		else
 			mAccount->addContactToSSI( contactId(), newGroup->displayName(), true );
 	}
-	return;
+
+	if ( flags & Kopete::Contact::DisplayNameChanged )
+	{
+		kDebug(OSCAR_GEN_DEBUG) << "Changing contact alias";
+		mAccount->engine()->changeContactAlias( contactId(), metaContact()->displayName() );
+	}
 }
 
 void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& details  )
