@@ -113,7 +113,6 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
         }
     }
 
-    data->context->setFinished();
     delete data;
 
     kDebug() << "handleCHannels finished.";
@@ -137,6 +136,13 @@ void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
         // Get KopeteContact
         TelepathyContact *contact = getTpContact(data->account,
                 properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString());
+
+        if (!contact) {
+            kDebug() << "Failed to get the contact, deleted account?";
+            data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
+                    "failed to get internal contact object");
+            return;
+        }
 
         Kopete::ContactPtrList chatContacts;
         chatContacts << contact;
@@ -163,6 +169,7 @@ void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
         tpChatSession->setTextChannel(
                 Tp::TextChannelPtr(qobject_cast<Tp::TextChannel*>(channel.data())));
 
+        data->context->setFinished();
         return;
     }
 
@@ -185,6 +192,8 @@ void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
                 }
         }
     }
+
+    data->context->setFinished();
 }
 
 void TelepathyChannelManager::handleFileTransferChannel(Tp::ChannelPtr channel,
@@ -202,6 +211,13 @@ void TelepathyChannelManager::handleFileTransferChannel(Tp::ChannelPtr channel,
         TelepathyContact *contact = getTpContact(data->account,
                 properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString());
 
+        if (!contact) {
+            kDebug() << "Failed to get the contact, deleted account?";
+            data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
+                    "failed to get internal contact object");
+            return;
+        }
+
         (void *) new TelepathyFileTransfer(channel, contact);
     }
     else {
@@ -210,77 +226,78 @@ void TelepathyChannelManager::handleFileTransferChannel(Tp::ChannelPtr channel,
         TelepathyContact *contact = getTpContact(data->account,
                 properties[TELEPATHY_INTERFACE_CHANNEL ".TargetID"].toString());
 
+        if (!contact) {
+            kDebug() << "Failed to get the contact, deleted account?";
+            data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
+                    "failed to get internal contact object");
+            return;
+        }
+
         QString fileName =
             properties[TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Filename"].toString();
 
         (void *) new TelepathyFileTransfer(channel, contact, fileName);
     }
+
+    data->context->setFinished();
 }
 
 TelepathyContact *TelepathyChannelManager::getTpContact(Tp::AccountPtr account,
                                                         const QString &contactId)
 {
-    TelepathyContact *tpContact = 0L;
     QList<Kopete::Account*> kAccounts = Kopete::AccountManager::self()->
         accounts(TelepathyProtocolInternal::protocolInternal()->protocol());
+    TelepathyAccount *tpAccount = 0L;
 
     foreach (Kopete::Account *kAccount, kAccounts) {
-             TelepathyAccount *tpAccount = qobject_cast<TelepathyAccount*>(kAccount);
+        TelepathyAccount *maybeTpAccount = qobject_cast<TelepathyAccount*>(kAccount);
 
-        if (!tpAccount)
+        if (!maybeTpAccount)
             continue;
 
-        if (tpAccount->account()->uniqueIdentifier() != account->uniqueIdentifier())
+        if (maybeTpAccount->account()->uniqueIdentifier() == account->uniqueIdentifier()) {
+            tpAccount = maybeTpAccount;
+            break;
+        }
+    }
+
+    if (!tpAccount) {
+        kDebug() << "Failed to find the corresponding account!";
+        return 0L;
+    }
+
+    // We have the same account.
+    QHash<QString, Kopete::Contact*> contacts = tpAccount->contacts();
+    TelepathyContact *tpContact = 0L;
+
+    for (QHash<QString, Kopete::Contact *>::const_iterator i  = contacts.constBegin();
+                                                           i != contacts.constEnd();
+                                                           ++i) {
+        // Check its a tp contact
+        TelepathyContact *contact = qobject_cast<TelepathyContact*>(i.value());
+
+        if (!contact) {
+            kWarning() << "Not a TelepathyContact";
             continue;
-
-        // We have the same account.
-        QHash<QString, Kopete::Contact*> contacts = tpAccount->contacts();
-
-        QHash<QString, Kopete::Contact*>::const_iterator contactIterator =
-            contacts.constBegin();
-
-        while (contactIterator != contacts.constEnd()) {
-
-            // Check its a tp contact
-            TelepathyContact *contact = qobject_cast<TelepathyContact*>(
-                    contactIterator.value());
-
-            if (!contact) {
-                kWarning() << "Not a TelepathyContact";
-                ++contactIterator;
-                continue;
-            }
-
-            // If we have any invalid contacts in contactslist.xml that
-            // don't exist in the tp roster, we will have a null
-            // internalContact(), so skip over them here to avoid a crash.
-            if (!contact->internalContact()) {
-                kWarning() << "Skipping over contact in Kopete contact \
-                    list which is not in telepathy roster.";
-                ++contactIterator;
-                continue;
-            }
-
-            // FIXME: String ID comparison is WRONG!
-            if (contact->internalContact()->id() == contactId) {
-                kDebug() << "Found the remote contact.";
-                tpContact = contact;
-                break;
-            }
-
-            ++contactIterator;
         }
 
+        // FIXME: String ID comparison is WRONG!
+        if (contact->contactId() == contactId) {
+            kDebug() << "Found the remote contact.";
+            tpContact = contact;
+            break;
+        }
+    }
+
+    if (!tpContact) {
         // No contact found == channel came from somebody we don't have in our contact list, let's
         // create a temporary contact.
 
         Kopete::MetaContact *metaContact = new Kopete::MetaContact();
         metaContact->setTemporary(true);
-        tpAccount->addContact(contactId, metaContact);
 
-        tpContact = qobject_cast<TelepathyContact *>(tpAccount->contacts()[contactId]);
-
-        break;
+        if (tpAccount->addContact(contactId, metaContact))
+            tpContact = qobject_cast<TelepathyContact *>(tpAccount->contacts()[contactId]);
     }
 
     return tpContact;
