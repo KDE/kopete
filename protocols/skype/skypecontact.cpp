@@ -432,6 +432,9 @@ void SkypeContact::deleteContact() {
 void SkypeContact::sync(unsigned int changed) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
+	if ( ! account()->isConnected() )
+		return;
+
 	if ( changed & Kopete::Contact::MovedBetweenGroup ) {
 
 		d->account->registerContact(contactId());
