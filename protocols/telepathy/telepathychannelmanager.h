@@ -44,9 +44,9 @@ private:
     TelepathyChannelManager(QObject *parent = 0);
     static TelepathyChannelManager *s_self;
 
-    void handleTextChannel(Tp::ChannelPtr channel,
+    void handleTextChannel(Tp::ChannelPtr channel, TelepathyContact *contact,
                            TelepathyClientHandler::HandleChannelsData *data);
-    void handleFileTransferChannel(Tp::ChannelPtr channel,
+    void handleFileTransferChannel(Tp::ChannelPtr channel, TelepathyContact *contact,
                                    TelepathyClientHandler::HandleChannelsData *data);
 
     TelepathyContact *getTpContact(Tp::AccountPtr account,

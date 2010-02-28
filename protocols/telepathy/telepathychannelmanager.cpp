@@ -95,30 +95,47 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
     // Loop through all the channels that are available in this
     // batch to be handled.
     foreach (const Tp::ChannelPtr channel, data->channels) {
-
         QVariantMap properties = channel->immutableProperties();
+
+        QString contactId;
+        if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"].toBool())
+            contactId = properties[TELEPATHY_INTERFACE_CHANNEL ".TargetID"].toString();
+        else
+            contactId = properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString();
+
+        TelepathyContact *contact = getTpContact(data->account, contactId);
+
+        if (!contact) {
+            kDebug() << "Failed to get the contact, deleted account?";
+            data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
+                    "failed to get internal contact object");
+            delete data;
+            return;
+        }
+
+        // TODO: build the TP contact if not already present, and dispatch to handle*Channel only
+        // when that's finished
 
         // Check the channel type
         if (properties[TELEPATHY_INTERFACE_CHANNEL ".ChannelType"] ==
             TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT) {
-
             kDebug() << "Handling:" << TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT;
-            handleTextChannel(channel, data);
+            handleTextChannel(channel, contact, data);
         }
         else if (properties[TELEPATHY_INTERFACE_CHANNEL ".ChannelType"] ==
                  TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER) {
-
             kDebug() << "Handling:" << TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER;
-            handleFileTransferChannel(channel, data);
+            handleFileTransferChannel(channel, contact, data);
         }
     }
 
     delete data;
 
-    kDebug() << "handleCHannels finished.";
+    kDebug() << "handleChannels() finished.";
 }
 
 void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
+                                                TelepathyContact *contact,
                                                 TelepathyClientHandler::HandleChannelsData *data)
 {
     kDebug();
@@ -132,17 +149,6 @@ void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
     // program, or if it was initiated by the contact at the other end.
     if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"] == false) {
         kDebug() << "Text Channel initiated by remote contact.";
-
-        // Get KopeteContact
-        TelepathyContact *contact = getTpContact(data->account,
-                properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString());
-
-        if (!contact) {
-            kDebug() << "Failed to get the contact, deleted account?";
-            data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
-                    "failed to get internal contact object");
-            return;
-        }
 
         Kopete::ContactPtrList chatContacts;
         chatContacts << contact;
@@ -197,46 +203,23 @@ void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
 }
 
 void TelepathyChannelManager::handleFileTransferChannel(Tp::ChannelPtr channel,
+                                                        TelepathyContact *contact,
                                                         TelepathyClientHandler::HandleChannelsData *data)
 {
     kDebug();
 
     QVariantMap properties = channel->immutableProperties();
 
-    // Check to see if this channel satisfies a request that was made by this
-    // program, or if it was initiated by the contact at the other end.
-    if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"] == false) {
-        kDebug() << "Incoming file transfer channel.";
-
-        TelepathyContact *contact = getTpContact(data->account,
-                properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString());
-
-        if (!contact) {
-            kDebug() << "Failed to get the contact, deleted account?";
-            data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
-                    "failed to get internal contact object");
-            return;
-        }
-
-        (void *) new TelepathyFileTransfer(channel, contact);
-    }
-    else {
-        kDebug() << "Outgoing file transfer channel.";
-
-        TelepathyContact *contact = getTpContact(data->account,
-                properties[TELEPATHY_INTERFACE_CHANNEL ".TargetID"].toString());
-
-        if (!contact) {
-            kDebug() << "Failed to get the contact, deleted account?";
-            data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
-                    "failed to get internal contact object");
-            return;
-        }
+    if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"].toBool()) {
+        kDebug() << "Outgoing";
 
         QString fileName =
             properties[TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER ".Filename"].toString();
 
         (void *) new TelepathyFileTransfer(channel, contact, fileName);
+    } else {
+        kDebug() << "Incoming";
+        (void *) new TelepathyFileTransfer(channel, contact);
     }
 
     data->context->setFinished();
