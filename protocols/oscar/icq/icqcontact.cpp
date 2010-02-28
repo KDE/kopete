@@ -646,7 +646,7 @@ void ICQContact::storeUserInfoDialog()
 	QString alias = m_infoWidget->getAlias();
 	if ( alias.isEmpty() )
 		requestShortInfoDelayed( 5000 );
-	else if ( nickName() == contactId() )
+	else
 		mAccount->engine()->changeContactAlias( contactId(), alias );
 }
 
