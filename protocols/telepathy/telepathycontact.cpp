@@ -40,6 +40,7 @@
 #include <TelepathyQt4/Contact>
 #include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/Connection>
+#include <TelepathyQt4/PendingContacts>
 
 #include <QtCore/QPointer>
 
@@ -47,13 +48,14 @@ class TelepathyContact::TelepathyContactPrivate
 {
 public:
     TelepathyContactPrivate()
-    : sync(true)
+    : sync(true), fetchingContact(false)
     {
     }
 
     Tp::ContactPtr internalContact;
     QPointer<Kopete::ChatSession> currentChatSession;
     bool sync;
+    bool fetchingContact;
 };
 
 TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &contactId,
@@ -266,6 +268,42 @@ void TelepathyContact::setInternalContact(Tp::ContactPtr contact)
                         const QByteArray&, const QString&)));
 }
 
+void TelepathyContact::fetchInternalContact()
+{
+    if (d->fetchingContact) {
+        kDebug() << "Internal contact fetch already in progress, ignoring";
+        return;
+    }
+
+    if (d->internalContact) {
+        kDebug() << "Already have internal contact";
+        QMetaObject::invokeMethod(this, "internalContactFetched", Qt::QueuedConnection, Q_ARG(bool, true));
+        return;
+    }
+
+    Tp::AccountPtr tpAccount = static_cast<TelepathyAccount *>(account())->account();
+
+    if (!tpAccount || !tpAccount->connection() || !tpAccount->connection()->isReady()) {
+        kDebug() << "There is no ready connection for this contact, aborting";
+        QMetaObject::invokeMethod(this, "internalContactFetched", Qt::QueuedConnection, Q_ARG(bool, false));
+        return;
+    }
+
+    d->fetchingContact = true;
+
+    Tp::ContactManager *contactManager = tpAccount->connection()->contactManager();
+
+    QSet<Tp::Contact::Feature> features;
+    features << Tp::Contact::FeatureAlias
+             << Tp::Contact::FeatureAvatarToken
+             << Tp::Contact::FeatureSimplePresence;
+
+    connect(contactManager->contactsForIdentifiers(QStringList() << contactId(), features),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            this,
+            SLOT(onContactFetched(Tp::PendingOperation*)));
+}
+
 QString TelepathyContact::storedAvatarToken() const
 {
     return property(TelepathyProtocolInternal::protocolInternal()->
@@ -374,6 +412,22 @@ void TelepathyContact::onBlockStatusChanged(bool blocked)
 
     // TODO: Implement me!
 
+}
+
+void TelepathyContact::onContactFetched(Tp::PendingOperation *pending)
+{
+    Tp::PendingContacts *contacts = qobject_cast<Tp::PendingContacts*>(pending);
+
+    d->fetchingContact = false;
+
+    if (contacts->isError() || contacts->contacts().isEmpty()) {
+        kDebug() << "Getting contact failed:" << pending->errorName() << pending->errorMessage();
+        emit internalContactFetched(false);
+        return;
+    }
+
+    setInternalContact(contacts->contacts()[0]);
+    emit internalContactFetched(true);
 }
 
 Tp::ContactPtr TelepathyContact::internalContact()

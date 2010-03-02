@@ -27,6 +27,7 @@
 #include <kopetechatsession.h>
 
 #include <TelepathyQt4/Contact>
+#include <TelepathyQt4/PendingOperation>
 
 namespace Kopete
 {
@@ -57,6 +58,7 @@ public:
                           uint fileSize = 0L);
 
     void setInternalContact(Tp::ContactPtr contact);
+    void fetchInternalContact();
     Tp::ContactPtr internalContact();
 
     QString storedAvatarToken() const;
@@ -64,6 +66,9 @@ public:
 
 public Q_SLOTS:
     virtual void deleteContact();
+
+Q_SIGNALS:
+    void internalContactFetched(bool successful);
 
 private slots:
     void onAliasChanged(const QString &);
@@ -73,6 +78,7 @@ private slots:
     void onSubscriptionStateChanged(Tp::Contact::PresenceState);
     void onPublishStateChanged(Tp::Contact::PresenceState);
     void onBlockStatusChanged(bool);
+    void onContactFetched(Tp::PendingOperation*);
 
 private:
     void serverToLocalSync();
