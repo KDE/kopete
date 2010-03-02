@@ -93,7 +93,7 @@ private slots:
     void slotSetAlias();
     void slotChangeAvatar();
 
-    void onPendingContactsForAddingReady(Tp::PendingOperation *op);
+    void onInternalContactFetchedForAdding(bool success);
     void onContactAdded(Tp::PendingOperation *op);
     void onContactDeleteRemoveSubscriptionFinished(Tp::PendingOperation *op);
     void onContactDeleteRemovePublicationFinished(Tp::PendingOperation *op);

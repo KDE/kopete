@@ -954,40 +954,37 @@ void TelepathyAccount::addNewContact(const QString &id)
         return;
     }
 
-    Tp::ContactManager *contactManager = connection->contactManager();
-    QSet<Tp::Contact::Feature> features;
-
-    features << Tp::Contact::FeatureAlias
-             << Tp::Contact::FeatureAvatarToken
-             << Tp::Contact::FeatureSimplePresence;
-
-    Tp::PendingOperation *op = contactManager->contactsForIdentifiers(QStringList() << id, features);
-
-    QObject::connect(op,
-            SIGNAL(finished(Tp::PendingOperation*)), this,
-            SLOT(onPendingContactsForAddingReady(Tp::PendingOperation*)));
-}
-
-void TelepathyAccount::onPendingContactsForAddingReady(Tp::PendingOperation *op)
-{
-    kDebug();
-    Tp::PendingContacts *pendingContacts = qobject_cast<Tp::PendingContacts*>(op);
-    Tp::ContactPtr contact = pendingContacts->contacts().at(0);
-
-    if (!contact) {
-        kDebug() << "Failed to retrieve contact:" << pendingContacts->errorName() << pendingContacts->errorMessage();
+    if (!contacts().contains(id)) {
+        kWarning() << "The contact must be created first";
         return;
     }
 
-    Tp::PendingOperation *opadd = contact->manager()->requestPresenceSubscription(pendingContacts->contacts());
-    QObject::connect(opadd, SIGNAL(finished(Tp::PendingOperation*)),
-                     this, SLOT(onContactAdded(Tp::PendingOperation*)));
+    TelepathyContact *tpContact = static_cast<TelepathyContact *>(contacts()[id]);
+    QObject::connect(tpContact, SIGNAL(internalContactFetched(bool)),
+            this, SLOT(onInternalContactFetchedForAdding(bool)));
+    tpContact->fetchInternalContact();
+}
 
-    TelepathyContact *tpContact =
-        static_cast<TelepathyContact *>(contacts()[pendingContacts->identifiers().first()]);
+void TelepathyAccount::onInternalContactFetchedForAdding(bool success)
+{
+    TelepathyContact *tpContact = qobject_cast<TelepathyContact*>(sender());
 
-    if (tpContact && !tpContact->internalContact())
-        tpContact->setInternalContact(contact);
+    kDebug();
+
+    if (!success) {
+        kDebug() << "Failed to fetch internal contact, assuming requested ID is illegal";
+        // TODO report to the user
+        return;
+    }
+
+    Tp::ContactManager *manager = tpContact->internalContact()->manager();
+    // TODO don't fire the contact list syncing from here, instead implement listening to the
+    // contact's publish/subscribe stateChanged events so we can report messages, reasons etc to the
+    // user.
+    QObject::connect(manager->requestPresenceSubscription(QList<Tp::ContactPtr>() << tpContact->internalContact()),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            this,
+            SLOT(onContactAdded(Tp::PendingOperation*)));
 }
 
 void TelepathyAccount::onContactAdded(Tp::PendingOperation *op)
