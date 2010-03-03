@@ -40,6 +40,14 @@
 #include <TelepathyQt4/PendingReady>
 #include <TelepathyQt4/TextChannel>
 
+#include <QSharedPointer>
+
+struct TelepathyChannelManager::ChannelHandlingContext
+{
+    Tp::ChannelPtr channel;
+    TelepathyClientHandler::HandleChannelsData *data;
+};
+
 TelepathyChannelManager* TelepathyChannelManager::s_self = 0;
 
 TelepathyChannelManager::TelepathyChannelManager(QObject *parent)
@@ -67,6 +75,17 @@ TelepathyChannelManager::~TelepathyChannelManager()
     // Delete the DBus adaptors
     delete m_clientHandler;
 
+    // Delete any pending handling contexts
+    foreach (QList<ChannelHandlingContext> contactContexts, contexts.values()) {
+        for (QList<ChannelHandlingContext>::iterator context = contactContexts.begin();
+                context != contactContexts.end(); ++context) {
+            context->data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
+                    "Channel manager destroyed before handling completed");
+            delete context->data;
+            context->data = 0;
+        }
+    }
+
     // Delete the singleton instance of this class
     s_self = 0;
 }
@@ -92,46 +111,88 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
     // struct containing shared pointers for all the relevant data we need
     // to handle the channel.
 
-    // Loop through all the channels that are available in this
-    // batch to be handled.
-    foreach (const Tp::ChannelPtr channel, data->channels) {
-        QVariantMap properties = channel->immutableProperties();
-
-        QString contactId;
-        if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"].toBool())
-            contactId = properties[TELEPATHY_INTERFACE_CHANNEL ".TargetID"].toString();
-        else
-            contactId = properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString();
-
-        TelepathyContact *contact = getTpContact(data->account, contactId);
-
-        if (!contact) {
-            kDebug() << "Failed to get the contact, deleted account?";
-            data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
-                    "failed to get internal contact object");
-            delete data;
-            return;
-        }
-
-        // TODO: build the TP contact if not already present, and dispatch to handle*Channel only
-        // when that's finished
-
-        // Check the channel type
-        if (properties[TELEPATHY_INTERFACE_CHANNEL ".ChannelType"] ==
-            TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT) {
-            kDebug() << "Handling:" << TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT;
-            handleTextChannel(channel, contact, data);
-        }
-        else if (properties[TELEPATHY_INTERFACE_CHANNEL ".ChannelType"] ==
-                 TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER) {
-            kDebug() << "Handling:" << TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER;
-            handleFileTransferChannel(channel, contact, data);
-        }
+    if (data->channels.size() != 1) {
+        // With the previous code, this was apparently supported (looping through the channels and
+        // handling them one by one), but actually it wasn't - if there had been multiple
+        // channels, data->context->setFinished() would've been called multiple times, etc.
+        kDebug() << "Got multiple channels to handle - currently not supported";
+        data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_IMPLEMENTED,
+                "Handling multiple channels is currently not implemented");
+        return;
     }
 
-    delete data;
+    Tp::ChannelPtr channel = data->channels[0];
+    QVariantMap properties = channel->immutableProperties();
 
-    kDebug() << "handleChannels() finished.";
+    QString contactId;
+    if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"].toBool())
+        contactId = properties[TELEPATHY_INTERFACE_CHANNEL ".TargetID"].toString();
+    else
+        contactId = properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString();
+
+    TelepathyContact *contact = getTpContact(data->account, contactId);
+
+    if (!contact) {
+        kDebug() << "Failed to get the contact, deleted account?";
+        data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
+                "failed to get internal contact object");
+        delete data;
+        return;
+    }
+
+    if (!contexts.contains(contact)) {
+        // -> Not currently fetching the internal contact
+        QObject::connect(contact, SIGNAL(internalContactFetched(bool)),
+                this, SLOT(onInternalContactFetched(bool)));
+        contact->fetchInternalContact();
+    }
+
+    ChannelHandlingContext context = {channel, data};
+    contexts[contact].push_back(context);
+}
+
+void TelepathyChannelManager::onInternalContactFetched(bool success)
+{
+    TelepathyContact *contact = qobject_cast<TelepathyContact *>(sender());
+
+    kDebug();
+
+    if (!contexts.contains(contact)) {
+        kDebug() << "Got unexpected internalContactFetched(), ignoring";
+        return;
+    }
+
+    QList<ChannelHandlingContext> &contactContexts = contexts[contact]; 
+    for (QList<ChannelHandlingContext>::iterator context = contactContexts.begin();
+            context != contactContexts.end(); ++context) {
+        Tp::ChannelPtr channel = context->channel;
+        QVariantMap properties = channel->immutableProperties();
+
+        if (success) {
+            // Check the channel type
+            if (properties[TELEPATHY_INTERFACE_CHANNEL ".ChannelType"] ==
+                    TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT) {
+                kDebug() << "Handling:" << TELEPATHY_INTERFACE_CHANNEL_TYPE_TEXT;
+                handleTextChannel(channel, contact, context->data);
+            } else if (properties[TELEPATHY_INTERFACE_CHANNEL ".ChannelType"] ==
+                    TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER) {
+                kDebug() << "Handling:" << TELEPATHY_INTERFACE_CHANNEL_TYPE_FILE_TRANSFER;
+                handleFileTransferChannel(channel, contact, context->data);
+            }
+        } else {
+            kDebug() << "Failure";
+            context->data->context->setFinishedWithError(TELEPATHY_ERROR_NOT_AVAILABLE,
+                    "failed to fetch internal contact");
+        }
+
+        delete context->data;
+    }
+
+    QObject::disconnect(contact, SIGNAL(onInternalContactFetched(bool)),
+            this, SLOT(onInternalContactFetched(bool)));
+    contexts.remove(contact);
+
+    kDebug() << "onInternalContactFetched() finished.";
 }
 
 void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,

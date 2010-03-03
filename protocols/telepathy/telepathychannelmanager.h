@@ -23,7 +23,9 @@
 
 #include <telepathyclienthandler.h>
 
+#include <QtCore/QHash>
 #include <QtCore/QObject>
+#include <QList>
 
 #include <TelepathyQt4/ClientRegistrar>
 
@@ -40,6 +42,9 @@ public:
 
     void handleChannels(TelepathyClientHandler::HandleChannelsData *data);
 
+private Q_SLOTS:
+    void onInternalContactFetched(bool success);
+
 private:
     TelepathyChannelManager(QObject *parent = 0);
     static TelepathyChannelManager *s_self;
@@ -53,6 +58,9 @@ private:
                                    const QString &contactId);
     TelepathyClientHandler *m_clientHandler;
     Tp::ClientRegistrarPtr m_clientRegistrar;
+
+    struct ChannelHandlingContext;
+    QHash<TelepathyContact *, QList<ChannelHandlingContext> > contexts;
 };
 
 
