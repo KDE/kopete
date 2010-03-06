@@ -228,6 +228,15 @@ void TelepathyContact::setInternalContact(Tp::ContactPtr contact)
 {
     kDebug();
 
+    if (d->internalContact) {
+        Tp::Client::ConnectionInterfaceAvatarsInterface *avatarIface =
+            d->internalContact->manager()->connection()->avatarsInterface();
+
+        if (avatarIface)
+            avatarIface->disconnect(this);
+        d->internalContact->disconnect(this);
+    }
+
     d->internalContact = contact;
 
     setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->telepathyStatusToKopete(
