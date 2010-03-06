@@ -985,6 +985,11 @@ void TelepathyAccount::onInternalContactFetchedForAdding(bool success)
             SIGNAL(finished(Tp::PendingOperation*)),
             this,
             SLOT(onContactAdded(Tp::PendingOperation*)));
+
+    // This is one-off - we don't want to be invoked if fetchInternalContact is called from
+    // somewhere else
+    QObject::disconnect(tpContact, SIGNAL(internalContactFetched(bool)),
+            this, SLOT(onInternalContactFetchedForAdding(bool)));
 }
 
 void TelepathyAccount::onContactAdded(Tp::PendingOperation *op)
@@ -993,8 +998,6 @@ void TelepathyAccount::onContactAdded(Tp::PendingOperation *op)
 
     // FIXME: Handle the case that the operation didn't finish successfully.
     Q_UNUSED(op);
-
-    fetchContactList();
 }
 
 void TelepathyAccount::deleteContact(Tp::ContactPtr contact)
