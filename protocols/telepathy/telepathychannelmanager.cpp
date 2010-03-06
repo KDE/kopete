@@ -188,7 +188,7 @@ void TelepathyChannelManager::onInternalContactFetched(bool success)
         delete context->data;
     }
 
-    QObject::disconnect(contact, SIGNAL(onInternalContactFetched(bool)),
+    QObject::disconnect(contact, SIGNAL(internalContactFetched(bool)),
             this, SLOT(onInternalContactFetched(bool)));
     contexts.remove(contact);
 
