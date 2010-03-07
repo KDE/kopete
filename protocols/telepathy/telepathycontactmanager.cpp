@@ -1,7 +1,7 @@
 /*
  * This file is part of Kopete
  *
- * Copyright (C) 2009 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -309,8 +309,7 @@ void TelepathyContactManager::onRequestingContactsUpgraded(Tp::PendingOperation 
         }
 
         Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
-     //   actions |= Kopete::AddedInfoEvent::BlockAction;
-        // FIXME: Add blocking support, then add the block action above.
+        actions |= Kopete::AddedInfoEvent::BlockAction;
 
         if (!kMetaContact || kMetaContact->isTemporary()) {
             actions |= Kopete::AddedInfoEvent::AddAction;
@@ -347,6 +346,7 @@ void TelepathyContactManager::onAddedInfoEventActionActivated(uint actionId)
     } else if (actionId == Kopete::AddedInfoEvent::AddContactAction) {
         // Add the contact
         Kopete::MetaContact *parentContact = event->addContact();
+        d->telepathyAccount->addNewContact(event->contactId());
 
         if (!parentContact)
             return;
@@ -356,7 +356,8 @@ void TelepathyContactManager::onAddedInfoEventActionActivated(uint actionId)
             groupNames += group->displayName();
 
         // TODO: Add to those groups too
-        d->telepathyAccount->addNewContact(event->contactId());
+    } else if (actionId == Kopete::AddedInfoEvent::BlockAction) {
+        event->contact()->removePresencePublication();
     } else {
         kWarning() << "Unknown button pressed.";
     }

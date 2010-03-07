@@ -1,7 +1,7 @@
 /*
  * This file is part of Kopete
  *
- * Copyright (C) 2009 Collabora Ltd. <info@collabora.co.uk>
+ * Copyright (C) 2009-2010 Collabora Ltd. <info@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@
 #include <KDebug>
 #include <KFileDialog>
 #include <KLocale>
+#include <KMessageBox>
 
 #include <kopetechatsession.h>
 #include <kopetechatsessionmanager.h>
@@ -36,6 +37,7 @@
 #include <kopeteavatarmanager.h>
 #include <kopetecontactlist.h>
 #include <kopetegroup.h>
+#include <kopeteuiglobal.h>
 
 #include <TelepathyQt4/Contact>
 #include <TelepathyQt4/ContactManager>
@@ -399,10 +401,31 @@ void TelepathyContact::onSubscriptionStateChanged(Tp::Contact::PresenceState sta
 {
     kDebug();
 
-    Q_UNUSED(state);
+    if (state == Tp::Contact::PresenceStateNo) {
+        // Contact refused to authorize / removed us
+        if (KMessageBox::warningYesNo(Kopete::UI::Global::mainWidget(),
+                    i18n(
+                        "The contact %1 disallowed %2 from receiving his/her presence. "
+                        "This account will no longer be able to view his/her online status. "
+                        "Do you want to delete the contact?",
+                        contactId(), account()->myself()->contactId()),
+                    i18n("Notification"), KStandardGuiItem::del(), KGuiItem(i18n("Keep")))
+                == KMessageBox::Yes) {
+            deleteContact();
 
-    // TODO: Implement me!
+            if (!metaContact()->isTemporary()) {
+                metaContact()->removeContact(this);
+                if (metaContact()->contacts().isEmpty())
+                    Kopete::ContactList::self()->removeMetaContact(metaContact());
 
+                deleteLater();
+            }
+        } else {
+            // We don't know anymore!
+            setOnlineStatus(Kopete::OnlineStatus::Unknown);
+            setStatusMessage(Kopete::StatusMessage());
+        }
+    }
 }
 
 void TelepathyContact::onPublishStateChanged(Tp::Contact::PresenceState state)
