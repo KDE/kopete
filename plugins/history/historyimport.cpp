@@ -1,9 +1,9 @@
 /*
     historyimport.cpp
 
-    Copyright (c) 2008 by Timo Schluessler
+    Copyright (c) 2010 by Timo Schluessler
 
-    Kopete    (c) 2008 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2010 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -71,7 +71,7 @@ HistoryImport::HistoryImport(QWidget *parent)
 
 	// create details widget
 	QWidget *details = new QWidget(w);
-	QVBoxLayout *dL = new QVBoxLayout(w);
+	QVBoxLayout *dL = new QVBoxLayout(details);
 
 	QTextEdit *detailsEdit = new QTextEdit(details);
 	detailsEdit->setReadOnly(true);
@@ -79,7 +79,6 @@ HistoryImport::HistoryImport(QWidget *parent)
 	
 	dL->addWidget(selectByHand);
 	dL->addWidget(detailsEdit);
-	details->setLayout(dL);
 
 	setDetailsWidget(details);
 	detailsCursor = QTextCursor(detailsEdit->document());
@@ -489,10 +488,9 @@ void HistoryImport::parsePidginTxt(QFile &file, struct Log *log, QDate date)
 
 void HistoryImport::parsePidginXml(QFile &file, struct Log * log, QDate date)
 {
-	bool incoming = false, inMessage = false, textComes = false;
-	QString messageText, status;
-	QTime time;
-	QDateTime dateTime;
+	bool inMessage = false, textComes = false;
+	int lineNumber = -1;
+	struct Message msg;
 
 	// unfortunately pidgin doesn't write <... /> for the <meta> tag
 	QByteArray data = file.readAll();
@@ -507,40 +505,38 @@ void HistoryImport::parsePidginXml(QFile &file, struct Log * log, QDate date)
 	while (!reader.atEnd()) {
 		reader.readNext();
 
-		if (reader.isStartElement() && reader.name() == "font" && !reader.attributes().value("color").isEmpty()) {
-			if (reader.attributes().value("color") == "#A82F2F")
-				incoming = true;
-			else
-				incoming = false;
-
-			while (reader.readNext() != QXmlStreamReader::Characters) { };
-
-			dateTime = extractTime(reader.text().toString(), date);
-			inMessage = true;
-		}
-		if (inMessage && reader.isStartElement() && reader.name() == "b") {
-			reader.readNext();
-			status = reader.text().toString();
-			textComes = true;
-		}
-		else if (textComes && reader.isCharacters()) {
-			messageText += reader.text().toString();
-		}
-		else if (reader.isStartElement() && reader.name() == "br" && !messageText.isEmpty()) {
-			messageText.remove(0, 1); // remove the leading blank
-		
-			struct Message message;
-			message.incoming = incoming;
-			message.text = messageText;
-			message.timestamp = dateTime;
-			log->messages.append(message);
-
-			messageText.clear();
+		// pidgin writes one chat-message per line. so if we come to the next line, we can finish and save the current message
+		if (inMessage && reader.lineNumber() != lineNumber) {
+			if (!msg.text.isEmpty()) {
+				msg.text = msg.text.trimmed(); // trimm especially unwished newlines and spaces
+				log->messages.append(msg); // save messge for later import via HistoryLogger (see HistoryImport::save())
+			}
 			textComes = false;
 			inMessage = false;
 		}
-			 
+		// when there is only the color attribute for the font-tag, this must be the beginning of a new message
+		if (!inMessage && reader.isStartElement() && reader.name() == "font" && reader.attributes().size() == 1 && reader.attributes().first().name() == "color") {
+			if (reader.attributes().value("color") == "#A82F2F")
+				msg.incoming = true;
+			else
+				msg.incoming = false;
+
+			while (reader.readNext() != QXmlStreamReader::Characters) { }; // skip tags
+			msg.timestamp = extractTime(reader.text().toString(), date);
+			msg.text.clear();
+			lineNumber = reader.lineNumber();
+			inMessage = true;
+		}
+		else if (inMessage && !textComes && reader.isStartElement() && reader.name() == "b") {
+			reader.readNext(); // this is the nickname, which is followed by the messageText
+			textComes = true;
+		}
+		else if (textComes && reader.isCharacters())
+			msg.text += reader.text().toString(); // append text
+		else if (textComes && reader.isStartElement() && reader.name() == "br")
+			msg.text += '\n'; // append newline
 	}
+
 	if (reader.hasError()) {
 		// we ignore error 4: premature end of document
 		if (reader.error() != 4) {
@@ -553,6 +549,9 @@ void HistoryImport::parsePidginXml(QFile &file, struct Log * log, QDate date)
 			detailsCursor.insertText(i18n("\t%1", QString(data.mid(pos, data.indexOf('\n', pos) - pos))));
 			detailsCursor.insertBlock();
 		}
+	} else if (inMessage) { // an unsaved message is still pending (this doesn't happen at least for my pidgin-logs - handle it anyway)
+		msg.text = msg.text.trimmed(); // trimm especially unwished newlines and spaces
+		log->messages.append(msg); // save messge for later import via HistoryLogger (see HistoryImport::save())
 	}
 }
 
