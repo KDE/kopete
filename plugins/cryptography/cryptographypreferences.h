@@ -29,6 +29,8 @@
  * @author Charles Connell
  */
 
+class QCheckBox;
+
 namespace Kleo { class EncryptionKeyRequester; }
 
 class CryptographyPreferences : public KCModule
@@ -45,6 +47,7 @@ class CryptographyPreferences : public KCModule
 
 	private:
 		Kleo::EncryptionKeyRequester * key;
+		QCheckBox * checkBox;
 };
 
 #endif

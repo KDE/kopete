@@ -12,5 +12,9 @@
 			<label>User's private key fingerprint.</label>
 			<default></default>
 		</entry>
+		<entry key="clearSignMode" type="Bool">
+			<label>Sign messages in clearsign mode.</label>
+			<default>false</default>
+		</entry>
 	</group>
 </kcfg>

@@ -51,17 +51,22 @@ CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVaria
 	QLabel * label = new QLabel ( i18nc ( "@info", "<para>Before you can sign messages or receive encrypted ones, you must select a private key for yourself.</para><para>Before you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list and choosing \"Select Public Key\".</para>"), this );
 	label->setWordWrap ( true );
 
+	checkBox = new QCheckBox ( i18n ("Sign messages in clearsign mode") );
+	checkBox->setCheckState ( Qt::Unchecked );
+
 	keyLabel->setBuddy( key );
 	keyLayout->addWidget ( keyLabel );
 	keyLayout->addWidget ( key );
 	l->addLayout ( keyLayout );
 	l->addWidget ( label );
+	l->addWidget ( checkBox );
 	l->addStretch ();
 	l->setSpacing ( 12 );
 
 
 	connect ( key->dialogButton(), SIGNAL ( clicked() ), this, SLOT ( changed() ) );
 	connect ( key->eraseButton(), SIGNAL ( clicked() ), this, SLOT ( changed() ) );
+	connect ( checkBox, SIGNAL ( stateChanged( int ) ), this, SLOT ( changed() ) );
 
 	load();
 }
@@ -73,6 +78,7 @@ CryptographyPreferences::~CryptographyPreferences()
 void CryptographyPreferences::load()
 {
 	key->setFingerprint( CryptographySettings::privateKeyFingerprint() );
+	checkBox->setCheckState ( CryptographySettings::clearSignMode() ? Qt::Checked : Qt::Unchecked );
 
 	KCModule::load();
 	emit changed ( false );
@@ -81,6 +87,7 @@ void CryptographyPreferences::load()
 void CryptographyPreferences::save()
 {
 	CryptographySettings::setPrivateKeyFingerprint ( key->fingerprint() );
+	CryptographySettings::setClearSignMode ( checkBox->checkState() == Qt::Checked ? true : false );
 
 	CryptographySettings::self()->writeConfig();
 

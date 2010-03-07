@@ -132,8 +132,13 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::MessageEvent *messageEven
 	Kopete::Message msg = messageEvent->message();
 	QString body = msg.plainBody();
 
-	if ( !body.startsWith ( QString::fromLatin1 ( "-----BEGIN PGP MESSAGE----" ) )
-	        || !body.contains ( QString::fromLatin1 ( "-----END PGP MESSAGE----" ) ) )
+	if ( ! ( (
+	        body.startsWith ( QString::fromLatin1 ( "-----BEGIN PGP MESSAGE----" ) )
+	        || body.startsWith ( QString::fromLatin1 ( "-----BEGIN PGP SIGNED MESSAGE-----" ) )
+	     ) && (
+	        body.contains ( QString::fromLatin1 ( "-----END PGP MESSAGE----" ) )
+	        || body.contains ( QString::fromLatin1 ( "-----END PGP SIGNATURE-----" ) )
+         ) ) )
 		return;
 
 	kDebug ( 14303 ) << "processing " << body;
@@ -322,7 +327,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	else if ( signing )
 	{
 		Kleo::SignJob * job = proto->signJob ( true/*armor*/ );
-		job->exec ( signingKeys, msg.plainBody().toLatin1(), GpgME::NormalSignatureMode, result );
+		job->exec ( signingKeys, msg.plainBody().toLatin1(), CryptographySettings::clearSignMode() ? GpgME::Clearsigned : GpgME::NormalSignatureMode, result );
 	}
 	// encrypt message body to all recipients
 	else if ( encrypting )
