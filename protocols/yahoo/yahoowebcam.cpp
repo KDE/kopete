@@ -22,7 +22,9 @@
 #include "yahoowebcam.h"
 #include "yahooaccount.h"
 #include "yahoowebcamdialog.h"
+#ifndef VIDEOSUPPORT_DISABLED
 #include "avdevice/videodevicepool.h"
+#endif
 
 
 YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
@@ -47,7 +49,7 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 
 	theDialog = new YahooWebcamDialog( "YahooWebcam" );
 	connect( theDialog, SIGNAL(closingWebcamDialog()), this, SLOT(webcamDialogClosing()) );
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	m_devicePool = Kopete::AV::VideoDevicePool::self();
 	m_devicePool->open();
 	m_devicePool->setSize(320, 240);
@@ -80,7 +82,7 @@ void YahooWebcam::webcamDialogClosing()
 	m_sendTimer->stop();
 	theDialog->delayedDestruct();
 	emit webcamClosing();
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	m_devicePool->stopCapturing(); 
 	m_devicePool->close();
 #endif
@@ -88,7 +90,7 @@ void YahooWebcam::webcamDialogClosing()
 
 void YahooWebcam::updateImage()
 {
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	m_devicePool->getFrame();
 	m_devicePool->getImage(m_img);
 	theDialog->newImage( QPixmap::fromImage(*m_img) );
@@ -99,7 +101,7 @@ void YahooWebcam::sendImage()
 {
 	kDebug(YAHOO_GEN_DEBUG) ;
 
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	m_devicePool->getFrame();
 	m_devicePool->getImage(m_img);
 #endif

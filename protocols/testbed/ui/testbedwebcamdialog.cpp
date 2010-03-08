@@ -16,7 +16,9 @@
 
 #include "testbedwebcamdialog.h"
 #include <webcamwidget.h>
+#ifndef VIDEOSUPPORT_DISABLED
 #include "avdevice/videodevicepool.h"
+#endif
 
 #include <QObject>
 #include <QWidget>
@@ -52,7 +54,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 
 	show();
 	
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
@@ -72,7 +74,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 
 TestbedWebcamDialog::~ TestbedWebcamDialog( )
 {
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	mVideoDevicePool->stopCapturing();
 	mVideoDevicePool->close();
 #endif
@@ -80,7 +82,7 @@ TestbedWebcamDialog::~ TestbedWebcamDialog( )
 
 void TestbedWebcamDialog::slotUpdateImage()
 {
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image";
 	mVideoDevicePool->getImage(&mImage);

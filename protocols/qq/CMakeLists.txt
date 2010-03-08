@@ -39,11 +39,11 @@ set(kopete_qq_PART_SRCS
 
 kde4_add_plugin(kopete_qq ${kopete_qq_PART_SRCS})
 
-if(WIN32)
+if(DISABLE_VIDEOSUPPORT)
 target_link_libraries(kopete_qq ${KDE4_KIO_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} kopete )
-else(WIN32)
+else(DISABLE_VIDEOSUPPORT)
 target_link_libraries(kopete_qq ${KDE4_KIO_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} kopete kopete_videodevice )
-endif(WIN32)
+endif(DISABLE_VIDEOSUPPORT)
 
 install(TARGETS kopete_qq DESTINATION ${PLUGIN_INSTALL_DIR} )
 

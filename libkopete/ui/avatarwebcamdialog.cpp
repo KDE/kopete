@@ -24,7 +24,7 @@
 #include <klocale.h>
 
 // Kopete includes
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 #include "avdevice/videodevicepool.h"
 #endif
 
@@ -46,7 +46,7 @@ public:
 
 	Kopete::WebcamWidget *mainWidget;
 	QTimer *m_timer;
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	Kopete::AV::VideoDevicePool *m_devicePool;
 #endif
 	QPixmap lastPixmap;
@@ -61,7 +61,7 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 	setCaption(i18n("Take a photo"));
 	setButtons(KDialog::Ok | KDialog::Cancel);
 
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	d->m_devicePool = Kopete::AV::VideoDevicePool::self();
 	d->m_devicePool->open();
 	// NB: this may fail if the device is already in use
@@ -73,7 +73,7 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 	connect( d->m_timer, SIGNAL(timeout()), this, SLOT(updateImage()));
 
 	d->mainWidget = new Kopete::WebcamWidget(this);
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	d->mainWidget->setMinimumSize(d->m_devicePool->width() + 5,
 	                              d->m_devicePool->height() + 5);
 #endif
@@ -84,7 +84,7 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 void AvatarWebcamDialog::updateImage()
 {
 	QImage image = QImage();
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	d->m_devicePool->getFrame();
 	d->m_devicePool->getImage(&image);
 #endif
@@ -99,7 +99,7 @@ QPixmap& AvatarWebcamDialog::getLastPixmap()
 
 void AvatarWebcamDialog::slotButtonClicked(int button)
 {
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	d->m_devicePool->close();
 #endif
 	KDialog::slotButtonClicked(button);

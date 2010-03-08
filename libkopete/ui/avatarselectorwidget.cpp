@@ -34,7 +34,7 @@
 #include <kpixmapregionselectordialog.h>
 
 #include "ui_avatarselectorwidget.h"
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 #include "avdevice/videodevicepool.h"
 
 using namespace Kopete::AV;
@@ -116,9 +116,7 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	d->mainWidget.buttonRemoveAvatar->setIcon( KIcon("edit-delete") );
 	d->mainWidget.buttonFromWebcam->setIcon( KIcon("camera-web") );
 
-//TODO: AVdevice only have support for Linux(kernel), should we change that?
-//If not windows, check devices
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	VideoDevicePool* devicePool = VideoDevicePool::self();
 	devicePool->scanDevices();//We've to be sure that this has been done
 	if( devicePool->size() == 0 ){

@@ -16,7 +16,9 @@
 
 #include "qqwebcamdialog.h"
 #include <webcamwidget.h>
+#ifndef VIDEOSUPPORT_DISABLED
 #include "avdevice/videodevicepool.h"
+#endif
 
 #include <qobject.h>
 #include <qwidget.h>
@@ -53,7 +55,7 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 	
 	show();
 
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
@@ -72,7 +74,7 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 
 QQWebcamDialog::~ QQWebcamDialog( )
 {
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	mVideoDevicePool->stopCapturing();
 	mVideoDevicePool->close();
 #endif
@@ -80,7 +82,7 @@ QQWebcamDialog::~ QQWebcamDialog( )
 
 void QQWebcamDialog::slotUpdateImage()
 {
-#ifndef Q_OS_WIN
+#ifndef VIDEOSUPPORT_DISABLED
 	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image";
 	mVideoDevicePool->getImage(&mImage);

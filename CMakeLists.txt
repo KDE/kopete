@@ -5,6 +5,15 @@ set(KOPETE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH ${KOPETE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} )
 
+if (WIN32)
+	set(DISABLE_VIDEOSUPPORT ON)
+else (WIN32)
+	option(DISABLE_VIDEOSUPPORT "Build Kopete without video-support" OFF)
+endif (WIN32)
+if (DISABLE_VIDEOSUPPORT)
+	add_definitions(-DVIDEOSUPPORT_DISABLED)
+endif (DISABLE_VIDEOSUPPORT)
+
 if(NOT INSIDE_KDENETWORK)
 
 	message ("We aren't inside KDENetwork, Loading KDE Macros")
@@ -100,14 +109,14 @@ macro_optional_find_package(Libgadu)
 macro_bool_to_01(LIBGADU_FOUND HAVE_LIBGADU)
 macro_log_feature(LIBGADU_FOUND "libgadu" "A library providing support for Gadu-Gadu protocol" "http://toxygen.net/libgadu/" FALSE "1.8.0" "Required for Kopete Gadu-Gadu protocol")
 
-if (NOT WIN32)
+if (NOT DISABLE_VIDEOSUPPORT)
   set (LIBV4L2_REQUIRED FALSE)
   if (CMAKE_SYSTEM_NAME MATCHES Linux)
     set (LIBV4L2_REQUIRED TRUE)
   endif (CMAKE_SYSTEM_NAME MATCHES Linux)
   find_package(LibV4L2)
   macro_log_feature(LIBV4L2_FOUND "libv4l2" "Collection of video4linux support libraries" "http://hansdegoede.livejournal.com" LIBV4L2_REQUIRED "" "Required for better webcam support")
-endif (NOT WIN32)
+endif (NOT DISABLE_VIDEOSUPPORT)
 macro_bool_to_01(LIBV4L2_FOUND HAVE_LIBV4L2)
 
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)

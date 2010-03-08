@@ -30,11 +30,11 @@ testbedaccountpreferences.ui
 kde4_add_plugin(kopete_testbed ${kopete_testbed_PART_SRCS})
 
 
-if(WIN32)
+if(DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_testbed  ${KDE4_KIO_LIBS} kopete )
-else(WIN32)
+else(DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_testbed  ${KDE4_KIO_LIBS} kopete kopete_videodevice )
-endif(WIN32)
+endif(DISABLE_VIDEOSUPPORT)
 
 install(TARGETS kopete_testbed  DESTINATION ${PLUGIN_INSTALL_DIR})
 
