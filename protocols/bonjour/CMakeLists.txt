@@ -28,11 +28,10 @@ bonjouraccountpreferences.ui
 
 kde4_add_plugin(kopete_bonjour ${kopete_bonjour_PART_SRCS})
 
-if(DISABLE_VIDEOSUPPORT)
-  target_link_libraries(kopete_bonjour ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${KDE4_KDNSSD_LIBS} kopete )
-else(DISABLE_VIDEOSUPPORT)
-  target_link_libraries(kopete_bonjour ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${KDE4_KDNSSD_LIBS} kopete kopete_videodevice )
-endif(DISABLE_VIDEOSUPPORT)
+target_link_libraries(kopete_bonjour ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${KDE4_KDNSSD_LIBS} kopete)
+if(NOT DISABLE_VIDEOSUPPORT)
+  target_link_libraries(kopete_bonjour kopete_videodevice)
+endif(NOT DISABLE_VIDEOSUPPORT)
 
 install(TARGETS kopete_bonjour  DESTINATION ${PLUGIN_INSTALL_DIR})
 

@@ -176,12 +176,9 @@ endif(BUILD_JINGLE)
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
 
+target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} ${KDE4_SOLID_LIBS} kopete iris_kopete)
 if(BUILD_JINGLE)	
-  target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES}
-	  ${KDE4_SOLID_LIBS} kopete iris_kopete ortp asound speex)
-else(BUILD_JINGLE)
-  target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES}
-	  ${KDE4_SOLID_LIBS} kopete iris_kopete)
+  target_link_libraries(kopete_jabber ortp asound speex)
 endif(BUILD_JINGLE)
 
 install(TARGETS kopete_jabber  DESTINATION ${PLUGIN_INSTALL_DIR})

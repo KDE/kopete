@@ -48,11 +48,10 @@ set(kopete_yahoo_PART_SRCS
 
 kde4_add_plugin(kopete_yahoo ${kopete_yahoo_PART_SRCS})
 
-if(DISABLE_VIDEOSUPPORT)
-  target_link_libraries(kopete_yahoo ${KDE4_KIO_LIBS} kopete kyahoo ${QT_QT3SUPPORT_LIBS})
-else(DISABLE_VIDEOSUPPORT)
-  target_link_libraries(kopete_yahoo ${KDE4_KIO_LIBS} kopete_videodevice kopete kyahoo ${QT_QT3SUPPORT_LIBS})
-endif(DISABLE_VIDEOSUPPORT)
+target_link_libraries(kopete_yahoo ${KDE4_KIO_LIBS} kopete kyahoo ${QT_QT3SUPPORT_LIBS})
+if(NOT DISABLE_VIDEOSUPPORT)
+  target_link_libraries(kopete_yahoo kopete_videodevice)
+endif(NOT DISABLE_VIDEOSUPPORT)
 
 install(TARGETS kopete_yahoo  DESTINATION ${PLUGIN_INSTALL_DIR})
 
