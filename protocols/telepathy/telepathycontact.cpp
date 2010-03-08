@@ -94,16 +94,56 @@ void TelepathyContact::serialize(QMap< QString, QString >& serializedData,
 QList<KAction *> *TelepathyContact::customContextMenuActions()
 {
     kDebug();
-    return new QList<KAction*>();
+
+    QList<KAction*> *actions = new QList<KAction*>();
+
+    if (!internalContact())
+        return actions;
+
+    struct ActionInfo {
+        KIcon icon;
+        QString text;
+        bool enabled;
+        const char *slot;
+    } infos[3] = {
+        {
+            KIcon("mail-reply-sender"),
+            i18n("(Re)request Presence Authorization"),
+            internalContact()->subscriptionState() != Tp::Contact::PresenceStateYes,
+            SLOT(requestAuthorization())
+        },
+        {
+            KIcon("mail-forward"),
+            i18n("Send Presence Authorization"),
+            internalContact()->publishState() == Tp::Contact::PresenceStateAsk,
+            SLOT(sendAuthorization()),
+        },
+        {
+            KIcon("edit-delete"),
+            i18n("Remove Presence Authorization"),
+            internalContact()->publishState() != Tp::Contact::PresenceStateNo,
+            SLOT(removeAuthorization())
+        }
+    };
+
+    for (int i = 0; i < 3; i++) {
+        KAction *action = new KAction(this);
+
+        action->setIcon(infos[i].icon);
+        action->setText(infos[i].text);
+        action->setEnabled(infos[i].enabled);
+
+        connect(action, SIGNAL(triggered(bool)), this, infos[i].slot);
+
+        actions->push_back(action);
+    }
+
+    return actions;
 }
 
-QList<KAction *> *TelepathyContact::customContextMenuActions(Kopete::ChatSession *manager)
+QList<KAction *> *TelepathyContact::customContextMenuActions(Kopete::ChatSession *)
 {
-    kDebug();
-
-    Q_UNUSED(manager);
-
-    return new QList<KAction*>();
+    return customContextMenuActions();
 }
 
 Kopete::ChatSession *TelepathyContact::manager(CanCreateFlags canCreate)
@@ -481,6 +521,42 @@ void TelepathyContact::deleteContact()
     if (d->internalContact) {
         tAccount->deleteContact(d->internalContact);
     }
+}
+
+void TelepathyContact::requestAuthorization()
+{
+    kDebug();
+
+    if (!internalContact()) {
+        kDebug() << "No internal contact, can't request authorization.";
+        return;
+    }
+
+    internalContact()->requestPresenceSubscription();
+}
+
+void TelepathyContact::sendAuthorization()
+{
+    kDebug();
+
+    if (!internalContact()) {
+        kDebug() << "No internal contact, can't send authorization.";
+        return;
+    }
+
+    internalContact()->authorizePresencePublication();
+}
+
+void TelepathyContact::removeAuthorization()
+{
+    kDebug();
+
+    if (!internalContact()) {
+        kDebug() << "No internal contact, can't remove authorization.";
+        return;
+    }
+
+    internalContact()->removePresencePublication();
 }
 
 void TelepathyContact::serverToLocalSync()

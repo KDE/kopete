@@ -66,6 +66,9 @@ public:
 
 public Q_SLOTS:
     virtual void deleteContact();
+    void requestAuthorization();
+    void sendAuthorization();
+    void removeAuthorization();
 
 Q_SIGNALS:
     void internalContactFetched(bool successful);

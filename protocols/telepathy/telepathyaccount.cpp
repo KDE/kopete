@@ -971,33 +971,18 @@ void TelepathyAccount::onInternalContactFetchedForAdding(bool success)
 
     kDebug();
 
+    // This is one-off - we don't want to be invoked if fetchInternalContact is called from
+    // somewhere else
+    QObject::disconnect(tpContact, SIGNAL(internalContactFetched(bool)),
+            this, SLOT(onInternalContactFetchedForAdding(bool)));
+
     if (!success) {
         kDebug() << "Failed to fetch internal contact, assuming requested ID is illegal";
         // TODO report to the user
         return;
     }
 
-    Tp::ContactManager *manager = tpContact->internalContact()->manager();
-    // TODO don't fire the contact list syncing from here, instead implement listening to the
-    // contact's publish/subscribe stateChanged events so we can report messages, reasons etc to the
-    // user.
-    QObject::connect(manager->requestPresenceSubscription(QList<Tp::ContactPtr>() << tpContact->internalContact()),
-            SIGNAL(finished(Tp::PendingOperation*)),
-            this,
-            SLOT(onContactAdded(Tp::PendingOperation*)));
-
-    // This is one-off - we don't want to be invoked if fetchInternalContact is called from
-    // somewhere else
-    QObject::disconnect(tpContact, SIGNAL(internalContactFetched(bool)),
-            this, SLOT(onInternalContactFetchedForAdding(bool)));
-}
-
-void TelepathyAccount::onContactAdded(Tp::PendingOperation *op)
-{
-    kDebug();
-
-    // FIXME: Handle the case that the operation didn't finish successfully.
-    Q_UNUSED(op);
+    tpContact->requestAuthorization();
 }
 
 void TelepathyAccount::deleteContact(Tp::ContactPtr contact)
