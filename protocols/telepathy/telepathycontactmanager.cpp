@@ -191,17 +191,20 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
     Tp::UIntList requestAvatarList;
 
     foreach(Tp::ContactPtr contact, pendingContacts->contacts()) {
-        if ((contact->publishState() == Tp::Contact::PresenceStateYes) ||
-            (contact->subscriptionState() == Tp::Contact::PresenceStateYes) ) {
+        if ((contact->publishState() != Tp::Contact::PresenceStateNo) ||
+            (contact->subscriptionState() != Tp::Contact::PresenceStateNo) ) {
 
             TelepathyContact *tpc = createContact(contact);
 
-            if (tpc)
+            if (tpc) {
                 if (contact->isAvatarTokenKnown() &&
                         (tpc->storedAvatarToken() != contact->avatarToken() ||
                         QFile::exists(tpc->storedAvatarPath()) == false)) {
                     requestAvatarList.append(contact->handle()[0]);
                 }
+
+                askPresenceAuthorization(tpc->metaContact(), contact);
+            }
         }
 
         connect(contact.data(),
@@ -294,7 +297,7 @@ void TelepathyContactManager::onRequestingContactsUpgraded(Tp::PendingOperation 
             foreach (Kopete::Contact *c, mc->contacts()) {
                 // FIXME: Comparing string ids is WRONG!
                 if ((c->account() == d->telepathyAccount) &&
-                    (c->contactId() == contact->id())) {
+                        (c->contactId() == contact->id())) {
 
                     // Contact is already in the list.
                     kContact = c;
@@ -308,22 +311,26 @@ void TelepathyContactManager::onRequestingContactsUpgraded(Tp::PendingOperation 
             }
         }
 
-        Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
-        actions |= Kopete::AddedInfoEvent::BlockAction;
-
-        if (!kMetaContact || kMetaContact->isTemporary()) {
-            actions |= Kopete::AddedInfoEvent::AddAction;
-        }
-
-        TelepathyAddedInfoEvent* event = new TelepathyAddedInfoEvent(contact, d->telepathyAccount);
-
-        connect(event,
-                SIGNAL(actionActivated(uint)),
-                SLOT(onAddedInfoEventActionActivated(uint)));
-
-        event->showActions(actions);
-        event->sendEvent();
+        askPresenceAuthorization(kMetaContact, contact);
     }
+}
+
+void TelepathyContactManager::askPresenceAuthorization(Kopete::MetaContact *mc, Tp::ContactPtr contact) {
+    Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
+    actions |= Kopete::AddedInfoEvent::BlockAction;
+
+    if (!mc || mc->isTemporary()) {
+        actions |= Kopete::AddedInfoEvent::AddAction;
+    }
+
+    TelepathyAddedInfoEvent* event = new TelepathyAddedInfoEvent(contact, d->telepathyAccount);
+
+    connect(event,
+            SIGNAL(actionActivated(uint)),
+            SLOT(onAddedInfoEventActionActivated(uint)));
+
+    event->showActions(actions);
+    event->sendEvent();
 }
 
 void TelepathyContactManager::onAddedInfoEventActionActivated(uint actionId)

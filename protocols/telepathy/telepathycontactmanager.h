@@ -29,6 +29,7 @@
 
 namespace Kopete {
     class Group;
+    class MetaContact;
 }
 
 class TelepathyAccount;
@@ -62,6 +63,7 @@ private slots:
 
 private:
     void fetchContactList();
+    void askPresenceAuthorization(Kopete::MetaContact *mc, Tp::ContactPtr contact);
     TelepathyContact *createContact(QSharedPointer<Tp::Contact> contact);
 
     class TelepathyContactManagerPrivate;
