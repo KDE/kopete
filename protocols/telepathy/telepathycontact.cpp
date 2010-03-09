@@ -109,7 +109,7 @@ QList<KAction *> *TelepathyContact::customContextMenuActions()
         {
             KIcon("mail-reply-sender"),
             i18n("(Re)request Presence Authorization"),
-            internalContact()->subscriptionState() != Tp::Contact::PresenceStateYes,
+            internalContact()->subscriptionState() == Tp::Contact::PresenceStateNo,
             SLOT(requestAuthorization())
         },
         {
