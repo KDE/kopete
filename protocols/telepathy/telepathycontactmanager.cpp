@@ -191,7 +191,7 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
     Tp::UIntList requestAvatarList;
 
     foreach(Tp::ContactPtr contact, pendingContacts->contacts()) {
-        if ((contact->publishState() != Tp::Contact::PresenceStateNo) ||
+        if ((contact->publishState() == Tp::Contact::PresenceStateYes) ||
             (contact->subscriptionState() != Tp::Contact::PresenceStateNo) ) {
 
             TelepathyContact *tpc = createContact(contact);
@@ -206,6 +206,26 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
                 if (contact->publishState() == Tp::Contact::PresenceStateAsk)
                     askPresenceAuthorization(tpc->metaContact(), contact);
             }
+        } else if (contact->publishState() == Tp::Contact::PresenceStateAsk) {
+            Kopete::MetaContact *metaContact = 0;
+
+            foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
+                foreach (Kopete::Contact *c, mc->contacts()) {
+                    // FIXME: Comparing string ids is WRONG!
+                    if ((c->account() == d->telepathyAccount) &&
+                            (c->contactId() == contact->id())) {
+
+                        // Contact is already in the list.
+                        metaContact = mc;
+                        break;
+                    }
+                }
+
+            }
+
+            askPresenceAuthorization(metaContact, contact);
+        } else {
+            kDebug() << "  Ignored" << contact->id() << "who is neither subscribed nor published";
         }
 
         connect(contact.data(),
