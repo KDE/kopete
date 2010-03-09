@@ -203,7 +203,8 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
                     requestAvatarList.append(contact->handle()[0]);
                 }
 
-                askPresenceAuthorization(tpc->metaContact(), contact);
+                if (contact->publishState() == Tp::Contact::PresenceStateAsk)
+                    askPresenceAuthorization(tpc->metaContact(), contact);
             }
         }
 
