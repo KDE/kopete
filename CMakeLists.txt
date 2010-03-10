@@ -115,7 +115,7 @@ if (NOT DISABLE_VIDEOSUPPORT)
     set (LIBV4L2_REQUIRED TRUE)
   endif (CMAKE_SYSTEM_NAME MATCHES Linux)
   find_package(LibV4L2)
-  macro_log_feature(LIBV4L2_FOUND "libv4l2" "Collection of video4linux support libraries" "http://hansdegoede.livejournal.com" LIBV4L2_REQUIRED "" "Required for better webcam support")
+  macro_log_feature(LIBV4L2_FOUND "libv4l" "Collection of video4linux support libraries" "http://hansdegoede.livejournal.com, http://linuxtv.org/hg/~hgoede/libv4l/" LIBV4L2_REQUIRED "" "Required for better webcam support")
 endif (NOT DISABLE_VIDEOSUPPORT)
 macro_bool_to_01(LIBV4L2_FOUND HAVE_LIBV4L2)
 
