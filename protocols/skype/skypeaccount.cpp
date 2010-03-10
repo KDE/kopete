@@ -29,6 +29,7 @@
 #include <qstring.h>
 #include <kopetemetacontact.h>
 #include <kopeteonlinestatus.h>
+#include <kopetestatusmanager.h>
 #include <kopetecontactlist.h>
 #include <kopetecontact.h>
 #include <kopetegroup.h>
@@ -247,7 +248,7 @@ void SkypeAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 void SkypeAccount::disconnect() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	setOnlineStatus(d->protocol->Offline, Kopete::StatusMessage());
+	setOnlineStatus(d->protocol->Offline, Kopete::StatusManager::self()->globalStatusMessage());
 }
 
 SkypeContact *SkypeAccount::contact(const QString &id) {
@@ -262,9 +263,9 @@ void SkypeAccount::connect(const Kopete::OnlineStatus &Status) {
 	if ((Status != d->protocol->Online) && (Status != d->protocol->Away) &&
 		(Status != d->protocol->NotAvailable) && (Status != d->protocol->DoNotDisturb) &&
 		(Status != d->protocol->SkypeMe))//some strange online status, taje a default one
-			setOnlineStatus(d->protocol->Online, Kopete::StatusMessage());
+			setOnlineStatus(d->protocol->Online, Kopete::StatusManager::self()->globalStatusMessage());
 	else
-		setOnlineStatus(Status, Kopete::StatusMessage());//just change the status
+		setOnlineStatus(Status, Kopete::StatusManager::self()->globalStatusMessage());//just change the status
 
 }
 

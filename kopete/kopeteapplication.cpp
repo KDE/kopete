@@ -221,17 +221,14 @@ void KopeteApplication::slotAllPluginsLoaded()
 	// --noconnect not specified?
 
 	Kopete::OnlineStatusManager::Category initStatus = Kopete::OnlineStatusManager::self()->initialStatus();
-	Kopete::OnlineStatusManager::Category setStatus;
+	Kopete::OnlineStatusManager::Category setStatus = Kopete::OnlineStatusManager::Offline;
 
 	if ( args->isSet( "connect" )  &&  initStatus != Kopete::OnlineStatusManager::Offline &&
 			( Solid::Networking::status() == Solid::Networking::Unknown ||
 			  Solid::Networking::status() == Solid::Networking::Connected ) ){
 
-		Kopete::AccountManager::self()->setOnlineStatus( initStatus, QString(), Kopete::AccountManager::ConnectIfOffline );
 		setStatus = initStatus;
 
-	} else {
-		setStatus = Kopete::OnlineStatusManager::Offline;
 	}
 
 	QList <Kopete::Status::StatusItem *> statusList = Kopete::StatusManager::self()->getRootGroup()->childList();
@@ -249,7 +246,23 @@ void KopeteApplication::slotAllPluginsLoaded()
 	}
 
 	if ( found )
+	{
+
+		if ( setStatus != Kopete::OnlineStatusManager::Offline )
+		{
+			Kopete::AccountManager::self()->setOnlineStatus(initStatus, Kopete::StatusMessage(title, message), Kopete::AccountManager::ConnectIfOffline);
+		}
+
 		Kopete::StatusManager::self()->setGlobalStatus(setStatus, Kopete::StatusMessage(title, message));
+
+	} else {
+
+		if ( setStatus != Kopete::OnlineStatusManager::Offline )
+		{
+			Kopete::AccountManager::self()->setOnlineStatus(initStatus, QString(), Kopete::AccountManager::ConnectIfOffline);
+		}
+
+	}
 
  	kDebug(14000)<< "initial status set in config: " << initStatus;
 

@@ -376,7 +376,7 @@ void StatusManager::setActive()
 				if( (*it)->isConnected() && (*it)->isAway() )
 				{
 					(*it)->setOnlineStatus( Kopete::OnlineStatusManager::self()->onlineStatus( (*it)->protocol(),
-						Kopete::OnlineStatusManager::Online ), Kopete::StatusMessage(), Kopete::Account::KeepSpecialFlags );
+						Kopete::OnlineStatusManager::Online ), globalStatusMessage(), Kopete::Account::KeepSpecialFlags );
 				}
 			}
 			d->autoAwayAccounts.clear();

@@ -107,7 +107,7 @@ bool AccountManager::isAnyAccountConnected() const
 
 void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage &statusMessage, uint flags )
 {
-	kDebug() << "category: " << category;
+	kDebug() << "category: " << category << "status title: " << statusMessage.title() << "status message: " << statusMessage.message();
 	OnlineStatusManager::Categories categories
 		= (OnlineStatusManager::Categories)category;
 	const bool onlyChangeConnectedAccounts = isAnyAccountConnected();
@@ -394,8 +394,6 @@ void AccountManager::networkConnected()
 	if ( Solid::Networking::status() == Solid::Networking::Unknown ||
 			  Solid::Networking::status() == Solid::Networking::Connected ){
 
-		Kopete::AccountManager::self()->setOnlineStatus( initStatus, QString(), Kopete::AccountManager::ConnectIfOffline );
-
 		QList <Kopete::Status::StatusItem *> statusList = Kopete::StatusManager::self()->getRootGroup()->childList();
 		QString message, title;
 		bool found = false;
@@ -409,6 +407,8 @@ void AccountManager::networkConnected()
 				break;
 			}
 		}
+
+		Kopete::AccountManager::self()->setOnlineStatus(initStatus, Kopete::StatusMessage(title, message), Kopete::AccountManager::ConnectIfOffline);
 
 		if ( found )
 			Kopete::StatusManager::self()->setGlobalStatus(initStatus, Kopete::StatusMessage(title, message));
