@@ -268,7 +268,9 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int)
 		stopCapturing();
 		mVideoDevicePool->close();
 		mVideoDevicePool->open(newdevice);
+		/* NOTE: input and signal standard are set automatically */
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		setupControls();
 		startCapturing();
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
@@ -283,6 +285,7 @@ void AVDeviceConfig::slotInputKComboBoxChanged(int)
 	{
 		stopCapturing();
 		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
+		/* FIXME: select signal standard ! */
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		setupControls();
 		startCapturing();
@@ -292,6 +295,7 @@ void AVDeviceConfig::slotInputKComboBoxChanged(int)
 
 void AVDeviceConfig::slotStandardKComboBoxChanged(int)
 {
+	/* FIXME: select signal standard ! */
 	emit changed( true );
 }
 

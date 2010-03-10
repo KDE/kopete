@@ -550,7 +550,7 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 				combobox->insertItem(m_videodevice[currentDevice()].m_input[loop].name);
 				kDebug() << "StandardKCombobox: Added input " << loop << ": " << m_videodevice[currentDevice()].m_input[loop].name << " (tuner: " << m_videodevice[currentDevice()].m_input[loop].hastuner << ")";*/
 				}
-				combobox->setCurrentIndex(currentInput());
+				combobox->setCurrentIndex(0);	// FIXME: set to actual signal standard
 				combobox->setEnabled(combobox->count());
 				return EXIT_SUCCESS;
 			}
@@ -759,6 +759,7 @@ void VideoDevicePool::loadDeviceConfig()
 				kDebug() << "Invalid key:" << ctrl_key;
 		}
 	}
+	/* TODO: load and apply signal standard */
 }
 
 /*!
@@ -850,6 +851,7 @@ void VideoDevicePool::saveCurrentDeviceConfig()
 		}
 		config.sync();
 	}
+	/* TODO: save signal standard */
 }
 
 void VideoDevicePool::deviceAdded( const QString & udi )
