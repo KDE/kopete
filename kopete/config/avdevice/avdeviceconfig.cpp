@@ -120,12 +120,14 @@ void AVDeviceConfig::load()
     /// @todo implement me
 }
 
-void AVDeviceConfig::slotSettingsChanged(bool){
-  emit changed(true);
+void AVDeviceConfig::slotSettingsChanged(bool)
+{
+	emit changed(true);
 }
 
-void AVDeviceConfig::slotValueChanged(int){
-  emit changed( true );
+void AVDeviceConfig::slotValueChanged(int)
+{
+	emit changed( true );
 }
 
 void AVDeviceConfig::setVideoInputParameters()
@@ -143,7 +145,8 @@ void AVDeviceConfig::setVideoInputParameters()
 	}
 }
 
-void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
+void AVDeviceConfig::slotDeviceKComboBoxChanged(int)
+{
 	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 	int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentIndex();
 	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDevice() << "New device: " << newdevice;
@@ -153,7 +156,9 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 		stopCapturing();
 		mVideoDevicePool->close();
 		mVideoDevicePool->open(newdevice);
+		/* NOTE: input and signal standard are set automatically */
 		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		setVideoInputParameters();
 		startCapturing();
 		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
@@ -161,12 +166,14 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int){
 	}
 }
 
-void AVDeviceConfig::slotInputKComboBoxChanged(int){
+void AVDeviceConfig::slotInputKComboBoxChanged(int)
+{
 	int newinput = mPrfsVideoDevice->mInputKComboBox->currentIndex();
 	if ((newinput < mVideoDevicePool->inputs()) && (newinput != mVideoDevicePool->currentInput()))
 	{
 		stopCapturing();
  		mVideoDevicePool->selectInput(mPrfsVideoDevice->mInputKComboBox->currentIndex());
+		/* FIXME: select signal standard ! */
  		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		setVideoInputParameters();
 		startCapturing();
@@ -177,53 +184,63 @@ void AVDeviceConfig::slotInputKComboBoxChanged(int){
 // ATTENTION: The 65535.0 value must be used instead of 65535 because the trailing ".0" converts the resulting value to floating point number.
 // Otherwise the resulting division operation would return 0 or 1 exclusively.
 
-void AVDeviceConfig::slotStandardKComboBoxChanged(int){
-  emit changed( true );
+void AVDeviceConfig::slotStandardKComboBoxChanged(int)
+{
+	/* FIXME: select signal standard ! */
+	emit changed( true );
 }
 
-void AVDeviceConfig::slotBrightnessSliderChanged(int){
+void AVDeviceConfig::slotBrightnessSliderChanged(int)
+{
 	kDebug() << "kopete:config (avdevice): slotBrightnessSliderChanged(int) called. " << mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0;
 	mVideoDevicePool->setBrightness( mPrfsVideoDevice->mBrightnessSlider->value() / 65535.0 );
-  emit changed( true );
+	emit changed( true );
 }
 
-void AVDeviceConfig::slotContrastSliderChanged(int){
+void AVDeviceConfig::slotContrastSliderChanged(int)
+{
 	kDebug() << "kopete:config (avdevice): slotContrastSliderChanged(int) called. " << mPrfsVideoDevice->mContrastSlider->value() / 65535.0;
 	mVideoDevicePool->setContrast( mPrfsVideoDevice->mContrastSlider->value() / 65535.0 );
-  emit changed( true );
+	emit changed( true );
 }
 
-void AVDeviceConfig::slotSaturationSliderChanged(int){
+void AVDeviceConfig::slotSaturationSliderChanged(int)
+{
 	kDebug() << "kopete:config (avdevice): slotSaturationSliderChanged(int) called. " << mPrfsVideoDevice->mSaturationSlider->value() / 65535.0;
 	mVideoDevicePool->setSaturation( mPrfsVideoDevice->mSaturationSlider->value() / 65535.0);
-  emit changed( true );
+	emit changed( true );
 }
 
-void AVDeviceConfig::slotWhitenessSliderChanged(int){
+void AVDeviceConfig::slotWhitenessSliderChanged(int)
+{
 	kDebug() << "kopete:config (avdevice): slotWhitenessSliderChanged(int) called. " << mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0;
 	mVideoDevicePool->setWhiteness( mPrfsVideoDevice->mWhitenessSlider->value() / 65535.0);
-  emit changed( true );
+	emit changed( true );
 }
 
-void AVDeviceConfig::slotHueSliderChanged(int){
+void AVDeviceConfig::slotHueSliderChanged(int)
+{
 	kDebug() << "kopete:config (avdevice): slotHueSliderChanged(int) called. " << mPrfsVideoDevice->mHueSlider->value() / 65535.0;
 	mVideoDevicePool->setHue( mPrfsVideoDevice->mHueSlider->value() / 65535.0 );
-  emit changed( true );
+	emit changed( true );
 }
 
-void AVDeviceConfig::slotImageAutoBrightnessContrastChanged(bool){
+void AVDeviceConfig::slotImageAutoBrightnessContrastChanged(bool)
+{
 	kDebug() << "kopete:config (avdevice): slotImageAutoBrightnessContrastChanged(" << mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked() << ") called. ";
 	mVideoDevicePool->setAutoBrightnessContrast(mPrfsVideoDevice->mImageAutoBrightnessContrast->isChecked());
 	emit changed( true );
 }
 
-void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool){
+void AVDeviceConfig::slotImageAutoColorCorrectionChanged(bool)
+{
 	kDebug() << "kopete:config (avdevice): slotImageAutoColorCorrectionChanged(" << mPrfsVideoDevice->mImageAutoColorCorrection->isChecked() << ") called. ";
 	mVideoDevicePool->setAutoColorCorrection(mPrfsVideoDevice->mImageAutoColorCorrection->isChecked());
 	emit changed( true );
 }
 
-void AVDeviceConfig::slotImageAsMirrorChanged(bool){
+void AVDeviceConfig::slotImageAsMirrorChanged(bool)
+{
 	kDebug() << "kopete:config (avdevice): slotImageAsMirrorChanged(" << mPrfsVideoDevice->mImageAsMirror->isChecked() << ") called. ";
 	mVideoDevicePool->setImageAsMirror(mPrfsVideoDevice->mImageAsMirror->isChecked());
 	emit changed( true );
