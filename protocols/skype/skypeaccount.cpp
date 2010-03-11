@@ -29,6 +29,7 @@
 #include <qstring.h>
 #include <kopetemetacontact.h>
 #include <kopeteonlinestatus.h>
+#include <kopetestatusmanager.h>
 #include <kopetecontactlist.h>
 #include <kopetecontact.h>
 #include <kopetegroup.h>
@@ -205,7 +206,7 @@ void SkypeAccount::setAway(bool away, const QString &reason) {
 }
 
 void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options) {
-	kDebug(SKYPE_DEBUG_GLOBAL);
+	kDebug(SKYPE_DEBUG_GLOBAL) << "status message:" << reason.message();
 	Q_UNUSED(options);
 	if (status == d->protocol->Online){
 		d->skype.setOnline();//Go online
@@ -242,12 +243,13 @@ void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kop
 void SkypeAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
 	d->skype.setUserProfileRichMoodText(statusMessage.message());
+	myself()->setStatusMessage(statusMessage.message());
 }
 
 void SkypeAccount::disconnect() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	setOnlineStatus(d->protocol->Offline, Kopete::StatusMessage());
+	setOnlineStatus(d->protocol->Offline, Kopete::StatusManager::self()->globalStatusMessage());
 }
 
 SkypeContact *SkypeAccount::contact(const QString &id) {
@@ -262,9 +264,9 @@ void SkypeAccount::connect(const Kopete::OnlineStatus &Status) {
 	if ((Status != d->protocol->Online) && (Status != d->protocol->Away) &&
 		(Status != d->protocol->NotAvailable) && (Status != d->protocol->DoNotDisturb) &&
 		(Status != d->protocol->SkypeMe))//some strange online status, taje a default one
-			setOnlineStatus(d->protocol->Online, Kopete::StatusMessage());
+			setOnlineStatus(d->protocol->Online, Kopete::StatusManager::self()->globalStatusMessage());
 	else
-		setOnlineStatus(Status, Kopete::StatusMessage());//just change the status
+		setOnlineStatus(Status, Kopete::StatusManager::self()->globalStatusMessage());//just change the status
 
 }
 
