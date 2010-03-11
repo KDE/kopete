@@ -206,7 +206,7 @@ void SkypeAccount::setAway(bool away, const QString &reason) {
 }
 
 void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options) {
-	kDebug(SKYPE_DEBUG_GLOBAL);
+	kDebug(SKYPE_DEBUG_GLOBAL) << "status message:" << reason.message();
 	Q_UNUSED(options);
 	if (status == d->protocol->Online){
 		d->skype.setOnline();//Go online
@@ -243,6 +243,7 @@ void SkypeAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kop
 void SkypeAccount::setStatusMessage(const Kopete::StatusMessage &statusMessage)
 {
 	d->skype.setUserProfileRichMoodText(statusMessage.message());
+	myself()->setStatusMessage(statusMessage.message());
 }
 
 void SkypeAccount::disconnect() {
