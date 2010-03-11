@@ -432,16 +432,24 @@ void SkypeContact::deleteContact() {
 void SkypeContact::sync(unsigned int changed) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	if (changed & MovedBetweenGroup) {
-		d->account->registerContact(contactId());
-	}
+	if ( ! account()->isConnected() )
+		return;
 
-	if (changed == MovedBetweenGroup)
+	if ( changed & Kopete::Contact::MovedBetweenGroup ) {
+
+		d->account->registerContact(contactId());
 		d->account->MovedBetweenGroup(this);
 
-//	if (changed == DisplayNameChanged)
-	//If user move skype contact to other metacontact, skype display name may change, todo: dont change it always
-	d->account->setDisplayName(contactId(), metaContact()->displayName());
+	}
+
+	if ( changed & Kopete::Contact::DisplayNameChanged ) {
+
+		if ( metaContact()->displayNameSource() == Kopete::MetaContact::SourceCustom && metaContact()->displayName() == formattedName() )
+			d->account->setContactDisplayName(contactId(), QString());
+		else
+			d->account->setContactDisplayName(contactId(), metaContact()->displayName());
+
+	}
 }
 
 void SkypeContact::authorize() {

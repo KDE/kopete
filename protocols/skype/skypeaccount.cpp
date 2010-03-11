@@ -399,7 +399,7 @@ void SkypeAccount::newUser(const QString &name, int groupID) {
 		return;
 	}
 
-	addContact(name, d->skype.getDisplayName(name), skypeGroup, ChangeKABC);
+	addContact(name, d->skype.getContactDisplayName(name), skypeGroup, ChangeKABC);
 }
 
 void SkypeAccount::prepareContact(SkypeContact *contact) {
@@ -572,7 +572,7 @@ QString SkypeAccount::getUserLabel(const QString &userId) {
 	Kopete::Contact *cont = contact(userId);
 
 	if (!cont) {
-		addContact(userId, d->skype.getDisplayName(userId), 0L, Temporary);//create a temporary contact
+		addContact(userId, d->skype.getContactDisplayName(userId), 0L, Temporary);//create a temporary contact
 
 		cont = (contacts().value(userId));//It should be there now
 		if (!cont)
@@ -635,7 +635,7 @@ int SkypeAccount::getWaitBeforeConnect() const {
 SkypeContact *SkypeAccount::getContact(const QString &userId) {
 	SkypeContact *cont = static_cast<SkypeContact *> (contacts().value(userId));//get the contact
 	if (!cont) {//We do not know such contact
-		addContact(userId, d->skype.getDisplayName(userId), 0L, Temporary);//create a temporary contact
+		addContact(userId, d->skype.getContactDisplayName(userId), 0L, Temporary);//create a temporary contact
 
 		cont = static_cast<SkypeContact *> (contacts().value(userId));//It should be there now
 	}
@@ -1013,9 +1013,9 @@ void SkypeAccount::openFileTransfer(const QString &user, const QString &url) {
 	d->skype.openFileTransfer(user, url);
 }
 
-void SkypeAccount::setDisplayName(const QString &user, const QString &name) {
+void SkypeAccount::setContactDisplayName(const QString &user, const QString &name) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << user << name;
-	d->skype.setDisplayName(user, name);
+	d->skype.setContactDisplayName(user, name);
 }
 
 void SkypeAccount::receivedAuth(const QString &user, const QString &info) {
@@ -1073,7 +1073,7 @@ void SkypeAccount::stopSendingVideo(const QString &callId) {
 void SkypeAccount::userInfo(const QString &user) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << user;
 	if ( ! contact(user) ) {
-		addContact(user, d->skype.getDisplayName(user), 0L, Temporary);//create a temporary contact
+		addContact(user, d->skype.getContactDisplayName(user), 0L, Temporary);//create a temporary contact
 		if ( ! contact(user) ) {
 			KMessageBox::error(0L, i18n("Cannot open info about user %1", user), i18n("Skype protocol"));
 			return;//contact arent in contact list - skip it
