@@ -295,8 +295,10 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 	         && msg.direction() != Kopete::Message::Internal )
 		{
 			viewWidget = dynamic_cast< QWidget * >( session->view( false ) );
-			isActiveWindow = session->view( false ) && session->view() == d->activeView
-			                 && viewWidget && viewWidget->isActiveWindow();
+			// note that session->view( true [default value] ) can create a view, so watch the
+			// side-effects...
+			isActiveWindow = session->view( false ) && viewWidget
+			                 && session->view() == d->activeView && viewWidget->isActiveWindow();
 			showNotification = msg.from() != 0;
 		}
 
