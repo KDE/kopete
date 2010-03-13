@@ -66,8 +66,6 @@
 #include <qstring.h>
 #include <qfile.h>
 #include <qimage.h>
-#include <q3valuevector.h>
-#include <kcombobox.h>
 #include <klocale.h>
 
 #include "videoinput.h"
@@ -342,7 +340,7 @@ public:
 	QVector<Kopete::AV::VideoInput> m_input;
 //	QFile file;
 protected:
-#if defined( __linux__) && defined(ENABLE_AV)
+#if defined(__linux__) && defined(ENABLE_AV)
 	/*!
 	    \enum VideoDevice::imgctrl_id Control-IDs used for V4L1- and software-controls
 	 */
@@ -386,12 +384,10 @@ protected:
 	bool m_videostream;
 
 	void setupControls();
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
+#if defined(__linux__) && defined(ENABLE_AV) && defined(V4L2_CAP_VIDEO_CAPTURE)
 	bool getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList * options);
 	void saveV4L2ControlData(struct v4l2_queryctrl qctrl);
 	const char *getUnifiedV4L2StdCtrlName(quint32 id);
-#endif
 #endif
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
