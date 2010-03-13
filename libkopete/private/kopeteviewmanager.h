@@ -71,11 +71,11 @@ public slots:
     /**
     * Make a view visible and on top.
     * @param manager The originating Kopete::ChatSession.
-    * @param outgoingMessage Whether the message is inbound or outbound.
+    * @param isOutboundMessage Whether the message is inbound or outbound.
     *
     * @todo Document @p activate
     */
-    void readMessages( Kopete::ChatSession* manager, bool outgoingMessage, bool activate = false );
+    void readMessages( Kopete::ChatSession* manager, bool isOutboundMessage, bool activate = false );
 
     /**
     * Called when a new message has been appended to the given

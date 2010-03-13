@@ -237,9 +237,9 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString
 
 void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSession *session)
 {
-	bool outgoingMessage = ( msg.direction() == Kopete::Message::Outbound );
+	const bool isOutboundMessage = msg.direction() == Kopete::Message::Outbound;
 
-	if ( outgoingMessage && !d->sessionMap.contains( session ) )
+	if ( isOutboundMessage && !d->sessionMap.contains( session ) )
 		return;
 
 	// Get an early copy of the plain message body before the chat view works on it
@@ -247,7 +247,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 	// the html conversion. See bug 161651.
 	const QString squashedMessage = squashMessage( msg );
 
-	d->foreignMessage = !outgoingMessage; // for the view we are about to create
+	d->foreignMessage = !isOutboundMessage; // for the view we are about to create
 	session->view( true, msg.requestedPlugin() )->appendMessage( msg );
 	d->foreignMessage = false; // the view has been created, reset the flag
 
@@ -263,7 +263,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 	}
 #endif
 
-	if ( d->queueUnreadMessages && w )
+	if ( w && d->queueUnreadMessages )
 	{
 		// append msg event to queue if chat window is active but not the chat view in it...
 		appendMessageEvent = appendMessageEvent && !( w->isActiveWindow()
@@ -287,28 +287,32 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 	QWidget *viewWidget = 0;
 	bool showNotification = false;
 	bool isActiveWindow = false;
-
-	if ( !outgoingMessage && ( !session->account()->isAway() || d->enableEventsWhileAway )
-	     && msg.direction() != Kopete::Message::Internal )
-	{
-		viewWidget = dynamic_cast< QWidget * >( session->view( false ) );
-		isActiveWindow = session->view( false ) && viewWidget
-		                 && session->view() == d->activeView && viewWidget->isActiveWindow();
-		showNotification = msg.from() != 0;
-	}
-
 	Kopete::MessageEvent *event = 0;
-	if ( ( appendMessageEvent && !outgoingMessage ) || showNotification )
-	{
-		showNotification = showNotification
-		                   || ( msg.from() && d->eventList.isEmpty() ); // may happen for internal messages
-		event = new Kopete::MessageEvent( msg, session );
-		d->eventList.append( event );
 
-		// Don't call readMessages twice. We call it later in this method. Fixes bug 168978.
-		if ( d->useQueue )
-			connect( event, SIGNAL(done(Kopete::MessageEvent *)),
-					 this, SLOT(slotEventDeleted(Kopete::MessageEvent *)) );
+	if ( !isOutboundMessage )
+	{
+		if ( ( !session->account()->isAway() || d->enableEventsWhileAway )
+	         && msg.direction() != Kopete::Message::Internal )
+		{
+			viewWidget = dynamic_cast< QWidget * >( session->view( false ) );
+			isActiveWindow = session->view( false ) && session->view() == d->activeView
+			                 && viewWidget && viewWidget->isActiveWindow();
+			showNotification = msg.from() != 0;
+		}
+
+		if ( appendMessageEvent || showNotification )
+		{
+			if ( msg.from() && d->eventList.isEmpty() ) // may happen for internal messages
+				showNotification = true;
+
+			event = new Kopete::MessageEvent( msg, session );
+			d->eventList.append( event );
+
+			// Don't call readMessages twice. We call it later in this method. Fixes bug 168978.
+			if ( d->useQueue )
+				connect( event, SIGNAL(done(Kopete::MessageEvent *)),
+				         this, SLOT(slotEventDeleted(Kopete::MessageEvent *)) );
+		}
 	}
 
 	if ( msg.delayed() )
@@ -321,7 +325,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 	if (!d->useQueue)
 	{
 		// "Open messages instantly" setting
-		readMessages( session, outgoingMessage );
+		readMessages( session, isOutboundMessage );
 	}
 
 	KopeteView *view = session->view( false );
@@ -419,13 +423,13 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 	notify->sendEvent();
 }
 
-void KopeteViewManager::readMessages( Kopete::ChatSession *session, bool outgoingMessage, bool activate )
+void KopeteViewManager::readMessages( Kopete::ChatSession *session, bool isOutboundMessage, bool activate )
 {
     // kDebug( 14000 ) ;
-    d->foreignMessage = !outgoingMessage; //for the view we are about to create
+    d->foreignMessage = !isOutboundMessage; //for the view we are about to create
     KopeteView *thisView = session->view( true );
     d->foreignMessage = false; //the view is created, reset the flag
-    if ( ( outgoingMessage && !thisView->isVisible() ) || d->raiseWindow || activate )
+    if ( ( isOutboundMessage && !thisView->isVisible() ) || d->raiseWindow || activate )
             thisView->raise( activate );
     else if ( !thisView->isVisible() )
             thisView->makeVisible();
