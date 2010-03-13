@@ -68,6 +68,7 @@
 #include <qimage.h>
 #include <q3valuevector.h>
 #include <kcombobox.h>
+#include <klocale.h>
 
 #include "videoinput.h"
 
@@ -389,6 +390,7 @@ protected:
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 	bool getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList * options);
 	void saveV4L2ControlData(struct v4l2_queryctrl qctrl);
+	const char *getUnifiedV4L2StdCtrlName(quint32 id);
 #endif
 #endif
 	int xioctl(int request, void *arg);

@@ -86,6 +86,9 @@ void VideoDevice::setupControls()
 						driver_vflip = true;
 					if (qctrl.id == V4L2_CID_HFLIP)
 						driver_hflip = true;
+					const char *name_uni = getUnifiedV4L2StdCtrlName(qctrl.id);
+					if (name_uni && strlen(name_uni))
+						strncpy((char*)qctrl.name, name_uni, 32); // NOTE: v4l2_queryctrl.name is _u8[32]
 					saveV4L2ControlData(qctrl);
 				}
 				else
@@ -122,19 +125,19 @@ void VideoDevice::setupControls()
 				numCtrl.value_step = 1;
 				numCtrl.value_default = 32767;
 				numCtrl.id = IMGCTRL_ID_V4L1_BRIGHTNESS;
-				numCtrl.name = "Brightness";
+				numCtrl.name = i18n("Brightness");
 				m_numericCtrls.push_back( numCtrl );
 				numCtrl.id = IMGCTRL_ID_V4L1_HUE;
-				numCtrl.name = "Hue";
+				numCtrl.name = i18n("Hue");
 				m_numericCtrls.push_back( numCtrl );
 				numCtrl.id = IMGCTRL_ID_V4L1_COLOR;
-				numCtrl.name = "Color";
+				numCtrl.name = i18n("Color");
 				m_numericCtrls.push_back( numCtrl );
 				numCtrl.id = IMGCTRL_ID_V4L1_CONTRAST;
-				numCtrl.name = "Contrast";
+				numCtrl.name = i18n("Contrast");
 				m_numericCtrls.push_back( numCtrl );
 				numCtrl.id = IMGCTRL_ID_V4L1_WHITENESS;
-				numCtrl.name = "Whiteness";
+				numCtrl.name = i18n("Whiteness");
 				m_numericCtrls.push_back( numCtrl );
 			}
 			break;
@@ -149,21 +152,21 @@ void VideoDevice::setupControls()
 	BooleanVideoControl boolCtrl;
 	boolCtrl.value_default = 0;
 	boolCtrl.id = IMGCTRL_ID_SOFT_AUTOBRIGHTNESSCONTRASTCORR;
-	boolCtrl.name = "Automatic brightness/contrast correction";
+	boolCtrl.name = i18n("Automatic Brightness/Contrast Correction");
 	m_booleanCtrls.push_back( boolCtrl );
 	boolCtrl.id = IMGCTRL_ID_SOFT_AUTOCOLORCORR;
-	boolCtrl.name = "Automatic color correction";
+	boolCtrl.name = i18n("Automatic Color Correction");
 	m_booleanCtrls.push_back( boolCtrl );
 	if (!driver_vflip)
 	{
 		boolCtrl.id = IMGCTRL_ID_SOFT_VFLIP;
-		boolCtrl.name = "Mirror vertically";
+		boolCtrl.name = i18n("Vertical Flip");
 		m_booleanCtrls.push_back( boolCtrl );
 	}
 	if (!driver_hflip)
 	{
 		boolCtrl.id = IMGCTRL_ID_SOFT_HFLIP;
-		boolCtrl.name = "Mirror horizontally";
+		boolCtrl.name = i18n("Horizontal Flip");
 		m_booleanCtrls.push_back( boolCtrl );
 	}
 #endif
@@ -191,7 +194,7 @@ bool VideoDevice::getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList *
 		ctrlmenu.index = k;
 		if (0 == xioctl(VIDIOC_QUERYMENU, &ctrlmenu))
 		{
-			opt.push_back( (char*)(ctrlmenu.name) );
+			opt.push_back( i18n( (char*)(ctrlmenu.name) ) );
 			kDebug() << "option" << k << ":" << (char*)(ctrlmenu.name);
 		}
 		else
@@ -225,7 +228,7 @@ void VideoDevice::saveV4L2ControlData(struct v4l2_queryctrl qctrl)
 	{
 		case V4L2_CTRL_TYPE_INTEGER:
 			numericCtrl.id = qctrl.id;
-			numericCtrl.name = (char*)qctrl.name;
+			numericCtrl.name = i18n((char*)qctrl.name);
 			numericCtrl.value_min = qctrl.minimum;
 			numericCtrl.value_max = qctrl.maximum;
 			numericCtrl.value_default = qctrl.default_value;
@@ -234,7 +237,7 @@ void VideoDevice::saveV4L2ControlData(struct v4l2_queryctrl qctrl)
 			break;
 		case V4L2_CTRL_TYPE_BOOLEAN:
 			booleanCtrl.id = qctrl.id;
-			booleanCtrl.name = (char*)qctrl.name;
+			booleanCtrl.name = i18n((char*)qctrl.name);
 			booleanCtrl.value_default = qctrl.default_value;
 			m_booleanCtrls.push_back( booleanCtrl );
 			break;
@@ -242,7 +245,7 @@ void VideoDevice::saveV4L2ControlData(struct v4l2_queryctrl qctrl)
 			if (getMenuCtrlOptions( qctrl.id, qctrl.maximum, &options ))
 			{
 				menuCtrl.id = qctrl.id;
-				menuCtrl.name = (char*)qctrl.name;
+				menuCtrl.name = i18n((char*)qctrl.name);
 				menuCtrl.index_default = qctrl.default_value;
 				menuCtrl.options = options;
 				m_menuCtrls.push_back( menuCtrl );
@@ -250,10 +253,10 @@ void VideoDevice::saveV4L2ControlData(struct v4l2_queryctrl qctrl)
 			break;
 		case V4L2_CTRL_TYPE_BUTTON:
 			actionCtrl.id = qctrl.id;
-			actionCtrl.name = (char*)qctrl.name;
+			actionCtrl.name = i18n((char*)qctrl.name);
 			m_actionCtrls.push_back( actionCtrl );
 			break;
-		// since kernel 2.6.18:
+		// Since kernel 2.6.18:
 #ifdef V4L2_CTRL_TYPE_INTEGER64
 		case V4L2_CTRL_TYPE_INTEGER64:
 #endif
@@ -2986,6 +2989,63 @@ QString VideoDevice::udi() const
 {
     return m_udi;
 }
+
+
+#if defined(__linux__) && defined(ENABLE_AV)  && defined(V4L2_CAP_VIDEO_CAPTURE)
+const char *VideoDevice::getUnifiedV4L2StdCtrlName(quint32 ctrl_id)
+{
+	switch (ctrl_id)
+	{
+		/* USER controls */
+		case V4L2_CID_BRIGHTNESS: 		return I18N_NOOP("Brightness");
+		case V4L2_CID_CONTRAST: 		return I18N_NOOP("Contrast");
+		case V4L2_CID_SATURATION: 		return I18N_NOOP("Saturation");
+		case V4L2_CID_HUE: 			return I18N_NOOP("Hue");
+		case V4L2_CID_AUDIO_VOLUME: 		return I18N_NOOP("Volume");
+		case V4L2_CID_AUDIO_BALANCE: 		return I18N_NOOP("Balance");
+		case V4L2_CID_AUDIO_BASS: 		return I18N_NOOP("Bass");
+		case V4L2_CID_AUDIO_TREBLE: 		return I18N_NOOP("Treble");
+		case V4L2_CID_AUDIO_MUTE: 		return I18N_NOOP("Mute");
+		case V4L2_CID_AUDIO_LOUDNESS: 		return I18N_NOOP("Loudness");
+		case V4L2_CID_BLACK_LEVEL:		return I18N_NOOP("Black Level");
+		case V4L2_CID_AUTO_WHITE_BALANCE:	return I18N_NOOP("Automatic White Balance");
+		case V4L2_CID_DO_WHITE_BALANCE:		return I18N_NOOP("Do White Balance");
+		case V4L2_CID_RED_BALANCE:		return I18N_NOOP("Red Balance");
+		case V4L2_CID_BLUE_BALANCE:		return I18N_NOOP("Blue Balance");
+		case V4L2_CID_GAMMA:			return I18N_NOOP("Gamma");
+		case V4L2_CID_EXPOSURE:			return I18N_NOOP("Exposure");
+		case V4L2_CID_AUTOGAIN:			return I18N_NOOP("Automatic Gain");
+		case V4L2_CID_GAIN:			return I18N_NOOP("Gain");
+		case V4L2_CID_HFLIP:			return I18N_NOOP("Horizontal Flip");
+		case V4L2_CID_VFLIP:			return I18N_NOOP("Vertical Flip");
+		case V4L2_CID_HCENTER:			return I18N_NOOP("Horizontal Center");
+		case V4L2_CID_VCENTER:			return I18N_NOOP("Vertical Center");
+#ifdef V4L2_CID_POWER_LINE_FREQUENCY	// since kernel 2.6.25
+		case V4L2_CID_POWER_LINE_FREQUENCY:	return I18N_NOOP("Power Line Frequency");
+		case V4L2_CID_HUE_AUTO:			return I18N_NOOP("Automatic Hue");
+		case V4L2_CID_WHITE_BALANCE_TEMPERATURE: return I18N_NOOP("White Balance Temperature");
+		case V4L2_CID_SHARPNESS:		return I18N_NOOP("Sharpness");
+		case V4L2_CID_BACKLIGHT_COMPENSATION:	return I18N_NOOP("Backlight Compensation");
+#endif
+#ifdef V4L2_CID_CHROMA_AGC		// since kernel 2.6.26
+		case V4L2_CID_CHROMA_AGC:		return I18N_NOOP("Chroma AGC");
+		case V4L2_CID_COLOR_KILLER:		return I18N_NOOP("Color Killer");
+#endif
+#ifdef V4L2_CID_COLORFX			// since kernel 2.6.30
+		case V4L2_CID_COLORFX:			return I18N_NOOP("Color Effects");
+#endif
+#ifdef V4L2_CID_ROTATE			// since kernel 2.6.33
+		case V4L2_CID_ROTATE:			return I18N_NOOP("Rotate");
+		case V4L2_CID_BG_COLOR:			return I18N_NOOP("Background color");
+#endif
+		default:
+			return NULL;
+	}
+	/* NOTE: We only mark the strings for translation, the translation is done for ALL controls
+	         (including custom controls) at a common place
+	 */
+}
+#endif
 
 }
 
