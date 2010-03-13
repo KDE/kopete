@@ -253,8 +253,13 @@ void VideoDevice::saveV4L2ControlData(struct v4l2_queryctrl qctrl)
 			actionCtrl.name = (char*)qctrl.name;
 			m_actionCtrls.push_back( actionCtrl );
 			break;
+		// since kernel 2.6.18:
+#ifdef V4L2_CTRL_TYPE_INTEGER64
 		case V4L2_CTRL_TYPE_INTEGER64:
+#endif
+#ifdef V4L2_CTRL_TYPE_CTRL_CLASS
 		case V4L2_CTRL_TYPE_CTRL_CLASS:
+#endif
 		default:
 			break;
 	}
