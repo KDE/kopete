@@ -60,7 +60,7 @@ public:
     * Provide access to the list of KopeteChatWindow the class maintains.
     */
     KopeteView *activeView() const;
-    
+
     /**
      * Returns unread messages for the given contact
      * @param contact Message sender
@@ -102,6 +102,10 @@ public slots:
     void slotViewActivated( KopeteView * );
 
 private:
+    void createNotification( Kopete::Message &msg, const QString &unchangedMessage,
+                             Kopete::ChatSession *session, Kopete::MessageEvent *event,
+                             QWidget *viewWidget, bool isActiveWindow, bool isViewOnCurrentDesktop);
+
     KopeteViewManagerPrivate *d;
     static KopeteViewManager *s_viewManager;
 

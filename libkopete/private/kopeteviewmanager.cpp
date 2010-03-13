@@ -61,7 +61,7 @@ static QString squashMessage( const Kopete::Message& msg )
 		// the parsed text if necessary. We used parsed text
 		// so that things like "<knuff>" show correctly
 		//  Escape it after snipping it to not snip entities
-		msgText =msg.plainBody() ;
+		msgText = msg.plainBody();
 		if( msgText.length() > 30 )
 			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
 		msgText=Kopete::Emoticons::parseEmoticons(Qt::escape(msgText));
@@ -98,20 +98,20 @@ static QString squashMessage( const Kopete::Message& msg )
 	return msgText;
 }
 
-typedef QMap<Kopete::ChatSession*,KopeteView*> ManagerMap;
+typedef QMap<Kopete::ChatSession*, KopeteView*> SessionMap;
 typedef QList<Kopete::MessageEvent*> EventList;
 
 struct KopeteViewManagerPrivate
 {
     ~KopeteViewManagerPrivate()
     {
-        qDeleteAll(managerMap);
-        managerMap.clear();
+        qDeleteAll(sessionMap);
+        sessionMap.clear();
         qDeleteAll(eventList);
         eventList.clear();
     }
 
-    ManagerMap managerMap;
+    SessionMap sessionMap;
     EventList eventList;
     KopeteView *activeView;
 
@@ -123,6 +123,8 @@ struct KopeteViewManagerPrivate
     bool balloonNotifyIgnoreClosesChatView;
     bool balloonGroupMessageNotificationsPerSender;
     bool foreignMessage;
+    bool animateOnMessageWithOpenChat;
+    bool enableEventsWhileAway;
     Kopete::ActiveNotifications activeNotifications;
 };
 
@@ -158,8 +160,8 @@ KopeteViewManager::~KopeteViewManager()
 // 	kDebug(14000) ;
 
     //delete all open chatwindow.
-    ManagerMap::Iterator it;
-    for ( it = d->managerMap.begin(); it != d->managerMap.end(); ++it )
+    SessionMap::Iterator it;
+    for ( it = d->sessionMap.begin(); it != d->sessionMap.end(); ++it )
     {
         it.value()->closeView( true ); //this does not clean the map, but we don't care
     }
@@ -169,22 +171,26 @@ KopeteViewManager::~KopeteViewManager()
 
 void KopeteViewManager::slotPrefsChanged()
 {
-	d->useQueue = Kopete::BehaviorSettings::self()->useMessageQueue();
-    d->raiseWindow = Kopete::BehaviorSettings::self()->raiseMessageWindow();
-    d->queueUnreadMessages = Kopete::BehaviorSettings::self()->queueUnreadMessages();
-    d->queueOnlyHighlightedMessagesInGroupChats = Kopete::BehaviorSettings::self()->queueOnlyHighlightedMessagesInGroupChats();
-    d->queueOnlyMessagesOnAnotherDesktop = Kopete::BehaviorSettings::self()->queueOnlyMessagesOnAnotherDesktop();
-    d->balloonNotifyIgnoreClosesChatView = Kopete::BehaviorSettings::self()->balloonNotifyIgnoreClosesChatView();
-    d->balloonGroupMessageNotificationsPerSender = Kopete::BehaviorSettings::self()->balloonGroupMessageNotificationsPerSender();
+	Kopete::BehaviorSettings *const bs = Kopete::BehaviorSettings::self();
+
+	d->useQueue = bs->useMessageQueue();
+	d->raiseWindow = bs->raiseMessageWindow();
+	d->queueUnreadMessages = bs->queueUnreadMessages();
+	d->queueOnlyHighlightedMessagesInGroupChats = bs->queueOnlyHighlightedMessagesInGroupChats();
+	d->queueOnlyMessagesOnAnotherDesktop = bs->queueOnlyMessagesOnAnotherDesktop();
+	d->balloonNotifyIgnoreClosesChatView = bs->balloonNotifyIgnoreClosesChatView();
+	d->balloonGroupMessageNotificationsPerSender = bs->balloonGroupMessageNotificationsPerSender();
+	d->animateOnMessageWithOpenChat = bs->animateOnMessageWithOpenChat();
+	d->enableEventsWhileAway = bs->enableEventsWhileAway();
 }
 
 KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString &requestedPlugin )
 {
     // kDebug(14000) ;
 
-    if( d->managerMap.contains( session ) && d->managerMap[ session ] )
+    if( d->sessionMap.contains( session ) && d->sessionMap[ session ] )
     {
-        return d->managerMap[ session ];
+        return d->sessionMap[ session ];
     }
     else
     {
@@ -199,7 +205,7 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString
             if( !viewPlugin )
             {
                 kWarning(14000) << "Requested view plugin, " << pluginName
-                                 << ", was not found. Falling back to chat window plugin" << endl;
+                                << ", was not found. Falling back to chat window plugin" << endl;
             }
         }
 
@@ -213,10 +219,10 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString
             KopeteView *newView = viewPlugin->createView(session);
 
             d->foreignMessage = false;
-            d->managerMap.insert( session, newView );
+            d->sessionMap.insert( session, newView );
 
             connect( session, SIGNAL( closing(Kopete::ChatSession *) ),
-                            this, SLOT(slotChatSessionDestroyed(Kopete::ChatSession*)) );
+                     this, SLOT(slotChatSessionDestroyed(Kopete::ChatSession*)) );
 
             return newView;
         }
@@ -229,195 +235,207 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString
 }
 
 
-void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSession *manager)
+void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSession *session)
 {
 	bool outgoingMessage = ( msg.direction() == Kopete::Message::Outbound );
 
-	if( !outgoingMessage || d->managerMap.contains( manager ) )
-	{
-		// Get an early copy of the plain message body before the chat view works on it
-		// Otherwise toPlainBody() will ignore smileys if they were turned into images during
-		// the html conversion. See bug 161651.
-		QString squashedMessage( squashMessage( msg ) );
+	if ( outgoingMessage && !d->sessionMap.contains( session ) )
+		return;
 
-		d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
-		manager->view(true,msg.requestedPlugin())->appendMessage( msg );
-		d->foreignMessage=false; //the view is created, reset the flag
+	// Get an early copy of the plain message body before the chat view works on it
+	// Otherwise toPlainBody() will ignore smileys if they were turned into images during
+	// the html conversion. See bug 161651.
+	const QString squashedMessage = squashMessage( msg );
 
-		bool appendMessageEvent = d->useQueue;
-		bool chatIsOnCurrentDesktop = true;
+	d->foreignMessage = !outgoingMessage; // for the view we are about to create
+	session->view( true, msg.requestedPlugin() )->appendMessage( msg );
+	d->foreignMessage = false; // the view has been created, reset the flag
 
-		QWidget *w = dynamic_cast<QWidget*>(view( manager ));
+	bool appendMessageEvent = d->useQueue;
+	bool isViewOnCurrentDesktop = true;
+
+	QWidget *w = dynamic_cast< QWidget * >( view( session ) );
 #ifdef Q_WS_X11
-		if (w)
-		{
-			chatIsOnCurrentDesktop = KWindowSystem::windowInfo( w->topLevelWidget()->winId(), NET::WMDesktop ).isOnCurrentDesktop();
-		}
+	if ( w )
+	{
+		isViewOnCurrentDesktop = KWindowSystem::windowInfo( w->topLevelWidget()->winId(),
+		                                                    NET::WMDesktop ).isOnCurrentDesktop();
+	}
 #endif
 
-		if( d->queueUnreadMessages && w )
+	if ( d->queueUnreadMessages && w )
+	{
+		// append msg event to queue if chat window is active but not the chat view in it...
+		appendMessageEvent = appendMessageEvent && !( w->isActiveWindow()
+		                                              && session->view() == d->activeView );
+		// ...and chat window is on another desktop
+		appendMessageEvent = appendMessageEvent && !( d->queueOnlyMessagesOnAnotherDesktop
+		                                              && isViewOnCurrentDesktop );
+	}
+	else
+	{
+		// append if no chat window exists already
+		appendMessageEvent = appendMessageEvent && !view( session )->isVisible();
+	}
+
+	// in groupchats always append highlighted messages to queue
+	appendMessageEvent = appendMessageEvent
+	                     && ( !d->queueOnlyHighlightedMessagesInGroupChats
+	                          || session->members().count() == 1
+	                          || msg.importance() == Kopete::Message::Highlight );
+
+	QWidget *viewWidget = 0;
+	bool showNotification = false;
+	bool isActiveWindow = false;
+
+	if ( !outgoingMessage && ( !session->account()->isAway() || d->enableEventsWhileAway )
+	     && msg.direction() != Kopete::Message::Internal )
+	{
+		viewWidget = dynamic_cast< QWidget * >( session->view( false ) );
+		isActiveWindow = session->view( false ) && viewWidget
+		                 && session->view() == d->activeView && viewWidget->isActiveWindow();
+		showNotification = msg.from() != 0;
+	}
+
+	Kopete::MessageEvent *event = 0;
+	if ( ( appendMessageEvent && !outgoingMessage ) || showNotification )
+	{
+		showNotification = showNotification
+		                   || ( msg.from() && d->eventList.isEmpty() ); // may happen for internal messages
+		event = new Kopete::MessageEvent( msg, session );
+		d->eventList.append( event );
+
+		// Don't call readMessages twice. We call it later in this method. Fixes bug 168978.
+		if ( d->useQueue )
+			connect( event, SIGNAL(done(Kopete::MessageEvent *)),
+					 this, SLOT(slotEventDeleted(Kopete::MessageEvent *)) );
+	}
+
+	if ( msg.delayed() )
+		showNotification = false;
+
+	if ( showNotification )
+		createNotification( msg, squashedMessage, session, event, viewWidget,
+		                    isActiveWindow, isViewOnCurrentDesktop );
+
+	if (!d->useQueue)
+	{
+		// "Open messages instantly" setting
+		readMessages( session, outgoingMessage );
+	}
+
+	KopeteView *view = session->view( false );
+	if ( d->raiseWindow && view && view->isVisible() )
+	{
+		// "Raise window on incoming message" setting
+		view->raise();
+	}
+
+	if ( event && ( appendMessageEvent || ( d->animateOnMessageWithOpenChat && !isActiveWindow ) ) )
+		Kopete::ChatSessionManager::self()->postNewEvent(event);
+}
+
+void KopeteViewManager::createNotification( Kopete::Message &msg, const QString &squashedMessage,
+                                            Kopete::ChatSession *session, Kopete::MessageEvent *event,
+	                                        QWidget *viewWidget,
+	                                        bool isActiveWindow, bool isViewOnCurrentDesktop )
+{
+    if ( d->balloonGroupMessageNotificationsPerSender )
+	{
+		Kopete::ActiveNotifications::iterator notifyIt =
+			d->activeNotifications.find( msg.from()->account()->accountLabel() + msg.from()->contactId() );
+		if (notifyIt != d->activeNotifications.end())
 		{
-			// append msg event to queue if chat window is active but not the chat view in it...
-			appendMessageEvent = appendMessageEvent && !(w->isActiveWindow() && manager->view() == d->activeView);
-			// ...and chat window is on another desktop
-			appendMessageEvent = appendMessageEvent && (!d->queueOnlyMessagesOnAnotherDesktop
-					||!chatIsOnCurrentDesktop);
+			( *notifyIt )->incrementMessages();
+			return;
+		}
+	}
+
+	const QString msgFrom = msg.from()->metaContact() ? msg.from()->metaContact()->displayName()
+	                                                  : msg.from()->contactId();
+
+	QString eventId;
+	KLocalizedString body = ki18n( "Incoming message from %1<br />\"%2\"" );
+	switch( msg.importance() )
+	{
+	case Kopete::Message::Low:
+		eventId = QLatin1String( "kopete_contact_lowpriority" );
+		break;
+	case Kopete::Message::Highlight:
+		eventId = QLatin1String( "kopete_contact_highlight" );
+		body = ki18n( "A highlighted message arrived from %1<br />\"%2\"" );
+		break;
+	default:
+		if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop
+		     && isViewOnCurrentDesktop ) )
+		{
+			eventId = QLatin1String( "kopete_contact_incoming_active_window" );
 		}
 		else
 		{
-			// append if no chat window exists already
-			appendMessageEvent = appendMessageEvent && !view( manager )->isVisible();
+			eventId = QLatin1String( "kopete_contact_incoming" );
 		}
-
-		// in groupchats always append highlighted messages to queue
-		appendMessageEvent = appendMessageEvent && (!d->queueOnlyHighlightedMessagesInGroupChats || manager->members().count() == 1 || msg.importance() == Kopete::Message::Highlight);
-
-		QWidget *viewWidget = 0L;
-		bool showNotification = false;
-		bool isActiveWindow = false;
-
-		if ( !outgoingMessage && ( !manager->account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
-		     && msg.direction() != Kopete::Message::Internal )
-		{
-			viewWidget = dynamic_cast<QWidget*>(manager->view(false));
-			isActiveWindow =  manager->view(false) && viewWidget && manager->view() == d->activeView && viewWidget->isActiveWindow();
-			showNotification = ( msg.from() );
-		}
-
-		Kopete::MessageEvent *event = 0L;
-		if ( (appendMessageEvent && !outgoingMessage) || showNotification )
-		{
-			showNotification = showNotification || (msg.from() && d->eventList.isEmpty()); // may happen for internal messages
-			event = new Kopete::MessageEvent(msg,manager);
-			d->eventList.append( event );
-
-			// Don't call readMessages twice. We call it later in this method. Fixes bug 168978.
-			if ( d->useQueue )
-				connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
-		}
-
-		if ( msg.delayed() )
-			showNotification = false;
-
-		if ( showNotification )
-		{
-			QString msgFrom;
-			msgFrom.clear();
-			if( msg.from()->metaContact() )
-				msgFrom = msg.from()->metaContact()->displayName();
-			else
-				msgFrom = msg.from()->contactId();
-
-			QString eventId;
-			KLocalizedString body = ki18n( "Incoming message from %1<br />\"%2\"" );
-			switch( msg.importance() )
-			{
-				case Kopete::Message::Low:
-					eventId = QLatin1String( "kopete_contact_lowpriority" );
-					break;
-				case Kopete::Message::Highlight:
-					eventId = QLatin1String( "kopete_contact_highlight" );
-					body = ki18n( "A highlighted message arrived from %1<br />\"%2\"" );
-					break;
-				default:
-					if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop
-						&& chatIsOnCurrentDesktop ) )
-					{
-						eventId = QLatin1String( "kopete_contact_incoming_active_window" );
-					}
-					else
-					{
-						 eventId = QLatin1String( "kopete_contact_incoming" );
-					}
-			}
-
-            bool displayNewNotification = true;
-            if ( d->balloonGroupMessageNotificationsPerSender )
-            {
-                Kopete::ActiveNotifications::iterator notifyIt = d->activeNotifications.find(msg.from()->account()->accountLabel() + msg.from()->contactId());
-                if (notifyIt != d->activeNotifications.end()) 
-                {
-                    (*notifyIt)->incrementMessages();
-                    displayNewNotification = false;
-                }
-            }
-
-            if (displayNewNotification) {
-                KNotification *notify = new KNotification(eventId, viewWidget, isActiveWindow ? KNotification::CloseOnTimeout : KNotification::Persistent);
-                notify->setPixmap( QPixmap::fromImage(msg.from()->metaContact()->picture().image()) );
-                notify->setActions(( QStringList() <<  i18nc("@action", "View" )  <<   i18nc("@action", "Ignore" )) );
-
-                QString bodyString = body.subs( Qt::escape(msgFrom) ).subs( squashedMessage ).toString();
-                if ( d->balloonGroupMessageNotificationsPerSender )
-                {
-                    // notify is parent, will die with it
-                    new Kopete::ActiveNotification(
-                        notify,
-                        msg.from()->account()->accountLabel() + msg.from()->contactId(),
-                        d->activeNotifications,
-                        bodyString );
-                }
-                else 
-                {
-                    notify->setText( "<qt>" + bodyString + "</qt>" );
-                }
-
-                foreach(const QString& cl , msg.classes())
-                    notify->addContext( qMakePair( QString::fromLatin1("class") , cl ) );
-
-                Kopete::MetaContact *mc= msg.from()->metaContact();
-                if(mc)
-                {
-                    notify->addContext( qMakePair( QString::fromLatin1("contact") , mc->metaContactId().toString()) );
-                    foreach( Kopete::Group *g , mc->groups() )
-                    {
-                        notify->addContext( qMakePair( QString::fromLatin1("group") , QString::number(g->groupId())) );
-                    }
-                }
-                connect(notify,SIGNAL(activated()), manager , SLOT(raiseView()) );
-                connect(notify,SIGNAL(action1Activated()), manager , SLOT(raiseView()) );
-                connect(notify,SIGNAL(action2Activated()), event , SLOT(discard()) );
-                connect(event, SIGNAL(done(Kopete::MessageEvent*)) , notify , SLOT(close() ));
-                notify->sendEvent();
-            }
-		}
-
-		if (!d->useQueue)
-		{
-			// "Open messages instantly" setting
-			readMessages(manager, outgoingMessage);
-		}
-
-		KopeteView *view = manager->view(false);
-		if ( d->raiseWindow && view && view->isVisible() )
-		{
-			// "Raise window on incoming message" setting
-			view->raise();
-		}
-
-		bool animateOnMessageWithOpenChat = Kopete::BehaviorSettings::self()->animateOnMessageWithOpenChat();
-		if ( event && ( appendMessageEvent || ( animateOnMessageWithOpenChat && !isActiveWindow ) ) )
-			Kopete::ChatSessionManager::self()->postNewEvent(event);
 	}
+
+	KNotification *notify = new KNotification(eventId, viewWidget, isActiveWindow
+	                                                               ? KNotification::CloseOnTimeout
+	                                                               : KNotification::Persistent);
+	notify->setPixmap( QPixmap::fromImage( msg.from()->metaContact()->picture().image() ) );
+	notify->setActions( QStringList() << i18nc( "@action", "View" )
+	                                  << i18nc( "@action", "Ignore" ) );
+
+	QString bodyString = body.subs( Qt::escape(msgFrom) ).subs( squashedMessage ).toString();
+	if ( d->balloonGroupMessageNotificationsPerSender )
+	{
+		// notify is parent, will die with it
+		new Kopete::ActiveNotification(	notify,
+		                msg.from()->account()->accountLabel() + msg.from()->contactId(),
+		                d->activeNotifications,
+		                bodyString );
+	}
+	else
+	{
+		notify->setText( "<qt>" + bodyString + "</qt>" );
+	}
+
+	foreach ( const QString& cl , msg.classes() )
+		notify->addContext( qMakePair( QString::fromLatin1("class"), cl ) );
+
+	Kopete::MetaContact *mc= msg.from()->metaContact();
+	if ( mc )
+	{
+		notify->addContext( qMakePair( QString::fromLatin1("contact"),
+		                               mc->metaContactId().toString()) );
+		foreach( Kopete::Group *g , mc->groups() )
+		{
+			notify->addContext( qMakePair( QString::fromLatin1("group"),
+			                               QString::number(g->groupId())) );
+		}
+	}
+	connect( notify, SIGNAL(activated()), session, SLOT(raiseView()) );
+	connect( notify, SIGNAL(action1Activated()), session, SLOT(raiseView()) );
+	connect( notify, SIGNAL(action2Activated()), event, SLOT(discard()) );
+	connect( event, SIGNAL(done(Kopete::MessageEvent*)), notify, SLOT(close()) );
+	notify->sendEvent();
 }
 
-void KopeteViewManager::readMessages( Kopete::ChatSession *manager, bool outgoingMessage, bool activate )
+void KopeteViewManager::readMessages( Kopete::ChatSession *session, bool outgoingMessage, bool activate )
 {
     // kDebug( 14000 ) ;
-    d->foreignMessage=!outgoingMessage; //let know for the view we are about to create
-    KopeteView *thisView = manager->view( true );
-    d->foreignMessage=false; //the view is created, reset the flag
-    if( ( outgoingMessage && !thisView->isVisible() ) || d->raiseWindow || activate )
+    d->foreignMessage = !outgoingMessage; //for the view we are about to create
+    KopeteView *thisView = session->view( true );
+    d->foreignMessage = false; //the view is created, reset the flag
+    if ( ( outgoingMessage && !thisView->isVisible() ) || d->raiseWindow || activate )
             thisView->raise( activate );
-    else if( !thisView->isVisible() )
+    else if ( !thisView->isVisible() )
             thisView->makeVisible();
 
-    foreach (Kopete::MessageEvent *event, d->eventList)
+    foreach ( Kopete::MessageEvent *event, d->eventList )
     {
-        if ( event->message().manager() == manager )
+        if ( event->message().manager() == session )
         {
             event->apply();
-            d->eventList.removeAll(event);
+            d->eventList.removeAll( event );
         }
     }
 }
@@ -488,9 +506,9 @@ void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 {
     // kDebug( 14000 ) ;
 
-    if( d->managerMap.contains( closingView->msgManager() ) )
+    if ( d->sessionMap.contains( closingView->msgManager() ) )
     {
-        d->managerMap.remove( closingView->msgManager() );
+        d->sessionMap.remove( closingView->msgManager() );
         // closingView->msgManager()->setCanBeDeleted( true );
     }
 
@@ -498,16 +516,16 @@ void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
         d->activeView = 0L;
 }
 
-void KopeteViewManager::slotChatSessionDestroyed( Kopete::ChatSession *manager )
+void KopeteViewManager::slotChatSessionDestroyed( Kopete::ChatSession *session )
 {
-    // kDebug( 14000 ) ;
+	// kDebug( 14000 ) ;
 
-	if( d->managerMap.contains( manager ) )
+	if ( d->sessionMap.contains( session ) )
 	{
-		KopeteView *v=d->managerMap[ manager ];
+		KopeteView *v = d->sessionMap[ session ];
 		v->closeView( true );
 		delete v;   //closeView call deleteLater,  but in this case this is not enough, because some signal are called that case crash
-		d->managerMap.remove( manager );
+		d->sessionMap.remove( session );
 	}
 }
 
@@ -520,18 +538,18 @@ KopeteView* KopeteViewManager::activeView() const
 QList<Kopete::MessageEvent*> KopeteViewManager::pendingMessages( Kopete::Contact *contact )
 {
 	QList<Kopete::MessageEvent*> pending;
-    foreach (Kopete::MessageEvent *event, d->eventList)
-    {
-    	const Kopete::Message &message = event->message();
-        if ( event->state() == Kopete::MessageEvent::Nothing
-        		&& message.direction() == Kopete::Message::Inbound
-        		&& message.from() == contact )
-        {
-        	pending << event;
-        }
-    }
+	foreach (Kopete::MessageEvent *event, d->eventList)
+	{
+		const Kopete::Message &message = event->message();
+		if ( event->state() == Kopete::MessageEvent::Nothing
+			 && message.direction() == Kopete::Message::Inbound
+			 && message.from() == contact )
+		{
+			pending << event;
+		}
+	}
 
-    return pending;
+	return pending;
 }
 
 #include "kopeteviewmanager.moc"
