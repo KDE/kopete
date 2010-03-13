@@ -3041,6 +3041,10 @@ const char *VideoDevice::getUnifiedV4L2StdCtrlName(quint32 ctrl_id)
 		default:
 			return NULL;
 	}
+	/* NOTE: Unification is necessary for translation, because drivers use individual descriptions
+	         (different uppercase/lowercase combinations but also some strange interpretations).
+	         Otherwise we would end up with too many different (or even untranslated !)strings.
+	 */
 	/* NOTE: We only mark the strings for translation, the translation is done for ALL controls
 	         (including custom controls) at a common place
 	 */
