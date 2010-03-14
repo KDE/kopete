@@ -3034,6 +3034,12 @@ const char *VideoDevice::getUnifiedV4L2StdCtrlName(quint32 ctrl_id)
 #ifdef V4L2_CID_COLORFX			// since kernel 2.6.30
 		case V4L2_CID_COLORFX:			return I18N_NOOP("Color Effects");
 #endif
+#ifdef V4L2_CID_AUTOBRIGHTNESS		// since kernel 2.6.31
+		case V4L2_CID_AUTOBRIGHTNESS:		return I18N_NOOP("Automatic Brightness");
+#endif
+#ifdef V4L2_CID_BAND_STOP_FILTER	// since kernel 2.6.32
+		case V4L2_CID_BAND_STOP_FILTER:		return I18N_NOOP("Band-Stop Filter");
+#endif
 #ifdef V4L2_CID_ROTATE			// since kernel 2.6.33
 		case V4L2_CID_ROTATE:			return I18N_NOOP("Rotate");
 		case V4L2_CID_BG_COLOR:			return I18N_NOOP("Background Color");
