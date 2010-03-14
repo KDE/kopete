@@ -3036,7 +3036,7 @@ const char *VideoDevice::getUnifiedV4L2StdCtrlName(quint32 ctrl_id)
 #endif
 #ifdef V4L2_CID_ROTATE			// since kernel 2.6.33
 		case V4L2_CID_ROTATE:			return I18N_NOOP("Rotate");
-		case V4L2_CID_BG_COLOR:			return I18N_NOOP("Background color");
+		case V4L2_CID_BG_COLOR:			return I18N_NOOP("Background Color");
 #endif
 		default:
 			return NULL;
