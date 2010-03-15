@@ -278,11 +278,12 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		appendMessageEvent = appendMessageEvent && !view( session )->isVisible();
 	}
 
-	// in groupchats always append highlighted messages to queue
-	appendMessageEvent = appendMessageEvent
-	                     && ( !d->queueOnlyHighlightedMessagesInGroupChats
-	                          || session->members().count() == 1
-	                          || msg.importance() == Kopete::Message::Highlight );
+	// in groupchats, don't notify on non-highlighted messages if configured that way.
+	const bool isIgnoredGroupChatMessage = session->members().count() > 1
+	                                       && d->queueOnlyHighlightedMessagesInGroupChats
+	                                       && msg.importance() != Kopete::Message::Highlight;
+
+	appendMessageEvent = appendMessageEvent && !isIgnoredGroupChatMessage;
 
 	QWidget *viewWidget = 0;
 	bool showNotification = false;
@@ -337,7 +338,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 		view->raise();
 	}
 
-	if ( event && ( appendMessageEvent || ( d->animateOnMessageWithOpenChat && !isActiveWindow ) ) )
+	if ( event && ( appendMessageEvent || ( d->animateOnMessageWithOpenChat && !isActiveWindow ) )
+	     && !isIgnoredGroupChatMessage )
 		Kopete::ChatSessionManager::self()->postNewEvent(event);
 }
 
