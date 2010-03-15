@@ -321,6 +321,8 @@ void TelepathyContact::setInternalContact(Tp::ContactPtr contact)
 
 void TelepathyContact::fetchInternalContact()
 {
+    kDebug();
+
     if (d->fetchingContact) {
         kDebug() << "Internal contact fetch already in progress, ignoring";
         return;

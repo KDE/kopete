@@ -231,8 +231,18 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
             }
 
             askPresenceAuthorization(metaContact, contact);
-        } else {
-            kDebug() << "  Ignored" << contact->id() << "who is neither subscribed nor published";
+        }
+    }
+
+    foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
+        foreach (Kopete::Contact *c, mc->contacts()) {
+            TelepathyContact *tpContact = qobject_cast<TelepathyContact *>(c);
+
+            if (!tpContact || tpContact->account() != d->telepathyAccount)
+                continue;
+
+            if (!tpContact->internalContact())
+                tpContact->fetchInternalContact();
         }
     }
 
