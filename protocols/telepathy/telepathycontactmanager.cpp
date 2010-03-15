@@ -211,16 +211,23 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
 
             foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
                 foreach (Kopete::Contact *c, mc->contacts()) {
+                    TelepathyContact *tpContact = static_cast<TelepathyContact *>(c);
+
                     // FIXME: Comparing string ids is WRONG!
                     if ((c->account() == d->telepathyAccount) &&
                             (c->contactId() == contact->id())) {
 
                         // Contact is already in the list.
                         metaContact = mc;
+                        if (!tpContact->internalContact()
+                                || !tpContact->internalContact()->manager()->connection()->isValid())
+                            tpContact->setInternalContact(contact);
                         break;
                     }
                 }
 
+                if (metaContact)
+                    break;
             }
 
             askPresenceAuthorization(metaContact, contact);
