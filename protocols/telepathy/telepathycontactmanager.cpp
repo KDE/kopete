@@ -227,16 +227,6 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
         } else {
             kDebug() << "  Ignored" << contact->id() << "who is neither subscribed nor published";
         }
-
-        connect(contact.data(),
-                SIGNAL(subscriptionStateChanged(Tp::Contact::PresenceState)),
-                SLOT(onContactSubscriptionStateChanged(Tp::Contact::PresenceState)));
-        connect(contact.data(),
-                SIGNAL(publishStateChanged(Tp::Contact::PresenceState)),
-                SLOT(onContactPublishStateChanged(Tp::Contact::PresenceState)));
-        connect(contact.data(),
-                SIGNAL(blockStatusChanged(bool)),
-                SLOT(onContactBlockStatusChanged(bool)));
     }
 
     if (!requestAvatarList.isEmpty()) {
@@ -246,37 +236,6 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
         if (avatarIface)
             avatarIface->RequestAvatars(requestAvatarList);
     }
-}
-
-void TelepathyContactManager::onContactSubscriptionStateChanged(Tp::Contact::PresenceState state)
-{
-    kDebug();
-
-    // TODO: Implement me!
-}
-
-void TelepathyContactManager::onContactPublishStateChanged(Tp::Contact::PresenceState state)
-{
-    kDebug();
-
-    // TODO: Implement me!
-}
-
-void TelepathyContactManager::onContactBlockStatusChanged(bool blocked)
-{
-    kDebug();
-
-    // Get the callee Tp::Contact.
-    Tp::Contact *pContact = qobject_cast<Tp::Contact*>(sender());
-
-    if (!pContact) {
-        kWarning() << "Slot called by non-Tp::Contact object.";
-        return;
-    }
-
-    Tp::ContactPtr contact = Tp::ContactPtr(pContact);
-
-    // TODO: Implement me!
 }
 
 void TelepathyContactManager::onPresencePublicationRequested(const Tp::Contacts &contacts)
