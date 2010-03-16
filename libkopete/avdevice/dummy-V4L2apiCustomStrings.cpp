@@ -42,13 +42,13 @@ I18N_NOOP2("Combfilter", "combfilter");						// bt8xx/bttv-driver.c
 I18N_NOOP2("Automute", "automute");						/* bt8xx/bttv-driver.c,
 										   saa7134/saa7134-video.c */
 I18N_NOOP2("Luminance Decimation Filter", "luma decimation filter");		// bt8xx/bttv-driver.c
-I18N_NOOP2("Analog/Digital Conversion Crush [NOTE: aGc is a typo ! => aDc]", "agc crush");		// bt8xx/bttv-driver.c
+I18N_NOOP2("Analog/Digital Conversion Crush [NOTE: aGc is a typo ! => aDc]", "agc crush");			// bt8xx/bttv-driver.c
 I18N_NOOP2("Video Cassette Recorder Hack [NOTE: improves sync on poor VCR tapes]", "vcr hack");	// bt8xx/bttv-driver.c
 I18N_NOOP2("Whitecrush Upper", "whitecrush upper");				// bt8xx/bttv-driver.c
 I18N_NOOP2("Whitecrush Lower", "whitecrush lower");				// bt8xx/bttv-driver.c
 I18N_NOOP2("U-V Gain Ratio [NOTE: NOT Ultra Violet !]", "uv ratio");		// bt8xx/bttv-driver.c
 I18N_NOOP2("Full Luminance Range", "full luma range");				// bt8xx/bttv-driver.c
-I18N_NOOP2("Luminance Coring Level", "coring");					// bt8xx/bttv-driver.c
+I18N_NOOP2("Luminance Coring Level [NOTE: Improves SNR (Signat-to-Noise-Ratio) by HF filtering]", "coring");	// bt8xx/bttv-driver.c
 I18N_NOOP("Invert");								// saa7134/saa7134-video.c
 I18N_NOOP2("Y Offset Odd Field", "y offset odd field");				// saa7134/saa7134-video.c
 I18N_NOOP2("Y Offset Even Field", "y offset even field");			// saa7134/saa7134-video.c
@@ -87,7 +87,7 @@ I18N_NOOP("Luminance Bandpass");						// vino.c (=> ssa7191.c)
 I18N_NOOP("Luminance Bandpass Weight");						// vino.c (=> ssa7191.c)
 I18N_NOOP("High Frequency Luminance Coring", "HF Luminance Coring");		// vino.c (=> ssa7191.c)
 I18N_NOOP("Force Color ON", "Force Colour");					// vino.c (=> ssa7191.c)
-I18N_NOOP("Chrominance Gain Control");						// vino.c (=> ssa7191.c)
+I18N_NOOP2("Chrominance Gain", "Chrominance Gain Control");			// vino.c (=> ssa7191.c)
 I18N_NOOP("Video Tape Recorder Time Constant", "VTR Time Constant");		// vino.c (=> ssa7191.c)
 I18N_NOOP("Luminance Delay Compensation");					// vino.c (=> ssa7191.c)
 I18N_NOOP("Vertical Noise Reduction");						// vino.c (=> ssa7191.c)
