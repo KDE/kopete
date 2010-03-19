@@ -74,7 +74,7 @@ public:
 	int scanDevices();
 	void registerDevice( Solid::Device & dev );
 	bool hasDevices();
-	size_t size();
+	int size();
 	~VideoDevicePool();
 	int fillDeviceKComboBox(KComboBox *combobox);
 	int fillInputKComboBox(KComboBox *combobox);
@@ -82,7 +82,7 @@ public:
 	QString currentDeviceUdi();
 	int currentDevice();
 	int currentInput();
-	unsigned int inputs();
+	int inputs();
 
 	QList<NumericVideoControl> getSupportedNumericControls();
 	QList<BooleanVideoControl> getSupportedBooleanControls();

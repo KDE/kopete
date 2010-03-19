@@ -88,7 +88,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 
 AVDeviceConfig::~AVDeviceConfig()
 {
-	for (unsigned int k=0; k<ctrl_values_bak.size(); k++)
+	for (int k=0; k<ctrl_values_bak.size(); k++)
 		mVideoDevicePool->setControlValue(ctrl_values_bak.at(k).id, ctrl_values_bak.at(k).value);
 	mVideoDevicePool->close();
 	clearControlGUIElements();
@@ -316,6 +316,7 @@ void AVDeviceConfig::slotUpdateImage()
 
 void AVDeviceConfig::deviceRegistered( const QString & udi )
 {
+	(void) udi; /* avoid compiler warning about unused parameter */
 	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
@@ -372,7 +373,7 @@ void AVDeviceConfig::stopCapturing()
 
 void AVDeviceConfig::resetControls()
 {
-	unsigned int k = 0;
+	int k = 0;
 	// Numeric controls:
 	QList<Kopete::AV::NumericVideoControl> numericCtrls;
 	numericCtrls = mVideoDevicePool->getSupportedNumericControls();

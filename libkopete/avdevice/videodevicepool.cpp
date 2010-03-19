@@ -634,7 +634,7 @@ bool VideoDevicePool::hasDevices()
 /*!
     \fn Kopete::AV::VideoDevicePool::size()
  */
-size_t VideoDevicePool::size()
+int VideoDevicePool::size()
 {
     /// @todo implement me
 	return m_videodevice.size();
@@ -672,7 +672,7 @@ int VideoDevicePool::currentInput()
 /*!
     \fn Kopete::AV::VideoDevicePool::currentInput()
  */
-unsigned int VideoDevicePool::inputs()
+int VideoDevicePool::inputs()
 {
     /// @todo implement me
 	return m_videodevice[currentDevice()].inputs();
