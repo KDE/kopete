@@ -26,6 +26,7 @@
 
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>
+#include <kopeteuiglobal.h>
 
 #include <kmessagebox.h>
 #include <kdebug.h>
@@ -123,7 +124,15 @@ void TelepathyAddContactAsyncContext::normalizedContactFetched(Tp::PendingOperat
         account->addContact(normalizedId, parentMetaContact);
         account->addNewContact(normalizedId);
     } else {
-        kDebug() << "Failure: " << op->errorName() << op->errorMessage();
+        if (!contacts->invalidIdentifiers().isEmpty()) {
+            kDebug() << "The identifier was invalid";
+
+            KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+                i18n("The contact ID was not valid. Check the contact ID and try again."),
+                i18n("Telepathy Protocol"));
+        } else {
+            kDebug() << "Failure: " << op->errorName() << op->errorMessage();
+        }
 
         // Check if KopeteContactListView::addContact only created the metacontact for us, in which
         // case we should remove it (as would've happened if we returned false synchronously from
