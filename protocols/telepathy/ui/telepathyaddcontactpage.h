@@ -19,7 +19,10 @@
 
 #include <ui/addcontactpage.h>
 
-#include <TelepathyQt4/PendingOperation>
+#include <QPointer>
+
+class TelepathyAccount;
+namespace Tp { class PendingOperation; }
 
 class TelepathyAddContactPage : public AddContactPage
 {
@@ -35,5 +38,25 @@ private:
     class Private;
     Private *d;
 };
+
+/*
+ * Current Kopete API doesn't allow asynchronous apply, and deletes the add contact page widget just
+ * after apply() has returned, so we need this workaround.
+ */
+class TelepathyAddContactAsyncContext : public QObject
+{
+    Q_OBJECT
+public:
+    TelepathyAddContactAsyncContext(TelepathyAccount *account,
+            Kopete::MetaContact *parentMetaContact);
+
+private Q_SLOTS:
+    void normalizedContactFetched(Tp::PendingOperation *op);
+
+private:
+    QPointer<TelepathyAccount> account;
+    QPointer<Kopete::MetaContact> parentMetaContact;
+};
+
 
 #endif

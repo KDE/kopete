@@ -24,6 +24,9 @@
 #include <telepathycontact.h>
 #include <telepathycontactmanager.h>
 
+#include <kopetecontactlist.h>
+#include <kopetemetacontact.h>
+
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -83,12 +86,56 @@ bool TelepathyAddContactPage::apply(Kopete::Account *account, Kopete::MetaContac
 
     // Get new id.
     QString newId = d->mainUi.textUserId->text();
-    tAccount->addContact(newId, parentMetaContact);
-    tAccount->addNewContact(newId);
+
+    kDebug() << "Starting to apply adding contact" << newId;
+
+    QObject::connect(connection->contactManager()->contactsForIdentifiers(QStringList() << newId),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            new TelepathyAddContactAsyncContext(tAccount, parentMetaContact),
+            SLOT(normalizedContactFetched(Tp::PendingOperation*)));
 
     return true;
 }
 
+TelepathyAddContactAsyncContext::TelepathyAddContactAsyncContext(TelepathyAccount *account,
+        Kopete::MetaContact *parentMetaContact) : account(account), parentMetaContact(parentMetaContact)
+{
+}
+
+void TelepathyAddContactAsyncContext::normalizedContactFetched(Tp::PendingOperation *op)
+{
+    Tp::PendingContacts *contacts = qobject_cast<Tp::PendingContacts *>(op);
+
+    if (!account || !parentMetaContact) {
+        kDebug() << "The account or meta contact went away, shutting down? Not doing anything";
+        deleteLater();
+        return;
+    }
+
+    if (contacts && contacts->isValid() && !contacts->contacts().isEmpty()) {
+        QString normalizedId = contacts->contacts()[0]->id();
+
+        kDebug() << "Success, adding contact - normalized to" << normalizedId;
+
+        // TODO: reuse the contact fetched here instead of fetching a new one? (might get cached
+        // in TpQt4 anyway)
+
+        account->addContact(normalizedId, parentMetaContact);
+        account->addNewContact(normalizedId);
+    } else {
+        kDebug() << "Failure: " << op->errorName() << op->errorMessage();
+
+        // Check if KopeteContactListView::addContact only created the metacontact for us, in which
+        // case we should remove it (as would've happened if we returned false synchronously from
+        // apply())
+        if (parentMetaContact->contacts().isEmpty()) {
+            kDebug() << "  Deleting supplied empty metacontact";
+            Kopete::ContactList::self()->removeMetaContact(parentMetaContact);
+        }
+    }
+
+    deleteLater();
+}
 
 #include "telepathyaddcontactpage.moc"
 
