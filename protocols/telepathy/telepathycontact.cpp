@@ -65,7 +65,7 @@ TelepathyContact::TelepathyContact(TelepathyAccount *account, const QString &con
         : Kopete::Contact(account, contactId, parent), d(new TelepathyContactPrivate)
 {
     kDebug();
-    setOnlineStatus(TelepathyProtocolInternal::protocolInternal()->Offline);
+    setOnlineStatus(Kopete::OnlineStatus::Unknown);
     setFileCapable(true);
 }
 
