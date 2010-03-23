@@ -55,7 +55,8 @@ private:
                                    TelepathyClientHandler::HandleChannelsData *data);
 
     TelepathyContact *getTpContact(Tp::AccountPtr account,
-                                   const QString &contactId);
+                                   const QString &contactId,
+                                   uint contactHandle);
     TelepathyClientHandler *m_clientHandler;
     Tp::ClientRegistrarPtr m_clientRegistrar;
 

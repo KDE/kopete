@@ -33,11 +33,13 @@
 #include <kopetechatsessionmanager.h>
 #include <kopetemetacontact.h>
 
+#include <TelepathyQt4/ContactManager>
 #include <TelepathyQt4/Debug>
 #include <TelepathyQt4/Feature>
 #include <TelepathyQt4/PendingChannel>
 #include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/PendingReady>
+#include <TelepathyQt4/ReferencedHandles>
 #include <TelepathyQt4/TextChannel>
 
 #include <QSharedPointer>
@@ -125,12 +127,16 @@ void TelepathyChannelManager::handleChannels(TelepathyClientHandler::HandleChann
     QVariantMap properties = channel->immutableProperties();
 
     QString contactId;
-    if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"].toBool())
+    uint contactHandle;
+    if (properties[TELEPATHY_INTERFACE_CHANNEL ".Requested"].toBool()) {
         contactId = properties[TELEPATHY_INTERFACE_CHANNEL ".TargetID"].toString();
-    else
+        contactHandle = properties[TELEPATHY_INTERFACE_CHANNEL ".TargetHandle"].toUInt();
+    } else {
         contactId = properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorID"].toString();
+        contactHandle = properties[TELEPATHY_INTERFACE_CHANNEL ".InitiatorHandle"].toUInt();
+    }
 
-    TelepathyContact *contact = getTpContact(data->account, contactId);
+    TelepathyContact *contact = getTpContact(data->account, contactId, contactHandle);
 
     if (!contact) {
         kDebug() << "Failed to get the contact, deleted account?";
@@ -287,7 +293,8 @@ void TelepathyChannelManager::handleFileTransferChannel(Tp::ChannelPtr channel,
 }
 
 TelepathyContact *TelepathyChannelManager::getTpContact(Tp::AccountPtr account,
-                                                        const QString &contactId)
+                                                        const QString &contactId,
+                                                        uint contactHandle)
 {
     QList<Kopete::Account*> kAccounts = Kopete::AccountManager::self()->
         accounts(TelepathyProtocolInternal::protocolInternal()->protocol());
@@ -325,9 +332,15 @@ TelepathyContact *TelepathyChannelManager::getTpContact(Tp::AccountPtr account,
             continue;
         }
 
-        // FIXME: String ID comparison is WRONG!
-        if (contact->contactId() == contactId) {
-            kDebug() << "Found the remote contact.";
+        if (contact->internalContact()
+                && contact->internalContact()->manager()->connection()->isValid()) {
+            if (contact->internalContact()->handle()[0] == contactHandle) {
+                kDebug() << "Found the remote contact (by handle)";
+                tpContact = contact;
+                break;
+            }
+        } else if (contact->contactId() == contactId) {
+            kDebug() << "Found the remote contact (using ID!)";
             tpContact = contact;
             break;
         }
