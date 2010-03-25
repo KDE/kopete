@@ -267,12 +267,14 @@ public:
 	VideoDevice();
 	virtual ~VideoDevice();
 	int setFileName(QString filename);
+	QString fileName();
+	void setUdi( const QString & );
+	QString udi() const;
 	virtual int open();
 	virtual bool isOpen();
-	virtual int checkDevice();
+
 	int showDeviceCapabilities();
-	virtual int initDevice();
-	int inputs();
+
 	int width();
 	int minWidth();
 	int maxWidth();
@@ -294,8 +296,10 @@ public:
 	QString signalStandardName(int standard);
 	int detectSignalStandards();
 
+	int inputs();
 	int currentInput();
 	int selectInput(int input);
+
 	virtual int startCapturing();
 	virtual int getFrame();
 	virtual int getFrame(imagebuffer *imgbuffer);
@@ -319,26 +323,9 @@ public:
 	bool canAsyncIO();
 	bool canStream();
 
-	void setUdi( const QString & );
-	QString udi() const;
-	QString m_model;
 	QString m_name;
-	QString full_filename;
-	videodev_driver m_driver;
-	int descriptor;
-
-//protected:
-#if defined(__linux__) && defined(ENABLE_AV)
-#ifdef V4L2_CAP_VIDEO_CAPTURE
-	struct v4l2_capability V4L2_capabilities;
-	struct v4l2_format fmt;
-//	struct v4l2_input m_input;
-#endif
-	struct video_capability V4L_capabilities;
-	struct video_buffer V4L_videobuffer;
-#endif	
 	QVector<Kopete::AV::VideoInput> m_input;
-//	QFile file;
+
 protected:
 #if defined(__linux__) && defined(ENABLE_AV)
 	/*!
@@ -364,6 +351,20 @@ protected:
 	QList<MenuVideoControl> m_menuCtrls;		/*!< Supported menu-controls for the current input */
 	QList<ActionVideoControl> m_actionCtrls;	/*!< Supported action-controls for the current input */
 
+	QString full_filename;
+	QString m_udi;
+	int descriptor;
+	videodev_driver m_driver;
+	QString m_model;
+#if defined(__linux__) && defined(ENABLE_AV)
+#ifdef V4L2_CAP_VIDEO_CAPTURE
+	struct v4l2_capability V4L2_capabilities;
+	struct v4l2_format fmt;
+//	struct v4l2_input m_input;
+#endif
+	struct video_capability V4L_capabilities;
+	struct video_buffer V4L_videobuffer;
+#endif	
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 
 	QVector<rawbuffer> m_rawbuffers;
@@ -383,11 +384,14 @@ protected:
 	bool m_videoasyncio;
 	bool m_videostream;
 
+	virtual int checkDevice();
+	virtual int initDevice();
+
 	void setupControls();
 #if defined(__linux__) && defined(ENABLE_AV) && defined(V4L2_CAP_VIDEO_CAPTURE)
 	bool getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList * options);
 	void saveV4L2ControlData(struct v4l2_queryctrl qctrl);
-	const char *getUnifiedV4L2StdCtrlName(quint32 id);
+	const char *getUnifiedV4L2StdCtrlName(quint32 ctrl_id);
 #endif
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
@@ -395,7 +399,6 @@ protected:
 	int initMmap();
 	int initUserptr();
 
-	QString m_udi;
 };
 
 }

@@ -607,11 +607,11 @@ void VideoDevicePool::registerDevice( Solid::Device & device )
 				VideoDevice videodevice;
 				videodevice.setUdi( device.udi() );
 				videodevice.setFileName(solidVideoDevice->driverHandle( "video4linux" ).toString());
-				kDebug() << "Found device " << videodevice.full_filename;
+				kDebug() << "Found device " << videodevice.fileName();
 				videodevice.open();
 				if(videodevice.isOpen())
 				{
-					kDebug() << "File " << videodevice.full_filename << " was opened successfuly";
+					kDebug() << "File " << videodevice.fileName() << " was opened successfuly";
 					videodevice.close();
 					m_videodevice.push_back(videodevice);
 				}

@@ -308,6 +308,14 @@ int VideoDevice::setFileName(QString filename)
 }
 
 /*!
+    \fn QString VideoDevice::fileName()
+ */
+QString VideoDevice::fileName()
+{
+	return full_filename;
+}
+
+/*!
     \fn VideoDevice::open()
  */
 int VideoDevice::open()
@@ -2982,12 +2990,12 @@ bool VideoDevice::canStream()
 
 void VideoDevice::setUdi( const QString & udi )
 {
-    m_udi = udi;
+	m_udi = udi;
 }
 
 QString VideoDevice::udi() const
 {
-    return m_udi;
+	return m_udi;
 }
 
 
