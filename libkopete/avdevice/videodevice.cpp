@@ -3000,9 +3000,15 @@ QString VideoDevice::udi() const
 
 
 #if defined(__linux__) && defined(ENABLE_AV)  && defined(V4L2_CAP_VIDEO_CAPTURE)
-const char *VideoDevice::getUnifiedV4L2StdCtrlName(quint32 ctrl_id)
+/*!
+    \fn const char * VideoDevice::getUnifiedV4L2StdCtrlName(quint32 std_ctrl_id)
+    \param std_ctrl_id ID of the V4L2 standard video control
+    \return The unified title of the V4L2 video control
+    \brief Returns a unified title of a V4L2-(standard-)video-control and makes it translatable
+ */
+const char *VideoDevice::getUnifiedV4L2StdCtrlName(quint32 std_ctrl_id)
 {
-	switch (ctrl_id)
+	switch (std_ctrl_id)
 	{
 		/* USER controls */
 		case V4L2_CID_BRIGHTNESS: 		return I18N_NOOP("Brightness");
@@ -3042,15 +3048,9 @@ const char *VideoDevice::getUnifiedV4L2StdCtrlName(quint32 ctrl_id)
 #ifdef V4L2_CID_COLORFX			// since kernel 2.6.30
 		case V4L2_CID_COLORFX:			return I18N_NOOP("Color Effects");
 #endif
-#ifdef V4L2_CID_AUTOBRIGHTNESS		// since kernel 2.6.31
-		case V4L2_CID_AUTOBRIGHTNESS:		return I18N_NOOP("Automatic Brightness");
-#endif
-#ifdef V4L2_CID_BAND_STOP_FILTER	// since kernel 2.6.32
-		case V4L2_CID_BAND_STOP_FILTER:		return I18N_NOOP("Band-Stop Filter");
-#endif
 #ifdef V4L2_CID_ROTATE			// since kernel 2.6.33
 		case V4L2_CID_ROTATE:			return I18N_NOOP("Rotate");
-		case V4L2_CID_BG_COLOR:			return I18N_NOOP("Background Color");
+		case V4L2_CID_BG_COLOR:			return I18N_NOOP("Background color");
 #endif
 		default:
 			return NULL;

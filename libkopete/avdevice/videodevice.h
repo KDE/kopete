@@ -391,7 +391,7 @@ protected:
 #if defined(__linux__) && defined(ENABLE_AV) && defined(V4L2_CAP_VIDEO_CAPTURE)
 	bool getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList * options);
 	void saveV4L2ControlData(struct v4l2_queryctrl qctrl);
-	const char *getUnifiedV4L2StdCtrlName(quint32 ctrl_id);
+	const char *getUnifiedV4L2StdCtrlName(quint32 std_ctrl_id);
 #endif
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
