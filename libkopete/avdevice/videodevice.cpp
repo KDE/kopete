@@ -1733,6 +1733,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 	if (!isOpen())
 		return EXIT_FAILURE;
 
+#if defined(__linux__) && defined(ENABLE_AV)
 	if (ctrl_id == IMGCTRL_ID_SOFT_AUTOBRIGHTNESSCONTRASTCORR)
 	{
 		if (m_current_input < m_input.size() )
@@ -1773,6 +1774,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 		else
 			return EXIT_FAILURE;
 	}
+#endif
 
 	switch(m_driver)
 	{
@@ -1867,6 +1869,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 	if (!isOpen())
 		return EXIT_FAILURE;
 
+#if defined(__linux__) && defined(ENABLE_AV)
 	if (ctrl_id == IMGCTRL_ID_SOFT_AUTOBRIGHTNESSCONTRASTCORR)
 	{
 		if (m_current_input < m_input.size() )
@@ -1907,6 +1910,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 		else
 			return EXIT_FAILURE;
 	}
+#endif
 
 	switch(m_driver)
 	{
