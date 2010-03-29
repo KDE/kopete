@@ -47,7 +47,6 @@ public:
     Tp::AccountPtr account;
     Tp::ConnectionPtr connection;
 
-    QList<QPointer<TelepathyContact> > contactList;
     QList<Tp::ContactPtr> contacts;
 };
 
@@ -71,15 +70,6 @@ TelepathyContactManager::TelepathyContactManager(TelepathyAccount *telepathyAcco
 TelepathyContactManager::~TelepathyContactManager()
 {
     kDebug();
-
-    foreach(QPointer<TelepathyContact> contact, d->contactList) {
-        if (!contact)
-            continue;
-
-        Kopete::MetaContact *metaContact = contact->metaContact();
-        Kopete::ContactList::self()->removeMetaContact(metaContact);
-        contact->deleteLater();
-    }
 
     delete d;
 }
@@ -158,24 +148,31 @@ void TelepathyContactManager::onConnectionReady(Tp::PendingOperation *operation)
                      SIGNAL(groupRemoved(const QString &)),
                      SLOT(onTpGroupRemoved(const QString &)));
 
-    QSet<Tp::ContactPtr> contacts = d->connection->contactManager()->allKnownContacts();
+    QSet<QString> ids;
+
+    foreach (Tp::ContactPtr contact, d->connection->contactManager()->allKnownContacts())
+        ids.insert(contact->id());
+
+    foreach (Kopete::Contact *contact, d->telepathyAccount->contacts().values())
+        ids.insert(contact->contactId());
 
     QSet<Tp::Contact::Feature> features;
     features << Tp::Contact::FeatureAlias
              << Tp::Contact::FeatureAvatarToken
              << Tp::Contact::FeatureSimplePresence;
 
-    QObject::connect(d->connection->contactManager()->upgradeContacts(contacts.toList(), features),
-                     SIGNAL(finished(Tp::PendingOperation*)),
-                     SLOT(onContactsUpgraded(Tp::PendingOperation*)));
+    QObject::connect(
+            d->connection->contactManager()->contactsForIdentifiers(ids.toList(), features),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onContactsFetched(Tp::PendingOperation*)));
 }
 
-void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
+void TelepathyContactManager::onContactsFetched(Tp::PendingOperation *op)
 {
     kDebug();
 
     if (op->isError()) {
-        kWarning() << "Upgrading contacts failed:" << op->errorName() << op->errorMessage();
+        kWarning() << "Fetching contacts failed:" << op->errorName() << op->errorMessage();
         return;
     }
 
@@ -190,59 +187,49 @@ void TelepathyContactManager::onContactsUpgraded(Tp::PendingOperation *op)
 
     Tp::UIntList requestAvatarList;
 
-    foreach(Tp::ContactPtr contact, pendingContacts->contacts()) {
-        if ((contact->publishState() == Tp::Contact::PresenceStateYes) ||
-            (contact->subscriptionState() != Tp::Contact::PresenceStateNo) ) {
+    for (int i = 0; i < d->contacts.length(); i++) {
+        Tp::ContactPtr fetchedContact = d->contacts[i];
+        QString requestId = pendingContacts->validIdentifiers()[i];
+        Kopete::Contact *kopeteContact = d->telepathyAccount->contacts().value(requestId, NULL);
+        TelepathyContact *tpContact =
+            kopeteContact ? qobject_cast<TelepathyContact *>(kopeteContact) : NULL;
 
-            TelepathyContact *tpc = createContact(contact);
+        if (tpContact && tpContact->internalContact() != fetchedContact)
+            tpContact->setInternalContact(fetchedContact);
 
-            if (tpc) {
-                if (contact->isAvatarTokenKnown() &&
-                        (tpc->storedAvatarToken() != contact->avatarToken() ||
-                        QFile::exists(tpc->storedAvatarPath()) == false)) {
-                    requestAvatarList.append(contact->handle()[0]);
-                }
+        if ((fetchedContact->publishState() == Tp::Contact::PresenceStateYes) ||
+            (fetchedContact->subscriptionState() != Tp::Contact::PresenceStateNo)) {
 
-                if (contact->publishState() == Tp::Contact::PresenceStateAsk)
-                    askPresenceAuthorization(tpc->metaContact(), contact);
-            }
-        } else if (contact->publishState() == Tp::Contact::PresenceStateAsk) {
-            Kopete::MetaContact *metaContact = 0;
+            if (!tpContact)
+                tpContact = createContact(fetchedContact);
 
-            foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
-                foreach (Kopete::Contact *c, mc->contacts()) {
-                    TelepathyContact *tpContact = static_cast<TelepathyContact *>(c);
+            if (fetchedContact->publishState() == Tp::Contact::PresenceStateAsk)
+                askPresenceAuthorization(tpContact->metaContact(), fetchedContact);
+        } else if (fetchedContact->publishState() == Tp::Contact::PresenceStateAsk) {
+            if (tpContact)
+                askPresenceAuthorization(tpContact->metaContact(), fetchedContact);
+            else
+                askPresenceAuthorization(NULL, fetchedContact);
+        }
 
-                    // FIXME: Comparing string ids is WRONG!
-                    if ((c->account() == d->telepathyAccount) &&
-                            (c->contactId() == contact->id())) {
-
-                        // Contact is already in the list.
-                        metaContact = mc;
-                        if (!tpContact->internalContact()
-                                || !tpContact->internalContact()->manager()->connection()->isValid())
-                            tpContact->setInternalContact(contact);
-                        break;
-                    }
-                }
-
-                if (metaContact)
-                    break;
-            }
-
-            askPresenceAuthorization(metaContact, contact);
+        if (tpContact && fetchedContact->isAvatarTokenKnown() &&
+                (tpContact->storedAvatarToken() != fetchedContact->avatarToken() ||
+                     !QFile::exists(tpContact->storedAvatarPath()))) {
+            requestAvatarList.append(fetchedContact->handle()[0]);
         }
     }
 
-    foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
-        foreach (Kopete::Contact *c, mc->contacts()) {
-            TelepathyContact *tpContact = qobject_cast<TelepathyContact *>(c);
+    foreach (QString invalidId, pendingContacts->invalidIdentifiers().keys()) {
+        Kopete::Contact *kopeteContact = d->telepathyAccount->contacts().value(invalidId, NULL);
 
-            if (!tpContact || tpContact->account() != d->telepathyAccount)
-                continue;
+        if (kopeteContact) {
+            Kopete::MetaContact *mc = kopeteContact->metaContact();
 
-            if (!tpContact->internalContact())
-                tpContact->fetchInternalContact();
+            kDebug() << "Deleting contact with invalid ID" << invalidId;
+            delete kopeteContact;
+
+            if (mc->contacts().isEmpty())
+                Kopete::ContactList::self()->removeMetaContact(mc);
         }
     }
 
@@ -425,44 +412,12 @@ TelepathyContact * TelepathyContactManager::createContact(QSharedPointer<Tp::Con
     kDebug() << "Subscription status:" << contact->subscriptionState();
     kDebug() << "Publish status:" << contact->publishState();
 
-    // Only create this contact if it isn't already in the list.
-    foreach (Kopete::MetaContact *mc, Kopete::ContactList::self()->metaContacts()) {
-        foreach (Kopete::Contact *c, mc->contacts()) {
-            // FIXME: Comparing the string ids is WRONG! One has to compare handles, one way or
-            // another.
-            if((c->account() == d->telepathyAccount) &&
-               (c->contactId() == contact->id()))
-            {
-                // Contact is already in the contact list. Check if it has a internalContact, and
-                // if it doesn't (or if the current one is invalid), add one
-                // (this is the case if it is one that was deserialized from contactlist.xml file),
-                // or we are reconnecting.
-                kDebug() << "Contact is already in list. Don't add it.";
-
-                TelepathyContact *tpc = qobject_cast<TelepathyContact*>(c);
-                if (!c) {
-                    kDebug() << "Contact is not of type TelepathyContact.";
-                    return NULL;
-                }
-
-                if (tpc->internalContact().isNull() ||
-                    !tpc->internalContact()->manager()->connection()->isValid()) {
-                    tpc->setInternalContact(contact);
-                }
-
-                return tpc;
-            }
-        }
-    }
-
     Kopete::MetaContact *metaContact = new Kopete::MetaContact();
     QPointer<TelepathyContact> newContact = new TelepathyContact(d->telepathyAccount, contact->id(), metaContact);
     newContact->setInternalContact(contact);
     newContact->setMetaContact(metaContact);
 
     Kopete::ContactList::self()->addMetaContact(metaContact);
-
-    d->contactList.push_back(newContact);
 
     return newContact;
 }
