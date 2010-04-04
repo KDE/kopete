@@ -74,7 +74,6 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	m_manager = 0L;
 	m_account = account;
 	m_YABEntry = 0L;
-	m_stealthed = false;
 	m_receivingWebcam = false;
 	m_sessionActive = false;
 
@@ -109,7 +108,8 @@ QString YahooContact::userId() const
 
 void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
 {
-	if( m_stealthed && status.internalStatus() <= 999)	// Not Stealted -> Stealthed
+	bool isStealthed = stealthed();
+	if( isStealthed && status.internalStatus() <= 999)	// Not Stealted -> Stealthed
 	{
 		Contact::setOnlineStatus(
 			Kopete::OnlineStatus(status.status() ,
@@ -119,7 +119,7 @@ void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
 			status.overlayIcons() + QStringList("yahoo_stealthed") ,
 			i18n("%1|Stealthed", status.description() ) ) );
 	}
-	else if( !m_stealthed && status.internalStatus() > 999 )// Stealthed -> Not Stealthed
+	else if( !isStealthed && status.internalStatus() > 999 )// Stealthed -> Not Stealthed
 		Contact::setOnlineStatus( static_cast< YahooProtocol *>( protocol() )->statusFromYahoo( status.internalStatus() - 1000 ) );
 	else
 		Contact::setOnlineStatus( status );
@@ -128,15 +128,14 @@ void YahooContact::setOnlineStatus(const Kopete::OnlineStatus &status)
 		setStatusMessage( Kopete::StatusMessage() );
 }
 
-void YahooContact::setStealthed( bool stealthed )
+void YahooContact::updateStealthed()
 {
-	m_stealthed = stealthed;
 	setOnlineStatus( onlineStatus() );
 }
 
-bool YahooContact::stealthed()
+bool YahooContact::stealthed() const
 {
-	return m_stealthed;
+	return (m_account->yahooSession()->stealthStatus( m_userId ) == Yahoo::StealthActive );
 }
 
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)

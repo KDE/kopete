@@ -40,7 +40,7 @@ protected:
 
 signals:
 	void gotBuddy(const QString&, const QString&, const QString&);
-
+	void stealthStatusChanged( const QString&, Yahoo::StealthStatus );
 };
 
 #endif

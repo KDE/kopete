@@ -56,8 +56,8 @@ public:
 
 	void setOnlineStatus(const Kopete::OnlineStatus &status);
 	void setYahooStatus( const Kopete::OnlineStatus& );
-	void setStealthed( bool );
-	bool stealthed();
+	void updateStealthed();
+	bool stealthed() const;
 
 
 	/** The group name getter and setter methods**/
@@ -121,7 +121,6 @@ private:
 	YahooChatSession *m_manager;
 	YahooWebcamDialog* m_webcamDialog;
 	YahooAccount* m_account;
-	bool m_stealthed;
 	bool m_receivingWebcam;
 	bool m_sessionActive;
 	
