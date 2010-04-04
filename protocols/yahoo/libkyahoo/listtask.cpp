@@ -34,9 +34,6 @@ ListTask::~ListTask()
 
 }
 
-QStringList loginstealthedbuddies;
-QStringList loginunstealthedbuddies;
-
 bool ListTask::take( Transfer* transfer )
 {
 	if ( !forMe( transfer ) )
@@ -85,47 +82,30 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 		case 301:
 			if( p.second == "319"){
 				emit gotBuddy( buddy, QString(), group );
-                                /**
-                                * Note: michaelacole
-                                * Since you can log in from other places and remove or add Perm Offline status
-                                * We have to reset both conditions at login
-                                * Yahoo sends this data at this time,
-                                * so better to compile list of both now then notify kopete client.
-                                */
-				loginunstealthedbuddies.append( buddy );
 			}
 			break;
 		case 317:
 			if( p.second == "2"){
-			kDebug(YAHOO_RAW_DEBUG) << "Stealthed setting on" << buddy ;
-                        /** Note: michaelacole
-                        * Since you can log in from other places and remove or add Perm Offline status
-                        * We have to reset both conditions at login
-                        * Yahoo sends this data at this time,
-                        * so better to compile list of both now then notify kopete client.
-                        */
-			loginstealthedbuddies.append( buddy );
-			loginunstealthedbuddies.removeAll( buddy );
+				kDebug(YAHOO_RAW_DEBUG) << "Stealthed setting on" << buddy ;
+				emit stealthStatusChanged( buddy, Yahoo::StealthActive );
 			};
 			break;
-                /**
-                * Note: michaelacole
-                * Other buddy codes are here for add to list and blacklist
-                * I will need to capute more codes for addition here.
-                * Blacklist is done on the server at Yahoo whereas
-                * Kopete has its own plugin for blacklisting.
-                */
+			/**
+			* Note: michaelacole
+			* Other buddy codes are here for add to list and blacklist
+			* I will need to capute more codes for addition here.
+			* Blacklist is done on the server at Yahoo whereas
+			* Kopete has its own plugin for blacklisting.
+			*/
 		}
 	}
-        /**
-        * Note: michaelacole
-        * Since you can log in from other places and remove or add Perm Offline status
-        * We have to reset both conditions at login
-        * Yahoo sends this data at this time,
-        * so better to compile list of both now then notify kopete client.
-        */
-        client()->notifyUnstealthedBuddies( loginunstealthedbuddies );
-        client()->notifyStealthedBuddies( loginstealthedbuddies );
+	/**
+	* Note: michaelacole
+	* Since you can log in from other places and remove or add Perm Offline status
+	* We have to reset both conditions at login
+	* Yahoo sends this data at this time,
+	* so better to compile list of both now then notify kopete client.
+	*/
 }
 
 

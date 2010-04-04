@@ -76,8 +76,7 @@ public:
 	int error;
 	QString errorString;
 	QString errorInformation;
-	QStringList stealthedBuddies;
-	QStringList unstealthedBuddies;
+	QSet<QString> stealthedBuddies;
 	// tasks
 	bool tasksInitialized;
 	LoginTask * loginTask;
@@ -133,14 +132,13 @@ Client::Client(QObject *par) :QObject(par)
 	
 	QObject::connect( d->loginTask, SIGNAL( haveSessionID( uint ) ), SLOT( lt_gotSessionID( uint ) ) );
 	QObject::connect( d->loginTask, SIGNAL( buddyListReady() ), SLOT( processPictureQueue() ) );
-	QObject::connect( d->loginTask, SIGNAL( buddyListReady() ), SLOT( processStealthQueue() ) );
 	QObject::connect( d->loginTask, SIGNAL( loginResponse( int, const QString& ) ), 
 				SLOT( slotLoginResponse( int, const QString& ) ) );
 	QObject::connect( d->loginTask, SIGNAL( haveCookies() ), SLOT( slotGotCookies() ) );
 	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
 					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
 	QObject::connect( d->listTask, SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ), 
-					SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
+					SLOT( notifyStealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
 }
 
 Client::~Client()
@@ -182,9 +180,11 @@ void Client::cs_connected()
 	emit connected();
 	kDebug(YAHOO_RAW_DEBUG) << " starting login task ... ";
 
+	// Clear stealth settings
+	d->stealthedBuddies.clear();
+
 	d->loginTask->setStateOnConnect( (d->statusOnConnect == Yahoo::StatusInvisible) ? Yahoo::StatusInvisible : Yahoo::StatusAvailable );
 	d->loginTask->go();
-	processStealthQueue();
 	d->active = true;
 }
 
@@ -615,29 +615,6 @@ void Client::setPictureStatus( Yahoo::PictureStatus status )
 	spt->go( true );
 }
 
-// **** Stealth Handling **** michaelacole
-void Client::processStealthQueue()
-{
-	if( d->buddyListReady ){
-		while (!d->unstealthedBuddies.isEmpty())
-			{
-			QString it;
-			it = d->unstealthedBuddies.takeFirst();
-			kDebug(YAHOO_RAW_DEBUG) << "unstealthed setting set on" << it;
-			stealthContact( it, Yahoo::StealthOffline , Yahoo::StealthNotActive );
-			}
-
-		while (!d->stealthedBuddies.isEmpty())
-			{
-			QString it;
-			it = d->stealthedBuddies.takeFirst();
-			kDebug(YAHOO_RAW_DEBUG) << "stealthed setting set on" << it ;
-			stealthContact( it, Yahoo::StealthPermOffline , Yahoo::StealthActive );
-			}
-	}
-}
-
-
 // ***** Webcam handling *****
 
 void Client::requestWebcam( const QString &userId )
@@ -767,14 +744,22 @@ void Client::notifyError( const QString &info, const QString & errorString, LogL
 	emit error( level );
 }
 
-void Client::notifyStealthedBuddies( const QStringList &buddies)
+Yahoo::StealthStatus Client::stealthStatus( const QString &userId ) const
 {
-	d->stealthedBuddies = buddies;
+	if ( d->stealthedBuddies.contains( userId ) )
+		return Yahoo::StealthActive;
+	else
+		return Yahoo::StealthNotActive;
 }
 
-void Client::notifyUnstealthedBuddies( const QStringList &buddies)
+void Client::notifyStealthStatusChanged( const QString &userId, Yahoo::StealthStatus state )
 {
-	d->unstealthedBuddies = buddies;
+	if ( state == Yahoo::StealthActive )
+		d->stealthedBuddies.insert( userId );
+	else
+		d->stealthedBuddies.remove( userId );
+	
+	emit stealthStatusChanged( userId, state );
 }
 
 QString Client::userId()
@@ -902,7 +887,7 @@ void Client::initTasks()
 	QObject::connect( d->statusTask, SIGNAL( statusChanged(QString,int,const QString,int,int,int) ), 
 				SIGNAL( statusChanged(QString,int,const QString,int,int,int) ) );
 	QObject::connect( d->statusTask, SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ), 
-				SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
+				SLOT( notifyStealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
 	QObject::connect( d->statusTask, SIGNAL( loginResponse( int, const QString& ) ), 
 				SLOT( slotLoginResponse( int, const QString& ) ) );
 	QObject::connect( d->statusTask, SIGNAL( authorizationRejected( const QString&, const QString& ) ), 

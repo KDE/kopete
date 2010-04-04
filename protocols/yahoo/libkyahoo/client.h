@@ -189,6 +189,12 @@ Q_OBJECT
 		void stealthContact( QString const &userId, Yahoo::StealthMode mode, Yahoo::StealthStatus state );
 
 		/**
+		 * Get the stealth status of a buddy
+		 * @param userId the yahoo ID of the buddy
+		 */
+		Yahoo::StealthStatus stealthStatus( const QString &userId ) const;
+
+		/**
 		 * Request the buddy's picture
 		 * @param userId the yahoo ID of the buddy
 		 */
@@ -456,12 +462,6 @@ Q_OBJECT
 		 */
 		void notifyError( const QString &info, const QString &errorString, LogLevel level );
 
-		/**
-		 * Steathed information from login..
-		 */
-		void notifyStealthedBuddies( const QStringList &buddies);
-		void notifyUnstealthedBuddies( const QStringList &buddies);
-
 	signals:
 		/** CONNECTION EVENTS */
 		/**
@@ -723,10 +723,10 @@ Q_OBJECT
 		 */
 		void processPictureQueue();
 
-		 /** 
-		 * Update all Stealth info after login
+		/**
+		 * Process steathed change.
 		 */
-		void processStealthQueue();
+		void notifyStealthStatusChanged( const QString &, Yahoo::StealthStatus );
                 
 	private:
 		void distribute( Transfer *transfer );
