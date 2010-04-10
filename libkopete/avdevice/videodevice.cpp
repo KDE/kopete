@@ -1728,7 +1728,7 @@ QList<ActionVideoControl> VideoDevice::getSupportedActionControls()
  */
 int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 {
-	kDebug() << "Control-ID" << ctrl_id << ", Value" << &value;
+	kDebug() << "Control-ID" << ctrl_id << ":";
 
 	if (!isOpen())
 		return EXIT_FAILURE;
@@ -1739,6 +1739,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 		if (m_current_input < m_input.size() )
 		{
 			*value = m_input[m_current_input].img_softcorr_autobrightnesscontrast;
+			kDebug() << "Reported current value is" << control.value << ".";
 			return EXIT_SUCCESS;
 		}
 		else
@@ -1749,6 +1750,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 		if (m_current_input < m_input.size() )
 		{
 			*value = m_input[m_current_input].img_softcorr_autocolor;
+			kDebug() << "Reported current value is" << control.value << ".";
 			return EXIT_SUCCESS;
 		}
 		else
@@ -1759,6 +1761,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 		if (m_current_input < m_input.size() )
 		{
 			*value = m_input[m_current_input].img_softcorr_vflip;
+			kDebug() << "Reported current value is" << control.value << ".";
 			return EXIT_SUCCESS;
 		}
 		else
@@ -1769,6 +1772,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 		if (m_current_input < m_input.size() )
 		{
 			*value = m_input[m_current_input].img_softcorr_hflip;
+			kDebug() << "Reported current value is" << control.value << ".";
 			return EXIT_SUCCESS;
 		}
 		else
