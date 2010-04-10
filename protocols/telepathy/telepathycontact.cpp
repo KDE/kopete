@@ -87,7 +87,14 @@ void TelepathyContact::serialize(QMap< QString, QString >& serializedData,
 {
     //kDebug();
 
-    Q_UNUSED(serializedData);
+    QString kopeteId = serializedData.value("contactId");
+    if (internalContact() && internalContact()->id() != kopeteId) {
+        kDebug() << "TP ID" << internalContact()->id() << " != Kopete contactId" << kopeteId;
+        kDebug() << "  (migrating old contacts or service normalization rules changed?)";
+
+        serializedData["contactId"] = internalContact()->id();
+    }
+
     Q_UNUSED(addressBookData);
 }
 
