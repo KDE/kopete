@@ -291,7 +291,7 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		if( msg.plainBody().isEmpty() ){
 			event->discard();
 			if(messageCache.contains("!OTR:MsgDelByOTR")){
-				msg.setPlainBody(messageCache["!OTR:MsgDelByOTR"]);
+				msg.setHtmlBody(messageCache["!OTR:MsgDelByOTR"]);
 				msg.manager()->view()->setCurrentMessage(msg);
 				messageCache.remove("!OTR:MsgDelByOTR");
 			}
