@@ -173,7 +173,7 @@ void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 			}
 		} else if(encryptionState == 1){
 //            kDebug(14318) << "Tagged plaintext!";
-			msg.setHtmlBody(msgBody);
+			msg.setPlainBody(msgBody);
 			messageCache.insert( msgBody, cacheBody );
 		}
 	}
