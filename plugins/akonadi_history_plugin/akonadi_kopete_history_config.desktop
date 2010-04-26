@@ -1,0 +1,12 @@
+[Desktop Entry]
+Icon=view-history
+Type=Service
+X-KDE-ServiceTypes=KCModule
+
+X-KDE-Library=kcm_akonadi_kopete_history
+X-KDE-FactoryName=kcm_akonadi_kopete_history
+X-KDE-ParentApp=akonadi_kopete_history
+X-KDE-ParentComponents=akonadi_kopete_history
+
+Name=AkonadiHistoryPlugin
+Comment= Akonadi History Plugin
