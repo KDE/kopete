@@ -27,9 +27,11 @@
 
 #include <kopeteplugin.h>
 #include <kopetemessagehandler.h>
+#include <KComponentData>
 
-
-class AkonadiHistoryPlugin ;
+class KopeteView;
+class HistoryActionManager;
+class AkonadiHistoryPlugin;
 
 class AkonadiHistoryMessageHandler : public Kopete::MessageHandler 
 {
@@ -70,13 +72,21 @@ class AkonadiHistoryPlugin : public Kopete::Plugin
 {
     Q_OBJECT
 public:
-    AkonadiHistoryPlugin(QObject* parent, const QVariantList &args); 
-    ~AkonadiHistoryPlugin();
+	AkonadiHistoryPlugin(QObject* parent, const QVariantList &args); 
+	~AkonadiHistoryPlugin();
     
-    void messageDisplayed(const Kopete::Message &msg) ;
+	void messageDisplayed(const Kopete::Message &msg) ;
+	const KComponentData &xmlGuiInstance() { return m_XmlGuiInstance; }
     
 private:
-    AkonadiHistoryMessageHandlerFactory m_messageHandlerFactory;
+	AkonadiHistoryMessageHandlerFactory m_messageHandlerFactory;
+	QHash<Kopete::ChatSession*,HistoryActionManager*> m_loggers;
+	KComponentData m_XmlGuiInstance ;
+    
+private slots:
+	void slotViewCreated(KopeteView*);
+	void slotKMMClosed( Kopete::ChatSession* );
+	void slotAddTag() ;
     
 };
 

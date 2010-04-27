@@ -15,6 +15,7 @@
 */
 
 #include "akonadihistoryplugin.h"
+#include "historyactionmanager.h"
 
 #include <QTextDocument>
 
@@ -24,6 +25,15 @@
 
 
 #include <kopetemessageevent.h>
+#include <kopetechatsession.h>
+#include <kopetechatsessionmanager.h>
+#include "kopeteview.h"
+#include <kopeteviewplugin.h>
+
+#include <KAction>
+#include <KActionCollection>
+#include <KPluginInfo>
+
 
 /**
 
@@ -35,8 +45,10 @@ K_EXPORT_PLUGIN (  AkonadiHistoryMessagePluginFactory ( "akonadi_kopete_history"
 AkonadiHistoryPlugin::AkonadiHistoryPlugin(QObject* parent, const QVariantList &args)
      : Kopete::Plugin(AkonadiHistoryMessagePluginFactory::componentData(), parent), m_messageHandlerFactory(this)
 {
-    kDebug() << "AkonadiHistoryMessagePluginFactory Loaded :) ..............";
-    
+	kDebug() << "AkonadiHistoryMessagePluginFactory Loaded :) ..............";
+	m_XmlGuiInstance = AkonadiHistoryMessagePluginFactory::componentData() ;
+	
+	connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)), this, SLOT(slotViewCreated(KopeteView*)) ); 
 }
 
 AkonadiHistoryPlugin::~AkonadiHistoryPlugin()
@@ -47,7 +59,53 @@ AkonadiHistoryPlugin::~AkonadiHistoryPlugin()
 
 void AkonadiHistoryPlugin::messageDisplayed(const Kopete::Message& msg)
 {
-    kDebug() << msg.body()->toPlainText() ;
+    kDebug() << msg.body()->toPlainText();
+    if (msg.direction()==Kopete::Message::Internal || !msg.manager() ||
+            (msg.type() == Kopete::Message::TypeFileTransferRequest && msg.plainBody().isEmpty() ) )
+    {	
+        return;
+    }
+    
+    if (!m_loggers.contains(msg.manager()))
+    {
+	m_loggers.insert(msg.manager() , new HistoryActionManager( msg.manager() , this ) );
+	
+        connect(msg.manager(), SIGNAL(closing(Kopete::ChatSession*)),
+                this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
+    }
+}
+
+
+void AkonadiHistoryPlugin::slotKMMClosed(Kopete::ChatSession* kmm)
+{
+    m_loggers[kmm]->deleteLater();
+    m_loggers.remove(kmm);
+}
+
+void AkonadiHistoryPlugin::slotAddTag()
+{
+	kDebug() << "slot add tag";
+}
+
+void AkonadiHistoryPlugin::slotViewCreated(KopeteView* v)
+{
+    if (v->plugin()->pluginInfo().pluginName() != QString::fromLatin1("kopete_chatwindow") )
+        return;  //Email chat windows are not supported.
+
+    KopeteView *m_currentView = v;
+    Kopete::ChatSession *m_currentChatSession = v->msgManager();
+    
+
+    if (!m_currentChatSession)
+        return; //i am sorry
+    
+    if (!m_loggers.contains(m_currentChatSession))
+    {	
+        m_loggers.insert(m_currentChatSession , new HistoryActionManager( m_currentChatSession , this ) );
+        connect( m_currentChatSession, SIGNAL(closing(Kopete::ChatSession*)),
+                 this , SLOT(slotKMMClosed(Kopete::ChatSession*)));
+    }
+
 }
 
 
@@ -58,5 +116,4 @@ void AkonadiHistoryMessageHandler::handleMessage(Kopete::MessageEvent* event)
     
     Kopete::MessageHandler::handleMessage(event);
 }
-
 
