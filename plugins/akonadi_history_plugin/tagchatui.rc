@@ -1,0 +1,14 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="21" name="kopetechatwindow">
+	<MenuBar>
+		<Menu name="tools" >
+			<text>&amp;Tools</text>
+			<Action name="tagThisChatHistory" />
+		</Menu>
+	</MenuBar>
+
+	<ToolBar name="chatToolBar" fullWidth="true">
+		<Action name="tagThisChatHistory" />
+	</ToolBar>
+
+</kpartgui>
