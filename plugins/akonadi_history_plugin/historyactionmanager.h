@@ -25,6 +25,8 @@
 
 #include <KXMLGUIClient>
 
+class KDialog;
+class KLineEdit;
 namespace Kopete { class ChatSession; }
 
 class HistoryActionManager : public QObject , public KXMLGUIClient
@@ -35,12 +37,17 @@ public:
 	HistoryActionManager(Kopete::ChatSession* parent = 0 , QObject* hPlugin = 0 );
 	~HistoryActionManager();
 	
+	void processTag(QString&) ;
+	
 private:
 	
 	QPointer<AkonadiHistoryPlugin> m_hPlugin;
 	Kopete::ChatSession * m_manager;
+	QPointer<KLineEdit> m_lineEdit;
+	QPointer<KDialog> m_getTagDialog;
 	
 private slots:
+	void slotApplyClicked();
 	void slotAddTag();
 		
 	

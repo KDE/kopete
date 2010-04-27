@@ -24,8 +24,10 @@
 #include <kgenericfactory.h>
 #include <KAction>
 #include <KActionCollection>
+#include <KLineEdit>
 
 #include "kopetechatsession.h"
+#include <KDialog>
 
 HistoryActionManager::HistoryActionManager(Kopete::ChatSession* parent, QObject* hPlugin)
       : QObject(parent) ,KXMLGUIClient(parent) , m_manager(parent) 
@@ -59,5 +61,36 @@ HistoryActionManager::~HistoryActionManager()
 void HistoryActionManager::slotAddTag()
 {
 	kDebug() << "Slot add Tag called :) ";
+	
+	m_lineEdit = new KLineEdit() ;
+	
+	m_getTagDialog = new KDialog( );
+	m_getTagDialog->setCaption( "Enter Label" );
+	m_getTagDialog->setButtons( KDialog::Apply | KDialog::Cancel );
+	m_getTagDialog->setDefaultButton(KDialog::Apply);
+	m_getTagDialog->setMainWidget(m_lineEdit);
+
+	connect(m_getTagDialog, SIGNAL(applyClicked()), this , SLOT(slotApplyClicked()) );
+	m_getTagDialog->show();
+	
 }
+
+void HistoryActionManager::slotApplyClicked()
+{
+	QString tag = m_lineEdit->userText() ;
+
+	m_lineEdit->deleteLater();
+	m_getTagDialog->deleteLater();
+	
+	processTag(tag);
+}
+
+
+void HistoryActionManager::processTag(QString& tagString)
+{
+	kDebug() << " ";
+	kDebug() << tagString ;
+}
+
+
 
