@@ -49,6 +49,13 @@ AkonadiHistoryPlugin::AkonadiHistoryPlugin(QObject* parent, const QVariantList &
 	m_XmlGuiInstance = AkonadiHistoryMessagePluginFactory::componentData() ;
 	
 	connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)), this, SLOT(slotViewCreated(KopeteView*)) ); 
+
+	KAction *viewDialog = new KAction( KIcon("view-history"), i18n("View &History" ), this);
+	actionCollection()->addAction("viewAkonadiHistoryDialog", viewDialog);
+	viewDialog->setShortcut(KShortcut (Qt::CTRL + Qt::Key_H));
+	connect(viewDialog, SIGNAL(triggered(bool)), this, SLOT(slotViewHistoryDialog()) );
+	setXMLFile ( "historyui.rc" );
+
 }
 
 AkonadiHistoryPlugin::~AkonadiHistoryPlugin()
@@ -107,6 +114,12 @@ void AkonadiHistoryPlugin::slotViewCreated(KopeteView* v)
     }
 
 }
+
+void AkonadiHistoryPlugin::slotViewHistoryDialog()
+{
+	kDebug() << "Slot view history Dialog called";
+}
+
 
 
 void AkonadiHistoryMessageHandler::handleMessage(Kopete::MessageEvent* event)

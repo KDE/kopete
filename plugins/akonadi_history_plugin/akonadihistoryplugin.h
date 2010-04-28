@@ -87,6 +87,7 @@ private slots:
 	void slotViewCreated(KopeteView*);
 	void slotKMMClosed( Kopete::ChatSession* );
 	void slotAddTag() ;
+	void slotViewHistoryDialog();
     
 };
 

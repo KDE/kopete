@@ -1,0 +1,13 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="akonadi_kopete_history" version="1">
+	<MenuBar>
+		<Menu name="edit">
+			<text>&amp;Edit</text>
+			<Action name="viewAkonadiHistoryDialog" />
+		</Menu>
+	</MenuBar>
+
+	<ToolBar fullWidth="true" name="mainToolBar" noMerge="1"> 
+		<Action name="viewAkonadiHistoryDialog" />
+  	</ToolBar>
+</kpartgui>
