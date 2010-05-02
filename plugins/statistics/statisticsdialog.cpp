@@ -432,8 +432,10 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 		 */
 	{
 		generalHTMLPart->write ( QString ( "<div class=\"statgroup\">" ) );
-		generalHTMLPart->write ( i18n ( "<b>Average message length :</b> %1 characters<br>", m_contact->messageLength() ) );
-		generalHTMLPart->write ( i18n ( "<b>Time between two messages : </b> %1 second(s)", m_contact->timeBetweenTwoMessages() ) );
+		generalHTMLPart->write ( i18np ( "<b>Average message length :</b> %1 character<br>",
+						"<b>Average message length :</b> %1 characters<br>", m_contact->messageLength() ) );
+		generalHTMLPart->write ( i18np ( "<b>Time between two messages : </b> %1 second",
+						 "<b>Time between two messages : </b> %1 seconds", m_contact->timeBetweenTwoMessages() ) );
 		generalHTMLPart->write ( QString ( "</div>" ) );
 
 		generalHTMLPart->write ( QString ( "<div class=\"statgroup\">" ) );
