@@ -57,7 +57,7 @@ set(akonadi_kopete_history_PART_SRCS
 kde4_add_ui_files(akonadi_kopete_history_PART_SRCS searchdialog.ui )
 
 #TODO:The config files, to de done later
-kde4_add_kcfg_files(akonadi_kopete_history_PART_SRCS historyconfig.kcfgc )
+#kde4_add_kcfg_files(akonadi_kopete_history_PART_SRCS historyconfig.kcfgc )
 
 
 kde4_add_plugin(akonadi_kopete_history ${akonadi_kopete_history_PART_SRCS})

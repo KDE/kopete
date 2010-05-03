@@ -25,9 +25,9 @@
 #include <KAction>
 #include <KActionCollection>
 #include <KLineEdit>
+#include <KDialog>
 
 #include "kopetechatsession.h"
-#include <KDialog>
 
 HistoryActionManager::HistoryActionManager(Kopete::ChatSession* parent, QObject* hPlugin)
       : QObject(parent) ,KXMLGUIClient(parent) , m_manager(parent) 
@@ -94,3 +94,4 @@ void HistoryActionManager::processTag(QString& tagString)
 
 
 
+//#include "historyactionmanager.moc"

@@ -112,6 +112,58 @@
     </rect>
    </property>
   </widget>
+  <widget class="QCheckBox" name="CBoxLogs">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>370</y>
+     <width>95</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>logs</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="CBoxContact">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>390</y>
+     <width>95</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>contacts</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="CBoxDate">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>370</y>
+     <width>95</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>date</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="CBoxExhaustive">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>390</y>
+     <width>95</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>exhaustive</string>
+   </property>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>

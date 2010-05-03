@@ -40,21 +40,34 @@ Q_OBJECT
 public:
     SearchDialog(QWidget* parent = 0, Qt::WFlags flags = 0);
     ~SearchDialog();
+     
+    enum SearchType { SingleWordInChat , MultipleWordInChat , SingleWordContact , MultipleWordContact,
+	Date , Exhaustive };
 	
 private:
     Ui::SearchDialog *m_MainWidget;
     Akonadi::Item::List m_items;
     QStringListModel *m_resultModel;
+    bool m_chats, m_contacts , m_date , m_exhaustive ;
+    QStringList m_searchStrings;
+    SearchType m_searchType;
 	
 private slots:
     void slotSearchButtonClicked();
     void itemSearchJobDone(KJob*);
-    void itemSelected( const QModelIndex& );
+    void itemSelected(const QModelIndex&);
     void itemFetched(KJob*);
+    
+    void slotCBoxLogs(int);
+    void slotCBoxContact(int);
+    void slotCBoxExhaustive(int);
+    void slotCBoxDate(int);
     
 private:
     void displayResult(const History&);
     void reset();
+    QString sparqlQuery( QString);
+    
     
 	
 };

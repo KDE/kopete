@@ -72,22 +72,28 @@ SearchDialog::SearchDialog(QWidget* parent, Qt::WFlags flags): KDialog(parent, f
     
     m_resultModel = new QStringListModel( this ) ;
     m_MainWidget->ListResultWidget->setModel( m_resultModel );
-    
-    /*
-    m_MainWidget->DisplayResultWidget;
-    m_MainWidget->LabelBox;
-    m_MainWidget->ListResultWidget;
-    m_MainWidget->progressBar;
-    m_MainWidget->SearchButton;
-    m_MainWidget->SearchTextBox;
-    m_MainWidget->SortBy;
-    */
-    
+
+    //if the search button is clicked
     connect(m_MainWidget->SearchButton, SIGNAL(clicked(bool)), this, SLOT(slotSearchButtonClicked()) );
+    //when a item is clickd on the result widget
     connect( m_MainWidget->ListResultWidget, SIGNAL(clicked(const QModelIndex&)),
 		   this, SLOT(itemSelected(const QModelIndex&)));
     
+    //fir check boxes, logs, contactm date and exhaustive
+    connect( m_MainWidget->CBoxLogs, SIGNAL(stateChanged(int)), this , SLOT(slotCBoxLogs(int)) ) ;
+    connect( m_MainWidget->CBoxContact, SIGNAL(stateChanged(int)), this, SLOT(slotCBoxContact(int)) ) ;
+    connect( m_MainWidget->CBoxDate, SIGNAL(stateChanged(int)), this , SLOT(slotCBoxDate(int) ) );
+    connect( m_MainWidget->CBoxExhaustive , SIGNAL(stateChanged(int)), this , SLOT(slotCBoxExhaustive(int)));
+    
+    //set the logs checkbox to be true by default
+    m_MainWidget->CBoxLogs->setCheckState( Qt::Checked );
     setMainWidget( w );
+
+    m_chats = true;
+    m_contacts = false;
+    m_date = false;
+    m_exhaustive = false;
+    m_searchStrings = QStringList() ;
 //    show();
 }
 
@@ -96,13 +102,62 @@ SearchDialog::~SearchDialog()
     delete m_MainWidget ;
 }
 
+
+void SearchDialog::slotCBoxLogs(int state)
+{
+    if(state == 0)
+	m_chats = false;
+    else if(state == 2 )
+	m_chats = true ;
+    
+    kDebug() << state << m_chats ;
+}
+
+void SearchDialog::slotCBoxContact(int state)
+{
+    if(state == 0)
+	m_contacts = false;
+    else if(state == 2 )
+	m_contacts = true ;
+    
+    kDebug() << state << m_contacts;
+}
+
+void SearchDialog::slotCBoxDate(int state)
+{
+    if(state == 0)
+	m_date = false;
+    else if(state == 2 )
+	m_date = true ;
+    
+    kDebug() << state << m_date;
+}
+
+void SearchDialog::slotCBoxExhaustive(int state)
+{
+    if(state == 0)
+    {
+	m_exhaustive = false;
+	m_MainWidget->CBoxContact->setEnabled(true);
+	m_MainWidget->CBoxDate->setEnabled(true);
+	m_MainWidget->CBoxLogs->setEnabled(true);
+    }
+    else if(state == 2 )
+    {
+	m_MainWidget->CBoxContact->setDisabled(true);
+	m_MainWidget->CBoxDate->setDisabled(true);
+	m_MainWidget->CBoxLogs->setDisabled(true);
+    }
+    
+    kDebug() << state << m_exhaustive;
+}
+
 void SearchDialog::reset()
 {
-    //TODO:should be in a reset function
+    m_searchStrings.clear();
+    m_items.clear();
     m_resultModel->setStringList( QStringList() );
     m_MainWidget->DisplayResultWidget->clear();
-    m_items.clear();
-	    
 }
 
 
@@ -113,18 +168,16 @@ void SearchDialog::slotSearchButtonClicked()
     //to reset the gui && clear the saved items
     reset(); 
     
-    QString query = "select distinct ?r ?reqProp1 \
-	    where { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#plainTextMessageContent> ?o .\
-	    FILTER REGEX(STR(?o),'" + m_MainWidget->SearchTextBox->text() + "', 'i') . FILTER isLiteral(?o) . \
-	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 . }";
-	    
-    Akonadi::ItemSearchJob *job = new Akonadi::ItemSearchJob( query );
+    QString query1 = sparqlQuery( m_MainWidget->SearchTextBox->text() );
+
+    Akonadi::ItemSearchJob *job = new Akonadi::ItemSearchJob( query1 );
     job->fetchScope().fetchFullPayload();
     connect(job, SIGNAL(result(KJob*)), this , SLOT(itemSearchJobDone(KJob*)) );
 }
 
 void SearchDialog::itemSearchJobDone(KJob* job)
 {
+    kDebug() << " ";
     if( job->error() ) {
 	kDebug() << job->errorText() ;
 	return;
@@ -145,6 +198,7 @@ void SearchDialog::itemSearchJobDone(KJob* job)
     }
     
     m_resultModel->setStringList( resultIndex );
+    kDebug() << "end of job" ;
 }
 
 void SearchDialog::itemSelected(const QModelIndex& index)
@@ -213,40 +267,191 @@ void SearchDialog::displayResult(const History &his)
     
     m_MainWidget->DisplayResultWidget->setHtml(finalHtml);
 }
-/*
- full text search query
- "select distinct ?r ?reqProp1 \
+
+QString SearchDialog::sparqlQuery(QString searchText)
+{
+    kDebug() << " " ;
+    bool single = true;//to chek if there is one wordor more than onw word in user entered text
+    QStringList list = searchText.split(" ", QString::SkipEmptyParts);
+    m_searchStrings =  list ;
+
+    if( list.size() > 1 )
+	single = false;
+    //all this code when exhaustive is false, for exhastive is true, write a diff sparql query
+    if( m_chats && single && !m_contacts && !m_date && !m_exhaustive)
+    {
+	m_searchType = SingleWordInChat;
+	
+	kDebug() << "of type single word in chat";
+	QString q = "select distinct ?r ?reqProp1 \
 	    where { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#plainTextMessageContent> ?o .\
-	    FILTER REGEX(STR(?o),'" + m_MainWidget->SearchTextBox->text() + "', 'i') . FILTER isLiteral(?o) . \
-	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 . }"
- 
- 
-     Nepomuk::Query::Query query;
-    Nepomuk::Query::OrTerm ot;
-    Nepomuk::Query::ComparisonTerm ct(Vocabulary::NMO::plainTextMessageContent(),
-			Nepomuk::Query::LiteralTerm( m_MainWidget->SearchTextBox->text() ), 
-			Nepomuk::Query::ComparisonTerm::Contains );
-    
-    ot.addSubTerm(ct);
-    query.setTerm(ot);
-    const Nepomuk::Query::Query::RequestProperty itemIdProperty( Akonadi::ItemSearchJob::akonadiItemIdUri(), false );
-    query.addRequestProperty(itemIdProperty);
-    
-    kDebug() << query.toSparqlQuery() ;
- 
-    Nepomuk::ResourceManager::instance()->init();
-    Soprano::QueryResultIterator it2
-    = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery( query.toSparqlQuery() , 
-                          Soprano::Query::QueryLanguageSparql );
-    while( it2.next() ) {
-	kDebug() << Nepomuk::Resource( it2.binding( "r" ).uri() ).uri() ;
-	Soprano::Node n = it2.binding( "reqProp1" ) ;
-	kDebug() << n.uri() ;
+	    FILTER REGEX(STR(?o),'" + m_searchStrings.first() + "', 'i') . FILTER isLiteral(?o) . \
+	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 . }";
+	
+	return q ;
     }
-    
+    //more than one word in context
+    else if( m_chats && !single && !m_contacts && !m_date && !m_exhaustive)
+    {
+	m_searchType = MultipleWordInChat ;
+	kDebug() << "multiple word in chat ";
+	
+	QString q = "select distinct ?r ?reqProp1 where { ";
+	int i=0;
+	for( ; i< m_searchStrings.size() - 1 ; i++)
+	{
+	    QString s = m_searchStrings.at(i);
+	    kDebug() << s;
+	    q += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#plainTextMessageContent> ?o .\
+		FILTER REGEX(STR(?o),'" + s + "', 'i') . FILTER isLiteral(?o) . \
+		?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 . } ";
+	    q += " Union " ;
+	}
+	
+	q += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#plainTextMessageContent> ?o .\
+	    FILTER REGEX(STR(?o),'" + m_searchStrings.at(i) + "', 'i') . FILTER isLiteral(?o) . \
+	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 . } ";
+	q += " } ";
+	
+	kDebug() << q ;
+	return q;
+    }
+    //if contact search
+    else if(m_contacts && single && !m_chats && !m_date && !m_exhaustive )
+    {
+	m_searchType = SingleWordContact;
+	kDebug() << "single contact search" ;
+	QString q = "select distinct ?r ?reqProp1  where{ \
+	    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+	    ?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasEmailAddress> ?i . \
+	    ?i <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#emailAddress> ?q2 . \
+	    FILTER REGEX(STR(?q2),'" + m_searchStrings.first() +"', 'i') . FILTER isLiteral(?q2)  . \
+	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 } \
+	    Union \
+	    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+	    ?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname> ?i . \
+	    FILTER REGEX(STR(?i),'" + m_searchStrings.first() + "', 'i') . FILTER isLiteral(?i)  . \
+	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1} }"; 
 
- */
+	return q;
+    }
+    else if( m_contacts && !single && !m_chats && !m_date && !m_exhaustive)
+    {
+	m_searchType = MultipleWordContact;
+	kDebug() << "multiple word contact";
+	QString q = "select distinct ?r ?reqProp1 where { ";
+	int i=0;
+	for( ; i< m_searchStrings.size() - 1 ; i++)
+	{
+	    QString s = m_searchStrings.at(i);
+	    q += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+		?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasEmailAddress> ?i . \
+		?i <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#emailAddress> ?q2 . \
+		FILTER REGEX(STR(?q2),'" + s + "', 'i') . FILTER isLiteral(?q2)  . \
+		?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 } \
+		Union \
+		{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+		?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname> ?i . \
+		FILTER REGEX(STR(?i),'" + s +  "', 'i') . FILTER isLiteral(?i)  . \
+		?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 }";
+	    q += " Union " ;
+	}
+	q += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+	    ?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasEmailAddress> ?i . \
+	    ?i <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#emailAddress> ?q2 . \
+	    FILTER REGEX(STR(?q2),'" + m_searchStrings.at(i) + "', 'i') . FILTER isLiteral(?q2)  . \
+	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 } \
+	    Union \
+	    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+	    ?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname> ?i . \
+	    FILTER REGEX(STR(?i),'" + m_searchStrings.at(i) +  "', 'i') . FILTER isLiteral(?i)  . \
+	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 }";
+	q += " } ";
+	
+	kDebug() << q ;
+	return q;
+    }
+    if( m_chats && m_contacts && !m_date && !m_exhaustive)
+    {
+	kDebug() << "contact+log";
+	QString q = "select distinct ?r ?reqProp1 where { ";
+	if(single)
+	{	kDebug() << "single";
+	    q += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#plainTextMessageContent> ?o .\
+		FILTER REGEX(STR(?o),'" + m_searchStrings.first() + "', 'i') . FILTER isLiteral(?o) . \
+		?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 . }";
+	    q += " Union " ;
+	    q += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+		?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasEmailAddress> ?i . \
+		?i <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#emailAddress> ?q2 . \
+		FILTER REGEX(STR(?q2),'" + m_searchStrings.first() +"', 'i') . FILTER isLiteral(?q2)  . \
+		?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 } \
+		Union \
+		{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+		?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname> ?i . \
+		FILTER REGEX(STR(?i),'" + m_searchStrings.first() + "', 'i') . FILTER isLiteral(?i)  . \
+		?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 }";
+	    q += " } ";
+	    
+	    kDebug() << q;
+	    return q;
+	}
+	else
+	{
+	    kDebug() << "not single" ;
+	    //for text search in logs
+	    foreach( const QString &s, m_searchStrings)
+	    {
+		kDebug() << s;
+		q += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#plainTextMessageContent> ?o .\
+		    FILTER REGEX(STR(?o),'" + s + "', 'i') . FILTER isLiteral(?o) . \
+		    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 . } ";
+		q += " Union " ;
+	    }
+	    //for contact search
+	    int i=0;
+	    for( ; i< m_searchStrings.size() - 1 ; i++)
+	    {
+		QString s = m_searchStrings.at(i);
+		q += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+		    ?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasEmailAddress> ?i . \
+		    ?i <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#emailAddress> ?q2 . \
+		    FILTER REGEX(STR(?q2),'" + s + "', 'i') . FILTER isLiteral(?q2)  . \
+		    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 } \
+		    Union \
+		    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+		    ?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname> ?i . \
+		    FILTER REGEX(STR(?i),'" + s +  "', 'i') . FILTER isLiteral(?i)  . \
+		    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 }";
+		q += " Union " ;
+	    }
+	    q += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+		?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasEmailAddress> ?i . \
+		?i <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#emailAddress> ?q2 . \
+		FILTER REGEX(STR(?q2),'" + m_searchStrings.at(i) + "', 'i') . FILTER isLiteral(?q2)  . \
+		?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 } \
+		Union \
+		{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
+		?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname> ?i . \
+		FILTER REGEX(STR(?i),'" + m_searchStrings.at(i) +  "', 'i') . FILTER isLiteral(?i)  . \
+		?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 }";
+	    q += " } ";
 
+	    kDebug() << q ;
+	    return q;
+	}
+    }
+    //if date search
+    else if(m_date)
+    {
+	m_searchType = Date ;
+    }
+    //general search
+    else if(m_exhaustive)
+    {
+	m_searchType = Exhaustive ;
+    }
+}
 
 
 
