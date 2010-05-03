@@ -16,6 +16,7 @@
 
 #include "akonadihistoryplugin.h"
 #include "historyactionmanager.h"
+#include "searchdialog.h"
 
 #include <QTextDocument>
 
@@ -50,7 +51,7 @@ AkonadiHistoryPlugin::AkonadiHistoryPlugin(QObject* parent, const QVariantList &
 	
 	connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)), this, SLOT(slotViewCreated(KopeteView*)) ); 
 
-	KAction *viewDialog = new KAction( KIcon("view-history"), i18n("View &History" ), this);
+	KAction *viewDialog = new KAction( KIcon("view-history"), i18n("Search &History" ), this);
 	actionCollection()->addAction("viewAkonadiHistoryDialog", viewDialog);
 	viewDialog->setShortcut(KShortcut (Qt::CTRL + Qt::Key_H));
 	connect(viewDialog, SIGNAL(triggered(bool)), this, SLOT(slotViewHistoryDialog()) );
@@ -118,6 +119,11 @@ void AkonadiHistoryPlugin::slotViewCreated(KopeteView* v)
 void AkonadiHistoryPlugin::slotViewHistoryDialog()
 {
 	kDebug() << "Slot view history Dialog called";
+	
+	SearchDialog *s = new SearchDialog();
+	
+	s->setInitialSize( QSize( 800, 600 ) );
+	s->show();
 }
 
 
@@ -130,3 +136,5 @@ void AkonadiHistoryMessageHandler::handleMessage(Kopete::MessageEvent* event)
     Kopete::MessageHandler::handleMessage(event);
 }
 
+
+#include "akonadihistoryplugin.moc"
