@@ -445,6 +445,19 @@ QString SearchDialog::sparqlQuery(QString searchText)
     else if(m_date)
     {
 	m_searchType = Date ;
+	kDebug() << "of type search date";
+	QDate date = parseDate(m_MainWidget->SearchTextBox->text() );
+	QString dateStr = date.toString("yyyy-MM-dd");
+	kDebug() << date << dateStr;
+	QString q = "select distinct ?r ?o where { \
+		    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#receivedDate> ?o . \
+		    FILTER REGEX(STR(?o) , '" + dateStr + "', 'i') . }   \
+		    Union \
+		    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sentDate> ?o . \
+		    FILTER REGEX(STR(?o) , '" + dateStr + "' , 'i') . } ";
+	q += " } ";
+	kDebug() << q;
+	return q;
     }
     //general search
     else if(m_exhaustive)
@@ -454,5 +467,60 @@ QString SearchDialog::sparqlQuery(QString searchText)
 }
 
 
+QDate SearchDialog::parseDate(QString date)
+{
+    int month=0, year =0, day =0;
+    kDebug() << date ;
+    
+    QStringList monthList = date.split(" ");
+    kDebug() << monthList  ;
+    foreach ( const QString &s,monthList)
+    {
+	if(s.contains("jan",Qt::CaseInsensitive ))
+	    month=1;
+	if(s.contains("feb",Qt::CaseInsensitive) )
+	    month=2;
+	if(s.contains("mar",Qt::CaseInsensitive) )
+	    month=3;
+	if(s.contains("apr",Qt::CaseInsensitive)) 
+	    month=4;
+	if(s.contains("may",Qt::CaseInsensitive) )
+	    month=5;
+	if(s.contains("june",Qt::CaseInsensitive) )
+	    month=6;
+	if(s.contains("july",Qt::CaseInsensitive) )
+	    month=7;
+	if(s.contains("aug",Qt::CaseInsensitive)) 
+	    month=8;
+	if(s.contains("sep",Qt::CaseInsensitive)) 
+	    month=9;
+	if(s.contains("oct",Qt::CaseInsensitive) )
+	    month=10;
+	if(s.contains("nov",Qt::CaseInsensitive))
+	    month=11;
+	if(s.contains("dec",Qt::CaseInsensitive)) 
+	    month=12;
+	
+	if( month != 0)
+	    {
+	    monthList.removeOne(s);break;
+	}
+	
+    }
+    kDebug() << monthList;
+    foreach ( const QString &s,monthList)
+    {
+	if(s.length() == 4 )
+	{
+	    year = s.toInt();
+	    monthList.removeOne(s);
+	 }
+    }
+    kDebug() << monthList  ;
+    
+    day = monthList.first().toInt();
+    kDebug() << year << month << day ;
+    return QDate(year, month, day  );
+}
 
 #include "searchdialog.moc"

@@ -68,7 +68,7 @@ private:
     void reset();
     QString sparqlQuery( QString);
     
-    
+    QDate parseDate(QString);
 	
 };
 
