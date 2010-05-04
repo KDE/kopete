@@ -28,10 +28,13 @@
 #include <kopeteplugin.h>
 #include <kopetemessagehandler.h>
 #include <KComponentData>
+#include <Akonadi/Collection>
 
 class KopeteView;
 class HistoryActionManager;
 class AkonadiHistoryPlugin;
+class KJob;
+
 
 class AkonadiHistoryMessageHandler : public Kopete::MessageHandler 
 {
@@ -77,17 +80,31 @@ public:
     
 	void messageDisplayed(const Kopete::Message &msg) ;
 	const KComponentData &xmlGuiInstance() { return m_XmlGuiInstance; }
+	
+	Akonadi::Collection getCollection(QString myId = QString() , QString contactId = QString() );
+
     
 private:
 	AkonadiHistoryMessageHandlerFactory m_messageHandlerFactory;
 	QHash<Kopete::ChatSession*,HistoryActionManager*> m_loggers;
 	KComponentData m_XmlGuiInstance ;
-    
+	
+        QHash<QString, Akonadi::Collection> m_collectionHash;
+        QHash<Akonadi::Collection::Id , QList<Akonadi::Collection> > m_idCollectionHash; 
+
+	Akonadi::Collection m_kopeteChat;
+	
 private slots:
 	void slotViewCreated(KopeteView*);
 	void slotKMMClosed( Kopete::ChatSession* );
 	void slotAddTag() ;
 	void slotViewHistoryDialog();
+    
+        void collectionFetch(KJob* );
+        void collectionAddedSlot(Akonadi::Collection  , Akonadi::Collection);
+        void collectionRemovedSlot(Akonadi::Collection);
+        
+        void list();
     
 };
 

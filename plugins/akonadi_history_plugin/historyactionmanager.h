@@ -22,6 +22,7 @@
 #define HISTORYACTIONMANAGE
 
 #include "akonadihistoryplugin.h"
+#include "akonadihistorylogger.h"
 
 #include <KXMLGUIClient>
 
@@ -38,10 +39,12 @@ public:
 	~HistoryActionManager();
 	
 	void processTag(QString&) ;
+	AkonadiHistoryLogger *logger() const { return m_logger; }
 	
 private:
 	
 	QPointer<AkonadiHistoryPlugin> m_hPlugin;
+	QPointer<AkonadiHistoryLogger> m_logger;
 	Kopete::ChatSession * m_manager;
 	QPointer<KLineEdit> m_lineEdit;
 	QPointer<KDialog> m_getTagDialog;

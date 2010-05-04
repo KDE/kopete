@@ -51,6 +51,9 @@ HistoryActionManager::HistoryActionManager(Kopete::ChatSession* parent, QObject*
 	
 	setXMLFile ( "tagchatui.rc" );
 	
+	QList<Kopete::Contact*> mb=m_manager->members();	
+	m_logger=new AkonadiHistoryLogger ( mb.first(), this, m_hPlugin );
+	
 }
 
 HistoryActionManager::~HistoryActionManager()

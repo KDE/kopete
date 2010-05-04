@@ -49,6 +49,7 @@ add_definitions( ${KDE4_ENABLE_EXCEPTIONS} )
 
 set(akonadi_kopete_history_PART_SRCS  
     akonadihistoryplugin.cpp
+    akonadihistorylogger.cpp
     historyactionmanager.cpp
     searchdialog.cpp
 )
