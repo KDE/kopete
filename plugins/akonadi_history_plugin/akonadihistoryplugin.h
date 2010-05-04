@@ -29,6 +29,7 @@
 #include <kopetemessagehandler.h>
 #include <KComponentData>
 #include <Akonadi/Collection>
+#include <Akonadi/Item>
 
 class KopeteView;
 class HistoryActionManager;
@@ -82,6 +83,8 @@ public:
 	const KComponentData &xmlGuiInstance() { return m_XmlGuiInstance; }
 	
 	Akonadi::Collection getCollection(QString myId = QString() , QString contactId = QString() );
+	Akonadi::Item getItem(Akonadi::Collection::Id);
+	void setItem(Akonadi::Collection::Id, Akonadi::Item::Id );
 
     
 private:
@@ -91,6 +94,7 @@ private:
 	
         QHash<QString, Akonadi::Collection> m_collectionHash;
         QHash<Akonadi::Collection::Id , QList<Akonadi::Collection> > m_idCollectionHash; 
+        QHash<Akonadi::Collection::Id, Akonadi::Item::Id> m_collItemBySession;
 
 	Akonadi::Collection m_kopeteChat;
 	

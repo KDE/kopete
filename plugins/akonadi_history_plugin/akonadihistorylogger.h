@@ -61,31 +61,31 @@ public:
    
 private:
 
- QMap<unsigned int , History> dayHistory ;
-  
-  Akonadi::Collection m_tosaveInCollection;
-  Akonadi::Item m_tosaveInItem;
-  QPointer<QTimer> m_saveTimer;
-  QPointer<AkonadiHistoryPlugin> m_hPlugin;
-  Akonadi::Collection m_kopeteChat;
-  History m_toSaveHistory;
-  Kopete::Message m_message;
-  const Kopete::Contact * m_contact;
-  Akonadi::Collection m_parentCollection;
-  History m_getHistory;
-  QMap<const Kopete::Contact*,QMap<unsigned int, History> > m_history;
-  
-           
-  
- 
+    QPointer<AkonadiHistoryPlugin> m_hPlugin;
+    
+    Akonadi::Collection m_tosaveInCollection;
+    Akonadi::Collection m_parentCollection;
+    Akonadi::Collection m_kopeteChat;
+
+    Akonadi::Item m_tosaveInItem;
+
+    Kopete::Message m_message;
+
+    const Kopete::Contact * m_contact;
+
+    History m_history;
+    bool itemFetched;
+    bool itemModifiedOnce;
 
 private slots:
    
     void appendMessage2();
+    void pCollectionCreated(KJob*);
     void createCollection(KJob *);
     void createItem();
     void itemCreateDone(KJob*);
     void itemsReceivedDone(Akonadi::Item::List);
+    void slotItemModified(KJob*);
     
 };
 

@@ -203,14 +203,15 @@ void AkonadiHistoryPlugin::collectionFetch(KJob* job)
   
     Akonadi::CollectionFetchJob *fetchJob = static_cast<Akonadi::CollectionFetchJob *>(job);
     Akonadi::Collection::List collList= fetchJob->collections();
+    
     if ( !m_kopeteChat.isValid() )
     {
-	kDebug() << "m_kopetechat coll is inavlid";
 	foreach ( const Akonadi::Collection &collection, collList)
 	{
 	    if (collection.name() == "KopeteChat")
 	    {
 		m_kopeteChat = collection;
+		break;
 	    }
 	}
 	
@@ -349,6 +350,27 @@ void AkonadiHistoryPlugin::list()
 	    kDebug() << "\t " << coll.name() ;
     }
 
+}
+
+Akonadi::Item AkonadiHistoryPlugin::getItem(Akonadi::Entity::Id id)
+{
+    if( m_collItemBySession.contains( id ) )
+    {
+      kDebug() << "contains item";
+      Akonadi::Item i = Akonadi::Item( m_collItemBySession.value( id ) ) ;
+      return i;
+      }
+      
+      kDebug() << "does not contain";
+      
+      return Akonadi::Item::Item() ;
+}
+
+
+void AkonadiHistoryPlugin::setItem(Akonadi::Collection::Id c, Akonadi::Item::Id i )
+{
+    kDebug() << c << i ;
+    m_collItemBySession.insert(c, i) ;
 }
 
 
