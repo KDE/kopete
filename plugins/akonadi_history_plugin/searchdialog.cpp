@@ -20,6 +20,8 @@
 
 #include "searchdialog.h"
 #include "gettags.h"
+#include "exhaustivesearchjob.h"
+
 #include "ui_searchdialog.h"
 
 //
@@ -149,6 +151,7 @@ void SearchDialog::slotCBoxExhaustive(int state)
     }
     else if(state == 2 )
     {
+	m_exhaustive = true;
 	m_MainWidget->CBoxContact->setDisabled(true);
 	m_MainWidget->CBoxDate->setDisabled(true);
 	m_MainWidget->CBoxLogs->setDisabled(true);
@@ -164,11 +167,46 @@ void SearchDialog::slotSearchButtonClicked()
     //to reset the gui && clear the saved items
     reset(); 
     
-    QString query1 = sparqlQuery( m_MainWidget->SearchTextBox->text() );
+    if( !m_exhaustive ) { 
+	QString query1 = sparqlQuery( m_MainWidget->SearchTextBox->text() );
 
-    Akonadi::ItemSearchJob *job = new Akonadi::ItemSearchJob( query1 );
-    job->fetchScope().fetchFullPayload();
-    connect(job, SIGNAL(result(KJob*)), this , SLOT(itemSearchJobDone(KJob*)) );
+	Akonadi::ItemSearchJob *job = new Akonadi::ItemSearchJob( query1 );
+	job->fetchScope().fetchFullPayload();
+	connect(job, SIGNAL(result(KJob*)), this , SLOT(itemSearchJobDone(KJob*)) );
+	}
+     else if( m_exhaustive ) {
+	ExhaustiveSearchJob *search = new ExhaustiveSearchJob(m_MainWidget->SearchTextBox->text(), this );
+	connect(search, SIGNAL(finished(KJob*)), this , SLOT( slotExhaustiveSearchDone(KJob*)) );
+	search->start() ;
+	}
+}
+
+void SearchDialog::slotExhaustiveSearchDone(KJob* job)
+{
+    kDebug() << " ";
+    if( job->error() ) {
+	kDebug() << job->errorText();
+	return;
+	}
+    ExhaustiveSearchJob *eJob = static_cast<ExhaustiveSearchJob*>(job);
+    QHash<QString, Akonadi::Item::List> hash = eJob->items();
+    QHash<QString, Akonadi::Item::List>::iterator i;
+    QStringList resultIndex;
+    kDebug() << hash.keys() ;
+    m_items.clear();
+    for (i = hash.begin(); i != hash.end(); ++i)
+    {
+    // cout << i.key() << ": " << i.value() << endl;
+	foreach( const Akonadi::Item&item, i.value() ) 
+	{	
+	    QString itemLabel = item.id() + ":" + i.key() + ":" + item.payload<History>().remoteContactId();
+	    kDebug() << itemLabel ;
+	    resultIndex<<itemLabel ;
+	    m_items << item;
+	}
+    }
+    m_resultModel->setStringList( resultIndex );
+    kDebug() << "end";
 }
 
 void SearchDialog::slotGetTags(KJob* job)
@@ -184,7 +222,6 @@ void SearchDialog::slotGetTags(KJob* job)
     m_MainWidget->LabelBox->addItems( tags );
 }
 
-
 void SearchDialog::reset()
 {
     m_searchStrings.clear();
@@ -192,7 +229,6 @@ void SearchDialog::reset()
     m_resultModel->setStringList( QStringList() );
     m_MainWidget->DisplayResultWidget->clear();
 }
-
 
 void SearchDialog::itemSearchJobDone(KJob* job)
 {
@@ -233,7 +269,7 @@ void SearchDialog::itemSelected(const QModelIndex& index)
 
     displayResult(history);
 }
-
+//I dont think this function is needed?
 void SearchDialog::itemFetched(KJob* job )
 {
     if( job->error() ) {

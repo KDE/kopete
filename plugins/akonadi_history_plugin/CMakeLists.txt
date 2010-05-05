@@ -53,6 +53,7 @@ set(akonadi_kopete_history_PART_SRCS
     akonadihistorylogger.cpp
     historyactionmanager.cpp
     searchdialog.cpp
+    exhaustivesearchjob.cpp
 )
 
 #TODO:The UI file for search and view of chat history

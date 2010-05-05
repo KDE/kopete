@@ -64,6 +64,8 @@ private slots:
     void slotCBoxDate(int);
     void slotGetTags(KJob*);
     
+    void slotExhaustiveSearchDone(KJob*);
+    
 private:
     void displayResult(const History&);
     void reset();
