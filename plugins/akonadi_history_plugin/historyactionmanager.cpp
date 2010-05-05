@@ -27,6 +27,10 @@
 #include <KLineEdit>
 #include <KDialog>
 
+#include <Akonadi/Item>
+
+#include <Nepomuk/Tag>
+
 #include "kopetechatsession.h"
 
 HistoryActionManager::HistoryActionManager(Kopete::ChatSession* parent, QObject* hPlugin)
@@ -93,6 +97,19 @@ void HistoryActionManager::processTag(QString& tagString)
 {
 	kDebug() << " ";
 	kDebug() << tagString ;
+	tagString = "kopete:" + tagString ;
+	Akonadi::Item item = m_logger->akonadiItem() ;
+	if( !item.isValid() ) {
+	    kDebug() << "the akonadi item is invalid, possible reason chat not started yet";
+	    return;
+	}
+	const Nepomuk::Tag tag( tagString );
+	Nepomuk::Resource resource( item.url() );
+	const QList<Nepomuk::Tag> tagList = resource.tags();
+	kDebug()<< tagList.size(); ;
+	
+	resource.addTag( tag );
+	kDebug()<<"tag added";
 }
 
 

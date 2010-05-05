@@ -57,6 +57,7 @@ public:
     explicit AkonadiHistoryLogger(Kopete::Contact *c , QObject *parent = 0, QObject *hPlugin = 0 );
     ~AkonadiHistoryLogger();
     void appendMessage( const Kopete::Message &msg , const Kopete::Contact *c=0L  );
+    Akonadi::Item akonadiItem() { return m_tosaveInItem ; }
     
    
 private:
