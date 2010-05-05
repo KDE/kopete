@@ -62,13 +62,15 @@ private slots:
     void slotCBoxContact(int);
     void slotCBoxExhaustive(int);
     void slotCBoxDate(int);
+    void slotGetTags(KJob*);
     
 private:
     void displayResult(const History&);
     void reset();
     QString sparqlQuery( QString);
     
-    QDate parseDate(QString);
+    QDate parseDate(QStringList);
+    int findMonth(QString);
 	
 };
 

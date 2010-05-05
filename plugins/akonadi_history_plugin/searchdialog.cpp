@@ -19,6 +19,7 @@
 */
 
 #include "searchdialog.h"
+#include "gettags.h"
 #include "ui_searchdialog.h"
 
 //
@@ -88,6 +89,9 @@ SearchDialog::SearchDialog(QWidget* parent, Qt::WFlags flags): KDialog(parent, f
     //set the logs checkbox to be true by default
     m_MainWidget->CBoxLogs->setCheckState( Qt::Checked );
     setMainWidget( w );
+    
+    GetTags *getTagJob = new GetTags(this);
+    connect(getTagJob, SIGNAL(finished(KJob*)), this, SLOT(slotGetTags(KJob*)) );
 
     m_chats = true;
     m_contacts = false;
@@ -446,9 +450,24 @@ QString SearchDialog::sparqlQuery(QString searchText)
     {
 	m_searchType = Date ;
 	kDebug() << "of type search date";
-	QDate date = parseDate(m_MainWidget->SearchTextBox->text() );
-	QString dateStr = date.toString("yyyy-MM-dd");
-	kDebug() << date << dateStr;
+	QString date = m_MainWidget->SearchTextBox->text();
+	QString dateStr;
+	QStringList monthList = date.split(" ");
+	if( monthList.size() == 1 )
+	{
+	    dateStr = "[0-9][0-9][0-9][0-9]-[0-9]*";
+	    int month = findMonth(date);
+	    dateStr += QString::number(month, 10);
+	    dateStr += "-[0-9][0-9]";
+	    kDebug() << date << dateStr;
+	}
+	    
+	else
+	{
+	    QDate date = parseDate(monthList);
+	    dateStr = date.toString("yyyy-MM-dd");
+	    kDebug() << date << dateStr;
+	}
 	QString q = "select distinct ?r ?o where { \
 		    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#receivedDate> ?o . \
 		    FILTER REGEX(STR(?o) , '" + dateStr + "', 'i') . }   \
@@ -458,6 +477,7 @@ QString SearchDialog::sparqlQuery(QString searchText)
 	q += " } ";
 	kDebug() << q;
 	return q;
+	
     }
     //general search
     else if(m_exhaustive)
@@ -467,13 +487,14 @@ QString SearchDialog::sparqlQuery(QString searchText)
 }
 
 
-QDate SearchDialog::parseDate(QString date)
+QDate SearchDialog::parseDate(QStringList monthList)
 {
     int month=0, year =0, day =0;
-    kDebug() << date ;
+    kDebug() << monthList ;
     
-    QStringList monthList = date.split(" ");
+    //QStringList monthList = date.split(" ");
     kDebug() << monthList  ;
+    
     foreach ( const QString &s,monthList)
     {
 	if(s.contains("jan",Qt::CaseInsensitive ))
@@ -500,12 +521,10 @@ QDate SearchDialog::parseDate(QString date)
 	    month=11;
 	if(s.contains("dec",Qt::CaseInsensitive)) 
 	    month=12;
-	
 	if( month != 0)
 	    {
 	    monthList.removeOne(s);break;
 	}
-	
     }
     kDebug() << monthList;
     foreach ( const QString &s,monthList)
@@ -522,5 +541,34 @@ QDate SearchDialog::parseDate(QString date)
     kDebug() << year << month << day ;
     return QDate(year, month, day  );
 }
+
+int SearchDialog::findMonth(QString s)
+{
+	if(s.contains("january",Qt::CaseInsensitive ))
+	    return 1;
+	if(s.contains("february",Qt::CaseInsensitive) )
+	    return 2;
+	if(s.contains("march",Qt::CaseInsensitive) )
+	    return 3;
+	if(s.contains("april",Qt::CaseInsensitive)) 
+	    return 4;
+	if(s.contains("may",Qt::CaseInsensitive) )
+	    return 5;
+	if(s.contains("june",Qt::CaseInsensitive) )
+	    return 6;
+	if(s.contains("july",Qt::CaseInsensitive) )
+	    return 7;
+	if(s.contains("august",Qt::CaseInsensitive)) 
+	    return 8;
+	if(s.contains("september",Qt::CaseInsensitive)) 
+	    return 9;
+	if(s.contains("october",Qt::CaseInsensitive) )
+	    return 10;
+	if(s.contains("november",Qt::CaseInsensitive))
+	    return 11;
+	if(s.contains("december",Qt::CaseInsensitive)) 
+	    return 12;
+
+	}
 
 #include "searchdialog.moc"
