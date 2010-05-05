@@ -648,7 +648,7 @@ OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, const char* host) {
     int extension_nid = OBJ_obj2nid(X509_EXTENSION_get_object(extension));
 
     if (extension_nid == NID_subject_alt_name) {
-      X509V3_EXT_METHOD* meth = X509V3_EXT_get(extension);
+      const X509V3_EXT_METHOD* meth = X509V3_EXT_get(extension);
       if (!meth)
         break;
 
