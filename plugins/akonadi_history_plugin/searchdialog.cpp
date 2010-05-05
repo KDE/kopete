@@ -164,17 +164,35 @@ void SearchDialog::slotCBoxExhaustive(int state)
 void SearchDialog::slotSearchButtonClicked()
 {
     kDebug() << " " << m_MainWidget->SearchTextBox->text() ;
-    
     //to reset the gui && clear the saved items
     reset(); 
     
-    if( !m_exhaustive ) { 
+    if( !m_exhaustive ) 
+    {
+	     // for now doing exhaustive search for these also, this should actually go somewhere else
+	if( m_chats && !m_contacts && m_date )
+	{
+	    kDebug() << "m_chats && !m_contacts && m_date";
+	    ExhaustiveSearchJob *search = new ExhaustiveSearchJob(m_MainWidget->SearchTextBox->text(), this );
+	    connect(search, SIGNAL(finished(KJob*)), this , SLOT( slotExhaustiveSearchDone(KJob*)) );
+	    search->start() ;
+	    return;
+	}
+	else if( !m_chats && m_contacts && m_date )
+	{
+	    kDebug() << "!m_chats && m_contacts && m_date"; 
+	    ExhaustiveSearchJob *search = new ExhaustiveSearchJob(m_MainWidget->SearchTextBox->text(), this );
+	    connect(search, SIGNAL(finished(KJob*)), this , SLOT( slotExhaustiveSearchDone(KJob*)) );
+	    search->start() ;
+	    return;
+	}
+
 	QString query1 = sparqlQuery( m_MainWidget->SearchTextBox->text() );
 
 	Akonadi::ItemSearchJob *job = new Akonadi::ItemSearchJob( query1 );
 	job->fetchScope().fetchFullPayload();
 	connect(job, SIGNAL(result(KJob*)), this , SLOT(itemSearchJobDone(KJob*)) );
-	}
+    }
      else if( m_exhaustive ) {
 	ExhaustiveSearchJob *search = new ExhaustiveSearchJob(m_MainWidget->SearchTextBox->text(), this );
 	connect(search, SIGNAL(finished(KJob*)), this , SLOT( slotExhaustiveSearchDone(KJob*)) );
@@ -200,8 +218,8 @@ void SearchDialog::slotExhaustiveSearchDone(KJob* job)
     // cout << i.key() << ": " << i.value() << endl;
 	foreach( const Akonadi::Item&item, i.value() ) 
 	{	
-	    QString itemLabel = item.id() + ":" + i.key() + ":" + item.payload<History>().remoteContactId();
-	    kDebug() << itemLabel ;
+	    QString itemLabel = i.key() + ":" +item.payload<History>().remoteContactId() ;
+	    kDebug() << itemLabel << item.id() << i.key() << item.payload<History>().remoteContactId();
 	    resultIndex<<itemLabel ;
 	    m_items << item;
 	}
@@ -330,24 +348,11 @@ QString SearchDialog::sparqlQuery(QString searchText)
     bool single = true;//to chek if there is one wordor more than onw word in user entered text
     QStringList list = searchText.split(" ", QString::SkipEmptyParts);
     m_searchStrings =  list ;
-
     if( list.size() > 1 )
 	single = false;
-    //all this code when exhaustive is false, for exhastive is true, write a diff sparql query
-    if( m_chats && single && !m_contacts && !m_date && !m_exhaustive)
-    {
-	m_searchType = SingleWordInChat;
-	
-	kDebug() << "of type single word in chat";
-	QString q = "select distinct ?r ?reqProp1 \
-	    where { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#plainTextMessageContent> ?o .\
-	    FILTER REGEX(STR(?o),'" + m_searchStrings.first() + "', 'i') . FILTER isLiteral(?o) . \
-	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 . }";
-	
-	return q ;
-    }
-    //more than one word in context
-    else if( m_chats && !single && !m_contacts && !m_date && !m_exhaustive)
+    kDebug() << m_searchStrings;
+//all this code when exhaustive is false, for exhastive is true, write a diff sparql query
+    if( m_chats && !m_contacts && !m_date && !m_exhaustive)
     {
 	m_searchType = MultipleWordInChat ;
 	kDebug() << "multiple word in chat ";
@@ -373,28 +378,9 @@ QString SearchDialog::sparqlQuery(QString searchText)
 	return q;
     }
     //if contact search
-    else if(m_contacts && single && !m_chats && !m_date && !m_exhaustive )
-    {
-	m_searchType = SingleWordContact;
-	kDebug() << "single contact search" ;
-	QString q = "select distinct ?r ?reqProp1  where{ \
-	    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
-	    ?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasEmailAddress> ?i . \
-	    ?i <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#emailAddress> ?q2 . \
-	    FILTER REGEX(STR(?q2),'" + m_searchStrings.first() +"', 'i') . FILTER isLiteral(?q2)  . \
-	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1 } \
-	    Union \
-	    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sender> ?q1 . \
-	    ?q1 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname> ?i . \
-	    FILTER REGEX(STR(?i),'" + m_searchStrings.first() + "', 'i') . FILTER isLiteral(?i)  . \
-	    ?r <http://akonadi-project.org/ontologies/aneo#akonadiItemId> ?reqProp1} }"; 
-
-	return q;
-    }
-    else if( m_contacts && !single && !m_chats && !m_date && !m_exhaustive)
+    else if( !m_chats && m_contacts && !m_date && !m_exhaustive)
     {
 	m_searchType = MultipleWordContact;
-	kDebug() << "multiple word contact";
 	QString q = "select distinct ?r ?reqProp1 where { ";
 	int i=0;
 	for( ; i< m_searchStrings.size() - 1 ; i++)
@@ -498,39 +484,89 @@ QString SearchDialog::sparqlQuery(QString searchText)
 	}
     }
     //if date search
-    else if(m_date)
+    else if(m_date && !m_chats && !m_contacts)
     {
-	m_searchType = Date ;
-	kDebug() << "of type search date";
-	QString date = m_MainWidget->SearchTextBox->text();
-	QString dateStr;
-	QStringList monthList = date.split(" ");
-	if( monthList.size() == 1 )
+	QStringList dateList;
+	
+	QStringList list = m_MainWidget->SearchTextBox->text().split(" ", QString::SkipEmptyParts);
+	QStringList days = list.filter(QRegExp("^\\d{1,2}$"));
+	foreach( const QString& d , days )
+	    dateList << "[0-9]{4}-[0-9]{2}-" + QDate(2010,1,d.toInt()).toString("dd");
+	
+	QStringList years = list.filter(QRegExp("^\\d{4,4}$"));
+	foreach( const QString& y , years )
+	    dateList << y + "-[0-9]{2}-[0-9]{2}";
+	
+	QStringList month;
+	foreach(const QString &s, list)
 	{
-	    dateStr = "[0-9][0-9][0-9][0-9]-[0-9]*";
-	    int month = findMonth(date);
-	    dateStr += QString::number(month, 10);
-	    dateStr += "-[0-9][0-9]";
-	    kDebug() << date << dateStr;
+	    if( s.contains("jan", Qt::CaseInsensitive))
+		month<< "01";
+	    else if( s.contains("feb", Qt::CaseInsensitive))
+		month<< "02";
+	    else if( s.contains("mar", Qt::CaseInsensitive))
+		month<< "03";
+	    else if( s.contains("apr", Qt::CaseInsensitive))
+		month<< "04";
+	    else if( s.contains("may", Qt::CaseInsensitive))
+		month<< "05";
+	    else if( s.contains("june", Qt::CaseInsensitive))
+		month<< "06";
+	    else if( s.contains("july", Qt::CaseInsensitive))
+		month<< "07";
+	    else if( s.contains("aug", Qt::CaseInsensitive))
+		month<< "08";
+	    else if( s.contains("sep", Qt::CaseInsensitive))
+		month<< "09";
+	    else if( s.contains("oct", Qt::CaseInsensitive))
+		month<< "10";
+	    else if( s.contains("nov", Qt::CaseInsensitive))
+		month<< "11";
+	    else if( s.contains("dec", Qt::CaseInsensitive))
+		month<< "12";
 	}
-	    
-	else
+	kDebug() << month;
+    
+	foreach( const QString &m, month )
+	    dateList << "[0-9]{4}-" + QDate(2010,m.toInt(),1).toString("MM") + "-[0-9]{2}";
+    
+	foreach( const QString &s, years )
 	{
-	    QDate date = parseDate(monthList);
-	    dateStr = date.toString("yyyy-MM-dd");
-	    kDebug() << date << dateStr;
+	    foreach( const QString &m, month )
+		dateList << QDate(s.toInt(),m.toInt(),1).toString("yyyy-MM") +"-[0-9]{2}";
+	
+	    foreach( const QString &d, days)
+		dateList << QDate(s.toInt(), 1, d.toInt()).toString("yyyy")+ "-[01][0-9]-" + QDate(s.toInt(), 1, d.toInt()).toString("dd") ;
 	}
-	QString q = "select distinct ?r ?o where { \
-		    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#receivedDate> ?o . \
-		    FILTER REGEX(STR(?o) , '" + dateStr + "', 'i') . }   \
+    
+	foreach( const QString &m, month)
+	{
+	    foreach(const QString &d, days )
+		dateList << "[09]{4}-"+ QDate(QDate::currentDate().year(),m.toInt(),d.toInt()).toString("MM-dd");
+	}
+    
+	kDebug() << dateList ;
+	QString querieFinal = "select distinct ?r where { ";
+	int i=0;
+	for( i=0; i < dateList.size() -1 ; i++)
+	{
+	    querieFinal += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#receivedDate> ?o . \
+		    FILTER REGEX(STR(?o) , '" + dateList.at(i) + "', 'i') . }   \
 		    Union \
 		    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sentDate> ?o . \
-		    FILTER REGEX(STR(?o) , '" + dateStr + "' , 'i') . } ";
-	q += " } ";
-	kDebug() << q;
-	return q;
+		    FILTER REGEX(STR(?o) , '" + dateList.at(i) + "' , 'i') . } ";
+	    querieFinal += " Union ";
+	}
+	 querieFinal += "{ ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#receivedDate> ?o . \
+		    FILTER REGEX(STR(?o) , '" + dateList.at(i) + "', 'i') . }   \
+		    Union \
+		    { ?r <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sentDate> ?o . \
+		    FILTER REGEX(STR(?o) , '" + dateList.at(i) + "' , 'i') . } ";
+	 querieFinal += " } ";
 	
-    }
+	kDebug() << querieFinal;
+	return querieFinal;
+    }//end
     //general search
     else if(m_exhaustive)
     {
@@ -544,48 +580,25 @@ QDate SearchDialog::parseDate(QStringList monthList)
     int month=0, year =0, day =0;
     kDebug() << monthList ;
     
-    //QStringList monthList = date.split(" ");
     kDebug() << monthList  ;
     
     foreach ( const QString &s,monthList)
     {
-	if(s.contains("jan",Qt::CaseInsensitive ))
-	    month=1;
-	if(s.contains("feb",Qt::CaseInsensitive) )
-	    month=2;
-	if(s.contains("mar",Qt::CaseInsensitive) )
-	    month=3;
-	if(s.contains("apr",Qt::CaseInsensitive)) 
-	    month=4;
-	if(s.contains("may",Qt::CaseInsensitive) )
-	    month=5;
-	if(s.contains("june",Qt::CaseInsensitive) )
-	    month=6;
-	if(s.contains("july",Qt::CaseInsensitive) )
-	    month=7;
-	if(s.contains("aug",Qt::CaseInsensitive)) 
-	    month=8;
-	if(s.contains("sep",Qt::CaseInsensitive)) 
-	    month=9;
-	if(s.contains("oct",Qt::CaseInsensitive) )
-	    month=10;
-	if(s.contains("nov",Qt::CaseInsensitive))
-	    month=11;
-	if(s.contains("dec",Qt::CaseInsensitive)) 
-	    month=12;
+	month = findMonth(s);
 	if( month != 0)
-	    {
-	    monthList.removeOne(s);break;
+	{
+	  monthList.removeOne(s);break;
 	}
     }
+    
     kDebug() << monthList;
     foreach ( const QString &s,monthList)
     {
 	if(s.length() == 4 )
 	{
-	    year = s.toInt();
-	    monthList.removeOne(s);
-	 }
+	  year = s.toInt();
+	  monthList.removeOne(s);
+	}
     }
     kDebug() << monthList  ;
     
@@ -596,32 +609,35 @@ QDate SearchDialog::parseDate(QStringList monthList)
 
 int SearchDialog::findMonth(QString s)
 {
-	if(s.contains("january",Qt::CaseInsensitive ))
-	    return 1;
-	if(s.contains("february",Qt::CaseInsensitive) )
-	    return 2;
-	if(s.contains("march",Qt::CaseInsensitive) )
-	    return 3;
-	if(s.contains("april",Qt::CaseInsensitive)) 
-	    return 4;
-	if(s.contains("may",Qt::CaseInsensitive) )
-	    return 5;
-	if(s.contains("june",Qt::CaseInsensitive) )
-	    return 6;
-	if(s.contains("july",Qt::CaseInsensitive) )
-	    return 7;
-	if(s.contains("august",Qt::CaseInsensitive)) 
-	    return 8;
-	if(s.contains("september",Qt::CaseInsensitive)) 
-	    return 9;
-	if(s.contains("october",Qt::CaseInsensitive) )
-	    return 10;
-	if(s.contains("november",Qt::CaseInsensitive))
-	    return 11;
-	if(s.contains("december",Qt::CaseInsensitive)) 
-	    return 12;
+  if(s.contains("january",Qt::CaseInsensitive ))
+	  return 1;
+  if(s.contains("february",Qt::CaseInsensitive) )
+	  return 2;
+  if(s.contains("march",Qt::CaseInsensitive) )
+	  return 3;
+  if(s.contains("april",Qt::CaseInsensitive)) 
+	  return 4;
+  if(s.contains("may",Qt::CaseInsensitive) )
+	  return 5;
+  if(s.contains("june",Qt::CaseInsensitive) )
+	  return 6;
+  if(s.contains("july",Qt::CaseInsensitive) )
+	  return 7;
+  if(s.contains("august",Qt::CaseInsensitive)) 
+	  return 8;
+  if(s.contains("september",Qt::CaseInsensitive)) 
+	  return 9;
+  if(s.contains("october",Qt::CaseInsensitive) )
+	  return 10;
+  if(s.contains("november",Qt::CaseInsensitive))
+	  return 11;
+  if(s.contains("december",Qt::CaseInsensitive)) 
+	  return 12;
+  
+  return 0;
 
 }
+
 
 void SearchDialog::slotLableSelected(int p)
 {

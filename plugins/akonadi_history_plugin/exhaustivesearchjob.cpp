@@ -56,8 +56,8 @@ void ExhaustiveSearchJob::start()
 	dateList << y + "-[0-9]{2}-[0-9]{2}";
  
     //assuming anybody will enter month only once
-    QRegExp r("jan|feb|mar|apr|may|june|july|aug|sep|oct|nov|dec");
-    int pos = r.indexIn( m_text );
+//    QRegExp r("jan|feb|mar|apr|may|june|july|aug|sep|oct|nov|dec");
+//    int pos = r.indexIn( m_text );
     
     QStringList month;
     
