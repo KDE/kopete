@@ -89,10 +89,11 @@ SearchDialog::SearchDialog(QWidget* parent, Qt::WFlags flags): KDialog(parent, f
     //set the logs checkbox to be true by default
     m_MainWidget->CBoxLogs->setCheckState( Qt::Checked );
     setMainWidget( w );
-    
+
     GetTags *getTagJob = new GetTags(this);
     connect(getTagJob, SIGNAL(finished(KJob*)), this, SLOT(slotGetTags(KJob*)) );
-
+    getTagJob->start();
+    
     m_chats = true;
     m_contacts = false;
     m_date = false;
@@ -156,15 +157,6 @@ void SearchDialog::slotCBoxExhaustive(int state)
     kDebug() << state << m_exhaustive;
 }
 
-void SearchDialog::reset()
-{
-    m_searchStrings.clear();
-    m_items.clear();
-    m_resultModel->setStringList( QStringList() );
-    m_MainWidget->DisplayResultWidget->clear();
-}
-
-
 void SearchDialog::slotSearchButtonClicked()
 {
     kDebug() << " " << m_MainWidget->SearchTextBox->text() ;
@@ -178,6 +170,29 @@ void SearchDialog::slotSearchButtonClicked()
     job->fetchScope().fetchFullPayload();
     connect(job, SIGNAL(result(KJob*)), this , SLOT(itemSearchJobDone(KJob*)) );
 }
+
+void SearchDialog::slotGetTags(KJob* job)
+{
+    kDebug() << " ";
+    
+    if( job->error() ) {
+	job->errorString();
+	return;
+    }
+    GetTags *j = static_cast<GetTags*>(job);
+    QStringList tags = j->tags();
+    m_MainWidget->LabelBox->addItems( tags );
+}
+
+
+void SearchDialog::reset()
+{
+    m_searchStrings.clear();
+    m_items.clear();
+    m_resultModel->setStringList( QStringList() );
+    m_MainWidget->DisplayResultWidget->clear();
+}
+
 
 void SearchDialog::itemSearchJobDone(KJob* job)
 {
