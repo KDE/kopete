@@ -63,6 +63,7 @@ private slots:
     void slotCBoxExhaustive(int);
     void slotCBoxDate(int);
     void slotGetTags(KJob*);
+    void slotLableSelected(int);
     
     void slotExhaustiveSearchDone(KJob*);
     

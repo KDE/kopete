@@ -87,6 +87,7 @@ SearchDialog::SearchDialog(QWidget* parent, Qt::WFlags flags): KDialog(parent, f
     connect( m_MainWidget->CBoxContact, SIGNAL(stateChanged(int)), this, SLOT(slotCBoxContact(int)) ) ;
     connect( m_MainWidget->CBoxDate, SIGNAL(stateChanged(int)), this , SLOT(slotCBoxDate(int) ) );
     connect( m_MainWidget->CBoxExhaustive , SIGNAL(stateChanged(int)), this , SLOT(slotCBoxExhaustive(int)));
+    connect( m_MainWidget->LabelBox, SIGNAL(activated(int)), this, SLOT(slotLableSelected(int)) );
     
     //set the logs checkbox to be true by default
     m_MainWidget->CBoxLogs->setCheckState( Qt::Checked );
@@ -95,7 +96,7 @@ SearchDialog::SearchDialog(QWidget* parent, Qt::WFlags flags): KDialog(parent, f
     GetTags *getTagJob = new GetTags(this);
     connect(getTagJob, SIGNAL(finished(KJob*)), this, SLOT(slotGetTags(KJob*)) );
     getTagJob->start();
-    
+
     m_chats = true;
     m_contacts = false;
     m_date = false;
@@ -620,6 +621,24 @@ int SearchDialog::findMonth(QString s)
 	if(s.contains("december",Qt::CaseInsensitive)) 
 	    return 12;
 
-	}
+}
 
+void SearchDialog::slotLableSelected(int p)
+{
+    QString label = m_MainWidget->LabelBox->currentText();
+    kDebug() << label;
+    QString query = "select distinct ?r where \
+	      { ?r <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTag> ?tag . \
+	      ?tag <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifier> ?p1 . \
+	      FILTER REGEX(STR(?p1),'kopete:"+label+"','i') . \
+	      } " ; 
+
+    Akonadi::ItemSearchJob *sjob = new Akonadi::ItemSearchJob(query, this);
+    sjob->fetchScope().fetchFullPayload();
+    connect(sjob, SIGNAL(result(KJob*)), this , SLOT(itemSearchJobDone(KJob*)) );
+
+}
+
+
+  
 #include "searchdialog.moc"
