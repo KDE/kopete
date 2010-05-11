@@ -63,10 +63,10 @@ BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountI
 
 void BonjourAccount::parseConfig()
 {
-	username = configGroup()->readEntry("username").toLatin1();
-	firstName = configGroup()->readEntry("firstName").toLatin1();
-	lastName = configGroup()->readEntry("lastName").toLatin1();
-	emailAddress = configGroup()->readEntry("emailAddress").toLatin1();
+	username = configGroup()->readEntry("username").toLocal8Bit();
+	firstName = configGroup()->readEntry("firstName").toLocal8Bit();
+	lastName = configGroup()->readEntry("lastName").toLocal8Bit();
+	emailAddress = configGroup()->readEntry("emailAddress").toLocal8Bit();
 }
 
 BonjourAccount::~BonjourAccount()
@@ -229,8 +229,8 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 		return;
 
         QMap <QString, QByteArray> map = pointer->textData();
-	QString cfirst = map["1st"];
-	QString clast = map["last"];
+	QString cfirst = QString::fromLocal8Bit(map["1st"]);
+	QString clast = QString::fromLocal8Bit(map["last"]);
 	
 	QString display;
 	if (! cfirst.isEmpty() && ! clast.isEmpty())
