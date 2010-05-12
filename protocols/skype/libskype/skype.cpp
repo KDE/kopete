@@ -330,7 +330,7 @@ void Skype::skypeMessage(const QString &message) {
 	} else if (messageType == "USERS") {//some user info
 		QString theRest = message.section(' ', 1).trimmed();//take the rest
 		if (d->searchFor == "FRIENDS") {//it was initial search for al users
-			QStringList names = theRest.split(",");//divide it into names by comas
+			QStringList names = theRest.split(", ");//divide it into names by comas
 			kDebug(SKYPE_DEBUG_GLOBAL) << "Names: " << names;//write what you have done with that
 			for (QStringList::iterator it = names.begin(); it != names.end(); ++it) {//run trough the names
 				QString name = (*it).trimmed();//get the name only
@@ -877,7 +877,7 @@ void Skype::fixGroups(bool loadOnly) {
 
 	//Fill d->groupsNames
 	{
-		QStringList groups = QString(d->connection % "SEARCH GROUPS CUSTOM").section(' ', 1).trimmed().split(",");//get all ids of group
+		QStringList groups = QString(d->connection % "SEARCH GROUPS CUSTOM").section(' ', 1).trimmed().split(", ");//get all ids of group
 
 		for ( QStringList::iterator it = groups.begin(); it != groups.end(); ++it ){
 			if ( ! (*it).trimmed().isEmpty() ){
@@ -894,7 +894,7 @@ void Skype::fixGroups(bool loadOnly) {
 	if ( d->groupsNames.count() > 0 ) {
 		QList <int> groups = d->groupsNames.values();
 		for ( QList <int>::iterator group = groups.begin(); group != groups.end(); ++group ) {
-			QStringList groupusers = QString(d->connection % QString("GET GROUP %1 USERS").arg(*group)).section(' ', 3).trimmed().split(",");//get all user in group (*group)
+			QStringList groupusers = QString(d->connection % QString("GET GROUP %1 USERS").arg(*group)).section(' ', 3).trimmed().split(", ");//get all user in group (*group)
 			if ( ( groupusers.count() == 0 || groupusers.first().trimmed().isEmpty() ) && ! loadOnly ) {//if group is empty, delete it
 				kDebug(SKYPE_DEBUG_GLOBAL) << QString("Group %1 is empty, delete it").arg(*group);
 				deleteGroup(*group);
