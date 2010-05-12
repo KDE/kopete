@@ -47,6 +47,7 @@
 #include "nlkaffeine.h"
 #include "nlquodlibet.h"
 #include "nlqmmp.h"
+#include "nlaudacious.h"
 
 #include "nowlisteningguiclient.h"
 
@@ -115,6 +116,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QVariantList& /*a
 	d->m_mediaPlayerList.append( new NLKaffeine() );
 	d->m_mediaPlayerList.append( new NLQuodLibet() );
 	d->m_mediaPlayerList.append( new NLqmmp() );
+	d->m_mediaPlayerList.append( new NLaudacious() );
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
 	d->m_mediaPlayerList.append( new NLXmms() );
