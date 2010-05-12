@@ -2928,3 +2928,8 @@ Comment[zh_CN]=联系人列表已收到/导出/删除
 Comment[zh_TW]=聯絡人清單已被接收/匯出/刪除
 Action=Popup
 Sound=
+
+[Event/user_is_typing_message]
+Name=Typing message
+Comment=An user is typing a message
+Action=Popup

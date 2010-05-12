@@ -41,12 +41,14 @@
 #include "kopetechatsessionmanager.h"
 #include "kopetemessagehandlerchain.h"
 #include "kopetemetacontact.h"
+#include "kopetegroup.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopeteview.h"
 #include "kopetecontact.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
+#include "kopetepicture.h"
 
 const int CHAIN_COUNT = 3;
 
@@ -530,6 +532,35 @@ void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString
 
 void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 {
+	if ( t )
+	{
+		QWidget *viewWidget = 0L;
+		bool isActiveWindow = false;
+
+		if ( !account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
+		{
+			viewWidget = dynamic_cast<QWidget*>(view(false));
+			isActiveWindow = view(false) && viewWidget->isActiveWindow();
+		}
+
+		if ( ! isActiveWindow )
+		{
+			KNotification * notification = new KNotification ( "user_is_typing_message", Kopete::UI::Global::mainWidget() );
+			notification->setText( i18n("User <i>%1</i> is typing a message", c->nickName()) );
+			notification->setPixmap( QPixmap::fromImage( c->metaContact()->picture().image() ) );
+			notification->setActions( QStringList( i18nc("@action", "Chat") ) );
+
+			notification->addContext( qMakePair( QString::fromLatin1("contact"), c->metaContact()->metaContactId().toString() ) );
+			foreach( Kopete::Group *g , c->metaContact()->groups() )
+			{
+				notification->addContext( qMakePair( QString::fromLatin1("group") , QString::number( g->groupId() ) ) );
+			}
+
+			connect( notification, SIGNAL(activated(unsigned int)) , c, SLOT(execute()) );
+			notification->sendEvent();
+		}
+	}
+
 	emit remoteTyping( c, t );
 }
 
