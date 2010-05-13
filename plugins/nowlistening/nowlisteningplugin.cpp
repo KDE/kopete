@@ -118,7 +118,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QVariantList& /*a
 	d->m_mediaPlayerList.append( new NLqmmp() );
 	d->m_mediaPlayerList.append( new NLaudacious() );
 
-#if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
+#if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
 	d->m_mediaPlayerList.append( new NLXmms() );
 #endif
 
