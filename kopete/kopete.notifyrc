@@ -2931,7 +2931,11 @@ Sound=
 
 [Event/user_is_typing_message]
 Name=Typing message
+Name[sv]=Skriver meddelande
+Name[uk]=Введення повідомлення
 Name[x-test]=xxTyping messagexx
 Comment=An user is typing a message
+Comment[sv]=En användare skriver ett meddelande
+Comment[uk]=Користувач вводить повідомлення
 Comment[x-test]=xxAn user is typing a messagexx
 Action=Popup
