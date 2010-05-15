@@ -117,7 +117,7 @@ void VideoDevice::setupControls()
 			}
 			break;
 #endif
-		VIDEODEV_DRIVER_V4L:
+		case VIDEODEV_DRIVER_V4L:
 			{
 				NumericVideoControl numCtrl;
 				numCtrl.value_min = 0;
@@ -142,7 +142,7 @@ void VideoDevice::setupControls()
 			}
 			break;
 #endif
-		VIDEODEV_DRIVER_NONE:
+		case VIDEODEV_DRIVER_NONE:
 		default:
 			break;
 	}
@@ -1206,7 +1206,7 @@ int VideoDevice::getFrame()
 					(uint) m_rawbuffers.size() <= v4l2buffer.index)
 					return EXIT_FAILURE;
 
-				if (m_rawbuffers[v4l2buffer.index].length < m_currentbuffer.data.size())
+				if (m_rawbuffers[v4l2buffer.index].length < (uint)m_currentbuffer.data.size())
 				{
 					kDebug() <<  "Buffer size mismatch: expecting raw buffer length to be" << m_currentbuffer.data.size() << "but it was" << m_rawbuffers[v4l2buffer.index].length;
 					return EXIT_FAILURE;
