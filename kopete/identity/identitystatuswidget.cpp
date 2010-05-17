@@ -340,8 +340,7 @@ void IdentityStatusWidget::slotPhotoClicked()
 void IdentityStatusWidget::resizeAccountListWidget()
 {
 	int frameWidth = d->ui.accounts->frameWidth();
-	int itemHeight = d->ui.accounts->itemDelegate()->sizeHint(
-			QStyleOptionViewItem(), d->ui.accounts->model()->index( 0, 0 ) ).height();
+	int itemHeight = d->ui.accounts->sizeHintForRow( 0 );
 	int itemCount = d->ui.accounts->count();
 	d->ui.accounts->setFixedHeight( 2 * frameWidth
 			+ itemHeight * ( itemCount ? itemCount : 1 ) );
