@@ -559,7 +559,7 @@ int OtrlChatInterface::encryptMessage( QString *msg, const QString &accountId,
 			err = otrl_message_fragment_and_send(&ui_ops, chatSession, context, newMessage,
 			OTRL_FRAGMENT_SEND_ALL_BUT_LAST, &fragment);
 
-			kDebug(14318) << "fragment left to be sent by kopete: " << fragment;
+//			kDebug(14318) << "fragment left to be sent by kopete: " << fragment;
 
 			if( err != 0){
 				*msg = i18n("Encryption error");

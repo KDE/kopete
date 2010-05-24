@@ -153,18 +153,35 @@ void OTRPlugin::slotNewChatSessionWindow( Kopete::ChatSession *KMM )
 void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 {
 	if( msg.direction() == Kopete::Message::Outbound ){
-//        kDebug(14318) << "Outgoing message: Plain: " << msg.plainBody() << "escapedBody:" << msg.escapedBody() << "parsedBody:" << msg.parsedBody();
-		QString msgBody = msg.escapedBody();
-		QString cacheBody = msg.escapedBody();
 		QString accountId = msg.manager()->account()->accountId();
 		Kopete::Contact *contact = msg.to().first();
-		
+
+        QString msgBody;
+        QString cacheBody;
+        bool plaintext = msg.format() == Qt::PlainText;
+        kDebug(14318) << "Message format is" << (plaintext ? "plaintext" : "richtext");
+        if(plaintext){
+            msgBody = msg.plainBody();
+            cacheBody = msgBody;
+        } else {
+            msgBody = msg.escapedBody();
+            cacheBody = msgBody;
+        }
+        kDebug(14318) << "Outgoing message before processing:" << msgBody;
+
 		int encryptionState = otrlChatInterface->encryptMessage( &msgBody, accountId, msg.manager()->account()->protocol()->displayName(), contact->contactId(), msg.manager() );
+        
 		if(encryptionState == -1){
+            // Failure. Shouldn't happen. However, if it does DON'T
+            // send the message out in plaintext. overwrite with something else...
 			msg.setPlainBody(i18n("An error occurred while encrypting the message."));
+            
 		} else if(encryptionState == 0){
-//            kDebug(14318) << "Encrypted successfully";
-			msg.setPlainBody( msgBody );
+            kDebug(14318) << "Encrypted successfully";
+            
+            // Always set plaintext if the message has been encrypted.
+            // The parser wouldn't understand anything after encryption anyways...
+            msg.setPlainBody( msgBody );
 			msg.setType(Kopete::Message::TypeNormal);
 			if( !msg.plainBody().isEmpty() ){
 				messageCache.insert( msgBody, cacheBody );
@@ -172,10 +189,32 @@ void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 				messageCache.insert( "!OTR:MsgDelByOTR", cacheBody );
 			}
 		} else if(encryptionState == 1){
-//            kDebug(14318) << "Tagged plaintext!";
-			msg.setPlainBody(msgBody);
+            kDebug(14318) << "Tagged plaintext!";
+            
+            /* Here we have a problem... libotr tags messages with whitespaces to
+               be recognized by other clients. Those whitespaces are discarded
+               if we use setHtmlBody() and breaks opportunistic mode.
+               If we use setPlainBody() for messages containing tags, those tags
+               are escaped and will be visible in the other sides chatwindow.
+               
+               This approach should always send out correct messages but will
+               break opportunistic mode if the user enables RTF formatting.
+               Sorry folks. No way to deal with this currently (Would need changes
+               in the rich text handling in libkopete).
+             */
+            if(plaintext){
+                msg.setPlainBody(msgBody);
+            } else {
+                msg.setHtmlBody(msgBody);
+            }
+            
 			messageCache.insert( msgBody, cacheBody );
-		}
+		} /* else {
+            Don't touch msg If encryptionState is something else than above!!!
+        } */
+		
+		
+        kDebug(14318) << "Outgoing message after processing:" << msgBody << msg.format();
 	}
 }
 
