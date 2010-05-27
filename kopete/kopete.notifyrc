@@ -2932,6 +2932,7 @@ Sound=
 [Event/user_is_typing_message]
 Name=Typing message
 Name[et]=Sõnumi kirjutamine
+Name[hr]=Piše poruku
 Name[km]=វាយ​សារ
 Name[nds]=Bi't Ingeven vun en Naricht
 Name[nl]=Typt een bericht
@@ -2942,6 +2943,7 @@ Name[uk]=Введення повідомлення
 Name[x-test]=xxTyping messagexx
 Comment=An user is typing a message
 Comment[et]=Kasutaja kirjutab sõnumit
+Comment[hr]=Korisnik piše poruku
 Comment[km]=អ្នកប្រើ​ម្នាក់​កំពុង​វាយ​សារ
 Comment[nds]=En Bruker gifft jüst en Naricht in.
 Comment[nl]=Een gebruiker is bezig een bericht te typen
