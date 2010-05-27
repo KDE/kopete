@@ -40,7 +40,9 @@
 #include <qdom.h>
 #include <QHash>
 #include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QNetworkProxy>
 #include <QtGui/QTextDocument> // Qt::escape
+
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -50,6 +52,7 @@
 #include <kdialog.h>
 #include <knotification.h>
 #include <kstandarddirs.h>
+#include <kprotocolmanager.h>
 
 #include "client.h"
 #include "connection.h"
@@ -1454,6 +1457,26 @@ QList<QDomNode> OscarAccount::getElementsByTagNameCI( const QDomNode& node, cons
 void OscarAccount::createClientStream( ClientStream **clientStream )
 {
 	QTcpSocket* tcpSocket = new QTcpSocket();
+
+	if (KProtocolManager::useProxy())
+	{
+		//TODO support for:
+		//-proxy requiring authentication
+		//-SOCKS5
+		//-different proxy for each account
+		//BUGS: 119806 186872 236721
+		QString proxyExp=KProtocolManager::proxyFor( "https" );
+		proxyExp.remove("http://");
+		int proxyPort=0;
+		int columnPos=proxyExp.indexOf(':');
+		if (columnPos!=-1)
+		{
+			proxyPort=proxyExp.mid(columnPos+1).toInt();;
+			proxyExp.resize(proxyExp.indexOf(':'));
+		}
+		tcpSocket->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxyExp, proxyPort));
+    }
+
 	ClientStream *cs = new ClientStream( tcpSocket, 0 );
 	
 	Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch(tcpSocket);
@@ -1467,4 +1490,4 @@ void OscarAccount::createClientStream( ClientStream **clientStream )
 }
 
 #include "oscaraccount.moc"
-//kate: tab-width 4; indent-mode csands;
+//kate: tab-width 4; indent-mode cstyle; replace-tabs 0;
