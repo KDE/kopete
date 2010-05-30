@@ -707,8 +707,8 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 		</sect2>
 		<sect2 id="protocols-msn">
 			<title>MSN</title> 
-			<para>MSN supports the sending and receiving of webcams, if your camera is supported by the Video4Linux 2 (v4l2) standard.  To view someones webcam, right click on their MSN butterfly icon and select <menuchoice><guimenuitem>View Contact's Webcam</guimenuitem></menuchoice>.  File transfer and multi user chats work.  To transfer a file,  drag the file from &konqueror; or the desktop into the chat window.  To invite someone else into a chat, drag them from the Contact List into the chat window.  The <menuchoice><guimenu>File</guimenu></menuchoice> menu also contains these commands.  In addition, MSN supports custom emoticons.</para>
-			<para>To use file transfer or a webcam, make sure port 6891 is forwarded to your computer.</para>
+			<para>File transfer and multi user chats work.  To transfer a file,  drag the file from &konqueror; or the desktop into the chat window.  To invite someone else into a chat, drag them from the Contact List into the chat window.  The <menuchoice><guimenu>File</guimenu></menuchoice> menu also contains these commands.  In addition, MSN supports custom emoticons.</para>
+			<para>To use file transfer, make sure port 6891 is forwarded to your computer.</para>
 		</sect2>
 		<sect2 id="protocols-yahoo">
 			<title>Yahoo</title>
