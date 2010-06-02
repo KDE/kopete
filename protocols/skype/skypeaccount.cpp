@@ -43,6 +43,7 @@
 #include <kopeteaddedinfoevent.h>
 
 #include <QDateTime>
+#include <QPointer>
 
 class SkypeAccountPrivate {
 	public:
@@ -79,9 +80,9 @@ class SkypeAccountPrivate {
 		///Do we wait before connecting?
 		int waitBeforeConnect;
 		///List of chat all chat sessions
-		QHash<QString, SkypeChatSession*> sessions;
+		QHash<QString, QPointer<SkypeChatSession> > sessions;
 		///Last used chat session
-		SkypeChatSession *lastSession;
+		QPointer <SkypeChatSession> lastSession;
 		///List of the conference calls
 		QHash<QString, SkypeConference*> conferences;
 		///List of existing calls
@@ -717,7 +718,7 @@ void SkypeAccount::sentMessage(const QString &id, const QString &body, const QSt
 
 	SkypeChatSession *session = d->sessions.value(chat);
 
-	if(session->ackMessage(id, false))
+	if ( ! session || session->ackMessage(id, false) )
 		return;
 
 	const QStringList &users = d->skype.getChatUsers(chat);
