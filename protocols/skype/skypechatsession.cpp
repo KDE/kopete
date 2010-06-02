@@ -60,7 +60,7 @@ class SkypeChatSessionPrivate {
 		 * @param _protocol Reference to the Skype protocol
 		 * @param _account Reference to the account this chat belongs to
 		 */
-		SkypeChatSessionPrivate(SkypeProtocol *_protocol, SkypeAccount *_account) {
+		SkypeChatSessionPrivate(SkypeProtocol *_protocol, SkypeAccount *_account) : messagesSentQueue(){
 			kDebug(SKYPE_DEBUG_GLOBAL);
 			//save given values
 			account = _account;
@@ -86,6 +86,8 @@ class SkypeChatSessionPrivate {
 		KActionMenu *inviteAction;
 		///The contact if any (and one)
 		SkypeContact *contact;
+		///Message queue
+		QMap < QString, Kopete::Message > messagesSentQueue;
 };
 
 static Kopete::ContactPtrList constructList(SkypeContact *contact) {
@@ -224,22 +226,41 @@ void SkypeChatSession::setChatId(const QString &chatId) {
 	}
 }
 
-void SkypeChatSession::sentMessage(const QList<Kopete::Contact*> *recv, const QString &body) {
-	Kopete::Message *mes;
-	if (recv->count() == 1) {
-		mes = new Kopete::Message(d->account->myself(), *recv->begin());
-		mes->setDirection(Kopete::Message::Outbound);
-		mes->setPlainBody(body);
-	} else {
-		mes = new Kopete::Message(d->account->myself(), d->account->myself());
-		mes->setDirection(Kopete::Message::Outbound);
-		mes->setPlainBody(body);
+void SkypeChatSession::sentMessage(const QList<Kopete::Contact*> *recv, const QString &body, const QString &id) {
+	Kopete::Message mes;
+	if (recv->count() == 1)
+		mes = Kopete::Message(d->account->myself(), *recv->begin());
+	else
+		mes = Kopete::Message(d->account->myself(), d->account->myself());
+
+	mes.setDirection(Kopete::Message::Outbound);
+	mes.setPlainBody(body);
+
+	sentMessage(mes, id);
+}
+
+void SkypeChatSession::sentMessage(Kopete::Message message, const QString &id) {
+	message.setState(id.isEmpty()?Kopete::Message::StateSent:Kopete::Message::StateSending);
+
+	appendMessage(message);
+
+	if(!id.isEmpty()){
+		d->messagesSentQueue[id] = message;
 	}
-	mes = new Kopete::Message(d->account->myself(), *recv);
-	mes->setDirection(Kopete::Message::Outbound);
-	mes->setPlainBody(body);
-	appendMessage(*mes);
-	delete mes;
+}
+
+bool SkypeChatSession::ackMessage(const QString &id, bool error) {
+	if(!d->messagesSentQueue.contains(id))
+		return false;
+
+	if(error)
+		receivedMessageState(d->messagesSentQueue[id].id(), Kopete::Message::StateError );
+	else
+		receivedMessageState(d->messagesSentQueue[id].id(), Kopete::Message::StateSent );
+
+	d->messagesSentQueue.remove (id);
+
+	return true;
 }
 
 void SkypeChatSession::disallowCall() {

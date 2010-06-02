@@ -297,11 +297,11 @@ class Skype : public QObject
 		 */
 		void getContactBuddy(const QString &contact);
 		/**
-		 * Sends a message trough skype
+		 * Sends a message trough skype, returns the message id
 		 * @param user To who it should be sent
 		 * @param body What to send
 		 */
-		void send(const QString &user, const QString &body);
+		QString send(const QString &user, const QString &body);
 		/**
 		 * Edit sent message
 		 * @param messageId Id of sent message
@@ -313,7 +313,7 @@ class Skype : public QObject
 		 * @param chat What chat to send it in
 		 * @param body Text of that message
 		 */
-		void sendToChat(const QString &chat, const QString &body);
+		QString sendToChat(const QString &chat, const QString &body);
 		/**
 		 * Begins new call.
 		 * @param userId ID of user to call (or multiple users separated by comas)
@@ -561,7 +561,7 @@ class Skype : public QObject
 		 * @param body Text of the message
 		 * @param chat Id of the chat it has been sent to
 		 */
-		void outgoingMessage(const QString &body, const QString &chat);
+		void outgoingMessage(const QString &id, const QString &body, const QString &chat);
 		/**
 		 * Put this call into a group, where other calls are (will be), used with conference calls
 		 * @param callId Id of the call

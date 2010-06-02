@@ -154,7 +154,7 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	QObject::connect(&d->skype, SIGNAL(newCall(const QString&, const QString&)), this, SLOT(newCall(const QString&, const QString&)));
 	QObject::connect(&d->skype, SIGNAL(setMyselfName(const QString&)), this, SLOT(setMyselfName(const QString& )));
 	QObject::connect(&d->skype, SIGNAL(receivedMultiIM(const QString&, const QString&, const QString&, const QString&, const QDateTime&)), this, SLOT(receiveMultiIm(const QString&, const QString&, const QString&, const QString&, const QDateTime&)));
-	QObject::connect(&d->skype, SIGNAL(outgoingMessage(const QString&, const QString&)), this, SLOT(sentMessage(const QString&, const QString& )));
+	QObject::connect(&d->skype, SIGNAL(outgoingMessage(const QString&, const QString&, const QString& )), this, SLOT(sentMessage(const QString&, const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(groupCall(const QString&, const QString& )), this, SLOT(groupCall(const QString&, const QString& )));
 	QObject::connect(&d->skype, SIGNAL(receivedAuth(const QString &, const QString &)), this, SLOT(receivedAuth(const QString &, const QString &)));
 	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRemoved (Kopete::Group *)), this, SLOT(deleteGroup (Kopete::Group *) ) );
@@ -440,16 +440,25 @@ SkypeProtocol * SkypeAccount::protocol() {
 void SkypeAccount::sendMessage(Kopete::Message &message, const QString &chat) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
+	QString id;
 	if (chat.isEmpty()) {
 		const QString &user = message.to().at(0)->contactId();//get id of the first contact, messages to multiple people are not yet possible
 		const QString &body = message.plainBody().trimmed();//get the text of the message
 
-		d->skype.send(user, body);//send it by skype
+		id = d->skype.send(user, body);//send it by skype
 	} else {
 		const QString &body = message.plainBody().trimmed();
-
-		d->skype.sendToChat(chat, body);
+		id = d->skype.sendToChat(chat, body);
 	}
+
+	// Append message to chat session
+	QString chatId = d->skype.getMessageChat(id);
+
+	// Use last session if available (could be set by skypechatsession)
+	SkypeChatSession *session = d->lastSession?d->lastSession:d->sessions.value(chatId);
+
+	if(session)
+		session->sentMessage(message, id);
 }
 
 bool SkypeAccount::getHitchHike() const {
@@ -703,10 +712,14 @@ void SkypeAccount::gotMessageId(const QString &messageId) {
 	d->lastSession = 0L;
 }
 
-void SkypeAccount::sentMessage(const QString &body, const QString &chat) {
+void SkypeAccount::sentMessage(const QString &id, const QString &body, const QString &chat) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << "chat: " << chat;
 
 	SkypeChatSession *session = d->sessions.value(chat);
+
+	if(session->ackMessage(id, false))
+		return;
+
 	const QStringList &users = d->skype.getChatUsers(chat);
 	QList<Kopete::Contact*> *recv = 0L;
 

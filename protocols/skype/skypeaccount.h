@@ -124,7 +124,7 @@ Q_OBJECT
 		 * @param body Text of the message
 		 * @param chat Id of the chat it was sent to
 		 */
-		void sentMessage(const QString &body, const QString &chat);
+		void sentMessage(const QString &id, const QString &body, const QString &chat);
 		/**
 		 * An Id of some message is known, use it
 		 * @param messageId New id of that message

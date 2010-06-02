@@ -427,13 +427,13 @@ void Skype::skypeMessage(const QString &message) {
 			} else if (value == "SENT") {//Sending out some message, that means it is a new one
 				if ((d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).trimmed().toUpper() == "SAID")//it is some message I'm interested in
 					emit gotMessageId(messageId);//Someone may be interested in its ID
-					if (d->recvMessages.indexOf(messageId) != d->recvMessages.lastIndexOf(QRegExp(messageId)))
-						return;//we already got this one
-					d->recvMessages << messageId;
-					const QString &chat = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).trimmed();
-					const QString &body = (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3);
-					if (!body.isEmpty())//sometimes skype shows empty messages, just ignore them
-						emit outgoingMessage(body, chat);
+				if (d->recvMessages.indexOf(messageId) != d->recvMessages.lastIndexOf(QRegExp(messageId)))
+					return;//we already got this one
+				d->recvMessages << messageId;
+				const QString &chat = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).trimmed();
+				const QString &body = (d->connection % QString("GET CHATMESSAGE %1 BODY").arg(messageId)).section(' ', 3);
+				if (!body.isEmpty())//sometimes skype shows empty messages, just ignore them
+					emit outgoingMessage(messageId, body, chat);
 			}
 		} else if ( type == "EDITED_TIMESTAMP" ) {//timestamp of message was edited
 			///TODO: Implement this
@@ -542,8 +542,10 @@ void Skype::skypeMessage(const QString &message) {
 		if (name.isEmpty())
 			name = user;
 		emit setMyselfName(name);
+	} else if (messageType == "PONG") {
+		// Do nothing
 	} else {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknow message" << message;
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown message" << message << "of type" << messageType;
 	}
 }
 
@@ -664,10 +666,17 @@ void Skype::hitchHike(const QString &messageId) {
 	}
 }
 
-void Skype::send(const QString &user, const QString &message) {
+QString Skype::send(const QString &user, const QString &message) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	d->connection << QString("MESSAGE %1 %2").arg(user).arg(message);//just ask skype to send it
+	QString resp = d->connection % (QString("MESSAGE %1 %2").arg(user).arg(message));//just ask skype to send it
+
+	QString messageType = resp.section(' ', 0, 0).trimmed().toUpper();
+	if (messageType == "CHATMESSAGE") {
+		QString messageId = resp.section(' ', 1, 1).trimmed();
+		return messageId;
+	}
+	return QString();
 }
 
 void Skype::editMessage(int messageId, const QString &newMessage) {
@@ -756,15 +765,18 @@ void Skype::setWaitConnect(int value) {
 	d->waitBeforeConnect = value;
 }
 
-void Skype::sendToChat(const QString &chat, const QString &message) {
+QString Skype::sendToChat(const QString &chat, const QString &message) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	if (d->connection.protocolVer() <= 4) {//Not able to handle it by the API, let Skype do it for me
-		d->connection << QString("OPEN CHAT %1 %2").arg(chat).arg(message);
-		emit gotMessageId("");
-	} else {
-		d->connection << QString("CHATMESSAGE %1 %2").arg(chat).arg(message);
+	QString resp = d->connection % (QString("CHATMESSAGE %1 %2").arg(chat).arg(message));
+
+
+	QString messageType = resp.section(' ', 0, 0).trimmed().toUpper();
+	if (messageType == "CHATMESSAGE") {
+		QString messageId = resp.section(' ', 1, 1).trimmed();
+		return messageId;
 	}
+	return QString();
 }
 
 void Skype::getTopic(const QString &chat) {

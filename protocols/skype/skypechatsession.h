@@ -95,8 +95,21 @@ class SkypeChatSession : public Kopete::ChatSession
 		 * This will add message that has been sent out by this user
 		 * @param recv List of receivers. If there are more than one, replaced by an dummy contact of that chat, because it does crash kopete otherwise
 		 * @param body Text to show
+		 * @param id Id of the message, not empty if an acknowledgement is expected
 		 */
-		void sentMessage(const QList<Kopete::Contact*> *recv, const QString &body);
+		void sentMessage(const QList<Kopete::Contact*> *recv, const QString &body, const QString &id = QString());
+		/**
+		 * This will add message that has been sent out by this user
+		 * @param message Message to show
+		 * @param id Id of the message, not empty if an acknowledgement is expected
+		 */
+		void sentMessage(Kopete::Message message, const QString &id="");
+		/**
+		 * This will mark a message as acknowleged and return true if successful
+		 * @param id The id of the message
+		 * @param error Whether or not an error happened
+		 */
+		bool ackMessage(const QString &id, bool error=false);
 		/**
 		* Invites a contact to the chat
 		* @param contactId What contact
