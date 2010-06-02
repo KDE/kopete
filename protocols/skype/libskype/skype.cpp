@@ -449,7 +449,7 @@ void Skype::skypeMessage(const QString &message) {
 		}
 	} else if (messageType == "CHATMESSAGES") {
 		if (d->searchFor == "MISSEDMESSAGES") {//Theese are messages we did not read yet
-			QStringList messages = message.section(' ', 1).split(' ');//get the meassage IDs
+			QStringList messages = message.section(' ', 1).split(',');//get the meassage IDs
 			for (QStringList::iterator it = messages.begin(); it != messages.end(); ++it) {
 				QString Id = (*it).trimmed();
 				if (Id.isEmpty())
