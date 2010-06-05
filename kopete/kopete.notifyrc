@@ -2936,6 +2936,7 @@ Sound=
 
 [Event/user_is_typing_message]
 Name=Typing message
+Name[da]=Skriver en besked
 Name[de]=Nachricht wird geschrieben
 Name[en_GB]=Typing message
 Name[et]=Sõnumi kirjutamine
@@ -2949,8 +2950,10 @@ Name[pt_BR]=Digitando mensagem
 Name[sv]=Skriver meddelande
 Name[uk]=Введення повідомлення
 Name[x-test]=xxTyping messagexx
+Name[zh_CN]=正在输入消息
 Name[zh_TW]=正在輸入訊息
 Comment=An user is typing a message
+Comment[da]=En bruger er ved at skrive en besked
 Comment[de]=Ein Benutzer schreibt eine Nachricht
 Comment[en_GB]=An user is typing a message
 Comment[et]=Kasutaja kirjutab sõnumit
@@ -2964,5 +2967,6 @@ Comment[pt_BR]=Um usuário está digitando uma mensagem
 Comment[sv]=En användare skriver ett meddelande
 Comment[uk]=Користувач вводить повідомлення
 Comment[x-test]=xxAn user is typing a messagexx
+Comment[zh_CN]=一位用户正在输入消息
 Comment[zh_TW]=有個使用者正在輸入訊息
 Action=Popup
