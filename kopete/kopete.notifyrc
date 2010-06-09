@@ -2937,6 +2937,7 @@ Sound=
 [Event/user_is_typing_message]
 Name=Typing message
 Name[ca]=S'està teclejant un missatge
+Name[ca@valencia]=S'està teclejant un missatge
 Name[cs]=Píše zprávu
 Name[da]=Skriver en besked
 Name[de]=Nachricht wird geschrieben
@@ -2957,6 +2958,7 @@ Name[zh_CN]=正在输入消息
 Name[zh_TW]=正在輸入訊息
 Comment=An user is typing a message
 Comment[ca]=Un usuari està teclejant un missatge
+Comment[ca@valencia]=Un usuari està teclejant un missatge
 Comment[cs]=Uživatel píše zprávu
 Comment[da]=En bruger er ved at skrive en besked
 Comment[de]=Ein Benutzer schreibt eine Nachricht
