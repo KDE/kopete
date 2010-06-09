@@ -1110,17 +1110,20 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 	}
 
 	QString command;
+	QString subcommands;
 	QString user;
 
 	if ( message.startsWith("callto:", Qt::CaseInsensitive) ) {
 		command = "call";
-		user = message.section(":", -1).section("/", -1).trimmed();
+		user = message.section(':', -1).section('/', -1).trimmed();
 	} else if ( message.startsWith("tel:", Qt::CaseInsensitive) ) {
 		command = "chat";
-		user = message.section(":", -1).section("/", -1).trimmed();
+		user = message.section(':', -1).section('/', -1).trimmed();
 	} else if ( message.startsWith("skype:", Qt::CaseInsensitive) ) {
-		command = message.section("?", -1).trimmed();
-		user = message.section(":", -1).section("?", 0, 0).trimmed();
+		command = message.section('?', -1).section('&', 0, 0).trimmed();
+		//TODO: Add support for subcommands
+//		subcommands = QUrl::fromPercentEncoding(message.section('&', 1, -1).toUtf8());
+		user = message.section(':', -1).section('?', 0, 0).trimmed();
 		if ( command.isEmpty() ) //set default double click action = open chat window
 			command = "chat";
 	} else {
@@ -1143,6 +1146,7 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 		makeCall(user);//Start call with user
 	} else if ( command == "chat" ) {
 		//TODO: Add support for multichat
+		//TODO: Add support for topic of chat
 		chatUser(user);//Open chat window
 	} else if ( command == "sendfile" ) {
 		openFileTransfer(user);//Open file transfer dialog
@@ -1152,7 +1156,7 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 	} else if ( command == "userinfo" ) {//TODO: Open option dialog (with all thisa options instead userinfo) and support unknown contacts who arent in contact list
 		userInfo(user);
 	} else {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown command";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Unknown action command from SkypeActionHandler:" << command;
 		KMessageBox::error(0L, i18n("Unknown action from SkypeActionHandler"), i18n("Skype protocol"));
 		return;//Unknow command
 	}
