@@ -25,6 +25,7 @@
 #include <qstring.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <knotification.h>
 #include <qtimer.h>
 #include <QDateTime>
 
@@ -284,7 +285,7 @@ void Skype::error(const QString &message) {
 	disconnect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//One arror at a time is enough, stop flooding the user
 
 	if (d->showDeadMessage)//just skip the error message if we are going offline, none ever cares.
-		KMessageBox::error(0L, message, i18n("Skype protocol"));//Show the message
+		KNotification::event(KNotification::Error, i18n("Skype protocol"), message);//Show the message
 
 	connect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//Continue showing more errors in future
 }
