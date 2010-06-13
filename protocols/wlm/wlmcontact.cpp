@@ -411,6 +411,7 @@ WlmContact::slotChatSessionDestroyed ()
 void
 WlmContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 {
+#if 0
 	bool isBlocked = qobject_cast <WlmAccount *>(account())->isOnBlockList(contactId());
 	bool isOnForwardList = qobject_cast <WlmAccount *>(account())->isOnServerSideList(contactId());
 	bool isOnReverseList = qobject_cast <WlmAccount *>(account())->isOnReverseList(contactId());
@@ -485,6 +486,7 @@ WlmContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 
 	}
 	else
+#endif
 		Kopete::Contact::setOnlineStatus(status);
 }
 
