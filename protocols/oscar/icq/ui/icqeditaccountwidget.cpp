@@ -201,15 +201,9 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 ICQEditAccountWidget::~ICQEditAccountWidget()
 {
-	if ( m_visibleEngine )
-		delete m_visibleEngine;
-	
-	if ( m_invisibleEngine )
-		delete m_invisibleEngine;
-	
-	if ( m_ignoreEngine )
-		delete m_ignoreEngine;
-	
+	delete m_visibleEngine;
+	delete m_invisibleEngine;
+	delete m_ignoreEngine;
 	delete mAccountSettings;
 }
 
@@ -222,8 +216,6 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	{
 		kDebug(14153) << "Creating a new account";
 		mAccount = new ICQAccount(mProtocol, mAccountSettings->edtAccountId->text());
-		if(!mAccount)
-			return NULL;
 	}
 
 	mAccountSettings->mPasswordWidget->save(&mAccount->password());
