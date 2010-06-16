@@ -717,10 +717,26 @@ void OscarAccount::setServerAddress(const QString &server)
 
 void OscarAccount::setServerPort(int port)
 {
-	if ( port > 0 )
-		configGroup()->writeEntry( QString::fromLatin1( "Port" ), port );
-	else //set to default 5190
-		configGroup()->writeEntry( QString::fromLatin1( "Port" ), 5190 );
+	if (port<=0)
+		port=5190;
+
+	configGroup()->writeEntry( QString::fromLatin1( "Port" ), port);
+}
+
+
+void OscarAccount::setProxyServerAddress(const QString &server)
+{
+	configGroup()->writeEntry( QString::fromLatin1( "ProxyServer" ), server );
+}
+
+void OscarAccount::setProxyServerPort(int port)
+{
+	configGroup()->writeEntry( QString::fromLatin1( "ProxyPort" ), port);
+}
+
+void OscarAccount::setProxyServerEnabled(bool enable)
+{
+	configGroup()->writeEntry( QString::fromLatin1( "ProxyEnable" ), enable);
 }
 
 QTextCodec* OscarAccount::defaultCodec() const
@@ -1458,13 +1474,20 @@ void OscarAccount::createClientStream( ClientStream **clientStream )
 {
 	QTcpSocket* tcpSocket = new QTcpSocket();
 
+	if (configGroup()->readEntry( QString::fromLatin1( "ProxyEnable" ), false))
+	{
+		QString proxyExp=configGroup()->readEntry( QString::fromLatin1( "ProxyServer" ), QString() );
+		int proxyPort=configGroup()->readEntry( QString::fromLatin1( "ProxyPort" ), 0 );
+		tcpSocket->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxyExp, proxyPort));
+	}
+	//TODO support for:
+	//-proxy requiring authentication
+	//-SOCKS5
+	//-system-wide proxy/account-wide proxy selection
+	//BUGS: 119806 186872 236721
+#if 0
 	if (KProtocolManager::useProxy())
 	{
-		//TODO support for:
-		//-proxy requiring authentication
-		//-SOCKS5
-		//-different proxy for each account
-		//BUGS: 119806 186872 236721
 		QString proxyExp=KProtocolManager::proxyFor( "https" );
 		proxyExp.remove("http://");
 		int proxyPort=0;
@@ -1476,6 +1499,7 @@ void OscarAccount::createClientStream( ClientStream **clientStream )
 		}
 		tcpSocket->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxyExp, proxyPort));
     }
+#endif
 
 	ClientStream *cs = new ClientStream( tcpSocket, 0 );
 	

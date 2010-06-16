@@ -82,11 +82,18 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 		QString serverEntry = mAccount->configGroup()->readEntry("Server", "login.oscar.aol.com");
 		int portEntry = mAccount->configGroup()->readEntry("Port", 5190);
-		if ( serverEntry != "login.oscar.aol.com" || ( portEntry != 5190) )
-			mAccountSettings->optionOverrideServer->setChecked( true );
+		mAccountSettings->optionOverrideServer->setChecked( serverEntry != "login.oscar.aol.com" || ( portEntry != 5190) );
 
 		mAccountSettings->edtServerAddress->setText( serverEntry );
 		mAccountSettings->edtServerPort->setValue( portEntry );
+
+		bool proxyServerEnableEntry = mAccount->configGroup()->readEntry("ProxyEnable", false);
+		QString proxyServerEntry = mAccount->configGroup()->readEntry("ProxyServer", QString());
+		int proxyPortEntry = mAccount->configGroup()->readEntry("ProxyPort", 443);
+		mAccountSettings->optionEnableProxy->setChecked( proxyServerEnableEntry );
+		mAccountSettings->edtProxyServerAddress->setText( proxyServerEntry );
+		mAccountSettings->edtProxyServerPort->setValue( proxyPortEntry );
+
 
 		bool configChecked = mAccount->configGroup()->readEntry( "RequireAuth", false );
 		mAccountSettings->chkRequireAuth->setChecked( configChecked );
@@ -248,6 +255,14 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	{
 		mAccount->setServerAddress("login.oscar.aol.com");
 		mAccount->setServerPort(5190);
+	}
+
+	bool useProxy=mAccountSettings->optionEnableProxy->isChecked();
+	mAccount->setProxyServerEnabled( useProxy );
+	if ( mAccountSettings->optionEnableProxy->isChecked() )
+	{
+		mAccount->setProxyServerAddress(mAccountSettings->edtProxyServerAddress->text().trimmed());
+		mAccount->setProxyServerPort(mAccountSettings->edtProxyServerPort->value());
 	}
 
 	//set filetransfer stuff
