@@ -632,7 +632,7 @@ void KopeteChatWindow::setStatus(const QString &text)
 
 void KopeteChatWindow::testCanDecode(const QDragMoveEvent *event, bool &accept)
 {
-	if (chatViewList[static_cast<KTabBar*>(m_tabBar->childAt( event->pos()))->selectTab( event->pos() )]->isDragEventAccepted( event )) {
+	if (m_tabBar && chatViewList[static_cast<KTabBar*>(m_tabBar->childAt( event->pos()))->selectTab( event->pos() )]->isDragEventAccepted( event )) {
 		accept = true;
 	} else {
 		accept = false;
