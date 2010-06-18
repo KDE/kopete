@@ -308,10 +308,12 @@ void AVDeviceConfig::changeVideoControlValue(unsigned int id, int value)
 
 void AVDeviceConfig::slotUpdateImage()
 {
-	mVideoDevicePool->getFrame();
-	mVideoDevicePool->getImage(&qimage);
-	mPrfsVideoDevice->mVideoImageLabel->setPixmap(QPixmap::fromImage(qimage));
-	//kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
+	if (EXIT_SUCCESS == mVideoDevicePool->getFrame())
+	{
+		mVideoDevicePool->getImage(&qimage);
+		mPrfsVideoDevice->mVideoImageLabel->setPixmap(QPixmap::fromImage(qimage));
+		//kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
+	}
 }
 
 void AVDeviceConfig::deviceRegistered( const QString & udi )

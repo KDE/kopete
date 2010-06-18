@@ -341,21 +341,9 @@ int VideoDevicePool::setControlValue(quint32 ctrl_id, qint32 value)
 int VideoDevicePool::getFrame()
 {
 //	kDebug() << "VideoDevicePool::getFrame() called.";
-	if(m_videodevice.size())
-		return m_videodevice[currentDevice()].getFrame();
-	else
-	{
-		kDebug() << "VideoDevicePool::getFrame() fallback for no device.";
-		for(int loop=0; loop < m_buffer.data.size(); loop+=3)
-		{
-			m_buffer.data[loop]   = 255;
-			m_buffer.data[loop+1] = 0;
-			m_buffer.data[loop+2] = 0;
-		}
-	}
-	kDebug() << "VideoDevicePool::getFrame() exited successfuly.";
-
-	return EXIT_SUCCESS;
+	if ((m_current_device < 0) || (m_current_device >= m_videodevice.size()))
+		return EXIT_FAILURE;
+	return m_videodevice[currentDevice()].getFrame();
 }
 
 /*!

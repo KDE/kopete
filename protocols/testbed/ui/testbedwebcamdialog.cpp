@@ -59,20 +59,21 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
 	mVideoDevicePool->startCapturing();
-	mVideoDevicePool->getFrame();
-	mVideoDevicePool->getImage(&mImage);
-	kDebug() << "Just captured 1st frame";
-#endif
+	if (EXIT_SUCCESS == mVideoDevicePool->getFrame())
+	{
+		mVideoDevicePool->getImage(&mImage);
+		mPixmap=QPixmap::fromImage(mImage);
+		if (!mPixmap.isNull())
+			mImageContainer->updatePixmap(mPixmap);
+	}
 
-	mPixmap=QPixmap::fromImage(mImage);
-	if (!mPixmap.isNull())
-		mImageContainer->updatePixmap(mPixmap);
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
 	qtimer.setSingleShot(false);
 	qtimer.start(0);
+#endif
 }
 
-TestbedWebcamDialog::~ TestbedWebcamDialog( )
+TestbedWebcamDialog::~TestbedWebcamDialog( )
 {
 #ifndef VIDEOSUPPORT_DISABLED
 	mVideoDevicePool->stopCapturing();
@@ -83,10 +84,12 @@ TestbedWebcamDialog::~ TestbedWebcamDialog( )
 void TestbedWebcamDialog::slotUpdateImage()
 {
 #ifndef VIDEOSUPPORT_DISABLED
-	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image";
-	mVideoDevicePool->getImage(&mImage);
-	mImageContainer->updatePixmap( QPixmap::fromImage( mImage ) );
+	if (EXIT_SUCCESS == mVideoDevicePool->getFrame())
+	{
+		mVideoDevicePool->getImage(&mImage);
+		mImageContainer->updatePixmap( QPixmap::fromImage( mImage ) );
+	}
 #endif
 }
 

@@ -329,9 +329,9 @@ int VideoDevice::open()
 		return EXIT_SUCCESS;
 	}
 #ifdef HAVE_LIBV4L2
-	descriptor = ::v4l2_open (QFile::encodeName(full_filename), O_RDWR, 0);
+	descriptor = ::v4l2_open (QFile::encodeName(full_filename), O_RDWR | O_NONBLOCK, 0);
 #else
-	descriptor = ::open (QFile::encodeName(full_filename), O_RDWR, 0);
+	descriptor = ::open (QFile::encodeName(full_filename), O_RDWR | O_NONBLOCK, 0);
 #endif
 	if(isOpen())
 	{
@@ -1162,15 +1162,13 @@ int VideoDevice::getFrame()
 #endif
 				if (-1 == bytesread) // must verify this point with ov511 driver.
 				{
-					kDebug() << "IO_METHOD_READ failed.";
-					switch (errno)
+					if (errno == EAGAIN)
 					{
-						case EAGAIN:
-							return EXIT_FAILURE;
-						case EIO: /* Could ignore EIO, see spec. fall through */
-						default:
-						return errnoReturn ("read");
+//						kDebug() << "No new frame available.";
+						return EXIT_FAILURE;
 					}
+					else
+						return errnoReturn ("read");
 				}
 				if((int)m_currentbuffer.data.size() < bytesread)
 				{
@@ -1185,18 +1183,13 @@ int VideoDevice::getFrame()
 				v4l2buffer.memory = V4L2_MEMORY_MMAP;
 				if (-1 == xioctl (VIDIOC_DQBUF, &v4l2buffer))
 				{
-					kDebug() << full_filename << " MMAPed getFrame failed.";
-					switch (errno)
+					if (errno == EAGAIN)
 					{
-						case EAGAIN:
-						{
-							kDebug() << full_filename << " MMAPed getFrame failed: EAGAIN. Pointer: ";
-							return EXIT_FAILURE;
-						}
-						case EIO: /* Could ignore EIO, see spec. fall through */
-						default:
-							return errnoReturn ("VIDIOC_DQBUF");
+//						kDebug() << "No new frame available.";
+						return EXIT_FAILURE;
 					}
+					else
+						return errnoReturn ("VIDIOC_DQBUF");
 				}
 /*				if (v4l2buffer.index < m_streambuffers)
 					return EXIT_FAILURE;*/ //it was an assert()
@@ -1228,14 +1221,13 @@ int VideoDevice::getFrame()
 					v4l2buffer.memory = V4L2_MEMORY_USERPTR;
 					if (-1 == xioctl (VIDIOC_DQBUF, &v4l2buffer))
 					{
-						switch (errno)
+						if (errno == EAGAIN)
 						{
-							case EAGAIN:
-								return EXIT_FAILURE;
-							case EIO: /* Could ignore EIO, see spec. fall through */
-							default:
-								return errnoReturn ("VIDIOC_DQBUF");
+//							kDebug() << "No new frame available.";
+							return EXIT_FAILURE;
 						}
+						else
+							return errnoReturn ("VIDIOC_DQBUF");
 					}
 					if ((unsigned int) m_rawbuffers.size() < m_streambuffers)
 						return EXIT_FAILURE;

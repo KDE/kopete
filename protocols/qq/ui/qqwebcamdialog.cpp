@@ -60,16 +60,18 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 	mVideoDevicePool->open();
 	mVideoDevicePool->setSize(320, 240);
 	mVideoDevicePool->startCapturing();
-	mVideoDevicePool->getFrame();
-	mVideoDevicePool->getImage(&mImage);
-	kDebug() << "Just captured 1st frame";
+	if (EXIT_SUCCESS == mVideoDevicePool->getFrame())
+	{
+		mVideoDevicePool->getImage(&mImage);
+		mPixmap = QPixmap::fromImage(mImage);
+		if (!mPixmap.isNull())
+			mImageContainer->updatePixmap(mPixmap);
+	}
 
-	mPixmap = QPixmap::fromImage(mImage);
-	if (!mPixmap.isNull())
-		mImageContainer->updatePixmap(mPixmap);
-#endif
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
+	qtimer.setSingleShot(false);
 	qtimer.start(0);
+#endif
 }
 
 QQWebcamDialog::~ QQWebcamDialog( )
@@ -83,11 +85,13 @@ QQWebcamDialog::~ QQWebcamDialog( )
 void QQWebcamDialog::slotUpdateImage()
 {
 #ifndef VIDEOSUPPORT_DISABLED
-	mVideoDevicePool->getFrame();
 	kDebug() << "Getting image";
-	mVideoDevicePool->getImage(&mImage);
-	kDebug() << "BitBlitting image";
-	mImageContainer->updatePixmap( QPixmap::fromImage( mImage ) );
+	if (EXIT_SUCCESS == mVideoDevicePool->getFrame())
+	{
+		kDebug() << "BitBlitting image";
+		mVideoDevicePool->getImage(&mImage);
+		mImageContainer->updatePixmap( QPixmap::fromImage( mImage ) );
+	}
 #endif
 }
 

@@ -85,7 +85,8 @@ void AvatarWebcamDialog::updateImage()
 {
 	QImage image = QImage();
 #ifndef VIDEOSUPPORT_DISABLED
-	d->m_devicePool->getFrame();
+	if (EXIT_SUCCESS != d->m_devicePool->getFrame())
+		return;
 	d->m_devicePool->getImage(&image);
 #endif
 	d->lastPixmap = QPixmap::fromImage(image.mirrored(false,false));//There is a better way of do this?

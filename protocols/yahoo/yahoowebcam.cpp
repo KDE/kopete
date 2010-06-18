@@ -54,8 +54,8 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 	m_devicePool->open();
 	m_devicePool->setSize(320, 240);
 	m_devicePool->startCapturing();
-#endif
 	m_updateTimer->start( 250 );
+#endif
 }
 
 YahooWebcam::~YahooWebcam()
@@ -91,9 +91,11 @@ void YahooWebcam::webcamDialogClosing()
 void YahooWebcam::updateImage()
 {
 #ifndef VIDEOSUPPORT_DISABLED
-	m_devicePool->getFrame();
-	m_devicePool->getImage(m_img);
-	theDialog->newImage( QPixmap::fromImage(*m_img) );
+	if (EXIT_SUCCESS == m_devicePool->getFrame())
+	{
+		m_devicePool->getImage(m_img);
+		theDialog->newImage( QPixmap::fromImage(*m_img) );
+	}
 #endif
 }
 
@@ -102,20 +104,22 @@ void YahooWebcam::sendImage()
 	kDebug(YAHOO_GEN_DEBUG) ;
 
 #ifndef VIDEOSUPPORT_DISABLED
-	m_devicePool->getFrame();
-	m_devicePool->getImage(m_img);
+	if (EXIT_SUCCESS == m_devicePool->getFrame())
+		m_devicePool->getImage(m_img);
+	/* NOTE: not sure if we can skip sending an image without running into trouble...
+	         => send last image
+	 */
 #endif
-	
+
 	origImg->close();
 	convertedImg->close();
-	
+
 	m_img->save( origImg->fileName(), "JPEG");
-	
+
 	KProcess p;
 	p << "jasper";
 	p << "--input" << origImg->fileName() << "--output" << convertedImg->fileName() << "--output-format" << "jpc" << "-O" <<"cblkwidth=64\ncblkheight=64\nnumrlvls=4\nrate=0.0165\nprcheight=128\nprcwidth=2048\nmode=real";
-	
-	
+
 	int ec = p.execute();
 	if( ec != 0 )
 	{
