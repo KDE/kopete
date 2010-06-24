@@ -381,7 +381,7 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Away )
 				status = i18n ( "Away" );
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Busy )
-				status = i18n ( "Away" );
+				status = i18n ( "Busy" );
 			else if ( Kopete::OnlineStatus::statusStringToType ( values[i] ) == Kopete::OnlineStatus::Offline )
 				status = i18n ( "Offline" );
 
