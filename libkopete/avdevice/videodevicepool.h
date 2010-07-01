@@ -25,7 +25,6 @@
 #include "videoinput.h"
 #include <qstring.h>
 #include <qimage.h>
-#include <qmutex.h>
 #include <kcombobox.h>
 #include "videodevice.h"
 #include "kopete_export.h"
@@ -110,7 +109,6 @@ protected:
 	int m_current_device;
 	QVector<VideoDevice*> m_videodevices;	/*!< Vector of pointers to the available video devices */
 	struct imagebuffer m_buffer; // only used when no devices were found
-	QMutex m_ready;
 
 private:
 	VideoDevicePool();

@@ -65,6 +65,9 @@ VideoDevicePool::VideoDevicePool()
 {
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
+	/* NOTE: No locking needed as long as we don't connect with Qt::ConnectionType = Qt::DirectConnection
+	         while the signals are emitted by other threads
+	 */
 	foreach( Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Video, QString()) )
 		registerDevice( device );
 }
@@ -91,7 +94,6 @@ int VideoDevicePool::open(int device)
 		kDebug() << "Device not found.";
 		return EXIT_FAILURE;
 	}
-	m_ready.lock();
 	int current_device = m_current_device;
 	if (device < 0)
 	{
@@ -108,10 +110,7 @@ int VideoDevicePool::open(int device)
 			if (EXIT_SUCCESS == m_videodevices[current_device]->close())
 				m_clients--;
 			else
-			{
-				m_ready.unlock();
 				return EXIT_FAILURE;
-			}
 		}
 		isopen = m_videodevices[m_current_device]->open();
 		if (isopen == EXIT_SUCCESS)
@@ -126,7 +125,6 @@ int VideoDevicePool::open(int device)
 		m_clients++;
 	}
 	kDebug() << "Number of clients: " << m_clients;
-	m_ready.unlock();
 	return isopen;
 }
 
@@ -860,7 +858,6 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 {
 	kDebug() << "("<< udi << ") called";
 	int i = 0;
-	m_ready.lock();
 	foreach ( VideoDevice* vd, m_videodevices )
 	{
 		if ( vd->udi() == udi )
@@ -877,17 +874,12 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 			{
 				m_current_device--;
 			}
-			m_ready.unlock();
 			emit deviceUnregistered( udi );
-			/* NOTE: do not emit deviceUnregistered( udi ) with mutex locked ! => potential deadlock ! */
 			return;
 		}
 		else
-		{
 			i++;
-		}
 	}
-	m_ready.unlock();
 }
 
 } // namespace AV
