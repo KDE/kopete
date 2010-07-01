@@ -103,7 +103,7 @@ protected:
 	int errnoReturn(const char* s);
 	bool registerDevice( Solid::Device & dev );
 	int showDeviceCapabilities(int device = -1);
-	void loadSelectedDevice();
+	int getSavedDevice();
 	void loadDeviceConfig(); // Load configuration parameters;
 
 	int m_current_device;

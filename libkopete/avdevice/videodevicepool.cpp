@@ -87,34 +87,39 @@ VideoDevicePool::~VideoDevicePool()
  */
 int VideoDevicePool::open(int device)
 {
-    /// @todo implement me
 	kDebug() << "called with device" << device;
 	if (!m_videodevices.size() || (device >= m_videodevices.size()))
 	{
 		kDebug() << "Device not found.";
 		return EXIT_FAILURE;
 	}
-	int current_device = m_current_device;
 	if (device < 0)
 	{
-		kDebug() << "Trying to load saved device (using default device if not available)";
-		loadSelectedDevice();	// Set m_current_device to saved device (if device available)
+		kDebug() << "Trying to load saved device.";
+		device = getSavedDevice();
+		if (device < 0)
+		{
+			if (m_current_device < 0)
+				device = 0;
+			else
+				device = m_current_device;
+			kDebug() << "Saved device is not available, using default device:" << device;
+		}
 	}
-	else
-		m_current_device = device;
 	int isopen = EXIT_FAILURE;
-	if ((m_current_device != current_device) || !isOpen())
+	if ((device != m_current_device) || !isOpen())
 	{
 		if (isOpen())
 		{
-			if (EXIT_SUCCESS == m_videodevices[current_device]->close())
+			if (EXIT_SUCCESS == m_videodevices[m_current_device]->close())
 				m_clients--;
 			else
 				return EXIT_FAILURE;
 		}
-		isopen = m_videodevices[m_current_device]->open();
+		isopen = m_videodevices[device]->open();
 		if (isopen == EXIT_SUCCESS)
 		{
+			m_current_device = device;
 			loadDeviceConfig(); // Load and apply device parameters
 			m_clients++;
 		}
@@ -580,10 +585,10 @@ int VideoDevicePool::inputs()
 }
 
 /*!
-    \fn void Kopete::AV::VideoDevicePool::loadSelectedDevice()
-    \brief Loads and selects the saved device
+    \fn int Kopete::AV::VideoDevicePool::getSavedDevice()
+    \brief Returns the index of the saved device
  */
-void VideoDevicePool::loadSelectedDevice()
+int VideoDevicePool::getSavedDevice()
 {
 	kDebug() << "called";
 	if (m_videodevices.size())
@@ -599,9 +604,9 @@ void VideoDevicePool::loadSelectedDevice()
 			{
 				if ((*vditerator)->udi() == currentdevice)
 				{
-					m_current_device = std::distance (m_videodevices.begin(), vditerator);
-					kDebug() << "Saved device is available, setting device-index to" << m_current_device;
-					return;
+					int devIndex = std::distance (m_videodevices.begin(), vditerator);
+					kDebug() << "Saved device is available, device index is" << devIndex;
+					return devIndex;
 				}
 			}
 			kDebug() << "Saved device is not available.";
@@ -609,6 +614,7 @@ void VideoDevicePool::loadSelectedDevice()
 		else
 			kDebug() << "No device saved.";
 	}
+	return -1;
 }
 
 /*!
