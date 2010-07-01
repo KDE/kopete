@@ -114,7 +114,7 @@ protected:
 	void loadDeviceConfig(); // Load configuration parameters;
 
 	int m_current_device;
-	VideoDeviceVector m_videodevice; // Vector to be filled with found devices
+	QVector<VideoDevice*> m_videodevices;	/*!< Vector of pointers to the available video devices */
 	struct imagebuffer m_buffer; // only used when no devices were found
 	QMutex m_ready;
 
