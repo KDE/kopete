@@ -33,11 +33,6 @@
 #include <kglobal.h>
 #include <solid/device.h>
 
-// Uncomment this line and comment out the include and using lines to 
-// revert to standard vector if you hit issues. It should all be fine though.
-// typedef QVector<Kopete::AV::VideoDevice> VideoDeviceVector;
-#include "videodevicevector.h"
-using Kopete::AV::VideoDeviceVector;
 
 namespace Kopete {
 

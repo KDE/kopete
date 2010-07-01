@@ -15,8 +15,6 @@ endif (LIBV4L2_FOUND)
 set(kopete_videodevice_LIB_SRCS 
    videodevice.cpp 
    videoinput.cpp 
-   dummyvideodevice.cpp
-   videodevicevector.cpp
    videodevicepool.cpp 
    bayer.cpp
    sonix_compress.cpp )
