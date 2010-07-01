@@ -73,7 +73,6 @@ public:
 	int selectInput(int newinput);
 	int scanDevices();
 	void registerDevice( Solid::Device & dev );
-	bool hasDevices();
 	int size();
 	~VideoDevicePool();
 	int fillDeviceKComboBox(KComboBox *combobox);

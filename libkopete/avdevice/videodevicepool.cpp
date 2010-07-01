@@ -609,17 +609,6 @@ void VideoDevicePool::registerDevice( Solid::Device & device )
 }
 
 /*!
-    \fn Kopete::AV::VideoDevicePool::hasDevices()
- */
-bool VideoDevicePool::hasDevices()
-{
-    /// @todo implement me
-	if(m_videodevice.size())
-		return true;
-	return false;
-}
-
-/*!
     \fn Kopete::AV::VideoDevicePool::size()
  */
 int VideoDevicePool::size()
@@ -673,7 +662,7 @@ int VideoDevicePool::inputs()
 void VideoDevicePool::loadSelectedDevice()
 {
 	kDebug() << "called";
-	if (hasDevices())
+	if (m_videodevice.size())
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
 		QString currentdevice = config.readEntry("Current Device", QString());
@@ -707,7 +696,7 @@ void VideoDevicePool::loadSelectedDevice()
 void VideoDevicePool::loadDeviceConfig()
 {
 	kDebug() << "called";
-	if (hasDevices())
+	if (m_videodevice.size())
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
 		// Load input and apply
@@ -759,7 +748,7 @@ void VideoDevicePool::loadDeviceConfig()
 void VideoDevicePool::saveCurrentDeviceConfig()
 {
 	kDebug() << "called";
-	if (hasDevices())
+	if (m_videodevice.size())
 	{
 		KConfigGroup config(KGlobal::config(), "Video Device Settings");
 		// Save current device:
