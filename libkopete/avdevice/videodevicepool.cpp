@@ -380,62 +380,7 @@ int VideoDevicePool::getImage(QImage *qimage)
 	if ((m_current_device >= 0) && (m_current_device < m_videodevices.size()))
 		return m_videodevices[m_current_device]->getImage(qimage);
 	else
-	{
-		kDebug() << "VideoDevicePool::getImage() fallback for no device.";
-
-		// do NOT delete qimage here, as it is received as a parameter
-		if (qimage->width() != width() || qimage->height() != height())
-			*qimage = QImage(width(), height(), QImage::Format_RGB32);
-
-		uchar *bits=qimage->bits();
-		switch(m_buffer.pixelformat)
-		{
-			case PIXELFORMAT_NONE	: break;
-			case PIXELFORMAT_GREY	: break;
-			case PIXELFORMAT_RGB332	: break;
-			case PIXELFORMAT_RGB555	: break;
-			case PIXELFORMAT_RGB555X: break;
-			case PIXELFORMAT_RGB565	: break;
-			case PIXELFORMAT_RGB565X: break;
-			case PIXELFORMAT_RGB24	:
-				{
-					kDebug() << "VideoDevicePool::getImage() fallback for no device - RGB24.";
-					int step=0;
-					for(int loop=0;loop < qimage->numBytes();loop+=4)
-					{
-						bits[loop]   = m_buffer.data[step];
-						bits[loop+1] = m_buffer.data[step+1];
-						bits[loop+2] = m_buffer.data[step+2];
-						bits[loop+3] = 255;
-						step+=3;
-					}
-				}
-				break;
-			case PIXELFORMAT_BGR24	: break;
-				{
-					int step=0;
-					for(int loop=0;loop < qimage->numBytes();loop+=4)
-					{
-						bits[loop]   = m_buffer.data[step+2];
-						bits[loop+1] = m_buffer.data[step+1];
-						bits[loop+2] = m_buffer.data[step];
-						bits[loop+3] = 255;
-						step+=3;
-					}
-				}
-				break;
-			case PIXELFORMAT_RGB32	: memcpy(bits,&m_buffer.data[0], m_buffer.data.size());
-				break;
-			case PIXELFORMAT_BGR32	: break;
-			case PIXELFORMAT_YUYV   : break;
-			case PIXELFORMAT_UYVY   : break;
-			case PIXELFORMAT_YUV420P: break;
-			case PIXELFORMAT_YUV422P: break;
-			default: break;
-		}
-	}
-	kDebug() << "VideoDevicePool::getImage() exited successfuly.";
-	return EXIT_SUCCESS;
+		return EXIT_FAILURE;
 }
 
 /*!
