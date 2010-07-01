@@ -526,42 +526,58 @@ void VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 
 bool VideoDevicePool::registerDevice( Solid::Device & device )
 {
-	kDebug() << "New video device at " << device.udi();
+	kDebug() << "called, UDI is:\n   " << device.udi();
 	const Solid::Device * vendorDevice = &device;
-	while ( vendorDevice->isValid() && vendorDevice->vendor().isEmpty() )
+	while (vendorDevice->isValid() && vendorDevice->vendor().isEmpty())
+		vendorDevice = new Solid::Device(vendorDevice->parentUdi());
+	/* NOTE: The device we register has usually an empty vendor string and a less meaningfull product string.
+	   So we go up to the first parent device that has a non-empty vendor string,
+	   because we find the expected strings describing the device there.
+	 */
+	if (vendorDevice->isValid())
+		kDebug() << "vendor:" << vendorDevice->vendor() << ", product:" << vendorDevice->product();
+	else
+		kDebug() << "vendor:" << device.vendor() << ", product:" << device.product();
+ 
+	if (device.isValid())
 	{
-		vendorDevice = new Solid::Device( vendorDevice->parentUdi() );
-	}
-	if ( vendorDevice->isValid() )
-	{
-		kDebug() << "vendor: " << vendorDevice->vendor() << ", product: " << vendorDevice->product();
-	}
-	Solid::Video * solidVideoDevice = device.as<Solid::Video>();
-	if ( solidVideoDevice ) {
-		QStringList protocols = solidVideoDevice->supportedProtocols();
-		if ( protocols.contains( "video4linux" ) )
+		Solid::Video * solidVideoDevice = device.as<Solid::Video>();
+		if (solidVideoDevice)
 		{
-			QStringList drivers = solidVideoDevice->supportedDrivers( "video4linux" );
-			if ( drivers.contains( "video4linux" ) )
+			QStringList protocols = solidVideoDevice->supportedProtocols();
+			if (protocols.contains("video4linux"))
 			{
-				kDebug() << "V4L device path is" << solidVideoDevice->driverHandle( "video4linux" ).toString();
-				VideoDevice* videodevice = new VideoDevice;
-				videodevice->setUdi( device.udi() );
-				videodevice->setFileName(solidVideoDevice->driverHandle( "video4linux" ).toString());
-				kDebug() << "Found device " << videodevice->fileName();
-				videodevice->open();
-				if(videodevice->isOpen())
+				QStringList drivers = solidVideoDevice->supportedDrivers("video4linux");
+				if (drivers.contains("video4linux"))
 				{
-					kDebug() << "File " << videodevice->fileName() << " was opened successfuly";
-					videodevice->close();
-					m_videodevices.push_back(videodevice);
-					return true;
-				}
-				else
+					VideoDevice* videodevice = new VideoDevice;
+					videodevice->setUdi( device.udi() );
+					videodevice->setFileName(solidVideoDevice->driverHandle("video4linux").toString());
+					kDebug() << "V4L device path is" << solidVideoDevice->driverHandle("video4linux").toString();
+					if (EXIT_SUCCESS == videodevice->open())
+					{
+						bool cap = videodevice->canCapture();
+						videodevice->close();
+						if (cap)
+						{
+							m_videodevices.push_back(videodevice);
+							kDebug() << "Device is a valid video device, adding it to video device pool.";
+							return true;
+						}
+						else
+							kDebug() << "Device does not support capturing.";
+					}
+					else
+						kDebug() << "Device could not be opened.";
 					delete videodevice;
+				}
 			}
 		}
+		else
+			kDebug() << "Device is not a video device.";
 	}
+	else
+		kDebug() << "Not a valid Solid device: device is not available in the system.";
 	return false;
 }
 
@@ -800,9 +816,12 @@ void VideoDevicePool::deviceAdded( const QString & udi )
 	Solid::Device dev( udi );
 	if ( dev.is<Solid::Video>() )
 	{
+		kDebug() << "Device is a video device, trying to register it.";
 		if ( registerDevice( dev ) )
 			emit deviceRegistered( udi );
 	}
+	else
+		kDebug() << "Device is not a video device";
 }
 
 void VideoDevicePool::deviceRemoved( const QString & udi )
