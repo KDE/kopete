@@ -796,7 +796,7 @@ void VideoDevicePool::saveCurrentDeviceConfig()
 
 void VideoDevicePool::deviceAdded( const QString & udi )
 {
-	kDebug() << "("<< udi << ") called";
+	kDebug() << "called with UDI" << udi;
 	Solid::Device dev( udi );
 	if ( dev.is<Solid::Video>() )
 	{
@@ -807,13 +807,13 @@ void VideoDevicePool::deviceAdded( const QString & udi )
 
 void VideoDevicePool::deviceRemoved( const QString & udi )
 {
-	kDebug() << "("<< udi << ") called";
+	kDebug() << "called with UDI" << udi;
 	int i = 0;
 	foreach ( VideoDevice* vd, m_videodevices )
 	{
 		if ( vd->udi() == udi )
 		{
-			kDebug() << "Video device '" << udi << "' has been removed!";
+			kDebug() << "Video device with UDI" << udi << "has been removed!";
 			delete m_videodevices[i]; // NOTE: device is closed in destructor
 			m_videodevices.remove( i );
 			if (m_current_device == i)
