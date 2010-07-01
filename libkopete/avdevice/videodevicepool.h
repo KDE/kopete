@@ -25,7 +25,6 @@
 #include "videoinput.h"
 #include <qstring.h>
 #include <qimage.h>
-#include <q3valuevector.h>
 #include <qmutex.h>
 #include <kcombobox.h>
 #include "videodevice.h"
