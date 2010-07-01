@@ -65,7 +65,6 @@ public:
 	int readFrame();
 	int getImage(QImage *qimage);
 	int selectInput(int newinput);
-	int scanDevices();
 	int size();
 	~VideoDevicePool();
 	int fillDeviceKComboBox(KComboBox *combobox);

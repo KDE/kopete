@@ -118,7 +118,6 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 
 #ifndef VIDEOSUPPORT_DISABLED
 	VideoDevicePool* devicePool = VideoDevicePool::self();
-	devicePool->scanDevices();//We've to be sure that this has been done
 	if( devicePool->size() == 0 ){
 		d->mainWidget.buttonFromWebcam->hide();
 	}

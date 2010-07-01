@@ -65,6 +65,8 @@ VideoDevicePool::VideoDevicePool()
 {
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
+	foreach( Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Video, QString()) )
+		registerDevice( device );
 }
 
 
@@ -84,18 +86,12 @@ int VideoDevicePool::open(int device)
 {
     /// @todo implement me
 	kDebug() << "called with device" << device;
-	m_ready.lock();
-	if (!m_videodevices.size())
-	{
-		kDebug() << "open(): No devices found. Must scan for available devices." << m_current_device;
-		scanDevices();
-	}
 	if (!m_videodevices.size() || (device >= m_videodevices.size()))
 	{
-		kDebug() << "open(): Device not found. bailing out." << m_current_device;
-		m_ready.unlock();
+		kDebug() << "Device not found.";
 		return EXIT_FAILURE;
 	}
+	m_ready.lock();
 	int current_device = m_current_device;
 	if (device < 0)
 	{
@@ -577,29 +573,6 @@ int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 		combobox->setEnabled(false);
 	}
 	return EXIT_FAILURE;
-}
-
-/*!
-    \fn Kopete::AV::VideoDevicePool::scanDevices()
- */
-int VideoDevicePool::scanDevices()
-{
-    /// @todo implement me
-
-	if (m_videodevices.isEmpty()) {
-		kDebug() << "called";
-#if defined(__linux__) && defined(ENABLE_AV)
-		foreach (Solid::Device device,
-				Solid::Device::listFromType(Solid::DeviceInterface::Video, QString())) {
-			registerDevice( device );
-		}
-
-#endif
-		kDebug() << "exited successfuly";
-	} else {
-		kDebug() << "Not scanning: initial device list already loaded";
-	}
-	return EXIT_SUCCESS;
 }
 
 bool VideoDevicePool::registerDevice( Solid::Device & device )
