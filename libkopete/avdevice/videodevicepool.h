@@ -104,7 +104,7 @@ protected slots:
 protected:
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
-	int showDeviceCapabilities(unsigned int device);
+	int showDeviceCapabilities(int device = -1);
 	void loadSelectedDevice();
 	void loadDeviceConfig(); // Load configuration parameters;
 

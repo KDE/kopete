@@ -145,8 +145,10 @@ bool VideoDevicePool::isOpen()
 /*!
     \fn VideoDevicePool::showDeviceCapabilities(int device)
  */
-int VideoDevicePool::showDeviceCapabilities(unsigned int device)
-{  
+int VideoDevicePool::showDeviceCapabilities(int device)
+{
+	if (device < 0)
+		device = m_current_device;
 	if ((device >= 0) && (device < m_videodevices.size()))
 		return m_videodevices[device]->showDeviceCapabilities();
 	else
