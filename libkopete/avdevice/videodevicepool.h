@@ -66,7 +66,6 @@ public:
 	int getImage(QImage *qimage);
 	int selectInput(int newinput);
 	int scanDevices();
-	void registerDevice( Solid::Device & dev );
 	int size();
 	~VideoDevicePool();
 	int fillDeviceKComboBox(KComboBox *combobox);
@@ -104,6 +103,7 @@ protected slots:
 protected:
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
+	void registerDevice( Solid::Device & dev );
 	int showDeviceCapabilities(int device = -1);
 	void loadSelectedDevice();
 	void loadDeviceConfig(); // Load configuration parameters;
