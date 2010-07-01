@@ -61,7 +61,7 @@ VideoDevicePool* VideoDevicePool::self()
 }
 
 VideoDevicePool::VideoDevicePool()
-: m_current_device(0)
+: m_current_device(-1)
 {
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
@@ -510,6 +510,8 @@ bool VideoDevicePool::registerDevice( Solid::Device & device )
 						videodevice->close();
 						if (cap)
 						{
+							if (m_videodevices.size() == 0)
+								m_current_device = 0;
 							m_videodevices.push_back(videodevice);
 							kDebug() << "Device is a valid video device, adding it to video device pool.";
 							return true;
@@ -788,7 +790,10 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 			m_videodevices.remove( i );
 			if (m_current_device == i)
 			{
-				m_current_device = 0;
+				if (m_videodevices.size())
+					m_current_device = 0;
+				else
+					m_current_device = -1;
 				m_clients = 0;
 			}
 			else if (m_current_device > i)
