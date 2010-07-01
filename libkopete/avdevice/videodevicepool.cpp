@@ -602,7 +602,7 @@ int VideoDevicePool::scanDevices()
 	return EXIT_SUCCESS;
 }
 
-void VideoDevicePool::registerDevice( Solid::Device & device )
+bool VideoDevicePool::registerDevice( Solid::Device & device )
 {
 	kDebug() << "New video device at " << device.udi();
 	const Solid::Device * vendorDevice = &device;
@@ -633,12 +633,14 @@ void VideoDevicePool::registerDevice( Solid::Device & device )
 					kDebug() << "File " << videodevice->fileName() << " was opened successfuly";
 					videodevice->close();
 					m_videodevices.push_back(videodevice);
+					return true;
 				}
 				else
 					delete videodevice;
 			}
 		}
 	}
+	return false;
 }
 
 /*!
@@ -876,8 +878,8 @@ void VideoDevicePool::deviceAdded( const QString & udi )
 	Solid::Device dev( udi );
 	if ( dev.is<Solid::Video>() )
 	{
-		registerDevice( dev );
-		emit deviceRegistered( udi );
+		if ( registerDevice( dev ) )
+			emit deviceRegistered( udi );
 	}
 }
 

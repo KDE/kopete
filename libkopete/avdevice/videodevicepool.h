@@ -103,7 +103,7 @@ protected slots:
 protected:
 	int xioctl(int request, void *arg);
 	int errnoReturn(const char* s);
-	void registerDevice( Solid::Device & dev );
+	bool registerDevice( Solid::Device & dev );
 	int showDeviceCapabilities(int device = -1);
 	void loadSelectedDevice();
 	void loadDeviceConfig(); // Load configuration parameters;
