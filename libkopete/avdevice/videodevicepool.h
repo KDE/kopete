@@ -66,9 +66,9 @@ public:
 	int selectInput(int newinput);
 	int size();
 	~VideoDevicePool();
-	int fillDeviceKComboBox(KComboBox *combobox);
-	int fillInputKComboBox(KComboBox *combobox);
-	int fillStandardKComboBox(KComboBox *combobox);
+	void fillDeviceKComboBox(KComboBox *combobox);
+	void fillInputKComboBox(KComboBox *combobox);
+	void fillStandardKComboBox(KComboBox *combobox);
 	QString currentDeviceUdi();
 	int currentDevice();
 	int currentInput();

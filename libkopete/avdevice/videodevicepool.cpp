@@ -453,124 +453,75 @@ int VideoDevicePool::selectInput(int newinput)
 /*!
     \fn Kopete::AV::VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
  */
-int VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
+void VideoDevicePool::fillDeviceKComboBox(KComboBox *combobox)
 {
-    /// @todo implement me
 	kDebug() << "Called.";
-// check if KComboBox is a valid pointer.
-	if (combobox != NULL)
+	if (combobox == NULL)
+		return;
+	combobox->clear();
+	if (m_videodevices.size())
 	{
-		combobox->clear();
-		kDebug() << "Combobox cleaned.";
-		if(m_videodevices.size())
+		for (int loop = 0; loop < m_videodevices.size(); loop++)
 		{
-			for (int loop=0; loop < m_videodevices.size(); loop++)
-			{
-				combobox->addItem(m_videodevices[loop]->m_name);
-				kDebug() << "Added device " << loop << ": " << m_videodevices[loop]->m_name;
-			}
-			combobox->setCurrentIndex(m_current_device);
-			combobox->setEnabled(true);
-			return EXIT_SUCCESS;
+			combobox->addItem(m_videodevices[loop]->m_name);
+			kDebug() << "Added device" << loop << ":  " << m_videodevices[loop]->m_name;
 		}
-		combobox->setEnabled(false);
+		combobox->setCurrentIndex(m_current_device);
 	}
-	return EXIT_FAILURE;
+	combobox->setEnabled(m_videodevices.size());
 }
 
 /*!
     \fn Kopete::AV::VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
  */
-int VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
+void VideoDevicePool::fillInputKComboBox(KComboBox *combobox)
 {
-    /// @todo implement me
 	kDebug() << "Called.";
-	if (combobox != NULL)
+	if (combobox == NULL)
+		return;
+	combobox->clear();
+	if ((m_current_device >= 0) && (m_current_device < m_videodevices.size()))
 	{
-		combobox->clear();
-		if ((m_current_device >= 0) && (m_current_device < m_videodevices.size()))
+		if (m_videodevices[m_current_device]->inputs() > 0)
 		{
-			if (m_videodevices[m_current_device]->inputs() > 0)
+			for (int loop = 0; loop < m_videodevices[m_current_device]->inputs(); loop++)
 			{
-				for (int loop=0; loop < m_videodevices[m_current_device]->inputs(); loop++)
-				{
-					combobox->addItem(m_videodevices[m_current_device]->m_input[loop].name);
-					kDebug() << "Added input " << loop << ": " << m_videodevices[m_current_device]->m_input[loop].name << " (tuner: " << m_videodevices[m_current_device]->m_input[loop].hastuner << ")";
-				}
-				combobox->setCurrentIndex(currentInput());
-				combobox->setEnabled(true);
-				return EXIT_SUCCESS;
+				combobox->addItem(m_videodevices[m_current_device]->m_input[loop].name);
+				kDebug() << "Added input" << loop << ":  " << m_videodevices[m_current_device]->m_input[loop].name
+				         << " (tuner: " << m_videodevices[m_current_device]->m_input[loop].hastuner << ")";
 			}
+			combobox->setCurrentIndex(m_videodevices[m_current_device]->currentInput());
 		}
-		combobox->setEnabled(false);
 	}
-	return EXIT_FAILURE;
+	combobox->setEnabled(combobox->count());
 }
 
 /*!
     \fn Kopete::AV::VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
  */
-int VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
+void VideoDevicePool::fillStandardKComboBox(KComboBox *combobox)
 {
-    /// @todo implement me
 	kDebug() << "Called.";
-	if (combobox != NULL)
+	if (combobox == NULL)
+		return;
+	combobox->clear();
+	if ((m_current_device >= 0) && (m_current_device < m_videodevices.size()))
 	{
-		combobox->clear();
-		if ((m_current_device >= 0) && (m_current_device < m_videodevices.size()))
+		if (m_videodevices[m_current_device]->inputs() > 0)
 		{
-			if (m_videodevices[m_current_device]->inputs() > 0)
+			for (unsigned int loop = 0; loop < 25; loop++)
 			{
-				for (unsigned int loop=0; loop < 25; loop++)
+				if (m_videodevices[m_current_device]->m_input[currentInput()].m_standards & (1 << loop))
 				{
-					if ( (m_videodevices[m_current_device]->m_input[currentInput()].m_standards) & (1 << loop) )
-						combobox->addItem(m_videodevices[m_current_device]->signalStandardName( 1 << loop));
-/*
-				case STANDARD_PAL_B1	: return V4L2_STD_PAL_B1;	break;
-				case STANDARD_PAL_G	: return V4L2_STD_PAL_G;	break;
-				case STANDARD_PAL_H	: return V4L2_STD_PAL_H;	break;
-				case STANDARD_PAL_I	: return V4L2_STD_PAL_I;	break;
-				case STANDARD_PAL_D	: return V4L2_STD_PAL_D;	break;
-				case STANDARD_PAL_D1	: return V4L2_STD_PAL_D1;	break;
-				case STANDARD_PAL_K	: return V4L2_STD_PAL_K;	break;
-				case STANDARD_PAL_M	: return V4L2_STD_PAL_M;	break;
-				case STANDARD_PAL_N	: return V4L2_STD_PAL_N;	break;
-				case STANDARD_PAL_Nc	: return V4L2_STD_PAL_Nc;	break;
-				case STANDARD_PAL_60	: return V4L2_STD_PAL_60;	break;
-				case STANDARD_NTSC_M	: return V4L2_STD_NTSC_M;	break;
-				case STANDARD_NTSC_M_JP	: return V4L2_STD_NTSC_M_JP;	break;
-				case STANDARD_NTSC_443	: return V4L2_STD_NTSC;		break; // Using workaround value because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
-				case STANDARD_SECAM_B	: return V4L2_STD_SECAM_B;	break;
-				case STANDARD_SECAM_D	: return V4L2_STD_SECAM_D;	break;
-				case STANDARD_SECAM_G	: return V4L2_STD_SECAM_G;	break;
-				case STANDARD_SECAM_H	: return V4L2_STD_SECAM_H;	break;
-				case STANDARD_SECAM_K	: return V4L2_STD_SECAM_K;	break;
-				case STANDARD_SECAM_K1	: return V4L2_STD_SECAM_K1;	break;
-				case STANDARD_SECAM_L	: return V4L2_STD_SECAM_L;	break;
-				case STANDARD_SECAM_LC	: return V4L2_STD_SECAM;	break; // Using workaround value because my videodev2.h header seems to not include this standard in struct __u64 v4l2_std_id
-				case STANDARD_ATSC_8_VSB	: return V4L2_STD_ATSC_8_VSB;	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
-				case STANDARD_ATSC_16_VSB	: return V4L2_STD_ATSC_16_VSB;	break; // ATSC/HDTV Standard officially not supported by V4L2 but exists in videodev2.h
-				case STANDARD_PAL_BG	: return V4L2_STD_PAL_BG;	break;
-				case STANDARD_PAL_DK	: return V4L2_STD_PAL_DK;	break;
-				case STANDARD_PAL	: return V4L2_STD_PAL;		break;
-				case STANDARD_NTSC	: return V4L2_STD_NTSC;		break;
-				case STANDARD_SECAM_DK	: return V4L2_STD_SECAM_DK;	break;
-				case STANDARD_SECAM	: return V4L2_STD_SECAM;	break;
-				case STANDARD_525_60	: return V4L2_STD_525_60;	break;
-				case STANDARD_625_50	: return V4L2_STD_625_50;	break;
-				case STANDARD_ALL	: return V4L2_STD_ALL;		break;
-
-				combobox->insertItem(m_videodevices[m_current_device]->m_input[loop].name);
-				kDebug() << "StandardKCombobox: Added input " << loop << ": " << m_videodevices[m_current_device]->m_input[loop].name << " (tuner: " << m_videodevices[m_current_device]->m_input[loop].hastuner << ")";*/
+					combobox->addItem(m_videodevices[m_current_device]->signalStandardName(1 << loop));
+					kDebug() << "Added signal standard" << loop << ":  " << m_videodevices[m_current_device]->signalStandardName(1 << loop);
 				}
-				combobox->setCurrentIndex(0);	// FIXME: set to actual signal standard
-				combobox->setEnabled(combobox->count());
-				return EXIT_SUCCESS;
+				  
 			}
-		}
-		combobox->setEnabled(false);
+			combobox->setCurrentIndex(0);	// FIXME: set to actual signal standard
+		}  
 	}
-	return EXIT_FAILURE;
+	combobox->setEnabled(combobox->count());
 }
 
 bool VideoDevicePool::registerDevice( Solid::Device & device )
