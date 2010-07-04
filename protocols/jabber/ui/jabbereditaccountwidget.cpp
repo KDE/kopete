@@ -67,6 +67,8 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (btnChangePassword, SIGNAL ( clicked() ), this, SLOT ( slotChangePasswordClicked () ));
 	
 	connect (privacyListsButton, SIGNAL ( clicked() ), this, SLOT ( slotPrivacyListsClicked() ) );
+
+	connect (cbAdjustPriority, SIGNAL (toggled (bool)), this, SLOT ( awayPriorityToggled (bool)));
 	
 #ifdef JINGLE_SUPPORT
 	checkAudioDevices();
@@ -197,6 +199,17 @@ void JabberEditAccountWidget::reopen ()
 		mServer->setText(mID->text().section('@', 1));
 	}
 
+	if ( account()->configGroup()->hasKey("AwayPriority") )
+	{
+		cbAdjustPriority->setChecked(true);
+		mAwayPriority->setValue( account()->configGroup()->readEntry("AwayPriority",0));
+	}
+	else
+	{
+		cbAdjustPriority->setChecked(false);
+		mAwayPriority->setEnabled(false);
+	}
+
 	cbAllowPlainTextPassword->setChecked (account()->configGroup()->readEntry("AllowPlainTextPassword", true));
 
 	KConfigGroup config = KGlobal::config()->group("Jabber");
@@ -288,6 +301,16 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->configGroup()->writeEntry("Server", mServer->text().trimmed ());
 	account()->configGroup()->writeEntry("Resource", mResource->text ());
 	account()->configGroup()->writeEntry("Priority", QString::number (mPriority->value ()));
+
+	if ( cbAdjustPriority->isChecked() )
+	{
+		account()->configGroup()->writeEntry("AwayPriority", QString::number( mAwayPriority->value ()));
+	}
+	else
+	{
+		account()->configGroup()->deleteEntry("AwayPriority");
+	}
+
 	account()->configGroup()->writeEntry("Port", QString::number (mPort->value ()));
 
 #ifdef JINGLE_SUPPORT
@@ -371,6 +394,11 @@ void JabberEditAccountWidget::updateServerField ()
 		mPort->setEnabled(true);
 	}
 
+}
+
+void JabberEditAccountWidget::awayPriorityToggled(bool enabled)
+{
+	mAwayPriority->setEnabled(enabled);
 }
 
 void JabberEditAccountWidget::deleteClicked ()

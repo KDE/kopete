@@ -1069,7 +1069,13 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 	}
 
 	// make sure the status gets the correct priority
-	newStatus.setPriority ( configGroup()->readEntry ( "Priority", 5 ) );
+	int newPriority = configGroup()->readEntry ( "Priority", 5 );
+	if ( newStatus.isAway() && configGroup()->hasKey( "AwayPriority" ))
+	{
+		newPriority = configGroup()->readEntry( "AwayPriority", 0 );
+	}
+	newStatus.setPriority ( newPriority );
+	kDebug(JABBER_DEBUG_GLOBAL) << "New priority: " << newPriority;
 
 	XMPP::Jid jid ( myself()->contactId () );
 	XMPP::Resource newResource ( resource (), newStatus );

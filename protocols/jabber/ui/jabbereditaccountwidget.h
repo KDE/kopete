@@ -52,6 +52,7 @@ private slots:
 	void slotChangePasswordFinished ();
 	void deleteClicked ();
 	void sslToggled (bool);
+	void awayPriorityToggled (bool);
 	void updateServerField ();
 	void slotPrivacyListsClicked ();
 
