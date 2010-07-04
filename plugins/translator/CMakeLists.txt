@@ -22,7 +22,7 @@ install(TARGETS kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 ########### next target ###############
 
-set(kcm_kopete_translator_PART_SRCS translatorprefs.cpp translatorlanguages.cpp )
+set(kcm_kopete_translator_PART_SRCS translatorpreferences.cpp translatorlanguages.cpp )
 
 kde4_add_ui_files(kcm_kopete_translator_PART_SRCS translatorprefsbase.ui )
 
