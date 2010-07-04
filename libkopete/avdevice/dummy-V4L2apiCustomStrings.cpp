@@ -29,86 +29,120 @@
 // --- V4L2 API custom (driver defined) strings from kernel sources (driver/media/video/) to make them translatable ---
 // Last update: kernel 2.6.33
 
-// Custom video control titles:
-I18N_NOOP2("Target Size (KB) [NOTE: KB = kilobyte]", "Target KB");		// cpia2/cpia2_v4l.c
-I18N_NOOP2("General Purpose In/Out", "GPIO");					// cpia2/cpia2_v4l.c
-I18N_NOOP("Flicker Reduction");							// cpia2/cpia2_v4l.c
-I18N_NOOP("Framerate");								// cpia2/cpia2_v4l.c
-I18N_NOOP2("USB Isochronous Interface", "USB Alternate");			// cpia2/cpia2_v4l.c
-I18N_NOOP2("[NOTE: selection of combinations of light sources]", "Lights");	// cpia2/cpia2_v4l.c
-I18N_NOOP("Reset Camera");							// cpia2/cpia2_v4l.c
-I18N_NOOP2("Chroma Auto Gain Control", "chroma agc");				// bt8xx/bttv-driver.c
-I18N_NOOP2("Combfilter", "combfilter");						// bt8xx/bttv-driver.c
-I18N_NOOP2("Automute", "automute");						/* bt8xx/bttv-driver.c,
-										   saa7134/saa7134-video.c */
-I18N_NOOP2("Luminance Decimation Filter", "luma decimation filter");		// bt8xx/bttv-driver.c
-I18N_NOOP2("Analog/Digital Conversion Crush [NOTE: aGc is a typo ! => aDc]", "agc crush");			// bt8xx/bttv-driver.c
-I18N_NOOP2("Video Cassette Recorder Hack [NOTE: improves sync on poor VCR tapes]", "vcr hack");	// bt8xx/bttv-driver.c
-I18N_NOOP2("Whitecrush Upper", "whitecrush upper");				// bt8xx/bttv-driver.c
-I18N_NOOP2("Whitecrush Lower", "whitecrush lower");				// bt8xx/bttv-driver.c
-I18N_NOOP2("U-V Gain Ratio [NOTE: NOT Ultra Violet !]", "uv ratio");		// bt8xx/bttv-driver.c
-I18N_NOOP2("Full Luminance Range", "full luma range");				// bt8xx/bttv-driver.c
-I18N_NOOP2("Luminance Coring Level [NOTE: Improves SNR (Signat-to-Noise-Ratio) by HF filtering]", "coring");	// bt8xx/bttv-driver.c
-I18N_NOOP("Invert");								// saa7134/saa7134-video.c
-I18N_NOOP2("Y Offset Odd Field", "y offset odd field");				// saa7134/saa7134-video.c
-I18N_NOOP2("Y Offset Even Field", "y offset even field");			// saa7134/saa7134-video.c
-I18N_NOOP2("Green Balance", "green balance");					/* zc0301/zc0301_pas202bcb.c,
-										   sn9c102/sn9c102_pas202bcb.c,
-										   sn9c102/sn9c102_pas106b.c,
-										   sn9c102/sn9c102_ov7660.c,
-										   sn9c102/sn9c102_ov7630.c,
-										   sn9c102/sn9c102_mi0360.c,
-										   sn9c102/sn9c102_mi0343.c,
-										   sn9c102/sn9c102_hv7131.c,
-										   sn9c102/sn9c102_hv7131d.c,
-										   gspca/m5602/m5602_po1030.c,
-										   gspca/m5602/m5602_mt9m111.c */
-I18N_NOOP2("Digital/Analog Converter Magnitude", "DAC magnitude");		/* zc0301/zc0301_pas202bcb.c,
-										   sn9c102/sn9c102_pas202bcb.c,
-										   sn9c102/sn9c102_pas106b.c */
-I18N_NOOP2("Band Filter", "band filter");					/* sn9c102/sn9c102_ov7660.c,
-										   sn9c102/sn9c102_ov7630.c */
-I18N_NOOP2("RGB Gamma", "rgb gamma");						// sn9c102/sn9c102_ov7630.c.
-I18N_NOOP2("Reset Level", "reset level");					// sn9c102/sn9c102_hv7131d.c
-I18N_NOOP2("Pixel Bias Voltage", "pixel bias voltage");				// sn9c102/sn9c102_hv7131d.c
-I18N_NOOP2("Noise Suppression (Smoothing)", "Noise suppression (smoothing)");	// gspca/m5602/m5602_s5k4aa.c
-I18N_NOOP("Minimum Clock Divider");						// gspca/mr97310a.c
-I18N_NOOP("Webcam Effects");							// gspca/t613.c
-I18N_NOOP("Infrared");								// gspca/sonixj.c
-I18N_NOOP2("Black/White", "B/W");						// hexium_gemini.c
-I18N_NOOP("Auto Luminance Control");						// tcm825x.c
-I18N_NOOP("Horizontal Edge Enhancement");					// tcm825x.c
-I18N_NOOP("Vertical Edge Enhancement");						// tcm825x.c
-I18N_NOOP("Lens Shading Compensation");						// tcm825x.c
-I18N_NOOP("Maximum Exposure Time");						// tcm825x.c
-I18N_NOOP("Red Saturation");							// vino.c (=> indycam.h)
-I18N_NOOP("Blue Saturation");							// vino.c (=> indycam.h)
-I18N_NOOP("Luminance Bandpass");						// vino.c (=> ssa7191.c)
-I18N_NOOP("Luminance Bandpass Weight");						// vino.c (=> ssa7191.c)
-I18N_NOOP("High Frequency Luminance Coring", "HF Luminance Coring");		// vino.c (=> ssa7191.c)
-I18N_NOOP("Force Color ON", "Force Colour");					// vino.c (=> ssa7191.c)
-I18N_NOOP2("Chrominance Gain", "Chrominance Gain Control");			// vino.c (=> ssa7191.c)
-I18N_NOOP("Video Tape Recorder Time Constant", "VTR Time Constant");		// vino.c (=> ssa7191.c)
-I18N_NOOP("Luminance Delay Compensation");					// vino.c (=> ssa7191.c)
-I18N_NOOP("Vertical Noise Reduction");						// vino.c (=> ssa7191.c)
-I18N_NOOP("Save User Settings");						// pwc/pwc_v4l.c
-I18N_NOOP("Restore User Settings");						// pwc/pwc_v4l.c
-I18N_NOOP("Restore Factory Settings");						// pwc/pwc_v4l.c
-I18N_NOOP2("Color Mode", "Colour mode");					// pwc/pwc_v4l.c
-I18N_NOOP2("Auto Contour", "Auto contour");					// pwc/pwc_v4l.c
-I18N_NOOP("Contour");								// pwc/pwc_v4l.c
-I18N_NOOP2("Backlight Compensation", "Backlight compensation");			// pwc/pwc_v4l.c
-I18N_NOOP("Flicker Suppression", "Flickerless");				// pwc/pwc_v4l.c
-I18N_NOOP2("Noise Reduction", "Noise reduction");				// pwc/pwc_v4l.c
+/* Custom video control titles: */
+// i18n: Target Size (KB) (=> KB = kilobyte)
+I18N_NOOP("Target KB");					// cpia2/cpia2_v4l.c
+// i18n: General Purpose In/Out
+I18N_NOOP("GPIO");					// cpia2/cpia2_v4l.c
+I18N_NOOP("Flicker Reduction");				// cpia2/cpia2_v4l.c
+I18N_NOOP("Framerate");					// cpia2/cpia2_v4l.c
+// i18n: USB Isochronous Interface
+I18N_NOOP("USB Alternate");				// cpia2/cpia2_v4l.c
+// i18n: Selection of combinations of light sources
+I18N_NOOP("Lights");	// cpia2/cpia2_v4l.c
+I18N_NOOP("Reset Camera");				// cpia2/cpia2_v4l.c
+// i18n: Chroma Auto Gain Control
+I18N_NOOP("chroma agc");				// bt8xx/bttv-driver.c
+// i18n: Combfilter
+I18N_NOOP("combfilter");				// bt8xx/bttv-driver.c
+// i18n: Automute
+I18N_NOOP("automute");					/* bt8xx/bttv-driver.c,
+							   saa7134/saa7134-video.c */
+// i18n: Luminance Decimation Filter
+I18N_NOOP("luma decimation filter");			// bt8xx/bttv-driver.c
+// i18n: Analog/Digital Conversion Crush (!!! aGc is a typo !!! => aDc)
+I18N_NOOP("agc crush");					// bt8xx/bttv-driver.c
+// i18n: Video Cassette Recorder Hack (improves sync on poor VCR tapes)
+I18N_NOOP("vcr hack");					// bt8xx/bttv-driver.c
+// i18n: Whitecrush Upper
+I18N_NOOP("whitecrush upper");				// bt8xx/bttv-driver.c
+// i18n: Whitecrush Lower
+I18N_NOOP("whitecrush lower");				// bt8xx/bttv-driver.c
+// i18n: U-V Gain Ratio (NOT Ultra Violet !)
+I18N_NOOP("uv ratio");					// bt8xx/bttv-driver.c
+// i18n: Full Luminance Range
+I18N_NOOP("full luma range");				// bt8xx/bttv-driver.c
+// i18n: Luminance Coring Level (=> Improves SNR (Signat-to-Noise-Ratio) by HF filtering)
+I18N_NOOP("coring");					// bt8xx/bttv-driver.c
+I18N_NOOP("Invert");					// saa7134/saa7134-video.c
+// i18n: Y Offset Odd Field
+I18N_NOOP("y offset odd field");			// saa7134/saa7134-video.c
+// i18n: Y Offset Even Field
+I18N_NOOP("y offset even field");			// saa7134/saa7134-video.c
+// i18n: Green Balance
+I18N_NOOP("green balance");				/* zc0301/zc0301_pas202bcb.c,
+							   sn9c102/sn9c102_pas202bcb.c,
+							   sn9c102/sn9c102_pas106b.c,
+							   sn9c102/sn9c102_ov7660.c,
+							   sn9c102/sn9c102_ov7630.c,
+							   sn9c102/sn9c102_mi0360.c,
+							   sn9c102/sn9c102_mi0343.c,
+							   sn9c102/sn9c102_hv7131.c,
+							   sn9c102/sn9c102_hv7131d.c,
+							   gspca/m5602/m5602_po1030.c,
+							   gspca/m5602/m5602_mt9m111.c */
+// i18n: Digital/Analog Converter Magnitude
+I18N_NOOP("DAC magnitude");				/* zc0301/zc0301_pas202bcb.c,
+							   sn9c102/sn9c102_pas202bcb.c,
+							   sn9c102/sn9c102_pas106b.c */
+// i18n: Band Filter
+I18N_NOOP("band filter");				/* sn9c102/sn9c102_ov7660.c,
+							   sn9c102/sn9c102_ov7630.c */
+// i18n: RGB Gamma
+I18N_NOOP("rgb gamma");					// sn9c102/sn9c102_ov7630.c.
+// i18n: Reset Level
+I18N_NOOP("reset level");				// sn9c102/sn9c102_hv7131d.c
+// i18n: Pixel Bias Voltage
+I18N_NOOP("pixel bias voltage");			// sn9c102/sn9c102_hv7131d.c
+// i18n: Noise Suppression (Smoothing)
+I18N_NOOP("Noise suppression (smoothing)");		// gspca/m5602/m5602_s5k4aa.c
+I18N_NOOP("Minimum Clock Divider");			// gspca/mr97310a.c
+I18N_NOOP("Webcam Effects");				// gspca/t613.c
+I18N_NOOP("Infrared");					// gspca/sonixj.c
+// i18n: Black/White
+I18N_NOOP("B/W");					// hexium_gemini.c
+I18N_NOOP("Auto Luminance Control");			// tcm825x.c
+I18N_NOOP("Horizontal Edge Enhancement");		// tcm825x.c
+I18N_NOOP("Vertical Edge Enhancement");			// tcm825x.c
+I18N_NOOP("Lens Shading Compensation");			// tcm825x.c
+I18N_NOOP("Maximum Exposure Time");			// tcm825x.c
+I18N_NOOP("Red Saturation");				// vino.c (=> indycam.h)
+I18N_NOOP("Blue Saturation");				// vino.c (=> indycam.h)
+I18N_NOOP("Luminance Bandpass");			// vino.c (=> ssa7191.c)
+I18N_NOOP("Luminance Bandpass Weight");			// vino.c (=> ssa7191.c)
+// i18n: High Frequency Luminance Coring
+I18N_NOOP("HF Luminance Coring");			// vino.c (=> ssa7191.c)
+I18N_NOOP("Force Color ON", "Force Colour");		// vino.c (=> ssa7191.c)
+// i18n: Chrominance Gain
+I18N_NOOP("Chrominance Gain Control");			// vino.c (=> ssa7191.c)
+// i18n: Video Tape Recorder Time Constant
+I18N_NOOP("VTR Time Constant");				// vino.c (=> ssa7191.c)
+I18N_NOOP("Luminance Delay Compensation");		// vino.c (=> ssa7191.c)
+I18N_NOOP("Vertical Noise Reduction");			// vino.c (=> ssa7191.c)
+I18N_NOOP("Save User Settings");			// pwc/pwc_v4l.c
+I18N_NOOP("Restore User Settings");			// pwc/pwc_v4l.c
+I18N_NOOP("Restore Factory Settings");			// pwc/pwc_v4l.c
+// i18n: Color Mode
+I18N_NOOP("Colour mode");				// pwc/pwc_v4l.c
+// i18n: Auto Contour
+I18N_NOOP("Auto contour");				// pwc/pwc_v4l.c
+I18N_NOOP("Contour");					// pwc/pwc_v4l.c
+// i18n: Backlight Compensation
+I18N_NOOP("Backlight compensation");			// pwc/pwc_v4l.c
+// i18n: Flicker Suppression
+I18N_NOOP("Flickerless");				// pwc/pwc_v4l.c
+// i18n: Noise Reduction
+I18N_NOOP("Noise reduction");				// pwc/pwc_v4l.c
 
 
-// Option strings for video control V4L2_CID_POWER_LINE_FREQUENCY:
-I18N_NOOP2("Off [NOTE: disable flicker compensation]", "NoFliker");
+/* Option strings for video control V4L2_CID_POWER_LINE_FREQUENCY: */
+// i18n: off / disable flicker compensation
+I18N_NOOP("NoFliker");
 I18N_NOOP("Automatic");
 // also: 50 Hz, 60 Hz
 
 
-// Option strings for custom video control "Lights" (cpia2/cpia2_v4l.c)
+/* Option strings for custom video control "Lights" (cpia2/cpia2_v4l.c) */
 I18N_NOOP("Off");
 I18N_NOOP("Top");
 I18N_NOOP("Bottom");
