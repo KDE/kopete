@@ -392,6 +392,7 @@ void AVDeviceConfig::resetControls()
 	for (k=0; k<menuCtrls.size(); k++)
 		mVideoDevicePool->setControlValue(menuCtrls.at(k).id, menuCtrls.at(k).index_default);
 	// NOTE: action video controls can not be reset
+	emit changed( true );
 	// Adjust GUI-elements:
 	setupControls();
 	if (ctrlWidgets.size())
