@@ -1,15 +1,15 @@
 
-include_directories( 
-${KOPETE_INCLUDES} 
+include_directories(
+${KOPETE_INCLUDES}
 )
 
 
 ########### next target ###############
 
-set(kopete_translator_PART_SRCS 
-   translatorplugin.cpp 
-   translatordialog.cpp 
-   translatorguiclient.cpp 
+set(kopete_translator_PART_SRCS
+   translatorplugin.cpp
+   translatordialog.cpp
+   translatorguiclient.cpp
    translatorlanguages.cpp )
 
 kde4_add_plugin(kopete_translator ${kopete_translator_PART_SRCS})

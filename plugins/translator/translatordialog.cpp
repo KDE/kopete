@@ -17,7 +17,7 @@
 
 #include <klocale.h>
 #include <ktextedit.h>
- 
+
 #include "translatordialog.h"
 
 

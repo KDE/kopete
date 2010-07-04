@@ -16,7 +16,7 @@
     * (at your option) any later version.                                   *
     *                                                                       *
     *************************************************************************
-    Patched by Francesco Rossi <redsh@email.it> in order to support new 
+    Patched by Francesco Rossi <redsh@email.it> in order to support new
     google translation page layout (13-sept-2007)
 */
 
@@ -295,7 +295,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 
 //	QRegExp re( "<textarea name=q rows=5 cols=45 wrap=PHYSICAL>(.*)</textarea>" );
 	QRegExp re( "<textarea name=utrans wrap=PHYSICAL dilr=ltr rows=5 id=suggestion>(.*)</textarea>");
-  
+
 	re.setMinimal( true );
 	re.indexIn( data );
 
@@ -370,7 +370,7 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 	case ShowOriginal:
 		if ( msg.format() & Qt::PlainText )
 			msg.setPlainBody( i18n( "%2 \nAuto Translated: \n%1", translated, msg.plainBody() ) );
-		else 
+		else
 			msg.setHtmlBody( i18n( "%2 \nAuto Translated: \n%1", translated, msg.plainBody() ) );
 		break;
 	case ShowDialog:
@@ -379,7 +379,7 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 		d->exec();
 		if ( msg.format() & Qt::PlainText )
 			msg.setPlainBody (d->translatedText() );
-		else	
+		else
 			msg.setHtmlBody( d->translatedText() );
 		delete d;
 		break;
