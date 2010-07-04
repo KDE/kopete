@@ -77,6 +77,8 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 			this, SLOT(showAccountContextMenu(const QPoint &)) );
 	connect( d->ui.accounts, SIGNAL(itemClicked(QListWidgetItem *)),
 			this, SLOT(slotAccountClicked( QListWidgetItem *)) );
+	connect( d->ui.accounts, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
+			this, SLOT(slotAccountDoubleClicked(QListWidgetItem *)) );
 	connect( d->ui.photo, SIGNAL(clicked()), 
 			 this, SLOT(slotPhotoClicked()));
 
@@ -311,6 +313,24 @@ void IdentityStatusWidget::slotAccountClicked( QListWidgetItem * item )
 		AddAccountWizard *addwizard = new AddAccountWizard( this, true );
 		addwizard->setIdentity(identity());
 		addwizard->show();
+	}
+}
+
+void IdentityStatusWidget::slotAccountDoubleClicked( QListWidgetItem * item )
+{
+	//Account toggles connect/disconnect at double click!
+	if ( item && !d->accountHash.isEmpty() )
+	{
+		Kopete::Account * account = d->accountHash[ item ];
+		if ( account ) {
+			if ( account->myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
+			{
+				Kopete::OnlineStatus s(Kopete::OnlineStatus::Online);
+				account->connect( s );
+			} else {
+				account->disconnect();
+			}
+		}
 	}
 }
 

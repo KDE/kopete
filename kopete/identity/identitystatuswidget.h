@@ -69,6 +69,7 @@ private slots:
 
 	void showAccountContextMenu( const QPoint & );
 	void slotAccountClicked( QListWidgetItem * item );
+	void slotAccountDoubleClicked( QListWidgetItem * item );
 	void slotPhotoClicked();
 	void slotAccountRegistered( Kopete::Account *account );
 	void slotAccountUnregistered( const Kopete::Account *account );
