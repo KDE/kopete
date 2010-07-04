@@ -23,15 +23,13 @@
 
 #include <qobject.h>
 #include <qmap.h>
-#include <q3cstring.h>
-#include <q3intdict.h>
+#include <qstring.h>
 
 #include <kio/job.h>
 
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
-class QString;
 class KSelectAction;
 
 namespace Kopete { class Message; }
@@ -55,7 +53,7 @@ friend class TranslatorGUIClient;
 public:
 	static  TranslatorPlugin  *plugin();
 
-	TranslatorPlugin( QObject *parent, const QStringList &args );
+	TranslatorPlugin( QObject *parent, const QVariantList &args );
 	~TranslatorPlugin();
 
 	enum TranslateMode

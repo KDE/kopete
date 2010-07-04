@@ -22,10 +22,9 @@
 
 #include <qapplication.h>
 #include <qregexp.h>
-#include <q3signal.h>
 #include <qstring.h>
-//Added by qt3to4:
-#include <QByteArray>
+#include <qbytearray.h>
+#include <qmetaobject.h>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -33,9 +32,9 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kdeversion.h>
-#include <kaboutdata.h>
 #include <kselectaction.h>
 #include <kicon.h>
+#include <kactioncollection.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -46,13 +45,12 @@
 #include "translatordialog.h"
 #include "translatorguiclient.h"
 #include "translatorlanguages.h"
-#include <kactioncollection.h>
+#include "translatorconfig.h"
 
-typedef KGenericFactory<TranslatorPlugin> TranslatorPluginFactory;
-static const KAboutData aboutdata("kopete_translator", 0, ki18n("Translator") , "1.0" );
-K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( &aboutdata )  )
+K_PLUGIN_FACTORY( TranslatorPluginFactory, registerPlugin<TranslatorPlugin>(); )
+K_EXPORT_PLUGIN( TranslatorPluginFactory( "kopete_translator" ) )
 
-TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args */ )
+TranslatorPlugin::TranslatorPlugin( QObject *parent, const QVariantList & /* args */ )
 : Kopete::Plugin( TranslatorPluginFactory::componentData(), parent )
 {
 	kDebug( 14308 ) ;
@@ -72,15 +70,9 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * ) ),
 		this, SLOT( slotNewKMM( Kopete::ChatSession * ) ) );
 
-	QStringList keys;
-	QMap<QString, QString> m = m_languages->languagesMap();
-	for ( int k = 0; k <= m_languages->numLanguages(); k++ )
-		keys << m[ m_languages->languageKey( k ) ];
-
 	m_actionLanguage = new KSelectAction( KIcon("preferences-desktop-locale"), i18n( "Set &Language" ), this );
-        actionCollection()->addAction( "contactLanguage", m_actionLanguage );
-	m_actionLanguage->setItems( keys );
-	connect( m_actionLanguage, SIGNAL( triggered(bool) ), this, SLOT(slotSetLanguage() ) );
+	actionCollection()->addAction( "contactLanguage", m_actionLanguage );
+	connect( m_actionLanguage, SIGNAL( triggered(int) ), this, SLOT(slotSetLanguage() ) );
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
 
 	setXMLFile( "translatorui.rc" );
@@ -88,10 +80,9 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const QStringList & /* args
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already running)
 	const QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
 	for (QList<Kopete::ChatSession*>::ConstIterator it= sessions.begin(); it!=sessions.end() ; ++it)
-	  slotNewKMM( *it );
+		slotNewKMM( *it );
 
 	loadSettings();
-	connect( this, SIGNAL( settingsChanged() ), this, SLOT( loadSettings() ) );
 }
 
 TranslatorPlugin::~TranslatorPlugin()
@@ -109,31 +100,43 @@ TranslatorPlugin* TranslatorPlugin::pluginStatic_ = 0L;
 
 void TranslatorPlugin::loadSettings()
 {
+	QString previousLang = m_languages->languageKey( m_service, m_actionLanguage->currentItem() );
+
+	TranslatorConfig::self()->readConfig();
 	int mode = 0;
 
-	KConfigGroup config = KGlobal::config()->group("Translator Plugin");
-	m_myLang = m_languages->languageKey( config.readEntry( "myLang" , 0 ) );
-	m_service = m_languages->serviceKey( config.readEntry( "Service", 0 ) );
+	m_myLang = TranslatorConfig::defaultLanguage();
+	m_service = TranslatorConfig::self()->service();
 
-	if ( config.readEntry( "IncomingDontTranslate", true ) )
-		mode = 0;
-	else if ( config.readEntry( "IncomingShowOriginal", false ) )
-		mode = 1;
-	else if ( config.readEntry( "IncomingTranslate", false ) )
-		mode = 2;
+	if ( TranslatorConfig::incomingDontTranslate() )
+		mode = DontTranslate;
+	else if ( TranslatorConfig::incomingShowOriginal() )
+		mode = ShowOriginal;
+	else if ( TranslatorConfig::incomingTranslate() )
+		mode = JustTranslate;
 
 	m_incomingMode = mode;
 
-	if ( config.readEntry( "OutgoingDontTranslate", true ) )
-		mode = 0;
-	else if ( config.readEntry( "OutgoingShowOriginal", false ) )
-		mode = 1;
-	else if ( config.readEntry( "OutgoingTranslate", false ) )
-		mode = 2;
-	else if ( config.readEntry( "OutgoingAsk", false ) )
-		mode = 3;
+	if ( TranslatorConfig::outgoingDontTranslate() )
+		mode = DontTranslate;
+	else if ( TranslatorConfig::outgoingShowOriginal() )
+		mode = ShowOriginal;
+	else if ( TranslatorConfig::outgoingTranslate() )
+		mode = JustTranslate;
+	else if ( TranslatorConfig::outgoingAsk() )
+		mode = ShowDialog;
 
 	m_outgoingMode = mode;
+
+	// Setting menu entries
+
+	QStringList keys;
+	QMap<QString, QString> m = m_languages->languagesMap( m_service );
+	for ( int k = 0; k <= m_languages->numLanguages( m_service ); k++ )
+		keys << m[ m_languages->languageKey( m_service, k ) ];
+
+	m_actionLanguage->setItems( keys );
+	m_actionLanguage->setCurrentItem( m_languages->languageIndex( m_service, previousLang ) );
 }
 
 void TranslatorPlugin::slotSelectionChanged( bool b )
@@ -147,12 +150,11 @@ void TranslatorPlugin::slotSelectionChanged( bool b )
 
 	if( !m )
 		return;
-
 	QString languageKey = m->pluginData( this, "languageKey" );
 	if ( !languageKey.isEmpty() && languageKey != "null" )
-		m_actionLanguage->setCurrentItem( m_languages->languageIndex( languageKey ) );
+		m_actionLanguage->setCurrentItem( m_languages->languageIndex( m_service, languageKey ) );
 	else
-		m_actionLanguage->setCurrentItem( m_languages->languageIndex( "null" ) );
+		m_actionLanguage->setCurrentItem( m_languages->languageIndex( m_service, "null" ) );
 }
 
 void TranslatorPlugin::slotNewKMM( Kopete::ChatSession *KMM )
@@ -221,16 +223,10 @@ void TranslatorPlugin::slotOutgoingMessage( Kopete::Message &msg )
 
 void TranslatorPlugin::translateMessage( const QString &msg, const QString &from, const QString &to, QObject *obj, const char* slot )
 {
-	Q3Signal completeSignal;
-	completeSignal.connect( obj, slot );
-
 	QString result = translateMessage( msg, from, to );
 
 	if(!result.isNull())
-	{
-		completeSignal.setValue( result );
-		completeSignal.activate();
-	}
+		QMetaObject::invokeMethod( obj, slot, Q_ARG( QString, result ) );
 }
 
 QString TranslatorPlugin::translateMessage( const QString &msg, const QString &from, const QString &to )
@@ -259,16 +255,9 @@ QString TranslatorPlugin::translateMessage( const QString &msg, const QString &f
 
 QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QString &from, const QString &to )
 {
-	KUrl translatorURL ( "http://translate.google.com/translate_t");
-
-	QString body = QString(QUrl::toPercentEncoding( msg ));
-	QString lp = from + '|' + to;
-
-	QByteArray postData = QString( "text=" + body + "&langpair=" + lp ).toUtf8();
-
-	QString gurl = "http://translate.google.com/translate_t?text=" + body +"&langpair=" + lp;
-	kDebug(14308) << " URL: " << gurl;
-	KUrl geturl ( gurl );
+	KUrl geturl ( QString("http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=%1&langpair=%2|%3")
+			.arg(QUrl::toPercentEncoding( msg ), from, to) );
+	kDebug(14308) << "URL:" << geturl;
 
 	KIO::TransferJob *job = KIO::get( geturl );
 	//job = KIO::http_post( translatorURL, postData );
@@ -285,7 +274,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 	while ( !m_completed[ job ] )
 		qApp->processEvents();
 
-	QString data = QString::fromLatin1( m_data[ job ] );
+	QString data = QString::fromUtf8( m_data[ job ] );
 
 	// After hacks, we need to clean
 	m_data.remove( job );
@@ -293,8 +282,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 
 //	kDebug( 14308 ) << "Google response:"<< endl << data;
 
-//	QRegExp re( "<textarea name=q rows=5 cols=45 wrap=PHYSICAL>(.*)</textarea>" );
-	QRegExp re( "<textarea name=utrans wrap=PHYSICAL dilr=ltr rows=5 id=suggestion>(.*)</textarea>");
+	QRegExp re( "\"translatedText\":\"(.*)\"" );
 
 	re.setMinimal( true );
 	re.indexIn( data );
@@ -304,14 +292,19 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 
 QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QString &from, const QString &to )
 {
-	QString body = QString(QUrl::toPercentEncoding( msg));
-	QString lp = from + '_' + to;
-	QString gurl = "http://babelfish.yahoo.com/translate_txt?&lp=" + lp  + "&text=" + body;
-	KUrl geturl ( gurl );
+	KUrl geturl ( "http://babelfish.yahoo.com/translate_txt" );
 
-	kDebug( 14308 ) << "URL: " << gurl;
+	QString body = QUrl::toPercentEncoding( msg );
+	body.replace("%20", "+");
 
-	KIO::TransferJob *job = KIO::get( geturl );
+	QByteArray postData = QString( "ei=UTF-8&doit=done&fr=bf-res&intl=1&tt=urltext&trtext=%1&lp=%2_%3&btnTrTxt=Translate")
+				.arg( body, from, to )
+				.toLocal8Bit();
+	kDebug(14308) << "URL:" << geturl << "(post data" << postData << ")";
+
+	KIO::TransferJob *job = KIO::http_post( geturl, postData );
+	job->addMetaData( "content-type", "Content-Type: application/x-www-form-urlencoded" );
+	job->addMetaData( "referrer", "http://babelfish.yahoo.com/translate_txt" );
 
 	QObject::connect( job, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotDataReceived( KIO::Job *, const QByteArray & ) ) );
 	QObject::connect( job, SIGNAL( result( KJob * ) ), this, SLOT( slotJobDone( KJob * ) ) );
@@ -328,9 +321,9 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg, const QStri
 	m_data.remove( job );
 	m_completed.remove( job );
 
-	//kDebug( 14308 ) << "Babelfish response: " << endl << data;
+//	kDebug( 14308 ) << "Babelfish response: " << endl << data;
 
-	QRegExp re( "<div style=padding:10px;>(.*)</div>" );
+	QRegExp re( "<div style=\"padding:0.6em;\">(.*)</div>" );
 	re.setMinimal( true );
 	re.indexIn( data );
 
@@ -371,7 +364,7 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 		if ( msg.format() & Qt::PlainText )
 			msg.setPlainBody( i18n( "%2 \nAuto Translated: \n%1", translated, msg.plainBody() ) );
 		else
-			msg.setHtmlBody( i18n( "%2 \nAuto Translated: \n%1", translated, msg.plainBody() ) );
+			msg.setHtmlBody( i18n( "%2 <br/>Auto Translated: <br/>%1", translated, msg.plainBody() ) );
 		break;
 	case ShowDialog:
 	{
@@ -393,7 +386,7 @@ void TranslatorPlugin::sendTranslation( Kopete::Message &msg, const QString &tra
 
 void TranslatorPlugin::slotDataReceived ( KIO::Job *job, const QByteArray &data )
 {
-	m_data[ job ] += QByteArray( data, data.size() + 1 );
+	m_data[ job ].append(data);
 }
 
 void TranslatorPlugin::slotJobDone ( KJob *job )
@@ -408,7 +401,7 @@ void TranslatorPlugin::slotSetLanguage()
 {
 	Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
 	if( m && m_actionLanguage )
-		m->setPluginData( this, "languageKey", m_languages->languageKey( m_actionLanguage->currentItem() ) );
+		m->setPluginData( this, "languageKey", m_languages->languageKey( m_service, m_actionLanguage->currentItem() ) );
 }
 
 #include "translatorplugin.moc"

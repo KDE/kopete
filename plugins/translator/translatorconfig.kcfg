@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+    <kcfgfile name="kopeterc"/>
+
+    <group name="Translator plugin">
+        <entry name="DefaultLanguage" type="String">
+            <label>Default native language</label>
+            <default>null</default>
+        </entry>
+
+        <entry name="Service" type="String">
+            <label>Translation service</label>
+            <default>google</default>
+        </entry>
+
+        <entry name="IncomingDontTranslate" type="Bool">
+            <label>Do not translate incoming messages</label>
+            <default>true</default>
+        </entry>
+
+        <entry name="IncomingShowOriginal" type="Bool">
+            <label>Show the original incoming message</label>
+            <default>false</default>
+        </entry>
+
+        <entry name="IncomingTranslate" type="Bool">
+            <label>Translate incoming message directly</label>
+            <default>false</default>
+        </entry>
+
+        <entry name="OutgoingDontTranslate" type="Bool">
+            <label>Do not translate outgoing messages</label>
+            <default>true</default>
+        </entry>
+
+        <entry name="OutgoingShowOriginal" type="Bool">
+            <label>Show the original outgoing message</label>
+            <default>false</default>
+        </entry>
+
+        <entry name="OutgoingTranslate" type="Bool">
+            <label>Translate outgoing message directly</label>
+            <default>false</default>
+        </entry>
+
+        <entry name="OutgoingAsk" type="Bool">
+            <label>Show dialog before sending message</label>
+            <default>false</default>
+        </entry>
+
+    </group>
+</kcfg>
+

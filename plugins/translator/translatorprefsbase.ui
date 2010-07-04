@@ -80,7 +80,7 @@
       </widget>
      </item>
      <item row="0" column="1" >
-      <widget class="QComboBox" name="myLang" >
+      <widget class="QComboBox" name="defaultLanguage" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
          <horstretch>1</horstretch>
@@ -90,7 +90,7 @@
       </widget>
      </item>
      <item row="1" column="1" >
-      <widget class="QComboBox" name="Service" />
+      <widget class="QComboBox" name="service"/>
      </item>
     </layout>
    </item>
@@ -116,7 +116,7 @@
        <number>9</number>
       </property>
       <item>
-       <widget class="QRadioButton" name="IncomingDontTranslate" >
+       <widget class="QRadioButton" name="kcfg_IncomingDontTranslate">
         <property name="text" >
          <string>Do not translate</string>
         </property>
@@ -126,7 +126,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="IncomingShowOriginal" >
+       <widget class="QRadioButton" name="kcfg_IncomingShowOriginal">
         <property name="text" >
          <string>Show the original message</string>
         </property>
@@ -136,7 +136,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="IncomingTranslate" >
+       <widget class="QRadioButton" name="kcfg_IncomingTranslate">
         <property name="text" >
          <string>Translate directly</string>
         </property>
@@ -167,7 +167,7 @@
        <number>9</number>
       </property>
       <item>
-       <widget class="QRadioButton" name="OutgoingDontTranslate" >
+       <widget class="QRadioButton" name="kcfg_OutgoingDontTranslate">
         <property name="text" >
          <string>Do not translate</string>
         </property>
@@ -177,7 +177,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="OutgoingShowOriginal" >
+       <widget class="QRadioButton" name="kcfg_OutgoingShowOriginal">
         <property name="text" >
          <string>Show the original message</string>
         </property>
@@ -187,14 +187,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="OutgoingTranslate" >
+       <widget class="QRadioButton" name="kcfg_OutgoingTranslate">
         <property name="text" >
          <string>Translate directly</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="OutgoingAsk" >
+       <widget class="QRadioButton" name="kcfg_OutgoingAsk">
         <property name="text" >
          <string>Show dialog before sending</string>
         </property>
