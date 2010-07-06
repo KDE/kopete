@@ -41,6 +41,12 @@
 
 bool messageTimestampLessThan(const Kopete::Message &m1, const Kopete::Message &m2)
 {
+	const Kopete::Contact* c1 = (m1.direction() == Kopete::Message::Outbound) ? m1.to().value(0) : m1.from();
+	const Kopete::Contact* c2 = (m2.direction() == Kopete::Message::Outbound) ? m2.to().value(0) : m2.from();
+
+	if (c1 == c2) // Messages from the same account, keep order as it was saved.
+		return false;
+
 	return m1.timestamp() < m2.timestamp();
 }
 
@@ -406,7 +412,23 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 
 	}
 
-	qSort(messages.begin(), messages.end(), messageTimestampLessThan);
+	//Bubble Sort, can't use qStableSort because we have to compare surrounding items only, mostly
+	//it will be only O(n) sort, because we will only have one contact in metacontact for a day.
+	const int size = messages.size();
+	for (int i = 0; i < size; i++)
+	{
+		bool swap = false;
+		for (int j = 0; j < size - 1; j++)
+		{
+			if (messageTimestampLessThan(messages.at(j + 1), messages.at(j))) {
+				messages.swap(j, j + 1);
+				swap = true;
+			}
+		}
+
+		if (!swap)
+			break;
+	}
 	return messages;
 }
 
