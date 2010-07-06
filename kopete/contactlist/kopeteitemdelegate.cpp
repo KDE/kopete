@@ -185,6 +185,14 @@ QList<Kopete::Contact*> KopeteItemDelegate::filterContacts( const QList<Kopete::
 	if ( Kopete::AppearanceSettings::self()->showOfflineUsers() )
 		return contacts;
 
+	QAbstractItemView* itemView = qobject_cast<QAbstractItemView*>(parent());
+	if ( itemView )
+	{
+		QSortFilterProxyModel* proxyModel = qobject_cast<QSortFilterProxyModel*>(itemView->model());
+		if ( proxyModel && !proxyModel->filterRegExp().isEmpty() )
+			return contacts;
+	}
+
 	QList<Kopete::Contact*> filtered;
 
 	foreach( Kopete::Contact *contact, contacts )
