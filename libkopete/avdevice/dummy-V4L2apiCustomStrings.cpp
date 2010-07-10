@@ -54,9 +54,9 @@ I18N_NOOP("luma decimation filter");			// bt8xx/bttv-driver.c
 I18N_NOOP("agc crush");					// bt8xx/bttv-driver.c
 // i18n: Video Cassette Recorder Hack (improves sync on poor VCR tapes)
 I18N_NOOP("vcr hack");					// bt8xx/bttv-driver.c
-// i18n: Whitecrush Upper
+// i18n: Whitecrush Upper (whitecrush => adaptive auto gain control to prevent "blooming" of the video signal due to very high Luminance levels; upper threshold)
 I18N_NOOP("whitecrush upper");				// bt8xx/bttv-driver.c
-// i18n: Whitecrush Lower
+// i18n: Whitecrush Lower (whitecrush => adaptive auto gain control to prevent "blooming" of the video signal due to very high Luminance levels; lower threshold)
 I18N_NOOP("whitecrush lower");				// bt8xx/bttv-driver.c
 // i18n: U-V Gain Ratio (NOT Ultra Violet !)
 I18N_NOOP("uv ratio");					// bt8xx/bttv-driver.c
