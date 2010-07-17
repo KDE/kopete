@@ -25,8 +25,6 @@
 #include <qwidget.h>
 #include <qapplication.h>
 
-#define KWALLET_TIMEOUT 15000
-
 static WId mainWindowID()
 {
 	if ( QWidget *w = Kopete::UI::Global::mainWidget() )
@@ -37,7 +35,7 @@ static WId mainWindowID()
 class Kopete::WalletManager::Private
 {
 public:
-	Private() : wallet(0), signal(0), firstTry(true) {}
+	Private() : wallet(0), signal(0) {}
 	~Private() { delete wallet; delete signal; }
 
 	KWallet::Wallet *wallet;
@@ -50,16 +48,11 @@ public:
 	// instead, we store a KopeteWalletSignal which we connect to, and create
 	// a new one for each set of requests.
 	KopeteWalletSignal *signal;
-
-	bool firstTry;
-	QTimer timeoutTimer;
 };
 
 Kopete::WalletManager::WalletManager()
  : d( new Private )
 {
-	d->timeoutTimer.setSingleShot( true );
-	connect( &(d->timeoutTimer), SIGNAL(timeout()), this, SLOT(slotWalletChangedStatus()) );
 }
 
 Kopete::WalletManager::~WalletManager()
@@ -115,15 +108,12 @@ void Kopete::WalletManager::openWalletInner()
 		return;
 	}
 
-	d->firstTry = true;
-	d->timeoutTimer.start( KWALLET_TIMEOUT );
 	connect( d->wallet, SIGNAL(walletOpened(bool)), SLOT(slotWalletChangedStatus()) );
 }
 
 void Kopete::WalletManager::slotWalletChangedStatus()
 {
 	kDebug(14010) << " isOpen: " << d->wallet->isOpen();
-	d->timeoutTimer.stop();
 
 	if( d->wallet->isOpen() )
 	{
@@ -149,18 +139,7 @@ void Kopete::WalletManager::slotWalletChangedStatus()
 		delete d->wallet;
 		d->wallet = 0;
 
-		if ( d->firstTry )
-		{
-			// Try again if it's the first failure
-			kDebug(14010) << "wallet open timeout";
-			openWalletInner();
-			d->firstTry = false;
-			return;
-		}
-		else
-		{
-			kWarning(14010) << "wallet open error";
-		}
+		kWarning(14010) << "wallet open error";
 	}
 
 	emitWalletOpened( d->wallet );
