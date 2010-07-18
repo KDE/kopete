@@ -91,7 +91,6 @@ public:
 protected:
 	int m_current_device;
 	QVector<VideoDevice*> m_videodevices;	/*!< Vector of pointers to the available video devices */
-	struct imagebuffer m_buffer; // only used when no devices were found
 
 	bool registerDevice( Solid::Device & dev );
 	int showDeviceCapabilities( int device = -1 );

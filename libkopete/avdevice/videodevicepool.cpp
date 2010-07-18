@@ -465,20 +465,12 @@ int VideoDevicePool::maxHeight()
 		return 0;
 }
 
-int VideoDevicePool::setSize( int newwidth, int newheight)
+int VideoDevicePool::setSize( int newwidth, int newheight )
 {
 	if ((m_current_device >= 0) && (m_current_device < m_videodevices.size()))
 		return m_videodevices[m_current_device]->setSize(newwidth, newheight);
 	else
-	{
-		kDebug() << "VideoDevicePool::setSize() fallback for no device.";
-		m_buffer.width=newwidth;
-		m_buffer.height=newheight;
-		m_buffer.pixelformat=	PIXELFORMAT_RGB24;
-		m_buffer.data.resize(m_buffer.width*m_buffer.height*3);
-		kDebug() << "VideoDevicePool::setSize() buffer size: "<< m_buffer.data.size();
-	}
-	return EXIT_SUCCESS;
+		return EXIT_FAILURE;
 }
 
 
