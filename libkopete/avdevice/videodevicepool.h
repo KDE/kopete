@@ -61,7 +61,6 @@ public:
 	int close();
 	int startCapturing();
 	int stopCapturing();
-	int readFrame();
 	int getImage(QImage *qimage);
 	int selectInput(int newinput);
 	int size();
