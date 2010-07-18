@@ -98,9 +98,6 @@ protected:
 	int getSavedDevice();
 	void loadDeviceConfig();
 
-	int xioctl(int request, void *arg);
-	int errnoReturn(const char* s);
-
 private:
 	static VideoDevicePool* s_self;
 	static __u64 m_clients; // Number of instances
