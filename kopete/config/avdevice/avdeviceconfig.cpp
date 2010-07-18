@@ -357,7 +357,7 @@ void AVDeviceConfig::deviceUnregistered( const QString & udi )
 
 void AVDeviceConfig::startCapturing()
 {
-	mVideoDevicePool->setSize(320, 240);
+	mVideoDevicePool->setImageSize(320, 240);
 	mVideoDevicePool->startCapturing();
 	capturingDevice_udi = mVideoDevicePool->currentDeviceUdi();
 	qtimer.start(40);

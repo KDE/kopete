@@ -80,7 +80,7 @@ public:
 	int height();
 	int minHeight();
 	int maxHeight();
-	int setSize( int newwidth, int newheight );
+	int setImageSize( int newwidth, int newheight );
 
 	void fillDeviceKComboBox( KComboBox *combobox );
 	void fillInputKComboBox( KComboBox *combobox );

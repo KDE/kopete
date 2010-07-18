@@ -65,7 +65,7 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 	d->m_devicePool = Kopete::AV::VideoDevicePool::self();
 	d->m_devicePool->open();
 	// NB: this may fail if the device is already in use
-	d->m_devicePool->setSize(640, 480);
+	d->m_devicePool->setImageSize(640, 480);
 	d->m_devicePool->startCapturing();
 #endif
 

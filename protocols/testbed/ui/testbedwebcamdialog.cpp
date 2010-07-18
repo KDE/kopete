@@ -57,7 +57,7 @@ TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * pa
 #ifndef VIDEOSUPPORT_DISABLED
 	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 	mVideoDevicePool->open();
-	mVideoDevicePool->setSize(320, 240);
+	mVideoDevicePool->setImageSize(320, 240);
 	mVideoDevicePool->startCapturing();
 	if (EXIT_SUCCESS == mVideoDevicePool->getFrame())
 	{

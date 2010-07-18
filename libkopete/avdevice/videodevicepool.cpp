@@ -465,7 +465,7 @@ int VideoDevicePool::maxHeight()
 		return 0;
 }
 
-int VideoDevicePool::setSize( int newwidth, int newheight )
+int VideoDevicePool::setImageSize( int newwidth, int newheight )
 {
 	if ((m_current_device >= 0) && (m_current_device < m_videodevices.size()))
 		return m_videodevices[m_current_device]->setSize(newwidth, newheight);

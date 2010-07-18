@@ -52,7 +52,7 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 #ifndef VIDEOSUPPORT_DISABLED
 	m_devicePool = Kopete::AV::VideoDevicePool::self();
 	m_devicePool->open();
-	m_devicePool->setSize(320, 240);
+	m_devicePool->setImageSize(320, 240);
 	m_devicePool->startCapturing();
 	m_updateTimer->start( 250 );
 #endif
