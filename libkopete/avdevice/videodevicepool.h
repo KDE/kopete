@@ -45,50 +45,67 @@ This class allows kopete to check for the existence, open, configure, test, set 
 
 class KOPETE_EXPORT VideoDevicePool : public QObject
 {
+
 Q_OBJECT
+
 public:
 	static VideoDevicePool* self();
-	int open(int device = -1);
+	~VideoDevicePool();
 	bool isOpen();
+	int open( int device = -1 );
+	int close();
+
+	int size();
+	int currentDevice();
+	QString currentDeviceUdi();
+	int inputs();
+	int currentInput();
+	int selectInput( int newinput );
+
+	QList<NumericVideoControl> getSupportedNumericControls();
+	QList<BooleanVideoControl> getSupportedBooleanControls();
+	QList<MenuVideoControl> getSupportedMenuControls();
+	QList<ActionVideoControl> getSupportedActionControls();
+	int getControlValue( quint32 ctrl_id, qint32 * value );
+	int setControlValue( quint32 ctrl_id, qint32 value );
+
+	int startCapturing();
+	int stopCapturing();
 	int getFrame();
+	int getImage( QImage *qimage );
+
 	int width();
 	int minWidth();
 	int maxWidth();
 	int height();
 	int minHeight();
 	int maxHeight();
-	int setSize( int newwidth, int newheight);
-	int close();
-	int startCapturing();
-	int stopCapturing();
-	int getImage(QImage *qimage);
-	int selectInput(int newinput);
-	int size();
-	~VideoDevicePool();
-	void fillDeviceKComboBox(KComboBox *combobox);
-	void fillInputKComboBox(KComboBox *combobox);
-	void fillStandardKComboBox(KComboBox *combobox);
-	QString currentDeviceUdi();
-	int currentDevice();
-	int currentInput();
-	int inputs();
+	int setSize( int newwidth, int newheight );
 
-	QList<NumericVideoControl> getSupportedNumericControls();
-	QList<BooleanVideoControl> getSupportedBooleanControls();
-	QList<MenuVideoControl> getSupportedMenuControls();
-	QList<ActionVideoControl> getSupportedActionControls();
-
-	int getControlValue(quint32 ctrl_id, qint32 * value);
-	int setControlValue(quint32 ctrl_id, qint32 value);
+	void fillDeviceKComboBox( KComboBox *combobox );
+	void fillInputKComboBox( KComboBox *combobox );
+	void fillStandardKComboBox( KComboBox *combobox );
 
 	void saveCurrentDeviceConfig();
 
-signals:
-	/**
-	 * Provisional signatures, probably more useful to indicate which device was registered
-	 */
-	void deviceRegistered( const QString & udi );
-	void deviceUnregistered( const QString & udi );
+protected:
+	int m_current_device;
+	QVector<VideoDevice*> m_videodevices;	/*!< Vector of pointers to the available video devices */
+	struct imagebuffer m_buffer; // only used when no devices were found
+
+	bool registerDevice( Solid::Device & dev );
+	int showDeviceCapabilities( int device = -1 );
+	int getSavedDevice();
+	void loadDeviceConfig();
+
+	int xioctl(int request, void *arg);
+	int errnoReturn(const char* s);
+
+private:
+	static VideoDevicePool* s_self;
+	static __u64 m_clients; // Number of instances
+
+	VideoDevicePool();
 
 protected slots:
 	/**
@@ -97,22 +114,12 @@ protected slots:
 	void deviceAdded( const QString & udi );
 	void deviceRemoved( const QString & udi );
 
-protected:
-	int xioctl(int request, void *arg);
-	int errnoReturn(const char* s);
-	bool registerDevice( Solid::Device & dev );
-	int showDeviceCapabilities(int device = -1);
-	int getSavedDevice();
-	void loadDeviceConfig(); // Load configuration parameters;
-
-	int m_current_device;
-	QVector<VideoDevice*> m_videodevices;	/*!< Vector of pointers to the available video devices */
-	struct imagebuffer m_buffer; // only used when no devices were found
-
-private:
-	VideoDevicePool();
-	static VideoDevicePool* s_self;
-	static __u64 m_clients; // Number of instances
+signals:
+	/**
+	 * Provisional signatures, probably more useful to indicate which device was registered
+	 */
+	void deviceRegistered( const QString & udi );
+	void deviceUnregistered( const QString & udi );
 
 };
 
