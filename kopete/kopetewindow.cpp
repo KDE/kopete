@@ -113,6 +113,10 @@
 GlobalStatusMessageIconLabel::GlobalStatusMessageIconLabel ( QWidget *parent )
 		: QLabel ( parent )
 {
+	setCursor ( QCursor ( Qt::PointingHandCursor ) );
+	setFixedSize ( 16, 16 );
+	setPixmap ( SmallIcon ( "im-status-message-edit" ) );
+	setToolTip ( i18n ( "Global status message" ) );
 }
 
 void GlobalStatusMessageIconLabel::mouseReleaseEvent ( QMouseEvent *event )
@@ -267,12 +271,8 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	statusBar()->addPermanentWidget ( indicator, 0 );
 
 	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel ( statusBarMessage );
-	label->setCursor ( QCursor ( Qt::PointingHandCursor ) );
-	label->setFixedSize ( 16, 16 );
-	label->setPixmap ( SmallIcon ( "im-status-message-edit" ) );
 	connect ( label, SIGNAL ( iconClicked ( const QPoint& ) ),
 	          this, SLOT ( slotGlobalStatusMessageIconClicked ( const QPoint& ) ) );
-	label->setToolTip ( i18n ( "Global status message" ) );
 	statusBarMessageLayout->addWidget ( label );
 	statusBarMessageLayout->addSpacing ( 1 );
 
