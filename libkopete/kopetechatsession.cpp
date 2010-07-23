@@ -540,7 +540,7 @@ void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 		if ( !account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
 		{
 			viewWidget = dynamic_cast<QWidget*>(view(false));
-			isActiveWindow = view(false) && viewWidget->isActiveWindow();
+			isActiveWindow = view(false) && ( viewWidget && viewWidget->isActiveWindow() );
 		}
 
 		if ( ! isActiveWindow )
