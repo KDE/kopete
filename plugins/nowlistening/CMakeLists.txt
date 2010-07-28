@@ -16,8 +16,8 @@ set(kopete_nowlistening_PART_SRCS
    nlamarok.cpp
    nlquodlibet.cpp
    nlkaffeine.cpp
-   nlqmmp.cpp
-   nlaudacious.cpp)
+   nlmpris.cpp
+)
 
 kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 

@@ -46,8 +46,7 @@
 #include "nlamarok.h"
 #include "nlkaffeine.h"
 #include "nlquodlibet.h"
-#include "nlqmmp.h"
-#include "nlaudacious.h"
+#include "nlmpris.h"
 
 #include "nowlisteningguiclient.h"
 
@@ -115,15 +114,14 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QVariantList& /*a
 	d->m_mediaPlayerList.append( new NLamaroK() );
 	d->m_mediaPlayerList.append( new NLKaffeine() );
 	d->m_mediaPlayerList.append( new NLQuodLibet() );
-	d->m_mediaPlayerList.append( new NLqmmp() );
-	d->m_mediaPlayerList.append( new NLaudacious() );
+	d->m_mediaPlayerList.append( new NLmpris() );
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
 	d->m_mediaPlayerList.append( new NLXmms() );
 #endif
 
 	// User has selected a specific mediaPlayer so update the currentMediaPlayer pointer.
-	if( NowListeningConfig::self()->useSpecifiedMediaPlayer() )
+	if( NowListeningConfig::self()->useSpecifiedMediaPlayer() && NowListeningConfig::self()->selectedMediaPlayer() < d->m_mediaPlayerList.size() )
 	{
 		updateCurrentMediaPlayer();
 	}
