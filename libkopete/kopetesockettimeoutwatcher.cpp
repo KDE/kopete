@@ -91,17 +91,17 @@ void SocketTimeoutWatcher::ackTimeoutCheck()
 		int info_length = sizeof(info);
 		if ( getsockopt( sDesc, SOL_TCP, TCP_INFO, (void*)&info, (socklen_t*)&info_length ) == 0 )
 		{
-			if ( info.tcpi_last_ack_recv >= info.tcpi_last_data_sent && (info.tcpi_last_ack_recv - info.tcpi_last_data_sent) > mTimeoutThreshold )
+			if ( info.tcpi_last_ack_recv < info.tcpi_last_data_sent || info.tcpi_last_data_sent <= 0 )
+			{
+				mAckCheckTimer->stop();
+			}
+			else if ( info.tcpi_last_ack_recv >= info.tcpi_last_data_sent && (info.tcpi_last_ack_recv - info.tcpi_last_data_sent) > mTimeoutThreshold )
 			{
 				kWarning() << "Connection timeout for " << mSocket->peerAddress();
 				mAckCheckTimer->stop();
 				emit error( QAbstractSocket::RemoteHostClosedError );
 				emit errorInt( QAbstractSocket::RemoteHostClosedError );
 				mSocket->abort();
-			}
-			else if ( info.tcpi_last_ack_recv < info.tcpi_last_data_sent )
-			{
-				mAckCheckTimer->stop();
 			}
 			return;
 		}
