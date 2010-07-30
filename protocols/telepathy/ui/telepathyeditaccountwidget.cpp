@@ -390,6 +390,10 @@ void TelepathyEditAccountWidget::setupEditAccountUi()
     foreach (Tp::ProtocolParameter *parameter, protocolParameters) {
         if (parameter->isRequired()) {
             mandatoryProtocolParameters.append(parameter);
+        // HACK Work around the password now optional in gabble issue
+        } else if (parameter->name() == "password") {
+            mandatoryProtocolParameters.append(parameter);
+        // HACK ends
         } else {
             optionalProtocolParameters.append(parameter);
         }
@@ -572,6 +576,27 @@ void TelepathyEditAccountWidget::onProtocolGotSelected(bool selected)
     Tp::ProtocolParameterList mandatoryParameters = item->mandatoryParameters();
     Tp::ProtocolParameterList mandatoryParametersLeft = item->mandatoryParameters();
 
+    // Get the list of parameters
+    Tp::ProtocolParameterList optionalParameters = item->optionalParameters();
+    Tp::ProtocolParameterList optionalParametersLeft = item->optionalParameters();
+
+    // HACK: Hack round gabble making password optional (FIXME once we sort out the plugin system)
+    Tp::ProtocolParameter *passwordParameter = 0;
+
+    foreach (Tp::ProtocolParameter *oP, optionalParameters) {
+        if (oP->name() == "password") {
+            passwordParameter = oP;
+        }
+    }
+
+    // If the password parameter is optional, add it to the mandatory lot for now instead.
+    optionalParameters.removeAll(passwordParameter);
+    optionalParametersLeft.removeAll(passwordParameter);
+    mandatoryParameters.append(passwordParameter);
+    mandatoryParametersLeft.append(passwordParameter);
+
+    // HACK ends
+
     // Create the custom UI or generic UI depending on available parameters.
     if (ui) {
         // UI does exist, set it up.
@@ -612,10 +637,6 @@ void TelepathyEditAccountWidget::onProtocolGotSelected(bool selected)
     } else {
         d->tabWidget->addTab(d->mandatoryParametersWidget, d->mandatoryPageDesc);
     }
-
-    // Get the list of parameters
-    Tp::ProtocolParameterList optionalParameters = item->optionalParameters();
-    Tp::ProtocolParameterList optionalParametersLeft = item->optionalParameters();
 
     int pageIndex = 0;
 
