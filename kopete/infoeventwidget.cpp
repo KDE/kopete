@@ -51,6 +51,7 @@ InfoEventWidget::InfoEventWidget(QWidget *parent)
 	d->ui.buttonPrev->setIcon( KIcon( "arrow-left" ) );
 	d->ui.buttonNext->setIcon( KIcon( "arrow-right" ) );
 	d->ui.buttonClose->setIcon( KIcon( "window-close" ) );
+	d->ui.lblInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
 	QWidget::setVisible( false );
 
 	d->currentEventIndex = 0;
