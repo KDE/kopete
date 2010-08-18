@@ -178,7 +178,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	// for the contact avatar, save it with the contactId + .png
 	if (newEntry.category == AvatarManager::Contact && newEntry.contact)
 	{
-		avatarFilename = newEntry.contact->contactId() + ".png";
+		avatarFilename = KIO::encodeFileName(newEntry.contact->contactId()) + ".png";
 	}
 	else
 	{
@@ -199,7 +199,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 
 	if( !avatar.save( avatarUrl.toLocalFile(), "PNG") )
 	{
-		kDebug(14010) << "Saving of " << avatarUrl.toLocalFile() << " failed !";
+		kDebug(14010) << "Saving of scaled avatar to " << avatarUrl.toLocalFile() << " failed !";
 		return AvatarEntry();
 	}
 
@@ -208,7 +208,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	// for the contact avatar, save it with the contactId + .png
 	if (newEntry.category == AvatarManager::Contact && newEntry.contact)
 	{
-		dataFilename = newEntry.contact->contactId() + QLatin1String("_");
+		dataFilename = KIO::encodeFileName(newEntry.contact->contactId()) + QLatin1String("_");
 	}
 
 	dataFilename += KMD5(data).hexDigest();
@@ -223,7 +223,7 @@ Kopete::AvatarManager::AvatarEntry AvatarManager::add(Kopete::AvatarManager::Ava
 	QFile f(dataUrl.toLocalFile());
 	if (!f.open(QIODevice::WriteOnly))
 	{
-		kDebug(14010) << "Saving of " << dataUrl.toLocalFile() << " failed !";
+		kDebug(14010) << "Saving of original avatar to " << dataUrl.toLocalFile() << " failed !";
 		return AvatarEntry();
 	}
 	f.write(data);
