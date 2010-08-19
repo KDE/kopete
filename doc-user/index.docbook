@@ -676,7 +676,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>The Devices section allows you to choose and configure which multimedia devices are used for A/V chatting.  Whether this works for you is highly dependent on the hardware you have and how well it is supported by your operating system.</para>
 <sect3 id="configuring-devices-video">
 <title>Video</title>
-<para>&kopete; uses the Video4Linux 2 system for video.  This shows a blue square if no video device is found, or a preview if the camera is working.  For up-to-date information on &kopete; webcam support, see the <ulink url="http://wiki.kde.org/tiki-index.php?page=Kopete%20Webcam%20Support">Kopete Webcam Support wiki page</ulink>.</para>
+<para>&kopete; uses the Video4Linux 2 system for video.  This shows a blue square if no video device is found, or a preview if the camera is working.  For up-to-date information on &kopete; webcam support, see the <ulink url="http://userbase.kde.org/Webcam_Support">Kopete Webcam Support wiki page</ulink>.</para>
 </sect3>
 <sect3 id="configuring-devices-audio">
 <title>Audio</title>
