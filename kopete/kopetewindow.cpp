@@ -759,7 +759,7 @@ void KopeteWindow::slotConfToolbar()
 	KConfigGroup cg ( KGlobal::config(), "General Options" );
 	saveMainWindowSettings ( cg );
 	KEditToolBar *dlg = new KEditToolBar ( factory() );
-	connect ( dlg, SIGNAL ( newToolbarConfig() ), this, SLOT ( slotUpdateToolbar() ) );
+	connect ( dlg, SIGNAL ( newToolBarConfig() ), this, SLOT ( slotUpdateToolbar() ) );
 	connect ( dlg, SIGNAL ( finished() ) , dlg, SLOT ( deleteLater() ) );
 	dlg->show();
 }
