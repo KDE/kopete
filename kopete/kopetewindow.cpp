@@ -1037,6 +1037,11 @@ void KopeteWindow::slotIdentityStatusIconChanged ( Kopete::Identity *identity )
 		i->setPixmap ( pm );
 }
 
+bool compareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b)
+{
+	return (a->myself()->onlineStatus().status() > b->myself()->onlineStatus().status());
+}
+
 void KopeteWindow::makeTrayToolTip()
 {
 	//FIXME: maybe use identities here?
@@ -1045,6 +1050,7 @@ void KopeteWindow::makeTrayToolTip()
 	{
 		QString tt = QLatin1String ( "<qt>" );
 		QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
+		qSort(accountList.begin(), accountList.end(), compareOnlineStatus);
 		foreach ( Kopete::Account *a, accountList )
 		{
 			Kopete::Contact *self = a->myself();
