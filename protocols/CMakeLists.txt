@@ -15,6 +15,7 @@ option(WITH_GOOGLETALK "Enable Kopete Jabber Google Talk support" ON)
 option(WITH_bonjour "Enable Kopete Bonjour protocol" ON)
 option(WITH_irc "Enable Kopete IRC protocol" OFF)
 option(WITH_wlm "Enable Window Live Messenger support" ON)
+option(WITH_WLM_MEDIASTREAMER "Enable Windows Live Messenger voice clip support" ON)
 option(WITH_meanwhile "Enable Kopete meanwhile protocol" ON)
 option(WITH_skype "Enable Kopete Skype protocol" ON)
 
@@ -39,6 +40,14 @@ else(SSL_FOUND OR WIN32)
   message(STATUS "Not building Google Talk libjingle support")
   set(BUILD_GOOGLETALK FALSE)
 endif(SSL_FOUND OR WIN32)
+
+if(MEDIASTREAMER_FOUND AND LIBORTP_FOUND AND WITH_WLM_MEDIASTREAMER)
+  message(STATUS "Building Windows Live Messenger voice clip support")
+  set(BUILD_WLM_MEDIASTREAMER TRUE)
+else(MEDIASTREAMER_FOUND AND LIBORTP_FOUND AND WITH_WLM_MEDIASTREAMER)
+  message(STATUS "Not building Windows Live Messenger voice clip support")
+  set(BUILD_WLM_MEDIASTREAMER FALSE)
+endif(MEDIASTREAMER_FOUND AND LIBORTP_FOUND AND WITH_WLM_MEDIASTREAMER)
 
 include_directories(${KOPETE_INCLUDES})
 
