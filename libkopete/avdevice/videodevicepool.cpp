@@ -863,7 +863,7 @@ void VideoDevicePool::deviceRemoved( const QString & udi )
 		if ( vd.udi() == udi )
 		{
 			kDebug() << "Video device '" << udi << "' has been removed!";
-			// not sure if this is safe but at this point the device node is gone already anyway
+			vd.close();
 			m_videodevice.remove( i );
 			if (m_current_device == i)
 			{

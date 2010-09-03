@@ -46,7 +46,6 @@ VideoDevice::VideoDevice()
 
 VideoDevice::~VideoDevice()
 {
-	close();
 }
 
 /*!
