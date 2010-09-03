@@ -48,7 +48,7 @@ GoogleTalk::GoogleTalk(const QString &jid, const QString &password) {
 	if ( callProcess->error() == QProcess::FailedToStart ) {
 		//Cant start process call
 		support = false;
-		QMessageBox error(QMessageBox::Critical, "Jabber Protocol", i18n("Cannot start process %1. Check your installation of Kopete", QString(callExe)));
+		QMessageBox error(QMessageBox::Critical, "Jabber Protocol", i18n("Cannot start process %1. Check your installation of Kopete.", QString(callExe)));
 		error.exec();
 		return;
 	} else {
