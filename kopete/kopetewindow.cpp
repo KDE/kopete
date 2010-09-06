@@ -1054,10 +1054,14 @@ void KopeteWindow::makeTrayToolTip()
 		foreach ( Kopete::Account *a, accountList )
 		{
 			Kopete::Contact *self = a->myself();
-			tt += i18nc ( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)</nobr><br />",
+			/*tt += i18nc ( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)</nobr><br />",
 			              "<nobr><img src=\"kopete-account-icon:%3:%4\" /> <b>%1:</b> %2 (<i>%5</i>)</nobr><br />",
 			              a->protocol()->displayName(), a->accountLabel(), QString ( QUrl::toPercentEncoding ( a->protocol()->pluginId() ) ),
-			              QString ( QUrl::toPercentEncoding ( a->accountId() ) ), self->onlineStatus().description() );
+			              QString ( QUrl::toPercentEncoding ( a->accountId() ) ), self->onlineStatus().description() );*/
+			tt += i18nc ( "Account tooltip information: <nobr>ICON <b>PROTOCOL:</b> NAME (<i>STATUS</i>)</nobr><br />",
+			              "<nobr><img src=\"%3\" width=\"16\" height=\"16\" /> <b>%1:</b> %2 (<i>%4</i>)</nobr><br />",
+			              a->protocol()->displayName(), a->accountLabel(),
+				      a->accountIconPath(KIconLoader::Small), self->onlineStatus().description() );
 		}
 		tt += QLatin1String ( "</qt>" );
 		d->tray->setToolTip ( "kopete", i18n("Kopete"), tt );

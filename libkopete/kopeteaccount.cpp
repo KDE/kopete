@@ -28,7 +28,6 @@
 #include <kdialog.h>
 #include <kdeversion.h>
 #include <klocale.h>
-#include <kiconloader.h>
 #include <kiconeffect.h>
 #include <kicon.h>
 #include <kaction.h>
@@ -230,6 +229,13 @@ QPixmap Account::accountIcon(const int size) const
 	}
 
 	return base;
+}
+
+QString Account::accountIconPath(const KIconLoader::Group size) const
+{
+	return KIconLoader::global()->iconPath(d->customIcon.isEmpty() ?
+	                                       d->protocol->pluginIcon() :
+					       d->customIcon, size);
 }
 
 KConfigGroup* Kopete::Account::configGroup() const
