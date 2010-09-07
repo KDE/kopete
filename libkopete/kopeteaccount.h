@@ -30,6 +30,7 @@
 #include <QtCore/QHash>
 
 #include <kconfiggroup.h>
+#include <kiconloader.h>
 
 class KActionMenu;
 class KConfigGroup;
@@ -210,7 +211,16 @@ public:
 	 * @return the icon for this account, colored if needed
 	 */
 	QPixmap accountIcon( const int size = 0 ) const;
-	
+
+	/*
+	 * \brief Get the icon path for this account.
+	 *
+	 * This is the account icon path.
+	 *
+	 * @return the icon path for this account.
+	 */
+	QString accountIconPath(const KIconLoader::Group size) const;
+
 	/**
 	 * \brief change the account icon.
 	 * by default the icon of an account is the protocol one, but it may be overide it.
