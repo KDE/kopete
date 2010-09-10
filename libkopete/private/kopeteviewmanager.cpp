@@ -49,7 +49,7 @@
  * Was in KopeteSystemTray::squashMessage in KDE3
  */
 
-static QString squashMessage( const Kopete::Message& msg )
+static QString squashMessage( const Kopete::Message& msg, const int len = 30 )
 {
 	QString msgText = msg.parsedBody();
 
@@ -57,31 +57,31 @@ static QString squashMessage( const Kopete::Message& msg )
 	rx.setMinimal( true );
 	if ( rx.indexIn( msgText ) == -1 )
 	{
-		// no URLs in text, just pick the first 30 chars of
+		// no URLs in text, just pick the first chars of
 		// the parsed text if necessary. We used parsed text
 		// so that things like "<knuff>" show correctly
 		//  Escape it after snipping it to not snip entities
 		msgText = msg.plainBody();
-		if( msgText.length() > 30 )
-			msgText = msgText.left( 30 ) + QString::fromLatin1( " ..." );
+		if( msgText.length() > len )
+			msgText = msgText.left( len ) + QString::fromLatin1( " ..." );
 		msgText=Kopete::Emoticons::parseEmoticons(Qt::escape(msgText));
 	}
 	else
 	{
 		QString plainText = msg.plainBody();
-		if ( plainText.length() > 30 )
+		if ( plainText.length() > len )
 		{
 			QString fullUrl = rx.cap( 2 );
 			QString shorterUrl;
-			if ( fullUrl.length() > 30 )
+			if ( fullUrl.length() > len )
 			{
 				QString urlWithoutProtocol = rx.cap( 4 );
-				shorterUrl = urlWithoutProtocol.left( 27 )
+				shorterUrl = urlWithoutProtocol.left( len - 3 )
 						+ QString::fromLatin1( "... " );
 			}
 			else
 			{
-				shorterUrl = fullUrl.left( 27 )
+				shorterUrl = fullUrl.left( len - 3 )
 						+ QString::fromLatin1( "... " );
 			}
 			// remove message text
@@ -245,7 +245,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 	// Get an early copy of the plain message body before the chat view works on it
 	// Otherwise toPlainBody() will ignore smileys if they were turned into images during
 	// the html conversion. See bug 161651.
-	const QString squashedMessage = squashMessage( msg );
+	const QString squashedMessage = squashMessage( msg, 300 );
 
 	d->foreignMessage = !isOutboundMessage; // for the view we are about to create
 	session->view( true, msg.requestedPlugin() )->appendMessage( msg );
@@ -363,7 +363,7 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 	                                                  : msg.from()->contactId();
 
 	QString eventId;
-	KLocalizedString body = ki18n( "Incoming message from %1<br />\"%2\"" );
+	KLocalizedString title = ki18n( "Incoming message from %1" );
 	switch( msg.importance() )
 	{
 	case Kopete::Message::Low:
@@ -371,7 +371,7 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 		break;
 	case Kopete::Message::Highlight:
 		eventId = QLatin1String( "kopete_contact_highlight" );
-		body = ki18n( "A highlighted message arrived from %1<br />\"%2\"" );
+		title = ki18n( "A highlighted message arrived from %1" );
 		break;
 	default:
 		if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop
@@ -392,18 +392,20 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 	notify->setActions( QStringList() << i18nc( "@action", "View" )
 	                                  << i18nc( "@action", "Ignore" ) );
 
-	QString bodyString = body.subs( Qt::escape(msgFrom) ).subs( squashedMessage ).toString();
+	QString titleString = title.subs( Qt::escape(msgFrom) ).toString();
 	if ( d->balloonGroupMessageNotificationsPerSender )
 	{
 		// notify is parent, will die with it
 		new Kopete::ActiveNotification(	notify,
 		                msg.from()->account()->accountLabel() + msg.from()->contactId(),
 		                d->activeNotifications,
-		                bodyString );
+						titleString, 
+		                squashedMessage );
 	}
 	else
 	{
-		notify->setText( "<qt>" + bodyString + "</qt>" );
+		notify->setTitle( "<qt>" + titleString + "</qt>" );
+		notify->setText( "<qt>" + squashedMessage + "</qt>" );
 	}
 
 	foreach ( const QString& cl , msg.classes() )

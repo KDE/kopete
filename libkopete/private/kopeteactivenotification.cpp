@@ -20,12 +20,14 @@
 
 namespace Kopete
 {
-        ActiveNotification::ActiveNotification( KNotification *notification, const QString& id_, ActiveNotifications& notifications_, const QString& body_ )
+        ActiveNotification::ActiveNotification( KNotification *notification, const QString& id_, ActiveNotifications& notifications_, const QString& title_, const QString& body_ )
           : QObject( notification ), id( id_ ),
-            notifications( notifications_ ), nEventsSinceNotified( 0 ), body( body_ )
+            notifications( notifications_ ), nEventsSinceNotified( 0 ), title( title_ ), body( body_ )
         {
             notifications.insert( id, this );
-            static_cast<KNotification *>( parent())->setText("<qt>" + body + "</qt>" );
+            KNotification* aParent = static_cast<KNotification *>( parent() );
+            aParent->setTitle( "<qt>" + title + "</qt>" );
+            aParent->setText( "<qt>" + body + "</qt>" );
         }
 
         /**
@@ -41,6 +43,6 @@ namespace Kopete
         void ActiveNotification::incrementMessages() {
             KLocalizedString append = ki18np( "+ %1 more message", "+ %1 more messages");
             KNotification *aParent = static_cast<KNotification *>( parent() );
-            aParent->setText( QString( "<qt>" ) + body + "<br/><small><font color=\"yellow\">" + append.subs( ++nEventsSinceNotified ).toString() + "</small></font></qt>" );
+            aParent->setText( "<qt>" + body + "<br/><small><font color=\"yellow\">" + append.subs( ++nEventsSinceNotified ).toString() + "</small></font></qt>" );
         }
 }

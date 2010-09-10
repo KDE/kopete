@@ -36,7 +36,7 @@ class ActiveNotification : public QObject
      * Construct an active notification and add to the specified hash.
      * notification becomes the parent object
      */
-    ActiveNotification( KNotification *notification, const QString& id_, ActiveNotifications& notifications_, const QString& body_ );
+    ActiveNotification( KNotification *notification, const QString& id_, ActiveNotifications& notifications_, const QString& title_, const QString& body_ );
 
     /**
      * Remove active notification from queue
@@ -52,6 +52,11 @@ class ActiveNotification : public QObject
     QString              id;
     ActiveNotifications& notifications;
     int                  nEventsSinceNotified;
+
+    /**
+     * This is text of title (like "Incoming message from ...")
+     */
+    QString              title;
 
     /**
      * This is the text of the body minus the <qt> and </qt> around it
