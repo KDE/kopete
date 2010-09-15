@@ -363,7 +363,7 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 	                                                  : msg.from()->contactId();
 
 	QString eventId;
-	KLocalizedString title = ki18n( "Incoming message from %1" );
+	KLocalizedString title = ki18n( "Incoming message from <i>%1</i>" );
 	switch( msg.importance() )
 	{
 	case Kopete::Message::Low:
@@ -371,7 +371,7 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 		break;
 	case Kopete::Message::Highlight:
 		eventId = QLatin1String( "kopete_contact_highlight" );
-		title = ki18n( "A highlighted message arrived from %1" );
+		title = ki18n( "A highlighted message arrived from <i>%1</i>" );
 		break;
 	default:
 		if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop
