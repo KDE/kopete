@@ -34,7 +34,6 @@
 #include <KInputDialog>
 #include <KStandardDirs>
 #include <KToolInvocation>
-#include <krun.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
@@ -1219,8 +1218,7 @@ WlmAccount::slotInboxUrl (MSN::hotmailInfo & info)
         tmpMailFile->flush();
 
         /* tmpMailFile->close() erases tmpMailFile->fileName property(), so use it before closing file. */
-        KRun *runner = new KRun( tmpMailFile->fileName(), 0, 0, true ); // false = non-local files
-        runner->setRunExecutables( false ); //security
+        KToolInvocation::invokeBrowser( tmpMailFile->fileName(), "0" ); // "0" means we don't need startup notification
         tmpMailFile->close();
         m_tmpMailFileTimer->start(30000);
         m_tmpMailFileTimer->setSingleShot(true);
