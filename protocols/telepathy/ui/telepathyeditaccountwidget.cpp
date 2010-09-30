@@ -28,8 +28,7 @@
 #include <KCMTelepathyAccounts/AbstractAccountUi>
 #include <KCMTelepathyAccounts/AbstractAccountUi>
 #include <KCMTelepathyAccounts/ConnectionManagerItem>
-#include <KCMTelepathyAccounts/MandatoryParameterEditWidget>
-#include <KCMTelepathyAccounts/OptionalParameterEditWidget>
+#include <KCMTelepathyAccounts/AccountEditWidget>
 #include <KCMTelepathyAccounts/PluginManager>
 #include <KCMTelepathyAccounts/ProtocolItem>
 #include <KCMTelepathyAccounts/ProtocolSelectWidget>
@@ -52,7 +51,7 @@ public:
     Private()
      : tabWidget(0),
        protocolSelectWidget(0),
-       mandatoryParametersWidget(0),
+       accountEditWidget(0),
        mainLayout(0)
     {
         kDebug();
@@ -60,10 +59,7 @@ public:
 
     KTabWidget *tabWidget;
     ProtocolSelectWidget *protocolSelectWidget;
-    AbstractAccountParametersWidget *mandatoryParametersWidget;
-    QList<AbstractAccountParametersWidget*> optionalParametersWidgets;
-    QString mandatoryPageDesc;
-    QList<QString> optionalPageDesc;
+    AccountEditWidget *accountEditWidget;
     QGridLayout *mainLayout;
 };
 
@@ -102,22 +98,14 @@ bool TelepathyEditAccountWidget::validateData()
 {
     kDebug();
 
-    // Check there is a mandatory parameters widget. If not, then fail.
-    if (!d->mandatoryParametersWidget) {
+    // Check there is an account edit widget. If not, then fail.
+    if (!d->accountEditWidget)
         return false;
-    }
 
-    // Check all widgets validate OK.
-    if (!d->mandatoryParametersWidget->validateParameterValues()) {
+    // Validate data
+    if (!d->accountEditWidget->validateParameterValues()) {
         kDebug() << "A widget failed parameter validation. Not accepting wizard.";
         return false;
-    }
-
-    foreach (AbstractAccountParametersWidget *w, d->optionalParametersWidgets) {
-        if (!w->validateParameterValues()) {
-            kDebug() << "A widget failed parameter validation. Not accepting wizard.";
-            return false;
-        }
     }
 
     return true;
@@ -140,28 +128,10 @@ Kopete::Account *TelepathyEditAccountWidget::apply()
 Kopete::Account *TelepathyEditAccountWidget::applyAddedAccount()
 {
     kDebug();
-    
-    // Get the mandatory parameters.
-    QMap<Tp::ProtocolParameter*, QVariant> mandatoryParameterValues;
-    mandatoryParameterValues = d->mandatoryParametersWidget->parameterValues();
 
-    // Get the optional properties
-    QMap<Tp::ProtocolParameter*, QVariant> optionalParameterValues;
-
-    foreach (AbstractAccountParametersWidget *w, d->optionalParametersWidgets) {
-        QMap<Tp::ProtocolParameter*, QVariant> parameters = w->parameterValues();
-        QMap<Tp::ProtocolParameter*, QVariant>::const_iterator i = parameters.constBegin();
-        while (i != parameters.constEnd()) {
-            if (!optionalParameterValues.contains(i.key())) {
-                optionalParameterValues.insert(i.key(), i.value());
-            } else {
-                kWarning() << "Parameter:" << i.key()->name() << "is already in the map.";
-            }
-
-            ++i;
-        }
-        continue;
-    }
+    // Get the parameters.
+    QMap<Tp::ProtocolParameter*, QVariant> parameterValues;
+    parameterValues = d->accountEditWidget->parameterValues();
 
     // Get the ProtocolItem that was selected and the corresponding ConnectionManagerItem.
     ProtocolItem *protocolItem = d->protocolSelectWidget->selectedProtocol();
@@ -176,27 +146,8 @@ Kopete::Account *TelepathyEditAccountWidget::applyAddedAccount()
     QVariantMap parameters;
 
 
-    foreach (Tp::ProtocolParameter *pp, mandatoryParameterValues.keys()) {
-        QVariant value = mandatoryParameterValues.value(pp);
-
-        // Don't try and add empty parameters or ones where the default value is still set.
-        if ((!value.isNull()) && (value != pp->defaultValue())) {
-
-            // Check for params where they are empty and the default is null.
-            if (pp->type() == QVariant::String) {
-                if ((pp->defaultValue() == QVariant()) && (value.toString().isEmpty())) {
-                    continue;
-                }
-            }
-
-            parameters.insert(pp->name(), value);
-        }
-    }
-
-    foreach (Tp::ProtocolParameter *pp, optionalParameterValues.keys()) {
-        QVariant value = optionalParameterValues.value(pp);
-
-        kDebug() << "Op Param:" << pp->name() << value;
+    foreach (Tp::ProtocolParameter *pp, parameterValues.keys()) {
+        QVariant value = parameterValues.value(pp);
 
         // Don't try and add empty parameters or ones where the default value is still set.
         if ((!value.isNull()) && (value != pp->defaultValue())) {
@@ -225,65 +176,17 @@ Kopete::Account *TelepathyEditAccountWidget::applyEditedAccount()
 {
     kDebug();
 
-    // Use the code from KCM to get the parameters and values and unset ones.
-    // Get the mandatory parameters.
-    QMap<Tp::ProtocolParameter*, QVariant> mandatoryParameterValues;
-    mandatoryParameterValues = d->mandatoryParametersWidget->parameterValues();
-
-    // Get the optional parameters.
-    QMap<Tp::ProtocolParameter*, QVariant> optionalParameterValues;
-
-    foreach (AbstractAccountParametersWidget *w, d->optionalParametersWidgets) {
-        QMap<Tp::ProtocolParameter*, QVariant> parameters = w->parameterValues();
-        QMap<Tp::ProtocolParameter*, QVariant>::const_iterator i = parameters.constBegin();
-        while (i != parameters.constEnd()) {
-            if (!optionalParameterValues.contains(i.key())) {
-                optionalParameterValues.insert(i.key(), i.value());
-            } else {
-                kWarning() << "Parameter:" << i.key()->name() << "is already in the map.";
-            }
-
-            ++i;
-        }
-        continue;
-    }
+    // Get the parameters.
+    QMap<Tp::ProtocolParameter*, QVariant> parameterValues;
+    parameterValues = d->accountEditWidget->parameterValues();
 
     // Merge the parameters into a QVariantMap for submitting to the Telepathy AM.
     QVariantMap parameters;
     QVariantMap allParameters;
     QStringList unsetParameters;
 
-    foreach (Tp::ProtocolParameter *pp, mandatoryParameterValues.keys()) {
-        QVariant value = mandatoryParameterValues.value(pp);
-
-        allParameters.insert(pp->name(), value);
-
-       // Unset null parameters.
-        if (value.isNull()) {
-            unsetParameters.append(pp->name());
-            continue;
-        }
-
-        // Unset any parameters where the default value is equal to the current value.
-        if (pp->defaultValue() == value) {
-            unsetParameters.append(pp->name());
-            continue;
-        }
-
-        // Unset any strings where the default is empty, and the value is an empty string
-        if (pp->type() == QVariant::String) {
-            if ((pp->defaultValue().isNull()) && value.toString().isEmpty()) {
-                unsetParameters.append(pp->name());
-                continue;
-            }
-        }
-
-        // Parameter has a valid value, so set it.
-        parameters.insert(pp->name(), value);
-    }
-
-    foreach (Tp::ProtocolParameter *pp, optionalParameterValues.keys()) {
-        QVariant value = optionalParameterValues.value(pp);
+    foreach (Tp::ProtocolParameter *pp, parameterValues.keys()) {
+        QVariant value = parameterValues.value(pp);
 
         allParameters.insert(pp->name(), value);
 
@@ -383,24 +286,18 @@ void TelepathyEditAccountWidget::setupEditAccountUi()
     Tp::ProtocolInfo *protocolInfo = account()->account()->protocolInfo();
     Tp::ProtocolParameterList protocolParameters = protocolInfo->parameters();
 
-    Tp::ProtocolParameterList optionalParameters;
-    Tp::ProtocolParameterList mandatoryParameters;
-
-    foreach (Tp::ProtocolParameter *parameter, protocolParameters) {
-        if (parameter->isRequired()) {
-            mandatoryParameters.append(parameter);
-        } else {
-            optionalParameters.append(parameter);
-        }
-    }
-
     // Get the parameter values.
     QVariantMap parameterValues = account()->account()->parameters();
 
     QString connectionManager = account()->account()->cmName();
     QString protocol = account()->account()->protocol();
 
-    loadProtocolPages(connectionManager, protocol, mandatoryParameters, optionalParameters, parameterValues);
+    d->accountEditWidget = new AccountEditWidget(connectionManager,
+                                                 protocol,
+                                                 protocolParameters,
+                                                 parameterValues,
+                                                 d->tabWidget);
+    d->tabWidget->addTab(d->accountEditWidget, i18n("Options"));
 }
 
 void TelepathyEditAccountWidget::onProtocolGotSelected(bool selected)
@@ -432,141 +329,21 @@ void TelepathyEditAccountWidget::onProtocolGotSelected(bool selected)
     kDebug() << connectionManager;
 
     // Get the list of parameters
-    Tp::ProtocolParameterList mandatoryParameters = item->mandatoryParameters();
-    Tp::ProtocolParameterList optionalParameters = item->optionalParameters();
+    Tp::ProtocolParameterList protocolParameters = item->parameters();
 
-    loadProtocolPages(connectionManager, protocol, mandatoryParameters, optionalParameters);
+    if (d->accountEditWidget) {
+        d->tabWidget->removePage(d->accountEditWidget);
+        d->accountEditWidget->deleteLater();
+        d->accountEditWidget = 0;
+    }
+
+    d->accountEditWidget = new AccountEditWidget(connectionManager,
+                                                 protocol,
+                                                 protocolParameters,
+                                                 QVariantMap(),
+                                                 d->tabWidget);
+    d->tabWidget->addTab(d->accountEditWidget, i18n("Options"));
 }
-
-void TelepathyEditAccountWidget::loadProtocolPages(const QString &connectionManager,
-                                                   const QString &protocol,
-                                                   const Tp::ProtocolParameterList &mandatoryParams,
-                                                   const Tp::ProtocolParameterList &optionalParams,
-                                                   const QVariantMap &values)
-{
-    Tp::ProtocolParameterList mandatoryParameters = mandatoryParams;
-    Tp::ProtocolParameterList optionalParameters = optionalParams;
-
-    // Delete any existing parameters widgets
-    if (d->mandatoryParametersWidget) {
-        d->tabWidget->removePage(d->mandatoryParametersWidget);
-        d->mandatoryParametersWidget->deleteLater();
-        d->mandatoryParametersWidget = 0;
-    }
-
-    foreach (AbstractAccountParametersWidget *w, d->optionalParametersWidgets) {
-        if (w) {
-            d->tabWidget->removePage(w);
-            w->deleteLater();
-        }
-    }
-    d->optionalParametersWidgets.clear();
-
-    // Get the AccountsUi for the plugin, and get the optional parameter widgets for it.
-    AbstractAccountUi *ui = PluginManager::instance()->accountUiForProtocol(connectionManager,
-                                                                            protocol);
-
-    // HACK: Hack round gabble making password optional (FIXME once we sort out the plugin system)
-    Tp::ProtocolParameter *passwordParameter = 0;
-
-    foreach (Tp::ProtocolParameter *oP, optionalParameters) {
-        if (oP->name() == "password") {
-            passwordParameter = oP;
-        }
-    }
-
-    // If the password parameter is optional, add it to the mandatory lot for now instead.
-    optionalParameters.removeAll(passwordParameter);
-    mandatoryParameters.append(passwordParameter);
-
-    // HACK ends
-
-    Tp::ProtocolParameterList mandatoryParametersLeft = mandatoryParameters;
-    Tp::ProtocolParameterList optionalParametersLeft = optionalParameters;
-    
-    // Create the custom UI or generic UI depending on available parameters.
-    if (ui) {
-        // UI does exist, set it up.
-        AbstractAccountParametersWidget *widget = ui->mandatoryParametersWidget(mandatoryParameters, values);
-        QMap<QString, QVariant::Type> manParams = ui->supportedMandatoryParameters();
-        QMap<QString, QVariant::Type>::const_iterator manIter = manParams.constBegin();
-        while(manIter != manParams.constEnd()) {
-            foreach (Tp::ProtocolParameter *parameter, mandatoryParameters) {
-                // If the parameter is not
-                if ((parameter->name() == manIter.key()) &&
-                    (parameter->type() == manIter.value())) {
-                    mandatoryParametersLeft.removeAll(parameter);
-                }
-            }
-
-            ++manIter;
-        }
-
-        if (mandatoryParametersLeft.isEmpty()) {
-            d->mandatoryParametersWidget = widget;
-        } else {
-            // FIXME: At the moment, if the custom widget can't handle all the mandatory
-            // parameters we fall back to the generic one for all of them. It might be nicer
-            // to have the custom UI for as many as possible, and stick a small generic one
-            // underneath for those parameters it doesn't handle.
-            widget->deleteLater();
-            widget = 0;
-        }
-    }
-
-    if (!d->mandatoryParametersWidget) {
-        d->mandatoryParametersWidget = new MandatoryParameterEditWidget(
-                mandatoryParameters, values, d->tabWidget);
-    }
-
-    QString title = d->mandatoryParametersWidget->windowTitle();
-    if (title.isEmpty())
-        title = i18n("Mandatory Parameters");
-
-    d->tabWidget->addTab(d->mandatoryParametersWidget, title);
-
-    // Check if the AbstractAccountUi exists. If not then we use the autogenerated UI for
-    // everything.
-    if (ui) {
-        // UI Does exist, set it up.
-        QList<AbstractAccountParametersWidget*> widgets = ui->optionalParametersWidgets(optionalParameters, values);
-
-        // Remove all handled parameters from the optionalParameters list.
-        QMap<QString, QVariant::Type> opParams = ui->supportedOptionalParameters();
-        QMap<QString, QVariant::Type>::const_iterator opIter = opParams.constBegin();
-        while(opIter != opParams.constEnd()) {
-            foreach (Tp::ProtocolParameter *parameter, optionalParameters) {
-                // If the parameter is not
-                if ((parameter->name() == opIter.key()) &&
-                    (parameter->type() == opIter.value())) {
-                    optionalParametersLeft.removeAll(parameter);
-                }
-            }
-
-            ++opIter;
-        }
-
-        foreach (AbstractAccountParametersWidget *widget, widgets) {
-            d->optionalParametersWidgets.append(widget);
-            title = widget->windowTitle();
-            if (title.isEmpty())
-                title = i18n("Optional Parameters");
-
-            d->tabWidget->addTab(widget, title);
-        }
-    }
-
-    // Show the generic UI if optionalParameters is not empty.
-    if (optionalParametersLeft.size() > 0) {
-        OptionalParameterEditWidget *opew =
-                new OptionalParameterEditWidget(optionalParametersLeft,
-                                                values,
-                                                d->tabWidget);
-        d->optionalParametersWidgets.append(opew);
-        d->tabWidget->addTab(opew, i18n("Optional Parameters"));
-    }
-}
-
 
 #include "telepathyeditaccountwidget.moc"
 

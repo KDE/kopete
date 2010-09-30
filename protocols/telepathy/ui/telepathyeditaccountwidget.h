@@ -58,11 +58,6 @@ private slots:
 private:
     void setupAddAccountUi();
     void setupEditAccountUi();
-    void loadProtocolPages(const QString &connectionManager,
-                           const QString &protocol,
-                           const Tp::ProtocolParameterList &mandatoryParams,
-                           const Tp::ProtocolParameterList &optionalParams,
-                           const QVariantMap &values = QVariantMap());
 
     Kopete::Account *applyAddedAccount();
     Kopete::Account *applyEditedAccount();
