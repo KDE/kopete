@@ -113,7 +113,7 @@ void YABTask::slotData( KIO::Job* /*job*/, const QByteArray &info  )
 
 void YABTask::slotResult( KJob* job )
 {
-	if( job->error () || m_transferJob->isErrorPage () )
+	if( job->error () || ( m_transferJob && m_transferJob->isErrorPage() ) )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "Could not retrieve server side addressbook for user info.";
 		client()->notifyError( i18n( "Could not retrieve server side address book for user info." ), job->errorString(), Client::Info );
