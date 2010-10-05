@@ -33,9 +33,8 @@
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopetecommandhandler.h"
-#include "kopeteaccount.h"
 #include "kopeteprotocol.h"
-#include "kopeteaccountmanager.h"
+#include "kopetestatusmanager.h"
 #include "kopetestatusmessage.h"
 
 #include "nowlisteningconfig.h"
@@ -275,30 +274,25 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 			}
 		}
 
-		QList<Kopete::Account*> accountsList = Kopete::AccountManager::self()->accounts();
-		foreach( Kopete::Account* a, accountsList )
+		Kopete::StatusMessage currentStatusMessage = Kopete::StatusManager::self()->globalStatusMessage();
+
+		// do not add metadata when replace/append to status is set
+		if( !NowListeningConfig::self()->statusAdvertising() &&
+			!NowListeningConfig::self()->appendStatusAdvertising() )
 		{
-			Kopete::StatusMessage currentStatusMessage = a->myself()->statusMessage();
+			// we dont have removeMetaData(), so we create a new status
+			Kopete::StatusMessage tmpStatusMessage;
+			tmpStatusMessage.setMessage(Kopete::StatusManager::self()->globalStatusMessage().message());
+			tmpStatusMessage.setTitle(Kopete::StatusManager::self()->globalStatusMessage().title());
 
-			// do not add metadata when replace/append to status is set
-			if( !NowListeningConfig::self()->statusAdvertising() && 
-				!NowListeningConfig::self()->appendStatusAdvertising() )
+			if(isPlaying)
 			{
-				// we dont have removeMetaData(), so we create a new status
-				Kopete::StatusMessage tmpStatusMessage;
-				tmpStatusMessage.setMessage(a->myself()->statusMessage().message());
-				tmpStatusMessage.setTitle(a->myself()->statusMessage().title());
-
-				if(isPlaying)
-				{
-					tmpStatusMessage.addMetaData("title", track);
-					tmpStatusMessage.addMetaData("artist", artist);
-					tmpStatusMessage.addMetaData("album", album);
-				}
-				a->setStatusMessage(tmpStatusMessage);
-				continue;
+				tmpStatusMessage.addMetaData("title", track);
+				tmpStatusMessage.addMetaData("artist", artist);
+				tmpStatusMessage.addMetaData("album", album);
 			}
-
+			Kopete::StatusManager::self()->setGlobalStatusMessage(tmpStatusMessage);
+		} else {
 			if( NowListeningConfig::self()->appendStatusAdvertising() )
 			{
 				// Check for the now listening message in parenthesis,
@@ -330,8 +324,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 				advert = mediaPlayerAdvert(false); // newTrackPlaying has done the update.
 			}
 			currentStatusMessage.setMessage( advert );
-
-			a->setStatusMessage(currentStatusMessage);
+			Kopete::StatusManager::self()->setGlobalStatusMessage(currentStatusMessage);
 		}
 	}
 }
