@@ -92,6 +92,7 @@ AVDeviceConfig::~AVDeviceConfig()
 		mVideoDevicePool->setControlValue(ctrl_values_bak.at(k).id, ctrl_values_bak.at(k).value);
 	mVideoDevicePool->close();
 	clearControlGUIElements();
+	delete mPrfsVideoDevice;
 }
 
 
