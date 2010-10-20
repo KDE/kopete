@@ -194,7 +194,7 @@ void KopeteAccountConfig::load()
 
 		lvi->setSizeHint( 0, QSize(0, 42) );
 		
-		lvi->setText( 1, account->myself()->onlineStatus().statusTypeToString(account->myself()->onlineStatus().status()) );
+		lvi->setText( 1, account->myself()->onlineStatus().description() );
 		lvi->setTextAlignment( 1, Qt::AlignRight | Qt::AlignVCenter );
 		lvi->setFont( 1, font );
 	
@@ -471,7 +471,7 @@ void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 		if (i->account()->myself() == contact)
 		{
 			(*it)->setIcon( 0, newStatus.iconFor(i->account()) );
-			(*it)->setText( 1, contact->onlineStatus().statusTypeToString(newStatus.status()) );
+			(*it)->setText( 1, newStatus.status().description() );
 			break;
 		}
 	}
