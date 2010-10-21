@@ -471,7 +471,7 @@ void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,
 		if (i->account()->myself() == contact)
 		{
 			(*it)->setIcon( 0, newStatus.iconFor(i->account()) );
-			(*it)->setText( 1, newStatus.status().description() );
+			(*it)->setText( 1, newStatus.description() );
 			break;
 		}
 	}
