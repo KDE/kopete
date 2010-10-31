@@ -259,7 +259,7 @@ void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
             if (tpc->pendingChannelRequest() &&
                 tpc->pendingChannelRequest()->channelRequest())
                 if (tpc->pendingChannelRequest()->
-                    channelRequest()->userActionTime() == crp->userActionTime()) {
+                    channelRequest()->objectPath() == crp->objectPath()) {
                     tpc->setTextChannel(textChannel);
                     break;
                 }
