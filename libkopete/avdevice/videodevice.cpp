@@ -58,7 +58,7 @@ VideoDevice::~VideoDevice()
  */
 void VideoDevice::setupControls()
 {
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 	bool driver_vflip = false;
 	bool driver_hflip = false;
 #endif
@@ -69,7 +69,7 @@ void VideoDevice::setupControls()
 
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			struct v4l2_queryctrl qctrl;
@@ -147,7 +147,7 @@ void VideoDevice::setupControls()
 			break;
 	}
 	
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 	// Software controls:
 	BooleanVideoControl boolCtrl;
 	boolCtrl.value_default = 0;
@@ -172,7 +172,7 @@ void VideoDevice::setupControls()
 #endif
 }
 
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 /*!
     \fn bool VideoDevice::getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList * options)
@@ -380,7 +380,7 @@ int VideoDevice::checkDevice()
 		m_videostream=false;
 
 		m_driver=VIDEODEV_DRIVER_NONE;
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 
 		CLEAR(V4L2_capabilities);
@@ -650,7 +650,7 @@ int VideoDevice::initDevice()
 	m_io_method = IO_METHOD_NONE;
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			if(V4L2_capabilities.capabilities & V4L2_CAP_READWRITE)
@@ -696,7 +696,7 @@ int VideoDevice::initDevice()
 	}
 
 // Select video input, video standard and tune here.
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
@@ -827,7 +827,7 @@ kDebug() << "setSize(" << newwidth << ", " << newheight << ") called.";
 // Change resolution for the video device
 		switch(m_driver)
 		{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 			case VIDEODEV_DRIVER_V4L2:
 //				CLEAR (fmt);
@@ -933,7 +933,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 // Change the pixel format for the video device
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 //			CLEAR (fmt);
@@ -1026,7 +1026,7 @@ int VideoDevice::selectInput(int newinput)
 	{
 		switch (m_driver)
 		{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 			case VIDEODEV_DRIVER_V4L2:
 				if (-1 == ioctl (descriptor, VIDIOC_S_INPUT, &newinput))
@@ -1077,7 +1077,7 @@ int VideoDevice::startCapturing()
 			case IO_METHOD_READ: // Nothing to do
 				break;
 			case IO_METHOD_MMAP:
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 				{
 					unsigned int loop;
@@ -1099,7 +1099,7 @@ int VideoDevice::startCapturing()
 #endif
 				break;
 			case IO_METHOD_USERPTR:
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 				{
 					unsigned int loop;
@@ -1137,7 +1137,7 @@ int VideoDevice::getFrame()
     /// @todo implement me
 	ssize_t bytesread;
 
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 	struct v4l2_buffer v4l2buffer;
 #endif
@@ -1176,7 +1176,7 @@ int VideoDevice::getFrame()
 				}
 				break;
 			case IO_METHOD_MMAP:
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 				CLEAR (v4l2buffer);
 				v4l2buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -1212,7 +1212,7 @@ int VideoDevice::getFrame()
 #endif
 				break;
 			case IO_METHOD_USERPTR:
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 				{
 					unsigned int i;
@@ -1725,7 +1725,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 	if (!isOpen())
 		return EXIT_FAILURE;
 
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 	if (ctrl_id == IMGCTRL_ID_SOFT_AUTOBRIGHTNESSCONTRASTCORR)
 	{
 		if (m_current_input < m_input.size() )
@@ -1774,7 +1774,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			{
@@ -1865,7 +1865,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 	if (!isOpen())
 		return EXIT_FAILURE;
 
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 	if (ctrl_id == IMGCTRL_ID_SOFT_AUTOBRIGHTNESSCONTRASTCORR)
 	{
 		if (m_current_input < m_input.size() )
@@ -1910,7 +1910,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			{
@@ -2013,7 +2013,7 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 {
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			switch(palette)
@@ -2093,7 +2093,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 {
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			switch(pixelformat)
@@ -2299,7 +2299,7 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 	returnvalue = "None";
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			switch(pixelformat)
@@ -2379,7 +2379,7 @@ int VideoDevice::detectPixelFormats()
 			int err = 0;
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			struct v4l2_fmtdesc fmtdesc;
@@ -2457,7 +2457,7 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 {
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			switch(standard)
@@ -2641,7 +2641,7 @@ QString VideoDevice::signalStandardName(int standard)
 	returnvalue = "None";
 	switch(m_driver)
 	{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 		case VIDEODEV_DRIVER_V4L2:
 			switch(standard)
@@ -2727,7 +2727,7 @@ int VideoDevice::detectSignalStandards()
 	{
 	switch(m_driver)
 		{
-#if defined(__linux__) && defined(ENABLE_AV)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 #ifdef V4L2_CAP_VIDEO_CAPTURE
 			case VIDEODEV_DRIVER_V4L2:
 
@@ -2999,7 +2999,7 @@ QString VideoDevice::udi() const
 }
 
 
-#if defined(__linux__) && defined(ENABLE_AV)  && defined(V4L2_CAP_VIDEO_CAPTURE)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)  && defined(V4L2_CAP_VIDEO_CAPTURE)
 /*!
     \fn const char * VideoDevice::getUnifiedV4L2StdCtrlName(quint32 std_ctrl_id)
     \param std_ctrl_id ID of the V4L2 standard video control
