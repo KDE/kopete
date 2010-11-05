@@ -31,6 +31,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <signal.h>
+#include <stdint.h>
 
 #if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 
