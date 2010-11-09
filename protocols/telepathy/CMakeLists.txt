@@ -1,50 +1,21 @@
-project (kopete-telepathy)
+project(kopete-protocol-telepathy)
 
-add_subdirectory (icons)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 
-add_definitions (-DKDE_DEFAULT_DEBUG_AREA=14400)
-remove_definitions (-DQT_NO_STL)
+# search packages used by KDE
+find_package(KDE4 REQUIRED)
+find_package(Kopete REQUIRED)
+find_package(TelepathyQt4 REQUIRED)
+find_package(KCMTelepathyAccounts REQUIRED)
 
-include_directories (${KDE4_INCLUDES}
-                     ${KOPETE_INCLUDES}
-                     ${KCMTELEPATHYACCOUNTS_INCLUDE_DIR}
-                     ${TELEPATHY_QT4_INCLUDE_DIR}
-)
+include (KDE4Defaults)
+include (MacroLibrary)
+include(MacroOptionalAddSubdirectory)
 
-kde4_add_ui_files (kopete_telepathy_UI_SRCS
-                   ui/telepathyaddcontactpage.ui
-)
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+include_directories (${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES} ${KOPETE_INCLUDE_DIR}/kopete )
 
-set (kopete_telepathy_SRCS
-     telepathyprotocol.cpp
-     telepathyaccount.cpp
-     telepathyaddedinfoevent.cpp
-     telepathychannelmanager.cpp
-     telepathychatsession.cpp
-     telepathyclienthandler.cpp
-     telepathycontact.cpp
-     telepathycontactmanager.cpp
-     telepathyprotocolinternal.cpp
-     telepathyfiletransfer.cpp
-     ui/telepathyaddcontactpage.cpp
-     ui/telepathyeditaccountwidget.cpp
-)
+# needed for the share-my-desktop plugin to link against the KopeteTelepathy library.
+#include_directories (${CMAKE_CURRENT_SOURCE_DIR}/protocols/telepathy)
 
-kde4_add_plugin (kopete_telepathy
-                 ${kopete_telepathy_SRCS}
-                 ${kopete_telepathy_UI_SRCS}
-)
-
-target_link_libraries (kopete_telepathy
-                       ${QT_QTCORE_LIBRARY}
-                       ${QT_QTGUI_LIBRARY}
-                       ${KDE4_KDEUI_LIBRARY}
-                       ${KDE4_KIO_LIBRARY}
-                       ${KOPETE_LIBRARIES}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${KCMTELEPATHYACCOUNTS_LIBRARIES}
-)
-
-install (TARGETS kopete_telepathy DESTINATION ${PLUGIN_INSTALL_DIR})
-install (FILES kopete_telepathy.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES telepathychatui.rc DESTINATION ${DATA_INSTALL_DIR}/kopete_telepathy)
+add_subdirectory(src)
