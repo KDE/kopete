@@ -202,7 +202,7 @@ void LinphoneMediaChannel::SetSend(bool send) {
   mute_ = !send;
 }
 
-int LinphoneMediaChannel::GetOutputLevel() {}
+int LinphoneMediaChannel::GetOutputLevel() { return 0; }
 
 LinphoneMediaEngine::LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav)
     : ring_wav_(ringWav),
@@ -243,8 +243,8 @@ MediaChannel *LinphoneMediaEngine::CreateChannel() {
   return new LinphoneMediaChannel(this);
 }
 
-int LinphoneMediaEngine::SetAudioOptions(int options) {}
-int LinphoneMediaEngine::SetSoundDevices(int wave_in_device, int wave_out_device) {}
+int LinphoneMediaEngine::SetAudioOptions(int options) { return 0; }
+int LinphoneMediaEngine::SetSoundDevices(int wave_in_device, int wave_out_device) { return 0; }
 
-float LinphoneMediaEngine::GetCurrentQuality() {}
-int LinphoneMediaEngine::GetInputLevel() {}
+float LinphoneMediaEngine::GetCurrentQuality() { return 0; }
+int LinphoneMediaEngine::GetInputLevel() { return 0; }

@@ -152,6 +152,8 @@ const char* unsafe_filename_characters() {
   return "\\/:*?\"<>|";
 #else  // !WIN32
   // TODO
+  ASSERT(false);
+  return "";
 #endif  // !WIN23
 }
 
