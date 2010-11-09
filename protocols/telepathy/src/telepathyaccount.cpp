@@ -528,7 +528,8 @@ void TelepathyAccount::newTelepathyAccountCreated(Tp::PendingOperation *operatio
                                        << operation->errorMessage();
 
         KMessageBox::error(NULL,
-	    i18n("Creating account failed. Make sure your Mission Controll keeps running."),
+            i18n("Creating account failed. Error was: %1 - %2",
+                 operation->errorName(), operation->errorMessage()),
             i18n("Error - Creating account"));
 
         return;
