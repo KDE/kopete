@@ -1,0 +1,26 @@
+Index: iris/jdns/jdns_p.h
+===================================================================
+--- iris/jdns/jdns_p.h	(revision 1197025)
++++ iris/jdns/jdns_p.h	(working copy)
+@@ -40,6 +40,8 @@
+ # define JDNS_OS_FREEBSD
+ #elif defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
+ # define JDNS_OS_MAC
++#elif defined __sun
++# define JDNS_OS_SOLARIS
+ #endif
+ 
+ #ifdef JDNS_OS_WIN
+Index: iris/jdns/jdns_sys.c
+===================================================================
+--- iris/jdns/jdns_sys.c	(revision 1197025)
++++ iris/jdns/jdns_sys.c	(working copy)
+@@ -705,7 +705,7 @@
+ /*    a define, so the #ifdef doesn't work.  as a workaround, we'll explicitly */
+ /*    specify the platforms that have __res_state_ext */
+ /* #ifdef __res_state_ext */
+-#if defined(JDNS_OS_MAC) || defined(JDNS_OS_FREEBSD)
++#if defined(JDNS_OS_MAC) || defined(JDNS_OS_FREEBSD) || defined(JDNS_OS_SOLARIS)
+ # define USE_EXTEXT
+ #endif
+ 
