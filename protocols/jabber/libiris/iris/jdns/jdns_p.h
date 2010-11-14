@@ -40,6 +40,8 @@
 # define JDNS_OS_FREEBSD
 #elif defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
 # define JDNS_OS_MAC
+#elif defined __sun
+# define JDNS_OS_SOLARIS
 #endif
 
 #ifdef JDNS_OS_WIN
