@@ -72,7 +72,7 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 		mMetaContacts.append (mc);
 	}
 	if ( mUi->keyList->count() == 0 ){
-		mUi->keyList->addItem ( i18nc ("@item:inlistbox", "&lt;No meta-contacts with keys to export&gt;") );
+		mUi->keyList->addItem ( i18nc ("@item:inlistbox", "&lt;No metacontacts with keys to export&gt;") );
 		button( KDialog::User1 )->setEnabled (false);
 	}
 }

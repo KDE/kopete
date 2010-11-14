@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>Cryptography plugin will export keys for the chosen meta-contacts. If no address book entry has been linked to each meta-contact, one will be created.</string>
+      <string>Cryptography plugin will export keys for the chosen metacontacts. If no address book entry has been linked to each metacontact, one will be created.</string>
      </property>
      <property name="wordWrap" >
       <bool>true</bool>
