@@ -136,7 +136,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	// Create actions
 	mEditInfoAction = new KAction( KIcon("user-properties"), i18n( "Edit User Info..." ), this );
 	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
-	
+
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
 	QObject::connect( mActionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 
@@ -188,7 +188,7 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 	*/
 
 	KActionMenu *xtrazStatusMenu = new KActionMenu( i18n( "Set Xtraz Status" ), actionMenu );
-	
+
 	KAction* xtrazStatusSetAction = new KAction( i18n( "Set Status..." ), xtrazStatusMenu );
 	QObject::connect( xtrazStatusSetAction, SIGNAL(triggered(bool)), this, SLOT(setXtrazStatus()) );
 	xtrazStatusMenu->addAction( xtrazStatusSetAction );
@@ -236,7 +236,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		myself()->setOnlineStatus( protocol()->statusManager()->connectingStatus() );
 		QString icqNumber = accountId();
 		kDebug(14153) << "Logging in as " << icqNumber;
-		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
+		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.icq.com" ) );
 		uint port = configGroup()->readEntry( "Port", 5190 );
 
 		//set up the settings for the account

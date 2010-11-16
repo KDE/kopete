@@ -65,7 +65,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 	mProtocol->fillComboFromTable( mAccountSettings->encodingCombo, mProtocol->encodings() );
 
-	//Setup the edtAccountId 
+	//Setup the edtAccountId
 	QRegExp rx("[0-9]{9}");
 	QValidator* validator = new QRegExpValidator( rx, this );
 	mAccountSettings->edtAccountId->setValidator(validator);
@@ -80,9 +80,9 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->mPasswordWidget->load(&mAccount->password());
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->excludeConnect());
 
-		QString serverEntry = mAccount->configGroup()->readEntry("Server", "login.oscar.aol.com");
+		QString serverEntry = mAccount->configGroup()->readEntry("Server", "login.icq.com");
 		int portEntry = mAccount->configGroup()->readEntry("Port", 5190);
-		if ( serverEntry != "login.oscar.aol.com" || ( portEntry != 5190) )
+		if ( serverEntry != "login.icq.com" || ( portEntry != 5190) )
 			mAccountSettings->optionOverrideServer->setChecked( true );
 
 		mAccountSettings->edtServerAddress->setText( serverEntry );
@@ -174,7 +174,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			default:
 				encodingId=4;
 		}
-		
+
 		mProtocol->setComboFromTable( mAccountSettings->encodingCombo,
 		                              mProtocol->encodings(),
 		                              encodingId );
@@ -203,13 +203,13 @@ ICQEditAccountWidget::~ICQEditAccountWidget()
 {
 	if ( m_visibleEngine )
 		delete m_visibleEngine;
-	
+
 	if ( m_invisibleEngine )
 		delete m_invisibleEngine;
-	
+
 	if ( m_ignoreEngine )
 		delete m_ignoreEngine;
-	
+
 	delete mAccountSettings;
 }
 
@@ -254,7 +254,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	}
 	else
 	{
-		mAccount->setServerAddress("login.oscar.aol.com");
+		mAccount->setServerAddress("login.icq.com");
 		mAccount->setServerPort(5190);
 	}
 
@@ -279,17 +279,17 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	{
 		if ( m_visibleEngine )
 			m_visibleEngine->storeChanges();
-		
+
 		if ( m_invisibleEngine )
 			m_invisibleEngine->storeChanges();
-		
+
 		if ( m_ignoreEngine )
 			m_ignoreEngine->storeChanges();
 
 		//Update Oscar settings
 		static_cast<ICQMyselfContact*>( mAccount->myself() )->fetchShortInfo();
 	}
-	
+
 	return mAccount;
 }
 
@@ -299,7 +299,7 @@ bool ICQEditAccountWidget::validateData()
 	bool bOk;
 	QString userId = mAccountSettings->edtAccountId->text();
 	qulonglong uid = userId.toULongLong( &bOk );
-	
+
 	if( !bOk || uid == 0 || userId.isEmpty() )
 	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
 	 	                              i18n("<qt>You must enter a valid ICQ No.</qt>"), i18n("ICQ"));
