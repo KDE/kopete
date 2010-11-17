@@ -627,6 +627,11 @@ void Level::flush()
     text = "";
 }
 
+//Solaris defines FS in sys/regset.h
+#ifdef __sun
+# undef FS
+#endif
+
 const unsigned FONTTBL		= 0;
 const unsigned COLORTBL		= 1;
 const unsigned RED			= 2;
