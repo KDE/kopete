@@ -1,0 +1,4 @@
+Id=kopete-update-icq-server/r1
+File=kopeterc
+Options=overwrite
+Script=kopete-update_icq_server.pl,perl
