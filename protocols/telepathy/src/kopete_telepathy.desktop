@@ -16,6 +16,7 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Telepathy
 Name[cs]=Telepathy
+Name[de]=Telepathy
 Name[nds]=Telepathy
 Name[pt]=Telepathy
 Name[pt_BR]=Telepathy
