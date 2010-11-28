@@ -10,7 +10,7 @@ include ( FindPackageHandleStandardArgs )
 
 if ( EXPAT_INCLUDE_DIR AND EXPAT_LIBRARY )
 	set ( EXPAT_FOUND true )
-else ( ILBC_INCLUDE_DIR AND ILBC_LIBRARY )
+else ( EXPAT_INCLUDE_DIR AND EXPAT_LIBRARY )
 	find_path ( EXPAT_INCLUDE_DIR expat.h )
 	find_library ( EXPAT_LIBRARY NAMES expat )
 
