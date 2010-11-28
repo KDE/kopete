@@ -3,6 +3,7 @@
 #include <deque>
 #include <map>
 #include <string.h>
+#include <stdio.h>
 
 #include "talk/base/common.h"
 #include "talk/base/logging.h"

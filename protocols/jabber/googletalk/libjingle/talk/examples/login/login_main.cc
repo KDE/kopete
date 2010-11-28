@@ -29,6 +29,7 @@
 #include "talk/xmpp/xmppclientsettings.h"
 #include "talk/examples/login/xmppthread.h"
 #include <iostream>
+#include <cstdio>
 
 int main(int argc, char **argv) {
   printf("Auth Cookie: ");

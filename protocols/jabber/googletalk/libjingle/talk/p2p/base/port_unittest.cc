@@ -11,6 +11,7 @@
 #include "talk/p2p/base/stunport.h"
 #include "talk/p2p/base/stunserver.h"
 #include <iostream>
+#include <cstdio>
 
 using namespace cricket;
 

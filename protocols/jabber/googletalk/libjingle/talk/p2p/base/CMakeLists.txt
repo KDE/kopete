@@ -63,7 +63,7 @@ SET(session_unittest_SRCS
 
 add_executable(session_unittest ${session_unittest_SRCS})
 
-target_link_libraries(session_unittest cricketp2pbase cricketbase pthread crickettest cricketxmllite cricketxmpp ${EXPAT_LIBS})
+target_link_libraries(session_unittest cricketp2pbase cricketbase pthread crickettest cricketxmllite cricketxmpp ${EXPAT_LIBRARY})
 
 endif ( BUILD_libjingle_session_unittest )
 

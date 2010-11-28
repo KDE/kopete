@@ -4,6 +4,7 @@
 #include "talk/base/host.h"
 #include "talk/p2p/base/stunserver.h"
 #include <cstring>
+#include <cstdio>
 #include <iostream>
 #include <cassert>
 

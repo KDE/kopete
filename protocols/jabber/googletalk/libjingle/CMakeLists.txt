@@ -1,19 +1,86 @@
-# Copyright (c) 2009, Pali Rohár <pali.rohar@gmail.com>
+# Copyright (c) 2009-2010 Pali Rohár <pali.rohar@gmail.com>
 # autotools files was converted to cmake build system using am2cmake
+
+########### next target ###############
+
+find_package ( LiboRTP )
+find_package ( Mediastreamer )
+find_package ( Speex )
+find_package ( Expat )
+
+if ( NOT WIN32 )
+	find_package ( SSL )
+endif ( NOT WIN32 )
+
+if ( MEDIASTREAMER_FOUND )
+        set ( HAVE_MEDIASTREAMER 1 )
+else (MEDIAST REAMER_FOUND)
+        set ( HAVE_MEDIASTREAMER 0 )
+endif ( MEDIASTREAMER_FOUND )
+
+if ( SPEEX_FOUND )
+	set ( HAVE_SPEEX 1 )
+else ( SPEEX_FOUND )
+	set ( HAVE_SPEEX 0 )
+endif ( SPEEX_FOUND )
+
+#New mediastreamer doesnt have native iLBC support
+set ( HAVE_ILBC 0 )
+
+########### next target ###############
+
+if ( NOT DEFINED BUILD_libjingle_natserver )
+	set ( BUILD_libjingle_natserver true )
+endif ( NOT DEFINED BUILD_libjingle_natserver )
+
+if ( NOT DEFINED BUILD_libjingle_nat_unittest )
+	set ( BUILD_libjingle_nat_unittest true )
+endif ( NOT DEFINED BUILD_libjingle_nat_unittest )
+
+if ( NOT DEFINED BUILD_libjingle_virtualsocket_unittest )
+	set ( BUILD_libjingle_virtualsocket_unittest true )
+endif ( NOT DEFINED BUILD_libjingle_virtualsocket_unittest )
+
+if ( NOT DEFINED BUILD_libjingle_relayserver )
+	set ( BUILD_libjingle_relayserver true )
+endif ( NOT DEFINED BUILD_libjingle_relayserver )
+
+if ( NOT DEFINED BUILD_libjingle_stunserver )
+	set ( BUILD_libjingle_stunserver true )
+endif ( NOT DEFINED BUILD_libjingle_stunserver )
+
+if ( NOT DEFINED BUILD_libjingle_stunserver_unittest )
+	set ( BUILD_libjingle_stunserver_unittest true )
+endif ( NOT DEFINED BUILD_libjingle_stunserver_unittest )
+
+if ( NOT DEFINED BUILD_libjingle_session_unittest )
+	set ( BUILD_libjingle_session_unittest true )
+endif ( NOT DEFINED BUILD_libjingle_session_unittest )
+
+if ( NOT DEFINED BUILD_libjingle_port_unittest )
+	set ( BUILD_libjingle_port_unittest true )
+endif ( NOT DEFINED BUILD_libjingle_port_unittest )
+
+if ( NOT DEFINED BUILD_libjingle_login )
+	set ( BUILD_libjingle_login true )
+endif ( NOT DEFINED BUILD_libjingle_login )
+
+if ( NOT DEFINED BUILD_libjingle_pcp )
+	set ( BUILD_libjingle_pcp true )
+endif ( NOT DEFINED BUILD_libjingle_pcp )
+
+if ( NOT DEFINED BUILD_libjingle_call )
+	set ( BUILD_libjingle_call true )
+endif ( NOT DEFINED BUILD_libjingle_call )
+
+if ( NOT DEFINED BUILD_libjingle_pcp )
+	set ( BUILD_libjingle_pcp true )
+endif ( NOT DEFINED BUILD_libjingle_pcp )
 
 ########### next target ###############
 
 set ( CMAKE_INCLUDE_CURRENT_DIR OFF )
 add_definitions ( -DHAVE_CONFIG_H )
-
-#macro_bool_to_01 ( ILBC_FOUND HAVE_ILBC )
-#macro_bool_to_01 ( ILBC_FOUND HAVE_ILBC_DECODE_H ) # Fixme: need this?
-#macro_bool_to_01 ( LIBORTP_FOUND HAVE_ORTP )
-macro_bool_to_01 ( SPEEX_FOUND HAVE_SPEEX )
-#macro_bool_to_01 ( SPEEX_FOUND HAVE_SPEEX_SPEEX_H ) # Fixme: need this?
-
-#New mediastreamer doesnt have native iLBC support
-set(HAVE_ILBC 0)
 
 if ( NOT WIN32 )
 	set ( POSIX 1 )
@@ -125,7 +192,6 @@ include_directories (
 )
 
 add_subdirectory(talk)
-
 
 ########### install files ###############
 

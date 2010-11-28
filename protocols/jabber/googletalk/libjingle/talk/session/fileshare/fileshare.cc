@@ -45,6 +45,8 @@
 #include "talk/session/tunnel/pseudotcpchannel.h"
 #include "talk/session/tunnel/tunnelsessionclient.h"
 
+#include <iostream>
+
 ///////////////////////////////////////////////////////////////////////////////
 // <description xmlns="http://www.google.com/session/share">
 //   <manifest>
