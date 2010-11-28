@@ -1,0 +1,39 @@
+Index: talk/session/phone/linphonemediaengine.cc
+===================================================================
+--- talk/session/phone/linphonemediaengine.cc	(revision 1194724)
++++ talk/session/phone/linphonemediaengine.cc	(revision 1194725)
+@@ -202,7 +202,7 @@
+   mute_ = !send;
+ }
+ 
+-int LinphoneMediaChannel::GetOutputLevel() {}
++int LinphoneMediaChannel::GetOutputLevel() { return 0; }
+ 
+ LinphoneMediaEngine::LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav)
+     : ring_wav_(ringWav),
+@@ -243,8 +243,8 @@
+   return new LinphoneMediaChannel(this);
+ }
+ 
+-int LinphoneMediaEngine::SetAudioOptions(int options) {}
+-int LinphoneMediaEngine::SetSoundDevices(int wave_in_device, int wave_out_device) {}
++int LinphoneMediaEngine::SetAudioOptions(int options) { return 0; }
++int LinphoneMediaEngine::SetSoundDevices(int wave_in_device, int wave_out_device) { return 0; }
+ 
+-float LinphoneMediaEngine::GetCurrentQuality() {}
+-int LinphoneMediaEngine::GetInputLevel() {}
++float LinphoneMediaEngine::GetCurrentQuality() { return 0; }
++int LinphoneMediaEngine::GetInputLevel() { return 0; }
+Index: talk/base/stringencode.cc
+===================================================================
+--- talk/base/stringencode.cc	(revision 1194724)
++++ talk/base/stringencode.cc	(revision 1194725)
+@@ -152,6 +152,8 @@
+   return "\\/:*?\"<>|";
+ #else  // !WIN32
+   // TODO
++  ASSERT(false);
++  return "";
+ #endif  // !WIN23
+ }
+ 

@@ -1,0 +1,1128 @@
+Index: talk/p2p/base/pseudotcp.cc
+===================================================================
+--- talk/p2p/base/pseudotcp.cc	(revision 1052316)
++++ talk/p2p/base/pseudotcp.cc	(revision 1052317)
+@@ -25,6 +25,7 @@
+  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
++#include <stdlib.h>
+ #include "talk/base/basicdefs.h"
+ #include "talk/base/basictypes.h"
+ #include "talk/base/byteorder.h"
+Index: talk/p2p/base/relayserver_main.cc
+===================================================================
+--- talk/p2p/base/relayserver_main.cc	(revision 1052316)
++++ talk/p2p/base/relayserver_main.cc	(revision 1052317)
+@@ -27,6 +27,7 @@
+ 
+ #include <cassert>
+ #include <iostream>
++#include <string.h>
+ #include "talk/base/host.h"
+ #include "talk/base/thread.h"
+ #include "talk/p2p/base/relayserver.h"
+@@ -53,13 +54,13 @@
+   
+   talk_base::AsyncUDPSocket* int_socket = talk_base::CreateAsyncUDPSocket(pthMain->socketserver());
+   if (int_socket->Bind(int_addr) < 0) {
+-    std::cerr << "bind: " << std::strerror(errno) << std::endl;
++    std::cerr << "bind: " << strerror(errno) << std::endl;
+     return 1;
+   }
+ 
+   talk_base::AsyncUDPSocket* ext_socket = talk_base::CreateAsyncUDPSocket(pthMain->socketserver());
+   if (ext_socket->Bind(ext_addr) < 0) {
+-    std::cerr << "bind: " << std::strerror(errno) << std::endl;
++    std::cerr << "bind: " << strerror(errno) << std::endl;
+     return 1;
+   }
+ 
+Index: talk/p2p/base/stunserver.cc
+===================================================================
+--- talk/p2p/base/stunserver.cc	(revision 1052316)
++++ talk/p2p/base/stunserver.cc	(revision 1052317)
+@@ -27,6 +27,7 @@
+ 
+ #include "talk/base/bytebuffer.h"
+ #include "talk/p2p/base/stunserver.h"
++#include <string.h>
+ #include <iostream>
+ 
+ #ifdef POSIX
+@@ -154,7 +155,7 @@
+   // TODO: Allow response addr attribute if sent from another stun server.
+ 
+   if (socket_->SendTo(buf.Data(), buf.Length(), addr) < 0)
+-    std::cerr << "sendto: " << std::strerror(errno) << std::endl;
++    std::cerr << "sendto: " << strerror(errno) << std::endl;
+ }
+ 
+ } // namespace cricket
+Index: talk/p2p/base/session_unittest.cc
+===================================================================
+--- talk/p2p/base/session_unittest.cc	(revision 1052316)
++++ talk/p2p/base/session_unittest.cc	(revision 1052317)
+@@ -2,6 +2,7 @@
+ #include <sstream>
+ #include <deque>
+ #include <map>
++#include <string.h>
+ 
+ #include "talk/base/common.h"
+ #include "talk/base/logging.h"
+@@ -341,7 +342,7 @@
+     ASSERT(size <= sizeof(last_data));
+     data_count += 1;
+     last_size = size;
+-    std::memcpy(last_data, buf, size);
++    memcpy(last_data, buf, size);
+   }
+ 
+   void Send(const char* data, size_t size) {
+@@ -449,10 +450,10 @@
+     ASSERT(chanhandler2a->last_size == strlen(dat1a));
+     ASSERT(chanhandler2b->last_size == strlen(dat1b));
+ 
+-    ASSERT(std::memcmp(chanhandler1a->last_data, dat2a, strlen(dat2a)) == 0);
+-    ASSERT(std::memcmp(chanhandler1b->last_data, dat2b, strlen(dat2b)) == 0);
+-    ASSERT(std::memcmp(chanhandler2a->last_data, dat1a, strlen(dat1a)) == 0);
+-    ASSERT(std::memcmp(chanhandler2b->last_data, dat1b, strlen(dat1b)) == 0);
++    ASSERT(memcmp(chanhandler1a->last_data, dat2a, strlen(dat2a)) == 0);
++    ASSERT(memcmp(chanhandler1b->last_data, dat2b, strlen(dat2b)) == 0);
++    ASSERT(memcmp(chanhandler2a->last_data, dat1a, strlen(dat1a)) == 0);
++    ASSERT(memcmp(chanhandler2b->last_data, dat1b, strlen(dat1b)) == 0);
+   }
+ }
+ 
+Index: talk/p2p/base/stun.cc
+===================================================================
+--- talk/p2p/base/stun.cc	(revision 1052316)
++++ talk/p2p/base/stun.cc	(revision 1052317)
+@@ -27,6 +27,7 @@
+ 
+ #include "talk/base/logging.h"
+ #include "talk/p2p/base/stun.h"
++#include <string.h>
+ #include <iostream>
+ #include <cassert>
+ 
+@@ -386,7 +387,7 @@
+ 
+ void StunByteStringAttribute::CopyBytes(const void* bytes, uint16 length) {
+   char* new_bytes = new char[length];
+-  std::memcpy(new_bytes, bytes, length);
++  memcpy(new_bytes, bytes, length);
+   SetBytes(new_bytes, length);
+ }
+ 
+Index: talk/p2p/base/sessionmanager.h
+===================================================================
+--- talk/p2p/base/sessionmanager.h	(revision 1052316)
++++ talk/p2p/base/sessionmanager.h	(revision 1052317)
+@@ -156,7 +156,7 @@
+ 
+   // Creates and returns an error message from the given components.  The
+   // caller is responsible for deleting this.
+-  buzz::XmlElement* SessionManager::CreateErrorMessage(
++  buzz::XmlElement* CreateErrorMessage(
+       const buzz::XmlElement* stanza,
+       const buzz::QName& name,
+       const std::string& type,
+Index: talk/p2p/base/relayport.cc
+===================================================================
+--- talk/p2p/base/relayport.cc	(revision 1052316)
++++ talk/p2p/base/relayport.cc	(revision 1052317)
+@@ -34,6 +34,7 @@
+ #include "talk/p2p/base/relayport.h"
+ #include <iostream>
+ #include <cassert>
++#include <string.h>
+ #ifdef OSX
+ #include <errno.h>
+ #endif
+@@ -215,9 +216,9 @@
+   if (size < 24 + magic_cookie_.size()) {
+     return false;
+   } else {
+-    return 0 == std::memcmp(data + 24,
+-                            magic_cookie_.c_str(),
+-                            magic_cookie_.size());
++    return 0 == memcmp(data + 24,
++                       magic_cookie_.c_str(),
++                       magic_cookie_.size());
+   }
+ }
+ 
+@@ -367,7 +368,7 @@
+ 
+   socket_->SignalReadPacket.connect(this, &RelayEntry::OnReadPacket);
+   if (socket_->Bind(local_addr_) < 0)
+-    LOG(INFO) << "bind: " << std::strerror(socket_->GetError());
++    LOG(INFO) << "bind: " << strerror(socket_->GetError());
+ 
+   for (unsigned i = 0; i < port_->options().size(); ++i)
+     socket_->SetOption(port_->options()[i].first, port_->options()[i].second);
+@@ -559,7 +560,7 @@
+   }
+   int sent = socket_->SendTo(data, size, ra->address);
+   if (sent <= 0) {
+-    LOG(LS_VERBOSE) << "sendto: " << std::strerror(socket_->GetError());
++    LOG(LS_VERBOSE) << "sendto: " << strerror(socket_->GetError());
+     assert(sent < 0);
+   }
+   return sent;
+Index: talk/p2p/base/port.cc
+===================================================================
+--- talk/p2p/base/port.cc	(revision 1052316)
++++ talk/p2p/base/port.cc	(revision 1052317)
+@@ -30,6 +30,7 @@
+ #endif
+ 
+ #include <errno.h>
++#include <string.h>
+ 
+ #include <algorithm>
+ #include <iostream>
+@@ -284,8 +285,8 @@
+ 
+   if (stun_msg->type() == STUN_BINDING_REQUEST) {
+     if ((remote_frag_len < 0)
+-        || (std::memcmp(username_attr->bytes(),
+-                        username_frag_.c_str(), username_frag_.size()) != 0)) {
++        || (memcmp(username_attr->bytes(),
++                   username_frag_.c_str(), username_frag_.size()) != 0)) {
+       LOG_J(LS_ERROR, this) << "Received STUN request with bad username";
+       SendBindingErrorResponse(stun_msg.get(), addr, STUN_ERROR_BAD_REQUEST,
+         STUN_ERROR_REASON_BAD_REQUEST);
+@@ -297,8 +298,8 @@
+   } else if ((stun_msg->type() == STUN_BINDING_RESPONSE)
+       || (stun_msg->type() == STUN_BINDING_ERROR_RESPONSE)) {
+     if ((remote_frag_len < 0)
+-        || (std::memcmp(username_attr->bytes() + remote_frag_len,
+-                        username_frag_.c_str(), username_frag_.size()) != 0)) {
++        || (memcmp(username_attr->bytes() + remote_frag_len,
++                   username_frag_.c_str(), username_frag_.size()) != 0)) {
+        LOG_J(LS_ERROR, this) << "Received STUN response with bad username";
+       // Do not send error response to a response
+       return true;
+@@ -796,7 +797,7 @@
+   if (valid) {
+     std::string username_fragment = port_->username_fragment();
+     int offset = (int)(username_attr->length() - username_fragment.size());
+-    if (std::memcmp(username_attr->bytes() + offset,
++    if (memcmp(username_attr->bytes() + offset,
+         username_fragment.c_str(), username_fragment.size()) != 0) {
+       LOG_J(LS_ERROR, this) << "Received STUN response with bad username";
+       valid = false;
+Index: talk/p2p/base/stunserver_main.cc
+===================================================================
+--- talk/p2p/base/stunserver_main.cc	(revision 1052316)
++++ talk/p2p/base/stunserver_main.cc	(revision 1052317)
+@@ -29,6 +29,7 @@
+ #include "talk/base/thread.h"
+ #include "talk/p2p/base/stunserver.h"
+ #include <iostream>
++#include <string.h>
+ 
+ #ifdef POSIX
+ extern "C" {
+@@ -50,7 +51,7 @@
+   
+   talk_base::AsyncUDPSocket* server_socket = talk_base::CreateAsyncUDPSocket(pthMain->socketserver());
+   if (server_socket->Bind(server_addr) < 0) {
+-    std::cerr << "bind: " << std::strerror(errno) << std::endl;
++    std::cerr << "bind: " << strerror(errno) << std::endl;
+     return 1;
+   }
+ 
+Index: talk/session/fileshare/fileshare.cc
+===================================================================
+--- talk/session/fileshare/fileshare.cc	(revision 1052316)
++++ talk/session/fileshare/fileshare.cc	(revision 1052317)
+@@ -670,8 +670,8 @@
+         && !query.empty()
+         && (sscanf(query.c_str(), "width=%u&height=%u",
+                    &width, &height) == 2)) {
+-      width = talk_base::_max<unsigned int>(1, talk_base::_min(width, kMaxPreviewSize));
+-      height = talk_base::_max<unsigned int>(1, talk_base::_min(height, kMaxPreviewSize));
++      width = talk_base::_max<unsigned int>(1, talk_base::_min<unsigned int>(width, kMaxPreviewSize));
++      height = talk_base::_max<unsigned int>(1, talk_base::_min<unsigned int>(height, kMaxPreviewSize));
+       std::string pathname;
+       if (is_sender_) {
+         talk_base::Pathname local_path;
+Index: talk/session/phone/linphonemediaengine.cc
+===================================================================
+--- talk/session/phone/linphonemediaengine.cc	(revision 1052316)
++++ talk/session/phone/linphonemediaengine.cc	(revision 1052317)
+@@ -17,6 +17,10 @@
+  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ // LinphoneMediaEngine is a Linphone implementation of MediaEngine
+ extern "C" {
+ #include "talk/third_party/mediastreamer/mediastream.h"
+@@ -63,7 +67,8 @@
+ }
+ 
+ LinphoneMediaChannel::~LinphoneMediaChannel() {
+-  audio_stream_stop(audio_stream_);
++  if (audio_stream_ != 0)
++    audio_stream_stop(audio_stream_);
+ }
+ 
+ void LinphoneMediaChannel::SetCodecs(const std::vector<Codec> &codecs) {
+@@ -80,19 +85,19 @@
+     } 
+ #endif
+ #ifdef HAVE_SPEEX
+-    if (i->name == speex_wb.mime_type && i->clockrate == speex_wb.clock_rate) {
+-      rtp_profile_set_payload(&av_profile, i->id, &speex_wb);
+-    } else if (i->name == speex_nb.mime_type && i->clockrate == speex_nb.clock_rate) {
+-      rtp_profile_set_payload(&av_profile, i->id, &speex_nb);
++    if (i->name == payload_type_speex_wb.mime_type && i->clockrate == payload_type_speex_wb.clock_rate) {
++      rtp_profile_set_payload(&av_profile, i->id, &payload_type_speex_wb);
++    } else if (i->name == payload_type_speex_nb.mime_type && i->clockrate == payload_type_speex_nb.clock_rate) {
++      rtp_profile_set_payload(&av_profile, i->id, &payload_type_speex_nb);
+     }
+ #endif
+ 
+     if (i->id == 0)
+-      rtp_profile_set_payload(&av_profile, 0, &pcmu8000);
++      rtp_profile_set_payload(&av_profile, 0, &payload_type_pcmu8000);
+ 
+-    if (i->name == telephone_event.mime_type) {
++/*    if (i->name == telephone_event.mime_type) {
+       rtp_profile_set_payload(&av_profile, i->id, &telephone_event);
+-    }
++    }*/
+     
+     if (first) {
+       LOG(LS_INFO) << "Using " << i->name << "/" << i->clockrate;
+@@ -114,12 +119,12 @@
+ bool LinphoneMediaEngine::FindCodec(const Codec &c) {
+   if (c.id == 0)
+     return true;
+-  if (c.name == telephone_event.mime_type)
+-    return true;
++/*  if (c.name == telephone_event.mime_type)
++    return true;*/
+ #ifdef HAVE_SPEEX
+-  if (c.name == speex_wb.mime_type && c.clockrate == speex_wb.clock_rate)
++  if (c.name == payload_type_speex_wb.mime_type && c.clockrate == payload_type_speex_wb.clock_rate)
+     return true;
+-  if (c.name == speex_nb.mime_type && c.clockrate == speex_nb.clock_rate)
++  if (c.name == payload_type_speex_nb.mime_type && c.clockrate == payload_type_speex_nb.clock_rate)
+     return true;
+ #endif
+ #ifdef HAVE_ILBC
+@@ -171,8 +176,8 @@
+ #ifdef HAVE_SPEEX
+   ms_speex_codec_init();
+ 
+-  codecs_.push_back(Codec(110, speex_wb.mime_type, speex_wb.clock_rate, 0, 1, 8));
+-  codecs_.push_back(Codec(111, speex_nb.mime_type, speex_nb.clock_rate, 0, 1, 7));
++  codecs_.push_back(Codec(110, payload_type_speex_wb.mime_type, payload_type_speex_wb.clock_rate, 0, 1, 8));
++  codecs_.push_back(Codec(111, payload_type_speex_nb.mime_type, payload_type_speex_nb.clock_rate, 0, 1, 7));
+   
+ #endif
+ 
+@@ -181,8 +186,8 @@
+   codecs_.push_back(Codec(102, payload_type_ilbc.mime_type, payload_type_ilbc.clock_rate, 0, 1, 4));
+ #endif
+ 
+-  codecs_.push_back(Codec(0, pcmu8000.mime_type, pcmu8000.clock_rate, 0, 1, 2));
+-  codecs_.push_back(Codec(101, telephone_event.mime_type, telephone_event.clock_rate, 0, 1, 1));
++  codecs_.push_back(Codec(0, payload_type_pcmu8000.mime_type, payload_type_pcmu8000.clock_rate, 0, 1, 2));
++ // codecs_.push_back(Codec(101, telephone_event.mime_type, telephone_event.clock_rate, 0, 1, 1));
+   return true;
+ }
+ 
+Index: talk/session/phone/phonesessionclient.cc
+===================================================================
+--- talk/session/phone/phonesessionclient.cc	(revision 1052316)
++++ talk/session/phone/phonesessionclient.cc	(revision 1052317)
+@@ -29,6 +29,9 @@
+ #include "talk/session/phone/phonesessionclient.h"
+ #include "talk/xmpp/constants.h"
+ #include "talk/xmllite/qname.h"
++
++#include <stdio.h>
++
+ namespace {
+ 
+ const std::string NS_PHONE("http://www.google.com/session/phone");
+Index: talk/xmpp/xmppclient.h
+===================================================================
+--- talk/xmpp/xmppclient.h	(revision 1052316)
++++ talk/xmpp/xmppclient.h	(revision 1052317)
+@@ -138,7 +138,7 @@
+     }
+   }
+ 
+-  std::string XmppClient::GetStateName(int state) const {
++  std::string GetStateName(int state) const {
+     switch (state) {
+       case STATE_PRE_XMPP_LOGIN:      return "PRE_XMPP_LOGIN";
+       case STATE_START_XMPP_LOGIN:  return "START_XMPP_LOGIN";
+Index: talk/third_party/mediastreamer/msread.c
+===================================================================
+--- talk/third_party/mediastreamer/msread.c	(revision 1052316)
++++ talk/third_party/mediastreamer/msread.c	(revision 1052317)
+@@ -28,6 +28,8 @@
+ 
+ static MSReadClass *ms_read_class=NULL;
+ 
++gint ms_read_open(MSRead *r, gchar *name);
++
+ MSFilter * ms_read_new(char *name)
+ {
+ 	MSRead *r;
+Index: talk/third_party/mediastreamer/alsacard.c
+===================================================================
+--- talk/third_party/mediastreamer/alsacard.c	(revision 1052316)
++++ talk/third_party/mediastreamer/alsacard.c	(revision 1052317)
+@@ -263,12 +263,28 @@
+ 
+ gboolean alsa_card_can_read(AlsaCard *obj)
+ {
+-	int frames;
++	int frames,err;
+ 	g_return_val_if_fail(obj->read_handle!=NULL,0);
+ 	if (obj->readpos!=0) return TRUE;
+-	if ( frames=snd_pcm_avail_update(obj->read_handle)>=obj->frames) return 1;
++	frames=snd_pcm_avail_update(obj->read_handle);
+ 	//g_message("frames=%i",frames);
+-	return 0;
++	if (frames==-EPIPE)
++	{/* Overrun COndition*/
++		err=snd_pcm_prepare(obj->read_handle);
++		if(err<0)
++		{
++			printf("Cant recover form XRun\n");
++			return FALSE;
++		}
++		return TRUE;/* Only Next read attempt will trigger the driver to start capturing CAN BE DONE BETTER*/
++	}else if(frames <=0)
++	{/* Opps! something seriously worng, that cant be handled by the app*/
++		return FALSE;
++	}else if(frames >= obj->frames)
++	{
++		return TRUE;
++	}
++	return FALSE;	
+ }
+ 
+ 
+Index: talk/third_party/mediastreamer/msrtprecv.c
+===================================================================
+--- talk/third_party/mediastreamer/msrtprecv.c	(revision 1052316)
++++ talk/third_party/mediastreamer/msrtprecv.c	(revision 1052317)
+@@ -26,7 +26,8 @@
+ MSMessage *msgb_2_ms_message(mblk_t* mp){
+ 	MSMessage *msg;
+ 	MSBuffer *msbuf;
+-	if (mp->b_datap->ref_count!=1) return NULL; /* cannot handle properly non-unique buffers*/
++	if (mp == NULL) return NULL;
++	if (mp->b_datap->db_ref!=1) return NULL; /* cannot handle properly non-unique buffers*/
+ 	/* create a MSBuffer using the mblk_t buffer */
+ 	msg=ms_message_alloc();
+ 	msbuf=ms_buffer_alloc(0);
+@@ -120,7 +121,7 @@
+ 		gint got=0;
+ 		/* we are connected with queues (surely for video)*/
+ 		/* use the sync system time to compute a timestamp */
+-		PayloadType *pt=rtp_profile_get_payload(r->rtpsession->profile,r->rtpsession->payload_type);
++		PayloadType *pt=rtp_profile_get_payload(rtp_session_get_recv_profile(r->rtpsession),rtp_session_get_recv_payload_type(r->rtpsession));
+ 		if (pt==NULL) {
+ 			ms_warning("ms_rtp_recv_process(): NULL RtpPayload- skipping.");
+ 			return;
+Index: talk/third_party/mediastreamer/msringplayer.c
+===================================================================
+--- talk/third_party/mediastreamer/msringplayer.c	(revision 1052316)
++++ talk/third_party/mediastreamer/msringplayer.c	(revision 1052317)
+@@ -24,6 +24,7 @@
+ #include <fcntl.h>
+ #include <sys/types.h>
+ #include <string.h>
++#include <stdlib.h>
+ #include <errno.h>
+ 
+ #include "waveheader.h"
+@@ -34,6 +35,8 @@
+ 
+ static int supported_freq[6]={8000,11025,16000,22050,32000,44100};
+ 
++gint ms_ring_player_set_property(MSRingPlayer *f,MSFilterProperty prop, void *value);
++
+ gint freq_is_supported(gint freq){
+ 	int i;
+ 	for (i=0;i<6;i++){
+Index: talk/third_party/mediastreamer/msbuffer.c
+===================================================================
+--- talk/third_party/mediastreamer/msbuffer.c	(revision 1052316)
++++ talk/third_party/mediastreamer/msbuffer.c	(revision 1052317)
+@@ -56,7 +56,7 @@
+ 		g_free(buf);
+ 	}
+ 	else {
+-		g_free(buf->buffer);
++		//g_free(buf->buffer);
+ 		g_free(buf);
+ 	}
+ }
+Index: talk/third_party/mediastreamer/audiostream.c
+===================================================================
+--- talk/third_party/mediastreamer/audiostream.c	(revision 1052316)
++++ talk/third_party/mediastreamer/audiostream.c	(revision 1052317)
+@@ -112,7 +112,7 @@
+ 			RtpSession **recvsend){
+ 	RtpSession *rtpr;
+ 	rtpr=rtp_session_new(RTP_SESSION_SENDRECV);
+-	rtp_session_max_buf_size_set(rtpr,MAX_RTP_SIZE);
++	rtp_session_set_recv_buf_size(rtpr,MAX_RTP_SIZE);
+ 	rtp_session_set_profile(rtpr,profile);
+ 	rtp_session_set_local_addr(rtpr,get_local_addr_for(remip),locport);
+ 	if (remport>0) rtp_session_set_remote_addr(rtpr,remip,remport);
+@@ -133,7 +133,7 @@
+ 	/* creates two rtp filters to recv send streams (remote part)*/
+ 	
+ 	rtps=rtp_session_new(RTP_SESSION_SENDONLY);
+-	rtp_session_max_buf_size_set(rtps,MAX_RTP_SIZE);
++	rtp_session_set_recv_buf_size(rtps,MAX_RTP_SIZE);
+ 	rtp_session_set_profile(rtps,profile);
+ #ifdef INET6
+ 	rtp_session_set_local_addr(rtps,"::",locport+2);
+@@ -147,7 +147,7 @@
+ 	rtp_session_set_jitter_compensation(rtps,jitt_comp);
+ 	
+ 	rtpr=rtp_session_new(RTP_SESSION_RECVONLY);
+-	rtp_session_max_buf_size_set(rtpr,MAX_RTP_SIZE);
++	rtp_session_set_recv_buf_size(rtpr,MAX_RTP_SIZE);
+ 	rtp_session_set_profile(rtpr,profile);
+ #ifdef INET6
+ 	rtp_session_set_local_addr(rtpr,"::",locport);
+@@ -217,8 +217,8 @@
+ 	ms_filter_set_property(stream->decoder,MS_FILTER_PROPERTY_FREQ,&pt->clock_rate);
+ 	ms_filter_set_property(stream->decoder,MS_FILTER_PROPERTY_BITRATE,&pt->normal_bitrate);
+ 	
+-	ms_filter_set_property(stream->encoder,MS_FILTER_PROPERTY_FMTP, (void*)pt->fmtp);
+-	ms_filter_set_property(stream->decoder,MS_FILTER_PROPERTY_FMTP,(void*)pt->fmtp);
++	ms_filter_set_property(stream->encoder,MS_FILTER_PROPERTY_FMTP, (void*)pt->send_fmtp);
++	ms_filter_set_property(stream->decoder,MS_FILTER_PROPERTY_FMTP,(void*)pt->recv_fmtp);
+ 	/* create the synchronisation source */
+ 	stream->timer=ms_timer_new();
+ 	
+Index: talk/third_party/mediastreamer/msrtpsend.c
+===================================================================
+--- talk/third_party/mediastreamer/msrtpsend.c	(revision 1052316)
++++ talk/third_party/mediastreamer/msrtpsend.c	(revision 1052317)
+@@ -85,7 +85,7 @@
+ {
+ 	guint32 clockts;
+ 	/* use the sync system time to compute a timestamp */
+-	PayloadType *pt=rtp_profile_get_payload(r->rtpsession->profile,r->rtpsession->payload_type);
++	PayloadType *pt=rtp_profile_get_payload(rtp_session_get_send_profile(r->rtpsession),rtp_session_get_send_payload_type(r->rtpsession));
+ 	g_return_val_if_fail(pt!=NULL,0);
+ 	clockts=(guint32)(((double)synctime * (double)pt->clock_rate)/1000.0);
+ 	ms_trace("ms_rtp_send_process: sync->time=%i clock=%i",synctime,clockts);
+Index: talk/base/testclient.cc
+===================================================================
+--- talk/base/testclient.cc	(revision 1052316)
++++ talk/base/testclient.cc	(revision 1052317)
+@@ -28,6 +28,7 @@
+ #include <iostream>
+ #include <cassert>
+ 
++#include <string.h>
+ #ifdef POSIX
+ extern "C" {
+ #include <errno.h>
+@@ -63,7 +64,7 @@
+ void TestClient::Send(const char* buf, size_t size) {
+   int result = socket_->Send(buf, size);
+   if (result < 0) {
+-    std::cerr << "send: " << std::strerror(errno) << std::endl;
++    std::cerr << "send: " << strerror(errno) << std::endl;
+     exit(1);
+   }
+ }
+@@ -72,7 +73,7 @@
+     const char* buf, size_t size, const SocketAddress& dest) {
+   int result = socket_->SendTo(buf, size, dest);
+   if (result < 0) {
+-    std::cerr << "sendto: " << std::strerror(errno) << std::endl;
++    std::cerr << "sendto: " << strerror(errno) << std::endl;
+     exit(1);
+   }
+ }
+@@ -132,7 +133,7 @@
+   Packet* packet = NextPacket();
+   assert(packet);
+   assert(packet->size == size);
+-  assert(std::memcmp(packet->buf, buf, size) == 0);
++  assert(memcmp(packet->buf, buf, size) == 0);
+   if (addr)
+     *addr = packet->addr;
+ }
+Index: talk/base/stringencode.cc
+===================================================================
+--- talk/base/stringencode.cc	(revision 1052316)
++++ talk/base/stringencode.cc	(revision 1052317)
+@@ -28,6 +28,7 @@
+ #ifdef WIN32
+ #include <malloc.h>
+ #endif  // WIN32
++#include <stdlib.h>
+ #ifdef POSIX
+ #include <alloca.h>
+ #define _alloca alloca
+Index: talk/base/httpbase.cc
+===================================================================
+--- talk/base/httpbase.cc	(revision 1052316)
++++ talk/base/httpbase.cc	(revision 1052317)
+@@ -82,6 +82,9 @@
+     return false;
+   }
+ 
++  //printf("chobits: HttpParser::process: %d\n", len);
++  total_size = len; //add by chobits
++  
+   while (true) {
+     if (state_ < ST_DATA) {
+       size_t pos = processed;
+@@ -138,6 +141,8 @@
+     break;
+ 
+   case ST_HEADERS:
++	//printf("<HEADER %d>\n", len);
++	total_size -= len; //add by chobits
+     if (len > 0) {
+       const char* value = strchrn(line, len, ':');
+       if (!value) {
+@@ -149,13 +154,17 @@
+       do {
+         value += 1;
+       } while ((value < eol) && isspace(static_cast<unsigned char>(*value)));
+-      size_t vlen = eol - value;
+-      if (MatchHeader(line, nlen, HH_CONTENT_LENGTH)) {
+-        if (sscanf(value, "%d", &data_size_) != 1) {
++      size_t vlen = eol - value;	  
++      if (MatchHeader(line, nlen, HH_CONTENT_LENGTH)) {		  
++        //if (sscanf(value, "%d", &data_size_) != 1) {
++		unsigned int data_size_temp;
++        if (sscanf(value, "%d", &data_size_temp) != 1) {
+           err = HE_PROTOCOL;
+           break;
+         }
+-      } else if (MatchHeader(line, nlen, HH_TRANSFER_ENCODING)) {
++		data_size_ = data_size_temp;
++		//printf("data_size_ %d\n", data_size_);
++      } else if (MatchHeader(line, nlen, HH_TRANSFER_ENCODING)) {		  
+         if ((vlen == 7) && (_strnicmp(value, "chunked", 7) == 0)) {
+           chunked_ = true;
+         } else if ((vlen == 8) && (_strnicmp(value, "identity", 8) == 0)) {
+@@ -168,11 +177,18 @@
+       err = onHttpRecvHeader(line, nlen, value, vlen);
+     } else {
+       state_ = chunked_ ? ST_CHUNKSIZE : ST_DATA;
++	  //fix: http response header does not contain content-length
++	  //add by chobits
++	  if (data_size_ == SIZE_UNKNOWN) {
++		//printf("chobits: assign data_size -> %d\n", total_size);
++		data_size_ = total_size;
++	  }
+       err = onHttpRecvHeaderComplete(chunked_, data_size_);
+     }
+     break;
+ 
+   case ST_CHUNKSIZE:
++	//printf("<CHUNKSIZE>%s\n", line);
+     if (len > 0) {
+       char* ptr = NULL;
+       data_size_ = strtoul(line, &ptr, 16);
+Index: talk/base/urlencode.cc
+===================================================================
+--- talk/base/urlencode.cc	(revision 1052316)
++++ talk/base/urlencode.cc	(revision 1052317)
+@@ -1,3 +1,5 @@
++#include <stdlib.h>
++#include <string.h>
+ #include "talk/base/urlencode.h"
+ 
+ static int HexPairValue(const char * code) {
+@@ -79,6 +81,7 @@
+       *dest++ = digits[       ch & 0x0F];
+     }  
+     source++;
++    len++;
+   }
+   *dest = 0;
+   return start - dest;
+Index: talk/base/httpbase.h
+===================================================================
+--- talk/base/httpbase.h	(revision 1052316)
++++ talk/base/httpbase.h	(revision 1052317)
+@@ -67,6 +67,7 @@
+   } state_;
+   bool chunked_;
+   size_t data_size_;
++  size_t total_size; //add by chobits
+ };
+ 
+ //////////////////////////////////////////////////////////////////////
+Index: talk/base/httpcommon.cc
+===================================================================
+--- talk/base/httpcommon.cc	(revision 1052316)
++++ talk/base/httpcommon.cc	(revision 1052317)
+@@ -546,11 +546,13 @@
+ HttpError
+ HttpResponseData::parseLeader(const char* line, size_t len) {
+   size_t pos = 0;
++  int temp;
+   uint32 vmajor, vminor;
+-  if ((sscanf(line, "HTTP/%lu.%lu %lu%n", &vmajor, &vminor, &scode, &pos) != 3)
++  if ((sscanf(line, "HTTP/%lu.%lu %lu%n", &vmajor, &vminor, &scode, &temp) != 3)
+       || (vmajor != 1)) {
+     return HE_PROTOCOL;
+   }
++  pos = temp;
+   if (vminor == 0) {
+     version = HVER_1_0;
+   } else if (vminor == 1) {
+@@ -690,7 +692,7 @@
+     cnonce = DIGEST_CNONCE;
+ #else
+     char buffer[256];
+-    sprintf(buffer, "%d", time(0));
++    sprintf(buffer, "%d", (int)time(0));
+     cnonce = MD5(buffer);
+ #endif
+     ncount = "00000001";
+Index: talk/base/natsocketfactory.cc
+===================================================================
+--- talk/base/natsocketfactory.cc	(revision 1052316)
++++ talk/base/natsocketfactory.cc	(revision 1052317)
+@@ -27,6 +27,7 @@
+ 
+ #include <iostream>
+ #include <cassert>
++#include <string.h>
+ #include "talk/base/natsocketfactory.h"
+ 
+ namespace talk_base {
+@@ -187,7 +188,7 @@
+ 	      const SocketAddress& remote_addr) {
+     assert(buf_size == data_size + remote_addr.Size_());
+     remote_addr.Write_(buf, (int)buf_size);
+-    std::memcpy(buf + remote_addr.Size_(), data, data_size);
++    memcpy(buf + remote_addr.Size_(), data, data_size);
+   }
+ 
+   // Decodes the given packet from the NAT server into the actual remote
+@@ -198,7 +199,7 @@
+     assert(data_size <= *buf_size + remote_addr->Size_());
+     remote_addr->Read_(data, (int)data_size);
+     *buf_size = data_size - remote_addr->Size_();
+-    std::memcpy(buf, data + remote_addr->Size_(), *buf_size);
++    memcpy(buf, data + remote_addr->Size_(), *buf_size);
+   }
+ 
+   bool async_;
+Index: talk/base/base64.h
+===================================================================
+--- talk/base/base64.h	(revision 1052316)
++++ talk/base/base64.h	(revision 1052317)
+@@ -23,8 +23,8 @@
+   static std::string decode(const std::string & data);
+   static std::string encodeFromArray(const char * data, size_t len);
+ private:
+-  static const std::string Base64::Base64Table;
+-  static const std::string::size_type Base64::DecodeTable[];
++  static const std::string Base64Table;
++  static const std::string::size_type DecodeTable[];
+ };
+ 
+ } // namespace talk_base
+Index: talk/base/natserver.cc
+===================================================================
+--- talk/base/natserver.cc	(revision 1052316)
++++ talk/base/natserver.cc	(revision 1052317)
+@@ -28,6 +28,7 @@
+ #include <cassert>
+ #include <iostream>
+ 
++#include <string.h>
+ #ifdef POSIX
+ extern "C" {
+ #include <errno.h>
+@@ -161,7 +162,7 @@
+   char*  real_buf  = new char[real_size];
+ 
+   remote_addr.Write_(real_buf, real_size);
+-  std::memcpy(real_buf + remote_addr.Size_(), buf, size);
++  memcpy(real_buf + remote_addr.Size_(), buf, size);
+ 
+   server_socket_->SendTo(real_buf, real_size, iter->second->route.source());
+ 
+Index: talk/base/openssladapter.cc
+===================================================================
+--- talk/base/openssladapter.cc	(revision 1052316)
++++ talk/base/openssladapter.cc	(revision 1052317)
+@@ -772,7 +772,7 @@
+ 
+ SSL_CTX*
+ OpenSSLAdapter::SetupSSLContext() {
+-  SSL_CTX* ctx = SSL_CTX_new(TLSv1_client_method());
++  SSL_CTX* ctx = SSL_CTX_new(SSLv23_client_method());
+   if (ctx == NULL) 
+ 	  return NULL;
+ 
+Index: talk/base/virtualsocket_unittest.cc
+===================================================================
+--- talk/base/virtualsocket_unittest.cc	(revision 1052316)
++++ talk/base/virtualsocket_unittest.cc	(revision 1052317)
+@@ -226,7 +226,7 @@
+   std::cout << "PASS" << std::endl;
+ }
+ 
+-int main(int argc, char* argv) {
++int main(int argc, char** argv) {
+   Thread *pthMain = Thread::Current(); 
+   VirtualSocketServer* ss = new VirtualSocketServer();
+   pthMain->set_socketserver(ss);
+Index: talk/base/streamutils.cc
+===================================================================
+--- talk/base/streamutils.cc	(revision 1052316)
++++ talk/base/streamutils.cc	(revision 1052317)
+@@ -26,6 +26,7 @@
+  */
+ 
+ 
++#include <string.h>
+ #include "talk/base/common.h"
+ #include "talk/base/streamutils.h"
+ 
+Index: talk/base/diskcache.cc
+===================================================================
+--- talk/base/diskcache.cc	(revision 1052316)
++++ talk/base/diskcache.cc	(revision 1052317)
+@@ -297,7 +297,7 @@
+ bool DiskCache::FilenameToId(const std::string& filename, std::string* id,
+                              size_t* index) const {
+   Pathname pathname(filename);
+-  if (1 != sscanf(pathname.extension().c_str(), ".%u", index))
++  if (1 != sscanf(pathname.extension().c_str(), ".%u", (unsigned int*)index))
+     return false;
+ 
+   size_t buffer_size = pathname.basename().length() + 1;
+Index: talk/base/criticalsection.h
+===================================================================
+--- talk/base/criticalsection.h	(revision 1052316)
++++ talk/base/criticalsection.h	(revision 1052317)
+@@ -83,6 +83,7 @@
+ public:
+   CriticalSection() {
+     pthread_mutexattr_t mutex_attribute;
++    pthread_mutexattr_init(&mutex_attribute);
+     pthread_mutexattr_settype(&mutex_attribute, PTHREAD_MUTEX_RECURSIVE);
+     pthread_mutex_init(&mutex_, &mutex_attribute);
+   }
+Index: talk/base/logging.cc
+===================================================================
+--- talk/base/logging.cc	(revision 1052316)
++++ talk/base/logging.cc	(revision 1052317)
+@@ -33,6 +33,8 @@
+ 
+ #include <iostream>
+ #include <iomanip>
++#include <string.h>
++#include <stdio.h>
+ 
+ #include "talk/base/logging.h"
+ #include "talk/base/stream.h"
+@@ -65,7 +67,7 @@
+   }
+   
+   char buffer[16];
+-  snprintf(buffer, sizeof(buffer), "0x%08lx", err);  
++  snprintf(buffer, sizeof(buffer), "0x%08lx", (long unsigned int)err);  
+   return buffer;
+ }
+ 
+Index: talk/base/unixfilesystem.cc
+===================================================================
+--- talk/base/unixfilesystem.cc	(revision 1052316)
++++ talk/base/unixfilesystem.cc	(revision 1052317)
+@@ -111,6 +111,7 @@
+     if (create)
+       CreateFolder(pathname);
+   }
++  return true;
+ }
+ 
+ std::string UnixFilesystem::TempFilenameI(const Pathname &dir, const std::string &prefix) {
+Index: talk/base/network.cc
+===================================================================
+--- talk/base/network.cc	(revision 1052316)
++++ talk/base/network.cc	(revision 1052317)
+@@ -30,6 +30,7 @@
+ #include <cfloat>
+ #include <cmath>
+ #include <sstream>
++#include <string.h>
+ 
+ #ifdef POSIX
+ extern "C" {
+Index: talk/base/stringutils.h
+===================================================================
+--- talk/base/stringutils.h	(revision 1052316)
++++ talk/base/stringutils.h	(revision 1052317)
+@@ -36,6 +36,7 @@
+ #endif  // WIN32
+ 
+ #include <string>
++#include <string.h>
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+ // Generic string/memory utilities
+@@ -269,7 +270,7 @@
+ template<>
+ struct Traits<char> {
+   typedef std::string string;
+-  inline static const char* Traits<char>::empty_str() { return ""; }
++  inline static const char* empty_str() { return ""; }
+ };
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+@@ -281,7 +282,7 @@
+ template<>
+ struct Traits<wchar_t> {
+   typedef std::wstring string;
+-  inline static const wchar_t* Traits<wchar_t>::empty_str() { return L""; }
++  inline static const wchar_t* empty_str() { return L""; }
+ };
+ 
+ #endif  // WIN32
+Index: talk/base/messagequeue.h
+===================================================================
+--- talk/base/messagequeue.h	(revision 1052316)
++++ talk/base/messagequeue.h	(revision 1052317)
+@@ -31,6 +31,7 @@
+ #include <vector>
+ #include <queue>
+ #include <algorithm>
++#include <string.h>
+ #include "talk/base/basictypes.h"
+ #include "talk/base/criticalsection.h"
+ #include "talk/base/socketserver.h"
+Index: talk/base/stream.cc
+===================================================================
+--- talk/base/stream.cc	(revision 1052316)
++++ talk/base/stream.cc	(revision 1052317)
+@@ -28,6 +28,8 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <errno.h>
++#include <string.h>
++#include <stdio.h>
+ #include <string>
+ #include "talk/base/basictypes.h"
+ #include "talk/base/common.h"
+Index: talk/base/asynctcpsocket.cc
+===================================================================
+--- talk/base/asynctcpsocket.cc	(revision 1052316)
++++ talk/base/asynctcpsocket.cc	(revision 1052317)
+@@ -29,6 +29,8 @@
+ #pragma warning(disable:4786)
+ #endif
+ 
++#include <string.h>
++
+ #include "talk/base/asynctcpsocket.h"
+ #include "talk/base/byteorder.h"
+ #include "talk/base/common.h"
+@@ -169,7 +171,7 @@
+   if (len < 0) {
+     // TODO: Do something better like forwarding the error to the user.
+     if (!socket_->IsBlocking()) {
+-      LOG(LS_ERROR) << "recvfrom: " << errno << " " <<  std::strerror(errno);
++      LOG(LS_ERROR) << "recvfrom: " << errno << " " <<  strerror(errno);
+     }
+     return;
+   }
+Index: talk/base/bytebuffer.cc
+===================================================================
+--- talk/base/bytebuffer.cc	(revision 1052316)
++++ talk/base/bytebuffer.cc	(revision 1052317)
+@@ -27,6 +27,7 @@
+ 
+ #include <algorithm>
+ #include <cassert>
++#include <string.h>
+ 
+ #include "talk/base/basictypes.h"
+ #include "talk/base/bytebuffer.h"
+Index: talk/base/socketadapters.cc
+===================================================================
+--- talk/base/socketadapters.cc	(revision 1052316)
++++ talk/base/socketadapters.cc	(revision 1052317)
+@@ -31,6 +31,7 @@
+ 
+ #include <time.h>
+ #include <errno.h>
++#include <string.h>
+ 
+ #ifdef WIN32
+ #include <winsock2.h>
+@@ -123,7 +124,7 @@
+   int len = socket_->Recv(buffer_ + data_len_, buffer_size_ - data_len_);
+   if (len < 0) {
+     // TODO: Do something better like forwarding the error to the user.
+-    LOG(INFO) << "Recv: " << errno << " " <<  std::strerror(errno);
++    LOG(INFO) << "Recv: " << errno << " " <<  strerror(errno);
+     return;
+   }
+ 
+Index: talk/base/host.cc
+===================================================================
+--- talk/base/host.cc	(revision 1052316)
++++ talk/base/host.cc	(revision 1052317)
+@@ -29,6 +29,7 @@
+ #include <iostream>
+ #include <cassert>
+ #include <errno.h>
++#include <stdlib.h>
+ 
+ #ifdef POSIX
+ extern "C" {
+@@ -54,7 +55,7 @@
+ 
+ void FatalError(const std::string& name, int err) {
+   PLOG(LERROR, err) << name;
+-  std::exit(1);
++  exit(1);
+ }
+ 
+ }
+Index: talk/base/cryptstring.h
+===================================================================
+--- talk/base/cryptstring.h	(revision 1052316)
++++ talk/base/cryptstring.h	(revision 1052317)
+@@ -29,6 +29,7 @@
+ #define _TALK_BASE_CRYPTSTRING_H_
+ 
+ #include <string>
++#include <string.h>
+ #include "talk/base/linked_ptr.h"
+ #include "talk/base/scoped_ptr.h"
+ 
+Index: talk/examples/login/xmppthread.cc
+===================================================================
+--- talk/examples/login/xmppthread.cc	(revision 1052316)
++++ talk/examples/login/xmppthread.cc	(revision 1052317)
+@@ -70,7 +70,7 @@
+   if (pmsg->message_id == MSG_LOGIN) {
+     assert(pmsg->pdata);
+     LoginData* data = reinterpret_cast<LoginData*>(pmsg->pdata);
+-    pump_->DoLogin(data->xcs, new XmppSocket(false), new XmppAuth());
++    pump_->DoLogin(data->xcs, new XmppSocket(data->xcs.use_tls()), 0); // new XmppAuth());
+     delete data;
+   } else if (pmsg->message_id == MSG_DISCONNECT) {
+     pump_->DoDisconnect();
+Index: talk/examples/login/xmppthread.h
+===================================================================
+--- talk/examples/login/xmppthread.h	(revision 1052316)
++++ talk/examples/login/xmppthread.h	(revision 1052317)
+@@ -35,7 +35,7 @@
+ #include <iostream>
+ 
+ class XmppThread:
+-    public talk_base::Thread, XmppPumpNotify, talk_base::MessageHandler {
++    public talk_base::Thread, protected XmppPumpNotify, protected talk_base::MessageHandler {
+ public:
+   XmppThread();
+   ~XmppThread();
+@@ -47,7 +47,7 @@
+   void Login(const buzz::XmppClientSettings & xcs);
+   void Disconnect();
+ 
+-private:
++protected:
+   XmppPump* pump_;
+ 
+   void OnStateChange(buzz::XmppEngine::State state);
+Index: talk/examples/login/status.h
+===================================================================
+--- talk/examples/login/status.h	(revision 1052316)
++++ talk/examples/login/status.h	(revision 1052317)
+@@ -23,6 +23,7 @@
+ #include "talk/xmpp/constants.h"
+ 
+ #define GOOGLE_CLIENT_NODE "http://www.google.com/xmpp/client/caps"
++#define GMAIL_CLIENT_NODE "http://mail.google.com/xmpp/client/caps"
+ 
+ namespace buzz {
+ 
+Index: talk/examples/login/presencepushtask.cc
+===================================================================
+--- talk/examples/login/presencepushtask.cc	(revision 1052316)
++++ talk/examples/login/presencepushtask.cc	(revision 1052317)
+@@ -128,7 +128,7 @@
+ 
+       s.set_know_capabilities(true);
+ 
+-      if (node == GOOGLE_CLIENT_NODE) {
++      if (node == GOOGLE_CLIENT_NODE || node == GMAIL_CLIENT_NODE) {
+         s.set_is_google_client(true);
+         s.set_version(ver);
+         if (ListContainsToken(exts, "voice-v1")) {
+Index: talk/examples/call/call_main.cc
+===================================================================
+--- talk/examples/call/call_main.cc	(revision 1052316)
++++ talk/examples/call/call_main.cc	(revision 1052317)
+@@ -19,6 +19,7 @@
+ 
+ #include <time.h>
+ #include <iomanip>
++#include <stdio.h>
+ #include "talk/base/logging.h"
+ #include "talk/base/physicalsocketserver.h"
+ #include "talk/base/ssladapter.h"
+@@ -231,6 +232,7 @@
+   xcs.set_pass(talk_base::CryptString(pass));
+   xcs.set_server(talk_base::SocketAddress("talk.google.com", 5222));
+   printf("Logging in as %s\n", jid.Str().c_str());
++  fflush(stdout);
+ 
+   talk_base::PhysicalSocketServer ss;
+ 
+Index: talk/examples/call/console.cc
+===================================================================
+--- talk/examples/call/console.cc	(revision 1052316)
++++ talk/examples/call/console.cc	(revision 1052317)
+@@ -56,6 +56,7 @@
+   printf("\n%s", str);
+   if (prompting_)
+     printf("\n(%s) ", prompt_.c_str());
++  fflush(stdout);
+ }
+ 
+ void Console::Print(const std::string& str) {
+Index: talk/examples/call/console.h
+===================================================================
+--- talk/examples/call/console.h	(revision 1052316)
++++ talk/examples/call/console.h	(revision 1052317)
+@@ -23,6 +23,8 @@
+ #include "talk/base/thread.h"
+ #include "talk/base/messagequeue.h"
+ 
++#include <stdio.h>
++
+ class CallClient;
+ 
+ enum {

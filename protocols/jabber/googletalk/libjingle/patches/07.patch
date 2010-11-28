@@ -1,0 +1,62 @@
+Index: talk/p2p/base/stunserver_unittest.cc
+===================================================================
+--- talk/p2p/base/stunserver_unittest.cc	(revision 1201677)
++++ talk/p2p/base/stunserver_unittest.cc	(revision 1201678)
+@@ -4,6 +4,7 @@
+ #include "talk/base/host.h"
+ #include "talk/p2p/base/stunserver.h"
+ #include <cstring>
++#include <cstdio>
+ #include <iostream>
+ #include <cassert>
+ 
+Index: talk/p2p/base/session_unittest.cc
+===================================================================
+--- talk/p2p/base/session_unittest.cc	(revision 1201677)
++++ talk/p2p/base/session_unittest.cc	(revision 1201678)
+@@ -3,6 +3,7 @@
+ #include <deque>
+ #include <map>
+ #include <string.h>
++#include <stdio.h>
+ 
+ #include "talk/base/common.h"
+ #include "talk/base/logging.h"
+Index: talk/p2p/base/port_unittest.cc
+===================================================================
+--- talk/p2p/base/port_unittest.cc	(revision 1201677)
++++ talk/p2p/base/port_unittest.cc	(revision 1201678)
+@@ -11,6 +11,7 @@
+ #include "talk/p2p/base/stunport.h"
+ #include "talk/p2p/base/stunserver.h"
+ #include <iostream>
++#include <cstdio>
+ 
+ using namespace cricket;
+ 
+Index: talk/session/fileshare/fileshare.cc
+===================================================================
+--- talk/session/fileshare/fileshare.cc	(revision 1201677)
++++ talk/session/fileshare/fileshare.cc	(revision 1201678)
+@@ -45,6 +45,8 @@
+ #include "talk/session/tunnel/pseudotcpchannel.h"
+ #include "talk/session/tunnel/tunnelsessionclient.h"
+ 
++#include <iostream>
++
+ ///////////////////////////////////////////////////////////////////////////////
+ // <description xmlns="http://www.google.com/session/share">
+ //   <manifest>
+
+Index: talk/examples/login/login_main.cc
+===================================================================
+--- talk/examples/login/login_main.cc	(revision 1201677)
++++ talk/examples/login/login_main.cc	(revision 1201678)
+@@ -29,6 +29,7 @@
+ #include "talk/xmpp/xmppclientsettings.h"
+ #include "talk/examples/login/xmppthread.h"
+ #include <iostream>
++#include <cstdio>
+ 
+ int main(int argc, char **argv) {
+   printf("Auth Cookie: ");

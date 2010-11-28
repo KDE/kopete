@@ -1,0 +1,5 @@
+This library is cloned from google libjingle project: http://code.google.com/p/libjingle/
+If somebody commit changes to kopete libjingle tree, please add changes diff to directory patches
+Changes of CMakeLists.txt is not needed - google libjingle use other compile tools
+
+Sometimes this library will be synchronized with google libjingle project

@@ -1,0 +1,24 @@
+Index: talk/examples/login/presencepushtask.cc
+===================================================================
+--- talk/examples/login/presencepushtask.cc	(revision 1060713)
++++ talk/examples/login/presencepushtask.cc	(revision 1060714)
+@@ -131,13 +131,13 @@
+       if (node == GOOGLE_CLIENT_NODE || node == GMAIL_CLIENT_NODE) {
+         s.set_is_google_client(true);
+         s.set_version(ver);
+-        if (ListContainsToken(exts, "voice-v1")) {
+-          s.set_phone_capability(true);
+-        }
+-	if (ListContainsToken(exts, "share-v1")) {
+-	 s.set_fileshare_capability(true);
+-	}
+       }
++      if (ListContainsToken(exts, "voice-v1")) {
++        s.set_phone_capability(true);
++      }
++      if (ListContainsToken(exts, "share-v1")) {
++        s.set_fileshare_capability(true);
++      }
+     }
+ 
+     const XmlElement* delay = stanza->FirstNamed(kQnDelayX);
