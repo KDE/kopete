@@ -90,7 +90,7 @@ void InfoDialog::slotSave()
 
 void InfoDialog::setTitle(const QString &title)
 {
-	d->title->setText( title );
+	d->title->setText( title, Qt::AlignLeft );
 }
 
 void InfoDialog::setIcon(const QString &icon)
