@@ -65,7 +65,7 @@ void LatexGUIClient::slotPreview()
 		return;
 	}
 
-	const QString oldBody = msg.plainBody();
+	const QString oldBody = msg.escapedBody();
 	msg=Kopete::Message( msg.from() , msg.to() );
 	msg.setHtmlBody( i18n("<b>Preview of the LaTeX message :</b> <br />%1", oldBody) );
 	msg.setDirection( Kopete::Message::Internal );
