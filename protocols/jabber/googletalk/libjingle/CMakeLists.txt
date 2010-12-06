@@ -3,18 +3,29 @@
 
 ########### next target ###############
 
-find_package ( LiboRTP )
-find_package ( Mediastreamer )
-find_package ( Speex )
-find_package ( Expat )
+if ( NOT DEFINED LIBORTP_FOUND )
+	find_package ( LiboRTP )
+endif ( NOT DEFINED LIBORTP_FOUND )
 
-if ( NOT WIN32 )
+if ( NOT DEFINED MEDIASTREAMER_FOUND )
+	find_package ( Mediastreamer )
+endif ( NOT DEFINED MEDIASTREAMER_FOUND )
+
+if ( NOT DEFINED SPEEX_FOUND )
+	find_package ( Speex )
+endif ( NOT DEFINED SPEEX_FOUND )
+
+if ( NOT DEFINED EXPAT_FOUND )
+	find_package ( Expat )
+endif ( NOT DEFINED EXPAT_FOUND )
+
+if ( NOT WIN32 AND NOT DEFINED SSL_FOUND )
 	find_package ( SSL )
-endif ( NOT WIN32 )
+endif ( NOT WIN32 AND NOT DEFINED SSL_FOUND )
 
 if ( MEDIASTREAMER_FOUND )
         set ( HAVE_MEDIASTREAMER 1 )
-else (MEDIAST REAMER_FOUND)
+else ( MEDIASTREAMER_FOUND )
         set ( HAVE_MEDIASTREAMER 0 )
 endif ( MEDIASTREAMER_FOUND )
 
