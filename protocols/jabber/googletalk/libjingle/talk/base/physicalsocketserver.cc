@@ -230,6 +230,7 @@ public:
     // This is not possible on OSX.
     return -1;
 #endif
+    return 0;
   }
 
   int Send(const void *pv, size_t cb) {
@@ -372,6 +373,7 @@ public:
 #endif   // __linux
 
     // TODO: OSX support
+    return 0;
   }
 
   SocketServer* socketserver() { return ss_; }
