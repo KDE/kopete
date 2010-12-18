@@ -133,9 +133,8 @@ if ( NOT WIN32 )
         macro_log_feature(SSL_FOUND "SSL" "" "" FALSE "" "Needed to build Google Talk libjingle support")
 endif ( NOT WIN32 )
 
-# New mediastreamer doesnt have native iLBC support - disabled
-# macro_optional_find_package(iLBC)
-# macro_log_feature(ILBC_FOUND "iLBC" "iLBC is low bitrate audio codec" "http://mirror.lihnidos.org/GNU/savannah/linphone/plugins/sources" FALSE "" "Needed to build Google Talk libjingle voice call support with iLBC codec")
+macro_optional_find_package(msiLBC)
+macro_log_feature(MSILBC_FOUND "msiLBC" "iLBC is low bitrate audio codec - plugin for mediastreamer" "http://mirror.lihnidos.org/GNU/savannah/linphone/plugins/sources" FALSE "" "Needed to build Google Talk libjingle voice call support with iLBC codec")
 
 # Generate config-kopete.h
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )

@@ -21,16 +21,15 @@
 #include <config.h>
 #endif
 
+#ifndef MSILBC_LIBRARY
+#define MSILBC_LIBRARY "/usr/lib/mediastreamer/plugins/libmsilbc.so"
+#endif
+
 // LinphoneMediaEngine is a Linphone implementation of MediaEngine
 extern "C" {
 #include <mediastreamer2/mediastream.h>
 #include <mediastreamer2/mssndcard.h>
-//#ifdef HAVE_ILBC
-//#include "talk/third_party/mediastreamer/msilbcdec.h"
-//#endif
-#ifdef HAVE_SPEEX
 #include <mediastreamer2/msfilter.h>
-#endif
 }
 
 #include <ortp/ortp.h>
@@ -215,19 +214,29 @@ LinphoneMediaEngine::~LinphoneMediaEngine() {}
 bool LinphoneMediaEngine::Init() {
   ortp_init();
   ms_init();
- 
-#ifdef HAVE_SPEEX
-  //ms_speex_codec_init();
-  //ms_filter_register(MS_FILTER_INFO(&speex_info));
 
+#ifdef HAVE_SPEEX
   codecs_.push_back(Codec(110, payload_type_speex_wb.mime_type, payload_type_speex_wb.clock_rate, 0, 1, 8));
   codecs_.push_back(Codec(111, payload_type_speex_nb.mime_type, payload_type_speex_nb.clock_rate, 0, 1, 7));
-  
 #endif
 
 #ifdef HAVE_ILBC
-  //ms_ilbc_codec_init();
+
+  int i;
+  const char * msilbc = MSILBC_LIBRARY;
+
+  for ( i = strlen(msilbc)-1; i > 0; --i )
+    if ( msilbc[i] == '/' || msilbc[i] == '\\' )
+      break;
+
+  char mspluginsdir[i+1];
+  memcpy(mspluginsdir, msilbc, i);
+  mspluginsdir[i] = 0;
+
+  ms_load_plugins(mspluginsdir);
+
   codecs_.push_back(Codec(102, payload_type_ilbc.mime_type, payload_type_ilbc.clock_rate, 0, 1, 4));
+
 #endif
 
   codecs_.push_back(Codec(0, payload_type_pcmu8000.mime_type, payload_type_pcmu8000.clock_rate, 0, 1, 2));
