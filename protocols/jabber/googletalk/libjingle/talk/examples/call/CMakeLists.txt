@@ -7,7 +7,7 @@ if ( NOT DEFINED SOUND_INSTALL_DIR )
 	set ( SOUND_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/share/sounds )
 endif ( NOT DEFINED SOUND_INSTALL_DIR )
 
-add_definitions ( -DRINGWAV="${SOUND_INSTALL_DIR}/KDE-Im-Phone-Ring.wav" -DCALLWAV="${SOUND_INSTALL_DIR}/KDE-Im-Phone-Ring.wav" )
+add_definitions ( -DRINGWAV="\\"${SOUND_INSTALL_DIR}/KDE-Im-Phone-Ring.wav\\"" -DCALLWAV="\\"${SOUND_INSTALL_DIR}/KDE-Im-Phone-Ring.wav\\"" )
 
 SET(call_SRCS
    call_main.cc

@@ -93,6 +93,7 @@ endif ( NOT DEFINED BUILD_libjingle_pcp )
 
 ########### next target ###############
 
+cmake_policy ( SET CMP0005 OLD )
 set ( CMAKE_INCLUDE_CURRENT_DIR OFF )
 add_definitions ( -DHAVE_CONFIG_H )
 
