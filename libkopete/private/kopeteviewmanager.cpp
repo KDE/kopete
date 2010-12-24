@@ -362,29 +362,46 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 	const QString msgFrom = msg.from()->metaContact() ? msg.from()->metaContact()->displayName()
 	                                                  : msg.from()->contactId();
 
-	QString eventId;
-	KLocalizedString title = ki18n( "Incoming message from <i>%1</i>" );
-	switch( msg.importance() )
-	{
-	case Kopete::Message::Low:
-		eventId = QLatin1String( "kopete_contact_lowpriority" );
-		break;
-	case Kopete::Message::Highlight:
-		eventId = QLatin1String( "kopete_contact_highlight" );
-		title = ki18n( "A highlighted message arrived from <i>%1</i>" );
-		break;
-	default:
-		if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop
-		     && isViewOnCurrentDesktop ) )
-		{
-			eventId = QLatin1String( "kopete_contact_incoming_active_window" );
-		}
-		else
-		{
-			eventId = QLatin1String( "kopete_contact_incoming" );
-		}
-	}
-
+	QString eventId, titleString;
+    QString bodyString = squashedMessage;
+	if ( msg.type() == Kopete::Message::TypeFileTransferRequest)
+    {
+		eventId = QLatin1String( "kopete_incoming_file_transfer" );
+		titleString = i18nc( "@title %1 is contact's name", "Incoming file transfer request from <i>%1</i>", Qt::escape( msgFrom ) );
+		if ( squashedMessage.isEmpty() )
+        {
+			bodyString = i18nc( "@info", "A user is trying to send you a file <filename>%1</filename>", Qt::escape( msg.fileName() ) );
+        }
+        else
+        {
+			bodyString = i18nc( "@info %2 is message", "A user is trying to send you a file <filename>%1</filename> with the message:<nl/>\"%2\"",
+				Qt::escape( msg.fileName() ), squashedMessage );
+        }
+    }
+    else
+    {
+        KLocalizedString title = ki18n( "Incoming message from <i>%1</i>" );
+        switch( msg.importance() )
+        {
+        case Kopete::Message::Low:
+            eventId = QLatin1String( "kopete_contact_lowpriority" );
+            break;
+        case Kopete::Message::Highlight:
+            eventId = QLatin1String( "kopete_contact_highlight" );
+            title = ki18n( "A highlighted message arrived from <i>%1</i>" );
+            break;
+        default:
+            if ( isActiveWindow || (d->queueOnlyMessagesOnAnotherDesktop
+                 && isViewOnCurrentDesktop ) )
+            {
+                eventId = QLatin1String( "kopete_contact_incoming_active_window" );
+            }
+            else
+            {
+                eventId = QLatin1String( "kopete_contact_incoming" );
+            }
+        }
+    }
 	KNotification *notify = new KNotification(eventId, viewWidget, isActiveWindow
 	                                                               ? KNotification::CloseOnTimeout
 	                                                               : KNotification::Persistent);
@@ -392,20 +409,19 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 	notify->setActions( QStringList() << i18nc( "@action", "View" )
 	                                  << i18nc( "@action", "Ignore" ) );
 
-	QString titleString = title.subs( Qt::escape(msgFrom) ).toString();
 	if ( d->balloonGroupMessageNotificationsPerSender )
 	{
 		// notify is parent, will die with it
 		new Kopete::ActiveNotification(	notify,
 		                msg.from()->account()->accountLabel() + msg.from()->contactId(),
 		                d->activeNotifications,
-						titleString, 
-		                squashedMessage );
+						titleString,
+		                bodyString );
 	}
 	else
 	{
-		notify->setTitle( "<qt>" + titleString + "</qt>" );
-		notify->setText( "<qt>" + squashedMessage + "</qt>" );
+		notify->setTitle( titleString );
+		notify->setText( squashedMessage );
 	}
 
 	foreach ( const QString& cl , msg.classes() )

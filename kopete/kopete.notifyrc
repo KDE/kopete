@@ -3018,3 +3018,9 @@ Comment[x-test]=xxAn user is typing a messagexx
 Comment[zh_CN]=一位用户正在输入消息
 Comment[zh_TW]=有個使用者正在輸入訊息
 Action=None
+
+[Event/kopete_incoming_file_transfer]
+Name=Incoming File Transfer
+Comment=An incoming file transfer request has been received
+Action=Popup
+Sound=
