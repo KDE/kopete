@@ -25,6 +25,7 @@
 #include <kdebug.h>
 #include <qlabel.h>
 #include <klocale.h>
+#include <kcurrencycode.h>
 #include <qpushbutton.h>
 #include <qtimer.h>
 #include <kglobal.h>
@@ -297,19 +298,15 @@ void SkypeCallDialog::updateCallInfo() {
 }
 
 void SkypeCallDialog::skypeOutInfo(int balance, const QString &currency) {
-	float part;//How to change the balance before showing (multiply by this)
-	QString symbol;//The symbol of the currency is
-	int digits;
-	if (currency == "EUR") {
-		part = 0.01;//It's in cent's not in euros
-		symbol = i18n("€");
-		digits = 2;
-	} else {
+	KCurrencyCode currencyCode(currency);
+	if (!currencyCode.isValid())	{
 		dialog->CreditLabel->setText(i18n("Skypeout inactive"));
 		return;
 	}
-	float value = balance * part;
-	dialog->CreditLabel->setText(KGlobal::locale()->formatMoney(value, symbol, digits));
+	// NOTE: As per the Skype API docs, the precision of the balance is fixed at 2 decimal places, regardless of currency, etc.
+	// If that ever changes, this might need to be altered.
+	double value = static_cast<double>(balance) / 100.;
+	dialog->CreditLabel->setText(KGlobal::locale()->formatMoney(value, currencyCode.defaultSymbol(), 2));
 }
 
 void SkypeCallDialog::chatUser() {
