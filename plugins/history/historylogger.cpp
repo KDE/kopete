@@ -25,6 +25,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QList>
 #include <QtCore/QDate>
+#include <QtGui/QTextDocument>
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
@@ -292,7 +293,13 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 	msgElem.setAttribute( "nick",  msg.from()->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ); //do we have to set this?
 	msgElem.setAttribute( "time", msg.timestamp().toString("d h:m:s") );
 
-	QDomText msgNode = doc.createTextNode( msg.plainBody() );
+	QDomText msgNode;
+
+	if ( msg.format() != Qt::PlainText )
+		msgNode = doc.createTextNode( msg.escapedBody() );
+	else
+		msgNode = doc.createTextNode( Qt::escape(msg.plainBody()) );
+
 	docElem.appendChild( msgElem );
 	msgElem.appendChild( msgNode );
 
@@ -397,9 +404,17 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 					to.append( dir==Kopete::Message::Inbound ? contact->account()->myself() : contact );
 
 					Kopete::Message msg(from, to);
-					msg.setPlainBody( msgElem2.text() );
+
+					QString message;
+					if ( Qt::mightBeRichText(msgElem2.text()) ) {
+						message = msgElem2.text();
+					} else {
+						msg.setPlainBody( msgElem2.text() );
+						message = msg.escapedBody();
+					}
+
 					msg.setHtmlBody( QString::fromLatin1("<span title=\"%1\">%2</span>")
-							.arg( dt.toString(Qt::LocalDate), msg.escapedBody() ));
+							.arg( dt.toString(Qt::LocalDate), message ));
 					msg.setTimestamp( dt );
 					msg.setDirection( dir );
 
@@ -627,18 +642,26 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
 					Kopete::Message msg(from, to);
 					msg.setTimestamp( timestamp );
 					msg.setDirection( dir );
-					msg.setPlainBody( msgElem.text() );
+
+					QString message;
+					if ( Qt::mightBeRichText(msgElem.text()) ) {
+						message = msgElem.text();
+					} else {
+						msg.setPlainBody( msgElem.text() );
+						message = msg.escapedBody();
+					}
+
 					if (colorize)
 					{
 						msg.setHtmlBody( QString::fromLatin1("<span style=\"color:%1\" title=\"%2\">%3</span>")
-							.arg( fgColor.name(), timestamp.toString(Qt::LocalDate), msg.escapedBody() ));
+							.arg( fgColor.name(), timestamp.toString(Qt::LocalDate), message ));
 						msg.setForegroundColor( fgColor );
 						msg.addClass( "history" );
 					}
 					else
 					{
 						msg.setHtmlBody( QString::fromLatin1("<span title=\"%1\">%2</span>")
-							.arg( timestamp.toString(Qt::LocalDate), msg.escapedBody() ));
+							.arg( timestamp.toString(Qt::LocalDate), message ));
 					}
 
 					if(reverseOrder)
