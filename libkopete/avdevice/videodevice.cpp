@@ -2,7 +2,7 @@
     videodevice.cpp  -  Kopete Video Device Low-level Support
 
     Copyright (c) 2005-2006 by Cláudio da Silveira Pinheiro   <taupter@gmail.com>
-    Copyright (c) 2010      by Frank Schaefer                 <fschaefer.oss@googlemail.com>
+    Copyright (c) 2010-2011 by Frank Schaefer                 <fschaefer.oss@googlemail.com>
 
     Kopete    (c) 2002-2003      by the Kopete developers  <kopete-devel@kde.org>
 
@@ -820,9 +820,6 @@ kDebug() << "setSize(" << newwidth << ", " << newheight << ") called.";
 		if(newwidth  < minwidth ) newwidth  = minwidth;
 		if(newheight < minheight) newheight = minheight;
 
-		currentwidth  = newwidth;
-		currentheight = newheight;
-
 //kDebug() << "width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << width() << "x" << height();
 // Change resolution for the video device
 		switch(m_driver)
@@ -836,13 +833,14 @@ kDebug() << "setSize(" << newwidth << ", " << newheight << ") called.";
 					kDebug() << "VIDIOC_G_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height;
 				}
 				fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-				fmt.fmt.pix.width       = width();
-				fmt.fmt.pix.height      = height();
+				fmt.fmt.pix.width       = newwidth;
+				fmt.fmt.pix.height      = newheight;
 				fmt.fmt.pix.field       = V4L2_FIELD_ANY;
 				if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
 				{
 					kDebug() << "VIDIOC_S_FMT failed (" << errno << ").Returned width: " << pixelFormatName(fmt.fmt.pix.pixelformat) << " " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height;
 					// Note VIDIOC_S_FMT may change width and height.
+					return EXIT_FAILURE;
 				}
 				else
 				{
@@ -858,7 +856,10 @@ kDebug() << "VIDIOC_S_FMT worked (" << errno << ").Returned width: " << pixelFor
 					{
 						fmt.fmt.pix.sizeimage = min;
 					}
-					m_buffer_size=fmt.fmt.pix.sizeimage ;
+					m_buffer_size=fmt.fmt.pix.sizeimage;
+					
+					currentwidth  = fmt.fmt.pix.width;
+					currentheight = fmt.fmt.pix.height;
 				}
 				break;
 #endif
@@ -871,15 +872,18 @@ kDebug() << "VIDIOC_S_FMT worked (" << errno << ").Returned width: " << pixelFor
 					perror ("ioctl VIDIOCGWIN");
 //					return (NULL);
 				}
-				V4L_videowindow.width  = width();
-				V4L_videowindow.height = height();
+				V4L_videowindow.width  = newwidth;
+				V4L_videowindow.height = newheight;
 				V4L_videowindow.clipcount=0;
 				if (xioctl (VIDIOCSWIN, &V4L_videowindow)== -1)
 				{
 					perror ("ioctl VIDIOCSWIN");
-//					return (NULL);
+					return EXIT_FAILURE;
 				}
 kDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << V4L_videowindow.height << " Clipcount: " << V4L_videowindow.clipcount << " -----------------";
+
+				currentwidth  = V4L_videowindow.width;
+				currentheight = V4L_videowindow.height;
 
 //				kDebug() << "libkopete (avdevice): V4L_picture.palette: " << V4L_picture.palette << " Depth: " << V4L_picture.depth;
 
@@ -891,11 +895,13 @@ kDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << V
 #endif
 			case VIDEODEV_DRIVER_NONE:
 			default:
-				break;
+				return EXIT_FAILURE;
 		}
 		m_buffer_size = width() * height() * pixelFormatDepth(m_pixelformat) / 8;
 kDebug() << "------------------------- ------- -- m_buffer_size: " << m_buffer_size << " !!! -- ------- -----------------------------------------";
 
+		m_currentbuffer.width=width();
+		m_currentbuffer.height=width();
 		m_currentbuffer.pixelformat=m_pixelformat;
 		m_currentbuffer.data.resize(m_buffer_size);
 
@@ -1255,7 +1261,7 @@ int VideoDevice::getFrame()
  */
 int VideoDevice::getFrame(imagebuffer *imgbuffer)
 {
-	if(imgbuffer)
+	if (imgbuffer != NULL)
 	{
 		getFrame();
 		imgbuffer->height      = m_currentbuffer.height;
