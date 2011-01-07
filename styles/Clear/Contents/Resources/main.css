@@ -339,32 +339,31 @@ background-color:*/
 	margin-bottom: 10px;
 	border: 1px solid #e0e0e0;
 	vertical-align: middle;
-	line-height: 20px;
-	height: 20px;
 }
 
 .InternalMessage
 {
-	position: absolute;
-	background: url(images/icon-internal.png) no-repeat center left;
+	position: relative;
+	background: url(images/icon-internal.png) no-repeat 0 2px;
 	text-align: left; font-size: 10px; font-weight: bold; color: #808080;
+	padding-top: 4px;
 	padding-right: 20px;
 	padding-left: 20px;
+	padding-bottom: 4px;
 	margin-left: 4px;
-	overflow: hidden;
-	height: 20px;
-	float: left;
+	min-height: 12px;
 }
 
 .InternalMessageHeaderTime
 {
 	position: relative;
-	background: url(images/icon-time.png) no-repeat center right;
+	background: transparent url(images/icon-time.png) no-repeat right center;
 	text-align: right; font-size: 10px; font-weight: bold; color: #808080;
 	padding-right: 18px;
 	padding-left: 5px;
 	float: right;
 	z-index: 1;
+	line-height: 20px;
 }
 
 .systemLogo
