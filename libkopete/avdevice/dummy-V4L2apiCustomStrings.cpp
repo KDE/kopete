@@ -133,6 +133,12 @@ I18N_NOOP("Backlight compensation");			// pwc/pwc_v4l.c
 I18N_NOOP("Flickerless");				// pwc/pwc_v4l.c
 // i18n: Noise Reduction
 I18N_NOOP("Noise reduction");				// pwc/pwc_v4l.c
+I18N_NOOP("Compression Target");			// gspca/cpia1.c
+I18N_NOOP("Color Filter");				// s2255drv.c
+// i18n: Transaction Time (msec)
+I18N_NOOP("Transaction time (msec)");			// mem2mem_testdev.c
+// i18n: "Buffers per Transaction"
+I18N_NOOP("Buffers per transaction");			// mem2mem_testdev.c
 
 
 /* Option strings for video control V4L2_CID_POWER_LINE_FREQUENCY: */
@@ -142,8 +148,17 @@ I18N_NOOP("Automatic");
 // also: 50 Hz, 60 Hz
 
 
+/* Option strings for custom video control "Compression Target" (gspca/cpia1.c) */
+I18N_NOOP("Quality");
+I18N_NOOP("Framerate");
+
+
 /* Option strings for custom video control "Lights" (cpia2/cpia2_v4l.c) */
 I18N_NOOP("Off");
 I18N_NOOP("Top");
 I18N_NOOP("Bottom");
 I18N_NOOP("Both");
+
+/* Option strings for custom video control "Color Filter" (s2255drv.c) */
+I18N_NOOP("On");
+// also: "Off"

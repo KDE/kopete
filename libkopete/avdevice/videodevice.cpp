@@ -3058,6 +3058,13 @@ const char *VideoDevice::getUnifiedV4L2StdCtrlName(quint32 std_ctrl_id)
 		case V4L2_CID_ROTATE:			return I18N_NOOP("Rotate");
 		case V4L2_CID_BG_COLOR:			return I18N_NOOP("Background color");
 #endif
+#ifdef V4L2_CID_CHROMA_GAIN		// since kernel 2.6.35
+		case V4L2_CID_CHROMA_GAIN:		return I18N_NOOP("Chroma Gain");
+#endif
+#ifdef V4L2_CID_ILLUMINATORS_1		// since kernel 2.6.37
+		case V4L2_CID_ILLUMINATORS_1:		return I18N_NOOP("Illuminator 1");
+		case V4L2_CID_ILLUMINATORS_2:		return I18N_NOOP("Illuminator 2");
+#endif
 		default:
 			return NULL;
 	}
@@ -3068,6 +3075,7 @@ const char *VideoDevice::getUnifiedV4L2StdCtrlName(quint32 std_ctrl_id)
 	/* NOTE: We only mark the strings for translation, the translation is done for ALL controls
 	         (including custom controls) at a common place
 	 */
+	/* NOTE: see kernel header file include/linux/videodev2.h */
 }
 #endif
 
