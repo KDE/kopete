@@ -3026,6 +3026,16 @@ Action=None
 
 [Event/kopete_incoming_file_transfer]
 Name=Incoming File Transfer
+Name[pt]=Transferência de Ficheiro Recebida
+Name[pt_BR]=Transferência de arquivo recebida
+Name[sv]=Inkommande filöverföring
+Name[uk]=Вхідне перенесення файла
+Name[x-test]=xxIncoming File Transferxx
 Comment=An incoming file transfer request has been received
+Comment[pt]=Foi recebido um pedido de transferência de ficheiro
+Comment[pt_BR]=Uma solicitação de transferência de arquivo foi recebida
+Comment[sv]=En inkommande filöverföringsbegäran har anlänt
+Comment[uk]=Отримано запити щодо вхідного перенесення файла
+Comment[x-test]=xxAn incoming file transfer request has been receivedxx
 Action=Popup
 Sound=
