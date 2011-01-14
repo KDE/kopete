@@ -3027,6 +3027,7 @@ Action=None
 [Event/kopete_incoming_file_transfer]
 Name=Incoming File Transfer
 Name[et]=Sisenev failiülekanne
+Name[nds]=Ankamen Dateiöverdregen
 Name[nl]=Inkomende bestandsoverdracht
 Name[pt]=Transferência de Ficheiro Recebida
 Name[pt_BR]=Transferência de arquivo recebida
@@ -3035,6 +3036,7 @@ Name[uk]=Вхідне перенесення файла
 Name[x-test]=xxIncoming File Transferxx
 Comment=An incoming file transfer request has been received
 Comment[et]=Saadi sisenev failiülekande soov
+Comment[nds]=Du hest en Verlööfnisanfraag för en ankamen Datei kregen.
 Comment[nl]=Er is een bericht ontvangen over een inkomende bestandsoverdracht
 Comment[pt]=Foi recebido um pedido de transferência de ficheiro
 Comment[pt_BR]=Uma solicitação de transferência de arquivo foi recebida
