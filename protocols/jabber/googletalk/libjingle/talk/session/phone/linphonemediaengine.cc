@@ -37,6 +37,7 @@ extern "C" {
 #include <netdb.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <libgen.h>
 #include <iostream>
 #include "talk/base/logging.h"
 #include "talk/base/thread.h"
@@ -221,22 +222,11 @@ bool LinphoneMediaEngine::Init() {
 #endif
 
 #ifdef HAVE_ILBC
-
-  int i;
-  const char * msilbc = MSILBC_LIBRARY;
-
-  for ( i = strlen(msilbc)-1; i > 0; --i )
-    if ( msilbc[i] == '/' || msilbc[i] == '\\' )
-      break;
-
-  char mspluginsdir[i+1];
-  memcpy(mspluginsdir, msilbc, i);
-  mspluginsdir[i] = 0;
-
-  ms_load_plugins(mspluginsdir);
-
-  codecs_.push_back(Codec(102, payload_type_ilbc.mime_type, payload_type_ilbc.clock_rate, 0, 1, 4));
-
+  char * path = strdup(MSILBC_LIBRARY);
+  char * dirc = dirname(path);
+  ms_load_plugins(dirc);
+  if ( ms_filter_codec_supported("iLBC") )
+    codecs_.push_back(Codec(102, payload_type_ilbc.mime_type, payload_type_ilbc.clock_rate, 0, 1, 4));
 #endif
 
   codecs_.push_back(Codec(0, payload_type_pcmu8000.mime_type, payload_type_pcmu8000.clock_rate, 0, 1, 2));
