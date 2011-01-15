@@ -15,6 +15,10 @@ if ( NOT DEFINED SPEEX_FOUND )
 	find_package ( Speex )
 endif ( NOT DEFINED SPEEX_FOUND )
 
+if ( NOT DEFINED MSILBC_FOUND )
+	find_package ( msiLBC )
+endif ( NOT DEFINED MSILBC_FOUND )
+
 if ( NOT DEFINED EXPAT_FOUND )
 	find_package ( Expat )
 endif ( NOT DEFINED EXPAT_FOUND )

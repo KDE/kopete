@@ -23,16 +23,24 @@ Index: talk/session/phone/linphonemediaengine.cc
  }
  
  #include <ortp/ortp.h>
-@@ -215,19 +214,29 @@
+@@ -38,6 +37,7 @@
+ #include <netdb.h>
+ #include <unistd.h>
+ #include <fcntl.h>
++#include <libgen.h>
+ #include <iostream>
+ #include "talk/base/logging.h"
+ #include "talk/base/thread.h"
+@@ -215,19 +215,18 @@
  bool LinphoneMediaEngine::Init() {
    ortp_init();
    ms_init();
 - 
-+
- #ifdef HAVE_SPEEX
+-#ifdef HAVE_SPEEX
 -  //ms_speex_codec_init();
 -  //ms_filter_register(MS_FILTER_INFO(&speex_info));
--
+ 
++#ifdef HAVE_SPEEX
    codecs_.push_back(Codec(110, payload_type_speex_wb.mime_type, payload_type_speex_wb.clock_rate, 0, 1, 8));
    codecs_.push_back(Codec(111, payload_type_speex_nb.mime_type, payload_type_speex_nb.clock_rate, 0, 1, 7));
 -  
@@ -40,22 +48,12 @@ Index: talk/session/phone/linphonemediaengine.cc
  
  #ifdef HAVE_ILBC
 -  //ms_ilbc_codec_init();
-+
-+  int i;
-+  const char * msilbc = MSILBC_LIBRARY;
-+
-+  for ( i = strlen(msilbc)-1; i > 0; --i )
-+    if ( msilbc[i] == '/' || msilbc[i] == '\\' )
-+      break;
-+
-+  char mspluginsdir[i+1];
-+  memcpy(mspluginsdir, msilbc, i);
-+  mspluginsdir[i] = 0;
-+
-+  ms_load_plugins(mspluginsdir);
-+
-   codecs_.push_back(Codec(102, payload_type_ilbc.mime_type, payload_type_ilbc.clock_rate, 0, 1, 4));
-+
+-  codecs_.push_back(Codec(102, payload_type_ilbc.mime_type, payload_type_ilbc.clock_rate, 0, 1, 4));
++  char * path = strdup(MSILBC_LIBRARY);
++  char * dirc = dirname(path);
++  ms_load_plugins(dirc);
++  if ( ms_filter_codec_supported("iLBC") )
++    codecs_.push_back(Codec(102, payload_type_ilbc.mime_type, payload_type_ilbc.clock_rate, 0, 1, 4));
  #endif
  
    codecs_.push_back(Codec(0, payload_type_pcmu8000.mime_type, payload_type_pcmu8000.clock_rate, 0, 1, 2));
