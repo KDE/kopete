@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="kopete-icq">
+<appendixinfo>
+<authorgroup>
+<author>
+<personname>
+    <firstname>This documentation was converted from the KDE UserBase <ulink url=" http://userbase.kde.org/Kopete/ICQ">Kopete/ICQ</ulink> page.</firstname>
+<surname></surname>
+</personname>
+    </author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+    </authorgroup>
+<date>2011-01-06</date>
+    <releaseinfo>&kde; SC 4.6</releaseinfo>
+</appendixinfo>
+<!--userbase <timestamp>2011-01-06T06:11:26Z</timestamp>-->
+<title>ICQ Handbook</title>
+<!--userbase-content-->
+<sect1 id="about-icq"><title>About ICQ</title>
+<para>This tutorial will help you to use ICQ, a common chat protocol in &kopete;.
+</para>
+<para><ulink url="http://www.icq.com/en.html">ICQ</ulink> is a proprietary instant messaging program, first developed by the Israeli company Mirabilis. It uses AOL's OSCAR network protocol for sending the text messages. To identify people, it uses a number, called UIN (Unified Identification Number). If you register an ICQ account, you also have to enter an e-mail address. Some ICQ clients support login with that e-mail address instead of your UIN (but not &kopete;).
+</para>
+<sect2 id="features"><title>Features</title> 
+<itemizedlist>
+<listitem><para>Offline messages
+</para></listitem>
+<listitem><para>multi user chat
+</para></listitem>
+<listitem><para>file transfer
+</para></listitem>
+</itemizedlist>
+<sect3 id="features-not-yet-supported-by-kopete"><title>Features not yet supported by Kopete</title> 
+<itemizedlist>
+<listitem><para>games
+</para></listitem>
+<listitem><para>sending SMS
+</para></listitem>
+</itemizedlist>
+</sect3>
+</sect2>
+<sect2 id="criticism"><title>Criticism</title> 
+<itemizedlist>
+<listitem><para>Privacy: according to the security analyst Jeffrey Carr, the russian secret service could gain access to chat protocols. For further information see <ulink url="http://greylogic.us/2010/07/13/your-icq-identity-now-belongs-to-the-fsb/">here</ulink>
+</para></listitem>
+<listitem><para>Spam: there is a lot of spam (unwanted advertisement or viruses) in the ICQ network
+</para></listitem>
+<listitem><para>Copyright: according to the <ulink url="http://www.icq.com/legal/policy.html">ICQ Acceptable Use Policy</ulink>, you allow ICQ to use posted material in any manner they want
+</para></listitem>
+</itemizedlist>
+<para> 
+</para>
+</sect2>
+</sect1>
+<sect1 id="create-your-icq-account"><title>Create your ICQ account</title> 
+<para>Before you can chat via ICQ, you have to create an ICQ account. If you already have one, you can skip this page.
+</para>
+<para>Go to the registration page with your preferred web browser (&eg; <guilabel>Firefox</guilabel>, <guilabel>Konqueror</guilabel>, <guilabel>Chromium</guilabel>) <ulink url="https://www.icq.com/register/">www.icq.com/register</ulink>
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_create_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Enter you data</phrase>
+    </textobject>
+    <caption>
+      <para>Enter you data</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>Now you have to wait until you get an e-mail from ICQ, which contains your verification link.
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_activate_new_account1.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>click on the verification link in your e-mail to verify you registration</phrase>
+    </textobject>
+    <caption>
+      <para>click on the verification link in your e-mail to verify you registration</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>Now you have your ICQ account! But at the moment, you can only login with Kopete using UINs (Unified Identification Number). ICQ does not show you your UIN by default. You have to go with your browser to <ulink url="https://www.icq.com/people">www.icq.com/people</ulink> and login there.
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_log_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>login on www.icq.com</phrase>
+    </textobject>
+    <caption>
+      <para>login on www.icq.com</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>Then you have to go to your profile:
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_go_to_profile.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>click on My Profile</phrase>
+    </textobject>
+    <caption>
+      <para>click on My Profile</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>Now you will get an information page about your account. If you click on <quote>More about me</quote> you will see an entry called ICQ#. This is your UIN:
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_uin.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase></phrase>
+    </textobject>
+    <caption>
+      <para></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="connect-through-kopete"><title>Connect through Kopete</title>
+<para>The first time, you start &kopete;, you will see a window like this:
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_first_start.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Kopete on the first startup</phrase>
+    </textobject>
+    <caption>
+      <para>Kopete on the first startup</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>To add your ICQ account click on <guilabel>Click to add an account</guilabel>. Or if you have already entered another account (like MSN or Jabber) you go to menu <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure...</guimenuitem></menuchoice> and click on <guilabel>Add Account</guilabel>.
+</para>
+<para>Now you see a list of all chat protocols available for &kopete;. In this case, as you want to use ICQ, you have to choose the ICQ entry:
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_new_account.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Choose your protocol</phrase>
+    </textobject>
+    <caption>
+      <para>Choose your protocol</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>Now you see the configure dialog for your account. Click on <guilabel>Basic Setup</guilabel> above in the tab bar. There you have to enter your UIN. If you don't want to enter your password every startup, you can add your password, too.
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_setup.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Basic account setup</phrase>
+    </textobject>
+    <caption>
+      <para>Basic account setup</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>The <guilabel>Account Preferences</guilabel> tab contains more detailed settings:
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_account_preferences.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>More settings</phrase>
+    </textobject>
+    <caption>
+      <para>More settings</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>&kopete; should work without changing any settings here. So if you don't understand points mentioned below, don't panic, just skip this section.
+</para>
+</sect1>
+<sect1 id="options-explained"><title>Options explained</title> 
+<itemizedlist>
+<listitem><para><guilabel>Require authorization before someone can add you to their contact list:</guilabel> Choose this option if you want to be asked before someone else can add you to his buddy list. Normally, everyone can search you and add you to his list. This means every stranger you don't even know can see whether you are online or not or can send you messages. If you don't want this, you can check this options and afterwards you will be asked if you want to confirm someone before he can chat with you.
+</para></listitem>
+<listitem><para><guilabel>Hide IP address:</guilabel> If you don't want others to see your <ulink url="http://en.wikipedia.org/wiki/IP_address">IP</ulink>, you can check this option. The IP address is an ID to identify you in the Internet. This number is unique. An average Internet user cannot get your name out of your IP Address, only your provider can do this! ICQ saves your IP address anyway for a specific time. So it is no real privacy problem not to choose this option.
+</para></listitem>
+<listitem><para><guilabel>Make my status available via ICQ's unified messaging center:</guilabel> If you choose this option, your status will be published on the messaging center (visible for everyone at www.icq.com/people). 
+</para></listitem>
+<listitem><para><guilabel>Override default server information:</guilabel> If you want to modify the address where &kopete; log in to the ICQ network, this option makes it possible (normally you won't need this setting).
+</para></listitem>
+<listitem><para><guilabel>Enable Proxy:</guilabel> connect through a <ulink url="http://en.wikipedia.org/wiki/Proxy_server">Proxy server</ulink>. Proxy servers are servers that transfer requests. Some companies, schools and universities use these servers to deny access to some websites. Users connecting from their home won't need this setting.
+</para></listitem>
+<listitem><para><guilabel>Port Range:</guilabel> This option tells &kopete; which ports should be used for peer to peer connection. Further explanations of the function of ports would go too far here. If you want more information take a look at the <ulink url="http://en.wikipedia.org/wiki/Port_numbers">Wikipedia article</ulink>. Normally you won't get any problems with the default settings. 
+</para></listitem>
+<listitem><para><guilabel>Timeout:</guilabel> defines, how many seconds &kopete; should wait before it drops connection. For example you send a file to one of your contacts but your contact's Internet connection is troubled so he does not get the file. This option tells &kopete; how long it should try to send the file. Normally you don't have to change this.
+</para></listitem>
+<listitem><para><guilabel>Default encoding:</guilabel> sets the encoding of the messages. Windows users will use the <quote>windows-125*</quote> (windows-1250 to windows-1258) encoding, so if you are going to chat with windows users, choose this option. And even if you only talk to persons not using windows it is likely that they will also use the windows-125* setting (because they perhaps chat with people using windows). The different windows encodings are for different countries. Choose the most fitting one (for example the <quote>Windows-1252 Western</quote> for countries like France or Germany). The difference between these encodings are only some special characters,so if they are not displayed correctly, try another.
+</para></listitem>
+</itemizedlist>
+<para>Now you have successfully configured your ICQ account. You can click on <guilabel>Next</guilabel> and <guilabel>Finish</guilabel>. If you have more than one account, you can choose different colors for them, so you can easily see which contacts come from which account.
+</para>
+</sect1>
+<sect1 id="add-a-contact"><title>Add a contact</title> 
+<para>Now you have connected &kopete; and your account. The window should look like this:
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_logged_in.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Connected</phrase>
+    </textobject>
+    <caption>
+      <para>Connected</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>To add a contact press <guilabel>Add</guilabel> in the toolbar and choose your account (in this case it is your UIN), or you can use the menu <menuchoice><guimenu>File</guimenu><guimenuitem>Add Contact</guimenuitem></menuchoice>. There you can enter the UIN of the person you want to add.
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_add_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase></phrase>
+    </textobject>
+    <caption>
+      <para></para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>If you do not know the UIN, but perhaps the nickname or the e-mail address of a person, it is also possible to search for your contact. Click on the <guilabel>Search</guilabel> button.
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_search_contact.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>It is also possible to search UINs</phrase>
+    </textobject>
+    <caption>
+      <para>It is also possible to search UINs</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+</sect1>
+<sect1 id="being-added"><title>Being added</title> 
+<para>If you use ICQ, it is very likely that you will get added by someone else. If this happens, &kopete; will display a message which contains the UIN of the person who wants to add you to his list.
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_added.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>authorization request</phrase>
+    </textobject>
+    <caption>
+      <para>authorization request</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>To get more information about the person click on <guilabel>Info...</guilabel>. A window will open which contains all the information available about the person.
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_information.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Information</phrase>
+    </textobject>
+    <caption>
+      <para>Information</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>Now you can authorize or block the person. If you authorize, you can chat with him and vice versa, if you block him, he can't talk with you.
+</para>
+</sect1>
+<sect1 id="chatting"><title>Chatting</title> 
+<para>To chat, click on one of your contacts. A chat window will appear. There you can type your text and send it.
+</para>
+<para>
+<screenshot>
+<screeninfo></screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Kopete_icq_chat_window.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Chat with your contacts</phrase>
+    </textobject>
+    <caption>
+      <para>Chat with your contacts</para>
+    </caption>
+  </mediaobject>
+</screenshot>
+</para>
+<para>It is also possible to send messages to persons that are offline. They will receive your message as soon as they go online.
+</para>
+</sect1>
+<sect1 id="spam"><title>Spam</title> 
+<para>Sadly, there is a lot of spam (spam are messages you don't want, usually advertisement or viruses) on the ICQ network. To avoid spam, you should authorize only people you know. There is nothing you can really do about this problem. Just ignore them!
+</para>
+</sect1>
+</appendix>
