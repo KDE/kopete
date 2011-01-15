@@ -134,7 +134,7 @@ if ( NOT WIN32 )
 endif ( NOT WIN32 )
 
 macro_optional_find_package(msiLBC)
-macro_log_feature(MSILBC_FOUND "msiLBC" "iLBC is low bitrate audio codec - plugin for mediastreamer" "http://mirror.lihnidos.org/GNU/savannah/linphone/plugins/sources" FALSE "" "Needed to build Google Talk libjingle voice call support with iLBC codec")
+macro_log_feature(MSILBC_FOUND "msiLBC" "iLBC is low bitrate audio codec - plugin for mediastreamer" "http://download.savannah.gnu.org/releases/linphone/plugins/sources/" FALSE "" "Needed to build Google Talk libjingle voice call support with iLBC codec")
 
 # Generate config-kopete.h
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )
