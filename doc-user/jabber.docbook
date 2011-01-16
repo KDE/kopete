@@ -127,7 +127,7 @@
   </mediaobject>
 </screenshot> 
 </para>
-<para>After selecting a server you are able to complete your desired Jabber-ID, &ie; your username. Add your prefered name in front of the <quote>@</quote> in the field <guilabel>Desired Jabber ID</guilabel>. After filling in your password and repeating it you should tick the checkbox <guilabel>Use protocol encryption (SSL)</guilabel> for having an <ulink url="http://en.wikipedia.org/wiki/Secure_Sockets_Layer">encrypted</ulink> client-server connection. 
+<para>After selecting a server you are able to complete your desired Jabber-ID, &ie; your username. Add your preferred name in front of the <quote>@</quote> in the field <guilabel>Desired Jabber ID</guilabel>. After filling in your password and repeating it you should tick the checkbox <guilabel>Use protocol encryption (SSL)</guilabel> for having an <ulink url="http://en.wikipedia.org/wiki/Secure_Sockets_Layer">encrypted</ulink> client-server connection. 
 </para>
 <para>
 <screenshot>
@@ -199,7 +199,7 @@
   </mediaobject>
 </screenshot>
 </para>
-<para>The next Tab, <guilabel>File Transfer</guilabel>, is normally not affected when setting up a Jabber account in a normal network.
+<para>The next tab, <guilabel>File Transfer</guilabel>, is normally not affected when setting up a Jabber account in a normal network.
 </para>
 <para>Finally, there are some privacy configurations in the tab <guilabel>Privacy</guilabel>, they are mostly self-explanatory. The option <guilabel>Use old inline PGP format for signed and encrypted messages</guilabel> (read here what <ulink url="http://en.wikipedia.org/wiki/Pretty_Good_Privacy">PGP</ulink> means) is not recommended, because there exists a method to do this with the built-in OTR, which will be explained <link linkend="useful-configuration-hints">later in this tutorial</link>.
 </para>
@@ -243,7 +243,7 @@
 </para>
 </sect1>
 <sect1 id="adding-friends"><title>Adding friends</title>
-<para>After your first login, your Kopete window is quite empty. There might be a default contact added by your server which perhaps sends you a welcome message, but there are no real contacts in your roster (this is by the way the word for <quote>contact list</quote> in the Jabber world). The first step for adding friends in Jabber is, of course, asking them for their Jabber ID. When you got one, you can immediately add it to &kopete;. You can either click <menuchoice><guimenu>Add</guimenu><guimenuitem>yourJID@example.org</guimenuitem></menuchoice> or <menuchoice><guimenu>File</guimenu><guimenuitem>Add Contact</guimenuitem></menuchoice>. A new window appears asking for the <guilabel>Jabber ID</guilabel> we want to add to our roster. Just type it in and click <guilabel>OK</guilabel>. The <guilabel>Group</guilabel> option is used, when you specified groups of contacts (&eg; <quote>family</quote> and <quote>work</quote>). A connection to your <ulink url="http://userbase.kde.org/Special:myLanguage/KAddressBook">KAddressBook</ulink> can be established with <guilabel>Address book  entry</guilabel>, so that you can exchange information like profile pictures between the two applications. 
+<para>After your first login, your &kopete; window is quite empty. There might be a default contact added by your server which perhaps sends you a welcome message, but there are no real contacts in your roster (this is by the way the word for <quote>contact list</quote> in the Jabber world). The first step for adding friends in Jabber is, of course, asking them for their Jabber ID. When you got one, you can immediately add it to &kopete;. You can either click <menuchoice><guimenu>Add</guimenu><guimenuitem>yourJID@example.org</guimenuitem></menuchoice> or <menuchoice><guimenu>File</guimenu><guisubmenu>Add Contact</guisubmenu><guimenuitem>yourJID@example.org</guimenuitem></menuchoice>. A new window appears asking for the <guilabel>Jabber ID</guilabel> we want to add to our roster. Just type it in and click <guilabel>OK</guilabel>. The <guilabel>Group</guilabel> option is used, when you specified groups of contacts (&eg; <quote>family</quote> and <quote>work</quote>). A connection to your <ulink url="http://userbase.kde.org/Special:myLanguage/KAddressBook">KAddressBook</ulink> can be established with <guilabel>Address book entry</guilabel>, so that you can exchange information like profile pictures between the two applications. 
 </para>
 <para>
 <screenshot>
@@ -321,7 +321,7 @@
 </para>
 </sect1>
 <sect1 id="messaging-and-sending-files"><title>Messaging and sending files</title>
-<para>You can start chatting with a contact by clicking on the name. A new window will open and you can type in messages into the smaller field at the bottom, where the cursor already resides. When you want to send your text, hit <keycap>Enter</keycap> or press the <guilabel>Send</guilabel> button. You and your partner can communicate now via Jabber.
+<para>You can start chatting with a contact by clicking on the name. A new window will open and you can type in messages into the smaller field at the bottom, where the cursor already resides. When you want to send your text, hit &Enter; or press the <guilabel>Send</guilabel> button. You and your partner can communicate now via Jabber.
 </para>
 <para>
 <screenshot>
@@ -346,7 +346,7 @@
 </para>
 </sect2>
 <sect2 id="group-chat"><title>Group chat</title> 
-<para>Jabber is not only capable of communicating with one person. You can use Group Chat to do an <ulink url="http://en.wikipedia.org/wiki/IRC">IRC</ulink> style discussion, where many people can talk with each other. To use Group Chat, you have to right-click on the Kopete systray icon, and select <menuchoice><guimenu><replaceable>yourJID</replaceable></guimenu><guimenuitem>Join Groupchat...</guimenuitem></menuchoice>, where <replaceable>yourJID</replaceable> stands for your own Jabber ID. A new window appears where you can join a chatroom. 
+<para>Jabber is not only capable of communicating with one person. You can use Group Chat to do an <ulink url="http://en.wikipedia.org/wiki/IRC">IRC</ulink> style discussion, where many people can talk with each other. To use Group Chat, you have to right-click on the &kopete; systray icon, and select <menuchoice><guimenu><replaceable>yourJID</replaceable></guimenu><guimenuitem>Join Groupchat...</guimenuitem></menuchoice>, where <replaceable>yourJID</replaceable> stands for your own Jabber ID. A new window appears where you can join a chatroom. 
 </para>
 <para>
 <screenshot>
@@ -364,18 +364,18 @@
   </mediaobject>
 </screenshot>
 </para>
-<para>Click on <guilabel>Query</guilabel> to show the list of existing chatrooms on your Jabber server. Select one and press <keycap>Enter</keycap> to enter this room. 
+<para>Click on <guilabel>Query</guilabel> to show the list of existing chatrooms on your Jabber server. Select one and press &Enter; to enter this room. 
 </para>
 <para>Alternatively you can type in and create your own chatroom by writing its name into the line <guilabel>Room</guilabel>. Then press &Enter; or click <guilabel>Join</guilabel> to join.
 </para>
-<para>After you created the chatroom, you'll see a new field appearing in your Kopete window with the JID <replaceable>chatroomname@jabber.example.org</replaceable>. Treat it as a normal contact, &ie; you have to click on this JID to chat &etc; 
+<para>After you created the chatroom, you'll see a new field appearing in your &kopete; window with the JID <replaceable>chatroomname@jabber.example.org</replaceable>. Treat it as a normal contact, &ie; you have to click on this JID to chat &etc; 
 </para>
 <para>At this point you have set up a working Jabber client and are in principle able to chat with your contacts. But for a better experience of &kopete;, you are able to configure the application for your best needs. A set of <link linkend="useful-configuration-hints">Useful configuration hints</link> is the content of the next page in this tutorial.
 </para>
 </sect2>
 </sect1>
 <sect1 id="useful-configuration-hints"><title>Useful configuration hints</title>
-<para>These hints all refer to Kopete's main configuration window residing under <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure...</guimenuitem></menuchoice>. Be sure to click on <guilabel>Apply</guilabel> or <guilabel>OK</guilabel> if you want your changes to be saved.
+<para>These hints all refer to &kopete;'s main configuration window residing under <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure...</guimenuitem></menuchoice>. Be sure to click on <guilabel>Apply</guilabel> or <guilabel>OK</guilabel> if you want your changes to be saved.
 </para>
 <para>All adjustments affecting your account setup and configuration of multiple accounts in &kopete; (Jabber/XMPP as well as <ulink url="http://en.wikipedia.org/wiki/Icq">ICQ</ulink>, <ulink url="http://en.wikipedia.org/wiki/.NET_Messenger_Service">MSN</ulink> and many other messaging protocols) can be found under the tab <guilabel>Accounts</guilabel>. If you want to set your personal information or are willing to use a contact photo, click on <guilabel>Modify Identity...</guilabel> and make your settings. A photo can be uploaded by clicking on the small icon on the left hand side at the bottom of the image area. 
 </para>
@@ -401,15 +401,13 @@
 </para>
 <para>Clicking on <guilabel>Behavior</guilabel> opens a quite detailed set of configuration. The most interesting ones, that can be found in the tab <guilabel>General</guilabel> are <guilabel>Message Handling</guilabel> and <guilabel>Initial Status</guilabel>. The first one decides if incoming messages from your contacts open instantly a new window or if they are queued until you open &kopete; yourself. The second one tells &kopete; if it shall go online when you start the program. When you set this, you are always available for your contacts once you run &kopete;. The tab <guilabel>Events</guilabel> lets you set in what cases &kopete; notifies you via your computer's notification system (in most cases <guilabel>KNotify</guilabel>). When you want &kopete; to set your status automatically to <quote>Away</quote>, open the tab <guilabel>Away Settings</guilabel> and enable the first checkbox. You can set the time that has to pass after your last action (keyboard input or mouse movement) that &kopete; will set you as <quote>away</quote>. The default value is 10 minutes. Options located in <guilabel>Chat</guilabel> are again self-explanatory and already set to useful values.
 </para>
-<para>The next item in the vertical row on the left is <guilabel>Chat Window</guilabel>. The first tab in there, <guilabel>Style</guilabel>, can be used to set another appearance than the default one. You can also install your own styles or download new ones from the Internet by clicking on <guilabel>Get New...</guilabel>. When you type in an <ulink url="http://en.wikipedia.org/wiki/Emoticon">Emoticon</ulink>
-</para>
-<para>during a conversation, &kopete; will convert it into a graphical emoticon by default. To disable this feature or to use another set of emoticons go to <guilabel>Emoticons</guilabel>. The last tab, <guilabel>Colors &amp; Fonts</guilabel> is again self-explanatory and configures these preferences of your chat window.
+<para>The next item in the vertical row on the left is <guilabel>Chat Window</guilabel>. The first tab in there, <guilabel>Style</guilabel>, can be used to set another appearance than the default one. You can also install your own styles or download new ones from the Internet by clicking on <guilabel>Get New...</guilabel>. When you type in an <ulink url="http://en.wikipedia.org/wiki/Emoticon">Emoticon</ulink> during a conversation, &kopete; will convert it into a graphical emoticon by default. To disable this feature or to use another set of emoticons go to <guilabel>Emoticons</guilabel>. The last tab, <guilabel>Colors &amp; Fonts</guilabel> is again self-explanatory and configures these preferences of your chat window.
 </para>
 <para><ulink url="http://en.wikipedia.org/wiki/Webcam">Webcams</ulink> are supported in &kopete;, but at the moment (November 2010) there are still some difficulties concerning video chat, so settings in <guilabel>Video</guilabel> are made at your own responsibility, because it's quite possible it doesn't work in the right way. The <ulink url="http://forum.kde.org/viewforum.php?f=18">KDE Forums</ulink> may be helpful while dealing with webcam issues.
 </para>
 </sect1>
 <sect1 id="jabber-plugins"><title>Plugins</title> 
-<para>A very powerful feature of Kopete is the capability of using plugins. There is a set of plugins pre-installed (new ones can be installed for example with your Linux distro's package manager) and they can be enabled and configured under <guilabel>Plugins</guilabel>. You can enable them by setting the tick into the respective checkbox. Most of them are again self-explanatory, but the most useful ones will be explained here anyway. A very helpful plugin is the <guilabel>History</guilabel>. With this option enabled, Kopete will log all your chats and write it onto your hard disk. You can read it in your chat window, when you select the <guilabel>View History</guilabel> icon or you open it with <menuchoice><guimenu>Tools</guimenu><guimenuitem>View History</guimenuitem></menuchoice>. 
+<para>A very powerful feature of &kopete; is the capability of using plugins. There is a set of plugins pre-installed (new ones can be installed for example with your &Linux; distro's package manager) and they can be enabled and configured under <guilabel>Plugins</guilabel>. You can enable them by setting the tick into the respective checkbox. Most of them are again self-explanatory, but the most useful ones will be explained here anyway. A very helpful plugin is the <guilabel>History</guilabel>. With this option enabled, Kopete will log all your chats and write it onto your hard disk. You can read it in your chat window, when you select the <guilabel>View History</guilabel> icon or you open it with <menuchoice><guimenu>Tools</guimenu><guimenuitem>View History</guimenuitem></menuchoice>. 
 </para>
 <sect2 id="otr"><title>OTR</title> 
 <para>One of the most important plugins considering privacy issues is <ulink url="http://en.wikipedia.org/wiki/Off-the-Record_Messaging">OTR</ulink>. This piece of software encrypts your entire conversation from one end to the other and makes it impossible for third persons to read your conversation. After you enabled the plugin, you have to open its settings (click on the wrench icon) and <guilabel>Generate</guilabel> a key. 
@@ -430,7 +428,7 @@
   </mediaobject>
 </screenshot>
 </para>
-<para>This may take a while and you have to wait until Kopete finished. After that close the OTR window with <guilabel>OK</guilabel> and <guilabel>Apply</guilabel> the changes. You eventually will have to restart Kopete after this. Then open a chat window of the contact you want to safely communicate with. Go to <menuchoice><guimenu>Tools</guimenu><guimenuitem>OTR Settings</guimenuitem></menuchoice> or use the icon <menuchoice><guimenu>OTR Encryption</guimenu><guimenuitem>Start OTR Session</guimenuitem></menuchoice>. Kopete will start the session if your contact is capable of OTR, otherwise you'll recieve an error message. 
+<para>This may take a while and you have to wait until &kopete; finished. After that close the OTR window with <guilabel>OK</guilabel> and <guilabel>Apply</guilabel> the changes. You eventually will have to restart &kopete; after this. Then open a chat window of the contact you want to safely communicate with. Go to <menuchoice><guimenu>Tools</guimenu><guisubmenu>OTR Settings</guisubmenu><guimenuitem>Start OTR Session</guimenuitem></menuchoice> or use the icon <menuchoice><guimenu>OTR Encryption</guimenu><guimenuitem>Start OTR Session</guimenuitem></menuchoice>. &kopete; will start the session if your contact is capable of OTR, otherwise you'll recieve an error message. 
 </para>
 <para>
 <screenshot>
@@ -448,7 +446,7 @@
   </mediaobject>
 </screenshot>
 </para>
-<para>To ensure your added contact is really the one he or she is pretending, it's necessary to authenticate him or her one time. You can do this by calling <menuchoice><guimenu>Tools</guimenu><guimenuitem>OTR Settings</guimenuitem></menuchoice>. You may choose between three options:
+<para>To ensure your added contact is really the one he or she is pretending, it's necessary to authenticate him or her one time. You can do this by calling <menuchoice><guimenu>Tools</guimenu><guisubmenu>OTR Settings</guisubmenu><guimenuitem>Authenticate contact</guimenuitem></menuchoice>. You may choose between three options:
 </para>
 <itemizedlist>
 <listitem><para>The first one is to ask your chat partner a question whose answer can only be known by him or her and you. 

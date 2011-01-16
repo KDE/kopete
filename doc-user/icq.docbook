@@ -265,7 +265,7 @@
   </mediaobject>
 </screenshot>
 </para>
-<para>To add a contact press <guilabel>Add</guilabel> in the toolbar and choose your account (in this case it is your UIN), or you can use the menu <menuchoice><guimenu>File</guimenu><guimenuitem>Add Contact</guimenuitem></menuchoice>. There you can enter the UIN of the person you want to add.
+<para>To add a contact press <guilabel>Add</guilabel> in the toolbar and choose your account (in this case it is your UIN), or you can use the menu <menuchoice><guimenu>File</guimenu><guisubmenu>Add Contact</guisubmenu><guimenuitem><replaceable>your account</replaceable></guimenuitem></menuchoice>. There you can enter the UIN of the person you want to add.
 </para>
 <para>
 <screenshot>
