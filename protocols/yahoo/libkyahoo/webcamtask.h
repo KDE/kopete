@@ -101,7 +101,7 @@ private:
 	void processData( KStreamSocket *socket );
 	void cleanUpConnection( KStreamSocket *socket );	
 
-	QString keyPending;	// the buddy we have requested the webcam from
+	QStringList keysPending; // time ordered list of users we have requested the webcam from
 	SocketInfoMap socketMap;
 	bool transmittingData;
 	QStringList pendingInvitations;
