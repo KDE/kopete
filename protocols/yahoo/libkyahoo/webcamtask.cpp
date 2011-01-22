@@ -80,8 +80,10 @@ void WebcamTask::requestWebcam( const QString &who )
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceWebcam);
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().toLocal8Bit());
-	t->setParam( 5, who.toLocal8Bit() );
-	keyPending = who;
+
+	if (!who.isEmpty())
+		t->setParam( 5, who.toLocal8Bit() );
+	keysPending.append(who);
 
 	send( t );
 }
@@ -91,7 +93,9 @@ void WebcamTask::parseWebcamInformation( YMSGTransfer *t )
 	kDebug(YAHOO_RAW_DEBUG) ;
 
 	YahooWebcamInformation info;
-	info.sender = keyPending;
+	if (!keysPending.isEmpty())
+		info.sender = keysPending.takeFirst();
+
 	info.server = t->firstParam( 102 );
 	info.key = t->firstParam( 61 );
 	info.status = InitialStatus;
@@ -99,7 +103,7 @@ void WebcamTask::parseWebcamInformation( YMSGTransfer *t )
 	info.buffer = 0L;
 	info.headerRead = false;
 	if(info.sender.isEmpty()){
-		info.server = t->firstParam( 4 );
+		info.sender = t->firstParam( 4 );
 	}
 	if( info.sender == client()->userId() )
 	{
@@ -551,7 +555,7 @@ void WebcamTask::registerWebcam()
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceWebcam);
 	t->setId( client()->sessionID() );
 	t->setParam( 1, client()->userId().toLocal8Bit());
-	keyPending  = client()->userId();
+	keysPending.append(client()->userId());
 
 	send( t );
 }
