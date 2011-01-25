@@ -18,6 +18,7 @@
 #include "transfer.h"
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
+#include "libyahoo.h"
 #include "client.h"
 #include <qstring.h>
 #include <qtimer.h>
@@ -29,6 +30,13 @@
 #include <krandom.h>
 
 using namespace KNetwork;
+
+
+/* Buffer size to send file data. Automatically resized. Won't grow up past BUFFER_SIZE_MAX. Code will try
+   to send as much data as it can in one shot */
+static const int BUFFER_SIZE_INITIAL = 1024;
+static const int BUFFER_SIZE_MAX = (64 * 1024);
+
 
 SendFileTask::SendFileTask(Task* parent) : Task(parent)
 {
@@ -177,9 +185,11 @@ void SendFileTask::parseTransferAccept(const Transfer *transfer)
 	kDebug(YAHOO_RAW_DEBUG) << "Token: " << m_token;
 
 	m_socket = new KStreamSocket( m_relayHost, QString::number(80) );
-	m_socket->setBlocking( true );
+	m_socket->setBlocking( false );
+	m_socket->enableWrite(true);
 	connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
 	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
+	connect( m_socket, SIGNAL( readyWrite() ), this, SLOT( transmitHeader() ) );
 
 	m_socket->connect();
 
@@ -197,9 +207,6 @@ void SendFileTask::connectSucceeded()
 {
 	kDebug(YAHOO_RAW_DEBUG) ;
 
-	QByteArray buffer;
-	QDataStream stream( &buffer, QIODevice::WriteOnly );
-
 	if ( m_file.open(QIODevice::ReadOnly ) )
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "File successfully opened. Reading...";
@@ -208,71 +215,169 @@ void SendFileTask::connectSucceeded()
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "Error opening file: " << m_file.errorString();
 		client()->notifyError( i18n( "An error occurred while sending the file." ), m_file.errorString(), Client::Error );
+		m_socket->close();
+		emit error( m_transferId, m_file.error(), m_file.errorString() );
 		setError();
 		return;
 	}
 
 	kDebug(YAHOO_RAW_DEBUG) << "Sizes: File (" << m_url << "): " << m_file.size();
-	QString header = QString::fromLatin1("POST /relay?token=%1&sender=%2&recver=%3 HTTP/1.1\r\n"
+	QString header = QString::fromLatin1("POST /relay?token=") + 
+		QUrl::toPercentEncoding(m_token) +
+		QString::fromLatin1("&sender=%1&recver=%2 HTTP/1.1\r\n"
 					     "Cache-Control: no-cache\r\n"
-					     "Cookie: T=%4; Y=%5\r\n"
-					     "Host: %6\r\n"
-					     "Content-Length: %7\r\n"
+					     "Cookie: T=%3; Y=%4\r\n"
+					     "Host: %5\r\n"
+					     "Content-Length: %6\r\n"
 					     "User-Agent: Mozilla/5.0\r\n"
 					     "Connection: Close\r\n\r\n")
-		.arg(m_token).arg(client()->userId()).arg(m_target)
+		.arg(client()->userId()).arg(m_target)
 		.arg(client()->tCookie()).arg(client()->yCookie())
 		.arg(m_relayHost)
 		.arg(QString::number(m_file.size()));
-	kDebug() << header;
-	stream.writeRawData( header.toLocal8Bit(), header.length() );
+	m_buffer = header.toLocal8Bit();
+	m_bufferOutPos = 0;
+	m_bufferInPos = m_buffer.size();
+}
 
-	if( !m_socket->write( buffer ) )
+
+void SendFileTask::transmitHeader()
+{
+	Q_ASSERT(m_bufferOutPos <= m_buffer.size());
+	const int remaining = m_bufferInPos - m_bufferOutPos;
+
+	if (remaining <= 0)
+	{
+		// Go to next step.
+		disconnect( m_socket, SIGNAL( readyWrite() ), this, SLOT( transmitHeader() ) );
+		connect( m_socket, SIGNAL(readyWrite()), this, SLOT(transmitData()) );
+		m_buffer.clear();
+		m_bufferOutPos = 0;
+		m_bufferInPos = 0;
+		m_buffer.resize(BUFFER_SIZE_INITIAL);
+		transmitData(); // since we're just in the situation of being ready to transmit.
+		return;
+	}
+
+
+	kDebug(YAHOO_RAW_DEBUG) << "Trying to send header part: " << m_buffer.mid(m_bufferOutPos);
+
+	const qint64 written = m_socket->write(m_buffer.constData() + m_bufferOutPos, remaining);
+	kDebug(YAHOO_RAW_DEBUG) << "  sent " << written << " bytes";
+
+	if (written <= 0)
 	{
 		emit error( m_transferId, m_socket->error(), m_socket->errorString() );
 		m_socket->close();
-	}
-	else
-	{
-		connect( m_socket, SIGNAL(readyWrite()), this, SLOT(transmitData()) );
-		m_socket->enableWrite( true );
-	}
-}
-
-void SendFileTask::transmitData()
-{
-	kDebug(YAHOO_RAW_DEBUG) ;
-	int read = 0;
-	int written = 0;	
-	char buf[1024];
-
-	m_socket->enableWrite( false );
-	read = m_file.read( buf, 1024 );
-	written = m_socket->write( buf, read );
-	kDebug(YAHOO_RAW_DEBUG) << "read:" << read << " written: " << written;
-
-	m_transmitted += read;
-	emit bytesProcessed( m_transferId, m_transmitted );
-
-	if( written != read )
-	{
-		kDebug(YAHOO_RAW_DEBUG) << "Upload Failed!";
-		emit error( m_transferId, m_socket->error(), m_socket->errorString() );
 		setError();
 		return;
 	}
-	if( m_transmitted == m_file.size() )
+
+	m_bufferOutPos += written;
+}
+
+
+
+bool SendFileTask::checkTransferEnd()
+{
+	if (m_transmitted >= m_file.size())
 	{
 		kDebug(YAHOO_RAW_DEBUG) << "Upload Successful: " << m_transmitted;
 		emit complete( m_transferId );
 		setSuccess();
 		m_socket->close();
+		return true;
 	}
-	else
+	return false;
+}
+
+
+
+bool SendFileTask::fillSendBuffer()
+{
+	if (checkTransferEnd())
+		return true;
+
+	Q_ASSERT(m_buffer.size() >= m_bufferOutPos);
+	Q_ASSERT(m_buffer.size() >= m_bufferInPos);
+
+	if (m_bufferOutPos >= m_bufferInPos)
 	{
-		m_socket->enableWrite( true );
+		m_bufferOutPos = m_bufferInPos = 0;
+	} else 
+	{
+		// we'd like to go with the maximum speed on the netw interface. reading from local file is speedy enough (+ caching at disk block layers)
+		m_bufferInPos = m_buffer.size() - m_bufferOutPos;
+		memmove(m_buffer.data(), m_buffer.constData() + m_bufferOutPos, m_bufferInPos);
+		m_bufferOutPos = 0;
+	}
+
+
+	const int to_read = m_buffer.size() - m_bufferInPos;
+	if (to_read <= 0)
+	{
+		return false; // buffer full. probably shouldn't happen
+	}
+	const qint64 file_read = m_file.read(m_buffer.data() + m_bufferInPos, to_read);
+
+	// kDebug(YAHOO_RAW_DEBUG) << "reading from file: want" << to_read << "got to read" << file_read << " bytes";
+
+	if (file_read < 0)
+	{
+		kDebug(YAHOO_RAW_DEBUG) << "Upload Failed (reading file)!";
+
+		m_buffer.clear();
+		m_buffer.reserve(0); // free memory until this task is reused or freed.
+
+		emit error( m_transferId, m_file.error(), m_file.errorString() );
+		setError();
+		return true;
+	}
+
+	m_bufferInPos += file_read;
+
+	return false;
+}
+
+
+void SendFileTask::transmitData()
+{
+	kDebug(YAHOO_RAW_DEBUG) ;
+
+	if (fillSendBuffer())
+		return;
+
+	Q_ASSERT(m_bufferOutPos <= m_bufferInPos);
+
+	const int remaining = m_bufferInPos - m_bufferOutPos;
+
+	const qint64 written = m_socket->write(m_buffer.constData() + m_bufferOutPos, remaining);
+	if (written <= 0)
+	{
+		kDebug(YAHOO_RAW_DEBUG) << "Upload Failed (sending data)! toSend=" << remaining << "sent=" << written;
+		emit error( m_transferId, m_socket->error(), m_socket->errorString() );
+		setError();
+		return;
+	}
+	// kDebug(YAHOO_RAW_DEBUG) << "sending file content: toSend=" << remaining << "sent=" << written;
+
+	m_transmitted += written;
+	m_bufferOutPos += written;
+        emit bytesProcessed( m_transferId, m_transmitted );
+	if (checkTransferEnd())
+		return;
+	// see if we should do a bit of buffer resizing
+	if ((m_buffer.size() < BUFFER_SIZE_MAX) &&
+		(written >= remaining) && (written >= m_buffer.size()))
+	{
+		// double its size
+		int oldC = m_buffer.size();
+		m_buffer.resize(MIN(2 * oldC, BUFFER_SIZE_MAX));
+		// kDebug(YAHOO_RAW_DEBUG) << "buffer resized from " << oldC << " to " << m_buffer.size();
 	}
 }
+
+
 void SendFileTask::setTarget( const QString &to )
 {
 	m_target = to;

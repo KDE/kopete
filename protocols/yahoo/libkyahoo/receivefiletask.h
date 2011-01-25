@@ -62,11 +62,13 @@ signals:
 
 private slots:
 	void slotData( KIO::Job *job, const QByteArray &data );
+	void slotHeadComplete( KJob *job );
 	void slotComplete( KJob *job );
 	void canceled( unsigned int );
 
 private:
 	void parseFileTransfer7Info( YMSGTransfer *transfer );
+	void setCommonTransferMetaData(KIO::TransferJob* job);
 
 	KUrl m_remoteUrl;
 	KUrl m_localUrl;

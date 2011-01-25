@@ -60,10 +60,17 @@ protected:
 
 	QString newYahooTransferId();
 
+	/** returns true if things need to be stopped due to file transfer error or completed */
+	bool fillSendBuffer();
+
+	/** returns true if file transfer completed */ 
+	bool checkTransferEnd();
+
 private slots:
 	void connectSucceeded();
 	void connectFailed( int );
 	void transmitData();
+	void transmitHeader();
 	void canceled( unsigned int );
 
 private:
@@ -78,6 +85,13 @@ private:
 	QString m_relayHost;
 	QString m_token;
 	QString m_yahooTransferId;
+
+	/** buffer containing data to be sent */
+	QByteArray m_buffer;
+	/** position (until m_bufferInPos) of data ready to be sent on the wire */
+	int m_bufferOutPos;
+	/** position where next fills from the file should happen */
+	int m_bufferInPos;
 };
 
 #endif
