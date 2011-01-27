@@ -2874,6 +2874,7 @@ Name=Gadu-Gadu contacts list
 Name[ast]=Llista de contautos Gadu-Gadu
 Name[ca]=Llista de contactes del Gadu-Gadu
 Name[ca@valencia]=Llista de contactes del Gadu-Gadu
+Name[cs]=Seznam kontaktů Gadu-Gadu
 Name[da]=Gadu-Gadu kontaktliste
 Name[de]=Gadu-Gadu-Kontaktliste
 Name[en_GB]=Gadu-Gadu contacts list
@@ -3026,6 +3027,7 @@ Action=None
 
 [Event/kopete_incoming_file_transfer]
 Name=Incoming File Transfer
+Name[cs]=Příchozí přenos souboru
 Name[en_GB]=Incoming File Transfer
 Name[et]=Sisenev failiülekanne
 Name[nds]=Ankamen Dateiöverdregen
