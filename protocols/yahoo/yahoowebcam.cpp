@@ -14,8 +14,6 @@
 */
 
 #include <kdebug.h>
-#include <kprocess.h>
-#include <ktemporaryfile.h>
 #include <qtimer.h>
 
 #include "client.h"
@@ -26,6 +24,7 @@
 #include "avdevice/videodevicepool.h"
 #endif
 
+#include "webcamimgformat.h"
 
 YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 {
@@ -33,12 +32,6 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 	kDebug(YAHOO_GEN_DEBUG) ;
 	theAccount = account;
 	theDialog = 0L;
-	origImg = new KTemporaryFile();
-	origImg->setAutoRemove(false);
-	origImg->open();
-	convertedImg = new KTemporaryFile();
-	convertedImg->setAutoRemove(false);
-	convertedImg->open();
 	m_img = new QImage();
 
 	m_sendTimer = new QTimer( this );
@@ -60,10 +53,6 @@ YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 
 YahooWebcam::~YahooWebcam()
 {
-	QFile::remove( origImg->fileName() );
-	QFile::remove( convertedImg->fileName() );
-	delete origImg;
-	delete convertedImg;
 	delete m_img;
 }
 
@@ -111,31 +100,17 @@ void YahooWebcam::sendImage()
 	 */
 #endif
 
-	origImg->close();
-	convertedImg->close();
-
-	m_img->save( origImg->fileName(), "JPEG");
-
-	KProcess p;
-	p << "jasper";
-	p << "--input" << origImg->fileName() << "--output" << convertedImg->fileName() << "--output-format" << "jpc" << "-O" <<"cblkwidth=64\ncblkheight=64\nnumrlvls=4\nrate=0.0165\nprcheight=128\nprcwidth=2048\nmode=real";
-
-	int ec = p.execute();
-	if( ec != 0 )
+	QByteArray result;
+	if (WebcamImgFormat::instance())
 	{
-		kDebug(YAHOO_GEN_DEBUG) << " jasper exited with status " << ec;
-	}
-	else
-	{
-		QFile file( convertedImg->fileName() );
-		if( file.open( QIODevice::ReadOnly ) )
+		if (WebcamImgFormat::instance()->forYahoo(result, m_img))
 		{
-			QByteArray ar = file.readAll();
-			theAccount->yahooSession()->sendWebcamImage( ar );
-		}
-		else
-			kDebug(YAHOO_GEN_DEBUG) << "Error opening the converted webcam image.";
-	}
+			kDebug(YAHOO_RAW_DEBUG) << "Image successfully converted";
+			theAccount->yahooSession()->sendWebcamImage(result);
+		} else
+			kDebug(YAHOO_RAW_DEBUG) << "Failed to convert outgoing Yahoo webcam image";
+	} else
+		kDebug(YAHOO_RAW_DEBUG) << "Failed to initialize WebcamImgFormat helper";
 }
 
 void YahooWebcam::addViewer( const QString &viewer )
