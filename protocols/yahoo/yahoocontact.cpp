@@ -629,13 +629,7 @@ void YahooContact::inviteConference()
 
 void YahooContact::inviteWebcam()
 {
-	if ( KStandardDirs::findExe("jasper").isEmpty() )
-	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("Unable to find the Jasper image conversion program.\nJasper is required to render Yahoo webcam images."
-			"\nPlease see %1 for further information.", QString("http://userbase.kde.org/Kopete/Webcam_Support") ) );
-		return;
-	}
+	// TODO: some message if code for local video devices is not present
 	m_account->yahooSession()->sendWebcamInvite( m_userId );
 }
 
@@ -684,14 +678,6 @@ void YahooContact::initWebcamViewer()
 
 void YahooContact::requestWebcam()
 {
-	if ( KStandardDirs::findExe("jasper").isEmpty() )
-	{
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n("Unable to find the Jasper image conversion program.\nJasper is required to render Yahoo webcam images."
-			"\nPlease see %1 for further information.", QString("http://userbase.kde.org/Kopete/Webcam_Support") ) );
-		return;
-	}
-
 	if( !m_webcamDialog )
 		initWebcamViewer();
 	m_account->yahooSession()->requestWebcam( contactId() );

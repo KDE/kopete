@@ -20,13 +20,11 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
+#include "webcamimgformat.h"
 
 #include <QBuffer>
-#include <QFile>
 #include <QTimer>
 #include <QPixmap>
-#include <ktemporaryfile.h>
-#include <kprocess.h>
 #include <k3streamsocket.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -466,36 +464,16 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			{
 			QPixmap webcamImage;
 			//webcamImage.loadFromData( info->buffer->buffer() );
-	
-			KTemporaryFile jpcTmpImageFile;
-			jpcTmpImageFile.setAutoRemove(false);
-			jpcTmpImageFile.open();
-			KTemporaryFile bmpTmpImageFile;
-			bmpTmpImageFile.setAutoRemove(false);
-			bmpTmpImageFile.open();
-
-			jpcTmpImageFile.write((info->buffer->buffer()).data(), info->buffer->size());
-			jpcTmpImageFile.close();
-			
-			KProcess p;
-			p << "jasper";
-			p << "--input" << jpcTmpImageFile.fileName() << "--output" << bmpTmpImageFile.fileName() << "--output-format" << "bmp";
-			
-			int ec = p.execute();
-			if( ec != 0 )
+			if (WebcamImgFormat::instance())
 			{
-				kDebug(YAHOO_RAW_DEBUG) << " jasper exited with status " << ec << " " << info->sender;
-			}
-			else
-			{
-				webcamImage.load( bmpTmpImageFile.fileName() );
-				/******* UPTO THIS POINT ******/
-				emit webcamImageReceived( info->sender, webcamImage );
-			}
-			QFile::remove(jpcTmpImageFile.fileName());
-			QFile::remove(bmpTmpImageFile.fileName());
-	
-			kDebug(YAHOO_RAW_DEBUG) << "Image Received. Size: " << webcamImage.size();
+				if (WebcamImgFormat::instance()->fromYahoo(webcamImage, info->buffer->buffer().constData(), info->buffer->buffer().size()))
+				{
+					kDebug(YAHOO_RAW_DEBUG) << "Image Received and converted. Size: " << webcamImage.size();
+					emit webcamImageReceived( info->sender, webcamImage );
+				} else
+					kDebug(YAHOO_RAW_DEBUG) << "Failed to convert incoming Yahoo webcam image";
+			} else
+				kDebug(YAHOO_RAW_DEBUG) << "Failed to initialize WebcamImgFormat helper";
 			}
 		break;
 		default:
