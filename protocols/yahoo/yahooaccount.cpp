@@ -768,6 +768,9 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	}
 
 	//If we get here, something went wrong, so set ourselves to offline
+	initConnectionSignals( DeleteConnections );
+	errorMsg = i18nc("@info", "Could not log into the Yahoo service. Error code: <message><numid>%1</numid></message>.", succ);
+	KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( Unknown );
 }
