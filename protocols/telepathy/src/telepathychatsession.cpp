@@ -146,7 +146,7 @@ void TelepathyChatSession::sendMessage(Kopete::Message &message)
 {
     kDebug();
 
-    if (!m_textChannel) {
+    if (!m_textChannel || !m_textChannel->isReady(Tp::TextChannel::FeatureCore)) {
         kWarning() << "Message not sent because channel does not yet exist.";
 
         // Indicate that the message sending failed.
