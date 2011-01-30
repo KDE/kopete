@@ -768,6 +768,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	}
 
 	//If we get here, something went wrong, so set ourselves to offline
+	initConnectionSignals( DeleteConnections );
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( Unknown );
 }
