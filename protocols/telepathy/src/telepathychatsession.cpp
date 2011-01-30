@@ -134,6 +134,7 @@ void TelepathyChatSession::onEnsureChannelFinished(Tp::PendingOperation* op)
 
     if (op->isError()) {
         kWarning() << "Ensuring Channel Failed:" << op->errorName() << op->errorMessage();
+        m_pendingChannelRequest = 0;
         return;
     }
 

@@ -254,15 +254,17 @@ void TelepathyChannelManager::handleTextChannel(Tp::ChannelPtr channel,
 
         if (!tpc)
             continue;
+        
+        //FIXME using the pending object sucks
+        Tp::ChannelRequestPtr channelRequest =
+            tpc->pendingChannelRequest() ?
+                tpc->pendingChannelRequest()->channelRequest() : tpc->channelRequest();  
 
         foreach (Tp::ChannelRequestPtr crp, data->requestsSatisfied) {
-            if (tpc->pendingChannelRequest() &&
-                tpc->pendingChannelRequest()->channelRequest())
-                if (tpc->pendingChannelRequest()->
-                    channelRequest()->objectPath() == crp->objectPath()) {
-                    tpc->setTextChannel(textChannel);
-                    break;
-                }
+            if (channelRequest->objectPath() == crp->objectPath()) {
+                tpc->setTextChannel(textChannel);
+                break;
+            }
         }
     }
 
