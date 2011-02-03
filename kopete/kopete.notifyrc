@@ -3039,6 +3039,10 @@ Name[x-test]=xxTyping messagexx
 Name[zh_CN]=正在输入消息
 Name[zh_TW]=正在輸入訊息
 Comment=A user is typing a message
+Comment[pt]=Um utilizador está a escrever uma mensagem
+Comment[sv]=En användare skriver ett meddelande
+Comment[uk]=Користувач вводить повідомлення
+Comment[x-test]=xxA user is typing a messagexx
 Action=None
 
 [Event/kopete_incoming_file_transfer]
