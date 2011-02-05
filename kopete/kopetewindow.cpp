@@ -311,14 +311,6 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	connect ( Kopete::IdentityManager::self(), SIGNAL ( identityUnregistered ( const Kopete::Identity* ) ),
 	          this, SLOT ( slotIdentityUnregistered ( const Kopete::Identity* ) ) );
 
-	//Connect the appropriate account signals
-	/* Please note that I tried to put this in the slotAllPluginsLoaded() function
-	 * but it seemed to break the account icons in the statusbar --Matt */
-	connect ( Kopete::AccountManager::self(), SIGNAL ( accountRegistered ( Kopete::Account* ) ),
-	          this, SLOT ( slotAccountRegistered ( Kopete::Account* ) ) );
-	connect ( Kopete::AccountManager::self(), SIGNAL ( accountUnregistered ( const Kopete::Account* ) ),
-	          this, SLOT ( slotAccountUnregistered ( const Kopete::Account* ) ) );
-
 	connect ( d->autoHideTimer, SIGNAL ( timeout() ), this, SLOT ( slotAutoHide() ) );
 	connect ( d->contactlist, SIGNAL( visibleContentHeightChanged() ), this, SLOT ( slotStartAutoResizeTimer() ) );
 	connect ( d->autoResizeTimer, SIGNAL ( timeout() ), this, SLOT ( slotUpdateSize() ) );
@@ -338,11 +330,6 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	Kopete::Identity::List identityList = Kopete::IdentityManager::self()->identities();
 	foreach ( Kopete::Identity *i, identityList )
 	slotIdentityRegistered ( i );
-
-	// If some account already loaded, build the status icon
-	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
-	foreach ( Kopete::Account *a, accountList )
-	slotAccountRegistered ( a );
 
 	//install an event filter for the quick search toolbar so we can
 	//catch the hide events
@@ -665,6 +652,9 @@ void KopeteWindow::slotToggleShowEmptyGroups()
 	Kopete::AppearanceSettings::self()->writeConfig();
 }
 
+bool compareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b);
+bool invertedCompareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b);
+
 void KopeteWindow::slotConfigChanged()
 {
 	bool groupContactByGroupModel = qobject_cast<Kopete::UI::ContactListTreeModel*>( d->model );
@@ -727,6 +717,7 @@ void KopeteWindow::slotConfigChanged()
 		else
 		{
 			QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
+			qSort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
 			foreach ( Kopete::Account *account, accountList )
 			{
 				KopeteAccountStatusBarIcon *sbIcon = new KopeteAccountStatusBarIcon ( account, d->statusBarWidget );
@@ -912,6 +903,20 @@ void KopeteWindow::slotAllPluginsLoaded()
 
 	KConfigGroup cg( KGlobal::config(), "General Options" );
 
+	// If some account already loaded, build the status icon
+	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
+	qSort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
+	foreach ( Kopete::Account *a, accountList )
+	slotAccountRegistered ( a );
+
+	//Connect the appropriate account signals
+	/* Please note that I tried to put this in the slotAllPluginsLoaded() function
+	 * but it seemed to break the account icons in the statusbar --Matt */
+	connect ( Kopete::AccountManager::self(), SIGNAL ( accountRegistered ( Kopete::Account* ) ),
+	          this, SLOT ( slotAccountRegistered ( Kopete::Account* ) ) );
+	connect ( Kopete::AccountManager::self(), SIGNAL ( accountUnregistered ( const Kopete::Account* ) ),
+	          this, SLOT ( slotAccountUnregistered ( const Kopete::Account* ) ) );
+
 	if ( d->showIdentityIcons )
 	{
 		QString identityId = cg.readEntry( "ShownIdentityId", Kopete::IdentityManager::self()->defaultIdentity()->id() );
@@ -1039,7 +1044,26 @@ void KopeteWindow::slotIdentityStatusIconChanged ( Kopete::Identity *identity )
 
 bool compareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b)
 {
-	return (a->myself()->onlineStatus().status() > b->myself()->onlineStatus().status());
+	int c = 0;
+
+	if (a->identity() && b->identity()) {
+		c = QString::localeAwareCompare(a->identity()->label(), b->identity()->label());
+	}
+
+	if (c == 0) {
+		c = a->myself()->onlineStatus().status() - b->myself()->onlineStatus().status();
+
+		if (c == 0) {
+			return (QString::localeAwareCompare(a->protocol()->displayName(), b->protocol()->displayName()) < 0);
+		}
+		return (c > 0);
+	}
+	return (c < 0);
+}
+
+bool invertedCompareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b)
+{
+	return !compareOnlineStatus(a, b);
 }
 
 void KopeteWindow::makeTrayToolTip()
@@ -1193,6 +1217,7 @@ void KopeteWindow::slotTrayAboutToShowMenu ( KMenu * popup )
 	popup->addTitle ( qApp->windowIcon(), KGlobal::caption() );
 
 	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
+	qSort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
 	foreach ( Kopete::Account *account, accountList )
 	{
 		KActionMenu *menu = new KActionMenu ( account->accountId(), account );
@@ -1270,6 +1295,7 @@ void KopeteWindow::setStatusMessage ( const Kopete::StatusMessage& statusMessage
 {
 	bool changed = false;
 	QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
+	qSort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
 	foreach ( Kopete::Account *account, accountList )
 	{
 		Kopete::Contact *self = account->myself();
