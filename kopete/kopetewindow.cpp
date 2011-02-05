@@ -652,8 +652,8 @@ void KopeteWindow::slotToggleShowEmptyGroups()
 	Kopete::AppearanceSettings::self()->writeConfig();
 }
 
-bool compareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b);
-bool invertedCompareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b);
+static bool compareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b);
+static bool invertedCompareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b);
 
 void KopeteWindow::slotConfigChanged()
 {
@@ -1042,7 +1042,7 @@ void KopeteWindow::slotIdentityStatusIconChanged ( Kopete::Identity *identity )
 		i->setPixmap ( pm );
 }
 
-bool compareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b)
+static bool compareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b)
 {
 	int c = 0;
 
@@ -1061,7 +1061,7 @@ bool compareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b)
 	return (c < 0);
 }
 
-bool invertedCompareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b)
+static bool invertedCompareOnlineStatus(const Kopete::Account *a, const Kopete::Account *b)
 {
 	return !compareOnlineStatus(a, b);
 }
