@@ -3039,6 +3039,7 @@ Name[x-test]=xxTyping messagexx
 Name[zh_CN]=正在输入消息
 Name[zh_TW]=正在輸入訊息
 Comment=A user is typing a message
+Comment[en_GB]=A user is typing a message
 Comment[ia]=Un usator es typante un message
 Comment[nl]=Een gebruiker is bezig een bericht te typen
 Comment[pt]=Um utilizador está a escrever uma mensagem
