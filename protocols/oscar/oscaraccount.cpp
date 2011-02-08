@@ -1018,16 +1018,16 @@ void OscarAccount::userStoppedTyping( const QString & contact )
 void OscarAccount::slotSocketError( int errCode, const QString& errString )
 {
 	Q_UNUSED( errCode );
-	KNotification::event( KNotification::Error, i18nc( "account has been disconnected", "Kopete: %1 disconnected", accountId() ),
-	                        errString,
-	                        myself()->onlineStatus().protocolIcon(),
-	                        Kopete::UI::Global::mainWidget() );
+	KNotification::event( QLatin1String("connection_error"), i18nc( "account has been disconnected", "Kopete: %1 disconnected", accountId() ),
+	                      errString,
+	                      myself()->onlineStatus().protocolIcon(),
+	                      Kopete::UI::Global::mainWidget() );
 	logOff( Kopete::Account::ConnectionReset );
 }
 
 void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 {
-	kDebug(OSCAR_GEN_DEBUG) << "error recieived from task";
+	kDebug(OSCAR_GEN_DEBUG) << "error received from task";
 	kDebug(OSCAR_GEN_DEBUG) << "service: " << s.family
 		<< " subtype: " << s.subtype << " code: " << code << endl;
 
@@ -1035,9 +1035,9 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 	if ( s.family == 0 && s.subtype == 0 )
 	{
 		message = getFLAPErrorMessage( code );
-		KNotification::event( KNotification::Error, i18nc( "account has been disconnected", "Kopete: %1 disconnected", accountId() ),
-		                        message, myself()->onlineStatus().protocolIcon(),
-		                        Kopete::UI::Global::mainWidget() );
+		KNotification::event( QLatin1String("connection_error"), i18nc( "account has been disconnected", "Kopete: %1 disconnected", accountId() ),
+		                      message, myself()->onlineStatus().protocolIcon(),
+		                      Kopete::UI::Global::mainWidget() );
 		switch ( code )
 		{
 		case 0x0000:
@@ -1076,8 +1076,8 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 	else
 		message = i18n("There was an error in the protocol handling; automatic reconnection occurring.");
 
-	KNotification::event( KNotification::Error, i18n("Kopete: OSCAR Protocol error"), message, myself()->onlineStatus().protocolIcon(),
-	                        Kopete::UI::Global::mainWidget() );
+	KNotification::event( QLatin1String("server_error"), i18n("Kopete: OSCAR Protocol error"), message, myself()->onlineStatus().protocolIcon(),
+	                      Kopete::UI::Global::mainWidget() );
 	if ( fatal )
 		logOff( Kopete::Account::ConnectionReset );
 }
