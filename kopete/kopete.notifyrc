@@ -2029,8 +2029,8 @@ Comment[x-test]=xxAn error on connection has occurredxx
 Comment[zh_CN]=发生了连接错误
 Comment[zh_HK]=連線發生錯誤
 Comment[zh_TW]=發生連線錯誤
-Action=Popup
-Persistant=true
+Sound=KDE-Im-Error-On-Connection.ogg
+Action=Sound|Popup
 
 [Event/connection_lost]
 Name=Connection Lost
@@ -2481,7 +2481,8 @@ Comment[uk]=Трапилась внутрішня помилка служби
 Comment[x-test]=xxAn internal service error has occurredxx
 Comment[zh_CN]=发生了内部服务错误
 Comment[zh_TW]=發生伺服器內部錯誤
-Action=Popup
+Sound=KDE-Im-Internal-Error.ogg
+Action=Sound|Popup
 
 [Event/buzz_nudge]
 Name=Buzz/Nudge
