@@ -129,9 +129,12 @@ public slots:
 	 * @param category is one of the Kopete::OnlineStatusManager::Categories
 	 * @param statusMessage is the new status message
 	 * @param flags is a bitmask of SetOnlineStatusFlag
+	 * @param forced is a boolean indicating that all accounts are required to change status
 	 */
 	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
-	                      const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(), uint flags=0);
+	                      const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(),
+			      uint flags = 0,
+			      bool forced = false );
 
 	/**
 	 * @brief Set the given status message for all online accounts

@@ -105,12 +105,12 @@ bool AccountManager::isAnyAccountConnected() const
 	return false;
 }
 
-void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage &statusMessage, uint flags )
+void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage &statusMessage, uint flags, bool forced )
 {
 	kDebug() << "category: " << category << "status title: " << statusMessage.title() << "status message: " << statusMessage.message();
 	OnlineStatusManager::Categories categories
 		= (OnlineStatusManager::Categories)category;
-	const bool onlyChangeConnectedAccounts = isAnyAccountConnected();
+	const bool onlyChangeConnectedAccounts = ( !forced && isAnyAccountConnected() );
 
 	foreach( Account *account, d->accounts )
 	{

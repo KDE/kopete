@@ -74,7 +74,7 @@ private slots:
 	void slotToggleAway();
 	void slotNewInfoEvent();
 
-
+	void setOnlineStatus( uint, const Kopete::StatusMessage& );
 	void setStatusMessage( const Kopete::StatusMessage& );
 
 	void globalStatusChanged();
