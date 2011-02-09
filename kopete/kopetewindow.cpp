@@ -154,8 +154,10 @@ void InfoEventIconLabel::updateIcon()
 {
 	if ( Kopete::InfoEventManager::self()->eventCount() > 0 )
 		setPixmap( SmallIcon( "flag-green" ) );
-	else
+	else {
 		setPixmap( SmallIcon( "flag-black" ) );
+		emit clicked();
+	}
 }
 //END InfoEventIconLabel
 
