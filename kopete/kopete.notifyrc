@@ -1000,6 +1000,7 @@ Comment[zh_HK]=有個聯絡人已離線
 Comment[zh_TW]=聯絡人已離線
 Sound=KDE-Im-Contact-Out.ogg
 Action=None
+Contexts=contact,group
 
 [Event/kopete_contact_status_change]
 Name=Status Change
