@@ -210,6 +210,7 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		case Kopete::OnlineStatus::Connecting:
 		{
 			setIconByName("kopete-offline");
+			setOverlayIconByName("user-offline");
 			break;
 		}
 		case Kopete::OnlineStatus::Invisible:
