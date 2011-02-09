@@ -418,7 +418,7 @@ void KopeteWindow::initActions()
 	Kopete::StatusRootAction* statusAction = new Kopete::StatusRootAction ( d->actionStatusMenu );
 
 	connect ( statusAction, SIGNAL ( changeStatus ( uint, const Kopete::StatusMessage& ) ),
-	          Kopete::AccountManager::self(), SLOT ( setOnlineStatus ( uint, const Kopete::StatusMessage& ) ) );
+	          this, SLOT ( setOnlineStatus ( uint, const Kopete::StatusMessage& ) ) );
 	connect ( statusAction, SIGNAL ( updateMessage ( Kopete::StatusRootAction* ) ),
 	          this, SLOT ( updateStatusMenuMessage ( Kopete::StatusRootAction* ) ) );
 	connect ( statusAction, SIGNAL ( changeMessage ( const Kopete::StatusMessage& ) ),
@@ -1289,6 +1289,11 @@ void KopeteWindow::slotStartAutoResizeTimer()
 	if ( Kopete::AppearanceSettings::contactListAutoResize() == true )
 		if ( ! d->autoResizeTimer->isActive() )
 			d->autoResizeTimer->start ( 1000 );
+}
+
+void KopeteWindow::setOnlineStatus( uint category, const Kopete::StatusMessage& statusMessage )
+{
+	Kopete::AccountManager::self()->setOnlineStatus( category, statusMessage, 0, true );
 }
 
 // Iterate each connected account, updating its status message but keeping the
