@@ -3051,6 +3051,7 @@ Comment[sv]=En användare skriver ett meddelande
 Comment[tr]=Bir kullanıcı bir ileti yazıyor
 Comment[uk]=Користувач вводить повідомлення
 Comment[x-test]=xxA user is typing a messagexx
+Comment[zh_TW]=有個使用者正在輸入訊息
 Action=None
 
 [Event/kopete_incoming_file_transfer]
