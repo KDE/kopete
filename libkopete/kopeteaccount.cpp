@@ -514,8 +514,14 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	const bool wasOffline = !oldStatus.isDefinitelyOnline();
 	const bool isOffline  = !newStatus.isDefinitelyOnline();
 
-	if (wasOffline && !isOffline)
+	if ( wasOffline && !isOffline )
 		d->lastLoginTime = QDateTime::currentDateTime();
+
+	// If we went offline we have to ensure that all of our contacts
+	// are online too. Otherwise the "Last Seen" tooltip won't work
+	// properly. See bug 266580.
+	if ( !wasOffline && isOffline )
+		setAllContactsStatus( Kopete::OnlineStatus::Offline );
 
 	if ( wasOffline || newStatus.status() == OnlineStatus::Offline )
 	{
