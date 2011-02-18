@@ -264,6 +264,7 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	d->statusBarWidget = new KHBox ( statusBar() );
 	d->statusBarWidget->setMargin ( 2 );
 	d->statusBarWidget->setSpacing ( 1 );
+	window()->setAttribute( Qt::WA_AlwaysShowToolTips );
 	statusBar()->addPermanentWidget ( d->statusBarWidget, 0 );
 	QWidget *statusBarMessage = new QWidget ( statusBar() );
 	QHBoxLayout *statusBarMessageLayout = new QHBoxLayout ( statusBarMessage );
