@@ -282,7 +282,7 @@ WlmAccount::connectWithPassword (const QString & pass)
 
     if (pass.isEmpty ())
     {
-        password ().setWrong (true);
+        // User has cancelled password prompt.
         return;
     }
 
