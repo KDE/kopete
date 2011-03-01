@@ -134,6 +134,11 @@ void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage
 	Kopete::StatusManager::self()->setGlobalStatus( category, statusMessage );
 }
 
+void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage &statusMessage, uint flags )
+{
+    setOnlineStatus(category, statusMessage, flags, false);
+}
+
 void AccountManager::setStatusMessage(const QString &message)
 {
 	foreach( Account *account, d->accounts )
