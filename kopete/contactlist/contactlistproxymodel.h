@@ -55,6 +55,8 @@ Q_OBJECT
 		void proxyRowsRemoved( const QModelIndex& parent, int start, int end );
 		void proxyCheckSort();
 		void forceSort();
+	private:
+		bool searchContactInfo( Kopete::MetaContact *mc, QRegExp searchPattern ) const;
 };
 
 }
