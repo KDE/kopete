@@ -628,10 +628,10 @@ void MetaContact::setDisplayName( const QString &name )
 	{
 		//check if there is another contact with the same display name.
 		//if this is the case, merge them
-		if(!name.isEmpty())
+		if(!this->d->temporary && !name.isEmpty())
 			foreach(MetaContact *m, ContactList::self()->metaContacts())
 		{
-			if( m != this && m->customDisplayName() == name)
+			if( !m->d->temporary && m != this && m->customDisplayName() == name)
 			{
 				//merge
 				while(!m->d->contacts.isEmpty())
