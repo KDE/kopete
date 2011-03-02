@@ -99,6 +99,8 @@ public:
 	
 	/// Method to access m_db member
 	StatisticsDB *db() { return m_db; }
+
+	void aboutToUnload();
 private slots:
 	// Do the initializations
 	void slotInitialize();
