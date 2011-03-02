@@ -311,6 +311,11 @@ signals:
 	void eventNotification( const QString& notificationText);
 
 	/**
+	 * Signals that view for that chat session was activated
+	 */
+	void viewActivated( KopeteView* view );
+
+	/**
 	 * Signals that a message has changed its state.
 	 * The chat window connects to this signal to update the message in chat view.
 	 */

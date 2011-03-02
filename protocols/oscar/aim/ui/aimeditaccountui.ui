@@ -334,7 +334,7 @@
                <string>The IP address or hostmask of the AIM server you wish to connect to.</string>
               </property>
               <property name="whatsThis" >
-               <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.oscar.aol.com).</string>
+               <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
               </property>
               <property name="text" >
                <string>Ser&amp;ver:</string>
@@ -353,10 +353,10 @@
                <string>The IP address or hostmask of the AIM server you wish to connect to.</string>
               </property>
               <property name="whatsThis" >
-               <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.oscar.aol.com).</string>
+               <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
               </property>
               <property name="text" >
-               <string>login.oscar.aol.com</string>
+               <string>login.icq.com</string>
               </property>
              </widget>
             </item>
