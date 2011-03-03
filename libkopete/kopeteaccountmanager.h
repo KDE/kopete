@@ -132,9 +132,13 @@ public slots:
 	 * @param forced is a boolean indicating that all accounts are required to change status
 	 */
 	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
+	                      const Kopete::StatusMessage &statusMessage,
+			      uint flags,
+			      bool forced );
+
+	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
 	                      const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(),
-			      uint flags = 0,
-			      bool forced = false );
+			      uint flags = 0 );
 
 	/**
 	 * @brief Set the given status message for all online accounts
