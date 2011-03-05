@@ -26,6 +26,7 @@ class QDomElement;
 namespace Kopete {
 
 class Account;
+class OnlineStatus;
 
 namespace Status {
 	class StatusGroup;
@@ -155,6 +156,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
 	void accountUnregistered( const Kopete::Account *account );
+	void checkIdleTimer();
 	void loadSettings();
 	void loadBehaviorSettings();
 	

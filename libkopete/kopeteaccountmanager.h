@@ -111,6 +111,11 @@ public:
 	 */
 	Account *registerAccount( Account *account );
 
+	/**
+	 * \brief Check if there is at least one account connected.
+	 * \return true if there at least one account connected, false otherwise.
+	 */
+	bool isAnyAccountConnected() const;
 
 	/**
 	 * Flag to be used in setOnlineStatus
@@ -191,14 +196,14 @@ private:
 	AccountManager();
 
 private slots:
-    /**
-     * Try to connect every account that should be connected automatically
-     */
-    void networkConnected();
-    /**
-     * Disconnect everything
-     */
-    void networkDisconnected();
+	/**
+	 * Try to connect every account that should be connected automatically
+	 */
+	void networkConnected();
+	/**
+	 * Disconnect everything
+	 */
+	void networkDisconnected();
 
 	void slotPluginLoaded( Kopete::Plugin *plugin );
 	void slotAccountOnlineStatusChanged(Kopete::Contact *c,
@@ -218,7 +223,6 @@ private slots:
 	void removeAccountInternal();
 
 private:
-	bool isAnyAccountConnected() const;
 	static AccountManager *s_self;
 	class Private;
 	Private * const d;

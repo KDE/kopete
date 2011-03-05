@@ -72,6 +72,10 @@ StatusManager::StatusManager()
 
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 	         this, SLOT(accountUnregistered(const Kopete::Account*)));
+
+	connect( Kopete::AccountManager::self(), SIGNAL(accountOnlineStatusChanged(Kopete::Account*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
+		 this, SLOT(checkIdleTimer()));
+
 }
 
 StatusManager::~StatusManager()
@@ -437,6 +441,22 @@ void StatusManager::accountUnregistered( const Kopete::Account *account )
 	d->autoAwayAccounts.removeAll( const_cast<Kopete::Account *>(account) );
 }
 
+void StatusManager::checkIdleTimer()
+{
+	// TODO: should we check for d->autoAwayAccounts to see whether to stop the timer?
+	Kopete::IdleTimer* idleTimer = Kopete::IdleTimer::self();
+	idleTimer->unregisterTimeout( this );
+
+	if(Kopete::AccountManager::self()->isAnyAccountConnected()) {
+		if ( Kopete::BehaviorSettings::self()->useAutoAway() ) {
+			if (Kopete::BehaviorSettings::self()->autoAwayAskAvailable())
+				idleTimer->registerTimeout( d->awayTimeout, this, SLOT(askAndSetActive()), SLOT(setAutoAway()) );
+			else
+				idleTimer->registerTimeout( d->awayTimeout, this, SLOT(setActive()), SLOT(setAutoAway()) );
+		}
+	}
+}
+
 void StatusManager::loadSettings()
 {
 	KConfigGroup config( KGlobal::config(), "Status Manager" );
@@ -459,15 +479,7 @@ void StatusManager::loadBehaviorSettings()
 	customStatusMessage.setMessage( Kopete::BehaviorSettings::self()->autoAwayCustomMessage() );
 	d->customStatusMessage = customStatusMessage;
 
-	Kopete::IdleTimer* idleTimer = Kopete::IdleTimer::self();
-	idleTimer->unregisterTimeout( this );
-	
-	if ( Kopete::BehaviorSettings::self()->useAutoAway() ) {
-		if (Kopete::BehaviorSettings::self()->autoAwayAskAvailable())
-			idleTimer->registerTimeout( d->awayTimeout, this, SLOT(askAndSetActive()), SLOT(setAutoAway()) );
-		else
-			idleTimer->registerTimeout( d->awayTimeout, this, SLOT(setActive()), SLOT(setAutoAway()) );
-	}
+	checkIdleTimer();
 }
 
 }
