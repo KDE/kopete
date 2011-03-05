@@ -284,4 +284,27 @@ QString StatisticsPlugin::dbusMainStatus(QString id, int timeStamp)
 	return "";
 }
 
+void StatisticsPlugin::aboutToUnload()
+{
+	/* Upon exit kopete will set the online status of each metacontact to
+	 * "unknown", causing a storm of synchronous writes to the DB.
+	 * Disconnect the signal and batch a single transaction.
+	 */
+	m_db->transaction();
+
+	QMap<Kopete::MetaContact *, StatisticsContact *>::iterator it;
+	for (it = statisticsContactMap.begin(); it != statisticsContactMap.end(); ++it) {
+		Kopete::MetaContact *mc = it.key();
+		StatisticsContact *sc = it.value();
+
+		disconnect(mc, 0, this, 0);
+		sc->onlineStatusChanged(Kopete::OnlineStatus::Unknown);
+	}
+
+	m_db->commit();
+
+	/* Report ready for unload */
+	emit readyForUnload();
+}
+
 #include "statisticsplugin.moc"

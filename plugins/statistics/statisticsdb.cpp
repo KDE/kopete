@@ -16,6 +16,7 @@
 */
 
 #include <QByteArray>
+#include <QSqlDriver>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QSqlRecord>
@@ -40,6 +41,8 @@ StatisticsDB::StatisticsDB()
 		kError ( 14315 ) << "Unable to open database" << path;
 		return;
 	}
+
+	has_transaction = m_db.driver()->hasFeature(QSqlDriver::Transactions);
 
 	// Creates the tables if they do not exist.
 	QStringList result = query ( "SELECT name FROM sqlite_master WHERE type='table'" );
@@ -133,4 +136,28 @@ QStringList StatisticsDB::query ( const QString& statement, QStringList* const n
 	}
 
 	return values;
+}
+
+bool StatisticsDB::transaction()
+{
+	if (!has_transaction)
+		return true;
+
+	bool ret = m_db.transaction();
+	if (!ret)
+		kError ( 14315 ) << "failed to open transaction";
+
+	return ret;
+}
+
+bool StatisticsDB::commit()
+{
+	if (!has_transaction)
+		return true;
+
+	bool ret = m_db.commit();
+	if (!ret)
+		kError ( 14315 ) << "failed to commit transaction:" << m_db.lastError().text();
+
+	return ret;
 }
