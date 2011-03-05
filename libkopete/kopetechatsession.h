@@ -7,6 +7,7 @@
     Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@kde.org>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
     Copyright (c) 2005      by Michaël Larouche      <larouche@kde.org>
+    Copyright (c) 2009      by Fabian Rami          <fabian.rami@wowcompany.com>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -326,6 +327,12 @@ signals:
 	 * Used to update the contacts photo in chat window.
 	 */
 	void photoChanged();
+
+    /**
+    * Toggle Graphic Override mode for plugin
+    * @param enable Toggle the overide
+    */
+    void toggleGraphicOverride(bool enable);
 
 public slots:
 	/**

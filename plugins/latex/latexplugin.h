@@ -5,6 +5,7 @@
 
     Copyright (c) 2004 by Duncan Mac-Vicar Prett   <duncan@kde.org>
     Copyright (c) 2004-2005 by Olivier Goffart  <ogoffart@kde. org>
+    Copyright (c) 2009      by Fabian Rami      <fabian.rami@wowcompany.com>
 
     Kopete    (c) 2001-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -64,6 +65,8 @@ public:
 	 */
 	bool securityCheck(const QString & formula);
 
+signals:
+    void toggleLatex(bool);
 
 private:
 	static LatexPlugin* s_pluginStatic;

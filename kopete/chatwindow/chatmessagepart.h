@@ -3,6 +3,7 @@
 
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Copyright (c) 2005      by Michaël Larouche      <larouche@kde.org>
+    Copyright (c) 2009      by Fabian Rami      <fabian.rami@wowcompany.com>
 
     Kopete    (c) 2002-2008 by the Kopete developers <kopete-devel@kde.org>
 
@@ -146,6 +147,13 @@ public slots:
 	void setStyleVariant( const QString &variantPath );
 
 	void messageStateChanged( uint messageId, Kopete::Message::MessageState state );
+
+    /**
+    * Change the current style
+    * This method override is used when a plugin need graphic management.
+    * @param enable toggle the override.
+    */
+    void slotToggleGraphicOverride(bool enable);
 
 signals:
 	/**

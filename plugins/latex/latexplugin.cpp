@@ -80,8 +80,8 @@ LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
 void LatexPlugin::slotNewChatSession( Kopete::ChatSession *KMM )
 {
 	new LatexGUIClient( KMM );
+	connect( this , SIGNAL( toggleLatex(bool) ), KMM, SIGNAL( toggleGraphicOverride(bool) ) );
 }
-
 
 void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 {
@@ -177,6 +177,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 	}
 
 	msg.setHtmlBody( messageText );
+	emit toggleLatex(true);
 }
 
 

@@ -125,6 +125,7 @@ public:
 	bool bgOverride;
 	bool fgOverride;
 	bool rtfOverride;
+	bool graphicOverride;
 
 //	ToolTip *tt;
 	bool scrollPressed;
@@ -214,7 +215,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	: KHTMLPart( parent ), d( new Private )
 {
 	d->manager = mgr;
-
+	d->graphicOverride = true;
 	d->currentChatStyle = ChatWindowStyleManager::self()->getValidStyleFromPool( KopeteChatWindowSettings::self()->styleName() );
 	if (d->currentChatStyle)
 		connect( d->currentChatStyle, SIGNAL(destroyed(QObject*)), this, SLOT(clearStyle()) );
@@ -254,6 +255,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( d->manager, SIGNAL(messageStateChanged(uint, Kopete::Message::MessageState)),
 	         this, SLOT(messageStateChanged(uint, Kopete::Message::MessageState)) );
+	connect (d->manager, SIGNAL( toggleGraphicOverride(bool) ), this, SLOT( slotToggleGraphicOverride(bool) ) );
 
 	connect ( browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ),
 	          this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
@@ -406,7 +408,16 @@ void ChatMessagePart::readOverrides()
 {
 	d->bgOverride = Kopete::AppearanceSettings::self()->chatBgOverride();
 	d->fgOverride = Kopete::AppearanceSettings::self()->chatFgOverride();
-	d->rtfOverride = Kopete::AppearanceSettings::self()->chatRtfOverride();
+	d->rtfOverride = ( d->graphicOverride ? false : Kopete::AppearanceSettings::self()->chatRtfOverride());
+}
+
+void ChatMessagePart::slotToggleGraphicOverride(bool enable)
+{
+	if (d->graphicOverride != enable)
+	{
+		d->graphicOverride = enable;
+		emit slotAppearanceChanged();
+	}
 }
 
 void ChatMessagePart::setStyle( const QString &styleName )
