@@ -26,7 +26,10 @@ namespace Kopete
         {
             notifications.insert( id, this );
             KNotification* aParent = static_cast<KNotification *>( parent() );
-            aParent->setTitle( "<qt>" + title + "</qt>" );
+            if ( !title.isEmpty() )
+            {
+                aParent->setTitle( "<qt>" + title + "</qt>" );
+            }
             aParent->setText( "<qt>" + body + "</qt>" );
         }
 
@@ -38,11 +41,19 @@ namespace Kopete
         }
 
         /**
+         * Show this notification
+         */
+        void ActiveNotification::showNotification() {
+            static_cast<KNotification *>( parent() )->sendEvent();
+        }
+
+        /**
          * received another message from a sender with a notification
          */
         void ActiveNotification::incrementMessages() {
             KLocalizedString append = ki18np( "+ %1 more message", "+ %1 more messages");
             KNotification *aParent = static_cast<KNotification *>( parent() );
             aParent->setText( "<qt>" + body + "<br/><small><font color=\"yellow\">" + append.subs( ++nEventsSinceNotified ).toString() + "</small></font></qt>" );
+            aParent->sendEvent(); // Show it
         }
 }

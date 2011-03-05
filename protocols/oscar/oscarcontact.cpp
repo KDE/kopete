@@ -271,8 +271,10 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 
 void OscarContact::startedTyping()
 {
-	if ( mMsgManager )
-		mMsgManager->receivedTypingMsg( this, true );
+	Kopete::ChatSession* cs = manager();
+	// We want the user to know if someone is typing a message
+	// but there is no chat session for this contact
+	cs->receivedTypingMsg( this, true );
 }
 
 void OscarContact::stoppedTyping()

@@ -49,6 +49,7 @@
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 #include "kopetepicture.h"
+#include "kopeteactivenotification.h"
 
 const int CHAIN_COUNT = 3;
 
@@ -58,6 +59,7 @@ public:
 	Kopete::ContactPtrList contacts;
 	const Kopete::Contact *mUser;
 	QMap<const Kopete::Contact *, Kopete::OnlineStatus> contactStatus;
+	Kopete::ActiveNotifications typingNotifications;
 	Kopete::Protocol *mProtocol;
 	bool isEmpty;
 	bool mCanBeDeleted;
@@ -532,37 +534,61 @@ void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString
 
 void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 {
-	if ( t )
+	emit remoteTyping( c, t );
+
+	QWidget *viewWidget = 0L;
+	bool isActiveWindow = false;
+
+	if ( !account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
 	{
-		QWidget *viewWidget = 0L;
-		bool isActiveWindow = false;
-
-		if ( !account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
-		{
-			viewWidget = dynamic_cast<QWidget*>(view(false));
-			isActiveWindow = view(false) && ( viewWidget && viewWidget->isActiveWindow() );
-		}
-
-		if ( ! isActiveWindow )
-		{
-			KNotification * notification = new KNotification ( "user_is_typing_message", Kopete::UI::Global::mainWidget() );
-			notification->setText( i18n("User <i>%1</i> is typing a message", c->nickName()) );
-			notification->setPixmap( QPixmap::fromImage( c->metaContact()->picture().image() ) );
-			notification->setActions( QStringList( i18nc("@action", "Chat") ) );
-
-			notification->addContext( qMakePair( QString::fromLatin1("contact"), c->metaContact()->metaContactId().toString() ) );
-			foreach( Kopete::Group *g , c->metaContact()->groups() )
-			{
-				notification->addContext( qMakePair( QString::fromLatin1("group") , QString::number( g->groupId() ) ) );
-			}
-
-			connect( notification, SIGNAL(activated(unsigned int)) , c, SLOT(execute()) );
-			notification->sendEvent();
-		}
+		viewWidget = dynamic_cast<QWidget*>(view(false));
+		isActiveWindow = view(false) && ( viewWidget && viewWidget->isActiveWindow() );
 	}
 
-	emit remoteTyping( c, t );
+	// We aren't interested in notification from current window
+	// or 'user stopped typing' notifications
+	if ( isActiveWindow || !t )
+	{
+		return;
+	}
+
+	// If there is a notification in d->typingNotifications, then we should show it and quit
+	Kopete::ActiveNotifications::iterator notifyIt =
+		d->typingNotifications.find( c->account()->accountLabel() + c->contactId() );
+	if (notifyIt != d->typingNotifications.end())
+	{
+		( *notifyIt )->showNotification();
+		return;
+	}
+
+	KNotification *notification = new KNotification( "user_is_typing_message", viewWidget );
+	const QString msgBody = i18n( "User <i>%1</i> is typing a message", c->nickName() );
+	notification->setText( msgBody );
+	notification->setPixmap( QPixmap::fromImage( c->metaContact()->picture().image() ) );
+	notification->setActions( QStringList( i18nc("@action", "Chat") ) );
+
+	new Kopete::ActiveNotification( notification,
+							c->account()->accountLabel() + c->contactId(),
+							d->typingNotifications,
+							"",
+							msgBody );
+
+	Kopete::MetaContact *mc = c->metaContact();
+	if ( mc )
+	{
+		notification->addContext( qMakePair( QString::fromLatin1("contact"), mc->metaContactId().toString() ) );
+		foreach( Kopete::Group *g , mc->groups() )
+		{
+			notification->addContext( qMakePair( QString::fromLatin1("group") , QString::number( g->groupId() ) ) );
+		}
+	}
+	connect( notification, SIGNAL(activated(unsigned int)) , c, SLOT(execute()) );
+	// User don't need this notification when view is activate
+	connect( this, SIGNAL( viewActivated( KopeteView * ) ), notification, SLOT( close() ) );
+
+	notification->sendEvent();
 }
+
 
 void Kopete::ChatSession::receivedTypingMsg( const QString &contactId, bool t )
 {
@@ -620,6 +646,7 @@ KopeteView* Kopete::ChatSession::view( bool canCreate, const QString &requestedP
 		d->view = Kopete::ChatSessionManager::self()->createView( this, requestedPlugin );
 		if ( d->view )
 		{
+			connect( d->view->mainWidget(), SIGNAL( activated( KopeteView * ) ), this, SIGNAL( viewActivated( KopeteView * ) ) );
 			connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );
 		}
 		else

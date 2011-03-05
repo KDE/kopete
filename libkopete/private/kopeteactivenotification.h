@@ -44,6 +44,11 @@ class ActiveNotification : public QObject
     ~ActiveNotification();
 
     /**
+     * Show this notification
+     */
+    void showNotification();
+
+    /**
      * received another message from a sender with a notification
      */
     void incrementMessages();
