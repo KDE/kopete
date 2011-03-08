@@ -646,7 +646,7 @@ void AIMAccount::connectWithPassword( const QString &password )
 
 		// Get the screen name for this account
 		QString screenName = accountId();
-		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.icq.com" ) );
+		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
 		uint port = configGroup()->readEntry( "Port", 5190 );
 
 		//set up the settings for the account

@@ -22,7 +22,7 @@ LoginTest::~LoginTest()
 
 void LoginTest::slotDoTest()
 {
-	QString server = QString::fromLatin1("login.icq.com");
+	QString server = QString::fromLatin1("login.oscar.aol.com");
 	// connect to server
 	qDebug( "connecting to server ");
 

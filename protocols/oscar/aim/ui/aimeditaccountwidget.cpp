@@ -47,9 +47,9 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 		//Remove me after we can change Account IDs (Matt)
 		mGui->edtAccountId->setReadOnly( true );
 		mGui->mAutoLogon->setChecked( account->excludeConnect() );
-		QString serverEntry = account->configGroup()->readEntry( "Server", "login.icq.com" );
+		QString serverEntry = account->configGroup()->readEntry( "Server", "login.oscar.aol.com" );
 		int portEntry = account->configGroup()->readEntry( "Port", 5190 );
-		if ( serverEntry != "login.icq.com" || portEntry != 5190 )
+		if ( serverEntry != "login.oscar.aol.com" || portEntry != 5190 )
 			mGui->optionOverrideServer->setChecked( true );
 		else
 			mGui->optionOverrideServer->setChecked( false );
@@ -162,7 +162,7 @@ Kopete::Account *AIMEditAccountWidget::apply()
 	}
 	else
 	{
-		static_cast<OscarAccount *>( mAccount )->setServerAddress( "login.icq.com" );
+		static_cast<OscarAccount *>( mAccount )->setServerAddress( "login.oscar.aol.com" );
 		static_cast<OscarAccount *>( mAccount )->setServerPort( 5190 );
 	}
 
