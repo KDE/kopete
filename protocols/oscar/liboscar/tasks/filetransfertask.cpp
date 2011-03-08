@@ -658,7 +658,7 @@ void FileTransferTask::doConnect()
 
 	QString host;
 	if ( m_proxyRequester )
-		host = "ars.icq.com";
+		host = "ars.oscar.aol.com";
 	else
 	{
 		if ( m_ip.length() != 4 || ! m_port )
