@@ -383,7 +383,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 					hasFixedTypeItem = true;
 					dlItem.type = LayoutFixed;
 				}
-				else if ( ContactList::LayoutManager::PlaceHolder )
+				else if ( value == ContactList::LayoutManager::PlaceHolder )
 				{
 					dlItem.type = LayoutNormal;
 				}
