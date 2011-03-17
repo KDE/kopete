@@ -570,7 +570,7 @@ GaduSession::handleUserlist( gg_event* event )
 	switch( event->event.userlist.type ) {
 		case GG_USERLIST_GET_REPLY:
 			if ( event->event.userlist.reply ) {
-				ul = event->event.userlist.reply;
+				ul = textcodec->toUnicode(event->event.userlist.reply);
 				kDebug( 14100 ) << "Got Contacts list  OK ";
 			}
 			else {
