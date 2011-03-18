@@ -95,7 +95,7 @@ void SocketTimeoutWatcher::ackTimeoutCheck()
 			{
 				mAckCheckTimer->stop();
 			}
-			else if ( info.tcpi_last_ack_recv >= info.tcpi_last_data_sent && (info.tcpi_last_ack_recv - info.tcpi_last_data_sent) > mTimeoutThreshold )
+ 			else if ( info.tcpi_last_ack_recv > info.tcpi_last_data_sent && info.tcpi_last_data_sent > mTimeoutThreshold )
 			{
 				kWarning() << "Connection timeout for " << mSocket->peerAddress();
 				mAckCheckTimer->stop();
