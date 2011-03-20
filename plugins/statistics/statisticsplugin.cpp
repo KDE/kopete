@@ -29,6 +29,7 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kdeversion.h>
+#include <kapplication.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
@@ -91,6 +92,7 @@ void StatisticsPlugin::slotInitialize()
 	QList<Kopete::MetaContact*> list = Kopete::ContactList::self()->metaContacts();
 	foreach(Kopete::MetaContact *metaContact, list)
 	{
+		kapp->processEvents();
 		slotMetaContactAdded(metaContact);
 	}
 }
@@ -294,6 +296,7 @@ void StatisticsPlugin::aboutToUnload()
 
 	QMap<Kopete::MetaContact *, StatisticsContact *>::iterator it;
 	for (it = statisticsContactMap.begin(); it != statisticsContactMap.end(); ++it) {
+		kapp->processEvents();
 		Kopete::MetaContact *mc = it.key();
 		StatisticsContact *sc = it.value();
 
