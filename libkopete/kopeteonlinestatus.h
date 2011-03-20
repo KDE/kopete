@@ -25,6 +25,7 @@
 
 #include <kdemacros.h>
 #include <ksharedptr.h>
+#include <kiconloader.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QFlags>
@@ -399,7 +400,7 @@ public:
 	 *
 	 * A cache is employed to reduce CPU and memory usage.
 	 */
-	QPixmap protocolIcon() const;
+	QPixmap protocolIcon(const KIconLoader::StdSizes size = KIconLoader::SizeSmall) const;
 
 	/**
 	 * Assignment operator

@@ -1158,6 +1158,7 @@ WlmAccount::slotInitialEmailNotification (const int unread_inbox)
                                  "You have %1 unread messages in your Hotmail inbox.", unread_inbox));
     notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Close" )) );
     notification->setFlags(KNotification::Persistent);
+    notification->setPixmap(accountIcon(KIconLoader::SizeMedium));
     QObject::connect(notification,SIGNAL(activated()), this , SLOT(slotOpenInbox()) );
     QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(slotOpenInbox()) );
     QObject::connect(notification,SIGNAL(action2Activated()), notification, SLOT(close()) );
@@ -1173,6 +1174,7 @@ WlmAccount::slotNewEmailNotification (const QString from, const QString subject)
     notification->setText(i18n( "New message from %1 in your Hotmail inbox.<p>Subject: %2", from, subject));
     notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Close" )) );
     notification->setFlags(KNotification::Persistent);
+    notification->setPixmap(accountIcon(KIconLoader::SizeMedium));
     QObject::connect(notification,SIGNAL(activated()), this , SLOT(slotOpenInbox()) );
     QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(slotOpenInbox()) );
     QObject::connect(notification,SIGNAL(action2Activated()), notification, SLOT(close()) );

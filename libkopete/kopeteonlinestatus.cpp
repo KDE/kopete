@@ -339,9 +339,9 @@ QPixmap OnlineStatus::iconFor( const QString &mimeSource ) const
 	return OnlineStatusManager::self()->cacheLookupByMimeSource( mimeSource );
 }
 
-QPixmap OnlineStatus::protocolIcon() const
+QPixmap OnlineStatus::protocolIcon(const KIconLoader::StdSizes size) const
 {
-	return OnlineStatusManager::self()->cacheLookupByObject( *this, d->protocolIcon() , 16, QColor() );
+	return OnlineStatusManager::self()->cacheLookupByObject( *this, d->protocolIcon() , size, QColor() );
 }
 
 QString OnlineStatus::mimeSource( const QString& icon, int size, QColor color, bool idle) const

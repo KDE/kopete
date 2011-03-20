@@ -788,7 +788,7 @@ void YahooAccount::slotDisconnected()
 	QString message;
 	message = i18n( "%1 has been disconnected.\nError message:\n%2 - %3" ,
 		  accountId(), m_session->error(), m_session->errorString() );
-	KNotification::event( "connection_lost", message, myself()->onlineStatus().protocolIcon() );
+	KNotification::event( "connection_lost", message, myself()->onlineStatus().protocolIcon(KIconLoader::SizeMedium) );
 }
 
 void YahooAccount::slotLoginFailed()
@@ -801,7 +801,7 @@ void YahooAccount::slotLoginFailed()
 	QString message;
 	message = i18n( "There was an error while connecting %1 to the Yahoo server.\nError message:\n%2 - %3" ,
 		  accountId(), m_session->error(), m_session->errorString() );
-	KNotification::event( "cannot_connect", message, myself()->onlineStatus().protocolIcon() );
+	KNotification::event( "cannot_connect", message, myself()->onlineStatus().protocolIcon(KIconLoader::SizeMedium) );
 }
 
 void YahooAccount::slotError( int level )
