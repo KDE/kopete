@@ -1156,7 +1156,7 @@ WlmAccount::slotInitialEmailNotification (const int unread_inbox)
 
     notification->setText(i18np( "You have one unread message in your Hotmail inbox.",
                                  "You have %1 unread messages in your Hotmail inbox.", unread_inbox));
-    notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Ignore" )) );
+    notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Close" )) );
     notification->setFlags(KNotification::Persistent);
     QObject::connect(notification,SIGNAL(activated()), this , SLOT(slotOpenInbox()) );
     QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(slotOpenInbox()) );
@@ -1171,7 +1171,7 @@ WlmAccount::slotNewEmailNotification (const QString from, const QString subject)
     KNotification *notification= new KNotification ("msn_mail");
 
     notification->setText(i18n( "New message from %1 in your Hotmail inbox.<p>Subject: %2", from, subject));
-    notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Ignore" )) );
+    notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Close" )) );
     notification->setFlags(KNotification::Persistent);
     QObject::connect(notification,SIGNAL(activated()), this , SLOT(slotOpenInbox()) );
     QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(slotOpenInbox()) );

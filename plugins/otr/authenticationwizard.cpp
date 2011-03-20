@@ -75,7 +75,7 @@ AuthenticationWizard::AuthenticationWizard(QWidget *parent, ConnContext *context
 		notification->setText( i18n( "Incoming authentication request from %1", OtrlChatInterface::self()->formatContact( session->members().first()->contactId() ) ) );
 		notification->setPixmap( SmallIcon( "kopete" ) );
 		notification->setWidget( this );
-		notification->setActions( QStringList() << i18n( "View" ) << i18n( "Ignore" ) );
+		notification->setActions( QStringList() << i18n( "View" ) << i18n( "Close" ) );
 		connect( notification, SIGNAL( activated( unsigned int ) ), SLOT( notificationActivated( unsigned int ) ) );
 		notification->sendEvent();
 	}

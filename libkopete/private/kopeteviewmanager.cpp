@@ -407,7 +407,7 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 	                                                               : KNotification::Persistent);
 	notify->setPixmap( QPixmap::fromImage( msg.from()->metaContact()->picture().image() ) );
 	notify->setActions( QStringList() << i18nc( "@action", "View" )
-	                                  << i18nc( "@action", "Ignore" ) );
+	                                  << i18nc( "@action", "Close" ) );
 
 	if ( d->balloonGroupMessageNotificationsPerSender )
 	{
