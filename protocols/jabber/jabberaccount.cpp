@@ -1007,18 +1007,14 @@ void JabberAccount::handleStreamError (int streamError, int streamCondition, int
 
 	if(!errorText.isEmpty()) {
 		if (!additionalErrMsg.isEmpty()) {
-			KNotification::event( i18n("Kopete: Connection problem with Jabber server %1", server),
-			                        QString ("%1\n%2").arg(errorText).arg(additionalErrMsg),
-                                    QPixmap(),
-			                        Kopete::UI::Global::mainWidget() );
-		} else {
-			KNotification::event( i18n("Kopete: Connection problem with Jabber server %1", server),
-			                        errorText,
-                                    QPixmap(),
-			                        Kopete::UI::Global::mainWidget() );
+			errorText += "\n" + additionalErrMsg;
 		}
-	}
 
+		KNotification::event( QLatin1String("connection_error"), i18n("Kopete: Connection problem with Jabber server %1", server),
+		                      errorText,
+		                      KIconLoader::global()->iconPath( "jabber_protocol", KIconLoader::Dialog ),
+		                      Kopete::UI::Global::mainWidget() );
+	}
 }
 
 void JabberAccount::slotCSError ( int error )
