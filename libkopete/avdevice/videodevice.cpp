@@ -52,7 +52,7 @@ VideoDevice::~VideoDevice()
 /*!
     \fn void VideoDevice::setupControls()
     \brief Sets up the supported video-controls for the current input
-    
+
     Determines which video-controls are supported for the current input,
     reads all needed informations about them and stores the data to the local members
  */
@@ -146,7 +146,7 @@ void VideoDevice::setupControls()
 		default:
 			break;
 	}
-	
+
 #if (defined(__linux__) || defined(__FreeBSD__)) && defined(ENABLE_AV)
 	// Software controls:
 	BooleanVideoControl boolCtrl;
@@ -507,7 +507,7 @@ detectSignalStandards();
 				if(V4L_capabilities.type & VID_TYPE_CHROMAKEY)
 					m_videochromakey=true;
 				if(V4L_capabilities.type & VID_TYPE_SCALES)
-					m_videoscale=true;	
+					m_videoscale=true;
 				if(V4L_capabilities.type & VID_TYPE_OVERLAY)
 					m_videooverlay=true;
 //				kDebug() << "libkopete (avdevice):     Inputs : " << V4L_capabilities.channels;
@@ -705,7 +705,7 @@ int VideoDevice::initDevice()
 	struct v4l2_crop crop;
 	CLEAR (cropcap);
 	CLEAR (crop);
-	
+
 	cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	if (-1 == xioctl (VIDIOC_CROPCAP, &cropcap))
 	{ // Errors ignored.
@@ -860,7 +860,7 @@ kDebug() << "VIDIOC_S_FMT worked (" << errno << ").Returned width: " << pixelFor
 						fmt.fmt.pix.sizeimage = min;
 					}
 					m_buffer_size=fmt.fmt.pix.sizeimage;
-					
+
 					currentwidth  = fmt.fmt.pix.width;
 					currentheight = fmt.fmt.pix.height;
 				}
@@ -955,7 +955,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			}
 			else
 				m_pixelformat = pixelFormatForPalette(fmt.fmt.pix.pixelformat);
-		
+
 			fmt.fmt.pix.pixelformat = pixelFormatCode(newformat);
 			if (-1 == xioctl (VIDIOC_S_FMT, &fmt))
 			{
@@ -1246,7 +1246,7 @@ int VideoDevice::getFrame()
 					}
 					if ((unsigned int) m_rawbuffers.size() < m_streambuffers)
 						return EXIT_FAILURE;
-					
+
 					for (i = 0; i < m_streambuffers; ++i)
 						if (v4l2buffer.m.userptr == (unsigned long) m_rawbuffers[i].start && v4l2buffer.length == m_rawbuffers[i].length)
 							break;
@@ -1290,13 +1290,13 @@ int VideoDevice::getImage(QImage *qimage)
     /// @todo implement me
 
 	// do NOT delete qimage here, as it is received as a parameter
-	if (qimage->width() != width() || qimage->height() != height()) 
+	if (qimage->width() != width() || qimage->height() != height())
 		*qimage = QImage(width(), height(), QImage::Format_RGB32);
 
 	if (!m_currentbuffer.data.size())
 		{
 		//there is no data so if we continue something will try access it (as in bug 161536) and crash kopete
-		//perhaps we should look at having the interface reflect when the camera isn't available? as it thinks 
+		//perhaps we should look at having the interface reflect when the camera isn't available? as it thinks
 		//it is for some reason, though the data size seems to be an ok check
 		return EXIT_FAILURE;
 		}
@@ -1443,7 +1443,7 @@ int VideoDevice::getImage(QImage *qimage)
 				cbptr = yptr + (width()*height());
 				crptr = cbptr + (width()*height()/(halfheight ? 4:2));
 			}
-	
+
 			for(int y=0; y<height(); y++)
 			{
 // Decode scanline
@@ -1463,18 +1463,18 @@ int VideoDevice::getImage(QImage *qimage)
 						d = (cbptr[x>>1])-128;
 						e = (crptr[x>>1])-128;
 					}
-	
+
 					int r = (298 * c           + 409 * e + 128)>>8;
 					int g = (298 * c - 100 * d - 208 * e + 128)>>8;
 					int b = (298 * c + 516 * d           + 128)>>8;
-	
+
 					if (r<0) r=0;   if (r>255) r=255;
 					if (g<0) g=0;   if (g>255) g=255;
 					if (b<0) b=0;   if (b>255) b=255;
-	
+
 					uint *p = (uint*)qimage->scanLine(y)+x;
 					*p = qRgba(r,g,b,255);
-	
+
 				}
 // Jump to next line
 				if (packed)
@@ -1593,7 +1593,7 @@ int VideoDevice::getImage(QImage *qimage)
 
 	if (m_input[m_current_input].img_softcorr_vflip || m_input[m_current_input].img_softcorr_hflip)
 		*qimage = qimage->mirrored(m_input[m_current_input].img_softcorr_vflip, m_input[m_current_input].img_softcorr_hflip);
-  
+
 	return EXIT_SUCCESS;
 }
 
@@ -1651,7 +1651,7 @@ int VideoDevice::stopCapturing()
     \fn int VideoDevice::close()
     \return The success of the operation: EXIT_SUCCESS or EXIT_FAILURE
     \brief Closes the device
-    
+
     Stops capturing, resets internal data and closes the device.
  */
 int VideoDevice::close()
@@ -2420,7 +2420,7 @@ int VideoDevice::detectPixelFormats()
 					err = errno;
 				}
 				else
-				{	
+				{
 					kDebug () << fmtdesc.pixelformat << "  " << pixelFormatName(fmtdesc.pixelformat); // Need a cleanup. PixelFormatForPalette is a really bad name
 					fmtdesc.index++;
 				}
