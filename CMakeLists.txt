@@ -122,6 +122,7 @@ macro_bool_to_01(LIBV4L2_FOUND HAVE_LIBV4L2)
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
+check_include_files(linux/videodev.h HAVE_V4L)
 macro_bool_to_01(X11_Xss_FOUND HAVE_XSCREENSAVER)
 
 macro_optional_find_package(Expat)
