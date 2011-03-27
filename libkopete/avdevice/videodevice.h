@@ -55,12 +55,20 @@
 #include <linux/fs.h>
 #include <linux/kernel.h>
 #endif
+
+#ifdef HAVE_V4L
 #include <linux/videodev.h>
+#endif // have_v4l
+
 #define VIDEO_MODE_PAL_Nc  3
 #define VIDEO_MODE_PAL_M   4
 #define VIDEO_MODE_PAL_N   5
 #define VIDEO_MODE_NTSC_JP 6
 #define __STRICT_ANSI__
+
+#if defined(HAVE_LIBV4L2) && ! defined(HAVE_V4L)
+#include <linux/videodev2.h>
+#endif
 
 #ifdef HAVE_LIBV4L2
 #include <libv4l2.h>
@@ -367,9 +375,11 @@ protected:
 	struct v4l2_format fmt;
 //	struct v4l2_input m_input;
 #endif
+#ifdef HAVE_V4L
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
-#endif	
+#endif
+#endif
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 
 	QVector<rawbuffer> m_rawbuffers;

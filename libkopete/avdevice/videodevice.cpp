@@ -485,7 +485,7 @@ detectSignalStandards();
 		}
 
 #endif
-
+#ifdef HAVE_V4L
 		CLEAR(V4L_capabilities);
 
 		if(m_driver==VIDEODEV_DRIVER_NONE)
@@ -549,6 +549,7 @@ detectSignalStandards();
 
 			}
 		}
+#endif
 #endif
 		m_name=m_model; // Take care about changing the name to be different from the model itself...
 
@@ -678,6 +679,7 @@ int VideoDevice::initDevice()
 			}
 			break;
 #endif
+#ifdef HAVE_V4L
 		case VIDEODEV_DRIVER_V4L:
 			m_videoread=true;
 			m_io_method=IO_METHOD_READ;
@@ -688,6 +690,7 @@ int VideoDevice::initDevice()
 				kDebug() << "    Streaming interface";
 			}
 			break;
+#endif
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -863,6 +866,7 @@ kDebug() << "VIDIOC_S_FMT worked (" << errno << ").Returned width: " << pixelFor
 				}
 				break;
 #endif
+#ifdef HAVE_V4L
 			case VIDEODEV_DRIVER_V4L:
 				{
 					struct video_window V4L_videowindow;
@@ -892,6 +896,7 @@ kDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << V
 
 				}
 				break;
+#endif
 #endif
 			case VIDEODEV_DRIVER_NONE:
 			default:
@@ -966,6 +971,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			}
 			break;
 #endif
+#ifdef HAVE_V4L
 		case VIDEODEV_DRIVER_V4L:
 			{
 			struct video_picture V4L_picture;
@@ -993,6 +999,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 
 			}
 			break;
+#endif
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -1043,6 +1050,7 @@ int VideoDevice::selectInput(int newinput)
 				setupControls();
 				break;
 #endif
+#ifdef HAVE_V4L
 			case VIDEODEV_DRIVER_V4L:
 				struct video_channel V4L_input;
 				V4L_input.channel=newinput;
@@ -1054,6 +1062,7 @@ int VideoDevice::selectInput(int newinput)
 				}
 				setupControls();
 				break;
+#endif
 #endif
 			case VIDEODEV_DRIVER_NONE:
 			default:
@@ -1817,6 +1826,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 			}
 			break;
 #endif
+#ifdef HAVE_V4L
 		case VIDEODEV_DRIVER_V4L:
 			struct video_picture V4L_picture;
 			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
@@ -1846,6 +1856,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 			}
 			kDebug() << "Reported current value is" << *value << ".";
 			return EXIT_SUCCESS;
+#endif
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -1963,6 +1974,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 			}
 			break;
 #endif
+#ifdef HAVE_V4L
 		case VIDEODEV_DRIVER_V4L:
 			struct video_picture V4L_picture;
 			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
@@ -2007,6 +2019,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 				return EXIT_FAILURE;
 			}
 			return EXIT_SUCCESS;
+#endif
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2070,6 +2083,7 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 			}
 			break;
 #endif
+#ifdef HAVE_V4L
 		case VIDEODEV_DRIVER_V4L:
 			switch(palette)
 			{
@@ -2087,6 +2101,7 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 				case VIDEO_PALETTE_YUV422P	: return PIXELFORMAT_YUV422P;	break;
 			}
 			break;
+#endif
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2150,6 +2165,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 			}
 			break;
 #endif
+#ifdef HAVE_V4L
 		case VIDEODEV_DRIVER_V4L:
 			switch(pixelformat)
 			{
@@ -2194,6 +2210,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 				case PIXELFORMAT_YYUV	: return 0;			break;
 			}
 			break;
+#endif
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2356,6 +2373,7 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 			}
 			break;
 #endif
+#ifdef HAVE_V4L
 		case VIDEODEV_DRIVER_V4L:
 			switch(pixelformat)
 			{
@@ -2372,6 +2390,7 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 				case VIDEO_PALETTE_YUV422P	: returnvalue = pixelFormatName(PIXELFORMAT_YUV422P);	break;
 			}
 			break;
+#endif
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2520,6 +2539,7 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 			}
 			break;
 #endif
+#ifdef HAVE_V4L
 		case VIDEODEV_DRIVER_V4L:
 			switch(standard)
 			{
@@ -2574,6 +2594,7 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 				case STANDARD_ALL	: return VIDEO_MODE_AUTO;	break;
 			}
 			break;
+#endif
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2701,6 +2722,7 @@ QString VideoDevice::signalStandardName(int standard)
 			}
 			break;
 #endif
+#ifdef HAVE_V4L
 		case VIDEODEV_DRIVER_V4L:
 			switch(standard)
 			{
@@ -2714,6 +2736,7 @@ QString VideoDevice::signalStandardName(int standard)
 				case VIDEO_MODE_NTSC_JP	: returnvalue = signalStandardName(STANDARD_NTSC_M_JP);	break;	// Undocumented value found to be compatible with V4L bttv driver
 			}
 			break;
+#endif
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
