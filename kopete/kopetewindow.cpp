@@ -1301,18 +1301,6 @@ void KopeteWindow::setOnlineStatus( uint category, const Kopete::StatusMessage& 
 // same onlinestatus.  Then update Kopete::Away and the UI.
 void KopeteWindow::setStatusMessage ( const Kopete::StatusMessage& statusMessage )
 {
-	bool changed = false;
-	QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
-	foreach ( Kopete::Account *account, accountList )
-	{
-		Kopete::Contact *self = account->myself();
-		bool isInvisible = self && self->onlineStatus().status() == Kopete::OnlineStatus::Invisible;
-		if ( self && account->isConnected() && !isInvisible )
-		{
-			changed = true;
-			account->setOnlineStatus ( self->onlineStatus(), statusMessage );
-		}
-	}
 	Kopete::StatusManager::self()->setGlobalStatusMessage ( statusMessage );
 }
 

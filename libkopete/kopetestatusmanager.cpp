@@ -326,6 +326,17 @@ void StatusManager::setGlobalStatusMessage( const Kopete::StatusMessage &statusM
 	config.writeEntry( "GlobalStatusMessage", d->globalStatusMessage.message() );
 	config.sync();
 
+	QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
+	foreach ( Kopete::Account *account, accountList )
+	{
+		Kopete::Contact *self = account->myself();
+		bool isInvisible = self && self->onlineStatus().status() == Kopete::OnlineStatus::Invisible;
+		if ( self && account->isConnected() && !isInvisible )
+		{
+			account->setOnlineStatus ( self->onlineStatus(), statusMessage );
+		}
+	}
+
 	emit globalStatusChanged();
 }
 
