@@ -1303,7 +1303,6 @@ void KopeteWindow::setStatusMessage ( const Kopete::StatusMessage& statusMessage
 {
 	bool changed = false;
 	QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
-	qSort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);
 	foreach ( Kopete::Account *account, accountList )
 	{
 		Kopete::Contact *self = account->myself();
