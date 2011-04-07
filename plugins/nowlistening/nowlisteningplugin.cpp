@@ -297,7 +297,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 			{
 				// Check for the now listening message in parenthesis,
 				// include the header to not override other messages in parenthesis.
-				QRegExp statusSong( QString("\\((%1[^.]*)\\)").arg( NowListeningConfig::header()) );
+				QRegExp statusSong( QString("\\((%1.+)\\)$").arg( NowListeningConfig::header()) );
 
 				// HACK: Don't keep appending the now listened song. Replace it in the status message.
 				advert = currentStatusMessage.message();
