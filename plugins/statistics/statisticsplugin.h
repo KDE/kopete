@@ -154,6 +154,8 @@ public slots:
  	*/
 	void slotMetaContactAdded(Kopete::MetaContact *mc);
 
+	void slotDelayedMetaContactAdded(Kopete::MetaContact *mc, Kopete::OnlineStatus::StatusType status);
+
 	void slotMetaContactRemoved(Kopete::MetaContact *mc);
 
 	/*

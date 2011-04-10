@@ -92,8 +92,15 @@ void StatisticsPlugin::slotInitialize()
 	QList<Kopete::MetaContact*> list = Kopete::ContactList::self()->metaContacts();
 	foreach(Kopete::MetaContact *metaContact, list)
 	{
-		kapp->processEvents();
-		slotMetaContactAdded(metaContact);
+		if (metaContact->isOnline())
+		{
+			slotMetaContactAdded(metaContact);
+		}
+		else
+		{
+			connect(metaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
+				SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+		}
 	}
 }
 
@@ -140,6 +147,12 @@ void StatisticsPlugin::slotViewStatistics()
 	kDebug(14315) << "statistics - dialog: " + mc->displayName();
 
 	StatisticsContact *sc = statisticsContactMap.value(mc);
+	if (!sc)
+	{
+		slotMetaContactAdded(mc);
+		sc = statisticsContactMap.value(mc);
+	}
+
 	if (sc)
 	{
 		StatisticsDialog* dialog = new StatisticsDialog(sc, db());
@@ -161,6 +174,26 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 	        SLOT(slotOnlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
 
 	statisticsContactMap[mc] = new StatisticsContact(mc, db());
+}
+
+void StatisticsPlugin::slotDelayedMetaContactAdded(Kopete::MetaContact *mc, Kopete::OnlineStatus::StatusType status)
+{
+	if (findStatisticsContact(mc->metaContactId()))
+	{
+		disconnect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
+		           SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+	}
+	else
+	{
+		if (status != Kopete::OnlineStatus::Unknown && status != Kopete::OnlineStatus::Offline)
+		{
+			disconnect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
+				   SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+
+			slotMetaContactAdded(mc);
+			slotOnlineStatusChanged(mc, status);
+		}
+	}
 }
 
 void StatisticsPlugin::slotMetaContactRemoved(Kopete::MetaContact *mc)
@@ -296,7 +329,6 @@ void StatisticsPlugin::aboutToUnload()
 
 	QMap<Kopete::MetaContact *, StatisticsContact *>::iterator it;
 	for (it = statisticsContactMap.begin(); it != statisticsContactMap.end(); ++it) {
-		kapp->processEvents();
 		Kopete::MetaContact *mc = it.key();
 		StatisticsContact *sc = it.value();
 
