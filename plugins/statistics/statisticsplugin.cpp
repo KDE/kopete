@@ -178,21 +178,13 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 
 void StatisticsPlugin::slotDelayedMetaContactAdded(Kopete::MetaContact *mc, Kopete::OnlineStatus::StatusType status)
 {
-	if (findStatisticsContact(mc->metaContactId()))
+	if (status != Kopete::OnlineStatus::Unknown && status != Kopete::OnlineStatus::Offline)
 	{
 		disconnect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
-		           SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
-	}
-	else
-	{
-		if (status != Kopete::OnlineStatus::Unknown && status != Kopete::OnlineStatus::Offline)
-		{
-			disconnect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
-				   SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+			   SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
 
-			slotMetaContactAdded(mc);
-			slotOnlineStatusChanged(mc, status);
-		}
+		slotMetaContactAdded(mc);
+		slotOnlineStatusChanged(mc, status);
 	}
 }
 
