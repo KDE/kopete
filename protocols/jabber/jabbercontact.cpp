@@ -357,6 +357,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 					Kopete::Message m=Kopete::Message ( this, mManager->members() );
 					m.setPlainBody( i18n("%1 has ended his/her participation in the chat session.", metaContact()->displayName()) );
 					m.setDirection( Kopete::Message::Internal );
+					m.setImportance(Kopete::Message::Low);
 
 					if ( account()->mergeMessages() )
 						mManager->appendMessage ( m, QString() );
