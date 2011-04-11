@@ -1152,7 +1152,7 @@ void WlmAccount::downloadPendingDisplayPicture()
 void
 WlmAccount::slotInitialEmailNotification (const int unread_inbox)
 {
-    KNotification *notification= new KNotification ("msn_mail");
+    KNotification *notification= new KNotification ("msn_mail", Kopete::UI::Global::mainWidget());
 
     notification->setText(i18np( "You have one unread message in your Hotmail inbox.",
                                  "You have %1 unread messages in your Hotmail inbox.", unread_inbox));
@@ -1169,7 +1169,7 @@ WlmAccount::slotInitialEmailNotification (const int unread_inbox)
 void
 WlmAccount::slotNewEmailNotification (const QString from, const QString subject)
 {
-    KNotification *notification= new KNotification ("msn_mail");
+    KNotification *notification= new KNotification ("msn_mail", Kopete::UI::Global::mainWidget());
 
     notification->setText(i18n( "New message from %1 in your Hotmail inbox.<p>Subject: %2", from, subject));
     notification->setActions(( QStringList() << i18nc("@action", "Open Inbox" ) << i18nc("@action", "Close" )) );
