@@ -63,6 +63,7 @@ SkypeConnection::SkypeConnection() {
 	d = new SkypeConnectionPrivate;//create the d pointer
 	d->fase = cfNotConnected;//not connected yet
 	d->startTimer = 0L;
+	d->bus = 0;
 	connect(this, SIGNAL(received(const QString&)), this, SLOT(parseMessage(const QString&)));//look into all messages
 }
 
