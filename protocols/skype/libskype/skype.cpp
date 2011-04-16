@@ -155,6 +155,9 @@ void Skype::setOnline() {
 void Skype::setUserProfileRichMoodText(const QString &message) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
+	if (! d->connection.connected())
+		return;
+
 	queueSkypeMessage(QString("SET PROFILE RICH_MOOD_TEXT %1").arg(message), false);
 }
 
