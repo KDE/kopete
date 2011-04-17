@@ -107,6 +107,7 @@
 #include "kopeteitemdelegate.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlistview.h"
+#include "kopetestatusitems.h"
 
 
 //BEGIN GlobalStatusMessageIconLabel
@@ -518,7 +519,26 @@ void KopeteWindow::slotShowHide()
 void KopeteWindow::slotToggleAway()
 {
 	kDebug ( 14000 );
-	if ( Kopete::StatusManager::self()->globalAway() )
+	Kopete::StatusManager * statusManager = Kopete::StatusManager::self();
+	const Kopete::Status::StatusItem * item = 0;
+	bool away = Kopete::StatusManager::self()->globalAway();
+
+	foreach (const Kopete::Status::StatusItem *i, statusManager->getRootGroup()->childList()) {
+		if (i->title() == QLatin1String("Online") && away ) {
+			item = i;
+			break;
+		} else if (i->title() == QLatin1String("Away") && !away) {
+			item = i;
+			break;
+		}
+	}
+
+	const Kopete::Status::Status * status = qobject_cast<const Kopete::Status::Status*>(item);
+	if (status) {
+		statusManager->setGlobalStatusMessage(Kopete::StatusMessage(status->title(), status->message()));
+	}
+
+	if ( away )
 		slotGlobalAvailable();
 	else
 		slotGlobalAway();
@@ -1297,8 +1317,6 @@ void KopeteWindow::setOnlineStatus( uint category, const Kopete::StatusMessage& 
 	Kopete::AccountManager::self()->setOnlineStatus( category, statusMessage, 0, true );
 }
 
-// Iterate each connected account, updating its status message but keeping the
-// same onlinestatus.  Then update Kopete::Away and the UI.
 void KopeteWindow::setStatusMessage ( const Kopete::StatusMessage& statusMessage )
 {
 	Kopete::StatusManager::self()->setGlobalStatusMessage ( statusMessage );

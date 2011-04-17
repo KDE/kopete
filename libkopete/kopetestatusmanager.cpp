@@ -322,6 +322,8 @@ void StatusManager::setGlobalStatusMessage( const Kopete::StatusMessage &statusM
 	config.writeEntry( "GlobalStatusMessage", d->globalStatusMessage.message() );
 	config.sync();
 
+	// Iterate each connected account, updating its status message but keeping the
+	// same onlinestatus.
 	QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
 	foreach ( Kopete::Account *account, accountList )
 	{
@@ -440,7 +442,8 @@ bool StatusManager::globalAway()
 {
 	return ( d->globalStatusCategory == OnlineStatusManager::Away ||
 	         d->globalStatusCategory == OnlineStatusManager::ExtendedAway ||
-	         d->globalStatusCategory == OnlineStatusManager::Busy );
+	         d->globalStatusCategory == OnlineStatusManager::Busy ||
+	         d->globalStatusCategory == OnlineStatusManager::Offline );
 }
 
 void StatusManager::accountUnregistered( const Kopete::Account *account )
