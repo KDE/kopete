@@ -656,6 +656,7 @@ void KopeteChatWindow::createTabBar()
 		m_tabBar->setTabsClosable(cg.readEntry( QLatin1String("HoverClose"), false ));
 		m_tabBar->setMovable(true);
 		m_tabBar->setAutomaticResizeTabs(true);
+		m_tabBar->setTabsClosable(true);
 		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
 
 		QToolButton* m_rightWidget = new QToolButton( m_tabBar );
