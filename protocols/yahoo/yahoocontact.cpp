@@ -606,8 +606,7 @@ void YahooContact::setDisplayPicture(const QByteArray &data, int checksum)
 void YahooContact::setYABEntry( YABEntry *entry, bool show )
 {
 	kDebug(YAHOO_GEN_DEBUG) << userId();
-	if( m_YABEntry )
-		delete m_YABEntry;
+	delete m_YABEntry;
 
 	m_YABEntry = entry;
 	writeYABEntry();	// Store data in Contact
@@ -787,8 +786,7 @@ void YahooContact::writeYABEntry()
 void YahooContact::readYABEntry()
 {
 	kDebug(YAHOO_GEN_DEBUG) ;
-	if( m_YABEntry )
-		delete m_YABEntry;
+	delete m_YABEntry;
 
 	m_YABEntry = new YABEntry;
 	m_YABEntry->yahooId = userId();

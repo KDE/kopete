@@ -191,7 +191,7 @@ void SMSSend::setOptions(const QString& name)
 	qDeleteAll(args);
 	args.clear();
 
-	if (m_provider) delete m_provider;
+	delete m_provider;
 	m_provider = new SMSSendProvider(name, prefWidget->program->url().url(), m_account, this);
 
 	for (int i=0; i < m_provider->count(); i++)
@@ -232,7 +232,7 @@ int SMSSend::maxSize()
 	if (prefix.isNull())
 		prefix = "/usr";
 	// quick sanity check
-	if (m_provider) delete m_provider;
+	delete m_provider;
 	m_provider = new SMSSendProvider(pName, prefix, m_account, this);
 	return m_provider->maxSize();
 }

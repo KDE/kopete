@@ -47,14 +47,10 @@ JabberJingleContent::JabberJingleContent(JabberJingleSession* parent, XMPP::Jing
 JabberJingleContent::~JabberJingleContent()
 {
 	kDebug() << "destroyed";
-	if (m_content)
-		delete m_content;
-	if (m_rtpInSession)
-		delete m_rtpInSession;
-	if (m_rtpOutSession)
-		delete m_rtpOutSession;
-	if (m_mediaSession)
-		delete m_mediaSession;
+	delete m_content;
+	delete m_rtpInSession;
+	delete m_rtpOutSession;
+	delete m_mediaSession;
 }
 
 void JabberJingleContent::setContent(XMPP::JingleContent* content)

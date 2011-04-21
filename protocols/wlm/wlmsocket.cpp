@@ -55,8 +55,7 @@ WlmSocket::WlmSocket(MSN::NotificationServerConnection * mainConnection, bool is
 
 WlmSocket::~WlmSocket()
 {
-    if ( mPingTimer )
-        delete mPingTimer;
+    delete mPingTimer;
 }
 
 void WlmSocket::connectionEncryptedReady()
@@ -117,11 +116,8 @@ void WlmSocket::connectionReady()
 
 void WlmSocket::connectionFinished()
 {
-    if ( mPingTimer )
-    {
-        delete mPingTimer;
-        mPingTimer = 0;
-    }
+    delete mPingTimer;
+    mPingTimer = 0;
 }
 
 void WlmSocket::incomingData()

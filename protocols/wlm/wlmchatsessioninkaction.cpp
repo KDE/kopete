@@ -41,16 +41,10 @@ public:
 
     ~WlmChatSessionInkActionPrivate()
     {
-        if(m_popup)
-        {
-            delete m_popup;
-            m_popup = 0;
-        }
-        if(m_sessionInk)
-        {
-            delete m_sessionInk;
-            m_sessionInk = 0;
-        }
+        delete m_popup;
+        m_popup = 0;
+        delete m_sessionInk;
+        m_sessionInk = 0;
     }
 
     KMenu *m_popup;

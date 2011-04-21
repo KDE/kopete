@@ -131,12 +131,8 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 
 AIMEditAccountWidget::~AIMEditAccountWidget()
 {
-	if ( m_visibleEngine )
-		delete m_visibleEngine;
-
-	if ( m_invisibleEngine )
-		delete m_invisibleEngine;
-
+	delete m_visibleEngine;
+	delete m_invisibleEngine;
 	delete mGui;
 }
 

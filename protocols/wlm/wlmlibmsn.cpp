@@ -407,8 +407,7 @@ Callbacks::buddyJoinedConversation (MSN::SwitchboardServerConnection * conn,
 
     emit joinedConversation (conn, WlmUtils::passport(username), WlmUtils::utf8(friendlyname));
     const std::pair<std::string, std::string> *ctx = static_cast<const std::pair<std::string, std::string> *>(conn->auth.tag);
-    if (ctx)
-        delete ctx;
+    delete ctx;
     conn->auth.tag = NULL;
 
 /*    if (conn->auth.tag)
