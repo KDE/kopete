@@ -145,8 +145,7 @@ Message::Private::Private (const Message::Private &other)
 
 Message::Private::~Private ()
 {
-	if ( fileTransfer )
-		delete fileTransfer;
+	delete fileTransfer;
 
 	delete body;
 }
