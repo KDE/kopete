@@ -924,10 +924,7 @@ void KopeteChatWindow::updateBackground( const QPixmap &pm )
 	if( updateBg )
 	{
 		updateBg = false;
-		if( backgroundFile != 0L )
-		{
-			delete backgroundFile;
-		}
+                delete backgroundFile;
 
 		backgroundFile = new KTemporaryFile();
 		backgroundFile->setSuffix(".bmp");
