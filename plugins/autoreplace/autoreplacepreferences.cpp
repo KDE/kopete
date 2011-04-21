@@ -133,8 +133,8 @@ void AutoReplacePreferences::slotAddCouple()
 		Q3ListViewItem * lvi;
 		Q3ListViewItem * oldLvi = 0;
 		// see if we are replacing an existing entry
-		if ( ( oldLvi = preferencesDialog->m_list->findItem( k, 0 ) ) )
-			delete oldLvi;
+		oldLvi = preferencesDialog->m_list->findItem( k, 0 );
+                delete oldLvi;
 		lvi = new Q3ListViewItem( preferencesDialog->m_list, k, v );
 		// Triggers a size, geometry and content update
 		// during the next iteration of the event loop

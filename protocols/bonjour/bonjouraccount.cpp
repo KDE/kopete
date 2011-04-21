@@ -308,10 +308,8 @@ void BonjourAccount::disconnect()
 {
 	wipeOutAllContacts();
 
-	if (browser) {
-		delete browser;
-		browser = NULL;
-	}
+	delete browser;
+	browser = NULL;
 
 	if (localServer) {
 		localServer->close();

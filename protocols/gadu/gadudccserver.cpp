@@ -98,14 +98,10 @@ void
 GaduDCCServer::destroyNotifiers()
 {
 	disableNotifiers();
-	if ( read_ ) {
-		delete read_;
-		read_ = NULL;
-	}
-	if ( write_ ) {
-		delete write_;
-		write_ = NULL;
-	}
+	delete read_;
+	read_ = NULL;
+	delete write_;
+	write_ = NULL;
 }
 
 void

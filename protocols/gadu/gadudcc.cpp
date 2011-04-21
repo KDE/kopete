@@ -89,10 +89,8 @@ GaduDCC::unregisterAccount( unsigned int id )
 	if ( --referenceCount <= 0 ) {
 		kDebug(14100) << "closing dcc socket";
 		referenceCount = 0;
-		if ( dccServer ) {
-			delete dccServer;
-			dccServer = NULL;
-		}
+		delete dccServer;
+		dccServer = NULL;
 	}
 	kDebug(14100)  << "reference count " << referenceCount;
 	initmutex.unlock();

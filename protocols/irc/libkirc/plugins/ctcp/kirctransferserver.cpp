@@ -60,8 +60,7 @@ TransferServer::TransferServer(Engine *engine, QString nick,// QString nick_peer
 
 TransferServer::~TransferServer()
 {
-	if (m_socket)
-		delete m_socket;
+	delete m_socket;
 }
 
 bool TransferServer::initServer()

@@ -1389,16 +1389,10 @@ void WlmAccount::logOff( Kopete::Account::DisconnectReason reason )
         c->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     }
 
-    if (m_transferManager)
-    {
-        delete m_transferManager;
-        m_transferManager = NULL;
-    }
-    if (m_chatManager)
-    {
-        delete m_chatManager;
-        m_chatManager = NULL;
-    }
+    delete m_transferManager;
+    m_transferManager = NULL;
+    delete m_chatManager;
+    m_chatManager = NULL;
     if (m_server)
     {
         QObject::disconnect (&m_server->cb, 0, 0, 0);

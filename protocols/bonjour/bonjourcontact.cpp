@@ -46,9 +46,7 @@ BonjourContact::BonjourContact( Kopete::Account* _account, const QString &unique
 BonjourContact::~BonjourContact()
 {
 	kDebug()<<"Deleting Contact!";
-	if (connection) {
-		delete connection;
-	}
+	delete connection;
 	remotePort = 0;
 }
 
@@ -190,8 +188,7 @@ bool BonjourContact::isRemoteAddress(const QHostAddress &host) const
 
 void BonjourContact::setConnection(BonjourContactConnection *c)
 {
-	if (connection)
-		delete connection;
+	delete connection;
 
 	connection = c;
 

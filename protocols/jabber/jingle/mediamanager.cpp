@@ -85,17 +85,11 @@ bool MediaManager::start()
 
 void MediaManager::stop()
 {
-	if (d->alsaIn)
-	{
-		delete d->alsaIn;
-		d->alsaIn = 0;
-	}
+	delete d->alsaIn;
+	d->alsaIn = 0;
 	
-	if (d->alsaOut)
-	{
-		delete d->alsaOut;
-		d->alsaOut = 0;
-	}
+	delete d->alsaOut;
+	d->alsaOut = 0;
 
 	d->started = false;
 }
