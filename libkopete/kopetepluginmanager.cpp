@@ -173,15 +173,6 @@ void PluginManager::shutdown()
 
 	_kpmp->shutdownMode = PluginManagerPrivate::ShuttingDown;
 
-
-	/* save the contact list now, just in case a change was made very recently
-	   and it hasn't autosaved yet
-	   from a OO point of view, theses lines should not be there, but i don't
-	   see better place -Olivier
-	*/
-	Kopete::ContactList::self()->shutdown(); // Save and shutdown contact list
-	Kopete::AccountManager::self()->save();
-
 	// Remove any pending plugins to load, we're shutting down now :)
 	_kpmp->pluginsToLoad.clear();
 
@@ -199,6 +190,13 @@ void PluginManager::shutdown()
 		//  another object to do it.
 		current.value()->aboutToUnload();
 	}
+
+	// save the contact list now, just in case a change was made very recently
+	// and it hasn't autosaved yet
+	// from a OO point of view, theses lines should not be there, but i don't
+	// see better place -Olivier
+	Kopete::ContactList::self()->shutdown(); // Save and shutdown contact list
+	Kopete::AccountManager::self()->save();
 
 	// When running under valgrind, don't enable the timer because it will almost
 	// certainly fire due to valgrind's much slower processing
