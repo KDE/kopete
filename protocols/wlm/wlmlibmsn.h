@@ -31,7 +31,7 @@ namespace WlmUtils {
 QString passport(const MSN::Passport& pass);
 QString latin1(const std::string& s);
 QString utf8(const std::string& s);
-};
+}
 
 class Callbacks:public QObject, public MSN::Callbacks
 {
