@@ -210,7 +210,7 @@ const PropertyTmpl &Properties::nickName() const
 const PropertyTmpl &Properties::isAlwaysVisible() const
 {
 	return createProp(QLatin1String("isAlwaysVisible"),
-		i18n("Shown even if offline"), bool(), true);
+		i18n("Shown even if offline"), QString(), true);
 }
 
 const PropertyTmpl &Properties::photo() const
