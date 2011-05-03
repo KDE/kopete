@@ -83,7 +83,7 @@ StatisticsContact::~StatisticsContact()
 	commonStatsSave("lastpresent", m_lastPresent.toString(), "", m_lastPresentChanged);
 }
 
-void StatisticsContact::commonStatsSave(const QString name, const QString statVar1, const QString statVar2, const bool statVarChanged)
+void StatisticsContact::commonStatsSave(const QString &name, const QString &statVar1, const QString &statVar2, const bool statVarChanged)
 {
 	// Only update the database if there was a change
 	if (!statVarChanged) return;
@@ -93,7 +93,7 @@ void StatisticsContact::commonStatsSave(const QString name, const QString statVa
 	
 }
 
-void StatisticsContact::commonStatsCheck(const QString name, int& statVar1, int& statVar2, const int defaultValue1, const int defaultValue2)
+void StatisticsContact::commonStatsCheck(const QString &name, int& statVar1, int& statVar2, const int defaultValue1, const int defaultValue2)
 {
 	QString a = QString::number(statVar1);
 	QString b = QString::number(statVar2);
@@ -104,7 +104,7 @@ void StatisticsContact::commonStatsCheck(const QString name, int& statVar1, int&
 	statVar2 = b.toInt();
 }
 
-void StatisticsContact::commonStatsCheck(const QString name, QString& statVar1, QString& statVar2, const QString defaultValue1, const QString defaultValue2)
+void StatisticsContact::commonStatsCheck(const QString &name, QString& statVar1, QString& statVar2, const QString &defaultValue1, const QString &defaultValue2)
 {
 	QStringList buffer = m_db->query(QString("SELECT statvalue1,statvalue2 FROM commonstats WHERE statname LIKE '%1' AND metacontactid LIKE '%2';").arg(name, metaContact()->metaContactId()));
 	if (!buffer.isEmpty())

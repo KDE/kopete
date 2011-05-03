@@ -59,26 +59,26 @@ public:
 	/** \brief Access method
 	 *  \return m_oldStatusDateTime
 	 */
-	QDateTime oldStatusDateTime() { return m_oldStatusDateTime; }
+	QDateTime oldStatusDateTime() const { return m_oldStatusDateTime; }
 	
 	/** \brief Access method
 	 *  \return m_messageLength
 	 */
-	int messageLength() { return m_messageLength; }
+	int messageLength() const { return m_messageLength; }
 	/** \brief Access method
 	 *  \return m_timeBetweenTwoMessages
 	 */
-	int timeBetweenTwoMessages() { return m_timeBetweenTwoMessages; }
+	int timeBetweenTwoMessages() const { return m_timeBetweenTwoMessages; }
 	/**
 	 * \brief Access method
 	 * \return m_lastTalk
 	 */
-	QDateTime lastTalk() { return m_lastTalk; }
+	QDateTime lastTalk() const { return m_lastTalk; }
 	/**
 	 * \brief Access method
 	 * \return m_lastPresent
  	 */
-	QDateTime lastPresent() { return m_lastPresent; }
+	QDateTime lastPresent() const { return m_lastPresent; }
 	/**
 	 * \brief sets \p m_isChatWindowOpen to true
 	 */
@@ -156,13 +156,13 @@ private:
 	 * \retval statvar1 
 	 * \retval statvar2
 	 */
-	void commonStatsCheck(const QString name, QString& statVar1, QString& statVar2, const QString defaultValue1 = "", const QString defaultValue2 = "");
+	void commonStatsCheck(const QString &name, QString& statVar1, QString& statVar2, const QString &defaultValue1 = "", const QString &defaultValue2 = "");
 	
 	/**
 	 * @brief Same as commonStatsCheck for integers.
 	 * Provided for convenience
 	 */
-	void commonStatsCheck(const QString name, int& statVar1, int& statVar2, const int defaultValue1 = 0, const int defaultValue2 = -1);
+	void commonStatsCheck(const QString &name, int& statVar1, int& statVar2, const int defaultValue1 = 0, const int defaultValue2 = -1);
 	
 	/**
 	 * @brief Save a value in the "commonstats" table 
@@ -171,7 +171,7 @@ private:
 	 * \param statVar2 the second stat we can save in this table for this entry
 	 * \param statVarChanged if this param is true, we save. Else, we don't. Spare some disk usage.
 	 */
-	void commonStatsSave(const QString name, const QString statVar1, const QString statVar2, const bool statVarChanged);
+	void commonStatsSave(const QString &name, const QString &statVar1, const QString &statVar2, const bool statVarChanged);
 	
 	/**
 	 * Kopete::MetaContact linked to this StatisticsContact
