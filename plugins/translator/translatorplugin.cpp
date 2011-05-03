@@ -88,6 +88,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const QVariantList & /* arg
 TranslatorPlugin::~TranslatorPlugin()
 {
 	kDebug( 14308 ) ;
+	delete m_languages;
 	pluginStatic_ = 0L;
 }
 
