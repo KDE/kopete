@@ -49,6 +49,7 @@ ContactSelectorWidget::ContactSelectorWidget( QWidget *parent )
 
 ContactSelectorWidget::~ContactSelectorWidget()
 {
+       delete mUi;
 }
 
 QList<AccountListEntry> ContactSelectorWidget::contacts()
