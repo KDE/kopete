@@ -598,8 +598,7 @@ void HistoryDialog::doneProgressBar()
 
 void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
 {
-	KMenu *chatWindowPopup = 0L;
-	chatWindowPopup = new KMenu();
+	KMenu *chatWindowPopup = new KMenu();
 
 	if ( !url.isEmpty() )
 	{
