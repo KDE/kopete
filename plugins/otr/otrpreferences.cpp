@@ -100,6 +100,7 @@ OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
 }
 
 OTRPreferences::~OTRPreferences(){
+       delete preferencesDialog;
 }
 
 void OTRPreferences::generateFingerprint()
