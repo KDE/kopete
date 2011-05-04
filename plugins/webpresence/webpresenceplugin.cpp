@@ -77,6 +77,7 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const QVariantList& /*arg
 
 WebPresencePlugin::~WebPresencePlugin()
 {
+        delete m_output;
 }
 
 void WebPresencePlugin::slotSettingsChanged()
