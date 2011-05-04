@@ -94,7 +94,7 @@ public slots:
 	 */
     void receivedMessage (const QString & message);
 
-    QString getMsnObj () { return m_msnobj; }
+    QString getMsnObj () const { return m_msnobj; }
 
     void setMsnObj (QString msnobj) { m_msnobj = msnobj; }
 
@@ -108,7 +108,7 @@ public slots:
     void slotShowProfile();
     void slotUpdateDisplayPicture();
     virtual void sync( unsigned int flags );
-    bool isDisabled() { return m_disabled; }
+    bool isDisabled() const { return m_disabled; }
     void setDisabled( bool disabled, bool updateServer );
     void slotDontShowEmoticons(bool block);
     bool dontShowEmoticons();
