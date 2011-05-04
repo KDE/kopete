@@ -17,7 +17,7 @@
 #include "wlmserver.h"
 #include "wlmsocket.h"
 
-WlmServer::WlmServer (WlmAccount * account, QString & accountID, QString & password):
+WlmServer::WlmServer (WlmAccount * account, const QString & accountID, const QString & password):
 m_account (account),
 m_accountID (accountID), m_password (password), mainConnection (NULL)
 {

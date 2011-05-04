@@ -25,7 +25,7 @@ class WlmServer : public QObject
 {
   Q_OBJECT
 public:
-    WlmServer( WlmAccount * account, QString & m_accountID, QString & m_password );
+    WlmServer( WlmAccount * account, const QString & m_accountID, const QString & m_password );
     ~WlmServer ();
 
     void WlmConnect( const QString& server, uint port );
