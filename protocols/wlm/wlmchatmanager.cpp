@@ -533,7 +533,7 @@ WlmChatManager::slotGotInk (MSN::SwitchboardServerConnection * conn,
     kmsg.setDirection( Kopete::Message::Inbound );
     chat->appendMessage ( kmsg );
     chat->addFileToRemove(inkImage->fileName());
-
+    //TODO mem leak ? inkImage ?
     inkImage = 0l;
 
 }
