@@ -61,7 +61,7 @@ K_EXPORT_PLUGIN(WebPresencePluginFactory( "kopete_webpresence" ))
 
 WebPresencePlugin::WebPresencePlugin( QObject *parent, const QVariantList& /*args*/ )
 	: Kopete::Plugin( WebPresencePluginFactory::componentData(), parent ),
-	shuttingDown( false ), resultFormatting( WEB_HTML )
+	shuttingDown( false ), resultFormatting( WEB_HTML ), m_output(0)
 {
 	m_writeScheduler = new QTimer( this );
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
