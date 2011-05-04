@@ -25,6 +25,7 @@
 #include <QSlider>
 
 #include "wlmchatsessioninkarea.h"
+#include <KLocale>
 
 WlmChatSessionInkArea::WlmChatSessionInkArea(QWidget * parent)
 : QWidget(parent), 
@@ -50,7 +51,7 @@ void WlmChatSessionInkArea::slotClear()
 
 void WlmChatSessionInkArea::slotColor()
 {
-    m_pen.setColor(QColorDialog::getColor(m_pen.color(), this, "Select the pen's color"));
+    m_pen.setColor(QColorDialog::getColor(m_pen.color(), this, i18n("Select the pen's color")));
     emit raiseInkWindow();
 }
 
