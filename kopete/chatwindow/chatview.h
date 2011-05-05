@@ -142,7 +142,7 @@ public:
 
 	QString &caption() const;
 
-	bool sendInProgress();
+	bool sendInProgress() const;
 
 	/** Reimplemented from KopeteView **/
 	virtual void raise( bool activate=false );
@@ -158,8 +158,8 @@ public:
 
 	KTextEdit *editWidget();
 
-	bool canSend();
-	bool canSendFile();
+	bool canSend() const;
+	bool canSendFile() const;
 	
 	/** Reimplemented from KopeteView **/
 	virtual void registerContextMenuHandler( QObject *target, const char* slot );

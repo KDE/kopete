@@ -189,12 +189,12 @@ QWidget *ChatView::mainWidget()
 	return this;
 }
 
-bool ChatView::canSend()
+bool ChatView::canSend() const
 {
 	return editPart()->canSend();
 }
 
-bool ChatView::canSendFile()
+bool ChatView::canSendFile() const
 {
 	Kopete::ContactPtrList contacts = msgManager()->members();
 	if ( contacts.count() != 1 )
@@ -332,7 +332,7 @@ bool ChatView::isVisible()
 	return ( m_mainWindow && m_mainWindow->isVisible() );
 }
 
-bool ChatView::sendInProgress()
+bool ChatView::sendInProgress() const
 {
 	return d->sendInProgress;
 }
