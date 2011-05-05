@@ -109,9 +109,7 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 
 ContactAddedNotifyDialog::~ContactAddedNotifyDialog()
 {
-// deleting the widget is not needed because it has a parent
-// which takes care of them
-//	delete d->widget;
+	delete d->widget;
 	delete d;
 }
 
