@@ -350,7 +350,7 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 
 void KopeteMetaLVIProps::slotSelectPhoto()
 {
-	QString path = Kopete::UI::AvatarDialog::getAvatar(this, m_photoPath);
+	const QString path = Kopete::UI::AvatarDialog::getAvatar(this, m_photoPath);
 	if (path.isNull())
 		return;
 
