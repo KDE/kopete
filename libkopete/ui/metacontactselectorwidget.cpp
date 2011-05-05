@@ -81,6 +81,11 @@ MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *
 	buildVisualComponents();
 }
 
+MetaContactSelectorWidgetLVI::~MetaContactSelectorWidgetLVI()
+{
+	delete d;
+}
+
 Kopete::MetaContact* MetaContactSelectorWidgetLVI::metaContact()
 {
 	return d->metaContact;
