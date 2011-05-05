@@ -57,12 +57,12 @@ class KOPETE_CONTACT_LIST_EXPORT LayoutManager : public QObject
 public:
 	static LayoutManager * instance();
 
-	QStringList layouts();
+	QStringList layouts() const;
 	void setActiveLayout( const QString &layout );
 	void setPreviewLayout( const ContactListLayout &layout );
 	ContactListLayout layout( const QString &layout );
 	ContactListLayout activeLayout();
-	QString activeLayoutName();
+	QString activeLayoutName() const;
 
 	bool isDefaultLayout( const QString &layout ) const;
 

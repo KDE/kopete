@@ -75,7 +75,7 @@ LayoutManager::LayoutManager()
 LayoutManager::~LayoutManager()
 {}
 
-QStringList LayoutManager::layouts()
+QStringList LayoutManager::layouts() const
 {
 	return m_layouts.keys();
 }
@@ -336,7 +336,7 @@ bool LayoutManager::isDefaultLayout( const QString & layout ) const
 	return false;
 }
 
-QString LayoutManager::activeLayoutName()
+QString LayoutManager::activeLayoutName() const
 {
 	return m_activeLayout;
 }
