@@ -83,6 +83,10 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const QVariantList & /* arg
 		slotNewKMM( *it );
 
 	loadSettings();
+	// When started, contactlist hasn't any selected metacontacts, but this action is available from contactlist
+	// menubar, so we need to disable it.          
+	// It is also important to do it after loadSettings because KSelectAction becomes enabled again after becoming non-empty
+	m_actionLanguage->setEnabled( !Kopete::ContactList::self()->selectedMetaContacts().isEmpty() );
 }
 
 TranslatorPlugin::~TranslatorPlugin()
