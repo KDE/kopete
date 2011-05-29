@@ -1034,7 +1034,7 @@ GaduAccount::slotExportContactsListToFile()
 		return;
 	}
 
-	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString(),
+	p->saveListDialog = new KFileDialog( QString( "::kopete-gadu" + accountId() ), QString(),
 					Kopete::UI::Global::mainWidget() );
 	p->saveListDialog->setCaption(
 	    i18n("Save Contacts List for Account %1 As",
@@ -1080,7 +1080,7 @@ GaduAccount::slotImportContactsFromFile()
 		return;
 	}
 
-	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString(),
+	p->loadListDialog = new KFileDialog( QString( "::kopete-gadu" + accountId() ), QString(),
 					Kopete::UI::Global::mainWidget() );
 	p->loadListDialog->setCaption(
 	    i18n("Load Contacts List for Account %1 As",
