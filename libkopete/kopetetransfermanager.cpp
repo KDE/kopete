@@ -419,7 +419,7 @@ void Kopete::TransferManager::saveIncomingTransfer( unsigned int id )
 
 	KConfigGroup cg( KGlobal::config(), "File Transfer" );
 	const QString defaultPath = cg.readEntry( "defaultPath", QDir::homePath() );
-	KUrl url = defaultPath + QLatin1String( "/" ) + info.file();
+	KUrl url = QString(defaultPath + QLatin1String( "/" ) + info.file());
 
 	if ( info.saveToDirectory() )
 		url = getSaveDir( url );

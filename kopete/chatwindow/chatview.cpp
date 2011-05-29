@@ -266,7 +266,7 @@ void ChatView::resetFontAndColor()
 	if ( !mc )
 		return;
 
-	QString contactListGroup = QLatin1String("chatwindow_") + mc->metaContactId();
+	QString contactListGroup = QString(QLatin1String("chatwindow_") + QString(mc->metaContactId()));
 	KConfigGroup config = KGlobal::config()->group(contactListGroup);
 	editPart()->resetConfig( config );
 	config.sync();
@@ -770,8 +770,8 @@ void ChatView::saveChatSettings()
 	if ( !mc )
 		return;
 
-	QString contactListGroup = QLatin1String("chatwindow_") +
-	                           mc->metaContactId();
+	QString contactListGroup = QString(QLatin1String("chatwindow_") +
+	                           QString(mc->metaContactId()));
     KConfigGroup config = KGlobal::config()->group(contactListGroup);
 
 	// If settings are the same as default delete entry from config. This will propagate global setting change.
@@ -796,8 +796,8 @@ void ChatView::loadChatSettings()
 		return; //can't load with more than one other person in the chat
 
 	//read settings for metacontact
-	QString contactListGroup = QLatin1String("chatwindow_") +
-	                           contacts.first()->metaContact()->metaContactId();
+	QString contactListGroup = QString(QLatin1String("chatwindow_") +
+	                           QString(contacts.first()->metaContact()->metaContactId()));
 	KConfigGroup config(KGlobal::config(), contactListGroup );
 	bool enableRichText = config.readEntry( "EnableRichText", Kopete::BehaviorSettings::self()->richTextByDefault() );
 	editPart()->textEdit()->setRichTextEnabled( enableRichText );

@@ -229,14 +229,14 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 	
 		send( t );
 		// The server expects a HTTP HEAD command prior to the GET
-		m_mimetypeJob = KIO::mimetype(
+		m_mimetypeJob = KIO::mimetype(QString(
 				QString::fromLatin1("http://%1/relay?token=")
 					.arg( QString(transfer->firstParam( 250 )) ) 
 				+
 				QString(QUrl::toPercentEncoding(QString(transfer->firstParam( 251 )))) +
 				QString::fromLatin1("&sender=%1&recver=%2")
 					.arg(m_userId)
-					.arg(client()->userId())
+					.arg(client()->userId()))
 				, 
 				KIO::HideProgressInfo);
 		m_mimetypeJob->addMetaData("cookies", "manual");

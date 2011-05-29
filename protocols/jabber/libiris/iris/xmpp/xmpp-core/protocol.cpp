@@ -1654,7 +1654,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 				r.setAttribute("id", e.attribute("id"));
 				QDomElement bind = doc.createElementNS(NS_BIND, "bind");
 				QDomElement jid = doc.createElement("jid");
-				Jid j = user + '@' + host + '/' + resource;
+				Jid j = QString(user + '@' + host + '/' + resource);
 				jid.appendChild(doc.createTextNode(j.full()));
 				bind.appendChild(jid);
 				r.appendChild(bind);
@@ -1670,7 +1670,7 @@ bool CoreProtocol::normalStep(const QDomElement &e)
 		}
 	}
 	else if(step == GetSASLResponse) {
-		if(e.namespaceURI() == NS_SASL && e.localName() == "response") {
+		if(e.namespaceURI() == NS_SASL && e.localName() == QLatin1String("response")) {
 			sasl_step = QCA::Base64().stringToArray(e.text()).toByteArray();
 			need = NSASLNext;
 			step = GetSASLNext;

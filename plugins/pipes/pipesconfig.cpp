@@ -50,10 +50,10 @@ void PipesConfig::save ()
 	
 	QStringList uids;
 	foreach (PipesPlugin::PipeOptions pipe, mPipesList){
-		config.writeEntry ( pipe.uid + "enabled", pipe.enabled );
-		config.writeEntry ( pipe.uid + "path", pipe.path );
-		config.writeEntry ( pipe.uid + "direction", (int) pipe.direction );
-		config.writeEntry ( pipe.uid + "pipeContents", (int) pipe.pipeContents);
+		config.writeEntry ( QString(pipe.uid) + "enabled", pipe.enabled );
+		config.writeEntry ( QString(pipe.uid) + "path", pipe.path );
+		config.writeEntry ( QString(pipe.uid) + "direction", (int) pipe.direction );
+		config.writeEntry ( QString(pipe.uid) + "pipeContents", (int) pipe.pipeContents);
 		uids.append (pipe.uid.toString());
 	}
 	config.writeEntry ( "Pipes", uids);
