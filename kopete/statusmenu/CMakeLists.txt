@@ -19,7 +19,7 @@ kde4_add_ui_files( kopetestatusmenu_SRCS
 )
 
 kde4_add_library( kopetestatusmenu SHARED ${kopetestatusmenu_SRCS} )
-target_link_libraries( kopetestatusmenu kopete ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS} )
+target_link_libraries( kopetestatusmenu kopete ${KDE4_KDEUI_LIBS} ${KDE4_KCMUTILS_LIBS} )
 set_target_properties( kopetestatusmenu PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopetestatusmenu ${INSTALL_TARGETS_DEFAULT_ARGS})
 
