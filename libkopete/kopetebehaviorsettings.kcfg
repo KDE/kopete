@@ -186,5 +186,13 @@
 			<label>Always show tabs.</label>
 			<default>false</default>
 		</entry>
+		<entry key="ShowContactName" type="Bool">
+			<label>Show contact name for each tab.</label>
+			<default>true</default>
+		</entry>
+		<entry key="HoverClose" type="Bool">
+			<label>Show close button for each tab.</label>
+			<default>true</default>
+		</entry>
 	</group>
 </kcfg>

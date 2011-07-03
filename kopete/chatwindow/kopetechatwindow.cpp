@@ -653,11 +653,12 @@ void KopeteChatWindow::createTabBar()
 
 		m_tabBar = new KTabWidget( mainArea );
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-		m_tabBar->setTabsClosable(cg.readEntry( QLatin1String("HoverClose"), false ));
+		m_tabBar->setTabsClosable(cg.readEntry( QLatin1String("HoverClose"), true ));
 		m_tabBar->setMovable(true);
 		m_tabBar->setAutomaticResizeTabs(true);
-		m_tabBar->setTabsClosable(true);
 		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
+
+		m_UpdateChatLabel = cg.readEntry( QLatin1String("ShowContactName"), true );
 
 		QToolButton* m_rightWidget = new QToolButton( m_tabBar );
 		connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
@@ -713,11 +714,15 @@ void KopeteChatWindow::addTab( ChatView *view )
 	view->move( QPoint() );
 	//view->show();
 
-	m_tabBar->addTab( view, pluginIcon, view->caption() );
+	m_tabBar->addTab( view, pluginIcon, "");
         view->setVisible(view == m_activeView);
-	connect( view, SIGNAL( captionChanged( bool ) ), this, SLOT( updateChatLabel() ) );
 	connect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
-	view->setCaption( view->caption(), false );
+
+	if (m_UpdateChatLabel) {
+		connect( view, SIGNAL( captionChanged( bool ) ), this, SLOT( updateChatLabel() ) );
+		view->setCaption( view->caption(), false );
+	}
+
 }
 
 void KopeteChatWindow::setPrimaryChatView( ChatView *view )
@@ -770,7 +775,10 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	connect( newView, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
 	connect( newView, SIGNAL(messageSuccess( ChatView* )), this, SLOT(slotStopAnimation( ChatView* )) );
 	connect( newView, SIGNAL(updateStatusIcon( ChatView* ) ), this, SLOT(slotUpdateCaptionIcons( ChatView* ) ) );
-	connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
+
+	if (m_UpdateChatLabel) {
+		connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
+	}
 
 	updateActions();
 	checkDetachEnable();

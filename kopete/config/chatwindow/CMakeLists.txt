@@ -16,7 +16,8 @@ set(kcm_kopete_chatwindowconfig_PART_SRCS
 kde4_add_ui_files(kcm_kopete_chatwindowconfig_PART_SRCS 
    chatwindowconfig_style.ui
    chatwindowconfig_emoticons.ui
-   chatwindowconfig_colors.ui )
+   chatwindowconfig_colors.ui
+   chatwindowconfig_tab.ui )
 
 kde4_add_plugin(kcm_kopete_chatwindowconfig ${kcm_kopete_chatwindowconfig_PART_SRCS})
 

@@ -20,6 +20,7 @@
 #include "chatwindowconfig.h"
 #include "emoticonthemedelegate.h"
 #include "emoticonthemeitem.h"
+#include "kopetebehaviorsettings.h"
 
 #include <QCheckBox>
 #include <QDir>
@@ -219,6 +220,12 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	m_colorsUi.setupUi(colorsWidget);
 	m_tab->addTab(colorsWidget, i18n("Colors && Fonts"));
 	addConfig( Kopete::AppearanceSettings::self(), colorsWidget );
+
+//--------- tab tab --------------------------
+	QWidget *tabWidget = new QWidget(m_tab);
+	m_tabUi.setupUi(tabWidget);
+	m_tab->addTab(tabWidget, i18n("&Tabs"));
+	addConfig( Kopete::BehaviorSettings::self(), tabWidget );
 
 	load();
 }
