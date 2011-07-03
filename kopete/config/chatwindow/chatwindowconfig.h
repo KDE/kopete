@@ -28,6 +28,7 @@
 #include "ui_chatwindowconfig_style.h"
 #include "ui_chatwindowconfig_emoticons.h"
 #include "ui_chatwindowconfig_colors.h"
+#include "ui_chatwindowconfig_tab.h"
 #include <kopetechatwindowstyle.h>
 
 class FakeProtocol;
@@ -97,5 +98,7 @@ private:
 	//----- Colors TAB ------------------------
 	Ui::ChatWindowConfig_Colors m_colorsUi;
 
+	//----- Tab TAB ---------------------
+	Ui::ChatWindowConfig_Tab m_tabUi;
 };
 #endif

@@ -176,6 +176,8 @@ private:
 	QString statusMsg;
 	Kopete::ChatSession::Form initialForm;
 
+	bool m_UpdateChatLabel;
+
 signals:
 	void closing( KopeteChatWindow* );
 	void chatSessionChanged( Kopete::ChatSession *newSession);
