@@ -11,7 +11,7 @@ if ( MSILBC_LIBRARY )
 	set ( MSILBC_FOUND true )
 else ( MSILBC_LIBRARY )
 
-	find_library ( MSILBC_LIBRARY NAMES msilbc PATHS ${LIB_INSTALL_DIR}/mediastreamer/plugins ${CMAKE_LIBRARY_PATH}/mediastreamer/plugins ${CMAKE_INSTALL_PREFIX}/lib/mediastreamer/plugins )
+	find_library ( MSILBC_LIBRARY NAMES msilbc PATH_SUFFIXES mediastreamer/plugins )
 
 	if ( MSILBC_LIBRARY )
 		set ( MSILBC_FOUND true )
