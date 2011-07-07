@@ -346,7 +346,7 @@ QPixmap OnlineStatus::protocolIcon(const KIconLoader::StdSizes size) const
 
 QPixmap OnlineStatus::protocolIcon() const
 {
-	return OnlineStatusManager::self()->cacheLookupByObject( *this, d->protocolIcon() , 16, QColor() );
+	return protocolIcon(KIconLoader::SizeSmall);
 }
 
 QString OnlineStatus::mimeSource( const QString& icon, int size, QColor color, bool idle) const
