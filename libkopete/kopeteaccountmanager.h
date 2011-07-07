@@ -141,7 +141,7 @@ public slots:
 			      uint flags,
 			      bool forced );
 
-	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
+	KDE_DEPRECATED void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
 	                      const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(),
 			      uint flags = 0 );
 

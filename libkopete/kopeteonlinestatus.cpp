@@ -344,6 +344,11 @@ QPixmap OnlineStatus::protocolIcon(const KIconLoader::StdSizes size) const
 	return OnlineStatusManager::self()->cacheLookupByObject( *this, d->protocolIcon() , size, QColor() );
 }
 
+QPixmap OnlineStatus::protocolIcon() const
+{
+	return OnlineStatusManager::self()->cacheLookupByObject( *this, d->protocolIcon() , 16, QColor() );
+}
+
 QString OnlineStatus::mimeSource( const QString& icon, int size, QColor color, bool idle) const
 {
 	// make sure the item is in the cache
