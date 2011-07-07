@@ -247,7 +247,7 @@ GaduPublicDir::iconForStatus( uint status )
 	QPixmap n;
 
 	if ( GaduProtocol::protocol() ) {
-		return GaduProtocol::protocol()->convertStatus( status ).protocolIcon();
+		return GaduProtocol::protocol()->convertStatus( status ).protocolIcon(KIconLoader::SizeSmall);
 	}
 	return n;
 }
