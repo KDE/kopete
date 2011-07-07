@@ -403,6 +403,13 @@ public:
 	QPixmap protocolIcon(const KIconLoader::StdSizes size = KIconLoader::SizeSmall) const;
 
 	/**
+	 * \brief Returns the status icon for the protocol.
+	 *
+	 * A cache is employed to reduce CPU and memory usage.
+	 */
+	KDE_DEPRECATED QPixmap protocolIcon() const;
+
+	/**
 	 * Assignment operator
 	 */
 	OnlineStatus & operator=( const OnlineStatus &other );
