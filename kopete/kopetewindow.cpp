@@ -488,7 +488,7 @@ void KopeteWindow::initActions()
 	KAction *globalShowContactList = new KAction ( i18n ( "Show/Hide Contact List" ), this );
 	actionCollection()->addAction ( "ShowContactList", globalShowContactList );
 	connect ( globalShowContactList, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotShowHide() ) );
-	globalShowContactList->setGlobalShortcut ( KShortcut ( Qt::CTRL + Qt::SHIFT + Qt::Key_S ) );
+	globalShowContactList->setGlobalShortcut ( KShortcut ( Qt::CTRL + Qt::ALT + Qt::Key_T ) );
 	globalShowContactList->setWhatsThis ( i18n ( "Show or hide the contact list" ) );
 
 	KAction *globalSetAway = new KAction ( i18n ( "Set Away/Back" ), this );
