@@ -400,7 +400,7 @@ public:
 	 *
 	 * A cache is employed to reduce CPU and memory usage.
 	 */
-	QPixmap protocolIcon(const KIconLoader::StdSizes size) const;
+	QPixmap protocolIcon(const KIconLoader::StdSizes size = KIconLoader::SizeSmall) const;
 
 	/**
 	 * \brief Returns the status icon for the protocol.
