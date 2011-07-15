@@ -87,6 +87,7 @@ Name[zh_TW]=WinPopup
 Comment=Sends Windows WinPopup messages
 Comment[ar]=إرسال رسائل النوافذ WinPopup
 Comment[ast]=Unvia Ventanos
+Comment[bg]=Изпращане на съобщения Windows WinPopup
 Comment[bs]=Šalje Windows-ove WinPopup poruke
 Comment[ca]=Envia missatges de finestres emergents de Windows
 Comment[ca@valencia]=Envia missatges de finestres emergents de Windows
