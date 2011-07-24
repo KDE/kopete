@@ -77,7 +77,7 @@ class KopetePasswordRequest : public KopetePasswordRequestBase
 {
 public:
 	KopetePasswordRequest( QObject *owner, Kopete::Password &pass )
-	 : KopetePasswordRequestBase( owner ), mPassword( pass ), mWallet( 0 )
+	 : QObject( owner ), mPassword( pass ), mWallet( 0 )
 	{
 	}
 
