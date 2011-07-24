@@ -69,6 +69,7 @@ Name[zh_CN]=Skype
 Name[zh_TW]=Skype
 Comment=Skype protocol plugin (a wrapper)
 Comment[ast]=Complementu de protocolu Skype (un ambiente)
+Comment[bg]=Приставка за протокол Skype (обвивка)
 Comment[bs]=Priključak za protokol Skypa (omotač)
 Comment[ca]=Connector de protocol Skype (un embolcall)
 Comment[ca@valencia]=Connector de protocol Skype (un embolcall)
