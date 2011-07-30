@@ -63,7 +63,7 @@ void IRCServerContact::slotDumpMessages()
 	{
 		manager()->appendMessage( mMsgBuffer.front() );
 		mMsgBuffer.pop_front();
-		QTimer::singleShot( 0, this, SLOT( slotDumpMessages() ) );
+		QTimer::singleShot( 0, this, SLOT(slotDumpMessages()) );
 	}
 }
 

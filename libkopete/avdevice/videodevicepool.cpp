@@ -72,8 +72,8 @@ VideoDevicePool* VideoDevicePool::self()
 VideoDevicePool::VideoDevicePool()
 : m_current_device(-1)
 {
-	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString&)), SLOT(deviceAdded(const QString &)) );
-	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString&)), SLOT(deviceRemoved(const QString &)) );
+	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)), SLOT(deviceAdded(QString)) );
+	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)), SLOT(deviceRemoved(QString)) );
 	/* NOTE: No locking needed as long as we don't connect with Qt::ConnectionType = Qt::DirectConnection
 	         while the signals are emitted by other threads
 	 */

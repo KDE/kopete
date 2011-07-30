@@ -48,10 +48,10 @@ SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const cha
 	
 	if( theService )
 	{
-		QObject::connect (theService, SIGNAL(messageSent(const Kopete::Message &)), 
-					this, SLOT(slotSendingSuccess(const Kopete::Message &)));
-		QObject::connect (theService, SIGNAL(messageNotSent(const Kopete::Message &, const QString &)), 
-					this, SLOT(slotSendingFailure(const Kopete::Message &, const QString &)));
+		QObject::connect (theService, SIGNAL(messageSent(Kopete::Message)), 
+					this, SLOT(slotSendingSuccess(Kopete::Message)));
+		QObject::connect (theService, SIGNAL(messageNotSent(Kopete::Message,QString)), 
+					this, SLOT(slotSendingFailure(Kopete::Message,QString)));
 		QObject::connect (theService, SIGNAL(connected()), this, SLOT(slotConnected()));
 		QObject::connect (theService, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
 	}

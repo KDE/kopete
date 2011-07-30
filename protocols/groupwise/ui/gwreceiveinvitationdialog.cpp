@@ -42,8 +42,8 @@ ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, co
 	setModal(false);
 	m_account = account;
 	m_guid = event.guid;	
-	connect( this, SIGNAL( yesClicked() ), SLOT( slotYesClicked() ) );
-	connect( this, SIGNAL( noClicked() ), SLOT( slotNoClicked() ) );
+	connect( this, SIGNAL(yesClicked()), SLOT(slotYesClicked()) );
+	connect( this, SIGNAL(noClicked()), SLOT(slotNoClicked()) );
 	
 	GroupWiseContact * c = account->contactForDN( event.user );
 

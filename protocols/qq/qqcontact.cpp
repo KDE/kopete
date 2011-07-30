@@ -137,7 +137,7 @@ QList<KAction*> *QQContact::customContextMenuActions()
 	if( !actionBlock )
 	{
 		actionBlock = new KAction( KIcon("qq_blocked"), label, this );
-		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT( slotBlockUser()) );
+		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotBlockUser()) );
 
 		//show profile
 		actionShowProfile = new KAction( i18n("Show Profile"), this );
@@ -456,7 +456,7 @@ void QQContact::setDisplayPicture(KTemporaryFile *f)
 
 
 	//let the time to KIO to copy the file
-	connect(j, SIGNAL(result(KJob *)) , this, SLOT(slotEmitDisplayPictureChanged() ));
+	connect(j, SIGNAL(result(KJob*)) , this, SLOT(slotEmitDisplayPictureChanged()));
 }
 
 void QQContact::slotEmitDisplayPictureChanged()

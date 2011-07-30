@@ -50,7 +50,7 @@ LatexPreferences::LatexPreferences(QWidget *parent, const QVariantList &args)
 	
 	connect(m_preferencesDialog->horizontalDPI, SIGNAL(valueChanged(int)), this, SLOT(slotModified()));
 	connect(m_preferencesDialog->verticalDPI, SIGNAL(valueChanged(int)), this, SLOT(slotModified()));
-	connect(m_preferencesDialog->includeUrlRequester, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(m_preferencesDialog->includeUrlRequester, SIGNAL(textChanged(QString)), this, SLOT(slotModified()));
 }
 
 LatexPreferences::~LatexPreferences()

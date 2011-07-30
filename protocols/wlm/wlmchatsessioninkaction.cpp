@@ -63,10 +63,10 @@ WlmChatSessionInkAction::WlmChatSessionInkAction( QObject* parent )
     WlmChatSessionInkArea *inkArea = sessionInkList.first();
     if(inkArea)
     {
-        connect( inkArea, SIGNAL( sendInk( const QPixmap & ) ),
-                        this, SIGNAL( sendInk( const QPixmap & ) ) );
-        connect( inkArea, SIGNAL( raiseInkWindow() ),
-                        this, SLOT( raiseInkWindow() ) );
+        connect( inkArea, SIGNAL(sendInk(QPixmap)),
+                        this, SIGNAL(sendInk(QPixmap)) );
+        connect( inkArea, SIGNAL(raiseInkWindow()),
+                        this, SLOT(raiseInkWindow()) );
     }
 }
 

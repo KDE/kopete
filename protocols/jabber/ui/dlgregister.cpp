@@ -51,7 +51,7 @@ KDialog(parent)
 	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSendForm()));
 
 	JT_XRegister *task = new JT_XRegister(mAccount->client()->rootTask());
-	connect (task, SIGNAL (finished ()), this, SLOT (slotGotForm ()));
+	connect (task, SIGNAL (finished()), this, SLOT (slotGotForm()));
 	task->getForm(jid);
 	task->go(true);
 }

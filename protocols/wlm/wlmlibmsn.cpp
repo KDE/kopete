@@ -88,9 +88,9 @@ Callbacks::registerSocket (void *s, int reading, int writing, bool isSSL)
 
     if (reading)
     {
-        QObject::disconnect(a, SIGNAL (readyRead ()),0,0);
-        QObject::connect (a, SIGNAL (readyRead ()), a,
-                  SLOT (incomingData ()));
+        QObject::disconnect(a, SIGNAL (readyRead()),0,0);
+        QObject::connect (a, SIGNAL (readyRead()), a,
+                  SLOT (incomingData()));
     }
 }
 
@@ -112,7 +112,7 @@ Callbacks::unregisterSocket (void *s)
     WlmSocket *a = (WlmSocket*)s;
     if (a)
     {
-        QObject::disconnect(a, SIGNAL (readyRead ()),0,0);
+        QObject::disconnect(a, SIGNAL (readyRead()),0,0);
     }
 }
 
@@ -683,7 +683,7 @@ Callbacks::connectToServer (std::string hostname, int port, bool * connected, bo
     if(!a)
         return NULL;
 
-    connect( a, SIGNAL(sslErrors(const QList<QSslError> &)), a, SLOT(ignoreSslErrors()) );
+    connect( a, SIGNAL(sslErrors(QList<QSslError>)), a, SLOT(ignoreSslErrors()) );
     connect( a, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(emitSocketError(QAbstractSocket::SocketError)) );
 
     if(!isSSL)

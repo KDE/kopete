@@ -78,8 +78,8 @@ void notify( QPixmap pic, const QString &eventid, const QString &caption, const 
 		info.debugInfo = debugInfo;
 
 		NotifyHelper::self()->registerNotification(n, info);
-		QObject::connect( n, SIGNAL(activated(unsigned int )) , NotifyHelper::self() , SLOT( slotEventActivated(unsigned int) ) );
-		QObject::connect( n, SIGNAL(closed()) , NotifyHelper::self() , SLOT( slotEventClosed() ) );
+		QObject::connect( n, SIGNAL(activated(uint)) , NotifyHelper::self() , SLOT(slotEventActivated(uint)) );
+		QObject::connect( n, SIGNAL(closed()) , NotifyHelper::self() , SLOT(slotEventClosed()) );
 		
 		n->sendEvent();
 }

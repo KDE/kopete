@@ -251,11 +251,11 @@ bool ContactListModel::saveModelSettings( const QString& modelType )
 
 void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 {
-	connect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+	connect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)),
 	         this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
 	connect( contact, SIGNAL(statusMessageChanged(Kopete::MetaContact*)),
 	         this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
-	connect( contact, SIGNAL(displayNameChanged(const QString&, const QString&)),
+	connect( contact, SIGNAL(displayNameChanged(QString,QString)),
 	         this, SLOT(handleContactDataChange()) );
 	connect( contact, SIGNAL(photoChanged()),
 	         this, SLOT(handleContactDataChange()) );
@@ -263,11 +263,11 @@ void ContactListModel::addMetaContact( Kopete::MetaContact* contact )
 
 void ContactListModel::removeMetaContact( Kopete::MetaContact* contact )
 {
-	disconnect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+	disconnect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)),
 	            this, SLOT(handleContactDataChange(Kopete::MetaContact*)));
 	disconnect( contact, SIGNAL(statusMessageChanged(Kopete::MetaContact*)),
 	            this, SLOT(handleContactDataChange(Kopete::MetaContact*)) );
-	disconnect( contact, SIGNAL(displayNameChanged(const QString&, const QString&)),
+	disconnect( contact, SIGNAL(displayNameChanged(QString,QString)),
 	            this, SLOT(handleContactDataChange()) );
 	disconnect( contact, SIGNAL(photoChanged()),
 	            this, SLOT(handleContactDataChange()) );
@@ -309,24 +309,24 @@ void ContactListModel::loadContactList()
 	disconnect( kcl, SIGNAL(contactListLoaded()), this, SLOT(loadContactList()) );
 
 	// MetaContact related
-	connect( kcl, SIGNAL( metaContactAdded( Kopete::MetaContact* ) ),
-	         this, SLOT( addMetaContact( Kopete::MetaContact* ) ) );
-	connect( kcl, SIGNAL( metaContactRemoved( Kopete::MetaContact* ) ),
-	         this, SLOT( removeMetaContact( Kopete::MetaContact* ) ) );
+	connect( kcl, SIGNAL(metaContactAdded(Kopete::MetaContact*)),
+	         this, SLOT(addMetaContact(Kopete::MetaContact*)) );
+	connect( kcl, SIGNAL(metaContactRemoved(Kopete::MetaContact*)),
+	         this, SLOT(removeMetaContact(Kopete::MetaContact*)) );
 
 	// Group related
-	connect( kcl, SIGNAL( groupAdded( Kopete::Group* ) ),
-	         this, SLOT( addGroup( Kopete::Group* ) ) );
-	connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
-	         this, SLOT( removeGroup( Kopete::Group* ) ) );
+	connect( kcl, SIGNAL(groupAdded(Kopete::Group*)),
+	         this, SLOT(addGroup(Kopete::Group*)) );
+	connect( kcl, SIGNAL(groupRemoved(Kopete::Group*)),
+	         this, SLOT(removeGroup(Kopete::Group*)) );
 
 	// MetaContact and Group related
-	connect( kcl, SIGNAL(metaContactAddedToGroup(Kopete::MetaContact*, Kopete::Group*)),
-	         this, SLOT(addMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*)) );
-	connect( kcl, SIGNAL(metaContactRemovedFromGroup(Kopete::MetaContact*, Kopete::Group*)),
-	         this, SLOT(removeMetaContactFromGroup(Kopete::MetaContact*, Kopete::Group*)) );
-	connect( kcl, SIGNAL(metaContactMovedToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)),
-	         this, SLOT(moveMetaContactToGroup(Kopete::MetaContact*, Kopete::Group*, Kopete::Group*)));
+	connect( kcl, SIGNAL(metaContactAddedToGroup(Kopete::MetaContact*,Kopete::Group*)),
+	         this, SLOT(addMetaContactToGroup(Kopete::MetaContact*,Kopete::Group*)) );
+	connect( kcl, SIGNAL(metaContactRemovedFromGroup(Kopete::MetaContact*,Kopete::Group*)),
+	         this, SLOT(removeMetaContactFromGroup(Kopete::MetaContact*,Kopete::Group*)) );
+	connect( kcl, SIGNAL(metaContactMovedToGroup(Kopete::MetaContact*,Kopete::Group*,Kopete::Group*)),
+	         this, SLOT(moveMetaContactToGroup(Kopete::MetaContact*,Kopete::Group*,Kopete::Group*)));
 }
 
 void ContactListModel::handleContactDataChange()

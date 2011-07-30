@@ -106,7 +106,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 	//create the D-pointer
 	d = new SkypeChatSessionPrivate(account->protocol(), account);
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
-	connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(message(Kopete::Message& )));//this will send the messages from this user going out
+	connect(this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), this, SLOT(message(Kopete::Message&)));//this will send the messages from this user going out
 	account->prepareChatSession(this);
 	d->isMulti = false;
 
@@ -115,8 +115,8 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 	d->callAction->setIcon(KIcon("skype_call"));
 	connect(d->callAction, SIGNAL(triggered()), SLOT(callChatSession()));
 
-	connect(contact, SIGNAL(setActionsPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
-	connect(this, SIGNAL(becameMultiChat(const QString&, SkypeChatSession* )), this, SLOT(disallowCall()));
+	connect(contact, SIGNAL(setActionsPossible(bool)), d->callAction, SLOT(setEnabled(bool)));
+	connect(this, SIGNAL(becameMultiChat(QString,SkypeChatSession*)), this, SLOT(disallowCall()));
 
 	actionCollection()->addAction("callSkypeContactFromChat", d->callAction);
 
@@ -145,7 +145,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 	//create the D-pointer
 	d = new SkypeChatSessionPrivate(account->protocol(), account);
 	Kopete::ChatSessionManager::self()->registerChatSession(this);
-	connect(this, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)), this, SLOT(message(Kopete::Message& )));
+	connect(this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), this, SLOT(message(Kopete::Message&)));
 	account->prepareChatSession(this);
 	d->isMulti = true;
 	d->chatId = session;
@@ -267,7 +267,7 @@ void SkypeChatSession::disallowCall() {
 	d->callAction->setEnabled(false);
 
 	/*if (d->contact) {
-		disconnect(d->contact, SIGNAL(setActionsPossible(bool )), d->callAction, SLOT(setEnabled(bool )));
+		disconnect(d->contact, SIGNAL(setActionsPossible(bool)), d->callAction, SLOT(setEnabled(bool)));
 		d->contact = 0L;
 	}*/
 }
@@ -293,7 +293,7 @@ void SkypeChatSession::showInviteMenu() {
 	for ( QHash <QString, Kopete::Contact *>::Iterator it = contactList.begin(); it != contactList.end(); ++it ) {
 		if ( ! members().contains(it.value()) && it.value()->isOnline() && it.value()->onlineStatus().status() != Kopete::OnlineStatus::Offline ) {
 			KAction *a = new Kopete::UI::ContactAction(it.value(), actionCollection());
-			connect( a, SIGNAL(triggered(const QString &, bool)), this, SLOT(inviteContact(const QString &)) );
+			connect( a, SIGNAL(triggered(QString,bool)), this, SLOT(inviteContact(QString)) );
 			d->inviteAction->addAction(a);
 		}
 	}

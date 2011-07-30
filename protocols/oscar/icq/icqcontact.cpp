@@ -51,19 +51,19 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline ) );
 
-	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
-	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( authReplyReceived( const QString&, const QString&, bool ) ),
-	                  this, SLOT( slotGotAuthReply(const QString&, const QString&, bool ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqShortInfo(const QString&)),
-	                  this, SLOT(receivedShortInfo(const QString&)) );
-	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqLongInfo( const QString& ) ),
-	                  this, SLOT( receivedLongInfo( const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
-	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqTlvInfo(const QString&)),
-	                  this, SLOT(receivedTlvInfo(const QString&)) );
+	QObject::connect( mAccount->engine(), SIGNAL(loggedIn()), this, SLOT(loggedIn()) );
+	//QObject::connect( mAccount->engine(), SIGNAL(userIsOnline(QString)), this, SLOT(userOnline(QString,UserDetails)) );
+	QObject::connect( mAccount->engine(), SIGNAL(userIsOffline(QString)), this, SLOT(userOffline(QString)) );
+	QObject::connect( mAccount->engine(), SIGNAL(authReplyReceived(QString,QString,bool)),
+	                  this, SLOT(slotGotAuthReply(QString,QString,bool)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqShortInfo(QString)),
+	                  this, SLOT(receivedShortInfo(QString)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqLongInfo(QString)),
+	                  this, SLOT(receivedLongInfo(QString)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedUserInfo(QString,UserDetails)),
+	                  this, SLOT(userInfoUpdated(QString,UserDetails)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedIcqTlvInfo(QString)),
+	                  this, SLOT(receivedTlvInfo(QString)) );
 }
 
 ICQContact::~ICQContact()
@@ -90,7 +90,7 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 		// we were offline and we don't know how many users changed its info, so better
 		// delay the request.
 		if ( mAccount->isConnected() )
-			QTimer::singleShot( 0, this, SLOT( requestMediumTlvInfo() ) );
+			QTimer::singleShot( 0, this, SLOT(requestMediumTlvInfo()) );
 		else
 			requestMediumTlvInfoDelayed();
 	}
@@ -101,7 +101,7 @@ void ICQContact::setSSIItem( const OContact& ssiItem )
 void ICQContact::setEncoding( int mib )
 {
 	ICQContactBase::setEncoding( mib );
-	QTimer::singleShot( 0, this, SLOT( requestShortInfo() ) );
+	QTimer::singleShot( 0, this, SLOT(requestShortInfo()) );
 }
 
 void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
@@ -408,7 +408,7 @@ void ICQContact::requestShortInfoDelayed( int minDelay )
 		m_requestingInfo = InfoShort;
 		int time = ( KRandom::random() % 20 ) * 1000 + minDelay;
 		kDebug(OSCAR_ICQ_DEBUG) << "requesting info in " << time/1000 << " seconds";
-		QTimer::singleShot( time, this, SLOT( infoDelayTimeout() ) );
+		QTimer::singleShot( time, this, SLOT(infoDelayTimeout()) );
 	}
 }
 
@@ -419,7 +419,7 @@ void ICQContact::requestMediumTlvInfoDelayed( int minDelay )
 		m_requestingInfo = InfoMediumTlv;
 		int time = ( KRandom::random() % 20 ) * 1000 + minDelay;
 		kDebug(OSCAR_ICQ_DEBUG) << "requesting info in " << time/1000 << " seconds";
-		QTimer::singleShot( time, this, SLOT( infoDelayTimeout() ) );
+		QTimer::singleShot( time, this, SLOT(infoDelayTimeout()) );
 	}
 }
 

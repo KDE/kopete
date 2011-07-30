@@ -60,11 +60,11 @@ AccountIdentityDialog::AccountIdentityDialog( QWidget *parent )
 	header->setVisible(false);
 	
 	// hook up the user input
-	connect(d->ui.identityList, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+	connect(d->ui.identityList, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
 		this, SLOT(slotValidate()));
 	connect(d->ui.identityList, SIGNAL(itemSelectionChanged()),
-		this, SLOT( slotValidate()));
-	connect(d->ui.identityList, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
+		this, SLOT(slotValidate()));
+	connect(d->ui.identityList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
 		this, SLOT(slotIdentityListDoubleClicked()));
 
 	// identity manager signals
@@ -74,7 +74,7 @@ AccountIdentityDialog::AccountIdentityDialog( QWidget *parent )
 	
 	// account manager signals
 	Kopete::AccountManager *acmanager = Kopete::AccountManager::self();
-	connect(acmanager, SIGNAL(accountOnlineStatusChanged(Kopete::Account*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
+	connect(acmanager, SIGNAL(accountOnlineStatusChanged(Kopete::Account*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
 			this, SLOT(slotLoadAccounts()));
 	slotLoadIdentities();
 	slotValidate();

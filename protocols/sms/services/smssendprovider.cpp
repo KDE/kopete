@@ -245,9 +245,9 @@ void SMSSendProvider::send(const Kopete::Message& msg)
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << values;
 
 	output = "";
-	connect( p, SIGNAL(processExited(K3Process *)), this, SLOT(slotSendFinished(K3Process *)));
-	connect( p, SIGNAL(receivedStdout(K3Process *, char *, int)), this, SLOT(slotReceivedOutput(K3Process *, char *, int)));
-//	connect( p, SIGNAL(receivedStderr(K3Process *, char *, int)), this, SLOT(slotReceivedOutput(K3Process *, char *, int)));
+	connect( p, SIGNAL(processExited(K3Process*)), this, SLOT(slotSendFinished(K3Process*)));
+	connect( p, SIGNAL(receivedStdout(K3Process*,char*,int)), this, SLOT(slotReceivedOutput(K3Process*,char*,int)));
+//	connect( p, SIGNAL(receivedStderr(K3Process*,char*,int)), this, SLOT(slotReceivedOutput(K3Process*,char*,int)));
 
 	p->start(K3Process::NotifyOnExit, K3Process::AllOutput);
 }

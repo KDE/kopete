@@ -76,7 +76,7 @@ void Kopete::Command::init( const QString &command, const char* slot, const QStr
 
 	if(m_type == Kopete::CommandHandler::Normal )
 	{
-		QObject::connect(this, SIGNAL( handleCommand(const QString &, Kopete::ChatSession *)),
+		QObject::connect(this, SIGNAL(handleCommand(QString,Kopete::ChatSession*)),
 			d->parent, slot );
 	}
 }

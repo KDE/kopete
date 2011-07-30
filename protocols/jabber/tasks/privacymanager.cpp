@@ -240,14 +240,14 @@ PrivacyManager::~PrivacyManager()
 void PrivacyManager::requestListNames()
 {
 	GetPrivacyListsTask* t = new GetPrivacyListsTask ( rootTask_ );
-	connect ( t,SIGNAL ( finished() ),SLOT ( receiveLists() ) );
+	connect ( t,SIGNAL (finished()),SLOT (receiveLists()) );
 	t->go ( true );
 }
 
 void PrivacyManager::requestList ( const QString& name )
 {
 	GetPrivacyListTask* t = new GetPrivacyListTask ( rootTask_, name );
-	connect ( t,SIGNAL ( finished() ),SLOT ( receiveList() ) );
+	connect ( t,SIGNAL (finished()),SLOT (receiveList()) );
 	t->go ( true );
 }
 
@@ -256,8 +256,8 @@ void PrivacyManager::block ( const QString& target )
 	block_targets_.push_back ( target );
 	if ( !block_waiting_ ) {
 		block_waiting_ = true;
-		connect ( this,SIGNAL ( defaultListAvailable ( const PrivacyList& ) ),SLOT ( block_getDefaultList_success ( const PrivacyList& ) ) );
-		connect ( this,SIGNAL ( defaultListError() ),SLOT ( block_getDefaultList_error() ) );
+		connect ( this,SIGNAL (defaultListAvailable(PrivacyList)),SLOT (block_getDefaultList_success(PrivacyList)) );
+		connect ( this,SIGNAL (defaultListError()),SLOT (block_getDefaultList_error()) );
 		getDefaultList();
 	}
 }
@@ -265,8 +265,8 @@ void PrivacyManager::block ( const QString& target )
 void PrivacyManager::block_getDefaultList_success ( const PrivacyList& l_ )
 {
 	PrivacyList l = l_;
-	disconnect ( this,SIGNAL ( defaultListAvailable ( const PrivacyList& ) ),this,SLOT ( block_getDefault_success ( const PrivacyList& ) ) );
-	disconnect ( this,SIGNAL ( defaultListError() ),this,SLOT ( block_getDefault_error() ) );
+	disconnect ( this,SIGNAL (defaultListAvailable(PrivacyList)),this,SLOT (block_getDefault_success(PrivacyList)) );
+	disconnect ( this,SIGNAL (defaultListError()),this,SLOT (block_getDefault_error()) );
 	block_waiting_ = false;
 	while ( !block_targets_.isEmpty() )
 		l.insertItem ( 0,PrivacyListItem::blockItem ( block_targets_.takeFirst() ) );
@@ -275,29 +275,29 @@ void PrivacyManager::block_getDefaultList_success ( const PrivacyList& l_ )
 
 void PrivacyManager::block_getDefaultList_error()
 {
-	disconnect ( this,SIGNAL ( defaultListAvailable ( const PrivacyList& ) ),this,SLOT ( block_getDefault_success ( const PrivacyList& ) ) );
-	disconnect ( this,SIGNAL ( defaultListError() ),this,SLOT ( block_getDefault_error() ) );
+	disconnect ( this,SIGNAL (defaultListAvailable(PrivacyList)),this,SLOT (block_getDefault_success(PrivacyList)) );
+	disconnect ( this,SIGNAL (defaultListError()),this,SLOT (block_getDefault_error()) );
 	block_waiting_ = false;
 	block_targets_.clear();
 }
 
 void PrivacyManager::getDefaultList()
 {
-	connect ( this,SIGNAL ( listsReceived ( const QString&, const QString&, const QStringList& ) ),SLOT ( getDefault_listsReceived ( const QString&, const QString&, const QStringList& ) ) );
-	connect ( this,SIGNAL ( listsError() ),SLOT ( getDefault_listsError() ) );
+	connect ( this,SIGNAL (listsReceived(QString,QString,QStringList)),SLOT (getDefault_listsReceived(QString,QString,QStringList)) );
+	connect ( this,SIGNAL (listsError()),SLOT (getDefault_listsError()) );
 	requestListNames();
 }
 
 void PrivacyManager::getDefault_listsReceived ( const QString& defaultList, const QString&, const QStringList& )
 {
-	disconnect ( this,SIGNAL ( listsReceived ( const QString&, const QString&, const QStringList& ) ),this,SLOT ( getDefault_listsReceived ( const QString&, const QString&, const QStringList& ) ) );
-	disconnect ( this,SIGNAL ( listsError() ),this,SLOT ( getDefault_listsError() ) );
+	disconnect ( this,SIGNAL (listsReceived(QString,QString,QStringList)),this,SLOT (getDefault_listsReceived(QString,QString,QStringList)) );
+	disconnect ( this,SIGNAL (listsError()),this,SLOT (getDefault_listsError()) );
 
 	getDefault_default_ = defaultList;
 	if ( !defaultList.isEmpty() ) {
 		getDefault_waiting_ = true;
-		connect ( this,SIGNAL ( listReceived ( const PrivacyList& ) ),SLOT ( getDefault_listReceived ( const PrivacyList& ) ) );
-		connect ( this,SIGNAL ( listError() ),SLOT ( getDefault_listError() ) );
+		connect ( this,SIGNAL (listReceived(PrivacyList)),SLOT (getDefault_listReceived(PrivacyList)) );
+		connect ( this,SIGNAL (listError()),SLOT (getDefault_listError()) );
 		requestList ( defaultList );
 	}
 	else {
@@ -307,16 +307,16 @@ void PrivacyManager::getDefault_listsReceived ( const QString& defaultList, cons
 
 void PrivacyManager::getDefault_listsError()
 {
-	disconnect ( this,SIGNAL ( listsReceived ( const QString&, const QString&, const QStringList& ) ),this,SLOT ( getDefault_listsReceived ( const QString&, const QString&, const QStringList& ) ) );
-	disconnect ( this,SIGNAL ( listsError() ),this,SLOT ( getDefault_listsError() ) );
+	disconnect ( this,SIGNAL (listsReceived(QString,QString,QStringList)),this,SLOT (getDefault_listsReceived(QString,QString,QStringList)) );
+	disconnect ( this,SIGNAL (listsError()),this,SLOT (getDefault_listsError()) );
 	emit defaultListError();
 }
 
 void PrivacyManager::getDefault_listReceived ( const PrivacyList& l )
 {
 	if ( l.name() == getDefault_default_ && getDefault_waiting_ ) {
-		disconnect ( this,SIGNAL ( listReceived ( const PrivacyList& ) ),this,SLOT ( getDefault_listReceived ( const PrivacyList& ) ) );
-		disconnect ( this,SIGNAL ( listError() ),this,SLOT ( getDefault_listError() ) );
+		disconnect ( this,SIGNAL (listReceived(PrivacyList)),this,SLOT (getDefault_listReceived(PrivacyList)) );
+		disconnect ( this,SIGNAL (listError()),this,SLOT (getDefault_listError()) );
 		getDefault_waiting_ = false;
 		emit defaultListAvailable ( l );
 	}
@@ -331,7 +331,7 @@ void PrivacyManager::changeDefaultList ( const QString& name )
 {
 	SetPrivacyListsTask* t = new SetPrivacyListsTask ( rootTask_ );
 	t->setDefault ( name );
-	connect ( t,SIGNAL ( finished() ),SLOT ( changeDefaultList_finished() ) );
+	connect ( t,SIGNAL (finished()),SLOT (changeDefaultList_finished()) );
 	t->go ( true );
 }
 
@@ -355,7 +355,7 @@ void PrivacyManager::changeActiveList ( const QString& name )
 {
 	SetPrivacyListsTask* t = new SetPrivacyListsTask ( rootTask_ );
 	t->setActive ( name );
-	connect ( t,SIGNAL ( finished() ),SLOT ( changeActiveList_finished() ) );
+	connect ( t,SIGNAL (finished()),SLOT (changeActiveList_finished()) );
 	t->go ( true );
 }
 
@@ -379,7 +379,7 @@ void PrivacyManager::changeList ( const PrivacyList& list )
 {
 	SetPrivacyListsTask* t = new SetPrivacyListsTask ( rootTask_ );
 	t->setList ( list );
-	connect ( t,SIGNAL ( finished() ),SLOT ( changeList_finished() ) );
+	connect ( t,SIGNAL (finished()),SLOT (changeList_finished()) );
 	t->go ( true );
 }
 

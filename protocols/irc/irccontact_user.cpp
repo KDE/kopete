@@ -112,10 +112,10 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 	mOnlineTimer = new QTimer( this );
 	m_isOnline = metaContact()->isTemporary();
 
-	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
+	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT(slotUserOffline()) );
 
-	QObject::connect(kircEngine(), SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
-		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
+	QObject::connect(kircEngine(), SIGNAL(incomingChannelModeChange(QString,QString,QString)),
+		this, SLOT(slotIncomingModeChange(QString,QString,QString)));
 
 	actionCtcpMenu = 0L;
 
@@ -463,8 +463,8 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession
 			actionBanMenu->setEnabled( false );
 
 			codecAction = new KCodecAction( i18n("&Encoding"), 0, this, "selectcharset" );
-			connect( codecAction, SIGNAL( activated( const QTextCodec * ) ),
-				this, SLOT( setCodec( const QTextCodec *) ) );
+			connect( codecAction, SIGNAL(activated(const QTextCodec*)),
+				this, SLOT(setCodec(const QTextCodec*)) );
 			codecAction->setCodec( codec() );
 		}
 

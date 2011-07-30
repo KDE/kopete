@@ -232,36 +232,36 @@ GaduAccount::initActions()
 void
 GaduAccount::initConnections()
 {
-	QObject::connect( p->session_, SIGNAL( error( const QString&, const QString& ) ),
-				SLOT( error( const QString&, const QString& ) ) );
-	QObject::connect( p->session_, SIGNAL( messageReceived( KGaduMessage* ) ),
-				SLOT( messageReceived( KGaduMessage* ) )  );
-	QObject::connect( p->session_, SIGNAL( contactStatusChanged( KGaduNotify* ) ),
-				SLOT( contactStatusChanged( KGaduNotify* ) ) );
-	QObject::connect( p->session_, SIGNAL( connectionFailed( gg_failure_t )),
-				SLOT( connectionFailed( gg_failure_t ) ) );
-	QObject::connect( p->session_, SIGNAL( connectionSucceed( ) ),
-				SLOT( connectionSucceed( ) ) );
-	QObject::connect( p->session_, SIGNAL( disconnect( Kopete::Account::DisconnectReason ) ),
-				SLOT( slotSessionDisconnect( Kopete::Account::DisconnectReason ) ) );
-	QObject::connect( p->session_, SIGNAL( ackReceived( unsigned int ) ),
-				SLOT( ackReceived( unsigned int ) ) );
-	QObject::connect( p->session_, SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int  ) ),
-				SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
-	QObject::connect( p->session_, SIGNAL( userListExported() ),
-				SLOT( userListExportDone() ) );
-	QObject::connect( p->session_, SIGNAL( userListDeleted() ),
-				SLOT( userListDeleteDone() ) );
-	QObject::connect( p->session_, SIGNAL( userListRecieved( const QString& ) ),
-				SLOT( userlist( const QString& ) ) );
-	QObject::connect( p->session_, SIGNAL( incomingCtcp( unsigned int ) ),
-				SLOT( slotIncomingDcc( unsigned int ) ) );
+	QObject::connect( p->session_, SIGNAL(error(QString,QString)),
+				SLOT(error(QString,QString)) );
+	QObject::connect( p->session_, SIGNAL(messageReceived(KGaduMessage*)),
+				SLOT(messageReceived(KGaduMessage*))  );
+	QObject::connect( p->session_, SIGNAL(contactStatusChanged(KGaduNotify*)),
+				SLOT(contactStatusChanged(KGaduNotify*)) );
+	QObject::connect( p->session_, SIGNAL(connectionFailed(gg_failure_t)),
+				SLOT(connectionFailed(gg_failure_t)) );
+	QObject::connect( p->session_, SIGNAL(connectionSucceed()),
+				SLOT(connectionSucceed()) );
+	QObject::connect( p->session_, SIGNAL(disconnect(Kopete::Account::DisconnectReason)),
+				SLOT(slotSessionDisconnect(Kopete::Account::DisconnectReason)) );
+	QObject::connect( p->session_, SIGNAL(ackReceived(uint)),
+				SLOT(ackReceived(uint)) );
+	QObject::connect( p->session_, SIGNAL(pubDirSearchResult(SearchResult,uint)),
+				SLOT(slotSearchResult(SearchResult,uint)) );
+	QObject::connect( p->session_, SIGNAL(userListExported()),
+				SLOT(userListExportDone()) );
+	QObject::connect( p->session_, SIGNAL(userListDeleted()),
+				SLOT(userListDeleteDone()) );
+	QObject::connect( p->session_, SIGNAL(userListRecieved(QString)),
+				SLOT(userlist(QString)) );
+	QObject::connect( p->session_, SIGNAL(incomingCtcp(uint)),
+				SLOT(slotIncomingDcc(uint)) );
 
-	QObject::connect( p->pingTimer_, SIGNAL( timeout() ),
-				SLOT( pingServer() ) );
+	QObject::connect( p->pingTimer_, SIGNAL(timeout()),
+				SLOT(pingServer()) );
 
-	QObject::connect( p->exportTimer_, SIGNAL( timeout() ),
-				SLOT( slotUserlistSynch() ) );
+	QObject::connect( p->exportTimer_, SIGNAL(timeout()),
+				SLOT(slotUserlistSynch()) );
 }
 
 void
@@ -385,7 +385,7 @@ GaduAccount::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->addAction( listMenuAction );
 
 	KAction *propertiesAction = new KAction( KIcon("configure"), i18n("Properties"), actionMenu );
-	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT( editAccount() ) );
+	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
 	actionMenu->addAction( propertiesAction );
 
 }

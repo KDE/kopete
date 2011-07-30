@@ -32,7 +32,7 @@ dlgJabberRegister::dlgJabberRegister (JabberAccount *account, const XMPP::Jid & 
 
 	XMPP::JT_Register * task = new XMPP::JT_Register(m_account->client()->rootTask ());
 
-	connect (task, SIGNAL (finished ()), this, SLOT (slotGotForm ()));
+	connect (task, SIGNAL (finished()), this, SLOT (slotGotForm()));
 
 	task->getForm (jid);
 	task->go (true);
@@ -66,7 +66,7 @@ void dlgJabberRegister::slotGotForm ()
 	// enable the send button
 	btnRegister->setEnabled (true);
 
-	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (slotSendForm ()));
+	connect (btnRegister, SIGNAL (clicked()), this, SLOT (slotSendForm()));
 
 }
 
@@ -76,7 +76,7 @@ void dlgJabberRegister::slotSendForm ()
 		return;
 	XMPP::JT_Register * task = new XMPP::JT_Register (m_account->client()->rootTask ());
 
-	connect (task, SIGNAL (finished ()), this, SLOT (slotSentForm ()));
+	connect (task, SIGNAL (finished()), this, SLOT (slotSentForm()));
 
 	task->setForm (translator->resultData ());
 	task->go (true);

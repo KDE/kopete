@@ -82,8 +82,8 @@ AccountManager::AccountManager()
 : QObject( qApp ), d(new Private())
 {
 	setObjectName( "KopeteAccountManager" );
-	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT( networkConnected() ) );
-	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT( networkDisconnected() ) );
+	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT(networkConnected()) );
+	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT(networkDisconnected()) );
 }
 
 
@@ -223,7 +223,7 @@ Account* AccountManager::registerAccount( Account *account )
 		this, SLOT(slotAccountOnlineStatusChanged(Kopete::Contact *,
 			const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)));
 
-	connect(account, SIGNAL(accountDestroyed(const Kopete::Account *)) , this, SLOT( unregisterAccount(const Kopete::Account *) ));
+	connect(account, SIGNAL(accountDestroyed(const Kopete::Account*)) , this, SLOT(unregisterAccount(const Kopete::Account*)));
 
 	if ( !account->identity() )
 	{
@@ -315,8 +315,8 @@ void AccountManager::save()
 
 void AccountManager::load()
 {
-	connect( PluginManager::self(), SIGNAL( pluginLoaded( Kopete::Plugin * ) ),
-		this, SLOT( slotPluginLoaded( Kopete::Plugin * ) ) );
+	connect( PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin*)),
+		this, SLOT(slotPluginLoaded(Kopete::Plugin*)) );
 
 	// Iterate over all groups that start with "Account_" as those are accounts
 	// and load the required protocols if the account is enabled.

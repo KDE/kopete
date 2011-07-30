@@ -110,7 +110,7 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
         }
 
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
-	connect ( newContact, SIGNAL ( contactDestroyed ( Kopete::Contact * ) ), this, SLOT ( slotContactDestroyed ( Kopete::Contact * ) ) );
+	connect ( newContact, SIGNAL (contactDestroyed(Kopete::Contact*)), this, SLOT (slotContactDestroyed(Kopete::Contact*)) );
 	newContactItem->setDirty ( dirty );
 	mPool.append ( newContactItem );
 
@@ -169,7 +169,7 @@ JabberBaseContact *JabberContactPool::addGroupContact ( const XMPP::RosterItem &
 
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
 
-	connect ( newContact, SIGNAL ( contactDestroyed ( Kopete::Contact * ) ), this, SLOT ( slotContactDestroyed ( Kopete::Contact * ) ) );
+	connect ( newContact, SIGNAL (contactDestroyed(Kopete::Contact*)), this, SLOT (slotContactDestroyed(Kopete::Contact*)) );
 
 	newContactItem->setDirty ( dirty );
 	mPool.append ( newContactItem );

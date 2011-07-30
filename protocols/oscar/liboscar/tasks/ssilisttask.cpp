@@ -27,9 +27,9 @@
 SSIListTask::SSIListTask( Task* parent ) : Task( parent )
 {
 	m_ssiManager = client()->ssiManager();
-	QObject::connect( this, SIGNAL( newContact( const OContact& ) ), m_ssiManager, SLOT( newContact( const OContact& ) ) );
-	QObject::connect( this, SIGNAL( newGroup( const OContact& ) ), m_ssiManager, SLOT( newGroup( const OContact& ) ) );
-	QObject::connect( this, SIGNAL( newItem( const OContact& ) ), m_ssiManager, SLOT( newItem( const OContact& ) ) );
+	QObject::connect( this, SIGNAL(newContact(OContact)), m_ssiManager, SLOT(newContact(OContact)) );
+	QObject::connect( this, SIGNAL(newGroup(OContact)), m_ssiManager, SLOT(newGroup(OContact)) );
+	QObject::connect( this, SIGNAL(newItem(OContact)), m_ssiManager, SLOT(newItem(OContact)) );
 }
 
 

@@ -148,18 +148,18 @@ SkypeAccount::SkypeAccount(SkypeProtocol *protocol, const QString& accountID) : 
 	QObject::connect(&d->skype, SIGNAL(wentInvisible()), this, SLOT(wentInvisible()));
 	QObject::connect(&d->skype, SIGNAL(wentSkypeMe()), this, SLOT(wentSkypeMe()));
 	QObject::connect(&d->skype, SIGNAL(statusConnecting()), this, SLOT(statusConnecting()));
-	QObject::connect(&d->skype, SIGNAL(newUser(const QString&, int)), this, SLOT(newUser(const QString&, int)));
-	QObject::connect(&d->skype, SIGNAL(contactInfo(const QString&, const QString& )), this, SLOT(updateContactInfo(const QString&, const QString& )));
-	QObject::connect(&d->skype, SIGNAL(receivedIM(const QString&, const QString&, const QString&, const QDateTime&)), this, SLOT(receivedIm(const QString&, const QString&, const QString&, const QDateTime&)));
-	QObject::connect(&d->skype, SIGNAL(gotMessageId(const QString& )), this, SLOT(gotMessageId(const QString& )));//every time some ID is known inform the contacts
-	QObject::connect(&d->skype, SIGNAL(newCall(const QString&, const QString&)), this, SLOT(newCall(const QString&, const QString&)));
-	QObject::connect(&d->skype, SIGNAL(setMyselfName(const QString&)), this, SLOT(setMyselfName(const QString& )));
-	QObject::connect(&d->skype, SIGNAL(receivedMultiIM(const QString&, const QString&, const QString&, const QString&, const QDateTime&)), this, SLOT(receiveMultiIm(const QString&, const QString&, const QString&, const QString&, const QDateTime&)));
-	QObject::connect(&d->skype, SIGNAL(outgoingMessage(const QString&, const QString&, const QString& )), this, SLOT(sentMessage(const QString&, const QString&, const QString& )));
-	QObject::connect(&d->skype, SIGNAL(groupCall(const QString&, const QString& )), this, SLOT(groupCall(const QString&, const QString& )));
-	QObject::connect(&d->skype, SIGNAL(receivedAuth(const QString &, const QString &)), this, SLOT(receivedAuth(const QString &, const QString &)));
-	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRemoved (Kopete::Group *)), this, SLOT(deleteGroup (Kopete::Group *) ) );
-	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRenamed (Kopete::Group *, const QString& )), this, SLOT(renameGroup (Kopete::Group *, const QString& )) );
+	QObject::connect(&d->skype, SIGNAL(newUser(QString,int)), this, SLOT(newUser(QString,int)));
+	QObject::connect(&d->skype, SIGNAL(contactInfo(QString,QString)), this, SLOT(updateContactInfo(QString,QString)));
+	QObject::connect(&d->skype, SIGNAL(receivedIM(QString,QString,QString,QDateTime)), this, SLOT(receivedIm(QString,QString,QString,QDateTime)));
+	QObject::connect(&d->skype, SIGNAL(gotMessageId(QString)), this, SLOT(gotMessageId(QString)));//every time some ID is known inform the contacts
+	QObject::connect(&d->skype, SIGNAL(newCall(QString,QString)), this, SLOT(newCall(QString,QString)));
+	QObject::connect(&d->skype, SIGNAL(setMyselfName(QString)), this, SLOT(setMyselfName(QString)));
+	QObject::connect(&d->skype, SIGNAL(receivedMultiIM(QString,QString,QString,QString,QDateTime)), this, SLOT(receiveMultiIm(QString,QString,QString,QString,QDateTime)));
+	QObject::connect(&d->skype, SIGNAL(outgoingMessage(QString,QString,QString)), this, SLOT(sentMessage(QString,QString,QString)));
+	QObject::connect(&d->skype, SIGNAL(groupCall(QString,QString)), this, SLOT(groupCall(QString,QString)));
+	QObject::connect(&d->skype, SIGNAL(receivedAuth(QString,QString)), this, SLOT(receivedAuth(QString,QString)));
+	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRemoved(Kopete::Group*)), this, SLOT(deleteGroup(Kopete::Group*)) );
+	QObject::connect(Kopete::ContactList::self(), SIGNAL(groupRenamed(Kopete::Group*,QString)), this, SLOT(renameGroup(Kopete::Group*,QString)) );
 
 	//set values for the connection (should be updated if changed)
 	d->skype.setValues(launchType, author);
@@ -409,9 +409,9 @@ void SkypeAccount::prepareContact(SkypeContact *contact) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	QObject::connect(&d->skype, SIGNAL(updateAllContacts()), contact, SLOT(requestInfo()));//all contacts will know that
-	QObject::connect(contact, SIGNAL(infoRequest(const QString& )), &d->skype, SLOT(getContactInfo(const QString& )));//How do we ask for info?
-	QObject::connect(this, SIGNAL(connectionStatus(bool )), contact, SLOT(connectionStatus(bool )));
-	QObject::connect(contact, SIGNAL(setActionsPossible(bool )), d->protocol, SLOT(updateCallActionStatus()));
+	QObject::connect(contact, SIGNAL(infoRequest(QString)), &d->skype, SLOT(getContactInfo(QString)));//How do we ask for info?
+	QObject::connect(this, SIGNAL(connectionStatus(bool)), contact, SLOT(connectionStatus(bool)));
+	QObject::connect(contact, SIGNAL(setActionsPossible(bool)), d->protocol, SLOT(updateCallActionStatus()));
 }
 
 void SkypeAccount::updateContactInfo(const QString &contact, const QString &change) {
@@ -530,16 +530,16 @@ void SkypeAccount::newCall(const QString &callId, const QString &userId) {
 	if (d->callControl) {//Show the kopete call control window
 		SkypeCallDialog *dialog = new SkypeCallDialog(callId, userId, this);//It should free itself when it is closed
 
-		QObject::connect(&d->skype, SIGNAL(callStatus(const QString&, const QString& )), dialog, SLOT(updateStatus(const QString&, const QString& )));
-		QObject::connect(dialog, SIGNAL(acceptTheCall(const QString& )), &d->skype, SLOT(acceptCall(const QString& )));
-		QObject::connect(dialog, SIGNAL(hangTheCall(const QString& )), &d->skype, SLOT(hangUp(const QString& )));
-		QObject::connect(dialog, SIGNAL(toggleHoldCall(const QString& )), &d->skype, SLOT(toggleHoldCall(const QString& )));
-		QObject::connect(&d->skype, SIGNAL(callError(const QString&, const QString& )), dialog, SLOT(updateError(const QString&, const QString& )));
-		QObject::connect(&d->skype, SIGNAL(skypeOutInfo(int, const QString& )), dialog, SLOT(skypeOutInfo(int, const QString& )));
+		QObject::connect(&d->skype, SIGNAL(callStatus(QString,QString)), dialog, SLOT(updateStatus(QString,QString)));
+		QObject::connect(dialog, SIGNAL(acceptTheCall(QString)), &d->skype, SLOT(acceptCall(QString)));
+		QObject::connect(dialog, SIGNAL(hangTheCall(QString)), &d->skype, SLOT(hangUp(QString)));
+		QObject::connect(dialog, SIGNAL(toggleHoldCall(QString)), &d->skype, SLOT(toggleHoldCall(QString)));
+		QObject::connect(&d->skype, SIGNAL(callError(QString,QString)), dialog, SLOT(updateError(QString,QString)));
+		QObject::connect(&d->skype, SIGNAL(skypeOutInfo(int,QString)), dialog, SLOT(skypeOutInfo(int,QString)));
 		QObject::connect(dialog, SIGNAL(updateSkypeOut()), &d->skype, SLOT(getSkypeOut()));
-		QObject::connect(dialog, SIGNAL(callFinished(const QString& )), this, SLOT(removeCall(const QString& )));
-		QObject::connect(&d->skype, SIGNAL(startReceivingVideo(const QString &)), dialog, SLOT(startReceivingVideo(const QString &)));
-		QObject::connect(&d->skype, SIGNAL(stopReceivingVideo(const QString &)), dialog, SLOT(stopReceivingVideo(const QString &)));
+		QObject::connect(dialog, SIGNAL(callFinished(QString)), this, SLOT(removeCall(QString)));
+		QObject::connect(&d->skype, SIGNAL(startReceivingVideo(QString)), dialog, SLOT(startReceivingVideo(QString)));
+		QObject::connect(&d->skype, SIGNAL(stopReceivingVideo(QString)), dialog, SLOT(stopReceivingVideo(QString)));
 
 		dialog->show();//Show Call dialog
 
@@ -655,13 +655,13 @@ SkypeContact *SkypeAccount::getContact(const QString &userId) {
 }
 
 void SkypeAccount::prepareChatSession(SkypeChatSession *session) {
-	QObject::connect(session, SIGNAL(updateChatId(const QString&, const QString&, SkypeChatSession* )), this, SLOT(setChatId(const QString&, const QString&, SkypeChatSession* )));
-	QObject::connect(session, SIGNAL(wantTopic(const QString& )), &d->skype, SLOT(getTopic(const QString& )));
-	QObject::connect(&d->skype, SIGNAL(joinUser(const QString&, const QString& )), session, SLOT(joinUser(const QString&, const QString& )));
-	QObject::connect(&d->skype, SIGNAL(leftUser(const QString&, const QString&, const QString& )), session, SLOT(leftUser(const QString&, const QString&, const QString& )));
-	QObject::connect(&d->skype, SIGNAL(setTopic(const QString&, const QString& )), session, SLOT(setTopic(const QString&, const QString& )));
-	QObject::connect(session, SIGNAL(inviteUserToChat(const QString&, const QString& )), &d->skype, SLOT(inviteUser(const QString&, const QString& )));
-	QObject::connect(session, SIGNAL(leaveChat(const QString& )), &d->skype, SLOT(leaveChat(const QString& )));
+	QObject::connect(session, SIGNAL(updateChatId(QString,QString,SkypeChatSession*)), this, SLOT(setChatId(QString,QString,SkypeChatSession*)));
+	QObject::connect(session, SIGNAL(wantTopic(QString)), &d->skype, SLOT(getTopic(QString)));
+	QObject::connect(&d->skype, SIGNAL(joinUser(QString,QString)), session, SLOT(joinUser(QString,QString)));
+	QObject::connect(&d->skype, SIGNAL(leftUser(QString,QString,QString)), session, SLOT(leftUser(QString,QString,QString)));
+	QObject::connect(&d->skype, SIGNAL(setTopic(QString,QString)), session, SLOT(setTopic(QString,QString)));
+	QObject::connect(session, SIGNAL(inviteUserToChat(QString,QString)), &d->skype, SLOT(inviteUser(QString,QString)));
+	QObject::connect(session, SIGNAL(leaveChat(QString)), &d->skype, SLOT(leaveChat(QString)));
 }
 
 void SkypeAccount::setChatId(const QString &oldId, const QString &newId, SkypeChatSession *sender) {
@@ -770,7 +770,7 @@ void SkypeAccount::groupCall(const QString &callId, const QString &groupId) {
 		conf = new SkypeConference(groupId);//no, create one then..
 		d->conferences.insert(groupId, conf);
 
-		QObject::connect(conf, SIGNAL(removeConference(const QString& )), this, SLOT(removeCallGroup(const QString& )));
+		QObject::connect(conf, SIGNAL(removeConference(QString)), this, SLOT(removeCallGroup(QString)));
 	}
 
 	conf->embedCall(d->calls.value(callId));

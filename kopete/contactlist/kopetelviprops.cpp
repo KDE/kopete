@@ -106,13 +106,13 @@ KopeteGVIProps::KopeteGVIProps(Kopete::Group *group, QWidget *parent)
 //	ui_mainWidget->icnbOpen->setIcon( openName );
 //	ui_mainWidget->icnbClosed->setIcon( closeName );
 
-	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
-	connect( ui_mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
-		this, SLOT( slotUseCustomIconsToggled( bool ) ) );
-	connect( ui_mainWidget->icnbOpen, SIGNAL( iconChanged( QString ) ),
-		SLOT( slotIconChanged() ) );
-	connect( ui_mainWidget->icnbClosed, SIGNAL( iconChanged( QString ) ),
-		SLOT( slotIconChanged() ) );
+	connect( this, SIGNAL(okClicked()), this, SLOT(slotOkClicked()) );
+	connect( ui_mainWidget->chkUseCustomIcons, SIGNAL(toggled(bool)),
+		this, SLOT(slotUseCustomIconsToggled(bool)) );
+	connect( ui_mainWidget->icnbOpen, SIGNAL(iconChanged(QString)),
+		SLOT(slotIconChanged()) );
+	connect( ui_mainWidget->icnbClosed, SIGNAL(iconChanged(QString)),
+		SLOT(slotIconChanged()) );
 	slotUseCustomIconsToggled( ui_mainWidget->chkUseCustomIcons->isChecked() );
 }
 
@@ -206,12 +206,12 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 	connect( ui_mainWidget->radioPhotoKABC, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->radioPhotoContact, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
 	connect( ui_mainWidget->radioPhotoCustom, SIGNAL(toggled(bool)), SLOT(slotEnableAndDisableWidgets()));
-	connect( ui_mainWidget->cmbAccountPhoto, SIGNAL(activated ( int )), SLOT(slotEnableAndDisableWidgets()));
+	connect( ui_mainWidget->cmbAccountPhoto, SIGNAL(activated(int)), SLOT(slotEnableAndDisableWidgets()));
 	
 
 	ui_mainWidget->btnClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "edit-clear-locationbar-ltr" : "edit-clear-locationbar-rtl" ) );
-	connect( ui_mainWidget->btnClearPhoto, SIGNAL( clicked() ), this, SLOT( slotClearPhotoClicked() ) );
-	connect( ui_mainWidget->widAddresseeLink, SIGNAL( addresseeChanged( const KABC::Addressee & ) ), SLOT( slotAddresseeChanged( const KABC::Addressee & ) ) );
+	connect( ui_mainWidget->btnClearPhoto, SIGNAL(clicked()), this, SLOT(slotClearPhotoClicked()) );
+	connect( ui_mainWidget->widAddresseeLink, SIGNAL(addresseeChanged(KABC::Addressee)), SLOT(slotAddresseeChanged(KABC::Addressee)) );
 	connect( ui_mainWidget->btnChoosePhoto, SIGNAL(clicked()), this, SLOT(slotSelectPhoto()));
 	ui_mainWidget->chkUseCustomIcons->setChecked( mMetaContact->useCustomIcon() );
 
@@ -262,15 +262,15 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 	slotLoadNameSources();
 	slotLoadPhotoSources();
 
-	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
-	connect( ui_mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
-		this, SLOT( slotUseCustomIconsToggled( bool ) ) );
-	connect( ui_mainWidget->btnImportKABC, SIGNAL( clicked() ),
-		this, SLOT( slotImportClicked() ) );
-	connect( ui_mainWidget->btnExportKABC, SIGNAL( clicked() ),
-					 this, SLOT( slotExportClicked() ) );
-	connect( mFromKABC, SIGNAL( clicked() ),
-		this, SLOT( slotFromKABCClicked() ) );
+	connect( this, SIGNAL(okClicked()), this, SLOT(slotOkClicked()) );
+	connect( ui_mainWidget->chkUseCustomIcons, SIGNAL(toggled(bool)),
+		this, SLOT(slotUseCustomIconsToggled(bool)) );
+	connect( ui_mainWidget->btnImportKABC, SIGNAL(clicked()),
+		this, SLOT(slotImportClicked()) );
+	connect( ui_mainWidget->btnExportKABC, SIGNAL(clicked()),
+					 this, SLOT(slotExportClicked()) );
+	connect( mFromKABC, SIGNAL(clicked()),
+		this, SLOT(slotFromKABCClicked()) );
 
 	slotUseCustomIconsToggled( ui_mainWidget->chkUseCustomIcons->isChecked() );
 	slotEnableAndDisableWidgets();
@@ -558,8 +558,8 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 {
 	// taken from kdelibs/kio/kfile/knotifydialog.cpp
 	// only need to init this once
-	requester->disconnect( SIGNAL( openFileDialog( KUrlRequester * )),
-						this, SLOT( slotOpenSoundDialog( KUrlRequester * )));
+	requester->disconnect( SIGNAL(openFileDialog(KUrlRequester*)),
+						this, SLOT(slotOpenSoundDialog(KUrlRequester*)));
 
 	KFileDialog *fileDialog = requester->fileDialog();
 	//fileDialog->setCaption( i18n("Select Sound File") );

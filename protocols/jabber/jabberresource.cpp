@@ -64,11 +64,11 @@ JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, c
 	if ( account->isConnected () )
 	{
 #if 0  //disabled because that flood the server, specially bad with the irc gateway
-		QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedClientVersion () ) );
+		QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedClientVersion()) );
 #endif
 		if(!d->capsEnabled)
 		{
-			QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetDiscoCapabilties () ) );
+			QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetDiscoCapabilties()) );
 		}
 	}
 }
@@ -129,7 +129,7 @@ void JabberResource::slotGetTimedClientVersion ()
 		// request client version
 		XMPP::JT_ClientVersion *task = new XMPP::JT_ClientVersion ( d->account->client()->rootTask () );
 		// signal to ourselves when the vCard data arrived
-		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotClientVersion () ) );
+		QObject::connect ( task, SIGNAL (finished()), this, SLOT (slotGotClientVersion()) );
 		task->get ( d->jid );
 		task->go ( true );
 	}
@@ -156,7 +156,7 @@ void JabberResource:: slotGetDiscoCapabilties ()
 
 		XMPP:: JT_DiscoInfo *task = new XMPP::JT_DiscoInfo ( d->account->client()->rootTask () );
 		// Retrive features when service discovery is done.
-		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT (slotGotDiscoCapabilities () ) );
+		QObject::connect ( task, SIGNAL (finished()), this, SLOT (slotGotDiscoCapabilities()) );
 		task->get ( d->jid);
 		task->go ( true );
 	}

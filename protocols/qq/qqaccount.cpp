@@ -94,27 +94,27 @@ void QQAccount::createNotificationServer( const QString &host, uint port )
 	myself()->setOnlineStatus( QQProtocol::protocol()->CNT );
 	m_notifySocket = new QQNotifySocket( this, m_password );
 
-	QObject::connect( m_notifySocket, SIGNAL( statusChanged( const Kopete::OnlineStatus & ) ),
-		SLOT( slotStatusChanged( const Kopete::OnlineStatus & ) ) );
-	QObject::connect( m_notifySocket, SIGNAL( newContactList() ),
-		SLOT( slotNewContactList() ) );
-	QObject::connect( m_notifySocket, SIGNAL( groupNames(const QStringList& )),
-		SLOT( slotGroupNamesListed(const QStringList& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL(statusChanged(Kopete::OnlineStatus)),
+		SLOT(slotStatusChanged(Kopete::OnlineStatus)) );
+	QObject::connect( m_notifySocket, SIGNAL(newContactList()),
+		SLOT(slotNewContactList()) );
+	QObject::connect( m_notifySocket, SIGNAL(groupNames(QStringList)),
+		SLOT(slotGroupNamesListed(QStringList)) );
 
-	QObject::connect( m_notifySocket, SIGNAL( contactInGroup(int, char, int)),
-		SLOT( slotContactInGroup(int, char, int)) );
+	QObject::connect( m_notifySocket, SIGNAL(contactInGroup(int,char,int)),
+		SLOT(slotContactInGroup(int,char,int)) );
 
-	QObject::connect( m_notifySocket, SIGNAL( contactList(const Eva::ContactInfo &) ),
-		SLOT( slotContactListed(const Eva::ContactInfo &) ) );
+	QObject::connect( m_notifySocket, SIGNAL(contactList(Eva::ContactInfo)),
+		SLOT(slotContactListed(Eva::ContactInfo)) );
 
-	QObject::connect( m_notifySocket, SIGNAL( contactStatusChanged(const Eva::ContactStatus&) ),
-		SLOT( slotContactStatusChanged(const Eva::ContactStatus &) ) );
+	QObject::connect( m_notifySocket, SIGNAL(contactStatusChanged(Eva::ContactStatus)),
+		SLOT(slotContactStatusChanged(Eva::ContactStatus)) );
 
-	QObject::connect( m_notifySocket, SIGNAL( messageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ),
-		SLOT( slotMessageReceived( const Eva::MessageHeader&, const Eva::ByteArray& ) ) );
+	QObject::connect( m_notifySocket, SIGNAL(messageReceived(Eva::MessageHeader,Eva::ByteArray)),
+		SLOT(slotMessageReceived(Eva::MessageHeader,Eva::ByteArray)) );
 
-	QObject::connect( m_notifySocket, SIGNAL( contactDetailReceived( const QString&,  const QMap<const char*, QByteArray>& )),
-		SLOT( slotContactDetailReceived( const QString&,  const QMap<const char*, QByteArray>& )) );
+	QObject::connect( m_notifySocket, SIGNAL(contactDetailReceived(QString,QMap<const char*,QByteArray>)),
+		SLOT(slotContactDetailReceived(QString,QMap<const char*,QByteArray>)) );
 
 	m_notifySocket->connect(host, port);
 }
@@ -228,8 +228,8 @@ QQChatSession * QQAccount::chatSession( Kopete::ContactPtrList others, const QSt
 			m_chatSessions.append( chatSession );
 			// listen for the message manager telling us that the user
 			//has left the conference so we remove it from our map
-			QObject::connect( chatSession, SIGNAL( leavingConference( QQChatSession * ) ),
-							SLOT( slotLeavingConference( QQChatSession * ) ) );
+			QObject::connect( chatSession, SIGNAL(leavingConference(QQChatSession*)),
+							SLOT(slotLeavingConference(QQChatSession*)) );
 			break;
 		}
 		//kDebug( GROUPWISE_DEBUG_GLOBAL ) <<

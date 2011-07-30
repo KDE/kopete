@@ -34,8 +34,8 @@ ContactAction::ContactAction( Kopete::Contact *contact, KActionCollection* paren
            contact->metaContact()->displayName(), parent )
 {
 	setData( QVariant::fromValue( contact ) );
-	connect( this, SIGNAL( triggered( bool ) ),
-	         this, SLOT( slotTriggered( bool ) ) );
+	connect( this, SIGNAL(triggered(bool)),
+	         this, SLOT(slotTriggered(bool)) );
         parent->addAction( contact->contactId(), this );
 }
 

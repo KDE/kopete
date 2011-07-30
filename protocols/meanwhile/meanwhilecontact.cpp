@@ -77,7 +77,7 @@ Kopete::ChatSession* MeanwhileContact::manager(CanCreateFlags canCreate)
 		create(account()->myself(), contacts, protocol());
 
 	connect(m_msgManager,
-			SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
+			SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
 			this, SLOT(sendMessage(Kopete::Message&)));
 
 	connect(m_msgManager, SIGNAL(myselfTyping(bool)),

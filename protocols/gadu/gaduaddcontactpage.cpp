@@ -56,7 +56,7 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent )
 	addUI_->setupUi( w );
 	l->addWidget( w );
 
-	connect( addUI_->addEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( slotUinChanged( const QString & ) ) );
+	connect( addUI_->addEdit_, SIGNAL(textChanged(QString)), SLOT(slotUinChanged(QString)) );
 	addUI_->addEdit_->setValidChars( "1234567890" );
 	addUI_->addEdit_->setText( "" );
 	addUI_->groups->setDisabled( true );

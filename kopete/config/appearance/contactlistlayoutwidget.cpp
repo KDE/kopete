@@ -40,7 +40,7 @@ ContactListLayoutWidget::ContactListLayoutWidget( QWidget *parent )
 	connect( layoutEdit, SIGNAL(changed()), this, SLOT(emitChanged()) );
 	connect( previewButton, SIGNAL(clicked()), this, SLOT(preview()) );
 	connect( removeButton, SIGNAL(clicked()), this, SLOT(remove()) );
-	connect( layoutComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLayout(const QString&)) );
+	connect( layoutComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(setLayout(QString)) );
 	connect( LayoutManager::instance(), SIGNAL(layoutListChanged()), this, SLOT(reloadLayoutList()) );
 }
 
@@ -110,7 +110,7 @@ void ContactListLayoutWidget::setLayout( const QString &layoutName )
 
 void ContactListLayoutWidget::reloadLayoutList()
 {
-	disconnect( layoutComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLayout(const QString&)) );
+	disconnect( layoutComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(setLayout(QString)) );
 
 	QString layoutName = layoutComboBox->currentText();
 	layoutComboBox->clear();
@@ -127,7 +127,7 @@ void ContactListLayoutWidget::reloadLayoutList()
 		LayoutManager::instance()->setActiveLayout( layoutComboBox->currentText() );
 	}
 
-	connect( layoutComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLayout(const QString&)) );
+	connect( layoutComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(setLayout(QString)) );
 }
 
 void ContactListLayoutWidget::preview()

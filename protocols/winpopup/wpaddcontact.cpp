@@ -51,7 +51,7 @@ WPAddContact::WPAddContact(QWidget *parent, WPAccount *newAccount) : AddContactP
 	theDialog->setupUi( w );
 	theDialog->mHostName->setFocus();
 
-	connect(theDialog->mHostGroup, SIGNAL(activated(const QString &)), this, SLOT(slotSelected(const QString &)));
+	connect(theDialog->mHostGroup, SIGNAL(activated(QString)), this, SLOT(slotSelected(QString)));
 	connect(theDialog->mRefresh, SIGNAL(clicked()), this, SLOT(slotUpdateGroups()));
 	w->show();
 

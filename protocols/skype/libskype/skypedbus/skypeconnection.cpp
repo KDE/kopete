@@ -64,7 +64,7 @@ SkypeConnection::SkypeConnection() {
 	d->fase = cfNotConnected;//not connected yet
 	d->startTimer = 0L;
 	d->bus = 0;
-	connect(this, SIGNAL(received(const QString&)), this, SLOT(parseMessage(const QString&)));//look into all messages
+	connect(this, SIGNAL(received(QString)), this, SLOT(parseMessage(QString)));//look into all messages
 }
 
 SkypeConnection::~SkypeConnection() {

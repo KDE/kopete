@@ -486,8 +486,8 @@ bool XmlContactStorage::parseMetaContact( Kopete::MetaContact *metaContact, cons
         metaContact->slotAllPluginsLoaded();
     else
         // When all plugins are loaded, set the source contact.
-        QObject::connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ),
-                          metaContact, SLOT( slotAllPluginsLoaded() ) );
+        QObject::connect( Kopete::PluginManager::self(), SIGNAL(allPluginsLoaded()),
+                          metaContact, SLOT(slotAllPluginsLoaded()) );
 
     metaContact->setLoading( false );
     return true;

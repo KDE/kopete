@@ -51,9 +51,9 @@
 
 ICQMyselfContact::ICQMyselfContact( ICQAccount *acct ) : OscarMyselfContact( acct )
 {
-	QObject::connect( acct->engine(), SIGNAL( loggedIn() ), this, SLOT( fetchShortInfo() ) );
-	QObject::connect( acct->engine(), SIGNAL( receivedIcqShortInfo( const QString& ) ),
-	                  this, SLOT( receivedShortInfo( const QString& ) ) );
+	QObject::connect( acct->engine(), SIGNAL(loggedIn()), this, SLOT(fetchShortInfo()) );
+	QObject::connect( acct->engine(), SIGNAL(receivedIcqShortInfo(QString)),
+	                  this, SLOT(receivedShortInfo(QString)) );
 }
 
 void ICQMyselfContact::userInfoUpdated()
@@ -128,10 +128,10 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	mHideIP = configGroup()->readEntry( "HideIP", true );
 	mInfoWidget = 0L;
 
-	QObject::connect( engine(), SIGNAL(userReadsStatusMessage(const QString&)),
-	                  this, SLOT(userReadsStatusMessage(const QString&)) );
-	QObject::connect( engine(), SIGNAL( authRequestReceived( const QString&, const QString& ) ),
-	                  this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
+	QObject::connect( engine(), SIGNAL(userReadsStatusMessage(QString)),
+	                  this, SLOT(userReadsStatusMessage(QString)) );
+	QObject::connect( engine(), SIGNAL(authRequestReceived(QString,QString)),
+	                  this, SLOT(slotGotAuthRequest(QString,QString)) );
 
 	// Create actions
 	mEditInfoAction = new KAction( KIcon("user-properties"), i18n( "Edit User Info..." ), this );
@@ -184,7 +184,7 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	/*
 	actionMenu->popupMenu()->insertSeparator();
-	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT( slotSendSMS() ), this, "ICQAccount::mActionSendSMS") );
+	//actionMenu->insert( new KToggleAction( i18n( "Send &SMS..." ), 0, 0, this, SLOT(slotSendSMS()), this, "ICQAccount::mActionSendSMS") );
 	*/
 
 	KActionMenu *xtrazStatusMenu = new KActionMenu( i18n( "Set Xtraz Status" ), actionMenu );
@@ -206,8 +206,8 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 	for ( int i = 0; i < xtrazStatusList.count(); i++ )
 	{
 		Xtraz::StatusAction* xtrazAction = new Xtraz::StatusAction( xtrazStatusList.at(i), xtrazStatusMenu );
-		QObject::connect( xtrazAction, SIGNAL(triggered(const Xtraz::Status&)),
-		                  this, SLOT(setPresenceXStatus(const Xtraz::Status&)) );
+		QObject::connect( xtrazAction, SIGNAL(triggered(Xtraz::Status)),
+		                  this, SLOT(setPresenceXStatus(Xtraz::Status)) );
 		xtrazStatusMenu->addAction( xtrazAction );
 	}
 
@@ -316,8 +316,8 @@ void ICQAccount::slotUserInfo()
 			return;
 
 		mInfoWidget = new ICQUserInfoWidget( this, engine()->userId(), Kopete::UI::Global::mainWidget(), true );
-		QObject::connect( mInfoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
-		QObject::connect( mInfoWidget, SIGNAL( okClicked() ), this, SLOT( storeUserInfoDialog() ) );
+		QObject::connect( mInfoWidget, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
+		QObject::connect( mInfoWidget, SIGNAL(okClicked()), this, SLOT(storeUserInfoDialog()) );
 		mInfoWidget->show();
 	}
 }

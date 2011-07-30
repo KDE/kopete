@@ -101,7 +101,7 @@ void IRCAccount::slotSearchChannels()
 	{
 		m_channelList = new ChannelListDialog( m_engine,
 			i18n( "Channel List for %1", m_engine->currentHost() ), this,
-			SLOT( slotJoinNamedChannel( const QString & ) ) );
+			SLOT(slotJoinNamedChannel(QString)) );
 	}
 	else
 		m_channelList->clear();

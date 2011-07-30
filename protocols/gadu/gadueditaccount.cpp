@@ -85,14 +85,14 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 		exportCheck_->setChecked( account_->exportListOnChange() );
 		importCheck_->setChecked( account_->importListOnLogin() );
 
-		connect( account(), SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int ) ),
-					SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
+		connect( account(), SIGNAL(pubDirSearchResult(SearchResult,uint)),
+					SLOT(slotSearchResult(SearchResult,uint)) );
 		connectLabel->setText( i18nc( "personal information being fetched from server",
 					"<p align=\"center\">Fetching from server</p>" ) );
 		seqNr = account_->getPersonalInformation();
 	}
 
-	connect( registerNew, SIGNAL( clicked( ) ), SLOT( registerNewAccount( ) ) );
+	connect( registerNew, SIGNAL(clicked()), SLOT(registerNewAccount()) );
 
 	QWidget::setTabOrder( loginEdit_, passwordWidget_->mRemembered );
 	QWidget::setTabOrder( passwordWidget_->mRemembered, passwordWidget_->mPassword );
@@ -161,7 +161,7 @@ GaduEditAccount::slotSearchResult( const SearchResult& result, unsigned int seq 
 
 	enableUserInfo( true );
 	
-	disconnect( SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
+	disconnect( SLOT(slotSearchResult(SearchResult,uint)) );
 }
 
 void
@@ -184,7 +184,7 @@ GaduEditAccount::registerNewAccount()
 	registerNew->setDisabled( true );
 	regDialog = new GaduRegisterAccount( NULL );
 	regDialog->setObjectName( QLatin1String("Register account dialog") );
-	connect( regDialog, SIGNAL( registeredNumber( unsigned int, QString  ) ), SLOT( newUin( unsigned int, QString  ) ) );
+	connect( regDialog, SIGNAL(registeredNumber(uint,QString)), SLOT(newUin(uint,QString)) );
 	if ( regDialog->exec() != QDialog::Accepted ) {
 		loginEdit_->setText( "" );
 		return;

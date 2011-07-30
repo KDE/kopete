@@ -34,8 +34,8 @@ KNetworkConnector::KNetworkConnector ( QObject *parent )
 
 	mByteStream = new KNetworkByteStream ( this );
 
-	connect ( mByteStream, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
-	connect ( mByteStream, SIGNAL ( error ( int ) ), this, SLOT ( slotError ( int ) ) );
+	connect ( mByteStream, SIGNAL (connected()), this, SLOT (slotConnected()) );
+	connect ( mByteStream, SIGNAL (error(int)), this, SLOT (slotError(int)) );
 	mPort = 0;
 }
 

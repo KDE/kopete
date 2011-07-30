@@ -74,10 +74,10 @@ MetaContactSelectorWidgetLVI::MetaContactSelectorWidgetLVI(Kopete::MetaContact *
 	d->metaContact = mc;
 	d->photoSize = 60;
 
-	connect( d->metaContact, SIGNAL( photoChanged() ),
-		SLOT( slotPhotoChanged() ) );
-	connect( d->metaContact, SIGNAL( displayNameChanged(const QString&, const QString&) ),
-		SLOT( slotDisplayNameChanged() ) );
+	connect( d->metaContact, SIGNAL(photoChanged()),
+		SLOT(slotPhotoChanged()) );
+	connect( d->metaContact, SIGNAL(displayNameChanged(QString,QString)),
+		SLOT(slotDisplayNameChanged()) );
 	buildVisualComponents();
 }
 
@@ -201,14 +201,14 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 	d->widget->setupUi(w);
 	l->addWidget(w);
 
-	connect( d->widget->metaContactListView, SIGNAL( clicked(Q3ListViewItem * ) ),
-			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
-	connect( d->widget->metaContactListView, SIGNAL( selectionChanged( Q3ListViewItem * ) ),
-			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
-	connect( d->widget->metaContactListView, SIGNAL( spacePressed( Q3ListViewItem * ) ),
-			SIGNAL( metaContactListClicked( Q3ListViewItem * ) ) );
+	connect( d->widget->metaContactListView, SIGNAL(clicked(Q3ListViewItem*)),
+			SIGNAL(metaContactListClicked(Q3ListViewItem*)) );
+	connect( d->widget->metaContactListView, SIGNAL(selectionChanged(Q3ListViewItem*)),
+			SIGNAL(metaContactListClicked(Q3ListViewItem*)) );
+	connect( d->widget->metaContactListView, SIGNAL(spacePressed(Q3ListViewItem*)),
+			SIGNAL(metaContactListClicked(Q3ListViewItem*)) );
 
-	connect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	connect( Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact*)), this, SLOT(slotLoadMetaContacts()) );
 
 	d->widget->kListViewSearchLine->setListView(d->widget->metaContactListView);
 	d->widget->kListViewSearchLine->setFocus();
@@ -222,7 +222,7 @@ MetaContactSelectorWidget::MetaContactSelectorWidget( QWidget *parent, const cha
 
 MetaContactSelectorWidget::~MetaContactSelectorWidget()
 {
-	disconnect( Kopete::ContactList::self(), SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), this, SLOT( slotLoadMetaContacts() ) );
+	disconnect( Kopete::ContactList::self(), SIGNAL(metaContactAdded(Kopete::MetaContact*)), this, SLOT(slotLoadMetaContacts()) );
 	delete d->widget;
 	delete d;
 }

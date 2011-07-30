@@ -49,16 +49,16 @@ JingleSessionManager::JingleSessionManager(Client* c)
 	d->pjs = new JT_PushJingleAction(d->client->rootTask());
 	connect(d->pjs, SIGNAL(newSessionIncoming()),
 		this, SLOT(slotSessionIncoming()));
-	connect(d->pjs, SIGNAL(removeContent(const QString&, const QStringList&)),
-		this, SLOT(slotRemoveContent(const QString&, const QStringList&)));
-	connect(d->pjs, SIGNAL(sessionInfo(const QDomElement&)),
-		this, SLOT(slotSessionInfo(const QDomElement&)));
-	connect(d->pjs, SIGNAL(transportInfo(const QDomElement&)),
-		this, SLOT(slotTransportInfo(const QDomElement&)));
-	connect(d->pjs, SIGNAL(sessionTerminate(const QString&, const JingleReason&)),
-		this, SLOT(slotSessionTerminate(const QString&, const JingleReason&)));
-	connect(d->pjs, SIGNAL(sessionAccepted(const QDomElement&)),
-		this, SLOT(slotSessionAccepted(const QDomElement&)));
+	connect(d->pjs, SIGNAL(removeContent(QString,QStringList)),
+		this, SLOT(slotRemoveContent(QString,QStringList)));
+	connect(d->pjs, SIGNAL(sessionInfo(QDomElement)),
+		this, SLOT(slotSessionInfo(QDomElement)));
+	connect(d->pjs, SIGNAL(transportInfo(QDomElement)),
+		this, SLOT(slotTransportInfo(QDomElement)));
+	connect(d->pjs, SIGNAL(sessionTerminate(QString,JingleReason)),
+		this, SLOT(slotSessionTerminate(QString,JingleReason)));
+	connect(d->pjs, SIGNAL(sessionAccepted(QDomElement)),
+		this, SLOT(slotSessionAccepted(QDomElement)));
 
 	Features f = d->client->features();
 	

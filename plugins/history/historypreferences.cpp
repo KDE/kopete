@@ -48,7 +48,7 @@ HistoryPreferences::HistoryPreferences(QWidget *parent, const QVariantList &args
 		this, SLOT(slotModified()));
 	connect(p->Number_ChatWindow, SIGNAL(valueChanged(int)),
 		this, SLOT(slotModified()));
-	connect(p->History_color, SIGNAL(changed(const QColor&)),
+	connect(p->History_color, SIGNAL(changed(QColor)),
 		this, SLOT(slotModified()));
 }
 

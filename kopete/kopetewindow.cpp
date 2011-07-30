@@ -275,8 +275,8 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	statusBar()->addPermanentWidget ( indicator, 0 );
 
 	GlobalStatusMessageIconLabel *label = new GlobalStatusMessageIconLabel ( statusBarMessage );
-	connect ( label, SIGNAL ( iconClicked ( const QPoint& ) ),
-	          this, SLOT ( slotGlobalStatusMessageIconClicked ( const QPoint& ) ) );
+	connect ( label, SIGNAL (iconClicked(QPoint)),
+	          this, SLOT (slotGlobalStatusMessageIconClicked(QPoint)) );
 	statusBarMessageLayout->addWidget ( label );
 	statusBarMessageLayout->addSpacing ( 1 );
 
@@ -287,8 +287,8 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	connect( Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent*)), this, SLOT(slotNewInfoEvent()) );
 
 	d->globalStatusMessage = new KSqueezedTextLabel ( statusBarMessage );
-	connect ( Kopete::StatusManager::self(), SIGNAL ( globalStatusChanged() ),
-	          this, SLOT ( globalStatusChanged() ) );
+	connect ( Kopete::StatusManager::self(), SIGNAL (globalStatusChanged()),
+	          this, SLOT (globalStatusChanged()) );
 	statusBarMessageLayout->addWidget ( d->globalStatusMessage );
 	statusBar()->addWidget ( statusBarMessage, 1 );
 
@@ -304,22 +304,22 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	// --------------------------------------------------------------------------------
 
 	// Trap all loaded plugins, so we can add their status bar icons accordingly , also used to add XMLGUIClient
-	connect ( Kopete::PluginManager::self(), SIGNAL ( pluginLoaded ( Kopete::Plugin * ) ),
-	          this, SLOT ( slotPluginLoaded ( Kopete::Plugin * ) ) );
-	connect ( Kopete::PluginManager::self(), SIGNAL ( allPluginsLoaded() ),
-	          this, SLOT ( slotAllPluginsLoaded() ) );
+	connect ( Kopete::PluginManager::self(), SIGNAL (pluginLoaded(Kopete::Plugin*)),
+	          this, SLOT (slotPluginLoaded(Kopete::Plugin*)) );
+	connect ( Kopete::PluginManager::self(), SIGNAL (allPluginsLoaded()),
+	          this, SLOT (slotAllPluginsLoaded()) );
 
 	// Connect all identity signals
-	connect ( Kopete::IdentityManager::self(), SIGNAL ( identityRegistered ( Kopete::Identity* ) ),
-	          this, SLOT ( slotIdentityRegistered ( Kopete::Identity* ) ) );
-	connect ( Kopete::IdentityManager::self(), SIGNAL ( identityUnregistered ( const Kopete::Identity* ) ),
-	          this, SLOT ( slotIdentityUnregistered ( const Kopete::Identity* ) ) );
+	connect ( Kopete::IdentityManager::self(), SIGNAL (identityRegistered(Kopete::Identity*)),
+	          this, SLOT (slotIdentityRegistered(Kopete::Identity*)) );
+	connect ( Kopete::IdentityManager::self(), SIGNAL (identityUnregistered(const Kopete::Identity*)),
+	          this, SLOT (slotIdentityUnregistered(const Kopete::Identity*)) );
 
-	connect ( d->autoHideTimer, SIGNAL ( timeout() ), this, SLOT ( slotAutoHide() ) );
-	connect ( d->contactlist, SIGNAL( visibleContentHeightChanged() ), this, SLOT ( slotStartAutoResizeTimer() ) );
-	connect ( d->autoResizeTimer, SIGNAL ( timeout() ), this, SLOT ( slotUpdateSize() ) );
-	connect ( Kopete::AppearanceSettings::self(), SIGNAL ( contactListAppearanceChanged() ),
-	          this, SLOT ( slotContactListAppearanceChanged() ) );
+	connect ( d->autoHideTimer, SIGNAL (timeout()), this, SLOT (slotAutoHide()) );
+	connect ( d->contactlist, SIGNAL(visibleContentHeightChanged()), this, SLOT (slotStartAutoResizeTimer()) );
+	connect ( d->autoResizeTimer, SIGNAL (timeout()), this, SLOT (slotUpdateSize()) );
+	connect ( Kopete::AppearanceSettings::self(), SIGNAL (contactListAppearanceChanged()),
+	          this, SLOT (slotContactListAppearanceChanged()) );
 	createGUI ( QLatin1String ( "kopeteui.rc" ) );
 
 	// call this _after_ createGUI(), otherwise menubar is not set up correctly
@@ -381,35 +381,35 @@ void KopeteWindow::initActions()
 	d->actionAddContact->setDelayed ( false );
 	// this signal mapper is needed to call slotAddContact with the correct arguments
 	d->addContactMapper = new QSignalMapper ( this );
-	connect ( d->addContactMapper, SIGNAL ( mapped ( const QString & ) ),
-	          this, SLOT ( slotAddContactDialogInternal ( const QString & ) ) );
+	connect ( d->addContactMapper, SIGNAL (mapped(QString)),
+	          this, SLOT (slotAddContactDialogInternal(QString)) );
 
 	d->actionDisconnect = new KAction ( KIcon ( "user-offline" ), i18n ( "Offline" ), this );
 	actionCollection()->addAction ( "DisconnectAll", d->actionDisconnect );
-	connect ( d->actionDisconnect, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotDisconnectAll() ) );
+	connect ( d->actionDisconnect, SIGNAL (triggered(bool)), this, SLOT (slotDisconnectAll()) );
 	d->actionDisconnect->setEnabled ( false );
 
 	d->actionExportContacts = new KAction ( i18n ( "&Export Contacts..." ), this );
 	d->actionExportContacts->setIcon ( KIcon ( "document-export" ) );
 	actionCollection()->addAction ( "ExportContacts", d->actionExportContacts );
-	connect ( d->actionExportContacts, SIGNAL ( triggered ( bool ) ), this, SLOT ( showExportDialog() ) );
+	connect ( d->actionExportContacts, SIGNAL (triggered(bool)), this, SLOT (showExportDialog()) );
 
 	d->actionSetAway = new KAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-away" ), i18n ( "&Away" ), this );
 	actionCollection()->addAction ( "SetAwayAll", d->actionSetAway );
-	connect ( d->actionSetAway, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotGlobalAway() ) );
+	connect ( d->actionSetAway, SIGNAL (triggered(bool)), this, SLOT (slotGlobalAway()) );
 
 	d->actionSetBusy = new KAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-busy" ), i18n ( "&Busy" ), this );
 	actionCollection()->addAction ( "SetBusyAll", d->actionSetBusy );
-	connect ( d->actionSetBusy, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotGlobalBusy() ) );
+	connect ( d->actionSetBusy, SIGNAL (triggered(bool)), this, SLOT (slotGlobalBusy()) );
 
 
 	d->actionSetInvisible = new KAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-invisible" ), i18n ( "&Invisible" ), this );
 	actionCollection()->addAction ( "SetInvisibleAll", d->actionSetInvisible );
-	connect ( d->actionSetInvisible, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSetInvisibleAll() ) );
+	connect ( d->actionSetInvisible, SIGNAL (triggered(bool)), this, SLOT (slotSetInvisibleAll()) );
 
 	d->actionSetAvailable = new KAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-online" ), i18n ( "&Online" ), this );
 	actionCollection()->addAction ( "SetAvailableAll", d->actionSetAvailable );
-	connect ( d->actionSetAvailable, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotGlobalAvailable() ) );
+	connect ( d->actionSetAvailable, SIGNAL (triggered(bool)), this, SLOT (slotGlobalAvailable()) );
 
 	d->actionStatusMenu = new KActionMenu ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-online" ), i18n ( "&Set Status" ), this );
 	d->actionStatusMenu->setIconText ( i18n ( "Status" ) );
@@ -419,48 +419,48 @@ void KopeteWindow::initActions()
 	// Will be automatically deleted when the actionStatusMenu is deleted.
 	Kopete::StatusRootAction* statusAction = new Kopete::StatusRootAction ( d->actionStatusMenu );
 
-	connect ( statusAction, SIGNAL ( changeStatus ( uint, const Kopete::StatusMessage& ) ),
-	          this, SLOT ( setOnlineStatus ( uint, const Kopete::StatusMessage& ) ) );
-	connect ( statusAction, SIGNAL ( updateMessage ( Kopete::StatusRootAction* ) ),
-	          this, SLOT ( updateStatusMenuMessage ( Kopete::StatusRootAction* ) ) );
-	connect ( statusAction, SIGNAL ( changeMessage ( const Kopete::StatusMessage& ) ),
-	          this, SLOT ( setStatusMessage ( const Kopete::StatusMessage& ) ) );
+	connect ( statusAction, SIGNAL (changeStatus(uint,Kopete::StatusMessage)),
+	          this, SLOT (setOnlineStatus(uint,Kopete::StatusMessage)) );
+	connect ( statusAction, SIGNAL (updateMessage(Kopete::StatusRootAction*)),
+	          this, SLOT (updateStatusMenuMessage(Kopete::StatusRootAction*)) );
+	connect ( statusAction, SIGNAL (changeMessage(Kopete::StatusMessage)),
+	          this, SLOT (setStatusMessage(Kopete::StatusMessage)) );
 
 	d->actionPrefs = KopeteStdAction::preferences ( actionCollection(), "settings_prefs" );
 
-	KStandardAction::quit ( this, SLOT ( slotQuit() ), actionCollection() );
+	KStandardAction::quit ( this, SLOT (slotQuit()), actionCollection() );
 
 	setStandardToolBarMenuEnabled ( true );
-	d->menubarAction = KStandardAction::showMenubar ( menuBar(), SLOT ( setVisible ( bool ) ), actionCollection() );
+	d->menubarAction = KStandardAction::showMenubar ( menuBar(), SLOT (setVisible(bool)), actionCollection() );
 	actionCollection()->addAction ( "settings_showmenubar", d->menubarAction );
-	d->statusbarAction = KStandardAction::showStatusbar ( statusBar(), SLOT ( setVisible ( bool ) ), actionCollection() );
+	d->statusbarAction = KStandardAction::showStatusbar ( statusBar(), SLOT (setVisible(bool)), actionCollection() );
 	actionCollection()->addAction ( "settings_showstatusbar", d->statusbarAction );
 
-	KAction* act = KStandardAction::keyBindings ( guiFactory(), SLOT ( configureShortcuts() ), actionCollection() );
+	KAction* act = KStandardAction::keyBindings ( guiFactory(), SLOT (configureShortcuts()), actionCollection() );
 	actionCollection()->addAction ( "settings_keys", act );
 
 	KAction *configureGlobalShortcutsAction = new KAction ( KIcon ( "configure-shortcuts" ), i18n ( "Configure &Global Shortcuts..." ), this );
 	configureGlobalShortcutsAction->setMenuRole( QAction::NoRole ); //OS X: prevent Qt heuristics to move action to app menu->"Preferences"
 	actionCollection()->addAction ( "settings_global", configureGlobalShortcutsAction );
-	connect ( configureGlobalShortcutsAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotConfGlobalKeys() ) );
+	connect ( configureGlobalShortcutsAction, SIGNAL (triggered(bool)), this, SLOT (slotConfGlobalKeys()) );
 
-	KStandardAction::configureToolbars ( this, SLOT ( slotConfToolbar() ), actionCollection() );
-	act = KStandardAction::configureNotifications ( this, SLOT ( slotConfNotifications() ), actionCollection() );
+	KStandardAction::configureToolbars ( this, SLOT (slotConfToolbar()), actionCollection() );
+	act = KStandardAction::configureNotifications ( this, SLOT (slotConfNotifications()), actionCollection() );
 	actionCollection()->addAction ( "settings_notifications", act );
 
 	d->actionShowAllOfflineEmpty = new KToggleAction ( KIcon ( "view-user-offline-kopete" ), i18n ( "Show &All" ), this );
 	actionCollection()->addAction ( "settings_show_all_offline_empty", d->actionShowAllOfflineEmpty );
 	d->actionShowAllOfflineEmpty->setShortcut ( KShortcut ( Qt::CTRL + Qt::Key_U ) );
-	connect ( d->actionShowAllOfflineEmpty, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotToggleShowAllOfflineEmpty ( bool ) ) );
+	connect ( d->actionShowAllOfflineEmpty, SIGNAL (triggered(bool)), this, SLOT (slotToggleShowAllOfflineEmpty(bool)) );
 
 	d->actionShowOfflineUsers = new KToggleAction ( KIcon ( "view-user-offline-kopete" ), i18n ( "Show Offline &Users" ), this );
 	actionCollection()->addAction ( "settings_show_offliners", d->actionShowOfflineUsers );
-	connect ( d->actionShowOfflineUsers, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotToggleShowOfflineUsers() ) );
+	connect ( d->actionShowOfflineUsers, SIGNAL (triggered(bool)), this, SLOT (slotToggleShowOfflineUsers()) );
 
 	d->actionShowEmptyGroups = new KToggleAction ( KIcon ( "folder-grey" ), i18n ( "Show Empty &Groups" ), this );
 	actionCollection()->addAction ( "settings_show_empty_groups", d->actionShowEmptyGroups );
 	d->actionShowEmptyGroups->setShortcut ( KShortcut ( Qt::CTRL + Qt::Key_G ) );
-	connect ( d->actionShowEmptyGroups, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotToggleShowEmptyGroups() ) );
+	connect ( d->actionShowEmptyGroups, SIGNAL (triggered(bool)), this, SLOT (slotToggleShowEmptyGroups()) );
 
     /* The following are highly misleading together with the checkbox, consider removing them - ahartmetz
 	d->actionShowAllOfflineEmpty->setCheckedState ( KGuiItem ( i18n ( "Hide O&ffline" ) ) );
@@ -475,25 +475,25 @@ void KopeteWindow::initActions()
 	quickSearch->setDefaultWidget ( searchLine );
 
 	// sync actions, config and prefs-dialog
-	connect ( Kopete::AppearanceSettings::self(), SIGNAL ( configChanged() ), this, SLOT ( slotConfigChanged() ) );
+	connect ( Kopete::AppearanceSettings::self(), SIGNAL (configChanged()), this, SLOT (slotConfigChanged()) );
 	slotConfigChanged();
 
 	// Global actions
 	KAction *globalReadMessage = new KAction ( i18n ( "Read Message" ), this );
 	actionCollection()->addAction ( "ReadMessage",  globalReadMessage );
-	connect ( globalReadMessage, SIGNAL ( triggered ( bool ) ), Kopete::ChatSessionManager::self(), SLOT ( slotReadMessage() ) );
+	connect ( globalReadMessage, SIGNAL (triggered(bool)), Kopete::ChatSessionManager::self(), SLOT (slotReadMessage()) );
 	globalReadMessage->setGlobalShortcut ( KShortcut ( Qt::CTRL + Qt::SHIFT + Qt::Key_I ) );
 	globalReadMessage->setWhatsThis ( i18n ( "Read the next pending message" ) );
 
 	KAction *globalShowContactList = new KAction ( i18n ( "Show/Hide Contact List" ), this );
 	actionCollection()->addAction ( "ShowContactList", globalShowContactList );
-	connect ( globalShowContactList, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotShowHide() ) );
+	connect ( globalShowContactList, SIGNAL (triggered(bool)), this, SLOT (slotShowHide()) );
 	globalShowContactList->setGlobalShortcut ( KShortcut ( Qt::CTRL + Qt::ALT + Qt::Key_T ) );
 	globalShowContactList->setWhatsThis ( i18n ( "Show or hide the contact list" ) );
 
 	KAction *globalSetAway = new KAction ( i18n ( "Set Away/Back" ), this );
 	actionCollection()->addAction ( "Set_Away_Back",  globalSetAway );
-	connect ( globalSetAway, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotToggleAway() ) );
+	connect ( globalSetAway, SIGNAL (triggered(bool)), this, SLOT (slotToggleAway()) );
 	globalSetAway->setGlobalShortcut ( KShortcut ( Qt::CTRL + Qt::SHIFT + Qt::Key_W ) );
 }
 
@@ -549,10 +549,10 @@ void KopeteWindow::initSystray()
 	if ( Kopete::BehaviorSettings::self()->showSystemTray() ) {
 		d->tray = KopeteSystemTray::systemTray ( this );
 
-		QObject::connect ( d->tray, SIGNAL ( aboutToShowMenu ( KMenu * ) ),
-						   this, SLOT ( slotTrayAboutToShowMenu ( KMenu * ) ) );
+		QObject::connect ( d->tray, SIGNAL (aboutToShowMenu(KMenu*)),
+						   this, SLOT (slotTrayAboutToShowMenu(KMenu*)) );
 		// :FIXME: The signal quitSelected does not exist on KopeteSystemTray
-		// QObject::connect ( d->tray, SIGNAL ( quitSelected() ), this, SLOT ( slotQuit() ) );
+		// QObject::connect ( d->tray, SIGNAL (quitSelected()), this, SLOT (slotQuit()) );
 	}
 }
 
@@ -729,8 +729,8 @@ void KopeteWindow::slotConfigChanged()
 			foreach ( Kopete::Identity *identity, identityList )
 			{
 				KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon ( identity, d->statusBarWidget );
-				connect ( sbIcon, SIGNAL(leftClicked(Kopete::Identity*, const QPoint&)), this,
-				          SLOT(slotIdentityStatusIconLeftClicked(Kopete::Identity*, const QPoint&)) );
+				connect ( sbIcon, SIGNAL(leftClicked(Kopete::Identity*,QPoint)), this,
+				          SLOT(slotIdentityStatusIconLeftClicked(Kopete::Identity*,QPoint)) );
 
 				d->identityStatusBarIcons.insert ( identity, sbIcon );
 				slotIdentityStatusIconChanged ( identity );
@@ -773,8 +773,8 @@ void KopeteWindow::slotConfToolbar()
 	KConfigGroup cg ( KGlobal::config(), "General Options" );
 	saveMainWindowSettings ( cg );
 	KEditToolBar *dlg = new KEditToolBar ( factory() );
-	connect ( dlg, SIGNAL ( newToolBarConfig() ), this, SLOT ( slotUpdateToolbar() ) );
-	connect ( dlg, SIGNAL ( finished() ) , dlg, SLOT ( deleteLater() ) );
+	connect ( dlg, SIGNAL (newToolBarConfig()), this, SLOT (slotUpdateToolbar()) );
+	connect ( dlg, SIGNAL (finished()) , dlg, SLOT (deleteLater()) );
 	dlg->show();
 }
 
@@ -935,10 +935,10 @@ void KopeteWindow::slotAllPluginsLoaded()
 	//Connect the appropriate account signals
 	/* Please note that I tried to put this in the slotAllPluginsLoaded() function
 	 * but it seemed to break the account icons in the statusbar --Matt */
-	connect ( Kopete::AccountManager::self(), SIGNAL ( accountRegistered ( Kopete::Account* ) ),
-	          this, SLOT ( slotAccountRegistered ( Kopete::Account* ) ) );
-	connect ( Kopete::AccountManager::self(), SIGNAL ( accountUnregistered ( const Kopete::Account* ) ),
-	          this, SLOT ( slotAccountUnregistered ( const Kopete::Account* ) ) );
+	connect ( Kopete::AccountManager::self(), SIGNAL (accountRegistered(Kopete::Account*)),
+	          this, SLOT (slotAccountRegistered(Kopete::Account*)) );
+	connect ( Kopete::AccountManager::self(), SIGNAL (accountUnregistered(const Kopete::Account*)),
+	          this, SLOT (slotAccountUnregistered(const Kopete::Account*)) );
 
 	if ( d->showIdentityIcons )
 	{
@@ -959,7 +959,7 @@ void KopeteWindow::slotIdentityRegistered ( Kopete::Identity *identity )
 
 	connect ( identity, SIGNAL(onlineStatusChanged(Kopete::Identity*)),
 	          this, SLOT(slotIdentityStatusIconChanged(Kopete::Identity*)) );
-	connect ( identity, SIGNAL(identityChanged(Kopete::Identity *)),
+	connect ( identity, SIGNAL(identityChanged(Kopete::Identity*)),
 	          this, SLOT(slotIdentityStatusIconChanged(Kopete::Identity*)) );
 	connect ( identity, SIGNAL(toolTipChanged(Kopete::Identity*)),
 	          this, SLOT(slotIdentityToolTipChanged(Kopete::Identity*)) );
@@ -967,8 +967,8 @@ void KopeteWindow::slotIdentityRegistered ( Kopete::Identity *identity )
 	if ( d->showIdentityIcons )
 	{
 		KopeteIdentityStatusBarIcon *sbIcon = new KopeteIdentityStatusBarIcon ( identity, d->statusBarWidget );
-		connect ( sbIcon, SIGNAL ( leftClicked ( Kopete::Identity *, const QPoint & ) ),
-		          SLOT ( slotIdentityStatusIconLeftClicked ( Kopete::Identity *, const QPoint & ) ) );
+		connect ( sbIcon, SIGNAL (leftClicked(Kopete::Identity*,QPoint)),
+		          SLOT (slotIdentityStatusIconLeftClicked(Kopete::Identity*,QPoint)) );
 
 		d->identityStatusBarIcons.insert ( identity, sbIcon );
 	}
@@ -1175,8 +1175,8 @@ void KopeteWindow::slotAccountRegistered ( Kopete::Account *account )
 	QString s = QString ( "actionAdd%1Contact" ).arg ( account->accountId() );
 	KAction *action = new KAction ( KIcon ( account->accountIcon() ), account->accountLabel(), this );
 	actionCollection()->addAction ( s, action );
-	connect ( action, SIGNAL ( triggered ( bool ) ), d->addContactMapper, SLOT ( map() ) );
-	connect ( account, SIGNAL(colorChanged(const QColor&)), this, SLOT(slotAccountColorChanged()) );
+	connect ( action, SIGNAL (triggered(bool)), d->addContactMapper, SLOT (map()) );
+	connect ( account, SIGNAL(colorChanged(QColor)), this, SLOT(slotAccountColorChanged()) );
 
 	d->addContactMapper->setMapping ( action, account->protocol()->pluginId() + QChar ( 0xE000 ) + account->accountId() );
 	d->actionAddContact->addAction ( action );
@@ -1209,7 +1209,7 @@ void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
 		d->actionDisconnect->setEnabled ( false );
 	}
 
-	disconnect ( account, SIGNAL(colorChanged(const QColor&)), this, SLOT(slotAccountColorChanged()) );
+	disconnect ( account, SIGNAL(colorChanged(QColor)), this, SLOT(slotAccountColorChanged()) );
 
 	// update add contact actionmenu
 	QString s = QString ( "actionAdd%1Contact" ).arg ( account->accountId() );
@@ -1252,7 +1252,7 @@ void KopeteWindow::slotTrayAboutToShowMenu ( KMenu * popup )
 		account->fillActionMenu ( menu );
 		popup->addAction ( menu );
 
-		connect ( popup , SIGNAL ( aboutToHide() ) , menu , SLOT ( deleteLater() ) );
+		connect ( popup , SIGNAL (aboutToHide()) , menu , SLOT (deleteLater()) );
 	}
 
 	popup->addSeparator();
@@ -1346,8 +1346,8 @@ void KopeteWindow::slotGlobalStatusMessageIconClicked ( const QPoint &position )
 
 	Kopete::UI::StatusEditAction* statusEditAction = new Kopete::UI::StatusEditAction ( this );
 	statusEditAction->setStatusMessage ( Kopete::StatusManager::self()->globalStatusMessage() );
-	connect ( statusEditAction, SIGNAL ( statusChanged ( const Kopete::StatusMessage& ) ),
-	          this, SLOT ( setStatusMessage ( const Kopete::StatusMessage& ) ) );
+	connect ( statusEditAction, SIGNAL (statusChanged(Kopete::StatusMessage)),
+	          this, SLOT (setStatusMessage(Kopete::StatusMessage)) );
 
 	menu->addAction ( statusEditAction );
 	menu->exec ( position );

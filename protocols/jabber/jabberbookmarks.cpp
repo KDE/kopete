@@ -30,7 +30,7 @@
 
 JabberBookmarks::JabberBookmarks(JabberAccount *parent) : QObject(parent) , m_account(parent) 
 {
-	connect( m_account , SIGNAL( isConnectedChanged() ) , this , SLOT( accountConnected() ) );
+	connect( m_account , SIGNAL(isConnectedChanged()) , this , SLOT(accountConnected()) );
 }
 
 void JabberBookmarks::accountConnected()
@@ -40,7 +40,7 @@ void JabberBookmarks::accountConnected()
 	
 	JT_PrivateStorage * task = new JT_PrivateStorage ( m_account->client()->rootTask ());
 	task->get( "storage" , "storage:bookmarks" );
-	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotReceivedBookmarks() ) );
+	QObject::connect ( task, SIGNAL (finished()), this, SLOT (slotReceivedBookmarks()) );
 	task->go ( true );
 }
 
@@ -134,7 +134,7 @@ KAction * JabberBookmarks::bookmarksAction(QObject * /*parent*/)
 	groupchatBM->setIcon( KIcon("jabber_group") );
 	groupchatBM->setText( i18n("Groupchat Bookmark") );
 	groupchatBM->setItems(m_conferencesJID);
-	QObject::connect(groupchatBM, SIGNAL(triggered(const QString&)) , this , SLOT(slotJoinChatBookmark(const QString&)));
+	QObject::connect(groupchatBM, SIGNAL(triggered(QString)) , this , SLOT(slotJoinChatBookmark(QString)));
 	return groupchatBM;
 }
 

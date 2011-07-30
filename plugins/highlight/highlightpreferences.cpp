@@ -64,13 +64,13 @@ HighlightPreferences::HighlightPreferences(QWidget *parent, const QVariantList &
 	connect(preferencesDialog.m_setImportance , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog.m_setBG , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog.m_setFG , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
-	connect(preferencesDialog.m_search , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
+	connect(preferencesDialog.m_search , SIGNAL(textChanged(QString)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog.m_notifications , SIGNAL(pressed()) , this , SLOT(slotConfigureNotifications()));
 	connect(preferencesDialog.m_raise , SIGNAL(stateChanged(int)) , this , SLOT(slotSomethingHasChanged()));
-	connect(preferencesDialog.m_search , SIGNAL(textChanged(const QString&)) , this , SLOT(slotSomethingHasChanged()));
+	connect(preferencesDialog.m_search , SIGNAL(textChanged(QString)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog.m_importance , SIGNAL(activated(int)) , this , SLOT(slotSomethingHasChanged()));
-	connect(preferencesDialog.m_FG , SIGNAL(changed(const QColor&)) , this , SLOT(slotSomethingHasChanged()));
-	connect(preferencesDialog.m_BG , SIGNAL(changed(const QColor&)) , this , SLOT(slotSomethingHasChanged()));
+	connect(preferencesDialog.m_FG , SIGNAL(changed(QColor)) , this , SLOT(slotSomethingHasChanged()));
+	connect(preferencesDialog.m_BG , SIGNAL(changed(QColor)) , this , SLOT(slotSomethingHasChanged()));
 
 	load();
 	donttouch=false;

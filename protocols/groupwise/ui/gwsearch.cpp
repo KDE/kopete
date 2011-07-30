@@ -244,9 +244,9 @@ GroupWiseContactSearch::GroupWiseContactSearch( GroupWiseAccount * account, QAbs
  : QWidget( parent ), m_account( account )
 {
 	setupUi( this );
-	connect( m_details, SIGNAL( clicked() ), SLOT( slotShowDetails() ) );
-	connect( m_search, SIGNAL( clicked() ), SLOT( slotDoSearch() ) );
-	connect( m_clear, SIGNAL( clicked() ), SLOT( slotClear() ) );
+	connect( m_details, SIGNAL(clicked()), SLOT(slotShowDetails()) );
+	connect( m_search, SIGNAL(clicked()), SLOT(slotDoSearch()) );
+	connect( m_clear, SIGNAL(clicked()), SLOT(slotClear()) );
 	if ( onlineOnly ) {
 		m_proxyModel = new OnlineOnlyGroupWiseContactSearchSortProxyModel( this );
 	} else {
@@ -323,7 +323,7 @@ void GroupWiseContactSearch::slotDoSearch()
 		// start a search task
 		SearchUserTask * st = new SearchUserTask( m_account->client()->rootTask() );
 		st->search( searchTerms );
-		connect( st, SIGNAL( finished() ), SLOT( slotGotSearchResults() ) );
+		connect( st, SIGNAL(finished()), SLOT(slotGotSearchResults()) );
 		st->go( true );
 		m_matchCount->setText( i18n( "Searching" ) );
 		m_details->setEnabled( false );
@@ -386,7 +386,7 @@ void GroupWiseContactSearch::slotGotSearchResults()
 	m_proxyModel->setSourceModel( m_model );
 	m_results->setModel( m_proxyModel );
 	m_results->resizeColumnToContents( 0 );
-	connect( m_results->selectionModel(), SIGNAL( selectionChanged(const QItemSelection &,const QItemSelection &) ), SLOT( slotValidateSelection() ) );
+	connect( m_results->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), SLOT(slotValidateSelection()) );
 
 	m_matchCount->setText( i18np( "1 matching user found", "%1 matching users found", m_proxyModel->rowCount() ) );
 	// if there was only one hit, select it

@@ -122,10 +122,10 @@ void ChatSessionMembersListModel::setChatSession(ChatSession *session)
 			 this, SLOT(slotSessionClosed()) );
 	connect( session, SIGNAL(contactAdded(const Kopete::Contact*,bool)),
 			 this, SLOT(slotContactAdded(const Kopete::Contact*)) );
-	connect( session, SIGNAL(contactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool)),
+	connect( session, SIGNAL(contactRemoved(const Kopete::Contact*,QString,Qt::TextFormat,bool)),
 			 this, SLOT(slotContactRemoved(const Kopete::Contact*)) );
-	connect( session, SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
-			 this, SLOT(slotContactStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&)) );
+	connect( session, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+			 this, SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus)) );
 	connect( session, SIGNAL(displayNameChanged()),
 			 this, SLOT(slotSessionChanged()) );
 	connect( session, SIGNAL(photoChanged()),

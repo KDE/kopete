@@ -58,7 +58,7 @@ InfoEventWidget::InfoEventWidget(QWidget *parent)
 	d->enableUpdates = false;
 	connect( Kopete::InfoEventManager::self(), SIGNAL(changed()), this, SLOT(updateInfo()) );
 	connect( Kopete::InfoEventManager::self(), SIGNAL(eventAdded(Kopete::InfoEvent*)), this, SLOT(eventAdded(Kopete::InfoEvent*)) );
-	connect( d->ui.lblActions, SIGNAL(linkActivated(const QString&)), this, SLOT(linkClicked(const QString&)) );
+	connect( d->ui.lblActions, SIGNAL(linkActivated(QString)), this, SLOT(linkClicked(QString)) );
 	connect( d->ui.buttonPrev, SIGNAL(clicked(bool)), this, SLOT(prevInfoEvent()) );
 	connect( d->ui.buttonNext, SIGNAL(clicked(bool)), this, SLOT(nextInfoEvent()) );
 	connect( d->ui.buttonClose, SIGNAL(clicked(bool)), this, SLOT(closeInfoEvent()) );
@@ -232,7 +232,7 @@ void InfoEventWidget::eventAdded( Kopete::InfoEvent* event )
 
 	d->notifyEventHash.insert( notify, event );
 
-	connect( notify, SIGNAL(activated(unsigned int)), this, SLOT(notificationActivated()) );
+	connect( notify, SIGNAL(activated(uint)), this, SLOT(notificationActivated()) );
 	connect( notify, SIGNAL(closed()), this, SLOT(notificationClosed()) );
 
 	notify->sendEvent();

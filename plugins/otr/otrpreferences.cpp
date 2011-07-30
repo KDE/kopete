@@ -71,10 +71,10 @@ OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
 	connect( preferencesDialog->btGenFingerprint, SIGNAL(clicked()), SLOT(generateFingerprint()));
 	connect( preferencesDialog->cbKeys, SIGNAL(activated(int)), SLOT(showPrivFingerprint(int)));
 	connect( preferencesDialog->btVerify, SIGNAL(clicked()), SLOT(verifyFingerprint()));
-	connect( preferencesDialog->twSettings, SIGNAL(currentChanged(QWidget *)), SLOT(fillFingerprints()));
-	connect( preferencesDialog->tbFingerprints, SIGNAL(currentCellChanged(int, int, int, int)), SLOT(updateButtons(int, int, int, int)));
-	connect( preferencesDialog->btForget, SIGNAL( clicked() ), SLOT( forgetFingerprint() ) );
-	connect( OtrlChatInterface::self(), SIGNAL( goneSecure( Kopete::ChatSession* , int ) ), this, SLOT( fillFingerprints() ) );
+	connect( preferencesDialog->twSettings, SIGNAL(currentChanged(QWidget*)), SLOT(fillFingerprints()));
+	connect( preferencesDialog->tbFingerprints, SIGNAL(currentCellChanged(int,int,int,int)), SLOT(updateButtons(int,int,int,int)));
+	connect( preferencesDialog->btForget, SIGNAL(clicked()), SLOT(forgetFingerprint()) );
+	connect( OtrlChatInterface::self(), SIGNAL(goneSecure(Kopete::ChatSession*,int)), this, SLOT(fillFingerprints()) );
 
 	int index = 0;
 	int accountnr = 0;

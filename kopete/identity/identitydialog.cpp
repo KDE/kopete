@@ -57,7 +57,7 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 
 	connect(d->general.selectPhoto, SIGNAL(clicked(bool)),
 			this, SLOT(slotSelectPhoto()));
-	connect(d->general.photo, SIGNAL(linkActivated(const QString&)),
+	connect(d->general.photo, SIGNAL(linkActivated(QString)),
 			this, SLOT(slotSelectPhoto()));
 	connect(d->general.clearPhoto, SIGNAL(clicked(bool)),
 			this, SLOT(slotClearPhoto()));

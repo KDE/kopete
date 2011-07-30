@@ -76,7 +76,7 @@ AuthenticationWizard::AuthenticationWizard(QWidget *parent, ConnContext *context
 		notification->setPixmap( SmallIcon( "kopete" ) );
 		notification->setWidget( this );
 		notification->setActions( QStringList() << i18n( "View" ) << i18n( "Close" ) );
-		connect( notification, SIGNAL( activated( unsigned int ) ), SLOT( notificationActivated( unsigned int ) ) );
+		connect( notification, SIGNAL(activated(uint)), SLOT(notificationActivated(uint)) );
 		notification->sendEvent();
 	}
 	

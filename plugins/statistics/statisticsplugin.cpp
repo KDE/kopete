@@ -98,8 +98,8 @@ void StatisticsPlugin::slotInitialize()
 		}
 		else
 		{
-			connect(metaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
-				SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+			connect(metaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)), this,
+				SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)));
 		}
 	}
 }
@@ -170,8 +170,8 @@ void StatisticsPlugin::slotOnlineStatusChanged(Kopete::MetaContact *metaContact,
 
 void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 {
-	connect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
-	        SLOT(slotOnlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+	connect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)), this,
+	        SLOT(slotOnlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)));
 
 	statisticsContactMap[mc] = new StatisticsContact(mc, db());
 }
@@ -180,8 +180,8 @@ void StatisticsPlugin::slotDelayedMetaContactAdded(Kopete::MetaContact *mc, Kope
 {
 	if (status != Kopete::OnlineStatus::Unknown && status != Kopete::OnlineStatus::Offline)
 	{
-		disconnect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact *, Kopete::OnlineStatus::StatusType)), this,
-			   SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)));
+		disconnect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)), this,
+			   SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)));
 
 		slotMetaContactAdded(mc);
 		slotOnlineStatusChanged(mc, status);

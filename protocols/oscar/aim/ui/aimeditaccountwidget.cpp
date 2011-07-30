@@ -102,20 +102,20 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 			m_visibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Visible );
 			m_visibleEngine->setAllContactsView( mGui->visibleAllContacts );
 			m_visibleEngine->setContactsView( mGui->visibleContacts );
-			QObject::connect( mGui->visibleAdd, SIGNAL( clicked() ), m_visibleEngine, SLOT( slotAdd() ) );
-			QObject::connect( mGui->visibleRemove, SIGNAL( clicked() ), m_visibleEngine, SLOT( slotRemove() ) );
+			QObject::connect( mGui->visibleAdd, SIGNAL(clicked()), m_visibleEngine, SLOT(slotAdd()) );
+			QObject::connect( mGui->visibleRemove, SIGNAL(clicked()), m_visibleEngine, SLOT(slotRemove()) );
 
 			m_invisibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Invisible );
 			m_invisibleEngine->setAllContactsView( mGui->invisibleAllContacts );
 			m_invisibleEngine->setContactsView( mGui->invisibleContacts );
-			QObject::connect( mGui->invisibleAdd, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotAdd() ) );
-			QObject::connect( mGui->invisibleRemove, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotRemove() ) );
+			QObject::connect( mGui->invisibleAdd, SIGNAL(clicked()), m_invisibleEngine, SLOT(slotAdd()) );
+			QObject::connect( mGui->invisibleRemove, SIGNAL(clicked()), m_invisibleEngine, SLOT(slotRemove()) );
 		}
 
 		// Hide the register UI if editing an existing account
 		mGui->registrationGroupBox->hide();
     }
-	QObject::connect( mGui->buttonRegister, SIGNAL( clicked() ), this, SLOT( slotOpenRegister() ) );
+	QObject::connect( mGui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()) );
 
 	if ( !mAccount || !mAccount->engine()->isActive() )
 	{

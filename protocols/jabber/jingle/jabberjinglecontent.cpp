@@ -73,7 +73,7 @@ void JabberJingleContent::prepareRtpInSession()
 		m_rtpInSession->setPayload(m_content->bestPayload());
 		m_rtpInSession->setRtpSocket(m_content->inSocket()); // This will set rtcp port = rtp port + 1. Maybe we don't want that for ice-udp.
 		kDebug() << "Connecting m_rtpInSession readyRead signal.";
-		connect(m_rtpInSession, SIGNAL(readyRead(const QByteArray&)), this, SLOT(slotIncomingData(const QByteArray&)));
+		connect(m_rtpInSession, SIGNAL(readyRead(QByteArray)), this, SLOT(slotIncomingData(QByteArray)));
 	}
 	else
 		kDebug() << "RTP IN session already set !";

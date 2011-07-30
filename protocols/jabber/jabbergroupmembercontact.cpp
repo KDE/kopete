@@ -84,7 +84,7 @@ Kopete::ChatSession *JabberGroupMemberContact::manager ( Kopete::Contact::CanCre
 	 *        the global myself() instance for a correct representation.
 	 */
 	mManager = new JabberChatSession ( protocol(), static_cast<JabberBaseContact *>(account()->myself()), chatMembers );
-	connect ( mManager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotChatSessionDeleted () ) );
+	connect ( mManager, SIGNAL (destroyed(QObject*)), this, SLOT (slotChatSessionDeleted()) );
 
 	return mManager;
 

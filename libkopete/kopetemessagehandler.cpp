@@ -56,7 +56,7 @@ int MessageHandler::capabilities()
 
 void MessageHandler::handleMessageInternal( MessageEvent *event )
 {
-	connect( event, SIGNAL( accepted(Kopete::MessageEvent*) ), this, SLOT( messageAccepted(Kopete::MessageEvent*) ) );
+	connect( event, SIGNAL(accepted(Kopete::MessageEvent*)), this, SLOT(messageAccepted(Kopete::MessageEvent*)) );
 	handleMessage( event );
 }
 
@@ -67,7 +67,7 @@ void MessageHandler::handleMessage( MessageEvent *event )
 
 void MessageHandler::messageAccepted( MessageEvent *event )
 {
-	disconnect( event, SIGNAL( accepted(Kopete::MessageEvent*) ), this, SLOT( messageAccepted(Kopete::MessageEvent*) ) );
+	disconnect( event, SIGNAL(accepted(Kopete::MessageEvent*)), this, SLOT(messageAccepted(Kopete::MessageEvent*)) );
 	d->next->handleMessageInternal( event );
 }
 

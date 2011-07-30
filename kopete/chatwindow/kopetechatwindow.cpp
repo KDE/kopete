@@ -212,7 +212,7 @@ KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *par
 
 	ChatSessionMembersListModel *members_model = new ChatSessionMembersListModel(this);
 
-	connect(this, SIGNAL(chatSessionChanged(Kopete::ChatSession *)), members_model, SLOT(setChatSession(Kopete::ChatSession *)));
+	connect(this, SIGNAL(chatSessionChanged(Kopete::ChatSession*)), members_model, SLOT(setChatSession(Kopete::ChatSession*)));
 
 	ChatMembersListView *chatmembers = new ChatMembersListView(m_participantsWidget);
 	chatmembers->setModel(members_model);
@@ -249,7 +249,7 @@ KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *par
 		m_button_send->setEnabled( false );
 		m_button_send->setFont( statusBar()->font() );
 		m_button_send->setFixedHeight( statusBar()->sizeHint().height() );
-		connect( m_button_send, SIGNAL( clicked() ), this, SLOT( slotSendMessage() ) );
+		connect( m_button_send, SIGNAL(clicked()), this, SLOT(slotSendMessage()) );
 		statusBar()->addPermanentWidget( m_button_send, 0 );
 	}
 	else
@@ -369,7 +369,7 @@ void KopeteChatWindow::initActions(void)
 	//Set up change signal in case the user changer the shortcut later
 	connect( sendMessage, SIGNAL(changed()), SLOT(updateSendKeySequence()) );
 
-	connect( chatSend, SIGNAL( triggered(bool) ), SLOT( slotSendMessage() ) );
+	connect( chatSend, SIGNAL(triggered(bool)), SLOT(slotSendMessage()) );
 	//Default to 'Return' and 'Enter' for sending messages
 	//'Return' is the key in the main part of the keyboard
 	//'Enter' is on the Numpad
@@ -379,7 +379,7 @@ void KopeteChatWindow::initActions(void)
 
 	chatSendFile = new KAction( KIcon("mail-attachment"), i18n( "Send File..." ), coll );
 	coll->addAction( "chat_send_file", chatSendFile );
-	connect( chatSendFile, SIGNAL( triggered(bool) ), SLOT( slotSendFile() ) );
+	connect( chatSendFile, SIGNAL(triggered(bool)), SLOT(slotSendFile()) );
 	chatSendFile->setEnabled( false );
 
 	KStandardAction::save ( this, SLOT(slotChatSave()), coll );
@@ -417,12 +417,12 @@ void KopeteChatWindow::initActions(void)
 	tabDetach = new KAction( KIcon("tab-detach"), i18n( "&Detach Chat" ), coll );
 	coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
-	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT( slotDetachChat() ));
+	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT(slotDetachChat()));
 
 	tabCloseAllOthers = new KAction( KIcon("tab-close"), i18n( "Close &All But This Tab" ), coll );
 	coll->addAction( "tabs_close_others", tabCloseAllOthers );
 	tabCloseAllOthers->setEnabled( true );
-	connect( tabCloseAllOthers, SIGNAL(triggered(bool)), this, SLOT( slotCloseAllOtherTabs() ));
+	connect( tabCloseAllOthers, SIGNAL(triggered(bool)), this, SLOT(slotCloseAllOtherTabs()));
 
 	actionDetachMenu = new KActionMenu( KIcon("tab-detach"), i18n( "&Move Tab to Window" ), coll );
 	coll->addAction( "tabs_detachmove", actionDetachMenu );
@@ -454,9 +454,9 @@ void KopeteChatWindow::initActions(void)
 	historyDown->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Down) );
 	connect( historyDown, SIGNAL(triggered(bool)), this, SLOT(slotHistoryDown()) );
 
-	action = KStandardAction::prior( this, SLOT( slotPageUp() ), coll );
+	action = KStandardAction::prior( this, SLOT(slotPageUp()), coll );
 	coll->addAction( "scroll_up", action );
-	action = KStandardAction::next( this, SLOT( slotPageDown() ), coll );
+	action = KStandardAction::next( this, SLOT(slotPageDown()), coll );
 	coll->addAction( "scroll_down", action );
 
 	KStandardAction::showMenubar( menuBar(), SLOT(setVisible(bool)), coll );
@@ -475,7 +475,7 @@ void KopeteChatWindow::initActions(void)
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
 	coll->addAction( "format_smiley", actionSmileyMenu );
 	actionSmileyMenu->setDelayed( false );
-	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
+	connect(actionSmileyMenu, SIGNAL(activated(QString)), this, SLOT(slotSmileyActivated(QString)));
 
 	actionContactMenu = new KActionMenu(i18n("Co&ntacts"), coll );
 	coll->addAction( "contacts_menu", actionContactMenu );
@@ -656,12 +656,12 @@ void KopeteChatWindow::createTabBar()
 		m_tabBar->setTabsClosable(cg.readEntry( QLatin1String("HoverClose"), true ));
 		m_tabBar->setMovable(true);
 		m_tabBar->setAutomaticResizeTabs(true);
-		connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
+		connect( m_tabBar, SIGNAL(closeRequest(QWidget*)), this, SLOT(slotCloseChat(QWidget*)) );
 
 		m_UpdateChatLabel = cg.readEntry( QLatin1String("ShowContactName"), true );
 
 		QToolButton* m_rightWidget = new QToolButton( m_tabBar );
-		connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
+		connect( m_rightWidget, SIGNAL(clicked()), this, SLOT(slotChatClosed()) );
 		m_rightWidget->setIcon( SmallIcon( "tab-close" ) );
 		m_rightWidget->adjustSize();
 		m_rightWidget->setToolTip( i18nc("@info:tooltip","Close the current tab") );
@@ -673,10 +673,10 @@ void KopeteChatWindow::createTabBar()
 		for( ChatViewList::iterator it = chatViewList.begin(); it != chatViewList.end(); ++it )
 			addTab( *it );
 
-		connect ( m_tabBar, SIGNAL(testCanDecode(const QDragMoveEvent *, bool &)), this, SLOT(testCanDecode(const QDragMoveEvent *, bool &)) );
-		connect ( m_tabBar, SIGNAL(receivedDropEvent( QWidget *, QDropEvent * )), this, SLOT(receivedDropEvent( QWidget *, QDropEvent * )) );
-		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
-		connect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
+		connect ( m_tabBar, SIGNAL(testCanDecode(const QDragMoveEvent*,bool&)), this, SLOT(testCanDecode(const QDragMoveEvent*,bool&)) );
+		connect ( m_tabBar, SIGNAL(receivedDropEvent(QWidget*,QDropEvent*)), this, SLOT(receivedDropEvent(QWidget*,QDropEvent*)) );
+		connect ( m_tabBar, SIGNAL(currentChanged(QWidget*)), this, SLOT(setActiveView(QWidget*)) );
+		connect ( m_tabBar, SIGNAL(contextMenu(QWidget*,QPoint)), this, SLOT(slotTabContextMenu(QWidget*,QPoint)) );
 
 		if( m_activeView )
 			m_tabBar->setCurrentWidget( m_activeView );
@@ -716,10 +716,10 @@ void KopeteChatWindow::addTab( ChatView *view )
 
 	m_tabBar->addTab( view, pluginIcon, "");
         view->setVisible(view == m_activeView);
-	connect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
+	connect( view, SIGNAL(updateStatusIcon(ChatView*)), this, SLOT(slotUpdateCaptionIcons(ChatView*)) );
 
 	if (m_UpdateChatLabel) {
-		connect( view, SIGNAL( captionChanged( bool ) ), this, SLOT( updateChatLabel() ) );
+		connect( view, SIGNAL(captionChanged(bool)), this, SLOT(updateChatLabel()) );
 		view->setCaption( view->caption(), false );
 	}
 
@@ -742,8 +742,8 @@ void KopeteChatWindow::deleteTabBar()
 {
 	if( m_tabBar )
 	{
-		disconnect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
-		disconnect ( m_tabBar, SIGNAL(contextMenu(QWidget *, const QPoint & )), this, SLOT(slotTabContextMenu( QWidget *, const QPoint & )) );
+		disconnect ( m_tabBar, SIGNAL(currentChanged(QWidget*)), this, SLOT(setActiveView(QWidget*)) );
+		disconnect ( m_tabBar, SIGNAL(contextMenu(QWidget*,QPoint)), this, SLOT(slotTabContextMenu(QWidget*,QPoint)) );
 
 		if( !chatViewList.isEmpty() )
 			setPrimaryChatView( chatViewList.first() );
@@ -772,18 +772,18 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 	newView->editWidget()->installEventFilter( this );
 
 	KCursor::setAutoHideCursor( newView->editWidget(), true, true );
-	connect( newView, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
-	connect( newView, SIGNAL(messageSuccess( ChatView* )), this, SLOT(slotStopAnimation( ChatView* )) );
-	connect( newView, SIGNAL(updateStatusIcon( ChatView* ) ), this, SLOT(slotUpdateCaptionIcons( ChatView* ) ) );
+	connect( newView, SIGNAL(captionChanged(bool)), this, SLOT(slotSetCaption(bool)) );
+	connect( newView, SIGNAL(messageSuccess(ChatView*)), this, SLOT(slotStopAnimation(ChatView*)) );
+	connect( newView, SIGNAL(updateStatusIcon(ChatView*)), this, SLOT(slotUpdateCaptionIcons(ChatView*)) );
 
 	if (m_UpdateChatLabel) {
-		connect( newView, SIGNAL(updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
+		connect( newView, SIGNAL(updateChatState(ChatView*,int)), this, SLOT(updateChatState(ChatView*,int)) );
 	}
 
 	updateActions();
 	checkDetachEnable();
-	connect( newView, SIGNAL(autoSpellCheckEnabled( ChatView*, bool ) ),
-	         this, SLOT( slotAutoSpellCheckEnabled( ChatView*, bool ) ) );
+	connect( newView, SIGNAL(autoSpellCheckEnabled(ChatView*,bool)),
+	         this, SLOT(slotAutoSpellCheckEnabled(ChatView*,bool)) );
 }
 
 void KopeteChatWindow::checkDetachEnable()
@@ -804,9 +804,9 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 {
 	chatViewList.removeAt( chatViewList.indexOf( view ) );
 
-	disconnect( view, SIGNAL(captionChanged( bool)), this, SLOT(slotSetCaption(bool)) );
-	disconnect( view, SIGNAL( updateStatusIcon( ChatView* ) ), this, SLOT( slotUpdateCaptionIcons( ChatView* ) ) );
-	disconnect( view, SIGNAL( updateChatState( ChatView*, int ) ), this, SLOT( updateChatState( ChatView*, int ) ) );
+	disconnect( view, SIGNAL(captionChanged(bool)), this, SLOT(slotSetCaption(bool)) );
+	disconnect( view, SIGNAL(updateStatusIcon(ChatView*)), this, SLOT(slotUpdateCaptionIcons(ChatView*)) );
+	disconnect( view, SIGNAL(updateChatState(ChatView*,int)), this, SLOT(updateChatState(ChatView*,int)) );
 	view->editWidget()->removeEventFilter( this );
 
 	if( m_tabBar )
@@ -938,7 +938,7 @@ void KopeteChatWindow::updateBackground( const QPixmap &pm )
 		backgroundFile->setSuffix(".bmp");
 		backgroundFile->open();
 		pm.save( backgroundFile, "BMP" );
-		QTimer::singleShot( 100, this, SLOT( slotEnableUpdateBg() ) );
+		QTimer::singleShot( 100, this, SLOT(slotEnableUpdateBg()) );
 	}
 }
 
@@ -1103,7 +1103,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 	{
 		KMenu *p = contact->popupMenu();
 		connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
-			p, SLOT(deleteLater() ) );
+			p, SLOT(deleteLater()) );
 
 		p->setIcon( contact->onlineStatus().iconFor( contact ) );
 		if( contact->metaContact() )
@@ -1118,7 +1118,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		{
 			KActionMenu *moreMenu = new KActionMenu( KIcon("folder-open"), i18n("More..."), this);
 			connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
-				moreMenu, SLOT(deleteLater() ) );
+				moreMenu, SLOT(deleteLater()) );
 			contactsMenu->addAction( moreMenu );
 			contactsMenu = moreMenu->menu();
 			contactCount = 0;

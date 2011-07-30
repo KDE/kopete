@@ -122,9 +122,9 @@ Skype::Skype(SkypeAccount &account) : QObject() {
 	d->fixGroupTimer = new QTimer;
 
 	connect(&d->connection, SIGNAL(connectionClosed(int)), this, SLOT(closed(int)));//tell me if you close/lose the connection
-	connect(&d->connection, SIGNAL(connectionDone(int, int)), this, SLOT(connectionDone(int, int)));//Do something whe he finishes connecting
-	connect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//Listen for errors
-	connect(&d->connection, SIGNAL(received(const QString&)), this, SLOT(skypeMessage(const QString&)));//Take all incoming messages
+	connect(&d->connection, SIGNAL(connectionDone(int,int)), this, SLOT(connectionDone(int,int)));//Do something whe he finishes connecting
+	connect(&d->connection, SIGNAL(error(QString)), this, SLOT(error(QString)));//Listen for errors
+	connect(&d->connection, SIGNAL(received(QString)), this, SLOT(skypeMessage(QString)));//Take all incoming messages
 	connect(d->pingTimer, SIGNAL(timeout()), this, SLOT(ping()));
 	connect(d->fixGroupTimer, SIGNAL(timeout()), this, SLOT(fixGroups()));//fix & load groups to memory
 }
@@ -285,12 +285,12 @@ void Skype::connectionDone(int error, int protocolVer) {
 void Skype::error(const QString &message) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	disconnect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//One arror at a time is enough, stop flooding the user
+	disconnect(&d->connection, SIGNAL(error(QString)), this, SLOT(error(QString)));//One arror at a time is enough, stop flooding the user
 
 	if (d->showDeadMessage)//just skip the error message if we are going offline, none ever cares.
 		KNotification::event(KNotification::Error, i18n("Skype protocol"), message);//Show the message
 
-	connect(&d->connection, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));//Continue showing more errors in future
+	connect(&d->connection, SIGNAL(error(QString)), this, SLOT(error(QString)));//Continue showing more errors in future
 }
 
 void Skype::skypeMessage(const QString &message) {

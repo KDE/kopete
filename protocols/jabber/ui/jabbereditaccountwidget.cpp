@@ -59,16 +59,16 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 
 	m_protocol = proto;
 
-	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (updateServerField ()));
-	connect (cbCustomServer, SIGNAL (toggled (bool)), this, SLOT (updateServerField ()));
+	connect (mID, SIGNAL (textChanged(QString)), this, SLOT (updateServerField()));
+	connect (cbCustomServer, SIGNAL (toggled(bool)), this, SLOT (updateServerField()));
 
-	connect (cbUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
+	connect (cbUseSSL, SIGNAL (toggled(bool)), this, SLOT (sslToggled(bool)));
 
-	connect (btnChangePassword, SIGNAL ( clicked() ), this, SLOT ( slotChangePasswordClicked () ));
+	connect (btnChangePassword, SIGNAL (clicked()), this, SLOT (slotChangePasswordClicked()));
 	
-	connect (privacyListsButton, SIGNAL ( clicked() ), this, SLOT ( slotPrivacyListsClicked() ) );
+	connect (privacyListsButton, SIGNAL (clicked()), this, SLOT (slotPrivacyListsClicked()) );
 
-	connect (cbAdjustPriority, SIGNAL (toggled (bool)), this, SLOT ( awayPriorityToggled (bool)));
+	connect (cbAdjustPriority, SIGNAL (toggled(bool)), this, SLOT (awayPriorityToggled(bool)));
 	
 #ifdef JINGLE_SUPPORT
 	checkAudioDevices();
@@ -113,7 +113,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 		// this is a new account
 		changePasswordGroupBox->hide();
 		btnChangePassword->setEnabled ( false );
-		connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
+		connect (btnRegister, SIGNAL (clicked()), this, SLOT (registerClicked()));
 		
 		privacyListsButton->setEnabled (false);
 	}
@@ -422,7 +422,7 @@ void JabberEditAccountWidget::slotChangePasswordClicked ()
 
 	DlgJabberChangePassword *passwordDlg = new DlgJabberChangePassword ( account (), this );
 
-	connect ( passwordDlg, SIGNAL ( destroyed () ), this, SLOT ( slotChangePasswordFinished () ) );
+	connect ( passwordDlg, SIGNAL (destroyed()), this, SLOT (slotChangePasswordFinished()) );
 
 	passwordDlg->show ();
 

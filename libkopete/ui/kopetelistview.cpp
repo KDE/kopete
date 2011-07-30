@@ -145,15 +145,15 @@ public:
 ListView::ListView( QWidget *parent )
  : K3ListView( parent ), d( new Private )
 {
-	connect( &d->sortTimer, SIGNAL( timeout() ), this, SLOT( slotSort() ) );
+	connect( &d->sortTimer, SIGNAL(timeout()), this, SLOT(slotSort()) );
 
 	// We have our own tooltips, don't use the default QListView ones
 	setShowToolTips( false );
 
-	connect( this, SIGNAL( contextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ),
-	         SLOT( slotContextMenu( K3ListView *, Q3ListViewItem *, const QPoint & ) ) );
-	connect( this, SIGNAL( doubleClicked( Q3ListViewItem * ) ),
-	         SLOT( slotDoubleClicked( Q3ListViewItem * ) ) );
+	connect( this, SIGNAL(contextMenu(K3ListView*,Q3ListViewItem*,QPoint)),
+	         SLOT(slotContextMenu(K3ListView*,Q3ListViewItem*,QPoint)) );
+	connect( this, SIGNAL(doubleClicked(Q3ListViewItem*)),
+	         SLOT(slotDoubleClicked(Q3ListViewItem*)) );
 
 	// set up flags for nicer painting
 	setAttribute( Qt::WA_StaticContents, false );
@@ -279,7 +279,7 @@ void ListView::setSmoothScrolling( bool b )
 		// Install the timer
 		d->smoothScrollingTimer = startTimer( (int)d->smoothScrollingTimerInterval );
 		// If we want to enable smooth scrolling when item has changed with keypresses etc, we need this
-		connect( this, SIGNAL( currentChanged( Q3ListViewItem* ) ), this, SLOT( slotCurrentChanged(Q3ListViewItem*) ) );
+		connect( this, SIGNAL(currentChanged(Q3ListViewItem*)), this, SLOT(slotCurrentChanged(Q3ListViewItem*)) );
 		// Disable autoscroll, we will do it the smooth way.
 		d->smoothScrollDragAutoScroll = dragAutoScroll();
 		setDragAutoScroll( false );
@@ -298,7 +298,7 @@ void ListView::setSmoothScrolling( bool b )
 		killTimer( (int)d->smoothScrollingTimer );
 		d->smoothScrollingTimer = 0;
 		// We don't need to list currentChanged anymore
-		disconnect( this, SIGNAL( currentChanged( Q3ListViewItem* ) ), this, SLOT( slotCurrentChanged(Q3ListViewItem*) ) );
+		disconnect( this, SIGNAL(currentChanged(Q3ListViewItem*)), this, SLOT(slotCurrentChanged(Q3ListViewItem*)) );
 		// Restore the autoscroll
 		setDragAutoScroll( d->smoothScrollDragAutoScroll );
 		// Kill the continuous press timers

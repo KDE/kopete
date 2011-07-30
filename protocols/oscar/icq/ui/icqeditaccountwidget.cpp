@@ -124,20 +124,20 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			m_visibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Visible );
 			m_visibleEngine->setAllContactsView( mAccountSettings->visibleAllContacts );
 			m_visibleEngine->setContactsView( mAccountSettings->visibleContacts );
-			QObject::connect( mAccountSettings->visibleAdd, SIGNAL( clicked() ), m_visibleEngine, SLOT( slotAdd() ) );
-			QObject::connect( mAccountSettings->visibleRemove, SIGNAL( clicked() ), m_visibleEngine, SLOT( slotRemove() ) );
+			QObject::connect( mAccountSettings->visibleAdd, SIGNAL(clicked()), m_visibleEngine, SLOT(slotAdd()) );
+			QObject::connect( mAccountSettings->visibleRemove, SIGNAL(clicked()), m_visibleEngine, SLOT(slotRemove()) );
 
 			m_invisibleEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Invisible );
 			m_invisibleEngine->setAllContactsView( mAccountSettings->invisibleAllContacts );
 			m_invisibleEngine->setContactsView( mAccountSettings->invisibleContacts );
-			QObject::connect( mAccountSettings->invisibleAdd, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotAdd() ) );
-			QObject::connect( mAccountSettings->invisibleRemove, SIGNAL( clicked() ), m_invisibleEngine, SLOT( slotRemove() ) );
+			QObject::connect( mAccountSettings->invisibleAdd, SIGNAL(clicked()), m_invisibleEngine, SLOT(slotAdd()) );
+			QObject::connect( mAccountSettings->invisibleRemove, SIGNAL(clicked()), m_invisibleEngine, SLOT(slotRemove()) );
 
 			m_ignoreEngine = new OscarPrivacyEngine( mAccount, OscarPrivacyEngine::Ignore );
 			m_ignoreEngine->setAllContactsView( mAccountSettings->ignoreAllContacts );
 			m_ignoreEngine->setContactsView( mAccountSettings->ignoreContacts );
-			QObject::connect( mAccountSettings->ignoreAdd, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotAdd() ) );
-			QObject::connect( mAccountSettings->ignoreRemove, SIGNAL( clicked() ), m_ignoreEngine, SLOT( slotRemove() ) );
+			QObject::connect( mAccountSettings->ignoreAdd, SIGNAL(clicked()), m_ignoreEngine, SLOT(slotAdd()) );
+			QObject::connect( mAccountSettings->ignoreRemove, SIGNAL(clicked()), m_ignoreEngine, SLOT(slotRemove()) );
 		}
 		// Hide the registration UI when editing an existing account
 		mAccountSettings->registrationGroupBox->hide();

@@ -35,8 +35,8 @@ KopeteAccountStatusBarIcon::KopeteAccountStatusBarIcon( Kopete::Account *account
 	setFixedSize ( 16, 16 );
 	setCursor(QCursor(Qt::PointingHandCursor));
 
-	connect( account, SIGNAL(colorChanged(const QColor&)), this, SLOT(statusIconChanged()) );
-	connect( account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
+	connect( account, SIGNAL(colorChanged(QColor)), this, SLOT(statusIconChanged()) );
+	connect( account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
 	         this, SLOT(statusIconChanged()) );
 
 	statusIconChanged();

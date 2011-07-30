@@ -66,7 +66,7 @@ void Kopete::PasswordedAccount::connect( const Kopete::OnlineStatus& initialStat
 	QString prompt = passwordPrompt();
 	Kopete::Password::PasswordSource src = password().isWrong() ? Kopete::Password::FromUser : Kopete::Password::FromConfigOrUser;
 
-	password().request( this, SLOT( connectWithPassword( const QString & ) ), accountIcon( Kopete::Password::preferredImageSize() ), prompt, src );
+	password().request( this, SLOT(connectWithPassword(QString)), accountIcon( Kopete::Password::preferredImageSize() ), prompt, src );
 }
 
 QString Kopete::PasswordedAccount::passwordPrompt()

@@ -52,7 +52,7 @@ void ChatroomManager::getChatrooms( bool refresh )
 	m_replace = !refresh;
 	SearchChatTask * sct = new SearchChatTask( m_client->rootTask() );
 	sct->search( ( refresh ? SearchChatTask::SinceLastSearch : SearchChatTask::FetchAll ) );
-	connect( sct, SIGNAL( finished() ), SLOT( slotGotChatroomList() ) );
+	connect( sct, SIGNAL(finished()), SLOT(slotGotChatroomList()) );
 	sct->go( true );
 }
 
@@ -80,7 +80,7 @@ void ChatroomManager::slotGotChatroomList()
 void ChatroomManager::updateCounts()
 {
 	ChatCountsTask * cct = new ChatCountsTask( m_client->rootTask() );
-	connect( cct, SIGNAL( finished() ), SLOT( slotGotChatCounts() ) );
+	connect( cct, SIGNAL(finished()), SLOT(slotGotChatCounts()) );
 	cct->go( true );
 }
 
@@ -108,7 +108,7 @@ void ChatroomManager::requestProperties( const QString & displayName )
 	{
 		ChatPropertiesTask * cpt = new ChatPropertiesTask( m_client->rootTask() );
 		cpt->setChat( displayName );
-		connect ( cpt, SIGNAL( finished() ), SLOT( slotGotChatProperties() ) );
+		connect ( cpt, SIGNAL(finished()), SLOT(slotGotChatProperties()) );
 		cpt->go( true );
 	}
 }

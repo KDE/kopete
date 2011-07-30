@@ -88,7 +88,7 @@ void DlgJabberChangePassword::slotOk ()
 										  i18n ( "Your account needs to be connected before the password can be changed. Do you want to try to connect now?" ),
 		                                  i18n ( "Jabber Password Change" ), KGuiItem( i18n("Connect") ), KGuiItem( i18n("Stay Offline") ) ) == KMessageBox::Yes )
 		{
-			connect ( m_account, SIGNAL ( isConnectedChanged () ), this, SLOT ( slotChangePassword () ) );
+			connect ( m_account, SIGNAL (isConnectedChanged()), this, SLOT (slotChangePassword()) );
 			m_account->connect ();
 		}
 	}
@@ -110,7 +110,7 @@ void DlgJabberChangePassword::slotChangePassword ()
 {
 
 	XMPP::JT_Register *task = new XMPP::JT_Register ( m_account->client()->rootTask () );
-	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotChangePasswordDone () ) );
+	QObject::connect ( task, SIGNAL (finished()), this, SLOT (slotChangePasswordDone()) );
 
 	task->changepw ( m_mainWidget->peNewPassword1->text () );
 	task->go ( true );

@@ -48,12 +48,12 @@ GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account
 
 	m_manager = m_account->client()->chatroomManager();
 	
-	connect ( m_manager, SIGNAL( updated() ), SLOT( slotManagerUpdated() ) );
-	connect ( m_manager, SIGNAL( gotProperties( const GroupWise::Chatroom & ) ),
-			  SLOT( slotGotProperties( const GroupWise::Chatroom & ) ) );
+	connect ( m_manager, SIGNAL(updated()), SLOT(slotManagerUpdated()) );
+	connect ( m_manager, SIGNAL(gotProperties(GroupWise::Chatroom)),
+			  SLOT(slotGotProperties(GroupWise::Chatroom)) );
 
-	connect( m_ui.btnRefresh, SIGNAL( clicked() ), SLOT( slotUpdateClicked() ) );
-	connect( m_ui.btnProperties, SIGNAL( clicked() ), SLOT( slotPropertiesClicked() ) );
+	connect( m_ui.btnRefresh, SIGNAL(clicked()), SLOT(slotUpdateClicked()) );
+	connect( m_ui.btnProperties, SIGNAL(clicked()), SLOT(slotPropertiesClicked()) );
 
 	m_manager->updateRooms();
 	show();

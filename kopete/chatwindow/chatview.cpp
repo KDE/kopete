@@ -112,14 +112,14 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	d->splitter->setSizes( sizes );
 
 	// FIXME: is this used these days? it seems totally unnecessary
-	connect( editPart(), SIGNAL( toolbarToggled(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
+	connect( editPart(), SIGNAL(toolbarToggled(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
 
-	connect( editPart(), SIGNAL( messageSent( Kopete::Message & ) ),
-	         this, SIGNAL( messageSent( Kopete::Message & ) ) );
-	connect( editPart(), SIGNAL( canSendChanged( bool ) ),
-	         this, SIGNAL( canSendChanged(bool) ) );
-	connect( editPart(), SIGNAL( typing(bool) ),
-		 mgr, SLOT( typing(bool) ) );
+	connect( editPart(), SIGNAL(messageSent(Kopete::Message&)),
+	         this, SIGNAL(messageSent(Kopete::Message&)) );
+	connect( editPart(), SIGNAL(canSendChanged(bool)),
+	         this, SIGNAL(canSendChanged(bool)) );
+	connect( editPart(), SIGNAL(typing(bool)),
+		 mgr, SLOT(typing(bool)) );
 
 	//Set the view as the main widget
 //	setView(viewDock);
@@ -130,28 +130,28 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 //	viewDock->setAcceptDrops(false);
 
 	//Manager signals
-	connect( mgr, SIGNAL( displayNameChanged() ),
-	         this, SLOT( slotChatDisplayNameChanged() ) );
-	connect( mgr, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
-	         this, SLOT( slotContactAdded(const Kopete::Contact*, bool) ) );
-	connect( mgr, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool) ),
-	         this, SLOT( slotContactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool) ) );
-	connect( mgr, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
-	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-	connect( mgr, SIGNAL( remoteTyping( const Kopete::Contact *, bool) ),
-		 this, SLOT( remoteTyping(const Kopete::Contact *, bool) ) );
-	connect( mgr, SIGNAL( eventNotification( const QString& ) ),
-		 this, SLOT( setStatusText( const QString& ) ) );
+	connect( mgr, SIGNAL(displayNameChanged()),
+	         this, SLOT(slotChatDisplayNameChanged()) );
+	connect( mgr, SIGNAL(contactAdded(const Kopete::Contact*,bool)),
+	         this, SLOT(slotContactAdded(const Kopete::Contact*,bool)) );
+	connect( mgr, SIGNAL(contactRemoved(const Kopete::Contact*,QString,Qt::TextFormat,bool)),
+	         this, SLOT(slotContactRemoved(const Kopete::Contact*,QString,Qt::TextFormat,bool)) );
+	connect( mgr, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+	         this, SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
+	connect( mgr, SIGNAL(remoteTyping(const Kopete::Contact*,bool)),
+		 this, SLOT(remoteTyping(const Kopete::Contact*,bool)) );
+	connect( mgr, SIGNAL(eventNotification(QString)),
+		 this, SLOT(setStatusText(QString)) );
 
 	//Connections to the manager and the ViewManager that every view should have
-	connect( this, SIGNAL( closing( KopeteView * ) ),
-		 KopeteViewManager::viewManager(), SLOT( slotViewDestroyed( KopeteView * ) ) );
-	connect( this, SIGNAL( activated( KopeteView * ) ),
-		 KopeteViewManager::viewManager(), SLOT( slotViewActivated( KopeteView * ) ) );
-	connect( this, SIGNAL( messageSent(Kopete::Message &) ),
-		 mgr, SLOT( sendMessage(Kopete::Message &) ) );
-	connect( mgr, SIGNAL( messageSuccess() ),
-		 this, SLOT( messageSentSuccessfully() ));
+	connect( this, SIGNAL(closing(KopeteView*)),
+		 KopeteViewManager::viewManager(), SLOT(slotViewDestroyed(KopeteView*)) );
+	connect( this, SIGNAL(activated(KopeteView*)),
+		 KopeteViewManager::viewManager(), SLOT(slotViewActivated(KopeteView*)) );
+	connect( this, SIGNAL(messageSent(Kopete::Message&)),
+		 mgr, SLOT(sendMessage(Kopete::Message&)) );
+	connect( mgr, SIGNAL(messageSuccess()),
+		 this, SLOT(messageSentSuccessfully()));
 
 	// add contacts
 	slotContactAdded( mgr->myself(), true );
@@ -437,7 +437,7 @@ void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
 	if( isTyping )
 	{
 		m_remoteTypingMap.insert( contact, new QTimer(this) );
-		connect( m_remoteTypingMap[ contact ], SIGNAL( timeout() ), SLOT( slotRemoteTypingTimeout() ) );
+		connect( m_remoteTypingMap[ contact ], SIGNAL(timeout()), SLOT(slotRemoteTypingTimeout()) );
 
 		m_remoteTypingMap[ contact ]->setSingleShot( true );
 		m_remoteTypingMap[ contact ]->start( 6000 );
@@ -534,13 +534,13 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 {
 	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 	{
-		connect( contact->metaContact(), SIGNAL( displayNameChanged(const QString&, const QString&) ),
-			this, SLOT( slotDisplayNameChanged(const QString &, const QString &) ) );
+		connect( contact->metaContact(), SIGNAL(displayNameChanged(QString,QString)),
+			this, SLOT(slotDisplayNameChanged(QString,QString)) );
 	}
 	else
 	{
-		connect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
-		this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+		connect( contact, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+		this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
 	}
 
 	if( !suppress && Kopete::BehaviorSettings::self()->showEvents() && m_manager->members().count() > 1 ) {
@@ -578,13 +578,13 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 		{
 			if( contact->metaContact() )
 			{
-				disconnect( contact->metaContact(), SIGNAL( displayNameChanged(const QString&, const QString&) ),
-				this, SLOT( slotDisplayNameChanged(const QString&, const QString&) ) );
+				disconnect( contact->metaContact(), SIGNAL(displayNameChanged(QString,QString)),
+				this, SLOT(slotDisplayNameChanged(QString,QString)) );
 			}
 			else
 			{
-				disconnect(contact,SIGNAL(propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & )),
-				this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+				disconnect(contact,SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+				this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
 			}
 		}
 
@@ -663,7 +663,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 	if( message.direction() == Kopete::Message::Inbound )
 	{
 		unreadMessageFrom = m_messagePart->formatName ( message.from(), Qt::PlainText );
-		QTimer::singleShot( 1000, this, SLOT( slotMarkMessageRead() ) );
+		QTimer::singleShot( 1000, this, SLOT(slotMarkMessageRead()) );
 	}
 	else
 		unreadMessageFrom.clear();
@@ -998,7 +998,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 void ChatView::registerContextMenuHandler( QObject *target, const char* slot )
 {
 	connect( m_messagePart,
-		SIGNAL( contextMenuEvent( Kopete::Message &, const QString &, KMenu * ) ),
+		SIGNAL(contextMenuEvent(Kopete::Message&,QString,KMenu*)),
 		target,
 		slot
 	);
@@ -1007,7 +1007,7 @@ void ChatView::registerContextMenuHandler( QObject *target, const char* slot )
 void ChatView::registerTooltipHandler( QObject *target, const char* slot )
 {
 	connect( m_messagePart,
-		SIGNAL( tooltipEvent( Kopete::Message &, const QString &, QString & ) ),
+		SIGNAL(tooltipEvent(Kopete::Message&,QString,QString&)),
 		target,
 		slot
 	);

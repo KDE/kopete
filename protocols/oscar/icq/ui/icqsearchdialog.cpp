@@ -67,12 +67,12 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
 	m_searchUI->searchResults->setModel( m_searchResultsModel );
 	m_searchUI->searchResults->setEditTriggers( QAbstractItemView::NoEditTriggers );
 	
-	connect( m_searchUI->searchButton, SIGNAL( clicked() ), this, SLOT( startSearch() ) );
-	connect( m_searchUI->searchResults->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-	         this, SLOT(selectionChanged(const QItemSelection&)) );
-	connect( m_searchUI->clearButton, SIGNAL( clicked() ), this, SLOT( clear() ) );
-	connect( m_searchUI->stopButton, SIGNAL( clicked() ), this, SLOT( stopSearch() ) );
-	connect( m_searchUI->userInfoButton, SIGNAL( clicked() ), this, SLOT( userInfo() ) );
+	connect( m_searchUI->searchButton, SIGNAL(clicked()), this, SLOT(startSearch()) );
+	connect( m_searchUI->searchResults->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+	         this, SLOT(selectionChanged(QItemSelection)) );
+	connect( m_searchUI->clearButton, SIGNAL(clicked()), this, SLOT(clear()) );
+	connect( m_searchUI->stopButton, SIGNAL(clicked()), this, SLOT(stopSearch()) );
+	connect( m_searchUI->userInfoButton, SIGNAL(clicked()), this, SLOT(userInfo()) );
 	
 	ICQProtocol *p = ICQProtocol::protocol();
 	p->fillComboFromTable( m_searchUI->gender, p->genders() );
@@ -106,10 +106,10 @@ void ICQSearchDialog::startSearch()
 		m_searchUI->searchButton->setEnabled( false );
 		m_searchUI->clearButton->setEnabled( false );
 	
-		connect( m_account->engine(), SIGNAL( gotSearchResults( const ICQSearchResult& ) ),
-				this, SLOT( newResult( const ICQSearchResult& ) ) );
-		connect( m_account->engine(), SIGNAL( endOfSearch( int ) ),
-				this, SLOT( searchFinished( int ) ) );
+		connect( m_account->engine(), SIGNAL(gotSearchResults(ICQSearchResult)),
+				this, SLOT(newResult(ICQSearchResult)) );
+		connect( m_account->engine(), SIGNAL(endOfSearch(int)),
+				this, SLOT(searchFinished(int)) );
 
 		const QWidget* currentPage = m_searchUI->tabWidget3->currentWidget();
 
@@ -174,10 +174,10 @@ void ICQSearchDialog::startSearch()
 
 void ICQSearchDialog::stopSearch()
 {
-	disconnect( m_account->engine(), SIGNAL( gotSearchResults( const ICQSearchResult& ) ),
-	         this, SLOT( newResult( const ICQSearchResult& ) ) );
-	disconnect( m_account->engine(), SIGNAL( endOfSearch( int ) ),
-	         this, SLOT( searchFinished( int ) ) );
+	disconnect( m_account->engine(), SIGNAL(gotSearchResults(ICQSearchResult)),
+	         this, SLOT(newResult(ICQSearchResult)) );
+	disconnect( m_account->engine(), SIGNAL(endOfSearch(int)),
+	         this, SLOT(searchFinished(int)) );
 
 	m_searchUI->stopButton->setEnabled( false );
 	m_searchUI->searchButton->setEnabled( true );
@@ -203,7 +203,7 @@ void ICQSearchDialog::userInfo()
 			QString uin = model->data( index ).toString();
 
 			m_infoWidget = new ICQUserInfoWidget( m_account, uin, Kopete::UI::Global::mainWidget() );
-			QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfo() ) );
+			QObject::connect( m_infoWidget, SIGNAL(finished()), this, SLOT(closeUserInfo()) );
 
 			m_infoWidget->setModal(true);
 			m_infoWidget->show();

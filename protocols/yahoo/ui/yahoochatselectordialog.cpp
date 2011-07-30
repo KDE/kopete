@@ -41,10 +41,10 @@ YahooChatSelectorDialog::YahooChatSelectorDialog( QWidget *parent )
 	loading->setText( 0, i18n("Loading...") );
 	mUi->treeCategories->addTopLevelItem( loading );
 
- 	connect(mUi->treeCategories, SIGNAL(currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * )), 
-		this, SLOT(slotCategorySelectionChanged( QTreeWidgetItem *, QTreeWidgetItem * )));
-	connect(mUi->treeRooms, SIGNAL(itemDoubleClicked( QTreeWidgetItem *, int )),
-		this, SLOT(slotChatRoomDoubleClicked( QTreeWidgetItem *, int )) );
+ 	connect(mUi->treeCategories, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), 
+		this, SLOT(slotCategorySelectionChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+	connect(mUi->treeRooms, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+		this, SLOT(slotChatRoomDoubleClicked(QTreeWidgetItem*,int)) );
 }
 
 YahooChatSelectorDialog::~YahooChatSelectorDialog()

@@ -122,7 +122,7 @@ void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
 	if( showProgressInfo )
 		emitCopying( sourceURL(), destinationURL() );
 
-	connect( this, SIGNAL( result( KJob* ) ), SLOT( slotResultEmitted() ) );
+	connect( this, SIGNAL(result(KJob*)), SLOT(slotResultEmitted()) );
 
 	ui()->setAutoErrorHandlingEnabled( false );
 }
@@ -364,7 +364,7 @@ Kopete::Transfer* Kopete::TransferManager::addTransfer( Kopete::Contact *contact
 	uint id = Kopete::Message::nextId();
 	Kopete::FileTransferInfo info(contact, files, size, recipient, di, id);
 	Kopete::Transfer *trans = new Kopete::Transfer(info);
-	connect(trans, SIGNAL(result(KJob *)), this, SLOT(slotComplete(KJob *)));
+	connect(trans, SIGNAL(result(KJob*)), this, SLOT(slotComplete(KJob*)));
 	mTransfersMap.insert(id, trans);
 	return trans;
 }
@@ -439,7 +439,7 @@ void Kopete::TransferManager::saveIncomingTransfer( unsigned int id )
 		cg.writeEntry( "defaultPath", directory );
 
 	Kopete::Transfer *trans = new Kopete::Transfer( info, url.toLocalFile() );
-	connect( trans, SIGNAL(result(KJob *)), this, SLOT(slotComplete(KJob *)) );
+	connect( trans, SIGNAL(result(KJob*)), this, SLOT(slotComplete(KJob*)) );
 	mTransfersMap.insert( info.transferId(), trans );
 	emit askIncomingDone( id );
 	emit accepted( trans, url.toLocalFile() );
@@ -511,9 +511,9 @@ void Kopete::TransferManager::sendFile( const KUrl &file, const QString &fname, 
 		}
 		else
 		{
-			connect( this, SIGNAL(sendFile(const KUrl&, const QString&, unsigned int)), sendTo, slot );
+			connect( this, SIGNAL(sendFile(KUrl,QString,uint)), sendTo, slot );
 			emit sendFile( url, filename, size );
-			disconnect( this, SIGNAL(sendFile(const KUrl&, const QString&, unsigned int)), sendTo, slot );
+			disconnect( this, SIGNAL(sendFile(KUrl,QString,uint)), sendTo, slot );
 		}
 	}
 }

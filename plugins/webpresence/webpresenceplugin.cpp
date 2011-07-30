@@ -64,13 +64,13 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const QVariantList& /*arg
 	shuttingDown( false ), resultFormatting( WEB_HTML ), m_output(0)
 {
 	m_writeScheduler = new QTimer( this );
-	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
+	connect ( m_writeScheduler, SIGNAL(timeout()), this, SLOT(slotWriteFile()) );
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
-				this, SLOT( listenToAllAccounts() ) );
+				this, SLOT(listenToAllAccounts()) );
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
-				this, SLOT( listenToAllAccounts() ) );
+				this, SLOT(listenToAllAccounts()) );
 
-	connect(this, SIGNAL(settingsChanged()), this, SLOT( slotSettingsChanged() ) );
+	connect(this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()) );
 	slotSettingsChanged();
 	listenToAllAccounts();
 }
@@ -134,13 +134,13 @@ void WebPresencePlugin::listenToAccount( Kopete::Account* account )
 								const Kopete::OnlineStatus &,
 								const Kopete::OnlineStatus & ) ),
 						this,
-						SLOT( slotWaitMoreStatusChanges() ) ) ;
+						SLOT(slotWaitMoreStatusChanges()) ) ;
 		QObject::connect( account->myself(),
 						SIGNAL(onlineStatusChanged( Kopete::Contact *,
 								const Kopete::OnlineStatus &,
 								const Kopete::OnlineStatus & ) ),
 						this,
-						SLOT( slotWaitMoreStatusChanges() ) );
+						SLOT(slotWaitMoreStatusChanges()) );
 	}
 }
 
@@ -195,8 +195,8 @@ void WebPresencePlugin::slotWriteFile()
 	// upload it to the specified URL
 	KUrl src( m_output->fileName() );
 	KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, KIO::Overwrite | KIO::HideProgressInfo );
-	connect( job, SIGNAL( result( KJob * ) ),
-			SLOT( slotUploadJobResult( KJob * ) ) );
+	connect( job, SIGNAL(result(KJob*)),
+			SLOT(slotUploadJobResult(KJob*)) );
 }
 
 void WebPresencePlugin::slotUploadJobResult( KJob *job )

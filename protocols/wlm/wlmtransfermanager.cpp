@@ -72,11 +72,11 @@ nextID (1)
                              const unsigned int &, const bool &)));
 
     connect (Kopete::TransferManager::transferManager (),
-             SIGNAL (accepted (Kopete::Transfer *, const QString &)),
-             this, SLOT (slotAccepted (Kopete::Transfer *, const QString &)));
+             SIGNAL (accepted(Kopete::Transfer*,QString)),
+             this, SLOT (slotAccepted(Kopete::Transfer*,QString)));
     connect (Kopete::TransferManager::transferManager (),
-             SIGNAL (refused (const Kopete::FileTransferInfo &)),
-             this, SLOT (slotRefused (const Kopete::FileTransferInfo &)));
+             SIGNAL (refused(Kopete::FileTransferInfo)),
+             this, SLOT (slotRefused(Kopete::FileTransferInfo)));
 }
 
 void
@@ -204,7 +204,7 @@ WlmTransferManager::slotAccepted (Kopete::Transfer * ft,
     _manager->setCanBeDeleted (false);
     transferSessions[sessionID].ft = ft;
 
-    connect (ft, SIGNAL (transferCanceled ()), this, SLOT (slotCanceled ()));
+    connect (ft, SIGNAL (transferCanceled()), this, SLOT (slotCanceled()));
 
     conn->fileTransferResponse (sessionID, QFile::encodeName(filename).constData (), true);
 }

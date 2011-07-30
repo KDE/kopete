@@ -77,14 +77,14 @@ dlgJabberVCard::dlgJabberVCard (JabberAccount *account, JabberBaseContact *conta
 	m_mainWidget->setupUi(w);
 	setMainWidget(w);
 
-	connect (this, SIGNAL (user1Clicked()), this, SLOT (slotSaveVCard ()));
-	connect (this, SIGNAL( user2Clicked()), this, SLOT (slotGetVCard ()));
+	connect (this, SIGNAL (user1Clicked()), this, SLOT (slotSaveVCard()));
+	connect (this, SIGNAL(user2Clicked()), this, SLOT (slotGetVCard()));
 
 	connect (m_mainWidget->btnSelectPhoto, SIGNAL (clicked()), this, SLOT (slotSelectPhoto()));
 	connect (m_mainWidget->btnClearPhoto, SIGNAL (clicked()), this, SLOT (slotClearPhoto()));
-	connect (m_mainWidget->urlHomeEmail, SIGNAL (leftClickedUrl(const QString &)), this, SLOT (slotOpenURL (const QString &)));
-	connect (m_mainWidget->urlWorkEmail, SIGNAL (leftClickedUrl(const QString &)), this, SLOT (slotOpenURL (const QString &)));
-	connect (m_mainWidget->urlHomepage, SIGNAL (leftClickedUrl(const QString &)), this, SLOT (slotOpenURL (const QString &)));
+	connect (m_mainWidget->urlHomeEmail, SIGNAL (leftClickedUrl(QString)), this, SLOT (slotOpenURL(QString)));
+	connect (m_mainWidget->urlWorkEmail, SIGNAL (leftClickedUrl(QString)), this, SLOT (slotOpenURL(QString)));
+	connect (m_mainWidget->urlHomepage, SIGNAL (leftClickedUrl(QString)), this, SLOT (slotOpenURL(QString)));
 
 	assignContactProperties();
 
@@ -446,7 +446,7 @@ void dlgJabberVCard::slotGetVCard()
 
 	XMPP::JT_VCard *task = new XMPP::JT_VCard ( m_account->client()->rootTask() );
 	// signal to ourselves when the vCard data arrived
-	QObject::connect( task, SIGNAL ( finished () ), this, SLOT ( slotGotVCard () ) );
+	QObject::connect( task, SIGNAL (finished()), this, SLOT (slotGotVCard()) );
 	task->get ( m_contact->rosterItem().jid().full() );
 	task->go ( true );	
 }

@@ -27,9 +27,9 @@ void NeedFolderTask::createFolder()
 {
 	CreateFolderTask * cct = new CreateFolderTask( client()->rootTask() );
 	cct->folder( 0, m_folderSequence, m_folderDisplayName );
-	connect( cct, SIGNAL( gotFolderAdded( const FolderItem & ) ), client(), SIGNAL( folderReceived( const FolderItem & ) ) );
-	connect( cct, SIGNAL( gotFolderAdded( const FolderItem & ) ), SLOT( slotFolderAdded( const FolderItem & ) ) );
-	connect( cct, SIGNAL( finished() ), SLOT( slotFolderTaskFinished() ) );
+	connect( cct, SIGNAL(gotFolderAdded(FolderItem)), client(), SIGNAL(folderReceived(FolderItem)) );
+	connect( cct, SIGNAL(gotFolderAdded(FolderItem)), SLOT(slotFolderAdded(FolderItem)) );
+	connect( cct, SIGNAL(finished()), SLOT(slotFolderTaskFinished()) );
 	cct->go( true );
 }
 

@@ -56,12 +56,12 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
 
-	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
-			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
+	connect ( this, SIGNAL (messageSent(Kopete::Message&,Kopete::ChatSession*)),
+			  this, SLOT (slotMessageSent(Kopete::Message&,Kopete::ChatSession*)) );
 
-	connect ( this, SIGNAL ( myselfTyping ( bool ) ), this, SLOT ( slotSendTypingNotification ( bool ) ) );
+	connect ( this, SIGNAL (myselfTyping(bool)), this, SLOT (slotSendTypingNotification(bool)) );
 
-	connect ( this, SIGNAL ( onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus& ) ), this, SLOT ( slotUpdateDisplayName () ) );
+	connect ( this, SIGNAL (onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)), this, SLOT (slotUpdateDisplayName()) );
 
 	// check if the user ID contains a hardwired resource,
 	// we'll have to use that one in that case
@@ -73,12 +73,12 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 #ifdef JINGLE_SUPPORT
 	KAction *jingleSessionGui = new KAction(i18n("Show audio calls"), members().first());
 	jingleSessionGui->setIcon(KIcon("voicecall"));
-	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui() ));
+	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui()));
 	setComponentData(protocol->componentData());
 
 	KAction *jingleSession = new KAction(i18n("Start audio call"), members().first());
 	jingleSession->setIcon(KIcon("voicecall"));
-	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession() ));
+	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession()));
 	setComponentData(protocol->componentData());
 
 	Kopete::ContactPtrList chatMembers = members();
@@ -99,12 +99,12 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 
 	/*KAction *jingleaudiocall = new KAction(i18n("Jingle Audio call" ), members().first());
-	connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall() ));
+	connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall()));
 	setComponentData(protocol->componentData());
 	jingleaudiocall->setEnabled( false );
 
 	KAction *jinglevideocall = new KAction(i18n("Jingle Video call" ), members().first());
-	connect(jinglevideocall, SIGNAL(triggered(bool)), SLOT (slotJingleVideoCall() ));
+	connect(jinglevideocall, SIGNAL(triggered(bool)), SLOT (slotJingleVideoCall()));
 	setComponentData(protocol->componentData());
 	jinglevideocall->setEnabled( false );*/
 

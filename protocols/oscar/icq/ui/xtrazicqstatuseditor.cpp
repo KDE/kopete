@@ -63,7 +63,7 @@ ICQStatusEditor::ICQStatusEditor( ICQStatusManager *statusManager, QWidget *pare
 	connect( mUi->buttonUp, SIGNAL(clicked()), this, SLOT(moveUp()) );
 	connect( mUi->buttonDown, SIGNAL(clicked()), this, SLOT(moveDown()) );
 	connect( this, SIGNAL(okClicked()), this, SLOT(save()) );
-	connect( mUi->statusView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex&, const QModelIndex&)),
+	connect( mUi->statusView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
 	         this, SLOT(updateButtons()) );
 
 	updateButtons();

@@ -163,24 +163,24 @@ GaduPublicDir::slotListSelected(  )
 void
 GaduPublicDir::initConnections()
 {
-	connect( this, SIGNAL( user2Clicked() ), SLOT( slotSearch() ) );
-	connect( this, SIGNAL( user1Clicked() ), SLOT( slotNewSearch() ) );
-	connect( this, SIGNAL( user3Clicked() ), SLOT( slotAddContact() ) );
+	connect( this, SIGNAL(user2Clicked()), SLOT(slotSearch()) );
+	connect( this, SIGNAL(user1Clicked()), SLOT(slotNewSearch()) );
+	connect( this, SIGNAL(user3Clicked()), SLOT(slotAddContact()) );
 
-	connect( mAccount, SIGNAL( pubDirSearchResult( const SearchResult&, unsigned int ) ),
-				SLOT( slotSearchResult( const SearchResult&, unsigned int ) ) );
+	connect( mAccount, SIGNAL(pubDirSearchResult(SearchResult,uint)),
+				SLOT(slotSearchResult(SearchResult,uint)) );
 
-	connect( mMainWidget->nameS,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->surname,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->nick,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->UIN,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->cityS,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->gender,		SIGNAL( activated( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->ageFrom,		SIGNAL( valueChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->ageTo,		SIGNAL( valueChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->radioByData,	SIGNAL( toggled( bool ) ), SLOT( inputChanged( bool ) ) );
+	connect( mMainWidget->nameS,		SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( mMainWidget->surname,		SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( mMainWidget->nick,		SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( mMainWidget->UIN,		SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( mMainWidget->cityS,		SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( mMainWidget->gender,		SIGNAL(activated(QString)), SLOT(inputChanged(QString)) );
+	connect( mMainWidget->ageFrom,		SIGNAL(valueChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( mMainWidget->ageTo,		SIGNAL(valueChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( mMainWidget->radioByData,	SIGNAL(toggled(bool)), SLOT(inputChanged(bool)) );
 
-	connect( mMainWidget->listFound,	SIGNAL( selectionChanged () ), SLOT( slotListSelected() ) );
+	connect( mMainWidget->listFound,	SIGNAL(selectionChanged()), SLOT(slotListSelected()) );
 
 }
 

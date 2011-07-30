@@ -29,7 +29,7 @@ BookmarksPlugin::BookmarksPlugin(QObject *parent, const QVariantList &/*args*/)
  : Kopete::Plugin(BookmarksPluginFactory::componentData(), parent)
 {
 	//kDebug(14501) << "plugin loading";
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), this, SLOT( slotBookmarkURLsInMessage( Kopete::Message & ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message&)), this, SLOT(slotBookmarkURLsInMessage(Kopete::Message&)) );
 }
 
 
@@ -119,8 +119,8 @@ void BookmarksPlugin::addKopeteBookmark( const KUrl &url, const QString &sender 
 		KIO::TransferJob *transfer;
 		// make asynchronous transfer to avoid GUI freezing due to overloaded web servers
 		transfer = KIO::get(url, KIO::NoReload, KIO::HideProgressInfo);
-		connect ( transfer, SIGNAL ( data( KIO::Job *, const QByteArray & ) ),
-		this, SLOT ( slotAddKopeteBookmark( KIO::Job *, const QByteArray & ) ) );
+		connect ( transfer, SIGNAL (data(KIO::Job*,QByteArray)),
+		this, SLOT (slotAddKopeteBookmark(KIO::Job*,QByteArray)) );
 		m_map[transfer].url = url;
 		m_map[transfer].sender = sender;
 	}

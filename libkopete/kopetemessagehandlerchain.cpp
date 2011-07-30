@@ -151,8 +151,8 @@ public:
 ProcessMessageTask::ProcessMessageTask( MessageHandlerChain::Ptr chain, MessageEvent *event )
  : d( new Private(chain, event) )
 {
-	QTimer::singleShot( 0, this, SLOT( start() ) );
-	connect( event, SIGNAL( done( Kopete::MessageEvent* ) ), this, SLOT( slotDone() ) );
+	QTimer::singleShot( 0, this, SLOT(start()) );
+	connect( event, SIGNAL(done(Kopete::MessageEvent*)), this, SLOT(slotDone()) );
 	event->message().manager()->ref();
 }
 

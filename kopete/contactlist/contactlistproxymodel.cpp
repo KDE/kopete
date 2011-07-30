@@ -41,10 +41,10 @@ ContactListProxyModel::ContactListProxyModel(QObject* parent)
 	connect ( Kopete::AppearanceSettings::self(), SIGNAL(configChanged()), this, SLOT(slotConfigChanged()) );
 
 	// Workaround Qt sorting bug
-	connect( this, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
-	         this, SLOT(proxyRowsInserted(const QModelIndex&, int, int)) );
-	connect( this, SIGNAL(rowsRemoved(const QModelIndex&, int, int)),
-	         this, SLOT(proxyRowsRemoved(const QModelIndex&, int, int)) );
+	connect( this, SIGNAL(rowsInserted(QModelIndex,int,int)),
+	         this, SLOT(proxyRowsInserted(QModelIndex,int,int)) );
+	connect( this, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+	         this, SLOT(proxyRowsRemoved(QModelIndex,int,int)) );
 	connect( this, SIGNAL(modelReset()),
 	         this, SLOT(proxyCheckSort()) );
 	connect( this, SIGNAL(layoutChanged()),

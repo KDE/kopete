@@ -129,16 +129,16 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const QVariantList& /*a
 	Kopete::CommandHandler::commandHandler()->registerCommand(
 		this,
 		"media",
-		SLOT( slotMediaCommand( const QString &, Kopete::ChatSession * ) ),
+		SLOT(slotMediaCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /media - Displays information on current song"),
 		0
 	);
 
-	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
+	connect ( this , SIGNAL(settingsChanged()) , this , SLOT(slotSettingsChanged()) );
 
 	// Advert the accounts with the current listened track.
 	d->advertTimer = new QTimer(this);
-	connect(d->advertTimer, SIGNAL( timeout() ), this, SLOT( slotAdvertCurrentMusic() ) );
+	connect(d->advertTimer, SIGNAL(timeout()), this, SLOT(slotAdvertCurrentMusic()) );
 	d->advertTimer->start(5000); // Update every 5 seconds
 }
 

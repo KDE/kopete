@@ -89,7 +89,7 @@ void ChatTextEditPart::init( Kopete::ChatSession *session, QWidget *parent)
 	textEdit()->setMinimumSize( QSize( 75, 20 ) );
 
 	// some signals and slots connections
-	connect( textEdit(), SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
+	connect( textEdit(), SIGNAL(textChanged()), this, SLOT(slotTextChanged()) );
 
 	// timers for typing notifications
 	m_typingRepeatTimer = new QTimer(this);
@@ -97,23 +97,23 @@ void ChatTextEditPart::init( Kopete::ChatSession *session, QWidget *parent)
 	m_typingStopTimer   = new QTimer(this);
 	m_typingStopTimer->setObjectName("m_typingStopTimer");
 
-	connect( m_typingRepeatTimer, SIGNAL( timeout() ), this, SLOT( slotRepeatTypingTimer() ) );
-	connect( m_typingStopTimer,   SIGNAL( timeout() ), this, SLOT( slotStoppedTypingTimer() ) );
+	connect( m_typingRepeatTimer, SIGNAL(timeout()), this, SLOT(slotRepeatTypingTimer()) );
+	connect( m_typingStopTimer,   SIGNAL(timeout()), this, SLOT(slotStoppedTypingTimer()) );
 
-	connect( session, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
-	         this, SLOT( slotContactAdded(const Kopete::Contact*) ) );
-	connect( session, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Qt::TextFormat, bool) ),
-	         this, SLOT( slotContactRemoved(const Kopete::Contact*) ) );
-	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
-	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+	connect( session, SIGNAL(contactAdded(const Kopete::Contact*,bool)),
+	         this, SLOT(slotContactAdded(const Kopete::Contact*)) );
+	connect( session, SIGNAL(contactRemoved(const Kopete::Contact*,QString,Qt::TextFormat,bool)),
+	         this, SLOT(slotContactRemoved(const Kopete::Contact*)) );
+	connect( session, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+	         this, SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 
-	connect( Kopete::AppearanceSettings::self(), SIGNAL( appearanceChanged() ),
-	         this, SLOT( slotAppearanceChanged() ) );
+	connect( Kopete::AppearanceSettings::self(), SIGNAL(appearanceChanged()),
+	         this, SLOT(slotAppearanceChanged()) );
 
-	connect( KGlobalSettings::self(), SIGNAL( kdisplayFontChanged() ),
-	         this, SLOT( slotAppearanceChanged() ) );
+	connect( KGlobalSettings::self(), SIGNAL(kdisplayFontChanged()),
+	         this, SLOT(slotAppearanceChanged()) );
 
-	connect( editor, SIGNAL( richTextSupportChanged() ), this, SLOT ( slotRichTextSupportChanged() ) );
+	connect( editor, SIGNAL(richTextSupportChanged()), this, SLOT (slotRichTextSupportChanged()) );
 
 	slotAppearanceChanged();
 
@@ -207,8 +207,8 @@ void ChatTextEditPart::slotPropertyChanged( Kopete::PropertyContainer*, const QS
 
 void ChatTextEditPart::slotContactAdded( const Kopete::Contact *contact )
 {
-	connect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
-	         this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	connect( contact, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+	         this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
 
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->addItem( contactName );
@@ -216,8 +216,8 @@ void ChatTextEditPart::slotContactAdded( const Kopete::Contact *contact )
 
 void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 {
-	disconnect( contact, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
-	            this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	disconnect( contact, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+	            this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
 
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	mComplete->removeItem( contactName );

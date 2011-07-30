@@ -93,7 +93,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	d = new SkypeContactPrivate;//create the insides
 	d->session = 0L;//no session yet
 	d->account = account;//save the account for future, it will be needed
-	connect(this, SIGNAL(setActionsPossible(bool )), this, SLOT(enableActions(bool )));
+	connect(this, SIGNAL(setActionsPossible(bool)), this, SLOT(enableActions(bool)));
 	account->prepareContact(this);//let the account prepare us
 	d->user = user;
 
@@ -119,7 +119,7 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 
 	statusChanged();//This one takes care of disabling/enabling this action depending on the user's status.
 
-	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,const Kopete::OnlineStatus&,const Kopete::OnlineStatus&)), this, SLOT(statusChanged()));
+	connect(this, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)), this, SLOT(statusChanged()));
 	if (account->canComunicate() && user)
 		emit infoRequest(contactId());//retrieve information
 
@@ -143,7 +143,7 @@ Kopete::ChatSession *SkypeContact::manager(Kopete::Contact::CanCreateFlags CanCr
 	if ((!d->session) && (CanCreate)) {//It is not there and I can create it
 		d->session = new SkypeChatSession(d->account, this);
 		connect(d->session, SIGNAL(destroyed()), this, SLOT(removeChat()));//Care about loosing the session
-		connect(d->session, SIGNAL(becameMultiChat(const QString&, SkypeChatSession* )), this, SLOT(removeChat()));//This means it no longer belongs to this user
+		connect(d->session, SIGNAL(becameMultiChat(QString,SkypeChatSession*)), this, SLOT(removeChat()));//This means it no longer belongs to this user
 	}
 
 	return d->session;//and return it

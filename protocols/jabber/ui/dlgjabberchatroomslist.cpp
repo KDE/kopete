@@ -44,8 +44,8 @@ dlgJabberChatRoomsList::dlgJabberChatRoomsList(JabberAccount* account, const QSt
 
 	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotJoin()));
 	connect(m_ui.pbQuery, SIGNAL(clicked()), this, SLOT(slotQuery()));
-	connect(m_ui.tblChatRoomsList, SIGNAL(itemClicked(QTableWidgetItem *)), this, SLOT(slotClick(QTableWidgetItem *)));
-	connect(m_ui.tblChatRoomsList, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this, SLOT(slotDoubleClick(QTableWidgetItem *)));
+	connect(m_ui.tblChatRoomsList, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(slotClick(QTableWidgetItem*)));
+	connect(m_ui.tblChatRoomsList, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotDoubleClick(QTableWidgetItem*)));
 }
 
 dlgJabberChatRoomsList::~dlgJabberChatRoomsList()

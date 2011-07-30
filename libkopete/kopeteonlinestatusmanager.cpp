@@ -58,7 +58,7 @@ OnlineStatusManager::OnlineStatusManager()
 	// no autodelete, removing everything in destructor
 //	d->iconCache.setAutoDelete( true );
 	d->nullPixmap = new QPixmap;
-	connect( KGlobalSettings::self(), SIGNAL( iconChanged(int) ), this, SLOT( slotIconsChanged() ) );
+	connect( KGlobalSettings::self(), SIGNAL(iconChanged(int)), this, SLOT(slotIconsChanged()) );
 }
 
 OnlineStatusManager::~OnlineStatusManager()

@@ -449,7 +449,7 @@ JabberXDataWidget::JabberXDataWidget(const XMPP::XData &data, QWidget *parent) :
 		instr->setWordWrap(true);
 		instr->setScaledContents(true);
 		instr->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-		//connect(instr, SIGNAL(linkActivated(const QString&)), SLOT(linkActivated(const QString&)));
+		//connect(instr, SIGNAL(linkActivated(QString)), SLOT(linkActivated(QString)));
 		formLayout->addWidget(instr, row, 0, 1, 3);
 		row++;
 	}

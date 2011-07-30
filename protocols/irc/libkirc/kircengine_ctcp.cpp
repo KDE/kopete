@@ -34,30 +34,30 @@ using namespace KIRC;
 
 void Engine::bindCtcp()
 {
-	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(KIRC::Message &)),
+	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(KIRC::Message&)),
 		-1,	-1);
-	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(KIRC::Message &)),
+	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(KIRC::Message&)),
 		-1,	1);
-	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(KIRC::Message &)),
+	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(KIRC::Message&)),
 		4,	5);
-	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(KIRC::Message &)),
+	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(KIRC::Message&)),
 		-1,	0);
-	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(KIRC::Message &)),
+	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(KIRC::Message&)),
 		1,	1);
-	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(KIRC::Message &)),
+	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(KIRC::Message&)),
 		-1,	0);
-	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(KIRC::Message &)),
+	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(KIRC::Message&)),
 		-1,	0);
-	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(KIRC::Message &)),
+	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(KIRC::Message&)),
 		-1,	0);
-	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(KIRC::Message &)),
+	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(KIRC::Message&)),
 		-1,	0);
 
-	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(KIRC::Message &)),
+	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(KIRC::Message&)),
 		1,	-1);
-	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(KIRC::Message &)),
+	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(KIRC::Message&)),
 		1,	1,	"");
-	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(KIRC::Message &)),
+	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(KIRC::Message&)),
 		-1,	-1,	"");
 }
 

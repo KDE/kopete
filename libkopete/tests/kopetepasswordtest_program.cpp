@@ -35,9 +35,9 @@ using namespace Kopete;
 QString retrieve( Password &pwd, const QPixmap &image, const QString &prompt )
 {
 	PasswordRetriever r;
-	pwd.request( &r, SLOT( gotPassword( const QString & ) ), image, prompt );
+	pwd.request( &r, SLOT(gotPassword(QString)), image, prompt );
 	QTimer tmr;
-	r.connect( &tmr, SIGNAL( timeout() ), SLOT( timer() ) );
+	r.connect( &tmr, SIGNAL(timeout()), SLOT(timer()) );
 	tmr.start( 1000 );
 	qApp->exec();
 	return r.password;
@@ -109,7 +109,7 @@ int main( int argc, char *argv[] )
 
 	// without this, setting passwords will fail since they're
 	// set asynchronously.
-	QTimer::singleShot( 0, &app, SLOT( deref() ) );
+	QTimer::singleShot( 0, &app, SLOT(deref()) );
 	app.exec();
 
 	if ( setPassword )

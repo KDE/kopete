@@ -39,12 +39,12 @@ NLQuodLibet::NLQuodLibet() : NLMediaPlayer()
 	m_name = "Quod Libet";
 	m_playing = false;
 	m_watch = new KDirWatch( this );
-	connect( m_watch, SIGNAL( created( const QString& ) ),
-			 SLOT( fileChanged( const QString & ) ) );
-	connect( m_watch, SIGNAL( deleted( const QString& ) ),
-			 SLOT( fileChanged( const QString & ) ) );
-	connect( m_watch, SIGNAL( created( const QString& ) ),
-			 SLOT( fileChanged( const QString & ) ) );
+	connect( m_watch, SIGNAL(created(QString)),
+			 SLOT(fileChanged(QString)) );
+	connect( m_watch, SIGNAL(deleted(QString)),
+			 SLOT(fileChanged(QString)) );
+	connect( m_watch, SIGNAL(created(QString)),
+			 SLOT(fileChanged(QString)) );
 	m_watch->addFile( currentTrackPath() );
 }
 

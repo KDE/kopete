@@ -187,9 +187,9 @@ void SendFileTask::parseTransferAccept(const Transfer *transfer)
 	m_socket = new KStreamSocket( m_relayHost, QString::number(80) );
 	m_socket->setBlocking( false );
 	m_socket->enableWrite(true);
-	connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
-	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
-	connect( m_socket, SIGNAL( readyWrite() ), this, SLOT( transmitHeader() ) );
+	connect( m_socket, SIGNAL(connected(KNetwork::KResolverEntry)), this, SLOT(connectSucceeded()) );
+	connect( m_socket, SIGNAL(gotError(int)), this, SLOT(connectFailed(int)) );
+	connect( m_socket, SIGNAL(readyWrite()), this, SLOT(transmitHeader()) );
 
 	m_socket->connect();
 
@@ -249,7 +249,7 @@ void SendFileTask::transmitHeader()
 	if (remaining <= 0)
 	{
 		// Go to next step.
-		disconnect( m_socket, SIGNAL( readyWrite() ), this, SLOT( transmitHeader() ) );
+		disconnect( m_socket, SIGNAL(readyWrite()), this, SLOT(transmitHeader()) );
 		connect( m_socket, SIGNAL(readyWrite()), this, SLOT(transmitData()) );
 		m_buffer.clear();
 		m_bufferOutPos = 0;

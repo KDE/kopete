@@ -124,19 +124,19 @@ IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 
 	// Statically implemented commands
 	commandHandler->registerCommand(this, QString::fromLatin1("all"),
-		SLOT( slotAllCommand(const QString &, Kopete::ChatSession*)),
+		SLOT(slotAllCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /all <command> - Exectute the given command in all the chats."), 2);
 
 	commandHandler->registerCommand(this, QString::fromLatin1("ctcp"),
-		SLOT( slotCtcpCommand(const QString &, Kopete::ChatSession *)),
+		SLOT(slotCtcpCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /ctcp <nick> <message> - Send the CTCP message to nick."), 2);
 
 	commandHandler->registerCommand(this, QString::fromLatin1("quote"),
-		SLOT( slotQuoteCommand(const QString &, Kopete::ChatSession*)),
+		SLOT(slotQuoteCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /quote <text> - Sends the text in quoted form to the server."), 1);
 
 	commandHandler->registerCommand(this, QString::fromLatin1("raw"),
-		SLOT( slotRawCommand( const QString &, Kopete::ChatSession*)),
+		SLOT(slotRawCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /raw <text> - Sends the text in raw form to the server."), 1);
 
 	// Alias implemented commands
@@ -146,7 +146,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 		CommandHandler::SystemAlias, 1);
 /*
 	commandHandler->registerAlias(this, QString::fromLatin1("ban"),
-		SLOT(slotBanCommand(const QString &, Kopete::ChatSession*)),
+		SLOT(slotBanCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /ban <mask> - Add someone to this channel's ban list. (requires operator status)."),
 		CommandHandler::SystemAlias, 1, 1);
 */
@@ -156,12 +156,12 @@ IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 		CommandHandler::SystemAlias, 1, 1);
 
 	commandHandler->registerAlias(this, QString::fromLatin1("deop"),
-		SLOT(slotDeopCommand(const QString &, Kopete::ChatSession*)),
+		SLOT(slotDeopCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /deop <nickname> [<nickname 2> <...>] - Remove channel operator status from someone (requires operator status)."),
 		CommandHandler::SystemAlias, 1);
 
 	commandHandler->registerAlias(this, QString::fromLatin1("devoice"),
-		SLOT( slotDevoiceCommand( const QString &, Kopete::ChatSession*) ),
+		SLOT(slotDevoiceCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /devoice <nickname> [<nickname 2> <...>] - Remove channel voice status from someone (requires operator status)."),
 		CommandHandler::SystemAlias, 1);
 
@@ -176,7 +176,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 		CommandHandler::SystemAlias, 1, 2);
 
 	commandHandler->registerAlias( this, QString::fromLatin1("kick"),
-		SLOT( slotKickCommand( const QString &, Kopete::ChatSession*) ),
+		SLOT(slotKickCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /kick <nickname> [<reason>] - Kick someone from the channel (requires operator status)."),
 		CommandHandler::SystemAlias, 1);
 
@@ -207,7 +207,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 		CommandHandler::SystemAlias, 1, 1);
 
 	commandHandler->registerAlias(this, QString::fromLatin1("op"),
-		SLOT( slotOpCommand(const QString &, Kopete::ChatSession*)),
+		SLOT(slotOpCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /op <nickname 1> [<nickname 2> <...>] - Give channel operator status to someone (requires operator status)."),
 		CommandHandler::SystemAlias, 1);
 
@@ -222,7 +222,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 		CommandHandler::SystemAlias, 1, 1);*/
 /*
 	commandHandler->registerCommand(this, QString::fromLatin1("query"),
-		SLOT(slotQueryCommand(const QString &, Kopete::ChatSession*)),
+		SLOT(slotQueryCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /query <nickname> [<message>] - Open a private chat with this user."),
 		CommandHandler::SystemAlias, 1);
 */
@@ -237,7 +237,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 		CommandHandler::SystemAlias);
 
 	commandHandler->registerAlias(this, QString::fromLatin1("voice"),
-		SLOT(slotVoiceCommand( const QString &, Kopete::ChatSession*)),
+		SLOT(slotVoiceCommand(QString,Kopete::ChatSession*)),
 		i18n("USAGE: /voice <nickname> [<nickname 2> <...>] - Give channel voice status to someone (requires operator status)."),
 		CommandHandler::SystemAlias, 1);
 */
@@ -275,11 +275,11 @@ IRCProtocol::IRCProtocol( QObject *parent, const QVariantList & /* args */ )
 		i18n("USAGE: /ns <message> - Alias for MSG NickServ <message>."),
 		CommandHandler::SystemAlias, 1);
 */
-	QObject::connect( ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message &)),
-		this, SLOT(slotMessageFilter(Kopete::Message &)) );
+	QObject::connect( ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message&)),
+		this, SLOT(slotMessageFilter(Kopete::Message&)) );
 
-	QObject::connect( ChatSessionManager::self(), SIGNAL( viewCreated( KopeteView* ) ),
-		this, SLOT( slotViewCreated( KopeteView* ) ) );
+	QObject::connect( ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)),
+		this, SLOT(slotViewCreated(KopeteView*)) );
 
 	setCapabilities(Protocol::RichBFormatting | Kopete::Protocol::RichUFormatting | Kopete::Protocol::RichColor);
 

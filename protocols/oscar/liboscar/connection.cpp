@@ -83,14 +83,14 @@ void Connection::setStartFlapSequenceList( const QList<Oscar::WORD>& seqList )
 void Connection::setClient( Client* c )
 {
 	d->client = c;
-	connect( c, SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
+	connect( c, SIGNAL(loggedIn()), this, SLOT(loggedIn()) );
 }
 
 void Connection::connectToServer( const QString& host, quint16 port )
 {
-	connect( d->clientStream, SIGNAL( error( int ) ), this, SLOT( streamSocketError( int ) ) );
-	connect( d->clientStream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
-	connect( d->clientStream, SIGNAL( connected() ), this, SIGNAL( connected() ) );
+	connect( d->clientStream, SIGNAL(error(int)), this, SLOT(streamSocketError(int)) );
+	connect( d->clientStream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()) );
+	connect( d->clientStream, SIGNAL(connected()), this, SIGNAL(connected()) );
 	d->clientStream->connectToServer( host, port );
 }
 

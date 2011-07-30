@@ -69,13 +69,13 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	
 	m_inboundHandler = new OtrMessageHandlerFactory(this);
 
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
-		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToSend(Kopete::Message&)),
+		SLOT(slotOutgoingMessage(Kopete::Message&)) );
 
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * ) ),
-			 this, SLOT( slotNewChatSessionWindow( Kopete::ChatSession * ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession*)),
+			 this, SLOT(slotNewChatSessionWindow(Kopete::ChatSession*)) );
 
-	connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );
+	connect( this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()) );
 
 
 
@@ -107,8 +107,8 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 
 	otrPolicyMenu->setEnabled( false );
 
-	connect( otrPolicyMenu, SIGNAL( triggered( int ) ), this, SLOT( slotSetPolicy() ) );
-	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotSelectionChanged( bool ) ) );
+	connect( otrPolicyMenu, SIGNAL(triggered(int)), this, SLOT(slotSetPolicy()) );
+	connect( Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(slotSelectionChanged(bool)) );
 
 	setXMLFile( "otrui.rc" );
 

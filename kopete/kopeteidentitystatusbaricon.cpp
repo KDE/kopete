@@ -53,14 +53,14 @@ void KopeteIdentityStatusBarIcon::mousePressEvent( QMouseEvent *me )
 		// Will be automatically deleted when the statusMenu is deleted.
 		Kopete::StatusRootAction* statusAction = new Kopete::StatusRootAction( statusMenu );
 
-		connect( statusAction, SIGNAL(changeStatus(uint, const Kopete::StatusMessage&)),
-		         m_identity, SLOT(setOnlineStatus(uint, const Kopete::StatusMessage&)) );
+		connect( statusAction, SIGNAL(changeStatus(uint,Kopete::StatusMessage)),
+		         m_identity, SLOT(setOnlineStatus(uint,Kopete::StatusMessage)) );
 		connect( statusAction, SIGNAL(updateMessage(Kopete::StatusRootAction*)),
 		         this, SLOT(updateMessage(Kopete::StatusRootAction*)) );
-		connect( statusAction, SIGNAL(changeMessage(const Kopete::StatusMessage&)),
-		         m_identity, SLOT(setStatusMessage(const Kopete::StatusMessage&)) );
+		connect( statusAction, SIGNAL(changeMessage(Kopete::StatusMessage)),
+		         m_identity, SLOT(setStatusMessage(Kopete::StatusMessage)) );
 
-		connect( statusMenu->menu(), SIGNAL( aboutToHide() ), statusMenu, SLOT( deleteLater() ) );
+		connect( statusMenu->menu(), SIGNAL(aboutToHide()), statusMenu, SLOT(deleteLater()) );
 		statusMenu->menu()->popup( me->globalPos() );
 	}
 }

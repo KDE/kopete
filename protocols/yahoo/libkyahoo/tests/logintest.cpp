@@ -33,7 +33,7 @@ LoginTest::LoginTest(int argc, char ** argv) : QApplication( argc, argv )
 	// notify when the transport layer is connected
 	myClient = new Client();
 	// do test once the event loop is running
-	QTimer::singleShot( 0, this, SLOT( slotDoTest() ) );
+	QTimer::singleShot( 0, this, SLOT(slotDoTest()) );
 	connected = false;
 }
 
@@ -50,7 +50,7 @@ void LoginTest::slotDoTest()
 	// connect to server
 	kDebug(14180) << " connecting to server";
 	
-	connect( myClient, SIGNAL( connected() ), SLOT( slotConnected() ) );
+	connect( myClient, SIGNAL(connected()), SLOT(slotConnected()) );
 	myClient->start( server, 5050, "duncanmacvicar", "**********" );
 	myClient->connectToServer( myClientStream, server, true );
 }

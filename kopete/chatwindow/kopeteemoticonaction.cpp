@@ -48,7 +48,7 @@ public:
 		QWidgetAction *act = new QWidgetAction(m_popup);
 		act->setDefaultWidget(emoticonSelector);
 		m_popup->addAction(act);
-		connect( m_popup, SIGNAL( aboutToShow() ), emoticonSelector, SLOT( prepareList() ) );
+		connect( m_popup, SIGNAL(aboutToShow()), emoticonSelector, SLOT(prepareList()) );
 	}
 
 	~KopeteEmoticonActionPrivate()
@@ -89,8 +89,8 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 		setIcon( KIcon( icon ) );
 
 	setShortcutConfigurable( false );
-	connect( d->emoticonSelector, SIGNAL( itemSelected( const QString & ) ),
-		this, SIGNAL( activated( const QString & ) ) );
+	connect( d->emoticonSelector, SIGNAL(itemSelected(QString)),
+		this, SIGNAL(activated(QString)) );
 }
 
 KopeteEmoticonAction::~KopeteEmoticonAction()

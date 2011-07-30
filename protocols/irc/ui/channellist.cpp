@@ -223,22 +223,22 @@ ChannelList::ChannelList( QWidget* parent, KIRC::Client *client )
 	mChannelList->header()->setLabel( 2, i18n( "Topic" ) );
 
 	// signals and slots connections
-	connect( mChannelList, SIGNAL( doubleClicked(Q3ListViewItem*) ),
-		this, SLOT( slotItemDoubleClicked(Q3ListViewItem*) ) );
+	connect( mChannelList, SIGNAL(doubleClicked(Q3ListViewItem*)),
+		this, SLOT(slotItemDoubleClicked(Q3ListViewItem*)) );
 
-	connect( mSearchButton, SIGNAL( clicked() ), this, SLOT( search() ) );
+	connect( mSearchButton, SIGNAL(clicked()), this, SLOT(search()) );
 
-	connect( mChannelList, SIGNAL( selectionChanged( Q3ListViewItem*) ), this,
-		SLOT( slotItemSelected( Q3ListViewItem *) ) );
+	connect( mChannelList, SIGNAL(selectionChanged(Q3ListViewItem*)), this,
+		SLOT(slotItemSelected(Q3ListViewItem*)) );
 
 	/*
-	connect( m_engine, SIGNAL( incomingListedChan( const QString &, uint, const QString & ) ),
-		this, SLOT( slotChannelListed( const QString &, uint, const QString & ) ) );
+	connect( m_engine, SIGNAL(incomingListedChan(QString,uint,QString)),
+		this, SLOT(slotChannelListed(QString,uint,QString)) );
 
-	connect( m_engine, SIGNAL( incomingEndOfList() ), this, SLOT( slotListEnd() ) );
+	connect( m_engine, SIGNAL(incomingEndOfList()), this, SLOT(slotListEnd()) );
 
-	connect( m_engine, SIGNAL( connectedToServer() ), this, SLOT( reset() ) );
-	connect( m_engine, SIGNAL( disconnected() ), this, SLOT( slotDisconnected() ) );
+	connect( m_engine, SIGNAL(connectedToServer()), this, SLOT(reset()) );
+	connect( m_engine, SIGNAL(disconnected()), this, SLOT(slotDisconnected()) );
 	*/
 
 	show();
@@ -322,7 +322,7 @@ void ChannelList::slotSearchCache()
 	{
 		checkSearchResult( cacheIterator.key(), cacheIterator.data().first, cacheIterator.data().second );
 		++cacheIterator;
-		QTimer::singleShot( 0, this, SLOT( slotSearchCache() ) );
+		QTimer::singleShot( 0, this, SLOT(slotSearchCache()) );
 	}
 	else
 	{

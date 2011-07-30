@@ -97,7 +97,7 @@ void PrivacyManager::setDefaultAllow( bool allow )
 {
 	PrivacyItemTask * pit = new PrivacyItemTask( m_client->rootTask() );
 	pit->defaultPolicy( !allow );
-	connect( pit, SIGNAL( finished() ), SLOT( slotDefaultPolicyChanged() ) );
+	connect( pit, SIGNAL(finished()), SLOT(slotDefaultPolicyChanged()) );
 	pit->go( true );
 }
 
@@ -105,7 +105,7 @@ void PrivacyManager::setDefaultDeny( bool deny )
 {
 	PrivacyItemTask * pit = new PrivacyItemTask( m_client->rootTask() );
 	pit->defaultPolicy( deny);
-	connect( pit, SIGNAL( finished() ), SLOT( slotDefaultPolicyChanged() ) );
+	connect( pit, SIGNAL(finished()), SLOT(slotDefaultPolicyChanged()) );
 	pit->go( true );
 }
 
@@ -114,7 +114,7 @@ void PrivacyManager::addAllow( const QString & dn )
 	// start off a CreatePrivacyItemTask
 	PrivacyItemTask * pit = new PrivacyItemTask( m_client->rootTask() );
 	pit->allow( dn );
-	connect( pit, SIGNAL( finished() ), SLOT( slotAllowAdded() ) );
+	connect( pit, SIGNAL(finished()), SLOT(slotAllowAdded()) );
 	pit->go( true );
 }
 
@@ -123,7 +123,7 @@ void PrivacyManager::addDeny( const QString & dn )
 	// start off a CreatePrivacyItemTask
 	PrivacyItemTask * pit = new PrivacyItemTask( m_client->rootTask() );
 	pit->deny( dn );
-	connect( pit, SIGNAL( finished() ), SLOT( slotDenyAdded() ) );
+	connect( pit, SIGNAL(finished()), SLOT(slotDenyAdded()) );
 	pit->go( true );
 }
 
@@ -131,7 +131,7 @@ void PrivacyManager::removeAllow( const QString & dn )
 {
 	PrivacyItemTask * pit = new PrivacyItemTask( m_client->rootTask() );
 	pit->removeAllow( dn );
-	connect( pit, SIGNAL( finished() ), SLOT( slotAllowRemoved() ) );
+	connect( pit, SIGNAL(finished()), SLOT(slotAllowRemoved()) );
 	pit->go( true );
 }
 
@@ -140,7 +140,7 @@ void PrivacyManager::removeDeny( const QString & dn )
 	// start off a CreatePrivacyItemTask
 	PrivacyItemTask * pit = new PrivacyItemTask( m_client->rootTask() );
 	pit->removeDeny( dn );
-	connect( pit, SIGNAL( finished() ), SLOT( slotDenyRemoved() ) );
+	connect( pit, SIGNAL(finished()), SLOT(slotDenyRemoved()) );
 	pit->go( true );
 }
 

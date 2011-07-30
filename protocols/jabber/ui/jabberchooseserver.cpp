@@ -55,8 +55,8 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent )
 	// retrieve server list
 	mTransferJob = KIO::get ( KUrl("http://www.jabber.org/servers.xml") );
 
-	connect ( mTransferJob, SIGNAL ( result ( KJob* ) ), this, SLOT ( slotTransferResult ( KJob* ) ) );
-	connect ( mTransferJob, SIGNAL ( data ( KIO::Job*, const QByteArray& ) ), this, SLOT ( slotTransferData ( KIO::Job*, const QByteArray& ) ) );
+	connect ( mTransferJob, SIGNAL (result(KJob*)), this, SLOT (slotTransferResult(KJob*)) );
+	connect ( mTransferJob, SIGNAL (data(KIO::Job*,QByteArray)), this, SLOT (slotTransferData(KIO::Job*,QByteArray)) );
 
 	connect ( mMainWidget->listServers, SIGNAL (cellClicked(int,int)), this, SLOT (slotListServerClicked()) );
 	connect ( mMainWidget->listServers, SIGNAL (cellDoubleClicked(int,int)), this, SLOT (slotOk()) );

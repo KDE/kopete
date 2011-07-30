@@ -30,11 +30,11 @@ ContactStalker::ContactStalker(Kopete::MetaContact *contact)
 {
     m_contact = contact;
     QObject::connect( Kopete::ContactList::self(), 
-    		SIGNAL(metaContactRemoved( Kopete::MetaContact *)),
-    		this, SLOT(slotMetaContactRemoved(Kopete::MetaContact *)) );
+    		SIGNAL(metaContactRemoved(Kopete::MetaContact*)),
+    		this, SLOT(slotMetaContactRemoved(Kopete::MetaContact*)) );
     QObject::connect( contact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)),
             this, SLOT(slotEmitSignalDelayed()));
-    QObject::connect( contact, SIGNAL(displayNameChanged(const QString &, const QString &)),
+    QObject::connect( contact, SIGNAL(displayNameChanged(QString,QString)),
             this, SLOT(slotEmitSignalDelayed()));
     QObject::connect( contact, SIGNAL(photoChanged()),
             this, SLOT(slotEmitSignalDelayed()));
@@ -44,8 +44,8 @@ ContactStalker::ContactStalker(Kopete::MetaContact *contact)
             this, SLOT(slotEmitSignalDelayed()));    
     
     QObject::connect(Kopete::ChatSessionManager::self(), 
-    		SIGNAL( display( Kopete::Message &, Kopete::ChatSession *) ), 
-    		this, SLOT ( messageAppended( Kopete::Message &, Kopete::ChatSession *) ) );
+    		SIGNAL(display(Kopete::Message&,Kopete::ChatSession*)), 
+    		this, SLOT (messageAppended(Kopete::Message&,Kopete::ChatSession*)) );
     
     m_lastChange = QTime::currentTime();
     slotEmitSignal();

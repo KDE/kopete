@@ -46,7 +46,7 @@ AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const
 	enableButtonOk(false);
 	//setHelp("linkaddressbook");
 	setHelp(QString(), "kopete");
-	connect(m_addressBookSelectorWidget, SIGNAL(addresseeListClicked( Q3ListViewItem * )), SLOT(slotWidgetAddresseeListClicked( Q3ListViewItem * )));
+	connect(m_addressBookSelectorWidget, SIGNAL(addresseeListClicked(Q3ListViewItem*)), SLOT(slotWidgetAddresseeListClicked(Q3ListViewItem*)));
 
 	if ( !preSelectUid.isEmpty() )
 		m_addressBookSelectorWidget->selectAddressee(preSelectUid);

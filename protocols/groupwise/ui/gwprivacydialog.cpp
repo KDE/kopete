@@ -76,13 +76,13 @@ GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWid
 	m_privacy.allowList->setSelectionMode( Q3ListBox::Extended );
 	m_privacy.denyList->setSelectionMode( Q3ListBox::Extended );
 
-	connect( m_privacy.btnAllow, SIGNAL( clicked() ), SLOT( slotAllowClicked() ) );
-	connect( m_privacy.btnBlock, SIGNAL( clicked() ), SLOT( slotBlockClicked() ) );
-	connect( m_privacy.btnAdd, SIGNAL( clicked() ), SLOT( slotAddClicked() ) );
-	connect( m_privacy.btnRemove, SIGNAL( clicked() ), SLOT( slotRemoveClicked() ) );
-	connect( m_privacy.allowList, SIGNAL( selectionChanged() ), SLOT( slotAllowListClicked() ) );
-	connect( m_privacy.denyList, SIGNAL( selectionChanged() ), SLOT( slotDenyListClicked() ) );
-	connect( mgr, SIGNAL( privacyChanged( const QString &, bool ) ), SLOT( slotPrivacyChanged() ) );
+	connect( m_privacy.btnAllow, SIGNAL(clicked()), SLOT(slotAllowClicked()) );
+	connect( m_privacy.btnBlock, SIGNAL(clicked()), SLOT(slotBlockClicked()) );
+	connect( m_privacy.btnAdd, SIGNAL(clicked()), SLOT(slotAddClicked()) );
+	connect( m_privacy.btnRemove, SIGNAL(clicked()), SLOT(slotRemoveClicked()) );
+	connect( m_privacy.allowList, SIGNAL(selectionChanged()), SLOT(slotAllowListClicked()) );
+	connect( m_privacy.denyList, SIGNAL(selectionChanged()), SLOT(slotDenyListClicked()) );
+	connect( mgr, SIGNAL(privacyChanged(QString,bool)), SLOT(slotPrivacyChanged()) );
 	connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
 	connect(this,SIGNAL(applyClicked()),this,SLOT(slotApply()));
 	m_privacy.btnAdd->setEnabled( true );
@@ -190,8 +190,8 @@ void GroupWisePrivacyDialog::slotAddClicked()
 		m_searchDlg->setModal(false);
 		m_search = new GroupWiseContactSearch( m_account, QAbstractItemView::ExtendedSelection, false, m_searchDlg );
 		m_searchDlg->setMainWidget( m_search );
-		QObject::connect( m_searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
-		QObject::connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
+		QObject::connect( m_searchDlg, SIGNAL(okClicked()), SLOT(slotSearchedForUsers()) );
+		QObject::connect( m_search, SIGNAL(selectionValidates(bool)), m_searchDlg, SLOT(enableButtonOk(bool)) );
 		m_searchDlg->enableButtonOk( false );
 	}
 	m_searchDlg->show();
@@ -247,9 +247,9 @@ void GroupWisePrivacyDialog::slotRemoveClicked()
 void GroupWisePrivacyDialog::slotAllowListClicked()
 {
 	// don't get into feedback
-	disconnect( m_privacy.denyList, SIGNAL( selectionChanged() ), this, SLOT( slotDenyListClicked() ) );
+	disconnect( m_privacy.denyList, SIGNAL(selectionChanged()), this, SLOT(slotDenyListClicked()) );
 	m_privacy.denyList->clearSelection();
-	connect( m_privacy.denyList, SIGNAL( selectionChanged() ), SLOT( slotDenyListClicked() ) );
+	connect( m_privacy.denyList, SIGNAL(selectionChanged()), SLOT(slotDenyListClicked()) );
 	bool selected = false;
 	for( int i = m_privacy.allowList->count() - 1; i >= 0 ; --i )
 	{
@@ -267,9 +267,9 @@ void GroupWisePrivacyDialog::slotAllowListClicked()
 void GroupWisePrivacyDialog::slotDenyListClicked()
 {
 	// don't get into feedback
-	disconnect( m_privacy.allowList, SIGNAL( selectionChanged() ), this, SLOT( slotAllowListClicked() ) );
+	disconnect( m_privacy.allowList, SIGNAL(selectionChanged()), this, SLOT(slotAllowListClicked()) );
 	m_privacy.allowList->clearSelection();
-	connect( m_privacy.allowList, SIGNAL( selectionChanged() ), SLOT( slotAllowListClicked() ) );
+	connect( m_privacy.allowList, SIGNAL(selectionChanged()), SLOT(slotAllowListClicked()) );
 	bool selected = false;
 	for( int i = m_privacy.denyList->count() - 1; i >= 0 ; --i )
 	{

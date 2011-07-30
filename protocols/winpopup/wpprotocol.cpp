@@ -69,8 +69,8 @@ WPProtocol::WPProtocol( QObject *parent, const QVariantList & /* args */ )
 	readConfig();
 
 	popupClient = new WinPopupLib(smbClientBin, groupCheckFreq);
-	QObject::connect(popupClient, SIGNAL(signalNewMessage(const QString &, const QDateTime &, const QString &)),
-		this, SLOT(slotReceivedMessage(const QString &, const QDateTime &, const QString &)));
+	QObject::connect(popupClient, SIGNAL(signalNewMessage(QString,QDateTime,QString)),
+		this, SLOT(slotReceivedMessage(QString,QDateTime,QString)));
 }
 
 // Destructor

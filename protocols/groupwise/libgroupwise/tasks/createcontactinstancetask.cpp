@@ -24,7 +24,7 @@
 CreateContactInstanceTask::CreateContactInstanceTask(Task* parent) : NeedFolderTask(parent)
 {
 	// make the client tell the client app (Kopete) when we receive a contact
-	connect( this, SIGNAL( gotContactAdded( const ContactItem & ) ), client(), SIGNAL( contactReceived( const ContactItem & ) ) );
+	connect( this, SIGNAL(gotContactAdded(ContactItem)), client(), SIGNAL(contactReceived(ContactItem)) );
 }
 
 CreateContactInstanceTask::~CreateContactInstanceTask()

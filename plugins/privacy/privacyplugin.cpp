@@ -59,12 +59,12 @@ PrivacyPlugin::PrivacyPlugin( QObject *parent, const QVariantList & )
 	setXMLFile("privacyui.rc");
 
 	m_inboundHandler = new PrivacyMessageHandlerFactory( Kopete::Message::Inbound,
-		Kopete::MessageHandlerFactory::InStageStart, this, SLOT( slotIncomingMessage( Kopete::MessageEvent * ) ) );
+		Kopete::MessageHandlerFactory::InStageStart, this, SLOT(slotIncomingMessage(Kopete::MessageEvent*)) );
 
 	connect(Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)),
 		this, SLOT(slotViewCreated(KopeteView*)));
 
-	connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );
+	connect( this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()) );
 }
 
 

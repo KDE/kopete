@@ -43,11 +43,11 @@ ICQContact::ICQContact( Kopete::Account* account, const QString &name, Kopete::M
 
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::ICQ ) );
 
-	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
-	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
-	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL(loggedIn()), this, SLOT(loggedIn()) );
+	//QObject::connect( mAccount->engine(), SIGNAL(userIsOnline(QString)), this, SLOT(userOnline(QString,UserDetails)) );
+	QObject::connect( mAccount->engine(), SIGNAL(userIsOffline(QString)), this, SLOT(userOffline(QString)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedUserInfo(QString,UserDetails)),
+	                  this, SLOT(userInfoUpdated(QString,UserDetails)) );
 }
 
 ICQContact::~ICQContact()

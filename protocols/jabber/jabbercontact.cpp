@@ -97,19 +97,19 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	{
 		// this contact is a regular contact
 		connect ( this,
-				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-				  this, SLOT ( slotCheckVCard () ) );
+				  SIGNAL (onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+				  this, SLOT (slotCheckVCard()) );
 	}
 	else
 	{
 		// this contact is the myself instance
 		connect ( account()->myself (),
-				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-				  this, SLOT ( slotCheckVCard () ) );
+				  SIGNAL (onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+				  this, SLOT (slotCheckVCard()) );
 
 		connect ( account()->myself (),
-				  SIGNAL ( onlineStatusChanged ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-				  this, SLOT ( slotCheckLastActivity ( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+				  SIGNAL (onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+				  this, SLOT (slotCheckLastActivity(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 
 		/*
 		 * Trigger update once if we're already connected for contacts
@@ -118,7 +118,7 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 		if ( account()->myself()->onlineStatus().isDefinitelyOnline() )
 		{
 			mVCardUpdateInProgress = true;
-			QTimer::singleShot ( 1000, this, SLOT ( slotGetTimedVCard () ) );
+			QTimer::singleShot ( 1000, this, SLOT (slotGetTimedVCard()) );
 		}
 	}
 
@@ -525,7 +525,7 @@ void JabberContact::slotCheckVCard ()
 		mVCardUpdateInProgress = true;
 
 		// current data is older than 24 hours, request a new one
-		QTimer::singleShot ( account()->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedVCard () ) );
+		QTimer::singleShot ( account()->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedVCard()) );
 	}
 
 }
@@ -564,7 +564,7 @@ void JabberContact::slotGetTimedVCard ()
 	// request vCard
 	XMPP::JT_VCard *task = new XMPP::JT_VCard ( account()->client()->rootTask () );
 	// signal to ourselves when the vCard data arrived
-	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotVCard () ) );
+	QObject::connect ( task, SIGNAL (finished()), this, SLOT (slotGotVCard()) );
 	task->get ( mRosterItem.jid () );
 	task->go ( true );
 
@@ -623,7 +623,7 @@ void JabberContact::slotCheckLastActivity ( Kopete::Contact *, const Kopete::Onl
 	{
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "Scheduling request for last activity for " << mRosterItem.jid().bare ();
 
-		QTimer::singleShot ( account()->client()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedLastActivity () ) );
+		QTimer::singleShot ( account()->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedLastActivity()) );
 	}
 
 }
@@ -650,7 +650,7 @@ void JabberContact::slotGetTimedLastActivity ()
 		kDebug ( JABBER_DEBUG_GLOBAL ) << "Requesting last activity from timer for " << mRosterItem.jid().bare ();
 
 		JT_GetLastActivity *task = new JT_GetLastActivity ( account()->client()->rootTask () );
-		QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotLastActivity () ) );
+		QObject::connect ( task, SIGNAL (finished()), this, SLOT (slotGotLastActivity()) );
 		task->get ( mRosterItem.jid () );
 		task->go ( true );
 	}
@@ -789,7 +789,7 @@ void JabberContact::slotSendVCard()
 
 	XMPP::JT_VCard *task = new XMPP::JT_VCard (account()->client()->rootTask ());
 	// signal to ourselves when the vCard data arrived
-	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotSentVCard ()));
+	QObject::connect (task, SIGNAL (finished()), this, SLOT (slotSentVCard()));
 	task->set (rosterItem().jid(), vCard);
 	task->go (true);
 }
@@ -898,7 +898,7 @@ JabberChatSession *JabberContact::manager ( Kopete::ContactPtrList chatMembers, 
 		kDebug(JABBER_DEBUG_GLOBAL) << "No manager found, creating a new one with resource '" << jid.resource () << "'";
 
 		manager = new JabberChatSession ( protocol(), static_cast<JabberBaseContact *>(account()->myself()), chatMembers, jid.resource () );
-		connect ( manager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotChatSessionDeleted ( QObject * ) ) );
+		connect ( manager, SIGNAL (destroyed(QObject*)), this, SLOT (slotChatSessionDeleted(QObject*)) );
 		mManagers.append ( manager );
 	}
 
@@ -955,7 +955,7 @@ JabberChatSession *JabberContact::manager ( const QString &resource, Kopete::Con
 		JabberChatSession *manager = new JabberChatSession ( protocol(),
 																   static_cast<JabberBaseContact *>(account()->myself()),
 																   chatmembers, resource );
-		connect ( manager, SIGNAL ( destroyed ( QObject * ) ), this, SLOT ( slotChatSessionDeleted ( QObject * ) ) );
+		connect ( manager, SIGNAL (destroyed(QObject*)), this, SLOT (slotChatSessionDeleted(QObject*)) );
 		mManagers.append ( manager );
 
 		return manager;

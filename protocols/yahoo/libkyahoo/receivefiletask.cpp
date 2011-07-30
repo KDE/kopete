@@ -58,8 +58,8 @@ void ReceiveFileTask::onGo()
 			return;
 		}
 		m_transferJob = KIO::get( m_remoteUrl, KIO::NoReload, KIO::HideProgressInfo );
-		QObject::connect( m_transferJob, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
-		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
+		QObject::connect( m_transferJob, SIGNAL(result(KJob*)), this, SLOT(slotComplete(KJob*)) );
+		QObject::connect( m_transferJob, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotData(KIO::Job*,QByteArray)) );
 		delete t;
 		break;
 	case FileTransfer7Accept:
@@ -162,8 +162,8 @@ void ReceiveFileTask::slotHeadComplete( KJob *job )
 		// same URL from the HEAD cmd
 		m_transferJob = KIO::get( transfer->url(), KIO::Reload, KIO::HideProgressInfo );
 
-		QObject::connect( m_transferJob, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
-		QObject::connect( m_transferJob, SIGNAL( data( KIO::Job*, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
+		QObject::connect( m_transferJob, SIGNAL(result(KJob*)), this, SLOT(slotComplete(KJob*)) );
+		QObject::connect( m_transferJob, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotData(KIO::Job*,QByteArray)) );
 
         	setCommonTransferMetaData(m_transferJob);
 	}
@@ -241,7 +241,7 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 				KIO::HideProgressInfo);
 		m_mimetypeJob->addMetaData("cookies", "manual");
 		setCommonTransferMetaData(m_mimetypeJob);
-		QObject::connect( m_mimetypeJob, SIGNAL( result( KJob* ) ), this, SLOT( slotHeadComplete( KJob* ) ) );
+		QObject::connect( m_mimetypeJob, SIGNAL(result(KJob*)), this, SLOT(slotHeadComplete(KJob*)) );
 
 	}
 }

@@ -162,10 +162,10 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	m_tab->addTab(styleWidget, i18n("&Style"));
 	addConfig( KopeteChatWindowSettings::self(), styleWidget );
 
-	connect(m_styleUi.styleList, SIGNAL(currentTextChanged(const QString &)),
-		this, SLOT(slotChatStyleSelected(const QString &)));
-	connect(m_styleUi.variantList, SIGNAL(activated(const QString&)),
-		this, SLOT(slotChatStyleVariantSelected(const QString &)));
+	connect(m_styleUi.styleList, SIGNAL(currentTextChanged(QString)),
+		this, SLOT(slotChatStyleSelected(QString)));
+	connect(m_styleUi.variantList, SIGNAL(activated(QString)),
+		this, SLOT(slotChatStyleVariantSelected(QString)));
 	connect(m_styleUi.deleteButton, SIGNAL(clicked()),
 		this, SLOT(slotDeleteChatStyle()));
 	connect(m_styleUi.installButton, SIGNAL(clicked()),

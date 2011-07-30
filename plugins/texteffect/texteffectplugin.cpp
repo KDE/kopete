@@ -38,11 +38,11 @@ TextEffectPlugin::TextEffectPlugin( QObject *parent, const QVariantList &/*args*
 	m_config = new TextEffectConfig;
 	m_config->load();
 
-	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
+	connect ( this , SIGNAL(settingsChanged()) , this , SLOT(slotSettingsChanged()) );
 
 	connect( Kopete::ChatSessionManager::self(),
-		SIGNAL( aboutToSend( Kopete::Message & ) ),
-		SLOT( slotOutgoingMessage( Kopete::Message & ) ) );
+		SIGNAL(aboutToSend(Kopete::Message&)),
+		SLOT(slotOutgoingMessage(Kopete::Message&)) );
 
 	 last_color=0;
 }

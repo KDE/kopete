@@ -57,8 +57,8 @@ StatisticsDialog::StatisticsDialog ( StatisticsContact *contact, StatisticsDB *d
 	KHBox *generalHBox = new KHBox ( this );
 
 	generalHTMLPart = new KHTMLPart ( generalHBox );
-	connect ( generalHTMLPart->browserExtension(), SIGNAL ( openUrlRequestDelayed ( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ),
-	          this, SLOT ( slotOpenURLRequest ( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
+	connect ( generalHTMLPart->browserExtension(), SIGNAL (openUrlRequestDelayed(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
+	          this, SLOT (slotOpenURLRequest(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)) );
 	generalHTMLPart->setJScriptEnabled ( false );
 	generalHTMLPart->setJavaEnabled ( false );
 	generalHTMLPart->setMetaRefreshEnabled ( false );
@@ -92,8 +92,8 @@ StatisticsDialog::StatisticsDialog ( StatisticsContact *contact, StatisticsDB *d
 	                                        m_offlineColor.name() ) );
 
 	dialogUi->datePicker->setDate ( QDate::currentDate() );
-	connect ( dialogUi->datePicker, SIGNAL ( dateChanged ( const QDate& ) ), this, SLOT ( fillCalendarCells() ) );
-	connect ( dialogUi->datePicker, SIGNAL ( dateChanged ( const QDate& ) ), this, SLOT ( generateOneDayStats() ) );
+	connect ( dialogUi->datePicker, SIGNAL (dateChanged(QDate)), this, SLOT (fillCalendarCells()) );
+	connect ( dialogUi->datePicker, SIGNAL (dateChanged(QDate)), this, SLOT (generateOneDayStats()) );
 
 	setFocus();
 	setEscapeButton ( Close );

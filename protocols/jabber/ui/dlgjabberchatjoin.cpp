@@ -44,7 +44,7 @@ dlgJabberChatJoin::dlgJabberChatJoin(JabberAccount *account, QWidget* parent)
 
 	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotJoin()));
 	connect(m_ui.pbQuery, SIGNAL(clicked()), this, SLOT(slotQuery()));
-	connect(m_ui.tblChatRoomsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(slotDoubleClick(QTreeWidgetItem *)));
+	connect(m_ui.tblChatRoomsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(slotDoubleClick(QTreeWidgetItem*)));
 	connect(m_ui.leServer, SIGNAL(textChanged(QString)), this, SLOT(slotCheckData()));
 	connect(m_ui.leRoom, SIGNAL(textChanged(QString)), this, SLOT(slotCheckData()));
 	connect(m_ui.leNick, SIGNAL(textChanged(QString)), this, SLOT(slotCheckData()));

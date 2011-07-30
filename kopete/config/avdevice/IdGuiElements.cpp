@@ -21,25 +21,25 @@
 IdPushButton::IdPushButton(unsigned int id, QWidget * parent) : KPushButton(parent)
 {
 	_id = id;
-	connect(this, SIGNAL( pressed() ), this, SLOT( emitPressed() ));
+	connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
 }
 
 IdPushButton::IdPushButton(unsigned int id, const QString text, QWidget * parent) : KPushButton(text, parent)
 {
 	_id = id;
-	connect(this, SIGNAL( pressed() ), this, SLOT( emitPressed() ));
+	connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
 }
 
 IdPushButton::IdPushButton(unsigned int id, const KIcon icon, const QString text, QWidget * parent) : KPushButton(icon, text, parent)
 {
 	_id = id;
-	connect(this, SIGNAL( pressed() ), this, SLOT( emitPressed() ));
+	connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
 }
 
 IdPushButton::IdPushButton(unsigned int id, KGuiItem item, QWidget * parent) : KPushButton(item, parent)
 {
 	_id = id;
-	connect(this, SIGNAL( pressed() ), this, SLOT( emitPressed() ));
+	connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
 }
 
 void IdPushButton::emitPressed()
@@ -52,13 +52,13 @@ void IdPushButton::emitPressed()
 IdComboBox::IdComboBox(unsigned int id, QWidget * parent) : KComboBox(parent)
 {
 	_id = id;
-	connect(this, SIGNAL( currentIndexChanged(int) ), this, SLOT( emitCurrentIndexChanged(int) ));
+	connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCurrentIndexChanged(int)));
 }
 
 IdComboBox::IdComboBox(unsigned int id, bool rw, QWidget * parent) : KComboBox(rw, parent)
 {
 	_id = id;
-	connect(this, SIGNAL( currentIndexChanged(int) ), this, SLOT( emitCurrentIndexChanged(int) ));
+	connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(emitCurrentIndexChanged(int)));
 }
 
 void IdComboBox::emitCurrentIndexChanged(int index)
@@ -71,13 +71,13 @@ void IdComboBox::emitCurrentIndexChanged(int index)
 IdCheckBox::IdCheckBox(unsigned int id, QWidget * parent) : QCheckBox(parent)
 {
 	_id = id;
-	connect(this, SIGNAL( stateChanged(int) ), this, SLOT( emitStateChanged(int) ));
+	connect(this, SIGNAL(stateChanged(int)), this, SLOT(emitStateChanged(int)));
 }
 
 IdCheckBox::IdCheckBox(unsigned int id, const QString & text, QWidget * parent) : QCheckBox(text, parent)
 {
 	_id = id;
-	connect(this, SIGNAL( stateChanged(int) ), this, SLOT( emitStateChanged(int) ));
+	connect(this, SIGNAL(stateChanged(int)), this, SLOT(emitStateChanged(int)));
 }
 
 void IdCheckBox::emitStateChanged(int state)
@@ -91,14 +91,14 @@ void IdCheckBox::emitStateChanged(int state)
 IdSlider::IdSlider(unsigned int id, QWidget * parent) : QSlider(parent)
 {
 	_id = id;
-	connect(this, SIGNAL( valueChanged(int) ), this, SLOT( emitValueChanged(int) ));
+	connect(this, SIGNAL(valueChanged(int)), this, SLOT(emitValueChanged(int)));
 
 }
 
 IdSlider::IdSlider(unsigned int id, Qt::Orientation orientation, QWidget * parent) : QSlider(orientation, parent)
 {
 	_id = id;
-	connect(this, SIGNAL( valueChanged(int) ), this, SLOT( emitValueChanged(int) ));
+	connect(this, SIGNAL(valueChanged(int)), this, SLOT(emitValueChanged(int)));
 }
 
 void IdSlider::emitValueChanged(int value)

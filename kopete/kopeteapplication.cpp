@@ -89,7 +89,7 @@ KopeteApplication::KopeteApplication()
 	 * Additionally, it makes the GUI appear less 'blocking' during startup, so
 	 * there is a secondary benefit as well here. (Martijn)
 	 */
-	QTimer::singleShot( 0, this, SLOT( slotLoadPlugins() ) );
+	QTimer::singleShot( 0, this, SLOT(slotLoadPlugins()) );
 
 	m_fileEngineHandler = new Kopete::FileEngineHandler();
 
@@ -183,15 +183,15 @@ void KopeteApplication::slotLoadPlugins()
 
 		showConfigDialog = false;
 		// pretend all plugins were loaded :)
-		QTimer::singleShot(0, this, SLOT( slotAllPluginsLoaded() ));
+		QTimer::singleShot(0, this, SLOT(slotAllPluginsLoaded()));
 	}
 	else
 	{
 		Kopete::PluginManager::self()->loadAllPlugins();
 	}
 
-	connect( Kopete::PluginManager::self(), SIGNAL( allPluginsLoaded() ),
-		this, SLOT( slotAllPluginsLoaded() ));
+	connect( Kopete::PluginManager::self(), SIGNAL(allPluginsLoaded()),
+		this, SLOT(slotAllPluginsLoaded()));
 
 	if( showConfigDialog )
 	{

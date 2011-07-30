@@ -107,8 +107,8 @@ void AccountSelector::initUI()
 			new AccountListViewItem(d->lv, account);
 	}
 
-	connect(d->lv, SIGNAL(selectionChanged(Q3ListViewItem *)),
-		this, SLOT(slotSelectionChanged(Q3ListViewItem *)));
+	connect(d->lv, SIGNAL(selectionChanged(Q3ListViewItem*)),
+		this, SLOT(slotSelectionChanged(Q3ListViewItem*)));
 }
 
 

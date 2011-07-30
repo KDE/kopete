@@ -73,8 +73,8 @@ ClientStream::ClientStream( QAbstractSocket *socket, QObject *parent )
 	connect(d->socket, SIGNAL(bytesWritten(qint64)), SLOT(socketBytesWritten(qint64)));
 	
 	
-	connect( &d->client, SIGNAL(outgoingData(const QByteArray&)),
-	         SLOT (cp_outgoingData(const QByteArray & )) );
+	connect( &d->client, SIGNAL(outgoingData(QByteArray)),
+	         SLOT (cp_outgoingData(QByteArray)) );
 	connect( &d->client, SIGNAL(incomingData()),
 	         SLOT (cp_incomingData()) );
 

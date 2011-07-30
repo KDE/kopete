@@ -75,7 +75,7 @@ bool SearchChatTask::take( Transfer * transfer )
 	m_objectId = sf->value().toInt();
 
 	// now start the results poll timer
-	QTimer::singleShot( GW_POLL_INITIAL_DELAY, this, SLOT( slotPollForResults() ) );
+	QTimer::singleShot( GW_POLL_INITIAL_DELAY, this, SLOT(slotPollForResults()) );
 	return true;
 }
 
@@ -84,7 +84,7 @@ void SearchChatTask::slotPollForResults()
 	//create a PollSearchResultsTask
 	GetChatSearchResultsTask * gcsrt = new GetChatSearchResultsTask( client()->rootTask() );
 	gcsrt->poll( m_objectId );
-	connect( gcsrt, SIGNAL( finished() ), SLOT( slotGotPollResults() ) );
+	connect( gcsrt, SIGNAL(finished()), SLOT(slotGotPollResults()) );
 	gcsrt->go( true );
 }
 
@@ -97,14 +97,14 @@ void SearchChatTask::slotGotPollResults()
 	{
 		case GetChatSearchResultsTask::GettingData:
 			if ( m_polls < GW_POLL_MAXIMUM ) // restart timer
-				QTimer::singleShot( GW_POLL_FREQUENCY_MS, this, SLOT( slotPollForResults() ) );
+				QTimer::singleShot( GW_POLL_FREQUENCY_MS, this, SLOT(slotPollForResults()) );
 			else
 				setSuccess( gcsrt->statusCode() );
 			break;
 		case GetChatSearchResultsTask::DataRetrieved:
 			// got some results, there may be more.
 			m_results += gcsrt->results();
-            QTimer::singleShot( 0, this, SLOT( slotPollForResults() ) );
+            QTimer::singleShot( 0, this, SLOT(slotPollForResults()) );
 			break;
 		case GetChatSearchResultsTask::Completed:
 			m_results += gcsrt->results();

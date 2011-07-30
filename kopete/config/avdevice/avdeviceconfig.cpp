@@ -77,10 +77,10 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
 	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 
-	connect(mVideoDevicePool, SIGNAL(deviceRegistered(const QString &) ),
-			SLOT(deviceRegistered(const QString &)) );
-	connect(mVideoDevicePool, SIGNAL(deviceUnregistered(const QString &) ),
-			SLOT(deviceUnregistered(const QString &)) );
+	connect(mVideoDevicePool, SIGNAL(deviceRegistered(QString)),
+			SLOT(deviceRegistered(QString)) );
+	connect(mVideoDevicePool, SIGNAL(deviceUnregistered(QString)),
+			SLOT(deviceUnregistered(QString)) );
 
 	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
 }
@@ -150,7 +150,7 @@ void AVDeviceConfig::setupControls()
 		KPushButton *button = new KPushButton( mPrfsVideoDevice->VideoTabWidget );
 		button->setText( i18n("Execute") );
 		mPrfsVideoDevice->actions_gridLayout->addWidget( button, insert_row, 1 );
-		connect( button, SIGNAL( pressed() ), this, SLOT( resetControls() ) );
+		connect( button, SIGNAL(pressed()), this, SLOT(resetControls()) );
 		ctrlWidgets.push_back(label);
 		ctrlWidgets.push_back(button);
 	}
@@ -183,7 +183,7 @@ void AVDeviceConfig::addSliderControlElement(int cid, QString title, int min, in
 	slider->setMaximum( max );
 	slider->setSliderPosition( value );
 	slider->setTickInterval( step );
-	connect( slider, SIGNAL( valueChanged(uint, int) ), this, SLOT( changeVideoControlValue(uint, int) ) );
+	connect( slider, SIGNAL(valueChanged(uint,int)), this, SLOT(changeVideoControlValue(uint,int)) );
 	ctrlWidgets.push_back(label);
 	ctrlWidgets.push_back(slider);
 }
@@ -195,7 +195,7 @@ void AVDeviceConfig::addCheckBoxControlElement(int cid, QString title, bool valu
 	checkbox->setText( title );
 	mPrfsVideoDevice->checkboxOptions_verticalLayout->addWidget( checkbox );
 	checkbox->setChecked( value );
-	connect( checkbox, SIGNAL( stateChanged(uint, int) ), this, SLOT( changeVideoControlValue(uint, int) ) );
+	connect( checkbox, SIGNAL(stateChanged(uint,int)), this, SLOT(changeVideoControlValue(uint,int)) );
 	ctrlWidgets.push_back(checkbox);
 }
 
@@ -209,7 +209,7 @@ void AVDeviceConfig::addPopupMenuControlElement(int cid, QString title, QStringL
 	mPrfsVideoDevice->menuOptions_gridLayout->addWidget( combobox, insert_row, 1 );
 	combobox->addItems( options );
 	combobox->setCurrentIndex( menuindex );
-	connect( combobox, SIGNAL( currentIndexChanged(uint, int) ), this, SLOT( changeVideoControlValue(uint, int) ) );
+	connect( combobox, SIGNAL(currentIndexChanged(uint,int)), this, SLOT(changeVideoControlValue(uint,int)) );
 	ctrlWidgets.push_back(label);
 	ctrlWidgets.push_back(combobox);
 }
@@ -223,7 +223,7 @@ void AVDeviceConfig::addButtonControlElement(int cid, QString title)
 	IdPushButton *button = new IdPushButton( cid, mPrfsVideoDevice->VideoTabWidget );
 	button->setText( i18n("Execute") );
 	mPrfsVideoDevice->actions_gridLayout->addWidget( button, insert_row, 1 );
-	connect( button, SIGNAL( pressed(uint) ), this, SLOT( changeVideoControlValue(uint) ) );
+	connect( button, SIGNAL(pressed(uint)), this, SLOT(changeVideoControlValue(uint)) );
 	ctrlWidgets.push_back(label);
 	ctrlWidgets.push_back(button);
 }

@@ -56,8 +56,8 @@ KDialog(parent)
 	ui.trServices->installEventFilter(this);
 	connect(ui.btnQuery, SIGNAL(clicked()), this, SLOT(slotDisco()));
 
-	connect(ui.trServices, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(slotItemExpanded(QTreeWidgetItem *)));
-	connect(ui.trServices, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(slotMenuRequested(const QPoint &)));
+	connect(ui.trServices, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(slotItemExpanded(QTreeWidgetItem*)));
+	connect(ui.trServices, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotMenuRequested(QPoint)));
 
 	mActRegister = new QAction(i18n("Register..."), this);
 	connect(mActRegister, SIGNAL(triggered()), this, SLOT(slotRegister()));
@@ -134,7 +134,7 @@ void dlgJabberServices::slotService()
 	}
 
 	XMPP::JT_GetServices *serviceTask = new XMPP::JT_GetServices (mAccount->client()->rootTask ());
-	connect (serviceTask, SIGNAL (finished ()), this, SLOT (slotServiceFinished ()));
+	connect (serviceTask, SIGNAL (finished()), this, SLOT (slotServiceFinished()));
 
 	// populate server field if it is empty
 	if(leServer->text().isEmpty())

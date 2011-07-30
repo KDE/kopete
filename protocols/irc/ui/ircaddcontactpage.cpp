@@ -42,11 +42,11 @@ IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a )
 
 	d->account = a;
 
-	connect( d->search, SIGNAL( channelSelected( const QString & ) ),
-		this, SLOT( slotChannelSelected( const QString & ) ) );
+	connect( d->search, SIGNAL(channelSelected(QString)),
+		this, SLOT(slotChannelSelected(QString)) );
 
-	connect( d->search, SIGNAL( channelDoubleClicked( const QString & ) ),
-		this, SLOT( slotChannelDoubleClicked( const QString & ) ) );
+	connect( d->search, SIGNAL(channelDoubleClicked(QString)),
+		this, SLOT(slotChannelDoubleClicked(QString)) );
 }
 
 IRCAddContactPage::~IRCAddContactPage()

@@ -353,8 +353,8 @@ IBBManager::IBBManager(Client *parent)
 	d->client = parent;
 	
 	d->ibb = new JT_IBB(d->client->rootTask(), true);
-	connect(d->ibb, SIGNAL(incomingRequest(const Jid &, const QString &, const QDomElement &)), SLOT(ibb_incomingRequest(const Jid &, const QString &, const QDomElement &)));
-	connect(d->ibb, SIGNAL(incomingData(const Jid &, const QString &, const QString &, const QByteArray &, bool)), SLOT(ibb_incomingData(const Jid &, const QString &, const QString &, const QByteArray &, bool)));
+	connect(d->ibb, SIGNAL(incomingRequest(Jid,QString,QDomElement)), SLOT(ibb_incomingRequest(Jid,QString,QDomElement)));
+	connect(d->ibb, SIGNAL(incomingData(Jid,QString,QString,QByteArray,bool)), SLOT(ibb_incomingData(Jid,QString,QString,QByteArray,bool)));
 }
 
 IBBManager::~IBBManager()

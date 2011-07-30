@@ -72,16 +72,16 @@ OscarContact::OscarContact( Kopete::Account* account, const QString& name,
 
 	setFileCapable( true );
 
-	QObject::connect( mAccount->engine(), SIGNAL(haveIconForContact(const QString&, QByteArray)),
-	                  this, SLOT(haveIcon(const QString&, QByteArray)) );
+	QObject::connect( mAccount->engine(), SIGNAL(haveIconForContact(QString,QByteArray)),
+	                  this, SLOT(haveIcon(QString,QByteArray)) );
 	QObject::connect( mAccount->engine(), SIGNAL(iconServerConnected()),
 	                  this, SLOT(requestBuddyIcon()) );
-	QObject::connect( mAccount->engine(), SIGNAL(receivedAwayMessage(const QString&, const QString& )),
-	                  this, SLOT(receivedStatusMessage(const QString&, const QString&)) );
-	QObject::connect( mAccount->engine(), SIGNAL(messageAck(const QString&, uint)),
-	                  this, SLOT(messageAck(const QString&, uint)) );
-	QObject::connect( mAccount->engine(), SIGNAL(messageError(const QString&, uint)),
-	                  this, SLOT(messageError(const QString&, uint)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedAwayMessage(QString,QString)),
+	                  this, SLOT(receivedStatusMessage(QString,QString)) );
+	QObject::connect( mAccount->engine(), SIGNAL(messageAck(QString,uint)),
+	                  this, SLOT(messageAck(QString,uint)) );
+	QObject::connect( mAccount->engine(), SIGNAL(messageError(QString,uint)),
+	                  this, SLOT(messageError(QString,uint)) );
 }
 
 OscarContact::~OscarContact()
@@ -134,15 +134,15 @@ Kopete::ChatSession* OscarContact::manager( CanCreateFlags canCreate )
 		mMsgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), theContact, protocol());
 
 		// This is for when the user types a message and presses send
-		connect(mMsgManager, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession * ) ),
-		        this, SLOT( slotSendMsg( Kopete::Message&, Kopete::ChatSession * ) ) );
+		connect(mMsgManager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+		        this, SLOT(slotSendMsg(Kopete::Message&,Kopete::ChatSession*)) );
 
 		// For when the message manager is destroyed
-		connect(mMsgManager, SIGNAL( destroyed() ),
-		        this, SLOT( chatSessionDestroyed() ) );
+		connect(mMsgManager, SIGNAL(destroyed()),
+		        this, SLOT(chatSessionDestroyed()) );
 
-		connect(mMsgManager, SIGNAL( myselfTyping( bool ) ),
-		        this, SLOT( slotTyping( bool ) ) );
+		connect(mMsgManager, SIGNAL(myselfTyping(bool)),
+		        this, SLOT(slotTyping(bool)) );
 	}
 	return mMsgManager;
 }
@@ -216,7 +216,7 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 				int time = ( KRandom::random() % 10 ) * 1000;
 				kDebug(OSCAR_GEN_DEBUG) << "updating buddy icon in "
 					<< time/1000 << " seconds" << endl;
-				QTimer::singleShot( time, this, SLOT( requestBuddyIcon() ) );
+				QTimer::singleShot( time, this, SLOT(requestBuddyIcon()) );
 			}
 		}
 	}
@@ -379,11 +379,11 @@ void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, 
 	connect( transfer, SIGNAL(transferCanceled()), ftHandler, SLOT(cancel()) );
 
 	connect( ftHandler, SIGNAL(transferCancelled()), transfer, SLOT(slotCancelled()) );
-	connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
-	connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
+	connect( ftHandler, SIGNAL(transferError(int,QString)), transfer, SLOT(slotError(int,QString)) );
+	connect( ftHandler, SIGNAL(transferProcessed(uint)), transfer, SLOT(slotProcessed(uint)) );
 	connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
-	connect( ftHandler, SIGNAL(transferNextFile(const QString&, const QString&)),
-	         transfer, SLOT(slotNextFile(const QString&, const QString&)) );
+	connect( ftHandler, SIGNAL(transferNextFile(QString,QString)),
+	         transfer, SLOT(slotNextFile(QString,QString)) );
 
 	ftHandler->send();
 }

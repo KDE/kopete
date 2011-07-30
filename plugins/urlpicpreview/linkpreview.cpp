@@ -70,7 +70,7 @@ QPixmap LinkPreview::getPreviewPic(const KUrl& url) {
     m_URLLoading = true;
 
     connect(m_khtml, SIGNAL(completed()), this, SLOT(completed()));
-    connect(m_khtml, SIGNAL(canceled(const QString &)), this, SLOT(completed()));
+    connect(m_khtml, SIGNAL(canceled(QString)), this, SLOT(completed()));
 
     if(m_khtml->openUrl(url)) {
         kDebug(14314) << "Creating preview of " << url;

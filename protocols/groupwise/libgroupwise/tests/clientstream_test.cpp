@@ -14,15 +14,15 @@ ClientStreamTest::ClientStreamTest(int argc, char ** argv) : QApplication( argc,
 	myTLSHandler = new QCATLSHandler( myTLS );
 	myTestObject = new ClientStream( myConnector, myTLSHandler, 0);
 	// notify when the transport layer is connected
-	connect( myTestObject, SIGNAL( connected() ), SLOT( slotConnected() ) );
+	connect( myTestObject, SIGNAL(connected()), SLOT(slotConnected()) );
 	// it's necessary to catch this signal and tell the TLS handler to proceed, even if we don't check cert validity
 	connect( myTLSHandler, SIGNAL(tlsHandshaken()), SLOT(slotTLSHandshaken()) );
 	// notify and start sending
-	connect( myTestObject, SIGNAL( securityLayerActivated(int) ), SLOT( slotSend(int) ) );
-	connect( myTestObject, SIGNAL( warning(int) ), SLOT( slotWarning(int) ) );
+	connect( myTestObject, SIGNAL(securityLayerActivated(int)), SLOT(slotSend(int)) );
+	connect( myTestObject, SIGNAL(warning(int)), SLOT(slotWarning(int)) );
 
 	// do test once the event loop is running
-	QTimer::singleShot( 0, this, SLOT( slotDoTest() ) );
+	QTimer::singleShot( 0, this, SLOT(slotDoTest()) );
 }
 
 ClientStreamTest::~ClientStreamTest()

@@ -66,7 +66,7 @@ HistoryLogger::HistoryLogger( Kopete::MetaContact *m,  QObject *parent )
 	m_filterRegExp=false;
 
 	//the contact may be destroyed, for example, if the contact changes its metacontact
-	connect(m_metaContact , SIGNAL(destroyed(QObject *)) , this , SLOT(slotMCDeleted()));
+	connect(m_metaContact , SIGNAL(destroyed(QObject*)) , this , SLOT(slotMCDeleted()));
 
 	setPositionToLast();
 }
@@ -86,7 +86,7 @@ HistoryLogger::HistoryLogger( Kopete::Contact *c,  QObject *parent )
 	m_filterRegExp=false;
 
 	//the contact may be destroyed, for example, if the contact changes its metacontact
-	connect(m_metaContact , SIGNAL(destroyed(QObject *)) , this , SLOT(slotMCDeleted()));
+	connect(m_metaContact , SIGNAL(destroyed(QObject*)) , this , SLOT(slotMCDeleted()));
 
 	setPositionToLast();
 }
@@ -320,7 +320,7 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 	if(!m_saveTimer)
 	{
 		m_saveTimer=new QTimer(this);
-		connect( m_saveTimer, SIGNAL( timeout() ) , this, SLOT(saveToDisk()) );
+		connect( m_saveTimer, SIGNAL(timeout()) , this, SLOT(saveToDisk()) );
 	}
 	if(!m_saveTimer->isActive())
 	{

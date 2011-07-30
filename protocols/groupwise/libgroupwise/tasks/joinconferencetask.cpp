@@ -113,8 +113,8 @@ bool JoinConferenceTask::take( Transfer * transfer )
 			{
 				client()->debug( "JoinConferenceTask::slotReceiveUserDetails(), requesting details" );
 				connect( client()->userDetailsManager(), 
-						SIGNAL( gotContactDetails( const GroupWise::ContactDetails & ) ),
-						SLOT( slotReceiveUserDetails( const GroupWise::ContactDetails & ) ) );
+						SIGNAL(gotContactDetails(GroupWise::ContactDetails)),
+						SLOT(slotReceiveUserDetails(GroupWise::ContactDetails)) );
 				client()->userDetailsManager()->requestDetails( m_unknowns );
 			}
 		}

@@ -65,25 +65,25 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
 
-	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
-			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
-	connect( this, SIGNAL( myselfTyping ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
-	connect( account(), SIGNAL( contactTyping( const ConferenceEvent & ) ),
-						SLOT( slotGotTypingNotification( const ConferenceEvent & ) ) );
-	connect( account(), SIGNAL( contactNotTyping( const ConferenceEvent & ) ),
-						SLOT( slotGotNotTypingNotification( const ConferenceEvent & ) ) );
+	connect ( this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+			  SLOT(slotMessageSent(Kopete::Message&,Kopete::ChatSession*)) );
+	connect( this, SIGNAL(myselfTyping(bool)), SLOT(slotSendTypingNotification(bool)) );
+	connect( account(), SIGNAL(contactTyping(ConferenceEvent)),
+						SLOT(slotGotTypingNotification(ConferenceEvent)) );
+	connect( account(), SIGNAL(contactNotTyping(ConferenceEvent)),
+						SLOT(slotGotNotTypingNotification(ConferenceEvent)) );
 
 	// Set up the Invite menu
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), this );
 	actionCollection()->addAction( "gwInvite", m_actionInvite );
-	connect( m_actionInvite->menu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
+	connect( m_actionInvite->menu(), SIGNAL(aboutToShow()), this, SLOT(slotActionInviteAboutToShow()) ) ;
 
 	m_secure = new KAction( KIcon( "security-high" ), i18n( "Security Status" ), 0 ); // "gwSecureChat"
-	QObject::connect( m_secure, SIGNAL( triggered( bool ) ), SLOT( slotShowSecurity() ) );
+	QObject::connect( m_secure, SIGNAL(triggered(bool)), SLOT(slotShowSecurity()) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 
 	m_logging = new KAction( KIcon( "utilities-log-viewer" ), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
-	QObject::connect( m_secure, SIGNAL( triggered( bool ) ),  SLOT( slotShowArchiving() ) );
+	QObject::connect( m_secure, SIGNAL(triggered(bool)),  SLOT(slotShowArchiving()) );
 	updateArchiving();
 
 	setXMLFile("gwchatui.rc");
@@ -169,8 +169,8 @@ void GroupWiseChatSession::createConference()
 			invitees.append( static_cast< GroupWiseContact * >( contact )->dn() );
 		}
 		// this is where we will set the GUID and send any pending messages
-		connect( account(), SIGNAL( conferenceCreated( const int, const GroupWise::ConferenceGuid & ) ), SLOT( receiveGuid( const int, const GroupWise::ConferenceGuid & ) ) );
-		connect( account(), SIGNAL( conferenceCreationFailed( const int, const int ) ), SLOT( slotCreationFailed( const int, const int ) ) );
+		connect( account(), SIGNAL(conferenceCreated(int,GroupWise::ConferenceGuid)), SLOT(receiveGuid(int,GroupWise::ConferenceGuid)) );
+		connect( account(), SIGNAL(conferenceCreationFailed(int,int)), SLOT(slotCreationFailed(int,int)) );
 
 		// create the conference
 		account()->createConference( mmId(), invitees );
@@ -327,8 +327,8 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	// Invite someone off-list
 	KAction *b = new KAction( i18n("&Other..."), this );
 	actionCollection()->addAction( "actionOther", b );
-	QObject::connect( b, SIGNAL( triggered( bool ) ),
-	                  this, SLOT( slotInviteOtherContact() ) );
+	QObject::connect( b, SIGNAL(triggered(bool)),
+	                  this, SLOT(slotInviteOtherContact()) );
 	m_actionInvite->addAction( b );
 	m_inviteActions.append( b ) ;
 }
@@ -377,7 +377,7 @@ void GroupWiseChatSession::slotInviteOtherContact()
 		m_searchDlg->setDefaultButton(KDialog::Ok);
 		m_search = new GroupWiseContactSearch( account(), QAbstractItemView::SingleSelection, true, m_searchDlg );
 		m_searchDlg->setMainWidget( m_search );
-		connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
+		connect( m_search, SIGNAL(selectionValidates(bool)), m_searchDlg, SLOT(enableButtonOk(bool)) );
 		m_searchDlg->enableButtonOk( false );
 	}
 	m_searchDlg->show();

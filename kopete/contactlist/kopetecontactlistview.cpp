@@ -126,12 +126,12 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	setItemDelegate( new KopeteItemDelegate( this ) );
 	setExpandsOnDoubleClick( true );
 
-	connect( this, SIGNAL( activated(const QModelIndex&)),
-	         this, SLOT( contactActivated(const QModelIndex&)));
-	connect( this, SIGNAL(expanded(const QModelIndex&)),
-	         this, SLOT(itemExpanded(const QModelIndex&)));
-	connect( this, SIGNAL(collapsed(const QModelIndex&)),
-	         this, SLOT(itemCollapsed(const QModelIndex&)));
+	connect( this, SIGNAL(activated(QModelIndex)),
+	         this, SLOT(contactActivated(QModelIndex)));
+	connect( this, SIGNAL(expanded(QModelIndex)),
+	         this, SLOT(itemExpanded(QModelIndex)));
+	connect( this, SIGNAL(collapsed(QModelIndex)),
+	         this, SLOT(itemCollapsed(QModelIndex)));
 	connect( ContactList::LayoutManager::instance(), SIGNAL(activeLayoutChanged()),
 	         this, SLOT(reset()) );
 	connect( Kopete::BehaviorSettings::self(), SIGNAL(configChanged()), SLOT(slotSettingsChanged()) );
@@ -149,8 +149,8 @@ KopeteContactListView::~KopeteContactListView()
 
 void KopeteContactListView::initActions( KActionCollection *ac )
 {
-// 	d->actionUndo = KStandardAction::undo( this , SLOT( slotUndo() ) , ac );
-// 	d->actionRedo = KStandardAction::redo( this , SLOT( slotRedo() ) , ac );
+// 	d->actionUndo = KStandardAction::undo( this , SLOT(slotUndo()) , ac );
+// 	d->actionRedo = KStandardAction::redo( this , SLOT(slotRedo()) , ac );
 // 	d->actionUndo->setEnabled(false);
 // 	d->actionRedo->setEnabled(false);
 
@@ -166,10 +166,10 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	ac->addAction( "contactStartChat", d->actionStartChat );
 
 	d->actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
-                                                KShortcut(), this, SLOT( moveToGroup() ), ac );
+                                                KShortcut(), this, SLOT(moveToGroup()), ac );
 	ac->addAction( "contactMove", d->actionMove );
 	d->actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "edit-copy" ),
-                                                KShortcut(), this, SLOT( copyToGroup() ), ac );
+                                                KShortcut(), this, SLOT(copyToGroup()), ac );
 	ac->addAction( "contactCopy", d->actionCopy );
 
 	d->actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Merge Meta Contacts"), ac);
@@ -187,7 +187,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 // 	-* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*-
 // 	d->actionRename = new KAction( KIcon("edit-rename"), i18n( "Rename" ), ac );
 // 	ac->addAction( "contactRename", d->actionRename );
-// 	connect( d->actionRename, SIGNAL( triggered(bool) ), this, SLOT( slotRename() ) );
+// 	connect( d->actionRename, SIGNAL(triggered(bool)), this, SLOT(slotRename()) );
 
 	d->actionSendFile = KopeteStdAction::sendFile( this, SLOT(sendFile()), ac );
 	ac->addAction( "contactSendFile", d->actionSendFile );
@@ -200,11 +200,11 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	ac->addAction( "contactAddTemporaryContact", d->actionAddTemporaryContact );
 	connect( d->actionAddTemporaryContact, SIGNAL(triggered(bool)), this, SLOT(addTemporaryContact()) );
 
-// 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
+// 	connect( Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(slotMetaContactSelected(bool)) );
 
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
 	         this, SLOT(addToAddContactMenu(Kopete::Account*)) );
-	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered( const Kopete::Account* )),
+	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 	         this, SLOT(removeToAddContactMenu(const Kopete::Account*)) );
 
 	d->actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
@@ -752,7 +752,7 @@ void KopeteContactListView::selectionChanged( const QItemSelection& selected, co
 
 	if ( d->selectedMetaContact )
 	{ // Delete previous connection
-		disconnect( d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		disconnect( d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)),
 		            this, SLOT(updateMetaContactActions()) );
 		d->selectedMetaContact = 0;
 	}
@@ -760,7 +760,7 @@ void KopeteContactListView::selectionChanged( const QItemSelection& selected, co
 	if ( contacts.count() == 1 && groups.empty() )
 	{
 		d->selectedMetaContact = contacts.values().first();
-		connect( d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*, Kopete::OnlineStatus::StatusType)),
+		connect( d->selectedMetaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)),
 		         this, SLOT(updateMetaContactActions()) );
 	}
 
@@ -1060,7 +1060,7 @@ void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, 
 			}
 
 			KMenu *contactMenu = c->popupMenu();
-			connect( popup, SIGNAL( aboutToHide() ), contactMenu, SLOT( deleteLater() ) );
+			connect( popup, SIGNAL(aboutToHide()), contactMenu, SLOT(deleteLater()) );
 			QString nick = c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 			QString text = nick.isEmpty() ?  c->contactId() : i18nc( "Translators: format: '<displayName> (<id>)'", "%2 <%1>", c->contactId(), nick );
 			text=text.replace('&',"&&"); // cf BUG 115449

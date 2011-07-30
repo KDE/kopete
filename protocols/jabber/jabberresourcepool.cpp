@@ -135,8 +135,8 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 
 	// create new resource instance and add it to the dictionary
 	JabberResource *newResource = new JabberResource(d->account, jid, resource);
-	connect ( newResource, SIGNAL ( destroyed (QObject *) ), this, SLOT ( slotResourceDestroyed (QObject *) ) );
-	connect ( newResource, SIGNAL ( updated (JabberResource *) ), this, SLOT ( slotResourceUpdated (JabberResource *) ) );
+	connect ( newResource, SIGNAL (destroyed(QObject*)), this, SLOT (slotResourceDestroyed(QObject*)) );
+	connect ( newResource, SIGNAL (updated(JabberResource*)), this, SLOT (slotResourceUpdated(JabberResource*)) );
 	d->pool.append ( newResource );
 
 	// send notifications out to the relevant contacts that

@@ -49,10 +49,10 @@ URLPicPreviewPreferences::URLPicPreviewPreferences ( QWidget *parent, const QVar
 	// don't display link preview features yet
 	m_ui->linkPreviewGroup->hide();
 
-	connect ( m_ui->enableScaling, SIGNAL ( toggled ( bool ) ), this, SLOT ( changed() ) );
-	connect ( m_ui->previewScaleWidth, SIGNAL ( valueChanged ( int ) ), this, SLOT ( changed() ) );
-	connect ( m_ui->restrictPreviews, SIGNAL ( toggled ( bool ) ), this, SLOT ( changed() ) );
-	connect ( m_ui->previewAmount, SIGNAL ( valueChanged ( int ) ), this, SLOT ( changed() ) );
+	connect ( m_ui->enableScaling, SIGNAL (toggled(bool)), this, SLOT (changed()) );
+	connect ( m_ui->previewScaleWidth, SIGNAL (valueChanged(int)), this, SLOT (changed()) );
+	connect ( m_ui->restrictPreviews, SIGNAL (toggled(bool)), this, SLOT (changed()) );
+	connect ( m_ui->previewAmount, SIGNAL (valueChanged(int)), this, SLOT (changed()) );
 }
 
 URLPicPreviewPreferences::~URLPicPreviewPreferences() {

@@ -44,7 +44,7 @@ void OscarLoginTask::onGo()
 	//send Snac 17,06
 	sendAuthStringRequest();
 	//when we have the authKey, login
-	connect( this, SIGNAL( haveAuthKey() ), this, SLOT( sendLoginRequest() ) );
+	connect( this, SIGNAL(haveAuthKey()), this, SLOT(sendLoginRequest()) );
 }
 
 bool OscarLoginTask::forMe( const Transfer* transfer ) const

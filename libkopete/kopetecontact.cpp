@@ -108,7 +108,7 @@ Contact::Contact( Account *account, const QString &contactId,
 		if ( d->metaContact != Kopete::ContactList::self()->myself() )
 			duplicate = !account->registerContact( this );
 
-		connect( account, SIGNAL( isConnectedChanged() ), SLOT( slotAccountIsConnectedChanged() ) );
+		connect( account, SIGNAL(isConnectedChanged()), SLOT(slotAccountIsConnectedChanged()) );
 	}
 
 	// Need to check this because myself() may have no parent
@@ -239,7 +239,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
 		KAction *actionAddContact = new KAction( KIcon("list-add-user"), i18n( "&Add to Your Contact List" ), menu );
-		connect( actionAddContact, SIGNAL(triggered(bool)), this, SLOT( slotAddContact() ) );
+		connect( actionAddContact, SIGNAL(triggered(bool)), this, SLOT(slotAddContact()) );
 
 		menu->addAction(actionAddContact);
 		menu->addSeparator();
@@ -249,15 +249,15 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	const bool reach = account()->isConnected() && isReachable();
 	const bool myself = (this == account()->myself());
 
-	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ), menu );
+	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT(sendMessage()), menu );
 	actionSendMessage->setEnabled( reach && !myself );
 	menu->addAction( actionSendMessage );
 
-	KAction *actionChat = KopeteStdAction::chat( this, SLOT( startChat() ), menu );
+	KAction *actionChat = KopeteStdAction::chat( this, SLOT(startChat()), menu );
 	actionChat->setEnabled( reach && !myself );
 	menu->addAction( actionChat );
 
-	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT( sendFile() ), menu );
+	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT(sendFile()), menu );
 	actionSendFile->setEnabled( reach && d->fileCapable && !myself );
 	menu->addAction( actionSendFile );
 
@@ -279,26 +279,26 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 
 	if( metaContact() && !metaContact()->isTemporary() )
 	{
-		KAction* changeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), menu );
+		KAction* changeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT(changeMetaContact()), menu );
 		menu->addAction( changeMetaContact );
 
 		d->toggleAlwaysVisibleAction = new KToggleAction( i18n( "Visible when offline" ), menu );
 		d->toggleAlwaysVisibleAction->setChecked( property( Kopete::Global::Properties::self()->isAlwaysVisible() ).value().toBool() );
 		menu->addAction( d->toggleAlwaysVisibleAction );
-		connect( d->toggleAlwaysVisibleAction, SIGNAL( toggled(bool) ), this, SLOT( toggleAlwaysVisible() ) );
+		connect( d->toggleAlwaysVisibleAction, SIGNAL(toggled(bool)), this, SLOT(toggleAlwaysVisible()) );
 	}
 
-	menu->addAction( KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), menu ) );
+	menu->addAction( KopeteStdAction::contactInfo( this, SLOT(slotUserInfo()), menu ) );
 
 #if 0 //this is not fully implemented yet (and doesn't work).  disable for now   - Olivier 2005-01-11
 	if ( account()->isBlocked( d->contactId ) )
-		KopeteStdAction::unblockContact( this, SLOT( slotUnblock() ), menu, "actionUnblockContact" )->plug( menu );
+		KopeteStdAction::unblockContact( this, SLOT(slotUnblock()), menu, "actionUnblockContact" )->plug( menu );
 	else
-		KopeteStdAction::blockContact( this, SLOT( slotBlock() ), menu, "actionBlockContact" )->plug( menu );
+		KopeteStdAction::blockContact( this, SLOT(slotBlock()), menu, "actionBlockContact" )->plug( menu );
 #endif
 
 	if( metaContact() && !metaContact()->isTemporary() )
-		menu->addAction( KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), menu ) );
+		menu->addAction( KopeteStdAction::deleteContact( this, SLOT(slotDelete()), menu ) );
 
 	return menu;
 }
@@ -327,7 +327,7 @@ void Contact::changeMetaContact()
 	QCheckBox *chkCreateNew = new QCheckBox( i18n( "Create a new metacontact for this contact" ), w );
 	chkCreateNew ->setWhatsThis( i18n( "If you select this option, a new metacontact will be created in the top-level group "
 		"with the name of this contact and the contact will be moved to it." ) );
-	QObject::connect( chkCreateNew , SIGNAL( toggled(bool) ) ,  selector , SLOT ( setDisabled(bool) ) ) ;
+	QObject::connect( chkCreateNew , SIGNAL(toggled(bool)) ,  selector , SLOT (setDisabled(bool)) ) ;
 
 	moveDialog->setMainWidget(w);
 	if( moveDialog->exec() == QDialog::Accepted )

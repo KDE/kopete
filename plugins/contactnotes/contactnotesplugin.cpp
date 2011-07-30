@@ -43,7 +43,7 @@ ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QVariantList & /*
         actionCollection()->addAction( "editContactNotes", m_actionEdit );
 	connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));
 
-	connect ( Kopete::ContactList::self() , SIGNAL( metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));
+	connect ( Kopete::ContactList::self() , SIGNAL(metaContactSelected(bool)) , m_actionEdit , SLOT(setEnabled(bool)));
 	m_actionEdit->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count()==1 );
 
 	setXMLFile("contactnotesui.rc");
@@ -68,8 +68,8 @@ void ContactNotesPlugin::slotEditInfo()
 	if(!m)
 		return;
 	ContactNotesEdit *e=new ContactNotesEdit(m,this);
-	connect( e, SIGNAL( notesChanged( const QString&, Kopete::MetaContact*) ),this,
-			SLOT( setNotes( const QString&, Kopete::MetaContact * ) ) );
+	connect( e, SIGNAL(notesChanged(QString,Kopete::MetaContact*)),this,
+			SLOT(setNotes(QString,Kopete::MetaContact*)) );
 	e->show();
 }
 

@@ -87,16 +87,16 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 
 	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
-	QObject::connect(m_openInboxAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenInbox() ) );
+	QObject::connect(m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
 	m_openYABAction = new KAction( KIcon("x-office-address-book"), i18n( "Open &Address book..." ), this );
         //, "m_openYABAction" );
-	QObject::connect(m_openYABAction, SIGNAL( triggered(bool) ), this, SLOT( slotOpenYAB() ) );
+	QObject::connect(m_openYABAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenYAB()) );
 	m_editOwnYABEntry = new KAction( KIcon("document-properties"), i18n( "&Edit my contact details..."), this );
         //, "m_editOwnYABEntry" );
-	QObject::connect(m_editOwnYABEntry, SIGNAL( triggered(bool) ), this, SLOT( slotEditOwnYABEntry() ) );
+	QObject::connect(m_editOwnYABEntry, SIGNAL(triggered(bool)), this, SLOT(slotEditOwnYABEntry()) );
 	m_joinChatAction = new KAction( KIcon("im-chat-room-join"), i18n( "&Join chat room..."), this );
         //, "m_joinChatAction" );
-	QObject::connect(m_joinChatAction, SIGNAL( triggered(bool) ), this, SLOT( slotJoinChatRoom() ) );
+	QObject::connect(m_joinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChatRoom()) );
 
 	YahooContact* _myself=new YahooContact( this, accountId.toLower(), accountId, Kopete::ContactList::self()->myself() );
 	setMyself( _myself );
@@ -229,8 +229,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 	if ( sct == MakeConnections )
 	{
-		QObject::connect(m_session, SIGNAL(loggedIn( int, const QString &)),
-		                 this, SLOT(slotLoginResponse(int, const QString &)) );
+		QObject::connect(m_session, SIGNAL(loggedIn(int,QString)),
+		                 this, SLOT(slotLoginResponse(int,QString)) );
 
 		QObject::connect(m_session, SIGNAL(disconnected()),
 		                 this, SLOT(slotDisconnected()) );
@@ -241,38 +241,38 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::connect(m_session, SIGNAL(error(int)),
 		                 this, SLOT(slotError(int)));
 
-		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
-		                 this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
+		QObject::connect(m_session, SIGNAL(gotBuddy(QString,QString,QString)),
+		                 this, SLOT(slotGotBuddy(QString,QString,QString)));
 
-		QObject::connect(m_session, SIGNAL(buddyAddResult(const QString &, const QString &, bool)),
-				 this, SLOT(slotBuddyAddResult(const QString &, const QString &, bool)));
+		QObject::connect(m_session, SIGNAL(buddyAddResult(QString,QString,bool)),
+				 this, SLOT(slotBuddyAddResult(QString,QString,bool)));
 
-		QObject::connect(m_session, SIGNAL(buddyRemoveResult(const QString &, const QString &, bool)),
-				 this, SLOT(slotBuddyRemoveResult(const QString &, const QString &, bool)));
+		QObject::connect(m_session, SIGNAL(buddyRemoveResult(QString,QString,bool)),
+				 this, SLOT(slotBuddyRemoveResult(QString,QString,bool)));
 
-		QObject::connect(m_session, SIGNAL(buddyChangeGroupResult(const QString &, const QString &, bool)),
-				 this, SLOT(slotBuddyChangeGroupResult(const QString &, const QString &, bool)));
+		QObject::connect(m_session, SIGNAL(buddyChangeGroupResult(QString,QString,bool)),
+				 this, SLOT(slotBuddyChangeGroupResult(QString,QString,bool)));
 
-		QObject::connect(m_session, SIGNAL(authorizationAccepted( const QString & )),
-		                 this, SLOT(slotAuthorizationAccepted( const QString & )) );
+		QObject::connect(m_session, SIGNAL(authorizationAccepted(QString)),
+		                 this, SLOT(slotAuthorizationAccepted(QString)) );
 
-		QObject::connect(m_session, SIGNAL(authorizationRejected( const QString &, const QString & )),
-		                 this, SLOT(slotAuthorizationRejected( const QString &, const QString & )) );
+		QObject::connect(m_session, SIGNAL(authorizationRejected(QString,QString)),
+		                 this, SLOT(slotAuthorizationRejected(QString,QString)) );
 
-		QObject::connect(m_session, SIGNAL(gotAuthorizationRequest( const QString &, const QString &, const QString & )),
-		                 this, SLOT(slotgotAuthorizationRequest( const QString &, const QString &, const QString & )) );
+		QObject::connect(m_session, SIGNAL(gotAuthorizationRequest(QString,QString,QString)),
+		                 this, SLOT(slotgotAuthorizationRequest(QString,QString,QString)) );
 
-		QObject::connect(m_session, SIGNAL(statusChanged(QString,int,const QString,int,int,int)),
-		                 this, SLOT(slotStatusChanged(QString,int,const QString,int,int,int)));
+		QObject::connect(m_session, SIGNAL(statusChanged(QString,int,QString,int,int,int)),
+		                 this, SLOT(slotStatusChanged(QString,int,QString,int,int,int)));
 
-		QObject::connect(m_session, SIGNAL(stealthStatusChanged(const QString &, Yahoo::StealthStatus)),
-		                 this, SLOT(slotStealthStatusChanged( const QString &, Yahoo::StealthStatus)) );
+		QObject::connect(m_session, SIGNAL(stealthStatusChanged(QString,Yahoo::StealthStatus)),
+		                 this, SLOT(slotStealthStatusChanged(QString,Yahoo::StealthStatus)) );
 
-		QObject::connect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
-		                 this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
+		QObject::connect(m_session, SIGNAL(gotIm(QString,QString,long,int)),
+		                 this, SLOT(slotGotIm(QString,QString,long,int)));
 
-		QObject::connect(m_session, SIGNAL(gotBuzz(const QString&, long)),
-		                 this, SLOT(slotGotBuzz(const QString &, long)));
+		QObject::connect(m_session, SIGNAL(gotBuzz(QString,long)),
+		                 this, SLOT(slotGotBuzz(QString,long)));
 
 		QObject::connect(m_session, SIGNAL( gotConferenceInvite( const QString&, const QString&,
 		                                                   const QString&, const QStringList&) ),
@@ -280,85 +280,85 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                 SLOT( slotGotConfInvite( const QString&, const QString&,
 		                                          const QString&, const QStringList& ) ) );
 
-		QObject::connect(m_session, SIGNAL(confUserDeclined(const QString&, const QString &, const QString &)),
+		QObject::connect(m_session, SIGNAL(confUserDeclined(QString,QString,QString)),
 		                 this,
-		                 SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
+		                 SLOT(slotConfUserDecline(QString,QString,QString)) );
 
-		QObject::connect(m_session , SIGNAL(confUserJoined( const QString &, const QString &)), this,
-		                 SLOT(slotConfUserJoin( const QString &, const QString &)) );
+		QObject::connect(m_session , SIGNAL(confUserJoined(QString,QString)), this,
+		                 SLOT(slotConfUserJoin(QString,QString)) );
 
-		QObject::connect(m_session , SIGNAL(confUserLeft( const QString &, const QString &)), this,
-		                 SLOT(slotConfUserLeave( const QString &, const QString &)) );
+		QObject::connect(m_session , SIGNAL(confUserLeft(QString,QString)), this,
+		                 SLOT(slotConfUserLeave(QString,QString)) );
 
-		QObject::connect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
-		                 SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
+		QObject::connect(m_session , SIGNAL(gotConferenceMessage(QString,QString,QString)), this,
+		                 SLOT(slotConfMessage(QString,QString,QString)) );
 
 		QObject::connect(m_session,
-		                 SIGNAL(incomingFileTransfer(const QString &, const QString &, long, const QString &, const QString &, unsigned long, const QPixmap &)),
+		                 SIGNAL(incomingFileTransfer(QString,QString,long,QString,QString,ulong,QPixmap)),
 		                 this,
-		                 SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long, const QPixmap &)));
+		                 SLOT(slotGotFile(QString,QString,long,QString,QString,ulong,QPixmap)));
 
-		QObject::connect(m_session, SIGNAL(fileTransferComplete(unsigned int)), this,
-		                 SLOT(slotFileTransferComplete(unsigned int)) );
+		QObject::connect(m_session, SIGNAL(fileTransferComplete(uint)), this,
+		                 SLOT(slotFileTransferComplete(uint)) );
 
-		QObject::connect(m_session, SIGNAL(fileTransferBytesProcessed(unsigned int,unsigned int)), this,
-		                 SLOT(slotFileTransferBytesProcessed(unsigned int,unsigned int)) );
+		QObject::connect(m_session, SIGNAL(fileTransferBytesProcessed(uint,uint)), this,
+		                 SLOT(slotFileTransferBytesProcessed(uint,uint)) );
 
-		QObject::connect(m_session, SIGNAL(fileTransferError(unsigned int,int,const QString &)), this,
-		                 SLOT(slotFileTransferError(unsigned int,int,const QString &)) );
+		QObject::connect(m_session, SIGNAL(fileTransferError(uint,int,QString)), this,
+		                 SLOT(slotFileTransferError(uint,int,QString)) );
 
-		QObject::connect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
-		                 SLOT(slotTypingNotify(const QString &, int)));
+		QObject::connect(m_session, SIGNAL(typingNotify(QString,int)), this ,
+		                 SLOT(slotTypingNotify(QString,int)));
 
-// 		QObject::connect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
-// 		                 SLOT(slotGameNotify( const QString &, int)));
+// 		QObject::connect(m_session, SIGNAL(gameNotify(QString,int)), this,
+// 		                 SLOT(slotGameNotify(QString,int)));
 
-		QObject::connect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
-		                 SLOT(slotMailNotify(const QString &, const QString&, int)));
+		QObject::connect(m_session, SIGNAL(mailNotify(QString,QString,int)), this,
+		                 SLOT(slotMailNotify(QString,QString,int)));
 
-		QObject::connect(m_session, SIGNAL(systemMessage(const QString&)), this,
-		                 SLOT(slotSystemMessage(const QString &)));
+		QObject::connect(m_session, SIGNAL(systemMessage(QString)), this,
+		                 SLOT(slotSystemMessage(QString)));
 
-// 		QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
-// 		                 SLOT(slotGotIdentities( const QStringList&)));
+// 		QObject::connect(m_session, SIGNAL(gotIdentities(QStringList)), this,
+// 		                 SLOT(slotGotIdentities(QStringList)));
 
-		QObject::connect(m_session, SIGNAL(gotWebcamInvite(const QString&)), this, SLOT(slotGotWebcamInvite(const QString&)));
+		QObject::connect(m_session, SIGNAL(gotWebcamInvite(QString)), this, SLOT(slotGotWebcamInvite(QString)));
 
-		QObject::connect(m_session, SIGNAL(webcamNotAvailable(const QString&)), this, SLOT(slotWebcamNotAvailable(const QString&)));
+		QObject::connect(m_session, SIGNAL(webcamNotAvailable(QString)), this, SLOT(slotWebcamNotAvailable(QString)));
 
-		QObject::connect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
+		QObject::connect(m_session, SIGNAL(webcamImageReceived(QString,QPixmap)), this, SLOT(slotGotWebcamImage(QString,QPixmap)));
 
-		QObject::connect(m_session, SIGNAL(webcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
+		QObject::connect(m_session, SIGNAL(webcamClosed(QString,int)), this, SLOT(slotWebcamClosed(QString,int)));
 
-		QObject::connect(m_session, SIGNAL(webcamPaused(const QString&)), this, SLOT(slotWebcamPaused(const QString&)));
+		QObject::connect(m_session, SIGNAL(webcamPaused(QString)), this, SLOT(slotWebcamPaused(QString)));
 
 		QObject::connect(m_session, SIGNAL(webcamReadyForTransmission()), this, SLOT(slotWebcamReadyForTransmission()));
 
 		QObject::connect(m_session, SIGNAL(webcamStopTransmission()), this, SLOT(slotWebcamStopTransmission()));
 
-		QObject::connect(m_session, SIGNAL(webcamViewerJoined(const QString&)), this, SLOT(slotWebcamViewerJoined(const QString&)));
+		QObject::connect(m_session, SIGNAL(webcamViewerJoined(QString)), this, SLOT(slotWebcamViewerJoined(QString)));
 
-		QObject::connect(m_session, SIGNAL(webcamViewerLeft(const QString&)), this, SLOT(slotWebcamViewerLeft(const QString&)));
+		QObject::connect(m_session, SIGNAL(webcamViewerLeft(QString)), this, SLOT(slotWebcamViewerLeft(QString)));
 
-		QObject::connect(m_session, SIGNAL(webcamViewerRequest(const QString&)), this, SLOT(slotWebcamViewerRequest( const QString&)));
+		QObject::connect(m_session, SIGNAL(webcamViewerRequest(QString)), this, SLOT(slotWebcamViewerRequest(QString)));
 
-		QObject::connect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), SLOT(slotPictureStatusNotify( const QString&, int)));
+		QObject::connect(m_session, SIGNAL(pictureStatusNotify(QString,int)), SLOT(slotPictureStatusNotify(QString,int)));
 
-		QObject::connect(m_session, SIGNAL(pictureDownloaded(const QString&, const QByteArray &, int)), this, SLOT(slotGotBuddyIcon(const QString&, const QByteArray &, int)) );
+		QObject::connect(m_session, SIGNAL(pictureDownloaded(QString,QByteArray,int)), this, SLOT(slotGotBuddyIcon(QString,QByteArray,int)) );
 
-		QObject::connect(m_session, SIGNAL(pictureInfoNotify(const QString&, KUrl, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KUrl, int )));
+		QObject::connect(m_session, SIGNAL(pictureInfoNotify(QString,KUrl,int)), this, SLOT(slotGotBuddyIconInfo(QString,KUrl,int)));
 
-		QObject::connect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		QObject::connect(m_session, SIGNAL(pictureChecksumNotify(QString,int)), this, SLOT(slotGotBuddyIconChecksum(QString,int)));
 
-		QObject::connect(m_session, SIGNAL(pictureRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
+		QObject::connect(m_session, SIGNAL(pictureRequest(QString)), this, SLOT(slotGotBuddyIconRequest(QString)) );
 
-		QObject::connect(m_session, SIGNAL(pictureUploaded( const QString &, int)), this, SLOT(slotBuddyIconChanged(const QString&, int)));
+		QObject::connect(m_session, SIGNAL(pictureUploaded(QString,int)), this, SLOT(slotBuddyIconChanged(QString,int)));
 
-		QObject::connect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
+		QObject::connect(m_session, SIGNAL(gotYABEntry(YABEntry*)), this, SLOT(slotGotYABEntry(YABEntry*)));
 
-		QObject::connect(m_session, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )), this, SLOT(slotModifyYABEntryError( YABEntry *, const QString & )));
+		QObject::connect(m_session, SIGNAL(modifyYABEntryError(YABEntry*,QString)), this, SLOT(slotModifyYABEntryError(YABEntry*,QString)));
 
-		QObject::connect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
+		QObject::connect(m_session, SIGNAL(gotYABRevision(long,bool)), this, SLOT(slotGotYABRevision(long,bool)) );
 
 		QObject::connect(m_session, SIGNAL(chatRoomJoined(int,int,QString,QString)), this, SLOT(slotChatJoined(int,int,QString,QString)));
 
@@ -371,8 +371,8 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 	if ( sct == DeleteConnections )
 	{
-		QObject::disconnect(m_session, SIGNAL(loggedIn(int, const QString &)),
-		                    this, SLOT(slotLoginResponse(int, const QString &)) );
+		QObject::disconnect(m_session, SIGNAL(loggedIn(int,QString)),
+		                    this, SLOT(slotLoginResponse(int,QString)) );
 
 		QObject::disconnect(m_session, SIGNAL(disconnected()),
 		                    this, SLOT(slotDisconnected()) );
@@ -383,38 +383,38 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		QObject::disconnect(m_session, SIGNAL(error(int)),
 		                 this, SLOT(slotError(int)));
 
-		QObject::disconnect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
-		                    this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
+		QObject::disconnect(m_session, SIGNAL(gotBuddy(QString,QString,QString)),
+		                    this, SLOT(slotGotBuddy(QString,QString,QString)));
 
-		QObject::disconnect(m_session, SIGNAL(buddyAddResult(const QString &, const QString &, bool)),
-		                    this, SLOT(slotBuddyAddResult(const QString &, const QString &, bool)));
+		QObject::disconnect(m_session, SIGNAL(buddyAddResult(QString,QString,bool)),
+		                    this, SLOT(slotBuddyAddResult(QString,QString,bool)));
 
-		QObject::disconnect(m_session, SIGNAL(buddyRemoveResult(const QString &, const QString &, bool)),
-		                    this, SLOT(slotBuddyRemoveResult(const QString &, const QString &, bool)));
+		QObject::disconnect(m_session, SIGNAL(buddyRemoveResult(QString,QString,bool)),
+		                    this, SLOT(slotBuddyRemoveResult(QString,QString,bool)));
 
-		QObject::disconnect(m_session, SIGNAL(buddyChangeGroupResult(const QString &, const QString &, bool)),
-				 this, SLOT(slotBuddyChangeGroupResult(const QString &, const QString &, bool)));
+		QObject::disconnect(m_session, SIGNAL(buddyChangeGroupResult(QString,QString,bool)),
+				 this, SLOT(slotBuddyChangeGroupResult(QString,QString,bool)));
 
-		QObject::disconnect(m_session, SIGNAL(authorizationAccepted( const QString &)),
-		                 this, SLOT(slotAuthorizationAccepted( const QString &)) );
+		QObject::disconnect(m_session, SIGNAL(authorizationAccepted(QString)),
+		                 this, SLOT(slotAuthorizationAccepted(QString)) );
 
-		QObject::disconnect(m_session, SIGNAL(authorizationRejected( const QString &, const QString &)),
-		                    this, SLOT(slotAuthorizationRejected( const QString &, const QString & )) );
+		QObject::disconnect(m_session, SIGNAL(authorizationRejected(QString,QString)),
+		                    this, SLOT(slotAuthorizationRejected(QString,QString)) );
 
-		QObject::disconnect(m_session, SIGNAL(gotAuthorizationRequest( const QString &, const QString &, const QString & )),
-		                 this, SLOT(slotgotAuthorizationRequest( const QString &, const QString &, const QString & )) );
+		QObject::disconnect(m_session, SIGNAL(gotAuthorizationRequest(QString,QString,QString)),
+		                 this, SLOT(slotgotAuthorizationRequest(QString,QString,QString)) );
 
-		QObject::disconnect(m_session, SIGNAL(statusChanged(QString,int,const QString,int,int,int)),
+		QObject::disconnect(m_session, SIGNAL(statusChanged(QString,int,QString,int,int,int)),
 		                    this, SLOT(slotStatusChanged(QString,int,QString,int,int,int)));
 
-		QObject::disconnect(m_session, SIGNAL(stealthStatusChanged(const QString &, Yahoo::StealthStatus)),
-		                 this, SLOT(slotStealthStatusChanged( const QString &, Yahoo::StealthStatus)) );
+		QObject::disconnect(m_session, SIGNAL(stealthStatusChanged(QString,Yahoo::StealthStatus)),
+		                 this, SLOT(slotStealthStatusChanged(QString,Yahoo::StealthStatus)) );
 
-		QObject::disconnect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
-		                    this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
+		QObject::disconnect(m_session, SIGNAL(gotIm(QString,QString,long,int)),
+		                    this, SLOT(slotGotIm(QString,QString,long,int)));
 
-		QObject::disconnect(m_session, SIGNAL(gotBuzz(const QString&, long)),
-		                    this, SLOT(slotGotBuzz(const QString &, long)));
+		QObject::disconnect(m_session, SIGNAL(gotBuzz(QString,long)),
+		                    this, SLOT(slotGotBuzz(QString,long)));
 
 		QObject::disconnect(m_session,
 		                    SIGNAL( gotConferenceInvite( const QString&, const QString&,
@@ -424,18 +424,18 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                                             const QString&, const QStringList&) ) );
 
 		QObject::disconnect(m_session,
-		                    SIGNAL(confUserDeclined(const QString&, const QString &, const QString &)),
+		                    SIGNAL(confUserDeclined(QString,QString,QString)),
 		                    this,
-		                    SLOT(slotConfUserDecline( const QString &, const QString &, const QString& ) ) );
+		                    SLOT(slotConfUserDecline(QString,QString,QString)) );
 
-		QObject::disconnect(m_session , SIGNAL(confUserJoined( const QString &, const QString &)),
-		                    this, SLOT(slotConfUserJoin( const QString &, const QString &)) );
+		QObject::disconnect(m_session , SIGNAL(confUserJoined(QString,QString)),
+		                    this, SLOT(slotConfUserJoin(QString,QString)) );
 
-		QObject::disconnect(m_session , SIGNAL(confUserLeft( const QString &, const QString &)),
-		                    this, SLOT(slotConfUserLeave( const QString &, const QString &)) );
+		QObject::disconnect(m_session , SIGNAL(confUserLeft(QString,QString)),
+		                    this, SLOT(slotConfUserLeave(QString,QString)) );
 
-		QObject::disconnect(m_session , SIGNAL(gotConferenceMessage( const QString &, const QString &, const QString &)), this,
-		                    SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
+		QObject::disconnect(m_session , SIGNAL(gotConferenceMessage(QString,QString,QString)), this,
+		                    SLOT(slotConfMessage(QString,QString,QString)) );
 
 		QObject::disconnect(m_session,
 		                    SIGNAL(incomingFileTransfer(const QString &, const QString &,
@@ -444,67 +444,67 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 		                    SLOT(slotGotFile(const QString&, const QString&,
 		                                     long, const QString&, const QString&, unsigned long, const QPixmap &)));
 
-		QObject::disconnect(m_session, SIGNAL(fileTransferComplete(unsigned int)), this,
-		                 SLOT(slotFileTransferComplete(unsigned int)) );
+		QObject::disconnect(m_session, SIGNAL(fileTransferComplete(uint)), this,
+		                 SLOT(slotFileTransferComplete(uint)) );
 
-		QObject::disconnect(m_session, SIGNAL(fileTransferBytesProcessed(unsigned int,unsigned int)), this,
-		                 SLOT(slotFileTransferBytesProcessed(unsigned int,unsigned int)) );
+		QObject::disconnect(m_session, SIGNAL(fileTransferBytesProcessed(uint,uint)), this,
+		                 SLOT(slotFileTransferBytesProcessed(uint,uint)) );
 
-		QObject::disconnect(m_session, SIGNAL(fileTransferError(unsigned int,int,const QString &)), this,
-		                 SLOT(slotFileTransferError(unsigned int,int,const QString &)) );
+		QObject::disconnect(m_session, SIGNAL(fileTransferError(uint,int,QString)), this,
+		                 SLOT(slotFileTransferError(uint,int,QString)) );
 
-		QObject::disconnect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
-		                    SLOT(slotTypingNotify(const QString &, int)));
+		QObject::disconnect(m_session, SIGNAL(typingNotify(QString,int)), this ,
+		                    SLOT(slotTypingNotify(QString,int)));
 
-// 		QObject::disconnect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
-// 		                    SLOT(slotGameNotify( const QString &, int)));
+// 		QObject::disconnect(m_session, SIGNAL(gameNotify(QString,int)), this,
+// 		                    SLOT(slotGameNotify(QString,int)));
 
-		QObject::disconnect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
-		                    SLOT(slotMailNotify(const QString &, const QString&, int)));
+		QObject::disconnect(m_session, SIGNAL(mailNotify(QString,QString,int)), this,
+		                    SLOT(slotMailNotify(QString,QString,int)));
 
-		QObject::disconnect(m_session, SIGNAL(systemMessage(const QString&)), this,
-		                    SLOT(slotSystemMessage(const QString &)));
+		QObject::disconnect(m_session, SIGNAL(systemMessage(QString)), this,
+		                    SLOT(slotSystemMessage(QString)));
 
-// 		QObject::disconnect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
-// 		                    SLOT(slotGotIdentities( const QStringList&)));
+// 		QObject::disconnect(m_session, SIGNAL(gotIdentities(QStringList)), this,
+// 		                    SLOT(slotGotIdentities(QStringList)));
 
-		QObject::disconnect(m_session, SIGNAL(gotWebcamInvite(const QString&)), this, SLOT(slotGotWebcamInvite(const QString&)));
+		QObject::disconnect(m_session, SIGNAL(gotWebcamInvite(QString)), this, SLOT(slotGotWebcamInvite(QString)));
 
-		QObject::disconnect(m_session, SIGNAL(webcamNotAvailable(const QString&)), this, SLOT(slotWebcamNotAvailable(const QString&)));
+		QObject::disconnect(m_session, SIGNAL(webcamNotAvailable(QString)), this, SLOT(slotWebcamNotAvailable(QString)));
 
-		QObject::disconnect(m_session, SIGNAL(webcamImageReceived(const QString&, const QPixmap& )), this, SLOT(slotGotWebcamImage(const QString&, const QPixmap& )));
+		QObject::disconnect(m_session, SIGNAL(webcamImageReceived(QString,QPixmap)), this, SLOT(slotGotWebcamImage(QString,QPixmap)));
 
-		QObject::disconnect(m_session, SIGNAL(webcamClosed(const QString&, int )), this, SLOT(slotWebcamClosed(const QString&, int )));
+		QObject::disconnect(m_session, SIGNAL(webcamClosed(QString,int)), this, SLOT(slotWebcamClosed(QString,int)));
 
-		QObject::disconnect(m_session, SIGNAL(webcamPaused(const QString&)), this, SLOT(slotWebcamPaused(const QString&)));
+		QObject::disconnect(m_session, SIGNAL(webcamPaused(QString)), this, SLOT(slotWebcamPaused(QString)));
 
 		QObject::disconnect(m_session, SIGNAL(webcamReadyForTransmission()), this, SLOT(slotWebcamReadyForTransmission()));
 
 		QObject::disconnect(m_session, SIGNAL(webcamStopTransmission()), this, SLOT(slotWebcamStopTransmission()));
 
-		QObject::disconnect(m_session, SIGNAL(webcamViewerJoined(const QString&)), this, SLOT(slotWebcamViewerJoined(const QString&)));
+		QObject::disconnect(m_session, SIGNAL(webcamViewerJoined(QString)), this, SLOT(slotWebcamViewerJoined(QString)));
 
-		QObject::disconnect(m_session, SIGNAL(webcamViewerLeft(const QString&)), this, SLOT(slotWebcamViewerLeft(const QString&)));
+		QObject::disconnect(m_session, SIGNAL(webcamViewerLeft(QString)), this, SLOT(slotWebcamViewerLeft(QString)));
 
-		QObject::disconnect(m_session, SIGNAL(webcamViewerRequest(const QString&)), this, SLOT(slotWebcamViewerRequest( const QString&)));
+		QObject::disconnect(m_session, SIGNAL(webcamViewerRequest(QString)), this, SLOT(slotWebcamViewerRequest(QString)));
 
-		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(const QString&, const QByteArray &, int )), this, SLOT(slotGotBuddyIcon(const QString&, const QByteArray &,int )));
+		QObject::disconnect(m_session, SIGNAL(pictureDownloaded(QString,QByteArray,int)), this, SLOT(slotGotBuddyIcon(QString,QByteArray,int)));
 
-		QObject::disconnect(m_session, SIGNAL(pictureInfoNotify(const QString&, KUrl, int)), this, SLOT(slotGotBuddyIconInfo(const QString&, KUrl, int )));
+		QObject::disconnect(m_session, SIGNAL(pictureInfoNotify(QString,KUrl,int)), this, SLOT(slotGotBuddyIconInfo(QString,KUrl,int)));
 
-		QObject::disconnect(m_session, SIGNAL(pictureRequest(const QString&)), this, SLOT(slotGotBuddyIconRequest(const QString&)) );
+		QObject::disconnect(m_session, SIGNAL(pictureRequest(QString)), this, SLOT(slotGotBuddyIconRequest(QString)) );
 
-		QObject::disconnect(m_session, SIGNAL(pictureUploaded( const QString &, int )), this, SLOT(slotBuddyIconChanged(const QString&, int)));
+		QObject::disconnect(m_session, SIGNAL(pictureUploaded(QString,int)), this, SLOT(slotBuddyIconChanged(QString,int)));
 
-		QObject::disconnect(m_session, SIGNAL(pictureStatusNotify( const QString&, int )), this, SLOT(slotPictureStatusNotify( const QString&, int)));
+		QObject::disconnect(m_session, SIGNAL(pictureStatusNotify(QString,int)), this, SLOT(slotPictureStatusNotify(QString,int)));
 
-		QObject::disconnect(m_session, SIGNAL(pictureChecksumNotify(const QString&, int)), this, SLOT(slotGotBuddyIconChecksum(const QString&, int )));
+		QObject::disconnect(m_session, SIGNAL(pictureChecksumNotify(QString,int)), this, SLOT(slotGotBuddyIconChecksum(QString,int)));
 
-		QObject::disconnect(m_session, SIGNAL(gotYABEntry( YABEntry * )), this, SLOT(slotGotYABEntry( YABEntry * )));
+		QObject::disconnect(m_session, SIGNAL(gotYABEntry(YABEntry*)), this, SLOT(slotGotYABEntry(YABEntry*)));
 
-		QObject::disconnect(m_session, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )), this, SLOT(slotModifyYABEntryError( YABEntry *, const QString & )));
+		QObject::disconnect(m_session, SIGNAL(modifyYABEntryError(YABEntry*,QString)), this, SLOT(slotModifyYABEntryError(YABEntry*,QString)));
 
-		QObject::disconnect(m_session, SIGNAL(gotYABRevision( long, bool )), this, SLOT(slotGotYABRevision( long , bool )) );
+		QObject::disconnect(m_session, SIGNAL(gotYABRevision(long,bool)), this, SLOT(slotGotYABRevision(long,bool)) );
 
 		QObject::disconnect(m_session, SIGNAL(chatRoomJoined(int,int,QString,QString)), this, SLOT(slotChatJoined(int,int,QString,QString)));
 
@@ -681,7 +681,7 @@ void YahooAccount::sendFile( YahooContact *to, const KUrl &url )
 		url.fileName(), file.size(), to->userId(), Kopete::FileTransferInfo::Outgoing );
 	m_session->sendFile( transfer->info().transferId(), to->userId(), QString(), url );
 
-	QObject::connect( transfer, SIGNAL(result( KJob * )), this, SLOT(slotFileTransferResult( KJob * )) );
+	QObject::connect( transfer, SIGNAL(result(KJob*)), this, SLOT(slotFileTransferResult(KJob*)) );
 
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );
 }
@@ -1176,7 +1176,7 @@ void YahooAccount::slotGotConfInvite( const QString & who, const QString & room,
 			YahooConferenceChatSession *session = new YahooConferenceChatSession( room, protocol(), myself(), others );
 			m_conferences[room] = session;
 
-			QObject::connect( session, SIGNAL(leavingConference( YahooConferenceChatSession * ) ), this, SLOT( slotConfLeave( YahooConferenceChatSession * ) ) );
+			QObject::connect( session, SIGNAL(leavingConference(YahooConferenceChatSession*)), this, SLOT(slotConfLeave(YahooConferenceChatSession*)) );
 
 			for ( QStringList::ConstIterator it = myMembers.constBegin(); it != myMembers.constEnd(); ++it )
 			{
@@ -1217,8 +1217,8 @@ void YahooAccount::prepareConference( const QString &who )
 	}
 
 	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );
-	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QStringList &, const QString & ) ),
-			this, SLOT( slotInviteConference( const QString &, const QStringList &, const QStringList &, const QString & ) ) );
+	QObject::connect( dlg, SIGNAL(readyToInvite(QString,QStringList,QStringList,QString)),
+			this, SLOT(slotInviteConference(QString,QStringList,QStringList,QString)) );
 	dlg->setRoom( room );
 	dlg->fillFriendList( buddies );
 	dlg->addInvitees( QStringList( who ) );
@@ -1235,7 +1235,7 @@ kDebug(YAHOO_GEN_DEBUG) << "Inviting " << members << " to the conference " << ro
 	YahooConferenceChatSession *session = new YahooConferenceChatSession( room, protocol(), myself(), others );
 	m_conferences[room] = session;
 
-	QObject::connect( session, SIGNAL(leavingConference( YahooConferenceChatSession * ) ), this, SLOT( slotConfLeave( YahooConferenceChatSession * ) ) );
+	QObject::connect( session, SIGNAL(leavingConference(YahooConferenceChatSession*)), this, SLOT(slotConfLeave(YahooConferenceChatSession*)) );
 
 	session->joined( static_cast< YahooContact *>(myself()) );
 	session->view( true )->raise( false );
@@ -1412,7 +1412,7 @@ void YahooAccount::slotGotYABEntry( YABEntry *entry )
 			dlg->setData( *entry );
 			dlg->setAccountConnected( isConnected() );
 			dlg->show();
-			QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), this, SLOT(slotSaveYABEntry( YABEntry & )));
+			QObject::connect( dlg, SIGNAL(saveYABEntry(YABEntry&)), this, SLOT(slotSaveYABEntry(YABEntry&)));
 			delete entry;
 		}
 	}
@@ -1444,10 +1444,10 @@ void YahooAccount::slotGotFile( const QString &  who, const QString &  url , lon
 
 	if( m_pendingFileTransfers.empty() )
 	{
-	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
-					this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
-	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
-	                  this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
+	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer*,QString)),
+					this, SLOT(slotReceiveFileAccepted(Kopete::Transfer*,QString)) );
+	QObject::connect( Kopete::TransferManager::transferManager(), SIGNAL(refused(Kopete::FileTransferInfo)),
+	                  this, SLOT(slotReceiveFileRefused(Kopete::FileTransferInfo)) );
 	}
 	m_pendingFileTransfers.append( url );
 }
@@ -1470,14 +1470,14 @@ void YahooAccount::slotReceiveFileAccepted(Kopete::Transfer *transfer, const QSt
 
 	m_session->receiveFile( transfer->info().transferId(), transfer->info().contact()->contactId(), transfer->info().internalId(), fileName );
 	m_fileTransfers.insert( transfer->info().transferId(), transfer );
-	QObject::connect( transfer, SIGNAL(result( KJob * )), this, SLOT(slotFileTransferResult( KJob * )) );
+	QObject::connect( transfer, SIGNAL(result(KJob*)), this, SLOT(slotFileTransferResult(KJob*)) );
 
 	if( m_pendingFileTransfers.empty() )
 	{
-		QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
-							this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
-		QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
-						this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
+		QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer*,QString)),
+							this, SLOT(slotReceiveFileAccepted(Kopete::Transfer*,QString)) );
+		QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL(refused(Kopete::FileTransferInfo)),
+						this, SLOT(slotReceiveFileRefused(Kopete::FileTransferInfo)) );
 	}
 }
 
@@ -1491,10 +1491,10 @@ void YahooAccount::slotReceiveFileRefused( const Kopete::FileTransferInfo& info 
 
 	if( m_pendingFileTransfers.empty() )
 	{
-		QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( accepted( Kopete::Transfer *, const QString& ) ),
-							this, SLOT( slotReceiveFileAccepted( Kopete::Transfer *, const QString& ) ) );
-		QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL( refused(const Kopete::FileTransferInfo& ) ),
-						this, SLOT( slotReceiveFileRefused( const Kopete::FileTransferInfo& ) ) );
+		QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer*,QString)),
+							this, SLOT(slotReceiveFileAccepted(Kopete::Transfer*,QString)) );
+		QObject::disconnect( Kopete::TransferManager::transferManager(), SIGNAL(refused(Kopete::FileTransferInfo)),
+						this, SLOT(slotReceiveFileRefused(Kopete::FileTransferInfo)) );
 	}
 }
 
@@ -1573,7 +1573,7 @@ void YahooAccount::slotMailNotify( const QString& from, const QString&  subject 
 	{
 		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",
 			"You have %1 unread messages in your Yahoo inbox.", cnt ), QPixmap() , Kopete::UI::Global::mainWidget() ),
-		                 SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
+		                 SIGNAL(activated(uint)) , this, SLOT(slotOpenInbox()) );
 
 		m_currentMailCount = cnt;
 	}
@@ -1581,7 +1581,7 @@ void YahooAccount::slotMailNotify( const QString& from, const QString&  subject 
 	{	kDebug(YAHOO_GEN_DEBUG) << "attempting to trigger event";
 	
 		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18n( "%1 has a message from %2 in your Yahoo inbox. <br><br>Subject: %3", m_session->userId(), from, subject )
-		                                       , QPixmap() , Kopete::UI::Global::mainWidget() ), SIGNAL(activated(unsigned int ) ) , this, SLOT( slotOpenInbox() ) );
+		                                       , QPixmap() , Kopete::UI::Global::mainWidget() ), SIGNAL(activated(uint)) , this, SLOT(slotOpenInbox()) );
 		m_currentMailCount = cnt;
 	}
 }
@@ -1911,12 +1911,12 @@ void YahooAccount::slotJoinChatRoom()
 {
 	YahooChatSelectorDialog *chatDialog = new YahooChatSelectorDialog( Kopete::UI::Global::mainWidget() );
 
-	QObject::connect( m_session, SIGNAL(gotYahooChatCategories( const QDomDocument & )), chatDialog,
-					SLOT(slotSetChatCategories( const QDomDocument & )) );
-	QObject::connect( m_session, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )),
-					chatDialog, SLOT(slotSetChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
-	QObject::connect( chatDialog, SIGNAL(chatCategorySelected( const Yahoo::ChatCategory & )),
-					this, SLOT(slotChatCategorySelected( const Yahoo::ChatCategory & ) ) );
+	QObject::connect( m_session, SIGNAL(gotYahooChatCategories(QDomDocument)), chatDialog,
+					SLOT(slotSetChatCategories(QDomDocument)) );
+	QObject::connect( m_session, SIGNAL(gotYahooChatRooms(Yahoo::ChatCategory,QDomDocument)),
+					chatDialog, SLOT(slotSetChatRooms(Yahoo::ChatCategory,QDomDocument)) );
+	QObject::connect( chatDialog, SIGNAL(chatCategorySelected(Yahoo::ChatCategory)),
+					this, SLOT(slotChatCategorySelected(Yahoo::ChatCategory)) );
 	m_session->getYahooChatCategories();
 
 	if( chatDialog->exec() == QDialog::Accepted )
@@ -1948,7 +1948,7 @@ void YahooAccount::slotChatJoined( int /*roomId*/, int /*categoryId*/, const QSt
 	if( !m_chatChatSession )
 	{
 		m_chatChatSession = new YahooChatChatSession( protocol(), myself(), others );
-		QObject::connect( m_chatChatSession, SIGNAL(closing(Kopete::ChatSession *)), this,
+		QObject::connect( m_chatChatSession, SIGNAL(closing(Kopete::ChatSession*)), this,
 					SLOT(slotLeavChat()) );
 	}
 	m_chatChatSession->removeAllContacts();

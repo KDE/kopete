@@ -441,10 +441,10 @@ void BonjourAccount::newIncomingConnection()
 	QTcpSocket *sock = localServer->nextPendingConnection();
 
 	BonjourContactConnection *bcc = new BonjourContactConnection(sock);
-	QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection *, const QString &)),
-			this, SLOT(discoveredUserName(BonjourContactConnection *, const QString &)));;
-	QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection *)),
-			this, SLOT(usernameNotInStream(BonjourContactConnection *)));;
+	QObject::connect(bcc, SIGNAL(discoveredUserName(BonjourContactConnection*,QString)),
+			this, SLOT(discoveredUserName(BonjourContactConnection*,QString)));;
+	QObject::connect(bcc, SIGNAL(usernameNotInStream(BonjourContactConnection*)),
+			this, SLOT(usernameNotInStream(BonjourContactConnection*)));;
 
 	unknownConnections << bcc;
 }

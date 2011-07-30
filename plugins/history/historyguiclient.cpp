@@ -54,10 +54,10 @@ HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 
 	actionLast = new KAction ( KIcon ( "go-last" ), i18n ( "Latest History" ), this );
 	actionCollection()->addAction ( "historyLast", actionLast );
-	connect ( actionLast, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotLast() ) );
-	actionPrev = KStandardAction::back ( this, SLOT ( slotPrevious() ), this );
+	connect ( actionLast, SIGNAL (triggered(bool)), this, SLOT (slotLast()) );
+	actionPrev = KStandardAction::back ( this, SLOT (slotPrevious()), this );
 	actionCollection()->addAction ( "historyPrevious", actionPrev );
-	actionNext = KStandardAction::forward ( this, SLOT ( slotNext() ), this );
+	actionNext = KStandardAction::forward ( this, SLOT (slotNext()), this );
 	actionCollection()->addAction ( "historyNext", actionNext );
 
 	KAction *viewChatHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
@@ -67,7 +67,7 @@ HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 
 	KAction *actionQuote = new KAction ( KIcon ( "go-last" ),i18n ( "Quote Last Message" ), this );
 	actionCollection()->addAction ( "historyQuote",actionQuote );
-	connect ( actionQuote,SIGNAL ( triggered ( bool ) ),this,SLOT ( slotQuote() ) );
+	connect ( actionQuote,SIGNAL (triggered(bool)),this,SLOT (slotQuote()) );
 
 	// we are generally at last when beginning
 	actionPrev->setEnabled ( true );

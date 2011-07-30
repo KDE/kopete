@@ -99,8 +99,8 @@ KopeteRichTextWidget::KopeteRichTextWidget(QWidget* parent, Kopete::Protocol::Ca
     createActions(d->actionCollection);
     setCurrentPlainCharFormat(d->defaultPlainFormat);
 
-    connect(this, SIGNAL(currentCharFormatChanged(const QTextCharFormat&)),
-            this, SLOT(updateCharFormat(const QTextCharFormat&)));
+    connect(this, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
+            this, SLOT(updateCharFormat(QTextCharFormat)));
 
     connect(this, SIGNAL(textChanged()),
             this, SLOT(updateTextFormat()));
@@ -175,8 +175,8 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 
     // FIXME: Really ugly hack, but we reset format in updateCharFormat and if we don't disconnect this
     //        then actions will have old values and not the resetted.
-    disconnect(this, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
-               this, SLOT(_k_updateCharFormatActions(const QTextCharFormat &)));
+    disconnect(this, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
+               this, SLOT(_k_updateCharFormatActions(QTextCharFormat)));
 }
 
 void KopeteRichTextWidget::setRichTextEnabled(bool enable)

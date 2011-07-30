@@ -32,7 +32,7 @@ using namespace Oscar;
 RateInfoTask::RateInfoTask( Task* parent )
 		: Task( parent )
 {
-	connect( this, SIGNAL( gotRateLimits() ), this, SLOT( sendRateInfoAck() ) );
+	connect( this, SIGNAL(gotRateLimits()), this, SLOT(sendRateInfoAck()) );
 }
 
 

@@ -36,11 +36,11 @@ ChannelListDialog::ChannelListDialog(KIRC::Engine *engine, const QString &captio
 	setModal(false);
 	m_list = new ChannelList( this, engine );
 
-	connect( m_list, SIGNAL( channelDoubleClicked( const QString & ) ),
+	connect( m_list, SIGNAL(channelDoubleClicked(QString)),
 		target, slotJoinChan );
 
-	connect( m_list, SIGNAL( channelDoubleClicked( const QString & ) ),
-		this, SLOT( slotChannelDoubleClicked( const QString & ) ) );
+	connect( m_list, SIGNAL(channelDoubleClicked(QString)),
+		this, SLOT(slotChannelDoubleClicked(QString)) );
 
 	new Q3HBoxLayout( m_list, 0, spacingHint() );
 

@@ -96,11 +96,11 @@ m_sessionID(1)
              this, SLOT (slotMessageSent (Kopete::Message &,
                                           Kopete::ChatSession *)));
 
-    connect (this, SIGNAL (myselfTyping (bool)),
-             this, SLOT (sendTypingMsg (bool)));
+    connect (this, SIGNAL (myselfTyping(bool)),
+             this, SLOT (sendTypingMsg(bool)));
 
     m_keepalivetimer = new QTimer (this);
-    connect (m_keepalivetimer, SIGNAL (timeout ()), SLOT (sendKeepAlive ()));
+    connect (m_keepalivetimer, SIGNAL (timeout()), SLOT (sendKeepAlive()));
 
     if (getChatService ()
         && getChatService ()->connectionState () ==
@@ -111,16 +111,16 @@ m_sessionID(1)
 
     m_actionNudge = new KAction (KIcon ("preferences-desktop-notification-bell"), i18n ("Send Nudge"), this);
     actionCollection ()->addAction ("wlmSendNudge", m_actionNudge);
-    connect (m_actionNudge, SIGNAL (triggered (bool)), this,
-             SLOT (sendNudge ()));
+    connect (m_actionNudge, SIGNAL (triggered(bool)), this,
+             SLOT (sendNudge()));
 
 
     m_actionInvite =
         new KActionMenu (KIcon ("system-users"), i18n ("&Invite"), this);
     actionCollection ()->addAction ("wlmInvite", m_actionInvite);
     m_actionInvite->setDelayed(false);
-    connect (m_actionInvite->menu (), SIGNAL (aboutToShow ()), this,
-             SLOT (slotActionInviteAboutToShow ()));
+    connect (m_actionInvite->menu (), SIGNAL (aboutToShow()), this,
+             SLOT (slotActionInviteAboutToShow()));
 
     unsigned int userCaps = qobject_cast<WlmContact*>(members ().first ())->property(WlmProtocol::protocol()->contactCapabilities).value().toString().toUInt();
 
@@ -133,7 +133,7 @@ m_sessionID(1)
         actionCollection ()->addAction ("wlmSendInk", m_actionInk);
 #endif
         m_actionInk->setDelayed(false);
-        connect(m_actionInk, SIGNAL(sendInk(const QPixmap &)), this, SLOT(slotSendInk(const QPixmap &)));
+        connect(m_actionInk, SIGNAL(sendInk(QPixmap)), this, SLOT(slotSendInk(QPixmap)));
     }
 
 #ifdef HAVE_MEDIASTREAMER
@@ -148,11 +148,11 @@ m_sessionID(1)
             actionCollection()->action("wlmSendVoice")->setEnabled(false);
             actionCollection()->action("wlmSendVoice")->setToolTip(i18n("Sound card not detected"));
         }
-        connect (m_actionVoice->menu(), SIGNAL (aboutToShow ()), this,
-                 SLOT (slotSendVoiceStartRec ()));
+        connect (m_actionVoice->menu(), SIGNAL (aboutToShow()), this,
+                 SLOT (slotSendVoiceStartRec()));
 
-        connect (m_actionVoice->menu(), SIGNAL (aboutToHide ()), this,
-                 SLOT (slotSendVoiceStopRec ()));
+        connect (m_actionVoice->menu(), SIGNAL (aboutToHide()), this,
+                 SLOT (slotSendVoiceStopRec()));
 
         KAction *stopRec = new  KAction(KIcon("wlm_fakefriend"), i18n("Stop &recording"), actionCollection ());
         m_actionVoice->addAction (stopRec);
@@ -251,8 +251,8 @@ WlmChatSession::sendFile (const QString & fileLocation, long unsigned int fileSi
                          members ().first ()->contactId (),
                          Kopete::FileTransferInfo::Outgoing);
 
-        connect (transf, SIGNAL (transferCanceled ()),
-                 acc->transferManager (), SLOT (slotCanceled ()));
+        connect (transf, SIGNAL (transferCanceled()),
+                 acc->transferManager (), SLOT (slotCanceled()));
         acc->transferManager ()->addTransferSession (ft.sessionId, transf,
                                                      account ()->myself ()->
                                                      contactId (),
@@ -639,12 +639,12 @@ WlmChatSession::slotActionInviteAboutToShow ()
         if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != myself() )
         {
             KAction *a=new KopeteContactAction( it.current(), this,
-                SLOT( slotInviteContact( Kopete::Contact * ) ), m_actionInvite );
+                SLOT(slotInviteContact(Kopete::Contact*)), m_actionInvite );
             m_actionInvite->insert( a );
             m_inviteactions.append( a ) ;
         }
     }
-//    KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT( slotInviteOtherContact() ), m_actionInvite, "actionOther" );
+//    KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT(slotInviteOtherContact()), m_actionInvite, "actionOther" );
 //    m_actionInvite->insert( b );
 //    m_inviteactions.append( b ) ;
 */
@@ -900,7 +900,7 @@ WlmChatSession::requestChatService ()
         const std::pair<std::string, std::string> *ctx = new std::pair<std::string, std::string>(rcpt_, msg_);
         // request a new switchboard connection
         static_cast <WlmAccount *>(account ())->server ()->cb.mainConnection->requestSwitchboardConnection (ctx);
-        QTimer::singleShot (30 * 1000, this, SLOT (switchboardConnectionTimeout ()));
+        QTimer::singleShot (30 * 1000, this, SLOT (switchboardConnectionTimeout()));
         return true;
     }
     // probably we are about to connect

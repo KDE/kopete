@@ -31,8 +31,8 @@ ICQContactBase::ICQContactBase( Kopete::Account *account, const QString &name, K
 						const QString& icon )
 : OscarContact( account, name, parent, icon )
 {
-	QObject::connect( mAccount->engine(), SIGNAL(receivedXStatusMessage(const QString&, int, const QString&, const QString&)),
-	                  this, SLOT(receivedXStatusMessage(const QString&, int, const QString&, const QString&)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedXStatusMessage(QString,int,QString,QString)),
+	                  this, SLOT(receivedXStatusMessage(QString,int,QString,QString)) );
 }
 
 ICQContactBase::~ICQContactBase()

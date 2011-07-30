@@ -88,12 +88,12 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	/*
 	 * Ui setup
 	 */
-	connect(unusedItemsListView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,  const QItemSelection&)),
-				this, SLOT(slotUnusedSelected(const QItemSelection&)));
-	connect(usedItemsListView->selectionModel(), SIGNAL(selectionChanged( const QItemSelection&,  const QItemSelection& )),
-		this, SLOT(slotUsedSelected(const QItemSelection&)));
-	connect(unusedItemsListView, SIGNAL(doubleClicked ( const QModelIndex& )), this, SLOT(slotAddButton()));
-	connect(usedItemsListView, SIGNAL(doubleClicked ( const QModelIndex& )), this, SLOT(slotRemoveButton()));
+	connect(unusedItemsListView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+				this, SLOT(slotUnusedSelected(QItemSelection)));
+	connect(usedItemsListView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+		this, SLOT(slotUsedSelected(QItemSelection)));
+	connect(unusedItemsListView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slotAddButton()));
+	connect(usedItemsListView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slotRemoveButton()));
 
 	tbUp->setIcon(KIcon("go-up"));
 	tbUp->setEnabled(false);

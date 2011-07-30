@@ -62,8 +62,8 @@ TranslatorPreferences::TranslatorPreferences(QWidget *parent, const QVariantList
 		this, SLOT(updateLanguageList()));
 
 	if (Kopete::PluginManager::self()->plugin("kopete_translator"))
-		connect( this, SIGNAL( preferencesChanged() ),
-			Kopete::PluginManager::self()->plugin("kopete_translator"), SLOT( loadSettings() ) );
+		connect( this, SIGNAL(preferencesChanged()),
+			Kopete::PluginManager::self()->plugin("kopete_translator"), SLOT(loadSettings()) );
 
 }
 

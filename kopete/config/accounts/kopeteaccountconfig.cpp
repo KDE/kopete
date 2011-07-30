@@ -71,14 +71,14 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QVariantList &a
 	configureMenus();
 
 	connect( mAccountList,  SIGNAL(itemPositionChanged()), this, SLOT(changed()) );
-	connect( mAccountList,  SIGNAL( itemSelectionChanged() ), this, SLOT( slotItemSelected() ) );
-	connect( mAccountList,  SIGNAL( itemDoubleClicked(QTreeWidgetItem*, int) ), this, SLOT( slotModify() ) );
-	connect( mAccountList,  SIGNAL( itemChanged ( QTreeWidgetItem * , int )), this, SLOT( slotItemChanged(QTreeWidgetItem*) ) );
-	connect( mAccountList,  SIGNAL( itemClicked ( QTreeWidgetItem * , int )), this, SLOT( slotItemClicked(QTreeWidgetItem*, int) ) );
+	connect( mAccountList,  SIGNAL(itemSelectionChanged()), this, SLOT(slotItemSelected()) );
+	connect( mAccountList,  SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(slotModify()) );
+	connect( mAccountList,  SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(slotItemChanged(QTreeWidgetItem*)) );
+	connect( mAccountList,  SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(slotItemClicked(QTreeWidgetItem*,int)) );
 
 	// this ensures that newly created accounts are assigned to the selected identity
-	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account *)), this, SLOT(slotAccountAdded(Kopete::Account *)) );
-    connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)), this, SLOT(slotAccountRemoved(const Kopete::Account *)) );
+	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)), this, SLOT(slotAccountAdded(Kopete::Account*)) );
+    connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)), this, SLOT(slotAccountRemoved(const Kopete::Account*)) );
 
 	mAccountList->installEventFilter( this );
 
@@ -201,8 +201,8 @@ void KopeteAccountConfig::load()
 		lvi->setFlags( (lvi->flags() & ~Qt::ItemIsDropEnabled) | Qt::ItemIsUserCheckable );
 		lvi->setCheckState ( 0, account->excludeConnect() ? Qt::Unchecked : Qt::Checked );
 
-		connect( account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
-				 this, SLOT(slotOnlineStatusChanged(Kopete::Contact*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)));
+		connect( account->myself(), SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+				 this, SLOT(slotOnlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)));
 	}
 
 	changed( false );

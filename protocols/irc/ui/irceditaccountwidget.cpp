@@ -99,24 +99,24 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCAccount *ident, QWidget *parent)
 		}
 	}
 /*
-	connect( commandList, SIGNAL( contextMenu( K3ListView *, QListViewItem *, const QPoint & ) ),
-		this, SLOT( slotCommandContextMenu( K3ListView *, QListViewItem *, const QPoint & ) ) );
+	connect( commandList, SIGNAL(contextMenu(K3ListView*,QListViewItem*,QPoint)),
+		this, SLOT(slotCommandContextMenu(K3ListView*,QListViewItem*,QPoint)) );
 
-	connect( ctcpList, SIGNAL( contextMenu( K3ListView *, QListViewItem *, const QPoint & ) ),
-		this, SLOT( slotCtcpContextMenu( K3ListView *, QListViewItem *, const QPoint & ) ) );
+	connect( ctcpList, SIGNAL(contextMenu(K3ListView*,QListViewItem*,QPoint)),
+		this, SLOT(slotCtcpContextMenu(K3ListView*,QListViewItem*,QPoint)) );
 
 */
-	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
-	connect( editButton, SIGNAL( clicked() ), this, SLOT(slotEditNetworks() ) );
-	connect( addReply, SIGNAL( clicked() ), this, SLOT( slotAddCtcp() ) );
+	connect( addButton, SIGNAL(clicked()), this, SLOT(slotAddCommand()) );
+	connect( editButton, SIGNAL(clicked()), this, SLOT(slotEditNetworks()) );
+	connect( addReply, SIGNAL(clicked()), this, SLOT(slotAddCtcp()) );
 
 
-        connect( network, SIGNAL( activated( const QString & ) ),
-		this, SLOT( slotUpdateNetworkDescription( const QString &) ) );
+        connect( network, SIGNAL(activated(QString)),
+		this, SLOT(slotUpdateNetworkDescription(QString)) );
 //TODO: signal doesn't exist anymore
 #if 0
-	connect( IRCProtocol::self(), SIGNAL( networkConfigUpdated( const QString & ) ),
-		this, SLOT( slotUpdateNetworks( const QString & ) ) );
+	connect( IRCProtocol::self(), SIGNAL(networkConfigUpdated(QString)),
+		this, SLOT(slotUpdateNetworks(QString)) );
 #endif
 	slotUpdateNetworks( QString() );
 }

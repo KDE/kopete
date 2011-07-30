@@ -44,7 +44,7 @@ ContactListElement::ContactListElement( QObject *parent )
 	d->useCustomIcon = false;
 	d->loading = false;
 #if 0  //TODO
-	connect( Kopete::Global::onlineStatusIconCache(), SIGNAL( iconsChanged() ), SIGNAL( iconAppearanceChanged() ) );
+	connect( Kopete::Global::onlineStatusIconCache(), SIGNAL(iconsChanged()), SIGNAL(iconAppearanceChanged()) );
 #endif
 }
 

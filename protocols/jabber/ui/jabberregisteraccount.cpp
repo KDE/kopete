@@ -71,9 +71,9 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	// clear variables
 	jabberClient = new JabberClient ();
 
-	connect ( jabberClient, SIGNAL ( csError ( int ) ), this, SLOT ( slotCSError ( int ) ) );
-	connect ( jabberClient, SIGNAL ( tlsWarning ( QCA::TLS::IdentityResult, QCA::Validity ) ), this, SLOT ( slotHandleTLSWarning ( QCA::TLS::IdentityResult, QCA::Validity ) ) );
-	connect ( jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
+	connect ( jabberClient, SIGNAL (csError(int)), this, SLOT (slotCSError(int)) );
+	connect ( jabberClient, SIGNAL (tlsWarning(QCA::TLS::IdentityResult,QCA::Validity)), this, SLOT (slotHandleTLSWarning(QCA::TLS::IdentityResult,QCA::Validity)) );
+	connect ( jabberClient, SIGNAL (connected()), this, SLOT (slotConnected()) );
 	
 	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
 	hintPixmap = SmallIcon ( "jabber_online" );
@@ -90,17 +90,17 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	mMainWidget->sbPort->setValue ( parent->mPort->value () );
 	mMainWidget->cbUseSSL->setChecked ( parent->cbUseSSL->isChecked () );
 
-	connect ( this, SIGNAL ( okClicked() ), this, SLOT( slotOk() ) );
-	connect ( this, SIGNAL ( cancelClicked () ), this, SLOT ( slotDeleteDialog () ) );
-	connect ( mMainWidget->btnChooseServer, SIGNAL ( clicked () ), this, SLOT ( slotChooseServer () ) );
-	connect ( mMainWidget->leServer, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( slotJIDInformation () ) );
-	connect ( mMainWidget->leJID, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( slotJIDInformation () ) );
-	connect ( mMainWidget->cbUseSSL, SIGNAL ( toggled ( bool ) ), this, SLOT ( slotSSLToggled () ) );
+	connect ( this, SIGNAL (okClicked()), this, SLOT(slotOk()) );
+	connect ( this, SIGNAL (cancelClicked()), this, SLOT (slotDeleteDialog()) );
+	connect ( mMainWidget->btnChooseServer, SIGNAL (clicked()), this, SLOT (slotChooseServer()) );
+	connect ( mMainWidget->leServer, SIGNAL (textChanged(QString)), this, SLOT (slotJIDInformation()) );
+	connect ( mMainWidget->leJID, SIGNAL (textChanged(QString)), this, SLOT (slotJIDInformation()) );
+	connect ( mMainWidget->cbUseSSL, SIGNAL (toggled(bool)), this, SLOT (slotSSLToggled()) );
 
-	connect ( mMainWidget->leServer, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( validateData () ) );
-	connect ( mMainWidget->leJID, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( validateData () ) );
-	connect ( mMainWidget->lePassword, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( validateData () ) );
-	connect ( mMainWidget->lePasswordVerify, SIGNAL ( textChanged ( const QString & ) ), this, SLOT ( validateData () ) );
+	connect ( mMainWidget->leServer, SIGNAL (textChanged(QString)), this, SLOT (validateData()) );
+	connect ( mMainWidget->leJID, SIGNAL (textChanged(QString)), this, SLOT (validateData()) );
+	connect ( mMainWidget->lePassword, SIGNAL (textChanged(QString)), this, SLOT (validateData()) );
+	connect ( mMainWidget->lePasswordVerify, SIGNAL (textChanged(QString)), this, SLOT (validateData()) );
 
 	// display JID info now
 	slotJIDInformation ();
@@ -333,7 +333,7 @@ void JabberRegisterAccount::slotConnected ()
 	mMainWidget->lblStatusMessage->setText ( i18n ( "Connected successfully, registering new account..." ) );
 
 	XMPP::JT_Register * task = new XMPP::JT_Register (jabberClient->rootTask ());
-	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));
+	QObject::connect (task, SIGNAL (finished()), this, SLOT (slotRegisterUserDone()));
 	task->reg (mMainWidget->leJID->text().section('@', 0, 0), mMainWidget->lePassword->text ());
 	task->go (true);
 
@@ -375,7 +375,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		// rewire buttons
 		enableButtonOk ( false );
 		setButtonGuiItem( KDialog::Cancel, KStandardGuiItem::close () );
-		connect ( this, SIGNAL ( closeClicked () ), this, SLOT ( slotDeleteDialog () ) );
+		connect ( this, SIGNAL (closeClicked()), this, SLOT (slotDeleteDialog()) );
 	}
 	else
 	{
@@ -388,7 +388,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 
 	// FIXME: this is required because Iris crashes if we try
 	//        to disconnect here. Hopefully Justin can fix this.
-	QTimer::singleShot(0, this, SLOT(disconnect ()));
+	QTimer::singleShot(0, this, SLOT(disconnect()));
 
 }
 

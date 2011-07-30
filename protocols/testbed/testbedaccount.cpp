@@ -102,8 +102,8 @@ void TestbedAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 {
 	kDebug ( 14210 ) ;
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOnline );
-	QObject::connect ( m_server, SIGNAL ( messageReceived( const QString & ) ),
-			this, SLOT ( receivedMessage( const QString & ) ) );
+	QObject::connect ( m_server, SIGNAL (messageReceived(QString)),
+			this, SLOT (receivedMessage(QString)) );
 }
 
 void TestbedAccount::disconnect()

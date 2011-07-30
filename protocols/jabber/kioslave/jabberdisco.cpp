@@ -74,14 +74,14 @@ void JabberDiscoProtocol::openConnection ()
 	{
 		m_jabberClient = new JabberClient;
 	
-		QObject::connect ( m_jabberClient, SIGNAL ( csDisconnected () ), this, SLOT ( slotCSDisconnected () ) );
-		QObject::connect ( m_jabberClient, SIGNAL ( csError ( int ) ), this, SLOT ( slotCSError ( int ) ) );
-		QObject::connect ( m_jabberClient, SIGNAL ( tlsWarning ( int ) ), this, SLOT ( slotHandleTLSWarning ( int ) ) );
-		QObject::connect ( m_jabberClient, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
-		QObject::connect ( m_jabberClient, SIGNAL ( error ( JabberClient::ErrorCode ) ), this, SLOT ( slotClientError ( JabberClient::ErrorCode ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL (csDisconnected()), this, SLOT (slotCSDisconnected()) );
+		QObject::connect ( m_jabberClient, SIGNAL (csError(int)), this, SLOT (slotCSError(int)) );
+		QObject::connect ( m_jabberClient, SIGNAL (tlsWarning(int)), this, SLOT (slotHandleTLSWarning(int)) );
+		QObject::connect ( m_jabberClient, SIGNAL (connected()), this, SLOT (slotConnected()) );
+		QObject::connect ( m_jabberClient, SIGNAL (error(JabberClient::ErrorCode)), this, SLOT (slotClientError(JabberClient::ErrorCode)) );
 
-		QObject::connect ( m_jabberClient, SIGNAL ( debugMessage ( const QString & ) ),
-				   this, SLOT ( slotClientDebugMessage ( const QString & ) ) );
+		QObject::connect ( m_jabberClient, SIGNAL (debugMessage(QString)),
+				   this, SLOT (slotClientDebugMessage(QString)) );
 	}
 	else
 	{
@@ -226,7 +226,7 @@ void JabberDiscoProtocol::slotConnected ()
 		case ListDir:	// list a directory
 						kDebug ( JABBER_DISCO_DEBUG ) << "Listing directory...";
 						discoTask = new XMPP::JT_DiscoItems ( m_jabberClient->rootTask () );
-						connect ( discoTask, SIGNAL ( finished () ), this, SLOT ( slotQueryFinished () ) );
+						connect ( discoTask, SIGNAL (finished()), this, SLOT (slotQueryFinished()) );
 						discoTask->get ( m_host );
 						discoTask->go ( true );
 						break;

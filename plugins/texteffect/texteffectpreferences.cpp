@@ -66,19 +66,19 @@ TextEffectPreferences::TextEffectPreferences(QWidget *parent,
 			this , SLOT(slotDownPressed()));
 
 	// Connect up all the check boxes
-	connect( preferencesDialog->m_lamer, SIGNAL( clicked() ),
-			 this, SLOT( slotSettingChanged() ) );
-	connect( preferencesDialog->m_casewaves, SIGNAL( clicked() ),
-			 this, SLOT( slotSettingChanged() ) );
+	connect( preferencesDialog->m_lamer, SIGNAL(clicked()),
+			 this, SLOT(slotSettingChanged()) );
+	connect( preferencesDialog->m_casewaves, SIGNAL(clicked()),
+			 this, SLOT(slotSettingChanged()) );
 
-	connect( preferencesDialog->m_colorRandom, SIGNAL( clicked() ),
-			 this, SLOT( slotSettingChanged() ) );
-	connect( preferencesDialog->m_fg, SIGNAL( clicked() ),
-			 this, SLOT( slotSettingChanged() ) );
-	connect( preferencesDialog->m_char, SIGNAL( clicked() ),
-			 this, SLOT( slotSettingChanged() ) );
-	connect( preferencesDialog->m_words, SIGNAL( clicked() ),
-			 this, SLOT( slotSettingChanged() ) );
+	connect( preferencesDialog->m_colorRandom, SIGNAL(clicked()),
+			 this, SLOT(slotSettingChanged()) );
+	connect( preferencesDialog->m_fg, SIGNAL(clicked()),
+			 this, SLOT(slotSettingChanged()) );
+	connect( preferencesDialog->m_char, SIGNAL(clicked()),
+			 this, SLOT(slotSettingChanged()) );
+	connect( preferencesDialog->m_words, SIGNAL(clicked()),
+			 this, SLOT(slotSettingChanged()) );
 
 	//setMainWidget( preferencesDialog, "Text Effect Plugin" );
 }

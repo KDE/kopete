@@ -190,7 +190,7 @@ void RateClass::setupTimer()
 		}
 		else
 		{
-			QTimer::singleShot( ttns, this, SLOT( slotSend() ) ); //or send later
+			QTimer::singleShot( ttns, this, SLOT(slotSend()) ); //or send later
 		}
 	}
 }

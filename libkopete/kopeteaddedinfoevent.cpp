@@ -95,8 +95,8 @@ void AddedInfoEvent::activate( uint actionId )
 			d->addDialog->setAttribute( Qt::WA_DeleteOnClose, false );
 
 			connect( d->addDialog, SIGNAL(finished()), this, SLOT(addDialogFinished()) );
-			connect( d->addDialog, SIGNAL(applyClicked(const QString&)), this, SLOT(addDialogOk()) );
-			connect( d->addDialog, SIGNAL(infoClicked(const QString&)), this, SLOT(addDialogInfo()) );
+			connect( d->addDialog, SIGNAL(applyClicked(QString)), this, SLOT(addDialogOk()) );
+			connect( d->addDialog, SIGNAL(infoClicked(QString)), this, SLOT(addDialogInfo()) );
 			d->addDialog->show();
 		}
 	}

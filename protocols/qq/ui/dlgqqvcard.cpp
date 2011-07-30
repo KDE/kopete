@@ -56,8 +56,8 @@ dlgQQVCard::dlgQQVCard (QQAccount *account, QQContact *contact, QWidget * parent
 	setMainWidget(w);
 	m_mainWidget->lblStatus->setText( i18n("WARNING: This vCard may be out-of-date.") );
 
-	connect (this, SIGNAL (user1Clicked()), this, SLOT (slotSaveVCard ()));
-	connect (this, SIGNAL( user2Clicked()), this, SLOT (slotGetVCard ()));
+	connect (this, SIGNAL (user1Clicked()), this, SLOT (slotSaveVCard()));
+	connect (this, SIGNAL(user2Clicked()), this, SLOT (slotGetVCard()));
 
 	assignContactProperties();
 
@@ -249,7 +249,7 @@ void dlgQQVCard::slotGetVCard()
 	setReadOnly(true);
 	setEnabled(false);
 
-	QObject::connect( m_contact, SIGNAL( gotVCard() ), this, SLOT( slotGotVCard() ) ); 
+	QObject::connect( m_contact, SIGNAL(gotVCard()), this, SLOT(slotGotVCard()) ); 
 	m_account->getVCard( m_contact );
 }
 

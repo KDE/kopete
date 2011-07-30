@@ -134,14 +134,14 @@ AliasPreferences::AliasPreferences( QWidget *parent, const QVariantList &args )
 	preferencesDialog->setupUi( w );
 	l->addWidget( w );
 
-	connect( preferencesDialog->addButton, SIGNAL(clicked()), this, SLOT( slotAddAlias() ) );
-	connect( preferencesDialog->editButton, SIGNAL(clicked()), this, SLOT( slotEditAlias() ) );
-	connect( preferencesDialog->deleteButton, SIGNAL(clicked()), this, SLOT( slotDeleteAliases() ) );
-	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded( Kopete::Plugin * ) ),
-		this, SLOT( slotPluginLoaded( Kopete::Plugin * ) ) );
+	connect( preferencesDialog->addButton, SIGNAL(clicked()), this, SLOT(slotAddAlias()) );
+	connect( preferencesDialog->editButton, SIGNAL(clicked()), this, SLOT(slotEditAlias()) );
+	connect( preferencesDialog->deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteAliases()) );
+	connect( Kopete::PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin*)),
+		this, SLOT(slotPluginLoaded(Kopete::Plugin*)) );
 
 	connect( preferencesDialog->aliasList, SIGNAL(selectionChanged()),
-		this, SLOT( slotCheckAliasSelected() ) );
+		this, SLOT(slotCheckAliasSelected()) );
 }
 
 AliasPreferences::~AliasPreferences()

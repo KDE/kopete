@@ -98,14 +98,14 @@ Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
 		addContact( others[i], true );
 
 	connect( Kopete::PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin*)), this, SLOT(clearChains()) );
-	connect( Kopete::PluginManager::self(), SIGNAL(pluginUnloaded(const QString&)), this, SLOT(clearChains()) );
+	connect( Kopete::PluginManager::self(), SIGNAL(pluginUnloaded(QString)), this, SLOT(clearChains()) );
 
 	connect( user, SIGNAL(contactDestroyed(Kopete::Contact*)), this, SLOT(slotMyselfDestroyed(Kopete::Contact*)) );
-	connect( user, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ), this,
-		SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+	connect( user, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)), this,
+		SLOT(slotOnlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 
 	if( user->metaContact() )
-		connect( user->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
+		connect( user->metaContact(), SIGNAL(photoChanged()), this, SIGNAL(photoChanged()) );
 
 	slotUpdateDisplayName();
 }
@@ -133,8 +133,8 @@ void Kopete::ChatSession::setContactOnlineStatus( const Kopete::Contact *contact
 {
 	Kopete::OnlineStatus oldStatus = d->contactStatus[ contact ];
 	d->contactStatus[ contact ] = status;
-	disconnect( contact, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-		this, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
+	disconnect( contact, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+		this, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 	emit onlineStatusChanged( (Kopete::Contact*)contact, status, oldStatus );
 }
 
@@ -455,18 +455,18 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			d->contacts.removeAll( old );
 			d->contacts.append( (Kopete::Contact*)c );
 
-			disconnect( old, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
+			disconnect( old, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+			this, SLOT(slotOnlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 
 			if ( old->metaContact() )
 			{
-				disconnect( old->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
-				disconnect( old->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
+				disconnect( old->metaContact(), SIGNAL(displayNameChanged(QString,QString)), this, SLOT(slotUpdateDisplayName()) );
+				disconnect( old->metaContact(), SIGNAL(photoChanged()), this, SIGNAL(photoChanged()) );
 			}
 			else
-				disconnect( old, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
+				disconnect( old, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)), this, SLOT(slotUpdateDisplayName()) );
 
-			disconnect( old, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT(slotContactPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant) ) );
+			disconnect( old, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)), this, SLOT(slotContactPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) );
 
 			emit contactAdded( c, suppress );
 			emit contactRemoved( old, QString() );
@@ -477,18 +477,18 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			emit contactAdded( c, suppress );
 		}
 
-		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
+		connect( c, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+			this, SLOT(slotOnlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 ;
 		if ( c->metaContact() )
 		{
-			connect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
-			connect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
+			connect( c->metaContact(), SIGNAL(displayNameChanged(QString,QString)), this, SLOT(slotUpdateDisplayName()) );
+			connect( c->metaContact(), SIGNAL(photoChanged()), this, SIGNAL(photoChanged()) );
 		}
 		else
-			connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
-		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
-		connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT(slotContactPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant) ) );
+			connect( c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)), this, SLOT(slotUpdateDisplayName()) );
+		connect( c, SIGNAL(contactDestroyed(Kopete::Contact*)), this, SLOT(slotContactDestroyed(Kopete::Contact*)) );
+		connect( c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)), this, SLOT(slotContactPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) );
 
 		slotUpdateDisplayName();
 	}
@@ -510,19 +510,19 @@ void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString
 	{
 		d->contacts.removeAll( (Kopete::Contact*)c );
 
-		disconnect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &) ) );
+		disconnect( c, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+			this, SLOT(slotOnlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 
 		if ( c->metaContact() )
 		{
-			disconnect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
-			disconnect( c->metaContact(), SIGNAL( photoChanged() ), this, SIGNAL( photoChanged() ) );
+			disconnect( c->metaContact(), SIGNAL(displayNameChanged(QString,QString)), this, SLOT(slotUpdateDisplayName()) );
+			disconnect( c->metaContact(), SIGNAL(photoChanged()), this, SIGNAL(photoChanged()) );
 		}
 		else
-			disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT( slotUpdateDisplayName() ) );
-		disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
+			disconnect( c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)), this, SLOT(slotUpdateDisplayName()) );
+		disconnect( c, SIGNAL(contactDestroyed(Kopete::Contact*)), this, SLOT(slotContactDestroyed(Kopete::Contact*)) );
 
-		disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ), this, SLOT(slotContactPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant) ) );
+		disconnect( c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)), this, SLOT(slotContactPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) );
 
 		slotUpdateDisplayName();
 	}
@@ -582,9 +582,9 @@ void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 			notification->addContext( qMakePair( QString::fromLatin1("group") , QString::number( g->groupId() ) ) );
 		}
 	}
-	connect( notification, SIGNAL(activated(unsigned int)) , c, SLOT(execute()) );
+	connect( notification, SIGNAL(activated(uint)) , c, SLOT(execute()) );
 	// User don't need this notification when view is activate
-	connect( this, SIGNAL( viewActivated( KopeteView * ) ), notification, SLOT( close() ) );
+	connect( this, SIGNAL(viewActivated(KopeteView*)), notification, SLOT(close()) );
 
 	notification->sendEvent();
 }
@@ -646,8 +646,8 @@ KopeteView* Kopete::ChatSession::view( bool canCreate, const QString &requestedP
 		d->view = Kopete::ChatSessionManager::self()->createView( this, requestedPlugin );
 		if ( d->view )
 		{
-			connect( d->view->mainWidget(), SIGNAL( activated( KopeteView * ) ), this, SIGNAL( viewActivated( KopeteView * ) ) );
-			connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );
+			connect( d->view->mainWidget(), SIGNAL(activated(KopeteView*)), this, SIGNAL(viewActivated(KopeteView*)) );
+			connect( d->view->mainWidget(), SIGNAL(closing(KopeteView*)), this, SLOT(slotViewDestroyed()) );
 		}
 		else
 		{

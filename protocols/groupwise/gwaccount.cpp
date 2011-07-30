@@ -73,22 +73,22 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 
 	// Contact list management
-	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRenamed( Kopete::Group *, const QString & ) ),
-			SLOT( slotKopeteGroupRenamed( Kopete::Group * ) ) );
-	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
-			SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
+	QObject::connect( Kopete::ContactList::self(), SIGNAL(groupRenamed(Kopete::Group*,QString)),
+			SLOT(slotKopeteGroupRenamed(Kopete::Group*)) );
+	QObject::connect( Kopete::ContactList::self(), SIGNAL(groupRemoved(Kopete::Group*)),
+			SLOT(slotKopeteGroupRemoved(Kopete::Group*)) );
 
 //		m_actionBlock = new KAction( KIcon( "msn_blocked" ), label, 0, "actionBlock" );
-//		QObject::connect( m_actionBlock, SIGNAL( triggered( bool ) ), SLOT( slotBlock() ) );
+//		QObject::connect( m_actionBlock, SIGNAL(triggered(bool)), SLOT(slotBlock()) );
 	m_actionAutoReply = new KAction ( i18n( "&Set Auto-Reply..." ), 0 );
-	QObject::connect( m_actionAutoReply, SIGNAL( triggered( bool ) ),
-			SLOT( slotSetAutoReply() ) );
+	QObject::connect( m_actionAutoReply, SIGNAL(triggered(bool)),
+			SLOT(slotSetAutoReply()) );
 	m_actionJoinChatRoom = new KAction ( i18n( "&Join Channel..." ), 0 );
-	QObject::connect( m_actionJoinChatRoom, SIGNAL( triggered( bool ) ),
-										 SLOT( slotJoinChatRoom() ) );
+	QObject::connect( m_actionJoinChatRoom, SIGNAL(triggered(bool)),
+										 SLOT(slotJoinChatRoom()) );
 	m_actionManagePrivacy = new KAction ( i18n( "&Manage Privacy..." ), 0 );
-	QObject::connect( m_actionManagePrivacy, SIGNAL( triggered( bool ) ),
-										 SLOT( slotPrivacy() ) );
+	QObject::connect( m_actionManagePrivacy, SIGNAL(triggered(bool)),
+										 SLOT(slotPrivacy()) );
 			
 	m_connector = 0;
 	m_QCATLS = 0;
@@ -117,7 +117,7 @@ void GroupWiseAccount::fillActionMenu( KActionMenu *actionMenu )
 	/* Used for debugging */
 	/*
 	theActionMenu->insert( new KAction ( "Test rtfize()", QString(), 0, this,
-		SLOT( slotTestRTFize() ), this,
+		SLOT(slotTestRTFize()), this,
 		"actionTestRTFize") );
 	*/
 }
@@ -180,8 +180,8 @@ GroupWiseChatSession * GroupWiseAccount::chatSession( Kopete::ContactPtrList oth
 			m_chatSessions.append( chatSession );
 			// listen for the message manager telling us that the user
 			//has left the conference so we remove it from our map
-			QObject::connect( chatSession, SIGNAL( leavingConference( GroupWiseChatSession * ) ),
-							SLOT( slotLeavingConference( GroupWiseChatSession * ) ) );
+			QObject::connect( chatSession, SIGNAL(leavingConference(GroupWiseChatSession*)),
+							SLOT(slotLeavingConference(GroupWiseChatSession*)) );
 			break;
 		}
 		//kDebug() <<
@@ -272,80 +272,80 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 		m_QCATLS->setTrustedCertificates( QCA::systemStore() );
 	m_clientStream = new ClientStream( m_connector, m_tlsHandler );
 
-	QObject::connect( m_connector, SIGNAL( error() ), this, SLOT( slotConnError() ) );
-	QObject::connect( m_connector, SIGNAL( connected() ), this, SLOT( slotConnConnected() ) );
+	QObject::connect( m_connector, SIGNAL(error()), this, SLOT(slotConnError()) );
+	QObject::connect( m_connector, SIGNAL(connected()), this, SLOT(slotConnConnected()) );
 
 	QObject::connect (m_clientStream, SIGNAL (connectionClosed()),
 				this, SLOT (slotCSDisconnected()));
 	QObject::connect (m_clientStream, SIGNAL (delayedCloseFinished()),
 				this, SLOT (slotCSDisconnected()));
 	// Notify us when the transport layer is connected
-	QObject::connect( m_clientStream, SIGNAL( connected() ), SLOT( slotCSConnected() ) );
+	QObject::connect( m_clientStream, SIGNAL(connected()), SLOT(slotCSConnected()) );
 	// it's necessary to catch this signal and tell the TLS handler to proceed
 	// even if we don't check cert validity
-	QObject::connect( m_tlsHandler, SIGNAL(tlsHandshaken()), SLOT( slotTLSHandshaken()) );
+	QObject::connect( m_tlsHandler, SIGNAL(tlsHandshaken()), SLOT(slotTLSHandshaken()) );
 	// starts the client once the security layer is up, but see below
-	QObject::connect( m_clientStream, SIGNAL( securityLayerActivated(int) ), SLOT( slotTLSReady(int) ) );
+	QObject::connect( m_clientStream, SIGNAL(securityLayerActivated(int)), SLOT(slotTLSReady(int)) );
 	// we could handle login etc in start(), in which case we would emit this signal after that
 	//QObject::connect (jabberClientStream, SIGNAL (authenticated()),
-	//			this, SLOT (slotCSAuthenticated ()));
+	//			this, SLOT (slotCSAuthenticated()));
 	// we could also get do the actual login in response to this..
-	//QObject::connect (m_clientStream, SIGNAL (needAuthParams(bool, bool, bool)),
-	//			this, SLOT (slotCSNeedAuthParams (bool, bool, bool)));
+	//QObject::connect (m_clientStream, SIGNAL (needAuthParams(bool,bool,bool)),
+	//			this, SLOT (slotCSNeedAuthParams(bool,bool,bool)));
 
 	// not implemented: warning
-	QObject::connect( m_clientStream, SIGNAL( warning(int) ), SLOT( slotCSWarning(int) ) );
+	QObject::connect( m_clientStream, SIGNAL(warning(int)), SLOT(slotCSWarning(int)) );
 	// not implemented: error
-	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotCSError(int) ) );
+	QObject::connect( m_clientStream, SIGNAL(error(int)), SLOT(slotCSError(int)) );
 
 	m_client = new Client( 0, CMSGPRES_GW_6_5 );
 
 	// NB these are prefixed with QObject:: to avoid any chance of a clash with our connect() methods.
 	// we connected successfully
-	QObject::connect( m_client, SIGNAL( loggedIn() ), SLOT( slotLoggedIn() ) );
+	QObject::connect( m_client, SIGNAL(loggedIn()), SLOT(slotLoggedIn()) );
 	// or connection failed
-	QObject::connect( m_client, SIGNAL( loginFailed() ), SLOT( slotLoginFailed() ) );
+	QObject::connect( m_client, SIGNAL(loginFailed()), SLOT(slotLoginFailed()) );
 	// folder listed
-	QObject::connect( m_client, SIGNAL( folderReceived( const FolderItem & ) ), SLOT( receiveFolder( const FolderItem & ) ) );
+	QObject::connect( m_client, SIGNAL(folderReceived(FolderItem)), SLOT(receiveFolder(FolderItem)) );
 	// contact listed
-	QObject::connect( m_client, SIGNAL( contactReceived( const ContactItem & ) ), SLOT( receiveContact( const ContactItem & ) ) );
+	QObject::connect( m_client, SIGNAL(contactReceived(ContactItem)), SLOT(receiveContact(ContactItem)) );
 	// contact details listed
-	QObject::connect( m_client, SIGNAL( contactUserDetailsReceived( const GroupWise::ContactDetails & ) ), SLOT( receiveContactUserDetails( const GroupWise::ContactDetails & ) ) );
+	QObject::connect( m_client, SIGNAL(contactUserDetailsReceived(GroupWise::ContactDetails)), SLOT(receiveContactUserDetails(GroupWise::ContactDetails)) );
 	// contact status changed
-	QObject::connect( m_client, SIGNAL( statusReceived( const QString &, quint16, const QString & ) ), SLOT( receiveStatus( const QString &, quint16 , const QString & ) ) );
+	QObject::connect( m_client, SIGNAL(statusReceived(QString,quint16,QString)), SLOT(receiveStatus(QString,quint16,QString)) );
 	// incoming message
-	QObject::connect( m_client, SIGNAL( messageReceived( const ConferenceEvent & ) ), SLOT( handleIncomingMessage( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL(messageReceived(ConferenceEvent)), SLOT(handleIncomingMessage(ConferenceEvent)) );
 	// auto reply to one of our messages because the recipient is away
-	QObject::connect( m_client, SIGNAL( autoReplyReceived( const ConferenceEvent & ) ), SLOT( handleIncomingMessage( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL(autoReplyReceived(ConferenceEvent)), SLOT(handleIncomingMessage(ConferenceEvent)) );
 
-	QObject::connect( m_client, SIGNAL( ourStatusChanged( GroupWise::Status, const QString &, const QString & ) ), SLOT( changeOurStatus( GroupWise::Status, const QString &, const QString & ) ) );
+	QObject::connect( m_client, SIGNAL(ourStatusChanged(GroupWise::Status,QString,QString)), SLOT(changeOurStatus(GroupWise::Status,QString,QString)) );
 	// conference events
 	QObject::connect( m_client,
-		SIGNAL( conferenceCreated( const int, const GroupWise::ConferenceGuid & ) ),
-		SIGNAL( conferenceCreated( const int, const GroupWise::ConferenceGuid & ) ) );
-	QObject::connect( m_client, SIGNAL( conferenceCreationFailed( const int,  const int ) ), SIGNAL( conferenceCreationFailed( const int,  const int ) ) );
-	QObject::connect( m_client, SIGNAL( invitationReceived( const ConferenceEvent & ) ), SLOT( receiveInvitation( const ConferenceEvent & ) ) );
-	QObject::connect( m_client, SIGNAL( conferenceLeft( const ConferenceEvent & ) ), SLOT( receiveConferenceLeft( const ConferenceEvent & ) ) );
-	QObject::connect( m_client, SIGNAL( conferenceJoinNotifyReceived( const ConferenceEvent & ) ), SLOT( receiveConferenceJoinNotify( const ConferenceEvent & ) ) );
-	QObject::connect( m_client, SIGNAL( inviteNotifyReceived( const ConferenceEvent & ) ), SLOT( receiveInviteNotify( const ConferenceEvent & ) ) );
-	QObject::connect( m_client, SIGNAL( invitationDeclined( const ConferenceEvent & ) ), SLOT( receiveInviteDeclined( const ConferenceEvent & ) ) );
+		SIGNAL(conferenceCreated(int,GroupWise::ConferenceGuid)),
+		SIGNAL(conferenceCreated(int,GroupWise::ConferenceGuid)) );
+	QObject::connect( m_client, SIGNAL(conferenceCreationFailed(int,int)), SIGNAL(conferenceCreationFailed(int,int)) );
+	QObject::connect( m_client, SIGNAL(invitationReceived(ConferenceEvent)), SLOT(receiveInvitation(ConferenceEvent)) );
+	QObject::connect( m_client, SIGNAL(conferenceLeft(ConferenceEvent)), SLOT(receiveConferenceLeft(ConferenceEvent)) );
+	QObject::connect( m_client, SIGNAL(conferenceJoinNotifyReceived(ConferenceEvent)), SLOT(receiveConferenceJoinNotify(ConferenceEvent)) );
+	QObject::connect( m_client, SIGNAL(inviteNotifyReceived(ConferenceEvent)), SLOT(receiveInviteNotify(ConferenceEvent)) );
+	QObject::connect( m_client, SIGNAL(invitationDeclined(ConferenceEvent)), SLOT(receiveInviteDeclined(ConferenceEvent)) );
 
-	QObject::connect( m_client, SIGNAL( conferenceJoined( const GroupWise::ConferenceGuid &, const QStringList &, const QStringList &  ) ), SLOT( receiveConferenceJoin( const GroupWise::ConferenceGuid &, const QStringList & , const QStringList & ) ) );
+	QObject::connect( m_client, SIGNAL(conferenceJoined(GroupWise::ConferenceGuid,QStringList,QStringList)), SLOT(receiveConferenceJoin(GroupWise::ConferenceGuid,QStringList,QStringList)) );
 
 	// typing events
-	QObject::connect( m_client, SIGNAL( contactTyping( const ConferenceEvent & ) ),
-								SIGNAL( contactTyping( const ConferenceEvent & ) ) );
-	QObject::connect( m_client, SIGNAL( contactNotTyping( const ConferenceEvent & ) ),
-								SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL(contactTyping(ConferenceEvent)),
+								SIGNAL(contactTyping(ConferenceEvent)) );
+	QObject::connect( m_client, SIGNAL(contactNotTyping(ConferenceEvent)),
+								SIGNAL(contactNotTyping(ConferenceEvent)) );
 	// misc
-	QObject::connect( m_client, SIGNAL( accountDetailsReceived( const GroupWise::ContactDetails &) ), SLOT( receiveAccountDetails( const GroupWise::ContactDetails & ) ) );
-	QObject::connect( m_client, SIGNAL( connectedElsewhere() ), SLOT( slotConnectedElsewhere() ) );
+	QObject::connect( m_client, SIGNAL(accountDetailsReceived(GroupWise::ContactDetails)), SLOT(receiveAccountDetails(GroupWise::ContactDetails)) );
+	QObject::connect( m_client, SIGNAL(connectedElsewhere()), SLOT(slotConnectedElsewhere()) );
 	// privacy - contacts can't connect directly to this signal because myself() is initialised before m_client
-	QObject::connect( m_client->privacyManager(), SIGNAL( privacyChanged( const QString &, bool ) ), SIGNAL( privacyChanged( const QString &, bool ) ) );
+	QObject::connect( m_client->privacyManager(), SIGNAL(privacyChanged(QString,bool)), SIGNAL(privacyChanged(QString,bool)) );
 
 	// GW7
-	QObject::connect( m_client, SIGNAL( broadcastReceived( const ConferenceEvent & ) ), SLOT( handleIncomingMessage( const ConferenceEvent & ) ) );
-	QObject::connect( m_client, SIGNAL( systemBroadcastReceived( const ConferenceEvent & ) ), SLOT( handleIncomingMessage( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL(broadcastReceived(ConferenceEvent)), SLOT(handleIncomingMessage(ConferenceEvent)) );
+	QObject::connect( m_client, SIGNAL(systemBroadcastReceived(ConferenceEvent)), SLOT(handleIncomingMessage(ConferenceEvent)) );
 
 	struct utsname utsBuf;
 	uname (&utsBuf);
@@ -361,7 +361,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	m_serverListModel = new GWContactList( this );
 	myself()->setOnlineStatus( protocol()->groupwiseConnecting );
 	m_client->connectToServer( m_clientStream, dn, true );
-	QObject::connect( m_client, SIGNAL( messageSendingFailed() ), SLOT( slotMessageSendingFailed() ) );
+	QObject::connect( m_client, SIGNAL(messageSendingFailed()), SLOT(slotMessageSendingFailed()) );
 }
 
 void GroupWiseAccount::slotMessageSendingFailed()
@@ -989,7 +989,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 			kDebug() << " - ERROR - contact's folder doesn't exist on server";
 			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
 			dit->item( contact.parentId, contact.id );
-//			QObject::connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+//			QObject::connect( dit, SIGNAL(gotContactDeleted(ContactItem)), SLOT(receiveContactDeleted(ContactItem)) );
 			dit->go( true );
 			return;
 		}
@@ -1224,7 +1224,7 @@ bool GroupWiseAccount::createContact( const QString& contactId, Kopete::MetaCont
 	// get the contact's full name to use as the display name of the created contact
 	CreateContactTask * cct = new CreateContactTask( client()->rootTask() );
 	cct->contactFromUserId( contactId, displayAs, highestFreeSequence, folders, topLevel );
-	QObject::connect( cct, SIGNAL( finished() ), SLOT( receiveContactCreated() ) );
+	QObject::connect( cct, SIGNAL(finished()), SLOT(receiveContactCreated()) );
 	cct->go( true );
 	return true;
 }
@@ -1288,7 +1288,7 @@ void GroupWiseAccount::deleteContact( GroupWiseContact * contact )
 		{
 			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
 			dit->item( qobject_cast<GWFolder*>( (*it)->parent() )->id, (*it)->id );
-			QObject::connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+			QObject::connect( dit, SIGNAL(gotContactDeleted(ContactItem)), SLOT(receiveContactDeleted(ContactItem)) );
 			dit->go( true );
 		}
 	}
@@ -1599,21 +1599,21 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 			{
 				MoveContactTask * mit = new MoveContactTask( client()->rootTask() );
 				mit->moveContact( instance, destinationFolder->id );
-				QObject::connect( mit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+				QObject::connect( mit, SIGNAL(gotContactDeleted(ContactItem)), SLOT(receiveContactDeleted(ContactItem)) );
 				mit->go();
 			}
 			else if ( grpIt.value() == Kopete::Group::topLevel() )
 			{
 				MoveContactTask * mit = new MoveContactTask( client()->rootTask() );
 				mit->moveContact( instance, 0 );
-				QObject::connect( mit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+				QObject::connect( mit, SIGNAL(gotContactDeleted(ContactItem)), SLOT(receiveContactDeleted(ContactItem)) );
 				mit->go();
 			}
 			else
 			{
 				MoveContactTask * mit = new MoveContactTask( client()->rootTask() );
-				QObject::connect( mit, SIGNAL( gotContactDeleted( const ContactItem & ) ), 
-								  SLOT( receiveContactDeleted( const ContactItem & ) ) );
+				QObject::connect( mit, SIGNAL(gotContactDeleted(ContactItem)), 
+								  SLOT(receiveContactDeleted(ContactItem)) );
 				// discover the next free sequence number and add the group using that
 				mit->moveContactToNewFolder( instance, nextFreeSequence++,
 											 grpIt.value()->displayName() );
@@ -1662,7 +1662,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 
 			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
 			dit->item( folder->id, instIt.value()->id );
-			QObject::connect( dit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+			QObject::connect( dit, SIGNAL(gotContactDeleted(ContactItem)), SLOT(receiveContactDeleted(ContactItem)) );
 			dit->go( true );
 
 			instIt.remove();
@@ -1685,7 +1685,7 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 
 				UpdateContactTask * uct = new UpdateContactTask( client()->rootTask() );
 				uct->renameContact( contact->metaContact()->displayName(), instancesToChange );
-				QObject::connect ( uct, SIGNAL( finished() ), contact, SLOT( renamedOnServer() ) );
+				QObject::connect ( uct, SIGNAL(finished()), contact, SLOT(renamedOnServer()) );
 				uct->go( true );
 			}
 		}

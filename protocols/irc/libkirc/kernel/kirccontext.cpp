@@ -141,8 +141,8 @@ void Context::add(EntityPtr entity)
 	if (!d->entities.contains(entity))
 	{
 		d->entities.append(entity);
-		connect(entity.data(), SIGNAL(destroyed(KIrc::Entity *)),
-			this, SLOT(remove(KIrc::Entity *)));
+		connect(entity.data(), SIGNAL(destroyed(KIrc::Entity*)),
+			this, SLOT(remove(KIrc::Entity*)));
 	}
 }
 

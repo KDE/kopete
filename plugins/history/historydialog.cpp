@@ -151,16 +151,16 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlPart->end();
 
 
-	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)),
-		this, SLOT(slotOpenURLRequest(const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)));
-	connect(mMainWidget->dateTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(dateSelected(QTreeWidgetItem*)));
+	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
+		this, SLOT(slotOpenURLRequest(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)));
+	connect(mMainWidget->dateTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(dateSelected(QTreeWidgetItem*)));
 	connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
-	connect(mMainWidget->searchLine, SIGNAL(textChanged(const QString&)), this, SLOT(slotSearchTextChanged(const QString&)));
+	connect(mMainWidget->searchLine, SIGNAL(textChanged(QString)), this, SLOT(slotSearchTextChanged(QString)));
 	connect(mMainWidget->contactComboBox, SIGNAL(activated(int)), this, SLOT(slotContactChanged(int)));
-	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int )));
+	connect(mMainWidget->messageFilterBox, SIGNAL(activated(int)), this, SLOT(slotFilterChanged(int)));
 	connect(mMainWidget->importHistory, SIGNAL(clicked()), this, SLOT(slotImportHistory()));
-	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)));
+	connect(mHtmlPart, SIGNAL(popupMenu(QString,QPoint)), this, SLOT(slotRightClick(QString,QPoint)));
 
 	//initActions
 	mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), mHtmlView );
@@ -609,7 +609,7 @@ void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
 	mCopyAct->setEnabled( mHtmlPart->hasSelection() );
 	chatWindowPopup->addAction( mCopyAct );
 
-	connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
+	connect( chatWindowPopup, SIGNAL(aboutToHide()), chatWindowPopup, SLOT(deleteLater()) );
 	chatWindowPopup->popup(point);
 }
 
@@ -619,18 +619,18 @@ void HistoryDialog::slotCopy()
 	qsSelection = mHtmlPart->selectedText();
 	if ( qsSelection.isEmpty() ) return;
 
-	disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	disconnect( QApplication::clipboard(), SIGNAL(selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 	QApplication::clipboard()->setText(qsSelection, QClipboard::Clipboard);
 	QApplication::clipboard()->setText(qsSelection, QClipboard::Selection);
-	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	connect( QApplication::clipboard(), SIGNAL(selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 }
 
 void HistoryDialog::slotCopyURL()
 {
-	disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	disconnect( QApplication::clipboard(), SIGNAL(selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 	QApplication::clipboard()->setText( mURL, QClipboard::Clipboard);
 	QApplication::clipboard()->setText( mURL, QClipboard::Selection);
-	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
+	connect( QApplication::clipboard(), SIGNAL(selectionChanged()), mHtmlPart, SLOT(slotClearSelection()));
 }
 
 void HistoryDialog::slotImportHistory(void)

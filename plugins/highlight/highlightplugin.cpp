@@ -34,8 +34,8 @@ HighlightPlugin::HighlightPlugin( QObject *parent, const QVariantList &/*args*/ 
 	if( !pluginStatic_ )
 		pluginStatic_=this;
 
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotIncomingMessage( Kopete::Message & ) ) );
-	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message&)), SLOT(slotIncomingMessage(Kopete::Message&)) );
+	connect ( this , SIGNAL(settingsChanged()) , this , SLOT(slotSettingsChanged()) );
 
 	m_config = new HighlightConfig;
 

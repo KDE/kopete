@@ -13,12 +13,12 @@ ClientStreamTest::ClientStreamTest(int argc, char ** argv) : QApplication( argc,
 	myConnector->setOptHostPort( "scs.msg.yahoo.com", 5050 );
 	myTestObject = new ClientStream( myConnector, myConnector);
 	// notify when the transport layer is connected
-	connect( myTestObject, SIGNAL( connected() ), SLOT( slotConnected() ) );
+	connect( myTestObject, SIGNAL(connected()), SLOT(slotConnected()) );
 	// notify and start sending
-	//connect( myTestObject, SIGNAL( warning(int) ), SLOT( slotWarning(int) ) );
+	//connect( myTestObject, SIGNAL(warning(int)), SLOT(slotWarning(int)) );
 
 	// do test once the event loop is running
-	QTimer::singleShot( 0, this, SLOT( slotDoTest() ) );
+	QTimer::singleShot( 0, this, SLOT(slotDoTest()) );
 	connected = false;
 }
 

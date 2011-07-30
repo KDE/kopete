@@ -86,7 +86,7 @@ bool SearchUserTask::take( Transfer * transfer )
 		return true;
 	}
 	// now start the results poll timer
-	QTimer::singleShot( GW_POLL_INITIAL_DELAY, this, SLOT( slotPollForResults() ) );
+	QTimer::singleShot( GW_POLL_INITIAL_DELAY, this, SLOT(slotPollForResults()) );
 	return true;
 }
 
@@ -95,7 +95,7 @@ void SearchUserTask::slotPollForResults()
 	//create a PollSearchResultsTask
 	PollSearchResultsTask * psrt = new PollSearchResultsTask( client()->rootTask() );
 	psrt->poll( m_queryHandle );
-	connect( psrt, SIGNAL( finished() ), SLOT( slotGotPollResults() ) );
+	connect( psrt, SIGNAL(finished()), SLOT(slotGotPollResults()) );
 	psrt->go( true );
 }
 
@@ -109,7 +109,7 @@ void SearchUserTask::slotGotPollResults()
 		case PollSearchResultsTask::Pending:
 		case PollSearchResultsTask::InProgess:
 			if ( m_polls < GW_POLL_MAXIMUM ) // restart timer
-				QTimer::singleShot( GW_POLL_FREQUENCY_MS, this, SLOT( slotPollForResults() ) );
+				QTimer::singleShot( GW_POLL_FREQUENCY_MS, this, SLOT(slotPollForResults()) );
 			else
 				setSuccess( psrt->statusCode() );
 			break;

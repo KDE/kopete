@@ -37,10 +37,10 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	mProtocol=static_cast<ICQProtocol *>(protocol());
 	setPresenceTarget( Oscar::Presence( Oscar::Presence::Offline, Oscar::Presence::AIM ) );
 
-	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
-	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ),
-	                  this, SLOT( userOffline( const QString& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedUserInfo(QString,UserDetails)),
+	                  this, SLOT(userInfoUpdated(QString,UserDetails)) );
+	QObject::connect( mAccount->engine(), SIGNAL(userIsOffline(QString)),
+	                  this, SLOT(userOffline(QString)) );
 }
 
 AIMContact::~AIMContact()

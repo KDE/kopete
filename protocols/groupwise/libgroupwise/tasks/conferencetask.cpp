@@ -42,8 +42,8 @@ ConferenceTask::ConferenceTask( Task* parent )
 	registerEvent( GroupWise::ReceivedSystemBroadcast );
 
 	// listen to the UserDetailsManager telling us that user details are available
-	connect( client()->userDetailsManager(), SIGNAL( gotContactDetails( const GroupWise::ContactDetails & ) ), 
-		SLOT( slotReceiveUserDetails( const GroupWise::ContactDetails & ) ) );
+	connect( client()->userDetailsManager(), SIGNAL(gotContactDetails(GroupWise::ContactDetails)), 
+		SLOT(slotReceiveUserDetails(GroupWise::ContactDetails)) );
 }
 
 

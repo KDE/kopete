@@ -355,7 +355,7 @@ public:
 				connect(lt->sock, SIGNAL(stunFinished()), SLOT(lt_stunFinished()));
 				connect(lt->sock, SIGNAL(error(XMPP::IceLocalTransport::Error)), SLOT(lt_error(XMPP::IceLocalTransport::Error)));
 				connect(lt->sock, SIGNAL(readyRead(XMPP::IceLocalTransport::TransmitPath)), SLOT(lt_readyRead(XMPP::IceLocalTransport::TransmitPath)));
-				connect(lt->sock, SIGNAL(datagramsWritten(XMPP::IceLocalTransport::TransmitPath, int)), SLOT(lt_datagramsWritten(XMPP::IceLocalTransport::TransmitPath, int)));
+				connect(lt->sock, SIGNAL(datagramsWritten(XMPP::IceLocalTransport::TransmitPath,int)), SLOT(lt_datagramsWritten(XMPP::IceLocalTransport::TransmitPath,int)));
 				lt->addrAt = i;
 				lt->network = localAddrs[i].network;
 				lt->isVpn = localAddrs[i].isVpn;
@@ -550,7 +550,7 @@ public:
 			LocalTransport *lt = localTransports[at];
 
 			pair.pool = new StunTransactionPool(StunTransaction::Udp, this);
-			connect(pair.pool, SIGNAL(retransmit(XMPP::StunTransaction *)), SLOT(pool_retransmit(XMPP::StunTransaction *)));
+			connect(pair.pool, SIGNAL(retransmit(XMPP::StunTransaction*)), SLOT(pool_retransmit(XMPP::StunTransaction*)));
 			pair.pool->setUsername(peerUser + ':' + localUser);
 			pair.pool->setPassword(peerPass.toUtf8());
 

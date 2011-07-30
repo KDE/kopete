@@ -61,32 +61,32 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	KAction *buzzAction = new KAction( KIcon("bell"), i18n( "Buzz Contact" ), this );
         actionCollection()->addAction( "yahooBuzz", buzzAction );
 	buzzAction->setShortcut( KShortcut("Ctrl+G") );
-	connect( buzzAction, SIGNAL( triggered(bool) ), this, SLOT( slotBuzzContact() ) );
+	connect( buzzAction, SIGNAL(triggered(bool)), this, SLOT(slotBuzzContact()) );
 
 	KAction *userInfoAction = new KAction( KIcon("help-about"), i18n( "Show User Info" ), this );
         actionCollection()->addAction( "yahooShowInfo",  userInfoAction) ;
-	connect( userInfoAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserInfo() ) );
+	connect( userInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
 
 	KAction *receiveWebcamAction = new KAction( KIcon("webcamreceive"), i18n( "Request Webcam" ), this );
         actionCollection()->addAction( "yahooRequestWebcam",  receiveWebcamAction) ;
-	connect( receiveWebcamAction, SIGNAL( triggered(bool) ), this, SLOT( slotRequestWebcam() ) );
+	connect( receiveWebcamAction, SIGNAL(triggered(bool)), this, SLOT(slotRequestWebcam()) );
 
 	KAction *sendWebcamAction = new KAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), this );
         actionCollection()->addAction( "yahooSendWebcam",  sendWebcamAction) ;
-	connect( sendWebcamAction, SIGNAL( triggered(bool) ), this, SLOT( slotInviteWebcam() ) );
+	connect( sendWebcamAction, SIGNAL(triggered(bool)), this, SLOT(slotInviteWebcam()) );
 
 	YahooContact *c = static_cast<YahooContact*>( others.first() );
-	connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
+	connect( c, SIGNAL(displayPictureChanged()), this, SLOT(slotDisplayPictureChanged()) );
 	m_image = new QLabel( 0L );
 	m_image->setObjectName( QLatin1String("kde toolbar widget") );
 	KAction *imageAction = new KAction( i18n( "Yahoo Display Picture" ), this );
         actionCollection()->addAction( "yahooDisplayPicture", imageAction );
 	imageAction->setDefaultWidget( m_image );
-	connect( imageAction, SIGNAL( triggered() ), this, SLOT( slotDisplayPictureChanged() ) );
+	connect( imageAction, SIGNAL(triggered()), this, SLOT(slotDisplayPictureChanged()) );
 
 	if(c->hasProperty(Kopete::Global::Properties::self()->photo().key())  )
 	{
-		connect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
+		connect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView*)) , this, SLOT(slotDisplayPictureChanged()) );
 	}
 	else
 	{
@@ -156,7 +156,7 @@ void YahooChatSession::slotDisplayPictureChanged()
 			if(w)
 			{
 				//We connected that in the constructor.  we don't need to keep this slot active.
-				disconnect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
+				disconnect( Kopete::ChatSessionManager::self() , SIGNAL(viewActivated(KopeteView*)) , this, SLOT(slotDisplayPictureChanged()) );
 
 				KAction *imgAction=actionCollection()->action("yahooDisplayPicture");
 				if(imgAction)

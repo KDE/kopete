@@ -67,7 +67,7 @@ GaduAway::GaduAway( GaduAccount* account, QWidget* parent )
 	}
 
 	ui_->textEdit_->setText( account->myself()->property( "statusMessage" ).value().toString() );
-	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
+	connect( this, SIGNAL(applyClicked()), SLOT(slotApply()) );
 }
 
 GaduAway::~GaduAway()

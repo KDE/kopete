@@ -908,9 +908,9 @@ class Item::Private
 {
 public:
 	Private( Item *item )
-	 : layoutAnimateTimer( theLayoutAnimateTimer(), item, SLOT( slotLayoutAnimateItems() ) )
+	 : layoutAnimateTimer( theLayoutAnimateTimer(), item, SLOT(slotLayoutAnimateItems()) )
 	 , animateLayout( true ), opacity( 1.0 )
-	 , visibilityTimer( theVisibilityTimer(), item, SLOT( slotUpdateVisibility() ) )
+	 , visibilityTimer( theVisibilityTimer(), item, SLOT(slotUpdateVisibility()) )
 	 , visibilityLevel( 0 ), visibilityTarget( false ), searchMatch( true )
 	{
 	}
@@ -984,11 +984,11 @@ void Item::setEffects( bool animation, bool fading, bool folding )
 
 void Item::initLVI(QObject* parent)
 {
-	connect( listView()->header(), SIGNAL( sizeChange( int, int, int ) ), SLOT( slotColumnResized() ) );
-	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( slotLayoutItems() ) );
-	connect (this, SIGNAL ( visibilityChanged(bool) ), parent, SIGNAL ( visibleSizeChanged () ) );
-	//connect( &d->layoutAnimateTimer, SIGNAL( timeout() ), SLOT( slotLayoutAnimateItems() ) );
-	//connect( &d->visibilityTimer, SIGNAL( timeout() ), SLOT( slotUpdateVisibility() ) );
+	connect( listView()->header(), SIGNAL(sizeChange(int,int,int)), SLOT(slotColumnResized()) );
+	connect( &d->layoutTimer, SIGNAL(timeout()), SLOT(slotLayoutItems()) );
+	connect (this, SIGNAL (visibilityChanged(bool)), parent, SIGNAL (visibleSizeChanged()) );
+	//connect( &d->layoutAnimateTimer, SIGNAL(timeout()), SLOT(slotLayoutAnimateItems()) );
+	//connect( &d->visibilityTimer, SIGNAL(timeout()), SLOT(slotUpdateVisibility()) );
 	mySetVisible( false );
 	setTargetVisibility( true );
 }

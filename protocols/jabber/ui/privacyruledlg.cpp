@@ -31,7 +31,7 @@ PrivacyRuleDlg::PrivacyRuleDlg()
 	setCaption ( i18n ("Edit Privacy List Rule" ) );
 	ui_.cb_value->setFocus (Qt::PopupFocusReason);
 	
-	connect(ui_.cb_type,SIGNAL(currentIndexChanged(const QString&)),SLOT(type_selected(const QString&)));
+	connect(ui_.cb_type,SIGNAL(currentIndexChanged(QString)),SLOT(type_selected(QString)));
 }
 
 void PrivacyRuleDlg::setRule(const PrivacyListItem& item)

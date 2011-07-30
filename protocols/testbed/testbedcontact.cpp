@@ -85,8 +85,8 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags canCreateFlags )
 		Kopete::ChatSession::Form form = ( m_type == Group ?
 				  Kopete::ChatSession::Chatroom : Kopete::ChatSession::Small );
 		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol(), form );
-		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
-				this, SLOT( sendMessage( Kopete::Message& ) ) );
+		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+				this, SLOT(sendMessage(Kopete::Message&)) );
 		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
 		return m_msgManager;
 	}
@@ -102,7 +102,7 @@ QList<KAction *> *TestbedContact::customContextMenuActions() //OBSOLETE
 	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
 	/*m_actionCollection = new KActionCollection( this, "userColl" );
 	m_actionPrefs = new KAction(i18n( "&Contact Settings" ), 0, this,
-			SLOT( showContactSettings( )), m_actionCollection, "contactSettings" );
+			SLOT(showContactSettings()), m_actionCollection, "contactSettings" );
 
 	return m_actionCollection;*/
 	return 0L;

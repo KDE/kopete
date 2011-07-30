@@ -49,8 +49,8 @@ void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int che
 	ext = ext.right( ext.length() - ext.lastIndexOf( "." ) );
 	
 	transfer = KIO::get( url, KIO::NoReload, KIO::HideProgressInfo );
-	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotComplete( KJob* ) ) );
-	connect( transfer, SIGNAL( data( KIO::Job*, const QByteArray& ) ), this, SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
+	connect( transfer, SIGNAL(result(KJob*)), this, SLOT(slotComplete(KJob*)) );
+	connect( transfer, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotData(KIO::Job*,QByteArray)) );
 
 	m_jobs[transfer].url = url;
 	m_jobs[transfer].who = who;

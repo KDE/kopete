@@ -181,7 +181,7 @@ void KABCPersistence::writeAddressBook( KABC::Resource * res)
 	if ( !d->addrBookWritePending )
 	{
 		d->addrBookWritePending = true;
-		QTimer::singleShot( 2000, this, SLOT( slotWriteAddressBook() ) );
+		QTimer::singleShot( 2000, this, SLOT(slotWriteAddressBook()) );
 	}
 }
 

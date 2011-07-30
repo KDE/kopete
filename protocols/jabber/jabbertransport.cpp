@@ -151,18 +151,18 @@ void JabberTransport::fillActionMenu( KActionMenu *actionMenu )
 	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "jabber_group", 0,
-		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
+		this, SLOT (slotJoinNewChat()), this, "actionJoinChat"));
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert ( new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
-										 this, SLOT ( slotGetServices () ), this, "actionJabberServices") );
+										 this, SLOT (slotGetServices()), this, "actionJabberServices") );
 
 	m_actionMenu->insert ( new KAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
-										 this, SLOT ( slotSendRaw () ), this, "actionJabberSendRaw") );
+										 this, SLOT (slotSendRaw()), this, "actionJabberSendRaw") );
 
 	m_actionMenu->insert ( new KAction ( i18n ("Edit User Info..."), "identity", 0,
-										 this, SLOT ( slotEditVCard () ), this, "actionEditVCard") );
+										 this, SLOT (slotEditVCard()), this, "actionEditVCard") );
 
 	return m_actionMenu;*/
 }
@@ -283,7 +283,7 @@ bool JabberTransport::removeAccount( )
 	
 	m_status = Removing;
 	XMPP::JT_Register *task = new XMPP::JT_Register ( m_account->client()->rootTask () );
-	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( removeAllContacts() ) );
+	QObject::connect ( task, SIGNAL (finished()), this, SLOT (removeAllContacts()) );
 
 	//JabberContact *my=static_cast<JabberContact*>(myself());
 	task->unreg ( myself()->contactId() );

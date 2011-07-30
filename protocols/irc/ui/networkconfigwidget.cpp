@@ -175,7 +175,7 @@ void IRCNetworkConfigWidget::slotUpdateNetworkConfig()
 
 		// prevent nested event loop crash
 		disconnect(m_hostList, SIGNAL(selectionChanged()),
-			this, SLOT( slotUpdateNetworkHostConfig() ) );
+			this, SLOT(slotUpdateNetworkHostConfig()) );
 
 		m_hostList->setSelected( 0, true );
 		slotUpdateNetworkHostConfig();
@@ -229,7 +229,7 @@ void IRCNetworkConfigWidget::slotHostPortChanged( int value )
 	QString entryText = m_hostList->text( d->m_uiCurrentHostSelectionIndex ) + QString::fromLatin1(":") + QString::number( value );
 	// changeItem causes a take() and insert, and we don't want a selectionChanged() signal that sets all this off again.
 	disconnect(m_hostList, SIGNAL(selectionChanged()),
-		this, SLOT( slotUpdateNetworkHostConfig() ) );
+		this, SLOT(slotUpdateNetworkHostConfig()) );
 
 	m_hostList->changeItem(entryText, m_hostList->currentItem());
 
@@ -265,13 +265,13 @@ void IRCNetworkConfigWidget::slotUpdateNetworkHostConfig()
 	{
 		d->m_uiCurrentHostSelectionIndex = -1;
 		disconnect(port, SIGNAL(valueChanged(int)),
-			this, SLOT( slotHostPortChanged( int ) ) );
+			this, SLOT(slotHostPortChanged(int)) );
 		m_host->clear();
 		//password->clear();
 		port->setValue( 6667 );
 		useSSL->setChecked( false );
 		connect(port, SIGNAL(valueChanged(int)),
-			this, SLOT( slotHostPortChanged( int ) ) );
+			this, SLOT(slotHostPortChanged(int)) );
 	}
 }
 
@@ -303,7 +303,7 @@ void IRCNetworkConfigWidget::slotDeleteHost()
 			int hostIndex=m_hostList->currentItem();
 			IRC::Host host = d->m_networks[d->m_uiCurrentNetworkSelection].hosts[hostIndex];
 			disconnect(m_hostList, SIGNAL(selectionChanged()),
-				this, SLOT( slotUpdateNetworkHostConfig() ) );
+				this, SLOT(slotUpdateNetworkHostConfig()) );
 
 			m_hostList->removeItem(hostIndex);
 

@@ -208,10 +208,10 @@ Kopete::ChatSession *YahooContact::manager( Kopete::Contact::CanCreateFlags canC
 		Kopete::ContactPtrList m_them;
 		m_them.append( this );
 		m_manager = new YahooChatSession( protocol(), account()->myself(), m_them  );
-		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotChatSessionDestroyed() ) );
-		connect( m_manager, SIGNAL( messageSent ( Kopete::Message&, Kopete::ChatSession* ) ), this, SLOT( slotSendMessage( Kopete::Message& ) ) );
-		connect( m_manager, SIGNAL( myselfTyping( bool) ), this, SLOT( slotTyping( bool ) ) );
-		connect( m_account, SIGNAL( receivedTypingMsg( const QString &, bool ) ), m_manager, SLOT( receivedTypingMsg( const QString&, bool ) ) );
+		connect( m_manager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()) );
+		connect( m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), this, SLOT(slotSendMessage(Kopete::Message&)) );
+		connect( m_manager, SIGNAL(myselfTyping(bool)), this, SLOT(slotTyping(bool)) );
+		connect( m_account, SIGNAL(receivedTypingMsg(QString,bool)), m_manager, SLOT(receivedTypingMsg(QString,bool)) );
 		connect( this, SIGNAL(displayPictureChanged()), m_manager, SLOT(slotDisplayPictureChanged()));
 	}
 
@@ -376,7 +376,7 @@ void YahooContact::slotSendMessage( Kopete::Message &message )
 void YahooContact::sendFile( const KUrl &sourceURL, const QString &fileName, uint fileSize )
 {
 	Kopete::TransferManager::transferManager()->sendFile( sourceURL, fileName, fileSize,
-			false, this, SLOT(slotSendFile( const KUrl & )) );
+			false, this, SLOT(slotSendFile(KUrl)) );
 }
 
 void YahooContact::slotTyping(bool isTyping_ )
@@ -401,7 +401,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	if ( !m_webcamAction )
 	{
 		m_webcamAction = new KAction( KIcon("webcamreceive"), i18n( "View &Webcam" ), this );
-		connect( m_webcamAction, SIGNAL( triggered(bool) ), this, SLOT( requestWebcam() ) );
+		connect( m_webcamAction, SIGNAL(triggered(bool)), this, SLOT(requestWebcam()) );
 	}
 	if ( isReachable() )
 		m_webcamAction->setEnabled( true );
@@ -413,7 +413,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	if( !m_inviteWebcamAction )
 	{
 		m_inviteWebcamAction = new KAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), this );
-		connect( m_inviteWebcamAction, SIGNAL( triggered(bool) ), this, SLOT( inviteWebcam() ) );
+		connect( m_inviteWebcamAction, SIGNAL(triggered(bool)), this, SLOT(inviteWebcam()) );
 	}
 	if ( isReachable() )
 		m_inviteWebcamAction->setEnabled( true );
@@ -425,7 +425,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	if ( !m_buzzAction )
 	{
 		m_buzzAction = new KAction( KIcon("bell"), i18n( "&Buzz Contact" ), this);
-		connect( m_buzzAction, SIGNAL( triggered(bool) ), this, SLOT( buzzContact() ) );
+		connect( m_buzzAction, SIGNAL(triggered(bool)), this, SLOT(buzzContact()) );
 	}
 	if ( isReachable() )
 		m_buzzAction->setEnabled( true );
@@ -437,7 +437,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	if ( !m_stealthAction )
 	{
 		m_stealthAction = new KAction( KIcon("yahoo_stealthed"), i18n( "&Stealth Setting" ), this );
-		connect( m_stealthAction, SIGNAL( triggered(bool) ), this, SLOT( stealthContact() ) );
+		connect( m_stealthAction, SIGNAL(triggered(bool)), this, SLOT(stealthContact()) );
 	}
 	if ( isReachable() )
 		m_stealthAction->setEnabled( true );
@@ -449,7 +449,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	if ( !m_inviteConferenceAction )
 	{
 		m_inviteConferenceAction = new KAction( KIcon("x-office-contact"), i18n( "&Invite to Conference" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
-		connect( m_inviteConferenceAction, SIGNAL( triggered(bool) ), this, SLOT( inviteConference() ) );
+		connect( m_inviteConferenceAction, SIGNAL(triggered(bool)), this, SLOT(inviteConference()) );
 	}
 	if ( isReachable() )
 		m_inviteConferenceAction->setEnabled( true );
@@ -461,7 +461,7 @@ QList<KAction*> *YahooContact::customContextMenuActions()
 	if ( !m_profileAction )
 	{
 		m_profileAction = new KAction( KIcon("document-preview"), i18n( "&View Yahoo Profile" ), this );
-		connect( m_profileAction, SIGNAL( triggered(bool) ), this, SLOT( slotUserProfile() ) );
+		connect( m_profileAction, SIGNAL(triggered(bool)), this, SLOT(slotUserProfile()) );
 	}
 	m_profileAction->setEnabled( true );
 	//actions->addAction( "profile_contact", m_profileAction );
@@ -490,7 +490,7 @@ void YahooContact::slotUserInfo()
 	dlg->setData( *m_YABEntry );
 	dlg->setAccountConnected( m_account->isConnected() );
 	dlg->show();
-	QObject::connect( dlg, SIGNAL(saveYABEntry( YABEntry & )), m_account, SLOT(slotSaveYABEntry( YABEntry & )));
+	QObject::connect( dlg, SIGNAL(saveYABEntry(YABEntry&)), m_account, SLOT(slotSaveYABEntry(YABEntry&)));
 }
 
 void YahooContact::slotUserProfile()
@@ -658,19 +658,19 @@ void YahooContact::initWebcamViewer()
 	if ( !m_webcamDialog )
 	{
 		m_webcamDialog = new YahooWebcamDialog( userId(), Kopete::UI::Global::mainWidget() );
-// 		QObject::connect( m_webcamDialog, SIGNAL( closeClicked() ), this, SLOT( closeWebcamDialog() ) );
+// 		QObject::connect( m_webcamDialog, SIGNAL(closeClicked()), this, SLOT(closeWebcamDialog()) );
 
-		QObject::connect( this, SIGNAL( signalWebcamClosed( int ) ),
-		                  m_webcamDialog, SLOT( webcamClosed( int ) ) );
+		QObject::connect( this, SIGNAL(signalWebcamClosed(int)),
+		                  m_webcamDialog, SLOT(webcamClosed(int)) );
 
-		QObject::connect( this, SIGNAL( signalWebcamPaused() ),
-		                  m_webcamDialog, SLOT( webcamPaused() ) );
+		QObject::connect( this, SIGNAL(signalWebcamPaused()),
+		                  m_webcamDialog, SLOT(webcamPaused()) );
 
-		QObject::connect( this, SIGNAL ( signalReceivedWebcamImage( const QPixmap& ) ),
-				m_webcamDialog, SLOT( newImage( const QPixmap& ) ) );
+		QObject::connect( this, SIGNAL (signalReceivedWebcamImage(QPixmap)),
+				m_webcamDialog, SLOT(newImage(QPixmap)) );
 
-		QObject::connect( m_webcamDialog, SIGNAL ( closingWebcamDialog ( ) ),
-				this, SLOT ( closeWebcamDialog ( ) ) );
+		QObject::connect( m_webcamDialog, SIGNAL (closingWebcamDialog()),
+				this, SLOT (closeWebcamDialog()) );
 	}
 	m_webcamDialog->show();
 }
@@ -684,17 +684,17 @@ void YahooContact::requestWebcam()
 
 void YahooContact::closeWebcamDialog()
 {
-	QObject::disconnect( this, SIGNAL( signalWebcamClosed( int ) ),
-	                  m_webcamDialog, SLOT( webcamClosed( int ) ) );
+	QObject::disconnect( this, SIGNAL(signalWebcamClosed(int)),
+	                  m_webcamDialog, SLOT(webcamClosed(int)) );
 
-	QObject::disconnect( this, SIGNAL( signalWebcamPaused() ),
-	                  m_webcamDialog, SLOT( webcamPaused( ) ) );
+	QObject::disconnect( this, SIGNAL(signalWebcamPaused()),
+	                  m_webcamDialog, SLOT(webcamPaused()) );
 
-	QObject::disconnect( this, SIGNAL ( signalReceivedWebcamImage( const QPixmap& ) ),
-	                  m_webcamDialog, SLOT( newImage( const QPixmap& ) ) );
+	QObject::disconnect( this, SIGNAL (signalReceivedWebcamImage(QPixmap)),
+	                  m_webcamDialog, SLOT(newImage(QPixmap)) );
 
-	QObject::disconnect( m_webcamDialog, SIGNAL ( closingWebcamDialog ( ) ),
-	                  this, SLOT ( closeWebcamDialog ( ) ) );
+	QObject::disconnect( m_webcamDialog, SIGNAL (closingWebcamDialog()),
+	                  this, SLOT (closeWebcamDialog()) );
 	if( m_receivingWebcam )
 		m_account->yahooSession()->closeWebcam( contactId() );
 	m_webcamDialog->delayedDestruct();

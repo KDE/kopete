@@ -59,8 +59,8 @@ GroupWiseContact::GroupWiseContact( Kopete::Account* account, const QString &dn,
 	{
 		m_dn = dn;
 	}
-	connect( static_cast< GroupWiseAccount *>( account ), SIGNAL( privacyChanged( const QString &, bool ) ),
-			SLOT( receivePrivacyChanged( const QString &, bool ) ) );
+	connect( static_cast< GroupWiseAccount *>( account ), SIGNAL(privacyChanged(QString,bool)),
+			SLOT(receivePrivacyChanged(QString,bool)) );
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? protocol()->groupwiseUnknown : protocol()->groupwiseOffline );
 }
 
@@ -161,7 +161,7 @@ QList<KAction*> *GroupWiseContact::customContextMenuActions()
 	if( !m_actionBlock )
 	{
 		m_actionBlock = new KAction( KIcon( "msn_blocked" ), label, 0 );
-		QObject::connect( m_actionBlock, SIGNAL( triggered( bool ) ), SLOT( slotBlock() ) );
+		QObject::connect( m_actionBlock, SIGNAL(triggered(bool)), SLOT(slotBlock()) );
 	}
 	else
 		m_actionBlock->setText( label );

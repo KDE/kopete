@@ -48,9 +48,9 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, Kopete:
 	QWidget * wid = new QWidget;
 	m_ui.setupUi( wid );
 	m_layout->addWidget( wid );
-	connect( m_ui.password, SIGNAL( changed() ), this, SLOT( configChanged() ) );
-	connect( m_ui.server, SIGNAL( textChanged( const QString & ) ), this, SLOT( configChanged() ) );
-	connect( m_ui.port, SIGNAL( valueChanged( int ) ), this, SLOT( configChanged() ) );
+	connect( m_ui.password, SIGNAL(changed()), this, SLOT(configChanged()) );
+	connect( m_ui.server, SIGNAL(textChanged(QString)), this, SLOT(configChanged()) );
+	connect( m_ui.port, SIGNAL(valueChanged(int)), this, SLOT(configChanged()) );
 	if ( account() )
 		reOpen();
 	else

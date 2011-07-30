@@ -64,8 +64,8 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, Kopete::Accoun
 
 	preferencesDialog->serviceName->addItems(ServiceLoader::services());
 
-	connect (preferencesDialog->serviceName, SIGNAL(activated(const QString &)),
-		this, SLOT(setServicePreferences(const QString &)));
+	connect (preferencesDialog->serviceName, SIGNAL(activated(QString)),
+		this, SLOT(setServicePreferences(QString)));
 	connect (preferencesDialog->descButton, SIGNAL(clicked()),
 		this, SLOT(showDescription()));
 

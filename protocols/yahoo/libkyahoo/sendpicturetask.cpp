@@ -65,9 +65,9 @@ void SendPictureTask::initiateUpload()
 {	
 	kDebug(YAHOO_RAW_DEBUG) ;
 	m_socket = new KBufferedSocket( "filetransfer.msg.yahoo.com", QString::number(80) );
-	connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry& ) ), this, SLOT( connectSucceeded() ) );
-	connect( m_socket, SIGNAL( gotError(int) ), this, SLOT( connectFailed(int) ) );
-	connect( m_socket, SIGNAL( readyRead() ), this, SLOT( readResult() ) );
+	connect( m_socket, SIGNAL(connected(KNetwork::KResolverEntry)), this, SLOT(connectSucceeded()) );
+	connect( m_socket, SIGNAL(gotError(int)), this, SLOT(connectFailed(int)) );
+	connect( m_socket, SIGNAL(readyRead()), this, SLOT(readResult()) );
 
 	m_socket->connect();
 }

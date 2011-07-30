@@ -239,40 +239,40 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	view()->setAcceptDrops(false);
 
 	connect( Kopete::AppearanceSettings::self(), SIGNAL(messageOverridesChanged()),
-	         this, SLOT( slotAppearanceChanged() ) );
+	         this, SLOT(slotAppearanceChanged()) );
 	connect( Kopete::AppearanceSettings::self(), SIGNAL(appearanceChanged()),
-	         this, SLOT( slotRefreshView() ) );
+	         this, SLOT(slotRefreshView()) );
 	connect( KopeteChatWindowSettings::self(), SIGNAL(chatwindowAppearanceChanged()),
-	         this, SLOT( slotRefreshView() ) );
-	connect( KopeteChatWindowSettings::self(), SIGNAL(styleChanged(const QString &)),
-			 this, SLOT( setStyle(const QString &) ) );
-	connect( KopeteChatWindowSettings::self(), SIGNAL(styleVariantChanged(const QString &)),
-			 this, SLOT( setStyleVariant(const QString &) ) );
+	         this, SLOT(slotRefreshView()) );
+	connect( KopeteChatWindowSettings::self(), SIGNAL(styleChanged(QString)),
+			 this, SLOT(setStyle(QString)) );
+	connect( KopeteChatWindowSettings::self(), SIGNAL(styleVariantChanged(QString)),
+			 this, SLOT(setStyleVariant(QString)) );
 
 	// Refresh the style if the display name change.
 	connect( d->manager, SIGNAL(displayNameChanged()), this, SLOT(slotUpdateHeaderDisplayName()) );
 	connect( d->manager, SIGNAL(photoChanged()), this, SLOT(slotUpdateHeaderPhoto()) );
 
-	connect( d->manager, SIGNAL(messageStateChanged(uint, Kopete::Message::MessageState)),
-	         this, SLOT(messageStateChanged(uint, Kopete::Message::MessageState)) );
-	connect (d->manager, SIGNAL( toggleGraphicOverride(bool) ), this, SLOT( slotToggleGraphicOverride(bool) ) );
+	connect( d->manager, SIGNAL(messageStateChanged(uint,Kopete::Message::MessageState)),
+	         this, SLOT(messageStateChanged(uint,Kopete::Message::MessageState)) );
+	connect (d->manager, SIGNAL(toggleGraphicOverride(bool)), this, SLOT(slotToggleGraphicOverride(bool)) );
 
-	connect ( browserExtension(), SIGNAL( openUrlRequestDelayed( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ),
-	          this, SLOT( slotOpenURLRequest( const KUrl &, const KParts::OpenUrlArguments &, const KParts::BrowserArguments & ) ) );
+	connect ( browserExtension(), SIGNAL(openUrlRequestDelayed(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
+	          this, SLOT(slotOpenURLRequest(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)) );
 
-	connect( this, SIGNAL(popupMenu(const QString &, const QPoint &)),
-	         this, SLOT(slotRightClick(const QString &, const QPoint &)) );
+	connect( this, SIGNAL(popupMenu(QString,QPoint)),
+	         this, SLOT(slotRightClick(QString,QPoint)) );
 
 	// setup scrollbar
 	view()->verticalScrollBar()->setTracking(true);
 	connect( view()->verticalScrollBar(), SIGNAL(valueChanged(int)),
 	         this, SLOT(slotScrollingTo(int)) );
 
-	connect( Kopete::TransferManager::transferManager(), SIGNAL(askIncomingDone(unsigned int)),
-	         this, SLOT(slotFileTransferIncomingDone(unsigned int)) );
+	connect( Kopete::TransferManager::transferManager(), SIGNAL(askIncomingDone(uint)),
+	         this, SLOT(slotFileTransferIncomingDone(uint)) );
 
 	connect( KGlobalSettings::self(), SIGNAL(kdisplayFontChanged()),
-	         this, SLOT( slotRefreshView() ) );
+	         this, SLOT(slotRefreshView()) );
 
 	//initActions
 	d->copyAction = KStandardAction::copy( this, SLOT(copy()), actionCollection() );
@@ -281,7 +281,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	d->closeAction = KStandardAction::close( this, SLOT(slotCloseView()),actionCollection() );
 	d->copyURLAction = new KAction( KIcon("edit-copy"), i18n( "Copy Link Address" ), actionCollection() );
         actionCollection()->addAction( "editcopy", d->copyURLAction );
-	connect( d->copyURLAction, SIGNAL( triggered(bool) ), this, SLOT( slotCopyURL() ) );
+	connect( d->copyURLAction, SIGNAL(triggered(bool)), this, SLOT(slotCopyURL()) );
 
 	// read formatting override flags
 	readOverrides();
@@ -658,7 +658,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	}
 
 	if ( !d->scrollPressed )
-		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
+		QTimer::singleShot( 1, this, SLOT(slotScrollView()) );
 
 #ifdef STYLE_TIMETEST
 	kDebug(14000) << "Message time: " << beforeMessage.msecsTo( QTime::currentTime());
@@ -681,7 +681,7 @@ void ChatMessagePart::slotRefreshView()
 void ChatMessagePart::keepScrolledDown()
 {
 	if ( !d->scrollPressed )
-		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
+		QTimer::singleShot( 1, this, SLOT(slotScrollView()) );
 }
 
 const QString ChatMessagePart::styleHTML() const
@@ -794,7 +794,7 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	if ( Kopete::Contact *contact = contactFromNode( d->activeElement ) )
 	{
 		chatWindowPopup = contact->popupMenu( d->manager );
-		connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup , SLOT( deleteLater() ) );
+		connect( chatWindowPopup, SIGNAL(aboutToHide()), chatWindowPopup , SLOT(deleteLater()) );
 	}
 	else
 	{
@@ -820,7 +820,7 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 		chatWindowPopup->addSeparator();
 		chatWindowPopup->addAction( d->closeAction );
 
-		connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
+		connect( chatWindowPopup, SIGNAL(aboutToHide()), chatWindowPopup, SLOT(deleteLater()) );
 		chatWindowPopup->popup( point );
 	}
 
@@ -917,7 +917,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 	if(text.isEmpty())
             return;
 
-	disconnect( QApplication::clipboard(), SIGNAL( selectionChanged()), this, SLOT( slotClearSelection()));
+	disconnect( QApplication::clipboard(), SIGNAL(selectionChanged()), this, SLOT(slotClearSelection()));
 
 #ifndef QT_NO_MIMECLIPBOARD
 	if(!justselection)
@@ -938,7 +938,7 @@ void ChatMessagePart::copy(bool justselection /* default false */)
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	QApplication::clipboard()->setText( text, QClipboard::Selection );
 #endif
-	connect( QApplication::clipboard(), SIGNAL( selectionChanged()), SLOT( slotClearSelection()));
+	connect( QApplication::clipboard(), SIGNAL(selectionChanged()), SLOT(slotClearSelection()));
 
 }
 

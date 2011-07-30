@@ -64,17 +64,17 @@ void Kopete::UI::PasswordWidget::setValidationProtocol( Kopete::Protocol * proto
 
 void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 {
-	disconnect( mRemembered, SIGNAL( stateChanged( int ) ), this, SLOT( slotRememberChanged() ) );
-	disconnect( mPassword, SIGNAL( textChanged( const QString & ) ),
-			this, SLOT( passwordTextChanged() ) );
-	disconnect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
+	disconnect( mRemembered, SIGNAL(stateChanged(int)), this, SLOT(slotRememberChanged()) );
+	disconnect( mPassword, SIGNAL(textChanged(QString)),
+			this, SLOT(passwordTextChanged()) );
+	disconnect( mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()) );
 
 	if ( source && source->remembered() )
 	{
 		mRemembered->setTristate();
 		mRemembered->setCheckState( Qt::PartiallyChecked );
 		mPassword->setEnabled( true );
-		source->requestWithoutPrompt( this, SLOT( receivePassword( const QString & ) ) );
+		source->requestWithoutPrompt( this, SLOT(receivePassword(QString)) );
 	}
 	else
 	{
@@ -83,10 +83,10 @@ void Kopete::UI::PasswordWidget::load( Kopete::Password *source )
 		mPassword->setEnabled( false );
 	}
 
-	connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SLOT( slotRememberChanged() ) );
-	connect( mPassword, SIGNAL( textChanged( const QString & ) ),
-			this, SLOT( passwordTextChanged() ) );
-	connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
+	connect( mRemembered, SIGNAL(stateChanged(int)), this, SLOT(slotRememberChanged()) );
+	connect( mPassword, SIGNAL(textChanged(QString)),
+			this, SLOT(passwordTextChanged()) );
+	connect( mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()) );
 
 	emit changed();
 }
@@ -157,11 +157,11 @@ void Kopete::UI::PasswordWidget::passwordTextChanged()
 {
 	if ( mRemembered->checkState() == Qt::PartiallyChecked )
 	{
-		disconnect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
+		disconnect( mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()) );
 		// switch out of 'waiting for wallet' mode if we're in it
 		mRemembered->setTristate( false );
 		mRemembered->setChecked(true);
-		connect( mRemembered, SIGNAL( stateChanged( int ) ), this, SIGNAL( changed() ) );
+		connect( mRemembered, SIGNAL(stateChanged(int)), this, SIGNAL(changed()) );
 	}
 	emit changed();
 }

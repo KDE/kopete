@@ -205,7 +205,7 @@ void PluginManager::shutdown()
 		kDebug(14010) << "Running under valgrind, disabling plugin unload timeout guard";
 	else
 #endif
-		QTimer::singleShot( 3000, this, SLOT( slotShutdownTimeout() ) );
+		QTimer::singleShot( 3000, this, SLOT(slotShutdownTimeout()) );
 }
 
 void PluginManager::slotPluginReadyForUnload()
@@ -313,7 +313,7 @@ void PluginManager::loadAllPlugins()
 		}
 	}
 	// Schedule the plugins to load
-	QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
+	QTimer::singleShot( 0, this, SLOT(slotLoadNextPlugin()) );
 }
 
 void PluginManager::slotLoadNextPlugin()
@@ -336,7 +336,7 @@ void PluginManager::slotLoadNextPlugin()
 	// allPluginsLoaded() signal's handling. This has the added benefit that
 	// the signal is delayed one event loop, so the accounts are more likely
 	// to be instantiated.
-	QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
+	QTimer::singleShot( 0, this, SLOT(slotLoadNextPlugin()) );
 }
 
 Plugin * PluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mode /* = LoadSync */ )
@@ -358,7 +358,7 @@ Plugin * PluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mod
 	else
 	{
 		_kpmp->pluginsToLoad.push( pluginId );
-		QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
+		QTimer::singleShot( 0, this, SLOT(slotLoadNextPlugin()) );
 		return 0L;
 	}
 }
@@ -385,8 +385,8 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 		_kpmp->loadedPlugins.insert( info, plugin );
 		info.setPluginEnabled( true );
 
-		connect( plugin, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotPluginDestroyed( QObject * ) ) );
-		connect( plugin, SIGNAL( readyForUnload() ), this, SLOT( slotPluginReadyForUnload() ) );
+		connect( plugin, SIGNAL(destroyed(QObject*)), this, SLOT(slotPluginDestroyed(QObject*)) );
+		connect( plugin, SIGNAL(readyForUnload()), this, SLOT(slotPluginReadyForUnload()) );
 
 		kDebug( 14010 ) << "Successfully loaded plugin '" << pluginId << "'";
 
@@ -436,7 +436,7 @@ void PluginManager::slotPluginDestroyed( QObject *plugin )
 	{
 		// Use a timer to make sure any pending deleteLater() calls have
 		// been handled first
-		QTimer::singleShot( 0, this, SLOT( slotShutdownDone() ) );
+		QTimer::singleShot( 0, this, SLOT(slotShutdownDone()) );
 	}
 }
 

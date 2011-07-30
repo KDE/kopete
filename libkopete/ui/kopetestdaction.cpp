@@ -41,7 +41,7 @@ KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
 KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
 : KAction( KIcon(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent )
 {
-	connect( this, SIGNAL( triggered(bool) ), this, SLOT( slotShowPreferences() ) );
+	connect( this, SIGNAL(triggered(bool)), this, SLOT(slotShowPreferences()) );
         parent->addAction( name, this );
 }
 

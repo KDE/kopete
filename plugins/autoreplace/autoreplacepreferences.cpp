@@ -51,24 +51,24 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QVariantL
 	
 	// connect SIGNALS/SLOTS
 	connect( preferencesDialog->m_add, SIGNAL(pressed()),
-		SLOT( slotAddCouple()) );
+		SLOT(slotAddCouple()) );
 	connect( preferencesDialog->m_edit, SIGNAL(pressed()),
-		SLOT( slotEditCouple()) );
+		SLOT(slotEditCouple()) );
 	connect( preferencesDialog->m_remove, SIGNAL(pressed()),
 		SLOT(slotRemoveCouple()) );
 	connect( preferencesDialog->m_list, SIGNAL(selectionChanged()),
 		SLOT(slotSelectionChanged()) );
-	connect( preferencesDialog->m_key, SIGNAL(textChanged ( const QString & )),
-		SLOT( slotEnableAddEdit( const QString & )) ); 
+	connect( preferencesDialog->m_key, SIGNAL(textChanged(QString)),
+		SLOT(slotEnableAddEdit(QString)) ); 
 
-	connect( preferencesDialog->AutoReplaceIncoming, SIGNAL(toggled ( bool )),
-		SLOT( slotWidgetModified()) ); 
-	connect( preferencesDialog->AutoReplaceOutgoing, SIGNAL(toggled ( bool )),
-		SLOT( slotWidgetModified()) ); 
-	connect( preferencesDialog->DotEndSentence, SIGNAL(toggled ( bool )),
-		SLOT( slotWidgetModified()) ); 
-	connect( preferencesDialog->CapitalizeBeginningSentence, SIGNAL(toggled ( bool )),
-		SLOT( slotWidgetModified()) ); 
+	connect( preferencesDialog->AutoReplaceIncoming, SIGNAL(toggled(bool)),
+		SLOT(slotWidgetModified()) ); 
+	connect( preferencesDialog->AutoReplaceOutgoing, SIGNAL(toggled(bool)),
+		SLOT(slotWidgetModified()) ); 
+	connect( preferencesDialog->DotEndSentence, SIGNAL(toggled(bool)),
+		SLOT(slotWidgetModified()) ); 
+	connect( preferencesDialog->CapitalizeBeginningSentence, SIGNAL(toggled(bool)),
+		SLOT(slotWidgetModified()) ); 
 
 	//setMainWidget( preferencesDialog->gb_options, "AutoReplace Plugin" );
 

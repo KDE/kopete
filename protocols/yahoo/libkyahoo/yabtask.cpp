@@ -101,8 +101,8 @@ void YABTask::getAllEntries( long lastMerge, long lastRemoteRevision )
 	m_transferJob->addMetaData("cookies", "manual");
 	m_transferJob->addMetaData("setcookies", QString::fromLatin1("Cookie: Y=%1; T=%2; C=%3;")
 				.arg(client()->yCookie()).arg(client()->tCookie()).arg(client()->cCookie()) );
-	connect( m_transferJob, SIGNAL( data( KIO::Job *, const QByteArray & ) ), this, SLOT( slotData( KIO::Job*, const QByteArray & ) ) );
-	connect( m_transferJob, SIGNAL( result( KJob *) ), this, SLOT( slotResult( KJob* ) ) );
+	connect( m_transferJob, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotData(KIO::Job*,QByteArray)) );
+	connect( m_transferJob, SIGNAL(result(KJob*)), this, SLOT(slotResult(KJob*)) );
 }
 
 void YABTask::slotData( KIO::Job* /*job*/, const QByteArray &info  )

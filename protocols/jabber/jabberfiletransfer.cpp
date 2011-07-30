@@ -64,10 +64,10 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 		Kopete::ContactList::self ()->addMetaContact ( metaContact );
 	}
 
-	connect ( Kopete::TransferManager::transferManager (), SIGNAL ( accepted ( Kopete::Transfer *, const QString & ) ),
-			  this, SLOT ( slotIncomingTransferAccepted ( Kopete::Transfer *, const QString & ) ) );
-	connect ( Kopete::TransferManager::transferManager (), SIGNAL ( refused ( const Kopete::FileTransferInfo & ) ),
-			  this, SLOT ( slotTransferRefused ( const Kopete::FileTransferInfo & ) ) );
+	connect ( Kopete::TransferManager::transferManager (), SIGNAL (accepted(Kopete::Transfer*,QString)),
+			  this, SLOT (slotIncomingTransferAccepted(Kopete::Transfer*,QString)) );
+	connect ( Kopete::TransferManager::transferManager (), SIGNAL (refused(Kopete::FileTransferInfo)),
+			  this, SLOT (slotTransferRefused(Kopete::FileTransferInfo)) );
 
 	initializeVariables ();
 	
@@ -101,15 +101,15 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 																			  Kopete::FileTransferInfo::Outgoing );
 
 
-	connect ( mKopeteTransfer, SIGNAL ( result ( KJob * ) ), this, SLOT ( slotTransferResult () ) );
+	connect ( mKopeteTransfer, SIGNAL (result(KJob*)), this, SLOT (slotTransferResult()) );
 
 	mXMPPTransfer = mAccount->client()->fileTransferManager()->createTransfer ();
 
 	initializeVariables ();
 
-	connect ( mXMPPTransfer, SIGNAL ( connected () ), this, SLOT ( slotOutgoingConnected () ) );
-	connect ( mXMPPTransfer, SIGNAL ( bytesWritten ( int ) ), this, SLOT ( slotOutgoingBytesWritten ( int ) ) );
-	connect ( mXMPPTransfer, SIGNAL ( error ( int ) ), this, SLOT ( slotTransferError ( int ) ) );
+	connect ( mXMPPTransfer, SIGNAL (connected()), this, SLOT (slotOutgoingConnected()) );
+	connect ( mXMPPTransfer, SIGNAL (bytesWritten(int)), this, SLOT (slotOutgoingBytesWritten(int)) );
+	connect ( mXMPPTransfer, SIGNAL (error(int)), this, SLOT (slotTransferError(int)) );
 	
 	QString preview;
 	QImage img=QImage(mLocalFile.fileName());
@@ -215,9 +215,9 @@ void JabberFileTransfer::slotIncomingTransferAccepted ( Kopete::Transfer *transf
 	}
 	else
 	{
-		connect ( mKopeteTransfer, SIGNAL ( result ( KJob * ) ), this, SLOT ( slotTransferResult () ) );
-		connect ( mXMPPTransfer, SIGNAL ( readyRead ( const QByteArray& ) ), this, SLOT ( slotIncomingDataReady ( const QByteArray & ) ) );
-		connect ( mXMPPTransfer, SIGNAL ( error ( int ) ), this, SLOT ( slotTransferError ( int ) ) );
+		connect ( mKopeteTransfer, SIGNAL (result(KJob*)), this, SLOT (slotTransferResult()) );
+		connect ( mXMPPTransfer, SIGNAL (readyRead(QByteArray)), this, SLOT (slotIncomingDataReady(QByteArray)) );
+		connect ( mXMPPTransfer, SIGNAL (error(int)), this, SLOT (slotTransferError(int)) );
 		mXMPPTransfer->accept ( offset, length );
 	}
 

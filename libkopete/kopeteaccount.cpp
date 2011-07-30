@@ -111,14 +111,14 @@ Account::Account( Protocol *parent, const QString &accountId )
 	QObject::connect( &d->reconnectTimer, SIGNAL(timeout()),
 	                  this, SLOT(reconnect()) );
 
-	QObject::connect( &d->suppressStatusTimer, SIGNAL( timeout() ),
-		this, SLOT( slotStopSuppression() ) );
+	QObject::connect( &d->suppressStatusTimer, SIGNAL(timeout()),
+		this, SLOT(slotStopSuppression()) );
 }
 
 Account::~Account()
 {
 	// Delete all registered child contacts first
-	foreach (Contact* c, d->contacts) QObject::disconnect(c, SIGNAL( contactDestroyed( Kopete::Contact * ) ), this, 0);
+	foreach (Contact* c, d->contacts) QObject::disconnect(c, SIGNAL(contactDestroyed(Kopete::Contact*)), this, 0);
 	qDeleteAll(d->contacts);
 	d->contacts.clear();
 
@@ -277,8 +277,8 @@ bool Account::registerContact( Contact *c )
 	}
 
 	d->contacts.insert( c->contactId(), c );
-	QObject::connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
-		SLOT( contactDestroyed( Kopete::Contact * ) ) );
+	QObject::connect( c, SIGNAL(contactDestroyed(Kopete::Contact*)),
+		SLOT(contactDestroyed(Kopete::Contact*)) );
 
 	return true;
 }
@@ -444,7 +444,7 @@ void Account::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->menu()->addSeparator();
 
 	KAction *propertiesAction = new KAction( i18n("Properties"), actionMenu );
-	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT( editAccount() ) );
+	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
 	actionMenu->addAction( propertiesAction );
 }
 
@@ -499,10 +499,10 @@ void Account::setMyself( Contact *myself )
 
 	d->myself = myself;
 
-	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-	QObject::connect( d->myself, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
-		this, SLOT( slotContactPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) );
+	QObject::connect( d->myself, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+		this, SLOT(slotOnlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
+	QObject::connect( d->myself, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+		this, SLOT(slotContactPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) );
 
 	if ( isConnected() )
 		emit isConnectedChanged();

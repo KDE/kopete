@@ -139,22 +139,22 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	doc.documentElement().removeChild( doc.documentElement().childNodes().item(1) ); //Remove MainToolbar
 	doc.documentElement().removeChild( doc.documentElement().lastChild() ); // Remove Edit popup
 	*/
-	connect( d->editPart, SIGNAL( messageSent( Kopete::Message & ) ),
-	         this, SIGNAL( messageSent( Kopete::Message & ) ) );
-	connect( d->editPart, SIGNAL( canSendChanged( bool ) ),
-	         this, SLOT( slotUpdateReplySend() ) );
-	connect( d->editPart, SIGNAL( typing(bool) ),
-		 manager, SIGNAL( typing(bool) ) );
+	connect( d->editPart, SIGNAL(messageSent(Kopete::Message&)),
+	         this, SIGNAL(messageSent(Kopete::Message&)) );
+	connect( d->editPart, SIGNAL(canSendChanged(bool)),
+	         this, SLOT(slotUpdateReplySend()) );
+	connect( d->editPart, SIGNAL(typing(bool)),
+		 manager, SIGNAL(typing(bool)) );
 
 	//Connections to the manager and the ViewManager that every view should have
-	connect( this, SIGNAL( closing( KopeteView * ) ),
-		 KopeteViewManager::viewManager(), SLOT( slotViewDestroyed( KopeteView * ) ) );
-	connect( this, SIGNAL( activated( KopeteView * ) ),
-		 KopeteViewManager::viewManager(), SLOT( slotViewActivated( KopeteView * ) ) );
-	connect( this, SIGNAL( messageSent(Kopete::Message &) ),
-		 manager, SLOT( sendMessage(Kopete::Message &) ) );
-	connect( manager, SIGNAL( messageSuccess() ),
-		 this, SLOT( messageSentSuccessfully() ));
+	connect( this, SIGNAL(closing(KopeteView*)),
+		 KopeteViewManager::viewManager(), SLOT(slotViewDestroyed(KopeteView*)) );
+	connect( this, SIGNAL(activated(KopeteView*)),
+		 KopeteViewManager::viewManager(), SLOT(slotViewActivated(KopeteView*)) );
+	connect( this, SIGNAL(messageSent(Kopete::Message&)),
+		 manager, SLOT(sendMessage(Kopete::Message&)) );
+	connect( manager, SIGNAL(messageSuccess()),
+		 this, SLOT(messageSentSuccessfully()));
 
 	QWidget *containerWidget = new QWidget( v );
 	containerWidget->setSizePolicy( QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum) );
@@ -165,16 +165,16 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	h->addStretch();
 
 	d->btnReadPrev = new KPushButton( i18n( "<< Prev" ), containerWidget );
-	connect( d->btnReadPrev, SIGNAL( pressed() ), this, SLOT( slotReadPrev() ) );
+	connect( d->btnReadPrev, SIGNAL(pressed()), this, SLOT(slotReadPrev()) );
 	h->addWidget( d->btnReadPrev, 0, Qt::AlignRight | Qt::AlignVCenter );
 	d->btnReadPrev->setEnabled( false );
 
 	d->btnReadNext = new KPushButton( i18n( "(0) Next >>" ), containerWidget );
-	connect( d->btnReadNext, SIGNAL( pressed() ), this, SLOT( slotReadNext() ) );
+	connect( d->btnReadNext, SIGNAL(pressed()), this, SLOT(slotReadNext()) );
 	h->addWidget( d->btnReadNext, 0, Qt::AlignRight | Qt::AlignVCenter );
 
 	d->btnReplySend = new KPushButton( containerWidget );
-	connect( d->btnReplySend, SIGNAL( pressed() ), this, SLOT( slotReplySend() ) );
+	connect( d->btnReplySend, SIGNAL(pressed()), this, SLOT(slotReplySend()) );
 	h->addWidget( d->btnReplySend, 0, Qt::AlignRight | Qt::AlignVCenter );
 
 	initActions();
@@ -220,13 +220,13 @@ void KopeteEmailWindow::initActions(void)
         coll->addAction( "chat_send", d->chatSend );
 	//Default to 'Return' for sending messages
 	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
-	connect( d->chatSend, SIGNAL(triggered()), this, SLOT( slotReplySend()) );
+	connect( d->chatSend, SIGNAL(triggered()), this, SLOT(slotReplySend()) );
 
-	KStandardAction::quit ( this, SLOT( slotCloseView() ), coll );
+	KStandardAction::quit ( this, SLOT(slotCloseView()), coll );
 
-	KStandardAction::cut( d->editPart->widget(), SLOT( cut() ), coll );
+	KStandardAction::cut( d->editPart->widget(), SLOT(cut()), coll );
 	KStandardAction::copy( this, SLOT(slotCopy()), coll);
-	KStandardAction::paste( d->editPart->widget(), SLOT( paste() ), coll );
+	KStandardAction::paste( d->editPart->widget(), SLOT(paste()), coll );
 
 	KAction* action;
 	action = new KAction( KIcon("preferences-desktop-font"), i18n( "&Set Font..." ), coll );
@@ -241,17 +241,17 @@ void KopeteEmailWindow::initActions(void)
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBackgroundColorColor()) );
 
-	KStandardAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
+	KStandardAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
 	setStandardToolBarMenuEnabled( true );
 
 	d->actionSmileyMenu = new KopeteEmoticonAction( coll );
         coll->addAction( "format_smiley", d->actionSmileyMenu );
 	d->actionSmileyMenu->setDelayed( false );
-	connect(d->actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
+	connect(d->actionSmileyMenu, SIGNAL(activated(QString)), this, SLOT(slotSmileyActivated(QString)));
 
 	// add configure key bindings menu item
-	KStandardAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), coll );
-	KStandardAction::configureToolbars(this, SLOT( slotConfToolbar() ), coll);
+	KStandardAction::keyBindings( guiFactory(), SLOT(configureShortcuts()), coll );
+	KStandardAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
 	//FIXME: no longer works?
 	KopeteStdAction::preferences( coll , "settings_prefs" );
 

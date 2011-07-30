@@ -179,7 +179,7 @@ void IRCChannelContact::slotAddNicknames()
 		mJoinedNicks.pop_front();
 	}
 
-	QTimer::singleShot( 0, this, SLOT( slotAddNicknames() ) );
+	QTimer::singleShot( 0, this, SLOT(slotAddNicknames()) );
 }
 
 void IRCChannelContact::channelTopic(const QString &topic)
@@ -550,8 +550,8 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 		actionModeMenu->setEnabled( true );
 
 		codecAction = new KCodecAction( i18n("&Encoding"), 0, this, "selectcharset" );
-		connect( codecAction, SIGNAL( activated( const QTextCodec * ) ),
-			this, SLOT( setCodec( const QTextCodec *) ) );
+		connect( codecAction, SIGNAL(activated(const QTextCodec*)),
+			this, SLOT(setCodec(const QTextCodec*)) );
 		codecAction->setCodec( codec() );
 	}
 

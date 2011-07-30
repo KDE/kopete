@@ -364,7 +364,7 @@ public:
 	Private(ServiceResolver *_q) : q(_q)
 	{
 		mode = 3;
-		connect(&dns, SIGNAL(resultsReady(const QList<XMPP::NameRecord> &)), SLOT(dns_resultsReady(const QList<XMPP::NameRecord> &)));
+		connect(&dns, SIGNAL(resultsReady(QList<XMPP::NameRecord>)), SLOT(dns_resultsReady(QList<XMPP::NameRecord>)));
 		connect(&dns, SIGNAL(error(XMPP::NameResolver::Error)), SLOT(dns_error(XMPP::NameResolver::Error)));
 	}
 
@@ -533,9 +533,9 @@ public:
 			// use queued connections
 			qRegisterMetaType< QList<XMPP::NameRecord> >("QList<XMPP::NameRecord>");
 			qRegisterMetaType<XMPP::NameResolver::Error>("XMPP::NameResolver::Error");
-			connect(p_net, SIGNAL(resolve_resultsReady(int, const QList<XMPP::NameRecord> &)), SLOT(provider_resolve_resultsReady(int, const QList<XMPP::NameRecord> &)), Qt::QueuedConnection);
-			connect(p_net, SIGNAL(resolve_error(int, XMPP::NameResolver::Error)), SLOT(provider_resolve_error(int, XMPP::NameResolver::Error)), Qt::QueuedConnection);
-			connect(p_net, SIGNAL(resolve_useLocal(int, const QByteArray &)), SLOT(provider_resolve_useLocal(int, const QByteArray &)), Qt::QueuedConnection);
+			connect(p_net, SIGNAL(resolve_resultsReady(int,QList<XMPP::NameRecord>)), SLOT(provider_resolve_resultsReady(int,QList<XMPP::NameRecord>)), Qt::QueuedConnection);
+			connect(p_net, SIGNAL(resolve_error(int,XMPP::NameResolver::Error)), SLOT(provider_resolve_error(int,XMPP::NameResolver::Error)), Qt::QueuedConnection);
+			connect(p_net, SIGNAL(resolve_useLocal(int,QByteArray)), SLOT(provider_resolve_useLocal(int,QByteArray)), Qt::QueuedConnection);
 		}
 
 		np->id = p_net->resolve_start(name, qType, longLived);
@@ -566,9 +566,9 @@ public:
 			qRegisterMetaType<XMPP::ServiceInstance>("XMPP::ServiceInstance");
 			qRegisterMetaType<XMPP::ServiceBrowser::Error>("XMPP::ServiceBrowser::Error");
 
-			connect(p_serv, SIGNAL(browse_instanceAvailable(int, const XMPP::ServiceInstance &)), SLOT(provider_browse_instanceAvailable(int, const XMPP::ServiceInstance &)), Qt::QueuedConnection);
-			connect(p_serv, SIGNAL(browse_instanceUnavailable(int, const XMPP::ServiceInstance &)), SLOT(provider_browse_instanceUnavailable(int, const XMPP::ServiceInstance &)), Qt::QueuedConnection);
-			connect(p_serv, SIGNAL(browse_error(int, XMPP::ServiceBrowser::Error)), SLOT(provider_browse_error(int, XMPP::ServiceBrowser::Error)), Qt::QueuedConnection);
+			connect(p_serv, SIGNAL(browse_instanceAvailable(int,XMPP::ServiceInstance)), SLOT(provider_browse_instanceAvailable(int,XMPP::ServiceInstance)), Qt::QueuedConnection);
+			connect(p_serv, SIGNAL(browse_instanceUnavailable(int,XMPP::ServiceInstance)), SLOT(provider_browse_instanceUnavailable(int,XMPP::ServiceInstance)), Qt::QueuedConnection);
+			connect(p_serv, SIGNAL(browse_error(int,XMPP::ServiceBrowser::Error)), SLOT(provider_browse_error(int,XMPP::ServiceBrowser::Error)), Qt::QueuedConnection);
 		}
 
 		/*np->id = */
@@ -599,7 +599,7 @@ public:
 			// use queued connections
 			qRegisterMetaType<QHostAddress>("QHostAddress");
 			qRegisterMetaType< QList<XMPP::ServiceProvider::ResolveResult> >("QList<XMPP::ServiceProvider::ResolveResult>");
-			connect(p_serv, SIGNAL(resolve_resultsReady(int, const QList<XMPP::ServiceProvider::ResolveResult> &)), SLOT(provider_resolve_resultsReady(int, const QList<XMPP::ServiceProvider::ResolveResult> &)), Qt::QueuedConnection);
+			connect(p_serv, SIGNAL(resolve_resultsReady(int,QList<XMPP::ServiceProvider::ResolveResult>)), SLOT(provider_resolve_resultsReady(int,QList<XMPP::ServiceProvider::ResolveResult>)), Qt::QueuedConnection);
 		}
 
 		/*np->id = */
@@ -697,8 +697,8 @@ private slots:
 			// use queued connections
 			qRegisterMetaType< QList<XMPP::NameRecord> >("QList<XMPP::NameRecord>");
 			qRegisterMetaType<XMPP::NameResolver::Error>("XMPP::NameResolver::Error");
-			connect(p_local, SIGNAL(resolve_resultsReady(int, const QList<XMPP::NameRecord> &)), SLOT(provider_resolve_resultsReady(int, const QList<XMPP::NameRecord> &)), Qt::QueuedConnection);
-			connect(p_local, SIGNAL(resolve_error(int, XMPP::NameResolver::Error)), SLOT(provider_resolve_error(int, XMPP::NameResolver::Error)), Qt::QueuedConnection);
+			connect(p_local, SIGNAL(resolve_resultsReady(int,QList<XMPP::NameRecord>)), SLOT(provider_resolve_resultsReady(int,QList<XMPP::NameRecord>)), Qt::QueuedConnection);
+			connect(p_local, SIGNAL(resolve_error(int,XMPP::NameResolver::Error)), SLOT(provider_resolve_error(int,XMPP::NameResolver::Error)), Qt::QueuedConnection);
 		}
 
 		NameResolver::Private *np = res_instances.value(id);

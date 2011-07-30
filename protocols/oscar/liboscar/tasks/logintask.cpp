@@ -133,8 +133,8 @@ StageTwoLoginTask::StageTwoLoginTask( Task* parent )
 	m_versionTask = new ServerVersionsTask( rootTask );
 	m_rateTask = new RateInfoTask( rootTask );
 	
-	QObject::connect( m_versionTask, SIGNAL( finished() ), this, SLOT( versionTaskFinished() ) );
-	QObject::connect( m_rateTask, SIGNAL( finished() ), this, SLOT( rateTaskFinished() ) );
+	QObject::connect( m_versionTask, SIGNAL(finished()), this, SLOT(versionTaskFinished()) );
+	QObject::connect( m_rateTask, SIGNAL(finished()), this, SLOT(rateTaskFinished()) );
 }
 
 StageTwoLoginTask::~StageTwoLoginTask()

@@ -22,15 +22,15 @@ FileTransferHandler::FileTransferHandler( FileTransferTask* fileTransferTask )
 {
 	connect( mFileTransferTask, SIGNAL(transferFinished()), this, SLOT(emitTransferFinished()) );
 	connect( mFileTransferTask, SIGNAL(transferCancelled()), this, SLOT(emitTransferCancelled()) );
-	connect( mFileTransferTask, SIGNAL(transferError(int, const QString&)), this, SLOT(emitTransferError(int, const QString&)) );
-	connect( mFileTransferTask, SIGNAL(transferProcessed(unsigned int)), this, SIGNAL(transferProcessed(unsigned int)) );
+	connect( mFileTransferTask, SIGNAL(transferError(int,QString)), this, SLOT(emitTransferError(int,QString)) );
+	connect( mFileTransferTask, SIGNAL(transferProcessed(uint)), this, SIGNAL(transferProcessed(uint)) );
 
-	connect( mFileTransferTask, SIGNAL(nextFile(const QString&, const QString&)),
-	         this, SIGNAL(transferNextFile(const QString&, const QString&)) );
-	connect( mFileTransferTask, SIGNAL(nextFile(const QString&, unsigned int)),
-	         this, SIGNAL(transferNextFile(const QString&, unsigned int)) );
-	connect( mFileTransferTask, SIGNAL(fileProcessed(unsigned int, unsigned int)),
-	         this, SIGNAL(transferFileProcessed(unsigned int, unsigned int)) );
+	connect( mFileTransferTask, SIGNAL(nextFile(QString,QString)),
+	         this, SIGNAL(transferNextFile(QString,QString)) );
+	connect( mFileTransferTask, SIGNAL(nextFile(QString,uint)),
+	         this, SIGNAL(transferNextFile(QString,uint)) );
+	connect( mFileTransferTask, SIGNAL(fileProcessed(uint,uint)),
+	         this, SIGNAL(transferFileProcessed(uint,uint)) );
 }
 
 FileTransferHandler::~FileTransferHandler()

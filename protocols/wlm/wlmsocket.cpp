@@ -165,7 +165,7 @@ void WlmSocket::initPingTimer()
     if ( !mPingTimer )
     {
         mPingTimer = new QTimer();
-        QObject::connect( mPingTimer, SIGNAL(timeout()), this, SLOT( pingTimeout()) );
+        QObject::connect( mPingTimer, SIGNAL(timeout()), this, SLOT(pingTimeout()) );
         mPingTimer->setInterval( 50000 );
     }
     mPingTimer->start();

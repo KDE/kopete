@@ -111,8 +111,8 @@ ClientStream::ClientStream(Connector *conn, QObject *parent)
 	d->conn = conn;
 	connect( d->conn, SIGNAL(connected()), SLOT(cr_connected()) );
 	connect( d->conn, SIGNAL(error()), SLOT(cr_error()) );
-	connect( &d->client, SIGNAL( outgoingData( const QByteArray& ) ), SLOT ( cp_outgoingData( const QByteArray & ) ) );
-	connect( &d->client, SIGNAL( incomingData() ), SLOT ( cp_incomingData() ) );
+	connect( &d->client, SIGNAL(outgoingData(QByteArray)), SLOT (cp_outgoingData(QByteArray)) );
+	connect( &d->client, SIGNAL(incomingData()), SLOT (cp_incomingData()) );
 
 	d->noop_time = 0;
 	connect(&d->noopTimer, SIGNAL(timeout()), SLOT(doNoop()));

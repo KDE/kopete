@@ -54,7 +54,7 @@ MessageHandler *SimpleMessageHandlerFactory::create( ChatSession *manager, Messa
 	if ( direction != d->direction )
 		return 0;
 	MessageHandler *handler = new SimpleMessageHandler;
-	QObject::connect( handler, SIGNAL( handle( Kopete::Message & ) ), d->target, d->slot );
+	QObject::connect( handler, SIGNAL(handle(Kopete::Message&)), d->target, d->slot );
 	return handler;
 }
 

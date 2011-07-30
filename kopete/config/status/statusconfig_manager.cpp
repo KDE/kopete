@@ -71,14 +71,14 @@ StatusConfig_Manager::StatusConfig_Manager( QWidget *parent )
 
 	statusView->expandAll();
 
-	connect( leStatusTitle, SIGNAL(textEdited(const QString&)), this, SLOT(editTitleEdited(const QString&)) );
+	connect( leStatusTitle, SIGNAL(textEdited(QString)), this, SLOT(editTitleEdited(QString)) );
 	connect( cbStatusCategory, SIGNAL(currentIndexChanged(int)), this, SLOT(editTypeChanged(int)) );
 	connect( teStatusMessage, SIGNAL(textChanged()), this, SLOT(editMessageChanged()) );
 
 	QItemSelectionModel *selectionModel = statusView->selectionModel();
 	//TODO change currentChanged to currentRowChanged when TT Bug 162986 is fixed
-	connect( selectionModel, SIGNAL(currentChanged( const QModelIndex&, const QModelIndex& )),
-	         this, SLOT(currentRowChanged(const QModelIndex&, const QModelIndex&)) );
+	connect( selectionModel, SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+	         this, SLOT(currentRowChanged(QModelIndex,QModelIndex)) );
 
 	currentRowChanged( selectionModel->currentIndex(), QModelIndex() );
 }

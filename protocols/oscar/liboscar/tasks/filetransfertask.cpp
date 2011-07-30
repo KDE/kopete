@@ -460,17 +460,17 @@ void FileTransferTask::doOft()
 
 	m_connection = 0; //it's not ours any more
 	//might be a good idea to hook up some signals&slots.
-	connect( oft, SIGNAL(fileStarted(const QString&, unsigned int)),
-	         this, SIGNAL(nextFile(const QString&, unsigned int)) );
-	connect( oft, SIGNAL(fileStarted(const QString&, const QString&)),
-	         this, SIGNAL(nextFile(const QString&, const QString&)) );
-	connect( oft, SIGNAL(fileProcessed(unsigned int, unsigned int)),
-	         this, SLOT(fileProcessedOft(unsigned int, unsigned int)) );
-	connect( oft, SIGNAL(fileFinished(const QString&, unsigned int)),
-	         this, SLOT(fileFinishedOft(const QString&, unsigned int)) );
+	connect( oft, SIGNAL(fileStarted(QString,uint)),
+	         this, SIGNAL(nextFile(QString,uint)) );
+	connect( oft, SIGNAL(fileStarted(QString,QString)),
+	         this, SIGNAL(nextFile(QString,QString)) );
+	connect( oft, SIGNAL(fileProcessed(uint,uint)),
+	         this, SLOT(fileProcessedOft(uint,uint)) );
+	connect( oft, SIGNAL(fileFinished(QString,uint)),
+	         this, SLOT(fileFinishedOft(QString,uint)) );
 
-	connect( oft, SIGNAL(transferError(int, const QString&)),
-	         this, SLOT(errorOft(int, const QString&)) );
+	connect( oft, SIGNAL(transferError(int,QString)),
+	         this, SLOT(errorOft(int,QString)) );
 	connect( oft, SIGNAL(transferCompleted()), this, SLOT(doneOft()) );
 	connect( this, SIGNAL(cancelOft()), oft, SLOT(doCancel()) );
 	//now we can finally send the first OFT packet.
@@ -676,7 +676,7 @@ void FileTransferTask::doConnect()
 
 	//proxies *always* use port 5190; the "port" value is some retarded check
 	m_connection = new QTcpSocket();
-	connect( m_connection, SIGNAL(readyRead() ), this, SLOT(proxyRead()) );
+	connect( m_connection, SIGNAL(readyRead()), this, SLOT(proxyRead()) );
 	connect( m_connection, SIGNAL(error(QAbstractSocket::SocketError)),
 	         this, SLOT(socketError(QAbstractSocket::SocketError)) );
 	connect( m_connection, SIGNAL(connected()), this, SLOT(socketConnected()));
@@ -684,7 +684,7 @@ void FileTransferTask::doConnect()
 	m_state = Connecting;
 	//socket doesn't seem to have its own timeout, so here's mine
 	m_timer.disconnect();
-	connect( &m_timer, SIGNAL( timeout() ), this, SLOT( timeout() ) );
+	connect( &m_timer, SIGNAL(timeout()), this, SLOT(timeout()) );
 	m_timer.start( client()->settings()->timeout()  * 1000 );
 	//try it
 	KSocketFactory::connectToHost( m_connection, QString(), host, m_proxy ? 5190 : m_port );

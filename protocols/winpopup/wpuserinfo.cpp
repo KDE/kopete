@@ -56,7 +56,7 @@ WPUserInfo::WPUserInfo( WPContact *contact, QWidget *parent )
 //	m_mainWidget->sOS->setText(i18n("Looking"));
 //	m_mainWidget->sServer->setText(i18n("Looking"));
 
-	connect( this, SIGNAL( closeClicked() ), this, SLOT( slotCloseClicked() ) );
+	connect( this, SIGNAL(closeClicked()), this, SLOT(slotCloseClicked()) );
 
 	noComment = true;
 	startDetailsProcess(m_contact->contactId());
@@ -81,7 +81,7 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 	QStringList args;
 	args << "-N" << "-g" << "-L" << host << "-I" << host;
 
-	connect(detailsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int, QProcess::ExitStatus)));
+	connect(detailsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int,QProcess::ExitStatus)));
 
 	detailsProcess->setProcessChannelMode(QProcess::MergedChannels);
 	detailsProcess->start(theSMBClientPath, args);
@@ -109,7 +109,7 @@ void WPUserInfo::slotDetailsProcessFinished(int, QProcess::ExitStatus)
 		}
 	}
 
-	disconnect(detailsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int, QProcess::ExitStatus)));
+	disconnect(detailsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int,QProcess::ExitStatus)));
 	delete detailsProcess;
 	detailsProcess = 0;
 

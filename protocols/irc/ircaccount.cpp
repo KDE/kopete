@@ -106,8 +106,8 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 	QObject::connect(d->client, SIGNAL(connectionStateChanged(KIrc::Socket::ConnectionState)),
 			 this, SLOT(clientConnectionStateChanged(KIrc::Socket::ConnectionState)));
 
-	QObject::connect(d->clientContext,SIGNAL( ircEvent( QEvent* ) ),
-			 this, SLOT( receivedEvent( QEvent* ) ) );
+	QObject::connect(d->clientContext,SIGNAL(ircEvent(QEvent*)),
+			 this, SLOT(receivedEvent(QEvent*)) );
 
 //	loadProperties();
 
@@ -515,7 +515,7 @@ void IRCAccount::clientConnectionStateChanged(KIrc::Socket::ConnectionState news
 		// after the 001 is sent, you need to wait until all the init junk is done.
 		// Unfortunately, there is no way for us to know when it is done (it could be
 		// spewing out any number of replies), so just try delaying it
-		QTimer::singleShot( 250, this, SLOT( slotPerformOnConnectCommands() ) );
+		QTimer::singleShot( 250, this, SLOT(slotPerformOnConnectCommands()) );
 		break;
 /*
 	case KIrc::Socket::Closing:
@@ -711,7 +711,7 @@ IRCContact *IRCAccount::getContact(const KIrc::EntityPtr &entity, MetaContact *m
 		d->contacts.append(contact);
 	}
 
-	QObject::connect(contact, SIGNAL(destroyed(IRCContact *)), SLOT(destroyed(IRCContact *)));
+	QObject::connect(contact, SIGNAL(destroyed(IRCContact*)), SLOT(destroyed(IRCContact*)));
 	return contact;
 }
 

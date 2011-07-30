@@ -94,8 +94,8 @@ void MeanwhileAccount::connectWithPassword(const QString &password)
                 SIGNAL(sessionStateChange(Kopete::OnlineStatus)),
                 this, SLOT(slotSessionStateChange(Kopete::OnlineStatus)));
         QObject::connect(m_session,
-                SIGNAL(serverNotification(const QString &)),
-                this, SLOT(slotServerNotification(const QString&)));
+                SIGNAL(serverNotification(QString)),
+                this, SLOT(slotServerNotification(QString)));
 
     }
 

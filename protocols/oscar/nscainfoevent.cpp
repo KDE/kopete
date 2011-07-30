@@ -31,8 +31,8 @@ NonServerContactsAddInfoEvent::NonServerContactsAddInfoEvent( ContactManager* li
 	else
 		setText( i18n( "Adding contacts to AIM server list.") );
 
-	connect( listManager, SIGNAL(contactAdded(const OContact&)),
-	         this, SLOT(ssiContactAdded(const OContact&)) );
+	connect( listManager, SIGNAL(contactAdded(OContact)),
+	         this, SLOT(ssiContactAdded(OContact)) );
 }
 
 void NonServerContactsAddInfoEvent::updateText()

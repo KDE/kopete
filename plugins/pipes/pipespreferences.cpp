@@ -51,7 +51,7 @@ PipesPreferences::PipesPreferences ( QWidget *parent, const QVariantList &args )
 
 	connect (mPrefs->addButton, SIGNAL (clicked()), this, SLOT(slotAdd()));
 	connect (mPrefs->removeButton, SIGNAL (clicked()), this, SLOT(slotRemove()));
-	connect (mModel, SIGNAL (dataChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(slotListChanged()));
+	connect (mModel, SIGNAL (dataChanged(QModelIndex,QModelIndex)), this, SLOT(slotListChanged()));
 	connect (mModel, SIGNAL (modelReset()), this, SLOT (slotListChanged()));
 	
 	slotListChanged();

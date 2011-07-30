@@ -67,8 +67,8 @@ bool TransferServer::initServer()
 {
 	if (!m_socket)
 	{
-		QObject::connect(this, SIGNAL(incomingNewTransfer(Transfer *)),
-				TransferHandler::self(), SIGNAL(transferCreated(Transfer *)));
+		QObject::connect(this, SIGNAL(incomingNewTransfer(Transfer*)),
+				TransferHandler::self(), SIGNAL(transferCreated(Transfer*)));
 
 		m_socket = new KExtendedSocket();
 

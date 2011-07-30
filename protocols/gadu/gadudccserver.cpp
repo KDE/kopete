@@ -118,8 +118,8 @@ GaduDCCServer::createNotifiers( bool connect )
 	write_->setEnabled( false );
 
 	if ( connect ) {
-		QObject::connect( read_, SIGNAL( activated( int ) ), SLOT( watcher() ) );
-		QObject::connect( write_, SIGNAL( activated( int ) ), SLOT( watcher() ) );
+		QObject::connect( read_, SIGNAL(activated(int)), SLOT(watcher()) );
+		QObject::connect( write_, SIGNAL(activated(int)), SLOT(watcher()) );
 	}
 }
 

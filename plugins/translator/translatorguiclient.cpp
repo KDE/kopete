@@ -40,13 +40,13 @@ TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent )
 : QObject( parent ), KXMLGUIClient( parent )
 {
 	setComponentData( TranslatorPlugin::plugin()->componentData() );
-	connect( TranslatorPlugin::plugin(), SIGNAL( destroyed( QObject * ) ), this, SLOT( deleteLater() ) );
+	connect( TranslatorPlugin::plugin(), SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()) );
 
 	m_manager = parent;
 
 	KAction *translate = new KAction( KIcon("preferences-desktop-locale"), i18n( "Translate" ), this );
         actionCollection()->addAction( "translateCurrentMessage", translate );
-	connect( translate, SIGNAL( triggered(bool) ), this, SLOT( slotTranslateChat() ) );
+	connect( translate, SIGNAL(triggered(bool)), this, SLOT(slotTranslateChat()) );
 	translate->setShortcut( KShortcut(Qt::CTRL + Qt::Key_T) );
 
 	setXMLFile( "translatorchatui.rc" );
@@ -79,7 +79,7 @@ void TranslatorGUIClient::slotTranslateChat()
 	}
 
 	// We search for src_dst
-	TranslatorPlugin::plugin()->translateMessage( body, src_lang, dst_lang, this, SLOT( messageTranslated( const QVariant & ) ) );
+	TranslatorPlugin::plugin()->translateMessage( body, src_lang, dst_lang, this, SLOT(messageTranslated(QVariant)) );
 }
 
 void TranslatorGUIClient::messageTranslated( const QVariant &result )

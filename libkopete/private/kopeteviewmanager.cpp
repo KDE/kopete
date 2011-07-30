@@ -144,13 +144,13 @@ KopeteViewManager::KopeteViewManager()
     d->activeView = 0L;
     d->foreignMessage=false;
 
-    connect( Kopete::BehaviorSettings::self(), SIGNAL( configChanged() ), this, SLOT( slotPrefsChanged() ) );
+    connect( Kopete::BehaviorSettings::self(), SIGNAL(configChanged()), this, SLOT(slotPrefsChanged()) );
 
-    connect( Kopete::ChatSessionManager::self() , SIGNAL( display( Kopete::Message &, Kopete::ChatSession *) ),
-            this, SLOT ( messageAppended( Kopete::Message &, Kopete::ChatSession *) ) );
+    connect( Kopete::ChatSessionManager::self() , SIGNAL(display(Kopete::Message&,Kopete::ChatSession*)),
+            this, SLOT (messageAppended(Kopete::Message&,Kopete::ChatSession*)) );
 
-    connect( Kopete::ChatSessionManager::self() , SIGNAL( readMessage() ),
-            this, SLOT ( nextEvent() ) );
+    connect( Kopete::ChatSessionManager::self() , SIGNAL(readMessage()),
+            this, SLOT (nextEvent()) );
 
     slotPrefsChanged();
 }
@@ -221,7 +221,7 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString
             d->foreignMessage = false;
             d->sessionMap.insert( session, newView );
 
-            connect( session, SIGNAL( closing(Kopete::ChatSession *) ),
+            connect( session, SIGNAL(closing(Kopete::ChatSession*)),
                      this, SLOT(slotChatSessionDestroyed(Kopete::ChatSession*)) );
 
             return newView;
@@ -313,8 +313,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 
 			// Don't call readMessages twice. We call it later in this method. Fixes bug 168978.
 			if ( d->useQueue )
-				connect( event, SIGNAL(done(Kopete::MessageEvent *)),
-				         this, SLOT(slotEventDeleted(Kopete::MessageEvent *)) );
+				connect( event, SIGNAL(done(Kopete::MessageEvent*)),
+				         this, SLOT(slotEventDeleted(Kopete::MessageEvent*)) );
 		}
 	}
 

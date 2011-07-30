@@ -176,7 +176,7 @@ public:
 		Q_ASSERT(!trans);
 
 		trans = new StunTransaction(this);
-		connect(trans, SIGNAL(finished(const XMPP::StunMessage &)), SLOT(trans_finished(const XMPP::StunMessage &)));
+		connect(trans, SIGNAL(finished(XMPP::StunMessage)), SLOT(trans_finished(XMPP::StunMessage)));
 		connect(trans, SIGNAL(error(XMPP::StunTransaction::Error)), SLOT(trans_error(XMPP::StunTransaction::Error)));
 
 		StunMessage message;

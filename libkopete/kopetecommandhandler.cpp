@@ -128,44 +128,44 @@ Kopete::CommandHandler::CommandHandler() : QObject( qApp )
 	mCommands.reserve(31);
 	p->pluginCommands.insert( this, mCommands );
 
-	registerCommand( this, QString::fromLatin1("help"), SLOT( slotHelpCommand( const QString &, Kopete::ChatSession * ) ),
+	registerCommand( this, QString::fromLatin1("help"), SLOT(slotHelpCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /help [<command>] - Used to list available commands, or show help for a specified command." ), 0, 1 );
 
-	registerCommand( this, QString::fromLatin1("url"), SLOT( slotOpenLastUrl( const QString &, Kopete::ChatSession * ) ),
+	registerCommand( this, QString::fromLatin1("url"), SLOT(slotOpenLastUrl(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /url - Opens last URL for current chat in default browser." ) );
 
-	registerCommand( this, QString::fromLatin1("close"), SLOT( slotCloseCommand( const QString &, Kopete::ChatSession * ) ),
+	registerCommand( this, QString::fromLatin1("close"), SLOT(slotCloseCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /close - Closes the current view." ) );
 
 	// FIXME: What's the difference with /close? The help doesn't explain it - Martijn
-	registerCommand( this, QString::fromLatin1("part"), SLOT( slotPartCommand( const QString &, Kopete::ChatSession * ) ),
+	registerCommand( this, QString::fromLatin1("part"), SLOT(slotPartCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /part - Closes the current view." ) );
 
-	registerCommand( this, QString::fromLatin1("clear"), SLOT( slotClearCommand( const QString &, Kopete::ChatSession * ) ),
+	registerCommand( this, QString::fromLatin1("clear"), SLOT(slotClearCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /clear - Clears the active view's chat buffer." ) );
 
-	//registerCommand( this, QString::fromLatin1("me"), SLOT( slotMeCommand( const QString &, Kopete::ChatSession * ) ),
+	//registerCommand( this, QString::fromLatin1("me"), SLOT(slotMeCommand(QString,Kopete::ChatSession*)),
 	//	i18n( "USAGE: /me <text> - Formats message as in '<nickname> went to the store'." ) );
 
-	registerCommand( this, QString::fromLatin1("away"), SLOT( slotAwayCommand( const QString &, Kopete::ChatSession * ) ),
+	registerCommand( this, QString::fromLatin1("away"), SLOT(slotAwayCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /away [<reason>] - Marks you as away/back for the current account only." ) );
 
-	registerCommand( this, QString::fromLatin1("awayall"), SLOT( slotAwayAllCommand( const QString &, Kopete::ChatSession * ) ),
+	registerCommand( this, QString::fromLatin1("awayall"), SLOT(slotAwayAllCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /awayall [<reason>] - Marks you as away/back for all accounts." ) );
 
-	registerCommand( this, QString::fromLatin1("say"), SLOT( slotSayCommand( const QString &, Kopete::ChatSession * ) ),
+	registerCommand( this, QString::fromLatin1("say"), SLOT(slotSayCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /say <text> - Say text in this chat. This is the same as just typing a message, but is very "
 			"useful for scripts." ), 1 );
 
-	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, Kopete::ChatSession * ) ),
+	registerCommand( this, QString::fromLatin1("exec"), SLOT(slotExecCommand(QString,Kopete::ChatSession*)),
 		i18n( "USAGE: /exec [-o] <command> - Executes the specified command and displays the output in the chat buffer. "
 		"If -o is specified, the output is sent to all members of the chat."), 1 );
 
-	connect( Kopete::PluginManager::self(), SIGNAL( pluginLoaded( Kopete::Plugin*) ),
-		this, SLOT(slotPluginLoaded(Kopete::Plugin*) ) );
+	connect( Kopete::PluginManager::self(), SIGNAL(pluginLoaded(Kopete::Plugin*)),
+		this, SLOT(slotPluginLoaded(Kopete::Plugin*)) );
 
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( viewCreated( KopeteView * ) ),
-		this, SLOT( slotViewCreated( KopeteView* ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(viewCreated(KopeteView*)),
+		this, SLOT(slotViewCreated(KopeteView*)) );
 }
 
 Kopete::CommandHandler::~CommandHandler()
@@ -334,8 +334,8 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 				*proc << args;
 			}
 
-			connect(proc, SIGNAL(receivedStdout(K3Process *, char *, int)), this, SLOT(slotExecReturnedData(K3Process *, char *, int)));
-			connect(proc, SIGNAL(receivedStderr(K3Process *, char *, int)), this, SLOT(slotExecReturnedData(K3Process *, char *, int)));
+			connect(proc, SIGNAL(receivedStdout(K3Process*,char*,int)), this, SLOT(slotExecReturnedData(K3Process*,char*,int)));
+			connect(proc, SIGNAL(receivedStderr(K3Process*,char*,int)), this, SLOT(slotExecReturnedData(K3Process*,char*,int)));
 			proc->start( K3Process::NotifyOnExit, K3Process::AllOutput );
 		}
 		else
@@ -518,7 +518,7 @@ void Kopete::CommandHandler::slotViewCreated( KopeteView *view )
 
 void Kopete::CommandHandler::slotPluginLoaded( Kopete::Plugin *plugin )
 {
-	connect( plugin, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotPluginDestroyed( QObject * ) ) );
+	connect( plugin, SIGNAL(destroyed(QObject*)), this, SLOT(slotPluginDestroyed(QObject*)) );
 	if( !p->pluginCommands.contains( plugin ) )
 	{
 		//Create a QDict optomized for a larger # of commands, and case insensitive

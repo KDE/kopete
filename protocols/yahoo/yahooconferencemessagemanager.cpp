@@ -44,14 +44,14 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	setComponentData(protocol->componentData());
 
-	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
-			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
+	connect ( this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+			  SLOT(slotMessageSent(Kopete::Message&,Kopete::ChatSession*)) );
 
 	m_yahooRoom = yahooRoom;
 
 	m_actionInvite = new KAction( KIcon("x-office-contact"), i18n( "&Invite others" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
         actionCollection()->addAction( "yahooInvite", m_actionInvite );
-	connect ( m_actionInvite, SIGNAL( triggered ( bool ) ), this, SLOT( slotInviteOthers() ) );
+	connect ( m_actionInvite, SIGNAL(triggered(bool)), this, SLOT(slotInviteOthers()) );
 
 	setXMLFile("yahooconferenceui.rc");
 }
@@ -104,8 +104,8 @@ void YahooConferenceChatSession::slotInviteOthers()
 	}
 
 	YahooInviteListImpl *dlg = new YahooInviteListImpl( Kopete::UI::Global::mainWidget() );
-	QObject::connect( dlg, SIGNAL( readyToInvite( const QString &, const QStringList &, const QStringList &, const QString & ) ),
-				account(), SLOT( slotAddInviteConference( const QString &, const QStringList &, const QStringList &, const QString & ) ) );
+	QObject::connect( dlg, SIGNAL(readyToInvite(QString,QStringList,QStringList,QString)),
+				account(), SLOT(slotAddInviteConference(QString,QStringList,QStringList,QString)) );
 	dlg->setRoom( m_yahooRoom );
 	dlg->fillFriendList( buddies );
 	for( QList<Kopete::Contact*>::ConstIterator it = members().constBegin(); it != members().constEnd(); ++it )

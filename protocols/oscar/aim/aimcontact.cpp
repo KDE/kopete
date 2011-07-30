@@ -43,14 +43,14 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	m_infoDialog = 0L;
 	m_warnUserAction = 0L;
 
-	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
-	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ),
-	                  this, SLOT( userOffline( const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( receivedProfile( const QString&, const QString& ) ),
-	                  this, SLOT( updateProfile( const QString&, const QString& ) ) );
-	QObject::connect( mAccount->engine(), SIGNAL( userWarned( const QString&, quint16, quint16 ) ),
-	                  this, SLOT( gotWarning( const QString&, quint16, quint16 ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedUserInfo(QString,UserDetails)),
+	                  this, SLOT(userInfoUpdated(QString,UserDetails)) );
+	QObject::connect( mAccount->engine(), SIGNAL(userIsOffline(QString)),
+	                  this, SLOT(userOffline(QString)) );
+	QObject::connect( mAccount->engine(), SIGNAL(receivedProfile(QString,QString)),
+	                  this, SLOT(updateProfile(QString,QString)) );
+	QObject::connect( mAccount->engine(), SIGNAL(userWarned(QString,quint16,quint16)),
+	                  this, SLOT(gotWarning(QString,quint16,quint16)) );
 }
 
 AIMContact::~AIMContact()
@@ -129,7 +129,7 @@ void AIMContact::slotUserInfo()
 		m_infoDialog = new AIMUserInfoDialog( this, static_cast<AIMAccount*>( account() ), Kopete::UI::Global::mainWidget() );
 		if( !m_infoDialog )
 			return;
-		connect( m_infoDialog, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
+		connect( m_infoDialog, SIGNAL(finished()), this, SLOT(closeUserInfoDialog()) );
 		m_infoDialog->show();
 		if ( mAccount->isConnected() )
 		{

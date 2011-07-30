@@ -52,18 +52,18 @@ MetaContact::MetaContact()
 {
 	d->metaContactId = QUuid::createUuid();
 
-	connect( this, SIGNAL( pluginDataChanged() ), SIGNAL( persistentDataChanged() ) );
-	connect( this, SIGNAL( iconChanged( Kopete::ContactListElement::IconState, const QString & ) ), SIGNAL( persistentDataChanged() ) );
-	connect( this, SIGNAL( useCustomIconChanged( bool ) ), SIGNAL( persistentDataChanged() ) );
-	connect( this, SIGNAL( displayNameChanged( const QString &, const QString & ) ), SIGNAL( persistentDataChanged() ) );
-	connect( this, SIGNAL( movedToGroup( Kopete::MetaContact *, Kopete::Group *, Kopete::Group * ) ), SIGNAL( persistentDataChanged() ) );
-	connect( this, SIGNAL( removedFromGroup( Kopete::MetaContact *, Kopete::Group * ) ), SIGNAL( persistentDataChanged() ) );
-	connect( this, SIGNAL( addedToGroup( Kopete::MetaContact *, Kopete::Group * ) ), SIGNAL( persistentDataChanged() ) );
-	connect( this, SIGNAL( contactAdded( Kopete::Contact * ) ), SIGNAL( persistentDataChanged() ) );
-	connect( this, SIGNAL( contactRemoved( Kopete::Contact * ) ), SIGNAL( persistentDataChanged() ) );
+	connect( this, SIGNAL(pluginDataChanged()), SIGNAL(persistentDataChanged()) );
+	connect( this, SIGNAL(iconChanged(Kopete::ContactListElement::IconState,QString)), SIGNAL(persistentDataChanged()) );
+	connect( this, SIGNAL(useCustomIconChanged(bool)), SIGNAL(persistentDataChanged()) );
+	connect( this, SIGNAL(displayNameChanged(QString,QString)), SIGNAL(persistentDataChanged()) );
+	connect( this, SIGNAL(movedToGroup(Kopete::MetaContact*,Kopete::Group*,Kopete::Group*)), SIGNAL(persistentDataChanged()) );
+	connect( this, SIGNAL(removedFromGroup(Kopete::MetaContact*,Kopete::Group*)), SIGNAL(persistentDataChanged()) );
+	connect( this, SIGNAL(addedToGroup(Kopete::MetaContact*,Kopete::Group*)), SIGNAL(persistentDataChanged()) );
+	connect( this, SIGNAL(contactAdded(Kopete::Contact*)), SIGNAL(persistentDataChanged()) );
+	connect( this, SIGNAL(contactRemoved(Kopete::Contact*)), SIGNAL(persistentDataChanged()) );
 
 	// Update the KABC picture when the KDE Address book change.
-	connect(KABCPersistence::self()->addressBook(), SIGNAL(addressBookChanged(AddressBook *)), this, SLOT(slotUpdateAddressBookPicture()));
+	connect(KABCPersistence::self()->addressBook(), SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotUpdateAddressBookPicture()));
 
 	// make sure MetaContact is at least in one group
 	addToGroup( Group::topLevel() );
@@ -98,17 +98,17 @@ void MetaContact::addContact( Contact *c )
 		const QString oldDisplayName = displayName();
 
 		d->contacts.append( c );
-		connect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-			SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+		connect( c, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+			SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 
-		connect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+		connect( c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+			this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
 
-		connect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
-			this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
+		connect( c, SIGNAL(contactDestroyed(Kopete::Contact*)),
+			this, SLOT(slotContactDestroyed(Kopete::Contact*)) );
 
-		connect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
-			this, SIGNAL( contactIdleStateChanged( Kopete::Contact * ) ) );
+		connect( c, SIGNAL(idleStateChanged(Kopete::Contact*)),
+			this, SIGNAL(contactIdleStateChanged(Kopete::Contact*)) );
 
 		emit contactAdded(c);
 
@@ -225,14 +225,14 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 
 		if(!deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
-			disconnect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-				this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-			disconnect( c, SIGNAL( propertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ),
-				this, SLOT( slotPropertyChanged( Kopete::PropertyContainer *, const QString &, const QVariant &, const QVariant & ) ) ) ;
-			disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
-				this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
-			disconnect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
-				this, SIGNAL( contactIdleStateChanged( Kopete::Contact *) ) );
+			disconnect( c, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+				this, SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
+			disconnect( c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+				this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
+			disconnect( c, SIGNAL(contactDestroyed(Kopete::Contact*)),
+				this, SLOT(slotContactDestroyed(Kopete::Contact*)) );
+			disconnect( c, SIGNAL(idleStateChanged(Kopete::Contact*)),
+				this, SIGNAL(contactIdleStateChanged(Kopete::Contact*)) );
 
 			kDebug( 14010 ) << "Contact disconnected";
 
@@ -1355,7 +1355,7 @@ void MetaContact::onlineStatusNotification( Kopete::Contact * c )
 
 			notify->setText( text );
 			notify->setPixmap( QPixmap::fromImage( picture().image() ) );
-			connect( notify, SIGNAL(activated(unsigned int)) , this, SLOT(execute()) );
+			connect( notify, SIGNAL(activated(uint)) , this, SLOT(execute()) );
 
 			notify->addContext( qMakePair( QString::fromLatin1("contact"), metaContactId().toString() ) );
 			foreach( Kopete::Group *g , groups() )

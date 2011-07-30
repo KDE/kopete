@@ -41,7 +41,7 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 	setInitialSize( QSize(320,290) );
 	
 	setEscapeButton( KDialog::Close );
-//	QObject::connect( this, SIGNAL( closeClicked() ), this, SIGNAL( closingWebcamDialog() ) );
+//	QObject::connect( this, SIGNAL(closeClicked()), this, SIGNAL(closingWebcamDialog()) );
 
 	QWidget *page = new QWidget(this);
 	setMainWidget(page);

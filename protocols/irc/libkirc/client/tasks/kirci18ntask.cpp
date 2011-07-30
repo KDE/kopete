@@ -67,7 +67,7 @@ void I18nTask::postServerEvent(const Event *e, const QString &message)
 /*
 void I18nTask::registerStandardCommands(CommandManager *cm)
 {
-	cm->registerCommand(ERROR,	this, SLOT(error(Event *&));
+	cm->registerCommand(ERROR,	this, SLOT(error(Event*&));
 //		setMinMax(0, 0);
 
 	bind(JOIN,	this, SLOT(join(Message)),	0, 1);
@@ -229,69 +229,69 @@ void I18nTask::topic(Event *e)
 /*
 void I18nTask::bindNumericReplies()
 {
-	bind(1, this, SLOT(numericReply_001(Event *)), 1, 1);
-	bind(2, this, SLOT(numericReply_002(Event *)), 1, 1);
-	bind(3, this, SLOT(numericReply_003(Event *)), 1, 1);
-	bind(4, this, SLOT(numericReply_004(Event *)), 5, 5);
-	bind(5, this, SLOT(numericReply_004(Event *)), 1, 1);
+	bind(1, this, SLOT(numericReply_001(Event*)), 1, 1);
+	bind(2, this, SLOT(numericReply_002(Event*)), 1, 1);
+	bind(3, this, SLOT(numericReply_003(Event*)), 1, 1);
+	bind(4, this, SLOT(numericReply_004(Event*)), 5, 5);
+	bind(5, this, SLOT(numericReply_004(Event*)), 1, 1);
 
-	bind(250, this, SLOT(numericReply_250(Event *)));
-	bind(251, this, SLOT(numericReply_251(Event *)));
-	bind(252, this, SLOT(numericReply_252(Event *)), 2, 2);
-	bind(253, this, SLOT(numericReply_253(Event *)), 2, 2);
-	bind(254, this, SLOT(numericReply_254(Event *)), 2, 2);
-	bind(255, this, SLOT(numericReply_255(Event *)), 1, 1);
+	bind(250, this, SLOT(numericReply_250(Event*)));
+	bind(251, this, SLOT(numericReply_251(Event*)));
+	bind(252, this, SLOT(numericReply_252(Event*)), 2, 2);
+	bind(253, this, SLOT(numericReply_253(Event*)), 2, 2);
+	bind(254, this, SLOT(numericReply_254(Event*)), 2, 2);
+	bind(255, this, SLOT(numericReply_255(Event*)), 1, 1);
 
-	bind(263, this, SLOT(numericReply_263(Event *)));
-	bind(265, this, SLOT(numericReply_265(Event *)));
-	bind(266, this, SLOT(numericReply_266(Event *)));
+	bind(263, this, SLOT(numericReply_263(Event*)));
+	bind(265, this, SLOT(numericReply_265(Event*)));
+	bind(266, this, SLOT(numericReply_266(Event*)));
 
-	bind(301, this, SLOT(numericReply_301(Event *)), 2, 2);
-	bind(303, this, SLOT(numericReply_303(Event *)), 1, 1);
-//	bind(305, this, SLOT(ignoreMessage(Event *)), 0, 0 );
-//	bind(306, this, SLOT(ignoreMessage(Event *)), 0, 0 );
-	bind(307, this, SLOT(numericReply_307(Event *)), 1, 1);
-	bind(311, this, SLOT(numericReply_311(Event *)), 5, 5);
-	bind(312, this, SLOT(numericReply_312(Event *)), 3, 3);
-	bind(313, this, SLOT(numericReply_313(Event *)), 2, 2);
-	bind(314, this, SLOT(numericReply_314(Event *)), 5, 5);
-	bind(315, this, SLOT(numericReply_315(Event *)), 2, 2);
-	bind(317, this, SLOT(numericReply_317(Event *)), 3, 4);
-	bind(318, this, SLOT(numericReply_318(Event *)), 2, 2);
-	bind(319, this, SLOT(numericReply_319(Event *)), 2, 2);
-	bind(320, this, SLOT(numericReply_320(Event *)), 2, 2);
-//	bind(321, this, SLOT(ignoreMessage(Event *)), 0, 0 );
-	bind(322, this, SLOT(numericReply_322(Event *)), 3, 3);
-	bind(323, this, SLOT(numericReply_323(Event *)), 1, 1);
-	bind(324, this, SLOT(numericReply_324(Event *)), 2, 4);
-	bind(328, this, SLOT(numericReply_328(Event *)), 2, 2);
-	bind(329, this, SLOT(numericReply_329(Event *)), 3, 3);
-//	bind(330, this, SLOT(ignoreMessage(Event *)), 3, 3); // ???
-	bind(331, this, SLOT(numericReply_331(Event *)), 2, 2);
-	bind(332, this, SLOT(numericReply_332(Event *)), 2, 2);
-	bind(333, this, SLOT(numericReply_333(Event *)), 4, 4);
-	bind(352, this, SLOT(numericReply_352(Event *)), 5, 10);
-	bind(353, this, SLOT(numericReply_353(Event *)), 3, 3);
-	bind(366, this, SLOT(numericReply_366(Event *)), 2, 2);
-	bind(369, this, SLOT(numericReply_369(Event *)), 2, 2);
-	bind(372, this, SLOT(numericReply_372(Event *)), 1, 1);
+	bind(301, this, SLOT(numericReply_301(Event*)), 2, 2);
+	bind(303, this, SLOT(numericReply_303(Event*)), 1, 1);
+//	bind(305, this, SLOT(ignoreMessage(Event*)), 0, 0 );
+//	bind(306, this, SLOT(ignoreMessage(Event*)), 0, 0 );
+	bind(307, this, SLOT(numericReply_307(Event*)), 1, 1);
+	bind(311, this, SLOT(numericReply_311(Event*)), 5, 5);
+	bind(312, this, SLOT(numericReply_312(Event*)), 3, 3);
+	bind(313, this, SLOT(numericReply_313(Event*)), 2, 2);
+	bind(314, this, SLOT(numericReply_314(Event*)), 5, 5);
+	bind(315, this, SLOT(numericReply_315(Event*)), 2, 2);
+	bind(317, this, SLOT(numericReply_317(Event*)), 3, 4);
+	bind(318, this, SLOT(numericReply_318(Event*)), 2, 2);
+	bind(319, this, SLOT(numericReply_319(Event*)), 2, 2);
+	bind(320, this, SLOT(numericReply_320(Event*)), 2, 2);
+//	bind(321, this, SLOT(ignoreMessage(Event*)), 0, 0 );
+	bind(322, this, SLOT(numericReply_322(Event*)), 3, 3);
+	bind(323, this, SLOT(numericReply_323(Event*)), 1, 1);
+	bind(324, this, SLOT(numericReply_324(Event*)), 2, 4);
+	bind(328, this, SLOT(numericReply_328(Event*)), 2, 2);
+	bind(329, this, SLOT(numericReply_329(Event*)), 3, 3);
+//	bind(330, this, SLOT(ignoreMessage(Event*)), 3, 3); // ???
+	bind(331, this, SLOT(numericReply_331(Event*)), 2, 2);
+	bind(332, this, SLOT(numericReply_332(Event*)), 2, 2);
+	bind(333, this, SLOT(numericReply_333(Event*)), 4, 4);
+	bind(352, this, SLOT(numericReply_352(Event*)), 5, 10);
+	bind(353, this, SLOT(numericReply_353(Event*)), 3, 3);
+	bind(366, this, SLOT(numericReply_366(Event*)), 2, 2);
+	bind(369, this, SLOT(numericReply_369(Event*)), 2, 2);
+	bind(372, this, SLOT(numericReply_372(Event*)), 1, 1);
 	bind(375, this, SLOT(ignoreMessage(Message&)), 0, 0 );
 	bind(376, this, SLOT(ignoreMessage(Message&)), 0, 0 );
 
-	bind(401, this, SLOT(numericReply_401(Event *)), 2, 2);
-	bind(404, this, SLOT(numericReply_404(Event *)), 2, 2);
-	bind(406, this, SLOT(numericReply_406(Event *)), 2, 2);
-	bind(422, this, SLOT(numericReply_422(Event *)), 1, 1);
-	bind(433, this, SLOT(numericReply_433(Event *)), 2, 2);
-	bind(442, this, SLOT(numericReply_442(Event *)), 2, 2);
-	bind(464, this, SLOT(numericReply_464(Event *)), 1, 1);
-	bind(471, this, SLOT(numericReply_471(Event *)), 2, 2);
-	bind(473, this, SLOT(numericReply_473(Event *)), 2, 2);
-	bind(474, this, SLOT(numericReply_474(Event *)), 2, 2);
-	bind(475, this, SLOT(numericReply_475(Event *)), 2, 2);
+	bind(401, this, SLOT(numericReply_401(Event*)), 2, 2);
+	bind(404, this, SLOT(numericReply_404(Event*)), 2, 2);
+	bind(406, this, SLOT(numericReply_406(Event*)), 2, 2);
+	bind(422, this, SLOT(numericReply_422(Event*)), 1, 1);
+	bind(433, this, SLOT(numericReply_433(Event*)), 2, 2);
+	bind(442, this, SLOT(numericReply_442(Event*)), 2, 2);
+	bind(464, this, SLOT(numericReply_464(Event*)), 1, 1);
+	bind(471, this, SLOT(numericReply_471(Event*)), 2, 2);
+	bind(473, this, SLOT(numericReply_473(Event*)), 2, 2);
+	bind(474, this, SLOT(numericReply_474(Event*)), 2, 2);
+	bind(475, this, SLOT(numericReply_475(Event*)), 2, 2);
 
 	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
-	bind(477, this, SLOT(postServerEvent(Event *)),0,0);
+	bind(477, this, SLOT(postServerEvent(Event*)),0,0);
 }
 */
 /* 001: "Welcome to the Internet Relay Network <nick>!<user>@<host>"
@@ -851,30 +851,30 @@ void I18nTask::numericReply_475(Event *e)
 /*
 void I18nTask::bindCtcp()
 {
-	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Event *&)),
+	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Event*&)),
 		-1,	-1);
-	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Event *&)),
+	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Event*&)),
 		-1,	1);
-	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Event *&)),
+	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Event*&)),
 		4,	5);
-	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Event *&)),
+	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Event*&)),
 		-1,	0);
-	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Event *&)),
+	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Event*&)),
 		1,	1);
-	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Event *&)),
+	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Event*&)),
 		-1,	0);
-	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Event *&)),
+	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Event*&)),
 		-1,	0);
-	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Event *&)),
+	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Event*&)),
 		-1,	0);
-	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Event *&)),
+	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Event*&)),
 		-1,	0);
 
-	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_erre(Event *&)),
+	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_erre(Event*&)),
 		1,	-1);
-	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Event *&)),
+	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Event*&)),
 		1,	1,	"");
-	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Event *&)),
+	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Event*&)),
 		-1,	-1,	"");
 }
 */

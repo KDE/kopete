@@ -98,8 +98,8 @@ Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags 
 		session = new AIMChatSession( this, chatMembers, account()->protocol(), exchange, room );
 		session->setEngine( m_acct->engine() );
 
-		connect( session, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession* ) ),
-				this, SLOT( sendMessage( Kopete::Message&, Kopete::ChatSession* ) ) );
+		connect( session, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+				this, SLOT(sendMessage(Kopete::Message&,Kopete::ChatSession*)) );
 		m_chatRoomSessions.append( session );
 	}
 	return session;
@@ -220,14 +220,14 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	mInitialStatusMessage.clear();
 
 	m_joinChatDialog = 0;
-	QObject::connect( engine(), SIGNAL( chatRoomConnected( Oscar::WORD, const QString& ) ),
-	                  this, SLOT( connectedToChatRoom( Oscar::WORD, const QString& ) ) );
+	QObject::connect( engine(), SIGNAL(chatRoomConnected(Oscar::WORD,QString)),
+	                  this, SLOT(connectedToChatRoom(Oscar::WORD,QString)) );
 
-	QObject::connect( engine(), SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ),
-			this, SLOT( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ) );
+	QObject::connect( engine(), SIGNAL(userJoinedChat(Oscar::WORD,QString,QString)),
+			this, SLOT(userJoinedChat(Oscar::WORD,QString,QString)) );
 
-	QObject::connect( engine(), SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
-			this, SLOT( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
+	QObject::connect( engine(), SIGNAL(userLeftChat(Oscar::WORD,QString,QString)),
+			this, SLOT(userLeftChat(Oscar::WORD,QString,QString)) );
 
 	// Create actions
 	mJoinChatAction = new KAction( i18n( "Join Chat..." ), this );
@@ -413,8 +413,8 @@ void AIMAccount::slotJoinChat()
 	if ( !m_joinChatDialog )
 	{
 		m_joinChatDialog = new AIMJoinChatUI( this, Kopete::UI::Global::mainWidget() );
-		QObject::connect( m_joinChatDialog, SIGNAL( closing( int ) ),
-				this, SLOT( joinChatDialogClosed( int ) ) );
+		QObject::connect( m_joinChatDialog, SIGNAL(closing(int)),
+				this, SLOT(joinChatDialogClosed(int)) );
 		QList<int> list = engine()->chatExchangeList();
 		m_joinChatDialog->setExchangeList( list );
 		m_joinChatDialog->show();

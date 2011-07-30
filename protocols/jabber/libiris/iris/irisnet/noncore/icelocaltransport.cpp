@@ -186,7 +186,7 @@ public:
 		relPort(-1)
 	{
 		pool = new StunTransactionPool(StunTransaction::Udp, this);
-		connect(pool, SIGNAL(retransmit(XMPP::StunTransaction *)), SLOT(pool_retransmit(XMPP::StunTransaction *)));
+		connect(pool, SIGNAL(retransmit(XMPP::StunTransaction*)), SLOT(pool_retransmit(XMPP::StunTransaction*)));
 	}
 
 	~Private()

@@ -82,12 +82,12 @@ void QQSocket::connect( const QString &server, uint port )
 	// non-empty, so disable it until we have actual data in the queue
 	m_socket->enableWrite( false );
 
-	QObject::connect( m_socket, SIGNAL( readyRead() ),             this, SLOT( slotDataReceived() ) );
-	QObject::connect( m_socket, SIGNAL( readyWrite() ),            this, SLOT( slotReadyWrite() ) );
-	QObject::connect( m_socket, SIGNAL( hostFound() ),	       this, SLOT( slotHostFound() ) );
-	QObject::connect( m_socket, SIGNAL( connected( const KNetwork::KResolverEntry &) ), this, SLOT( slotConnectionSuccess() ) );
-	QObject::connect( m_socket, SIGNAL( gotError( int ) ),         this, SLOT( slotSocketError( int ) ) );
-	QObject::connect( m_socket, SIGNAL( closed( ) ),               this, SLOT( slotSocketClosed( ) ) );
+	QObject::connect( m_socket, SIGNAL(readyRead()),             this, SLOT(slotDataReceived()) );
+	QObject::connect( m_socket, SIGNAL(readyWrite()),            this, SLOT(slotReadyWrite()) );
+	QObject::connect( m_socket, SIGNAL(hostFound()),	       this, SLOT(slotHostFound()) );
+	QObject::connect( m_socket, SIGNAL(connected(KNetwork::KResolverEntry)), this, SLOT(slotConnectionSuccess()) );
+	QObject::connect( m_socket, SIGNAL(gotError(int)),         this, SLOT(slotSocketError(int)) );
+	QObject::connect( m_socket, SIGNAL(closed()),               this, SLOT(slotSocketClosed()) );
 
 	aboutToConnect();
 

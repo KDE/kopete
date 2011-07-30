@@ -120,8 +120,8 @@ GaduSession::createNotifiers( bool connect )
 	write_->setEnabled( false );
 
 	if ( connect ) {
-		QObject::connect( read_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
-		QObject::connect( write_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
+		QObject::connect( read_, SIGNAL(activated(int)), SLOT(checkDescriptor()) );
+		QObject::connect( write_, SIGNAL(activated(int)), SLOT(checkDescriptor()) );
 	}
 }
 

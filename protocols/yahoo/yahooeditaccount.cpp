@@ -76,7 +76,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 		bool sendPicture = account()->configGroup()->readEntry("sendPicture", false);
 		optionSendBuddyIcon->setChecked( sendPicture );
 		buttonSelectPicture->setEnabled( sendPicture );  
-		connect( optionSendBuddyIcon, SIGNAL( toggled( bool ) ), buttonSelectPicture, SLOT( setEnabled( bool ) ) ); 
+		connect( optionSendBuddyIcon, SIGNAL(toggled(bool)), buttonSelectPicture, SLOT(setEnabled(bool)) ); 
 		m_photoPath = iconUrl;
 		if( !iconUrl.isEmpty() )
 			m_Picture->setPixmap( iconUrl );

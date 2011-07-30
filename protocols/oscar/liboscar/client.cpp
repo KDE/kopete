@@ -201,10 +201,10 @@ Client::Client( QObject* parent )
 	d->awayMsgRequestTimer = new QTimer();
 	d->codecProvider = &defaultCodecProvider;
 
-	connect( this, SIGNAL( redirectionFinished( Oscar::WORD ) ),
-	         this, SLOT( checkRedirectionQueue( Oscar::WORD ) ) );
-	connect( d->awayMsgRequestTimer, SIGNAL( timeout() ),
-	         this, SLOT( nextICQAwayMessageRequest() ) );
+	connect( this, SIGNAL(redirectionFinished(Oscar::WORD)),
+	         this, SLOT(checkRedirectionQueue(Oscar::WORD)) );
+	connect( d->awayMsgRequestTimer, SIGNAL(timeout()),
+	         this, SLOT(nextICQAwayMessageRequest()) );
 }
 
 Client::~Client()
@@ -231,7 +231,7 @@ void Client::connectToServer( const QString& host, quint16 port )
 	c->setClient( this );
 
 	d->loginTask = new StageOneLoginTask( c->rootTask() );
-	connect( d->loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+	connect( d->loginTask, SIGNAL(finished()), this, SLOT(lt_loginFinished()) );
 	connectToServer( c, host, port );
 }
 
@@ -414,13 +414,13 @@ void Client::lt_loginFinished()
 		kDebug(OSCAR_RAW_DEBUG) << "stage two done. setting up services";
 		initializeStaticTasks();
 		ServiceSetupTask* ssTask = new ServiceSetupTask( d->connections.defaultConnection()->rootTask() );
-		connect( ssTask, SIGNAL( finished() ), this, SLOT( serviceSetupFinished() ) );
+		connect( ssTask, SIGNAL(finished()), this, SLOT(serviceSetupFinished()) );
 		ssTask->go( Task::AutoDelete ); //fire and forget
 	}
 	else if ( d->stage == ClientPrivate::StageOne )
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "stage one login done";
-		disconnect( d->loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+		disconnect( d->loginTask, SIGNAL(finished()), this, SLOT(lt_loginFinished()) );
 
 		if ( d->loginTask->statusCode() == 0 ) //we can start stage two
 		{
@@ -431,7 +431,7 @@ void Client::lt_loginFinished()
 			d->port = d->loginTask->bosPort().toUInt();
 			d->cookie = d->loginTask->loginCookie();
 			close();
-			QTimer::singleShot( 100, this, SLOT(startStageTwo() ) );
+			QTimer::singleShot( 100, this, SLOT(startStageTwo()) );
 			d->stage = ClientPrivate::StageTwo;
 		}
 		else
@@ -454,10 +454,10 @@ void Client::startStageTwo()
 	//create the new login task
 	d->loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
 	d->loginTaskTwo->setCookie( d->cookie );
-	QObject::connect( d->loginTaskTwo, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+	QObject::connect( d->loginTaskTwo, SIGNAL(finished()), this, SLOT(lt_loginFinished()) );
 
 	//connect
-	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+	QObject::connect( c, SIGNAL(connected()), this, SLOT(streamConnected()) );
 	connectToServer( c, d->host, d->port ) ;
 
 }
@@ -808,45 +808,45 @@ void Client::initializeStaticTasks()
 	d->typingNotifyTask = new TypingNotifyTask( c->rootTask() );
 	d->ssiModifyTask = new SSIModifyTask( c->rootTask(), true );
 
-	connect( d->onlineNotifier, SIGNAL( userIsOnline( const QString&, const UserDetails& ) ),
-	         this, SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ) );
-	connect( d->onlineNotifier, SIGNAL( userIsOffline( const QString&, const UserDetails& ) ),
-	         this, SLOT( offlineUser( const QString&, const UserDetails & ) ) );
+	connect( d->onlineNotifier, SIGNAL(userIsOnline(QString,UserDetails)),
+	         this, SIGNAL(receivedUserInfo(QString,UserDetails)) );
+	connect( d->onlineNotifier, SIGNAL(userIsOffline(QString,UserDetails)),
+	         this, SLOT(offlineUser(QString,UserDetails)) );
 
-	connect( d->ownStatusTask, SIGNAL( gotInfo() ), this, SLOT( haveOwnUserInfo() ) );
-	connect( d->ownStatusTask, SIGNAL( buddyIconUploadRequested() ), this,
-	         SIGNAL( iconNeedsUploading() ) );
+	connect( d->ownStatusTask, SIGNAL(gotInfo()), this, SLOT(haveOwnUserInfo()) );
+	connect( d->ownStatusTask, SIGNAL(buddyIconUploadRequested()), this,
+	         SIGNAL(iconNeedsUploading()) );
 
-	connect( d->messageReceiverTask, SIGNAL( receivedMessage( const Oscar::Message& ) ),
-	         this, SLOT( receivedMessage( const Oscar::Message& ) ) );
-	connect( d->messageReceiverTask, SIGNAL( fileMessage( int, const QString, const QByteArray, Buffer ) ),
-	         this, SLOT( gotFileMessage( int, const QString, const QByteArray, Buffer ) ) );
-	connect( d->messageReceiverTask, SIGNAL( chatroomMessage( const Oscar::Message&, const QByteArray & ) ),
-	         this, SLOT( gotChatRoomMessage( const Oscar::Message&, const QByteArray & ) ) );
+	connect( d->messageReceiverTask, SIGNAL(receivedMessage(Oscar::Message)),
+	         this, SLOT(receivedMessage(Oscar::Message)) );
+	connect( d->messageReceiverTask, SIGNAL(fileMessage(int,QString,QByteArray,Buffer)),
+	         this, SLOT(gotFileMessage(int,QString,QByteArray,Buffer)) );
+	connect( d->messageReceiverTask, SIGNAL(chatroomMessage(Oscar::Message,QByteArray)),
+	         this, SLOT(gotChatRoomMessage(Oscar::Message,QByteArray)) );
 
-	connect( d->messageAckTask, SIGNAL(messageAck(const QString&, uint)),
-	         this, SIGNAL(messageAck(const QString&, uint)) );
-	connect( d->errorTask, SIGNAL(messageError(const QString&, uint)),
-	         this, SIGNAL(messageError(const QString&, uint)) );
+	connect( d->messageAckTask, SIGNAL(messageAck(QString,uint)),
+	         this, SIGNAL(messageAck(QString,uint)) );
+	connect( d->errorTask, SIGNAL(messageError(QString,uint)),
+	         this, SIGNAL(messageError(QString,uint)) );
 	
-	connect( d->ssiAuthTask, SIGNAL( authRequested( const QString&, const QString& ) ),
-	         this, SIGNAL( authRequestReceived( const QString&, const QString& ) ) );
-	connect( d->ssiAuthTask, SIGNAL( authReplied( const QString&, const QString&, bool ) ),
-	         this, SIGNAL( authReplyReceived( const QString&, const QString&, bool ) ) );
+	connect( d->ssiAuthTask, SIGNAL(authRequested(QString,QString)),
+	         this, SIGNAL(authRequestReceived(QString,QString)) );
+	connect( d->ssiAuthTask, SIGNAL(authReplied(QString,QString,bool)),
+	         this, SIGNAL(authReplyReceived(QString,QString,bool)) );
 
-	connect( d->icqInfoTask, SIGNAL( receivedInfoFor( const QString&, unsigned int ) ),
-	         this, SLOT( receivedIcqInfo( const QString&, unsigned int ) ) );
-	connect( d->icqTlvInfoTask, SIGNAL(receivedInfoFor(const QString&)),
-	         this, SIGNAL(receivedIcqTlvInfo(const QString&)) );
+	connect( d->icqInfoTask, SIGNAL(receivedInfoFor(QString,uint)),
+	         this, SLOT(receivedIcqInfo(QString,uint)) );
+	connect( d->icqTlvInfoTask, SIGNAL(receivedInfoFor(QString)),
+	         this, SIGNAL(receivedIcqTlvInfo(QString)) );
 
-	connect( d->userInfoTask, SIGNAL( receivedProfile( const QString&, const QString& ) ),
-	         this, SIGNAL( receivedProfile( const QString&, const QString& ) ) );
-	connect( d->userInfoTask, SIGNAL( receivedAwayMessage( const QString&, const QString& ) ),
-	         this, SIGNAL( receivedAwayMessage( const QString&, const QString& ) ) );
-	connect( d->typingNotifyTask, SIGNAL( typingStarted( const QString& ) ),
-	         this, SIGNAL( userStartedTyping( const QString& ) ) );
-	connect( d->typingNotifyTask, SIGNAL( typingFinished( const QString& ) ),
-	         this, SIGNAL( userStoppedTyping( const QString& ) ) );
+	connect( d->userInfoTask, SIGNAL(receivedProfile(QString,QString)),
+	         this, SIGNAL(receivedProfile(QString,QString)) );
+	connect( d->userInfoTask, SIGNAL(receivedAwayMessage(QString,QString)),
+	         this, SIGNAL(receivedAwayMessage(QString,QString)) );
+	connect( d->typingNotifyTask, SIGNAL(typingStarted(QString)),
+	         this, SIGNAL(userStartedTyping(QString)) );
+	connect( d->typingNotifyTask, SIGNAL(typingFinished(QString)),
+	         this, SIGNAL(userStoppedTyping(QString)) );
 }
 
 void Client::removeGroup( const QString& groupName )
@@ -1103,8 +1103,8 @@ void Client::sendWarning( const QString& contact, bool anonymous )
 	WarningTask* warnTask = new WarningTask( c->rootTask() );
 	warnTask->setContact( contact );
 	warnTask->setAnonymous( anonymous );
-	QObject::connect( warnTask, SIGNAL( userWarned( const QString&, quint16, quint16 ) ),
-	                  this, SIGNAL( userWarned( const QString&, quint16, quint16 ) ) );
+	QObject::connect( warnTask, SIGNAL(userWarned(QString,quint16,quint16)),
+	                  this, SIGNAL(userWarned(QString,quint16,quint16)) );
 	warnTask->go( Task::AutoDelete );
 }
 
@@ -1360,9 +1360,9 @@ void Client::whitePagesSearch( const ICQWPSearchInfo& info )
 	if ( !c )
 		return;
 	UserSearchTask* ust = new UserSearchTask( c->rootTask() );
-	connect( ust, SIGNAL( foundUser( const ICQSearchResult& ) ),
-	         this, SIGNAL( gotSearchResults( const ICQSearchResult& ) ) );
-	connect( ust, SIGNAL( searchFinished( int ) ), this, SIGNAL( endOfSearch( int ) ) );
+	connect( ust, SIGNAL(foundUser(ICQSearchResult)),
+	         this, SIGNAL(gotSearchResults(ICQSearchResult)) );
+	connect( ust, SIGNAL(searchFinished(int)), this, SIGNAL(endOfSearch(int)) );
 	ust->go( Task::AutoDelete ); //onGo does nothing in this task. This is just here so autodelete works
 	ust->searchWhitePages( info );
 }
@@ -1373,9 +1373,9 @@ void Client::uinSearch( const QString& uin )
 	if ( !c )
 		return;
 	UserSearchTask* ust = new UserSearchTask( c->rootTask() );
-	connect( ust, SIGNAL( foundUser( const ICQSearchResult& ) ),
-	         this, SIGNAL( gotSearchResults( const ICQSearchResult& ) ) );
-	connect( ust, SIGNAL( searchFinished( int ) ), this, SIGNAL( endOfSearch( int ) ) );
+	connect( ust, SIGNAL(foundUser(ICQSearchResult)),
+	         this, SIGNAL(gotSearchResults(ICQSearchResult)) );
+	connect( ust, SIGNAL(searchFinished(int)), this, SIGNAL(endOfSearch(int)) );
 	ust->go( Task::AutoDelete ); //onGo does nothing in this task. This is just here so autodelete works
 	ust->searchUserByUIN( uin );
 }
@@ -1475,8 +1475,8 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash, Osca
 		return;
 
 	BuddyIconTask* bit = new BuddyIconTask( c->rootTask() );
-	connect( bit, SIGNAL( haveIcon( const QString&, QByteArray ) ),
-	         this, SIGNAL( haveIconForContact( const QString&, QByteArray ) ) );
+	connect( bit, SIGNAL(haveIcon(QString,QByteArray)),
+	         this, SIGNAL(haveIconForContact(QString,QByteArray)) );
 	bit->requestIconFor( user );
 	bit->setIconType( iconType );
 	bit->setHashType( hashType );
@@ -1515,8 +1515,8 @@ void Client::requestServerRedirect( Oscar::WORD family, Oscar::WORD exchange,
         srt->setChatRoom( room );
     }
 
-	connect( srt, SIGNAL( haveServer( const QString&, const QByteArray&, Oscar::WORD ) ),
-	         this, SLOT( haveServerForRedirect( const QString&, const QByteArray&, Oscar::WORD ) ) );
+	connect( srt, SIGNAL(haveServer(QString,QByteArray,Oscar::WORD)),
+	         this, SLOT(haveServerForRedirect(QString,QByteArray,Oscar::WORD)) );
 	srt->setService( family );
 	srt->go( Task::AutoDelete );
 }
@@ -1545,11 +1545,11 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 	//create the new login task
 	d->loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
 	d->loginTaskTwo->setCookie( cookie );
-	QObject::connect( d->loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
+	QObject::connect( d->loginTaskTwo, SIGNAL(finished()), this, SLOT(serverRedirectFinished()) );
 
 	//connect
 	connectToServer( c, realHost, realPort.toInt() );
-  	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+  	QObject::connect( c, SIGNAL(connected()), this, SLOT(streamConnected()) );
 
     if ( srt )
         d->connections.addChatInfoForConnection( c, srt->chatExchange(), srt->chatRoomName() );
@@ -1577,8 +1577,8 @@ void Client::serverRedirectFinished()
 
 	if ( d->currentRedirect == 0x000D )
 	{
-		connect( this, SIGNAL( chatNavigationConnected() ),
-				 this, SLOT( requestChatNavLimits() ) );
+		connect( this, SIGNAL(chatNavigationConnected()),
+				 this, SLOT(requestChatNavLimits()) );
 		emit chatNavigationConnected();
 	}
 
@@ -1599,12 +1599,12 @@ void Client::serverRedirectFinished()
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "setting up chat connection";
 			ChatServiceTask* cst = new ChatServiceTask( c->rootTask(), exchange, roomName );
-			connect( cst, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ),
-			         this, SIGNAL( userJoinedChat( Oscar::WORD, const QString&, const QString& ) ) );
-			connect( cst, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ),
-			         this, SIGNAL( userLeftChat( Oscar::WORD, const QString&, const QString& ) ) );
-			connect( cst, SIGNAL( newChatMessage( const Oscar::Message& ) ),
-			         this, SIGNAL( messageReceived( const Oscar::Message& ) ) );
+			connect( cst, SIGNAL(userJoinedChat(Oscar::WORD,QString,QString)),
+			         this, SIGNAL(userJoinedChat(Oscar::WORD,QString,QString)) );
+			connect( cst, SIGNAL(userLeftChat(Oscar::WORD,QString,QString)),
+			         this, SIGNAL(userLeftChat(Oscar::WORD,QString,QString)) );
+			connect( cst, SIGNAL(newChatMessage(Oscar::Message)),
+			         this, SIGNAL(messageReceived(Oscar::Message)) );
 		}
 		emit chatRoomConnected( exchange, roomName );
 	}
@@ -1635,8 +1635,8 @@ void Client::requestChatNavLimits()
 	kDebug(OSCAR_RAW_DEBUG) << "requesting chat nav service limits";
 	ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
     cnst->setRequestType( ChatNavServiceTask::Limits );
-    QObject::connect( cnst, SIGNAL( haveChatExchanges( const QList<int>& ) ),
-                      this, SLOT( setChatExchangeList( const QList<int>& ) ) );
+    QObject::connect( cnst, SIGNAL(haveChatExchanges(QList<int>)),
+                      this, SLOT(setChatExchangeList(QList<int>)) );
 	cnst->go( Task::AutoDelete ); //autodelete
 
 }
@@ -1687,8 +1687,8 @@ void Client::joinChatRoom( const QString& roomName, int exchange )
     kDebug(OSCAR_RAW_DEBUG) << "joining the chat room '" << roomName
                              << "' on exchange " << exchange << endl;
     ChatNavServiceTask* cnst = new ChatNavServiceTask( c->rootTask() );
-    connect( cnst, SIGNAL( connectChat( Oscar::WORD, QByteArray, Oscar::WORD, const QString& ) ),
-             this, SLOT( setupChatConnection( Oscar::WORD, QByteArray, Oscar::WORD, const QString& ) ) );
+    connect( cnst, SIGNAL(connectChat(Oscar::WORD,QByteArray,Oscar::WORD,QString)),
+             this, SLOT(setupChatConnection(Oscar::WORD,QByteArray,Oscar::WORD,QString)) );
     cnst->createRoom( exchange, roomName );
 
 }
@@ -1714,7 +1714,7 @@ void Client::disconnectChatRoom( Oscar::WORD exchange, const QString& room )
 void Client::connectToServer( Connection* c, const QString& host, quint16 port )
 {
 	d->connections.append( c );
-	connect( c, SIGNAL( socketError( int, const QString& ) ), this, SLOT( determineDisconnection( int, const QString& ) ) );
+	connect( c, SIGNAL(socketError(int,QString)), this, SLOT(determineDisconnection(int,QString)) );
 	c->connectToServer( host, port );
 }
 
@@ -1778,8 +1778,8 @@ FileTransferHandler* Client::createFileTransfer( const QString& contact, const Q
 		return 0;
 
 	FileTransferTask *ft = new FileTransferTask( c->rootTask(), contact, ourInfo().userId(), files );
-	connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
-	         this, SLOT( fileMessage( const Oscar::Message& ) ) );
+	connect( ft, SIGNAL(sendMessage(Oscar::Message)),
+	         this, SLOT(fileMessage(Oscar::Message)) );
 
 	return new FileTransferHandler(ft);
 }
@@ -1822,8 +1822,8 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 	{
 		kDebug(14151) << "new request :)";
 		FileTransferTask *ft = new FileTransferTask( c->rootTask(), from, ourInfo().userId(), cookie, buf );
-		connect( ft, SIGNAL( sendMessage( const Oscar::Message& ) ),
-				this, SLOT( fileMessage( const Oscar::Message& ) ) );
+		connect( ft, SIGNAL(sendMessage(Oscar::Message)),
+				this, SLOT(fileMessage(Oscar::Message)) );
 		ft->go( Task::AutoDelete );
 		
 		emit incomingFileTransfer( new FileTransferHandler(ft) );

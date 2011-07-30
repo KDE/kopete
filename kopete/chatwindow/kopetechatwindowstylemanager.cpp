@@ -97,7 +97,7 @@ void ChatWindowStyleManager::loadStyles()
 	d->styleDirLister = new KDirLister(this);
 	d->styleDirLister->setDirOnlyMode(true);
 
-	connect(d->styleDirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotNewStyles(const KFileItemList &)));
+	connect(d->styleDirLister, SIGNAL(newItems(KFileItemList)), this, SLOT(slotNewStyles(KFileItemList)));
 	connect(d->styleDirLister, SIGNAL(completed()), this, SLOT(slotDirectoryFinished()));
 
 	if( !d->styleDirs.isEmpty() )

@@ -104,7 +104,7 @@ void GoogleTalk::login() {
 	usersOnline.clear();
 
 	connect( callProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(read()) );
-	connect( callProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)) );
+	connect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(finished(int,QProcess::ExitStatus)) );
 
 	c = false;
 	activeCall = false;
@@ -130,7 +130,7 @@ void GoogleTalk::logout(const QString &res) {
 
 	disconnect( timer, SIGNAL(timeout()), this, SLOT(restart()) );
 	disconnect( callProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(read()) );
-	disconnect( callProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)) );
+	disconnect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(finished(int,QProcess::ExitStatus)) );
 
 	usersOnline.clear();
 
@@ -155,27 +155,27 @@ void GoogleTalk::logout(const QString &res) {
 		QEventLoop * loop = new QEventLoop;
 		QTimer * quitTimer = new QTimer;
 
-		connect( callProcess, SIGNAL(finished(int, QProcess::ExitStatus)), loop, SLOT(quit()) );
+		connect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()) );
 		connect( quitTimer, SIGNAL(timeout()), loop, SLOT(quit()) );
 
 		quitTimer->start(QUIT_INTERVAL);
 		loop->exec();
 
 		disconnect( quitTimer, SIGNAL(timeout()), loop, SLOT(quit()) );
-		disconnect( callProcess, SIGNAL(finished(int, QProcess::ExitStatus)), loop, SLOT(quit()) );
+		disconnect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()) );
 
 		if ( isRunning() ) {
 
 			callProcess->kill();
 
-			connect( callProcess, SIGNAL(finished(int, QProcess::ExitStatus)), loop, SLOT(quit()) );
+			connect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()) );
 			connect( quitTimer, SIGNAL(timeout()), loop, SLOT(quit()) );
 
 			quitTimer->start(QUIT_INTERVAL);
 			loop->exec();
 
 			disconnect( quitTimer, SIGNAL(timeout()), loop, SLOT(quit()) );
-			disconnect( callProcess, SIGNAL(finished(int, QProcess::ExitStatus)), loop, SLOT(quit()) );
+			disconnect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), loop, SLOT(quit()) );
 
 			if ( isRunning() )
 				callProcess->terminate();

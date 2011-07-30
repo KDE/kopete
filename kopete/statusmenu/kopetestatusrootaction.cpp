@@ -130,8 +130,8 @@ void StatusRootAction::createAccountStatusActions( Account *account , KActionMen
 				else
 				{
 					action = new OnlineStatusAction( status, status.caption(), status.iconFor(account), account );
-					connect(action, SIGNAL(activated(const Kopete::OnlineStatus&)) ,
-					        account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
+					connect(action, SIGNAL(activated(Kopete::OnlineStatus)) ,
+					        account, SLOT(setOnlineStatus(Kopete::OnlineStatus)));
 				}
 				action->setObjectName( actionName ); // for the lookup by name above
 			}
@@ -154,8 +154,8 @@ void StatusRootAction::init()
 
 	connect( d->group, SIGNAL(childRemoved(Kopete::Status::StatusItem*)),
 	         this, SLOT(childRemoved(Kopete::Status::StatusItem*)) );
-	connect( d->group, SIGNAL(childInserted(int, Kopete::Status::StatusItem*)),
-	         this, SLOT(childInserted(int, Kopete::Status::StatusItem*)) );
+	connect( d->group, SIGNAL(childInserted(int,Kopete::Status::StatusItem*)),
+	         this, SLOT(childInserted(int,Kopete::Status::StatusItem*)) );
 
 	foreach( Kopete::Status::StatusItem* child, d->group->childList() )
 		insertChild( d->insertBefore, child );
@@ -163,11 +163,11 @@ void StatusRootAction::init()
 	d->statusSeparator = d->menu->insertSeparator( d->insertBefore );
 
 	QAction *statusAction = new QAction( i18n( "Edit Message..." ), this );
-	connect (statusAction, SIGNAL(triggered( bool )), this, SLOT(showEditStatusDialog()) );
+	connect (statusAction, SIGNAL(triggered(bool)), this, SLOT(showEditStatusDialog()) );
 	d->menu->insertAction( d->insertBefore, statusAction );
 
 	QAction *action = new QAction( i18n("Edit Statuses..."), this );
-	connect( action, SIGNAL(triggered( bool )), this, SLOT(editStatuses()) );
+	connect( action, SIGNAL(triggered(bool)), this, SLOT(editStatuses()) );
 	d->menu->insertAction( d->insertBefore, action );
 }
 
@@ -298,8 +298,8 @@ void StatusRootAction::rootChanged()
 	
 	connect( d->group, SIGNAL(childRemoved(Kopete::Status::StatusItem*)),
 	         this, SLOT(childRemoved(Kopete::Status::StatusItem*)) );
-	connect( d->group, SIGNAL(childInserted(int, Kopete::Status::StatusItem*)),
-	         this, SLOT(childInserted(int, Kopete::Status::StatusItem*)) );
+	connect( d->group, SIGNAL(childInserted(int,Kopete::Status::StatusItem*)),
+	         this, SLOT(childInserted(int,Kopete::Status::StatusItem*)) );
 
 	foreach( Kopete::Status::StatusItem* child, d->group->childList() )
 		insertChild( d->statusSeparator, child );

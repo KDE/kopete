@@ -61,17 +61,17 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 	m_addressBook = Kopete::KABCPersistence::self()->addressBook();
 
 	// Addressee validation connections
-	connect( addAddresseeButton, SIGNAL( clicked() ), SLOT( slotAddAddresseeClicked() ) );
-	connect( addAddresseeButton, SIGNAL( clicked() ), SIGNAL( addAddresseeClicked() ) );
+	connect( addAddresseeButton, SIGNAL(clicked()), SLOT(slotAddAddresseeClicked()) );
+	connect( addAddresseeButton, SIGNAL(clicked()), SIGNAL(addAddresseeClicked()) );
 
-	connect( addresseeListView, SIGNAL( clicked(Q3ListViewItem * ) ),
-			SIGNAL( addresseeListClicked( Q3ListViewItem * ) ) );
-	connect( addresseeListView, SIGNAL( selectionChanged( Q3ListViewItem * ) ),
-			SIGNAL( addresseeListClicked( Q3ListViewItem * ) ) );
-	connect( addresseeListView, SIGNAL( spacePressed( Q3ListViewItem * ) ),
-			SIGNAL( addresseeListClicked( Q3ListViewItem * ) ) );
+	connect( addresseeListView, SIGNAL(clicked(Q3ListViewItem*)),
+			SIGNAL(addresseeListClicked(Q3ListViewItem*)) );
+	connect( addresseeListView, SIGNAL(selectionChanged(Q3ListViewItem*)),
+			SIGNAL(addresseeListClicked(Q3ListViewItem*)) );
+	connect( addresseeListView, SIGNAL(spacePressed(Q3ListViewItem*)),
+			SIGNAL(addresseeListClicked(Q3ListViewItem*)) );
 
-	connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
+	connect( m_addressBook, SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotLoadAddressees()) );
 
 	//We should add a clear KAction here.  But we can't really do that with a designer file :\  this sucks
 
@@ -87,7 +87,7 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 
 AddressBookSelectorWidget::~AddressBookSelectorWidget()
 {
-	disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
+	disconnect( m_addressBook, SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotLoadAddressees()) );
 }
 
 

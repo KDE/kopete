@@ -61,11 +61,11 @@ GaduCommand::checkSocket( int fd, int checkWhat )
 {
 	read_ = new QSocketNotifier( fd, QSocketNotifier::Read, this );
 	read_->setEnabled( false );
-	QObject::connect( read_, SIGNAL( activated(int) ), SLOT( forwarder() ) );
+	QObject::connect( read_, SIGNAL(activated(int)), SLOT(forwarder()) );
 
 	write_ = new QSocketNotifier( fd, QSocketNotifier::Write, this );
 	write_->setEnabled( false );
-	QObject::connect( write_, SIGNAL( activated(int) ), SLOT( forwarder() ) );
+	QObject::connect( write_, SIGNAL(activated(int)), SLOT(forwarder()) );
 
 	enableNotifiers( checkWhat );
 }
@@ -146,7 +146,7 @@ RegisterCommand::requestToken()
 		return;
 	}
 
-	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
+	connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
 	checkSocket( session_->fd, session_->check );
 
 	return;
@@ -182,7 +182,7 @@ RegisterCommand::execute()
 		return;
 	}
 	state = RegisterStateWaitingForNumber;
-	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
+	connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
 	checkSocket( session_->fd, session_->check );
 }
 
@@ -235,7 +235,7 @@ void RegisterCommand::watcher()
 				}
 				gg_token_free( session_ );
 				session_ = NULL;
-				disconnect( this, SLOT( watcher() ) );
+				disconnect( this, SLOT(watcher()) );
 				return;
 				break;
 		}
@@ -281,7 +281,7 @@ void RegisterCommand::watcher()
 				}
 				gg_free_register( session_ );
 				session_ = NULL;
-				disconnect( this, SLOT( watcher() ) );
+				disconnect( this, SLOT(watcher()) );
 				deleteLater();
 				return;
 				break;

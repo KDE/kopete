@@ -138,30 +138,30 @@ void CtcpPlugin::receivedServerMessage(Message msg, const QString &message)
 /*
 void CtcpPlugin::bindCtcp()
 {
-	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Message &)),
+	bindCtcpQuery("ACTION",		this, SLOT(CtcpQuery_action(Message&)),
 		-1,	-1);
-	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Message &)),
+	bindCtcpQuery("CLIENTINFO",	this, SLOT(CtcpQuery_clientinfo(Message&)),
 		-1,	1);
-	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Message &)),
+	bindCtcpQuery("DCC",		this, SLOT(CtcpQuery_dcc(Message&)),
 		4,	5);
-	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Message &)),
+	bindCtcpQuery("FINGER",		this, SLOT(CtcpQuery_finger(Message&)),
 		-1,	0);
-	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Message &)),
+	bindCtcpQuery("PING",		this, SLOT(CtcpQuery_ping(Message&)),
 		1,	1);
-	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Message &)),
+	bindCtcpQuery("SOURCE",		this, SLOT(CtcpQuery_source(Message&)),
 		-1,	0);
-	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Message &)),
+	bindCtcpQuery("TIME",		this, SLOT(CtcpQuery_time(Message&)),
 		-1,	0);
-	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Message &)),
+	bindCtcpQuery("USERINFO",	this, SLOT(CtcpQuery_userinfo(Message&)),
 		-1,	0);
-	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Message &)),
+	bindCtcpQuery("VERSION",	this, SLOT(CtcpQuery_version(Message&)),
 		-1,	0);
 
-	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(Message &)),
+	bindCtcpReply("ERRMSG",		this, SLOT(CtcpReply_errmsg(Message&)),
 		1,	-1);
-	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Message &)),
+	bindCtcpReply("PING",		this, SLOT(CtcpReply_ping(Message&)),
 		1,	1,	"");
-	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Message &)),
+	bindCtcpReply("VERSION",	this, SLOT(CtcpReply_version(Message&)),
 		-1,	-1,	"");
 }
 */

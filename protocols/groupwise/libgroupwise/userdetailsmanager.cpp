@@ -96,8 +96,8 @@ void UserDetailsManager::requestDetails( const QStringList & dnList, bool onlyUn
 	{
 		GetDetailsTask * gdt = new GetDetailsTask( m_client->rootTask() );
 		gdt->userDNs( requestList );
-		connect( gdt, SIGNAL( gotContactUserDetails( const GroupWise::ContactDetails & ) ), 
-			SLOT( slotReceiveContactDetails( const GroupWise::ContactDetails & ) ) );
+		connect( gdt, SIGNAL(gotContactUserDetails(GroupWise::ContactDetails)), 
+			SLOT(slotReceiveContactDetails(GroupWise::ContactDetails)) );
 		// TODO: connect to gdt's finished() signal, check for failures, expand gdt to maintain a list of not found DNs?
 		gdt->go( true );
 	}

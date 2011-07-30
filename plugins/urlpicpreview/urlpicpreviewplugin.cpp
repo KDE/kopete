@@ -46,10 +46,10 @@ URLPicPreviewPlugin::URLPicPreviewPlugin ( QObject* parent, const QVariantList& 
 	kDebug ( 14314 );
 
 	Kopete::ChatSessionManager * chatSessionManager = Kopete::ChatSessionManager::self();
-	connect ( chatSessionManager, SIGNAL ( aboutToDisplay ( Kopete::Message& ) ),
-	          this, SLOT ( aboutToDisplay ( Kopete::Message& ) ) );
+	connect ( chatSessionManager, SIGNAL (aboutToDisplay(Kopete::Message&)),
+	          this, SLOT (aboutToDisplay(Kopete::Message&)) );
 
-	connect ( this, SIGNAL ( readyForUnload() ), this, SLOT ( readyForUnload() ) );
+	connect ( this, SIGNAL (readyForUnload()), this, SLOT (readyForUnload()) );
 
 	m_pic = new QImage;
 }
@@ -63,7 +63,7 @@ URLPicPreviewPlugin::~URLPicPreviewPlugin()
 		KIO::NetAccess::removeTempFile ( m_tmpFileRegistry[i] );
 	}
 
-	disconnect ( this, SLOT ( aboutToDisplay ( Kopete::Message& ) ) );
+	disconnect ( this, SLOT (aboutToDisplay(Kopete::Message&)) );
 
 	delete m_pic;
 

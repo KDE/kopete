@@ -32,8 +32,8 @@ StatusGroupAction::StatusGroupAction( Status::StatusGroup *group, StatusRootActi
 	connect( mStatusGroup, SIGNAL(changed()), this, SLOT(changed()) );
 	connect( mStatusGroup, SIGNAL(childRemoved(Kopete::Status::StatusItem*)),
 	         this, SLOT(childRemoved(Kopete::Status::StatusItem*)) );
-	connect( mStatusGroup, SIGNAL(childInserted(int, Kopete::Status::StatusItem*)),
-	         this, SLOT(childInserted(int, Kopete::Status::StatusItem*)) );
+	connect( mStatusGroup, SIGNAL(childInserted(int,Kopete::Status::StatusItem*)),
+	         this, SLOT(childInserted(int,Kopete::Status::StatusItem*)) );
 
 	foreach( Kopete::Status::StatusItem* child, mStatusGroup->childList() )
 		insertChild( 0, child );

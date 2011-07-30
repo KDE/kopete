@@ -24,8 +24,8 @@
 ChatRoomHandler::ChatRoomHandler( ChatRoomTask* chatRoomTask )
 		: QObject( chatRoomTask ), m_chatRoomTask( chatRoomTask )
 {
-	connect( chatRoomTask, SIGNAL( joinChatRoom( const QString&, int ) ),
-	         this, SIGNAL( joinChatRoom( const QString&, int ) ) );
+	connect( chatRoomTask, SIGNAL(joinChatRoom(QString,int)),
+	         this, SIGNAL(joinChatRoom(QString,int)) );
 }
 
 QString ChatRoomHandler::internalId() const

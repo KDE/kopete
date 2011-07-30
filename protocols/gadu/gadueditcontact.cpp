@@ -129,8 +129,8 @@ GaduEditContact::init()
 	// fill values from cl into proper fields on widget
 
 	show();
-	connect( this, SIGNAL( okClicked() ), SLOT( slotApply() ) );
-	connect( ui_->groups, SIGNAL( clicked( Q3ListViewItem * ) ), SLOT( listClicked( Q3ListViewItem * ) ) );
+	connect( this, SIGNAL(okClicked()), SLOT(slotApply()) );
+	connect( ui_->groups, SIGNAL(clicked(Q3ListViewItem*)), SLOT(listClicked(Q3ListViewItem*)) );
 }
 
 void

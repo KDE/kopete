@@ -215,8 +215,8 @@ void LoginTask::sendAuthSixteenStage1(const QString& sn, const QString& seed)
 	QString fullUrl = YahooTokenUrl.arg(sn, client()->password(), seed);
 	KUrl tokenUrl(fullUrl);
 	KIO::Job* job = KIO::get(tokenUrl, KIO::Reload, KIO::HideProgressInfo);
-	connect(job, SIGNAL(data(KIO::Job*, const QByteArray&)),
-	        this, SLOT(handleAuthSixteenStage1Data(KIO::Job*, const QByteArray&)));
+	connect(job, SIGNAL(data(KIO::Job*,QByteArray)),
+	        this, SLOT(handleAuthSixteenStage1Data(KIO::Job*,QByteArray)));
 	connect(job, SIGNAL(result(KJob*)),
 	        this, SLOT(handleAuthSixteenStage1Result(KJob*)));
 }
@@ -295,8 +295,8 @@ void LoginTask::sendAuthSixteenStage2(const QString& token)
 	QString fullUrl = YahooLoginUrl.arg(token);
 	KUrl loginUrl(fullUrl);
 	KIO::Job* job = KIO::get(loginUrl, KIO::Reload, KIO::HideProgressInfo);
-	connect(job, SIGNAL(data(KIO::Job*, const QByteArray&)),
-	        this, SLOT(handleAuthSixteenStage2Data(KIO::Job*, const QByteArray&)));
+	connect(job, SIGNAL(data(KIO::Job*,QByteArray)),
+	        this, SLOT(handleAuthSixteenStage2Data(KIO::Job*,QByteArray)));
 	connect(job, SIGNAL(result(KJob*)),
 	        this, SLOT(handleAuthSixteenStage2Result(KJob*)));
 }

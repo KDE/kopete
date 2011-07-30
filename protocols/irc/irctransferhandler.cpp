@@ -40,13 +40,13 @@ KIRC::TransferHandler *IRCTransferHandler::handler()
 
 IRCTransferHandler::IRCTransferHandler()
 {
-	connect(handler(), SIGNAL(transferCreated(KIRC::Transfer *)),
-		this, SLOT(transferCreated(KIRC::Transfer *)));
+	connect(handler(), SIGNAL(transferCreated(KIRC::Transfer*)),
+		this, SLOT(transferCreated(KIRC::Transfer*)));
 
-	connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer *, const QString &)),
-		this, SLOT(transferAccepted(Kopete::Transfer *, const QString&)));
-	connect( Kopete::TransferManager::transferManager(), SIGNAL(refused(const Kopete::FileTransferInfo &)),
-		this, SLOT(transferRefused(const Kopete::FileTransferInfo &)));
+	connect(Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer*,QString)),
+		this, SLOT(transferAccepted(Kopete::Transfer*,QString)));
+	connect( Kopete::TransferManager::transferManager(), SIGNAL(refused(Kopete::FileTransferInfo)),
+		this, SLOT(transferRefused(Kopete::FileTransferInfo)));
 }
 
 void IRCTransferHandler::transferCreated(KIRC::Transfer *t)
@@ -120,8 +120,8 @@ void IRCTransferHandler::connectKopeteTransfer(Kopete::Transfer *kt, KIRC::Trans
 //		case KIRC::Transfer::Chat:
 		case KIRC::Transfer::FileOutgoing:
 		case KIRC::Transfer::FileIncoming:
-			connect(t , SIGNAL(fileSizeAcknowledge(unsigned int)),
-				kt, SLOT(slotProcessed(unsigned int)));
+			connect(t , SIGNAL(fileSizeAcknowledge(uint)),
+				kt, SLOT(slotProcessed(uint)));
 			break;
 		default:
 			kDebug(14120) << "Unknown transfer connections for type";
@@ -137,8 +137,8 @@ void IRCTransferHandler::connectKopeteTransfer(Kopete::Transfer *kt, KIRC::Trans
 //		connect(kt,  SIGNAL(destroyed()),
 //			t, SLOT(slotKopeteTransferDestroyed()));
 
-		connect(kt, SIGNAL(result(KJob *)),
-			this , SLOT(kioresult(KJob *)));
+		connect(kt, SIGNAL(result(KJob*)),
+			this , SLOT(kioresult(KJob*)));
 
 		t->initiate();
 	}

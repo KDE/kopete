@@ -88,7 +88,7 @@ public:
 	{
 		kDebug( 14010 );
 
-		Kopete::WalletManager::self()->openWallet( this, SLOT( walletReceived( KWallet::Wallet* ) ) );
+		Kopete::WalletManager::self()->openWallet( this, SLOT(walletReceived(KWallet::Wallet*)) );
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
@@ -180,9 +180,9 @@ public:
 		passwdDialog->setPrompt( mPrompt );
 		passwdDialog->setPixmap( mImage );
 
-		connect( passwdDialog, SIGNAL( gotPassword(const QString&, bool) ), SLOT( gotPassword( const QString&, bool) )) ;
-		connect( passwdDialog, SIGNAL( rejected() ), SLOT( slotCancelPressed() ) );
-		connect( this, SIGNAL( destroyed() ), passwdDialog, SLOT( deleteLater() ) );
+		connect( passwdDialog, SIGNAL(gotPassword(QString,bool)), SLOT(gotPassword(QString,bool))) ;
+		connect( passwdDialog, SIGNAL(rejected()), SLOT(slotCancelPressed()) );
+		connect( this, SIGNAL(destroyed()), passwdDialog, SLOT(deleteLater()) );
 		passwdDialog->show();
 	}
 
@@ -414,14 +414,14 @@ void Kopete::Password::requestWithoutPrompt( QObject *returnObj, const char *slo
 {
 	KopetePasswordRequest *request = new KopetePasswordGetRequestNoPrompt( returnObj, *this );
 	// call connect on returnObj so we can still connect if 'slot' is protected/private
-	returnObj->connect( request, SIGNAL( requestFinished( const QString & ) ), slot );
+	returnObj->connect( request, SIGNAL(requestFinished(QString)), slot );
 	request->begin();
 }
 
 void Kopete::Password::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, Kopete::Password::PasswordSource source )
 {
 	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( returnObj, *this, image, prompt, source );
-	returnObj->connect( request, SIGNAL( requestFinished( const QString & ) ), slot );
+	returnObj->connect( request, SIGNAL(requestFinished(QString)), slot );
 	request->begin();
 }
 

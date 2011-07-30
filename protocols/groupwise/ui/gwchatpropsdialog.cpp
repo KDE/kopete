@@ -97,18 +97,18 @@ void GroupWiseChatPropsDialog::initialise()
 	QWidget * wid = new QWidget( this );
 	m_ui.setupUi( wid );
 	setMainWidget( wid );
-	connect( m_ui.topic, SIGNAL( textChanged( const QString & )  ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.owner, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.createdOn, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.creator, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.description, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.disclaimer, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.query, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.archive, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.maxUsers, SIGNAL( textChanged( const QString & ) ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.addAcl, SIGNAL( clicked() ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.editAcl, SIGNAL( clicked() ), SLOT( slotWidgetChanged() ) );
-	connect( m_ui.deleteAcl, SIGNAL( clicked() ), SLOT( slotWidgetChanged() ) );
+	connect( m_ui.topic, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.owner, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.createdOn, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.creator, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.description, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.disclaimer, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.query, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.archive, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.maxUsers, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.addAcl, SIGNAL(clicked()), SLOT(slotWidgetChanged()) );
+	connect( m_ui.editAcl, SIGNAL(clicked()), SLOT(slotWidgetChanged()) );
+	connect( m_ui.deleteAcl, SIGNAL(clicked()), SLOT(slotWidgetChanged()) );
 
 	show();
 }

@@ -41,12 +41,12 @@ AutoReplacePlugin::AutoReplacePlugin( QObject *parent, const QVariantList & )
 
 	// intercept inbound messages
 	mInboundHandler = new Kopete::SimpleMessageHandlerFactory ( Kopete::Message::Inbound,
-	        Kopete::MessageHandlerFactory::InStageToDesired, this, SLOT ( slotInterceptMessage ( Kopete::Message& ) ) );
+	        Kopete::MessageHandlerFactory::InStageToDesired, this, SLOT (slotInterceptMessage(Kopete::Message&)) );
 
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend( Kopete::Message & ) ),
-		this, SLOT( slotInterceptMessage( Kopete::Message & ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToSend(Kopete::Message&)),
+		this, SLOT(slotInterceptMessage(Kopete::Message&)) );
 
-	connect( this, SIGNAL( settingsChanged() ), this, SLOT( slotSettingsChanged() ) );
+	connect( this, SIGNAL(settingsChanged()), this, SLOT(slotSettingsChanged()) );
 }
 
 AutoReplacePlugin::~AutoReplacePlugin()

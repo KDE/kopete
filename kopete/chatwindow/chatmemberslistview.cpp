@@ -32,7 +32,7 @@ ChatMembersListView::ChatMembersListView( QWidget *parent )
 	 : QListView( parent )
 {
 	setContextMenuPolicy (Qt::CustomContextMenu);
-	connect(this, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(slotContextMenuRequested(const QPoint &)));
+	connect(this, SIGNAL(customContextMenuRequested(QPoint)), SLOT(slotContextMenuRequested(QPoint)));
 }
 
 void ChatMembersListView::slotContextMenuRequested( const QPoint & pos )
@@ -50,7 +50,7 @@ void ChatMembersListView::slotContextMenuRequested( const QPoint & pos )
 				return;
 	
 			KMenu *p = c->popupMenu( membermodel->session() );
-			connect( p, SIGNAL( aboutToHide() ), p, SLOT( deleteLater() ) );
+			connect( p, SIGNAL(aboutToHide()), p, SLOT(deleteLater()) );
 			p->popup( mapToGlobal(pos) );
 		}
 	}

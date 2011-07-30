@@ -126,19 +126,19 @@ Client::Client(QObject *par) :QObject(par)
 	m_connector = 0L;
 
 	m_pingTimer = new QTimer( this );
-	QObject::connect( m_pingTimer, SIGNAL( timeout() ), this, SLOT( sendPing() ) );
+	QObject::connect( m_pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()) );
 	m_aliveTimer = new QTimer( this );
-	QObject::connect( m_aliveTimer, SIGNAL( timeout() ), this, SLOT( sendAlive() ) );
+	QObject::connect( m_aliveTimer, SIGNAL(timeout()), this, SLOT(sendAlive()) );
 	
-	QObject::connect( d->loginTask, SIGNAL( haveSessionID( uint ) ), SLOT( lt_gotSessionID( uint ) ) );
-	QObject::connect( d->loginTask, SIGNAL( buddyListReady() ), SLOT( processPictureQueue() ) );
-	QObject::connect( d->loginTask, SIGNAL( loginResponse( int, const QString& ) ), 
-				SLOT( slotLoginResponse( int, const QString& ) ) );
-	QObject::connect( d->loginTask, SIGNAL( haveCookies() ), SLOT( slotGotCookies() ) );
-	QObject::connect( d->listTask, SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ), 
-					SIGNAL( gotBuddy(const QString &, const QString &, const QString &) ) );
-	QObject::connect( d->listTask, SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ), 
-					SLOT( notifyStealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
+	QObject::connect( d->loginTask, SIGNAL(haveSessionID(uint)), SLOT(lt_gotSessionID(uint)) );
+	QObject::connect( d->loginTask, SIGNAL(buddyListReady()), SLOT(processPictureQueue()) );
+	QObject::connect( d->loginTask, SIGNAL(loginResponse(int,QString)), 
+				SLOT(slotLoginResponse(int,QString)) );
+	QObject::connect( d->loginTask, SIGNAL(haveCookies()), SLOT(slotGotCookies()) );
+	QObject::connect( d->listTask, SIGNAL(gotBuddy(QString,QString,QString)), 
+					SIGNAL(gotBuddy(QString,QString,QString)) );
+	QObject::connect( d->listTask, SIGNAL(stealthStatusChanged(QString,Yahoo::StealthStatus)), 
+					SLOT(notifyStealthStatusChanged(QString,Yahoo::StealthStatus)) );
 }
 
 Client::~Client()
@@ -161,10 +161,10 @@ void Client::connect( const QString &host, const uint port, const QString &userI
 	m_connector = new KNetworkConnector;
 	m_connector->setOptHostPort( host, port );
 	d->stream = new ClientStream( m_connector, this );
-	QObject::connect( d->stream, SIGNAL( connected() ), this, SLOT( cs_connected() ) );
-	QObject::connect( d->stream, SIGNAL( error(int) ), this, SLOT( streamError(int) ) );
-	QObject::connect( d->stream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
-	QObject::connect( d->stream, SIGNAL( connectionClosed() ), this, SLOT( streamDisconnected() ) );
+	QObject::connect( d->stream, SIGNAL(connected()), this, SLOT(cs_connected()) );
+	QObject::connect( d->stream, SIGNAL(error(int)), this, SLOT(streamError(int)) );
+	QObject::connect( d->stream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()) );
+	QObject::connect( d->stream, SIGNAL(connectionClosed()), this, SLOT(streamDisconnected()) );
 	
 	d->stream->connectToServer( host, false );
 }
@@ -202,7 +202,7 @@ void Client::close()
 		deleteTasks();	
 	d->loginTask->reset();
 	if( d->stream ) {
-		QObject::disconnect( d->stream, SIGNAL( readyRead() ), this, SLOT( streamReadyRead() ) );
+		QObject::disconnect( d->stream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()) );
 		d->stream->deleteLater();
 	}
 	d->stream = 0L;
@@ -369,11 +369,11 @@ void Client::sendFile( unsigned int transferId, const QString &to, const QString
 {
 	SendFileTask *sft = new SendFileTask( d->root );
 
-	QObject::connect( sft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
-	QObject::connect( sft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
-	QObject::connect( sft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
+	QObject::connect( sft, SIGNAL(complete(uint)), SIGNAL(fileTransferComplete(uint)) );
+	QObject::connect( sft, SIGNAL(bytesProcessed(uint,uint)), SIGNAL(fileTransferBytesProcessed(uint,uint)) );
+	QObject::connect( sft, SIGNAL(error(uint,int,QString)), SIGNAL(fileTransferError(uint,int,QString)) );
 
-	QObject::connect( this, SIGNAL(fileTransferCanceled( unsigned int )), sft, SLOT(canceled( unsigned int )) );
+	QObject::connect( this, SIGNAL(fileTransferCanceled(uint)), sft, SLOT(canceled(uint)) );
 
 	sft->setTarget( to );
 	sft->setMessage( msg );
@@ -386,10 +386,10 @@ void Client::receiveFile( unsigned int transferId, const QString &userId, KUrl r
 {
 	ReceiveFileTask *rft = new ReceiveFileTask( d->root );
 
-	QObject::connect( rft, SIGNAL(complete(unsigned int)), SIGNAL(fileTransferComplete(unsigned int)) );
-	QObject::connect( rft, SIGNAL(bytesProcessed(unsigned int, unsigned int)), SIGNAL(fileTransferBytesProcessed(unsigned int, unsigned int)) );
-	QObject::connect( rft, SIGNAL(error(unsigned int, int, const QString &)), SIGNAL(fileTransferError(unsigned int, int, const QString &)) );
-	QObject::connect( this, SIGNAL(fileTransferCanceled( unsigned int )), rft, SLOT(canceled( unsigned int )) );
+	QObject::connect( rft, SIGNAL(complete(uint)), SIGNAL(fileTransferComplete(uint)) );
+	QObject::connect( rft, SIGNAL(bytesProcessed(uint,uint)), SIGNAL(fileTransferBytesProcessed(uint,uint)) );
+	QObject::connect( rft, SIGNAL(error(uint,int,QString)), SIGNAL(fileTransferError(uint,int,QString)) );
+	QObject::connect( this, SIGNAL(fileTransferCanceled(uint)), rft, SLOT(canceled(uint)) );
 
 	rft->setRemoteUrl( remoteURL );
 	rft->setLocalUrl( localURL );
@@ -484,8 +484,8 @@ void Client::addBuddy( const QString &userId, const QString &group, const QStrin
 {
 	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
 	
-	QObject::connect(mbt, SIGNAL(buddyAddResult( const QString &, const QString &, bool )),
-			 SIGNAL(buddyAddResult( const QString &, const QString &, bool)));
+	QObject::connect(mbt, SIGNAL(buddyAddResult(QString,QString,bool)),
+			 SIGNAL(buddyAddResult(QString,QString,bool)));
 
 	mbt->setType( ModifyBuddyTask::AddBuddy );
 	mbt->setTarget( userId );
@@ -498,8 +498,8 @@ void Client::removeBuddy( const QString &userId, const QString &group )
 {
 	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
 
-	QObject::connect(mbt, SIGNAL(buddyRemoveResult( const QString &, const QString &, bool )),
-			 SIGNAL(buddyRemoveResult( const QString &, const QString &, bool)));
+	QObject::connect(mbt, SIGNAL(buddyRemoveResult(QString,QString,bool)),
+			 SIGNAL(buddyRemoveResult(QString,QString,bool)));
 
 	mbt->setType( ModifyBuddyTask::RemoveBuddy );
 	mbt->setTarget( userId );
@@ -511,8 +511,8 @@ void Client::moveBuddy( const QString &userId, const QString &oldGroup, const QS
 {
 	ModifyBuddyTask *mbt = new ModifyBuddyTask( d->root );
 
-	QObject::connect(mbt, SIGNAL(buddyChangeGroupResult( const QString &, const QString &, bool )),
-			 SIGNAL(buddyChangeGroupResult( const QString &, const QString &, bool)));
+	QObject::connect(mbt, SIGNAL(buddyChangeGroupResult(QString,QString,bool)),
+			 SIGNAL(buddyChangeGroupResult(QString,QString,bool)));
 
 	mbt->setType( ModifyBuddyTask::MoveBuddy );
 	mbt->setTarget( userId );
@@ -560,8 +560,8 @@ void Client::downloadPicture(  const QString &userId, KUrl url, int checksum )
 	if( !d->iconLoader )
 	{
 		d->iconLoader = new YahooBuddyIconLoader( this );
-		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(const QString&, const QByteArray &, int )),
-				SIGNAL(pictureDownloaded(const QString&, const QByteArray &,  int ) ) );
+		QObject::connect( d->iconLoader, SIGNAL(fetchedBuddyIcon(QString,QByteArray,int)),
+				SIGNAL(pictureDownloaded(QString,QByteArray,int)) );
 	}
 
 	d->iconLoader->fetchBuddyIcon( QString(userId), KUrl(url), checksum );
@@ -685,8 +685,8 @@ void Client::saveYABEntry( YABEntry &entry )
 	ModifyYABTask *myt = new ModifyYABTask( d->root );
 	myt->setAction( ModifyYABTask::EditEntry );
 	myt->setEntry( entry );
-	QObject::connect( myt, SIGNAL(gotEntry( YABEntry * )), this, SIGNAL( gotYABEntry( YABEntry * ) ) );
-	QObject::connect( myt, SIGNAL(error( YABEntry *, const QString &)), this, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )));
+	QObject::connect( myt, SIGNAL(gotEntry(YABEntry*)), this, SIGNAL(gotYABEntry(YABEntry*)) );
+	QObject::connect( myt, SIGNAL(error(YABEntry*,QString)), this, SIGNAL(modifyYABEntryError(YABEntry*,QString)));
 	myt->go(true);
 }
 
@@ -695,8 +695,8 @@ void Client::addYABEntry(  YABEntry &entry )
 	ModifyYABTask *myt = new ModifyYABTask( d->root );
 	myt->setAction( ModifyYABTask::AddEntry );
 	myt->setEntry( entry );
-	QObject::connect( myt, SIGNAL(gotEntry( YABEntry * )), this, SIGNAL( gotYABEntry( YABEntry * ) ) );
-	QObject::connect( myt, SIGNAL(error( YABEntry *, const QString &)), this, SIGNAL(modifyYABEntryError( YABEntry *, const QString & )));
+	QObject::connect( myt, SIGNAL(gotEntry(YABEntry*)), this, SIGNAL(gotYABEntry(YABEntry*)) );
+	QObject::connect( myt, SIGNAL(error(YABEntry*,QString)), this, SIGNAL(modifyYABEntryError(YABEntry*,QString)));
 	myt->go(true);
 }
 
@@ -884,84 +884,84 @@ void Client::initTasks()
 		return;
 
 	d->statusTask = new StatusNotifierTask( d->root );
-	QObject::connect( d->statusTask, SIGNAL( statusChanged(QString,int,const QString,int,int,int) ), 
-				SIGNAL( statusChanged(QString,int,const QString,int,int,int) ) );
-	QObject::connect( d->statusTask, SIGNAL( stealthStatusChanged( const QString&, Yahoo::StealthStatus ) ), 
-				SLOT( notifyStealthStatusChanged( const QString&, Yahoo::StealthStatus ) ) );
-	QObject::connect( d->statusTask, SIGNAL( loginResponse( int, const QString& ) ), 
-				SLOT( slotLoginResponse( int, const QString& ) ) );
-	QObject::connect( d->statusTask, SIGNAL( authorizationRejected( const QString&, const QString& ) ), 
-				SIGNAL( authorizationRejected( const QString&, const QString& ) ) );
-	QObject::connect( d->statusTask, SIGNAL( authorizationAccepted( const QString& ) ), 
-				SIGNAL( authorizationAccepted( const QString& ) ) );
-	QObject::connect( d->statusTask, SIGNAL( gotAuthorizationRequest( const QString &, const QString &, const QString & ) ), 
-				SIGNAL( gotAuthorizationRequest( const QString &, const QString &, const QString & ) ) );
+	QObject::connect( d->statusTask, SIGNAL(statusChanged(QString,int,QString,int,int,int)), 
+				SIGNAL(statusChanged(QString,int,QString,int,int,int)) );
+	QObject::connect( d->statusTask, SIGNAL(stealthStatusChanged(QString,Yahoo::StealthStatus)), 
+				SLOT(notifyStealthStatusChanged(QString,Yahoo::StealthStatus)) );
+	QObject::connect( d->statusTask, SIGNAL(loginResponse(int,QString)), 
+				SLOT(slotLoginResponse(int,QString)) );
+	QObject::connect( d->statusTask, SIGNAL(authorizationRejected(QString,QString)), 
+				SIGNAL(authorizationRejected(QString,QString)) );
+	QObject::connect( d->statusTask, SIGNAL(authorizationAccepted(QString)), 
+				SIGNAL(authorizationAccepted(QString)) );
+	QObject::connect( d->statusTask, SIGNAL(gotAuthorizationRequest(QString,QString,QString)), 
+				SIGNAL(gotAuthorizationRequest(QString,QString,QString)) );
 
 	d->mailTask = new MailNotifierTask( d->root );
-	QObject::connect( d->mailTask, SIGNAL( mailNotify(const QString&, const QString&, int) ), 
-				SIGNAL( mailNotify(const QString&, const QString&, int) ) );
+	QObject::connect( d->mailTask, SIGNAL(mailNotify(QString,QString,int)), 
+				SIGNAL(mailNotify(QString,QString,int)) );
 
 	d->messageReceiverTask = new MessageReceiverTask( d->root );
-	QObject::connect( d->messageReceiverTask, SIGNAL( gotIm(const QString&, const QString&, long, int) ),
-				SIGNAL( gotIm(const QString&, const QString&, long, int) ) );
-	QObject::connect( d->messageReceiverTask, SIGNAL( systemMessage(const QString&) ),
-				SIGNAL( systemMessage(const QString&) ) );
-	QObject::connect( d->messageReceiverTask, SIGNAL( gotTypingNotify(const QString &, int) ),
-				SIGNAL( typingNotify(const QString &, int) ) );
-	QObject::connect( d->messageReceiverTask, SIGNAL( gotBuzz( const QString &, long ) ),
-				SIGNAL( gotBuzz( const QString &, long ) ) );
-	QObject::connect( d->messageReceiverTask, SIGNAL( gotWebcamInvite(const QString &) ),
-				SIGNAL( gotWebcamInvite(const QString &) ) );
+	QObject::connect( d->messageReceiverTask, SIGNAL(gotIm(QString,QString,long,int)),
+				SIGNAL(gotIm(QString,QString,long,int)) );
+	QObject::connect( d->messageReceiverTask, SIGNAL(systemMessage(QString)),
+				SIGNAL(systemMessage(QString)) );
+	QObject::connect( d->messageReceiverTask, SIGNAL(gotTypingNotify(QString,int)),
+				SIGNAL(typingNotify(QString,int)) );
+	QObject::connect( d->messageReceiverTask, SIGNAL(gotBuzz(QString,long)),
+				SIGNAL(gotBuzz(QString,long)) );
+	QObject::connect( d->messageReceiverTask, SIGNAL(gotWebcamInvite(QString)),
+				SIGNAL(gotWebcamInvite(QString)) );
 
 	d->pictureNotifierTask = new PictureNotifierTask( d->root );
-	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureStatusNotify( const QString &, int ) ),
-				SIGNAL( pictureStatusNotify( const QString &, int ) ) );
-	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureChecksumNotify( const QString &, int ) ),
-				SIGNAL( pictureChecksumNotify( const QString &, int ) ) );
-	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureInfoNotify( const QString &, KUrl, int ) ),
-				SIGNAL( pictureInfoNotify( const QString &, KUrl, int ) ) );
-	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureRequest( const QString & ) ),
-				SIGNAL( pictureRequest( const QString & ) ) );
-	QObject::connect( d->pictureNotifierTask, SIGNAL( pictureUploaded( const QString &, int ) ),
-				SIGNAL( pictureUploaded( const QString &, int ) ) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL(pictureStatusNotify(QString,int)),
+				SIGNAL(pictureStatusNotify(QString,int)) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL(pictureChecksumNotify(QString,int)),
+				SIGNAL(pictureChecksumNotify(QString,int)) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL(pictureInfoNotify(QString,KUrl,int)),
+				SIGNAL(pictureInfoNotify(QString,KUrl,int)) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL(pictureRequest(QString)),
+				SIGNAL(pictureRequest(QString)) );
+	QObject::connect( d->pictureNotifierTask, SIGNAL(pictureUploaded(QString,int)),
+				SIGNAL(pictureUploaded(QString,int)) );
 
 	d->webcamTask = new WebcamTask( d->root );
-	QObject::connect( d->webcamTask, SIGNAL( webcamImageReceived( const QString &, const QPixmap &) ),
-				SIGNAL( webcamImageReceived( const QString &, const QPixmap &) ) );
-	QObject::connect( d->webcamTask, SIGNAL( webcamNotAvailable( const QString & ) ),
-				SIGNAL( webcamNotAvailable( const QString & ) ) );
-	QObject::connect( d->webcamTask, SIGNAL( webcamClosed( const QString &, int ) ),
-				SIGNAL( webcamClosed( const QString &, int ) ) );
-	QObject::connect( d->webcamTask, SIGNAL( webcamPaused(const QString&) ),
-				SIGNAL( webcamPaused(const QString&) ) );
-	QObject::connect( d->webcamTask, SIGNAL( readyForTransmission() ),
-				SIGNAL( webcamReadyForTransmission() ) );
-	QObject::connect( d->webcamTask, SIGNAL( stopTransmission() ),
-				SIGNAL( webcamStopTransmission() ) );
-	QObject::connect( d->webcamTask, SIGNAL( viewerJoined( const QString &) ),
-				SIGNAL( webcamViewerJoined( const QString &) ) );
-	QObject::connect( d->webcamTask, SIGNAL( viewerLeft( const QString &) ),
-				SIGNAL( webcamViewerLeft( const QString &) ) );
-	QObject::connect( d->webcamTask, SIGNAL( viewerRequest( const QString &) ),
-				SIGNAL( webcamViewerRequest( const QString &) ) );
+	QObject::connect( d->webcamTask, SIGNAL(webcamImageReceived(QString,QPixmap)),
+				SIGNAL(webcamImageReceived(QString,QPixmap)) );
+	QObject::connect( d->webcamTask, SIGNAL(webcamNotAvailable(QString)),
+				SIGNAL(webcamNotAvailable(QString)) );
+	QObject::connect( d->webcamTask, SIGNAL(webcamClosed(QString,int)),
+				SIGNAL(webcamClosed(QString,int)) );
+	QObject::connect( d->webcamTask, SIGNAL(webcamPaused(QString)),
+				SIGNAL(webcamPaused(QString)) );
+	QObject::connect( d->webcamTask, SIGNAL(readyForTransmission()),
+				SIGNAL(webcamReadyForTransmission()) );
+	QObject::connect( d->webcamTask, SIGNAL(stopTransmission()),
+				SIGNAL(webcamStopTransmission()) );
+	QObject::connect( d->webcamTask, SIGNAL(viewerJoined(QString)),
+				SIGNAL(webcamViewerJoined(QString)) );
+	QObject::connect( d->webcamTask, SIGNAL(viewerLeft(QString)),
+				SIGNAL(webcamViewerLeft(QString)) );
+	QObject::connect( d->webcamTask, SIGNAL(viewerRequest(QString)),
+				SIGNAL(webcamViewerRequest(QString)) );
 
 	d->conferenceTask = new ConferenceTask( d->root );
-	QObject::connect( d->conferenceTask, SIGNAL( gotInvite( const QString &, const QString &, const QString &, const QStringList & ) ),
-				SIGNAL( gotConferenceInvite( const QString &, const QString &, const QString &, const QStringList & ) ) );
-	QObject::connect( d->conferenceTask, SIGNAL( gotMessage( const QString &, const QString &, const QString & ) ),
-				SIGNAL( gotConferenceMessage( const QString &, const QString &, const QString & ) ) );
-	QObject::connect( d->conferenceTask, SIGNAL( userJoined( const QString &, const QString & ) ),
-				SIGNAL( confUserJoined( const QString &, const QString & ) ) );
-	QObject::connect( d->conferenceTask, SIGNAL( userLeft( const QString &, const QString & ) ),
-				SIGNAL( confUserLeft( const QString &, const QString & ) ) );
-	QObject::connect( d->conferenceTask, SIGNAL( userDeclined( const QString &, const QString &, const QString & ) ),
-				SIGNAL( confUserDeclined( const QString &, const QString &, const QString & ) ) );
+	QObject::connect( d->conferenceTask, SIGNAL(gotInvite(QString,QString,QString,QStringList)),
+				SIGNAL(gotConferenceInvite(QString,QString,QString,QStringList)) );
+	QObject::connect( d->conferenceTask, SIGNAL(gotMessage(QString,QString,QString)),
+				SIGNAL(gotConferenceMessage(QString,QString,QString)) );
+	QObject::connect( d->conferenceTask, SIGNAL(userJoined(QString,QString)),
+				SIGNAL(confUserJoined(QString,QString)) );
+	QObject::connect( d->conferenceTask, SIGNAL(userLeft(QString,QString)),
+				SIGNAL(confUserLeft(QString,QString)) );
+	QObject::connect( d->conferenceTask, SIGNAL(userDeclined(QString,QString,QString)),
+				SIGNAL(confUserDeclined(QString,QString,QString)) );
 
 	d->yabTask = new YABTask( d->root );
-	QObject::connect( d->yabTask, SIGNAL( gotEntry( YABEntry * ) ),
-				SIGNAL( gotYABEntry( YABEntry * ) ) );
-	QObject::connect( d->yabTask, SIGNAL( gotRevision( long, bool ) ),
-				SIGNAL( gotYABRevision( long, bool ) ) );
+	QObject::connect( d->yabTask, SIGNAL(gotEntry(YABEntry*)),
+				SIGNAL(gotYABEntry(YABEntry*)) );
+	QObject::connect( d->yabTask, SIGNAL(gotRevision(long,bool)),
+				SIGNAL(gotYABRevision(long,bool)) );
 
 	d->fileTransferTask = new FileTransferNotifierTask( d->root );
 	QObject::connect( d->fileTransferTask, SIGNAL(incomingFileTransfer( const QString &, const QString &, 
@@ -970,18 +970,18 @@ void Client::initTasks()
 					long, const QString &, const QString &, unsigned long, const QPixmap & )) );
 
 	d->yahooChatTask = new YahooChatTask( d->root );
-	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatCategories( const QDomDocument & )),
-				SIGNAL(gotYahooChatCategories( const QDomDocument & )) );
-	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )),
-				SIGNAL(gotYahooChatRooms( const Yahoo::ChatCategory &, const QDomDocument & )) );
-	QObject::connect( d->yahooChatTask, SIGNAL(chatRoomJoined( int , int , const QString &, const QString & ) ),
-				SIGNAL(chatRoomJoined( int , int , const QString &, const QString & ) ) );
-	QObject::connect( d->yahooChatTask, SIGNAL(chatBuddyHasJoined( const QString &, const QString &, bool  ) ),
-				SIGNAL(chatBuddyHasJoined( const QString &, const QString &, bool  ) ) );
-	QObject::connect( d->yahooChatTask, SIGNAL(chatBuddyHasLeft(QString,QString) ),
-				SIGNAL(chatBuddyHasLeft(QString,QString) ) );
-	QObject::connect( d->yahooChatTask, SIGNAL(chatMessageReceived( const QString &, const QString &, const QString & ) ),
-				SIGNAL(chatMessageReceived( const QString &, const QString &, const QString & ) ) );
+	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatCategories(QDomDocument)),
+				SIGNAL(gotYahooChatCategories(QDomDocument)) );
+	QObject::connect( d->yahooChatTask, SIGNAL(gotYahooChatRooms(Yahoo::ChatCategory,QDomDocument)),
+				SIGNAL(gotYahooChatRooms(Yahoo::ChatCategory,QDomDocument)) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatRoomJoined(int,int,QString,QString)),
+				SIGNAL(chatRoomJoined(int,int,QString,QString)) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatBuddyHasJoined(QString,QString,bool)),
+				SIGNAL(chatBuddyHasJoined(QString,QString,bool)) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatBuddyHasLeft(QString,QString)),
+				SIGNAL(chatBuddyHasLeft(QString,QString)) );
+	QObject::connect( d->yahooChatTask, SIGNAL(chatMessageReceived(QString,QString,QString)),
+				SIGNAL(chatMessageReceived(QString,QString,QString)) );
 }
 
 void Client::deleteTasks()

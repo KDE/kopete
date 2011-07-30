@@ -301,30 +301,30 @@ WlmAccount::connectWithPassword (const QString & pass)
 
     m_chatManager = new WlmChatManager (this);
 
-    QObject::connect (&m_server->cb, SIGNAL (connectionCompleted ()),
-                      this, SLOT (connectionCompleted ()));
-    QObject::connect (&m_server->cb, SIGNAL (connectionFailed ()),
-                      this, SLOT (connectionFailed ()));
+    QObject::connect (&m_server->cb, SIGNAL (connectionCompleted()),
+                      this, SLOT (connectionCompleted()));
+    QObject::connect (&m_server->cb, SIGNAL (connectionFailed()),
+                      this, SLOT (connectionFailed()));
     QObject::connect (&m_server->cb, SIGNAL(socketError(int)),
                       this, SLOT(error(int)));
     QObject::connect (&m_server->cb, SIGNAL(mainConnectionError(int)),
                       this, SLOT(mainConnectionError(int)));
     QObject::connect (&m_server->cb,
-                      SIGNAL (gotDisplayName (const QString &)), this,
-                      SLOT (gotDisplayName (const QString &)));
+                      SIGNAL (gotDisplayName(QString)), this,
+                      SLOT (gotDisplayName(QString)));
     QObject::connect (&m_server->cb,
                       SIGNAL (receivedOIMList
                               (std::vector < MSN::eachOIM > &)), this,
                       SLOT (receivedOIMList
                             (std::vector < MSN::eachOIM > &)));
     QObject::connect (&m_server->cb,
-                      SIGNAL (receivedOIM (const QString &, const QString &)),
+                      SIGNAL (receivedOIM(QString,QString)),
                       this,
-                      SLOT (receivedOIM (const QString &, const QString &)));
+                      SLOT (receivedOIM(QString,QString)));
 
     QObject::connect (&m_server->cb,
-                      SIGNAL (deletedOIM(const QString&, const bool&)), this,
-                      SLOT (deletedOIM(const QString&, const bool &)));
+                      SIGNAL (deletedOIM(QString,bool)), this,
+                      SLOT (deletedOIM(QString,bool)));
     QObject::connect (&m_server->cb,
                       SIGNAL (NotificationServerConnectionTerminated
                               (MSN::NotificationServerConnection *)), this,
@@ -332,10 +332,10 @@ WlmAccount::connectWithPassword (const QString & pass)
                             (MSN::NotificationServerConnection *)));
     QObject::connect (&m_server->cb, SIGNAL (initialEmailNotification(int)), this,
                       SLOT (slotInitialEmailNotification(int)));
-    QObject::connect (&m_server->cb, SIGNAL (newEmailNotification(QString, QString)), this,
-                      SLOT (slotNewEmailNotification(QString, QString)));
-    QObject::connect (&m_server->cb, SIGNAL (inboxUrl(MSN::hotmailInfo &)), this,
-                      SLOT (slotInboxUrl(MSN::hotmailInfo &)));
+    QObject::connect (&m_server->cb, SIGNAL (newEmailNotification(QString,QString)), this,
+                      SLOT (slotNewEmailNotification(QString,QString)));
+    QObject::connect (&m_server->cb, SIGNAL (inboxUrl(MSN::hotmailInfo&)), this,
+                      SLOT (slotInboxUrl(MSN::hotmailInfo&)));
 
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmConnecting);
 }
@@ -1000,8 +1000,8 @@ WlmAccount::connectionCompleted ()
     password ().setWrong (false);
 
     QObject::connect (&m_server->cb,
-                      SIGNAL (changedStatus (MSN::BuddyStatus &)), this,
-                      SLOT (changedStatus (MSN::BuddyStatus &)));
+                      SIGNAL (changedStatus(MSN::BuddyStatus&)), this,
+                      SLOT (changedStatus(MSN::BuddyStatus&)));
 
     QObject::connect (&m_server->cb,
                       SIGNAL (contactChangedStatus
@@ -1014,9 +1014,9 @@ WlmAccount::connectionCompleted ()
                              const QString &)));
 
     QObject::connect (&m_server->cb,
-                      SIGNAL (contactDisconnected (const QString &)),
+                      SIGNAL (contactDisconnected(QString)),
                       this,
-                      SLOT (contactDisconnected (const QString &)));
+                      SLOT (contactDisconnected(QString)));
 
     QObject::connect (identity (),
                       SIGNAL (propertyChanged
@@ -1040,30 +1040,30 @@ WlmAccount::connectionCompleted ()
                             (const QString &,
                              const MSN::personalInfo &)));
 
-    QObject::connect (&m_server->cb, SIGNAL(gotNewContact(const MSN::ContactList&, const QString&, const QString&)),
-                      SLOT (gotNewContact(const MSN::ContactList&, const QString&, const QString&)));
+    QObject::connect (&m_server->cb, SIGNAL(gotNewContact(MSN::ContactList,QString,QString)),
+                      SLOT (gotNewContact(MSN::ContactList,QString,QString)));
 
-    QObject::connect (&m_server->cb, SIGNAL(gotRemovedContactFromList(const MSN::ContactList&, const QString&)),
-                      this, SLOT(gotRemovedContactFromList(const MSN::ContactList&, const QString&)) );
+    QObject::connect (&m_server->cb, SIGNAL(gotRemovedContactFromList(MSN::ContactList,QString)),
+                      this, SLOT(gotRemovedContactFromList(MSN::ContactList,QString)) );
 
-    QObject::connect (&m_server->cb, SIGNAL(gotAddedContactToGroup(bool, const QString&, const QString&)),
-                      this, SLOT(gotAddedContactToGroup(bool, const QString&, const QString&)) );
+    QObject::connect (&m_server->cb, SIGNAL(gotAddedContactToGroup(bool,QString,QString)),
+                      this, SLOT(gotAddedContactToGroup(bool,QString,QString)) );
 
-    QObject::connect (&m_server->cb, SIGNAL(gotRemovedContactFromGroup(bool, const QString&, const QString&)),
-                      this, SLOT(gotRemovedContactFromGroup(bool, const QString&, const QString&)) );
+    QObject::connect (&m_server->cb, SIGNAL(gotRemovedContactFromGroup(bool,QString,QString)),
+                      this, SLOT(gotRemovedContactFromGroup(bool,QString,QString)) );
 
-    QObject::connect (&m_server->cb, SIGNAL(gotAddedGroup(bool, const QString&, const QString&)),
-                      this, SLOT(gotAddedGroup(bool, const QString&, const QString&)) );
+    QObject::connect (&m_server->cb, SIGNAL(gotAddedGroup(bool,QString,QString)),
+                      this, SLOT(gotAddedGroup(bool,QString,QString)) );
 
-    QObject::connect (&m_server->cb, SIGNAL(gotRemovedGroup(bool, const QString&)),
-                      this, SLOT(gotRemovedGroup(bool, const QString&)) );
+    QObject::connect (&m_server->cb, SIGNAL(gotRemovedGroup(bool,QString)),
+                      this, SLOT(gotRemovedGroup(bool,QString)) );
 
 
-    QObject::connect (&m_server->cb, SIGNAL(gotAddedContactToAddressBook (bool, const QString&, const QString&, const QString&)),
-                      this, SLOT(gotAddedContactToAddressBook(bool, const QString&, const QString&, const QString&)));
+    QObject::connect (&m_server->cb, SIGNAL(gotAddedContactToAddressBook(bool,QString,QString,QString)),
+                      this, SLOT(gotAddedContactToAddressBook(bool,QString,QString,QString)));
 
-    QObject::connect (&m_server->cb, SIGNAL(gotRemovedContactFromAddressBook(const bool&, const QString&, const QString&)),
-                      this, SLOT(gotRemovedContactFromAddressBook(bool, const QString&, const QString&)));
+    QObject::connect (&m_server->cb, SIGNAL(gotRemovedContactFromAddressBook(bool,QString,QString)),
+                      this, SLOT(gotRemovedContactFromAddressBook(bool,QString,QString)));
 
     MSN::BuddyStatus state = MSN::STATUS_AVAILABLE;
 
@@ -1085,7 +1085,7 @@ WlmAccount::connectionCompleted ()
     m_server->cb.mainConnection->setState (state, clientid);
     // this prevents our client from downloading display pictures
     // when is just connected.
-    QTimer::singleShot (10 * 1000, this, SLOT (disableInitialList ()));
+    QTimer::singleShot (10 * 1000, this, SLOT (disableInitialList()));
     setPersonalMessage(myself()->statusMessage());
 
     // download a pending picture every 20 seconds

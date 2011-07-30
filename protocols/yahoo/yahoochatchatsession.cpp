@@ -37,8 +37,8 @@ YahooChatChatSession::YahooChatChatSession( Kopete::Protocol *protocol, const Ko
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	setComponentData(protocol->componentData());
 
-	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
-			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
+	connect ( this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+			  SLOT(slotMessageSent(Kopete::Message&,Kopete::ChatSession*)) );
 
 	setDisplayName( i18n("Yahoo Chat: " ));
 

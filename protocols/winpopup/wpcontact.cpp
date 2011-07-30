@@ -81,8 +81,8 @@ Kopete::ChatSession* WPContact::manager( Kopete::Contact::CanCreateFlags /*canCr
 
 		m_manager = Kopete::ChatSessionManager::self()->create( account()->myself(), singleContact, protocol() );
 
-		connect(m_manager, SIGNAL(messageSent(Kopete::Message &, Kopete::ChatSession *)), this, SLOT(slotSendMessage(Kopete::Message &)));
-		connect(m_manager, SIGNAL(messageSent(Kopete::Message &, Kopete::ChatSession *)), m_manager, SLOT(appendMessage(Kopete::Message &)));
+		connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), this, SLOT(slotSendMessage(Kopete::Message&)));
+		connect(m_manager, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)), m_manager, SLOT(appendMessage(Kopete::Message&)));
 		connect(m_manager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
 	}
 
@@ -115,7 +115,7 @@ void WPContact::slotUserInfo()
 	if (!m_infoDialog) {
 		m_infoDialog = new WPUserInfo( this );
 		if (!m_infoDialog) return;
-		connect( m_infoDialog, SIGNAL( closing() ), this, SLOT( slotCloseUserInfoDialog() ) );
+		connect( m_infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()) );
 		m_infoDialog->show();
 	} else {
 		m_infoDialog->raise();

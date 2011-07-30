@@ -50,8 +50,8 @@ ICQUserInfoWidget::ICQUserInfoWidget( ICQAccount* account, const QString& contac
 {
 	init();
 
-	QObject::connect( m_account->engine(), SIGNAL(receivedIcqLongInfo(const QString&)),
-	                  this, SLOT(receivedLongInfo(const QString&)) );
+	QObject::connect( m_account->engine(), SIGNAL(receivedIcqLongInfo(QString)),
+	                  this, SLOT(receivedLongInfo(QString)) );
 
 	m_genInfoWidget->uinEdit->setText( contactId );
 
@@ -65,20 +65,20 @@ ICQUserInfoWidget::ICQUserInfoWidget( ICQContact* contact, QWidget * parent, boo
 {
 	init();
 
-	QObject::connect( contact, SIGNAL(haveBasicInfo(const ICQGeneralUserInfo&)),
-	                  this, SLOT(fillBasicInfo(const ICQGeneralUserInfo&)) );
-	QObject::connect( contact, SIGNAL(haveWorkInfo(const ICQWorkUserInfo&)),
-	                  this, SLOT(fillWorkInfo(const ICQWorkUserInfo&)) );
-	QObject::connect( contact, SIGNAL(haveEmailInfo(const ICQEmailInfo&)),
-	                  this, SLOT(fillEmailInfo(const ICQEmailInfo&)) );
-	QObject::connect( contact, SIGNAL(haveNotesInfo(const ICQNotesInfo&)),
-	                  this, SLOT(fillNotesInfo(const ICQNotesInfo&)) );
-	QObject::connect( contact, SIGNAL(haveMoreInfo(const ICQMoreUserInfo&)),
-	                  this, SLOT(fillMoreInfo(const ICQMoreUserInfo&)) );
-	QObject::connect( contact, SIGNAL(haveInterestInfo(const ICQInterestInfo&)),
-	                  this, SLOT(fillInterestInfo(const ICQInterestInfo&)) );
-	QObject::connect( contact, SIGNAL(haveOrgAffInfo(const ICQOrgAffInfo&)),
-	                  this, SLOT(fillOrgAffInfo(const ICQOrgAffInfo&)) );
+	QObject::connect( contact, SIGNAL(haveBasicInfo(ICQGeneralUserInfo)),
+	                  this, SLOT(fillBasicInfo(ICQGeneralUserInfo)) );
+	QObject::connect( contact, SIGNAL(haveWorkInfo(ICQWorkUserInfo)),
+	                  this, SLOT(fillWorkInfo(ICQWorkUserInfo)) );
+	QObject::connect( contact, SIGNAL(haveEmailInfo(ICQEmailInfo)),
+	                  this, SLOT(fillEmailInfo(ICQEmailInfo)) );
+	QObject::connect( contact, SIGNAL(haveNotesInfo(ICQNotesInfo)),
+	                  this, SLOT(fillNotesInfo(ICQNotesInfo)) );
+	QObject::connect( contact, SIGNAL(haveMoreInfo(ICQMoreUserInfo)),
+	                  this, SLOT(fillMoreInfo(ICQMoreUserInfo)) );
+	QObject::connect( contact, SIGNAL(haveInterestInfo(ICQInterestInfo)),
+	                  this, SLOT(fillInterestInfo(ICQInterestInfo)) );
+	QObject::connect( contact, SIGNAL(haveOrgAffInfo(ICQOrgAffInfo)),
+	                  this, SLOT(fillOrgAffInfo(ICQOrgAffInfo)) );
 
 	ICQProtocol* icqProtocol = static_cast<ICQProtocol*>( m_contact->protocol() );
 
@@ -182,8 +182,8 @@ void ICQUserInfoWidget::init()
 		connect( m_otherInfoWidget->removeEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotRemoveEmail()) );
 		connect( m_otherInfoWidget->upEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotUpEmail()) );
 		connect( m_otherInfoWidget->downEmailButton, SIGNAL(clicked(bool)), this, SLOT(slotDownEmail()) );
-		connect( m_otherInfoWidget->emailTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-		         this, SLOT(slotEmailSelectionChanged(const QItemSelection&)) );
+		connect( m_otherInfoWidget->emailTableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+		         this, SLOT(slotEmailSelectionChanged(QItemSelection)) );
 	}
 
 	m_genInfoWidget->aliasEdit->setReadOnly( m_ownInfo );

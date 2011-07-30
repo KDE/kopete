@@ -72,8 +72,8 @@ void Kopete::WalletManager::openWallet( QObject *object, const char *slot )
 	if ( !d->signal )
 		d->signal = new KopeteWalletSignal;
 	// allow connecting to protected slots  by calling object->connect
-	connect( d->signal, SIGNAL( walletOpened( KWallet::Wallet* ) ), object, slot );
-	//object->connect( d->signal, SIGNAL( walletOpened( KWallet::Wallet* ) ), slot );
+	connect( d->signal, SIGNAL(walletOpened(KWallet::Wallet*)), object, slot );
+	//object->connect( d->signal, SIGNAL(walletOpened(KWallet::Wallet*)), slot );
 	openWalletInner();
 }
 
@@ -87,7 +87,7 @@ void Kopete::WalletManager::openWalletInner()
 		if ( d->wallet->isOpen() )
 		{
 			kDebug(14010) << " wallet already open";
-			QTimer::singleShot( 0, this, SLOT( slotGiveExistingWallet() ) );
+			QTimer::singleShot( 0, this, SLOT(slotGiveExistingWallet()) );
 		}
 		else
 		{
@@ -124,7 +124,7 @@ void Kopete::WalletManager::slotWalletChangedStatus()
 		{
 			kDebug(14010) << "Successfully opened the wallet !";
 			// success!
-			QObject::connect( d->wallet, SIGNAL( walletClosed() ), this, SLOT( closeWallet() ) );
+			QObject::connect( d->wallet, SIGNAL(walletClosed()), this, SLOT(closeWallet()) );
 		}
 		else
 		{

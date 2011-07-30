@@ -141,8 +141,8 @@ void TokenWithLayout::fillMenu( QMenu * menu )
     QLCDNumber * sizeLabel = new QLCDNumber( 3, sliderBox );
     sizeLabel->display( m_width * 100.0 );
 
-    connect( slider, SIGNAL( valueChanged( int ) ), sizeLabel, SLOT( display( int ) ) );
-    connect( slider, SIGNAL( valueChanged( int ) ), this, SLOT( setWidth( int ) ) );
+    connect( slider, SIGNAL(valueChanged(int)), sizeLabel, SLOT(display(int)) );
+    connect( slider, SIGNAL(valueChanged(int)), this, SLOT(setWidth(int)) );
 
     menu->setFixedHeight( orgHeight + slider->height() );
 

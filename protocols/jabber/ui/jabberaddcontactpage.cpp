@@ -56,7 +56,7 @@ JabberAddContactPage::JabberAddContactPage (Kopete::Account * owner, QWidget * p
 		{
 			jabData->textLabel1->setText( i18n("Loading instructions from gateway...") );
 			XMPP::JT_Gateway * gatewayTask = new XMPP::JT_Gateway ( jaccount->client()->rootTask () );
-			QObject::connect (gatewayTask, SIGNAL (finished ()), this, SLOT (slotPromtReceived()));
+			QObject::connect (gatewayTask, SIGNAL (finished()), this, SLOT (slotPromtReceived()));
 			gatewayTask->get ( transport->myself()->contactId() );
 			gatewayTask->go ( true );
 		}
@@ -99,7 +99,7 @@ bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact
 			XMPP::JT_Gateway * gatewayTask = new XMPP::JT_Gateway ( jaccount->client()->rootTask () );
 			JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND *workaround = 
 					new JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND( transport , parentContact , gatewayTask );
-			QObject::connect (gatewayTask, SIGNAL (finished ()), workaround, SLOT (slotJidReceived()));
+			QObject::connect (gatewayTask, SIGNAL (finished()), workaround, SLOT (slotJidReceived()));
 			gatewayTask->set ( transport->myself()->contactId() , contactId );
 			gatewayTask->go ( true );
 			return true;

@@ -71,8 +71,8 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QVariantList &args
 	connect(prefUi->chkDropAtLeastOne, SIGNAL(toggled(bool)), prefUi->editDropAtLeastOne, SLOT(setEnabled(bool)));
 	connect(prefUi->chkDropAll, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
 	connect(prefUi->chkDropAll, SIGNAL(toggled(bool)), prefUi->editDropAll, SLOT(setEnabled(bool)));
-	connect(prefUi->editDropAll, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
-	connect(prefUi->editDropAtLeastOne, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(prefUi->editDropAll, SIGNAL(textChanged(QString)), this, SLOT(slotModified()));
+	connect(prefUi->editDropAtLeastOne, SIGNAL(textChanged(QString)), this, SLOT(slotModified()));
 
 	connect(prefUi->btnAddToWhiteList, SIGNAL(clicked()), this, SLOT(slotBtnAddToWhiteListClicked()));
 	connect(prefUi->btnAddToBlackList, SIGNAL(clicked()), this, SLOT(slotBtnAddToBlackListClicked()));
@@ -81,8 +81,8 @@ PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QVariantList &args
 	connect(prefUi->btnRemoveFromWhiteList, SIGNAL(clicked()), this, SLOT(slotBtnRemoveFromWhiteListClicked()));
 	connect(prefUi->btnRemoveFromBlackList, SIGNAL(clicked()), this, SLOT(slotBtnRemoveFromBlackListClicked()));
 
-	connect(m_whiteListModel, SIGNAL(rowsInserted(const QModelIndex &,int,int)), this, SLOT(slotSetupViews()));
-	connect(m_blackListModel, SIGNAL(rowsInserted(const QModelIndex &,int,int)), this, SLOT(slotSetupViews()));
+	connect(m_whiteListModel, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(slotSetupViews()));
+	connect(m_blackListModel, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(slotSetupViews()));
 }
 
 PrivacyPreferences::~PrivacyPreferences()

@@ -98,8 +98,8 @@ void YahooChatTask::getYahooChatCategories()
 	transfer->addMetaData("setcookies", QString("Cookie: %1; %2; %3").arg(client()->tCookie(), client()->yCookie()) );
 
 
-	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotCategoriesComplete( KJob* ) ) );
-	connect( transfer, SIGNAL( data( KIO::Job*, const QByteArray& ) ), this, SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
+	connect( transfer, SIGNAL(result(KJob*)), this, SLOT(slotCategoriesComplete(KJob*)) );
+	connect( transfer, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotData(KIO::Job*,QByteArray)) );
 }
 
 void YahooChatTask::getYahooChatRooms( const Yahoo::ChatCategory &category )
@@ -114,8 +114,8 @@ void YahooChatTask::getYahooChatRooms( const Yahoo::ChatCategory &category )
 	transfer->addMetaData("setcookies", QString("Cookie: %1; %2; %3").arg(client()->tCookie(), client()->yCookie()) );
 
 
-	connect( transfer, SIGNAL( result( KJob* ) ), this, SLOT( slotChatRoomsComplete( KJob* ) ) );
-	connect( transfer, SIGNAL( data( KIO::Job*, const QByteArray& ) ), this, SLOT( slotData( KIO::Job*, const QByteArray& ) ) );
+	connect( transfer, SIGNAL(result(KJob*)), this, SLOT(slotChatRoomsComplete(KJob*)) );
+	connect( transfer, SIGNAL(data(KIO::Job*,QByteArray)), this, SLOT(slotData(KIO::Job*,QByteArray)) );
 
 	m_jobs[ transfer ].category = category;
 }

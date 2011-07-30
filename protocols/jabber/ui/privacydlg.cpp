@@ -41,8 +41,8 @@ PrivacyDlg::PrivacyDlg(JabberAccount* acc, QWidget* parent) : KDialog(parent), a
 	ui_.lv_rules->setFocus (Qt::PopupFocusReason);
 
 	PrivacyManager* manager = acc->client()->privacyManager();
-	connect(manager,SIGNAL(listsReceived(const QString&, const QString&, const QStringList&)),SLOT(updateLists(const QString&, const QString&, const QStringList&)));
-	connect(manager,SIGNAL(listReceived(const PrivacyList&)),SLOT(refreshList(const PrivacyList&)));
+	connect(manager,SIGNAL(listsReceived(QString,QString,QStringList)),SLOT(updateLists(QString,QString,QStringList)));
+	connect(manager,SIGNAL(listReceived(PrivacyList)),SLOT(refreshList(PrivacyList)));
 	connect(manager,SIGNAL(listError()),SLOT(list_failed()));
 	//connect(manager,SIGNAL(listNamesError()),SLOT(listNamesError()));
 	//connect(manager,SIGNAL(listReceiveError()),SLOT(listReceiveError()));

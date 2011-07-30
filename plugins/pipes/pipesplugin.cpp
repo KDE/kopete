@@ -48,11 +48,11 @@ PipesPlugin::PipesPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	
 	// intercept inbound messages
 	mInboundHandler = new Kopete::SimpleMessageHandlerFactory ( Kopete::Message::Inbound,
-	        Kopete::MessageHandlerFactory::InStageToDesired, this, SLOT ( slotIncomingMessage ( Kopete::Message& ) ) );
+	        Kopete::MessageHandlerFactory::InStageToDesired, this, SLOT (slotIncomingMessage(Kopete::Message&)) );
 	// intercept outbound messages
 	connect ( Kopete::ChatSessionManager::self(),
-	          SIGNAL ( aboutToSend ( Kopete::Message & ) ),
-	          SLOT ( slotOutgoingMessage ( Kopete::Message & ) ) );
+	          SIGNAL (aboutToSend(Kopete::Message&)),
+	          SLOT (slotOutgoingMessage(Kopete::Message&)) );
 }
 
 PipesPlugin::~PipesPlugin()

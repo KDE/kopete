@@ -81,7 +81,7 @@ SrvResolver::SrvResolver(QObject *parent)
 	d = new Private;
 	d->nndns_busy = false;
 
-	connect(&d->nndns, SIGNAL(resultsReady(const QList<XMPP::NameRecord> &)), SLOT(nndns_resultsReady(const QList<XMPP::NameRecord> &)));
+	connect(&d->nndns, SIGNAL(resultsReady(QList<XMPP::NameRecord>)), SLOT(nndns_resultsReady(QList<XMPP::NameRecord>)));
 	connect(&d->nndns, SIGNAL(error(XMPP::NameResolver::Error)), SLOT(nndns_error(XMPP::NameResolver::Error)));
 
 #ifndef NO_NDNS

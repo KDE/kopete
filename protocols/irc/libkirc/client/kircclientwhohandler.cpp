@@ -89,30 +89,30 @@ void ClientWhoHandler::WHOWAS(KIrc::Context *context, const KIrc::Message &messa
 /*
 void ClientWhoHandler::bindNumericReplies()
 {
-	bind(263, this, SLOT(numericReply_263(Message *&)));
-	bind(265, this, SLOT(numericReply_265(Message *&)));
-	bind(266, this, SLOT(numericReply_266(Message *&)));
+	bind(263, this, SLOT(numericReply_263(Message*&)));
+	bind(265, this, SLOT(numericReply_265(Message*&)));
+	bind(266, this, SLOT(numericReply_266(Message*&)));
 
-//	bind(305, this, SLOT(ignoreMessage(Message *&)), 0, 0 );
-//	bind(306, this, SLOT(ignoreMessage(Message *&)), 0, 0 );
-	bind(312, this, SLOT(numericReply_312(Message *&)), 3, 3);
-	bind(313, this, SLOT(numericReply_313(Message *&)), 2, 2);
-	bind(314, this, SLOT(numericReply_314(Message *&)), 5, 5);
-	bind(315, this, SLOT(numericReply_315(Message *&)), 2, 2);
-	bind(317, this, SLOT(numericReply_317(Message *&)), 3, 4);
-	bind(318, this, SLOT(numericReply_318(Message *&)), 2, 2);
-	bind(319, this, SLOT(numericReply_319(Message *&)), 2, 2);
-	bind(320, this, SLOT(numericReply_320(Message *&)), 2, 2);
-//	bind(321, this, SLOT(ignoreMessage(Message *&)), 0, 0 );
-	bind(322, this, SLOT(numericReply_322(Message *&)), 3, 3);
-	bind(323, this, SLOT(numericReply_323(Message *&)), 1, 1);
-	bind(324, this, SLOT(numericReply_324(Message *&)), 2, 4);
-	bind(328, this, SLOT(numericReply_328(Message *&)), 2, 2);
-	bind(329, this, SLOT(numericReply_329(Message *&)), 3, 3);
-//	bind(330, this, SLOT(ignoreMessage(Message *&)), 3, 3); // ???
-	bind(331, this, SLOT(numericReply_331(Message *&)), 2, 2);
-	bind(332, this, SLOT(numericReply_332(Message *&)), 2, 2);
-	bind(352, this, SLOT(numericReply_352(Message *&)), 5, 10);
+//	bind(305, this, SLOT(ignoreMessage(Message*&)), 0, 0 );
+//	bind(306, this, SLOT(ignoreMessage(Message*&)), 0, 0 );
+	bind(312, this, SLOT(numericReply_312(Message*&)), 3, 3);
+	bind(313, this, SLOT(numericReply_313(Message*&)), 2, 2);
+	bind(314, this, SLOT(numericReply_314(Message*&)), 5, 5);
+	bind(315, this, SLOT(numericReply_315(Message*&)), 2, 2);
+	bind(317, this, SLOT(numericReply_317(Message*&)), 3, 4);
+	bind(318, this, SLOT(numericReply_318(Message*&)), 2, 2);
+	bind(319, this, SLOT(numericReply_319(Message*&)), 2, 2);
+	bind(320, this, SLOT(numericReply_320(Message*&)), 2, 2);
+//	bind(321, this, SLOT(ignoreMessage(Message*&)), 0, 0 );
+	bind(322, this, SLOT(numericReply_322(Message*&)), 3, 3);
+	bind(323, this, SLOT(numericReply_323(Message*&)), 1, 1);
+	bind(324, this, SLOT(numericReply_324(Message*&)), 2, 4);
+	bind(328, this, SLOT(numericReply_328(Message*&)), 2, 2);
+	bind(329, this, SLOT(numericReply_329(Message*&)), 3, 3);
+//	bind(330, this, SLOT(ignoreMessage(Message*&)), 3, 3); // ???
+	bind(331, this, SLOT(numericReply_331(Message*&)), 2, 2);
+	bind(332, this, SLOT(numericReply_332(Message*&)), 2, 2);
+	bind(352, this, SLOT(numericReply_352(Message*&)), 5, 10);
 
 	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
 	bind(477, this, SLOT(receivedServerMessage(Message&)),0,0);

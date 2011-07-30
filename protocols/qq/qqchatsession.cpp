@@ -55,29 +55,29 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
 
-	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
-			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
-	connect( this, SIGNAL( myselfTyping ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
-	connect( account(), SIGNAL( contactTyping( const ConferenceEvent & ) ),
-						SLOT( slotGotTypingNotification( const ConferenceEvent & ) ) );
-	connect( account(), SIGNAL( contactNotTyping( const ConferenceEvent & ) ),
-						SLOT( slotGotNotTypingNotification( const ConferenceEvent & ) ) );
+	connect ( this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+			  SLOT(slotMessageSent(Kopete::Message&,Kopete::ChatSession*)) );
+	connect( this, SIGNAL(myselfTyping(bool)), SLOT(slotSendTypingNotification(bool)) );
+	connect( account(), SIGNAL(contactTyping(ConferenceEvent)),
+						SLOT(slotGotTypingNotification(ConferenceEvent)) );
+	connect( account(), SIGNAL(contactNotTyping(ConferenceEvent)),
+						SLOT(slotGotNotTypingNotification(ConferenceEvent)) );
 
 	// Set up the Invite menu
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), this );
         actionCollection()->addAction( "qqInvite", m_actionInvite );
-	connect( m_actionInvite->menu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
+	connect( m_actionInvite->menu(), SIGNAL(aboutToShow()), this, SLOT(slotActionInviteAboutToShow()) ) ;
 
 	m_secure = actionCollection()->addAction( "qqSecureChat" );
 	m_secure->setText( i18n( "Security Status" ) );
         m_secure->setIcon( KIcon( "security-high" ) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
-        connect( m_secure, SIGNAL( triggered() ), this, SLOT( slotShowSecurity() ) );
+        connect( m_secure, SIGNAL(triggered()), this, SLOT(slotShowSecurity()) );
 
 	m_logging = actionCollection()->addAction( "qqLoggingChat" );
 	m_logging->setText( i18n( "Archiving Status" ) );
         m_logging->setIcon( KIcon( "utilities-log-viewer" ) );
-        connect( m_logging, SIGNAL( triggered() ), this, SLOT( slotShowArchiving() ) );
+        connect( m_logging, SIGNAL(triggered()), this, SLOT(slotShowArchiving()) );
 	updateArchiving();
 
 	setXMLFile("qqchatui.rc");
@@ -135,8 +135,8 @@ void QQChatSession::createConference()
 			invitees.append( static_cast<QQContact*>( *contact )->contactId() );
 		}
 		// this is where we will set the GUID and send any pending messages
-		connect( account(), SIGNAL( conferenceCreated( const int, const QString & ) ), SLOT( receiveGuid( const int, const QString & ) ) );
-		connect( account(), SIGNAL( conferenceCreationFailed( const int, const int ) ), SLOT( slotCreationFailed( const int, const int ) ) );
+		connect( account(), SIGNAL(conferenceCreated(int,QString)), SLOT(receiveGuid(int,QString)) );
+		connect( account(), SIGNAL(conferenceCreationFailed(int,int)), SLOT(slotCreationFailed(int,int)) );
 
 		// create the conference
 		// account()->createConference( mmId(), invitees );
@@ -299,8 +299,8 @@ void QQChatSession::slotActionInviteAboutToShow()
 	// Invite someone off-list
 	KAction *b=new KAction( KIcon(), i18n ("&Other..."), actionCollection() );
         actionCollection()->addAction( "actionOther", b );
-	QObject::connect( b, SIGNAL( triggered( bool ) ),
-	                  this, SLOT( slotInviteOtherContact() ) );
+	QObject::connect( b, SIGNAL(triggered(bool)),
+	                  this, SLOT(slotInviteOtherContact()) );
 	m_actionInvite->addAction( b );
 	m_inviteActions.append( b ) ;
 }
@@ -350,7 +350,7 @@ void QQChatSession::slotInviteOtherContact()
 		m_searchDlg->setDefaultButton(KDialog::Ok);
 		// m_search = new QQContactSearch( account(), Q3ListView::Single, true, m_searchDlg, "invitesearchwidget" );
 		// m_searchDlg->setMainWidget( m_search );
-		// connect( m_search, SIGNAL( selectionValidates( bool ) ), m_searchDlg, SLOT( enableButtonOk( bool ) ) );
+		// connect( m_search, SIGNAL(selectionValidates(bool)), m_searchDlg, SLOT(enableButtonOk(bool)) );
 		m_searchDlg->enableButtonOk( false );
 	}
 	m_searchDlg->show();

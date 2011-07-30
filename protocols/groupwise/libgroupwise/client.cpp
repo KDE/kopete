@@ -91,7 +91,7 @@ Client::Client(QObject *par, uint protocolVersion )
 	d->protocolVersion = protocolVersion;
 	// Sends regular keepalives so the server knows we are still running
 	d->keepAliveTimer = new QTimer( this );
-	connect( d->keepAliveTimer, SIGNAL( timeout() ), SLOT( sendKeepAlive() ) );
+	connect( d->keepAliveTimer, SIGNAL(timeout()), SLOT(sendKeepAlive()) );
 }
 
 Client::~Client()
@@ -107,7 +107,7 @@ void Client::connectToServer( ClientStream *s, const NovellDN &server, bool auth
 	//connect(d->stream, SIGNAL(connected()), SLOT(streamConnected()));
 	//connect(d->stream, SIGNAL(handshaken()), SLOT(streamHandshaken()));
 	connect(d->stream, SIGNAL(error(int)), SLOT(streamError(int)));
-	//connect(d->stream, SIGNAL(sslCertificateReady(const QSSLCert &)), SLOT(streamSSLCertificateReady(const QSSLCert &)));
+	//connect(d->stream, SIGNAL(sslCertificateReady(QSSLCert)), SLOT(streamSSLCertificateReady(QSSLCert)));
 	connect(d->stream, SIGNAL(readyRead()), SLOT(streamReadyRead()));
 	//connect(d->stream, SIGNAL(closeFinished()), SLOT(streamCloseFinished()));
 
@@ -140,27 +140,27 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 	
 	LoginTask * login = new LoginTask( d->root );
 	
-	connect( login, SIGNAL( gotMyself( const GroupWise::ContactDetails &  ) ), 
-			this, SIGNAL( accountDetailsReceived( const GroupWise::ContactDetails & ) ) );
+	connect( login, SIGNAL(gotMyself(GroupWise::ContactDetails)), 
+			this, SIGNAL(accountDetailsReceived(GroupWise::ContactDetails)) );
 			
-	connect( login, SIGNAL( gotFolder( const FolderItem & ) ), 
-			this, SIGNAL( folderReceived( const FolderItem & ) ) );
+	connect( login, SIGNAL(gotFolder(FolderItem)), 
+			this, SIGNAL(folderReceived(FolderItem)) );
 			
-	connect( login, SIGNAL( gotContact( const ContactItem &  ) ), 
-			this, SIGNAL( contactReceived( const ContactItem &  ) ) );
+	connect( login, SIGNAL(gotContact(ContactItem)), 
+			this, SIGNAL(contactReceived(ContactItem)) );
 			
-	connect( login, SIGNAL( gotContactUserDetails( const GroupWise::ContactDetails & ) ), 
-			this, SIGNAL( contactUserDetailsReceived( const GroupWise::ContactDetails & ) ) ) ;
+	connect( login, SIGNAL(gotContactUserDetails(GroupWise::ContactDetails)), 
+			this, SIGNAL(contactUserDetailsReceived(GroupWise::ContactDetails)) ) ;
 
-	connect( login, SIGNAL( gotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ),
-			privacyManager(), SLOT( slotGotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ) );
+	connect( login, SIGNAL(gotPrivacySettings(bool,bool,QStringList,QStringList)),
+			privacyManager(), SLOT(slotGotPrivacySettings(bool,bool,QStringList,QStringList)) );
 
-	connect( login, SIGNAL( gotCustomStatus( const GroupWise::CustomStatus & ) ), 
-			SLOT( lt_gotCustomStatus( const GroupWise::CustomStatus & ) ) );
+	connect( login, SIGNAL(gotCustomStatus(GroupWise::CustomStatus)), 
+			SLOT(lt_gotCustomStatus(GroupWise::CustomStatus)) );
 
-	connect( login, SIGNAL( gotKeepalivePeriod( int ) ), SLOT( lt_gotKeepalivePeriod( int ) ) );
+	connect( login, SIGNAL(gotKeepalivePeriod(int)), SLOT(lt_gotKeepalivePeriod(int)) );
 
-	connect( login, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+	connect( login, SIGNAL(finished()), this, SLOT(lt_loginFinished()) );
 	
 	login->initialise();
 	login->go( true );
@@ -198,26 +198,26 @@ void Client::initialiseEventTasks()
 {
 	// The StatusTask handles incoming status changes
 	StatusTask * st = new StatusTask( d->root ); // FIXME - add an additional EventRoot?
-	connect( st, SIGNAL( gotStatus( const QString &, quint16, const QString & ) ), SIGNAL( statusReceived( const QString &, quint16, const QString & ) ) );
+	connect( st, SIGNAL(gotStatus(QString,quint16,QString)), SIGNAL(statusReceived(QString,quint16,QString)) );
 	// The ConferenceTask handles incoming conference events, messages, joins, leaves, etc
 	ConferenceTask * ct = new ConferenceTask( d->root ); 
-	connect( ct, SIGNAL( message( const ConferenceEvent & ) ), SLOT( ct_messageReceived( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( typing( const ConferenceEvent & ) ), SIGNAL( contactTyping( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( notTyping( const ConferenceEvent & ) ), SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( joined( const ConferenceEvent & ) ), SIGNAL( conferenceJoinNotifyReceived( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( left( const ConferenceEvent & ) ), SIGNAL( conferenceLeft( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( invited( const ConferenceEvent & ) ), SIGNAL( invitationReceived( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( otherInvited( const ConferenceEvent & ) ), SIGNAL( inviteNotifyReceived( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( invitationDeclined( const ConferenceEvent & ) ), SIGNAL( invitationDeclined( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( closed( const ConferenceEvent & ) ), SIGNAL( conferenceClosed( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( autoReply( const ConferenceEvent & ) ), SIGNAL( autoReplyReceived( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( broadcast( const ConferenceEvent & ) ), SIGNAL( broadcastReceived( const ConferenceEvent & ) ) );
-	connect( ct, SIGNAL( systemBroadcast( const ConferenceEvent & ) ), SIGNAL( systemBroadcastReceived( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL(message(ConferenceEvent)), SLOT(ct_messageReceived(ConferenceEvent)) );
+	connect( ct, SIGNAL(typing(ConferenceEvent)), SIGNAL(contactTyping(ConferenceEvent)) );
+	connect( ct, SIGNAL(notTyping(ConferenceEvent)), SIGNAL(contactNotTyping(ConferenceEvent)) );
+	connect( ct, SIGNAL(joined(ConferenceEvent)), SIGNAL(conferenceJoinNotifyReceived(ConferenceEvent)) );
+	connect( ct, SIGNAL(left(ConferenceEvent)), SIGNAL(conferenceLeft(ConferenceEvent)) );
+	connect( ct, SIGNAL(invited(ConferenceEvent)), SIGNAL(invitationReceived(ConferenceEvent)) );
+	connect( ct, SIGNAL(otherInvited(ConferenceEvent)), SIGNAL(inviteNotifyReceived(ConferenceEvent)) );
+	connect( ct, SIGNAL(invitationDeclined(ConferenceEvent)), SIGNAL(invitationDeclined(ConferenceEvent)) );
+	connect( ct, SIGNAL(closed(ConferenceEvent)), SIGNAL(conferenceClosed(ConferenceEvent)) );
+	connect( ct, SIGNAL(autoReply(ConferenceEvent)), SIGNAL(autoReplyReceived(ConferenceEvent)) );
+	connect( ct, SIGNAL(broadcast(ConferenceEvent)), SIGNAL(broadcastReceived(ConferenceEvent)) );
+	connect( ct, SIGNAL(systemBroadcast(ConferenceEvent)), SIGNAL(systemBroadcastReceived(ConferenceEvent)) );
 	
 
 	// The ConnectionTask handles incoming connection events
 	ConnectionTask* cont = new ConnectionTask( d->root );
-	connect( cont, SIGNAL( connectedElsewhere() ), SIGNAL( connectedElsewhere() ) );
+	connect( cont, SIGNAL(connectedElsewhere()), SIGNAL(connectedElsewhere()) );
 }
 
 void Client::setStatus( GroupWise::Status status, const QString & reason, const QString & autoReply )
@@ -225,7 +225,7 @@ void Client::setStatus( GroupWise::Status status, const QString & reason, const 
 	debug( QString("Setting status to %1").arg( status ) );;
 	SetStatusTask * sst = new SetStatusTask( d->root );
 	sst->status( status, reason, autoReply );
-	connect( sst, SIGNAL( finished() ), this, SLOT( sst_statusChanged() ) );
+	connect( sst, SIGNAL(finished()), this, SLOT(sst_statusChanged()) );
 	sst->go( true );
 	// TODO: set status change in progress flag
 }
@@ -234,7 +234,7 @@ void Client::requestStatus( const QString & userDN )
 {
 	GetStatusTask * gst = new GetStatusTask( d->root );
 	gst->userDN( userDN );
-	connect( gst, SIGNAL( gotStatus( const QString &, quint16, const QString & ) ), SIGNAL( statusReceived( const QString &, quint16, const QString & ) ) );
+	connect( gst, SIGNAL(gotStatus(QString,quint16,QString)), SIGNAL(statusReceived(QString,quint16,QString)) );
 	gst->go( true );
 }
 
@@ -242,7 +242,7 @@ void Client::sendMessage( const QStringList & addresseeDNs, const OutgoingMessag
 {
 	SendMessageTask * smt = new SendMessageTask( d->root );
 	smt->message( addresseeDNs, message );
-	connect( smt, SIGNAL( finished() ), SLOT( smt_messageSent() ) );
+	connect( smt, SIGNAL(finished()), SLOT(smt_messageSent()) );
 	smt->go( true );
 }
 
@@ -263,15 +263,15 @@ void Client::createConference( const int clientId, const QStringList & participa
 {
 	CreateConferenceTask * cct = new CreateConferenceTask( d->root );
 	cct->conference( clientId, participants );
-	connect( cct, SIGNAL( finished() ), SLOT( cct_conferenceCreated() ) );
+	connect( cct, SIGNAL(finished()), SLOT(cct_conferenceCreated()) );
 	cct->go( true );
 }
 void Client::requestDetails( const QStringList & userDNs )
 {
 	GetDetailsTask * gdt = new GetDetailsTask( d->root );
 	gdt->userDNs( userDNs );
-	connect( gdt, SIGNAL( gotContactUserDetails( const GroupWise::ContactDetails & ) ),
-			this, SIGNAL( contactUserDetailsReceived( const GroupWise::ContactDetails & ) ) );
+	connect( gdt, SIGNAL(gotContactUserDetails(GroupWise::ContactDetails)),
+			this, SIGNAL(contactUserDetailsReceived(GroupWise::ContactDetails)) );
 	gdt->go( true );
 }
 
@@ -279,7 +279,7 @@ void Client::joinConference( const GroupWise::ConferenceGuid & guid )
 {
 	JoinConferenceTask * jct = new JoinConferenceTask( d->root );
 	jct->join( guid );
-	connect( jct, SIGNAL( finished() ), SLOT( jct_joinConfCompleted() ) );
+	connect( jct, SIGNAL(finished()), SLOT(jct_joinConfCompleted()) );
 	jct->go( true );
 }
 
@@ -295,7 +295,7 @@ void Client::leaveConference( const GroupWise::ConferenceGuid & guid )
 {
 	LeaveConferenceTask * lct = new LeaveConferenceTask( d->root );
 	lct->leave( guid );
-	//connect( lct, SIGNAL( finished() ), SLOT( lct_leftConference() ) );
+	//connect( lct, SIGNAL(finished()), SLOT(lct_leftConference()) );
 	lct->go( true );
 }
 

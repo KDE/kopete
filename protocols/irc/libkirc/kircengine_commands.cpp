@@ -25,32 +25,32 @@ using namespace KIRC;
 /*
 void Client::registerStandardCommands(CommandManager *cm)
 {
-	cm->registerCommand(ERROR,	this, SLOT(error(KIRC::Message &));
+	cm->registerCommand(ERROR,	this, SLOT(error(KIRC::Message&));
 //		setMinMax(0, 0);
 
-	bind(JOIN,	this, SLOT(join(KIRC::Message &)),	0, 1);
+	bind(JOIN,	this, SLOT(join(KIRC::Message&)),	0, 1);
 
-	bind(KICK,	this, SLOT(kick(KIRC::Message &)),	2, 2);
+	bind(KICK,	this, SLOT(kick(KIRC::Message&)),	2, 2);
 
-	bind(MODE,	this, SLOT(mode(KIRC::Message &)),	1, 1);
+	bind(MODE,	this, SLOT(mode(KIRC::Message&)),	1, 1);
 
-	bind(NICK,	this, SLOT(nick(KIRC::Message &)),	0, 0);
+	bind(NICK,	this, SLOT(nick(KIRC::Message&)),	0, 0);
 
-	bind(NOTICE,	this, SLOT(notice(KIRC::Message &)),	1, 1);
+	bind(NOTICE,	this, SLOT(notice(KIRC::Message&)),	1, 1);
 
-	bind(PART,	this, SLOT(part(KIRC::Message &)),	1, 1);
+	bind(PART,	this, SLOT(part(KIRC::Message&)),	1, 1);
 
-	bind(PING,	this, SLOT(ping(KIRC::Message &)),	0, 0);
+	bind(PING,	this, SLOT(ping(KIRC::Message&)),	0, 0);
 
-	bind(PONG,	this, SLOT(pong(KIRC::Message &)),	0, 0);
+	bind(PONG,	this, SLOT(pong(KIRC::Message&)),	0, 0);
 
-	bind(PRIVMSG,	this, SLOT(privmsg(KIRC::Message &)),	1, 1);
+	bind(PRIVMSG,	this, SLOT(privmsg(KIRC::Message&)),	1, 1);
 
-	bind(QUIT,	this, SLOT(quit(KIRC::Message &)),	0, 0);
+	bind(QUIT,	this, SLOT(quit(KIRC::Message&)),	0, 0);
 
-//	bind(SQUIT,	this, SLOT(squit(KIRC::Message &)),	1, 1);
+//	bind(SQUIT,	this, SLOT(squit(KIRC::Message&)),	1, 1);
 
-	bind(TOPIC,	this, SLOT(topic(KIRC::Message &)),	1, 1);
+	bind(TOPIC,	this, SLOT(topic(KIRC::Message&)),	1, 1);
 }
 */
 void Client::away(bool isAway, const QString &awayMessage)

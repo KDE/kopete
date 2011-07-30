@@ -54,7 +54,7 @@ void WinPopupLib::slotStartDirLister()
 	if (checkMessageDir()) {
 		dirLister = new KDirLister();
 		dirLister->setAutoUpdate(true);
-		connect(dirLister, SIGNAL(newItems(const KFileItemList &)), this, SLOT(slotReadMessages(const KFileItemList &)));
+		connect(dirLister, SIGNAL(newItems(KFileItemList)), this, SLOT(slotReadMessages(KFileItemList)));
 		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
 		dirLister->openUrl(KUrl(WP_POPUP_DIR));
 	}
@@ -164,7 +164,7 @@ void WinPopupLib::startReadProcess(const QString &Host)
 	QStringList args;
 	args << "-N" << "-g" << "-L" << Host << "-I" << Host;
 
-	connect(readGroupsProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int, QProcess::ExitStatus)));
+	connect(readGroupsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int,QProcess::ExitStatus)));
 
 	readGroupsProcess->setProcessChannelMode(QProcess::MergedChannels);
 	readGroupsProcess->start(smbClientBin, args);
@@ -354,7 +354,7 @@ void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 	//TODO: check if we can write message
 	sender->write(Body.toLocal8Bit());
 	sender->closeWriteChannel();
-	connect(sender, SIGNAL(finished(int, QProcess::ExitStatus)), sender, SLOT(deleteLater()));
+	connect(sender, SIGNAL(finished(int,QProcess::ExitStatus)), sender, SLOT(deleteLater()));
 }
 
 void WinPopupLib::settingsChanged(const QString &smbClient, int groupFreq)

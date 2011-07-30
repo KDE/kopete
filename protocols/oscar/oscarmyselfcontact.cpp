@@ -27,7 +27,7 @@
 OscarMyselfContact::OscarMyselfContact( OscarAccount* account )
 : Kopete::Contact( account, account->accountId(), Kopete::ContactList::self()->myself() )
 {
-	QObject::connect( account->engine(), SIGNAL( haveOwnInfo() ), this, SLOT( userInfoUpdated() ) );
+	QObject::connect( account->engine(), SIGNAL(haveOwnInfo()), this, SLOT(userInfoUpdated()) );
 }
 
 OscarMyselfContact::~OscarMyselfContact()

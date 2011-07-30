@@ -145,29 +145,29 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 
 	d->engine->setCodecProvider( d );
     d->olnscDialog = 0L;
-    QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( loginActions() ) );
-	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
-	                  this, SLOT( messageReceived(const Oscar::Message& ) ) );
-	QObject::connect( d->engine, SIGNAL( socketError( int, const QString& ) ),
-	                  this, SLOT( slotSocketError( int, const QString& ) ) );
-	QObject::connect( d->engine, SIGNAL( taskError( const Oscar::SNAC&, int, bool ) ),
-	                  this, SLOT( slotTaskError( const Oscar::SNAC&, int, bool ) ) );
-	QObject::connect( d->engine, SIGNAL( userStartedTyping( const QString& ) ),
-	                  this, SLOT( userStartedTyping( const QString& ) ) );
-	QObject::connect( d->engine, SIGNAL( userStoppedTyping( const QString& ) ),
-	                  this, SLOT( userStoppedTyping( const QString& ) ) );
-	QObject::connect( d->engine, SIGNAL( iconNeedsUploading() ),
-	                  this, SLOT( slotSendBuddyIcon() ) );
+    QObject::connect( d->engine, SIGNAL(loggedIn()), this, SLOT(loginActions()) );
+	QObject::connect( d->engine, SIGNAL(messageReceived(Oscar::Message)),
+	                  this, SLOT(messageReceived(Oscar::Message)) );
+	QObject::connect( d->engine, SIGNAL(socketError(int,QString)),
+	                  this, SLOT(slotSocketError(int,QString)) );
+	QObject::connect( d->engine, SIGNAL(taskError(Oscar::SNAC,int,bool)),
+	                  this, SLOT(slotTaskError(Oscar::SNAC,int,bool)) );
+	QObject::connect( d->engine, SIGNAL(userStartedTyping(QString)),
+	                  this, SLOT(userStartedTyping(QString)) );
+	QObject::connect( d->engine, SIGNAL(userStoppedTyping(QString)),
+	                  this, SLOT(userStoppedTyping(QString)) );
+	QObject::connect( d->engine, SIGNAL(iconNeedsUploading()),
+	                  this, SLOT(slotSendBuddyIcon()) );
 	QObject::connect( d->engine, SIGNAL(incomingFileTransfer(FileTransferHandler*)),
 	                  this, SLOT(incomingFileTransfer(FileTransferHandler*)) );
 	QObject::connect( d->engine, SIGNAL(chatroomRequest(ChatRoomHandler*)),
 	                  this, SLOT(chatroomRequest(ChatRoomHandler*)) );
 
 	Kopete::TransferManager *tm = Kopete::TransferManager::transferManager();
-	QObject::connect( tm, SIGNAL(refused(const Kopete::FileTransferInfo&)),
-	                  this, SLOT(fileTransferRefused(const Kopete::FileTransferInfo&)) );
-	QObject::connect( tm, SIGNAL(accepted(Kopete::Transfer*, const QString&)),
-	                  this, SLOT(fileTransferAccept(Kopete::Transfer*, const QString&)) );
+	QObject::connect( tm, SIGNAL(refused(Kopete::FileTransferInfo)),
+	                  this, SLOT(fileTransferRefused(Kopete::FileTransferInfo)) );
+	QObject::connect( tm, SIGNAL(accepted(Kopete::Transfer*,QString)),
+	                  this, SLOT(fileTransferAccept(Kopete::Transfer*,QString)) );
 }
 
 OscarAccount::~OscarAccount()
@@ -186,18 +186,18 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	kDebug(OSCAR_GEN_DEBUG) << "accountId='" << accountId() << "'";
 	//disconnect the signals
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
-	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ),
-	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
-	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
-	                     this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const OContact& ) ),
-	                     this, SLOT( ssiContactAdded( const OContact& ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const OContact& ) ),
-	                     this, SLOT( ssiGroupAdded( const OContact& ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupUpdated( const OContact& ) ),
-	                     this, SLOT( ssiGroupUpdated( const OContact& ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactUpdated( const OContact& ) ),
-	                     this, SLOT( ssiContactUpdated( const OContact& ) ) );
+	QObject::disconnect( kcl, SIGNAL(groupRenamed(Kopete::Group*,QString)),
+	                     this, SLOT(kopeteGroupRenamed(Kopete::Group*,QString)) );
+	QObject::disconnect( kcl, SIGNAL(groupRemoved(Kopete::Group*)),
+	                     this, SLOT(kopeteGroupRemoved(Kopete::Group*)) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL(contactAdded(OContact)),
+	                     this, SLOT(ssiContactAdded(OContact)) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL(groupAdded(OContact)),
+	                     this, SLOT(ssiGroupAdded(OContact)) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL(groupUpdated(OContact)),
+	                     this, SLOT(ssiGroupUpdated(OContact)) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL(contactUpdated(OContact)),
+	                     this, SLOT(ssiContactUpdated(OContact)) );
 
 	d->engine->close();
 	OscarProtocol* p = static_cast<OscarProtocol*>(protocol());
@@ -224,8 +224,8 @@ bool OscarAccount::setIdentity( Kopete::Identity *ident )
 	if ( !Kopete::PasswordedAccount::setIdentity( ident ) )
 		return false;
 
-	QObject::connect( ident, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)),
-	                  this, SLOT(slotIdentityPropertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)) );
+	QObject::connect( ident, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+	                  this, SLOT(slotIdentityPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) );
 	
 	QString photoPath = ident->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 	updateBuddyIcon( photoPath );
@@ -256,10 +256,10 @@ void OscarAccount::processSSIList()
 {
 	//disconnect signals so we don't attempt to add things to SSI!
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
-	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ),
-	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
-	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
-	                     this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
+	QObject::disconnect( kcl, SIGNAL(groupRenamed(Kopete::Group*,QString)),
+	                     this, SLOT(kopeteGroupRenamed(Kopete::Group*,QString)) );
+	QObject::disconnect( kcl, SIGNAL(groupRemoved(Kopete::Group*)),
+	                     this, SLOT(kopeteGroupRemoved(Kopete::Group*)) );
 
 	kDebug(OSCAR_RAW_DEBUG) ;
 
@@ -318,18 +318,18 @@ void OscarAccount::processSSIList()
 			addContact( ( *bit ).name(), QString(), group, Kopete::Account::DontChangeKABC );
 	}
 
-	QObject::connect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ),
-	                  this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
-	QObject::connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
-	                  this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
-	QObject::connect( listManager, SIGNAL( contactAdded( const OContact& ) ),
-	                  this, SLOT( ssiContactAdded( const OContact& ) ) );
-	QObject::connect( listManager, SIGNAL( groupAdded( const OContact& ) ),
-	                  this, SLOT( ssiGroupAdded( const OContact& ) ) );
-	QObject::connect( listManager, SIGNAL( groupUpdated( const OContact& ) ),
-	                  this, SLOT( ssiGroupUpdated( const OContact& ) ) );
-	QObject::connect( listManager, SIGNAL( contactUpdated( const OContact& ) ),
-	                  this, SLOT( ssiContactUpdated( const OContact& ) ) );
+	QObject::connect( kcl, SIGNAL(groupRenamed(Kopete::Group*,QString)),
+	                  this, SLOT(kopeteGroupRenamed(Kopete::Group*,QString)) );
+	QObject::connect( kcl, SIGNAL(groupRemoved(Kopete::Group*)),
+	                  this, SLOT(kopeteGroupRemoved(Kopete::Group*)) );
+	QObject::connect( listManager, SIGNAL(contactAdded(OContact)),
+	                  this, SLOT(ssiContactAdded(OContact)) );
+	QObject::connect( listManager, SIGNAL(groupAdded(OContact)),
+	                  this, SLOT(ssiGroupAdded(OContact)) );
+	QObject::connect( listManager, SIGNAL(groupUpdated(OContact)),
+	                  this, SLOT(ssiGroupUpdated(OContact)) );
+	QObject::connect( listManager, SIGNAL(contactUpdated(OContact)),
+	                  this, SLOT(ssiContactUpdated(OContact)) );
 
 	// TODO: Synchronize groups.
 	// Currently groups that have been removed from the server do not get
@@ -356,8 +356,8 @@ void OscarAccount::processSSIList()
     if ( !nonServerContactList.isEmpty() && showMissingContactsDialog )
     {
         d->olnscDialog = new OscarListNonServerContacts( Kopete::UI::Global::mainWidget() );
-        QObject::connect( d->olnscDialog, SIGNAL( closing() ),
-                          this, SLOT( nonServerAddContactDialogClosed() ) );
+        QObject::connect( d->olnscDialog, SIGNAL(closing()),
+                          this, SLOT(nonServerAddContactDialogClosed()) );
         d->olnscDialog->addContacts( nonServerContactList );
         d->olnscDialog->show();
     }
@@ -473,12 +473,12 @@ void OscarAccount::chatroomRequest( ChatRoomHandler* handler )
 	dialog->setDefaultButton( KDialog::Yes );
 	dialog->setEscapeButton( KDialog::No );
 
-	QObject::connect( dialog, SIGNAL( yesClicked() ),
-	                  handler, SLOT( accept() ) );
-	QObject::connect( dialog, SIGNAL( noClicked() ),
-	                  handler, SLOT( reject() ) );
-	QObject::connect( handler, SIGNAL( joinChatRoom( const QString&, int ) ),
-	                  engine(), SLOT( joinChatRoom( const QString&, int ) ) );
+	QObject::connect( dialog, SIGNAL(yesClicked()),
+	                  handler, SLOT(accept()) );
+	QObject::connect( dialog, SIGNAL(noClicked()),
+	                  handler, SLOT(reject()) );
+	QObject::connect( handler, SIGNAL(joinChatRoom(QString,int)),
+	                  engine(), SLOT(joinChatRoom(QString,int)) );
 
 	KMessageBox::createKMessageBox( dialog, QMessageBox::Question,
 	                                ( handler->contact() + ": " + handler->invite() ), QStringList(),
@@ -560,11 +560,11 @@ void OscarAccount::fileTransferAccept( Kopete::Transfer* transfer, const QString
 
 	QObject::connect( transfer, SIGNAL(transferCanceled()), ftHandler, SLOT(cancel()) );
 	QObject::connect( ftHandler, SIGNAL(transferCancelled()), transfer, SLOT(slotCancelled()) );
-	QObject::connect( ftHandler, SIGNAL(transferError(int, const QString&)), transfer, SLOT(slotError(int, const QString&)) );
-	QObject::connect( ftHandler, SIGNAL(transferProcessed(unsigned int)), transfer, SLOT(slotProcessed(unsigned int)) );
+	QObject::connect( ftHandler, SIGNAL(transferError(int,QString)), transfer, SLOT(slotError(int,QString)) );
+	QObject::connect( ftHandler, SIGNAL(transferProcessed(uint)), transfer, SLOT(slotProcessed(uint)) );
 	QObject::connect( ftHandler, SIGNAL(transferFinished()), transfer, SLOT(slotComplete()) );
-	QObject::connect( ftHandler, SIGNAL(transferNextFile(const QString&, const QString&)),
-	                  transfer, SLOT(slotNextFile(const QString&, const QString&)) );
+	QObject::connect( ftHandler, SIGNAL(transferNextFile(QString,QString)),
+	                  transfer, SLOT(slotNextFile(QString,QString)) );
 
 	if ( transfer->info().saveToDirectory() )
 		ftHandler->save( fileName );
@@ -1171,7 +1171,7 @@ void OscarAccount::updateBuddyIconInSSI()
 void OscarAccount::slotSendBuddyIcon()
 {
 	//need to disconnect because we could end up with many connections
-	QObject::disconnect( engine(), SIGNAL( iconServerConnected() ), this, SLOT( slotSendBuddyIcon() ) );
+	QObject::disconnect( engine(), SIGNAL(iconServerConnected()), this, SLOT(slotSendBuddyIcon()) );
 	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 	if ( photoPath.isEmpty() )
 		return;
@@ -1184,8 +1184,8 @@ void OscarAccount::slotSendBuddyIcon()
 		if ( !engine()->hasIconConnection() )
 		{
 			//will send icon when we connect to icon server
-			QObject::connect( engine(), SIGNAL( iconServerConnected() ),
-			                  this, SLOT( slotSendBuddyIcon() ) );
+			QObject::connect( engine(), SIGNAL(iconServerConnected()),
+			                  this, SLOT(slotSendBuddyIcon()) );
 			
 			engine()->connectToIconServer();
 			return;

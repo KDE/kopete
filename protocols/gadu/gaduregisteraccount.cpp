@@ -60,18 +60,18 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent )
 	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
 	hintPixmap = KIconLoader::global()->loadIcon ( "gadu_protocol", KIconLoader::Small );
 
-	connect( this, SIGNAL( user1Clicked() ), SLOT( doRegister() ) );
-	connect( this, SIGNAL( okClicked() ), SLOT( slotClose() ) );
+	connect( this, SIGNAL(user1Clicked()), SLOT(doRegister()) );
+	connect( this, SIGNAL(okClicked()), SLOT(slotClose()) );
 
-	connect( ui->valueEmailAddress, SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( ui->valuePassword, SIGNAL( textChanged( const QString & ) ), SLOT( inputChanged( const QString & ) ) );
-	connect( ui->valuePasswordVerify, SIGNAL( textChanged( const QString & ) ), SLOT( inputChanged( const QString & ) ) );
-	connect( ui->valueVerificationSequence, SIGNAL( textChanged( const QString & ) ), SLOT( inputChanged( const QString & ) ) );
+	connect( ui->valueEmailAddress, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( ui->valuePassword, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( ui->valuePasswordVerify, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
+	connect( ui->valueVerificationSequence, SIGNAL(textChanged(QString)), SLOT(inputChanged(QString)) );
 
-	connect( cRegister, SIGNAL( tokenRecieved( QPixmap, QString ) ), SLOT( displayToken( QPixmap, QString ) ) );
-	connect( cRegister, SIGNAL( done(  const QString&,  const QString& ) ), SLOT( registrationDone(  const QString&,  const QString& ) ) );
-	connect( cRegister, SIGNAL( error(  const QString&,  const QString& ) ), SLOT( registrationError(  const QString&,  const QString& ) ) );
-	connect( cRegister, SIGNAL( operationStatus( const QString ) ), SLOT( updateStatus( const QString ) ) );
+	connect( cRegister, SIGNAL(tokenRecieved(QPixmap,QString)), SLOT(displayToken(QPixmap,QString)) );
+	connect( cRegister, SIGNAL(done(QString,QString)), SLOT(registrationDone(QString,QString)) );
+	connect( cRegister, SIGNAL(error(QString,QString)), SLOT(registrationError(QString,QString)) );
+	connect( cRegister, SIGNAL(operationStatus(QString)), SLOT(updateStatus(QString)) );
 
 	updateStatus( i18n( "Retrieving token" ) );
 	cRegister->requestToken();
@@ -176,10 +176,10 @@ GaduRegisterAccount::registrationError(  const QString& title,  const QString& w
 	updateStatus( i18n( "Registration failed: %1", what ) );
 	KMessageBox::sorry( this, i18n("Registration was unsucessful, please try again."), title );
 
-	disconnect( this, SLOT( displayToken( QPixmap, QString ) ) );
-	disconnect( this, SLOT( registrationDone(  const QString&,  const QString& ) ) );
-	disconnect( this, SLOT( registrationError(  const QString&,  const QString& ) ) );
-	disconnect( this, SLOT( updateStatus( const QString ) ) );
+	disconnect( this, SLOT(displayToken(QPixmap,QString)) );
+	disconnect( this, SLOT(registrationDone(QString,QString)) );
+	disconnect( this, SLOT(registrationError(QString,QString)) );
+	disconnect( this, SLOT(updateStatus(QString)) );
 
 	ui->valueVerificationSequence->setDisabled( true );
 	ui->valueVerificationSequence->setText( "" );

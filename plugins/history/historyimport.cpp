@@ -89,7 +89,7 @@ HistoryImport::HistoryImport(QWidget *parent)
 	model->setHorizontalHeaderLabels(QStringList(i18n("Parsed History")));
 
 	// connect everything
-	connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(itemClicked(const QModelIndex &)));
+	connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)));
 	connect(fromPidgin, SIGNAL(clicked()), this, SLOT(importPidgin()));
 	connect(this, SIGNAL(okClicked()), this, SLOT(save()));
 

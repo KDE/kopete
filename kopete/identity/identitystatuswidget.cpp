@@ -73,12 +73,12 @@ IdentityStatusWidget::IdentityStatusWidget(Kopete::Identity *identity, QWidget *
 	setIdentity(identity);
 
 	// user input signals
-	connect( d->ui.accounts, SIGNAL(customContextMenuRequested(const QPoint &)),
-			this, SLOT(showAccountContextMenu(const QPoint &)) );
-	connect( d->ui.accounts, SIGNAL(itemClicked(QListWidgetItem *)),
-			this, SLOT(slotAccountClicked( QListWidgetItem *)) );
-	connect( d->ui.accounts, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
-			this, SLOT(slotAccountDoubleClicked(QListWidgetItem *)) );
+	connect( d->ui.accounts, SIGNAL(customContextMenuRequested(QPoint)),
+			this, SLOT(showAccountContextMenu(QPoint)) );
+	connect( d->ui.accounts, SIGNAL(itemClicked(QListWidgetItem*)),
+			this, SLOT(slotAccountClicked(QListWidgetItem*)) );
+	connect( d->ui.accounts, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+			this, SLOT(slotAccountDoubleClicked(QListWidgetItem*)) );
 	connect( d->ui.photo, SIGNAL(clicked()), 
 			 this, SLOT(slotPhotoClicked()));
 
@@ -106,7 +106,7 @@ void IdentityStatusWidget::setIdentity(Kopete::Identity *identity)
 	if (d->identity)
 	{
 		// if we were showing an identity before, disconnect the signal to handle updates
-		disconnect( d->identity, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)),
+		disconnect( d->identity, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
 		            this, SLOT(slotIdentityPropertyChanged(Kopete::PropertyContainer*)) );
 		disconnect( d->identity, SIGNAL(identityChanged(Kopete::Identity*)),
 		         this, SLOT(slotIdentityChanged(Kopete::Identity*)));
@@ -117,7 +117,7 @@ void IdentityStatusWidget::setIdentity(Kopete::Identity *identity)
 	if (d->identity)
 	{
 		// Handle identity changes
-		connect( d->identity, SIGNAL(propertyChanged(Kopete::PropertyContainer*, const QString&, const QVariant&, const QVariant&)),
+		connect( d->identity, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
 		         this, SLOT(slotIdentityPropertyChanged(Kopete::PropertyContainer*)) );
 		connect( d->identity, SIGNAL(identityChanged(Kopete::Identity*)),
 		         this, SLOT(slotIdentityChanged(Kopete::Identity*)));
@@ -255,8 +255,8 @@ void IdentityStatusWidget::addAccountItem( Kopete::Account *account )
 	}
 
 	connect( account->myself(),
-			SIGNAL(onlineStatusChanged(Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
-			this, SLOT(slotAccountStatusIconChanged(Kopete::Contact *)) );
+			SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+			this, SLOT(slotAccountStatusIconChanged(Kopete::Contact*)) );
 
 	QListWidgetItem * item = new QListWidgetItem( account->accountIcon(), account->accountLabel(), d->ui.accounts );
 	d->accountHash.insert( item, account );

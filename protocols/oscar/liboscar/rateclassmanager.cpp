@@ -60,7 +60,7 @@ void RateClassManager::reset()
 
 void RateClassManager::registerClass( RateClass* rc )
 {
-	QObject::connect( rc, SIGNAL( dataReady( Transfer* ) ), this, SLOT( transferReady( Transfer* ) ) );
+	QObject::connect( rc, SIGNAL(dataReady(Transfer*)), this, SLOT(transferReady(Transfer*)) );
 	d->classList.append( rc );
 }
 

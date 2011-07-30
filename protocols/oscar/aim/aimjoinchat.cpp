@@ -46,8 +46,8 @@ AIMJoinChatUI::AIMJoinChatUI( AIMAccount* account, QWidget* parent )
 
     setMainWidget( w  );
 
-    QObject::connect( this, SIGNAL( user1Clicked() ), this, SLOT( joinChat() ) );
-    QObject::connect( this, SIGNAL( cancelClicked() ), this, SLOT( closeClicked() ) );
+    QObject::connect( this, SIGNAL(user1Clicked()), this, SLOT(joinChat()) );
+    QObject::connect( this, SIGNAL(cancelClicked()), this, SLOT(closeClicked()) );
 }
 
 AIMJoinChatUI::~AIMJoinChatUI()

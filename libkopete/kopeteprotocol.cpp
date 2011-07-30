@@ -103,8 +103,8 @@ void Protocol::slotAccountOnlineStatusChanged( Contact *self )
 	// some protocols change status several times during shutdown.  We should only call deleteLater() once
 	disconnect( self, 0, this, 0 );
 
-	connect( self->account(), SIGNAL(destroyed( )),
-		this, SLOT( slotAccountDestroyed( ) ) );
+	connect( self->account(), SIGNAL(destroyed()),
+		this, SLOT(slotAccountDestroyed()) );
 
 	self->account()->deleteLater();
 }
@@ -146,8 +146,8 @@ void Protocol::aboutToUnload()
 						" is still connected, disconnecting..." << endl;
 
 				QObject::connect( a->myself(),
-								  SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-								  this, SLOT( slotAccountOnlineStatusChanged( Kopete::Contact * ) ) );
+								  SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+								  this, SLOT(slotAccountOnlineStatusChanged(Kopete::Contact*)) );
 				a->disconnect();
 			}
 			else
@@ -156,8 +156,8 @@ void Protocol::aboutToUnload()
 				kDebug( 14010 ) << a->accountId() <<
 						" is already disconnected, deleting..." << endl;
 
-				QObject::connect( a, SIGNAL( destroyed( ) ),
-								  this, SLOT( slotAccountDestroyed( ) ) );
+				QObject::connect( a, SIGNAL(destroyed()),
+								  this, SLOT(slotAccountDestroyed()) );
 				a->deleteLater();
 			}
 		}

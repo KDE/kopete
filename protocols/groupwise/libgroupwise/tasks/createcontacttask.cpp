@@ -76,8 +76,8 @@ void CreateContactTask::onGo()
 		// the add contact action may cause other contacts' sequence numbers to change
 		// CreateContactInstanceTask signals these changes, so we propagate the signal via the Client, to the GroupWiseAccount
 		// This updates our local versions of those contacts using the same mechanism by which they are updated at login.
-		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
-        connect( ccit, SIGNAL( finished() ), SLOT( slotCheckContactInstanceCreated() ) );
+		connect( ccit, SIGNAL(gotContactAdded(ContactItem)), SLOT(slotContactAdded(ContactItem)) );
+        connect( ccit, SIGNAL(finished()), SLOT(slotCheckContactInstanceCreated()) );
 		if ( (*it).id == 0 ) // caller asserts that this isn't on the server...
 		{
 			ccit->contactFromDNAndFolder( m_userId, m_displayName, m_firstSequenceNumber++, ( *it ).name );
@@ -92,8 +92,8 @@ void CreateContactTask::onGo()
 	{
 		client()->debug( " - contact is in top level folder " );
 		CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
-		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
-        connect( ccit, SIGNAL( finished() ), SLOT( slotCheckContactInstanceCreated() ) );
+		connect( ccit, SIGNAL(gotContactAdded(ContactItem)), SLOT(slotContactAdded(ContactItem)) );
+        connect( ccit, SIGNAL(finished()), SLOT(slotCheckContactInstanceCreated()) );
 		ccit->contactFromDN( m_userId, m_displayName, 0 );
 		ccit->go( true );
 	}

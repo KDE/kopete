@@ -51,10 +51,10 @@ LatexPlugin::LatexPlugin( QObject *parent, const QVariantList &/*args*/ )
 		s_pluginStatic = this;
 
 	mMagickNotFoundShown = false;
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotMessageAboutToShow( Kopete::Message & ) ) );
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToSend(Kopete::Message& )  ), this,  SLOT(slotMessageAboutToSend(Kopete::Message& )  ) );
-	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * ) ),
-			 this, SLOT( slotNewChatSession( Kopete::ChatSession * ) ) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message&)), SLOT(slotMessageAboutToShow(Kopete::Message&)) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToSend(Kopete::Message&)), this,  SLOT(slotMessageAboutToSend(Kopete::Message&)) );
+	connect( Kopete::ChatSessionManager::self(), SIGNAL(chatSessionCreated(Kopete::ChatSession*)),
+			 this, SLOT(slotNewChatSession(Kopete::ChatSession*)) );
 	
 	m_convScript = KStandardDirs::findExe("kopete_latexconvert.sh");
 
@@ -80,7 +80,7 @@ LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
 void LatexPlugin::slotNewChatSession( Kopete::ChatSession *KMM )
 {
 	new LatexGUIClient( KMM );
-	connect( this , SIGNAL( toggleLatex(bool) ), KMM, SIGNAL( toggleGraphicOverride(bool) ) );
+	connect( this , SIGNAL(toggleLatex(bool)), KMM, SIGNAL(toggleGraphicOverride(bool)) );
 }
 
 void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )

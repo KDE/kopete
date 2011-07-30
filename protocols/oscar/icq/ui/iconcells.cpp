@@ -57,8 +57,8 @@ IconCells::IconCells( QWidget *parent )
 	QFont timesFont( "Times", 10, QFont::Normal );
 	setFont( timesFont );
 
-	connect( this, SIGNAL(cellActivated( int, int )), this, SLOT(selected(int, int)) );
-	connect( this, SIGNAL(cellPressed( int, int )), this, SLOT(selected(int, int)) );
+	connect( this, SIGNAL(cellActivated(int,int)), this, SLOT(selected(int,int)) );
+	connect( this, SIGNAL(cellPressed(int,int)), this, SLOT(selected(int,int)) );
 }
 
 IconCells::~IconCells()

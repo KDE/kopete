@@ -72,7 +72,7 @@ void SocketPrivate::socketReadyRead()
 //			postErrorEvent(i18n("Parse error while parsing: %1").arg(msg.rawLine()));
 
 		// FIXME: post events instead of reschudeling ?
-		QTimer::singleShot( 0, this, SLOT( socketReadyRead() ) );
+		QTimer::singleShot( 0, this, SLOT(socketReadyRead()) );
 	}
 
 //	if(d->socket->socketStatus() != KExtendedSocket::connected)

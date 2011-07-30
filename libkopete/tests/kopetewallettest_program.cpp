@@ -37,7 +37,7 @@ void closeWallet()
 
 void delay()
 {
-	QTimer::singleShot( 3000, qApp, SLOT( quit() ) );
+	QTimer::singleShot( 3000, qApp, SLOT(quit()) );
 	qApp->exec();
 }
 
@@ -45,7 +45,7 @@ void openWalletAsync()
 {
 	WalletReciever *r = new WalletReciever;
 	_out << "[ASYNC] About to open wallet, receiver: " << r << endl;
-	Kopete::WalletManager::self()->openWallet( r, SLOT( gotWallet(  KWallet::Wallet* ) ) );
+	Kopete::WalletManager::self()->openWallet( r, SLOT(gotWallet(KWallet::Wallet*)) );
 }
 
 void WalletReciever::gotWallet( KWallet::Wallet *w )
@@ -86,11 +86,11 @@ int main( int argc, char *argv[] )
 	WalletReciever *r = new WalletReciever;
 
 	QTimer timer;
-	r->connect( &timer, SIGNAL( timeout() ), SLOT( timer() ) );
+	r->connect( &timer, SIGNAL(timeout()), SLOT(timer()) );
 	timer.start( 1000 );
 
 	_out << "About to start 30 second event loop" << endl;
-	QTimer::singleShot( 30000, qApp, SLOT( quit() ) );
+	QTimer::singleShot( 30000, qApp, SLOT(quit()) );
 	return qApp->exec();
 }
 

@@ -67,7 +67,7 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 		formLayout->addWidget (edit, row, 1);
 		edit->show ();
 
-		connect (this, SIGNAL (gatherData (XMPP::Form &)), edit, SLOT (slotGatherData (XMPP::Form &)));
+		connect (this, SIGNAL (gatherData(XMPP::Form&)), edit, SLOT (slotGatherData(XMPP::Form&)));
 	}
 
 	innerLayout->addStretch ();

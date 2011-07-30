@@ -40,7 +40,7 @@ void TestbedFakeServer::sendMessage( const QString &contactId, const QString &me
 	QString messageId = contactId + QString::fromLatin1(": ");
 	TestbedIncomingMessage* msg = new TestbedIncomingMessage( this, messageId + message );
 	m_incomingMessages.append( msg );
-	QTimer::singleShot( 1000, msg, SLOT( deliver() ) );
+	QTimer::singleShot( 1000, msg, SLOT(deliver()) );
 	
 	// This removes any delivered messages 
 	purgeMessages();

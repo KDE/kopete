@@ -73,7 +73,7 @@ StatusManager::StatusManager()
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 	         this, SLOT(accountUnregistered(const Kopete::Account*)));
 
-	connect( Kopete::AccountManager::self(), SIGNAL(accountOnlineStatusChanged(Kopete::Account*, const Kopete::OnlineStatus&, const Kopete::OnlineStatus&)),
+	connect( Kopete::AccountManager::self(), SIGNAL(accountOnlineStatusChanged(Kopete::Account*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
 		 this, SLOT(checkIdleTimer()));
 
 }

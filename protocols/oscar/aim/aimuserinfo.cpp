@@ -106,11 +106,11 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		userInfoView->setObjectName("userInfoView");
 		userInfoView->setNotifyClick(true);
 		QObject::connect(
-			userInfoView, SIGNAL(urlClick(const QString&)),
-			this, SLOT(slotUrlClicked(const QString&)));
+			userInfoView, SIGNAL(urlClick(QString)),
+			this, SLOT(slotUrlClicked(QString)));
 		QObject::connect(
-			userInfoView, SIGNAL(mailClick(const QString&, const QString&)),
-			this, SLOT(slotMailClicked(const QString&, const QString&)));
+			userInfoView, SIGNAL(mailClick(QString,QString)),
+			this, SLOT(slotMailClicked(QString,QString)));
 		showButton(Cancel, false);
 		setButtonText(Ok, i18n("&Close"));
 		setEscapeButton(Ok);

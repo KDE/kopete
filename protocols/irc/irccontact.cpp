@@ -265,10 +265,10 @@ ChatSession *IRCContact::chatSession(IRC::ChatSessionType type, CanCreateFlags c
 		chatSession = ChatSessionManager::self()->create(account->myself(), ( Kopete::ContactPtrList()<<this ) , account->protocol());
 		chatSession->setDisplayName(caption());
 
-		connect(chatSession, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
-			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::ChatSession *)));
-		connect(chatSession, SIGNAL(closing(ChatSession *)),
-			this, SLOT(chatSessionDestroyed(ChatSession *)));
+		connect(chatSession, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
+			this, SLOT(slotSendMsg(Kopete::Message&,Kopete::ChatSession*)));
+		connect(chatSession, SIGNAL(closing(ChatSession*)),
+			this, SLOT(chatSessionDestroyed(ChatSession*)));
 
 		d->chatSessions.insert(type, chatSession);
 	}

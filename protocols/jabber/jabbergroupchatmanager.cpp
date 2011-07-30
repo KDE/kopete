@@ -39,8 +39,8 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
 
-	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
-			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
+	connect ( this, SIGNAL (messageSent(Kopete::Message&,Kopete::ChatSession*)),
+			  this, SLOT (slotMessageSent(Kopete::Message&,Kopete::ChatSession*)) );
 
 	updateDisplayName ();
 }

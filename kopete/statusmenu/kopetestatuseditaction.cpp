@@ -103,8 +103,8 @@ StatusEditAction::StatusEditAction( QObject *parent )
 	mStatusEditWidget = new StatusEditWidget();
 	setDefaultWidget( mStatusEditWidget );
 
-	connect(mStatusEditWidget, SIGNAL( statusChanged( const Kopete::StatusMessage& ) ), SLOT( hideMenu() ) );
-	connect(mStatusEditWidget, SIGNAL( statusChanged( const Kopete::StatusMessage& ) ), SIGNAL( statusChanged( const Kopete::StatusMessage& ) ) );
+	connect(mStatusEditWidget, SIGNAL(statusChanged(Kopete::StatusMessage)), SLOT(hideMenu()) );
+	connect(mStatusEditWidget, SIGNAL(statusChanged(Kopete::StatusMessage)), SIGNAL(statusChanged(Kopete::StatusMessage)) );
 }
 
 Kopete::StatusMessage StatusEditAction::statusMessage() const
@@ -140,9 +140,9 @@ StatusEditDialog::StatusEditDialog( QWidget *parent )
 	setButtons(KDialog::None);
 	KDialogButtonBox *buttonBox = mStatusEditWidget->buttonBox();
 	buttonBox->setStandardButtons( buttonBox->standardButtons() | QDialogButtonBox::Cancel );
-	connect(buttonBox, SIGNAL( rejected() ), SLOT( reject() ) );
+	connect(buttonBox, SIGNAL(rejected()), SLOT(reject()) );
 
-	connect(mStatusEditWidget, SIGNAL( statusChanged( const Kopete::StatusMessage& ) ), SLOT( accept() ) );
+	connect(mStatusEditWidget, SIGNAL(statusChanged(Kopete::StatusMessage)), SLOT(accept()) );
 }
 
 Kopete::StatusMessage StatusEditDialog::statusMessage() const
