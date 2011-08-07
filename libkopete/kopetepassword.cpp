@@ -77,7 +77,7 @@ class KopetePasswordRequest : public KopetePasswordRequestBase
 {
 public:
 	KopetePasswordRequest( QObject *owner, Kopete::Password &pass )
-	 : QObject( owner ), mPassword( pass ), mWallet( 0 )
+	 : KopetePasswordRequestBase( owner ), mPassword( pass ), mWallet( 0 )
 	{
 	}
 
@@ -375,7 +375,7 @@ void Kopete::Password::writeConfig()
 		//  also, which cause a call to this function )
 		return;
 	}
-		  
+
 	KConfigGroup group = config->group( d->configGroup );
 
 	if ( d->remembered && !d->passwordFromKConfig.isNull() )
