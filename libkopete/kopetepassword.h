@@ -183,9 +183,12 @@ private:
  * @internal
  * @see KopetePassword
  */
-class KopetePasswordRequestBase : public virtual QObject
+class KopetePasswordRequestBase : public QObject
 {
 	Q_OBJECT
+public:
+    KopetePasswordRequestBase(QObject *parent)
+        :QObject(parent) {};
 signals:
 	void requestFinished( const QString &password );
 public slots:
