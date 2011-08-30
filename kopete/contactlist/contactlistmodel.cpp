@@ -493,6 +493,12 @@ QVariant ContactListModel::metaContactData( const Kopete::MetaContact* mc, int r
 	case Qt::DisplayRole:
 		return mc->displayName();
 		break;
+	case Qt::AccessibleTextRole:
+		return i18nc("%1 is display name, %2 is status (connected/away/etc.)", "%1 (%2)", mc->displayName(), mc->statusString());
+		break;
+	case Qt::AccessibleDescriptionRole:
+		return i18nc("%1 is display name, %2 is status and %3 is status message", "%1 (%2)\n%3", mc->displayName(), mc->statusString(), mc->statusMessage().message());
+		break;
 	case Kopete::Items::MetaContactImageRole:
 		return metaContactImage( mc );
 		break;
