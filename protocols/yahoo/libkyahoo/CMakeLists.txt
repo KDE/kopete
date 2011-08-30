@@ -56,6 +56,9 @@ receivefiletask.cpp
 yahoochattask.cpp
 )
 
+if(MINGW)
+    set_source_files_properties(yahoo_fn.c PROPERTIES COMPILE_FLAGS "--std=c99")
+endif(MINGW)
 
 kde4_add_library( kyahoo SHARED ${libkyahoo_SRCS} )
 
