@@ -60,6 +60,7 @@ set(kopete_jabber_ui_SRCS
     ui/jabbereditaccountwidget.cpp 
     ui/jabberregisteraccount.cpp 
     ui/jabberchooseserver.cpp 
+    ui/dlgjabberbookmarkeditor.cpp
     ui/dlgjabberchangepassword.cpp
     ui/dlgjabberchatroomslist.cpp
     ui/dlgjabberchatjoin.cpp 
@@ -94,6 +95,7 @@ set(kopete_jabber_ui_files
    ui/dlgaddcontact.ui 
    ui/dlgsearch.ui 
    ui/dlgchangepassword.ui 
+   ui/dlgjabberbookmarkeditor.ui
    ui/dlgjabbereditaccountwidget.ui
    ui/dlgchatjoin.ui 
    ui/dlgchatroomslist.ui 

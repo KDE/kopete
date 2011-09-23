@@ -27,6 +27,37 @@ class JabberAccount;
 
 class KAction;
 
+class JabberBookmark
+{
+  public:
+    typedef QList<JabberBookmark> List;
+
+    JabberBookmark();
+
+    void setJId( const QString &jid );
+    QString jId() const;
+    QString fullJId() const;
+
+    void setName( const QString &name );
+    QString name() const;
+
+    void setNickName( const QString &name );
+    QString nickName() const;
+
+    void setPassword( const QString &password );
+    QString password() const;
+
+    void setAutoJoin( bool autoJoin );
+    bool autoJoin() const;
+
+  private:
+    QString m_jId;
+    QString m_name;
+    QString m_nickName;
+    QString m_password;
+    bool m_autoJoin;
+};
+
 /**
  * This is a class that hanlde the bookmark collection  (JEP-0048)
  * There is one instance of that class by accounts.
@@ -61,7 +92,11 @@ class JabberBookmarks : public QObject
 	private:
 		JabberAccount *m_account;
 		QDomDocument m_storage;
-		QStringList m_conferencesJID;
+
+    static JabberBookmark::List bookmarksFromStorage( const QDomElement& );
+    static QDomElement bookmarksToStorage( const JabberBookmark::List&, QDomDocument& );
+
+		JabberBookmark::List m_bookmarks;
 };
 
 #endif

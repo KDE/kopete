@@ -26,7 +26,69 @@
 #include <kicon.h>
 
 #include "tasks/jt_privatestorage.h"
+#include "ui/dlgjabberbookmarkeditor.h"
 
+JabberBookmark::JabberBookmark() : m_autoJoin( false )
+{
+}
+
+void JabberBookmark::setJId( const QString &jid )
+{
+	m_jId = jid;
+}
+
+QString JabberBookmark::jId() const
+{
+	return m_jId;
+}
+
+QString JabberBookmark::fullJId() const
+{
+	if ( !m_nickName.isEmpty() )
+		return m_jId + '/' + m_nickName;
+	else
+		return m_jId;
+}
+
+void JabberBookmark::setName( const QString &name )
+{
+	m_name = name;
+}
+
+QString JabberBookmark::name() const
+{
+	return m_name;
+}
+
+void JabberBookmark::setNickName( const QString &name )
+{
+	m_nickName = name;
+}
+
+QString JabberBookmark::nickName() const
+{
+	return m_nickName;
+}
+
+void JabberBookmark::setPassword( const QString &password )
+{
+	m_password = password;
+}
+
+QString JabberBookmark::password() const
+{
+	return m_password;
+}
+
+void JabberBookmark::setAutoJoin( bool autoJoin )
+{
+	m_autoJoin = autoJoin;
+}
+
+bool JabberBookmark::autoJoin() const
+{
+	return m_autoJoin;
+}
 
 JabberBookmarks::JabberBookmarks(JabberAccount *parent) : QObject(parent) , m_account(parent) 
 {
@@ -44,52 +106,88 @@ void JabberBookmarks::accountConnected()
 	task->go ( true );
 }
 
-void JabberBookmarks::slotReceivedBookmarks( )
+JabberBookmark::List JabberBookmarks::bookmarksFromStorage( const QDomElement &storageElement )
 {
-	JT_PrivateStorage * task = (JT_PrivateStorage*)(sender());
-	m_storage=QDomDocument("storage");
-	m_conferencesJID.clear();
-	if(task->success())
-	{
-		QDomElement storage_e=task->element();
-		if(!storage_e.isNull() && storage_e.tagName() == "storage")
-		{
-			storage_e=m_storage.importNode(storage_e,true).toElement();
-			m_storage.appendChild(storage_e);
+	JabberBookmark::List bookmarks;
+	if ( !storageElement.isNull() && storageElement.tagName() == "storage" ) {
+		for ( QDomElement element = storageElement.firstChildElement(); !element.isNull(); element = element.nextSiblingElement() ) {
 
-			for(QDomNode n = storage_e.firstChild(); !n.isNull(); n = n.nextSibling()) 
-			{
-				QDomElement i = n.toElement();
-				if(i.isNull())
-					continue;
-				if(i.tagName() == "conference")
-				{
-					QString jid=i.attribute("jid");
-					QString password;
-					for(QDomNode n = i.firstChild(); !n.isNull(); n = n.nextSibling()) {
-						QDomElement e = n.toElement();
-						if(e.isNull())
-							continue;
-						else if(e.tagName() == "nick")
-							jid+='/'+e.text();
-						else if(e.tagName() == "password")
-							password=e.text();
-						
-					}
-					m_conferencesJID += jid;
-					if(i.attribute("autojoin") == "true")
-					{
-						XMPP::Jid x_jid(jid);
-						QString nick=x_jid.resource();
-						if(nick.isEmpty())
-							nick=m_account->myself()->nickName();
+			if ( element.tagName() == "conference" ) {
+				JabberBookmark bookmark;
 
-						if(password.isEmpty())
-							m_account->client()->joinGroupChat(x_jid.domain() , x_jid.node() , nick );
-						else
-							m_account->client()->joinGroupChat(x_jid.domain() , x_jid.node() , nick , password);
+				bookmark.setJId( element.attribute( "jid" ) );
+				bookmark.setName( element.attribute( "name" ) );
+				bookmark.setAutoJoin( element.attribute( "autojoin", "false" ) == "true" );
+
+				for ( QDomElement childElement = element.firstChildElement(); !childElement.isNull(); childElement = childElement.nextSiblingElement() ) {
+					if ( childElement.tagName() == "nick" ) {
+						bookmark.setNickName( childElement.text() );
+					} else if ( childElement.tagName() == "password" ) {
+						bookmark.setPassword( childElement.text() );
 					}
 				}
+
+				bookmarks += bookmark;
+			}
+		}
+	}
+
+	return bookmarks;
+}
+
+QDomElement JabberBookmarks::bookmarksToStorage( const JabberBookmark::List &bookmarks, QDomDocument &document )
+{
+	QDomElement storageElement = document.createElement( "storage" );
+	storageElement.setAttribute( "xmlns", "storage:bookmarks" );
+
+	foreach ( const JabberBookmark &bookmark, bookmarks ) {
+		QDomElement conferenceElement = document.createElement( "conference" );
+		conferenceElement.setAttribute( "jid", bookmark.jId() );
+
+		if ( !bookmark.name().isEmpty() )
+			conferenceElement.setAttribute( "name", bookmark.name() );
+
+		if ( bookmark.autoJoin() )
+			conferenceElement.setAttribute( "autojoin", "true" );
+
+		if ( !bookmark.nickName().isEmpty() ) {
+			QDomElement element = document.createElement( "nick" );
+			element.appendChild( document.createTextNode( bookmark.nickName() ) );
+			conferenceElement.appendChild( element );
+		}
+
+		if ( !bookmark.password().isEmpty() ) {
+			QDomElement element = document.createElement( "password" );
+			element.appendChild( document.createTextNode( bookmark.password() ) );
+			conferenceElement.appendChild( element );
+		}
+
+		storageElement.appendChild( conferenceElement );
+	}
+
+	return storageElement;
+}
+
+void JabberBookmarks::slotReceivedBookmarks( )
+{
+	JT_PrivateStorage *task = (JT_PrivateStorage*)( sender() );
+	m_bookmarks.clear();
+
+	if ( task->success() ) {
+		m_bookmarks = bookmarksFromStorage( task->element() );
+
+		foreach ( const JabberBookmark &bookmark, m_bookmarks ) {
+			if ( bookmark.autoJoin() ) {
+				XMPP::Jid x_jid( bookmark.fullJId() );
+
+				QString nickName = x_jid.resource();
+				if ( nickName.isEmpty() )
+					nickName = m_account->myself()->nickName();
+
+				if ( bookmark.password().isEmpty() )
+					m_account->client()->joinGroupChat( x_jid.domain(), x_jid.node(), nickName );
+				else
+					m_account->client()->joinGroupChat( x_jid.domain(), x_jid.node(), nickName, bookmark.password() );
 			}
 		}
 	}
@@ -98,52 +196,76 @@ void JabberBookmarks::slotReceivedBookmarks( )
 
 void JabberBookmarks::insertGroupChat(const XMPP::Jid &jid)
 {
-	if(m_conferencesJID.contains(jid.full()) || !m_account->isConnected())
-	{
+	bool containsConference = false;
+	foreach ( const JabberBookmark &bookmark, m_bookmarks ) {
+		if ( bookmark.fullJId() == jid.full() ) {
+			containsConference = true;
+			break;
+		}
+	}
+
+	if ( containsConference || !m_account->isConnected() )
 		return;
-	}
 
-	QDomElement storage_e=m_storage.documentElement();
-	if(storage_e.isNull())
-	{
-		storage_e=m_storage.createElement("storage");
-		m_storage.appendChild(storage_e);
-		storage_e.setAttribute("xmlns","storage:bookmarks");
-	}
-	
-	QDomElement conference=m_storage.createElement("conference");
-	storage_e.appendChild(conference);
-	conference.setAttribute("jid",jid.bare());
-	QDomElement nick=m_storage.createElement("nick");
-	conference.appendChild(nick);
-	nick.appendChild(m_storage.createTextNode(jid.resource()));
-	QDomElement name=m_storage.createElement("name");
-	conference.appendChild(name);
-	name.appendChild(m_storage.createTextNode(jid.full()));
+	JabberBookmark bookmark;
+	bookmark.setJId( jid.bare() );
+	bookmark.setNickName( jid.resource() );
+	bookmark.setName( jid.full() );
 
-	JT_PrivateStorage * task = new JT_PrivateStorage ( m_account->client()->rootTask ());
-	task->set( storage_e );
-	task->go ( true );
-	
-	m_conferencesJID += jid.full();
+	m_bookmarks.append( bookmark );
+
+	QDomDocument document( "storage" );
+	const QDomElement element = bookmarksToStorage( m_bookmarks, document );
+
+	JT_PrivateStorage *task = new JT_PrivateStorage( m_account->client()->rootTask() );
+	task->set( element );
+	task->go( true );
 }
 
-KAction * JabberBookmarks::bookmarksAction(QObject * /*parent*/)
+KAction * JabberBookmarks::bookmarksAction(QObject *parent)
 {
-	KSelectAction *groupchatBM = new KSelectAction( this );
-	groupchatBM->setIcon( KIcon("jabber_group") );
-	groupchatBM->setText( i18n("Groupchat Bookmark") );
-	groupchatBM->setItems(m_conferencesJID);
-	QObject::connect(groupchatBM, SIGNAL(triggered(QString)) , this , SLOT(slotJoinChatBookmark(QString)));
-	return groupchatBM;
+	Q_UNUSED( parent )
+
+	QStringList menuEntries;
+	foreach ( const JabberBookmark &bookmark, m_bookmarks ) {
+		menuEntries << bookmark.fullJId();
+	}
+
+	if ( !menuEntries.isEmpty() ) {
+		menuEntries << QString(); // separator
+		menuEntries << i18n( "Edit Bookmarks..." );
+	}
+
+	KSelectAction *action = new KSelectAction( this );
+	action->setIcon( KIcon( "jabber_group" ) );
+	action->setText( i18n( "Groupchat Bookmark" ) );
+	action->setItems( menuEntries );
+
+	connect( action, SIGNAL(triggered(QString)), this, SLOT(slotJoinChatBookmark(QString)) );
+	return action;
 }
 
 void JabberBookmarks::slotJoinChatBookmark( const QString & _jid )
 {
-	if(!m_account->isConnected())
+	if ( !m_account->isConnected() )
 		return;
-	XMPP::Jid jid(_jid);
-	m_account->client()->joinGroupChat( jid.domain() , jid.node() , jid.resource() );
+
+	if ( _jid != i18n( "Edit Bookmarks..." ) ) {
+		XMPP::Jid jid( _jid );
+		m_account->client()->joinGroupChat( jid.domain(), jid.node(), jid.resource() );
+	} else {
+		DlgJabberBookmarkEditor editor( m_bookmarks );
+		if ( editor.exec() ) {
+			m_bookmarks = editor.bookmarks();
+
+			QDomDocument document( "storage" );
+			const QDomElement element = bookmarksToStorage( m_bookmarks, document );
+
+			JT_PrivateStorage *task = new JT_PrivateStorage( m_account->client()->rootTask() );
+			task->set( element );
+			task->go( true );
+		}
+	}
 }
 
 #include "jabberbookmarks.moc"
