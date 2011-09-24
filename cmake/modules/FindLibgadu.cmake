@@ -65,23 +65,35 @@ if (NOT LIBGADU_INCLUDE_DIR OR NOT LIBGADU_LIBRARIES)
     mark_as_advanced (LIBGADU_INCLUDE_DIR LIBGADU_LIBRARIES)
 
 endif (NOT LIBGADU_INCLUDE_DIR OR NOT LIBGADU_LIBRARIES)
-    
+
 if (LIBGADU_INCLUDE_DIR AND LIBGADU_LIBRARIES)
 
     if (NOT WIN32)
 
-        execute_process ( COMMAND grep "#define GG_CONFIG_HAVE_PTHREAD" ${LIBGADU_INCLUDE_DIR}/libgadu.h RESULT_VARIABLE LIBGADU_PTHREADS )
-    
-        if (${LIBGADU_PTHREADS} GREATER 0)
+        try_run (run_result compile_result ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/gadu_pthread_check.c
+            CMAKE_FLAGS -DINCLUDE_DIRECTORIES:STRING=${LIBGADU_INCLUDE_DIR}
+            COMPILE_DEFINITIONS "${LIBGADU_DEFINITIONS}"
+        )
 
-            MESSAGE(STATUS "libgadu must be compiled with pthreads support")
+        if (compile_result)
+
+            if (run_result EQUAL 1)
+
+                set (LIBGADU_FOUND TRUE)
+
+            else (run_result EQUAL 1)
+
+                MESSAGE(STATUS "libgadu must be compiled with pthreads support")
+                set (LIBGADU_FOUND FALSE)
+
+            endif (run_result EQUAL 1)
+
+        else (compile_result)
+
+            MESSAGE(STATUS "unable to compile libgadu pthread check")
             set (LIBGADU_FOUND FALSE)
 
-        else (${LIBGADU_PTHREADS} GREATER 0)
-
-            set (LIBGADU_FOUND TRUE)
-
-        endif (${LIBGADU_PTHREADS} GREATER 0)
+        endif (compile_result)
 
     else (NOT WIN32)
 
