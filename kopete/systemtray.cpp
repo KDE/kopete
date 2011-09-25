@@ -51,7 +51,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
 	kDebug(14010) ;
     setCategory(Communications);
 	setToolTip("kopete", "Kopete", KGlobal::mainComponent().aboutData()->shortDescription());
-	setStatus(Active);
+	setStatus(Passive);
 
 	mIsBlinkIcon = false;
 	mBlinkTimer = new QTimer(this);
@@ -139,8 +139,8 @@ void KopeteSystemTray::startBlink()
 
 void KopeteSystemTray::stopBlink()
 {
-    setStatus(Active);
-    
+    setStatus(Passive);
+
 	if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
 
