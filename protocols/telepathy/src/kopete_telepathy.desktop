@@ -34,6 +34,7 @@ Name[uk]=Telepathy
 Name[x-test]=xxTelepathyxx
 Name[zh_CN]=Telepathy
 Comment=Messaging using Telepathy connection managers.
+Comment[cs]=Komunikace pomocí správců spojení Telepathy.
 Comment[da]=Messaging med Telepathy forbindelseshåndtering.
 Comment[es]=Mensajería que usa gestores de conexión de Telepathy.
 Comment[et]=Kiirsuhtlemine Telepathy ühendushaldurite vahendusel
