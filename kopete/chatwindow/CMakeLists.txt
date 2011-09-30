@@ -1,6 +1,8 @@
 
 #add_subdirectory(tests)
 
+add_subdirectory(a11y)
+
 include_directories( 
 ${KOPETE_INCLUDES}
 ${CMAKE_CURRENT_SOURCE_DIR}/../ 

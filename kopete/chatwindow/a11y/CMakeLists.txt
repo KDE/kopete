@@ -1,0 +1,5 @@
+include_directories(${KOPETE_INCLUDES})
+set(chatwindowaccessiblewidgetfactory_SRCS chatwindowaccessiblewidgetfactory.cpp accessiblechatmessagepart.cpp)
+kde4_add_plugin(chatwindowaccessiblewidgetfactory ${chatwindowaccessiblewidgetfactory_SRCS})
+target_link_libraries(chatwindowaccessiblewidgetfactory ${KDE4_KHTML_LIBS} )
+install(TARGETS chatwindowaccessiblewidgetfactory DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/accessible)
