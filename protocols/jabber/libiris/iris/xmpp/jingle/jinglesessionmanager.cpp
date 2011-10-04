@@ -21,7 +21,7 @@
 #include "jinglesessionmanager.h"
 #include "jingletasks.h"
 
-#include <QHttp>
+//#include <QHttp>
 
 using namespace XMPP;
 
@@ -38,7 +38,7 @@ public:
 	QList<int> usedPorts;
 	int firstPort;
 	QString ip;
-	QHttp *http;
+	//QHttp *http;
 };
 
 JingleSessionManager::JingleSessionManager(Client* c)
@@ -82,6 +82,7 @@ JingleSessionManager::JingleSessionManager(Client* c)
 
 void JingleSessionManager::slotExternalIPDone(bool err)
 {
+#if 0
 	d->ip = "";
 	if (err)
 	{
@@ -107,7 +108,8 @@ void JingleSessionManager::slotExternalIPDone(bool err)
 		qDebug() << " JingleSessionManager::slotExternalIPDone : Unable to parse HTML document." << errMess << line << col;
 	}
 	
-	delete d->http;
+	delete d->http; // NO! use deleteLater
+#endif
 }
 
 void JingleSessionManager::setExternalIP(const QString& eip)
