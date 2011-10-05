@@ -33,7 +33,9 @@ class QComboBox;
 class QAbstractItemView;
 
 class OscarAccount;
+namespace Oscar {
 class Client;
+}
 
 class OSCAR_EXPORT OscarPrivacyEngine : public QObject
 {
@@ -68,7 +70,7 @@ private:
 	QStandardItemModel m_contactsModel;
 	QStandardItemModel m_allContactsModel;
 	
-	Client* m_client;
+	Oscar::Client* m_client;
 	Type m_type;
 	
 	QComboBox* m_comboBox;

@@ -36,7 +36,9 @@ class Group;
 class FileTransferInfo;
 }
 
+namespace Oscar {
 class Client;
+}
 class ClientStream;
 class OscarContact;
 class OscarAccountPrivate;
@@ -52,7 +54,7 @@ public:
 	virtual ~OscarAccount();
 
 	/** Provide the derived accounts and contacts with access to the backend */
-	Client* engine();
+	Oscar::Client* engine();
 
 	/** Disconnects this account */
 	virtual void disconnect();

@@ -55,7 +55,6 @@ namespace Kopete
 namespace Oscar
 {
 class Settings;
-}
 
 class LIBOSCAR_EXPORT Client : public QObject
 {
@@ -649,7 +648,8 @@ private:
 	class ClientPrivate;
 	ClientPrivate* d;
 };
-Q_DECLARE_OPERATORS_FOR_FLAGS(Client::ICQStatus)
+}
+Q_DECLARE_OPERATORS_FOR_FLAGS(Oscar::Client::ICQStatus)
 
 #endif
 

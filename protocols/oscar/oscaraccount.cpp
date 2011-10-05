@@ -73,6 +73,8 @@
 #include "oscarstatusmanager.h"
 #include <kopetesockettimeoutwatcher.h>
 
+using namespace Oscar;
+
 
 class OscarAccountPrivate : public Client::CodecProvider
 {

@@ -95,6 +95,8 @@ namespace
 	DefaultCodecProvider defaultCodecProvider;
 }
 
+namespace Oscar {
+
 class Client::ClientPrivate
 {
 public:
@@ -1830,6 +1832,8 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 	}
 
 	kDebug(14151) << "nobody wants it :(";
+}
+
 }
 
 #include "client.moc"

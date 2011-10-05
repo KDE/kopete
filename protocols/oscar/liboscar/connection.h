@@ -25,7 +25,6 @@ Kopete (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 #include "liboscar_export.h"
 
 class ConnectionPrivate;
-class Client;
 class ClientStream;
 class Transfer;
 class RateClassManager;
@@ -36,6 +35,7 @@ class QHostAddress;
 
 namespace Oscar
 {
+class Client;
 class Settings;
 
 class MessageInfo
@@ -68,7 +68,7 @@ public:
 
 	static void setStartFlapSequenceList( const QList<Oscar::WORD>& seqList );
 	
-	void setClient( Client* );
+	void setClient( Oscar::Client* );
 
 	void connectToServer( const QString& host, quint16 port );
 	/**

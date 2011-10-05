@@ -25,6 +25,8 @@
 #include "kopeteprotocol.h"
 #include "client.h"
 
+using namespace Oscar;
+
 AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtrList others,
                                 Kopete::Protocol* protocol, Oscar::WORD exchange,
                                 const QString& room )

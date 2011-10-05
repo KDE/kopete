@@ -22,7 +22,9 @@
 #include "kopetechatsession.h"
 #include "oscartypes.h"
 
+namespace Oscar {
 class Client;
+}
 
 class AIMChatSession : public Kopete::ChatSession
 {
@@ -37,7 +39,7 @@ public:
      * Set the engine to use so that we can disconnect from the chat service
      * properly
      */
-    void setEngine( Client* engine );
+    void setEngine( Oscar::Client* engine );
 
     /**
      * Get the name of the AIM chat room represented by
@@ -77,7 +79,7 @@ public:
 private:
     QString m_roomName;
     Oscar::WORD m_exchange;
-    Client* m_engine;
+    Oscar::Client* m_engine;
 };
 
 
