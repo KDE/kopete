@@ -157,12 +157,18 @@ void KopeteItemDelegate::paint( QPainter* painter,
 
 		painter->translate( option.rect.topLeft() );
 
+		QPalette::ColorGroup cg = QPalette::Active;
+		if (!(option.state & QStyle::State_Enabled))
+			cg = QPalette::Disabled;
+		else if (!(option.state & QStyle::State_Active))
+			cg = QPalette::Inactive;
+
 		if ( Kopete::AppearanceSettings::self()->greyIdleMetaContacts() && index.data( Kopete::Items::IdleTimeRole ).toInt() > 0 )
 			painter->setPen( Kopete::AppearanceSettings::self()->idleContactColor() ); //apply the appropriate idle color
 		else if ( option.state & QStyle::State_Selected )
-			painter->setPen( option.palette.color( QPalette::Normal, QPalette::HighlightedText ) );
+			painter->setPen( option.palette.color( cg, QPalette::HighlightedText ) );
 		else
-			painter->setPen( option.palette.color( QPalette::Normal, QPalette::Text ) );
+			painter->setPen( option.palette.color( cg, QPalette::Text ) );
 
 		paintItem( layout.layout(), painter, option, index, 0 );
 
