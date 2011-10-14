@@ -23,6 +23,8 @@
 #include "client.h"
 #include <kdebug.h>
 
+using namespace KYahoo;
+
 MessageReceiverTask::MessageReceiverTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) ;

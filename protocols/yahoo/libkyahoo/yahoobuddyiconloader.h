@@ -25,7 +25,9 @@
 #include <kurl.h>
 
 class KJob;
-class Client;
+namespace KYahoo {
+	class Client;
+}
 namespace KIO {
 	class Job;
 	class TransferJob;
@@ -49,7 +51,7 @@ class YahooBuddyIconLoader : public QObject
 {
 	Q_OBJECT
 public:
-	YahooBuddyIconLoader( Client *c );
+	YahooBuddyIconLoader( KYahoo::Client *c );
 	~YahooBuddyIconLoader();
 
 	/**
@@ -71,7 +73,7 @@ private slots:
 private:
 	typedef QMap< KIO::TransferJob *, IconLoadJob > TransferJobMap;
 	TransferJobMap m_jobs;
-	Client *m_client;
+	KYahoo::Client *m_client;
 };
 
 #endif

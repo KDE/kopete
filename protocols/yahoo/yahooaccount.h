@@ -54,7 +54,9 @@ class ChatSession;
 class StatusMessage;
 class FileTransferInfo;
 }
-class Client;
+namespace KYahoo {
+	class Client;
+}
 struct YABEntry;
 class KJob;
 namespace KIO{
@@ -87,7 +89,7 @@ public:
 	/**
 	 * The session
 	 */
-	Client *yahooSession();
+	KYahoo::Client *yahooSession();
 
 	/**
 	 * Returns true if contact @p id is on the server-side contact list
@@ -296,7 +298,7 @@ private:
 	KAction *m_editOwnYABEntry;	// Menu item editOwnYABEntry
 	KAction *m_joinChatAction;	// Menu item joinChatAction
 	
-	Client *m_session;		// The Connection object
+	KYahoo::Client *m_session;		// The Connection object
 };
 
 #endif // YAHOOACCOUNT_H

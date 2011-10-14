@@ -31,6 +31,8 @@
 #include <k3bufferedsocket.h>
 
 using namespace KNetwork;
+using namespace KYahoo;
+
 ModifyYABTask::ModifyYABTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) ;

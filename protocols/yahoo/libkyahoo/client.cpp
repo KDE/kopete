@@ -60,6 +60,7 @@
 
 using namespace KNetwork;
 
+namespace KYahoo {
 
 class Client::ClientPrivate
 {
@@ -1007,6 +1008,8 @@ void Client::deleteTasks()
 	d->yahooChatTask = 0;
 	d->receiveFileTask->deleteLater();
 	d->receiveFileTask = 0;
+}
+
 }
 
 #include "client.moc"

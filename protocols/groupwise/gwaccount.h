@@ -50,7 +50,9 @@ namespace QCA {
 }
 class QCATLSHandler;
 class ClientStream;
-class Client;
+namespace GroupWise {
+	class Client;
+}
 class GWContactList;
 
 using namespace GroupWise;

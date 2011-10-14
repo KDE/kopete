@@ -23,7 +23,9 @@
 #include <QStringList>
 #include "libgroupwise_export.h"
 
-class Client;
+namespace GroupWise {
+	class Client;
+}
 
 /**
 Keeps a record of the server side privacy allow and deny lists, default policy and whether the user is allowed to change privacy settings
@@ -34,7 +36,7 @@ class LIBGROUPWISE_EXPORT PrivacyManager : public QObject
 {
 Q_OBJECT
 public:
-	PrivacyManager( Client * client);
+	PrivacyManager( GroupWise::Client * client);
 	~PrivacyManager();
 	// accessors
 	bool isBlocked( const QString & dn );
@@ -79,7 +81,7 @@ protected slots:
 	void slotAllowRemoved();
 	void slotDenyRemoved();	
 private:
-	Client * m_client;
+	GroupWise::Client * m_client;
 	bool m_locked;
 	bool m_defaultDeny;
 	QStringList m_allowList;

@@ -30,6 +30,7 @@
 #include <krandom.h>
 
 using namespace KNetwork;
+using namespace KYahoo;
 
 
 /* Buffer size to send file data. Automatically resized. Won't grow up past BUFFER_SIZE_MAX. Code will try

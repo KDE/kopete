@@ -27,6 +27,8 @@
 #include <kio/jobclasses.h>
 #include <QDomDocument>
 
+using namespace KYahoo;
+
 YahooChatTask::YahooChatTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) ;

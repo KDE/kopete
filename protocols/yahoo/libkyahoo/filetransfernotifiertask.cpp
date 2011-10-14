@@ -25,6 +25,8 @@
 #include <kdebug.h>
 #include <kcodecs.h>
 
+using namespace KYahoo;
+
 FileTransferNotifierTask::FileTransferNotifierTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) ;

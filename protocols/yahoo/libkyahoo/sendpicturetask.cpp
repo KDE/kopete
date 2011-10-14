@@ -30,6 +30,7 @@
 #include <klocale.h>
 
 using namespace KNetwork;
+using namespace KYahoo;
 
 SendPictureTask::SendPictureTask(Task* parent) : Task(parent)
 {

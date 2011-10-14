@@ -27,6 +27,8 @@
 #include <kio/jobclasses.h>
 #include <klocale.h>
 
+using namespace KYahoo;
+
 YABTask::YABTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) ;

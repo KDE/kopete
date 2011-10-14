@@ -42,6 +42,8 @@ class Task;
 class KTemporaryFile;
 struct YABEntry;
 
+namespace KYahoo {
+
 class LIBKYAHOO_EXPORT Client : public QObject
 {
 Q_OBJECT
@@ -748,5 +750,7 @@ Q_OBJECT
 		QTimer *m_pingTimer;
 		QTimer *m_aliveTimer;
 };
+
+}
 
 #endif
