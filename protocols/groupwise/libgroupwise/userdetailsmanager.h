@@ -25,7 +25,9 @@
 #include "gwerror.h"
 #include "libgroupwise_export.h"
 
-class Client;
+namespace GroupWise {
+	class Client;
+}
 
 /**
 Several client event handling processes require that a contact's details are available before exposing the event to the user.  This class is responsible for issuing details requests, tracking which users the client already has received details for, and signalling when details have been received.  The manager allows multiple interleaved get details requests to be replaced by a single request.

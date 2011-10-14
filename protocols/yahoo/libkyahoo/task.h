@@ -24,7 +24,10 @@
 
 class QString;
 
-class Client;
+namespace KYahoo {
+	class Client;
+}
+
 class Transfer;
 
 class Task : public QObject
@@ -33,11 +36,11 @@ class Task : public QObject
 public:
 	enum { ErrDisc };
 	Task(Task *parent);
-	Task( Client *, bool isRoot );
+	Task( KYahoo::Client *, bool isRoot );
 	virtual ~Task();
 
 	Task *parent() const;
-	Client *client() const;
+	KYahoo::Client *client() const;
 	Transfer *transfer() const;
 	
 	QString id() const;

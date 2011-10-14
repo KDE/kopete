@@ -30,6 +30,7 @@
 #include <klocale.h>
 
 using namespace KNetwork;
+using namespace KYahoo;
 
 WebcamTask::WebcamTask(Task* parent) : Task(parent)
 {

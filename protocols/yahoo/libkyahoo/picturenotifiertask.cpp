@@ -24,6 +24,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+using namespace KYahoo;
 
 PictureNotifierTask::PictureNotifierTask(Task* parent) : Task(parent)
 {

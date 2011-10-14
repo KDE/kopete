@@ -39,6 +39,8 @@ class Task;
 
 using namespace GroupWise;
 
+namespace GroupWise {
+
 class LIBGROUPWISE_EXPORT Client : public QObject
 {
 Q_OBJECT
@@ -400,5 +402,7 @@ fd		 * @param password
 		class ClientPrivate;
 		ClientPrivate* d;
 };
+
+}
 
 #endif

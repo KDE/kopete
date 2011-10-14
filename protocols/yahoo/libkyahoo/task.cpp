@@ -25,6 +25,8 @@
 
 #include "task.h"
 
+using namespace KYahoo;
+
 class Task::TaskPrivate
 {
 public:

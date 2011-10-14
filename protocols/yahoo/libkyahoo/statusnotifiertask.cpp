@@ -24,6 +24,8 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+using namespace KYahoo;
+
 StatusNotifierTask::StatusNotifierTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) ;

@@ -31,6 +31,8 @@
 #include "yahootypes.h"
 #include "client.h"
 
+using namespace KYahoo;
+
 YahooBuddyIconLoader::YahooBuddyIconLoader( Client *c )
 : m_client( c )
 {

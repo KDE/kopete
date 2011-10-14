@@ -37,6 +37,8 @@ extern "C"
 #include "libyahoo.h"
 }
 
+using namespace KYahoo;
+
 LoginTask::LoginTask(Task* parent) : Task(parent)
 {
 	kDebug(YAHOO_RAW_DEBUG) ;

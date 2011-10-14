@@ -27,7 +27,9 @@
 #include "libgroupwise_export.h"
 #include "transfer.h"
 
-class Client;
+namespace GroupWise {
+	class Client;
+}
 class Request; 
 
 class LIBGROUPWISE_EXPORT Task : public QObject
@@ -36,11 +38,11 @@ class LIBGROUPWISE_EXPORT Task : public QObject
 public:
 	enum { ErrDisc };
 	Task(Task *parent);
-	Task( Client *, bool isRoot );
+	Task( GroupWise::Client *, bool isRoot );
 	virtual ~Task();
 
 	Task *parent() const;
-	Client *client() const;
+	GroupWise::Client *client() const;
 	Transfer *transfer() const;
 	
 	QString id() const;

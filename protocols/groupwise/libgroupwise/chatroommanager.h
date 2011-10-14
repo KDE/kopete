@@ -24,7 +24,9 @@
 #include "gwchatrooms.h"
 #include "libgroupwise_export.h"
 
-class Client;
+namespace GroupWise {
+	class Client;
+}
 
 /**
  * Keeps a record of the server side chatrooms
@@ -34,7 +36,7 @@ class LIBGROUPWISE_EXPORT ChatroomManager : public QObject
 {
 	Q_OBJECT
 	public:
-		ChatroomManager( Client * client);
+		ChatroomManager( GroupWise::Client * client);
 		~ChatroomManager();
 		GroupWise::ChatroomMap rooms();
 		void requestProperties( const QString & displayName );
@@ -59,7 +61,7 @@ class LIBGROUPWISE_EXPORT ChatroomManager : public QObject
 		 */
 		void slotGotChatProperties();
 	private:
-		Client * m_client;
+		GroupWise::Client * m_client;
 		GroupWise::ChatroomMap m_rooms;
 		bool m_replace;
 };

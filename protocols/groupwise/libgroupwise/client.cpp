@@ -47,6 +47,8 @@
 #include "userdetailsmanager.h"
 #include "client.h"
 
+namespace GroupWise {
+
 class Client::ClientPrivate
 {
 public:
@@ -543,6 +545,8 @@ void Client::smt_messageSent()
 		debug( "message sending failed!" );
 		emit messageSendingFailed();
 	}
+}
+
 }
 
 #include "client.moc"

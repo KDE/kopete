@@ -71,6 +71,8 @@
 #include "yahoochatselectordialog.h"
 #include "yahoochatchatsession.h"
 
+using namespace KYahoo;
+
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
  : Kopete::PasswordedAccount(parent, accountId, false)
 {
