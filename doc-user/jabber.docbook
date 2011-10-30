@@ -175,7 +175,7 @@
   </mediaobject>
 </screenshot>
 </para>
-<para>Click on the Tab <guilabel>Connection</guilabel> to check additional options. Especially selecting <guilabel>Use protocol encryption</guilabel> and the unselection of <guilabel>Allow plain-text password authentification</guilabel> should be chosen for basic security reasons.
+<para>Click on the Tab <guilabel>Connection</guilabel> to check additional options. Especially selecting <guilabel>Use protocol encryption</guilabel> and the unselection of <guilabel>Allow plain-text password authentication</guilabel> should be chosen for basic security reasons.
 </para>
 <para>The <guilabel>default server information</guilabel> should be okay, if you are in a normal home network without special <ulink url="http://en.wikipedia.org/wiki/Firewall_%28computing%29">firewall</ulink> configuration.
 </para>
@@ -492,7 +492,7 @@
   </mediaobject>
 </screenshot>
 </para>
-<para>Your partner may do the same thing in return, so when you see a window asking you for authentification just answer the question and you are an authentificated user in your friend's contact list, too. 
+<para>Your partner may do the same thing in return, so when you see a window asking you for authentication just answer the question and you are an authentificated user in your friend's contact list, too. 
 </para>
 <para>
 <screenshot>
@@ -502,10 +502,10 @@
       <imagedata fileref="Kopetetutorial_snap019_otrauth.png" format="PNG"/>
     </imageobject>
     <textobject>
-      <phrase>OTR authentification</phrase>
+      <phrase>OTR authentication</phrase>
     </textobject>
     <caption>
-      <para>OTR authentification</para>
+      <para>OTR authentication</para>
     </caption>
   </mediaobject>
 </screenshot> 
