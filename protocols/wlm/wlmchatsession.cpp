@@ -79,6 +79,7 @@ Kopete::ChatSession (user, others, protocol),
 m_chatService (conn),
 m_downloadDisplayPicture (false),
 m_sendNudge (false),
+m_chatServiceRequested (false),
 m_tries (0),
 m_oimid (1),
 m_sessionID(1)
@@ -925,7 +926,7 @@ WlmChatSession::requestChatService ()
         WlmProtocol::protocol ()->wlmOffline)
         return false;
 
-    if (!isReady () && account ()->isConnected () && !isConnecting ())
+    if (!isReady () && account ()->isConnected () && !isConnecting () && !m_chatServiceRequested)
     {
         const std::string rcpt_ = members().first()->contactId().toLatin1().constData();
         const std::string msg_ = "";
@@ -933,6 +934,10 @@ WlmChatSession::requestChatService ()
         // request a new switchboard connection
         static_cast <WlmAccount *>(account ())->server ()->cb.mainConnection->requestSwitchboardConnection (ctx);
         QTimer::singleShot (30 * 1000, this, SLOT (switchboardConnectionTimeout()));
+        // if the user attempts to send more than one message a new sb
+        // is requested every time unless we received one in the mean
+        // time and the other client has already joined
+        m_chatServiceRequested = true;
         return true;
     }
     // probably we are about to connect
@@ -944,6 +949,8 @@ WlmChatSession::switchboardConnectionTimeout ()
 {
     if (!isReady ())
     {
+        // allow a new chat service request
+        m_chatServiceRequested = false;
         // try 3 times
         if (m_tries < 3)
         {

@@ -110,6 +110,7 @@ class WlmChatSession: public Kopete::ChatSession
     MSN::SwitchboardServerConnection * m_chatService;
     bool m_downloadDisplayPicture;
     bool m_sendNudge;
+    bool m_chatServiceRequested;
     int m_tries;
     int m_oimid;
     int m_sessionID;
