@@ -618,15 +618,17 @@ WlmChatManager::slotGotEmoticonFile(MSN::SwitchboardServerConnection * conn,
     if(pendingMessages.value(conn).isEmpty())
         return;
 
-    QMutableLinkedListIterator<PendingMessage> it(pendingMessages[conn]);
-    while (it.hasNext())
     {
-        PendingMessage pendingMsg = it.next();
-        if (fillEmoticons(chat, pendingMsg.message))
+        QMutableLinkedListIterator<PendingMessage> it(pendingMessages[conn]);
+        while (it.hasNext())
         {
-            chat->appendMessage(*pendingMsg.message);
-            it.remove();
-            delete pendingMsg.message;
+            PendingMessage pendingMsg = it.next();
+            if (fillEmoticons(chat, pendingMsg.message))
+            {
+                chat->appendMessage(*pendingMsg.message);
+                it.remove();
+                delete pendingMsg.message;
+            }
         }
     }
 
