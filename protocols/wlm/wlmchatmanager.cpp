@@ -656,19 +656,21 @@ void WlmChatManager::timerEvent(QTimerEvent *event)
         {
             connIt.next();
 
-            QMutableLinkedListIterator<PendingMessage> it(connIt.value());
-            while (it.hasNext())
             {
-                PendingMessage pendingMsg = it.next();
-                if (pendingMsg.receiveTime < thresholdTime)
+                QMutableLinkedListIterator<PendingMessage> it(connIt.value());
+                while (it.hasNext())
                 {
-                    kDebug(14210) << "Did not get emoticons in time!";
-                    WlmChatSession *chat = chatSessions[connIt.key()];
-                    if (chat)
-                        chat->appendMessage(*pendingMsg.message);
+                    PendingMessage pendingMsg = it.next();
+                    if (pendingMsg.receiveTime < thresholdTime)
+                    {
+                        kDebug(14210) << "Did not get emoticons in time!";
+                        WlmChatSession *chat = chatSessions[connIt.key()];
+                        if (chat)
+                            chat->appendMessage(*pendingMsg.message);
 
-                    it.remove();
-                    delete pendingMsg.message;
+                        it.remove();
+                        delete pendingMsg.message;
+                    }
                 }
             }
             if (connIt.value().isEmpty())
