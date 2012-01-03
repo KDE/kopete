@@ -18,11 +18,11 @@
 #define KOPETEPROPERTIES_H
 
 #include <QMultiHash>
+#include <QVariant>
 
 #include <typeinfo>
 
 class QString;
-class QVariant;
 class QDomElement;
 
 namespace Kopete
