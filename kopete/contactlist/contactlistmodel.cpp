@@ -150,6 +150,21 @@ QMimeData* ContactListModel::mimeData(const QModelIndexList &indexes) const
 	return mdata;
 }
 
+bool ContactListModel::setData(const QModelIndex &index, const QVariant &value, const int role){
+	if ( !index.isValid() )
+			return false;
+	QObject* metaContactObject = qVariantValue<QObject*>( index.data( Kopete::Items::ObjectRole ) );
+	Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
+	if ( metaContact )
+	{
+		metaContact->setDisplayName(value.toString());
+		metaContact->setDisplayNameSource(MetaContact::SourceCustom);
+		emit dataChanged(index,index);
+		return true;
+	}
+	return false;
+}
+
 bool ContactListModel::loadModelSettings( const QString& modelType )
 {
 	QDomDocument doc;
@@ -491,6 +506,7 @@ QVariant ContactListModel::metaContactData( const Kopete::MetaContact* mc, int r
 	switch ( role )
 	{
 	case Qt::DisplayRole:
+        case Qt::EditRole:
 		return mc->displayName();
 		break;
 	case Qt::AccessibleTextRole:

@@ -163,6 +163,7 @@ Qt::ItemFlags ContactListPlainModel::flags( const QModelIndex &index ) const
 		Kopete::MetaContact *mc = dynamic_cast<Kopete::MetaContact*>(cle);
 		if (mc)
 		{
+			f |= Qt::ItemIsEditable;
 			bool online = true;
 			foreach(Kopete::Contact *c, mc->contacts())
 			{

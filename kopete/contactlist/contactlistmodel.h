@@ -53,6 +53,7 @@ public:
 	virtual Qt::DropActions supportedDropActions() const;
 	virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
 	virtual QStringList mimeTypes() const;
+	virtual bool setData(const QModelIndex &index, const QVariant &value, const int role);
 
 	bool loadModelSettings( const QString& modelType );
 	bool saveModelSettings( const QString& modelType );

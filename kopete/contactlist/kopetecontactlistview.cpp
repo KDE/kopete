@@ -125,6 +125,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent )
 	setDropIndicatorShown( true );
 	setItemDelegate( new KopeteItemDelegate( this ) );
 	setExpandsOnDoubleClick( true );
+	setEditTriggers(QAbstractItemView::EditKeyPressed);
 
 	connect( this, SIGNAL(activated(QModelIndex)),
 	         this, SLOT(contactActivated(QModelIndex)));
@@ -183,11 +184,10 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	ac->addAction( "contactSendEmail", d->actionSendEmail );
 	connect( d->actionSendEmail, SIGNAL(triggered(bool)), this, SLOT(sendEmail()) );
 
-// FIXME: Do we need this, it's in properties
-// 	-* this actionRename is buggy, and useless with properties, removed in kopeteui.rc*-
-// 	d->actionRename = new KAction( KIcon("edit-rename"), i18n( "Rename" ), ac );
-// 	ac->addAction( "contactRename", d->actionRename );
-// 	connect( d->actionRename, SIGNAL(triggered(bool)), this, SLOT(slotRename()) );
+	d->actionRename = new KAction( KIcon("edit-rename"), i18nc( "verb, rename a contact", "Rename" ), ac );
+	d->actionRename->setShortcut( KShortcut(Qt::Key_F2) );
+	ac->addAction( "contactRename", d->actionRename );
+	connect( d->actionRename, SIGNAL(triggered(bool)), this, SLOT(rename()) );
 
 	d->actionSendFile = KopeteStdAction::sendFile( this, SLOT(sendFile()), ac );
 	ac->addAction( "contactSendFile", d->actionSendFile );
@@ -203,9 +203,9 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 // 	connect( Kopete::ContactList::self(), SIGNAL(metaContactSelected(bool)), this, SLOT(slotMetaContactSelected(bool)) );
 
 	connect( Kopete::AccountManager::self(), SIGNAL(accountRegistered(Kopete::Account*)),
-	         this, SLOT(addToAddContactMenu(Kopete::Account*)) );
+			this, SLOT(addToAddContactMenu(Kopete::Account*)) );
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
-	         this, SLOT(removeToAddContactMenu(const Kopete::Account*)) );
+			this, SLOT(removeToAddContactMenu(const Kopete::Account*)) );
 
 	d->actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
 	ac->addAction( "contactProperties", d->actionProperties );
@@ -532,6 +532,15 @@ void KopeteContactListView::sendEmail()
 	}
 }
 
+void KopeteContactListView::rename()
+{
+	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
+	if ( metaContact )
+	{
+		edit(currentIndex());
+	}
+}
+
 void KopeteContactListView::addTemporaryContact()
 {
 	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
@@ -812,20 +821,20 @@ void KopeteContactListView::updateActions()
 
 	if ( singleContactSelected )
 	{
-// 		d->actionRename->setText( i18n("Rename Contact") );
+		d->actionRename->setText( i18n("Rename Contact") );
 		d->actionRemove->setText( i18n("Remove Contact") );
 		d->actionSendMessage->setText( i18n("Send Single Message...") );
-// 		d->actionRename->setEnabled( true );
+		d->actionRename->setEnabled( true );
 		d->actionRemove->setEnabled( true );
 		d->actionAddContact->setText( i18n("&Add Subcontact") );
 		d->actionAddContact->setEnabled( !metaContact->isTemporary() );
 	}
 	else if ( singleGroupSelected )
 	{
-// 		d->actionRename->setText( i18n("Rename Group") );
+		d->actionRename->setText( i18n("Rename Group") );
 		d->actionRemove->setText( i18n("Remove Group") );
 		d->actionSendMessage->setText( i18n("Send Message to Group") );
-// 		d->actionRename->setEnabled( true );
+		d->actionRename->setEnabled( true );
 		d->actionRemove->setEnabled( true );
 		d->actionSendMessage->setEnabled( true );
 		d->actionAddContact->setText( i18n("&Add Contact to Group") );
@@ -833,9 +842,9 @@ void KopeteContactListView::updateActions()
 	}
 	else
 	{
-// 		d->actionRename->setText( i18n("Rename") );
+		d->actionRename->setText( i18n("Rename") );
 		d->actionRemove->setText( i18n("Remove") );
-// 		d->actionRename->setEnabled( false );
+		d->actionRename->setEnabled( false );
 		d->actionRemove->setEnabled( !selected.isEmpty() );
 		d->actionAddContact->setEnabled( false );
 		d->actionMakeMetaContact->setText( i18n("Make Meta Contact") );

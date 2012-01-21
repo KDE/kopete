@@ -82,6 +82,7 @@ public Q_SLOTS:
 	void sendFile();
 	void sendMessage();
 	void sendEmail();
+        void rename();
 	void addTemporaryContact();
 	void removeGroupOrMetaContact();
 	void moveToGroup();

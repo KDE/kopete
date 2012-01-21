@@ -234,6 +234,8 @@ bool ContactListTreeModel::setData( const QModelIndex & index, const QVariant & 
 	if ( !index.isValid() )
 		return false;
 
+	ContactListModel::setData(index,value,role);
+
 	if ( role == Kopete::Items::ExpandStateRole )
 	{
 		ContactListModelItem *clmi = itemFor( index );
@@ -345,6 +347,7 @@ Qt::ItemFlags ContactListTreeModel::flags( const QModelIndex &index ) const
 		MetaContactModelItem *mcmi = dynamic_cast<MetaContactModelItem*>(clmi);
 		if (mcmi)
 		{
+			f |= Qt::ItemIsEditable;
 			bool online = true;
 			foreach(Kopete::Contact *c, mcmi->metaContact()->contacts())
 			{
