@@ -213,8 +213,9 @@ void LoginTask::sendAuthSixteenStage1(const QString& sn, const QString& seed)
 	kDebug(YAHOO_RAW_DEBUG) << "seed:" << seed;
 	m_stage1Data.clear();
 	/* construct a URL from the seed and request tokens */
-	QByteArray encodedUrl;
-	QString fullUrl = YahooTokenUrl.arg(sn, client()->password(), seed);
+	QString encodedPassword(QUrl::toPercentEncoding(client()->password()));
+	QString encodedUser(QUrl::toPercentEncoding(sn));
+	QString fullUrl = YahooTokenUrl.arg(encodedUser, encodedPassword, seed);
 	KUrl tokenUrl(fullUrl);
 	KIO::Job* job = KIO::get(tokenUrl, KIO::Reload, KIO::HideProgressInfo);
 	connect(job, SIGNAL(data(KIO::Job*,QByteArray)),
