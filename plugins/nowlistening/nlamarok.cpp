@@ -88,10 +88,16 @@ void NLamaroK::update()
 	if(statusReply.isValid())
 	{
 		// 0 = playing, 1 = paused, 2 = stopped
-		if(statusReply.value().Play != 2)
+		if(statusReply.value().Play == 0)
 			m_playing = true;
-		else
+		else {
 			m_playing = false;
+			m_newTrack = true;
+			m_track = "";
+                        m_album = "";
+			m_artist = "";
+			return;
+		}
 	}
 	else
 		m_playing = false;
