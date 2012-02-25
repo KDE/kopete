@@ -141,9 +141,6 @@ public slots:
 
 	void requestAuthorization();
 
-signals:
-	void statusMessageChanged();
-
 protected slots:
 	void slotTyping( bool typing );
 	void messageAck( const QString& contact, uint messageId );

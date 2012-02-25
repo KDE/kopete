@@ -51,12 +51,9 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	setPresenceTarget( presence );
 
 	Kopete::StatusMessage statusMessage;
-	if ( !description.isEmpty() )
-		setProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle, description );
-	else
-		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusTitle );
-
-	setAwayMessage( message );
+	statusMessage.setTitle( description );
+	statusMessage.setMessage( message );
+	setStatusMessage( statusMessage );
 }
 
 #include "icqcontactbase.moc"

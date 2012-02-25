@@ -139,22 +139,33 @@ void ICQContact::refreshStatus( const UserDetails& details, Oscar::Presence pres
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus2 );
 		presence.setMood( details.statusMood() );
-		setProperty( mProtocol->statusTitle, details.personalMessage() );
+
+		Kopete::StatusMessage msg;
+		msg.setTitle( details.personalMessage() );
+		setStatusMessage( msg );
 	}
 	// XStatus don't support offline status so don't show it (xtrazStatusSpecified can be true if contact was online)
 	else if ( details.xtrazStatus() != -1 && presence.type() != Oscar::Presence::Offline )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::XStatus );
 		presence.setXtrazStatus( details.xtrazStatus() );
+
+		Kopete::StatusMessage msg;
+		msg.setTitle( details.personalMessage() );
+		setStatusMessage( msg );
 	}
 	else if ( !details.personalMessage().isEmpty() )
 	{
 		presence.setFlags( presence.flags() | Oscar::Presence::ExtStatus );
-		setProperty( mProtocol->statusTitle, details.personalMessage() );
+
+		Kopete::StatusMessage msg;
+		msg.setTitle( details.personalMessage() );
+		setStatusMessage( msg );
 	}
 	else
 	{
-		removeProperty( mProtocol->statusTitle );
+		Kopete::StatusMessage msg;
+		setStatusMessage( msg ); // set an empty status message
 	}
 
 	setPresenceTarget( presence );

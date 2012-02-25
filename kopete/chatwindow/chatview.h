@@ -318,6 +318,12 @@ private slots:
 	void slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldstatus );
 
 	/**
+	 * Called when a contact changes status message.
+	 * @param contact The contact who changed status
+	 */
+	void slotStatusMessageChanged( Kopete::Contact *contact );
+
+	/**
 	 * Called when the chat's display name is changed
 	 */
 	void slotChatDisplayNameChanged();

@@ -481,6 +481,11 @@ signals:
 		const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 
 	/**
+	 * The contact's status message changed
+	 */
+	void statusMessageChanged( Kopete::Contact *contact );
+
+	/**
 	 * The contact is about to be destroyed.
 	 * Called when entering the destructor. Useful for cleanup, since
 	 * metaContact() is still accessible at this point.

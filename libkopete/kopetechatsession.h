@@ -280,6 +280,11 @@ signals:
 	void onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & );
 
 	/**
+	 * @brief a contact in this chat has changed his status message
+	 */
+	void statusMessageChanged( Kopete::Contact* );
+
+	/**
 	 * @brief a contact in this chat has changed his nickname
 	 */
 	void nickNameChanged( Kopete::Contact *, const QString & );

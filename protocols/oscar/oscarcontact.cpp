@@ -398,7 +398,7 @@ void OscarContact::setAwayMessage( const QString &message )
 	else
 		removeProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage );
 
-	emit statusMessageChanged();
+	emit statusMessageChanged( this );
 }
 
 void OscarContact::changeContactEncoding()

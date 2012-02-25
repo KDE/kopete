@@ -59,7 +59,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotUpdateClicked()));
 	QObject::connect(this, SIGNAL(cancelClicked()), this, SLOT(slotCloseClicked()));
 	QObject::connect(c, SIGNAL(updatedProfile()), this, SLOT(slotUpdateProfile()));
-	QObject::connect(c, SIGNAL(statusMessageChanged()), this, SLOT(slotUpdateProfile()));
+	QObject::connect(c, SIGNAL(statusMessageChanged( Kopete::Contact* )), this, SLOT(slotUpdateProfile()));
 
 	mMainWidget->txtScreenName->setText( c->contactId() );
 

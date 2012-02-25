@@ -194,6 +194,8 @@ void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 		setProperty( Kopete::Global::Properties::self()->statusMessage(), statusMessage.message() );
 	else
 		removeProperty( Kopete::Global::Properties::self()->statusMessage() );
+
+	emit statusMessageChanged( this );
 }
 
 void Contact::slotAccountIsConnectedChanged()

@@ -132,6 +132,8 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	//Manager signals
 	connect( mgr, SIGNAL(displayNameChanged()),
 	         this, SLOT(slotChatDisplayNameChanged()) );
+	connect( mgr, SIGNAL(statusMessageChanged(Kopete::Contact*)),
+	         this, SLOT(slotStatusMessageChanged( Kopete::Contact*)));
 	connect( mgr, SIGNAL(contactAdded(const Kopete::Contact*,bool)),
 	         this, SLOT(slotContactAdded(const Kopete::Contact*,bool)) );
 	connect( mgr, SIGNAL(contactRemoved(const Kopete::Contact*,QString,Qt::TextFormat,bool)),
@@ -530,6 +532,30 @@ void ChatView::slotDisplayNameChanged( const QString &oldValue, const QString &n
 	}
 }
 
+void ChatView::slotStatusMessageChanged( Kopete::Contact* contact )
+{
+	if ( contact == m_manager->myself() )
+		return;
+	const QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
+	const QString statusTitle = contact->statusMessage().title();
+	const QString statusMessage = contact->statusMessage().message();
+	QString msg;
+	if ( statusTitle.isEmpty() && statusMessage.isEmpty() )
+		msg = i18n( "%1 deleted status message", contactName );
+	else
+	{
+		if ( statusTitle.isEmpty() )
+			msg = statusMessage;
+		else if ( statusMessage.isEmpty() )
+			msg = statusTitle;
+		else
+			msg = statusTitle + " - " + statusMessage;
+		msg = i18n( "%1 changed status message: %2", contactName, msg );
+	}
+
+	sendInternalMessage( msg );
+}
+
 void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 {
 	if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
@@ -543,10 +569,9 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 		this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
 	}
 
-	if( !suppress && Kopete::BehaviorSettings::self()->showEvents() && m_manager->members().count() > 1 ) {
-		QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
+	const QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
+	if( !suppress && Kopete::BehaviorSettings::self()->showEvents() && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.", contactName) );
-	}
 
 	if ( m_manager->members().count() == 1 )
 	{
@@ -557,6 +582,20 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	}
 	else
 		disconnect( m_manager->members().first(), SIGNAL(canAcceptFilesChanged()), this, SIGNAL(canAcceptFilesChanged()) );
+
+	const QString statusTitle = contact->statusMessage().title();
+	const QString statusMessage = contact->statusMessage().message();
+	if ( contact != m_manager->myself() && ( !statusTitle.isEmpty() || !statusMessage.isEmpty() ) )
+	{
+		QString msg;
+		if ( statusTitle.isEmpty() )
+			msg = statusMessage;
+		else if ( statusMessage.isEmpty() )
+			msg = statusTitle;
+		else
+			msg = statusTitle + " - " + statusMessage;
+		sendInternalMessage( i18n( "%1 status message is %2", contactName, msg ) );
+	}
 }
 
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Qt::TextFormat format, bool suppressNotification )
@@ -705,9 +744,17 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 		}
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
-			QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
-			sendInternalMessage( i18n( "%2 is now %1.",
-				newStatus.description(), contactName ) );
+			// We shouldn't show an internal message if status have changed
+			// but status visible by user hadn't. It can be happened
+			// if contact changed Xtraz status (oscar/icq protocol)
+			// In this case only status' metadata changes, and no need
+			// to show this message (see bug #193402)
+			if ( newStatus.status() != oldStatus.status() )
+			{
+				QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
+				sendInternalMessage( i18n( "%2 is now %1.",
+					newStatus.description(), contactName ) );
+			}
 		}
 	}
 
