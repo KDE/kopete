@@ -562,8 +562,8 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
                 group->setDisplayName( QLatin1String( "Top-Level" ) );
                 break;
             default:
-                group->setDisplayName( i18n( "(Unnamed Group)" ) );
-                break;
+                group->setLoading( false );
+                return false;
         }
     }
 
