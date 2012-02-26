@@ -53,7 +53,7 @@ public:
 	typedef QList<Group*> List;
 
 	/** Kinds of groups. */
-	enum GroupType { Normal=0, Temporary, TopLevel };
+	enum GroupType { Normal=0, Temporary, TopLevel, Offline };
 
 	/**
 	 * \brief Create an empty group
@@ -122,7 +122,12 @@ public:
 	 * \return a Group pointer to the temporary group
 	 */
 	static Group *temporary();
-	
+
+	/**
+	 * \return a Group pointer to the offline group
+	 */
+	static Group *offline();
+
 	/**
 	 * @internal
 	 */
@@ -162,10 +167,11 @@ private:
 
 	static Group *s_topLevel;
 	static Group *s_temporary;
+	static Group *s_offline;
 
 	class Private;
 	Private * const d;
-	
+
 	/**
 	 * @internal  used to get reachabe contact to send message to thom.
 	 */

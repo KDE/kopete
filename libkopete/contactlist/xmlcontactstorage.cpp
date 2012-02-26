@@ -506,7 +506,7 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
     }
 
     // Don't overwrite type for Temporary and TopLevel groups
-    if ( group->type() != Kopete::Group::Temporary && group->type() != Kopete::Group::TopLevel )
+    if ( group->type() != Kopete::Group::Temporary && group->type() != Kopete::Group::TopLevel && group->type() != Kopete::Group::Offline )
     {
         QString type = element.attribute( QLatin1String( "type" ), QLatin1String( "standard" ) );
         if ( type == QLatin1String( "temporary" ) )
@@ -522,6 +522,14 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
             if ( group->type() != Kopete::Group::TopLevel )
             {
                 parseGroup( Kopete::Group::topLevel(), element );
+                return false;
+            }
+        }
+        else if ( type == QLatin1String( "offline" ) )
+        {
+            if ( group->type() != Kopete::Group::Offline )
+            {
+                parseGroup( Kopete::Group::offline(), element );
                 return false;
             }
         }
@@ -560,6 +568,9 @@ bool XmlContactStorage::parseGroup(Kopete::Group *group, const QDomElement &elem
                 break;
             case Kopete::Group::TopLevel:
                 group->setDisplayName( QLatin1String( "Top-Level" ) );
+                break;
+            case Kopete::Group::Offline:
+                group->setDisplayName( QLatin1String( "Offline" ) );
                 break;
             default:
                 group->setLoading( false );
@@ -748,6 +759,10 @@ const QDomElement XmlContactStorage::storeGroup( Kopete::Group *group ) const
         case Kopete::Group::TopLevel:
             type = QLatin1String( "top-level" );
             break;
+        case Kopete::Group::Offline:
+            type = QLatin1String( "offline" );
+            break;
+
         default:
             type = QLatin1String( "standard" ); // == Normal
             break;

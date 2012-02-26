@@ -368,6 +368,10 @@ void KopeteContactListView::removeGroupOrMetaContact()
 			if ( group == Kopete::Group::topLevel() )
 				continue;
 
+			// Can't remove the offline group
+			if ( group == Kopete::Group::offline() )
+				continue;
+
 			groupList.append( group );
 
 			if( !group->displayName().isEmpty() )
@@ -453,6 +457,10 @@ void KopeteContactListView::moveToGroup()
 		QObject* groupObject = qVariantValue<QObject*>( index.data( Kopete::Items::MetaContactGroupRole ) );
 		Kopete::Group* fromGroup = qobject_cast<Kopete::Group*>(groupObject);
 
+		// Can't move to the offline group manually
+		if ( toGroup == Kopete::Group::offline() )
+		    return;
+
 		metaContact->moveToGroup( fromGroup, toGroup );
 	}
 }
@@ -482,6 +490,10 @@ void KopeteContactListView::copyToGroup()
 		Kopete::Group *toGroup = Kopete::ContactList::self()->group( groupId );
 		if ( !toGroup )
 			return;
+
+		// Can't copy to the offline group manually
+		if ( toGroup == Kopete::Group::offline() )
+		    return;
 
 		metaContact->addToGroup( toGroup );
 	}
@@ -1009,6 +1021,9 @@ void KopeteContactListView::groupPopup( Kopete::Group *group, const QPoint& pos 
 			<< "Kopete::UI::Global::mainWidget() = " << Kopete::UI::Global::mainWidget() << endl;
 		return;
 	}
+
+	if ( group == Kopete::Group::offline() )
+	    return;
 
 	KMenu *popup = dynamic_cast<KMenu *>( window->factory()->container( "group_popup", window ) );
 	if ( popup )

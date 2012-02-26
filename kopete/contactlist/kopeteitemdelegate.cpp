@@ -188,7 +188,8 @@ void KopeteItemDelegate::paint( QPainter* painter,
 
 QList<Kopete::Contact*> KopeteItemDelegate::filterContacts( const QList<Kopete::Contact*> contacts ) const
 {
-	if ( Kopete::AppearanceSettings::self()->showOfflineUsers() )
+	if ( Kopete::AppearanceSettings::self()->showOfflineUsers() ||
+		Kopete::AppearanceSettings::self()->showOfflineGrouped() )
 		return contacts;
 
 	QAbstractItemView* itemView = qobject_cast<QAbstractItemView*>(parent());

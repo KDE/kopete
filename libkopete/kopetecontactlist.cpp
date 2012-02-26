@@ -198,7 +198,9 @@ Group * ContactList::findGroup(const QString& displayName, int type)
 		return Group::temporary();
 	if( type == Group::TopLevel )
 		return Group::topLevel();
-	
+	if( type == Group::Offline )
+		return Group::offline();
+
 	if ( displayName == i18n ("Top Level") )
 		return Group::topLevel();
 

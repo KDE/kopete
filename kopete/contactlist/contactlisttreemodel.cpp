@@ -57,6 +57,14 @@ void ContactListTreeModel::addMetaContact( Kopete::MetaContact* contact )
 
 	foreach( Kopete::Group* g, contact->groups() )
 		addMetaContactToGroup( contact, g );
+
+	if (  Kopete::AppearanceSettings::self()->showOfflineGrouped() )
+	{
+		if ( !contact->isOnline() )
+			addMetaContactToGroup( contact, Kopete::Group::offline() );
+		else
+			removeMetaContactFromGroup( contact, Kopete::Group::offline() );
+	}
 }
 
 void ContactListTreeModel::removeMetaContact( Kopete::MetaContact* contact )
@@ -273,7 +281,10 @@ QVariant ContactListTreeModel::data ( const QModelIndex & index, int role ) cons
 		switch ( role )
 		{
 		case Qt::DisplayRole:
-			return i18n( "%1 (%2/%3)", g->displayName(), countConnected( gmi ), gmi->count() );
+			if ( g == Kopete::Group::offline() )
+				return i18n( "%1 (%2)", g->displayName(), gmi->count() );
+			else
+				return i18n( "%1 (%2/%3)", g->displayName(), countConnected( gmi ), gmi->count() );
 			break;
 		case Qt::DecorationRole:
 			if ( g->isExpanded() )
@@ -585,6 +596,11 @@ void ContactListTreeModel::handleContactDataChange(Kopete::MetaContact* mc)
 	// and now notify all the changes
 	foreach(QModelIndex index, indexList)
 	{
+		if ( !mc->isOnline() )
+			addMetaContactToGroup( mc, Kopete::Group::offline() );
+		else
+			removeMetaContactFromGroup( mc, Kopete::Group::offline() );
+
 		// we need to emit the dataChanged signal to the groups this metacontact belongs to
 		// so that proxy filtering is aware of the changes, first we have to update the parent
 		// otherwise the group won't be expandable.

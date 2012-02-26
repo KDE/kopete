@@ -995,6 +995,9 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 		return;
 	}
 
+	if ( to->type() == Group::Offline )
+		return;
+
 	if ( isTemporary() && to->type() != Group::Temporary )
 		return;
 

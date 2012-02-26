@@ -250,10 +250,14 @@
 			<default>false</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
-
 		<entry key="showIdentityIcons" type="Bool">
 			<label>Show identities in status bar instead of accounts.</label>
 			<default>true</default>
+		</entry>
+		<entry key="showOfflineGrouped" type="Bool">
+			<label>Show offline users in a seperate group.</label>
+			<default>false</default>
+			<emit signal="contactListAppearanceChanged" />
 		</entry>
 	</group>
 </kcfg>

@@ -79,6 +79,15 @@ bool ContactListProxyModel::lessThan(const QModelIndex &left, const QModelIndex 
 		default:
 			QString leftName = left.data( Qt::DisplayRole ).toString();
 			QString rightName = right.data( Qt::DisplayRole ).toString();
+
+			// Force the offline group to the bottom
+			QObject* groupObjectLeft = qVariantValue<QObject*>( sourceModel()->data( left, Kopete::Items::ObjectRole ) );
+			QObject* groupObjectRight = qVariantValue<QObject*>( sourceModel()->data( right, Kopete::Items::ObjectRole ) );
+
+			if ( groupObjectLeft == Kopete::Group::offline() )
+				return false;
+			else if ( groupObjectRight == Kopete::Group::offline() )
+				return true;
 			return QString::localeAwareCompare( leftName, rightName ) < 0;
 		}
 	}
@@ -130,6 +139,10 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 		int connectedContactsCount = model->data( current, Kopete::Items::ConnectedCountRole ).toInt();
 		int totalContactsCount = model->data( current, Kopete::Items::TotalCountRole ).toInt();
 
+		bool isOfflineGroup = ( groupObject == Kopete::Group::offline() );
+		if ( !filterRegExp().isEmpty() && isOfflineGroup )
+			return false;
+
 		if ( !filterRegExp().isEmpty() )
 		{
 			// This shows or hides the contacts group folder if something was found.
@@ -158,10 +171,17 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 		}
 
 
-		if ( !showEmpty && totalContactsCount == 0 )
+		if ( !Kopete::AppearanceSettings::self()->showOfflineGrouped() && isOfflineGroup )
 			return false;
 
-		if ( !showEmpty && !showOffline && connectedContactsCount == 0 )
+		if ( !showEmpty && totalContactsCount == 0 && !isOfflineGroup)
+			return false;
+
+		// dont display offline when viewing in grouped offline mode
+		if ( showOffline && isOfflineGroup )
+			return false;
+
+		if ( !showEmpty && !showOffline && connectedContactsCount == 0 && !isOfflineGroup )
 			return false;
 
 		return true;
@@ -176,6 +196,17 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 
 			// Do a better search
 			return searchContactInfo( mc, filterRegExp() );
+		}
+
+		// Get the MetaContacts parent group name
+		QObject* groupObject = qVariantValue<QObject*>( model->data( sourceParent, Kopete::Items::ObjectRole ) );
+
+		if ( Kopete::AppearanceSettings::self()->groupContactByGroup() && qobject_cast<Kopete::Group*>(groupObject) != 0 )
+		{
+			// If this contact's group is called Offline, and we are not globally 
+			// showing offline all users show the offline group folder
+			if ( groupObject == Kopete::Group::offline() )
+				return !showOffline;
 		}
 
 		bool alwaysVisible = model->data( current, Kopete::Items::AlwaysVisible ).toBool();

@@ -31,6 +31,7 @@ namespace Kopete {
 
 Group *Group::s_topLevel  = 0L;
 Group *Group::s_temporary = 0L;
+Group *Group::s_offline = 0L;
 Group * Group::topLevel()
 {
 	if ( !s_topLevel )
@@ -45,6 +46,14 @@ Group * Group::temporary()
 		s_temporary = new Group( i18n( "Not in your contact list" ), Group::Temporary );
 
 	return s_temporary;
+}
+
+Group * Group::offline()
+{
+	if ( !s_offline )
+		s_offline = new Group( i18n( "Offline Users" ), Group::Offline );
+
+	return s_offline;
 }
 
 uint Group::Private::uniqueGroupId = 0;
@@ -81,6 +90,8 @@ Group::~Group()
 		s_topLevel=0L;
 	if(d->type == Temporary)
 		s_temporary=0L;
+	if(d->type == Offline)
+		s_offline=0L;
 	delete d;
 }
 
