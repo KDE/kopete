@@ -86,7 +86,12 @@ class CryptographyPlugin : public Kopete::Plugin
 		static QStringList supportedProtocols() {
 			return QStringList() << "MSNProtocol"
 			       << "MessengerProtocol"
+			       << "WLMProtocol"
 			       << "JabberProtocol"
+			       << "SkypeProtocol"
+			       << "BonjourProtocol"
+			       << "WPProtocol"
+			       << "IRCProtocol"
 			       << "YahooProtocol";
 		}
 		

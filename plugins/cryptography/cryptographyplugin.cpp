@@ -326,6 +326,7 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	// sign message body
 	else if ( signing )
 	{
+		kDebug ( 14303 ) << "clearsign:" << (CryptographySettings::clearSignMode() ? "true" : "false");
 		Kleo::SignJob * job = proto->signJob ( true/*armor*/ );
 		job->exec ( signingKeys, msg.plainBody().toLatin1(), CryptographySettings::clearSignMode() ? GpgME::Clearsigned : GpgME::NormalSignatureMode, result );
 	}
@@ -369,10 +370,10 @@ void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 	// warn about unfriendly protocols
 	if ( KMM->protocol() ) {
 		QString protocol ( KMM->protocol()->metaObject()->className() );
-		if ( gui->m_encAction->isChecked() ) {
+		if ( protocol != "Kopete::Protocol" ) {
 			if ( ! supportedProtocols().contains ( protocol ) ) {
-				KMessageBox::information ( 0, i18nc ( "@info", "This protocol may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption." ),
-				                           i18n ( "Cryptography Unsupported Protocol" ), "Warn about unsupported " + QString ( KMM->protocol()->metaObject()->className() ) );
+				KMessageBox::information ( 0, i18nc ( "@info", "This protocol %1 may not work with messages that are encrypted. This is because encrypted messages are very long, and the server or peer may reject them due to their length. To avoid being signed off or your account being warned or temporarily suspended, turn off encryption.", protocol ),
+				                           i18n ( "Cryptography Unsupported Protocol %1", protocol ), "Warn about unsupported " + protocol );
 			}
 		}
 	}
