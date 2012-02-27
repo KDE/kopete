@@ -255,7 +255,7 @@
 			<default>true</default>
 		</entry>
 		<entry key="showOfflineGrouped" type="Bool">
-			<label>Show offline users in a seperate group.</label>
+			<label>Show offline users in a separate group.</label>
 			<default>false</default>
 			<emit signal="contactListAppearanceChanged" />
 		</entry>
