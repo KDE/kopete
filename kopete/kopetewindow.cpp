@@ -871,6 +871,10 @@ bool KopeteWindow::queryExit()
 	{
 		saveOptions();
 		kDebug ( 14000 ) << " shutting down plugin manager";
+		Kopete::PluginList list = Kopete::PluginManager::self()->loadedPlugins();
+		foreach ( Kopete::Plugin *plugin, list ) {
+			guiFactory()->removeClient(plugin);
+		}
 		Kopete::PluginManager::self()->shutdown();
 		return true;
 	}
