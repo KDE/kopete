@@ -85,6 +85,7 @@ public:
 	Contact *myself;
 	QTimer suppressStatusTimer;
 	QTimer reconnectTimer;
+	bool reconnectOnNetworkIsOnline;
 	bool suppressStatusNotification;
 	Kopete::BlackLister *blackList;
 	KConfigGroup *configGroup;
@@ -106,10 +107,13 @@ Account::Account( Protocol *parent, const QString &accountId )
 
 	d->restoreStatus = Kopete::OnlineStatus::Online;
 	d->restoreMessage = Kopete::StatusMessage();
+	d->reconnectOnNetworkIsOnline = false;
 
 	d->reconnectTimer.setSingleShot( true );
 	QObject::connect( &d->reconnectTimer, SIGNAL(timeout()),
 	                  this, SLOT(reconnect()) );
+
+	QObject::connect(Solid::Networking::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)), this, SLOT(networkingStatusChanged(Solid::Networking::Status)));
 
 	QObject::connect( &d->suppressStatusTimer, SIGNAL(timeout()),
 		this, SLOT(slotStopSuppression()) );
@@ -141,6 +145,29 @@ void Account::reconnect()
 	setOnlineStatus( d->restoreStatus, d->restoreMessage );
 }
 
+void Account::networkingStatusChanged( const Solid::Networking::Status status )
+{
+	switch(status) {
+	case Solid::Networking::Connected:
+		if (d->reconnectOnNetworkIsOnline) {
+			reconnect();
+		}
+		break;
+
+	case Solid::Networking::Unconnected:
+	case Solid::Networking::Disconnecting:
+		setOnlineStatus( OnlineStatus::Offline );
+		if (Kopete::BehaviorSettings::self()->reconnectOnDisconnect()) {
+			d->reconnectOnNetworkIsOnline = true;
+		}
+		break;
+
+	case Solid::Networking::Unknown:
+	case Solid::Networking::Connecting:
+		break;
+	}
+}
+
 void Account::disconnected( DisconnectReason reason )
 {
 	kDebug( 14010 ) << reason;
@@ -151,18 +178,24 @@ void Account::disconnected( DisconnectReason reason )
 	}
 	else if ( Kopete::BehaviorSettings::self()->reconnectOnDisconnect() == true && reason > Manual )
 	{
-		if ( d->reconnectTimer.isActive() )
-			return; // In case protocol calls disconnected more than one time on disconnect.
+		if (reason == ConnectionReset) {
+			d->reconnectOnNetworkIsOnline = true;
+			d->reconnectTimer.stop();
+		} else {
+			if ( d->reconnectTimer.isActive() )
+				return; // In case protocol calls disconnected more than one time on disconnect.
 
-		d->connectionTry++;
-		//use a timer to allow the plugins to clean up after return
-		if ( d->connectionTry < 3 )
-			d->reconnectTimer.start( 10000 ); // wait 10 seconds before reconnect
-		else if ( d->connectionTry <= 10 )
-			d->reconnectTimer.start( ((2 * (d->connectionTry - 2)) - 1) * 60000 ); // wait 1,3,5...15 minutes => stops after 64 min
+			d->connectionTry++;
+			//use a timer to allow the plugins to clean up after return
+			if ( d->connectionTry < 3 )
+				d->reconnectTimer.start( 10000 ); // wait 10 seconds before reconnect
+			else if ( d->connectionTry <= 10 )
+				d->reconnectTimer.start( ((2 * (d->connectionTry - 2)) - 1) * 60000 ); // wait 1,3,5...15 minutes => stops after 64 min
+		}
 	}
 	else
 	{
+		d->reconnectOnNetworkIsOnline = false;
 		d->reconnectTimer.stop();
 	}
 

@@ -31,6 +31,7 @@
 
 #include <kconfiggroup.h>
 #include <kiconloader.h>
+#include <solid/networking.h>
 
 class KActionMenu;
 class KConfigGroup;
@@ -473,6 +474,13 @@ protected slots:
 	 * @param status the status to set all contacts of this account except @ref myself() to.
 	 */
 	void setAllContactsStatus( const Kopete::OnlineStatus &status );
+
+        /**
+	 * @brief React to network status changes
+	 *
+	 * @param status the new network status.
+	 */
+	void networkingStatusChanged( const Solid::Networking::Status status );
 
 signals:
 	/**
