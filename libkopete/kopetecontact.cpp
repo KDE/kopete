@@ -181,6 +181,11 @@ Kopete::StatusMessage Contact::statusMessage() const
 
 void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 {
+	bool emitUpdate = true;
+
+	if ( d->statusMessage.title() == statusMessage.title() && d->statusMessage.message() == statusMessage.message() )
+		emitUpdate = false;
+
 	d->statusMessage = statusMessage;
 
 	kDebug(14010) << "Setting up the status title property with this: " << statusMessage.title();
@@ -195,7 +200,8 @@ void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 	else
 		removeProperty( Kopete::Global::Properties::self()->statusMessage() );
 
-	emit statusMessageChanged( this );
+	if ( emitUpdate )
+		emit statusMessageChanged( this );
 }
 
 void Contact::slotAccountIsConnectedChanged()
