@@ -149,7 +149,7 @@ void Account::networkingStatusChanged( const Solid::Networking::Status status )
 {
 	switch(status) {
 	case Solid::Networking::Connected:
-		if (d->reconnectOnNetworkIsOnline) {
+		if (d->reconnectOnNetworkIsOnline && ! excludeConnect()) {
 			reconnect();
 		}
 		break;
