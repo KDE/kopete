@@ -455,6 +455,8 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			d->contacts.removeAll( old );
 			d->contacts.append( (Kopete::Contact*)c );
 
+			disconnect( old, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+				this, SLOT(slotOnlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 			disconnect( old, SIGNAL(statusMessageChanged(Kopete::Contact*)), this, SIGNAL(statusMessageChanged(Kopete::Contact*)) );
 
 			if ( old->metaContact() )
@@ -476,6 +478,8 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 			emit contactAdded( c, suppress );
 		}
 
+		connect( c, SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+			this, SLOT(slotOnlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 		connect( c, SIGNAL(statusMessageChanged(Kopete::Contact*)), this, SIGNAL(statusMessageChanged(Kopete::Contact*)) );
 
 		if ( c->metaContact() )
