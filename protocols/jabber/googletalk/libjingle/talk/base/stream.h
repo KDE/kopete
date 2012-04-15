@@ -33,6 +33,8 @@
 #include "talk/base/scoped_ptr.h"
 #include "talk/base/sigslot.h"
 
+#include <cstdio> // for FILE
+
 namespace talk_base {
 
 ///////////////////////////////////////////////////////////////////////////////

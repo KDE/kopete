@@ -1,0 +1,13 @@
+Index: talk/base/stream.h
+===================================================================
+--- talk/base/stream.h	(revision 1289708)
++++ talk/base/stream.h	(working copy)
+@@ -33,6 +33,8 @@
+ #include "talk/base/scoped_ptr.h"
+ #include "talk/base/sigslot.h"
+ 
++#include <cstdio> // for FILE
++
+ namespace talk_base {
+ 
+ ///////////////////////////////////////////////////////////////////////////////
