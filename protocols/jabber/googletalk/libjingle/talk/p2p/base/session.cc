@@ -931,7 +931,7 @@ bool Session::OnCandidatesMessage(const buzz::XmlElement* stanza,
     new_candidate->SetName(kQnP2pCandidate);
     transport_info->AddElement(new_candidate);
   }
-  return transport_->OnTransportMessage(transport_info.get(), stanza);
+  return true;
 }
 
 bool Session::CheckState(const buzz::XmlElement* stanza, State state) {

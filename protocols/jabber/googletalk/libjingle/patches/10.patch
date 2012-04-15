@@ -1,0 +1,13 @@
+Index: talk/p2p/base/session.cc
+===================================================================
+--- talk/p2p/base/session.cc	(revision 1289685)
++++ talk/p2p/base/session.cc	(working copy)
+@@ -931,7 +931,7 @@
+     new_candidate->SetName(kQnP2pCandidate);
+     transport_info->AddElement(new_candidate);
+   }
+-  return transport_->OnTransportMessage(transport_info.get(), stanza);
++  return true;
+ }
+ 
+ bool Session::CheckState(const buzz::XmlElement* stanza, State state) {
