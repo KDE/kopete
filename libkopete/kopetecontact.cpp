@@ -149,8 +149,9 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 
 	Kopete::Global::Properties *globalProps = Kopete::Global::Properties::self();
 
-	// Contact changed from Offline to another status
+	// Contact changed from Offline to another known online status
 	if( oldStatus.status() == OnlineStatus::Offline &&
+		status.status() != OnlineStatus::Unknown &&
 		status.status() != OnlineStatus::Offline )
 	{
 		if ( !hasProperty( globalProps->onlineSince().key() ) )
