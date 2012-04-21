@@ -27,6 +27,12 @@
 
 #include "talk/base/ssladapter.h"
 
+#ifdef POSIX
+extern "C" {
+#include <unistd.h>
+}
+#endif
+
 #if !defined(SSL_USE_SCHANNEL) && !defined(SSL_USE_OPENSSL)
 #ifdef WIN32
 #define SSL_USE_SCHANNEL 1
