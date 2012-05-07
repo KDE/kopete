@@ -115,7 +115,8 @@ KabcExportWizard::KabcExportWizard( QWidget *parent )
 		QListWidgetItem * lvi = new ContactLVI( mc, m_page2.contactList,
 				mc->displayName() );
 		lvi->setCheckState( Qt::Unchecked );
-		if ( !mc->kabcId().isEmpty() )
+		const QString &kabcId = mc->kabcId();
+		if ( kabcId.isEmpty() || m_addressBook->findByUid(kabcId).isEmpty() )
 		{
 			lvi->setCheckState( Qt::Checked );
 			lvi->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);	
