@@ -78,6 +78,7 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*
 	/* Initialization reads the database, so it could be a bit time-consuming
 	due to disk access. This should overcome the problem and makes it non-blocking. */
 	QTimer::singleShot(0, this, SLOT(slotInitialize()));
+	QTimer::singleShot(20000, this, SLOT(slotInitialize2()));
 	
 	new StatisticsAdaptor(this);
 	QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -95,11 +96,24 @@ void StatisticsPlugin::slotInitialize()
 		if (metaContact->isOnline())
 		{
 			slotMetaContactAdded(metaContact);
+			slotOnlineStatusChanged(metaContact, metaContact->status());
 		}
 		else
 		{
 			connect(metaContact, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)), this,
 				SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)));
+		}
+	}
+}
+
+void StatisticsPlugin::slotInitialize2()
+{
+	QList<Kopete::MetaContact*> list = Kopete::ContactList::self()->metaContacts();
+	foreach(Kopete::MetaContact *metaContact, list)
+	{
+		if (metaContact->status() != Kopete::OnlineStatus::Unknown && !statisticsContactMap.value(metaContact))
+		{
+			slotDelayedMetaContactAdded(metaContact, metaContact->status());
 		}
 	}
 }
@@ -178,7 +192,7 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 
 void StatisticsPlugin::slotDelayedMetaContactAdded(Kopete::MetaContact *mc, Kopete::OnlineStatus::StatusType status)
 {
-	if (status != Kopete::OnlineStatus::Unknown && status != Kopete::OnlineStatus::Offline)
+	if (status != Kopete::OnlineStatus::Unknown)
 	{
 		disconnect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)), this,
 			   SLOT(slotDelayedMetaContactAdded(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)));

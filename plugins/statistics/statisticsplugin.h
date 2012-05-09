@@ -104,6 +104,7 @@ public:
 private slots:
 	// Do the initializations
 	void slotInitialize();
+	void slotInitialize2();
 
 public slots:
 	
