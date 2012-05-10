@@ -69,10 +69,10 @@ StatisticsDialog::StatisticsDialog ( StatisticsContact *contact, StatisticsDB *d
 	dialogUi->tabWidget->setCurrentIndex ( 0 );
 
 	KColorScheme scheme ( QPalette::Active, KColorScheme::View );
-	m_onlineColor = scheme.background ( KColorScheme::ActiveBackground ).color();
-	m_awayColor = scheme.background ( KColorScheme::NeutralBackground ).color();
-	m_offlineColor = scheme.background ( KColorScheme::AlternateBackground ).color();
-	m_backgroundColor = scheme.background ( KColorScheme::NormalBackground ).color();
+	m_onlineColor = scheme.background ( KColorScheme::ActiveBackground ).color().darker(130);
+	m_awayColor = scheme.background ( KColorScheme::NeutralBackground ).color().darker(130);
+	m_offlineColor = scheme.background ( KColorScheme::AlternateBackground ).color().darker(130);
+	m_backgroundColor = scheme.background ( KColorScheme::NormalBackground ).color().darker(130);
 	m_textColor = scheme.foreground ( KColorScheme::NormalText ).color();
 
 	calendarHTMLPart = new KHTMLPart ( dialogUi->calendarHBox );
@@ -419,11 +419,11 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 	// Some "total times"
 	generalHTMLPart->write ( i18n ( "<div class=\"statgroup\">" ) );
 	generalHTMLPart->write ( i18n ( "<b title=\"The total time %1 was visible\">"
-	                                "Total visible time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds ( totalTime ) ) );
+	                                "Total visible time :</b> %2<br>", m_contact->metaContact()->displayName(), stringFromSeconds ( totalOnlineTime + totalAwayTime ) ) );
 	generalHTMLPart->write ( i18n ( "<b title=\"The total time %1 was online\">"
-	                                "Total online time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds ( totalOnlineTime ) ) );
-	generalHTMLPart->write ( i18n ( "<b title=\"The total time %1 was away\">Total busy time :</b> %2 hour(s)<br>", m_contact->metaContact()->displayName(), stringFromSeconds ( totalAwayTime ) ) );
-	generalHTMLPart->write ( i18n ( "<b title=\"The total time %1 was offline\">Total offline time :</b> %2 hour(s)", m_contact->metaContact()->displayName(), stringFromSeconds ( totalOfflineTime ) ) );
+	                                "Total online time :</b> %2<br>", m_contact->metaContact()->displayName(), stringFromSeconds ( totalOnlineTime ) ) );
+	generalHTMLPart->write ( i18n ( "<b title=\"The total time %1 was away\">Total busy time :</b> %2<br>", m_contact->metaContact()->displayName(), stringFromSeconds ( totalAwayTime ) ) );
+	generalHTMLPart->write ( i18n ( "<b title=\"The total time %1 was offline\">Total offline time :</b> %2", m_contact->metaContact()->displayName(), stringFromSeconds ( totalOfflineTime ) ) );
 	generalHTMLPart->write ( QString ( "</div>" ) );
 
 	if ( subTitle == i18n ( "General information" ) )
@@ -483,7 +483,7 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 	for ( uint i=0; i<24; i++ )
 	{
 
-		int hrWidth = qRound ( ( double ) hours[i]/ ( double ) hours[iMaxHours]*100. );
+		int hrWidth = qRound ( ( double ) ( hoursOnline[i] + hoursAway[i] ) / ( double ) hours[iMaxHours]*100. );
 		chartString += QString ( "<img class=\"margin:0px;\"  height=\"" )
 		               + ( totalTime ? QString::number ( hrWidth ) : QString::number ( 0 ) )
 		               + QString ( "\" src=\"data:image/png;base64," )
@@ -577,9 +577,7 @@ QString StatisticsDialog::generateHTMLChart ( const int *hours, const int *hours
 
 QString StatisticsDialog::stringFromSeconds ( const int seconds )
 {
-	QTime time ( 0, 0 );
-	time = time.addSecs ( seconds );
-	return KGlobal::locale()->formatTime ( time, true/*seconds*/, true/*duration*/ );
+	return KGlobal::locale()->prettyFormatDuration ( (unsigned long)seconds * 1000 );
 }
 
 void StatisticsDialog::fillCalendarCells()
