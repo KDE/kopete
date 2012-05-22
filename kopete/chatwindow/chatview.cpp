@@ -541,7 +541,7 @@ void ChatView::slotStatusMessageChanged( Kopete::Contact* contact )
 	const QString statusMessage = contact->statusMessage().message();
 	QString msg;
 	if ( statusTitle.isEmpty() && statusMessage.isEmpty() )
-		msg = i18n( "%1 deleted status message", contactName );
+		msg = i18nc( "%1 is a contact's name", "%1 deleted status message", contactName );
 	else
 	{
 		if ( statusTitle.isEmpty() )
@@ -550,7 +550,7 @@ void ChatView::slotStatusMessageChanged( Kopete::Contact* contact )
 			msg = statusTitle;
 		else
 			msg = statusTitle + " - " + statusMessage;
-		msg = i18n( "%1 changed status message: %2", contactName, msg );
+		msg = i18nc( "%1 is a contact's name", "%1 changed status message: %2", contactName, msg );
 	}
 
 	sendInternalMessage( msg );
