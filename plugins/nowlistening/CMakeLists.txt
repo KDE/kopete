@@ -17,6 +17,7 @@ set(kopete_nowlistening_PART_SRCS
    nlquodlibet.cpp
    nlkaffeine.cpp
    nlmpris.cpp
+   nlmpris2.cpp
 )
 
 kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )

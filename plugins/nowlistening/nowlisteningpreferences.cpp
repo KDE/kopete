@@ -57,6 +57,7 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QVariant
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kaffeine"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Quod Libet"));
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("MPRIS compatible player"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("MPRIS2 compatible player"));
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
 	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("XMMS"));
 #endif
