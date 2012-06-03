@@ -462,6 +462,22 @@ WlmChatSession::slotInviteContact (Kopete::Contact * contact)
         m_pendingInvitations.append (contact->contactId ());
 }
 
+static void
+printGifErrorMessage()
+{
+#ifdef HAVE_GIFLIB
+#ifdef HAVE_GIF_ERROR_STRING // giflib 4.2.0+
+        const char * errorString = GifErrorString();
+        if (errorString)
+            fprintf(stderr, "GIF-LIB error: %s\n", errorString);
+        else
+            fprintf(stderr, "GIF-LIB undefined error: %d\n", GifError());
+#else // older giflib versions, libungif
+        PrintGifError();
+#endif // HAVE_GIF_ERROR_STRING
+#endif // HAVE_GIFLIB
+}
+
 /* stolen from kpaint write_to_gif() */
 void
 WlmChatSession::convertToGif( const QPixmap & ink, QString filename)
@@ -546,13 +562,13 @@ WlmChatSession::convertToGif( const QPixmap & ink, QString filename)
     }
 
     if (status != GIF_OK) {
-        PrintGifError();
+        printGifErrorMessage();
         EGifCloseFile(GifFile);
         return;
     }
 
     if (EGifCloseFile(GifFile) != GIF_OK) {
-        PrintGifError();
+        printGifErrorMessage();
         return;
     }
     return;
