@@ -64,6 +64,21 @@ if(HAVE_GIFLIB)
     set(kopete_wlm_link_LIBS ${kopete_wlm_link_LIBS} ${GIF_LIBRARIES})
     set(kopete_wlm_include_DIRS ${kopete_wlm_include_DIRS} ${GIF_INCLUDE_DIR})
     add_definitions(-DHAVE_GIFLIB)
+
+    # giflib 4.2.0 removed PrintGifError() in favor of GifError() and GifErrorString().
+    # We need to check which functions are present.
+    # FIXME: Once we depend on CMake 2.8.6+ we can use CMAKE_{PUSH,POP}_CHECK_STATE().
+    set(_OLD_CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES}")
+    set(_OLD_CMAKE_REQUIRED_INCLUDES "${CMAKE_REQUIRED_INCLUDES}")
+    set(CMAKE_REQUIRED_LIBRARIES "${GIF_LIBRARIES}")
+    set(CMAKE_REQUIRED_INCLUDES "${GIF_INCLUDE_DIR}")
+    check_function_exists(GifErrorString HAVE_GIF_ERROR_STRING)
+    set(CMAKE_REQUIRED_LIBRARIES "${_OLD_CMAKE_REQUIRED_LIBRARIES}")
+    set(CMAKE_REQUIRED_INCLUDES "${_OLD_CMAKE_REQUIRED_INCLUDES}")
+
+    if(HAVE_GIF_ERROR_STRING)
+        add_definitions(-DHAVE_GIF_ERROR_STRING)
+    endif(HAVE_GIF_ERROR_STRING)
 endif(HAVE_GIFLIB)
 
 include_directories(${kopete_wlm_include_DIRS})
