@@ -344,7 +344,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 			kWarning(14010) << "You are not allowed to add yourself to the contact list. The addition of" << contactId
 			                << "to account" << accountId() << "will not take place.";
 		}
-		return false;
+		return 0;
 	}
 
 	bool isTemporary = (mode == Temporary);
