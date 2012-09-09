@@ -149,7 +149,6 @@ set(KOPETE_INCLUDES
 	${KOPETE_SOURCE_DIR}/libkopete/
 	${KOPETE_BINARY_DIR}/libkopete/
 	${KOPETE_SOURCE_DIR}/libkopete/ui/
-	${KOPETE_BINARY_DIR}/libkopete/ui/
 	${KOPETE_SOURCE_DIR}/libkopete/private/
 	${KOPETE_SOURCE_DIR}/libkopete/contactlist/
 	${KOPETE_SOURCE_DIR}/libkopete/tasks/
