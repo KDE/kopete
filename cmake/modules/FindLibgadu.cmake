@@ -70,7 +70,7 @@ if (LIBGADU_INCLUDE_DIR AND LIBGADU_LIBRARIES)
 
     if (NOT WIN32)
 
-        try_run (run_result compile_result ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/gadu_pthread_check.c
+        try_run (run_result compile_result ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/gadu_pthread_check.cpp
             CMAKE_FLAGS -DINCLUDE_DIRECTORIES:STRING=${LIBGADU_INCLUDE_DIR}
             COMPILE_DEFINITIONS "${LIBGADU_DEFINITIONS}"
         )
