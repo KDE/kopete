@@ -74,7 +74,7 @@ Appendix: Obtaining and installation (1st draft, Will)
 Appendix: Chat Window Style Guide (1st draft, Michaël)
 -->
 
-<book lang="&language;">
+<book id="kopete" lang="&language;">
 <bookinfo>
 <title>The &kopete; Handbook</title>
 
