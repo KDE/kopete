@@ -230,7 +230,7 @@ int ContactListTreeModel::countConnected( GroupModelItem* gmi ) const
 	foreach ( ContactListModelItem* clmi, items )
 	{
 		MetaContactModelItem* mcmi = dynamic_cast<MetaContactModelItem*>(clmi);
-		if ( mcmi && ( mcmi->metaContact()->isOnline() || mcmi->metaContact()->isAlwaysVisible() ) )
+		if ( mcmi && mcmi->metaContact() && ( mcmi->metaContact()->isOnline() || mcmi->metaContact()->isAlwaysVisible() ) )
 			onlineCount++;
 	}
 
@@ -329,7 +329,7 @@ QVariant ContactListTreeModel::data ( const QModelIndex & index, int role ) cons
 		}
 	}
 
-	if ( mcmi )
+	if ( mcmi && mcmi->metaContact() )
 	{
 		if ( role == Kopete::Items::MetaContactGroupRole )
 			return qVariantFromValue( (QObject*)mcmi->parent()->group() );
@@ -356,7 +356,7 @@ Qt::ItemFlags ContactListTreeModel::flags( const QModelIndex &index ) const
 		// metacontact if all the accounts its contacts belong are online
 		ContactListModelItem *clmi = itemFor( index );
 		MetaContactModelItem *mcmi = dynamic_cast<MetaContactModelItem*>(clmi);
-		if (mcmi)
+		if (mcmi && mcmi->metaContact())
 		{
 			f |= Qt::ItemIsEditable;
 			bool online = true;
@@ -694,10 +694,12 @@ void ContactListTreeModel::saveModelSettingsImpl( QDomDocument& doc, QDomElement
 				if ( !clmi->isGroup() )
 				{
 					MetaContactModelItem* mcmi = dynamic_cast<MetaContactModelItem*>( clmi );
-					QDomElement metaContactElement = doc.createElement( "MetaContact" );
-					metaContactElement.setAttribute( "uuid", mcmi->metaContact()->metaContactId() );
-					metaContactElement.setAttribute( "possition", index++ );
-					groupElement.appendChild( metaContactElement );
+					if ( mcmi->metaContact() ) {
+						QDomElement metaContactElement = doc.createElement( "MetaContact" );
+						metaContactElement.setAttribute( "uuid", mcmi->metaContact()->metaContactId() );
+						metaContactElement.setAttribute( "possition", index++ );
+						groupElement.appendChild( metaContactElement );
+					}
 				}
 			}
 		}
@@ -781,7 +783,8 @@ void ContactListTreeModel::loadModelSettingsImpl( QDomElement& rootElement )
 					if ( !clmi->isGroup() )
 					{
 						MetaContactModelItem* mcmi = dynamic_cast<MetaContactModelItem*>(clmi);
-						uuidToMetaContact.insert( mcmi->metaContact()->metaContactId(), mcmi );
+						if ( mcmi->metaContact() )
+							uuidToMetaContact.insert( mcmi->metaContact()->metaContactId(), mcmi );
 					}
 				}
 

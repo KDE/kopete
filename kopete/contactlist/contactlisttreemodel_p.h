@@ -18,6 +18,8 @@
 #ifndef KOPETE_UI_CONTACTLISTTREEMODEL_P_H
 #define KOPETE_UI_CONTACTLISTTREEMODEL_P_H
 
+#include <QPointer>
+
 namespace Kopete {
 
 class Group;
@@ -87,7 +89,7 @@ public:
 	}
 
 private:
-	Kopete::MetaContact* mMetaContact;
+	QPointer <Kopete::MetaContact> mMetaContact;
 };
 
 class GroupModelItem : public ContactListModelItem
