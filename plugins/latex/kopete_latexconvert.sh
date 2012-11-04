@@ -85,9 +85,13 @@ Options:
 		b) color1=$OPTARG;;
 		t) color2=$OPTARG;;
 		f) format=$OPTARG;;
-      x) extra_header=$OPTARG;;
+		x) extra_header_arg=$OPTARG;;
 	esac
 done
+
+if [ -e "$extra_header_arg" ]; then
+	extra_header = $extra_header_arg
+fi
 
 #
 # Generate temporary directory
