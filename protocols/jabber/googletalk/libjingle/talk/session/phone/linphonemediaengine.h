@@ -62,13 +62,15 @@ class LinphoneMediaChannel : public MediaChannel {
   int pt_;
   bool mute_;
   bool play_;
+  int port1; // local port for audio_stream
+  int port2; // local port for rtp
 };
 
 class LinphoneMediaEngine : public MediaEngine {
  public:
   LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav);
   ~LinphoneMediaEngine();
-  virtual bool Init();
+  virtual bool Init() {return true;}
   virtual void Terminate();
   
   virtual MediaChannel *CreateChannel();
@@ -84,6 +86,10 @@ class LinphoneMediaEngine : public MediaEngine {
 
   std::string GetRingWav(){return ring_wav_;}
   std::string GetCallWav(){return call_wav_;}
+
+  bool have_ilbc;
+  bool have_speex;
+  bool have_gsm;
 
  private:
   std::vector<Codec, std::allocator<Codec> > codecs_;

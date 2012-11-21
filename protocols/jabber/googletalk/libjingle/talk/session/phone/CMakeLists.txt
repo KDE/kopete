@@ -6,10 +6,6 @@ include_directories(
    ${LIBORTP_INCLUDE_DIR}
 )
 
-if ( MSILBC_FOUND )
-	add_definitions ( -DMSILBC_LIBRAY="${MSILBC_LIBRARY}" )
-endif ( MSILBC_FOUND )
-
 add_definitions(-D_REENTRANT -DORTP_INET6)
 
 endif ( BUILD_libjingle_cricketsessionphone )

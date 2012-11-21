@@ -11,14 +11,6 @@ if ( NOT DEFINED MEDIASTREAMER_FOUND )
 	find_package ( Mediastreamer )
 endif ( NOT DEFINED MEDIASTREAMER_FOUND )
 
-if ( NOT DEFINED SPEEX_FOUND )
-	find_package ( Speex )
-endif ( NOT DEFINED SPEEX_FOUND )
-
-if ( NOT DEFINED MSILBC_FOUND )
-	find_package ( msiLBC )
-endif ( NOT DEFINED MSILBC_FOUND )
-
 if ( NOT DEFINED EXPAT_FOUND )
 	find_package ( Expat )
 endif ( NOT DEFINED EXPAT_FOUND )
@@ -26,24 +18,6 @@ endif ( NOT DEFINED EXPAT_FOUND )
 if ( NOT WIN32 AND NOT DEFINED SSL_FOUND )
 	find_package ( SSL )
 endif ( NOT WIN32 AND NOT DEFINED SSL_FOUND )
-
-if ( MEDIASTREAMER_FOUND )
-        set ( HAVE_MEDIASTREAMER 1 )
-else ( MEDIASTREAMER_FOUND )
-        set ( HAVE_MEDIASTREAMER 0 )
-endif ( MEDIASTREAMER_FOUND )
-
-if ( SPEEX_FOUND )
-	set ( HAVE_SPEEX 1 )
-else ( SPEEX_FOUND )
-	set ( HAVE_SPEEX 0 )
-endif ( SPEEX_FOUND )
-
-if ( MSILBC_FOUND )
-	set ( HAVE_ILBC 1 )
-else ( MSILBC_FOUND )
-	set ( HAVE_ILBC 0 )
-endif ( MSILBC_FOUND )
 
 ########### next target ###############
 
@@ -125,20 +99,17 @@ configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINA
 
 ########### next target ###############
 
+if ( NOT EXPAT_FOUND )
+	message( FATAL_ERROR "Expat library not found" )
+endif ( NOT EXPAT_FOUND )
+
+if ( NOT WIN32 AND NOT SSL_FOUND )
+	message( FATAL_ERROR "SSL library not found" )
+endif ( NOT WIN32 AND NOT SSL_FOUND )
+
 if ( BUILD_libjingle_call )
 	if ( LIBORTP_FOUND AND MEDIASTREAMER_FOUND )
-		message ( STATUS "Building Google Talk libjingle voice call support, supported codecs:" )
-		if ( SPEEX_FOUND )
-			message ( STATUS " Speex: yes" )
-		else ( SPEEX_FOUND )
-			message ( STATUS " Speex: no" )
-		endif ( SPEEX_FOUND )
-		if ( MSILBC_FOUND )
-			message ( STATUS " iLBC: yes" )
-		else ( MSILBC_FOUND )
-			message ( STATUS " iLBC: no" )
-		endif ( MSILBC_FOUND )
-		message ( STATUS " MULAW: yes" )
+		message ( STATUS "Building Google Talk libjingle voice call support" )
 	else ( LIBORTP_FOUND AND MEDIASTREAMER_FOUND )
 		set ( BUILD_libjingle_call false )
 		message ( STATUS "Not building Google Talk libjingle voice call support, because oRTP or Mediastreamer not found!" )
@@ -206,8 +177,8 @@ endif ( BUILD_libjingle_pcp )
 ########### next target ###############
 
 include_directories (
-   ${CMAKE_CURRENT_SOURCE_DIR}
-   ${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 add_subdirectory(talk)
