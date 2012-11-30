@@ -14,10 +14,10 @@
 #ifndef _KOPETE_VERSION_H_
 #define _KOPETE_VERSION_H_
 
-#define KOPETE_VERSION_STRING "1.3.3"
+#define KOPETE_VERSION_STRING "1.3.4"
 #define KOPETE_VERSION_MAJOR 1
 #define KOPETE_VERSION_MINOR 3
-#define KOPETE_VERSION_RELEASE 3
+#define KOPETE_VERSION_RELEASE 4
 #define KOPETE_MAKE_VERSION( a,b,c ) (((a) << 16) | ((b) << 8) | (c))
 
 #define KOPETE_VERSION \
