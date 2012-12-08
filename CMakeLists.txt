@@ -57,7 +57,7 @@ macro_optional_find_package(LiboRTP)
 macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support, Google Talk libjingle audio call support and voice clips in WLM.")
 
 macro_optional_find_package(Speex)
-macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support and Google Talk libjingle audio call support in Kopete.")
+macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support in Kopete.")
 
 macro_optional_find_package(QCA2)
 macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca" FALSE "2.0.0" "Needed to build Kopete's GroupWise and Jabber protocols.")
@@ -133,9 +133,6 @@ if ( NOT WIN32 )
         macro_optional_find_package(SSL)
         macro_log_feature(SSL_FOUND "SSL" "" "" FALSE "" "Needed to build Google Talk libjingle support")
 endif ( NOT WIN32 )
-
-macro_optional_find_package(msiLBC)
-macro_log_feature(MSILBC_FOUND "msiLBC" "iLBC is low bitrate audio codec - plugin for mediastreamer" "http://download.savannah.gnu.org/releases/linphone/plugins/sources/" FALSE "" "Needed to build Google Talk libjingle voice call support with iLBC codec")
 
 # Generate config-kopete.h
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )

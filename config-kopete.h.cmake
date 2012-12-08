@@ -29,9 +29,6 @@
 /* Define if you have a tm_gmtoff member in struct tm */
 #define HAVE_TM_GMTOFF 1
 
-/* Defined when we have ilbc codec lib */
-#define HAVE_ILBC 1
-
 /* Defines if you have GL (Mesa, OpenGL, ...) */
 #define HAVE_GL 1
 
