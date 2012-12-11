@@ -56,6 +56,11 @@ public:
 	 */
 	const QString &clientName () const;
 	/**
+	 * Return the client version for this resource.
+	 * @return the client version
+	 */
+	const QString &clientVersion () const;
+	/**
 	 * Return the client system for this resource.
 	 * @return the client system.
 	 */

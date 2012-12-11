@@ -47,7 +47,7 @@ public:
 	XMPP::Jid jid;
 	XMPP::Resource resource;
 	
-	QString clientName, clientSystem;
+	QString clientName, clientVersion, clientSystem;
 	XMPP::Features supportedFeatures;
 	bool capsEnabled;
 };
@@ -63,12 +63,13 @@ JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, c
 
 	if ( account->isConnected () )
 	{
-#if 0  //disabled because that flood the server, specially bad with the irc gateway
-		QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedClientVersion()) );
-#endif
 		if(!d->capsEnabled)
 		{
 			QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetDiscoCapabilties()) );
+		}
+		else if(cm->features(jid).list().contains("jabber:iq:version"))
+		{
+			QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedClientVersion()) );
 		}
 	}
 }
@@ -101,6 +102,11 @@ void JabberResource::setResource ( const XMPP::Resource &resource )
 const QString &JabberResource::clientName () const
 {
 	return d->clientName;
+}
+
+const QString &JabberResource::clientVersion () const
+{
+	return d->clientVersion;
 }
 
 const QString &JabberResource::clientSystem () const
@@ -141,7 +147,8 @@ void JabberResource::slotGotClientVersion ()
 
 	if ( clientVersion->success () )
 	{
-		d->clientName = clientVersion->name () + ' ' + clientVersion->version ();
+		d->clientName = clientVersion->name ();
+		d->clientVersion = clientVersion->version ();
 		d->clientSystem = clientVersion->os ();
 
 		emit updated ( this );
@@ -169,7 +176,12 @@ void JabberResource::slotGotDiscoCapabilities ()
 	if ( discoInfo->success () )
 	{
 		d->supportedFeatures = discoInfo->item().features();
-		
+
+		if(d->supportedFeatures.list().contains("jabber:iq:version"))
+		{
+			QTimer::singleShot ( d->account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedClientVersion()) );
+		}
+
 		emit updated ( this );
 	}
 }

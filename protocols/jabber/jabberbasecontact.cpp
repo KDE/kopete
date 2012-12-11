@@ -39,6 +39,7 @@
 #include "jabberaccount.h"
 #include "jabberresource.h"
 #include "jabberresourcepool.h"
+#include "jabbercapabilitiesmanager.h"
 #include "kopetemetacontact.h"
 #include "kopetemessage.h"
 #include "kopeteuiglobal.h"
@@ -238,10 +239,33 @@ void JabberBaseContact::updateResourceList ()
 								 (*it)->resource().name (), QString::number ( (*it)->resource().priority () ) );
 
 		// client name, version, OS
-		if ( !(*it)->clientName().isEmpty () )
+		QString clientName = (*it)->clientName ();
+		QString clientVersion = (*it)->clientVersion ();
+		QString clientSystem = (*it)->clientSystem ();
+
+		if ( clientName.isEmpty () )
 		{
-			resourceListStr += QString ( "<tr><td>%1: %2 (%3)</td></tr>" ).
-							   arg ( i18n ( "Client" ), (*it)->clientName (), (*it)->clientSystem () );
+			clientName = account()->protocol()->capabilitiesManager()->clientName ( (*it)->jid () );
+		}
+
+		if ( clientVersion.isEmpty () )
+		{
+			clientVersion = account()->protocol()->capabilitiesManager()->clientVersion ( (*it)->jid () );
+		}
+
+		if ( !clientName.isEmpty () )
+		{
+			QString clientNameVersion = clientName;
+			if ( !clientVersion.isEmpty () )
+			{
+				clientNameVersion += ' ' + clientVersion;
+			}
+			resourceListStr += QString ( "<tr><td>%1: %2" ).arg ( i18n ( "Client" ), clientNameVersion );
+			if ( !clientSystem.isEmpty () )
+			{
+				resourceListStr += QString ( " (%1)" ).arg ( clientSystem );
+			}
+			resourceListStr += QString ( "</td></tr>" );
 		}
 		
 		// Supported features
