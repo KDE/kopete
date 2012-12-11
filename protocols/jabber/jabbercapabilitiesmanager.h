@@ -140,8 +140,9 @@ private:
 			 * @param node the node
 			 * @param version the version
 			 * @param extensions the list of extensions (separated by spaces)
+			 * @param hash the hash
 			 */
-			Capabilities(const QString &node, const QString &version, const QString &extensions);
+			Capabilities(const QString &node, const QString &version, const QString &extensions, const QString &hash);
 			/**
 			 * Returns the node of the capabilities specification.
 			 */
@@ -154,6 +155,10 @@ private:
 			 * @brief Returns the extensions of the capabilities specification.
 			 */
 			const QString& extensions() const; 
+			/**
+			 * @brief Returns the hash of the capabilities specification.
+			 */
+			const QString& hash() const;
 			/**
 			 * \brief Flattens the caps specification into the set of 'simple' specifications.
 			 * A 'simple' specification is a specification with exactly one extension,
@@ -172,7 +177,7 @@ private:
 			bool operator<(const Capabilities&) const;
 				
 		private:
-			QString m_node, m_version, m_extensions;
+			QString m_node, m_version, m_extensions, m_hash;
 	};
 
 	class CapabilitiesInformation

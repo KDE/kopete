@@ -41,8 +41,8 @@ using namespace XMPP;
 JabberCapabilitiesManager::Capabilities::Capabilities()
 {}
 
-JabberCapabilitiesManager::Capabilities::Capabilities(const QString& node, const QString& version, const QString& extensions) 
-	: m_node(node), m_version(version), m_extensions(extensions) 
+JabberCapabilitiesManager::Capabilities::Capabilities(const QString& node, const QString& version, const QString& extensions, const QString& hash)
+	: m_node(node), m_version(version), m_extensions(extensions), m_hash(hash)
 {}
 
 const QString& JabberCapabilitiesManager::Capabilities::node() const 
@@ -60,16 +60,21 @@ const QString& JabberCapabilitiesManager::Capabilities::extensions() const
 	return m_extensions; 
 }
 
+const QString& JabberCapabilitiesManager::Capabilities::hash() const
+{
+	return m_hash;
+}
+
 JabberCapabilitiesManager::CapabilitiesList JabberCapabilitiesManager::Capabilities::flatten() const 
 {
 	CapabilitiesList capsList;
-	capsList.append( Capabilities(node(), version(), version()) );
+	capsList.append( Capabilities(node(), version(), version(), hash()) );
 
 	QStringList extensionList = extensions().split(' ');
 
 	foreach(QStringList::const_reference str, extensionList)
 	{
-		capsList.append( Capabilities(node(), version(), str) );
+		capsList.append( Capabilities(node(), version(), str, hash()) );
 	}
 
 	return capsList;
@@ -77,7 +82,7 @@ JabberCapabilitiesManager::CapabilitiesList JabberCapabilitiesManager::Capabilit
 
 bool JabberCapabilitiesManager::Capabilities::operator==(const Capabilities &other) const 
 {
-	return (node() == other.node() && version() == other.version() && extensions() == other.extensions());
+	return (node() == other.node() && version() == other.version() && extensions() == other.extensions() && hash() == other.hash());
 }
 
 bool JabberCapabilitiesManager::Capabilities::operator!=(const Capabilities &other) const 
@@ -89,7 +94,8 @@ bool JabberCapabilitiesManager::Capabilities::operator<(const Capabilities &othe
 {
 	return (node() != other.node() ? node() < other.node() :
 			(version() != other.version() ? version() < other.version() : 
-			 extensions() < other.extensions()));
+			 (extensions() != other.extensions() ? extensions() < other.extensions() :
+			  hash() < other.hash())));
 }
 //END Capabilities
 
@@ -356,8 +362,8 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 	if( jid.compare(account->client()->jid(), false) )
 		return;
 
-	QString node = status.capsNode(), version = status.capsVersion(), extensions = status.capsExt();
-	Capabilities capabilities( node, version, extensions );
+	QString node = status.capsNode(), version = status.capsVersion(), extensions = status.capsExt(), hash = status.capsHash();
+	Capabilities capabilities( node, version, extensions, hash );
 	
 	// Check if the capabilities was really updated(i.e the content is different)
 	if( d->jidCapabilitiesMap[jid.full()] != capabilities) 
@@ -457,7 +463,7 @@ void JabberCapabilitiesManager::discoRequestFinished()
 	Capabilities jidCapabilities = d->jidCapabilitiesMap[jid.full()];
 	if( jidCapabilities.node() == node )
 	{
-		Capabilities capabilities(node, jidCapabilities.version(), extensions);
+		Capabilities capabilities(node, jidCapabilities.version(), extensions, jidCapabilities.hash());
 
 		if( discoInfo->success() )
 		{
@@ -548,7 +554,7 @@ void JabberCapabilitiesManager::loadCachedInformation()
 		{
 			CapabilitiesInformation info;
 			info.fromXml(element);
-			Capabilities entityCaps( element.attribute("node"),element.attribute("ver"),element.attribute("ext") );
+			Capabilities entityCaps( element.attribute("node"),element.attribute("ver"),element.attribute("ext"),element.attribute("hash") );
 			d->capabilitiesInformationMap[entityCaps] = info;
 		}
 		else 
@@ -585,7 +591,17 @@ QString JabberCapabilitiesManager::clientName(const Jid& jid) const
 	if( capabilitiesEnabled(jid) ) 
 	{
 		Capabilities caps = d->jidCapabilitiesMap[jid.full()];
-		QString name = d->capabilitiesInformationMap[Capabilities(caps.node(),caps.version(),caps.version())].identities().first().name;
+		const XMPP::DiscoItem::Identities &identities = d->capabilitiesInformationMap[Capabilities(caps.node(),caps.version(),caps.version(),caps.hash())].identities();
+		QString name;
+
+		for ( int i = 0; i < identities.size(); ++i )
+		{
+			if ( identities[i].category == "client" && ! identities[i].name.isEmpty() )
+			{
+				name = identities[i].name;
+				break;
+			}
+		}
 		
 		// Try to be intelligent about the name
 		/*if (name.isEmpty()) {
@@ -612,7 +628,10 @@ QString JabberCapabilitiesManager::clientName(const Jid& jid) const
 
 QString JabberCapabilitiesManager::clientVersion(const Jid& jid) const
 {
-	return (capabilitiesEnabled(jid) ? d->jidCapabilitiesMap[jid.full()].version() : QString());
+	if (!capabilitiesEnabled(jid))
+		return QString();
+	else
+		return (d->jidCapabilitiesMap[jid.full()].hash().isEmpty() ? d->jidCapabilitiesMap[jid.full()].version() : QString());
 }
 
 void JabberCapabilitiesManager::saveInformation()
@@ -632,6 +651,7 @@ void JabberCapabilitiesManager::saveInformation()
 		info.setAttribute("node",it.key().node());
 		info.setAttribute("ver",it.key().version());
 		info.setAttribute("ext",it.key().extensions());
+		info.setAttribute("hash",it.key().hash());
 		capabilities.appendChild(info);
 	}
 
