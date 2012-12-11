@@ -237,6 +237,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 				KAction *tmp = new KAction( this );
 				tmp->setIcon( KIcon("dialog-ok") );
 				tmp->setText( str);
+				tmp->setObjectName( QString::number(i) );
 				connect(tmp, SIGNAL(triggered(bool)), SLOT(slotSelectResource()));
 				actionSelectResource->addAction(tmp);
 			}
@@ -252,6 +253,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 				KAction *tmp = new KAction(this);
 				tmp->setIcon( KIcon(iconSet) );
 				tmp->setText( str );
+				tmp->setObjectName( QString::number(i) );
 				connect(tmp, SIGNAL(triggered(bool)), SLOT(slotSelectResource()));
 				actionSelectResource->addAction ( tmp );
 			}
@@ -1178,7 +1180,8 @@ void JabberContact::slotSelectResource ()
 	}
 	else
 	{
-		QString selectedResource = static_cast<const KAction *>(sender())->text();
+		// use iconText() instead of text(), because we need stripped value without '&'
+		QString selectedResource = static_cast<const KAction *>(sender())->iconText();
 
 		kDebug (JABBER_DEBUG_GLOBAL) << "Moving to resource " << selectedResource;
 
