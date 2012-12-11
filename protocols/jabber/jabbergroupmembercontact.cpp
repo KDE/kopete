@@ -163,10 +163,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 					m.setDirection( Kopete::Message::Internal );
 					m.setImportance(Kopete::Message::Low);
 					
-					if ( account()->mergeMessages() )
-						mManager->appendMessage ( m, QString() );
-					else
-						mManager->appendMessage ( m, message.from().resource () );
+					mManager->appendMessage ( m, message.from().resource () );
 				}*/
 			}
 		}

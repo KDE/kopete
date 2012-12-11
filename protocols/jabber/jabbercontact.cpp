@@ -361,10 +361,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 					m.setDirection( Kopete::Message::Internal );
 					m.setImportance(Kopete::Message::Low);
 
-					if ( account()->mergeMessages() )
-						mManager->appendMessage ( m, QString() );
-					else
-						mManager->appendMessage ( m, message.from().resource () );
+					mManager->appendMessage ( m, message.from().resource () );
 				}
 			}
 		}
@@ -449,10 +446,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	// append message to (eventually new) manager and preselect the originating resource
 	if ( newMessage )
 	{
-		if ( account()->mergeMessages() )
-			mManager->appendMessage ( *newMessage, QString() );
-		else
-			mManager->appendMessage ( *newMessage, message.from().resource () );
+		mManager->appendMessage ( *newMessage, message.from().resource () );
 
 		delete newMessage;
 	}
@@ -476,10 +470,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		msg.setDirection( Kopete::Message::Inbound );
 		msg.setRequestedPlugin( viewPlugin );
 
-		if ( account()->mergeMessages() )
-			mManager->appendMessage ( msg, QString() );
-		else
-			mManager->appendMessage ( msg, message.from().resource () );
+		mManager->appendMessage ( msg, message.from().resource () );
 	}
 }
 
@@ -935,7 +926,7 @@ JabberChatSession *JabberContact::manager ( const QString &resource, Kopete::Con
 		for ( ; it != end ; ++it )
 		{
 			JabberChatSession *mManager = *it;
-			if ( mManager->resource().isEmpty () || ( mManager->resource () == resource ) )
+			if ( account()->mergeMessages () || mManager->resource().isEmpty () || ( mManager->resource () == resource ) )
 			{
 				// we found a matching manager, return this one
 				kDebug(JABBER_DEBUG_GLOBAL) << "Found an existing message manager for this resource.";
