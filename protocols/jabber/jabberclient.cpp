@@ -784,7 +784,17 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	d->jabberClient->setTimeZone ( timeZoneName (), timeZoneOffset () );
 
 	// Additional features
-	d->jabberClient->setFeatures(Features("http://jabber.org/protocol/xhtml-im"));
+	XMPP::Features features;
+	features.addFeature("http://jabber.org/protocol/chatstates");
+	features.addFeature("http://jabber.org/protocol/mood");
+	features.addFeature("http://jabber.org/protocol/muc");
+	features.addFeature("http://jabber.org/protocol/pubsub");
+	features.addFeature("http://jabber.org/protocol/xhtml-im");
+	features.addFeature("jabber:iq:version");
+	features.addFeature("jabber:x:data");
+	features.addFeature("jabber:x:encrypted");
+	features.addFeature("urn:xmpp:receipts");
+	d->jabberClient->setFeatures(features);
 
 	d->jabberClient->connectToServer ( d->jabberClientStream, jid, auth );
 
