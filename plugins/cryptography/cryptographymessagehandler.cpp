@@ -52,7 +52,7 @@ MessageHandler *CryptographyMessageHandlerFactory::create( ChatSession *manager,
 	if ( direction != d->direction )
 		return 0;
 	MessageHandler *handler = new CryptographyMessageHandler;
-	QObject::connect( handler, SIGNAL( handle( Kopete::MessageEvent * ) ), d->target, d->slot );
+	QObject::connect( handler, SIGNAL(handle(Kopete::MessageEvent*)), d->target, d->slot );
 	return handler;
 }
 

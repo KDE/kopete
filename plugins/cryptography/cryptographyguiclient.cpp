@@ -91,9 +91,9 @@ CryptographyGUIClient::CryptographyGUIClient ( Kopete::ChatSession *parent )
 	slotEncryptToggled();
 	slotSignToggled();
 
-	connect ( m_encAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotEncryptToggled() ) );
-	connect ( m_signAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSignToggled() ) );
-	connect ( m_exportAction, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExport() ) );
+	connect ( m_encAction, SIGNAL (triggered(bool)), this, SLOT (slotEncryptToggled()) );
+	connect ( m_signAction, SIGNAL (triggered(bool)), this, SLOT (slotSignToggled()) );
+	connect ( m_exportAction, SIGNAL (triggered(bool)), this, SLOT (slotExport()) );
 }
 
 

@@ -64,9 +64,9 @@ CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVaria
 	l->setSpacing ( 12 );
 
 
-	connect ( key->dialogButton(), SIGNAL ( clicked() ), this, SLOT ( changed() ) );
-	connect ( key->eraseButton(), SIGNAL ( clicked() ), this, SLOT ( changed() ) );
-	connect ( checkBox, SIGNAL ( stateChanged( int ) ), this, SLOT ( changed() ) );
+	connect ( key->dialogButton(), SIGNAL (clicked()), this, SLOT (changed()) );
+	connect ( key->eraseButton(), SIGNAL (clicked()), this, SLOT (changed()) );
+	connect ( checkBox, SIGNAL (stateChanged(int)), this, SLOT (changed()) );
 
 	load();
 }

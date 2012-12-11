@@ -83,28 +83,28 @@ CryptographyPlugin::CryptographyPlugin ( QObject *parent, const QVariantList &/*
 
 	// set up slots to handle incoming and outgoing messages
 	mInboundHandler = new CryptographyMessageHandlerFactory ( Kopete::Message::Inbound,
-	        Kopete::MessageHandlerFactory::InStageToSent, this, SLOT ( slotIncomingMessage ( Kopete::MessageEvent* ) ) );
+	        Kopete::MessageHandlerFactory::InStageToSent, this, SLOT (slotIncomingMessage(Kopete::MessageEvent*)) );
 	connect ( Kopete::ChatSessionManager::self(),
-	          SIGNAL ( aboutToSend ( Kopete::Message & ) ),
-	          SLOT ( slotOutgoingMessage ( Kopete::Message & ) ) );
+	          SIGNAL (aboutToSend(Kopete::Message&)),
+	          SLOT (slotOutgoingMessage(Kopete::Message&)) );
 
 	// actions in the contact list
 	KAction *action = new KAction ( KIcon ( "document-encrypt" ), i18nc ( "@action", "&Select Public Key..." ), this );
 	actionCollection()->addAction ( "contactSelectKey", action );
-	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotSelectContactKey() ) );
-	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
+	connect ( action, SIGNAL (triggered(bool)), this, SLOT (slotSelectContactKey()) );
+	connect ( Kopete::ContactList::self() , SIGNAL (metaContactSelected(bool)) , action , SLOT (setEnabled(bool)) );
 	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
 
 	action = new KAction ( KIcon ( "document-export-key" ), i18nc ( "@action", "&Export Public Keys To Address Book..." ), this );
 	actionCollection()->addAction ( "exportKey", action );
-	connect ( action, SIGNAL ( triggered ( bool ) ), this, SLOT ( slotExportSelectedMetaContactKeys() ) );
-	connect ( Kopete::ContactList::self() , SIGNAL ( metaContactSelected ( bool ) ) , action , SLOT ( setEnabled ( bool ) ) );
+	connect ( action, SIGNAL (triggered(bool)), this, SLOT (slotExportSelectedMetaContactKeys()) );
+	connect ( Kopete::ContactList::self() , SIGNAL (metaContactSelected(bool)) , action , SLOT (setEnabled(bool)) );
 	action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
 
 	setXMLFile ( "cryptographyui.rc" );
 
 	// add functionality to chat window when one opens
-	connect ( Kopete::ChatSessionManager::self(), SIGNAL ( chatSessionCreated ( Kopete::ChatSession * ) ) , SLOT ( slotNewKMM ( Kopete::ChatSession * ) ) );
+	connect ( Kopete::ChatSessionManager::self(), SIGNAL (chatSessionCreated(Kopete::ChatSession*)) , SLOT (slotNewKMM(Kopete::ChatSession*)) );
 
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already running)
 	QList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
@@ -150,7 +150,7 @@ void CryptographyPlugin::slotIncomingMessage ( Kopete::MessageEvent *messageEven
 	Q_ASSERT ( proto );
 
 	Kleo::DecryptVerifyJob * decryptVerifyJob = proto->decryptVerifyJob();
-	connect ( decryptVerifyJob, SIGNAL ( result ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ), this, SLOT ( slotIncomingMessageContinued ( const GpgME::DecryptionResult &, const GpgME::VerificationResult &, const QByteArray & ) ) );
+	connect ( decryptVerifyJob, SIGNAL (result(GpgME::DecryptionResult,GpgME::VerificationResult,QByteArray)), this, SLOT (slotIncomingMessageContinued(GpgME::DecryptionResult,GpgME::VerificationResult,QByteArray)) );
 	mCurrentJobs.insert ( decryptVerifyJob, msg );
 	decryptVerifyJob->start ( body.toLatin1() );
 
@@ -179,12 +179,12 @@ void CryptographyPlugin::slotIncomingMessageContinued ( const GpgME::DecryptionR
 			Q_ASSERT ( proto );
 
 			Kleo::DecryptJob * decryptJob = proto->decryptJob();
-			connect ( decryptJob, SIGNAL ( result ( const GpgME::DecryptionResult &, const QByteArray & ) ), this, SLOT ( slotIncomingEncryptedMessageContinued ( const GpgME::DecryptionResult &, const QByteArray & ) ) );
+			connect ( decryptJob, SIGNAL (result(GpgME::DecryptionResult,QByteArray)), this, SLOT (slotIncomingEncryptedMessageContinued(GpgME::DecryptionResult,QByteArray)) );
 			mCurrentJobs.insert ( decryptJob, msg );
 			decryptJob->start ( msg.plainBody().toLatin1() );
 
 			Kleo::VerifyOpaqueJob * verifyJob = proto->verifyOpaqueJob();
-			connect ( verifyJob, SIGNAL ( result ( const GpgME::VerificationResult &, const QByteArray & ) ), this, SLOT ( slotIncomingSignedMessageContinued ( const GpgME::VerificationResult &, const QByteArray & ) ) );
+			connect ( verifyJob, SIGNAL (result(GpgME::VerificationResult,QByteArray)), this, SLOT (slotIncomingSignedMessageContinued(GpgME::VerificationResult,QByteArray)) );
 			mCurrentJobs.insert ( verifyJob, msg );
 			verifyJob->start ( msg.plainBody().toLatin1() );
 		}
@@ -365,7 +365,7 @@ void CryptographyPlugin::slotSelectContactKey()
 void CryptographyPlugin::slotNewKMM ( Kopete::ChatSession *KMM )
 {
 	CryptographyGUIClient * gui = new CryptographyGUIClient ( KMM );
-	connect ( this , SIGNAL ( destroyed ( QObject* ) ), gui, SLOT ( deleteLater() ) );
+	connect ( this , SIGNAL (destroyed(QObject*)), gui, SLOT (deleteLater()) );
 
 	// warn about unfriendly protocols
 	if ( KMM->protocol() ) {

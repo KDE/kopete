@@ -40,7 +40,7 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 	setCaption ( i18n ("Export Public Keys") );
 	setButtons ( KDialog::User1 | KDialog::Cancel );
 	setButtonGuiItem ( KDialog::User1, KGuiItem ( i18nc("@action:button", "Export"), "document-export-key", i18nc("@info:tooltip", "Export checked keys to address book")));
-	connect ( this, SIGNAL( user1Clicked() ), this, SLOT ( accept() ) );
+	connect ( this, SIGNAL(user1Clicked()), this, SLOT (accept()) );
 	
 	QString key;
 	KABC::Addressee addressee;
