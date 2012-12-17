@@ -338,6 +338,9 @@ void ICQAccount::closeUserInfoDialog()
 
 void ICQAccount::userReadsStatusMessage( const QString& contact )
 {
+	if ( isBusy() )
+		return;
+
 	QString name;
 
 	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );

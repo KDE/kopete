@@ -287,7 +287,7 @@ void Skype::error(const QString &message) {
 
 	disconnect(&d->connection, SIGNAL(error(QString)), this, SLOT(error(QString)));//One arror at a time is enough, stop flooding the user
 
-	if (d->showDeadMessage)//just skip the error message if we are going offline, none ever cares.
+	if (d->showDeadMessage && !d->account.isBusy())//just skip the error message if we are going offline, none ever cares.
 		KNotification::event(KNotification::Error, i18n("Skype protocol"), message);//Show the message
 
 	connect(&d->connection, SIGNAL(error(QString)), this, SLOT(error(QString)));//Continue showing more errors in future

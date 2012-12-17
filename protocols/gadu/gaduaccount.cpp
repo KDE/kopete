@@ -1007,7 +1007,8 @@ GaduAccount::userListDeleteDone()
 void
 GaduAccount::userListNotification( QString what )
 {
-	KNotification::event( QString::fromLatin1("kopete_gadu_contactslist"), what, accountIcon());
+	if ( !isBusy() )
+		KNotification::event( QString::fromLatin1("kopete_gadu_contactslist"), what, accountIcon());
 }
 
 void
@@ -1184,7 +1185,8 @@ GaduAccount::slotChangePassword()
 void
 GaduAccount::slotCommandDone( const QString& /*title*/, const QString& what )
 {
-	KNotification::event( KNotification::Notification, what );
+	if ( !isBusy() )
+		KNotification::event( KNotification::Notification, what );
 }
 
 void

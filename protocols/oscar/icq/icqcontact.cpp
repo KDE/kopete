@@ -296,6 +296,9 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
+	if ( account()->isBusy() )
+		return;
+
 	kDebug(OSCAR_ICQ_DEBUG) ;
 	QString message;
 	if( granted )

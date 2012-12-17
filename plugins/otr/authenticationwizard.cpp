@@ -33,6 +33,7 @@
 #include <QGroupBox>
 #include <QProgressBar>
 #include <kopeteview.h>
+#include <kopeteaccount.h>
 
 QList<AuthenticationWizard*> wizardList;
 
@@ -67,6 +68,9 @@ AuthenticationWizard::AuthenticationWizard(QWidget *parent, ConnContext *context
 	connect(rbMV, SIGNAL(clicked()), this, SLOT(updateInfoBox()));
 
 	updateInfoBox();
+
+	if ( session->account()->isBusy() )
+		return;
 
 	show();
 	

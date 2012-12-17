@@ -26,6 +26,8 @@
 
 #include <kopeteinfoeventmanager.h>
 #include <kopeteinfoevent.h>
+#include <kopetestatusmanager.h>
+#include <kopeteonlinestatusmanager.h>
 
 class InfoEventWidget::Private
 {
@@ -226,16 +228,19 @@ void InfoEventWidget::updateInfo()
 
 void InfoEventWidget::eventAdded( Kopete::InfoEvent* event )
 {
-	KNotification *notify = new KNotification( QString("kopete_info_event") , 0l );
-	notify->setActions( QStringList( i18n( "View" ) ) );
-	notify->setText( event->text() );
+	if ( Kopete::StatusManager::self()->globalStatusCategory() != Kopete::OnlineStatusManager::Busy )
+	{
+		KNotification *notify = new KNotification( QString("kopete_info_event") , 0l );
+		notify->setActions( QStringList( i18n( "View" ) ) );
+		notify->setText( event->text() );
 
-	d->notifyEventHash.insert( notify, event );
+		d->notifyEventHash.insert( notify, event );
 
-	connect( notify, SIGNAL(activated(uint)), this, SLOT(notificationActivated()) );
-	connect( notify, SIGNAL(closed()), this, SLOT(notificationClosed()) );
+		connect( notify, SIGNAL(activated(uint)), this, SLOT(notificationActivated()) );
+		connect( notify, SIGNAL(closed()), this, SLOT(notificationClosed()) );
 
-	notify->sendEvent();
+		notify->sendEvent();
+	}
 
 	if ( event->showOnSend() )
 	{
