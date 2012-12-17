@@ -365,8 +365,22 @@ public:
 	 *
 	 * This is a convenience method that queries @ref Contact::onlineStatus() on @ref myself().
 	 * This function is safe to call if @ref setMyself() has not been called yet.
+	 *
+	 * @see @ref isBusy()
 	 */
 	bool isAway() const;
+
+	/**
+	 * @brief Indicate whether the account is busy.
+	 *
+	 * In busy mode all visible and sound events should be disabled.
+	 *
+	 * This is a convenience method that queries @ref Contact::onlineStatus() on @ref myself().
+	 * This function is safe to call if @ref setMyself() has not been called yet.
+	 *
+	 * @see @ref isAway()
+	 */
+	bool isBusy() const;
 
 	/**
 	 * Return the @ref KConfigGroup used to write and read special properties

@@ -787,6 +787,9 @@ void YahooAccount::slotDisconnected()
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( ConnectionReset );	// may reconnect
 
+	if ( isBusy() )
+		return;
+
 	QString message;
 	message = i18n( "%1 has been disconnected.\nError message:\n%2 - %3" ,
 		  accountId(), m_session->error(), m_session->errorString() );
@@ -799,6 +802,9 @@ void YahooAccount::slotLoginFailed()
 	initConnectionSignals( DeleteConnections );
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( Manual );			// don't reconnect
+
+	if ( isBusy() )
+		return;
 
 	QString message;
 	message = i18n( "There was an error while connecting %1 to the Yahoo server.\nError message:\n%2 - %3" ,
@@ -870,6 +876,10 @@ void YahooAccount::slotBuddyChangeGroupResult(const QString &userid, const QStri
 void YahooAccount::slotAuthorizationAccepted( const QString &who )
 {
 	kDebug(YAHOO_GEN_DEBUG) ;
+
+	if ( isBusy() )
+		return;
+
 	QString message;
 	message = i18n( "User %1 has granted your authorization request." ,
 		  who );
@@ -882,6 +892,10 @@ void YahooAccount::slotAuthorizationAccepted( const QString &who )
 void YahooAccount::slotAuthorizationRejected( const QString &who, const QString &msg )
 {
 	kDebug(YAHOO_GEN_DEBUG) ;
+
+	if ( isBusy() )
+		return;
+
 	QString message;
 	message = i18n( "User %1 has rejected your authorization request.\n%2" ,
 		  who, msg );
@@ -1570,7 +1584,10 @@ void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )
 void YahooAccount::slotMailNotify( const QString& from, const QString&  subject , int cnt )
 {
 	kDebug(YAHOO_GEN_DEBUG) << "Mail count: " << cnt;
-	
+
+	if ( isBusy() )
+		return;
+
 	if ( cnt > 0 && from.isEmpty() )
 	{
 		QObject::connect(KNotification::event( QLatin1String("yahoo_mail"), i18np( "You have one unread message in your Yahoo inbox.",

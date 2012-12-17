@@ -498,6 +498,11 @@ bool Account::isAway() const
 					d->myself->onlineStatus().status() == Kopete::OnlineStatus::Busy );
 }
 
+bool Account::isBusy() const
+{
+	return d->myself && ( d->myself->onlineStatus().status() == Kopete::OnlineStatus::Busy );
+}
+
 Identity * Account::identity() const
 {
 	return d->identity;

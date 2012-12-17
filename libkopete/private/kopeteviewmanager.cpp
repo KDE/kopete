@@ -348,6 +348,10 @@ void KopeteViewManager::createNotification( Kopete::Message &msg, const QString 
 	                                        QWidget *viewWidget,
 	                                        bool isActiveWindow, bool isViewOnCurrentDesktop )
 {
+
+	if ( msg.from()->account()->isBusy() )
+		return;
+
     if ( d->balloonGroupMessageNotificationsPerSender )
 	{
 		Kopete::ActiveNotifications::iterator notifyIt =

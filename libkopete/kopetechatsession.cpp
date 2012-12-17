@@ -286,7 +286,7 @@ void Kopete::ChatSession::sendMessage( Kopete::Message &message )
 	if ( !Kopete::CommandHandler::commandHandler()->processMessage( message, this ) )
 	{
 		emit messageSent( sentMessage, this );
-		if ( !account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
+		if ( ( !account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() ) && !account()->isBusy() )
 		{
 			KNotification::event(QString::fromLatin1( "kopete_outgoing" ),	i18n( "Outgoing Message Sent" ) );
 		}
@@ -304,7 +304,8 @@ void Kopete::ChatSession::messageSucceeded()
 
 void Kopete::ChatSession::emitNudgeNotification()
 {
-	KNotification::event( QString::fromLatin1("buzz_nudge"), i18n("A contact sent you a buzz/nudge.") );
+	if ( !account()->isBusy() )
+		KNotification::event( QString::fromLatin1("buzz_nudge"), i18n("A contact sent you a buzz/nudge.") );
 }
 
 void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
@@ -538,14 +539,11 @@ void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 {
 	emit remoteTyping( c, t );
 
-	QWidget *viewWidget = 0L;
-	bool isActiveWindow = false;
+	if ( ( account()->isAway() && ! Kopete::BehaviorSettings::self()->enableEventsWhileAway() ) || account()->isBusy() )
+		return;
 
-	if ( !account()->isAway() || Kopete::BehaviorSettings::self()->enableEventsWhileAway() )
-	{
-		viewWidget = dynamic_cast<QWidget*>(view(false));
-		isActiveWindow = view(false) && ( viewWidget && viewWidget->isActiveWindow() );
-	}
+	QWidget * viewWidget = dynamic_cast<QWidget*>(view(false));
+	bool isActiveWindow = view(false) && ( viewWidget && viewWidget->isActiveWindow() );
 
 	// We aren't interested in notification from current window
 	// or 'user stopped typing' notifications

@@ -1289,6 +1289,7 @@ void MetaContact::onlineStatusNotification( Kopete::Contact * c )
 	// ensure we are not suppressing notifications, because connecting or disconnected
 	if ( !c->account()->suppressStatusNotification() && c->account()->isConnected()
 	     && c->account()->myself()->onlineStatus().status() != OnlineStatus::Connecting
+	     && c->account()->myself()->onlineStatus().status() != OnlineStatus::Busy
 	     && (Kopete::BehaviorSettings::self()->enableEventsWhileAway() || !c->account()->isAway()) )
 	{
 		// figure out what's happened

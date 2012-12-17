@@ -61,6 +61,7 @@
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaddedinfoevent.h"
+#include "kopetestatusmanager.h"
 
 #include "jabberclient.h"
 #include "jabberprotocol.h"
@@ -783,6 +784,9 @@ void JabberAccount::slotCSDisconnected ()
 
 void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, const QString &server, Kopete::Account::DisconnectReason &errorClass, QString additionalErrMsg)
 {
+	if ( Kopete::StatusManager::self()->globalStatusCategory() == Kopete::OnlineStatusManager::Busy )
+		return;
+
 	QString errorText;
 	QString errorCondition;
 

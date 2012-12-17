@@ -33,6 +33,7 @@
 #include "kopeteutils_private.h"
 #include "kopeteutils.h"
 #include "kopeteuiglobal.h"
+#include "kopetestatusmanager.h"
 
 namespace Kopete
 {
@@ -64,6 +65,9 @@ K_GLOBAL_STATIC(DefaultStrings, defaultStrings)
 void notify( QPixmap pic, const QString &eventid, const QString &caption, const QString &message, const QString explanation, const QString debugInfo)
 {
 	Q_UNUSED(caption);
+
+	if ( Kopete::StatusManager::self()->globalStatusCategory() == Kopete::OnlineStatusManager::Busy )
+		return;
 
 	QStringList actions;
 		if ( !explanation.isEmpty() )
