@@ -58,7 +58,6 @@ Name[zh_CN]=密码术
 Name[zh_TW]=加密
 Comment=Encrypts and signs messages using OpenPGP
 Comment[bg]=Шифриране и подписване на съобщения с OpenPGP
-Comment[bs]=Šifrovanje i potpisivanje poruka openPGP‑om
 Comment[cs]=Šifruje a podepisuje zprávy pomocí OpenPGP
 Comment[da]=Krypterer og signerer beskeder med brug af OpenPGP
 Comment[de]=Verschlüsselt und signiert Nachrichten mit OpenPGP
