@@ -13,6 +13,7 @@ Description=A KIO slave for Jabber Service Discovery
 Description[ar]=تابع KIO إكتشف لخدمة جابر
 Description[ast]=Un esclavu KIO pal serviciu de descubrimientu jabber
 Description[bn]=Jabber সার্ভিস ডিসকভারির জন্য একটি কে-আই-ও স্লেভ
+Description[bs]=KIO rob za Jabber Servis Otkrivanja
 Description[ca]=Un esclau KIO pel servei de descoberta del Jabber
 Description[ca@valencia]=Un esclau KIO pel servei de descoberta del Jabber
 Description[cs]=Pomocný protokol pro zjišťování služeb Jabber
