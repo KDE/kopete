@@ -233,7 +233,7 @@ void CryptographyPlugin::finalizeMessage ( Kopete::Message & msg, const QString 
 	GpgME::Signature::Validity validity = ( GpgME::Signature::Validity ) GpgME::Signature::Unknown;
 	bool firstTime = true;
 	std::vector<GpgME::Signature> signatures = verificationResult.signatures();
-	for ( int i = 0 ; i < verificationResult.signatures().size() ; i++ )
+	for ( size_t i = 0 ; i < verificationResult.signatures().size() ; i++ )
 	{
 		kDebug ( 14303 ) << "signature" << i << "validity is" << signatures[i].validityAsString() << "from" << signatures[i].fingerprint();
 		if ( validity > signatures[i].validity() || firstTime ) {
