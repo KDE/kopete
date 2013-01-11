@@ -305,8 +305,12 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 
 		if ( appendMessageEvent || showNotification )
 		{
-			if ( msg.from() && d->eventList.isEmpty() ) // may happen for internal messages
-				showNotification = true;
+			if ( msg.from() && d->eventList.isEmpty() ) { // may happen for internal messages
+				if ( session->account()->isBusy() || ( session->account()->isAway() && !d->enableEventsWhileAway ) )
+					showNotification = false;
+				else
+					showNotification = true;
+			}
 
 			event = new Kopete::MessageEvent( msg, session );
 			d->eventList.append( event );
