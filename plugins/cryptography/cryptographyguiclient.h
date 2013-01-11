@@ -33,7 +33,7 @@ class CryptographyGUIClient : public QObject, public KXMLGUIClient
 {
 		Q_OBJECT
 	public:
-		CryptographyGUIClient ( Kopete::ChatSession *parent = 0 );
+		explicit CryptographyGUIClient ( Kopete::ChatSession *parent = 0 );
 		~CryptographyGUIClient();
 
 		bool signing() { return m_signAction->isChecked(); }
