@@ -52,10 +52,8 @@ WinPopupLib::~WinPopupLib()
 void WinPopupLib::slotStartDirLister()
 {
 	if (checkMessageDir()) {
-		dirLister = new KDirLister();
-		dirLister->setAutoUpdate(true);
+		dirLister = new KDirLister(this);
 		connect(dirLister, SIGNAL(newItems(KFileItemList)), this, SLOT(slotReadMessages(KFileItemList)));
-		connect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
 		dirLister->openUrl(KUrl(WP_POPUP_DIR));
 	}
 }
@@ -273,20 +271,12 @@ void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 	}
 }
 
-void WinPopupLib::slotListCompleted()
-{
-	/// only to check received messages during start up, then we use newItems. GF
-	disconnect(dirLister, SIGNAL(completed()), this, SLOT(slotListCompleted()));
-	slotReadMessages(dirLister->items());
-}
-
 /**
  * read new arrived messages
  */
 void WinPopupLib::slotReadMessages(const KFileItemList &items)
 {
-	KFileItem tmpItem;
-	foreach (tmpItem, items) {
+	foreach (const KFileItem& tmpItem, items) {
 		if (tmpItem.isFile()) {
 			QFile messageFile(tmpItem.url().toLocalFile());
 

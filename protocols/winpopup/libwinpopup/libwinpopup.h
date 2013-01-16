@@ -77,7 +77,6 @@ private slots:
 	void startReadProcess(const QString &Host);
 	void slotReadProcessExited(int, QProcess::ExitStatus);
 	void slotStartDirLister();
-	void slotListCompleted();
 	void slotReadMessages(const KFileItemList &items);
 
 signals:
