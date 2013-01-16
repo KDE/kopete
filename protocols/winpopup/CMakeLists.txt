@@ -1,7 +1,6 @@
 
 #add_subdirectory( ui ) 
 add_subdirectory( icons ) 
-#add_subdirectory( libwinpopup ) 
 
 include_directories( 
 ${KOPETE_INCLUDES} 
