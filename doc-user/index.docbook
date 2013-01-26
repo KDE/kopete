@@ -1046,8 +1046,8 @@ sets that you can simply extract there.</para>
 <para>Installing emoticon sets</para>
 </chapter> <!-- specialised -->
 
-<chapter id="credits-and-licenses">
-<title>Credits and Licenses</title>
+<chapter id="credits-and-license">
+<title>Credits and License</title>
 <para>
 &kopete;: copyright 2001-2007, &kopete; Developers
 </para>
@@ -1096,7 +1096,7 @@ sets that you can simply extract there.</para>
 Documentation copyright 2003,2004,2005 &Will.Stephenson; (lists at stevello free-online co uk), copyright 2005 &Matt.Rogers; (mattr at kde org), copyright 2005,2006 &Michael.Larouche; (michael.larouche at kdemail net).
 </para>
 </sect1>
-</chapter><!-- credits-and-licenses -->
+</chapter><!-- credits-and-license -->
 
 <appendix id="installation">
 <title>Installation</title>
