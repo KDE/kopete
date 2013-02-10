@@ -640,7 +640,7 @@ JingleReason::JingleReason(JingleReason::Type type, const QString& text)
 
 JingleReason::~JingleReason()
 {
-
+        delete d;
 }
 
 void JingleReason::setText(const QString& r)
