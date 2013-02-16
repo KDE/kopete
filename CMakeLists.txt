@@ -160,6 +160,7 @@ add_subdirectory( plugins )
 add_subdirectory( icons )
 add_subdirectory( sounds )
 add_subdirectory( styles )
+add_subdirectory( doc )
 
 if(NOT INSIDE_KDENETWORK)
 	macro_display_feature_log()
