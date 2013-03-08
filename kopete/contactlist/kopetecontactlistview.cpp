@@ -442,7 +442,12 @@ void KopeteContactListView::moveToGroup()
 		foreach( Kopete::Contact *c, metaContact->contacts() )
 		{
 			if ( !c->account()->isConnected() )
-				return; // Some contact is offline we can't move it
+			{ // Some accounts are offline we can't move it
+				const QString msg = i18n( "Account %1 is offline. Do you really want to move this metacontact?", c->account()->accountLabel() );
+				if ( KMessageBox::warningYesNo( this, msg, i18n( "Move contact" ), KStandardGuiItem::yes(), KStandardGuiItem::no(),
+				                                "askMoveMetaContactToGroup", KMessageBox::Notify | KMessageBox::Dangerous ) == KMessageBox::No )
+					return;
+			}
 		}
 
 		bool ok = false;
