@@ -24,7 +24,7 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 
-#include <k3listbox.h>
+#include <klistwidget.h>
 #include <klocale.h>
 #include <kpluginfactory.h>
 
@@ -51,15 +51,15 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QVariant
 	addConfig( NowListeningConfig::self(), w );
 
 	// Fill the media player listbox.
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kscd"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Juk"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Amarok"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Kaffeine"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("Quod Libet"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("MPRIS compatible player"));
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("MPRIS2 compatible player"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Kscd"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Juk"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Amarok"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Kaffeine"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("Quod Libet"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("MPRIS compatible player"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("MPRIS2 compatible player"));
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
-	preferencesDialog->kcfg_SelectedMediaPlayer->insertItem(QString::fromUtf8("XMMS"));
+	preferencesDialog->kcfg_SelectedMediaPlayer->addItem(QString::fromUtf8("XMMS"));
 #endif
 }
 
