@@ -395,18 +395,6 @@ change the notifications (sounds, error messages, &etc;)  used by &kopete;.
 </listitem>
 </varlistentry>
 
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>Configure Plugins...</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Displays the <link linkend="configuring-load-plugins-dialog">Configure Plugins</link> dialog.</para>
-</listitem>
-</varlistentry>
-
 </variablelist>
 </sect2>
 <sect2 id="menus-help">
@@ -871,8 +859,7 @@ Show Empty Groups
 Configure Shortcuts...
 Configure Global Shortcuts...
 Configure Toolbars...
-Configure Plugins...
-Configure Kopete...
+Configure...
 HELP
 Kopete Handbook...
 What's This?

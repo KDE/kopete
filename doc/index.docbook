@@ -689,7 +689,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 
 <sect1 id="configuring-load-plugins-dialog">
 <title>Loading Plugins</title>
-<para>You can customize &kopete; with special functions that may be useful or just a bit of fun.  Bring up the <guilabel>Configure Plugins</guilabel> dialog with  <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure Plugins...</guimenuitem></menuchoice>.</para>
+<para>You can customize &kopete; with special functions that may be useful or just a bit of fun.  Bring up the <guilabel>Select and Configure Plugins</guilabel> panel with <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure...</guimenuitem></menuchoice> and then the <guilabel>Plugins</guilabel> entry.</para>
 <para>Plugins can be turned on or off in the list on the left side of the page.  Each plugin may be configured on the right side.  See the <link linkend="plugins">chapter on plugins</link> for details on each plugin.</para>
 </sect1>
 </chapter> <!-- configuring -->
@@ -941,7 +941,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="plugins-translator">
 <title>Translator</title>
-<para>The Translator plugin lets you define a preferred language for each Metacontact, and then translates messages to or from them using web based translation services such as <trademark>Google</trademark> and <trademark>Babelfish</trademark>.  Set your own preferred language in the Configure Plugins dialog.  Each contact's preferred language can be set on its context menu.</para>
+<para>The Translator plugin lets you define a preferred language for each Metacontact, and then translates messages to or from them using web based translation services such as <trademark>Google</trademark> and <trademark>Babelfish</trademark>.  Set your own preferred language in the <guilabel>Select and Configure Plugins</guilabel> dialog.  Each contact's preferred language can be set on its context menu.</para>
 <para>The following item is added to the Chat window's menus:</para>
 <variablelist>
 <varlistentry>
