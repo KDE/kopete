@@ -78,7 +78,9 @@ namespace Eva {
 		plain[0] = ( rand() & 0xf8 ) | pos;
 		memset( plain_pre, 0, 8 );
 		memset( crypted_pre, 0, 8 );
-		memset( plain+1, rand()& 0xff, pos++ );
+		if( pos > 0 )
+			memset( plain+1, rand()& 0xff, pos );
+		pos++;
 
 		// pad 2 bytes
 		for( i = 0; i< 2; i++ )
