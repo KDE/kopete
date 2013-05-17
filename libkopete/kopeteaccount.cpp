@@ -569,15 +569,15 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 
 	if ( wasOffline || newStatus.status() == OnlineStatus::Offline )
 	{
-		// Wait for five seconds until we treat status notifications for contacts
+		// Wait for twenty seconds until we treat status notifications for contacts
 		// as unrelated to our own status change.
-		// Five seconds may seem like a long time, but just after your own
+		// Twenty seconds may seem like a long time, but just after your own
 		// connection it's basically neglectible, and depending on your own
 		// contact list's size, the protocol you are using, your internet
 		// connection's speed and your computer's speed you *will* need it.
 		d->suppressStatusNotification = true;
 		d->suppressStatusTimer.setSingleShot( true );
-		d->suppressStatusTimer.start( 5000 );
+		d->suppressStatusTimer.start( 20000 );
 		//the timer is also used to reset the d->connectionTry
 	}
 
@@ -621,7 +621,7 @@ void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
 {
 	d->suppressStatusNotification = true;
 	d->suppressStatusTimer.setSingleShot( true );
-	d->suppressStatusTimer.start( 5000 );
+	d->suppressStatusTimer.start( 20000 );
 
 	QHashIterator<QString, Contact*> it(d->contacts);
 	for (  ; it.hasNext(); ) {
