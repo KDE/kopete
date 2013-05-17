@@ -921,30 +921,15 @@ void ChatView::dragMoveEvent( QDragMoveEvent * event )
 
 bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 {
-	if( event->provides( "kopete/x-contact" ) )
+	if( event->provides( "application/kopete.metacontacts.list" ) )
 	{
-		QStringList lst = QString::fromUtf8(event->encodedData ( "kopete/x-contact" )).split( QChar( 0xE000 ) , QString::SkipEmptyParts );
-		if(m_manager->mayInvite() && m_manager->protocol()->pluginId() == lst[0] && m_manager->account()->accountId() == lst[1])
-		{
-			QString contact=lst[2];
+		QByteArray encodedData = event->encodedData ( "application/kopete.metacontacts.list" );
+		QDataStream stream( &encodedData, QIODevice::ReadOnly );
+		QString metacontactID;
+		stream >> metacontactID;
 
-			bool found =false;
-			foreach(Kopete::Contact * cts, m_manager->members())
-			{
-				if(cts->contactId() == contact)
-				{
-					found=true;
-					break;
-				}
-			}
-
-			if(!found && contact != m_manager->myself()->contactId())
-				return true;
-		}
-	}
-	else if( event->provides( "kopete/x-metacontact" ) )
-	{
-		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
+		metacontactID.remove( 0, metacontactID.indexOf('/')+1 ); // strip groupid
+		kDebug() << metacontactID;
 		Kopete::MetaContact *parent = Kopete::ContactList::self()->metaContact(metacontactID);
 		if ( parent && m_manager->mayInvite() )
 		{
@@ -974,29 +959,14 @@ void ChatView::dropEvent ( QDropEvent * event )
 {
 	Kopete::ContactPtrList contacts;
 
-	if( event->provides( "kopete/x-contact" ) )
+	if( event->provides( "application/kopete.metacontacts.list" ) )
 	{
-		QStringList lst = QString::fromUtf8(event->encodedData ( "kopete/x-contact" )).split( QChar( 0xE000 ) , QString::SkipEmptyParts );
-		if(m_manager->mayInvite() && m_manager->protocol()->pluginId() == lst[0] && m_manager->account()->accountId() == lst[1])
-		{
-			QString contact=lst[2];
+		QByteArray encodedData = event->encodedData ( "application/kopete.metacontacts.list" );
+		QDataStream stream( &encodedData, QIODevice::ReadOnly );
+		QString metacontactID;
+		stream >> metacontactID;
 
-			bool found =false;
-			foreach ( Kopete::Contact * candidate, m_manager->members() )
-			{
-				if(candidate->contactId() == contact)
-				{
-					found=true;
-					break;
-				}
-			}
-			if(!found && contact != m_manager->myself()->contactId())
-				m_manager->inviteContact(contact);
-		}
-	}
-	else if( event->provides( "kopete/x-metacontact" ) )
-	{
-		QString metacontactID=QString::fromUtf8(event->encodedData ( "kopete/x-metacontact" ));
+		metacontactID.remove( 0, metacontactID.indexOf('/')+1 ); // strip groupid
 		Kopete::MetaContact *parent = Kopete::ContactList::self()->metaContact(metacontactID);
 		if ( parent && m_manager->mayInvite() )
 		{
