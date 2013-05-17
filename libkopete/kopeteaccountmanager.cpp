@@ -22,6 +22,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QTimer>
 #include <QtCore/QHash>
+#include <QtDBus/QDBusInterface>
 
 #include <ksharedconfig.h>
 #include <kdebug.h>
@@ -65,6 +66,9 @@ class AccountManager::Private
 public:
 	QList<Account *> accounts;
 	QList<Account *> accountsToBeRemoved;
+	bool suspended;
+	Kopete::StatusMessage suspendedStatusMessage;
+	uint suspendedStatusCategory;
 };
 
 AccountManager * AccountManager::s_self = 0L;
@@ -84,6 +88,10 @@ AccountManager::AccountManager()
 	setObjectName( "KopeteAccountManager" );
 	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT(networkConnected()) );
 	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT(networkDisconnected()) );
+#warning TODO: Switch to a org.kde.Solid.PowerManagement Sleeping/Suspending signal when available.
+	QDBusConnection::systemBus().connect( "org.freedesktop.UPower", "/org/freedesktop/UPower", "", "Sleeping", this, SLOT( suspend() ) );
+	QDBusConnection::sessionBus().connect( "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT( resume() ) );
+	d->suspended = false;
 }
 
 
@@ -111,6 +119,7 @@ void AccountManager::setOnlineStatus( uint category, const Kopete::StatusMessage
 	OnlineStatusManager::Categories categories
 		= (OnlineStatusManager::Categories)category;
 	const bool onlyChangeConnectedAccounts = ( !forced && isAnyAccountConnected() );
+	d->suspended = false;
 
 	foreach( Account *account, d->accounts )
 	{
@@ -145,6 +154,53 @@ void AccountManager::setStatusMessage(const QString &message)
 	{
 		account->setStatusMessage(message);
 	}
+}
+
+void AccountManager::suspend()
+{
+	if ( d->suspended )
+		return;
+
+	d->suspended = true;
+	d->suspendedStatusMessage = Kopete::StatusManager::self()->globalStatusMessage();
+	d->suspendedStatusCategory = Kopete::StatusManager::self()->globalStatusCategory();
+
+	Kopete::StatusMessage statusMessage( i18n( "Offline" ), "" );
+	QList <Kopete::Status::StatusItem *> statusList = Kopete::StatusManager::self()->getRootGroup()->childList();
+	//find first Status for OffineStatus
+	for ( QList <Kopete::Status::StatusItem *>::ConstIterator it = statusList.constBegin(); it != statusList.constEnd(); ++it )
+	{
+		if ( ! (*it)->isGroup() && (*it)->category() == Kopete::OnlineStatusManager::Offline )
+		{
+			QString message, title;
+			title = (*it)->title();
+			message = (static_cast <Kopete::Status::Status*> (*it))->message(); //if it is not group, it's status
+			statusMessage.setTitle( title );
+			statusMessage.setMessage( message );
+			break;
+		}
+	}
+
+	foreach( Account *account, d->accounts )
+	{
+		account->suspend( statusMessage );
+	}
+	Kopete::StatusManager::self()->setGlobalStatus( Kopete::OnlineStatusManager::Offline, statusMessage );
+}
+
+bool AccountManager::resume()
+{
+	bool networkAvailable = ( Solid::Networking::status() == Solid::Networking::Unknown || Solid::Networking::status() == Solid::Networking::Connected );
+	if ( !d->suspended || !networkAvailable )
+		return false;
+
+	foreach( Account *account, d->accounts )
+	{
+		account->resume();
+	}
+	Kopete::StatusManager::self()->setGlobalStatus( d->suspendedStatusCategory, d->suspendedStatusMessage );
+	d->suspended = false;
+	return true;
 }
 
 QColor AccountManager::guessColor( Protocol *protocol ) const
@@ -394,36 +450,14 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 
 void AccountManager::networkConnected()
 {
-	Kopete::OnlineStatusManager::Category initStatus = Kopete::OnlineStatusManager::self()->initialStatus();
-	//we check for network availability here too
-	if ( Solid::Networking::status() == Solid::Networking::Unknown ||
-			  Solid::Networking::status() == Solid::Networking::Connected ){
-
-		QList <Kopete::Status::StatusItem *> statusList = Kopete::StatusManager::self()->getRootGroup()->childList();
-		QString message, title;
-		bool found = false;
-
-		//find first Status for OnlineStatus
-		for ( QList <Kopete::Status::StatusItem *>::ConstIterator it = statusList.constBegin(); it != statusList.constEnd(); ++it ) {
-			if ( ! (*it)->isGroup() && (*it)->category() == initStatus ) {
-				title = (*it)->title();
-				message = (static_cast <Kopete::Status::Status*> (*it))->message(); //if it is not group, it status
-				found = true;
-				break;
-			}
-		}
-
-		Kopete::AccountManager::self()->setOnlineStatus(initStatus, Kopete::StatusMessage(title, message), Kopete::AccountManager::ConnectIfOffline);
-
-		if ( found )
-			Kopete::StatusManager::self()->setGlobalStatus(initStatus, Kopete::StatusMessage(title, message));
-	}
+	if( !resume() )
+		setOnlineStatus( Kopete::StatusManager::self()->globalStatusCategory(), Kopete::StatusManager::self()->globalStatusMessage(), 0, true);
 }
 
 
 void AccountManager::networkDisconnected()
 {
-	setOnlineStatus( Kopete::OnlineStatusManager::Offline );
+	suspend();
 }
 
 void AccountManager::removeAccountConnectedChanged()

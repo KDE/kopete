@@ -570,6 +570,18 @@ public slots:
 	virtual void setStatusMessage( const Kopete::StatusMessage &statusMessage ) = 0;
 
 	/**
+	 * Disconnects account, required before resume()
+	 * Returns false if account is already suspended.
+	 */
+	bool suspend( const Kopete::StatusMessage &reason = Kopete::StatusMessage() );
+
+	/**
+	 * Sets account to the online status that was active when suspend() was called.
+	 * Returns false if account has not been suspended or status has changed to something other than Offline in the meantime.
+	 */
+	bool resume();
+
+	/**
 	 * Display the edit account widget for the account
 	 */
 	void editAccount( QWidget* parent = 0L );

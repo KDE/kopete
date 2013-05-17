@@ -93,6 +93,8 @@ public:
 	Kopete::OnlineStatus restoreStatus;
 	Kopete::StatusMessage restoreMessage;
 	QDateTime lastLoginTime;
+	bool suspended;
+	Kopete::OnlineStatus suspendStatus;
 };
 
 Account::Account( Protocol *parent, const QString &accountId )
@@ -117,6 +119,9 @@ Account::Account( Protocol *parent, const QString &accountId )
 
 	QObject::connect( &d->suppressStatusTimer, SIGNAL(timeout()),
 		this, SLOT(slotStopSuppression()) );
+
+	d->suspended = false;
+	d->suspendStatus = Kopete::OnlineStatus::Offline;
 }
 
 Account::~Account()
@@ -551,6 +556,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 {
 	const bool wasOffline = !oldStatus.isDefinitelyOnline();
 	const bool isOffline  = !newStatus.isDefinitelyOnline();
+	d->suspended = false;
 
 	if ( wasOffline && !isOffline )
 		d->lastLoginTime = QDateTime::currentDateTime();
@@ -587,6 +593,28 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;*/
 	if ( wasOffline != isOffline )
 		emit isConnectedChanged();
+}
+
+bool Account::suspend( const Kopete::StatusMessage &reason )
+{
+	if ( d->suspended )
+		return false;
+
+	d->suspendStatus = myself()->onlineStatus();
+	if( myself()->onlineStatus().status() == OnlineStatus::Connecting )
+		d->suspendStatus = d->restoreStatus;
+	setOnlineStatus( OnlineStatus::Offline, reason );
+	d->suspended = true;
+	return true;
+}
+
+bool Account::resume()
+{
+	if ( !d->suspended )
+		return false;
+
+	setOnlineStatus( d->suspendStatus, d->restoreMessage, Kopete::Account::None );
+	return true;
 }
 
 void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )

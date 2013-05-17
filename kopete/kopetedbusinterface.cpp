@@ -256,6 +256,16 @@ void KopeteDBusInterface::disconnectAll()
 			Kopete::OnlineStatusManager::Offline);
 }
 
+void KopeteDBusInterface::suspend()
+{
+	Kopete::AccountManager::self()->suspend();
+}
+
+void KopeteDBusInterface::resume()
+{
+	Kopete::AccountManager::self()->resume();
+}
+
 void KopeteDBusInterface::setOnlineStatus(const QString &status,
 		const QString &message)
 {

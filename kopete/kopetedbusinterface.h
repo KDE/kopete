@@ -55,6 +55,16 @@ public Q_SLOTS:
 	void disconnectAll();
 
 	/**
+	 * @brief Saves the online status of all accounts and disconnects them
+	 */
+	void suspend();
+
+	/**
+	 * @brief Sets the online status of all accounts to the status they had when suspend was called
+	 */
+	void resume();
+
+	/**
 	 * @brief Get information if we are connected to a given account in the given protocol
 	 * @param protocolName The protocol name (ex: Jabber, Yahoo, Messenger)
 	 * @param accountId Account ID

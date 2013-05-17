@@ -5,6 +5,10 @@
     </method>
     <method name="disconnectAll">
     </method>
+    <method name="suspend">
+    </method>
+    <method name="resume">
+    </method>
     <method name="isConnected">
       <arg type="b" direction="out"/>
       <arg name="protocolName" type="s" direction="in"/>

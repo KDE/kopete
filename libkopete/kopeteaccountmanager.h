@@ -153,6 +153,17 @@ public slots:
 	void setStatusMessage(const QString &message);
 
 	/**
+	 * Suspends all accounts.
+	 */
+	void suspend();
+
+	/**
+	 * Resumes all accounts.
+	 * Returns false if network is not available.
+	 */
+	bool resume();
+
+	/**
 	 * \internal
 	 * Save the account data to KConfig
 	 */
