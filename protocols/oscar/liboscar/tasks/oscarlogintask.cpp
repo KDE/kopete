@@ -88,6 +88,16 @@ const QString& OscarLoginTask::bosPort() const
 	return m_bosPort;
 }
 
+bool OscarLoginTask::bosEncrypted() const
+{
+	return m_bosEncrypted;
+}
+
+const QString& OscarLoginTask::bosSSLName() const
+{
+	return m_bosSSLName;
+}
+
 bool OscarLoginTask::take( Transfer* transfer )
 {
 	if ( forMe( transfer ) )
@@ -228,6 +238,20 @@ void OscarLoginTask::handleLoginResponse()
 		kDebug(OSCAR_RAW_DEBUG) << "found TLV(6) [COOKIE]";
 		m_cookie = cookie.data;
 	}
+
+	TLV sslcert = findTLV( tlvList, 141 );
+	if ( sslcert )
+	{
+		kDebug(OSCAR_RAW_DEBUG) << "found TLV(141) [SSLCERT]";
+		m_bosSSLName = sslcert.data;
+	}
+
+	TLV ssl = findTLV( tlvList, 142 );
+	{
+		kDebug(OSCAR_RAW_DEBUG) << "found TLV(142) [SSL] " << (int)ssl.data[0];
+		m_bosEncrypted = ssl.data[0];
+	}
+
 	tlvList.clear();
 
 	if ( m_bosHost.isEmpty() )
@@ -241,7 +265,7 @@ void OscarLoginTask::handleLoginResponse()
 	}
 	
 	kDebug( OSCAR_RAW_DEBUG ) << "We should reconnect to server '"
-		<< m_bosHost << "' on port " << m_bosPort << endl;
+		<< m_bosHost << "' on port " << m_bosPort << ( m_bosEncrypted ? " with " : " without " ) << "SSL" << endl;
 	setSuccess( 0, QString() );
 }
 

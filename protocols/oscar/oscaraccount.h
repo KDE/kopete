@@ -86,11 +86,17 @@ public:
 	/** Set the server port */
 	void setServerPort( int port );
 
+	/** Set the server encryption */
+	void setServerEncrypted( bool encrypted );
+
     /** Set the proxy server address */
     void setProxyServerAddress( const QString& server );
 
     /** Set the proxy server port */
     void setProxyServerPort( int port );
+
+    /** Set the proxy server encryption */
+    void setProxyServerEncrypted( bool encrypted );
 
     void setProxyServerEnabled(bool);
 

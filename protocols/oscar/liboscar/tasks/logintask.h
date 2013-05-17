@@ -59,6 +59,10 @@ public:
 	//! Get the BOS port
 	const QString& bosPort() const;
 
+	bool bosEncrypted() const;
+
+	const QString& bosSSLName() const;
+
 	//! Get the error code, if there is one
 	int errorCode() const;
 
@@ -83,6 +87,8 @@ private:
 	QByteArray m_cookie;
 	QString m_bosServer;
 	QString m_bosPort;
+	bool m_bosEncrypted;
+	QString m_bosSSLName;
 
 };
 

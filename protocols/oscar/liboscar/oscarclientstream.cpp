@@ -47,8 +47,9 @@ public:
 
 	QString host;
 	quint16 port;
+	QString name;
 
-	QAbstractSocket *socket;
+	QSslSocket *socket;
 	CoreProtocol client;
 	Connection* connection;
 
@@ -60,7 +61,7 @@ public:
 	int noop_time;
 };
 
-ClientStream::ClientStream( QAbstractSocket *socket, QObject *parent )
+ClientStream::ClientStream( QSslSocket *socket, QObject *parent )
 : Stream( parent ), d(new Private())
 {
 	d->socket = socket;
@@ -102,7 +103,7 @@ ClientStream::~ClientStream()
 	delete d;
 }
 
-void ClientStream::connectToServer( const QString& host, quint16 port )
+void ClientStream::connectToServer( const QString& host, quint16 port, bool encrypted, const QString& name )
 {
 	d->noopTimer.stop();
 	if ( d->socket->isOpen() )
@@ -122,8 +123,22 @@ void ClientStream::connectToServer( const QString& host, quint16 port )
 	
 	d->host = host;
 	d->port = port;
+	d->name = name;
 
-	d->socket->connectToHost( d->host, d->port );
+	kDebug(OSCAR_RAW_DEBUG) << "Connect to: host" << host << "port" << port << "encrypted" << encrypted << "name" << name;
+
+	if ( encrypted )
+	{
+		d->socket->ignoreSslErrors();
+		d->socket->setPeerVerifyMode(QSslSocket::VerifyNone);
+		if ( name.isEmpty() )
+			d->socket->connectToHostEncrypted( d->host, d->port );
+		else
+			d->socket->connectToHostEncrypted( d->host, d->port, d->name );
+	} else
+	{
+		d->socket->connectToHost( d->host, d->port );
+	}
 }
 
 bool ClientStream::isOpen() const

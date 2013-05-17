@@ -28,7 +28,7 @@ void LoginTest::slotDoTest()
 
 	myClient->setIsIcq( true );
 	myClient->start( server, 5190, "userid", "password" );
-	myClient->connectToServer( server, 5190 );
+	myClient->connectToServer( server, 5190, false, QString() );
 	connected = true;
 }
 

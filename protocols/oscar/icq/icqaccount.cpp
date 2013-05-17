@@ -236,8 +236,9 @@ void ICQAccount::connectWithPassword( const QString &password )
 		myself()->setOnlineStatus( protocol()->statusManager()->connectingStatus() );
 		QString icqNumber = accountId();
 		kDebug(14153) << "Logging in as " << icqNumber;
-		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.icq.com" ) );
-		uint port = configGroup()->readEntry( "Port", 5190 );
+		bool encrypted = configGroup()->readEntry( "Encrypted", false );
+		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( encrypted ? "slogin.icq.com" : "login.icq.com" ) );
+		uint port = configGroup()->readEntry( "Port", encrypted ? 443 : 5190 );
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
@@ -261,7 +262,7 @@ void ICQAccount::connectWithPassword( const QString &password )
 		engine()->start( server, port, accountId(), password.left(8) );
 		engine()->setStatus( status, mInitialStatusMessage.message(), pres.xtrazStatus(),
 		                     mInitialStatusMessage.title(), pres.mood() );
-		engine()->connectToServer( server, port );
+		engine()->connectToServer( server, port, encrypted, QString() );
 
 		mInitialStatusMessage = Kopete::StatusMessage();
 	}

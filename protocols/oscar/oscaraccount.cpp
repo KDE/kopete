@@ -39,7 +39,7 @@
 #include <qfile.h>
 #include <qdom.h>
 #include <QHash>
-#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QSslSocket>
 #include <QtNetwork/QNetworkProxy>
 #include <QtGui/QTextDocument> // Qt::escape
 
@@ -725,6 +725,11 @@ void OscarAccount::setServerPort(int port)
 	configGroup()->writeEntry( QString::fromLatin1( "Port" ), port);
 }
 
+void OscarAccount::setServerEncrypted( bool encrypted )
+{
+	configGroup()->writeEntry( QString::fromLatin1( "Encrypted" ), encrypted);
+}
+
 
 void OscarAccount::setProxyServerAddress(const QString &server)
 {
@@ -734,6 +739,11 @@ void OscarAccount::setProxyServerAddress(const QString &server)
 void OscarAccount::setProxyServerPort(int port)
 {
 	configGroup()->writeEntry( QString::fromLatin1( "ProxyPort" ), port);
+}
+
+void OscarAccount::setProxyServerEncrypted( bool encrypted )
+{
+	configGroup()->writeEntry( QString::fromLatin1( "ProxyEncrypted" ), encrypted);
 }
 
 void OscarAccount::setProxyServerEnabled(bool enable)
@@ -1479,7 +1489,7 @@ QList<QDomNode> OscarAccount::getElementsByTagNameCI( const QDomNode& node, cons
 
 void OscarAccount::createClientStream( ClientStream **clientStream )
 {
-	QTcpSocket* tcpSocket = new QTcpSocket();
+	QSslSocket* tcpSocket = new QSslSocket();
 
 	if (configGroup()->readEntry( QString::fromLatin1( "ProxyEnable" ), false))
 	{

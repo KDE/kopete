@@ -37,6 +37,8 @@ public:
 	const QByteArray& cookie() const;
 	const QString& bosHost() const;
 	const QString& bosPort() const;
+	bool bosEncrypted() const;
+	const QString& bosSSLName() const;
 
 protected:
 	bool forMe( const Transfer* transfer ) const;
@@ -77,6 +79,10 @@ private:
 
 	//! The new BOS Port
 	QString m_bosPort;
+
+	bool m_bosEncrypted;
+
+	QString m_bosSSLName;
 
 };
 

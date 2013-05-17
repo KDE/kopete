@@ -70,7 +70,7 @@ public:
 	
 	void setClient( Oscar::Client* );
 
-	void connectToServer( const QString& host, quint16 port );
+	void connectToServer( const QString& host, quint16 port, bool encrypted, const QString &name );
 	/**
 	 * Close the connection and reset the connection data
 	 */

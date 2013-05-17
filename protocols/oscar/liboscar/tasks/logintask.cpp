@@ -88,6 +88,8 @@ void StageOneLoginTask::loginTaskFinished()
 	m_cookie = m_loginTask->cookie();
 	m_bosPort = m_loginTask->bosPort();
 	m_bosServer = m_loginTask->bosHost();
+	m_bosEncrypted = m_loginTask->bosEncrypted();
+	m_bosSSLName = m_loginTask->bosSSLName();
 
 	if ( !m_loginTask->success() )
 	{
@@ -119,6 +121,16 @@ const QString& StageOneLoginTask::bosServer() const
 const QString& StageOneLoginTask::bosPort() const
 {
 	return m_bosPort;
+}
+
+bool StageOneLoginTask::bosEncrypted() const
+{
+	return m_bosEncrypted;
+}
+
+const QString& StageOneLoginTask::bosSSLName() const
+{
+	return m_bosSSLName;
 }
 
 

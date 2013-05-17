@@ -80,19 +80,27 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->mPasswordWidget->load(&mAccount->password());
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->excludeConnect());
 
-		QString serverEntry = mAccount->configGroup()->readEntry("Server", "login.icq.com");
-		int portEntry = mAccount->configGroup()->readEntry("Port", 5190);
-		mAccountSettings->optionOverrideServer->setChecked( serverEntry != "login.icq.com" || ( portEntry != 5190) );
+		bool encryptedEntry = mAccount->configGroup()->readEntry("Encrypted", false);
+		QString serverEntry = mAccount->configGroup()->readEntry("Server", encryptedEntry ? "slogin.icq.com" : "login.icq.com");
+		int portEntry = mAccount->configGroup()->readEntry("Port", encryptedEntry ? 443 : 5190);
+		if ( ( encryptedEntry && ( serverEntry != "slogin.icq.com" || portEntry != 443 ) ) ||
+				( ! encryptedEntry && ( serverEntry != "login.icq.com" || ( portEntry != 5190 ) ) ) )
+			mAccountSettings->optionOverrideServer->setChecked( true );
+		else
+			mAccountSettings->optionOverrideServer->setChecked( false );
 
 		mAccountSettings->edtServerAddress->setText( serverEntry );
 		mAccountSettings->edtServerPort->setValue( portEntry );
+		mAccountSettings->edtServerEncrypted->setChecked( encryptedEntry );
 
 		bool proxyServerEnableEntry = mAccount->configGroup()->readEntry("ProxyEnable", false);
+		bool proxyEncryptedEntry = mAccount->configGroup()->readEntry("ProxyEncrypted", false);
 		QString proxyServerEntry = mAccount->configGroup()->readEntry("ProxyServer", QString());
 		int proxyPortEntry = mAccount->configGroup()->readEntry("ProxyPort", 443);
 		mAccountSettings->optionEnableProxy->setChecked( proxyServerEnableEntry );
 		mAccountSettings->edtProxyServerAddress->setText( proxyServerEntry );
 		mAccountSettings->edtProxyServerPort->setValue( proxyPortEntry );
+		mAccountSettings->edtProxyServerEncrypted->setChecked( proxyEncryptedEntry );
 
 
 		bool configChecked = mAccount->configGroup()->readEntry( "RequireAuth", false );
@@ -246,6 +254,10 @@ Kopete::Account *ICQEditAccountWidget::apply()
                                                   mProtocol->encodings() );
 	mAccount->configGroup()->writeEntry( "DefaultEncoding", configValue );
 
+	bool encrypted = mAccountSettings->edtServerEncrypted->isChecked();
+
+	mAccount->setServerEncrypted(encrypted);
+
 	if ( mAccountSettings->optionOverrideServer->isChecked() )
 	{
 		mAccount->setServerAddress(mAccountSettings->edtServerAddress->text().trimmed());
@@ -253,8 +265,8 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	}
 	else
 	{
-		mAccount->setServerAddress("login.icq.com");
-		mAccount->setServerPort(5190);
+		mAccount->setServerAddress(encrypted ? "slogin.icq.com" : "login.icq.com");
+		mAccount->setServerPort(encrypted ? 443 : 5190);
 	}
 
 	bool useProxy=mAccountSettings->optionEnableProxy->isChecked();
@@ -263,6 +275,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 	{
 		mAccount->setProxyServerAddress(mAccountSettings->edtProxyServerAddress->text().trimmed());
 		mAccount->setProxyServerPort(mAccountSettings->edtProxyServerPort->value());
+		mAccount->setProxyServerEncrypted(mAccountSettings->edtProxyServerEncrypted->isChecked());
 	}
 
 	//set filetransfer stuff

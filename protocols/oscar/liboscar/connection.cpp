@@ -86,12 +86,12 @@ void Connection::setClient( Client* c )
 	connect( c, SIGNAL(loggedIn()), this, SLOT(loggedIn()) );
 }
 
-void Connection::connectToServer( const QString& host, quint16 port )
+void Connection::connectToServer( const QString& host, quint16 port, bool encrypted, const QString &name )
 {
 	connect( d->clientStream, SIGNAL(error(int)), this, SLOT(streamSocketError(int)) );
 	connect( d->clientStream, SIGNAL(readyRead()), this, SLOT(streamReadyRead()) );
 	connect( d->clientStream, SIGNAL(connected()), this, SIGNAL(connected()) );
-	d->clientStream->connectToServer( host, port );
+	d->clientStream->connectToServer( host, port, encrypted, name );
 }
 
 void Connection::close()

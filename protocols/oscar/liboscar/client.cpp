@@ -26,7 +26,7 @@
 #include <QByteArray>
 #include <QPointer>
 #include <QTextCodec>
-#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QSslSocket>
 
 #include <kdebug.h> //for kDebug()
 #include <klocale.h>
@@ -104,6 +104,9 @@ public:
 
 	QString host, user, pass;
 	uint port;
+	bool encrypted;
+	bool encrypted2;
+	QString SSLName;
 	int tzoffset;
 	bool active;
 
@@ -226,15 +229,17 @@ Oscar::Settings* Client::clientSettings() const
 	return d->settings;
 }
 
-void Client::connectToServer( const QString& host, quint16 port )
+void Client::connectToServer( const QString& host, quint16 port, bool encrypted, const QString &name )
 {
 	ClientStream* cs = createClientStream();
 	Connection* c = new Connection( cs, "AUTHORIZER" );
 	c->setClient( this );
 
+	d->encrypted2 = encrypted;
+
 	d->loginTask = new StageOneLoginTask( c->rootTask() );
 	connect( d->loginTask, SIGNAL(finished()), this, SLOT(lt_loginFinished()) );
-	connectToServer( c, host, port );
+	connectToServer( c, host, port, encrypted, name );
 }
 
 void Client::start( const QString &host, const uint port, const QString &userId, const QString &pass )
@@ -381,6 +386,16 @@ int Client::port()
 	return d->port;
 }
 
+bool Client::encrypted()
+{
+	return d->encrypted;
+}
+
+QString Client::SSLName()
+{
+	return d->SSLName;
+}
+
 ContactManager* Client::ssiManager() const
 {
 	return d->ssiManager;
@@ -431,6 +446,8 @@ void Client::lt_loginFinished()
 			//cache these values since they'll be deleted when we close the connections (which deletes the tasks)
 			d->host = d->loginTask->bosServer();
 			d->port = d->loginTask->bosPort().toUInt();
+			d->encrypted = d->loginTask->bosEncrypted();
+			d->SSLName = d->loginTask->bosSSLName();
 			d->cookie = d->loginTask->loginCookie();
 			close();
 			QTimer::singleShot( 100, this, SLOT(startStageTwo()) );
@@ -460,7 +477,7 @@ void Client::startStageTwo()
 
 	//connect
 	QObject::connect( c, SIGNAL(connected()), this, SLOT(streamConnected()) );
-	connectToServer( c, d->host, d->port ) ;
+	connectToServer( c, d->host, d->port, d->encrypted, d->SSLName ) ;
 
 }
 
@@ -1531,17 +1548,20 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 
 	//create a new connection and set it up
 	int colonPos = host.indexOf(':');
-	QString realHost, realPort;
+	QString realHost;
+	uint realPort;
 	if ( colonPos != -1 )
 	{
 		realHost = host.left( colonPos );
-		realPort = host.right(4); //we only need 4 bytes
+		realPort = host.right(4).toUInt(); //we only need 4 bytes
 	}
 	else
 	{
 		realHost = host;
-		realPort = QString::fromLatin1("5190");
+		realPort = d->port;
 	}
+
+	bool encrypted = d->encrypted2;
 
 	Connection* c = createConnection();
 	//create the new login task
@@ -1550,7 +1570,7 @@ void Client::haveServerForRedirect( const QString& host, const QByteArray& cooki
 	QObject::connect( d->loginTaskTwo, SIGNAL(finished()), this, SLOT(serverRedirectFinished()) );
 
 	//connect
-	connectToServer( c, realHost, realPort.toInt() );
+	connectToServer( c, realHost, realPort, encrypted, QString() );
   	QObject::connect( c, SIGNAL(connected()), this, SLOT(streamConnected()) );
 
     if ( srt )
@@ -1713,11 +1733,11 @@ void Client::disconnectChatRoom( Oscar::WORD exchange, const QString& room )
     c = 0;
 }
 
-void Client::connectToServer( Connection* c, const QString& host, quint16 port )
+void Client::connectToServer( Connection* c, const QString& host, quint16 port, bool encrypted, const QString &name )
 {
 	d->connections.append( c );
 	connect( c, SIGNAL(socketError(int,QString)), this, SLOT(determineDisconnection(int,QString)) );
-	c->connectToServer( host, port );
+	c->connectToServer( host, port, encrypted, name );
 }
 
 ClientStream* Client::createClientStream()
@@ -1725,7 +1745,7 @@ ClientStream* Client::createClientStream()
 	ClientStream* cs = 0;
 	emit createClientStream( &cs );
 	if ( !cs )
-		cs = new ClientStream( new QTcpSocket(), 0 );
+		cs = new ClientStream( new QSslSocket(), 0 );
 
 	return cs;
 }

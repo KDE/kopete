@@ -108,8 +108,10 @@ public:
 	 * This is only a transport layer connection.
 	 * @param host the host name of server to connect to
 	 * @param port the port of server to connect to
+	 * @param encrypted true for SSL encryption
+	 * @param name SSL peer name, empty means default
 	 */
-	void connectToServer( const QString& host, quint16 port );
+	void connectToServer( const QString& host, quint16 port, bool encrypted, const QString &name );
 
 	/**
 	 * Start the login process for Oscar
@@ -374,6 +376,8 @@ public:
 	/** Accessors needed for login */
 	QString host();
 	int port();
+	bool encrypted();
+	QString SSLName();
 
 	/** Send a typing notification */
 	void sendTyping( const QString & contact, bool typing );
@@ -632,7 +636,7 @@ private:
 	void deleteStaticTasks();
 
 	/** Start a connection */
-	void connectToServer( Connection *c, const QString& host, quint16 port );
+	void connectToServer( Connection *c, const QString& host, quint16 port, bool encrypted, const QString &name );
 
 	ClientStream* createClientStream();
 	Connection* createConnection();
