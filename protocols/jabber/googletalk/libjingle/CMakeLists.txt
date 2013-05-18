@@ -36,7 +36,7 @@ include_directories (
 set ( call_SRCS
 	talk/base/latebindingsymboltable.cc
 	talk/base/linux.cc
-	talk/base/linuxfdwalk.c
+	talk/base/linuxfdwalk.cc
 	talk/base/libdbusglibsymboltable.cc
 	talk/session/phone/libudevsymboltable.cc
 	talk/session/phone/linuxdevicemanager.cc
