@@ -58,7 +58,7 @@
 #include "jdns.h"
 #include "jdns_packet.h"
 
-// jdns_util.c
+/*  jdns_util.c */
 void *jdns_alloc(int size);
 void *jdns_realloc(void *p, int size);
 void jdns_free(void *p);

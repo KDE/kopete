@@ -143,21 +143,21 @@ static unsigned char *string_getnextword(unsigned char *in, int size, int pos, i
 
 	at = pos;
 
-	// skip any space at the start
+	/*  skip any space at the start */
 	while(at < size && char_isspace(in[at]))
 		++at;
 
-	// all space?  no word then
+	/*  all space?  no word then */
 	if(at >= size)
 		return 0;
 
-	// skip until a space or end
+	/*  skip until a space or end */
 	n = at;
 	while(n < size && !char_isspace(in[n]))
 		++n;
 	len = n - at;
 
-	// allocate length + zero byte
+	/*  allocate length + zero byte */
 	out = (unsigned char *)jdns_alloc(len + 1);
 	if(!out)
 		return 0;
@@ -177,7 +177,7 @@ static jdns_string_t *string_simplify(const jdns_string_t *in)
 	jdns_string_t *outstr;
 	jdns_stringlist_t *wordlist;
 
-	// gather words and total of lengths
+	/*  gather words and total of lengths */
 	pos = 0;
 	total = 0;
 	wordlist = jdns_stringlist_new();
@@ -204,11 +204,11 @@ static jdns_string_t *string_simplify(const jdns_string_t *in)
 		return outstr;
 	}
 
-	// we need to allocate space for total lengths and wordcount-1 spaces
+	/*  we need to allocate space for total lengths and wordcount-1 spaces */
 	outlen = total + (wordlist->count - 1);
 	out = (unsigned char *)jdns_alloc(outlen);
 
-	// lay out the words
+	/*  lay out the words */
 	pos = 0;
 	for(n = 0; n < wordlist->count; ++n)
 	{
@@ -217,7 +217,7 @@ static jdns_string_t *string_simplify(const jdns_string_t *in)
 		memcpy(out + pos, data, size);
 		pos += size;
 
-		// if this is not the last word, append a space
+		/*  if this is not the last word, append a space */
 		if(n + 1 < wordlist->count)
 			out[pos++] = ' ';
 	}
@@ -254,8 +254,8 @@ static jdns_string_t *file_nextline(FILE *f)
 		{
 			if(at > 0)
 			{
-				// if we read at least one char, take it as a
-				//   line
+				/*  if we read at least one char, take it as a */
+				/*    line */
 				break;
 			}
 			else
@@ -298,7 +298,7 @@ static jdns_dnshostlist_t *read_hosts_file(const char *path)
 		if(!line)
 			break;
 
-		// truncate at comment
+		/*  truncate at comment */
 		n = string_indexOf(line, '#', 0);
 		if(n != -1)
 		{
@@ -367,7 +367,7 @@ static int dnsparams_have_domain(const jdns_dnsparams_t *a, const jdns_string_t 
 
 #ifdef JDNS_OS_WIN
 
-// from Microsoft IPTypes.h
+/*  from Microsoft IPTypes.h */
 #ifndef IP_TYPES_INCLUDED
 #define MAX_HOSTNAME_LEN    128
 #define MAX_DOMAIN_NAME_LEN 128
@@ -470,7 +470,7 @@ static jdns_dnsparams_t *dnsparams_get_winreg()
 	list_searchlist = 0;
 	if(str_searchlist)
 	{
-		// lowercase the string
+		/*  lowercase the string */
 		jdns_string_t *p = string_tolower(str_searchlist);
 		jdns_string_delete(str_searchlist);
 		str_searchlist = p;
@@ -482,12 +482,12 @@ static jdns_dnsparams_t *dnsparams_get_winreg()
 	params = jdns_dnsparams_new();
 	if(list_nameserver)
 	{
-		// qt seems to do a strange thing here by running each name
-		//   server address through the q3dns setLabel function, and
-		//   then pulls the result as a list of addresses.  i have
-		//   no idea why they do this, or how one IP address would
-		//   turn into anything else, let alone several addresses.
-		// so, uh, we're not going to do that.
+		/*  qt seems to do a strange thing here by running each name */
+		/*    server address through the q3dns setLabel function, and */
+		/*    then pulls the result as a list of addresses.  i have */
+		/*    no idea why they do this, or how one IP address would */
+		/*    turn into anything else, let alone several addresses. */
+		/*  so, uh, we're not going to do that. */
 		for(n = 0; n < list_nameserver->count; ++n)
 		{
 			jdns_address_t *addr = jdns_address_new();
@@ -587,13 +587,13 @@ static void apply_hosts_var_filepath(jdns_dnsparams_t *a, const char *envvar, co
 
 static void apply_win_hosts_file(jdns_dnsparams_t *a)
 {
-	// windows 64-bit
+	/*  windows 64-bit */
 	apply_hosts_var_filepath(a, "SystemRoot", "\\SysWOW64\\drivers\\etc\\hosts");
 
-	// winnt+
+	/*  winnt+ */
 	apply_hosts_var_filepath(a, "SystemRoot", "\\system32\\drivers\\etc\\hosts");
 
-	// win9x
+	/*  win9x */
 	apply_hosts_var_filepath(a, "WINDIR", "\\hosts");
 }
 
@@ -605,22 +605,22 @@ static jdns_dnsparams_t *dnsparams_get_win()
 	reg_params = dnsparams_get_winreg();
 	sys_params = dnsparams_get_winsys();
 
-	// no sys params?  take the reg params then
+	/*  no sys params?  take the reg params then */
 	if(!sys_params)
 	{
 		apply_win_hosts_file(reg_params);
 		return reg_params;
 	}
 
-	// sys params don't have a search list, so merge the domains from
-	//   the registry if possible
+	/*  sys params don't have a search list, so merge the domains from */
+	/*    the registry if possible */
 	if(reg_params)
 	{
 		for(n = 0; n < reg_params->domains->count; ++n)
 		{
 			jdns_string_t *reg_str = reg_params->domains->item[n];
 
-			// don't add dups
+			/*  don't add dups */
 			if(!dnsparams_have_domain(sys_params, reg_str))
 				jdns_dnsparams_append_domain(sys_params, reg_str);
 		}
@@ -653,7 +653,7 @@ static jdns_dnsparams_t *dnsparams_get_unixfiles()
 		if(!line)
 			break;
 
-		// truncate at comment
+		/*  truncate at comment */
 		n = string_indexOf(line, '#', 0);
 		if(n != -1)
 		{
@@ -711,7 +711,7 @@ static int my_res_init()
 #ifdef JDNS_OS_MAC
 	res_init_func mac_res_init;
 
-	// look up res_init in the system library (qt does this, not sure why)
+	/*  look up res_init in the system library (qt does this, not sure why) */
 	mac_res_init = (res_init_func)dlsym(RTLD_NEXT, "res_init");
 	if(!mac_res_init)
 		return -1;
@@ -722,10 +722,10 @@ static int my_res_init()
 }
 #endif
 
-// on some platforms, __res_state_ext exists as a struct but it is not
-//   a define, so the #ifdef doesn't work.  as a workaround, we'll explicitly
-//   specify the platforms that have __res_state_ext
-//#ifdef __res_state_ext
+/*  on some platforms, __res_state_ext exists as a struct but it is not */
+/*    a define, so the #ifdef doesn't work.  as a workaround, we'll explicitly */
+/*    specify the platforms that have __res_state_ext */
+/* #ifdef __res_state_ext */
 #if defined(JDNS_OS_MAC) || defined(JDNS_OS_FREEBSD) || \
     defined(JDNS_OS_NETBSD) || defined (JDNS_OS_SOLARIS)
 # define USE_EXTEXT
@@ -748,18 +748,18 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 
 	params = jdns_dnsparams_new();
 
-	// error initializing?
+	/*  error initializing? */
 	if(n == -1)
 		return params;
 
-	// nameservers - ipv6
+	/*  nameservers - ipv6 */
 	for(n = 0; n < MAXNS && n < RESVAR._u._ext.nscount; ++n)
 	{
 		jdns_address_t *addr;
 		struct sockaddr_in6 *sa6;
 
 #ifdef USE_EXTEXT
-		// seems _ext.ext can be null in some cases...
+		/*  seems _ext.ext can be null in some cases... */
 		if(RESVAR._u._ext.ext == NULL)
 			break;
 
@@ -776,7 +776,7 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 		jdns_address_delete(addr);
 	}
 
-	// nameservers - ipv4
+	/*  nameservers - ipv4 */
 	for(n = 0; n < MAXNS && n < RESVAR.nscount; ++n)
 	{
 		jdns_address_t *addr = jdns_address_new();
@@ -785,7 +785,7 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 		jdns_address_delete(addr);
 	}
 
-	// domain name
+	/*  domain name */
 	if(strlen(RESVAR.defdname) > 0)
 	{
 		jdns_string_t *str;
@@ -799,7 +799,7 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 		jdns_string_delete(str);
 	}
 
-	// search list
+	/*  search list */
 #ifdef MAXDFLSRCH
 	for(n = 0; n < MAXDFLSRCH && RESVAR.dnsrch[n]; ++n)
 	{
@@ -813,7 +813,7 @@ static jdns_dnsparams_t *dnsparams_get_unixsys()
 			jdns_string_delete(str);
 			str = p;
 
-			// don't add dups
+			/*  don't add dups */
 			if(!dnsparams_have_domain(params, str))
 				jdns_dnsparams_append_domain(params, str);
 
@@ -829,7 +829,7 @@ static jdns_dnsparams_t *dnsparams_get_unix()
 {
 	jdns_dnsparams_t *params;
 
-	// prefer system calls over files
+	/*  prefer system calls over files */
 	params = dnsparams_get_unixsys();
 	if(params->nameservers->count == 0)
 	{

@@ -25,15 +25,15 @@
 
 #include "jdns_p.h"
 
-// maximum length of a sublabel
+/*  maximum length of a sublabel */
 #define MAX_SUBLABEL_LENGTH  63
 
-// maximum length of a label, including final terminating zero (root sublabel)
-//   according to RFC 2181, the maximum length is 255, not counting the root
-//   sublabel.  so, with the root sublabel, that means a max length of 256.
+/*  maximum length of a label, including final terminating zero (root sublabel) */
+/*    according to RFC 2181, the maximum length is 255, not counting the root */
+/*    sublabel.  so, with the root sublabel, that means a max length of 256. */
 #define MAX_LABEL_LENGTH     256
 
-// jer's endian functions
+/*  jer's endian functions */
 static unsigned short int net2short(const unsigned char **bufp)
 {
 	unsigned short int i;
@@ -78,7 +78,7 @@ static void long2net(unsigned long int l, unsigned char **bufp)
 	*bufp += 4;
 }
 
-// label stuff
+/*  label stuff */
 typedef struct jdns_packet_label
 {
 	JDNS_OBJECT
@@ -114,7 +114,7 @@ void jdns_packet_label_delete(jdns_packet_label_t *a)
 	jdns_object_free(a);
 }
 
-// gets an offset for decompression.  does range and hop count checking also
+/*  gets an offset for decompression.  does range and hop count checking also */
 static int getoffset(const unsigned char *str, int refsize, int *hopsleft)
 {
 	unsigned short int x;
@@ -124,7 +124,7 @@ static int getoffset(const unsigned char *str, int refsize, int *hopsleft)
 	x = str[0] & 0x3f;
 	x <<= 8;
 	x |= str[1];
-	// stay in bounds
+	/*  stay in bounds */
 	if(x >= refsize)
 		return -1;
 	return x;
@@ -133,10 +133,10 @@ static int getoffset(const unsigned char *str, int refsize, int *hopsleft)
 static int readlabel(const unsigned char *in, int insize, const unsigned char *ref, int refsize, int *_at, jdns_string_t **name)
 {
 	int at;
-	// string format is one character smaller than dns format.  e.g.:
-	//   dns:    [7] affinix [3] com [0] = 13 bytes
-	//   string: "affinix.com."          = 12 bytes
-	// only exception is '.' itself, but that won't influence the max.
+	/*  string format is one character smaller than dns format.  e.g.: */
+	/*    dns:    [7] affinix [3] com [0] = 13 bytes */
+	/*    string: "affinix.com."          = 12 bytes */
+	/*  only exception is '.' itself, but that won't influence the max. */
 	unsigned char out[MAX_LABEL_LENGTH - 1];
 	int out_size;
 	const unsigned char *label, *last;
@@ -146,7 +146,7 @@ static int readlabel(const unsigned char *in, int insize, const unsigned char *r
 
 	at = *_at;
 
-	// stay in range
+	/*  stay in range */
 	if(at < 0 || at >= insize)
 		return 0;
 
@@ -156,19 +156,19 @@ static int readlabel(const unsigned char *in, int insize, const unsigned char *r
 	last = in + insize;
 	while(1)
 	{
-		// need a byte
+		/*  need a byte */
 		if(label + 1 > last)
 			goto error;
 
-		// we make this a while loop instead of an 'if', in case
-		//   there's a pointer to a pointer.  as a precaution,
-		//   we will hop no more than 8 times
+		/*  we make this a while loop instead of an 'if', in case */
+		/*    there's a pointer to a pointer.  as a precaution, */
+		/*    we will hop no more than 8 times */
 		hopsleft = 8;
 		while(*label & 0xc0)
 		{
 			int offset;
 
-			// need the next byte, too
+			/*  need the next byte, too */
 			if(label + 2 > last)
 				goto error;
 
@@ -184,14 +184,14 @@ static int readlabel(const unsigned char *in, int insize, const unsigned char *r
 				last = ref + refsize;
 			}
 
-			// need a byte
+			/*  need a byte */
 			if(label + 1 > last)
 				goto error;
 		}
 
 		label_size = *label & 0x3f;
 
-		// null label?  then we're done
+		/*  null label?  then we're done */
 		if(label_size == 0)
 		{
 			if(!hopped_yet)
@@ -199,11 +199,11 @@ static int readlabel(const unsigned char *in, int insize, const unsigned char *r
 			break;
 		}
 
-		// enough source bytes? (length byte + length)
+		/*  enough source bytes? (length byte + length) */
 		if(label + label_size + 1 > last)
 			goto error;
 
-		// enough dest bytes? (length + dot)
+		/*  enough dest bytes? (length + dot) */
 		if(out_size + label_size + 1 > MAX_LABEL_LENGTH - 1)
 			goto error;
 
@@ -227,20 +227,20 @@ error:
 	return 0;
 }
 
-// this function compares labels in label format:
-//   [length] [value ...] [length] [value ...] [0]
+/*  this function compares labels in label format: */
+/*    [length] [value ...] [length] [value ...] [0] */
 static int matchlabel(const unsigned char *a, int asize, const unsigned char *b, int bsize, const unsigned char *ref, int refsize, int ahopsleft, int bhopsleft)
 {
 	int n, alen, blen, offset;
 
-	// same pointer?
+	/*  same pointer? */
 	if(a == b)
 		return 1;
 
 	if(asize < 1 || bsize < 1)
 		return 0;
 
-	// always ensure we get called without a pointer
+	/*  always ensure we get called without a pointer */
 	if(*a & 0xc0)
 	{
 		if(asize < 2)
@@ -263,28 +263,28 @@ static int matchlabel(const unsigned char *a, int asize, const unsigned char *b,
 	alen = *a & 0x3f;
 	blen = *b & 0x3f;
 
-	// must be same length
+	/*  must be same length */
 	if(alen != blen)
 		return 0;
 
-	// done?
+	/*  done? */
 	if(alen == 0)
 		return 1;
 
-	// length byte + length + first byte of next label
+	/*  length byte + length + first byte of next label */
 	if(asize < alen + 2)
 		return 0;
 	if(bsize < blen + 2)
 		return 0;
 
-	// compare the value
+	/*  compare the value */
 	for(n = 1; n < alen + 1; ++n)
 	{
 		if(a[n] != b[n])
 			return 0;
 	}
 
-	// try next labels
+	/*  try next labels */
 	n = alen + 1;
 	return matchlabel(a + n, asize - n, b + n, bsize - n, ref, refsize, ahopsleft, bhopsleft);
 }
@@ -293,43 +293,43 @@ int jdns_packet_name_isvalid(const unsigned char *name, int size)
 {
 	int n, at, len;
 
-	// at least one byte, no larger than MAX_LABEL_LENGTH - 1 (one byte is
-	//   gained when converting to a label)
+	/*  at least one byte, no larger than MAX_LABEL_LENGTH - 1 (one byte is */
+	/*    gained when converting to a label) */
 	if(size < 1 || size > (MAX_LABEL_LENGTH - 1))
 		return 0;
 
-	// last byte must be a dot
+	/*  last byte must be a dot */
 	if(name[size - 1] != '.')
 		return 0;
 
-	// first byte can't be a dot if there are characters after
+	/*  first byte can't be a dot if there are characters after */
 	if(size > 1 && name[0] == '.')
 		return 0;
 
-	// each sublabel must be between 1 and MAX_SUBLABEL_LENGTH in length
+	/*  each sublabel must be between 1 and MAX_SUBLABEL_LENGTH in length */
 	at = 0;
 	while(1)
 	{
-		// search for dot or end
+		/*  search for dot or end */
 		for(n = at; n < size; ++n)
 		{
 			if(name[n] == '.')
 				break;
 		}
-		// length of last one is always zero
+		/*  length of last one is always zero */
 		if(n >= size)
 			break;
 
 		len = n - at;
 		if(len < 1 || len > MAX_SUBLABEL_LENGTH)
 			return 0;
-		at = n + 1; // skip over the dot
+		at = n + 1; /*  skip over the dot */
 	}
 
 	return 1;
 }
 
-// this function assumes label is pointing to a MAX_LABEL_LENGTH byte buffer
+/*  this function assumes label is pointing to a MAX_LABEL_LENGTH byte buffer */
 static int name_to_label(const jdns_string_t *name, unsigned char *label)
 {
 	int n, i, at, len;
@@ -347,29 +347,29 @@ static int name_to_label(const jdns_string_t *name, unsigned char *label)
 	i = 0;
 	while(1)
 	{
-		// search for dot or end
+		/*  search for dot or end */
 		for(n = at; n < name->size; ++n)
 		{
 			if(name->data[n] == '.')
 				break;
 		}
 		len = n - at;
-		if(i + (len + 1) > MAX_LABEL_LENGTH) // length byte + length
+		if(i + (len + 1) > MAX_LABEL_LENGTH) /*  length byte + length */
 			return 0;
 
 		label[i++] = len;
 		memcpy(label + i, name->data + at, len);
 		i += len;
 
-		if(n >= name->size) // end?
+		if(n >= name->size) /*  end? */
 			break;
-		at = n + 1; // skip over the dot
+		at = n + 1; /*  skip over the dot */
 	}
 
 	return i;
 }
 
-// lookup list is made of jdns_packet_labels
+/*  lookup list is made of jdns_packet_labels */
 static int writelabel(const jdns_string_t *name, int at, int left, unsigned char **bufp, jdns_list_t *lookup)
 {
 	unsigned char label[MAX_LABEL_LENGTH];
@@ -392,33 +392,33 @@ static int writelabel(const jdns_string_t *name, int at, int left, unsigned char
 
 			if(matchlabel(label + n, len - n, pl->value->data, pl->value->size, ref, refsize, 8, 8))
 			{
-				// set up a pointer right here, overwriting
-				//   the length byte and the first content
-				//   byte of this section within 'label'.
-				//   this is safe, because the length value
-				//   will always be greater than zero,
-				//   ensuring we have two bytes available to
-				//   use.
+				/*  set up a pointer right here, overwriting */
+				/*    the length byte and the first content */
+				/*    byte of this section within 'label'. */
+				/*    this is safe, because the length value */
+				/*    will always be greater than zero, */
+				/*    ensuring we have two bytes available to */
+				/*    use. */
 				l = label + n;
 				short2net((unsigned short int)pl->offset, &l);
 				label[n] |= 0xc0;
-				len = n + 2; // cut things short
+				len = n + 2; /*  cut things short */
 				break;
 			}
 		}
-		if(label[n] & 0xc0) // double loop, so break again
+		if(label[n] & 0xc0) /*  double loop, so break again */
 			break;
 	}
 
 	if(left < len)
 		return 0;
 
-	// copy into buffer, point there now
+	/*  copy into buffer, point there now */
 	memcpy(*bufp, label, len);
 	l = *bufp;
 	*bufp += len;
 
-	// for each new label, store its location for future compression
+	/*  for each new label, store its location for future compression */
 	for(n = 0; l[n]; n += l[n] + 1)
 	{
 		jdns_string_t *str;
@@ -437,9 +437,9 @@ static int writelabel(const jdns_string_t *name, int at, int left, unsigned char
 	return 1;
 }
 
-//----------------------------------------------------------------------------
-// jdns_packet_write
-//----------------------------------------------------------------------------
+/* ---------------------------------------------------------------------------- */
+/*  jdns_packet_write */
+/* ---------------------------------------------------------------------------- */
 #define JDNS_PACKET_WRITE_RAW  0
 #define JDNS_PACKET_WRITE_NAME 1
 
@@ -478,9 +478,9 @@ void jdns_packet_write_delete(jdns_packet_write_t *a)
 	jdns_object_free(a);
 }
 
-//----------------------------------------------------------------------------
-// jdns_packet_question
-//----------------------------------------------------------------------------
+/* ---------------------------------------------------------------------------- */
+/*  jdns_packet_question */
+/* ---------------------------------------------------------------------------- */
 jdns_packet_question_t *jdns_packet_question_new()
 {
 	jdns_packet_question_t *a = JDNS_OBJECT_NEW(jdns_packet_question);
@@ -508,9 +508,9 @@ void jdns_packet_question_delete(jdns_packet_question_t *a)
 	jdns_object_free(a);
 }
 
-//----------------------------------------------------------------------------
-// jdns_packet_resource
-//----------------------------------------------------------------------------
+/* ---------------------------------------------------------------------------- */
+/*  jdns_packet_resource */
+/* ---------------------------------------------------------------------------- */
 jdns_packet_resource_t *jdns_packet_resource_new()
 {
 	jdns_packet_resource_t *a = JDNS_OBJECT_NEW(jdns_packet_resource);
@@ -577,13 +577,13 @@ int jdns_packet_resource_read_name(const jdns_packet_resource_t *a, const jdns_p
 	return readlabel(a->rdata, a->rdlength, p->raw_data, p->raw_size, at, name);
 }
 
-//----------------------------------------------------------------------------
-// jdns_packet
-//----------------------------------------------------------------------------
+/* ---------------------------------------------------------------------------- */
+/*  jdns_packet */
+/* ---------------------------------------------------------------------------- */
 
-// note: both process_qsection and process_rrsection modify the 'dest' list,
-//   even if later items cause an error.  this turns out to be convenient
-//   for handling truncated dns packets
+/*  note: both process_qsection and process_rrsection modify the 'dest' list, */
+/*    even if later items cause an error.  this turns out to be convenient */
+/*    for handling truncated dns packets */
 
 static int process_qsection(jdns_list_t *dest, int count, const unsigned char *data, int size, const unsigned char **bufp)
 {
@@ -605,7 +605,7 @@ static int process_qsection(jdns_list_t *dest, int count, const unsigned char *d
 
 		offset += at;
 
-		// need 4 more bytes
+		/*  need 4 more bytes */
 		if(size - offset < 4)
 			goto error;
 
@@ -649,7 +649,7 @@ static int process_rrsection(jdns_list_t *dest, int count, const unsigned char *
 
 		offset += at;
 
-		// need 10 more bytes
+		/*  need 10 more bytes */
 		if(offset + 10 > size)
 			goto error;
 
@@ -662,9 +662,9 @@ static int process_rrsection(jdns_list_t *dest, int count, const unsigned char *
 		r->qclass = net2short(&buf);
 		r->ttl = net2long(&buf);
 
-		// per RFC 2181, ttl is supposed to be a 31 bit number.  if
-		//   the top bit of the 32 bit field is 1, then entire ttl is
-		//   to be considered 0.
+		/*  per RFC 2181, ttl is supposed to be a 31 bit number.  if */
+		/*    the top bit of the 32 bit field is 1, then entire ttl is */
+		/*    to be considered 0. */
 		if(r->ttl & 0x80000000)
 			r->ttl = 0;
 
@@ -672,7 +672,7 @@ static int process_rrsection(jdns_list_t *dest, int count, const unsigned char *
 
 		offset = buf - data;
 
-		// make sure we have enough for the rdata
+		/*  make sure we have enough for the rdata */
 		if(size - offset < r->rdlength)
 		{
 			jdns_packet_resource_delete(r);
@@ -745,11 +745,11 @@ static int append_rrsection(const jdns_list_t *src, int at, int left, unsigned c
 		short2net(r->qclass, &buf);
 		long2net(r->ttl, &buf);
 
-		// skip over rdlength
+		/*  skip over rdlength */
 		rdlengthp = buf;
 		buf += 2;
 
-		// play write log
+		/*  play write log */
 		for(i = 0; i < r->writelog->count; ++i)
 		{
 			jdns_packet_write_t *write = (jdns_packet_write_t *)r->writelog->item[i];
@@ -761,14 +761,14 @@ static int append_rrsection(const jdns_list_t *src, int at, int left, unsigned c
 				memcpy(buf, write->value->data, write->value->size);
 				buf += write->value->size;
 			}
-			else // JDNS_PACKET_WRITE_NAME
+			else /*  JDNS_PACKET_WRITE_NAME */
 			{
 				if(!writelabel(write->value, buf - start, last - buf, &buf, lookup))
 					goto error;
 			}
 		}
 
-		i = buf - rdlengthp; // should be rdata size + 2
+		i = buf - rdlengthp; /*  should be rdata size + 2 */
 		short2net((unsigned short int)(i - 2), &rdlengthp);
 	}
 
@@ -857,44 +857,44 @@ int jdns_packet_import(jdns_packet_t **a, const unsigned char *data, int size)
 	jdns_packet_t *tmp = 0;
 	const unsigned char *buf;
 
-	// need at least some data
+	/*  need at least some data */
 	if(!data || size == 0)
 		return 0;
 
-	// header (id + options + item counts) is 12 bytes
+	/*  header (id + options + item counts) is 12 bytes */
 	if(size < 12)
 		goto error;
 
 	tmp = jdns_packet_new();
 	buf = data;
 
-	// id
+	/*  id */
 	tmp->id = net2short(&buf);
 
-	// options
-	if(buf[0] & 0x80)                        // qr is bit 7
+	/*  options */
+	if(buf[0] & 0x80)                        /*  qr is bit 7 */
 		tmp->opts.qr = 1;
-	tmp->opts.opcode = (buf[0] & 0x78) >> 3; // opcode is bits 6,5,4,3
-	if(buf[0] & 0x04)                        // aa is bit 2
+	tmp->opts.opcode = (buf[0] & 0x78) >> 3; /*  opcode is bits 6,5,4,3 */
+	if(buf[0] & 0x04)                        /*  aa is bit 2 */
 		tmp->opts.aa = 1;
-	if(buf[0] & 0x02)                        // tc is bit 1
+	if(buf[0] & 0x02)                        /*  tc is bit 1 */
 		tmp->opts.tc = 1;
-	if(buf[0] & 0x01)                        // rd is bit 0
+	if(buf[0] & 0x01)                        /*  rd is bit 0 */
 		tmp->opts.rd = 1;
-	if(buf[1] & 0x80)                        // ra is bit 7 (second byte)
+	if(buf[1] & 0x80)                        /*  ra is bit 7 (second byte) */
 		tmp->opts.ra = 1;
-	tmp->opts.z = (buf[1] & 0x70) >> 4;      // z is bits 6,5,4
-	tmp->opts.rcode = buf[1] & 0x0f;         // rcode is bits 3,2,1,0
+	tmp->opts.z = (buf[1] & 0x70) >> 4;      /*  z is bits 6,5,4 */
+	tmp->opts.rcode = buf[1] & 0x0f;         /*  rcode is bits 3,2,1,0 */
 	buf += 2;
 
-	// item counts
+	/*  item counts */
 	tmp->qdcount = net2short(&buf);
 	tmp->ancount = net2short(&buf);
 	tmp->nscount = net2short(&buf);
 	tmp->arcount = net2short(&buf);
 
-	// if these fail, we don't count them as errors, since the packet
-	//   might have been truncated
+	/*  if these fail, we don't count them as errors, since the packet */
+	/*    might have been truncated */
 	if(!process_qsection(tmp->questions, tmp->qdcount, data, size, &buf))
 		goto skip;
 	if(!process_rrsection(tmp->answerRecords, tmp->ancount, data, size, &buf))
@@ -907,7 +907,7 @@ int jdns_packet_import(jdns_packet_t **a, const unsigned char *data, int size)
 	tmp->fully_parsed = 1;
 
 skip:
-	// keep the raw data for reference during rdata parsing
+	/*  keep the raw data for reference during rdata parsing */
 	tmp->raw_size = size;
 	tmp->raw_data = jdns_copy_array(data, size);
 
@@ -925,9 +925,9 @@ int jdns_packet_export(jdns_packet_t *a, int maxsize)
 	unsigned char *buf, *last;
 	unsigned char c;
 	int size;
-	jdns_list_t *lookup = 0; // to hold jdns_packet_label_t
+	jdns_list_t *lookup = 0; /*  to hold jdns_packet_label_t */
 
-	// clear out any existing raw data before we begin
+	/*  clear out any existing raw data before we begin */
 	if(a->raw_data)
 	{
 		jdns_free(a->raw_data);
@@ -935,7 +935,7 @@ int jdns_packet_export(jdns_packet_t *a, int maxsize)
 		a->raw_size = 0;
 	}
 
-	// preallocate
+	/*  preallocate */
 	size = maxsize;
 	block = (unsigned char *)jdns_alloc(size);
 	memset(block, 0, size);
@@ -969,7 +969,7 @@ int jdns_packet_export(jdns_packet_t *a, int maxsize)
 	short2net((unsigned short int)a->authorityRecords->count, &buf);
 	short2net((unsigned short int)a->additionalRecords->count, &buf);
 
-	// append sections
+	/*  append sections */
 	lookup = jdns_list_new();
 	lookup->autoDelete = 1;
 
@@ -982,14 +982,14 @@ int jdns_packet_export(jdns_packet_t *a, int maxsize)
 	if(!append_rrsection(a->additionalRecords, buf - block, last - buf, &buf, lookup))
 		goto error;
 
-	// done with all sections
+	/*  done with all sections */
 	jdns_list_delete(lookup);
 
-	// condense
+	/*  condense */
 	size = buf - block;
 	block = (unsigned char *)jdns_realloc(block, size);
 
-	// finalize
+	/*  finalize */
 	a->qdcount = a->questions->count;
 	a->ancount = a->answerRecords->count;
 	a->nscount = a->authorityRecords->count;

@@ -38,18 +38,18 @@
 #define QTYPE_NS    JDNS_RTYPE_NS
 #define QTYPE_ANY   JDNS_RTYPE_ANY
 
-// size of query/publish hashes
+/*  size of query/publish hashes */
 #define SPRIME 108
-// size of cache hash
+/*  size of cache hash */
 #define LPRIME 1009
-// brute force garbage cleanup frequency, rarely needed (daily default)
+/*  brute force garbage cleanup frequency, rarely needed (daily default) */
 #define GC 86400
 
-// maximum number of items to cache.  if an attacker on the LAN advertises
-//   a million services, we don't want to crash our program trying to collect
-//   them all.  any dns records received beyond this max are ignored.  this
-//   means the attacker would succeed in DoS'ing the multicast dns network,
-//   but he wouldn't succeed in running our program out of memory.
+/*  maximum number of items to cache.  if an attacker on the LAN advertises */
+/*    a million services, we don't want to crash our program trying to collect */
+/*    them all.  any dns records received beyond this max are ignored.  this */
+/*    means the attacker would succeed in DoS'ing the multicast dns network, */
+/*    but he wouldn't succeed in running our program out of memory. */
 #define MAX_CACHE 16384
 
 #define bzero(p, size) memset(p, 0, size)
@@ -93,7 +93,7 @@ struct cached
 struct mdnsdr_struct
 {
     struct mdnsda_struct rr;
-    char unique; // # of checks performed to ensure
+    char unique; /*  # of checks performed to ensure */
     int tries;
     void (*pubresult)(int, char *, int, void *);
     void *arg;
@@ -119,10 +119,10 @@ struct mdnsd_struct
 
 void mygettimeofday(mdnsd d, struct mytimeval *tv)
 {
-    //struct timeval t;
-    //gettimeofday(&t, 0);
-    //tv->tv_sec = t.tv_sec;
-    //tv->tv_usec = t.tv_usec;
+    /* struct timeval t; */
+    /* gettimeofday(&t, 0); */
+    /* tv->tv_sec = t.tv_sec; */
+    /* tv->tv_usec = t.tv_usec; */
 
     int msec = d->cb_time_now(d, d->cb_arg);
     tv->tv_sec = msec / 1000;
@@ -161,7 +161,7 @@ int _namehash(const char *s)
     return (int)h;
 }
 
-// case-insensitive hash
+/*  case-insensitive hash */
 int _namehash_nocase(const char *s)
 {
     int n, len;
@@ -174,7 +174,7 @@ int _namehash_nocase(const char *s)
     return n;
 }
 
-// basic linked list and hash primitives
+/*  basic linked list and hash primitives */
 struct query *_q_next(mdnsd d, struct query *q, char *host, int type)
 {
     if(q == 0) q = d->queries[_namehash_nocase(host) % SPRIME];
@@ -250,7 +250,7 @@ int _a_match(const jdns_rr_t *r, mdnsda a)
     return 0;
 }
 
-// compare time values easily
+/*  compare time values easily */
 int _tvdiff(struct mytimeval old, struct mytimeval new)
 {
     int udiff = 0;
@@ -258,7 +258,7 @@ int _tvdiff(struct mytimeval old, struct mytimeval new)
     return (new.tv_usec - old.tv_usec) + udiff;
 }
 
-// make sure not already on the list, then insert
+/*  make sure not already on the list, then insert */
 void _r_push(mdnsdr *list, mdnsdr r)
 {
     mdnsdr cur;
@@ -268,26 +268,26 @@ void _r_push(mdnsdr *list, mdnsdr r)
     *list = r;
 }
 
-// set this r to probing, set next probe time
+/*  set this r to probing, set next probe time */
 void _r_probe(mdnsd d, mdnsdr r)
 {
     (void)d;
     (void)r;
 }
 
-// force any r out right away, if valid
+/*  force any r out right away, if valid */
 void _r_publish(mdnsd d, mdnsdr r)
 {
-    if(r->unique && r->unique < 5) return; // probing already
+    if(r->unique && r->unique < 5) return; /*  probing already */
     r->tries = 0;
     d->publish.tv_sec = d->now.tv_sec; d->publish.tv_usec = d->now.tv_usec;
     _r_push(&d->a_publish,r);
 }
 
-// send r out asap
+/*  send r out asap */
 void _r_send(mdnsd d, mdnsdr r)
 {
-    // removing record
+    /*  removing record */
     if(r->rr.ttl == 0)
     {
         if(d->a_publish == r)
@@ -297,24 +297,24 @@ void _r_send(mdnsd d, mdnsdr r)
     }
 
     if(r->tries < 4)
-    { // being published, make sure that happens soon
+    { /*  being published, make sure that happens soon */
         d->publish.tv_sec = d->now.tv_sec; d->publish.tv_usec = d->now.tv_usec;
         return;
     }
     if(r->unique)
-    { // known unique ones can be sent asap
+    { /*  known unique ones can be sent asap */
         _r_push(&d->a_now,r);
         return;
     }
-    // set d->pause.tv_usec to random 20-120 msec
+    /*  set d->pause.tv_usec to random 20-120 msec */
     d->pause.tv_sec = d->now.tv_sec;
-    //d->pause.tv_usec = d->now.tv_usec + ((d->now.tv_usec % 100) + 20) * 1000;
+    /* d->pause.tv_usec = d->now.tv_usec + ((d->now.tv_usec % 100) + 20) * 1000; */
     d->pause.tv_usec = d->now.tv_usec;
     d->pause.tv_usec += ((d->cb_rand_int(d, d->cb_arg) % 100) + 20) * 1000;
     _r_push(&d->a_pause,r);
 }
 
-// create generic unicast response struct
+/*  create generic unicast response struct */
 void _u_push(mdnsd d, mdnsdr r, int id, const jdns_address_t *addr, unsigned short int port)
 {
     struct unicast *u;
@@ -348,7 +348,7 @@ void _q_reset(mdnsd d, struct query *q)
 }
 
 void _q_done(mdnsd d, struct query *q)
-{ // no more query, update all it's cached entries, remove from lists
+{ /*  no more query, update all it's cached entries, remove from lists */
     struct cached *c = 0;
     struct query *cur;
     int i = _namehash_nocase(q->name) % SPRIME;
@@ -367,7 +367,7 @@ void _q_done(mdnsd d, struct query *q)
 }
 
 void _r_done(mdnsd d, mdnsdr r)
-{ // buh-bye, remove from hash and free
+{ /*  buh-bye, remove from hash and free */
     mdnsdr cur = 0;
     int i = _namehash_nocase((char *)r->rr.name) % SPRIME;
     if(d->a_now == r)
@@ -386,7 +386,7 @@ void _r_done(mdnsd d, mdnsdr r)
 }
 
 void _q_answer(mdnsd d, struct cached *c)
-{ // call the answer function with this cached entry
+{ /*  call the answer function with this cached entry */
     if(c->rr.ttl <= d->now.tv_sec) c->rr.ttl = 0;
     if(c->q->answer(&c->rr,c->q->arg) == -1) _q_done(d, c->q);
 }
@@ -404,7 +404,7 @@ void _published(mdnsd d, mdnsdr r)
 }
 
 void _c_expire(mdnsd d, struct cached **list)
-{ // expire any old entries in this list
+{ /*  expire any old entries in this list */
     struct cached *next, *cur = *list, *last = 0;
     while(cur != 0)
     {
@@ -412,7 +412,7 @@ void _c_expire(mdnsd d, struct cached **list)
         if(d->now.tv_sec >= cur->rr.ttl)
         {
             if(last) last->next = next;
-            if(*list == cur) *list = next; // update list pointer if the first one expired
+            if(*list == cur) *list = next; /*  update list pointer if the first one expired */
             --(d->cache_count);
             if(cur->q) _q_answer(d,cur);
             mdnsda_content_free(&cur->rr);
@@ -424,7 +424,7 @@ void _c_expire(mdnsd d, struct cached **list)
     }
 }
 
-// brute force expire any old cached records
+/*  brute force expire any old cached records */
 void _gc(mdnsd d)
 {
     int i;
@@ -453,18 +453,18 @@ void _cache(mdnsd d, const jdns_rr_t *r)
     int i = _namehash_nocase((char *)r->owner) % LPRIME;
     struct cached *same_value;
 
-    // do we already have it?
-    //printf("cache: checking for entry: [%s] [%d]\n", r->owner, r->type);
+    /*  do we already have it? */
+    /* printf("cache: checking for entry: [%s] [%d]\n", r->owner, r->type); */
     same_value = _find_exact(d, r);
     if(same_value)
     {
-        //printf("already have entry of same value\n");
+        /* printf("already have entry of same value\n"); */
     }
 
     if(r->qclass == 32768 + d->class)
-    { // cache flush
-        // simulate removal of all records for this question,
-        //   except if the value hasn't changed
+    { /*  cache flush */
+        /*  simulate removal of all records for this question, */
+        /*    except if the value hasn't changed */
         c = 0;
         while((c = _c_next(d,c,(char *)r->owner,r->type)))
         {
@@ -473,12 +473,12 @@ void _cache(mdnsd d, const jdns_rr_t *r)
         }
         _c_expire(d,&d->cache[i]);
 
-        // we may have expired same_value here, so check for it again
+        /*  we may have expired same_value here, so check for it again */
         same_value = _find_exact(d, r);
     }
 
     if(r->ttl == 0)
-    { // process deletes
+    { /*  process deletes */
         if(same_value)
             same_value->rr.ttl = 0;
         _c_expire(d,&d->cache[i]);
@@ -487,15 +487,15 @@ void _cache(mdnsd d, const jdns_rr_t *r)
 
     if(same_value)
     {
-        //printf("updating ttl only\n");
+        /* printf("updating ttl only\n"); */
 
-        // only update ttl (this code directly copied from below)
+        /*  only update ttl (this code directly copied from below) */
         same_value->rr.ttl = d->now.tv_sec + (r->ttl / 2) + 8;
         same_value->rr.real_ttl = r->ttl;
         return;
     }
 
-    //printf("cache: inserting entry:    [%s] [%d]\n", r->owner, r->type);
+    /* printf("cache: inserting entry:    [%s] [%d]\n", r->owner, r->type); */
     if(d->cache_count >= MAX_CACHE)
         return;
 
@@ -503,7 +503,7 @@ void _cache(mdnsd d, const jdns_rr_t *r)
     bzero(c,sizeof(struct cached));
     c->rr.name = (unsigned char *)jdns_strdup((char *)r->owner);
     c->rr.type = r->type;
-    c->rr.ttl = d->now.tv_sec + (r->ttl / 2) + 8; // XXX hack for now, BAD SPEC, start retrying just after half-waypoint, then expire
+    c->rr.ttl = d->now.tv_sec + (r->ttl / 2) + 8; /*  XXX hack for now, BAD SPEC, start retrying just after half-waypoint, then expire */
     c->rr.real_ttl = r->ttl;
     c->rr.rdlen = r->rdlength;
     c->rr.rdata = jdns_copy_array(r->rdata, r->rdlength);
@@ -530,11 +530,11 @@ void _cache(mdnsd d, const jdns_rr_t *r)
         _q_answer(d,c);
     if(c->q && c->q->nexttry == 0)
     {
-        //printf("cache insert, but nexttry == 0\n");
+        /* printf("cache insert, but nexttry == 0\n"); */
         _q_reset(d,c->q);
         if(d->checkqlist == 0)
             d->checkqlist = c->q->nexttry;
-        //printf("after reset: q->nexttry=%d d->checkqlist=%d\n", c->q->nexttry, d->checkqlist);
+        /* printf("after reset: q->nexttry=%d d->checkqlist=%d\n", c->q->nexttry, d->checkqlist); */
     }
 }
 
@@ -623,8 +623,8 @@ int _r_out(mdnsd d, struct message *m, mdnsdr *list)
 */
 
 int _r_out(mdnsd d, jdns_packet_t *m, mdnsdr *list)
-{ // copy a published record into an outgoing message
-    mdnsdr r; //, next;
+{ /*  copy a published record into an outgoing message */
+    mdnsdr r; /* , next; */
     unsigned short class;
     int ret = 0;
     while((r = *list) != 0)
@@ -641,7 +641,7 @@ int _r_out(mdnsd d, jdns_packet_t *m, mdnsdr *list)
 
 mdnsd mdnsd_new(int class, int frame, int port, int (*time_now)(mdnsd d, void *arg), int (*rand_int)(mdnsd d, void *arg), void *arg)
 {
-    //int i;
+    /* int i; */
     mdnsd d;
     d = (mdnsd)jdns_alloc(sizeof(struct mdnsd_struct));
     bzero(d,sizeof(struct mdnsd_struct));
@@ -658,7 +658,7 @@ mdnsd mdnsd_new(int class, int frame, int port, int (*time_now)(mdnsd d, void *a
 }
 
 void mdnsd_shutdown(mdnsd d)
-{ // shutting down, zero out ttl and push out all records
+{ /*  shutting down, zero out ttl and push out all records */
     int i;
     mdnsdr cur,next;
     d->a_now = 0;
@@ -676,10 +676,10 @@ void mdnsd_shutdown(mdnsd d)
 
 void mdnsd_flush(mdnsd d)
 {
-    // set all querys to 0 tries
-    // free whole cache
-    // set all mdnsdr to probing
-    // reset all answer lists
+    /*  set all querys to 0 tries */
+    /*  free whole cache */
+    /*  set all mdnsdr to probing */
+    /*  reset all answer lists */
 
     (void)d;
 }
@@ -688,8 +688,8 @@ void mdnsd_free(mdnsd d)
 {
     int i;
 
-    // loop through all hashes, free everything
-    // free answers if any
+    /*  loop through all hashes, free everything */
+    /*  free answers if any */
 
     for(i = 0; i < LPRIME; ++i)
     {
@@ -745,27 +745,27 @@ void mdnsd_in(mdnsd d, const jdns_packet_t *m, const jdns_response_t *resp, cons
     if(m->opts.qr == 0)
     {
         for(i=0;i<m->questions->count;i++)
-        { // process each query
+        { /*  process each query */
             jdns_packet_question_t *pq = (jdns_packet_question_t *)m->questions->item[i];
 
             if(pq->qclass != d->class || (r = _r_next(d,0,(char *)pq->qname->data,pq->qtype)) == 0) continue;
 
-            // send the matching unicast reply
+            /*  send the matching unicast reply */
             if(port != d->port) _u_push(d,r,m->id,addr,port);
 
             for(;r != 0; r = _r_next(d,r,(char *)pq->qname->data,pq->qtype))
-            { // check all of our potential answers
+            { /*  check all of our potential answers */
                 if(r->unique && r->unique < 5)
-                { // probing state, check for conflicts
+                { /*  probing state, check for conflicts */
                     for(j=0;j<resp->authorityCount;j++)
-                    { // check all to-be answers against our own
+                    { /*  check all to-be answers against our own */
                         jdns_rr_t *ns = resp->authorityRecords[j];
                         if(pq->qtype != ns->type || !jdns_domain_cmp(pq->qname->data, ns->owner)) continue;
                         if(!_a_match(ns,&r->rr))
                         {
-                            _conflict(d,r); // answer isn't ours, conflict!
+                            _conflict(d,r); /*  answer isn't ours, conflict! */
 
-                            // r is invalid after conflict, start all over
+                            /*  r is invalid after conflict, start all over */
                             r = 0;
                             break;
                         }
@@ -773,10 +773,10 @@ void mdnsd_in(mdnsd d, const jdns_packet_t *m, const jdns_response_t *resp, cons
                     continue;
                 }
                 for(j=0;j<resp->answerCount;j++)
-                { // check the known answers for this question
+                { /*  check the known answers for this question */
                     jdns_rr_t *an = resp->answerRecords[j];
                     if(pq->qtype != an->type || !jdns_domain_cmp(pq->qname->data, an->owner)) continue;
-                    if(_a_match(an,&r->rr)) break; // they already have this answer
+                    if(_a_match(an,&r->rr)) break; /*  they already have this answer */
                 }
                 if(j == resp->answerCount) _r_send(d,r);
             }
@@ -785,13 +785,13 @@ void mdnsd_in(mdnsd d, const jdns_packet_t *m, const jdns_response_t *resp, cons
     }
 
     for(i=0;i<resp->answerCount;i++)
-    { // process each answer, check for a conflict, and cache
+    { /*  process each answer, check for a conflict, and cache */
         jdns_rr_t *an = resp->answerRecords[i];
         if((r = _r_next(d,0,(char *)an->owner,an->type)) != 0 && r->unique && _a_match(an,&r->rr) == 0) _conflict(d,r);
         _cache(d,an);
     }
 
-    // cache additional records
+    /*  cache additional records */
     for(i=0;i<resp->additionalCount;i++)
     {
         jdns_rr_t *an = resp->additionalRecords[i];
@@ -806,22 +806,22 @@ int mdnsd_out(mdnsd d, jdns_packet_t **_m, jdns_address_t **addr, unsigned short
     jdns_packet_t *m;
 
     mygettimeofday(d, &d->now);
-    //bzero(m,sizeof(struct message));
+    /* bzero(m,sizeof(struct message)); */
     m = jdns_packet_new();
 
-    // defaults, multicast
-    *port = 0; //htons(5353);
+    /*  defaults, multicast */
+    *port = 0; /* htons(5353); */
     *addr = 0;
-    // *ip = 0; //inet_addr("224.0.0.251");
+    /*  *ip = 0; //inet_addr("224.0.0.251"); */
     m->opts.qr = 1;
     m->opts.aa = 1;
 
     if(d->uanswers)
-    { // send out individual unicast answers
+    { /*  send out individual unicast answers */
         struct unicast *u = d->uanswers;
         d->uanswers = u->next;
         *port = u->port;
-        // *ip = u->to;
+        /*  *ip = u->to; */
         *addr = jdns_address_new();
         if(u->ipv6)
             jdns_address_set_ipv6(*addr, u->to6);
@@ -835,13 +835,13 @@ int mdnsd_out(mdnsd d, jdns_packet_t **_m, jdns_address_t **addr, unsigned short
         goto end;
     }
 
-//printf("OUT: probing %X now %X pause %X publish %X\n",d->probing,d->a_now,d->a_pause,d->a_publish);
+/* printf("OUT: probing %X now %X pause %X publish %X\n",d->probing,d->a_now,d->a_pause,d->a_publish); */
 
-    // accumulate any immediate responses
+    /*  accumulate any immediate responses */
     if(d->a_now) { ret += _r_out(d, m, &d->a_now); }
 
     if(d->a_publish && _tvdiff(d->now,d->publish) <= 0)
-    { // check to see if it's time to send the publish retries (and unlink if done)
+    { /*  check to see if it's time to send the publish retries (and unlink if done) */
         mdnsdr next, cur = d->a_publish, last = 0;
         unsigned short class;
         while(cur /*&& message_packet_len(m) + _rr_len(&cur->rr) < d->frame*/ )
@@ -869,14 +869,14 @@ int mdnsd_out(mdnsd d, jdns_packet_t **_m, jdns_address_t **addr, unsigned short
         }
     }
 
-    // if we're in shutdown, we're done
+    /*  if we're in shutdown, we're done */
     if(d->shutdown)
         goto end;
 
-    // check if a_pause is ready
+    /*  check if a_pause is ready */
     if(d->a_pause && _tvdiff(d->now, d->pause) <= 0) ret += _r_out(d, m, &d->a_pause);
 
-    // now process questions
+    /*  now process questions */
     if(ret)
         goto end;
     m->opts.qr = 0;
@@ -886,9 +886,9 @@ int mdnsd_out(mdnsd d, jdns_packet_t **_m, jdns_address_t **addr, unsigned short
     {
         mdnsdr last = 0;
         for(r = d->probing; r != 0;)
-        { // scan probe list to ask questions and process published
+        { /*  scan probe list to ask questions and process published */
             if(r->unique == 4)
-            { // done probing, publish
+            { /*  done probing, publish */
                 mdnsdr next = r->list;
                 if(d->probing == r)
                     d->probing = r->list;
@@ -901,19 +901,19 @@ int mdnsd_out(mdnsd d, jdns_packet_t **_m, jdns_address_t **addr, unsigned short
                 r = next;
                 continue;
             }
-            //message_qd(m, r->rr.name, r->rr.type, (unsigned short)d->class);
+            /* message_qd(m, r->rr.name, r->rr.type, (unsigned short)d->class); */
             _a_copyq(m->questions, r->rr.name, r->rr.type, (unsigned short)d->class);
             last = r;
             r = r->list;
         }
         for(r = d->probing; r != 0; last = r, r = r->list)
-        { // scan probe list again to append our to-be answers
+        { /*  scan probe list again to append our to-be answers */
             r->unique++;
             _a_copy(m->authorityRecords, r->rr.name, r->rr.type, (unsigned short)d->class, r->rr.ttl, &r->rr);
             ret++;
         }
         if(ret)
-        { // process probes again in the future
+        { /*  process probes again in the future */
             d->probe.tv_sec = d->now.tv_sec;
             d->probe.tv_usec = d->now.tv_usec + 250000;
             goto end;
@@ -921,24 +921,24 @@ int mdnsd_out(mdnsd d, jdns_packet_t **_m, jdns_address_t **addr, unsigned short
     }
 
     if(d->checkqlist && d->now.tv_sec >= d->checkqlist)
-    { // process qlist for retries or expirations
+    { /*  process qlist for retries or expirations */
         struct query *q;
         struct cached *c;
         unsigned long int nextbest = 0;
 
-        // ask questions first, track nextbest time
+        /*  ask questions first, track nextbest time */
         for(q = d->qlist; q != 0; q = q->list)
             if(q->nexttry > 0 && q->nexttry <= d->now.tv_sec && q->tries < 3)
                 _a_copyq(m->questions, (unsigned char *)q->name, (unsigned short)q->type, (unsigned short)d->class);
             else if(q->nexttry > 0 && (nextbest == 0 || q->nexttry < nextbest))
                 nextbest = q->nexttry;
 
-        // include known answers, update questions
+        /*  include known answers, update questions */
         for(q = d->qlist; q != 0; q = q->list)
         {
             if(q->nexttry == 0 || q->nexttry > d->now.tv_sec) continue;
             if(q->tries == 3)
-            { // done retrying, expire and reset
+            { /*  done retrying, expire and reset */
                 _c_expire(d,&d->cache[_namehash_nocase(q->name) % LPRIME]);
                 _q_reset(d,q);
                 continue;
@@ -947,7 +947,7 @@ int mdnsd_out(mdnsd d, jdns_packet_t **_m, jdns_address_t **addr, unsigned short
             q->nexttry = d->now.tv_sec + ++q->tries;
             if(nextbest == 0 || q->nexttry < nextbest)
                 nextbest = q->nexttry;
-            // if room, add all known good entries
+            /*  if room, add all known good entries */
             c = 0;
             while((c = _c_next(d,c,q->name,q->type)) != 0 && c->rr.ttl > d->now.tv_sec + 8 /* && message_packet_len(m) + _rr_len(&c->rr) < d->frame */)
             {
@@ -972,40 +972,40 @@ end:
 struct mytimeval *mdnsd_sleep(mdnsd d)
 {
     int sec, usec;
-    //mdnsdr r;
+    /* mdnsdr r; */
     d->sleep.tv_sec = d->sleep.tv_usec = 0;
     #define RET while(d->sleep.tv_usec > 1000000) {d->sleep.tv_sec++;d->sleep.tv_usec -= 1000000;} return &d->sleep;
 
-    // first check for any immediate items to handle
+    /*  first check for any immediate items to handle */
     if(d->uanswers || d->a_now) return &d->sleep;
 
     mygettimeofday(d, &d->now);
 
     if(d->a_pause)
-    { // then check for paused answers
+    { /*  then check for paused answers */
         if((usec = _tvdiff(d->now,d->pause)) > 0) d->sleep.tv_usec = usec;
         RET;
     }
 
     if(d->probing)
-    { // now check for probe retries
+    { /*  now check for probe retries */
         if((usec = _tvdiff(d->now,d->probe)) > 0) d->sleep.tv_usec = usec;
         RET;
     }
 
     if(d->a_publish)
-    { // now check for publish retries
+    { /*  now check for publish retries */
         if((usec = _tvdiff(d->now,d->publish)) > 0) d->sleep.tv_usec = usec;
         RET;
     }
 
     if(d->checkqlist)
-    { // also check for queries with known answer expiration/retry
+    { /*  also check for queries with known answer expiration/retry */
         if((sec = d->checkqlist - d->now.tv_sec) > 0) d->sleep.tv_sec = sec;
         RET;
     }
 
-    // last resort, next gc expiration
+    /*  last resort, next gc expiration */
     if((sec = d->expireall - d->now.tv_sec) > 0) d->sleep.tv_sec = sec;
     RET;
 }
@@ -1029,15 +1029,15 @@ void mdnsd_query(mdnsd d, char *host, int type, int (*answer)(mdnsda a, void *ar
         q->arg = arg;
         while((cur = _c_next(d,cur,q->name,q->type)))
         {
-            cur->q = q; // any cached entries should be associated
-            _q_answer(d,cur); // and reported!
+            cur->q = q; /*  any cached entries should be associated */
+            _q_answer(d,cur); /*  and reported! */
         }
         _q_reset(d,q);
-        q->nexttry = d->checkqlist = d->now.tv_sec; // new questin, immediately send out
+        q->nexttry = d->checkqlist = d->now.tv_sec; /*  new questin, immediately send out */
 	return;
     }
     if(!answer)
-    { // no answer means we don't care anymore
+    { /*  no answer means we don't care anymore */
         _q_done(d,q);
         return;
     }
@@ -1081,7 +1081,7 @@ void mdnsd_done(mdnsd d, mdnsdr r)
 {
     mdnsdr cur;
     if(r->unique && r->unique < 5)
-    { // probing yet, zap from that list first!
+    { /*  probing yet, zap from that list first! */
         if(d->probing == r) d->probing = r->list;
         else {
             for(cur=d->probing;cur->list != r;cur = cur->list);
