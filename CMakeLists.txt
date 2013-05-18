@@ -56,10 +56,16 @@ check_type_size("long" SIZEOF_LONG)
 check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
 
 macro_optional_find_package(LiboRTP)
-macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Jingle support, Google Talk libjingle audio call support and voice clips in WLM.")
+macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build voice clips in WLM.")
 
-macro_optional_find_package(Speex)
-macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support in Kopete.")
+macro_optional_find_package(SRTP)
+macro_log_feature(SRTP_FOUND "srtp" "SRTP provides an implementation of the Secure Real-time Transport Protocol (SRTP)" "http://srtp.sourceforge.net/srtp.html" FALSE "" "Needed to build Google Talk libjingle audio call support")
+
+macro_optional_find_package(JsonCpp)
+macro_log_feature(JSONCPP_FOUND "jsoncpp" "jsoncpp is an implementation of a JSON reader and writer in C++" "http://jsoncpp.sourceforge.net/" FALSE "" "Needed to build Google Talk libjingle audio call support")
+
+#macro_optional_find_package(Speex)
+#macro_log_feature(SPEEX_FOUND "speex" "speex is an encoder/decoder for the speex audio format." "http://www.speex.org/" FALSE "" "Needed to build Jingle support in Kopete.")
 
 macro_optional_find_package(QCA2)
 macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca" FALSE "2.0.0" "Needed to build Kopete's GroupWise and Jabber protocols.")
@@ -67,8 +73,8 @@ macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delt
 macro_optional_find_package(IDN)
 macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implemenation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
 
-macro_optional_find_package(Alsa)
-macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed for Jingle Support in Kopete Jabber Plugin")
+#macro_optional_find_package(Alsa)
+#macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed for Jingle Support in Kopete Jabber Plugin")
 
 macro_optional_find_package(Xmms)
 macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
