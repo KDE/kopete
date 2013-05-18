@@ -19,13 +19,15 @@ option(WITH_WLM_MEDIASTREAMER "Enable Windows Live Messenger voice clip support"
 option(WITH_meanwhile "Enable Kopete meanwhile protocol" ON)
 option(WITH_skype "Enable Kopete Skype protocol" ON)
 
-if(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
-  message(STATUS "Building jingle support")
-  set(BUILD_JINGLE TRUE)
-else(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
-  message(STATUS "Not building jingle support (recommended)")
-  set(BUILD_JINGLE FALSE)
-endif(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
+# Disable jingle support because it is not working and libiris does not support it
+#if(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
+#  message(STATUS "Building jingle support")
+#  set(BUILD_JINGLE TRUE)
+#else(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
+#  message(STATUS "Not building jingle support (recommended)")
+#  set(BUILD_JINGLE FALSE)
+#endif(LIBORTP_FOUND AND SPEEX_FOUND AND ALSA_FOUND AND WITH_JINGLE)
+set(BUILD_JINGLE FALSE)
 
 # TODO: remove LIBORTP_FOUND and MEDIASTREAMER_FOUND if google libjingle filetransfer will be supported
 if(SSL_FOUND OR WIN32)
