@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: Stefan Gehn -->
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+	<kcfgfile name="kopeterc"/>
+
+	<group name="History2 Plugin">
+		<entry name="Auto_chatwindow" type="Bool">
+			<label>Show previous messages in new chats.</label>
+			<default>true</default>
+		</entry>
+
+		<entry name="Number_Auto_chatwindow" type="UInt">
+			<label>Number of messages to show.</label>
+			<default>7</default>
+		</entry>
+
+		<entry name="Number_ChatWindow" type="Int">
+			<label>Number of messages per page</label>
+			<default>20</default>
+		</entry>
+
+		<entry name="History_color" type="Color">
+			<label>Color of messages</label>
+			<default>170, 170, 127</default>
+		</entry>
+
+		<entry name="BrowserStyle" type="Path">
+			<label>Style to use in history-browser.</label>
+		</entry>
+
+	</group>
+</kcfg>

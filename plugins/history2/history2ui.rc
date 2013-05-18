@@ -1,0 +1,12 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kopete_history" version="1">
+	<MenuBar>
+		<Menu name="edit">
+			<text>&amp;Edit</text>
+			<Action name="viewMetaContactHistory" />
+		</Menu>
+	</MenuBar>
+	<Menu name="contact_popup">
+		<Action name="viewMetaContactHistory" />
+  	</Menu>
+</kpartgui>
