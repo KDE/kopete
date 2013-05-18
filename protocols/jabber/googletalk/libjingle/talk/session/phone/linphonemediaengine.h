@@ -30,6 +30,8 @@
 #ifndef TALK_SESSION_PHONE_LINPHONEMEDIAENGINE_H_
 #define TALK_SESSION_PHONE_LINPHONEMEDIAENGINE_H_
 
+#ifdef HAVE_LINPHONE
+
 #include <string>
 #include <vector>
 
@@ -53,17 +55,8 @@ class LinphoneMediaEngine : public MediaEngineInterface {
   LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav);
   virtual ~LinphoneMediaEngine() {}
 
-  // Should be called before codecs() and video_codecs() are called. We need to
-  // set the voice and video codecs; otherwise, Jingle initiation will fail.
-  void set_voice_codecs(const std::vector<AudioCodec>& codecs) {
-    voice_codecs_ = codecs;
-  }
-  void set_video_codecs(const std::vector<VideoCodec>& codecs) {
-    video_codecs_ = codecs;
-  }
-
   // Implement pure virtual methods of MediaEngine.
-  virtual bool Init();
+  virtual bool Init() { return true; }
   virtual void Terminate();
   virtual int GetCapabilities();
   virtual VoiceMediaChannel* CreateChannel();
@@ -84,27 +77,27 @@ class LinphoneMediaEngine : public MediaEngineInterface {
   virtual bool SetLocalRenderer(VideoRenderer* renderer) { return true; }
   // TODO: control channel send?
   virtual CaptureResult SetVideoCapture(bool capture) { return CR_SUCCESS; }
-  virtual const std::vector<AudioCodec>& audio_codecs() {
-    return voice_codecs_;
-  }
-  virtual const std::vector<VideoCodec>& video_codecs() {
-    return video_codecs_;
-  }
+  virtual const std::vector<AudioCodec>& audio_codecs() { return voice_codecs_; }
+  virtual const std::vector<VideoCodec>& video_codecs() { return video_codecs_; }
   virtual bool FindAudioCodec(const AudioCodec& codec);
   virtual bool FindVideoCodec(const VideoCodec& codec) { return true; }
   virtual void SetVoiceLogging(int min_sev, const char* filter) {}
   virtual void SetVideoLogging(int min_sev, const char* filter) {}
+  virtual bool SetVideoCapturer(cricket::VideoCapturer*, uint32) { return true; }
+  virtual bool GetOutputVolume(int*) { return true; }
+  virtual bool RegisterVideoProcessor(cricket::VideoProcessor*) { return true; }
+  virtual bool UnregisterVideoProcessor(cricket::VideoProcessor*) { return true; }
+  virtual bool RegisterVoiceProcessor(uint32, cricket::VoiceProcessor*, cricket::MediaProcessorDirection) { return true; }
+  virtual bool UnregisterVoiceProcessor(uint32, cricket::VoiceProcessor*, cricket::MediaProcessorDirection) { return true; }
 
   std::string GetRingWav(){return ring_wav_;}
   std::string GetCallWav(){return call_wav_;}
 
-  int have_ilbc;
+  bool have_ilbc;
+  bool have_speex;
+  bool have_gsm;
 
  private:
-  std::string voice_input_filename_;
-  std::string voice_output_filename_;
-  std::string video_input_filename_;
-  std::string video_output_filename_;
   std::vector<AudioCodec> voice_codecs_;
   std::vector<VideoCodec> video_codecs_;
 
@@ -124,8 +117,6 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
   virtual bool SetSendCodecs(const std::vector<AudioCodec>& codecs);
   virtual bool SetPlayout(bool playout);
   virtual bool SetSend(SendFlags flag);
-  virtual bool AddStream(uint32 ssrc) { return true; }
-  virtual bool RemoveStream(uint32 ssrc) { return true; }
   virtual bool GetActiveStreams(AudioInfo::StreamList* actives) { return true; }
   virtual int GetOutputLevel() { return 0; }
   virtual bool SetOutputScaling(uint32 ssrc, double left, double right) {
@@ -134,16 +125,14 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
   virtual bool GetOutputScaling(uint32 ssrc, double* left, double* right) {
     return false;
   }
-  virtual void SetRingbackTone(const char* buf, int len) {}
+  virtual bool SetRingbackTone(const char* buf, int len) { return true; }
   virtual bool PlayRingbackTone(bool play, bool loop) { return true; }
   virtual bool PressDTMF(int event, bool playout) { return true; }
   virtual bool GetStats(VoiceMediaInfo* info) { return true; }
 
   // Implement pure virtual methods of MediaChannel.
   virtual void OnPacketReceived(talk_base::Buffer* packet);
-  virtual void OnRtcpReceived(talk_base::Buffer* packet) {}
-  virtual void SetSendSsrc(uint32 id) {}  // TODO: change RTP packet?
-  virtual bool SetRtcpCName(const std::string& cname) { return true; }
+  virtual void OnRtcpReceived(talk_base::Buffer* packet) { OnPacketReceived(packet); }
   virtual bool Mute(bool on) { return mute_; }
   virtual bool SetSendBandwidth(bool autobw, int bps) { return true; }
   virtual bool SetOptions(int options) { return true; }
@@ -151,6 +140,12 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
       const std::vector<RtpHeaderExtension>& extensions) { return true; }
   virtual bool SetSendRtpHeaderExtensions(
       const std::vector<RtpHeaderExtension>& extensions) { return true; }
+  virtual bool AddSendStream(const cricket::StreamParams&) { return true; }
+  virtual bool RemoveSendStream(uint32) { return true; }
+  virtual bool AddRecvStream(const cricket::StreamParams&) { return true; }
+  virtual bool RemoveRecvStream(uint32) { return true; }
+  virtual int GetOptions() const { return 0; }
+  virtual bool PlayRingbackTone(uint32, bool, bool) { return true; }
 
   virtual void StartRing(bool bIncomingCall);
   virtual void StopRing();
@@ -165,9 +160,14 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
   talk_base::scoped_ptr<talk_base::AsyncSocket> socket_;
   void OnIncomingData(talk_base::AsyncSocket *s);
 
+  int port1; // local port for audio_stream
+  int port2; // local port for rtp
+
   DISALLOW_COPY_AND_ASSIGN(LinphoneVoiceChannel);
 };
 
 }  // namespace cricket
+
+#endif // HAVE_LINPHONE
 
 #endif  // TALK_SESSION_PHONE_LINPHONEMEDIAENGINE_H_
