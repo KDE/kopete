@@ -630,8 +630,6 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	 */
 	d->jabberClientConnector = new XMPP::AdvancedConnector;
 
-	d->jabberClientConnector->setOptSSL ( useSSL () );
-
 	if ( useXMPP09 () )
 	{
 		if ( overrideHost () )
@@ -642,6 +640,8 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 		d->jabberClientConnector->setOptProbe ( probeSSL () );
 
 	}
+
+	d->jabberClientConnector->setOptSSL ( useSSL () );
 
 	/*
 	 * Setup authentication layer
