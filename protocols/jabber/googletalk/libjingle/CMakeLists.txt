@@ -1,187 +1,254 @@
-# Copyright (c) 2009-2010 Pali Rohár <pali.rohar@gmail.com>
-# autotools files was converted to cmake build system using am2cmake
+# Copyright (c) 2009-2013 Pali Rohár <pali.rohar@gmail.com>
 
 ########### next target ###############
 
-if ( NOT DEFINED LIBORTP_FOUND )
-	find_package ( LiboRTP )
-endif ( NOT DEFINED LIBORTP_FOUND )
-
-if ( NOT DEFINED MEDIASTREAMER_FOUND )
-	find_package ( Mediastreamer )
-endif ( NOT DEFINED MEDIASTREAMER_FOUND )
-
-if ( NOT DEFINED EXPAT_FOUND )
-	find_package ( Expat )
-endif ( NOT DEFINED EXPAT_FOUND )
-
-if ( NOT WIN32 AND NOT DEFINED SSL_FOUND )
-	find_package ( SSL )
-endif ( NOT WIN32 AND NOT DEFINED SSL_FOUND )
-
-########### next target ###############
-
-if ( NOT DEFINED BUILD_libjingle_natserver )
-	set ( BUILD_libjingle_natserver true )
-endif ( NOT DEFINED BUILD_libjingle_natserver )
-
-if ( NOT DEFINED BUILD_libjingle_nat_unittest )
-	set ( BUILD_libjingle_nat_unittest true )
-endif ( NOT DEFINED BUILD_libjingle_nat_unittest )
-
-if ( NOT DEFINED BUILD_libjingle_virtualsocket_unittest )
-	set ( BUILD_libjingle_virtualsocket_unittest true )
-endif ( NOT DEFINED BUILD_libjingle_virtualsocket_unittest )
-
-if ( NOT DEFINED BUILD_libjingle_relayserver )
-	set ( BUILD_libjingle_relayserver true )
-endif ( NOT DEFINED BUILD_libjingle_relayserver )
-
-if ( NOT DEFINED BUILD_libjingle_stunserver )
-	set ( BUILD_libjingle_stunserver true )
-endif ( NOT DEFINED BUILD_libjingle_stunserver )
-
-if ( NOT DEFINED BUILD_libjingle_stunserver_unittest )
-	set ( BUILD_libjingle_stunserver_unittest true )
-endif ( NOT DEFINED BUILD_libjingle_stunserver_unittest )
-
-if ( NOT DEFINED BUILD_libjingle_session_unittest )
-	set ( BUILD_libjingle_session_unittest true )
-endif ( NOT DEFINED BUILD_libjingle_session_unittest )
-
-if ( NOT DEFINED BUILD_libjingle_port_unittest )
-	set ( BUILD_libjingle_port_unittest true )
-endif ( NOT DEFINED BUILD_libjingle_port_unittest )
-
-if ( NOT DEFINED BUILD_libjingle_login )
-	set ( BUILD_libjingle_login true )
-endif ( NOT DEFINED BUILD_libjingle_login )
-
-if ( NOT DEFINED BUILD_libjingle_pcp )
-	set ( BUILD_libjingle_pcp true )
-endif ( NOT DEFINED BUILD_libjingle_pcp )
-
-if ( NOT DEFINED BUILD_libjingle_call )
-	set ( BUILD_libjingle_call true )
-endif ( NOT DEFINED BUILD_libjingle_call )
-
-if ( NOT DEFINED BUILD_libjingle_pcp )
-	set ( BUILD_libjingle_pcp true )
-endif ( NOT DEFINED BUILD_libjingle_pcp )
-
-########### next target ###############
-
-cmake_policy ( SET CMP0005 OLD )
-set ( CMAKE_INCLUDE_CURRENT_DIR OFF )
-add_definitions ( -DHAVE_CONFIG_H )
+add_definitions (
+	-DFEATURE_ENABLE_VOICEMAIL
+	-DFEATURE_ENABLE_SSL
+	-DHAVE_LINPHONE
+	-DHAVE_OPENSSL_SSL_H
+	-DHAVE_SRTP
+	-DSRTP_RELATIVE_PATH
+	-DEXPAT_RELATIVE_PATH
+	-DGTEST_RELATIVE_PATH
+	-DJSONCPP_RELATIVE_PATH
+)
 
 if ( NOT WIN32 )
-	set ( POSIX 1 )
 	add_definitions ( -DPOSIX )
 	if ( NOT APPLE )
-		#add_definitions ( -DLINUX ) #Fixme: need this?
-		set ( WIN32 0 )
-		set ( LINUX 1 )
-		set ( OSX 0 )
-	else ( NOT APPLE )
-		set ( WIN32 0 )
-		set ( LINUX 0 )
-		set ( OSX 1 )
+		add_definitions ( -DLINUX )
 	endif ( NOT APPLE )
-else ( NOT WIN32 )
-	set ( POSIX 0 )
-	set ( WIN32 1 )
-	set ( LINUX 0 )
-	set ( OSX 0 )
 endif ( NOT WIN32 )
-
-configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
-
-########### next target ###############
-
-if ( NOT EXPAT_FOUND )
-	message( FATAL_ERROR "Expat library not found" )
-endif ( NOT EXPAT_FOUND )
-
-if ( NOT WIN32 AND NOT SSL_FOUND )
-	message( FATAL_ERROR "SSL library not found" )
-endif ( NOT WIN32 AND NOT SSL_FOUND )
-
-if ( BUILD_libjingle_call )
-	if ( LIBORTP_FOUND AND MEDIASTREAMER_FOUND )
-		message ( STATUS "Building Google Talk libjingle voice call support" )
-	else ( LIBORTP_FOUND AND MEDIASTREAMER_FOUND )
-		set ( BUILD_libjingle_call false )
-		message ( STATUS "Not building Google Talk libjingle voice call support, because oRTP or Mediastreamer not found!" )
-	endif ( LIBORTP_FOUND AND MEDIASTREAMER_FOUND )
-else ( BUILD_libjingle_call )
-	message ( STATUS "Not building Google Talk libjingle voice call support" )
-endif ( BUILD_libjingle_call )
-
-if ( BUILD_libjingle_pcp )
-	message ( STATUS "Building Google Talk libjingle filetransfer support" )
-else ( BUILD_libjingle_pcp )
-	message ( STATUS "Not building Google Talk libjingle filetransfer support" )
-endif ( BUILD_libjingle_pcp )
-
-########### next target ###############
-
-if ( BUILD_libjingle_natserver OR BUILD_libjingle_nat_unittest OR BUILD_libjingle_virtualsocket_unittest OR BUILD_libjingle_relayserver OR BUILD_libjingle_stunserver OR BUILD_libjingle_stunserver_unittest OR BUILD_libjingle_session_unittest OR BUILD_libjingle_port_unittest OR BUILD_libjingle_login OR BUILD_libjingle_pcp OR BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketbase true )
-else ( BUILD_libjingle_natserver OR BUILD_libjingle_nat_unittest OR BUILD_libjingle_virtualsocket_unittest OR BUILD_libjingle_relayserver OR BUILD_libjingle_stunserver OR BUILD_libjingle_stunserver_unittest OR BUILD_libjingle_session_unittest OR BUILD_libjingle_port_unittest OR BUILD_libjingle_login OR BUILD_libjingle_pcp OR BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketbase false )
-endif ( BUILD_libjingle_natserver OR BUILD_libjingle_nat_unittest OR BUILD_libjingle_virtualsocket_unittest OR BUILD_libjingle_relayserver OR BUILD_libjingle_stunserver OR BUILD_libjingle_stunserver_unittest OR BUILD_libjingle_session_unittest OR BUILD_libjingle_port_unittest OR BUILD_libjingle_login OR BUILD_libjingle_pcp OR BUILD_libjingle_call )
-
-if ( BUILD_libjingle_natserver OR BUILD_libjingle_nat_unittest OR BUILD_libjingle_virtualsocket_unittest OR BUILD_libjingle_stunserver_unittest OR BUILD_libjingle_session_unittest OR BUILD_libjingle_port_unittest )
-	set ( BUILD_libjingle_crickettest true )
-else ( BUILD_libjingle_natserver OR BUILD_libjingle_nat_unittest OR BUILD_libjingle_virtualsocket_unittest OR BUILD_libjingle_stunserver_unittest OR BUILD_libjingle_session_unittest OR BUILD_libjingle_port_unittest )
-	set ( BUILD_libjingle_crickettest false )
-endif ( BUILD_libjingle_natserver OR BUILD_libjingle_nat_unittest OR BUILD_libjingle_virtualsocket_unittest OR BUILD_libjingle_stunserver_unittest OR BUILD_libjingle_session_unittest OR BUILD_libjingle_port_unittest )
-
-if ( BUILD_libjingle_relayserver OR BUILD_libjingle_stunserver OR BUILD_libjingle_stunserver_unittest OR BUILD_libjingle_session_unittest OR BUILD_libjingle_port_unittest OR BUILD_libjingle_pcp OR BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketp2pbase true )
-else ( BUILD_libjingle_relayserver OR BUILD_libjingle_stunserver OR BUILD_libjingle_stunserver_unittest OR BUILD_libjingle_session_unittest OR BUILD_libjingle_port_unittest OR BUILD_libjingle_pcp OR BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketp2pbase false )
-endif ( BUILD_libjingle_relayserver OR BUILD_libjingle_stunserver OR BUILD_libjingle_stunserver_unittest OR BUILD_libjingle_session_unittest OR BUILD_libjingle_port_unittest OR BUILD_libjingle_pcp OR BUILD_libjingle_call )
-
-if ( BUILD_libjingle_session_unittest OR BUILD_libjingle_login OR BUILD_libjingle_pcp OR BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketxmllite true )
-	set ( BUILD_libjingle_cricketxmpp true )
-else ( BUILD_libjingle_session_unittest OR BUILD_libjingle_login OR BUILD_libjingle_pcp OR BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketxmllite false )
-	set ( BUILD_libjingle_cricketxmpp false )
-endif ( BUILD_libjingle_session_unittest OR BUILD_libjingle_login OR BUILD_libjingle_pcp OR BUILD_libjingle_call )
-
-if ( BUILD_libjingle_pcp OR BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketp2pclient true )
-	set ( BUILD_libjingle_cricketexampleslogin true )
-else ( BUILD_libjingle_pcp OR BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketp2pclient false )
-	set ( BUILD_libjingle_cricketexampleslogin false )
-endif ( BUILD_libjingle_pcp OR BUILD_libjingle_call )
-
-if ( BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketsessionphone true )
-else ( BUILD_libjingle_call )
-	set ( BUILD_libjingle_cricketsessionphone false )
-endif ( BUILD_libjingle_call )
-
-if ( BUILD_libjingle_pcp )
-	set ( BUILD_libjingle_cricketsessiontunnel true )
-	set ( BUILD_libjingle_cricketsessionfileshare true )
-else ( BUILD_libjingle_pcp )
-	set ( BUILD_libjingle_cricketsessiontunnel false )
-	set ( BUILD_libjingle_cricketsessionfileshare false )
-endif ( BUILD_libjingle_pcp )
 
 ########### next target ###############
 
 include_directories (
 	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/talk/third_party/gtest
+	${CMAKE_CURRENT_SOURCE_DIR}/talk/third_party/gtest/include
+	${SRTP_INCLUDE_DIR}
+	${JSONCPP_INCLUDE_DIR}
 )
 
-add_subdirectory(talk)
+########### next target ###############
+
+set ( call_SRCS
+	talk/base/latebindingsymboltable.cc
+	talk/base/linux.cc
+	talk/base/linuxfdwalk.c
+	talk/base/libdbusglibsymboltable.cc
+	talk/session/phone/libudevsymboltable.cc
+	talk/session/phone/linuxdevicemanager.cc
+	talk/session/phone/v4llookup.cc
+	talk/sound/alsasoundsystem.cc
+	talk/sound/alsasymboltable.cc
+	talk/sound/linuxsoundsystem.cc
+	talk/sound/pulseaudiosoundsystem.cc
+	talk/sound/pulseaudiosymboltable.cc
+	talk/base/unixfilesystem.cc
+	talk/base/openssladapter.cc
+	talk/base/openssldigest.cc
+	talk/base/opensslidentity.cc
+	talk/base/opensslstreamadapter.cc
+	talk/base/posix.cc
+	talk/base/sslidentity.cc
+	talk/base/sslstreamadapter.cc
+	talk/session/phone/linphonemediaengine.cc
+	talk/base/asyncfile.cc
+	talk/base/asynchttprequest.cc
+	talk/base/asyncsocket.cc
+	talk/base/asynctcpsocket.cc
+	talk/base/asyncudpsocket.cc
+	talk/base/autodetectproxy.cc
+	talk/base/bandwidthsmoother.cc
+	talk/base/base64.cc
+	talk/base/basicpacketsocketfactory.cc
+	talk/base/bytebuffer.cc
+	talk/base/checks.cc
+	talk/base/common.cc
+	talk/base/cpuid.cc
+	talk/base/cpumonitor.cc
+	talk/base/diskcache.cc
+	talk/base/event.cc
+	talk/base/filelock.cc
+	talk/base/fileutils.cc
+	talk/base/firewallsocketserver.cc
+	talk/base/flags.cc
+	talk/base/helpers.cc
+	talk/base/host.cc
+	talk/base/httpbase.cc
+	talk/base/httpclient.cc
+	talk/base/httpcommon.cc
+	talk/base/httprequest.cc
+	talk/base/httpserver.cc
+	talk/base/ipaddress.cc
+	talk/base/logging.cc
+	talk/base/md5c.c
+	talk/base/messagedigest.cc
+	talk/base/messagehandler.cc
+	talk/base/messagequeue.cc
+	talk/base/multipart.cc
+	talk/base/natserver.cc
+	talk/base/natsocketfactory.cc
+	talk/base/nattypes.cc
+	talk/base/nethelpers.cc
+	talk/base/network.cc
+	talk/base/optionsfile.cc
+	talk/base/pathutils.cc
+	talk/base/physicalsocketserver.cc
+	talk/base/proxydetect.cc
+	talk/base/proxyinfo.cc
+	talk/base/proxyserver.cc
+	talk/base/ratelimiter.cc
+	talk/base/ratetracker.cc
+	talk/base/sha1.c
+	talk/base/sharedexclusivelock.cc
+	talk/base/signalthread.cc
+	talk/base/socketadapters.cc
+	talk/base/socketaddress.cc
+	talk/base/socketaddresspair.cc
+	talk/base/socketpool.cc
+	talk/base/socketstream.cc
+	talk/base/ssladapter.cc
+	talk/base/sslsocketfactory.cc
+	talk/base/stream.cc
+	talk/base/stringencode.cc
+	talk/base/stringutils.cc
+	talk/base/systeminfo.cc
+	talk/base/task.cc
+	talk/base/taskparent.cc
+	talk/base/taskrunner.cc
+	talk/base/testclient.cc
+	talk/base/thread.cc
+	talk/base/timeutils.cc
+	talk/base/timing.cc
+	talk/base/transformadapter.cc
+	talk/base/urlencode.cc
+	talk/base/versionparsing.cc
+	talk/base/virtualsocketserver.cc
+	talk/base/worker.cc
+	talk/p2p/base/constants.cc
+	talk/p2p/base/p2ptransport.cc
+	talk/p2p/base/p2ptransportchannel.cc
+	talk/p2p/base/parsing.cc
+	talk/p2p/base/port.cc
+	talk/p2p/base/portallocator.cc
+	talk/p2p/base/portallocatorsessionproxy.cc
+	talk/p2p/base/portproxy.cc
+	talk/p2p/base/pseudotcp.cc
+	talk/p2p/base/relayport.cc
+	talk/p2p/base/relayserver.cc
+	talk/p2p/base/rawtransport.cc
+	talk/p2p/base/rawtransportchannel.cc
+	talk/p2p/base/session.cc
+	talk/p2p/base/sessiondescription.cc
+	talk/p2p/base/sessionmanager.cc
+	talk/p2p/base/sessionmessages.cc
+	talk/p2p/base/stun.cc
+	talk/p2p/base/stunport.cc
+	talk/p2p/base/stunrequest.cc
+	talk/p2p/base/stunserver.cc
+	talk/p2p/base/tcpport.cc
+	talk/p2p/base/transport.cc
+	talk/p2p/base/transportchannel.cc
+	talk/p2p/base/transportchannelproxy.cc
+	talk/p2p/base/udpport.cc
+	talk/p2p/client/basicportallocator.cc
+	talk/p2p/client/connectivitychecker.cc
+	talk/p2p/client/httpportallocator.cc
+	talk/p2p/client/socketmonitor.cc
+	talk/session/tunnel/pseudotcpchannel.cc
+	talk/session/tunnel/tunnelsessionclient.cc
+	talk/session/tunnel/securetunnelsessionclient.cc
+	talk/session/phone/audiomonitor.cc
+	talk/session/phone/call.cc
+	talk/session/phone/channel.cc
+	talk/session/phone/channelmanager.cc
+	talk/session/phone/codec.cc
+	talk/session/phone/constants.cc
+	talk/session/phone/currentspeakermonitor.cc
+	talk/session/phone/dataengine.cc
+	talk/session/phone/devicemanager.cc
+	talk/session/phone/filemediaengine.cc
+	talk/session/phone/filevideocapturer.cc
+	talk/session/phone/mediaengine.cc
+	talk/session/phone/mediamessages.cc
+	talk/session/phone/mediamonitor.cc
+	talk/session/phone/mediarecorder.cc
+	talk/session/phone/mediasession.cc
+	talk/session/phone/mediasessionclient.cc
+	talk/session/phone/rtpdump.cc
+	talk/session/phone/rtputils.cc
+	talk/session/phone/rtcpmuxfilter.cc
+	talk/session/phone/soundclip.cc
+	talk/session/phone/srtpfilter.cc
+	talk/session/phone/ssrcmuxfilter.cc
+	talk/session/phone/streamparams.cc
+	talk/session/phone/videoadapter.cc
+	talk/session/phone/videocapturer.cc
+	talk/session/phone/videocommon.cc
+	talk/session/phone/videoframe.cc
+	talk/sound/nullsoundsystem.cc
+	talk/sound/nullsoundsystemfactory.cc
+	talk/sound/platformsoundsystem.cc
+	talk/sound/platformsoundsystemfactory.cc
+	talk/sound/soundsysteminterface.cc
+	talk/sound/soundsystemproxy.cc
+	talk/xmllite/qname.cc
+	talk/xmllite/xmlbuilder.cc
+	talk/xmllite/xmlconstants.cc
+	talk/xmllite/xmlelement.cc
+	talk/xmllite/xmlnsstack.cc
+	talk/xmllite/xmlparser.cc
+	talk/xmllite/xmlprinter.cc
+	talk/xmpp/constants.cc
+	talk/xmpp/hangoutpubsubclient.cc
+	talk/xmpp/iqtask.cc
+	talk/xmpp/jid.cc
+	talk/xmpp/moduleimpl.cc
+	talk/xmpp/mucroomconfigtask.cc
+	talk/xmpp/mucroomhistorytask.cc
+	talk/xmpp/mucroomlookuptask.cc
+	talk/xmpp/pubsubclient.cc
+	talk/xmpp/pubsub_task.cc
+	talk/xmpp/pubsubtasks.cc
+	talk/xmpp/receivetask.cc
+	talk/xmpp/saslmechanism.cc
+	talk/xmpp/xmppclient.cc
+	talk/xmpp/xmppengineimpl.cc
+	talk/xmpp/xmppengineimpl_iq.cc
+	talk/xmpp/xmpplogintask.cc
+	talk/xmpp/xmppstanzaparser.cc
+	talk/xmpp/xmpptask.cc
+	talk/examples/call/call_main.cc
+	talk/examples/call/callclient.cc
+	talk/examples/call/console.cc
+	talk/examples/call/friendinvitesendtask.cc
+	talk/examples/call/mediaenginefactory.cc
+	talk/examples/call/mucinviterecvtask.cc
+	talk/examples/call/mucinvitesendtask.cc
+	talk/examples/call/presenceouttask.cc
+	talk/examples/call/presencepushtask.cc
+	talk/examples/login/jingleinfotask.cc
+	talk/examples/login/xmppauth.cc
+	talk/examples/login/xmpppump.cc
+	talk/examples/login/xmppsocket.cc
+)
+
+set ( call_LIBS
+	${SRTP_LIBRARY}
+	${JSONCPP_LIBRARY}
+	${EXPAT_LIBRARY}
+	${SSL_LIBRARY}
+	${CRYPTO_LIBRARY}
+	${MEDIASTREAMER_LIBRARIES}
+)
+
+add_executable ( call ${call_SRCS} )
+set_target_properties ( call PROPERTIES OUTPUT_NAME googletalk-call )
+target_link_libraries ( call ${call_LIBS} )
 
 ########### install files ###############
 
+install ( TARGETS call DESTINATION bin )
