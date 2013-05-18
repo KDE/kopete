@@ -25,13 +25,14 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _PORTALLOCATOR_H_
-#define _PORTALLOCATOR_H_
+#ifndef TALK_P2P_BASE_PORTALLOCATOR_H_
+#define TALK_P2P_BASE_PORTALLOCATOR_H_
+
+#include <string>
+#include <vector>
 
 #include "talk/base/sigslot.h"
 #include "talk/p2p/base/port.h"
-#include <string>
-#undef SetPort
 
 namespace cricket {
 
@@ -46,18 +47,31 @@ const uint32 PORTALLOCATOR_DISABLE_STUN = 0x02;
 const uint32 PORTALLOCATOR_DISABLE_RELAY = 0x04;
 const uint32 PORTALLOCATOR_DISABLE_TCP = 0x08;
 const uint32 PORTALLOCATOR_ENABLE_SHAKER = 0x10;
+const uint32 PORTALLOCATOR_ENABLE_BUNDLE = 0x20;
 
 const uint32 kDefaultPortAllocatorFlags = 0;
 
+class PortAllocatorSessionMuxer;
+
 class PortAllocatorSession : public sigslot::has_slots<> {
-public:
-  PortAllocatorSession(uint32 flags) : flags_(flags) {}
+ public:
+  // TODO Remove session_type argument (and other places), as
+  // its not used.
+  PortAllocatorSession(const std::string& name,
+                       const std::string& session_type,
+                       uint32 flags)
+      : name_(name),
+        session_type_(session_type),
+        flags_(flags) {
+  }
 
   // Subclasses should clean up any ports created.
   virtual ~PortAllocatorSession() {}
 
   uint32 flags() const { return flags_; }
   void set_flags(uint32 flags) { flags_ = flags; }
+  const std::string& name() const { return name_; }
+  const std::string& session_type() const { return session_type_; }
 
   // Prepares an initial set of ports to try.
   virtual void GetInitialPorts() = 0;
@@ -68,21 +82,39 @@ public:
   virtual bool IsGettingAllPorts() = 0;
 
   sigslot::signal2<PortAllocatorSession*, Port*> SignalPortReady;
-  sigslot::signal2<PortAllocatorSession*, const std::vector<Candidate>&> SignalCandidatesReady;
+  sigslot::signal2<PortAllocatorSession*,
+                   const std::vector<Candidate>&> SignalCandidatesReady;
+  sigslot::signal1<PortAllocatorSession*> SignalCandidatesAllocationDone;
 
   uint32 generation() { return generation_; }
   void set_generation(uint32 generation) { generation_ = generation; }
+  sigslot::signal1<PortAllocatorSession*> SignalDestroyed;
 
-private:
+ protected:
+  std::string name_;
+  std::string session_type_;
+
+ private:
   uint32 flags_;
   uint32 generation_;
 };
 
-class PortAllocator {
-public:
-  PortAllocator() : flags_(kDefaultPortAllocatorFlags) {}
+class PortAllocator : public sigslot::has_slots<> {
+ public:
+  PortAllocator() :
+      flags_(kDefaultPortAllocatorFlags),
+      min_port_(0),
+      max_port_(0) {
+  }
+  virtual ~PortAllocator();
 
-    virtual PortAllocatorSession *CreateSession(const std::string &name, const std::string &session_type) = 0;
+  PortAllocatorSession* CreateSession(
+      const std::string& sid,
+      const std::string& name,
+      const std::string& session_type);
+
+  PortAllocatorSessionMuxer* GetSessionMuxer(const std::string& sid) const;
+  void OnSessionMuxerDestroyed(PortAllocatorSessionMuxer* session);
 
   uint32 flags() const { return flags_; }
   void set_flags(uint32 flags) { flags_ = flags; }
@@ -90,15 +122,39 @@ public:
   const std::string& user_agent() const { return agent_; }
   const talk_base::ProxyInfo& proxy() const { return proxy_; }
   void set_proxy(const std::string& agent, const talk_base::ProxyInfo& proxy) {
-    agent_ = agent; proxy_ = proxy;
+    agent_ = agent;
+    proxy_ = proxy;
   }
 
-protected:
+  // Gets/Sets the port range to use when choosing client ports.
+  int min_port() const { return min_port_; }
+  int max_port() const { return max_port_; }
+  bool SetPortRange(int min_port, int max_port) {
+    if (min_port > max_port) {
+      return false;
+    }
+
+    min_port_ = min_port;
+    max_port_ = max_port;
+    return true;
+  }
+
+ protected:
+  // TODO - Change this version of CreateSession name to avoid method hiding
+  // when called by the derived classes.
+  virtual PortAllocatorSession* CreateSession(const std::string &name,
+      const std::string &session_type) = 0;
+
+  typedef std::map<std::string, PortAllocatorSessionMuxer*> SessionMuxerMap;
+
   uint32 flags_;
   std::string agent_;
   talk_base::ProxyInfo proxy_;
+  int min_port_;
+  int max_port_;
+  SessionMuxerMap muxers_;
 };
 
-} // namespace cricket
+}  // namespace cricket
 
-#endif // _PORTALLOCATOR_H_
+#endif  // TALK_P2P_BASE_PORTALLOCATOR_H_

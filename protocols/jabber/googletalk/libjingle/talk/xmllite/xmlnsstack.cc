@@ -2,36 +2,36 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "talk/base/stl_decl.h"
-#include <string>
-#include <iostream>
-#include <vector>
-#include <sstream>
-#include "talk/xmllite/xmlelement.h"
 #include "talk/xmllite/xmlnsstack.h"
+
+#include <sstream>
+#include <string>
+#include <vector>
+
+#include "talk/xmllite/xmlelement.h"
 #include "talk/xmllite/xmlconstants.h"
 
 namespace buzz {
@@ -43,13 +43,11 @@ XmlnsStack::XmlnsStack() :
 
 XmlnsStack::~XmlnsStack() {}
 
-void
-XmlnsStack::PushFrame() {
+void XmlnsStack::PushFrame() {
   pxmlnsDepthStack_->push_back(pxmlnsStack_->size());
 }
 
-void
-XmlnsStack::PopFrame() {
+void XmlnsStack::PopFrame() {
   size_t prev_size = pxmlnsDepthStack_->back();
   pxmlnsDepthStack_->pop_back();
   if (prev_size < pxmlnsStack_->size()) {
@@ -57,46 +55,42 @@ XmlnsStack::PopFrame() {
                         pxmlnsStack_->end());
   }
 }
-const std::pair<std::string, bool> NS_NOT_FOUND(STR_EMPTY, false);
-const std::pair<std::string, bool> EMPTY_NS_FOUND(STR_EMPTY, true);
-const std::pair<std::string, bool> XMLNS_DEFINITION_FOUND(NS_XMLNS, true);
 
-const std::string *
-XmlnsStack::NsForPrefix(const std::string & prefix) {
+std::pair<std::string, bool> XmlnsStack::NsForPrefix(
+    const std::string& prefix) {
   if (prefix.length() >= 3 &&
       (prefix[0] == 'x' || prefix[0] == 'X') &&
       (prefix[1] == 'm' || prefix[1] == 'M') &&
       (prefix[2] == 'l' || prefix[2] == 'L')) {
     if (prefix == "xml")
-      return &(NS_XML);
+      return std::make_pair(NS_XML, true);
     if (prefix == "xmlns")
-      return &(NS_XMLNS);
-    return NULL;
+      return std::make_pair(NS_XMLNS, true);
+    // Other names with xml prefix are illegal.
+    return std::make_pair(STR_EMPTY, false);
   }
 
   std::vector<std::string>::iterator pos;
   for (pos = pxmlnsStack_->end(); pos > pxmlnsStack_->begin(); ) {
     pos -= 2;
     if (*pos == prefix)
-      return &(*(pos + 1));
+      return std::make_pair(*(pos + 1), true);
   }
 
   if (prefix == STR_EMPTY)
-    return &(STR_EMPTY); // default namespace
+    return std::make_pair(STR_EMPTY, true);  // default namespace
 
-  return NULL; // none found
+  return std::make_pair(STR_EMPTY, false);  // none found
 }
 
-bool
-XmlnsStack::PrefixMatchesNs(const std::string & prefix, const std::string & ns) {
-  const std::string * match = NsForPrefix(prefix);
-  if (match == NULL)
-    return false;
-  return (*match == ns);
+bool XmlnsStack::PrefixMatchesNs(const std::string& prefix,
+                                 const std::string& ns) {
+  const std::pair<std::string, bool> match = NsForPrefix(prefix);
+  return match.second && (match.first == ns);
 }
 
-std::pair<std::string, bool>
-XmlnsStack::PrefixForNs(const std::string & ns, bool isattr) {
+std::pair<std::string, bool> XmlnsStack::PrefixForNs(const std::string& ns,
+                                                     bool isattr) {
   if (ns == NS_XML)
     return std::make_pair(std::string("xml"), true);
   if (ns == NS_XMLNS)
@@ -115,8 +109,7 @@ XmlnsStack::PrefixForNs(const std::string & ns, bool isattr) {
   return std::make_pair(STR_EMPTY, false); // none found
 }
 
-std::string
-XmlnsStack::FormatQName(const QName & name, bool isAttr) {
+std::string XmlnsStack::FormatQName(const QName& name, bool isAttr) {
   std::string prefix(PrefixForNs(name.Namespace(), isAttr).first);
   if (prefix == STR_EMPTY)
     return name.LocalPart();
@@ -124,14 +117,12 @@ XmlnsStack::FormatQName(const QName & name, bool isAttr) {
     return prefix + ':' + name.LocalPart();
 }
 
-void
-XmlnsStack::AddXmlns(const std::string & prefix, const std::string & ns) {
+void XmlnsStack::AddXmlns(const std::string & prefix, const std::string & ns) {
   pxmlnsStack_->push_back(prefix);
   pxmlnsStack_->push_back(ns);
 }
 
-void
-XmlnsStack::RemoveXmlns() {
+void XmlnsStack::RemoveXmlns() {
   pxmlnsStack_->pop_back();
   pxmlnsStack_->pop_back();
 }
@@ -178,16 +169,15 @@ static std::string SuggestPrefix(const std::string & ns) {
   return "ns";
 }
 
-
-std::pair<std::string, bool>
-XmlnsStack::AddNewPrefix(const std::string & ns, bool isAttr) {
+std::pair<std::string, bool> XmlnsStack::AddNewPrefix(const std::string& ns,
+                                                      bool isAttr) {
   if (PrefixForNs(ns, isAttr).second)
     return std::make_pair(STR_EMPTY, false);
 
   std::string base(SuggestPrefix(ns));
   std::string result(base);
   int i = 2;
-  while (NsForPrefix(result) != NULL) {
+  while (NsForPrefix(result).second) {
     std::stringstream ss;
     ss << base;
     ss << (i++);

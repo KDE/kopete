@@ -30,24 +30,64 @@
 
 #include "talk/p2p/base/port.h"
 #include "talk/base/cryptstring.h"
+#include "talk/xmpp/xmppengine.h"
 
 namespace buzz {
 
-class XmppClientSettings {
-public:
-  XmppClientSettings() :
-    use_tls_(false), use_cookie_auth_(false), protocol_(cricket::PROTO_TCP),
-    proxy_(talk_base::PROXY_NONE), proxy_port_(80), use_proxy_auth_(false),
-    allow_plain_(false) {}
+class XmppUserSettings {
+ public:
+  XmppUserSettings()
+    : use_tls_(buzz::TLS_DISABLED),
+      allow_plain_(false) {
+  }
 
   void set_user(const std::string & user) { user_ = user; }
   void set_host(const std::string & host) { host_ = host; }
   void set_pass(const talk_base::CryptString & pass) { pass_ = pass; }
   void set_auth_cookie(const std::string & cookie) { auth_cookie_ = cookie; }
   void set_resource(const std::string & resource) { resource_ = resource; }
-  void set_use_tls(bool use_tls) { use_tls_ = use_tls; }
-  void set_server(const talk_base::SocketAddress & server) { 
-      server_ = server; 
+  void set_use_tls(const TlsOptions use_tls) { use_tls_ = use_tls; }
+  void set_allow_plain(bool f) { allow_plain_ = f; }
+  void set_test_server_domain(const std::string & test_server_domain) {
+    test_server_domain_ = test_server_domain;
+  }
+  void set_token_service(const std::string & token_service) {
+    token_service_ = token_service;
+  }
+
+  const std::string & user() const { return user_; }
+  const std::string & host() const { return host_; }
+  const talk_base::CryptString & pass() const { return pass_; }
+  const std::string & auth_cookie() const { return auth_cookie_; }
+  const std::string & resource() const { return resource_; }
+  TlsOptions use_tls() const { return use_tls_; }
+  bool allow_plain() const { return allow_plain_; }
+  const std::string & test_server_domain() const { return test_server_domain_; }
+  const std::string & token_service() const { return token_service_; }
+
+ private:
+  std::string user_;
+  std::string host_;
+  talk_base::CryptString pass_;
+  std::string auth_cookie_;
+  std::string resource_;
+  TlsOptions use_tls_;
+  bool allow_plain_;
+  std::string test_server_domain_;
+  std::string token_service_;
+};
+
+class XmppClientSettings : public XmppUserSettings {
+ public:
+  XmppClientSettings()
+    : protocol_(cricket::PROTO_TCP),
+      proxy_(talk_base::PROXY_NONE),
+      proxy_port_(80),
+      use_proxy_auth_(false) {
+  }
+
+  void set_server(const talk_base::SocketAddress & server) {
+      server_ = server;
   }
   void set_protocol(cricket::ProtocolType protocol) { protocol_ = protocol; }
   void set_proxy(talk_base::ProxyType f) { proxy_ = f; }
@@ -56,14 +96,7 @@ public:
   void set_use_proxy_auth(bool f) { use_proxy_auth_ = f; }
   void set_proxy_user(const std::string & user) { proxy_user_ = user; }
   void set_proxy_pass(const talk_base::CryptString & pass) { proxy_pass_ = pass; }
-  void set_allow_plain(bool f) { allow_plain_ = f; }
 
-  const std::string & user() const { return user_; }
-  const std::string & host() const { return host_; }
-  const talk_base::CryptString & pass() const { return pass_; }
-  const std::string & auth_cookie() const { return auth_cookie_; }
-  const std::string & resource() const { return resource_; }
-  bool use_tls() const { return use_tls_; }
   const talk_base::SocketAddress & server() const { return server_; }
   cricket::ProtocolType protocol() const { return protocol_; }
   talk_base::ProxyType proxy() const { return proxy_; }
@@ -72,16 +105,8 @@ public:
   bool use_proxy_auth() const { return use_proxy_auth_; }
   const std::string & proxy_user() const { return proxy_user_; }
   const talk_base::CryptString & proxy_pass() const { return proxy_pass_; }
-  bool allow_plain() const { return allow_plain_; }
 
-private:
-  std::string user_;
-  std::string host_;
-  talk_base::CryptString pass_;
-  std::string auth_cookie_;
-  std::string resource_;
-  bool use_tls_;
-  bool use_cookie_auth_;
+ private:
   talk_base::SocketAddress server_;
   cricket::ProtocolType protocol_;
   talk_base::ProxyType proxy_;
@@ -90,7 +115,6 @@ private:
   bool use_proxy_auth_;
   std::string proxy_user_;
   talk_base::CryptString proxy_pass_;
-  bool allow_plain_;
 };
 
 }

@@ -41,6 +41,8 @@ enum NATType {
 // Implements the rules for each specific type of NAT.
 class NAT {
 public:
+  virtual ~NAT() { }
+
   // Determines whether this NAT uses both source and destination address when
   // checking whether a mapping already exists.
   virtual bool IsSymmetric() = 0;

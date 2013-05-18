@@ -2,46 +2,38 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cassert>
-#include <iostream>
-
-#include <string.h>
-#ifdef POSIX
-extern "C" {
-#include <errno.h>
-}
-#endif // POSIX
-
+#include "talk/base/natsocketfactory.h"
 #include "talk/base/natserver.h"
+#include "talk/base/logging.h"
 
 namespace talk_base {
 
 RouteCmp::RouteCmp(NAT* nat) : symmetric(nat->IsSymmetric()) {
 }
-  
+
 size_t RouteCmp::operator()(const SocketAddressPair& r) const {
   size_t h = r.source().Hash();
   if (symmetric)
@@ -65,11 +57,11 @@ bool RouteCmp::operator()(
 AddrCmp::AddrCmp(NAT* nat)
     : use_ip(nat->FiltersIP()), use_port(nat->FiltersPort()) {
 }
-  
+
 size_t AddrCmp::operator()(const SocketAddress& a) const {
   size_t h = 0;
   if (use_ip)
-    h ^= a.ip();
+    h ^= HashIP(a.ipaddr());
   if (use_port)
     h ^= a.port() | (a.port() << 16);
   return h;
@@ -77,9 +69,9 @@ size_t AddrCmp::operator()(const SocketAddress& a) const {
 
 bool AddrCmp::operator()(
       const SocketAddress& a1, const SocketAddress& a2) const {
-  if (use_ip && (a1.ip() < a2.ip()))
+  if (use_ip && (a1.ipaddr() < a2.ipaddr()))
     return true;
-  if (use_ip && (a2.ip() < a1.ip()))
+  if (use_ip && (a2.ipaddr() < a1.ipaddr()))
     return false;
   if (use_port && (a1.port() < a2.port()))
     return true;
@@ -89,13 +81,12 @@ bool AddrCmp::operator()(
 }
 
 NATServer::NATServer(
-      NATType type, SocketFactory* internal, const SocketAddress& internal_addr,
-      SocketFactory* external, const SocketAddress& external_ip)
-      : external_(external), external_ip_(external_ip) {
+    NATType type, SocketFactory* internal, const SocketAddress& internal_addr,
+    SocketFactory* external, const SocketAddress& external_ip)
+    : external_(external), external_ip_(external_ip.ipaddr(), 0) {
   nat_ = NAT::Create(type);
 
-  server_socket_ = CreateAsyncUDPSocket(internal);
-  server_socket_->Bind(internal_addr);
+  server_socket_ = AsyncUDPSocket::Create(internal, internal_addr);
   server_socket_->SignalReadPacket.connect(this, &NATServer::OnInternalPacket);
 
   int_map_ = new InternalMap(RouteCmp(nat_));
@@ -115,12 +106,12 @@ NATServer::~NATServer() {
 }
 
 void NATServer::OnInternalPacket(
-    const char* buf, size_t size, const SocketAddress& addr,
-    AsyncPacketSocket* socket) {
+    AsyncPacketSocket* socket, const char* buf, size_t size,
+    const SocketAddress& addr) {
 
   // Read the intended destination from the wire.
   SocketAddress dest_addr;
-  dest_addr.Read_(buf, size);
+  size_t length = UnpackAddressFromNAT(buf, size, &dest_addr);
 
   // Find the translation for these addresses (allocating one if necessary).
   SocketAddressPair route(addr, dest_addr);
@@ -129,69 +120,56 @@ void NATServer::OnInternalPacket(
     Translate(route);
     iter = int_map_->find(route);
   }
-  assert(iter != int_map_->end());
+  ASSERT(iter != int_map_->end());
 
   // Allow the destination to send packets back to the source.
   iter->second->whitelist->insert(dest_addr);
 
   // Send the packet to its intended destination.
-  iter->second->socket->SendTo(
-      buf + dest_addr.Size_(), size - dest_addr.Size_(), dest_addr);
+  iter->second->socket->SendTo(buf + length, size - length, dest_addr);
 }
 
 void NATServer::OnExternalPacket(
-    const char* buf, size_t size, const SocketAddress& remote_addr,
-    AsyncPacketSocket* socket) {
+    AsyncPacketSocket* socket, const char* buf, size_t size,
+    const SocketAddress& remote_addr) {
 
   SocketAddress local_addr = socket->GetLocalAddress();
 
   // Find the translation for this addresses.
   ExternalMap::iterator iter = ext_map_->find(local_addr);
-  assert(iter != ext_map_->end());
+  ASSERT(iter != ext_map_->end());
 
   // Allow the NAT to reject this packet.
   if (Filter(iter->second, remote_addr)) {
-    std::cerr << "Packet from " << remote_addr.ToString()
-              << " was filtered out by the NAT." << std::endl;
+    LOG(LS_INFO) << "Packet from " << remote_addr.ToString()
+                 << " was filtered out by the NAT.";
     return;
   }
 
   // Forward this packet to the internal address.
-
-  size_t real_size = size + remote_addr.Size_();
-  char*  real_buf  = new char[real_size];
-
-  remote_addr.Write_(real_buf, real_size);
-  memcpy(real_buf + remote_addr.Size_(), buf, size);
-
-  server_socket_->SendTo(real_buf, real_size, iter->second->route.source());
-
-  delete[] real_buf;
+  // First prepend the address in a quasi-STUN format.
+  scoped_array<char> real_buf(new char[size + kNATEncodedIPv6AddressSize]);
+  size_t addrlength = PackAddressForNAT(real_buf.get(),
+                                        size + kNATEncodedIPv6AddressSize,
+                                        remote_addr);
+  // Copy the data part after the address.
+  std::memcpy(real_buf.get() + addrlength, buf, size);
+  server_socket_->SendTo(real_buf.get(), size + addrlength,
+                         iter->second->route.source());
 }
 
 void NATServer::Translate(const SocketAddressPair& route) {
-  AsyncUDPSocket* socket = CreateAsyncUDPSocket(external_);
+  AsyncUDPSocket* socket = AsyncUDPSocket::Create(external_, external_ip_);
 
-  SocketAddress ext_addr = external_ip_;
-  for (int i = 0; i < 65536; i++) {
-    ext_addr.SetPort((route.source().port() + i) % 65536);
-    if (ext_map_->find(ext_addr) == ext_map_->end()) {
-      int result = socket->Bind(ext_addr);
-      if ((result < 0) && (socket->GetError() == EADDRINUSE))
-	 continue;
-      assert(result >= 0); // TODO: do something better
-
-      TransEntry* entry = new TransEntry(route, socket, nat_);
-      (*int_map_)[route] = entry;
-      (*ext_map_)[ext_addr] = entry;
-      socket->SignalReadPacket.connect(this, &NATServer::OnExternalPacket);
-      return;
-    }
+  if (!socket) {
+    LOG(LS_ERROR) << "Couldn't find a free port!";
+    return;
   }
 
-  std::cerr << "Couldn't find a free port!" << std::endl;
-  delete socket;
-  exit(1);
+  TransEntry* entry = new TransEntry(route, socket, nat_);
+  (*int_map_)[route] = entry;
+  (*ext_map_)[socket->GetLocalAddress()] = entry;
+  socket->SignalReadPacket.connect(this, &NATServer::OnExternalPacket);
 }
 
 bool NATServer::Filter(TransEntry* entry, const SocketAddress& ext_addr) {
@@ -205,7 +183,8 @@ NATServer::TransEntry::TransEntry(
 }
 
 NATServer::TransEntry::~TransEntry() {
+  delete whitelist;
   delete socket;
 }
 
-} // namespace talk_base
+}  // namespace talk_base

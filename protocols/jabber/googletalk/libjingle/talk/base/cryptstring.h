@@ -28,8 +28,9 @@
 #ifndef _TALK_BASE_CRYPTSTRING_H_
 #define _TALK_BASE_CRYPTSTRING_H_
 
+#include <cstring>
 #include <string>
-#include <string.h>
+#include <vector>
 #include "talk/base/linked_ptr.h"
 #include "talk/base/scoped_ptr.h"
 
@@ -42,6 +43,7 @@ public:
   virtual void CopyTo(char * dest, bool nullterminate) const = 0;
   virtual std::string UrlEncode() const = 0;
   virtual CryptStringImpl * Copy() const = 0;
+  virtual void CopyRawTo(std::vector<unsigned char> * dest) const = 0;
 };
 
 class EmptyCryptStringImpl : public CryptStringImpl {
@@ -55,6 +57,9 @@ public:
   }
   virtual std::string UrlEncode() const { return ""; }
   virtual CryptStringImpl * Copy() const { return new EmptyCryptStringImpl(); }
+  virtual void CopyRawTo(std::vector<unsigned char> * dest) const {
+    dest->clear();
+  }
 };
 
 class CryptString {
@@ -72,6 +77,9 @@ public:
   }
   void Clear() { impl_.reset(new EmptyCryptStringImpl()); }
   std::string UrlEncode() const { return impl_->UrlEncode(); }
+  void CopyRawTo(std::vector<unsigned char> * dest) const {
+    return impl_->CopyRawTo(dest);
+  }
   
 private:
   scoped_ptr<const CryptStringImpl> impl_;
@@ -176,6 +184,10 @@ class InsecureCryptStringImpl : public CryptStringImpl {
     InsecureCryptStringImpl * copy = new InsecureCryptStringImpl;
     copy->password() = password_;
     return copy;
+  }
+  virtual void CopyRawTo(std::vector<unsigned char> * dest) const {
+    dest->resize(password_.size());
+    memcpy(&dest->front(), password_.data(), password_.size());
   }
  private:
   std::string password_;

@@ -2,72 +2,76 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#include "talk/base/socketaddress.h"
 
 #ifdef POSIX
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#if defined(OPENBSD)
+#include <netinet/in_systm.h>
+#endif
+#include <netinet/ip.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
 #endif
 
-#include <cstring>
 #include <sstream>
 
 #include "talk/base/byteorder.h"
 #include "talk/base/common.h"
 #include "talk/base/logging.h"
-#include "talk/base/socketaddress.h"
+#include "talk/base/nethelpers.h"
 
 #ifdef WIN32
-#undef SetPort
-int inet_aton(const char * cp, struct in_addr * inp) {
-  inp->s_addr = inet_addr(cp);
-  return (inp->s_addr == INADDR_NONE) ? 0 : 1;
-}
-#endif // WIN32
-
-#ifdef _DEBUG
-#define DISABLE_DNS 0
-#else // !_DEBUG
-#define DISABLE_DNS 0
-#endif // !_DEBUG
+#include "talk/base/win32.h"
+#endif
 
 namespace talk_base {
+
+// Address family constants for STUN (see RFC 5389).
+static const int kStunFamilyIPv4 = 1;
+static const int kStunFamilyIPv6 = 2;
 
 SocketAddress::SocketAddress() {
   Clear();
 }
 
-SocketAddress::SocketAddress(const std::string& hostname, int port, bool use_dns) {
-  SetIP(hostname, use_dns);
+SocketAddress::SocketAddress(const std::string& hostname, int port) {
+  SetIP(hostname);
   SetPort(port);
 }
 
-SocketAddress::SocketAddress(uint32 ip, int port) {
+SocketAddress::SocketAddress(uint32 ip_as_host_order_integer, int port) {
+  SetIP(IPAddress(ip_as_host_order_integer));
+  SetPort(port);
+}
+
+SocketAddress::SocketAddress(const IPAddress& ip, int port) {
   SetIP(ip);
   SetPort(port);
 }
@@ -78,29 +82,52 @@ SocketAddress::SocketAddress(const SocketAddress& addr) {
 
 void SocketAddress::Clear() {
   hostname_.clear();
-  ip_ = 0;
+  literal_ = false;
+  ip_ = IPAddress(INADDR_ANY);
   port_ = 0;
+}
+
+bool SocketAddress::IsNil() const {
+  return hostname_.empty() && IPIsAny(ip_) && 0 == port_;
+}
+
+bool SocketAddress::IsComplete() const {
+  return (!IPIsAny(ip_)) && (0 != port_);
 }
 
 SocketAddress& SocketAddress::operator=(const SocketAddress& addr) {
   hostname_ = addr.hostname_;
   ip_ = addr.ip_;
   port_ = addr.port_;
+  literal_ = addr.literal_;
   return *this;
 }
 
-void SocketAddress::SetIP(uint32 ip) {
+void SocketAddress::SetIP(uint32 ip_as_host_order_integer) {
   hostname_.clear();
+  literal_ = false;
+  ip_ = IPAddress(ip_as_host_order_integer);
+}
+
+void SocketAddress::SetIP(const IPAddress& ip) {
+  hostname_.clear();
+  literal_ = false;
   ip_ = ip;
 }
 
-bool SocketAddress::SetIP(const std::string& hostname, bool use_dns) {
+void SocketAddress::SetIP(const std::string& hostname) {
   hostname_ = hostname;
-  ip_ = 0;
-  return Resolve(true, use_dns);
+  literal_ = IPFromString(hostname, &ip_);
+  if (!literal_) {
+    ip_ = IPAddress(INADDR_ANY);
+  }
 }
 
-void SocketAddress::SetResolvedIP(uint32 ip) {
+void SocketAddress::SetResolvedIP(uint32 ip_as_host_order_integer) {
+  ip_ = IPAddress(ip_as_host_order_integer);
+}
+
+void SocketAddress::SetResolvedIP(const IPAddress& ip) {
   ip_ = ip;
 }
 
@@ -110,6 +137,10 @@ void SocketAddress::SetPort(int port) {
 }
 
 uint32 SocketAddress::ip() const {
+  return ip_.v4AddressAsHostOrderInteger();
+}
+
+const IPAddress& SocketAddress::ipaddr() const {
   return ip_;
 }
 
@@ -118,9 +149,15 @@ uint16 SocketAddress::port() const {
 }
 
 std::string SocketAddress::IPAsString() const {
-  if (!hostname_.empty())
+  // If the hostname was a literal IP string, it may need to have square
+  // brackets added (for SocketAddress::ToString()).
+  if (!literal_ && !hostname_.empty())
     return hostname_;
-  return IPToString(ip_);
+  if (ip_.family() == AF_INET6) {
+    return "[" + ip_.ToString() + "]";
+  } else {
+    return ip_.ToString();
+  }
 }
 
 std::string SocketAddress::PortAsString() const {
@@ -137,50 +174,106 @@ std::string SocketAddress::ToString() const {
   return ost.str();
 }
 
-bool SocketAddress::IsAny() const {
-  return (ip_ == 0);
-}
-
-bool SocketAddress::IsLocalIP() const {
-  return (ip_ >> 24) == 127;
-}
-
-bool SocketAddress::IsPrivateIP() const {
-  return ((ip_ >> 24) == 127) ||
-         ((ip_ >> 24) == 10) ||
-         ((ip_ >> 20) == ((172 << 4) | 1)) ||
-         ((ip_ >> 16) == ((192 << 8) | 168));
-}
-
-bool SocketAddress::IsUnresolved() const {
-  return IsAny() && !hostname_.empty();
-}
-
-bool SocketAddress::Resolve(bool force, bool use_dns) {
-  if (hostname_.empty()) {
-    // nothing to resolve
-  } else if (!force && !IsAny()) {
-    // already resolved
-  } else if (uint32 ip = StringToIP(hostname_, use_dns)) {
-    ip_ = ip;
+bool SocketAddress::FromString(const std::string& str) {
+  if (str.at(0) == '[') {
+    std::string::size_type closebracket = str.rfind(']');
+    if (closebracket != std::string::npos) {
+      std::string::size_type colon = str.find(':', closebracket);
+      if (colon != std::string::npos && colon > closebracket) {
+        SetPort(strtoul(str.substr(colon + 1).c_str(), NULL, 10));
+        SetIP(str.substr(1, closebracket - 1));
+      } else {
+        return false;
+      }
+    }
   } else {
-    return false;
+    std::string::size_type pos = str.find(':');
+    if (std::string::npos == pos)
+      return false;
+    SetPort(strtoul(str.substr(pos + 1).c_str(), NULL, 10));
+    SetIP(str.substr(0, pos));
   }
   return true;
 }
 
-bool SocketAddress::operator ==(const SocketAddress& addr) const {
+std::ostream& operator<<(std::ostream& os, const SocketAddress& addr) {
+  os << addr.IPAsString() << ":" << addr.port();
+  return os;
+}
+
+bool SocketAddress::IsAnyIP() const {
+  return IPIsAny(ip_);
+}
+
+bool SocketAddress::IsLoopbackIP() const {
+  return IPIsLoopback(ip_) || (IPIsAny(ip_) &&
+                               0 == strcmp(hostname_.c_str(), "localhost"));
+}
+
+bool SocketAddress::IsLocalIP() const {
+  if (IsLoopbackIP())
+    return true;
+
+  std::vector<IPAddress> ips;
+  if (IPIsAny(ip_)) {
+    if (!hostname_.empty()
+        && (0 == stricmp(hostname_.c_str(), GetHostname().c_str()))) {
+      return true;
+    }
+  } else if (GetLocalIPs(&ips)) {
+    for (size_t i = 0; i < ips.size(); ++i) {
+      if (ips[i] == ip_) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool SocketAddress::IsPrivateIP() const {
+  return IPIsPrivate(ip_);
+}
+
+bool SocketAddress::IsUnresolvedIP() const {
+  return IsAny() && !literal_ && !hostname_.empty();
+}
+
+bool SocketAddress::ResolveIP(bool force, int* error) {
+  if (hostname_.empty()) {
+    // nothing to resolve
+  } else if (!force && !IsAny()) {
+    // already resolved
+  } else {
+    LOG_F(LS_VERBOSE) << "(" << hostname_ << ")";
+    int errcode = 0;
+    if (hostent* pHost = SafeGetHostByName(hostname_.c_str(), &errcode)) {
+      if (IPFromHostEnt(pHost, &ip_)) {
+        LOG_F(LS_VERBOSE) << "(" << hostname_ << ") resolved to: "
+                          << ip_.ToString();
+      }
+      FreeHostEnt(pHost);
+    } else {
+      LOG_F(LS_ERROR) << "(" << hostname_ << ") err: " << errcode;
+    }
+    if (error) {
+      *error = errcode;
+    }
+  }
+  return (!IPIsAny(ip_));
+}
+
+bool SocketAddress::operator==(const SocketAddress& addr) const {
   return EqualIPs(addr) && EqualPorts(addr);
 }
 
-bool SocketAddress::operator <(const SocketAddress& addr) const {
+bool SocketAddress::operator<(const SocketAddress& addr) const {
   if (ip_ < addr.ip_)
     return true;
   else if (addr.ip_ < ip_)
     return false;
 
   // We only check hostnames if both IPs are zero.  This matches EqualIPs()
-  if (addr.ip_ == 0) {
+  if (addr.IsAnyIP()) {
     if (hostname_ < addr.hostname_)
       return true;
     else if (addr.hostname_ < hostname_)
@@ -191,7 +284,8 @@ bool SocketAddress::operator <(const SocketAddress& addr) const {
 }
 
 bool SocketAddress::EqualIPs(const SocketAddress& addr) const {
-  return (ip_ == addr.ip_) && ((ip_ != 0) || (hostname_ == addr.hostname_));
+  return (ip_ == addr.ip_) &&
+      ((!IPIsAny(ip_)) || (hostname_ == addr.hostname_));
 }
 
 bool SocketAddress::EqualPorts(const SocketAddress& addr) const {
@@ -200,83 +294,104 @@ bool SocketAddress::EqualPorts(const SocketAddress& addr) const {
 
 size_t SocketAddress::Hash() const {
   size_t h = 0;
-  h ^= ip_;
+  h ^= HashIP(ip_);
   h ^= port_ | (port_ << 16);
   return h;
 }
 
-size_t SocketAddress::Size_() const {
-  return sizeof(ip_) + sizeof(port_);
-}
-
-void SocketAddress::Write_(char* buf, int len) const {
-  // TODO: Depending on how this is used, we may want/need to write hostname
-  ASSERT((size_t)len >= Size_());
-  reinterpret_cast<uint32*>(buf)[0] = ip_;
-  buf += sizeof(ip_);
-  reinterpret_cast<uint16*>(buf)[0] = port_;
-}
-
-void SocketAddress::Read_(const char* buf, int len) {
-  ASSERT((size_t)len >= Size_());
-  ip_ = reinterpret_cast<const uint32*>(buf)[0];
-  buf += sizeof(ip_);
-  port_ = reinterpret_cast<const uint16*>(buf)[0];
-}
-
 void SocketAddress::ToSockAddr(sockaddr_in* saddr) const {
   memset(saddr, 0, sizeof(*saddr));
+  if (ip_.family() != AF_INET) {
+    saddr->sin_family = AF_UNSPEC;
+    return;
+  }
   saddr->sin_family = AF_INET;
   saddr->sin_port = HostToNetwork16(port_);
-  if (0 == ip_) {
+  if (IPIsAny(ip_)) {
     saddr->sin_addr.s_addr = INADDR_ANY;
   } else {
-    saddr->sin_addr.s_addr = HostToNetwork32(ip_);
+    saddr->sin_addr = ip_.ipv4_address();
   }
 }
 
-void SocketAddress::FromSockAddr(const sockaddr_in& saddr) {
+bool SocketAddress::FromSockAddr(const sockaddr_in& saddr) {
+  if (saddr.sin_family != AF_INET)
+    return false;
   SetIP(NetworkToHost32(saddr.sin_addr.s_addr));
   SetPort(NetworkToHost16(saddr.sin_port));
+  literal_ = false;
+  return true;
 }
 
-std::string SocketAddress::IPToString(uint32 ip) {
+static size_t ToSockAddrStorageHelper(sockaddr_storage* addr,
+                                      IPAddress ip, int port, int scope_id) {
+  memset(addr, 0, sizeof(sockaddr_storage));
+  addr->ss_family = ip.family();
+  if (addr->ss_family == AF_INET6) {
+    sockaddr_in6* saddr = reinterpret_cast<sockaddr_in6*>(addr);
+    saddr->sin6_addr = ip.ipv6_address();
+    saddr->sin6_port = HostToNetwork16(port);
+    saddr->sin6_scope_id = scope_id;
+    return sizeof(sockaddr_in6);
+  } else if (addr->ss_family == AF_INET) {
+    sockaddr_in* saddr = reinterpret_cast<sockaddr_in*>(addr);
+    saddr->sin_addr = ip.ipv4_address();
+    saddr->sin_port = HostToNetwork16(port);
+    return sizeof(sockaddr_in);
+  }
+  return 0;
+}
+
+size_t SocketAddress::ToDualStackSockAddrStorage(sockaddr_storage *addr) const {
+  return ToSockAddrStorageHelper(addr, ip_.AsIPv6Address(), port_, scope_id_);
+}
+
+size_t SocketAddress::ToSockAddrStorage(sockaddr_storage* addr) const {
+  return ToSockAddrStorageHelper(addr, ip_, port_, scope_id_);
+}
+
+std::string SocketAddress::IPToString(uint32 ip_as_host_order_integer) {
   std::ostringstream ost;
-  ost << ((ip >> 24) & 0xff);
+  ost << ((ip_as_host_order_integer >> 24) & 0xff);
   ost << '.';
-  ost << ((ip >> 16) & 0xff);
+  ost << ((ip_as_host_order_integer >> 16) & 0xff);
   ost << '.';
-  ost << ((ip >> 8) & 0xff);
+  ost << ((ip_as_host_order_integer >> 8) & 0xff);
   ost << '.';
-  ost << ((ip >> 0) & 0xff);
+  ost << ((ip_as_host_order_integer >> 0) & 0xff);
   return ost.str();
 }
 
-uint32 SocketAddress::StringToIP(const std::string& hostname, bool use_dns) {
-  uint32 ip = 0;
+bool SocketAddress::StringToIP(const std::string& hostname, uint32* ip) {
   in_addr addr;
-  if (inet_aton(hostname.c_str(), &addr) != 0) {
-    ip = NetworkToHost32(addr.s_addr);
-  } else if (use_dns) {
-    // Note: this is here so we can spot spurious DNS resolutions for a while
-    LOG(INFO) << "=== DNS RESOLUTION (" << hostname << ") ===";
-#if DISABLE_DNS
-    LOG(WARNING) << "*** DNS DISABLED ***";
-#if WIN32
-    WSASetLastError(WSAHOST_NOT_FOUND);
-#endif // WIN32
-#endif // DISABLE_DNS
-    if (hostent * pHost = gethostbyname(hostname.c_str())) {
-      ip = NetworkToHost32(*reinterpret_cast<uint32 *>(pHost->h_addr_list[0]));
-    } else {
-#if WIN32
-      LOG(LS_ERROR) << "gethostbyname error: " << WSAGetLastError();
-#else
-      LOG(LS_ERROR) << "gethostbyname error: " << strerror(h_errno);
-#endif
+  if (talk_base::inet_pton(AF_INET, hostname.c_str(), &addr) == 0)
+    return false;
+  *ip = NetworkToHost32(addr.s_addr);
+  return true;
+}
+
+bool SocketAddress::StringToIP(const std::string& hostname, IPAddress* ip) {
+  in_addr addr4;
+  if (talk_base::inet_pton(AF_INET, hostname.c_str(), &addr4) > 0) {
+    if (ip) {
+      *ip = IPAddress(addr4);
     }
-    LOG(INFO) << hostname << " resolved to " << IPToString(ip);
+    return true;
   }
+
+  in6_addr addr6;
+  if (talk_base::inet_pton(AF_INET6, hostname.c_str(), &addr6) > 0) {
+    if (ip) {
+      *ip = IPAddress(addr6);
+    }
+    return true;
+  }
+  return false;
+}
+
+uint32 SocketAddress::StringToIP(const std::string& hostname) {
+  uint32 ip = 0;
+  StringToIP(hostname, &ip);
   return ip;
 }
 
@@ -287,27 +402,48 @@ std::string SocketAddress::GetHostname() {
   return "";
 }
 
-bool SocketAddress::GetLocalIPs(std::vector<uint32>& ips) {
-  ips.clear();
+bool SocketAddress::GetLocalIPs(std::vector<IPAddress>* ips) {
+  if (!ips) {
+    return false;
+  }
+  ips->clear();
 
-  const std::string hostname = GetHostname();
+  const std::string hostname = SocketAddress::GetHostname();
   if (hostname.empty())
     return false;
 
-  if (hostent * pHost = gethostbyname(hostname.c_str())) {
-    for (size_t i=0; pHost->h_addr_list[i]; ++i) {
-      uint32 ip =
-        NetworkToHost32(*reinterpret_cast<uint32 *>(pHost->h_addr_list[i]));
-      ips.push_back(ip);
+  int errcode;
+  if (hostent* pHost = SafeGetHostByName(hostname.c_str(), &errcode)) {
+    for (int i = 0; pHost->h_addr_list[i]; ++i) {
+      IPAddress ip;
+      if (IPFromHostEnt(pHost, i, &ip)) {
+        ips->push_back(ip);
+      }
     }
-    return !ips.empty();
+    FreeHostEnt(pHost);
+    return !ips->empty();
   }
-#if WIN32
-  LOG(LS_ERROR) << "gethostbyname error: " << WSAGetLastError();
-#else
-  LOG(LS_ERROR) << "gethostbyname error: " << strerror(h_errno);
-#endif
+  LOG(LS_ERROR) << "gethostbyname err: " << errcode;
   return false;
 }
 
-} // namespace talk_base
+bool SocketAddressFromSockAddrStorage(const sockaddr_storage& addr,
+                                      SocketAddress* out) {
+  if (!out) {
+    return false;
+  }
+  if (addr.ss_family == AF_INET) {
+    const sockaddr_in* saddr = reinterpret_cast<const sockaddr_in*>(&addr);
+    *out = SocketAddress(IPAddress(saddr->sin_addr),
+                         NetworkToHost16(saddr->sin_port));
+    return true;
+  } else if (addr.ss_family == AF_INET6) {
+    const sockaddr_in6* saddr = reinterpret_cast<const sockaddr_in6*>(&addr);
+    *out = SocketAddress(IPAddress(saddr->sin6_addr),
+                         NetworkToHost16(saddr->sin6_port));
+    out->SetScopeID(saddr->sin6_scope_id);
+    return true;
+  }
+  return false;
+}
+}  // namespace talk_base

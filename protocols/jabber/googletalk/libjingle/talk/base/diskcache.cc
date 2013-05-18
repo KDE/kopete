@@ -31,7 +31,6 @@
 #include "talk/base/win32.h"
 #endif
 
-#include "talk/base/basicdefs.h"
 #include "talk/base/common.h"
 #include "talk/base/diskcache.h"
 #include "talk/base/fileutils.h"
@@ -140,7 +139,7 @@ StreamInterface* DiskCache::WriteResource(const std::string& id, size_t index) {
   }
 
   scoped_ptr<FileStream> file(new FileStream);
-  if (!file->Open(filename, "wb")) {
+  if (!file->Open(filename, "wb", NULL)) {
     LOG_F(LS_ERROR) << "Couldn't create cache file";
     return NULL;
   }
@@ -178,7 +177,7 @@ StreamInterface* DiskCache::ReadResource(const std::string& id,
     return NULL;
 
   scoped_ptr<FileStream> file(new FileStream);
-  if (!file->Open(IdToFilename(id, index), "rb"))
+  if (!file->Open(IdToFilename(id, index), "rb", NULL))
     return NULL;
 
   entry->accessors += 1;
@@ -297,8 +296,11 @@ std::string DiskCache::IdToFilename(const std::string& id, size_t index) const {
 bool DiskCache::FilenameToId(const std::string& filename, std::string* id,
                              size_t* index) const {
   Pathname pathname(filename);
-  if (1 != sscanf(pathname.extension().c_str(), ".%u", (unsigned int*)index))
+  unsigned tempdex;
+  if (1 != sscanf(pathname.extension().c_str(), ".%u", &tempdex))
     return false;
+
+  *index = static_cast<size_t>(tempdex);
 
   size_t buffer_size = pathname.basename().length() + 1;
   char* buffer = new char[buffer_size];

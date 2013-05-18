@@ -2,381 +2,536 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <algorithm>
-#include <cassert>
-#include <cfloat>
-#include <cmath>
-#include <sstream>
-#include <string.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include "talk/base/network.h"
 
 #ifdef POSIX
-extern "C" {
 #include <sys/socket.h>
 #include <sys/utsname.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <unistd.h>
 #include <errno.h>
-}
-#endif // POSIX
+// There's no ifaddrs.h in Android.
+#ifndef ANDROID
+#include <ifaddrs.h>
+#endif
+#endif  // POSIX
 
 #ifdef WIN32
 #include "talk/base/win32.h"
 #include <Iphlpapi.h>
 #endif
 
+#include <algorithm>
+#include <cstdio>
+
 #include "talk/base/host.h"
 #include "talk/base/logging.h"
-#include "talk/base/network.h"
-#include "talk/base/socket.h" // this includes something that makes windows happy
+#include "talk/base/scoped_ptr.h"
+#include "talk/base/socket.h"  // includes something that makes windows happy
+#include "talk/base/stream.h"
 #include "talk/base/stringencode.h"
-#include "talk/base/time.h"
-#include "talk/base/basicdefs.h"
-
-namespace {
-
-const double kAlpha = 0.5; // weight for data infinitely far in the past
-const double kHalfLife = 2000; // half life of exponential decay (in ms)
-const double kLog2 = 0.693147180559945309417;
-const double kLambda = kLog2 / kHalfLife;
-
-// assume so-so quality unless data says otherwise
-const double kDefaultQuality = talk_base::QUALITY_FAIR;
-
-typedef std::map<std::string,std::string> StrMap;
-
-void BuildMap(const StrMap& map, std::string& str) {
-  str.append("{");
-  bool first = true;
-  for (StrMap::const_iterator i = map.begin(); i != map.end(); ++i) {
-    if (!first) str.append(",");
-    str.append(i->first);
-    str.append("=");
-    str.append(i->second);
-    first = false;
-  }
-  str.append("}");
-}
-
-void ParseCheck(std::istringstream& ist, char ch) {
-  if (ist.get() != ch)
-    LOG(LERROR) << "Expecting '" << ch << "'";
-}
-
-std::string ParseString(std::istringstream& ist) {
-  std::string str;
-  int count = 0;
-  while (ist) {
-    char ch = ist.peek();
-    if ((count == 0) && ((ch == '=') || (ch == ',') || (ch == '}'))) {
-      break;
-    } else if (ch == '{') {
-      count += 1;
-    } else if (ch == '}') {
-      count -= 1;
-      if (count < 0)
-        LOG(LERROR) << "mismatched '{' and '}'";
-    }
-    str.append(1, static_cast<char>(ist.get()));
-  }
-  return str;
-}
-
-void ParseMap(const std::string& str, StrMap& map) {
-  if (str.size() == 0)
-    return;
-  std::istringstream ist(str);
-  ParseCheck(ist, '{');
-  for (;;) {
-    std::string key = ParseString(ist);
-    ParseCheck(ist, '=');
-    std::string val = ParseString(ist);
-    map[key] = val;
-    if (ist.peek() == ',')
-      ist.get();
-    else
-      break;
-  }
-  ParseCheck(ist, '}');
-  if (ist.rdbuf()->in_avail() != 0)
-    LOG(LERROR) << "Unexpected characters at end";
-}
-
-#if 0
-const std::string TEST_MAP0_IN = "";
-const std::string TEST_MAP0_OUT = "{}";
-const std::string TEST_MAP1 = "{a=12345}";
-const std::string TEST_MAP2 = "{a=12345,b=67890}";
-const std::string TEST_MAP3 = "{a=12345,b=67890,c=13579}";
-const std::string TEST_MAP4 = "{a={d=12345,e=67890}}";
-const std::string TEST_MAP5 = "{a={d=12345,e=67890},b=67890}";
-const std::string TEST_MAP6 = "{a=12345,b={d=12345,e=67890}}";
-const std::string TEST_MAP7 = "{a=12345,b={d=12345,e=67890},c=13579}";
-
-class MyTest {
-public:
-  MyTest() {
-    test(TEST_MAP0_IN, TEST_MAP0_OUT);
-    test(TEST_MAP1, TEST_MAP1);
-    test(TEST_MAP2, TEST_MAP2);
-    test(TEST_MAP3, TEST_MAP3);
-    test(TEST_MAP4, TEST_MAP4);
-    test(TEST_MAP5, TEST_MAP5);
-    test(TEST_MAP6, TEST_MAP6);
-    test(TEST_MAP7, TEST_MAP7);
-  }
-  void test(const std::string& input, const std::string& exp_output) {
-    StrMap map;
-    ParseMap(input, map);
-    std::string output;
-    BuildMap(map, output);
-    LOG(INFO) << "  ********  " << (output == exp_output);
-  }
-};
-
-static MyTest myTest;
-#endif
-
-} // namespace
+#include "talk/base/thread.h"
 
 namespace talk_base {
+namespace {
 
-#ifdef POSIX
-void NetworkManager::CreateNetworks(std::vector<Network*>& networks) {
-  int fd;
-  if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    PLOG(LERROR, errno) << "socket";
-    return;
-  }
+const uint32 kUpdateNetworksMessage = 1;
+const uint32 kSignalNetworksMessage = 2;
 
-  struct ifconf ifc;
-  ifc.ifc_len = 64 * sizeof(struct ifreq);
-  ifc.ifc_buf = new char[ifc.ifc_len];
+// Fetch list of networks every two seconds.
+const int kNetworksUpdateIntervalMs = 2000;
 
-  if (ioctl(fd, SIOCGIFCONF, &ifc) < 0) {
-    PLOG(LERROR, errno) << "ioctl";
-    return;
-  }
-  assert(ifc.ifc_len < static_cast<int>(64 * sizeof(struct ifreq)));
 
-  struct ifreq* ptr = reinterpret_cast<struct ifreq*>(ifc.ifc_buf);
-  struct ifreq* end =
-      reinterpret_cast<struct ifreq*>(ifc.ifc_buf + ifc.ifc_len);
+// Makes a string key for this network. Used in the network manager's maps.
+// Network objects are keyed on interface name, network prefix and the
+// length of that prefix.
+std::string MakeNetworkKey(const std::string& name, const IPAddress& prefix,
+                           int prefix_length) {
+  std::ostringstream ost;
+  ost << name << "%" << prefix.ToString() << "/" << prefix_length;
+  return ost.str();
+}
 
-  while (ptr < end) {
-    if (strcmp(ptr->ifr_name, "lo")) { // Ignore the loopback device
-      struct sockaddr_in* inaddr =
-          reinterpret_cast<struct sockaddr_in*>(&ptr->ifr_ifru.ifru_addr);
-      if (inaddr->sin_family == AF_INET) {
-        uint32 ip = ntohl(inaddr->sin_addr.s_addr);
-        networks.push_back(new Network(std::string(ptr->ifr_name), ip));
-      }
+bool CompareNetworks(const Network* a, const Network* b) {
+  if (a->prefix_length() == b->prefix_length()) {
+    if (a->name() == b->name()) {
+      return a->prefix() < b->prefix();
     }
-#ifdef _SIZEOF_ADDR_IFREQ
-    ptr = reinterpret_cast<struct ifreq*>(
-        reinterpret_cast<char*>(ptr) + _SIZEOF_ADDR_IFREQ(*ptr));
-#else
-    ptr++;
-#endif
   }
-
-  delete [] ifc.ifc_buf;
-  close(fd);
+  return a->name() < b->name();
 }
-#endif
 
-#ifdef WIN32
-void NetworkManager::CreateNetworks(std::vector<Network*>& networks) {
-  IP_ADAPTER_INFO info_temp;
-  ULONG len = 0;
-  
-  if (GetAdaptersInfo(&info_temp, &len) != ERROR_BUFFER_OVERFLOW)
-    return;
-  IP_ADAPTER_INFO *infos = new IP_ADAPTER_INFO[len];
-  if (GetAdaptersInfo(infos, &len) != NO_ERROR)
-    return;
 
-  int count = 0;
-  for (IP_ADAPTER_INFO *info = infos; info != NULL; info = info->Next) {
-    if (info->Type == MIB_IF_TYPE_LOOPBACK)
-      continue;
-    if (strcmp(info->IpAddressList.IpAddress.String, "0.0.0.0") == 0)
-      continue;
+}  // namespace
 
-    // In production, don't transmit the network name because of
-    // privacy concerns. Transmit a number instead.
+NetworkManager::NetworkManager() {
+}
 
-    std::string name;
-#if defined(PRODUCTION)
-    std::ostringstream ost;
-    ost << count;
-    name = ost.str();
-    count++;
-#else
-    name = info->Description;
-#endif
+NetworkManager::~NetworkManager() {
+}
 
-    networks.push_back(new Network(name,
-        SocketAddress::StringToIP(info->IpAddressList.IpAddress.String)));
+NetworkManagerBase::NetworkManagerBase() : ipv6_enabled_(false) {
+}
+
+NetworkManagerBase::~NetworkManagerBase() {
+  for (NetworkMap::iterator i = networks_map_.begin();
+       i != networks_map_.end(); ++i) {
+    delete i->second;
   }
-
-  delete infos;
 }
-#endif
 
-void NetworkManager::GetNetworks(std::vector<Network*>& result) {
-  std::vector<Network*> list;
-  CreateNetworks(list);
+void NetworkManagerBase::GetNetworks(NetworkList* result) const {
+  *result = networks_;
+}
 
+void NetworkManagerBase::MergeNetworkList(const NetworkList& new_networks,
+                                          bool* changed) {
+  // Sort the list so that we can detect when it changes.
+  typedef std::pair<Network*, std::vector<IPAddress> > address_list;
+  std::map<std::string, address_list> address_map;
+  NetworkList list(new_networks);
+  NetworkList merged_list;
+  std::sort(list.begin(), list.end(), CompareNetworks);
+
+  *changed = false;
+
+  if (networks_.size() != list.size())
+    *changed = true;
+
+  // First, build a set of network-keys to the ipaddresses.
   for (uint32 i = 0; i < list.size(); ++i) {
-    NetworkMap::iterator iter = networks_.find(list[i]->name());
-
-    Network* network;
-    if (iter == networks_.end()) {
-      network = list[i];
-    } else {
-      network = iter->second;
-      network->set_ip(list[i]->ip());
+    bool might_add_to_merged_list = false;
+    std::string key = MakeNetworkKey(list[i]->name(),
+                                     list[i]->prefix(),
+                                     list[i]->prefix_length());
+    if (address_map.find(key) == address_map.end()) {
+      address_map[key] = address_list(list[i], std::vector<IPAddress>());
+      might_add_to_merged_list = true;
+    }
+    const std::vector<IPAddress>& addresses = list[i]->GetIPs();
+    address_list& current_list = address_map[key];
+    for (std::vector<IPAddress>::const_iterator it = addresses.begin();
+         it != addresses.end();
+         ++it) {
+      current_list.second.push_back(*it);
+    }
+    if (!might_add_to_merged_list) {
       delete list[i];
     }
+  }
 
-    networks_[network->name()] = network;
-    result.push_back(network);
+  // Next, look for existing network objects to re-use.
+  for (std::map<std::string, address_list >::iterator it = address_map.begin();
+       it != address_map.end();
+       ++it) {
+    const std::string& key = it->first;
+    Network* net = it->second.first;
+    NetworkMap::iterator existing = networks_map_.find(key);
+    if (existing == networks_map_.end()) {
+      // This network is new. Place it in the network map.
+      merged_list.push_back(net);
+      networks_map_[key] = net;
+      *changed = true;
+    } else {
+      // This network exists in the map already. Reset its IP addresses.
+      *changed = existing->second->SetIPs(it->second.second, *changed);
+      merged_list.push_back(existing->second);
+      if (existing->second != net) {
+        delete net;
+      }
+    }
+  }
+  networks_ = merged_list;
+}
+
+BasicNetworkManager::BasicNetworkManager()
+    : thread_(NULL),
+      start_count_(0) {
+}
+
+BasicNetworkManager::~BasicNetworkManager() {
+}
+
+#ifdef POSIX
+bool BasicNetworkManager::CreateNetworks(bool include_ignored,
+                                         NetworkList* networks) const {
+#ifdef ANDROID
+  // TODO: Implement CreateNetworks on Android without using ifaddrs.
+  return false;
+#else
+  NetworkMap current_networks;
+  struct ifaddrs* interfaces;
+  int error = getifaddrs(&interfaces);
+  if (error != 0) {
+    LOG_ERR(LERROR) << "getifaddrs failed to gather interface data: " << error;
+    return false;
+  }
+  struct ifaddrs* cursor = interfaces;
+  while (cursor != NULL) {
+    IPAddress prefix;
+    IPAddress mask;
+    IPAddress ip;
+    int scope_id = 0;
+    switch (cursor->ifa_addr->sa_family) {
+      case AF_INET: {
+        ip = IPAddress(
+            reinterpret_cast<sockaddr_in*>(cursor->ifa_addr)->sin_addr);
+        mask = IPAddress(
+            reinterpret_cast<sockaddr_in*>(cursor->ifa_netmask)->sin_addr);
+        break;
+      }
+      case AF_INET6: {
+        if (ipv6_enabled()) {
+          ip = IPAddress(
+              reinterpret_cast<sockaddr_in6*>(cursor->ifa_addr)->sin6_addr);
+          mask = IPAddress(
+              reinterpret_cast<sockaddr_in6*>(cursor->ifa_netmask)->sin6_addr);
+          scope_id =
+              reinterpret_cast<sockaddr_in6*>(cursor->ifa_addr)->sin6_scope_id;
+          break;
+        } else {
+          cursor = cursor->ifa_next;
+          continue;
+        }
+      }
+      default: {
+        cursor = cursor->ifa_next;
+        continue;
+      }
+    }
+    int prefix_length = CountIPMaskBits(mask);
+    prefix = TruncateIP(ip, prefix_length);
+    std::string key = MakeNetworkKey(std::string(cursor->ifa_name),
+                                     prefix, prefix_length);
+    NetworkMap::iterator existing_network = current_networks.find(key);
+    if (existing_network == current_networks.end()) {
+      scoped_ptr<Network> network(new Network(cursor->ifa_name,
+                                              cursor->ifa_name,
+                                              prefix,
+                                              prefix_length));
+      network->set_scope_id(scope_id);
+      network->AddIP(ip);
+      bool ignored = ((cursor->ifa_flags & IFF_LOOPBACK) ||
+                      IsIgnoredNetwork(*network));
+      network->set_ignored(ignored);
+      if (include_ignored || !network->ignored()) {
+        networks->push_back(network.release());
+      }
+    } else {
+      (*existing_network).second->AddIP(ip);
+    }
+    cursor = cursor->ifa_next;
+  }
+  freeifaddrs(interfaces);
+  return true;
+#endif
+}
+#endif  // POSIX
+
+#ifdef WIN32
+unsigned int GetPrefix(PIP_ADAPTER_PREFIX prefixlist,
+              const IPAddress& ip, IPAddress* prefix) {
+  IPAddress current_prefix;
+  IPAddress best_prefix;
+  unsigned int best_length = 0;
+  while (prefixlist) {
+    // Look for the longest matching prefix in the prefixlist.
+    if (prefixlist->Address.lpSockaddr->sa_family != ip.family()) {
+      prefixlist = prefixlist->Next;
+      continue;
+    }
+    switch (prefixlist->Address.lpSockaddr->sa_family) {
+      case AF_INET: {
+        sockaddr_in* v4_addr =
+            reinterpret_cast<sockaddr_in*>(prefixlist->Address.lpSockaddr);
+        current_prefix = IPAddress(v4_addr->sin_addr);
+        break;
+      }
+      case AF_INET6: {
+          sockaddr_in6* v6_addr =
+              reinterpret_cast<sockaddr_in6*>(prefixlist->Address.lpSockaddr);
+          current_prefix = IPAddress(v6_addr->sin6_addr);
+          break;
+      }
+      default: {
+        prefixlist = prefixlist->Next;
+        continue;
+      }
+    }
+    if (TruncateIP(ip, prefixlist->PrefixLength) == current_prefix &&
+        prefixlist->PrefixLength > best_length) {
+      best_prefix = current_prefix;
+      best_length = prefixlist->PrefixLength;
+    }
+    prefixlist = prefixlist->Next;
+  }
+  *prefix = best_prefix;
+  return best_length;
+}
+
+bool BasicNetworkManager::CreateNetworks(bool include_ignored,
+                                         NetworkList* networks) const {
+  NetworkMap current_networks;
+  // MSDN recommends a 15KB buffer for the first try at GetAdaptersAddresses.
+  size_t buffer_size = 16384;
+  scoped_array<char> adapter_info(new char[buffer_size]);
+  PIP_ADAPTER_ADDRESSES adapter_addrs =
+      reinterpret_cast<PIP_ADAPTER_ADDRESSES>(adapter_info.get());
+  int adapter_flags = (GAA_FLAG_SKIP_DNS_SERVER | GAA_FLAG_SKIP_ANYCAST |
+                       GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_INCLUDE_PREFIX);
+  int ret = 0;
+  do {
+    adapter_info.reset(new char[buffer_size]);
+    adapter_addrs = reinterpret_cast<PIP_ADAPTER_ADDRESSES>(adapter_info.get());
+    ret = GetAdaptersAddresses(AF_UNSPEC, adapter_flags,
+                               0, adapter_addrs,
+                               reinterpret_cast<PULONG>(&buffer_size));
+  } while (ret == ERROR_BUFFER_OVERFLOW);
+  if (ret != ERROR_SUCCESS) {
+    return false;
+  }
+  int count = 0;
+  while (adapter_addrs) {
+    PIP_ADAPTER_UNICAST_ADDRESS address = adapter_addrs->FirstUnicastAddress;
+    PIP_ADAPTER_PREFIX prefixlist = adapter_addrs->FirstPrefix;
+    std::string name;
+    std::string description;
+#ifdef _DEBUG
+    name = ToUtf8(adapter_addrs->FriendlyName,
+                  wcslen(adapter_addrs->FriendlyName));
+    LOG(LS_INFO) << "Name: " << name;
+#endif
+    description = ToUtf8(adapter_addrs->Description,
+                         wcslen(adapter_addrs->Description));
+    LOG(LS_INFO) << "Description: " << description;
+    while (address) {
+#ifndef _DEBUG
+      name = talk_base::ToString(count);
+#endif
+
+      IPAddress ip;
+      int scope_id = 0;
+      scoped_ptr<Network> network;
+      switch (address->Address.lpSockaddr->sa_family) {
+        case AF_INET: {
+          sockaddr_in* v4_addr =
+              reinterpret_cast<sockaddr_in*>(address->Address.lpSockaddr);
+          ip = IPAddress(v4_addr->sin_addr);
+          break;
+        }
+        case AF_INET6: {
+          if (ipv6_enabled()) {
+            sockaddr_in6* v6_addr =
+                reinterpret_cast<sockaddr_in6*>(address->Address.lpSockaddr);
+            scope_id = v6_addr->sin6_scope_id;
+            ip = IPAddress(v6_addr->sin6_addr);
+            break;
+          } else {
+            address = address->Next;
+            continue;
+          }
+        }
+        default: {
+          address = address->Next;
+          continue;
+        }
+      }
+      IPAddress prefix;
+      int prefix_length = GetPrefix(prefixlist, ip, &prefix);
+      std::string key = MakeNetworkKey(name, prefix, prefix_length);
+      NetworkMap::iterator existing_network = current_networks.find(key);
+      if (existing_network == current_networks.end()) {
+        scoped_ptr<Network> network(new Network(name,
+                                                description,
+                                                prefix,
+                                                prefix_length));
+        network->set_scope_id(scope_id);
+        network->AddIP(ip);
+        bool ignore = ((adapter_addrs->IfType == IF_TYPE_SOFTWARE_LOOPBACK) ||
+                       IsIgnoredNetwork(*network));
+        network->set_ignored(ignore);
+        if (include_ignored || !network->ignored()) {
+          networks->push_back(network.release());
+        }
+      } else {
+        (*existing_network).second->AddIP(ip);
+      }
+      address = address->Next;
+    }
+    // Count is per-adapter - all 'Networks' created from the same
+    // adapter need to have the same name.
+    ++count;
+    adapter_addrs = adapter_addrs->Next;
+  }
+  return true;
+}
+#endif  // WIN32
+
+bool BasicNetworkManager::IsIgnoredNetwork(const Network& network) {
+#ifdef POSIX
+  // Ignore local networks (lo, lo0, etc)
+  // Also filter out VMware interfaces, typically named vmnet1 and vmnet8
+  if (strncmp(network.name().c_str(), "vmnet", 5) == 0 ||
+      strncmp(network.name().c_str(), "vnic", 4) == 0) {
+    return true;
+  }
+#elif defined(WIN32)
+  // Ignore any HOST side vmware adapters with a description like:
+  // VMware Virtual Ethernet Adapter for VMnet1
+  // but don't ignore any GUEST side adapters with a description like:
+  // VMware Accelerated AMD PCNet Adapter #2
+  if (strstr(network.description().c_str(), "VMnet") != NULL) {
+    return true;
+  }
+#endif
+
+  // Ignore any networks with a 0.x.y.z IP
+  if (network.prefix().family() == AF_INET) {
+    return (network.prefix().v4AddressAsHostOrderInteger() < 0x01000000);
+  }
+  return false;
+}
+
+void BasicNetworkManager::StartUpdating() {
+  thread_ = Thread::Current();
+  if (start_count_) {
+    // If network interfaces are already discovered and signal is sent,
+    // we should trigger network signal immediately for the new clients
+    // to start allocating ports.
+    if (sent_first_update_)
+      thread_->Post(this, kSignalNetworksMessage);
+  } else {
+    thread_->Post(this, kUpdateNetworksMessage);
+  }
+  ++start_count_;
+}
+
+void BasicNetworkManager::StopUpdating() {
+  ASSERT(Thread::Current() == thread_);
+  if (!start_count_)
+    return;
+
+  --start_count_;
+  if (!start_count_) {
+    thread_->Clear(this);
+    sent_first_update_ = false;
   }
 }
 
-std::string NetworkManager::GetState() {
-  StrMap map;
-  for (NetworkMap::iterator i = networks_.begin(); i != networks_.end(); ++i)
-    map[i->first] = i->second->GetState();
-
-  std::string str;
-  BuildMap(map, str);
-  return str;
-}
-
-void NetworkManager::SetState(std::string str) {
-  StrMap map;
-  ParseMap(str, map);
-
-  for (StrMap::iterator i = map.begin(); i != map.end(); ++i) {
-    std::string name = i->first;
-    std::string state = i->second;
-
-    Network* network = new Network(name, 0);
-    network->SetState(state);
-    networks_[name] = network;
+void BasicNetworkManager::OnMessage(Message* msg) {
+  switch (msg->message_id) {
+    case kUpdateNetworksMessage:  {
+      DoUpdateNetworks();
+      break;
+    }
+    case kSignalNetworksMessage:  {
+      SignalNetworksChanged();
+      break;
+    }
+    default:
+      ASSERT(false);
   }
 }
 
-Network::Network(const std::string& name, uint32 ip)
-  : name_(name), ip_(ip), uniform_numerator_(0), uniform_denominator_(0),
-    exponential_numerator_(0), exponential_denominator_(0),
-    quality_(kDefaultQuality) {
+void BasicNetworkManager::DoUpdateNetworks() {
+  if (!start_count_)
+    return;
 
-  last_data_time_ = Time();
+  ASSERT(Thread::Current() == thread_);
 
-  // TODO: seed the historical data with one data point based on the link speed
-  //       metric from XP (4.0 if < 50, 3.0 otherwise).
-}
-
-void Network::StartSession(NetworkSession* session) {
-  assert(std::find(sessions_.begin(), sessions_.end(), session) == sessions_.end());
-  sessions_.push_back(session);
-}
-
-void Network::StopSession(NetworkSession* session) {
-  SessionList::iterator iter = std::find(sessions_.begin(), sessions_.end(), session);
-  if (iter != sessions_.end())
-    sessions_.erase(iter);
-}
-
-void Network::EstimateQuality() {
-  uint32 now = Time();
-
-  // Add new data points for the current time.
-  for (uint32 i = 0; i < sessions_.size(); ++i) {
-    if (sessions_[i]->HasQuality())
-      AddDataPoint(now, sessions_[i]->GetCurrentQuality());
+  NetworkList list;
+  if (!CreateNetworks(false, &list)) {
+    SignalError();
+  } else {
+    bool changed;
+    MergeNetworkList(list, &changed);
+    if (changed || !sent_first_update_) {
+      SignalNetworksChanged();
+      sent_first_update_ = true;
+    }
   }
 
-  // Construct the weighted average using both uniform and exponential weights.
+  thread_->PostDelayed(kNetworksUpdateIntervalMs, this, kUpdateNetworksMessage);
+}
 
-  double exp_shift = exp(-kLambda * (now - last_data_time_));
-  double numerator = uniform_numerator_ + exp_shift * exponential_numerator_;
-  double denominator = uniform_denominator_ + exp_shift * exponential_denominator_;
+void BasicNetworkManager::DumpNetworks(bool include_ignored) {
+  NetworkList list;
+  CreateNetworks(include_ignored, &list);
+  LOG(LS_INFO) << "NetworkManager detected " << list.size() << " networks:";
+  for (size_t i = 0; i < list.size(); ++i) {
+    const Network* network = list[i];
+    if (!network->ignored() || include_ignored) {
+      LOG(LS_INFO) << network->ToString() << ": " << network->description()
+                   << ((network->ignored()) ? ", Ignored" : "");
+    }
+  }
+}
 
-  if (denominator < DBL_EPSILON)
-    quality_ = kDefaultQuality;
-  else
-    quality_ = numerator / denominator;
+Network::Network(const std::string& name, const std::string& desc,
+                 const IPAddress& prefix, int prefix_length)
+    : name_(name), description_(desc), prefix_(prefix),
+      prefix_length_(prefix_length), scope_id_(0), ignored_(false),
+      uniform_numerator_(0), uniform_denominator_(0), exponential_numerator_(0),
+      exponential_denominator_(0) {
 }
 
 std::string Network::ToString() const {
   std::stringstream ss;
-  // Print out the first space-terminated token of the network name, plus
+  // Print out the first space-terminated token of the network desc, plus
   // the IP address.
-  ss << "Net[" << name_.substr(0, name_.find(' ')) 
-     << ":" << SocketAddress::IPToString(ip_) << "]";
+  ss << "Net[" << description_.substr(0, description_.find(' '))
+     << ":" << prefix_ << "/" << prefix_length_ << "]";
   return ss.str();
 }
 
-void Network::AddDataPoint(uint32 time, double quality) {
-  uniform_numerator_ += kAlpha * quality;
-  uniform_denominator_ += kAlpha;
-
-  double exp_shift = exp(-kLambda * (time - last_data_time_));
-  exponential_numerator_ = (1 - kAlpha) * quality + exp_shift * exponential_numerator_;
-  exponential_denominator_ = (1 - kAlpha) + exp_shift * exponential_denominator_;
-
-  last_data_time_ = time;
+// Sets the addresses of this network. Returns true if the address set changed.
+// Change detection is short circuited if the changed argument is true.
+bool Network::SetIPs(const std::vector<IPAddress>& ips, bool changed) {
+  changed = changed || ips.size() != ips_.size();
+  // Detect changes with a nested loop; n-squared but we expect on the order
+  // of 2-3 addresses per network.
+  for (std::vector<IPAddress>::const_iterator it = ips.begin();
+      !changed && it != ips.end();
+      ++it) {
+    bool found = false;
+    for (std::vector<IPAddress>::iterator inner_it = ips_.begin();
+         !found && inner_it != ips_.end();
+         ++inner_it) {
+      if (*it == *inner_it) {
+        found = true;
+      }
+    }
+    changed = !found;
+  }
+  ips_ = ips;
+  return changed;
 }
-
-std::string Network::GetState() {
-  StrMap map;
-  map["lt"] = talk_base::ToString<uint32>(last_data_time_);
-  map["un"] = talk_base::ToString<double>(uniform_numerator_);
-  map["ud"] = talk_base::ToString<double>(uniform_denominator_);
-  map["en"] = talk_base::ToString<double>(exponential_numerator_);
-  map["ed"] = talk_base::ToString<double>(exponential_denominator_);
-
-  std::string str;
-  BuildMap(map, str);
-  return str;
-}
-
-void Network::SetState(std::string str) {
-  StrMap map;
-  ParseMap(str, map);
-
-  last_data_time_ = FromString<uint32>(map["lt"]);
-  uniform_numerator_ = FromString<double>(map["un"]);
-  uniform_denominator_ = FromString<double>(map["ud"]);
-  exponential_numerator_ = FromString<double>(map["en"]);
-  exponential_denominator_ = FromString<double>(map["ed"]);
-}
-
-} // namespace talk_base
+}  // namespace talk_base

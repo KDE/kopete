@@ -1,120 +1,75 @@
+/*
+ * libjingle
+ * Copyright 2008, Google Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif  // HAVE_CONFIG_H
+
+#if HAVE_OPENSSL_SSL_H
+
 #include <openssl/bio.h>
-#include <openssl/ssl.h>
+#include <openssl/crypto.h>
 #include <openssl/err.h>
+#include <openssl/opensslv.h>
+#include <openssl/rand.h>
+#include <openssl/ssl.h>
 #include <openssl/x509v3.h>
 
 #include "talk/base/common.h"
 #include "talk/base/logging.h"
 #include "talk/base/openssladapter.h"
+#include "talk/base/sslroots.h"
 #include "talk/base/stringutils.h"
-#include "talk/base/Equifax_Secure_Global_eBusiness_CA-1.h"
 
-//////////////////////////////////////////////////////////////////////
-// StreamBIO
-//////////////////////////////////////////////////////////////////////
+// TODO: Use a nicer abstraction for mutex.
 
-#if 0
-static int stream_write(BIO* h, const char* buf, int num);
-static int stream_read(BIO* h, char* buf, int size);
-static int stream_puts(BIO* h, const char* str);
-static long stream_ctrl(BIO* h, int cmd, long arg1, void* arg2);
-static int stream_new(BIO* h);
-static int stream_free(BIO* data);
-
-static BIO_METHOD methods_stream = {
-	BIO_TYPE_BIO,
-	"stream",
-	stream_write,
-	stream_read,
-	stream_puts,
-	0,
-	stream_ctrl,
-	stream_new,
-	stream_free,
-	NULL,
-};
-
-BIO_METHOD* BIO_s_stream() { return(&methods_stream); }
-
-BIO* BIO_new_stream(StreamInterface* stream) {
-	BIO* ret = BIO_new(BIO_s_stream());
-	if (ret == NULL)
-    return NULL;
-	ret->ptr = stream;
-	return ret;
-}
-
-static int stream_new(BIO* b) {
-	b->shutdown = 0;
-	b->init = 1;
-	b->num = 0; // 1 means end-of-stream
-	b->ptr = 0;
-	return 1;
-}
-
-static int stream_free(BIO* b) {
-	if (b == NULL)
-		return 0;
-	return 1;
-}
-
-static int stream_read(BIO* b, char* out, int outl) {
-	if (!out)
-		return -1;
-	StreamInterface* stream = static_cast<StreamInterface*>(b->ptr);
-	BIO_clear_retry_flags(b);
-	size_t read;
-  int error;
-  StreamResult result = stream->Read(out, outl, &read, &error);
-  if (result == SR_SUCCESS) {
-    return read;
-  } else if (result == SR_EOS) {
-		b->num = 1;
-	} else if (result == SR_BLOCK) {
-		BIO_set_retry_read(b);
-	}
-	return -1;
-}
-
-static int stream_write(BIO* b, const char* in, int inl) {
-	if (!in)
-		return -1;
-	StreamInterface* stream = static_cast<StreamInterface*>(b->ptr);
-	BIO_clear_retry_flags(b);
-	size_t written;
-  int error;
-  StreamResult result = stream->Write(in, inl, &written, &error);
-  if (result == SR_SUCCESS) {
-    return written;
-  } else if (result == SR_BLOCK) {
-		BIO_set_retry_write(b);
-	}
-	return -1;
-}
-
-static int stream_puts(BIO* b, const char* str) {
-	return stream_write(b, str, strlen(str));
-}
-
-static long stream_ctrl(BIO* b, int cmd, long num, void* ptr) {
-  UNUSED(num);
-  UNUSED(ptr);
-
-	switch (cmd) {
-	case BIO_CTRL_RESET:
-		return 0;
-	case BIO_CTRL_EOF:
-		return b->num;
-	case BIO_CTRL_WPENDING:
-	case BIO_CTRL_PENDING:
-		return 0;
-	case BIO_CTRL_FLUSH:
-		return 1;
-	default:
-		return 0;
-	}
-}
+#if defined(WIN32)
+  #define MUTEX_TYPE HANDLE
+  #define MUTEX_SETUP(x) (x) = CreateMutex(NULL, FALSE, NULL)
+  #define MUTEX_CLEANUP(x) CloseHandle(x)
+  #define MUTEX_LOCK(x) WaitForSingleObject((x), INFINITE)
+  #define MUTEX_UNLOCK(x) ReleaseMutex(x)
+  #define THREAD_ID GetCurrentThreadId()
+#elif defined(_POSIX_THREADS)
+  // _POSIX_THREADS is normally defined in unistd.h if pthreads are available
+  // on your platform.
+  #define MUTEX_TYPE pthread_mutex_t
+  #define MUTEX_SETUP(x) pthread_mutex_init(&(x), NULL)
+  #define MUTEX_CLEANUP(x) pthread_mutex_destroy(&(x))
+  #define MUTEX_LOCK(x) pthread_mutex_lock(&(x))
+  #define MUTEX_UNLOCK(x) pthread_mutex_unlock(&(x))
+  #define THREAD_ID pthread_self()
+#else
+  #error You must define mutex operations appropriate for your platform!
 #endif
+
+struct CRYPTO_dynlock_value {
+  MUTEX_TYPE mutex;
+};
 
 //////////////////////////////////////////////////////////////////////
 // SocketBIO
@@ -128,94 +83,94 @@ static int socket_new(BIO* h);
 static int socket_free(BIO* data);
 
 static BIO_METHOD methods_socket = {
-	BIO_TYPE_BIO,
-	"socket",
-	socket_write,
-	socket_read,
-	socket_puts,
-	0,
-	socket_ctrl,
-	socket_new,
-	socket_free,
-	NULL,
+  BIO_TYPE_BIO,
+  "socket",
+  socket_write,
+  socket_read,
+  socket_puts,
+  0,
+  socket_ctrl,
+  socket_new,
+  socket_free,
+  NULL,
 };
 
 BIO_METHOD* BIO_s_socket2() { return(&methods_socket); }
 
 BIO* BIO_new_socket(talk_base::AsyncSocket* socket) {
-	BIO* ret = BIO_new(BIO_s_socket2());
-	if (ret == NULL) {
+  BIO* ret = BIO_new(BIO_s_socket2());
+  if (ret == NULL) {
           return NULL;
-	}
-	ret->ptr = socket;
-	return ret;
+  }
+  ret->ptr = socket;
+  return ret;
 }
 
 static int socket_new(BIO* b) {
-	b->shutdown = 0;
-	b->init = 1;
-	b->num = 0; // 1 means socket closed
-	b->ptr = 0;
-	return 1;
+  b->shutdown = 0;
+  b->init = 1;
+  b->num = 0; // 1 means socket closed
+  b->ptr = 0;
+  return 1;
 }
 
 static int socket_free(BIO* b) {
-	if (b == NULL)
-		return 0;
-	return 1;
+  if (b == NULL)
+    return 0;
+  return 1;
 }
 
 static int socket_read(BIO* b, char* out, int outl) {
-	if (!out)
-		return -1;
-	talk_base::AsyncSocket* socket = static_cast<talk_base::AsyncSocket*>(b->ptr);
-	BIO_clear_retry_flags(b);
+  if (!out)
+    return -1;
+  talk_base::AsyncSocket* socket = static_cast<talk_base::AsyncSocket*>(b->ptr);
+  BIO_clear_retry_flags(b);
   int result = socket->Recv(out, outl);
   if (result > 0) {
     return result;
   } else if (result == 0) {
-		b->num = 1;
+    b->num = 1;
   } else if (socket->IsBlocking()) {
-		BIO_set_retry_read(b);
-	}
-	return -1;
+    BIO_set_retry_read(b);
+  }
+  return -1;
 }
 
 static int socket_write(BIO* b, const char* in, int inl) {
-	if (!in)
-		return -1;
-	talk_base::AsyncSocket* socket = static_cast<talk_base::AsyncSocket*>(b->ptr);
-	BIO_clear_retry_flags(b);
+  if (!in)
+    return -1;
+  talk_base::AsyncSocket* socket = static_cast<talk_base::AsyncSocket*>(b->ptr);
+  BIO_clear_retry_flags(b);
   int result = socket->Send(in, inl);
   if (result > 0) {
     return result;
   } else if (socket->IsBlocking()) {
-		BIO_set_retry_write(b);
-	}
-	return -1;
+    BIO_set_retry_write(b);
+  }
+  return -1;
 }
 
 static int socket_puts(BIO* b, const char* str) {
-	return socket_write(b, str, strlen(str));
+  return socket_write(b, str, strlen(str));
 }
 
 static long socket_ctrl(BIO* b, int cmd, long num, void* ptr) {
   UNUSED(num);
   UNUSED(ptr);
 
-	switch (cmd) {
-	case BIO_CTRL_RESET:
-		return 0;
-	case BIO_CTRL_EOF:
-		return b->num;
-	case BIO_CTRL_WPENDING:
-	case BIO_CTRL_PENDING:
-		return 0;
-	case BIO_CTRL_FLUSH:
-		return 1;
-	default:
-		return 0;
-	}
+  switch (cmd) {
+  case BIO_CTRL_RESET:
+    return 0;
+  case BIO_CTRL_EOF:
+    return b->num;
+  case BIO_CTRL_WPENDING:
+  case BIO_CTRL_PENDING:
+    return 0;
+  case BIO_CTRL_FLUSH:
+    return 1;
+  default:
+    return 0;
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -224,13 +179,96 @@ static long socket_ctrl(BIO* b, int cmd, long num, void* ptr) {
 
 namespace talk_base {
 
+// This array will store all of the mutexes available to OpenSSL.
+static MUTEX_TYPE* mutex_buf = NULL;
+
+static void locking_function(int mode, int n, const char * file, int line) {
+  if (mode & CRYPTO_LOCK) {
+    MUTEX_LOCK(mutex_buf[n]);
+  } else {
+    MUTEX_UNLOCK(mutex_buf[n]);
+  }
+}
+
+static pthread_t id_function() {
+  return THREAD_ID;
+}
+
+static CRYPTO_dynlock_value* dyn_create_function(const char* file, int line) {
+  CRYPTO_dynlock_value* value = new CRYPTO_dynlock_value;
+  if (!value)
+    return NULL;
+  MUTEX_SETUP(value->mutex);
+  return value;
+}
+
+static void dyn_lock_function(int mode, CRYPTO_dynlock_value* l,
+                              const char* file, int line) {
+  if (mode & CRYPTO_LOCK) {
+    MUTEX_LOCK(l->mutex);
+  } else {
+    MUTEX_UNLOCK(l->mutex);
+  }
+}
+
+static void dyn_destroy_function(CRYPTO_dynlock_value* l,
+                                 const char* file, int line) {
+  MUTEX_CLEANUP(l->mutex);
+  delete l;
+}
+
+VerificationCallback OpenSSLAdapter::custom_verify_callback_ = NULL;
+
+bool OpenSSLAdapter::InitializeSSL(VerificationCallback callback) {
+  if (!InitializeSSLThread() || !SSL_library_init())
+      return false;
+  SSL_load_error_strings();
+  ERR_load_BIO_strings();
+  OpenSSL_add_all_algorithms();
+  RAND_poll();
+  custom_verify_callback_ = callback;
+  return true;
+}
+
+bool OpenSSLAdapter::InitializeSSLThread() {
+  mutex_buf = new MUTEX_TYPE[CRYPTO_num_locks()];
+  if (!mutex_buf)
+    return false;
+  for (int i = 0; i < CRYPTO_num_locks(); ++i)
+    MUTEX_SETUP(mutex_buf[i]);
+
+  // we need to cast our id_function to return an unsigned long -- pthread_t is a pointer
+  CRYPTO_set_id_callback((unsigned long (*)())id_function);
+  CRYPTO_set_locking_callback(locking_function);
+  CRYPTO_set_dynlock_create_callback(dyn_create_function);
+  CRYPTO_set_dynlock_lock_callback(dyn_lock_function);
+  CRYPTO_set_dynlock_destroy_callback(dyn_destroy_function);
+  return true;
+}
+
+bool OpenSSLAdapter::CleanupSSL() {
+  if (!mutex_buf)
+    return false;
+  CRYPTO_set_id_callback(NULL);
+  CRYPTO_set_locking_callback(NULL);
+  CRYPTO_set_dynlock_create_callback(NULL);
+  CRYPTO_set_dynlock_lock_callback(NULL);
+  CRYPTO_set_dynlock_destroy_callback(NULL);
+  for (int i = 0; i < CRYPTO_num_locks(); ++i)
+    MUTEX_CLEANUP(mutex_buf[i]);
+  delete [] mutex_buf;
+  mutex_buf = NULL;
+  return true;
+}
+
 OpenSSLAdapter::OpenSSLAdapter(AsyncSocket* socket)
   : SSLAdapter(socket),
     state_(SSL_NONE),
     ssl_read_needs_write_(false),
     ssl_write_needs_read_(false),
     restartable_(false),
-    ssl_(NULL), ssl_ctx_(NULL) {
+    ssl_(NULL), ssl_ctx_(NULL),
+    custom_verification_succeeded_(false) {
 }
 
 OpenSSLAdapter::~OpenSSLAdapter() {
@@ -240,7 +278,7 @@ OpenSSLAdapter::~OpenSSLAdapter() {
 int
 OpenSSLAdapter::StartSSL(const char* hostname, bool restartable) {
   if (state_ != SSL_NONE)
-    return -1; 
+    return -1;
 
   ssl_host_name_ = hostname;
   restartable_ = restartable;
@@ -256,7 +294,6 @@ OpenSSLAdapter::StartSSL(const char* hostname, bool restartable) {
     return err;
   }
 
-  LOG(LS_VERBOSE) << "OpenSSLAdapter::StartSSL() returns 0";
   return 0;
 }
 
@@ -277,7 +314,7 @@ OpenSSLAdapter::BeginSSL() {
     goto ssl_error;
   }
 
-  bio = BIO_new_socket(static_cast<talk_base::AsyncSocketAdapter*>(socket_));
+  bio = BIO_new_socket(static_cast<AsyncSocketAdapter*>(socket_));
   if (!bio) {
     err = -1;
     goto ssl_error;
@@ -319,12 +356,7 @@ OpenSSLAdapter::ContinueSSL() {
   ASSERT(state_ == SSL_CONNECTING);
 
   int code = SSL_connect(ssl_);
-  int err = SSL_get_error(ssl_, code);
-  if (err != SSL_ERROR_NONE)
-  {
-	LOG(LS_WARNING) << "!!! SSL_connect() returned " << err; 
-  }
-  switch (err) {
+  switch (SSL_get_error(ssl_, code)) {
   case SSL_ERROR_NONE:
     LOG(LS_INFO) << " -- success";
 
@@ -362,13 +394,12 @@ OpenSSLAdapter::ContinueSSL() {
     return (code != 0) ? code : -1;
   }
 
-  LOG(LS_VERBOSE) << "OpenSSLAdapter::ContinueSSL() returns 0";
   return 0;
 }
 
 void
 OpenSSLAdapter::Error(const char* context, int err, bool signal) {
-  LOG(LS_WARNING) << "SChannelAdapter::Error("
+  LOG(LS_WARNING) << "OpenSSLAdapter::Error("
                   << context << ", " << err << ")";
   state_ = SSL_ERROR;
   SetError(err);
@@ -383,6 +414,7 @@ OpenSSLAdapter::Cleanup() {
   state_ = SSL_NONE;
   ssl_read_needs_write_ = false;
   ssl_write_needs_read_ = false;
+  custom_verification_succeeded_ = false;
 
   if (ssl_) {
     SSL_free(ssl_);
@@ -611,8 +643,9 @@ OpenSSLAdapter::OnCloseEvent(AsyncSocket* socket, int err) {
 
 // This code is taken from the "Network Security with OpenSSL"
 // sample in chapter 5
-bool
-OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, const char* host) {
+
+bool OpenSSLAdapter::VerifyServerName(SSL* ssl, const char* host,
+                                      bool ignore_bad_cert) {
   if (!host)
     return false;
 
@@ -648,7 +681,7 @@ OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, const char* host) {
     int extension_nid = OBJ_obj2nid(X509_EXTENSION_get_object(extension));
 
     if (extension_nid == NID_subject_alt_name) {
-#if OPENSSL_VERSION_NUMBER >= 0x1000000fL
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L
       const X509V3_EXT_METHOD* meth = X509V3_EXT_get(extension);
 #else
       X509V3_EXT_METHOD* meth = X509V3_EXT_get(extension);
@@ -658,28 +691,44 @@ OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, const char* host) {
 
       void* ext_str = NULL;
 
+      // We assign this to a local variable, instead of passing the address
+      // directly to ASN1_item_d2i.
+      // See http://readlist.com/lists/openssl.org/openssl-users/0/4761.html.
+      unsigned char* ext_value_data = extension->value->data;
+
 #if OPENSSL_VERSION_NUMBER >= 0x0090800fL
-      const unsigned char **ext_value_data = (const_cast<const unsigned char **>
-					      (&extension->value->data));
+      const unsigned char **ext_value_data_ptr =
+          (const_cast<const unsigned char **>(&ext_value_data));
 #else
-      unsigned char **ext_value_data = &extension->value->data;
+      unsigned char **ext_value_data_ptr = &ext_value_data;
 #endif
 
       if (meth->it) {
-        ext_str = ASN1_item_d2i(NULL, ext_value_data, extension->value->length,
+        ext_str = ASN1_item_d2i(NULL, ext_value_data_ptr,
+                                extension->value->length,
                                 ASN1_ITEM_ptr(meth->it));
       } else {
-        ext_str = meth->d2i(NULL, ext_value_data, extension->value->length);
+        ext_str = meth->d2i(NULL, ext_value_data_ptr, extension->value->length);
       }
 
       STACK_OF(CONF_VALUE)* value = meth->i2v(meth, ext_str, NULL);
       for (int j = 0; j < sk_CONF_VALUE_num(value); ++j) {
         CONF_VALUE* nval = sk_CONF_VALUE_value(value, j);
-        if (!strcmp(nval->name, "DNS") && !strcmp(nval->value, host)) {
+        // The value for nval can contain wildcards
+        if (!strcmp(nval->name, "DNS") && string_match(host, nval->value)) {
           ok = true;
           break;
         }
       }
+      sk_CONF_VALUE_pop_free(value, X509V3_conf_free);
+      value = NULL;
+
+      if (meth->it) {
+        ASN1_item_free(reinterpret_cast<ASN1_VALUE*>(ext_str), meth->it);
+      } else {
+        meth->ext_free(ext_str);
+      }
+      ext_str = NULL;
     }
     if (ok)
       break;
@@ -698,14 +747,23 @@ OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, const char* host) {
 
   X509_free(certificate);
 
-  if (!ok && ignore_bad_cert()) {
+  // This should only ever be turned on for debugging and development.
+  if (!ok && ignore_bad_cert) {
     LOG(LS_WARNING) << "TLS certificate check FAILED.  "
       << "Allowing connection anyway.";
     ok = true;
   }
 
-  if (ok) 
-    ok = (SSL_get_verify_result(ssl) == X509_V_OK);
+  return ok;
+}
+
+bool OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, const char* host) {
+  bool ok = VerifyServerName(ssl, host, ignore_bad_cert());
+
+  if (ok) {
+    ok = (SSL_get_verify_result(ssl) == X509_V_OK ||
+          custom_verification_succeeded_);
+  }
 
   if (!ok && ignore_bad_cert()) {
     LOG(LS_INFO) << "Other TLS post connection checks failed.";
@@ -773,6 +831,17 @@ OpenSSLAdapter::SSLVerifyCallback(int ok, X509_STORE_CTX* store) {
   OpenSSLAdapter* stream =
     reinterpret_cast<OpenSSLAdapter*>(SSL_get_app_data(ssl));
 
+  if (!ok && custom_verify_callback_) {
+    void* cert =
+        reinterpret_cast<void*>(X509_STORE_CTX_get_current_cert(store));
+    if (custom_verify_callback_(cert)) {
+      stream->custom_verification_succeeded_ = true;
+      LOG(LS_INFO) << "validated certificate using custom callback";
+      ok = true;
+    }
+  }
+
+  // Should only be used for debugging and development.
   if (!ok && stream->ignore_bad_cert()) {
     LOG(LS_WARNING) << "Ignoring cert error while verifying cert chain";
     ok = 1;
@@ -781,30 +850,31 @@ OpenSSLAdapter::SSLVerifyCallback(int ok, X509_STORE_CTX* store) {
   return ok;
 }
 
-SSL_CTX*
-OpenSSLAdapter::SetupSSLContext() {
-  SSL_CTX* ctx = SSL_CTX_new(SSLv23_client_method());
-  if (ctx == NULL) 
-  {
-	  LOG(LS_ERROR) << "OpenSSLAdapter::SetupSSLContext() error: ctx == NULL";
-	  return NULL;
-  }  
-
-  // Add the root cert to the SSL context
+bool OpenSSLAdapter::ConfigureTrustedRootCertificates(SSL_CTX* ctx) {
+  // Add the root cert that we care about to the SSL context
 #if OPENSSL_VERSION_NUMBER >= 0x0090800fL
    const unsigned char* cert_buffer
 #else
    unsigned char* cert_buffer
 #endif
-    = EquifaxSecureGlobalEBusinessCA1_certificate;
-  size_t cert_buffer_len = sizeof(EquifaxSecureGlobalEBusinessCA1_certificate);
+    = Equifax_Secure_Certificate_Authority_certificate;
+  size_t cert_buffer_len =
+      sizeof(Equifax_Secure_Certificate_Authority_certificate);
   X509* cert = d2i_X509(NULL, &cert_buffer, cert_buffer_len);
-  if (cert == NULL) {
-    SSL_CTX_free(ctx);
+  if (cert == NULL)
+    return false;
+  bool success = X509_STORE_add_cert(SSL_CTX_get_cert_store(ctx), cert);
+  X509_free(cert);
+  return success;
+}
+
+SSL_CTX*
+OpenSSLAdapter::SetupSSLContext() {
+  SSL_CTX* ctx = SSL_CTX_new(TLSv1_client_method());
+  if (ctx == NULL)
     return NULL;
-  }
-  if (!X509_STORE_add_cert(SSL_CTX_get_cert_store(ctx), cert)) {
-    X509_free(cert);
+
+  if (!ConfigureTrustedRootCertificates(ctx)) {
     SSL_CTX_free(ctx);
     return NULL;
   }
@@ -821,3 +891,5 @@ OpenSSLAdapter::SetupSSLContext() {
 }
 
 } // namespace talk_base
+
+#endif  // HAVE_OPENSSL_SSL_H

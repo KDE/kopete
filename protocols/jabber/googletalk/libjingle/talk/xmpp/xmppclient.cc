@@ -2,47 +2,40 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "xmppclient.h"
 #include "xmpptask.h"
-#include "talk/xmpp/constants.h"
 #include "talk/base/sigslot.h"
+#include "talk/base/scoped_ptr.h"
+#include "talk/base/stringutils.h"
+#include "talk/xmpp/constants.h"
 #include "talk/xmpp/saslplainmechanism.h"
 #include "talk/xmpp/prexmppauth.h"
-#include "talk/base/scoped_ptr.h"
 #include "talk/xmpp/plainsaslhandler.h"
-#include "talk/base/logging.h"
 
 namespace buzz {
-
-talk_base::Task* XmppClient::GetParent(int code) {
-  if (code == XMPP_CLIENT_TASK_CODE)
-    return this;
-  else
-    return talk_base::Task::GetParent(code);
-}
 
 class XmppClient::Private :
     public sigslot::has_slots<>,
@@ -64,9 +57,9 @@ public:
   XmppClient * const client_;
 
   // the two main objects
-  scoped_ptr<AsyncSocket> socket_;
-  scoped_ptr<XmppEngine> engine_;
-  scoped_ptr<PreXmppAuth> pre_auth_;
+  talk_base::scoped_ptr<AsyncSocket> socket_;
+  talk_base::scoped_ptr<XmppEngine> engine_;
+  talk_base::scoped_ptr<PreXmppAuth> pre_auth_;
   talk_base::CryptString pass_;
   std::string auth_cookie_;
   talk_base::SocketAddress server_;
@@ -90,8 +83,16 @@ public:
   void OnSocketClosed();
 };
 
+bool IsTestServer(const std::string& server_name,
+                  const std::string& test_server_domain) {
+  return (!test_server_domain.empty() &&
+          talk_base::ends_with(server_name.c_str(),
+                               test_server_domain.c_str()));
+}
+
 XmppReturnStatus
-XmppClient::Connect(const XmppClientSettings & settings, const std::string & lang, AsyncSocket * socket, PreXmppAuth * pre_auth) {
+XmppClient::Connect(const XmppClientSettings & settings,
+    const std::string & lang, AsyncSocket * socket, PreXmppAuth * pre_auth) {
   if (socket == NULL)
     return XMPP_RETURN_BADARGUMENT;
   if (d_->socket_.get() != NULL)
@@ -109,21 +110,27 @@ XmppClient::Connect(const XmppClientSettings & settings, const std::string & lan
   if (!settings.resource().empty()) {
     d_->engine_->SetRequestedResource(settings.resource());
   }
-  d_->engine_->SetUseTls(settings.use_tls());
+  d_->engine_->SetTls(settings.use_tls());
 
-  //
-  // The talk.google.com server expects you to use "gmail.com" in the
-  // stream, and expects the domain certificate to be "gmail.com" as well.
-  // For all other servers, we leave the strings empty, which causes
-  // the jid's domain to be used.  "foo@example.com" -> stream to="example.com"
-  // tls certificate for "example.com"
-  //
-  // This is only true when using Gaia auth, so let's say if there's no preauth,
-  // we should use the actual server name
-  if ((settings.server().IPAsString() == buzz::STR_TALK_GOOGLE_COM ||
-      settings.server().IPAsString() == buzz::STR_TALKX_L_GOOGLE_COM) && 
-      pre_auth != NULL) {
-    d_->engine_->SetTlsServer(buzz::STR_GMAIL_COM, buzz::STR_GMAIL_COM);
+  // The talk.google.com server returns a certificate with common-name:
+  //   CN="gmail.com" for @gmail.com accounts,
+  //   CN="googlemail.com" for @googlemail.com accounts,
+  //   CN="talk.google.com" for other accounts (such as @example.com),
+  // so we tweak the tls server setting for those other accounts to match the
+  // returned certificate CN of "talk.google.com".
+  // For other servers, we leave the strings empty, which causes the jid's
+  // domain to be used.  We do the same for gmail.com and googlemail.com as the
+  // returned CN matches the account domain in those cases.
+  std::string server_name = settings.server().IPAsString();
+  if (server_name == buzz::STR_TALK_GOOGLE_COM ||
+      server_name == buzz::STR_TALKX_L_GOOGLE_COM ||
+      server_name == buzz::STR_XMPP_GOOGLE_COM ||
+      server_name == buzz::STR_XMPPX_L_GOOGLE_COM ||
+      IsTestServer(server_name, settings.test_server_domain())) {
+    if (settings.host() != STR_GMAIL_COM &&
+        settings.host() != STR_GOOGLEMAIL_COM) {
+      d_->engine_->SetTlsServer("", STR_TALK_GOOGLE_COM);
+    }
   }
 
   // Set language
@@ -143,7 +150,7 @@ XmppClient::Connect(const XmppClientSettings & settings, const std::string & lan
 }
 
 XmppEngine::State
-XmppClient::GetState() {
+XmppClient::GetState() const {
   if (d_->engine_.get() == NULL)
     return XmppEngine::STATE_NONE;
   return d_->engine_->GetState();
@@ -184,17 +191,6 @@ XmppClient::GetAuthCookie() {
   if (d_->engine_.get() == NULL)
     return "";
   return d_->auth_cookie_;
-}
-
-static void
-ForgetPassword(std::string & to_erase) {
-  size_t len = to_erase.size();
-  for (size_t i = 0; i < len; i++) {
-    // get rid of characters
-    to_erase[i] = 'x';
-  }
-  // get rid of length
-  to_erase.erase();
 }
 
 int
@@ -263,7 +259,7 @@ XmppClient::ProcessStartXmppLogin() {
     EnsureClosed();
     return STATE_ERROR;
   }
-  
+
   return STATE_RESPONSE;
 }
 
@@ -280,12 +276,14 @@ XmppReturnStatus
 XmppClient::Disconnect() {
   if (d_->socket_.get() == NULL)
     return XMPP_RETURN_BADSTATE;
+  Abort();
   d_->engine_->Disconnect();
+  d_->socket_.reset(NULL);
   return XMPP_RETURN_OK;
 }
 
-XmppClient::XmppClient(Task * parent) 
-    : Task(parent), 
+XmppClient::XmppClient(TaskParent * parent)
+    : XmppTaskParentInterface(parent),
       delivering_signal_(false),
       valid_(false) {
   d_.reset(new Private(this));
@@ -297,7 +295,7 @@ XmppClient::~XmppClient() {
 }
 
 const Jid &
-XmppClient::jid() {
+XmppClient::jid() const {
   return d_->engine_->FullJid();
 }
 
@@ -338,7 +336,7 @@ XmppClient::Private::OnSocketRead() {
   size_t bytes_read;
   for (;;) {
     if (!socket_->Read(bytes, sizeof(bytes), &bytes_read)) {
-      LOG(LS_WARNING) << "XmppClient::Private::OnSocketRead() socket_->Read() failed";
+      // TODO: deal with error information
       return;
     }
 
@@ -355,7 +353,7 @@ XmppClient::Private::OnSocketRead() {
 
 void
 XmppClient::Private::OnSocketClosed() {
-  int code = socket_->GetError();  
+  int code = socket_->GetError();
   engine_->ConnectionClosed(code);
 }
 

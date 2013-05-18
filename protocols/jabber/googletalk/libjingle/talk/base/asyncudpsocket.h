@@ -25,10 +25,11 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TALK_BASE_ASYNCUDPSOCKET_H__
-#define TALK_BASE_ASYNCUDPSOCKET_H__
+#ifndef TALK_BASE_ASYNCUDPSOCKET_H_
+#define TALK_BASE_ASYNCUDPSOCKET_H_
 
 #include "talk/base/asyncpacketsocket.h"
+#include "talk/base/scoped_ptr.h"
 #include "talk/base/socketfactory.h"
 
 namespace talk_base {
@@ -36,24 +37,40 @@ namespace talk_base {
 // Provides the ability to receive packets asynchronously.  Sends are not
 // buffered since it is acceptable to drop packets under high load.
 class AsyncUDPSocket : public AsyncPacketSocket {
-public:
-  AsyncUDPSocket(AsyncSocket* socket);
+ public:
+  // Binds |socket| and creates AsyncUDPSocket for it. Takes ownership
+  // of |socket|. Returns NULL if bind() fails (|socket| is destroyed
+  // in that case).
+  static AsyncUDPSocket* Create(AsyncSocket* socket,
+                                const SocketAddress& bind_address);
+  // Creates a new socket for sending asynchronous UDP packets using an
+  // asynchronous socket from the given factory.
+  static AsyncUDPSocket* Create(SocketFactory* factory,
+                                const SocketAddress& bind_address);
+  explicit AsyncUDPSocket(AsyncSocket* socket);
   virtual ~AsyncUDPSocket();
 
-private:
-  char* buf_;
-  size_t size_;
+  virtual SocketAddress GetLocalAddress() const;
+  virtual SocketAddress GetRemoteAddress() const;
+  virtual int Send(const void *pv, size_t cb);
+  virtual int SendTo(const void *pv, size_t cb, const SocketAddress& addr);
+  virtual int Close();
 
+  virtual State GetState() const;
+  virtual int GetOption(Socket::Option opt, int* value);
+  virtual int SetOption(Socket::Option opt, int value);
+  virtual int GetError() const;
+  virtual void SetError(int error);
+
+ private:
   // Called when the underlying socket is ready to be read from.
   void OnReadEvent(AsyncSocket* socket);
+
+  scoped_ptr<AsyncSocket> socket_;
+  char* buf_;
+  size_t size_;
 };
 
-// Creates a new socket for sending asynchronous UDP packets using an
-// asynchronous socket from the given factory.
-inline AsyncUDPSocket* CreateAsyncUDPSocket(SocketFactory* factory) {
-  return new AsyncUDPSocket(factory->CreateAsyncSocket(SOCK_DGRAM));
-}
+}  // namespace talk_base
 
-} // namespace talk_base
-
-#endif // TALK_BASE_ASYNCUDPSOCKET_H__
+#endif  // TALK_BASE_ASYNCUDPSOCKET_H_

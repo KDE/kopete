@@ -1,103 +1,622 @@
-#include <iostream>
+/*
+ * libjingle
+ * Copyright 2004 Google Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include <cstring>
 #include <sstream>
 #include <deque>
 #include <map>
-#include <string.h>
-#include <stdio.h>
 
+#include "talk/base/basicpacketsocketfactory.h"
 #include "talk/base/common.h"
-#include "talk/base/logging.h"
+#include "talk/base/gunit.h"
+#include "talk/base/helpers.h"
 #include "talk/base/host.h"
+#include "talk/base/logging.h"
 #include "talk/base/natserver.h"
 #include "talk/base/natsocketfactory.h"
-#include "talk/base/helpers.h"
-#include "talk/xmpp/constants.h"
+#include "talk/base/stringencode.h"
 #include "talk/p2p/base/constants.h"
-#include "talk/p2p/base/sessionmanager.h"
-#include "talk/p2p/base/sessionclient.h"
-#include "talk/p2p/base/session.h"
+#include "talk/p2p/base/parsing.h"
 #include "talk/p2p/base/portallocator.h"
-#include "talk/p2p/base/transportchannel.h"
-#include "talk/p2p/base/udpport.h"
-#include "talk/p2p/base/stunport.h"
-#include "talk/p2p/base/relayport.h"
 #include "talk/p2p/base/p2ptransport.h"
-#include "talk/p2p/base/rawtransport.h"
-#include "talk/p2p/base/stunserver.h"
+#include "talk/p2p/base/relayport.h"
 #include "talk/p2p/base/relayserver.h"
+#include "talk/p2p/base/session.h"
+#include "talk/p2p/base/sessionclient.h"
+#include "talk/p2p/base/sessionmanager.h"
+#include "talk/p2p/base/stunport.h"
+#include "talk/p2p/base/stunserver.h"
+#include "talk/p2p/base/transportchannel.h"
+#include "talk/p2p/base/transportchannelproxy.h"
+#include "talk/p2p/base/udpport.h"
+#include "talk/xmpp/constants.h"
 
-using namespace cricket;
-using namespace buzz;
+using cricket::SignalingProtocol;
+using cricket::PROTOCOL_HYBRID;
+using cricket::PROTOCOL_JINGLE;
+using cricket::PROTOCOL_GINGLE;
 
-const std::string kSessionType = "http://oink.splat/session";
+static const std::string kInitiator = "init@init.com";
+static const std::string kResponder = "resp@resp.com";
+// Expected from test random number generator.
+static const std::string kSessionId = "2154761789";
+// TODO: When we need to test more than one transport type,
+// allow this to be injected like the content types are.
+static const std::string kTransportType = "http://www.google.com/transport/p2p";
 
-const talk_base::SocketAddress kStunServerAddress("127.0.0.1", 7000);
-const talk_base::SocketAddress kStunServerAddress2("127.0.0.1", 7001);
+// Controls how long we wait for a session to send messages that we
+// expect, in milliseconds.  We put it high to avoid flaky tests.
+static const int kEventTimeout = 5000;
 
-const talk_base::SocketAddress kRelayServerIntAddress("127.0.0.1", 7002);
-const talk_base::SocketAddress kRelayServerExtAddress("127.0.0.1", 7003);
+static const int kNumPorts = 2;
+static const int kPort0 = 28653;
+static const int kPortStep = 5;
 
-const int kNumPorts = 2;
+static const std::string kNotifyNick1 = "derekcheng_google.com^59422C27";
+static const std::string kNotifyNick2 = "someoneelses_google.com^7abd6a7a20";
+static const uint32 kNotifyAudioSsrc1 = 2625839801U;
+static const uint32 kNotifyAudioSsrc2 = 2529430427U;
+static const uint32 kNotifyVideoSsrc1 = 3;
+static const uint32 kNotifyVideoSsrc2 = 2;
 
-int gPort = 28653;
-int GetNextPort() {
-  int p = gPort;
-  gPort += 5;
-  return p;
+static const std::string kViewRequestNick = "param_google.com^16A3CDBE";
+static const uint32 kViewRequestSsrc = 4;
+static const int kViewRequestWidth = 320;
+static const int kViewRequestHeight = 200;
+static const int kViewRequestFrameRate = 15;
+
+int GetPort(int port_index) {
+  return kPort0 + (port_index * kPortStep);
 }
 
-int gID = 0;
-std::string GetNextID() {
-  std::ostringstream ost;
-  ost << gID++;
-  return ost.str();
+std::string GetPortString(int port_index) {
+  return talk_base::ToString(GetPort(port_index));
 }
 
-class TestPortAllocatorSession : public PortAllocatorSession {
-public:
-  TestPortAllocatorSession(talk_base::Thread* worker_thread, talk_base::SocketFactory* factory,
-                           const std::string& name, const std::string& session_type)
-      : PortAllocatorSession(0), worker_thread_(worker_thread),
-        factory_(factory), name_(name), ports_(kNumPorts),
-        address_("127.0.0.1", 0), network_("network", address_.ip()),
-        running_(false) {
+// Only works for port_index < 10, which is fine for our purposes.
+std::string GetUsername(int port_index) {
+  return "username" + std::string(8, talk_base::ToString(port_index)[0]);
+}
+
+// Only works for port_index < 10, which is fine for our purposes.
+std::string GetPassword(int port_index) {
+  return "password" + std::string(8, talk_base::ToString(port_index)[0]);
+}
+
+std::string IqAck(const std::string& id,
+                  const std::string& from,
+                  const std::string& to) {
+  return "<cli:iq"
+      " to=\"" + to + "\""
+      " id=\"" + id + "\""
+      " type=\"result\""
+      " from=\"" + from + "\""
+      " xmlns:cli=\"jabber:client\""
+      "/>";
+}
+
+std::string IqSet(const std::string& id,
+                  const std::string& from,
+                  const std::string& to,
+                  const std::string& content) {
+  return "<cli:iq"
+      " to=\"" + to + "\""
+      " type=\"set\""
+      " from=\"" + from + "\""
+      " id=\"" + id + "\""
+      " xmlns:cli=\"jabber:client\""
+      ">"
+      + content +
+      "</cli:iq>";
+}
+
+std::string IqError(const std::string& id,
+                    const std::string& from,
+                    const std::string& to,
+                    const std::string& content) {
+  return "<cli:error"
+      " to=\"" + to + "\""
+      " type=\"error\""
+      " from=\"" + from + "\""
+      " id=\"" + id + "\""
+      " xmlns:cli=\"jabber:client\""
+      ">"
+      + content +
+      "</cli:error>";
+}
+
+std::string GingleSessionXml(const std::string& type,
+                             const std::string& content) {
+  return "<session"
+      " xmlns=\"http://www.google.com/session\""
+      " type=\"" + type + "\""
+      " id=\"" + kSessionId + "\""
+      " initiator=\"" + kInitiator + "\""
+      ">"
+      + content +
+      "</session>";
+}
+
+std::string GingleDescriptionXml(const std::string& content_type) {
+  return "<description"
+      " xmlns=\"" + content_type + "\""
+      "/>";
+}
+
+std::string P2pCandidateXml(const std::string& name, int port_index) {
+  return "<candidate"
+      " name=\"" + name + "\""
+      " address=\"127.0.0.1\""
+      " port=\"" + GetPortString(port_index) + "\""
+      " preference=\"1\""
+      " username=\"" + GetUsername(port_index) + "\""
+      " protocol=\"udp\""
+      " generation=\"0\""
+      " password=\"" + GetPassword(port_index) + "\""
+      " type=\"local\""
+      " network=\"network\""
+      "/>";
+}
+
+std::string JingleActionXml(const std::string& action,
+                            const std::string& content) {
+  return "<jingle"
+      " xmlns=\"urn:xmpp:jingle:1\""
+      " action=\"" + action + "\""
+      " sid=\"" + kSessionId + "\""
+      ">"
+      + content +
+      "</jingle>";
+}
+
+std::string JingleInitiateActionXml(const std::string& content) {
+  return "<jingle"
+      " xmlns=\"urn:xmpp:jingle:1\""
+      " action=\"session-initiate\""
+      " sid=\"" + kSessionId + "\""
+      " initiator=\"" + kInitiator + "\""
+      ">"
+      + content +
+      "</jingle>";
+}
+
+std::string JingleGroupInfoXml(const std::string& content_name_a,
+                               const std::string& content_name_b) {
+  std::string group_info = "<jin:group"
+      " type=\"BUNDLE\""
+      " xmlns:jin=\"google:jingle\""
+      ">";
+  if (!content_name_a.empty())
+    group_info += "<content name=\"" + content_name_a + "\""
+    "/>";
+  if (!content_name_b.empty())
+    group_info += "<content name=\"" + content_name_b + "\""
+    "/>";
+  group_info += "</jin:group>";
+  return group_info;
+}
+
+
+std::string JingleEmptyContentXml(const std::string& content_name,
+                                  const std::string& content_type,
+                                  const std::string& transport_type) {
+  return "<content"
+      " name=\"" + content_name + "\""
+      " creator=\"initiator\""
+      ">"
+      "<description"
+      " xmlns=\"" + content_type + "\""
+      "/>"
+      "<transport"
+      " xmlns=\"" + transport_type + "\""
+      "/>"
+      "</content>";
+}
+
+std::string JingleContentXml(const std::string& content_name,
+                             const std::string& content_type,
+                             const std::string& transport_type,
+                             const std::string& transport_main) {
+  std::string transport = transport_type.empty() ? "" :
+      "<transport"
+      " xmlns=\"" + transport_type + "\""
+      ">"
+      + transport_main +
+      "</transport>";
+
+  return"<content"
+      " name=\"" + content_name + "\""
+      " creator=\"initiator\""
+      ">"
+      "<description"
+      " xmlns=\"" + content_type + "\""
+      "/>"
+      + transport +
+      "</content>";
+}
+
+std::string JingleTransportContentXml(const std::string& content_name,
+                                      const std::string& transport_type,
+                                      const std::string& content) {
+  return "<content"
+      " name=\"" + content_name + "\""
+      " creator=\"initiator\""
+      ">"
+      "<transport"
+      " xmlns=\"" + transport_type + "\""
+      ">"
+      + content +
+      "</transport>"
+      "</content>";
+}
+
+std::string GingleInitiateXml(const std::string& content_type) {
+  return GingleSessionXml(
+      "initiate",
+      GingleDescriptionXml(content_type));
+}
+
+std::string JingleInitiateXml(const std::string& content_name_a,
+                              const std::string& content_type_a,
+                              const std::string& content_name_b,
+                              const std::string& content_type_b,
+                              bool bundle = false) {
+  std::string content_xml;
+  if (content_name_b.empty()) {
+    content_xml = JingleEmptyContentXml(
+        content_name_a, content_type_a, kTransportType);
+  } else {
+    content_xml = JingleEmptyContentXml(
+           content_name_a, content_type_a, kTransportType) +
+       JingleEmptyContentXml(
+           content_name_b, content_type_b, kTransportType);
+    if (bundle) {
+      content_xml += JingleGroupInfoXml(content_name_a, content_name_b);
+    }
+  }
+  return JingleInitiateActionXml(content_xml);
+}
+
+std::string GingleAcceptXml(const std::string& content_type) {
+  return GingleSessionXml(
+      "accept",
+      GingleDescriptionXml(content_type));
+}
+
+std::string JingleAcceptXml(const std::string& content_name_a,
+                            const std::string& content_type_a,
+                            const std::string& content_name_b,
+                            const std::string& content_type_b,
+                            bool bundle = false) {
+  std::string content_xml;
+  if (content_name_b.empty()) {
+    content_xml = JingleEmptyContentXml(
+        content_name_a, content_type_a, kTransportType);
+  } else {
+    content_xml = JingleEmptyContentXml(
+        content_name_a, content_type_a, kTransportType) +
+        JingleEmptyContentXml(
+            content_name_b, content_type_b, kTransportType);
+  }
+  if (bundle) {
+    content_xml += JingleGroupInfoXml(content_name_a, content_name_b);
+  }
+
+  return JingleActionXml("session-accept", content_xml);
+}
+
+std::string Gingle2CandidatesXml(const std::string& channel_name,
+                                 int port_index0,
+                                 int port_index1) {
+  return GingleSessionXml(
+      "candidates",
+      P2pCandidateXml(channel_name, port_index0) +
+      P2pCandidateXml(channel_name, port_index1));
+}
+
+std::string Gingle4CandidatesXml(const std::string& channel_name_a,
+                                 int port_index0,
+                                 int port_index1,
+                                 const std::string& channel_name_b,
+                                 int port_index2,
+                                 int port_index3) {
+  return GingleSessionXml(
+      "candidates",
+      P2pCandidateXml(channel_name_a, port_index0) +
+      P2pCandidateXml(channel_name_a, port_index1) +
+      P2pCandidateXml(channel_name_b, port_index2) +
+      P2pCandidateXml(channel_name_b, port_index3));
+}
+
+std::string Jingle2TransportInfoXml(const std::string& content_name,
+                                    const std::string& channel_name,
+                                    int port_index0,
+                                    int port_index1) {
+  return JingleActionXml(
+      "transport-info",
+      JingleTransportContentXml(
+          content_name, kTransportType,
+          P2pCandidateXml(channel_name, port_index0) +
+          P2pCandidateXml(channel_name, port_index1)));
+}
+
+std::string Jingle4TransportInfoXml(const std::string& content_name,
+                                    const std::string& channel_name_a,
+                                    int port_index0,
+                                    int port_index1,
+                                    const std::string& channel_name_b,
+                                    int port_index2,
+                                    int port_index3) {
+  return JingleActionXml(
+      "transport-info",
+      JingleTransportContentXml(
+          content_name, kTransportType,
+          P2pCandidateXml(channel_name_a, port_index0) +
+          P2pCandidateXml(channel_name_a, port_index1) +
+          P2pCandidateXml(channel_name_b, port_index2) +
+          P2pCandidateXml(channel_name_b, port_index3)));
+}
+
+std::string JingleDescriptionInfoXml(const std::string& content_name,
+                                     const std::string& content_type) {
+  return JingleActionXml(
+      "description-info",
+      JingleContentXml(content_name, content_type, "", ""));
+}
+
+std::string GingleRejectXml(const std::string& reason) {
+  return GingleSessionXml(
+      "reject",
+      "<" + reason + "/>");
+}
+
+std::string JingleTerminateXml(const std::string& reason) {
+    return JingleActionXml(
+        "session-terminate",
+        "<reason><" + reason + "/></reason>");
+}
+
+std::string GingleTerminateXml(const std::string& reason) {
+  return GingleSessionXml(
+      "terminate",
+      "<" + reason + "/>");
+}
+
+std::string GingleRedirectXml(const std::string& intitiate,
+                              const std::string& target) {
+  return intitiate +
+    "<error code=\"302\" type=\"modify\">"
+    "<redirect xmlns=\"http://www.google.com/session\">"
+    "xmpp:" + target +
+    "</redirect>"
+    "</error>";
+}
+
+std::string JingleRedirectXml(const std::string& intitiate,
+                              const std::string& target) {
+  return intitiate +
+    "<error code=\"302\" type=\"modify\">"
+    "<redirect xmlns=\"urn:ietf:params:xml:ns:xmpp-stanzas\">"
+    "xmpp:" + target +
+    "</redirect>"
+    "</error>";
+}
+
+std::string InitiateXml(SignalingProtocol protocol,
+                        const std::string& gingle_content_type,
+                        const std::string& content_name_a,
+                        const std::string& content_type_a,
+                        const std::string& content_name_b,
+                        const std::string& content_type_b,
+                        bool bundle = false) {
+  switch (protocol) {
+    case PROTOCOL_JINGLE:
+      return JingleInitiateXml(content_name_a, content_type_a,
+                               content_name_b, content_type_b,
+                               bundle);
+    case PROTOCOL_GINGLE:
+      return GingleInitiateXml(gingle_content_type);
+    case PROTOCOL_HYBRID:
+      return JingleInitiateXml(content_name_a, content_type_a,
+                               content_name_b, content_type_b) +
+          GingleInitiateXml(gingle_content_type);
+  }
+  return "";
+}
+
+std::string InitiateXml(SignalingProtocol protocol,
+                        const std::string& content_name,
+                        const std::string& content_type) {
+  return InitiateXml(protocol,
+                     content_type,
+                     content_name, content_type,
+                     "", "");
+}
+
+std::string AcceptXml(SignalingProtocol protocol,
+                      const std::string& gingle_content_type,
+                      const std::string& content_name_a,
+                      const std::string& content_type_a,
+                      const std::string& content_name_b,
+                      const std::string& content_type_b,
+                      bool bundle = false) {
+  switch (protocol) {
+    case PROTOCOL_JINGLE:
+      return JingleAcceptXml(content_name_a, content_type_a,
+                             content_name_b, content_type_b, bundle);
+    case PROTOCOL_GINGLE:
+      return GingleAcceptXml(gingle_content_type);
+    case PROTOCOL_HYBRID:
+      return
+          JingleAcceptXml(content_name_a, content_type_a,
+                          content_name_b, content_type_b) +
+          GingleAcceptXml(gingle_content_type);
+  }
+  return "";
+}
+
+
+std::string AcceptXml(SignalingProtocol protocol,
+                      const std::string& content_name,
+                      const std::string& content_type,
+                      bool bundle = false) {
+  return AcceptXml(protocol,
+                   content_type,
+                   content_name, content_type,
+                   "", "");
+}
+
+std::string TransportInfo2Xml(SignalingProtocol protocol,
+                              const std::string& content_name,
+                              const std::string& channel_name,
+                              int port_index0,
+                              int port_index1) {
+  switch (protocol) {
+    case PROTOCOL_JINGLE:
+      return Jingle2TransportInfoXml(
+          content_name,
+          channel_name, port_index0, port_index1);
+    case PROTOCOL_GINGLE:
+      return Gingle2CandidatesXml(
+          channel_name, port_index0, port_index1);
+    case PROTOCOL_HYBRID:
+      return
+          Jingle2TransportInfoXml(
+              content_name,
+              channel_name, port_index0, port_index1) +
+          Gingle2CandidatesXml(
+              channel_name, port_index0, port_index1);
+  }
+  return "";
+}
+
+std::string TransportInfo4Xml(SignalingProtocol protocol,
+                              const std::string& content_name,
+                              const std::string& channel_name_a,
+                              int port_index0,
+                              int port_index1,
+                              const std::string& channel_name_b,
+                              int port_index2,
+                              int port_index3) {
+  switch (protocol) {
+    case PROTOCOL_JINGLE:
+      return Jingle4TransportInfoXml(
+          content_name,
+          channel_name_a, port_index0, port_index1,
+          channel_name_b, port_index2, port_index3);
+    case PROTOCOL_GINGLE:
+      return Gingle4CandidatesXml(
+          channel_name_a, port_index0, port_index1,
+          channel_name_b, port_index2, port_index3);
+    case PROTOCOL_HYBRID:
+      return
+          Jingle4TransportInfoXml(
+              content_name,
+              channel_name_a, port_index0, port_index1,
+              channel_name_b, port_index2, port_index3) +
+          Gingle4CandidatesXml(
+              channel_name_a, port_index0, port_index1,
+              channel_name_b, port_index2, port_index3);
+  }
+  return "";
+}
+
+std::string RejectXml(SignalingProtocol protocol,
+                      const std::string& reason) {
+  switch (protocol) {
+    case PROTOCOL_JINGLE:
+      return JingleTerminateXml(reason);
+    case PROTOCOL_GINGLE:
+      return GingleRejectXml(reason);
+    case PROTOCOL_HYBRID:
+      return JingleTerminateXml(reason) +
+          GingleRejectXml(reason);
+  }
+  return "";
+}
+
+std::string TerminateXml(SignalingProtocol protocol,
+                         const std::string& reason) {
+  switch (protocol) {
+    case PROTOCOL_JINGLE:
+      return JingleTerminateXml(reason);
+    case PROTOCOL_GINGLE:
+      return GingleTerminateXml(reason);
+    case PROTOCOL_HYBRID:
+      return JingleTerminateXml(reason) +
+          GingleTerminateXml(reason);
+  }
+  return "";
+}
+
+std::string RedirectXml(SignalingProtocol protocol,
+                        const std::string& initiate,
+                        const std::string& target) {
+  switch (protocol) {
+    case PROTOCOL_JINGLE:
+      return JingleRedirectXml(initiate, target);
+    case PROTOCOL_GINGLE:
+      return GingleRedirectXml(initiate, target);
+  }
+  return "";
+}
+
+// TODO: Break out and join with fakeportallocator.h
+class TestPortAllocatorSession : public cricket::PortAllocatorSession {
+ public:
+  TestPortAllocatorSession(const std::string& name,
+                           const std::string& session_type,
+                           const int port_offset)
+      : PortAllocatorSession(name, session_type, 0),
+        port_offset_(port_offset),
+        ports_(kNumPorts),
+        address_("127.0.0.1", 0),
+        network_("network", "unittest",
+                 talk_base::IPAddress(INADDR_LOOPBACK), 8),
+        socket_factory_(talk_base::Thread::Current()),
+        running_(false),
+        port_(28653) {
+    network_.AddIP(address_.ipaddr());
   }
 
   ~TestPortAllocatorSession() {
-    for (int i = 0; i < ports_.size(); i++)
+    for (size_t i = 0; i < ports_.size(); i++)
       delete ports_[i];
   }
 
   virtual void GetInitialPorts() {
-    // These are the flags set by the raw transport.
-    uint32 raw_flags = PORTALLOCATOR_DISABLE_UDP | PORTALLOCATOR_DISABLE_TCP;
-
-    // If the client doesn't care, just give them two UDP ports.
-    if (flags() == 0) {
-      for (int i = 0; i < kNumPorts; i++) {
-        ports_[i] = new UDPPort(worker_thread_, factory_, &network_,
-                                GetAddress());
-        AddPort(ports_[i]);
-      }
-
-    // If the client requested just stun and relay, we have to oblidge.
-    } else if (flags() == raw_flags) {
-      StunPort* sport = new StunPort(worker_thread_, factory_, &network_,
-                                     GetAddress(), kStunServerAddress);
-      sport->set_server_addr2(kStunServerAddress2);
-      ports_[0] = sport;
-      AddPort(sport);
-
-      std::string username = CreateRandomString(16);
-      std::string password = CreateRandomString(16);
-      RelayPort* rport = new RelayPort(worker_thread_, factory_, &network_,
-                                       GetAddress(), username, password, "");
-      rport->AddServerAddress(
-          ProtocolAddress(kRelayServerIntAddress, PROTO_UDP));
-      ports_[1] = rport;
-      AddPort(rport);
-    } else {
-      ASSERT(false);
+    for (int i = 0; i < kNumPorts; i++) {
+      int index = port_offset_ + i;
+      ports_[i] = cricket::UDPPort::Create(
+          talk_base::Thread::Current(), &socket_factory_,
+          &network_, address_.ipaddr(), GetPort(index), GetPort(index));
+      ports_[i]->set_username_fragment(GetUsername(index));
+      ports_[i]->set_password(GetPassword(index));
+      AddPort(ports_[i]);
     }
   }
 
@@ -105,13 +624,7 @@ public:
   virtual void StopGetAllPorts() { running_ = false; }
   virtual bool IsGettingAllPorts() { return running_; }
 
-  talk_base::SocketAddress GetAddress() const {
-    talk_base::SocketAddress addr(address_);
-    addr.SetPort(GetNextPort());
-    return addr;
-  }
-
-  void AddPort(Port* port) {
+  void AddPort(cricket::Port* port) {
     port->set_name(name_);
     port->set_preference(1.0);
     port->set_generation(0);
@@ -123,919 +636,1601 @@ public:
     SignalPortReady(this, port);
   }
 
-  void OnPortDestroyed(Port* port) {
-    for (int i = 0; i < ports_.size(); i++) {
+  void OnPortDestroyed(cricket::Port* port) {
+    for (size_t i = 0; i < ports_.size(); i++) {
       if (ports_[i] == port)
         ports_[i] = NULL;
     }
   }
 
-  void OnAddressReady(Port* port) {
+  void OnAddressReady(cricket::Port* port) {
     SignalCandidatesReady(this, port->candidates());
   }
 
-private:
-  talk_base::Thread* worker_thread_;
-  talk_base::SocketFactory* factory_;
-  std::string name_;
-  std::vector<Port*> ports_;
+ private:
+  int port_offset_;
+  std::vector<cricket::Port*> ports_;
   talk_base::SocketAddress address_;
   talk_base::Network network_;
+  talk_base::BasicPacketSocketFactory socket_factory_;
   bool running_;
+  int port_;
 };
 
-class TestPortAllocator : public PortAllocator {
-public:
-  TestPortAllocator(talk_base::Thread* worker_thread, talk_base::SocketFactory* factory)
-    : worker_thread_(worker_thread), factory_(factory) {
-    if (factory_ == NULL)
-      factory_ = worker_thread_->socketserver();
+class TestPortAllocator : public cricket::PortAllocator {
+ public:
+  TestPortAllocator() : port_offset_(0) {}
+
+  virtual cricket::PortAllocatorSession*
+  CreateSession(const std::string &name,
+                const std::string &content_type) {
+    port_offset_ += 2;
+    return new TestPortAllocatorSession(name, content_type, port_offset_ - 2);
   }
 
-  virtual PortAllocatorSession *CreateSession(const std::string &name, const std::string &session_type) {
-    return new TestPortAllocatorSession(worker_thread_, factory_, name, session_type);
-  }
-
-private:
-  talk_base::Thread* worker_thread_;
-  talk_base::SocketFactory* factory_;
+  int port_offset_;
 };
 
-struct SessionManagerHandler : sigslot::has_slots<> {
-  SessionManagerHandler(SessionManager* m, const std::string& u)
-      : manager(m), username(u), create_count(0), destroy_count(0) {
-    manager->SignalSessionCreate.connect(
-        this, &SessionManagerHandler::OnSessionCreate);
-    manager->SignalSessionDestroy.connect(
-        this, &SessionManagerHandler::OnSessionDestroy);
-    manager->SignalOutgoingMessage.connect(
-        this, &SessionManagerHandler::OnOutgoingMessage);
-    manager->SignalRequestSignaling.connect(
-        this, &SessionManagerHandler::OnRequestSignaling);
+class TestContentDescription : public cricket::ContentDescription {
+ public:
+  explicit TestContentDescription(const std::string& gingle_content_type,
+                                  const std::string& content_type)
+      : gingle_content_type(gingle_content_type),
+        content_type(content_type) {
+  }
+  virtual ContentDescription* Copy() const {
+    return new TestContentDescription(*this);
   }
 
-  void OnSessionCreate(Session *session, bool initiate) {
-    create_count += 1;
-    last_id = session->id();
+  std::string gingle_content_type;
+  std::string content_type;
+};
+
+cricket::SessionDescription* NewTestSessionDescription(
+    const std::string gingle_content_type,
+    const std::string& content_name_a, const std::string& content_type_a,
+    const std::string& content_name_b, const std::string& content_type_b) {
+
+  cricket::SessionDescription* offer = new cricket::SessionDescription();
+  offer->AddContent(content_name_a, content_type_a,
+                    new TestContentDescription(gingle_content_type,
+                                               content_type_a));
+  if (content_name_a != content_name_b) {
+    offer->AddContent(content_name_b, content_type_b,
+                      new TestContentDescription(gingle_content_type,
+                                                 content_type_b));
+  }
+  return offer;
+}
+
+cricket::SessionDescription* NewTestSessionDescription(
+    const std::string& content_name, const std::string& content_type) {
+
+  cricket::SessionDescription* offer = new cricket::SessionDescription();
+  offer->AddContent(content_name, content_type,
+                    new TestContentDescription(content_type,
+                                               content_type));
+  return offer;
+}
+
+struct TestSessionClient: public cricket::SessionClient,
+                          public sigslot::has_slots<> {
+ public:
+  TestSessionClient() {
   }
 
-  void OnSessionDestroy(Session *session) {
-    destroy_count += 1;
-    last_id = session->id();
+  ~TestSessionClient() {
   }
 
-  void OnOutgoingMessage(const XmlElement* stanza) {
-    XmlElement* elem = new XmlElement(*stanza);
-    ASSERT(elem->Name() == QN_IQ);
-    ASSERT(elem->HasAttr(QN_TO));
-    ASSERT(!elem->HasAttr(QN_FROM));
-    ASSERT(elem->HasAttr(QN_TYPE));
-    ASSERT((elem->Attr(QN_TYPE) == "set") ||
-           (elem->Attr(QN_TYPE) == "result") ||
-           (elem->Attr(QN_TYPE) == "error"));
-
-    // Add in the appropriate "from".
-    elem->SetAttr(QN_FROM, username);
-
-    // Add in the appropriate IQ ID.
-    if (elem->Attr(QN_TYPE) == "set") {
-      ASSERT(!elem->HasAttr(QN_ID));
-      elem->SetAttr(QN_ID, GetNextID());
+  virtual bool ParseContent(SignalingProtocol protocol,
+                            const buzz::XmlElement* elem,
+                            const cricket::ContentDescription** content,
+                            cricket::ParseError* error) {
+    std::string content_type;
+    std::string gingle_content_type;
+    if (protocol == PROTOCOL_GINGLE) {
+      gingle_content_type = elem->Name().Namespace();
+    } else {
+      content_type = elem->Name().Namespace();
     }
 
-    stanzas_.push_back(elem);
+    *content = new TestContentDescription(gingle_content_type, content_type);
+    return true;
   }
 
-  void OnRequestSignaling() {
-    manager->OnSignalingReady();
+  virtual bool WriteContent(SignalingProtocol protocol,
+                            const cricket::ContentDescription* untyped_content,
+                            buzz::XmlElement** elem,
+                            cricket::WriteError* error) {
+    const TestContentDescription* content =
+        static_cast<const TestContentDescription*>(untyped_content);
+    std::string content_type = (protocol == PROTOCOL_GINGLE ?
+                                content->gingle_content_type :
+                                content->content_type);
+     *elem = new buzz::XmlElement(
+        buzz::QName(content_type, "description"), true);
+    return true;
   }
 
-
-  XmlElement* CheckNextStanza(const std::string& expected) {
-    // Get the next stanza, which should exist.
-    ASSERT(stanzas_.size() > 0);
-    XmlElement* stanza = stanzas_.front();
-    stanzas_.pop_front();
-
-    // Make sure the stanza is correct.
-    std::string actual = stanza->Str();
-    if (actual != expected) {
-      LOG(LERROR) << "Incorrect stanza: expected=\"" << expected
-                  << "\" actual=\"" << actual << "\"";
-      ASSERT(actual == expected);
-    }
-
-    return stanza;
+  void OnSessionCreate(cricket::Session* session, bool initiate) {
   }
 
-  void CheckNoStanza() {
-    ASSERT(stanzas_.size() == 0);
+  void OnSessionDestroy(cricket::Session* session) {
   }
-
-  void PrintNextStanza() {
-    ASSERT(stanzas_.size() > 0);
-    printf("Stanza: %s\n", stanzas_.front()->Str().c_str());
-  }
-
-  SessionManager* manager;
-  std::string username;
-  SessionID last_id;
-  uint32 create_count;
-  uint32 destroy_count;
-  std::deque<XmlElement*> stanzas_;
-};
-
-struct SessionHandler : sigslot::has_slots<> {
-  SessionHandler(Session* s) : session(s) {
-    session->SignalState.connect(this, &SessionHandler::OnState);
-    session->SignalError.connect(this, &SessionHandler::OnError);
-  }
-
-  void PrepareTransport() {
-    Transport* transport = session->GetTransport(kNsP2pTransport);
-    if (transport != NULL)
-      transport->set_allow_local_ips(true);
-  }
-
-  void OnState(Session* session, Session::State state) {
-    ASSERT(session == this->session);
-    last_state = state;
-  }
-
-  void OnError(Session* session, Session::Error error) {
-    ASSERT(session == this->session);
-    ASSERT(false); // errors are bad!
-  }
-
-  Session* session;
-  Session::State last_state;
-};
-
-struct MySessionClient: public SessionClient, public sigslot::has_slots<> {
-  MySessionClient() : create_count(0), a(NULL), b(NULL) { }
-
-  void AddManager(SessionManager* manager) {
-    manager->AddClient(kSessionType, this);
-    ASSERT(manager->GetClient(kSessionType) == this);
-    manager->SignalSessionCreate.connect(
-        this, &MySessionClient::OnSessionCreate);
-  }
-
-  const SessionDescription* CreateSessionDescription(
-      const XmlElement* element) {
-    return new SessionDescription();
-  }
-
-  XmlElement* TranslateSessionDescription(
-      const SessionDescription* description) {
-    return new XmlElement(QName(kSessionType, "description"));
-  }
-
-  void OnSessionCreate(Session *session, bool initiate) {
-    create_count += 1;
-    a = session->CreateChannel("a");
-    b = session->CreateChannel("b");
-
-    if (transport_name.size() > 0)
-      session->SetPotentialTransports(&transport_name, 1);
-  }
-
-  void OnSessionDestroy(Session *session)
-  {
-  }
-  
-  void SetTransports(bool p2p, bool raw) {
-    if (p2p && raw)
-      return;  // this is the default
-
-    if (p2p) {
-      transport_name = kNsP2pTransport;
-    }
-  }
-
-  int create_count;
-  TransportChannel* a;
-  TransportChannel* b;
-  std::string transport_name;
 };
 
 struct ChannelHandler : sigslot::has_slots<> {
-  ChannelHandler(TransportChannel* p)
+  explicit ChannelHandler(cricket::TransportChannel* p, const std::string& name)
     : channel(p), last_readable(false), last_writable(false), data_count(0),
-      last_size(0) {
+      last_size(0), name(name) {
     p->SignalReadableState.connect(this, &ChannelHandler::OnReadableState);
     p->SignalWritableState.connect(this, &ChannelHandler::OnWritableState);
     p->SignalReadPacket.connect(this, &ChannelHandler::OnReadPacket);
   }
 
-  void OnReadableState(TransportChannel* p) {
-    ASSERT(p == channel);
+  bool writable() const {
+    return last_writable && channel->writable();
+  }
+
+  bool readable() const {
+    return last_readable && channel->readable();
+  }
+
+  void OnReadableState(cricket::TransportChannel* p) {
+    EXPECT_EQ(channel, p);
     last_readable = channel->readable();
   }
 
-  void OnWritableState(TransportChannel* p) {
-    ASSERT(p == channel);
+  void OnWritableState(cricket::TransportChannel* p) {
+    EXPECT_EQ(channel, p);
     last_writable = channel->writable();
   }
 
-  void OnReadPacket(TransportChannel* p, const char* buf, size_t size) {
-    ASSERT(p == channel);
-    ASSERT(size <= sizeof(last_data));
+  void OnReadPacket(cricket::TransportChannel* p, const char* buf,
+                    size_t size) {
+    if (memcmp(buf, name.c_str(), name.size()) != 0)
+      return;  // drop packet if packet doesn't belong to this channel. This
+               // can happen when transport channels are muxed together.
+    buf += name.size();  // Remove channel name from the message.
+    size -= name.size();  // Decrement size by channel name string size.
+    EXPECT_EQ(channel, p);
+    EXPECT_LE(size, sizeof(last_data));
     data_count += 1;
     last_size = size;
-    memcpy(last_data, buf, size);
+    std::memcpy(last_data, buf, size);
   }
 
   void Send(const char* data, size_t size) {
-    int result = channel->SendPacket(data, size);
-    ASSERT(result == static_cast<int>(size));
+    std::string data_with_id(name);
+    data_with_id += data;
+    int result = channel->SendPacket(data_with_id.c_str(), data_with_id.size());
+    EXPECT_EQ(static_cast<int>(data_with_id.size()), result);
   }
 
-  TransportChannel* channel;
+  cricket::TransportChannel* channel;
   bool last_readable, last_writable;
   int data_count;
   char last_data[4096];
   size_t last_size;
+  std::string name;
 };
 
-char* Reverse(const char* str) {
-  int len = strlen(str);
-  char* rev = new char[len+1];
-  for (int i = 0; i < len; i++)
-    rev[i] = str[len-i-1];
-  rev[len] = '\0';
-  return rev;
+void PrintStanza(const std::string& message,
+                 const buzz::XmlElement* stanza) {
+  printf("%s: %s\n", message.c_str(), stanza->Str().c_str());
 }
 
-// Sets up values that should be the same for every test.
-void InitTest() {
-  SetRandomSeed(7);
-  gPort = 28653;
-  gID = 0;
+class TestClient : public sigslot::has_slots<> {
+ public:
+  TestClient(cricket::PortAllocator* port_allocator,
+             int* next_message_id,
+             const std::string& local_name,
+             SignalingProtocol start_protocol,
+             const std::string& content_type,
+             const std::string& content_name_a,
+             const std::string& channel_name_a,
+             const std::string& content_name_b,
+             const std::string& channel_name_b) {
+    Construct(port_allocator, next_message_id, local_name, start_protocol,
+              content_type, content_name_a, channel_name_a,
+              content_name_b, channel_name_b);
+  }
+
+  ~TestClient() {
+    if (session) {
+      session_manager->DestroySession(session);
+      EXPECT_EQ(1U, session_destroyed_count);
+    }
+    delete session_manager;
+    delete client;
+  }
+
+  void Construct(cricket::PortAllocator* pa,
+                 int* message_id,
+                 const std::string& lname,
+                 SignalingProtocol protocol,
+                 const std::string& cont_type,
+                 const std::string& cont_name_a,
+                 const std::string& chan_name_a,
+                 const std::string& cont_name_b,
+                 const std::string& chan_name_b) {
+    port_allocator_ = pa;
+    next_message_id = message_id;
+    local_name = lname;
+    start_protocol = protocol;
+    content_type = cont_type;
+    content_name_a = cont_name_a;
+    channel_name_a = chan_name_a;
+    content_name_b = cont_name_b;
+    channel_name_b = chan_name_b;
+    session_created_count = 0;
+    session_destroyed_count = 0;
+    session_remote_description_update_count = 0;
+    last_expected_sent_stanza = NULL;
+    session = NULL;
+    last_session_state = cricket::BaseSession::STATE_INIT;
+    chan_a = NULL;
+    chan_b = NULL;
+    blow_up_on_error = true;
+    error_count = 0;
+
+    session_manager = new cricket::SessionManager(port_allocator_);
+    session_manager->SignalSessionCreate.connect(
+        this, &TestClient::OnSessionCreate);
+    session_manager->SignalSessionDestroy.connect(
+        this, &TestClient::OnSessionDestroy);
+    session_manager->SignalOutgoingMessage.connect(
+        this, &TestClient::OnOutgoingMessage);
+
+    client = new TestSessionClient();
+    session_manager->AddClient(content_type, client);
+    EXPECT_EQ(client, session_manager->GetClient(content_type));
+  }
+
+  uint32 sent_stanza_count() const {
+    return sent_stanzas.size();
+  }
+
+  const buzz::XmlElement* stanza() const {
+    return last_expected_sent_stanza;
+  }
+
+  cricket::BaseSession::State session_state() const {
+    EXPECT_EQ(last_session_state, session->state());
+    return session->state();
+  }
+
+  void SetSessionState(cricket::BaseSession::State state) {
+    session->SetState(state);
+    EXPECT_EQ_WAIT(last_session_state, session->state(), kEventTimeout);
+  }
+
+  void CreateSession() {
+    session_manager->CreateSession(local_name, content_type);
+  }
+
+  void DeliverStanza(const buzz::XmlElement* stanza) {
+    session_manager->OnIncomingMessage(stanza);
+  }
+
+  void DeliverStanza(const std::string& str) {
+    buzz::XmlElement* stanza = buzz::XmlElement::ForStr(str);
+    session_manager->OnIncomingMessage(stanza);
+    delete stanza;
+  }
+
+  void DeliverAckToLastStanza() {
+    const buzz::XmlElement* orig_stanza = stanza();
+    const buzz::XmlElement* response_stanza =
+        buzz::XmlElement::ForStr(IqAck(orig_stanza->Attr(buzz::QN_IQ), "", ""));
+    session_manager->OnIncomingResponse(orig_stanza, response_stanza);
+    delete response_stanza;
+  }
+
+  void ExpectSentStanza(const std::string& expected) {
+    EXPECT_TRUE(!sent_stanzas.empty()) <<
+        "Found no stanza when expected " << expected;
+
+    last_expected_sent_stanza = sent_stanzas.front();
+    sent_stanzas.pop_front();
+
+    std::string actual = last_expected_sent_stanza->Str();
+    EXPECT_EQ(expected, actual);
+  }
+
+  void SkipUnsentStanza() {
+    GetNextOutgoingMessageID();
+  }
+
+  bool HasTransport(const std::string& content_name) const {
+    ASSERT(session != NULL);
+    const cricket::Transport* transport = session->GetTransport(content_name);
+    return transport != NULL && (kTransportType == transport->type());
+  }
+
+  bool HasChannel(const std::string& content_name,
+                  const std::string& channel_name) const {
+    ASSERT(session != NULL);
+    const cricket::TransportChannel* channel =
+        session->GetChannel(content_name, channel_name);
+    return channel != NULL && (channel_name == channel->name());
+  }
+
+  cricket::TransportChannel* GetChannel(const std::string& content_name,
+                                        const std::string& channel_name) const {
+    ASSERT(session != NULL);
+    return session->GetChannel(content_name, channel_name);
+  }
+
+  void OnSessionCreate(cricket::Session* created_session, bool initiate) {
+    session_created_count += 1;
+
+    session = created_session;
+    session->set_current_protocol(start_protocol);
+    session->set_allow_local_ips(true);
+    session->SignalState.connect(this, &TestClient::OnSessionState);
+    session->SignalError.connect(this, &TestClient::OnSessionError);
+    session->SignalRemoteDescriptionUpdate.connect(
+        this, &TestClient::OnSessionRemoteDescriptionUpdate);
+
+    CreateChannels();
+  }
+
+  void OnSessionDestroy(cricket::Session *session) {
+    session_destroyed_count += 1;
+  }
+
+  void OnSessionState(cricket::BaseSession* session,
+                      cricket::BaseSession::State state) {
+    // EXPECT_EQ does not allow use of this, hence the tmp variable.
+    cricket::BaseSession* tmp = this->session;
+    EXPECT_EQ(tmp, session);
+    last_session_state = state;
+  }
+
+  void OnSessionError(cricket::BaseSession* session,
+                      cricket::BaseSession::Error error) {
+    // EXPECT_EQ does not allow use of this, hence the tmp variable.
+    cricket::BaseSession* tmp = this->session;
+    EXPECT_EQ(tmp, session);
+    if (blow_up_on_error) {
+      EXPECT_TRUE(false);
+    } else {
+      error_count++;
+    }
+  }
+
+  void OnSessionRemoteDescriptionUpdate(cricket::BaseSession* session,
+      const cricket::ContentInfos& contents) {
+    session_remote_description_update_count++;
+  }
+
+  void PrepareCandidates() {
+    session_manager->OnSignalingReady();
+  }
+
+  void OnOutgoingMessage(cricket::SessionManager* manager,
+                         const buzz::XmlElement* stanza) {
+    buzz::XmlElement* elem = new buzz::XmlElement(*stanza);
+    EXPECT_TRUE(elem->Name() == buzz::QN_IQ);
+    EXPECT_TRUE(elem->HasAttr(buzz::QN_TO));
+    EXPECT_FALSE(elem->HasAttr(buzz::QN_FROM));
+    EXPECT_TRUE(elem->HasAttr(buzz::QN_TYPE));
+    EXPECT_TRUE((elem->Attr(buzz::QN_TYPE) == "set") ||
+                (elem->Attr(buzz::QN_TYPE) == "result") ||
+                (elem->Attr(buzz::QN_TYPE) == "error"));
+
+    elem->SetAttr(buzz::QN_FROM, local_name);
+    if (elem->Attr(buzz::QN_TYPE) == "set") {
+      EXPECT_FALSE(elem->HasAttr(buzz::QN_ID));
+      elem->SetAttr(buzz::QN_ID, GetNextOutgoingMessageID());
+    }
+
+    // Uncommenting this is useful for debugging.
+    // PrintStanza("OutgoingMessage", elem);
+    sent_stanzas.push_back(elem);
+  }
+
+  std::string GetNextOutgoingMessageID() {
+    int message_id = (*next_message_id)++;
+    std::ostringstream ost;
+    ost << message_id;
+    return ost.str();
+  }
+
+  void CreateChannels() {
+    ASSERT(session != NULL);
+    chan_a = new ChannelHandler(
+        session->CreateChannel(content_name_a, channel_name_a), channel_name_a);
+    chan_b = new ChannelHandler(
+        session->CreateChannel(content_name_b, channel_name_b), channel_name_b);
+  }
+
+  int* next_message_id;
+  std::string local_name;
+  SignalingProtocol start_protocol;
+  std::string content_type;
+  std::string content_name_a;
+  std::string channel_name_a;
+  std::string content_name_b;
+  std::string channel_name_b;
+
+  uint32 session_created_count;
+  uint32 session_destroyed_count;
+  uint32 session_remote_description_update_count;
+  std::deque<buzz::XmlElement*> sent_stanzas;
+  buzz::XmlElement* last_expected_sent_stanza;
+
+  cricket::SessionManager* session_manager;
+  TestSessionClient* client;
+  cricket::PortAllocator* port_allocator_;
+  cricket::Session* session;
+  cricket::BaseSession::State last_session_state;
+  ChannelHandler* chan_a;
+  ChannelHandler* chan_b;
+  bool blow_up_on_error;
+  int error_count;
+};
+
+class SessionTest : public testing::Test {
+ protected:
+  virtual void SetUp() {
+    // Seed needed for each test to satisfy expectations.
+    talk_base::SetRandomTestMode(true);
+  }
+
+  virtual void TearDown() {
+    talk_base::SetRandomTestMode(false);
+  }
+
+  // Tests sending data between two clients, over two channels.
+  void TestSendRecv(ChannelHandler* chan1a,
+                    ChannelHandler* chan1b,
+                    ChannelHandler* chan2a,
+                    ChannelHandler* chan2b) {
+    const char* dat1a = "spamspamspamspamspamspamspambakedbeansspam";
+    const char* dat2a = "mapssnaebdekabmapsmapsmapsmapsmapsmapsmaps";
+    const char* dat1b = "Lobster Thermidor a Crevette with a mornay sauce...";
+    const char* dat2b = "...ecuas yanrom a htiw etteverC a rodimrehT retsboL";
+
+    for (int i = 0; i < 20; i++) {
+      chan1a->Send(dat1a, strlen(dat1a));
+      chan1b->Send(dat1b, strlen(dat1b));
+      chan2a->Send(dat2a, strlen(dat2a));
+      chan2b->Send(dat2b, strlen(dat2b));
+
+      EXPECT_EQ_WAIT(i + 1, chan1a->data_count, kEventTimeout);
+      EXPECT_EQ_WAIT(i + 1, chan1b->data_count, kEventTimeout);
+      EXPECT_EQ_WAIT(i + 1, chan2a->data_count, kEventTimeout);
+      EXPECT_EQ_WAIT(i + 1, chan2b->data_count, kEventTimeout);
+
+      EXPECT_EQ(strlen(dat2a), chan1a->last_size);
+      EXPECT_EQ(strlen(dat2b), chan1b->last_size);
+      EXPECT_EQ(strlen(dat1a), chan2a->last_size);
+      EXPECT_EQ(strlen(dat1b), chan2b->last_size);
+
+      EXPECT_EQ(0, std::memcmp(chan1a->last_data, dat2a,
+                               strlen(dat2a)));
+      EXPECT_EQ(0, std::memcmp(chan1b->last_data, dat2b,
+                               strlen(dat2b)));
+      EXPECT_EQ(0, std::memcmp(chan2a->last_data, dat1a,
+                               strlen(dat1a)));
+      EXPECT_EQ(0, std::memcmp(chan2b->last_data, dat1b,
+                               strlen(dat1b)));
+    }
+  }
+
+  // Test an initiate from one client to another, each with
+  // independent initial protocols.  Checks for the correct initiates,
+  // candidates, and accept messages, and tests that working network
+  // channels are established.
+  void TestSession(SignalingProtocol initiator_protocol,
+                   SignalingProtocol responder_protocol,
+                   SignalingProtocol resulting_protocol,
+                   const std::string& gingle_content_type,
+                   const std::string& content_type,
+                   const std::string& content_name_a,
+                   const std::string& channel_name_a,
+                   const std::string& content_name_b,
+                   const std::string& channel_name_b,
+                   const std::string& initiate_xml,
+                   const std::string& transport_info_a_xml,
+                   const std::string& transport_info_b_xml,
+                   const std::string& transport_info_reply_a_xml,
+                   const std::string& transport_info_reply_b_xml,
+                   const std::string& accept_xml,
+                   bool bundle = false) {
+    talk_base::scoped_ptr<cricket::PortAllocator> allocator(
+        new TestPortAllocator());
+    int next_message_id = 0;
+
+    talk_base::scoped_ptr<TestClient> initiator(
+        new TestClient(allocator.get(), &next_message_id,
+                       kInitiator, initiator_protocol,
+                       content_type,
+                       content_name_a,  channel_name_a,
+                       content_name_b,  channel_name_b));
+    talk_base::scoped_ptr<TestClient> responder(
+        new TestClient(allocator.get(), &next_message_id,
+                       kResponder, responder_protocol,
+                       content_type,
+                       content_name_a,  channel_name_a,
+                       content_name_b,  channel_name_b));
+
+    // Create Session and check channels and state.
+    initiator->CreateSession();
+    EXPECT_EQ(1U, initiator->session_created_count);
+    EXPECT_EQ(kSessionId, initiator->session->id());
+    EXPECT_EQ(initiator->session->local_name(), kInitiator);
+    EXPECT_EQ(cricket::BaseSession::STATE_INIT,
+              initiator->session_state());
+
+    EXPECT_TRUE(initiator->HasTransport(content_name_a));
+    EXPECT_TRUE(initiator->HasChannel(content_name_a, channel_name_a));
+    EXPECT_TRUE(initiator->HasTransport(content_name_b));
+    EXPECT_TRUE(initiator->HasChannel(content_name_b, channel_name_b));
+
+    // Initiate and expect initiate message sent.
+    cricket::SessionDescription* offer = NewTestSessionDescription(
+        gingle_content_type,
+        content_name_a, content_type,
+        content_name_b, content_type);
+    if (bundle) {
+      cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
+      group.AddContentName(content_name_a);
+      group.AddContentName(content_name_b);
+      EXPECT_TRUE(group.HasContentName(content_name_a));
+      EXPECT_TRUE(group.HasContentName(content_name_b));
+      offer->AddGroup(group);
+    }
+    EXPECT_TRUE(initiator->session->Initiate(kResponder, offer));
+    EXPECT_EQ(initiator->session->remote_name(), kResponder);
+    EXPECT_EQ(initiator->session->local_description(), offer);
+
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    EXPECT_EQ(cricket::BaseSession::STATE_SENTINITIATE,
+              initiator->session_state());
+
+    initiator->ExpectSentStanza(
+        IqSet("0", kInitiator, kResponder, initiate_xml));
+
+    // Deliver the initiate. Expect ack and session created with
+    // transports.
+    responder->DeliverStanza(initiator->stanza());
+    responder->ExpectSentStanza(
+        IqAck("0", kResponder, kInitiator));
+    EXPECT_EQ(0U, responder->sent_stanza_count());
+
+    EXPECT_EQ(1U, responder->session_created_count);
+    EXPECT_EQ(kSessionId, responder->session->id());
+    EXPECT_EQ(responder->session->local_name(), kResponder);
+    EXPECT_EQ(responder->session->remote_name(), kInitiator);
+    EXPECT_EQ(cricket::BaseSession::STATE_RECEIVEDINITIATE,
+              responder->session_state());
+
+    EXPECT_TRUE(responder->HasTransport(content_name_a));
+    EXPECT_TRUE(responder->HasChannel(content_name_a, channel_name_a));
+    EXPECT_TRUE(responder->HasTransport(content_name_b));
+    EXPECT_TRUE(responder->HasChannel(content_name_b, channel_name_b));
+
+    // Expect transport-info message from initiator.
+    // But don't send candidates until initiate ack is received.
+    initiator->PrepareCandidates();
+    WAIT(initiator->sent_stanza_count() > 0, 100);
+    EXPECT_EQ(0U, initiator->sent_stanza_count());
+    initiator->DeliverAckToLastStanza();
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    initiator->ExpectSentStanza(
+        IqSet("1", kInitiator, kResponder, transport_info_a_xml));
+
+    // Deliver transport-info and expect ack.
+    responder->DeliverStanza(initiator->stanza());
+    responder->ExpectSentStanza(
+        IqAck("1", kResponder, kInitiator));
+
+    if (!transport_info_b_xml.empty()) {
+      // Expect second transport-info message from initiator.
+      EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+      initiator->ExpectSentStanza(
+          IqSet("2", kInitiator, kResponder, transport_info_b_xml));
+      EXPECT_EQ(0U, initiator->sent_stanza_count());
+
+      // Deliver second transport-info message and expect ack.
+      responder->DeliverStanza(initiator->stanza());
+      responder->ExpectSentStanza(
+          IqAck("2", kResponder, kInitiator));
+    } else {
+      EXPECT_EQ(0U, initiator->sent_stanza_count());
+      EXPECT_EQ(0U, responder->sent_stanza_count());
+      initiator->SkipUnsentStanza();
+    }
+
+    // Expect reply transport-info message from responder.
+    responder->PrepareCandidates();
+    EXPECT_TRUE_WAIT(responder->sent_stanza_count() > 0, kEventTimeout);
+    responder->ExpectSentStanza(
+        IqSet("3", kResponder, kInitiator, transport_info_reply_a_xml));
+
+    // Deliver reply transport-info and expect ack.
+    initiator->DeliverStanza(responder->stanza());
+    initiator->ExpectSentStanza(
+        IqAck("3", kInitiator, kResponder));
+
+    if (!transport_info_reply_b_xml.empty()) {
+      // Expect second reply transport-info message from responder.
+      EXPECT_TRUE_WAIT(responder->sent_stanza_count() > 0, kEventTimeout);
+      responder->ExpectSentStanza(
+          IqSet("4", kResponder, kInitiator, transport_info_reply_b_xml));
+      EXPECT_EQ(0U, responder->sent_stanza_count());
+
+      // Deliver second reply transport-info message and expect ack.
+      initiator->DeliverStanza(responder->stanza());
+      initiator->ExpectSentStanza(
+          IqAck("4", kInitiator, kResponder));
+      EXPECT_EQ(0U, initiator->sent_stanza_count());
+    } else {
+      EXPECT_EQ(0U, initiator->sent_stanza_count());
+      EXPECT_EQ(0U, responder->sent_stanza_count());
+      responder->SkipUnsentStanza();
+    }
+
+    // The channels should be able to become writable at this point.  This
+    // requires pinging, so it may take a little while.
+    EXPECT_TRUE_WAIT(initiator->chan_a->writable() &&
+                     initiator->chan_a->readable(), kEventTimeout);
+    EXPECT_TRUE_WAIT(initiator->chan_b->writable() &&
+                     initiator->chan_b->readable(), kEventTimeout);
+    EXPECT_TRUE_WAIT(responder->chan_a->writable() &&
+                     responder->chan_a->readable(), kEventTimeout);
+    EXPECT_TRUE_WAIT(responder->chan_b->writable() &&
+                     responder->chan_b->readable(), kEventTimeout);
+
+    // Accept the session and expect accept stanza.
+    cricket::SessionDescription* answer = NewTestSessionDescription(
+        gingle_content_type,
+        content_name_a, content_type,
+        content_name_b, content_type);
+    if (bundle) {
+      cricket::ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
+      group.AddContentName(content_name_a);
+      group.AddContentName(content_name_b);
+      EXPECT_TRUE(group.HasContentName(content_name_a));
+      EXPECT_TRUE(group.HasContentName(content_name_b));
+      answer->AddGroup(group);
+    }
+    EXPECT_TRUE(responder->session->Accept(answer));
+    EXPECT_EQ(responder->session->local_description(), answer);
+
+    responder->ExpectSentStanza(
+        IqSet("5", kResponder, kInitiator, accept_xml));
+
+    EXPECT_EQ(0U, responder->sent_stanza_count());
+
+    // Deliver the accept message and expect an ack.
+    initiator->DeliverStanza(responder->stanza());
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    initiator->ExpectSentStanza(
+        IqAck("5", kInitiator, kResponder));
+    EXPECT_EQ(0U, initiator->sent_stanza_count());
+
+    // Both sessions should be in progress and have functioning
+    // channels.
+    EXPECT_EQ(resulting_protocol, initiator->session->current_protocol());
+    EXPECT_EQ(resulting_protocol, responder->session->current_protocol());
+    EXPECT_EQ_WAIT(cricket::BaseSession::STATE_INPROGRESS,
+                   initiator->session_state(), kEventTimeout);
+    EXPECT_EQ_WAIT(cricket::BaseSession::STATE_INPROGRESS,
+                   responder->session_state(), kEventTimeout);
+    if (bundle) {
+      cricket::TransportChannel* initiator_chan_a = initiator->chan_a->channel;
+      cricket::TransportChannel* initiator_chan_b = initiator->chan_b->channel;
+
+      // Since we know these are TransportChannelProxy, type cast it.
+      cricket::TransportChannelProxy* initiator_proxy_chan_a =
+          static_cast<cricket::TransportChannelProxy*>(initiator_chan_a);
+      cricket::TransportChannelProxy* initiator_proxy_chan_b =
+              static_cast<cricket::TransportChannelProxy*>(initiator_chan_b);
+      EXPECT_TRUE(initiator_proxy_chan_a->impl() != NULL);
+      EXPECT_TRUE(initiator_proxy_chan_b->impl() != NULL);
+      EXPECT_EQ(initiator_proxy_chan_a->impl(), initiator_proxy_chan_b->impl());
+
+      cricket::TransportChannel* responder_chan_a = responder->chan_a->channel;
+      cricket::TransportChannel* responder_chan_b = responder->chan_b->channel;
+
+      // Since we know these are TransportChannelProxy, type cast it.
+      cricket::TransportChannelProxy* responder_proxy_chan_a =
+          static_cast<cricket::TransportChannelProxy*>(responder_chan_a);
+      cricket::TransportChannelProxy* responder_proxy_chan_b =
+              static_cast<cricket::TransportChannelProxy*>(responder_chan_b);
+      EXPECT_TRUE(responder_proxy_chan_a->impl() != NULL);
+      EXPECT_TRUE(responder_proxy_chan_b->impl() != NULL);
+      EXPECT_EQ(responder_proxy_chan_a->impl(), responder_proxy_chan_b->impl());
+    }
+    TestSendRecv(initiator->chan_a, initiator->chan_b,
+                 responder->chan_a, responder->chan_b);
+
+    if (resulting_protocol == PROTOCOL_JINGLE) {
+      // Deliver a description-info message to the initiator and check if the
+      // content description changes.
+      EXPECT_EQ(0U, initiator->session_remote_description_update_count);
+
+      const cricket::SessionDescription* old_session_desc =
+          initiator->session->remote_description();
+      const cricket::ContentInfo* old_content_a =
+          old_session_desc->GetContentByName(content_name_a);
+      const cricket::ContentDescription* old_content_desc_a =
+          old_content_a->description;
+      const cricket::ContentInfo* old_content_b =
+          old_session_desc->GetContentByName(content_name_b);
+      const cricket::ContentDescription* old_content_desc_b =
+          old_content_b->description;
+      EXPECT_TRUE(old_content_desc_a != NULL);
+      EXPECT_TRUE(old_content_desc_b != NULL);
+
+      LOG(LS_INFO) << "A " << old_content_a->name;
+      LOG(LS_INFO) << "B " << old_content_b->name;
+
+      std::string description_info_xml =
+          JingleDescriptionInfoXml(content_name_a, content_type);
+      initiator->DeliverStanza(
+          IqSet("6", kResponder, kInitiator, description_info_xml));
+      responder->SkipUnsentStanza();
+      EXPECT_EQ(1U, initiator->session_remote_description_update_count);
+
+      const cricket::SessionDescription* new_session_desc =
+          initiator->session->remote_description();
+      const cricket::ContentInfo* new_content_a =
+          new_session_desc->GetContentByName(content_name_a);
+      const cricket::ContentDescription* new_content_desc_a =
+          new_content_a->description;
+      const cricket::ContentInfo* new_content_b =
+          new_session_desc->GetContentByName(content_name_b);
+      const cricket::ContentDescription* new_content_desc_b =
+          new_content_b->description;
+      EXPECT_TRUE(new_content_desc_a != NULL);
+      EXPECT_TRUE(new_content_desc_b != NULL);
+
+      // TODO: We used to replace contents from an update, but
+      // that no longer works with partial updates.  We need to figure out
+      // a way to merge patial updates into contents.  For now, users of
+      // Session should listen to SignalRemoteDescriptionUpdate and handle
+      // updates.  They should not expect remote_description to be the
+      // latest value.
+      // See session.cc OnDescriptionInfoMessage.
+
+      // EXPECT_NE(old_content_desc_a, new_content_desc_a);
+
+      // if (content_name_a != content_name_b) {
+      //   // If content_name_a != content_name_b, then b's content description
+      //   // should not have changed since the description-info message only
+      //   // contained an update for content_name_a.
+      //   EXPECT_EQ(old_content_desc_b, new_content_desc_b);
+      // }
+
+      EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+      initiator->ExpectSentStanza(
+          IqAck("6", kInitiator, kResponder));
+      EXPECT_EQ(0U, initiator->sent_stanza_count());
+    } else {
+      responder->SkipUnsentStanza();
+    }
+
+    initiator->session->Terminate();
+    initiator->ExpectSentStanza(
+        IqSet("7", kInitiator, kResponder,
+              TerminateXml(resulting_protocol,
+                           cricket::STR_TERMINATE_SUCCESS)));
+
+    responder->DeliverStanza(initiator->stanza());
+    responder->ExpectSentStanza(
+        IqAck("7", kResponder, kInitiator));
+    EXPECT_EQ(cricket::BaseSession::STATE_SENTTERMINATE,
+              initiator->session_state());
+    EXPECT_EQ(cricket::BaseSession::STATE_RECEIVEDTERMINATE,
+              responder->session_state());
+  }
+
+  // Test an initiate with other content, called "main".
+  void TestOtherContent(SignalingProtocol initiator_protocol,
+                        SignalingProtocol responder_protocol,
+                        SignalingProtocol resulting_protocol) {
+    std::string content_name = "main";
+    std::string content_type = "http://oink.splat/session";
+    std::string content_name_a = content_name;
+    std::string channel_name_a = "rtcp";
+    std::string content_name_b = content_name;
+    std::string channel_name_b = "rtp";
+    std::string initiate_xml = InitiateXml(
+        initiator_protocol,
+        content_name_a, content_type);
+    std::string transport_info_a_xml = TransportInfo4Xml(
+        initiator_protocol, content_name,
+        channel_name_a, 0, 1,
+        channel_name_b, 2, 3);
+    std::string transport_info_b_xml = "";
+    std::string transport_info_reply_a_xml = TransportInfo4Xml(
+        resulting_protocol, content_name,
+        channel_name_a, 4, 5,
+        channel_name_b, 6, 7);
+    std::string transport_info_reply_b_xml = "";
+    std::string accept_xml = AcceptXml(
+        resulting_protocol,
+        content_name_a, content_type);
+
+
+    TestSession(initiator_protocol, responder_protocol, resulting_protocol,
+                content_type,
+                content_type,
+                content_name_a, channel_name_a,
+                content_name_b, channel_name_b,
+                initiate_xml,
+                transport_info_a_xml, transport_info_b_xml,
+                transport_info_reply_a_xml, transport_info_reply_b_xml,
+                accept_xml);
+  }
+
+  // Test an initiate with audio content.
+  void TestAudioContent(SignalingProtocol initiator_protocol,
+                        SignalingProtocol responder_protocol,
+                        SignalingProtocol resulting_protocol) {
+    std::string gingle_content_type = cricket::NS_GINGLE_AUDIO;
+    std::string content_name = cricket::CN_AUDIO;
+    std::string content_type = cricket::NS_JINGLE_RTP;
+    std::string channel_name_a = "rtcp";
+    std::string channel_name_b = "rtp";
+    std::string initiate_xml = InitiateXml(
+        initiator_protocol,
+        gingle_content_type,
+        content_name, content_type,
+        "", "");
+    std::string transport_info_a_xml = TransportInfo4Xml(
+        initiator_protocol, content_name,
+        channel_name_a, 0, 1,
+        channel_name_b, 2, 3);
+    std::string transport_info_b_xml = "";
+    std::string transport_info_reply_a_xml = TransportInfo4Xml(
+        resulting_protocol, content_name,
+        channel_name_a, 4, 5,
+        channel_name_b, 6, 7);
+    std::string transport_info_reply_b_xml = "";
+    std::string accept_xml = AcceptXml(
+        resulting_protocol,
+        gingle_content_type,
+        content_name, content_type,
+        "", "");
+
+
+    TestSession(initiator_protocol, responder_protocol, resulting_protocol,
+                gingle_content_type,
+                content_type,
+                content_name, channel_name_a,
+                content_name, channel_name_b,
+                initiate_xml,
+                transport_info_a_xml, transport_info_b_xml,
+                transport_info_reply_a_xml, transport_info_reply_b_xml,
+                accept_xml);
+  }
+
+  // Since media content is "split" into two contents (audio and
+  // video), we need to treat it special.
+  void TestVideoContents(SignalingProtocol initiator_protocol,
+                         SignalingProtocol responder_protocol,
+                         SignalingProtocol resulting_protocol) {
+    std::string content_type = cricket::NS_JINGLE_RTP;
+    std::string gingle_content_type = cricket::NS_GINGLE_VIDEO;
+    std::string content_name_a = cricket::CN_AUDIO;
+    std::string channel_name_a = "rtcp";
+    std::string content_name_b = cricket::CN_VIDEO;
+    std::string channel_name_b = "video_rtp";
+
+    std::string initiate_xml = InitiateXml(
+        initiator_protocol,
+        gingle_content_type,
+        content_name_a, content_type,
+        content_name_b, content_type);
+    std::string transport_info_a_xml = TransportInfo2Xml(
+        initiator_protocol, content_name_a,
+        channel_name_a, 0, 1);
+    std::string transport_info_b_xml = TransportInfo2Xml(
+        initiator_protocol, content_name_b,
+        channel_name_b, 2, 3);
+    std::string transport_info_reply_a_xml = TransportInfo2Xml(
+        resulting_protocol, content_name_a,
+        channel_name_a, 4, 5);
+    std::string transport_info_reply_b_xml = TransportInfo2Xml(
+        resulting_protocol, content_name_b,
+        channel_name_b, 6, 7);
+    std::string accept_xml = AcceptXml(
+        resulting_protocol,
+        gingle_content_type,
+        content_name_a, content_type,
+        content_name_b, content_type);
+
+    TestSession(initiator_protocol, responder_protocol, resulting_protocol,
+                gingle_content_type,
+                content_type,
+                content_name_a, channel_name_a,
+                content_name_b, channel_name_b,
+                initiate_xml,
+                transport_info_a_xml, transport_info_b_xml,
+                transport_info_reply_a_xml, transport_info_reply_b_xml,
+                accept_xml);
+  }
+
+  void TestBadRedirect(SignalingProtocol protocol) {
+    std::string content_name = "main";
+    std::string content_type = "http://oink.splat/session";
+    std::string channel_name_a = "chana";
+    std::string channel_name_b = "chanb";
+    std::string initiate_xml = InitiateXml(
+        protocol, content_name, content_type);
+    std::string transport_info_xml = TransportInfo4Xml(
+        protocol, content_name,
+        channel_name_a, 0, 1,
+        channel_name_b, 2, 3);
+    std::string transport_info_reply_xml = TransportInfo4Xml(
+        protocol, content_name,
+        channel_name_a, 4, 5,
+        channel_name_b, 6, 7);
+    std::string accept_xml = AcceptXml(
+        protocol, content_name, content_type);
+    std::string responder_full = kResponder + "/full";
+
+    talk_base::scoped_ptr<cricket::PortAllocator> allocator(
+        new TestPortAllocator());
+    int next_message_id = 0;
+
+    talk_base::scoped_ptr<TestClient> initiator(
+        new TestClient(allocator.get(), &next_message_id,
+                       kInitiator, protocol,
+                       content_type,
+                       content_name, channel_name_a,
+                       content_name, channel_name_b));
+
+    talk_base::scoped_ptr<TestClient> responder(
+        new TestClient(allocator.get(), &next_message_id,
+                       responder_full, protocol,
+                       content_type,
+                       content_name,  channel_name_a,
+                       content_name,  channel_name_b));
+
+    // Create Session and check channels and state.
+    initiator->CreateSession();
+    EXPECT_EQ(1U, initiator->session_created_count);
+    EXPECT_EQ(kSessionId, initiator->session->id());
+    EXPECT_EQ(initiator->session->local_name(), kInitiator);
+    EXPECT_EQ(cricket::BaseSession::STATE_INIT,
+              initiator->session_state());
+
+    EXPECT_TRUE(initiator->HasChannel(content_name, channel_name_a));
+    EXPECT_TRUE(initiator->HasChannel(content_name, channel_name_b));
+
+    // Initiate and expect initiate message sent.
+    cricket::SessionDescription* offer = NewTestSessionDescription(
+        content_name, content_type);
+    EXPECT_TRUE(initiator->session->Initiate(kResponder, offer));
+    EXPECT_EQ(initiator->session->remote_name(), kResponder);
+    EXPECT_EQ(initiator->session->local_description(), offer);
+
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    EXPECT_EQ(cricket::BaseSession::STATE_SENTINITIATE,
+              initiator->session_state());
+    initiator->ExpectSentStanza(
+        IqSet("0", kInitiator, kResponder, initiate_xml));
+
+    // Expect transport-info message from initiator.
+    initiator->DeliverAckToLastStanza();
+    initiator->PrepareCandidates();
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    initiator->ExpectSentStanza(
+        IqSet("1", kInitiator, kResponder, transport_info_xml));
+
+    // Send an unauthorized redirect to the initiator and expect it be ignored.
+    initiator->blow_up_on_error = false;
+    const buzz::XmlElement* initiate_stanza = initiator->stanza();
+    talk_base::scoped_ptr<buzz::XmlElement> redirect_stanza(
+        buzz::XmlElement::ForStr(
+            IqError("ER", kResponder, kInitiator,
+                    RedirectXml(protocol, initiate_xml, "not@allowed.com"))));
+    initiator->session_manager->OnFailedSend(
+        initiate_stanza, redirect_stanza.get());
+    EXPECT_EQ(initiator->session->remote_name(), kResponder);
+    initiator->blow_up_on_error = true;
+    EXPECT_EQ(initiator->error_count, 1);
+  }
+
+  void TestGoodRedirect(SignalingProtocol protocol) {
+    std::string content_name = "main";
+    std::string content_type = "http://oink.splat/session";
+    std::string channel_name_a = "chana";
+    std::string channel_name_b = "chanb";
+    std::string initiate_xml = InitiateXml(
+        protocol, content_name, content_type);
+    std::string transport_info_xml = TransportInfo4Xml(
+        protocol, content_name,
+        channel_name_a, 0, 1,
+        channel_name_b, 2, 3);
+    std::string transport_info_reply_xml = TransportInfo4Xml(
+        protocol, content_name,
+        channel_name_a, 4, 5,
+        channel_name_b, 6, 7);
+    std::string accept_xml = AcceptXml(
+        protocol, content_name, content_type);
+    std::string responder_full = kResponder + "/full";
+
+    talk_base::scoped_ptr<cricket::PortAllocator> allocator(
+        new TestPortAllocator());
+    int next_message_id = 0;
+
+    talk_base::scoped_ptr<TestClient> initiator(
+        new TestClient(allocator.get(), &next_message_id,
+                       kInitiator, protocol,
+                       content_type,
+                       content_name, channel_name_a,
+                       content_name, channel_name_b));
+
+    talk_base::scoped_ptr<TestClient> responder(
+        new TestClient(allocator.get(), &next_message_id,
+                       responder_full, protocol,
+                       content_type,
+                       content_name,  channel_name_a,
+                       content_name,  channel_name_b));
+
+    // Create Session and check channels and state.
+    initiator->CreateSession();
+    EXPECT_EQ(1U, initiator->session_created_count);
+    EXPECT_EQ(kSessionId, initiator->session->id());
+    EXPECT_EQ(initiator->session->local_name(), kInitiator);
+    EXPECT_EQ(cricket::BaseSession::STATE_INIT,
+              initiator->session_state());
+
+    EXPECT_TRUE(initiator->HasChannel(content_name, channel_name_a));
+    EXPECT_TRUE(initiator->HasChannel(content_name, channel_name_b));
+
+    // Initiate and expect initiate message sent.
+    cricket::SessionDescription* offer = NewTestSessionDescription(
+        content_name, content_type);
+    EXPECT_TRUE(initiator->session->Initiate(kResponder, offer));
+    EXPECT_EQ(initiator->session->remote_name(), kResponder);
+    EXPECT_EQ(initiator->session->local_description(), offer);
+
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    EXPECT_EQ(cricket::BaseSession::STATE_SENTINITIATE,
+              initiator->session_state());
+    initiator->ExpectSentStanza(
+        IqSet("0", kInitiator, kResponder, initiate_xml));
+
+    // Expect transport-info message from initiator.
+    initiator->DeliverAckToLastStanza();
+    initiator->PrepareCandidates();
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    initiator->ExpectSentStanza(
+        IqSet("1", kInitiator, kResponder, transport_info_xml));
+
+    // Send a redirect to the initiator and expect all of the message
+    // to be resent.
+    const buzz::XmlElement* initiate_stanza = initiator->stanza();
+    talk_base::scoped_ptr<buzz::XmlElement> redirect_stanza(
+        buzz::XmlElement::ForStr(
+            IqError("ER2", kResponder, kInitiator,
+                    RedirectXml(protocol, initiate_xml, responder_full))));
+    initiator->session_manager->OnFailedSend(
+        initiate_stanza, redirect_stanza.get());
+    EXPECT_EQ(initiator->session->remote_name(), responder_full);
+
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    initiator->ExpectSentStanza(
+        IqSet("2", kInitiator, responder_full, initiate_xml));
+    initiator->ExpectSentStanza(
+        IqSet("3", kInitiator, responder_full, transport_info_xml));
+
+    // Deliver the initiate. Expect ack and session created with
+    // transports.
+    responder->DeliverStanza(
+        IqSet("2", kInitiator, responder_full, initiate_xml));
+    responder->ExpectSentStanza(
+        IqAck("2", responder_full, kInitiator));
+    EXPECT_EQ(0U, responder->sent_stanza_count());
+
+    EXPECT_EQ(1U, responder->session_created_count);
+    EXPECT_EQ(kSessionId, responder->session->id());
+    EXPECT_EQ(responder->session->local_name(), responder_full);
+    EXPECT_EQ(responder->session->remote_name(), kInitiator);
+    EXPECT_EQ(cricket::BaseSession::STATE_RECEIVEDINITIATE,
+              responder->session_state());
+
+    EXPECT_TRUE(responder->HasChannel(content_name, channel_name_a));
+    EXPECT_TRUE(responder->HasChannel(content_name, channel_name_b));
+
+    // Deliver transport-info and expect ack.
+    responder->DeliverStanza(
+        IqSet("3", kInitiator, responder_full, transport_info_xml));
+    responder->ExpectSentStanza(
+        IqAck("3", responder_full, kInitiator));
+
+    // Expect reply transport-infos sent to new remote JID
+    responder->PrepareCandidates();
+    EXPECT_TRUE_WAIT(responder->sent_stanza_count() > 0, kEventTimeout);
+    responder->ExpectSentStanza(
+        IqSet("4", responder_full, kInitiator, transport_info_reply_xml));
+
+    initiator->DeliverStanza(responder->stanza());
+    initiator->ExpectSentStanza(
+        IqAck("4", kInitiator, responder_full));
+
+    // The channels should be able to become writable at this point.  This
+    // requires pinging, so it may take a little while.
+    EXPECT_TRUE_WAIT(initiator->chan_a->writable() &&
+                     initiator->chan_a->readable(), kEventTimeout);
+    EXPECT_TRUE_WAIT(initiator->chan_b->writable() &&
+                     initiator->chan_b->readable(), kEventTimeout);
+    EXPECT_TRUE_WAIT(responder->chan_a->writable() &&
+                     responder->chan_a->readable(), kEventTimeout);
+    EXPECT_TRUE_WAIT(responder->chan_b->writable() &&
+                     responder->chan_b->readable(), kEventTimeout);
+
+    // Accept the session and expect accept stanza.
+    cricket::SessionDescription* answer = NewTestSessionDescription(
+        content_name, content_type);
+    EXPECT_TRUE(responder->session->Accept(answer));
+    EXPECT_EQ(responder->session->local_description(), answer);
+
+    responder->ExpectSentStanza(
+        IqSet("5", responder_full, kInitiator, accept_xml));
+    EXPECT_EQ(0U, responder->sent_stanza_count());
+
+    // Deliver the accept message and expect an ack.
+    initiator->DeliverStanza(responder->stanza());
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    initiator->ExpectSentStanza(
+        IqAck("5", kInitiator, responder_full));
+    EXPECT_EQ(0U, initiator->sent_stanza_count());
+
+    // Both sessions should be in progress and have functioning
+    // channels.
+    EXPECT_EQ_WAIT(cricket::BaseSession::STATE_INPROGRESS,
+                   initiator->session_state(), kEventTimeout);
+    EXPECT_EQ_WAIT(cricket::BaseSession::STATE_INPROGRESS,
+                   responder->session_state(), kEventTimeout);
+    TestSendRecv(initiator->chan_a, initiator->chan_b,
+                 responder->chan_a, responder->chan_b);
+  }
+
+  void TestCandidatesInInitiateAndAccept(const std::string& test_name) {
+    std::string content_name = "main";
+    std::string content_type = "http://oink.splat/session";
+    std::string channel_name_a = "rtcp";
+    std::string channel_name_b = "rtp";
+    cricket::SignalingProtocol protocol = PROTOCOL_JINGLE;
+
+    talk_base::scoped_ptr<cricket::PortAllocator> allocator(
+        new TestPortAllocator());
+    int next_message_id = 0;
+
+    talk_base::scoped_ptr<TestClient> initiator(
+        new TestClient(allocator.get(), &next_message_id,
+                       kInitiator, protocol,
+                       content_type,
+                       content_name,  channel_name_a,
+                       content_name,  channel_name_b));
+
+    talk_base::scoped_ptr<TestClient> responder(
+        new TestClient(allocator.get(), &next_message_id,
+                       kResponder, protocol,
+                       content_type,
+                       content_name,  channel_name_a,
+                       content_name,  channel_name_b));
+
+    // Create Session and check channels and state.
+    initiator->CreateSession();
+    EXPECT_TRUE(initiator->HasTransport(content_name));
+    EXPECT_TRUE(initiator->HasChannel(content_name, channel_name_a));
+    EXPECT_TRUE(initiator->HasTransport(content_name));
+    EXPECT_TRUE(initiator->HasChannel(content_name, channel_name_b));
+
+    // Initiate and expect initiate message sent.
+    cricket::SessionDescription* offer = NewTestSessionDescription(
+        content_name, content_type);
+    EXPECT_TRUE(initiator->session->Initiate(kResponder, offer));
+
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    EXPECT_EQ(cricket::BaseSession::STATE_SENTINITIATE,
+              initiator->session_state());
+    initiator->ExpectSentStanza(
+        IqSet("0", kInitiator, kResponder,
+              InitiateXml(protocol, content_name, content_type)));
+
+    // Fake the delivery the initiate and candidates together.
+    responder->DeliverStanza(
+        IqSet("A", kInitiator, kResponder,
+            JingleInitiateActionXml(
+                JingleContentXml(
+                    content_name, content_type, kTransportType,
+                    P2pCandidateXml(channel_name_a, 0) +
+                    P2pCandidateXml(channel_name_a, 1) +
+                    P2pCandidateXml(channel_name_b, 2) +
+                    P2pCandidateXml(channel_name_b, 3)))));
+    responder->ExpectSentStanza(
+        IqAck("A", kResponder, kInitiator));
+    EXPECT_EQ(0U, responder->sent_stanza_count());
+
+    EXPECT_EQ(1U, responder->session_created_count);
+    EXPECT_EQ(kSessionId, responder->session->id());
+    EXPECT_EQ(responder->session->local_name(), kResponder);
+    EXPECT_EQ(responder->session->remote_name(), kInitiator);
+    EXPECT_EQ(cricket::BaseSession::STATE_RECEIVEDINITIATE,
+              responder->session_state());
+
+    EXPECT_TRUE(responder->HasTransport(content_name));
+    EXPECT_TRUE(responder->HasChannel(content_name, channel_name_a));
+    EXPECT_TRUE(responder->HasTransport(content_name));
+    EXPECT_TRUE(responder->HasChannel(content_name, channel_name_b));
+
+    // Expect transport-info message from initiator.
+    // But don't send candidates until initiate ack is received.
+    initiator->DeliverAckToLastStanza();
+    initiator->PrepareCandidates();
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    initiator->ExpectSentStanza(
+        IqSet("1", kInitiator, kResponder,
+              TransportInfo4Xml(protocol, content_name,
+                                channel_name_a, 0, 1,
+                                channel_name_b, 2, 3)));
+
+    responder->PrepareCandidates();
+    EXPECT_TRUE_WAIT(responder->sent_stanza_count() > 0, kEventTimeout);
+    responder->ExpectSentStanza(
+        IqSet("2", kResponder, kInitiator,
+              TransportInfo4Xml(protocol, content_name,
+                                channel_name_a, 4, 5,
+                                channel_name_b, 6, 7)));
+
+    // Accept the session and expect accept stanza.
+    cricket::SessionDescription* answer = NewTestSessionDescription(
+        content_name, content_type);
+    EXPECT_TRUE(responder->session->Accept(answer));
+
+    responder->ExpectSentStanza(
+        IqSet("3", kResponder, kInitiator,
+              AcceptXml(protocol, content_name, content_type)));
+    EXPECT_EQ(0U, responder->sent_stanza_count());
+
+    // Fake the delivery the accept and candidates together.
+    initiator->DeliverStanza(
+        IqSet("B", kResponder, kInitiator,
+            JingleActionXml("session-accept",
+                JingleContentXml(
+                    content_name, content_type, kTransportType,
+                    P2pCandidateXml(channel_name_a, 4) +
+                    P2pCandidateXml(channel_name_a, 5) +
+                    P2pCandidateXml(channel_name_b, 6) +
+                    P2pCandidateXml(channel_name_b, 7)))));
+    EXPECT_TRUE_WAIT(initiator->sent_stanza_count() > 0, kEventTimeout);
+    initiator->ExpectSentStanza(
+        IqAck("B", kInitiator, kResponder));
+    EXPECT_EQ(0U, initiator->sent_stanza_count());
+
+    // The channels should be able to become writable at this point.  This
+    // requires pinging, so it may take a little while.
+    EXPECT_TRUE_WAIT(initiator->chan_a->writable() &&
+                     initiator->chan_a->readable(), kEventTimeout);
+    EXPECT_TRUE_WAIT(initiator->chan_b->writable() &&
+                     initiator->chan_b->readable(), kEventTimeout);
+    EXPECT_TRUE_WAIT(responder->chan_a->writable() &&
+                     responder->chan_a->readable(), kEventTimeout);
+    EXPECT_TRUE_WAIT(responder->chan_b->writable() &&
+                     responder->chan_b->readable(), kEventTimeout);
+
+
+    // Both sessions should be in progress and have functioning
+    // channels.
+    EXPECT_EQ(protocol, initiator->session->current_protocol());
+    EXPECT_EQ(protocol, responder->session->current_protocol());
+    EXPECT_EQ_WAIT(cricket::BaseSession::STATE_INPROGRESS,
+                   initiator->session_state(), kEventTimeout);
+    EXPECT_EQ_WAIT(cricket::BaseSession::STATE_INPROGRESS,
+                   responder->session_state(), kEventTimeout);
+    TestSendRecv(initiator->chan_a, initiator->chan_b,
+                 responder->chan_a, responder->chan_b);
+  }
+
+  // Tests that when an initiator terminates right after initiate,
+  // everything behaves correctly.
+  void TestEarlyTerminationFromInitiator(SignalingProtocol protocol) {
+    std::string content_name = "main";
+    std::string content_type = "http://oink.splat/session";
+
+    talk_base::scoped_ptr<cricket::PortAllocator> allocator(
+        new TestPortAllocator());
+    int next_message_id = 0;
+
+    talk_base::scoped_ptr<TestClient> initiator(
+        new TestClient(allocator.get(), &next_message_id,
+                       kInitiator, protocol,
+                       content_type,
+                       content_name, "a",
+                       content_name, "b"));
+
+    talk_base::scoped_ptr<TestClient> responder(
+        new TestClient(allocator.get(), &next_message_id,
+                       kResponder, protocol,
+                       content_type,
+                       content_name,  "a",
+                       content_name,  "b"));
+
+    // Send initiate
+    initiator->CreateSession();
+    EXPECT_TRUE(initiator->session->Initiate(
+        kResponder, NewTestSessionDescription(content_name, content_type)));
+    initiator->ExpectSentStanza(
+        IqSet("0", kInitiator, kResponder,
+              InitiateXml(protocol, content_name, content_type)));
+    EXPECT_EQ(cricket::BaseSession::STATE_SENTINITIATE,
+              initiator->session_state());
+
+    responder->DeliverStanza(initiator->stanza());
+    responder->ExpectSentStanza(
+        IqAck("0", kResponder, kInitiator));
+    EXPECT_EQ(cricket::BaseSession::STATE_RECEIVEDINITIATE,
+              responder->session_state());
+
+    initiator->session->TerminateWithReason(cricket::STR_TERMINATE_ERROR);
+    initiator->ExpectSentStanza(
+        IqSet("1", kInitiator, kResponder,
+              TerminateXml(protocol, cricket::STR_TERMINATE_ERROR)));
+    EXPECT_EQ(cricket::BaseSession::STATE_SENTTERMINATE,
+              initiator->session_state());
+
+    responder->DeliverStanza(initiator->stanza());
+    responder->ExpectSentStanza(
+        IqAck("1", kResponder, kInitiator));
+    EXPECT_EQ(cricket::BaseSession::STATE_RECEIVEDTERMINATE,
+              responder->session_state());
+  }
+
+  // Tests that when the responder rejects, everything behaves
+  // correctly.
+  void TestRejection(SignalingProtocol protocol) {
+    std::string content_name = "main";
+    std::string content_type = "http://oink.splat/session";
+
+    talk_base::scoped_ptr<cricket::PortAllocator> allocator(
+        new TestPortAllocator());
+    int next_message_id = 0;
+
+    talk_base::scoped_ptr<TestClient> initiator(
+        new TestClient(allocator.get(), &next_message_id,
+                       kInitiator, protocol,
+                       content_type,
+                       content_name, "a",
+                       content_name, "b"));
+
+    // Send initiate
+    initiator->CreateSession();
+    EXPECT_TRUE(initiator->session->Initiate(
+        kResponder, NewTestSessionDescription(content_name, content_type)));
+    initiator->ExpectSentStanza(
+        IqSet("0", kInitiator, kResponder,
+              InitiateXml(protocol, content_name, content_type)));
+    EXPECT_EQ(cricket::BaseSession::STATE_SENTINITIATE,
+              initiator->session_state());
+
+    initiator->DeliverStanza(
+        IqSet("1", kResponder, kInitiator,
+              RejectXml(protocol, cricket::STR_TERMINATE_ERROR)));
+    initiator->ExpectSentStanza(
+        IqAck("1", kInitiator, kResponder));
+    if (protocol == PROTOCOL_JINGLE) {
+      EXPECT_EQ(cricket::BaseSession::STATE_RECEIVEDTERMINATE,
+                initiator->session_state());
+    } else {
+      EXPECT_EQ(cricket::BaseSession::STATE_RECEIVEDREJECT,
+                initiator->session_state());
+    }
+  }
+
+  void TestTransportMux() {
+    SignalingProtocol initiator_protocol = PROTOCOL_JINGLE;
+    SignalingProtocol responder_protocol = PROTOCOL_JINGLE;
+    SignalingProtocol resulting_protocol = PROTOCOL_JINGLE;
+    std::string content_type = cricket::NS_JINGLE_RTP;
+    std::string gingle_content_type = cricket::NS_GINGLE_VIDEO;
+    std::string content_name_a = cricket::CN_AUDIO;
+    std::string channel_name_a = "rtcp";
+    std::string content_name_b = cricket::CN_VIDEO;
+    std::string channel_name_b = "video_rtp";
+
+    std::string initiate_xml = InitiateXml(
+        initiator_protocol,
+        gingle_content_type,
+        content_name_a, content_type,
+        content_name_b, content_type, true);
+    std::string transport_info_a_xml = TransportInfo2Xml(
+        initiator_protocol, content_name_a,
+        channel_name_a, 0, 1);
+    std::string transport_info_b_xml = TransportInfo2Xml(
+        initiator_protocol, content_name_b,
+        channel_name_b, 2, 3);
+    std::string transport_info_reply_a_xml = TransportInfo2Xml(
+        resulting_protocol, content_name_a,
+        channel_name_a, 4, 5);
+    std::string transport_info_reply_b_xml = TransportInfo2Xml(
+        resulting_protocol, content_name_b,
+        channel_name_b, 6, 7);
+    std::string accept_xml = AcceptXml(
+        resulting_protocol,
+        gingle_content_type,
+        content_name_a, content_type,
+        content_name_b, content_type, true);
+
+    TestSession(initiator_protocol, responder_protocol, resulting_protocol,
+                gingle_content_type,
+                content_type,
+                content_name_a, channel_name_a,
+                content_name_b, channel_name_b,
+                initiate_xml,
+                transport_info_a_xml, transport_info_b_xml,
+                transport_info_reply_a_xml, transport_info_reply_b_xml,
+                accept_xml,
+                true);
+  }
+};
+
+// For each of these, "X => Y = Z" means "if a client with protocol X
+// initiates to a client with protocol Y, they end up speaking protocol Z.
+
+// Gingle => Gingle = Gingle (with other content)
+TEST_F(SessionTest, GingleToGingleOtherContent) {
+  TestOtherContent(PROTOCOL_GINGLE, PROTOCOL_GINGLE, PROTOCOL_GINGLE);
 }
 
-// Tests having client2 accept the session.
-void TestAccept(talk_base::Thread* signaling_thread,
-                Session* session1, Session* session2,
-                SessionHandler* handler1, SessionHandler* handler2,
-                SessionManager* manager1, SessionManager* manager2,
-                SessionManagerHandler* manhandler1,
-                SessionManagerHandler* manhandler2) {
-  // Make sure the IQ ID is 5.
-  ASSERT(gID <= 5);
-  while (gID < 5) GetNextID();
-
-  // Accept the session.
-  SessionDescription* desc2 = new SessionDescription();
-  bool valid = session2->Accept(desc2);
-  ASSERT(valid);
-
-  scoped_ptr<buzz::XmlElement> stanza;
-  stanza.reset(manhandler2->CheckNextStanza(
-    "<cli:iq to=\"foo@baz.com\" type=\"set\" from=\"bar@baz.com\" id=\"5\""
-    " xmlns:cli=\"jabber:client\">"
-    "<session xmlns=\"http://www.google.com/session\" type=\"accept\""
-    " id=\"2154761789\" initiator=\"foo@baz.com\">"
-    "<ses:description xmlns:ses=\"http://oink.splat/session\"/>"
-    "</session>"
-    "</cli:iq>"));
-  manhandler2->CheckNoStanza();
-
-  // Simulate a tiny delay in sending.
-  signaling_thread->ProcessMessages(10);
-
-  // Delivery the accept.
-  manager1->OnIncomingMessage(stanza.get());
-  stanza.reset(manhandler1->CheckNextStanza(
-    "<cli:iq to=\"bar@baz.com\" id=\"5\" type=\"result\" from=\"foo@baz.com\""
-    " xmlns:cli=\"jabber:client\"/>"));
-  manhandler1->CheckNoStanza();
-
-  // Both sessions should be in progress after a short wait.
-  signaling_thread->ProcessMessages(10);
-  ASSERT(handler1->last_state == Session::STATE_INPROGRESS);
-  ASSERT(handler2->last_state == Session::STATE_INPROGRESS);
+// Gingle => Gingle = Gingle (with audio content)
+TEST_F(SessionTest, GingleToGingleAudioContent) {
+  TestAudioContent(PROTOCOL_GINGLE, PROTOCOL_GINGLE, PROTOCOL_GINGLE);
 }
 
-// Tests sending data between two clients, over two channels.
-void TestSendRecv(ChannelHandler* chanhandler1a, ChannelHandler* chanhandler1b,
-                  ChannelHandler* chanhandler2a, ChannelHandler* chanhandler2b,
-                  talk_base::Thread* signaling_thread, bool first_dropped) {
-  const char* dat1a = "spamspamspamspamspamspamspambakedbeansspam";
-  const char* dat1b = "Lobster Thermidor a Crevette with a mornay sauce...";
-  const char* dat2a = Reverse(dat1a);
-  const char* dat2b = Reverse(dat1b);
-
-  // Sending from 2 -> 1 will enable 1 to send to 2 below.  That will then
-  // enable 2 to send back to 1.  So the code below will just work.
-  if (first_dropped) {
-    chanhandler2a->Send(dat2a, strlen(dat2a));
-    chanhandler2b->Send(dat2b, strlen(dat2b));
-  }
-
-  for (int i = 0; i < 20; i++) {
-    chanhandler1a->Send(dat1a, strlen(dat1a));
-    chanhandler1b->Send(dat1b, strlen(dat1b));
-    chanhandler2a->Send(dat2a, strlen(dat2a));
-    chanhandler2b->Send(dat2b, strlen(dat2b));
-
-    signaling_thread->ProcessMessages(10);
-
-    ASSERT(chanhandler1a->data_count == i + 1);
-    ASSERT(chanhandler1b->data_count == i + 1);
-    ASSERT(chanhandler2a->data_count == i + 1);
-    ASSERT(chanhandler2b->data_count == i + 1);
-
-    ASSERT(chanhandler1a->last_size == strlen(dat2a));
-    ASSERT(chanhandler1b->last_size == strlen(dat2b));
-    ASSERT(chanhandler2a->last_size == strlen(dat1a));
-    ASSERT(chanhandler2b->last_size == strlen(dat1b));
-
-    ASSERT(memcmp(chanhandler1a->last_data, dat2a, strlen(dat2a)) == 0);
-    ASSERT(memcmp(chanhandler1b->last_data, dat2b, strlen(dat2b)) == 0);
-    ASSERT(memcmp(chanhandler2a->last_data, dat1a, strlen(dat1a)) == 0);
-    ASSERT(memcmp(chanhandler2b->last_data, dat1b, strlen(dat1b)) == 0);
-  }
+// Gingle => Gingle = Gingle (with video contents)
+TEST_F(SessionTest, GingleToGingleVideoContents) {
+  TestVideoContents(PROTOCOL_GINGLE, PROTOCOL_GINGLE, PROTOCOL_GINGLE);
 }
 
-// Tests a session between two clients.  The inputs indicate whether we should
-// replace each client's output with what we would see from an old client.
-void TestP2PCompatibility(const std::string& test_name, bool old1, bool old2) {
-  InitTest();
 
-  talk_base::Thread* signaling_thread = talk_base::Thread::Current();
-  scoped_ptr<talk_base::Thread> worker_thread(new talk_base::Thread());
-  worker_thread->Start();
-
-  scoped_ptr<PortAllocator> allocator(
-      new TestPortAllocator(worker_thread.get(), NULL));
-  scoped_ptr<MySessionClient> client(new MySessionClient());
-  client->SetTransports(true, false);
-
-  scoped_ptr<SessionManager> manager1(
-      new SessionManager(allocator.get(), worker_thread.get()));
-  scoped_ptr<SessionManagerHandler> manhandler1(
-      new SessionManagerHandler(manager1.get(), "foo@baz.com"));
-  client->AddManager(manager1.get());
-
-  Session* session1 = manager1->CreateSession("foo@baz.com", kSessionType);
-  ASSERT(manhandler1->create_count == 1);
-  ASSERT(manhandler1->last_id == session1->id());
-  scoped_ptr<SessionHandler> handler1(new SessionHandler(session1));
-
-  ASSERT(client->create_count == 1);
-  TransportChannel* chan1a = client->a;
-  ASSERT(chan1a->name() == "a");
-  ASSERT(session1->GetChannel("a") == chan1a);
-  scoped_ptr<ChannelHandler> chanhandler1a(new ChannelHandler(chan1a));
-  TransportChannel* chan1b = client->b;
-  ASSERT(chan1b->name() == "b");
-  ASSERT(session1->GetChannel("b") == chan1b);
-  scoped_ptr<ChannelHandler> chanhandler1b(new ChannelHandler(chan1b));
-
-  SessionDescription* desc1 = new SessionDescription();
-  ASSERT(session1->state() == Session::STATE_INIT);
-  bool valid = session1->Initiate("bar@baz.com", NULL, desc1);
-  ASSERT(valid);
-  handler1->PrepareTransport();
-
-  signaling_thread->ProcessMessages(100);
-
-  ASSERT(handler1->last_state == Session::STATE_SENTINITIATE);
-  scoped_ptr<XmlElement> stanza1, stanza2;
-  stanza1.reset(manhandler1->CheckNextStanza(
-    "<cli:iq to=\"bar@baz.com\" type=\"set\" from=\"foo@baz.com\" id=\"0\""
-    " xmlns:cli=\"jabber:client\">"
-    "<session xmlns=\"http://www.google.com/session\" type=\"initiate\""
-    " id=\"2154761789\" initiator=\"foo@baz.com\">"
-    "<ses:description xmlns:ses=\"http://oink.splat/session\"/>"
-    "<p:transport xmlns:p=\"http://www.google.com/transport/p2p\"/>"
-    "</session>"
-    "</cli:iq>"));
-  stanza2.reset(manhandler1->CheckNextStanza(
-    "<cli:iq to=\"bar@baz.com\" type=\"set\" from=\"foo@baz.com\" id=\"1\""
-    " xmlns:cli=\"jabber:client\">"
-    "<session xmlns=\"http://www.google.com/session\" type=\"transport-info\""
-    " id=\"2154761789\" initiator=\"foo@baz.com\">"
-    "<p:transport xmlns:p=\"http://www.google.com/transport/p2p\">"
-    "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28653\""
-    " preference=\"1\" username=\"h0ISP4S5SJKH/9EY\" protocol=\"udp\""
-    " generation=\"0\" password=\"UhnAmO5C89dD2dZ+\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28658\""
-    " preference=\"1\" username=\"yid4vfB3zXPvrRB9\" protocol=\"udp\""
-    " generation=\"0\" password=\"SqLXTvcEyriIo+Mj\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28663\""
-    " preference=\"1\" username=\"NvT78D7WxPWM1KL8\" protocol=\"udp\""
-    " generation=\"0\" password=\"+mV/QhOapXu4caPX\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28668\""
-    " preference=\"1\" username=\"8EzB7MH+TYpIlSp/\" protocol=\"udp\""
-    " generation=\"0\" password=\"h+MelLXupoK5aYqC\" type=\"local\""
-    " network=\"network\"/>"
-    "</p:transport>"
-    "</session>"
-    "</cli:iq>"));
-  manhandler1->CheckNoStanza();
-
-  // If the first client were old, the initiate would have no transports and
-  // the candidates would be sent in a candidates message.
-  if (old1) {
-    stanza1.reset(XmlElement::ForStr(
-      "<cli:iq to=\"bar@baz.com\" type=\"set\" from=\"foo@baz.com\" id=\"0\""
-      " xmlns:cli=\"jabber:client\">"
-      "<session xmlns=\"http://www.google.com/session\" type=\"initiate\""
-      " id=\"2154761789\" initiator=\"foo@baz.com\">"
-      "<ses:description xmlns:ses=\"http://oink.splat/session\"/>"
-      "</session>"
-      "</cli:iq>"));
-    stanza2.reset(XmlElement::ForStr(
-      "<cli:iq to=\"bar@baz.com\" type=\"set\" from=\"foo@baz.com\" id=\"1\""
-      " xmlns:cli=\"jabber:client\">"
-      "<session xmlns=\"http://www.google.com/session\" type=\"candidates\""
-      " id=\"2154761789\" initiator=\"foo@baz.com\">"
-      "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28653\""
-      " preference=\"1\" username=\"h0ISP4S5SJKH/9EY\" protocol=\"udp\""
-      " generation=\"0\" password=\"UhnAmO5C89dD2dZ+\" type=\"local\""
-      " network=\"network\"/>"
-      "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28658\""
-      " preference=\"1\" username=\"yid4vfB3zXPvrRB9\" protocol=\"udp\""
-      " generation=\"0\" password=\"SqLXTvcEyriIo+Mj\" type=\"local\""
-      " network=\"network\"/>"
-      "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28663\""
-      " preference=\"1\" username=\"NvT78D7WxPWM1KL8\" protocol=\"udp\""
-      " generation=\"0\" password=\"+mV/QhOapXu4caPX\" type=\"local\""
-      " network=\"network\"/>"
-      "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28668\""
-      " preference=\"1\" username=\"8EzB7MH+TYpIlSp/\" protocol=\"udp\""
-      " generation=\"0\" password=\"h+MelLXupoK5aYqC\" type=\"local\""
-      " network=\"network\"/>"
-      "</session>"
-      "</cli:iq>"));
-  }
-
-  scoped_ptr<SessionManager> manager2(
-      new SessionManager(allocator.get(), worker_thread.get()));
-  scoped_ptr<SessionManagerHandler> manhandler2(
-      new SessionManagerHandler(manager2.get(), "bar@baz.com"));
-  client->AddManager(manager2.get());
-
-  // Deliver the initiate.
-  manager2->OnIncomingMessage(stanza1.get());
-  stanza1.reset(manhandler2->CheckNextStanza(
-    "<cli:iq to=\"foo@baz.com\" id=\"0\" type=\"result\" from=\"bar@baz.com\""
-    " xmlns:cli=\"jabber:client\"/>"));
-
-  // If client1 is old, we will not see a transport-accept.  If client2 is old,
-  // then we should act as if it did not send one.
-  if (!old1) {
-    stanza1.reset(manhandler2->CheckNextStanza(
-      "<cli:iq to=\"foo@baz.com\" type=\"set\" from=\"bar@baz.com\" id=\"2\""
-      " xmlns:cli=\"jabber:client\">"
-      "<session xmlns=\"http://www.google.com/session\""
-      " type=\"transport-accept\" id=\"2154761789\" initiator=\"foo@baz.com\">"
-      "<p:transport xmlns:p=\"http://www.google.com/transport/p2p\"/>"
-      "</session>"
-      "</cli:iq>"));
-  } else {
-    GetNextID();  // Advance the ID count to be the same in all cases.
-    stanza1.reset(NULL);
-  }
-  if (old2) {
-    stanza1.reset(NULL);
-  }
-  manhandler2->CheckNoStanza();
-  ASSERT(manhandler2->create_count == 1);
-  ASSERT(manhandler2->last_id == session1->id());
-
-  Session* session2 = manager2->GetSession(session1->id());
-  ASSERT(session2);
-  ASSERT(session1->id() == session2->id());
-  ASSERT(manhandler2->last_id == session2->id());
-  ASSERT(session2->state() == Session::STATE_RECEIVEDINITIATE);
-  scoped_ptr<SessionHandler> handler2(new SessionHandler(session2));
-  handler2->PrepareTransport();
-
-  ASSERT(session2->name() == session1->remote_name());
-  ASSERT(session1->name() == session2->remote_name());
-
-  ASSERT(session2->transport() != NULL);
-  ASSERT(session2->transport()->name() == kNsP2pTransport);
-
-  ASSERT(client->create_count == 2);
-  TransportChannel* chan2a = client->a;
-  scoped_ptr<ChannelHandler> chanhandler2a(new ChannelHandler(chan2a));
-  TransportChannel* chan2b = client->b;
-  scoped_ptr<ChannelHandler> chanhandler2b(new ChannelHandler(chan2b));
-
-  // Deliver the candidates.
-  manager2->OnIncomingMessage(stanza2.get());
-  stanza2.reset(manhandler2->CheckNextStanza(
-    "<cli:iq to=\"foo@baz.com\" id=\"1\" type=\"result\" from=\"bar@baz.com\""
-    " xmlns:cli=\"jabber:client\"/>"));
-
-  signaling_thread->ProcessMessages(10);
-
-  // If client1 is old, we should see a candidates message instead of a
-  // transport-info.  If client2 is old, we should act as if we did.
-  const char* kCandidates2 =
-    "<cli:iq to=\"foo@baz.com\" type=\"set\" from=\"bar@baz.com\" id=\"3\""
-    " xmlns:cli=\"jabber:client\">"
-    "<session xmlns=\"http://www.google.com/session\" type=\"candidates\""
-    " id=\"2154761789\" initiator=\"foo@baz.com\">"
-    "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28673\""
-    " preference=\"1\" username=\"FJDz3iuXjbQJDRjs\" protocol=\"udp\""
-    " generation=\"0\" password=\"Ca5daV9m6G91qhlM\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28678\""
-    " preference=\"1\" username=\"xlN53r3Jn/R5XuCt\" protocol=\"udp\""
-    " generation=\"0\" password=\"rgik2pKsjaPSUdJd\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28683\""
-    " preference=\"1\" username=\"IBZ8CSq8ot2+pSMp\" protocol=\"udp\""
-    " generation=\"0\" password=\"i7RcDsGntMI6fzdd\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28688\""
-    " preference=\"1\" username=\"SEtih9PYtMHCAlMI\" protocol=\"udp\""
-    " generation=\"0\" password=\"wROrHJ3+gDxUUMp1\" type=\"local\""
-    " network=\"network\"/>"
-    "</session>"
-    "</cli:iq>";
-  if (old1) {
-    stanza2.reset(manhandler2->CheckNextStanza(kCandidates2));
-  } else {
-    stanza2.reset(manhandler2->CheckNextStanza(
-      "<cli:iq to=\"foo@baz.com\" type=\"set\" from=\"bar@baz.com\" id=\"3\""
-      " xmlns:cli=\"jabber:client\">"
-      "<session xmlns=\"http://www.google.com/session\" type=\"transport-info\""
-      " id=\"2154761789\" initiator=\"foo@baz.com\">"
-      "<p:transport xmlns:p=\"http://www.google.com/transport/p2p\">"
-      "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28673\""
-      " preference=\"1\" username=\"FJDz3iuXjbQJDRjs\" protocol=\"udp\""
-      " generation=\"0\" password=\"Ca5daV9m6G91qhlM\" type=\"local\""
-      " network=\"network\"/>"
-      "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28678\""
-      " preference=\"1\" username=\"xlN53r3Jn/R5XuCt\" protocol=\"udp\""
-      " generation=\"0\" password=\"rgik2pKsjaPSUdJd\" type=\"local\""
-      " network=\"network\"/>"
-      "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28683\""
-      " preference=\"1\" username=\"IBZ8CSq8ot2+pSMp\" protocol=\"udp\""
-      " generation=\"0\" password=\"i7RcDsGntMI6fzdd\" type=\"local\""
-      " network=\"network\"/>"
-      "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28688\""
-      " preference=\"1\" username=\"SEtih9PYtMHCAlMI\" protocol=\"udp\""
-      " generation=\"0\" password=\"wROrHJ3+gDxUUMp1\" type=\"local\""
-      " network=\"network\"/>"
-      "</p:transport>"
-      "</session>"
-      "</cli:iq>"));
-  }
-  if (old2) {
-    stanza2.reset(XmlElement::ForStr(kCandidates2));
-  }
-  manhandler2->CheckNoStanza();
-
-  // Deliver the transport-accept if one exists.
-  if (stanza1.get() != NULL) {
-    manager1->OnIncomingMessage(stanza1.get());
-    stanza1.reset(manhandler1->CheckNextStanza(
-      "<cli:iq to=\"bar@baz.com\" id=\"2\" type=\"result\" from=\"foo@baz.com\""
-      " xmlns:cli=\"jabber:client\"/>"));
-    manhandler1->CheckNoStanza();
-
-    // The first session should now have a transport.
-    ASSERT(session1->transport() != NULL);
-    ASSERT(session1->transport()->name() == kNsP2pTransport);
-  }
-
-  // Deliver the candidates.  If client2 is old (or is acting old because
-  // client1 is), then client1 will correct its earlier mistake of sending
-  // transport-info by sending a candidates message.  If client1 is supposed to
-  // be old, then it sent candidates earlier, so we drop this.
-  manager1->OnIncomingMessage(stanza2.get());
-  if (old1 || old2)  {
-    stanza2.reset(manhandler1->CheckNextStanza(
-      "<cli:iq to=\"bar@baz.com\" type=\"set\" from=\"foo@baz.com\" id=\"4\""
-      " xmlns:cli=\"jabber:client\">"
-      "<session xmlns=\"http://www.google.com/session\" type=\"candidates\""
-      " id=\"2154761789\" initiator=\"foo@baz.com\">"
-      "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28653\""
-      " preference=\"1\" username=\"h0ISP4S5SJKH/9EY\" protocol=\"udp\""
-      " generation=\"0\" password=\"UhnAmO5C89dD2dZ+\" type=\"local\""
-      " network=\"network\"/>"
-      "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28658\""
-      " preference=\"1\" username=\"yid4vfB3zXPvrRB9\" protocol=\"udp\""
-      " generation=\"0\" password=\"SqLXTvcEyriIo+Mj\" type=\"local\""
-      " network=\"network\"/>"
-      "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28663\""
-      " preference=\"1\" username=\"NvT78D7WxPWM1KL8\" protocol=\"udp\""
-      " generation=\"0\" password=\"+mV/QhOapXu4caPX\" type=\"local\""
-      " network=\"network\"/>"
-      "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28668\""
-      " preference=\"1\" username=\"8EzB7MH+TYpIlSp/\" protocol=\"udp\""
-      " generation=\"0\" password=\"h+MelLXupoK5aYqC\" type=\"local\""
-      " network=\"network\"/>"
-      "</session>"
-      "</cli:iq>"));
-  } else {
-    GetNextID();  // Advance the ID count to be the same in all cases.
-    stanza2.reset(NULL);
-  }
-  if (old1) {
-    stanza2.reset(NULL);
-  }
-  stanza1.reset(manhandler1->CheckNextStanza(
-    "<cli:iq to=\"bar@baz.com\" id=\"3\" type=\"result\" from=\"foo@baz.com\""
-    " xmlns:cli=\"jabber:client\"/>"));
-  manhandler1->CheckNoStanza();
-
-  // The first session must have a transport in either case now.
-  ASSERT(session1->transport() != NULL);
-  ASSERT(session1->transport()->name() == kNsP2pTransport);
-
-  // If client1 just generated a candidates message, then we must deliver it.
-  if (stanza2.get() != NULL) {
-    manager2->OnIncomingMessage(stanza2.get());
-    stanza2.reset(manhandler2->CheckNextStanza(
-      "<cli:iq to=\"foo@baz.com\" id=\"4\" type=\"result\" from=\"bar@baz.com\""
-      " xmlns:cli=\"jabber:client\"/>"));
-    manhandler2->CheckNoStanza();
-  }
-
-  // The channels should be able to become writable at this point.  This
-  // requires pinging, so it may take a little while.
-  signaling_thread->ProcessMessages(500);
-  ASSERT(chan1a->writable() && chan1a->readable());
-  ASSERT(chan1b->writable() && chan1b->readable());
-  ASSERT(chan2a->writable() && chan2a->readable());
-  ASSERT(chan2b->writable() && chan2b->readable());
-  ASSERT(chanhandler1a->last_writable);
-  ASSERT(chanhandler1b->last_writable);
-  ASSERT(chanhandler2a->last_writable);
-  ASSERT(chanhandler2b->last_writable);
-
-  // Accept the session.
-  TestAccept(signaling_thread, session1, session2,
-             handler1.get(), handler2.get(),
-             manager1.get(), manager2.get(),
-             manhandler1.get(), manhandler2.get());
-
-  // Send a bunch of data between them.
-  TestSendRecv(chanhandler1a.get(), chanhandler1b.get(), chanhandler2a.get(),
-               chanhandler2b.get(), signaling_thread, false);
-
-  manager1->DestroySession(session1);
-  manager2->DestroySession(session2);
-
-  ASSERT(manhandler1->create_count == 1);
-  ASSERT(manhandler2->create_count == 1);
-  ASSERT(manhandler1->destroy_count == 1);
-  ASSERT(manhandler2->destroy_count == 1);
-
-  worker_thread->Stop();
-
-  std::cout << "P2P Compatibility: " << test_name << ": PASS" << std::endl;
+// Jingle => Jingle = Jingle (with other content)
+TEST_F(SessionTest, JingleToJingleOtherContent) {
+  TestOtherContent(PROTOCOL_JINGLE, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
 }
 
-// Tests the P2P transport.  The flags indicate whether they clients will
-// advertise support for raw as well.
-void TestP2P(const std::string& test_name, bool raw1, bool raw2) {
-  InitTest();
-
-  talk_base::Thread* signaling_thread = talk_base::Thread::Current();
-  scoped_ptr<talk_base::Thread> worker_thread(new talk_base::Thread());
-  worker_thread->Start();
-
-  scoped_ptr<PortAllocator> allocator(
-      new TestPortAllocator(worker_thread.get(), NULL));
-  scoped_ptr<MySessionClient> client1(new MySessionClient());
-  client1->SetTransports(true, raw1);
-  scoped_ptr<MySessionClient> client2(new MySessionClient());
-  client2->SetTransports(true, raw2);
-
-  scoped_ptr<SessionManager> manager1(
-      new SessionManager(allocator.get(), worker_thread.get()));
-  scoped_ptr<SessionManagerHandler> manhandler1(
-      new SessionManagerHandler(manager1.get(), "foo@baz.com"));
-  client1->AddManager(manager1.get());
-
-  Session* session1 = manager1->CreateSession("foo@baz.com", kSessionType);
-  ASSERT(manhandler1->create_count == 1);
-  ASSERT(manhandler1->last_id == session1->id());
-  scoped_ptr<SessionHandler> handler1(new SessionHandler(session1));
-
-  ASSERT(client1->create_count == 1);
-  TransportChannel* chan1a = client1->a;
-  ASSERT(chan1a->name() == "a");
-  ASSERT(session1->GetChannel("a") == chan1a);
-  scoped_ptr<ChannelHandler> chanhandler1a(new ChannelHandler(chan1a));
-  TransportChannel* chan1b = client1->b;
-  ASSERT(chan1b->name() == "b");
-  ASSERT(session1->GetChannel("b") == chan1b);
-  scoped_ptr<ChannelHandler> chanhandler1b(new ChannelHandler(chan1b));
-
-  SessionDescription* desc1 = new SessionDescription();
-  ASSERT(session1->state() == Session::STATE_INIT);
-  bool valid = session1->Initiate("bar@baz.com", NULL, desc1);
-  ASSERT(valid);
-  handler1->PrepareTransport();
-
-  signaling_thread->ProcessMessages(100);
-
-  ASSERT(handler1->last_state == Session::STATE_SENTINITIATE);
-  scoped_ptr<XmlElement> stanza1, stanza2;
-  if (raw1) {
-    stanza1.reset(manhandler1->CheckNextStanza(
-      "<cli:iq to=\"bar@baz.com\" type=\"set\" from=\"foo@baz.com\" id=\"0\""
-      " xmlns:cli=\"jabber:client\">"
-      "<session xmlns=\"http://www.google.com/session\" type=\"initiate\""
-      " id=\"2154761789\" initiator=\"foo@baz.com\">"
-      "<ses:description xmlns:ses=\"http://oink.splat/session\"/>"
-      "<p:transport xmlns:p=\"http://www.google.com/transport/p2p\"/>"
-      "<raw:transport xmlns:raw=\"http://www.google.com/transport/raw\"/>"
-      "</session>"
-      "</cli:iq>"));
-  } else {
-    stanza1.reset(manhandler1->CheckNextStanza(
-      "<cli:iq to=\"bar@baz.com\" type=\"set\" from=\"foo@baz.com\" id=\"0\""
-      " xmlns:cli=\"jabber:client\">"
-      "<session xmlns=\"http://www.google.com/session\" type=\"initiate\""
-      " id=\"2154761789\" initiator=\"foo@baz.com\">"
-      "<ses:description xmlns:ses=\"http://oink.splat/session\"/>"
-      "<p:transport xmlns:p=\"http://www.google.com/transport/p2p\"/>"
-      "</session>"
-      "</cli:iq>"));
-  }
-  stanza2.reset(manhandler1->CheckNextStanza(
-    "<cli:iq to=\"bar@baz.com\" type=\"set\" from=\"foo@baz.com\" id=\"1\""
-    " xmlns:cli=\"jabber:client\">"
-    "<session xmlns=\"http://www.google.com/session\" type=\"transport-info\""
-    " id=\"2154761789\" initiator=\"foo@baz.com\">"
-    "<p:transport xmlns:p=\"http://www.google.com/transport/p2p\">"
-    "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28653\""
-    " preference=\"1\" username=\"h0ISP4S5SJKH/9EY\" protocol=\"udp\""
-    " generation=\"0\" password=\"UhnAmO5C89dD2dZ+\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28658\""
-    " preference=\"1\" username=\"yid4vfB3zXPvrRB9\" protocol=\"udp\""
-    " generation=\"0\" password=\"SqLXTvcEyriIo+Mj\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28663\""
-    " preference=\"1\" username=\"NvT78D7WxPWM1KL8\" protocol=\"udp\""
-    " generation=\"0\" password=\"+mV/QhOapXu4caPX\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28668\""
-    " preference=\"1\" username=\"8EzB7MH+TYpIlSp/\" protocol=\"udp\""
-    " generation=\"0\" password=\"h+MelLXupoK5aYqC\" type=\"local\""
-    " network=\"network\"/>"
-    "</p:transport>"
-    "</session>"
-    "</cli:iq>"));
-  manhandler1->CheckNoStanza();
-
-  scoped_ptr<SessionManager> manager2(
-      new SessionManager(allocator.get(), worker_thread.get()));
-  scoped_ptr<SessionManagerHandler> manhandler2(
-      new SessionManagerHandler(manager2.get(), "bar@baz.com"));
-  client2->AddManager(manager2.get());
-
-  // Deliver the initiate.
-  manager2->OnIncomingMessage(stanza1.get());
-  stanza1.reset(manhandler2->CheckNextStanza(
-    "<cli:iq to=\"foo@baz.com\" id=\"0\" type=\"result\" from=\"bar@baz.com\""
-    " xmlns:cli=\"jabber:client\"/>"));
-  stanza1.reset(manhandler2->CheckNextStanza(
-    "<cli:iq to=\"foo@baz.com\" type=\"set\" from=\"bar@baz.com\" id=\"2\""
-    " xmlns:cli=\"jabber:client\">"
-    "<session xmlns=\"http://www.google.com/session\""
-    " type=\"transport-accept\" id=\"2154761789\" initiator=\"foo@baz.com\">"
-    "<p:transport xmlns:p=\"http://www.google.com/transport/p2p\"/>"
-    "</session>"
-    "</cli:iq>"));
-  manhandler2->CheckNoStanza();
-  ASSERT(manhandler2->create_count == 1);
-  ASSERT(manhandler2->last_id == session1->id());
-
-  Session* session2 = manager2->GetSession(session1->id());
-  ASSERT(session2);
-  ASSERT(session1->id() == session2->id());
-  ASSERT(manhandler2->last_id == session2->id());
-  ASSERT(session2->state() == Session::STATE_RECEIVEDINITIATE);
-  scoped_ptr<SessionHandler> handler2(new SessionHandler(session2));
-  handler2->PrepareTransport();
-
-  ASSERT(session2->name() == session1->remote_name());
-  ASSERT(session1->name() == session2->remote_name());
-
-  ASSERT(session2->transport() != NULL);
-  ASSERT(session2->transport()->name() == kNsP2pTransport);
-
-  ASSERT(client2->create_count == 1);
-  TransportChannel* chan2a = client2->a;
-  scoped_ptr<ChannelHandler> chanhandler2a(new ChannelHandler(chan2a));
-  TransportChannel* chan2b = client2->b;
-  scoped_ptr<ChannelHandler> chanhandler2b(new ChannelHandler(chan2b));
-
-  // Deliver the candidates.
-  manager2->OnIncomingMessage(stanza2.get());
-  stanza2.reset(manhandler2->CheckNextStanza(
-    "<cli:iq to=\"foo@baz.com\" id=\"1\" type=\"result\" from=\"bar@baz.com\""
-    " xmlns:cli=\"jabber:client\"/>"));
-
-  signaling_thread->ProcessMessages(10);
-
-  stanza2.reset(manhandler2->CheckNextStanza(
-    "<cli:iq to=\"foo@baz.com\" type=\"set\" from=\"bar@baz.com\" id=\"3\""
-    " xmlns:cli=\"jabber:client\">"
-    "<session xmlns=\"http://www.google.com/session\" type=\"transport-info\""
-    " id=\"2154761789\" initiator=\"foo@baz.com\">"
-    "<p:transport xmlns:p=\"http://www.google.com/transport/p2p\">"
-    "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28673\""
-    " preference=\"1\" username=\"FJDz3iuXjbQJDRjs\" protocol=\"udp\""
-    " generation=\"0\" password=\"Ca5daV9m6G91qhlM\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"a\" address=\"127.0.0.1\" port=\"28678\""
-    " preference=\"1\" username=\"xlN53r3Jn/R5XuCt\" protocol=\"udp\""
-    " generation=\"0\" password=\"rgik2pKsjaPSUdJd\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28683\""
-    " preference=\"1\" username=\"IBZ8CSq8ot2+pSMp\" protocol=\"udp\""
-    " generation=\"0\" password=\"i7RcDsGntMI6fzdd\" type=\"local\""
-    " network=\"network\"/>"
-    "<candidate name=\"b\" address=\"127.0.0.1\" port=\"28688\""
-    " preference=\"1\" username=\"SEtih9PYtMHCAlMI\" protocol=\"udp\""
-    " generation=\"0\" password=\"wROrHJ3+gDxUUMp1\" type=\"local\""
-    " network=\"network\"/>"
-    "</p:transport>"
-    "</session>"
-    "</cli:iq>"));
-  manhandler2->CheckNoStanza();
-
-  // Deliver the transport-accept.
-  manager1->OnIncomingMessage(stanza1.get());
-  stanza1.reset(manhandler1->CheckNextStanza(
-    "<cli:iq to=\"bar@baz.com\" id=\"2\" type=\"result\" from=\"foo@baz.com\""
-    " xmlns:cli=\"jabber:client\"/>"));
-  manhandler1->CheckNoStanza();
-
-  // The first session should now have a transport.
-  ASSERT(session1->transport() != NULL);
-  ASSERT(session1->transport()->name() == kNsP2pTransport);
-
-  // Deliver the candidates.
-  manager1->OnIncomingMessage(stanza2.get());
-  stanza1.reset(manhandler1->CheckNextStanza(
-    "<cli:iq to=\"bar@baz.com\" id=\"3\" type=\"result\" from=\"foo@baz.com\""
-    " xmlns:cli=\"jabber:client\"/>"));
-  manhandler1->CheckNoStanza();
-
-  // The channels should be able to become writable at this point.  This
-  // requires pinging, so it may take a little while.
-  signaling_thread->ProcessMessages(500);
-  ASSERT(chan1a->writable() && chan1a->readable());
-  ASSERT(chan1b->writable() && chan1b->readable());
-  ASSERT(chan2a->writable() && chan2a->readable());
-  ASSERT(chan2b->writable() && chan2b->readable());
-  ASSERT(chanhandler1a->last_writable);
-  ASSERT(chanhandler1b->last_writable);
-  ASSERT(chanhandler2a->last_writable);
-  ASSERT(chanhandler2b->last_writable);
-
-  // Accept the session.
-  TestAccept(signaling_thread, session1, session2,
-             handler1.get(), handler2.get(),
-             manager1.get(), manager2.get(),
-             manhandler1.get(), manhandler2.get());
-
-  // Send a bunch of data between them.
-  TestSendRecv(chanhandler1a.get(), chanhandler1b.get(), chanhandler2a.get(),
-               chanhandler2b.get(), signaling_thread, false);
-
-  manager1->DestroySession(session1);
-  manager2->DestroySession(session2);
-
-  ASSERT(manhandler1->create_count == 1);
-  ASSERT(manhandler2->create_count == 1);
-  ASSERT(manhandler1->destroy_count == 1);
-  ASSERT(manhandler2->destroy_count == 1);
-
-  worker_thread->Stop();
-
-  std::cout << "P2P: " << test_name << ": PASS" << std::endl;
+// Jingle => Jingle = Jingle (with audio content)
+TEST_F(SessionTest, JingleToJingleAudioContent) {
+  TestAudioContent(PROTOCOL_JINGLE, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
 }
-//
-int main(int argc, char* argv[]) {
-  talk_base::LogMessage::LogToDebug(talk_base::LS_WARNING);
 
-  TestP2P("{p2p} => {p2p}", false, false);
-  TestP2P("{p2p} => {p2p,raw}", false, true);
-  TestP2P("{p2p,raw} => {p2p}", true, false);
-  TestP2P("{p2p,raw} => {p2p,raw}", true, true);
-  TestP2PCompatibility("New => New", false, false);
-  TestP2PCompatibility("Old => New", true, false);
-  TestP2PCompatibility("New => Old", false, true);
-  TestP2PCompatibility("Old => Old", true, true);
+// Jingle => Jingle = Jingle (with video contents)
+TEST_F(SessionTest, JingleToJingleVideoContents) {
+  TestVideoContents(PROTOCOL_JINGLE, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
+}
 
-  return 0;
+
+// Hybrid => Hybrid = Jingle (with other content)
+TEST_F(SessionTest, HybridToHybridOtherContent) {
+  TestOtherContent(PROTOCOL_HYBRID, PROTOCOL_HYBRID, PROTOCOL_JINGLE);
+}
+
+// Hybrid => Hybrid = Jingle (with audio content)
+TEST_F(SessionTest, HybridToHybridAudioContent) {
+  TestAudioContent(PROTOCOL_HYBRID, PROTOCOL_HYBRID, PROTOCOL_JINGLE);
+}
+
+// Hybrid => Hybrid = Jingle (with video contents)
+TEST_F(SessionTest, HybridToHybridVideoContents) {
+  TestVideoContents(PROTOCOL_HYBRID, PROTOCOL_HYBRID, PROTOCOL_JINGLE);
+}
+
+
+// Gingle => Hybrid = Gingle (with other content)
+TEST_F(SessionTest, GingleToHybridOtherContent) {
+  TestOtherContent(PROTOCOL_GINGLE, PROTOCOL_HYBRID, PROTOCOL_GINGLE);
+}
+
+// Gingle => Hybrid = Gingle (with audio content)
+TEST_F(SessionTest, GingleToHybridAudioContent) {
+  TestAudioContent(PROTOCOL_GINGLE, PROTOCOL_HYBRID, PROTOCOL_GINGLE);
+}
+
+// Gingle => Hybrid = Gingle (with video contents)
+TEST_F(SessionTest, GingleToHybridVideoContents) {
+  TestVideoContents(PROTOCOL_GINGLE, PROTOCOL_HYBRID, PROTOCOL_GINGLE);
+}
+
+
+// Jingle => Hybrid = Jingle (with other content)
+TEST_F(SessionTest, JingleToHybridOtherContent) {
+  TestOtherContent(PROTOCOL_JINGLE, PROTOCOL_HYBRID, PROTOCOL_JINGLE);
+}
+
+// Jingle => Hybrid = Jingle (with audio content)
+TEST_F(SessionTest, JingleToHybridAudioContent) {
+  TestAudioContent(PROTOCOL_JINGLE, PROTOCOL_HYBRID, PROTOCOL_JINGLE);
+}
+
+// Jingle => Hybrid = Jingle (with video contents)
+TEST_F(SessionTest, JingleToHybridVideoContents) {
+  TestVideoContents(PROTOCOL_JINGLE, PROTOCOL_HYBRID, PROTOCOL_JINGLE);
+}
+
+
+// Hybrid => Gingle = Gingle (with other content)
+TEST_F(SessionTest, HybridToGingleOtherContent) {
+  TestOtherContent(PROTOCOL_HYBRID, PROTOCOL_GINGLE, PROTOCOL_GINGLE);
+}
+
+// Hybrid => Gingle = Gingle (with audio content)
+TEST_F(SessionTest, HybridToGingleAudioContent) {
+  TestAudioContent(PROTOCOL_HYBRID, PROTOCOL_GINGLE, PROTOCOL_GINGLE);
+}
+
+// Hybrid => Gingle = Gingle (with video contents)
+TEST_F(SessionTest, HybridToGingleVideoContents) {
+  TestVideoContents(PROTOCOL_HYBRID, PROTOCOL_GINGLE, PROTOCOL_GINGLE);
+}
+
+
+// Hybrid => Jingle = Jingle (with other content)
+TEST_F(SessionTest, HybridToJingleOtherContent) {
+  TestOtherContent(PROTOCOL_HYBRID, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
+}
+
+// Hybrid => Jingle = Jingle (with audio content)
+TEST_F(SessionTest, HybridToJingleAudioContent) {
+  TestAudioContent(PROTOCOL_HYBRID, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
+}
+
+// Hybrid => Jingle = Jingle (with video contents)
+TEST_F(SessionTest, HybridToJingleVideoContents) {
+  TestVideoContents(PROTOCOL_HYBRID, PROTOCOL_JINGLE, PROTOCOL_JINGLE);
+}
+
+
+TEST_F(SessionTest, GingleEarlyTerminationFromInitiator) {
+  TestEarlyTerminationFromInitiator(PROTOCOL_GINGLE);
+}
+
+TEST_F(SessionTest, JingleEarlyTerminationFromInitiator) {
+  TestEarlyTerminationFromInitiator(PROTOCOL_JINGLE);
+}
+
+TEST_F(SessionTest, HybridEarlyTerminationFromInitiator) {
+  TestEarlyTerminationFromInitiator(PROTOCOL_HYBRID);
+}
+
+TEST_F(SessionTest, GingleRejection) {
+  TestRejection(PROTOCOL_GINGLE);
+}
+
+TEST_F(SessionTest, JingleRejection) {
+  TestRejection(PROTOCOL_JINGLE);
+}
+
+TEST_F(SessionTest, GingleGoodRedirect) {
+  TestGoodRedirect(PROTOCOL_GINGLE);
+}
+
+TEST_F(SessionTest, JingleGoodRedirect) {
+  TestGoodRedirect(PROTOCOL_JINGLE);
+}
+
+TEST_F(SessionTest, GingleBadRedirect) {
+  TestBadRedirect(PROTOCOL_GINGLE);
+}
+
+TEST_F(SessionTest, JingleBadRedirect) {
+  TestBadRedirect(PROTOCOL_JINGLE);
+}
+
+TEST_F(SessionTest, TestCandidatesInInitiateAndAccept) {
+  TestCandidatesInInitiateAndAccept("Candidates in initiate/accept");
+}
+
+TEST_F(SessionTest, TestTransportMux) {
+  TestTransportMux();
 }

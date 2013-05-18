@@ -2,31 +2,31 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _CRICKET_P2P_CLIENT_SESSIONSENDTASK_H_
-#define _CRICKET_P2P_CLIENT_SESSIONSENDTASK_H_
+#ifndef TALK_P2P_CLIENT_SESSIONSENDTASK_H_
+#define TALK_P2P_CLIENT_SESSIONSENDTASK_H_
 
 #include "talk/base/common.h"
 #include "talk/xmpp/constants.h"
@@ -34,7 +34,6 @@
 #include "talk/xmpp/xmppengine.h"
 #include "talk/xmpp/xmpptask.h"
 #include "talk/p2p/base/sessionmanager.h"
-#include "talk/base/logging.h"
 
 namespace cricket {
 
@@ -45,11 +44,14 @@ namespace cricket {
 // task will quietly go away.
 
 class SessionSendTask : public buzz::XmppTask {
-public:
-  SessionSendTask(Task *parent, SessionManager *session_manager)
+ public:
+  SessionSendTask(buzz::XmppTaskParentInterface* parent,
+                  SessionManager* session_manager)
     : buzz::XmppTask(parent, buzz::XmppEngine::HL_SINGLE),
       session_manager_(session_manager) {
     set_timeout_seconds(15);
+    session_manager_->SignalDestroyed.connect(
+        this, &SessionSendTask::OnSessionManagerDestroyed);
   }
 
   virtual ~SessionSendTask() {
@@ -77,14 +79,21 @@ public:
     } else {
       stanza_->SetAttr(buzz::QN_ID, task_id());
     }
-    LOG(LS_VERBOSE) << "sending stanza\n" << stanza_.get()->BodyText().c_str() << "\n"; 
+  }
+
+  void OnSessionManagerDestroyed() {
+    // If the session manager doesn't exist anymore, we should still try to
+    // send the message, but avoid calling back into the SessionManager.
+    session_manager_ = NULL;
   }
 
   sigslot::signal1<SessionSendTask *> SignalDone;
 
-protected:
+ protected:
   virtual int OnTimeout() {
-    session_manager_->OnFailedSend(stanza_.get(), NULL);
+    if (session_manager_ != NULL) {
+      session_manager_->OnFailedSend(stanza_.get(), NULL);
+    }
 
     return XmppTask::OnTimeout();
   }
@@ -99,18 +108,16 @@ protected:
   }
 
   virtual int ProcessResponse() {
-    if (GetClient()->GetState() != buzz::XmppEngine::STATE_OPEN) {
-      return STATE_DONE;
-    }
-
     const buzz::XmlElement* next = NextStanza();
     if (next == NULL)
       return STATE_BLOCKED;
 
-    if (next->Attr(buzz::QN_TYPE) == buzz::STR_RESULT) {
-      session_manager_->OnIncomingResponse(stanza_.get(), next);
-    } else {
-      session_manager_->OnFailedSend(stanza_.get(), next);
+    if (session_manager_ != NULL) {
+      if (next->Attr(buzz::QN_TYPE) == buzz::STR_RESULT) {
+        session_manager_->OnIncomingResponse(stanza_.get(), next);
+      } else {
+        session_manager_->OnFailedSend(stanza_.get(), next);
+      }
     }
 
     return STATE_DONE;
@@ -128,7 +135,7 @@ protected:
     return false;
   }
 
-private:
+ private:
   SessionManager *session_manager_;
   talk_base::scoped_ptr<buzz::XmlElement> stanza_;
   bool timed_out_;
@@ -136,4 +143,4 @@ private:
 
 }
 
-#endif // _CRICKET_P2P_CLIENT_SESSIONSENDTASK_H_
+#endif // TALK_P2P_CLIENT_SESSIONSENDTASK_H_

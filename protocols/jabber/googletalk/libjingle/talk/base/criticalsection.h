@@ -63,6 +63,13 @@ public:
     EnterCriticalSection(&crit_);
     TRACK_OWNER(thread_ = GetCurrentThreadId());
   }
+  bool TryEnter() {
+    if (TryEnterCriticalSection(&crit_) != FALSE) {
+      TRACK_OWNER(thread_ = GetCurrentThreadId());
+      return true;
+    }
+    return false;
+  }
   void Leave() {
     TRACK_OWNER(thread_ = 0);
     LeaveCriticalSection(&crit_);
@@ -86,18 +93,35 @@ public:
     pthread_mutexattr_init(&mutex_attribute);
     pthread_mutexattr_settype(&mutex_attribute, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&mutex_, &mutex_attribute);
+    pthread_mutexattr_destroy(&mutex_attribute);
+    TRACK_OWNER(thread_ = 0);
   }
   ~CriticalSection() {
     pthread_mutex_destroy(&mutex_);
   }
   void Enter() {
     pthread_mutex_lock(&mutex_);
+    TRACK_OWNER(thread_ = pthread_self());
+  }
+  bool TryEnter() {
+    if (pthread_mutex_trylock(&mutex_) == 0) {
+      TRACK_OWNER(thread_ = pthread_self());
+      return true;
+    }
+    return false;
   }
   void Leave() {
+    TRACK_OWNER(thread_ = 0);
     pthread_mutex_unlock(&mutex_);
   }
+
+#if CS_TRACK_OWNER
+  bool CurrentThreadIsOwner() const { return pthread_equal(thread_, pthread_self()); }
+#endif  // CS_TRACK_OWNER
+
 private:
   pthread_mutex_t mutex_;
+  TRACK_OWNER(pthread_t thread_);
 };
 #endif // POSIX
 
@@ -114,6 +138,45 @@ public:
   }
 private:
   CriticalSection *pcrit_;
+};
+
+// TODO: Replace with platform-specific "atomic" ops.
+// Something like: google3/base/atomicops.h TODO: And, move
+// it to atomicops.h, which can't be done easily because of complex
+// compile rules.
+class AtomicOps {
+ public:
+#ifdef WIN32
+  // Assumes sizeof(int) == sizeof(LONG), which it is on Win32 and Win64.
+  static int Increment(int* i) {
+    return ::InterlockedIncrement(reinterpret_cast<LONG*>(i));
+  }
+  static int Decrement(int* i) {
+    return ::InterlockedDecrement(reinterpret_cast<LONG*>(i));
+  }
+#else
+  static int Increment(int* i) {
+    // Could be faster, and less readable:
+    // static CriticalSection* crit = StaticCrit();
+    // CritScope scope(crit);
+    CritScope scope(StaticCrit());
+    return ++(*i);
+  }
+
+  static int Decrement(int* i) {
+    // Could be faster, and less readable:
+    // static CriticalSection* crit = StaticCrit();
+    // CritScope scope(crit);
+    CritScope scope(StaticCrit());
+    return --(*i);
+  }
+
+ private:
+  static CriticalSection* StaticCrit() {
+    static CriticalSection* crit = new CriticalSection();
+    return crit;
+  }
+#endif
 };
 
 } // namespace talk_base

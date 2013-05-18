@@ -25,15 +25,17 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TALK_BASE_NATSERVER_H__
-#define TALK_BASE_NATSERVER_H__
+#ifndef TALK_BASE_NATSERVER_H_
+#define TALK_BASE_NATSERVER_H_
+
+#include <map>
+#include <set>
 
 #include "talk/base/asyncudpsocket.h"
 #include "talk/base/socketaddresspair.h"
 #include "talk/base/thread.h"
 #include "talk/base/socketfactory.h"
 #include "talk/base/nattypes.h"
-#include <map>
 
 namespace talk_base {
 
@@ -41,7 +43,7 @@ namespace talk_base {
 // NAT.  The NAT server maintains a hashtable of the routes that it knows
 // about.  So these affect which routes are treated the same.
 struct RouteCmp {
-  RouteCmp(NAT* nat);
+  explicit RouteCmp(NAT* nat);
   size_t operator()(const SocketAddressPair& r) const;
   bool operator()(
       const SocketAddressPair& r1, const SocketAddressPair& r2) const;
@@ -51,7 +53,7 @@ struct RouteCmp {
 
 // Changes how addresses are compared based on the filtering rules of the NAT.
 struct AddrCmp {
-  AddrCmp(NAT* nat);
+  explicit AddrCmp(NAT* nat);
   size_t operator()(const SocketAddress& r) const;
   bool operator()(const SocketAddress& r1, const SocketAddress& r2) const;
 
@@ -65,22 +67,24 @@ struct AddrCmp {
 const int NAT_SERVER_PORT = 4237;
 
 class NATServer : public sigslot::has_slots<> {
-public:
+ public:
   NATServer(
       NATType type, SocketFactory* internal, const SocketAddress& internal_addr,
       SocketFactory* external, const SocketAddress& external_ip);
   ~NATServer();
 
-  // Packets received on one of the networks.
-  void OnInternalPacket(
-      const char* buf, size_t size, const SocketAddress& addr,
-      AsyncPacketSocket* socket);
-  void OnExternalPacket(
-      const char* buf, size_t size, const SocketAddress& remote_addr,
-      AsyncPacketSocket* socket);
+  SocketAddress internal_address() const {
+    return server_socket_->GetLocalAddress();
+  }
 
-private:
-  typedef std::set<SocketAddress,AddrCmp> AddressSet;
+  // Packets received on one of the networks.
+  void OnInternalPacket(AsyncPacketSocket* socket, const char* buf,
+                        size_t size, const SocketAddress& addr);
+  void OnExternalPacket(AsyncPacketSocket* socket, const char* buf,
+                        size_t size, const SocketAddress& remote_addr);
+
+ private:
+  typedef std::set<SocketAddress, AddrCmp> AddressSet;
 
   /* Records a translation and the associated external socket. */
   struct TransEntry {
@@ -92,23 +96,26 @@ private:
     AddressSet* whitelist;
   };
 
-  typedef std::map<SocketAddressPair,TransEntry*,RouteCmp> InternalMap;
-  typedef std::map<SocketAddress,TransEntry*> ExternalMap;
-
-  NAT* nat_;
-  AsyncUDPSocket* server_socket_;
-  SocketFactory* external_;
-  SocketAddress external_ip_;
-  InternalMap* int_map_;
-  ExternalMap* ext_map_;
+  typedef std::map<SocketAddressPair, TransEntry*, RouteCmp> InternalMap;
+  typedef std::map<SocketAddress, TransEntry*> ExternalMap;
 
   /* Creates a new entry that translates the given route. */
   void Translate(const SocketAddressPair& route);
 
   /* Determines whether the NAT would filter out a packet from this address. */
   bool Filter(TransEntry* entry, const SocketAddress& ext_addr);
+
+  NAT* nat_;
+  SocketFactory* internal_;
+  SocketFactory* external_;
+  SocketAddress external_ip_;
+  AsyncUDPSocket* server_socket_;
+  AsyncSocket* tcp_server_socket_;
+  InternalMap* int_map_;
+  ExternalMap* ext_map_;
+  DISALLOW_EVIL_CONSTRUCTORS(NATServer);
 };
 
-} // namespace talk_base
+}  // namespace talk_base
 
-#endif // TALK_BASE_NATSERVER_H__
+#endif  // TALK_BASE_NATSERVER_H_

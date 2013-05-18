@@ -2,44 +2,39 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "talk/xmllite/xmlparser.h"
 
-#include "talk/base/stl_decl.h"
 #include <string>
 #include <vector>
-#include <iostream>
-#include <expat.h>
+
 #include "talk/base/common.h"
+#include "talk/xmllite/xmlconstants.h"
 #include "talk/xmllite/xmlelement.h"
 #include "talk/xmllite/xmlnsstack.h"
-#include "talk/xmllite/xmlconstants.h"
-
-#include <expat.h>
-
-#define new TRACK_NEW
+#include "talk/xmllite/xmlnsstack.h"
 
 namespace buzz {
 
@@ -117,6 +112,9 @@ XmlParser::ExpatStartElement(const char *name, const char **atts) {
       }
     }
   }
+  context_.SetPosition(XML_GetCurrentLineNumber(expat_),
+                       XML_GetCurrentColumnNumber(expat_),
+                       XML_GetCurrentByteIndex(expat_));
   pxph_->StartElement(&context_, name, atts);
 }
 
@@ -125,6 +123,9 @@ XmlParser::ExpatEndElement(const char *name) {
   if (context_.RaisedError() != XML_ERROR_NONE)
     return;
   context_.EndElement();
+  context_.SetPosition(XML_GetCurrentLineNumber(expat_),
+                       XML_GetCurrentColumnNumber(expat_),
+                       XML_GetCurrentByteIndex(expat_));
   pxph_->EndElement(&context_, name);
 }
 
@@ -132,6 +133,9 @@ void
 XmlParser::ExpatCharacterData(const char *text, int len) {
   if (context_.RaisedError() != XML_ERROR_NONE)
     return;
+  context_.SetPosition(XML_GetCurrentLineNumber(expat_),
+                       XML_GetCurrentColumnNumber(expat_),
+                       XML_GetCurrentByteIndex(expat_));
   pxph_->CharacterData(&context_, text, len);
 }
 
@@ -165,8 +169,13 @@ XmlParser::Parse(const char *data, size_t len, bool isFinal) {
   if (sentError_)
     return false;
 
-  if (XML_Parse(expat_, data, static_cast<int>(len), isFinal) != XML_STATUS_OK)
+  if (XML_Parse(expat_, data, static_cast<int>(len), isFinal) !=
+      XML_STATUS_OK) {
+    context_.SetPosition(XML_GetCurrentLineNumber(expat_),
+                         XML_GetCurrentColumnNumber(expat_),
+                         XML_GetCurrentByteIndex(expat_));
     context_.RaiseError(XML_GetErrorCode(expat_));
+  }
 
   if (context_.RaisedError() != XML_ERROR_NONE) {
     sentError_ = true;
@@ -190,17 +199,15 @@ XmlParser::ParseXml(XmlParseHandler *pxph, std::string text) {
 XmlParser::ParseContext::ParseContext(XmlParser *parser) :
     parser_(parser),
     xmlnsstack_(),
-    raised_(XML_ERROR_NONE) {
+    raised_(XML_ERROR_NONE),
+    line_number_(0),
+    column_number_(0),
+    byte_index_(0) {
 }
 
 void
 XmlParser::ParseContext::StartNamespace(const char *prefix, const char *ns) {
-  xmlnsstack_.AddXmlns(
-    *prefix ? std::string(prefix) : STR_EMPTY,
-//    ns == NS_CLIENT ? NS_CLIENT :
-//    ns == NS_ROSTER ? NS_ROSTER :
-//    ns == NS_GR ? NS_GR :
-    std::string(ns));
+  xmlnsstack_.AddXmlns(*prefix ? prefix : STR_EMPTY, ns);
 }
 
 void
@@ -214,28 +221,25 @@ XmlParser::ParseContext::EndElement() {
 }
 
 QName
-XmlParser::ParseContext::ResolveQName(const char *qname, bool isAttr) {
+XmlParser::ParseContext::ResolveQName(const char* qname, bool isAttr) {
   const char *c;
   for (c = qname; *c; ++c) {
     if (*c == ':') {
-      const std::string * result;
-      result = xmlnsstack_.NsForPrefix(std::string(qname, c - qname));
-      if (result == NULL)
-        return QN_EMPTY;
-      const char * localname = c + 1;
-      return QName(*result, localname); 
+      const std::pair<std::string, bool> result =
+          xmlnsstack_.NsForPrefix(std::string(qname, c - qname));
+      if (!result.second)
+        return QName();
+      return QName(result.first, c + 1);
     }
   }
-  if (isAttr) {
+  if (isAttr)
     return QName(STR_EMPTY, qname);
-  }
-  
-  const std::string * result;
-  result = xmlnsstack_.NsForPrefix(STR_EMPTY);
-  if (result == NULL)
-    return QN_EMPTY;
 
-  return QName(*result, qname);
+  std::pair<std::string, bool> result = xmlnsstack_.NsForPrefix(STR_EMPTY);
+  if (!result.second)
+    return QName();
+
+  return QName(result.first, qname);
 }
 
 void
@@ -244,8 +248,32 @@ XmlParser::ParseContext::Reset() {
   raised_ = XML_ERROR_NONE;
 }
 
+void
+XmlParser::ParseContext::SetPosition(int line, int column,
+                                          long byte_index) {
+  line_number_ = line;
+  column_number_ = column;
+  byte_index_ = byte_index;
+}
+
+void
+XmlParser::ParseContext::GetPosition(unsigned long * line,
+                                     unsigned long * column,
+                                     unsigned long * byte_index) {
+  if (line != NULL) {
+    *line = static_cast<unsigned long>(line_number_);
+  }
+
+  if (column != NULL) {
+    *column = static_cast<unsigned long>(column_number_);
+  }
+
+  if (byte_index != NULL) {
+    *byte_index = static_cast<unsigned long>(byte_index_);
+  }
+}
+
 XmlParser::ParseContext::~ParseContext() {
 }
 
-}
-
+}  // namespace buzz

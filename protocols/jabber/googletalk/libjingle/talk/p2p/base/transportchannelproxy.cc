@@ -32,8 +32,9 @@
 
 namespace cricket {
 
-TransportChannelProxy::TransportChannelProxy(const std::string& name, const std::string &session_type)
-  : TransportChannel(name, session_type), impl_(NULL) {
+TransportChannelProxy::TransportChannelProxy(const std::string& name,
+                                             const std::string& content_type)
+    : TransportChannel(name, content_type), impl_(NULL) {
 }
 
 TransportChannelProxy::~TransportChannelProxy() {
@@ -42,6 +43,11 @@ TransportChannelProxy::~TransportChannelProxy() {
 }
 
 void TransportChannelProxy::SetImplementation(TransportChannelImpl* impl) {
+  // Destroy any existing impl_
+  if (impl_) {
+    impl_->GetTransport()->DestroyChannel(impl_->name());
+  }
+
   impl_ = impl;
   impl_->SignalReadableState.connect(
       this, &TransportChannelProxy::OnReadableState);
@@ -57,9 +63,9 @@ void TransportChannelProxy::SetImplementation(TransportChannelImpl* impl) {
   pending_options_.clear();
 }
 
-int TransportChannelProxy::SendPacket(const char *data, size_t len) {
-  ASSERT(impl_ != NULL);  // should not be used until channel is writable
-  return impl_->SendPacket(data, len);
+int TransportChannelProxy::SendPacket(const char* data, size_t len) {
+  // Fail if we don't have an impl yet.
+  return (impl_) ? impl_->SendPacket(data, len) : -1;
 }
 
 int TransportChannelProxy::SetOption(talk_base::Socket::Option opt, int value) {
@@ -74,26 +80,35 @@ int TransportChannelProxy::GetError() {
   return impl_->GetError();
 }
 
+P2PTransportChannel* TransportChannelProxy::GetP2PChannel() {
+  if (impl_) {
+      return impl_->GetP2PChannel();
+  }
+  return NULL;
+}
+
 void TransportChannelProxy::OnReadableState(TransportChannel* channel) {
   ASSERT(channel == impl_);
   set_readable(impl_->readable());
+  // Note: SignalReadableState fired by set_readable.
 }
 
 void TransportChannelProxy::OnWritableState(TransportChannel* channel) {
   ASSERT(channel == impl_);
   set_writable(impl_->writable());
+  // Note: SignalWritableState fired by set_writable.
 }
 
-void TransportChannelProxy::OnReadPacket(
-    TransportChannel* channel, const char* data, size_t size) {
+void TransportChannelProxy::OnReadPacket(TransportChannel* channel,
+                                         const char* data, size_t size) {
   ASSERT(channel == impl_);
   SignalReadPacket(this, data, size);
 }
 
 void TransportChannelProxy::OnRouteChange(TransportChannel* channel,
-                                          const talk_base::SocketAddress& address) {
+                                          const Candidate& candidate) {
   ASSERT(channel == impl_);
-  SignalRouteChange(this, address);
+  SignalRouteChange(this, candidate);
 }
 
 }  // namespace cricket

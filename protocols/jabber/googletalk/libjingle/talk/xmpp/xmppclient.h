@@ -2,26 +2,26 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -31,14 +31,14 @@
 #include <string>
 #include "talk/base/basicdefs.h"
 #include "talk/base/sigslot.h"
-#include "talk/xmpp/xmppengine.h"
+#include "talk/base/task.h"
 #include "talk/xmpp/asyncsocket.h"
 #include "talk/xmpp/xmppclientsettings.h"
-#include "talk/base/task.h"
+#include "talk/xmpp/xmppengine.h"
+#include "talk/xmpp/xmpptask.h"
 
 namespace buzz {
 
-class XmppTask;
 class PreXmppAuth;
 class CaptchaChallenge;
 
@@ -59,7 +59,7 @@ class CaptchaChallenge;
 // listener should be a task that is a child of the XmppClient that owns
 // the connection you are using.  XmppClient has all the utility methods
 // that basically drill through to XmppEngine.
-// 
+//
 // XmppClient is just a wrapper for XmppEngine, and if I were writing it
 // all over again, I would make XmppClient == XmppEngine.  Why?
 // XmppEngine needs tasks too, for example it has an XmppLoginTask which
@@ -68,25 +68,24 @@ class CaptchaChallenge;
 //
 /////////////////////////////////////////////////////////////////////
 
-class XmppClient : public talk_base::Task, public sigslot::has_slots<>
+class XmppClient : public XmppTaskParentInterface,
+                   public XmppClientInterface,
+                   public sigslot::has_slots<>
 {
 public:
-  XmppClient(talk_base::Task * parent);
-  ~XmppClient();
+  explicit XmppClient(talk_base::TaskParent * parent);
+  virtual ~XmppClient();
 
   XmppReturnStatus Connect(const XmppClientSettings & settings,
                            const std::string & lang,
                            AsyncSocket * socket,
                            PreXmppAuth * preauth);
-  
-  virtual talk_base::Task* GetParent(int code);
+
   virtual int ProcessStart();
   virtual int ProcessResponse();
   XmppReturnStatus Disconnect();
-  const Jid & jid();
-  
+
   sigslot::signal1<XmppEngine::State> SignalStateChange;
-  XmppEngine::State GetState();
   XmppEngine::Error GetError(int *subcode);
 
   // When there is a <stream:error> stanza, return the stanza
@@ -101,30 +100,32 @@ public:
   // (if we used GAIA authentication)
   std::string GetAuthCookie();
 
-  std::string NextId();
-  XmppReturnStatus SendStanza(const XmlElement *stanza);
   XmppReturnStatus SendRaw(const std::string & text);
-  XmppReturnStatus SendStanzaError(const XmlElement * pelOriginal,
-                       XmppStanzaError code,
-                       const std::string & text);
 
   XmppEngine* engine();
 
   sigslot::signal2<const char *, int> SignalLogInput;
   sigslot::signal2<const char *, int> SignalLogOutput;
 
-private:
+  // As XmppTaskParentIntreface
+  virtual XmppClientInterface* GetClient() { return this; }
+
+  // As XmppClientInterface
+  virtual XmppEngine::State GetState() const;
+  virtual const Jid& jid() const;
+  virtual std::string NextId();
+  virtual XmppReturnStatus SendStanza(const XmlElement *stanza);
+  virtual XmppReturnStatus SendStanzaError(const XmlElement * pelOriginal,
+                                           XmppStanzaError code,
+                                           const std::string & text);
+  virtual void AddXmppTask(XmppTask *, XmppEngine::HandlerLevel);
+  virtual void RemoveXmppTask(XmppTask *);
+
+ private:
   friend class XmppTask;
 
   void OnAuthDone();
 
-  // managed tasks and dispatching
-  void AddXmppTask(XmppTask *, XmppEngine::HandlerLevel);
-  void RemoveXmppTask(XmppTask *);
-
-  sigslot::signal0<> SignalDisconnected;
-
-private:
   // Internal state management
   enum {
     STATE_PRE_XMPP_LOGIN = STATE_NEXT,
@@ -149,11 +150,11 @@ private:
   int ProcessCookieLogin();
   int ProcessStartXmppLogin();
   void EnsureClosed();
-  
+
   class Private;
   friend class Private;
-  scoped_ptr<Private> d_;
-  
+  talk_base::scoped_ptr<Private> d_;
+
   bool delivering_signal_;
   bool valid_;
 };

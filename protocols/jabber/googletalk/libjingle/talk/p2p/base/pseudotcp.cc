@@ -2,47 +2,45 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include "talk/base/basicdefs.h"
+#include "talk/p2p/base/pseudotcp.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <set>
+
 #include "talk/base/basictypes.h"
+#include "talk/base/bytebuffer.h"
 #include "talk/base/byteorder.h"
 #include "talk/base/common.h"
 #include "talk/base/logging.h"
 #include "talk/base/socket.h"
 #include "talk/base/stringutils.h"
-#include "talk/base/time.h"
-#include "talk/p2p/base/pseudotcp.h"
+#include "talk/base/timeutils.h"
 
-#ifdef POSIX
-extern "C" {
-#include <errno.h>
-}
-#endif // POSIX
-
-// The following logging is for detailed (packet-level) pseudotcp analysis only.
+// The following logging is for detailed (packet-level) analysis only.
 #define _DBG_NONE     0
 #define _DBG_NORMAL   1
 #define _DBG_VERBOSE  2
@@ -87,12 +85,16 @@ const uint32 UDP_HEADER_SIZE = 8;
 // TODO: Make JINGLE_HEADER_SIZE transparent to this code?
 const uint32 JINGLE_HEADER_SIZE = 64; // when relay framing is in use
 
+// Default size for receive and send buffer.
+const uint32 DEFAULT_RCV_BUF_SIZE = 60 * 1024;
+const uint32 DEFAULT_SND_BUF_SIZE = 90 * 1024;
+
 //////////////////////////////////////////////////////////////////////
 // Global Constants and Functions
 //////////////////////////////////////////////////////////////////////
 //
-//    0                   1                   2                   3   
-//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 
+//    0                   1                   2                   3
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 //    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  0 |                      Conversation Number                      |
 //    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -122,7 +124,7 @@ const uint32 PACKET_OVERHEAD = HEADER_SIZE + UDP_HEADER_SIZE + IP_HEADER_SIZE + 
 const uint32 MIN_RTO   =   250; // 250 ms (RFC1122, Sec 4.2.3.1 "fractions of a second")
 const uint32 DEF_RTO   =  3000; // 3 seconds (RFC1122, Sec 4.2.3.1)
 const uint32 MAX_RTO   = 60000; // 60 seconds
-const uint32 ACK_DELAY =   100; // 100 milliseconds
+const uint32 DEF_ACK_DELAY = 100; // 100 milliseconds
 
 const uint8 FLAG_CTL = 0x02;
 const uint8 FLAG_RST = 0x04;
@@ -130,6 +132,12 @@ const uint8 FLAG_RST = 0x04;
 const uint8 CTL_CONNECT = 0;
 //const uint8 CTL_REDIRECT = 1;
 const uint8 CTL_EXTRA = 255;
+
+// TCP options.
+const uint8 TCP_OPT_EOL = 0;  // End of list.
+const uint8 TCP_OPT_NOOP = 1;  // No-op.
+const uint8 TCP_OPT_MSS = 2;  // Maximum segment size.
+const uint8 TCP_OPT_WND_SCALE = 3;  // Window scale factor.
 
 /*
 const uint8 FLAG_FIN = 0x01;
@@ -200,7 +208,7 @@ inline void Incr(Stat s) { ++g_stats[s]; }
 void ReportStats() {
   char buffer[256];
   size_t len = 0;
-  for (int i=0; i<S_NUM_STATS; ++i) {
+  for (int i = 0; i < S_NUM_STATS; ++i) {
     len += talk_base::sprintfn(buffer, ARRAY_SIZE(buffer), "%s%s:%d",
                                (i == 0) ? "" : ",", STAT_NAMES[i], g_stats[i]);
     g_stats[i] = 0;
@@ -216,26 +224,33 @@ void ReportStats() {
 
 uint32 PseudoTcp::Now() {
 #if 0  // Use this to synchronize timers with logging timestamps (easier debug)
-  return talk_base::ElapsedTime();
+  return talk_base::TimeSince(StartTime());
 #else
   return talk_base::Time();
 #endif
 }
 
-PseudoTcp::PseudoTcp(IPseudoTcpNotify * notify, uint32 conv)
-    : m_notify(notify), m_shutdown(SD_NONE), m_error(0) {
+PseudoTcp::PseudoTcp(IPseudoTcpNotify* notify, uint32 conv)
+    : m_notify(notify),
+      m_shutdown(SD_NONE),
+      m_error(0),
+      m_rbuf_len(DEFAULT_RCV_BUF_SIZE),
+      m_rbuf(m_rbuf_len),
+      m_sbuf_len(DEFAULT_SND_BUF_SIZE),
+      m_sbuf(m_sbuf_len) {
 
   // Sanity check on buffer sizes (needed for OnTcpWriteable notification logic)
-  ASSERT(sizeof(m_rbuf) + MIN_PACKET < sizeof(m_sbuf));
+  ASSERT(m_rbuf_len + MIN_PACKET < m_sbuf_len);
 
   uint32 now = Now();
 
   m_state = TCP_LISTEN;
   m_conv = conv;
-  m_rcv_wnd = sizeof(m_rbuf);
-  m_snd_nxt = m_slen = 0;
+  m_rcv_wnd = m_rbuf_len;
+  m_rwnd_scale = m_swnd_scale = 0;
+  m_snd_nxt = 0;
   m_snd_wnd = 1;
-  m_snd_una = m_rcv_nxt = m_rlen = 0;
+  m_snd_una = m_rcv_nxt = 0;
   m_bReadEnable = true;
   m_bWriteEnable = false;
   m_t_ack = 0;
@@ -249,7 +264,7 @@ PseudoTcp::PseudoTcp(IPseudoTcpNotify * notify, uint32 conv)
   m_rto_base = 0;
 
   m_cwnd = 2 * m_mss;
-  m_ssthresh = sizeof(m_rbuf);
+  m_ssthresh = m_rbuf_len;
   m_lastrecv = m_lastsend = m_lasttraffic = now;
   m_bOutgoing = false;
 
@@ -260,13 +275,16 @@ PseudoTcp::PseudoTcp(IPseudoTcpNotify * notify, uint32 conv)
 
   m_rx_rto = DEF_RTO;
   m_rx_srtt = m_rx_rttvar = 0;
+
+  m_use_nagling = true;
+  m_ack_delay = DEF_ACK_DELAY;
+  m_support_wnd_scale = true;
 }
 
 PseudoTcp::~PseudoTcp() {
 }
 
-int
-PseudoTcp::Connect() {
+int PseudoTcp::Connect() {
   if (m_state != TCP_LISTEN) {
     m_error = EINVAL;
     return -1;
@@ -275,24 +293,20 @@ PseudoTcp::Connect() {
   m_state = TCP_SYN_SENT;
   LOG(LS_INFO) << "State: TCP_SYN_SENT";
 
-  char buffer[1];
-  buffer[0] = CTL_CONNECT;
-  queue(buffer, 1, true);
+  queueConnectMessage();
   attemptSend();
 
   return 0;
 }
 
-void
-PseudoTcp::NotifyMTU(uint16 mtu) {
+void PseudoTcp::NotifyMTU(uint16 mtu) {
   m_mtu_advise = mtu;
   if (m_state == TCP_ESTABLISHED) {
     adjustMTU();
   }
 }
 
-void
-PseudoTcp::NotifyClock(uint32 now) {
+void PseudoTcp::NotifyClock(uint32 now) {
   if (m_state == TCP_CLOSED)
     return;
 
@@ -326,9 +340,9 @@ PseudoTcp::NotifyClock(uint32 now) {
       m_rto_base = now;
     }
   }
-  
+
   // Check if it's time to probe closed windows
-  if ((m_snd_wnd == 0) 
+  if ((m_snd_wnd == 0)
         && (talk_base::TimeDiff(m_lastsend + m_rx_rto, now) <= 0)) {
     if (talk_base::TimeDiff(now, m_lastrecv) >= 15000) {
       closedown(ECONNABORTED);
@@ -344,7 +358,7 @@ PseudoTcp::NotifyClock(uint32 now) {
   }
 
   // Check if it's time to send delayed acks
-  if (m_t_ack && (talk_base::TimeDiff(m_t_ack + ACK_DELAY, now) <= 0)) {
+  if (m_t_ack && (talk_base::TimeDiff(m_t_ack + m_ack_delay, now) <= 0)) {
     packet(m_snd_nxt, 0, 0, 0);
   }
 
@@ -362,8 +376,7 @@ PseudoTcp::NotifyClock(uint32 now) {
 #endif // PSEUDO_KEEPALIVE
 }
 
-bool
-PseudoTcp::NotifyPacket(const char * buffer, size_t len) {
+bool PseudoTcp::NotifyPacket(const char* buffer, size_t len) {
   if (len > MAX_PACKET) {
     LOG_F(WARNING) << "packet too large";
     return false;
@@ -371,40 +384,85 @@ PseudoTcp::NotifyPacket(const char * buffer, size_t len) {
   return parse(reinterpret_cast<const uint8 *>(buffer), uint32(len));
 }
 
-bool
-PseudoTcp::GetNextClock(uint32 now, long& timeout) {
+bool PseudoTcp::GetNextClock(uint32 now, long& timeout) {
   return clock_check(now, timeout);
 }
 
-// 
+void PseudoTcp::GetOption(Option opt, int* value) {
+  if (opt == OPT_NODELAY) {
+    *value = m_use_nagling ? 0 : 1;
+  } else if (opt == OPT_ACKDELAY) {
+    *value = m_ack_delay;
+  } else if (opt == OPT_SNDBUF) {
+    *value = m_sbuf_len;
+  } else if (opt == OPT_RCVBUF) {
+    *value = m_rbuf_len;
+  } else {
+    ASSERT(false);
+  }
+}
+void PseudoTcp::SetOption(Option opt, int value) {
+  if (opt == OPT_NODELAY) {
+    m_use_nagling = value == 0;
+  } else if (opt == OPT_ACKDELAY) {
+    m_ack_delay = value;
+  } else if (opt == OPT_SNDBUF) {
+    ASSERT(m_state == TCP_LISTEN);
+    resizeSendBuffer(value);
+  } else if (opt == OPT_RCVBUF) {
+    ASSERT(m_state == TCP_LISTEN);
+    resizeReceiveBuffer(value);
+  } else {
+    ASSERT(false);
+  }
+}
+
+uint32 PseudoTcp::GetCongestionWindow() const {
+  return m_cwnd;
+}
+
+uint32 PseudoTcp::GetBytesInFlight() const {
+  return m_snd_nxt - m_snd_una;
+}
+
+uint32 PseudoTcp::GetBytesBufferedNotSent() const {
+  size_t buffered_bytes = 0;
+  m_sbuf.GetBuffered(&buffered_bytes);
+  return m_snd_una + buffered_bytes - m_snd_nxt;
+}
+
+uint32 PseudoTcp::GetRoundTripTimeEstimateMs() const {
+  return m_rx_srtt;
+}
+
+//
 // IPStream Implementation
 //
 
-int
-PseudoTcp::Recv(char * buffer, size_t len) {
+int PseudoTcp::Recv(char* buffer, size_t len) {
   if (m_state != TCP_ESTABLISHED) {
     m_error = ENOTCONN;
     return SOCKET_ERROR;
   }
 
-  if (m_rlen == 0) {
+  size_t read = 0;
+  talk_base::StreamResult result = m_rbuf.Read(buffer, len, &read, NULL);
+
+  // If there's no data in |m_rbuf|.
+  if (result == talk_base::SR_BLOCK) {
     m_bReadEnable = true;
     m_error = EWOULDBLOCK;
     return SOCKET_ERROR;
   }
+  ASSERT(result == talk_base::SR_SUCCESS);
 
-  uint32 read = talk_base::_min(uint32(len), m_rlen);
-  memcpy(buffer, m_rbuf, read);
-  m_rlen -= read;
+  size_t available_space = 0;
+  m_rbuf.GetWriteRemaining(&available_space);
 
-  // !?! until we create a circular buffer, we need to move all of the rest of the buffer up!
-  memmove(m_rbuf, m_rbuf + read, sizeof(m_rbuf) - read/*m_rlen*/);
-
-  if ((sizeof(m_rbuf) - m_rlen - m_rcv_wnd) 
-      >= talk_base::_min<uint32>(sizeof(m_rbuf) / 2, m_mss)) {
+  if (uint32(available_space) - m_rcv_wnd >=
+      talk_base::_min<uint32>(m_rbuf_len / 2, m_mss)) {
     bool bWasClosed = (m_rcv_wnd == 0); // !?! Not sure about this was closed business
-
-    m_rcv_wnd = sizeof(m_rbuf) - m_rlen;
+    m_rcv_wnd = available_space;
 
     if (bWasClosed) {
       attemptSend(sfImmediateAck);
@@ -414,14 +472,16 @@ PseudoTcp::Recv(char * buffer, size_t len) {
   return read;
 }
 
-int
-PseudoTcp::Send(const char * buffer, size_t len) {
+int PseudoTcp::Send(const char* buffer, size_t len) {
   if (m_state != TCP_ESTABLISHED) {
     m_error = ENOTCONN;
     return SOCKET_ERROR;
   }
 
-  if (m_slen == sizeof(m_sbuf)) {
+  size_t available_space = 0;
+  m_sbuf.GetWriteRemaining(&available_space);
+
+  if (!available_space) {
     m_bWriteEnable = true;
     m_error = EWOULDBLOCK;
     return SOCKET_ERROR;
@@ -432,8 +492,7 @@ PseudoTcp::Send(const char * buffer, size_t len) {
   return written;
 }
 
-void
-PseudoTcp::Close(bool force) {
+void PseudoTcp::Close(bool force) {
   LOG_F(LS_VERBOSE) << "(" << (force ? "true" : "false") << ")";
   m_shutdown = force ? SD_FORCEFUL : SD_GRACEFUL;
 }
@@ -446,11 +505,13 @@ int PseudoTcp::GetError() {
 // Internal Implementation
 //
 
-uint32
-PseudoTcp::queue(const char * data, uint32 len, bool bCtrl) {
-  if (len > sizeof(m_sbuf) - m_slen) {
+uint32 PseudoTcp::queue(const char* data, uint32 len, bool bCtrl) {
+  size_t available_space = 0;
+  m_sbuf.GetWriteRemaining(&available_space);
+
+  if (len > static_cast<uint32>(available_space)) {
     ASSERT(!bCtrl);
-    len = sizeof(m_sbuf) - m_slen;
+    len = static_cast<uint32>(available_space);
   }
 
   // We can concatenate data if the last segment is the same type
@@ -458,18 +519,19 @@ PseudoTcp::queue(const char * data, uint32 len, bool bCtrl) {
   if (!m_slist.empty() && (m_slist.back().bCtrl == bCtrl) && (m_slist.back().xmit == 0)) {
     m_slist.back().len += len;
   } else {
-    SSegment sseg(m_snd_una + m_slen, len, bCtrl);
+    size_t snd_buffered = 0;
+    m_sbuf.GetBuffered(&snd_buffered);
+    SSegment sseg(m_snd_una + snd_buffered, len, bCtrl);
     m_slist.push_back(sseg);
   }
 
-  memcpy(m_sbuf + m_slen, data, len);
-  m_slen += len;
-  //LOG(LS_INFO) << "PseudoTcp::queue - m_slen = " << m_slen;
-  return len;
+  size_t written = 0;
+  m_sbuf.Write(data, len, &written, NULL);
+  return written;
 }
 
-IPseudoTcpNotify::WriteResult
-PseudoTcp::packet(uint32 seq, uint8 flags, const char * data, uint32 len) {
+IPseudoTcpNotify::WriteResult PseudoTcp::packet(uint32 seq, uint8 flags,
+                                                uint32 offset, uint32 len) {
   ASSERT(HEADER_SIZE + len <= MAX_PACKET);
 
   uint32 now = Now();
@@ -480,14 +542,23 @@ PseudoTcp::packet(uint32 seq, uint8 flags, const char * data, uint32 len) {
   long_to_bytes(m_rcv_nxt, buffer + 8);
   buffer[12] = 0;
   buffer[13] = flags;
-  short_to_bytes(uint16(m_rcv_wnd), buffer + 14);
+  short_to_bytes(static_cast<uint16>(m_rcv_wnd >> m_rwnd_scale), buffer + 14);
 
   // Timestamp computations
   long_to_bytes(now, buffer + 16);
   long_to_bytes(m_ts_recent, buffer + 20);
   m_ts_lastack = m_rcv_nxt;
 
-  memcpy(buffer + HEADER_SIZE, data, len);
+  if (len) {
+    size_t bytes_read = 0;
+    talk_base::StreamResult result = m_sbuf.ReadOffset(buffer + HEADER_SIZE,
+                                                       len,
+                                                       offset,
+                                                       &bytes_read);
+    UNUSED(result);
+    ASSERT(result == talk_base::SR_SUCCESS);
+    ASSERT(static_cast<uint32>(bytes_read) == len);
+  }
 
 #if _DEBUGMSG >= _DBG_VERBOSE
   LOG(LS_INFO) << "<-- <CONV=" << m_conv
@@ -501,10 +572,10 @@ PseudoTcp::packet(uint32 seq, uint8 flags, const char * data, uint32 len) {
 #endif // _DEBUGMSG
 
   IPseudoTcpNotify::WriteResult wres = m_notify->TcpWritePacket(this, reinterpret_cast<char *>(buffer), len + HEADER_SIZE);
-  // Note: When data is NULL, this is an ACK packet.  We don't read the return value for those,
+  // Note: When len is 0, this is an ACK packet.  We don't read the return value for those,
   // and thus we won't retry.  So go ahead and treat the packet as a success (basically simulate
   // as if it were dropped), which will prevent our timers from being messed up.
-  if ((wres != IPseudoTcpNotify::WR_SUCCESS) && (NULL != data))
+  if ((wres != IPseudoTcpNotify::WR_SUCCESS) && (0 != len))
     return wres;
 
   m_t_ack = 0;
@@ -517,8 +588,7 @@ PseudoTcp::packet(uint32 seq, uint8 flags, const char * data, uint32 len) {
   return IPseudoTcpNotify::WR_SUCCESS;
 }
 
-bool
-PseudoTcp::parse(const uint8 * buffer, uint32 size) {
+bool PseudoTcp::parse(const uint8* buffer, uint32 size) {
   if (size < 12)
     return false;
 
@@ -528,7 +598,7 @@ PseudoTcp::parse(const uint8 * buffer, uint32 size) {
   seg.ack = bytes_to_long(buffer + 8);
   seg.flags = buffer[13];
   seg.wnd = bytes_to_short(buffer + 14);
-  
+
   seg.tsval = bytes_to_long(buffer + 16);
   seg.tsecr = bytes_to_long(buffer + 20);
 
@@ -549,14 +619,15 @@ PseudoTcp::parse(const uint8 * buffer, uint32 size) {
   return process(seg);
 }
 
-bool
-PseudoTcp::clock_check(uint32 now, long& nTimeout) {
+bool PseudoTcp::clock_check(uint32 now, long& nTimeout) {
   if (m_shutdown == SD_FORCEFUL)
     return false;
 
+  size_t snd_buffered = 0;
+  m_sbuf.GetBuffered(&snd_buffered);
   if ((m_shutdown == SD_GRACEFUL)
       && ((m_state != TCP_ESTABLISHED)
-          || ((m_slen == 0) && (m_t_ack == 0)))) {
+          || ((snd_buffered == 0) && (m_t_ack == 0)))) {
     return false;
   }
 
@@ -568,27 +639,26 @@ PseudoTcp::clock_check(uint32 now, long& nTimeout) {
   nTimeout = DEFAULT_TIMEOUT;
 
   if (m_t_ack) {
-    nTimeout = talk_base::_min(nTimeout, 
-      talk_base::TimeDiff(m_t_ack + ACK_DELAY, now));
+    nTimeout = talk_base::_min<int32>(nTimeout,
+      talk_base::TimeDiff(m_t_ack + m_ack_delay, now));
   }
   if (m_rto_base) {
-    nTimeout = talk_base::_min(nTimeout, 
+    nTimeout = talk_base::_min<int32>(nTimeout,
       talk_base::TimeDiff(m_rto_base + m_rx_rto, now));
   }
   if (m_snd_wnd == 0) {
-    nTimeout = talk_base::_min(nTimeout, talk_base::TimeDiff(m_lastsend + m_rx_rto, now));
+    nTimeout = talk_base::_min<int32>(nTimeout, talk_base::TimeDiff(m_lastsend + m_rx_rto, now));
   }
 #if PSEUDO_KEEPALIVE
   if (m_state == TCP_ESTABLISHED) {
-    nTimeout = talk_base::_min(nTimeout, 
+    nTimeout = talk_base::_min<int32>(nTimeout,
       talk_base::TimeDiff(m_lasttraffic + (m_bOutgoing ? IDLE_PING * 3/2 : IDLE_PING), now));
   }
 #endif // PSEUDO_KEEPALIVE
   return true;
 }
 
-bool
-PseudoTcp::process(Segment& seg) {
+bool PseudoTcp::process(Segment& seg) {
   // If this is the wrong conversation, send a reset!?! (with the correct conversation?)
   if (seg.conv != m_conv) {
     //if ((seg.flags & FLAG_RST) == 0) {
@@ -622,13 +692,15 @@ PseudoTcp::process(Segment& seg) {
       return false;
     } else if (seg.data[0] == CTL_CONNECT) {
       bConnect = true;
+
+      // TCP options are in the remainder of the payload after CTL_CONNECT.
+      parseOptions(&seg.data[1], seg.len - 1);
+
       if (m_state == TCP_LISTEN) {
         m_state = TCP_SYN_RECEIVED;
         LOG(LS_INFO) << "State: TCP_SYN_RECEIVED";
         //m_notify->associate(addr);
-        char buffer[1];
-        buffer[0] = CTL_CONNECT;
-        queue(buffer, 1, true);
+        queueConnectMessage();
       } else if (m_state == TCP_SYN_SENT) {
         m_state = TCP_ESTABLISHED;
         LOG(LS_INFO) << "State: TCP_ESTABLISHED";
@@ -662,7 +734,8 @@ PseudoTcp::process(Segment& seg) {
           m_rx_rttvar = (3 * m_rx_rttvar + abs(long(rtt - m_rx_srtt))) / 4;
           m_rx_srtt = (7 * m_rx_srtt + rtt) / 8;
         }
-        m_rx_rto = bound(MIN_RTO, m_rx_srtt + talk_base::_max(1LU, 4 * m_rx_rttvar), MAX_RTO);
+        m_rx_rto = bound(MIN_RTO, m_rx_srtt +
+            talk_base::_max<uint32>(1, 4 * m_rx_rttvar), MAX_RTO);
 #if _DEBUGMSG >= _DBG_VERBOSE
         LOG(LS_INFO) << "rtt: " << rtt
                      << "  srtt: " << m_rx_srtt
@@ -673,16 +746,14 @@ PseudoTcp::process(Segment& seg) {
       }
     }
 
-    m_snd_wnd = seg.wnd;
+    m_snd_wnd = static_cast<uint32>(seg.wnd) << m_swnd_scale;
 
     uint32 nAcked = seg.ack - m_snd_una;
     m_snd_una = seg.ack;
 
     m_rto_base = (m_snd_una == m_snd_nxt) ? 0 : now;
 
-    m_slen -= nAcked;
-    memmove(m_sbuf, m_sbuf + nAcked, m_slen);
-    //LOG(LS_INFO) << "PseudoTcp::process - m_slen = " << m_slen;
+    m_sbuf.ConsumeReadData(nAcked);
 
     for (uint32 nFree = nAcked; nFree > 0; ) {
       ASSERT(!m_slist.empty());
@@ -701,7 +772,7 @@ PseudoTcp::process(Segment& seg) {
     if (m_dup_acks >= 3) {
       if (m_snd_una >= m_recover) { // NewReno
         uint32 nInFlight = m_snd_nxt - m_snd_una;
-        m_cwnd = talk_base::_min(m_ssthresh, nInFlight + m_mss); // (Fast Retransmit) 
+        m_cwnd = talk_base::_min(m_ssthresh, nInFlight + m_mss); // (Fast Retransmit)
 #if _DEBUGMSG >= _DBG_NORMAL
         LOG(LS_INFO) << "exit recovery";
 #endif // _DEBUGMSG
@@ -722,35 +793,12 @@ PseudoTcp::process(Segment& seg) {
       if (m_cwnd < m_ssthresh) {
         m_cwnd += m_mss;
       } else {
-        m_cwnd += talk_base::_max(1LU, m_mss * m_mss / m_cwnd);
+        m_cwnd += talk_base::_max<uint32>(1, m_mss * m_mss / m_cwnd);
       }
-    }
-
-    // !?! A bit hacky
-    if ((m_state == TCP_SYN_RECEIVED) && !bConnect) {
-      m_state = TCP_ESTABLISHED;
-      LOG(LS_INFO) << "State: TCP_ESTABLISHED";
-      adjustMTU();
-      if (m_notify) {
-        m_notify->OnTcpOpen(this);
-      }
-      //notify(evOpen);
-    }
-    
-    // If we make room in the send queue, notify the user
-    // The goal it to make sure we always have at least enough data to fill the
-    // window.  We'd like to notify the app when we are halfway to that point.
-    const uint32 kIdealRefillSize = (sizeof(m_sbuf) + sizeof(m_rbuf)) / 2;
-    if (m_bWriteEnable && (m_slen < kIdealRefillSize)) {
-      m_bWriteEnable = false;
-      if (m_notify) {
-        m_notify->OnTcpWriteable(this);
-      }
-      //notify(evWrite);
     }
   } else if (seg.ack == m_snd_una) {
     // !?! Note, tcp says don't do this... but otherwise how does a closed window become open?
-    m_snd_wnd = seg.wnd;
+    m_snd_wnd = static_cast<uint32>(seg.wnd) << m_swnd_scale;
 
     // Check duplicate acks
     if (seg.len > 0) {
@@ -779,6 +827,31 @@ PseudoTcp::process(Segment& seg) {
     }
   }
 
+  // !?! A bit hacky
+  if ((m_state == TCP_SYN_RECEIVED) && !bConnect) {
+    m_state = TCP_ESTABLISHED;
+    LOG(LS_INFO) << "State: TCP_ESTABLISHED";
+    adjustMTU();
+    if (m_notify) {
+      m_notify->OnTcpOpen(this);
+    }
+    //notify(evOpen);
+  }
+
+  // If we make room in the send queue, notify the user
+  // The goal it to make sure we always have at least enough data to fill the
+  // window.  We'd like to notify the app when we are halfway to that point.
+  const uint32 kIdealRefillSize = (m_sbuf_len + m_rbuf_len) / 2;
+  size_t snd_buffered = 0;
+  m_sbuf.GetBuffered(&snd_buffered);
+  if (m_bWriteEnable && static_cast<uint32>(snd_buffered) < kIdealRefillSize) {
+    m_bWriteEnable = false;
+    if (m_notify) {
+      m_notify->OnTcpWriteable(this);
+    }
+    //notify(evWrite);
+  }
+
   // Conditions were acks must be sent:
   // 1) Segment is too old (they missed an ACK) (immediately)
   // 2) Segment is too new (we missed a segment) (immediately)
@@ -789,7 +862,11 @@ PseudoTcp::process(Segment& seg) {
   if (seg.seq != m_rcv_nxt) {
     sflags = sfImmediateAck; // (Fast Recovery)
   } else if (seg.len != 0) {
-    sflags = sfDelayedAck;
+    if (m_ack_delay == 0) {
+      sflags = sfImmediateAck;
+    } else {
+      sflags = sfDelayedAck;
+    }
   }
 #if _DEBUGMSG >= _DBG_NORMAL
   if (sflags == sfImmediateAck) {
@@ -812,8 +889,12 @@ PseudoTcp::process(Segment& seg) {
       seg.len = 0;
     }
   }
-  if ((seg.seq + seg.len - m_rcv_nxt) > (sizeof(m_rbuf) - m_rlen)) {
-    uint32 nAdjust = seg.seq + seg.len - m_rcv_nxt - (sizeof(m_rbuf) - m_rlen);
+
+  size_t available_space = 0;
+  m_rbuf.GetWriteRemaining(&available_space);
+
+  if ((seg.seq + seg.len - m_rcv_nxt) > static_cast<uint32>(available_space)) {
+    uint32 nAdjust = seg.seq + seg.len - m_rcv_nxt - static_cast<uint32>(available_space);
     if (nAdjust < seg.len) {
       seg.len -= nAdjust;
     } else {
@@ -831,13 +912,18 @@ PseudoTcp::process(Segment& seg) {
       }
     } else {
       uint32 nOffset = seg.seq - m_rcv_nxt;
-      memcpy(m_rbuf + m_rlen + nOffset, seg.data, seg.len);
+
+      talk_base::StreamResult result = m_rbuf.WriteOffset(seg.data, seg.len,
+                                                          nOffset, NULL);
+      ASSERT(result == talk_base::SR_SUCCESS);
+      UNUSED(result);
+
       if (seg.seq == m_rcv_nxt) {
-        m_rlen += seg.len;
+        m_rbuf.ConsumeWriteBuffer(seg.len);
         m_rcv_nxt += seg.len;
         m_rcv_wnd -= seg.len;
         bNewData = true;
-        
+
         RList::iterator it = m_rlist.begin();
         while ((it != m_rlist.end()) && (it->seq <= m_rcv_nxt)) {
           if (it->seq + it->len > m_rcv_nxt) {
@@ -846,7 +932,7 @@ PseudoTcp::process(Segment& seg) {
 #if _DEBUGMSG >= _DBG_NORMAL
             LOG(LS_INFO) << "Recovered " << nAdjust << " bytes (" << m_rcv_nxt << " -> " << m_rcv_nxt + nAdjust << ")";
 #endif // _DEBUGMSG
-            m_rlen += nAdjust;
+            m_rbuf.ConsumeWriteBuffer(nAdjust);
             m_rcv_nxt += nAdjust;
             m_rcv_wnd -= nAdjust;
           }
@@ -882,8 +968,7 @@ PseudoTcp::process(Segment& seg) {
   return true;
 }
 
-bool
-PseudoTcp::transmit(const SList::iterator& seg, uint32 now) {
+bool PseudoTcp::transmit(const SList::iterator& seg, uint32 now) {
   if (seg->xmit >= ((m_state == TCP_ESTABLISHED) ? 15 : 30)) {
     LOG_F(LS_VERBOSE) << "too many retransmits";
     return false;
@@ -894,8 +979,10 @@ PseudoTcp::transmit(const SList::iterator& seg, uint32 now) {
   while (true) {
     uint32 seq = seg->seq;
     uint8 flags = (seg->bCtrl ? FLAG_CTL : 0);
-    const char * buffer = m_sbuf + (seg->seq - m_snd_una);
-    IPseudoTcpNotify::WriteResult wres = this->packet(seq, flags, buffer, nTransmit);
+    IPseudoTcpNotify::WriteResult wres = packet(seq,
+                                                flags,
+                                                seg->seq - m_snd_una,
+                                                nTransmit);
 
     if (wres == IPseudoTcpNotify::WR_SUCCESS)
       break;
@@ -950,8 +1037,7 @@ PseudoTcp::transmit(const SList::iterator& seg, uint32 now) {
   return true;
 }
 
-void
-PseudoTcp::attemptSend(SendFlags sflags) {
+void PseudoTcp::attemptSend(SendFlags sflags) {
   uint32 now = Now();
 
   if (talk_base::TimeDiff(now, m_lastsend) > static_cast<long>(m_rx_rto)) {
@@ -972,7 +1058,10 @@ PseudoTcp::attemptSend(SendFlags sflags) {
     uint32 nInFlight = m_snd_nxt - m_snd_una;
     uint32 nUseable = (nInFlight < nWindow) ? (nWindow - nInFlight) : 0;
 
-    uint32 nAvailable = talk_base::_min(m_slen - nInFlight, m_mss);
+    size_t snd_buffered = 0;
+    m_sbuf.GetBuffered(&snd_buffered);
+    uint32 nAvailable =
+        talk_base::_min(static_cast<uint32>(snd_buffered) - nInFlight, m_mss);
 
     if (nAvailable > nUseable) {
       if (nUseable * 4 < nWindow) {
@@ -985,13 +1074,16 @@ PseudoTcp::attemptSend(SendFlags sflags) {
 
 #if _DEBUGMSG >= _DBG_VERBOSE
     if (bFirst) {
+      size_t available_space = 0;
+      m_sbuf.GetWriteRemaining(&available_space);
+
       bFirst = false;
       LOG(LS_INFO) << "[cwnd: " << m_cwnd
                    << "  nWindow: " << nWindow
                    << "  nInFlight: " << nInFlight
                    << "  nAvailable: " << nAvailable
-                   << "  nQueued: " << m_slen - nInFlight
-                   << "  nEmpty: " << sizeof(m_sbuf) - m_slen
+                   << "  nQueued: " << snd_buffered
+                   << "  nEmpty: " << available_space
                    << "  ssthresh: " << m_ssthresh << "]";
     }
 #endif // _DEBUGMSG
@@ -1006,11 +1098,14 @@ PseudoTcp::attemptSend(SendFlags sflags) {
       } else {
         m_t_ack = Now();
       }
-      return;       
+      return;
     }
-    
-    // Nagle algorithm
-    if ((m_snd_nxt > m_snd_una) && (nAvailable < m_mss))  {
+
+    // Nagle's algorithm.
+    // If there is data already in-flight, and we haven't a full segment of
+    // data ready to send then hold off until we get more to send, or the
+    // in-flight data is acknowledged.
+    if (m_use_nagling && (m_snd_nxt > m_snd_una) && (nAvailable < m_mss))  {
       return;
     }
 
@@ -1041,8 +1136,6 @@ PseudoTcp::attemptSend(SendFlags sflags) {
 
 void
 PseudoTcp::closedown(uint32 err) {
-  m_slen = 0;
-
   LOG(LS_INFO) << "State: TCP_CLOSED";
   m_state = TCP_CLOSED;
   if (m_notify) {
@@ -1069,4 +1162,135 @@ PseudoTcp::adjustMTU() {
   m_cwnd = talk_base::_max(m_cwnd, m_mss);
 }
 
-} // namespace cricket
+bool
+PseudoTcp::isReceiveBufferFull() const {
+  size_t available_space = 0;
+  m_rbuf.GetWriteRemaining(&available_space);
+  return !available_space;
+}
+
+void
+PseudoTcp::disableWindowScale() {
+  m_support_wnd_scale = false;
+}
+
+void
+PseudoTcp::queueConnectMessage() {
+  talk_base::ByteBuffer buf(talk_base::ByteBuffer::ORDER_NETWORK);
+
+  buf.WriteUInt8(CTL_CONNECT);
+  if (m_support_wnd_scale) {
+    buf.WriteUInt8(TCP_OPT_WND_SCALE);
+    buf.WriteUInt8(1);
+    buf.WriteUInt8(m_rwnd_scale);
+  }
+  m_snd_wnd = buf.Length();
+  queue(buf.Data(), buf.Length(), true);
+}
+
+void
+PseudoTcp::parseOptions(const char* data, uint32 len) {
+  std::set<uint8> options_specified;
+
+  // See http://www.freesoft.org/CIE/Course/Section4/8.htm for
+  // parsing the options list.
+  talk_base::ByteBuffer buf(data, len);
+  while (buf.Length()) {
+    uint8 kind = TCP_OPT_EOL;
+    buf.ReadUInt8(&kind);
+
+    if (kind == TCP_OPT_EOL) {
+      // End of option list.
+      break;
+    } else if (kind == TCP_OPT_NOOP) {
+      // No op.
+      continue;
+    }
+
+    // Length of this option.
+    ASSERT(len != 0);
+    UNUSED(len);
+    uint8 opt_len = 0;
+    buf.ReadUInt8(&opt_len);
+
+    // Content of this option.
+    if (opt_len <= buf.Length()) {
+      applyOption(kind, buf.Data(), opt_len);
+      buf.Consume(opt_len);
+    } else {
+      LOG(LS_ERROR) << "Invalid option length received.";
+      return;
+    }
+    options_specified.insert(kind);
+  }
+
+  if (options_specified.find(TCP_OPT_WND_SCALE) == options_specified.end()) {
+    LOG(LS_WARNING) << "Peer doesn't support window scaling";
+
+    if (m_rwnd_scale > 0) {
+      // Peer doesn't support TCP options and window scaling.
+      // Revert receive buffer size to default value.
+      resizeReceiveBuffer(DEFAULT_RCV_BUF_SIZE);
+      m_swnd_scale = 0;
+    }
+  }
+}
+
+void
+PseudoTcp::applyOption(char kind, const char* data, uint32 len) {
+  if (kind == TCP_OPT_MSS) {
+    LOG(LS_WARNING) << "Peer specified MSS option which is not supported.";
+    // TODO: Implement.
+  } else if (kind == TCP_OPT_WND_SCALE) {
+    // Window scale factor.
+    // http://www.ietf.org/rfc/rfc1323.txt
+    if (len != 1) {
+      LOG_F(WARNING) << "Invalid window scale option received.";
+      return;
+    }
+    applyWindowScaleOption(data[0]);
+  }
+}
+
+void
+PseudoTcp::applyWindowScaleOption(uint8 scale_factor) {
+  m_swnd_scale = scale_factor;
+}
+
+void
+PseudoTcp::resizeSendBuffer(uint32 new_size) {
+  m_sbuf_len = new_size;
+  m_sbuf.SetCapacity(new_size);
+}
+
+void
+PseudoTcp::resizeReceiveBuffer(uint32 new_size) {
+  uint8 scale_factor = 0;
+
+  // Determine the scale factor such that the scaled window size can fit
+  // in a 16-bit unsigned integer.
+  while (new_size > 0xFFFF) {
+    ++scale_factor;
+    new_size >>= 1;
+  }
+
+  // Determine the proper size of the buffer.
+  new_size <<= scale_factor;
+  bool result = m_rbuf.SetCapacity(new_size);
+
+  // Make sure the new buffer is large enough to contain data in the old
+  // buffer. This should always be true because this method is called either
+  // before connection is established or when peers are exchanging connect
+  // messages.
+  ASSERT(result);
+  UNUSED(result);
+  m_rbuf_len = new_size;
+  m_rwnd_scale = scale_factor;
+  m_ssthresh = new_size;
+
+  size_t available_space = 0;
+  m_rbuf.GetWriteRemaining(&available_space);
+  m_rcv_wnd = available_space;
+}
+
+}  // namespace cricket

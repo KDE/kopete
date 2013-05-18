@@ -2,39 +2,36 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "talk/base/bytebuffer.h"
-#include "talk/p2p/base/stunserver.h"
-#include <string.h>
-#include <iostream>
-
 #ifdef POSIX
-extern "C" {
 #include <errno.h>
-}
-#endif // POSIX
+#endif  // POSIX
+
+#include "talk/p2p/base/stunserver.h"
+#include "talk/base/bytebuffer.h"
+#include "talk/base/logging.h"
 
 namespace cricket {
 
@@ -47,8 +44,8 @@ StunServer::~StunServer() {
 }
 
 void StunServer::OnPacket(
-    const char* buf, size_t size, const talk_base::SocketAddress& remote_addr,
-    talk_base::AsyncPacketSocket* socket) {
+    talk_base::AsyncPacketSocket* socket, const char* buf, size_t size,
+    const talk_base::SocketAddress& remote_addr) {
 
   // TODO: If appropriate, look for the magic cookie before parsing.
 
@@ -92,25 +89,17 @@ void StunServer::OnBindingRequest(
   response.SetTransactionID(msg->transaction_id());
 
   // Tell the user the address that we received their request from.
-  StunAddressAttribute* mapped_addr =
-      StunAttribute::CreateAddress(STUN_ATTR_MAPPED_ADDRESS);
-  mapped_addr->SetFamily(1);
+  StunAddressAttribute* mapped_addr;
+  if (!msg->IsLegacy()) {
+    mapped_addr = StunAttribute::CreateAddress(STUN_ATTR_MAPPED_ADDRESS);
+  } else {
+    mapped_addr = StunAttribute::CreateAddress(STUN_ATTR_XOR_MAPPED_ADDRESS);
+  }
   mapped_addr->SetPort(remote_addr.port());
-  mapped_addr->SetIP(remote_addr.ip());
+  mapped_addr->SetIP(remote_addr.ipaddr());
   response.AddAttribute(mapped_addr);
 
-  // Tell the user the address that we are sending the response from.
-  talk_base::SocketAddress local_addr = socket_->GetLocalAddress();
-  StunAddressAttribute* source_addr =
-      StunAttribute::CreateAddress(STUN_ATTR_SOURCE_ADDRESS);
-  source_addr->SetFamily(1);
-  source_addr->SetPort(local_addr.port());
-  source_addr->SetIP(local_addr.ip());
-  response.AddAttribute(source_addr);
-
   // TODO: Add username and message-integrity.
-
-  // TODO: Add changed-address.  (Keep information about three other servers.)
 
   SendResponse(response, remote_addr);
 }
@@ -125,13 +114,14 @@ void StunServer::OnSharedSecretRequest(
   SendErrorResponse(*msg, addr, 600, "Operation Not Supported");
 }
 
-void StunServer::OnSendRequest(StunMessage* msg, const talk_base::SocketAddress& addr) {
+void StunServer::OnSendRequest(StunMessage* msg,
+                               const talk_base::SocketAddress& addr) {
   SendErrorResponse(*msg, addr, 600, "Operation Not Supported");
 }
 
 void StunServer::SendErrorResponse(
-    const StunMessage& msg, const talk_base::SocketAddress& addr, int error_code,
-    const char* error_desc) {
+    const StunMessage& msg, const talk_base::SocketAddress& addr,
+    int error_code, const char* error_desc) {
 
   StunMessage err_msg;
   err_msg.SetType(GetStunErrorResponseType(msg.type()));
@@ -155,7 +145,7 @@ void StunServer::SendResponse(
   // TODO: Allow response addr attribute if sent from another stun server.
 
   if (socket_->SendTo(buf.Data(), buf.Length(), addr) < 0)
-    std::cerr << "sendto: " << strerror(errno) << std::endl;
+    LOG_ERR(LS_ERROR) << "sendto";
 }
 
-} // namespace cricket
+}  // namespace cricket

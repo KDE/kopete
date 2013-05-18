@@ -28,8 +28,9 @@
 #ifndef _SASLCOOKIEMECHANISM_H_
 #define _SASLCOOKIEMECHANISM_H_
 
-#include "talk/xmpp/saslmechanism.h"
+#include "talk/xmllite/qname.h"
 #include "talk/xmllite/xmlelement.h"
+#include "talk/xmpp/saslmechanism.h"
 #include "talk/xmpp/constants.h"
 
 namespace buzz {
@@ -37,16 +38,34 @@ namespace buzz {
 class SaslCookieMechanism : public SaslMechanism {
 
 public:
-  SaslCookieMechanism(const std::string & mechanism, const std::string & username, const std::string & cookie) :
-    mechanism_(mechanism), username_(username), cookie_(cookie) {}
+  SaslCookieMechanism(const std::string & mechanism,
+                      const std::string & username,
+                      const std::string & cookie,
+                      const std::string & token_service)
+    : mechanism_(mechanism),
+      username_(username),
+      cookie_(cookie),
+      token_service_(token_service) {}
+
+  SaslCookieMechanism(const std::string & mechanism,
+                      const std::string & username,
+                      const std::string & cookie)
+    : mechanism_(mechanism),
+      username_(username),
+      cookie_(cookie),
+      token_service_("") {}
 
   virtual std::string GetMechanismName() { return mechanism_; }
-    
+
   virtual XmlElement * StartSaslAuth() {
     // send initial request
     XmlElement * el = new XmlElement(QN_SASL_AUTH, true);
     el->AddAttr(QN_MECHANISM, mechanism_);
-    
+    if (!token_service_.empty()) {
+      el->AddAttr(QName("http://www.google.com/talk/protocol/auth", "service"),
+                  token_service_);
+    }
+
     std::string credential;
     credential.append("\0", 1);
     credential.append(username_);
@@ -55,11 +74,12 @@ public:
     el->AddText(Base64Encode(credential));
     return el;
   }
-  
+
 private:
   std::string mechanism_;
   std::string username_;
   std::string cookie_;
+  std::string token_service_;
 };
 
 }

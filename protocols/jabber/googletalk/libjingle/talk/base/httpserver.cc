@@ -34,6 +34,7 @@
 #include "talk/base/httpserver.h"
 #include "talk/base/logging.h"
 #include "talk/base/socketstream.h"
+#include "talk/base/thread.h"
 
 namespace talk_base {
 
@@ -41,10 +42,13 @@ namespace talk_base {
 // HttpServer
 ///////////////////////////////////////////////////////////////////////////////
 
-HttpServer::HttpServer() : next_connection_id_(1) {
+HttpServer::HttpServer() : next_connection_id_(1), closing_(false) {
 }
 
 HttpServer::~HttpServer() {
+  if (closing_) {
+    LOG(LS_WARNING) << "HttpServer::CloseAll has not completed";
+  }
   for (ConnectionMap::iterator it = connections_.begin();
        it != connections_.end();
        ++it) {
@@ -65,10 +69,10 @@ HttpServer::HandleConnection(StreamInterface* stream) {
 }
 
 void
-HttpServer::Respond(HttpTransaction* transaction) {
+HttpServer::Respond(HttpServerTransaction* transaction) {
   int connection_id = transaction->connection_id();
-     if (Connection* connection = Find(connection_id)) {
-          connection->Respond(transaction);
+  if (Connection* connection = Find(connection_id)) {
+    connection->Respond(transaction);
   } else {
     delete transaction;
     // We may be tempted to SignalHttpComplete, but that implies that a
@@ -78,17 +82,22 @@ HttpServer::Respond(HttpTransaction* transaction) {
 
 void
 HttpServer::Close(int connection_id, bool force) {
-     if (Connection* connection = Find(connection_id)) {
-          connection->InitiateClose(force);
-     }
+  if (Connection* connection = Find(connection_id)) {
+    connection->InitiateClose(force);
+  }
 }
 
 void
 HttpServer::CloseAll(bool force) {
+  if (connections_.empty()) {
+    SignalCloseAllComplete(this);
+    return;
+  }
+  closing_ = true;
   std::list<Connection*> connections;
   for (ConnectionMap::const_iterator it = connections_.begin();
        it != connections_.end(); ++it) {
-     connections.push_back(it->second);
+    connections.push_back(it->second);
   }
   for (std::list<Connection*>::const_iterator it = connections.begin();
       it != connections.end(); ++it) {
@@ -115,6 +124,10 @@ HttpServer::Remove(int connection_id) {
   connections_.erase(it);
   SignalConnectionClosed(this, connection_id, connection->EndProcess());
   delete connection;
+  if (closing_ && connections_.empty()) {
+    closing_ = false;
+    SignalCloseAllComplete(this);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -127,17 +140,18 @@ HttpServer::Connection::Connection(int connection_id, HttpServer* server)
 }
 
 HttpServer::Connection::~Connection() {
-  delete current_;
+  // It's possible that an object hosted inside this transaction signalled
+  // an event which caused the connection to close.
+  Thread::Current()->Dispose(current_);
 }
 
 void
 HttpServer::Connection::BeginProcess(StreamInterface* stream) {
   base_.notify(this); 
   base_.attach(stream);
-  current_ = new HttpTransaction(connection_id_);
-  current_->request()->document.reset(new MemoryStream);
+  current_ = new HttpServerTransaction(connection_id_);
   if (base_.mode() != HM_CONNECT)
-    base_.recv(current_->request());
+    base_.recv(&current_->request);
 }
 
 StreamInterface*
@@ -148,23 +162,24 @@ HttpServer::Connection::EndProcess() {
 }
 
 void
-HttpServer::Connection::Respond(HttpTransaction* transaction) {
+HttpServer::Connection::Respond(HttpServerTransaction* transaction) {
   ASSERT(current_ == NULL);
   current_ = transaction;
-  if (current_->response()->begin() == current_->response()->end()) {
-    current_->response()->set_error(HC_INTERNAL_SERVER_ERROR);
+  if (current_->response.begin() == current_->response.end()) {
+    current_->response.set_error(HC_INTERNAL_SERVER_ERROR);
   }
-  bool keep_alive = HttpShouldKeepAlive(*transaction->request());
-  current_->response()->setHeader(HH_CONNECTION,
-                                  keep_alive ? "Keep-Alive" : "Close",
-                                  false);
-  close_ = !HttpShouldKeepAlive(*transaction->response());
-  base_.send(current_->response());
+  bool keep_alive = HttpShouldKeepAlive(current_->request);
+  current_->response.setHeader(HH_CONNECTION,
+                               keep_alive ? "Keep-Alive" : "Close",
+                               false);
+  close_ = !HttpShouldKeepAlive(current_->response);
+  base_.send(&current_->response);
 }
 
 void
 HttpServer::Connection::InitiateClose(bool force) {
-  if (!signalling_ && (force || (base_.mode() != HM_SEND))) {
+  bool request_in_progress = (HM_SEND == base_.mode()) || (NULL == current_);
+  if (!signalling_ && (force || !request_in_progress)) {
     server_->Remove(connection_id_);
   } else {
     close_ = true;
@@ -179,6 +194,12 @@ HttpError
 HttpServer::Connection::onHttpHeaderComplete(bool chunked, size_t& data_size) {
   if (data_size == SIZE_UNKNOWN) {
     data_size = 0;
+  }
+  ASSERT(current_ != NULL);
+  bool custom_document = false;
+  server_->SignalHttpRequestHeader(server_, current_, &custom_document);
+  if (!custom_document) {
+    current_->request.document.reset(new MemoryStream);
   }
   return HE_NONE;
 }
@@ -198,19 +219,19 @@ HttpServer::Connection::onHttpComplete(HttpMode mode, HttpError err) {
   if (err != HE_NONE) {
     server_->Remove(connection_id_);
   } else if (mode == HM_CONNECT) {
-    base_.recv(current_->request());
+    base_.recv(&current_->request);
   } else if (mode == HM_RECV) {
     ASSERT(current_ != NULL);
     // TODO: do we need this?
     //request_.document_->rewind();
-    HttpTransaction* transaction = current_;
+    HttpServerTransaction* transaction = current_;
     current_ = NULL;
     server_->SignalHttpRequest(server_, transaction);
   } else if (mode == HM_SEND) {
-    current_->request()->clear(true);
-    current_->request()->document.reset(new MemoryStream);
-    current_->response()->clear(true);
-    base_.recv(current_->request());
+    Thread::Current()->Dispose(current_->response.document.release());
+    current_->request.clear(true);
+    current_->response.clear(true);
+    base_.recv(&current_->request);
   } else {
     ASSERT(false);
   }
@@ -226,34 +247,45 @@ HttpServer::Connection::onHttpClosed(HttpError err) {
 // HttpListenServer
 ///////////////////////////////////////////////////////////////////////////////
 
-HttpListenServer::HttpListenServer(AsyncSocket* listener)
-  : listener_(listener) {
+HttpListenServer::HttpListenServer()
+: listener_(Thread::Current()->socketserver()->CreateAsyncSocket(SOCK_STREAM)) {
   listener_->SignalReadEvent.connect(this, &HttpListenServer::OnReadEvent);
+  SignalConnectionClosed.connect(this, &HttpListenServer::OnConnectionClosed);
 }
 
 HttpListenServer::~HttpListenServer() {
 }
 
-int
-HttpListenServer::Listen(const SocketAddress& address) {
+int HttpListenServer::Listen(const SocketAddress& address) {
   if ((listener_->Bind(address) != SOCKET_ERROR) &&
       (listener_->Listen(5) != SOCKET_ERROR))
     return 0;
   return listener_->GetError();
 }
 
-bool
-HttpListenServer::GetAddress(SocketAddress& address) {
-  address = listener_->GetLocalAddress();
-  return !address.IsNil();
+bool HttpListenServer::GetAddress(SocketAddress* address) const {
+  *address = listener_->GetLocalAddress();
+  return !address->IsNil();
 }
 
-void
-HttpListenServer::OnReadEvent(AsyncSocket* socket) {
-  ASSERT(socket == listener_);
-  AsyncSocket* incoming = static_cast<AsyncSocket*>(listener_->Accept(NULL));
-  if (incoming)
-    HandleConnection(new SocketStream(incoming));
+void HttpListenServer::StopListening() {
+  listener_->Close();
+}
+
+void HttpListenServer::OnReadEvent(AsyncSocket* socket) {
+  ASSERT(socket == listener_.get());
+  AsyncSocket* incoming = listener_->Accept(NULL);
+  if (incoming) {
+    StreamInterface* stream = new SocketStream(incoming);
+    //stream = new LoggingAdapter(stream, LS_VERBOSE, "HttpServer", false);
+    HandleConnection(stream);
+  }
+}
+
+void HttpListenServer::OnConnectionClosed(HttpServer* server,
+                                          int connection_id,
+                                          StreamInterface* stream) {
+  Thread::Current()->Dispose(stream);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

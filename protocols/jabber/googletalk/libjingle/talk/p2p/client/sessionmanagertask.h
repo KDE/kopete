@@ -2,26 +2,26 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -32,7 +32,6 @@
 #include "talk/p2p/client/sessionsendtask.h"
 #include "talk/xmpp/xmppengine.h"
 #include "talk/xmpp/xmpptask.h"
-#include "talk/base/logging.h"
 
 namespace cricket {
 
@@ -41,9 +40,10 @@ namespace cricket {
 
 class SessionManagerTask : public buzz::XmppTask {
  public:
-  SessionManagerTask(Task *parent, SessionManager *session_manager)
-      : buzz::XmppTask(parent, buzz::XmppEngine::HL_SINGLE) {
-    session_manager_ = session_manager;
+  SessionManagerTask(buzz::XmppTaskParentInterface* parent,
+                     SessionManager* session_manager)
+      : buzz::XmppTask(parent, buzz::XmppEngine::HL_SINGLE),
+        session_manager_(session_manager) {
   }
 
   ~SessionManagerTask() {
@@ -67,7 +67,6 @@ class SessionManagerTask : public buzz::XmppTask {
 
  protected:
   virtual bool HandleStanza(const buzz::XmlElement *stanza) {
-    LOG(LS_VERBOSE) << "HandleStanza()\n" << stanza->BodyText().c_str() << "\n";
     if (!session_manager_->IsSessionMessage(stanza))
       return false;
     // Responses are handled by the SessionSendTask that sent the request.
@@ -78,14 +77,15 @@ class SessionManagerTask : public buzz::XmppTask {
   }
 
  private:
-  SessionManager* session_manager_;
-
-  void OnOutgoingMessage(const buzz::XmlElement* stanza) {
+  void OnOutgoingMessage(SessionManager* manager,
+                         const buzz::XmlElement* stanza) {
     cricket::SessionSendTask* sender =
-        new cricket::SessionSendTask(GetParent(), session_manager_);
+        new cricket::SessionSendTask(parent_, session_manager_);
     sender->Send(stanza);
     sender->Start();
   }
+
+  SessionManager* session_manager_;
 };
 
 }  // namespace cricket

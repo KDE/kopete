@@ -25,80 +25,124 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "talk/base/bytebuffer.h"
+
 #include <algorithm>
 #include <cassert>
-#include <string.h>
+#include <cstring>
 
 #include "talk/base/basictypes.h"
-#include "talk/base/bytebuffer.h"
 #include "talk/base/byteorder.h"
-
-#if defined(_MSC_VER) && _MSC_VER < 1300
-namespace std {
-  using ::memcpy;
-}
-#endif
 
 namespace talk_base {
 
 static const int DEFAULT_SIZE = 4096;
 
 ByteBuffer::ByteBuffer() {
-  start_ = 0;
-  end_   = 0;
-  size_  = DEFAULT_SIZE;
-  bytes_ = new char[size_];
+  Construct(NULL, DEFAULT_SIZE, ORDER_NETWORK);
+}
+
+ByteBuffer::ByteBuffer(ByteOrder byte_order) {
+  Construct(NULL, DEFAULT_SIZE, byte_order);
 }
 
 ByteBuffer::ByteBuffer(const char* bytes, size_t len) {
-  start_ = 0;
-  end_   = len;
-  size_  = len;
-  bytes_ = new char[size_];
-  memcpy(bytes_, bytes, end_);
+  Construct(bytes, len, ORDER_NETWORK);
+}
+
+ByteBuffer::ByteBuffer(const char* bytes, size_t len, ByteOrder byte_order) {
+  Construct(bytes, len, byte_order);
 }
 
 ByteBuffer::ByteBuffer(const char* bytes) {
-  start_ = 0;
-  end_   = strlen(bytes);
-  size_  = end_;
-  bytes_ = new char[size_];
-  memcpy(bytes_, bytes, end_);
+  Construct(bytes, strlen(bytes), ORDER_NETWORK);
+}
+
+void ByteBuffer::Construct(const char* bytes, size_t len,
+                           ByteOrder byte_order) {
+  start_      = 0;
+  size_       = len;
+  byte_order_ = byte_order;
+  bytes_      = new char[size_];
+
+  if (bytes) {
+    end_ = len;
+    memcpy(bytes_, bytes, end_);
+  } else {
+    end_ = 0;
+  }
 }
 
 ByteBuffer::~ByteBuffer() {
-  delete bytes_;
+  delete[] bytes_;
 }
 
-bool ByteBuffer::ReadUInt8(uint8& val) {
-  return ReadBytes(reinterpret_cast<char*>(&val), 1);
+bool ByteBuffer::ReadUInt8(uint8* val) {
+  if (!val) return false;
+
+  return ReadBytes(reinterpret_cast<char*>(val), 1);
 }
 
-bool ByteBuffer::ReadUInt16(uint16& val) {
+bool ByteBuffer::ReadUInt16(uint16* val) {
+  if (!val) return false;
+
   uint16 v;
   if (!ReadBytes(reinterpret_cast<char*>(&v), 2)) {
     return false;
   } else {
-    val = NetworkToHost16(v);
+    *val = (byte_order_ == ORDER_NETWORK) ? NetworkToHost16(v) : v;
     return true;
   }
 }
 
-bool ByteBuffer::ReadUInt32(uint32& val) {
+bool ByteBuffer::ReadUInt24(uint32* val) {
+  if (!val) return false;
+
+  uint32 v = 0;
+  char* read_into = reinterpret_cast<char*>(&v);
+  if (byte_order_ == ORDER_NETWORK || IsHostBigEndian()) {
+    ++read_into;
+  }
+
+  if (!ReadBytes(read_into, 3)) {
+    return false;
+  } else {
+    *val = (byte_order_ == ORDER_NETWORK) ? NetworkToHost32(v) : v;
+    return true;
+  }
+}
+
+bool ByteBuffer::ReadUInt32(uint32* val) {
+  if (!val) return false;
+
   uint32 v;
   if (!ReadBytes(reinterpret_cast<char*>(&v), 4)) {
     return false;
   } else {
-    val = NetworkToHost32(v);
+    *val = (byte_order_ == ORDER_NETWORK) ? NetworkToHost32(v) : v;
     return true;
   }
 }
 
-bool ByteBuffer::ReadString(std::string& val, size_t len) {
+bool ByteBuffer::ReadUInt64(uint64* val) {
+  if (!val) return false;
+
+  uint64 v;
+  if (!ReadBytes(reinterpret_cast<char*>(&v), 8)) {
+    return false;
+  } else {
+    *val = (byte_order_ == ORDER_NETWORK) ? NetworkToHost64(v) : v;
+    return true;
+  }
+}
+
+bool ByteBuffer::ReadString(std::string* val, size_t len) {
+  if (!val) return false;
+
   if (len > Length()) {
     return false;
   } else {
-    val.append(bytes_ + start_, len);
+    val->append(bytes_ + start_, len);
     start_ += len;
     return true;
   }
@@ -119,13 +163,27 @@ void ByteBuffer::WriteUInt8(uint8 val) {
 }
 
 void ByteBuffer::WriteUInt16(uint16 val) {
-  uint16 v = HostToNetwork16(val);
+  uint16 v = (byte_order_ == ORDER_NETWORK) ? HostToNetwork16(val) : val;
   WriteBytes(reinterpret_cast<const char*>(&v), 2);
 }
 
+void ByteBuffer::WriteUInt24(uint32 val) {
+  uint32 v = (byte_order_ == ORDER_NETWORK) ? HostToNetwork32(val) : val;
+  char* start = reinterpret_cast<char*>(&v);
+  if (byte_order_ == ORDER_NETWORK || IsHostBigEndian()) {
+    ++start;
+  }
+  WriteBytes(start, 3);
+}
+
 void ByteBuffer::WriteUInt32(uint32 val) {
-  uint32 v = HostToNetwork32(val);
+  uint32 v = (byte_order_ == ORDER_NETWORK) ? HostToNetwork32(val) : val;
   WriteBytes(reinterpret_cast<const char*>(&v), 4);
+}
+
+void ByteBuffer::WriteUInt64(uint64 val) {
+  uint64 v = (byte_order_ == ORDER_NETWORK) ? HostToNetwork64(val) : val;
+  WriteBytes(reinterpret_cast<const char*>(&v), 8);
 }
 
 void ByteBuffer::WriteString(const std::string& val) {
@@ -155,13 +213,22 @@ void ByteBuffer::Resize(size_t size) {
   bytes_ = new_bytes;
 }
 
-void ByteBuffer::Shift(size_t size) {
+bool ByteBuffer::Consume(size_t size) {
   if (size > Length())
-    return;
+    return false;
+
+  start_ += size;
+  return true;
+}
+
+bool ByteBuffer::Shift(size_t size) {
+  if (size > Length())
+    return false;
 
   end_ = Length() - size;
   memmove(bytes_, bytes_ + start_ + size, end_);
   start_ = 0;
+  return true;
 }
 
-} // namespace talk_base
+}  // namespace talk_base

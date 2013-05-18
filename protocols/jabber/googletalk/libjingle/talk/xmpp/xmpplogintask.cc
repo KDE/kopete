@@ -2,32 +2,34 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <iostream>
+#include "talk/xmpp/xmpplogintask.h"
+
 #include <string>
 #include <vector>
+
 #include "talk/base/base64.h"
 #include "talk/base/common.h"
 #include "talk/xmllite/xmlelement.h"
@@ -35,7 +37,6 @@
 #include "talk/xmpp/jid.h"
 #include "talk/xmpp/saslmechanism.h"
 #include "talk/xmpp/xmppengineimpl.h"
-#include "talk/xmpp/xmpplogintask.h"
 
 using talk_base::ConstantLabel;
 
@@ -57,10 +58,10 @@ const ConstantLabel XmppLoginTask::LOGINTASK_STATES[] = {
   LASTLABEL
 };
 #endif  // _DEBUG
-
 XmppLoginTask::XmppLoginTask(XmppEngineImpl * pctx) :
   pctx_(pctx),
   authNeeded_(true),
+  allowNonGoogleLogin_(true),
   state_(LOGINSTATE_INIT),
   pelStanza_(NULL),
   isStart_(false),
@@ -108,7 +109,6 @@ XmppLoginTask::Advance() {
     switch (state_) {
 
       case LOGINSTATE_INIT: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_INIT";
         pctx_->RaiseReset();
         pelFeatures_.reset(NULL);
 
@@ -123,33 +123,31 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_STREAMSTART_SENT: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_STREAMSTART_SENT";  
-        if (NULL == (element = NextStanza())) {
-          LOG(LS_VERBOSE) << "XmppLoginTask::Advance() NextStanza() == NULL";
+        if (NULL == (element = NextStanza()))
           return true;
-        }  
 
-        if (!isStart_ || !HandleStartStream(element)) {
-          LOG(LS_VERBOSE) << "XmppLoginTask::Advance() !isStart_ || !HandleStartStream(element) == true";
-          LOG(LS_VERBOSE) << "isStart_=" << isStart_;  
+        if (!isStart_ || !HandleStartStream(element))
           return Failure(XmppEngine::ERROR_VERSION);
-        }  
 
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() state_ = LOGINSTATE_STARTED_XMPP";
         state_ = LOGINSTATE_STARTED_XMPP;
         return true;
       }
 
       case LOGINSTATE_STARTED_XMPP: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_STARTED_XMPP";    
         if (NULL == (element = NextStanza()))
           return true;
 
         if (!HandleFeatures(element))
           return Failure(XmppEngine::ERROR_VERSION);
 
-        // Use TLS if forced, or if available
-        if (pctx_->tls_needed_ || GetFeature(QN_TLS_STARTTLS) != NULL) {
+        bool tls_present = (GetFeature(QN_TLS_STARTTLS) != NULL);
+        // Error if TLS required but not present.
+        if (pctx_->tls_option_ == buzz::TLS_REQUIRED && !tls_present) {
+          return Failure(XmppEngine::ERROR_TLS);
+        }
+        // Use TLS if required or enabled, and also available
+        if ((pctx_->tls_option_ == buzz::TLS_REQUIRED ||
+            pctx_->tls_option_ == buzz::TLS_ENABLED) && tls_present) {
           state_ = LOGINSTATE_TLS_INIT;
           continue;
         }
@@ -164,7 +162,6 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_TLS_INIT: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_TLS_INIT";      
         const XmlElement * pelTls = GetFeature(QN_TLS_STARTTLS);
         if (!pelTls)
           return Failure(XmppEngine::ERROR_TLS);
@@ -176,7 +173,6 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_TLS_REQUESTED: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance()  LOGINSTATE_TLS_REQUESTED";  
         if (NULL == (element = NextStanza()))
           return true;
         if (element->Name() != QN_TLS_PROCEED)
@@ -188,13 +184,12 @@ XmppLoginTask::Advance() {
         // to do so - see the implementation of XmppEngineImpl::StartTls and
         // XmppEngine::SetTlsServerDomain to see how you can use that feature
         pctx_->StartTls(pctx_->user_jid_.domain());
-        pctx_->tls_needed_ = false;
+        pctx_->tls_option_ = buzz::TLS_ENABLED;
         state_ = LOGINSTATE_INIT;
         continue;
       }
 
       case LOGINSTATE_AUTH_INIT: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_AUTH_INIT";   
         const XmlElement * pelSaslAuth = GetFeature(QN_SASL_MECHANISMS);
         if (!pelSaslAuth) {
           return Failure(XmppEngine::ERROR_AUTH);
@@ -227,15 +222,24 @@ XmppLoginTask::Advance() {
         if (auth == NULL) {
           return Failure(XmppEngine::ERROR_AUTH);
         }
+        if (allowNonGoogleLogin_) {
+          // Setting the following two attributes is required to support
+          // non-google ids.
+
+          // Allow login with non-google id accounts.
+          auth->SetAttr(QN_GOOGLE_ALLOW_NON_GOOGLE_ID_XMPP_LOGIN, "true");
+
+          // Allow login with either the non-google id or the friendly email.
+          auth->SetAttr(QN_GOOGLE_AUTH_CLIENT_USES_FULL_BIND_RESULT, "true");
+        }
 
         pctx_->InternalSendStanza(auth);
         delete auth;
         state_ = LOGINSTATE_SASL_RUNNING;
         continue;
       }
-        
+
       case LOGINSTATE_SASL_RUNNING: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_SASL_RUNNING";      
         if (NULL == (element = NextStanza()))
           return true;
         if (element->Name().Namespace() != NS_SASL)
@@ -251,9 +255,6 @@ XmppLoginTask::Advance() {
           continue;
         }
         if (element->Name() != QN_SASL_SUCCESS) {
-          if (element->FirstNamed(QN_MISSING_USERNAME) != NULL) {
-            return Failure(XmppEngine::ERROR_MISSING_USERNAME);
-          }
           return Failure(XmppEngine::ERROR_UNAUTHORIZED);
         }
 
@@ -264,7 +265,6 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_BIND_INIT: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_BIND_INIT";
         const XmlElement * pelBindFeature = GetFeature(QN_BIND_BIND);
         const XmlElement * pelSessionFeature = GetFeature(QN_SESSION_SESSION);
         if (!pelBindFeature || !pelSessionFeature)
@@ -287,7 +287,6 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_BIND_REQUESTED: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_BIND_REQUESTED";
         if (NULL == (element = NextStanza()))
           return true;
 
@@ -318,7 +317,6 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_SESSION_REQUESTED: {
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_SESSION_REQUESTED";
         if (NULL == (element = NextStanza()))
           return true;
         if (element->Name() != QN_IQ || element->Attr(QN_ID) != iqId_ ||
@@ -335,7 +333,6 @@ XmppLoginTask::Advance() {
       }
 
       case LOGINSTATE_DONE:
-        LOG(LS_VERBOSE) << "XmppLoginTask::Advance() LOGINSTATE_DONE";    
         return false;
     }
   }
@@ -355,7 +352,7 @@ XmppLoginTask::HandleStartStream(const XmlElement *element) {
 
   if (!element->HasAttr(QN_ID))
     return false;
-  
+
   streamId_ = element->Attr(QN_ID);
 
   return true;
@@ -377,7 +374,6 @@ XmppLoginTask::GetFeature(const QName & name) {
 
 bool
 XmppLoginTask::Failure(XmppEngine::Error reason) {
-  LOG(LS_ERROR) << "XmppLoginTask::Failure() " << reason;
   state_ = LOGINSTATE_DONE;
   pctx_->SignalError(reason, 0);
   return false;

@@ -1,55 +1,42 @@
-/*
- * Jingle call example
- * Copyright 2004--2005, Google Inc.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Tempe Place, Suite 330, Boston, MA  02111-1307  USA
- */
+#define _CRT_SECURE_NO_DEPRECATE 1
 
-#include <iomanip>
 #include <time.h>
 
-#ifndef WIN32
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <iomanip>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#else
-#include <direct.h>
-//typedef _getcwd getcwd;
-#include "talk/base/win32.h"
+#include <iostream>
+#include <string>
+
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif  // HAVE_CONFIG_H
+
+#if HAVE_OPENSSL_SSL_H
+#define USE_SSL_TUNNEL
 #endif
 
-#include "talk/base/fileutils.h"
-#include "talk/base/pathutils.h"
+#include "talk/base/basicdefs.h"
+#include "talk/base/common.h"
 #include "talk/base/helpers.h"
-#include "talk/base/httpclient.h"
 #include "talk/base/logging.h"
-#include "talk/base/physicalsocketserver.h"
 #include "talk/base/ssladapter.h"
-#include "talk/xmpp/xmppclientsettings.h"
-#include "talk/examples/login/xmppthread.h"
-#include "talk/examples/login/xmppauth.h"
-#include "talk/p2p/client/httpportallocator.h"
+#include "talk/base/stringutils.h"
+#include "talk/base/thread.h"
+#include "talk/examples/login/autoportallocator.h"
+#include "talk/examples/login/xmpppump.h"
+#include "talk/examples/login/xmppsocket.h"
+#include "talk/p2p/base/sessionmanager.h"
 #include "talk/p2p/client/sessionmanagertask.h"
-#include "talk/session/fileshare/fileshare.h"
-#include "talk/examples/login/presencepushtask.h"
-#include "talk/examples/login/presenceouttask.h"
-#include "talk/examples/login/jingleinfotask.h"
+#include "talk/xmpp/xmppengine.h"
+#ifdef USE_SSL_TUNNEL
+#include "talk/session/tunnel/securetunnelsessionclient.h"
+#endif
+#include "talk/session/tunnel/tunnelsessionclient.h"
+#include "talk/xmpp/xmppclient.h"
+#include "talk/xmpp/xmppclientsettings.h"
+
+#ifndef MAX_PATH
+#define MAX_PATH 256
+#endif
 
 #if defined(_MSC_VER) && (_MSC_VER < 1400)
 // The following are necessary to properly link when compiling STL without
@@ -58,30 +45,18 @@ void __cdecl std::_Throw(const std::exception &) {}
 std::_Prhand std::_Raise_handler = 0;
 #endif
 
-void SetConsoleEcho(bool on) {
-#ifdef WIN32
-  HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
-  if ((hIn == INVALID_HANDLE_VALUE) || (hIn == NULL))
-    return;
+enum {
+  MSG_LOGIN_COMPLETE = 1,
+  MSG_LOGIN_FAILED,
+  MSG_DONE,
+};
 
-  DWORD mode;
-  if (!GetConsoleMode(hIn, &mode))
-    return;
+buzz::Jid gUserJid;
+talk_base::InsecureCryptStringImpl gUserPass;
+std::string gXmppHost = "talk.google.com";
+int gXmppPort = 5222;
+buzz::TlsOptions gXmppUseTls = buzz::TLS_REQUIRED;
 
-  if (on) {
-    mode = mode | ENABLE_ECHO_INPUT;
-  } else {
-    mode = mode & ~ENABLE_ECHO_INPUT;
-  }
-
-  SetConsoleMode(hIn, mode);
-#else
-  if (on)
-    system("stty echo");
-  else
-    system("stty -echo");
-#endif
-}
 class DebugLog : public sigslot::has_slots<> {
 public:
   DebugLog() :
@@ -181,22 +156,22 @@ public:
             nest += 2;
 
           // Note if it's a PLAIN auth tag
-	  if (IsAuthTag(buf + start, i + 1 - start)) {
-	    censor_password_ = true;
-	  }
+          if (IsAuthTag(buf + start, i + 1 - start)) {
+            censor_password_ = true;
+          }
 
           // incr
           start = i + 1;
         }
 
         if (buf[i] == '<' && start < i) {
-	  if (censor_password_) {
-	    LOG(INFO) << std::setw(nest) << " " << "## TEXT REMOVED ##";
-	    censor_password_ = false;
-	  }
-	  else {
-	    LOG(INFO) << std::setw(nest) << " " << std::string(buf + start, i - start);
-	  }
+          if (censor_password_) {
+            LOG(INFO) << std::setw(nest) << " " << "## TEXT REMOVED ##";
+            censor_password_ = false;
+          }
+          else {
+            LOG(INFO) << std::setw(nest) << " " << std::string(buf + start, i - start);
+          }
           start = i;
         }
       }
@@ -210,409 +185,525 @@ public:
 
 static DebugLog debug_log_;
 
+// Prints out a usage message then exits.
+void Usage() {
+  std::cerr << "Usage:" << std::endl;
+  std::cerr << "  pcp [options] <my_jid>                             (server mode)" << std::endl;
+  std::cerr << "  pcp [options] <my_jid> <src_file> <dst_full_jid>:<dst_file> (client sending)" << std::endl;
+  std::cerr << "  pcp [options] <my_jid> <src_full_jid>:<src_file> <dst_file> (client rcv'ing)" << std::endl;
+  std::cerr << "           --verbose" << std::endl;
+  std::cerr << "           --xmpp-host=<host>" << std::endl;
+  std::cerr << "           --xmpp-port=<port>" << std::endl;
+  std::cerr << "           --xmpp-use-tls=(true|false)" << std::endl;
+  exit(1);
+}
 
-class FileShareClient : public sigslot::has_slots<>, public talk_base::MessageHandler {
- public:
-  FileShareClient(buzz::XmppClient *xmppclient, const buzz::Jid &send_to, const cricket::FileShareManifest *manifest, std::string root_dir) :
-    xmpp_client_(xmppclient),
-    root_dir_(root_dir),
-    send_to_jid_(send_to),
-    waiting_for_file_(send_to == buzz::JID_EMPTY),  
-    manifest_(manifest) {}
+// Prints out an error message, a usage message, then exits.
+void Error(const std::string& msg) {
+  std::cerr << "error: " << msg << std::endl;
+  std::cerr << std::endl;
+  Usage();
+}
+
+void FatalError(const std::string& msg) {
+  std::cerr << "error: " << msg << std::endl;
+  std::cerr << std::endl;
+  exit(1);
+}
+
+// Determines whether the given string is an option.  If so, the name and
+// value are appended to the given strings.
+bool ParseArg(const char* arg, std::string* name, std::string* value) {
+  if (strncmp(arg, "--", 2) != 0)
+    return false;
+
+  const char* eq = strchr(arg + 2, '=');
+  if (eq) {
+    if (name)
+      name->append(arg + 2, eq);
+    if (value)
+      value->append(eq + 1, arg + strlen(arg));
+  } else {
+    if (name)
+      name->append(arg + 2, arg + strlen(arg));
+    if (value)
+      value->clear();
+  }
+
+  return true;
+}
+
+int ParseIntArg(const std::string& name, const std::string& value) {
+  char* end;
+  long val = strtol(value.c_str(), &end, 10);
+  if (*end != '\0')
+    Error(std::string("value of option ") + name + " must be an integer");
+  return static_cast<int>(val);
+}
+
+#ifdef WIN32
+#pragma warning(push)
+// disable "unreachable code" warning b/c it varies between dbg and opt
+#pragma warning(disable: 4702)
+#endif
+bool ParseBoolArg(const std::string& name, const std::string& value) {
+  if (value == "true")
+    return true;
+  else if (value == "false")
+    return false;
+  else {
+    Error(std::string("value of option ") + name + " must be true or false");
+    return false;
+  }
+}
+#ifdef WIN32
+#pragma warning(pop)
+#endif
+
+void ParseFileArg(const char* arg, buzz::Jid* jid, std::string* file) {
+  const char* sep = strchr(arg, ':');
+  if (!sep) {
+    *file = arg;
+  } else {
+    buzz::Jid jid_arg(std::string(arg, sep-arg));
+    if (jid_arg.IsBare())
+      Error("A full JID is required for the source or destination arguments.");
+    *jid = jid_arg;
+    *file = std::string(sep+1);
+  }
+}
+
+
+void SetConsoleEcho(bool on) {
+#ifdef WIN32
+  HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
+  if ((hIn == INVALID_HANDLE_VALUE) || (hIn == NULL))
+    return;
+
+  DWORD mode;
+  if (!GetConsoleMode(hIn, &mode))
+    return;
+
+  if (on) {
+    mode = mode | ENABLE_ECHO_INPUT;
+  } else {
+    mode = mode & ~ENABLE_ECHO_INPUT;
+  }
+
+  SetConsoleMode(hIn, mode);
+#else
+  int re;
+  if (on)
+    re = system("stty echo");
+  else
+    re = system("stty -echo");
+  if (-1 == re)
+    return;
+#endif
+}
+
+// Fills in a settings object with the values from the arguments.
+buzz::XmppClientSettings LoginSettings() {
+  buzz::XmppClientSettings xcs;
+  xcs.set_user(gUserJid.node());
+  xcs.set_host(gUserJid.domain());
+  xcs.set_resource("pcp");
+  xcs.set_pass(talk_base::CryptString(gUserPass));
+  talk_base::SocketAddress server(gXmppHost, gXmppPort);
+  xcs.set_server(server);
+  xcs.set_use_tls(gXmppUseTls);
+  return xcs;
+}
+
+// Runs the current thread until a message with the given ID is seen.
+uint32 Loop(const std::vector<uint32>& ids) {
+  talk_base::Message msg;
+  while (talk_base::Thread::Current()->Get(&msg)) {
+    if (msg.phandler == NULL) {
+      if (std::find(ids.begin(), ids.end(), msg.message_id) != ids.end())
+        return msg.message_id;
+      std::cout << "orphaned message: " << msg.message_id;
+      continue;
+    }
+    talk_base::Thread::Current()->Dispatch(&msg);
+  }
+  return 0;
+}
+
+#ifdef WIN32
+#pragma warning(disable:4355)
+#endif
+
+class CustomXmppPump : public XmppPumpNotify, public XmppPump {
+public:
+  CustomXmppPump() : XmppPump(this), server_(false) { }
+
+  void Serve(cricket::TunnelSessionClient* client) {
+    client->SignalIncomingTunnel.connect(this,
+      &CustomXmppPump::OnIncomingTunnel);
+    server_ = true;
+  }
 
   void OnStateChange(buzz::XmppEngine::State state) {
     switch (state) {
     case buzz::XmppEngine::STATE_START:
-      std::cout << "Connecting..." << std::endl;
+      std::cout << "connecting..." << std::endl;
       break;
     case buzz::XmppEngine::STATE_OPENING:
-      std::cout << "Logging in. " << std::endl;
+      std::cout << "logging in..." << std::endl;
       break;
     case buzz::XmppEngine::STATE_OPEN:
-      std::cout << "Logged in as " << xmpp_client_->jid().Str() << std::endl;
-      if (!waiting_for_file_)
-        std::cout << "Waiting for " << send_to_jid_.Str() << std::endl;
-      OnSignon();
+      std::cout << "logged in..." << std::endl;
+      talk_base::Thread::Current()->Post(NULL, MSG_LOGIN_COMPLETE);
       break;
     case buzz::XmppEngine::STATE_CLOSED:
-      std::cout << "Logged out." << std::endl;
+      std::cout << "logged out..." << std::endl;
+      talk_base::Thread::Current()->Post(NULL, MSG_LOGIN_FAILED);
       break;
     }
   }
 
- private:
-
-  enum {
-    MSG_STOP,
-  };
- 
-  void OnJingleInfo(const std::string & relay_token,
-                    const std::vector<std::string> &relay_addresses,
-                    const std::vector<talk_base::SocketAddress> &stun_addresses) {
-    port_allocator_->SetStunHosts(stun_addresses);
-    port_allocator_->SetRelayHosts(relay_addresses);
-    port_allocator_->SetRelayToken(relay_token);
-  }
-							
-  
-  void OnStatusUpdate(const buzz::Status &status) {
-    if (status.available() && status.fileshare_capability()) {
-
-      // A contact's status has changed. If the person we're looking for is online and able to receive
-      // files, send it.
-      if (send_to_jid_.BareEquals(status.jid())) {
-	std::cout << send_to_jid_.Str() << " has signed on." << std::endl;
-	cricket::FileShareSession* share = file_share_session_client_->CreateFileShareSession();
-	std::cout << "Hit enter to send the files" << std::endl;
-	std::string str;
-	std::cin >> str;
-	share->Share(status.jid(), const_cast<cricket::FileShareManifest*>(manifest_));
-	send_to_jid_ = buzz::Jid("");
-      }
-      
+  void OnIncomingTunnel(cricket::TunnelSessionClient* client, buzz::Jid jid,
+    std::string description, cricket::Session* session) {
+    std::cout << "IncomingTunnel from " << jid.Str()
+      << ": " << description << std::endl;
+    if (!server_ || (file_.get() != NULL)) {
+      client->DeclineTunnel(session);
+      return;
     }
-  }
-  
-  void OnMessage(talk_base::Message *m) {
-    ASSERT(m->message_id == MSG_STOP);
-    talk_base::Thread *thread = talk_base::ThreadManager::CurrentThread();
-    delete session_;
-    thread->Stop();
-  }
-
-  std::string filesize_to_string(unsigned int size) {
-    double size_display;
-    std::string format;
-    std::stringstream ret;
-
-    // the comparisons to 1000 * (2^(n10)) are intentional
-    // it's so you don't see something like "1023 bytes",
-    // instead you'll see ".9 KB"
-
-    if (size < 1000) {
-      format = "Bytes";
-      size_display = size;
-    } else if (size < 1000 * 1024) {
-      format = "KiB";
-      size_display = (double)size / 1024.0;
-    } else if (size < 1000 * 1024 * 1024) {
-      format = "MiB";
-      size_display = (double)size / (1024.0 * 1024.0);
+    std::string filename;
+    bool send;
+    if (strncmp(description.c_str(), "send:", 5) == 0) {
+      send = true;
+    } else if (strncmp(description.c_str(), "recv:", 5) == 0) {
+      send = false;
     } else {
-      format = "GiB";
-      size_display = (double)size / (1024.0 * 1024.0 * 1024.0);
+      client->DeclineTunnel(session);
+      return;
     }
-    
-    ret << std::setprecision(1) << std::setiosflags(std::ios::fixed) << size_display << " " << format;    
-    return ret.str();
+    filename = description.substr(5);
+    talk_base::StreamInterface* stream = client->AcceptTunnel(session);
+    if (!ProcessStream(stream, filename, send))
+      talk_base::Thread::Current()->Post(NULL, MSG_DONE);
+
+    // TODO: There is a potential memory leak, however, since the PCP
+    // app doesn't work right now, I can't verify the fix actually works, so
+    // comment out the following line until we fix the PCP app.
+
+    // delete stream;
   }
-  
-  void OnSessionState(cricket::FileShareState state) {
-    talk_base::Thread *thread = talk_base::ThreadManager::CurrentThread();
-    std::stringstream manifest_description;
-	    
-    switch(state) {
-    case cricket::FS_OFFER:
 
-      // The offer has been made; print a summary of it and, if it's an incoming transfer, accept it
+  bool ProcessStream(talk_base::StreamInterface* stream,
+                     const std::string& filename, bool send) {
+    ASSERT(file_.get() == NULL);
+    sending_ = send;
+    file_.reset(new talk_base::FileStream);
+    buffer_len_ = 0;
+    int err;
+    if (!file_->Open(filename.c_str(), sending_ ? "rb" : "wb", &err)) {
+      std::cerr << "Error opening <" << filename << ">: "
+                << std::strerror(err) << std::endl;
+      return false;
+    }
+    stream->SignalEvent.connect(this, &CustomXmppPump::OnStreamEvent);
+    if (stream->GetState() == talk_base::SS_CLOSED) {
+      std::cerr << "Failed to establish P2P tunnel" << std::endl;
+      return false;
+    }
+    if (stream->GetState() == talk_base::SS_OPEN) {
+      OnStreamEvent(stream,
+        talk_base::SE_OPEN | talk_base::SE_READ | talk_base::SE_WRITE, 0);
+    }
+    return true;
+  }
 
-      if (manifest_->size() == 1)
-        manifest_description <<  session_->manifest()->item(0).name;
-      else if (session_->manifest()->GetFileCount() && session_->manifest()->GetFolderCount())
-        manifest_description <<  session_->manifest()->GetFileCount() << " files and " <<
-    	           session_->manifest()->GetFolderCount() << " directories";
-      else if (session_->manifest()->GetFileCount() > 0)
-        manifest_description <<  session_->manifest()->GetFileCount() << " files";
-      else
-        manifest_description <<  session_->manifest()->GetFolderCount() << " directories"; 
-
-      size_t filesize;
-      if (!session_->GetTotalSize(filesize)) {
-        manifest_description << " (Unknown size)";
+  void OnStreamEvent(talk_base::StreamInterface* stream, int events,
+                     int error) {
+    if (events & talk_base::SE_CLOSE) {
+      if (error == 0) {
+        std::cout << "Tunnel closed normally" << std::endl;
       } else {
-        manifest_description << " (" << filesize_to_string(filesize) << ")";
-      }    
-      if (session_->is_sender()) {
-        std::cout << "Offering " << manifest_description.str()  << " to " << send_to_jid_.Str() << std::endl;
-      } else if (waiting_for_file_) {
-	std::cout << "Receiving " << manifest_description.str() << " from " << session_->jid().BareJid().Str() << std::endl;
-	session_->Accept();
-	waiting_for_file_ = false;
-	
-	// If this were a graphical client, we might want to go through the manifest, look for images,
-	// and request previews. There are two ways to go about this:
-	//
-	// If we want to display the preview in a web browser (like the embedded IE control in Google Talk), we could call
-	// GetImagePreviewUrl on the session, with the image's index in the manifest, the size, and a pointer to the URL.
-	// This will cause the session to listen for HTTP requests on localhost, and set url to a localhost URL that any
-	// web browser can use to get the image preview:
-	//
-	//      std::string url;
-	//      session_->GetImagePreviewUrl(0, 100, 100, &url);
-	//      url = std::string("firefox \"") + url + "\"";
-	//      system(url.c_str());
-	//
-	// Alternately, you could use libjingle's own HTTP code with the FileShareSession's SocketPool interface to
-	// write the image preview directly into a StreamInterface:
-	//
-	//	talk_base::HttpClient *client = new talk_base::HttpClient("pcp", session_);
-	//	std::string path;
-	//	session_->GetItemNetworkPath(0,1,&path);
-	//	
-	//	client->request().verb = talk_base::HV_GET;
-	//	client->request().path = path + "?width=100&height=100";
-	//	talk_base::FileStream *file = new talk_base::FileStream;
-	//	file->Open("/home/username/foo.jpg", "wb");
-	//	client->response().document.reset(file);
-	//	client->start();
+        std::cout << "Tunnel closed with error: " << error << std::endl;
       }
-      break;
-    case cricket::FS_TRANSFER:
-      std::cout << "File transfer started." << std::endl;
-      break;
-    case cricket::FS_COMPLETE:
-      thread->Post(this, MSG_STOP);
-      std::cout << std::endl << "File transfer completed." << std::endl;
-      break;
-    case cricket::FS_LOCAL_CANCEL:
-    case cricket::FS_REMOTE_CANCEL:
-      std::cout << std::endl << "File transfer cancelled." << std::endl;
-      thread->Post(this, MSG_STOP);
-      break;
-    case cricket::FS_FAILURE:
-      std::cout << std::endl << "File transfer failed." << std::endl;
-      thread->Post(this, MSG_STOP);
-      break;
+      Cleanup(stream);
+      return;
     }
-  }
-
-  void OnUpdateProgress(cricket::FileShareSession *sess) {
-    // Progress has occured on the transfer; update the UI
-    
-    size_t totalsize, progress;
-    std::string itemname;
-    unsigned int width = 79;
-
-#ifndef WIN32
-    struct winsize ws; 
-    if ((ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0))
-      width = ws.ws_col;
-#endif
-
-    if(sess->GetTotalSize(totalsize) && sess->GetProgress(progress) && sess->GetCurrentItemName(&itemname)) {
-      float percent = (float)progress / totalsize;
-      unsigned int progressbar_width = (width * 4) / 5;
-      
-      const char *filename = itemname.c_str();
-      std::cout.put('\r');
-      for (unsigned int l = 0; l < width; l++) {
-        if (l < percent * progressbar_width)
-	  std::cout.put('#');
-      	else if (l > progressbar_width && l < progressbar_width + 1 + strlen(filename))
-      	  std::cout.put(filename[l-(progressbar_width + 1)]);
-      	else
-      	  std::cout.put(' ');
+    if (events & talk_base::SE_OPEN) {
+      std::cout << "Tunnel connected" << std::endl;
+    }
+    talk_base::StreamResult result;
+    size_t count;
+    if (sending_ && (events & talk_base::SE_WRITE)) {
+      LOG(LS_VERBOSE) << "Tunnel SE_WRITE";
+      while (true) {
+        size_t write_pos = 0;
+        while (write_pos < buffer_len_) {
+          result = stream->Write(buffer_ + write_pos, buffer_len_ - write_pos,
+                                &count, &error);
+          if (result == talk_base::SR_SUCCESS) {
+            write_pos += count;
+            continue;
+          }
+          if (result == talk_base::SR_BLOCK) {
+            buffer_len_ -= write_pos;
+            memmove(buffer_, buffer_ + write_pos, buffer_len_);
+            LOG(LS_VERBOSE) << "Tunnel write block";
+            return;
+          }
+          if (result == talk_base::SR_EOS) {
+            std::cout << "Tunnel closed unexpectedly on write" << std::endl;
+          } else {
+            std::cout << "Tunnel write error: " << error << std::endl;
+          }
+          Cleanup(stream);
+          return;
+        }
+        buffer_len_ = 0;
+        while (buffer_len_ < sizeof(buffer_)) {
+          result = file_->Read(buffer_ + buffer_len_,
+                              sizeof(buffer_) - buffer_len_,
+                              &count, &error);
+          if (result == talk_base::SR_SUCCESS) {
+            buffer_len_ += count;
+            continue;
+          }
+          if (result == talk_base::SR_EOS) {
+            if (buffer_len_ > 0)
+              break;
+            std::cout << "End of file" << std::endl;
+            // A hack until we have friendly shutdown
+            Cleanup(stream, true);
+            return;
+          } else if (result == talk_base::SR_BLOCK) {
+            std::cout << "File blocked unexpectedly on read" << std::endl;
+          } else {
+            std::cout << "File read error: " << error << std::endl;
+          }
+          Cleanup(stream);
+          return;
+        }
       }
-      std::cout.flush();
+    }
+    if (!sending_ && (events & talk_base::SE_READ)) {
+      LOG(LS_VERBOSE) << "Tunnel SE_READ";
+      while (true) {
+        buffer_len_ = 0;
+        while (buffer_len_ < sizeof(buffer_)) {
+          result = stream->Read(buffer_ + buffer_len_,
+                                sizeof(buffer_) - buffer_len_,
+                                &count, &error);
+          if (result == talk_base::SR_SUCCESS) {
+            buffer_len_ += count;
+            continue;
+          }
+          if (result == talk_base::SR_BLOCK) {
+            if (buffer_len_ > 0)
+              break;
+            LOG(LS_VERBOSE) << "Tunnel read block";
+            return;
+          }
+          if (result == talk_base::SR_EOS) {
+            std::cout << "Tunnel closed unexpectedly on read" << std::endl;
+          } else {
+            std::cout << "Tunnel read error: " << error << std::endl;
+          }
+          Cleanup(stream);
+          return;
+        }
+        size_t write_pos = 0;
+        while (write_pos < buffer_len_) {
+          result = file_->Write(buffer_ + write_pos, buffer_len_ - write_pos,
+                                &count, &error);
+          if (result == talk_base::SR_SUCCESS) {
+            write_pos += count;
+            continue;
+          }
+          if (result == talk_base::SR_EOS) {
+            std::cout << "File closed unexpectedly on write" << std::endl;
+          } else if (result == talk_base::SR_BLOCK) {
+            std::cout << "File blocked unexpectedly on write" << std::endl;
+          } else {
+            std::cout << "File write error: " << error << std::endl;
+          }
+          Cleanup(stream);
+          return;
+        }
+      }
     }
   }
 
-  void OnResampleImage(std::string path, int width, int height, talk_base::HttpTransaction *trans) {  
-
-    // The other side has requested an image preview. This is an asynchronous request. We should resize
-    // the image to the requested size,and send that to ResampleComplete(). For simplicity, here, we
-    // send back the original sized image. Note that because we don't recognize images in our manifest
-    // this will never be called in pcp
-
-    // Even if you don't resize images, you should implement this method and connect to the 
-    // SignalResampleImage signal, just to return an error.    
-
-    talk_base::FileStream *s = new talk_base::FileStream();
-    if (s->Open(path.c_str(), "rb"))
-      session_->ResampleComplete(s, trans, true);  
-    else {
-      delete s;
-      session_->ResampleComplete(NULL, trans, false);
+  void Cleanup(talk_base::StreamInterface* stream, bool delay = false) {
+    LOG(LS_VERBOSE) << "Closing";
+    stream->Close();
+    file_.reset();
+    if (!server_) {
+      if (delay)
+        talk_base::Thread::Current()->PostDelayed(2000, NULL, MSG_DONE);
+      else
+        talk_base::Thread::Current()->Post(NULL, MSG_DONE);
     }
   }
-    
-  void OnFileShareSessionCreate(cricket::FileShareSession *sess) {
-    session_ = sess;
-    sess->SignalState.connect(this, &FileShareClient::OnSessionState);
-    sess->SignalNextFile.connect(this, &FileShareClient::OnUpdateProgress);
-    sess->SignalUpdateProgress.connect(this, &FileShareClient::OnUpdateProgress);
-    sess->SignalResampleImage.connect(this, &FileShareClient::OnResampleImage);
-    sess->SetLocalFolder(root_dir_);
-  }
-  
-  void OnSignon() {
-    std::string client_unique = xmpp_client_->jid().Str();
-    cricket::InitRandom(client_unique.c_str(), client_unique.size());
 
-    buzz::PresencePushTask *presence_push_ = new buzz::PresencePushTask(xmpp_client_);
-    presence_push_->SignalStatusUpdate.connect(this, &FileShareClient::OnStatusUpdate);
-    presence_push_->Start();
-    
-    buzz::Status my_status;
-    my_status.set_jid(xmpp_client_->jid());
-    my_status.set_available(true);
-    my_status.set_show(buzz::Status::SHOW_ONLINE);
-    my_status.set_priority(0);
-    my_status.set_know_capabilities(true);
-    my_status.set_fileshare_capability(true);
-    my_status.set_is_google_client(true);
-    my_status.set_version("1.0.0.66");
-
-    buzz::PresenceOutTask* presence_out_ =
-      new buzz::PresenceOutTask(xmpp_client_);
-    presence_out_->Send(my_status);
-    presence_out_->Start();
-    
-    port_allocator_.reset(new cricket::HttpPortAllocator(&network_manager_, "pcp"));
-
-    session_manager_.reset(new cricket::SessionManager(port_allocator_.get(), NULL));
-
-    cricket::SessionManagerTask * session_manager_task = new cricket::SessionManagerTask(xmpp_client_, session_manager_.get());
-    session_manager_task->EnableOutgoingMessages();
-    session_manager_task->Start();
-    
-    buzz::JingleInfoTask *jingle_info_task = new buzz::JingleInfoTask(xmpp_client_);
-    jingle_info_task->RefreshJingleInfoNow();
-    jingle_info_task->SignalJingleInfo.connect(this, &FileShareClient::OnJingleInfo);
-    jingle_info_task->Start();
-    
-    file_share_session_client_.reset(new cricket::FileShareSessionClient(session_manager_.get(), xmpp_client_->jid(), "pcp"));
-    file_share_session_client_->SignalFileShareSessionCreate.connect(this, &FileShareClient::OnFileShareSessionCreate);
-    session_manager_->AddClient(NS_GOOGLE_SHARE, file_share_session_client_.get());
-  }
-  
-  talk_base::NetworkManager network_manager_;
-  talk_base::scoped_ptr<cricket::HttpPortAllocator> port_allocator_;
-  talk_base::scoped_ptr<cricket::SessionManager> session_manager_;
-  talk_base::scoped_ptr<cricket::FileShareSessionClient> file_share_session_client_;
-  buzz::XmppClient *xmpp_client_;
-  buzz::Jid send_to_jid_;
-  const cricket::FileShareManifest *manifest_;
-  cricket::FileShareSession *session_;
-  bool waiting_for_file_;
-  std::string root_dir_;
+private:
+  bool server_, sending_;
+  talk_base::scoped_ptr<talk_base::FileStream> file_;
+  char buffer_[1024 * 64];
+  size_t buffer_len_;
 };
 
-static unsigned int get_dir_size(const char *directory) {
-  unsigned int total = 0;
-  talk_base::DirectoryIterator iter;
-  talk_base::Pathname path;
-  path.AppendFolder(directory);
-  iter.Iterate(path.pathname());
-  while (iter.Next())  {
-    if (iter.Name() == "." || iter.Name() == "..")
-      continue;
-    if (iter.IsDirectory()) {
-      path.AppendPathname(iter.Name());
-      total += get_dir_size(path.pathname().c_str());
-    }
-    else
-      total += iter.FileSize();
-  }
-  return total;
-}
-
 int main(int argc, char **argv) {
-  talk_base::PhysicalSocketServer ss;
-  int i;
-  bool debug = false;
-  bool send_mode = false;
-  char cwd[256];
-  getcwd(cwd, sizeof(cwd));
-  for (i = 1; i < argc && *argv[i] == '-'; i++) {
-    if (!strcmp(argv[i], "-d")) {
-      debug = true;
+  talk_base::LogMessage::LogThreads();
+  talk_base::LogMessage::LogTimestamps();
+
+  // TODO: Default the username to the current users's name.
+
+  // Parse the arguments.
+
+  int index = 1;
+  while (index < argc) {
+    std::string name, value;
+    if (!ParseArg(argv[index], &name, &value))
+      break;
+
+    if (name == "help") {
+      Usage();
+    } else if (name == "verbose") {
+      talk_base::LogMessage::LogToDebug(talk_base::LS_VERBOSE);
+    } else if (name == "xmpp-host") {
+      gXmppHost = value;
+    } else if (name == "xmpp-port") {
+      gXmppPort = ParseIntArg(name, value);
+    } else if (name == "xmpp-use-tls") {
+      gXmppUseTls = ParseBoolArg(name, value)?
+          buzz::TLS_REQUIRED : buzz::TLS_DISABLED;
     } else {
-      std::cout << "USAGE: " << argv[0] << " [-d][-h] [FILE1 FILE2 ... FILE#] [JID]" << std::endl;
-      std::cout << "  To send files, specify a list of files to send, followed by the JID of the recipient" << std::endl;
-      std::cout << "  To receive files, specify no files or JID" << std::endl;
-      std::cout << "COMMAND LINE ARGUMENTS" << std::endl;
-      std::cout << "  -h -- Prints this help message" << std::endl;
-      std::cout << "  -d -- Prints debug messages to stderr" << std::endl;
-      exit(0);
+      Error(std::string("unknown option: ") + name);
     }
+
+    index += 1;
   }
-  
-  if (debug)
-    talk_base::LogMessage::LogToDebug(talk_base::LS_VERBOSE);
-  else
-    talk_base::LogMessage::LogToDebug(talk_base::LS_ERROR + 1);
 
+  if (index >= argc)
+    Error("bad arguments");
+  gUserJid = buzz::Jid(argv[index++]);
+  if (!gUserJid.IsValid())
+    Error("bad arguments");
 
-  talk_base::InitializeSSL();   
-  XmppPump pump;
-  buzz::Jid jid;
-  buzz::XmppClientSettings xcs;
-  talk_base::InsecureCryptStringImpl pass;
-  std::string username;
+  char path[MAX_PATH];
+#if WIN32
+  GetCurrentDirectoryA(MAX_PATH, path);
+#else
+  if (NULL == getcwd(path, MAX_PATH))
+    Error("Unable to get current path");
+#endif
 
-  std::cout << "JID: ";
-  std::cin >> username;
-  jid = buzz::Jid(username);
-  if (!jid.IsValid() || jid.node() == "") {
-    printf("Invalid JID. JIDs should be in the form user@domain\n");
-    return 1;
+  std::cout << "Directory: " << std::string(path) << std::endl;
+
+  buzz::Jid gSrcJid;
+  buzz::Jid gDstJid;
+  std::string gSrcFile;
+  std::string gDstFile;
+
+  bool as_server = true;
+  if (index + 2 == argc) {
+    ParseFileArg(argv[index], &gSrcJid, &gSrcFile);
+    ParseFileArg(argv[index+1], &gDstJid, &gDstFile);
+    if(gSrcJid.Str().empty() == gDstJid.Str().empty())
+      Error("Exactly one of source JID or destination JID must be empty.");
+    as_server = false;
+  } else if (index != argc) {
+    Error("bad arguments");
   }
-  SetConsoleEcho(false);
+
   std::cout << "Password: ";
-  std::cin >> pass.password();
+  SetConsoleEcho(false);
+  std::cin >> gUserPass.password();
   SetConsoleEcho(true);
   std::cout << std::endl;
 
-  xcs.set_user(jid.node());
-  xcs.set_resource("pcp");
-  xcs.set_host(jid.domain());
-  xcs.set_use_tls(true);
- 
-  xcs.set_pass(talk_base::CryptString(pass));
-  xcs.set_server(talk_base::SocketAddress("talk.google.com", 5222));
+  talk_base::InitializeSSL();
+  // Log in.
+  CustomXmppPump pump;
+  pump.client()->SignalLogInput.connect(&debug_log_, &DebugLog::Input);
+  pump.client()->SignalLogOutput.connect(&debug_log_, &DebugLog::Output);
+  pump.DoLogin(LoginSettings(), new XmppSocket(gXmppUseTls), 0);
+    //new XmppAuth());
 
-  talk_base::Thread main_thread(&ss);
-  talk_base::ThreadManager::SetCurrent(&main_thread);
- 
-  if (debug) {
-    pump.client()->SignalLogInput.connect(&debug_log_, &DebugLog::Input);
-    pump.client()->SignalLogOutput.connect(&debug_log_, &DebugLog::Output);
+  // Wait until login succeeds.
+  std::vector<uint32> ids;
+  ids.push_back(MSG_LOGIN_COMPLETE);
+  ids.push_back(MSG_LOGIN_FAILED);
+  if (MSG_LOGIN_FAILED == Loop(ids))
+    FatalError("Failed to connect");
+
+  {
+    talk_base::scoped_ptr<buzz::XmlElement> presence(
+      new buzz::XmlElement(buzz::QN_PRESENCE));
+    presence->AddElement(new buzz::XmlElement(buzz::QN_PRIORITY));
+    presence->AddText("-1", 1);
+    pump.SendStanza(presence.get());
   }
-  
-  cricket::FileShareManifest *manifest = new cricket::FileShareManifest();
- 
-  for (;i < argc - 1;i++) {
-    if (0) {
-      printf("%s is not a valid file\n", argv[i]);
-      continue;
-    }
-    send_mode = true;
 
-    // Additionally, we should check for image files here, and call
-    // AddImage on the manifest with their file size and image size.
-    // The receiving client can then request previews of those images
-    if (talk_base::Filesystem::IsFolder(std::string(argv[i]))) {
-      manifest->AddFolder(argv[i], get_dir_size(argv[i]));
+  std::string user_jid_str = pump.client()->jid().Str();
+  std::cout << "Logged in as " << user_jid_str << std::endl;
+
+  // Prepare the random number generator.
+  talk_base::InitRandom(user_jid_str.c_str(), user_jid_str.size());
+
+  // Create the P2P session manager.
+  talk_base::BasicNetworkManager network_manager;
+  AutoPortAllocator allocator(&network_manager, "pcp_agent");
+  allocator.SetXmppClient(pump.client());
+  cricket::SessionManager session_manager(&allocator);
+#ifdef USE_SSL_TUNNEL
+  cricket::SecureTunnelSessionClient session_client(pump.client()->jid(),
+                                                    &session_manager);
+  if (!session_client.GenerateIdentity())
+    FatalError("Failed to generate SSL identity");
+#else  // !USE_SSL_TUNNEL
+  cricket::TunnelSessionClient session_client(pump.client()->jid(),
+                                              &session_manager);
+#endif  // USE_SSL_TUNNEL
+  cricket::SessionManagerTask *receiver =
+      new cricket::SessionManagerTask(pump.client(), &session_manager);
+  receiver->EnableOutgoingMessages();
+  receiver->Start();
+
+  bool success = true;
+
+  // Establish the appropriate connection.
+  if (as_server) {
+    pump.Serve(&session_client);
+  } else {
+    talk_base::StreamInterface* stream = NULL;
+    std::string filename;
+    bool sending;
+    if (gSrcJid.Str().empty()) {
+      std::string message("recv:");
+      message.append(gDstFile);
+      stream = session_client.CreateTunnel(gDstJid, message);
+      filename = gSrcFile;
+      sending = true;
     } else {
-      size_t size = 0;
-      talk_base::Filesystem::GetFileSize(std::string(argv[i]), &size);
-      manifest->AddFile(argv[i], size);
+      std::string message("send:");
+      message.append(gSrcFile);
+      stream = session_client.CreateTunnel(gSrcJid, message);
+      filename = gDstFile;
+      sending = false;
     }
+    success = pump.ProcessStream(stream, filename, sending);
   }
-  buzz::Jid j;
-  if (send_mode)
-    j = buzz::Jid(argv[argc-1]);
-  else
-    j = buzz::JID_EMPTY;
 
-  FileShareClient fs_client(pump.client(), j, manifest, cwd);
+  if (success) {
+    // Wait until the copy is done.
+    ids.clear();
+    ids.push_back(MSG_DONE);
+    ids.push_back(MSG_LOGIN_FAILED);
+    Loop(ids);
+  }
 
-  pump.client()->SignalStateChange.connect(&fs_client, &FileShareClient::OnStateChange);
-
-  pump.DoLogin(xcs, new XmppSocket(true), NULL);
-  main_thread.Run();
+  // Log out.
   pump.DoDisconnect();
-  
+
   return 0;
 }

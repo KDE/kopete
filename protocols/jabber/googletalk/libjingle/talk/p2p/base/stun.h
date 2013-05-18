@@ -2,39 +2,41 @@
  * libjingle
  * Copyright 2004--2005, Google Inc.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  1. Redistributions of source code must retain the above copyright notice, 
+ *  1. Redistributions of source code must retain the above copyright notice,
  *     this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
  *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products 
+ *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __STUN_H__
-#define __STUN_H__
+#ifndef TALK_P2P_BASE_STUN_H_
+#define TALK_P2P_BASE_STUN_H_
 
 // This file contains classes for dealing with the STUN and TURN protocols.
 // Both protocols use the same wire format.
 
-#include "talk/base/basictypes.h"
-#include "talk/base/bytebuffer.h"
 #include <string>
 #include <vector>
+
+#include "talk/base/basictypes.h"
+#include "talk/base/bytebuffer.h"
+#include "talk/base/socketaddress.h"
 
 namespace cricket {
 
@@ -57,27 +59,32 @@ enum StunMessageType {
 
 // These are the types of attributes defined in STUN & TURN.  Next to each is
 // the name of the class (T is StunTAttribute) that implements that type.
+//
+// TODO: Some attributes defined in RFC5389 are not
+// implemented yet, particularly REALM, NONCE, SOFTWARE,
+// ALTERNATE-SERVE and FINGEPRINT. Implement them.
 enum StunAttributeType {
-  STUN_ATTR_MAPPED_ADDRESS        = 0x0001, // Address
-  STUN_ATTR_RESPONSE_ADDRESS      = 0x0002, // Address
-  STUN_ATTR_CHANGE_REQUEST        = 0x0003, // UInt32
-  STUN_ATTR_SOURCE_ADDRESS        = 0x0004, // Address
-  STUN_ATTR_CHANGED_ADDRESS       = 0x0005, // Address
-  STUN_ATTR_USERNAME              = 0x0006, // ByteString, multiple of 4 bytes
-  STUN_ATTR_PASSWORD              = 0x0007, // ByteString, multiple of 4 bytes
-  STUN_ATTR_MESSAGE_INTEGRITY     = 0x0008, // ByteString, 20 bytes
-  STUN_ATTR_ERROR_CODE            = 0x0009, // ErrorCode
-  STUN_ATTR_UNKNOWN_ATTRIBUTES    = 0x000a, // UInt16List
-  STUN_ATTR_REFLECTED_FROM        = 0x000b, // Address
-  STUN_ATTR_TRANSPORT_PREFERENCES = 0x000c, // TransportPrefs
-  STUN_ATTR_LIFETIME              = 0x000d, // UInt32
-  STUN_ATTR_ALTERNATE_SERVER      = 0x000e, // Address
-  STUN_ATTR_MAGIC_COOKIE          = 0x000f, // ByteString, 4 bytes
-  STUN_ATTR_BANDWIDTH             = 0x0010, // UInt32
-  STUN_ATTR_DESTINATION_ADDRESS   = 0x0011, // Address
-  STUN_ATTR_SOURCE_ADDRESS2       = 0x0012, // Address
-  STUN_ATTR_DATA                  = 0x0013, // ByteString
-  STUN_ATTR_OPTIONS               = 0x8001  // UInt32
+  STUN_ATTR_MAPPED_ADDRESS        = 0x0001,  // Address
+  STUN_ATTR_USERNAME              = 0x0006,  // ByteString, multiple of 4 bytes
+  STUN_ATTR_MESSAGE_INTEGRITY     = 0x0008,  // ByteString, 20 bytes
+  STUN_ATTR_ERROR_CODE            = 0x0009,  // ErrorCode
+  STUN_ATTR_UNKNOWN_ATTRIBUTES    = 0x000a,  // UInt16List
+  STUN_ATTR_LIFETIME              = 0x000d,  // UInt32
+  STUN_ATTR_MAGIC_COOKIE          = 0x000f,  // ByteString, 4 bytes
+  STUN_ATTR_BANDWIDTH             = 0x0010,  // UInt32
+  STUN_ATTR_DESTINATION_ADDRESS   = 0x0011,  // Address
+  STUN_ATTR_SOURCE_ADDRESS2       = 0x0012,  // Address
+  STUN_ATTR_DATA                  = 0x0013,  // ByteString
+  STUN_ATTR_XOR_MAPPED_ADDRESS    = 0x0020,  // XorAddress
+  STUN_ATTR_OPTIONS               = 0x8001,  // UInt32
+  STUN_ATTR_SOFTWARE              = 0x8022,  // ByteString
+  STUN_ATTR_FINGERPRINT           = 0x8028,  // UInt32
+
+  // RFC5245 defined attributes.
+  STUN_ATTR_PRIORITY              = 0x0024,  // UInt32
+  STUN_ATTR_USE_CANDIDATE         = 0x0025,  // No content, Length = 0
+  STUN_ATTR_ICE_CONTROLLED        = 0x8029,  // UInt64
+  STUN_ATTR_ICE_CONTROLLING       = 0x802A   // UInt64
 };
 
 enum StunErrorCodes {
@@ -92,19 +99,39 @@ enum StunErrorCodes {
   STUN_ERROR_GLOBAL_FAILURE       = 600
 };
 
-extern const std::string STUN_ERROR_REASON_BAD_REQUEST;
-extern const std::string STUN_ERROR_REASON_UNAUTHORIZED;
-extern const std::string STUN_ERROR_REASON_UNKNOWN_ATTRIBUTE;
-extern const std::string STUN_ERROR_REASON_STALE_CREDENTIALS;
-extern const std::string STUN_ERROR_REASON_INTEGRITY_CHECK_FAILURE;
-extern const std::string STUN_ERROR_REASON_MISSING_USERNAME;
-extern const std::string STUN_ERROR_REASON_USE_TLS;
-extern const std::string STUN_ERROR_REASON_SERVER_ERROR;
-extern const std::string STUN_ERROR_REASON_GLOBAL_FAILURE;
+enum StunAddressFamily {
+  // NB: UNDEF is not part of the STUN spec.
+  STUN_ADDRESS_UNDEF = 0,
+  STUN_ADDRESS_IPV4 = 1,
+  STUN_ADDRESS_IPV6 = 2
+};
+
+extern const char STUN_ERROR_REASON_BAD_REQUEST[];
+extern const char STUN_ERROR_REASON_UNAUTHORIZED[];
+extern const char STUN_ERROR_REASON_STALE_CREDENTIALS[];
+extern const char STUN_ERROR_REASON_SERVER_ERROR[];
+
+// STUN Attribute header length.
+const size_t kStunAttributeHeaderSize = 4;
+
+// Following values correspond to RFC5389.
+const size_t kStunHeaderSize = 20;
+const size_t kStunTransactionIdOffset = 8;
+const size_t kStunTransactionIdLength = 12;
+const uint32 kStunMagicCookie = 0x2112A442;
+const size_t kStunMagicCookieLength = sizeof(kStunMagicCookie);
+
+// Following value corresponds to an earlier version of STUN from
+// RFC3489.
+const size_t kStunLegacyTransactionIdLength = 16;
+
+// STUN Message Integrity HMAC length.
+const size_t kStunMessageIntegritySize = 20;
 
 class StunAttribute;
 class StunAddressAttribute;
 class StunUInt32Attribute;
+class StunUInt64Attribute;
 class StunByteStringAttribute;
 class StunErrorCodeAttribute;
 class StunUInt16ListAttribute;
@@ -115,19 +142,31 @@ class StunTransportPrefsAttribute;
 // appropriate class (see above).  The Get* methods will return instances of
 // that attribute class.
 class StunMessage {
-public:
+ public:
   StunMessage();
   ~StunMessage();
-
   StunMessageType type() const { return static_cast<StunMessageType>(type_); }
   uint16 length() const { return length_; }
   const std::string& transaction_id() const { return transaction_id_; }
 
+  // Returns true if the message confirms to RFC3489 rather than
+  // RFC5389. The main difference between two version of the STUN
+  // protocol is the presence of the magic cookie and different length
+  // of transaction ID. For outgoing packets version of the protocol
+  // is determined by the lengths of the transaction ID.
+  bool IsLegacy() const;
+
+  static bool ValidateMessageIntegrity(
+      const char* data, size_t size, const std::string& password);
+  void AddMessageIntegrity(const std::string& password);
+  bool HasMessageIntegrity() const;
+
   void SetType(StunMessageType type) { type_ = type; }
-  void SetTransactionID(const std::string& str);
+  bool SetTransactionID(const std::string& str);
 
   const StunAddressAttribute* GetAddress(StunAttributeType type) const;
   const StunUInt32Attribute* GetUInt32(StunAttributeType type) const;
+  const StunUInt64Attribute* GetUInt64(StunAttributeType type) const;
   const StunByteStringAttribute* GetByteString(StunAttributeType type) const;
   const StunErrorCodeAttribute* GetErrorCode() const;
   const StunUInt16ListAttribute* GetUnknownAttributes() const;
@@ -139,28 +178,32 @@ public:
   // return value indicates whether this was successful.
   bool Read(talk_base::ByteBuffer* buf);
 
-  // Writes this object into a STUN/TURN packet.  Return value is true if
+  // Writes this object into a STUN/TURN packet. Return value is true if
   // successful.
   void Write(talk_base::ByteBuffer* buf) const;
 
-private:
+ private:
+  const StunAttribute* GetAttribute(StunAttributeType type) const;
+  static bool IsValidTransactionId(const std::string& transaction_id);
+
   uint16 type_;
   uint16 length_;
   std::string transaction_id_;
   std::vector<StunAttribute*>* attrs_;
-
-  const StunAttribute* GetAttribute(StunAttributeType type) const;
 };
 
 // Base class for all STUN/TURN attributes.
 class StunAttribute {
-public:
+ public:
   virtual ~StunAttribute() {}
 
   StunAttributeType type() const {
     return static_cast<StunAttributeType>(type_);
-  } 
+  }
   uint16 length() const { return length_; }
+
+  // Only XorAddressAttribute needs this so far.
+  virtual void SetOwner(StunMessage* owner) { }
 
   // Reads the body (not the type or length) for this type of attribute from
   // the given buffer.  Return value is true if successful.
@@ -170,65 +213,110 @@ public:
   // value is true if successful.
   virtual void Write(talk_base::ByteBuffer* buf) const = 0;
 
-  // Creates an attribute object with the given type and len.
-  static StunAttribute* Create(uint16 type, uint16 length);
+  // Creates an attribute object with the given type, length and transaction id.
+  static StunAttribute* Create(uint16 type, uint16 length,
+                               StunMessage* owner);
 
   // Creates an attribute object with the given type and smallest length.
   static StunAddressAttribute* CreateAddress(uint16 type);
   static StunUInt32Attribute* CreateUInt32(uint16 type);
+  static StunUInt64Attribute* CreateUInt64(uint16 type);
   static StunByteStringAttribute* CreateByteString(uint16 type);
   static StunErrorCodeAttribute* CreateErrorCode();
   static StunUInt16ListAttribute* CreateUnknownAttributes();
   static StunTransportPrefsAttribute* CreateTransportPrefs();
 
-protected:
+ protected:
   StunAttribute(uint16 type, uint16 length);
-
   void SetLength(uint16 length) { length_ = length; }
+  void WritePadding(talk_base::ByteBuffer* buf) const;
+  void ConsumePadding(talk_base::ByteBuffer* buf) const;
 
-private:
+ private:
   uint16 type_;
   uint16 length_;
 };
 
 // Implements STUN/TURN attributes that record an Internet address.
 class StunAddressAttribute : public StunAttribute {
-public:
-  StunAddressAttribute(uint16 type);
+ public:
+  StunAddressAttribute(uint16 type, uint16 length);
 
-#if (_MSC_VER < 1300)
-  enum { SIZE = 8 };
-#else
-  static const uint16 SIZE = 8;
-#endif
+  static const uint16 SIZE_UNDEF = 0;
+  static const uint16 SIZE_IP4 = 8;
+  static const uint16 SIZE_IP6 = 20;
 
-  uint8 family() const { return family_; }
-  uint16 port() const { return port_; }
-  uint32 ip() const { return ip_; }
+  StunAddressFamily family() const {
+    switch (address_.ipaddr().family()) {
+      case AF_INET:
+        return STUN_ADDRESS_IPV4;
+      case AF_INET6:
+        return STUN_ADDRESS_IPV6;
+    }
+    return STUN_ADDRESS_UNDEF;
+  }
 
-  void SetFamily(uint8 family) { family_ = family; }
-  void SetIP(uint32 ip) { ip_ = ip; }
-  void SetPort(uint16 port) { port_ = port; }
+  uint16 port() const { return address_.port(); }
+  const talk_base::IPAddress& ipaddr() const { return address_.ipaddr(); }
+  void SetAddress(const talk_base::SocketAddress& addr) {
+    address_ = addr;
+    EnsureAddressLength();
+  }
+  const talk_base::SocketAddress& GetAddress() const { return address_; }
+  void SetIP(const talk_base::IPAddress& ip) {
+    address_.SetIP(ip);
+    EnsureAddressLength();
+  }
+  void SetPort(uint16 port) { address_.SetPort(port); }
 
-  bool Read(talk_base::ByteBuffer* buf);
-  void Write(talk_base::ByteBuffer* buf) const;
+  virtual bool Read(talk_base::ByteBuffer* buf);
+  virtual void Write(talk_base::ByteBuffer* buf) const;
 
-private:
-  uint8 family_;
-  uint16 port_;
-  uint32 ip_;
+ private:
+  void EnsureAddressLength() {
+    switch (family()) {
+      case STUN_ADDRESS_IPV4: {
+        SetLength(SIZE_IP4);
+        break;
+      }
+      case STUN_ADDRESS_IPV6: {
+        SetLength(SIZE_IP6);
+        break;
+      }
+      default: {
+        SetLength(SIZE_UNDEF);
+        break;
+      }
+    }
+  }
+  talk_base::SocketAddress address_;
+};
+
+// Implements STUN/TURN attributes that record an Internet address. When encoded
+// in a STUN message, the address contained in this attribute is XORed with the
+// transaction ID of the message.
+class StunXorAddressAttribute : public StunAddressAttribute {
+ public:
+  StunXorAddressAttribute(uint16 type, uint16 length);
+  StunXorAddressAttribute(uint16 type, uint16 length,
+                          StunMessage* owner);
+
+  virtual void SetOwner(StunMessage* owner) {
+    owner_ = owner;
+  }
+  virtual bool Read(talk_base::ByteBuffer* buf);
+  virtual void Write(talk_base::ByteBuffer* buf) const;
+ private:
+  talk_base::IPAddress GetXoredIP() const;
+  StunMessage* owner_;
 };
 
 // Implements STUN/TURN attributs that record a 32-bit integer.
 class StunUInt32Attribute : public StunAttribute {
-public:
-  StunUInt32Attribute(uint16 type);
+ public:
+  explicit StunUInt32Attribute(uint16 type);
 
-#if (_MSC_VER < 1300)
-  enum { SIZE = 4 };
-#else
   static const uint16 SIZE = 4;
-#endif
 
   uint32 value() const { return bits_; }
 
@@ -240,13 +328,30 @@ public:
   bool Read(talk_base::ByteBuffer* buf);
   void Write(talk_base::ByteBuffer* buf) const;
 
-private:
+ private:
   uint32 bits_;
 };
 
-// Implements STUN/TURN attributs that record an arbitrary byte string
+class StunUInt64Attribute : public StunAttribute {
+ public:
+  explicit StunUInt64Attribute(uint16 type);
+
+  static const uint16 SIZE = 8;
+
+  uint64 value() const { return bits_; }
+
+  void SetValue(uint64 bits) { bits_ = bits; }
+
+  bool Read(talk_base::ByteBuffer* buf);
+  void Write(talk_base::ByteBuffer* buf) const;
+
+ private:
+  uint64 bits_;
+};
+
+// Implements STUN/TURN attributes that record an arbitrary byte string
 class StunByteStringAttribute : public StunAttribute {
-public:
+ public:
   StunByteStringAttribute(uint16 type, uint16 length);
   ~StunByteStringAttribute();
 
@@ -254,7 +359,7 @@ public:
 
   void SetBytes(char* bytes, uint16 length);
 
-  void CopyBytes(const char* bytes); // uses strlen
+  void CopyBytes(const char* bytes);  // uses strlen
   void CopyBytes(const void* bytes, uint16 length);
 
   uint8 GetByte(int index) const;
@@ -263,21 +368,17 @@ public:
   bool Read(talk_base::ByteBuffer* buf);
   void Write(talk_base::ByteBuffer* buf) const;
 
-private:
+ private:
   char* bytes_;
 };
 
-// Implements STUN/TURN attributs that record an error code.
+// Implements STUN/TURN attributes that record an error code.
 class StunErrorCodeAttribute : public StunAttribute {
-public:
+ public:
   StunErrorCodeAttribute(uint16 type, uint16 length);
   ~StunErrorCodeAttribute();
 
-#if (_MSC_VER < 1300)
-  enum { MIN_SIZE = 4 };
-#else
   static const uint16 MIN_SIZE = 4;
-#endif
 
   uint32 error_code() const { return (class_ << 8) | number_; }
   uint8 error_class() const { return class_; }
@@ -292,15 +393,15 @@ public:
   bool Read(talk_base::ByteBuffer* buf);
   void Write(talk_base::ByteBuffer* buf) const;
 
-private:
+ private:
   uint8 class_;
   uint8 number_;
   std::string reason_;
 };
 
-// Implements STUN/TURN attributs that record a list of attribute names.
+// Implements STUN/TURN attributes that record a list of attribute names.
 class StunUInt16ListAttribute : public StunAttribute {
-public:
+ public:
   StunUInt16ListAttribute(uint16 type, uint16 length);
   ~StunUInt16ListAttribute();
 
@@ -312,46 +413,15 @@ public:
   bool Read(talk_base::ByteBuffer* buf);
   void Write(talk_base::ByteBuffer* buf) const;
 
-private:
+ private:
   std::vector<uint16>* attr_types_;
-};
-
-// Implements the TURN TRANSPORT-PREFS attribute, which provides information
-// about the ports to allocate.
-class StunTransportPrefsAttribute : public StunAttribute {
-public:
-  StunTransportPrefsAttribute(uint16 type, uint16 length);
-  ~StunTransportPrefsAttribute();
-
-#if (_MSC_VER < 1300)
-  enum { SIZE1 = 4, SIZE2 = 12 };
-#else
-  static const uint16 SIZE1 = 4;
-  static const uint16 SIZE2 = 12;
-#endif
-
-  bool preallocate() const { return preallocate_; }
-  uint8 preference_type() const { return prefs_; }
-  const StunAddressAttribute* address() const { return addr_; }
-
-  void SetPreferenceType(uint8 prefs) { prefs_ = prefs; }
-
-  // Sets the preallocate address to the given value, or if 0 is given, it sets
-  // to not preallocate.
-  void SetPreallocateAddress(StunAddressAttribute* addr);
-
-  bool Read(talk_base::ByteBuffer* buf);
-  void Write(talk_base::ByteBuffer* buf) const;
-
-private:
-  bool preallocate_;
-  uint8 prefs_;
-  StunAddressAttribute* addr_;
 };
 
 // The special MAGIC-COOKIE attribute is used to distinguish TURN packets from
 // other kinds of traffic.
-const char STUN_MAGIC_COOKIE_VALUE[] = { 0x72, char(0xc6), 0x4b, char(0xc6) };
+// TODO: This value has nothing to do with STUN. Move it to a
+// separate file.
+extern const char TURN_MAGIC_COOKIE_VALUE[4];
 
 // Returns the (successful) response type for the given request type.
 StunMessageType GetStunResponseType(StunMessageType request_type);
@@ -359,6 +429,6 @@ StunMessageType GetStunResponseType(StunMessageType request_type);
 // Returns the error response type for the given request type.
 StunMessageType GetStunErrorResponseType(StunMessageType request_type);
 
-} // namespace cricket
+}  // namespace cricket
 
-#endif // __STUN_H__
+#endif  // TALK_P2P_BASE_STUN_H_

@@ -29,24 +29,25 @@
 #include "talk/xmpp/xmppclient.h"
 #include "talk/xmpp/xmppengine.h"
 #include "talk/xmpp/constants.h"
-#include "talk/xmpp/ratelimitmanager.h"
-#include "talk/base/logging.h"
 
 namespace buzz {
 
-RateLimitManager task_rate_manager;
+XmppClientInterface::XmppClientInterface() {
+}
 
-XmppTask::XmppTask(Task* parent, XmppEngine::HandlerLevel level)
-    : Task(parent), client_(NULL) {
+XmppClientInterface::~XmppClientInterface() {
+}
+
+XmppTask::XmppTask(XmppTaskParentInterface* parent,
+                   XmppEngine::HandlerLevel level)
+    : XmppTaskBase(parent), stopped_(false) {
 #ifdef _DEBUG
   debug_force_timeout_ = false;
 #endif
 
-  XmppClient* client = (XmppClient*)parent->GetParent(XMPP_CLIENT_TASK_CODE);
-  client_ = client;
-  id_ = client->NextId();
-  client->AddXmppTask(this, level);
-  client->SignalDisconnected.connect(this, &XmppTask::OnDisconnect);
+  id_ = GetClient()->NextId();
+  GetClient()->AddXmppTask(this, level);
+  GetClient()->SignalDisconnected.connect(this, &XmppTask::OnDisconnect);
 }
 
 XmppTask::~XmppTask() {
@@ -55,25 +56,25 @@ XmppTask::~XmppTask() {
 
 void XmppTask::StopImpl() {
   while (NextStanza() != NULL) {}
-  if (client_) {
-    client_->RemoveXmppTask(this);
-    client_->SignalDisconnected.disconnect(this);
-    client_ = NULL;
+  if (!stopped_) {
+    GetClient()->RemoveXmppTask(this);
+    GetClient()->SignalDisconnected.disconnect(this);
+    stopped_ = true;
   }
 }
 
 XmppReturnStatus XmppTask::SendStanza(const XmlElement* stanza) {
-  if (client_ == NULL)
+  if (stopped_)
     return XMPP_RETURN_BADSTATE;
-  return client_->SendStanza(stanza);
+  return GetClient()->SendStanza(stanza);
 }
 
 XmppReturnStatus XmppTask::SendStanzaError(const XmlElement* element_original,
                                            XmppStanzaError code,
                                            const std::string& text) {
-  if (client_ == NULL)
+  if (stopped_)
     return XMPP_RETURN_BADSTATE;
-  return client_->SendStanzaError(element_original, code, text);
+  return GetClient()->SendStanzaError(element_original, code, text);
 }
 
 void XmppTask::Stop() {
@@ -91,8 +92,6 @@ void XmppTask::QueueStanza(const XmlElement* stanza) {
     return;
 #endif
 
-  LOG(LS_VERBOSE) << stanza->BodyText().c_str() << "\n";
-  
   stanza_queue_.push_back(new XmlElement(*stanza));
   Wake();
 }
@@ -109,11 +108,11 @@ const XmlElement* XmppTask::NextStanza() {
 
 XmlElement* XmppTask::MakeIq(const std::string& type,
                              const buzz::Jid& to,
-                             const std::string id) {
+                             const std::string& id) {
   XmlElement* result = new XmlElement(QN_IQ);
   if (!type.empty())
     result->AddAttr(QN_TYPE, type);
-  if (to != JID_EMPTY)
+  if (!to.IsEmpty())
     result->AddAttr(QN_TO, to.Str());
   if (!id.empty())
     result->AddAttr(QN_ID, id);
@@ -139,17 +138,22 @@ bool XmppTask::MatchResponseIq(const XmlElement* stanza,
   if (stanza->Attr(QN_ID) != id)
     return false;
 
+  return MatchStanzaFrom(stanza, to);
+}
+
+bool XmppTask::MatchStanzaFrom(const XmlElement* stanza,
+                               const Jid& to) {
   Jid from(stanza->Attr(QN_FROM));
   if (from == to)
     return true;
 
   // We address the server as "", check if we are doing so here.
-  if (to != JID_EMPTY)
+  if (!to.IsEmpty())
     return false;
 
   // It is legal for the server to identify itself with "domain" or
   // "myself@domain"
-  Jid me = client_->jid();
+  Jid me = GetClient()->jid();
   return (from == Jid(me.domain())) || (from == me.BareJid());
 }
 
@@ -166,12 +170,6 @@ bool XmppTask::MatchRequestIq(const XmlElement* stanza,
     return false;
 
   return true;
-} 
-
-bool XmppTask::VerifyTaskRateLimit(const std::string task_name, int max_count, 
-                                   int per_x_seconds) {
-  return task_rate_manager.VerifyRateLimit(task_name, max_count, 
-                                           per_x_seconds);
 }
 
 }

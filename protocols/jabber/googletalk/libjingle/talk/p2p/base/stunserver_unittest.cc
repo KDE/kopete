@@ -1,108 +1,129 @@
+/*
+ * libjingle
+ * Copyright 2004 Google Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include <string>
+
+#include "talk/base/gunit.h"
+#include "talk/base/logging.h"
+#include "talk/base/physicalsocketserver.h"
+#include "talk/base/virtualsocketserver.h"
 #include "talk/base/testclient.h"
 #include "talk/base/thread.h"
-#include "talk/base/physicalsocketserver.h"
-#include "talk/base/host.h"
 #include "talk/p2p/base/stunserver.h"
-#include <cstring>
-#include <cstdio>
-#include <iostream>
-#include <cassert>
 
 using namespace cricket;
 
-StunMessage* GetResponse(talk_base::TestClient* client) {
-    talk_base::TestClient::Packet* packet = client->NextPacket();
-  assert(packet);
-  talk_base::ByteBuffer buf(packet->buf, packet->size);
-  StunMessage* msg = new StunMessage();
-  assert(msg->Read(&buf));
-  delete packet;
-  return msg;
-}
+static const talk_base::SocketAddress server_addr("99.99.99.1", 3478);
+static const talk_base::SocketAddress client_addr("1.2.3.4", 1234);
 
-int main(int argc, char* argv[]) {
-  assert(talk_base::LocalHost().networks().size() >= 2);
-  talk_base::SocketAddress server_addr(talk_base::LocalHost().networks()[1]->ip(), 7000);
-  talk_base::SocketAddress client_addr(talk_base::LocalHost().networks()[1]->ip(), 6000);
+class StunServerTest : public testing::Test {
+ public:
+  StunServerTest()
+    : pss_(new talk_base::PhysicalSocketServer),
+      ss_(new talk_base::VirtualSocketServer(pss_.get())),
+      worker_(ss_.get()) {
+  }
+  virtual void SetUp() {
+    server_.reset(new StunServer(
+        talk_base::AsyncUDPSocket::Create(ss_.get(), server_addr)));
+    client_.reset(new talk_base::TestClient(
+        talk_base::AsyncUDPSocket::Create(ss_.get(), client_addr)));
 
-  talk_base::Thread th;
+    worker_.Start();
+  }
+  void Send(const StunMessage& msg) {
+    talk_base::ByteBuffer buf;
+    msg.Write(&buf);
+    Send(buf.Data(), buf.Length());
+  }
+  void Send(const char* buf, int len) {
+    client_->SendTo(buf, len, server_addr);
+  }
+  StunMessage* Receive() {
+    StunMessage* msg = NULL;
+    talk_base::TestClient::Packet* packet = client_->NextPacket();
+    if (packet) {
+      talk_base::ByteBuffer buf(packet->buf, packet->size);
+      msg = new StunMessage();
+      msg->Read(&buf);
+      delete packet;
+    }
+    return msg;
+  }
+ private:
+  talk_base::scoped_ptr<talk_base::PhysicalSocketServer> pss_;
+  talk_base::scoped_ptr<talk_base::VirtualSocketServer> ss_;
+  talk_base::Thread worker_;
+  talk_base::scoped_ptr<StunServer> server_;
+  talk_base::scoped_ptr<talk_base::TestClient> client_;
+};
 
-  talk_base::AsyncUDPSocket* server_socket = 0;
-  StunServer* server = 0;
-  if (argc >= 2) {
-    server_addr.SetIP(argv[1]);
-    client_addr.SetIP(0);
-    if (argc == 3)
-      server_addr.SetPort(atoi(argv[2]));
-    std::cout << "Using server at " << server_addr.ToString() << std::endl;
-  } else {
-    server_socket = talk_base::CreateAsyncUDPSocket(th.socketserver());
-    assert(server_socket->Bind(server_addr) >= 0);
-    server = new StunServer(server_socket);
+TEST_F(StunServerTest, TestGood) {
+  StunMessage req;
+  std::string transaction_id = "0123456789ab";
+  req.SetType(STUN_BINDING_REQUEST);
+  req.SetTransactionID(transaction_id);
+  Send(req);
+
+  StunMessage* msg = Receive();
+  ASSERT_TRUE(msg != NULL);
+  EXPECT_EQ(STUN_BINDING_RESPONSE, msg->type());
+  EXPECT_EQ(req.transaction_id(), msg->transaction_id());
+
+  const StunAddressAttribute* mapped_addr =
+      msg->GetAddress(STUN_ATTR_MAPPED_ADDRESS);
+  EXPECT_TRUE(mapped_addr != NULL);
+  EXPECT_EQ(1, mapped_addr->family());
+  EXPECT_EQ(client_addr.port(), mapped_addr->port());
+  if (mapped_addr->ipaddr() != client_addr.ipaddr()) {
+    LOG(LS_WARNING) << "Warning: mapped IP ("
+                    << mapped_addr->ipaddr()
+                    << ") != local IP (" << client_addr.ipaddr()
+                    << ")";
   }
 
-  talk_base::AsyncUDPSocket* client_socket = talk_base::CreateAsyncUDPSocket(th.socketserver());
-  assert(client_socket->Bind(client_addr) >= 0);
-  talk_base::TestClient* client = new talk_base::TestClient(client_socket, &th);
+  delete msg;
+}
 
-  th.Start();
-
+TEST_F(StunServerTest, TestBad) {
   const char* bad = "this is a completely nonsensical message whose only "
                     "purpose is to make the parser go 'ack'.  it doesn't "
                     "look anything like a normal stun message";
+  Send(bad, std::strlen(bad));
 
-  client->SendTo(bad, std::strlen(bad), server_addr);
-  StunMessage* msg = GetResponse(client);
-  assert(msg->type() == STUN_BINDING_ERROR_RESPONSE);
+  StunMessage* msg = Receive();
+  ASSERT_TRUE(msg != NULL);
+  EXPECT_EQ(STUN_BINDING_ERROR_RESPONSE, msg->type());
 
   const StunErrorCodeAttribute* err = msg->GetErrorCode();
-  assert(err);
-  assert(err->error_class() == 4);
-  assert(err->number() == 0);
-  assert(err->reason() == std::string("Bad Request"));
+  EXPECT_TRUE(err != NULL);
+  EXPECT_EQ(4, err->error_class());
+  EXPECT_EQ(0, err->number());
+  EXPECT_EQ("Bad Request", err->reason());
 
   delete msg;
-
-  std::string transaction_id = "0123456789abcdef";
-
-  StunMessage req;
-  req.SetType(STUN_BINDING_REQUEST);
-  req.SetTransactionID(transaction_id);
-
-  talk_base::ByteBuffer buf;
-  req.Write(&buf);
-
-  client->SendTo(buf.Data(), buf.Length(), server_addr);
-  StunMessage* msg2 = GetResponse(client);
-  assert(msg2->type() == STUN_BINDING_RESPONSE);
-  assert(msg2->transaction_id() == transaction_id);
-
-  const StunAddressAttribute* mapped_addr =
-      msg2->GetAddress(STUN_ATTR_MAPPED_ADDRESS);
-  assert(mapped_addr);
-  assert(mapped_addr->family() == 1);
-  assert(mapped_addr->port() == client_addr.port());
-  if (mapped_addr->ip() != client_addr.ip()) {
-    printf("Warning: mapped IP (%s) != local IP (%s)\n",
-        talk_base::SocketAddress::IPToString(mapped_addr->ip()).c_str(),
-        client_addr.IPAsString().c_str());
-  }
-
-  const StunAddressAttribute* source_addr =
-      msg2->GetAddress(STUN_ATTR_SOURCE_ADDRESS);
-  assert(source_addr);
-  assert(source_addr->family() == 1);
-  assert(source_addr->port() == server_addr.port());
-  assert(source_addr->ip() == server_addr.ip());
-
-  delete msg2;
-
-  th.Stop();
-
-  delete server;
-  delete server_socket;
-  delete client;
-
-  std::cout << "PASS" << std::endl;
-  return 0;
 }
