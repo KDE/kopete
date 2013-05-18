@@ -19,6 +19,7 @@
 #define JABBERFILETRANSFER_H
 
 #include <qobject.h>
+#include <qfile.h>
 #include <filetransfer.h>
 
 class QString;

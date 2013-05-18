@@ -26,6 +26,7 @@
 #include <qpair.h>
 #include <qdom.h>
 #include <qtextstream.h>
+#include <qfile.h>
 
 #include <kstandarddirs.h>
 #include <kdebug.h>

@@ -8,9 +8,8 @@ include_directories(
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/ui/
 ${CMAKE_CURRENT_SOURCE_DIR}/tasks/
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/include/
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/
-${CMAKE_CURRENT_SOURCE_DIR}/libiris/iris/xmpp/jingle
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/include/iris
+${CMAKE_CURRENT_SOURCE_DIR}/libiris/src
 ${QCA2_INCLUDE_DIR}
 )
 
