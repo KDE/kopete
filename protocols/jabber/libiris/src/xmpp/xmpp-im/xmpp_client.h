@@ -98,6 +98,7 @@ namespace XMPP
 		QString capsNode() const;
 		QString capsVersion() const;
 		QString capsExt() const;
+		QString capsHash() const;
 
 		void setOSName(const QString &);
 		void setTimeZone(const QString &, int);
@@ -105,6 +106,7 @@ namespace XMPP
 		void setClientVersion(const QString &);
 		void setCapsNode(const QString &);
 		void setCapsVersion(const QString &);
+		void setCapsHash(const QString &);
 
 		void setIdentity(DiscoItem::Identity);
 		DiscoItem::Identity identity();

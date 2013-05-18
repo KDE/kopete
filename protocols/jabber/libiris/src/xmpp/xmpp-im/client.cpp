@@ -129,7 +129,7 @@ public:
 	int id_seed;
 	Task *root;
 	QString host, user, pass, resource;
-	QString osname, tzname, clientName, clientVersion, capsNode, capsVersion, capsExt;
+	QString osname, tzname, clientName, clientVersion, capsNode, capsVersion, capsExt, capsHash;
 	DiscoItem::Identity identity;
 	Features features;
 	QMap<QString,Features> extension_features;
@@ -161,6 +161,7 @@ Client::Client(QObject *par)
 	d->capsNode = "";
 	d->capsVersion = "";
 	d->capsExt = "";
+	d->capsHash = "";
 
 	d->id_seed = 0xaaaa;
 	d->root = new Task(this, true);
@@ -1064,6 +1065,11 @@ QString Client::capsExt() const
 	return d->capsExt;
 }
 
+QString Client::capsHash() const
+{
+	return d->capsHash;
+}
+
 void Client::setOSName(const QString &name)
 {
 	d->osname = name;
@@ -1094,6 +1100,11 @@ void Client::setCapsNode(const QString &s)
 void Client::setCapsVersion(const QString &s)
 {
 	d->capsVersion = s;
+}
+
+void Client::setCapsHash(const QString &s)
+{
+	d->capsHash = s;
 }
 
 DiscoItem::Identity Client::identity()

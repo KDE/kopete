@@ -589,6 +589,8 @@ void JT_Presence::pres(const Status &s)
 			c.setAttribute("ver",s.capsVersion());
 			if (!s.capsExt().isEmpty()) 
 				c.setAttribute("ext",s.capsExt());
+			if (!s.capsHash().isEmpty())
+				c.setAttribute("hash",s.capsHash());
 			tag.appendChild(c);
 		}
 
@@ -759,6 +761,7 @@ bool JT_PushPresence::take(const QDomElement &e)
  			p.setCapsNode(i.attribute("node"));
  			p.setCapsVersion(i.attribute("ver"));
  			p.setCapsExt(i.attribute("ext"));
+			p.setCapsHash(i.attribute("hash"));
   		}
 		else if(i.tagName() == "x" && i.attribute("xmlns") == "vcard-temp:x:update") {
 			QDomElement t;

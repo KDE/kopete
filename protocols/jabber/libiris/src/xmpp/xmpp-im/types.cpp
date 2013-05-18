@@ -2302,6 +2302,11 @@ void Status::setCapsExt(const QString & _capsExt)
 	v_capsExt = _capsExt;
 }
 
+void Status::setCapsHash(const QString & _capsHash)
+{
+	v_capsHash = _capsHash;
+}
+
 void Status::setMUC() 
 {
 	v_isMUC = true;
@@ -2454,6 +2459,11 @@ const QString & Status::capsVersion() const
 const QString & Status::capsExt() const
 {
 	return v_capsExt;
+}
+
+const QString & Status::capsHash() const
+{
+	return v_capsHash;
 }
 
 bool Status::isMUC() const
