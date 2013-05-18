@@ -71,6 +71,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 
 	initializeVariables ();
 	
+#ifdef IRIS_FILE_TRANSFER_PREVIEW
 	QPixmap preview;
 	if(!mXMPPTransfer->preview().isEmpty())
 	{
@@ -83,6 +84,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 																				  mXMPPTransfer->description () ,
 																				QString(),
 																				  preview);
+#endif
 
 }
 
@@ -124,10 +126,15 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 	}
 
 	  
-	if(canOpen)
-		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "" , preview);
-	else
+	if(canOpen) {
+#ifdef IRIS_FILE_TRANSFER_PREVIEW
+		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "", preview);
+#else
+		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "");
+#endif
+	} else {
 		mKopeteTransfer->slotError ( KIO::ERR_CANNOT_OPEN_FOR_READING, file );
+	}
 
 }
 

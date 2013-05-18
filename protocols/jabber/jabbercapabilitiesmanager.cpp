@@ -363,7 +363,14 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 	if( jid.compare(account->client()->jid(), false) )
 		return;
 
-	QString node = status.capsNode(), version = status.capsVersion(), extensions = status.capsExt(), hash = status.capsHash();
+	QString node = status.capsNode(), version = status.capsVersion(), extensions = status.capsExt();
+
+#ifdef IRIS_HASH_ATTRIBUTE
+	QString hash = status.capsHash();
+#else
+	QString hash = QString();
+#endif
+
 	Capabilities capabilities( node, version, extensions, hash );
 	
 	// Check if the capabilities was really updated(i.e the content is different)

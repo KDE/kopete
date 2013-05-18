@@ -32,8 +32,13 @@
 
 #include <bsocket.h>
 #include <filetransfer.h>
-#include <jinglesessionmanager.h>
 #include <xmpp_tasks.h>
+
+#ifdef IRIS_JINGLE
+#ifdef JINGLE_SUPPORT
+#include <jinglesessionmanager.h>
+#endif
+#endif
 
 #include "privacymanager.h"
 
@@ -720,6 +725,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	/*if (jingleEnabled())
 	{*/
 
+#ifdef IRIS_JINGLE
 #ifdef JINGLE_SUPPORT
 		d->jabberClient->setJingleEnabled(true);
 		
@@ -730,6 +736,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 		}
 #else
 		d->jabberClient->setJingleEnabled(false);
+#endif
 #endif
 	/*}*/
 
@@ -1108,6 +1115,7 @@ void JabberClient::slotCSError ( int error )
 
 void JabberClient::slotCSConnected ()
 {
+#ifdef IRIS_SOCKET_ACCESS
 	Kopete::SocketTimeoutWatcher* timeoutWatcher = 0;
 
 	ByteStream *irisByteStream = d->jabberClientConnector->stream ();
@@ -1116,6 +1124,7 @@ void JabberClient::slotCSConnected ()
 
 	if ( timeoutWatcher )
 		QObject::connect( timeoutWatcher, SIGNAL(errorInt(int)), this, SLOT(slotCSError(int)) );
+#endif
 }
 
 void JabberClient::slotRosterRequestFinished ( bool success, int /*statusCode*/, const QString &/*statusString*/ )
