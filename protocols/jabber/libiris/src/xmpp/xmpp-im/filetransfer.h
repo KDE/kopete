@@ -55,7 +55,7 @@ namespace XMPP
 		void setProxy(const Jid &proxy);
 
 		// send
-		void sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc);
+		void sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc, const QString& preview=QString());
 		qlonglong offset() const;
 		qlonglong length() const;
 		int dataSizeNeeded() const;
@@ -66,6 +66,7 @@ namespace XMPP
 		QString fileName() const;
 		qlonglong fileSize() const;
 		QString description() const;
+		QString preview() const;
 		bool rangeSupported() const;
 		void accept(qlonglong offset=0, qlonglong length=0);
 
@@ -144,7 +145,7 @@ namespace XMPP
 		JT_FT(Task *parent);
 		~JT_FT();
 
-		void request(const Jid &to, const QString &id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes);
+		void request(const Jid &to, const QString &id, const QString &fname, qlonglong size, const QString &desc, const QStringList &streamTypes, const QString &preview=QString());
 		qlonglong rangeOffset() const;
 		qlonglong rangeLength() const;
 		QString streamType() const;
@@ -164,6 +165,7 @@ namespace XMPP
 		QString fname;
 		qlonglong size;
 		QString desc;
+		QString preview;
 		bool rangeSupported;
 		QStringList streamTypes;
 	};

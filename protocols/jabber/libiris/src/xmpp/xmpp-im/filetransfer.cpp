@@ -58,6 +58,7 @@ public:
 	qlonglong size;
 	qlonglong sent;
 	QString desc;
+	QString preview;
 	bool rangeSupported;
 	qlonglong rangeOffset, rangeLength, length;
 	QString streamType;
@@ -129,19 +130,20 @@ void FileTransfer::setProxy(const Jid &proxy)
 	d->proxy = proxy;
 }
 
-void FileTransfer::sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc)
+void FileTransfer::sendFile(const Jid &to, const QString &fname, qlonglong size, const QString &desc, const QString& preview)
 {
 	d->state = Requesting;
 	d->peer = to;
 	d->fname = fname;
 	d->size = size;
 	d->desc = desc;
+	d->preview = preview;
 	d->sender = true;
 	d->id = d->m->link(this);
 
 	d->ft = new JT_FT(d->m->client()->rootTask());
 	connect(d->ft, SIGNAL(finished()), SLOT(ft_finished()));
-	d->ft->request(to, d->id, fname, size, desc, d->m->streamPriority() );
+	d->ft->request(to, d->id, fname, size, desc, d->m->streamPriority(), preview);
 	d->ft->go(true);
 }
 
@@ -192,6 +194,12 @@ qlonglong FileTransfer::fileSize() const
 QString FileTransfer::description() const
 {
 	return d->desc;
+}
+
+
+QString XMPP::FileTransfer::preview() const
+{
+	return d->preview;
 }
 
 bool FileTransfer::rangeSupported() const
@@ -347,6 +355,7 @@ void FileTransfer::man_waitForAccept(const FTRequest &req, const QString &stream
 	d->fname = req.fname;
 	d->size = req.size;
 	d->desc = req.desc;
+	d->preview = req.preview;
 	d->rangeSupported = req.rangeSupported;
 	d->streamType = streamType;
 }
@@ -550,7 +559,8 @@ JT_FT::~JT_FT()
 }
 
 void JT_FT::request(const Jid &to, const QString &_id, const QString &fname,
-					qlonglong size, const QString &desc, const QStringList &streamTypes)
+					qlonglong size, const QString &desc, const QStringList &streamTypes,
+					const QString& preview)
 {
 	QDomElement iq;
 	d->to = to;
@@ -568,6 +578,12 @@ void JT_FT::request(const Jid &to, const QString &_id, const QString &fname,
 		QDomElement de = doc()->createElement("desc");
 		de.appendChild(doc()->createTextNode(desc));
 		file.appendChild(de);
+	}
+	if(!preview.isEmpty()) {
+		QDomElement pr = doc()->createElement("preview");
+		pr.setAttribute("xmlns", "http://kopete.kde.org/protocol/file-preview");
+		pr.appendChild(doc()->createTextNode(preview));
+		file.appendChild(pr);
 	}
 	QDomElement range = doc()->createElement("range");
 	file.appendChild(range);
@@ -802,6 +818,11 @@ bool JT_PushFT::take(const QDomElement &e)
 	QDomElement de = file.elementsByTagName("desc").item(0).toElement();
 	if(!de.isNull())
 		desc = de.text();
+	
+	QString preview;
+	QDomElement pr = file.elementsByTagName("preview").item(0).toElement();
+	if(!pr.isNull())
+		preview= pr.text();
 
 	bool rangeSupported = false;
 	QDomElement range = file.elementsByTagName("range").item(0).toElement();
@@ -833,6 +854,7 @@ bool JT_PushFT::take(const QDomElement &e)
 	r.fname = fname;
 	r.size = size;
 	r.desc = desc;
+	r.preview = preview;
 	r.rangeSupported = rangeSupported;
 	r.streamTypes = streamTypes;
 
