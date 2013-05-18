@@ -1,0 +1,63 @@
+Index: talk/base/openssladapter.cc
+===================================================================
+--- talk/base/openssladapter.cc	(revision 1355325)
++++ talk/base/openssladapter.cc	(working copy)
+@@ -39,6 +39,8 @@
+ #include <openssl/ssl.h>
+ #include <openssl/x509v3.h>
+ 
++#include <unistd.h>
++
+ #include "talk/base/common.h"
+ #include "talk/base/logging.h"
+ #include "talk/base/openssladapter.h"
+Index: talk/session/phone/videorendererfactory.h
+===================================================================
+--- talk/session/phone/videorendererfactory.h	(revision 1355325)
++++ talk/session/phone/videorendererfactory.h	(working copy)
+@@ -28,6 +28,9 @@
+ #ifndef TALK_SESSION_PHONE_VIDEORENDERERFACTORY_H_
+ #define TALK_SESSION_PHONE_VIDEORENDERERFACTORY_H_
+ 
++#include "talk/session/phone/videorenderer.h"
++
++#if 0
+ #if defined(LINUX)
+ #include "talk/session/phone/gtkvideorenderer.h"
+ #elif defined(OSX)
+@@ -35,12 +38,14 @@
+ #elif defined(WIN32)
+ #include "talk/session/phone/gdivideorenderer.h"
+ #endif
++#endif
+ 
+ namespace cricket {
+ 
+ class VideoRendererFactory {
+  public:
+   static VideoRenderer* CreateGuiVideoRenderer(int x, int y) {
++#if 0
+   #if defined(LINUX)
+     return new GtkVideoRenderer(x, y);
+   #elif defined(OSX)
+@@ -57,6 +62,8 @@
+   #else
+     return NULL;
+   #endif
++#endif
++    return NULL;
+   }
+ };
+ 
+Index: talk/session/phone/v4llookup.cc
+===================================================================
+--- talk/session/phone/v4llookup.cc	(revision 1355325)
++++ talk/session/phone/v4llookup.cc	(working copy)
+@@ -15,6 +15,7 @@
+ #include <sys/ioctl.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <unistd.h>
+ 
+ #include <cstring>
+ 

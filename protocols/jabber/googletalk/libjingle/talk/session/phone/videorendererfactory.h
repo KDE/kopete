@@ -28,6 +28,9 @@
 #ifndef TALK_SESSION_PHONE_VIDEORENDERERFACTORY_H_
 #define TALK_SESSION_PHONE_VIDEORENDERERFACTORY_H_
 
+#include "talk/session/phone/videorenderer.h"
+
+#if 0
 #if defined(LINUX)
 #include "talk/session/phone/gtkvideorenderer.h"
 #elif defined(OSX)
@@ -35,12 +38,14 @@
 #elif defined(WIN32)
 #include "talk/session/phone/gdivideorenderer.h"
 #endif
+#endif
 
 namespace cricket {
 
 class VideoRendererFactory {
  public:
   static VideoRenderer* CreateGuiVideoRenderer(int x, int y) {
+#if 0
   #if defined(LINUX)
     return new GtkVideoRenderer(x, y);
   #elif defined(OSX)
@@ -57,6 +62,8 @@ class VideoRendererFactory {
   #else
     return NULL;
   #endif
+#endif
+    return NULL;
   }
 };
 
