@@ -111,6 +111,11 @@ class GoogleTalk : public QObject
 		void hangupCall();
 
 		/**
+		 * Call both hangupCall() and rejectCall()
+		 */
+		void cancelCall();
+
+		/**
 		 * Mute or unmute active call
 		 * @param b true for mute, false for unmute
 		 */

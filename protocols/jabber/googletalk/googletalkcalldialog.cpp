@@ -13,10 +13,17 @@
     *************************************************************************
 */
 
+#include <QCloseEvent>
+
 #include "googletalkcalldialog.h"
 
 GoogleTalkCallDialog::GoogleTalkCallDialog(QWidget *parent): QDialog(parent) {
 	setupUi(this);
+}
+
+void GoogleTalkCallDialog::closeEvent(QCloseEvent * e) {
+	e->ignore();
+	emit(closed());
 }
 
 #include "googletalkcalldialog.moc"
