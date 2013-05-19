@@ -3,11 +3,11 @@
 ########### next target ###############
 
 add_definitions (
-	-DFEATURE_ENABLE_VOICEMAIL
 	-DFEATURE_ENABLE_SSL
-	-DHAVE_LINPHONE
-	-DHAVE_OPENSSL_SSL_H
+	-DFEATURE_ENABLE_VOICEMAIL
+	-DFEATURE_ENABLE_PSTN
 	-DHAVE_SRTP
+	-DHAVE_LINPHONE
 	-DSRTP_RELATIVE_PATH
 	-DEXPAT_RELATIVE_PATH
 	-DGTEST_RELATIVE_PATH
@@ -15,7 +15,14 @@ add_definitions (
 )
 
 if ( NOT WIN32 )
-	add_definitions ( -DPOSIX )
+	add_definitions (
+		-DHASHNAMESPACE=__gnu_cxx
+		-DHASH_NAMESPACE=__gnu_cxx
+		-DPOSIX
+		-DDISABLE_DYNAMIC_CAST
+		-DHAVE_OPENSSL_SSL_H
+		-D_REENTRANT
+	)
 	if ( NOT APPLE )
 		add_definitions ( -DLINUX )
 	endif ( NOT APPLE )
@@ -25,8 +32,7 @@ endif ( NOT WIN32 )
 
 include_directories (
 	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/talk/third_party/gtest
-	${CMAKE_CURRENT_SOURCE_DIR}/talk/third_party/gtest/include
+	${CMAKE_CURRENT_SOURCE_DIR}/talk/third_party/libudev
 	${SRTP_INCLUDE_DIR}
 	${JSONCPP_INCLUDE_DIR}
 )
@@ -240,10 +246,15 @@ set ( call_LIBS
 	${SRTP_LIBRARY}
 	${JSONCPP_LIBRARY}
 	${EXPAT_LIBRARY}
-	${SSL_LIBRARY}
-	${CRYPTO_LIBRARY}
 	${MEDIASTREAMER_LIBRARIES}
 )
+
+if ( NOT WIN32 )
+	set ( call_LIBS ${call_LIBS}
+		${SSL_LIBRARY}
+		${CRYPTO_LIBRARY}
+	)
+endif ( NOT WIN32 )
 
 add_executable ( call ${call_SRCS} )
 set_target_properties ( call PROPERTIES OUTPUT_NAME googletalk-call )
