@@ -9,6 +9,12 @@ X-KDE-ParentApp=kopete_history2
 X-KDE-ParentComponents=kopete_history2
 
 Name=History2
+Name[nl]=Geschiedenis2
+Name[pt]=Histórico-2
+Name[pt_BR]=Histórico-2
+Name[sk]=História2
+Name[uk]=Журнал2
+Name[x-test]=xxHistory2xx
 Comment=History Plugin
 Comment[ar]=ملحق التاريخ
 Comment[ast]=Complementu d'hestorial
