@@ -220,12 +220,14 @@ void JabberChatSession::sendNotification( Event event )
 	XMPP::MsgEvent msg_event;
 	XMPP::ChatState new_state;
 	bool send_msg_event=false;
+	bool send_msg_delivery=false;
 	bool send_state=false;
 
 	switch(event)
 	{
 		case Delivered:
 			send_msg_event=true;
+			send_msg_delivery=true;
 			msg_event=DeliveredEvent;
 			break;
 		case Displayed:
@@ -270,6 +272,19 @@ void JabberChatSession::sendNotification( Event event )
 			}
 		}
 	}
+	if(send_msg_delivery)
+	{
+		send_msg_delivery=false;
+		foreach(Kopete::Contact *c, members())
+		{
+			JabberBaseContact *contact = static_cast<JabberBaseContact*>(c);
+			if(contact->isContactRequestingReceiptDelivery())
+			{
+				send_msg_delivery=true;
+				break;
+			}
+		}
+	}
 /*	if(send_state)
 	{
 		send_state=false;
@@ -284,42 +299,59 @@ void JabberChatSession::sendNotification( Event event )
 		}
 	}*/
 
-	if( !members().isEmpty() && (send_state || send_msg_event) )
+	if( !members().isEmpty() && (send_state || send_msg_event || send_msg_delivery) )
 	{
 		// create JID for the recipient
 		JabberBaseContact *recipient = static_cast<JabberBaseContact*>(members().first());
 		XMPP::Jid toJid = recipient->rosterItem().jid();
+		const QString &lastReceivedMessageId = recipient->lastReceivedMessageId ();
 
 		// set resource properly if it has been selected already
 		if ( !resource().isEmpty () )
 			toJid = toJid.withResource ( resource () );
 
-		XMPP::Message message;
-
-		message.setTo ( toJid );
-		if(send_msg_event)
+		if (send_state || send_msg_delivery)
 		{
-			message.setEventId ( recipient->lastReceivedMessageId () );
-			// store composing event depending on state
-			message.addEvent ( msg_event );
-		}
-		if(send_state)
-		{
-			message.setChatState( new_state );
+
+			XMPP::Message message;
+
+			message.setTo ( toJid );
+			if(send_msg_event)
+			{
+				message.setEventId ( lastReceivedMessageId );
+				// store composing event depending on state
+				message.addEvent ( msg_event );
+			}
+			if(send_state)
+			{
+				message.setChatState( new_state );
+			}
+
+			if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
+			{
+				message.setType ( "normal" );
+			}
+			else
+			{
+				message.setType ( "chat" );
+			}
+
+			// send message
+			account()->client()->sendMessage ( message );
+
 		}
 
-		if (view() && view()->plugin()->pluginId() == "kopete_emailwindow" )
+#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
+		// XEP-0184: Message Delivery Receipts (same as DeliveredEvent)
+		if (send_msg_delivery)
 		{
-			message.setType ( "normal" );
+			XMPP::Message message;
+			message.setTo ( toJid );
+			message.setMessageReceipt ( ReceiptReceived );
+			message.setMessageReceiptId ( lastReceivedMessageId );
+			account()->client()->sendMessage ( message );
 		}
-		else
-		{
-			message.setType ( "chat" );
-		}
-
-
-		// send message
-		account()->client()->sendMessage ( message );
+#endif
 	}
 }
 
@@ -437,6 +469,14 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		jabberMessage.addEvent( DisplayedEvent );
 		jabberMessage.setChatState( XMPP::StateActive );
 
+#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
+		// XEP-0184: Message Delivery Receipts
+		JabberResource *jresource = account()->resourcePool()->getJabberResource(toJid, resource());
+		if( jresource && jresource->features().test(QStringList("urn:xmpp:receipts")) )
+		{
+			jabberMessage.setMessageReceipt( ReceiptRequest );
+		}
+#endif
 
 		// send the message
 		account()->client()->sendMessage ( jabberMessage );

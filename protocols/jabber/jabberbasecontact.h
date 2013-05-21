@@ -153,6 +153,7 @@ public:
 	bool sendsDeliveredEvent() const { return mSendsDeliveredEvent; }
 
 	virtual bool isContactRequestingEvent( XMPP::MsgEvent /*event*/ ) { return false; }
+	virtual bool isContactRequestingReceiptDelivery() { return false; }
 	
 	virtual QString lastReceivedMessageId () const { return QString(); }
 

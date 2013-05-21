@@ -53,6 +53,7 @@ public:
 	void handleIncomingMessage ( const XMPP::Message &message );
 
 	virtual bool isContactRequestingEvent( XMPP::MsgEvent event );
+	virtual bool isContactRequestingReceiptDelivery();
 	
 	virtual QString lastReceivedMessageId () const;
 
@@ -84,6 +85,8 @@ private:
 	bool mRequestOfflineEvent :1;
 	bool mRequestDisplayedEvent :1;
 	bool mRequestDeliveredEvent :1;
+
+	bool mRequestReceiptDelivery :1;
 
 };
 

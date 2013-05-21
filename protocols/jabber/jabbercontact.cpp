@@ -126,6 +126,8 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 	mRequestDisplayedEvent = false;
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
+
+	mRequestReceiptDelivery = false;
 }
 
 JabberContact::~JabberContact()
@@ -364,6 +366,16 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 					mManager->appendMessage ( m, message.from().resource () );
 				}
 			}
+
+#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
+			// XEP-0184: Message Delivery Receipts
+			if ( message.messageReceipt() == ReceiptReceived )
+			{
+				mManager->receivedEventNotification ( i18n("Message has been delivered") );
+				mManager->receivedMessageState( message.messageReceiptId().toUInt(), Kopete::Message::StateSent );
+				mSendsDeliveredEvent = true;
+			}
+#endif
 		}
 		else
 		// Then here could be event notification requests
@@ -372,6 +384,11 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			mRequestOfflineEvent = message.containsEvent ( XMPP::OfflineEvent );
 			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent );
 			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent);
+
+#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
+			// XEP-0184: Message Delivery Receipts
+			mRequestReceiptDelivery = ( message.messageReceipt() == ReceiptRequest );
+#endif
 		}
 	}
 
@@ -1279,6 +1296,11 @@ bool JabberContact::isContactRequestingEvent( XMPP::MsgEvent event )
 		return mRequestComposingEvent;
 	else
 		return false;
+}
+
+bool JabberContact::isContactRequestingReceiptDelivery()
+{
+	return mRequestReceiptDelivery;
 }
 
 QString JabberContact::lastReceivedMessageId () const

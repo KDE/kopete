@@ -67,6 +67,7 @@ public:
 	
 
 	virtual bool isContactRequestingEvent( XMPP::MsgEvent event );
+	virtual bool isContactRequestingReceiptDelivery();
 
 	virtual QString lastReceivedMessageId () const;
 
@@ -273,6 +274,7 @@ private:
 	 */
 	bool mDiscoDone :1;
 
+	bool mRequestReceiptDelivery :1;
 	QString mLastReceivedMessageId;
 	QTimer *m_syncTimer;
 

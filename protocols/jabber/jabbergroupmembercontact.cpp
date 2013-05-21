@@ -47,6 +47,8 @@ JabberGroupMemberContact::JabberGroupMemberContact (const XMPP::RosterItem &rost
 	mRequestDisplayedEvent = false;
 	mRequestDeliveredEvent = false;
 	mRequestComposingEvent = false;
+
+	mRequestReceiptDelivery = false;
 }
 
 /**
@@ -166,6 +168,16 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 					mManager->appendMessage ( m, message.from().resource () );
 				}*/
 			}
+
+#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
+			// XEP-0184: Message Delivery Receipts
+			if ( message.messageReceipt() == ReceiptReceived )
+			{
+				//mManager->receivedEventNotification ( i18n("Message has been delivered") );
+				mManager->receivedMessageState( message.messageReceiptId().toUInt(), Kopete::Message::StateSent );
+				mSendsDeliveredEvent = true;
+			}
+#endif
 		}
 		else
 		// Then here could be event notification requests
@@ -174,6 +186,11 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 			mRequestOfflineEvent = message.containsEvent ( XMPP::OfflineEvent );
 			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent );
 			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent);
+
+#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
+			// XEP-0184: Message Delivery Receipts
+			mRequestReceiptDelivery = ( message.messageReceipt() == ReceiptRequest );
+#endif
 		}
 	}
 
@@ -240,6 +257,11 @@ bool JabberGroupMemberContact::isContactRequestingEvent( XMPP::MsgEvent event )
 		return mRequestComposingEvent;
 	else
 		return false;
+}
+
+bool JabberGroupMemberContact::isContactRequestingReceiptDelivery()
+{
+	return mRequestReceiptDelivery;
 }
 
 QString JabberGroupMemberContact::lastReceivedMessageId () const
