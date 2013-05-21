@@ -306,13 +306,13 @@
           <item>
            <widget class="QCheckBox" name="cbUseSSL" >
             <property name="toolTip" >
-             <string>Check this box to enable SSL encrypted communication with the server.</string>
+             <string>Check this box to enable legacy SSL encrypted communication with the server. This is needed only for old servers.</string>
             </property>
             <property name="whatsThis" >
-             <string>Check this box to enable SSL encrypted communication with the server.  Note that this is not end-to-end encryption, but rather encrypted communication with the server.</string>
+             <string>Check this box to enable legacy SSL encrypted communication with the server. This is needed only for old servers.</string>
             </property>
             <property name="text" >
-             <string>Use protocol encr&amp;yption (SSL)</string>
+             <string>Use legacy SSL encr&amp;yption</string>
             </property>
            </widget>
           </item>
