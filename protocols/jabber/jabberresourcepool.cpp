@@ -396,4 +396,26 @@ void JabberResourcePool::findResources ( const XMPP::Jid &jid, XMPP::ResourceLis
 	}
 }
 
+JabberResource *JabberResourcePool::getJabberResource ( const XMPP::Jid &jid, const QString &resource )
+{
+	if ( resource.isEmpty() )
+		return bestJabberResource(jid);
+
+	foreach(JabberResource *mResource, d->pool)
+	{
+		if ( mResource->jid().bare().toLower() == jid.bare().toLower() && jid.resource().toLower() == resource )
+		{
+			// we found a resource for the JID, let's see if the JID already contains a resource
+			if ( !jid.resource().isEmpty() && ( jid.resource().toLower() != mResource->resource().name().toLower() ) )
+				// the JID contains a resource but it's not the one we have in the dictionary,
+				// thus we have to ignore this resource
+				continue;
+
+			return mResource;
+		}
+	}
+
+	return bestJabberResource(jid);
+}
+
 #include "jabberresourcepool.moc"

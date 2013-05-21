@@ -112,6 +112,12 @@ public:
 	 */
 	const XMPP::Resource &bestResource ( const XMPP::Jid &jid, bool honourLock = true );
 
+	/*
+	 * Return a JabberResource for a given JID and resource name
+	 * If resource name is empty or not exists, return bestJabberResource
+	 */
+	JabberResource *getJabberResource ( const XMPP::Jid &jid, const QString &resource );
+
 	/**
 	 * Find all resources that exist for a given JID
 	 */
