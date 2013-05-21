@@ -685,8 +685,6 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 		                   this, SLOT (slotCSConnected()) );
 	}
 
-	d->jabberClientStream->setOldOnly ( useXMPP09 () );
-
 	/*
 	 * Initiate anti-idle timer (will be triggered every 55 seconds).
 	 */
