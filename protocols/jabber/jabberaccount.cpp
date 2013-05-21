@@ -346,11 +346,18 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	// clean up old client backend
 	m_jabberClient->disconnect ();
 
-	if (configGroup()->readEntry("CustomServer",false))
+	bool customServer = configGroup()->readEntry("CustomServer", false);
+
+	if ( customServer )
 	{
-		m_jabberClient->setUseXMPP09 ( configGroup()->readEntry("CustomServer",false) );
+		m_jabberClient->setUseXMPP09 ( true );
 		// override server and port (this should be dropped when using the new protocol and no direct SSL)
 		m_jabberClient->setOverrideHost ( true, server (), port () );
+	}
+	else
+	{
+		m_jabberClient->setUseXMPP09 ( false );
+		m_jabberClient->setOverrideHost ( false );
 	}
 
 	// set SSL flag (this should be converted to forceTLS when using the new protocol)
