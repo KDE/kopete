@@ -1741,7 +1741,8 @@ void JabberAccount::slotUnregisterFinished( )
 
 bool JabberAccount::enabledGoogleTalk()
 {
-	return configGroup()->readEntry("GoogleTalk", ( server() == "talk.google.com" ? true : false ) );
+	XMPP::Jid jid ( myself()->contactId () );
+	return configGroup()->readEntry("GoogleTalk", ( ( server() == "talk.google.com" || jid.domain() == "gmail.com" ) ? true : false ) );
 }
 
 void JabberAccount::enableGoogleTalk(bool b)

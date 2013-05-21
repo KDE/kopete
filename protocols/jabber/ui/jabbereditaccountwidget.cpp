@@ -47,6 +47,8 @@
 #include "dlgjabberchangepassword.h"
 #include "privacydlg.h"
 
+#include "xmpp.h"
+
 #ifdef JINGLE_SUPPORT
 //FIXME:Should be replaced by Solid.
 #include "alsaio.h"
@@ -361,7 +363,8 @@ bool JabberEditAccountWidget::validateData ()
 	}
 
 #ifdef GOOGLETALK_SUPPORT
-	if ( GoogleTalk->isChecked() && mServer->text().trimmed() != "talk.google.com" )
+	XMPP::Jid jid ( account()->myself()->contactId () );
+	if ( GoogleTalk->isChecked() && ( mServer->text().trimmed() != "talk.google.com" && jid.domain() != "gmail.com" ) )
 	{
 		KMessageBox::sorry(this, i18n("Google Talk libjingle support is only for GTalk/Gmail account, which connect to server talk.google.com."), i18n("Invalid Google Talk"));
 		return false;
