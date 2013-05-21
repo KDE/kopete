@@ -646,9 +646,8 @@ void AIMAccount::connectWithPassword( const QString &password )
 
 		// Get the screen name for this account
 		QString screenName = accountId();
-		bool encrypted = configGroup()->readEntry( "Encrypted", false );
-		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( encrypted ? "slogin.oscar.aol.com" : "login.oscar.aol.com" ) );
-		uint port = configGroup()->readEntry( "Port", encrypted ? 443: 5190 );
+		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( "login.oscar.aol.com" ) );
+		uint port = configGroup()->readEntry( "Port", 5190 );
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
@@ -662,7 +661,7 @@ void AIMAccount::connectWithPassword( const QString &password )
 
 		engine()->start( server, port, accountId(), password.left(16) );
 		engine()->setStatus( status, mInitialStatusMessage );
-		engine()->connectToServer( server, port, encrypted, QString() );
+		engine()->connectToServer( server, port, false, QString() );
 
 		mInitialStatusMessage.clear();
 	}
