@@ -788,18 +788,39 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 
 	d->jabberClient->setTimeZone ( timeZoneName (), timeZoneOffset () );
 
-	// Additional features
+
+	// XMPP Features from http://xmpp.org/registrar/disco-features.html
+
+	// Standard features automatically supported and added by libiris:
+	// http://jabber.org/protocol/bytestreams                      // XEP-0065: SOCKS5 Bytestreams
+	// http://jabber.org/protocol/disco#info                       // XEP-0030: Service Discovery
+	// http://jabber.org/protocol/ibb                              // XEP-0047: In-Band Bytestreams
+	// http://jabber.org/protocol/si                               // XEP-0096: SI File Transfer
+	// http://jabber.org/protocol/si/profile/file-transfer         // XEP-0096: SI File Transfer
+	// urn:xmpp:bob                                                // XEP-0231: Bits of Binary
+
+	// Additional features supported by Kopete:
 	XMPP::Features features;
-	features.addFeature("http://jabber.org/protocol/chatstates");
-	features.addFeature("http://jabber.org/protocol/mood");
-	features.addFeature("http://jabber.org/protocol/muc");
-	features.addFeature("http://jabber.org/protocol/pubsub");
-	features.addFeature("http://jabber.org/protocol/xhtml-im");
-	features.addFeature("jabber:iq:version");
-	features.addFeature("jabber:x:data");
-	features.addFeature("jabber:x:encrypted");
-	features.addFeature("urn:xmpp:receipts");
+	features.addFeature("http://jabber.org/protocol/chatstates");  // XEP-0085: Chat State Notifications
+	features.addFeature("http://jabber.org/protocol/mood");        // XEP-0107: User Mood
+	features.addFeature("http://jabber.org/protocol/muc");         // XEP-0045: Multi-User Chat
+	features.addFeature("http://jabber.org/protocol/xhtml-im");    // XEP-0071: XHTML-IM
+	features.addFeature("jabber:iq:oob");                          // XEP-0066: Out of Band Data
+	features.addFeature("jabber:iq:version");                      // XEP-0092: Software Version
+	features.addFeature("jabber:x:data");                          // XEP-0004: Data Forms
+	features.addFeature("jabber:x:delay");                         // XEP-0091: Legacy Delayed Delivery
+	features.addFeature("jabber:x:encrypted");                     // XEP-0027: Current OpenPGP Usage
+	features.addFeature("jabber:x:event");                         // XEP-0022: Message Events
+	features.addFeature("jabber:x:signed");                        // XEP-0027: Current OpenPGP Usage
+	features.addFeature("urn:xmpp:delay");                         // XEP-0203: Delayed Delivery
+	features.addFeature("urn:xmpp:receipts");                      // XEP-0184: Message Delivery Receipts
 	d->jabberClient->setFeatures(features);
+
+	// Additional features supported by libiris, but not yet by Kopete:
+	// http://jabber.org/protocol/pubsub                           // XEP-0060: Publish-Subscribe
+	// http://jabber.org/protocol/address                          // XEP-0033: Extended Stanza Addressing
+	// http://jabber.org/protocol/rosterx                          // XEP-0144: Roster Item Exchange
+
 
 	d->jabberClient->connectToServer ( d->jabberClientStream, jid, auth );
 
