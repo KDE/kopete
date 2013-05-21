@@ -18,6 +18,8 @@
 
 #include "ui_googletalkcalldialog.h"
 
+class QCloseEvent;
+
 /**
  * @author Pali Rohár
  * @short Dialog for voice call
@@ -36,6 +38,18 @@ class GoogleTalkCallDialog : public QDialog, public Ui::GoogleTalkCallDialog
 		 * use method hide() to close and hide voice call dialog
 		 */
 		GoogleTalkCallDialog(QWidget *parent = 0);
+
+	protected:
+
+		/**
+		 * Reimplement close event
+		 * Do not close and do not delete this call dialog, but emit signal closed()
+		 */
+		virtual void closeEvent(QCloseEvent * e);
+
+	signals:
+
+		void closed();
 
 };
 

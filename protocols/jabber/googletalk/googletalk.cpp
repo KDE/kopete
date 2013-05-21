@@ -64,6 +64,7 @@ GoogleTalk::GoogleTalk(const QString &jid, const QString &password) {
 	connect( callDialog->acceptButton, SIGNAL(pressed()), this, SLOT(acceptCall()) );
 	connect( callDialog->hangupButton, SIGNAL(pressed()), this, SLOT(hangupCall()) );
 	connect( callDialog->rejectButton, SIGNAL(pressed()), this, SLOT(rejectCall()) );
+	connect( callDialog, SIGNAL(closed()), this, SLOT(cancelCall()) );
 
 }
 
@@ -431,6 +432,14 @@ void GoogleTalk::hangupCall() {
 	callDialog->callStatus->setText("");
 
 	activeCall = false;
+
+}
+
+void GoogleTalk::cancelCall() {
+
+//	qDebug() << "GoogleTalk::cancelCall";
+	hangupCall();
+	rejectCall();
 
 }
 
