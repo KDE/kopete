@@ -298,6 +298,9 @@ If you do not currently have an ICQ account, please click the button to create o
             <property name="text">
              <string>Use SSL encryption</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -340,7 +343,7 @@ If you do not currently have an ICQ account, please click the button to create o
                <string>The IP address or hostmask of the ICQ server you wish to connect to.</string>
               </property>
               <property name="whatsThis">
-               <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
+               <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (slogin.icq.com or login.icq.com).</string>
               </property>
               <property name="text">
                <string>Ser&amp;ver /</string>
@@ -359,7 +362,7 @@ If you do not currently have an ICQ account, please click the button to create o
                <string>The port on the ICQ server that you would like to connect to.</string>
               </property>
               <property name="whatsThis">
-               <string>The port on the ICQ server that you would like to connect to.  Normally this is 5190.</string>
+               <string>The port on the ICQ server that you would like to connect to.  Normally this is 443 or 5190.</string>
               </property>
               <property name="text">
                <string>Po&amp;rt:</string>
@@ -378,10 +381,10 @@ If you do not currently have an ICQ account, please click the button to create o
                <string>The IP address or hostmask of the ICQ server you wish to connect to.</string>
               </property>
               <property name="whatsThis">
-               <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (login.icq.com).</string>
+               <string>The IP address or hostmask of the ICQ server you wish to connect to.  Normally you will want the default (slogin.icq.com or login.icq.com).</string>
               </property>
               <property name="text">
-               <string>login.icq.com</string>
+               <string>slogin.icq.com</string>
               </property>
              </widget>
             </item>
@@ -394,7 +397,7 @@ If you do not currently have an ICQ account, please click the button to create o
                <string>The port on the ICQ server that you would like to connect to.</string>
               </property>
               <property name="whatsThis">
-               <string>The port on the ICQ server that you would like to connect to.  Normally this is 5190.</string>
+               <string>The port on the ICQ server that you would like to connect to.  Normally this is 443 or 5190.</string>
               </property>
               <property name="minimum">
                <number>1</number>
@@ -403,7 +406,7 @@ If you do not currently have an ICQ account, please click the button to create o
                <number>65534</number>
               </property>
               <property name="value">
-               <number>5190</number>
+               <number>443</number>
               </property>
              </widget>
             </item>
@@ -461,7 +464,7 @@ If you do not currently have an ICQ account, please click the button to create o
                  <string>The IP address or hostmask of the proxy server you wish to use for connecting to an ICQ server.</string>
                 </property>
                 <property name="whatsThis">
-                 <string>The IP address or hostmask of the proxy server you wish to use for connecting to an ICQ server. The proxy server must support a CONNECT command and allow connections to the ICQ server port (normally 5190).</string>
+                 <string>The IP address or hostmask of the proxy server you wish to use for connecting to an ICQ server. The proxy server must support a CONNECT command and allow connections to the ICQ server port (normally 443 or 5190).</string>
                 </property>
                 <property name="text">
                  <string>Ser&amp;ver /</string>
@@ -499,7 +502,7 @@ If you do not currently have an ICQ account, please click the button to create o
                  <string>The IP address or hostmask of the proxy server you wish to use for connecting to an ICQ server.</string>
                 </property>
                 <property name="whatsThis">
-                 <string>The IP address or hostmask of the proxy server you wish to use for connecting to an ICQ server. The proxy server must support a CONNECT command and allow connections to the ICQ server port (normally 5190).</string>
+                 <string>The IP address or hostmask of the proxy server you wish to use for connecting to an ICQ server. The proxy server must support a CONNECT command and allow connections to the ICQ server port (normally 443 or 5190).</string>
                 </property>
                 <property name="text">
                  <string/>

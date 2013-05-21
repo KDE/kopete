@@ -80,9 +80,9 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->mPasswordWidget->load(&mAccount->password());
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->excludeConnect());
 
-		bool encryptedEntry = mAccount->configGroup()->readEntry("Encrypted", false);
-		QString serverEntry = mAccount->configGroup()->readEntry("Server", encryptedEntry ? "slogin.icq.com" : "login.icq.com");
-		int portEntry = mAccount->configGroup()->readEntry("Port", encryptedEntry ? 443 : 5190);
+		QString serverEntry = mAccount->configGroup()->readEntry("Server", "slogin.icq.com");
+		int portEntry = mAccount->configGroup()->readEntry("Port", 443);
+		bool encryptedEntry = mAccount->configGroup()->readEntry("Encrypted", ( serverEntry == "slogin.icq.com" && portEntry == 443 ));
 		if ( ( encryptedEntry && ( serverEntry != "slogin.icq.com" || portEntry != 443 ) ) ||
 				( ! encryptedEntry && ( serverEntry != "login.icq.com" || ( portEntry != 5190 ) ) ) )
 			mAccountSettings->optionOverrideServer->setChecked( true );

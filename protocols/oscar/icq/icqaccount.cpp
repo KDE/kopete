@@ -236,9 +236,9 @@ void ICQAccount::connectWithPassword( const QString &password )
 		myself()->setOnlineStatus( protocol()->statusManager()->connectingStatus() );
 		QString icqNumber = accountId();
 		kDebug(14153) << "Logging in as " << icqNumber;
-		bool encrypted = configGroup()->readEntry( "Encrypted", false );
-		QString server = configGroup()->readEntry( "Server", QString::fromLatin1( encrypted ? "slogin.icq.com" : "login.icq.com" ) );
-		uint port = configGroup()->readEntry( "Port", encrypted ? 443 : 5190 );
+		QString server = configGroup()->readEntry( "Server", "slogin.icq.com" );
+		uint port = configGroup()->readEntry( "Port", 443 );
+		bool encrypted = configGroup()->readEntry( "Encrypted", ( server == "slogin.icq.com" && port == 443 ) );
 
 		//set up the settings for the account
 		Oscar::Settings* oscarSettings = engine()->clientSettings();
