@@ -1,0 +1,74 @@
+Index: src/xmpp/xmpp-im/xmpp_message.h
+===================================================================
+--- src/xmpp/xmpp-im/xmpp_message.h	(revision 1355873)
++++ src/xmpp/xmpp-im/xmpp_message.h	(working copy)
+@@ -106,6 +106,8 @@
+ 		// XEP-0184
+ 		MessageReceipt messageReceipt() const;
+ 		void setMessageReceipt(MessageReceipt);
++		QString messageReceiptId() const;
++		void setMessageReceiptId(const QString &s);
+ 
+ 		// JEP-0027
+ 		QString xencrypted() const;
+Index: src/xmpp/xmpp-im/types.cpp
+===================================================================
+--- src/xmpp/xmpp-im/types.cpp	(revision 1355873)
++++ src/xmpp/xmpp-im/types.cpp	(working copy)
+@@ -947,6 +947,7 @@
+ 	QString xencrypted, invite;
+ 	ChatState chatState;
+ 	MessageReceipt messageReceipt;
++	QString messageReceiptId;
+ 	QString nick;
+ 	HttpAuthRequest httpAuthRequest;
+ 	XData xdata;
+@@ -1320,6 +1321,16 @@
+ 	d->messageReceipt = messageReceipt;
+ }
+ 
++QString Message::messageReceiptId() const
++{
++	return d->messageReceiptId;
++}
++
++void Message::setMessageReceiptId(const QString &s)
++{
++	d->messageReceiptId = s;
++}
++
+ QString Message::xencrypted() const
+ {
+ 	return d->xencrypted;
+@@ -1587,7 +1598,12 @@
+ 				s.appendChild(s.createElement(messageReceiptNS, "request"));
+ 				break;
+ 			case ReceiptReceived:
+-				s.appendChild(s.createElement(messageReceiptNS, "received"));
++				{
++				QDomElement elem = s.createElement(messageReceiptNS, "received");
++				if (!d->messageReceiptId.isEmpty())
++					elem.setAttribute("id", d->messageReceiptId);
++				s.appendChild(elem);
++				}
+ 				break;
+ 			default: 
+ 				break;
+@@ -1858,11 +1874,15 @@
+ 	// message receipts
+ 	QString messageReceiptNS = "urn:xmpp:receipts";
+ 	t = childElementsByTagNameNS(root, messageReceiptNS, "request").item(0).toElement();
+-	if(!t.isNull())
++	if(!t.isNull()) {
+ 		d->messageReceipt = ReceiptRequest;
++		d->messageReceiptId.clear();
++	}
+ 	t = childElementsByTagNameNS(root, messageReceiptNS, "received").item(0).toElement();
+-	if(!t.isNull())
++	if(!t.isNull()) {
+ 		d->messageReceipt = ReceiptReceived;
++		d->messageReceiptId = t.attribute("id");
++	}
+ 
+ 	// xencrypted
+ 	t = childElementsByTagNameNS(root, "jabber:x:encrypted", "x").item(0).toElement();
