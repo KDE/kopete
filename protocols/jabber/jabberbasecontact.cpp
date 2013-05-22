@@ -269,24 +269,42 @@ void JabberBaseContact::updateResourceList ()
 		}
 		
 		// Supported features
-#if 0  //disabled because it's just an ugly and long list of incomprehensible namespaces to the user
+		QStringList features;
 		QStringList supportedFeatures = (*it)->features().list();
 		QStringList::ConstIterator featuresIt, featuresItEnd = supportedFeatures.constEnd();
-		if( !supportedFeatures.empty() )
-			resourceListStr += QString( "<tr><td>Supported Features:" );
 		for( featuresIt = supportedFeatures.constBegin(); featuresIt != featuresItEnd; ++featuresIt )
 		{
 			XMPP::Features tempFeature(*featuresIt);
-			resourceListStr += QString("\n<br>");
+			QString name;
 			if ( tempFeature.id() > XMPP::Features::FID_None )
-				resourceListStr += tempFeature.name() + QString(" (");
-			resourceListStr += *featuresIt;
-			if ( tempFeature.id() > Features::FID_None )
-				resourceListStr += QString(")");	
+				name = tempFeature.name();
+			if ( name.isEmpty() ) {
+				if ( *featuresIt == "http://jabber.org/protocol/mood" )
+					name = i18n("User Mood");
+				else if ( *featuresIt == "http://jabber.org/protocol/muc" )
+					name = i18n("Groupchat");
+				else if ( *featuresIt == "http://jabber.org/protocol/xhtml-im" )
+					name = i18n("Rich text messages");
+				else if ( *featuresIt == "jabber:x:data" )
+					name = i18n("Data Forms");
+				else if ( *featuresIt == "jabber:x:encrypted" || *featuresIt == "jabber:x:signed" )
+					name = i18n("OpenPGP");
+				else if ( *featuresIt == "jabber:x:event" )
+					name = i18n("Message Events");
+				else if ( *featuresIt == "urn:xmpp:receipts" )
+					name = i18n("Message Delivery Receipts");
+				else if ( featuresIt->startsWith("http://jabber.org/protocol/si") )
+					name = i18n("File transfers");
+				else if ( featuresIt->startsWith("http://jabber.org/protocol/disco") )
+					name = i18n("Service Discovery");
+			}
+			if ( !name.isEmpty() )
+				features << name;
 		}
-		if( !supportedFeatures.empty() )
-			resourceListStr += QString( "</td></tr>" );
-#endif
+		if( !features.empty() ) {
+			features.removeDuplicates();
+			resourceListStr += QString( "<tr><td>%1: %2</td></tr>" ).arg ( i18n ( "Supported Features" ), features.join( ", " ) );
+		}
 		
 		// resource timestamp
 		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
