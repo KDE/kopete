@@ -697,6 +697,11 @@ QString Contact::toolTip() const
 						}
 				}
 
+				if (valueText.size() > 1000) {
+					valueText.truncate(997);
+					valueText += "...";
+				}
+
 				tip += i18nc("@label:textbox property label %2 is name, %1 is value",
 					"<br /><nobr><b>%2:</b></nobr>&nbsp;%1",
 						valueText, Qt::escape(p.tmpl().label()) );
