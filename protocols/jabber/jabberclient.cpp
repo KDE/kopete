@@ -793,7 +793,6 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	features.addFeature("jabber:iq:version");
 	features.addFeature("jabber:x:data");
 	features.addFeature("jabber:x:encrypted");
-	features.addFeature("urn:xmpp:receipts");
 	d->jabberClient->setFeatures(features);
 
 	d->jabberClient->connectToServer ( d->jabberClientStream, jid, auth );
