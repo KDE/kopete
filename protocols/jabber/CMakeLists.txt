@@ -1,7 +1,7 @@
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS -DIRIS_XMPP_JID_DEPRECATED)
 
 # if using patched libiris version, enable kopete features
-add_definitions(-DIRIS_FILE_TRANSFER_PREVIEW -DIRIS_SOCKET_ACCESS -DIRIS_HASH_ATTRIBUTE -DIRIS_XEP_0184_ID_ATTRIBUTE)
+add_definitions(-DIRIS_FILE_TRANSFER_PREVIEW -DIRIS_SOCKET_ACCESS -DIRIS_XEP_0115_HASH_ATTRIBUTE -DIRIS_XEP_0184_ID_ATTRIBUTE)
 
 add_subdirectory( icons ) 
 add_subdirectory( libiris ) 
