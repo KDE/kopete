@@ -149,6 +149,8 @@ void dlgJabberChatJoin::slotChatRooomsQueryFinished()
 	for (XMPP::DiscoList::const_iterator it = items.begin(); it != items.end(); ++it)
 	{
 		const XMPP::DiscoItem &di = *it;
+		if (di.jid().node().isEmpty())
+			continue;
 		QTreeWidgetItem *item = new QTreeWidgetItem();
 		item->setText(0, di.jid().node());
 		item->setText(1, di.name());
