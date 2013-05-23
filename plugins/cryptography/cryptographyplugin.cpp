@@ -338,7 +338,13 @@ void CryptographyPlugin::slotOutgoingMessage ( Kopete::Message& msg )
 	}
 
 	if ( !result.isEmpty() )
+	{
 		msg.setPlainBody ( result );
+		if ( encrypting )
+			msg.addClass ( "encrypted" );
+		if ( signing )
+			msg.addClass ( "signed" );
+	}
 	else
 		kDebug ( 14303 ) << "empty result";
 }
