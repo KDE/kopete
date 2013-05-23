@@ -26,6 +26,7 @@ class JabberAccount;
 class JabberBaseContact;
 namespace Kopete { class Message; }
 class QString;
+class KActionMenu;
 
 /**
  * @author Till Gerken
@@ -57,6 +58,8 @@ public:
 	 */
 	void updateDisplayName ();
 	
+public slots:
+
 	/**
 	 * reimplemented from Kopete::ChatSession
 	 * called when a contact is dropped in the window
@@ -64,12 +67,18 @@ public:
 	virtual void inviteContact(const QString &contactId);
 
 private slots:
+	///Slot to show invite menu for other user to chat
+	void showInviteMenu();
+	///Slot to hide invite menu
+	void hideInviteMenu();
 	void slotMessageSent ( Kopete::Message &message, Kopete::ChatSession *kmm );
 	
 
 
 private:
 	XMPP::Jid mRoomJid;
+	///The action to invite the user
+	KActionMenu *mInviteAction;
 };
 
 #endif
