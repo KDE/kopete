@@ -396,7 +396,11 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	 * Don't display empty messages, these were most likely just carrying
 	 * event notifications or other payload.
 	 */
-	if ( message.body().isEmpty () && message.urlList().isEmpty () && !message.containsHTML() && message.xencrypted().isEmpty() )
+	if ( message.body().isEmpty () && message.urlList().isEmpty () && !message.containsHTML() && message.xencrypted().isEmpty()
+#ifdef IRIS_XEP_0027_XSIGNED
+	     && message.xsigned().isEmpty()
+#endif
+	   )
 		return;
 
 	// determine message type
@@ -437,6 +441,17 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 			}
 		}
+#ifdef IRIS_XEP_0027_XSIGNED
+		else if( !message.xsigned().isEmpty() )
+		{
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received signed message";
+			if (Kopete::PluginManager::self()->plugin("kopete_cryptography"))
+			{
+				kDebug( JABBER_DEBUG_GLOBAL ) << "Kopete cryptography plugin loaded";
+				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QString ("\n-----END PGP MESSAGE-----\n");
+			}
+		}
+#endif
 
 		if( message.containsHTML() )
 		{

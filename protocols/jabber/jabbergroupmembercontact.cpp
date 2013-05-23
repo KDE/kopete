@@ -226,6 +226,12 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
+#ifdef IRIS_XEP_0027_XSIGNED
+		else if( !message.xsigned().isEmpty () )
+		{
+			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QString ("\n-----END PGP MESSAGE-----\n");
+		}
+#endif
 
 		// convert XMPP::Message into Kopete::Message
 		newMessage = new Kopete::Message ( this, contactList );

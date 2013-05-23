@@ -403,7 +403,18 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			 */
 
 			// please don't translate the following string
-			jabberMessage.setBody ( "This message is signed or encrypted." );
+#ifdef IRIS_XEP_0027_XSIGNED
+			bool xsigned = message.classes().contains ( "signed" );
+			bool xencrypted = message.classes().contains ( "encrypted" );
+			if ( xsigned && xencrypted )
+				jabberMessage.setBody ( "This message is signed and encrypted." );
+			else if ( xsigned )
+				jabberMessage.setBody ( "This message is signed." );
+			else if ( xencrypted )
+				jabberMessage.setBody ( "This message is encrypted." );
+			else
+#endif
+				jabberMessage.setBody ( "This message is signed or encrypted." );
 
 			QString encryptedBody = message.plainBody().trimmed();
 
@@ -412,7 +423,12 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.indexOf ( "\n\n" ) - 2 );
 
 			// assign payload to message
-			jabberMessage.setXEncrypted ( encryptedBody );
+#ifdef IRIS_XEP_0027_XSIGNED
+			if ( xsigned && ! xencrypted )
+				jabberMessage.setXSigned ( encryptedBody );
+			else
+#endif
+				jabberMessage.setXEncrypted ( encryptedBody );
         }
         else
         {
