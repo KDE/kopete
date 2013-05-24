@@ -39,6 +39,11 @@ StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) 
 	m_lastPresentChanged  = false;
 	m_messageLengthChanged = false;
 
+	m_timeBetweenTwoMessages = 0;
+	m_timeBetweenTwoMessagesOn = 0;
+	m_messageLength = 0;
+	m_messageLengthOn = 0;
+
 	commonStatsCheck("timebetweentwomessages", m_timeBetweenTwoMessages, m_timeBetweenTwoMessagesOn, 0, -1);
 	commonStatsCheck("messagelength", m_messageLength, m_messageLengthOn, 0, 0);
 	
