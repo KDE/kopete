@@ -119,7 +119,7 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 			if ( xsigned && xencrypted )
 				jabberMessage.setBody ( "This message is signed and encrypted." );
 			else if ( xsigned )
-				jabberMessage.setBody ( "This message is signed." );
+				jabberMessage.setBody ( message.plainBody().trimmed() );
 			else if ( xencrypted )
 				jabberMessage.setBody ( "This message is encrypted." );
 			else
