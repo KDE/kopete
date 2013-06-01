@@ -468,7 +468,7 @@ void KopeteWindow::initActions()
 	d->actionShowEmptyGroups->setCheckedState ( KGuiItem ( i18n ( "Hide Empty &Groups" ) ) );
     */
 
-	KFilterProxySearchLine* searchLine = new KFilterProxySearchLine();
+	KFilterProxySearchLine* searchLine = new KFilterProxySearchLine ( this );
 	searchLine->setProxy( d->proxyModel );
 	KAction *quickSearch = new KAction ( i18n ( "Quick Search Bar" ), this );
 	actionCollection()->addAction ( "quicksearch_bar", quickSearch );
