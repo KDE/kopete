@@ -1399,8 +1399,15 @@ void KopeteWindow::showAddContactDialog ( Kopete::Account * account )
 	// Populate the groups list
 	Kopete::GroupList groups=Kopete::ContactList::self()->groups();
 	QHash<QString, Kopete::Group*> groupItems;
+
+	// Add top level group
+	groupItems.insert ( Kopete::Group::topLevel()->displayName(), Kopete::Group::topLevel() );
+	ui_groupKABC.groupCombo->addItem ( Kopete::Group::topLevel()->displayName() );
+
 	foreach ( Kopete::Group *group, groups )
 	{
+		if ( group->type() != Kopete::Group::Normal )
+			continue;
 		QString groupname = group->displayName();
 		if ( !groupname.isEmpty() )
 		{

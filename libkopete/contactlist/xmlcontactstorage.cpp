@@ -189,6 +189,9 @@ void XmlContactStorage::load()
         element = element.nextSibling().toElement();
     }
 
+    // above parseGroup will always fail for top level group, so add it here
+    addGroup( Kopete::Group::topLevel() );
+
     // Load metaContacts
     element = list.firstChild().toElement();
     while( !element.isNull() )
