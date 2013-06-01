@@ -179,13 +179,16 @@ void OscarContact::sync(unsigned int flags)
 		
 		OContact oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
 		Kopete::Group* newGroup = metaContact()->groups().first();
-		if ( newGroup->displayName() == oldGroup.name() )
+		QString newGroupName = newGroup->displayName();
+		if ( newGroup->type() == Kopete::Group::TopLevel )
+			newGroupName = "Buddies";
+		if ( newGroupName == oldGroup.name() )
 			return; //we didn't really move
 		
 		if ( m_ssiItem.isValid() )
-			mAccount->changeContactGroupInSSI( contactId(), newGroup->displayName(), true );
+			mAccount->changeContactGroupInSSI( contactId(), newGroupName, true );
 		else
-			mAccount->addContactToSSI( contactId(), newGroup->displayName(), true );
+			mAccount->addContactToSSI( contactId(), newGroupName, true );
 	}
 
 	if ( flags & Kopete::Contact::DisplayNameChanged && mAccount->engine() )

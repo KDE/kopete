@@ -277,6 +277,7 @@ void OscarAccount::processSSIList()
 	kDebug(OSCAR_GEN_DEBUG) << "Adding " << groupList.count() << " groups to contact list";
 	for( ; git != listEnd; ++git )
 	{ //add all the groups.
+		if ( ( *git ).name() == "Buddies" ) continue;
 		kDebug( OSCAR_GEN_DEBUG ) << "Adding SSI group'" << ( *git ).name()
 			<< "' to the kopete contact list" << endl;
 		kcl->findGroup( ( *git ).name() );
@@ -291,10 +292,10 @@ void OscarAccount::processSSIList()
 	{
 		OContact groupForAdd = listManager->findGroup( ( *bit ).gid() );
 		Kopete::Group* group;
-		if ( groupForAdd.isValid() )
+		if ( groupForAdd.isValid() && groupForAdd.name() != "Buddies" )
 			group = kcl->findGroup( groupForAdd.name() ); //add if not present
 		else
-			group = kcl->findGroup( i18n( "Buddies" ) );
+			group = Kopete::Group::topLevel();
 
 		kDebug( OSCAR_GEN_DEBUG ) << "Adding contact '" << ( *bit ).name() << "' to kopete list in group " <<
 			group->displayName() << endl;
@@ -576,7 +577,7 @@ void OscarAccount::fileTransferAccept( Kopete::Transfer* transfer, const QString
 
 void OscarAccount::kopeteGroupRemoved( Kopete::Group* group )
 {
-	if ( isConnected() )
+	if ( isConnected() && group->displayName() != "Buddies" )
 		d->engine->removeGroup( group->displayName() );
 }
 
@@ -588,7 +589,7 @@ void OscarAccount::kopeteGroupAdded( Kopete::Group* group )
 
 void OscarAccount::kopeteGroupRenamed( Kopete::Group* group, const QString& oldName )
 {
-	if ( isConnected() )
+	if ( isConnected() && oldName != "Buddies" )
 		d->engine->renameGroup( oldName, group->displayName() );
 }
 
@@ -912,13 +913,13 @@ bool OscarAccount::createContact(const QString &contactId,
 		if ( kopeteGroups.isEmpty() || kopeteGroups.first() == Kopete::Group::topLevel() )
 		{
 			kDebug(OSCAR_GEN_DEBUG) << "Contact with NO group. " << "Adding to group 'Buddies'";
-			groupName = i18n("Buddies");
+			groupName = "Buddies";
 		}
 		else
 		{
 				//apparently kopeteGroups.first() can be invalid. Attempt to prevent
 				//crashes in SSIData::findGroup(const QString& name)
-			groupName = kopeteGroups.first() ? kopeteGroups.first()->displayName() : i18n("Buddies");
+			groupName = kopeteGroups.first() ? kopeteGroups.first()->displayName() : "Buddies";
 
 			kDebug(OSCAR_GEN_DEBUG) << "Contact with group." << " No. of groups = " << kopeteGroups.count() <<
 				" Name of first group = " << groupName << endl;
