@@ -160,7 +160,7 @@ protected:
 	}
 
 private:
-	Kopete::Group* mGroup;
+	QPointer <Kopete::Group> mGroup;
 	QList<ContactListModelItem*> mItems;
 };
 

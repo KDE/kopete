@@ -249,7 +249,7 @@ bool ContactListTreeModel::setData( const QModelIndex & index, const QVariant & 
 		ContactListModelItem *clmi = itemFor( index );
 		GroupModelItem *gmi = dynamic_cast<GroupModelItem*>( clmi );
 
-		if ( gmi )
+		if ( gmi && gmi->group() )
 		{
 			if ( gmi->group()->isExpanded() != value.toBool() )
 			{
@@ -275,7 +275,7 @@ QVariant ContactListTreeModel::data ( const QModelIndex & index, int role ) cons
 	GroupModelItem *gmi = dynamic_cast<GroupModelItem*>( clmi );
 	MetaContactModelItem *mcmi = dynamic_cast<MetaContactModelItem*>( clmi );
 
-	if ( gmi )
+	if ( gmi && gmi->group() )
 	{
 		Kopete::Group* g = gmi->group();
 		switch ( role )
@@ -663,10 +663,12 @@ void ContactListTreeModel::saveModelSettingsImpl( QDomDocument& doc, QDomElement
 			if ( clmi->isGroup() )
 			{
 				GroupModelItem* gmi = dynamic_cast<GroupModelItem*>( clmi );
-				QDomElement groupElement = doc.createElement( "Group" );
-				groupElement.setAttribute( "uuid", gmi->group()->groupId() );
-				groupElement.setAttribute( "possition", index++ );
-				groupRootElement.appendChild( groupElement );
+				if ( gmi->group() ) {
+					QDomElement groupElement = doc.createElement( "Group" );
+					groupElement.setAttribute( "uuid", gmi->group()->groupId() );
+					groupElement.setAttribute( "possition", index++ );
+					groupRootElement.appendChild( groupElement );
+				}
 			}
 		}
 	}
@@ -685,6 +687,7 @@ void ContactListTreeModel::saveModelSettingsImpl( QDomDocument& doc, QDomElement
 		{
 			GroupModelItem* gmi = it.next().value();
 			QDomElement groupElement = doc.createElement( "Group" );
+			if ( ! gmi->group() ) continue;
 			groupElement.setAttribute( "uuid", gmi->group()->groupId() );
 			metaContactRootElement.appendChild( groupElement );
 
@@ -731,6 +734,7 @@ void ContactListTreeModel::loadModelSettingsImpl( QDomElement& rootElement )
 	while ( it.hasNext() )
 	{
 		GroupModelItem* gmi = it.next().value();
+		if ( ! gmi->group() ) continue;
 		uuidToGroup.insert( gmi->group()->groupId(), gmi );
 	}
 
