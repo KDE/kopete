@@ -190,8 +190,9 @@ void CryptographyGUIClient::slotExport()
 	QList <Kopete::MetaContact*> mcs;
 	foreach ( Kopete::Contact* c, csn->members() )
 	mcs.append ( c->metaContact() );
-	ExportKeys dialog ( mcs, csn->view()->mainWidget() );
-	dialog.exec();
+	QPointer <ExportKeys> dialog = new ExportKeys ( mcs, csn->view()->mainWidget() );
+	dialog->exec();
+	delete dialog;
 }
 
 #include "cryptographyguiclient.moc"

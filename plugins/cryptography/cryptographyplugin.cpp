@@ -357,13 +357,14 @@ void CryptographyPlugin::slotSelectContactKey()
 		return;
 	// key we already have
 	QString key = m->pluginData ( this, "gpgKey" );
-	CryptographySelectUserKey opts ( key, m );
-	opts.exec();
-	if ( opts.result() )
+	QPointer <CryptographySelectUserKey> opts = new CryptographySelectUserKey ( key, m );
+	opts->exec();
+	if ( opts && opts->result() )
 	{
-		key = opts.publicKey();
+		key = opts->publicKey();
 		m->setPluginData ( this, "gpgKey", key );
 	}
+	delete opts;
 }
 
 
@@ -423,20 +424,24 @@ QString CryptographyPlugin::kabcKeySelector ( QString displayName, QString addre
 	// allow for selection of key out of many
 	if ( keys.count() > 1 )
 	{
-		KDialog dialog ( parent );
-		QWidget w ( &dialog );
+		QPointer <KDialog> dialog = new KDialog ( parent );
+		QPointer <QWidget> w = new QWidget ( dialog );
 		Ui::KabcKeySelectorUI ui;
-		ui.setupUi ( &w );
-		dialog.setCaption ( i18n ( "Public Keys Found" ) );
-		dialog.setButtons ( KDialog::Ok | KDialog::Cancel );
-		dialog.setMainWidget ( &w );
+		ui.setupUi ( w );
+		dialog->setCaption ( i18n ( "Public Keys Found" ) );
+		dialog->setButtons ( KDialog::Ok | KDialog::Cancel );
+		dialog->setMainWidget ( w );
 		ui.label->setText ( i18nc ( "@info", "Cryptography plugin has found multiple encryption keys for %1 (%2) in your KDE address book. To use one of these keys, select it and choose OK.",
 		                           displayName, addresseeName ) );
 		for ( int i = 0; i < keys.count(); i++ )
 			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "application-pgp-keys", KIconLoader::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
 		ui.keyList->addItems ( keys );
-		if ( dialog.exec() )
-			return ui.keyList->currentItem()->text();
+		QString ret;
+		if ( dialog->exec() )
+			ret = ui.keyList->currentItem()->text();
+		delete dialog;
+		if ( ! ret.isEmpty() )
+			return ret;
 	}
 	return QString();
 }
@@ -444,8 +449,9 @@ QString CryptographyPlugin::kabcKeySelector ( QString displayName, QString addre
 // export the public keys of the chat session's contacts
 void CryptographyPlugin::slotExportSelectedMetaContactKeys()
 {
-	ExportKeys dialog ( Kopete::ContactList::self()->selectedMetaContacts(), Kopete::UI::Global::mainWidget() );
-	dialog.exec();
+	QPointer <ExportKeys> dialog = new ExportKeys ( Kopete::ContactList::self()->selectedMetaContacts(), Kopete::UI::Global::mainWidget() );
+	dialog->exec();
+	delete dialog;
 }
 
 #include "cryptographyplugin.moc"
