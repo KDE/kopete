@@ -33,6 +33,7 @@ int main( int argc, char *argv[] )
 		KOPETE_VERSION_STRING, ki18n(description), KAboutData::License_GPL,
 		ki18n("(c) 2001-2004, Duncan Mac-Vicar Prett\n(c) 2002-2008, Kopete Development Team"), ki18n("kopete-devel@kde.org"), "http://kopete.kde.org");
 
+	aboutData.addAuthor ( ki18n("Pali Rohár"), ki18n("Developer and maintainer"), "pali.rohar@gmail.com" );
 	aboutData.addAuthor ( ki18n("Duncan Mac-Vicar Prett"), ki18n("Developer and Project founder"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
 	aboutData.addAuthor ( ki18n("Andre Duffeck"), ki18n("Developer, Yahoo plugin maintainer"), "duffeck@kde.org" );
 	aboutData.addAuthor ( ki18n("Andy Goossens"), ki18n("Developer"), "andygoossens@telenet.be" );
@@ -55,7 +56,6 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( ki18n("Roman Jarosz"), ki18n("Developer, AIM and ICQ"), "kedgedev@centrum.cz" );
 	aboutData.addAuthor ( ki18n("Charles Connell"), ki18n("Developer"), "charles@connells.org" );
 	aboutData.addAuthor ( ki18n("Tejas Dinkar"), ki18n("Developer, Bonjour Plugin Maintainer"), "tejas@gja.in", "http://www.gja.in" );
-	aboutData.addAuthor ( ki18n("Pali Rohár"), ki18n("Developer, Skype plugin maintainer"), "pali.rohar@gmail.com" );
 
 	aboutData.addCredit ( ki18n("Vally8"), ki18n("Konki style author"), "vally8@gmail.com", "http://vally8.free.fr/" );
 	aboutData.addCredit ( ki18n("Tm_T"), ki18n("Hacker style author"), "jussi.kekkonen@gmail.com");
