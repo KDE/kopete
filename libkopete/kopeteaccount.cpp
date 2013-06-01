@@ -74,7 +74,7 @@ public:
 
 	~Private() { delete blackList; }
 
-	Protocol *protocol;
+	QPointer <Protocol> protocol;
 	QString id;
 	QString accountLabel;
 	bool excludeconnect;
@@ -82,8 +82,8 @@ public:
 	QHash<QString, Contact*> contacts;
 	QColor color;
 	uint connectionTry;
-	Identity *identity;
-	Contact *myself;
+	QPointer <Identity> identity;
+	QPointer <Contact> myself;
 	QTimer suppressStatusTimer;
 	QTimer reconnectTimer;
 	bool reconnectOnNetworkIsOnline;
