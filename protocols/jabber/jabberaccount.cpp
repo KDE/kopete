@@ -289,7 +289,15 @@ bool JabberAccount::createContact (const QString & contactId,  Kopete::MetaConta
 	QStringList groupNames;
 	Kopete::GroupList groupList = metaContact->groups();
 	foreach( Kopete::Group *group, groupList )
-		groupNames += group->displayName();
+	{
+		if (group->type() == Kopete::Group::Normal)
+			groupNames += group->displayName();
+		else if (group->type() == Kopete::Group::TopLevel)
+			groupNames += QString();
+	}
+
+	if(groupNames.size() == 1 && groupNames.at(0).isEmpty())
+		groupNames.clear();
 
 	XMPP::Jid jid ( contactId );
 	XMPP::RosterItem item ( jid );
@@ -1246,7 +1254,15 @@ void JabberAccount::slotAddedInfoEventActionActivated ( uint actionId )
 			QStringList groupNames;
 			Kopete::GroupList groupList = parentContact->groups();
 			foreach(Kopete::Group *group,groupList)
-				groupNames += group->displayName();
+			{
+				if (group->type() == Kopete::Group::Normal)
+					groupNames += group->displayName();
+				else if (group->type() == Kopete::Group::TopLevel)
+					groupNames += QString();
+			}
+
+			if(groupNames.size() == 1 && groupNames.at(0).isEmpty())
+				groupNames.clear();
 
 			XMPP::RosterItem item;
 
@@ -1329,7 +1345,12 @@ void JabberAccount::slotContactUpdated (const XMPP::RosterItem & item)
 	
 			// add this metacontact to all groups the contact is a member of
 			for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
-				metaContact->addToGroup (Kopete::ContactList::self ()->findGroup (*it));
+			{
+				if ( it->isEmpty() )
+					metaContact->addToGroup (Kopete::Group::topLevel ());
+				else
+					metaContact->addToGroup (Kopete::ContactList::self ()->findGroup (*it));
+			}
 	
 			// put it onto contact list
 			Kopete::ContactList::self ()->addMetaContact ( metaContact );

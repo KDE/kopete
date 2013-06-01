@@ -1088,10 +1088,15 @@ void JabberContact::slotDelayedSync( )
 
 	foreach ( Kopete::Group * g, groupList )
 	{
-		if ( g->type () != Kopete::Group::TopLevel )
+		if ( g->type () == Kopete::Group::Normal )
 			groups += g->displayName ();
+		else if ( g->type () == Kopete::Group::TopLevel )
+			groups += QString();
 	}
-		
+
+	if(groups.size() == 1 && groups.at(0).isEmpty())
+		groups.clear();
+
 	if(mRosterItem.groups() != groups)
 	{
 		changed=true;

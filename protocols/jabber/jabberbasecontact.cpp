@@ -148,8 +148,11 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		// find all groups our contact is in but that are not in the server side roster
 		for ( int i = 0; i < metaContact()->groups().count (); i++ )
 		{
-			if ( !item.groups().contains ( metaContact()->groups().at(i)->displayName () ) )
-				groupsToRemoveFrom.append ( metaContact()->groups().at ( i ) );
+			Kopete::Group *gr = metaContact()->groups().at ( i );
+			if ( gr->type () == Kopete::Group::Normal && !item.groups().contains ( gr->displayName () ) )
+				groupsToRemoveFrom.append ( gr );
+			else if ( gr->type () == Kopete::Group::TopLevel && !item.groups().contains ( QString () ) )
+				groupsToRemoveFrom.append ( gr );
 		}
 	
 		// now find all groups that are in the server side roster but not in the local group
@@ -158,7 +161,13 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 			bool found = false;
 			for ( int j = 0; j < metaContact()->groups().count (); j++)
 			{
-				if ( metaContact()->groups().at(j)->displayName () == item.groups().at(i) )
+				Kopete::Group *gr = metaContact()->groups().at ( j );
+				if ( gr->type () == Kopete::Group::Normal && gr->displayName () == item.groups().at(i) )
+				{
+					found = true;
+					break;
+				}
+				else if ( gr->type () == Kopete::Group::TopLevel && item.groups().at(i).isEmpty() )
 				{
 					found = true;
 					break;
@@ -167,7 +176,10 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 			
 			if ( !found )
 			{
-				groupsToAddTo.append ( Kopete::ContactList::self()->findGroup ( item.groups().at(i) ) );
+				if ( item.groups().at(i).isEmpty() )
+					groupsToAddTo.append ( Kopete::Group::topLevel() );
+				else
+					groupsToAddTo.append ( Kopete::ContactList::self()->findGroup ( item.groups().at(i) ) );
 			}
 		}
 	
