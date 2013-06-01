@@ -22,6 +22,7 @@
 #include <QTimer>
 #include <QPixmap>
 #include <QIcon>
+#include <QPointer>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -683,7 +684,7 @@ bool Account::isBlocked( const QString &contactId )
 
 void Account::editAccount(QWidget *parent)
 {
-	KDialog *editDialog = new KDialog( parent );
+	QPointer <KDialog> editDialog = new KDialog( parent );
 	editDialog->setCaption( i18n( "Edit Account" ) );
 	editDialog->setButtons( KDialog::Ok | KDialog::Apply | KDialog::Cancel );
 
@@ -708,11 +709,11 @@ void Account::editAccount(QWidget *parent)
 	editDialog->setMainWidget( w );
 	if ( editDialog->exec() == QDialog::Accepted )
 	{
-		if( m_accountWidget->validateData() )
+		if( editDialog && m_accountWidget->validateData() )
 			m_accountWidget->apply();
 	}
 
-	editDialog->deleteLater();
+	delete editDialog;
 }
 
 void Account::setCustomIcon( const QString & i)
