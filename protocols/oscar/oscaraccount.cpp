@@ -202,8 +202,9 @@ void OscarAccount::logOff( Kopete::Account::DisconnectReason reason )
 	                     this, SLOT(ssiContactUpdated(OContact)) );
 
 	d->engine->close();
-	OscarProtocol* p = static_cast<OscarProtocol*>(protocol());
-	myself()->setOnlineStatus( p->statusManager()->onlineStatusOf( Oscar::Presence( Oscar::Presence::Offline ) ) );
+	OscarProtocol* p = dynamic_cast<OscarProtocol*>(protocol());
+	if ( myself() && p && p->statusManager() )
+		myself()->setOnlineStatus( p->statusManager()->onlineStatusOf( Oscar::Presence( Oscar::Presence::Offline ) ) );
 
 	d->contactAddQueue.clear();
 	d->contactChangeQueue.clear();
