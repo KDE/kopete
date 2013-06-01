@@ -61,8 +61,6 @@ class SkypeAccountPrivate {
 		bool searchForUnread;
 		///Do we show call control window?
 		bool callControl;
-		///Metacontact for all users that aren't in the list
-		Kopete::MetaContact notInListUsers;
 		///Constructor
 		SkypeAccountPrivate(SkypeAccount &account) : skype(account) {};//just an empty constructor
 		///Automatic close of call window when the call finishes (in seconds, 0 -> disabled)
