@@ -182,7 +182,7 @@ void AppearanceConfig::emitChanged()
 
 void AppearanceConfig::slotEditTooltips()
 {
-	TooltipEditDialog *dlg = new TooltipEditDialog(this);
+	QPointer <TooltipEditDialog> dlg = new TooltipEditDialog(this);
 	connect(dlg, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
 	dlg->exec();
 	delete dlg;

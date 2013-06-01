@@ -20,6 +20,7 @@
  
 #include "privacylistmodel.h"
 #include <QAbstractListModel>
+#include <QPointer>
 
 #include "privacylist.h"
 #include "privacyruledlg.h"
@@ -97,25 +98,29 @@ bool PrivacyListModel::removeRows(int row, int count, const QModelIndex&)
 
 bool PrivacyListModel::add()
 {
-	PrivacyRuleDlg d;
-	if (d.exec() == QDialog::Accepted) {
-		list_.insertItem(0,d.rule());
+	QPointer <PrivacyRuleDlg> d = new PrivacyRuleDlg;
+	if (d->exec() == QDialog::Accepted && d) {
+		list_.insertItem(0,d->rule());
+		delete d;
 		reset();
 		return true;
 	}
+	delete d;
 	return false;
 }
 
 bool PrivacyListModel::edit(const QModelIndex& index)
 {
 	if (index.isValid()) {
-		PrivacyRuleDlg d;
-		d.setRule(list_.item(index.row()));
-		if (d.exec() == QDialog::Accepted) {
-			list_.updateItem(index.row(),d.rule());
+		QPointer <PrivacyRuleDlg> d = new PrivacyRuleDlg;
+		d->setRule(list_.item(index.row()));
+		if (d->exec() == QDialog::Accepted && d) {
+			list_.updateItem(index.row(),d->rule());
+			delete d;
 			reset();
 			return true;
 		}
+		delete d;
 	}
 	return false;
 }

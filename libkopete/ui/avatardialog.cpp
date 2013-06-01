@@ -17,6 +17,9 @@
 */
 #include "avatardialog.h"
 
+// Qt includes
+#include <QPointer>
+
 // KDE includes
 #include <kdebug.h>
 #include <klocale.h>
@@ -66,10 +69,10 @@ QString AvatarDialog::selectedAvatarPath() const
 
 QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar, bool * ok )
 {
-	AvatarDialog dialog(parent);
-	dialog.d->mainWidget->setCurrentAvatar(currentAvatar);
-	dialog.d->currentPath = currentAvatar;
-	if ( dialog.exec() == QDialog::Accepted )
+	QPointer <AvatarDialog> dialog = new AvatarDialog(parent);
+	dialog->d->mainWidget->setCurrentAvatar(currentAvatar);
+	dialog->d->currentPath = currentAvatar;
+	if ( dialog->exec() == QDialog::Accepted )
 	{
 		if ( ok ) {
 			*ok = true;
@@ -81,7 +84,11 @@ QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar, b
 			*ok = false;
 		}
 	}
-	return dialog.selectedAvatarPath();
+	QString ret;
+	if ( dialog )
+		ret = dialog->selectedAvatarPath();
+	delete dialog;
+	return ret;
 }
 
 void AvatarDialog::slotButtonClicked(int button)

@@ -19,6 +19,7 @@
 
 #include "icqcontact.h"
 
+#include <QPointer>
 #include <qtimer.h>
 #include <KActionCollection>
 #include <klocale.h>
@@ -284,11 +285,12 @@ void ICQContact::slotRequestAuth()
 void ICQContact::slotSendAuth()
 {
 	kDebug(OSCAR_ICQ_DEBUG) << "Sending auth reply";
-	ICQAuthReplyDialog replyDialog( 0, false );
+	QPointer <ICQAuthReplyDialog> replyDialog = new ICQAuthReplyDialog( 0, false );
 
-	replyDialog.setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
-	if ( replyDialog.exec() )
-		mAccount->engine()->sendAuth( contactId(), replyDialog.reason(), replyDialog.grantAuth() );
+	replyDialog->setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+	if ( replyDialog->exec() && replyDialog )
+		mAccount->engine()->sendAuth( contactId(), replyDialog->reason(), replyDialog->grantAuth() );
+	delete replyDialog;
 }
 
 void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason, bool granted )

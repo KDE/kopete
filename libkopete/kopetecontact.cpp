@@ -321,7 +321,7 @@ void Contact::toggleAlwaysVisible()
 
 void Contact::changeMetaContact()
 {
-	KDialog *moveDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	QPointer <KDialog> moveDialog = new KDialog( Kopete::UI::Global::mainWidget() );
 	moveDialog->setCaption( i18n( "Move Contact" ) );
 	moveDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	moveDialog->setDefaultButton( KDialog::Ok );
@@ -360,7 +360,8 @@ void Contact::changeMetaContact()
 		}
 	}
 
-	moveDialog->deleteLater();
+	if ( moveDialog )
+		moveDialog->deleteLater();
 }
 
 void Contact::slotMetaContactDestroyed( QObject* mc )

@@ -314,14 +314,20 @@ void ChatMessagePart::slotScrollingTo( int y )
 void ChatMessagePart::save()
 {
 	const KUrl dummyUrl;
-	KFileDialog dlg( dummyUrl, QLatin1String( "text/html text/plain" ), view() );
-	dlg.setCaption( i18n( "Save Conversation" ) );
-	dlg.setOperationMode( KFileDialog::Saving );
+	QPointer <KFileDialog> dlg = new KFileDialog( dummyUrl, QLatin1String( "text/html text/plain" ), view() );
+	dlg->setCaption( i18n( "Save Conversation" ) );
+	dlg->setOperationMode( KFileDialog::Saving );
 
-	if ( dlg.exec() != QDialog::Accepted )
+	if ( dlg->exec() != QDialog::Accepted )
+	{
+		delete dlg;
+		return;
+	}
+
+	if ( ! dlg )
 		return;
 
-	KUrl saveURL = dlg.selectedUrl();
+	KUrl saveURL = dlg->selectedUrl();
 	KTemporaryFile *tempFile = new KTemporaryFile();
 	tempFile->setAutoRemove(false);
 	tempFile->open();
@@ -329,7 +335,7 @@ void ChatMessagePart::save()
 	QTextStream stream ( tempFile );
 	stream.setCodec(QTextCodec::codecForName("UTF-8"));
 
-	if ( dlg.currentFilter() == QLatin1String( "text/plain" ) )
+	if ( dlg->currentFilter() == QLatin1String( "text/plain" ) )
 	{
 		QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
 		for(it = d->allMessages.constBegin(); it != itEnd; ++it)
@@ -347,6 +353,8 @@ void ChatMessagePart::save()
 	{
 		stream << htmlDocument().toString().string() << '\n';
 	}
+
+	delete dlg;
 
 	stream.flush();
 	QString fileName = tempFile->fileName();

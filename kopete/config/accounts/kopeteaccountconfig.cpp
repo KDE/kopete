@@ -258,13 +258,13 @@ void KopeteAccountConfig::modifyAccount(Kopete::Account *account)
 {
 	Kopete::Protocol *proto = account->protocol();
 
-	KDialog editDialog ( this );
-	editDialog.setCaption( i18n("Modify Account" ) );
-	editDialog.setButtons( KDialog::Ok | KDialog::Cancel );
-	editDialog.setDefaultButton(KDialog::Ok);
-	editDialog.showButtonSeparator(true);
+	QPointer <KDialog> editDialog = new KDialog( this );
+	editDialog->setCaption( i18n("Modify Account" ) );
+	editDialog->setButtons( KDialog::Ok | KDialog::Cancel );
+	editDialog->setDefaultButton(KDialog::Ok);
+	editDialog->showButtonSeparator(true);
 
-	KopeteEditAccountWidget *m_accountWidget = proto->createEditAccountWidget( account, &editDialog );
+	KopeteEditAccountWidget *m_accountWidget = proto->createEditAccountWidget( account, editDialog );
 	if ( !m_accountWidget )
 		return;
 
@@ -278,12 +278,13 @@ void KopeteAccountConfig::modifyAccount(Kopete::Account *account)
 	if ( !w )
 		return;
 
-	editDialog.setMainWidget( w );
-	if ( editDialog.exec() == QDialog::Accepted )
+	editDialog->setMainWidget( w );
+	if ( editDialog->exec() == QDialog::Accepted )
 	{
 		if( m_accountWidget->validateData() )
 			m_accountWidget->apply();
 	}
+	delete editDialog;
 
 	load();
 	Kopete::AccountManager::self()->save();
@@ -298,8 +299,9 @@ void KopeteAccountConfig::modifyIdentity(Kopete::Identity *)
 
 	Kopete::Identity *ident = lvi->identity();
 
-	IdentityDialog dialog(ident, this);
-	dialog.exec();
+	QPointer <IdentityDialog> dialog = new IdentityDialog(ident, this);
+	dialog->exec();
+	delete dialog;
 
 	load();
 	Kopete::IdentityManager::self()->save();
@@ -415,8 +417,8 @@ void KopeteAccountConfig::slotAddIdentity()
 	if (!ident)
 		return;
 
-	IdentityDialog dialog(ident, this);
-	if ( dialog.exec() == QDialog::Accepted ) {
+	QPointer <IdentityDialog> dialog = new IdentityDialog(ident, this);
+	if ( dialog->exec() == QDialog::Accepted ) {
 		ident = Kopete::IdentityManager::self()->registerIdentity(ident);
 		if (ident) {
 			Kopete::IdentityManager::self()->save();
@@ -425,6 +427,7 @@ void KopeteAccountConfig::slotAddIdentity()
 	} else {
 		delete ident;
 	}
+	delete dialog;
 }
 
 void KopeteAccountConfig::slotCopyIdentity()
@@ -445,14 +448,15 @@ void KopeteAccountConfig::slotCopyIdentity()
 	Kopete::Identity * ident = existing->clone();
 	ident->setLabel( newLabel );
 
-	IdentityDialog dialog(ident, this);
-	if ( dialog.exec() == QDialog::Accepted ) {
+	QPointer <IdentityDialog> dialog = new IdentityDialog(ident, this);
+	if ( dialog->exec() == QDialog::Accepted ) {
 		if ( Kopete::IdentityManager::self()->registerIdentity(ident) ) {
 			load();
 		}
 	} else {
 		delete ident;
 	}
+	delete dialog;
 }
 
 void KopeteAccountConfig::slotOnlineStatusChanged( Kopete::Contact *contact,

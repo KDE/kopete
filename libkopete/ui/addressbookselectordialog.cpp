@@ -58,12 +58,14 @@ AddressBookSelectorDialog::~AddressBookSelectorDialog()
 
 KABC::Addressee AddressBookSelectorDialog::getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent)
 {
-	AddressBookSelectorDialog dialog(title, message, preSelectUid, parent);
-	int result = dialog.exec();
+	QPointer <AddressBookSelectorDialog> dialog = new AddressBookSelectorDialog(title, message, preSelectUid, parent);
+	int result = dialog->exec();
 
 	KABC::Addressee adr;
-	if ( result == QDialog::Accepted )
-		adr = dialog.addressBookSelectorWidget()->addressee();
+	if ( result == QDialog::Accepted && dialog )
+		adr = dialog->addressBookSelectorWidget()->addressee();
+
+	delete dialog;
 
 	return adr;
 }

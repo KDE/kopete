@@ -981,7 +981,7 @@ void KopeteContactListView::addContact()
 	if( !account || !(metaContact || group) )
 		return;
 
-	KDialog *addDialog = new KDialog( this );
+	QPointer <KDialog> addDialog = new KDialog( this );
 	addDialog->setCaption( i18n( "Add Contact" ) );
 	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 
@@ -1013,7 +1013,8 @@ void KopeteContactListView::addContact()
 			}
 		}
 	}
-	addDialog->deleteLater();
+	if ( addDialog )
+		addDialog->deleteLater();
 }
 
 void KopeteContactListView::groupPopup( Kopete::Group *group, const QPoint& pos )

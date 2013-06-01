@@ -15,6 +15,7 @@
   *************************************************************************
 */
 
+#include <QPointer>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -357,24 +358,29 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 
 void ICQAccount::setXtrazStatus()
 {
-	Xtraz::ICQStatusDialog dialog;
-	if ( dialog.exec() == QDialog::Accepted )
+	QPointer <Xtraz::ICQStatusDialog> dialog = new Xtraz::ICQStatusDialog;
+	if ( dialog->exec() == QDialog::Accepted )
 	{
-		setPresenceXStatus( dialog.xtrazStatus() );
+		if ( ! dialog )
+			return;
 
-		if ( dialog.append() )
+		setPresenceXStatus( dialog->xtrazStatus() );
+
+		if ( dialog->append() )
 		{
 			ICQStatusManager* mgr = static_cast<ICQStatusManager*>( protocol()->statusManager() );
-			mgr->appendXtrazStatus( dialog.xtrazStatus() );
+			mgr->appendXtrazStatus( dialog->xtrazStatus() );
 		}
 	}
+	delete dialog;
 }
 
 void ICQAccount::editXtrazStatuses()
 {
 	ICQStatusManager* icqStatusManager = static_cast<ICQStatusManager*>( protocol()->statusManager() );
-	Xtraz::ICQStatusEditor dialog( icqStatusManager );
-	dialog.exec();
+	QPointer <Xtraz::ICQStatusEditor> dialog = new Xtraz::ICQStatusEditor( icqStatusManager );
+	dialog->exec();
+	delete dialog;
 }
 
 void ICQAccount::setPresenceFlags( Oscar::Presence::Flags flags, const Kopete::StatusMessage &reason )

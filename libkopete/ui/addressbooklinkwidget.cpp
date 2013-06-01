@@ -86,20 +86,21 @@ void AddressBookLinkWidget::slotSelectAddressee()
 	{
 		assocDisplayText = mMetaContact->kabcId();
 	}
-	Kopete::UI::AddressBookSelectorDialog dialog( i18n("Address Book Association"), message,
+	QPointer <Kopete::UI::AddressBookSelectorDialog> dialog = new Kopete::UI::AddressBookSelectorDialog( i18n("Address Book Association"), message,
 	                                              assocDisplayText, this );
-	int result = dialog.exec();
+	int result = dialog->exec();
 
 	KABC::Addressee addr;
-	if ( result == QDialog::Accepted )
+	if ( result == QDialog::Accepted && dialog )
 	{
-		addr = dialog.addressBookSelectorWidget()->addressee();
+		addr = dialog->addressBookSelectorWidget()->addressee();
 
 		edtAddressee->setText( addr.realName() );
 		btnClear->setEnabled( !addr.isEmpty() );
 		mSelectedUid = ( addr.isEmpty() ? QString() : addr.uid() );
 		emit addresseeChanged( addr );
 	}
+	delete dialog;
 }
 
 } // end namespace UI

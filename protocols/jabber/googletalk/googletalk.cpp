@@ -16,6 +16,7 @@
 #include "googletalk.h"
 #include "googletalkcalldialog.h"
 
+#include <QPointer>
 #include <QByteArray>
 #include <QString>
 #include <QStringList>
@@ -48,8 +49,9 @@ GoogleTalk::GoogleTalk(const QString &jid, const QString &password) {
 	if ( callProcess->error() == QProcess::FailedToStart ) {
 		//Cant start process call
 		support = false;
-		QMessageBox error(QMessageBox::Critical, "Jabber Protocol", i18n("Cannot start process %1. Check your installation of Kopete.", QString(callExe)));
-		error.exec();
+		QPointer <QMessageBox> error = new QMessageBox(QMessageBox::Critical, "Jabber Protocol", i18n("Cannot start process %1. Check your installation of Kopete.", QString(callExe)));
+		error->exec();
+		delete error;
 		return;
 	} else {
 		//Call exist, quit it

@@ -27,6 +27,7 @@
 #include <qpixmap.h>
 #include <qstringlist.h>
 #include <QList>
+#include <QPointer>
 
 #include "im.h"
 #include "xmpp.h"
@@ -387,21 +388,29 @@ void JabberProtocol::handleURL(const KUrl & kurl) const
 			account = static_cast<JabberAccount*>(accounts.first());
 		else
 		{
-			KDialog chooser(Kopete::UI::Global::mainWidget());
-			chooser.setCaption( i18n("Choose Account") );
-			chooser.setButtons( KDialog::Ok | KDialog::Cancel );
-			chooser.setDefaultButton(KDialog::Ok);
-			KVBox vb(&chooser);
-			chooser.setMainWidget(&vb);
-			QLabel label(&vb);
-			label.setText(i18n("Choose an account to handle the URL %1" , kurl.prettyUrl()));
-//			label.setSizePolicy(QSizePolicy::Minimum , QSizePolicy::MinimumExpanding);
-			label.setWordWrap(true);
-			AccountSelector accSelector(const_cast<JabberProtocol*>(this), &vb);
-	//		accSelector.setSizePolicy(QSizePolicy::MinimumExpanding , QSizePolicy::MinimumExpanding);
-			int ret = chooser.exec();
-			account=qobject_cast<JabberAccount*>(accSelector.selectedItem());
-			if (ret == QDialog::Rejected || account == 0)
+			QPointer <KDialog> chooser = new KDialog(Kopete::UI::Global::mainWidget());
+			chooser->setCaption( i18n("Choose Account") );
+			chooser->setButtons( KDialog::Ok | KDialog::Cancel );
+			chooser->setDefaultButton(KDialog::Ok);
+			KVBox * vb = new KVBox(chooser);
+			chooser->setMainWidget(vb);
+			QLabel * label = new QLabel(vb);
+			label->setText(i18n("Choose an account to handle the URL %1" , kurl.prettyUrl()));
+//			label->setSizePolicy(QSizePolicy::Minimum , QSizePolicy::MinimumExpanding);
+			label->setWordWrap(true);
+			QPointer <AccountSelector> accSelector = new AccountSelector(const_cast<JabberProtocol*>(this), vb);
+	//		accSelector->setSizePolicy(QSizePolicy::MinimumExpanding , QSizePolicy::MinimumExpanding);
+			int ret = chooser->exec();
+			if (ret == QDialog::Rejected || !accSelector)
+			{
+				delete chooser;
+				delete accSelector;
+				return;
+			}
+			account=qobject_cast<JabberAccount*>(accSelector->selectedItem());
+			delete chooser;
+			delete accSelector;
+			if (!account)
 				return;
 		}
 	}

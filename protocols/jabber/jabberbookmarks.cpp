@@ -19,6 +19,7 @@
 #include <kopetecontact.h>
 
 
+#include <QPointer>
 #include <kdebug.h>
 #include <kaction.h>
 #include <kselectaction.h>
@@ -254,9 +255,9 @@ void JabberBookmarks::slotJoinChatBookmark( const QString & _jid )
 		XMPP::Jid jid( _jid );
 		m_account->client()->joinGroupChat( jid.domain(), jid.node(), jid.resource() );
 	} else {
-		DlgJabberBookmarkEditor editor( m_bookmarks );
-		if ( editor.exec() ) {
-			m_bookmarks = editor.bookmarks();
+		QPointer <DlgJabberBookmarkEditor> editor = new DlgJabberBookmarkEditor( m_bookmarks );
+		if ( editor->exec() && editor ) {
+			m_bookmarks = editor->bookmarks();
 
 			QDomDocument document( "storage" );
 			const QDomElement element = bookmarksToStorage( m_bookmarks, document );
@@ -265,6 +266,7 @@ void JabberBookmarks::slotJoinChatBookmark( const QString & _jid )
 			task->set( element );
 			task->go( true );
 		}
+		delete editor;
 	}
 }
 

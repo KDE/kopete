@@ -20,6 +20,7 @@
 
 #include <QHeaderView>
 #include <QMap>
+#include <QPointer>
 #include <KIcon>
 #include <KMessageBox>
 
@@ -198,28 +199,32 @@ bool AccountIdentityDialog::changeAccountIdentity( QWidget *parent, Kopete::Acco
 													Kopete::Identity *hidden_ident,
 													const QString &message )
 {
-	AccountIdentityDialog dialog( parent );
+	QPointer <AccountIdentityDialog> dialog = new AccountIdentityDialog( parent );
 
-	dialog.setAccount( account );
-	dialog.setHiddenIdentity( hidden_ident );
+	dialog->setAccount( account );
+	dialog->setHiddenIdentity( hidden_ident );
 	if ( !message.isEmpty() )
-		dialog.setMessage( message );
+		dialog->setMessage( message );
 
-	return dialog.exec();
+	int ret = dialog->exec();
+	delete dialog;
+	return ret;
 }
 
 bool AccountIdentityDialog::changeAccountIdentity( QWidget *parent, QList<Kopete::Account*> accountList, 
 										Kopete::Identity *hidden_ident,
 										const QString &message )
 {
-	AccountIdentityDialog dialog( parent );
+	QPointer <AccountIdentityDialog> dialog = new AccountIdentityDialog( parent );
 
-	dialog.setAccounts( accountList );
-	dialog.setHiddenIdentity( hidden_ident );
+	dialog->setAccounts( accountList );
+	dialog->setHiddenIdentity( hidden_ident );
 	if ( !message.isEmpty() )
-		dialog.setMessage( message );
+		dialog->setMessage( message );
 
-	return dialog.exec();
+	int ret = dialog->exec();
+	delete dialog;
+	return ret;
 }
 
 #include "accountidentitydialog.moc"

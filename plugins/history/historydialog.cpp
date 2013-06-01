@@ -18,6 +18,7 @@
 
 #include "historydialog.h"
 
+#include <QtCore/QPointer>
 #include <QtCore/QDir>
 #include <QtCore/QTextStream>
 #include <QtGui/QClipboard>
@@ -635,8 +636,9 @@ void HistoryDialog::slotCopyURL()
 
 void HistoryDialog::slotImportHistory(void)
 {
-	HistoryImport importer(this);
-	importer.exec();
+	QPointer <HistoryImport> importer = new HistoryImport(this);
+	importer->exec();
+	delete importer;
 }
 
 QString HistoryDialog::highlight(const QString &htmlText, const QString &highlight) const

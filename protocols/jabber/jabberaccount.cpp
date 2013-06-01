@@ -39,6 +39,7 @@
 #include <qregexp.h>
 #include <qtimer.h>
 #include <QAbstractSocket>
+#include <QPointer>
 
 #include <kcomponentdata.h>
 #include <kconfig.h>
@@ -1593,10 +1594,11 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 	{
 	case JabberClient::InvalidPasswordForMUC:
 		{
-			KPasswordDialog dlg(Kopete::UI::Global::mainWidget());
-            dlg.setPrompt(i18n("A password is required to join the room %1.", jid.node()));
-			if (dlg.exec() == KPasswordDialog::Accepted)
-				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), jid.resource(), dlg.password());
+			QPointer <KPasswordDialog> dlg = new KPasswordDialog(Kopete::UI::Global::mainWidget());
+			dlg->setPrompt(i18n("A password is required to join the room %1.", jid.node()));
+			if (dlg->exec() == KPasswordDialog::Accepted && dlg)
+				m_jabberClient->joinGroupChat(jid.domain(), jid.node(), jid.resource(), dlg->password());
+			delete dlg;
 		}
 		break;
 

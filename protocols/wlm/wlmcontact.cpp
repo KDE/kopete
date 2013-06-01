@@ -16,6 +16,7 @@
 
 #include "wlmcontact.h"
 
+#include <QPointer>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -327,13 +328,13 @@ void WlmContact::blockContact(bool block)
 
 void WlmContact::slotUserInfo()
 {
-    KDialog infoDialog;
-    infoDialog.setButtons( KDialog::Close);
-    infoDialog.setDefaultButton(KDialog::Close);
+    QPointer <KDialog> infoDialog = new KDialog;
+    infoDialog->setButtons( KDialog::Close);
+    infoDialog->setDefaultButton(KDialog::Close);
     const QString nick = property(Kopete::Global::Properties::self()->nickName()).value().toString();
     const QString personalMessage = statusMessage().message();
     Ui::WLMInfo info;
-    info.setupUi(infoDialog.mainWidget());
+    info.setupUi(infoDialog->mainWidget());
     info.m_id->setText(contactId());
     info.m_displayName->setText(nick);
     info.m_personalMessage->setText(personalMessage);
@@ -347,8 +348,9 @@ void WlmContact::slotUserInfo()
     info.groupBox->setVisible(false);
     info.m_reversed->setVisible(false);
 
-    infoDialog.setCaption(nick);
-    infoDialog.exec();
+    infoDialog->setCaption(nick);
+    infoDialog->exec();
+    delete infoDialog;
 }
 
 void
