@@ -1387,7 +1387,8 @@ void WlmAccount::logOff( Kopete::Account::DisconnectReason reason )
     if (m_server)
         m_server->WlmDisconnect ();
 
-    myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
+    if (myself ())
+        myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
 
     foreach ( Kopete::Contact *kc , contacts() )
     {
