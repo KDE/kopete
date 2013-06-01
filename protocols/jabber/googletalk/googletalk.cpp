@@ -73,7 +73,7 @@ GoogleTalk::GoogleTalk(const QString &jid, const QString &password) {
 GoogleTalk::~GoogleTalk() {
 
 //	qDebug() << "GoogleTalk::~GoogleTalk";
-	logout();
+	logout("destruct");
 
 	delete timer;
 	delete callProcess;
@@ -154,6 +154,13 @@ void GoogleTalk::logout(const QString &res) {
 		write("quit");
 
 		c = false;
+
+		if ( res == "destruct" ) {
+
+			callProcess->terminate();
+			return;
+
+		}
 
 		QEventLoop * loop = new QEventLoop;
 		QTimer * quitTimer = new QTimer;
