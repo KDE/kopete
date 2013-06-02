@@ -255,6 +255,10 @@ private:
 
 	/* last resource for this account */
 	QString m_lastResource;
+	XMPP::Resource m_lastXMPPResource;
+
+	/* last status for this account */
+	XMPP::Status m_lastStatus;
 
 #ifdef GOOGLETALK_SUPPORT
 	GoogleTalk * m_googleTalk;
@@ -346,6 +350,9 @@ private slots:
 
 	/* the unregister task finished */
 	void slotUnregisterFinished();
+
+	/* update our capabilities for myself contact */
+	void slotUpdateOurCapabilities();
 
 	//void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };

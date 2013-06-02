@@ -73,6 +73,7 @@
 #include "jabbergroupcontact.h"
 #include "jabbercapabilitiesmanager.h"
 #include "jabbertransport.h"
+#include "jabberresource.h"
 #include "dlgxmppconsole.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
@@ -1149,6 +1150,15 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 
 			task->pres ( newStatus );
 			task->go ( true );
+
+			// update our capabilities (for this we need capabilities manager)
+			if (protocol() && protocol()->capabilitiesManager())
+			{
+				m_lastStatus = newStatus;
+				m_lastXMPPResource = newResource;
+				protocol()->capabilitiesManager()->updateCapabilities( this, jid, m_lastStatus );
+				QTimer::singleShot ( client()->getPenaltyTime () * 1000 + 2000, this, SLOT (slotUpdateOurCapabilities()) );
+			}
 		}
 		else
 		{
@@ -1156,6 +1166,18 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 		}
 	}
 
+}
+
+void JabberAccount::slotUpdateOurCapabilities ()
+{
+	if ( ! myself() )
+		return;
+	XMPP::Jid jid ( myself()->contactId () );
+	JabberResource * resource = resourcePool()->getJabberResource( jid, m_lastResource );
+	if ( resource )
+		resource->setResource ( m_lastXMPPResource );
+	protocol()->capabilitiesManager()->updateCapabilities( this, jid, m_lastStatus );
+	dynamic_cast<JabberContact *>(myself())->updateResourceList ();
 }
 
 void JabberAccount::slotXMPPConsole ()

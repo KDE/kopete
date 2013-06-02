@@ -356,12 +356,6 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 {
 	if( !account->client() || !account->client()->rootTask() )
 		return;
-	
-	
-	// Do don't anything if the jid correspond to the account's JabberClient jid.
-	// false means that we don't check for resources.
-	if( jid.compare(account->client()->jid(), false) )
-		return;
 
 	QString node = status.capsNode(), version = status.capsVersion(), extensions = status.capsExt();
 	QString hash;
