@@ -163,7 +163,8 @@ JabberAccount::~JabberAccount ()
 	disconnect ( Kopete::Account::Manual );
 
 	// Remove this account from Capabilities manager.
-	protocol()->capabilitiesManager()->removeAccount( this );
+	if ( protocol() && protocol()->capabilitiesManager() )
+		protocol()->capabilitiesManager()->removeAccount( this );
 
 	cleanup ();
 	
