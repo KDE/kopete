@@ -95,14 +95,14 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, Kopete::Accoun
 
 	if ( !account()->myself () )
 	{
-		// this contact is a regular contact
+		// JabberContact (this) is the myself instance
 		connect ( this,
 				  SIGNAL (onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
 				  this, SLOT (slotCheckVCard()) );
 	}
 	else
 	{
-		// this contact is the myself instance
+		// JabberContact (this) is a regular contact and account()->myself () is the myself instance
 		connect ( account()->myself (),
 				  SIGNAL (onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
 				  this, SLOT (slotCheckVCard()) );
