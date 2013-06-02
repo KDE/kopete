@@ -215,6 +215,7 @@ class KopeteWindow::Private
 		QPoint position;
 		KHBox *statusBarWidget;
 		KopeteSystemTray *tray;
+		bool appDestroyed;
 		bool hidden;
 		bool autoHide;
 		unsigned int autoHideTimeout;
@@ -255,6 +256,8 @@ class KopeteWindow::Private
 KopeteWindow::KopeteWindow ( QWidget *parent )
 		: KXmlGuiWindow ( parent ), d ( new Private )
 {
+	d->appDestroyed = false;
+	connect ( kapp, SIGNAL (destroyed()), this, SLOT (slotAppDestroyed()) );
 	setAttribute ( Qt::WA_DeleteOnClose, false );
 	setAttribute ( Qt::WA_QuitOnClose, false );
 	// Applications should ensure that their StatusBar exists before calling createGUI()
@@ -338,6 +341,11 @@ KopeteWindow::KopeteWindow ( QWidget *parent )
 	//install an event filter for the quick search toolbar so we can
 	//catch the hide events
 	toolBar ( "quickSearchBar" )->installEventFilter ( this );
+}
+
+void KopeteWindow::slotAppDestroyed()
+{
+	d->appDestroyed = true;
 }
 
 void KopeteWindow::initView()
@@ -1001,6 +1009,13 @@ void KopeteWindow::slotIdentityUnregistered ( const Kopete::Identity *identity )
 
 void KopeteWindow::slotIdentityToolTipChanged ( Kopete::Identity *identity )
 {
+	if ( d->appDestroyed )
+		return;
+
+	KopeteApplication *app = static_cast<KopeteApplication *> ( kapp );
+	if ( app->sessionSaving() || app->isShuttingDown() )
+		return;
+
 	// Adds tooltip for each status icon, useful in case you have many accounts
 	// over one protocol
 	KopeteIdentityStatusBarIcon *i = d->identityStatusBarIcons.value ( identity, 0 );
@@ -1023,6 +1038,13 @@ void KopeteWindow::slotIdentityStatusIconChanged ( Kopete::Identity *identity )
 //	}
 //	kDebug(14000) << "Icons: '" <<
 //		status.overlayIcons() << "'" << endl;
+
+	if ( d->appDestroyed )
+		return;
+
+	KopeteApplication *app = static_cast<KopeteApplication *> ( kapp );
+	if ( app->sessionSaving() || app->isShuttingDown() )
+		return;
 
 	if ( identity->onlineStatus() != Kopete::OnlineStatus::Connecting )
 	{
