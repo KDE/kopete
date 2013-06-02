@@ -1093,14 +1093,44 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 	newStatus.setPriority ( newPriority );
 	kDebug(JABBER_DEBUG_GLOBAL) << "New priority: " << newPriority;
 
-	XMPP::Jid jid ( myself()->contactId () );
-	XMPP::Resource newResource ( resource (), newStatus );
+	XMPP::Jid jid;
 
-	// update our resource in the resource pool
-	resourcePool()->addResource ( jid, newResource );
+	if ( client() )
+		jid = client()->jid ();
 
-	// make sure that we only consider our own resource locally
-	resourcePool()->lockToResource ( jid, newResource );
+	if ( jid.isEmpty() && myself() )
+		jid = myself()->contactId ();
+
+	if ( jid.isEmpty() )
+		return;
+
+	XMPP::Resource oldResource ( m_lastResource );
+
+	kDebug(JABBER_DEBUG_GLOBAL) << "Old resource:" << m_lastResource;
+
+	// update resource from jabber client
+	m_lastResource = jid.resource();
+	if ( m_lastResource.isEmpty() )
+		m_lastResource = resource();
+
+	XMPP::Resource newResource ( m_lastResource, newStatus );
+
+	// for resource pool we need capabilities manager
+	// JabberAccount::setPresence can be called when deleting JabberAccount
+	if (protocol() && protocol()->capabilitiesManager())
+	{
+		// update our resource in the resource pool
+		resourcePool()->addResource ( jid, newResource );
+
+		// make sure that we only consider our own resource locally
+		resourcePool()->lockToResource ( jid, newResource );
+
+		// remove old resource if was changed and was not empty
+		if ( ! oldResource.name().isEmpty() && oldResource.name() != newResource.name() )
+			resourcePool()->removeResource ( jid, oldResource );
+	}
+
+	kDebug(JABBER_DEBUG_GLOBAL) << "New resource:" << m_lastResource;
 
 	/*
 	 * Unless we are in the connecting status, send a presence packet to the server

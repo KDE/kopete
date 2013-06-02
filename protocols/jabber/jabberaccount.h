@@ -253,6 +253,9 @@ private:
 	   jabber transfer port, to avoid popup insanity */
 	bool m_notifiedUserCannotBindTransferPort;
 
+	/* last resource for this account */
+	QString m_lastResource;
+
 #ifdef GOOGLETALK_SUPPORT
 	GoogleTalk * m_googleTalk;
 #endif
