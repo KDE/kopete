@@ -308,7 +308,8 @@ void SkypeAccount::wentOnline() {
 void SkypeAccount::wentOffline() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	myself()->setOnlineStatus(d->protocol->Offline);//just change the icon
+	if (myself())
+		myself()->setOnlineStatus(d->protocol->Offline);//just change the icon
 	emit connectionStatus(false);
 }
 
