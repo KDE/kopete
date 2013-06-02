@@ -104,6 +104,7 @@ ContactList::ContactList()
 
 ContactList::~ContactList()
 {
+	s_self=0L;
 	delete d->myself;
 	delete d;
 }

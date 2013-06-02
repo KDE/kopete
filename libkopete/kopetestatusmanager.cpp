@@ -15,6 +15,7 @@
 */
 #include "kopetestatusmanager.h"
 
+#include <QApplication>
 #include <QtCore/QFile>
 #include <QtXml/QDomElement>
 #include <QtCore/QTimer>
@@ -58,7 +59,7 @@ public:
 };
 
 StatusManager::StatusManager()
-	: QObject(), d( new Private )
+	: QObject( qApp ), d( new Private )
 {
 	d->away = false;
 	d->root = 0;
@@ -80,6 +81,8 @@ StatusManager::StatusManager()
 
 StatusManager::~StatusManager()
 {
+	instance = 0L;
+
 	delete d->idleTimer;
 
 	delete d->root;

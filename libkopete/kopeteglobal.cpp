@@ -81,6 +81,7 @@ Properties::Properties()
 Properties::~Properties()
 {
 	kDebug(14000) ;
+	mSelf = 0L;
 	delete d;
 }
 

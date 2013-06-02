@@ -14,6 +14,7 @@
     *************************************************************************
 */
 
+#include <qapplication.h>
 #include <qmap.h>
 
 #include <kmessagebox.h>
@@ -31,12 +32,13 @@ namespace Utils
 
 NotifyHelper* NotifyHelper::s_self = 0L;
 
-NotifyHelper::NotifyHelper()
+NotifyHelper::NotifyHelper() : QObject(qApp)
 {
 }
 
 NotifyHelper::~NotifyHelper()
 {
+	s_self = 0L;
 }
 
 NotifyHelper* NotifyHelper::self()

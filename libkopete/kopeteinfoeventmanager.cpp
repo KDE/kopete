@@ -16,6 +16,7 @@
 #include "kopeteinfoeventmanager.h"
 #include "kopeteinfoevent.h"
 
+#include <QApplication>
 #include <QStringList>
 
 namespace Kopete {
@@ -29,13 +30,14 @@ public:
 InfoEventManager *InfoEventManager::instance = 0L;
 
 InfoEventManager::InfoEventManager()
- : QObject(), d( new Private )
+ : QObject( qApp ), d( new Private )
 {
 }
 
 
 InfoEventManager::~InfoEventManager()
 {
+	instance = 0L;
 	delete d;
 }
 

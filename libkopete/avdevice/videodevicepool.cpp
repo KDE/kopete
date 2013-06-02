@@ -28,6 +28,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kconfiggroup.h>
+#include <qapplication.h>
 #include <qdir.h>
 #include <solid/device.h>
 #include <solid/devicenotifier.h>
@@ -70,7 +71,7 @@ VideoDevicePool* VideoDevicePool::self()
     \brief Constructor of class VideoDevicePool
  */
 VideoDevicePool::VideoDevicePool()
-: m_current_device(-1)
+: QObject(qApp), m_current_device(-1)
 {
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)), SLOT(deviceAdded(QString)) );
 	connect( Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)), SLOT(deviceRemoved(QString)) );
@@ -87,6 +88,7 @@ VideoDevicePool::VideoDevicePool()
  */
 VideoDevicePool::~VideoDevicePool()
 {
+	s_self = 0L;
 	foreach ( VideoDevice* vd, m_videodevices )
 		delete vd;
 }

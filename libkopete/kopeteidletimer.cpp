@@ -81,6 +81,8 @@ Kopete::IdleTimer *Kopete::IdleTimer::self()
 
 Kopete::IdleTimer::~IdleTimer()
 {
+	instance = 0L;
+
 	delete d->platform;
 
 	delete d;

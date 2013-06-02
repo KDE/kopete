@@ -93,6 +93,8 @@ MessageHandlerFactory::MessageHandlerFactory()
 
 MessageHandlerFactory::~MessageHandlerFactory()
 {
+	if (g_list.isDestroyed())
+		return;
  	Private::factories().erase( d->iterator );
 	delete d;
 }
