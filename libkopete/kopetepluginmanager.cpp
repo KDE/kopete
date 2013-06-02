@@ -60,7 +60,7 @@ public:
 
 	~PluginManagerPrivate()
 	{
-		if ( shutdownMode != DoneShutdown )
+		if ( shutdownMode != DoneShutdown && !loadedPlugins.empty() )
 		{
 			kWarning( 14010 ) << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
 		}
