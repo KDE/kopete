@@ -48,7 +48,7 @@
 class SkypeAccountPrivate {
 	public:
 		///The skype protocol pointer
-		SkypeProtocol *protocol;
+		QPointer <SkypeProtocol> protocol;
 		///ID of this account (means my skype name)
 		QString ID;
 		///The skype back-end
@@ -175,7 +175,8 @@ SkypeAccount::~SkypeAccount() {
 
 	save();
 
-	d->protocol->unregisterAccount();//This account no longer exists
+	if (d->protocol)
+		d->protocol->unregisterAccount();//This account no longer exists
 
 	//free memory
 	delete d;

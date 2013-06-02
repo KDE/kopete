@@ -124,6 +124,7 @@ SkypeProtocol::~SkypeProtocol() {
 	//release the memory
 	delete d->handler;
 	delete d;
+	d = 0L;
 }
 
 Kopete::Account *SkypeProtocol::createNewAccount(const QString & accountID) {
@@ -151,7 +152,8 @@ void SkypeProtocol::registerAccount(SkypeAccount *account) {
 void SkypeProtocol::unregisterAccount() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	d->account = 0L;//forget everything about the account
+	if (d)
+		d->account = 0L;//forget everything about the account
 }
 
 bool SkypeProtocol::hasAccount() const {
