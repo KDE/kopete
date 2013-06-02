@@ -807,6 +807,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	features.addFeature("http://jabber.org/protocol/xhtml-im");    // XEP-0071: XHTML-IM
 	features.addFeature("jabber:iq:oob");                          // XEP-0066: Out of Band Data
 	features.addFeature("jabber:iq:version");                      // XEP-0092: Software Version
+	features.addFeature("jabber:x:conference");                    // XEP-0249: Direct MUC Invitations
 	features.addFeature("jabber:x:data");                          // XEP-0004: Data Forms
 	features.addFeature("jabber:x:delay");                         // XEP-0091: Legacy Delayed Delivery
 	features.addFeature("jabber:x:encrypted");                     // XEP-0027: Current OpenPGP Usage
