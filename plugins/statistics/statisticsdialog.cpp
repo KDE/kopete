@@ -143,7 +143,7 @@ void StatisticsDialog::slotOpenURLRequest ( const KUrl& url, const KParts::OpenU
 void StatisticsDialog::generatePageForMonth ( const int monthOfYear )
 {
 	QStringList values = m_db->query ( QString ( "SELECT status, datetimebegin, datetimeend "
-	                                   "FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;" ).arg ( m_contact->metaContact()->metaContactId() ) );
+	                                   "FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;" ).arg ( m_contact->metaContactId() ) );
 
 	QStringList values2;
 
@@ -165,7 +165,7 @@ void StatisticsDialog::generatePageForMonth ( const int monthOfYear )
 void StatisticsDialog::generatePageForDay ( const int dayOfWeek )
 {
 	QStringList values = m_db->query ( QString ( "SELECT status, datetimebegin, datetimeend "
-	                                   "FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;" ).arg ( m_contact->metaContact()->metaContactId() ) );
+	                                   "FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;" ).arg ( m_contact->metaContactId() ) );
 
 	QStringList values2;
 
@@ -536,7 +536,7 @@ void StatisticsDialog::generatePageGeneral()
 	QStringList values;
 	values = m_db->query ( QString ( "SELECT status, datetimebegin, datetimeend "
 	                                 "FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin;" )
-	                       .arg ( m_contact->metaContact()->metaContactId() ) );
+	                       .arg ( m_contact->metaContactId() ) );
 	generatePageFromQStringList ( values, i18n ( "General information" ) );
 }
 
@@ -592,7 +592,7 @@ void StatisticsDialog::fillCalendarCells()
 	                                   "FROM contactstatus WHERE metacontactid LIKE '%1' AND "
 	                                   "datetimebegin BETWEEN '%2' AND '%3' "
 	                                   "AND datetimeend BETWEEN '%4' AND '%5';" )
-	                                   .arg ( m_contact->metaContact()->metaContactId() )
+	                                   .arg ( m_contact->metaContactId() )
 	                                   .arg ( firstOfMonth.toTime_t() )
 	                                   .arg ( lastOfMonth.toTime_t() )
 	                                   .arg ( firstOfMonth.toTime_t() )
@@ -649,7 +649,7 @@ void StatisticsDialog::generateOneDayStats ()
 	                                   "FROM contactstatus WHERE metacontactid LIKE '%1' AND "
 	                                   "datetimebegin BETWEEN '%2' AND '%3' "
 	                                   "AND datetimeend BETWEEN '%4' AND '%5';" )
-	                                   .arg ( m_contact->metaContact()->metaContactId() )
+	                                   .arg ( m_contact->metaContactId() )
 	                                   .arg ( topOfDay.toTime_t() )
 	                                   .arg ( endOfDay.toTime_t() )
 	                                   .arg ( topOfDay.toTime_t() )

@@ -28,7 +28,7 @@
 #include "statisticscontact.h"
 #include "statisticsdb.h"
 
-StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) : m_metaContact(mc),m_db(db), m_oldStatus(Kopete::OnlineStatus::Unknown)
+StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) : m_metaContact(mc), m_metaContactId(mc->metaContactId()), m_db(db), m_oldStatus(Kopete::OnlineStatus::Unknown)
 {
 	m_isChatWindowOpen = false;
 	m_oldStatusDateTime = QDateTime::currentDateTime();
@@ -94,7 +94,7 @@ void StatisticsContact::commonStatsSave(const QString &name, const QString &stat
 	if (!statVarChanged) return;
 
 	m_db->query(QString("UPDATE commonstats SET statvalue1 = '%1', statvalue2='%2'"
-			"WHERE statname LIKE '%3' AND metacontactid LIKE '%4';").arg(statVar1).arg(statVar2).arg(name).arg(metaContact()->metaContactId()));
+			"WHERE statname LIKE '%3' AND metacontactid LIKE '%4';").arg(statVar1).arg(statVar2).arg(name).arg(m_metaContactId));
 	
 }
 
@@ -111,7 +111,7 @@ void StatisticsContact::commonStatsCheck(const QString &name, int& statVar1, int
 
 void StatisticsContact::commonStatsCheck(const QString &name, QString& statVar1, QString& statVar2, const QString &defaultValue1, const QString &defaultValue2)
 {
-	QStringList buffer = m_db->query(QString("SELECT statvalue1,statvalue2 FROM commonstats WHERE statname LIKE '%1' AND metacontactid LIKE '%2';").arg(name, metaContact()->metaContactId()));
+	QStringList buffer = m_db->query(QString("SELECT statvalue1,statvalue2 FROM commonstats WHERE statname LIKE '%1' AND metacontactid LIKE '%2';").arg(name, m_metaContactId));
 	if (!buffer.isEmpty())
 	{
 		statVar1 = buffer[0];
@@ -119,7 +119,7 @@ void StatisticsContact::commonStatsCheck(const QString &name, QString& statVar1,
 	}
 	else
 	{
-		m_db->query(QString("INSERT INTO commonstats (metacontactid, statname, statvalue1, statvalue2) VALUES('%1', '%2', 0, 0);").arg(metaContact()->metaContactId(), name));
+		m_db->query(QString("INSERT INTO commonstats (metacontactid, statname, statvalue1, statvalue2) VALUES('%1', '%2', 0, 0);").arg(m_metaContactId, name));
 		statVar1 = defaultValue1;
 		statVar2 = defaultValue2;
 	}
@@ -188,10 +188,10 @@ void StatisticsContact::onlineStatusChanged(Kopete::OnlineStatus::StatusType sta
 	if (m_oldStatus != Kopete::OnlineStatus::Unknown)
 	{
 		
-		kDebug(14315) << "statistics - status change for "<< metaContact()->metaContactId() << " : "<< QString::number(m_oldStatus);
+		kDebug(14315) << "statistics - status change for "<< m_metaContactId << " : "<< QString::number(m_oldStatus);
 		m_db->query(QString("INSERT INTO contactstatus "
 		"(metacontactid, status, datetimebegin, datetimeend) "
-				"VALUES('%1', '%2', '%3', '%4'" ");").arg(m_metaContact->metaContactId()).arg(Kopete::OnlineStatus::statusTypeToString(m_oldStatus)).arg(QString::number(m_oldStatusDateTime.toTime_t())).arg(QString::number(currentDateTime.toTime_t())));
+				"VALUES('%1', '%2', '%3', '%4'" ");").arg(m_metaContactId).arg(Kopete::OnlineStatus::statusTypeToString(m_oldStatus)).arg(QString::number(m_oldStatusDateTime.toTime_t())).arg(QString::number(currentDateTime.toTime_t())));
 	}
 	
 	if (m_oldStatus == Kopete::OnlineStatus::Online
@@ -214,7 +214,7 @@ bool StatisticsContact::wasStatus(QDateTime dt, Kopete::OnlineStatus::StatusType
 			"FROM contactstatus WHERE metacontactid LIKE '%1' AND datetimebegin <= %2 AND datetimeend >= %3 "
 			"AND status LIKE '%4' "
 			"ORDER BY datetimebegin;"
-		).arg(metaContact()->metaContactId()).arg(dt.toTime_t()).arg(dt.toTime_t()).arg(Kopete::OnlineStatus::statusTypeToString(status)));	
+		).arg(m_metaContactId).arg(dt.toTime_t()).arg(dt.toTime_t()).arg(Kopete::OnlineStatus::statusTypeToString(status)));	
 	
 	if (!values.isEmpty()) return true;
 	
@@ -226,7 +226,7 @@ QString StatisticsContact::statusAt(QDateTime dt)
 	QStringList values = m_db->query(QString("SELECT status, datetimebegin, datetimeend "
 			"FROM contactstatus WHERE metacontactid LIKE '%1' AND datetimebegin <= %2 AND datetimeend >= %3 "
 			"ORDER BY datetimebegin;"
-			).arg(metaContact()->metaContactId()).arg(dt.toTime_t()).arg(dt.toTime_t()));	
+			).arg(m_metaContactId).arg(dt.toTime_t()).arg(dt.toTime_t()));	
 	
 	if (!values.isEmpty()) return Kopete::OnlineStatus(Kopete::OnlineStatus::statusStringToType(values[0])).description();
 	else return "";
@@ -242,7 +242,7 @@ QString StatisticsContact::mainStatusDate(const QDate& date)
 			"(datetimebegin >= %2 AND datetimebegin <= %3 OR "
 			"datetimeend >= %4 AND datetimeend <= %5) "
 			"ORDER BY datetimebegin;"
-							 ).arg(metaContact()->metaContactId()).arg(dt1.toTime_t()).arg(dt2.toTime_t()).arg(dt1.toTime_t()).arg(dt2.toTime_t());
+							 ).arg(m_metaContactId).arg(dt1.toTime_t()).arg(dt2.toTime_t()).arg(dt1.toTime_t()).arg(dt2.toTime_t());
 	kDebug(14315) << request;
 	QStringList values = m_db->query(request);
 	
@@ -296,7 +296,7 @@ QList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::StatusTyp
 	
 	
 	QDateTime currentDateTime = QDateTime::currentDateTime();
-	buffer = m_db->query(QString("SELECT datetimebegin, datetimeend, status FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin").arg(metaContact()->metaContactId()));
+	buffer = m_db->query(QString("SELECT datetimebegin, datetimeend, status FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin").arg(m_metaContactId));
 	
 	
 	// Only select the events for which the previous is not Unknown AND the status is status.

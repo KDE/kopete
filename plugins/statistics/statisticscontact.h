@@ -22,6 +22,7 @@
 #include "kopetemessage.h"
 #include <QtCore/QList>
 #include <QtCore/QTime>
+#include <QtCore/QPointer>
 
 class StatisticsDB;
 class QDateTime;
@@ -51,6 +52,12 @@ public:
 	 *  \return m_metaContact
 	 */
 	Kopete::MetaContact *metaContact() { return m_metaContact; }
+	
+	/** \brief Access method
+	 *  \return m_metaContactId
+	 */
+	QString metaContactId() { return m_metaContactId; }
+	
 	/** \brief Access method
 	 *  \return m_oldStatus
 	 */
@@ -177,7 +184,12 @@ private:
 	 * Kopete::MetaContact linked to this StatisticsContact
 	 * Each StatisticsContact object _has_ to be linked to a metaContact
 	 */ 
-	Kopete::MetaContact *m_metaContact;
+	QPointer <Kopete::MetaContact> m_metaContact;
+	
+	/**
+	 * Id of Kopete::MetaContact
+	 */
+	QString m_metaContactId;
 	
 	/**
 	 * Required to be able to write to the database

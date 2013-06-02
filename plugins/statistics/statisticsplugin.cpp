@@ -190,7 +190,8 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 	connect(mc, SIGNAL(onlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)), this,
 	        SLOT(slotOnlineStatusChanged(Kopete::MetaContact*,Kopete::OnlineStatus::StatusType)));
 
-	statisticsContactMap[mc] = new StatisticsContact(mc, db());
+	if (!statisticsContactMap.contains(mc))
+		statisticsContactMap[mc] = new StatisticsContact(mc, db());
 }
 
 void StatisticsPlugin::slotDelayedMetaContactAdded(Kopete::MetaContact *mc, Kopete::OnlineStatus::StatusType status)
