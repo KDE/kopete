@@ -104,6 +104,26 @@ KopeteApplication::~KopeteApplication()
 {
 	kDebug( 14000 ) ;
 
+	if ( ! m_isShuttingDown )
+	{
+		// destruct was called without proper shutdown, dbus quit maybe?
+		m_isShuttingDown = true;
+
+		// close all windows
+		QList<KMainWindow*> members = KMainWindow::memberList();
+		QList<KMainWindow*>::iterator it, itEnd = members.end();
+		for ( it = members.begin(); it != itEnd; ++it )
+			(*it)->close();
+
+		// shutdown plugin manager
+		Kopete::PluginManager::self()->shutdown();
+
+		// destroy all plugins until KopeteApplication is alive
+		Kopete::PluginList list = Kopete::PluginManager::self()->loadedPlugins();
+		foreach ( Kopete::Plugin *plugin, list )
+			delete plugin;
+	}
+
 	delete m_fileEngineHandler;
 	delete m_emoticonHandler;
 	//kDebug( 14000 ) << "Done";
