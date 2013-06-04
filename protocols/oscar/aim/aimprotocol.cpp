@@ -43,7 +43,7 @@ AIMProtocolHandler::AIMProtocolHandler() : Kopete::MimeTypeHandler(false)
 	registerAsProtocolHandler(QString::fromLatin1("aim"));
 }
 
-void AIMProtocolHandler::handleURL(const KUrl &url) const
+void AIMProtocolHandler::handleURL(const QString&, const KUrl &url) const
 {
 /**
  * Send a Message  =================================================

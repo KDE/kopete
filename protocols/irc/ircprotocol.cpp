@@ -77,7 +77,7 @@ IRCProtocolHandler::IRCProtocolHandler()
 	registerAsProtocolHandler(QString::fromLatin1("irc"));
 }
 
-void IRCProtocolHandler::handleURL(const KUrl &url) const
+void IRCProtocolHandler::handleURL(const QString &, const KUrl &url) const
 {
 	kDebug(14120) << url;
 	if (!url.isValid())

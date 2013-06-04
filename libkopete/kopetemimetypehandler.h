@@ -67,13 +67,6 @@ public:
 	bool canAcceptRemoteFiles() const;
 
 	/**
-	 * Handles the URL @p url
-	 *
-	 * @param url The url to handle
-	 */
-	virtual void handleURL( const KUrl &url ) const;
-
-	/**
 	 * Handles the URL @p url, which has the mime type @p mimeType
 	 *
 	 * @param mimeType The mime type of the URL
@@ -126,7 +119,6 @@ public:
 	const QStringList mimeTypes() const;
 
 	void handleURL( const QString &mimeType, const KUrl &url ) const;
-	void handleURL( const KUrl &url ) const;
 };
 
 } // Kopete

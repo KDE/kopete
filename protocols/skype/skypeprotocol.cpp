@@ -46,17 +46,13 @@ SkypeProtocolHandler::SkypeProtocolHandler() : Kopete::MimeTypeHandler(false) {
 	registerAsProtocolHandler("tell");
 }
 
-void SkypeProtocolHandler::handleURL(const KUrl &url) const {
+void SkypeProtocolHandler::handleURL(const QString &, const KUrl &url) const {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 	if ( ! SkypeProtocol::protocol()->hasAccount() ) {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "No Skype account registred";
 		return;
 	}
 	SkypeProtocol::protocol()->account()->SkypeActionHandler(url.url());
-}
-
-void SkypeProtocolHandler::handleURL(const QString &, const KUrl &url) const {
-	handleURL(url);
 }
 
 class SkypeProtocolPrivate {

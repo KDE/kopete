@@ -29,7 +29,7 @@ class AIMProtocolHandler : public Kopete::MimeTypeHandler
 {
 public:
 	AIMProtocolHandler();
-	void handleURL( const KUrl & url ) const;
+	void handleURL( const QString&, const KUrl & url ) const;
 };
 
 class AIMProtocol : public OscarProtocol

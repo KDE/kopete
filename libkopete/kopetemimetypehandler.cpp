@@ -128,7 +128,7 @@ bool MimeTypeHandler::dispatchURL( const KUrl &url )
 
 		if( mimeHandler )
 		{
-			mimeHandler->handleURL( url );
+			mimeHandler->handleURL( QString(), url );
 			return true;
 		}
 		else
@@ -165,28 +165,17 @@ bool MimeTypeHandler::dispatchToHandler( const KUrl &url, const QString &mimeTyp
 		KUrl dest;
 		dest.setPath( file );
 
-		if( !mimeType.isNull() )
-			handler->handleURL( mimeType, dest );
-		else
-			handler->handleURL( dest );
+		handler->handleURL( mimeType, dest );
 
 		// for now, local-only handlers have to be synchronous
 		KIO::NetAccess::removeTempFile( file );
 	}
 	else
 	{
-		if( !mimeType.isNull() )
-			handler->handleURL( mimeType, url );
-		else
-			handler->handleURL( url );
+		handler->handleURL( mimeType, url );
 	}
 
 	return true;
-}
-
-void MimeTypeHandler::handleURL( const KUrl &url ) const
-{
-	Q_UNUSED( url );
 }
 
 void MimeTypeHandler::handleURL( const QString &mimeType, const KUrl &url ) const
@@ -205,11 +194,6 @@ EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
 }
 
 void EmoticonMimeTypeHandler::handleURL( const QString &, const KUrl &url ) const
-{
-  handleURL(url);
-}
-
-void EmoticonMimeTypeHandler::handleURL( const KUrl &url ) const
 {
   Emoticons::self()->installTheme( url.toLocalFile() );
 }

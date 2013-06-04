@@ -352,11 +352,6 @@ XMPP::Status JabberProtocol::kosToStatus( const Kopete::OnlineStatus & status , 
 
 void JabberProtocol::handleURL(const QString&, const KUrl & kurl) const
 {
-  handleURL(kurl);
-}
-
-void JabberProtocol::handleURL(const KUrl & kurl) const
-{
 	QUrl url=kurl; //QUrl has better query handling.
 	if(url.scheme() != "xmpp" && !url.scheme().isEmpty() )
 		return;

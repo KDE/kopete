@@ -148,7 +148,6 @@ public:
 	/**
 	 * inherited from Kopete::MimeTypeHandler
 	 */
-	virtual void handleURL( const KUrl & url ) const;
 	virtual void handleURL(const QString&, const KUrl & kurl) const;
 
 private:
