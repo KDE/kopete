@@ -1,4 +1,4 @@
-add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS -DIRIS_XMPP_JID_DEPRECATED)
+add_definitions(-DIRIS_XMPP_JID_DEPRECATED)
 
 # if using patched libiris version, enable kopete features
 add_definitions(-DIRIS_FILE_TRANSFER_PREVIEW -DIRIS_SOCKET_ACCESS -DIRIS_XEP_0115_HASH_ATTRIBUTE -DIRIS_XEP_0184_ID_ATTRIBUTE -DIRIS_XEP_0027_XSIGNED)
@@ -162,7 +162,7 @@ endif(BUILD_JINGLE)
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
 
-target_link_libraries(kopete_jabber ${KDE4_KDE3SUPPORT_LIBS} ${QCA2_LIBRARIES} ${KDE4_SOLID_LIBS} kopete iris_kopete)
+target_link_libraries(kopete_jabber ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QCA2_LIBRARIES} ${KDE4_SOLID_LIBS} kopete iris_kopete)
 if(BUILD_JINGLE)	
   target_link_libraries(kopete_jabber ortp asound speex)
 endif(BUILD_JINGLE)

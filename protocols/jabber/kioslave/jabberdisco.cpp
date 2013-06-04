@@ -22,7 +22,6 @@
 #include <kdebug.h>
 
 #include <stdlib.h>
-#include <q3cstring.h>
 #include <qthread.h>
 #include <klocale.h>
 #include <kmessagebox.h>

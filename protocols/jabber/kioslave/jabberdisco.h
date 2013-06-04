@@ -22,7 +22,6 @@
 
 #include <qobject.h>
 #include <qstring.h>
-#include <q3cstring.h>
 
 #include <kurl.h>
 #include <kio/global.h>

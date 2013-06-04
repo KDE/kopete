@@ -27,6 +27,7 @@
 #include <qdom.h>
 #include <qtextstream.h>
 #include <qfile.h>
+#include <qtextcodec.h>
 
 #include <kstandarddirs.h>
 #include <kdebug.h>

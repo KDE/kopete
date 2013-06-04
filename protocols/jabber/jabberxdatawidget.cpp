@@ -120,7 +120,7 @@ public:
 		}
 		QLabel *label = new QLabel("<qt>" + text + "</qt>", parent);
 		label->setWordWrap(true);
-		layout->addMultiCellWidget(label, row, row, 0, 2);
+		layout->addWidget(label, row, 0, 1, 3);
 
 		if(!f.desc().isEmpty())
 			label->setToolTip(f.desc());
@@ -151,7 +151,7 @@ public:
 
 		combo = new QComboBox(parent);
 		layout->addWidget(combo, row, 1);
-		combo->setInsertionPolicy(QComboBox::NoInsertion);
+		combo->setInsertPolicy(QComboBox::NoInsert);
 		QString sel;
 		if (!f.value().isEmpty())
 			sel = f.value().first();
@@ -163,7 +163,7 @@ public:
 				lbl = (*it).value;
 			combo->addItem(lbl);
 			if ((*it).value == sel)
-				combo->setCurrentText(lbl);
+				combo->setItemText(combo->currentIndex(), lbl);
 		}
 
 		QLabel *req = new QLabel(reqText(), parent);
@@ -307,7 +307,7 @@ public:
 	virtual XMPP::XData::Field field() const
 	{
 		XMPP::XData::Field f = XDataWidgetField::field();
-		f.setValue(QStringList::split("\n", edit->text(), true));
+		f.setValue(edit->toPlainText().split('\n'));
 		return f;
 	}
 
@@ -440,7 +440,8 @@ JabberXDataWidget::JabberXDataWidget(const XMPP::XData &data, QWidget *parent) :
 				break;
 		}
 	}
-	QGridLayout *formLayout = new QGridLayout(this, fields, 3);
+	QGridLayout *formLayout = new QGridLayout(parent);
+	//formLayout->addLayout(this, fields, 3);
 	//formLayout->setSizeConstraint(QLayout::SetMinimumSize);
 	int row = 0;
 	if(!data.instructions().isEmpty())

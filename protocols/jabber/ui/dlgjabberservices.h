@@ -25,7 +25,6 @@
 #include "xmpp_tasks.h"
 
 #include "ui_dlgservices.h"
-#include <q3listview.h>
 
 /**
   *@author Till Gerken <till@tantalo.net>

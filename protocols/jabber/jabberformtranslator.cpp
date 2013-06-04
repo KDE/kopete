@@ -17,9 +17,8 @@
 
 #include "jabberformtranslator.h"
 #include <qlabel.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
-#include <Q3GridLayout>
+#include <QVBoxLayout>
+#include <QGridLayout>
 
 #include <kdebug.h>
 
@@ -35,7 +34,8 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 	emptyForm = privForm;
 
 	/* Add instructions to layout. */
-	Q3VBoxLayout *innerLayout = new Q3VBoxLayout (this, 0, 4);
+	QVBoxLayout *innerLayout = new QVBoxLayout (this);
+	innerLayout->setSpacing (4);
 
 	QLabel *label = new QLabel (form.instructions (), this);
 	label->setWordWrap (true);
@@ -45,7 +45,8 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 
 	innerLayout->addWidget (label, 0);
 
-	Q3GridLayout *formLayout = new Q3GridLayout (innerLayout, form.count (), 2);
+	QGridLayout *formLayout = new QGridLayout (this);
+	formLayout->addLayout (innerLayout, form.count (), 2);
 
 	int row = 1;
 	XMPP::Form::const_iterator formEnd = form.end ();

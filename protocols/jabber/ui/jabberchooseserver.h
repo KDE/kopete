@@ -21,7 +21,6 @@
 #define JABBERCHOOSESERVER_H
 
 #include <kdialog.h>
-#include <q3cstring.h>
 
 class JabberRegisterAccount;
 namespace Ui { class DlgJabberChooseServer; }
