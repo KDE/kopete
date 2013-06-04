@@ -21,8 +21,6 @@
 #include "icqaccount.h"
 #include "icqcontact.h"
 
-#include <q3vbox.h>
-
 #include <ktextbrowser.h>
 #include <klocale.h>
 #include <krun.h>

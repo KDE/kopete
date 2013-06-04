@@ -48,7 +48,7 @@ OscarListNonServerContacts::~OscarListNonServerContacts()
 void OscarListNonServerContacts::addContacts( const QStringList& contactList )
 {
     m_nonServerContacts = contactList;
-    m_contactsList->notServerContacts->insertStringList( contactList );
+    m_contactsList->notServerContacts->addItems( contactList );
 }
 
 QStringList OscarListNonServerContacts::nonServerContactList() const

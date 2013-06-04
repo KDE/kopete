@@ -24,13 +24,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3ListBox" name="notServerContacts" >
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Sunken</enum>
-     </property>
+    <widget class="QListWidget" name="notServerContacts" >
     </widget>
    </item>
    <item>
@@ -42,15 +36,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>Q3ListBox</class>
-   <extends></extends>
-   <header>q3listbox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

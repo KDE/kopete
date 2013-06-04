@@ -27,7 +27,6 @@
 #include <qdatastream.h>
 #include <qdatetime.h>
 #include <qtextstream.h>
-//Added by qt3to4:
 #include <QByteArray>
 
 #include <kdebug.h>
