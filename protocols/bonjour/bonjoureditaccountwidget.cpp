@@ -73,7 +73,7 @@ BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Acc
 				names = ident.fullName().split(' ');
 
 			// Get the email address
-			emailAddress = ident.emailAddr();
+			emailAddress = ident.primaryEmailAddress();
 		}
 
 		// Split the names array into firstName and lastName
