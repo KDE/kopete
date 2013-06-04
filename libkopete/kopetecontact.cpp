@@ -274,7 +274,7 @@ KMenu* Contact::popupMenu( ChatSession *manager )
 	// through the use of the customContextMenuActions() function
 
 	// Get the custom actions from the protocols ( pure virtual function )
-	QList<KAction*> *customActions = customContextMenuActions( manager );
+	QList<KAction*> *customActions = customContextMenuActions();
 	if( customActions && !customActions->isEmpty() )
 	{
 		menu->addSeparator();
@@ -516,11 +516,6 @@ void Contact::setIcon( const QString& icon )
 QList<KAction *> *Contact::customContextMenuActions()
 {
 	return 0L;
-}
-
-QList<KAction*> *Contact::customContextMenuActions( ChatSession * /* manager */ )
-{
-	return customContextMenuActions();
 }
 
 bool Contact::isOnline() const

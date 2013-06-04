@@ -83,7 +83,6 @@ class SkypeContact : public Kopete::Contact
 		bool hasChat() const;
 		///Tell kopete which actions to show in the contact pop-up menu
 		virtual QList<KAction*> *customContextMenuActions();
-		virtual QList<KAction*> *customContextMenuActions(Kopete::ChatSession *);
 		///Give me actually existing chat session
 		SkypeChatSession *getChatSession();
 		///Can this contact be called now?

@@ -361,10 +361,6 @@ QList<KAction*> *SkypeContact::customContextMenuActions() {
 	return actions;
 }
 
-QList<KAction*> *SkypeContact::customContextMenuActions(Kopete::ChatSession *) {
-	return customContextMenuActions();
-}
-
 void SkypeContact::enableActions(bool value) {
 	d->callContactAction->setEnabled(value);
 	d->authorizeAction->setEnabled(value);

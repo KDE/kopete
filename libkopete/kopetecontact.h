@@ -232,11 +232,6 @@ public:
 	virtual QList<KAction *> *customContextMenuActions();
 
 	/**
-	 * @todo  What is this function for ?
-	 */
-	virtual QList<KAction *> *customContextMenuActions( ChatSession *manager );
-
-	/**
 	 * @brief Get the Context Menu for this contact
 	 *
 	 * This menu includes generic actions common to each protocol, and action defined in
