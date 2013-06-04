@@ -45,6 +45,7 @@
 #include "kopeteaccountmanager.h"
 #include "addcontactpage.h"
 #include "kopetecommandhandler.h"
+#include "kopetedeletecontacttask.h"
 
 #include "jabbercontact.h"
 #include "jabberaddcontactpage.h"
@@ -471,7 +472,8 @@ void JabberProtocol::handleURL(const QString&, const KUrl & kurl) const
 			return;
 		}
 		
-		contact->deleteContact();
+		Kopete::DeleteContactTask *deleteTask = new Kopete::DeleteContactTask(contact);
+		deleteTask->start();
 	}//TODO: probe
 	else if(action == "join" || action=="invite")
 	{
