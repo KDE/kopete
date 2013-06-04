@@ -167,14 +167,6 @@ public:
 public slots:
 
 	/**
-	 * @brief This is going to be removed soon
-	 *
-	 * @todo Remove this function
-	 * This is an old function left over from the Testbed protocol
-	 */
-	void receivedMessage( const QString &message );
-
-	/**
 	 * @brief Slots Called When a Contact Comes Online
 	 *
 	 * This is Called when A contact Comes online

@@ -369,17 +369,6 @@ void BonjourAccount::slotGoOffline ()
 		disconnect ();
 }
 
-void BonjourAccount::receivedMessage( const QString &message )
-{
-	// Look up the contact the message is from
-	QString from;
-	BonjourContact* messageSender;
-
-	from = message.section( ':', 0, 0 );
-	Kopete::Contact* contact = contacts().value(from);
-	messageSender = dynamic_cast<BonjourContact *>( contact );
-}
-
 void BonjourAccount::setusername(const QByteArray &n_username)
 {
 	username = n_username;
