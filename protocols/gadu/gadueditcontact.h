@@ -23,6 +23,8 @@
 #ifndef GADUEDITCONTACT_H
 #define GADUEDITCONTACT_H
 
+#include "gaducontactlist.h"
+
 #include <kdialog.h>
 //Added by qt3to4:
 #include <QLabel>
@@ -32,7 +34,6 @@ namespace Ui { class GaduAddUI; }
 class QLabel;
 class QWidget;
 class GaduContact;
-class GaduContactsList::ContactLine;
 class Q3ListViewItem;
 
 class GaduEditContact : public KDialog
