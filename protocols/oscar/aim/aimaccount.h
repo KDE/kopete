@@ -58,8 +58,9 @@ public:
 	void setOwnProfile( const QString& newProfile );
 	QString userProfile();
 
-    virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate,
-                                          Oscar::WORD exchange = 0, const QString& room = QString());
+    virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
+    virtual Kopete::ChatSession* manager( Kopete::Contact::CanCreateFlags canCreate,
+                                          Oscar::WORD exchange, const QString& room );
 
 public slots:
     void sendMessage( Kopete::Message&, Kopete::ChatSession* session );

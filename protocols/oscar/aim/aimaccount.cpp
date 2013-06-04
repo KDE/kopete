@@ -83,6 +83,11 @@ QString AIMMyselfContact::userProfile()
 	return m_profileString;
 }
 
+Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags canCreate )
+{
+	return manager( canCreate, 0, QString() );
+}
+
 Kopete::ChatSession* AIMMyselfContact::manager( Kopete::Contact::CanCreateFlags canCreate,
 		Oscar::WORD exchange, const QString& room )
 {
