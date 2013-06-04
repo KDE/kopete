@@ -432,7 +432,6 @@ bool ContactManager::listComplete() const
 bool ContactManager::newGroup( const OContact& group )
 {
 	//trying to find the group by its ID
-	QList<OContact>::iterator it, listEnd = d->contactList.end();
 	if ( findGroup( group.name() ).isValid() )
 		return false;
 

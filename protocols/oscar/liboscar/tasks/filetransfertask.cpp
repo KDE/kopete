@@ -815,7 +815,7 @@ bool FileTransferTask::listen()
 
 	for ( int i = first; i <= last; i++ )
 	{ //try ports in the range (default 5190-5199)
-		if( success = ( m_tcpServer->listen( QHostAddress::Any, i ) ) )
+		if( ( success = ( m_tcpServer->listen( QHostAddress::Any, i ) ) ) )
 		{
 			m_port = i;
 			break;
