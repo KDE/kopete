@@ -17,25 +17,7 @@ ${QCA2_INCLUDE_DIR}
 )
 
 if(BUILD_GOOGLETALK)
-  # We dont need other programs
-  set ( BUILD_libjingle_natserver false )
-  set ( BUILD_libjingle_nat_unittest false )
-  set ( BUILD_libjingle_virtualsocket_unittest false )
-  set ( BUILD_libjingle_relayserver false )
-  set ( BUILD_libjingle_stunserver false )
-  set ( BUILD_libjingle_stunserver_unittest false )
-  set ( BUILD_libjingle_session_unittest false )
-  set ( BUILD_libjingle_port_unittest false )
-  set ( BUILD_libjingle_login false )
-
-  # Enable pcp if filetransfer is supported by Kopete
-  set ( BUILD_libjingle_pcp false )
-
-  # Enabled voice call
-  set ( BUILD_libjingle_call true )
-
   add_subdirectory(googletalk/libjingle)
-
   add_definitions(-DGOOGLETALK_SUPPORT)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/googletalk/)
 endif(BUILD_GOOGLETALK)
