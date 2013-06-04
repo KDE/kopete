@@ -1,6 +1,5 @@
 project ( kopete-bonjour )
 
-add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=14220)
 
 include_directories(${KDEPIMLIBS_INCLUDE_DIRS})

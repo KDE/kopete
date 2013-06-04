@@ -19,8 +19,6 @@
 
 #include <qlayout.h>
 #include <qlineedit.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
 #include <kdebug.h>
 #include <KConfigGroup>
 #include "kopeteaccount.h"
@@ -36,7 +34,6 @@
 BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Account* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
 				kDebug() ;
 	m_preferencesWidget = new Ui::BonjourAccountPreferences();
 	m_preferencesWidget->setupUi( this );
