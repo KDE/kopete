@@ -43,7 +43,7 @@ BonjourAddContactPage::~BonjourAddContactPage()
 {
 }
 
-bool BonjourAddContactPage::apply( Kopete::Account* a, Kopete::MetaContact* m )
+bool BonjourAddContactPage::apply( Kopete::Account*, Kopete::MetaContact* )
 {
 	return false;
 }

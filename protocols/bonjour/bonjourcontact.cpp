@@ -55,7 +55,7 @@ bool BonjourContact::isReachable()
     return true;
 }
 
-void BonjourContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
+void BonjourContact::serialize( QMap< QString, QString > & /*serializedData*/, QMap< QString, QString > & /* addressBookData */ )
 {
 	// Really Do Nothing
 }

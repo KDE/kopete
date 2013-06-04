@@ -188,6 +188,9 @@ void BonjourContactConnection::dataInSocket()
 		case BonjourConnectionNewOutgoing:
 			getStreamTag(token);
 			break;
+
+		default:
+			break;
 	}
 
 	if (moreTokensAvailable())
@@ -252,7 +255,7 @@ void BonjourContactConnection::sayStream()
 
 }
 
-void BonjourContactConnection::getWho(BonjourXmlToken &token)
+void BonjourContactConnection::getWho(BonjourXmlToken & /*token*/)
 {
 }
 
@@ -328,6 +331,9 @@ void BonjourContactConnection::readData(BonjourXmlToken &token)
 
 		case BonjourXmlTokenError:
 			break;
+
+		default:
+			break;
 	}
 }
 
@@ -357,6 +363,11 @@ void BonjourContactConnection::readMessage(BonjourXmlToken &token)
 					inHtml = true;
 				else
 					inHtml = false;
+				break;
+
+			default:
+				break;
+
 		}
 
 	} while (token.name != BonjourXmlTokenError && token.name != BonjourXmlTokenMessage);
