@@ -232,7 +232,7 @@ void SMSSendProvider::send(const Kopete::Message& msg)
 	QString message = msg.plainBody();
 	QString nr = dynamic_cast<SMSContact *>(msg.to().first())->qualifiedNumber();
 
-	if (canSend = false)
+	if (canSend == false)
 		return;
 
 	values[messagePos] = message;
