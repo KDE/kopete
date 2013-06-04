@@ -65,7 +65,7 @@ private:
 	class Private;
 	Private *d;
 
-	void reset(bool clear=false);
+	void resetConnection(bool clear=false);
 	QByteArray makePacket(const QString &ident, const QString &key, const QString &newkey, const QByteArray &block);
 	void resetKey();
 	const QString & getKey(bool *);
@@ -106,7 +106,7 @@ private:
 	class Private;
 	Private *d;
 
-	void reset(bool clear=false);
+	void resetConnection(bool clear=false);
 	void processData(const QByteArray &block);
 };
 
@@ -145,7 +145,7 @@ private:
 	class Private;
 	Private *d;
 
-	void reset(bool clear=false);
+	void resetConnection(bool clear=false);
 	void processData(const QByteArray &block);
 };
 

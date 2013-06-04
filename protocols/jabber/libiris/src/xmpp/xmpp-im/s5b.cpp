@@ -94,7 +94,7 @@ public:
 	Item(S5BManager *manager);
 	~Item();
 
-	void reset();
+	void resetConnection();
 	void startRequester(const QString &_sid, const Jid &_self, const Jid &_peer, bool fast, bool udp);
 	void startTarget(const QString &_sid, const Jid &_self, const Jid &_peer,
 					 const QString &_dstaddr, const StreamHostList &hosts,
@@ -201,12 +201,12 @@ S5BConnection::S5BConnection(S5BManager *m, QObject *parent)
 	qDebug("S5BConnection[%d]: constructing, count=%d, %p\n", d->id, num_conn, this);
 #endif
 
-	reset();
+	resetConnection();
 }
 
 S5BConnection::~S5BConnection()
 {
-	reset(true);
+	resetConnection(true);
 
 	--num_conn;
 #ifdef S5B_DEBUG
@@ -216,7 +216,7 @@ S5BConnection::~S5BConnection()
 	delete d;
 }
 
-void S5BConnection::reset(bool clear)
+void S5BConnection::resetConnection(bool clear)
 {
 	d->m->con_unlink(this);
 	if(clear && d->sc) {
@@ -252,7 +252,7 @@ void S5BConnection::setProxy(const Jid &proxy)
 
 void S5BConnection::connectToJid(const Jid &peer, const QString &sid, Mode m)
 {
-	reset(true);
+	resetConnection(true);
 	if(!d->m->isAcceptableSID(peer, sid))
 		return;
 
@@ -290,7 +290,7 @@ void S5BConnection::close()
 #ifdef S5B_DEBUG
 	qDebug("S5BConnection[%d]: closing %s [%s]\n", d->id, qPrintable(d->peer.full()), qPrintable(d->sid));
 #endif
-	reset();
+	resetConnection();
 }
 
 Jid S5BConnection::peer() const
@@ -449,7 +449,7 @@ void S5BConnection::man_udpReady(const QByteArray &buf)
 
 void S5BConnection::man_failed(int x)
 {
-	reset(true);
+	resetConnection(true);
 	if(x == S5BManager::Item::ErrRefused)
 		setError(ErrRefused);
 	if(x == S5BManager::Item::ErrConnect)
@@ -471,7 +471,7 @@ void S5BConnection::sc_connectionClosed()
 		return;
 	}
 	d->notifyClose = false;
-	reset();
+	resetConnection();
 	connectionClosed();
 }
 
@@ -502,7 +502,7 @@ void S5BConnection::sc_bytesWritten(qint64 x)
 
 void S5BConnection::sc_error(int)
 {
-	reset();
+	resetConnection();
 	setError(ErrSocket);
 }
 
@@ -1102,15 +1102,15 @@ S5BManager::Item::Item(S5BManager *manager) : QObject(0)
 	client = 0;
 	client_out_udp = 0;
 	client_out = 0;
-	reset();
+	resetConnection();
 }
 
 S5BManager::Item::~Item()
 {
-	reset();
+	resetConnection();
 }
 
-void S5BManager::Item::reset()
+void S5BManager::Item::resetConnection()
 {
 	delete task;
 	task = 0;
@@ -1365,7 +1365,7 @@ void S5BManager::Item::jt_finished()
 #ifdef S5B_DEBUG
 				qDebug("S5BManager::Item %s claims to have connected to us, but we don't see this\n", qPrintable(peer.full()));
 #endif
-				reset();
+				resetConnection();
 				error(ErrWrongHost);
 			}
 		}
@@ -1395,7 +1395,7 @@ void S5BManager::Item::jt_finished()
 #ifdef S5B_DEBUG
 			qDebug("S5BManager::Item %s claims to have connected to a streamhost we never offered\n", qPrintable(peer.full()));
 #endif
-			reset();
+			resetConnection();
 			error(ErrWrongHost);
 		}
 	}
@@ -1505,7 +1505,7 @@ void S5BManager::Item::proxy_result(bool b)
 	else {
 		delete proxy_conn;
 		proxy_conn = 0;
-		reset();
+		resetConnection();
 		error(ErrProxy);
 	}
 }
@@ -1527,7 +1527,7 @@ void S5BManager::Item::proxy_finished()
 			checkForActivation();
 	}
 	else {
-		reset();
+		resetConnection();
 		error(ErrProxy);
 	}
 }
@@ -1556,7 +1556,7 @@ void S5BManager::Item::sc_error(int)
 #ifdef S5B_DEBUG
 	qDebug("sc_error\n");
 #endif
-	reset();
+	resetConnection();
 	error(ErrConnect);
 }
 
@@ -1713,14 +1713,14 @@ void S5BManager::Item::checkFailure()
 
 	if(failed) {
 		if(state == Requester) {
-			reset();
+			resetConnection();
 			if(statusCode == 404)
 				error(ErrConnect);
 			else
 				error(ErrRefused);
 		}
 		else {
-			reset();
+			resetConnection();
 			error(ErrConnect);
 		}
 	}
@@ -1866,11 +1866,11 @@ S5BConnector::S5BConnector(QObject *parent)
 
 S5BConnector::~S5BConnector()
 {
-	reset();
+	resetConnection();
 	delete d;
 }
 
-void S5BConnector::reset()
+void S5BConnector::resetConnection()
 {
 	d->t.stop();
 	delete d->active_udp;
@@ -1884,7 +1884,7 @@ void S5BConnector::reset()
 
 void S5BConnector::start(const Jid &self, const StreamHostList &hosts, const QString &key, bool udp, int timeout)
 {
-	reset();
+	resetConnection();
 
 #ifdef S5B_DEBUG
 	qDebug("S5BConnector: starting [%p]!\n", this);
@@ -1950,7 +1950,7 @@ void S5BConnector::item_result(bool b)
 
 void S5BConnector::t_timeout()
 {
-	reset();
+	resetConnection();
 #ifdef S5B_DEBUG
 	qDebug("S5BConnector: failed! (timeout)\n");
 #endif
