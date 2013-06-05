@@ -21,7 +21,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Chat History2</string>
+      <string>Chat History</string>
      </property>
      <layout class="QGridLayout">
       <property name="margin">
@@ -49,7 +49,7 @@
       <item row="2" column="1">
        <widget class="QLabel" name="colorLabel">
         <property name="whatsThis">
-         <string>Color of history2 messages in the chat window</string>
+         <string>Color of history messages in the chat window</string>
         </property>
         <property name="text">
          <string>Color of messages:</string>
