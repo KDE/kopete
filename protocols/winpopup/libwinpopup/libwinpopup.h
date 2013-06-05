@@ -76,7 +76,8 @@ private:
 private slots:
 	void slotUpdateGroupData();
 	void startReadProcess();
-	void slotReadIpProcessExited(int, QProcess::ExitStatus);
+	void slotReadIpProcessExited(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
+	void slotSendIpMessage(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
 	void slotReadProcessExited(int, QProcess::ExitStatus);
 	void slotStartDirLister();
 	void slotReadMessages(const KFileItemList &items);

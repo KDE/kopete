@@ -160,6 +160,7 @@ void WinPopupLib::startReadProcess()
 
 	readIpProcess = new QProcess;
 	connect(readIpProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotReadIpProcessExited(int,QProcess::ExitStatus)));
+	connect(readIpProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotReadIpProcessExited()));
 	readIpProcess->setProcessChannelMode(QProcess::MergedChannels);
 	readIpProcess->start("nmblookup", QStringList() << currentHost);
 }
@@ -168,7 +169,7 @@ void WinPopupLib::slotReadIpProcessExited(int i, QProcess::ExitStatus status)
 {
 	QString Ip;
 
-	if (i == 0 && status != QProcess::CrashExit) {
+	if (readIpProcess && i == 0 && status != QProcess::CrashExit) {
 		QStringList output = QString::fromUtf8(readIpProcess->readAll()).split('\n');
 		if ( output.size() == 2 && ! output.contains("failed") )
 			Ip = output.at(1).split(' ').first();
@@ -361,9 +362,44 @@ void WinPopupLib::slotReadMessages(const KFileItemList &items)
  */
 void WinPopupLib::sendMessage(const QString &Body, const QString &Destination)
 {
+	QProcess *ipProcess = new QProcess;
+	connect(ipProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotSendIpMessage(int,QProcess::ExitStatus)));
+	connect(ipProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotSendIpMessage()));
+	ipProcess->setProperty("body", Body);
+	ipProcess->setProperty("destination", Destination);
+	ipProcess->setProcessChannelMode(QProcess::MergedChannels);
+	ipProcess->start("nmblookup", QStringList() << Destination);
+}
+
+void WinPopupLib::slotSendIpMessage(int i, QProcess::ExitStatus status)
+{
+	QProcess *ipProcess = dynamic_cast<QProcess *>(sender());
+	QString Ip;
+
+	if ( ! ipProcess )
+		return;
+
+	if ( i == 0 && status != QProcess::CrashExit ) {
+		QStringList output = QString::fromUtf8(ipProcess->readAll()).split('\n');
+		if ( output.size() == 2 && ! output.contains("failed") )
+			Ip = output.at(1).split(' ').first();
+		if ( QHostAddress(Ip).isNull() )
+			Ip.clear();
+	}
+
+	QString Body = ipProcess->property("body").toString();
+	QString Destination = ipProcess->property("destination").toString();
+
+	delete ipProcess;
+
+	if ( Body.isEmpty() || Destination.isEmpty() )
+		return;
+
 	QProcess *sender = new QProcess(this);
 	QStringList args;
-	args << "-M" << Destination << "-N" << "-I" << Destination;
+	args << "-M" << Destination << "-N";
+	if ( ! Ip.isEmpty() )
+		args << "-I" << Ip;
 	sender->start(smbClientBin, args);
 	sender->waitForStarted();
 	//TODO: check if we can write message

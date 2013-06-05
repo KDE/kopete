@@ -22,6 +22,7 @@
 
 // QT Includes
 #include <QRegExp>
+#include <QHostAddress>
 
 // KDE Includes
 #include <KDebug>
@@ -71,6 +72,34 @@ WPUserInfo::~WPUserInfo()
 // if we would do this in libwinpopup. GF
 void WPUserInfo::startDetailsProcess(const QString &host)
 {
+	QProcess *ipProcess = new QProcess;
+	connect(ipProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcess(int,QProcess::ExitStatus)));
+	connect(ipProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotDetailsProcess()));
+	ipProcess->setProperty("host", host);
+	ipProcess->setProcessChannelMode(QProcess::MergedChannels);
+	ipProcess->start("nmblookup", QStringList() << host);
+}
+
+void WPUserInfo::slotDetailsProcess(int i, QProcess::ExitStatus status)
+{
+	QProcess *ipProcess = dynamic_cast<QProcess *>(sender());
+	QString ip;
+
+	if ( ! ipProcess )
+		return;
+
+	if ( i == 0 && status != QProcess::CrashExit ) {
+		QStringList output = QString::fromUtf8(ipProcess->readAll()).split('\n');
+		if ( output.size() == 2 && ! output.contains("failed") )
+			ip = output.at(1).split(' ').first();
+		if ( QHostAddress(ip).isNull() )
+			ip.clear();
+	}
+
+	QString host = ipProcess->property("host").toString();
+
+	delete ipProcess;
+
 	KConfigGroup group = KGlobal::config()->group("WinPopup");
 	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
@@ -79,7 +108,10 @@ void WPUserInfo::startDetailsProcess(const QString &host)
 
 	detailsProcess = new QProcess(this);
 	QStringList args;
-	args << "-N" << "-g" << "-L" << host << "-I" << host;
+	args << "-N" << "-g" << "-L" << host;
+
+	if ( ! ip.isEmpty() )
+		args << "-I" << ip;
 
 	connect(detailsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotDetailsProcessFinished(int,QProcess::ExitStatus)));
 

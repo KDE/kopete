@@ -39,6 +39,7 @@ class WPUserInfo : public KDialog
 		void startDetailsProcess(const QString &host);
 
 	private slots:
+		void slotDetailsProcess(int i = 1, QProcess::ExitStatus status = QProcess::CrashExit);
 		void slotDetailsProcessFinished(int, QProcess::ExitStatus);
 		void slotCloseClicked();
 
