@@ -18,8 +18,13 @@ if [ "$KOPETE_RUNNING" = "x" ]; then
     fi
 
     if [ "$2" != "$THIS_SERVER" ]; then
+        ARGS=""
+        IP=`nmblookup $2 | tail -n +2 | head -1 | cut -f1 -d' '`
+        if [ "$IP" != "name_query" ]; then
+            ARGS="-I $IP"
+        fi
         echo -e "Kopete is currently not running.\nYour message was not delivered!" \
-            | smbclient -N -M $2 -I $2
+            | smbclient -N -M $2 $ARGS
     fi
 
 else
