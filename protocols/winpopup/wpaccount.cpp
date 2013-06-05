@@ -206,7 +206,7 @@ void WPAccount::slotSendMessage(const QString &Body, const QString &Destination)
 	mProtocol->sendMessage(Body, Destination);
 }
 
-void WPAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
+void WPAccount::setOnlineStatus(const Kopete::OnlineStatus &status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& /*options*/)
 {
 	if (myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online)
 		connect( status );
