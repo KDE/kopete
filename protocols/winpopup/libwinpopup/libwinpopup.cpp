@@ -23,6 +23,7 @@
 #include <QFileInfo>
 #include <QRegExp>
 #include <QTextStream>
+#include <QHostAddress>
 
 // KDE Includes
 #include <KDebug>
@@ -148,19 +149,43 @@ void WinPopupLib::slotUpdateGroupData()
 	todo.clear();
 	currentGroupsMap.clear();
 	currentHost = QString::fromLatin1("LOCALHOST");
-	startReadProcess(currentHost);
+	startReadProcess();
 }
 
-void WinPopupLib::startReadProcess(const QString &Host)
+void WinPopupLib::startReadProcess()
 {
 	currentHosts.clear();
 	currentGroups.clear();
 	currentGroup.clear();
 
+	readIpProcess = new QProcess;
+	connect(readIpProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotReadIpProcessExited(int,QProcess::ExitStatus)));
+	readIpProcess->setProcessChannelMode(QProcess::MergedChannels);
+	readIpProcess->start("nmblookup", QStringList() << currentHost);
+}
+
+void WinPopupLib::slotReadIpProcessExited(int i, QProcess::ExitStatus status)
+{
+	QString Ip;
+
+	if (i == 0 && status != QProcess::CrashExit) {
+		QStringList output = QString::fromUtf8(readIpProcess->readAll()).split('\n');
+		if ( output.size() == 2 && ! output.contains("failed") )
+			Ip = output.at(1).split(' ').first();
+		if ( QHostAddress(Ip).isNull() )
+			Ip.clear();
+	}
+
+	delete readIpProcess;
+	readIpProcess = 0;
+
 	// for Samba 3
 	readGroupsProcess = new QProcess;
 	QStringList args;
-	args << "-N" << "-g" << "-L" << Host << "-I" << Host;
+	args << "-N" << "-g" << "-L" << currentHost;
+
+	if ( ! Ip.isEmpty() )
+		args << "-I" << Ip;
 
 	connect(readGroupsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotReadProcessExited(int,QProcess::ExitStatus)));
 
@@ -263,7 +288,7 @@ void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 	// maybe restart cycle
 	if (todo.count()) {
 		currentHost = todo.at(0);
-		startReadProcess(currentHost);
+		startReadProcess();
 	} else {
 		theGroups = currentGroupsMap;
 		updateGroupDataTimer.setSingleShot(true);

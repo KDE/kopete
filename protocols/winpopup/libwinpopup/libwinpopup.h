@@ -68,13 +68,15 @@ private:
 	QString smbClientBin;
 	int groupCheckFreq;
 	KDirLister *dirLister;
+	QProcess *readIpProcess;
 	QProcess *readGroupsProcess;
 
 	bool checkMessageDir();
 
 private slots:
 	void slotUpdateGroupData();
-	void startReadProcess(const QString &Host);
+	void startReadProcess();
+	void slotReadIpProcessExited(int, QProcess::ExitStatus);
 	void slotReadProcessExited(int, QProcess::ExitStatus);
 	void slotStartDirLister();
 	void slotReadMessages(const KFileItemList &items);
