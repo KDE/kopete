@@ -47,7 +47,7 @@ namespace Eva {
 		isHeader = false;
 	}
 
-	inline void decrypt64( uchar* crypt, uchar* crypt_pre, 
+	inline void decrypt64( uchar* crypt, uchar* /*crypt_pre*/,
 			uchar* key, uchar* decrypted)
 	{
 		for( int i = 0; i< 8; i++ )
@@ -66,7 +66,7 @@ namespace Eva {
 			crypted[8],        /* crypted text*/
 			crypted_pre[8];  /* crypted test, previous 8 bytes*/
 	
-		int pos, len, i;
+		int pos, i;
 		bool isHeader = true;      /* header is one byte*/
 		ByteArray encoded( text.size() + 32 );
 		

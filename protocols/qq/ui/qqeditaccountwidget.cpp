@@ -80,8 +80,6 @@ QQEditAccountWidget::QQEditAccountWidget( QQProtocol *proto, Kopete::Account *ac
 	// default fields
 	if ( account )
 	{
-		KConfigGroup * config=account->configGroup();
-
 		// Basic Setup
 		d->ui->m_login->setText( account->accountId() );
 		d->ui->m_password->load( &static_cast<QQAccount *>(account)->password() );

@@ -176,8 +176,8 @@ private:
 	 * return an unique identifier for that kmm
 	 * @todo check it!
 	*/
-	uint mmId() const;
-	uint m_mmId;
+	int mmId() const;
+	int m_mmId;
 
 };
 

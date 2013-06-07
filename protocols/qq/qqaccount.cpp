@@ -140,7 +140,7 @@ void QQAccount::fillActionMenu( KActionMenu *actionMenu )
 	action->setEnabled( isConnected() );
 }
 
-void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
+void QQAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& /*options*/)
 {
 	Q_UNUSED(reason);
 
