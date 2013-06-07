@@ -94,7 +94,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 	QString nick;		/* key = 7  */
 	int state;		/* key = 10  */
 	QString message;	/* key = 19  */
-	int flags;		/* key = 13  */
+//	int flags;		/* key = 13  */
 	int away;		/* key = 47  */
 	int idle;		/* key = 137 */
 	bool utf;		/* key = 97 */
@@ -110,7 +110,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 	{
 		nick = t->nthParam( 7, i );
 		state = t->nthParam( 10, i ).toInt();
-		flags = t->nthParamSeparated( 13, i, 7 ).toInt();
+//		flags = t->nthParamSeparated( 13, i, 7 ).toInt();
 		away = t->nthParamSeparated( 47, i, 7 ).toInt();
 		idle = t->nthParamSeparated( 137, i, 7 ).toInt();
 		utf = t->nthParamSeparated( 97, i, 7 ).toInt() == 1;

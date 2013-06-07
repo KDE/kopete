@@ -218,7 +218,6 @@ QByteArray YMSGTransfer::serialize() const
 	*/
 	
 	int pos = 0;
-	QStringList::ConstIterator listIt = 0;
 	QByteArray buffer;
 	QDataStream stream( &buffer, QIODevice::WriteOnly );
 	

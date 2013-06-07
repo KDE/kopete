@@ -224,7 +224,7 @@ void LoginTask::sendAuthSixteenStage1(const QString& sn, const QString& seed)
 	        this, SLOT(handleAuthSixteenStage1Result(KJob*)));
 }
 
-void LoginTask::handleAuthSixteenStage1Data(KIO::Job* job, const QByteArray& data)
+void LoginTask::handleAuthSixteenStage1Data(KIO::Job* /*job*/, const QByteArray& data)
 {
 	kDebug(YAHOO_RAW_DEBUG) << "data:" << data;
 	m_stage1Data.append(data);

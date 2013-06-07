@@ -851,7 +851,7 @@ void YahooAccount::slotBuddyAddResult( const QString &userid, const QString &gro
      kDebug(YAHOO_GEN_DEBUG) << IDs;
 }
 
-void YahooAccount::slotBuddyRemoveResult( const QString &userid, const QString &group, bool success )
+void YahooAccount::slotBuddyRemoveResult( const QString &userid, const QString & /*group*/, bool /*success*/ )
 {
      kDebug(YAHOO_GEN_DEBUG);
 
@@ -988,7 +988,7 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 	}
 }
 
-void YahooAccount::slotStealthStatusChanged( const QString &who, Yahoo::StealthStatus state )
+void YahooAccount::slotStealthStatusChanged( const QString &who, Yahoo::StealthStatus /*state*/ )
 {
 	//kDebug(YAHOO_GEN_DEBUG) << "Stealth Status of " << who << "changed to " << state;
 
@@ -1872,7 +1872,7 @@ void YahooAccount::slotWebcamPaused( const QString &who )
 	kc->webcamPaused();
 }
 
-void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
+void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& /*options*/ )
 {
 	kDebug(YAHOO_GEN_DEBUG) ;
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline &&

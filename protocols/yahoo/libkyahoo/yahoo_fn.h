@@ -35,5 +35,5 @@ struct yahoo_fn
 
 int yahoo_xfrm( int table, int depth, int seed );
 
-#endif // YAHOO_FN_H
+#endif /* YAHOO_FN_H */
 

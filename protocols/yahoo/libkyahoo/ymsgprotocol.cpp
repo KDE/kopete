@@ -369,7 +369,7 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	}
 	
 	sessionid = yahoo_get32(packet.data() + pos);
-	kDebug(YAHOO_RAW_DEBUG) << "  Parsed session id: " << (void *)sessionid;
+	kDebug(YAHOO_RAW_DEBUG) << "  Parsed session id: " << sessionid;
 	pos += 4;
 	
 	kDebug(YAHOO_RAW_DEBUG) << " Setting incoming transfer basic information.";

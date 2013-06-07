@@ -51,7 +51,7 @@
 #include "md5.h"
 #include "sha1.h"
 
-extern char *yahoo_crypt(char *, char *);
+extern char *yahoo_crypt(const char *, const char *);
 
 void yahooBase64(unsigned char *out, const unsigned char *in, int inlen)
 /* raw bytes in quasi-big-endian order to base 64 string (NUL-terminated) */
@@ -106,7 +106,7 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 	unsigned char pass_hash_xor2[64];
 	unsigned char crypt_hash_xor1[64];
 	unsigned char crypt_hash_xor2[64];
-	char chal[7];
+	md5_byte_t chal[7];
 
 	unsigned char digest1[20];
 	unsigned char digest2[20];
@@ -484,6 +484,8 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 
 	free(password_hash);
 	free(crypt_hash);
+
+	(void)sn;
 }
 
 char * getcookie(const char *rawcookie)
