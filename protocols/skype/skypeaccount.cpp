@@ -573,7 +573,7 @@ int SkypeAccount::closeCallWindowTimeout() const {
 QString SkypeAccount::getUserLabel(const QString &userId) {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	if (userId.indexOf(' ') != -1) {//there are more people than just one
+	if (userId.contains(' ')) {//there are more people than just one
 		QStringList users = userId.split(' ');
 		for (QStringList::iterator it = users.begin(); it != users.end(); ++it) {
 			(*it) = getUserLabel((*it).trimmed());

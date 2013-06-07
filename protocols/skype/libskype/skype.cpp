@@ -377,10 +377,10 @@ void Skype::skypeMessage(const QString &message) {
 	} else if (messageType == "CHATMESSAGE") {//something with message, maebe incoming/sent
 		QString messageId = message.section(' ', 1, 1).trimmed();//get the second part of message - it is the message ID
 		QString type = message.section(' ', 2, 2).trimmed().toUpper();//This part significates what about the message are we talking about (status, body, etc..)
-		QString chatMessageType = (d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).toUpper();
+		QString chatMessageType = (d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).trimmed().toUpper();
 		if (chatMessageType == "ADDEDMEMBERS") {
 			QString status = message.section(' ', 3, 3).trimmed().toUpper();
-			if (d->recvMessages.indexOf(messageId) != d->recvMessages.lastIndexOf(QRegExp(messageId)))
+			if (d->recvMessages.contains(messageId))
 				return;
 			d->recvMessages << messageId;
 			const QString &users = (d->connection % QString("GET CHATMESSAGE %1 USERS").arg(messageId)).section(' ', 3).trimmed();
@@ -394,7 +394,7 @@ void Skype::skypeMessage(const QString &message) {
 			return;
 		} else if (chatMessageType == "LEFT") {
 			QString status = message.section(' ', 3, 3).trimmed().toUpper();
-			if (d->recvMessages.indexOf(messageId) != d->recvMessages.lastIndexOf(QRegExp(messageId)))
+			if (d->recvMessages.contains(messageId))
 				return;
 			d->recvMessages << messageId;
 			const QString &chatId = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).trimmed();
@@ -431,7 +431,7 @@ void Skype::skypeMessage(const QString &message) {
 			} else if (value == "SENT") {//Sending out some message, that means it is a new one
 				if ((d->connection % QString("GET CHATMESSAGE %1 TYPE").arg(messageId)).section(' ', 3, 3).trimmed().toUpper() == "SAID")//it is some message I'm interested in
 					emit gotMessageId(messageId);//Someone may be interested in its ID
-				if (d->recvMessages.indexOf(messageId) != d->recvMessages.lastIndexOf(QRegExp(messageId)))
+				if (d->recvMessages.contains(messageId))
 					return;//we already got this one
 				d->recvMessages << messageId;
 				const QString &chat = (d->connection % QString("GET CHATMESSAGE %1 CHATNAME").arg(messageId)).section(' ', 3, 3).trimmed();
@@ -467,7 +467,7 @@ void Skype::skypeMessage(const QString &message) {
 	} else if (messageType == "CALL") {
 		const QString &callId = message.section(' ', 1, 1).trimmed();
 		if (message.section(' ', 2, 2).trimmed().toUpper() == "CONF_ID") {
-			if (d->knownCalls.indexOf(callId) == -1) {//new call
+			if (!d->knownCalls.contains(callId)) {//new call
 				d->knownCalls << callId;
 				const QString &userId = (d->connection % QString("GET CALL %1 PARTNER_HANDLE").arg(callId)).section(' ', 3, 3).trimmed();
 				emit newCall(callId, userId);
@@ -478,12 +478,12 @@ void Skype::skypeMessage(const QString &message) {
 			}
 		}
 		if (message.section(' ', 2, 2).trimmed().toUpper() == "STATUS") {
-			if (d->knownCalls.indexOf(callId) == -1) {//new call
+			if (!d->knownCalls.contains(callId)) {//new call
 				d->knownCalls << callId;
 				const QString &userId = (d->connection % QString("GET CALL %1 PARTNER_HANDLE").arg(callId)).section(' ', 3, 3).trimmed();
 				emit newCall(callId, userId);
 			}
-			const QString &status = message.section(' ', 3, 3).toUpper();
+			const QString &status = message.section(' ', 3, 3).trimmed().toUpper();
 			if (status == "FAILED") {
 				int reason = (d->connection % QString("GET CALL %1 FAILUREREASON").arg(callId)).section(' ', 3, 3).trimmed().toInt();
 				QString errorText = i18n("Unknown error");
