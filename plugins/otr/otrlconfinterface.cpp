@@ -108,7 +108,7 @@ QList<QStringList> OtrlConfInterface::readAllFingerprints(){
 				entry << i18nc("@item:intable Fingerprint was never used", "Unused");
 			} else {
 				if (context && context->msgstate == OTRL_MSGSTATE_ENCRYPTED) {
-					if (context->active_fingerprint->trust && context->active_fingerprint->trust[0] != NULL) {
+					if (context->active_fingerprint->trust && context->active_fingerprint->trust[0]) {
 						entry << i18nc("@item:intable Fingerprint is used in a private conversation", "Private");
 					} else {
 						entry << i18nc("@item:intable Fingerprint is used in an unverified conversation", "Unverified");
