@@ -75,7 +75,7 @@ void TestbedAccount::setAway( bool away, const QString & /* reason */ )
 		slotGoOnline();
 }
 
-void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options)
+void TestbedAccount::setOnlineStatus(const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& /*options*/)
 {
 	if ( status.status() == Kopete::OnlineStatus::Online &&
 			myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
