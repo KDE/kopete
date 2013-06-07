@@ -721,7 +721,6 @@ void YahooContact::deleteContact()
 		// Now remove from the contact list
 		m_account->yahooSession()->removeBuddy( contactId(), m_groupName );
 	}
-	Kopete::Contact::deleteContact();
 }
 
 void YahooContact::writeYABEntry()
