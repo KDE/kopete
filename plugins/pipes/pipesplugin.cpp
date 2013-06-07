@@ -202,17 +202,20 @@ QByteArray PipesPlugin::createXml ( const Kopete::Message & msg )
 		case Kopete::Message::Inbound: message.setAttribute ( "route", "inbound" ); break;
 		case Kopete::Message::Outbound: message.setAttribute ( "route", "outbound" ); break;
 		case Kopete::Message::Internal: message.setAttribute ( "route", "internal" ); break;
+		default: break;
 	}
 	switch ( msg.type() )
 	{
 		case Kopete::Message::TypeAction: message.setAttribute ( "type", "action" ); break;
 		case Kopete::Message::TypeNormal: message.setAttribute ( "type", "normal" ); break;
+		default: break;
 	}
 	switch ( msg.importance() )
 	{
 		case Kopete::Message::Low: message.setAttribute ( "importance", 0 ); break;
 		case Kopete::Message::Normal: message.setAttribute ( "importance", 1 ); break;
 		case Kopete::Message::Highlight: message.setAttribute ( "importance", 2 ); break;
+		default: break;
 	}
 	message.setAttribute ( "mainContactId", msg.to().first()->contactId() );
 
