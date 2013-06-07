@@ -26,6 +26,8 @@ if( NOT MOZPLUGIN_INSTALL_DIR )
 	endif( NOT IS_HOME AND NOT IS_USR AND NOT IS_LOCAL )
 endif( NOT MOZPLUGIN_INSTALL_DIR )
 
+mark_as_advanced( MOZPLUGIN_INSTALL_DIR )
+
 message( STATUS "Mozilla plugin install dir is \"${MOZPLUGIN_INSTALL_DIR}\" to change use parm -DMOZPLUGIN_INSTALL_DIR=<directory>" )
 
 #TODO: Check if QtBrowerPlugin (or QtNsPlugin?) installed and use it
