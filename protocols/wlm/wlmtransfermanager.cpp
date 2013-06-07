@@ -80,7 +80,7 @@ nextID (1)
 }
 
 void
-WlmTransferManager::fileTransferInviteResponse (MSN::SwitchboardServerConnection * conn,
+WlmTransferManager::fileTransferInviteResponse (MSN::SwitchboardServerConnection * /*conn*/,
                                                 const unsigned int &sessionID,
                                                 const bool & response)
 {
@@ -153,7 +153,7 @@ WlmTransferManager::incomingFileTransfer (MSN::SwitchboardServerConnection * con
 }
 
 void
-WlmTransferManager::gotFileTransferProgress (MSN::SwitchboardServerConnection * conn,
+WlmTransferManager::gotFileTransferProgress (MSN::SwitchboardServerConnection * /*conn*/,
                                              const unsigned int &sessionID,
                                              const unsigned long long
                                              &transferred)
@@ -230,9 +230,9 @@ WlmTransferManager::slotRefused (const Kopete::FileTransferInfo & fti)
 }
 
 void
-WlmTransferManager::gotFileTransferFailed (MSN::SwitchboardServerConnection * conn,
+WlmTransferManager::gotFileTransferFailed (MSN::SwitchboardServerConnection * /*conn*/,
                                             const unsigned int &sessionID,
-                                            const MSN::fileTransferError & error)
+                                            const MSN::fileTransferError & /*error*/)
 {
     if(!transferSessions.count(sessionID))
         return;
@@ -257,7 +257,7 @@ WlmTransferManager::gotFileTransferFailed (MSN::SwitchboardServerConnection * co
 }
 
 void
-WlmTransferManager::gotFileTransferSucceeded (MSN::SwitchboardServerConnection * conn,
+WlmTransferManager::gotFileTransferSucceeded (MSN::SwitchboardServerConnection * /*conn*/,
                                             const unsigned int &sessionID)
 {
     Kopete::Transfer * transfer = transferSessions[sessionID].ft;

@@ -42,7 +42,6 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
 
     if ( account )
     {
-        KConfigGroup * config = account->configGroup();
         m_wlmAccount = static_cast<WlmAccount*>(account);
 
         m_preferencesWidget->m_passport->setText( m_wlmAccount->accountId() );

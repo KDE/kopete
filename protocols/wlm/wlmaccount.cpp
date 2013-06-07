@@ -203,7 +203,7 @@ void WlmAccount::setPersonalMessage (const Kopete::StatusMessage & reason)
 void
 WlmAccount::setOnlineStatus (const Kopete::OnlineStatus & status,
                              const Kopete::StatusMessage & reason,
-                             const OnlineStatusOptions& options)
+                             const OnlineStatusOptions& /*options*/)
 {
     kDebug (14210) << k_funcinfo;
 
@@ -1375,7 +1375,7 @@ void WlmAccount::disconnect()
     logOff( Kopete::Account::Manual );
 }
 
-void WlmAccount::error( int errCode )
+void WlmAccount::error( int /*errCode*/ )
 {
     logOff( Kopete::Account::ConnectionReset );
 }
