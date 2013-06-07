@@ -140,12 +140,14 @@ void HistoryPlugin::convertOldHistory()
 					// create a new <message> block
 					while ( ! feof( f ) )
 					{
-						fgets(cbuf, CBUFLENGTH, f);
+						if ( ! fgets(cbuf, CBUFLENGTH, f) )
+							break;
 						buffer = QString::fromUtf8(cbuf);
 
 						while ( strchr(cbuf, '\n') == NULL && !feof(f) )
 						{
-							fgets( cbuf, CBUFLENGTH, f );
+							if ( ! fgets( cbuf, CBUFLENGTH, f ) )
+								break;
 							buffer += QString::fromUtf8(cbuf);
 						}
 
@@ -156,12 +158,14 @@ void HistoryPlugin::convertOldHistory()
 							// find the end of the message block
 							while( !feof( f ) && buffer != QString::fromLatin1( "</message>\n" ) /*strcmp("</message>\n", cbuf )*/ )
 							{
-								fgets(cbuf, CBUFLENGTH, f);
+								if ( ! fgets(cbuf, CBUFLENGTH, f) )
+									break;
 								buffer = QString::fromUtf8(cbuf);
 
 								while ( strchr(cbuf, '\n') == NULL && !feof(f) )
 								{
-									fgets( cbuf, CBUFLENGTH, f );
+									if ( ! fgets( cbuf, CBUFLENGTH, f ) )
+										break;
 									buffer += QString::fromUtf8(cbuf);
 								}
 								msgBlock.append(buffer);
