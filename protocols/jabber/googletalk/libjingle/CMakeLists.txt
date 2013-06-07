@@ -33,6 +33,9 @@ endif ( NOT WIN32 )
 include_directories (
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/talk/third_party/libudev
+	${EXPAT_INCLUDE_DIR}
+	${MEDIASTREAMER_INCLUDE_DIR}
+	${LIBORTP_INCLUDE_DIR}
 	${SRTP_INCLUDE_DIR}
 	${JSONCPP_INCLUDE_DIR}
 )
@@ -242,22 +245,22 @@ set ( call_SRCS
 	talk/examples/login/xmppsocket.cc
 )
 
-
 set ( call_LIBS
 	${SRTP_LIBRARY}
 	${JSONCPP_LIBRARY}
 	${EXPAT_LIBRARY}
 	${MEDIASTREAMER_LIBRARIES}
+	${LIBORTP_LIBRARY}
 	${CMAKE_DL_LIBS}
 )
 
 if ( NOT WIN32 )
-        #timeutils calls CLOCK_MONOLITHIC stuff, so we need the rt library
-        FIND_LIBRARY(RT_LIBRARY NAMES rt)
+	#timeutils calls CLOCK_MONOLITHIC stuff, so we need the rt library
+	FIND_LIBRARY(RT_LIBRARY NAMES rt)
 	set ( call_LIBS ${call_LIBS}
 		${SSL_LIBRARY}
 		${CRYPTO_LIBRARY}
-                ${RT_LIBRARY}
+		${RT_LIBRARY}
 	)
 endif ( NOT WIN32 )
 

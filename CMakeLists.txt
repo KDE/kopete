@@ -52,7 +52,7 @@ check_type_size("long" SIZEOF_LONG)
 check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
 
 macro_optional_find_package(LiboRTP)
-macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build voice clips in WLM.")
+macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Google Talk libjingle audio call support and voice clips in WLM.")
 
 macro_optional_find_package(SRTP)
 macro_log_feature(SRTP_FOUND "srtp" "SRTP provides an implementation of the Secure Real-time Transport Protocol (SRTP)" "http://srtp.sourceforge.net/srtp.html" FALSE "" "Needed to build Google Talk libjingle audio call support")
