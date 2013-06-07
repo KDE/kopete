@@ -135,9 +135,8 @@ macro_optional_find_package(Expat)
 macro_log_feature(EXPAT_FOUND "Expat" "Expat is a stream oriented XML parser" "http://expat.sourceforge.net/" FALSE "" "Needed to build Google Talk libjingle support")
 
 if ( NOT WIN32 )
-	# TODO: Add info
         macro_optional_find_package(SSL)
-        macro_log_feature(SSL_FOUND "SSL" "" "" FALSE "" "Needed to build Google Talk libjingle support")
+        macro_log_feature(SSL_FOUND "SSL" "OpenSSL implementation of SSL" "https://www.openssl.org/" FALSE "" "Needed to build Google Talk libjingle support")
 endif ( NOT WIN32 )
 
 # Generate config-kopete.h
