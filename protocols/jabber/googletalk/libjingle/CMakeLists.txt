@@ -242,6 +242,7 @@ set ( call_SRCS
 	talk/examples/login/xmppsocket.cc
 )
 
+
 set ( call_LIBS
 	${SRTP_LIBRARY}
 	${JSONCPP_LIBRARY}
@@ -251,9 +252,12 @@ set ( call_LIBS
 )
 
 if ( NOT WIN32 )
+        #timeutils calls CLOCK_MONOLITHIC stuff, so we need the rt library
+        FIND_LIBRARY(RT_LIBRARY NAMES rt)
 	set ( call_LIBS ${call_LIBS}
 		${SSL_LIBRARY}
 		${CRYPTO_LIBRARY}
+                ${RT_LIBRARY}
 	)
 endif ( NOT WIN32 )
 
