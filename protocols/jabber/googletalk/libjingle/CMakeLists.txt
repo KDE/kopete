@@ -28,6 +28,9 @@ if ( NOT WIN32 )
 	endif ( NOT APPLE )
 endif ( NOT WIN32 )
 
+set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-undef -Wno-unused-parameter" )
+set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undef -Wno-unused-parameter -Wno-non-virtual-dtor -Wno-delete-non-virtual-dtor" )
+
 ########### next target ###############
 
 include_directories (
