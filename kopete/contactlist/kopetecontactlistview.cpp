@@ -305,13 +305,13 @@ void KopeteContactListView::showItemProperties()
 
 	if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact )
 	{
-		KopeteMetaLVIProps *propsDialog = new KopeteMetaLVIProps( metaContactFromIndex( index ), 0L );
+		QPointer <KopeteMetaLVIProps> propsDialog = new KopeteMetaLVIProps( metaContactFromIndex( index ), 0L );
 		propsDialog->exec(); // modal
 		delete propsDialog;
 	}
 	else if ( index.data( Kopete::Items::TypeRole ) == Kopete::Items::Group )
 	{
-		KopeteGVIProps *propsDialog = new KopeteGVIProps( groupFromIndex( index ), 0L );
+		QPointer <KopeteGVIProps> propsDialog = new KopeteGVIProps( groupFromIndex( index ), 0L );
 		propsDialog->exec(); // modal
 		delete propsDialog;
 	}
