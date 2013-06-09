@@ -18,6 +18,7 @@
 
 #include "history2preferences.h"
 
+#include <QtCore/QPointer>
 #include <QtGui/QLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QCheckBox>
@@ -86,8 +87,9 @@ void History2Preferences::save()
 
 void History2Preferences::slotShowImport()
 {
-	History2Import importer(parentWidget());
-	importer.exec();
+	QPointer <History2Import> importer = new History2Import(parentWidget());
+	importer->exec();
+	delete importer;
 }
 
 void History2Preferences::slotModified()

@@ -17,6 +17,7 @@
 #include <QLayout>
 #include <QVBoxLayout>
 #include <QHeaderView>
+#include <QPointer>
 
 #include <kgenericfactory.h>
 #include <kinputdialog.h>
@@ -160,18 +161,18 @@ void PrivacyPreferences::slotChkDropAllToggled( bool enabled )
 
 void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 {
-	KDialog *addDialog = new KDialog( this );
+	QPointer <KDialog> addDialog = new KDialog( this );
 	addDialog->setCaption( i18n( "Add Contact to Whitelist" ) );
 	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	addDialog->setDefaultButton( KDialog::Ok );
 	addDialog->showButtonSeparator( true );
 
-	KVBox *box = new KVBox( addDialog );
+	QPointer <KVBox> box = new KVBox( addDialog );
 	box->setSpacing( KDialog::spacingHint() );
-	ContactSelectorWidget *selector = new ContactSelectorWidget( box );
+	QPointer <ContactSelectorWidget> selector = new ContactSelectorWidget( box );
 	addDialog->setMainWidget(box);
 
-	if( addDialog->exec() == QDialog::Accepted )
+	if( addDialog->exec() == QDialog::Accepted && addDialog && selector )
 	{
 		foreach( const AccountListEntry &entry, selector->contacts() )
 		{
@@ -179,25 +180,25 @@ void PrivacyPreferences::slotBtnAddToWhiteListClicked()
 		}
 	}
 
-	addDialog->deleteLater();
+	delete addDialog;
 
 	emit KCModule::changed(true);
 }
 
 void PrivacyPreferences::slotBtnAddToBlackListClicked()
 {
-	KDialog *addDialog = new KDialog( this );
+	QPointer <KDialog> addDialog = new KDialog( this );
 	addDialog->setCaption( i18n( "Add Contact to Blacklist" ) );
 	addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	addDialog->setDefaultButton( KDialog::Ok );
 	addDialog->showButtonSeparator( true );
 
-	KVBox *box = new KVBox( addDialog );
+	QPointer <KVBox> box = new KVBox( addDialog );
 	box->setSpacing( KDialog::spacingHint() );
-	ContactSelectorWidget *selector = new ContactSelectorWidget( box );
+	QPointer <ContactSelectorWidget> selector = new ContactSelectorWidget( box );
 	addDialog->setMainWidget(box);
 
-	if( addDialog->exec() == QDialog::Accepted )
+	if( addDialog->exec() == QDialog::Accepted && addDialog && selector )
 	{
 		foreach( const AccountListEntry &entry, selector->contacts() )
 		{
@@ -205,7 +206,7 @@ void PrivacyPreferences::slotBtnAddToBlackListClicked()
 		}
 	}
 
-	addDialog->deleteLater();
+	delete addDialog;
 
 	emit KCModule::changed(true);
 }

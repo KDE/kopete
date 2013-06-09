@@ -18,6 +18,7 @@
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <QVBoxLayout>
+#include <QPointer>
 
 
 #include <kcombobox.h>
@@ -271,7 +272,7 @@ void HighlightPreferences::slotConfigureNotifications()
 		return;
 
 	
-	KDialog *dialog=new KDialog(this);
+	QPointer <KDialog> dialog=new KDialog(this);
 	KNotifyConfigWidget *w=new KNotifyConfigWidget(this);
 	dialog->setMainWidget(w);
 	
