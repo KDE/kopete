@@ -131,7 +131,10 @@ void Identity::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 		if ( !account->excludeConnect() )
 		{
 			Kopete::Contact *self = account->myself();
-			account->setOnlineStatus( self->onlineStatus(), statusMessage );
+			if ( self )
+			{
+				account->setOnlineStatus( self->onlineStatus(), statusMessage );
+			}
 		}
 	}
 }
@@ -196,9 +199,12 @@ void Identity::addAccount( Kopete::Account *account )
 
 	d->accounts.append( account );
 
-	connect( account->myself(),
-			SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
-			this, SLOT(updateOnlineStatus()));
+	if ( account->myself() )
+	{
+		connect( account->myself(),
+				SIGNAL(onlineStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)),
+				this, SLOT(updateOnlineStatus()));
+	}
 	connect(account, SIGNAL(accountDestroyed(const Kopete::Account*)),
 			this, SLOT(removeAccount(const Kopete::Account*)));
 
