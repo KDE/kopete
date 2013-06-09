@@ -74,7 +74,8 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	connect ( jabberClient, SIGNAL (csError(int)), this, SLOT (slotCSError(int)) );
 	connect ( jabberClient, SIGNAL (tlsWarning(QCA::TLS::IdentityResult,QCA::Validity)), this, SLOT (slotHandleTLSWarning(QCA::TLS::IdentityResult,QCA::Validity)) );
 	connect ( jabberClient, SIGNAL (connected()), this, SLOT (slotConnected()) );
-	
+	connect ( jabberClient, SIGNAL (debugMessage(QString)), this, SLOT (slotDebugMessage(QString)) );
+
 	jidRegExp.setPattern ( "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
 	hintPixmap = SmallIcon ( "jabber_online" );
 
@@ -394,6 +395,13 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 	// FIXME: this is required because Iris crashes if we try
 	//        to disconnect here. Hopefully Justin can fix this.
 	QTimer::singleShot(0, this, SLOT(disconnect()));
+
+}
+
+void JabberRegisterAccount::slotDebugMessage ( const QString &msg )
+{
+
+	kDebug (JABBER_DEBUG_PROTOCOL) << msg;
 
 }
 

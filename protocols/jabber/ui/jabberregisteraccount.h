@@ -65,6 +65,8 @@ private slots:
 
 	void disconnect ();
 
+	void slotDebugMessage ( const QString &msg );
+
 private:
 	Ui::DlgJabberRegisterAccount *mMainWidget;
 	JabberEditAccountWidget *mParentWidget;
