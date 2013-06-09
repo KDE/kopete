@@ -69,6 +69,7 @@ public:
 	// connection details
 	XMPP::Jid jid;
 	QString password;
+	bool auth;
 
 	// XMPP backend
 	XMPP::Client *jabberClient;
@@ -618,6 +619,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	}
 	d->jid = jid;
 	d->password = password;
+	d->auth = auth;
 
 	/*
 	 * Return an error if we should force TLS but it's not available.
@@ -1059,7 +1061,7 @@ void JabberClient::slotCSAuthenticated ()
 	// start the client operation
 	d->jabberClient->start ( jid().domain (), jid().node (), d->password, jid().resource () );
 
-	if (!d->jabberClientStream->old())
+	if (!d->jabberClientStream->old() && d->auth)
 	{
 		XMPP::JT_Session *j = new XMPP::JT_Session(rootTask());
 		QObject::connect(j, SIGNAL(finished()), this, SLOT(slotSessionStarted()));
