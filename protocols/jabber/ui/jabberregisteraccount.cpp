@@ -116,6 +116,11 @@ JabberRegisterAccount::~JabberRegisterAccount()
 	delete jabberClient;
 }
 
+void JabberRegisterAccount::accept ()
+{
+
+}
+
 void JabberRegisterAccount::slotDeleteDialog ()
 {
 

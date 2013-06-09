@@ -46,6 +46,9 @@ public:
 
 	void setServer ( const QString &server );
 
+public slots:
+	virtual void accept ();
+
 private slots:
 	void slotChooseServer ();
 	void slotJIDInformation ();
