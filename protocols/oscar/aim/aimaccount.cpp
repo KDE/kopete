@@ -13,6 +13,8 @@
  *************************************************************************
  */
 
+#include <QPointer>
+
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kdialog.h>
@@ -388,8 +390,9 @@ void AIMAccount::slotEditInfo()
 				i18n( "Unable to edit user info" ) );
 		return;
 	}
-	AIMUserInfoDialog *myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>( myself() ), this);
+	QPointer <AIMUserInfoDialog> myInfo = new AIMUserInfoDialog(static_cast<AIMContact *>( myself() ), this);
 	myInfo->exec(); // This is a modal dialog
+	delete myInfo;
 }
 
 void AIMAccount::slotToggleInvisible()

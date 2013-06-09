@@ -25,6 +25,7 @@
 #include <QValidator>
 #include <QLatin1String>
 #include <QLocale>
+#include <QPointer>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -344,7 +345,7 @@ void ICQEditAccountWidget::slotOpenRegister()
 
 void ICQEditAccountWidget::slotChangePassword()
 {
-	ICQChangePasswordDialog *passwordDlg = new ICQChangePasswordDialog( mAccount, this );
+	QPointer <ICQChangePasswordDialog> passwordDlg = new ICQChangePasswordDialog( mAccount, this );
 	passwordDlg->exec();
 	delete passwordDlg;
 }
