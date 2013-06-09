@@ -59,6 +59,7 @@
 //Added by qt3to4:
 #include <QByteArray>
 #include <QList>
+#include <QPointer>
 
 #include <netinet/in.h>
 #include <kconfiggroup.h>
@@ -1198,9 +1199,9 @@ GaduAccount::slotCommandError(const QString& title, const QString& what )
 void
 GaduAccount::slotDescription()
 {
-	GaduAway* away = new GaduAway( this );
+	QPointer <GaduAway> away = new GaduAway( this );
 
-	if( away->exec() == QDialog::Accepted ) {
+	if( away->exec() == QDialog::Accepted && away ) {
 		changeStatus( GaduProtocol::protocol()->convertStatus( away->status() ),
 					away->awayText() );
 	}
