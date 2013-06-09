@@ -82,14 +82,17 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	mSuccess = false;
 
 	// get all settings from the main dialog
-	mMainWidget->leServer->setText ( parent->mServer->text () );
 	mMainWidget->leJID->setText ( parent->mID->text () );
 	mMainWidget->lePassword->setText ( parent->mPass->password () );
     mMainWidget->lePassword->setPasswordMode ( true );
 	//	mMainWidget->lePasswordVerify->setText ( parent->mPass->password () ); //BUG 114631
     mMainWidget->lePasswordVerify->setPasswordMode ( true );
-	mMainWidget->sbPort->setValue ( parent->mPort->value () );
 	mMainWidget->cbUseSSL->setChecked ( parent->cbUseSSL->isChecked () );
+	mMainWidget->cbOverrideHost->setChecked ( parent->cbCustomServer->isChecked () );
+	mMainWidget->leServer->setText ( parent->mServer->text () );
+	mMainWidget->sbPort->setValue ( parent->mPort->value () );
+
+	slotOverrideHostToggled();
 
 	connect ( this, SIGNAL (okClicked()), this, SLOT(slotOk()) );
 	connect ( this, SIGNAL (cancelClicked()), this, SLOT (slotDeleteDialog()) );
@@ -97,6 +100,7 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	connect ( mMainWidget->leServer, SIGNAL (textChanged(QString)), this, SLOT (slotJIDInformation()) );
 	connect ( mMainWidget->leJID, SIGNAL (textChanged(QString)), this, SLOT (slotJIDInformation()) );
 	connect ( mMainWidget->cbUseSSL, SIGNAL (toggled(bool)), this, SLOT (slotSSLToggled()) );
+	connect ( mMainWidget->cbOverrideHost, SIGNAL (toggled(bool)), this, SLOT (slotOverrideHostToggled()) );
 
 	connect ( mMainWidget->leServer, SIGNAL (textChanged(QString)), this, SLOT (validateData()) );
 	connect ( mMainWidget->leJID, SIGNAL (textChanged(QString)), this, SLOT (validateData()) );
@@ -135,20 +139,15 @@ void JabberRegisterAccount::validateData ()
 	bool valid = true;
 	bool passwordHighlight = false;
 
-	if ( mMainWidget->leServer->text().isEmpty () )
+	if ( mMainWidget->cbOverrideHost->isChecked () && mMainWidget->leServer->text().isEmpty () )
 	{
-		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter a server name, or click Choose." ) );
-		mMainWidget->pixServer->setPixmap ( hintPixmap );
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter a server name." ) );
 		valid = false;
-	}
-	else
-	{
-		mMainWidget->pixServer->setText ( "" );
 	}
 
 	if ( valid && !jidRegExp.exactMatch ( mMainWidget->leJID->text() ) )
 	{
-		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter a valid Jabber ID." ) );
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter a valid Jabber ID or click Choose." ) );
 		mMainWidget->pixJID->setPixmap ( hintPixmap );
 		valid = false;
 	}
@@ -198,7 +197,7 @@ void JabberRegisterAccount::slotJIDInformation ()
 
 	if ( !mMainWidget->leServer->text().isEmpty () &&
 		 ( !jidRegExp.exactMatch ( mMainWidget->leJID->text () ) ||
-		 ( mMainWidget->leJID->text().section ( '@', 1 ) != mMainWidget->leServer->text () ) ) )
+		 ( mMainWidget->cbOverrideHost->isChecked () && mMainWidget->leJID->text().section ( '@', 1 ) != mMainWidget->leServer->text () ) ) )
 	{
 		mMainWidget->lblJIDInformation->setText ( i18n ( "Unless you know what you are doing, your JID should be of the form "
 														 "\"username@server.com\".  In your case for example \"username@%1\"." , 
@@ -231,6 +230,19 @@ void JabberRegisterAccount::slotSSLToggled ()
 
 }
 
+void JabberRegisterAccount::slotOverrideHostToggled()
+{
+
+	bool overrideHost = mMainWidget->cbOverrideHost->isChecked ();
+	mMainWidget->leServer->setEnabled ( overrideHost );
+	mMainWidget->sbPort->setEnabled ( overrideHost );
+	mMainWidget->lblServer->setEnabled ( overrideHost );
+	mMainWidget->lblPort->setEnabled ( overrideHost );
+	slotJIDInformation();
+	validateData();
+
+}
+
 void JabberRegisterAccount::slotChooseServer ()
 {
 
@@ -260,13 +272,18 @@ void JabberRegisterAccount::slotOk ()
 	// cancel any previous attempt
 	jabberClient->disconnect ();
 
-	// FIXME: we need to use the old protocol for now
-	jabberClient->setUseXMPP09 ( true );
-
 	jabberClient->setUseSSL ( mMainWidget->cbUseSSL->isChecked () );
 
-	// FIXME: check this when using the new protocol
-	jabberClient->setOverrideHost ( true, mMainWidget->leServer->text (), mMainWidget->sbPort->value () );
+	if ( mMainWidget->cbOverrideHost->isChecked () )
+	{
+		jabberClient->setUseXMPP09 ( true );
+		jabberClient->setOverrideHost ( true, mMainWidget->leServer->text (), mMainWidget->sbPort->value () );
+	}
+	else
+	{
+		jabberClient->setUseXMPP09 ( false );
+		jabberClient->setOverrideHost ( false );
+	}
 
 	// start connection, no authentication
 	switch ( jabberClient->connect ( XMPP::Jid ( mMainWidget->leJID->text () ), QString(), false ) )
@@ -359,6 +376,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mParentWidget->mPass->setPassword ( mMainWidget->lePassword->text () );
 		mParentWidget->mPort->setValue ( mMainWidget->sbPort->value () );
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
+		mParentWidget->cbCustomServer->setChecked ( mMainWidget->cbOverrideHost->isChecked () );
 
 		// disable input widgets
 		mMainWidget->btnChooseServer->setEnabled ( false );
@@ -368,6 +386,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mMainWidget->lePasswordVerify->setEnabled ( false );
 		mMainWidget->sbPort->setEnabled ( false );
 		mMainWidget->cbUseSSL->setEnabled ( false );
+		mMainWidget->cbOverrideHost->setEnabled ( false );
 
 		// disable input widget labels
 		mMainWidget->lblServer->setEnabled ( false );

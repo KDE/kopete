@@ -53,6 +53,7 @@ private slots:
 	void slotChooseServer ();
 	void slotJIDInformation ();
 	void slotSSLToggled ();
+	void slotOverrideHostToggled();
 	void slotOk ();
 
 	void slotHandleTLSWarning ( QCA::TLS::IdentityResult, QCA::Validity );
