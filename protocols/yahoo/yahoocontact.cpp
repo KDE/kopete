@@ -43,6 +43,7 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qradiobutton.h>
+#include <QPointer>
 
 // KDE Includes
 #include <kdebug.h>
@@ -511,7 +512,7 @@ void YahooContact::stealthContact()
 {
 	kDebug(YAHOO_GEN_DEBUG) ;
 
-	KDialog *stealthSettingDialog = new KDialog( Kopete::UI::Global::mainWidget() );
+	QPointer <KDialog> stealthSettingDialog = new KDialog( Kopete::UI::Global::mainWidget() );
 	stealthSettingDialog->setCaption( i18n("Stealth Setting") );
 	stealthSettingDialog->setButtons( KDialog::Ok | KDialog::Cancel );
 	stealthSettingDialog->setDefaultButton(KDialog::Ok);
@@ -533,9 +534,9 @@ void YahooContact::stealthContact()
 
 
 	// Show dialog
-	if ( stealthSettingDialog->exec() == QDialog::Rejected )
+	if ( stealthSettingDialog->exec() == QDialog::Rejected || ! stealthSettingDialog )
 	{
-		stealthSettingDialog->deleteLater();
+		delete stealthSettingDialog;
 		return;
 	}
 

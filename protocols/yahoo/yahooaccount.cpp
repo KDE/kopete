@@ -30,6 +30,7 @@
 #include <QPixmap>
 #include <QDir>
 #include <QFileInfo>
+#include <QPointer>
 
 // KDE
 #include <klocale.h>
@@ -1928,7 +1929,7 @@ void YahooAccount::slotEditOwnYABEntry()
 
 void YahooAccount::slotJoinChatRoom()
 {
-	YahooChatSelectorDialog *chatDialog = new YahooChatSelectorDialog( Kopete::UI::Global::mainWidget() );
+	QPointer <YahooChatSelectorDialog> chatDialog = new YahooChatSelectorDialog( Kopete::UI::Global::mainWidget() );
 
 	QObject::connect( m_session, SIGNAL(gotYahooChatCategories(QDomDocument)), chatDialog,
 					SLOT(slotSetChatCategories(QDomDocument)) );
@@ -1938,13 +1939,13 @@ void YahooAccount::slotJoinChatRoom()
 					this, SLOT(slotChatCategorySelected(Yahoo::ChatCategory)) );
 	m_session->getYahooChatCategories();
 
-	if( chatDialog->exec() == QDialog::Accepted )
+	if( chatDialog->exec() == QDialog::Accepted && chatDialog )
 	{
 		kDebug() << chatDialog->selectedRoom().topic << " " << chatDialog->selectedRoom().topic << " " << chatDialog->selectedRoom().id;
 		m_session->joinYahooChatRoom( chatDialog->selectedRoom() );
 	}
 
-	chatDialog->deleteLater();
+	delete chatDialog;
 }
 
 void YahooAccount::slotLeavChat()
