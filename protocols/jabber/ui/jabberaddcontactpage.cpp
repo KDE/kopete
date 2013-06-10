@@ -114,7 +114,15 @@ bool JabberAddContactPage::apply ( Kopete::Account *account, Kopete::MetaContact
 		QStringList groupNames;
 		Kopete::GroupList groupList = parentContact->groups();
 		foreach(Kopete::Group *group, groupList)
-			groupNames += group->displayName();
+		{
+			if (group->type() == Kopete::Group::Normal)
+				groupNames += group->displayName();
+			else if (group->type() == Kopete::Group::TopLevel)
+				groupNames += QString();
+		}
+
+		if(groupNames.size() == 1 && groupNames.at(0).isEmpty())
+			groupNames.clear();
 
 		if ( jaccount->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) )
 		{
@@ -191,7 +199,15 @@ void JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND::slot
 	QStringList groupNames;
 	Kopete::GroupList groupList = parentContact->groups();
 	foreach(Kopete::Group *group,groupList)
-		groupNames += group->displayName();
+	{
+		if (group->type() == Kopete::Group::Normal)
+			groupNames += group->displayName();
+		else if (group->type() == Kopete::Group::TopLevel)
+			groupNames += QString();
+	}
+
+	if(groupNames.size() == 1 && groupNames.at(0).isEmpty())
+		groupNames.clear();
 
 	if ( jaccount->addContact ( contactId, parentContact, Kopete::Account::ChangeKABC ) )
 	{
