@@ -2,10 +2,10 @@ Basic Installation
 ==================
 
         KDE uses the cmake build system. The simple instructions for
-building kdenetwork are these commands (starting in kdenetwork source directory):
+building kopete are these commands (starting in kopete source directory):
 
-                        mkdir ../kdenetwork-build && cd ../kdenetwork-build
-                        cmake ../kdenetwork
+                        mkdir build && cd build
+                        cmake ..
                         make
                         make install
 
@@ -17,7 +17,7 @@ in the order in which they should be built:
                         kdepimlibs
                         kdebase/runtime
 
-        Various components of kdenetwork and the KDE modules listed above have
+        Various components of kopete and the KDE modules listed above have
 other dependencies as well. If these are not met when the 'cmake' command is
 run, those components will not be built. The output of 'cmake' should make it
 clear what these dependencies are and how to meet them.
