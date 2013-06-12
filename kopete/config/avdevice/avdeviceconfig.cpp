@@ -27,6 +27,8 @@
 #include <qslider.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
+#include <QShowEvent>
+#include <QHideEvent>
 
 #include <kplugininfo.h>
 #include <klocale.h>
@@ -61,38 +63,80 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
 	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
 
-	connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
-	connect(mPrfsVideoDevice->mStandardKComboBox,            SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
-
-	mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
-
-	if (EXIT_SUCCESS == mVideoDevicePool->open())
-	{
-		setupControls();
-		startCapturing();
-	}
-
-	mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
-	mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
-	mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
-
-	connect(mVideoDevicePool, SIGNAL(deviceRegistered(QString)),
-			SLOT(deviceRegistered(QString)) );
-	connect(mVideoDevicePool, SIGNAL(deviceUnregistered(QString)),
-			SLOT(deviceUnregistered(QString)) );
-
-	connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
+	mVideoDevicePool = NULL;
 }
 
 
 AVDeviceConfig::~AVDeviceConfig()
 {
-	for (int k=0; k<ctrl_values_bak.size(); k++)
-		mVideoDevicePool->setControlValue(ctrl_values_bak.at(k).id, ctrl_values_bak.at(k).value);
-	mVideoDevicePool->close();
+	if (mVideoDevicePool)
+	{
+		for (int k=0; k<ctrl_values_bak.size(); k++)
+			mVideoDevicePool->setControlValue(ctrl_values_bak.at(k).id, ctrl_values_bak.at(k).value);
+		mVideoDevicePool->close();
+	}
 	clearControlGUIElements();
 	delete mPrfsVideoDevice;
+}
+
+
+void AVDeviceConfig::updateVideoDevicePool()
+{
+	bool visible = isVisible();
+
+	if ((mVideoDevicePool && visible) || (!mVideoDevicePool && !visible))
+		return;
+
+	if (visible)
+	{
+		connect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
+		connect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
+		connect(mPrfsVideoDevice->mStandardKComboBox,            SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
+
+		mVideoDevicePool = Kopete::AV::VideoDevicePool::self();
+
+		if (EXIT_SUCCESS == mVideoDevicePool->open())
+		{
+			setupControls();
+			startCapturing();
+		}
+
+		mVideoDevicePool->fillDeviceKComboBox(mPrfsVideoDevice->mDeviceKComboBox);
+		mVideoDevicePool->fillInputKComboBox(mPrfsVideoDevice->mInputKComboBox);
+		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
+
+		connect(mVideoDevicePool, SIGNAL(deviceRegistered(QString)), this,
+				SLOT(deviceRegistered(QString)) );
+		connect(mVideoDevicePool, SIGNAL(deviceUnregistered(QString)), this,
+				SLOT(deviceUnregistered(QString)) );
+
+		connect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
+	}
+	else
+	{
+		for (int k=0; k<ctrl_values_bak.size(); k++)
+			mVideoDevicePool->setControlValue(ctrl_values_bak.at(k).id, ctrl_values_bak.at(k).value);
+
+		disconnect(mVideoDevicePool, SIGNAL(deviceRegistered(QString)), this,
+				SLOT(deviceRegistered(QString)) );
+		disconnect(mVideoDevicePool, SIGNAL(deviceUnregistered(QString)), this,
+				SLOT(deviceUnregistered(QString)) );
+
+		disconnect(mPrfsVideoDevice->mDeviceKComboBox,              SIGNAL(activated(int)),    this, SLOT(slotDeviceKComboBoxChanged(int)));
+		disconnect(mPrfsVideoDevice->mInputKComboBox,               SIGNAL(activated(int)),    this, SLOT(slotInputKComboBoxChanged(int)));
+		disconnect(mPrfsVideoDevice->mStandardKComboBox,            SIGNAL(activated(int)),    this, SLOT(slotStandardKComboBoxChanged(int)));
+
+		disconnect(&qtimer, SIGNAL(timeout()), this, SLOT(slotUpdateImage()) );
+
+		stopCapturing();
+		mVideoDevicePool->close();
+
+		mVideoDevicePool = NULL;
+
+		// set a default image for the webcam widget, in case the user does not have a video device
+		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
+		mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
+	}
 }
 
 
@@ -399,4 +443,18 @@ void AVDeviceConfig::resetControls()
 	if (ctrlWidgets.size())
 		mPrfsVideoDevice->VideoTabWidget->setCurrentIndex(3);
 	// NOTE: TO BE IMPROVED
+}
+
+void AVDeviceConfig::showEvent(QShowEvent *event)
+{
+	// wait 1s so duplicate show/hide events will be skipped
+	QTimer::singleShot(1000, this, SLOT(updateVideoDevicePool()));
+	KCModule::showEvent(event);
+}
+
+void AVDeviceConfig::hideEvent(QHideEvent *event)
+{
+	// wait 1s so duplicate show/hide events will be skipped
+	QTimer::singleShot(1000, this, SLOT(updateVideoDevicePool()));
+	KCModule::hideEvent(event);
 }

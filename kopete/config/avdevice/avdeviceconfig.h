@@ -62,6 +62,7 @@ private slots:
 	void resetControls();
 	void deviceRegistered( const QString & );
 	void deviceUnregistered( const QString & );
+	void updateVideoDevicePool();
 
 private:
 	class VideoControlValue
@@ -95,6 +96,10 @@ private:
 #ifdef HAVE_GL
 //	QGLWidget m_video_gl;
 #endif
+
+protected:
+	virtual void showEvent(QShowEvent *event);
+	virtual void hideEvent(QHideEvent *event);
 };
 
 #endif
