@@ -1,7 +1,7 @@
 option(WITH_latex "Enable Kopete latex plugin" ON)
 option(WITH_autoreplace "Enable Kopete autoreplace plugin" ON)
 option(WITH_history "Enable Kopete history plugin" ON)
-option(WITH_history2 "Enable Kopete history2 plugin" OFF)
+option(WITH_history2 "Enable Kopete history2 plugin" ON)
 option(WITH_contactnotes "Enable Kopete contactnotes plugin" ON)
 option(WITH_translator "Enable Kopete translator plugin" ON)
 option(WITH_nowlistening "Enable Kopete nowlistening plugin" ON)
