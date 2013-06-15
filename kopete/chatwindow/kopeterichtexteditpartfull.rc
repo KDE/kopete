@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="krichtexteditpart" version="14">
+<kpartgui name="krichtexteditpart" version="15">
 <MenuBar>
   <Menu name="format"><text>F&amp;ormat</text>
     <Action name="format_bold"/>
@@ -17,6 +17,7 @@
     <Action name="format_font_size"/>
     <Action name="format_font"/>
     <Action name="enable_richtext"/>
+    <Action name="enable_autoresize"/>
   </Menu>
   <Merge />
 </MenuBar>

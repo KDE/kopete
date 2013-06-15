@@ -50,6 +50,7 @@
 #include <QTimer>
 #include <QSplitter>
 #include <Q3UriDrag>
+#include <QScrollBar>
 
 K_PLUGIN_FACTORY( ChatWindowPluginFactory, registerPlugin<ChatWindowPlugin>(); )
 K_EXPORT_PLUGIN( ChatWindowPluginFactory( "kopete_chatwindow" ) )
@@ -120,6 +121,8 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	         this, SIGNAL(canSendChanged(bool)) );
 	connect( editPart(), SIGNAL(typing(bool)),
 		 mgr, SLOT(typing(bool)) );
+	connect( editPart()->textEdit(), SIGNAL(documentSizeUpdated(int)),
+	         this, SLOT(slotRecalculateSize(int)) );
 
 	//Set the view as the main widget
 //	setView(viewDock);
@@ -477,6 +480,24 @@ void ChatView::setStatusText( const QString &status )
 	d->statusText = status;
 	if ( d->isActive )
 		m_mainWindow->setStatus( status );
+}
+
+void ChatView::slotRecalculateSize(int difference)
+{
+	// Firstly, save the scrollbar state
+	QScrollBar *messageAreaScrollBar = messagePart()->view()->verticalScrollBar();
+	bool isScrolledDown = messageAreaScrollBar->value() == messageAreaScrollBar->maximum();
+
+	// Apply sizes changing to splitter
+	QList<int> sizes = d->splitter->sizes();
+	sizes.first() -= difference;
+	sizes.last() += difference;
+	d->splitter->setSizes(sizes);
+
+	// Restore scrollbar state
+	if (isScrolledDown) {
+		messagePart()->keepScrolledDown();
+	}
 }
 
 const QString& ChatView::statusText()

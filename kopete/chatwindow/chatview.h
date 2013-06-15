@@ -222,6 +222,12 @@ public slots:
 	 */
 	void setStatusText( const QString &text );
 
+	/**
+	 * Triggers text edit's size recalculation.
+	 * Used for auto-sizing.
+	 */
+	void slotRecalculateSize(int difference);
+
 	/** Reimplemented from KopeteView **/
 	virtual void messageSentSuccessfully();
 

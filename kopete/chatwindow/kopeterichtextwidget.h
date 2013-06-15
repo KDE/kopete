@@ -80,8 +80,11 @@ public Q_SLOTS:
 
     void slotResetFontAndColor();
     void slotCheckSpellingChanged(bool b);
+    void slotDocumentSizeUpdated();
+    void slotEnableAutoResize(bool enable);
 signals:
     void richTextSupportChanged();
+    void documentSizeUpdated(int difference);
 
 protected:
     virtual void insertFromMimeData(const QMimeData * source);

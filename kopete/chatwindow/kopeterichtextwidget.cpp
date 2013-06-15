@@ -30,6 +30,7 @@
 #include <klocalizedstring.h>
 #include <ktoggleaction.h>
 #include <kcolorscheme.h>
+#include <KConfigGroup>
 
 // Qt includes
 #include <QUrl>
@@ -74,6 +75,7 @@ public:
 
     bool changingTextMode;
 
+    KToggleAction* autoResize;
     KToggleAction* checkSpelling;
     KToggleAction* toggleRichText;
     KAction* reset;
@@ -108,6 +110,10 @@ KopeteRichTextWidget::KopeteRichTextWidget(QWidget* parent, Kopete::Protocol::Ca
 
 KopeteRichTextWidget::~KopeteRichTextWidget()
 {
+    KConfigGroup configGroupMode( KGlobal::config(), QLatin1String( "KopeteChatWindowGroupMode" ));
+    KConfigGroup configIndividual( KGlobal::config(), QLatin1String( "KopeteChatWindowIndividualMode" ));
+    configGroupMode.writeEntry( "AutoResize", d->autoResize->isChecked());
+    configIndividual.writeEntry( "AutoResize", d->autoResize->isChecked());
     delete d;
 }
 
@@ -135,8 +141,37 @@ void KopeteRichTextWidget::slotCheckSpellingChanged(bool b)
     setCheckSpellingEnabled(b);
 }
 
+void KopeteRichTextWidget::slotDocumentSizeUpdated()
+{
+    int currentFontHeight = QFontMetrics(font()).height();
+    int difference = document()->size().toSize().height() - size().height() + currentFontHeight;
+    emit documentSizeUpdated(difference);
+}
+
+void KopeteRichTextWidget::slotEnableAutoResize(bool enable)
+{
+    if (enable)
+    {
+        connect(this, SIGNAL(textChanged()),
+                this, SLOT(slotDocumentSizeUpdated()));
+    }
+    else
+    {
+        disconnect(this, SLOT(slotDocumentSizeUpdated()));
+    }
+}
+
 void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 {
+    KConfigGroup config(KGlobal::config(), QLatin1String("KopeteChatWindowIndividualMode"));
+
+    bool autoResizeEnabled = config.readEntry("AutoResize", true);
+    d->autoResize = new KToggleAction( i18n("Input auto-resize"), actionCollection );
+    connect( d->autoResize, SIGNAL(toggled(bool)), this, SLOT(slotEnableAutoResize(bool)) );
+    d->autoResize->setChecked(autoResizeEnabled);
+    slotEnableAutoResize(autoResizeEnabled);
+    actionCollection->addAction( "enable_autoresize", d->autoResize );
+
     if (!d->checkSpelling)
     {
         d->checkSpelling = new KToggleAction(KIcon("tools-check-spelling"), i18n("Automatic Spell Checking"), actionCollection);
