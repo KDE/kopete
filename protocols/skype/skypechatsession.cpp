@@ -130,7 +130,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 
 	setMayInvite(true);//It is possible to invite people to chat with Skype
 
-	if ( account->leaveOnExit() )//dont open warn dialog on leaving chat window, if user doesnt set it
+	if ( account->leaveOnExit() )//do not open warn dialog on leaving chat window, if user does not set it
 		setWarnGroupChat(false);
 
 	setXMLFile("skypechatui.rc");
@@ -168,7 +168,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 
 	setMayInvite(true);//It is possible to invite people to chat with Skype
 
-	if ( account->leaveOnExit() )//dont open warn dialog on leaving chat window, if user doesnt set it
+	if ( account->leaveOnExit() )//do not open warn dialog on leaving chat window, if user does not set it
 		setWarnGroupChat(false);
 
 	setXMLFile("skypechatui.rc");

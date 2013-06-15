@@ -75,7 +75,7 @@ class JabberBookmarks : public QObject
 		
 		/**
 		 * update or create en entry with the given jid.
-		 * the jid ressource is the nickname
+		 * the jid resource is the nickname
 		 */
 		void insertGroupChat(const XMPP::Jid &jid);
 		

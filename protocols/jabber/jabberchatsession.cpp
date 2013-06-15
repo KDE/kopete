@@ -112,7 +112,7 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	//if ( chatMembers.first () )
 	//{
 		// Check if the current contact support Audio calls, also honor lock by default.
-		// FIXME: we should use the active ressource
+		// FIXME: we should use the active resource
 		//jingleaudiocall->setEnabled( bestResource->features().canJingleAudio() );
 		//jinglevideocall->setEnabled( bestResource->features().canJingleVideo() );
 	//}

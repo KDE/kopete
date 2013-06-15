@@ -101,7 +101,7 @@ class SkypeWindow : public QObject
 		///Called when new window is added to kwin manager
 		void windowAdded(WId wid);
 	signals:
-		///Emited when we found skype call dialog
+		///Emitted when we found skype call dialog
 		void foundCallDialog();
 };
 

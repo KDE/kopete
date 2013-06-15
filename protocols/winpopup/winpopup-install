@@ -22,12 +22,12 @@ i=`find /etc -name smb.conf`
 
 # Check if smb.conf exist
 if [ ! -f "$i" ]; then
-	echo "Samba configuration file smb.conf doesnt exist in /etc"
+	echo "Samba configuration file smb.conf does not exist in /etc"
 	exit 1
 fi
 
 # Create new smb.conf file with updated message command line and security section
-# If security isnt share, smbclient doesnt get SERVER and WORKGROUP for browsing network
+# If security isnt share, smbclient does not get SERVER and WORKGROUP for browsing network
 echo "[global]" > ~/smb.conf.new
 echo "   message command = $WPSEND %s %m %t &" >> ~/smb.conf.new
 echo "   security = share" ~/smb.conf.new

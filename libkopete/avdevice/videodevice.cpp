@@ -54,7 +54,7 @@ VideoDevice::~VideoDevice()
     \brief Sets up the supported video-controls for the current input
 
     Determines which video-controls are supported for the current input,
-    reads all needed informations about them and stores the data to the local members
+    reads all needed information about them and stores the data to the local members
  */
 void VideoDevice::setupControls()
 {
@@ -178,7 +178,7 @@ void VideoDevice::setupControls()
     \fn bool VideoDevice::getMenuCtrlOptions(quint32 id, quint32 maxindex, QStringList * options)
     \param id ID of the video-control
     \param maxindex Highest menu index
-    \param options Pointer to the QStringList which will recieve the option-strings of the video-control
+    \param options Pointer to the QStringList which will receive the option-strings of the video-control
     \return The success of the operation
     \brief Reads the available options provided by a menu-video-control
  */
@@ -1727,7 +1727,7 @@ QList<ActionVideoControl> VideoDevice::getSupportedActionControls()
 /*!
     \fn int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
     \param ctrl_id ID of the video-control
-    \param value Pointer to the variable, which recieves the value of the querried video-control.
+    \param value Pointer to the variable, which receives the value of the querried video-control.
                  For boolean controls, the value is 0 or 1.
                  For menu-controls, the value is the index of the currently selected option.
     \return The result-code, currently EXIT_SUCCESS or EXIT_FAILURE

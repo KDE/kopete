@@ -289,7 +289,7 @@ void MessageReceiverTask::handleType2Message()
 					emit receivedMessage( msg );
 					break;
 				case 0x01:
-					kDebug(OSCAR_RAW_DEBUG) << "Received Abort Mesage";
+					kDebug(OSCAR_RAW_DEBUG) << "Received Abort Message";
 					break;
 				case 0x02:
 					kDebug(OSCAR_RAW_DEBUG) << "Received OK Message";

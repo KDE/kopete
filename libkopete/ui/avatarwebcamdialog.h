@@ -55,7 +55,7 @@ public:
 	 */
 	AvatarWebcamDialog(QWidget *parent = 0);
 	/**
-	 * Clean-up ressource of AvatarFromWebcamDialog
+	 * Clean-up resource of AvatarFromWebcamDialog
 	 */
 	virtual ~AvatarWebcamDialog();
 	/**

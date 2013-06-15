@@ -91,7 +91,7 @@ install( FILES kopete_skype.desktop skype.protocol callto.protocol tel.protocol 
 install( FILES skypeui.rc skypechatui.rc DESTINATION ${DATA_INSTALL_DIR}/kopete_skype )
 
 #Enable this for system bus dbus type communication with skype public api
-#Linux skype client (version 2.0.0.72) still doesnt support it, so we doesnt need it now maybe in new skype version
+#Linux skype client (version 2.0.0.72) still does not support it, so we do not need it now maybe in new skype version
 #if (DBUS_SYSTEM_POLICY_DIR)
 #	install( FILES libskype/skypedbus/com.Skype.API.Client.conf DESTINATION ${DBUS_SYSTEM_POLICY_DIR})
 #else (DBUS_SYSTEM_POLICY_DIR)

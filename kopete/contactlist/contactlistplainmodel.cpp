@@ -75,7 +75,7 @@ void ContactListPlainModel::addMetaContactImpl( Kopete::MetaContact *mc )
 		if ( mcIndex == mcDesireIndex )
 			return;
 
-		// We're moving metaContact so temporary remove it so model is avare of the change.
+		// We're moving metaContact so temporary remove it so model is aware of the change.
 		beginRemoveRows( QModelIndex(), mcIndex, mcIndex );
 		m_contacts.removeAt( mcIndex );
 		endRemoveRows();

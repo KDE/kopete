@@ -65,7 +65,7 @@ public:
 	 */
 	AvatarDialog(QWidget *parent = 0);
 	/**
-	 * Clean-up ressource of AvatarDialog
+	 * Clean-up resource of AvatarDialog
 	 */
 	virtual ~AvatarDialog();
 

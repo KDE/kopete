@@ -428,7 +428,7 @@
   </mediaobject>
 </screenshot>
 </para>
-<para>This may take a while and you have to wait until &kopete; finished. After that close the OTR window with <guilabel>OK</guilabel> and <guilabel>Apply</guilabel> the changes. You eventually will have to restart &kopete; after this. Then open a chat window of the contact you want to safely communicate with. Go to <menuchoice><guimenu>Tools</guimenu><guisubmenu>OTR Settings</guisubmenu><guimenuitem>Start OTR Session</guimenuitem></menuchoice> or use the icon <menuchoice><guimenu>OTR Encryption</guimenu><guimenuitem>Start OTR Session</guimenuitem></menuchoice>. &kopete; will start the session if your contact is capable of OTR, otherwise you'll recieve an error message. 
+<para>This may take a while and you have to wait until &kopete; finished. After that close the OTR window with <guilabel>OK</guilabel> and <guilabel>Apply</guilabel> the changes. You eventually will have to restart &kopete; after this. Then open a chat window of the contact you want to safely communicate with. Go to <menuchoice><guimenu>Tools</guimenu><guisubmenu>OTR Settings</guisubmenu><guimenuitem>Start OTR Session</guimenuitem></menuchoice> or use the icon <menuchoice><guimenu>OTR Encryption</guimenu><guimenuitem>Start OTR Session</guimenuitem></menuchoice>. &kopete; will start the session if your contact is capable of OTR, otherwise you'll receive an error message. 
 </para>
 <para>
 <screenshot>

@@ -331,7 +331,7 @@ QList<ActionVideoControl> VideoDevicePool::getSupportedActionControls()
 /*!
     \fn int VideoDevicePool::getControlValue( quint32 ctrl_id, qint32 * value )
     \param ctrl_id ID of the video-control
-    \param value Pointer to the variable, which recieves the value of the querried video-control.
+    \param value Pointer to the variable, which receives the value of the querried video-control.
                  For boolean controls, the value is 0 or 1.
                  For menu-controls, the value is the index of the currently selected option.
     \return The result-code, currently EXIT_SUCCESS or EXIT_FAILURE

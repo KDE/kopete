@@ -52,7 +52,7 @@ class GoogleTalk : public QObject
 
 		/**
 		 * Set (or change) user name and password for Google Talk account
-		 * Use it if you doesnt set up in constructor
+		 * Use it if you do not set up in constructor
 		 * If you change, first logout @see logout()
 		 * @param jid user name (jabber jid) for Google Talk account (default none)
 		 * @param password password for GoogleTalk account (default none)
@@ -160,25 +160,25 @@ class GoogleTalk : public QObject
 	signals:
 
 		/**
-		 * This signal is emited when we are succesfull login to Google Talk server
+		 * This signal is emitted when we are succesfull login to Google Talk server
 		 */
 		void connected();
 
 		/**
-		 * This signal is emited when we are disconnected or logouted from Google Talk server
+		 * This signal is emitted when we are disconnected or logouted from Google Talk server
 		 * @param res Resolution why we are disconneced
 		 */
 		void disconnected(const QString &res);
 
 		/**
-		 * This signal is emited when user go online and support voice call
+		 * This signal is emitted when user go online and support voice call
 		 * @param user name of who go online
 		 * @param resource jabber resource of user
 		 */
 		void userOnline(const QString &user, const QString &resource);
 
 		/**
-		 * This signal is emited when user go offline or not support voice call
+		 * This signal is emitted when user go offline or not support voice call
 		 * After succesfull login it is all user who are online, but dont support voice call
 		 * @param user name of user who go offline
 		 * @param resource jabber resource of user
@@ -186,34 +186,34 @@ class GoogleTalk : public QObject
 		void userOffline(const QString &user, const QString &resourc);
 
 		/**
-		 * This signal is emited when user call you
+		 * This signal is emitted when user call you
 		 * @param user name of user who are call you
 		 * @param resource jabber resource of user
 		 */
 		void incomingCall(const QString &user, const QString &resourc);
 
 		/**
-		 * This signal is emited when you start call, but user from other side doesnt accept/reject call
+		 * This signal is emitted when you start call, but user from other side does not accept/reject call
 		 */
 		void callingCall();
 
 		/**
-		 * This signal is emited when user from other side accept call
+		 * This signal is emitted when user from other side accept call
 		 */
 		void acceptedCall();
 
 		/**
-		 * This signal is emited when user from other side reject call
+		 * This signal is emitted when user from other side reject call
 		 */
 		void rejectedCall();
 
 		/**
-		 * This signal is emited when call is active in all side
+		 * This signal is emitted when call is active in all side
 		 */
 		void progressCall();
 
 		/**
-		 * This signal is emited when user from other side hang up call
+		 * This signal is emitted when user from other side hang up call
 		 */
 		void hangedupCall();
 

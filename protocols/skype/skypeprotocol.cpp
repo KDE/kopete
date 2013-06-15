@@ -40,7 +40,7 @@ K_EXPORT_PLUGIN( SkypeProtocolFactory( "kopete_skype" ) )
 SkypeProtocol *SkypeProtocol::s_protocol = 0L;
 
 SkypeProtocolHandler::SkypeProtocolHandler() : Kopete::MimeTypeHandler(false) {
-	registerAsMimeHandler("x-skype"); //This is still not enought for javascript web buttons checker, we still need skypebuttons netscape plugin
+	registerAsMimeHandler("x-skype"); //This is still not enough for javascript web buttons checker, we still need skypebuttons netscape plugin
 	registerAsProtocolHandler("callto");
 	registerAsProtocolHandler("skype");
 	registerAsProtocolHandler("tell");
@@ -49,7 +49,7 @@ SkypeProtocolHandler::SkypeProtocolHandler() : Kopete::MimeTypeHandler(false) {
 void SkypeProtocolHandler::handleURL(const QString &, const KUrl &url) const {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 	if ( ! SkypeProtocol::protocol()->hasAccount() ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "No Skype account registred";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "No Skype account registered";
 		return;
 	}
 	SkypeProtocol::protocol()->account()->SkypeActionHandler(url.url());

@@ -967,7 +967,7 @@ public:
 //! \brief Constructs Message with given Jid information.
 //!
 //! This function will construct a Message container.
-//! \param to - specify reciver (default: empty string)
+//! \param to - specify receiver (default: empty string)
 Message::Message(const Jid &to)
 {
 	d = new Private;

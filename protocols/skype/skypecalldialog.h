@@ -110,7 +110,7 @@ class SkypeCallDialog : public KDialog, private Ui::SkypeCallDialogBase
 		 */
 		void updateSkypeOut();
 		/**
-		 * This is emited when a call dialog is closed and is going to be deleted
+		 * This is emitted when a call dialog is closed and is going to be deleted
 		 * @param callId Id of it's call
 		 */
 		void callFinished(const QString &callId);

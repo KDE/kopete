@@ -110,10 +110,10 @@ bool SkypeWindow::isCallDialog(const QString &user, WId wid) {
 			kDebug(SKYPE_DEBUG_GLOBAL) << "It is skype dialog";
 			return true;
 		} else {
-			kDebug(SKYPE_DEBUG_GLOBAL) << "pid" << pid << "windowName" << windowName << "isnt skype call dialog for name" << user;
+			kDebug(SKYPE_DEBUG_GLOBAL) << "pid" << pid << "windowName" << windowName << "is not skype call dialog for name" << user;
 		}
 	} else {
-		kDebug(SKYPE_DEBUG_GLOBAL) <<  "pid" << pid << "isnt skype call dialog for name" << user;
+		kDebug(SKYPE_DEBUG_GLOBAL) <<  "pid" << pid << "is not skype call dialog for name" << user;
 	}
 
 
@@ -173,7 +173,7 @@ void SkypeWindow::hideCallDialog(const QString &user) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << user;
 	WId wid = getCallDialogWId(user);
 	if ( wid == 0 ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find WId of skype call dialog";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cannot find WId of skype call dialog";
 		return;
 	}
 	kDebug(SKYPE_DEBUG_GLOBAL) << "Hide skype call dialog id" << wid;
@@ -185,7 +185,7 @@ void SkypeWindow::showCallDialog(const QString &user) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << user;
 	WId wid = d->hiddenWindows.value(user, 0);
 	if ( wid == 0 ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find WId of skype call dialog, maybe now doesnt exist";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cannot find WId of skype call dialog, maybe now it does not exist";
 		return;
 	}
 	kDebug(SKYPE_DEBUG_GLOBAL) << "Show skype call dialog WId" << wid;
@@ -198,7 +198,7 @@ void SkypeWindow::deleteCallDialog(const QString &user) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << user;
 	WId wid = d->hiddenWindows.value(user, 0);
 	if ( wid == 0 ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find WId of skype call dialog, maybe is now deleted";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cannot find WId of skype call dialog, maybe it is now deleted";
 		return;
 	}
 	kDebug(SKYPE_DEBUG_GLOBAL) << "Delete skype call dialog id" << wid;
@@ -250,7 +250,7 @@ void SkypeWindow::moveWebcamWidget(const QString &user, WId otherWId, int x, int
 	}
 	WId webcamWidgetWId = getWebcamWidgetWId(callDialogWId);
 	if ( webcamWidgetWId == 0 ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find WId of skype webcam widget, maybe isnt incomming webcam stream";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cannot find WId of skype webcam widget, maybe it is not an incoming webcam stream";
 		return;
 	}
 	//get parent of webcam stream widget
@@ -259,7 +259,7 @@ void SkypeWindow::moveWebcamWidget(const QString &user, WId otherWId, int x, int
 	unsigned int nchildren;
 	int status = XQueryTree(QX11Info::display(), webcamWidgetWId, &root, &parent, &children, &nchildren);
 	if ( status == 0 ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find parent of skype webcam widget";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cannot find parent of skype webcam widget";
 		return;
 	}
 	XFree(children);
@@ -273,17 +273,17 @@ void SkypeWindow::revertWebcamWidget(const QString &user) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << user;
 	WId callDialogWId = getCallDialogWId(user);
 	if ( callDialogWId == 0 ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find WId of skype call dialog";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cannot find WId of skype call dialog";
 		return;
 	}
 	WId webcamWidgetWId = getWebcamWidgetWId(callDialogWId);
 	if ( callDialogWId == 0 ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find WId of skype webcam widget, maybe isnt incomming webcam stream";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cannot find WId of skype webcam widget, maybe it is not an incoming webcam stream";
 		return;
 	}
 	WId parentWId = d->webcamStreams.value(webcamWidgetWId, 0);
 	if ( parentWId == 0 ) {
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant find parent of skype webcam widget";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Cannot find parent of skype webcam widget";
 		return;
 	}
 	d->webcamStreams.remove(webcamWidgetWId);

@@ -249,8 +249,8 @@ void WinPopupLib::slotReadProcessExited(int i, QProcess::ExitStatus status)
 			passedInitialHost = true;
 			if ( currentGroups.isEmpty() && currentHost.toUpper() == "LOCALHOST" ) {
 				kDebug(14170) << "Cant get workgroup for localhost";
-				//Samba on localhost in up but doesnt receive workgroups or security in smb.conf in not share
-				//Sometimes samba recive workgroups in 2min.
+				//Samba on localhost in up but does not receive workgroups or security in smb.conf in not share
+				//Sometimes samba receive workgroups in 2min.
 				//TODO: Fix it better
 
 				//try get host name

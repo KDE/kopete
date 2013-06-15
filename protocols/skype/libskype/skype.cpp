@@ -278,7 +278,7 @@ void Skype::connectionDone(int error, int protocolVer) {
 		d->connection.send("GET CONNSTATUS");
 		d->fixGroupTimer->start(60000);//fix & load groups to memory every minutes
 	} else {
-		closed(crLost);//OK, this is wrong, justclose the connection/atempt and delete the queue
+		closed(crLost);//OK, this is wrong, just close the connection/attempt and delete the queue
 	}
 }
 
@@ -943,7 +943,7 @@ void Skype::fixGroups(bool loadOnly) {
 		}
 	}
 
-	//Check if groups doesnt have same names
+	//Check if groups do not have same names
 	if ( ! loadOnly ) {
 		QStringList groupsNames = d->groupsNames.keys();//get all groups names, if group has more ides then one, add to List this group only one
 		for ( QStringList::iterator group = groupsNames.begin(); group != groupsNames.end(); ++group ){

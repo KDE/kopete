@@ -160,7 +160,7 @@ public:
  * class YourClass : public WithProperties<YourClass> { ... };
  * \endcode
  *
- * You will also need to explicitly specialise the propertyCreated() member function to
+ * You will also need to explicitly specify the propertyCreated() member function to
  * load property data upon creation of a new property object.
  */
 template<class Parent>

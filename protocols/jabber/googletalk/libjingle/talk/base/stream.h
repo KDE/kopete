@@ -97,7 +97,7 @@ class StreamInterface : public MessageHandler {
   virtual void Close() = 0;
 
   // Streams may signal one or more StreamEvents to indicate state changes.
-  // The first argument identifies the stream on which the state change occured.
+  // The first argument identifies the stream on which the state change occurred.
   // The second argument is a bit-wise combination of StreamEvents.
   // If SE_CLOSE is signalled, then the third argument is the associated error
   // code.  Otherwise, the value is undefined.

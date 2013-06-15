@@ -67,7 +67,7 @@ macro_optional_find_package(QCA2)
 macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca" FALSE "2.0.0" "Needed to build Kopete's GroupWise and Jabber protocols.")
 
 macro_optional_find_package(IDN)
-macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implemenation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
+macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implementation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
 
 #macro_optional_find_package(Alsa)
 #macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed for Jingle Support in Kopete Jabber Plugin")

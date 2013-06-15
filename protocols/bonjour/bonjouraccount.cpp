@@ -185,7 +185,7 @@ void BonjourAccount::startPublish()
 
 void BonjourAccount::published(bool success)
 {
-	// If we have sucessfully published, great :)
+	// If we have successfully published, great :)
 	if (success) {
 		kDebug()<<"Publish Successful";
 	} else {

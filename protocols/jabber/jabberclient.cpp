@@ -1055,7 +1055,7 @@ void JabberClient::slotCSAuthenticated ()
 	}
 
 	
-	//update the ressource:
+	//update the resource:
 	d->jid = d->jabberClientStream->jid();
 
 	// start the client operation

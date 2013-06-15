@@ -567,7 +567,7 @@ Q_OBJECT
 		void SkypeActionHandler(const QString &message);
 	signals:
 		/**
-		 * This is emited when the message has been sent by skype
+		 * This is emitted when the message has been sent by skype
 		 * @param messageId Id of the message that has been sent
 		 */
 		void sentMessage(const QString &messageId);

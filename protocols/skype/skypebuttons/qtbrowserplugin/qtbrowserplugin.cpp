@@ -1470,7 +1470,7 @@ bool QtNPBindable::readData(QIODevice *source, const QString &format)
     Requests that the \a url be retrieved and sent to the named \a window (or
     a new window if \a window is empty), and returns the ID of the request that is
     delivered to transferComplete() when the get-operation has finished. Returns 0 when
-    the browser or the system doesn't support notification, or -1 when an error occured.
+    the browser or the system doesn't support notification, or -1 when an error occurred.
 
     \code
     void MyPlugin::aboutTrolltech()
@@ -1509,7 +1509,7 @@ int QtNPBindable::openUrl(const QString &url, const QString &window)
 /*!
     Posts \a data to \a url, and displays the result in \a window. Returns the ID of the request
     that is delivered to transferComplete() when the post-operation has finished. Returns 0 when
-    the browser or the system doesn't support notification, or -1 when an error occured.
+    the browser or the system doesn't support notification, or -1 when an error occurred.
 
     \code
     void MyPlugin::sendMail()
@@ -1538,7 +1538,7 @@ int QtNPBindable::uploadData(const QString &url, const QString &window, const QB
     Posts \a filename to \a url, and displays the result in \a window. Returns the ID of
     the request that is delivered to transferComplete() when the post-operation has finished.
     Returns 0 when the browser or the system doesn't support notification, or -1 when an
-    error occured.
+    error occurred.
 
     \code
     void MyPlugin::uploadFile()

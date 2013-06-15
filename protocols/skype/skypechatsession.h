@@ -117,14 +117,14 @@ class SkypeChatSession : public Kopete::ChatSession
 		virtual void inviteContact(const QString &contactId);
 	signals:
 		/**
-		 * This is emited when it become a multi-user chat. It should be removed from the contact so when user clicks on the contact, new one with only that one should be created
+		 * This is emitted when it become a multi-user chat. It should be removed from the contact so when user clicks on the contact, new one with only that one should be created
 		 * @param chatSession Identificator of the chat
 		 * @param previousUser Id of the other user before it became a multichat or empty string if no such user ever was
-		 * @param sender Pointer to the chat session that emited this
+		 * @param sender Pointer to the chat session that emitted this
 		 */
 		void becameMultiChat(const QString &chatSession, SkypeChatSession *sender);
 		/**
-		 * This is emited when there is an request to get a frindly name of a chat
+		 * This is emitted when there is an request to get a frindly name of a chat
 		 * @param chat Id of that chat
 		 */
 		void wantTopic(const QString &chat);

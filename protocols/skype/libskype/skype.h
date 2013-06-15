@@ -449,7 +449,7 @@ class Skype : public QObject
 		 */
 		void wentInvisible();
 		/**
-		 * Emitted when atempt to connect started
+		 * Emitted when attempt to connect started
 		 */
 		void statusConnecting();
 		/**
@@ -570,7 +570,7 @@ class Skype : public QObject
 		 */
 		void groupCall(const QString &callId, const QString &groupId);
 		/**
-		 * Emitted when we recive auth request
+		 * Emitted when we receive auth request
 		 * @param contactId who send request
 		 * @parma info info in request
 		 */

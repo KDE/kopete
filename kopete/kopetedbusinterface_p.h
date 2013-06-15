@@ -79,7 +79,7 @@ public:
     
 Q_SIGNALS:
 	/** 
-	 * Emmited whenever a contact's property changed 
+	 * Emitted whenever a contact's property changed 
 	 * @param contactId protocol:account:contact triplet of the 
 	 *        contact with a property change
 	 * */ 

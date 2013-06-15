@@ -497,7 +497,7 @@ void BaseSession::LogState(State old_state, State new_state) {
 void BaseSession::OnMessage(talk_base::Message *pmsg) {
   switch (pmsg->message_id) {
   case MSG_TIMEOUT:
-    // Session timeout has occured.
+    // Session timeout has occurred.
     SetError(ERROR_TIME);
     break;
 

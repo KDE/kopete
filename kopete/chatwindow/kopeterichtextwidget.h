@@ -28,7 +28,7 @@
 #include <kopete_export.h>
 
 /**
- * @brief A KopeteRichTextWidget with overidden behaviors
+ * @brief A KopeteRichTextWidget with overridden behaviors
  *
  * This class overrides the default behavior of fonts when cleared, pasted, etc
  * to match the expected behavior of the user.

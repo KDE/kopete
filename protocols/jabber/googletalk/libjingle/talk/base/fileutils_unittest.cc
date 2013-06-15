@@ -114,7 +114,7 @@ TEST(FilesystemTest, TestGetDiskFreeSpace) {
   EXPECT_GT(free1, 0);
 
   int64 free2 = 0;
-  path.AppendFolder("this_folder_doesnt_exist");
+  path.AppendFolder("this_folder_does not_exist");
   EXPECT_FALSE(Filesystem::IsFolder(path));
   EXPECT_TRUE(Filesystem::IsAbsent(path));
   EXPECT_TRUE(Filesystem::GetDiskFreeSpace(path, &free2));

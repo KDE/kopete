@@ -148,7 +148,7 @@ void ContactListTreeModel::addMetaContactToGroup( Kopete::MetaContact *mc, Kopet
 		if ( mcIndex == mcDesireIndex )
 			return;
 
-		// We're moving metaContact so temporary remove it so model is avare of the change.
+		// We're moving metaContact so temporary remove it so model is aware of the change.
 		beginRemoveRows( parent, mcIndex, mcIndex );
 		mcModelItem->remove();
 		endRemoveRows();
@@ -439,7 +439,7 @@ bool ContactListTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction ac
 			if ( gIndex == gDesireIndex )
 				continue;
 
-			// We're moving group so temporary remove it so model is avare of the change.
+			// We're moving group so temporary remove it so model is aware of the change.
 			beginRemoveRows( indexFor( gmi->parent() ), gIndex, gIndex );
 			gmi->remove();
 			endRemoveRows();

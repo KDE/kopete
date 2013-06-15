@@ -108,7 +108,7 @@ private:
 	bool isNickIncoming(const QString &nick, struct Log *log);
 
 	/**
-	 * Trys to extract the time from @param string using formats specified in timeFormats.
+	 * Tries to extract the time from @param string using formats specified in timeFormats.
 	 * @param ref is used when @param string doesn't contain a date or to adjust a found date.
 	 * @param ref is taken from the filename of the log.
 	 */

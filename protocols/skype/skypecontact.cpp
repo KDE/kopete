@@ -54,7 +54,7 @@ typedef enum {
 
 class SkypeContactPrivate {
 	public:
-		///Acount that this contact belongs to
+		///Account that this contact belongs to
 		SkypeAccount *account;
 		///Is it some user or is it something special (myself contact or such)
 		bool user;

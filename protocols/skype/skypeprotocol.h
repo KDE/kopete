@@ -137,7 +137,7 @@ class SkypeProtocol : public Kopete::Protocol
 		static SkypeProtocol *protocol();
 		/**
 		 * Access to account (at the moment skype can have only one account)
-		 * @return account or null if account inst registred
+		 * @return account or null if account inst registered
 		 */
 		SkypeAccount * account();
 	public slots:

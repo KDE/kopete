@@ -167,8 +167,8 @@ GaduDCCServer::watcher() {
 			kDebug( 14100 ) << " dcc error occurred ";
 			break;
 		case GG_EVENT_DCC_NEW:
-			// I do expect reciver to set this boolean to true if he handled signal
-			// if so, no other reciver should be bothered with it, and I shall not close it
+			// I do expect receiver to set this boolean to true if he handled signal
+			// if so, no other receiver should be bothered with it, and I shall not close it
 			// otherwise connection is closed as not handled
 			emit incoming( dccEvent->event.dcc_new, handled );
 			if ( !handled ) {

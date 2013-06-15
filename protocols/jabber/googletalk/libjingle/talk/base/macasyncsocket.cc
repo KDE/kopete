@@ -415,7 +415,7 @@ void MacAsyncSocket::MacAsyncSocketCallBack(CFSocketRef s,
 
     case kCFSocketConnectCallBack:
       if (data != NULL) {
-        // An error occured in the background while connecting
+        // An error occurred in the background while connecting
         this_socket->error_ = errno;
         this_socket->state_ = CS_CLOSED;
         this_socket->SignalCloseEvent(this_socket, this_socket->error_);

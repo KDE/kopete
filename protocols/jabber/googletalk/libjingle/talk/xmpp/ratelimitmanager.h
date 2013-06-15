@@ -103,7 +103,7 @@ class RateLimitManager {
 
    private:
 
-    // The time at which the i-th (where i = max_count) event occured
+    // The time at which the i-th (where i = max_count) event occurred
     uint32 PreviousTimeAtCounter() {
       return event_times_[counter_];
     }

@@ -165,7 +165,7 @@ class FakeVideoCaptureModule
     return impl_->EnableNoPictureAlarm(enable);
   }
 
-  // Inherited from MesageHandler.
+  // Inherited from MessageHandler.
   virtual void OnMessage(talk_base::Message* msg) {
     GenerateNewFrame();
   }

@@ -279,7 +279,7 @@ void GoogleTalk::read() {
 			//Invalid JID
 			emit(disconnected(line));
 		} else if ( line.startsWith("Removing from roster:") ) {
-			//User doesnt support google talk libjingle
+			//User does not support google talk libjingle
 			QString user = line.section(':', -1).section('/', 0, 0).trimmed();
 			QString resource = line.section(':', -1).section('/', -1).trimmed();
 //			qDebug() << "user offline" << user << resource;

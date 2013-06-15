@@ -197,7 +197,7 @@ public:
                                    XmppSubscriptionRequestType type,
                                    const XmlElement* raw_xml) = 0;
 
-  //! Some type of presence error has occured
+  //! Some type of presence error has occurred
   virtual void SubscriptionError(XmppRosterModule* roster,
                                  const Jid& from,
                                  const XmlElement* raw_xml) = 0;

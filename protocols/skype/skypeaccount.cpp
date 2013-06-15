@@ -367,11 +367,11 @@ void SkypeAccount::newUser(const QString &name, int groupID) {
 	Kopete::Group * skypeGroup;
 
 	bool root = false;
-	if (group.isEmpty() || groupID == -1) { // If skype group hasnt name, in kopete will be in top
+	if (group.isEmpty() || groupID == -1) { // If skype group has not name, in kopete will be in top
 		skypeGroup = Kopete::Group::topLevel();
 		root = true;
 	} else {
-		skypeGroup = Kopete::ContactList::self()->findGroup(group); //get kopete group by skype group name. If skype group in kopete doesnt exist, create it automatically
+		skypeGroup = Kopete::ContactList::self()->findGroup(group); //get kopete group by skype group name. If skype group in kopete does not exist, create it automatically
 		if ( skypeGroup == Kopete::Group::topLevel() ){ //if group in skype has name i18n("Top Level") kopete get top level group, but in skype top level group is group without name
 			QList <Kopete::Group *> groups = Kopete::ContactList::self()->groups(); //get all groups
 			bool found = false;
@@ -1012,7 +1012,7 @@ void SkypeAccount::deleteGroup (Kopete::Group * group){
 	if ( groupID != -1 )
 		d->skype.deleteGroup(groupID);
 	else
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Group" << group->displayName() << "in skype doesnt exist, skipping";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Group" << group->displayName() << "in skype does not exist, skipping";
 }
 
 void SkypeAccount::renameGroup (Kopete::Group * group, const QString &oldname){
@@ -1021,7 +1021,7 @@ void SkypeAccount::renameGroup (Kopete::Group * group, const QString &oldname){
 	if ( groupID != -1 )
 		d->skype.renameGroup( groupID, group->displayName() );
 	else
-		kDebug(SKYPE_DEBUG_GLOBAL) << "Old group" << oldname << "in skype doesnt exist, skipping";
+		kDebug(SKYPE_DEBUG_GLOBAL) << "Old group" << oldname << "in skype does not exist, skipping";
 }
 
 void SkypeAccount::openFileTransfer(const QString &user, const QString &url) {
