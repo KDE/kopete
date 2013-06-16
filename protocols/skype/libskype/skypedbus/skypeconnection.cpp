@@ -73,7 +73,7 @@ SkypeConnection::~SkypeConnection() {
 	disconnectSkype();//disconnect before you leave
 	if ( d->skypeProcess.state() != QProcess::NotRunning )//if we started skype process kill it
 		d->skypeProcess.kill();
-	QProcess::execute("bash -c \"pkill -2 -U $USER -x ^skype.*$\"");//try find skype process (skype, skype.real, ...) and kill it if we dont start skype or use skype.real wrapper
+	QProcess::execute("bash -c \"pkill -2 -U $USER -x ^skype.*$\"");//try find skype process (skype, skype.real, ...) and kill it if we do not start skype or use skype.real wrapper
 	QProcess::execute("bash -c \"pkill -2 -U $USER -x skype\"");
 	delete d;//Remove the D pointer
 }
@@ -148,7 +148,7 @@ void SkypeConnection::parseMessage(const QString &message) {
 			break;
 		}
 		case cfConnected: {
-			//We dont need doing with message, it is handled by signal received
+			//We do not need doing with message, it is handled by signal received
 			break;
 		}
 	}

@@ -71,7 +71,7 @@ bool SkypeWindow::isCallDialog(const QString &user, WId wid) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << user << wid;
 
 	Atom atom = XInternAtom(QX11Info::display(), "_NET_WM_PID", True); //get atom properties for process id
-	Atom actual_type; int actual_format; unsigned long nitems, bytes_after; //dont use
+	Atom actual_type; int actual_format; unsigned long nitems, bytes_after; //do not use
 	unsigned char *prop; //array of return value of pid
 	int status = XGetWindowProperty(QX11Info::display(), wid, atom, 0, 1024, False, AnyPropertyType, &actual_type, &actual_format, &nitems, &bytes_after, &prop); //try get process id from window id
 
@@ -166,7 +166,7 @@ WId SkypeWindow::getCallDialogWId(const QString &user) {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "Found skype call dialog WId" << wid;
 		return wid;
 	}
-	return 0; //We dont find it
+	return 0; //We do not find it
 }
 
 void SkypeWindow::hideCallDialog(const QString &user) {
@@ -222,7 +222,7 @@ WId SkypeWindow::getWebcamWidgetWId(WId actualWId) {
 	kDebug(SKYPE_DEBUG_GLOBAL) << actualWId;
 	if ( isWebcamWidget(actualWId) ) //first check if it is webcam widget
 		return actualWId;
-	Window root, parent; //dont use
+	Window root, parent; //do not use
 	Window * children; //array of all children windows
 	unsigned int nchildren; //count children windows
 	int status = XQueryTree(QX11Info::display(), actualWId, &root, &parent, &children, &nchildren); //get all children windows

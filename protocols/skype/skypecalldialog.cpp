@@ -77,7 +77,7 @@ class SkypeCallDialogPrivate {
 SkypeCallDialog::SkypeCallDialog(const QString &callId, const QString &userId, SkypeAccount *account) : KDialog() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	setButtons( KDialog::None ); //dont add any buttons
+	setButtons( KDialog::None ); //do not add any buttons
 	setDefaultButton( KDialog::None );
 
 	QWidget *w = new QWidget( this );
@@ -227,7 +227,7 @@ void SkypeCallDialog::updateStatus(const QString &callId, const QString &status)
 
 			//deleteLater();//Just give up, this one is odd
 			//dialog->StatusLabel->setText(i18n("Unplaced (please wait...)"));
-			//it is when user create call after hangup, so dont close dialog and wait
+			//it is when user create call after hangup, so do not close dialog and wait
 		}
 	}
 }

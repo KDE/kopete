@@ -103,7 +103,7 @@ void WPUserInfo::slotDetailsProcess(int i, QProcess::ExitStatus status)
 	KConfigGroup group = KGlobal::config()->group("WinPopup");
 	QString theSMBClientPath = group.readEntry("SMBClientPath", "/usr/bin/smbclient");
 
-	if ( host == "LOCALHOST" ) //dont cycle
+	if ( host == "LOCALHOST" ) //do not cycle
 		noComment = false;
 
 	detailsProcess = new QProcess(this);

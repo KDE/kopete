@@ -282,7 +282,7 @@ void NowListeningPlugin::slotAdvertCurrentMusic()
 		if( !NowListeningConfig::self()->statusAdvertising() &&
 			!NowListeningConfig::self()->appendStatusAdvertising() )
 		{
-			// we dont have removeMetaData(), so we create a new status
+			// we do not have removeMetaData(), so we create a new status
 			Kopete::StatusMessage tmpStatusMessage;
 			tmpStatusMessage.setMessage(Kopete::StatusManager::self()->globalStatusMessage().message());
 			tmpStatusMessage.setTitle(Kopete::StatusManager::self()->globalStatusMessage().title());

@@ -177,7 +177,7 @@ bool ContactListProxyModel::filterAcceptsRow ( int sourceRow, const QModelIndex 
 		if ( !showEmpty && totalContactsCount == 0 && !isOfflineGroup)
 			return false;
 
-		// dont display offline when viewing in grouped offline mode
+		// do not display offline when viewing in grouped offline mode
 		if ( showOffline && isOfflineGroup )
 			return false;
 

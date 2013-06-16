@@ -92,7 +92,7 @@ class SkypePrivate {
 		QTimer *pingTimer;
 		///What bus is used now?
 		int bus;
-		///The launch timeout (after that no connection -> unsuccessfull -> error)
+		///The launch timeout (after that no connection -> unsuccessful -> error)
 		int launchTimeout;
 		///By what command is skype started?
 		QString skypeCommand;

@@ -72,7 +72,7 @@ class ByteBuffer {
   bool ReadString(std::string* val, size_t len);
 
   // Write value to the buffer. Resizes the buffer when it is
-  // neccessary.
+  // necessary.
   void WriteUInt8(uint8 val);
   void WriteUInt16(uint16 val);
   void WriteUInt24(uint32 val);

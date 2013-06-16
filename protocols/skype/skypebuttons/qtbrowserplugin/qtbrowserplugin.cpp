@@ -1455,7 +1455,7 @@ NPP QtNPBindable::instance() const
     HTML page. This function is called once for every stream the browser
     creates for the plugin.
 
-    Return true to indicate successfull processing of the data, otherwise
+    Return true to indicate successful processing of the data, otherwise
     return false. The default implementation does nothing and returns false.
 */
 

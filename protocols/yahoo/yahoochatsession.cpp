@@ -184,7 +184,7 @@ void YahooChatSession::slotDisplayPictureChanged()
 			if(!scaledImg.isNull())
 				m_image->setPixmap( QPixmap(scaledImg) );
 			else
-			{ //the image has maybe not been transfered correctly..  force to download again
+			{ //the image has maybe not been transferred correctly..  force to download again
 				c->removeProperty(Kopete::Global::Properties::self()->photo());
 				//slotDisplayPictureChanged(); //don't do that or we might end in a infinite loop
 			}

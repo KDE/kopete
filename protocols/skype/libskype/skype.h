@@ -375,7 +375,7 @@ class Skype : public QObject
 		 */
 		void setBus(int bus);
 		/**
-		 * Set the launch timeout - after that launch of Skype will be considered as unsuccessfull if connection can not be established
+		 * Set the launch timeout - after that launch of Skype will be considered as unsuccessful if connection can not be established
 		 */
 		void setLaunchTimeout(int seconds);
 		/**

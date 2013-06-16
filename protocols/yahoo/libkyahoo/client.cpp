@@ -289,7 +289,7 @@ void Client::slotLoginResponse( int response, const QString &msg )
 		* If we time out and try to log out and log in
 		* we can lose messages therefore we should set this
 		* to the same as the Yahoo Messenger client
-		*. so as we dont get disconnected
+		*. so as we do not get disconnected
 		* Also it sends a PING at every hour.
 		*/
 		m_aliveTimer->start( 1 * 60 * 1000 );

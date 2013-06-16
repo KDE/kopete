@@ -63,7 +63,7 @@ private:
 		Kopete::Contact *other;
 		QList<Message> messages;
 		/**
-		 * Comparison between the Message lists is not neccessary because we need this operator
+		 * Comparison between the Message lists is not necessary because we need this operator
 		 * only in displayLog() to get the index of this log in logs.
 		 */
 		bool operator==(const struct Log & cmp) {
