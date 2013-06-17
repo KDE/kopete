@@ -488,7 +488,8 @@ void History2Import::parsePidginTxt(QFile &file, struct Log *log, QDate date) {
 
 	// this is to collect unknown nicknames (the list stores the index in log->messages of the messages that used the nickname)
 	// the bool says if that nickname is incoming (only used when the list is empty)
-	QHash<QString, QPair<bool, QList<int> > > nicknames;
+	typedef QHash<QString, QPair<bool, QList<int> > > NickNameHash;
+	NickNameHash nicknames;
 
 	QTextStream str(&file);
 	// utf-8 seems to be default for pidgins-txt logs
@@ -543,15 +544,15 @@ void History2Import::parsePidginTxt(QFile &file, struct Log *log, QDate date) {
 		log->messages.append(message);
 
 		// check if we can guess which nickname belongs to us
-		QHash<QString, QPair<bool, QList<int> > >::iterator itr;
-		QHash<QString, QPair<bool, QList<int> > >::const_iterator itr2;
+		NickNameHash::iterator itr;
+		NickNameHash::const_iterator itr2;
 		for (itr = nicknames.begin(); itr != nicknames.end(); ++itr) {
 			if (itr->second.isEmpty()) // no work for this one
 				continue;
 			bool haveAnother = false, lastIncoming = false;
 			// check against all other nicknames
 			for (itr2 = nicknames.constBegin(); itr2 != nicknames.constEnd(); ++itr2) {
-				if (itr2 == itr) // skip ourselve
+				if (itr2 == NickNameHash::const_iterator(itr)) // skip ourselve
 					continue;
 				// if there is another unknown nickname, we have no chance to guess which is our
 				if (!itr2->second.isEmpty())
