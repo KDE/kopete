@@ -14,6 +14,7 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=History2
+Name[ca]=Historial2
 Name[cs]=Historie2
 Name[de]=Verlauf2
 Name[es]=Historial2
