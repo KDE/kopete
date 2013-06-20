@@ -614,7 +614,9 @@ bool Account::resume()
 	if ( !d->suspended )
 		return false;
 
-	setOnlineStatus( d->suspendStatus, d->restoreMessage, Kopete::Account::None );
+	if ( d->suspendStatus != Kopete::OnlineStatus::Offline )
+		setOnlineStatus( d->suspendStatus, d->restoreMessage, Kopete::Account::None );
+
 	return true;
 }
 
