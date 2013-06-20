@@ -184,6 +184,11 @@ void MimeTypeHandler::handleURL( const QString &mimeType, const KUrl &url ) cons
 	Q_UNUSED( url );
 }
 
+void MimeTypeHandler::handleURL( const KUrl &url ) const
+{
+	handleURL( QString(), url );
+}
+
 
 EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
  : MimeTypeHandler( false )
@@ -196,6 +201,11 @@ EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
 void EmoticonMimeTypeHandler::handleURL( const QString &, const KUrl &url ) const
 {
   Emoticons::self()->installTheme( url.toLocalFile() );
+}
+
+void EmoticonMimeTypeHandler::handleURL( const KUrl &url ) const
+{
+	handleURL( QString(), url );
 }
 
 

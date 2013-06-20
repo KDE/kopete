@@ -232,6 +232,11 @@ public:
 	virtual QList<KAction *> *customContextMenuActions();
 
 	/**
+	 * @deprecated
+	 */
+	virtual KDE_DEPRECATED QList<KAction *> *customContextMenuActions( ChatSession *manager );
+
+	/**
 	 * @brief Get the Context Menu for this contact
 	 *
 	 * This menu includes generic actions common to each protocol, and action defined in

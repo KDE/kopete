@@ -518,6 +518,11 @@ QList<KAction *> *Contact::customContextMenuActions()
 	return 0L;
 }
 
+QList<KAction*> *Contact::customContextMenuActions( ChatSession * /* manager */ )
+{
+	return customContextMenuActions();
+}
+
 bool Contact::isOnline() const
 {
 	return onlineStatus().isDefinitelyOnline();

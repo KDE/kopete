@@ -74,6 +74,11 @@ public:
 	 */
 	virtual void handleURL( const QString &mimeType, const KUrl &url ) const;
 
+	/**
+	 * @deprecated
+	 */
+	virtual KDE_DEPRECATED void handleURL( const KUrl &url ) const;
+
 protected:
 	/**
 	 * Register this object as the handler of type @p mimeType.
@@ -119,6 +124,7 @@ public:
 	const QStringList mimeTypes() const;
 
 	void handleURL( const QString &mimeType, const KUrl &url ) const;
+	KDE_DEPRECATED void handleURL( const KUrl &url ) const;
 };
 
 } // Kopete
