@@ -18,8 +18,7 @@ set(kopete_sms_PART_SRCS
   services/kopete_unix_serial.cpp
   services/smsclient.cpp
   services/smssend.cpp
-  services/smssendprovider.cpp
-  ui/empty.cpp )
+  services/smssendprovider.cpp )
 
 kde4_add_ui3_files( kopete_sms_PART_SRCS
   services/gsmlibprefs.ui

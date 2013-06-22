@@ -3,7 +3,6 @@
 
 
 ########### next target ###############
-set( uiSrcs empty.cpp )
 kde4_add_ui3_files ( uiSrcs
   smsactprefs.ui
   smsuserprefs.ui
