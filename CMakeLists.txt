@@ -88,11 +88,9 @@ macro_optional_find_package(LibXslt)
 macro_bool_to_01(LIBXSLT_FOUND HAVE_XSLT)
 macro_log_feature(LIBXSLT_FOUND "LibXSLT" "A library to transform XML files into other XML files" "http://xmlsoft.org/XSLT" FALSE "" "Required for the Kopete webpresence plugin.")
 
-# LibOTR 4 have undergone significant changes leading to compilation errors, so this plugin should be disabled to let kopete compile (quick fix)
-# TODO: fix otr plugin to make it work sith LibOTR 4
 macro_optional_find_package(LibOTR)
 macro_bool_to_01(LIBOTR_FOUND HAVE_LIBOTR)
-macro_log_feature(LIBOTR_FOUND "libotr" "A library to encrypt messages with Off-the-Record encryption (versions 3.2.0 to 4.0.0)" "http://www.cypherpunks.ca/otr" FALSE "3.2.0" "Required for the Kopete otr plugin.")
+macro_log_feature(LIBOTR_FOUND "libotr" "A library to encrypt messages with Off-the-Record encryption (version 4.0.0) or greater" "http://www.cypherpunks.ca/otr" FALSE "4.0.0" "Required for the Kopete otr plugin.")
 
 macro_optional_find_package(Libmsn)
 macro_bool_to_01(LIBMSN_FOUND HAVE_LIBMSN)

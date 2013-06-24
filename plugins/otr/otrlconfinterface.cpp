@@ -1,5 +1,5 @@
 /*************************************************************************
- * Copyright <2007>  <Michael Zanetti> <michael_zanetti@gmx.net>         *
+ * Copyright <2007 - 2013>  <Michael Zanetti> <mzanetti@kde.org>         *
  *                                                                       *
  * This program is free software; you can redistribute it and/or         *
  * modify it under the terms of the GNU General Public License as        *
@@ -83,11 +83,7 @@ void OtrlConfInterface::generateNewPrivKey( const QString &accountId, const QStr
 	popup->show();
 	popup->setCloseLock( true );
 
-	KeyGenThread *keyGenThread = new KeyGenThread ( accountId, protocol );
-	keyGenThread->start();
-	while( !keyGenThread->wait(100) ){
-		qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 100);
-	}
+	OtrlChatInterface::self()->generatePrivateKey(accountId, protocol);
 
 	popup->setCloseLock( false );
 	popup->close();

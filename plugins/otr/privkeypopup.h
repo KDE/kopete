@@ -1,5 +1,5 @@
 /*************************************************************************
- * Copyright <2007>  <Michael Zanetti> <michael_zanetti@gmx.net>         *
+ * Copyright <2007 - 2013>  <Michael Zanetti> <mzanetti@kde.org>         *
  *                                                                       *
  * This program is free software; you can redistribute it and/or         *
  * modify it under the terms of the GNU General Public License as        *

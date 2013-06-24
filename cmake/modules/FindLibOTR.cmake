@@ -1,6 +1,6 @@
-# cmake macro to test LibOTR
+## cmake macro to test LibOTR
 
-# Copyright (c) 2008, Michael Zanetti <michael_zanetti @ gnx.net>
+# Copyright (c) 2008-2013, Michael Zanetti <mzanetti @ kde.org>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
@@ -22,15 +22,15 @@ IF( LIBOTR_INCLUDE_DIR AND LIBOTR_LIBRARY )
   EXECUTE_PROCESS(COMMAND grep "OTRL_VERSION" "${LIBOTR_INCLUDE_DIR}/libotr/version.h" OUTPUT_VARIABLE output)
   STRING(REGEX MATCH "OTRL_VERSION \"[0-9]+\\.[0-9]+\\.[0-9]+" LIBOTR_VERSION "${output}")
   STRING(REGEX REPLACE "^OTRL_VERSION \"" "" LIBOTR_VERSION "${LIBOTR_VERSION}")
-  # Check if version is at least 3.2.0
-  MACRO_ENSURE_VERSION_RANGE("3.2.0" ${LIBOTR_VERSION} "4.0.0" LIBOTR_FOUND)
+  # Check if version is at least 4.0.0
+  MACRO_ENSURE_VERSION("4.0.0" ${LIBOTR_VERSION} LIBOTR_FOUND)
 
   IF( LIBOTR_FOUND )
     IF( NOT LIBOTR_FIND_QUIETLY )
       MESSAGE( STATUS "Found libotr: ${LIBOTR_LIBRARY} (version ${LIBOTR_VERSION})")
     ENDIF( NOT LIBOTR_FIND_QUIETLY )
   ELSE( LIBOTR_FOUND )
-    MESSAGE(STATUS "libotr version between 3.2.0 and 4.0.0 required but found ${LIBOTR_VERSION}.")
+    MESSAGE(STATUS "libotr version 4.0.0 or greater required but found ${LIBOTR_VERSION}.")
   ENDIF( LIBOTR_FOUND )
 
 ENDIF( LIBOTR_INCLUDE_DIR AND LIBOTR_LIBRARY )
