@@ -5,9 +5,13 @@
 FIND_PACKAGE(ZLIB REQUIRED)
 
 remove_definitions(-DQT_NO_HTTP)
-if(NOT MSVC)
+if(NOT WIN32)
   add_definitions(-fPIC)
-endif(NOT MSVC)
+else(NOT WIN32)
+  if(MINGW)
+    add_definitions(-DWIN32)
+  endif(MINGW)
+endif(NOT WIN32)
 
 include_directories(
 ${CMAKE_CURRENT_SOURCE_DIR}/iris
