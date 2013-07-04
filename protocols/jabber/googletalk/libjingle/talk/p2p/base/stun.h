@@ -25,20 +25,9 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TALK_P2P_BASE_STUN_H_
-#define TALK_P2P_BASE_STUN_H_
 
-// This file contains classes for dealing with the STUN and TURN protocols.
-// Both protocols use the same wire format.
-
-#include <string>
-#include <vector>
-
-#include "talk/base/basictypes.h"
-#include "talk/base/bytebuffer.h"
-#include "talk/base/socketaddress.h"
-
-namespace cricket {
+#ifndef STUN__HH__IN__STUNREQUEST__HH__CYCLIC_PROBLEM_FIX
+#define STUN__HH__IN__STUNREQUEST__HH__CYCLIC_PROBLEM_FIX
 
 // These are the types of STUN & TURN messages as of last check.
 enum StunMessageType {
@@ -56,6 +45,24 @@ enum StunMessageType {
   STUN_SEND_ERROR_RESPONSE          = 0x0114,
   STUN_DATA_INDICATION              = 0x0115
 };
+
+#endif // STUN__HH__IN__STUNREQUEST__HH__CYCLIC_PROBLEM_FIX
+
+
+#ifndef TALK_P2P_BASE_STUN_H_
+#define TALK_P2P_BASE_STUN_H_
+
+// This file contains classes for dealing with the STUN and TURN protocols.
+// Both protocols use the same wire format.
+
+#include <string>
+#include <vector>
+
+#include "talk/base/basictypes.h"
+#include "talk/base/bytebuffer.h"
+#include "talk/base/socketaddress.h"
+
+namespace cricket {
 
 // These are the types of attributes defined in STUN & TURN.  Next to each is
 // the name of the class (T is StunTAttribute) that implements that type.
