@@ -1,0 +1,78 @@
+From 7449acb4de84f766c27454baee499087d84384f0 Mon Sep 17 00:00:00 2001
+From: Joachim Schiele <js@lastlog.de>
+Date: Thu, 4 Jul 2013 14:13:02 +0000
+Subject: [PATCH] fix for cyclic inclusion issue of stun.h in stunrequest.h
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+when compiling kopete/protocols/jabber/googletalk/libjingle/talk/session/phone/channelmanager.cc
+it would produce this error:
+
+kopete/protocols/jabber/googletalk/libjingle/talk/p2p/base/stunrequest.h:91:9: error: ‘StunMessageType’ does not name a type
+
+problem:
+  this is cased by a cyclic use of stun.h, stunrequest.h and channelmanager.cc with the outcome,
+  that kdenetwork couldn't be compiled since kopete fails to build.
+
+solution:
+  move the StunMessageType enum into its own #ifndef
+---
+ .../googletalk/libjingle/talk/p2p/base/stun.h      | 33 +++++++++++++---------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
+
+diff --git a/protocols/jabber/googletalk/libjingle/talk/p2p/base/stun.h b/protocols/jabber/googletalk/libjingle/talk/p2p/base/stun.h
+index 349d7bc..1ae64ed 100644
+--- a/protocols/jabber/googletalk/libjingle/talk/p2p/base/stun.h
++++ b/protocols/jabber/googletalk/libjingle/talk/p2p/base/stun.h
+@@ -25,20 +25,9 @@
+  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#ifndef TALK_P2P_BASE_STUN_H_
+-#define TALK_P2P_BASE_STUN_H_
+-
+-// This file contains classes for dealing with the STUN and TURN protocols.
+-// Both protocols use the same wire format.
+ 
+-#include <string>
+-#include <vector>
+-
+-#include "talk/base/basictypes.h"
+-#include "talk/base/bytebuffer.h"
+-#include "talk/base/socketaddress.h"
+-
+-namespace cricket {
++#ifndef STUN__HH__IN__STUNREQUEST__HH__CYCLIC_PROBLEM_FIX
++#define STUN__HH__IN__STUNREQUEST__HH__CYCLIC_PROBLEM_FIX
+ 
+ // These are the types of STUN & TURN messages as of last check.
+ enum StunMessageType {
+@@ -57,6 +46,24 @@ enum StunMessageType {
+   STUN_DATA_INDICATION              = 0x0115
+ };
+ 
++#endif // STUN__HH__IN__STUNREQUEST__HH__CYCLIC_PROBLEM_FIX
++
++
++#ifndef TALK_P2P_BASE_STUN_H_
++#define TALK_P2P_BASE_STUN_H_
++
++// This file contains classes for dealing with the STUN and TURN protocols.
++// Both protocols use the same wire format.
++
++#include <string>
++#include <vector>
++
++#include "talk/base/basictypes.h"
++#include "talk/base/bytebuffer.h"
++#include "talk/base/socketaddress.h"
++
++namespace cricket {
++
+ // These are the types of attributes defined in STUN & TURN.  Next to each is
+ // the name of the class (T is StunTAttribute) that implements that type.
+ //
+-- 
+1.8.2.3
+
