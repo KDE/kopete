@@ -59,7 +59,7 @@ int main(int argc, char **argv) \
 	if(argv[1]) \
 		tc.setPath( argv[1] ); \
 	else \
-		tc.setPath( QDir::current().absolutePath() ); \
+		tc.setPath( KDESRCDIR ); \
 	return QTest::qExec( &tc, 0, 0 ); \
 }
 
