@@ -69,7 +69,7 @@ void XmlContactStorage_Test::testLoad()
 	// Verify that the loading went well.
 	QVERIFY( storage->isValid() );
 	// Check that we have the correct numbers of groups and contacts.
-	QCOMPARE( storage->groups().size() ,4 );
+	QCOMPARE( storage->groups().size(), 5 );
 	QCOMPARE( storage->contacts().size(), 6 );
 
 	// Verify that we parsed the correct group names.
