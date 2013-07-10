@@ -369,6 +369,13 @@ public:
 	 * @param body The body, interpreted as HTML
 	 */
 	void setHtmlBody( const QString &body);
+	
+	/**
+	 * @brief Sets the body of the message, which is used even if formatting is overridden
+	 *
+	 * @param body The body, interpreted as HTML
+	 */
+	void setForcedHtmlBody( const QString &body);
 
 	/**
 	 * @brief Sets the body of the message
@@ -417,22 +424,24 @@ public:
 	 void setManager(ChatSession * manager);
 
 	/**
-	 * @brief Enables the use of a background for a message
-	 * @param enable A flag to indicate if the background should be enabled or disabled.
+	 * @brief Does nothing
 	 */
-	void setBackgroundOverride( bool enable );
+	void KDE_DEPRECATED setBackgroundOverride( bool enable );
 
 	/**
-	 * @brief Enables the use of a foreground for a message
-	 * @param enable A flag to indicate if the foreground should be enabled or disabled.
+	 * @brief Does nothing
 	 */
-	void setForegroundOverride( bool enable );
+	void KDE_DEPRECATED setForegroundOverride( bool enable );
 
 	/**
-	 * @brief Enables the use of a RTF formatting for a message
-	 * @param enable A flag to indicate if the RTF formatting should be enabled or disabled.
+	 * @brief Does nothing
 	 */
-	void setRichTextOverride( bool enable );
+	void KDE_DEPRECATED setRichTextOverride( bool enable );
+	
+	/**
+	 * @brief Ignores peer's formatting
+	 */
+	void setFormattingOverride( bool enable );
 
 	/**
 	 * @brief Return HTML style attribute for this message.

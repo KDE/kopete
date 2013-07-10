@@ -333,11 +333,10 @@ signals:
 	 */
 	void photoChanged();
 
-    /**
-    * Toggle Graphic Override mode for plugin
-    * @param enable Toggle the overide
-    */
-    void toggleGraphicOverride(bool enable);
+	/**
+	 * does nothing
+	 */
+	void toggleGraphicOverride(bool enable);
 
 public slots:
 	/**

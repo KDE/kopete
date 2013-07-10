@@ -122,10 +122,7 @@ public:
 		// Don't delete currentChatStyle, it is handled by ChatWindowStyleManager.
 	}
 
-	bool bgOverride;
-	bool fgOverride;
-	bool rtfOverride;
-	bool graphicOverride;
+	bool fmtOverride;
 
 //	ToolTip *tt;
 	bool scrollPressed;
@@ -215,7 +212,6 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	: KHTMLPart( parent ), d( new Private )
 {
 	d->manager = mgr;
-	d->graphicOverride = true;
 	d->currentChatStyle = ChatWindowStyleManager::self()->getValidStyleFromPool( KopeteChatWindowSettings::self()->styleName() );
 	if (d->currentChatStyle)
 		connect( d->currentChatStyle, SIGNAL(destroyed(QObject*)), this, SLOT(clearStyle()) );
@@ -255,7 +251,6 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 
 	connect( d->manager, SIGNAL(messageStateChanged(uint,Kopete::Message::MessageState)),
 	         this, SLOT(messageStateChanged(uint,Kopete::Message::MessageState)) );
-	connect (d->manager, SIGNAL(toggleGraphicOverride(bool)), this, SLOT(slotToggleGraphicOverride(bool)) );
 
 	connect ( browserExtension(), SIGNAL(openUrlRequestDelayed(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
 	          this, SLOT(slotOpenURLRequest(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)) );
@@ -414,18 +409,11 @@ void ChatMessagePart::slotFileTransferIncomingDone( unsigned int id )
 
 void ChatMessagePart::readOverrides()
 {
-	d->bgOverride = Kopete::AppearanceSettings::self()->chatBgOverride();
-	d->fgOverride = Kopete::AppearanceSettings::self()->chatFgOverride();
-	d->rtfOverride = ( d->graphicOverride ? false : Kopete::AppearanceSettings::self()->chatRtfOverride());
+	d->fmtOverride = Kopete::AppearanceSettings::self()->chatFmtOverride();
 }
 
-void ChatMessagePart::slotToggleGraphicOverride(bool enable)
+void ChatMessagePart::slotToggleGraphicOverride(bool)
 {
-	if (d->graphicOverride != enable)
-	{
-		d->graphicOverride = enable;
-		emit slotAppearanceChanged();
-	}
 }
 
 void ChatMessagePart::setStyle( const QString &styleName )
@@ -488,13 +476,8 @@ void ChatMessagePart::appendMessage( Kopete::Message &message, bool restoring )
 	if ( !d->currentChatStyle )
 		return;
 
-	// Don't remove foreground color for history messages.
 	if ( !message.classes().contains("history") )
-	{
-		message.setBackgroundOverride( d->bgOverride );
-		message.setForegroundOverride( d->fgOverride );
-		message.setRichTextOverride( d->rtfOverride );
-	}
+		message.setFormattingOverride( d->fmtOverride );
 
 #ifdef STYLE_TIMETEST
 	QTime beforeMessage = QTime::currentTime();
@@ -1294,7 +1277,8 @@ QString ChatMessagePart::formatMessageBody(const Kopete::Message &message)
 	classes+=message.classes();
 
 	// Affect the parsed body.
-	formattedBody += QString("class=\"%1\">%2</span>").arg(classes.join(" "), message.parsedBody());
+	formattedBody += QString("class=\"%1\">%2</span>")
+		.arg(classes.join(" "), message.parsedBody());
 
 	return formattedBody;
 }

@@ -148,12 +148,10 @@ public slots:
 
 	void messageStateChanged( uint messageId, Kopete::Message::MessageState state );
 
-    /**
-    * Change the current style
-    * This method override is used when a plugin need graphic management.
-    * @param enable toggle the override.
-    */
-    void slotToggleGraphicOverride(bool enable);
+	/**
+	 * does nothing
+	 */
+	void slotToggleGraphicOverride(bool enable);
 
 signals:
 	/**

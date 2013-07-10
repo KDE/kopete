@@ -57,18 +57,8 @@
 		</entry>
 		
 		<!-- Overrides preferences -->
-		<entry key="chatBgOverride" type="Bool">
-			<label>Disable custom text color set by users.</label>
-			<default>false</default>
-			<emit signal="messageOverridesChanged" />
-		</entry>
-		<entry key="chatFgOverride" type="Bool">
-			<label>Disable custom background color set by users.</label>
-			<default>false</default>
-			<emit signal="messageOverridesChanged" />
-		</entry>
-		<entry key="chatRtfOverride" type="Bool">
-			<label>Disable rich text set by users.</label>
+		<entry key="chatFmtOverride" type="Bool">
+			<label>Disable custom formatting set by users.</label>
 			<default>false</default>
 			<emit signal="messageOverridesChanged" />
 		</entry>

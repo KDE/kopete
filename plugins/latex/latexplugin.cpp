@@ -80,7 +80,6 @@ LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
 void LatexPlugin::slotNewChatSession( Kopete::ChatSession *KMM )
 {
 	new LatexGUIClient( KMM );
-	connect( this , SIGNAL(toggleLatex(bool)), KMM, SIGNAL(toggleGraphicOverride(bool)) );
 }
 
 void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
@@ -176,8 +175,7 @@ void LatexPlugin::slotMessageAboutToShow( Kopete::Message& msg )
 		messageText.replace(Kopete::Message::escape(it.key()), " <img width=\"" + QString::number(imagePxWidth) + "\" height=\"" + QString::number(imagePxHeight) + "\" align=\"middle\" src=\"" + (*it) + "\"  alt=\"" + escapedLATEX +"\" title=\"" + escapedLATEX +"\"  /> ");
 	}
 
-	msg.setHtmlBody( messageText );
-	emit toggleLatex(true);
+	msg.setForcedHtmlBody( messageText );
 }
 
 

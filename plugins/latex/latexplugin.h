@@ -65,9 +65,6 @@ public:
 	 */
 	bool securityCheck(const QString & formula);
 
-signals:
-    void toggleLatex(bool);
-
 private:
 	static LatexPlugin* s_pluginStatic;
 	QString m_convScript;

@@ -49,7 +49,7 @@ class Message::Private
 public:
 	Private() //assign next message id, it can't be changed later
 		: id(nextId++), direction(Internal), format(Qt::PlainText), type(TypeNormal), importance(Normal), state(StateUnknown),
-		  delayed(false), backgroundOverride(false), foregroundOverride(false), richTextOverride(false), isRightToLeft(false),
+		  delayed(false), formattingOverride(false), forceHtml(false), isRightToLeft(false),
 		  timeStamp( QDateTime::currentDateTime() ), body(new QTextDocument), parsedBodyDirty(true), escapedBodyDirty(true),
 		  fileTransfer(0)
 	{}
@@ -68,9 +68,7 @@ public:
 	MessageImportance importance;
 	MessageState state;
 	bool delayed;
-	bool backgroundOverride;
-	bool foregroundOverride;
-	bool richTextOverride;
+	bool formattingOverride, forceHtml;
 	bool isRightToLeft;
 	QDateTime timeStamp;
 	QFont font;
@@ -119,9 +117,7 @@ Message::Private::Private (const Message::Private &other)
 	importance = other.importance;
 	state = other.state;
 	delayed = other.delayed;
-	backgroundOverride = other.backgroundOverride;
-	foregroundOverride = other.foregroundOverride;
-	richTextOverride = other.richTextOverride;
+	formattingOverride = other.formattingOverride;
 	isRightToLeft = other.isRightToLeft;
 	timeStamp = other.timeStamp;
 	font = other.font;
@@ -199,22 +195,24 @@ uint Message::nextId()
 
 void Message::setBackgroundOverride( bool enabled )
 {
-	d->backgroundOverride = enabled;
+	setFormattingOverride(enabled);
 }
 
 void Message::setForegroundOverride( bool enabled )
 {
-	d->foregroundOverride = enabled;
+	setFormattingOverride(enabled);
 }
 
 void Message::setRichTextOverride( bool enabled )
 {
-	if ( d->richTextOverride != enabled )
-	{
-		d->richTextOverride = enabled;
-		d->escapedBodyDirty = true;
-		d->parsedBodyDirty = true;
-	}
+	setFormattingOverride(enabled);
+}
+
+void Message::setFormattingOverride( bool enabled )
+{
+	d->formattingOverride = enabled;
+	d->parsedBodyDirty=true;
+	d->escapedBodyDirty=true;
 }
 
 void Message::setForegroundColor( const QColor &color )
@@ -240,6 +238,12 @@ void Message::setPlainBody (const QString &body)
 void Message::setHtmlBody (const QString &body)
 {
 	doSetBody (body, Qt::RichText);
+}
+
+void Message::setForcedHtmlBody( const QString &body)
+{
+	setHtmlBody(body);
+	d->forceHtml = true;
 }
 
 void Message::doSetBody (QString body, Qt::TextFormat f)
@@ -370,12 +374,12 @@ QString Message::escapedBody() const
 {
 //	kDebug(14010) << escapedBody() << " " << d->richTextOverride;
 
-//	the escaped body is cached because QRegExp is very expensive, so it shouldn't be used any more than nescessary
+//	the escaped body is cached because QRegExp is very expensive, so it shouldn't be used any more than necessary
 	if (!d->escapedBodyDirty)
 		return d->escapedBody;
 	else {
 		QString html;
-		if ( d->format == Qt::PlainText || d->richTextOverride )
+		if ( d->format == Qt::PlainText || (d->formattingOverride && !d->forceHtml))
 			html = Qt::convertFromPlainText( d->body->toPlainText(), Qt::WhiteSpaceNormal );
 		else
 			html = d->body->toHtml();
@@ -414,16 +418,16 @@ static QString makeRegExp( const char *pattern )
 
 const QStringList Message::regexpPatterns()
 {
-        const QString name = QLatin1String( "[\\w\\+\\-=_\\.]+" );
-        const QString userAndPassword = QString( "(?:%1(?::%1)?\\@)" ).arg( name );
-        const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
-        const QString urlSection = QString( "[%1]+" ).arg( urlChar );
-        const QString domain = QLatin1String( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
-        QStringList patternList;
-        patternList << makeRegExp("\\w+://%1?\\w%2").arg( userAndPassword, urlSection )
-                    << makeRegExp("%1?www\\.%2%3").arg( userAndPassword, domain, urlSection )
-                    << makeRegExp("%1@%2").arg( name, domain );
-        return patternList;
+	const QString name = QLatin1String( "[\\w\\+\\-=_\\.]+" );
+	const QString userAndPassword = QString( "(?:%1(?::%1)?\\@)" ).arg( name );
+	const QString urlChar = QLatin1String( "\\+\\-\\w\\./#@&;:=\\?~%_,\\!\\$\\*\\(\\)" );
+	const QString urlSection = QString( "[%1]+" ).arg( urlChar );
+	const QString domain = QLatin1String( "[\\-\\w_]+(?:\\.[\\-\\w_]+)+" );
+	QStringList patternList;
+	patternList << makeRegExp("\\w+://%1?\\w%2").arg( userAndPassword, urlSection )
+	            << makeRegExp("%1?www\\.%2%3").arg( userAndPassword, domain, urlSection )
+	            << makeRegExp("%1@%2").arg( name, domain );
+	return patternList;
 }
 
 QString Message::parseLinks( const QString &message, Qt::TextFormat format )
@@ -613,32 +617,36 @@ QString Message::getHtmlStyleAttribute() const
 
 	styleAttribute = QString::fromUtf8("style=\"");
 
-	// Affect foreground(color) and background color to message.
-	if( !d->foregroundOverride && d->foregroundColor.isValid() )
+	if( !d->formattingOverride)
 	{
-		styleAttribute += QString::fromUtf8("color: %1; ").arg(d->foregroundColor.name());
-	}
-	if( !d->backgroundOverride && d->backgroundColor.isValid() )
-	{
-		styleAttribute += QString::fromUtf8("background-color: %1; ").arg(d->backgroundColor.name());
-	}
+		// Affect foreground(color) and background color to message.
+		// we only do this if the formatting won't get stripped anyway
+		if( d->foregroundColor.isValid() )
+		{
+			styleAttribute += QString::fromUtf8("color: %1; ").arg(d->foregroundColor.name());
+		}
+		if( d->backgroundColor.isValid() )
+		{
+			styleAttribute += QString::fromUtf8("background-color: %1; ").arg(d->backgroundColor.name());
+		}
 
-	// Affect font parameters.
-	if( !d->richTextOverride && d->font!=QFont() )
-	{
-		QString fontstr;
-		if(!d->font.family().isNull())
-			fontstr+=QLatin1String("font-family: ")+d->font.family()+QLatin1String("; ");
-		if(d->font.italic())
-			fontstr+=QLatin1String("font-style: italic; ");
-		if(d->font.strikeOut())
-			fontstr+=QLatin1String("text-decoration: line-through; ");
-		if(d->font.underline())
-			fontstr+=QLatin1String("text-decoration: underline; ");
-		if(d->font.bold())
-			fontstr+=QLatin1String("font-weight: bold;");
+		// Affect font parameters.
+		if( d->font!=QFont() )
+		{
+			QString fontstr;
+			if(!d->font.family().isNull())
+				fontstr+=QLatin1String("font-family: ")+d->font.family()+QLatin1String("; ");
+			if(d->font.italic())
+				fontstr+=QLatin1String("font-style: italic; ");
+			if(d->font.strikeOut())
+				fontstr+=QLatin1String("text-decoration: line-through; ");
+			if(d->font.underline())
+				fontstr+=QLatin1String("text-decoration: underline; ");
+			if(d->font.bold())
+				fontstr+=QLatin1String("font-weight: bold;");
 
-		styleAttribute += fontstr;
+			styleAttribute += fontstr;
+		}
 	}
 
 	styleAttribute += QString::fromUtf8("\"");

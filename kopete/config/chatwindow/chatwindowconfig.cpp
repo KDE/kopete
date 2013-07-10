@@ -275,8 +275,7 @@ void ChatWindowConfig::save()
 	// Ugly hacks, this will emit the kcfg signals
 	appearanceSettings->setChatTextColor(m_colorsUi.kcfg_chatTextColor->color());
 	appearanceSettings->setUseEmoticons(m_emoticonsUi.kcfg_useEmoticons->isChecked());
-	settings->setHighlightForegroundColor(m_colorsUi.kcfg_highlightForegroundColor->color());
-	settings->setChatBgOverride(m_colorsUi.kcfg_chatBgOverride->isChecked());
+	settings->setChatFmtOverride(m_colorsUi.kcfg_chatFmtOverride->isChecked());
 
 	appearanceSettings->writeConfig();
 	settings->writeConfig();
