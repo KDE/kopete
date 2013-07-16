@@ -1,0 +1,48 @@
+<ui version="4.0" >
+ <author>Charles Connell</author>
+ <class>KabcKeySelectorUI</class>
+ <widget class="QWidget" name="KabcKeySelectorUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>306</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KListWidget" name="keyList" >
+     <property name="toolTip" >
+      <string>Select Keys to Use</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Select the key you want to use for to encrypt to the metacontact</string>
+     </property>
+     <property name="editTriggers" >
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KListWidget</class>
+   <extends>QListWidget</extends>
+   <header>klistwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

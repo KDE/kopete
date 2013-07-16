@@ -1,0 +1,45 @@
+<ui version="4.0" >
+ <author>Charles Connell</author>
+ <class>ExportKeysUI</class>
+ <widget class="QWidget" name="ExportKeysUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Cryptography plugin will export keys for the chosen metacontacts. If no address book entry has been linked to each metacontact, one will be created.</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KListWidget" name="keyList" >
+     <property name="toolTip" >
+      <string>Select Keys to Export</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Check the box next to the name and key of each user that you want to export to the address book.</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KListWidget</class>
+   <extends>QListWidget</extends>
+   <header>klistwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

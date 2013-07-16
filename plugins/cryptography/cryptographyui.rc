@@ -1,0 +1,14 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="2" name="kopete_cryptography" >
+	<MenuBar>
+		<Menu name="edit">
+			<text>&amp;Edit</text>
+			<Action name="contactSelectKey" />
+			<Action name="exportKey" />
+		</Menu>
+	</MenuBar>
+	<Menu name="contact_popup">
+		<Action name="contactSelectKey" />
+		<Action name="exportKey" />
+  	</Menu>
+</kpartgui>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: Charles Connell-->
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+	<kcfgfile name="kopeterc"/>
+
+	<group name="Cryptography Plugin">
+		<!-- General Behavior -->
+		<entry key="privateKeyFingerprint" type="String">
+			<label>User's private key fingerprint.</label>
+			<default></default>
+		</entry>
+		<entry key="clearSignMode" type="Bool">
+			<label>Sign messages in clearsign mode.</label>
+			<default>false</default>
+		</entry>
+	</group>
+</kcfg>

@@ -1,0 +1,16 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="2" name="kopetecryptographychat">
+	<MenuBar>
+		<Menu name="tools" >
+			<text>&amp;Tools</text>
+			<Action name="encryptionToggle" />
+			<Action name="signToggle" />
+			<Action name="export" />
+		</Menu>
+	</MenuBar>
+	<ToolBar name="cryptographyToolBar" fullWidth="false">
+		<text>Cryptography Toolbar</text>
+		<Action name="encryptionToggle" />
+		<Action name="signToggle" />
+	</ToolBar>
+</kpartgui>
