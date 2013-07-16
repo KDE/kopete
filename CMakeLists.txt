@@ -115,6 +115,12 @@ macro_optional_find_package(Libgadu)
 macro_bool_to_01(LIBGADU_FOUND HAVE_LIBGADU)
 macro_log_feature(LIBGADU_FOUND "libgadu" "A library providing support for Gadu-Gadu protocol" "http://toxygen.net/libgadu/" FALSE "1.8.0" "Required for Kopete Gadu-Gadu protocol")
 
+macro_optional_find_package(Kleopatra)
+macro_log_feature(KLEOPATRA_FOUND "Kleopatra" "The Kleopatra libraries (from kdepim)" "" FALSE "" "Kleopatra is required to build the cryptography plugin")
+
+macro_optional_find_package(QGpgme)
+macro_log_feature(QGPGME_FOUND "QGpgME" "QGpgME library (from kdepimlibs)" "" FALSE "" "QGpgME library is required to build the cryptography plugin")
+
 if (NOT DISABLE_VIDEOSUPPORT)
   set (LIBV4L2_REQUIRED FALSE)
   if (CMAKE_SYSTEM_NAME MATCHES Linux)
