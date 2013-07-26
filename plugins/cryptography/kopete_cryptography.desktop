@@ -122,4 +122,3 @@ Comment[uk]=Зашифровує і підписує повідомлення з
 Comment[x-test]=xxEncrypts and signs messages using OpenPGPxx
 Comment[zh_CN]=使用 OpenPGP 对消息进行加密和签名
 Comment[zh_TW]=使用 OpenPGP 加密與簽署訊息
-X-DocPath=kopete/plugins/cryptography/index.html#cryptography-summary

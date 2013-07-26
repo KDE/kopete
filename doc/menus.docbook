@@ -48,7 +48,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 <para>Set all accounts offline</para>
 </listitem>
 </varlistentry>
-
+<!--FIXME missing Set Status Invisible, Busy, Edit Messages, Edit Statuses-->
 <varlistentry>
 <term>
 <menuchoice>
@@ -72,7 +72,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 <para>Prompts you for the new group's name and adds it to the contact list.</para>
 </listitem>
 </varlistentry>
-
+<!--FIXME missing Export Contacts-->
 <varlistentry>
 <term>
 <menuchoice>
@@ -92,7 +92,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 <sect2 id="menus-contactlist-edit">
 <title><guimenu>Edit</guimenu> Menu</title>
 <variablelist>
-
+<!--FIXME not in Edit menu
 <varlistentry>
 <term>
 <menuchoice>
@@ -120,7 +120,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 <para>Reverts the last change that was made to the contact list by <guimenu>Edit</guimenu><guimenuitem>Undo</guimenuitem></para>
 </listitem>
 </varlistentry>
-
+-->
 <varlistentry>
 <term>
 <menuchoice>
@@ -184,32 +184,6 @@ performs a menu item function, the default shortcut is listed with the menu item
 <varlistentry>
 <term>
 <menuchoice>
-<shortcut><keycombo><keycap>Delete</keycap></keycombo>
-</shortcut>
-<guimenu>Edit</guimenu>
-<guimenuitem>Remove</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>(Enabled when a contact is selected) Removes a contact from the contact list entirely.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Edit</guimenu>
-<guimenuitem>Rename Contact</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>(Enabled when a contact is selected) Renames the contact on the contact list.  If you do this, the contact list entry will no longer change if the contact changes their display name remotely.  You can re-enable this using the contact's Properties dialog.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
 <guimenu>Edit</guimenu>
 <guisubmenu>Add Contact...</guisubmenu>
 </menuchoice>
@@ -228,6 +202,33 @@ performs a menu item function, the default shortcut is listed with the menu item
 </term>
 <listitem>
 <para>(Enabled when a contact is selected) Sometimes people will message you who aren't on your contact list already.  In this case, &kopete; creates a temporary entry for them, but to keep them on your contact list, use this function.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo><keycap>Del</keycap></keycombo>
+</shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Delete Contact</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a contact is selected) Removes a contact from the contact list entirely.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo><keycap>F2</keycap></keycombo></shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Rename</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>(Enabled when a contact is selected) Renames the contact on the contact list.  If you do this, the contact list entry will no longer change if the contact changes their display name remotely.  You can re-enable this using the contact's Properties dialog.</para>
 </listitem>
 </varlistentry>
 

@@ -7,7 +7,11 @@
   <!ENTITY Matt.Rogers.mail "<email>mattr@kde.org</email>">
   <!ENTITY Michael.Larouche "<personname><firstname>Michaël</firstname><surname>Larouche</surname></personname>">
   <!ENTITY Michael.Larouche.mail "<email>michael.larouche@kdemail.net</email>">
-  <!ENTITY package "kdenetwork">
+  <!ENTITY Olivier.Goffart "<personname><firstname>Olivier</firstname><surname>Goffart</surname></personname>">
+  <!ENTITY Olivier.Goffart.mail "<email>ogoffart@kde.org</email>">
+  <!ENTITY Charles.Connell "<personname><firstname>Charles</firstname><surname>Connell</surname></personname>">
+  <!ENTITY Charles.Connell.mail "<email>charles@connells.org</email>">
+  <!ENTITY package "kopete">
   <!ENTITY kappname "&kopete;">
   <!ENTITY im "<acronym>IM</acronym>">
   <!ENTITY ascii "<acronym>ASCII</acronym>">
@@ -603,7 +607,9 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Emoticons</title>
 <para>Emoticons (also known as smileys) are combinations of characters such as <userinput>;-)</userinput>that look like a face, and communicate moods or expressions.  &kopete; can optionally use graphical emoticons in place of the characters themselves.</para>
 <para>On this tab, you can select which emoticon set you prefer, or turn off graphical emoticons altogether.</para>
+<!--FIXME uncomment when chapter id="specialised" has content
 <para>See <link linkend="specialised">Specialized Actions</link> for details of how to install extra emoticon sets.</para>
+-->
 </sect3>
 <sect3 id="configuring-appearance-chat">
 <title>Chat Window</title>
@@ -749,10 +755,10 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>&kopete; offers plugins that provide functions that aren't essential for messaging, but are useful for some people.</para>
 <sect1 id="plugins-list">
 <title>Plugins</title>
-<sect2 id="plugins-alias">
+<!-- disabled from build in 4.11/master sect2 id="plugins-alias">
 <title>Alias</title>
 <para><guilabel>Alias</guilabel> lets you define your own commands, &eg; /hello, in &kopete; that run scripts and output the result in the chat window.  If you know how the alias Unix command works, this is just the same</para>
-</sect2>
+</sect2-->
 <sect2 id="plugins-auto-replace">
 <title>Auto Replace</title>
 <para><guilabel>Auto Replace</guilabel> allows you to correct frequently misspelled words or save typing certain words using abbreviations.</para>
@@ -761,18 +767,57 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <title>Bookmarks</title>
 <para>The <guilabel>Bookmarks</guilabel> plugin creates bookmarks in your &kde; bookmarks list from URLs that are received in &im; messages.</para>
 </sect2>
-<sect2 id="plugins-connection-status">
+<!-- was removed with Revision 732681
+sect2 id="plugins-connection-status">
 <title>Connection Status</title>
 <para><guilabel>Connection Status</guilabel> is useful for modem users or others who don't have a permanent Internet connection.  It watches for an active Internet connection and sets your accounts online when it detects you have dialed up.</para>
-</sect2>
+</sect2-->
 <sect2 id="plugins-contact-notes">
 <title>Contact Notes</title>
 <para><guilabel>Contact Notes</guilabel> allows you to note down any useful bits of information on a metacontact.</para>
+</sect2>
+<sect2 id="plugins-cryptography">
+<sect2info>
+<authorgroup>
+<author>&Olivier.Goffart; &Olivier.Goffart.mail;</author>
+<author>&Charles.Connell; &Charles.Connell.mail;</author>
+</authorgroup>
+<date>2007-10-14</date>
+<releaseinfo>1.3.0</releaseinfo>
+</sect2info>
+
+<title>Cryptography</title>
+<para>The Cryptography plugin allows you to send and receive encrypted and/or signed messages.</para>
+<para>Cryptography lets you use an OpenPGP implementation to encrypt and sign messages in conversations.  Note that this is not the same as an SSL secured chat session.  Cryptography can encrypt your messages to a single individual so that only the holder of the matching key can read it.  If you wish that the recipient of your messages can verify that you have sent your messages, you may sign messages.  Signing and encryption can be used separately or together. When you receive a message, if it has been encrypted, you will see a lock icon. If it has been signed with a verifiable signature (you have the public key of the sender), you will see a pen icon.  For a non-verifiable signature, a red pen icon will be shown.</para>
+<para>To configure Cryptography, select your private key in the plugin configuration page.  Then, using <menuchoice><guimenuitem>Select Public Key...</guimenuitem></menuchoice> from each meta-contact's context menu, choose their public key.  You will be prompted for your passphrase when using this plugin.</para>
+<para>Due to limitations in some of the instant messaging protocols that &kopete; uses, encrypted messages cannot be sent with those protocols.  If you attempt to use an unsupported protocol, you will be warned.</para>
+<para>Cryptography can use the public keys stored in your &kde; address book for each contact.  However, it must be
+able to know which address book entry is associated with which meta-contact.  To provide this information, choose
+Properties from the meta-contact context menu, and then set the Address Book Link.  Cryptography can also export
+public keys that you have set to your address book.  If a meta-contact has an address book link, then the key will go in
+the correct address book entry, replacing an existing one.  If no link exists (possibly because no address book entry
+exists for the individual in question), a new entry will be created. This entry will have two fields filled: the public key from &kopete; and the meta-contact's display name.</para>
+<para>Documentation copyright &copy; &Olivier.Goffart; &Olivier.Goffart.mail; and &copy; 2007 &Charles.Connell; &Charles.Connell.mail;</para>
 </sect2>
 <sect2 id="plugins-highlight">
 <title>Highlight</title>
 <para><guilabel>Highlight</guilabel> works a little like email filters, in that it allows you to make things happen in response to particular messages.  As well as highlighting the text, you can play sounds.</para>
 </sect2>
+<!--FIXME History2 missing
+Another history plugin based on sqlite.
+Most important changes:
+- based on sqlite3 instead of xml-files
+- import history button in config dialog
+- import option added for the other xml-based history-plugin
+- pidgin import improved
+- test and skip duplicates on import (so it is possible to synchronize
+  regularly from a windows-pidgin installation for example)
+- more speed in most cases
+The main reason I began to rewrite the complete plugin was, that I had
+dataloss by importing from pidgin with the old history plugin.
+The months, which where imported from pidgin, did overwrite the kopete
+history. This was unacceptable.
+-->
 <sect2 id="plugins-history">
 <title>History</title>
 <para>The <guilabel>History</guilabel> plugin, when activated, records conversations using any &im; system and allows you to view old conversations later.  A <menuchoice><guimenuitem>History</guimenuitem></menuchoice> item appears in each Metacontact's context menu so you can view the message history for that metacontact.</para>
@@ -830,6 +875,19 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </listitem>
 </varlistentry>
 </variablelist>
+</sect2>
+<sect2 id="plugins-kopetex">
+<title>KopeteTeX</title>
+<para>KopeteTeX allows scientists and mathematicians to hold conversations using the LaTeX markup language.  Expressions entered within $$ are rendered as a graphic in the chatwindow, and can be cut and pasted as the original Latex.  To use this plugin you must have LaTeX installed</para>
+</sect2>
+<!-- Revision 732090 don't compile motionautoaway. it's moving back to playground
+sect2 id="plugins-motion-auto-away">
+<title>Motion Auto-Away</title>
+<para>In conjunction with a webcam and the <application>Video4Linux</application> package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <emphasis>Away</emphasis>.</para>
+</sect2-->
+<sect2 id="plugins-now-listening">
+<title>Now Listening</title>
+<para>With the <guilabel>Now Listening plugin</guilabel>, let people you're chatting with know what you're listening to, by typing <userinput>/media</userinput> in a chat, or with <menuchoice><guimenu>Tools</guimenu><guimenuitem>Send Media Info</guimenuitem></menuchoice> in the Chat window.</para>
 </sect2>
 <sect2 id="plugins-otr">
 <title>OTR</title>
@@ -919,18 +977,34 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect4>
 </sect3>
 </sect2>
-<sect2 id="plugins-kopetex">
-<title>KopeteTeX</title>
-<para>KopeteTeX allows scientists and mathematicians to hold conversations using the LaTeX markup language.  Expressions entered within $$ are rendered as a graphic in the chatwindow, and can be cut and pasted as the original Latex.  To use this plugin you must have LaTeX installed</para>
+<sect2 id="plugins-pipes">
+<title>Pipes</title>
+<para>Pipes allows you to pipe incoming or outgoing messages through an external script or executable. An incoming message will be piped through the executable before it reaches your chat window, while outgoing messages will be piped through the executable before they are sent over the Internet. Pipes can receive text in one of three forms:
+<variablelist>
+<varlistentry>
+<term>Plain text body</term>
+<listitem><para>The body of the message, in plain &ascii; text</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&html; text body</term>
+<listitem><para>The body of the message, in &html;, as it would be if your chat peer had sent &html; to you, which will be rendered in the chat window</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&xml; full message</term>
+<listitem><para>An &xml; document that describes all the characteristics of the message, including the &html; body.</para></listitem>
+</varlistentry>
+</variablelist>
+For most purposes, you probably want to use the plain text body or &html; text body options. These can be used with programs such as translators or summarizers. The &xml; format is only appropriate for use with a program or script written specifically to work with this plugin. If you would like to write a program or script that does work with this plugin, see <link linkend="pipes">the more detailed documentation</link>.
+</para>
 </sect2>
-<sect2 id="plugins-motion-auto-away">
-<title>Motion Auto-Away</title>
-<para>In conjunction with a webcam and the <application>Video4Linux</application> package, this lets you detect when you're no longer at your computer and have &kopete; automatically become <emphasis>Away</emphasis>.</para>
-</sect2>
-<sect2 id="plugins-now-listening">
-<title>Now Listening</title>
-<para>With the <guilabel>Now Listening plugin</guilabel>, let people you're chatting with know what you're listening to, by typing <userinput>/media</userinput> in a chat, or with <menuchoice><guimenu>Tools</guimenu><guimenuitem>Send Media Info</guimenuitem></menuchoice> in the Chat window.</para>
-</sect2>
+<!--FIXME missing
+preview
+privacy
+Import Privacy Plugin into svn.
+This plugin allows flexible filtering of messages by sender and/or by content.
+FEATURE: 63839
+scripting
+  -->
 <sect2 id="plugins-statistics">
 <title>Statistics</title>
 <para>This plugin uses a database to gather information about your contacts' activity patterns. You can use this to see when a contact is usually online, for example.</para>
@@ -941,7 +1015,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </sect2>
 <sect2 id="plugins-translator">
 <title>Translator</title>
-<para>The Translator plugin lets you define a preferred language for each Metacontact, and then translates messages to or from them using web based translation services such as <trademark>Google</trademark> and <trademark>Babelfish</trademark>.  Set your own preferred language in the <guilabel>Select and Configure Plugins</guilabel> dialog.  Each contact's preferred language can be set on its context menu.</para>
+<para>The Translator plugin lets you define a preferred language for each Metacontact, and then translates messages to or from them using web based translation services such as <trademark>Google</trademark>.  Set your own preferred language in the <guilabel>Select and Configure Plugins</guilabel> dialog.  Each contact's preferred language can be set on its context menu.</para>
 <para>The following item is added to the Chat window's menus:</para>
 <variablelist>
 <varlistentry>
@@ -964,31 +1038,13 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <para>Web Presence allows you to publicize your &im; presence on the Web.  Give it the path to a file on an &FTP; server (for example), and it will upload a short piece of &HTML; to that file, which you can include in your homepage.  &kde;'s network transparency makes this simple.  Useful for bloggers to make friends with, or you could use it to use &im; in your business.</para>
 <para>Example: <userinput>sftp://username@somehost.org/path/to/homes/user/im.html</userinput> uses the <acronym>SFTP</acronym> protocol to upload your presence directly onto the webserver.</para>
 <para>See <ulink url="help:/kioslave/index.html">the KIO manuals</ulink> for tips on specific network protocols.</para>
+<!--FIXME wrong url to ioslaves
+in konsole "khelpcenter khelpcenter:kioslaves" works-->
 </sect2>
-<sect2 id="plugins-pipes">
-<title>Pipes</title>
-<para>Pipes allows you to pipe incoming or outgoing messages through an external script or executable. An incoming message will be piped through the executable before it reaches your chat window, while outgoing messages will be piped through the executable before they are sent over the Internet. Pipes can receive text in one of three forms:
-<variablelist>
-<varlistentry>
-<term>Plain text body</term>
-<listitem><para>The body of the message, in plain &ascii; text</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>&html; text body</term>
-<listitem><para>The body of the message, in &html;, as it would be if your chat peer had sent &html; to you, which will be rendered in the chat window</para></listitem>
-</varlistentry>
-<varlistentry>
-<term>&xml; full message</term>
-<listitem><para>An &xml; document that describes all the characteristics of the message, including the &html; body.</para></listitem>
-</varlistentry>
-</variablelist>
-For most purposes, you probably want to use the plain text body or &html; text body options. These can be used with programs such as translators or summarizers. The &xml; format is only appropriate for use with a program or script written specifically to work with this plugin. If you would like to write a program or script that does work with this plugin, see <link linkend="pipes">the more detailed documentation</link>.
-</para>
-</sect2>
-</sect1>
-<sect1 id="plugins-contributing">
+<sect2 id="plugins-contributing">
 <title>Contributing a plugin</title>
 <para>&kopete; is designed to make it easy to create plugins that give it extra functions. So if you've got a great idea to make &kopete; even better, <link linkend="intro-to-kopete-web">get in touch</link>!</para>
+</sect2>
 </sect1>
 </chapter><!-- plugins -->
 
@@ -1040,11 +1096,11 @@ sets that you can simply extract there.</para>
 </qandaset>
 </chapter> <!-- faq -->
 
-<chapter id="specialised">
+<!--FIXME chapter id="specialised">
 <title>Specialized Actions</title>
 <para>Command line parameters</para>
 <para>Installing emoticon sets</para>
-</chapter> <!-- specialised -->
+</chapter--> <!-- specialised -->
 
 <chapter id="credits-and-license">
 <title>Credits and License</title>
@@ -1055,9 +1111,12 @@ sets that you can simply extract there.</para>
 &underFDL;
 &underGPL;
 <sect1 id="team">
+<title>The Team</title>
+<sect2 id="current-team">
 <title>Current Development Team</title>
 <!-- please keep in sync with the authors list on the webpage -->
 <itemizedlist>
+<listitem><para>Pali Rohár (pali.rohar at gmail com): Developer and Maintainer</para></listitem>
 <listitem><para>Duncan Mac-Vicar Prett (duncan at kde org): Original author, developer, and project leader</para></listitem>
 <listitem><para>Till Gerken (till at tantalo net): Developer, Jabber maintainer</para></listitem>
 <listitem><para>Olivier Goffart (ogoffart at tiscalinet be): Lead Developer, MSN Plugin Maintainer</para></listitem>
@@ -1071,8 +1130,8 @@ sets that you can simply extract there.</para>
 <listitem><para>Andre Duffeck (andre at duffeck de): Developer: Developer, Yahoo plugin maintainer</para></listitem>
 <listitem><para>&Michael.Larouche; (michael.larouche at kdemail net): Developer, MSN, Chat Window.</para></listitem>
 </itemizedlist>
-</sect1>
-<sect1 id="ex-team">
+</sect2>
+<sect2 id="ex-team">
 <title>Former Developers (&kopete; Hall Of Fame)</title>
 <para>These people have moved on from &kopete;, so don't contact them for &kopete; support.  We're eternally grateful for their contributions.  </para>
 <itemizedlist>
@@ -1089,12 +1148,13 @@ sets that you can simply extract there.</para>
 <listitem><para>Gav Wood (gav at kde org): WinPopup Plugin author</para></listitem>
 <listitem><para>Martijn Klingens (klingens at kde org): Developer, MSN hacker</para></listitem>
 </itemizedlist>
-</sect1>
-<sect1 id="documentation">
+</sect2>
+<sect2 id="documentation">
 <title>Documentation</title>
 <para>
 Documentation copyright 2003,2004,2005 &Will.Stephenson; (lists at stevello free-online co uk), copyright 2005 &Matt.Rogers; (mattr at kde org), copyright 2005,2006 &Michael.Larouche; (michael.larouche at kdemail net).
 </para>
+</sect2>
 </sect1>
 </chapter><!-- credits-and-license -->
 

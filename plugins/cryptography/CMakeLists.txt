@@ -1,7 +1,5 @@
 include_directories (${KLEOPATRA_INCLUDE_DIR})
 
-add_subdirectory ( doc )
-
 ########### next target ###############
 
 set(kopete_cryptography_PART_SRCS 
