@@ -1032,23 +1032,29 @@ void XmlContactStorage::checkGroupIds()
 
     QSet<uint> groupIdSet;
 
-    groupIdSet.insert( Kopete::Group::topLevel()->groupId() );
+    bool idsUnique = true;
+    bool haveTemporary = false;
+    bool haveTopLevel = false;
 
-    bool idsUnique = !groupIdSet.contains( Kopete::Group::temporary()->groupId() );
-    groupIdSet.insert( Kopete::Group::temporary()->groupId() );
-
-    if ( idsUnique )
+    foreach( Kopete::Group * group, groups() )
     {
-        foreach( Kopete::Group * group, groups() )
+        if ( groupIdSet.contains( group->groupId() ) )
         {
-            if ( groupIdSet.contains( group->groupId() ) )
-            {
-                idsUnique = false;
-                break;
-            }
-            groupIdSet.insert( group->groupId() );
+            idsUnique = false;
+            break;
         }
+        groupIdSet.insert( group->groupId() );
+        if ( group->type() == Kopete::Group::Temporary )
+            haveTemporary = true;
+        else if ( group->type() == Kopete::Group::TopLevel )
+            haveTopLevel = true;
     }
+
+    if ( !haveTemporary )
+        groupIdSet.insert(Kopete::Group::topLevel()->groupId());
+
+    if ( !haveTopLevel )
+        groupIdSet.insert(Kopete::Group::topLevel()->groupId());
 
     if ( !idsUnique )
     {
