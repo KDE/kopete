@@ -38,6 +38,7 @@ QStringList expectedGroupList()
 	groupList << QString("Kontact Developers");
 	groupList << QString("Users");
 	groupList << QString("Friends & Family");
+	groupList << QString("Top Level");
 
 	return groupList;
 }
@@ -76,7 +77,6 @@ void XmlContactStorage_Test::testLoad()
 	QStringList groupNameList = expectedGroupList();
 	QStringList::ConstIterator expectedIt, expectedItEnd = groupNameList.constEnd();
 
-	QSKIP("This test is broken, please someone fix it", SkipAll);
 	uint groupId = 1;
 	Kopete::Group::List loadGroupList = storage->groups();
 	Kopete::Group::List::ConstIterator it, itEnd = loadGroupList.constEnd();
