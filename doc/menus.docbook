@@ -415,7 +415,7 @@ change the notifications (sounds, error messages, &etc;)  used by &kopete;.
 <varlistentry>
 <term>
 <menuchoice>
-<shortcut><keycombo action="simul">&Ctrl;<keycap>&Enter;</keycap></keycombo>
+<shortcut><keycap>Return</keycap>
 </shortcut>
 <guimenu>Chat</guimenu>
 <guimenuitem>Send Message</guimenuitem>
@@ -425,7 +425,7 @@ change the notifications (sounds, error messages, &etc;)  used by &kopete;.
 <para>Sends a message.</para>
 </listitem>
 </varlistentry>
-
+<!--FIXME Send File missing-->
 <varlistentry>
 <term>
 <menuchoice>
@@ -465,7 +465,8 @@ change the notifications (sounds, error messages, &etc;)  used by &kopete;.
 <para>This menu lists all the people in the chat.  You have access to the same contact menu you get by <mousebutton>right</mousebutton>-clicking a contact's name in the Contact List, allowing you to perform contact specific actions such as sending them a file, viewing their user info or blocking them.</para>
 </listitem>
 </varlistentry>
-
+<!--FIXME Commands missing-->
+<!--FIXME Close All But This Tab missing-->
 <varlistentry>
 <term>
 <menuchoice>
@@ -558,7 +559,8 @@ clipboard is pasted at the current cursor position.</para>
 <para>This menu contains all the smileys/emoticons that the current emoticon scheme includes.  You can change the scheme <link linkend="configuring-appearance-emoticons">in the Configure Kopete Dialog</link>.</para>
 </listitem>
 </varlistentry>
-
+<!--FIXME Alignment missing-->
+<!--FIXME not in 4.11
 <varlistentry>
 <term>
 <menuchoice>
@@ -606,7 +608,7 @@ clipboard is pasted at the current cursor position.</para>
 <para>This menu allows you to change the font size used in the chat.</para>
 </listitem>
 </varlistentry>
-
+-->
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-tabs">
@@ -649,7 +651,7 @@ clipboard is pasted at the current cursor position.</para>
 <para>You can move chats between windows using this menu.  Choose the chat window the tab should move to from the menu.</para>
 </listitem>
 </varlistentry>
-
+<!--FIXME Activate Previous Tab, Activate Next Tab,  Activate Next Active Tab missing-->
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-tools">
@@ -725,11 +727,11 @@ clipboard is pasted at the current cursor position.</para>
 <term>
 <menuchoice>
 <guimenu>Settings</guimenu>
-<guisubmenu>Show Chat Members List</guisubmenu>
+<guisubmenu>Show Participants</guisubmenu>
 </menuchoice>
 </term>
 <listitem>
-<para>This menu controls whether the Chat Members List appears on the left or right of the Chat View, and whether it is visible at all.</para>
+<para>This menu controls whether the Participants list appears on the right of the Chat View.</para>
 </listitem>
 </varlistentry>
 
