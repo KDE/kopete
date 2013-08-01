@@ -94,6 +94,7 @@ Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContac
 {
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 
 	WPAccount *theAccount = static_cast<WPAccount *>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 	if(!theAccount)	{
@@ -107,7 +108,13 @@ Kopete::Contact *WPProtocol::deserializeContact( Kopete::MetaContact *metaContac
 	}
 
 	theAccount->addContact(contactId, metaContact, Kopete::Account::DontChangeKABC);
-	return theAccount->contacts().value(contactId);
+
+	Kopete::Contact *c = theAccount->contacts().value(contactId);
+	if (!c)
+		return 0;
+
+	c->setPreferredNameType(nameType);
+	return c;
 }
 
 KopeteEditAccountWidget *WPProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)

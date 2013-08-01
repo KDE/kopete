@@ -63,6 +63,7 @@ Kopete::Contact *QQProtocol::deserializeContact(
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 	QString type = serializedData[ "contactType" ];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 /*
 	QQContact::QQContactType tbcType;
 	if ( type == QString::fromLatin1( "echo" ) )
@@ -86,7 +87,9 @@ Kopete::Contact *QQProtocol::deserializeContact(
 		return 0;
 	}
 
-	return new QQContact(account, contactId, metaContact);
+	QQContact *contact = new QQContact(account, contactId, metaContact);
+	contact->setPreferredNameType(nameType);
+	return contact;
 }
 
 AddContactPage * QQProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )

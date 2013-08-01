@@ -35,6 +35,7 @@
 #include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
 #include "kopeteproperty.h"
+#include "kopetecontact.h"
 
 K_PLUGIN_FACTORY( YahooProtocolFactory, registerPlugin<YahooProtocol>(); )
 K_EXPORT_PLUGIN( YahooProtocolFactory( "kopete_yahoo" ) )
@@ -174,6 +175,7 @@ Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaCon
 {
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 
 	YahooAccount *theAccount = static_cast<YahooAccount*>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 
@@ -188,7 +190,13 @@ Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaCon
 	}
 
 	theAccount->addContact(contactId,  metaContact, Kopete::Account::DontChangeKABC);
-	return theAccount->contacts().value(contactId);
+
+	Kopete::Contact *c = theAccount->contacts().value(contactId);
+	if (!c)
+		return 0;
+
+	c->setPreferredNameType(nameType);
+	return c;
 }
 
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , Kopete::Account* )

@@ -98,6 +98,7 @@ Kopete::Contact *MeanwhileProtocol::deserializeContact(
 {
     QString contactId = serializedData[ "contactId" ];
     QString accountId = serializedData[ "accountId" ];
+    Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 
     MeanwhileAccount *theAccount = 
             static_cast<MeanwhileAccount*>(
@@ -110,7 +111,13 @@ Kopete::Contact *MeanwhileProtocol::deserializeContact(
     }
 
     theAccount->addContact(contactId, metaContact, Kopete::Account::DontChangeKABC);
-	return theAccount->contacts().value(contactId);
+
+    Kopete::Contact *c = theAccount->contacts().value(contactId);
+    if (!c)
+        return 0;
+
+    c->setPreferredNameType(nameType);
+    return c;
 }
 
 const Kopete::OnlineStatus MeanwhileProtocol::accountOfflineStatus()

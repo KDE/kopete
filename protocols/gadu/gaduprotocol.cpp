@@ -132,6 +132,7 @@ GaduProtocol::deserializeContact( Kopete::MetaContact* metaContact,
 
 	const QString aid	= serializedData[ "accountId" ];
 	const QString cid	= serializedData[ "contactId" ];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 
 	Kopete::Account* account = Kopete::AccountManager::self()->findAccount( pluginId(), aid ); 
 	if (!account) {
@@ -143,6 +144,7 @@ GaduProtocol::deserializeContact( Kopete::MetaContact* metaContact,
 	GaduContact* contact = new GaduContact( cid.toUInt(), account, metaContact );
 
 	contact->setParentIdentity( aid );
+	contact->setPreferredNameType( nameType );
 	gaccount->addNotify( cid.toUInt() );
 
 	contact->setProperty( propEmail, serializedData["email"] );

@@ -279,6 +279,7 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 
 	QString contactId = serializedData["contactId"];
 	QString accountId = serializedData["accountId"];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 	QString jid = serializedData["JID"];
 
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self ()->accounts (this);
@@ -301,7 +302,13 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 		transport->account()->addContact ( jid.isEmpty() ? contactId : jid ,  metaContact);
 	else
 		account->addContact (contactId,  metaContact);
-	return account->contacts().value(contactId);
+
+	Kopete::Contact *c = account->contacts().value(contactId);
+	if (!c)
+		return NULL;
+
+	c->setPreferredNameType(nameType);
+	return c;
 }
 
 XMPP::Status JabberProtocol::kosToStatus( const Kopete::OnlineStatus & status , const QString & message )

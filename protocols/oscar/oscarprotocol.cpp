@@ -62,6 +62,7 @@ Kopete::Contact *OscarProtocol::deserializeContact(Kopete::MetaContact *metaCont
 {
 	QString contactId = serializedData["contactId"];
 	QString accountId = serializedData["accountId"];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 
 	// Get the account it belongs to
 	Kopete::Account* account = Kopete::AccountManager::self()->findAccount( this->pluginId(), accountId );
@@ -104,7 +105,13 @@ Kopete::Contact *OscarProtocol::deserializeContact(Kopete::MetaContact *metaCont
 	item.setMetaInfoId( ssiMetaInfoId );
 
 	OscarAccount* oaccount = static_cast<OscarAccount*>(account);
-	return oaccount->createNewContact( contactId, metaContact, item );
+	OscarContact* ocontact = oaccount->createNewContact( contactId, metaContact, item );
+
+	if ( !ocontact )
+		return 0;
+
+	ocontact->setPreferredNameType( nameType );
+	return ocontact;
 }
 
 #include "oscarprotocol.moc"

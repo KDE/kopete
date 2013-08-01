@@ -59,6 +59,7 @@ Kopete::Contact *BonjourProtocol::deserializeContact(
 {
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
 	Kopete::Account* account = 0;
@@ -75,6 +76,7 @@ Kopete::Contact *BonjourProtocol::deserializeContact(
 	}
 
 	BonjourContact * contact = new BonjourContact(account, contactId, metaContact);
+	contact->setPreferredNameType(nameType);
 	return contact;
 }
 

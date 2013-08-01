@@ -168,6 +168,7 @@ Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaCont
 
 	QString contactID = serializedData["contactId"];//get the contact ID
 	QString accountId = serializedData["accountId"];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 
 	if (!d->account) {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "Account does not exists, skiping contact creation";//write error for debugging
@@ -179,7 +180,9 @@ Kopete::Contact *SkypeProtocol::deserializeContact(Kopete::MetaContact *metaCont
 		return 0L;
 	}
 
-	return new SkypeContact(d->account, contactID, metaContact);//create the contact
+	SkypeContact *contact = new SkypeContact(d->account, contactID, metaContact);//create the contact
+	contact->setPreferredNameType(nameType);
+	return contact;
 }
 
 void SkypeProtocol::updateCallActionStatus() {

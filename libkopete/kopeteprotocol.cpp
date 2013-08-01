@@ -185,9 +185,12 @@ void Protocol::serialize( MetaContact *metaContact )
 		QMap<QString, QString> sd;
 		QMap<QString, QString> ad;
 
-		// Preset the contactId, if the plugin doesn't want to save
+		const QString &nameType = Kopete::Contact::nameTypeToString(c->preferredNameType());
+
+		// Preset the contactId and preferredNameType, if the plugin doesn't want to save
 		// them, or use its own format, it can call clear() on the provided list
 		sd[ QString::fromLatin1( "contactId" ) ] =   c->contactId();
+		sd[ QString::fromLatin1( "preferredNameType" ) ] = nameType;
 		if(c->account())
 			sd[ QString::fromLatin1( "accountId" ) ] = c->account()->accountId();
 

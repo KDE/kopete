@@ -59,6 +59,7 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 	QString type = serializedData[ "contactType" ];
+	Kopete::Contact::NameType nameType = Kopete::Contact::nameTypeFromString(serializedData[ "preferredNameType" ]);
 
 	TestbedContact::Type tbcType;
 	if ( type == QLatin1String( "group" ) )
@@ -86,6 +87,7 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 
 	TestbedContact * contact = new TestbedContact(account, contactId, metaContact);
 	contact->setType( tbcType );
+	contact->setPreferredNameType( nameType );
 	return contact;
 }
 
