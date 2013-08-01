@@ -104,6 +104,9 @@ void MetaContact::addContact( Contact *c )
 		connect( c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
 			this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
 
+		connect( c, SIGNAL(displayNameChanged(QString,QString)),
+			this, SLOT(slotContactDisplayNameChanged(QString,QString)) );
+
 		connect( c, SIGNAL(contactDestroyed(Kopete::Contact*)),
 			this, SLOT(slotContactDestroyed(Kopete::Contact*)) );
 
@@ -229,6 +232,8 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 				this, SLOT(slotContactStatusChanged(Kopete::Contact*,Kopete::OnlineStatus,Kopete::OnlineStatus)) );
 			disconnect( c, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
 				this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
+			disconnect( c, SIGNAL(displayNameChanged(QString,QString)),
+				this, SLOT(slotContactDisplayNameChanged(QString,QString)) );
 			disconnect( c, SIGNAL(contactDestroyed(Kopete::Contact*)),
 				this, SLOT(slotContactDestroyed(Kopete::Contact*)) );
 			disconnect( c, SIGNAL(idleStateChanged(Kopete::Contact*)),
@@ -878,31 +883,33 @@ void MetaContact::setPhotoSourceContact( Contact *contact )
 	}
 }
 
+void MetaContact::slotContactDisplayNameChanged(const QString &oldName, const QString &newName)
+{
+	Contact *subcontact = static_cast<Contact *>(sender());
+	if ( displayNameSource() == SourceContact || 
+			(d->displayName.isEmpty() && displayNameSource() == SourceCustom) )
+	{
+		if (displayNameSourceContact() == subcontact)
+		{
+			emit displayNameChanged(oldName, newName);
+			QListIterator<Kopete::Contact *> it( d->contacts );
+			while (  it.hasNext() )
+				( it.next() )->sync(Contact::DisplayNameChanged);
+		}
+		else
+		{
+			// HACK the displayName that changed is not from the contact we are tracking, but
+			// as the current one is null, lets use this new one
+			if (displayName().isEmpty())
+				setDisplayNameSourceContact(subcontact);
+		}
+	}
+}
+
 void MetaContact::slotPropertyChanged( PropertyContainer* _subcontact, const QString &key,
 		const QVariant &oldValue, const QVariant &newValue  )
 {
 	Contact *subcontact=static_cast<Contact*>(_subcontact);
-	if ( displayNameSource() == SourceContact || 
-			(d->displayName.isEmpty() && displayNameSource() == SourceCustom) )
-	{
-		if( key == Global::Properties::self()->nickName().key() )
-		{
-			if (displayNameSourceContact() == subcontact)
-			{
-				emit displayNameChanged( oldValue.toString(), newValue.toString());
-				QListIterator<Kopete::Contact *> it( d->contacts );
-				while (  it.hasNext() )
-					( it.next() )->sync(Contact::DisplayNameChanged);
-			}
-			else
-			{
-				// HACK the displayName that changed is not from the contact we are tracking, but
-				// as the current one is null, lets use this new one
-				if (displayName().isEmpty())
-					setDisplayNameSourceContact(subcontact);
-			}
-		}
-	}
 
 	if (photoSource() == SourceContact)
 	{

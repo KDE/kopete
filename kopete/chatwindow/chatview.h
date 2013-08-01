@@ -291,10 +291,6 @@ signals:
 
 private slots:
 	void slotRemoteTypingTimeout();
-	/**
-	 * Show that a contact changed his nickname when a metacontact is not avaiable.
-	 */
-	void slotPropertyChanged( Kopete::PropertyContainer *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
 	 * Called when a contact is added to the chat session.

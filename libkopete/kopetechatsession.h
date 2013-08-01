@@ -285,7 +285,7 @@ signals:
 	void statusMessageChanged( Kopete::Contact* );
 
 	/**
-	 * @brief a contact in this chat has changed his nickname
+	 * @brief a contact in this chat has changed his display name (previously nickname)
 	 */
 	void nickNameChanged( Kopete::Contact *, const QString & );
 
@@ -463,7 +463,7 @@ private slots:
 	void slotOnlineStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldStatus );
 	void slotContactDestroyed( Kopete::Contact *contact );
 	void slotMyselfDestroyed( Kopete::Contact *contact );
-	void slotContactPropertyChanged( Kopete::PropertyContainer * contact, const QString &key, const QVariant &oldValue, const QVariant &newValue );
+	void slotDisplayNameChanged( const QString &oldName, const QString &newName );
 
 protected:
 	/**

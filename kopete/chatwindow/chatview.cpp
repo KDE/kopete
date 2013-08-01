@@ -530,20 +530,6 @@ void ChatView::slotChatDisplayNameChanged()
 		setCaption( chatName, true );
 }
 
-void ChatView::slotPropertyChanged( Kopete::PropertyContainer*, const QString &key,
-		const QVariant& oldValue, const QVariant &newValue  )
-{
-	if ( key == Kopete::Global::Properties::self()->nickName().key() )
-	{
-		QString newName=newValue.toString();
-		QString oldName=oldValue.toString();
-
-		if(Kopete::BehaviorSettings::self()->showEvents())
-			if ( oldName != newName && !oldName.isEmpty())
-				sendInternalMessage( i18n( "%1 is now known as %2", oldName, newName ) );
-	}
-}
-
 void ChatView::slotDisplayNameChanged( const QString &oldValue, const QString &newValue )
 {
 	if( Kopete::BehaviorSettings::self()->showEvents() )
@@ -586,8 +572,8 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	}
 	else
 	{
-		connect( contact, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
-		this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
+		connect( contact, SIGNAL(displayNameChanged(QString,QString)),
+			this, SLOT(slotDisplayNameChanged(QString,QString)) );
 	}
 
 	const QString contactName = m_messagePart->formatName(contact, Qt::PlainText);
@@ -643,8 +629,8 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 			}
 			else
 			{
-				disconnect(contact,SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
-				this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
+				disconnect( contact, SIGNAL(displayNameChanged(QString,QString)),
+				this, SLOT(slotDisplayNameChanged(QString,QString)) );
 			}
 		}
 

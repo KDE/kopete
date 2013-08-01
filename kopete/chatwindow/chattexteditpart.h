@@ -227,7 +227,7 @@ private slots:
 	/**
 	 * Update completion to follow changes in users' nicknames
 	 */
-	void slotPropertyChanged( Kopete::PropertyContainer *, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotDisplayNameChanged( const QString &oldName, const QString &newName );
 
 	/**
 	 * Some appearance settings has changed.

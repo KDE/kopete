@@ -195,32 +195,26 @@ void ChatTextEditPart::complete()
 	}
 }
 
-void ChatTextEditPart::slotPropertyChanged( Kopete::PropertyContainer*, const QString &key,
-		const QVariant& oldValue, const QVariant &newValue  )
+void ChatTextEditPart::slotDisplayNameChanged( const QString &oldName, const QString &newName )
 {
-	if ( key == Kopete::Global::Properties::self()->nickName().key() )
-	{
-		mComplete->removeItem( oldValue.toString() );
-		mComplete->addItem( newValue.toString() );
-	}
+	mComplete->removeItem( oldName );
+	mComplete->addItem( newName );
 }
 
 void ChatTextEditPart::slotContactAdded( const Kopete::Contact *contact )
 {
-	connect( contact, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
-	         this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
+	connect( contact, SIGNAL(displayNameChanged(QString,QString)),
+	         this, SLOT(slotDisplayNameChanged(QString,QString)) );
 
-	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-	mComplete->addItem( contactName );
+	mComplete->addItem( contact->displayName() );
 }
 
 void ChatTextEditPart::slotContactRemoved( const Kopete::Contact *contact )
 {
-	disconnect( contact, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
-	            this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) ) ;
+	disconnect( contact, SIGNAL(displayNameChanged(QString,QString)),
+	            this, SLOT(slotDisplayNameChanged(QString,QString)) );
 
-	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-	mComplete->removeItem( contactName );
+	mComplete->removeItem( contact->displayName() );
 }
 
 bool ChatTextEditPart::canSend()
