@@ -81,6 +81,20 @@ public:
 		      DisplayNameChanged = 0x02 ///< the displayname of the contact changed
 	};
 
+	enum NameType {
+		NickName,	///< Nick name, comes from contact
+		CustomName,	///< Custom name set by user and stored on server contact list, can be changed
+		FormattedName,	///< Formatted name (first and/or last name)
+		ContactId,	///< Contact id, will never change
+	};
+
+	/**
+	 * These functions do conversion between enum NameType and QString
+	 * Usefull for protocol serialize/deserialize funcions
+	 */
+	static NameType nameTypeFromString(const QString &nameType);
+	static const QString nameTypeToString(NameType nameType);
+
 	/**
 	 * \brief Create new contact.
 	 *
@@ -341,10 +355,41 @@ public:
 
 	/**
 	 * \brief Convenience method to retrieve the nickName property.
-	 *
+	 * Property nickName comes from contact and cannot be changed by user custom name
 	 * This method will return the contactId if there has been no nickName property set
 	 */
 	QString nickName() const;
+
+	/**
+	 * \brief Convenience method to set the customkName property to the specified value
+	 * @param name The name to set
+	 */
+	void setCustomName( const QString &name );
+
+	/**
+	 * \brief Convenience method to retrieve the customName property.
+	 * Property customName is name set by user and stored on server contact list
+	 * This method will return nickName if there has been no customName property set
+	 */
+	QString customName() const;
+
+	/**
+	 * Set preferred name type, used by displayName function
+	 */
+	void setPreferredNameType(NameType type);
+
+	/**
+	 * Returns prefered name type, used by displayName function
+	 * Default is CustomName
+	 */
+	NameType preferredNameType() const;
+
+	/**
+	 * Returns display name of contact. Suitable for GUI display.
+	 * Call formattedName or nickName or customName or contactId depending on preferredNameType.
+	 * This method will return contactId if preferredNameType property is empty string.
+	 */
+	QString displayName() const;
 
 	/**
 	 * \brief Get the tooltip for this contact
@@ -354,9 +399,7 @@ public:
 	QString toolTip() const;
 
 	/**
-	 * Returns a formatted string of "firstName" and/or "lastName" properties
-	 * if present.
-	 * Suitable for GUI display
+	 * Returns a formatted string of "firstName" and/or "lastName" properties if present.
 	 **/
 	QString formattedName() const;
 
@@ -478,6 +521,11 @@ private slots:
 	 * slot called when the metaContact was deleted.
 	 */
 	void slotMetaContactDestroyed( QObject* mc );
+
+	/**
+	 * slot to handle changing display name
+	 */
+	void slotPropertyChanged(Kopete::PropertyContainer *, const QString &key, const QVariant &oldValue, const QVariant &newValue);
 signals:
 	/**
 	 * The contact's online status changed
@@ -511,6 +559,11 @@ signals:
 	 * \brief Emitted when the file transfer capability of this contact has changed
 	 */
 	void canAcceptFilesChanged();
+
+	/**
+	 * Emitted when displayName has changed
+	 */
+	void displayNameChanged(const QString &oldName, const QString &newName);
 
 private:
 	class Private;

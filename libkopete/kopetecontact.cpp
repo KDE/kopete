@@ -82,7 +82,42 @@ public:
 
 	Kopete::StatusMessage statusMessage;
 	KToggleAction* toggleAlwaysVisibleAction;
+
+	Kopete::Contact::NameType preferredNameType;
+	QString oldName;
 };
+
+/* static */
+Kopete::Contact::NameType Kopete::Contact::nameTypeFromString(const QString &nameType)
+{
+	if (nameType == "nickName")
+		return Kopete::Contact::NickName;
+	else if (nameType == "customName")
+		return Kopete::Contact::CustomName;
+	else if (nameType == "formattedName")
+		return Kopete::Contact::FormattedName;
+	else if (nameType == "contactId")
+		return Kopete::Contact::ContactId;
+	else // fallback to custom name
+		return Kopete::Contact::CustomName;
+}
+
+/* static */
+const QString Kopete::Contact::nameTypeToString(Kopete::Contact::NameType nameType)
+{
+	switch (nameType)
+	{
+		case Kopete::Contact::NickName:
+			return QString("nickName");
+		case Kopete::Contact::FormattedName:
+			return QString("formattedName");
+		case Kopete::Contact::ContactId:
+			return QString("contactId");
+		case Kopete::Contact::CustomName:
+		default: // fallback to custom name
+			return QString("customName");
+	}
+}
 
 Contact::Contact( Account *account, const QString &contactId,
 	MetaContact *parent, const QString &icon )
@@ -98,6 +133,11 @@ Contact::Contact( Account *account, const QString &contactId,
 	d->account = account;
 	d->idleTime = 0;
 	d->icon = icon;
+	d->preferredNameType = Kopete::Contact::CustomName;
+	d->oldName = displayName();
+
+	connect( this, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
+		this, SLOT(slotPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) );
 
 	bool duplicate = false;
 	// If can happend that a MetaContact may be used without a account
@@ -816,9 +856,84 @@ QString Kopete::Contact::nickName() const
 	return contactId();
 }
 
+void Kopete::Contact::setCustomName( const QString &name )
+{
+	setProperty( Kopete::Global::Properties::self()->customName(), name );
+}
+
+QString Kopete::Contact::customName() const
+{
+	const QString name = property( Kopete::Global::Properties::self()->customName() ).value().toString();
+	if (!name.isEmpty())
+		return name;
+	return nickName();
+}
+
 void Kopete::Contact::setPhoto(const QString &photoPath)
 {
 	setProperty( Kopete::Global::Properties::self()->photo(), photoPath );
+}
+
+void Kopete::Contact::slotPropertyChanged(Kopete::PropertyContainer *, const QString &key,
+	const QVariant &, const QVariant &)
+{
+	if (key != Kopete::Global::Properties::self()->customName().key()
+		&& key != Kopete::Global::Properties::self()->fullName().key()
+		&& key != Kopete::Global::Properties::self()->firstName().key()
+		&& key != Kopete::Global::Properties::self()->lastName().key()
+		&& key != Kopete::Global::Properties::self()->nickName().key())
+		return;
+
+	const QString oldName = d->oldName;
+	const QString newName = displayName();
+	if (oldName != newName) {
+		d->oldName = newName;
+		emit displayNameChanged(oldName, newName);
+	}
+}
+
+void Kopete::Contact::setPreferredNameType(Kopete::Contact::NameType preferredNameType)
+{
+	if (d->preferredNameType != preferredNameType)
+	{
+		const QString oldName = displayName();
+		d->preferredNameType = preferredNameType;
+		const QString newName = displayName();
+		if (oldName != newName) {
+			d->oldName = newName;
+			emit displayNameChanged(oldName, newName);
+		}
+	}
+}
+
+Kopete::Contact::NameType Kopete::Contact::preferredNameType() const
+{
+	return d->preferredNameType;
+}
+
+QString Kopete::Contact::displayName() const
+{
+	QString name;
+	switch (d->preferredNameType)
+	{
+		case NickName:
+			name = nickName();
+			break;
+		case FormattedName:
+			name = formattedName();
+			break;
+		case ContactId:
+			name = contactId();
+			break;
+		case CustomName:
+		default: // fallback to custom name
+			name = customName();
+			break;
+	}
+	if (name.isEmpty())
+		return contactId();
+	else
+		return name;
 }
 
 

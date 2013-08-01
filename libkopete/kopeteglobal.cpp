@@ -66,6 +66,7 @@ Properties *Properties::self()
 		mSelf->workPhone();
 		mSelf->workMobilePhone();
 		mSelf->nickName();
+		mSelf->customName();
 		mSelf->photo();
 
 	}
@@ -206,6 +207,12 @@ const PropertyTmpl &Properties::nickName() const
 {
 	return createProp(QLatin1String("nickName"),
 		i18n("Nick Name"), QString(), true);
+}
+
+const PropertyTmpl &Properties::customName() const
+{
+	return createProp(QLatin1String("customName"),
+		i18n("Custom Name"), QString(), true);
 }
 
 const PropertyTmpl &Properties::isAlwaysVisible() const

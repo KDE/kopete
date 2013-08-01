@@ -120,8 +120,14 @@ namespace Global
 			const PropertyTmpl &workMobilePhone() const;
 			/**
 			 * @return default template for a contact's nickname (set by the contact)
+			 * This property comes from contact and cannot be changed by user custom name
 			 */
 			const PropertyTmpl &nickName() const;
+			/**
+			 * @return default template for a contact's nickname (set by the contact)
+			 * This property is set by user and stored on server contact list
+			 */
+			const PropertyTmpl &customName() const;
 			/**
 			 * @return default template for a contact's visibility even if offline
 			 */
