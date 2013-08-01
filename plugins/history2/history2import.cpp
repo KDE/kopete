@@ -168,7 +168,7 @@ void History2Import::displayLog(struct Log *log) {
 		amount++; // for QProgressDialog in save()
 
 		strings[0] = log->other->protocol()->pluginId() + " (" + log->other->account()->accountId() + ')';
-		strings[1] = log->other->nickName();
+		strings[1] = log->other->displayName();
 		strings[2] = message.timestamp.toString("yyyy-MM-dd");
 
 		bool update = false;
@@ -222,9 +222,9 @@ void History2Import::itemClicked(const QModelIndex &index) {
 				continue;
 			cursor.insertHtml(message.timestamp.toString("hh:mm:ss "));
 			if (message.incoming)
-				cursor.insertHtml("<font color=\"blue\">" + log->other->nickName().append(": </font>"));
+				cursor.insertHtml("<font color=\"blue\">" + log->other->displayName().append(": </font>"));
 			else
-				cursor.insertHtml("<font color=\"green\">" + log->me->nickName().append(": </font>"));
+				cursor.insertHtml("<font color=\"green\">" + log->me->displayName().append(": </font>"));
 			cursor.insertHtml(message.text);
 			cursor.insertBlock();
 		}
@@ -518,9 +518,9 @@ void History2Import::parsePidginTxt(QFile &file, struct Log *log, QDate date) {
 			nick = line.mid(endTime+1, nickEnd - endTime - 2); // -2 to delete the colon
 
 			// detect if the message is in- or outbound
-			if (nick == log->me->nickName())
+			if (nick == log->me->displayName())
 				message.incoming = false;
-			else if (nick == log->other->nickName())
+			else if (nick == log->other->displayName())
 				message.incoming = true;
 			else if (knownNicks.contains(nick))
 				message.incoming = knownNicks.value(nick);

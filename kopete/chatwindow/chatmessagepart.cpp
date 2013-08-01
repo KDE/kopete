@@ -758,7 +758,7 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 			if( contact->metaContact() && contact->metaContact() != Kopete::ContactList::self()->myself() )
 				contactNick = contact->metaContact()->displayName();
 			else
-				contactNick = contact->nickName();
+				contactNick = contact->displayName();
 
 			if ( contactNick == nick )
 				return contact;
@@ -1166,11 +1166,11 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML )
 		Kopete::Contact *remoteContact = d->manager->members().first();
 
 		// Use contact nickname for ourselfs, Myself metacontact display name isn't a reliable source.
-		sourceName = d->manager->myself()->nickName();
+		sourceName = d->manager->myself()->displayName();
 		if( remoteContact->metaContact() )
 			destinationName = remoteContact->metaContact()->displayName();
 		else
-			destinationName = remoteContact->nickName();
+			destinationName = remoteContact->displayName();
 
 		// Replace %chatName%, create a internal span to update it by DOM when asked.
 		resultHTML.replace( QLatin1String("%chatName%"), QString("<span id=\"KopeteHeaderChatNameInternal\">%1</span>").arg( formatName(d->manager->displayName(), Qt::RichText) ) );
@@ -1263,7 +1263,7 @@ QString ChatMessagePart::formatName( const Kopete::Contact* contact, Qt::TextFor
 	// Use contact nickname for no metacontact or myself.
 	else
 	{
-		return formatName( contact->nickName(), format );
+		return formatName( contact->displayName(), format );
 	}
 }
 

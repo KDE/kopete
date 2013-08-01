@@ -715,7 +715,7 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 	if ( !c )
 		return QString();
 
-	QString contactName = c->nickName();
+	QString contactName = c->displayName();
 				//the remove is there to workaround the Bug 95444
 	return contactName.remove('\n');
 }

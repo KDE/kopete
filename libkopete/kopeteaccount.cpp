@@ -472,7 +472,7 @@ void Account::fillActionMenu( KActionMenu *actionMenu )
        	if (identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
 		nick = identity()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 	else
-		nick = myself()->nickName();
+		nick = myself()->displayName();
 
 	// Always add title at the beginning of actionMenu
 	QAction *before = actionMenu->menu()->actions().value( 0, 0 );

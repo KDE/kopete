@@ -521,7 +521,7 @@ void ChatView::slotChatDisplayNameChanged()
 		}
 		else
 		{
-			chatName.replace( c->nickName(), contactName );
+			chatName.replace( c->displayName(), contactName );
 		}
 	}
 

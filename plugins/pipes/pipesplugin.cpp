@@ -235,7 +235,7 @@ QByteArray PipesPlugin::createXml ( const Kopete::Message & msg )
 	QDomElement contactDisplayName = doc.createElement ( "contactDisplayName" );
 	fromContact.appendChild ( contactDisplayName );
 	contactDisplayName.setAttribute ( "dir", msg.from()->formattedName().isRightToLeft() ? "rtl" : "ltr" );
-	contactDisplayName.setAttribute ( "text", msg.from()->nickName() );
+	contactDisplayName.setAttribute ( "text", msg.from()->displayName() );
 
 	QDomElement metaContactDisplayName = doc.createElement ( "metaContactDisplayName" );
 	fromContact.appendChild ( metaContactDisplayName );
@@ -258,7 +258,7 @@ QByteArray PipesPlugin::createXml ( const Kopete::Message & msg )
 		QDomElement contactDisplayName = doc.createElement ( "contactDisplayName" );
 		toContact.appendChild ( contactDisplayName );
 		contactDisplayName.setAttribute ( "dir", contact->formattedName().isRightToLeft() ? "rtl" : "ltr" );
-		contactDisplayName.setAttribute ( "text", contact->nickName() );
+		contactDisplayName.setAttribute ( "text", contact->displayName() );
 
 		QDomElement metaContactDisplayName = doc.createElement ( "metaContactDisplayName" );
 		toContact.appendChild ( metaContactDisplayName );

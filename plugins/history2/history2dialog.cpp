@@ -268,7 +268,7 @@ void History2Dialog::setMessages(QList<Kopete::Message> msgs) {
 			if ( msg.from()->metaContact() && msg.from()->metaContact() != Kopete::ContactList::self()->myself() ) {
 				name = msg.from()->metaContact()->displayName();
 			} else {
-				name = msg.from()->nickName();
+				name = msg.from()->displayName();
 			}
 
 			QString fontColor;

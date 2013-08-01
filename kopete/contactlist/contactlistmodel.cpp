@@ -667,7 +667,7 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 			      QString(QUrl::toPercentEncoding( c->contactId() ) )
 			    );
 
-		QString name = Kopete::Emoticons::parseEmoticons(c->nickName());
+		QString name = Kopete::Emoticons::parseEmoticons(c->displayName());
 
 		QString message = c->statusMessage().message();
 

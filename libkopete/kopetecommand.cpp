@@ -127,9 +127,9 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 		{
 			QString formatString = m_formatString;
 
-			// Translate %s to the whole string and %n to current nickname
+			// Translate %s to the whole string and %n to current display name
 
-			formatString.replace( QString::fromLatin1("%n"), manager->myself()->nickName() );
+			formatString.replace( QString::fromLatin1("%n"), manager->myself()->displayName() );
 			formatString.replace( QString::fromLatin1("%s"), args );
 
 			// Translate %1..%N to word1..wordN

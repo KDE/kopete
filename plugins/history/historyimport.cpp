@@ -157,7 +157,7 @@ void HistoryImport::displayLog(struct Log *log)
 		amount++; // for QProgressDialog in save()
 
 		strings[0] = log->other->protocol()->pluginId() + " (" + log->other->account()->accountId() + ')';
-		strings[1] = log->other->nickName();
+		strings[1] = log->other->displayName();
 		strings[2] = message.timestamp.toString("yyyy-MM-dd");
 
 		bool update = false;
@@ -213,9 +213,9 @@ void HistoryImport::itemClicked(const QModelIndex &index)
 				continue;
 			cursor.insertText(message.timestamp.toString("hh:mm:ss "));
 			if (message.incoming)
-				cursor.insertText(log.other->nickName().append(": "));
+				cursor.insertText(log.other->displayName().append(": "));
 			else
-				cursor.insertText(log.me->nickName().append(": "));
+				cursor.insertText(log.me->displayName().append(": "));
 			cursor.insertText(message.text);
 			cursor.insertBlock();
 		}
@@ -364,9 +364,9 @@ bool HistoryImport::isNickIncoming(const QString &nick, struct Log *log)
 {
 	bool incoming;
 
-	if (nick == log->me->nickName())
+	if (nick == log->me->displayName())
 		incoming = false;
-	else if (nick == log->other->nickName())
+	else if (nick == log->other->displayName())
 		incoming = true;
 	else if (knownNicks.contains(nick)) 
 		incoming = knownNicks.value(nick);

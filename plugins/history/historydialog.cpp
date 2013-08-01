@@ -371,7 +371,7 @@ void HistoryDialog::setMessages(QList<Kopete::Message> msgs)
 			}
 			else
 			{
-				name = msg.from()->nickName();
+				name = msg.from()->displayName();
 			}
 
 			QString fontColor;

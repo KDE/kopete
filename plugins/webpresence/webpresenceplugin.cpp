@@ -257,7 +257,7 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 			acc.appendChild( protoName );
 
 			Kopete::Contact* me = account->myself();
-			QString displayName = me->nickName();
+			QString displayName = me->displayName();
 			QDomElement accName = doc.createElement( "accountname" );
 			QDomText accNameText = doc.createTextNode( ( me )
 					? displayName

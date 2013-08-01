@@ -23,7 +23,7 @@
 //own contact comparator, needs sessions contact-online-status weight
 inline bool lessThan(const Kopete::Contact *c1, int weight1, const Kopete::Contact *c2, int weight2){
 		return (weight1 > weight2 || (weight1 == weight2
-				&& c1->nickName().compare(c2->nickName(),Qt::CaseInsensitive)<=0));
+				&& c1->displayName().compare(c2->displayName(),Qt::CaseInsensitive)<=0));
 
 }
 
@@ -178,7 +178,7 @@ QVariant ChatSessionMembersListModel::data(const QModelIndex &index, int role) c
 	if (role == Qt::DisplayRole)
 	{
 		
-		return c->nickName();
+		return c->displayName();
 
 	}
 	else if (role == Qt::DecorationRole)
@@ -206,7 +206,7 @@ QVariant ChatSessionMembersListModel::headerData(int section, Qt::Orientation or
 
 void ChatSessionMembersListModel::slotContactAdded( const Kopete::Contact *contact )
 {
-	kDebug( 14010 ) << "memberslistmodel contact added "<< contact->nickName();
+	kDebug( 14010 ) << "memberslistmodel contact added "<< contact->displayName();
 	int index = d->getInsertIndex(contact);
 	beginInsertRows(QModelIndex(),index,index);
 	d->contacts.insert(index,(Contact*)contact);
@@ -215,10 +215,10 @@ void ChatSessionMembersListModel::slotContactAdded( const Kopete::Contact *conta
 
 void ChatSessionMembersListModel::slotContactRemoved( const Kopete::Contact *contact )
 {
-	kDebug( 14010 ) << "memberslistmodel contact removed "<< contact->nickName();
+	kDebug( 14010 ) << "memberslistmodel contact removed "<< contact->displayName();
 	int index = d->contacts.indexOf((Contact*)contact);
 	if (index == -1) {
-		kDebug( 14010 ) << "Trying to remove contact '" << contact->nickName() << "' which isn't in members list model!!!";
+		kDebug( 14010 ) << "Trying to remove contact '" << contact->displayName() << "' which isn't in members list model!!!";
 		return;
 	}
 
@@ -230,7 +230,7 @@ void ChatSessionMembersListModel::slotContactRemoved( const Kopete::Contact *con
 void ChatSessionMembersListModel::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status )
 {
 	Q_UNUSED(status)
-	kDebug( 14010 ) << "memberslistmodel contact status changed "<< contact->nickName();
+	kDebug( 14010 ) << "memberslistmodel contact status changed "<< contact->displayName();
 	slotContactRemoved(contact);
 	slotContactAdded(contact);
 }
@@ -243,7 +243,7 @@ void ChatSessionMembersListModel::slotSessionChanged()
 
 void ChatSessionMembersListModel::slotContactNickNameChanged( Kopete::Contact *contact)
 {
-	kDebug( 14010 ) << "memberslistmodel nickname changed to "<< contact->nickName();
+	kDebug( 14010 ) << "memberslistmodel nickname changed to "<< contact->displayName();
 	slotContactRemoved(contact);
 	slotContactAdded(contact);
 }

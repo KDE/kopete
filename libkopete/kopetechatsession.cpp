@@ -194,7 +194,7 @@ void Kopete::ChatSession::slotUpdateDisplayName()
 			d->displayName.append( c->metaContact()->displayName() );
 		else
 		{
-			d->displayName.append( c->nickName() );
+			d->displayName.append( c->displayName() );
 		}
 	}
 
@@ -313,7 +313,7 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 
 	if ( msg.direction() == Kopete::Message::Inbound )
 	{
-		const QString nick = myself()->nickName();
+		const QString nick = myself()->displayName();
 		if ( Kopete::BehaviorSettings::self()->highlightEnabled() && !nick.isEmpty() )
 		{
 			const QString nickNameRegExp = QString::fromLatin1( "(^|[\\W])(%1)([\\W]|$)" ).arg( QRegExp::escape( nick ) );
@@ -561,7 +561,7 @@ void Kopete::ChatSession::receivedTypingMsg( const Kopete::Contact *c, bool t )
 	}
 
 	KNotification *notification = new KNotification( "user_is_typing_message", viewWidget );
-	const QString msgBody = i18n( "User <i>%1</i> is typing a message", c->nickName() );
+	const QString msgBody = i18n( "User <i>%1</i> is typing a message", c->displayName() );
 	notification->setText( msgBody );
 	notification->setPixmap( QPixmap::fromImage( c->metaContact()->picture().image() ) );
 	notification->setActions( QStringList( i18nc("@action", "Chat") ) );

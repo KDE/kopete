@@ -144,9 +144,9 @@ void History2Logger::appendMessage( const Kopete::Message &msg , const Kopete::C
 	              "VALUES (:direction, :protocol, :account, :me_id, :me_nick, :other_id, :other_nick, :datetime, :message)");
 	query.bindValue(":direction", msg.direction());
 	query.bindValue(":me_id",me->contactId() );
-	query.bindValue(":me_nick", me->nickName());
+	query.bindValue(":me_nick", me->displayName());
 	query.bindValue(":other_id",other->contactId() );
-	query.bindValue(":other_nick", other->nickName());
+	query.bindValue(":other_nick", other->displayName());
 	query.bindValue(":datetime",msg.timestamp());
 	query.bindValue(":protocol", ct->protocol()->pluginId());
 	query.bindValue(":account", ct->account()->accountId());

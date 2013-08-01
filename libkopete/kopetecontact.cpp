@@ -283,7 +283,7 @@ KMenu* Contact::popupMenu()
 	KMenu *menu = new KMenu();
 
 	QString titleText;
-	const QString nick = nickName();
+	const QString nick = displayName();
 	if( nick == contactId() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
 	else
@@ -640,8 +640,7 @@ QString Contact::toolTip() const
 			      QString(QUrl::toPercentEncoding( contactId() )) );
 	}
 
-	// TODO:  the nickname should be a configurable properties, like others. -Olivier
-	QString nick = nickName();
+	QString nick = displayName();
 	if ( nick == contactId() )
 	{
 		tip = i18nc( "@label:textbox %3 is contact-display-name, %1 is its status",

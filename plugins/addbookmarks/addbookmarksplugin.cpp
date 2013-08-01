@@ -59,8 +59,8 @@ void BookmarksPlugin::slotBookmarkURLsInMessage(Kopete::Message & msg)
 				//kDebug (14501) << "name:" << msg.from()->metaContact()->displayName();
 			}
 			else {
-				addKopeteBookmark(*it, msg.from()->nickName() );
-				//kDebug (14501) << "name:" << msg.from()->nickName();
+				addKopeteBookmark(*it, msg.from()->displayName() );
+				//kDebug (14501) << "name:" << msg.from()->displayName();
 			}
 		}
 	}
