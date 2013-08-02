@@ -75,8 +75,6 @@ class SkypeContact : public Kopete::Contact
 		 * Save this contact (resp. set what should be saved and it will be written automatically by kopete)
 		 */
 		virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
-		///Returns full name for the contact
-		virtual QString formattedName() const;
 		///Is it reachable now?
 		virtual bool isReachable();
 		///Does this contact has opened chat session?

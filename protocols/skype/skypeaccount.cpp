@@ -591,7 +591,7 @@ QString SkypeAccount::getUserLabel(const QString &userId) {
 			return userId;//something odd,.but better do nothing than crash
 	}
 
-	return QString("%1 (%2)").arg(cont->nickName()).arg(userId);
+	return QString("%1 (%2)").arg(cont->displayName()).arg(userId);
 }
 
 void SkypeAccount::setPings(bool enabled) {
@@ -1048,7 +1048,7 @@ void SkypeAccount::receivedAuth(const QString &user, const QString &info) {
 		actions |= Kopete::AddedInfoEvent::AddAction;
 
 	if( ct )
-		event->setContactNickname( ct->nickName() );
+		event->setContactNickname( ct->displayName() );
 
 	event->showActions( actions );
 

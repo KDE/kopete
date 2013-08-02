@@ -167,13 +167,12 @@ void SkypeContact::setInfo(const QString &change) {
 
 	const QString &receivedProperty = change.section(' ', 0, 0).trimmed().toUpper();//get the first part
 	if (receivedProperty == "FULLNAME") {
-		setProperty( Kopete::Global::Properties::self()->fullName(), change.section(' ', 1).trimmed() );//save the name
+		const QString &name = change.section(' ', 1).trimmed();//get the name
+		setProperty( Kopete::Global::Properties::self()->fullName(), name );//save the name
+		setNickName( name );//kopete nick name comes from contact, but skype contact has only one non custom name (=fullname), so set it also here
 	} else if (receivedProperty == "DISPLAYNAME") {
 		const QString &name = change.section(' ', 1).trimmed();//get the name
-		if (name.isEmpty())
-			setNickName( property( Kopete::Global::Properties::self()->fullName() ).value().toString() );
-		else
-			setNickName(name);//set the display name
+		setCustomName( name );//set the custom display name
 	} else if (receivedProperty == "ONLINESTATUS") {//The online status eather changed or we just logged in and I asked for it
 		const QString &status = change.section(' ', 1, 1).trimmed().toUpper();//get the status
 
@@ -240,12 +239,6 @@ void SkypeContact::setInfo(const QString &change) {
 			}
 		}
 	}
-}
-
-QString SkypeContact::formattedName() const {
-	if (!d->user)
-		return nickName();
-	return property( Kopete::Global::Properties::self()->fullName() ).value().toString();
 }
 
 void SkypeContact::resetStatus() {
@@ -416,7 +409,7 @@ bool SkypeContact::canCall() const {
 void SkypeContact::slotUserInfo() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
-	(new SkypeDetails)->setNames(contactId(), nickName(), formattedName()).setPhones(d->privatePhone, d->privateMobile, d->workPhone).setHomepage(d->homepage).setAuthor(d->account->getAuthor(contactId()), d->account).setSex(d->sex).show();
+	(new SkypeDetails)->setNames(contactId(), customName(), formattedName()).setPhones(d->privatePhone, d->privateMobile, d->workPhone).setHomepage(d->homepage).setAuthor(d->account->getAuthor(contactId()), d->account).setSex(d->sex).show();
 }
 
 void SkypeContact::deleteContact() {
@@ -440,7 +433,9 @@ void SkypeContact::sync(unsigned int changed) {
 
 	if ( changed & Kopete::Contact::DisplayNameChanged ) {
 
-		if ( metaContact()->displayNameSource() == Kopete::MetaContact::SourceCustom && metaContact()->displayName() == formattedName() )
+		// if metacontact using display name from remote skype contact (not customized), reset skype contact display name to default
+		if ( metaContact()->displayNameSource() == Kopete::MetaContact::SourceCustom && metaContact()->displayNameSourceContact() == this
+			&& ( preferredNameType() == Kopete::Contact::NickName || preferredNameType() == Kopete::Contact::FormattedName ) )
 			d->account->setContactDisplayName(contactId(), QString());
 		else
 			d->account->setContactDisplayName(contactId(), metaContact()->displayName());
