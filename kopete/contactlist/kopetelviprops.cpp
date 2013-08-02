@@ -289,15 +289,35 @@ void KopeteMetaLVIProps::slotLoadNameSources()
 	ui_mainWidget->cmbAccountName->clear();
 	for( ; it != cList.end(); ++it )
 	{
-		QString acct = (*it)->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + (*it)->contactId() + '>';
-		QPixmap acctIcon = (*it)->account()->accountIcon();
-		ui_mainWidget->cmbAccountName->addItem( QIcon(acctIcon), acct );
-		
-		// Select this item if it's the one we're tracking.
-		if( (*it) == trackingName )
-		{
+		QString acct;
+		QVariant acctData;
+		QVariant acctContact = QVariant::fromValue(static_cast<QObject *>(*it));
+		QIcon acctIcon = QPixmap((*it)->account()->accountIcon());
+		bool isTrackingName = ((*it) == trackingName);
+
+		acct = (*it)->customName() + " <" + (*it)->contactId() + "> " + i18n("(custom name)");
+		acctData = QVariantList() << acctContact << QVariant((uint)Kopete::Contact::CustomName);
+		ui_mainWidget->cmbAccountName->addItem( acctIcon, acct, acctData );
+		if (isTrackingName && (*it)->preferredNameType() == Kopete::Contact::CustomName)
 			ui_mainWidget->cmbAccountName->setCurrentIndex( ui_mainWidget->cmbAccountName->count() - 1 );
-		}
+
+		acct = (*it)->nickName() + " <" + (*it)->contactId() + "> " + i18n("(nick name)");
+		acctData = QVariantList() << acctContact << QVariant((uint)Kopete::Contact::NickName);
+		ui_mainWidget->cmbAccountName->addItem( acctIcon, acct, acctData );
+		if (isTrackingName && (*it)->preferredNameType() == Kopete::Contact::NickName)
+			ui_mainWidget->cmbAccountName->setCurrentIndex( ui_mainWidget->cmbAccountName->count() - 1 );
+
+		acct = (*it)->formattedName() + " <" + (*it)->contactId() + "> " + i18n("(formatted name)");
+		acctData = QVariantList() << acctContact << QVariant((uint)Kopete::Contact::FormattedName);
+		ui_mainWidget->cmbAccountName->addItem( acctIcon, acct, acctData );
+		if (isTrackingName && (*it)->preferredNameType() == Kopete::Contact::FormattedName)
+			ui_mainWidget->cmbAccountName->setCurrentIndex( ui_mainWidget->cmbAccountName->count() - 1 );
+
+		acct = (*it)->contactId() + " " + i18n("(contact id)");
+		acctData = QVariantList() << acctContact << QVariant((uint)Kopete::Contact::ContactId);
+		ui_mainWidget->cmbAccountName->addItem( acctIcon, acct, acctData );
+		if (isTrackingName && (*it)->preferredNameType() == Kopete::Contact::ContactId)
+			ui_mainWidget->cmbAccountName->setCurrentIndex( ui_mainWidget->cmbAccountName->count() - 1 );
 	}
 
 	ui_mainWidget->edtDisplayName->setText( mMetaContact->customDisplayName() );
@@ -323,7 +343,7 @@ void KopeteMetaLVIProps::slotLoadPhotoSources()
 		Kopete::Contact *citem = (*itp);
 		if ( citem->hasProperty( Kopete::Global::Properties::self()->photo().key() ) )
 		{
-			QString acct = citem->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + citem->contactId() + '>';
+			QString acct = citem->displayName() + " <" + citem->contactId() + '>';
 			QPixmap acctIcon = citem->account()->accountIcon();
 			ui_mainWidget->cmbAccountPhoto->addItem( QIcon(acctIcon), acct );
 			
@@ -438,7 +458,29 @@ Kopete::MetaContact::PropertySource KopeteMetaLVIProps::selectedPhotoSource() co
 
 Kopete::Contact* KopeteMetaLVIProps::selectedNameSourceContact() const
 {
-	return mMetaContact->contacts().value( ui_mainWidget->cmbAccountName->currentIndex(), 0 );
+	QVariantList data = ui_mainWidget->cmbAccountName->itemData(ui_mainWidget->cmbAccountName->currentIndex()).toList();
+	QObject *object = data.at(0).value<QObject *>();
+	return static_cast<Kopete::Contact *>(object);
+}
+
+void KopeteMetaLVIProps::setContactsNameTypes()
+{
+	QVariantList data = ui_mainWidget->cmbAccountName->itemData(ui_mainWidget->cmbAccountName->currentIndex()).toList();
+	QObject *object = data.at(0).value<QObject *>();
+	Kopete::Contact *contact = static_cast<Kopete::Contact *>(object);
+	Kopete::Contact::NameType nameType = (Kopete::Contact::NameType)data.at(1).toUInt();
+	Kopete::MetaContact::PropertySource nameSource = selectedNameSource();
+
+	QList<Kopete::Contact*> cList = mMetaContact->contacts();
+	QList<Kopete::Contact*>::iterator it = cList.begin();
+	for( ; it != cList.end(); ++it )
+	{
+		if (nameSource == Kopete::MetaContact::SourceContact && (*it) == contact)
+			contact->setPreferredNameType(nameType);
+		else
+			contact->setPreferredNameType(Kopete::Contact::CustomName);
+	}
+
 }
 
 Kopete::Contact* KopeteMetaLVIProps::selectedPhotoSourceContact() const
@@ -458,6 +500,8 @@ void KopeteMetaLVIProps::slotOkClicked()
 	
 	mMetaContact->setDisplayNameSource(selectedNameSource());
 	mMetaContact->setDisplayNameSourceContact( selectedNameSourceContact() );
+	
+	setContactsNameTypes();
 	
 	// set photo source
 	mMetaContact->setPhotoSource(selectedPhotoSource());

@@ -83,6 +83,8 @@ class KopeteMetaLVIProps: public KDialog
 		QString mAddressBookUid; // the currently selected addressbook UID
 		QString m_photoPath;
 		
+		void setContactsNameTypes();
+		
 		Kopete::MetaContact::PropertySource selectedNameSource() const;
 		Kopete::MetaContact::PropertySource selectedPhotoSource() const;
 		Kopete::Contact* selectedNameSourceContact() const;
