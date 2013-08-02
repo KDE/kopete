@@ -1015,7 +1015,7 @@ WlmChatSession::slotMessageSent (Kopete::Message & msg,
         if (!requestChatService ())
         {
             MSN::Soap::OIM oim;
-            oim.myFname = myself ()->property(Kopete::Global::Properties::self()->nickName()).value().toString().toUtf8().constData();
+            oim.myFname = myself ()->displayName ().toUtf8().constData();
             oim.toUsername = members ().first ()->contactId ().toLatin1 ().constData();
             oim.message = msg.plainBody ().toUtf8 ().constData();
             oim.myUsername = myself ()->contactId ().toLatin1 ().constData();

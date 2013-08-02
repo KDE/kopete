@@ -242,7 +242,7 @@ WlmAccount::slotChangePublicName()
     bool ok;
     const QString name = KInputDialog::getText( i18n( "Change Display Name - MSN Plugin" ), //TODO rename MSN to WLM (see also following strings)
         i18n( "Enter the new display name by which you want to be visible to your friends on MSN:" ),
-        myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), &ok );
+        myself()->displayName(), &ok );
 
     if ( ok )
     {
@@ -553,8 +553,7 @@ void
 WlmAccount::gotDisplayName (const QString & displayName)
 {
     kDebug (14210) << k_funcinfo;
-    myself ()->setProperty (Kopete::Global::Properties::self ()->nickName (),
-                            displayName);
+    myself ()->setNickName (displayName);
 }
 
 void
@@ -596,8 +595,7 @@ WlmAccount::contactChangedStatus (const QString & buddy,
 	WlmContact *contact = qobject_cast<WlmContact*>(contacts().value(buddy));
     if (contact)
     {
-        contact->setProperty (Kopete::Global::Properties::self ()->
-                              nickName (), friendlyname);
+        contact->setNickName (friendlyname);
 
         // set contact properties
         contact->setProperty (WlmProtocol::protocol ()->contactCapabilities, QString::number(clientID));
@@ -795,7 +793,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
                     if(!newcontact)
                         return;
 
-                    newcontact->setProperty (Kopete::Global::Properties::self ()->nickName (), WlmUtils::utf8(b->friendlyName));
+                    newcontact->setNickName (WlmUtils::utf8(b->friendlyName));
                 }
 
                 if (metacontact)
@@ -824,7 +822,7 @@ WlmAccount::addressBookReceivedFromServer (std::map < std::string,
 	                WlmContact *contact = qobject_cast<WlmContact*>(contacts().value( passport ));
                     if (contact)
                     {
-                        contact->setProperty(Kopete::Global::Properties::self ()->nickName (), WlmUtils::utf8(b->friendlyName));
+                        contact->setNickName(WlmUtils::utf8(b->friendlyName));
                         contact->setContactSerial(WlmUtils::latin1(b->properties["contactId"]));
                         kDebug (14210) << "ContactID: " << WlmUtils::latin1(b->properties["contactId"]);
                     }
@@ -1320,7 +1318,7 @@ WlmAccount::gotAddedContactToAddressBook (bool added, const QString & passport, 
             return;
 
         newcontact->setContactSerial (guid);
-        newcontact->setProperty (Kopete::Global::Properties::self()->nickName(), displayName);
+        newcontact->setNickName (displayName);
 
         QString groupName = m_contactAddQueue.value (passport);
         if( !groupName.isEmpty() && m_groupToGroupId.contains (groupName) )

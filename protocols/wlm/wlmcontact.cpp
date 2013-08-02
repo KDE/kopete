@@ -329,12 +329,12 @@ void WlmContact::slotUserInfo()
     QPointer <KDialog> infoDialog = new KDialog;
     infoDialog->setButtons( KDialog::Close);
     infoDialog->setDefaultButton(KDialog::Close);
-    const QString nick = property(Kopete::Global::Properties::self()->nickName()).value().toString();
+    const QString name = displayName();
     const QString personalMessage = statusMessage().message();
     Ui::WLMInfo info;
     info.setupUi(infoDialog->mainWidget());
     info.m_id->setText(contactId());
-    info.m_displayName->setText(nick);
+    info.m_displayName->setText(name);
     info.m_personalMessage->setText(personalMessage);
 //     info.m_phh->setText(m_phoneHome); //TODO enable and fill
 //     info.m_phw->setText(m_phoneWork);
@@ -346,7 +346,7 @@ void WlmContact::slotUserInfo()
     info.groupBox->setVisible(false);
     info.m_reversed->setVisible(false);
 
-    infoDialog->setCaption(nick);
+    infoDialog->setCaption(name);
     infoDialog->exec();
     delete infoDialog;
 }
