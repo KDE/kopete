@@ -110,9 +110,7 @@ bool OscarContact::isOnServer() const
 
 void OscarContact::setSSIItem( const OContact& ssiItem )
 {
-	if ( !ssiItem.alias().isEmpty() )
-		setProperty( Kopete::Global::Properties::self()->nickName(), ssiItem.alias() );
-	
+	setCustomName( ssiItem.alias() );
 	m_ssiItem = ssiItem;
 }
 
@@ -419,7 +417,7 @@ void OscarContact::requestAuthorization()
 {
 	QString info = i18n("The user %1 requires authorization before being added to a contact list. "
 	                    "Do you want to send an authorization request?\n\nReason for requesting authorization:",
-	                    ( !nickName().isEmpty() ) ? nickName() : contactId() );
+	                    displayName() );
 
 	QString reason = KInputDialog::getText( i18n("Request Authorization"), info,
 	                                        i18n("Please authorize me so I can add you to my contact list") );

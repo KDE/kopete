@@ -264,13 +264,7 @@ void ICQContact::loggedIn()
 	if ( m_ssiItem.waitingAuth() )
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
-	if ( ( ( hasProperty( Kopete::Global::Properties::self()->nickName().key() ) && nickName() == contactId() )
-	            || !hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
-	     && m_ssiItem.alias().isEmpty() )
-	{
-		requestShortInfoDelayed();
-	}
-
+	requestShortInfoDelayed();
 }
 
 void ICQContact::slotRequestAuth()
@@ -287,7 +281,7 @@ void ICQContact::slotSendAuth()
 	kDebug(OSCAR_ICQ_DEBUG) << "Sending auth reply";
 	QPointer <ICQAuthReplyDialog> replyDialog = new ICQAuthReplyDialog( 0, false );
 
-	replyDialog->setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+	replyDialog->setUser( displayName() );
 	if ( replyDialog->exec() && replyDialog )
 		mAccount->engine()->sendAuth( contactId(), replyDialog->reason(), replyDialog->grantAuth() );
 	delete replyDialog;
@@ -306,7 +300,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	if( granted )
 	{
 		message = i18n( "User %1 has granted your authorization request.\nReason: %2" ,
-			  property( Kopete::Global::Properties::self()->nickName() ).value().toString() ,
+			  displayName() ,
 			  reason );
 
 		// remove the unknown status
@@ -315,7 +309,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 	else
 	{
 		message = i18n( "User %1 has rejected the authorization request.\nReason: %2" ,
-			  property( Kopete::Global::Properties::self()->nickName() ).value().toString() ,
+			  displayName() ,
 			  reason );
 	}
 	KNotification::event( QString::fromLatin1("icq_authorization"), message );
@@ -343,12 +337,7 @@ void ICQContact::receivedShortInfo( const QString& contact )
 
 	setProperty( mProtocol->firstName, codec->toUnicode( shortInfo.firstName ) );
 	setProperty( mProtocol->lastName, codec->toUnicode( shortInfo.lastName ) );
-
-	if ( m_ssiItem.alias().isEmpty() && !shortInfo.nickname.isEmpty() )
-	{
-		kDebug(OSCAR_ICQ_DEBUG) << "setting new displayname for former UIN-only Contact";
-		setProperty( Kopete::Global::Properties::self()->nickName(), codec->toUnicode( shortInfo.nickname ) );
-	}
+	setNickName( codec->toUnicode( shortInfo.nickname ) );
 }
 
 void ICQContact::receivedLongInfo( const QString& contact )
@@ -365,11 +354,10 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	kDebug(OSCAR_ICQ_DEBUG) << "received long info from engine";
 
 	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
-	if ( m_ssiItem.alias().isEmpty() && !genInfo.nickName.get().isEmpty() )
-		setNickName( codec->toUnicode( genInfo.nickName.get() ) );
 
 	setProperty( mProtocol->firstName, codec->toUnicode( genInfo.firstName.get() ) );
 	setProperty( mProtocol->lastName, codec->toUnicode( genInfo.lastName.get() ) );
+	setNickName( codec->toUnicode( genInfo.nickName.get() ) );
 
 	emit haveBasicInfo( genInfo );
 
@@ -412,9 +400,7 @@ void ICQContact::receivedTlvInfo( const QString& contact )
 
 	setProperty( mProtocol->firstName, QString::fromUtf8( info.firstName.get() ) );
 	setProperty( mProtocol->lastName, QString::fromUtf8( info.lastName.get() ) );
-
-	if ( m_ssiItem.alias().isEmpty() && !info.nickName.get().isEmpty() )
-		setNickName( QString::fromUtf8( info.nickName.get() ) );
+	setNickName( QString::fromUtf8( info.nickName.get() ) );
 }
 
 void ICQContact::requestShortInfoDelayed( int minDelay )
@@ -771,11 +757,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 		removeProperty("privMobileNum");
 	*/
 
-	if(contactName() == displayName() && !generalInfo.nickName.isEmpty())
-	{
-		kDebug(14153) << "setting new displayname for former UIN-only Contact";
-		setDisplayName(generalInfo.nickName);
-	}
+	setDisplayName(generalInfo.nickName);
 
 	incUserInfoCounter();
 }

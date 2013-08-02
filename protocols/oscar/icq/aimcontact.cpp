@@ -117,11 +117,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 	kDebug(OSCAR_ICQ_DEBUG) << contact;
 
-	//if they don't have an SSI alias, make sure we use the capitalization from the
-	//server so their contact id looks all pretty.
-	QString nickname = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contact ) )
-		setNickName( contact );
+	setNickName( contact );
 
 	kDebug( OSCAR_ICQ_DEBUG ) << "extendedStatus is " << details.extendedStatus();
 	Oscar::Presence presence = mProtocol->statusManager()->presenceOf( details.extendedStatus(), details.userClass() );

@@ -42,9 +42,9 @@ OscarPrivacyEngine::OscarPrivacyEngine( OscarAccount* account, Type type )
 		
 		OscarContact* oc = dynamic_cast<OscarContact*>( account->contacts().value( ( *it ).name() ) );
 		if ( oc )
-		{	//for better orientation in lists use nickName and id
+		{	//for better orientation in lists use displayName and id
 			QString screenName( "%1 (%2)" );
-			screenName = screenName.arg( oc->nickName(), contactId );
+			screenName = screenName.arg( oc->displayName(), contactId );
 			contactMap.insert( contactId, screenName );
 		}
 		else

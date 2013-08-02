@@ -96,8 +96,7 @@ void ICQMyselfContact::receivedShortInfo( const QString& contact )
 
 	ICQAccount* icqAccount = static_cast<ICQAccount*>( account() );
 	ICQShortInfo shortInfo = icqAccount->engine()->getShortInfo( contact );
-	if ( !shortInfo.nickname.isEmpty() )
-		setProperty( Kopete::Global::Properties::self()->nickName(), icqAccount->defaultCodec()->toUnicode( shortInfo.nickname ) );
+	setNickName( icqAccount->defaultCodec()->toUnicode( shortInfo.nickname ) );
 
 	//Sync server settings with local
 	QList<ICQInfoBase*> infoList;
@@ -348,7 +347,7 @@ void ICQAccount::userReadsStatusMessage( const QString& contact )
 
 	Kopete::Contact * ct = contacts().value( Oscar::normalize( contact ) );
 	if ( ct )
-		name = ct->nickName();
+		name = ct->displayName();
 	else
 		name = contact;
 
@@ -503,7 +502,7 @@ void ICQAccount::slotGotAuthRequest( const QString& contact, const QString& reas
 		actions |= Kopete::AddedInfoEvent::AddAction;
 
 	if( ct )
-		event->setContactNickname( ct->nickName() );
+		event->setContactNickname( ct->displayName() );
 
 	event->showActions( actions );
 	event->setAdditionalText( reason );

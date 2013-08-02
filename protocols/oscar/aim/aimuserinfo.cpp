@@ -40,7 +40,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	: KDialog( parent )
 {
 	setCaption( i18n( "User Information on %1" ,
-	                  c->property( Kopete::Global::Properties::self()->nickName() ).value().toString() ) );
+	                  c->displayName() ) );
 	setButtons( KDialog::Cancel | KDialog::Ok );
 	
 	setDefaultButton(KDialog::Ok);
@@ -62,12 +62,7 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 	QObject::connect(c, SIGNAL(statusMessageChanged( Kopete::Contact* )), this, SLOT(slotUpdateProfile()));
 
 	mMainWidget->txtScreenName->setText( c->contactId() );
-
-	QString nickName = c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if( nickName.isEmpty() )
-		mMainWidget->txtNickName->setText( c->contactId() );
-	else
-		mMainWidget->txtNickName->setText( nickName );
+	mMainWidget->txtNickName->setText( c->customName() );
 
 	if(m_contact == mAccount->myself()) // edit own account profile
 	{
@@ -135,8 +130,8 @@ void AIMUserInfoDialog::slotUpdateClicked()
 {
 	kDebug(14200) << "Called.";
 	QString newNick = mMainWidget->txtNickName->text();
-	QString currentNick = m_contact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if ( !newNick.isEmpty() && ( newNick != currentNick ) )
+	QString currentNick = m_contact->displayName();
+	if ( newNick != currentNick )
 	{
 		//m_contact->rename(newNick);
 		//emit updateNickname(newNick);
@@ -152,7 +147,7 @@ void AIMUserInfoDialog::slotSaveClicked()
 	if (userInfoEdit)
 	{ // editable mode, set profile
 		QString newNick = mMainWidget->txtNickName->text();
-		QString currentNick = m_contact->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+		QString currentNick = m_contact->displayName();
 		if(!newNick.isEmpty() && ( newNick != currentNick ) )
 		{
 			//m_contact->rename(newNick);
