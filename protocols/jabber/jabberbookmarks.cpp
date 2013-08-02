@@ -183,7 +183,7 @@ void JabberBookmarks::slotReceivedBookmarks( )
 
 				QString nickName = x_jid.resource();
 				if ( nickName.isEmpty() )
-					nickName = m_account->myself()->nickName();
+					nickName = m_account->myself()->displayName();
 
 				if ( bookmark.password().isEmpty() )
 					m_account->client()->joinGroupChat( x_jid.domain(), x_jid.node(), nickName );

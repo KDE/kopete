@@ -36,7 +36,7 @@ PrivacyDlg::PrivacyDlg(JabberAccount* acc, QWidget* parent) : KDialog(parent), a
 	ui_.setupUi(w);
 	setMainWidget (w);
 	setAttribute(Qt::WA_DeleteOnClose);
-	setCaption(i18n("%1: Privacy Lists", (acc->myself()->nickName() ) ) );
+	setCaption(i18n("%1: Privacy Lists", (acc->myself()->displayName() ) ) );
 	setButtons (KDialog::Close);
 	ui_.lv_rules->setFocus (Qt::PopupFocusReason);
 

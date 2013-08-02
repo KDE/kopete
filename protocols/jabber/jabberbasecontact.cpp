@@ -206,11 +206,8 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 			metaContact()->addToGroup ( group );
 		}
 
-		//Set nick name from roster
-		if ( ! item.name().isEmpty() )
-		{
-			setProperty ( protocol()->propNickName, item.name() );
-		}
+		//Set custom name from roster
+		setCustomName ( item.name() );
 	}
 
 	/*
@@ -460,11 +457,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	*/
 	if(inherits ( "JabberContact" ))
 	{
-		if ( !mRosterItem.name().isEmpty() )
-		{
-			setProperty ( protocol()->propNickName, mRosterItem.name() );
-		}
-		else if ( !vCard.nickName().isEmpty () )
+		if ( !vCard.nickName().isEmpty () )
 		{
 			setProperty ( protocol()->propNickName, vCard.nickName () );
 		}

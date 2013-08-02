@@ -130,7 +130,7 @@ void JabberTransport::fillActionMenu( KActionMenu *actionMenu )
 	if ( identity()->hasProperty( Kopete::Global::Properties::self()->nickName().key() ))
 		nick = identity()->property( Kopete::Global::Properties::self()->nickName()).value().toString();
 	else
-		nick = myself()->nickName();
+		nick = myself()->displayName();
 
 	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
 	nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
