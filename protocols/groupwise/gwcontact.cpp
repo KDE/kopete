@@ -291,9 +291,7 @@ void GroupWiseContact::renamedOnServer()
 	UpdateContactTask * uct = ( UpdateContactTask * )sender();
 	if ( uct->success() )
 	{
-		if( uct->displayName() != 
-				property( Kopete::Global::Properties::self()->nickName() ).value().toString() )
-			setProperty( Kopete::Global::Properties::self()->nickName(), uct->displayName() );
+		setNickName( uct->displayName() );
 	}
 	else
 		kDebug() << "rename failed, return code: " << uct->statusCode();

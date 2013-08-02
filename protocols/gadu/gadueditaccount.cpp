@@ -70,13 +70,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 
 		passwordWidget_->load( &account_->password() );
 
-		QString nick = account()->myself()->property(
-				Kopete::Global::Properties::self()->nickName() ).value().toString();
-		if ( nick.isEmpty() ) {
-			nick = account_->myself()->contactId();
-		}
-
-		nickName->setText( nick );
+		nickName->setText( account_->myself()->nickName() );
 
 		autoLoginCheck_->setChecked( account_->excludeConnect() );
 		dccCheck_->setChecked( account_->dccEnabled() );
@@ -247,7 +241,7 @@ GaduEditAccount::apply()
 
 	passwordWidget_->save( &account_->password() );
 
-	account_->myself()->setProperty( Kopete::Global::Properties::self()->nickName(), nickName->text() );
+	account_->myself()->setNickName( nickName->text() );
 
 	// this is changed only here, so i won't add any proper handling now
         account_->configGroup()->writeEntry( QString::fromAscii( "nickName" ), nickName->text() );

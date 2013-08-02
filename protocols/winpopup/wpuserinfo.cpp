@@ -43,7 +43,7 @@ WPUserInfo::WPUserInfo( WPContact *contact, QWidget *parent )
 	setDefaultButton(KDialog::Close);
 //	kDebug( 14170 ) ;
 
-	setCaption( i18n( "User Info for %1", m_contact->nickName() ) );
+	setCaption( i18n( "User Info for %1", m_contact->displayName() ) );
 
 	QWidget* w = new QWidget( this );
 	m_mainWidget = new Ui::WPUserInfoWidget();

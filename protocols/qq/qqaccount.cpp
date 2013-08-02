@@ -383,11 +383,7 @@ void QQAccount::slotContactListed( const Eva::ContactInfo& ci )
 
 		c = new QQContact( this, id, metaContact );
 		c->setOnlineStatus( QQProtocol::protocol()->Offline );
-
-		if(!publicName.isEmpty() )
-			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
-		else
-			c->removeProperty( Kopete::Global::Properties::self()->nickName() );
+		c->setNickName( publicName );
 
 		Kopete::ContactList::self()->addMetaContact( metaContact );
 	}

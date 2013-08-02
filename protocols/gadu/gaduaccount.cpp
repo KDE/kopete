@@ -183,11 +183,7 @@ static const char* const servers_ip[] = {
 
 	QString nick = p->config->readEntry( QString::fromAscii( "nickName" ), QString() );
 	if ( !nick.isNull() ) {
-		myself()->setProperty( Kopete::Global::Properties::self()->nickName(), nick );
-	}
-	else {
-		myself()->setProperty( Kopete::Global::Properties::self()->nickName(), accountId() );
-		p->config->writeEntry( QString::fromAscii( "nickName" ), accountId() );
+		myself()->setNickName( nick );
 	}
 }
 
@@ -286,7 +282,7 @@ GaduAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->setIcon( myself()->onlineStatus().iconFor( this ) );
 	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> ",
-	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
+	    myself()->displayName(), accountId() ) );
 
 	if ( p->session_->isConnected() ) {
 		p->searchAction->setEnabled( true );
@@ -1038,7 +1034,7 @@ GaduAccount::slotExportContactsListToFile()
 					Kopete::UI::Global::mainWidget() );
 	p->saveListDialog->setCaption(
 	    i18n("Save Contacts List for Account %1 As",
-	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
+	    myself()->displayName() ) );
 
 	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
 		QByteArray list = p->textcodec_->fromUnicode( userlist()->asString() );
@@ -1084,7 +1080,7 @@ GaduAccount::slotImportContactsFromFile()
 					Kopete::UI::Global::mainWidget() );
 	p->loadListDialog->setCaption(
 	    i18n("Load Contacts List for Account %1 As",
-	    myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
+	    myself()->displayName() ) );
 
 	if ( p->loadListDialog->exec() == QDialog::Accepted ) {
 		url = p->loadListDialog->selectedUrl();

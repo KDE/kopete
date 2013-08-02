@@ -292,7 +292,7 @@ void QQContact::setInfo(const  QString &type,const QString &data )
 	}
 	else if( type == "MFN" )
 	{
-		setProperty(Kopete::Global::Properties::self()->nickName(), data );
+		setNickName(data);
 	}
 	else
 	{

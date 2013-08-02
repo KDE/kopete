@@ -442,7 +442,7 @@ void MeanwhileSession::syncContactsToServer()
         struct mwSametimeUser *stuser = mwSametimeUser_new(stgroup,
                 mwSametimeUser_NORMAL, &id);
 
-        mwSametimeUser_setAlias(stuser, contact->nickName().toUtf8().constData());
+        mwSametimeUser_setAlias(stuser, mc->displayName().toUtf8().constData());
     }
 
     /* store! */
