@@ -67,17 +67,17 @@ public:
 	bool canAcceptRemoteFiles() const;
 
 	/**
+	 * @deprecated
+	 */
+	virtual KDE_DEPRECATED void handleURL( const KUrl &url ) const;
+
+	/**
 	 * Handles the URL @p url, which has the mime type @p mimeType
 	 *
 	 * @param mimeType The mime type of the URL
 	 * @param url The url to handle
 	 */
 	virtual void handleURL( const QString &mimeType, const KUrl &url ) const;
-
-	/**
-	 * @deprecated
-	 */
-	virtual KDE_DEPRECATED void handleURL( const KUrl &url ) const;
 
 protected:
 	/**
