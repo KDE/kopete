@@ -73,17 +73,17 @@ class SkypeProtocolPrivate {
 
 SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 	Kopete::Protocol(SkypeProtocolFactory::componentData(), parent),//create the parent
-	Offline(Kopete::OnlineStatus::Offline, 0, this, 1, QStringList("skype_contact_offline"), i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline),//and online statuses
-	Online(Kopete::OnlineStatus::Online, 1, this, 2, QStringList("skype_contact_online"), i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online),
-	SkypeMe(Kopete::OnlineStatus::Online, 0, this, 3, QStringList("skype_contact_skypeme"), i18n("Skype Me"), i18n("Skype Me"), Kopete::OnlineStatusManager::FreeForChat),
-	Away(Kopete::OnlineStatus::Away, 2, this, 4, QStringList("skype_contact_away"), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away),
-	NotAvailable(Kopete::OnlineStatus::Away, 1, this, 5, QStringList("skype_contact_not_available"), i18n("Not Available"), i18n("Not Available"), Kopete::OnlineStatusManager::Away),
-	DoNotDisturb(Kopete::OnlineStatus::Busy, 0, this, 6, QStringList("skype_contact_dnd"), i18n("Do Not Disturb"), i18n("Do Not Disturb"), Kopete::OnlineStatusManager::Busy),
-	Invisible(Kopete::OnlineStatus::Invisible, 0, this, 7, QStringList("skype_contact_invisible"), i18n("Invisible"), i18n("Invisible"), Kopete::OnlineStatusManager::Invisible),
-	Connecting(Kopete::OnlineStatus::Connecting, 0, this, 8, QStringList("skype_connecting"), i18n("Connecting")),
-	NotInList(Kopete::OnlineStatus::Unknown, 0, this, 9, QStringList("skype_contact_unknown"), i18n("Not in Skype list")),
-	NoAuth(Kopete::OnlineStatus::Unknown, 0, this, 10, QStringList("skype_contact_unknown"), i18n("Not authorized")),
-	Phone(Kopete::OnlineStatus::Unknown, 3, this, 11, QStringList("skype_contact_skypeout"), i18n("SkypeOut contact")), //Skype Out contact permanently offline TODO: add option for changing
+	Offline(Kopete::OnlineStatus::Offline, 0, this, 1, QStringList(), i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline, Kopete::OnlineStatusManager::HasStatusMessage),//and online statuses
+	Online(Kopete::OnlineStatus::Online, 0, this, 2, QStringList(), i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage),
+	SkypeMe(Kopete::OnlineStatus::Online, 1, this, 3, QStringList("contact_freeforchat_overlay"), i18n("Skype Me"), i18n("Skype Me"), Kopete::OnlineStatusManager::FreeForChat, Kopete::OnlineStatusManager::HasStatusMessage),
+	Away(Kopete::OnlineStatus::Away, 1, this, 4, QStringList("contact_away_overlay"), i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
+	NotAvailable(Kopete::OnlineStatus::Away, 0, this, 5, QStringList("contact_xa_overlay"), i18n("Not Available"), i18n("Not Available"), Kopete::OnlineStatusManager::ExtendedAway, Kopete::OnlineStatusManager::HasStatusMessage),
+	DoNotDisturb(Kopete::OnlineStatus::Busy, 0, this, 6, QStringList("contact_busy_overlay"), i18n("Do Not Disturb"), i18n("Do Not Disturb"), Kopete::OnlineStatusManager::Busy, Kopete::OnlineStatusManager::HasStatusMessage),
+	Invisible(Kopete::OnlineStatus::Invisible, 0, this, 7, QStringList("contact_invisible_overlay"), i18n("Invisible"), i18n("Invisible"), Kopete::OnlineStatusManager::Invisible, Kopete::OnlineStatusManager::HasStatusMessage),
+	Connecting(Kopete::OnlineStatus::Connecting, 0, this, 8, QStringList(), i18n("Connecting")),
+	NotInList(Kopete::OnlineStatus::Unknown, 0, this, 9, QStringList("status_unknown_overlay"), i18n("Not in Skype list")),
+	NoAuth(Kopete::OnlineStatus::Unknown, 1, this, 10, QStringList("status_unknown_overlay"), i18n("Not authorized")),
+	Phone(Kopete::OnlineStatus::Unknown, 2, this, 11, QStringList("contact_phone_overlay"), i18n("SkypeOut contact")), //Skype Out contact permanently offline TODO: add option for changing
 	/** Contact property templates */
 	propFullName(Kopete::Global::Properties::self()->fullName()),
 	propPrivatePhone(Kopete::Global::Properties::self()->privatePhone()),
@@ -101,7 +101,7 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 	setXMLFile("skypeui.rc");
 
 	d->callContactAction = new KAction( this );
-	d->callContactAction->setIcon( (KIcon("skype_call") ) );
+	d->callContactAction->setIcon( (KIcon("voicecall") ) );
 	d->callContactAction->setText( i18n ("Call") );
 	connect(d->callContactAction, SIGNAL(triggered(bool)), SLOT(callContacts()));
 

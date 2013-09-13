@@ -953,7 +953,7 @@ void SkypeAccount::fillActionMenu( KActionMenu *actionMenu ) {
 
 		actionMenu->addSeparator();
 
-		KAction *makeTestCall = new KAction( KIcon("skype_call"), i18n("Make Test Call"), this );
+		KAction *makeTestCall = new KAction( KIcon("voicecall"), i18n("Make Test Call"), this );
 		QObject::connect( makeTestCall, SIGNAL(triggered(bool)), this, SLOT(makeTestCall()) );
 
 		const Kopete::OnlineStatus &myStatus = (myself()) ? myself()->onlineStatus() : protocol()->Offline;
