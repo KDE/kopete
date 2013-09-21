@@ -280,8 +280,8 @@ void IRCNetworkConfigWidget::slotDeleteNetwork()
 	QString network = m_networkList->currentText();
 	if( KMessageBox::warningContinueCancel(
 		UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the network <b>%1</b>?<br>"
-		"Any accounts which use this network will have to be modified.</qt>")
-		.arg(network), i18n("Deleting Network"),
+		"Any accounts which use this network will have to be modified.</qt>", network),
+		i18n("Deleting Network"),
 		KGuiItem(i18n("&Delete Network"),"edit-delete"), KStandardGuiItem::cancel(), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
 	{
 		d->m_networks.remove( network );
@@ -294,8 +294,8 @@ void IRCNetworkConfigWidget::slotDeleteHost()
 {
 	QString hostName = m_host->text();
 	if ( KMessageBox::warningContinueCancel(
-		UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>")
-		.arg(hostName), i18n("Deleting Host"),
+		UI::Global::mainWidget(), i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>", hostName),
+		i18n("Deleting Host"),
 		KGuiItem(i18n("&Delete Host"),"edit-delete"), KStandardGuiItem::cancel(), QString::fromLatin1("AskIRCDeleteHost")) == KMessageBox::Continue )
 	{
 		if ( m_hostList->selectedItem() )

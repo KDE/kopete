@@ -223,7 +223,7 @@ void skypeEditAccount::configureSkypeClient() {
 
 	if ( ! sharedFile.open(QIODevice::WriteOnly) ) {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant create/open file" << sharedPath;
-		KMessageBox::error(this, i18n("Cannot create/open file %1 for configuring the Skype client.").arg(sharedPath), i18n("Skype protocol"));
+		KMessageBox::error(this, i18n("Cannot create/open file %1 for configuring the Skype client.", sharedPath), i18n("Skype protocol"));
 		return;
 	}
 
@@ -240,7 +240,7 @@ void skypeEditAccount::configureSkypeClient() {
 
 	if ( ! configFile.open(QIODevice::WriteOnly) ) {
 		kDebug(SKYPE_DEBUG_GLOBAL) << "Cant create/open file" << configPath;
-		KMessageBox::error(this, i18n("Cannot create/open file %1 for configuring the Skype client.").arg(configPath), i18n("Skype protocol"));
+		KMessageBox::error(this, i18n("Cannot create/open file %1 for configuring the Skype client.", configPath), i18n("Skype protocol"));
 		return;
 	}
 

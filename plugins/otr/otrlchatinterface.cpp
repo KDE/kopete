@@ -274,7 +274,7 @@ const char* OtrlChatInterface::otr_error_message(void *opdata, ConnContext *cont
 	}
 	case OTRL_ERRCODE_MSG_NOT_IN_PRIVATE :
 		if (context) {
-		QString message = i18n("You sent encrypted data to %s, who wasn't expecting it.").arg(context->accountname);
+		QString message = i18n("You sent encrypted data to %1, who wasn't expecting it.", QLatin1String(context->accountname));
 		err_msg = (char*)malloc(message.length() + 1);
 		memset(err_msg, 0, message.length() + 1);
 		memcpy(err_msg, message.toUtf8().data(), message.length());
@@ -393,15 +393,15 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 	case OTRL_MSGEVENT_NONE:
 		break;
 	case OTRL_MSGEVENT_ENCRYPTION_REQUIRED:
-		msg.setHtmlBody( i18n( "You attempted to send an unencrypted message to %1" ).arg(QLatin1String(context->username)) );
+		msg.setHtmlBody( i18n( "You attempted to send an unencrypted message to %1.", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Internal );
 		break;
 	case OTRL_MSGEVENT_ENCRYPTION_ERROR:
-		msg.setHtmlBody( i18n( "An error occurred when encrypting your message. The message was not sent." ).arg(QLatin1String(context->username)) );
+		msg.setHtmlBody( i18n( "An error occurred when encrypting your message. The message was not sent." ) );
 		msg.setDirection( Kopete::Message::Internal );
 		break;
 	case OTRL_MSGEVENT_CONNECTION_ENDED:
-		msg.setHtmlBody( i18n( "%1 has already closed his/her private connection to you. Your message was not sent. Either end your private conversation, or restart it." ).arg(QLatin1String(context->username)) );
+		msg.setHtmlBody( i18n( "%1 has already closed his/her private connection to you. Your message was not sent. Either end your private conversation, or restart it.", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Internal );
 		break;
 	case OTRL_MSGEVENT_SETUP_ERROR:
@@ -423,20 +423,20 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 		msg.setDirection( Kopete::Message::Internal );
 		break;
 	case OTRL_MSGEVENT_MSG_RESENT:
-		msg.setHtmlBody( i18n( "<b>The last message to %1 was resent.</b>" ).arg(QLatin1String(context->username)) );
+		msg.setHtmlBody( i18n( "<b>The last message to %1 was resent.</b>", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Internal );
 		break;
 	case OTRL_MSGEVENT_RCVDMSG_NOT_IN_PRIVATE:
-		msg.setHtmlBody( i18n( "<b>The encrypted message received from %1 is unreadable, as you are not currently communicating privately.</b>" ).arg(QLatin1String(context->username)) );
+		msg.setHtmlBody( i18n( "<b>The encrypted message received from %1 is unreadable, as you are not currently communicating privately.</b>", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Inbound );
 		OtrlChatInterface::self()->m_blackistIds.append(msg.id());
 		break;
 	case OTRL_MSGEVENT_RCVDMSG_UNREADABLE:
-		msg.setHtmlBody( i18n( "We received an unreadable encrypted message from %1." ).arg(QLatin1String(context->username)) );
+		msg.setHtmlBody( i18n( "We received an unreadable encrypted message from %1.", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Internal );
 		break;
 	case OTRL_MSGEVENT_RCVDMSG_MALFORMED:
-		msg.setHtmlBody( i18n( "We received a malformed data message from %1." ).arg(QLatin1String(context->username)) );
+		msg.setHtmlBody( i18n( "We received a malformed data message from %1.", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Internal );
 		break;
 	case OTRL_MSGEVENT_LOG_HEARTBEAT_RCVD:
@@ -451,7 +451,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 		session->appendMessage( msg );
 		break;
 	case OTRL_MSGEVENT_RCVDMSG_UNENCRYPTED:
-		msg.setHtmlBody( i18n("<b>The following message received from %1 was <i>not</i> encrypted: [</b>%2<b>]</b>").arg(QLatin1String(context->username), QLatin1String(message) ));
+		msg.setHtmlBody( i18n("<b>The following message received from %1 was <i>not</i> encrypted: [</b>%2<b>]</b>", QLatin1String(context->username), QLatin1String(message) ) );
 		msg.setDirection( Kopete::Message::Inbound );
 		OtrlChatInterface::self()->m_blackistIds.append(msg.id());
 		break;
@@ -459,7 +459,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 		kDebug(14318) << "Unrecognized OTR message received from" << context->username;
 		break;
 	case OTRL_MSGEVENT_RCVDMSG_FOR_OTHER_INSTANCE:
-		msg.setHtmlBody( i18n( "%1 has sent an encrypted message intended for a different session. If you are logged in multiple times, another session may have received the message.").arg(QLatin1String(context->username) ));
+		msg.setHtmlBody( i18n( "%1 has sent an encrypted message intended for a different session. If you are logged in multiple times, another session may have received the message.", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Inbound );
 		OtrlChatInterface::self()->m_blackistIds.append(msg.id());
 		break;

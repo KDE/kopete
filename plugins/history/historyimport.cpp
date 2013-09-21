@@ -420,7 +420,7 @@ QDateTime HistoryImport::extractTime(const QString &string, QDate ref)
 
 	// inform the user about the date problems
 	if (!dateTime.isValid())
-		detailsCursor.insertText(i18n("WARNING: Cannot parse date \"%1\". You may want to edit the file containing this date manually. (Example recognized date strings: \"05/31/2008 15:24:30\".)\n", string, dateTime.toString("yyyy-MM-dd hh:mm:ss")));
+		detailsCursor.insertText(i18n("WARNING: Cannot parse date \"%1\". You may want to edit the file containing this date manually. (Example recognized date strings: \"%2\".)\n", string, dateTime.toString("yyyy-MM-dd hh:mm:ss")));
 
 
 	return dateTime;
