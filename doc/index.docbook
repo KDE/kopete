@@ -1067,7 +1067,7 @@ in konsole "khelpcenter khelpcenter:kioslaves" works-->
 <question><para>I need to connect via a SOCKS proxy, but I cannot find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
 </question>
 <answer><itemizedlist>
-<listitem><para><trademark>MSN</trademark>, <trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in &systemsettings;, <menuchoice><guimenu>Internet and Connectivity</guimenu><guisubmenu>Network Settings</guisubmenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
+<listitem><para><trademark>MSN</trademark>, <trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in &systemsettings;, <menuchoice><guimenu>Network and Connectivity</guimenu><guisubmenu>Network Settings</guisubmenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
 </itemizedlist>
 </answer>
 </qandaentry>
