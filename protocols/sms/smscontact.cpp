@@ -121,14 +121,14 @@ void SMSContact::setPhoneNumber( const QString phoneNumber )
 	new SMSContact(account(), phoneNumber, nickName(), metaContact());
 }
 
-KActionCollection* SMSContact::customContextMenuActions(QWidget *parent)
+QList<KAction *>* SMSContact::customContextMenuActions()
 {
-	KActionCollection *m_actionCollection = new KActionCollection(parent);
+	QList<KAction*> *actions = new QList<KAction*>();
 
 	if( !m_actionPrefs )
 	{
 		m_actionPrefs = new KAction(i18n("&Contact Settings"),
-					    m_actionCollection );
+					    this );
 
 //       dynamic_cast<QObject*>(this),
 //          SLOT(userPrefs()),
@@ -140,9 +140,9 @@ KActionCollection* SMSContact::customContextMenuActions(QWidget *parent)
 				 SLOT(userPrefs()));
 	}
 
-	m_actionCollection->addAction("userPrefs", m_actionPrefs);
+	actions->append(m_actionPrefs);
 
-	return m_actionCollection;
+	return actions;
 }
 
 void SMSContact::userPrefs()

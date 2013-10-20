@@ -35,7 +35,7 @@ public:
 	SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 		const QString &displayName, Kopete::MetaContact *parent );
 
-	KActionCollection* customContextMenuActions(QWidget *parent);
+	virtual QList<KAction *>* customContextMenuActions();
 
 	const QString &phoneNumber();
 	void setPhoneNumber( const QString phoneNumber );
