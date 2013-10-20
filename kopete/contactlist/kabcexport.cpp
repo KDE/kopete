@@ -156,6 +156,7 @@ void KabcExportWizard::slotSelectAll()
 void KabcExportWizard::slotResourceSelectionChanged( QListWidgetItem * lbi )
 {
 	setValid( m_page1WidgetItem,true );
+	Q_UNUSED(lbi);
 }
 
 // accept runs the export algorithm

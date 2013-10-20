@@ -719,7 +719,6 @@ void DisplayNameComponent::redraw()
 
 	tokens = Kopete::Emoticons::tokenize( d->text );
 	ImageComponent *ic;
-	TextComponent *t;
 
 	QFontMetrics fontMetrics( d->font );
 	int fontHeight = fontMetrics.height();
@@ -728,7 +727,7 @@ void DisplayNameComponent::redraw()
 		switch ( (*token).type )
 		{
 		case KEmoticonsTheme::Text:
-			t = new TextComponent( this,  d->font, (*token).text );
+			new TextComponent( this,  d->font, (*token).text );
 		break;
 		case KEmoticonsTheme::Image:
 			ic = new ImageComponent( this );

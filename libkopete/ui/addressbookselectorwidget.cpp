@@ -129,10 +129,9 @@ void AddressBookSelectorWidget::slotLoadAddressees()
 {
 	addresseeListView->clear();
 	KABC::AddressBook::Iterator it;
-	AddresseeItem *addr;
 	for( it = m_addressBook->begin(); it != m_addressBook->end(); ++it )
 	{
-		 addr = new AddresseeItem( addresseeListView, (*it));
+		new AddresseeItem( addresseeListView, (*it));
 	}
 
 }

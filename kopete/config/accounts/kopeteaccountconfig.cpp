@@ -486,6 +486,7 @@ void KopeteAccountConfig::slotAccountAdded( Kopete::Account * account )
 {
 	save();
 	load();
+	Q_UNUSED(account);
 }
 
 void KopeteAccountConfig::slotAccountRemoved( const Kopete::Account * account )

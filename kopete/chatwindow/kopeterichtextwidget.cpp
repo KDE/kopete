@@ -91,8 +91,6 @@ KopeteRichTextWidget::KopeteRichTextWidget(QWidget* parent, Kopete::Protocol::Ca
     connect(this, SIGNAL(textModeChanged(KRichTextEdit::Mode)),
             this, SLOT(slotTextModeChanged(KRichTextEdit::Mode)));
 
-    KopeteRichTextWidget::RichTextSupport richText = getProtocolRichTextSupport();
-
     // Default plaintext setup
     setRichTextSupport(KopeteRichTextWidget::DisableRichText);
     d->changingTextMode = true;

@@ -164,7 +164,7 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	int validResult = 0;
 	const QStringList entries = rootDir->entries();
 	// Will be reused later.
-	QStringList::ConstIterator entriesIt, entriesItEnd = entries.end();
+	QStringList::ConstIterator entriesIt;
 	for(entriesIt = entries.begin(); entriesIt != entries.end(); ++entriesIt)
 	{
 		currentEntry = const_cast<KArchiveEntry*>(rootDir->entry(*entriesIt));

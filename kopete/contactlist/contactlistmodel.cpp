@@ -163,6 +163,7 @@ bool ContactListModel::setData(const QModelIndex &index, const QVariant &value, 
 		return true;
 	}
 	return false;
+	Q_UNUSED(role);
 }
 
 bool ContactListModel::loadModelSettings( const QString& modelType )

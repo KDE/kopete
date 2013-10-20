@@ -738,6 +738,7 @@ void Kopete::ChatSession::slotContactPropertyChanged( Kopete::PropertyContainer 
 		const QString nick = oldValue.toString();
 		emit nickNameChanged(c,nick);
 	}
+	Q_UNUSED(newValue);
 }
 
 #include "kopetechatsession.moc"
