@@ -149,9 +149,10 @@ public slots:
 	void messageStateChanged( uint messageId, Kopete::Message::MessageState state );
 
 	/**
+	 * @deprecated
 	 * does nothing
 	 */
-	void slotToggleGraphicOverride(bool enable);
+	KDE_DEPRECATED void slotToggleGraphicOverride(bool enable);
 
 signals:
 	/**
