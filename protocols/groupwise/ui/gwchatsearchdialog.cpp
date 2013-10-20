@@ -33,7 +33,7 @@
 #include "gwprotocol.h"
 #include "gwchatpropsdialog.h"
 
-GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
+GroupWiseChatSearchDialog::GroupWiseChatSearchDialog( GroupWiseAccount * account, QWidget *parent, const char * /*name*/ )
 	: KDialog(  parent),
 					m_account( account )
 {

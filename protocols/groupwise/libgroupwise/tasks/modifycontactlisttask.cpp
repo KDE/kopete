@@ -44,8 +44,6 @@ bool ModifyContactListTask::take( Transfer * transfer )
 	// emit each add and delete as a signal
 	Field::FieldList fl = response->fields();
 	fl.dump( true );
-	Field::FieldListIterator it = fl.begin();
-	Field::FieldListIterator end = fl.end();
 	Field::MultiField * current = fl.findMultiField( Field::NM_A_FA_RESULTS );
 	if ( current )
 		fl = current->fields();

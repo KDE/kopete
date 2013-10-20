@@ -66,7 +66,7 @@ public:
 			return QModelIndex();
 		}
 	}
-	QModelIndex parent( const QModelIndex & index ) const
+	QModelIndex parent( const QModelIndex & /*index*/ ) const
 	{
 		return QModelIndex();
 	}

@@ -46,7 +46,7 @@ KNetworkConnector::~KNetworkConnector ()
 
 }
 
-void KNetworkConnector::connectToServer ( const QString &server )
+void KNetworkConnector::connectToServer ( const QString & /*server*/ )
 {
 	kDebug () << "Initiating connection to " << mHost;
 	Q_ASSERT( !mHost.isNull() );

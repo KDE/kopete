@@ -64,7 +64,7 @@ bool ChatCountsTask::take( Transfer * transfer )
 		Field::MultiField * mf = static_cast<Field::MultiField *>( *it );
 		Field::FieldList chat = mf->fields();
 		QString roomName;
-		int participants;
+		int participants = 0;
 		// read the supplied fields, set metadata and status.
 		Field::SingleField * sf;
 		if ( ( sf = chat.findSingleField ( Field::NM_A_DISPLAY_NAME ) ) )

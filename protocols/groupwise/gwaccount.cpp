@@ -370,7 +370,7 @@ void GroupWiseAccount::slotMessageSendingFailed()
 				i18nc("Message Sending Failed using the named local account", "Kopete was not able to send the last message sent on account '%1'.\nIf possible, please send the console output from Kopete to <wstephenson@novell.com> for analysis.", accountId() ) , i18nc("message sending failed using the named local account", "Unable to Send Message on Account '%1'", accountId() ) );
 }
 
-void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
+void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const Kopete::StatusMessage &reason, const OnlineStatusOptions& /*options*/ )
 {
 	kDebug () ;
 	if ( status == protocol()->groupwiseUnknown
@@ -969,6 +969,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 	// add to new style contact list
 	GWContactInstance * gwInst = m_serverListModel->addContactInstance( contact.id, contact.parentId, contact.sequence, contact.displayName, contact.dn );
 	Q_ASSERT( gwInst );
+	Q_UNUSED( gwInst );
 
 	GroupWiseContact * c = contactForDN( contact.dn );
 	// this contact is new to us, create him on the server

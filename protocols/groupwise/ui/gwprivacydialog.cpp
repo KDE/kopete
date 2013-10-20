@@ -51,7 +51,7 @@ private:
 	QString m_dn;
 };
 
-GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWidget *parent, const char *name )
+GroupWisePrivacyDialog::GroupWisePrivacyDialog( GroupWiseAccount * account, QWidget *parent, const char * /*name*/ )
  : KDialog(  parent)
  , m_account( account ), m_dirty( false ), m_searchDlg(0)
 {

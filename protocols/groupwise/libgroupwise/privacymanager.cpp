@@ -240,7 +240,6 @@ QStringList PrivacyManager::difference( const QStringList & lhs, const QStringLi
 {
 	QStringList diff;
 	const QStringList::ConstIterator lhsEnd = lhs.constEnd();
-	const QStringList::ConstIterator rhsEnd = rhs.constEnd();
 	for ( QStringList::ConstIterator lhsIt = lhs.constBegin(); lhsIt != lhsEnd; ++lhsIt )
 	{
 		if ( !rhs.contains( *lhsIt ) )

@@ -33,7 +33,7 @@
 #include "gwerror.h"
 #include "gwprotocol.h"
 
-ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, const ConferenceEvent & event, QWidget *parent, const char *name)
+ReceiveInvitationDialog::ReceiveInvitationDialog( GroupWiseAccount * account, const ConferenceEvent & event, QWidget *parent, const char * /*name*/)
  : KDialog(  parent )
 {
 	setCaption(i18n("Invitation to Conversation"));

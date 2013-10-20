@@ -61,6 +61,9 @@ Transfer * ResponseProtocol::parse( QByteArray & wire, uint & bytes )
 	QByteArray rtnField = headerFirst.mid( firstSpace + 1, 3 );
 	bool ok = true;
 	int rtnCode;
+#ifdef __GNUC__
+	#warning what to do with packetState?
+#endif
 	int packetState = -1;
 	rtnCode = rtnField.toInt( &ok );
 	debug( QString("CoreProtocol::readResponse() got HTTP return code '%1'").arg( rtnCode) );
