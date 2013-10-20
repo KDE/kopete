@@ -31,7 +31,6 @@
 #include <qradiobutton.h>
 #include <qtabwidget.h>
 #include <qcombobox.h>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QHBoxLayout>

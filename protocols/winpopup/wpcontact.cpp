@@ -19,7 +19,6 @@
 
 // Qt Includes
 #include <qregexp.h>
-//Added by qt3to4:
 #include <QList>
 
 // KDE Includes

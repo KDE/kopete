@@ -25,7 +25,6 @@
 #include "userdetailsmanager.h"
 
 #include "logintask.h"
-//Added by qt3to4:
 #include <QByteArray>
 
 LoginTask::LoginTask( Task * parent )

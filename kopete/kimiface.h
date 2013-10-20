@@ -23,7 +23,6 @@
 #define KIMIFACE_H
 
 #include <qpixmap.h>
-//Added by qt3to4:
 #include <QByteArray>
 #include <dcopobject.h>
 #include <qstringlist.h>

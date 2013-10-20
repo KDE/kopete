@@ -24,7 +24,6 @@
 #include <qmutex.h>
 #include <qthread.h>
 #include <qcheckbox.h>
-//Added by qt3to4:
 #include <QCustomEvent>
 #include <Q3GridLayout>
 

@@ -32,7 +32,6 @@
 #include <qradiobutton.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
-//Added by qt3to4:
 #include <QPixmap>
 
 #include <kcombobox.h>

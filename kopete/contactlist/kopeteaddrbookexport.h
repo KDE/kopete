@@ -26,7 +26,6 @@
 
 #include "kopeteproperty.h"
 #include "ui_kopeteaddrbookexportui.h"
-//Added by qt3to4:
 #include <QPixmap>
 
 class KDialog;

@@ -23,7 +23,6 @@
 #define SECURESTREAM_H
 
 #include <QtCrypto>
-//Added by qt3to4:
 #include "tlshandler.h"
 #include"bytestream.h"
 

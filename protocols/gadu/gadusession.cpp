@@ -33,7 +33,6 @@
 #include <qsocketnotifier.h>
 #include <qtextcodec.h>
 #include <qdatetime.h>
-//Added by qt3to4:
 #include <QByteArray>
 #include "gadurichtextformat.h"
 

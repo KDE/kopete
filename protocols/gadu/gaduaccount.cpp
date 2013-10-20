@@ -56,7 +56,6 @@
 #include <qtextcodec.h>
 #include <qtextstream.h>
 #include <qhostaddress.h>
-//Added by qt3to4:
 #include <QByteArray>
 #include <QList>
 #include <QPointer>

@@ -31,7 +31,6 @@
 #include <qregexp.h>
 #include <qtextcodec.h>
 #include <qimage.h>
-//Added by qt3to4:
 #include <QPixmap>
 
 #include <klocale.h>

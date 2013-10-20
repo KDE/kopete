@@ -17,7 +17,6 @@
 #define GSMLIB_H_039562406
 
 #include <config-kopete.h>
-//Added by qt3to4:
 #include <Q3GridLayout>
 #include <QCustomEvent>
 #ifdef INCLUDE_SMSGSM

@@ -1,5 +1,4 @@
 #include "clientstream_test.h"
-//Added by qt3to4:
 #include <QByteArray>
 
 ClientStreamTest::ClientStreamTest(int argc, char ** argv) : QApplication( argc, argv )

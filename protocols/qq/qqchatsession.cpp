@@ -15,7 +15,6 @@
 
 #include <qlabel.h>
 #include <qvalidator.h>
-//Added by qt3to4:
 #include <Q3ValueList>
 #include <kdebug.h>
 #include <kdialog.h>

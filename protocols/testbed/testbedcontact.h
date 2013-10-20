@@ -18,7 +18,6 @@
 #define TESTBEDCONTACT_H
 
 #include <qmap.h>
-//Added by qt3to4:
 #include <QList>
 #include "kopetecontact.h"
 #include "kopetemessage.h"

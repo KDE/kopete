@@ -22,7 +22,6 @@
 #define LOGINTASK_H
 
 #include "requesttask.h"
-//Added by qt3to4:
 #include <QByteArray>
 
 using namespace GroupWise;

@@ -23,7 +23,6 @@
 #include <meanwhile/mw_srvc_aware.h>
 #include <meanwhile/mw_srvc_im.h>
 #include <meanwhile/mw_srvc_resolve.h>
-//Added by qt3to4:
 #include <Q3ValueList>
 
 class QTcpSocket;

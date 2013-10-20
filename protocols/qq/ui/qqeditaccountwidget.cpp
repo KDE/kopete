@@ -28,7 +28,6 @@
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qspinbox.h>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QLatin1String>

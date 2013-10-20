@@ -27,7 +27,6 @@
 
 #include <kdebug.h>
 #include <kdialog.h>
-//Added by qt3to4:
 #include <QPixmap>
 
 class GaduAccount;

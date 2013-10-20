@@ -2,7 +2,6 @@
 #define NETWORKSTATUS_COMMON_H
 
 #include <qstringlist.h>
-//Added by qt3to4:
 #include <QByteArray>
 
 namespace NetworkStatus

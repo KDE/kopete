@@ -41,7 +41,6 @@
 #include <meanwhile/mw_srvc_store.h>
 #include <meanwhile/mw_cipher.h>
 #include <meanwhile/mw_st_list.h>
-//Added by qt3to4:
 #include <Q3ValueList>
 
 #define set_session_handler(a,b) sessionHandler.a = _handleSession ## b

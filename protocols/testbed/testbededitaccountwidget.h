@@ -18,7 +18,6 @@
 #define TESTBEDEDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
-//Added by qt3to4:
 #include <QVBoxLayout>
 #include <editaccountwidget.h>
 

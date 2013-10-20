@@ -22,7 +22,6 @@
 
 #include <kparts/mainwindow.h>
 #include <qmovie.h>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QLabel>
 #include <QVBoxLayout>

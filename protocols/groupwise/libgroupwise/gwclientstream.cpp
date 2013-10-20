@@ -36,7 +36,6 @@
 #include <qobject.h>
 #include <QQueue>
 #include <qtimer.h>
-//Added by qt3to4:
 #include <QByteArray>
 
 #include "bytestream.h"
