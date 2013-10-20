@@ -25,9 +25,9 @@
 
 #include "jdns_packet.h"
 
-/* ---------------------------------------------------------------------------- */
-/*  misc */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// misc
+//----------------------------------------------------------------------------
 void *jdns_alloc(int size)
 {
 	return malloc(size);
@@ -48,7 +48,7 @@ char *jdns_strdup(const char *s)
 	char *p;
 	int len;
 
-	len = strlen(s) + 1; /*  the zero */
+	len = strlen(s) + 1; // the zero
 	p = (char *)jdns_alloc(len);
 	memcpy(p, s, len);
 	return p;
@@ -69,7 +69,7 @@ int jdns_domain_cmp(const unsigned char *a, const unsigned char *b)
 	int n;
 	int len_a;
 
-	/*  case-insensitive compare */
+	// case-insensitive compare
 	len_a = _ustrlen(a);
 	if(len_a != (int)_ustrlen(b))
 		return 0;
@@ -135,7 +135,7 @@ jdns_string_t *jdns_getenv(const char *name)
 	}
 	out = jdns_string_new();
 	out->size = sizei - 1;
-	out->data = dest; /*  must be zero-terminated, which it is */
+	out->data = dest; // must be zero-terminated, which it is
 	return out;
 #else
 	jdns_string_t *out;
@@ -153,7 +153,7 @@ char *jdns_strcpy(char *dst, const char *src)
 {
 #if defined(_MSC_VER) && _MSC_VER >= 1400
 	int len;
-	/*  deliberately unsafe */
+	// deliberately unsafe
 	len = strlen(src);
 	if(strcpy_s(dst, len + 1, src) != 0)
 		return 0;
@@ -163,9 +163,9 @@ char *jdns_strcpy(char *dst, const char *src)
 #endif
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_object */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_object
+//----------------------------------------------------------------------------
 void *jdns_object_new(int size, void (*dtor)(void *), void *(*cctor)(const void *))
 {
 	jdns_object_t *a = (jdns_object_t *)jdns_alloc(size);
@@ -190,9 +190,9 @@ void jdns_object_free(void *a)
 	jdns_free(a);
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_list */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_list
+//----------------------------------------------------------------------------
 jdns_list_t *jdns_list_new()
 {
 	jdns_list_t *a = JDNS_OBJECT_NEW(jdns_list);
@@ -207,14 +207,14 @@ jdns_list_t *jdns_list_copy(const jdns_list_t *a)
 {
 	jdns_list_t *c = jdns_list_new();
 
-	/*  note: copying a list with autoDelete should not ever be done. */
-	/*    heck, let's not even allow it.  return an empty list. */
+	// note: copying a list with autoDelete should not ever be done.
+	//   heck, let's not even allow it.  return an empty list.
 	if(a->autoDelete)
 		return c;
 
 	c->valueList = a->valueList;
 
-	/*  copy the items */
+	// copy the items
 	if(a->item)
 	{
 		int n;
@@ -222,13 +222,13 @@ jdns_list_t *jdns_list_copy(const jdns_list_t *a)
 		c->item = (void **)jdns_alloc(sizeof(void *) * c->count);
 		if(a->valueList)
 		{
-			/*  deep copy */
+			// deep copy
 			for(n = 0; n < c->count; ++n)
 				c->item[n] = jdns_object_copy(a->item[n]);
 		}
 		else
 		{
-			/*  just the pointer */
+			// just the pointer
 			for(n = 0; n < c->count; ++n)
 				c->item[n] = a->item[n];
 		}
@@ -248,7 +248,7 @@ void jdns_list_clear(jdns_list_t *a)
 {
 	if(a->item)
 	{
-		/*  delete the items if necessary */
+		// delete the items if necessary
 		if(a->valueList || a->autoDelete)
 		{
 			int n;
@@ -263,19 +263,19 @@ void jdns_list_clear(jdns_list_t *a)
 
 void jdns_list_insert(jdns_list_t *a, void *item, int pos)
 {
-	/*  make memory */
+	// make memory
 	if(!a->item)
 		a->item = (void **)jdns_alloc(sizeof(void *));
 	else
 		a->item = (void **)jdns_realloc(a->item, sizeof(void *) * (a->count + 1));
 
-	/*  prepare position */
+	// prepare position
 	if(pos != -1)
 		memmove(a->item + pos + 1, a->item + pos, (a->count - pos) * sizeof(void *));
 	else
 		pos = a->count;
 
-	/*  insert it */
+	// insert it
 	if(a->valueList)
 		a->item[pos] = jdns_object_copy(item);
 	else
@@ -311,11 +311,11 @@ void jdns_list_remove_at(jdns_list_t *a, int pos)
 	if(pos < 0 || pos >= a->count)
 		return;
 
-	/*  delete the item if necessary */
+	// delete the item if necessary
 	if(a->valueList || a->autoDelete)
 		jdns_object_delete(a->item[pos]);
 
-	/*  free the position */
+	// free the position
 	if(a->count > 1)
 	{
 		memmove(a->item + pos, a->item + pos + 1, (a->count - pos - 1) * sizeof(void *));
@@ -329,9 +329,9 @@ void jdns_list_remove_at(jdns_list_t *a, int pos)
 	}
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_string */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_string
+//----------------------------------------------------------------------------
 jdns_string_t *jdns_string_new()
 {
 	jdns_string_t *s = JDNS_OBJECT_NEW(jdns_string);
@@ -397,21 +397,21 @@ jdns_stringlist_t *jdns_string_split(const jdns_string_t *s, unsigned char sep)
 		if(n == -1)
 			n = s->size;
 		len = n - at;
-		/*  FIXME: should we allow empty items? */
-		/* if(len == 0) */
-		/* 	break; */
+		// FIXME: should we allow empty items?
+		//if(len == 0)
+		//	break;
 		str = jdns_string_new();
 		jdns_string_set(str, s->data + at, len);
 		jdns_stringlist_append(out, str);
 		jdns_string_delete(str);
-		at = n + 1; /*  skip over separator */
+		at = n + 1; // skip over separator
 	}
 	return out;
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_stringlist */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_stringlist
+//----------------------------------------------------------------------------
 jdns_stringlist_t *jdns_stringlist_new()
 {
 	jdns_list_t *a = jdns_list_new();
@@ -427,7 +427,7 @@ jdns_stringlist_t *jdns_stringlist_copy(const jdns_stringlist_t *a)
 void jdns_stringlist_delete(jdns_stringlist_t *a)
 {
 	jdns_list_delete((jdns_list_t *)a);
-	/*  note: no need to call jdns_object_free() here */
+	// note: no need to call jdns_object_free() here
 }
 
 void jdns_stringlist_append(jdns_stringlist_t *a, const jdns_string_t *str)
@@ -435,9 +435,9 @@ void jdns_stringlist_append(jdns_stringlist_t *a, const jdns_string_t *str)
 	jdns_list_insert_value((jdns_list_t *)a, str, -1);
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_address */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_address
+//----------------------------------------------------------------------------
 jdns_address_t *jdns_address_new()
 {
 	jdns_address_t *a = alloc_type(jdns_address_t);
@@ -474,7 +474,7 @@ void jdns_address_set_ipv4(jdns_address_t *a, unsigned long int ipv4)
 	jdns_free(a->c_str);
 	a->isIpv6 = 0;
 	a->addr.v4 = ipv4;
-	a->c_str = (char *)jdns_alloc(16); /*  max size (3 * 4 + 3 + 1) */
+	a->c_str = (char *)jdns_alloc(16); // max size (3 * 4 + 3 + 1)
 	jdns_sprintf_s(a->c_str, 16, "%d.%d.%d.%d",
 		(unsigned char)((ipv4 >> 24) & 0xff),
 		(unsigned char)((ipv4 >> 16) & 0xff),
@@ -494,8 +494,8 @@ void jdns_address_set_ipv6(jdns_address_t *a, const unsigned char *ipv6)
 	a->addr.v6 = (unsigned char *)jdns_alloc(16);
 	memcpy(a->addr.v6, ipv6, 16);
 	p = (unsigned char *)a->addr.v6;
-	a->c_str = (char *)jdns_alloc(40); /*  max size (8 * 4 + 7 + 1) */
-	/*  each word in a 16-byte ipv6 address is network byte order */
+	a->c_str = (char *)jdns_alloc(40); // max size (8 * 4 + 7 + 1)
+	// each word in a 16-byte ipv6 address is network byte order
 	for(n = 0; n < 8; ++n)
 		word[n] = ((unsigned short)(p[n * 2]) << 8) + (unsigned short)(p[n * 2 + 1]);
 	jdns_sprintf_s(a->c_str, 40, "%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X", word[0], word[1], word[2], word[3], word[4], word[5], word[6], word[7]);
@@ -505,7 +505,7 @@ int jdns_address_set_cstr(jdns_address_t *a, const char *str)
 {
 	int slen = strlen(str);
 
-	/*  ipv6 */
+	// ipv6
 	if(strchr(str, ':'))
 	{
 		jdns_string_t *in;
@@ -518,7 +518,7 @@ int jdns_address_set_cstr(jdns_address_t *a, const char *str)
 		list = jdns_string_split(in, ':');
 		jdns_string_delete(in);
 
-		/*  a confusing outputting-backwards parser adapted from qt */
+		// a confusing outputting-backwards parser adapted from qt
 
 		count = list->count;
 
@@ -622,7 +622,7 @@ error:
 				p2 = str + slen;
 			len = p2 - p;
 
-			/*  convert the section into a byte */
+			// convert the section into a byte
 			part = (char *)jdns_alloc(len + 1);
 			memcpy(part, p, len);
 			part[len] = 0;
@@ -632,11 +632,11 @@ error:
 				break;
 			b[at++] = (unsigned char)x;
 
-			/*  done? */
+			// done?
 			if(p2 >= str + slen)
 				break;
 
-			/*  skip over the separator */
+			// skip over the separator
 			p = p2 + 1;
 		}
 		if(at != 4)
@@ -660,7 +660,7 @@ error:
 
 int jdns_address_cmp(const jdns_address_t *a, const jdns_address_t *b)
 {
-	/*  same protocol? */
+	// same protocol?
 	if(a->isIpv6 != b->isIpv6)
 		return 0;
 	if(a->isIpv6)
@@ -682,7 +682,7 @@ int jdns_address_cmp(const jdns_address_t *a, const jdns_address_t *b)
 	return 0;
 }
 
-/*  FF02::FB */
+// FF02::FB
 unsigned char jdns_multicast_addr6_value_v6[] =
 {
 	0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -703,9 +703,9 @@ jdns_address_t *jdns_address_multicast6_new()
 	return a;
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_server */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_server
+//----------------------------------------------------------------------------
 jdns_server_t *jdns_server_new()
 {
 	jdns_server_t *s = alloc_type(jdns_server_t);
@@ -743,9 +743,9 @@ void jdns_server_set_name(jdns_server_t *s, const unsigned char *name)
 	s->name = _ustrdup(name);
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_nameserver */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_nameserver
+//----------------------------------------------------------------------------
 jdns_nameserver_t *jdns_nameserver_new()
 {
 	jdns_nameserver_t *a = alloc_type(jdns_nameserver_t);
@@ -779,9 +779,9 @@ void jdns_nameserver_set(jdns_nameserver_t *a, const jdns_address_t *addr, int p
 	a->port = port;
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_nameserverlist */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_nameserverlist
+//----------------------------------------------------------------------------
 jdns_nameserverlist_t *jdns_nameserverlist_new()
 {
 	jdns_nameserverlist_t *a = alloc_type(jdns_nameserverlist_t);
@@ -829,9 +829,9 @@ void jdns_nameserverlist_append(jdns_nameserverlist_t *a, const jdns_address_t *
 	++a->count;
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_dnshost */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_dnshost
+//----------------------------------------------------------------------------
 jdns_dnshost_t *jdns_dnshost_new()
 {
 	jdns_dnshost_t *a = alloc_type(jdns_dnshost_t);
@@ -859,9 +859,9 @@ void jdns_dnshost_delete(jdns_dnshost_t *a)
 	jdns_free(a);
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_dnshostlist */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_dnshostlist
+//----------------------------------------------------------------------------
 jdns_dnshostlist_t *jdns_dnshostlist_new()
 {
 	jdns_dnshostlist_t *a = alloc_type(jdns_dnshostlist_t);
@@ -908,9 +908,9 @@ void jdns_dnshostlist_append(jdns_dnshostlist_t *a, const jdns_dnshost_t *host)
 	++a->count;
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_dnsparams */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_dnsparams
+//----------------------------------------------------------------------------
 jdns_dnsparams_t *jdns_dnsparams_new()
 {
 	jdns_dnsparams_t *a = alloc_type(jdns_dnsparams_t);
@@ -958,9 +958,9 @@ void jdns_dnsparams_append_host(jdns_dnsparams_t *a, const jdns_string_t *name, 
 	jdns_dnshost_delete(h);
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_rr */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_rr
+//----------------------------------------------------------------------------
 void _jdns_rr_data_reset(jdns_rr_t *r)
 {
 	if(r->rdata)
@@ -1184,7 +1184,7 @@ int jdns_rr_verify(const jdns_rr_t *r)
 		case JDNS_RTYPE_MX:
 		case JDNS_RTYPE_SRV:
 		{
-			/*  consider it valid if we don't have a known to check */
+			// consider it valid if we don't have a known to check
 			if(!r->haveKnown)
 				return 1;
 			if(!jdns_packet_name_isvalid(r->data.server->name, _ustrlen(r->data.server->name)))
@@ -1260,9 +1260,9 @@ static jdns_string_t *read_text_string(const jdns_packet_resource_t *pr, int *_a
 	return out;
 }
 
-/*  if the type is known, then it must be parsed properly */
-/*  if the type is unknown, then that's ok */
-/*  rdata is always copied, known or not */
+// if the type is known, then it must be parsed properly
+// if the type is unknown, then that's ok
+// rdata is always copied, known or not
 jdns_rr_t *jdns_rr_from_resource(const jdns_packet_resource_t *pr, const jdns_packet_t *ref)
 {
 	jdns_rr_t *rr = 0;
@@ -1435,7 +1435,7 @@ jdns_rr_t *jdns_rr_from_resource(const jdns_packet_resource_t *pr, const jdns_pa
 	{
 		rr->qclass = pr->qclass;
 		rr->owner = _ustrdup(pr->qname->data);
-		rr->ttl = (int)pr->ttl; /*  pr->ttl is 31-bits, cast is safe */
+		rr->ttl = (int)pr->ttl; // pr->ttl is 31-bits, cast is safe
 		rr->rdlength = pr->rdlength;
 		rr->rdata = jdns_copy_array(pr->rdata, pr->rdlength);
 	}
@@ -1443,9 +1443,9 @@ jdns_rr_t *jdns_rr_from_resource(const jdns_packet_resource_t *pr, const jdns_pa
 	return rr;
 }
 
-/* ---------------------------------------------------------------------------- */
-/*  jdns_response */
-/* ---------------------------------------------------------------------------- */
+//----------------------------------------------------------------------------
+// jdns_response
+//----------------------------------------------------------------------------
 #define ARRAY_DELETE(array, count, dtor) \
 	{ \
 		if(count > 0) \
@@ -1538,7 +1538,7 @@ void jdns_response_remove_answer(jdns_response_t *r, int pos)
 	jdns_rr_t *rr = r->answerRecords[pos];
 	jdns_rr_delete(rr);
 
-	/*  free the position */
+	// free the position
 	if(r->answerCount > 1)
 	{
 		memmove(r->answerRecords + pos, r->answerRecords + pos + 1, (r->answerCount - pos - 1) * sizeof(void *));

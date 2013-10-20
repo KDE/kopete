@@ -39,8 +39,8 @@ class JDnsSharedDebugPrivate;
 
 \code
 JDnsSharedDebug *db = new JDnsSharedDebug;
-connect(db, SIGNAL(debugLinesReady(const QStringList &)),
-	SLOT(db_debugLinesReady(const QStringList &)));
+connect(db, SIGNAL(debugLinesReady(QStringList)),
+	SLOT(db_debugLinesReady(QStringList)));
 
 JDnsShared *jdnsShared1 = new JDnsShared(JDnsShared::UnicastInternet);
 jdnsShared1->setDebug(db, "U");
@@ -466,7 +466,7 @@ public:
 
 	   This operation primarily exists for Multicast mode, so that any published records have a chance to be unpublished.  If the JDnsShared object is simply deleted without performing a shutdown, then published records will linger on the network until their TTLs expire.
 
-	   When shutdown is complete, the shutdownFinished() signal will be emitted. 
+	   When shutdown is complete, the shutdownFinished() signal will be emitted.
 	*/
 	void shutdown();
 

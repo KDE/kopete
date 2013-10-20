@@ -98,7 +98,6 @@ namespace XMPP
 		QString capsNode() const;
 		QString capsVersion() const;
 		QString capsExt() const;
-		QString capsHash() const;
 
 		void setOSName(const QString &);
 		void setTimeZone(const QString &, int);
@@ -106,7 +105,6 @@ namespace XMPP
 		void setClientVersion(const QString &);
 		void setCapsNode(const QString &);
 		void setCapsVersion(const QString &);
-		void setCapsHash(const QString &);
 
 		void setIdentity(DiscoItem::Identity);
 		DiscoItem::Identity identity();
@@ -118,7 +116,7 @@ namespace XMPP
 		void removeExtension(const QString& ext);
 		const Features& extension(const QString& ext) const;
 		QStringList extensions() const;
-		
+
 		S5BManager *s5bManager() const;
 		IBBManager *ibbManager() const;
 		BoBManager *bobManager() const;
@@ -128,7 +126,7 @@ namespace XMPP
 		FileTransferManager *fileTransferManager() const;
 
 		QString groupChatPassword(const QString& host, const QString& room) const;
-		bool groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString& password = QString(), int maxchars = -1, int maxstanzas = -1, int seconds = -1, const Status& = Status());
+		bool groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString& password = QString(), int maxchars = -1, int maxstanzas = -1, int seconds = -1, const QDateTime &since = QDateTime(), const Status& = Status());
 		void groupChatSetStatus(const QString &host, const QString &room, const Status &);
 		void groupChatChangeNick(const QString &host, const QString &room, const QString &nick, const Status &);
 		void groupChatLeave(const QString &host, const QString &room, const QString &statusStr = QString());

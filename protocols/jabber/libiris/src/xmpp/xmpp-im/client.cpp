@@ -51,7 +51,7 @@
 //!  {
 //!    client = new Client;
 //!    connect(client, SIGNAL(handshaken()), SLOT(clientHandshaken()));
-//!    connect(client, SIGNAL(authFinished(bool, int, const QString &)), SLOT(authFinished(bool, int, const QString &)));
+//!    connect(client, SIGNAL(authFinished(bool,int,QString)), SLOT(authFinished(bool,int,QString)));
 //!    client->connectToHost("jabber.org");
 //!  }
 //!
@@ -129,7 +129,7 @@ public:
 	int id_seed;
 	Task *root;
 	QString host, user, pass, resource;
-	QString osname, tzname, clientName, clientVersion, capsNode, capsVersion, capsExt, capsHash;
+	QString osname, tzname, clientName, clientVersion, capsNode, capsVersion, capsExt;
 	DiscoItem::Identity identity;
 	Features features;
 	QMap<QString,Features> extension_features;
@@ -161,7 +161,6 @@ Client::Client(QObject *par)
 	d->capsNode = "";
 	d->capsVersion = "";
 	d->capsExt = "";
-	d->capsHash = "";
 
 	d->id_seed = 0xaaaa;
 	d->root = new Task(this, true);
@@ -194,11 +193,11 @@ void Client::connectToServer(ClientStream *s, const Jid &j, bool auth)
 	//connect(d->stream, SIGNAL(connected()), SLOT(streamConnected()));
 	//connect(d->stream, SIGNAL(handshaken()), SLOT(streamHandshaken()));
 	connect(d->stream, SIGNAL(error(int)), SLOT(streamError(int)));
-	//connect(d->stream, SIGNAL(sslCertificateReady(const QSSLCert &)), SLOT(streamSSLCertificateReady(const QSSLCert &)));
+	//connect(d->stream, SIGNAL(sslCertificateReady(QSSLCert)), SLOT(streamSSLCertificateReady(QSSLCert)));
 	connect(d->stream, SIGNAL(readyRead()), SLOT(streamReadyRead()));
 	//connect(d->stream, SIGNAL(closeFinished()), SLOT(streamCloseFinished()));
-	connect(d->stream, SIGNAL(incomingXml(const QString &)), SLOT(streamIncomingXml(const QString &)));
-	connect(d->stream, SIGNAL(outgoingXml(const QString &)), SLOT(streamOutgoingXml(const QString &)));
+	connect(d->stream, SIGNAL(incomingXml(QString)), SLOT(streamIncomingXml(QString)));
+	connect(d->stream, SIGNAL(outgoingXml(QString)), SLOT(streamOutgoingXml(QString)));
 
 	d->stream->connectToServer(j, auth);
 }
@@ -216,14 +215,14 @@ void Client::start(const QString &host, const QString &user, const QString &pass
 	d->resourceList += Resource(resource(), stat);
 
 	JT_PushPresence *pp = new JT_PushPresence(rootTask());
-	connect(pp, SIGNAL(subscription(const Jid &, const QString &, const QString&)), SLOT(ppSubscription(const Jid &, const QString &, const QString&)));
-	connect(pp, SIGNAL(presence(const Jid &, const Status &)), SLOT(ppPresence(const Jid &, const Status &)));
+	connect(pp, SIGNAL(subscription(Jid,QString,QString)), SLOT(ppSubscription(Jid,QString,QString)));
+	connect(pp, SIGNAL(presence(Jid,Status)), SLOT(ppPresence(Jid,Status)));
 
 	JT_PushMessage *pm = new JT_PushMessage(rootTask());
-	connect(pm, SIGNAL(message(const Message &)), SLOT(pmMessage(const Message &)));
+	connect(pm, SIGNAL(message(Message)), SLOT(pmMessage(Message)));
 
 	JT_PushRoster *pr = new JT_PushRoster(rootTask());
-	connect(pr, SIGNAL(roster(const Roster &)), SLOT(prRoster(const Roster &)));
+	connect(pr, SIGNAL(roster(Roster)), SLOT(prRoster(Roster)));
 
 	new JT_ServInfo(rootTask());
 	new JT_PongServer(rootTask());
@@ -301,7 +300,7 @@ void Client::groupChatChangeNick(const QString &host, const QString &room, const
 	}
 }
 
-bool Client::groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString& password, int maxchars, int maxstanzas, int seconds, const Status& _s)
+bool Client::groupChatJoin(const QString &host, const QString &room, const QString &nick, const QString& password, int maxchars, int maxstanzas, int seconds, const QDateTime &since, const Status& _s)
 {
 	Jid jid(room + "@" + host + "/" + nick);
 	for(QList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end();) {
@@ -327,7 +326,7 @@ bool Client::groupChatJoin(const QString &host, const QString &room, const QStri
 	JT_Presence *j = new JT_Presence(rootTask());
 	Status s = _s;
 	s.setMUC();
-	s.setMUCHistory(maxchars,maxstanzas,seconds);
+	s.setMUCHistory(maxchars, maxstanzas, seconds, since);
 	if (!password.isEmpty()) {
 		s.setMUCPassword(password);
 	}
@@ -1065,11 +1064,6 @@ QString Client::capsExt() const
 	return d->capsExt;
 }
 
-QString Client::capsHash() const
-{
-	return d->capsHash;
-}
-
 void Client::setOSName(const QString &name)
 {
 	d->osname = name;
@@ -1100,11 +1094,6 @@ void Client::setCapsNode(const QString &s)
 void Client::setCapsVersion(const QString &s)
 {
 	d->capsVersion = s;
-}
-
-void Client::setCapsHash(const QString &s)
-{
-	d->capsHash = s;
 }
 
 DiscoItem::Identity Client::identity()

@@ -369,20 +369,17 @@ IBBManager::IBBManager(Client *parent)
 {
 	d = new Private;
 	d->client = parent;
-	
+
 	d->ibb = new JT_IBB(d->client->rootTask(), true);
 	connect(d->ibb,
-			SIGNAL(incomingRequest(const Jid &, const QString &,
-								   const QString &, int, const QString &)),
-			SLOT(ibb_incomingRequest(const Jid &, const QString &,
-									 const QString &, int,
-									 const QString &)));
+			SIGNAL(incomingRequest(Jid,QString,QString,int,QString)),
+			SLOT(ibb_incomingRequest(Jid,QString,QString,int,QString)));
 	connect(d->ibb,
-			SIGNAL(incomingData(const Jid &, const QString &, const IBBData &, Stanza::Kind)),
-			SLOT(takeIncomingData(const Jid &, const QString &, const IBBData &, Stanza::Kind)));
+			SIGNAL(incomingData(Jid,QString,IBBData,Stanza::Kind)),
+			SLOT(takeIncomingData(Jid,QString,IBBData,Stanza::Kind)));
 	connect(d->ibb,
-			SIGNAL(closeRequest(const Jid &, const QString &, const QString &)),
-			SLOT(ibb_closeRequest(const Jid &, const QString &, const QString &)));
+			SIGNAL(closeRequest(Jid,QString,QString)),
+			SLOT(ibb_closeRequest(Jid,QString,QString)));
 }
 
 IBBManager::~IBBManager()
@@ -590,25 +587,24 @@ bool JT_IBB::take(const QDomElement &e)
 		if(e.tagName() != "iq" || e.attribute("type") != "set")
 			return false;
 
-		bool found;
 		QString id = e.attribute("id");
 		QString from = e.attribute("from");
-		QDomElement openEl = findSubTag(e, "open", &found);
-		if (found && openEl.attribute("xmlns") == IBB_NS) {
+		QDomElement openEl = e.firstChildElement("open");
+		if (!openEl.isNull() && openEl.attribute("xmlns") == IBB_NS) {
 			emit incomingRequest(Jid(from), id,
 							openEl.attribute("sid"),
 							openEl.attribute("block-size").toInt(),
 							openEl.attribute("stanza"));
 			return true;
 		}
-		QDomElement dataEl = findSubTag(e, "data", &found);
-		if (found && dataEl.attribute("xmlns") == IBB_NS) {
+		QDomElement dataEl = e.firstChildElement("data");
+		if (!dataEl.isNull() && dataEl.attribute("xmlns") == IBB_NS) {
 			IBBData data;
 			emit incomingData(Jid(from), id, data.fromXml(dataEl), Stanza::IQ);
 			return true;
 		}
-		QDomElement closeEl = findSubTag(e, "close", &found);
-		if (found && closeEl.attribute("xmlns") == IBB_NS) {
+		QDomElement closeEl = e.firstChildElement("close");
+		if (!closeEl.isNull() && closeEl.attribute("xmlns") == IBB_NS) {
 			emit closeRequest(Jid(from), id, closeEl.attribute("sid"));
 			return true;
 		}

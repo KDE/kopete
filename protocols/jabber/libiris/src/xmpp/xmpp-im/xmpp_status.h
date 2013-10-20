@@ -28,7 +28,7 @@
 #include "xmpp_muc.h"
 #include "xmpp_bitsofbinary.h"
 
-namespace XMPP 
+namespace XMPP
 {
 	class Status
 	{
@@ -57,9 +57,9 @@ namespace XMPP
 		const QString & songTitle() const;
 		const QString & capsNode() const;
 		const QString & capsVersion() const;
+		const QString & capsHashAlgorithm() const;
 		const QString & capsExt() const;
-		const QString & capsHash() const;
-		
+
 		bool isMUC() const;
 		bool hasMUCItem() const;
 		const MUCItem & mucItem() const;
@@ -71,6 +71,7 @@ namespace XMPP
 		int mucHistoryMaxChars() const;
 		int mucHistoryMaxStanzas() const;
 		int mucHistorySeconds() const;
+		const QDateTime & mucHistorySince() const;
 
 		void setPriority(int);
 		void setType(Type);
@@ -84,15 +85,15 @@ namespace XMPP
 		void setError(int, const QString &);
 		void setCapsNode(const QString&);
 		void setCapsVersion(const QString&);
+		void setCapsHashAlgorithm(const QString&);
 		void setCapsExt(const QString&);
-		void setCapsHash(const QString&);
-		
+
 		void setMUC();
 		void setMUCItem(const MUCItem&);
 		void setMUCDestroy(const MUCDestroy&);
 		void addMUCStatus(int);
 		void setMUCPassword(const QString&);
-		void setMUCHistory(int maxchars, int maxstanzas, int seconds);
+		void setMUCHistory(int maxchars, int maxstanzas, int seconds, const QDateTime &since);
 
 		void setXSigned(const QString &);
 		void setSongTitle(const QString &);
@@ -118,7 +119,7 @@ namespace XMPP
 		QString v_xsigned;
 		// gabber song extension
 		QString v_songTitle;
-		QString v_capsNode, v_capsVersion, v_capsExt, v_capsHash;
+		QString v_capsNode, v_capsVersion, v_capsHashAlgorithm, v_capsExt;
 		QList<BoBData> v_bobDataList;
 
 		// MUC
@@ -128,6 +129,7 @@ namespace XMPP
 		QList<int> v_mucStatuses;
 		QString v_mucPassword;
 		int v_mucHistoryMaxChars, v_mucHistoryMaxStanzas, v_mucHistorySeconds;
+		QDateTime v_mucHistorySince;
 
 		int ecode;
 		QString estr;

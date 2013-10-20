@@ -249,7 +249,7 @@ void BSocket::connectToHost(const QString &host, quint16 port, QAbstractSocket::
 			break;
 	}
 
-	connect(d->resolver, SIGNAL(resultReady(const QHostAddress&, quint16)), this, SLOT(handle_dns_ready(const QHostAddress&, quint16)));
+	connect(d->resolver, SIGNAL(resultReady(QHostAddress,quint16)), this, SLOT(handle_dns_ready(QHostAddress,quint16)));
 	connect(d->resolver, SIGNAL(error(XMPP::ServiceResolver::Error)), this, SLOT(handle_dns_error(XMPP::ServiceResolver::Error)));
 	d->resolver->start(host, port);
 }
@@ -268,7 +268,7 @@ void BSocket::connectToHost(const QString &service, const QString &transport, co
 	/* cleanup resolver for the new query */
 	recreate_resolver();
 
-	connect(d->resolver, SIGNAL(resultReady(const QHostAddress&, quint16)), this, SLOT(handle_dns_ready(const QHostAddress&, quint16)));
+	connect(d->resolver, SIGNAL(resultReady(QHostAddress,quint16)), this, SLOT(handle_dns_ready(QHostAddress,quint16)));
 	connect(d->resolver, SIGNAL(error(XMPP::ServiceResolver::Error)), this, SLOT(handle_dns_error(XMPP::ServiceResolver::Error)));
 	d->resolver->start(service, transport, domain, port);
 }
@@ -375,10 +375,13 @@ qint64 BSocket::writeData(const char *data, qint64 maxSize)
 
 qint64 BSocket::readData(char *data, qint64 maxSize)
 {
+	if(!maxSize) {
+		return 0;
+	}
 	quint64 readSize;
 	if(d->qsock) {
-	   int max = bytesAvailable();
-	   if(maxSize <= 0 || maxSize > max) {
+		int max = bytesAvailable();
+		if(maxSize <= 0 || maxSize > max) {
 			maxSize = max;
 		}
 		readSize = d->qsock->read(data, maxSize);

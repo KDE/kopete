@@ -1609,10 +1609,11 @@ Stanza Message::toStanza(Stream *stream) const
 				break;
 			case ReceiptReceived:
 				{
-				QDomElement elem = s.createElement(messageReceiptNS, "received");
-				if (!d->messageReceiptId.isEmpty())
-					elem.setAttribute("id", d->messageReceiptId);
-				s.appendChild(elem);
+					QDomElement elem = s.createElement(messageReceiptNS, "received");
+					if (!d->messageReceiptId.isEmpty()) {
+						elem.setAttribute("id", d->messageReceiptId);
+					}
+					s.appendChild(elem);
 				}
 				break;
 			default:
@@ -1896,6 +1897,8 @@ bool Message::fromStanza(const Stanza &s, bool useTimeZoneOffset, int timeZoneOf
 	if(!t.isNull()) {
 		d->messageReceipt = ReceiptReceived;
 		d->messageReceiptId = t.attribute("id");
+		if (d->messageReceiptId.isEmpty())
+			d->messageReceiptId = id();
 	}
 
 	// xsigned
@@ -2338,14 +2341,14 @@ void Status::setCapsVersion(const QString & _capsVersion)
 	v_capsVersion = _capsVersion;
 }
 
+void Status::setCapsHashAlgorithm(const QString & _capsHashAlgorithm)
+{
+	v_capsHashAlgorithm = _capsHashAlgorithm;
+}
+
 void Status::setCapsExt(const QString & _capsExt)
 {
 	v_capsExt = _capsExt;
-}
-
-void Status::setCapsHash(const QString & _capsHash)
-{
-	v_capsHash = _capsHash;
 }
 
 void Status::setMUC()
@@ -2365,11 +2368,12 @@ void Status::setMUCDestroy(const MUCDestroy& i)
 	v_mucDestroy = i;
 }
 
-void Status::setMUCHistory(int maxchars, int maxstanzas, int seconds)
+void Status::setMUCHistory(int maxchars, int maxstanzas, int seconds, const QDateTime &since)
 {
 	v_mucHistoryMaxChars = maxchars;
 	v_mucHistoryMaxStanzas = maxstanzas;
 	v_mucHistorySeconds = seconds;
+	v_mucHistorySince = since;
 }
 
 
@@ -2497,14 +2501,14 @@ const QString & Status::capsVersion() const
 	return v_capsVersion;
 }
 
+const QString & Status::capsHashAlgorithm() const
+{
+	return v_capsHashAlgorithm;
+}
+
 const QString & Status::capsExt() const
 {
 	return v_capsExt;
-}
-
-const QString & Status::capsHash() const
-{
-	return v_capsHash;
 }
 
 bool Status::isMUC() const
@@ -2549,7 +2553,7 @@ const QString& Status::mucPassword() const
 
 bool Status::hasMUCHistory() const
 {
-	return v_mucHistoryMaxChars >= 0 || v_mucHistoryMaxStanzas >= 0 || v_mucHistorySeconds >= 0;
+	return v_mucHistoryMaxChars >= 0 || v_mucHistoryMaxStanzas >= 0 || v_mucHistorySeconds >= 0 || !v_mucHistorySince.isNull();
 }
 
 int Status::mucHistoryMaxChars() const
@@ -2565,6 +2569,11 @@ int Status::mucHistoryMaxStanzas() const
 int Status::mucHistorySeconds() const
 {
 	return v_mucHistorySeconds;
+}
+
+const QDateTime & Status::mucHistorySince() const
+{
+	return v_mucHistorySince;
 }
 
 void Status::setMUCPassword(const QString& i)

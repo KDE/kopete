@@ -585,12 +585,12 @@ void JT_Presence::pres(const Status &s)
 		if(!s.capsNode().isEmpty() && !s.capsVersion().isEmpty()) {
 			QDomElement c = doc()->createElement("c");
 			c.setAttribute("xmlns","http://jabber.org/protocol/caps");
+			if (!s.capsHashAlgorithm().isEmpty())
+				c.setAttribute("hash",s.capsHashAlgorithm());
 			c.setAttribute("node",s.capsNode());
 			c.setAttribute("ver",s.capsVersion());
 			if (!s.capsExt().isEmpty())
 				c.setAttribute("ext",s.capsExt());
-			if (!s.capsHash().isEmpty())
-				c.setAttribute("hash",s.capsHash());
 			tag.appendChild(c);
 		}
 
@@ -608,6 +608,8 @@ void JT_Presence::pres(const Status &s)
 					h.setAttribute("maxstanzas",s.mucHistoryMaxStanzas());
 				if (s.mucHistorySeconds() >= 0)
 					h.setAttribute("seconds",s.mucHistorySeconds());
+				if (!s.mucHistorySince().isNull())
+					h.setAttribute("since", s.mucHistorySince().toUTC().addSecs(1).toString(Qt::ISODate));
 				m.appendChild(h);
 			}
 			tag.appendChild(m);
@@ -696,9 +698,8 @@ bool JT_PushPresence::take(const QDomElement &e)
 		}
 		else if(type == "subscribe" || type == "subscribed" || type == "unsubscribe" || type == "unsubscribed") {
 			QString nick;
-			bool found;
-			QDomElement tag = findSubTag(e, "nick", &found);
-			if (found && tag.attribute("xmlns") == "http://jabber.org/protocol/nick") {
+			QDomElement tag = e.firstChildElement("nick");
+			if (!tag.isNull() && tag.attribute("xmlns") == "http://jabber.org/protocol/nick") {
 				nick = tagContent(tag);
 			}
 			subscription(j, type, nick);
@@ -707,16 +708,15 @@ bool JT_PushPresence::take(const QDomElement &e)
 	}
 
 	QDomElement tag;
-	bool found;
 
-	tag = findSubTag(e, "status", &found);
-	if(found)
+	tag = e.firstChildElement("status");
+	if(!tag.isNull())
 		p.setStatus(tagContent(tag));
-	tag = findSubTag(e, "show", &found);
-	if(found)
+	tag = e.firstChildElement("show");
+	if(!tag.isNull())
 		p.setShow(tagContent(tag));
-	tag = findSubTag(e, "priority", &found);
-	if(found)
+	tag = e.firstChildElement("priority");
+	if(!tag.isNull())
 		p.setPriority(tagContent(tag).toInt());
 
 	QDateTime stamp;
@@ -738,14 +738,13 @@ bool JT_PushPresence::take(const QDomElement &e)
 		}
 		else if(i.tagName() == "x" && i.attribute("xmlns") == "gabber:x:music:info") {
 			QDomElement t;
-			bool found;
 			QString title, state;
 
-			t = findSubTag(i, "title", &found);
-			if(found)
+			t = i.firstChildElement("title");
+			if(!t.isNull())
 				title = tagContent(t);
-			t = findSubTag(i, "state", &found);
-			if(found)
+			t = i.firstChildElement("state");
+			if(!t.isNull())
 				state = tagContent(t);
 
 			if(!title.isEmpty() && state == "playing")
@@ -761,13 +760,11 @@ bool JT_PushPresence::take(const QDomElement &e)
  			p.setCapsNode(i.attribute("node"));
  			p.setCapsVersion(i.attribute("ver"));
  			p.setCapsExt(i.attribute("ext"));
-			p.setCapsHash(i.attribute("hash"));
   		}
 		else if(i.tagName() == "x" && i.attribute("xmlns") == "vcard-temp:x:update") {
 			QDomElement t;
-			bool found;
-			t = findSubTag(i, "photo", &found);
-			if (found)
+			t = i.firstChildElement("photo");
+			if (!t.isNull())
 				p.setPhotoHash(tagContent(t));
 			else
 				p.setPhotoHash("");
@@ -954,26 +951,25 @@ bool JT_GetServices::take(const QDomElement &x)
 				a.setJid(Jid(i.attribute("jid")));
 
 				QDomElement tag;
-				bool found;
 
-				tag = findSubTag(i, "name", &found);
-				if(found)
+				tag = i.firstChildElement("name");
+				if(!tag.isNull())
 					a.setName(tagContent(tag));
 
 				// determine which namespaces does item support
 				QStringList ns;
 
-				tag = findSubTag(i, "register", &found);
-				if(found)
+				tag = i.firstChildElement("register");
+				if(!tag.isNull())
 					ns << "jabber:iq:register";
-				tag = findSubTag(i, "search", &found);
-				if(found)
+				tag = i.firstChildElement("search");
+				if(!tag.isNull())
 					ns << "jabber:iq:search";
-				tag = findSubTag(i, "groupchat", &found);
-				if(found)
+				tag = i.firstChildElement("groupchat");
+				if(!tag.isNull())
 					ns << "jabber:iq:conference";
-				tag = findSubTag(i, "transport", &found);
-				if(found)
+				tag = i.firstChildElement("transport");
+				if(!tag.isNull())
 					ns << "jabber:iq:gateway";
 
 				a.setFeatures(ns);
@@ -1245,19 +1241,18 @@ bool JT_Search::take(const QDomElement &x)
 					SearchResult r(Jid(i.attribute("jid")));
 
 					QDomElement tag;
-					bool found;
 
-					tag = findSubTag(i, "nick", &found);
-					if(found)
+					tag = i.firstChildElement("nick");
+					if(!tag.isNull())
 						r.setNick(tagContent(tag));
-					tag = findSubTag(i, "first", &found);
-					if(found)
+					tag = i.firstChildElement("first");
+					if(!tag.isNull())
 						r.setFirst(tagContent(tag));
-					tag = findSubTag(i, "last", &found);
-					if(found)
+					tag = i.firstChildElement("last");
+					if(!tag.isNull())
 						r.setLast(tagContent(tag));
-					tag = findSubTag(i, "email", &found);
-					if(found)
+					tag = i.firstChildElement("email");
+					if(!tag.isNull())
 						r.setEmail(tagContent(tag));
 
 					d->resultList += r;
@@ -1306,17 +1301,16 @@ bool JT_ClientVersion::take(const QDomElement &x)
 		return false;
 
 	if(x.attribute("type") == "result") {
-		bool found;
 		QDomElement q = queryTag(x);
 		QDomElement tag;
-		tag = findSubTag(q, "name", &found);
-		if(found)
+		tag = q.firstChildElement("name");
+		if(!tag.isNull())
 			v_name = tagContent(tag);
-		tag = findSubTag(q, "version", &found);
-		if(found)
+		tag = q.firstChildElement("version");
+		if(!tag.isNull())
 			v_ver = tagContent(tag);
-		tag = findSubTag(q, "os", &found);
-		if(found)
+		tag = q.firstChildElement("os");
+		if(!tag.isNull())
 			v_os = tagContent(tag);
 
 		setSuccess();
@@ -1445,9 +1439,8 @@ bool JT_ServInfo::take(const QDomElement &e)
 		// Find out the node
 		bool invalid_node = false;
 		QString node;
-		bool found;
-		QDomElement q = findSubTag(e, "query", &found);
-		if(found) // NOTE: Should always be true, since a NS was found above
+		QDomElement q = e.firstChildElement("query");
+		if(!q.isNull()) // NOTE: Should always be true, since a NS was found above
 			node = q.attribute("node");
 
 		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
@@ -1476,22 +1469,24 @@ bool JT_ServInfo::take(const QDomElement &e)
 
 		QDomElement feature;
 		if (node.isEmpty() || node == client()->capsNode() + "#" + client()->capsVersion()) {
-			// Standard features
-			feature = doc()->createElement("feature");
-			feature.setAttribute("var", "http://jabber.org/protocol/bytestreams");
-			query.appendChild(feature);
+			if (client()->fileTransferManager()) {
+				// Standard features
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", "http://jabber.org/protocol/bytestreams");
+				query.appendChild(feature);
 
-			feature = doc()->createElement("feature");
-			feature.setAttribute("var", "http://jabber.org/protocol/ibb");
-			query.appendChild(feature);
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", "http://jabber.org/protocol/ibb");
+				query.appendChild(feature);
 
-			feature = doc()->createElement("feature");
-			feature.setAttribute("var", "http://jabber.org/protocol/si");
-			query.appendChild(feature);
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", "http://jabber.org/protocol/si");
+				query.appendChild(feature);
 
-			feature = doc()->createElement("feature");
-			feature.setAttribute("var", "http://jabber.org/protocol/si/profile/file-transfer");
-			query.appendChild(feature);
+				feature = doc()->createElement("feature");
+				feature.setAttribute("var", "http://jabber.org/protocol/si/profile/file-transfer");
+				query.appendChild(feature);
+			}
 
 			feature = doc()->createElement("feature");
 			feature.setAttribute("var", "http://jabber.org/protocol/disco#info");
@@ -1636,29 +1631,27 @@ bool JT_Gateway::take(const QDomElement &x)
 	if(x.attribute("type") == "result") {
 		if(type == 0) {
 			QDomElement query = queryTag(x);
-			bool found;
 			QDomElement tag;
-			tag = findSubTag(query, "desc", &found);
-			if (found) {
+			tag = query.firstChildElement("desc");
+			if (!tag.isNull()) {
 				v_desc = tagContent(tag);
 			}
-			tag = findSubTag(query, "prompt", &found);
-			if (found) {
+			tag = query.firstChildElement("prompt");
+			if (!tag.isNull()) {
 				v_prompt = tagContent(tag);
 			}
 		}
 		else {
 			QDomElement query = queryTag(x);
-			bool found;
 			QDomElement tag;
-			tag = findSubTag(query, "jid", &found);
-			if (found) {
+			tag = query.firstChildElement("jid");
+			if (!tag.isNull()) {
 				v_translatedJid = tagContent(tag);
 			}
 			// we used to read 'prompt' in the past
 			// and some gateways still send it
-			tag = findSubTag(query, "prompt", &found);
-			if (found) {
+			tag = query.firstChildElement("prompt");
+			if (!tag.isNull()) {
 				v_prompt = tagContent(tag);
 			}
 		}
@@ -2092,9 +2085,8 @@ bool JT_PongServer::take(const QDomElement &e)
 	if (e.tagName() != "iq" || e.attribute("type") != "get")
 		return false;
 
-	bool found = false;
-	QDomElement ping = findSubTag(e, "ping", &found);
-	if (found && ping.attribute("xmlns") == "urn:xmpp:ping") {
+	QDomElement ping = e.firstChildElement("ping");
+	if (!e.isNull() && ping.attribute("xmlns") == "urn:xmpp:ping") {
 		QDomElement iq = createIQ(doc(), "result", e.attribute("from"), e.attribute("id"));
 		send(iq);
 		return true;
