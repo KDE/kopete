@@ -537,10 +537,12 @@ void GroupWiseAccount::reconcileOfflineChanges()
 				instIt.next();
 				QString groupId = grp->pluginData( protocol(), accountId() + " objectId" );
 				if ( groupId.isEmpty() )
+				{
 					if ( grp == Kopete::Group::topLevel() )
 						groupId = '0';	// hack the top level's objectId to 0
 					else
 						continue;
+				}
 				GWFolder * folder = qobject_cast<GWFolder*>( instIt.value()->parent() );
 				kDebug() << "      local stored groupId #" << groupId.toInt() << ", remote instance groupId #" << folder->id;
 				if ( folder->id == ( unsigned int )groupId.toInt() )
