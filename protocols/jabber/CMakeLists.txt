@@ -135,6 +135,7 @@ set(kopete_jabber_PART_SRCS
    jabbertransport.cpp 
    jabberbookmarks.cpp 
    jabberclient.cpp 
+   jabberbobcache.cpp
 )
 
 if(BUILD_GOOGLETALK)

@@ -21,6 +21,7 @@
  ***************************************************************************/
 
 #include "jabberclient.h"
+#include "jabberbobcache.h"
 
 #include <kdebug.h>
 #include "kopetesockettimeoutwatcher.h"
@@ -789,6 +790,9 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	d->jabberClient->setIdentity( discoIdentity() );
 
 	d->jabberClient->setTimeZone ( timeZoneName (), timeZoneOffset () );
+
+	// Set cache for XEP-0231
+	d->jabberClient->bobManager()->setCache ( new JabberBoBCache ( d->jabberClient ) );
 
 
 	// XMPP Features from http://xmpp.org/registrar/disco-features.html
