@@ -12,9 +12,7 @@
 #ifndef ADDBOOKMARKSPREFERENCES_H
 #define ADDBOOKMARKSPREFERENCES_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include "addbookmarksprefssettings.h"
 
 class QButtonGroup;

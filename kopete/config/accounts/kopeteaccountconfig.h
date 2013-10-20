@@ -20,9 +20,7 @@
 #ifndef KOPETEACCOUNTCONFIG_H
 #define KOPETEACCOUNTCONFIG_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include <qmap.h>
 #include <qcolor.h>
 

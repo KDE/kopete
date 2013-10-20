@@ -15,9 +15,7 @@
 #ifndef AliasPREFERENCES_H
 #define AliasPREFERENCES_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 #include <QList>
 

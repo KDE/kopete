@@ -18,9 +18,7 @@
 #ifndef AutoReplacePREFERENCES_H
 #define AutoReplacePREFERENCES_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 namespace Ui { class AutoReplacePrefsUI; }
 class AutoReplaceConfig;

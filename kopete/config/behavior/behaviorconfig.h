@@ -16,9 +16,7 @@
 #ifndef BEHAVIORCONFIG_H
 #define BEHAVIORCONFIG_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 class QTabWidget;
 

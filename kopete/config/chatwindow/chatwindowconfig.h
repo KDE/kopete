@@ -22,9 +22,7 @@
 
 #include <QtCore/QPointer>
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 #include "ui_chatwindowconfig_style.h"
 #include "ui_chatwindowconfig_emoticons.h"
 #include "ui_chatwindowconfig_colors.h"

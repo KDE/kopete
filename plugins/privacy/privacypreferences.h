@@ -17,9 +17,7 @@
 #ifndef PRIVACY_PREFERENCES_H
 #define PRIVACY_PREFERENCES_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 #include <QVariantList>
 

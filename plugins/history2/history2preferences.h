@@ -19,9 +19,7 @@
 #ifndef HISTORYPREFERENCES_H
 #define HISTORYPREFERENCES_H
 
-#define KDE3_SUPPORT
 #include <kcmodule.h>
-#undef KDE3_SUPPORT
 
 namespace Ui { class History2PrefsUI; }
 
