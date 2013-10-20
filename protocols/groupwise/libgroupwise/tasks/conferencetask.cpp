@@ -61,9 +61,9 @@ void ConferenceTask::dumpConferenceEvent( ConferenceEvent & evt )
 
 bool ConferenceTask::take( Transfer * transfer )
 {
-	EventTransfer * incomingEvent;
-	if ( forMe( transfer, incomingEvent ) )
+	if ( forMe( transfer ) )
 	{
+		EventTransfer * incomingEvent = static_cast<EventTransfer *>(transfer);
 		client()->debug( "Got a conference event:" );
 		ConferenceEvent event;
 		event.type = (GroupWise::Event)( incomingEvent->eventType() );

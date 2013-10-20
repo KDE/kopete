@@ -34,7 +34,7 @@ Q_OBJECT
 	public:
 		EventTask( Task *parent );
 	protected:
-		bool forMe( Transfer * transfer, EventTransfer *& event ) const;
+		virtual bool forMe( const Transfer * transfer ) const;
 		void registerEvent( GroupWise::Event e );
 	private:
 		QList<int> m_eventCodes;

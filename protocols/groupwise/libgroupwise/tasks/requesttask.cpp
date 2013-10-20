@@ -31,10 +31,10 @@ RequestTask::RequestTask( Task * parent )
 {
 }
 
-bool RequestTask::forMe( Transfer * transfer ) const
+bool RequestTask::forMe( const Transfer * transfer ) const
 {
 	// see if we can down-cast transfer to a Response
-	Response * theResponse = dynamic_cast<Response *>(transfer);
+	const Response * theResponse = dynamic_cast<const Response *>(transfer);
 	return (theResponse && theResponse->transactionId() == m_transactionId );
 }
 

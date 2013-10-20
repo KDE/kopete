@@ -72,7 +72,7 @@ bool EventTransfer::hasStatusText()
 
 // accessors
 	
-int EventTransfer::eventType()
+int EventTransfer::eventType() const
 { 
 	return m_eventType;
 }

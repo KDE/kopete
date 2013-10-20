@@ -31,11 +31,10 @@ void EventTask::registerEvent( GroupWise::Event e )
 	m_eventCodes.append( e );
 }
 
-bool EventTask::forMe( Transfer * transfer, EventTransfer*& event ) const
+bool EventTask::forMe( const Transfer * transfer ) const
 {
 	// see if we can down-cast transfer to an EventTransfer
-	/*EventTransfer * */
-	event = dynamic_cast<EventTransfer *>(transfer);
+	const EventTransfer * event = dynamic_cast<const EventTransfer *>(transfer);
 	if ( event )
 	{
 		// see if we are supposed to handle this kind of event

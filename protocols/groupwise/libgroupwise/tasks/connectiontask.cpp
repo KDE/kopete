@@ -34,9 +34,9 @@ ConnectionTask::~ConnectionTask()
 
 bool ConnectionTask::take( Transfer * transfer )
 {
-	EventTransfer * incomingEvent;
-	if ( forMe( transfer, incomingEvent ) )
+	if ( forMe( transfer ) )
 	{
+		EventTransfer * incomingEvent = static_cast<EventTransfer *>(transfer);
 		client()->debug( "Got a connection event:" );
 		switch ( incomingEvent->eventType() )
 		{

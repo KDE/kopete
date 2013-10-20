@@ -77,7 +77,7 @@ public:
 	 * Accessors for the transfer's contents
 	 */
 	TransferType type() { return Transfer::EventTransfer; }
-	int eventType();
+	int eventType() const;
 	QString source();
 	QDateTime timeStamp();
 	GroupWise::ConferenceGuid guid();

@@ -33,7 +33,7 @@ void UserTransfer::setFields( Field::FieldList fields )
 	m_fields = fields;
 }
 
-int UserTransfer::transactionId()
+int UserTransfer::transactionId() const
 {
 	return m_transactionId;
 }
