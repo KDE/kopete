@@ -187,7 +187,7 @@ void SMSAccount::fillActionMenu( KActionMenu *actionMenu )
 	Kopete::Account::fillActionMenu( actionMenu );
 }
 
-void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
+void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const Kopete::StatusMessage &reason, const OnlineStatusOptions& /*options*/ )
 {
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
 		connect();
