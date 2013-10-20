@@ -8,10 +8,9 @@ future. It is best to send patches upstream so they'll end up in the
 main tree. We will benefit from them at the next synch point.
 
 If you really really need to make a change to one of the source files,
-please make sure to commit a diff to the original file in this directory in
-the form of 001_your_fix_name.patch. Always pick the next free number
-for your patch, the version found in this directory is meant to have
-all patches applied in order. When committing, CCMAIL kopete-devel@kde.org.
+please make sure to commit a diff to the original file in "patches" directory
+in the form of 01_your_fix_name.patch. Always pick the next free number
+for your patch. When committing, CCMAIL kopete-devel@kde.org.
 
 Changes to CMakeLists.txt are fine and require no diffs, since Psi
 uses qmake.
@@ -23,3 +22,6 @@ This library depends on: libidn (compile time), qca-tls (runtime)
 
 As of 01-03-2007, all changes from 001 to 014 are combined into iris_patch_070301.diff,
    updated libiris to psi svn rev.356
+
+
+As of 20-10-2013, all kopete changes were pushed to iris repository
