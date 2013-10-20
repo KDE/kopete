@@ -37,6 +37,7 @@ class SkypeProtocolHandler : public Kopete::MimeTypeHandler
 	public:
 		SkypeProtocolHandler();
 		void handleURL(const QString &, const KUrl &url) const;
+		using Kopete::MimeTypeHandler::handleURL;
 };
 
 #define LAUNCH_ALLWAYS 0

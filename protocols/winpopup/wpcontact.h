@@ -53,6 +53,7 @@ public:
 //	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QList<KAction*> *customContextMenuActions();
+	using Kopete::Contact::customContextMenuActions;
 	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 

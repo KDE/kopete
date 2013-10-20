@@ -41,6 +41,7 @@ public:
 	 * the context menu
 	 */
 	virtual QList<KAction*> *customContextMenuActions();
+	using AIMContactBase::customContextMenuActions;
 
 	virtual void setSSIItem( const OContact& ssiItem );
 

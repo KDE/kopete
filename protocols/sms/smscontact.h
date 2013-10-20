@@ -36,6 +36,7 @@ public:
 		const QString &displayName, Kopete::MetaContact *parent );
 
 	virtual QList<KAction *>* customContextMenuActions();
+	using Kopete::Contact::customContextMenuActions;
 
 	const QString &phoneNumber();
 	void setPhoneNumber( const QString phoneNumber );

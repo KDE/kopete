@@ -68,6 +68,7 @@ public:
 	 * Return the actions for this contact
 	 */
     virtual QList <KAction *>*customContextMenuActions ();
+    using Kopete::Contact::customContextMenuActions;
         /**
 	 * Returns a Kopete::ChatSession associated with this contact
 	 */

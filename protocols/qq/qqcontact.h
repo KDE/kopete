@@ -94,6 +94,7 @@ public:
 	virtual bool isReachable();
 
 	virtual QList<KAction*> *customContextMenuActions();
+	using Kopete::Contact::customContextMenuActions;
 
 	/**
 	 * update the server group map

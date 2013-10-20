@@ -51,6 +51,7 @@ public:
 	 * the context menu
 	 */
 	virtual QList<KAction*> *customContextMenuActions();
+	using ICQContactBase::customContextMenuActions;
 
 	/** Return whether or not this contact is reachable. */
 	virtual bool isReachable();

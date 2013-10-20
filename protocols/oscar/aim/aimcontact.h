@@ -36,6 +36,7 @@ public:
 
 	bool isReachable();
 	QList<KAction*> *customContextMenuActions();
+	using AIMContactBase::customContextMenuActions;
 
 	int warningLevel() const;
 
