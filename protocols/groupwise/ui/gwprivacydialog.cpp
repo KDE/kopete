@@ -113,7 +113,7 @@ void GroupWisePrivacyDialog::populateWidgets()
 	else
 		m_defaultPolicy = new Q3ListBoxText( m_privacy.denyList, defaultPolicyText );
 
-	QPixmap icon = m_account->protocol()->groupwiseAvailable.iconFor( m_account , 16);
+	QPixmap icon = m_account->protocol()->groupwiseAvailable.iconFor( m_account ).pixmap( 16 );
 
 	// allow list
 	QStringList allowList = mgr->allowList();
@@ -203,7 +203,7 @@ void GroupWisePrivacyDialog::slotSearchedForUsers()
 	QList< ContactDetails > selected = m_search->selectedResults();
 	QList< ContactDetails >::Iterator it = selected.begin();
 	const QList< ContactDetails >::Iterator end = selected.end();
-	QPixmap icon = m_account->protocol()->groupwiseAvailable.iconFor( m_account, 16 );
+	QPixmap icon = m_account->protocol()->groupwiseAvailable.iconFor( m_account ).pixmap ( 16 );
 	for ( ; it != end; ++it )
 	{
 		m_dirty = true;
