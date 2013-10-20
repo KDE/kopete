@@ -182,9 +182,8 @@ bool JT_AHCommand::take(const QDomElement &e)
 	// Result of a command
 	if(e.attribute("type") == "result")
 	{
-		bool found;
-		QDomElement i = findSubTag(e, "command", &found);
-		if(found)
+		QDomElement i = e.firstChildElement("command");
+		if(!i.isNull())
 		{
 			AHCommand c(i);
 			if(c.status() == AHCommand::Executing)
@@ -233,9 +232,8 @@ bool JT_AHCGetList::take(const QDomElement &e)
 	if(e.attribute("type") == "result")
 	{
 		mCommands.clear();
-		bool found;
-		QDomElement commands = findSubTag(e, "query", &found);
-		if(found)
+		QDomElement commands = e.firstChildElement("query");
+		if(!commands.isNull())
 		{
 			for(QDomNode n = commands.firstChild(); !n.isNull(); n = n.nextSibling())
 			{
