@@ -53,7 +53,7 @@ private slots:
 	void slotTransferError ( int errorCode );
 
 	void slotOutgoingConnected ();
-	void slotOutgoingBytesWritten ( int nrWritten );
+	void slotOutgoingBytesWritten ( qint64 nrWritten );
 
 	void slotIncomingDataReady ( const QByteArray &data );
 
@@ -69,8 +69,8 @@ private:
 	Kopete::Transfer *mKopeteTransfer;
 	QFile mLocalFile;
 	int mTransferId;
-	qlonglong mBytesTransferred;
-	qlonglong mBytesToTransfer;
+	qint64 mBytesTransferred;
+	qint64 mBytesToTransfer;
 
 };
 

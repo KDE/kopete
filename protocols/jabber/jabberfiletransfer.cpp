@@ -133,7 +133,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 	initializeVariables ();
 
 	connect ( mXMPPTransfer, SIGNAL (connected()), this, SLOT (slotOutgoingConnected()) );
-	connect ( mXMPPTransfer, SIGNAL (bytesWritten(int)), this, SLOT (slotOutgoingBytesWritten(int)) );
+	connect ( mXMPPTransfer, SIGNAL (bytesWritten(qint64)), this, SLOT (slotOutgoingBytesWritten(qint64)) );
 	connect ( mXMPPTransfer, SIGNAL (error(int)), this, SLOT (slotTransferError(int)) );
 	
 	FTThumbnail preview;
@@ -347,7 +347,7 @@ void JabberFileTransfer::slotOutgoingConnected ()
 
 }
 
-void JabberFileTransfer::slotOutgoingBytesWritten ( int nrWritten )
+void JabberFileTransfer::slotOutgoingBytesWritten ( qint64 nrWritten )
 {
 
 	mBytesTransferred += nrWritten;
