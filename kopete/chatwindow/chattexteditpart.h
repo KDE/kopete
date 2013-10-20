@@ -58,7 +58,7 @@ class PropertyContainer;
  * 
  * @author Richard Smith
  */
-class KOPETECHATWINDOW_SHARED_EXPORT ChatTextEditPart : public KParts::ReadOnlyPart
+class CHATTEXTEDITPART_EXPORT ChatTextEditPart : public KParts::ReadOnlyPart
 {
 	Q_OBJECT
 public:
