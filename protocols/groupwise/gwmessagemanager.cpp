@@ -54,7 +54,7 @@
 GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id ): Kopete::ChatSession( user, others, protocol ), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
 	Q_UNUSED( id );
-	static uint s_id=0;
+	static int s_id=0;
 	m_mmId=++s_id;
 
 	kDebug () << "New message manager for " << user->contactId();
@@ -98,7 +98,7 @@ GroupWiseChatSession::~GroupWiseChatSession()
 		delete contact;
 }
 
-uint GroupWiseChatSession::mmId() const
+int GroupWiseChatSession::mmId() const
 {
   return m_mmId;
 }
