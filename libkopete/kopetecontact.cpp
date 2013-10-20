@@ -233,7 +233,12 @@ void Contact::slotAddContact()
 	}
 }
 
-KMenu* Contact::popupMenu( ChatSession *manager )
+KMenu* Contact::popupMenu( ChatSession * )
+{
+	return popupMenu();
+}
+
+KMenu* Contact::popupMenu()
 {
 	KMenu *menu = new KMenu();
 

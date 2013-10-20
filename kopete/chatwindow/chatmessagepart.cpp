@@ -784,7 +784,7 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 
 	if ( Kopete::Contact *contact = contactFromNode( d->activeElement ) )
 	{
-		chatWindowPopup = contact->popupMenu( d->manager );
+		chatWindowPopup = contact->popupMenu();
 		connect( chatWindowPopup, SIGNAL(aboutToHide()), chatWindowPopup , SLOT(deleteLater()) );
 	}
 	else

@@ -242,7 +242,12 @@ public:
 	 * This menu includes generic actions common to each protocol, and action defined in
 	 * @ref customContextMenuActions()
 	 */
-	KMenu *popupMenu( ChatSession *manager = 0L );
+	KMenu *popupMenu();
+
+	/**
+	 * @deprecated
+	 */
+	KDE_DEPRECATED KMenu *popupMenu( ChatSession *manager );
 
 	/**
 	 * \brief Get whether or not this contact is capable of file transfers

@@ -49,7 +49,7 @@ void ChatMembersListView::slotContextMenuRequested( const QPoint & pos )
 			if (!c)
 				return;
 	
-			KMenu *p = c->popupMenu( membermodel->session() );
+			KMenu *p = c->popupMenu();
 			connect( p, SIGNAL(aboutToHide()), p, SLOT(deleteLater()) );
 			p->popup( mapToGlobal(pos) );
 		}
