@@ -135,13 +135,15 @@ public slots:
 	 * @param statusMessage is the new status message
 	 * @param flags is a bitmask of SetOnlineStatusFlag
 	 * @param forced is a boolean indicating that all accounts are required to change status
+	 *
+	 * @note KDE5: Merge these two setOnlineStatus functions (default value for forced is false)
 	 */
 	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
 	                      const Kopete::StatusMessage &statusMessage,
 			      uint flags,
 			      bool forced );
 
-	KDE_DEPRECATED void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
+	void setOnlineStatus( /*Kopete::OnlineStatusManager::Categories*/ uint category,
 	                      const Kopete::StatusMessage &statusMessage = Kopete::StatusMessage(),
 			      uint flags = 0 );
 
