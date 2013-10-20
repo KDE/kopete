@@ -197,7 +197,6 @@ void GroupWiseContact::sendMessage( Kopete::Message &message )
 void GroupWiseContact::deleteContact()
 {
 	account()->deleteContact( this );
-	Kopete::Contact::deleteContact();
 }
 
 void GroupWiseContact::sync( unsigned int)
