@@ -817,6 +817,7 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	features.addFeature("jabber:x:signed");                        // XEP-0027: Current OpenPGP Usage
 	features.addFeature("urn:xmpp:delay");                         // XEP-0203: Delayed Delivery
 	features.addFeature("urn:xmpp:receipts");                      // XEP-0184: Message Delivery Receipts
+	features.addFeature("urn:xmpp:thumbs:0");                      // XEP-0264: File Transfer Thumbnails
 	d->jabberClient->setFeatures(features);
 
 	// Additional features supported by libiris, but not yet by Kopete:

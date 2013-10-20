@@ -57,10 +57,14 @@ private slots:
 
 	void slotIncomingDataReady ( const QByteArray &data );
 
+	void slotThumbnailReceived ();
+	void askIncomingTransfer ( const QByteArray &thumbnail = QByteArray() );
+
 private:
 	void initializeVariables ();
 
 	JabberAccount *mAccount;
+	JabberBaseContact *mContact;
 	XMPP::FileTransfer *mXMPPTransfer;
 	Kopete::Transfer *mKopeteTransfer;
 	QFile mLocalFile;

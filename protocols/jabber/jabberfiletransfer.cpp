@@ -17,6 +17,7 @@
 
 #include "jabberfiletransfer.h"
 #include <QBuffer>
+#include <QTimer>
 #include <kdebug.h>
 #include <im.h>
 #include <xmpp.h>
@@ -34,6 +35,7 @@
 #include "jabbercontactpool.h"
 #include "jabberbasecontact.h"
 #include "jabbercontact.h"
+#include "xmpp_tasks.h"
 
 JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTransfer *incomingTransfer )
 {
@@ -43,15 +45,15 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 	mXMPPTransfer = incomingTransfer;
 
 	// try to locate an exact match in our pool first
-	JabberBaseContact *contact = mAccount->contactPool()->findExactMatch ( mXMPPTransfer->peer () );
+	mContact = mAccount->contactPool()->findExactMatch ( mXMPPTransfer->peer () );
 
-	if ( !contact )
+	if ( !mContact )
 	{
 		// we have no exact match, try a broader search
-		contact = mAccount->contactPool()->findRelevantRecipient ( mXMPPTransfer->peer () );
+		mContact = mAccount->contactPool()->findRelevantRecipient ( mXMPPTransfer->peer () );
 	}
 
-	if ( !contact )
+	if ( !mContact )
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << "No matching local contact found, creating a new one.";
 
@@ -59,7 +61,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 
 		metaContact->setTemporary (true);
 
-		contact = mAccount->contactPool()->addContact ( mXMPPTransfer->peer (), metaContact, false );
+		mContact = mAccount->contactPool()->addContact ( mXMPPTransfer->peer (), metaContact, false );
 
 		Kopete::ContactList::self ()->addMetaContact ( metaContact );
 	}
@@ -70,21 +72,41 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 			  this, SLOT (slotTransferRefused(Kopete::FileTransferInfo)) );
 
 	initializeVariables ();
-	
-#ifdef IRIS_FILE_TRANSFER_PREVIEW
+
+	if (!mXMPPTransfer->thumbnail().isNull()) {
+		JT_BitsOfBinary *task = new JT_BitsOfBinary ( mAccount->client()->rootTask() );
+		connect ( task, SIGNAL(finished()), this, SLOT(slotThumbnailReceived()) );
+		task->get ( mXMPPTransfer->peer(), QString(mXMPPTransfer->thumbnail().data) );
+		task->go ( true );
+		QTimer::singleShot ( 5000, this, SLOT(askIncomingTransfer()) ); // Wait for thumbnail max 5s
+	} else {
+		askIncomingTransfer ();
+	}
+}
+
+void JabberFileTransfer::slotThumbnailReceived ()
+{
+	JT_BitsOfBinary *task = static_cast<JT_BitsOfBinary *> ( sender() );
+	askIncomingTransfer ( task->data().data() );
+}
+
+void JabberFileTransfer::askIncomingTransfer ( const QByteArray &thumbnail )
+{
+	if (mTransferId != -1)
+		return;
+
 	QPixmap preview;
-	if(!mXMPPTransfer->preview().isEmpty())
+	if (!thumbnail.isNull())
 	{
-		preview.loadFromData(KCodecs::base64Decode(mXMPPTransfer->preview().toAscii()));
+		preview.loadFromData ( thumbnail );
 	}
 
-	mTransferId = Kopete::TransferManager::transferManager()->askIncomingTransfer ( contact,
+	mTransferId = Kopete::TransferManager::transferManager()->askIncomingTransfer ( mContact,
 																				  mXMPPTransfer->fileName (),
 																				  mXMPPTransfer->fileSize (),
 																				  mXMPPTransfer->description () ,
 																				QString(),
 																				  preview);
-#endif
 
 }
 
@@ -93,6 +115,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 	kDebug(JABBER_DEBUG_GLOBAL) << "New outgoing transfer for " << contact->contactId() << ": " << file;
 
 	mAccount = account;
+	mContact = contact;
 	mLocalFile.setFileName ( file );
 	bool canOpen=mLocalFile.open ( QIODevice::ReadOnly );
 	
@@ -113,7 +136,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 	connect ( mXMPPTransfer, SIGNAL (bytesWritten(int)), this, SLOT (slotOutgoingBytesWritten(int)) );
 	connect ( mXMPPTransfer, SIGNAL (error(int)), this, SLOT (slotTransferError(int)) );
 	
-	QString preview;
+	FTThumbnail preview;
 	QImage img=QImage(mLocalFile.fileName());
 	if(!img.isNull())
 	{
@@ -122,16 +145,12 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 		QBuffer buffer(&ba);
 		buffer.open(QIODevice::WriteOnly);
 		img.save(&buffer, "PNG"); // writes image into ba in PNG format
-		preview= KCodecs::base64Encode( ba  , true  );
+		preview= FTThumbnail(ba,QString("image/png"),img.width(),img.height());
 	}
 
 	  
 	if(canOpen) {
-#ifdef IRIS_FILE_TRANSFER_PREVIEW
 		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "", preview);
-#else
-		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "");
-#endif
 	} else {
 		mKopeteTransfer->slotError ( KIO::ERR_CANNOT_OPEN_FOR_READING, file );
 	}
