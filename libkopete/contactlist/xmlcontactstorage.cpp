@@ -146,15 +146,14 @@ void XmlContactStorage::load()
     {
         QFile::copy( filename, filename + QString::fromLatin1(".bak_v%1").arg( d->version ) );
 
-        bool contactListUpdated = false;
         if ( d->version == 10 )
         {
-            contactListUpdated = updateFrom10to11( list );
+            updateFrom10to11( list );
             d->version = readVersion( list );
         }
         if ( d->version == 11 )
         {
-            contactListUpdated = updateFrom11to12( list );
+            updateFrom11to12( list );
             d->version = readVersion( list );
         }
 
