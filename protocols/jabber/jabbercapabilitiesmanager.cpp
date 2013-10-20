@@ -358,12 +358,7 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 	if( !account->client() || !account->client()->rootTask() )
 		return;
 
-	QString node = status.capsNode(), version = status.capsVersion(), extensions = status.capsExt();
-	QString hash;
-
-#ifdef IRIS_XEP_0115_HASH_ATTRIBUTE
-	hash = status.capsHash();
-#endif
+	QString node = status.capsNode(), version = status.capsVersion(), extensions = status.capsExt(), hash = status.capsHashAlgorithm();
 
 	Capabilities capabilities( node, version, extensions, hash );
 	
@@ -630,10 +625,8 @@ QString JabberCapabilitiesManager::clientName(const Jid& jid) const
 
 QString JabberCapabilitiesManager::clientVersion(const Jid& jid) const
 {
-#ifdef IRIS_XEP_0115_HASH_ATTRIBUTE
 	if (capabilitiesEnabled(jid) && d->jidCapabilitiesMap[jid.full()].hash().isEmpty())
 		return d->jidCapabilitiesMap[jid.full()].version();
-#endif
 	return QString();
 }
 

@@ -1142,7 +1142,6 @@ void JabberClient::slotCSError ( int error )
 
 void JabberClient::slotCSConnected ()
 {
-#ifdef IRIS_SOCKET_ACCESS
 	Kopete::SocketTimeoutWatcher* timeoutWatcher = 0;
 
 	ByteStream *irisByteStream = d->jabberClientConnector->stream ();
@@ -1151,7 +1150,6 @@ void JabberClient::slotCSConnected ()
 
 	if ( timeoutWatcher )
 		QObject::connect( timeoutWatcher, SIGNAL(errorInt(int)), this, SLOT(slotCSError(int)) );
-#endif
 }
 
 void JabberClient::slotRosterRequestFinished ( bool success, int /*statusCode*/, const QString &/*statusString*/ )

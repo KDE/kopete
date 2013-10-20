@@ -199,7 +199,6 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 			}
 		}
-#ifdef IRIS_XEP_0027_XSIGNED
 		else if( !message.xsigned().isEmpty () )
 		{
 			if (Kopete::PluginManager::self()->plugin("kopete_cryptography"))
@@ -208,7 +207,6 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QString ("\n-----END PGP MESSAGE-----\n");
 			}
 		}
-#endif
 
 		// locate the originating contact
 		JabberBaseContact *subContact = account()->contactPool()->findExactMatch ( message.from () );

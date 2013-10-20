@@ -367,7 +367,6 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 				}
 			}
 
-#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
 			// XEP-0184: Message Delivery Receipts
 			if ( message.messageReceipt() == ReceiptReceived )
 			{
@@ -375,7 +374,6 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 				mManager->receivedMessageState( message.messageReceiptId().toUInt(), Kopete::Message::StateSent );
 				mSendsDeliveredEvent = true;
 			}
-#endif
 		}
 		else
 		// Then here could be event notification requests
@@ -385,10 +383,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent );
 			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent);
 
-#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
 			// XEP-0184: Message Delivery Receipts
 			mRequestReceiptDelivery = ( message.messageReceipt() == ReceiptRequest );
-#endif
 		}
 	}
 
@@ -396,11 +392,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	 * Don't display empty messages, these were most likely just carrying
 	 * event notifications or other payload.
 	 */
-	if ( message.body().isEmpty () && message.urlList().isEmpty () && !message.containsHTML() && message.xencrypted().isEmpty()
-#ifdef IRIS_XEP_0027_XSIGNED
-	     && message.xsigned().isEmpty()
-#endif
-	   )
+	if ( message.body().isEmpty () && message.urlList().isEmpty () && !message.containsHTML() && message.xencrypted().isEmpty() && message.xsigned().isEmpty() )
 		return;
 
 	// determine message type
@@ -441,7 +433,6 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 			}
 		}
-#ifdef IRIS_XEP_0027_XSIGNED
 		else if( !message.xsigned().isEmpty() )
 		{
 			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received signed message";
@@ -451,7 +442,6 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 				body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QString ("\n-----END PGP MESSAGE-----\n");
 			}
 		}
-#endif
 
 		if( message.containsHTML() )
 		{

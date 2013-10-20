@@ -341,7 +341,6 @@ void JabberChatSession::sendNotification( Event event )
 
 		}
 
-#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
 		// XEP-0184: Message Delivery Receipts (same as DeliveredEvent)
 		if (send_msg_delivery)
 		{
@@ -351,7 +350,6 @@ void JabberChatSession::sendNotification( Event event )
 			message.setMessageReceiptId ( lastReceivedMessageId );
 			account()->client()->sendMessage ( message );
 		}
-#endif
 	}
 }
 
@@ -403,7 +401,6 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			 */
 
 			// please don't translate the following string
-#ifdef IRIS_XEP_0027_XSIGNED
 			bool xsigned = message.classes().contains ( "signed" );
 			bool xencrypted = message.classes().contains ( "encrypted" );
 			if ( xsigned && xencrypted )
@@ -413,7 +410,6 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			else if ( xencrypted )
 				jabberMessage.setBody ( "This message is encrypted." );
 			else
-#endif
 				jabberMessage.setBody ( "This message is signed or encrypted." );
 
 			QString encryptedBody = message.plainBody().trimmed();
@@ -423,11 +419,9 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			encryptedBody = encryptedBody.right ( encryptedBody.length () - encryptedBody.indexOf ( "\n\n" ) - 2 );
 
 			// assign payload to message
-#ifdef IRIS_XEP_0027_XSIGNED
 			if ( xsigned && ! xencrypted )
 				jabberMessage.setXSigned ( encryptedBody );
 			else
-#endif
 				jabberMessage.setXEncrypted ( encryptedBody );
         }
         else
@@ -485,14 +479,12 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		jabberMessage.addEvent( DisplayedEvent );
 		jabberMessage.setChatState( XMPP::StateActive );
 
-#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
 		// XEP-0184: Message Delivery Receipts
 		JabberResource *jresource = account()->resourcePool()->getJabberResource(toJid, resource());
 		if( jresource && jresource->features().test(QStringList("urn:xmpp:receipts")) )
 		{
 			jabberMessage.setMessageReceipt( ReceiptRequest );
 		}
-#endif
 
 		// send the message
 		account()->client()->sendMessage ( jabberMessage );

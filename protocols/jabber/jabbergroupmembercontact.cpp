@@ -169,7 +169,6 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 				}*/
 			}
 
-#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
 			// XEP-0184: Message Delivery Receipts
 			if ( message.messageReceipt() == ReceiptReceived )
 			{
@@ -177,7 +176,6 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 				mManager->receivedMessageState( message.messageReceiptId().toUInt(), Kopete::Message::StateSent );
 				mSendsDeliveredEvent = true;
 			}
-#endif
 		}
 		else
 		// Then here could be event notification requests
@@ -187,10 +185,8 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 			mRequestDeliveredEvent = message.containsEvent ( XMPP::DeliveredEvent );
 			mRequestDisplayedEvent = message.containsEvent ( XMPP::DisplayedEvent);
 
-#ifdef IRIS_XEP_0184_ID_ATTRIBUTE
 			// XEP-0184: Message Delivery Receipts
 			mRequestReceiptDelivery = ( message.messageReceipt() == ReceiptRequest );
-#endif
 		}
 	}
 
@@ -226,12 +222,10 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
-#ifdef IRIS_XEP_0027_XSIGNED
 		else if( !message.xsigned().isEmpty () )
 		{
 			body = QString ("-----BEGIN PGP MESSAGE-----\n\n") + message.xsigned () + QString ("\n-----END PGP MESSAGE-----\n");
 		}
-#endif
 
 		// convert XMPP::Message into Kopete::Message
 		newMessage = new Kopete::Message ( this, contactList );
