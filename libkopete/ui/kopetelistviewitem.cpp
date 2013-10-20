@@ -826,7 +826,7 @@ ContactComponent::~ContactComponent()
 
 void ContactComponent::updatePixmap()
 {
-	setPixmap( contact()->onlineStatus().iconFor( contact(), d->iconSize ) );
+	setPixmap( contact()->onlineStatus().iconFor( contact() ).pixmap( d->iconSize ) );
 }
 Kopete::Contact *ContactComponent::contact()
 {

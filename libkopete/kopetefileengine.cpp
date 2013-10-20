@@ -92,7 +92,7 @@ namespace Kopete
 
 					if (contact)
 					{
-						tmpPixmap = QPixmap(contact->onlineStatus().iconFor(contact,16));
+						tmpPixmap = QPixmap(contact->onlineStatus().iconFor(contact).pixmap(16));
 						completed = true;
 					}
 					else
@@ -119,7 +119,7 @@ namespace Kopete
 
 				if (account)
 				{
-					tmpPixmap = QPixmap(account->myself()->onlineStatus().iconFor(account->myself(),16));
+					tmpPixmap = QPixmap(account->myself()->onlineStatus().iconFor(account->myself()).pixmap(16));
 					completed = true;
 				}
 				else
