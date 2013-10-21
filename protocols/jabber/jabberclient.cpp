@@ -1054,9 +1054,8 @@ void JabberClient::slotCSAuthenticated ()
 		d->jabberClient->s5bManager()->setServer ( s5bServer () );
 	}
 
-	
-	//update the resource:
-	d->jid = d->jabberClientStream->jid();
+	// update only resource and do not change bare jid, see bug 324937
+	d->jid = XMPP::Jid ( d->jid.node(), d->jid.domain(), d->jabberClientStream->jid().resource() );
 
 	// start the client operation
 	d->jabberClient->start ( jid().domain (), jid().node (), d->password, jid().resource () );
