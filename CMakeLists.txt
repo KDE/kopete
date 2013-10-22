@@ -69,8 +69,8 @@ macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delt
 macro_optional_find_package(IDN)
 macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implementation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
 
-#macro_optional_find_package(Alsa)
-#macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed for Jingle Support in Kopete Jabber Plugin")
+macro_optional_find_package(Alsa)
+macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed to build Google Talk libjingle audio call support")
 
 macro_optional_find_package(Xmms)
 macro_bool_to_01(XMMS_FOUND HAVE_XMMS)

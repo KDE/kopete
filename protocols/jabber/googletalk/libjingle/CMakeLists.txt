@@ -41,6 +41,7 @@ include_directories (
 	${LIBORTP_INCLUDE_DIR}
 	${SRTP_INCLUDE_DIR}
 	${JSONCPP_INCLUDE_DIR}
+	${ALSA_INCLUDES}
 )
 
 if ( NOT WIN32 )
