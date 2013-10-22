@@ -43,6 +43,12 @@ include_directories (
 	${JSONCPP_INCLUDE_DIR}
 )
 
+if ( NOT WIN32 )
+	include_directories (
+		${OPENSSL_INCLUDE_DIR}
+	)
+endif ( NOT WIN32 )
+
 ########### next target ###############
 
 set ( call_SRCS
@@ -261,8 +267,7 @@ if ( NOT WIN32 )
 	#timeutils calls CLOCK_MONOLITHIC stuff, so we need the rt library
 	FIND_LIBRARY(RT_LIBRARY NAMES rt)
 	set ( call_LIBS ${call_LIBS}
-		${SSL_LIBRARY}
-		${CRYPTO_LIBRARY}
+		${OPENSSL_LIBRARIES}
 		${RT_LIBRARY}
 	)
 endif ( NOT WIN32 )
