@@ -1,4 +1,4 @@
-include_directories (${KLEOPATRA_INCLUDE_DIR})
+include_directories (${KLEOPATRA_INCLUDE_DIR} ${KOPETE_INCLUDES})
 
 ########### next target ###############
 

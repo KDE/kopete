@@ -23,15 +23,15 @@
 #include <qlabel.h>
 #include <qboxlayout.h>
 
-#include <kopete/kopeteuiglobal.h>
+#include "kopeteuiglobal.h"
+#include "kopetemetacontact.h"
+#include "kabcpersistence.h"
 
 #include <kleo/ui/keyrequester.h>
 
-#include <kopete/kabcpersistence.h>
 #include <kabc/addressbook.h>
 #include <kabc/addressee.h>
 
-#include <kopete/kopetemetacontact.h>
 #include "cryptographyplugin.h"
 
 CryptographySelectUserKey::CryptographySelectUserKey ( const QString& key ,Kopete::MetaContact *mc )

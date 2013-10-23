@@ -17,7 +17,7 @@
 */
 
 #include "cryptographymessagehandler.h"
-#include <kopete/kopetemessageevent.h>
+#include "kopetemessageevent.h"
 
 #include <kdebug.h>
 #include <QPointer>

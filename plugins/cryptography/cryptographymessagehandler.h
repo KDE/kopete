@@ -19,7 +19,7 @@
 #ifndef CRYPTOGRAPHY_MESSAGEHANDLER_H
 #define CRYPTOGRAPHY_MESSAGEHANDLER_H
 
-#include <kopete/kopetemessagehandler.h>
+#include "kopetemessagehandler.h"
 #include "cryptography_export.h"
 using namespace Kopete;
 

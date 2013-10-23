@@ -19,15 +19,15 @@
 #include "cryptographyplugin.h"
 #include "cryptographysettings.h"
 
-#include <kopete/kopetemetacontact.h>
-#include <kopete/kopetecontact.h>
-#include <kopete/kopetecontactlist.h>
-#include <kopete/kopetechatsession.h>
-#include <kopete/ui/kopeteview.h>
-#include <kopete/kopeteuiglobal.h>
-#include <kopete/kopeteprotocol.h>
+#include "kopetemetacontact.h"
+#include "kopetecontact.h"
+#include "kopetecontactlist.h"
+#include "kopetechatsession.h"
+#include "ui/kopeteview.h"
+#include "kopeteuiglobal.h"
+#include "kopeteprotocol.h"
+#include "kabcpersistence.h"
 
-#include <kopete/kabcpersistence.h>
 #include <kabc/addressee.h>
 #include <kabc/addressbook.h>
 #include "exportkeys.h"

@@ -32,14 +32,15 @@
 #include <kactioncollection.h>
 
 // kopete stuff
-#include <kopete/kopetemetacontact.h>
-#include <kopete/kopetecontactlist.h>
-#include <kopete/kopetechatsessionmanager.h>
-#include <kopete/kopetesimplemessagehandler.h>
-#include <kopete/kopeteuiglobal.h>
-#include <kopete/kopetecontact.h>
-#include <kopete/kopeteprotocol.h>
-#include <kopete/kopetemessageevent.h>
+#include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
+#include "kopetechatsessionmanager.h"
+#include "kopetesimplemessagehandler.h"
+#include "kopeteuiglobal.h"
+#include "kopetecontact.h"
+#include "kopeteprotocol.h"
+#include "kopetemessageevent.h"
+#include "kabcpersistence.h"
 
 // crypto stuff
 #include <kleo/cryptobackendfactory.h>
@@ -60,7 +61,6 @@
 
 // kabc stuff
 #include <kabc/addressbook.h>
-#include <kopete/kabcpersistence.h>
 
 // our own stuff
 #include "cryptographyselectuserkey.h"

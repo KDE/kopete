@@ -22,8 +22,8 @@
 #include <kiconloader.h>
 #include <kpushbutton.h>
 
-#include <kopete/kopetemetacontact.h>
-#include <kopete/kabcpersistence.h>
+#include "kopetemetacontact.h"
+#include "kabcpersistence.h"
 
 #include "cryptographyplugin.h"
 

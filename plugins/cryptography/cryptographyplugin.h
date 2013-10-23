@@ -19,7 +19,7 @@
 #ifndef CRYPTOGRAPHYPLUGIN_H
 #define CRYPTOGRAPHYPLUGIN_H
 
-#include <kopete/kopeteplugin.h>
+#include "kopeteplugin.h"
 
 #include <QVariantList>
 #include <QHash>
