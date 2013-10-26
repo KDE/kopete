@@ -306,7 +306,7 @@ void IdentityStatusWidget::slotAccountClicked( QListWidgetItem * item )
 {
 	Q_UNUSED( item );
 
-	if ( d->identity->accounts().isEmpty() )
+	if ( d->identity && d->identity->accounts().isEmpty() )
 	{
 		Q_ASSERT(d->accountHash.isEmpty());
 		// "Add an account" item
@@ -336,6 +336,9 @@ void IdentityStatusWidget::slotAccountDoubleClicked( QListWidgetItem * item )
 
 void IdentityStatusWidget::slotPhotoClicked()
 {
+	if ( !d->identity )
+		return;
+
 	bool ok, changed = false;
 	const QString photoPath = Kopete::UI::AvatarDialog::getAvatar( this, d->photoPath, &ok);
 	if ( ok ) {
