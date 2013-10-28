@@ -1,7 +1,3 @@
-# On Solaris, some of the name resolution functions are in libnsl;
-# this needs to be linked in if found. Copied from kdelibs.
-check_library_exists(nsl gethostbyname "" HAVE_NSL_LIBRARY)
-
 option(WITH_testbed "Enable Kopete testbed protocol" ON)
 option(WITH_oscar "Enable Kopete Oscar (ICQ and AIM) protocol" ON)
 option(WITH_yahoo "Enable Kopete Yahoo protocol" ON)

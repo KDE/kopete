@@ -227,6 +227,11 @@ if(WIN32)
   set(iris_kopete_libs ${iris_kopete_libs} ws2_32)
 endif(WIN32)
 
+# On Solaris, some of the name resolution functions are in libnsl;
+# this needs to be linked in if found. Copied from kdelibs.
+include(CheckLibraryExists)
+check_library_exists(nsl gethostbyname "" HAVE_NSL_LIBRARY)
+
 if(HAVE_NSL_LIBRARY)
   # This is probably Solaris, and libiris needs to link
   # to libnsl for gethostbyname
