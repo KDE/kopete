@@ -52,9 +52,9 @@ endif(MEDIASTREAMER_FOUND AND LIBORTP_FOUND AND WITH_WLM_MEDIASTREAMER)
 
 include_directories(${KOPETE_INCLUDES})
 
-if(WITH_wlm AND LIBMSN_FOUND)
+if(WITH_wlm AND LIBMSN_FOUND AND Boost_FOUND)
   add_subdirectory( wlm )
-endif(WITH_wlm AND LIBMSN_FOUND)
+endif(WITH_wlm AND LIBMSN_FOUND AND Boost_FOUND)
 
 if(WITH_oscar)
   add_subdirectory( oscar )

@@ -125,6 +125,9 @@ macro_log_feature(QGPGME_FOUND "QGpgME" "QGpgME library (from kdepimlibs)" "" FA
 macro_optional_find_package(Jasper)
 macro_log_feature(JASPER_FOUND Jasper "JasPer library implements the codec specified in the JPEG-2000 Part-1 standard" "http://www.ece.uvic.ca/~mdadams/jasper/" FALSE "" "Required in order to be able to receive and send webcam images from/to Yahoo in Kopete")
 
+macro_optional_find_package(Boost)
+macro_log_feature(Boost_FOUND Boost "C++ Boost libraries" "http://www.boost.org/" FALSE "" "Required for the Kopete WLM protocol")
+
 if (NOT DISABLE_VIDEOSUPPORT)
   set (LIBV4L2_REQUIRED FALSE)
   if (CMAKE_SYSTEM_NAME MATCHES Linux)

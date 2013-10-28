@@ -1,7 +1,5 @@
 project(wlm)
 
-# the wlm protocol uses KMime from kdepimlibs, which in turn requires Boost to work
-find_package(Boost REQUIRED)
 include_directories(
     ${Boost_INCLUDE_DIRS}
 )
