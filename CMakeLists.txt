@@ -66,6 +66,9 @@ macro_log_feature(JSONCPP_FOUND "jsoncpp" "jsoncpp is an implementation of a JSO
 macro_optional_find_package(QCA2)
 macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca" FALSE "2.0.0" "Needed to build Kopete's GroupWise and Jabber protocols.")
 
+macro_optional_find_package(ZLIB)
+macro_log_feature(ZLIB_FOUND "zlib" "zlib is a library implementing the deflate compression method" "http://zlib.net/" FALSE "" "Needed to build Kopete's GroupWise and Jabber protocols.")
+
 macro_optional_find_package(IDN)
 macro_log_feature(IDN_FOUND "IDN" "GNU Libidn Internationalized Domain Name (IDN) implementation" "http://www.gnu.org/software/libidn/" FALSE "" "Used by the Kopete Jabber plugin.")
 

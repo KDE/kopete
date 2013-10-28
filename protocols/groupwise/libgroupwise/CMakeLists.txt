@@ -1,8 +1,6 @@
 set( GROUPWISE_DEBUG_LIBGW 14191 )
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=${GROUPWISE_DEBUG_LIBGW} )
 
-find_package(ZLIB REQUIRED)
-
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/tasks
 	${QCA2_INCLUDE_DIR}
