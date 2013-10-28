@@ -28,7 +28,6 @@
 #include <kpluginfactory.h>
 #include <kaction.h>
 
-#include "config-kopete.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"

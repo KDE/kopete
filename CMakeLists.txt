@@ -73,7 +73,6 @@ macro_optional_find_package(Alsa)
 macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "" FALSE "" "Needed to build Google Talk libjingle audio call support")
 
 macro_optional_find_package(Xmms)
-macro_bool_to_01(XMMS_FOUND HAVE_XMMS)
 macro_log_feature(XMMS_FOUND "XMMS" "X MultiMedia System development libraries" "http://www.xmms.org" FALSE "" "Used by the Kopete nowlistening plugin to support the XMMS player.")
 
 if(XMMS_FOUND)
