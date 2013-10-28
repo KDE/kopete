@@ -25,8 +25,6 @@
 #ifndef JABBERACCOUNT_H
 #define JABBERACCOUNT_H
 
-#include <config-kopete.h>
-
 // we need these for type reasons
 #include <kopetepasswordedaccount.h>
 #include <kopeteonlinestatus.h>

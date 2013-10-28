@@ -21,7 +21,6 @@
 
 #include <qfile.h>
 #include <qicon.h>
-#include <config-kopete.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
