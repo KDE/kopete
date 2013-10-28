@@ -30,7 +30,7 @@
 #define _SHA1_H
 
 #include <config-kopete.h>
-#if HAVE_INTTYPES_H
+#ifdef HAVE_INTTYPES_H
 # include <inttypes.h>
 #else
 # if HAVE_STDINT_H
