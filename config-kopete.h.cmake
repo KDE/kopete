@@ -8,9 +8,6 @@
 /* Define to compile with GSM SMS support */
 /* #undef INCLUDE_SMSGSM */
 
-/* TODO */
-/* #undef HAVE_XSHM */
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine HAVE_INTTYPES_H 1
 
