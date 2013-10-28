@@ -136,12 +136,6 @@ if ( NOT WIN32 )
         macro_log_feature(OPENSSL_FOUND "OpenSSL" "OpenSSL implementation of SSL" "https://www.openssl.org/" FALSE "" "Needed to build Google Talk libjingle support")
 endif ( NOT WIN32 )
 
-# Generate config-kopete.h
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kopete.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kopete.h )
-
-# For config-kopete.h
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
-
 set(KOPETE_INCLUDES 
 	${KDE4_INCLUDES}
         ${KDEPIMLIBS_INCLUDE_DIRS}
