@@ -1,5 +1,3 @@
-find_package(Jasper)
-macro_log_feature(JASPER_FOUND Jasper "JasPer library implements the codec specified in the JPEG-2000 Part-1 standard" "http://www.ece.uvic.ca/~mdadams/jasper/" TRUE "" "Required in order to be able to receive and send webcam images from/to Yahoo in Kopete")
 
 add_subdirectory( libkyahoo ) 
 #add_subdirectory( ui ) 

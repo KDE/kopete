@@ -122,6 +122,9 @@ macro_log_feature(KLEOPATRA_FOUND "Kleopatra" "The Kleopatra libraries (from kde
 macro_optional_find_package(QGpgme)
 macro_log_feature(QGPGME_FOUND "QGpgME" "QGpgME library (from kdepimlibs)" "" FALSE "" "QGpgME library is required to build the cryptography plugin")
 
+macro_optional_find_package(Jasper)
+macro_log_feature(JASPER_FOUND Jasper "JasPer library implements the codec specified in the JPEG-2000 Part-1 standard" "http://www.ece.uvic.ca/~mdadams/jasper/" FALSE "" "Required in order to be able to receive and send webcam images from/to Yahoo in Kopete")
+
 if (NOT DISABLE_VIDEOSUPPORT)
   set (LIBV4L2_REQUIRED FALSE)
   if (CMAKE_SYSTEM_NAME MATCHES Linux)
