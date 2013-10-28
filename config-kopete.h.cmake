@@ -5,9 +5,6 @@
 /* Define if you have xmms libraries and header files. */
 #cmakedefine HAVE_XMMS 1
 
-/* Define if MSN webcam support can be enabled */
-#define MSN_WEBCAM 1
-
 /* Define to compile with GSM SMS support */
 /* #undef INCLUDE_SMSGSM */
 
