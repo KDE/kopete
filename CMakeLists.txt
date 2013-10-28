@@ -90,7 +90,6 @@ macro_log_feature(LIBMSN_FOUND "libmsn" "A library providing support for the msn
 
 include(CheckStructMember)
 macro_optional_find_package(GIF)
-macro_bool_to_01(GIF_FOUND HAVE_GIFLIB)
 macro_log_feature( GIF_FOUND "giflib" "Handwriting messages support for WLM" "http://sourceforge.net/projects/giflib/" FALSE "" "Required for the Kopete WLM protocol")
 
 macro_optional_find_package(Mediastreamer)
