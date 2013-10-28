@@ -21,9 +21,6 @@
    first (like Motorola and SPARC, unlike Intel and VAX). */
 #cmakedefine WORDS_BIGENDIAN ${CMAKE_WORDS_BIGENDIAN}
 
-/* The size of a `long', as computed by sizeof. */
-#define SIZEOF_LONG ${SIZEOF_LONG}
-
 /* The size of a `unsigned long', as computed by sizeof. */
 #define SIZEOF_UNSIGNED_LONG ${SIZEOF_UNSIGNED_LONG}
 

@@ -48,7 +48,6 @@ FIND_PACKAGE(QImageBlitz REQUIRED)
 # Configure checks
 include (TestBigEndian)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
-check_type_size("long" SIZEOF_LONG)
 check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
 
 macro_optional_find_package(LiboRTP)
