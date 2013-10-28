@@ -2,7 +2,21 @@ include_directories( ${JASPER_INCLUDE_DIR} )
 
 add_subdirectory( tests ) 
 
+include(CheckIncludeFile)
+check_include_file(stdint.h HAVE_STDINT_H)
+check_include_file(inttypes.h HAVE_INTTYPES_H)
+if(HAVE_STDINT_H)
+    add_definitions(-DHAVE_STDINT_H)
+endif(HAVE_STDINT_H)
+if(HAVE_INTTYPES_H)
+    add_definitions(-DHAVE_INTTYPES_H)
+endif(HAVE_INTTYPES_H)
 
+include(TestBigEndian)
+test_big_endian(WORDS_BIGENDIAN)
+if(WORDS_BIGENDIAN)
+    add_definitions(-DWORDS_BIGENDIAN)
+endif(WORDS_BIGENDIAN)
 
 ########### next target ###############
 set(libkyahoo_SRCS 

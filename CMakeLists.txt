@@ -44,10 +44,6 @@ KDE4_NO_ENABLE_FINAL(kopete)
 
 FIND_PACKAGE(QImageBlitz REQUIRED)
 
-# Configure checks
-include (TestBigEndian)
-TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
-
 macro_optional_find_package(LiboRTP)
 macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Google Talk libjingle audio call support and voice clips in WLM.")
 
@@ -134,8 +130,6 @@ endif (NOT DISABLE_VIDEOSUPPORT)
 macro_bool_to_01(LIBV4L2_FOUND HAVE_LIBV4L2)
 
 check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
-check_include_files(stdint.h HAVE_STDINT_H)
-check_include_files(inttypes.h HAVE_INTTYPES_H)
 check_include_files(linux/videodev.h HAVE_V4L)
 
 macro_optional_find_package(Expat)
