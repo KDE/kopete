@@ -23,7 +23,6 @@
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qtimer.h>
-#include <config-kopete.h>
 
 #include "avdevice/videodevicepool.h"
 #include "ui_avdeviceconfig_videodevice.h"

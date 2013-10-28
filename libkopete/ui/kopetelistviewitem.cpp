@@ -16,8 +16,6 @@
     *************************************************************************
 */
 
-#include <config-kopete.h>
-
 #include "kopetecontact.h"
 #include "kopetelistviewitem.h"
 #include "kopeteemoticons.h"
