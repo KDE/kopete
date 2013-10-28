@@ -96,7 +96,6 @@ macro_optional_find_package(Mediastreamer)
 macro_log_feature( MEDIASTREAMER_FOUND "mediastreamer" "A streaming engine specialized for voice/video telephony applications" "http://www.linphone.org/index.php/eng/code_review/mediastreamer2" FALSE "2.3.0" "Required to enable voice clips support in WLM plugin and needed to build Google Talk libjingle audio call support in Kopete.")
 
 macro_optional_find_package(LibMeanwhile)
-macro_bool_to_01(LIBMEANWHILE_FOUND HAVE_LIBMEANWHILE)
 macro_log_feature(LIBMEANWHILE_FOUND "libmeanwhile" "A library for protocol support for connection to Sametime servers" "http://meanwhile.sf.net" FALSE "" "Required for the Kopete Meanwhile protocol")
 
 macro_optional_find_package(Libgadu)
