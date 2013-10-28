@@ -4,11 +4,18 @@ include_directories(
 ${KOPETE_INCLUDES} 
 ${LIBV4L2_INCLUDE_DIR}
 )
+add_definitions(-DHAVE_LIBV4L2)
 else (LIBV4L2_FOUND)
 include_directories(
 ${KOPETE_INCLUDES}
 )
 endif (LIBV4L2_FOUND)
+
+include(CheckIncludeFile)
+check_include_file(linux/videodev.h HAVE_V4L)
+if(HAVE_V4L)
+add_definitions(-DHAVE_V4L)
+endif(HAVE_V4L)
 
 ########### next target ###############
 

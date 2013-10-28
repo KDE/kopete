@@ -127,9 +127,6 @@ if (NOT DISABLE_VIDEOSUPPORT)
   find_package(LibV4L2)
   macro_log_feature(LIBV4L2_FOUND "libv4l" "Collection of video4linux support libraries" "http://hansdegoede.livejournal.com, http://linuxtv.org/hg/~hgoede/libv4l/" LIBV4L2_REQUIRED "" "Required for better webcam support")
 endif (NOT DISABLE_VIDEOSUPPORT)
-macro_bool_to_01(LIBV4L2_FOUND HAVE_LIBV4L2)
-
-check_include_files(linux/videodev.h HAVE_V4L)
 
 macro_optional_find_package(Expat)
 macro_log_feature(EXPAT_FOUND "Expat" "Expat is a stream oriented XML parser" "http://expat.sourceforge.net/" FALSE "" "Needed to build Google Talk libjingle support")

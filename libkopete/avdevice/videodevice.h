@@ -21,8 +21,6 @@
 #ifndef KOPETE_AVVIDEODEVICELISTITEM_H
 #define KOPETE_AVVIDEODEVICELISTITEM_H
 
-#include <config-kopete.h>
-
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
