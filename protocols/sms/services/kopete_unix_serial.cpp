@@ -11,7 +11,6 @@
 // * Created: 10.5.1999
 // *************************************************************************
 #include "kopete_unix_serial.h"
-#include <config-kopete.h>
 #ifdef INCLUDE_SMSGSM
 
 #include <gsmlib/gsm_util.h>

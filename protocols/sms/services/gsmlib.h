@@ -16,7 +16,6 @@
 #ifndef GSMLIB_H_039562406
 #define GSMLIB_H_039562406
 
-#include <config-kopete.h>
 #include <Q3GridLayout>
 #include <QCustomEvent>
 #ifdef INCLUDE_SMSGSM

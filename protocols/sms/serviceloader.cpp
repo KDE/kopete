@@ -15,7 +15,6 @@
 */
 
 #include "serviceloader.h"
-#include <config-kopete.h>
 
 #include <kmessagebox.h>
 #include <klocale.h>

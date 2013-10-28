@@ -14,7 +14,6 @@
 */
 
 #include "gsmlib.h"
-#include <config-kopete.h>
 #ifdef INCLUDE_SMSGSM
 
 #include <qcombobox.h>
