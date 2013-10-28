@@ -1,9 +1,3 @@
-find_package(KDE4 REQUIRED)
-include (KDE4Defaults)
-include (MacroLibrary)
-include(MacroOptionalAddSubdirectory)
-
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
 include_directories ( ${KOPETE_INCLUDES} )
 
