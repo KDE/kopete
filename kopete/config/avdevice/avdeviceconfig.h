@@ -28,10 +28,6 @@
 #include "avdevice/videodevicepool.h"
 #include "ui_avdeviceconfig_videodevice.h"
 
-//#ifdef HAVE_GL
-//#include <qgl.h>
-//#endif
-
 class QTabWidget;
 
 //class Ui_AVDeviceConfig_VideoDevice;
@@ -91,9 +87,6 @@ private:
 	void addButtonControlElement(int cid, QString title);
 	void startCapturing();
 	void stopCapturing();
-#ifdef HAVE_GL
-//	QGLWidget m_video_gl;
-#endif
 
 protected:
 	virtual void showEvent(QShowEvent *event);
