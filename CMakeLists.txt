@@ -83,7 +83,6 @@ macro_optional_find_package(LibXslt)
 macro_log_feature(LIBXSLT_FOUND "LibXSLT" "A library to transform XML files into other XML files" "http://xmlsoft.org/XSLT" FALSE "" "Required for the Kopete webpresence plugin.")
 
 macro_optional_find_package(LibOTR)
-macro_bool_to_01(LIBOTR_FOUND HAVE_LIBOTR)
 macro_log_feature(LIBOTR_FOUND "libotr" "A library to encrypt messages with Off-the-Record encryption (version 4.0.0) or greater" "http://www.cypherpunks.ca/otr" FALSE "4.0.0" "Required for the Kopete otr plugin.")
 
 macro_optional_find_package(Libmsn)
