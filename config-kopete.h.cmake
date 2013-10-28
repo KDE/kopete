@@ -8,9 +8,6 @@
 /* Define to compile with GSM SMS support */
 /* #undef INCLUDE_SMSGSM */
 
-/* Define to 1 if you want IDN support. */
-#define LIBIDN 1
-
 /* Jingle support is enabled */
 /* #undef SUPPORT_JINGLE */
 
