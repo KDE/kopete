@@ -86,7 +86,6 @@ macro_optional_find_package(LibOTR)
 macro_log_feature(LIBOTR_FOUND "libotr" "A library to encrypt messages with Off-the-Record encryption (version 4.0.0) or greater" "http://www.cypherpunks.ca/otr" FALSE "4.0.0" "Required for the Kopete otr plugin.")
 
 macro_optional_find_package(Libmsn)
-macro_bool_to_01(LIBMSN_FOUND HAVE_LIBMSN)
 macro_log_feature(LIBMSN_FOUND "libmsn" "A library providing support for the msn protocol" "http://sourceforge.net/projects/libmsn" FALSE "0.4.0" "Required for the Kopete wlm plugin")
 
 include(CheckStructMember)
