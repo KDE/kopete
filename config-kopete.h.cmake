@@ -2,9 +2,6 @@
 /* Define if you have valgrind.h installed */
 #cmakedefine HAVE_VALGRIND_H 1
 
-/* Define if you have xslt libraries and header files */
-#cmakedefine HAVE_XSLT 1
-
 /* Define if you have xmms libraries and header files. */
 #cmakedefine HAVE_XMMS 1
 

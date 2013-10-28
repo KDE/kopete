@@ -18,8 +18,6 @@
  *************************************************************************
  */
 
-#include <config-kopete.h> // for HAVE_XSLT
-
 #include "webpresenceplugin.h"
 
 #include <QtCore/QTimer>
@@ -37,7 +35,6 @@
 #include <ktemporaryfile.h>
 #include <kstandarddirs.h>
 
-#ifdef HAVE_XSLT
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -45,7 +42,6 @@
 #include <libxslt/xsltInternals.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
-#endif
 
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
@@ -322,7 +318,6 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 
 bool WebPresencePlugin::transform( KTemporaryFile * src, KTemporaryFile * dest )
 {
-#ifdef HAVE_XSLT
 	bool retval = true;
 	xmlSubstituteEntitiesDefault( 1 );
 	xmlLoadExtDtdDefaultValue = 1;
@@ -405,13 +400,6 @@ end:
 	if (cur) xsltFreeStylesheet(cur);
 
 	return retval;
-
-#else
-	Q_UNUSED( src );
-	Q_UNUSED( dest );
-
-	return false;
-#endif
 }
 
 ProtocolList WebPresencePlugin::allProtocols()

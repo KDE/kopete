@@ -88,7 +88,6 @@ macro_optional_find_package(LibXml2)
 macro_log_feature(LIBXML2_FOUND "LibXML2" "Libraries used to develop XML applications" "http://xmlsoft.org" FALSE "" "Required for the Kopete webpresence plugin.")
 
 macro_optional_find_package(LibXslt)
-macro_bool_to_01(LIBXSLT_FOUND HAVE_XSLT)
 macro_log_feature(LIBXSLT_FOUND "LibXSLT" "A library to transform XML files into other XML files" "http://xmlsoft.org/XSLT" FALSE "" "Required for the Kopete webpresence plugin.")
 
 macro_optional_find_package(LibOTR)
