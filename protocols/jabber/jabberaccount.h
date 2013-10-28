@@ -218,12 +218,6 @@ private:
 
 	JabberResourcePool *m_resourcePool;
 	JabberContactPool *m_contactPool;
-
-/*#ifdef SUPPORT_JINGLE
-	VoiceCaller *m_voiceCaller;
-	//JingleSessionManager *m_jingleSessionManager;
-#endif*/
-
 	JabberBookmarks *m_bookmarks;
 
 	/* Set up our actions for the status menu. */

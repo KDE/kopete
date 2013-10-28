@@ -8,9 +8,6 @@
 /* Define to compile with GSM SMS support */
 /* #undef INCLUDE_SMSGSM */
 
-/* Jingle support is enabled */
-/* #undef SUPPORT_JINGLE */
-
 /* enable support for the smpppd */
 /* #undef USE_SMPPPD */
 
