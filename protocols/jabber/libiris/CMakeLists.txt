@@ -1,5 +1,4 @@
 
-remove_definitions(-DQT_NO_HTTP)
 if(NOT WIN32)
   add_definitions(-fPIC)
 else(NOT WIN32)
