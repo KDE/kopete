@@ -1,5 +1,11 @@
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
+include(CheckIncludeFile)
+check_include_file(valgrind/valgrind.h HAVE_VALGRIND_H)
+if(HAVE_VALGRIND_H)
+  add_definitions(-DHAVE_VALGRIND_H)
+endif(HAVE_VALGRIND_H)
+
 add_subdirectory( private )
 if(NOT DISABLE_VIDEOSUPPORT)
   add_subdirectory( avdevice )

@@ -17,8 +17,6 @@
     *************************************************************************
 */
 
-#include "config-kopete.h"
-
 #include "kopetepluginmanager.h"
 
 #if defined(HAVE_VALGRIND_H) && !defined(NDEBUG)
