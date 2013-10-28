@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-#include <config-kopete.h>
 #include "webcamimgformat.h"
 
 #include "yahootypes.h"
