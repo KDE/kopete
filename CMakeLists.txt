@@ -141,7 +141,6 @@ check_include_files(valgrind/valgrind.h HAVE_VALGRIND_H)
 check_include_files(stdint.h HAVE_STDINT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
 check_include_files(linux/videodev.h HAVE_V4L)
-macro_bool_to_01(X11_Xss_FOUND HAVE_XSCREENSAVER)
 
 macro_optional_find_package(Expat)
 macro_log_feature(EXPAT_FOUND "Expat" "Expat is a stream oriented XML parser" "http://expat.sourceforge.net/" FALSE "" "Needed to build Google Talk libjingle support")
