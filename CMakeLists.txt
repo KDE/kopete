@@ -11,7 +11,6 @@ include(CheckSymbolExists)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
 include(CheckPrototypeExists)
-include(CheckTypeSize)
 
 set(CMAKE_REQUIRED_DEFINITIONS ${_KDE4_PLATFORM_DEFINITIONS})
 if(WIN32)
@@ -48,7 +47,6 @@ FIND_PACKAGE(QImageBlitz REQUIRED)
 # Configure checks
 include (TestBigEndian)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
-check_type_size("unsigned long" SIZEOF_UNSIGNED_LONG)
 
 macro_optional_find_package(LiboRTP)
 macro_log_feature(LIBORTP_FOUND "libortp" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp" FALSE "0.13" "Needed to build Google Talk libjingle audio call support and voice clips in WLM.")
