@@ -200,7 +200,11 @@ bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) 
       LOG(LS_INFO) << "Using " << i->name << "/" << i->clockrate;
       pt_ = i->id;
       audio_stream_ = audio_stream_start(&av_profile, -1, "localhost", port1, i->id, 250, 0); /* -1 means that function will choose some free port */
+#ifdef MEDIASTREAMER_OLD
       port2 = rtp_session_get_local_port(audio_stream_->session);
+#else
+      port2 = rtp_session_get_local_port(audio_stream_->ms.session);
+#endif
       first = false;
     }
   }
@@ -211,7 +215,11 @@ bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) 
     // working with a buggy client; let's try PCMU.
     LOG(LS_WARNING) << "Received empty list of codces; using PCMU/8000";
     audio_stream_ = audio_stream_start(&av_profile, -1, "localhost", port1, 0, 250, 0); /* -1 means that function will choose some free port */
+#ifdef MEDIASTREAMER_OLD
     port2 = rtp_session_get_local_port(audio_stream_->session);
+#else
+    port2 = rtp_session_get_local_port(audio_stream_->ms.session);
+#endif
   }
 
   return true;
