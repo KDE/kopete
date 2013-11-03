@@ -804,7 +804,6 @@ void Kopete::Contact::slotUnblock()
 
 void Kopete::Contact::setNickName( const QString &name )
 {
-	const QString oldNickName = nickName();
 	setProperty( Kopete::Global::Properties::self()->nickName(), name );
 }
 
