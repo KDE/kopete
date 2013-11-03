@@ -243,8 +243,8 @@ KMenu* Contact::popupMenu()
 	KMenu *menu = new KMenu();
 
 	QString titleText;
-	const QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if( nick.isEmpty() )
+	const QString nick = nickName();
+	if( nick == contactId() )
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
 	else
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), onlineStatus().description() );
@@ -601,8 +601,8 @@ QString Contact::toolTip() const
 	}
 
 	// TODO:  the nickname should be a configurable properties, like others. -Olivier
-	QString nick = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if ( nick.isEmpty() )
+	QString nick = nickName();
+	if ( nick == contactId() )
 	{
 		tip = i18nc( "@label:textbox %3 is contact-display-name, %1 is its status",
 			"<b><nobr>%3</nobr></b><br /><img src=\"%2\">&nbsp;%1",

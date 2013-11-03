@@ -715,12 +715,9 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 	if ( !c )
 		return QString();
 
-	QString contactName;
-	if ( c->hasProperty( Kopete::Global::Properties::self()->nickName().key() ) )
-		contactName = c->property( Global::Properties::self()->nickName()).value().toString();
-
+	QString contactName = c->nickName();
 				//the remove is there to workaround the Bug 95444
-	return contactName.isEmpty() ? c->contactId() : contactName.remove('\n');
+	return contactName.remove('\n');
 }
 
 KUrl MetaContact::customPhoto() const

@@ -194,8 +194,7 @@ void Kopete::ChatSession::slotUpdateDisplayName()
 			d->displayName.append( c->metaContact()->displayName() );
 		else
 		{
-			QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-			d->displayName.append( nick.isEmpty() ? c->contactId() : nick );
+			d->displayName.append( c->nickName() );
 		}
 	}
 
