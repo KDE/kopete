@@ -185,11 +185,9 @@ void Protocol::serialize( MetaContact *metaContact )
 		QMap<QString, QString> sd;
 		QMap<QString, QString> ad;
 
-		// Preset the contactId and displayName, if the plugin doesn't want to save
+		// Preset the contactId, if the plugin doesn't want to save
 		// them, or use its own format, it can call clear() on the provided list
 		sd[ QString::fromLatin1( "contactId" ) ] =   c->contactId();
-		//TODO(nick) remove
-		sd[ QString::fromLatin1( "displayName" ) ] = c->property(Global::Properties::self()->nickName()).value().toString();
 		if(c->account())
 			sd[ QString::fromLatin1( "accountId" ) ] = c->account()->accountId();
 
