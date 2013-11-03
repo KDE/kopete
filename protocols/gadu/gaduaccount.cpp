@@ -423,7 +423,7 @@ GaduAccount::disconnect( DisconnectReason reason )
 }
 
 void
-GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason, const OnlineStatusOptions& options )
+GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Kopete::StatusMessage &reason, const OnlineStatusOptions& /*options*/ )
 {
 	kDebug(14100) << "Called";
 	changeStatus( status, reason.message() );
