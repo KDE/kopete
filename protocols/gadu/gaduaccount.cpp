@@ -144,7 +144,7 @@ static const char* const servers_ip[] = {
 	p->session_ = new GaduSession( this );
 	p->session_->setObjectName( QLatin1String("GaduSession") );
 
-	setMyself( new GaduContact( accountId().toInt(), accountId(), this, Kopete::ContactList::self()->myself() ) );
+	setMyself( new GaduContact( accountId().toInt(), this, Kopete::ContactList::self()->myself() ) );
 
 	p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 	p->lastDescription.clear();
@@ -465,7 +465,7 @@ GaduAccount::createContact( const QString& contactId, Kopete::MetaContact* paren
 		return false;
 	}
 
-	GaduContact* newContact = new GaduContact( uinNumber, parentContact->displayName(),this, parentContact );
+	GaduContact* newContact = new GaduContact( uinNumber, this, parentContact );
 	newContact->setParentIdentity( accountId() );
 	addNotify( uinNumber );
 
@@ -694,8 +694,7 @@ GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 
 		Kopete::MetaContact* metaContact = new Kopete::MetaContact ();
 		metaContact->setTemporary ( true );
-		contact = new GaduContact( gaduMessage->sender_id,
-				QString::number( gaduMessage->sender_id ), this, metaContact );
+		contact = new GaduContact( gaduMessage->sender_id, this, metaContact );
 		Kopete::ContactList::self ()->addMetaContact( metaContact );
 		addNotify( gaduMessage->sender_id );
 	}
