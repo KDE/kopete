@@ -484,10 +484,6 @@ Contact *IRCProtocol::deserializeContact(MetaContact *metaContact, const QMap<QS
 	kDebug(14120) ;
 
 	QString contactId = serializedData[ "contactId" ];
-	QString displayName = serializedData[ "displayName" ];
-
-	if( displayName.isEmpty() )
-		displayName = contactId;
 
 	QList<Account*> accounts = AccountManager::self()->accounts( this );
 	if( !accounts.isEmpty() )

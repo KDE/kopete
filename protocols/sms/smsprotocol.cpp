@@ -75,7 +75,6 @@ Kopete::Contact *SMSProtocol::deserializeContact(Kopete::MetaContact *metaContac
 {
 	QString contactId = serializedData["contactId"];
 	QString accountId = serializedData["accountId"];
-	QString displayName = serializedData["displayName"];
 
 	QList<Kopete::Account*> accounts=Kopete::AccountManager::self()->accounts(this);
 
@@ -96,7 +95,7 @@ Kopete::Contact *SMSProtocol::deserializeContact(Kopete::MetaContact *metaContac
 		return 0;
 	}
 
-	return new SMSContact(account, contactId, displayName, metaContact);
+	return new SMSContact(account, contactId, metaContact);
 }
 
 Kopete::Account* SMSProtocol::createNewAccount(const QString &accountId)

@@ -34,11 +34,10 @@
 #include "smsuserpreferences.h"
 
 SMSContact::SMSContact( Kopete::Account* _account, const QString &phoneNumber,
-	const QString &displayName, Kopete::MetaContact *parent )
+	Kopete::MetaContact *parent )
 : Kopete::Contact( _account, phoneNumber, parent ), m_phoneNumber( phoneNumber )
 {
 //	kWarning( 14160 ) << " this = " << this << ", phone = " << phoneNumber;
-	setNickName( displayName );
 
 	m_msgManager = 0L;
 	m_actionPrefs = 0L;
@@ -118,7 +117,7 @@ const QString &SMSContact::phoneNumber()
 void SMSContact::setPhoneNumber( const QString phoneNumber )
 {
 	deleteLater();
-	new SMSContact(account(), phoneNumber, nickName(), metaContact());
+	new SMSContact(account(), phoneNumber, metaContact());
 }
 
 QList<KAction *>* SMSContact::customContextMenuActions()

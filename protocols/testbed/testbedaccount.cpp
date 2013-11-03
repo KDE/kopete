@@ -36,7 +36,7 @@ TestbedAccount::TestbedAccount( TestbedProtocol *parent, const QString& accountI
 : Kopete::Account ( parent, accountID )
 {
 	// Init the myself contact
-	setMyself( new TestbedContact( this, accountId(), accountId(), Kopete::ContactList::self()->myself() ) );
+	setMyself( new TestbedContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( TestbedProtocol::protocol()->testbedOffline );
 	m_server = new TestbedFakeServer();;
 }
@@ -63,7 +63,7 @@ void TestbedAccount::fillActionMenu( KActionMenu *actionMenu )
 
 bool TestbedAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
-	TestbedContact* newContact = new TestbedContact( this, contactId, parentContact->displayName(), parentContact );
+	TestbedContact* newContact = new TestbedContact( this, contactId, parentContact );
 	return newContact != 0L;
 }
 

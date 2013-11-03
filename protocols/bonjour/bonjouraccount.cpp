@@ -49,7 +49,7 @@ BonjourAccount::BonjourAccount( BonjourProtocol *parent, const QString& accountI
 	service(NULL), localServer(NULL), listeningPort(0), bonjourGroup(NULL), browser(NULL), unknownConnections()
 {
 	// Init the myself contact
-	setMyself( new BonjourContact( this, accountId(), accountId(), Kopete::ContactList::self()->myself() ) );
+	setMyself( new BonjourContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
 	myself()->setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
 
 	// All Contacts Go To The Bonjour Group
@@ -84,7 +84,7 @@ KActionMenu* BonjourAccount::actionMenu()
 #endif
 bool BonjourAccount::createContact(const QString& contactId, Kopete::MetaContact* parentContact)
 {
-	BonjourContact* newContact = new BonjourContact( this, contactId, parentContact->displayName(), parentContact );
+	BonjourContact* newContact = new BonjourContact( this, contactId, parentContact );
 	return newContact != 0L;
 }
 

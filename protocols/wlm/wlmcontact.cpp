@@ -40,12 +40,10 @@
 WlmContact::WlmContact (Kopete::Account * _account,
                         const QString & uniqueName,
                         const QString & contactSerial,
-                        const QString & displayName,
                         Kopete::MetaContact * parent):
 Kopete::Contact (_account, uniqueName, parent)
 {
-    kDebug (14210) << k_funcinfo << " uniqueName: " << uniqueName <<
-        ", displayName: " << displayName;
+    kDebug (14210) << k_funcinfo << " uniqueName: " << uniqueName;
     m_msgManager = 0L;
     m_account = qobject_cast<WlmAccount*>(account());
     setFileCapable (true);

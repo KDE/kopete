@@ -62,7 +62,6 @@ Kopete::Contact *QQProtocol::deserializeContact(
 {
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
-	QString displayName = serializedData[ "displayName" ];
 	QString type = serializedData[ "contactType" ];
 /*
 	QQContact::QQContactType tbcType;

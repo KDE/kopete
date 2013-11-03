@@ -31,10 +31,10 @@
 #include "testbedprotocol.h"
 
 TestbedContact::TestbedContact( Kopete::Account* _account, const QString &uniqueName,
-		const QString &displayName, Kopete::MetaContact *parent )
+		Kopete::MetaContact *parent )
 : Kopete::Contact( _account, uniqueName, parent )
 {
-	kDebug( 14210 ) << " uniqueName: " << uniqueName << ", displayName: " << displayName;
+	kDebug( 14210 ) << " uniqueName: " << uniqueName;
 	m_type = TestbedContact::Null;
 	// FIXME: ? setDisplayName( displayName );
 	m_msgManager = 0L;

@@ -278,7 +278,6 @@ Kopete::Contact *JabberProtocol::deserializeContact (Kopete::MetaContact * metaC
 //  kDebug (JABBER_DEBUG_GLOBAL) << "Deserializing data for metacontact " << metaContact->displayName () << "\n";
 
 	QString contactId = serializedData["contactId"];
-	QString displayName = serializedData["displayName"];
 	QString accountId = serializedData["accountId"];
 	QString jid = serializedData["JID"];
 

@@ -41,7 +41,6 @@ public:
 	enum Type { Null, Echo, Group };
 
 	TestbedContact( Kopete::Account* _account, const QString &uniqueName, 
-			const QString &displayName, 
 			Kopete::MetaContact *parent );
 
     ~TestbedContact();

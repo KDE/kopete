@@ -94,7 +94,6 @@ Kopete::Contact *GroupWiseProtocol::deserializeContact(
 {
 	QString dn = serializedData[ "DN" ];
 	QString accountId = serializedData[ "accountId" ];
-	QString displayName = serializedData[ "displayName" ];
 	int objectId = serializedData[ "objectId" ].toInt();
 	int parentId = serializedData[ "parentId" ].toInt();
 	int sequence = serializedData[ "sequenceNumber" ].toInt();

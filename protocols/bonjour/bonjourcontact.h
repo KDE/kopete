@@ -59,7 +59,6 @@ class BonjourContact : public Kopete::Contact
 
 public:
 	BonjourContact( Kopete::Account* _account, const QString &uniqueName, 
-			const QString &displayName, 
 			Kopete::MetaContact *parent );
 
 	~BonjourContact();

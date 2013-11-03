@@ -62,7 +62,6 @@ Kopete::Contact *OscarProtocol::deserializeContact(Kopete::MetaContact *metaCont
 {
 	QString contactId = serializedData["contactId"];
 	QString accountId = serializedData["accountId"];
-	QString displayName = serializedData["displayName"];
 
 	// Get the account it belongs to
 	Kopete::Account* account = Kopete::AccountManager::self()->findAccount( this->pluginId(), accountId );

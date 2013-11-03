@@ -59,7 +59,6 @@ Kopete::Contact *BonjourProtocol::deserializeContact(
 {
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
-	QString displayName = serializedData[ "displayName" ];
 
 	QList<Kopete::Account*> accounts = Kopete::AccountManager::self()->accounts( this );
 	Kopete::Account* account = 0;
@@ -75,7 +74,7 @@ Kopete::Contact *BonjourProtocol::deserializeContact(
 		return 0;
 	}
 
-	BonjourContact * contact = new BonjourContact(account, contactId, displayName, metaContact);
+	BonjourContact * contact = new BonjourContact(account, contactId, metaContact);
 	return contact;
 }
 

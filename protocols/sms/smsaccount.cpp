@@ -39,7 +39,7 @@ SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const cha
 {
 	Q_UNUSED(name);
 
-	setMyself( new SMSContact(this, accountID, accountID, Kopete::ContactList::self()->myself()) );
+	setMyself( new SMSContact(this, accountID, Kopete::ContactList::self()->myself()) );
 	loadConfig();
 	myself()->setOnlineStatus( SMSProtocol::protocol()->SMSOffline );
 
@@ -176,7 +176,7 @@ void SMSAccount::slotSendingFailure(const Kopete::Message &msg, const QString &e
 bool SMSAccount::createContact( const QString &contactId,
 	Kopete::MetaContact * parentContact )
 {
-	if (new SMSContact(this, contactId, parentContact->displayName(), parentContact))
+	if (new SMSContact(this, contactId, parentContact))
 		return true;
 	else
 		return false;

@@ -47,7 +47,7 @@ class GaduContact : public Kopete::Contact
 	Q_OBJECT
 
 public:
-	GaduContact( unsigned int, const QString&, Kopete::Account*, Kopete::MetaContact* );
+	GaduContact( unsigned int, Kopete::Account*, Kopete::MetaContact* );
 
 	virtual bool isReachable();
 	virtual void serialize( QMap<QString, QString>&, QMap<QString, QString>& );

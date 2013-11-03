@@ -62,8 +62,7 @@ m_lastMainConnectionError(Callbacks::NoError)
 {
     // Init the myself contact
     setMyself (new
-               WlmContact (this, accountId (), QString(),
-                           accountId (),
+               WlmContact (this, accountId (), accountId (),
                            Kopete::ContactList::self ()->myself ()));
     myself ()->setOnlineStatus (WlmProtocol::protocol ()->wlmOffline);
     clientid += MSN::MSNC7;
@@ -123,7 +122,7 @@ WlmAccount::createContact (const QString & contactId,
         return false;
 
     kDebug() << "contact " << contactId;
-    WlmContact *newContact = new WlmContact (this, contactId, QString(), parentContact->displayName (), parentContact);
+    WlmContact *newContact = new WlmContact (this, contactId, QString(), parentContact);
 
     if (parentContact->isTemporary())
         return true;

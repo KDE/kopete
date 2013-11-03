@@ -103,7 +103,6 @@ Kopete::Contact * WlmProtocol::deserializeContact (Kopete::MetaContact *
     QString contactId = serializedData["contactId"];
     QString contactSerial = serializedData["contactSerial"];
     QString accountId = serializedData["accountId"];
-    QString displayName = serializedData["displayName"];
     QString dontShowEmoticons = serializedData["dontShowEmoticons"];
 
     QList <Kopete::Account*>accounts =
@@ -120,8 +119,7 @@ Kopete::Contact * WlmProtocol::deserializeContact (Kopete::MetaContact *
         kDebug (14210) << "Account doesn't exist, skipping";
         return 0;
     }
-    WlmContact * c = new WlmContact (account, contactId, contactSerial,
-                        displayName, metaContact);
+    WlmContact * c = new WlmContact (account, contactId, contactSerial, metaContact);
 
     if(dontShowEmoticons == "true")
         c->slotDontShowEmoticons(true);

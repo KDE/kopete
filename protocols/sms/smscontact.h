@@ -33,7 +33,7 @@ class SMSContact : public Kopete::Contact
 	Q_OBJECT
 public:
 	SMSContact( Kopete::Account* _account, const QString &phoneNumber,
-		const QString &displayName, Kopete::MetaContact *parent );
+		Kopete::MetaContact *parent );
 
 	virtual QList<KAction *>* customContextMenuActions();
 	using Kopete::Contact::customContextMenuActions;

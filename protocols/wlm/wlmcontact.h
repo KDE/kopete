@@ -52,8 +52,7 @@ class WlmContact : public Kopete::Contact
     Q_OBJECT
 public:
     WlmContact (Kopete::Account * _account, const QString & uniqueName,
-                const QString & contactSerial,
-                const QString & displayName, Kopete::MetaContact * parent);
+                const QString & contactSerial, Kopete::MetaContact * parent);
 
     ~WlmContact ();
 

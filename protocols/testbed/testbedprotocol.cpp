@@ -58,7 +58,6 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 {
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
-	QString displayName = serializedData[ "displayName" ];
 	QString type = serializedData[ "contactType" ];
 
 	TestbedContact::Type tbcType;
@@ -85,7 +84,7 @@ Kopete::Contact *TestbedProtocol::deserializeContact(
 		return 0;
 	}
 
-	TestbedContact * contact = new TestbedContact(account, contactId, displayName, metaContact);
+	TestbedContact * contact = new TestbedContact(account, contactId, metaContact);
 	contact->setType( tbcType );
 	return contact;
 }

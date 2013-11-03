@@ -45,7 +45,7 @@
 
 //using Kopete::UserInfoDialog;
 
-GaduContact::GaduContact( uin_t uin, const QString& name, Kopete::Account* account, Kopete::MetaContact* parent )
+GaduContact::GaduContact( uin_t uin, Kopete::Account* account, Kopete::MetaContact* parent )
 : Kopete::Contact( account, QString::number( uin ), parent ), uin_( uin )
 {
 	msgManager_ = 0L;
@@ -68,8 +68,6 @@ GaduContact::GaduContact( uin_t uin, const QString& name, Kopete::Account* accou
 
 	//offline
 	setOnlineStatus( GaduProtocol::protocol()->convertStatus( 0 ) );
-
-	setProperty( Kopete::Global::Properties::self()->nickName(), name );
 }
 
 QString

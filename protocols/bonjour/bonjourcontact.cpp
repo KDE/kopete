@@ -34,11 +34,11 @@
 // FIXME: Here, we hardcode the icon (bonjour_protocol) into the constructor.
 // This shouldn't be necessary
 BonjourContact::BonjourContact( Kopete::Account* _account, const QString &uniqueName,
-		const QString &displayName, Kopete::MetaContact *parent )
+		Kopete::MetaContact *parent )
 : Kopete::Contact( _account, uniqueName, parent, QString("bonjour_protocol") ), connection(NULL), 
 	remoteHostName(), remoteAddress(), remotePort(0), m_msgManager(NULL)
 {
-	kDebug()<< " uniqueName: " << uniqueName << ", displayName: " << displayName;
+	kDebug()<< " uniqueName: " << uniqueName;
 
 	setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
 }
