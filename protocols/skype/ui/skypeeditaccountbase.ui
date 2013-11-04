@@ -16,7 +16,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="basicSetupTab">
       <attribute name="title">
        <string>&amp;Basic Setup</string>
       </attribute>
@@ -107,7 +107,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage">
+     <widget class="QWidget" name="launchTab">
       <attribute name="title">
        <string>Lau&amp;nch</string>
       </attribute>
@@ -305,7 +305,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage">
+     <widget class="QWidget" name="connectionTab">
       <attribute name="title">
        <string>C&amp;onnection</string>
       </attribute>
@@ -399,7 +399,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage">
+     <widget class="QWidget" name="activityTab">
       <attribute name="title">
        <string>&amp;Activity</string>
       </attribute>
@@ -651,7 +651,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage">
+     <widget class="QWidget" name="callsTab">
       <attribute name="title">
        <string>&amp;Calls</string>
       </attribute>
