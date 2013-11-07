@@ -86,3 +86,4 @@ private:
 
 } // namespace Kopete
 #endif
+
