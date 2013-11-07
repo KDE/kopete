@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#include "kopetepropertycontainer.h"
 #include "kopeteidentity.h"
+#include "kopetepropertycontainer.h"
 #include "kopeteaccount.h"
 #include "kopetecontact.h"
 #include "kopeteprotocol.h"

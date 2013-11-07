@@ -14,12 +14,12 @@
     *                                                                       *
     *************************************************************************
 */
+#include "kopetetask_test.h"
 #include <qtest_kde.h>
 
 #include <QtTest/QSignalSpy>
 #include <QTimer>
 
-#include "kopetetask_test.h"
 #include "kopetetask_test.moc"
 
 #include <kcmdlineargs.h>

@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "metacontactselectorwidget.h"
+
 #include <qcheckbox.h>
 #include <qlabel.h>
 
@@ -43,7 +45,6 @@
 #include "kopetemetacontact.h"
 #include "kopetepicture.h"
 #include "ui_addressbookselectorwidget_base.h"
-#include "metacontactselectorwidget.h"
 #include "ui_metacontactselectorwidget_base.h"
 
 using namespace Kopete::UI::ListView;

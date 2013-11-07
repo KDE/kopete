@@ -19,9 +19,10 @@
     *************************************************************************
 */
 
+#include "kopetemessageevent.h"
+
 #include <kdebug.h>
 
-#include "kopetemessageevent.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontact.h"

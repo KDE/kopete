@@ -24,6 +24,7 @@
     *                                                                       *
     *************************************************************************
 */
+#include "addressbookselectorwidget.h"
 
 #include <qcheckbox.h>
 #include <kconfig.h>
@@ -41,7 +42,6 @@
 #include <qlabel.h>
 
 
-#include "addressbookselectorwidget.h"
 #include <addresseeitem.h>
 #include "kabcpersistence.h"
 

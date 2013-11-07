@@ -17,6 +17,8 @@
     *************************************************************************
 */
 
+#include "kopeteutils.h"
+
 #include <qmap.h>
 #include <QPixmap>
 #include <QByteArray>
@@ -30,7 +32,6 @@
 #include "kopeteaccount.h"
 #include "knotification.h"
 #include "kopeteutils_private.h"
-#include "kopeteutils.h"
 #include "kopeteuiglobal.h"
 #include "kopetestatusmanager.h"
 

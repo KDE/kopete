@@ -17,6 +17,8 @@
     *************************************************************************
 */
 
+#include "kopetetransfermanager.h"
+
 #include <QtCore/QTimerEvent>
 #include <QtGui/QTextDocument>
 
@@ -33,8 +35,6 @@
 #include "kopetemessage.h"
 #include "kopetechatsession.h"
 #include "kopeteuiglobal.h"
-
-#include "kopetetransfermanager.h"
 
 /***************************
  *  Kopete::FileTransferInfo *

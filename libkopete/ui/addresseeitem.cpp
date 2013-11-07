@@ -17,6 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "addresseeitem.h"
+
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <q3groupbox.h>
@@ -25,8 +27,6 @@
 
 #include <klocale.h>
 #include <kdebug.h>
-
-#include "addresseeitem.h"
 
 AddresseeItem::AddresseeItem( Q3ListView *parent, const KABC::Addressee &addressee) :
   K3ListViewItem( parent ),

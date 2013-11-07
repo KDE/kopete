@@ -15,9 +15,9 @@
     *************************************************************************
 */
 
+#include "chatsessionmemberslistmodel.h"
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
-#include "chatsessionmemberslistmodel.h"
 #include "kdebug.h"
 
 //own contact comparator, needs sessions contact-online-status weight

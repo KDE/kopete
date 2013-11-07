@@ -19,6 +19,8 @@
     *************************************************************************
 */
 
+#include "kopetemessage.h"
+
 #include <stdlib.h>
 
 #include <QtCore/QDateTime>
@@ -32,7 +34,6 @@
 #include <kdebug.h>
 #include <kstringhandler.h>
 
-#include "kopetemessage.h"
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopetechatsession.h"

@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "kopetewallettest_program.h"
+
 #include <qtextstream.h>
 #include <qtimer.h>
 
@@ -26,7 +28,6 @@
 #include <kwallet.h>
 
 #include "kopetewalletmanager.h"
-#include "kopetewallettest_program.h"
 
 static QTextStream _out( stdout, QIODevice::WriteOnly );
 

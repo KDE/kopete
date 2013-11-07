@@ -18,6 +18,8 @@
 
 #define ENABLE_AV
 
+#include "videodevice.h"
+
 #include <cstdlib>
 #include <cerrno>
 #include <cstring>
@@ -25,7 +27,6 @@
 #include <kdebug.h>
 
 #include "videoinput.h"
-#include "videodevice.h"
 
 #include "bayer.h"
 #include "sonix_compress.h"

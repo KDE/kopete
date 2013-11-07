@@ -14,8 +14,8 @@
     *************************************************************************
 */
 
-#include "kopeteuiglobal.h"
 #include "kopetepassword.h"
+#include "kopeteuiglobal.h"
 #include "kopetewalletmanager.h"
 
 #include <kwallet.h>

@@ -21,6 +21,8 @@
     *************************************************************************
 */
 
+#include "addressbooklinkwidget.h"
+
 #include <qapplication.h>
 #include <klineedit.h>
 #include <klocale.h>
@@ -30,7 +32,6 @@
 
 #include <kopetemetacontact.h>
 
-#include "addressbooklinkwidget.h"
 #include "addressbookselectordialog.h"
 #include "addressbookselectorwidget.h"
 

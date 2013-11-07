@@ -15,10 +15,10 @@
     *************************************************************************
 */
 
+#include "managedconnectionaccount.h"
+
 #include "connectionmanager.h"
 #include "kopeteuiglobal.h"
-
-#include "managedconnectionaccount.h"
 
 
 namespace Kopete

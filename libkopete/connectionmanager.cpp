@@ -16,14 +16,14 @@
  */
 
 
+#include "connectionmanager.h"
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
 #include "clientiface_stub.h"
 #include "networkstatuscommon.h"
-
-#include "connectionmanager.h"
 
 // ConnectionManager's private parts
 class ConnectionManagerPrivate

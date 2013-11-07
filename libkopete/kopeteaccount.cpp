@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include "kopeteaccount.h"
+
 #include <qapplication.h>
 #include <QTimer>
 #include <QPixmap>
@@ -38,7 +40,6 @@
 #include <kactionmenu.h>
 #include <kconfiggroup.h>
 
-#include "kopeteaccount.h"
 #include "kopeteidentity.h"
 #include "kopeteidentitymanager.h"
 #include "kabcpersistence.h"

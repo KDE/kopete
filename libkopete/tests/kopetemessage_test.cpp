@@ -17,6 +17,8 @@
     *************************************************************************
 */
 
+#include "kopetemessage_test.h"
+
 // QTestLib for KDE
 #include <qtest_kde.h>
 #include <stdlib.h>
@@ -31,7 +33,6 @@
 #include <k3process.h>
 #include <kdebug.h>
 
-#include "kopetemessage_test.h"
 #include "kopetemessage_test.moc"
 #include "kopeteaccount_mock.h"
 #include "kopeteprotocol_mock.h"

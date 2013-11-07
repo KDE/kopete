@@ -15,11 +15,11 @@
     *************************************************************************
 */
 
+#include "kopetecontactlist_test.h"
 #include <qfile.h>
 #include <qdir.h>
 #include <kstandarddirs.h>
 #include <kunittest/module.h>
-#include "kopetecontactlist_test.h"
 
 using namespace KUnitTest;
 

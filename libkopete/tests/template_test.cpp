@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#include <kunittest/module.h>
 #include "template_test.h"
+#include <kunittest/module.h>
 
 using namespace KUnitTest;
 

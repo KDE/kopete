@@ -18,6 +18,8 @@
 
 #define ENABLE_AV
 
+#include "videodevicepool.h"
+
 #include <assert.h>
 #include <cstdlib>
 #include <cerrno>
@@ -37,7 +39,6 @@
 
 
 #include "videodevice.h"
-#include "videodevicepool.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 

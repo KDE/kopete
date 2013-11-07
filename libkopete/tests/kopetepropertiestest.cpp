@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include "kopetepropertiestest.h"
+
 #include <kunittest/module.h>
 
 #include "kopeteproperties.h"
@@ -26,8 +28,6 @@
 #include <kaboutdata.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
-
-#include "kopetepropertiestest.h"
 
 using namespace KUnitTest;
 

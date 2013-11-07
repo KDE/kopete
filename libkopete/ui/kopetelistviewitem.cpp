@@ -16,8 +16,8 @@
     *************************************************************************
 */
 
-#include "kopetecontact.h"
 #include "kopetelistviewitem.h"
+#include "kopetecontact.h"
 #include "kopeteemoticons.h"
 #include "kopeteonlinestatus.h"
 
