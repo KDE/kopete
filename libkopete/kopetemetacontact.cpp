@@ -825,7 +825,7 @@ void MetaContact::setDisplayNameSourceContact( Contact *contact )
 {
 	Contact *old = d->displayNameSourceContact;
 	d->displayNameSourceContact = contact;
-	if ( displayNameSource() == SourceContact ) {
+	if ( contact && displayNameSource() == SourceContact ) {
 		emit displayNameChanged( nameFromContact(old), nameFromContact(contact));
 		QListIterator<Kopete::Contact *> it( d->contacts );
 		while (  it.hasNext() )
