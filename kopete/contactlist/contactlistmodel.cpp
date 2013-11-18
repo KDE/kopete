@@ -625,7 +625,15 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
 #endif
-		toolTip += QString::fromLatin1("<img src=\"%1\">&nbsp;").arg( metaContact->picture().path() );
+		// scale big image to max size 96x96
+		// NOTE: attribute style="max-width:96px; max-height:96px;" not working
+		const QImage &image = metaContact->picture().image();
+		if ( image.width() <= 96 && image.height() <= 96 )
+			toolTip += QString::fromLatin1("<img src=\"%1\">&nbsp;").arg( metaContact->picture().path() );
+		else if ( image.width() > image.height() )
+			toolTip += QString::fromLatin1("<img src=\"%1\" width=\"96\">&nbsp;").arg( metaContact->picture().path() );
+		else
+			toolTip += QString::fromLatin1("<img src=\"%1\" height=\"96\">&nbsp;").arg( metaContact->picture().path() );
 	}
 
 	toolTip += QLatin1String("</td><td>");
