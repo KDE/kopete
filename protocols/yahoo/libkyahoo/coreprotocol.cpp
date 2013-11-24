@@ -19,6 +19,8 @@
     *************************************************************************
 */
 
+#include "coreprotocol.h"
+
 #include <string.h>
 #include <iostream>
 
@@ -31,7 +33,6 @@
 #include <kdebug.h>
 #include <kurl.h>
 
-#include "coreprotocol.h"
 #include "ymsgprotocol.h"
 #include "ymsgtransfer.h"
 

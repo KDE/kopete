@@ -18,9 +18,10 @@
     *************************************************************************
 */
 
+#include "ymsgtransfer.h"
+
 #include <string>
 
-#include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "kdebug.h"
 

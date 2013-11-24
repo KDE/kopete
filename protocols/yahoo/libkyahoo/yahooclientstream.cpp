@@ -19,6 +19,7 @@
 */
 
 
+#include "yahooclientstream.h"
 
 #include <QApplication>  // for qdebug
 #include <QPointer> 
@@ -33,7 +34,6 @@
 #include "coreprotocol.h"
 #include "transfer.h"
 
-#include "yahooclientstream.h"
 #include "yahootypes.h"
 
 void cs_dump( const QByteArray &bytes );

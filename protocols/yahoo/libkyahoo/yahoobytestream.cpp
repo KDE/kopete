@@ -15,12 +15,12 @@
     *************************************************************************
 */
 
+#include "yahoobytestream.h"
+
 #include <qobject.h>
 #include <k3bufferedsocket.h>
 #include <kdebug.h>
 #include <k3resolver.h>
-
-#include "yahoobytestream.h"
 
 KNetworkByteStream::KNetworkByteStream( QObject *parent )
  : ByteStream ( parent )

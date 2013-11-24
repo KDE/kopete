@@ -14,9 +14,10 @@
     *************************************************************************
 */
 
+#include "messagereceivertask.h"
+
 #include <qstring.h>
 
-#include "messagereceivertask.h"
 #include "transfer.h"
 #include "ymsgtransfer.h"
 #include "yahootypes.h"

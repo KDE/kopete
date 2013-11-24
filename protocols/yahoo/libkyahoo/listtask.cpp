@@ -14,10 +14,11 @@
     *************************************************************************
 */
 
+#include "listtask.h"
+
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 
-#include "listtask.h"
 #include "transfer.h"
 #include "ymsgtransfer.h"
 #include "client.h"

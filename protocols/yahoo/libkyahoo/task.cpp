@@ -17,13 +17,13 @@
     *************************************************************************
 */
   
+#include "task.h"
+
 #include <qtimer.h>
 
 #include "client.h"
 #include "transfer.h"
 #include "safedelete.h"
-
-#include "task.h"
 
 using namespace KYahoo;
 

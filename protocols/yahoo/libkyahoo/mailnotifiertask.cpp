@@ -14,9 +14,10 @@
     *************************************************************************
 */
 
+#include "mailnotifiertask.h"
+
 #include <qstring.h>
 
-#include "mailnotifiertask.h"
 #include "transfer.h"
 #include "ymsgtransfer.h"
 #include "yahootypes.h"

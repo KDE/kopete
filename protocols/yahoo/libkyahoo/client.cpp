@@ -19,6 +19,8 @@
     *************************************************************************
 */
 
+#include "client.h"
+
 #include <QTimer>
 #include <QPixmap>
 
@@ -54,7 +56,6 @@
 #include "filetransfernotifiertask.h"
 #include "receivefiletask.h"
 #include "yahoochattask.h"
-#include "client.h"
 #include "yahootypes.h"
 #include "yahoobuddyiconloader.h"
 

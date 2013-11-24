@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include "ymsgprotocol.h"
+
 #include <QDataStream>
 #include <QMap>
 #include <QObject>
@@ -23,7 +25,6 @@
 
 #include <kdebug.h>
 
-#include "ymsgprotocol.h"
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 
