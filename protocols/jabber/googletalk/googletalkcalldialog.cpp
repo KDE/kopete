@@ -13,9 +13,9 @@
     *************************************************************************
 */
 
-#include <QCloseEvent>
-
 #include "googletalkcalldialog.h"
+
+#include <QCloseEvent>
 
 GoogleTalkCallDialog::GoogleTalkCallDialog(QWidget *parent): QDialog(parent) {
 	setupUi(this);
