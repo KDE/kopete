@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include "searchchattask.h"
+
 #include <qdatetime.h>
 #include <qtimer.h>
 
@@ -27,8 +29,6 @@
 #include "response.h"
 
 #include "getchatsearchresultstask.h"
-
-#include "searchchattask.h"
 
 
 // the delay we allow the server to initially do the search

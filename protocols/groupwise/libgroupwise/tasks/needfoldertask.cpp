@@ -9,11 +9,11 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "needfoldertask.h"
+
 #include "client.h"
 #include "tasks/createcontactinstancetask.h"
 #include "tasks/createfoldertask.h"
-
-#include "needfoldertask.h"
 
 NeedFolderTask::NeedFolderTask(Task* parent): ModifyContactListTask(parent)
 {

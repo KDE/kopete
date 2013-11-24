@@ -18,10 +18,10 @@
     *************************************************************************
 */
 
+#include "modifycontactlisttask.h"
 #include "client.h"
 #include "response.h"
 #include "gwerror.h"
-#include "modifycontactlisttask.h"
 
 ModifyContactListTask::ModifyContactListTask(Task* parent): RequestTask(parent)
 {

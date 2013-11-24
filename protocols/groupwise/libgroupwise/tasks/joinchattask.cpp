@@ -18,12 +18,12 @@
     *************************************************************************
 */
 
+#include "joinchattask.h"
+
 #include "gwerror.h"
 #include "client.h"
 #include "response.h"
 #include "userdetailsmanager.h"
-
-#include "joinchattask.h"
 
 JoinChatTask::JoinChatTask(Task* parent): RequestTask(parent)
 {

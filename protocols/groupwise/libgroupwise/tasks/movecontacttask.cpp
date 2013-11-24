@@ -18,9 +18,9 @@
     *************************************************************************
 */
 
-#include "client.h"
-
 #include "movecontacttask.h"
+
+#include "client.h"
 
 MoveContactTask::MoveContactTask(Task* parent): NeedFolderTask(parent)
 {

@@ -18,9 +18,9 @@
     *************************************************************************
 */
 
-#include "response.h"
-
 #include "getstatustask.h"
+
+#include "response.h"
 
 GetStatusTask::GetStatusTask(Task* parent): RequestTask(parent)
 {

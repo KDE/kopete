@@ -17,9 +17,9 @@
     *                                                                       *
     *************************************************************************
 */
-#include "client.h"
-
 #include "connectiontask.h"
+
+#include "client.h"
 
 ConnectionTask::ConnectionTask(Task* parent): EventTask(parent)
 {

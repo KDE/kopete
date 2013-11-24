@@ -18,9 +18,9 @@
     *************************************************************************
 */
 
+#include "updatecontacttask.h"
 #include "gwfield.h" 
 
-#include "updatecontacttask.h"
 #include <QtCore/QList>
 
 using namespace GroupWise; 

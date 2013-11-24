@@ -18,9 +18,9 @@
     *************************************************************************
 */
 
-#include "client.h"
-
 #include "statustask.h"
+
+#include "client.h"
 
 StatusTask::StatusTask(Task* parent): EventTask(parent)
 {

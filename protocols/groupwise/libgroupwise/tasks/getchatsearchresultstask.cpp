@@ -18,14 +18,14 @@
     *************************************************************************
 */
 
+#include "getchatsearchresultstask.h"
+
 #include <kdebug.h>
 
 #include "gwfield.h"
 #include "response.h"
 
 #include "logintask.h"
-
-#include "getchatsearchresultstask.h"
 
 using namespace GroupWise;
 

@@ -21,6 +21,7 @@
 #ifndef JOINCHATTASK_H
 #define JOINCHATTASK_H
 
+#include <QStringList>
 #include "requesttask.h"
 
 using namespace GroupWise;

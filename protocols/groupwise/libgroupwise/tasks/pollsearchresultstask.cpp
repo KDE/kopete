@@ -19,12 +19,12 @@
     *************************************************************************
 */
 
+#include "pollsearchresultstask.h"
 #include "gwfield.h"
 #include "response.h"
 
 #include "logintask.h"
 
-#include "pollsearchresultstask.h"
 #include <QtCore/QList>
 
 using namespace GroupWise;

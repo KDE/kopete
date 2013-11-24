@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include "searchusertask.h"
+
 #include <qdatetime.h>
 #include <qtimer.h>
 
@@ -27,8 +29,6 @@
 #include "response.h"
 
 #include "pollsearchresultstask.h"
-
-#include "searchusertask.h"
 
 // the delay we allow the server to initially do the search
 #define GW_POLL_INITIAL_DELAY 1000

@@ -17,9 +17,9 @@
     *                                                                       *
     *************************************************************************
 */
-#include "gwfield.h"
-
 #include "updatefoldertask.h"
+
+#include "gwfield.h"
 
 UpdateFolderTask::UpdateFolderTask(Task* parent): UpdateItemTask(parent)
 {

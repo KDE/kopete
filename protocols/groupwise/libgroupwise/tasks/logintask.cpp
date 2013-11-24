@@ -19,12 +19,12 @@
     *************************************************************************
 */
 
+#include "logintask.h"
 #include "client.h"
 #include "response.h"
 #include "privacymanager.h"
 #include "userdetailsmanager.h"
 
-#include "logintask.h"
 #include <QByteArray>
 
 LoginTask::LoginTask( Task * parent )

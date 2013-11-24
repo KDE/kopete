@@ -18,12 +18,12 @@
     *************************************************************************
 */
 
+#include "joinconferencetask.h"
+
 #include "gwerror.h"
 #include "client.h"
 #include "response.h"
 #include "userdetailsmanager.h"
-
-#include "joinconferencetask.h"
 
 JoinConferenceTask::JoinConferenceTask(Task* parent): RequestTask(parent)
 {

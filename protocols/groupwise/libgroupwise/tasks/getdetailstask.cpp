@@ -19,11 +19,11 @@
     *************************************************************************
 */
 
+#include "getdetailstask.h"
+
 #include "client.h"
 #include "response.h"
 #include "userdetailsmanager.h"
-
-#include "getdetailstask.h"
 
 using namespace GroupWise;
 

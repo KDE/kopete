@@ -17,9 +17,9 @@
     *                                                                       *
     *************************************************************************
 */
-#include "client.h"
-
 #include "createcontactinstancetask.h"
+
+#include "client.h"
 
 CreateContactInstanceTask::CreateContactInstanceTask(Task* parent) : NeedFolderTask(parent)
 {

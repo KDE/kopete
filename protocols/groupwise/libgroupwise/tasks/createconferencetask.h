@@ -22,6 +22,7 @@
 #define CREATECONFERENCETASK_H
 
 #include "requesttask.h"
+#include "client.h"
 
 /**
 This task is responsible for creating a conference at the server, and confirming that the server allowed the conference to be created.

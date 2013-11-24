@@ -16,13 +16,13 @@
     *************************************************************************
 */
 
+#include "chatcountstask.h"
+
 #include <qmap.h>
 #include <kdebug.h>
 
 #include "gwfield.h"
 #include "response.h"
-
-#include "chatcountstask.h"
 
 ChatCountsTask::ChatCountsTask(Task* parent): RequestTask(parent)
 {

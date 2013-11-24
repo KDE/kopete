@@ -17,8 +17,8 @@
     *                                                                       *
     *************************************************************************
 */
-#include <QStringList>
 #include "sendinvitetask.h"
+#include <QStringList>
 
 SendInviteTask::SendInviteTask(Task* parent): RequestTask(parent)
 {

@@ -18,11 +18,11 @@
     *************************************************************************
 */
 
+#include "createconferencetask.h"
+
 #include "client.h"
 #include "response.h"
 
-
-#include "createconferencetask.h"
 
 CreateConferenceTask::CreateConferenceTask(Task* parent): RequestTask(parent), m_confId( 0 ), m_guid( BLANK_GUID )
 {

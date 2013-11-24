@@ -19,10 +19,10 @@
     *************************************************************************
 */
 
+#include "keepalivetask.h"
 #include "client.h"
 #include "request.h"
 #include "requestfactory.h"
-#include "keepalivetask.h"
 
 KeepAliveTask::KeepAliveTask(Task* parent): RequestTask(parent)
 {

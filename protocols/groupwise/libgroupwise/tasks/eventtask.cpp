@@ -18,8 +18,8 @@
     *************************************************************************
 */
 
-#include "gwfield.h"
 #include "eventtask.h"
+#include "gwfield.h"
 
 EventTask::EventTask( Task * parent )
 : Task( parent )

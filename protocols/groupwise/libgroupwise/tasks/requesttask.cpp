@@ -18,13 +18,13 @@
     *************************************************************************
 */
 
+#include "requesttask.h"
+
 #include "gwfield.h"
 #include "client.h"
 #include "request.h"
 #include "response.h"
 #include "requestfactory.h"
-
-#include "requesttask.h"
 
 RequestTask::RequestTask( Task * parent )
 : Task( parent )

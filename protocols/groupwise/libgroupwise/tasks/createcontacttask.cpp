@@ -18,11 +18,11 @@
     *************************************************************************
 */
 
+#include "createcontacttask.h"
+
 #include "client.h"
 #include "createfoldertask.h"
 #include "createcontactinstancetask.h"
-
-#include "createcontacttask.h"
 
 CreateContactTask::CreateContactTask(Task* parent): Task(parent)
 {

@@ -18,10 +18,10 @@
     *************************************************************************
 */
 
+#include "conferencetask.h"
+
 #include "client.h"
 #include "userdetailsmanager.h"
-
-#include "conferencetask.h"
 
 ConferenceTask::ConferenceTask( Task* parent )
  : EventTask( parent )

@@ -21,6 +21,7 @@
 #ifndef JOINCONFERENCETASK_H
 #define JOINCONFERENCETASK_H
 
+#include <QStringList>
 #include "requesttask.h"
 
 using namespace GroupWise;

@@ -16,12 +16,12 @@
     *************************************************************************
 */
 
+#include "chatpropertiestask.h"
+
 #include <kdebug.h>
 
 #include "gwfield.h"
 #include "response.h"
-
-#include "chatpropertiestask.h"
 
 using namespace GroupWise;
 

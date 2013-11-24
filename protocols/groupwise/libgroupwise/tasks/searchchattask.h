@@ -25,6 +25,7 @@
 #include "libgroupwise_export.h"
 
 #include "requesttask.h"
+#include "getchatsearchresultstask.h"
 
 class QTimer;
 
