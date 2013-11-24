@@ -20,6 +20,8 @@
     *************************************************************************
 */
 
+#include "coreprotocol.h"
+
 #include <string.h>
 #include <iostream>
 #include <stdlib.h>
@@ -40,8 +42,6 @@
 #include "request.h"
 #include "response.h"
 #include "responseprotocol.h"
-
-#include "coreprotocol.h"
 
 #define NO_ESCAPE(ch) ((ch == 0x20) || (ch >= 0x30 && ch <= 0x39) || (ch >= 0x41 && ch <= 0x5a) || (ch >= 0x61 && ch <= 0x7a))
 #define GW_URLVAR_TAG "&tag="

@@ -15,9 +15,9 @@
     *************************************************************************
 */
 
-#include <klocale.h>
-
 #include "gwerror.h"
+
+#include <klocale.h>
 
 QString GroupWise::errorCodeToString( int errorCode )
 {

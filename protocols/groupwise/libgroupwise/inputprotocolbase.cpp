@@ -16,14 +16,14 @@
     *************************************************************************
 */
 
+#include "inputprotocolbase.h"
+
 #include <QByteArray>
 
 #include <kdebug.h>
 
 #include "gwerror.h"
-
 #include "gwfield.h"
-#include "inputprotocolbase.h"
 
 InputProtocolBase::InputProtocolBase(QObject *parent)
  : QObject(parent)

@@ -15,9 +15,9 @@
     *************************************************************************
 */
 
-#include "request.h"
-
 #include "requestfactory.h"
+
+#include "request.h"
 
 #define GW_REQUESTFACTORY_FIRST_TID 1
 RequestFactory::RequestFactory()

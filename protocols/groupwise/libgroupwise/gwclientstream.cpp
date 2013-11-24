@@ -31,6 +31,8 @@
 // #include"securestream.h"
 // #include"protocol.h"
 
+#include "gwclientstream.h"
+
 #include <qapplication.h>  // for qdebug
 #include <qpointer.h> 
 #include <qobject.h>
@@ -46,8 +48,6 @@
 #include "tlshandler.h"
 
 //#include "iostream.h"
-
-#include "gwclientstream.h"
 
 //#define LIBGW_DEBUG 1
 

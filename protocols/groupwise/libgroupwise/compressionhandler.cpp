@@ -1,7 +1,8 @@
+#include "compressionhandler.h"
+
 #include <QTimer>
 #include <QDebug>
 
-#include "compressionhandler.h"
 #include "compress.h"
 
 CompressionHandler::CompressionHandler() : errorCode_(0)

@@ -18,11 +18,11 @@
     *************************************************************************
 */
 
+#include "qcatlshandler.h"
+
 #include <qtimer.h>
 
 #include <QtCrypto>
-
-#include "qcatlshandler.h"
 
 class QCATLSHandler::Private
 {

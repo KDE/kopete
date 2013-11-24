@@ -14,9 +14,9 @@
     *                                                                       *
     *************************************************************************
 */
-#include <qapplication.h>
-
 #include "transfer.h"
+
+#include <qapplication.h>
 
 Transfer::Transfer()
 {

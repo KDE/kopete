@@ -27,11 +27,11 @@
     but future layers might not.
 */
 
+#include "securestream.h"
+
 #include <qpointer.h>
 #include <qtimer.h>
 #include <QList>
-
-#include "securestream.h"
 
 #include "compressionhandler.h"
 //----------------------------------------------------------------------------

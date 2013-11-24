@@ -16,12 +16,13 @@
     *************************************************************************
 */
 
+#include "eventprotocol.h"
+
 #include <qbuffer.h>
 
 #include "gwerror.h"
 
 #include "eventtransfer.h"
-#include "eventprotocol.h"
 
 using namespace GroupWise;
 

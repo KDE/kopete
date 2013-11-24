@@ -17,6 +17,8 @@
     *************************************************************************
 */
 
+#include "gwfield.h"
+
 #include <q3cstring.h>
 
 #include "gwerror.h"
@@ -25,7 +27,6 @@
   #include <kdebug.h>
 #endif
 
-#include "gwfield.h"
 #include <iostream>
 
 using namespace Field;

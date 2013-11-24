@@ -16,14 +16,14 @@
     *************************************************************************
 */
 
+#include "responseprotocol.h"
+
 #include <QBuffer>
 #include <QByteArray>
 #include <QDebug>
 #include <QStringList>
 
 #include "response.h"
-
-#include "responseprotocol.h"
 
 ResponseProtocol::ResponseProtocol(QObject* parent)
 : InputProtocolBase(parent)

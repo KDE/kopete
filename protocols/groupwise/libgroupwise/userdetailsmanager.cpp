@@ -15,10 +15,10 @@
     *************************************************************************
 */
 
+#include "userdetailsmanager.h"
+
 #include "client.h"
 #include "tasks/getdetailstask.h"
-
-#include "userdetailsmanager.h"
 
 UserDetailsManager::UserDetailsManager( Client * parent)
  : QObject(parent), m_client( parent )

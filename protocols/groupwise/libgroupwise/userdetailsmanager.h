@@ -24,6 +24,7 @@
 
 #include "gwerror.h"
 #include "libgroupwise_export.h"
+#include "client.h"
 
 namespace GroupWise {
 	class Client;

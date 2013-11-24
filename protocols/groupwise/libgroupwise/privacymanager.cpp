@@ -16,11 +16,11 @@
     *************************************************************************
 */
 
+#include "privacymanager.h"
+
 #include "client.h"
 #include "tasks/privacyitemtask.h"
 #include "userdetailsmanager.h"
-
-#include "privacymanager.h"
 
 PrivacyManager::PrivacyManager( Client * client)
  : QObject(client), m_client( client )

@@ -17,14 +17,14 @@
     *************************************************************************
 */
   
+#include "task.h"
+
 #include <qtimer.h>
 
 #include "client.h"
 #include "gwfield.h"
 #include "request.h"
 #include "safedelete.h"
-
-#include "task.h"
 
 class Task::TaskPrivate
 {

@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include "chatroommanager.h"
+
 #include <qmap.h>
 #include <q3valuelist.h>
 
@@ -25,8 +27,6 @@
 #include "tasks/chatcountstask.h"
 #include "tasks/chatpropertiestask.h"
 #include "tasks/searchchattask.h"
-
-#include "chatroommanager.h"
 
 ChatroomManager::ChatroomManager( Client * parent)
 	: QObject(parent), m_client( parent ), m_replace( false )

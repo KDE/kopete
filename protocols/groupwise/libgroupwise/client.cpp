@@ -19,6 +19,8 @@
     *************************************************************************
 */
 
+#include "client.h"
+
 #include <QApplication>
 #include <QByteArray>
 #include <QList>
@@ -45,7 +47,6 @@
 #include "tasks/statustask.h"
 #include "tasks/typingtask.h"
 #include "userdetailsmanager.h"
-#include "client.h"
 
 namespace GroupWise {
 

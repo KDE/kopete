@@ -14,9 +14,9 @@
     *                                                                       *
     *************************************************************************
 */
-#include <qapplication.h>
-
 #include "response.h"
+
+#include <qapplication.h>
 
 Response::Response( int transactionId, int resultCode, Field::FieldList fields )
 : UserTransfer( transactionId ), m_resultCode( resultCode )

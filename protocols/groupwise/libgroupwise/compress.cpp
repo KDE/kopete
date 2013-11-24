@@ -1,10 +1,10 @@
+#include "compress.h"
+
 #include <QtCore> // for qWarning()
 #include <QObject>
 #include <QIODevice>
 #include <zlib.h>
 #include <stdlib.h>
-
-#include "compress.h"
 
 #define CHUNK_SIZE 1024
 
