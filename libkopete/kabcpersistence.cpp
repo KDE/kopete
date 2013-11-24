@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "kabcpersistence.h"
+
 #include <qstring.h>
 #include <qtimer.h>
 
@@ -36,8 +38,6 @@
 #include "kopetemetacontact.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
-
-#include "kabcpersistence.h"
 
 namespace Kopete
 {

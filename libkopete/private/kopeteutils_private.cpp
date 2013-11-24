@@ -13,6 +13,7 @@
     *                                                                       *
     *************************************************************************
 */
+#include "kopeteutils_private.h"
 
 #include <qapplication.h>
 #include <qmap.h>
@@ -22,7 +23,6 @@
 #include <kdebug.h>
 
 #include "knotification.h"
-#include "kopeteutils_private.h"
 #include "kopeteuiglobal.h"
 
 namespace Kopete

@@ -18,6 +18,8 @@
 #ifndef KABCPERSISTENCE_H
 #define KABCPERSISTENCE_H
 
+#include <QObject>
+
 #include "kopete_export.h"
 
 // Goal is to have all the address book modifying code in one place
