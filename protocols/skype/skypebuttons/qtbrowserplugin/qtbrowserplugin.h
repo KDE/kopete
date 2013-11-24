@@ -27,6 +27,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QDateTime>
 #include <QtGui/QPainter>
+#include <QMetaClassInfo>
 
 
 struct QtNPInstance;

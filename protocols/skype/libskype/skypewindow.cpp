@@ -13,6 +13,8 @@
     *************************************************************************
 */
 
+#include "skypewindow.h"
+
 #include <QString>
 #include <QRegExp>
 #include <QHash>
@@ -30,8 +32,6 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-
-#include "skypewindow.h"
 
 class SkypeWindowPrivate
 {

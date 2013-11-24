@@ -20,11 +20,12 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
+#include "qtbrowserplugin.h"
+
 #include <QtGui>
 
 #include "qtnpapi.h"
 
-#include "qtbrowserplugin.h"
 #include "qtbrowserplugin_p.h"
 
 #ifndef WINAPI
