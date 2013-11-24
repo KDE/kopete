@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "chatmemberslistview.h"
+
 #include <QToolTip>
 #include <QHelpEvent>
 #include <QDrag>
@@ -23,7 +25,6 @@
 #include "kdebug.h"
 #include "kmenu.h"
 #include "kopetecontact.h"
-#include "chatmemberslistview.h"
 #include "chatsessionmemberslistmodel.h"
 
 using namespace Kopete;

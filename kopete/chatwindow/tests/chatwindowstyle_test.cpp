@@ -15,8 +15,8 @@
     *************************************************************************
 */
 
-#include <kunittest/module.h>
 #include "chatwindowstyle_test.h"
+#include <kunittest/module.h>
 
 #include <stdlib.h>
 

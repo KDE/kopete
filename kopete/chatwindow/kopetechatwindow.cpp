@@ -21,6 +21,8 @@
     *************************************************************************
 */
 
+#include "kopetechatwindow.h"
+
 #include <QtCore/QTextStream>
 #include <QtCore/QTimer>
 #include <QtGui/QDockWidget>
@@ -70,7 +72,6 @@
 #include "chatview.h"
 #include "kopeteapplication.h"
 #include "kopetebehaviorsettings.h"
-#include "kopetechatwindow.h"
 #include "kopeteemoticonaction.h"
 #include "kopetegroup.h"
 #include "kopetechatsession.h"
