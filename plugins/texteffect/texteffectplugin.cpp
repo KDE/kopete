@@ -15,6 +15,8 @@
     ***************************************************************************
 */
 
+#include "texteffectplugin.h"
+
 #include <stdlib.h>
 
 #include <kdebug.h>
@@ -23,7 +25,6 @@
 
 #include "kopetechatsessionmanager.h"
 
-#include "texteffectplugin.h"
 #include "texteffectconfig.h"
 
 K_PLUGIN_FACTORY(TextEffectPluginFactory, registerPlugin<TextEffectPlugin>();)

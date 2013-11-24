@@ -19,6 +19,7 @@
 #define STATISTICSPLUGIN_H
 
 #include <QMap>
+#include <QVariantList>
 
 #include "kopeteplugin.h"
 

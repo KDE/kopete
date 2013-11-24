@@ -15,6 +15,8 @@
     ***************************************************************************
 */
 
+#include "highlightpreferences.h"
+
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <QVBoxLayout>
@@ -38,7 +40,6 @@
 #include "highlightplugin.h"
 #include "highlightconfig.h"
 #include "ui_highlightprefsbase.h"
-#include "highlightpreferences.h"
 
 K_PLUGIN_FACTORY(HighlightPreferencesFactory, registerPlugin<HighlightPreferences>();)
 K_EXPORT_PLUGIN(HighlightPreferencesFactory( "kcm_kopete_highlight" ))

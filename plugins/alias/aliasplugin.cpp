@@ -7,11 +7,11 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "aliasplugin.h"
+
 #include <kgenericfactory.h>
 
 #include "kopetechatsessionmanager.h"
-
-#include "aliasplugin.h"
 
 K_PLUGIN_FACTORY( AliasPluginFactory, registerPlugin<AliasPlugin>(); )
 K_EXPORT_PLUGIN( AliasPluginFactory( "kopete_alias" ) )

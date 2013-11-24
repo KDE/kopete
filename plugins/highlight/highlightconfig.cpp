@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include "highlightconfig.h"
+
 #include <qfile.h>
 #include <QTextDocument>
 #include <qregexp.h>
@@ -29,7 +31,6 @@
 #include <klocale.h>
 
 #include "filter.h"
-#include "highlightconfig.h"
 
 
 HighlightConfig::HighlightConfig()

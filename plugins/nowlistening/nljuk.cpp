@@ -21,13 +21,14 @@
     *************************************************************************
 */
 
+#include "nljuk.h"
+
 #include <kdebug.h>
 
 
 #include <QtDBus/QtDBus>
 
 #include "nlmediaplayer.h"
-#include "nljuk.h"
 
 NLJuk::NLJuk() : NLMediaPlayer()
 {

@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "privacyplugin.h"
+
 #include <kgenericfactory.h>
 #include <kicon.h>
 #include <kaction.h>
@@ -35,7 +37,6 @@
 #include "privacyconfig.h"
 #include "privacyguiclient.h"
 
-#include "privacyplugin.h"
 #include <kactioncollection.h>
 
 K_PLUGIN_FACTORY( PrivacyPluginFactory, registerPlugin<PrivacyPlugin>(); )

@@ -24,6 +24,9 @@
 #ifndef NLKSCD_H
 #define NLKSCD_H
 
+#include <QtDBus/QtDBus>
+#include "nlmediaplayer.h"
+
 class QDBusInterface;
 
 class NLKscd : public NLMediaPlayer

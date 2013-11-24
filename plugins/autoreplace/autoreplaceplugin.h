@@ -18,6 +18,7 @@
 #ifndef AutoReplacePLUGIN_H
 #define AutoReplacePLUGIN_H
 
+#include <QVariantList>
 #include <qobject.h>
 #include <qmap.h>
 #include <qstring.h>

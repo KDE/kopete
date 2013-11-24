@@ -16,6 +16,9 @@
  ***************************************************************************/
 
 #define QT3_SUPPORT
+
+#include "autoreplacepreferences.h"
+
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <q3header.h>
@@ -27,7 +30,6 @@
 #include <kgenericfactory.h>
 
 #include "ui_autoreplaceprefs.h"
-#include "autoreplacepreferences.h"
 #include "autoreplaceconfig.h"
 
 K_PLUGIN_FACTORY(AutoReplacePreferencesFactory, registerPlugin<AutoReplacePreferences>();)

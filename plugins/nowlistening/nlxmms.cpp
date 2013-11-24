@@ -23,10 +23,10 @@
 
 #ifdef HAVE_XMMS
 
+#include "nlxmms.h"
 #include <kdebug.h>
 #include <xmmsctrl.h> // need to fix Makefile.am for this?
 #include "nlmediaplayer.h"
-#include "nlxmms.h"
 
 NLXmms::NLXmms() : NLMediaPlayer()
 {

@@ -21,13 +21,14 @@
     *************************************************************************
 */
 
+#include "nlamarok.h"
+
 #include <kdebug.h>
 
 
 #include <QtDBus/QtDBus>
 
 #include "nlmediaplayer.h"
-#include "nlamarok.h"
 
 // from kvirc mpris interface
 struct MPRISPlayerStatus

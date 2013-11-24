@@ -21,13 +21,14 @@
     *************************************************************************
 */
 
+#include "nlkaffeine.h"
+
 #include <kdebug.h>
 
 
 #include <QtDBus/QtDBus>
 
 #include "nlmediaplayer.h"
-#include "nlkaffeine.h"
 
 NLKaffeine::NLKaffeine() : NLMediaPlayer()
 {

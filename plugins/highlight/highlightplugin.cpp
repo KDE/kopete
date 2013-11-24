@@ -13,6 +13,8 @@
     ***************************************************************************
 */
 
+#include "highlightplugin.h"
+
 #include <qregexp.h>
 
 #include <kgenericfactory.h>
@@ -21,7 +23,6 @@
 #include "kopeteview.h"
 
 #include "filter.h"
-#include "highlightplugin.h"
 #include "highlightconfig.h"
 
 K_PLUGIN_FACTORY(HighlightPluginFactory, registerPlugin<HighlightPlugin>();)

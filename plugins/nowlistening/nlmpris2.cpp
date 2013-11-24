@@ -21,12 +21,12 @@
     *************************************************************************
 */
 
+#include "nlmpris2.h"
+
 #include <kdebug.h>
 
 
 #include <QtDBus/QtDBus>
-
-#include "nlmpris2.h"
 
 
 NLmpris2::NLmpris2() : NLMediaPlayer()

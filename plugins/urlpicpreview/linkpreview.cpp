@@ -15,6 +15,8 @@
     **************************************************************************
 */
 
+#include "linkpreview.h"
+
 //Qt
 #include <qpainter.h>
 
@@ -26,7 +28,6 @@
 
 // Kopete
 #include "urlpicpreviewplugin.h"
-#include "linkpreview.h"
 
 LinkPreview * LinkPreview::m_self = NULL;
 

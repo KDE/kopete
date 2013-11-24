@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "statisticsplugin.h"
+
 #include <math.h>
 
 #include <qfile.h>
@@ -43,7 +45,6 @@
 
 #include "statisticscontact.h"
 #include "statisticsdialog.h"
-#include "statisticsplugin.h"
 #include "statisticsadaptor.h"
 #include "statisticsdb.h"
 

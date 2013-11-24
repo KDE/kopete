@@ -25,6 +25,9 @@
 #ifndef NLAMAROK_H
 #define NLAMAROK_H
 
+#include <QtDBus/QtDBus>
+#include "nlmediaplayer.h"
+
 class QDBusInterface;
 
 class NLamaroK : public NLMediaPlayer

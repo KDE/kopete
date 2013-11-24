@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "latexguiclient.h"
+
 #include <qvariant.h>
 
 #include <kaction.h>
@@ -29,7 +31,6 @@
 #include "kopetemessage.h"
 
 #include "latexplugin.h"
-#include "latexguiclient.h"
 #include <kactioncollection.h>
 
 LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent )

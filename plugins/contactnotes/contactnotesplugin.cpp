@@ -15,6 +15,8 @@
     ***************************************************************************
 */
 
+#include "contactnotesplugin.h"
+
 #include <kaction.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -25,7 +27,6 @@
 
 #include "contactnotesedit.h"
 
-#include "contactnotesplugin.h"
 #include <kactioncollection.h>
 
 K_PLUGIN_FACTORY(ContactNotesPluginFactory, registerPlugin<ContactNotesPlugin>();)

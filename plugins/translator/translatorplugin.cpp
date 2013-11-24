@@ -20,6 +20,8 @@
     google translation page layout (13-sept-2007)
 */
 
+#include "translatorplugin.h"
+
 #include <qapplication.h>
 #include <qregexp.h>
 #include <qstring.h>
@@ -41,7 +43,6 @@
 #include "kopetechatsessionmanager.h"
 #include "kopetecontact.h"
 
-#include "translatorplugin.h"
 #include "translatordialog.h"
 #include "translatorguiclient.h"
 #include "translatorlanguages.h"

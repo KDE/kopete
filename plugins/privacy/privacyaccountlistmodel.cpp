@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "privacyaccountlistmodel.h"
+
 #include <QStringList>
 
 #include <klocale.h>
@@ -22,7 +24,6 @@
 
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
-#include "privacyaccountlistmodel.h"
 
 PrivacyAccountListModel::PrivacyAccountListModel( QObject *parent )
 	: QAbstractTableModel(parent)

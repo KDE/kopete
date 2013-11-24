@@ -9,12 +9,12 @@
 // License: GPL v2
 //
 //
+#include "addbookmarksprefssettings.h"
+
 #include <kdebug.h>
 #include <ksharedconfig.h>
 #include <kglobal.h>
 #include <kconfiggroup.h>
-
-#include "addbookmarksprefssettings.h"
 
 BookmarksPrefsSettings::BookmarksPrefsSettings(QObject *parent)
  : QObject(parent)

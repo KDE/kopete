@@ -14,6 +14,7 @@
     *************************************************************************
 */
 
+#include "contactselectorwidget.h"
 #include <kopetemetacontact.h>
 #include <kopeteplugin.h>
 #include <kopetepluginmanager.h>
@@ -22,7 +23,6 @@
 #include <kplugininfo.h>
 #include <metacontactselectorwidget.h>
 #include "ui_contactselectorwidget_base.h"
-#include "contactselectorwidget.h"
 
 ContactSelectorWidget::ContactSelectorWidget( QWidget *parent )
 	: QWidget(parent)

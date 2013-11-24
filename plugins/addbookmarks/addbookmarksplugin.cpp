@@ -10,13 +10,14 @@
 //
 //
 
+#include "addbookmarksplugin.h"
+
 #include <kdebug.h>
 #include <kbookmark.h>
 #include <qvariant.h>
 #include <qtextcodec.h>
 #include <qregexp.h>
 
-#include "addbookmarksplugin.h"
 #include "kopetecontact.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteglobal.h"

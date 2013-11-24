@@ -17,6 +17,9 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "nowlisteningpreferences.h"
+
 #include <qspinbox.h>
 #include <qlineedit.h>
 #include <qlayout.h>
@@ -29,7 +32,6 @@
 
 #include "ui_nowlisteningprefs.h"
 #include "nowlisteningconfig.h"
-#include "nowlisteningpreferences.h"
 #include "nowlisteningpreferences.moc"
 
 K_PLUGIN_FACTORY( NowListeningPreferencesFactory, registerPlugin<NowListeningPreferences>(); )

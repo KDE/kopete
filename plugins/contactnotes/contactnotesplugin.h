@@ -18,6 +18,7 @@
 #ifndef CONTACTNOTESPLUGIN_H
 #define CONTACTNOTESPLUGIN_H
 
+#include <QVariantList>
 #include <qobject.h>
 #include <qmap.h>
 #include <qstring.h>

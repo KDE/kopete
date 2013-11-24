@@ -17,6 +17,8 @@
     *************************************************************************
 */
 
+#include "translatorguiclient.h"
+
 #include <qvariant.h>
 
 #include <kdebug.h>
@@ -31,7 +33,6 @@
 #include "kopetemessage.h"
 
 #include "translatorplugin.h"
-#include "translatorguiclient.h"
 #include "translatorlanguages.h"
 #include <kactioncollection.h>
 

@@ -17,6 +17,8 @@
     *************************************************************************
 */
 
+#include "translatorpreferences.h"
+
 #include <qlayout.h>
 #include <qboxlayout.h>
 #include <qwidget.h>
@@ -25,7 +27,6 @@
 #include <kopetepluginmanager.h>
 
 #include "translatorplugin.h"
-#include "translatorpreferences.h"
 #include "translatorconfig.h"
 #include "ui_translatorprefsbase.h"
 

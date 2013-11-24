@@ -14,6 +14,9 @@
 */
 
 #define QT3_SUPPORT
+
+#include "aliaspreferences.h"
+
 #include <kpushbutton.h>
 #include <k3listview.h>
 #include <klocale.h>
@@ -36,7 +39,6 @@
 
 #include "ui_aliasdialogbase.h"
 #include "editaliasdialog.h"
-#include "aliaspreferences.h"
 
 K_PLUGIN_FACTORY( AliasPreferencesFactory, registerPlugin<AliasPreferences>(); )
 K_EXPORT_PLUGIN( AliasPreferencesFactory( "kcm_kopete_alias" ) )

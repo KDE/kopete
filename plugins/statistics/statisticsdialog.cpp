@@ -15,6 +15,7 @@
     *************************************************************************
 */
 
+#include "statisticsdialog.h"
 
 #include <qtabwidget.h>
 #include <qwidget.h>
@@ -36,7 +37,6 @@
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
 
-#include "statisticsdialog.h"
 #include "statisticscontact.h"
 #include "ui_statisticswidgetbase.h"
 #include "statisticsplugin.h"

@@ -21,12 +21,12 @@
     *************************************************************************
 */
 
+#include "nlmpris.h"
+
 #include <kdebug.h>
 
 
 #include <QtDBus/QtDBus>
-
-#include "nlmpris.h"
 
 struct mprisPlayerStatus
 {

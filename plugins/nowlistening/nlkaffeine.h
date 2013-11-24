@@ -25,6 +25,9 @@
 #ifndef NLKAFFEINE_H
 #define NLKAFFEINE_H
 
+#include <QtDBus/QtDBus>
+#include "nlmediaplayer.h"
+
 class QDBusInterface;
 
 class NLKaffeine : public NLMediaPlayer

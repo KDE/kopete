@@ -15,6 +15,8 @@
     ***************************************************************************
 */
 
+#include "texteffectpreferences.h"
+
 #include <qstring.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
@@ -29,7 +31,6 @@
 #include <kdeversion.h>
 
 #include "ui_texteffectprefs.h"
-#include "texteffectpreferences.h"
 #include "texteffectconfig.h"
 
 K_PLUGIN_FACTORY(TextEffectPreferencesFactory, registerPlugin<TextEffectPreferences>();)

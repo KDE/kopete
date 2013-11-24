@@ -15,6 +15,8 @@
     **************************************************************************
 */
 
+#include "urlpicpreviewpreferences.h"
+
 // Qt
 #include <qlayout.h>
 #include <qcheckbox.h>
@@ -28,7 +30,6 @@
 // Kopete
 #include "urlpicpreviewconfig.h"
 #include "ui_urlpicpreviewprefsbase.h"
-#include "urlpicpreviewpreferences.h"
 
 
 K_PLUGIN_FACTORY(URLPicPreviewPreferencesFactory,

@@ -15,10 +15,10 @@
     ***************************************************************************
 */
 
+#include "translatordialog.h"
+
 #include <klocale.h>
 #include <ktextedit.h>
-
-#include "translatordialog.h"
 
 
 TranslatorDialog::TranslatorDialog(const QString &text, QWidget *parent)

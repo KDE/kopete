@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "statisticsdb.h"
+
 #include <QByteArray>
 #include <QSqlDriver>
 #include <QSqlQuery>
@@ -26,8 +28,6 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kdeversion.h>
-
-#include "statisticsdb.h"
 
 #include <time.h>
 

@@ -21,14 +21,14 @@
     *************************************************************************
 */
 
+#include "nlkscd.h"
+
 #include <kdebug.h>
 #include <QStringList>
 
 #include <QtDBus/QtDBus>
 
 #include "nlmediaplayer.h"
-
-#include "nlkscd.h"
 
 NLKscd::NLKscd() : NLMediaPlayer()
 {

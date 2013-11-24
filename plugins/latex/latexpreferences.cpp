@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "latexpreferences.h"
+
 #include <qlayout.h>
 
 #include <kparts/componentfactory.h>
@@ -26,7 +28,6 @@
 #include "latexplugin.h"
 #include "latexconfig.h"
 #include "ui_latexprefsbase.h"
-#include "latexpreferences.h"
 
 K_PLUGIN_FACTORY(LatexPreferencesFactory, registerPlugin<LatexPreferences>();)
 K_EXPORT_PLUGIN(LatexPreferencesFactory( "kcm_kopete_latex" ))

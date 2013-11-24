@@ -18,6 +18,7 @@
 #ifndef HighlightPLUGIN_H
 #define HighlightPLUGIN_H
 
+#include <QVariantList>
 #include <qobject.h>
 #include <qmap.h>
 #include <qstring.h>

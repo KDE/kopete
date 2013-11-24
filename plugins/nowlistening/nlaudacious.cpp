@@ -22,12 +22,12 @@
     *************************************************************************
 */
 
+#include "nlaudacious.h"
+
 #include <kdebug.h>
 
 
 #include <QtDBus/QtDBus>
-
-#include "nlaudacious.h"
 
 struct audaciousPlayerStatus
 {

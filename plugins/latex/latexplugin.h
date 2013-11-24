@@ -22,6 +22,7 @@
 #ifndef LATEXPLUGIN_H
 #define LATEXPLUGIN_H
 
+#include <QVariantList>
 #include <qobject.h>
 #include <qstring.h>
 

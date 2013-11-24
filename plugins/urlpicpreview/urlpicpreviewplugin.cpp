@@ -15,6 +15,8 @@
     **************************************************************************
 */
 
+#include "urlpicpreviewplugin.h"
+
 // Qt
 #include <qimage.h>
 #include <qregexp.h>
@@ -32,7 +34,6 @@
 // Kopete
 #include "linkpreview.h"
 #include "kopeteuiglobal.h"
-#include "urlpicpreviewplugin.h"
 #include "urlpicpreviewconfig.h"
 #include "kopetechatsessionmanager.h"
 

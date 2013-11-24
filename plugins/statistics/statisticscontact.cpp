@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "statisticscontact.h"
+
 #include <stdlib.h>
 
 #include <q3valuelist.h>
@@ -25,7 +27,6 @@
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
 
-#include "statisticscontact.h"
 #include "statisticsdb.h"
 
 StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) : m_metaContact(mc), m_metaContactId(mc->metaContactId()), m_db(db), m_oldStatus(Kopete::OnlineStatus::Unknown)

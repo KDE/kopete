@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "autoreplaceplugin.h"
+
 #include <kgenericfactory.h>
 
 #include <kopetecontact.h>
@@ -22,7 +24,6 @@
 #include "kopetechatsessionmanager.h"
 #include "kopetesimplemessagehandler.h"
 
-#include "autoreplaceplugin.h"
 #include "autoreplaceconfig.h"
 
 K_PLUGIN_FACTORY(AutoReplacePluginFactory, registerPlugin<AutoReplacePlugin>();)

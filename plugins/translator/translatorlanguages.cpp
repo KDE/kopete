@@ -17,11 +17,11 @@
     *************************************************************************
 */
 
+#include "translatorlanguages.h"
+
 #include <qstring.h>
 #include <qmap.h>
 #include <klocale.h>
-
-#include "translatorlanguages.h"
 
 TranslatorLanguages::TranslatorLanguages()
 {

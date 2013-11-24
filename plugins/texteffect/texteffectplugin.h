@@ -18,6 +18,7 @@
 #ifndef TextEffectPLUGIN_H
 #define TextEffectPLUGIN_H
 
+#include <QVariantList>
 #include <qobject.h>
 #include <qmap.h>
 #include <qstring.h>

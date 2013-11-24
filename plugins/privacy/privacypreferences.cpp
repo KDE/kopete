@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "privacypreferences.h"
+
 #include <QLayout>
 #include <QVBoxLayout>
 #include <QHeaderView>
@@ -32,7 +34,6 @@
 #include "privacyconfig.h"
 #include "ui_privacydialog.h"
 #include "privacyaccountlistmodel.h"
-#include "privacypreferences.h"
 
 K_PLUGIN_FACTORY( PrivacyPreferencesFactory, registerPlugin<PrivacyPreferences>(); )
 K_EXPORT_PLUGIN( PrivacyPreferencesFactory( "kcm_kopete_privacy" ) )

@@ -20,6 +20,8 @@
 
 #include <kcmodule.h>
 #include <qstring.h>
+#include "highlightconfig.h"
+#include "ui_highlightprefsbase.h"
 
 namespace Ui { class HighlightPrefsUI; }
 class Filter;

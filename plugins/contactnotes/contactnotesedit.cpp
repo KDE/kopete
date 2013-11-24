@@ -15,6 +15,8 @@
     ***************************************************************************
 */
 
+#include "contactnotesedit.h"
+
 #include <qlabel.h>
 #include <QTextEdit>
 
@@ -25,7 +27,6 @@
 #include "kopetemetacontact.h"
 
 #include "contactnotesplugin.h"
-#include "contactnotesedit.h"
 
 ContactNotesEdit::ContactNotesEdit(Kopete::MetaContact *m,ContactNotesPlugin *p) 
  : KDialog()

@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include "nowlisteningplugin.h"
+
 #include <QTimer>
 #include <QStringList>
 #include <QVariantList>
@@ -37,7 +39,6 @@
 #include "kopetestatusmessage.h"
 
 #include "nowlisteningconfig.h"
-#include "nowlisteningplugin.h"
 #include "nlmediaplayer.h"
 #include "nlkscd.h"
 #include "nljuk.h"

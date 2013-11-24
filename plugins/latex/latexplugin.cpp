@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include "latexplugin.h"
+
 #include <qregexp.h>
 #include <qimage.h>
 #include <qbuffer.h>
@@ -32,7 +34,6 @@
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
 
-#include "latexplugin.h"
 #include "latexconfig.h"
 #include "latexguiclient.h"
 
