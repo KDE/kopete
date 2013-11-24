@@ -15,9 +15,10 @@
   *************************************************************************
   */
 
+#include "aimprotocol.h"
+
 #include <kgenericfactory.h>
 
-#include "aimprotocol.h"
 #include "aimaccount.h"
 #include "aimstatusmanager.h"
 #include "aimaddcontactpage.h"

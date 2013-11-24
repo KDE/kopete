@@ -16,8 +16,8 @@
    *************************************************************************
 */
 
-#include <kdebug.h>
 #include "ssiactivatetask.h"
+#include <kdebug.h>
 #include "connection.h"
 #include "buffer.h"
 #include "oscartypes.h"

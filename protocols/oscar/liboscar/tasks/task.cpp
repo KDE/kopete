@@ -17,6 +17,8 @@
     *************************************************************************
 */
 
+#include "task.h"
+
 #include <qtimer.h>
 #include <qstring.h>
 #include <kdebug.h>
@@ -25,8 +27,6 @@
 #include "transfer.h"
 #include "safedelete.h"
 #include "buffer.h"
-#include "task.h"
-
 
 class Task::TaskPrivate
 {

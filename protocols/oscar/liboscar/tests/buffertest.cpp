@@ -1,5 +1,5 @@
-#include <QtTest/QtTest>
 #include "buffertest.h"
+#include <QtTest/QtTest>
 #include "buffer.h"
 
 QTEST_MAIN(BufferTest)

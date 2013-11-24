@@ -16,6 +16,8 @@
   *************************************************************************
 */
 
+#include "icqprotocol.h"
+
 #include <qcombobox.h>
 #include <kdialog.h>
 
@@ -33,7 +35,6 @@
 #include "icqaddcontactpage.h"
 #include "icqeditaccountwidget.h"
 
-#include "icqprotocol.h"
 #include "icqstatusmanager.h"
 
 K_PLUGIN_FACTORY( ICQProtocolFactory, registerPlugin<ICQProtocol>(); )

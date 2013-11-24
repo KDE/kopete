@@ -13,6 +13,8 @@
  *************************************************************************
  */
 
+#include "aimaccount.h"
+
 #include <QPointer>
 
 #include <kdebug.h>
@@ -35,7 +37,6 @@
 #include "kopeteview.h"
 
 #include "aimprotocol.h"
-#include "aimaccount.h"
 #include "aimchatsession.h"
 #include "aimcontact.h"
 #include "icqcontact.h"

@@ -17,8 +17,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
-#include "ui_oscarencodingselectionbase.h"
 #include "oscarencodingselectiondialog.h"
+#include "ui_oscarencodingselectionbase.h"
 
 #include <kdebug.h>
 #include <klocale.h>

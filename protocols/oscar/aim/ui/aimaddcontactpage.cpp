@@ -15,8 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "ui_aimaddcontactui.h"
 #include "aimaddcontactpage.h"
+#include "ui_aimaddcontactui.h"
 
 #include "kopeteaccount.h"
 

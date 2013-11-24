@@ -1,6 +1,6 @@
 
-#include <QtTest/QtTest>
 #include "guidtest.h"
+#include <QtTest/QtTest>
 #include "oscarguid.h"
 
 QTEST_MAIN( GuidTest )

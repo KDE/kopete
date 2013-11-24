@@ -14,14 +14,14 @@
   *************************************************************************
 */
 
+#include "oscarmyselfcontact.h"
+
 #include <klocale.h>
 
 #include "kopetecontactlist.h"
 
 #include "oscartypes.h"
 #include "oscaraccount.h"
-
-#include "oscarmyselfcontact.h"
 
 
 OscarMyselfContact::OscarMyselfContact( OscarAccount* account )

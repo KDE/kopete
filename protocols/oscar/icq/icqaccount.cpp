@@ -15,6 +15,8 @@
   *************************************************************************
 */
 
+#include "icqaccount.h"
+
 #include <QPointer>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -41,7 +43,6 @@
 #include "icqcontact.h"
 #include "aimcontact.h"
 #include "icqprotocol.h"
-#include "icqaccount.h"
 #include "icquserinfowidget.h"
 #include "oscarstatusmanager.h"
 #include "oscarpresencesdataclasses.h"

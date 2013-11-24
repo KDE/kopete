@@ -15,12 +15,12 @@
 	*                                                                       *
 	*************************************************************************
 */
+#include "userdetails.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include "userdetails.h"
 #include "buffer.h"
 #include "oscarutils.h"
 #include "oscardebug.h"

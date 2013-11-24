@@ -16,11 +16,12 @@
     *************************************************************************
 */
 
+#include "rateclassmanager.h"
+
 #include <QList>
 #include <kdebug.h>
 
 
-#include "rateclassmanager.h"
 #include "transfer.h"
 #include "connection.h"
 #include "rateclass.h"

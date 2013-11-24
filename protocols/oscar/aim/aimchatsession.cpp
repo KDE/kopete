@@ -17,9 +17,10 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
+#include "aimchatsession.h"
+
 #include <kcomponentdata.h>
 
-#include "aimchatsession.h"
 #include "kopetecontact.h"
 #include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
