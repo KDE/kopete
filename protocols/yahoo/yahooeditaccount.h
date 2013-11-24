@@ -28,6 +28,7 @@
 #include "kopetepasswordwidget.h"
 
 // Local Includes
+#include "yahooaccount.h"
 #include "ui_yahooeditaccountbase.h"
 
 namespace Kopete { class Account; }

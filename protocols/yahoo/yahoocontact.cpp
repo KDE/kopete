@@ -18,6 +18,9 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "yahoocontact.h"
+
 #include "kopetegroup.h"
 #include "kopetechatsession.h"
 #include "kopeteonlinestatus.h"
@@ -29,7 +32,6 @@
 #include "kopeteavatarmanager.h"
 
 // Local Includes
-#include "yahoocontact.h"
 #include "yahooaccount.h"
 #include "client.h"
 #include "yahoowebcamdialog.h"

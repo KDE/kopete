@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "yahoochatselectordialog.h"
+
 #include <QDomDocument>
 #include <QTreeWidgetItem>
 #include <QHeaderView>
@@ -21,7 +23,6 @@
 #include <kdebug.h>
 
 #include "ui_yahoochatselectorwidgetbase.h"
-#include "yahoochatselectordialog.h"
 
 YahooChatSelectorDialog::YahooChatSelectorDialog( QWidget *parent )
 	: KDialog( parent )

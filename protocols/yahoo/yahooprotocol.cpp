@@ -15,6 +15,8 @@
     *                                                                       *
     *************************************************************************
 */
+/* Own Header */
+#include "yahooprotocol.h"
 
 /* QT Includes */
 
@@ -24,7 +26,6 @@
 #include <kconfig.h>
 
 /* Local Includes */
-#include "yahooprotocol.h"
 #include "yahooaccount.h"
 #include "yahooaddcontact.h"
 #include "yahooeditaccount.h"

@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include "yahoochatchatsession.h"
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kcomponentdata.h>
@@ -26,7 +28,6 @@
 #include <kopeteuiglobal.h>
 #include <kopetemessage.h>
 
-#include "yahoochatchatsession.h"
 #include "yahoocontact.h"
 #include "yahooaccount.h"
 

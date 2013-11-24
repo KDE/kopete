@@ -13,11 +13,12 @@
     *************************************************************************
 */
 
+#include "yahoowebcam.h"
+
 #include <kdebug.h>
 #include <qtimer.h>
 
 #include "client.h"
-#include "yahoowebcam.h"
 #include "yahooaccount.h"
 #include "yahoowebcamdialog.h"
 #ifndef VIDEOSUPPORT_DISABLED

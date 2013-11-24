@@ -13,6 +13,9 @@
     *************************************************************************
 */
 
+// Own header
+#include "yahooverifyaccount.h"
+
 // QT Includes
 #include <qlayout.h>
 #include <qfile.h>
@@ -33,7 +36,6 @@
 
 // Local Includes
 #include "ui_yahooverifyaccountbase.h"
-#include "yahooverifyaccount.h"
 #include "yahooaccount.h"
 
 YahooVerifyAccount::YahooVerifyAccount(Kopete::Account *account, QWidget *parent)

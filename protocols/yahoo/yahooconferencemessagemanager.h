@@ -19,6 +19,7 @@
 #ifndef YAHOOCONFERENCEMESSAGEMANAGER_H
 #define YAHOOCONFERENCEMESSAGEMANAGER_H
 
+#include <kactioncollection.h>
 #include "kopetechatsession.h"
 
 class YahooContact;

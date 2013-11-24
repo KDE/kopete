@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include "yahooconferencemessagemanager.h"
+
 #include <kdebug.h>
 #include <klineedit.h>
 #include <klocale.h>
@@ -30,7 +32,6 @@
 #include <kopeteuiglobal.h>
 #include <kicon.h>
 
-#include "yahooconferencemessagemanager.h"
 #include "yahoocontact.h"
 #include "yahooaccount.h"
 #include "yahooinvitelistimpl.h"

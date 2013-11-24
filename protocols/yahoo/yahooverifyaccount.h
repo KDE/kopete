@@ -23,6 +23,7 @@
 
 // KDE Includes
 #include <kdialog.h>
+#include <kio/job.h>
 
 namespace Kopete { class Account; }
 namespace Ui { class YahooVerifyAccountBase; }

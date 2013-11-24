@@ -16,6 +16,9 @@
     *************************************************************************
 */
 
+// Own header
+#include "yahooeditaccount.h"
+
 // QT Includes
 #include <QCheckBox>
 #include <QImage>
@@ -47,7 +50,6 @@
 // Local Includes
 #include "yahooaccount.h"
 #include "yahoocontact.h"
-#include "yahooeditaccount.h"
 
 // Yahoo Add Contact page
 YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent): QWidget(parent), KopeteEditAccountWidget(theAccount)

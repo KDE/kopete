@@ -15,6 +15,8 @@
     *                                                                       *
     *************************************************************************
 */
+// Own Header
+#include "yahooaddcontact.h"
 
 // QT Includes
 #include <QLayout>
@@ -30,7 +32,6 @@
 
 // Local Includes
 #include "ui_yahooadd.h"
-#include "yahooaddcontact.h"
 #include "yahooaccount.h"
 
 // Yahoo Add Contact page

@@ -18,6 +18,7 @@
 #ifndef YAHOOCHATSELECTORDIALOG_H
 #define YAHOOCHATSELECTORDIALOG_H
 
+#include <QDomDocument>
 #include <KDialog>
 #include "yahootypes.h"
 

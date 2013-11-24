@@ -16,6 +16,9 @@
     *                                                                       *
     *************************************************************************
 */
+// Own Header
+#include "yahooaccount.h"
+
 //Standard Header
 #include <ctime>
 #include <stdlib.h>
@@ -58,7 +61,6 @@
 #include <kopeteaddedinfoevent.h>
 
 // Yahoo
-#include "yahooaccount.h"
 #include "yahoocontact.h"
 #include "yahooconnector.h"
 #include "yahooclientstream.h"
