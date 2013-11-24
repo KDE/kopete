@@ -20,6 +20,9 @@
 #ifndef KOPETE_CUSTOM_NOTIFICATION_PROPS_H
 #define KOPETE_CUSTOM_NOTIFICATION_PROPS_H
 
+#include <QPair>
+#include <QStringList>
+
 class KNotifyConfigWidget;
 class QBoxLayout;
 

@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include "customnotificationprops.h"
+
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlineedit.h>
@@ -27,8 +29,6 @@
 #include <kurlrequester.h>
 
 #include <knotifyconfigwidget.h>
-
-#include "customnotificationprops.h"
 
 #include <knotification.h>
 

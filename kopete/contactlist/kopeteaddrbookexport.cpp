@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include "kopeteaddrbookexport.h"
+
 #include <kabc/phonenumber.h>
 #include <qcombobox.h>
 #include <qlabel.h>
@@ -32,8 +34,6 @@
 #include "kopeteglobal.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
-
-#include "kopeteaddrbookexport.h"
 
 KopeteAddressBookExport::KopeteAddressBookExport( QWidget *parent, Kopete::MetaContact *mc ) : QObject( parent ), Ui::AddressBookExportUI()
 {

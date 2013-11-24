@@ -19,6 +19,8 @@
     *************************************************************************
 */
 
+#include "kabcexport.h"
+
 #include <qpushbutton.h>
 #include <qmap.h>
 
@@ -38,8 +40,6 @@
 #include <kopeteglobal.h>
 #include <kopetemetacontact.h>
 #include <kopetepicture.h>
-
-#include "kabcexport.h"
 
 class ContactLVI : public QListWidgetItem
 {

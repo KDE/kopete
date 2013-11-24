@@ -21,6 +21,7 @@
 #include <kassistantdialog.h>
 
 #include <kopete_export.h>
+#include <kabc/resource.h>
 
 #include "ui_kabcexport_page1.h"
 #include "ui_kabcexport_page2.h"
