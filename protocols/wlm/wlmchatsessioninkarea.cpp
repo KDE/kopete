@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "wlmchatsessioninkarea.h"
+
 #include <QPaintDevice>
 #include <QPainter>
 #include <QHBoxLayout>
@@ -24,7 +26,6 @@
 #include <QColorDialog>
 #include <QSlider>
 
-#include "wlmchatsessioninkarea.h"
 #include <KLocale>
 
 WlmChatSessionInkArea::WlmChatSessionInkArea(QWidget * parent)

@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include "wlmchatsessioninkaction.h"
+
 #include <QHBoxLayout>
 
 #include <KMenu>
@@ -21,7 +23,6 @@
 #include <KLocale>
 
 #include "wlmchatsessioninkarea.h"
-#include "wlmchatsessioninkaction.h"
 #include "ui_wlmchatsessioninkpopup.h"
 
 class WlmChatSessionInkAction::WlmChatSessionInkActionPrivate
