@@ -15,6 +15,8 @@
     *************************************************************************
 */
 
+#include "meanwhilecontact.h"
+
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -27,7 +29,6 @@
 #include "meanwhileprotocol.h"
 #include "meanwhilesession.h"
 #include "meanwhileaccount.h"
-#include "meanwhilecontact.h"
 #include "meanwhileplugin.h"
 
 MeanwhileContact::MeanwhileContact(QString userId, QString nickname,

@@ -15,10 +15,10 @@
     *                                                                       *
     *************************************************************************
 */
+#include "meanwhileaccount.h"
 #include <signal.h>
 #include "meanwhileprotocol.h"
 #include "meanwhileplugin.h"
-#include "meanwhileaccount.h"
 #include "meanwhilecontact.h"
 #include "meanwhilesession.h"
 #include "kopetechatsession.h"

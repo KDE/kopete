@@ -14,6 +14,8 @@
     *                                                                       *
     *************************************************************************
 */
+#include "meanwhileeditaccountwidget.h"
+
 #include <kdebug.h>
 #include <kopeteaccount.h>
 #include <kopetepasswordwidget.h>
@@ -22,7 +24,6 @@
 
 #include "meanwhileprotocol.h"
 #include "meanwhileaccount.h"
-#include "meanwhileeditaccountwidget.h"
 #include "meanwhilesession.h"
 
 #define DEFAULT_SERVER "messaging.opensource.ibm.com"

@@ -23,6 +23,8 @@
 
 namespace Kopete { class Account; }
 
+class MeanwhileProtocol;
+
 class MeanwhileEditAccountWidget :
           public QWidget,
           public KopeteEditAccountWidget

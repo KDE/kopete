@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include "meanwhilesession.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <kmessagebox.h>
@@ -27,7 +29,6 @@
 #include <kopetegroup.h>
 #include <kopetecontactlist.h>
 #include <kopetesockettimeoutwatcher.h>
-#include "meanwhilesession.h"
 #include "meanwhileprotocol.h"
 
 #include <meanwhile/mw_channel.h>

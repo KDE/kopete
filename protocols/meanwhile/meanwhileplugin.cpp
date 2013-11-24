@@ -14,9 +14,9 @@
     *                                                                       *
     *************************************************************************
 */
+#include "meanwhileplugin.h"
 #include <qwidget.h>
 #include <qlineedit.h>
-#include "meanwhileplugin.h"
 
 void MeanwhilePlugin::getMeanwhileId(QWidget * /*parent*/,
             QLineEdit * /*fillThis*/)
