@@ -19,10 +19,11 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
+#include "gadurichtextformat.h"
+
 #include <kdebug.h>
 #include <kopetemessage.h>
 
-#include "gadurichtextformat.h"
 #include "gadusession.h"
 
 #include <QtCore/QString>

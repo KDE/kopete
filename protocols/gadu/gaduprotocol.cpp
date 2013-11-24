@@ -20,6 +20,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
+#include "gaduprotocol.h"
+
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kconfig.h>
@@ -28,7 +30,6 @@
 
 #include "gaduaccount.h"
 #include "gaducontact.h"
-#include "gaduprotocol.h"
 
 #include "gadueditaccount.h"
 #include "gaduaddcontactpage.h"

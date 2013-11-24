@@ -22,9 +22,9 @@
 // 02110-1301, USA.
 //
 
-#include <ctime>
-
 #include "gadusession.h"
+
+#include <ctime>
 
 #include <klocale.h>
 #include <kdebug.h>

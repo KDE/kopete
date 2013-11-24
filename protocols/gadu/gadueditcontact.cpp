@@ -19,9 +19,9 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
+#include "gadueditcontact.h"
 #include "gaduaccount.h"
 #include "gaducontact.h"
-#include "gadueditcontact.h"
 #include "kopeteonlinestatus.h"
 
 #include "gaducontactlist.h"

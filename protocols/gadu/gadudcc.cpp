@@ -19,6 +19,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
+#include "gadudcc.h"
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -29,7 +31,6 @@
 #include <kdebug.h>
 
 #include "gadudccserver.h"
-#include "gadudcc.h"
 #include "gadudcctransaction.h"
 #include "gaduaccount.h"
 

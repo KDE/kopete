@@ -19,6 +19,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 
+#include "gaduregisteraccount.h"
+
 #include <qstring.h>
 #include <qregexp.h>
 #include <qpushbutton.h>
@@ -33,7 +35,6 @@
 #include <kglobal.h>
 
 #include "ui_gaduregisteraccountui.h"
-#include "gaduregisteraccount.h"
 #include "gaducommands.h"
 
 GaduRegisterAccount::GaduRegisterAccount( QWidget* parent )
