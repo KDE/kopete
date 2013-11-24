@@ -118,8 +118,8 @@ AIMEditAccountWidget::AIMEditAccountWidget( AIMProtocol *protocol,
 
 	if ( !mAccount || !mAccount->engine()->isActive() )
 	{
-		mGui->tabVisible->setEnabled( false );
-		mGui->tabInvisible->setEnabled( false );
+		mGui->visibleTab->setEnabled( false );
+		mGui->invisibleTab->setEnabled( false );
 	}
 
 	/* Set tab order to password custom widget correctly */

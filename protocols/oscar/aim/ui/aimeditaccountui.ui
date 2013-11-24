@@ -36,7 +36,7 @@
      <property name="currentIndex" >
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="basicSetupTab" >
       <attribute name="title" >
        <string>&amp;Basic Setup</string>
       </attribute>
@@ -241,7 +241,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="accountPreferencesTab" >
       <attribute name="title" >
        <string>Accou&amp;nt Preferences</string>
       </attribute>
@@ -637,7 +637,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="privacyTab" >
       <attribute name="title" >
        <string>Pri&amp;vacy</string>
       </attribute>
@@ -741,7 +741,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabVisible" >
+     <widget class="QWidget" name="visibleTab" >
       <attribute name="title" >
        <string>Visible</string>
       </attribute>
@@ -807,7 +807,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabInvisible" >
+     <widget class="QWidget" name="invisibleTab" >
       <attribute name="title" >
        <string>Invisible</string>
       </attribute>
