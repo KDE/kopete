@@ -26,6 +26,8 @@
 
 #ifdef HAVE_XMMS
 
+#include "nlmediaplayer.h"
+
 class NLXmms : public NLMediaPlayer
 {
 	public:

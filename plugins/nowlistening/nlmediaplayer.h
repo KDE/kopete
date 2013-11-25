@@ -25,6 +25,8 @@
 #ifndef NLMEDIAPLAYER_H
 #define NLMEDIAPLAYER_H
 
+#include <QString>
+
 class NLMediaPlayer
 {
 	public:
