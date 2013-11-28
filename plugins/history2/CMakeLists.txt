@@ -21,7 +21,7 @@ kde4_add_kcfg_files(kopete_history2_PART_SRCS history2config.kcfgc )
 kde4_add_plugin(kopete_history2 ${kopete_history2_PART_SRCS})
 
 
-target_link_libraries(kopete_history2  ${KDE4_KHTML_LIBS} kopete QtSql)
+target_link_libraries(kopete_history2  ${KDE4_KHTML_LIBS} kopete ${QT_QTSQL_LIBRARY})
 
 install(TARGETS kopete_history2  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -38,7 +38,7 @@ kde4_add_kcfg_files(kcm_kopete_history2_PART_SRCS history2config.kcfgc )
 kde4_add_plugin(kcm_kopete_history2 ${kcm_kopete_history2_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_history2  ${KDE4_KUTILS_LIBS} ${KDE4_KHTML_LIBS} kopete QtSql)
+target_link_libraries(kcm_kopete_history2  ${KDE4_KUTILS_LIBS} ${KDE4_KHTML_LIBS} kopete ${QT_QTSQL_LIBRARY})
 
 install(TARGETS kcm_kopete_history2  DESTINATION ${PLUGIN_INSTALL_DIR})
 
