@@ -52,7 +52,7 @@ kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui infoeventbase.ui )
 kde4_add_app_icon(kopete_SRCS "hi*-apps-kopete.png")
 
 kde4_add_executable(kopete_bin ${kopete_SRCS})
-set_target_properties(kopete_bin PROPERTIES OUTPUT_NAME kopete)
+set_target_properties(kopete_bin PROPERTIES RUNTIME_OUTPUT_NAME kopete)
 
 target_link_libraries(kopete_bin 
 	${KDE4_KTEXTEDITOR_LIBS} 
