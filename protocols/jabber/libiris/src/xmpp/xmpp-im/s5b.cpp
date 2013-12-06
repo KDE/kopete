@@ -31,6 +31,7 @@
 #include "safedelete.h"
 
 #ifdef Q_OS_WIN
+# include <winsock2.h>
 # include <windows.h>
 #else
 # include <netinet/in.h>

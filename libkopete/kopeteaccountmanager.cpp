@@ -88,7 +88,9 @@ AccountManager::AccountManager()
 	setObjectName( "KopeteAccountManager" );
 	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT(networkConnected()) );
 	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT(networkDisconnected()) );
+#ifdef __GNUC__
 #warning TODO: Switch to a org.kde.Solid.PowerManagement Sleeping/Suspending signal when available.
+#endif
 	QDBusConnection::systemBus().connect( "org.freedesktop.UPower", "/org/freedesktop/UPower", "", "Sleeping", this, SLOT( suspend() ) );
 	QDBusConnection::sessionBus().connect( "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT( resume() ) );
 	d->suspended = false;

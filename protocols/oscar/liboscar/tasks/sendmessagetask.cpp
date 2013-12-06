@@ -61,7 +61,7 @@ void SendMessageTask::onGo()
 	}
 
 	// Check Message to see what SNAC to use
-	WORD snacSubfamily = 0x0006;
+	Oscar::WORD snacSubfamily = 0x0006;
 	if ( ( m_message.channel() == 2 ) && m_message.hasProperty( Oscar::Message::AutoResponse ) )
 	{ // an auto response is send for ack of channel 2 messages
 		kDebug(OSCAR_RAW_DEBUG) << "Sending SNAC 0x0B instead of 0x06 ";
