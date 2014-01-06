@@ -236,9 +236,14 @@ void OtrlChatInterface::still_secure(void *opdata, ConnContext *context, int is_
 }
 
 int OtrlChatInterface::max_message_size(void *opdata, ConnContext *context){
-	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
-
 	Q_UNUSED(context)
+
+	if (!opdata) {
+		kDebug(14318) << "Trying to determine max message size of unknown session. Fragmentation will not work.";
+		return 0;
+	}
+
+	Kopete::ChatSession *session= ((Kopete::ChatSession*)opdata);
 
 	kDebug(14318) << session->protocol()->pluginId();
 
