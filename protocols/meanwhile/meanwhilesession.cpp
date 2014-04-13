@@ -42,7 +42,6 @@
 #include <meanwhile/mw_srvc_store.h>
 #include <meanwhile/mw_cipher.h>
 #include <meanwhile/mw_st_list.h>
-#include <QList>
 
 #define set_session_handler(a,b) sessionHandler.a = _handleSession ## b
 #define set_aware_handler(a,b)   awareHandler.a = _handleAware ## b

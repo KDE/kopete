@@ -24,7 +24,8 @@
 #include <meanwhile/mw_srvc_im.h>
 #include <meanwhile/mw_srvc_resolve.h>
 
-class QList;
+#include <QList>
+
 class QTcpSocket;
 
 struct MeanwhileClientID {
