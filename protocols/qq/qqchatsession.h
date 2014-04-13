@@ -15,7 +15,6 @@
 
 #include <q3ptrqueue.h>
 #include <QLabel>
-#include <Q3ValueList>
 #include <QList>
 #include <QDateTime>
 #include <kopetemessage.h>
@@ -155,7 +154,7 @@ private:
 	QString m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
 
-	Q3ValueList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
+	QList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
 	Kopete::ContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
 	KActionMenu *m_actionInvite;
 	typedef QList<KAction*> ActionList;

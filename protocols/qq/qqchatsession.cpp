@@ -15,7 +15,7 @@
 
 #include <qlabel.h>
 #include <qvalidator.h>
-#include <Q3ValueList>
+#include <QList>
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kiconloader.h>
@@ -260,7 +260,7 @@ void QQChatSession::slotGotNotTypingNotification( const ConferenceEvent& event )
 void QQChatSession::dequeueMessagesAndInvites()
 {
 	kDebug ( 14140 ) ;
-	for ( Q3ValueListIterator< Kopete::Message > it = m_pendingOutgoingMessages.begin();
+	for ( QList< Kopete::Message >::iterator it = m_pendingOutgoingMessages.begin();
 		  it != m_pendingOutgoingMessages.end();
 		  ++it )
 	{

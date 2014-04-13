@@ -23,8 +23,8 @@
 #include <meanwhile/mw_srvc_aware.h>
 #include <meanwhile/mw_srvc_im.h>
 #include <meanwhile/mw_srvc_resolve.h>
-#include <Q3ValueList>
 
+class QList;
 class QTcpSocket;
 
 struct MeanwhileClientID {
@@ -184,7 +184,7 @@ private:
     struct ConversationData {
         MeanwhileContact *contact;
         Kopete::ChatSession *chat;
-        Q3ValueList<Kopete::Message> *queue;
+        QList<Kopete::Message> *queue;
     };
 
     /** (To be) stored in the mwConference struct */

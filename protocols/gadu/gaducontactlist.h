@@ -23,9 +23,8 @@
 #ifndef GADUCONTACTLIST_H
 #define GADUCONTACTLIST_H
 
-#include <q3valuelist.h>
-
-class QString;
+#include <QList>
+#include <QString>
 
 class GaduContactsList
 {
@@ -60,7 +59,7 @@ public:
 	unsigned int size();
 	const GaduContactsList::ContactLine& operator[]( unsigned int i );
 private:
-	typedef Q3ValueList<ContactLine> CList;
+	typedef QList<ContactLine> CList;
 	CList cList;
 	CList::iterator	it;
 };
