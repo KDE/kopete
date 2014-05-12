@@ -112,6 +112,10 @@ macro_log_feature(XMMS_FOUND "Xmms" "X MultiMedia System development libraries" 
 macro_optional_find_package(ZLIB)
 macro_log_feature(ZLIB_FOUND "ZLIB" "Zlib is a library implementing the deflate compression method" "http://zlib.net/" FALSE "" "Required for the GroupWise and Jabber protocols")
 
+if(Q_WS_X11)
+    macro_log_feature(X11_Xss_FOUND "libXss" "libXss provides access to screen server X11 extension" "" FALSE "" "Required for idle timer on X11")
+endif(Q_WS_X11)
+
 set(KOPETE_INCLUDES
     ${KDE4_INCLUDES}
     ${KDEPIMLIBS_INCLUDE_DIRS}
