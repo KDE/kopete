@@ -143,7 +143,7 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	connect( d->editPart, SIGNAL(canSendChanged(bool)),
 	         this, SLOT(slotUpdateReplySend()) );
 	connect( d->editPart, SIGNAL(typing(bool)),
-		 manager, SIGNAL(typing(bool)) );
+		 manager, SLOT(typing(bool)) );
 
 	//Connections to the manager and the ViewManager that every view should have
 	connect( this, SIGNAL(closing(KopeteView*)),
