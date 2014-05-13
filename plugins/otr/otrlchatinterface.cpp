@@ -381,7 +381,10 @@ void OtrlChatInterface::handle_smp_event(void *opdata, OtrlSMPEvent smp_event, C
 	case OTRL_SMPEVENT_ABORT :
 	case OTRL_SMPEVENT_CHEATED :
 	case OTRL_SMPEVENT_ERROR :
-		AuthenticationWizard::findWizard(chatSession)->finished(false, false);
+		AuthenticationWizard *wizard = AuthenticationWizard::findWizard(chatSession);
+		if (wizard) {
+			wizard->finished(false, false);
+		}
 		OtrlChatInterface::self()->abortSMP( context, chatSession );
 		break;
 	}
