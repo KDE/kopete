@@ -26,27 +26,7 @@
 #include <kauthorized.h>
 #include <kactioncollection.h>
 #include <ktoolinvocation.h>
-#ifndef Q_OS_WIN
-#include <k3process.h>
-#else
-class K3Process : public QObject {
-public:
-    enum RunMode {
-        NotifyOnExit,
-    };
-    enum Communication {
-        NoCommunication,
-        AllOutput,
-    };
-    K3Process(QObject *) {}
-    
-    K3Process &operator<< (const QString &arg) { return *this; }
-    K3Process &operator<< (const char *arg) { return *this; }
-    K3Process &operator<< (const QByteArray &arg) { return *this; }
-    K3Process &operator<< (const QStringList &args) { return *this; }
-    virtual bool start (RunMode runmode=NotifyOnExit, Communication comm=NoCommunication) { return true; }
-};
-#endif
+#include <kprocess.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
@@ -112,7 +92,7 @@ struct CommandHandlerPrivate
 {
 	PluginCommandMap pluginCommands;
 	Kopete::CommandHandler *s_handler;
-	QMap<K3Process*,ManagerPair> processMap;
+	QMap<KProcess*,ManagerPair> processMap;
 	bool inCommand;
 	QList<KAction *> m_commands;
 };
@@ -315,9 +295,9 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 {
 	if( !args.isEmpty() )
 	{
-		K3Process *proc = 0L;
+		KProcess *proc = 0L;
 		if ( KAuthorized::authorizeKAction( "shell_access" ) )
-				proc = new K3Process(manager);
+				proc = new KProcess(manager);
 		if( proc )
 		{
 			*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
@@ -334,9 +314,14 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 				*proc << args;
 			}
 
-			connect(proc, SIGNAL(receivedStdout(K3Process*,char*,int)), this, SLOT(slotExecReturnedData(K3Process*,char*,int)));
-			connect(proc, SIGNAL(receivedStderr(K3Process*,char*,int)), this, SLOT(slotExecReturnedData(K3Process*,char*,int)));
-			proc->start( K3Process::NotifyOnExit, K3Process::AllOutput );
+			connect(proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(slotExecError(QProcess::ProcessError)));
+			connect(proc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(slotExecFinished()));
+
+			proc->setOutputChannelMode(KProcess::MergedChannels);
+			proc->setNextOpenMode(QIODevice::ReadOnly);
+			proc->clearEnvironment();
+			proc->start();
+			proc->closeWriteChannel();
 		}
 		else
 		{
@@ -395,12 +380,43 @@ void Kopete::CommandHandler::slotCloseCommand( const QString &, Kopete::ChatSess
 		manager->view()->closeView();
 }
 
-void Kopete::CommandHandler::slotExecReturnedData(K3Process *proc, char *buff, int bufflen )
+void Kopete::CommandHandler::slotExecError( QProcess::ProcessError error )
 {
-	kDebug(14010) ;
-	QString buffer = QString::fromLocal8Bit( buff, bufflen );
-	ManagerPair mgrPair = p->processMap[ proc ];
-	Kopete::Message msg( mgrPair.first->myself(), mgrPair.first->members()  );
+	kDebug(14010);
+	KProcess *proc = static_cast<KProcess *>(sender());
+	if (error == QProcess::FailedToStart) {
+		ManagerPair &mgrPair = p->processMap[ proc ];
+		Kopete::Message msg( mgrPair.first->myself(), mgrPair.first->members() );
+		msg.setDirection( Kopete::Message::Internal );
+		msg.setPlainBody( i18n( "ERROR: Failed to start process from /exec command." ) );
+		mgrPair.first->sendMessage( msg );
+	} else {
+		const QString &buffer = QString::fromUtf8(proc->readAll());
+		if (!buffer.isEmpty())
+			slotExecSendMessage(proc, buffer);
+	}
+	disconnect(proc, 0, 0, 0);
+	p->processMap.remove(proc);
+	proc->deleteLater();
+}
+
+void Kopete::CommandHandler::slotExecFinished()
+{
+	kDebug(14010);
+	KProcess *proc = static_cast<KProcess *>(sender());
+	const QString &buffer = QString::fromUtf8(proc->readAll());
+	if (!buffer.isEmpty())
+		slotExecSendMessage(proc, buffer);
+	disconnect(proc, 0, 0, 0);
+	p->processMap.remove(proc);
+	proc->deleteLater();
+}
+
+void Kopete::CommandHandler::slotExecSendMessage( KProcess *proc, const QString &buffer )
+{
+	kDebug(14010);
+	ManagerPair &mgrPair = p->processMap[ proc ];
+	Kopete::Message msg( mgrPair.first->myself(), mgrPair.first->members());
 	msg.setDirection( mgrPair.second );
 	msg.setPlainBody( buffer );
 
@@ -408,12 +424,6 @@ void Kopete::CommandHandler::slotExecReturnedData(K3Process *proc, char *buff, i
 		mgrPair.first->sendMessage( msg );
 	else
 		mgrPair.first->appendMessage( msg );
-}
-
-void Kopete::CommandHandler::slotExecFinished(K3Process *proc)
-{
-	delete proc;
-	p->processMap.remove( proc );
 }
 
 QStringList Kopete::CommandHandler::parseArguments( const QString &args )

@@ -20,11 +20,10 @@
 #include <QtCore/QMultiHash>
 
 #include <kshortcut.h>
+#include <kprocess.h>
 #include "kopetemessage.h"
 
 #include "kopete_export.h"
-
-class K3Process;
 
 struct CommandHandlerPrivate;
 
@@ -183,8 +182,9 @@ class KOPETE_EXPORT CommandHandler : public QObject
 	private slots:
 		void slotPluginLoaded( Kopete::Plugin * );
 		void slotPluginDestroyed( QObject * );
-		void slotExecReturnedData(K3Process *proc, char *buff, int bufflen );
-		void slotExecFinished(K3Process *proc);
+		void slotExecError( QProcess::ProcessError error );
+		void slotExecFinished();
+		void slotExecSendMessage( KProcess *proc, const QString &buffer );
 		void slotViewCreated( KopeteView *view );
 
 		void slotHelpCommand( const QString & args, Kopete::ChatSession *manager );
