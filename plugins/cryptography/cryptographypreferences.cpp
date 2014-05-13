@@ -51,7 +51,7 @@ CryptographyPreferences::CryptographyPreferences ( QWidget *parent, const QVaria
 	QLabel * label = new QLabel ( i18nc ( "@info", "<para>Before you can sign messages or receive encrypted ones, you must select a private key for yourself.</para><para>Before you can send encrypted messages to someone, you must select their public key by right-clicking on their name in your contact list and choosing \"Select Public Key\".</para>"), this );
 	label->setWordWrap ( true );
 
-	checkBox = new QCheckBox ( i18n ("Sign messages in clearsign mode") );
+	checkBox = new QCheckBox ( i18n ("Sign messages in clearsign mode"), this );
 	checkBox->setCheckState ( Qt::Unchecked );
 
 	keyLabel->setBuddy( key );
