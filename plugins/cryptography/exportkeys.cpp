@@ -62,7 +62,7 @@ ExportKeys::ExportKeys ( QList<Kopete::MetaContact*> mcs, QWidget *parent )
 		// now we create the ListWidgetItem
 		key = key.right(8).prepend("0x");
 		key = key + ' ' + mc->displayName() + " (" + addressee.formattedName() + ')';
-		QListWidgetItem * tmpItem = new QListWidgetItem ( KIconLoader::global()->loadIconSet ("document-export-key", KIconLoader::Small), key, mUi->keyList);
+		QListWidgetItem * tmpItem = new QListWidgetItem ( KIcon ("document-export-key"), key, mUi->keyList);
 		tmpItem->setFlags (Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		tmpItem->setCheckState (Qt::Checked);
 		mUi->keyList->addItem ( tmpItem );

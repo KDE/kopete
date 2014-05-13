@@ -434,7 +434,7 @@ QString CryptographyPlugin::kabcKeySelector ( QString displayName, QString addre
 		ui.label->setText ( i18nc ( "@info", "Cryptography plugin has found multiple encryption keys for %1 (%2) in your KDE address book. To use one of these keys, select it and choose OK.",
 		                           displayName, addresseeName ) );
 		for ( int i = 0; i < keys.count(); i++ )
-			ui.keyList->addItem ( new QListWidgetItem ( KIconLoader::global()->loadIconSet ( "application-pgp-keys", KIconLoader::Small ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
+			ui.keyList->addItem ( new QListWidgetItem ( KIcon ( "application-pgp-keys" ), keys[i].right ( 8 ).prepend ( "0x" ), ui.keyList ) );
 		ui.keyList->addItems ( keys );
 		QString ret;
 		if ( dialog->exec() )
