@@ -743,11 +743,6 @@ void OscarAccount::setProxyServerPort(int port)
 	configGroup()->writeEntry( QString::fromLatin1( "ProxyPort" ), port);
 }
 
-void OscarAccount::setProxyServerEncrypted( bool encrypted )
-{
-	configGroup()->writeEntry( QString::fromLatin1( "ProxyEncrypted" ), encrypted);
-}
-
 void OscarAccount::setProxyServerEnabled(bool enable)
 {
 	configGroup()->writeEntry( QString::fromLatin1( "ProxyEnable" ), enable);

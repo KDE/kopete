@@ -95,9 +95,6 @@ public:
     /** Set the proxy server port */
     void setProxyServerPort( int port );
 
-    /** Set the proxy server encryption */
-    void setProxyServerEncrypted( bool encrypted );
-
     void setProxyServerEnabled(bool);
 
 	/** Returns codec for account's default encoding */
