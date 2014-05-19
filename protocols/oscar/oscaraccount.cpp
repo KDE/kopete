@@ -733,6 +733,11 @@ void OscarAccount::setServerEncrypted( bool encrypted )
 }
 
 
+void OscarAccount::setProxyServerSocks5( bool enable )
+{
+	configGroup()->writeEntry( QString::fromLatin1( "ProxySocks5" ), enable );
+}
+
 void OscarAccount::setProxyServerAddress(const QString &server)
 {
 	configGroup()->writeEntry( QString::fromLatin1( "ProxyServer" ), server );
@@ -1492,7 +1497,8 @@ void OscarAccount::createClientStream( ClientStream **clientStream )
 	{
 		QString proxyExp=configGroup()->readEntry( QString::fromLatin1( "ProxyServer" ), QString() );
 		int proxyPort=configGroup()->readEntry( QString::fromLatin1( "ProxyPort" ), 0 );
-		tcpSocket->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxyExp, proxyPort));
+		bool proxySocks5=configGroup()->readEntry( QString::fromLatin1( "ProxySocks5" ), false );
+		tcpSocket->setProxy(QNetworkProxy(proxySocks5 ? QNetworkProxy::Socks5Proxy : QNetworkProxy::HttpProxy, proxyExp, proxyPort));
 	}
 	//TODO support for:
 	//-proxy requiring authentication

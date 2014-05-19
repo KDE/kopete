@@ -89,6 +89,9 @@ public:
 	/** Set the server encryption */
 	void setServerEncrypted( bool encrypted );
 
+    /** Set if the proxy server is SOCKS5 */
+    void setProxyServerSocks5( bool enable );
+
     /** Set the proxy server address */
     void setProxyServerAddress( const QString& server );
 

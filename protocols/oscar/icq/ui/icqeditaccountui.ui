@@ -422,6 +422,16 @@ If you do not currently have an ICQ account, please click the button to create o
           <item>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
+             <widget class="QCheckBox" name="edtProxyServerSocks5">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Proxy server is SOCKS5</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <property name="spacing">
                <number>6</number>
@@ -1069,6 +1079,22 @@ If you do not currently have an ICQ account, please click the button to create o
     <hint type="destinationlabel">
      <x>530</x>
      <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionEnableProxy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>edtProxyServerSocks5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>288</x>
+     <y>292</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>320</y>
     </hint>
    </hints>
   </connection>
