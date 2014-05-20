@@ -1500,26 +1500,21 @@ void OscarAccount::createClientStream( ClientStream **clientStream )
 		bool proxySocks5=configGroup()->readEntry( QString::fromLatin1( "ProxySocks5" ), false );
 		tcpSocket->setProxy(QNetworkProxy(proxySocks5 ? QNetworkProxy::Socks5Proxy : QNetworkProxy::HttpProxy, proxyExp, proxyPort));
 	}
-	//TODO support for:
-	//-proxy requiring authentication
-	//-SOCKS5
-	//-system-wide proxy/account-wide proxy selection
-	//BUGS: 119806 186872 236721
-#if 0
-	if (KProtocolManager::useProxy())
+	else
 	{
-		QString proxyExp=KProtocolManager::proxyFor( "https" );
-		proxyExp.remove("http://");
-		int proxyPort=0;
-		int columnPos=proxyExp.indexOf(':');
-		if (columnPos!=-1)
+		const QString &proxyUrl = KProtocolManager::proxyForUrl( KUrl( "http:" ) );
+		if (!proxyUrl.isEmpty() && proxyUrl != QLatin1String( "DIRECT" ))
 		{
-			proxyPort=proxyExp.mid(columnPos+1).toInt();;
-			proxyExp.resize(proxyExp.indexOf(':'));
+			const KUrl url( proxyUrl );
+			QNetworkProxy::ProxyType proxyType = QNetworkProxy::NoProxy;
+			if (url.protocol() == QLatin1String( "http" ))
+				proxyType = QNetworkProxy::HttpProxy;
+			else if (url.protocol() == QLatin1String( "socks" ))
+				proxyType = QNetworkProxy::Socks5Proxy;
+			if (proxyType != QNetworkProxy::NoProxy)
+				tcpSocket->setProxy( QNetworkProxy( proxyType, url.host(), url.port(), url.user(), url.pass() ) );
 		}
-		tcpSocket->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxyExp, proxyPort));
-    }
-#endif
+	}
 
 	ClientStream *cs = new ClientStream( tcpSocket, 0 );
 	
