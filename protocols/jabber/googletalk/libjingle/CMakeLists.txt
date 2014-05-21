@@ -33,7 +33,7 @@ if ( MEDIASTREAMER_OLD )
 endif ( MEDIASTREAMER_OLD )
 
 set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-undef -Wno-unused-parameter" )
-set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undef -Wno-unused-parameter -Wno-non-virtual-dtor -Wno-delete-non-virtual-dtor" )
+set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undef -Wno-unused-parameter -Wno-non-virtual-dtor -Wno-delete-non-virtual-dtor -std=gnu++98" )
 
 ########### next target ###############
 
