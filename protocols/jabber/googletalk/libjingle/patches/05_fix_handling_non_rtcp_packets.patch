@@ -1,0 +1,13 @@
+diff --git a/protocols/jabber/googletalk/libjingle/talk/session/phone/channel.cc b/protocols/jabber/googletalk/libjingle/talk/session/phone/channel.cc
+index 3d8ff89..cbd1e85 100644
+--- a/protocols/jabber/googletalk/libjingle/talk/session/phone/channel.cc
++++ b/protocols/jabber/googletalk/libjingle/talk/session/phone/channel.cc
+@@ -514,7 +514,7 @@ void BaseChannel::HandlePacket(bool rtcp, talk_base::Buffer* packet) {
+   // If this channel is suppose to handle RTP data, that is determined by
+   // checking against ssrc filter. This is necessary to do it here to avoid
+   // double decryption.
+-  if (ssrc_filter_.IsActive() &&
++  if (rtcp && ssrc_filter_.IsActive() &&
+       !ssrc_filter_.DemuxPacket(packet->data(), packet->length(), rtcp)) {
+     return;
+   }
