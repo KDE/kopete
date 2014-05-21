@@ -37,6 +37,7 @@ namespace talk_base {
 class SystemInfo {
  public:
   enum Architecture {
+    SI_ARCH_UNKNOWN = -1,
     SI_ARCH_X86 = 0,
     SI_ARCH_X64 = 1,
     SI_ARCH_ARM = 2
