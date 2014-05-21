@@ -1,0 +1,32 @@
+--- a/protocols/jabber/googletalk/libjingle/talk/base/systeminfo.cc
++++ b/protocols/jabber/googletalk/libjingle/talk/base/systeminfo.cc
+@@ -102,7 +102,7 @@ SystemInfo::SystemInfo()
+ #elif defined(CPU_X86)
+   cpu_arch_ = SI_ARCH_X86;
+ #else
+-#error "Unknown architecture."
++  cpu_arch_ = SI_ARCH_UNKNOWN;
+ #endif
+ 
+ #ifdef WIN32
+@@ -144,8 +144,8 @@ SystemInfo::SystemInfo()
+     proc_info.GetNumCpus(&logical_cpus_);
+     proc_info.GetNumPhysicalCpus(&physical_cpus_);
+     proc_info.GetCpuFamily(&cpu_family_);
+-#if !defined(__arm__)
+-    // These values aren't found on ARM systems.
++#if defined(CPU_X86)
++    // These values only apply to x86 systems.
+     proc_info.GetSectionIntValue(0, "model", &cpu_model_);
+     proc_info.GetSectionIntValue(0, "stepping", &cpu_stepping_);
+     proc_info.GetSectionIntValue(0, "cpu MHz", &cpu_speed_);
+--- a/protocols/jabber/googletalk/libjingle/talk/base/systeminfo.h
++++ b/protocols/jabber/googletalk/libjingle/talk/base/systeminfo.h
+@@ -37,6 +37,7 @@ namespace talk_base {
+ class SystemInfo {
+  public:
+   enum Architecture {
++    SI_ARCH_UNKNOWN = -1,
+     SI_ARCH_X86 = 0,
+     SI_ARCH_X64 = 1,
+     SI_ARCH_ARM = 2
