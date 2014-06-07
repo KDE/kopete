@@ -361,15 +361,6 @@ bool JabberEditAccountWidget::validateData ()
 		return false;
 	}
 
-#ifdef GOOGLETALK_SUPPORT
-	XMPP::Jid jid ( mID->text () );
-	if ( GoogleTalk->isChecked() && ( mServer->text().trimmed() != "talk.google.com" && jid.domain() != "gmail.com" ) )
-	{
-		KMessageBox::sorry(this, i18n("Google Talk libjingle support is only for GTalk/Gmail account, which connect to server talk.google.com."), i18n("Invalid Google Talk"));
-		return false;
-	}
-#endif
-
 	return true;
 }
 

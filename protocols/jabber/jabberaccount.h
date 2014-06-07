@@ -346,6 +346,11 @@ private slots:
 	/* update our capabilities for myself contact */
 	void slotUpdateOurCapabilities();
 
+#ifdef GOOGLETALK_SUPPORT
+	void loginGoogleTalk();
+	void loginGoogleTalkResolver(const QHostAddress &address, quint16 port);
+#endif
+
 	//void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };
 

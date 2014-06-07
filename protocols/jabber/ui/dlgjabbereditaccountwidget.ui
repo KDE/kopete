@@ -925,7 +925,7 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
              <string>This enable Google Talk libjingle voice call</string>
             </property>
             <property name="text">
-             <string>Enable Google Talk libjingle support (only for GTalk/Gmail accounts)</string>
+             <string>Enable Google Talk libjingle support</string>
             </property>
            </widget>
           </item>

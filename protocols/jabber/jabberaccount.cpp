@@ -624,8 +624,7 @@ void JabberAccount::slotConnected ()
 	kDebug (JABBER_DEBUG_GLOBAL) << "Connected to Jabber server.";
 
 #ifdef GOOGLETALK_SUPPORT
-	if ( enabledGoogleTalk() && ! m_googleTalk->isConnected() )
-		m_googleTalk->login();
+	loginGoogleTalk();
 #endif
 
 #ifdef JINGLE_SUPPORT
@@ -1821,10 +1820,49 @@ void JabberAccount::slotUnregisterFinished( )
 
 #ifdef GOOGLETALK_SUPPORT
 
+void JabberAccount::loginGoogleTalk()
+{
+	if ( ! enabledGoogleTalk() || m_googleTalk->isConnected() )
+		return;
+
+	bool customServer = configGroup()->readEntry("CustomServer", false);
+
+	if ( customServer ) {
+		m_googleTalk->setServer(server(), port());
+		m_googleTalk->login();
+		return;
+	}
+
+	XMPP::Jid jid(myself()->contactId());
+
+	/* We need to specify server only if jabber account is not google's one */
+	if ( jid.domain() == "gmail.com" ) {
+		m_googleTalk->login();
+		return;
+	}
+
+	XMPP::ServiceResolver * resolver = new XMPP::ServiceResolver;
+	resolver->setProtocol(XMPP::ServiceResolver::IPv4); // libjingle does not support ipv6
+	QObject::connect(resolver, SIGNAL(resultReady(QHostAddress,quint16)), this, SLOT(loginGoogleTalkResolver(QHostAddress,quint16)));
+	QObject::connect(resolver, SIGNAL(error(XMPP::ServiceResolver::Error)), resolver, SLOT(deleteLater()));
+	resolver->start("xmpp-client", "tcp", jid.domain(), 5222);
+}
+
+void JabberAccount::loginGoogleTalkResolver(const QHostAddress &address, quint16 port)
+{
+	XMPP::ServiceResolver * resolver = qobject_cast<XMPP::ServiceResolver *>(sender());
+	if ( resolver ) {
+		QObject::disconnect(resolver, 0, 0, 0);
+		resolver->deleteLater();
+	}
+
+	m_googleTalk->setServer(address.toString(), port);
+	m_googleTalk->login();
+}
+
 bool JabberAccount::enabledGoogleTalk()
 {
-	XMPP::Jid jid ( myself()->contactId () );
-	return configGroup()->readEntry("GoogleTalk", ( ( server() == "talk.google.com" || jid.domain() == "gmail.com" ) ? true : false ) );
+	return configGroup()->readEntry("GoogleTalk", true);
 }
 
 void JabberAccount::enableGoogleTalk(bool b)
@@ -1833,7 +1871,7 @@ void JabberAccount::enableGoogleTalk(bool b)
 	if ( ! b )
 		m_googleTalk->logout();
 	else if ( isConnected() )
-		m_googleTalk->login();
+		loginGoogleTalk();
 }
 
 bool JabberAccount::supportGoogleTalk(const QString &user)
