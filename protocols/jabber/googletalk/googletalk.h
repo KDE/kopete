@@ -42,8 +42,10 @@ class GoogleTalk : public QObject
 		 * It does not login automatically. For login use @see login()
 		 * @param jid user name (jabber jid) for Google Talk account (default none)
 		 * @param password password for GoogleTalk account (default none)
+		 * @param host server host for GoogleTalk account (default google's one)
+		 * @param port server port for GoogleTalk account (default google's one)
 		 */
-		GoogleTalk(const QString &jid = QString(), const QString &password = QString());
+		GoogleTalk(const QString &jid = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0);
 
 		/**
 		 * Destructor
@@ -58,6 +60,15 @@ class GoogleTalk : public QObject
 		 * @param password password for GoogleTalk account (default none)
 		 */
 		void setUser(const QString &jid, const QString &password);
+
+		/**
+		 * Set (or change) server host and port for Google Talk account
+		 * Use it if you do not set up in constructor
+		 * If you change, first logout @see logout()
+		 * @param host server host for GoogleTalk account (default google's one)
+		 * @param port server port for GoogleTalk account (default google's one)
+		 */
+		void setServer(const QString &host, quint16 port);
 
 		/**
 		 * Check if user is online, support Google libjingle voice call and if no voice call is active
@@ -129,6 +140,10 @@ class GoogleTalk : public QObject
 		QString jid;
 		/// password for Google Talk account
 		QString password;
+		/// server host for Google Talk account
+		QString host;
+		/// server port for Google Talk account
+		quint16 port;
 		/// variable if we are connected
 		bool c;
 		/// variable if we are active voice call

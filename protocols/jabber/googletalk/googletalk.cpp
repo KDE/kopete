@@ -32,7 +32,7 @@
 #define RESTART_INTERVAL 100000
 #define QUIT_INTERVAL 10000
 
-GoogleTalk::GoogleTalk(const QString &jid, const QString &password) {
+GoogleTalk::GoogleTalk(const QString &jid, const QString &password, const QString &host, quint16 port) {
 
 //	qDebug() << "GoogleTalk::GoogleTalk";
 	callProcess = new QProcess;
@@ -45,6 +45,8 @@ GoogleTalk::GoogleTalk(const QString &jid, const QString &password) {
 
 	this->jid = jid;
 	this->password = password;
+	this->host = host;
+	this->port = port;
 
 	connect( callDialog->muteButton, SIGNAL(toggled(bool)), this, SLOT(muteCall(bool)) );
 	connect( callDialog->acceptButton, SIGNAL(pressed()), this, SLOT(acceptCall()) );
@@ -79,6 +81,20 @@ void GoogleTalk::setUser(const QString &jid, const QString &password) {
 
 }
 
+void GoogleTalk::setServer(const QString &host, quint16 port) {
+
+//	qDebug() << "GoogleTalk::setServer";
+	if ( ! support )
+		return;
+
+	c = false;
+	activeCall = false;
+
+	this->host = host;
+	this->port = port;
+
+}
+
 void GoogleTalk::error(QProcess::ProcessError error) {
 
 //	qDebug() << "GoogleTalk::error";
@@ -110,7 +126,16 @@ void GoogleTalk::login() {
 	c = false;
 	activeCall = false;
 
-	callProcess->start(callExe);
+	QStringList callArgs;
+
+	if ( ! this->host.isEmpty() ) {
+		QString server = this->host;
+		if ( this->port )
+			server += ':' + QString::number(this->port);
+		callArgs << "--s" << server;
+	}
+
+	callProcess->start(callExe, callArgs);
 //	callProcess->waitForStarted();
 //	qDebug() << "started";
 
