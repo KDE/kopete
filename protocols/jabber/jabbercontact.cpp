@@ -164,17 +164,17 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
 	actionAuthorization->addAction(removeAuthAction);
 
-#ifdef GOOGLETALK_SUPPORT
+#ifdef LIBJINGLE_SUPPORT
 
-	if ( account()->enabledGoogleTalk() ) {
+	if ( account()->enabledLibjingle() ) {
 
-		KAction *googleTalkCallAction;
-		googleTalkCallAction = new KAction( this );
-		googleTalkCallAction->setIcon( (KIcon("voicecall") ) );
-		googleTalkCallAction->setText( i18n ("Call Google Talk contact") );
-		googleTalkCallAction->setEnabled( account()->supportGoogleTalk(contactId()) );
-		connect(googleTalkCallAction, SIGNAL(triggered(bool)), SLOT(makeGoogleTalkCallAction()));
-		actions->append(googleTalkCallAction);
+		KAction *libjingleCallAction;
+		libjingleCallAction = new KAction( this );
+		libjingleCallAction->setIcon( (KIcon("voicecall") ) );
+		libjingleCallAction->setText( i18n ("Call contact") );
+		libjingleCallAction->setEnabled( account()->supportLibjingle(contactId()) );
+		connect(libjingleCallAction, SIGNAL(triggered(bool)), SLOT(makeLibjingleCallAction()));
+		actions->append(libjingleCallAction);
 
 	}
 
@@ -1438,11 +1438,11 @@ void JabberContact::startJingleVideoCall()
 }
 #endif
 
-#ifdef GOOGLETALK_SUPPORT
+#ifdef LIBJINGLE_SUPPORT
 
-void JabberContact::makeGoogleTalkCallAction()
+void JabberContact::makeLibjingleCallAction()
 {
-	account()->makeGoogleTalkCall(contactId());
+	account()->makeLibjingleCall(contactId());
 }
 
 #endif

@@ -282,7 +282,7 @@ if ( NOT WIN32 )
 endif ( NOT WIN32 )
 
 add_executable ( call ${call_SRCS} )
-set_target_properties ( call PROPERTIES OUTPUT_NAME googletalk-call )
+set_target_properties ( call PROPERTIES OUTPUT_NAME libjingle-call )
 target_link_libraries ( call ${call_LIBS} )
 
 ########### install files ###############

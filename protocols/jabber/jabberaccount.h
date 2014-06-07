@@ -45,8 +45,8 @@ class JabberTransport;
 class JabberBookmarks;
 
 
-#ifdef GOOGLETALK_SUPPORT
-class GoogleTalk;
+#ifdef LIBJINGLE_SUPPORT
+class Libjingle;
 #endif
 
 #ifdef JINGLE_SUPPORT
@@ -152,11 +152,11 @@ public:
 	 */
 	void setOldEncrypted(bool b);
 	
-#ifdef GOOGLETALK_SUPPORT
-	bool enabledGoogleTalk();
-	void enableGoogleTalk(bool b);
-	bool supportGoogleTalk(const QString &user);
-	void makeGoogleTalkCall(const QString &user);
+#ifdef LIBJINGLE_SUPPORT
+	bool enabledLibjingle();
+	void enableLibjingle(bool b);
+	bool supportLibjingle(const QString &user);
+	void makeLibjingleCall(const QString &user);
 #endif
 
 #ifdef JINGLE_SUPPORT
@@ -252,8 +252,8 @@ private:
 	/* last status for this account */
 	XMPP::Status m_lastStatus;
 
-#ifdef GOOGLETALK_SUPPORT
-	GoogleTalk * m_googleTalk;
+#ifdef LIBJINGLE_SUPPORT
+	Libjingle * m_libjingle;
 #endif
 
 #ifdef JINGLE_SUPPORT
@@ -346,9 +346,9 @@ private slots:
 	/* update our capabilities for myself contact */
 	void slotUpdateOurCapabilities();
 
-#ifdef GOOGLETALK_SUPPORT
-	void loginGoogleTalk();
-	void loginGoogleTalkResolver(const QHostAddress &address, quint16 port);
+#ifdef LIBJINGLE_SUPPORT
+	void loginLibjingle();
+	void loginLibjingleResolver(const QHostAddress &address, quint16 port);
 #endif
 
 	//void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);

@@ -209,8 +209,8 @@ private slots:
 	 */
 	void slotDelayedSync();
 
-#ifdef GOOGLETALK_SUPPORT
-	void makeGoogleTalkCallAction();
+#ifdef LIBJINGLE_SUPPORT
+	void makeLibjingleCallAction();
 #endif
 
 private:

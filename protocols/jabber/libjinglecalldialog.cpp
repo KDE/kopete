@@ -1,7 +1,7 @@
 /*
-    googletalkcalldialog.cpp - Google Talk and Google libjingle support
+    libjinglecalldialog.cpp - libjingle support
 
-    Copyright (c) 2009 by Pali Rohár <pali.rohar@gmail.com>
+    Copyright (c) 2009-2014 by Pali Rohár <pali.rohar@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -13,18 +13,18 @@
     *************************************************************************
 */
 
-#include "googletalkcalldialog.h"
+#include "libjinglecalldialog.h"
 
 #include <QCloseEvent>
 
-GoogleTalkCallDialog::GoogleTalkCallDialog(QWidget *parent): QDialog(parent) {
+LibjingleCallDialog::LibjingleCallDialog(QWidget *parent): QDialog(parent) {
 	setupUi(this);
 }
 
-void GoogleTalkCallDialog::closeEvent(QCloseEvent * e) {
+void LibjingleCallDialog::closeEvent(QCloseEvent * e) {
 	e->ignore();
 	emit(closed());
 }
 
-#include "googletalkcalldialog.moc"
+#include "libjinglecalldialog.moc"
 

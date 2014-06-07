@@ -35,13 +35,13 @@ kde4_no_enable_final(kopete)
 ### Alphabetical list of optional packages ###
 
 macro_optional_find_package(Alsa)
-macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "http://www.alsa-project.org/" FALSE "" "Required for the Jabber protocol with Google Talk libjingle support")
+macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "http://www.alsa-project.org/" FALSE "" "Required for the Jabber protocol with libjingle support")
 
 macro_optional_find_package(Boost)
 macro_log_feature(Boost_FOUND Boost "C++ Boost libraries" "http://www.boost.org/" FALSE "" "Required for the WLM protocol")
 
 macro_optional_find_package(Expat)
-macro_log_feature(EXPAT_FOUND "Expat" "Expat is a stream oriented XML parser" "http://expat.sourceforge.net/" FALSE "" "Required for the Jabber protocol with Google Talk libjingle support")
+macro_log_feature(EXPAT_FOUND "Expat" "Expat is a stream oriented XML parser" "http://expat.sourceforge.net/" FALSE "" "Required for the Jabber protocol with libjingle support")
 
 macro_optional_find_package(GIF)
 macro_log_feature(GIF_FOUND "GIF" "Package of portable tools and library routines for working with GIF images" "http://giflib.sourceforge.net/" FALSE "" "Required for the WLM protocol with handwriting messages support")
@@ -56,7 +56,7 @@ macro_optional_find_package(Jasper)
 macro_log_feature(JASPER_FOUND "Jasper" "JasPer library implements the codec specified in the JPEG-2000 Part-1 standard" "http://www.ece.uvic.ca/~mdadams/jasper/" FALSE "" "Required for the Yahoo protocol")
 
 macro_optional_find_package(JsonCpp)
-macro_log_feature(JSONCPP_FOUND "JsonCpp" "JsonCpp is an implementation of a JSON reader and writer in C++" "http://jsoncpp.sourceforge.net/" FALSE "" "Required for the Jabber protocol with Google Talk libjingle support")
+macro_log_feature(JSONCPP_FOUND "JsonCpp" "JsonCpp is an implementation of a JSON reader and writer in C++" "http://jsoncpp.sourceforge.net/" FALSE "" "Required for the Jabber protocol with libjingle support")
 
 macro_optional_find_package(Kleopatra)
 macro_log_feature(KLEOPATRA_FOUND "Kleopatra" "The Kleopatra libraries (from kdepim)" "http://kde.org/" FALSE "" "Required for the Cryptography plugin")
@@ -71,7 +71,7 @@ macro_optional_find_package(Libmsn)
 macro_log_feature(LIBMSN_FOUND "Libmsn" "A library providing support for the msn protocol" "http://libmsn.sourceforge.net/" FALSE "0.4.0" "Required for the WLM protocol")
 
 macro_optional_find_package(LiboRTP)
-macro_log_feature(LIBORTP_FOUND "LiboRTP" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp/" FALSE "0.13" "Required for the Jabber protocol with Google Talk libjingle support and for the WLM protocol with voice clips support")
+macro_log_feature(LIBORTP_FOUND "LiboRTP" "oRTP provides an API to send rtp packets" "http://www.linphone.org/index.php/eng/code_review/ortp/" FALSE "0.13" "Required for the Jabber protocol with libjingle support and for the WLM protocol with voice clips support")
 
 macro_optional_find_package(LibOTR)
 macro_log_feature(LIBOTR_FOUND "LibOTR" "A library to encrypt messages with Off-the-Record encryption" "http://www.cypherpunks.ca/otr/" FALSE "4.0.0" "Required for the OTR plugin")
@@ -86,10 +86,10 @@ macro_optional_find_package(LibXslt)
 macro_log_feature(LIBXSLT_FOUND "LibXslt" "A library to transform XML files into other XML files" "http://xmlsoft.org/XSLT/" FALSE "" "Required for the Webpresence plugin")
 
 macro_optional_find_package(Mediastreamer)
-macro_log_feature(MEDIASTREAMER_FOUND "Mediastreamer" "A streaming engine specialized for voice/video telephony applications" "http://www.linphone.org/index.php/eng/code_review/mediastreamer2/" FALSE "2.3.0" "Required for the Jabber protocol with Google Talk libjingle support and for the WLM protocol with voice clips support")
+macro_log_feature(MEDIASTREAMER_FOUND "Mediastreamer" "A streaming engine specialized for voice/video telephony applications" "http://www.linphone.org/index.php/eng/code_review/mediastreamer2/" FALSE "2.3.0" "Required for the Jabber protocol with libjingle support and for the WLM protocol with voice clips support")
 
 macro_optional_find_package(OpenSSL)
-macro_log_feature(OPENSSL_FOUND "OpenSSL" "OpenSSL implementation of SSL" "https://www.openssl.org/" FALSE "" "Required for the Jabber protocol with Google Talk libjingle support")
+macro_log_feature(OPENSSL_FOUND "OpenSSL" "OpenSSL implementation of SSL" "https://www.openssl.org/" FALSE "" "Required for the Jabber protocol with libjingle support")
 
 macro_optional_find_package(QCA2)
 macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca/" FALSE "2.0.0" "Required for the GroupWise and Jabber protocols")
@@ -104,7 +104,7 @@ macro_log_feature(SQLITE_FOUND "Sqlite" "SQLite is a Binary-Database" "http://ww
 #macro_log_feature(SPEEX_FOUND "Speex" "Speex is an encoder/decoder for the speex audio format" "http://www.speex.org/" FALSE "" "Required for the Jabber protocol with Jingle support")
 
 macro_optional_find_package(SRTP)
-macro_log_feature(SRTP_FOUND "SRTP" "SRTP provides an implementation of the Secure Real-time Transport Protocol (SRTP)" "http://srtp.sourceforge.net/srtp.html" FALSE "" "Required for the Jabber protocol with Google Talk libjingle support")
+macro_log_feature(SRTP_FOUND "SRTP" "SRTP provides an implementation of the Secure Real-time Transport Protocol (SRTP)" "http://srtp.sourceforge.net/srtp.html" FALSE "" "Required for the Jabber protocol with libjingle support")
 
 macro_optional_find_package(Xmms)
 macro_log_feature(XMMS_FOUND "Xmms" "X MultiMedia System development libraries" "http://www.xmms.org/" FALSE "" "Required for the Nowlistening plugin with XMMS player support")

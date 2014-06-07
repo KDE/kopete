@@ -910,22 +910,22 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
      </widget>
      <widget class="QWidget" name="TabPage">
       <attribute name="title">
-       <string>&amp;Google Talk</string>
+       <string>&amp;Libjingle</string>
       </attribute>
       <layout class="QVBoxLayout" name="_20">
        <item>
         <widget class="QGroupBox" name="groupBox_17">
          <property name="title">
-          <string>Google Talk libjingle settings</string>
+          <string>Libjingle settings</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
-           <widget class="QCheckBox" name="GoogleTalk">
+           <widget class="QCheckBox" name="Libjingle">
             <property name="toolTip">
-             <string>This enable Google Talk libjingle voice call</string>
+             <string>This enable libjingle voice call</string>
             </property>
             <property name="text">
-             <string>Enable Google Talk libjingle support</string>
+             <string>Enable libjingle support</string>
             </property>
            </widget>
           </item>

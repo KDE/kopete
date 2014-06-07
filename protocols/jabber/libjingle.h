@@ -1,7 +1,7 @@
 /*
-    googletalk.h - Google Talk and Google libjingle support
+    libjingle.h - libjingle support
 
-    Copyright (c) 2009 by Pali Rohár <pali.rohar@gmail.com>
+    Copyright (c) 2009-2014 by Pali Rohár <pali.rohar@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -13,24 +13,24 @@
     *************************************************************************
 */
 
-#ifndef GoogleTalk_H
-#define GoogleTalk_H
+#ifndef Libjingle_H
+#define Libjingle_H
 
 #include <QtCore/QObject>
 #include <QProcess>
 #include <QHash>
 
 class QTimer;
-class GoogleTalkCallDialog;
+class LibjingleCallDialog;
 
 /**
  * @author Pali Rohár
- * @short Class to use Google Talk with external apps
- * This provide support for Google Talk client. Now it support voice call using external Google libjingle example googletalk-call application
+ * @short Class to use libjingle with external apps
+ * This provide support for libjingle client. Now it support voice call using external libjingle example libjingle-call application
  * @todo Add support for libjingle file transfer
- * You must have installed "googletalk-call" application in PATH
+ * You must have installed "libjingle-call" application in PATH
  */
-class GoogleTalk : public QObject
+class Libjingle : public QObject
 {
 
 	Q_OBJECT
@@ -40,38 +40,38 @@ class GoogleTalk : public QObject
 		/**
 		 * Constructor
 		 * It does not login automatically. For login use @see login()
-		 * @param jid user name (jabber jid) for Google Talk account (default none)
-		 * @param password password for GoogleTalk account (default none)
-		 * @param host server host for GoogleTalk account (default google's one)
-		 * @param port server port for GoogleTalk account (default google's one)
+		 * @param jid user name (jabber jid) for jabber account (default none)
+		 * @param password password for jabber account (default none)
+		 * @param host server host for jabber account (default google's one)
+		 * @param port server port for jabber account (default google's one)
 		 */
-		GoogleTalk(const QString &jid = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0);
+		Libjingle(const QString &jid = QString(), const QString &password = QString(), const QString &host = QString(), quint16 port = 0);
 
 		/**
 		 * Destructor
 		 */
-		~GoogleTalk();
+		~Libjingle();
 
 		/**
-		 * Set (or change) user name and password for Google Talk account
+		 * Set (or change) user name and password for jabber account
 		 * Use it if you do not set up in constructor
 		 * If you change, first logout @see logout()
-		 * @param jid user name (jabber jid) for Google Talk account (default none)
-		 * @param password password for GoogleTalk account (default none)
+		 * @param jid user name (jabber jid) for jabber account (default none)
+		 * @param password password for jabber account (default none)
 		 */
 		void setUser(const QString &jid, const QString &password);
 
 		/**
-		 * Set (or change) server host and port for Google Talk account
+		 * Set (or change) server host and port for jabber account
 		 * Use it if you do not set up in constructor
 		 * If you change, first logout @see logout()
-		 * @param host server host for GoogleTalk account (default google's one)
-		 * @param port server port for GoogleTalk account (default google's one)
+		 * @param host server host for jabber account (default google's one)
+		 * @param port server port for jabber account (default google's one)
 		 */
 		void setServer(const QString &host, quint16 port);
 
 		/**
-		 * Check if user is online, support Google libjingle voice call and if no voice call is active
+		 * Check if user is online, support libjingle voice call and if no voice call is active
 		 * @param user name of contact
 		 * @return true if user support voice call
 		 */
@@ -86,21 +86,21 @@ class GoogleTalk : public QObject
 	public slots:
 
 		/**
-		 * Start and login to Google Talk server using Google libjingle example googletalk-call application for voice call support
-		 * Do not forget specify user name and password for Google Talk account
-		 * @see setUser(const QString &jid, const QString &password) @see GoogleTalk(const QString &jid = QString(), const QString &password = QString())
+		 * Start and login to jabber server using libjingle example libjingle-call application for voice call support
+		 * Do not forget specify user name and password for jabber account
+		 * @see setUser(const QString &jid, const QString &password) @see Libjingle(const QString &jid = QString(), const QString &password = QString())
 		 */
 		void login();
 
 		/**
-		 * Logout and quit from Google Talk server using Google libjingle example googletalk-call application for voice call support
+		 * Logout and quit from jabber server using libjingle example libjingle-call application for voice call support
 		 * @param res Resolution why you are going to logout
 		 * Resolution is only for signal @see disconnected()
 		 */
 		void logout(const QString &res = QString());
 
 		/**
-		 * It start voice call to user using external Google libjingle example googletalk-call application
+		 * It start voice call to user using external libjingle example libjingle-call application
 		 * You must be connected if you want to start voice call @see login() @see connected()
 		 * @param user Specify user for voice call
 		 */
@@ -134,26 +134,26 @@ class GoogleTalk : public QObject
 
 	private:
 
-		/// Google libjingle example googletalk-call application process
+		/// libjingle example libjingle-call application process
 		QProcess * callProcess;
-		/// user name (jid) for Google Talk account
+		/// user name (jid) for jabber account
 		QString jid;
-		/// password for Google Talk account
+		/// password for jabber account
 		QString password;
-		/// server host for Google Talk account
+		/// server host for jabber account
 		QString host;
-		/// server port for Google Talk account
+		/// server port for jabber account
 		quint16 port;
 		/// variable if we are connected
 		bool c;
 		/// variable if we are active voice call
 		bool activeCall;
-		/// variable if Google Talk is supported (if googletalk-call exist in PATH)
+		/// variable if libjingle is supported (if libjingle-call exist in PATH)
 		bool support;
 		/// List of all online user, who support voice call
 		QMultiHash <QString, QString> usersOnline;
 		/// voice call dialog
-		GoogleTalkCallDialog * callDialog;
+		LibjingleCallDialog * callDialog;
 		/// show voice call dialog
 		void openCallDialog();
 		/// hide voice call dialog
@@ -163,26 +163,26 @@ class GoogleTalk : public QObject
 
 	private slots:
 
-		/// slot for read all available data from Google libjingle example googletalk-call application
+		/// slot for read all available data from libjingle example libjingle-call application
 		void read();
-		/// slot for write line to Google libjingle example googletalk-call application
+		/// slot for write line to libjingle example libjingle-call application
 		void write(const QByteArray &line);
-		/// slot called when Google libjingle example googletalk-call application failed to start
+		/// slot called when libjingle example libjingle-call application failed to start
 		void error(QProcess::ProcessError error);
-		/// slot called when Google libjingle example googletalk-call application exit or crashed
+		/// slot called when libjingle example libjingle-call application exit or crashed
 		void finished(int, QProcess::ExitStatus exitStatus);
-		/// slot for restart Google libjingle example googletalk-call application
+		/// slot for restart libjingle example libjingle-call application
 		void restart();
 
 	signals:
 
 		/**
-		 * This signal is emitted when we are succesfull login to Google Talk server
+		 * This signal is emitted when we are succesfull login to jabber server
 		 */
 		void connected();
 
 		/**
-		 * This signal is emitted when we are disconnected or logouted from Google Talk server
+		 * This signal is emitted when we are disconnected or logouted from jabber server
 		 * @param res Resolution why we are disconneced
 		 */
 		void disconnected(const QString &res);
@@ -236,5 +236,5 @@ class GoogleTalk : public QObject
 
 };
 
-#endif // GoogleTalk_H
+#endif // Libjingle_H
 

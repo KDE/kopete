@@ -85,11 +85,11 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	}
 #endif
 
-#ifndef GOOGLETALK_SUPPORT
-	//Remove Google Talk tab
+#ifndef LIBJINGLE_SUPPORT
+	//Remove Libjingle tab
 	for ( int i=0; i<tabWidget10->count(); ++i )
 	{
-		if ( tabWidget10->tabText(i) == "&Google Talk" )
+		if ( tabWidget10->tabText(i) == "&Libjingle" )
 		{
 			tabWidget10->removeTab(i);
 			break;
@@ -256,8 +256,8 @@ void JabberEditAccountWidget::reopen ()
 	mergeMessages->setChecked(account()->mergeMessages());
 	oldEncrypted->setChecked(account()->oldEncrypted());
 
-#ifdef GOOGLETALK_SUPPORT
-	GoogleTalk->setChecked(account()->enabledGoogleTalk());
+#ifdef LIBJINGLE_SUPPORT
+	Libjingle->setChecked(account()->enabledLibjingle());
 #endif
 
 }
@@ -343,8 +343,8 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->setMergeMessages(mergeMessages->isChecked());
 	account()->setOldEncrypted(oldEncrypted->isChecked());
 
-#ifdef GOOGLETALK_SUPPORT
-	account()->enableGoogleTalk(GoogleTalk->isChecked());
+#ifdef LIBJINGLE_SUPPORT
+	account()->enableLibjingle(Libjingle->isChecked());
 #endif
 
 }

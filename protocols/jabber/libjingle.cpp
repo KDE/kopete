@@ -1,7 +1,7 @@
 /*
-    googletalk.cpp - Google Talk and Google libjingle support
+    libjingle.cpp - libjingle support
 
-    Copyright (c) 2009 by Pali Rohár <pali.rohar@gmail.com>
+    Copyright (c) 2009-2014 by Pali Rohár <pali.rohar@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -13,8 +13,8 @@
     *************************************************************************
 */
 
-#include "googletalk.h"
-#include "googletalkcalldialog.h"
+#include "libjingle.h"
+#include "libjinglecalldialog.h"
 
 #include <QPointer>
 #include <QByteArray>
@@ -27,16 +27,16 @@
 #include <QEventLoop>
 
 #define isRunning() callProcess->state() == QProcess::Running
-#define callExe "googletalk-call"
+#define callExe "libjingle-call"
 
 #define RESTART_INTERVAL 100000
 #define QUIT_INTERVAL 10000
 
-GoogleTalk::GoogleTalk(const QString &jid, const QString &password, const QString &host, quint16 port) {
+Libjingle::Libjingle(const QString &jid, const QString &password, const QString &host, quint16 port) {
 
-//	qDebug() << "GoogleTalk::GoogleTalk";
+//	qDebug() << "Libjingle::Libjingle";
 	callProcess = new QProcess;
-	callDialog = new GoogleTalkCallDialog;
+	callDialog = new LibjingleCallDialog;
 	timer = new QTimer;
 
 	support = true;
@@ -56,9 +56,9 @@ GoogleTalk::GoogleTalk(const QString &jid, const QString &password, const QStrin
 
 }
 
-GoogleTalk::~GoogleTalk() {
+Libjingle::~Libjingle() {
 
-//	qDebug() << "GoogleTalk::~GoogleTalk";
+//	qDebug() << "Libjingle::~Libjingle";
 	logout("destruct");
 
 	delete timer;
@@ -67,9 +67,9 @@ GoogleTalk::~GoogleTalk() {
 
 }
 
-void GoogleTalk::setUser(const QString &jid, const QString &password) {
+void Libjingle::setUser(const QString &jid, const QString &password) {
 
-//	qDebug() << "GoogleTalk::setUser";
+//	qDebug() << "Libjingle::setUser";
 	if ( ! support )
 		return;
 
@@ -81,9 +81,9 @@ void GoogleTalk::setUser(const QString &jid, const QString &password) {
 
 }
 
-void GoogleTalk::setServer(const QString &host, quint16 port) {
+void Libjingle::setServer(const QString &host, quint16 port) {
 
-//	qDebug() << "GoogleTalk::setServer";
+//	qDebug() << "Libjingle::setServer";
 	if ( ! support )
 		return;
 
@@ -95,9 +95,9 @@ void GoogleTalk::setServer(const QString &host, quint16 port) {
 
 }
 
-void GoogleTalk::error(QProcess::ProcessError error) {
+void Libjingle::error(QProcess::ProcessError error) {
 
-//	qDebug() << "GoogleTalk::error";
+//	qDebug() << "Libjingle::error";
 	if ( error == QProcess::FailedToStart ) {
 		//Cant start process call
 		support = false;
@@ -108,9 +108,9 @@ void GoogleTalk::error(QProcess::ProcessError error) {
 
 }
 
-void GoogleTalk::login() {
+void Libjingle::login() {
 
-//	qDebug() << "GoogleTalk::login";
+//	qDebug() << "Libjingle::login";
 	if ( ! support )
 		return;
 
@@ -146,9 +146,9 @@ void GoogleTalk::login() {
 
 }
 
-void GoogleTalk::logout(const QString &res) {
+void Libjingle::logout(const QString &res) {
 
-//	qDebug() << "GoogleTalk::logout";
+//	qDebug() << "Libjingle::logout";
 	if ( ! support )
 		return;
 
@@ -223,9 +223,9 @@ void GoogleTalk::logout(const QString &res) {
 
 }
 
-void GoogleTalk::restart() {
+void Libjingle::restart() {
 
-//	qDebug() << "GoogleTalk::restart";
+//	qDebug() << "Libjingle::restart";
 	if ( ! activeCall && c ) {
 		logout("Periodic restart");
 		login();
@@ -233,9 +233,9 @@ void GoogleTalk::restart() {
 
 }
 
-void GoogleTalk::finished(int, QProcess::ExitStatus exitStatus) {
+void Libjingle::finished(int, QProcess::ExitStatus exitStatus) {
 
-//	qDebug() << "GoogleTalk::finished";
+//	qDebug() << "Libjingle::finished";
 	logout();
 
 	if ( exitStatus == QProcess::CrashExit ) {
@@ -246,23 +246,23 @@ void GoogleTalk::finished(int, QProcess::ExitStatus exitStatus) {
 
 }
 
-void GoogleTalk::openCallDialog() {
+void Libjingle::openCallDialog() {
 
-//	qDebug() << "GoogleTalk::openCallDialog";
+//	qDebug() << "Libjingle::openCallDialog";
 	callDialog->show();
 
 }
 
-void GoogleTalk::closeCallDialog() {
+void Libjingle::closeCallDialog() {
 
-//	qDebug() << "GoogleTalk::closeCallDialog";
+//	qDebug() << "Libjingle::closeCallDialog";
 	callDialog->hide();
 
 }
 
-void GoogleTalk::write(const QByteArray &line) {
+void Libjingle::write(const QByteArray &line) {
 
-//	qDebug() << "GoogleTalk::write" << line;
+//	qDebug() << "Libjingle::write" << line;
 	if ( ! isRunning() )
 		return;
 
@@ -271,9 +271,9 @@ void GoogleTalk::write(const QByteArray &line) {
 
 }
 
-void GoogleTalk::read() {
+void Libjingle::read() {
 
-//	qDebug() << "GoogleTalk::read";
+//	qDebug() << "Libjingle::read";
 	QStringList input = QString::fromUtf8(callProcess->readAllStandardOutput()).split('\n');
 
 	for ( int i=0; i<input.size(); ++i ) {
@@ -303,14 +303,14 @@ void GoogleTalk::read() {
 			//Invalid JID
 			emit(disconnected(line));
 		} else if ( line.startsWith("Removing from roster:") ) {
-			//User does not support google talk libjingle
+			//User does not support libjingle
 			QString user = line.section(':', -1).section('/', 0, 0).trimmed();
 			QString resource = line.section(':', -1).section('/', -1).trimmed();
 //			qDebug() << "user offline" << user << resource;
 			emit(userOffline(user, resource));
 			usersOnline.remove(user, resource);
 		} else if ( line.startsWith("Adding to roster:") ) {
-			//User support google talk libjingle
+			//User support libjingle
 			QString user = line.section(':', -1).section('/', 0, 0).trimmed();
 			QString resource = line.section(':', -1).section('/', -1).trimmed();
 //			qDebug() << "user online" << user << resource;
@@ -318,7 +318,7 @@ void GoogleTalk::read() {
 			if ( ! usersOnline.contains(user, resource) )
 				usersOnline.insert(user, resource);
 		} else if ( line.startsWith("Found online friend") ) {
-			//User support google talk libjingle
+			//User support libjingle
 			QString user = line.section('\'', 1, 1).section('/', 0, 0).trimmed();
 			QString resource = line.section('\'', 1, 1).section('/', -1).trimmed();
 //			qDebug() << "user online" << user << resource;
@@ -393,9 +393,9 @@ void GoogleTalk::read() {
 
 }
 
-bool GoogleTalk::isOnline(const QString &user) {
+bool Libjingle::isOnline(const QString &user) {
 
-//	qDebug() << "GoogleTalk::isOnline";
+//	qDebug() << "Libjingle::isOnline";
 	if ( ! c )
 		return false;
 
@@ -403,16 +403,16 @@ bool GoogleTalk::isOnline(const QString &user) {
 	return ( usersOnline.contains(user) && ! activeCall );
 }
 
-bool GoogleTalk::isConnected() {
+bool Libjingle::isConnected() {
 
-//	qDebug() << "GoogleTalk::isConnected";
+//	qDebug() << "Libjingle::isConnected";
 	return c;
 
 }
 
-void GoogleTalk::makeCall(const QString &user) {
+void Libjingle::makeCall(const QString &user) {
 
-//	qDebug() << "GoogleTalk::makeCall";
+//	qDebug() << "Libjingle::makeCall";
 	if ( ! support )
 		return;
 
@@ -432,17 +432,17 @@ void GoogleTalk::makeCall(const QString &user) {
 
 }
 
-void GoogleTalk::acceptCall() {
+void Libjingle::acceptCall() {
 
-//	qDebug() << "GoogleTalk::acceptCall";
+//	qDebug() << "Libjingle::acceptCall";
 	write("accept");
 	activeCall = true;
 
 }
 
-void GoogleTalk::rejectCall() {
+void Libjingle::rejectCall() {
 
-//	qDebug() << "GoogleTalk::rejectCall";
+//	qDebug() << "Libjingle::rejectCall";
 	write("reject");
 
 	closeCallDialog();
@@ -454,9 +454,9 @@ void GoogleTalk::rejectCall() {
 
 }
 
-void GoogleTalk::hangupCall() {
+void Libjingle::hangupCall() {
 
-//	qDebug() << "GoogleTalk::hangupCall";
+//	qDebug() << "Libjingle::hangupCall";
 	write("hangup");
 
 	closeCallDialog();
@@ -468,17 +468,17 @@ void GoogleTalk::hangupCall() {
 
 }
 
-void GoogleTalk::cancelCall() {
+void Libjingle::cancelCall() {
 
-//	qDebug() << "GoogleTalk::cancelCall";
+//	qDebug() << "Libjingle::cancelCall";
 	hangupCall();
 	rejectCall();
 
 }
 
-void GoogleTalk::muteCall(bool b) {
+void Libjingle::muteCall(bool b) {
 
-//	qDebug() << "GoogleTalk::muteCall";
+//	qDebug() << "Libjingle::muteCall";
 	if ( ! activeCall )
 		return;
 
@@ -489,5 +489,5 @@ void GoogleTalk::muteCall(bool b) {
 
 }
 
-#include "googletalk.moc"
+#include "libjingle.moc"
 

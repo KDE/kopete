@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GoogleTalkCallDialog</class>
- <widget class="QWidget" name="GoogleTalkCallDialog">
+ <class>LibjingleCallDialog</class>
+ <widget class="QWidget" name="LibjingleCallDialog">
   <property name="windowTitle">
-   <string>Google Talk Voice Call</string>
+   <string>Libjingle Voice Call</string>
   </property>
   <layout class="QVBoxLayout" name="_2">
    <item>

@@ -13,11 +13,10 @@ ${CMAKE_CURRENT_SOURCE_DIR}/libiris/src
 ${QCA2_INCLUDE_DIR}
 )
 
-if(BUILD_GOOGLETALK)
-  add_subdirectory(googletalk/libjingle)
-  add_definitions(-DGOOGLETALK_SUPPORT)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/googletalk/)
-endif(BUILD_GOOGLETALK)
+if(BUILD_LIBJINGLE)
+  add_subdirectory(libjingle)
+  add_definitions(-DLIBJINGLE_SUPPORT)
+endif(BUILD_LIBJINGLE)
 
 IF(BUILD_JINGLE)
   add_definitions(-DJINGLE_SUPPORT)
@@ -51,12 +50,12 @@ set(kopete_jabber_ui_SRCS
     ui/privacyruledlg.cpp
 )
 
-if(BUILD_GOOGLETALK)
+if(BUILD_LIBJINGLE)
    set(kopete_jabber_ui_SRCS
       ${kopete_jabber_ui_SRCS}
-      googletalk/googletalkcalldialog.cpp
+      libjinglecalldialog.cpp
    )
-endif(BUILD_GOOGLETALK)
+endif(BUILD_LIBJINGLE)
 
 if(BUILD_JINGLE)	
   set(kopete_jabber_ui_SRCS
@@ -84,12 +83,12 @@ set(kopete_jabber_ui_files
    ui/privacy.ui
 )
 
-if(BUILD_GOOGLETALK)
+if(BUILD_LIBJINGLE)
    set(kopete_jabber_ui_files
       ${kopete_jabber_ui_files}
-      googletalk/googletalkcalldialog.ui
+      libjinglecalldialog.ui
    )
-endif(BUILD_GOOGLETALK)
+endif(BUILD_LIBJINGLE)
 
 if(BUILD_JINGLE)
   set(kopete_jabber_ui_files
@@ -135,12 +134,12 @@ set(kopete_jabber_PART_SRCS
    jabberbobcache.cpp
 )
 
-if(BUILD_GOOGLETALK)
+if(BUILD_LIBJINGLE)
   set(kopete_jabber_PART_SRCS
       ${kopete_jabber_PART_SRCS}
-      googletalk/googletalk.cpp
+      libjingle.cpp
   )
-endif(BUILD_GOOGLETALK)
+endif(BUILD_LIBJINGLE)
 
 if(BUILD_JINGLE)	
   set(kopete_jabber_PART_SRCS

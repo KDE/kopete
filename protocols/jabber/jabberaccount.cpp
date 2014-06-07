@@ -80,8 +80,8 @@
 
 #include <sys/utsname.h>
 
-#ifdef GOOGLETALK_SUPPORT
-#include "googletalk.h"
+#ifdef LIBJINGLE_SUPPORT
+#include "libjingle.h"
 #endif
 
 #ifdef JINGLE_SUPPORT
@@ -152,8 +152,8 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	QObject::connect ( m_jabberClient, SIGNAL (debugMessage(QString)),
 	                   this, SLOT (slotClientDebugMessage(QString)) );
 
-#ifdef GOOGLETALK_SUPPORT
-	m_googleTalk = new GoogleTalk;
+#ifdef LIBJINGLE_SUPPORT
+	m_libjingle = new Libjingle;
 #endif
 
 }
@@ -187,9 +187,9 @@ void JabberAccount::cleanup ()
 	delete m_contactPool;
 	m_contactPool = 0L;
 
-#ifdef GOOGLETALK_SUPPORT
-	delete m_googleTalk;
-	m_googleTalk = 0L;
+#ifdef LIBJINGLE_SUPPORT
+	delete m_libjingle;
+	m_libjingle = 0L;
 #endif
 
 #ifdef JINGLE_SUPPORT
@@ -462,8 +462,8 @@ void JabberAccount::connectWithPassword ( const QString &password )
 			break;
 	}
 
-#ifdef GOOGLETALK_SUPPORT
-	m_googleTalk->setUser(myself()->contactId (), password);
+#ifdef LIBJINGLE_SUPPORT
+	m_libjingle->setUser(myself()->contactId (), password);
 #endif
 
 }
@@ -623,8 +623,8 @@ void JabberAccount::slotConnected ()
 {
 	kDebug (JABBER_DEBUG_GLOBAL) << "Connected to Jabber server.";
 
-#ifdef GOOGLETALK_SUPPORT
-	loginGoogleTalk();
+#ifdef LIBJINGLE_SUPPORT
+	loginLibjingle();
 #endif
 
 #ifdef JINGLE_SUPPORT
@@ -671,8 +671,8 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	if( status.status() == Kopete::OnlineStatus::Offline )
 	{
 
-		#ifdef GOOGLETALK_SUPPORT
-			m_googleTalk->logout();
+		#ifdef LIBJINGLE_SUPPORT
+			m_libjingle->logout();
 		#endif
 			xmppStatus.setIsAvailable( false );
 			kDebug (JABBER_DEBUG_GLOBAL) << "CROSS YOUR FINGERS! THIS IS GONNA BE WILD";
@@ -1818,18 +1818,18 @@ void JabberAccount::slotUnregisterFinished( )
 		Kopete::AccountManager::self()->removeAccount( this ); //this will delete this
 }
 
-#ifdef GOOGLETALK_SUPPORT
+#ifdef LIBJINGLE_SUPPORT
 
-void JabberAccount::loginGoogleTalk()
+void JabberAccount::loginLibjingle()
 {
-	if ( ! enabledGoogleTalk() || m_googleTalk->isConnected() )
+	if ( ! enabledLibjingle() || m_libjingle->isConnected() )
 		return;
 
 	bool customServer = configGroup()->readEntry("CustomServer", false);
 
 	if ( customServer ) {
-		m_googleTalk->setServer(server(), port());
-		m_googleTalk->login();
+		m_libjingle->setServer(server(), port());
+		m_libjingle->login();
 		return;
 	}
 
@@ -1837,18 +1837,18 @@ void JabberAccount::loginGoogleTalk()
 
 	/* We need to specify server only if jabber account is not google's one */
 	if ( jid.domain() == "gmail.com" ) {
-		m_googleTalk->login();
+		m_libjingle->login();
 		return;
 	}
 
 	XMPP::ServiceResolver * resolver = new XMPP::ServiceResolver;
 	resolver->setProtocol(XMPP::ServiceResolver::IPv4); // libjingle does not support ipv6
-	QObject::connect(resolver, SIGNAL(resultReady(QHostAddress,quint16)), this, SLOT(loginGoogleTalkResolver(QHostAddress,quint16)));
+	QObject::connect(resolver, SIGNAL(resultReady(QHostAddress,quint16)), this, SLOT(loginLibjingleResolver(QHostAddress,quint16)));
 	QObject::connect(resolver, SIGNAL(error(XMPP::ServiceResolver::Error)), resolver, SLOT(deleteLater()));
 	resolver->start("xmpp-client", "tcp", jid.domain(), 5222);
 }
 
-void JabberAccount::loginGoogleTalkResolver(const QHostAddress &address, quint16 port)
+void JabberAccount::loginLibjingleResolver(const QHostAddress &address, quint16 port)
 {
 	XMPP::ServiceResolver * resolver = qobject_cast<XMPP::ServiceResolver *>(sender());
 	if ( resolver ) {
@@ -1856,33 +1856,35 @@ void JabberAccount::loginGoogleTalkResolver(const QHostAddress &address, quint16
 		resolver->deleteLater();
 	}
 
-	m_googleTalk->setServer(address.toString(), port);
-	m_googleTalk->login();
+	kDebug (JABBER_DEBUG_GLOBAL) << "address:" << address.toString() << "port:" << port;
+
+	m_libjingle->setServer(address.toString(), port);
+	m_libjingle->login();
 }
 
-bool JabberAccount::enabledGoogleTalk()
+bool JabberAccount::enabledLibjingle()
 {
-	return configGroup()->readEntry("GoogleTalk", true);
+	return configGroup()->readEntry("Libjingle", true);
 }
 
-void JabberAccount::enableGoogleTalk(bool b)
+void JabberAccount::enableLibjingle(bool b)
 {
-	configGroup()->writeEntry("GoogleTalk", b);
+	configGroup()->writeEntry("Libjingle", b);
 	if ( ! b )
-		m_googleTalk->logout();
+		m_libjingle->logout();
 	else if ( isConnected() )
-		loginGoogleTalk();
+		loginLibjingle();
 }
 
-bool JabberAccount::supportGoogleTalk(const QString &user)
+bool JabberAccount::supportLibjingle(const QString &user)
 {
-	return ( enabledGoogleTalk() && m_googleTalk->isOnline(user) );
+	return ( enabledLibjingle() && m_libjingle->isOnline(user) );
 }
 
-void JabberAccount::makeGoogleTalkCall(const QString &user)
+void JabberAccount::makeLibjingleCall(const QString &user)
 {
-	if ( enabledGoogleTalk() )
-		m_googleTalk->makeCall(user);
+	if ( enabledLibjingle() )
+		m_libjingle->makeCall(user);
 }
 
 #endif

@@ -1,7 +1,7 @@
 /*
-    googletalkcalldialog.h - Google Talk and Google libjingle support
+    libjinglecalldialog.h - libjingle support
 
-    Copyright (c) 2009 by Pali Rohár <pali.rohar@gmail.com>
+    Copyright (c) 2009-2014 by Pali Rohár <pali.rohar@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -13,19 +13,19 @@
     *************************************************************************
 */
 
-#ifndef GoogleTalkCallDialog_H
-#define GoogleTalkCallDialog_H
+#ifndef LibjingleCallDialog_H
+#define LibjingleCallDialog_H
 
-#include "ui_googletalkcalldialog.h"
+#include "ui_libjinglecalldialog.h"
 
 class QCloseEvent;
 
 /**
  * @author Pali Rohár
  * @short Dialog for voice call
- * This is voice call dialog for Google libjingle example googletalk-call application
+ * This is voice call dialog for libjingle example libjingle-call application
  */
-class GoogleTalkCallDialog : public QDialog, public Ui::GoogleTalkCallDialog
+class LibjingleCallDialog : public QDialog, public Ui::LibjingleCallDialog
 {
 
 	Q_OBJECT
@@ -37,7 +37,7 @@ class GoogleTalkCallDialog : public QDialog, public Ui::GoogleTalkCallDialog
 		 * use method show() to open and show voice call dialog
 		 * use method hide() to close and hide voice call dialog
 		 */
-		GoogleTalkCallDialog(QWidget *parent = 0);
+		LibjingleCallDialog(QWidget *parent = 0);
 
 	protected:
 
@@ -53,5 +53,5 @@ class GoogleTalkCallDialog : public QDialog, public Ui::GoogleTalkCallDialog
 
 };
 
-#endif // GoogleTalkCallDialog_H
+#endif // LibjingleCallDialog_H
 

@@ -1,2 +1,2 @@
 SKIP /protocols/jabber/libiris/
-SKIP /protocols/jabber/googletalk/libjingle/
+SKIP /protocols/jabber/libjingle/
