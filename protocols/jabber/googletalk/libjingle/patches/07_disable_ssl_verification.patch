@@ -1,0 +1,24 @@
+diff --git a/protocols/jabber/googletalk/libjingle/talk/examples/call/call_main.cc b/protocols/jabber/googletalk/libjingle/talk/examples/call/call_main.cc
+index 66602c4..04134ca 100644
+--- a/protocols/jabber/googletalk/libjingle/talk/examples/call/call_main.cc
++++ b/protocols/jabber/googletalk/libjingle/talk/examples/call/call_main.cc
+@@ -200,6 +200,10 @@ void Print(const char* chars) {
+   fflush(stdout);
+ }
+ 
++bool SSLVerificationCallback(void* cert) {
++  return true;
++}
++
+ int main(int argc, char **argv) {
+   // This app has three threads. The main thread will run the XMPP client,
+   // which will print to the screen in its own thread. A second thread
+@@ -360,7 +364,7 @@ int main(int argc, char **argv) {
+   xcs.set_server(talk_base::SocketAddress(host, port));
+   Print(("Logging in to " + server + " as " + jid.Str() + "\n").c_str());
+ 
+-  talk_base::InitializeSSL();
++  talk_base::InitializeSSL(SSLVerificationCallback);
+ 
+ #ifdef ANDROID
+   InitAndroidMediaEngineFactory(AndroidMediaEngineFactory);

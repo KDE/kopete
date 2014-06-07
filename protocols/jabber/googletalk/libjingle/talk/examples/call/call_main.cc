@@ -200,6 +200,10 @@ void Print(const char* chars) {
   fflush(stdout);
 }
 
+bool SSLVerificationCallback(void* cert) {
+  return true;
+}
+
 int main(int argc, char **argv) {
   // This app has three threads. The main thread will run the XMPP client,
   // which will print to the screen in its own thread. A second thread
@@ -360,7 +364,7 @@ int main(int argc, char **argv) {
   xcs.set_server(talk_base::SocketAddress(host, port));
   Print(("Logging in to " + server + " as " + jid.Str() + "\n").c_str());
 
-  talk_base::InitializeSSL();
+  talk_base::InitializeSSL(SSLVerificationCallback);
 
 #ifdef ANDROID
   InitAndroidMediaEngineFactory(AndroidMediaEngineFactory);
