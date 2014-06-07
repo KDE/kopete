@@ -43,22 +43,6 @@ GoogleTalk::GoogleTalk(const QString &jid, const QString &password) {
 	c = false;
 	activeCall = false;
 
-	callProcess->start(callExe);
-	callProcess->waitForStarted();
-
-	if ( callProcess->error() == QProcess::FailedToStart ) {
-		//Cant start process call
-		support = false;
-		QPointer <QMessageBox> error = new QMessageBox(QMessageBox::Critical, "Jabber Protocol", i18n("Cannot start process %1. Check your installation of Kopete.", QString(callExe)));
-		error->exec();
-		delete error;
-		return;
-	} else {
-		//Call exist, quit it
-		callProcess->kill();
-		callProcess->waitForFinished();
-	}
-
 	this->jid = jid;
 	this->password = password;
 
@@ -95,6 +79,19 @@ void GoogleTalk::setUser(const QString &jid, const QString &password) {
 
 }
 
+void GoogleTalk::error(QProcess::ProcessError error) {
+
+//	qDebug() << "GoogleTalk::error";
+	if ( error == QProcess::FailedToStart ) {
+		//Cant start process call
+		support = false;
+		QPointer <QMessageBox> error = new QMessageBox(QMessageBox::Critical, "Jabber Protocol", i18n("Cannot start process %1. Check your installation of Kopete.", QString(callExe)));
+		error->exec();
+		delete error;
+	}
+
+}
+
 void GoogleTalk::login() {
 
 //	qDebug() << "GoogleTalk::login";
@@ -106,6 +103,7 @@ void GoogleTalk::login() {
 
 	usersOnline.clear();
 
+	connect( callProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)) );
 	connect( callProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(read()) );
 	connect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(finished(int,QProcess::ExitStatus)) );
 
@@ -132,6 +130,7 @@ void GoogleTalk::logout(const QString &res) {
 	timer->stop();
 
 	disconnect( timer, SIGNAL(timeout()), this, SLOT(restart()) );
+	disconnect( callProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)) );
 	disconnect( callProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(read()) );
 	disconnect( callProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(finished(int,QProcess::ExitStatus)) );
 

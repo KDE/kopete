@@ -152,6 +152,8 @@ class GoogleTalk : public QObject
 		void read();
 		/// slot for write line to Google libjingle example googletalk-call application
 		void write(const QByteArray &line);
+		/// slot called when Google libjingle example googletalk-call application failed to start
+		void error(QProcess::ProcessError error);
 		/// slot called when Google libjingle example googletalk-call application exit or crashed
 		void finished(int, QProcess::ExitStatus exitStatus);
 		/// slot for restart Google libjingle example googletalk-call application
