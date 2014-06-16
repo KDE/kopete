@@ -19,7 +19,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/xmpp/zlib
 ${CMAKE_CURRENT_SOURCE_DIR}/src/xmpp/base64
 ${CMAKE_CURRENT_SOURCE_DIR}/src/xmpp/xmpp-core
 ${CMAKE_CURRENT_SOURCE_DIR}/src/xmpp/jingle
-${CMAKE_CURRENT_SOURCE_DIR}/src/jdns
+${CMAKE_CURRENT_SOURCE_DIR}/src/jdns/include/jdns
 ${CMAKE_CURRENT_SOURCE_DIR}/src/irisnet/noncore
 ${CMAKE_CURRENT_SOURCE_DIR}/src/irisnet/noncore/legacy
 ${CMAKE_CURRENT_SOURCE_DIR}/src/irisnet/corelib
@@ -73,8 +73,6 @@ src/xmpp/xmpp-core/protocol.cpp
 src/xmpp/xmpp-core/compressionhandler.cpp
 src/xmpp/xmpp-core/parser.cpp
 src/xmpp/xmpp-core/connector.cpp
-src/jdns/qjdns.cpp
-src/jdns/qjdns_sock.cpp
 src/irisnet/noncore/ice176.cpp
 src/irisnet/noncore/icecomponent.cpp
 src/irisnet/noncore/icetransport.cpp
@@ -98,15 +96,17 @@ src/irisnet/corelib/netnames_jdns.cpp
 src/irisnet/corelib/netnames.cpp
 src/irisnet/corelib/irisnetplugin.cpp
 src/irisnet/corelib/netinterface.cpp
-src/irisnet/corelib/jdnsshared.cpp
 src/irisnet/corelib/objectsession.cpp
 src/irisnet/corelib/irisnetglobal.cpp
 
-src/jdns/jdns.c
-src/jdns/jdns_util.c
-src/jdns/jdns_sys.c
-src/jdns/jdns_mdnsd.c
-src/jdns/jdns_packet.c
+src/jdns/src/jdns/jdns_util.c
+src/jdns/src/jdns/jdns_packet.c
+src/jdns/src/jdns/jdns_mdnsd.c
+src/jdns/src/jdns/jdns_sys.c
+src/jdns/src/jdns/jdns.c
+src/jdns/src/qjdns/qjdns_sock.cpp
+src/jdns/src/qjdns/qjdns.cpp
+src/jdns/src/qjdns/qjdnsshared.cpp
 
 )
 
@@ -189,9 +189,6 @@ src/xmpp/xmpp-core/xmpp_stream.h
 src/xmpp/xmpp-core/td.h
 src/xmpp/xmpp-core/parser.h
 
-src/jdns/qjdns.h
-
-
 src/irisnet/noncore/stuntransaction.h
 src/irisnet/noncore/stunbinding.h
 src/irisnet/noncore/legacy/ndns.h
@@ -208,11 +205,22 @@ src/irisnet/corelib/netavailability.h
 src/irisnet/corelib/netnames.h
 src/irisnet/corelib/irisnetplugin.h
 src/irisnet/corelib/netinterface.h
-src/irisnet/corelib/jdnsshared.h
+
+src/jdns/src/jdns/jdns_packet.h
+src/jdns/src/jdns/jdns_mdnsd.h
+src/jdns/src/jdns/jdns_p.h
+src/jdns/include/jdns/jdns.h
+src/jdns/src/qjdns/qjdns_sock.h
+src/jdns/src/qjdns/qjdns_p.h
+src/jdns/src/qjdns/qjdnsshared_p.h
+src/jdns/include/jdns/qjdns.h
+src/jdns/include/jdns/qjdnsshared.h
+src/jdns/include/jdns/jdns_export.h
 
 )
 
 add_definitions(-DIRISNET_STATIC)
+add_definitions(-DJDNS_STATIC)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
