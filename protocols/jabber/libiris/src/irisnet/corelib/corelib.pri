@@ -1,10 +1,11 @@
 QT *= network
 
-include(../../jdns/jdns.pri)
-INCLUDEPATH += $$PWD/../../jdns
+iris-qjdns {
+	include(../../jdns/jdns.pri)
+	INCLUDEPATH += $$PWD/../../jdns
+}
 
 HEADERS += \
-	$$PWD/jdnsshared.h \
 	$$PWD/objectsession.h \
 	$$PWD/irisnetexport.h \
 	$$PWD/irisnetplugin.h \
@@ -16,7 +17,6 @@ HEADERS += \
 	$$PWD/addressresolver.h
 
 SOURCES += \
-	$$PWD/jdnsshared.cpp \
 	$$PWD/objectsession.cpp \
 	$$PWD/irisnetplugin.cpp \
 	$$PWD/irisnetglobal.cpp \
