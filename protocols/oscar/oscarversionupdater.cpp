@@ -95,8 +95,8 @@ void OscarVersionUpdater::initICQVersionInfo()
 	mICQVersion.major = config.readEntry( "Major", "0x0006" ).toUShort( 0, 0 );
 	mICQVersion.minor = config.readEntry( "Minor", "0x0005" ).toUShort( 0, 0 );
 	mICQVersion.point = config.readEntry( "Point", "0x0000" ).toUShort( 0, 0 );
-	mICQVersion.build = config.readEntry( "Build", "0x03ED" ).toUShort( 0, 0 );
-	mICQVersion.other = config.readEntry( "Other", "0x00007537" ).toUInt( 0, 0 );
+	mICQVersion.build = config.readEntry( "Build", "0x0412" ).toUShort( 0, 0 );
+	mICQVersion.other = config.readEntry( "Other", "0x00000000" ).toUInt( 0, 0 );
 	mICQVersion.country = config.readEntry( "Country", "us" );
 	mICQVersion.lang = config.readEntry( "Lang", "en" );
 }
