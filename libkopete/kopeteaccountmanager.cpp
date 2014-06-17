@@ -30,6 +30,7 @@
 #include <kplugininfo.h>
 #include <kconfiggroup.h>
 #include <solid/networking.h>
+#include <solid/powermanagement.h>
 
 #include "kopeteaccount.h"
 #include "kopetebehaviorsettings.h"
@@ -88,11 +89,11 @@ AccountManager::AccountManager()
 	setObjectName( "KopeteAccountManager" );
 	connect( Solid::Networking::notifier(), SIGNAL(shouldConnect()), this, SLOT(networkConnected()) );
 	connect( Solid::Networking::notifier(), SIGNAL(shouldDisconnect()), this, SLOT(networkDisconnected()) );
+	connect( Solid::PowerManagement::notifier(), SIGNAL(resumingFromSuspend()), this, SLOT(resume()) );
 #ifdef __GNUC__
 #warning TODO: Switch to a org.kde.Solid.PowerManagement Sleeping/Suspending signal when available.
 #endif
 	QDBusConnection::systemBus().connect( "org.freedesktop.UPower", "/org/freedesktop/UPower", "", "Sleeping", this, SLOT( suspend() ) );
-	QDBusConnection::sessionBus().connect( "org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT( resume() ) );
 	d->suspended = false;
 }
 
