@@ -62,6 +62,7 @@ MetaContact::MetaContact()
 	connect( this, SIGNAL(contactAdded(Kopete::Contact*)), SIGNAL(persistentDataChanged()) );
 	connect( this, SIGNAL(contactRemoved(Kopete::Contact*)), SIGNAL(persistentDataChanged()) );
 
+	// TODO: speed up: this slot is called when any kabc contact is changed and is called in *every* metacontact instance. also slot is slow because it finding kabc id
 	// Update the KABC picture when the KDE Address book change.
 	connect(KABCPersistence::self()->addressBook(), SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotUpdateAddressBookPicture()));
 
@@ -1196,6 +1197,7 @@ void MetaContact::setKabcId( const QString& newKabcId )
 	d->kabcId = newKabcId;
 	if ( loading() )
 	{
+		// TODO: speed up: this slot is called in *every* metacontact instance and is slow because it finding kabc id
 		slotUpdateAddressBookPicture();
 	}
 	else
