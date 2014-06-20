@@ -422,9 +422,9 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 				jabberMessage.setXSigned ( encryptedBody );
 			else
 				jabberMessage.setXEncrypted ( encryptedBody );
-        }
-        else
-        {
+		}
+		else
+		{
 			// this message is not encrypted
 			jabberMessage.setBody ( message.plainBody ());
 			if (message.format() ==  Qt::RichText)
@@ -452,7 +452,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					doc.setContent(xhtmlBody, true);
 					jabberMessage.setHTML( XMPP::HTMLElement( doc.documentElement() ) );
 				}
-        	}
+			}
 		}
 
 		// determine type of the widget and set message type accordingly
