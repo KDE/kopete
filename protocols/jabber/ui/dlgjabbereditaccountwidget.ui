@@ -1128,7 +1128,7 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
        <item>
         <widget class="QCheckBox" name="oldEncrypted" >
          <property name="text" >
-          <string>Use old inline PGP format for signed and encrypted messages</string>
+          <string>When recipient does not support OpenPGP XEP-0027 wrap PGP block to message body</string>
          </property>
         </widget>
        </item>

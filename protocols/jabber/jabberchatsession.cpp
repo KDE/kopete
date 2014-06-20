@@ -389,7 +389,15 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		jabberMessage.setSubject ( message.subject () );
 		jabberMessage.setTimeStamp ( message.timestamp () );
 
-		if ( ! account()->oldEncrypted() && message.plainBody().indexOf ( "-----BEGIN PGP MESSAGE-----" ) != -1 )
+		JabberResource *jresource = account()->resourcePool()->getJabberResource(toJid, resource());
+
+		bool xsigned = message.classes().contains ( "signed" );
+		bool xencrypted = message.classes().contains ( "encrypted" );
+
+		bool fxsigned = jresource && jresource->features().test ( QStringList ( "jabber:x:signed" ) );
+		bool fxencrypted = jresource && jresource->features().test ( QStringList ( "jabber:x:encrypted" ) );
+
+		if ( ( ( xsigned && fxsigned ) || ( xencrypted && fxencrypted ) || ! account()->oldEncrypted() ) && message.plainBody().indexOf ( "-----BEGIN PGP MESSAGE-----" ) != -1 )
 		{
 			/*
 			 * This message is encrypted, so we need to set
@@ -400,8 +408,6 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 			 */
 
 			// please don't translate the following string
-			bool xsigned = message.classes().contains ( "signed" );
-			bool xencrypted = message.classes().contains ( "encrypted" );
 			if ( xsigned && xencrypted )
 				jabberMessage.setBody ( "This message is signed and encrypted." );
 			else if ( xsigned )
@@ -479,7 +485,6 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		jabberMessage.setChatState( XMPP::StateActive );
 
 		// XEP-0184: Message Delivery Receipts
-		JabberResource *jresource = account()->resourcePool()->getJabberResource(toJid, resource());
 		if( jresource && jresource->features().test(QStringList("urn:xmpp:receipts")) )
 		{
 			jabberMessage.setMessageReceipt( ReceiptRequest );
