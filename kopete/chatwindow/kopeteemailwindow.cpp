@@ -273,7 +273,7 @@ void KopeteEmailWindow::initActions(void)
 	coll->addAction( "toolbar_spacer", spacerAction );
 
 	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );
-        coll->addAction( "toolbar_animation", action );
+	coll->addAction( "toolbar_animation", animAction );
 	animAction->setDefaultWidget( d->anim );
 
 	setXMLFile( QLatin1String( "kopeteemailwindow.rc" ) );
