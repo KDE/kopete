@@ -452,7 +452,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 					//&nbsp; is not a valid XML entity
 					xhtmlBody.replace("&nbsp;" , "&#160;");
 
-					xhtmlBody="<p "+ message.getHtmlStyleAttribute() +'>'+ xhtmlBody +"</p>";
+					xhtmlBody="<body xmlns=\"http://www.w3.org/1999/xhtml\">" + xhtmlBody + "</body>";
 
 					QDomDocument doc;
 					doc.setContent(xhtmlBody, true);
