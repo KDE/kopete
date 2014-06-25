@@ -29,6 +29,7 @@
 
 #include "qvariant.h"
 #include <QPointer>
+#include <QPair>
 
 /**
   * @author Michael Zanetti
@@ -81,7 +82,7 @@ public:
 	~OTRPlugin();
 
 	void emitGoneSecure( Kopete::ChatSession *session, int status );
-	QMap<QString, QString> getMessageCache();
+	QMap<QString, QPair<QString, bool> > getMessageCache();
 
 public slots:
 
@@ -100,7 +101,7 @@ private:
 	static OTRPlugin* pluginStatic_;
 	OtrMessageHandlerFactory *m_inboundHandler;
 	OtrlChatInterface *otrlChatInterface;
-	QMap<QString, QString> messageCache;
+	QMap<QString, QPair<QString, bool> > messageCache;
 	KSelectAction* otrPolicyMenu;
 
 /*	KActionMenu *otrPolicyMenuBar;

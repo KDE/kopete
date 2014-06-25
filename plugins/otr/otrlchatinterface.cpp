@@ -50,6 +50,7 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qwidget.h>
+#include <qtextdocument.h>
 
 extern "C"{
 #include <sys/types.h>
@@ -634,7 +635,7 @@ int OtrlChatInterface::encryptMessage( Kopete::Message &message ){
 	bool plaintext = message.format() == Qt::PlainText;
 
 	if(plaintext){
-		msgBody = message.plainBody().replace('<', "&lt;");
+		msgBody = Qt::escape(message.plainBody()).replace('\n', "<br/>");
 	} else {
 		msgBody = message.escapedBody();
 	}
@@ -656,6 +657,9 @@ int OtrlChatInterface::encryptMessage( Kopete::Message &message ){
 		} else if (newMessage) {
 			msgBody = QString::fromUtf8(newMessage);
 			otrl_message_free(newMessage);
+		} else {
+			/* Message was not changed */
+			return 2;
 		}
 
 
