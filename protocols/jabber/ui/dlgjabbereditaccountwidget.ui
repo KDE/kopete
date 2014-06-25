@@ -578,6 +578,17 @@
               <height>32767</height>
              </size>
             </property>
+            <property name="minimum">
+              <number>-127</number>
+            </property>
+            <property name="maximum">
+              <number>127</number>
+            </property>
+            <property name="toolTip">
+             <string>&lt;qt>Each resource can have different &lt;b>priority &lt;/b> levels. The messages will be sent to the resource which has the highest priority level.
+
+If two resources have the same priority, the messages will be sent to the one most recently connected.&lt;/qt></string>
+            </property>
             <property name="whatsThis" >
              <string>&lt;qt>Each resource can have different &lt;b>priority &lt;/b> levels. The messages will be sent to the resource which has the highest priority level.
 
@@ -636,7 +647,7 @@ If two resources have the same priority, the messages will be sent to the one mo
                <number>-127</number>
               </property>
               <property name="maximum">
-               <number>128</number>
+               <number>127</number>
               </property>
              </widget>
             </item>
