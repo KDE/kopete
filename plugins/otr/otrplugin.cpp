@@ -155,18 +155,21 @@ void OTRPlugin::slotOutgoingMessage( Kopete::Message& msg )
 	if( msg.direction() == Kopete::Message::Outbound ){
 
 	QString cacheBody;
+	bool cachePlain;
 	if(msg.format() == Qt::PlainText){
-		cacheBody = msg.plainBody().replace('<', "&lt;");
+		cacheBody = msg.plainBody();
+		cachePlain = true;
 	} else {
 		cacheBody = msg.escapedBody();
+		cachePlain = false;
 	}
 
 	otrlChatInterface->encryptMessage( msg );
         
 	if( !msg.plainBody().isEmpty() ){
-		messageCache.insert( msg.plainBody(), cacheBody );
+		messageCache.insert( msg.plainBody(), qMakePair( cacheBody, cachePlain ) );
 	} else {
-		messageCache.insert( "!OTR:MsgDelByOTR", cacheBody );
+		messageCache.insert( "!OTR:MsgDelByOTR", qMakePair( cacheBody, cachePlain ) );
 	}
 
 	kDebug(14318) << "Outgoing message after processing:" << msg.plainBody() << msg.format();
@@ -232,7 +235,7 @@ void OTRPlugin::emitGoneSecure( Kopete::ChatSession *session, int status){
 	emit goneSecure( session, status );
 }
 
-QMap<QString, QString> OTRPlugin::getMessageCache(){
+QMap<QString, QPair<QString, bool> > OTRPlugin::getMessageCache(){
 	return messageCache;
 }
 
@@ -245,7 +248,7 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 
 	Kopete::Message msg = event->message();
 //	Kopete::ChatSession *session = msg.manager();
-	QMap<QString, QString> messageCache = plugin->getMessageCache();
+	QMap<QString, QPair<QString, bool> > messageCache = plugin->getMessageCache();
 
     kDebug(14318) << "OtrMessageHandler::handleMessage:" << msg.plainBody();
 
@@ -267,10 +270,14 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 			return;
 		}
 	} else if( msg.direction() == Kopete::Message::Outbound ){
+		const QString &plainBody = msg.plainBody();
 //        kDebug(14318) << "searching cache for" << msg.plainBody();
-		if( messageCache.contains( msg.plainBody() ) ){
-			msg.setHtmlBody( messageCache[msg.plainBody()].replace('\n', "<br>"));
-			messageCache.remove( messageCache[msg.plainBody()] );
+		if( messageCache.contains( plainBody ) ){
+			if (!messageCache[plainBody].second)
+				msg.setHtmlBody( messageCache[plainBody].first );
+			else if (plainBody != messageCache[plainBody].first)
+				msg.setPlainBody( messageCache[plainBody].first );
+			messageCache.remove( messageCache[plainBody].first );
 			if(messageCache.count() > 5) messageCache.clear();
 		}
 		// Check if Message is an OTR message. Should it be discarded or shown?
@@ -284,7 +291,10 @@ void OtrMessageHandler::handleMessage( Kopete::MessageEvent *event ){
 		if( msg.plainBody().isEmpty() ){
 			event->discard();
 			if(messageCache.contains("!OTR:MsgDelByOTR")){
-				msg.setHtmlBody(messageCache["!OTR:MsgDelByOTR"]);
+				if (!messageCache["!OTR:MsgDelByOTR"].second)
+					msg.setHtmlBody(messageCache["!OTR:MsgDelByOTR"].first);
+				else
+					msg.setPlainBody(messageCache["!OTR:MsgDelByOTR"].first);
 				msg.manager()->view()->setCurrentMessage(msg);
 				messageCache.remove("!OTR:MsgDelByOTR");
 			}
