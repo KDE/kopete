@@ -47,7 +47,7 @@ public:
 
     virtual QString attributes( int offset, int* startOffset, int* endOffset );
 
-    virtual int childCount() const;;
+    virtual int childCount() const;
     virtual int navigate(RelationFlag rel, int entry, QAccessibleInterface** target) const;
 
     virtual void selection( int selectionIndex, int* startOffset, int* endOffset );
