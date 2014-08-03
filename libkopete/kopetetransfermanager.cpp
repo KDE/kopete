@@ -426,6 +426,9 @@ void Kopete::TransferManager::saveIncomingTransfer( unsigned int id )
 	else
 		url = getSaveFile( url );
 
+	if ( url.isEmpty() )
+		return;
+
 	if ( !url.isValid() )
 	{
 		emit askIncomingDone( id );
