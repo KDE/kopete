@@ -185,7 +185,8 @@ void Account::disconnected( DisconnectReason reason )
 	}
 	else if ( Kopete::BehaviorSettings::self()->reconnectOnDisconnect() == true && reason > Manual )
 	{
-		if (reason == ConnectionReset) {
+		bool networkAvailable = ( Solid::Networking::status() == Solid::Networking::Unknown || Solid::Networking::status() == Solid::Networking::Connected );
+		if ( reason == ConnectionReset && ! networkAvailable ) {
 			d->reconnectOnNetworkIsOnline = true;
 			d->reconnectTimer.stop();
 		} else {
