@@ -405,8 +405,12 @@ QList<Kopete::Message> HistoryLogger::readMessages(QDate date)
 
 					Kopete::Message msg(from, to);
 
+					QString text = msgElem2.text();
+					if (!Qt::mightBeRichText(text))
+						text.replace(QRegExp("(?!<br[^>]*>)\n"), "<br />");
+
 					msg.setHtmlBody( QString::fromLatin1("<span title=\"%1\">%2</span>")
-							.arg( dt.toString(Qt::LocalDate), msgElem2.text() ));
+							.arg( dt.toString(Qt::LocalDate), text ));
 					msg.setTimestamp( dt );
 					msg.setDirection( dir );
 
@@ -635,17 +639,21 @@ QList<Kopete::Message> HistoryLogger::readMessages(int lines,
 					msg.setTimestamp( timestamp );
 					msg.setDirection( dir );
 
+					QString text = msgElem.text();
+					if (!Qt::mightBeRichText(text))
+						text.replace(QRegExp("(?!<br[^>]*>)\n"), "<br />");
+
 					if (colorize)
 					{
 						msg.setHtmlBody( QString::fromLatin1("<span style=\"color:%1\" title=\"%2\">%3</span>")
-							.arg( fgColor.name(), timestamp.toString(Qt::LocalDate), msgElem.text() ));
+							.arg( fgColor.name(), timestamp.toString(Qt::LocalDate), text ));
 						msg.setForegroundColor( fgColor );
 						msg.addClass( "history" );
 					}
 					else
 					{
 						msg.setHtmlBody( QString::fromLatin1("<span title=\"%1\">%2</span>")
-							.arg( timestamp.toString(Qt::LocalDate), msgElem.text() ));
+							.arg( timestamp.toString(Qt::LocalDate), text ));
 					}
 
 					if(reverseOrder)
