@@ -487,6 +487,16 @@ printGifErrorMessage()
 #endif // HAVE_GIFLIB
 }
 
+static int
+closeGif(GifFileType* file)
+{
+#if ((GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1) || GIFLIB_MAJOR > 5)
+        return EGifCloseFile(file, NULL);
+#else
+        return EGifCloseFile(file);
+#endif
+}
+
 /* stolen from kpaint write_to_gif() */
 void
 WlmChatSession::convertToGif( const QPixmap & ink, QString filename)
@@ -557,7 +567,7 @@ WlmChatSession::convertToGif( const QPixmap & ink, QString filename)
                 screenColourmap);
 
     if (status != GIF_OK) {
-        EGifCloseFile(GifFile);
+        closeGif(GifFile);
         return;
     }
 
@@ -580,11 +590,11 @@ WlmChatSession::convertToGif( const QPixmap & ink, QString filename)
 
     if (status != GIF_OK) {
         printGifErrorMessage();
-        EGifCloseFile(GifFile);
+        closeGif(GifFile);
         return;
     }
 
-    if (EGifCloseFile(GifFile) != GIF_OK) {
+    if (closeGif(GifFile) != GIF_OK) {
         printGifErrorMessage();
         return;
     }
