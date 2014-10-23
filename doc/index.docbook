@@ -1093,6 +1093,74 @@ the same folder under $KDEHOME.  At present there aren't any complete replacemen
 sets that you can simply extract there.</para>
 </answer>
 </qandaentry>
+<qandaentry>
+<question><para>I don't see any &quot;plugins&quot; listed in the &quot;Configure Plugins&quot; dialog. What's up?</para>
+</question>
+<answer><para>There are two solutions to this problem. If you used binary packages, then make sure that you used binary packages designed for your distribution, and the specific version of your distribution. Crossing distributions and versions around will not work with Kopete. If there are no binary packages for your system, you must compile Kopete using the source packages or source rpms. If you compiled your KDE, then Kopete must go in the same prefix as KDE did. If, however, you compiled the source packages, then make sure that your Kopete is installed in the same location as your KDE, if it is not, you can force it to do so by specifying a --prefix command to cmake. e.g. cmake -DCMAKE_PREFIX=/opt/kde4 (where /opt/kde4 is your prefix). To determine where your KDE prefix is, type &quot;which konqueror&quot; in a konsole. It should display something like &quot;/opt/kde4/bin/konqueror&quot;, then /opt/kde4 would be your prefix, or if it says &quot;/usr/bin/konqueror&quot;, then your prefix would be /usr. Also make sure you performed a 'make install', and check that there is no stale Kopete installation from previous versions in different locations. You might also need to run 'kbuildsycoca4' manually after installing Kopete.  kbuildsycoca updates the plugin database.  It runs when new software using plugins is installed, but it is possible that 'make install; kopete' will run Kopete before the update has completed.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>I have many &lt;desktops / monitors / computers&gt; and / or I talk to many people at the same time, and as a result I wish Kopete could play a &lt;sound / pop up a m
+essage / change my wallpaper / reboot my computer &gt; whenever I &lt;receive a new message / someone goes online / someone goes offline &gt; When will this be added?</para>
+</question>
+<answer><para>It is already there
+ (surprise!). Kopete is a KDE application and thus makes use of KNotify for all notifications. For those who don't know, KNotify is a very powerful architecture that lets you do pretty much
+ anything you want when an event occurs in a KDE application. You can play a sound, pop up a passive dialog, flash the taskbar, log a message, or even run your own custom commands, such as 
+a shell script, to do anything your heart desires. To access this treasure trove, go into the Configure Notifications dialog, and click &quot;More Options&quot;. This will present you with 
+all the different actions you can take on the events listed just above. As a tip, check out some of your other KDE applications to see what events they let you catch. I for one find a passi
+ve popup on new emails in KMail to be very handy.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>How come file transfers don't work?</para>
+</question>
+<answer><para>There are many reasons for this. WLM was the the first protocol in which we've implemented support for file transfers.  Support for file transfers in Jabber and IRC was added in Kopete 0.9.0 (included in KDE 3.3), and ICQ and AIM in Kopete 0.50.0 (included in KDE 4.0.0). Also, file transfers may not work if you're behind a firewall - see WLM section in the protocol chapter.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>Why all of this silly single-click behavior? It's very annoying!</para>
+</question>
+<answer><para>Kopete is a KDE application. We are not some lame 3rd party application that decides to &quot;look&quot; like the rest of KDE. We also have the &quot;feel&quot; and &quot;integration&quot; aspect of KDE, which means that Kopete follows KDE's standard &quot;Single-click&quot; behavior. If you would like to change this it requires you to change it in all of KDE. You can change to a double-click style by going to K-&gt;Settings-&gt;Peripherals-&gt;Mouse or start &systemsettings; and go to Peripherals-&gt;Mouse and change to the option &quot;Double-click to open files and folders&quot;.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>Will you make the user-interface skinnable?</para>
+</question>
+<answer><para>The only answer for this is no. Kopete was invented to be a KDE Instant-Messenger and this also includes having a KDE Look-n-Feel. By adding skins we would break this rule and having both skin-support and skinless-support at once is impractical as well. Just select a different style in KDEs controlcenter and be happy to have transparent menus and other neat eye-candy today's KDE offers. You can, however, run kopete using a different style. Just run &quot;kopete --style=marble&quot; as an example. Any valid KDE or Qt style will work.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>I would like a feature in the next version of Kopete.</para>
+</question>
+<answer><para>Please go to http://bugs.kde.org and file a wishlist item under the application 'kopete'. Please be very detailed and proof-read what you have written to us. This is NOT a guarantee that we will add this feature in any version, but allows us to consider it.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>My Kopete crashed or has/had unexpected behavior (unexpected behavior does NOT fall in the category of &quot;Kopete doesn't act like Pidgin&quot;, etc).</para>
+</question>
+<answer><para>Please rep
+ort this bug to us by going to http://bugs.KDE.org and file a bug report under the application 'kopete'. Bugs will only be accepted if they are in English, they are detailed, and if a crash was involved they contain a backtrace (the text in the tab marked &quot;Backtrace&quot; once Kopete has crashed).  If you're using Kopete git, however, please mail us at kopete-devel@kde.org instead of filing a bug report.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>Jabber SSL support stopped working, I get the message that the QCA TLS plugin is probably missing. What am I supposed to do?</para>
+</question>
+<answer><para>As the error message indicates, you are missing the QCA TLS plugin, which handles the Jabber plugin's TLS/SSL encryption. Install the package qca-tls (and eventually qca-ossl) or retrieve the plugin from http://delta.affinix.com/qca. Please note that you only need to install the qca-tls plugin, _not_ the QCA library itself. A recompilation of Kopete is not necessary, in fact not even a restart. In case you have installed the plugin and it still won't work, Qt can probably not find it. Since qca-tls installs itself as a Qt plugin, you will have to make sure that it gets installed to the plugin directory of the Qt version you are using to run Kopete.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>I AM behind a firewall.  Which ports need to be open for WLM file transfers?</para>
+</question>
+<answer><para>If you are behind a firewall, port 6891 needs to be open to inbound TCP traffic.</para>
+</answer>
+</qandaentry>
+<qandaentry>
+<question><para>I use Jabber and ICQ together.  Whenever I go online with Jabber, I am disconnected from ICQ with an error message about being connected from another client.  What's 
+up?</para>
+</question>
+<answer><para>Remember when you played with ICQ transports on that other Jabber client?  You set up an &quot;ICQ Transport&quot; which allows you to talk to ICQ people from Jabber.  ICQ doesn't allow multiple connections to the same account, and disconnects you.  Look in your Jabber contacts for a contact of the form &quot;123456@icq.jabber.org&quot; and delete it.</para>
+</answer>
+</qandaentry>
 </qandaset>
 </chapter> <!-- faq -->
 
