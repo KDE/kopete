@@ -468,6 +468,8 @@ void ChatTextEditPart::slotAppearanceChanged()
 
 	editor->setDefaultPlainCharFormat(format);
 	editor->setDefaultRichCharFormat(format);
+	QString styleSheet = QLatin1String("QTextEdit { color: %1; }");
+	editor->setStyleSheet(styleSheet.arg(settings->chatTextColor().name()));
 }
 
 void ChatTextEditPart::slotRichTextSupportChanged()
