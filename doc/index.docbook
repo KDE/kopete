@@ -116,7 +116,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 <keyword>Messaging</keyword>
 <keyword>Jabber</keyword>
 <keyword>IRC</keyword>
-<keyword>MSN</keyword>
+<keyword>WLM</keyword>
 <keyword>ICQ</keyword>
 <keyword>AIM</keyword>
 <keyword>Yahoo</keyword>
@@ -178,7 +178,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 <para>To use &kopete; you need to set up one or more accounts for the instant messaging services you wish to use.</para>
 <para>You've probably already chosen a messaging service, either because you already use &im;, or you need to use the same service as your friends.  If you don't fit into either of these categories, please consider using a messaging service based on open standards, because these are designed for use by Free Software.  Other messaging services are prone to changing the underlying technology without making the details freely available, making them harder for Free Software developers to support.</para>
 <para>The messaging services that &kopete; supports that are based on open standards are Jabber and IRC.</para>
-<para>The following section assumes you are registered with an &im; service already.  If not, you can register with Gadu-Gadu, Jabber, and <trademark>MSN</trademark> from inside &kopete;; for other services, you'll have to register using their respective web site before creating an account in &kopete;.</para>
+<para>The following section assumes you are registered with an &im; service already.  If not, you can register with Gadu-Gadu, Jabber, and <trademark>WLM</trademark> from inside &kopete;; for other services, you'll have to register using their respective web site before creating an account in &kopete;.</para>
 <sect1 id="creating-accounts">
 <title>Creating Accounts</title>
 <para>To create an account, use <menuchoice><guimenu>Settings</guimenu> <guimenuitem>Configure...</guimenuitem> </menuchoice> to display the Configure window.</para>
@@ -714,8 +714,8 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 			<para>ICQ has an Invisibility feature which allows you to hide from selected contacts.  You may also search the ICQ user folder when adding a contact.  A wide range of contact details can be set using the <guilabel>Properties</guilabel> option.</para>
 		</sect2>
 		<sect2 id="protocols-msn">
-			<title>MSN</title> 
-			<para>File transfer and multi user chats work.  To transfer a file,  drag the file from &dolphin; or the desktop into the chat window.  To invite someone else into a chat, drag them from the Contact List into the chat window.  The <menuchoice><guimenu>File</guimenu></menuchoice> menu also contains these commands.  In addition, MSN supports custom emoticons.</para>
+			<title>WLM</title> 
+			<para>File transfer and multi user chats work.  To transfer a file,  drag the file from &dolphin; or the desktop into the chat window.  To invite someone else into a chat, drag them from the Contact List into the chat window.  The <menuchoice><guimenu>File</guimenu></menuchoice> menu also contains these commands.  In addition, WLM supports custom emoticons.</para>
 			<para>To use file transfer, make sure port 6891 is forwarded to your computer.</para>
 		</sect2>
 		<sect2 id="protocols-yahoo">
@@ -1067,7 +1067,7 @@ in konsole "khelpcenter khelpcenter:kioslaves" works-->
 <question><para>I need to connect via a SOCKS proxy, but I cannot find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
 </question>
 <answer><itemizedlist>
-<listitem><para><trademark>MSN</trademark>, <trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in &systemsettings;, <menuchoice><guimenu>Network and Connectivity</guimenu><guisubmenu>Network Settings</guisubmenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
+<listitem><para><trademark>WLM</trademark>, <trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in &systemsettings;, <menuchoice><guimenu>Network and Connectivity</guimenu><guisubmenu>Network Settings</guisubmenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
 </itemizedlist>
 </answer>
 </qandaentry>
@@ -1183,7 +1183,7 @@ up?</para>
 <listitem><para>Pali Rohár (pali.rohar at gmail com): Developer and Maintainer</para></listitem>
 <listitem><para>Duncan Mac-Vicar Prett (duncan at kde org): Original author, developer, and project leader</para></listitem>
 <listitem><para>Till Gerken (till at tantalo net): Developer, Jabber maintainer</para></listitem>
-<listitem><para>Olivier Goffart (ogoffart at tiscalinet be): Lead Developer, MSN Plugin Maintainer</para></listitem>
+<listitem><para>Olivier Goffart (ogoffart at tiscalinet be): Lead Developer, WLM Plugin Maintainer</para></listitem>
 <listitem><para>Andy Goossens (andygoossens at telenet be): Developer</para></listitem>
 <listitem><para>Grzegorz Jaskiewicz (gregj at pointblue com pl): Developer, Gadu-gadu Plugin Maintainer</para></listitem>
 <listitem><para>Jason Keirstead (jason at keirstead org): Developer</para></listitem>
@@ -1192,7 +1192,7 @@ up?</para>
 <listitem><para>&Will.Stephenson; (lists at stevello free-online co uk): Developer, icons, plugins, manual author</para></listitem>
 <listitem><para>Michel Hermier (michel.hermier at wanadoo fr): IRC Plugin Maintainer</para></listitem>
 <listitem><para>Andre Duffeck (andre at duffeck de): Developer: Developer, Yahoo plugin maintainer</para></listitem>
-<listitem><para>&Michael.Larouche; (michael.larouche at kdemail net): Developer, MSN, Chat Window.</para></listitem>
+<listitem><para>&Michael.Larouche; (michael.larouche at kdemail net): Developer, WLM, Chat Window.</para></listitem>
 </itemizedlist>
 </sect2>
 <sect2 id="ex-team">
@@ -1210,7 +1210,7 @@ up?</para>
 <listitem><para>James Grant (topace at lightbox org): Developer, importer Plugin author</para></listitem>
 <listitem><para>Zack Rusin (zack at kde org): Developer, old Gadu-gadu Plugin author</para></listitem>
 <listitem><para>Gav Wood (gav at kde org): WinPopup Plugin author</para></listitem>
-<listitem><para>Martijn Klingens (klingens at kde org): Developer, MSN hacker</para></listitem>
+<listitem><para>Martijn Klingens (klingens at kde org): Developer, WLM hacker</para></listitem>
 </itemizedlist>
 </sect2>
 <sect2 id="documentation">
