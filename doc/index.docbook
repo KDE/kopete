@@ -25,7 +25,6 @@
   <!ENTITY kopete-pipes SYSTEM "pipes.docbook">
   <!ENTITY kopete-jabber SYSTEM "jabber.docbook">
   <!ENTITY kopete-icq SYSTEM "icq.docbook">
-  <!ENTITY kopete-emoticonspec SYSTEM "emoticonspec.docbook">
 ]>
 <!--
 Intro (1st draft, Will)
@@ -1182,7 +1181,6 @@ Documentation copyright 2003,2004,2005 &Will.Stephenson; (lists at stevello free
 &kopete-pipes;
 &kopete-jabber;
 &kopete-icq;
-&kopete-emoticonspec;
 
 &documentation.index;
 </book>
