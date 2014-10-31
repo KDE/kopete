@@ -7,7 +7,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 <sect1 id="menus-contactlist">
 <title>The Contact List Window's Menus</title>
 <sect2 id="menus-contactlist-file">
-<title><guimenu>File</guimenu> Menu</title>
+<title>File Menu</title>
 
 <variablelist>
 <varlistentry>
@@ -90,7 +90,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 </variablelist>
 </sect2>
 <sect2 id="menus-contactlist-edit">
-<title><guimenu>Edit</guimenu> Menu</title>
+<title>Edit Menu</title>
 <variablelist>
 <!--FIXME not in Edit menu
 <varlistentry>
@@ -273,46 +273,12 @@ performs a menu item function, the default shortcut is listed with the menu item
 
 </sect2>
 <sect2 id="menus-settings">
-<title><guimenu>Settings</guimenu> Menu</title>
+<title>Settings Menu</title>
+<para>&kopete; has a default &kde; Settings menu as described in the 
+<ulink url="help:/fundamentals/ui.html#menus-settings">&kde; Fundamentals</ulink> 
+with additional entries:</para>
+
 <variablelist>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guisubmenu>Toolbars</guisubmenu>
-</menuchoice>
-</term>
-<listitem>
-<para>Shows/hides the <guimenuitem>Main Toolbar</guimenuitem> and the <guimenuitem>Quick Search Bar</guimenuitem>.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<shortcut><keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>
-</shortcut>
-<guimenu>Settings</guimenu>
-<guimenuitem>Show Menubar</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Shows/hides the menu bar.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>Show Statusbar</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Shows/hides the status bar.</para>
-</listitem>
-</varlistentry>
 
 <varlistentry>
 <term>
@@ -340,27 +306,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 </listitem>
 </varlistentry>
 
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>Configure Toolbars...</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customize the Contact List's toolbars.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><menuchoice><guimenuitem>Configure Notifications...</guimenuitem></menuchoice></term>
-<listitem><para>In the dialog displayed by this menu entry, you can
-change the notifications (sounds, error messages, &etc;)  used by &kopete;.
-</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
+<varlistentry><!--FIXME no global Shortcuts dialog, it is the app shortcuts dialog-->
 <term>
 <menuchoice>
 <guimenu>Settings</guimenu>
@@ -372,45 +318,20 @@ change the notifications (sounds, error messages, &etc;)  used by &kopete;.
 </listitem>
 </varlistentry>
 
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>Configure Shortcuts...</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Shows the &kde; standard Configure Shortcuts dialog, where you can change keyboard shortcuts that work in the Contact List's windows.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>Configure...</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Displays the <link linkend="configure-dialog">Configure Kopete</link> dialog. </para>
-</listitem>
-</varlistentry>
-
 </variablelist>
 </sect2>
 <sect2 id="menus-help">
-<title><guimenu>Help</guimenu> Menu</title>
-<para>These are the &kde; standard items for the <guimenu>Help</guimenu> menu:</para>
-
-&help.menu.documentation;
-
+<title>Help Menu</title>
+<para>
+The contact list window has the common &kde; Help menu items, for more information read the section about the <ulink url="help:/fundamentals/ui.html#menus-help">Help Menu</ulink> of the &kde; Fundamentals.
+</para>
 </sect2>
 </sect1>  <!-- menus-contactlist -->
 
 <sect1 id="menus-chatwindow">
 <title>The Chat Window's Menus</title>
 <sect2 id="menus-chatwindow-chat">
-<title><guimenu>Chat</guimenu> Menu</title>
+<title>Chat Menu</title>
 <variablelist>
 <varlistentry>
 <term>
@@ -497,7 +418,7 @@ change the notifications (sounds, error messages, &etc;)  used by &kopete;.
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-edit">
-<title><guimenu>Edit</guimenu> Menu</title>
+<title>Edit Menu</title>
 <variablelist>
 <varlistentry>
 <term>
@@ -546,7 +467,7 @@ clipboard is pasted at the current cursor position.</para>
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-format">
-<title><guimenu>Format</guimenu> Menu</title>
+<title>Format Menu</title>
 <variablelist>
 <varlistentry>
 <term>
@@ -612,7 +533,7 @@ clipboard is pasted at the current cursor position.</para>
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-tabs">
-<title><guimenu>Tabs</guimenu> Menu</title>
+<title>Tabs Menu</title>
 <variablelist>
 <varlistentry>
 <term>
@@ -655,73 +576,16 @@ clipboard is pasted at the current cursor position.</para>
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-tools">
-<title><guimenu>Tools</guimenu> Menu</title>
+<title>Tools Menu</title>
 <para>This menu contains items added by the plugins you have loaded.  See the <link linkend="plugins">plugins chapter</link> for details.</para>
 </sect2>
 <sect2 id="menus-chatwindow-settings">
-<title><guimenu>Settings</guimenu> Menu</title>
+<title>Settings Menu</title>
+<para>&kopete; has a default &kde; Settings menu as described in the 
+<ulink url="help:/fundamentals/ui.html#menus-settings">&kde; Fundamentals</ulink> 
+with additional entries:</para>
+
 <variablelist>
-<varlistentry>
-<term>
-<menuchoice>
-<shortcut><keycombo action="simul">&Ctrl;<keycap>M</keycap></keycombo>
-</shortcut>
-<guimenu>Settings</guimenu>
-<guimenuitem>Show Menubar</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Separates the current chat into its own window.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guisubmenu>Toolbars</guisubmenu>
-<guimenuitem>Main Toolbar (Kopete)</guimenuitem></menuchoice>
-</term>
-<listitem>
-<para>Shows/hides the main toolbar.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guisubmenu>Toolbars</guisubmenu>
-<guimenuitem>Status (Kopete)</guimenuitem></menuchoice>
-</term>
-<listitem>
-<para>Shows/hides &kopete;'s status bar.  This is where buddy pictures appear.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guisubmenu>Toolbars</guisubmenu>
-<guimenuitem>Format Toolbar (Kopete)</guimenuitem></menuchoice>
-</term>
-<listitem>
-<para>Shows/hides the text formatting toolbar.</para>
-</listitem>
-</varlistentry>
-	
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>Show Statusbar</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Separates the current chat into its own window.</para>
-</listitem>
-</varlistentry>
 
 <varlistentry>
 <term>
@@ -735,37 +599,13 @@ clipboard is pasted at the current cursor position.</para>
 </listitem>
 </varlistentry>
 
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>Configure Shortcuts...</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Shows the &kde; standard Configure Shortcuts dialog, where you can change keyboard shortcuts that work in the chat window.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Settings</guimenu>
-<guimenuitem>Configure Toolbars...</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>Displays the &kde; standard Configure Toolbars dialog, which lets you customize the chat window's toolbars.</para>
-</listitem>
-</varlistentry>
-
 </variablelist>
 </sect2>
 <sect2 id="menus-chatwindow-help">
-<title><guimenu>Help</guimenu> Menu</title>
-<para>These are the &kde; standard items for the <guimenu>Help</guimenu> menu:</para>
-
-&help.menu.documentation;
+<title>Help Menu</title>
+<para>
+The chat window has the common &kde; Help menu items, for more information read the section about the <ulink url="help:/fundamentals/ui.html#menus-help">Help Menu</ulink> of the &kde; Fundamentals.
+</para>
 
 </sect2>
 <!--
