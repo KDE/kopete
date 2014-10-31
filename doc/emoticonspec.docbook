@@ -30,8 +30,7 @@
 		contains all the pictures and an &XML; file that gives each picture ASCII symbols.
 		A .directory file might be used.
     </para>
-  </sect1>
-  <sect1 id="location">
+  <sect2 id="location">
     <title>File locations</title>
     <para>
       Files involved in this specification are located according to the "desktop
@@ -49,14 +48,14 @@
 		  The theme directory may also contain a .directory file which contains
 		  translations of the theme name and/or an icon for that theme.
 	</para>
-  </sect1>
-  <sect1 id="emoticons-map-format">
+  </sect2>
+  <sect2 id="emoticons-map-format">
     <title>Format of the emoticons.xml file</title>
     <para>
       Emoticon map files must be well-formed XML files.
 		Implementations should ignore unknown tag or unknown attributes.
     </para>
-    <sect2 id="emoticons-map-elements">
+    <sect3 id="emoticons-map-elements">
       <title>Elements</title>
       <para>
         <variablelist>
@@ -104,19 +103,19 @@
           </varlistentry>
 	    </variablelist>
   </para>
-    </sect2>
-  </sect1>
+    </sect3>
+  </sect2>
 
-  <sect1 id="img-format">
+  <sect2 id="img-format">
     <title>Format of the image.</title>
     <para>
 		All images SHOULD be in a supported format :  PNG, GIF or MNG.
     </para>
-  </sect1>
+  </sect2>
 
-  <sect1 id="implementation">
+  <sect2 id="implementation">
     <title>Implementations notes</title>
-	 <sect2 id="impl-parser">
+	 <sect3 id="impl-parser">
 	  <title>Emoticon parser</title>
     <para>
 		There are no real recommendation how to parse emoticons. But
@@ -124,10 +123,10 @@
 		(Example: if both :-() and :-( are in a theme, the picture for the first one should be used
 			when :-() is encountered)
     </para>
+</sect3>
 </sect2>
-</sect1>
 
-<sect1 id="example">
+<sect2 id="example">
 	  <title>Example</title>
 	  <para>
 			 <programlisting>
@@ -151,13 +150,14 @@
 
  </programlisting>
 </para>
-</sect1>
+</sect2>
 
-<sect1 id="todo">
+<!--sect2 id="todo">
 	  <title>TODO</title>
 	  <para>
 			 A DTD of the XML file
 	  </para>
+</sect2-->
 </sect1>
 </appendix>
 
