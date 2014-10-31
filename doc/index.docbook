@@ -163,7 +163,7 @@ Appendix: Chat Window Style Guide (1st draft, Michaël)
 <title>More &kopete; Information on the Web</title>
 <para>For more info about the &kopete; project; the team maintains a website at &kopetewww;.  The latest news and updates are always available there.</para>
 <para>If you need to contact the team, the &kopete; developers' mailing list is hosted at <ulink url="https://mail.kde.org/mailman/listinfo/kopete-devel">https://mail.kde.org/mailman/listinfo/kopete-devel</ulink>.</para>
-<para>If you want live support, there is an Internet Relay Chat channel for &kopete; where you can find the team discussing technical (well, not always) issues or just hanging out. You can use any IRC client to join the channel (including &kopete;), just add an IRC contact and use <userinput>irc.kde.org</userinput> as the server and <userinput>#kopete</userinput> as the channel name. See you there!</para>
+<para>If you want live support, there is an Internet Relay Chat channel for &kopete; where you can find the team discussing technical (well, not always) issues or just hanging out. You can use any IRC client to join the channel (including &kopete;), just add an IRC contact and use <userinput>irc.freenode.org</userinput> as the server and <userinput>#kopete</userinput> as the channel name. See you there!</para>
 </sect2>
 </sect1>
 <sect1 id="intro-to-instant-messaging">
