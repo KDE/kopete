@@ -538,7 +538,7 @@ void KopeteContactListView::sendEmail()
 			
 			kDebug( 14000 ) << "Email: " << emailAddr << "!";
 			if ( !emailAddr.isEmpty() )
-				KToolInvocation::invokeMailer( emailAddr, QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+				KToolInvocation::invokeMailer( emailAddr, QString() );
 			else
 				KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "There is no email address set for this contact in the KDE address book." ), i18n( "No Email Address in Address Book" ) );
 		}

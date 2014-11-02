@@ -196,7 +196,7 @@ public:
 
 	void slotCancelPressed()
 	{
-		finished( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+		finished( QString() );
 	}
 
 private:

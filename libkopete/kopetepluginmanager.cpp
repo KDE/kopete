@@ -273,7 +273,7 @@ void PluginManager::loadAllPlugins()
 				pluginsMap.insert( key.left(key.length() - 7), (it.value() == QLatin1String( "true" )) );
 		}
 
-		QList<KPluginInfo> plugins = availablePlugins( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+		QList<KPluginInfo> plugins = availablePlugins( QString() );
 		QList<KPluginInfo>::ConstIterator it2 = plugins.constBegin();
 		QList<KPluginInfo>::ConstIterator end = plugins.constEnd();
 		for ( ; it2 != end; ++it2 )
@@ -301,7 +301,7 @@ void PluginManager::loadAllPlugins()
 	else
 	{
 		// we had no config, so we load any plugins that should be loaded by default.
-		QList<KPluginInfo> plugins = availablePlugins( QString::null );	//krazy:exclude=nullstrassign for old broken gcc
+		QList<KPluginInfo> plugins = availablePlugins( QString() );
 		QList<KPluginInfo>::ConstIterator it = plugins.constBegin();
 		QList<KPluginInfo>::ConstIterator end = plugins.constEnd();
 		for ( ; it != end; ++it )
