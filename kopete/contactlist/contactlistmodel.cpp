@@ -502,6 +502,22 @@ bool ContactListModel::dropMetaContacts( int row, const QModelIndex &parent, Qt:
 	return false;
 }
 
+QList<QVariant> ContactListModel::emoticonStringToList( const QString &msg ) const
+{
+	QList<QVariant> l;
+	QList<KEmoticonsTheme::Token> tokenList = Kopete::Emoticons::tokenize( msg );
+
+	foreach ( const KEmoticonsTheme::Token &token, tokenList )
+	{
+		if ( token.type == KEmoticonsTheme::Image )
+			l << QIcon(token.picPath);
+		else if ( token.type == KEmoticonsTheme::Text )
+			l << token.text;
+	}
+
+	return l;
+}
+
 QVariant ContactListModel::metaContactData( const Kopete::MetaContact* mc, int role ) const
 {
 	switch ( role )
@@ -535,10 +551,10 @@ QVariant ContactListModel::metaContactData( const Kopete::MetaContact* mc, int r
 		return mc->status();
 		break;
 	case Kopete::Items::StatusMessageRole:
-		return mc->statusMessage().message();
+		return emoticonStringToList( mc->statusMessage().message() );
 		break;
 	case Kopete::Items::StatusTitleRole:
-		return mc->statusMessage().title();
+		return emoticonStringToList( mc->statusMessage().title() );
 		break;
 	case Kopete::Items::AccountIconsRole:
 		{

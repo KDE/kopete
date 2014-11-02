@@ -492,7 +492,7 @@ void KopeteChatWindow::initActions(void)
 	normalIcon = QPixmap( BarIcon( QLatin1String( "kopete" ) ) );
 
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
-	anim = new QLabel( QString::null, 0L );	//krazy:exclude=nullstrassign for old broken gcc
+	anim = new QLabel( QString(), 0L );
 	anim->setObjectName( QLatin1String("kde toolbar widget") );
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );

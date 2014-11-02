@@ -84,7 +84,7 @@ Kopete::OnlineStatus Kopete::PasswordedAccount::initialStatus()
 
 bool Kopete::PasswordedAccount::removeAccount()
 {
-	password().set(QString::null);	//krazy:exclude=nullstrassign for old broken gcc
+	password().set(QString());
 	return Kopete::Account::removeAccount();
 }
 

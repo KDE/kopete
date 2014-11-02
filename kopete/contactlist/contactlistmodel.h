@@ -82,6 +82,8 @@ protected:
 	typedef QPair<Kopete::Group*, Kopete::MetaContact*> GroupMetaContactPair;
 	virtual bool dropMetaContacts( int row, const QModelIndex &parent, Qt::DropAction action, const QList<GroupMetaContactPair> &items );
 
+	QList<QVariant> emoticonStringToList( const QString &msg ) const;
+
 	QVariant metaContactData( const Kopete::MetaContact* mc, int role ) const;
 	QVariant metaContactImage( const Kopete::MetaContact* mc ) const;
 	QString metaContactTooltip( const Kopete::MetaContact* metaContact ) const;

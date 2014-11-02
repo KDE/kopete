@@ -397,7 +397,22 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 				else
 				{
 					QFontMetricsF fm( dlItem.font );
-					idealWidth = fm.width( dlItem.text );
+					const int role = ContactList::LayoutManager::instance()->token( value ).mModelRole;
+					if ( role == Kopete::Items::StatusMessageRole || role == Kopete::Items::StatusTitleRole )
+					{
+						QList<QVariant> msgList = index.data( role ).toList();
+						foreach ( const QVariant &msg, msgList)
+						{
+							if ( msg.canConvert(QVariant::Icon) )
+								idealWidth += IconSize;
+							else if (msg.canConvert(QVariant::String) )
+								idealWidth += fm.width(msg.toString());
+						}
+					}
+					else
+					{
+						idealWidth = fm.width( dlItem.text );
+					}
 					dlItem.type = LayoutNormal;
 				}
 
@@ -540,18 +555,58 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 						}
 					}
 				}
-				else if ( ContactList::LayoutManager::PlaceHolder )
+				else if ( value == ContactList::LayoutManager::PlaceHolder )
 				{
 					// Do nothing
 				}
 				else
 				{
-					if ( painter )
+					const int role = ContactList::LayoutManager::instance()->token( value ).mModelRole;
+					if ( role == Kopete::Items::StatusMessageRole || role == Kopete::Items::StatusTitleRole )
 					{
-						QString text = QFontMetricsF( dlItem.font ).elidedText( dlItem.text, Qt::ElideRight, itemWidth );
-						QRectF drawRect( currentItemX, rowOffsetY, itemWidth, rowHeight );
-						painter->setClipRect( drawRect );
-						painter->drawText( drawRect, alignment, text );
+						const qreal IconMarginV = 1.0;
+						const qreal IconSize = rowHeight - 2 * IconMarginV;
+						QFontMetricsF fm( dlItem.font );
+						QList<QVariant> msgList = index.data( role ).toList();
+						qreal offsetX = 0;
+						foreach ( QVariant msg, msgList )
+						{
+							if ( msg.canConvert(QVariant::Icon) )
+							{
+								if ( painter )
+								{
+									msg.convert(QVariant::Icon);
+									QPixmap emoticonPixmap = msg.value<QIcon>().pixmap(IconSize, IconSize);
+									QRectF pixmapRect(currentItemX + offsetX, rowOffsetY, IconSize, IconSize);
+									painter->setClipRect( pixmapRect );
+									painter->drawPixmap( pixmapRect.topLeft(), emoticonPixmap );
+									offsetX += IconSize;
+								}
+							}
+							else if ( msg.canConvert(QVariant::String) )
+							{
+								if ( painter )
+								{
+									const QString msgString = msg.toString();
+									qreal w = fm.width(msgString);
+									const QString text = QFontMetricsF( dlItem.font ).elidedText( msgString, Qt::ElideRight, w );
+									QRectF drawRect( currentItemX + offsetX, rowOffsetY, w, rowHeight );
+									painter->setClipRect( drawRect );
+									painter->drawText( drawRect, alignment, text );
+									offsetX += w;
+								}
+							}
+						}
+					}
+					else
+					{
+						if ( painter )
+						{
+							QString text = QFontMetricsF( dlItem.font ).elidedText( dlItem.text, Qt::ElideRight, itemWidth );
+							QRectF drawRect( currentItemX, rowOffsetY, itemWidth, rowHeight );
+							painter->setClipRect( drawRect );
+							painter->drawText( drawRect, alignment, text );
+						}
 					}
 				}
 
