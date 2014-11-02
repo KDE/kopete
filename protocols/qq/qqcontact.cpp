@@ -118,7 +118,7 @@ Kopete::ChatSession *QQContact::manager( Kopete::Contact::CanCreateFlags canCrea
 {
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append(this);
-	QString guid(QString());
+	QString guid;
 
 	// 1 to 1 chat session
 	if( chatMembers.count() == 1 )
