@@ -540,7 +540,7 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 						}
 					}
 				}
-				else if ( ContactList::LayoutManager::PlaceHolder )
+				else if ( value == ContactList::LayoutManager::PlaceHolder )
 				{
 					// Do nothing
 				}
