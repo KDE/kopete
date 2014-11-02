@@ -102,12 +102,6 @@ private:
 	int countLogs(QDir dir, int depth);
 
 	/**
-	 * Checks if nickname @param nick can be mapped to either @param log ->me or @param log ->other.
-	 * If not it asks the user if it is his nickname or someone elses.
-	 */
-	bool isNickIncoming(const QString &nick, struct Log *log);
-
-	/**
 	 * Tries to extract the time from @param string using formats specified in timeFormats.
 	 * @param ref is used when @param string doesn't contain a date or to adjust a found date.
 	 * @param ref is taken from the filename of the log.

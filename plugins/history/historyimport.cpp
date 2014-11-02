@@ -275,6 +275,19 @@ void HistoryImport::importPidgin()
 	progress.show();
 	cancel = false;
 
+	// protocolMap maps pidgin account-names to kopete protocol names (as in Kopete::Contact::protocol()->pluginId())
+	QHash<QString, QString> protocolMap;
+	protocolMap.insert("msn", "WlmProtocol");
+	protocolMap.insert("icq", "ICQProtocol");
+	protocolMap.insert("aim", "AIMProtocol");
+	protocolMap.insert("jabber", "JabberProtocol");
+	protocolMap.insert("yahoo", "YahooProtocol");
+	protocolMap.insert("qq", "QQProtocol");
+	protocolMap.insert("irc", "IRCProtocol");
+	protocolMap.insert("gadu-gadu", "GaduProtocol");
+	protocolMap.insert("bonjour", "BonjourProtocol");
+	protocolMap.insert("meanwhile", "MeanwhileProtocol");
+
 	QString protocolFolder;
 	foreach (protocolFolder, logDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
 		logDir.cd(protocolFolder);
@@ -283,14 +296,21 @@ void HistoryImport::importPidgin()
 		foreach (accountFolder, logDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
 			logDir.cd(accountFolder);
 
+			// check if we can map the protocol
+			if (!protocolMap.contains(protocolFolder)) {
+				detailsCursor.insertText(i18n("WARNING: There is no equivalent for protocol %1 in kopete.\n", protocolFolder));
+				logDir.cdUp();
+				continue;
+			}
+			const QString & protocol = protocolMap.value(protocolFolder);
+
 			// TODO use findContact?
 			Kopete::ContactList * cList = Kopete::ContactList::self();
 			QList<Kopete::Contact *> meList = cList->myself()->contacts();
 			Kopete::Contact *me;
 			bool found = false;
 			foreach (me, meList) {
-				if (me->protocol()->pluginId().contains(protocolFolder, Qt::CaseInsensitive) &&
-				 me->account()->accountId().contains(accountFolder, Qt::CaseInsensitive)) {
+				if (me->protocol()->pluginId() == protocol && me->account()->accountId().contains(accountFolder, Qt::CaseInsensitive)) {
 					found = true;
 					break;
 				}
@@ -360,38 +380,6 @@ void HistoryImport::importPidgin()
 
 }
 
-bool HistoryImport::isNickIncoming(const QString &nick, struct Log *log)
-{
-	bool incoming;
-
-	if (nick == log->me->displayName())
-		incoming = false;
-	else if (nick == log->other->displayName())
-		incoming = true;
-	else if (knownNicks.contains(nick)) 
-		incoming = knownNicks.value(nick);
-	else {
-		int r = QMessageBox::question(NULL,
-			i18n("Cannot Map Nickname to Account"),
-			i18n("Did you use \"%1\" as nickname in history?", nick),
-			QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort);
-
-		if (r == QMessageBox::Yes) {
-			knownNicks.insert(nick, true);
-			incoming = true;
-		}
-		else if (r == QMessageBox::No) {
-			knownNicks.insert(nick, false);
-			incoming = false;
-		}
-		else {
-			cancel = true;
-			return false;
-		}
-	}
-	return incoming;
-}
-
 QDateTime HistoryImport::extractTime(const QString &string, QDate ref)
 {
 	QDateTime dateTime;
@@ -428,30 +416,32 @@ QDateTime HistoryImport::extractTime(const QString &string, QDate ref)
 
 void HistoryImport::parsePidginTxt(QFile &file, struct Log *log, QDate date)
 {
-	QByteArray line;
-	QTime time;
-	QDateTime dateTime;
-	QString messageText, nick;
-	bool incoming = false; // =false to make the compiler not complain
+	QString line;
+	QString nick;
+	struct Message message;
 
-	while (!file.atEnd()) {
-		line = file.readLine();
+	// this is to collect unknown nicknames (the list stores the index in log->messages of the messages that used the nickname)
+	// the bool says if that nickname is incoming (only used when the list is empty)
+	QHash<QString, QPair<bool, QList<int> > > nicknames;
+
+	QTextStream str(&file);
+	// utf-8 seems to be default for pidgins-txt logs
+	str.setCodec("UTF-8");
+
+	while (!str.atEnd()) {
+		line = str.readLine();
 
 		if (line[0] == '(') {
-			if (!messageText.isEmpty()) {
-				// messageText contains an unwished newline at the end
-				if (messageText.endsWith('\n'))
-					messageText.remove(-1, 1);
-				struct Message message;
-				message.incoming = incoming;
-				message.text = messageText;
-				message.timestamp = dateTime;
+			if (!message.text.isEmpty()) {
+				/*// message.text contains an unwished newline at the end
+				if (message.text.endsWith('\n'))
+					message.text.chop(1); */
 				log->messages.append(message);
-				messageText.clear();
+				message.text.clear();
 			}
 
 			int endTime = line.indexOf(')')+1;
-			dateTime = extractTime(line.left(endTime), date);
+			message.timestamp = extractTime(line.left(endTime), date);
 
 			int nickEnd = QRegExp("\\s").indexIn(line, endTime + 1);
 			// TODO what if a nickname consists of two words? is this possible?
@@ -463,25 +453,101 @@ void HistoryImport::parsePidginTxt(QFile &file, struct Log *log, QDate date)
 
 			nick = line.mid(endTime+1, nickEnd - endTime - 2); // -2 to delete the colon
 
-			incoming = isNickIncoming(nick, log);
+			// detect if the message is in- or outbound
+			if (nick == log->me->displayName())
+				message.incoming = false;
+			else if (nick == log->other->displayName())
+				message.incoming = true;
+			else if (knownNicks.contains(nick))
+				message.incoming = knownNicks.value(nick);
+			else {
+				// store this nick for later decision
+				nicknames[nick].second.append(log->messages.size());
+			}
+			nicknames[nick].first = message.incoming;
+
 			if (cancel)
 				return;
 
-			messageText = line.mid(nickEnd + 1);
+			message.text = line.mid(nickEnd + 1);
 		}
 		else if (line[0] == ' ') {
 			// an already started message is continued in this line
 			int start = QRegExp("\\S").indexIn(line);
-			messageText.append('\n' + line.mid(start));
+			message.text.append('\n' + line.mid(start));
 		}
 	}
-	if (!messageText.isEmpty()) {
-		struct Message message;
-		message.incoming = incoming;
-		message.text = messageText;
-		message.timestamp = dateTime;
+	if (!message.text.isEmpty())
 		log->messages.append(message);
-		messageText.clear();
+
+	// check if we can guess which nickname belongs to us
+	QHash<QString, QPair<bool, QList<int> > >::iterator itr;
+	QHash<QString, QPair<bool, QList<int> > >::const_iterator itr2;
+	for (itr = nicknames.begin(); itr != nicknames.end(); ++itr) {
+		if (itr->second.isEmpty()) // no work for this one
+			continue;
+		bool haveAnother = false, lastIncoming = false;
+		// check against all other nicknames
+		for (itr2 = nicknames.constBegin(); itr2 != nicknames.constEnd(); ++itr2) {
+			if (itr2 == itr) // skip ourselve
+				continue;
+
+			// if there is another unknown nickname, we have no chance to guess which is our
+			if (!itr2->second.isEmpty())
+				break;
+			if (!haveAnother) {
+				lastIncoming = itr2->first;
+				haveAnother = true;
+			} else {
+				// when there are more than one known nicknames, but with different incoming-values, we also can't guess which is ours
+				if (lastIncoming != itr2->first)
+					break;
+			}
+		}
+		// we now can guess the incoming value of itr, namely !lastIncoming
+		if (haveAnother && itr2 == nicknames.constEnd()) {
+			// inform the user
+			if (lastIncoming)
+				detailsCursor.insertText(i18n("INFORMATION: Guessed %1 to be one of your nicks.\n", itr.key()));
+			else
+				detailsCursor.insertText(i18n("INFORMATION: Guessed %1 to be one of your buddys nicks.\n", itr.key()));
+
+			knownNicks.insert(itr.key(), !lastIncoming);
+			int i;
+			for (i = 0; i < itr->second.size(); i++)
+				log->messages[itr->second.at(i)].incoming = !lastIncoming;
+			itr->second.clear(); // we are finished with theese indexes
+		}
+	}
+
+	// iterate once again over the nicknames to detect which nicks are still not known. simply ask the user!
+	for (itr = nicknames.begin(); itr != nicknames.end(); ++itr) {
+		if (itr->second.isEmpty()) // no word for this one
+			continue;
+
+		bool incoming;
+		int r = QMessageBox::question(NULL,
+			i18n("Cannot map Nickname to Account"),
+			i18n("Did you ever use \"%1\" as nickname in your history?", itr.key()),
+			QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort);
+
+		if (r == QMessageBox::Yes) {
+			knownNicks.insert(itr.key(), false);
+			incoming = true;
+		}
+		else if (r == QMessageBox::No) {
+			knownNicks.insert(itr.key(), true);
+			incoming = false;
+		}
+		else {
+			cancel = true;
+			return;
+		}
+
+		// set the queried incoming value to our already stored Messages
+		int i;
+		for (i = 0; i < itr->second.size(); i++)
+			log->messages[itr->second.at(i)].incoming = incoming;
 	}
 }
 			
