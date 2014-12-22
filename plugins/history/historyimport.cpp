@@ -482,14 +482,14 @@ void HistoryImport::parsePidginTxt(QFile &file, struct Log *log, QDate date)
 
 	// check if we can guess which nickname belongs to us
 	QHash<QString, QPair<bool, QList<int> > >::iterator itr;
-	QHash<QString, QPair<bool, QList<int> > >::const_iterator itr2;
+	QHash<QString, QPair<bool, QList<int> > >::iterator itr2;
 	for (itr = nicknames.begin(); itr != nicknames.end(); ++itr) {
 		if (itr->second.isEmpty()) // no work for this one
 			continue;
 		bool haveAnother = false, lastIncoming = false;
 		// check against all other nicknames
-		for (itr2 = nicknames.constBegin(); itr2 != nicknames.constEnd(); ++itr2) {
-			if (itr2 == itr) // skip ourselve
+		for (itr2 = nicknames.begin(); itr2 != nicknames.end(); ++itr2) {
+			if (itr2 == itr) // skip ourselves
 				continue;
 
 			// if there is another unknown nickname, we have no chance to guess which is our
@@ -505,7 +505,7 @@ void HistoryImport::parsePidginTxt(QFile &file, struct Log *log, QDate date)
 			}
 		}
 		// we now can guess the incoming value of itr, namely !lastIncoming
-		if (haveAnother && itr2 == nicknames.constEnd()) {
+		if (haveAnother && itr2 == nicknames.end()) {
 			// inform the user
 			if (lastIncoming)
 				detailsCursor.insertText(i18n("INFORMATION: Guessed %1 to be one of your nicks.\n", itr.key()));
@@ -516,7 +516,7 @@ void HistoryImport::parsePidginTxt(QFile &file, struct Log *log, QDate date)
 			int i;
 			for (i = 0; i < itr->second.size(); i++)
 				log->messages[itr->second.at(i)].incoming = !lastIncoming;
-			itr->second.clear(); // we are finished with theese indexes
+			itr->second.clear(); // we are finished with these indexes
 		}
 	}
 
