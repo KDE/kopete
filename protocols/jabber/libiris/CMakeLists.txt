@@ -62,7 +62,6 @@ src/xmpp/sasl/scramsha1signature.cpp
 src/xmpp/sasl/scramsha1response.cpp
 src/xmpp/zlib/zlibcompressor.cpp
 src/xmpp/zlib/zlibdecompressor.cpp
-src/xmpp/base64/base64.cpp
 src/xmpp/xmpp-core/tlshandler.cpp
 src/xmpp/xmpp-core/xmpp_stanza.cpp
 src/xmpp/xmpp-core/stream.cpp
@@ -176,7 +175,6 @@ src/xmpp/sasl/scramsha1response.h
 src/xmpp/zlib/common.h
 src/xmpp/zlib/zlibdecompressor.h
 src/xmpp/zlib/zlibcompressor.h
-src/xmpp/base64/base64.h
 src/xmpp/xmpp-core/xmpp_stanza.h
 src/xmpp/xmpp-core/simplesasl.h
 src/xmpp/xmpp-core/securestream.h
