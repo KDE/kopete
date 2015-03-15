@@ -28,9 +28,13 @@ if ( NOT WIN32 )
 	endif ( NOT APPLE )
 endif ( NOT WIN32 )
 
-if ( MEDIASTREAMER_OLD )
-	add_definitions ( -DMEDIASTREAMER_OLD )
-endif ( MEDIASTREAMER_OLD )
+if ( MEDIASTREAMER_LESS_2_9 )
+	add_definitions ( -DMEDIASTREAMER_LESS_2_9 )
+endif ( MEDIASTREAMER_LESS_2_9 )
+
+if ( MEDIASTREAMER_LESS_2_11 )
+	add_definitions ( -DMEDIASTREAMER_LESS_2_11 )
+endif ( MEDIASTREAMER_LESS_2_11 )
 
 if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
 	add_definitions ( -D_DEBUG )
