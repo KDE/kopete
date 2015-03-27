@@ -224,19 +224,40 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		}
 
 		// convert XMPP::Message into Kopete::Message
-		newMessage = new Kopete::Message ( subContact, contactList );
-		newMessage->setDirection( subContact != mManager->myself() ? Kopete::Message::Inbound : Kopete::Message::Outbound );
-		newMessage->setTimestamp( message.timeStamp() );
-		newMessage->setPlainBody( body );
-		newMessage->setRequestedPlugin( viewType );
-		newMessage->setImportance( Kopete::Message::Low );
-		newMessage->setDelayed( message.spooled() );
+		if( message.containsHTML() )
+		{
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received a xHTML message";
+			newMessage = new Kopete::Message ( subContact, contactList );
+			newMessage->setDirection( subContact != mManager->myself() ? Kopete::Message::Inbound : Kopete::Message::Outbound );
+			newMessage->setTimestamp( message.timeStamp() );
+			newMessage->setHtmlBody( message.html().toString() );
+			newMessage->setSubject( message.subject() );
+			newMessage->setRequestedPlugin( viewType );
+			newMessage->setImportance( Kopete::Message::Low );
+			newMessage->setDelayed( message.spooled() );
+		}
+		else if ( !body.isEmpty () )
+		{
+			kDebug ( JABBER_DEBUG_GLOBAL ) << "Received a plain text message";
+			newMessage = new Kopete::Message ( subContact, contactList );
+			newMessage->setDirection( subContact != mManager->myself() ? Kopete::Message::Inbound : Kopete::Message::Outbound );
+			newMessage->setTimestamp( message.timeStamp() );
+			newMessage->setPlainBody( body );
+			newMessage->setSubject( message.subject() );
+			newMessage->setRequestedPlugin( viewType );
+			newMessage->setImportance( Kopete::Message::Low );
+			newMessage->setDelayed( message.spooled() );
+		}
+
 	}
 
 	// append message to manager
-	mManager->appendMessage ( *newMessage );
+	if ( newMessage )
+	{
+		mManager->appendMessage ( *newMessage );
 
-	delete newMessage;
+		delete newMessage;
+	}
 
 }
 

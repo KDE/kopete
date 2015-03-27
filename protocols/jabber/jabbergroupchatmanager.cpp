@@ -135,12 +135,23 @@ void JabberGroupChatManager::slotMessageSent ( Kopete::Message &message, Kopete:
 				jabberMessage.setXSigned ( encryptedBody );
 			else
 				jabberMessage.setXEncrypted ( encryptedBody );
-        }
-        else
-        {
+		}
+		else
+		{
 			// this message is not encrypted
 			jabberMessage.setBody ( message.plainBody () );
-        }
+
+			if (message.format() == Qt::RichText)
+			{
+				QString xhtmlBody = message.escapedBody();
+				xhtmlBody.remove('\n');
+				xhtmlBody.replace("&nbsp;" , "&#160;");
+				xhtmlBody="<body xmlns=\"http://www.w3.org/1999/xhtml\">" + xhtmlBody + "</body>";
+				QDomDocument doc;
+				doc.setContent(xhtmlBody, true);
+				jabberMessage.setHTML( XMPP::HTMLElement( doc.documentElement() ) );
+			}
+		}
 
 		jabberMessage.setType ( "groupchat" );
 
