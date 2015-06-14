@@ -22,6 +22,8 @@
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <QVBoxLayout>
+#include <QListWidget>
+#include <QListWidgetItem>
 
 #include <klocale.h>
 #include <kcolordialog.h>
@@ -96,7 +98,7 @@ void TextEffectPreferences::load()
 
 	config->load();
 
-	preferencesDialog->mColorsListBox->insertStringList(config->colors());
+	preferencesDialog->mColorsListBox->addItems(config->colors());
 	preferencesDialog->m_fg->setChecked(config->colorLines());
 	preferencesDialog->m_words->setChecked(config->colorWords());
 	preferencesDialog->m_char->setChecked(config->colorChar());
@@ -143,9 +145,9 @@ void TextEffectPreferences::save()
 QStringList TextEffectPreferences::colors()
 {
 	QStringList ret;
-	for(unsigned int f=0; f<preferencesDialog->mColorsListBox->count() ; f++)
+	for(int f=0; f < preferencesDialog->mColorsListBox->count() ; ++f)
 	{
-		ret.append(preferencesDialog->mColorsListBox->text(f));
+		ret.append(preferencesDialog->mColorsListBox->item(f)->text());
 	}
 	return ret;
 }
@@ -155,7 +157,7 @@ void TextEffectPreferences::slotAddPressed()
 	QColor myColor;
 	if( KColorDialog::getColor( myColor ) == KColorDialog::Accepted )
 	{
-		preferencesDialog->mColorsListBox->insertItem(myColor.name());
+		preferencesDialog->mColorsListBox->addItem(myColor.name());
 	}
 
 	// Indicate that something has changed
@@ -164,7 +166,8 @@ void TextEffectPreferences::slotAddPressed()
 }
 void TextEffectPreferences::slotRemovePressed()
 {
-	delete preferencesDialog->mColorsListBox->selectedItem();
+	delete preferencesDialog->mColorsListBox->currentItem();
+
 	// Indicate that something has changed
 	slotSettingChanged();
 }
@@ -172,16 +175,17 @@ void TextEffectPreferences::slotRemovePressed()
 
 void TextEffectPreferences::slotUpPressed()
 {
-	int p=preferencesDialog->mColorsListBox->currentItem();
+	int p=preferencesDialog->mColorsListBox->currentRow();
 	if(p <= 0 )
 		return;
-	Q3ListBoxItem *i=preferencesDialog->mColorsListBox->selectedItem();
+
+	QListWidgetItem *i = preferencesDialog->mColorsListBox->currentItem();
 	if(!i)
 		return;
-	preferencesDialog->mColorsListBox->setSelected(i,false);
-	preferencesDialog->mColorsListBox->takeItem(i);
-	preferencesDialog->mColorsListBox->insertItem(i , p-1 );
-	preferencesDialog->mColorsListBox->setSelected(i,true);
+	i->setSelected(false);
+	preferencesDialog->mColorsListBox->removeItemWidget(i);
+	preferencesDialog->mColorsListBox->insertItem(p-1, i);
+	i->setSelected(true);
 
 	// Indicate that something has changed
 	slotSettingChanged();
@@ -189,16 +193,17 @@ void TextEffectPreferences::slotUpPressed()
 }
 void TextEffectPreferences::slotDownPressed()
 {
-	int p=preferencesDialog->mColorsListBox->currentItem();
+	int p=preferencesDialog->mColorsListBox->currentRow();
 	if(p < 0 )
 		return;
-	Q3ListBoxItem *i=preferencesDialog->mColorsListBox->selectedItem();
+
+	QListWidgetItem *i = preferencesDialog->mColorsListBox->currentItem();
 	if(!i)
 		return;
-	preferencesDialog->mColorsListBox->setSelected(i,false);
-	preferencesDialog->mColorsListBox->takeItem(i);
-	preferencesDialog->mColorsListBox->insertItem(i , p+1 );
-	preferencesDialog->mColorsListBox->setSelected(i,true);
+	i->setSelected(false);
+	preferencesDialog->mColorsListBox->takeItem(p);
+	preferencesDialog->mColorsListBox->insertItem(p+1, i);
+	i->setSelected(true);
 
 	// Indicate that something has changed
 	slotSettingChanged();
@@ -217,7 +222,7 @@ void TextEffectPreferences::slotSettingChanged()
 void TextEffectPreferences::defaults()
 {
     preferencesDialog->mColorsListBox->clear();
-    preferencesDialog->mColorsListBox->insertStringList(config->defaultColorList());
+    preferencesDialog->mColorsListBox->addItems(config->defaultColorList());
     preferencesDialog->m_fg->setChecked(false);
     preferencesDialog->m_words->setChecked(false);
     preferencesDialog->m_char->setChecked(false);
