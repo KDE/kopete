@@ -113,7 +113,7 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
   virtual ~LinphoneVoiceChannel();
 
   // Implement pure virtual methods of VoiceMediaChannel.
-  virtual bool SetRecvCodecs(const std::vector<AudioCodec>& codecs) { return true; }
+  virtual bool SetRecvCodecs(const std::vector<AudioCodec>& codecs);
   virtual bool SetSendCodecs(const std::vector<AudioCodec>& codecs);
   virtual bool SetPlayout(bool playout);
   virtual bool SetSend(SendFlags flag);
@@ -152,6 +152,7 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
 
  private:
   int pt_;
+  bool profile_;
   bool mute_;
   bool play_;
   AudioStream *audio_stream_;
@@ -161,6 +162,7 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
   talk_base::scoped_ptr<talk_base::AsyncSocket> socketRtcp_;
   void OnIncomingData(talk_base::AsyncSocket *s);
   void OnIncomingRtcp(talk_base::AsyncSocket *s);
+  bool StartCall();
 
   int captport; // local port for audio_stream
   int playport; // local port for rtp

@@ -69,20 +69,9 @@ LinphoneMediaEngine::LinphoneMediaEngine(const std::string& ringWav,  const std:
   free(path);
 #endif
 
-  if (ms_filter_codec_supported("iLBC"))
-    have_ilbc = true;
-  else
-    have_ilbc = false;
-
-  if (ms_filter_codec_supported("speex"))
-    have_speex = true;
-  else
-    have_speex = false;
-
-  if (ms_filter_codec_supported("gsm"))
-    have_gsm = true;
-  else
-    have_gsm = false;
+  have_ilbc = ms_filter_codec_supported("iLBC");
+  have_speex = ms_filter_codec_supported("speex");
+  have_gsm = ms_filter_codec_supported("gsm");
 
   if (have_speex) {
     voice_codecs_.push_back(AudioCodec(110, payload_type_speex_wb.mime_type, payload_type_speex_wb.clock_rate, 0, 1, 8));
@@ -122,15 +111,15 @@ VideoMediaChannel* LinphoneMediaEngine::CreateVideoChannel(VoiceMediaChannel* vo
 bool LinphoneMediaEngine::FindAudioCodec(const AudioCodec &c) {
   if (c.id == 0)
     return true;
-  if (c.name == payload_type_telephone_event.mime_type)
+  if (stricmp(c.name.c_str(), payload_type_telephone_event.mime_type) == 0)
     return true;
-  if (have_speex && c.name == payload_type_speex_wb.mime_type && c.clockrate == payload_type_speex_wb.clock_rate)
+  if (have_speex && stricmp(c.name.c_str(), payload_type_speex_wb.mime_type) == 0 && c.clockrate == payload_type_speex_wb.clock_rate)
     return true;
-  if (have_speex && c.name == payload_type_speex_nb.mime_type && c.clockrate == payload_type_speex_nb.clock_rate)
+  if (have_speex && stricmp(c.name.c_str(), payload_type_speex_nb.mime_type) == 0 && c.clockrate == payload_type_speex_nb.clock_rate)
     return true;
-  if (have_ilbc && c.name == payload_type_ilbc.mime_type)
+  if (have_ilbc && stricmp(c.name.c_str(), payload_type_ilbc.mime_type) == 0)
     return true;
-  if (have_gsm && c.name == payload_type_gsm.mime_type)
+  if (have_gsm && stricmp(c.name.c_str(), payload_type_gsm.mime_type) == 0)
     return true;
   return false;
 }
@@ -141,6 +130,7 @@ bool LinphoneMediaEngine::FindAudioCodec(const AudioCodec &c) {
 ///////////////////////////////////////////////////////////////////////////
 LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
     : pt_(-1),
+      profile_(false),
       engine_(eng),
       ring_stream_(0)
 {
@@ -195,30 +185,20 @@ bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) 
 
   std::vector<AudioCodec>::const_iterator i;
 
+  pt_ = -1;
+
   for (i = codecs.begin(); i < codecs.end(); i++) {
 
-    if (!engine_->FindAudioCodec(*i))
+    if (!engine_->FindAudioCodec(*i)) {
+      LOG(LS_INFO) << "Codec " << i->name << "/" << i->clockrate << " is not supported";
       continue;
-    if (engine_->have_ilbc && i->name == payload_type_ilbc.mime_type) {
-      rtp_profile_set_payload(&av_profile, i->id, &payload_type_ilbc);
-    } else if (engine_->have_speex && i->name == payload_type_speex_wb.mime_type && i->clockrate == payload_type_speex_wb.clock_rate) {
-      rtp_profile_set_payload(&av_profile, i->id, &payload_type_speex_wb);
-    } else if (engine_->have_speex && i->name == payload_type_speex_nb.mime_type && i->clockrate == payload_type_speex_nb.clock_rate) {
-      rtp_profile_set_payload(&av_profile, i->id, &payload_type_speex_nb);
-    } else if (engine_->have_gsm && i->name == payload_type_gsm.mime_type) {
-      rtp_profile_set_payload(&av_profile, i->id, &payload_type_gsm);
-    } else if (i->name == payload_type_telephone_event.mime_type) {
-      rtp_profile_set_payload(&av_profile, i->id, &payload_type_telephone_event);
-    } else if (i->id == 0)
-      rtp_profile_set_payload(&av_profile, 0, &payload_type_pcmu8000);
-
-    if (pt_ == -1) {
-      LOG(LS_INFO) << "Using " << i->name << "/" << i->clockrate;
-      pt_ = i->id;
     }
-  }
 
-  StopRing();
+    LOG(LS_INFO) << "Using " << i->name << "/" << i->clockrate;
+    pt_ = i->id;
+    break;
+
+  }
 
   if (pt_ == -1) {
     // We're being asked to set an empty list of codecs. This will only happen when
@@ -226,6 +206,62 @@ bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) 
     LOG(LS_WARNING) << "Received empty list of codces; using PCMU/8000";
     pt_ = 0;
   }
+
+  if (pt_ != -1 && profile_ && playport == PORT_UNUSED)
+    StartCall();
+
+  return true;
+
+}
+
+bool LinphoneVoiceChannel::SetRecvCodecs(const std::vector<AudioCodec>& codecs) {
+
+  std::vector<AudioCodec>::const_iterator i;
+
+  profile_ = false;
+
+  for (i = codecs.begin(); i < codecs.end(); i++) {
+
+    if (!engine_->FindAudioCodec(*i)) {
+      LOG(LS_INFO) << "Codec " << i->name << "/" << i->clockrate << " is not supported";
+      continue;
+    }
+
+    if (engine_->have_ilbc && stricmp(i->name.c_str(), payload_type_ilbc.mime_type) == 0)
+      rtp_profile_set_payload(&av_profile, i->id, &payload_type_ilbc);
+    else if (engine_->have_speex && stricmp(i->name.c_str(), payload_type_speex_wb.mime_type) == 0 && i->clockrate == payload_type_speex_wb.clock_rate)
+      rtp_profile_set_payload(&av_profile, i->id, &payload_type_speex_wb);
+    else if (engine_->have_speex && stricmp(i->name.c_str(), payload_type_speex_nb.mime_type) == 0 && i->clockrate == payload_type_speex_nb.clock_rate)
+      rtp_profile_set_payload(&av_profile, i->id, &payload_type_speex_nb);
+    else if (engine_->have_gsm && stricmp(i->name.c_str(), payload_type_gsm.mime_type) == 0)
+      rtp_profile_set_payload(&av_profile, i->id, &payload_type_gsm);
+    else if (stricmp(i->name.c_str(), payload_type_telephone_event.mime_type) == 0)
+      rtp_profile_set_payload(&av_profile, i->id, &payload_type_telephone_event);
+    else if (i->id == 0)
+      rtp_profile_set_payload(&av_profile, 0, &payload_type_pcmu8000);
+
+    LOG(LS_INFO) << "Accepting " << i->name << "/" << i->clockrate;
+    profile_ = true;
+
+  }
+
+  if (!profile_) {
+    // We're being asked to set an empty list of codecs. This will only happen when
+    // working with a buggy client; let's try PCMU.
+    LOG(LS_WARNING) << "Received empty list of codces; accepting PCMU/8000";
+    rtp_profile_set_payload(&av_profile, 0, &payload_type_pcmu8000);
+    profile_ = true;
+  }
+
+  if (pt_ != -1 && profile_ && playport == PORT_UNUSED)
+    StartCall();
+
+  return true;
+}
+
+bool LinphoneVoiceChannel::StartCall()
+{
+  StopRing();
 
   MSSndCard *playcard = ms_snd_card_manager_get_default_playback_card(ms_snd_card_manager_get());
   if (!playcard)
