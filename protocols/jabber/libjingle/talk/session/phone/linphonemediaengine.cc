@@ -159,6 +159,12 @@ LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
 
   playport = PORT_UNUSED;
 
+#ifdef _DEBUG
+  ortp_set_log_level_mask(ORTP_DEBUG|ORTP_MESSAGE|ORTP_WARNING|ORTP_ERROR|ORTP_FATAL);
+#else
+  ortp_set_log_level_mask(ORTP_FATAL);
+#endif
+
   audio_stream_ = audio_stream_new(-1, 0); /* -1 means that function will choose some free port */
 
 }
@@ -188,8 +194,6 @@ static inline RtpSession * audio_stream_get_rtp_session(const AudioStream *strea
 bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) {
 
   std::vector<AudioCodec>::const_iterator i;
-
-  ortp_set_log_level_mask(ORTP_MESSAGE|ORTP_WARNING|ORTP_ERROR|ORTP_FATAL);
 
   for (i = codecs.begin(); i < codecs.end(); i++) {
 
