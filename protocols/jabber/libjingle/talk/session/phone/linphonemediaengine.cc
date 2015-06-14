@@ -147,12 +147,17 @@ LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
 
   talk_base::Thread *thread = talk_base::ThreadManager::Instance()->CurrentThread();
   talk_base::SocketServer *ss = thread->socketserver();
-  socket_.reset(ss->CreateAsyncSocket(SOCK_DGRAM));
 
+  socket_.reset(ss->CreateAsyncSocket(SOCK_DGRAM));
   socket_->Bind(talk_base::SocketAddress("localhost", 0)); /* 0 means that OS will choose some free port */
-  port1 = socket_->GetLocalAddress().port(); /* and here we get port choosed by OS */
-  port2 = PORT_UNUSED;
+  captport = socket_->GetLocalAddress().port(); /* and here we get port choosed by OS */
   socket_->SignalReadEvent.connect(this, &LinphoneVoiceChannel::OnIncomingData);
+
+  socketRtcp_.reset(ss->CreateAsyncSocket(SOCK_DGRAM));
+  socketRtcp_->Bind(talk_base::SocketAddress("localhost", captport+1));
+  socketRtcp_->SignalReadEvent.connect(this, &LinphoneVoiceChannel::OnIncomingRtcp);
+
+  playport = PORT_UNUSED;
 
   audio_stream_ = audio_stream_new(-1, 0); /* -1 means that function will choose some free port */
 
@@ -226,10 +231,10 @@ bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) 
   if (!captcard)
     return false;
 
-  if (audio_stream_start_now(audio_stream_, &av_profile, "localhost", port1, port1+1, pt_, 250, playcard, captcard, 0))
+  if (audio_stream_start_now(audio_stream_, &av_profile, "localhost", captport, captport+1, pt_, 250, playcard, captcard, 0))
     return false;
 
-  port2 = rtp_session_get_local_port(audio_stream_get_rtp_session(audio_stream_));
+  playport = rtp_session_get_local_port(audio_stream_get_rtp_session(audio_stream_));
 
   return true;
 }
@@ -247,20 +252,21 @@ bool LinphoneVoiceChannel::SetSend(SendFlags flag) {
 }
 
 void LinphoneVoiceChannel::OnPacketReceived(talk_base::Buffer* packet) {
-  const void* data = packet->data();
-  int len = packet->length();
-  uint8 buf[2048];
-  memcpy(buf, data, len);
-
-  if (port2 == PORT_UNUSED)
+  if (playport == PORT_UNUSED)
     return;
 
   /* We may receive packets with payload type 13: comfort noise. Linphone can't
    * handle them, so let's ignore those packets.
    */
-  int payloadtype = buf[1] & 0x7f;
+  int payloadtype = ((const uint8*)packet->data())[1] & 0x7f;
   if (play_ && payloadtype != 13)
-    socket_->SendTo(buf, len, talk_base::SocketAddress("localhost",port2));
+    socket_->SendTo(packet->data(), packet->length(), talk_base::SocketAddress("localhost", playport));
+}
+
+void LinphoneVoiceChannel::OnRtcpReceived(talk_base::Buffer* packet) {
+  if (playport == PORT_UNUSED)
+    return;
+  socketRtcp_->SendTo(packet->data(), packet->length(), talk_base::SocketAddress("localhost", playport+1));
 }
 
 void LinphoneVoiceChannel::StartRing(bool bIncomingCall)
@@ -298,12 +304,20 @@ void LinphoneVoiceChannel::StopRing()
 
 void LinphoneVoiceChannel::OnIncomingData(talk_base::AsyncSocket *s)
 {
-  char *buf[2048];
-  int len;
-  len = s->Recv(buf, sizeof(buf));
+  char buf[2048];
+  int len = s->Recv(buf, sizeof(buf));
   talk_base::Buffer packet(buf, len, sizeof(buf));
   if (network_interface_ && !mute_)
     network_interface_->SendPacket(&packet);
+}
+
+void LinphoneVoiceChannel::OnIncomingRtcp(talk_base::AsyncSocket *s)
+{
+  char buf[2048];
+  int len = s->Recv(buf, sizeof(buf));
+  talk_base::Buffer packet(buf, len, sizeof(buf));
+  if (network_interface_)
+    network_interface_->SendRtcp(&packet);
 }
 
 }

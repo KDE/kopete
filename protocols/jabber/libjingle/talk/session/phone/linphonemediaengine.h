@@ -132,7 +132,7 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
 
   // Implement pure virtual methods of MediaChannel.
   virtual void OnPacketReceived(talk_base::Buffer* packet);
-  virtual void OnRtcpReceived(talk_base::Buffer* packet) { OnPacketReceived(packet); }
+  virtual void OnRtcpReceived(talk_base::Buffer* packet);
   virtual bool Mute(bool on) { return mute_; }
   virtual bool SetSendBandwidth(bool autobw, int bps) { return true; }
   virtual bool SetOptions(int options) { return true; }
@@ -158,10 +158,12 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
   LinphoneMediaEngine *engine_;
   RingStream* ring_stream_;
   talk_base::scoped_ptr<talk_base::AsyncSocket> socket_;
+  talk_base::scoped_ptr<talk_base::AsyncSocket> socketRtcp_;
   void OnIncomingData(talk_base::AsyncSocket *s);
+  void OnIncomingRtcp(talk_base::AsyncSocket *s);
 
-  int port1; // local port for audio_stream
-  int port2; // local port for rtp
+  int captport; // local port for audio_stream
+  int playport; // local port for rtp
 
   DISALLOW_COPY_AND_ASSIGN(LinphoneVoiceChannel);
 };
