@@ -1,0 +1,27 @@
+diff --git a/protocols/jabber/libjingle/talk/session/phone/ssrcmuxfilter.cc b/protocols/jabber/libjingle/talk/session/phone/ssrcmuxfilter.cc
+index d81feab..188daa2 100644
+--- a/protocols/jabber/libjingle/talk/session/phone/ssrcmuxfilter.cc
++++ b/protocols/jabber/libjingle/talk/session/phone/ssrcmuxfilter.cc
+@@ -49,7 +49,7 @@ bool SsrcMuxFilter::IsActive() const {
+ bool SsrcMuxFilter::DemuxPacket(const char* data, size_t len, bool rtcp) {
+   uint32 ssrc = 0;
+   if (!rtcp) {
+-    GetRtpSsrc(data, len, &ssrc);
++    if (!GetRtpSsrc(data, len, &ssrc)) return false;
+   } else {
+     int pl_type = 0;
+     if (!GetRtcpType(data, len, &pl_type)) return false;
+@@ -67,7 +67,12 @@ bool SsrcMuxFilter::DemuxPacket(const char* data, size_t len, bool rtcp) {
+       }
+     }
+   }
+-  return FindStream(ssrc);
++  bool found = FindStream(ssrc);
++  if (rtcp)
++    return found;
++  if (!found)
++      LOG(LS_WARNING) << "Stream with ssrc " << ssrc << " is not in filter! But still processing";
++  return true;
+ }
+ 
+ bool SsrcMuxFilter::AddStream(const StreamParams& stream) {
