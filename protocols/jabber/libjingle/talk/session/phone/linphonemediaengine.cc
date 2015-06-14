@@ -141,7 +141,6 @@ bool LinphoneMediaEngine::FindAudioCodec(const AudioCodec &c) {
 ///////////////////////////////////////////////////////////////////////////
 LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
     : pt_(-1),
-      audio_stream_(0),
       engine_(eng),
       ring_stream_(0)
 {
@@ -155,15 +154,15 @@ LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
   port2 = PORT_UNUSED;
   socket_->SignalReadEvent.connect(this, &LinphoneVoiceChannel::OnIncomingData);
 
+  audio_stream_ = audio_stream_new(-1, 0); /* -1 means that function will choose some free port */
+
 }
 
 LinphoneVoiceChannel::~LinphoneVoiceChannel()
 {
   fflush(stdout);
   StopRing();
-
-  if (audio_stream_)
-    audio_stream_stop(audio_stream_);
+  audio_stream_stop(audio_stream_);
 }
 
 bool LinphoneVoiceChannel::SetPlayout(bool playout) {
@@ -183,7 +182,6 @@ static inline RtpSession * audio_stream_get_rtp_session(const AudioStream *strea
 
 bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) {
 
-  bool first = true;
   std::vector<AudioCodec>::const_iterator i;
 
   ortp_set_log_level_mask(ORTP_MESSAGE|ORTP_WARNING|ORTP_ERROR|ORTP_FATAL);
@@ -205,25 +203,41 @@ bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) 
     } else if (i->id == 0)
       rtp_profile_set_payload(&av_profile, 0, &payload_type_pcmu8000);
 
-    if (first) {
-      StopRing();
+    if (pt_ == -1) {
       LOG(LS_INFO) << "Using " << i->name << "/" << i->clockrate;
       pt_ = i->id;
-      audio_stream_ = audio_stream_start(&av_profile, -1, "localhost", port1, i->id, 250, 0); /* -1 means that function will choose some free port */
-      port2 = rtp_session_get_local_port(audio_stream_get_rtp_session(audio_stream_));
-      first = false;
     }
   }
 
-  if (first) {
-    StopRing();
+  StopRing();
+
+  if (pt_ == -1) {
     // We're being asked to set an empty list of codecs. This will only happen when
     // working with a buggy client; let's try PCMU.
     LOG(LS_WARNING) << "Received empty list of codces; using PCMU/8000";
-    audio_stream_ = audio_stream_start(&av_profile, -1, "localhost", port1, 0, 250, 0); /* -1 means that function will choose some free port */
-    port2 = rtp_session_get_local_port(audio_stream_get_rtp_session(audio_stream_));
+    pt_ = 0;
   }
 
+  MSSndCard *playcard = ms_snd_card_manager_get_default_playback_card(ms_snd_card_manager_get());
+  if (!playcard)
+    return false;
+
+  MSSndCard *captcard = ms_snd_card_manager_get_default_capture_card(ms_snd_card_manager_get());
+  if (!captcard)
+    return false;
+
+  if (audio_stream_start_now(audio_stream_, &av_profile, "localhost", port1, port1+1, pt_, 250, playcard, captcard, 0))
+    return false;
+
+  port2 = rtp_session_get_local_port(audio_stream_get_rtp_session(audio_stream_));
+
+  return true;
+}
+
+bool LinphoneVoiceChannel::AddSendStream(const cricket::StreamParams& st)
+{
+  LOG(LS_INFO) << "linphone:: SET send stream ssrc: " << st.first_ssrc();
+  rtp_session_set_ssrc(audio_stream_get_rtp_session(audio_stream_), st.first_ssrc());
   return true;
 }
 

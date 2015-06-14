@@ -140,7 +140,7 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
       const std::vector<RtpHeaderExtension>& extensions) { return true; }
   virtual bool SetSendRtpHeaderExtensions(
       const std::vector<RtpHeaderExtension>& extensions) { return true; }
-  virtual bool AddSendStream(const cricket::StreamParams&) { return true; }
+  virtual bool AddSendStream(const cricket::StreamParams&);
   virtual bool RemoveSendStream(uint32) { return true; }
   virtual bool AddRecvStream(const cricket::StreamParams&) { return true; }
   virtual bool RemoveRecvStream(uint32) { return true; }
