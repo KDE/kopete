@@ -247,7 +247,14 @@ bool LinphoneVoiceChannel::AddSendStream(const cricket::StreamParams& st)
 }
 
 bool LinphoneVoiceChannel::SetSend(SendFlags flag) {
-  mute_ = !flag;
+  mute_ = (flag == SEND_NOTHING);
+  audio_stream_mute_rtp(audio_stream_, mute_);
+  return true;
+}
+
+bool LinphoneVoiceChannel::Mute(bool on) {
+  mute_ = on;
+  audio_stream_mute_rtp(audio_stream_, mute_);
   return true;
 }
 

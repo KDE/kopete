@@ -133,7 +133,7 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
   // Implement pure virtual methods of MediaChannel.
   virtual void OnPacketReceived(talk_base::Buffer* packet);
   virtual void OnRtcpReceived(talk_base::Buffer* packet);
-  virtual bool Mute(bool on) { return mute_; }
+  virtual bool Mute(bool on);
   virtual bool SetSendBandwidth(bool autobw, int bps) { return true; }
   virtual bool SetOptions(int options) { return true; }
   virtual bool SetRecvRtpHeaderExtensions(
