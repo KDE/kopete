@@ -16,6 +16,7 @@ option(WITH_webpresence "Enable Kopete webpresence plugin" ON)
 option(WITH_pipes "Enable Kopete pipes plugin" ON)
 option(WITH_otr "Enable Kopete Off-the-Record plugin" ON)
 option(WITH_cryptography "Enable Kopete Cryptography plugin" ON)
+option(WITH_new_crypto "Enable kopete new cryptography plugin" ON)
 
 # Laurent this plugins use shell script which will not work on windows
 if (WITH_latex AND UNIX)
@@ -77,3 +78,7 @@ endif (WITH_otr AND LIBOTR_FOUND)
 if (WITH_cryptography AND KLEOPATRA_FOUND AND QGPGME_FOUND)
   add_subdirectory ( cryptography )
 endif (WITH_cryptography AND KLEOPATRA_FOUND AND QGPGME_FOUND)
+if (WITH_new_crypto)
+add_subdirectory (new_crypto)
+endif(WITH_newcrypto)
+
