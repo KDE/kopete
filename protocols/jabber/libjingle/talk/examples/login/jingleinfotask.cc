@@ -114,7 +114,7 @@ JingleInfoTask::ProcessStart() {
          server != NULL; server = server->NextNamed(QN_JINGLE_INFO_SERVER)) {
       std::string host = server->Attr(QN_JINGLE_INFO_HOST);
       std::string port = server->Attr(QN_JINGLE_INFO_UDP);
-      if (host != STR_EMPTY && host != STR_EMPTY) {
+      if (host != STR_EMPTY && port != STR_EMPTY) {
         stun_hosts.push_back(talk_base::SocketAddress(host, atoi(port.c_str())));
       }
     }
