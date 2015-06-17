@@ -30,3 +30,7 @@ kopete
 )
 
 install( TARGETS kcm_kopete_cryptography2 DESTINATION ${PLUGIN_INSTALL_DIR})
+
+install( FILES kopete_cryptography2.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+
+install( FILES kopete_cryptography_config2.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
