@@ -412,6 +412,13 @@ bool Libjingle::isConnected() {
 
 }
 
+void Libjingle::setStatus(const QString &status) {
+
+//	qDebug() << "Libjingle::setStatus" << status;
+	write(QString("status %1").arg(status).toUtf8());
+
+}
+
 void Libjingle::makeCall(const QString &user) {
 
 //	qDebug() << "Libjingle::makeCall";

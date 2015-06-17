@@ -694,6 +694,9 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const K
 	}
 	else
 	{
+#ifdef LIBJINGLE_SUPPORT
+		m_libjingle->setStatus(xmppStatus.typeString());
+#endif
 		setPresence ( xmppStatus );
 	}
 }

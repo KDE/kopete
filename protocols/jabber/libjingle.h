@@ -83,6 +83,13 @@ class Libjingle : public QObject
 		 */
 		bool isConnected();
 
+		/**
+		 * Set online status
+		 * You must be connected @see login() @see connected()
+		 * @param status jabber online status (none offline xa away dnd online chat)
+		 */
+		void setStatus(const QString &status);
+
 	public slots:
 
 		/**
