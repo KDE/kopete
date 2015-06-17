@@ -1,0 +1,74 @@
+diff --git a/protocols/jabber/libjingle/talk/session/phone/linphonemediaengine.cc b/protocols/jabber/libjingle/talk/session/phone/linphonemediaengine.cc
+index c4bf1b1..bd3de2b 100644
+--- a/protocols/jabber/libjingle/talk/session/phone/linphonemediaengine.cc
++++ b/protocols/jabber/libjingle/talk/session/phone/linphonemediaengine.cc
+@@ -148,6 +148,7 @@ LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
+   socketRtcp_->SignalReadEvent.connect(this, &LinphoneVoiceChannel::OnIncomingRtcp);
+ 
+   playport = PORT_UNUSED;
++  playport2 = PORT_UNUSED;
+ 
+ #ifdef _DEBUG
+   ortp_set_log_level_mask(ORTP_DEBUG|ORTP_MESSAGE|ORTP_WARNING|ORTP_ERROR|ORTP_FATAL);
+@@ -155,7 +156,11 @@ LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
+   ortp_set_log_level_mask(ORTP_FATAL);
+ #endif
+ 
++#ifdef MEDIASTREAMER_LESS_2_9
+   audio_stream_ = audio_stream_new(-1, 0); /* -1 means that function will choose some free port */
++#else
++  audio_stream_ = audio_stream_new(-1, -1, 0); /* -1 means that function will choose some free port */
++#endif
+ 
+ }
+ 
+@@ -181,6 +186,12 @@ static inline RtpSession * audio_stream_get_rtp_session(const AudioStream *strea
+ }
+ #endif
+ 
++#if defined(MEDIASTREAMER_LESS_2_11) && !defined(MEDIASTREAMER_LESS_2_9)
++static inline int rtp_session_get_local_rtcp_port(const RtpSession *session) {
++  return (session->rtcp.loc_port>0) ? session->rtcp.loc_port : -1;
++}
++#endif
++
+ bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) {
+ 
+   std::vector<AudioCodec>::const_iterator i;
+@@ -276,6 +287,12 @@ bool LinphoneVoiceChannel::StartCall()
+ 
+   playport = rtp_session_get_local_port(audio_stream_get_rtp_session(audio_stream_));
+ 
++#ifdef MEDIASTREAMER_LESS_2_9
++  playport2 = playport+1;
++#else
++  playport2 = rtp_session_get_local_rtcp_port(audio_stream_get_rtp_session(audio_stream_));
++#endif
++
+   return true;
+ }
+ 
+@@ -311,9 +328,9 @@ void LinphoneVoiceChannel::OnPacketReceived(talk_base::Buffer* packet) {
+ }
+ 
+ void LinphoneVoiceChannel::OnRtcpReceived(talk_base::Buffer* packet) {
+-  if (playport == PORT_UNUSED)
++  if (playport2 == PORT_UNUSED)
+     return;
+-  socketRtcp_->SendTo(packet->data(), packet->length(), talk_base::SocketAddress("localhost", playport+1));
++  socketRtcp_->SendTo(packet->data(), packet->length(), talk_base::SocketAddress("localhost", playport2));
+ }
+ 
+ void LinphoneVoiceChannel::StartRing(bool bIncomingCall)
+diff --git a/protocols/jabber/libjingle/talk/session/phone/linphonemediaengine.h b/protocols/jabber/libjingle/talk/session/phone/linphonemediaengine.h
+index b123b4b..6105ab8 100644
+--- a/protocols/jabber/libjingle/talk/session/phone/linphonemediaengine.h
++++ b/protocols/jabber/libjingle/talk/session/phone/linphonemediaengine.h
+@@ -166,6 +166,7 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
+ 
+   int captport; // local port for audio_stream
+   int playport; // local port for rtp
++  int playport2; // local port for rtcp
+ 
+   DISALLOW_COPY_AND_ASSIGN(LinphoneVoiceChannel);
+ };
