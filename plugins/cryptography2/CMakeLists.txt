@@ -1,4 +1,4 @@
-include_directories(${KOPETE_INCLUDES})
+include_directories(${KOPETE_INCLUDES} ${QCA2_LIBRARIES})
 
 #set(kopete_cryptography2_PART_SRCS
 #    cryptographygui.cpp)
@@ -27,6 +27,7 @@ kopete
     ${KDE4_KUTILS_LIBS}
     ${QT_QTCORE_LIBRARY}
     ${QT_QTGUI_LIBRARY}
+    ${QCA2_LIBRARIES}
 )
 
 install( TARGETS kcm_kopete_cryptography2 DESTINATION ${PLUGIN_INSTALL_DIR})

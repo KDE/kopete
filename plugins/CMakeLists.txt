@@ -15,7 +15,7 @@ option(WITH_statistics "Enable Kopete statistics plugin" ON)
 option(WITH_webpresence "Enable Kopete webpresence plugin" ON)
 option(WITH_pipes "Enable Kopete pipes plugin" ON)
 option(WITH_otr "Enable Kopete Off-the-Record plugin" ON)
-option(WITH_cryptography "Enable Kopete Cryptography plugin" ON)
+#option(WITH_cryptography "Enable Kopete Cryptography plugin" ON)
 option(WITH_cryptography2 "Enable kopete new cryptography plugin" ON)
 
 # Laurent this plugins use shell script which will not work on windows
