@@ -124,6 +124,10 @@ class CallClient: public sigslot::has_slots<> {
   void SetPriority(int priority) {
     my_status_.set_priority(priority);
   }
+  void SetOnlineStatus(const std::string& str) {
+    SetOnlineStatus(str, &my_status_);
+  }
+  void SetOnlineStatus(const std::string& str, buzz::Status* status);
   void SendStatus() {
     SendStatus(my_status_);
   }

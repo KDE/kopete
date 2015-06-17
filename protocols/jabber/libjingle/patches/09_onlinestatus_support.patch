@@ -1,0 +1,61 @@
+diff --git a/protocols/jabber/libjingle/talk/examples/call/callclient.cc b/protocols/jabber/libjingle/talk/examples/call/callclient.cc
+index 70163af..77582be 100644
+--- a/protocols/jabber/libjingle/talk/examples/call/callclient.cc
++++ b/protocols/jabber/libjingle/talk/examples/call/callclient.cc
+@@ -138,6 +138,7 @@ const char* CONSOLE_COMMANDS =
+ "  leave [room]        Leaves a multi-user-chat.\n"
+ "  nick [nick]         Sets the nick.\n"
+ "  priority [int]      Sets the priority.\n"
++"  status [status]     Sets the online status.\n"
+ "  getdevs             Prints the available media devices.\n"
+ "  quit                Quits the application.\n"
+ "";
+@@ -274,6 +275,9 @@ void CallClient::ParseLine(const std::string& line) {
+       int priority = GetInt(words, 1, 0);
+       SetPriority(priority);
+       SendStatus();
++    } else if (command == "status") {
++      SetOnlineStatus(GetWord(words, 1, ""));
++      SendStatus();
+     } else if (command == "getdevs") {
+       GetDevices();
+     } else if ((words.size() == 2) && (command == "setvol")) {
+@@ -540,6 +544,23 @@ void SetAvailable(const buzz::Jid& jid, buzz::Status* status) {
+   status->set_show(buzz::Status::SHOW_ONLINE);
+ }
+ 
++void CallClient::SetOnlineStatus(const std::string& str, buzz::Status* status) {
++  if (str == "none" || str == "invisible")
++    status->set_show(buzz::Status::SHOW_NONE);
++  else if (str == "offline")
++    status->set_show(buzz::Status::SHOW_OFFLINE);
++  else if (str == "xa")
++    status->set_show(buzz::Status::SHOW_XA);
++  else if (str == "away")
++    status->set_show(buzz::Status::SHOW_AWAY);
++  else if (str == "dnd")
++    status->set_show(buzz::Status::SHOW_DND);
++  else if (str == "online")
++    status->set_show(buzz::Status::SHOW_ONLINE);
++  else if (str == "chat")
++    status->set_show(buzz::Status::SHOW_CHAT);
++}
++
+ void CallClient::InitPresence() {
+   presence_push_ = new buzz::PresencePushTask(xmpp_client_, this);
+   presence_push_->SignalStatusUpdate.connect(
+diff --git a/protocols/jabber/libjingle/talk/examples/call/callclient.h b/protocols/jabber/libjingle/talk/examples/call/callclient.h
+index 15444cf..bcf6076 100644
+--- a/protocols/jabber/libjingle/talk/examples/call/callclient.h
++++ b/protocols/jabber/libjingle/talk/examples/call/callclient.h
+@@ -124,6 +124,10 @@ class CallClient: public sigslot::has_slots<> {
+   void SetPriority(int priority) {
+     my_status_.set_priority(priority);
+   }
++  void SetOnlineStatus(const std::string& str) {
++    SetOnlineStatus(str, &my_status_);
++  }
++  void SetOnlineStatus(const std::string& str, buzz::Status* status);
+   void SendStatus() {
+     SendStatus(my_status_);
+   }
