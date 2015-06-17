@@ -3,12 +3,8 @@
 
 #include <kcmodule.h>
 #include <QVariantList>
-#include <QtCrypto/QtCrypto>
-#include <QtCrypto/QtCrypto>
 
 class QCheckBox;
-
-namespace QCA
 
 class Cryptography2Preferences: public KCModule
 {
@@ -22,7 +18,6 @@ public:
   
 private:
   QCheckBox *checkBox;
-  QCA::Initializer init;
 };
 
 #endif
