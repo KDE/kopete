@@ -113,7 +113,7 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
   virtual ~LinphoneVoiceChannel();
 
   // Implement pure virtual methods of VoiceMediaChannel.
-  virtual bool SetRecvCodecs(const std::vector<AudioCodec>& codecs) { return true; }
+  virtual bool SetRecvCodecs(const std::vector<AudioCodec>& codecs);
   virtual bool SetSendCodecs(const std::vector<AudioCodec>& codecs);
   virtual bool SetPlayout(bool playout);
   virtual bool SetSend(SendFlags flag);
@@ -132,15 +132,15 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
 
   // Implement pure virtual methods of MediaChannel.
   virtual void OnPacketReceived(talk_base::Buffer* packet);
-  virtual void OnRtcpReceived(talk_base::Buffer* packet) { OnPacketReceived(packet); }
-  virtual bool Mute(bool on) { return mute_; }
+  virtual void OnRtcpReceived(talk_base::Buffer* packet);
+  virtual bool Mute(bool on);
   virtual bool SetSendBandwidth(bool autobw, int bps) { return true; }
   virtual bool SetOptions(int options) { return true; }
   virtual bool SetRecvRtpHeaderExtensions(
       const std::vector<RtpHeaderExtension>& extensions) { return true; }
   virtual bool SetSendRtpHeaderExtensions(
       const std::vector<RtpHeaderExtension>& extensions) { return true; }
-  virtual bool AddSendStream(const cricket::StreamParams&) { return true; }
+  virtual bool AddSendStream(const cricket::StreamParams&);
   virtual bool RemoveSendStream(uint32) { return true; }
   virtual bool AddRecvStream(const cricket::StreamParams&) { return true; }
   virtual bool RemoveRecvStream(uint32) { return true; }
@@ -152,16 +152,21 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
 
  private:
   int pt_;
+  bool profile_;
   bool mute_;
   bool play_;
   AudioStream *audio_stream_;
   LinphoneMediaEngine *engine_;
   RingStream* ring_stream_;
   talk_base::scoped_ptr<talk_base::AsyncSocket> socket_;
+  talk_base::scoped_ptr<talk_base::AsyncSocket> socketRtcp_;
   void OnIncomingData(talk_base::AsyncSocket *s);
+  void OnIncomingRtcp(talk_base::AsyncSocket *s);
+  bool StartCall();
 
-  int port1; // local port for audio_stream
-  int port2; // local port for rtp
+  int captport; // local port for audio_stream
+  int playport; // local port for rtp
+  int playport2; // local port for rtcp
 
   DISALLOW_COPY_AND_ASSIGN(LinphoneVoiceChannel);
 };

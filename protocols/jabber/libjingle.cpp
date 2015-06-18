@@ -294,6 +294,8 @@ void Libjingle::read() {
 			c = true;
 			emit(connected());
 //			qDebug() << "connected";
+			//Set lowest resource priority
+			write("priority -127");
 		} else if ( line.startsWith("logged out...") ) {
 			//We are logouted - bad username or passwd
 			QString res = line.section("logged out...", -1).trimmed();
@@ -407,6 +409,13 @@ bool Libjingle::isConnected() {
 
 //	qDebug() << "Libjingle::isConnected";
 	return c;
+
+}
+
+void Libjingle::setStatus(const QString &status) {
+
+//	qDebug() << "Libjingle::setStatus" << status;
+	write(QString("status %1").arg(status).toUtf8());
 
 }
 

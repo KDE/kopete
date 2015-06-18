@@ -514,7 +514,7 @@ void BaseChannel::HandlePacket(bool rtcp, talk_base::Buffer* packet) {
   // If this channel is suppose to handle RTP data, that is determined by
   // checking against ssrc filter. This is necessary to do it here to avoid
   // double decryption.
-  if (rtcp && ssrc_filter_.IsActive() &&
+  if (ssrc_filter_.IsActive() &&
       !ssrc_filter_.DemuxPacket(packet->data(), packet->length(), rtcp)) {
     return;
   }

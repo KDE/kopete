@@ -138,6 +138,7 @@ const char* CONSOLE_COMMANDS =
 "  leave [room]        Leaves a multi-user-chat.\n"
 "  nick [nick]         Sets the nick.\n"
 "  priority [int]      Sets the priority.\n"
+"  status [status]     Sets the online status.\n"
 "  getdevs             Prints the available media devices.\n"
 "  quit                Quits the application.\n"
 "";
@@ -273,6 +274,9 @@ void CallClient::ParseLine(const std::string& line) {
     } else if (command == "priority") {
       int priority = GetInt(words, 1, 0);
       SetPriority(priority);
+      SendStatus();
+    } else if (command == "status") {
+      SetOnlineStatus(GetWord(words, 1, ""));
       SendStatus();
     } else if (command == "getdevs") {
       GetDevices();
@@ -538,6 +542,23 @@ void SetAvailable(const buzz::Jid& jid, buzz::Status* status) {
   status->set_jid(jid);
   status->set_available(true);
   status->set_show(buzz::Status::SHOW_ONLINE);
+}
+
+void CallClient::SetOnlineStatus(const std::string& str, buzz::Status* status) {
+  if (str == "none" || str == "invisible")
+    status->set_show(buzz::Status::SHOW_NONE);
+  else if (str == "offline")
+    status->set_show(buzz::Status::SHOW_OFFLINE);
+  else if (str == "xa")
+    status->set_show(buzz::Status::SHOW_XA);
+  else if (str == "away")
+    status->set_show(buzz::Status::SHOW_AWAY);
+  else if (str == "dnd")
+    status->set_show(buzz::Status::SHOW_DND);
+  else if (str == "online")
+    status->set_show(buzz::Status::SHOW_ONLINE);
+  else if (str == "chat")
+    status->set_show(buzz::Status::SHOW_CHAT);
 }
 
 void CallClient::InitPresence() {

@@ -364,7 +364,10 @@ int main(int argc, char **argv) {
   xcs.set_server(talk_base::SocketAddress(host, port));
   Print(("Logging in to " + server + " as " + jid.Str() + "\n").c_str());
 
-  talk_base::InitializeSSL(SSLVerificationCallback);
+  if (server.empty())
+    talk_base::InitializeSSL();
+  else
+    talk_base::InitializeSSL(SSLVerificationCallback);
 
 #ifdef ANDROID
   InitAndroidMediaEngineFactory(AndroidMediaEngineFactory);
