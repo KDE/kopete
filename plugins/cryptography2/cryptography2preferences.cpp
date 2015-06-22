@@ -24,7 +24,6 @@ K_EXPORT_PLUGIN(Cryptography2PreferencesFactory ("kcm_kopete_cryptography2"))
 Cryptography2Preferences::Cryptography2Preferences ( QWidget *parent, const QVariantList &args )
 		: KCModule ( Cryptography2PreferencesFactory::componentData(), parent, args )
 {
-  qDebug() << "1337";
   QCA::Initializer init;
   setButtons( Help | Apply | Default );
   QVBoxLayout *nl = new QVBoxLayout(this);
@@ -37,19 +36,16 @@ Cryptography2Preferences::Cryptography2Preferences ( QWidget *parent, const QVar
   QCA::KeyStoreManager sman(this);
   sman.waitForBusyFinished();
   QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
-  qDebug() << "1338" << " " << pgpks.entryList().length();
   foreach(const QCA::KeyStoreEntry kse, pgpks.entryList())
   {
     QString text = kse.name()+" "+kse.id();
     QVariant v;
     v.setValue(kse);
-    qDebug() << "KEYYYYYYYYYYYYYYYYYYYYYYYYYYY: " << kse.name();
     if(!kse.pgpSecretKey().isNull())
     {
       keysList->addItem(text,v);
     }
   }
-  keysList->addItem("test");
   load();
 }
 
