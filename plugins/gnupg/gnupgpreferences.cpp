@@ -27,7 +27,7 @@ Cryptography2Preferences::Cryptography2Preferences ( QWidget *parent, const QVar
   QCA::Initializer init;
   setButtons( Help | Apply | Default );
   QVBoxLayout *nl = new QVBoxLayout(this);
-  QLabel *intro = new QLabel("This is the Cryptography2 plugin.<br>Please select your public key below:",this);
+  QLabel *intro = new QLabel("This is the Cryptography2 plugin.<br>Please select your private key below:",this);
   QComboBox *keysList = new QComboBox(this);
   nl->addLayout(nl);
   nl->addWidget(intro);
