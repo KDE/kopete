@@ -1,5 +1,0 @@
-ClassName=CryptographySettings
-File=cryptographysettings.kcfg
-Inherits=KConfigSkeleton
-Singleton=true
-Mutators=true
