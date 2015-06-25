@@ -8,6 +8,12 @@
 #include <QLabel>
 #include <QString>
 #include <QVariantList>
+#include <QListView>
+#include <kopeteaccountmanager.h>
+#include <kopeteaccount.h>
+#include <kopeteprotocol.h>
+#include <QStandardItemModel>
+#include <QList>
 
 #include <qca2/QtCrypto/QtCrypto>
 
@@ -25,16 +31,50 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
 {
   QCA::Initializer init;
   setButtons( Help | Apply | Default );
-  QVBoxLayout *nl = new QVBoxLayout(this);
+  QVBoxLayout *globalLayout = new QVBoxLayout(this);
+  QHBoxLayout *introLayout = new QHBoxLayout(this);
+  QHBoxLayout *mainLayout = new QHBoxLayout(this);
+  QHBoxLayout *accountsLayout = new QHBoxLayout(this);
+  QHBoxLayout *keysLayout = new QHBoxLayout(this);
+  QListView *accountsList = new QListView(this);
+  QListView *keysList = new QListView(this);
   QLabel *intro = new QLabel("This is the GnuPG plugin.<br>Please select your private key below:",this);
-  QComboBox *keysList = new QComboBox(this);
-  nl->addLayout(nl);
-  nl->addWidget(intro);
-  nl->addWidget(keysList);
+  QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
+  QStandardItemModel *accountsModel = new QStandardItemModel(this);
+  accountsList->setModel(accountsModel);
+  if(accountList.length()==0)
+  {
+      QStandardItem *accountItem = new QStandardItem();
+      accountItem->setData("<no account>",Qt::DisplayRole);
+      accountItem->setEditable(false);
+      accountsModel->appendRow(accountItem);
+  }
+  else
+  {
+  foreach( Kopete::Account *account, accountList )
+	{
+	  QStandardItem *accountItem = new QStandardItem();
+	  accountItem->setData(account->accountLabel(),Qt::DisplayRole);
+	  accountItem->setEditable(false);
+	  accountsModel->appendRow(accountItem);
+	}
+  }
+
   QCA::KeyStoreManager::start();
   QCA::KeyStoreManager sman(this);
   sman.waitForBusyFinished();
   QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
+  QStandardItemModel *keysModel = new QStandardItemModel(this);
+  keysList->setModel(keysModel);
+  if(pgpks.entryList().length() == 0 )
+  {
+      QStandardItem *keyItem = new QStandardItem();
+      keyItem->setData("<no pgp keys>",Qt::DisplayRole);
+      keyItem->setEditable(false);
+      keysModel->appendRow(keyItem); 
+  }
+  else
+  {
   foreach(const QCA::KeyStoreEntry kse, pgpks.entryList())
   {
     QString text = kse.name()+" "+kse.id();
@@ -42,9 +82,20 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     v.setValue(kse);
     if(!kse.pgpSecretKey().isNull())
     {
-      keysList->addItem(text,v);
+      QStandardItem *keyItem = new QStandardItem();
+      keyItem->setData(text,Qt::DisplayRole);
+      keyItem->setEditable(false);
+      keysModel->appendRow(keyItem);
     }
   }
+  }
+  accountsLayout->addWidget(accountsList);
+  keysLayout->addWidget(keysList);
+  introLayout->addWidget(intro);
+  mainLayout->addLayout(accountsLayout);
+  mainLayout->addLayout(keysLayout);
+  globalLayout->addLayout(introLayout);
+  globalLayout->addLayout(mainLayout);
   load();
 }
 
