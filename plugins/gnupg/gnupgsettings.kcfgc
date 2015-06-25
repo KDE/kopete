@@ -1,4 +1,4 @@
-ClassName=GnuPGSettings
+ClassName=GnupgSettings
 File=gnupgsettings.kcfg
 Inherits=KConfigSkeleton
 Singleton=true

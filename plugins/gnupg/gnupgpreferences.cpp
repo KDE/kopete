@@ -21,7 +21,7 @@ K_PLUGIN_FACTORY (GnupgPreferencesFactory, registerPlugin<GnupgPreferences>();)
 K_EXPORT_PLUGIN(GnupgPreferencesFactory ("kcm_kopete_gnupg"))
 
 GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
-: KCModule ( GnupgPreferences::componentData(), parent, args )
+: KCModule ( GnupgPreferencesFactory::componentData(), parent, args )
 {
   QCA::Initializer init;
   setButtons( Help | Apply | Default );
