@@ -9,16 +9,16 @@ class QCheckBox;
 
 class GnupgPreferences: public KCModule
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit GnupgPreferences(QWidget *parent=0, const QVariantList &args = QVariantList() );
-  virtual ~GnupgPreferences();
-  virtual void save();
-  virtual void load();
-  virtual void defaults();
-  
+    explicit GnupgPreferences(QWidget *parent=0, const QVariantList &args = QVariantList() );
+    virtual ~GnupgPreferences();
+    virtual void save();
+    virtual void load();
+    virtual void defaults();
+
 private:
-  QCheckBox *checkBox;
+    QCheckBox *checkBox;
 };
 
 #endif
