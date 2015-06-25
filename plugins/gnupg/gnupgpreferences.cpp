@@ -8,26 +8,25 @@
 #include <QLabel>
 #include <QString>
 #include <QVariantList>
-#include <QtCrypto/QtCrypto>
 
-#include <QtCrypto/QtCrypto>
+#include <qca2/QtCrypto/QtCrypto>
 
-#include "cryptography2preferences.h"
+#include "gnupgpreferences.h"
 
 #include <kpluginfactory.h>
 
 Q_DECLARE_METATYPE(QCA::KeyStoreEntry)
 
-K_PLUGIN_FACTORY (Cryptography2PreferencesFactory, registerPlugin<Cryptography2Preferences>();)
-K_EXPORT_PLUGIN(Cryptography2PreferencesFactory ("kcm_kopete_cryptography2"))
+K_PLUGIN_FACTORY (GnupgPreferencesFactory, registerPlugin<GnupgPreferences>();)
+K_EXPORT_PLUGIN(GnupgPreferencesFactory ("kcm_kopete_gnupg"))
 
-Cryptography2Preferences::Cryptography2Preferences ( QWidget *parent, const QVariantList &args )
-		: KCModule ( Cryptography2PreferencesFactory::componentData(), parent, args )
+GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
+: KCModule ( GnupgPreferences::componentData(), parent, args )
 {
   QCA::Initializer init;
   setButtons( Help | Apply | Default );
   QVBoxLayout *nl = new QVBoxLayout(this);
-  QLabel *intro = new QLabel("This is the Cryptography2 plugin.<br>Please select your private key below:",this);
+  QLabel *intro = new QLabel("This is the GnuPG plugin.<br>Please select your private key below:",this);
   QComboBox *keysList = new QComboBox(this);
   nl->addLayout(nl);
   nl->addWidget(intro);
@@ -49,22 +48,22 @@ Cryptography2Preferences::Cryptography2Preferences ( QWidget *parent, const QVar
   load();
 }
 
-Cryptography2Preferences::~Cryptography2Preferences()
+void GnupgPreferences::defaults()
 {
-
+    KCModule::defaults();
 }
 
-void Cryptography2Preferences::load()
+void GnupgPreferences::load()
 {
     KCModule::load();
 }
 
-void Cryptography2Preferences::save()
+void GnupgPreferences::save()
 {
     KCModule::save();
 }
 
-void Cryptography2Preferences::defaults()
+GnupgPreferences::~GnupgPreferences()
 {
-    KCModule::defaults();
+
 }

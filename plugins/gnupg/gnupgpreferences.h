@@ -1,17 +1,18 @@
-#ifndef CRYPTOGRAPHY2PREFERENCES_H
-#define CRYPTOGRAPHY2PREFERENCES_H
+#ifndef GNUPGPREFERENCES_H
+#define GNUPGPREFERENCES_H
 
 #include <kcmodule.h>
+
 #include <QVariantList>
 
 class QCheckBox;
 
-class Cryptography2Preferences: public KCModule
+class GnupgPreferences: public KCModule
 {
   Q_OBJECT
 public:
-  explicit Cryptography2Preferences(QWidget *parent=0, const QVariantList &args = QVariantList() );
-  virtual ~Cryptography2Preferences();
+  explicit GnupgPreferences(QWidget *parent=0, const QVariantList &args = QVariantList() );
+  virtual ~GnupgPreferences();
   virtual void save();
   virtual void load();
   virtual void defaults();

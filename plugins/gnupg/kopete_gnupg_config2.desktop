@@ -3,10 +3,10 @@ Icon=encrypted
 Type=Service
 X-KDE-ServiceTypes=KCModule
 
-X-KDE-Library=kcm_kopete_cryptography2
-X-KDE-FactoryName=kcm_kopete_cryptography2
-X-KDE-ParentApp=kopete_cryptography2
-X-KDE-ParentComponents=kopete_cryptography2
+X-KDE-Library=kcm_kopete_gnupg
+X-KDE-FactoryName=kcm_kopete_gnupg
+X-KDE-ParentApp=kopete_gnupg
+X-KDE-ParentComponents=kopete_gnupg
 
 Name=Cryptography2
 Name[bg]=Шифроване
