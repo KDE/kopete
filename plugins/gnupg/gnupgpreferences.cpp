@@ -14,6 +14,8 @@
 #include <QPushButton>
 #include <QItemSelectionModel>
 #include <QStringList>
+#include <QStandardItemModel>
+#include <QList>
 //=======================//
 
 
@@ -21,8 +23,6 @@
 #include <kopeteaccountmanager.h>
 #include <kopeteaccount.h>
 #include <kopeteprotocol.h>
-#include <QStandardItemModel>
-#include <QList>
 //===========================//
 
 #include <qca2/QtCrypto/QtCrypto>
@@ -54,8 +54,8 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     keysList = new QListView(this);
     resultsTable = new QTableView(this);
     resultsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    QPushButton *addCombination = new QPushButton("Add Combination",this);
-    QPushButton *removeCombination = new QPushButton("Remove Pair",this);
+    addCombination = new QPushButton("Add Pair",this);
+    removeCombination = new QPushButton("Remove Pair",this);
     connect(addCombination,SIGNAL(clicked()),this,SLOT(addPair()));
     connect(removeCombination,SIGNAL(clicked()),this,SLOT(remPair()));
     QLabel *resultsInfo = new QLabel("Account-Key PGP pair",this);
@@ -91,6 +91,14 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     QCA::KeyStoreManager sman(this);
     sman.waitForBusyFinished();
     QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
+    if(accountList.length()==0 || pgpks.entryList().length() == 0)
+    {
+      addCombination->setEnabled(false);
+    }
+    if(resultsModel->rowCount() == 0)
+    {
+      removeCombination->setEnabled(false);
+    }
     keysModel = new QStandardItemModel(this);
     keysList->setModel(keysModel);
     if(pgpks.entryList().length() == 0 )
@@ -161,7 +169,10 @@ void GnupgPreferences::addPair()
   QList<QStandardItem *> myList;
   myList << pairItem << pairItem2;
   resultsModel->appendRow(myList);
-  
+  if(!removeCombination->isEnabled())
+  {
+    removeCombination->setEnabled(true);
+  }
 }
 
 void GnupgPreferences::remPair()
@@ -169,6 +180,10 @@ void GnupgPreferences::remPair()
   int index = resultsTable->currentIndex().row();
   resultsModel->removeRow(index);
   qDebug() << "Removed INDEX: " << index << endl;
+  if(resultsModel->rowCount() == 0)
+  {
+    removeCombination->setEnabled(false);
+  }
 }
 
 GnupgPreferences::~GnupgPreferences()

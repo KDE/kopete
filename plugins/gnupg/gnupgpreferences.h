@@ -9,6 +9,7 @@ class QCheckBox;
 class QTableView;
 class QStandardItemModel;
 class QListView;
+class QPushButton;
 
 class GnupgPreferences: public KCModule
 {
@@ -32,6 +33,8 @@ private:
     QListView *accountsList;
     QListView *keysList;
     QStandardItemModel *keysModel;
+    QPushButton *addCombination;
+    QPushButton *removeCombination;
 };
 
 #endif
