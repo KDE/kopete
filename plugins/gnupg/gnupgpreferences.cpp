@@ -12,6 +12,7 @@
 #include <QListView>
 #include <QTableView>
 #include <QPushButton>
+#include <QItemSelectionModel>
 //=======================//
 
 
@@ -59,6 +60,8 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     QLabel *intro = new QLabel("This is the GnuPG plugin.<br>Please select your private key below:",this);
     QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
     QStandardItemModel *accountsModel = new QStandardItemModel(this);
+    resultsModel = new QStandardItemModel(this);
+    resultsTable->setModel(resultsModel);
     accountsList->setModel(accountsModel);
     if(accountList.length()==0)
     {
@@ -141,12 +144,18 @@ void GnupgPreferences::save()
 
 void GnupgPreferences::addPair()
 {
-
+  QStandardItem *pairItem = new QStandardItem();
+  pairItem->setData("<no pgp keys>",Qt::DisplayRole);
+  pairItem->setEditable(false);
+  resultsModel->appendRow(pairItem);
+  
 }
 
 void GnupgPreferences::remPair()
 {
-
+  int index = resultsTable->currentIndex().row();
+  resultsModel->removeRow(index);
+  qDebug() << "Removed INDEX: " << index << endl;
 }
 
 GnupgPreferences::~GnupgPreferences()
