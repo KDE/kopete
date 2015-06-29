@@ -7,7 +7,6 @@
 
 class QCheckBox;
 class QTableView;
-class QStandardItemModel;
 
 class GnupgPreferences: public KCModule
 {
@@ -26,7 +25,6 @@ private slots:
 private:
     QCheckBox *checkBox;
     QTableView *resultsTable;
-    QStandardItemModel *resultsModel;
 };
 
 #endif
