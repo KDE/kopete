@@ -8,6 +8,7 @@
 class QCheckBox;
 class QTableView;
 class QStandardItemModel;
+class QListView;
 
 class GnupgPreferences: public KCModule
 {
@@ -27,6 +28,10 @@ private:
     QCheckBox *checkBox;
     QTableView *resultsTable;
     QStandardItemModel *resultsModel;
+    QStandardItemModel *accountsModel;
+    QListView *accountsList;
+    QListView *keysList;
+    QStandardItemModel *keysModel;
 };
 
 #endif

@@ -13,6 +13,7 @@
 #include <QTableView>
 #include <QPushButton>
 #include <QItemSelectionModel>
+#include <QStringList>
 //=======================//
 
 
@@ -49,9 +50,10 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     QHBoxLayout *keysLayout = new QHBoxLayout(this);
     QVBoxLayout *resultsLayout = new QVBoxLayout(this);
     resultsLayout->setAlignment(Qt::AlignCenter);
-    QListView *accountsList = new QListView(this);
-    QListView *keysList = new QListView(this);
+    accountsList = new QListView(this);
+    keysList = new QListView(this);
     resultsTable = new QTableView(this);
+    resultsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     QPushButton *addCombination = new QPushButton("Add Combination",this);
     QPushButton *removeCombination = new QPushButton("Remove Pair",this);
     connect(addCombination,SIGNAL(clicked()),this,SLOT(addPair()));
@@ -59,9 +61,13 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     QLabel *resultsInfo = new QLabel("Account-Key PGP pair",this);
     QLabel *intro = new QLabel("This is the GnuPG plugin.<br>Please select your private key below:",this);
     QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
-    QStandardItemModel *accountsModel = new QStandardItemModel(this);
+    accountsModel = new QStandardItemModel(this);
     resultsModel = new QStandardItemModel(this);
+    QStringList headersList;
+    headersList << "Account" << "Private Key";
+    resultsModel->setHorizontalHeaderLabels(headersList);
     resultsTable->setModel(resultsModel);
+    resultsTable->resizeColumnsToContents();
     accountsList->setModel(accountsModel);
     if(accountList.length()==0)
     {
@@ -85,7 +91,7 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     QCA::KeyStoreManager sman(this);
     sman.waitForBusyFinished();
     QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
-    QStandardItemModel *keysModel = new QStandardItemModel(this);
+    keysModel = new QStandardItemModel(this);
     keysList->setModel(keysModel);
     if(pgpks.entryList().length() == 0 )
     {
@@ -144,10 +150,17 @@ void GnupgPreferences::save()
 
 void GnupgPreferences::addPair()
 {
+  QString account = accountsList->currentIndex().data().toString();
+  QString key = keysList->currentIndex().data().toString(); 
   QStandardItem *pairItem = new QStandardItem();
-  pairItem->setData("<no pgp keys>",Qt::DisplayRole);
+  QStandardItem *pairItem2 = new QStandardItem();
+  pairItem2->setData(key,Qt::DisplayRole);
+  pairItem2->setEditable(false);
+  pairItem->setData(account,Qt::DisplayRole);
   pairItem->setEditable(false);
-  resultsModel->appendRow(pairItem);
+  QList<QStandardItem *> myList;
+  myList << pairItem << pairItem2;
+  resultsModel->appendRow(myList);
   
 }
 
