@@ -6,6 +6,7 @@
 #include <QVariantList>
 
 class QCheckBox;
+class QTableView;
 
 class GnupgPreferences: public KCModule
 {
@@ -17,8 +18,13 @@ public:
     virtual void load();
     virtual void defaults();
 
+private slots:
+  void addPair();
+  void remPair();
+    
 private:
     QCheckBox *checkBox;
+    QTableView *resultsTable;
 };
 
 #endif

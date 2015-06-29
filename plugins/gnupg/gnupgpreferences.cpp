@@ -1,5 +1,4 @@
 //=====QT Stuff here=====//
-
 #include <QtCore>
 #include <QPushButton>
 #include <QDebug>
@@ -11,6 +10,8 @@
 #include <QString>
 #include <QVariantList>
 #include <QListView>
+#include <QTableView>
+#include <QPushButton>
 //=======================//
 
 
@@ -40,11 +41,21 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     setButtons( Help | Apply | Default );
     QVBoxLayout *globalLayout = new QVBoxLayout(this);
     QHBoxLayout *introLayout = new QHBoxLayout(this);
+    QHBoxLayout *addbuttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *removebuttonLayout = new QHBoxLayout(this);
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
     QHBoxLayout *accountsLayout = new QHBoxLayout(this);
     QHBoxLayout *keysLayout = new QHBoxLayout(this);
+    QVBoxLayout *resultsLayout = new QVBoxLayout(this);
+    resultsLayout->setAlignment(Qt::AlignCenter);
     QListView *accountsList = new QListView(this);
     QListView *keysList = new QListView(this);
+    resultsTable = new QTableView(this);
+    QPushButton *addCombination = new QPushButton("Add Combination",this);
+    QPushButton *removeCombination = new QPushButton("Remove Pair",this);
+    connect(addCombination,SIGNAL(clicked()),this,SLOT(addPair()));
+    connect(removeCombination,SIGNAL(clicked()),this,SLOT(remPair()));
+    QLabel *resultsInfo = new QLabel("Account-Key PGP pair",this);
     QLabel *intro = new QLabel("This is the GnuPG plugin.<br>Please select your private key below:",this);
     QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
     QStandardItemModel *accountsModel = new QStandardItemModel(this);
@@ -99,10 +110,17 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     accountsLayout->addWidget(accountsList);
     keysLayout->addWidget(keysList);
     introLayout->addWidget(intro);
+    addbuttonLayout->addWidget(addCombination);
+    removebuttonLayout->addWidget(removeCombination);
+    resultsLayout->addWidget(resultsInfo);
+    resultsLayout->addWidget(resultsTable);
     mainLayout->addLayout(accountsLayout);
     mainLayout->addLayout(keysLayout);
     globalLayout->addLayout(introLayout);
     globalLayout->addLayout(mainLayout);
+    globalLayout->addLayout(addbuttonLayout);
+    globalLayout->addLayout(resultsLayout);
+    globalLayout->addLayout(removebuttonLayout);
     load();
 }
 
@@ -119,6 +137,16 @@ void GnupgPreferences::load()
 void GnupgPreferences::save()
 {
     KCModule::save();
+}
+
+void GnupgPreferences::addPair()
+{
+
+}
+
+void GnupgPreferences::remPair()
+{
+
 }
 
 GnupgPreferences::~GnupgPreferences()
