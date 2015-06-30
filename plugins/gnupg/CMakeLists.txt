@@ -13,7 +13,9 @@ include_directories(${KOPETE_INCLUDES} ${QCA2_LIBRARIES})
 
 set(kcm_kopete_gnupg_PART_SRCS gnupgpreferences.cpp)
 
-#kde4_add_kcfg_files(kcm_kopete_cryptography2 ${kcm_kopete_cryptography2_PART_SRCS} cryptography2settings.kcfgc)
+#kde4_add_kcfg_files(kcm_kopete_gnupg ${kcm_kopete_cryptography2_PART_SRCS} gnupgsettings.kcfgc)
+kde4_add_kcfg_files(kcm_kopete_gnupg gnupgsettings.kcfgc)
+
 
 
 kde4_add_plugin(kcm_kopete_gnupg ${kcm_kopete_gnupg_PART_SRCS})

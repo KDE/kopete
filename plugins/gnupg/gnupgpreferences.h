@@ -20,6 +20,7 @@ public:
     virtual void save();
     virtual void load();
     virtual void defaults();
+    void buttonsStatus();
 
 private slots:
   void addPair();
@@ -34,7 +35,7 @@ private:
     QListView *keysList;
     QStandardItemModel *keysModel;
     QPushButton *addCombination;
-    QPushButton *removeCombination;
+    QPushButton *remCombination;
 };
 
 #endif

@@ -16,6 +16,7 @@
 #include <QStringList>
 #include <QStandardItemModel>
 #include <QList>
+#include <QMessageBox>
 //=======================//
 
 
@@ -55,9 +56,9 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     resultsTable = new QTableView(this);
     resultsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     addCombination = new QPushButton("Add Pair",this);
-    removeCombination = new QPushButton("Remove Pair",this);
+    remCombination = new QPushButton("Remove Pair",this);
     connect(addCombination,SIGNAL(clicked()),this,SLOT(addPair()));
-    connect(removeCombination,SIGNAL(clicked()),this,SLOT(remPair()));
+    connect(remCombination,SIGNAL(clicked()),this,SLOT(remPair()));
     QLabel *resultsInfo = new QLabel("Account-Key PGP pair",this);
     QLabel *intro = new QLabel("This is the GnuPG plugin.<br>Please select your private key below:",this);
     QList<Kopete::Account*> accountList = Kopete::AccountManager::self()->accounts();
@@ -91,14 +92,6 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     QCA::KeyStoreManager sman(this);
     sman.waitForBusyFinished();
     QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
-    if(accountList.length()==0 || pgpks.entryList().length() == 0)
-    {
-      addCombination->setEnabled(false);
-    }
-    if(resultsModel->rowCount() == 0)
-    {
-      removeCombination->setEnabled(false);
-    }
     keysModel = new QStandardItemModel(this);
     keysList->setModel(keysModel);
     if(pgpks.entryList().length() == 0 )
@@ -128,7 +121,7 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     keysLayout->addWidget(keysList);
     introLayout->addWidget(intro);
     addbuttonLayout->addWidget(addCombination);
-    removebuttonLayout->addWidget(removeCombination);
+    removebuttonLayout->addWidget(remCombination);
     resultsLayout->addWidget(resultsInfo);
     resultsLayout->addWidget(resultsTable);
     mainLayout->addLayout(accountsLayout);
@@ -138,6 +131,9 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     globalLayout->addLayout(addbuttonLayout);
     globalLayout->addLayout(resultsLayout);
     globalLayout->addLayout(removebuttonLayout);
+    addCombination->setEnabled(true);
+    remCombination->setEnabled(true);
+    buttonsStatus();
     load();
 }
 
@@ -158,39 +154,61 @@ void GnupgPreferences::save()
 
 void GnupgPreferences::addPair()
 {
-  QString account = accountsList->currentIndex().data().toString();
-  QString key = keysList->currentIndex().data().toString(); 
-  QStandardItem *pairItem = new QStandardItem();
-  QStandardItem *pairItem2 = new QStandardItem();
-  pairItem2->setData(key,Qt::DisplayRole);
-  pairItem2->setEditable(false);
-  pairItem->setData(account,Qt::DisplayRole);
-  pairItem->setEditable(false);
-  QList<QStandardItem *> myList;
-  myList << pairItem << pairItem2;
-  resultsModel->appendRow(myList);
-  if(!removeCombination->isEnabled())
+  if(accountsList->currentIndex().data().toString()=="" || accountsList->currentIndex().data().toString() == "<no account>" || keysList->currentIndex().data().toString()=="" || keysList->currentIndex().data().toString() == "<no pgp keys>")
   {
-    removeCombination->setEnabled(true);
+    QMessageBox::information(this,"Kopete GnuPG","Please select account and key.");
   }
-  int index = accountsList->currentIndex().row();
-  accountsModel->removeRow(index);
+  else
+  {
+    QString account = accountsList->currentIndex().data().toString();
+    QString key = keysList->currentIndex().data().toString(); 
+    QStandardItem *pairItem = new QStandardItem();
+    QStandardItem *pairItem2 = new QStandardItem();
+    pairItem2->setData(key,Qt::DisplayRole);
+    pairItem2->setEditable(false);
+    pairItem->setData(account,Qt::DisplayRole);
+    pairItem->setEditable(false);
+    QList<QStandardItem *> myList;
+    myList << pairItem << pairItem2;
+    resultsModel->appendRow(myList);
+    int index = accountsList->currentIndex().row();
+    accountsModel->removeRow(index);
+    accountsList->clearSelection();
+  }
+  buttonsStatus();
 }
 
 void GnupgPreferences::remPair()
 {
   int index = resultsTable->currentIndex().row();
-  QString temp = resultsTable->currentIndex().data(0).toString();
-  resultsModel->removeRow(index);
-  qDebug() << "Removed INDEX: " << index << endl;
-  QStandardItem *accountItem = new QStandardItem();
-  accountItem->setData(temp,Qt::DisplayRole);
-  accountItem->setEditable(false);
-  accountsModel->appendRow(accountItem);
-  if(resultsModel->rowCount() == 0)
+  if(index<0)
   {
-    removeCombination->setEnabled(false);
+    QMessageBox::information(this,"Kopete GnuPG","Please select a pair to delete.");
   }
+  else
+  {
+    //QString temp = resultsTable->currentIndex().data().toString();
+    QString temp = resultsTable->model()->data(resultsTable->model()->index(index,0)).toString();
+    resultsModel->removeRow(index);
+    qDebug() << "Removed INDEX: " << index << endl;
+    QStandardItem *accountItem = new QStandardItem();
+    accountItem->setData(temp,Qt::DisplayRole);
+    accountItem->setEditable(false);
+    accountsModel->appendRow(accountItem);
+  }
+  buttonsStatus();
+}
+
+void GnupgPreferences::buttonsStatus()
+{
+  if(accountsModel->rowCount() == 0 || keysModel->rowCount()==0)
+    addCombination->setEnabled(false);
+  else
+    addCombination->setEnabled(true);
+  if(resultsModel->rowCount() == 0)
+    remCombination->setEnabled(false);
+  else
+    remCombination->setEnabled(true);
 }
 
 GnupgPreferences::~GnupgPreferences()

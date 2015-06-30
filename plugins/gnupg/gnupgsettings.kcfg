@@ -8,13 +8,13 @@
 
 	<group name="Kopete GnuPG Plugin">
 		<!-- General Behavior -->
-		<entry key="privateKeyFingerprint" type="String">
-			<label>User's private key fingerprint.</label>
+		<entry key="accountKopete" type="String">
+			<label>Selected account to pair with key.</label>
 			<default></default>
 		</entry>
-		<entry key="clearSignMode" type="Bool">
-			<label>Sign messages in clearsign mode.</label>
-			<default>false</default>
+		<entry key="privateFingerprint" type="String">
+			<label>Private PGP key fingerprint for selected account.</label>
+			<default></default>
 		</entry>
 	</group>
 </kcfg>
