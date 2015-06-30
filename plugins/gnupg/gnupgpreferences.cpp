@@ -173,13 +173,20 @@ void GnupgPreferences::addPair()
   {
     removeCombination->setEnabled(true);
   }
+  int index = accountsList->currentIndex().row();
+  accountsModel->removeRow(index);
 }
 
 void GnupgPreferences::remPair()
 {
   int index = resultsTable->currentIndex().row();
+  QString temp = resultsTable->currentIndex().data(0).toString();
   resultsModel->removeRow(index);
   qDebug() << "Removed INDEX: " << index << endl;
+  QStandardItem *accountItem = new QStandardItem();
+  accountItem->setData(temp,Qt::DisplayRole);
+  accountItem->setEditable(false);
+  accountsModel->appendRow(accountItem);
   if(resultsModel->rowCount() == 0)
   {
     removeCombination->setEnabled(false);
