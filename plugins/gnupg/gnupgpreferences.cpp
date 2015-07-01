@@ -1,6 +1,5 @@
 //=====QT Stuff here=====//
 #include <QtCore>
-#include <QPushButton>
 #include <QDebug>
 #include <QComboBox>
 #include <QCheckBox>
@@ -8,13 +7,8 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QString>
-#include <QVariantList>
-#include <QListView>
-#include <QTableView>
-#include <QPushButton>
 #include <QItemSelectionModel>
 #include <QStringList>
-#include <QStandardItemModel>
 #include <QList>
 #include <QMessageBox>
 //=======================//
