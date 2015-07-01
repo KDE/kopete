@@ -32,6 +32,8 @@
 
 #include <kpluginfactory.h>
 
+#include <gnupgsettings.h>
+
 Q_DECLARE_METATYPE(QCA::KeyStoreEntry)
 
 K_PLUGIN_FACTORY (GnupgPreferencesFactory, registerPlugin<GnupgPreferences>();)
@@ -41,15 +43,15 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     : KCModule ( GnupgPreferencesFactory::componentData(), parent, args )
 {
     QCA::Initializer init;
-    setButtons( Help | Apply | Default );
+    setButtons( KCModule::Help | KCModule::Apply | KCModule::Default );
     QVBoxLayout *globalLayout = new QVBoxLayout(this);
-    QHBoxLayout *introLayout = new QHBoxLayout(this);
-    QHBoxLayout *addbuttonLayout = new QHBoxLayout(this);
-    QHBoxLayout *removebuttonLayout = new QHBoxLayout(this);
-    QHBoxLayout *mainLayout = new QHBoxLayout(this);
-    QHBoxLayout *accountsLayout = new QHBoxLayout(this);
-    QHBoxLayout *keysLayout = new QHBoxLayout(this);
-    QVBoxLayout *resultsLayout = new QVBoxLayout(this);
+    QHBoxLayout *introLayout = new QHBoxLayout(0);
+    QHBoxLayout *addbuttonLayout = new QHBoxLayout(0);
+    QHBoxLayout *removebuttonLayout = new QHBoxLayout(0);
+    QHBoxLayout *mainLayout = new QHBoxLayout(0);
+    QHBoxLayout *accountsLayout = new QHBoxLayout(0);
+    QHBoxLayout *keysLayout = new QHBoxLayout(0);
+    QVBoxLayout *resultsLayout = new QVBoxLayout(0);
     resultsLayout->setAlignment(Qt::AlignCenter);
     accountsList = new QListView(this);
     keysList = new QListView(this);
@@ -134,29 +136,14 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     addCombination->setEnabled(true);
     remCombination->setEnabled(true);
     buttonsStatus();
-    load();
-}
-
-void GnupgPreferences::defaults()
-{
-    KCModule::defaults();
-}
-
-void GnupgPreferences::load()
-{
-    KCModule::load();
-}
-
-void GnupgPreferences::save()
-{
-    KCModule::save();
+    //load();
 }
 
 void GnupgPreferences::addPair()
 {
   if(accountsList->currentIndex().data().toString()=="" || accountsList->currentIndex().data().toString() == "<no account>" || keysList->currentIndex().data().toString()=="" || keysList->currentIndex().data().toString() == "<no pgp keys>")
   {
-    QMessageBox::information(this,"Kopete GnuPG","Please select account and key.");
+    QMessageBox::information(this,"Kopete GnuPG","Please select both account and key.");
   }
   else
   {
@@ -190,7 +177,7 @@ void GnupgPreferences::remPair()
     //QString temp = resultsTable->currentIndex().data().toString();
     QString temp = resultsTable->model()->data(resultsTable->model()->index(index,0)).toString();
     resultsModel->removeRow(index);
-    qDebug() << "Removed INDEX: " << index << endl;
+    //qDebug() << "Removed INDEX: " << index << endl;
     QStandardItem *accountItem = new QStandardItem();
     accountItem->setData(temp,Qt::DisplayRole);
     accountItem->setEditable(false);
@@ -214,4 +201,25 @@ void GnupgPreferences::buttonsStatus()
 GnupgPreferences::~GnupgPreferences()
 {
 
+}
+
+void GnupgPreferences::defaults()
+{
+  qDebug() << "DEFAULTS";
+  KCModule::defaults();
+}
+
+void GnupgPreferences::load()
+{
+  qDebug() << "LOAD";
+  KCModule::load();
+}
+
+void GnupgPreferences::save()
+{
+  qDebug() <<"SAVE";
+  //GnupgSettings::setAccountKopete("testme");
+  //GnupgSettings::setPrivateFingerprint("huhuhu");
+  //GnupgSettings::self()->writeConfig();
+  KCModule::save();
 }

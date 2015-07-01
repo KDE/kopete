@@ -2,14 +2,11 @@
 #define GNUPGPREFERENCES_H
 
 #include <kcmodule.h>
-
+#include <QTableView>
+#include <QStandardItemModel>
+#include <QListView>
+#include <QPushButton>
 #include <QVariantList>
-
-class QCheckBox;
-class QTableView;
-class QStandardItemModel;
-class QListView;
-class QPushButton;
 
 class GnupgPreferences: public KCModule
 {
@@ -27,7 +24,6 @@ private slots:
   void remPair();
     
 private:
-    QCheckBox *checkBox;
     QTableView *resultsTable;
     QStandardItemModel *resultsModel;
     QStandardItemModel *accountsModel;
