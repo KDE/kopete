@@ -11,6 +11,30 @@ include_directories(${KOPETE_INCLUDES} ${QCA2_LIBRARIES})
 
 #install( TARGETS kopete_cryptography2 DESTINATION ${PLUGIN_INSTALL_DIR})
 
+set(kopete_gnupg_PART_SRCS
+   gnupgpreferences.cpp
+)
+
+
+kde4_add_kcfg_files(kopete_gnupg_PART_SRCS gnupgsettings.kcfgc )
+
+
+kde4_add_plugin(kopete_gnupg ${kopete_gnupg_PART_SRCS})
+
+
+target_link_libraries(
+kopete_gnupg
+kopete
+    ${KDE4_KDECORE_LIBS}
+    ${KDE4_KDEUI_LIBS}
+    ${KDE4_KUTILS_LIBS}
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
+    ${QCA2_LIBRARIES}
+)
+
+install(TARGETS kopete_gnupg DESTINATION ${PLUGIN_INSTALL_DIR})
+
 set(kcm_kopete_gnupg_PART_SRCS gnupgpreferences.cpp)
 
 #kde4_add_kcfg_files(kcm_kopete_gnupg ${kcm_kopete_cryptography2_PART_SRCS} gnupgsettings.kcfgc)
@@ -31,6 +55,8 @@ kopete
 )
 
 install( TARGETS kcm_kopete_gnupg DESTINATION ${PLUGIN_INSTALL_DIR})
+
+install( FILES gnupgsettings.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
 
 install( FILES kopete_gnupg.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 

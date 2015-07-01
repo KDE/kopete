@@ -156,6 +156,7 @@ void GnupgPreferences::addPair()
     accountsModel->removeRow(index);
     accountsList->clearSelection();
   }
+  emit KCModule::changed(true);
   buttonsStatus();
 }
 
@@ -212,8 +213,8 @@ void GnupgPreferences::load()
 void GnupgPreferences::save()
 {
   qDebug() <<"SAVE";
-  //GnupgSettings::setAccountKopete("testme");
-  //GnupgSettings::setPrivateFingerprint("huhuhu");
-  //GnupgSettings::self()->writeConfig();
+  GnupgSettings::setAccountKopete("testme");
+  GnupgSettings::setPrivateFingerprint("huhuhu");
+  GnupgSettings::self()->writeConfig();
   KCModule::save();
 }
