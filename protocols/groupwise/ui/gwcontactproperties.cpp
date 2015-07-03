@@ -22,7 +22,6 @@
 #include <q3header.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <k3listview.h>
 #include <qmap.h>
 #include <QMenu>
 #include <QHeaderView>

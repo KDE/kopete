@@ -27,7 +27,6 @@
 #include <klineedit.h>
 #include <kparts/componentfactory.h>
 #include <klocale.h>
-#include <k3listview.h>
 #include <kgenericfactory.h>
 #include <kcolorbutton.h>
 #include <kinputdialog.h>
