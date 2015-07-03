@@ -36,7 +36,7 @@
       </attribute>
       <layout class="QVBoxLayout" >
        <item>
-        <widget class="Q3GroupBox" name="groupBox53" >
+        <widget class="QGroupBox" name="groupBox53" >
          <property name="title" >
           <string>Account Information</string>
          </property>
@@ -98,7 +98,7 @@
       </attribute>
       <layout class="QVBoxLayout" >
        <item>
-        <widget class="Q3GroupBox" name="groupBox54" >
+        <widget class="QGroupBox" name="groupBox54" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Minimum" hsizetype="Expanding" >
            <horstretch>0</horstretch>
@@ -193,7 +193,7 @@
         </widget>
        </item>
        <item>
-        <widget class="Q3GroupBox" name="groupBox5" >
+        <widget class="QGroupBox" name="groupBox5" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Minimum" hsizetype="Expanding" >
            <horstretch>0</horstretch>
@@ -342,12 +342,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
    <extends>QWidget</extends>
