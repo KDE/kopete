@@ -22,7 +22,6 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <QPainter>
-#include <q3listview.h>
 
 #include <kdebug.h>
 #include <kpushbutton.h>

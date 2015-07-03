@@ -19,7 +19,6 @@
 
 #include "gwprivacydialog.h"
 #include <q3listbox.h>
-#include <q3listview.h>
 #include <QtCore/QStringList>
 #include <QtCore/QList>
 #include <QtGui/QPainter>
