@@ -18,7 +18,6 @@
 #include "aliaspreferences.h"
 
 #include <kpushbutton.h>
-#include <k3listview.h>
 #include <klocale.h>
 #include <klineedit.h>
 #include <kglobal.h>

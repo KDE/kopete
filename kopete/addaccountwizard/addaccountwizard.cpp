@@ -24,7 +24,6 @@
 #include <kcolorbutton.h>
 #include <kdebug.h>
 #include <kiconloader.h>
-#include <k3listview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kplugininfo.h>
