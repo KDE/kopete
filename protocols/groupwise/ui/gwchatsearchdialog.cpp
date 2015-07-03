@@ -20,8 +20,8 @@
 #include "gwchatsearchdialog.h"
 #include <qmap.h>
 
-#include <k3listview.h>
-#include <k3listviewsearchline.h>
+#include <QTreeWidget>
+#include <ktreewidgetsearchline.h>
 
 #include <kpushbutton.h>
 #include <kdebug.h>
@@ -66,12 +66,13 @@ GroupWiseChatSearchDialog::~GroupWiseChatSearchDialog()
 void GroupWiseChatSearchDialog::slotUpdateClicked()
 {
 	kDebug () << "updating chatroom list ";
-	Q3ListViewItem * first = m_ui.chatrooms->firstChild();
-	QString updateMessage = i18n("Updating chatroom list..." );
+	QStringList updateMessage;
+	QTreeWidgetItem * first = m_ui.chatrooms->topLevelItem(0);
+	updateMessage.append(i18n("Updating chatroom list..." ));
 	if ( first )
-		new Q3ListViewItem( first, updateMessage );
+		new QTreeWidgetItem(first, updateMessage);
 	else
-		new Q3ListViewItem( m_ui.chatrooms, updateMessage );
+		new QTreeWidgetItem( m_ui.chatrooms, updateMessage );
 	m_manager->updateRooms();
 
 }
@@ -84,17 +85,20 @@ void GroupWiseChatSearchDialog::slotManagerUpdated()
 	const ChatroomMap::iterator end = rooms.end();
 	while ( it != end )
 	{
-		new Q3ListViewItem( m_ui.chatrooms,
-						   it.value().displayName,
-						   m_account->protocol()->dnToDotted( it.value().ownerDN ),
-						   QString::number( it.value().participantsCount ) );
+		QStringList argsList;
+		// Populate the String List
+		argsList.append(it.value().displayName);
+		argsList.append(m_account->protocol()->dnToDotted(it.value().ownerDN));
+		argsList.append(QString::number(it.value().participantsCount));
+
+		new QTreeWidgetItem( m_ui.chatrooms, argsList);
 		++it;
 	}
 }
 
 void GroupWiseChatSearchDialog::slotPropertiesClicked()
 {
-	Q3ListViewItem * selected  = m_ui.chatrooms->selectedItem();
+	QTreeWidgetItem * selected  = m_ui.chatrooms->currentItem();
 	if ( selected )
 	{
 		m_manager->requestProperties( selected->text( 0 ) );

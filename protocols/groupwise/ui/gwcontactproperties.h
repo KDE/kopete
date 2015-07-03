@@ -27,7 +27,6 @@
 
 namespace Ui { class GroupWiseContactPropsWidget; }
 class KDialog;
-class Q3ListViewItem;
 class KAction;
 
 /**
