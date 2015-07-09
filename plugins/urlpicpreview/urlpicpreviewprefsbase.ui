@@ -32,7 +32,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="Q3GroupBox" name="groupBox1" >
+    <widget class="QGroupBox" name="groupBox1" >
      <property name="title" >
       <string>Preview</string>
      </property>
@@ -87,7 +87,7 @@ Otherwise, an unlimited number of previews are generated.</string>
     </widget>
    </item>
    <item>
-    <widget class="Q3GroupBox" name="groupBox2" >
+    <widget class="QGroupBox" name="groupBox2" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
        <horstretch>0</horstretch>
@@ -160,7 +160,7 @@ Otherwise, the images are not scaled at all and appear in their original size.</
     </widget>
    </item>
    <item>
-    <widget class="Q3GroupBox" name="linkPreviewGroup" >
+    <widget class="QGroupBox" name="linkPreviewGroup" >
      <property name="title" >
       <string>Link Preview</string>
      </property>
@@ -272,13 +272,7 @@ Use 0 seconds to never abort the creation.</string>
    </item>
   </layout>
  </widget>
-  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
+ <customwidgets>
   <customwidget>
    <class>KIntNumInput</class>
    <extends>QWidget</extends>
