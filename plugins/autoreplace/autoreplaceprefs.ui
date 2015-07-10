@@ -89,14 +89,8 @@
        <number>6</number>
       </property>
       <item row="1" column="0" >
-       <widget class="Q3ListView" name="m_list" >
-        <property name="selectionMode" >
-         <enum>Q3ListView::Single</enum>
-        </property>
+       <widget class="QTreeWidget" name="m_list" >
         <property name="allColumnsShowFocus" >
-         <bool>true</bool>
-        </property>
-        <property name="showSortIndicator" >
          <bool>true</bool>
         </property>
        </widget>
@@ -257,13 +251,6 @@
    </item>
   </layout>
  </widget>
-  <customwidgets>
-  <customwidget>
-   <class>Q3ListView</class>
-   <extends>Q3Frame</extends>
-   <header>q3listview.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>DotEndSentence</tabstop>
   <tabstop>CapitalizeBeginningSentence</tabstop>
