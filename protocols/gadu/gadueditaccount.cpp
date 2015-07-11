@@ -30,10 +30,10 @@
 #include <qstring.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
-#include <q3button.h>
+#include <QAbstractButton>
 #include <qregexp.h>
 #include <qpushbutton.h>
-#include <q3groupbox.h>
+#include <QGroupBox>
 
 #include <klineedit.h>
 #include <kmessagebox.h>

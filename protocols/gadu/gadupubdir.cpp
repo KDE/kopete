@@ -27,8 +27,8 @@
 #include "gaduaccount.h"
 #include "gaduprotocol.h"
 
-#include <q3widgetstack.h>
-#include <q3listview.h>
+#include <QStackedWidget>
+#include <QTreeWidget>
 #include <qradiobutton.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
@@ -67,13 +67,17 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	kDebug( 14100 ) << "search for Uin: " << searchFor;
 
 	mMainWidget->listFound->clear();
+	mMainWidget->listFound->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	mMainWidget->listFound->header()->setResizeMode(QHeaderView::Fixed);
+	mMainWidget->listFound->header()->setResizeMode(QHeaderView::ResizeToContents);
+	mMainWidget->listFound->header()->setSortIndicatorShown(true);
 	show();
 
 	if ( searchFor == 0 ) {
 		return;
 	}
 
-	mMainWidget->pubsearch->raiseWidget( 1 );
+	mMainWidget->pubsearch->setCurrentWidget(mMainWidget->pubsearch->widget(1));
 	mMainWidget->radioByUin->setChecked( true );
 
 	setButtonGuiItem( KDialog::User2, KGuiItem( i18n( "Search &More..." ) ) );
@@ -84,7 +88,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 
 	// now it is time to switch to Right Page(tm)
 	rs.uin = searchFor;
-	
+
 	fName.clear();
   fSurname.clear();
   fNick.clear();
@@ -113,6 +117,7 @@ GaduPublicDir::createWidget()
 	setMainWidget( w );
 
 	mMainWidget->UIN->setValidChars( "1234567890" );
+	mMainWidget->listFound->header()->setSortIndicatorShown(true);
 
 	setButtonGuiItem( KDialog::User1, KGuiItem( i18n( "&New Search" ) ) );
 	setButtonGuiItem( KDialog::User2, KGuiItem( i18n( "S&earch" ) ) );
@@ -133,7 +138,7 @@ void
 GaduPublicDir::slotAddContact()
 {
 	GaduContactsList::ContactLine* cl = new GaduContactsList::ContactLine;
-	Q3ListViewItem* item = mMainWidget->listFound->currentItem();
+	QTreeWidgetItem *item = mMainWidget->listFound->currentItem();
 
 	cl->ignored	= false;
 	cl->firstname	= item->text( 1 );
@@ -149,7 +154,7 @@ GaduPublicDir::slotAddContact()
 void
 GaduPublicDir::slotListSelected(  )
 {
-	Q3ListViewItem* item = mMainWidget->listFound->currentItem();
+	QTreeWidgetItem* item = mMainWidget->listFound->currentItem();
 	if ( item ) {
 		enableButton( KDialog::User3, true );
 	}
@@ -253,25 +258,19 @@ GaduPublicDir::iconForStatus( uint status )
 void
 GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int )
 {
-	Q3ListView* list = mMainWidget->listFound;
+	QTreeWidget *list = mMainWidget->listFound;
+	QTreeWidgetItem *sl;
+	QStringList args;
 
 	kDebug(14100) << "searchResults(" << result.count() <<")";
-
-	Q3ListViewItem* sl;
 
 	SearchResult::const_iterator r;
 
 	for ( r = result.begin(); r != result.end() ; ++r ){
 		kDebug(14100) << "adding" << (*r).uin;
-		sl= new Q3ListViewItem(
-					list, QString::fromAscii(""),
-					(*r).firstname,
-					(*r).nickname,
-					(*r).age,
-					(*r).city,
-					QString::number( (*r).uin ).toAscii()
-						);
-		sl->setPixmap( 0, iconForStatus( (*r).status ) );
+		args = (QStringList() << QString::fromAscii("") << (*r).firstname << (*r).nickname << (*r).age << (*r).city << QString::number( (*r).uin ).toAscii() );
+		sl= new QTreeWidgetItem( list, args );
+		sl->setIcon( 0, QIcon(iconForStatus( (*r).status )) );
 	}
 
 	// if not found anything, obviously we don't want to search for more
@@ -290,7 +289,7 @@ GaduPublicDir::slotSearchResult( const SearchResult& result, unsigned int )
 void
 GaduPublicDir::slotNewSearch()
 {
-	mMainWidget->pubsearch->raiseWidget( 0 );
+	mMainWidget->pubsearch->widget(0)->raise();
 
 	setButtonGuiItem( KDialog::User2, KGuiItem( i18n( "S&earch" ) ) );
 
@@ -309,7 +308,7 @@ GaduPublicDir::slotSearch()
 	QString empty;
 
 	// search more, or search ?
-	if ( mMainWidget->pubsearch->id( mMainWidget->pubsearch->visibleWidget() ) == 0 ) {
+	if ( mMainWidget->pubsearch->indexOf( mMainWidget->pubsearch->currentWidget() ) == 0 ) {
 		kDebug(14100) << "start search... ";
 		getData();
 
@@ -319,7 +318,7 @@ GaduPublicDir::slotSearch()
 		}
 
 		// go on
-		mMainWidget->pubsearch->raiseWidget( 1 );
+		mMainWidget->pubsearch->widget(1)->raise();
 
 	}
 	else{

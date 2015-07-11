@@ -27,13 +27,14 @@
 
 #include <kdialog.h>
 #include <QLabel>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 
 class GaduAccount;
 namespace Ui { class GaduAddUI; }
 class QLabel;
 class QWidget;
 class GaduContact;
-class Q3ListViewItem;
 
 class GaduEditContact : public KDialog
 {
@@ -47,7 +48,7 @@ public:
 	~GaduEditContact();
 protected slots:
 	void slotApply();
-	void listClicked( Q3ListViewItem* );
+	void listClicked( QTreeWidgetItem* );
 private:
 
 	void init();
