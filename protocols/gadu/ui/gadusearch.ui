@@ -17,7 +17,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="Q3WidgetStack" name="pubsearch" >
+    <widget class="QStackedWidget" name="pubsearch" >
      <widget class="QWidget" name="page" >
       <property name="geometry" >
        <rect>
@@ -32,7 +32,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="Q3ButtonGroup" name="buttonGroup2" >
+        <widget class="QGroupBox" name="buttonGroup2" >
          <property name="title" >
           <string/>
          </property>
@@ -378,7 +378,7 @@
       </property>
       <layout class="QGridLayout" name="gridLayout" >
        <item row="0" column="0" >
-        <widget class="K3ListView" name="listFound" >
+        <widget class="QTreeWidget" name="listFound" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
            <horstretch>0</horstretch>
@@ -400,20 +400,8 @@
          <property name="lineWidth" >
           <number>2</number>
          </property>
-         <property name="resizePolicy" >
-          <enum>Q3ScrollView::AutoOneFit</enum>
-         </property>
-         <property name="selectionMode" >
-          <enum>Q3ListView::Extended</enum>
-         </property>
          <property name="allColumnsShowFocus" >
           <bool>true</bool>
-         </property>
-         <property name="showSortIndicator" >
-          <bool>true</bool>
-         </property>
-         <property name="resizeMode" >
-          <enum>Q3ListView::NoColumn</enum>
          </property>
         </widget>
        </item>
@@ -441,18 +429,6 @@
    <class>KRestrictedLine</class>
    <extends>KLineEdit</extends>
    <header>krestrictedline.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Q3WidgetStack</class>
-   <extends>Q3WidgetStack</extends>
-   <header>q3widgetstack.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

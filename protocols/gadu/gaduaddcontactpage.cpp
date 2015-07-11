@@ -39,7 +39,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <q3listview.h>
+#include <QTreeWidget>
 #include <qcombobox.h>
 #include <QShowEvent>
 #include <QVBoxLayout>

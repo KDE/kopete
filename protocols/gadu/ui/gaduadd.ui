@@ -304,7 +304,7 @@
     </widget>
    </item>
    <item row="3" column="0" >
-    <widget class="Q3ListView" name="groups" >
+    <widget class="QTreeWidget" name="groups" >
      <column>
       <property name="text" >
        <string>Group</string>
@@ -315,13 +315,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>Q3ListView</class>
-   <extends></extends>
-   <header>q3listview.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>KRestrictedLine</class>
    <extends></extends>

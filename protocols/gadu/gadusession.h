@@ -30,7 +30,6 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qdatetime.h>
-#include <q3cstring.h>
 #include <qhostaddress.h>
 #include <QList>
 

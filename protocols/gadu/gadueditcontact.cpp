@@ -34,11 +34,10 @@
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>
 
-#include <q3buttongroup.h>
+#include <QButtonGroup>
 #include <qradiobutton.h>
 #include <qlineedit.h>
 #include <qlayout.h>
-#include <q3listview.h>
 
 #include <krestrictedline.h>
 
@@ -105,11 +104,12 @@ GaduEditContact::fillGroups()
 		if ( g->type() == Kopete::Group::Temporary ) {
 			continue;
 		}
-		Q3CheckListItem* item = new Q3CheckListItem( ui_->groups, g->displayName(), Q3CheckListItem::CheckBox );
+		QTreeWidgetItem *item = new QTreeWidgetItem( ui_->groups, QStringList(g->displayName()) );
 		// FIXME: optimize this O(2) search
 		foreach( cg , cgl ) {
 			if ( cg->groupId() == g->groupId() ) {
-				item->setOn( true );
+				//FIXME: Not sure of the column number
+				item->setCheckState( 0, Qt::Checked );
 				break;
 			}
 		}
@@ -130,11 +130,11 @@ GaduEditContact::init()
 
 	show();
 	connect( this, SIGNAL(okClicked()), SLOT(slotApply()) );
-	connect( ui_->groups, SIGNAL(clicked(Q3ListViewItem*)), SLOT(listClicked(Q3ListViewItem*)) );
+	connect( ui_->groups, SIGNAL(itemClicked(QTreeWidgetItem*,0)), SLOT(listClicked(QTreeWidgetItem*)) );
 }
 
 void
-GaduEditContact::listClicked( Q3ListViewItem* /*item*/ )
+GaduEditContact::listClicked( QTreeWidgetItem* /*item*/ )
 {
 
 }
@@ -184,16 +184,16 @@ GaduEditContact::slotApply()
 	contact_->setContactDetails( cl_ );
 
 	gl = Kopete::ContactList::self()->groups();
-	for ( Q3ListViewItemIterator it( ui_->groups ); it.current(); ++it ) {
-		Q3CheckListItem *check = dynamic_cast<Q3CheckListItem *>( it.current() );
-		
+	for ( QTreeWidgetItemIterator it( ui_->groups ); (*it); ++it ) {
+		QTreeWidgetItem *check = dynamic_cast<QTreeWidgetItem *>( (*it) );
+
 		if ( !check ) {
 			continue;
 		}
 
-		if ( check->isOn() ) {
+		if ( check->checkState(0) == Qt::Checked ) {
 			foreach( group, gl )  {
-				if ( group->displayName() == check->text() ) {
+				if ( group->displayName() == check->text(1) ) {
 					contact_->metaContact()->addToGroup( group );
 				}
 			}
@@ -201,7 +201,8 @@ GaduEditContact::slotApply()
 		else {
 			// check metacontact's in the group, and if so, remove it from
 			foreach( group, gl ) {
-				if ( group->displayName() == check->text() ) {
+				//FIXME: Not sure of the column number in text()
+				if ( group->displayName() == check->text(1) ) {
 					contact_->metaContact()->removeFromGroup( group );
 				}
 			}
