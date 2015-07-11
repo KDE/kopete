@@ -47,7 +47,7 @@ kde4_add_kcfg_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 kde4_add_plugin(kcm_kopete_nowlistening ${kcm_kopete_nowlistening_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KUTILS_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KUTILS_LIBS})
 
 install(TARGETS kcm_kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})
 
