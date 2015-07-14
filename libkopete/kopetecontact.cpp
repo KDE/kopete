@@ -34,7 +34,7 @@
 #include <kicon.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
-#include <k3listviewsearchline.h>
+#include <ktreewidgetsearchline.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
@@ -58,7 +58,7 @@
 #include <qimage.h>
 #include <qmime.h>
 #include <kvbox.h>
-#include <k3listview.h>
+#include <QTreeWidget>
 #include <qcheckbox.h>
 
 
