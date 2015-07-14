@@ -19,22 +19,22 @@
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 
-#include <q3header.h>
+#include <QIcon>
+#include <QHeaderView>
+#include <QTreeWidget>
 #include <qlayout.h>
-#include <qpixmap.h>
 #include <QVBoxLayout>
 
 #include <kdebug.h>
-#include <k3listview.h>
 
-class AccountListViewItem : public K3ListViewItem
+class AccountListViewItem : public QTreeWidgetItem
 {
 	private:
 		Kopete::Account *mAccount;
 
 	public:
-		AccountListViewItem(Q3ListView *parent, Kopete::Account *acc)
-			: K3ListViewItem(parent)
+		AccountListViewItem(QTreeWidget *parent, Kopete::Account *acc)
+			: QTreeWidgetItem(parent)
 		{
 			if (acc==0)
 				return;
@@ -43,7 +43,7 @@ class AccountListViewItem : public K3ListViewItem
 				"account name = " << acc->accountId() << endl;*/
 			mAccount = acc;
 			setText(0, mAccount->accountId());
-			setPixmap(0, mAccount->accountIcon());
+			setIcon(0, QIcon(mAccount->accountIcon()) );
 		}
 
 		Kopete::Account *account()
@@ -58,7 +58,7 @@ class AccountListViewItem : public K3ListViewItem
 class AccountSelectorPrivate
 {
 	public:
-		K3ListView *lv;
+		QTreeWidget *lv;
 		Kopete::Protocol *proto;
 };
 
@@ -93,10 +93,10 @@ void AccountSelector::initUI()
 {
 	kDebug(14010) ;
 	QVBoxLayout *layout = new QVBoxLayout(this);
-	d->lv = new K3ListView(this);
-	d->lv->setFullWidth(true);
-	d->lv->addColumn(QString::fromLatin1(""));
-	d->lv->header()->hide();
+	d->lv = new QTreeWidget(this);
+	d->lv->header()->setResizeMode( QHeaderView::ResizeToContents );
+	d->lv->setHeaderLabel(QString::fromLatin1(""));
+	d->lv->headerItem()->setHidden(true);
 	layout->addWidget(d->lv);
 	setLayout(layout);
 	kDebug(14010) << "creating list of all accounts";
@@ -106,8 +106,8 @@ void AccountSelector::initUI()
 			new AccountListViewItem(d->lv, account);
 	}
 
-	connect(d->lv, SIGNAL(selectionChanged(Q3ListViewItem*)),
-		this, SLOT(slotSelectionChanged(Q3ListViewItem*)));
+	connect(d->lv, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+		this,SLOT(slotSelectionChanged(QTreeWidgetItem*)));
 }
 
 
@@ -116,14 +116,15 @@ void AccountSelector::setSelected(Kopete::Account *account)
 	if (account==0)
 		return;
 
-	Q3ListViewItemIterator it(d->lv);
-	while (it.current())
+	QTreeWidgetItemIterator it(d->lv);
+	while ( *it )
 	{
-		if(static_cast<AccountListViewItem *>(it.current())->account() == account)
+		if(static_cast<AccountListViewItem *>( *it )->account() == account)
 		{
-			it.current()->setSelected(true);
+			(*it)->setSelected(true);
 			return;
 		}
+		++it;
 	}
 }
 
@@ -133,11 +134,12 @@ bool AccountSelector::isSelected(Kopete::Account *account)
 	if (account==0)
 		return false;
 
-	Q3ListViewItemIterator it(d->lv);
-	while (it.current())
+	QTreeWidgetItemIterator it(d->lv);
+	while ( *it )
 	{
-		if(static_cast<AccountListViewItem *>(it.current())->account() == account)
+		if(static_cast<AccountListViewItem *>( *it )->account() == account)
 			return true;
+		++it;
 	}
 	return false;
 }
@@ -147,13 +149,13 @@ Kopete::Account *AccountSelector::selectedItem()
 {
 	//kDebug(14010) ;
 
-	if (d->lv->selectedItem() != 0)
-		return static_cast<AccountListViewItem *>(d->lv->selectedItem())->account();
+	if (d->lv->currentItem())
+		return static_cast<AccountListViewItem *>(d->lv->currentItem())->account();
 	return 0;
 }
 
 
-void AccountSelector::slotSelectionChanged(Q3ListViewItem *item)
+void AccountSelector::slotSelectionChanged(QTreeWidgetItem *item)
 {
 	//kDebug(14010) ;
 	if (item != 0)
