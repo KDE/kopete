@@ -30,7 +30,7 @@
 
 #include <kstandarddirs.h>
 #include <kcomponentdata.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <kdebug.h>
 
 #include "kopetemessage_test.moc"
