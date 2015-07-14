@@ -34,7 +34,6 @@
 #include <kdeversion.h>
 #include <kinputdialog.h>
 #include <kpushbutton.h>
-#include <k3activelabel.h>
 #include <kdebug.h>
 #include <k3listview.h>
 #include <k3listviewsearchline.h>
@@ -295,7 +294,8 @@ void MetaContactSelectorWidget::slotLoadMetaContacts()
 
 void MetaContactSelectorWidget::setLabelMessage( const QString &msg )
 {
-	d->widget->lblHeader->setPlainText(msg);
+	d->widget->lblHeader->setTextFormat(Qt::PlainText);
+	d->widget->lblHeader->setText(msg);
 }
 
 } // namespace UI

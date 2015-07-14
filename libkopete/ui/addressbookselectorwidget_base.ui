@@ -64,7 +64,7 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="2" >
-    <widget class="K3ActiveLabel" native="1" name="lblHeader" >
+    <widget class="QLabel" native="1" name="lblHeader" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
        <horstretch>0</horstretch>
@@ -152,11 +152,6 @@
    <class>K3ListView</class>
    <extends>Q3ListView</extends>
    <header>k3listview.h</header>
-  </customwidget>
-  <customwidget>
-   <class>K3ActiveLabel</class>
-   <extends></extends>
-   <header>k3activelabel.h</header>
   </customwidget>
   <customwidget>
    <class>K3ListViewSearchLine</class>
