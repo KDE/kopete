@@ -23,9 +23,9 @@
 #include "kopete_export.h"
 
 class AccountSelectorPrivate;
-class Q3ListViewItem;
+class QTreeWidgetItem;
 /**
- * \brief widget to select an account, based on K3ListView
+ * \brief widget to select an account, based on QTreeWidget
  * @author Stefan Gehn <metz AT gehn.net>
  */
 class KOPETE_EXPORT AccountSelector : public QWidget
@@ -37,7 +37,7 @@ Q_OBJECT
 		 * Constructor.
 		 *
 		 * The parameter @p parent is handled by
-		 * K3ListView.
+		 * QTreeWidget.
 		 */
 		AccountSelector(QWidget *parent=0);
 
@@ -45,7 +45,7 @@ Q_OBJECT
 		 * Constructor for a list of accounts for one protocol only
 		 *
 		 * The parameters @p parent is handled by
-		 * K3ListView. @p proto defines the protocol whose accounts are
+		 * QTreeWidget. @p proto defines the protocol whose accounts are
 		 * shown in the list
 		 */
 		explicit AccountSelector(Kopete::Protocol *proto, QWidget *parent=0);
@@ -79,7 +79,7 @@ Q_OBJECT
 		void selectionChanged(Kopete::Account *acc);
 
 	private slots:
-		void slotSelectionChanged(Q3ListViewItem *item);
+		void slotSelectionChanged(QTreeWidgetItem *item);
 
 	private:
 		void initUI();
