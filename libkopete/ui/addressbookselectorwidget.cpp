@@ -35,7 +35,6 @@
 #include <kinputdialog.h>
 
 #include <kpushbutton.h>
-#include <k3activelabel.h>
 #include <kdebug.h>
 #include <k3listview.h>
 #include <k3listviewsearchline.h>
@@ -138,7 +137,8 @@ void AddressBookSelectorWidget::slotLoadAddressees()
 
 void AddressBookSelectorWidget::setLabelMessage( const QString &msg )
 {
-	lblHeader->setPlainText(msg);
+	lblHeader->setTextFormat(Qt::PlainText);
+	lblHeader->setText(msg);
 }
 
 void AddressBookSelectorWidget::slotAddAddresseeClicked()
