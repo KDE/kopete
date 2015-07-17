@@ -102,13 +102,6 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 		
 	// create new contact instance and add it to the dictionary
 	JabberContact *newContact = new JabberContact ( contact, transport ? (Kopete::Account*)transport : (Kopete::Account*)mAccount, metaContact , legacyId );
-
-        // Facebook does not allow sending files
-        if(QString::compare(mAccount->server(), QString("chat.facebook.com")) == 0)
-        {
-                newContact->setFileCapable(false);
-        }
-
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
 	connect ( newContact, SIGNAL (contactDestroyed(Kopete::Contact*)), this, SLOT (slotContactDestroyed(Kopete::Contact*)) );
 	newContactItem->setDirty ( dirty );
