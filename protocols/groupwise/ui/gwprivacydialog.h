@@ -25,7 +25,7 @@
 #include "ui_gwprivacy.h"
 
 class GroupWiseAccount;
-class Q3ListBoxItem;
+class QListWidgetItem;
 
 /**
 Logic for the UI part managing the allow and deny lists, and the default privacy setting.
@@ -60,7 +60,7 @@ private:
 	GroupWiseAccount * m_account;
 	Ui::GroupWisePrivacy m_privacy;
 	GroupWiseContactSearch * m_search;
-	Q3ListBoxItem * m_defaultPolicy;
+	QListWidgetItem * m_defaultPolicy;
 	bool m_dirty;
 	KDialog * m_searchDlg;
 };
