@@ -20,8 +20,8 @@
 #include "kopetestatusgroupviewitem.h"
 #include <kdebug.h>
 
-KopeteStatusGroupViewItem::KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , Q3ListView *parent)
-		: Q3ListViewItem(parent)
+KopeteStatusGroupViewItem::KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , QTreeWidget *parent)
+		: QTreeWidgetItem(parent)
 {
 	m_status = status_;
 }

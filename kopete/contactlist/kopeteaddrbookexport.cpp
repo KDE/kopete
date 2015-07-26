@@ -27,7 +27,6 @@
 
 #include <kdialog.h>
 #include <kiconloader.h>
-#include <k3listbox.h>
 #include <klocale.h>
 
 #include "kopeteaccount.h"
@@ -41,6 +40,11 @@ KopeteAddressBookExport::KopeteAddressBookExport( QWidget *parent, Kopete::MetaC
 	mParent = parent;
 	mAddressBook = KABC::StdAddressBook::self();
 	mMetaContact = mc;
+
+	mWorkPhones->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	mMobilePhones->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	mHomePhones->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	mEmails->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
 KopeteAddressBookExport::~KopeteAddressBookExport()
@@ -91,12 +95,17 @@ void KopeteAddressBookExport::fetchKABCData()
 		
 		// emails
 		QStringList emails = mAddressee.emails();
+		unsigned int rowCount = 0;
 		numEmails = emails.count();
-		for ( QStringList::Iterator it = emails.begin(); it != emails.end(); ++it )
-			mEmails->insertItem( mAddrBookIcon, *it );
+		for ( QStringList::Iterator it = emails.begin(); it != emails.end(); ++it ) {
+			mEmails->insertItem(rowCount, *it);
+			mEmails->item(rowCount)->setIcon(QIcon(mAddrBookIcon));
+			++rowCount;
+		}
 		if ( numEmails == 0 )
 		{
-			mEmails->insertItem( mAddrBookIcon, i18n("<Not Set>") );
+			QListWidgetItem *newItem = new QListWidgetItem(mAddrBookIcon, i18n("<Not Set>"));
+			mEmails->addItem(newItem);
 			numEmails = 1;
 		}
 		
@@ -107,16 +116,20 @@ void KopeteAddressBookExport::fetchKABCData()
 	}
 }
 
-void KopeteAddressBookExport::fetchPhoneNumbers( K3ListBox * listBox, KABC::PhoneNumber::Type type, uint& counter )
+void KopeteAddressBookExport::fetchPhoneNumbers( QListWidget * listBox, KABC::PhoneNumber::Type type, uint& counter )
 {
 	KABC::PhoneNumber::List phones = mAddressee.phoneNumbers( type );
 	counter = phones.count();
 	KABC::PhoneNumber::List::Iterator it;
-	for ( it = phones.begin(); it != phones.end(); ++it )
-		listBox->insertItem( mAddrBookIcon, (*it).number() );
+	unsigned int rowCount = 0;
+	for ( it = phones.begin(); it != phones.end(); ++it ) {
+		listBox->item(rowCount)->setIcon(QIcon(mAddrBookIcon));
+		listBox->insertItem(rowCount, (*it).number());
+	}
 	if ( counter == 0 )
 	{
-		listBox->insertItem( mAddrBookIcon, i18n("<Not Set>") );
+		QListWidgetItem *newItem = new QListWidgetItem(mAddrBookIcon, i18n("<Not Set>"));
+		listBox->addItem(newItem);
 		counter = 1;
 	}
 }
@@ -156,12 +169,14 @@ void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const 
 	}	
 }
 
-void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, K3ListBox *listBox, const Kopete::PropertyTmpl &property )
+void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const QPixmap &icon, QListWidget *listBox, const Kopete::PropertyTmpl &property )
 {
 	Kopete::Property prop = contact->property( property );
 	if ( !prop.isNull() )
 	{
-		listBox->insertItem( icon, prop.value().toString() );
+		QListWidgetItem *newItem = new QListWidgetItem(QIcon(icon), prop.value().toString());
+		listBox->addItem(newItem);
+		delete newItem;
 	}	
 }
 
@@ -278,24 +293,24 @@ bool KopeteAddressBookExport::newValue( QComboBox *combo )
 			( combo->itemText( combo->currentIndex() ) == combo->itemText( 0 ) ) );
 }
 
-QStringList KopeteAddressBookExport::newValues( K3ListBox *listBox, uint counter )
+QStringList KopeteAddressBookExport::newValues( QListWidget *listBox, int counter )
 {
 	QStringList newValues;
 	// need to iterate all items except those from KABC and check if selected and not same as the first
 	// counter is the number of KABC items, and hence the index of the first non KABC item
-	for ( uint i = counter; i < listBox->count(); ++i )
+	for ( int i = counter; i < listBox->count(); ++i )
 	{
-		if ( listBox->isSelected( i ) )
+		if ( listBox->item(i)->isSelected() )
 		{
 			// check whether it matches any KABC item
 			bool duplicate = false;
-			for ( uint j = 0; j < counter; ++j )
+			for ( int j = 0; j < counter; ++j )
 			{
-				if ( listBox->text( i ) == listBox->text( j ) )
+				if ( listBox->item(i)->text() == listBox->item(j)->text() )
 					duplicate = true;
 			}
 			if ( !duplicate )
-				newValues.append( listBox->text( i ) );
+				newValues.append( listBox->item(i)->text() );
 		}
 	}
 	return newValues;
