@@ -1,4 +1,4 @@
-//=====QT Stuff here=====//
+//=====QT Stuff=====//
 #include <QtCore>
 #include <QDebug>
 #include <QComboBox>
@@ -14,19 +14,23 @@
 //=======================//
 
 
-//=====Kopete Stuff here=====//
+//=====Kopete Stuff=====//
 #include <kopeteaccountmanager.h>
 #include <kopeteaccount.h>
 #include <kopeteprotocol.h>
 //===========================//
 
+//=======KDE Stuff=======//
+#include <kconfig.h>
+#include <kconfiggroup.h>
+//=======================//
+
+//=======Other Stuff=======//
 #include <qca2/QtCrypto/QtCrypto>
-
 #include "gnupgpreferences.h"
-
 #include <kpluginfactory.h>
-
 #include <gnupgsettings.h>
+//=========================//
 
 Q_DECLARE_METATYPE(QCA::KeyStoreEntry)
 
@@ -130,67 +134,66 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     addCombination->setEnabled(true);
     remCombination->setEnabled(true);
     buttonsStatus();
-    //load();
 }
 
 void GnupgPreferences::addPair()
 {
-  if(accountsList->currentIndex().data().toString()=="" || accountsList->currentIndex().data().toString() == "<no account>" || keysList->currentIndex().data().toString()=="" || keysList->currentIndex().data().toString() == "<no pgp keys>")
-  {
-    QMessageBox::information(this,"Kopete GnuPG","Please select both account and key.");
-  }
-  else
-  {
-    QString account = accountsList->currentIndex().data().toString();
-    QString key = keysList->currentIndex().data().toString(); 
-    QStandardItem *pairItem = new QStandardItem();
-    QStandardItem *pairItem2 = new QStandardItem();
-    pairItem2->setData(key,Qt::DisplayRole);
-    pairItem2->setEditable(false);
-    pairItem->setData(account,Qt::DisplayRole);
-    pairItem->setEditable(false);
-    QList<QStandardItem *> myList;
-    myList << pairItem << pairItem2;
-    resultsModel->appendRow(myList);
-    int index = accountsList->currentIndex().row();
-    accountsModel->removeRow(index);
-    accountsList->clearSelection();
-  }
-  emit KCModule::changed(true);
-  buttonsStatus();
+    if(accountsList->currentIndex().data().toString()=="" || accountsList->currentIndex().data().toString() == "<no account>" || keysList->currentIndex().data().toString()=="" || keysList->currentIndex().data().toString() == "<no pgp keys>")
+    {
+        QMessageBox::information(this,"Kopete GnuPG","Please select both account and key.");
+    }
+    else
+    {
+        QString account = accountsList->currentIndex().data().toString();
+        QString key = keysList->currentIndex().data().toString();
+        QStandardItem *pairItem = new QStandardItem();
+        QStandardItem *pairItem2 = new QStandardItem();
+        pairItem2->setData(key,Qt::DisplayRole);
+        pairItem2->setEditable(false);
+        pairItem->setData(account,Qt::DisplayRole);
+        pairItem->setEditable(false);
+        QList<QStandardItem *> myList;
+        myList << pairItem << pairItem2;
+        resultsModel->appendRow(myList);
+        int index = accountsList->currentIndex().row();
+        accountsModel->removeRow(index);
+        accountsList->clearSelection();
+    }
+    emit KCModule::changed(true);
+    buttonsStatus();
 }
 
 void GnupgPreferences::remPair()
 {
-  int index = resultsTable->currentIndex().row();
-  if(index<0)
-  {
-    QMessageBox::information(this,"Kopete GnuPG","Please select a pair to delete.");
-  }
-  else
-  {
-    //QString temp = resultsTable->currentIndex().data().toString();
-    QString temp = resultsTable->model()->data(resultsTable->model()->index(index,0)).toString();
-    resultsModel->removeRow(index);
-    //qDebug() << "Removed INDEX: " << index << endl;
-    QStandardItem *accountItem = new QStandardItem();
-    accountItem->setData(temp,Qt::DisplayRole);
-    accountItem->setEditable(false);
-    accountsModel->appendRow(accountItem);
-  }
-  buttonsStatus();
+    int index = resultsTable->currentIndex().row();
+    if(index<0)
+    {
+        QMessageBox::information(this,"Kopete GnuPG","Please select a pair to delete.");
+    }
+    else
+    {
+        //QString temp = resultsTable->currentIndex().data().toString();
+        QString temp = resultsTable->model()->data(resultsTable->model()->index(index,0)).toString();
+        resultsModel->removeRow(index);
+        //qDebug() << "Removed INDEX: " << index << endl;
+        QStandardItem *accountItem = new QStandardItem();
+        accountItem->setData(temp,Qt::DisplayRole);
+        accountItem->setEditable(false);
+        accountsModel->appendRow(accountItem);
+    }
+    buttonsStatus();
 }
 
 void GnupgPreferences::buttonsStatus()
 {
-  if(accountsModel->rowCount() == 0 || keysModel->rowCount()==0)
-    addCombination->setEnabled(false);
-  else
-    addCombination->setEnabled(true);
-  if(resultsModel->rowCount() == 0)
-    remCombination->setEnabled(false);
-  else
-    remCombination->setEnabled(true);
+    if(accountsModel->rowCount() == 0 || keysModel->rowCount()==0)
+        addCombination->setEnabled(false);
+    else
+        addCombination->setEnabled(true);
+    if(resultsModel->rowCount() == 0)
+        remCombination->setEnabled(false);
+    else
+        remCombination->setEnabled(true);
 }
 
 GnupgPreferences::~GnupgPreferences()
@@ -200,21 +203,32 @@ GnupgPreferences::~GnupgPreferences()
 
 void GnupgPreferences::defaults()
 {
-  qDebug() << "DEFAULTS";
-  KCModule::defaults();
+    qDebug() << "DEFAULTS";
+    KCModule::defaults();
 }
 
 void GnupgPreferences::load()
 {
-  qDebug() << "LOAD";
-  KCModule::load();
+    qDebug() << "LOAD";
+    KCModule::load();
 }
 
 void GnupgPreferences::save()
 {
-  qDebug() <<"SAVE";
-  GnupgSettings::setAccountKopete("testme");
-  GnupgSettings::setPrivateFingerprint("huhuhu");
-  GnupgSettings::self()->writeConfig();
-  KCModule::save();
+    qDebug() <<"SAVE";
+    /*
+    GnupgSettings::setAccountKopete("paparia");
+    GnupgSettings::setPrivateFingerprint(QString::number(i));
+    GnupgSettings::self()->writeConfig();
+    */
+    KConfig config;
+    KConfigGroup firstGroup(&config,"General");
+    KConfigGroup keysGroup = config.group("Kleidi");
+    for(int i = 0;i<10;i++)
+    {
+      keysGroup.writeEntry("Test1","xouxouxou");
+      keysGroup.writeEntry("Test2",QString::number(i));
+    }
+    keysGroup.config()->sync();
+    //KCModule::save();
 }

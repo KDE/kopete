@@ -20,9 +20,9 @@ public:
     void buttonsStatus();
 
 private slots:
-  void addPair();
-  void remPair();
-    
+    void addPair();
+    void remPair();
+
 private:
     QTableView *resultsTable;
     QStandardItemModel *resultsModel;

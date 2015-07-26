@@ -1,15 +1,15 @@
 include_directories(${KOPETE_INCLUDES} ${QCA2_LIBRARIES})
 
-#set(kopete_cryptography2_PART_SRCS
-#    cryptographygui.cpp)
+set(kopete_gnupg_PART_SRCS
+    gnupgselectuserkey.cpp)
 
-#kde4_add_ui_files(kopete_cryptography_PART_SRCS maingui.ui)
+#kde4_add_ui_files(kopete_cryptography_PART_SRCS gnupggui.ui)
 
-#kde4_add_plugin(kopete_cryptography2 ${kopete_cryptography2_PART_SRCS})
+kde4_add_plugin(kopete_gnupg ${kopete_gnupg_PART_SRCS})
 
-#target_link_libraries(kopete_cryptography2 ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBS})
+target_link_libraries(kopete_gnupg ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBS})
 
-#install( TARGETS kopete_cryptography2 DESTINATION ${PLUGIN_INSTALL_DIR})
+install( TARGETS kopete_gnupg DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kopete_gnupg_PART_SRCS
    gnupgpreferences.cpp
