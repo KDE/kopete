@@ -96,18 +96,18 @@ void GroupWiseChatPropsDialog::initialise()
 	QWidget * wid = new QWidget( this );
 	m_ui.setupUi( wid );
 	setMainWidget( wid );
-	connect( m_ui.topic, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
-	connect( m_ui.owner, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
-	connect( m_ui.createdOn, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
-	connect( m_ui.creator, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
-	connect( m_ui.description, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
-	connect( m_ui.disclaimer, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
-	connect( m_ui.query, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
-	connect( m_ui.archive, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
-	connect( m_ui.maxUsers, SIGNAL(textChanged(QString)), SLOT(slotWidgetChanged()) );
-	connect( m_ui.addAcl, SIGNAL(clicked()), SLOT(slotWidgetChanged()) );
-	connect( m_ui.editAcl, SIGNAL(clicked()), SLOT(slotWidgetChanged()) );
-	connect( m_ui.deleteAcl, SIGNAL(clicked()), SLOT(slotWidgetChanged()) );
+	connect( m_ui.topic, SIGNAL(currentTextChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.owner, SIGNAL(currentTextChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.createdOn, SIGNAL(currentTextChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.creator, SIGNAL(currentTextChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.description, SIGNAL(currentTextChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.disclaimer, SIGNAL(currentTextChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.query, SIGNAL(currentTextChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.archive, SIGNAL(currentTextChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.maxUsers, SIGNAL(currentTextChanged(QString)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.addAcl, SIGNAL(itemClicked(QListWidgetItem*)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.editAcl, SIGNAL(itemClicked(QListWidgetItem*)), SLOT(slotWidgetChanged()) );
+	connect( m_ui.deleteAcl, SIGNAL(itemClicked(QListWidgetItem*)), SLOT(slotWidgetChanged()) );
 
 	show();
 }

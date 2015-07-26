@@ -372,12 +372,12 @@
       <bool>false</bool>
      </property>
      <property name="buddy" >
-      <cstring>k3ListBox1</cstring>
+      <cstring>QListWidget1</cstring>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="K3ListBox" name="acl" >
+     <widget class="QListWidget" name="acl" >
      <property name="toolTip" >
       <string>Access permissions for specific users</string>
      </property>
@@ -432,11 +432,6 @@
    <header>kpushbutton.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>K3ListBox</class>
-   <extends>Q3ListBox</extends>
-   <header>k3listbox.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>topic</tabstop>
@@ -457,9 +452,6 @@
   <tabstop>deleteAcl</tabstop>
  </tabstops>
  <includes>
-  <include location="local" >k3listbox.h</include>
-  <include location="local" >kpushbutton.h</include>
-  <include location="local" >kpushbutton.h</include>
   <include location="local" >kpushbutton.h</include>
  </includes>
  <resources/>

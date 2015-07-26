@@ -83,7 +83,7 @@
         </widget>
        </item>
        <item>
-        <widget class="Q3ListBox" name="allowList" />
+        <widget class="QListWidget" name="allowList" />
        </item>
       </layout>
      </item>
@@ -213,7 +213,7 @@
         </widget>
        </item>
        <item>
-        <widget class="Q3ListBox" name="denyList" />
+        <widget class="QListWidget" name="denyList" />
        </item>
       </layout>
      </item>
@@ -231,13 +231,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>Q3ListBox</class>
-   <extends>Q3Frame</extends>
-   <header>q3listbox.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
