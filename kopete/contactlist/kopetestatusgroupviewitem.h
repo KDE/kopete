@@ -26,10 +26,10 @@
   *@author Duncan Mac-Vicar Prett <duncan@kde.org>
   */
 
- class KopeteStatusGroupViewItem : public Q3ListViewItem
+ class KopeteStatusGroupViewItem : public QTreeWidgetItem
 {
 public: 
-	KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , Q3ListView *parent);
+	KopeteStatusGroupViewItem( Kopete::OnlineStatus::StatusType status_ , QTreeWidget *parent);
 	~KopeteStatusGroupViewItem();
 
 private:

@@ -49,7 +49,7 @@
 
 #include <QTimer>
 #include <QSplitter>
-#include <Q3UriDrag>
+#include <QMimeData>
 #include <QScrollBar>
 
 K_PLUGIN_FACTORY( ChatWindowPluginFactory, registerPlugin<ChatWindowPlugin>(); )
@@ -992,7 +992,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 
-		if ( !contact || !contact->canAcceptFiles() || !Q3UriDrag::canDecode( event ) )
+		if ( !contact || !contact->canAcceptFiles() || event->mimeData()->hasText() || event->mimeData()->hasURls() )
 		{
 			event->ignore();
 			return;

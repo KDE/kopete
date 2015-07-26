@@ -27,9 +27,9 @@
 #include "kopeteproperty.h"
 #include "ui_kopeteaddrbookexportui.h"
 #include <QPixmap>
+#include <QListWidget>
 
 class KDialog;
-class K3ListBox;
 
 namespace Kopete
 {
@@ -67,7 +67,7 @@ protected:
 	/**
 	 * Populate a listbox with a given type of phone number
 	 */
-	void fetchPhoneNumbers( K3ListBox * listBox, KABC::PhoneNumber::Type type, uint& counter );
+	void fetchPhoneNumbers( QListWidget * listBox, KABC::PhoneNumber::Type type, uint& counter );
 	/**
 	 * Populate the GUI with data from IM systems
 	 */
@@ -81,11 +81,11 @@ protected:
 	 * Populate a listbox with a contact's IM data
 	 */
 	void populateIM( const Kopete::Contact *contact, const QPixmap &icon, 
-			K3ListBox *combo, const Kopete::PropertyTmpl &property );
+			QListWidget *combo, const Kopete::PropertyTmpl &property );
 	
 	/** Check the selected item is not the first (existing KABC) item, or the same as it */
 	bool newValue( QComboBox *combo );
-	QStringList newValues( K3ListBox *listBox, uint counter );
+	QStringList newValues( QListWidget *listBox, int counter );
 	
 	// the GUI
 	QWidget *mParent;

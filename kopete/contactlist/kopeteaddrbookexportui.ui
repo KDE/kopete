@@ -52,25 +52,13 @@
     </widget>
    </item>
    <item row="5" column="1" >
-    <widget class="K3ListBox" name="mWorkPhones" >
-     <property name="selectionMode" >
-      <enum>Q3ListBox::Extended</enum>
-     </property>
-    </widget>
+    <widget class="QListWidget" name="mWorkPhones" > </widget>
    </item>
    <item row="6" column="1" >
-    <widget class="K3ListBox" name="mMobilePhones" >
-     <property name="selectionMode" >
-      <enum>Q3ListBox::Extended</enum>
-     </property>
-    </widget>
+    <widget class="QListWidget" name="mMobilePhones" > </widget>
    </item>
    <item row="4" column="1" >
-    <widget class="K3ListBox" name="mHomePhones" >
-     <property name="selectionMode" >
-      <enum>Q3ListBox::Extended</enum>
-     </property>
-    </widget>
+    <widget class="QListWidget" name="mHomePhones" > </widget>
    </item>
    <item row="5" column="0" >
     <widget class="QLabel" name="mLblWorkPhone" >
@@ -122,11 +110,7 @@
     </widget>
    </item>
    <item row="2" column="1" >
-    <widget class="K3ListBox" name="mEmails" >
-     <property name="selectionMode" >
-      <enum>Q3ListBox::Extended</enum>
-     </property>
-    </widget>
+    <widget class="QListWidget" name="mEmails" > </widget>
    </item>
    <item row="2" column="0" >
     <widget class="QLabel" name="mLblEmail" >
@@ -140,13 +124,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>K3ListBox</class>
-   <extends>Q3ListBox</extends>
-   <header>k3listbox.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>mFirstName</tabstop>
   <tabstop>mLastName</tabstop>
