@@ -30,10 +30,10 @@
 #include <qpainter.h>
 #include <qrect.h>
 #include <qtimer.h>
-#include <q3header.h>
 #include <qstyle.h>
 #include <qstyleoption.h>
 #include <QList>
+#include <QHeaderView>
 
 #include <limits.h>
 
@@ -955,14 +955,14 @@ bool Item::Private::animateChanges = true;
 bool Item::Private::fadeVisibility = true;
 bool Item::Private::foldVisibility = true;
 
-Item::Item( Q3ListViewItem *parent, QObject *owner )
- : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
+Item::Item( QTreeWidgetItem *parent, QObject *owner )
+ : QObject( owner ), QTreeWidgetItem( parent ), d( new Private(this) )
 {
-	initLVI(parent->listView());
+	initLVI(parent->treeWidget());
 }
 
-Item::Item( Q3ListView *parent, QObject *owner )
- : QObject( owner ), K3ListViewItem( parent ), d( new Private(this) )
+Item::Item( QTreeWidget *parent, QObject *owner )
+ : QObject( owner ), QTreeWidgetItem( parent ), d( new Private(this) )
 {
 	initLVI(parent);
 }
@@ -981,7 +981,7 @@ void Item::setEffects( bool animation, bool fading, bool folding )
 
 void Item::initLVI(QObject* parent)
 {
-	connect( listView()->header(), SIGNAL(sizeChange(int,int,int)), SLOT(slotColumnResized()) );
+	connect( treeWidget()->header(), SIGNAL(sectionResized(int,int,int)), SLOT(slotColumnResized()) );
 	connect( &d->layoutTimer, SIGNAL(timeout()), SLOT(slotLayoutItems()) );
 	connect (this, SIGNAL (visibilityChanged(bool)), parent, SIGNAL (visibleSizeChanged()) );
 	//connect( &d->layoutAnimateTimer, SIGNAL(timeout()), SLOT(slotLayoutAnimateItems()) );
@@ -1013,11 +1013,11 @@ void Item::slotLayoutItems()
 
 	for ( uint n = 0; n < components(); ++n )
 	{
-		int width = listView()->columnWidth(n);
+		int width = treeWidget()->columnWidth(n);
 		if ( n == 0 )
 		{
-			int d = depth() + (listView()->rootIsDecorated() ? 1 : 0);
-			width -= d * listView()->treeStepSize();
+			int d = depth() + (treeWidget()->rootIsDecorated() ? 1 : 0);
+			width -= d * treeWidget()->indentation();
 		}
 
 		int height = component( n )->heightForWidth( width );
@@ -1139,7 +1139,7 @@ void Item::repaint()
 	// if we're about to relayout, don't bother painting yet.
 	if ( d->layoutTimer.isActive() )
 		return;
-	listView()->repaintItem( this );
+	this->treeWidget()->update();
 }
 
 void Item::relayout()
@@ -1149,7 +1149,8 @@ void Item::relayout()
 
 void Item::setup()
 {
-	K3ListViewItem::setup();
+	//FIXME:
+	//QTreeWidgetItem::setup();
 	slotLayoutItems();
 }
 
@@ -1166,32 +1167,45 @@ void Item::setHeight( int )
 		    vis = Private::visibilityFoldSteps;
 		minHeight = (minHeight * vis) / Private::visibilityFoldSteps;
 	}
-	K3ListViewItem::setHeight( minHeight );
+	this->setHeight( minHeight );
 }
 
-int Item::width( const QFontMetrics &, const Q3ListView *lv, int c ) const
+int Item::width( const QFontMetrics &, const QTreeWidget *lv, int c ) const
 {
 	// Qt computes the itemRect from this. we want the whole item to be
 	// clickable, so we return the widest we could possibly be.
 	return lv->header()->sectionSize( c );
 }
 
-void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align )
+int Item::depth( ) const
+{
+	int itemDepth = 0;
+	QTreeWidgetItem *item = this->treeWidget()->currentItem();
+
+	while(item->parent() != 0) {
+		++itemDepth;
+		item = item->parent();
+	}
+
+	return itemDepth;
+}
+
+void Item::paintCell( QPainter *p, const QPalette &cg, int column, int width, int align )
 {
 	Q_UNUSED(align);
-	QPixmap back( width, height() );
+	QPixmap back( width, treeWidget()->height() );
 	QPainter paint( &back );
-	//K3ListViewItem::paintCell( &paint, cg, column, width, align );
+	//QTreeWidgetItem::paintCell( &paint, cg, column, width, align );
 	// PASTED FROM KLISTVIEWITEM:
 	// set the alternate cell background colour if necessary
 	QColorGroup _cg = cg;
-	_cg.setColor( listView()->backgroundRole(), backgroundColor(column) );
+	_cg.setColor( treeWidget()->backgroundRole(), backgroundColor(column) );
 
 // PASTED FROM QLISTVIEWITEM
 	{
 		QPainter *p = &paint;
 
-		Q3ListView *lv = listView();
+		QTreeWidget *lv = treeWidget();
 		if ( !lv )
 			return;
 		QFontMetrics fm( p->fontMetrics() );
@@ -1201,13 +1215,13 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 
 		// removed text truncating code from Qt - we do that differently, further on
 
-		int marg = lv->itemMargin();
+		int marg = lv->autoScrollMargin();
 		QBrush b;
 		if (isSelected())
 			b = _cg.brush(QPalette::Normal, QPalette::Highlight);
 		else
 			b = _cg.background();
-		p->fillRect( 0, 0, width, height(), b );
+		p->fillRect( 0, 0, width, treeWidget()->height(), b );
 	//	const QPixmap * icon = pixmap( column );
 #ifdef __GNUC__
 #warning Item::paintCell needs fixing
@@ -1227,9 +1241,9 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 			if ( lv->isEnabled() )
 				how |= QStyle::State_Enabled;
 
-			lv->style()->drawComplexControl( QStyle::CC_Q3ListView,
+			lv->style()->drawComplexControl( QStyle::CC_QTreeWidget,
 						p, lv, QRect( 0, 0, width, height() ), lv->colorGroup(),
-						how, QStyle::SC_Q3ListView, QStyle::SC_None,
+						how, QStyle::SC_QTreeWidget, QStyle::SC_None,
 						opt );
 		}
 
@@ -1252,10 +1266,10 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 				textheight++;
 			if ( textheight < height() ) {
 				int w = lv->treeStepSize() / 2;
-				lv->style()->drawComplexControl( QStyle::CC_Q3ListView, p, lv,
+				lv->style()->drawComplexControl( QStyle::CC_QTreeWidget, p, lv,
 								QRect( 0, textheight, w + 1, height() - textheight + 1 ), _cg,
 								lv->isEnabled() ? QStyle::State_Enabled : QStyle::State_Default,
-								QStyle::SC_Q3ListViewExpand,
+								QStyle::SC_QTreeWidgetExpand,
 								(uint)QStyle::SC_All, QStyleOption( this ) );
 			}
         }
@@ -1314,7 +1328,7 @@ void Item::componentResized( Component *component )
 
 void Item::mySetVisible ( bool b )
 {
-	setVisible (b);
+	setHidden (!b);
 	emit visibilityChanged (b);
 }
 

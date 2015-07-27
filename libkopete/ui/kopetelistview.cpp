@@ -29,6 +29,7 @@
 #include <QKeyEvent>
 #include <QEvent>
 #include <QHelpEvent>
+#include <QScrollBar>
 #include <QDragMoveEvent>
 #include <QTimerEvent>
 #include <QMouseEvent>
@@ -143,17 +144,17 @@ public:
 };
 
 ListView::ListView( QWidget *parent )
- : K3ListView( parent ), d( new Private )
+ : QTreeWidget( parent ), d( new Private )
 {
 	connect( &d->sortTimer, SIGNAL(timeout()), this, SLOT(slotSort()) );
 
 	// We have our own tooltips, don't use the default QListView ones
-	setShowToolTips( false );
+	setAttribute(Qt::WA_AlwaysShowToolTips, false);
 
-	connect( this, SIGNAL(contextMenu(K3ListView*,Q3ListViewItem*,QPoint)),
-	         SLOT(slotContextMenu(K3ListView*,Q3ListViewItem*,QPoint)) );
-	connect( this, SIGNAL(doubleClicked(Q3ListViewItem*)),
-	         SLOT(slotDoubleClicked(Q3ListViewItem*)) );
+	connect( this, SIGNAL(customContextMenuRequested(QPoint)),
+	         SLOT(slotContextMenu(QTreeWidget*,QTreeWidgetItem*,QPoint)) );
+	connect( this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+	         SLOT(slotDoubleClicked(QTreeWidgetItem*)) );
 
 	// set up flags for nicer painting
 	setAttribute( Qt::WA_StaticContents, false );
@@ -181,16 +182,16 @@ ListView::~ListView()
 	delete d;
 }
 
-void ListView::slotDoubleClicked( Q3ListViewItem *item )
+void ListView::slotDoubleClicked( QTreeWidgetItem *item )
 {
 	kDebug( 14000 ) ;
 
 	if ( item )
-		setOpen( item, !isOpen( item ) );
+		item->setExpanded( !item->isExpanded() );
 }
 
-void ListView::slotContextMenu( K3ListView * /*listview*/,
-	Q3ListViewItem *item, const QPoint &/*point*/ )
+void ListView::slotContextMenu( QTreeWidget * /*listview*/,
+	QTreeWidgetItem *item, const QPoint &/*point*/ )
 {
 	if ( item && !item->isSelected() )
 	{
@@ -209,12 +210,12 @@ void ListView::setShowTreeLines( bool bShowAsTree )
 	if ( bShowAsTree )
 	{
 		setRootIsDecorated( true );
-		setTreeStepSize( 20 );
+		setIndentation( 20 );
 	}
 	else
 	{
 		setRootIsDecorated( false );
-		setTreeStepSize( 0 );
+		setIndentation( 0 );
 	}
 	// TODO: relayout all items. their width may have changed, but they won't know about it.
 }
@@ -229,17 +230,19 @@ void ListView::setShowTreeLines( bool bShowAsTree )
  */
 void ListView::keyPressEvent( QKeyEvent *e )
 {
-	Q3ListViewItem *item = currentItem();
-	if ( (e->key() == Qt::Key_F2) && item && item->isVisible() )
-		rename( item, 0 );
-	else if ( (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && item && item->isVisible() )
+	QTreeWidgetItem *item = currentItem();
+	if ( (e->key() == Qt::Key_F2) && item && !( item->isHidden() ) ) {
+		qDebug() << "\nHelp !" << "\n";
+		//FIXME: rename( item, 0 );
+	}
+	else if ( (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && item && !( item->isHidden() ) )
 	{
 		// must provide a point within the item; emitExecute checks for this
-		QPoint p = viewport()->mapToGlobal(itemRect(item).center());
-		emitExecute( currentItem(), p, 0 );
+		QPoint p = viewport()->mapToGlobal(visualItemRect(item).center());
+		//FIXME: emitExecute( currentItem(), p, 0 );
 	}
 	else
-		K3ListView::keyPressEvent(e);
+		QTreeWidget::keyPressEvent(e);
 }
 
 void ListView::delayedSort()
@@ -279,10 +282,10 @@ void ListView::setSmoothScrolling( bool b )
 		// Install the timer
 		d->smoothScrollingTimer = startTimer( (int)d->smoothScrollingTimerInterval );
 		// If we want to enable smooth scrolling when item has changed with keypresses etc, we need this
-		connect( this, SIGNAL(currentChanged(Q3ListViewItem*)), this, SLOT(slotCurrentChanged(Q3ListViewItem*)) );
+		connect( this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(slotCurrentChanged(QTreeWidgetItem*)) );
 		// Disable autoscroll, we will do it the smooth way.
-		d->smoothScrollDragAutoScroll = dragAutoScroll();
-		setDragAutoScroll( false );
+		d->smoothScrollDragAutoScroll = hasAutoScroll();
+		setAutoScroll( false );
 		// Init the timers to simulate continuous press
 		d->continuousLinePressTimer = startTimer( d->continuousLinePressTimerInterval );
 		d->continuousPagePressTimer = startTimer( d->continuousPagePressTimerInterval );
@@ -298,9 +301,9 @@ void ListView::setSmoothScrolling( bool b )
 		killTimer( (int)d->smoothScrollingTimer );
 		d->smoothScrollingTimer = 0;
 		// We don't need to list currentChanged anymore
-		disconnect( this, SIGNAL(currentChanged(Q3ListViewItem*)), this, SLOT(slotCurrentChanged(Q3ListViewItem*)) );
+		disconnect( this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(slotCurrentChanged(QTreeWidgetItem*)) );
 		// Restore the autoscroll
-		setDragAutoScroll( d->smoothScrollDragAutoScroll );
+		setAutoScroll( d->smoothScrollDragAutoScroll );
 		// Kill the continuous press timers
 		killTimer( d->continuousLinePressTimer  );
 		d->continuousLinePressTimer = 0;
@@ -334,7 +337,7 @@ void ListView::setScrollAutoHide( bool b )
 		// Set scrollbar auto-hiding state true
 		d->scrollAutoHide = true;
 		// Turn of the bar now
-		setVScrollBarMode( AlwaysOff );
+		setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 		// Start the timer to handle auto-hide
 		killTimer( d->scrollAutoHideTimer );
 		d->scrollAutoHideTimer = startTimer( 1000 );
@@ -342,7 +345,7 @@ void ListView::setScrollAutoHide( bool b )
 	else
 	{
 		d->scrollAutoHide = false;
-		setVScrollBarMode( Auto );
+		setVerticalScrollBarPolicy( Qt::ScrollBarAsNeeded );
 		killTimer( d->scrollAutoHideTimer );
 	}
 }
@@ -369,9 +372,9 @@ void ListView::setScrollHide( bool b )
 
 	d->scrollHide = b;
 	if( b )
-		setVScrollBarMode( AlwaysOff );
+		setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 	else
-		setVScrollBarMode( Auto );
+		setVerticalScrollBarPolicy( Qt::ScrollBarAsNeeded );
 }
 
 bool ListView::scrollHide() const
@@ -462,7 +465,7 @@ void ListView::timerEvent( QTimerEvent *e )
 	else if( e->timerId() == d->scrollAutoHideTimer )
 	{
 		if( !d->scrollAutoHideCounter-- )
-			setVScrollBarMode( AlwaysOff );
+			setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 	}
 }
 
@@ -637,9 +640,9 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			{ // If he's too close to the upper edge, let's smootly scroll up
 				d->targetScrollBarValue -= ( d->smoothAutoScrollOffset - event->pos().y() ) * d->scrollBarAccelerationConstant / 3;
 			}
-			else if( event->pos().y() > ( visibleHeight() - d->smoothAutoScrollOffset ) )
+			else if( event->pos().y() > ( height() - d->smoothAutoScrollOffset ) )
 			{ // If he's too close to the bottom edege, then let's smoothle scroll down
-				d->targetScrollBarValue += ( event->pos().y() - visibleHeight() + d->smoothAutoScrollOffset ) * d->scrollBarAccelerationConstant / 3;
+				d->targetScrollBarValue += ( event->pos().y() - height() + d->smoothAutoScrollOffset ) * d->scrollBarAccelerationConstant / 3;
 			}
 			// Make sure if the targetScrollBarValue is in the scroll bar values range
 			d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minimum() );
@@ -652,15 +655,15 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 
 			if( d->scrollAutoHide ) // If auto-hide scroll bar is enabled
 			{
-				setVScrollBarMode( Auto );			// show the scroll bar
+				setVerticalScrollBarPolicy( Qt::ScrollBarAsNeeded );			// show the scroll bar
 				d->scrollAutoHideCounter = 9999;		// Mouse is on the contact list, so don't hide it
 			}
 
 			if( d->mouseNavigation )
 			{
-				const double offset = static_cast<double>(visibleHeight())/50.0 + d->mouseNavigationOffset;
+				const double offset = static_cast<double>(height())/50.0 + d->mouseNavigationOffset;
 				d->targetScrollBarValue = ( event->y() - offset ) * ( static_cast<double>(verticalScrollBar()->maximum()) /
-										   ( static_cast<double>(visibleHeight()) - offset * 2 ) );
+										   ( static_cast<double>(height()) - offset * 2 ) );
 			}
 		}
 		else if( e->type() == QEvent::Leave )
@@ -675,15 +678,15 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			QHelpEvent *helpEvent = static_cast<QHelpEvent *>(e);
 			if( Item *item = dynamic_cast<Item*>( itemAt( helpEvent->pos() ) ) )
 			{
-				QRect itemRegion = this->itemRect( item );
-
-				uint leftMargin = this->treeStepSize() * ( item->depth() + ( this->rootIsDecorated() ? 1 : 0 ) ) + itemMargin();
+				QRect itemRegion = this->visualItemRect( item );
+				QTreeWidgetItem *currItem = item->treeWidget()->currentItem();
+				uint leftMargin = this->indentation() * ( item->depth() + ( this->rootIsDecorated() ? 1 : 0 ) ) + autoScrollMargin();
 
 				uint xAdjust = itemRegion.left() + leftMargin;
 				uint yAdjust = itemRegion.top();
 				QPoint relativePosition( helpEvent->pos().x() - xAdjust, helpEvent->pos().y() - yAdjust );
 
-				std::pair<QString,QRect> toolTip = item->toolTip( relativePosition );
+				std::pair<QString,QRect> toolTip( currItem->toolTip(currItem->treeWidget()->columnAt(itemRegion.left())), itemRegion );
 				if ( toolTip.first.isEmpty() )
 					return false;
 
@@ -693,23 +696,24 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 			}
 		}
 
-		return K3ListView::eventFilter( o, e ); // Pass the event to K3ListView
+		return QTreeWidget::eventFilter( o, e ); // Pass the event to QTreeWidget
 	}
 	else
 	{
 // 		kDebug( 14000 ) << "Unhandled event: [" << o << "][" << o->name() << "][" << o->metaObject()->className() << "][" << e->type() << "]";
-		return K3ListView::eventFilter( o, e ); // Pass the event to K3ListView
+		return QTreeWidget::eventFilter( o, e ); // Pass the event to QTreeWidget
 	}
 
 	return false;
 }
 
-void ListView::slotCurrentChanged( Q3ListViewItem *item )
+void ListView::slotCurrentChanged( QTreeWidgetItem *item )
 {
+	int itemHeight = rowHeight(indexFromItem(item));
 	if( !item ) return;
 	// If the current item changed due to mouse click then don't center it in the listview. Do this just for key presses.
 	if( d->mousePressed ){ d->mousePressed = false; return; }
-	d->targetScrollBarValue = itemPos(item) - static_cast<double>(visibleHeight()/2.0) + item->height();
+	d->targetScrollBarValue = columnAt(indexOfTopLevelItem(item)) - static_cast<double>(height()/2.0) + itemHeight;
 	// Make sure it's in the boundaries of scroll bar
 	d->targetScrollBarValue = qMax( d->targetScrollBarValue, ( double )verticalScrollBar()->minimum() );
 	d->targetScrollBarValue = qMin( d->targetScrollBarValue, ( double )verticalScrollBar()->maximum() );

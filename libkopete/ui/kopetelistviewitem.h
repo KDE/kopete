@@ -19,7 +19,7 @@
 #ifndef KOPETE_LISTVIEWITEM_H
 #define KOPETE_LISTVIEWITEM_H
 
-#include <k3listview.h>
+#include <QTreeWidget>
 #include <kopetecontact.h>
 #include <kopete_export.h>
 
@@ -393,19 +393,19 @@ public:
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class KOPETE_EXPORT Item : public QObject, public K3ListViewItem, public ComponentBase
+class KOPETE_EXPORT Item : public QObject, public QTreeWidgetItem, public ComponentBase
 {
 	Q_OBJECT
 public:
-	explicit Item( Q3ListView *parent, QObject *owner = 0 );
-	explicit Item( Q3ListViewItem *parent, QObject *owner = 0 );
+	explicit Item( QTreeWidget *parent, QObject *owner = 0 );
+	explicit Item( QTreeWidgetItem *parent, QObject *owner = 0 );
 	~Item();
 
 	void repaint();
 	void relayout();
 
 	void setup();
-	virtual void paintCell( QPainter *p, const QColorGroup &cg, int column, int width, int align );
+	virtual void paintCell( QPainter *p, const QPalette &cg, int column, int width, int align );
 	//TODO: startRename(...)
 
 	float opacity();
@@ -422,7 +422,8 @@ public:
 	 */
 	static void setEffects( bool animation, bool fading, bool folding );
 
-	int width( const QFontMetrics & fm, const Q3ListView * lv, int c ) const;
+	int width( const QFontMetrics & fm, const QTreeWidget * lv, int c ) const;
+	int depth( ) const;
 
 	/**
 	 * Show or hide this item in a clean way depending on whether it matches

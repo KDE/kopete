@@ -19,7 +19,7 @@
 #ifndef KOPETE_LISTVIEW_H
 #define KOPETE_LISTVIEW_H
 
-#include <k3listview.h>
+#include <QTreeWidget>
 #include <kopete_export.h>
 
 class QKeyEvent;
@@ -34,7 +34,7 @@ namespace ListView {
  * @author Engin AYDOGAN <engin@bzzzt.biz>
  * @author Richard Smith <kde@metafoo.co.uk>
  */
-class KOPETE_EXPORT ListView : public K3ListView
+class KOPETE_EXPORT ListView : public QTreeWidget
 {
 	Q_OBJECT
 
@@ -132,7 +132,7 @@ public slots:
 	/**
 	 * Calls QListView::sort()
 	 */
-	void slotSort() { sort(); }
+	void slotSort() { sortItems(currentColumn(), Qt::AscendingOrder); }
 
 protected:
 	virtual void keyPressEvent( QKeyEvent *e );
@@ -152,8 +152,8 @@ signals:
 	void visibleSizeChanged ();
 
 private slots:
-	void slotContextMenu(K3ListView*,Q3ListViewItem *item, const QPoint &point );
-	void slotDoubleClicked( Q3ListViewItem *item );
+	void slotContextMenu(QTreeWidget*,QTreeWidgetItem *item, const QPoint &point );
+	void slotDoubleClicked( QTreeWidgetItem *item );
 	/**
 	 * To enable smooth scroll to focus on highlighted items when they are highlighted
 	 * by a key press we use this slot. slotCurrentChanged is connected to the currentChanged
@@ -161,7 +161,7 @@ private slots:
 	 * by the mouse, then we don't do anything, since the item is on the viewable area already.
 	 * Otherwise, we focus (bring it to the center of the list) smoothly.
 	 */
-	void slotCurrentChanged( Q3ListViewItem *item );
+	void slotCurrentChanged( QTreeWidgetItem *item );
 
 private:
 	class Private;

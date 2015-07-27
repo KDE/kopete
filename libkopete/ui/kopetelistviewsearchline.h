@@ -18,7 +18,7 @@
 #ifndef KOPETELISTVIEWSEARCHLINE_H
 #define KOPETELISTVIEWSEARCHLINE_H
 
-#include <k3listviewsearchline.h>
+#include <ktreewidgetsearchline.h>
 #include <kopete_export.h>
 
 namespace Kopete {
@@ -27,7 +27,7 @@ namespace ListView {
 
 class ListView;
 
-class KOPETE_EXPORT SearchLine : public K3ListViewSearchLine
+class KOPETE_EXPORT SearchLine : public KTreeWidgetSearchLine
 {
 	Q_OBJECT
 public:
@@ -48,8 +48,8 @@ public:
 	
 protected:
 	virtual void checkItemParentsNotVisible();
-	virtual bool checkItemParentsVisible( Q3ListViewItem *it );
-	virtual void setItemVisible( Q3ListViewItem *it, bool visible );
+	virtual bool checkItemParentsVisible( QTreeWidgetItem *it );
+	virtual void setItemVisible( QTreeWidgetItem *it, bool visible );
 	
 private:
 	QString search;

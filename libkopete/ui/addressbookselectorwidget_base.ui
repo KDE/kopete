@@ -74,7 +74,7 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="2" >
-    <widget class="K3ListView" name="addresseeListView" >
+    <widget class="QTreeWidget" name="addresseeListView" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
        <horstretch>0</horstretch>
@@ -86,9 +86,6 @@
      </property>
      <property name="allColumnsShowFocus" >
       <bool>true</bool>
-     </property>
-     <property name="resizeMode" >
-      <enum>Q3ListView::LastColumn</enum>
      </property>
      <column>
       <property name="text" >
@@ -141,31 +138,16 @@
       </widget>
      </item>
      <item>
-      <widget class="K3ListViewSearchLine" native="1" name="kListViewSearchLine" />
+      <widget class="KTreeWidgetSearchLine" native="1" name="kListViewSearchLine" />
      </item>
     </layout>
    </item>
   </layout>
  </widget>
-  <customwidgets>
-  <customwidget>
-   <class>K3ListView</class>
-   <extends>Q3ListView</extends>
-   <header>k3listview.h</header>
-  </customwidget>
-  <customwidget>
-   <class>K3ListViewSearchLine</class>
-   <extends></extends>
-   <header>k3listviewsearchline.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>addresseeListView</tabstop>
   <tabstop>addAddresseeButton</tabstop>
  </tabstops>
- <includes>
-  <include location="global" >k3listviewsearchline.h</include>
- </includes>
  <resources/>
  <connections/>
 </ui>

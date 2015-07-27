@@ -25,7 +25,7 @@ namespace UI {
 namespace ListView {
 
 SearchLine::SearchLine( QWidget *parent, ListView *listView )
-	: K3ListViewSearchLine( parent, listView ), searchEmpty(true)
+	: KTreeWidgetSearchLine( parent, listView ), searchEmpty(true)
 {
 }
 
@@ -41,7 +41,7 @@ void SearchLine::updateSearch( const QString &s )
 	// calls setVisible() on items with no way to customize this behaviour.
 	
 	//BEGIN code from KSearchLine::updateSearch
-		if( !listView() )
+		if( !( this->treeWidget() ) )
 		return;
 	
 	search = s.isNull() ? text() : s;
@@ -50,58 +50,59 @@ void SearchLine::updateSearch( const QString &s )
 	// If there's a selected item that is visible, make sure that it's visible
 	// when the search changes too (assuming that it still matches).
 	
-	Q3ListViewItem *currentItem = 0;
+	QTreeWidgetItem *currentItem = 0;
 	
-	switch( listView()->selectionMode() )
+	switch( this->treeWidget()->selectionMode() )
 	{
-	case K3ListView::NoSelection:
+	case QTreeWidget::NoSelection:
 		break;
-	case K3ListView::Single:
-		currentItem = listView()->selectedItem();
+	case QTreeWidget::SingleSelection:
+		currentItem = this->treeWidget()->currentItem();
 		break;
 	default:
-		for( Q3ListViewItemIterator it(listView(), Q3ListViewItemIterator::Selected | Q3ListViewItemIterator::Visible);
-		     it.current() && !currentItem; ++it )
+		for( QTreeWidgetItemIterator it(this->treeWidget(), QTreeWidgetItemIterator::Selected | QTreeWidgetItemIterator::NotHidden);
+			 (*it) && !currentItem; ++it )
 		{
-			if( listView()->itemRect( it.current() ).isValid() )
-				currentItem = it.current();
+			if( this->treeWidget()->visualItemRect( (*it) ).isValid() )
+				currentItem = (*it);
 		}
 	}
 	
 	if( keepParentsVisible() )
-		checkItemParentsVisible( listView()->firstChild() );
+		checkItemParentsVisible( this->treeWidget()->topLevelItem(0) );
 	else
 		checkItemParentsNotVisible();
 	
 	if( currentItem )
-		listView()->ensureItemVisible( currentItem );
+		this->treeWidget()->scrollToItem( currentItem );
 	//END code from KSearchLine::updateSearch
 }
 
 void SearchLine::checkItemParentsNotVisible()
 {
 	//BEGIN code from KSearchLine::checkItemParentsNotVisible
-	Q3ListViewItemIterator it( listView() );
-	for( ; it.current(); ++it )
+	QTreeWidgetItemIterator it( this->treeWidget() );
+	for( ; (*it); ++it )
 	{
-		Q3ListViewItem *item = it.current();
+		QTreeWidgetItem *item = (*it);
 		if( itemMatches( item, search ) )
-			setItemVisible( item, true );
+			this->setItemVisible( item, true );
 		else
-			setItemVisible( item, false );
+			this->setItemVisible( item, false );
 	}
 	//END code from KSearchLine::checkItemParentsNotVisible
 }
 
-bool SearchLine::checkItemParentsVisible( Q3ListViewItem *item )
+bool SearchLine::checkItemParentsVisible( QTreeWidgetItem *item )
 {
 	//BEGIN code from KSearchLine::checkItemParentsVisible
 	bool visible = false;
-	for( ; item; item = item->nextSibling() ) {
-		if( ( item->firstChild() && checkItemParentsVisible( item->firstChild() ) ) ||
+	QTreeWidgetItemIterator it(item);
+	for( ; (*it); ++it ) {
+		if( ( (*it)->child(0) && checkItemParentsVisible( (*it)->child(0) ) ) ||
 		    itemMatches( item, search ) )
 		{
-			setItemVisible( item, true );
+			(*it)->setHidden( false );
 			// OUCH! this operation just became exponential-time.
 			// however, setting an item visible sets all its descendents
 			// visible too, which we definitely don't want.
@@ -109,22 +110,22 @@ bool SearchLine::checkItemParentsVisible( Q3ListViewItem *item )
 			// so this really just doubles the runtime, if that.
 			// this still can be done in O(n) time by a mark-set process,
 			// but that's overkill in our case.
-			checkItemParentsVisible( item->firstChild() );
+			checkItemParentsVisible( (*it)->child(0) );
 			visible = true;
 		}
 		else
-			setItemVisible( item, false );
+			(*it)->setHidden( true );
 	}
 	return visible;
 	//END code from KSearchLine::checkItemParentsVisible
 }
 
-void SearchLine::setItemVisible( Q3ListViewItem *it, bool b )
+void SearchLine::setItemVisible( QTreeWidgetItem *it, bool b )
 {
 	if( Item *item = dynamic_cast<Item*>( it ) )
 		item->setSearchMatch( b, !searchEmpty );
 	else
-		it->setVisible( b );
+		it->setHidden( !b );
 }
 
 } // namespace ListView

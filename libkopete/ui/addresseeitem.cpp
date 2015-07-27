@@ -24,12 +24,13 @@
 #include <q3groupbox.h>
 #include <qregexp.h>
 #include <QPixmap>
+#include <QIcon>
 
 #include <klocale.h>
 #include <kdebug.h>
 
-AddresseeItem::AddresseeItem( Q3ListView *parent, const KABC::Addressee &addressee) :
-  K3ListViewItem( parent ),
+AddresseeItem::AddresseeItem( QTreeWidget *parent, const KABC::Addressee &addressee) :
+  QTreeWidgetItem( parent ),
   mAddressee( addressee )
 {
   //We can't save showphoto because we don't have a d pointer
@@ -39,7 +40,7 @@ AddresseeItem::AddresseeItem( Q3ListView *parent, const KABC::Addressee &address
   if(pic.isIntern())
   {
     QPixmap qpixmap = QPixmap::fromImage( pic.data().scaledToWidth(60) ); //60 pixels seems okay.. kmail uses 60 btw
-    setPixmap( Photo,qpixmap );
+	setIcon(Photo, QIcon(qpixmap));
   }
 
   setText( Name, addressee.realName() );
