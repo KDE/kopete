@@ -22,8 +22,10 @@
 #include <kdemacros.h>
 #include "kopete_export.h"
 #include <kdialog.h>
+#include <ktreewidgetsearchline.h>
 
-#include <Qt3Support/Q3ListView>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 
 namespace KABC
 {
@@ -80,7 +82,7 @@ public:
 protected slots:
 	virtual void accept();
 	virtual void reject();
-	void slotWidgetAddresseeListClicked( Q3ListViewItem *addressee );
+	void slotWidgetAddresseeListClicked( QTreeWidgetItem *addressee );
 protected:
 	 AddressBookSelectorWidget *m_addressBookSelectorWidget;
 };

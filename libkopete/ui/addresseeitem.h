@@ -22,14 +22,14 @@
 #define ADDRESSEEITEM_H
 
 #include <klineedit.h>
-#include <k3listview.h>
+#include <QTreeWidget>
 
 #include <kabc/addressbook.h>
 
 /**
   @short Special ListViewItem
 */
-class AddresseeItem : public K3ListViewItem
+class AddresseeItem : public QTreeWidgetItem
 {
   public:
 
@@ -46,7 +46,7 @@ class AddresseeItem : public K3ListViewItem
       @param parent    The parent listview.
       @param addressee The associated addressee.
     */
-    AddresseeItem( Q3ListView *parent, const KABC::Addressee &addressee );
+    AddresseeItem( QTreeWidget *parent, const KABC::Addressee &addressee );
    
     /**
       Returns the addressee.

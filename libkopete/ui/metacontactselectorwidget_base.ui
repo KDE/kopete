@@ -94,7 +94,6 @@
  <includes>
   <include location="global" >kopetelistviewsearchline.h</include>
   <include location="global" >kopetelistview.h</include>
-  <include location="global" >q3header.h</include>
  </includes>
  <resources/>
  <connections/>

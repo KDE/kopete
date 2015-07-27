@@ -77,7 +77,7 @@ protected slots:
 	 */
 	void slotLoadAddressees();
 signals:
-	void addresseeListClicked( Q3ListViewItem *addressee );
+	void addresseeListClicked( QTreeWidgetItem *addressee );
 	void addAddresseeClicked();
 };
 

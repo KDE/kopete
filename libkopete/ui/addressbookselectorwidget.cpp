@@ -26,7 +26,6 @@
 */
 #include "addressbookselectorwidget.h"
 
-#include <qcheckbox.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -36,9 +35,12 @@
 
 #include <kpushbutton.h>
 #include <kdebug.h>
-#include <k3listview.h>
-#include <k3listviewsearchline.h>
+#include <ktreewidgetsearchline.h>
 #include <qlabel.h>
+#include <qcheckbox.h>
+#include <QHeaderView>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 
 
 #include <addresseeitem.h>
@@ -63,23 +65,26 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 	connect( addAddresseeButton, SIGNAL(clicked()), SLOT(slotAddAddresseeClicked()) );
 	connect( addAddresseeButton, SIGNAL(clicked()), SIGNAL(addAddresseeClicked()) );
 
-	connect( addresseeListView, SIGNAL(clicked(Q3ListViewItem*)),
-			SIGNAL(addresseeListClicked(Q3ListViewItem*)) );
-	connect( addresseeListView, SIGNAL(selectionChanged(Q3ListViewItem*)),
-			SIGNAL(addresseeListClicked(Q3ListViewItem*)) );
-	connect( addresseeListView, SIGNAL(spacePressed(Q3ListViewItem*)),
-			SIGNAL(addresseeListClicked(Q3ListViewItem*)) );
+	connect( addresseeListView, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+			SIGNAL(addresseeListClicked(QTreeWidgetItem*)) );
+	connect( addresseeListView, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+			SIGNAL(addresseeListClicked(QTreeWidgetItem*)) );
+	//FIXME: Find the correct replacement for Q3ListView::spacePressed(Q3ListViewItem*)
+	connect( addresseeListView, SIGNAL(itemPressed(QTreeWidgetItem*,int)),
+			SIGNAL(addresseeListClicked(QTreeWidgetItem*)) );
 
 	connect( m_addressBook, SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotLoadAddressees()) );
 
 	//We should add a clear KAction here.  But we can't really do that with a designer file :\  this sucks
 
-	addresseeListView->setColumnText(2, KIcon(QLatin1String("internet-mail")), i18n("Email"));
+	addresseeListView->header()->setResizeMode(QHeaderView::ResizeToContents);
+	addresseeListView->currentItem()->setIcon(2, QIcon(QLatin1String("internet-mail")));
+	addresseeListView->currentItem()->setText(2, i18n("Email"));
 
-	kListViewSearchLine->setListView(addresseeListView);
+	kListViewSearchLine->setTreeWidget(addresseeListView);
 	slotLoadAddressees();
 
-	addresseeListView->setColumnWidthMode(0, Q3ListView::Manual);
+	addresseeListView->header()->setResizeMode(QHeaderView::ResizeToContents);
 	addresseeListView->setColumnWidth(0, 63); //Photo is 60, and it's nice to have a small gap, imho
 }
 
@@ -93,7 +98,7 @@ AddressBookSelectorWidget::~AddressBookSelectorWidget()
 KABC::Addressee AddressBookSelectorWidget::addressee()
 {
 	AddresseeItem *item = 0L;
-	item = static_cast<AddresseeItem *>( addresseeListView->selectedItem() );
+	item = static_cast<AddresseeItem *>( addresseeListView->currentItem() );
 
 	if ( item )
 		m_addressee = item->addressee();
@@ -104,15 +109,15 @@ KABC::Addressee AddressBookSelectorWidget::addressee()
 void AddressBookSelectorWidget::selectAddressee( const QString &uid )
 {
 	// iterate trough list view
-	Q3ListViewItemIterator it( addresseeListView );
-	while( it.current() )
+	QTreeWidgetItemIterator it( addresseeListView );
+	while( (*it) )
 	{
-		AddresseeItem *addrItem = (AddresseeItem *) it.current();
+		AddresseeItem *addrItem = (AddresseeItem *) ( (*it) );
 		if ( addrItem->addressee().uid() == uid )
 		{
 			// select the contact item
-			addresseeListView->setSelected( addrItem, true );
-			addresseeListView->ensureItemVisible( addrItem );
+			addrItem->setSelected( true );
+			addresseeListView->scrollToItem( addrItem, QAbstractItemView::EnsureVisible );
 		}
 		++it;
 	}
@@ -120,7 +125,7 @@ void AddressBookSelectorWidget::selectAddressee( const QString &uid )
 
 bool AddressBookSelectorWidget::addresseeSelected()
 {
-	return addresseeListView->selectedItem() ? true : false;
+	return addresseeListView->currentItem() ? true : false;
 }
 
 /**  Read in contacts from addressbook, and select the contact that is for our nick. */
@@ -154,13 +159,16 @@ void AddressBookSelectorWidget::slotAddAddresseeClicked()
 		Kopete::KABCPersistence::self()->writeAddressBook( 0 );
 		slotLoadAddressees();
 		// select the addressee we just added
-		Q3ListViewItem * added = addresseeListView->findItem( addresseeName, 1 );
+		QList<QTreeWidgetItem *> added = addresseeListView->findItems( addresseeName, 0, 1 );
+		foreach(QTreeWidgetItem *wi, added) {
+			wi->setSelected( true );
+			addresseeListView->scrollToItem(wi, QAbstractItemView::EnsureVisible);
+		}
 		kListViewSearchLine->clear();
 		kListViewSearchLine->updateSearch();
 		kListViewSearchLine->clear();
 		kListViewSearchLine->updateSearch();
-		addresseeListView->setSelected( added, true );
-		addresseeListView->ensureItemVisible( added );
+		//addresseeListView->scrollToItem( added, 0 );
 	}
 }
 
