@@ -21,7 +21,7 @@ ui/yahoouserinfodialog.cpp
 ui/yahoochatselectordialog.cpp
 )
 
-kde4_add_ui_files(kopete_yahoo_ui_SRCS 
+ki18n_wrap_ui(kopete_yahoo_ui_SRCS 
 ui/yahooadd.ui 
 ui/yahooinvitelistbase.ui 
 ui/yahooverifyaccountbase.ui 
@@ -47,9 +47,9 @@ set(kopete_yahoo_PART_SRCS
    yahoowebcam.cpp )
 
 
-kde4_add_plugin(kopete_yahoo ${kopete_yahoo_PART_SRCS})
+add_library(kopete_yahoo MODULE ${kopete_yahoo_PART_SRCS})
 
-target_link_libraries(kopete_yahoo ${KDE4_KIO_LIBS} kopete kyahoo ${QT_QT3SUPPORT_LIBS} ${JASPER_LIBRARIES})
+target_link_libraries(kopete_yahoo KF5::KIOCore kopete kyahoo ${QT_QT3SUPPORT_LIBS} ${JASPER_LIBRARIES})
 if(NOT DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_yahoo kopete_videodevice)
 endif(NOT DISABLE_VIDEOSUPPORT)

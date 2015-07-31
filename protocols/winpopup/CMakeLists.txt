@@ -12,7 +12,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/libwinpopup/
 
 set(kopete_wp_ui_SRCS)
 
-kde4_add_ui_files(kopete_wp_ui_SRCS 
+ki18n_wrap_ui(kopete_wp_ui_SRCS 
 ui/wpaddcontactbase.ui 
 ui/wpuserinfowidget.ui 
 ui/wpeditaccountbase.ui 
@@ -33,10 +33,10 @@ set(kopete_wp_PART_SRCS
    wpuserinfo.cpp )
 
 
-kde4_add_plugin(kopete_wp ${kopete_wp_PART_SRCS})
+add_library(kopete_wp MODULE ${kopete_wp_PART_SRCS})
 
 
-target_link_libraries(kopete_wp  ${KDE4_KIO_LIBS} kopete )
+target_link_libraries(kopete_wp  KF5::KIOCore kopete )
 
 install(TARGETS kopete_wp  DESTINATION ${PLUGIN_INSTALL_DIR})
 

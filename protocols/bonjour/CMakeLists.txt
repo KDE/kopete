@@ -8,6 +8,8 @@ add_subdirectory( icons )
 
 ########### next target ###############
 
+find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS KIO DNSSD)
+
 set(kopete_bonjour_PART_SRCS 
    bonjourprotocol.cpp 
    bonjourcontact.cpp 
@@ -17,17 +19,17 @@ set(kopete_bonjour_PART_SRCS
    bonjourcontactconnection.cpp
 )
 
-kde4_add_ui_files(kopete_bonjour_PART_SRCS
+ki18n_wrap_ui(kopete_bonjour_PART_SRCS
 bonjouraddui.ui
 )
 
-kde4_add_ui_files(kopete_bonjour_PART_SRCS
+ki18n_wrap_ui(kopete_bonjour_PART_SRCS
 bonjouraccountpreferences.ui
 )
 
-kde4_add_plugin(kopete_bonjour ${kopete_bonjour_PART_SRCS})
+add_library(kopete_bonjour MODULE ${kopete_bonjour_PART_SRCS})
 
-target_link_libraries(kopete_bonjour ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${KDE4_KDNSSD_LIBS} kopete)
+target_link_libraries(kopete_bonjour KF5::KIOCore KF5::PimIdentities KF5::DNSSD kopete)
 if(NOT DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_bonjour kopete_videodevice)
 endif(NOT DISABLE_VIDEOSUPPORT)

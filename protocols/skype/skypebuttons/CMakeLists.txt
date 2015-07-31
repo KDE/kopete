@@ -38,10 +38,10 @@ set( skypebuttons_SRCS
 	qtbrowserplugin/qtbrowserplugin_x11.cpp
 )
 
-QT4_GENERATE_MOC( ${CMAKE_CURRENT_SOURCE_DIR}/skypebuttons.cpp ${CMAKE_CURRENT_BINARY_DIR}/skypebuttons.moc )
+qt5_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/skypebuttons.cpp ${CMAKE_CURRENT_BINARY_DIR}/skypebuttons.moc )
 
-kde4_add_plugin( skypebuttons ${skypebuttons_SRCS} ${qtbrowserplugin_SRC} )
-target_link_libraries( skypebuttons ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} )
+add_library(skypebuttons MODULE ${skypebuttons_SRCS} ${qtbrowserplugin_SRC} )
+target_link_libraries( skypebuttons Qt5::Core Qt5::Gui )
 
 ########### install files ###############
 

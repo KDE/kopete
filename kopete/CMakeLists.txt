@@ -31,6 +31,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/contactlist
 ########### next target ###############
 
 # Contact List
+find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS NotifyConfig TextEditor)
 
 set(kopete_SRCS 
    ${kopetecontactlist_SRCS}
@@ -45,26 +46,28 @@ set(kopete_SRCS
    infoeventwidget.cpp
    )
 
-QT4_ADD_DBUS_ADAPTOR(kopete_SRCS org.kde.Kopete.xml kopetedbusinterface.h KopeteDBusInterface)
+qt5_add_dbus_adaptor(kopete_SRCS org.kde.Kopete.xml kopetedbusinterface.h KopeteDBusInterface)
 
-kde4_add_ui_files(kopete_SRCS groupkabcselectorwidget.ui infoeventbase.ui )
+ki18n_wrap_ui(kopete_SRCS groupkabcselectorwidget.ui infoeventbase.ui )
 
-kde4_add_app_icon(kopete_SRCS "hi*-apps-kopete.png")
+file(GLOB ICONS_SRCS "hi*-apps-kopete.png")
+ecm_add_app_icon(kopete_SRCS ICONS ${ICONS_SRCS})
 
-kde4_add_executable(kopete_bin ${kopete_SRCS})
+add_executable(kopete_bin ${kopete_SRCS})
 set_target_properties(kopete_bin PROPERTIES RUNTIME_OUTPUT_NAME kopete)
 
-target_link_libraries(kopete_bin 
-	${KDE4_KTEXTEDITOR_LIBS} 
-	${KDE4_KNOTIFYCONFIG_LIBS}
+target_link_libraries(kopete_bin
+	KF5::TextEditor
+	KF5::NotifyConfig
 	${KDE4_KABC_LIBS}
 	${KDE4_SOLID_LIBRARY}
 	${QIMAGEBLITZ_LIBRARIES}
-	kopete 
+	kopete
 	kopeteaddaccountwizard
 	kopetestatusmenu
 	kopetecontactlist
-	kopeteidentity)
+	kopeteidentity
+)
 
 install(TARGETS kopete_bin  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
@@ -76,5 +79,5 @@ install( FILES kopeteui.rc kopete.notifyrc  DESTINATION ${DATA_INSTALL_DIR}/kope
 install( FILES kopeterc DESTINATION ${CONFIG_INSTALL_DIR} )
 install( FILES org.kde.Kopete.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
 
-kde4_install_icons( ${ICON_INSTALL_DIR}   )
+ecm_install_icons( ${ICON_INSTALL_DIR}   )
 

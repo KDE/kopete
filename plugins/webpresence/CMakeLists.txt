@@ -4,11 +4,11 @@ include_directories(${KOPETE_INCLUDES} ${LIBXML2_INCLUDE_DIR} ${LIBXSLT_INCLUDE_
 
 set(kopete_webpresence_PART_SRCS webpresenceplugin.cpp )
 
-kde4_add_kcfg_files(kopete_webpresence_PART_SRCS webpresenceconfig.kcfgc )
+kconfig_add_kcfg_files(kopete_webpresence_PART_SRCS webpresenceconfig.kcfgc )
 
-kde4_add_plugin(kopete_webpresence ${kopete_webpresence_PART_SRCS})
+add_library(kopete_webpresence MODULE ${kopete_webpresence_PART_SRCS})
 
-target_link_libraries(kopete_webpresence  ${KDE4_KIO_LIBS} kopete ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${QT_QTXML_LIBRARY})
+target_link_libraries(kopete_webpresence  KF5::KIOCore kopete ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} Qt5::Xml)
 
 install(TARGETS kopete_webpresence  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -17,13 +17,13 @@ install(TARGETS kopete_webpresence  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_webpresence_PART_SRCS webpresencepreferences.cpp )
 
-kde4_add_ui_files(kcm_kopete_webpresence_PART_SRCS webpresenceprefs.ui )
+ki18n_wrap_ui(kcm_kopete_webpresence_PART_SRCS webpresenceprefs.ui )
 
-kde4_add_kcfg_files(kcm_kopete_webpresence_PART_SRCS webpresenceconfig.kcfgc )
+kconfig_add_kcfg_files(kcm_kopete_webpresence_PART_SRCS webpresenceconfig.kcfgc )
 
-kde4_add_plugin(kcm_kopete_webpresence ${kcm_kopete_webpresence_PART_SRCS})
+add_library(kcm_kopete_webpresence MODULE ${kcm_kopete_webpresence_PART_SRCS})
 
-target_link_libraries(kcm_kopete_webpresence  ${KDE4_KUTILS_LIBS} ${KDE4_KIO_LIBS} kopete )
+target_link_libraries(kcm_kopete_webpresence   KF5::KIOCore kopete )
 
 install(TARGETS kcm_kopete_webpresence  DESTINATION ${PLUGIN_INSTALL_DIR})
 

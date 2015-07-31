@@ -16,7 +16,7 @@ set(kopete_qq_ui_SRCS
    ui/dlgqqvcard.cpp 
 )
 	
-kde4_add_ui_files(kopete_qq_ui_SRCS
+ki18n_wrap_ui(kopete_qq_ui_SRCS
    ui/qqeditaccountui.ui
    ui/qqaddui.ui
    ui/qqvcard.ui
@@ -37,9 +37,9 @@ set(kopete_qq_PART_SRCS
 )
 
 
-kde4_add_plugin(kopete_qq ${kopete_qq_PART_SRCS})
+add_library(kopete_qq MODULE ${kopete_qq_PART_SRCS})
 
-target_link_libraries(kopete_qq ${KDE4_KIO_LIBS} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} kopete)
+target_link_libraries(kopete_qq KF5::KIOCore Qt5::Network ${QT_QT3SUPPORT_LIBRARY} kopete)
 if(NOT DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_qq kopete_videodevice)
 endif(NOT DISABLE_VIDEOSUPPORT)

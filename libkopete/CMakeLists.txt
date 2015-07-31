@@ -134,7 +134,7 @@ set(kopete_LIB_SRCS
 
 )
 
-kde4_add_ui_files(kopete_LIB_SRCS
+ki18n_wrap_ui(kopete_LIB_SRCS
  ui/addressbooklinkwidget_base.ui
  ui/addressbookselectorwidget_base.ui
  ui/avatarselectorwidget.ui
@@ -144,20 +144,21 @@ kde4_add_ui_files(kopete_LIB_SRCS
  ui/metacontactselectorwidget_base.ui
 )
 
-kde4_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC
+kconfig_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC
   kopeteappearancesettings.kcfgc
   kopetebehaviorsettings.kcfgc
   kopetestatussettings.kcfgc
   )
 
-kde4_add_library(kopete SHARED ${kopete_LIB_SRCS})
+add_library(kopete SHARED ${kopete_LIB_SRCS})
 
 target_link_libraries(kopete
 	${QT_QTXML_LIBRARIES}
-	${KDE4_KIO_LIBS}
-	${KDE4_KABC_LIBS}
-	${KDE4_SOLID_LIBS}
-	${KDE4_KCMUTILS_LIBS}
+	KF5::KIOCore
+	KF5::KIOWidgets
+	KF5::Contacts
+	KF5::Solid
+	KF5::KCMUtils
 	${KDE4_KEMOTICONS_LIBS}
 )
 

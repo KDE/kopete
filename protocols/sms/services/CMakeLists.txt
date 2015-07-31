@@ -6,12 +6,12 @@ set( kopete_sms_services_SRCS
   smsclient.cpp
   smssend.cpp
   smssendprovider.cpp )
-kde4_add_ui3_files( kopete_sms_services_SRCS
-  gsmlibprefs.ui
-  smsclientprefs.ui
-  smssendprefs.ui )
-#kde4_add_library( kopetesmsservices SHARED ${kopete_sms_services_SRCS} )
-#target_link_libraries(kopetesmsservices  ${KDE4_KIO_LIBS} kopete )
+#kde4_add_ui3_files( kopete_sms_services_SRCS
+#  gsmlibprefs.ui
+#  smsclientprefs.ui
+#  smssendprefs.ui )
+#add_library( kopetesmsservices SHARED ${kopete_sms_services_SRCS} )
+#target_link_libraries(kopetesmsservices  KF5::KIOCore kopete )
 
 
 ########### install files ###############

@@ -8,9 +8,10 @@ set(kopetetabwidgettest_SRCS kopetetabwidgettest.cpp )
 
 
 
-kde4_add_executable(kopetetabwidgettest TEST ${kopetetabwidgettest_SRCS})
+add_executable(kopetetabwidgettest ${kopetetabwidgettest_SRCS})
+ecm_mark_as_test(kopetetabwidgettest)
 
-target_link_libraries(kopetetabwidgettest  ${KDE4_KDECORE_LIBS} kopetechatwindow )
+target_link_libraries(kopetetabwidgettest  KF5::KDELibs4Support kopetechatwindow )
 
 
 ########### install files ###############

@@ -12,13 +12,13 @@ set(kopete_translator_PART_SRCS
    translatorguiclient.cpp
    translatorlanguages.cpp )
 
-kde4_add_kcfg_files(kopete_translator_PART_SRCS translatorconfig.kcfgc )
+kconfig_add_kcfg_files(kopete_translator_PART_SRCS translatorconfig.kcfgc )
 
 
-kde4_add_plugin(kopete_translator ${kopete_translator_PART_SRCS})
+add_library(kopete_translator MODULE ${kopete_translator_PART_SRCS})
 
 
-target_link_libraries(kopete_translator  ${KDE4_KIO_LIBS} kopete )
+target_link_libraries(kopete_translator  KF5::KIOCore kopete )
 
 install(TARGETS kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -27,15 +27,15 @@ install(TARGETS kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_translator_PART_SRCS translatorpreferences.cpp translatorlanguages.cpp )
 
-kde4_add_ui_files(kcm_kopete_translator_PART_SRCS translatorprefsbase.ui )
+ki18n_wrap_ui(kcm_kopete_translator_PART_SRCS translatorprefsbase.ui )
 
-kde4_add_kcfg_files(kcm_kopete_translator_PART_SRCS translatorconfig.kcfgc )
-
-
-kde4_add_plugin(kcm_kopete_translator ${kcm_kopete_translator_PART_SRCS})
+kconfig_add_kcfg_files(kcm_kopete_translator_PART_SRCS translatorconfig.kcfgc )
 
 
-target_link_libraries(kcm_kopete_translator  ${KDE4_KUTILS_LIBS} kopete )
+add_library(kcm_kopete_translator MODULE ${kcm_kopete_translator_PART_SRCS})
+
+
+target_link_libraries(kcm_kopete_translator   kopete )
 
 install(TARGETS kcm_kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
 

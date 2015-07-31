@@ -3,7 +3,7 @@ set(jdns_tool_MOC_HDRS
 )
 
 if(NOT Qt5Core_FOUND)
-  qt4_wrap_cpp(jdns_tool_MOC_SRCS ${jdns_tool_MOC_HDRS})
+  qt5_wrap_cpp(jdns_tool_MOC_SRCS ${jdns_tool_MOC_HDRS})
 endif()
 
 set(jdns_tool_SRCS

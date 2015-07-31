@@ -99,7 +99,7 @@ if(BUILD_JINGLE)
   )
 endif(BUILD_JINGLE)
 
-kde4_add_ui_files(kopete_jabber_ui_SRCS ${kopete_jabber_ui_files})
+ki18n_wrap_ui(kopete_jabber_ui_SRCS ${kopete_jabber_ui_files})
 
 set(kopete_jabber_PART_SRCS 
    tasks/jt_getlastactivity.cpp
@@ -157,10 +157,10 @@ if(BUILD_JINGLE)
   )
 endif(BUILD_JINGLE)
 
-kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
+add_library(kopete_jabber MODULE ${kopete_jabber_PART_SRCS})
 
 
-target_link_libraries(kopete_jabber ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QCA2_LIBRARIES} ${KDE4_SOLID_LIBS} kopete iris_kopete)
+target_link_libraries(kopete_jabber  KF5::KIOCore ${QCA2_LIBRARIES}  kopete iris_kopete)
 if(BUILD_JINGLE)	
   target_link_libraries(kopete_jabber ${LIBORTP_LIBRARY} ${ASOUND_LIBRARY} ${SPEEX_LIBRARY})
 endif(BUILD_JINGLE)

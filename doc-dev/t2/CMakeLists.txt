@@ -13,8 +13,8 @@ install(FILES kopete_tutorialplugin.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 # set the search path for included headers
 set(KOPETE_INCLUDES
-    ${KDE4_INCLUDE_DIR}/kopete
-    ${KDE4_INCLUDES}
+    /kopete
+    
    )
 
 include_directories(${KOPETE_INCLUDES})
@@ -25,11 +25,11 @@ set(kopete_tutorialplugin_PART_SRCS tutorialplugin.cpp )
 # create moc files as needed
 
 # declare the plugin library
-kde4_add_plugin(kopete_tutorialplugin ${kopete_tutorialplugin_PART_SRCS})
+add_library(kopete_tutorialplugin MODULE ${kopete_tutorialplugin_PART_SRCS})
 
 # link any other libraries
 # kdeui is needed because a kopete plugin uses KXMLGUI
-target_link_libraries(kopete_tutorialplugin ${KDE4_KDEUI_LIBS} kopete )
+target_link_libraries(kopete_tutorialplugin  kopete )
 
 # install the result with other KDE plugins
 install(TARGETS kopete_tutorialplugin DESTINATION ${PLUGIN_INSTALL_DIR})

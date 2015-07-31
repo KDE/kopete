@@ -17,7 +17,7 @@ set(kopete_wlm_ui_SRCS
    ui/wlmeditaccountwidget.cpp
 )
 
-kde4_add_ui_files(kopete_wlm_ui_SRCS
+ki18n_wrap_ui(kopete_wlm_ui_SRCS
     ui/wlmaddui.ui
     ui/wlminfo.ui 
     ui/wlmaccountpreferences.ui
@@ -39,15 +39,15 @@ set(kopete_wlm_PART_SRCS
    wlmtransfermanager.cpp
 )
 
-kde4_add_plugin(kopete_wlm ${kopete_wlm_PART_SRCS})
+add_library(kopete_wlm MODULE ${kopete_wlm_PART_SRCS})
 
 set(kopete_wlm_link_LIBS
-    ${KDE4_KDEUI_LIBS} 
-    ${KDE4_KUTILS_LIBS}
-    ${KDE4_KIO_LIBRARY} 
+     
+    
+    KF5::KIOCore 
     ${KDE4_KMIME_LIBS}
-    ${QT_QTXML_LIBRARY} 
-    ${QT_QTNETWORK_LIBRARY} 
+    Qt5::Xml 
+    Qt5::Network 
     kopete 
     ${LIBMSN_LIBRARIES}
 )

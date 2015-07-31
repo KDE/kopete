@@ -1,6 +1,5 @@
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
-KDE4_NO_ENABLE_FINAL(kopete)
 
 add_subdirectory( icons ) 
 
@@ -10,9 +9,12 @@ include_directories( ${KOPETE_INCLUDES} ${LIBGADU_INCLUDE_DIRS} }
 
 ########### next target ###############
 
+find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS KIO)
+find_package(Qt5 ${REQUIRED_QT_VERSION} REQUIRED COMPONENTS Network)
+
 set(kopete_gaduui_SRCS)
 
-kde4_add_ui_files(kopete_gaduui_SRCS
+ki18n_wrap_ui(kopete_gaduui_SRCS
    ui/gadueditaccountui.ui
    ui/gaduadd.ui 
    ui/gaduawayui.ui 
@@ -40,10 +42,10 @@ set(kopete_gadu_PART_SRCS
    gadudcc.cpp )
 
 
-kde4_add_plugin(kopete_gadu ${kopete_gadu_PART_SRCS})
+add_library(kopete_gadu MODULE ${kopete_gadu_PART_SRCS})
 
 
-target_link_libraries(kopete_gadu ${KDE4_KIO_LIBS} ${QT_QTNETWORK_LIBRARY} ${KDE4_KDE3SUPPORT_LIBS} ${LIBGADU_LIBRARIES} kopete )
+target_link_libraries(kopete_gadu KF5::KIOCore Qt5::Network ${KDE4_KDE3SUPPORT_LIBS} ${LIBGADU_LIBRARIES} kopete )
 
 install(TARGETS kopete_gadu  DESTINATION ${PLUGIN_INSTALL_DIR})
 

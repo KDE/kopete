@@ -224,9 +224,9 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
-kde4_add_library(iris_kopete STATIC ${libiris_SRCS})
+add_library(iris_kopete STATIC ${libiris_SRCS})
 
-set(iris_kopete_libs ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTXML_LIBRARY}
+set(iris_kopete_libs Qt5::Core Qt5::Network Qt5::Xml
                      ${IDN_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} )
 
 if(WIN32)

@@ -6,10 +6,10 @@
 
 set(kio_jabberdisco_PART_SRCS jabberdisco.cpp )
 
-kde4_add_plugin(kio_jabberdisco ${kio_jabberdisco_PART_SRCS})
+add_library(kio_jabberdisco MODULE ${kio_jabberdisco_PART_SRCS})
 
 
-target_link_libraries(kio_jabberdisco  ${KDE4_KIO_LIBS} jabberclient iris_local  )
+target_link_libraries(kio_jabberdisco  KF5::KIOCore jabberclient iris_local  )
 
 install(TARGETS kio_jabberdisco  DESTINATION ${PLUGIN_INSTALL_DIR})
 

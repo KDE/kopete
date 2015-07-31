@@ -21,12 +21,12 @@ set(kopete_nowlistening_PART_SRCS
    nlmpris2.cpp
 )
 
-kde4_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
+kconfig_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 
-kde4_add_plugin(kopete_nowlistening ${kopete_nowlistening_PART_SRCS})
+add_library(kopete_nowlistening MODULE ${kopete_nowlistening_PART_SRCS})
 
 
-target_link_libraries(kopete_nowlistening  ${KDE4_KIO_LIBS} kopete)
+target_link_libraries(kopete_nowlistening  KF5::KIOCore kopete)
 
 if(XMMS_FOUND)
    target_link_libraries( kopete_nowlistening ${XMMS_LDFLAGS} )
@@ -39,15 +39,15 @@ install(TARGETS kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_nowlistening_PART_SRCS nowlisteningpreferences.cpp )
 
-kde4_add_ui_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningprefs.ui )
+ki18n_wrap_ui(kcm_kopete_nowlistening_PART_SRCS nowlisteningprefs.ui )
 
-kde4_add_kcfg_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
-
-
-kde4_add_plugin(kcm_kopete_nowlistening ${kcm_kopete_nowlistening_PART_SRCS})
+kconfig_add_kcfg_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 
 
-target_link_libraries(kcm_kopete_nowlistening  ${KDE4_KUTILS_LIBS})
+add_library(kcm_kopete_nowlistening MODULE ${kcm_kopete_nowlistening_PART_SRCS})
+
+
+target_link_libraries(kcm_kopete_nowlistening  )
 
 install(TARGETS kcm_kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})
 

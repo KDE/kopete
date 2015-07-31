@@ -8,10 +8,10 @@ ${KOPETE_INCLUDES}
 set(kopete_addbookmarks_PART_SRCS addbookmarksplugin.cpp addbookmarksprefssettings.cpp )
 
 
-kde4_add_plugin(kopete_addbookmarks ${kopete_addbookmarks_PART_SRCS})
+add_library(kopete_addbookmarks MODULE ${kopete_addbookmarks_PART_SRCS})
 
 
-target_link_libraries(kopete_addbookmarks  ${KDE4_KIO_LIBS} kopete )
+target_link_libraries(kopete_addbookmarks  KF5::KIOCore kopete )
 
 install(TARGETS kopete_addbookmarks  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -20,13 +20,13 @@ install(TARGETS kopete_addbookmarks  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_addbookmarks_PART_SRCS addbookmarkspreferences.cpp addbookmarksprefssettings.cpp )
 
-kde4_add_ui_files(kcm_kopete_addbookmarks_PART_SRCS addbookmarksprefsui.ui )
+ki18n_wrap_ui(kcm_kopete_addbookmarks_PART_SRCS addbookmarksprefsui.ui )
 
 
-kde4_add_plugin(kcm_kopete_addbookmarks ${kcm_kopete_addbookmarks_PART_SRCS})
+add_library(kcm_kopete_addbookmarks MODULE ${kcm_kopete_addbookmarks_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_addbookmarks kopete ${KDE4_KUTILS_LIBS} )
+target_link_libraries(kcm_kopete_addbookmarks kopete  )
 
 install(TARGETS kcm_kopete_addbookmarks  DESTINATION ${PLUGIN_INSTALL_DIR})
 

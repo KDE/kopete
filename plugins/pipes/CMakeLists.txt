@@ -5,13 +5,15 @@ include_directories ( ${KOPETE_INCLUDES} )
 
 ########### next target ###############
 
+find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS KCMUtils )
+
 set (kopete_pipes_PART_SRCS 
  pipesplugin.cpp
  pipesconfig.cpp )
 
-kde4_add_plugin( kopete_pipes ${kopete_pipes_PART_SRCS})
+add_library(kopete_pipes MODULE ${kopete_pipes_PART_SRCS})
 
-target_link_libraries( kopete_pipes ${KDE4_KIO_LIBS} ${KDE4_KDEUI_LIBS} kopete )
+target_link_libraries( kopete_pipes KF5::KIOCore  kopete )
 
 install( TARGETS kopete_pipes DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -24,11 +26,15 @@ set ( kcm_kopete_pipes_PART_SRCS
   pipesmodel.cpp
   pipesconfig.cpp )
 
-kde4_add_ui_files( kcm_kopete_pipes_PART_SRCS pipesprefsbase.ui )
+ki18n_wrap_ui( kcm_kopete_pipes_PART_SRCS pipesprefsbase.ui )
 
-kde4_add_plugin( kcm_kopete_pipes ${kcm_kopete_pipes_PART_SRCS} )
+add_library(kcm_kopete_pipes MODULE ${kcm_kopete_pipes_PART_SRCS} )
 
-target_link_libraries( kcm_kopete_pipes ${KDE4_KUTILS_LIBS} ${KDE4_KIO_LIBS} kopete )
+target_link_libraries( kcm_kopete_pipes
+	KF5::KIOCore
+	KF5::KCMUtils
+	kopete
+)
 
 install( TARGETS kcm_kopete_pipes  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

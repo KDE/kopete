@@ -12,6 +12,8 @@ link_directories( ${KOPETE_BINARY_DIR}/kopete/contactlist )
 
 ########### next target ###############
 
+find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS NotifyConfig)
+
 set(kcm_kopete_appearanceconfig_PART_SRCS
    appearanceconfig.cpp 
    contactlistlayoutwidget.cpp
@@ -23,17 +25,17 @@ set(kcm_kopete_appearanceconfig_PART_SRCS
    layout/TokenPool.cpp
    layout/TokenWithLayout.cpp )
 
-kde4_add_ui_files(kcm_kopete_appearanceconfig_PART_SRCS 
+ki18n_wrap_ui(kcm_kopete_appearanceconfig_PART_SRCS 
    appearanceconfig_colors.ui
    appearanceconfig_contactlist.ui
    appearanceconfig_advanced.ui
    contactlistlayoutwidget.ui
    tooltipeditwidget.ui )
 
-kde4_add_plugin(kcm_kopete_appearanceconfig ${kcm_kopete_appearanceconfig_PART_SRCS})
+add_library(kcm_kopete_appearanceconfig MODULE ${kcm_kopete_appearanceconfig_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_appearanceconfig ${KDE4_KUTILS_LIBS} kopete kopetecontactlist )
+target_link_libraries(kcm_kopete_appearanceconfig  kopete kopetecontactlist )
 
 install(TARGETS kcm_kopete_appearanceconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 

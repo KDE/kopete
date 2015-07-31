@@ -9,6 +9,7 @@ link_directories( ${KOPETE_BINARY_DIR}/protocols/yahoo/libkyahoo )
 
 set(clientstream_test_SRCS clientstream_test.cpp )
 
-kde4_add_executable(clientstream_test TEST  ${clientstream_test_SRCS})
+add_executable(clientstream_test  ${clientstream_test_SRCS})
+ecm_mark_as_test(clientstream_test)
 
-target_link_libraries(clientstream_test ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBS} kyahoo )
+target_link_libraries(clientstream_test Qt5::Gui KF5::KDELibs4Support kyahoo )

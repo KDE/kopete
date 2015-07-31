@@ -16,7 +16,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../liboscar/tasks
 
 set(kopete_aim_ui_SRCS ui/aimaddcontactpage.cpp ui/aimeditaccountwidget.cpp)
 
-kde4_add_ui_files(kopete_aim_ui_SRCS
+ki18n_wrap_ui(kopete_aim_ui_SRCS
 ui/aimaddcontactui.ui
 ui/aiminfobase.ui
 ui/aimjoinchatbase.ui
@@ -34,15 +34,15 @@ set(kopete_aim_PART_SRCS
    aimjoinchat.cpp
    aimchatsession.cpp )
 
-kde4_add_plugin(kopete_aim ${kopete_aim_PART_SRCS})
+add_library(kopete_aim MODULE ${kopete_aim_PART_SRCS})
 
 
 target_link_libraries(kopete_aim
     kopete_oscar
     oscar
     kopete
-    ${KDE4_KDEUI_LIBS}
-    ${QT_QTXML_LIBRARY}
+    
+    Qt5::Xml
     )
 
 install(TARGETS kopete_aim  DESTINATION ${PLUGIN_INSTALL_DIR})

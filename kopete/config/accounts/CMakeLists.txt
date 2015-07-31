@@ -14,12 +14,12 @@ link_directories( ${KOPETE_BINARY_DIR}/kopete/addaccountwizard ${KOPETE_BINARY_D
 set(kcm_kopete_accountconfig_PART_SRCS accounttreewidget.cpp kopeteaccountconfig.cpp )
 
 
-kde4_add_ui_files(kcm_kopete_accountconfig_PART_SRCS kopeteaccountconfigbase.ui )
+ki18n_wrap_ui(kcm_kopete_accountconfig_PART_SRCS kopeteaccountconfigbase.ui )
 
-kde4_add_plugin(kcm_kopete_accountconfig ${kcm_kopete_accountconfig_PART_SRCS})
+add_library(kcm_kopete_accountconfig MODULE ${kcm_kopete_accountconfig_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_accountconfig  ${KDE4_KUTILS_LIBS} kopete kopeteaddaccountwizard kopeteidentity)
+target_link_libraries(kcm_kopete_accountconfig   kopete kopeteaddaccountwizard kopeteidentity)
 
 install(TARGETS kcm_kopete_accountconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 
