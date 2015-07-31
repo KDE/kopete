@@ -8,10 +8,10 @@ ${KOPETE_INCLUDES}
 
 set(kopete_contactnotes_PART_SRCS contactnotesplugin.cpp contactnotesedit.cpp )
 
-kde4_add_plugin(kopete_contactnotes ${kopete_contactnotes_PART_SRCS})
+add_library(kopete_contactnotes MODULE ${kopete_contactnotes_PART_SRCS})
 
 
-target_link_libraries(kopete_contactnotes ${KDE4_KIO_LIBS} kopete )
+target_link_libraries(kopete_contactnotes KF5::KIOCore kopete )
 
 install(TARGETS kopete_contactnotes  DESTINATION ${PLUGIN_INSTALL_DIR})
 

@@ -14,15 +14,15 @@ set(kopete_history_PART_SRCS
    historyguiclient.cpp
    historyimport.cpp )
 
-kde4_add_ui_files(kopete_history_PART_SRCS historyviewer.ui )
+ki18n_wrap_ui(kopete_history_PART_SRCS historyviewer.ui )
 
-kde4_add_kcfg_files(kopete_history_PART_SRCS historyconfig.kcfgc )
-
-
-kde4_add_plugin(kopete_history ${kopete_history_PART_SRCS})
+kconfig_add_kcfg_files(kopete_history_PART_SRCS historyconfig.kcfgc )
 
 
-target_link_libraries(kopete_history  ${KDE4_KHTML_LIBS} kopete )
+add_library(kopete_history MODULE ${kopete_history_PART_SRCS})
+
+
+target_link_libraries(kopete_history  KF5::KHtml kopete )
 
 install(TARGETS kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -31,15 +31,15 @@ install(TARGETS kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_history_PART_SRCS historypreferences.cpp )
 
-kde4_add_ui_files(kcm_kopete_history_PART_SRCS historyprefsui.ui )
+ki18n_wrap_ui(kcm_kopete_history_PART_SRCS historyprefsui.ui )
 
-kde4_add_kcfg_files(kcm_kopete_history_PART_SRCS historyconfig.kcfgc )
-
-
-kde4_add_plugin(kcm_kopete_history ${kcm_kopete_history_PART_SRCS})
+kconfig_add_kcfg_files(kcm_kopete_history_PART_SRCS historyconfig.kcfgc )
 
 
-target_link_libraries(kcm_kopete_history  ${KDE4_KUTILS_LIBS} kopete )
+add_library(kcm_kopete_history MODULE ${kcm_kopete_history_PART_SRCS})
+
+
+target_link_libraries(kcm_kopete_history   kopete )
 
 install(TARGETS kcm_kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 

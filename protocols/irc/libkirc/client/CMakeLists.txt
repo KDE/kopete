@@ -18,9 +18,9 @@ set(libkirc_client_SRCS
 )
 
 
-kde4_add_library(kirc_client SHARED ${libkirc_client_SRCS})
+add_library(kirc_client SHARED ${libkirc_client_SRCS})
 
-target_link_libraries(kirc_client kirc ${KDE4_KDECORE_LIBS} ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(kirc_client kirc KF5::KDELibs4Support Qt5::Core Qt5::Network)
 set_target_properties(kirc_client PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
 install(TARGETS kirc_client ${INSTALL_TARGETS_DEFAULT_ARGS})

@@ -6,10 +6,10 @@ ${KOPETE_INCLUDES}
 
 set(kcm_kopete_pluginconfig_PART_SRCS kopetepluginconfig.cpp )
 
-kde4_add_plugin(kcm_kopete_pluginconfig ${kcm_kopete_pluginconfig_PART_SRCS})
+add_library(kcm_kopete_pluginconfig MODULE ${kcm_kopete_pluginconfig_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_pluginconfig  ${KDE4_KUTILS_LIBS} kopete)
+target_link_libraries(kcm_kopete_pluginconfig   kopete)
 
 install(TARGETS kcm_kopete_pluginconfig DESTINATION ${PLUGIN_INSTALL_DIR})
 

@@ -18,7 +18,7 @@ set(kopeteirc_ui_SRCS
   ui/networkconfigwidget.cpp 
 )
 
-kde4_add_ui_files(kopeteirc_ui_SRCS 
+ki18n_wrap_ui(kopeteirc_ui_SRCS 
   ui/ircadd.ui 
   ui/irceditaccount.ui 
   ui/networkconfig.ui 
@@ -40,9 +40,9 @@ set(kopete_irc_SRCS
 )
 
 
-kde4_add_plugin(kopete_irc ${kopete_irc_SRCS})
+add_library(kopete_irc MODULE ${kopete_irc_SRCS})
 
-target_link_libraries(kopete_irc ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} kopete kirc_client kirc )
+target_link_libraries(kopete_irc KF5::KIOCore ${QT_QT3SUPPORT_LIBRARY} kopete kirc_client kirc )
 
 install(TARGETS kopete_irc  DESTINATION ${PLUGIN_INSTALL_DIR})
 

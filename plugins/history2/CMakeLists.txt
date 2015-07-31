@@ -13,15 +13,15 @@ set(kopete_history2_PART_SRCS
    history2import.cpp
 )
 
-kde4_add_ui_files(kopete_history2_PART_SRCS history2viewer.ui )
+ki18n_wrap_ui(kopete_history2_PART_SRCS history2viewer.ui )
 
-kde4_add_kcfg_files(kopete_history2_PART_SRCS history2config.kcfgc )
-
-
-kde4_add_plugin(kopete_history2 ${kopete_history2_PART_SRCS})
+kconfig_add_kcfg_files(kopete_history2_PART_SRCS history2config.kcfgc )
 
 
-target_link_libraries(kopete_history2  ${KDE4_KHTML_LIBS} kopete ${QT_QTSQL_LIBRARY})
+add_library(kopete_history2 MODULE ${kopete_history2_PART_SRCS})
+
+
+target_link_libraries(kopete_history2  KF5::KHtml kopete Qt5::Sql)
 
 install(TARGETS kopete_history2  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -30,15 +30,15 @@ install(TARGETS kopete_history2  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_history2_PART_SRCS history2preferences.cpp history2logger.cpp history2import.cpp)
 
-kde4_add_ui_files(kcm_kopete_history2_PART_SRCS history2prefsui.ui )
+ki18n_wrap_ui(kcm_kopete_history2_PART_SRCS history2prefsui.ui )
 
-kde4_add_kcfg_files(kcm_kopete_history2_PART_SRCS history2config.kcfgc )
-
-
-kde4_add_plugin(kcm_kopete_history2 ${kcm_kopete_history2_PART_SRCS})
+kconfig_add_kcfg_files(kcm_kopete_history2_PART_SRCS history2config.kcfgc )
 
 
-target_link_libraries(kcm_kopete_history2  ${KDE4_KUTILS_LIBS} ${KDE4_KHTML_LIBS} kopete ${QT_QTSQL_LIBRARY})
+add_library(kcm_kopete_history2 MODULE ${kcm_kopete_history2_PART_SRCS})
+
+
+target_link_libraries(kcm_kopete_history2   KF5::KHtml kopete Qt5::Sql)
 
 install(TARGETS kcm_kopete_history2  DESTINATION ${PLUGIN_INSTALL_DIR})
 

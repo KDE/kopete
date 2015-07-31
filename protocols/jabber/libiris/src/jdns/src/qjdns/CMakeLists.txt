@@ -6,7 +6,7 @@ set(qjdns_MOC_HDRS
 )
 
 if(NOT Qt5Core_FOUND)
-  qt4_wrap_cpp(qjdns_MOC_SRCS ${qjdns_MOC_HDRS})
+  qt5_wrap_cpp(qjdns_MOC_SRCS ${qjdns_MOC_HDRS})
 endif()
 
 set(qjdns_SRCS

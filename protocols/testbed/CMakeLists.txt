@@ -7,7 +7,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/ui/
 
 
 ########### next target ###############
-
+find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS KIO)
 set(kopete_testbed_PART_SRCS 
    testbedprotocol.cpp 
    testbedcontact.cpp 
@@ -19,18 +19,18 @@ set(kopete_testbed_PART_SRCS
    ui/testbedwebcamdialog.cpp 
 )
 
-kde4_add_ui_files(kopete_testbed_PART_SRCS
+ki18n_wrap_ui(kopete_testbed_PART_SRCS
 testbedaddui.ui
 )
 
-kde4_add_ui_files(kopete_testbed_PART_SRCS
+ki18n_wrap_ui(kopete_testbed_PART_SRCS
 testbedaccountpreferences.ui
 )
 
-kde4_add_plugin(kopete_testbed ${kopete_testbed_PART_SRCS})
+add_library(kopete_testbed MODULE ${kopete_testbed_PART_SRCS})
 
 
-target_link_libraries(kopete_testbed ${KDE4_KIO_LIBS} kopete)
+target_link_libraries(kopete_testbed KF5::KIOCore kopete)
 if(NOT DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_testbed kopete_videodevice)
 endif(NOT DISABLE_VIDEOSUPPORT)

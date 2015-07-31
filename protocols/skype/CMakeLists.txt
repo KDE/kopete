@@ -14,6 +14,8 @@ include_directories(
 	${CMAKE_CURRENT_BUILD_DIR}
 )
 
+include(ECMOptionalAddSubdirectory)
+
 add_definitions(-DSKYPE_DEBUG_GLOBAL=14311)
 
 ########### next target ###############
@@ -23,7 +25,7 @@ set(
 	libskype/skypedbus/skypeconnection.cpp
 )
 
-QT4_ADD_DBUS_ADAPTOR(
+qt5_add_dbus_adaptor(
 	skypedbus_SRCS
 	libskype/skypedbus/com.Skype.API.Client.xml
 	libskype/skypedbus/skypeconnection.h
@@ -43,7 +45,7 @@ set(
 	kopete_skype_ui_SRCS
 )
 
-kde4_add_ui_files(
+ki18n_wrap_ui(
 	kopete_skype_ui_SRCS
 	ui/skypeaddcontactbase.ui
 	ui/skypecalldialogbase.ui
@@ -67,22 +69,19 @@ set(
 	skypeprotocol.cpp
 )
 
-kde4_add_plugin(
-	kopete_skype
-	${kopete_skype_SRCS}
-)
+add_library( kopete_skype MODULE ${kopete_skype_SRCS} )
 
 target_link_libraries(
 	kopete_skype
 	kopete
-	${KDE4_KDEUI_LIBS}
+	
 	${X11_X11_LIB}
 )
 
 ########### next target ###############
 
 add_subdirectory( icons )
-macro_optional_add_subdirectory( skypebuttons )
+ecm_optional_add_subdirectory( skypebuttons )
 
 ########### install files ###############
 

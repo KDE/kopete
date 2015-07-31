@@ -30,14 +30,14 @@ set(kopete_oscar_LIB_SRCS
    oscarstatusmanager.cpp
    nscainfoevent.cpp)
 
-kde4_add_ui_files(kopete_oscar_LIB_SRCS
+ki18n_wrap_ui(kopete_oscar_LIB_SRCS
    oscarencodingselectionbase.ui
    oscarlistcontactsbase.ui
 )
 
-kde4_add_library(kopete_oscar SHARED ${kopete_oscar_LIB_SRCS})
+add_library(kopete_oscar SHARED ${kopete_oscar_LIB_SRCS})
 
-target_link_libraries(kopete_oscar ${KDE4_KIO_LIBS} kopete oscar)
+target_link_libraries(kopete_oscar KF5::KIOCore kopete oscar)
 
 set_target_properties(kopete_oscar PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS kopete_oscar ${INSTALL_TARGETS_DEFAULT_ARGS})

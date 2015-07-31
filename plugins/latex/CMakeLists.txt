@@ -10,12 +10,12 @@ ${KOPETE_INCLUDES}
 
 set(kopete_latex_PART_SRCS latexplugin.cpp latexguiclient.cpp )
 
-kde4_add_kcfg_files(kopete_latex_PART_SRCS latexconfig.kcfgc )
+kconfig_add_kcfg_files(kopete_latex_PART_SRCS latexconfig.kcfgc )
 
-kde4_add_plugin(kopete_latex ${kopete_latex_PART_SRCS})
+add_library(kopete_latex MODULE ${kopete_latex_PART_SRCS})
 
 
-target_link_libraries(kopete_latex  ${KDE4_KDEUI_LIBS} kopete )
+target_link_libraries(kopete_latex   kopete )
 
 install(TARGETS kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -24,15 +24,15 @@ install(TARGETS kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_latex_PART_SRCS latexpreferences.cpp )
 
-kde4_add_ui_files(kcm_kopete_latex_PART_SRCS latexprefsbase.ui )
+ki18n_wrap_ui(kcm_kopete_latex_PART_SRCS latexprefsbase.ui )
 
-kde4_add_kcfg_files(kcm_kopete_latex_PART_SRCS latexconfig.kcfgc )
-
-
-kde4_add_plugin(kcm_kopete_latex ${kcm_kopete_latex_PART_SRCS})
+kconfig_add_kcfg_files(kcm_kopete_latex_PART_SRCS latexconfig.kcfgc )
 
 
-target_link_libraries(kcm_kopete_latex  ${KDE4_KUTILS_LIBS} ${KDE4_KIO_LIBS})
+add_library(kcm_kopete_latex MODULE ${kcm_kopete_latex_PART_SRCS})
+
+
+target_link_libraries(kcm_kopete_latex   KF5::KIOCore)
 
 install(TARGETS kcm_kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
 

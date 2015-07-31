@@ -15,16 +15,16 @@ set(kopete_meanwhile_PART_SRCS
    meanwhileeditaccountwidget.cpp
    meanwhilesession.cpp )
 
-kde4_add_ui_files(kopete_meanwhile_PART_SRCS
+ki18n_wrap_ui(kopete_meanwhile_PART_SRCS
    ui/meanwhileaddcontact.ui
    ui/meanwhileeditaccount.ui
 )
 
-kde4_add_plugin(kopete_meanwhile ${kopete_meanwhile_PART_SRCS})
+add_library(kopete_meanwhile MODULE ${kopete_meanwhile_PART_SRCS})
 
 target_link_libraries(kopete_meanwhile
-  ${KDE4_KDECORE_LIBS} ${GLIB2_LIBRARIES} ${LIBMEANWHILE_LIBRARY}
-  ${KDE4_KDEUI_LIBS} ${QT_QTNETWORK_LIBRARY}
+  KF5::KDELibs4Support ${GLIB2_LIBRARIES} ${LIBMEANWHILE_LIBRARY}
+   Qt5::Network
   kopete)
 
 install(TARGETS kopete_meanwhile DESTINATION ${PLUGIN_INSTALL_DIR})

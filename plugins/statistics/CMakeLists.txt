@@ -9,15 +9,15 @@ set(kopete_statistics_PART_SRCS
    statisticsdialog.cpp 
    statisticscontact.cpp )
 
-kde4_add_ui_files(kopete_statistics_PART_SRCS statisticswidgetbase.ui )
+ki18n_wrap_ui(kopete_statistics_PART_SRCS statisticswidgetbase.ui )
 
-qt4_add_dbus_adaptor(kopete_statistics_PART_SRCS org.kde.kopete.Statistics.xml
+qt5_add_dbus_adaptor(kopete_statistics_PART_SRCS org.kde.kopete.Statistics.xml
                      statisticsplugin.h StatisticsPlugin)
 
-kde4_add_plugin(kopete_statistics ${kopete_statistics_PART_SRCS})
+add_library(kopete_statistics MODULE ${kopete_statistics_PART_SRCS})
 
 
-target_link_libraries(kopete_statistics  kopete ${QT_QTSQL_LIBRARY} ${KDE4_KHTML_LIBS} )
+target_link_libraries(kopete_statistics  kopete Qt5::Sql KF5::KHtml )
 
 install(TARGETS kopete_statistics  DESTINATION ${PLUGIN_INSTALL_DIR})
 

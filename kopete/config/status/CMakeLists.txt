@@ -9,14 +9,14 @@ set(kcm_kopete_statusconfig_PART_SRCS
     statusmodel.cpp
     )
 
-kde4_add_ui_files(kcm_kopete_statusconfig_PART_SRCS
+ki18n_wrap_ui(kcm_kopete_statusconfig_PART_SRCS
     statusconfig_manager.ui
     statusconfig_general.ui
 )
 
-kde4_add_plugin(kcm_kopete_statusconfig ${kcm_kopete_statusconfig_PART_SRCS})
+add_library(kcm_kopete_statusconfig MODULE ${kcm_kopete_statusconfig_PART_SRCS})
 
-target_link_libraries(kcm_kopete_statusconfig  ${KDE4_KUTILS_LIBS} ${QT_QTXML_LIBRARY} kopete)
+target_link_libraries(kcm_kopete_statusconfig   Qt5::Xml kopete)
 
 install(TARGETS kcm_kopete_statusconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 

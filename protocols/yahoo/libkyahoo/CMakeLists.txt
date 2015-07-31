@@ -74,9 +74,9 @@ if(MINGW)
     set_source_files_properties(yahoo_fn.c PROPERTIES COMPILE_FLAGS "--std=c99")
 endif(MINGW)
 
-kde4_add_library( kyahoo SHARED ${libkyahoo_SRCS} )
+add_library( kyahoo SHARED ${libkyahoo_SRCS} )
 
-target_link_libraries( kyahoo ${KDE4_KIO_LIBS} ${QT_QTXML_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${JASPER_LIBRARIES} )
+target_link_libraries( kyahoo KF5::KIOCore Qt5::Xml Qt5::Network ${JASPER_LIBRARIES} )
 set_target_properties( kyahoo PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
 

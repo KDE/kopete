@@ -10,10 +10,10 @@ ${KOPETE_INCLUDES}
 
 set(kopete_highlight_PART_SRCS highlightplugin.cpp highlightconfig.cpp filter.cpp )
 
-kde4_add_plugin(kopete_highlight ${kopete_highlight_PART_SRCS})
+add_library(kopete_highlight MODULE ${kopete_highlight_PART_SRCS})
 
 
-target_link_libraries(kopete_highlight  ${KDE4_KDEUI_LIBS} kopete ${QT_QTXML_LIBRARY})
+target_link_libraries(kopete_highlight   kopete Qt5::Xml)
 
 install(TARGETS kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -22,13 +22,12 @@ install(TARGETS kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_highlight_PART_SRCS highlightpreferences.cpp filter.cpp highlightconfig.cpp )
 
-kde4_add_ui_files(kcm_kopete_highlight_PART_SRCS highlightprefsbase.ui )
+ki18n_wrap_ui(kcm_kopete_highlight_PART_SRCS highlightprefsbase.ui )
 
 
-kde4_add_plugin(kcm_kopete_highlight ${kcm_kopete_highlight_PART_SRCS})
+add_library(kcm_kopete_highlight MODULE ${kcm_kopete_highlight_PART_SRCS})
 
-
-target_link_libraries(kcm_kopete_highlight ${QT_QTXML_LIBRARY} ${KDE4_KUTILS_LIBS}  ${KDE4_KNOTIFYCONFIG_LIBS})
+target_link_libraries(kcm_kopete_highlight KF5::NotifyConfig ${QT_QTXML_LIBRARY})
 
 install(TARGETS kcm_kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 

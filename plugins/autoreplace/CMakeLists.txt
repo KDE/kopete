@@ -9,10 +9,10 @@ ${KOPETE_INCLUDES}
 
 set(kopete_autoreplace_PART_SRCS autoreplaceplugin.cpp autoreplaceconfig.cpp )
 
-kde4_add_plugin(kopete_autoreplace ${kopete_autoreplace_PART_SRCS})
+add_library(kopete_autoreplace MODULE ${kopete_autoreplace_PART_SRCS})
 
 
-target_link_libraries(kopete_autoreplace  ${KDE4_KDEUI_LIBS} kopete )
+target_link_libraries(kopete_autoreplace   kopete )
 
 install(TARGETS kopete_autoreplace  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -21,13 +21,13 @@ install(TARGETS kopete_autoreplace  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_autoreplace_PART_SRCS autoreplacepreferences.cpp autoreplaceconfig.cpp )
 
-kde4_add_ui_files(kcm_kopete_autoreplace_PART_SRCS autoreplaceprefs.ui )
+ki18n_wrap_ui(kcm_kopete_autoreplace_PART_SRCS autoreplaceprefs.ui )
 
 
-kde4_add_plugin(kcm_kopete_autoreplace ${kcm_kopete_autoreplace_PART_SRCS})
+add_library(kcm_kopete_autoreplace MODULE ${kcm_kopete_autoreplace_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_autoreplace  ${KDE4_KUTILS_LIBS} kopete )
+target_link_libraries(kcm_kopete_autoreplace   kopete )
 
 install(TARGETS kcm_kopete_autoreplace  DESTINATION ${PLUGIN_INSTALL_DIR})
 

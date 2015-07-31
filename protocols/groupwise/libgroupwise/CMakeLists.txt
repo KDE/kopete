@@ -80,9 +80,9 @@ set( libqgroupwise_SRCS
 )
 
 
-kde4_add_library( qgroupwise SHARED ${libqgroupwise_tasks_SRCS} ${libqgroupwise_SRCS} )
+add_library( qgroupwise SHARED ${libqgroupwise_tasks_SRCS} ${libqgroupwise_SRCS} )
 
-target_link_libraries( qgroupwise ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} ${KDE4_KDECORE_LIBS})
+target_link_libraries( qgroupwise Qt5::Core Qt5::Gui Qt5::Network ${QT_QT3SUPPORT_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} KF5::KDELibs4Support)
 
 ########### install files ###############
 

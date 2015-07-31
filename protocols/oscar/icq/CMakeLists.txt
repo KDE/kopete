@@ -30,7 +30,7 @@ ui/iconcells.cpp
 ui/infocombobox.cpp
 )
 
-kde4_add_ui_files(kopete_icq_ui_SRCS
+ki18n_wrap_ui(kopete_icq_ui_SRCS
 ui/icqadd.ui
 ui/icqgeneralinfo.ui
 ui/icqotherinfowidget.ui
@@ -57,15 +57,15 @@ set(kopete_icq_PART_SRCS
    xtrazstatusmodel.cpp
    xtrazstatusaction.cpp )
 
-kde4_add_plugin(kopete_icq ${kopete_icq_PART_SRCS})
+add_library(kopete_icq MODULE ${kopete_icq_PART_SRCS})
 
 
 target_link_libraries(kopete_icq
     kopete_oscar
     oscar
     kopete
-    ${KDE4_KDEUI_LIBS}
-    ${QT_QTNETWORK_LIBRARY}
+    
+    Qt5::Network
     )
 
 install(TARGETS kopete_icq  DESTINATION ${PLUGIN_INSTALL_DIR})

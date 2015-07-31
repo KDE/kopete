@@ -9,15 +9,15 @@ set(kopete_cryptography_PART_SRCS
    exportkeys.cpp
    cryptographymessagehandler.cpp )
 
-kde4_add_kcfg_files(kopete_cryptography_PART_SRCS
+kconfig_add_kcfg_files(kopete_cryptography_PART_SRCS
   cryptographysettings.kcfgc
 )
 
-kde4_add_ui_files(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui exportkeysbase.ui )
+ki18n_wrap_ui(kopete_cryptography_PART_SRCS kabckeyselectorbase.ui exportkeysbase.ui )
 
-kde4_add_plugin(kopete_cryptography ${kopete_cryptography_PART_SRCS})
+add_library(kopete_cryptography MODULE ${kopete_cryptography_PART_SRCS})
 
-target_link_libraries(kopete_cryptography ${QT_QTGUI_LIBRARY}  ${KDE4_KDECORE_LIBS} kopete ${KLEOPATRA_LIBRARIES} ${KDE4_KABC_LIBS} ${QGPGME_LIBRARIES} )
+target_link_libraries(kopete_cryptography Qt5::Gui  KF5::KDELibs4Support kopete ${KLEOPATRA_LIBRARIES} ${KDE4_KABC_LIBS} ${QGPGME_LIBRARIES} )
 
 install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -26,21 +26,21 @@ install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_cryptography_PART_SRCS cryptographypreferences.cpp )
 
-kde4_add_kcfg_files(kcm_kopete_cryptography_PART_SRCS
+kconfig_add_kcfg_files(kcm_kopete_cryptography_PART_SRCS
   cryptographysettings.kcfgc
 )
 
-kde4_add_plugin(kcm_kopete_cryptography ${kcm_kopete_cryptography_PART_SRCS})
+add_library(kcm_kopete_cryptography MODULE ${kcm_kopete_cryptography_PART_SRCS})
 
 target_link_libraries(
     kcm_kopete_cryptography
     kopete
     ${KLEOPATRA_LIBRARIES}
-    ${KDE4_KDECORE_LIBS}
-    ${KDE4_KDEUI_LIBS}
-    ${KDE4_KUTILS_LIBS}
-    ${QT_QTCORE_LIBRARY}
-    ${QT_QTGUI_LIBRARY}
+    KF5::KDELibs4Support
+    
+    
+    Qt5::Core
+    Qt5::Gui
     )
 
 install(TARGETS kcm_kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
