@@ -1,7 +1,6 @@
 #ifndef GNUPGPLUGIN_H
 #define GNUPGPLUGIN_H
 
-
 #include "kopeteplugin.h"
 
 namespace Kopete
@@ -16,6 +15,7 @@ class GnupgPlugin : public Kopete::Plugin
     Q_OBJECT
 public:
     static GnupgPlugin  *plugin();
+    GnupgPlugin ( QObject *parent, const QVariantList &args );
     ~GnupgPlugin();
 
 private:

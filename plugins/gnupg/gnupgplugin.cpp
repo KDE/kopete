@@ -27,6 +27,7 @@
 
 //=======KDE Stuff=======//
 #include <kconfig.h>
+#include <kpluginfactory.h>
 #include <kconfiggroup.h>
 #include <kgenericfactory.h>
 #include <kmessagebox.h>
@@ -36,6 +37,8 @@
 //=======Other Stuff=======//
 #include <qca2/QtCrypto/QtCrypto>
 #include "gnupgpreferences.h"
+#include "gnupgplugin.h"
+#include "gnupgplugin.moc"
 //=========================//
 
 GnupgPlugin* GnupgPlugin::mPluginStatic = 0L;
@@ -52,5 +55,5 @@ GnupgPlugin::GnupgPlugin ( QObject *parent, const QVariantList &/*args*/ )
 
 GnupgPlugin::~GnupgPlugin()
 {
-    mPluginStatic = 0L;
+
 }

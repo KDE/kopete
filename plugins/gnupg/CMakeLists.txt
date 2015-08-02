@@ -8,7 +8,7 @@ set(kopete_gnupg_PART_SRCS
 
 kde4_add_plugin(kopete_gnupg ${kopete_gnupg_PART_SRCS})
 
-target_link_libraries(kopete_gnupg ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBS})
+target_link_libraries(kopete_gnupg ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBS} kopete)
 
 install( TARGETS kopete_gnupg DESTINATION ${PLUGIN_INSTALL_DIR})
 
