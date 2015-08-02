@@ -6,17 +6,24 @@
 
 namespace Kopete
 {
-	class Message;
-	class MessageEvent;
-	class ChatSession;
+class Message;
+class MessageEvent;
+class ChatSession;
 }
 
-class CryptographyPlugin : public Kopete::Plugin
+class GnupgPlugin : public Kopete::Plugin
 {
-		Q_OBJECT
+    Q_OBJECT
+public:
+    static GnupgPlugin  *plugin();
+    ~GnupgPlugin();
 
-	public:
-		static CryptographyPlugin  *plugin();
+private:
+    static GnupgPlugin *mPluginStatic;
+
+private slots:
+    void slotIncomingMessage(Kopete::MessageEvent *msg);
+    void slotOUtgoingMessage(Kopete::Message &msg);
 };
 
 #endif

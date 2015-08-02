@@ -1,6 +1,7 @@
 include_directories(${KOPETE_INCLUDES} ${QCA2_LIBRARIES})
 
 set(kopete_gnupg_PART_SRCS
+    gnupgplugin.cpp
     gnupgselectuserkey.cpp)
 
 #kde4_add_ui_files(kopete_cryptography_PART_SRCS gnupggui.ui)
