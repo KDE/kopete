@@ -9,6 +9,7 @@
 #include <QWidget>
 #include <kabc/addressbook.h>
 #include <kabc/addressee.h>
+#include <kdialog.h>
 
 GnupgSelectUserKey::GnupgSelectUserKey(const QString &key, Kopete::MetaContact *mc): KDialog()
 {

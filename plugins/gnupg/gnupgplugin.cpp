@@ -11,6 +11,7 @@
 #include <QStringList>
 #include <QList>
 #include <QMessageBox>
+#include <QVariantList>
 //=======================//
 
 
@@ -26,6 +27,7 @@
 //===========================//
 
 //=======KDE Stuff=======//
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kpluginfactory.h>
 #include <kconfiggroup.h>
@@ -38,7 +40,6 @@
 #include <qca2/QtCrypto/QtCrypto>
 #include "gnupgpreferences.h"
 #include "gnupgplugin.h"
-#include "gnupgplugin.moc"
 //=========================//
 
 GnupgPlugin* GnupgPlugin::mPluginStatic = 0L;
@@ -53,7 +54,19 @@ GnupgPlugin::GnupgPlugin ( QObject *parent, const QVariantList &/*args*/ )
         mPluginStatic=this;
 }
 
+void GnupgPlugin::slotIncomingMessage(Kopete::MessageEvent *msg)
+{
+  
+}
+
+void GnupgPlugin::slotOUtgoingMessage(Kopete::Message &msg)
+{
+  
+}
+
 GnupgPlugin::~GnupgPlugin()
 {
 
 }
+
+#include "gnupgplugin.moc"

@@ -2,6 +2,9 @@
 #define GNUPGPLUGIN_H
 
 #include "kopeteplugin.h"
+#include <QObject>
+#include <QVariantList>
+
 
 namespace Kopete
 {

@@ -2,6 +2,7 @@
 #define GNUPGSELECTUSERKEY_H
 
 #include <kdialog.h>
+#include <QObject>
 
 namespace Kopete {class MetaContact;}
 
