@@ -23,7 +23,7 @@
 #include <kcmdlineargs.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kstandarddirs.h>
+
 #include <dcopclient.h>
 #include <kwallet.h>
 

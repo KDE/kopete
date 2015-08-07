@@ -19,7 +19,7 @@
 #include "kopeteuiglobal.h"
 
 #include <QtCore/QLatin1String>
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -28,9 +28,9 @@
 #include <kmessagebox.h>
 #include <kprogressdialog.h>
 
-#include <kstandarddirs.h>
-#include <ktar.h>
-#include <kzip.h>
+
+#include <KArchive/ktar.h>
+#include <KArchive/kzip.h>
 
 namespace Kopete
 {

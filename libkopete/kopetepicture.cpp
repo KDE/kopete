@@ -18,11 +18,12 @@
 
 #include <qbuffer.h>
 
-#include <kabc/picture.h>
+#include <kcontacts/picture.h>
 
 #include <kcodecs.h>
-#include <kstandarddirs.h>
+
 #include <kdebug.h>
+#include <QStandardPaths>
 
 
 namespace Kopete
@@ -56,7 +57,7 @@ Picture::Picture(const QImage &image)
 	setPicture(image);
 }
 
-Picture::Picture(const KABC::Picture &picture)
+Picture::Picture(const KContacts::Picture &picture)
  : d(new Private)
 {
 	setPicture(picture);
@@ -121,7 +122,7 @@ QString Picture::path()
 		KMD5 context(tempArray);
 		// Save the image to a file.
 		localPhotoPath = context.hexDigest() + ".png";
-		localPhotoPath = KStandardDirs::locateLocal( "appdata", QString::fromUtf8("metacontactpicturecache/%1").arg( localPhotoPath) );
+		localPhotoPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QString::fromUtf8("metacontactpicturecache/%1").arg( localPhotoPath) ;
 		if( image().save(localPhotoPath, "PNG") )
 		{
 			d->picturePath = localPhotoPath;
@@ -172,7 +173,7 @@ void Picture::setPicture(const QString &path)
 	d->pictureBase64.clear();
 }
 
-void Picture::setPicture(const KABC::Picture &picture)
+void Picture::setPicture(const KContacts::Picture &picture)
 {
 	// No need to call detach() here because setPicture will do it.
 	if ( picture.isIntern())

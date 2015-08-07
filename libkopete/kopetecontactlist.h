@@ -21,9 +21,9 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QtGui/QStandardItemModel>
+#include <QStandardItemModel>
 
-#include <KUrl>
+#include <QUrl>
 
 #include "kopete_export.h"
 
@@ -255,7 +255,7 @@ signals:
 	/**
 	 * This signal is emitted each time the selection has changed. the bool is set to true if only one meta contact has been selected,
 	 * and set to false if none, or several contacts are selected
-	 * you can connect this signal to KAction::setEnabled if you have an action which is applied to only one contact
+	 * you can connect this signal to QAction::setEnabled if you have an action which is applied to only one contact
 	 */
 	void metaContactSelected(bool);
 

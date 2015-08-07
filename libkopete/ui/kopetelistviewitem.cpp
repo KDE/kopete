@@ -21,19 +21,19 @@
 #include "kopeteemoticons.h"
 #include "kopeteonlinestatus.h"
 
-#include <kdebug.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
 
-#include <qapplication.h>
-#include <qpixmap.h>
-#include <qpainter.h>
-#include <qrect.h>
-#include <qtimer.h>
-#include <qstyle.h>
-#include <qstyleoption.h>
+#include <QApplication>
+#include <QPixmap>
+#include <QPainter>
+#include <QRect>
+#include <QTimer>
+#include <QStyle>
+#include <QStyleOption>
 #include <QList>
 #include <QHeaderView>
+#include <QPalette>
 
 #include <limits.h>
 
@@ -733,7 +733,7 @@ void DisplayNameComponent::redraw()
 			ic->scale( INT_MAX, fontHeight, Qt::KeepAspectRatio );
 		break;
 		default:
-			kDebug( 14010 ) << "This should have not happened!";
+			qCDebug(LIBKOPETE_LOG) << "This should have not happened!";
 		}
 	}
 
@@ -1073,8 +1073,8 @@ void Item::setSearchMatch( bool match, bool searching )
 		mySetVisible( false );
 	else
 	{
-		kDebug(14000) << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
-		               << ", target visibility: " << targetVisibility() << endl;
+		/*kDebug(14000) << " match: " << match << ", vis timer active: " << d->visibilityTimer.isActive()
+					   << ", target visibility: " << targetVisibility() << endl;*/
 		if ( d->visibilityTimer.isActive() || searching )
 			mySetVisible( true );
 		else
@@ -1198,7 +1198,7 @@ void Item::paintCell( QPainter *p, const QPalette &cg, int column, int width, in
 	//QTreeWidgetItem::paintCell( &paint, cg, column, width, align );
 	// PASTED FROM KLISTVIEWITEM:
 	// set the alternate cell background colour if necessary
-	QColorGroup _cg = cg;
+	QPalette _cg = cg;
 	_cg.setColor( treeWidget()->backgroundRole(), backgroundColor(column) );
 
 // PASTED FROM QLISTVIEWITEM
@@ -1280,13 +1280,13 @@ void Item::paintCell( QPainter *p, const QPalette &cg, int column, int width, in
 
 	//do you see a better way to tell the TextComponent we are selected ?  - Olivier 2004-09-02
 	if ( isSelected() )
-		_cg.setColor(QPalette::Text , _cg.highlightedText() );
+		//FIXME : Port to KF5 _cg.setColor(QPalette::Text , _cg.highlightedText() );
 
 	if ( Component *comp = component( column ) )
 		comp->paint( &paint, _cg );
 	paint.end();
 
-	QColor rgba = cg.base();//backgroundColor();
+	QColor rgba = cg.base().color();//backgroundColor();
 	float opac = 1.0;
 	if ( d->visibilityTimer.isActive() && Private::fadeVisibility )
 	{

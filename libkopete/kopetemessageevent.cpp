@@ -50,7 +50,7 @@ MessageEvent::MessageEvent( const Message& m, QObject *parent )
 
 MessageEvent::~MessageEvent()
 {
-//	kDebug(14010) ;
+//	qCDebug(LIBKOPETE_LOG) ;
 	emit done(this);
 	delete d;
 }

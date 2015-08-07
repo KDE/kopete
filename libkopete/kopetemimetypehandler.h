@@ -18,12 +18,14 @@
 #ifndef KOPETEMIMETYPEHANDLER_H
 #define KOPETEMIMETYPEHANDLER_H
 
-#include <kurl.h>
+#include <QUrl>
+#include <QDebug>
 
 class QString;
 class QStringList;
 
 #include "kopete_export.h"
+#include "libkopete_debug.h"
 
 namespace Kopete
 {
@@ -47,7 +49,7 @@ public:
 	 *
 	 * @return true if a handler was registered for the mime type, false otherwise
 	 */
-	static bool dispatchURL( const KUrl &url );
+	static bool dispatchURL( const QUrl &url );
 
 	/**
 	 * Returns a list of mime types this object is registered to handle
@@ -69,7 +71,7 @@ public:
 	/**
 	 * @deprecated
 	 */
-	virtual KDE_DEPRECATED void handleURL( const KUrl &url ) const;
+	virtual KDE_DEPRECATED void handleURL( const QUrl &url ) const;
 
 	/**
 	 * Handles the URL @p url, which has the mime type @p mimeType
@@ -77,7 +79,7 @@ public:
 	 * @param mimeType The mime type of the URL
 	 * @param url The url to handle
 	 */
-	virtual void handleURL( const QString &mimeType, const KUrl &url ) const;
+	virtual void handleURL( const QString &mimeType, const QUrl &url ) const;
 
 protected:
 	/**
@@ -107,7 +109,7 @@ private:
 	 *
 	 * @return true if a handler was able to process the URL, false otherwise
 	 */
-	static bool dispatchToHandler( const KUrl &url, const QString &mimeType, MimeTypeHandler *handler );
+	static bool dispatchToHandler( const QUrl &url, const QString &mimeType, MimeTypeHandler *handler );
 
 	class Private;
 	Private * const d;
@@ -123,8 +125,8 @@ public:
 
 	const QStringList mimeTypes() const;
 
-	void handleURL( const QString &mimeType, const KUrl &url ) const;
-	KDE_DEPRECATED void handleURL( const KUrl &url ) const;
+	void handleURL( const QString &mimeType, const QUrl &url ) const;
+	KDE_DEPRECATED void handleURL( const QUrl &url ) const;
 };
 
 } // Kopete

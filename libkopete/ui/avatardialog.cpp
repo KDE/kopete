@@ -19,10 +19,13 @@
 
 // Qt includes
 #include <QPointer>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QDialogButtonBox>
 
 // KDE includes
-#include <kdebug.h>
-#include <klocale.h>
+#include <KConfigGroup>
+#include <KLocalizedString>
 
 // Kopete includes
 #include "avatarselectorwidget.h"
@@ -47,14 +50,24 @@ public:
 };
 
 AvatarDialog::AvatarDialog(QWidget *parent)
- : KDialog(parent), d(new Private)
+ : QDialog(parent), d(new Private)
 {
-	showButtonSeparator(true);
-	setCaption( i18n("Select Avatar") );
-	setButtons( KDialog::Ok | KDialog::Cancel );
+	setWindowTitle( i18n("Select Avatar") );
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+	QWidget *mainWidget = new QWidget(this);
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+	okButton->setDefault(true);
+	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+	mainLayout->addWidget(buttonBox);
 
 	d->mainWidget = new Kopete::UI::AvatarSelectorWidget(this);
-	setMainWidget(d->mainWidget);
+	//setMainWidget(d->mainWidget);
 }
 
 AvatarDialog::~AvatarDialog()
@@ -91,9 +104,10 @@ QString AvatarDialog::getAvatar(QWidget *parent, const QString &currentAvatar, b
 	return ret;
 }
 
+//Adapt code and connect okbutton or other to new slot. It doesn't exist in qdialog
 void AvatarDialog::slotButtonClicked(int button)
 {
-	if (button == KDialog::Ok)
+	if (button == QDialogButtonBox::Ok)
 	{
 		Kopete::AvatarManager::AvatarEntry selectedEntry = d->mainWidget->selectedEntry();
 
@@ -101,7 +115,9 @@ void AvatarDialog::slotButtonClicked(int button)
 		emit result();
 	}
 
-	KDialog::slotButtonClicked(button);
+	/* FIXME :Adapt code and connect okbutton or other to new slot. It doesn't exist in qdialog
+	QDialog::slotButtonClicked(button);
+	connect( button, SIGNAL(clicked()), SLOT(slotButtonClicked(int)) ); */
 }
 
 } // namespace UI

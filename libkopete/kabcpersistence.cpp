@@ -20,15 +20,19 @@
 #include <qstring.h>
 #include <qtimer.h>
 
-#include <kabc/addressbook.h>
-#include <kabc/addressee.h>
-#include <kabc/resource.h>
-#include <kabc/stdaddressbook.h>
+#include <kcontacts/addressbook.h>
+#include <kcontacts/addressee.h>
+#include <kcontacts/resource.h>
+#include <kcontacts/stdaddressbook.h>
 
 // UI related includes used for importing from KABC
-#include <kdialog.h>
+#include <QDialog>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include "accountselector.h"
 #include "kopeteuiglobal.h"
 
@@ -63,14 +67,14 @@ public:
 	Private() 
 	 : addrBookWritePending(false)
 	{}
-	QList<KABC::Resource *> pendingResources;
+	QList<KContacts::Resource *> pendingResources;
 	bool addrBookWritePending;
 
 	// FIXME: Try to remove that static variable !
-	static KABC::AddressBook* s_addressBook;
+	static KContacts::AddressBook* s_addressBook;
 };
 
-KABC::AddressBook* KABCPersistence::Private::s_addressBook = 0L;
+KContacts::AddressBook* KABCPersistence::Private::s_addressBook = 0L;
 
 KABCPersistence::KABCPersistence( QObject * parent, const char * name )
   : QObject( parent), d(new Private())
@@ -89,12 +93,12 @@ KABCPersistence *KABCPersistence::self()
 	return &s;
 }
 
-KABC::AddressBook* KABCPersistence::addressBook()
+KContacts::AddressBook* KABCPersistence::addressBook()
 {
 	if ( Private::s_addressBook == 0L )
 	{
-		Private::s_addressBook = KABC::StdAddressBook::self();
-		KABC::StdAddressBook::setAutomaticSave( false );
+		Private::s_addressBook = KContacts::StdAddressBook::self();
+		KContacts::StdAddressBook::setAutomaticSave( false );
 	}
 	return Private::s_addressBook;
 }
@@ -102,11 +106,11 @@ KABC::AddressBook* KABCPersistence::addressBook()
 void KABCPersistence::write( MetaContact * mc )
 {
 	// Save any changes in each contact's addressBookFields to KABC
-	KABC::AddressBook* ab = addressBook();
+	KContacts::AddressBook* ab = addressBook();
 
-	kDebug( 14010 ) << "looking up Addressee for " << mc->displayName() << "...";
+	qCDebug(LIBKOPETE_LOG) << "looking up Addressee for " << mc->displayName() << "...";
 	// Look up the address book entry
-	KABC::Addressee theAddressee = ab->findByUid( mc->kabcId() );
+	KContacts::Addressee theAddressee = ab->findByUid( mc->kabcId() );
 	// Check that if addressee is not deleted or if the link is spurious
 	// (inherited from Kopete < 0.8, where all metacontacts had random ids)
 	if ( theAddressee.isEmpty() )
@@ -137,7 +141,7 @@ void KABCPersistence::write( MetaContact * mc )
 			// merge without duplicating
 			const QString toWrite = unionContents( currentCustomForProtocol, it.value().join( QString( QChar( 0xE000 ) ) ) );
 			// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
-			kDebug( 14010 ) << "Writing: " << it.key() << ", " << "All" << ", " << toWrite;
+			qCDebug(LIBKOPETE_LOG) << "Writing: " << it.key() << ", " << "All" << ", " << toWrite;
 			theAddressee.insertCustom( it.key(), QLatin1String( "All" ), toWrite );
 			const QString check = theAddressee.custom( it.key(), QLatin1String( "All" ) );
 		}
@@ -151,7 +155,7 @@ void KABCPersistence::write( MetaContact * mc )
 	// This causes each Kopete::Protocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
 			emit aboutToSave(this);
 
-			kDebug( 14010 ) << "...FOUND ONE!";
+			qCDebug(LIBKOPETE_LOG) << "...FOUND ONE!";
 	// Store address book fields
 			QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
 			for( ; appIt != d->addressBook.end(); ++appIt )
@@ -165,7 +169,7 @@ void KABCPersistence::write( MetaContact * mc )
 					QString toWrite = unionContents( currentCustom, addrIt.data() );
 			// write the result
 			// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
-					kDebug( 14010 ) << "Writing: " << appIt.key() << ", " << addrIt.key() << ", " << toWrite;
+					qCDebug(LIBKOPETE_LOG) << "Writing: " << appIt.key() << ", " << addrIt.key() << ", " << toWrite;
 					theAddressee.insertCustom( appIt.key(), addrIt.key(), toWrite );
 				}
 			}
@@ -174,7 +178,7 @@ void KABCPersistence::write( MetaContact * mc )
 		}*/
 }
 
-void KABCPersistence::writeAddressBook( KABC::Resource * res)
+void KABCPersistence::writeAddressBook( KContacts::Resource * res)
 {
 	if ( !d->pendingResources.count( res ) )
 		d->pendingResources.append( res );
@@ -187,24 +191,24 @@ void KABCPersistence::writeAddressBook( KABC::Resource * res)
 
 void KABCPersistence::slotWriteAddressBook()
 {
-	//kDebug(  14010 ) ;
-	KABC::AddressBook* ab = addressBook();
-	QListIterator<KABC::Resource *> it( d->pendingResources );
+	//qCDebug(LIBKOPETE_LOG) ;
+	KContacts::AddressBook* ab = addressBook();
+	QListIterator<KContacts::Resource *> it( d->pendingResources );
 	while ( it.hasNext() )
 	{
-		//kDebug(  14010 )  << "Writing resource " << it.current()->resourceName();
-		KABC::Ticket *ticket = ab->requestSaveTicket( it.next() );
+		//qCDebug(LIBKOPETE_LOG)  << "Writing resource " << it.current()->resourceName();
+		KContacts::Ticket *ticket = ab->requestSaveTicket( it.next() );
 		if ( !ticket )
-			kWarning( 14010 ) << "WARNING: Resource is locked by other application!";
+			qCWarning(LIBKOPETE_LOG) << "WARNING: Resource is locked by other application!";
 		else
 		{
 			if ( !ab->save( ticket ) )
 			{
-				kWarning( 14010 ) << "ERROR: Saving failed!";
+				qCWarning(LIBKOPETE_LOG) << "ERROR: Saving failed!";
 				ab->releaseSaveTicket( ticket );
 			}
 		}
-		//kDebug( 14010 ) << "Finished writing KABC";
+		//qCDebug(LIBKOPETE_LOG) << "Finished writing KABC";
 	}
 	d->pendingResources.clear();
 	d->addrBookWritePending = false;
@@ -214,7 +218,7 @@ void KABCPersistence::removeKABC( MetaContact *)
 {
 /*	// remove any data this KMC has written to the KDE address book
 	// Save any changes in each contact's addressBookFields to KABC
-	KABC::AddressBook* ab = addressBook();
+	KContacts::AddressBook* ab = addressBook();
 
 	// Wipe out the existing addressBook entries
 	d->addressBook.clear();
@@ -224,19 +228,19 @@ void KABCPersistence::removeKABC( MetaContact *)
 	// If the metacontact is linked to a kabc entry
 	if ( !d->kabcId().isEmpty() )
 	{
-		//kDebug( 14010 ) << "looking up Addressee for " << displayName() << "...";
+		//qCDebug(LIBKOPETE_LOG) << "looking up Addressee for " << displayName() << "...";
 		// Look up the address book entry
-		KABC::Addressee theAddressee = ab->findByUid( d->kabcId() );
+		KContacts::Addressee theAddressee = ab->findByUid( d->kabcId() );
 
 		if ( theAddressee.isEmpty() )
 		{
 			// remove the link
-			//kDebug( 14010 ) << "...not found.";
+			//qCDebug(LIBKOPETE_LOG) << "...not found.";
 			d->kabcId.clear();
 		}
 		else
 		{
-			//kDebug( 14010 ) << "...FOUND ONE!";
+			//qCDebug(LIBKOPETE_LOG) << "...FOUND ONE!";
 			// Remove address book fields
 			QMap<QString, QMap<QString, QString> >::ConstIterator appIt = d->addressBook.begin();
 			for( ; appIt != d->addressBook.end(); ++appIt )
@@ -245,7 +249,7 @@ void KABCPersistence::removeKABC( MetaContact *)
 				for( ; addrIt != appIt.data().end(); ++addrIt )
 				{
 					// FIXME: This assumes Kopete is the only app writing these fields
-					kDebug( 14010 ) << "Removing: " << appIt.key() << ", " << addrIt.key();
+					qCDebug(LIBKOPETE_LOG) << "Removing: " << appIt.key() << ", " << addrIt.key();
 					theAddressee.removeCustom( appIt.key(), addrIt.key() );
 				}
 			}
@@ -254,16 +258,16 @@ void KABCPersistence::removeKABC( MetaContact *)
 			writeAddressBook();
 		}
 	}
-//	kDebug(14010) << kBacktrace();*/
+//	qCDebug(LIBKOPETE_LOG) << kBacktrace();*/
 }
 
 bool KABCPersistence::syncWithKABC( MetaContact * mc )
 {
-	kDebug(14010) ;
+	qCDebug(LIBKOPETE_LOG) ;
 	bool contactAdded = false;
 	// check whether the dontShowAgain was checked
-		KABC::AddressBook* ab = addressBook();
-		KABC::Addressee addr  = ab->findByUid( mc->kabcId() );
+		KContacts::AddressBook* ab = addressBook();
+		KContacts::Addressee addr  = ab->findByUid( mc->kabcId() );
 
 		if ( !addr.isEmpty() ) // if we are associated with KABC
 		{
@@ -275,13 +279,13 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 		{
 			QString app, name, value;
 			splitField( *it, app, name, value );
-			kDebug( 14010 ) << "app=" << app << " name=" << name << " value=" << value;
+			qCDebug(LIBKOPETE_LOG) << "app=" << app << " name=" << name << " value=" << value;
 
 			if ( app.startsWith( QLatin1String( "messaging/" ) ) )
 			{
 				if ( name == QLatin1String( "All" ) )
 				{
-					kDebug( 14010 ) << " syncing \"" << app << ":" << name << " with contact list ";
+					qCDebug(LIBKOPETE_LOG) << " syncing \"" << app << ":" << name << " with contact list ";
 					// Get the protocol name from the custom field
 					// by chopping the 'messaging/' prefix from the custom field app name
 					QString protocolName = app.right( app.length() - 10 );
@@ -330,17 +334,17 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 							// Is it already in this metacontact? If so, we needn't do anything
 							if ( otherMc == mc )
 							{
-								kDebug( 14010 ) << *it << " already a child of this metacontact.";
+								qCDebug(LIBKOPETE_LOG) << *it << " already a child of this metacontact.";
 								continue;
 							}
-							kDebug( 14010 ) << *it << " already exists in OTHER metacontact, move here?";
+							qCDebug(LIBKOPETE_LOG) << *it << " already exists in OTHER metacontact, move here?";
 							// find the Kopete::Contact and attempt to move it to this metacontact.
 							otherMc->findContact( proto->pluginId(), QString(), *it )->setMetaContact( mc );
 						}
 						else
 						{
 							// if not, prompt to add it
-							kDebug( 14010 ) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add...";
+							qCDebug(LIBKOPETE_LOG) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add...";
 							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 									 i18n( "<qt>An address was added to this contact by another application.<br />Would you like to use it in Kopete?<br /><b>Protocol:</b> %1<br /><b>Address:</b> %2</qt>", proto->displayName(), *it ), i18n( "Import Address From Address Book" ), KGuiItem( i18n("Use") ), KGuiItem( i18n("Do Not Use") ), QLatin1String( "ImportFromKABC" ) ) )
 							{
@@ -376,13 +380,24 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								// Do we need to choose an account
 								if ( accountcount > 1 )
 								{	// if we have >1 account in this protocol, prompt for the protocol.
-									KDialog *chooser = new KDialog(0);
-									chooser->setCaption( i18n("Choose Account") );
-									chooser->setButtons( KDialog::Ok | KDialog::Cancel );
+									QDialog *chooser = new QDialog(0);
+									chooser->setWindowTitle( i18n("Choose Account") );
+									QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+									QWidget *mainWidget = new QWidget(this);
+									QVBoxLayout *mainLayout = new QVBoxLayout;
+									chooser->setLayout(mainLayout);
+									mainLayout->addWidget(mainWidget);
+									QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+									okButton->setDefault(true);
+									okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+									chooser->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+									chooser->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+									//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+									mainLayout->addWidget(buttonBox);
 
 									AccountSelector *accSelector = new AccountSelector(proto, chooser);
 									accSelector->setObjectName( QLatin1String("accSelector") );
-									chooser->setMainWidget(accSelector);
+									mainLayout->addWidget(accSelector);
 									if ( chooser->exec() == QDialog::Rejected )
 										continue;
 									chosen = accSelector->selectedItem();
@@ -400,7 +415,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								// add the contact to the chosen account
 								if ( chosen )
 								{
-									kDebug( 14010 ) << "Adding " << *it << " to " << chosen->accountId();
+									qCDebug(LIBKOPETE_LOG) << "Adding " << *it << " to " << chosen->accountId();
 									if ( chosen->addContact( *it, mc ) )
 										contactAdded = true;
 									else
@@ -410,17 +425,17 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 								}
 							}
 							else
-								kDebug( 14010 ) << " user declined to add " << *it << " to contact list ";
+								qCDebug(LIBKOPETE_LOG) << " user declined to add " << *it << " to contact list ";
 						}
 					}
-					kDebug( 14010 ) << " all " << addresses.count() << " contacts in " << proto->pluginId() << " checked ";
+					qCDebug(LIBKOPETE_LOG) << " all " << addresses.count() << " contacts in " << proto->pluginId() << " checked ";
 				}
 				else
-					kDebug( 14010 ) << "not interested in name=" << name;
+					qCDebug(LIBKOPETE_LOG) << "not interested in name=" << name;
 
 			}
 			else
-				kDebug( 14010 ) << "not interested in app=" << app;
+				qCDebug(LIBKOPETE_LOG) << "not interested in app=" << app;
 		}
 	}
 	return contactAdded;

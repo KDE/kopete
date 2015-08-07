@@ -18,7 +18,8 @@
 #ifndef KOPETEINFODIALOG_H
 #define KOPETEINFODIALOG_H
 
-#include <KDE/KDialog>
+#include <QIcon>
+#include <QDialog>
 #include "kopete_export.h"
 
 namespace Kopete
@@ -32,7 +33,7 @@ namespace UI
  *
  * @author Gustavo Pichorim Boiko <gustavo.boiko AT kdemail.net>
  */
-class KOPETE_EXPORT InfoDialog : public KDialog
+class KOPETE_EXPORT InfoDialog : public QDialog
 {
 Q_OBJECT
 
@@ -54,7 +55,7 @@ public:
 	 * @param icon the icon to be used
 	 */
 	InfoDialog(QWidget *parent, 
-			   const QString &title, const KIcon &icon);
+			   const QString &title, const QIcon &icon);
 
 	/**
 	 * Destructor.
@@ -63,7 +64,7 @@ public:
 
 	void setTitle(const QString &title);
 	void setIcon(const QString &icon);
-	void setIcon(const KIcon &icon);
+	void setIcon(const QIcon &icon);
 	
 	void addWidget(QWidget *w, const QString &caption);
 
@@ -77,7 +78,7 @@ private:
 	class Private;
 	Private * const d;
 
-	void initialize();
+	void initialize(QWidget *parent);
 
 };
 

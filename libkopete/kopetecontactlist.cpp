@@ -27,12 +27,12 @@
 #include <QtCore/QTextStream>
 
 // KDE includes
-#include <kabc/stdaddressbook.h>
+#include <kcontacts/stdaddressbook.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <ksavefile.h>
-#include <kstandarddirs.h>
+#include <QSaveFile>
+
 
 // Kopete includes
 #include "kopeteaccount.h"
@@ -160,7 +160,7 @@ Contact *ContactList::findContact( const QString &protocolId,
 	Account *i=AccountManager::self()->findAccount(protocolId,accountId);
 	if(!i)
 	{
-		kDebug( 14010 ) << "Account not found";
+		qCDebug(LIBKOPETE_LOG) << "Account not found";
 		return 0L;
 	}
 	return i->contacts().value( contactId );
@@ -252,7 +252,7 @@ void ContactList::removeMetaContact(MetaContact *m)
 {
 	if ( !d->contacts.contains(m) )
 	{
-		kDebug(14010) << "Trying to remove a not listed MetaContact.";
+		qCDebug(LIBKOPETE_LOG) << "Trying to remove a not listed MetaContact.";
 		return;
 	}
 
@@ -338,7 +338,7 @@ void ContactList::removeGroup( Group *g )
 
 void ContactList::setSelectedItems(QList<MetaContact *> metaContacts , QList<Group *> groups)
 {
-	kDebug( 14010 ) << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected";
+	qCDebug(LIBKOPETE_LOG) << metaContacts.count() << " metacontacts, " << groups.count() << " groups selected";
 	d->selectedMetaContacts=metaContacts;
 	d->selectedGroups=groups;
 
@@ -363,7 +363,7 @@ void ContactList::load()
 	storage->load();
 	if( !storage->isValid() )
 	{
-		kDebug(14010) << "Contact list storage failed. Reason: " << storage->errorMessage();
+		qCDebug(LIBKOPETE_LOG) << "Contact list storage failed. Reason: " << storage->errorMessage();
 	}
 	else
 	{
@@ -385,13 +385,13 @@ void Kopete::ContactList::save()
 {
 	if ( d->terminated )
 	{
-		kWarning(14010) << "Contact list terminated, abort saving";
+		qCWarning(LIBKOPETE_LOG) << "Contact list terminated, abort saving";
 		return;
 	}
 
 	if( !d->loaded )
 	{
-		kDebug(14010) << "Contact list not loaded, abort saving";
+		qCDebug(LIBKOPETE_LOG) << "Contact list not loaded, abort saving";
 		return;
 	}
 
@@ -399,7 +399,7 @@ void Kopete::ContactList::save()
 	storage->save();
 	if( !storage->isValid() )
 	{
-		kDebug(14010) << "Contact list storage failed. Reason: " << storage->errorMessage();
+		qCDebug(LIBKOPETE_LOG) << "Contact list storage failed. Reason: " << storage->errorMessage();
 
 		// Saving the contact list failed. retry every minute until it works.
 		// single-shot: will get restarted by us next time if it's still failing

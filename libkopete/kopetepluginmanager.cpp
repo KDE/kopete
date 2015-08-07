@@ -36,9 +36,10 @@
 #include <kparts/componentfactory.h>
 #include <kplugininfo.h>
 #include <kconfig.h>
-#include <kstandarddirs.h>
-#include <kurl.h>
+
+#include <QUrl>
 #include <kservicetypetrader.h>
+#include <KSharedConfig>
 
 #include "kopeteplugin.h"
 #include "kopeteprotocol.h"
@@ -60,7 +61,7 @@ public:
 	{
 		if ( shutdownMode != DoneShutdown && !loadedPlugins.empty() )
 		{
-			kWarning( 14010 ) << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
+			qCWarning(LIBKOPETE_LOG) << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kBacktrace();
 		}
 
 		// Clean up loadedPlugins manually, because PluginManager can't access our global
@@ -68,7 +69,7 @@ public:
 		while ( !loadedPlugins.empty() )
 		{
 			InfoToPluginMap::ConstIterator it = loadedPlugins.constBegin();
-			kWarning( 14010 ) << "Deleting stale plugin '" << it.value()->objectName() << "'";
+			qCWarning(LIBKOPETE_LOG) << "Deleting stale plugin '" << it.value()->objectName() << "'";
 			KPluginInfo info = it.key();
 			Plugin *plugin = it.value();
 			loadedPlugins.remove(info);
@@ -165,7 +166,7 @@ void PluginManager::shutdown()
 {
 	if(_kpmp->shutdownMode != PluginManagerPrivate::Running)
 	{
-		kDebug( 14010 ) << "called when not running.  / state = " << _kpmp->shutdownMode;
+		qCDebug(LIBKOPETE_LOG) << "called when not running.  / state = " << _kpmp->shutdownMode;
 		return;
 	}
 
@@ -200,7 +201,7 @@ void PluginManager::shutdown()
 	// certainly fire due to valgrind's much slower processing
 #if defined(HAVE_VALGRIND_H) && !defined(NDEBUG) && defined(__i386__)
 	if ( RUNNING_ON_VALGRIND )
-		kDebug(14010) << "Running under valgrind, disabling plugin unload timeout guard";
+		qCDebug(LIBKOPETE_LOG) << "Running under valgrind, disabling plugin unload timeout guard";
 	else
 #endif
 		QTimer::singleShot( 3000, this, SLOT(slotShutdownTimeout()) );
@@ -216,10 +217,10 @@ void PluginManager::slotPluginReadyForUnload()
 	Plugin *plugin = dynamic_cast<Plugin *>( const_cast<QObject *>( sender() ) );
 	if ( !plugin )
 	{
-		kWarning( 14010 ) << "Calling object is not a plugin!";
+		qCWarning(LIBKOPETE_LOG) << "Calling object is not a plugin!";
 		return;
 	}
-	kDebug( 14010 ) << plugin->pluginId() << "ready for unload";
+	qCDebug(LIBKOPETE_LOG) << plugin->pluginId() << "ready for unload";
 
 	plugin->deleteLater();
 }
@@ -236,7 +237,7 @@ void PluginManager::slotShutdownTimeout()
 	for ( PluginManagerPrivate::InfoToPluginMap::ConstIterator it = _kpmp->loadedPlugins.constBegin(); it != _kpmp->loadedPlugins.constEnd(); ++it )
 		remaining.append( it.value()->pluginId() );
 
-	kWarning( 14010 ) << "Some plugins didn't shutdown in time!" << endl
+	qCWarning(LIBKOPETE_LOG) << "Some plugins didn't shutdown in time!" << endl
 		<< "Remaining plugins: " << remaining.join( QLatin1String( ", " ) ) << endl
 		<< "Forcing Kopete shutdown now." << endl;
 
@@ -245,10 +246,10 @@ void PluginManager::slotShutdownTimeout()
 
 void PluginManager::slotShutdownDone()
 {
-	kDebug( 14010 ) ;
+	qCDebug(LIBKOPETE_LOG) ;
 
 	if (QTextCodec::codecForCStrings())
-		kWarning(14010) << "WARNING: Some plugin set QTextCodec::setCodecForCStrings this may break protocols!!!";
+		qCWarning(LIBKOPETE_LOG) << "WARNING: Some plugin set QTextCodec::setCodecForCStrings this may break protocols!!!";
 
 	_kpmp->shutdownMode = PluginManagerPrivate::DoneShutdown;
 
@@ -259,7 +260,7 @@ void PluginManager::loadAllPlugins()
 {
 	// FIXME: We need session management here - Martijn
 
-	KSharedConfig::Ptr config = KGlobal::config();
+	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 	if ( config->hasGroup( QLatin1String( "Plugins" ) ) )
 	{
 		QMap<QString, bool> pluginsMap;
@@ -345,7 +346,7 @@ Plugin * PluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mod
 	// FIXME: Find any cases causing this, remove them, and remove this too - Richard
 	if ( pluginId.endsWith( QLatin1String( ".desktop" ) ) )
 	{
-		kWarning( 14010 ) << "Trying to use old-style API!" << endl << kBacktrace();
+		qCWarning(LIBKOPETE_LOG) << "Trying to use old-style API!" << endl << kBacktrace();
 		pluginId = pluginId.remove( QRegExp( QLatin1String( ".desktop$" ) ) );
 	}
 
@@ -363,12 +364,12 @@ Plugin * PluginManager::loadPlugin( const QString &_pluginId, PluginLoadMode mod
 
 Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 {
-	//kDebug( 14010 ) << pluginId;
+	//qCDebug(LIBKOPETE_LOG) << pluginId;
 
 	KPluginInfo info = infoForPluginId( pluginId );
 	if ( !info.isValid() )
 	{
-		kWarning( 14010 ) << "Unable to find a plugin named '" << pluginId << "'!";
+		qCWarning(LIBKOPETE_LOG) << "Unable to find a plugin named '" << pluginId << "'!";
 		return 0L;
 	}
 
@@ -386,7 +387,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 		connect( plugin, SIGNAL(destroyed(QObject*)), this, SLOT(slotPluginDestroyed(QObject*)) );
 		connect( plugin, SIGNAL(readyForUnload()), this, SLOT(slotPluginReadyForUnload()) );
 
-		kDebug( 14010 ) << "Successfully loaded plugin '" << pluginId << "'";
+		qCDebug(LIBKOPETE_LOG) << "Successfully loaded plugin '" << pluginId << "'";
 
 		emit pluginLoaded( plugin );
 
@@ -396,7 +397,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 	}
 	else
 	{
-		kDebug( 14010 ) << "Loading plugin " << pluginId << " failed, KServiceTypeTrader reported error: " << error ;
+		qCDebug(LIBKOPETE_LOG) << "Loading plugin " << pluginId << " failed, KServiceTypeTrader reported error: " << error ;
 	}
 
 	return plugin;
@@ -404,7 +405,7 @@ Plugin *PluginManager::loadPluginInternal( const QString &pluginId )
 
 bool PluginManager::unloadPlugin( const QString &spec )
 {
-	//kDebug(14010) << spec;
+	//qCDebug(LIBKOPETE_LOG) << spec;
 	if( Plugin *thePlugin = plugin( spec ) )
 	{
 		thePlugin->aboutToUnload();
@@ -482,7 +483,7 @@ bool PluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* 
 {
 	QString pluginId = _pluginId;
 
-	KConfigGroup config(KGlobal::config(), "Plugins");
+	KConfigGroup config(KSharedConfig::openConfig(), "Plugins");
 
 	// FIXME: What is this for? This sort of thing is kconf_update's job - Richard
 	if ( !pluginId.startsWith( QLatin1String( "kopete_" ) ) )

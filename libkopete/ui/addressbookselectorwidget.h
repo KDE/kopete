@@ -27,14 +27,14 @@
 #ifndef AddressBookSelectorWidget_H
 #define AddressBookSelectorWidget_H
 
-#include <kabc/addressbook.h>
+#include <kcontacts/addressbook.h>
 
 #include <kdemacros.h>
 #include "kopete_export.h"
 
 #include "ui_addressbookselectorwidget_base.h"
 
-namespace KABC {
+namespace KContacts {
 		class AddressBook;
 		class Addressee;
 }
@@ -50,7 +50,7 @@ class KOPETE_EXPORT AddressBookSelectorWidget : public QWidget, private Ui::Addr
 public:
 	explicit AddressBookSelectorWidget( QWidget *parent = 0, const char *name  = 0 );
 	~AddressBookSelectorWidget();
-	KABC::Addressee addressee();
+	KContacts::Addressee addressee();
 	/**
 	 * sets the widget label message
 	 * example: Please select a contact
@@ -67,8 +67,8 @@ public:
 	bool addresseeSelected();
 	
 private:
-	KABC::AddressBook * m_addressBook;
-	KABC::Addressee m_addressee;
+	KContacts::AddressBook * m_addressBook;
+	KContacts::Addressee m_addressee;
 	
 protected slots:
 	void slotAddAddresseeClicked();

@@ -27,7 +27,7 @@
 
 #include <kaboutdata.h>
 #include <kglobal.h>
-#include <kstandarddirs.h>
+
 
 using namespace KUnitTest;
 

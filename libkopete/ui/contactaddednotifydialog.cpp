@@ -26,7 +26,11 @@
 #include <kpushbutton.h>
 #include <kiconloader.h>
 
-#include <kabc/addressee.h>
+#include <kcontacts/addressee.h>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 #include "kopetegroup.h"
 #include "kopeteaccount.h"
@@ -53,16 +57,27 @@ struct ContactAddedNotifyDialog::Private
 
 ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 		const QString& contactNick, Kopete::Account *account, const HideWidgetOptions &hide)
-	: KDialog( Global::mainWidget() ), d(new Private())
+	: QDialog( Global::mainWidget() ), d(new Private())
 {
-	setCaption( i18n("Someone Has Added You") );
-	setButtons( KDialog::Ok | KDialog::Cancel );
+	setWindowTitle( i18n("Someone Has Added You") );
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+	QWidget *mainWidget = new QWidget(this);
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+	okButton->setDefault(true);
+	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+	mainLayout->addWidget(buttonBox);
     setAttribute( Qt::WA_DeleteOnClose );
 
 	d->widget=new Ui::ContactAddedNotifyWidget;
 	QWidget* w = new QWidget(this);
 	d->widget->setupUi(w);
-	setMainWidget(w);
+	mainLayout->addWidget(w);
 
 	d->account=account;
 	d->contactId=contactId;
@@ -99,10 +114,10 @@ ContactAddedNotifyDialog::ContactAddedNotifyDialog(const QString& contactId,
 	}
 	d->widget->m_groupList->setEditText(QString()); //default to top-level
 
-	connect( d->widget->widAddresseeLink, SIGNAL(addresseeChanged(KABC::Addressee)), this, SLOT(slotAddresseeSelected(KABC::Addressee)) );
+	connect( d->widget->widAddresseeLink, SIGNAL(addresseeChanged(KContacts::Addressee)), this, SLOT(slotAddresseeSelected(KContacts::Addressee)) );
 	connect( d->widget->m_infoButton, SIGNAL(clicked()), this, SLOT(slotInfoClicked()) );
 
-	connect( this, SIGNAL(okClicked()) , this , SLOT(slotFinished()));
+	connect(okButton, SIGNAL(clicked()) , this , SLOT(slotFinished()));
 
 }
 
@@ -151,7 +166,7 @@ MetaContact *ContactAddedNotifyDialog::addContact() const
 	return metacontact;
 }
 
-void ContactAddedNotifyDialog::slotAddresseeSelected( const KABC::Addressee & addr )
+void ContactAddedNotifyDialog::slotAddresseeSelected( const KContacts::Addressee & addr )
 {
 	if ( !addr.isEmpty() )
 	{

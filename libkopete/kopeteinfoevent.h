@@ -16,11 +16,13 @@
 #ifndef KOPETEINFOEVENT_H
 #define KOPETEINFOEVENT_H
 
-#include <QtCore/QMap>
-#include <QtCore/QObject>
-#include <QtCore/QString>
+#include <QMap>
+#include <QObject>
+#include <QString>
+#include <QDebug>
 
 #include "kopete_export.h"
+#include "libkopete_debug.h"
 
 namespace Kopete {
 

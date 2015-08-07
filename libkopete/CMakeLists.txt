@@ -128,6 +128,7 @@ set(kopete_LIB_SRCS
    kopeteinfoevent.cpp
    kopeteaddedinfoevent.cpp
    kopetesockettimeoutwatcher.cpp
+   libkopete_debug.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp
@@ -150,17 +151,29 @@ kconfig_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC
   kopetestatussettings.kcfgc
   )
 
+find_package(KF5Contacts ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
 add_library(kopete SHARED ${kopete_LIB_SRCS})
+
+set(libkopete_kf5_link_libs
+	KF5::Contacts
+	KF5::Emoticons
+	KF5::KCMUtils
+	KF5::I18n
+	KF5::KIOCore
+	KF5::KIOWidgets
+	KF5::KArchive
+	KF5::ConfigCore
+	KF5::ConfigGui
+	KF5::KDELibs4Support
+)
 
 target_link_libraries(kopete
 	${QT_QTXML_LIBRARIES}
-	KF5::KIOCore
-	KF5::KIOWidgets
-	KF5::Contacts
-	KF5::Solid
-	KF5::KCMUtils
 	${KDE4_KEMOTICONS_LIBS}
+	${libkopete_kf5_link_libs}
 )
+
+target_link_libraries(kopete ${libkopete_kf5_link_libs} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} )
 
 if(NOT DISABLE_VIDEOSUPPORT)
     target_link_libraries(kopete kopete_videodevice)

@@ -14,19 +14,19 @@
     *************************************************************************
 */
 
-#include <qregexp.h>
+#include <QRegExp>
 #include <QList>
+#include <QAction>
+#include <qdom.h>
 #include <QApplication>
-#include <kdebug.h>
-#include <klocale.h>
+
 #include <kdeversion.h>
 #include <kxmlguiclient.h>
-#include <kaction.h>
-#include <qdom.h>
 #include <kauthorized.h>
 #include <kactioncollection.h>
 #include <ktoolinvocation.h>
 #include <kprocess.h>
+#include <KLocalizedString>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteprotocol.h"
@@ -61,7 +61,7 @@ class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
 			CommandList::Iterator it, itEnd = mCommands.end();
 			for( it = mCommands.begin(); it != itEnd; ++it )
 			{
-				KAction *a = static_cast<KAction*>( it.value() );
+				QAction *a = static_cast<QAction*>( it.value() );
 				actionCollection()->addAction( a->objectName(), a );
 				QDomElement newNode = doc.createElement( QString::fromLatin1("Action") );
 				newNode.setAttribute( QString::fromLatin1("name"), a->objectName() );
@@ -94,7 +94,7 @@ struct CommandHandlerPrivate
 	Kopete::CommandHandler *s_handler;
 	QMap<KProcess*,ManagerPair> processMap;
 	bool inCommand;
-	QList<KAction *> m_commands;
+	QList<QAction *> m_commands;
 };
 
 CommandHandlerPrivate *Kopete::CommandHandler::p = 0L;
@@ -173,7 +173,7 @@ Kopete::CommandHandler *Kopete::CommandHandler::commandHandler()
 }
 
 void Kopete::CommandHandler::registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
-	const QString &help, uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
+	const QString &help, uint minArgs, int maxArgs, const QKeySequence &cut, const QString &pix )
 {
 	const QString lowerCommand = command.toLower();
 
@@ -189,7 +189,7 @@ void Kopete::CommandHandler::unregisterCommand( QObject *parent, const QString &
 }
 
 void Kopete::CommandHandler::registerAlias( QObject *parent, const QString &alias, const QString &formatString,
-	const QString &help, CommandType type, uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
+	const QString &help, CommandType type, uint minArgs, int maxArgs, const QKeySequence &cut, const QString &pix )
 {
 	const QString lowerAlias = alias.toLower();
 
@@ -223,7 +223,7 @@ bool Kopete::CommandHandler::processMessage( const QString &msg, Kopete::ChatSes
 	Kopete::Command *c = mCommands.value(command);
 	if(c)
 	{
-		kDebug(14010) << "Handled Command";
+		qCDebug(LIBKOPETE_LOG) << "Handled Command";
 		if( c->type() != SystemAlias && c->type() != UserAlias )
 			p->inCommand = true;
 
@@ -382,7 +382,7 @@ void Kopete::CommandHandler::slotCloseCommand( const QString &, Kopete::ChatSess
 
 void Kopete::CommandHandler::slotExecError( QProcess::ProcessError error )
 {
-	kDebug(14010);
+	qCDebug(LIBKOPETE_LOG);
 	KProcess *proc = static_cast<KProcess *>(sender());
 	if (error == QProcess::FailedToStart) {
 		ManagerPair &mgrPair = p->processMap[ proc ];
@@ -402,7 +402,7 @@ void Kopete::CommandHandler::slotExecError( QProcess::ProcessError error )
 
 void Kopete::CommandHandler::slotExecFinished()
 {
-	kDebug(14010);
+	qCDebug(LIBKOPETE_LOG);
 	KProcess *proc = static_cast<KProcess *>(sender());
 	const QString &buffer = QString::fromUtf8(proc->readAll());
 	if (!buffer.isEmpty())
@@ -414,7 +414,7 @@ void Kopete::CommandHandler::slotExecFinished()
 
 void Kopete::CommandHandler::slotExecSendMessage( KProcess *proc, const QString &buffer )
 {
-	kDebug(14010);
+	qCDebug(LIBKOPETE_LOG);
 	ManagerPair &mgrPair = p->processMap[ proc ];
 	Kopete::Message msg( mgrPair.first->myself(), mgrPair.first->members());
 	msg.setDirection( mgrPair.second );
@@ -434,7 +434,7 @@ QStringList Kopete::CommandHandler::parseArguments( const QString &args )
 
 	if ( quotedArgs.indexIn( args ) != -1 )
 	{
-		for( int i = 0; i< quotedArgs.numCaptures(); i++ )
+		for( int i = 0; i< quotedArgs.captureCount(); i++ )
 			arguments.append( quotedArgs.cap(i) );
 	}
 

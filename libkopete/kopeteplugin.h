@@ -21,9 +21,14 @@
 #define KOPETEPLUGIN_H
 
 #include <kxmlguiclient.h>
-#include <QtCore/QObject>
-#include <kdemacros.h>
 
+#include <kdemacros.h>
+#include <KAboutData>
+
+#include <QObject>
+#include <QDebug>
+
+#include "libkopete_debug.h"
 #include "kopete_export.h"
 
 class KPluginInfo;
@@ -86,7 +91,7 @@ class KOPETE_EXPORT Plugin : public QObject, public KXMLGUIClient
 	Q_OBJECT
 
 public:
-	Plugin( const KComponentData &instance, QObject *parent );
+	Plugin( const KAboutData &instance, QObject *parent );
 	virtual ~Plugin();
 
 	/**

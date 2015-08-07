@@ -23,11 +23,11 @@
 
 #include "kopetecontactlistelement.h"
 
+#include <QUrl>
 #include <QtCore/QList>
 #include <QtCore/QUuid>
 
 #include <kdemacros.h>
-#include <kurl.h>
 #include "kopete_export.h"
 
 #include "kopeteonlinestatus.h"
@@ -237,7 +237,7 @@ public:
 	 * @see photo()
 	 * @see photoSource()
 	 */
-	KUrl customPhoto() const;
+	QUrl customPhoto() const;
 
 
 	/**
@@ -249,7 +249,7 @@ public:
 	 * @see photo()
 	 * @see photoSource()
 	 */
-	void setPhoto( const KUrl &url );
+	void setPhoto( const QUrl &url );
 
 	/**
 	 * @brief get the subcontact being tracked for its displayname (null if not set)
@@ -416,13 +416,13 @@ public slots:
 	 * no parameters are sent and they assume default values. This slot calls the slotSendFile
 	 * with identical params of the highest ranked contact capable of sending files (if any)
 	 *
-	 * @param sourceURL The actual KUrl of the file you are sending
+	 * @param sourceURL The actual QUrl of the file you are sending
 	 * @param altFileName (Optional) An alternate name for the file - what the receiver will see
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending a nondeterminate
 	 *                file size (such as over a socket)
 	 *
 	 */
-	void sendFile( const KUrl &sourceURL, const QString &altFileName = QString(),
+	void sendFile( const QUrl &sourceURL, const QString &altFileName = QString(),
 		unsigned long fileSize = 0L );
 
 	/**

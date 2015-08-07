@@ -21,7 +21,7 @@
 #define KOPETEFILEENGINE_H
 
 #include <qabstractfileengine.h>
-#include <qstring.h>
+#include <QString>
 #include <QBuffer>
 
 #include "kopete_export.h"

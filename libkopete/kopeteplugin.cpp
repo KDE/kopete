@@ -20,6 +20,7 @@
 #include "kopetepluginmanager.h"
 
 #include <kplugininfo.h>
+#include <KAboutData>
 #include <ksettings/dispatcher.h>
 
 namespace Kopete {
@@ -31,11 +32,11 @@ public:
 	QString indexField;
 };
 
-Plugin::Plugin( const KComponentData &instance, QObject *parent )
+Plugin::Plugin( const KAboutData &instance, QObject *parent )
 : QObject( parent ), KXMLGUIClient(), d(new Private)
 {
-	setComponentData( instance );
-	KSettings::Dispatcher::registerComponent( instance, this, "settingsChanged" );
+	setObjectName( instance.componentName() );
+	KSettings::Dispatcher::registerComponent( instance.componentName(), this, "settingsChanged" );
 }
 
 Plugin::~Plugin()

@@ -19,14 +19,16 @@
 #define kopeteonlinestatusmanager_h__
 
 #include "kopete_export.h"
+#include "libkopete_debug.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QFlags>
-#include <QtCore/QMap>
+#include <QObject>
+#include <QFlags>
+#include <QMap>
+#include <QIcon>
+#include <QDebug>
 
 class QPixmap;
 class QColor;
-class KIcon;
 
 namespace Kopete
 {
@@ -116,9 +118,9 @@ public:
 	QList<OnlineStatus> registeredStatusList( Protocol *protocol ) const;
 
 	/**
-	 * return KIcon for given @p category
+	 * return QIcon for given @p category
 	 */
-	static KIcon pixmapForCategory( Categories category );
+	static QIcon pixmapForCategory( Categories category );
 
 	/**
 	 * This returns status from config as Kopete::OnlineStatusManager::Category

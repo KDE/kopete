@@ -121,7 +121,7 @@ void InfoEvent::close()
 {
 	if ( d->closed )
 	{
-		kDebug( 14010 ) << "Closing more the once!!!";
+		qCDebug(LIBKOPETE_LOG) << "Closing more the once!!!";
 		return;
 	}
 

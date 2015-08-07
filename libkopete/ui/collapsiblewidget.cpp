@@ -17,9 +17,16 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <collapsiblewidget.h>
+#include "collapsiblewidget.h"
+
 #include <QtGui>
+#include <QStyle>
 #include <QTimeLine>
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include <QStyleOption>
+
+#include <KConfigGroup>
 
 /******************************************************************
  * Helper classes
@@ -133,7 +140,7 @@ CollapsibleWidget::CollapsibleWidget(const QString& caption, QWidget *parent)
  : QWidget(parent), d(new CollapsibleWidget::Private)
 {
   init();
-  setCaption(caption);
+  setWindowTitle(caption);
 }
 
 void CollapsibleWidget::init()
@@ -221,7 +228,7 @@ void CollapsibleWidget::setInnerWidget(QWidget *w)
   }
 }
 
-void CollapsibleWidget::setCaption(const QString& caption)
+void CollapsibleWidget::setWindowTitle(const QString& caption)
 {
   d->label->setText(QString("<b>%1</b>").arg(caption));
 }

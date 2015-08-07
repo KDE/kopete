@@ -53,7 +53,7 @@ class  MetaContact::Private
 
 	// used when source is custom
 	QString displayName;
-	KUrl photoUrl;
+	QUrl photoUrl;
 
 	QList<Group *> groups;
 	QMap<QString, QMap<QString, QString> > addressBook;

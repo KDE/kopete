@@ -44,12 +44,12 @@ AddressBookLinkWidget::AddressBookLinkWidget( QWidget * parent, const char * nam
 	setObjectName(name);
 	setupUi(this);
 
-	btnClear->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? QString::fromLatin1( "edit-clear-locationbar-ltr" ) : QString::fromLatin1( "edit-clear-locationbar-rtl") ) );
+	btnClear->setIcon( QIcon::fromTheme( (QApplication::layoutDirection() == Qt::RightToLeft) ? QString::fromLatin1( "edit-clear-locationbar-ltr" ) : QString::fromLatin1( "edit-clear-locationbar-rtl") ) );
 	connect( btnClear, SIGNAL(clicked()), this, SLOT(slotClearAddressee()) );
 	connect( btnSelectAddressee, SIGNAL(clicked()), SLOT(slotSelectAddressee()) );
 }
 
-void AddressBookLinkWidget::setAddressee( const KABC::Addressee& addr )
+void AddressBookLinkWidget::setAddressee( const KContacts::Addressee& addr )
 {
 	edtAddressee->setText( addr.realName() );
 	btnClear->setEnabled( !addr.isEmpty() );
@@ -69,7 +69,7 @@ void AddressBookLinkWidget::slotClearAddressee()
 {
 	edtAddressee->clear();
 	btnClear->setEnabled( false );
-	KABC::Addressee mrEmpty;
+	KContacts::Addressee mrEmpty;
 	mSelectedUid.clear();
 	emit addresseeChanged( mrEmpty );
 }
@@ -91,7 +91,7 @@ void AddressBookLinkWidget::slotSelectAddressee()
 	                                              assocDisplayText, this );
 	int result = dialog->exec();
 
-	KABC::Addressee addr;
+	KContacts::Addressee addr;
 	if ( result == QDialog::Accepted && dialog )
 	{
 		addr = dialog->addressBookSelectorWidget()->addressee();

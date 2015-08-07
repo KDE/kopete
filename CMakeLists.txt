@@ -13,13 +13,16 @@ set(REQUIRED_QT_VERSION "5.2.0")
 find_package(ECM 1.7 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_MODULE_DIR} ${ECM_KDE_MODULE_DIR} ${KOPETE_SOURCE_DIR}/cmake)
 
+find_package(Phonon4Qt5 REQUIRED NO_MODULE)
 find_package(Qt5 ${REQUIRED_QT_VERSION} NO_MODULE REQUIRED Core)
 find_package(Qt5 ${REQUIRED_QT_VERSION} REQUIRED COMPONENTS Widgets Xml Sql Test)
+#find_package(KF5Abc ${REQUIRED_QT_VERSION} CONFIG REQUIRED)
+#find_package(KF5Contacts ${REQUIRED_QT_VERSION} CONFIG REQUIRED)
 find_package(KF5Config ${KF5_VERSION} CONFIG REQUIRED)
 find_package(KF5DBusAddons ${KF5_VERSION} CONFIG REQUIRED)
 find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS
 	CoreAddons I18n DocTools KCMUtils KHtml NotifyConfig #[[Phonon PimIdentities]]
-	KDELibs4Support)
+    Wallet KDELibs4Support)
 
 include(KDEInstallDirs)
 include(KDECompilerSettings)
@@ -28,6 +31,7 @@ include(FeatureSummary)
 include(ECMAddTests)
 include(ECMAddAppIcon)
 include(ECMInstallIcons)
+include_directories(${PHONON_INCLUDES})
 
 if(WIN32)
     set(CMAKE_REQUIRED_LIBRARIES ${KDEWIN32_LIBRARIES})

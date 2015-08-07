@@ -26,7 +26,7 @@
 #include <kdebug.h>
 #include <kinputdialog.h>
 #include <klocale.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kmessagebox.h>
 
 #include <qstringlist.h>
@@ -46,8 +46,8 @@ public:
 
 Kopete::Command::Command( QObject *parent, const QString &command, const char* handlerSlot,
 		const QString &help, Kopete::CommandHandler::CommandType type, const QString &formatString,
-		uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
-	: KAction( KIcon(pix), command[0].toUpper() + command.right( command.length() - 1).toLower(), 0 )
+		uint minArgs, int maxArgs, const QKeySequence &cut, const QString &pix )
+	: QAction( QIcon::fromTheme(pix), command[0].toUpper() + command.right( command.length() - 1).toLower(), 0 )
 	, d(new Private)
 {
 	setObjectName( command.toLower() + QString::fromLatin1("_command") );
@@ -139,7 +139,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 				mArgs.pop_front();
 			}
 
-			kDebug(14010) << "New Command after processing alias: " << formatString;
+			qCDebug(LIBKOPETE_LOG) << "New Command after processing alias: " << formatString;
 
 			Kopete::CommandHandler::commandHandler()->processMessage( QString::fromLatin1("/") + formatString, manager );
 		}

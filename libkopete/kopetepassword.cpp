@@ -18,7 +18,7 @@
 #include "kopeteuiglobal.h"
 #include "kopetewalletmanager.h"
 
-#include <kwallet.h>
+#include <KWallet/kwallet.h>
 
 #include <QApplication>
 #include <QLabel>
@@ -27,12 +27,14 @@
 #include <k3activelabel.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kdialog.h>
+#include <QDialog>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
 #include <kpassworddialog.h>
+#include <KConfigGroup>
+#include <KSharedConfig>
 
 class Kopete::Password::Private
 {
@@ -86,14 +88,14 @@ public:
 	 */
 	void begin()
 	{
-		kDebug( 14010 );
+		qCDebug(LIBKOPETE_LOG);
 
 		Kopete::WalletManager::self()->openWallet( this, SLOT(walletReceived(KWallet::Wallet*)) );
 	}
 
 	void walletReceived( KWallet::Wallet *wallet )
 	{
-		kDebug( 14010 ) ;
+		qCDebug(LIBKOPETE_LOG) ;
 		mWallet = wallet;
 		processRequest();
 	}
@@ -173,7 +175,7 @@ public:
 
 	void doPasswordDialog()
 	{
-		kDebug( 14010 ) ;
+		qCDebug(LIBKOPETE_LOG) ;
 
 		KPasswordDialog *passwdDialog = new KPasswordDialog( Kopete::UI::Global::mainWidget(), KPasswordDialog::ShowKeepPassword );
 		passwdDialog->setWindowTitle( i18n( "Password Required" ) );
@@ -236,7 +238,7 @@ public:
 	~KopetePasswordSetRequest()
 	{
 		KGlobal::deref();
-		kDebug( 14010 ) << "job complete";
+		qCDebug(LIBKOPETE_LOG) << "job complete";
 	}
 	void processRequest()
 	{
@@ -249,7 +251,7 @@ public:
 	}
 	bool setPassword()
 	{
-		kDebug( 14010 ) << " setting password for " << mPassword.d->configGroup;
+		qCDebug(LIBKOPETE_LOG) << " setting password for " << mPassword.d->configGroup;
 
 		if ( mWallet && mWallet->writePassword( mPassword.d->configGroup, mNewPass ) == 0 )
 		{
@@ -298,7 +300,7 @@ public:
 	~KopetePasswordClearRequest()
 	{
 		KGlobal::deref();
-		kDebug( 14010 ) << "job complete";
+		qCDebug(LIBKOPETE_LOG) << "job complete";
 	}
 	void processRequest()
 	{
@@ -312,7 +314,7 @@ public:
 	}
 	bool clearPassword()
 	{
-		kDebug( 14010 ) << " clearing password";
+		qCDebug(LIBKOPETE_LOG) << " clearing password";
 
 		mPassword.d->remembered = false;
 		mPassword.d->passwordFromKConfig.clear();
@@ -350,7 +352,7 @@ Kopete::Password &Kopete::Password::operator=( Password &other )
 
 void Kopete::Password::readConfig()
 {
-	KConfigGroup config(KGlobal::config(), d->configGroup );
+	KConfigGroup config(KSharedConfig::openConfig(), d->configGroup );
 
 	const QString passwordCrypted = config.readEntry( "Password", QString() );
 	if ( passwordCrypted.isNull() )
@@ -364,7 +366,7 @@ void Kopete::Password::readConfig()
 
 void Kopete::Password::writeConfig()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
+	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 	if(!config->hasGroup(d->configGroup))
 	{
 		//### (KOPETE)

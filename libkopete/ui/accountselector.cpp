@@ -39,7 +39,7 @@ class AccountListViewItem : public QTreeWidgetItem
 			if (acc==0)
 				return;
 
-			/*kDebug(14010) <<
+			/*qCDebug(LIBKOPETE_LOG) <<
 				"account name = " << acc->accountId() << endl;*/
 			mAccount = acc;
 			setText(0, mAccount->accountId());
@@ -66,7 +66,7 @@ class AccountSelectorPrivate
 AccountSelector::AccountSelector(QWidget *parent)
 	: QWidget(parent)
 {
-	//kDebug(14010) << "for no special protocol";
+	//qCDebug(LIBKOPETE_LOG) << "for no special protocol";
 	d = new AccountSelectorPrivate;
 	d->proto = 0;
 	initUI();
@@ -75,7 +75,7 @@ AccountSelector::AccountSelector(QWidget *parent)
 
 AccountSelector::AccountSelector(Kopete::Protocol *proto, QWidget *parent) : QWidget(parent)
 {
-	//kDebug(14010) << " for protocol " << proto->pluginId();
+	//qCDebug(LIBKOPETE_LOG) << " for protocol " << proto->pluginId();
 	d = new AccountSelectorPrivate;
 	d->proto = proto;
 	initUI();
@@ -84,14 +84,14 @@ AccountSelector::AccountSelector(Kopete::Protocol *proto, QWidget *parent) : QWi
 
 AccountSelector::~AccountSelector()
 {
-	kDebug(14010) ;
+	qCDebug(LIBKOPETE_LOG) ;
 	delete d;
 }
 
 
 void AccountSelector::initUI()
 {
-	kDebug(14010) ;
+	qCDebug(LIBKOPETE_LOG) ;
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	d->lv = new QTreeWidget(this);
 	d->lv->header()->setResizeMode( QHeaderView::ResizeToContents );
@@ -99,7 +99,7 @@ void AccountSelector::initUI()
 	d->lv->headerItem()->setHidden(true);
 	layout->addWidget(d->lv);
 	setLayout(layout);
-	kDebug(14010) << "creating list of all accounts";
+	qCDebug(LIBKOPETE_LOG) << "creating list of all accounts";
 	foreach(Kopete::Account *account , Kopete::AccountManager::self()->accounts() )
 	{
 		if( !d->proto  ||  account->protocol() == d->proto )
@@ -147,7 +147,7 @@ bool AccountSelector::isSelected(Kopete::Account *account)
 
 Kopete::Account *AccountSelector::selectedItem()
 {
-	//kDebug(14010) ;
+	//qCDebug(LIBKOPETE_LOG) ;
 
 	if (d->lv->currentItem())
 		return static_cast<AccountListViewItem *>(d->lv->currentItem())->account();
@@ -157,7 +157,7 @@ Kopete::Account *AccountSelector::selectedItem()
 
 void AccountSelector::slotSelectionChanged(QTreeWidgetItem *item)
 {
-	//kDebug(14010) ;
+	//qCDebug(LIBKOPETE_LOG) ;
 	if (item != 0)
 	{
 		Kopete::Account *account = static_cast<AccountListViewItem *>(item)->account();

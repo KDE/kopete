@@ -19,7 +19,7 @@
 #ifndef KOPETEVIEW_H
 #define KOPETEVIEW_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include "../kopetemessage.h"
 #include "../kopete_export.h"
@@ -137,7 +137,7 @@ class KOPETE_EXPORT KopeteView
 		 * menus that can be extended
 		 *
 		 * @param target A target QObject for the contextMenuEvent signal of the view
-		 * @param slot A slot that matches the signature ( QString&, KMenu *)
+		 * @param slot A slot that matches the signature ( QString&, QMenu *)
 		 */
 		virtual void registerContextMenuHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); }
 
@@ -153,7 +153,7 @@ class KOPETE_EXPORT KopeteView
 		* to show tooltips
 		*
 		* @param target A target QObject for the contextMenuEvent signal of the view
-		* @param slot A slot that matches the signature ( QString&, KMenu *)
+		* @param slot A slot that matches the signature ( QString&, QMenu *)
 		*/
 		virtual void registerTooltipHandler( QObject *target, const char*slot ){ Q_UNUSED(target); Q_UNUSED(slot); }
 

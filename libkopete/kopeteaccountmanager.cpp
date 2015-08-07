@@ -18,7 +18,7 @@
 
 #include "kopeteaccountmanager.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/QRegExp>
 #include <QtCore/QTimer>
 #include <QtCore/QHash>
@@ -31,6 +31,7 @@
 #include <kconfiggroup.h>
 #include <solid/networking.h>
 #include <solid/powermanagement.h>
+#include <KSharedConfig>
 
 #include "kopeteaccount.h"
 #include "kopetebehaviorsettings.h"
@@ -293,7 +294,7 @@ Account* AccountManager::registerAccount( Account *account )
 		// FIXME: get rid of this, the account's identity should always exist at this point
 		if (!identity)
 		{
-			kWarning( 14010 ) << "No identity for account " << account->accountId() << ": falling back to default";
+			qCWarning(LIBKOPETE_LOG) << "No identity for account " << account->accountId() << ": falling back to default";
 			identity = Kopete::IdentityManager::self()->defaultIdentity();
 		}
 		account->setIdentity( identity );
@@ -305,7 +306,7 @@ Account* AccountManager::registerAccount( Account *account )
 
 void AccountManager::unregisterAccount( const Account *account )
 {
-	kDebug( 14010 ) << "Unregistering account " << account->accountId();
+	qCDebug(LIBKOPETE_LOG) << "Unregistering account " << account->accountId();
 	d->accounts.removeAll( const_cast<Account*>(account) );
 	emit accountUnregistered( account );
 }
@@ -349,7 +350,7 @@ void AccountManager::removeAccount( Account *account )
 	}
 	else
 	{
-		kDebug( 14010 ) << account->accountId() << " is still connected, disconnecting...";
+		qCDebug(LIBKOPETE_LOG) << account->accountId() << " is still connected, disconnecting...";
 		connect( account, SIGNAL(isConnectedChanged()), this, SLOT(removeAccountConnectedChanged()) );
 		account->disconnect();
 	}
@@ -357,7 +358,7 @@ void AccountManager::removeAccount( Account *account )
 
 void AccountManager::save()
 {
-	//kDebug( 14010 ) ;
+	//qCDebug(LIBKOPETE_LOG) ;
 	qSort( d->accounts.begin(), d->accounts.end(), compareAccountsByPriority );
 
 	for ( QListIterator<Account *> it( d->accounts ); it.hasNext(); )
@@ -369,7 +370,7 @@ void AccountManager::save()
 		config->writeEntry( "AccountId", a->accountId() );
 	}
 
-	KGlobal::config()->sync();
+	KSharedConfig::openConfig()->sync();
 }
 
 void AccountManager::load()
@@ -381,7 +382,7 @@ void AccountManager::load()
 	// and load the required protocols if the account is enabled.
 	// Don't try to optimize duplicate calls out, the plugin queue is smart enough
 	// (and fast enough) to handle that without adding complexity here
-	KSharedConfig::Ptr config = KGlobal::config();
+	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 	QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
 	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
 	{
@@ -405,7 +406,7 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 
 	// Iterate over all groups that start with "Account_" as those are accounts
 	// and parse them if they are from this protocol
-	KSharedConfig::Ptr config = KGlobal::config();
+	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 	const QStringList accountGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Account_" ) ) );
 	for ( QStringList::ConstIterator it = accountGroups.constBegin(); it != accountGroups.constEnd(); ++it )
 	{
@@ -421,19 +422,19 @@ void AccountManager::slotPluginLoaded( Plugin *plugin )
 		QString accountId = cg.readEntry( "AccountId", QString() );
 		if ( accountId.isEmpty() )
 		{
-			kWarning( 14010 ) <<
+			qCWarning(LIBKOPETE_LOG) <<
 				"Not creating account for empty accountId." << endl;
 			continue;
 		}
 
-		kDebug( 14010 ) <<
+		qCDebug(LIBKOPETE_LOG) <<
 			"Creating account for '" << accountId << "'" << endl;
 
 		Account *account = 0L;
 		account = registerAccount( protocol->createNewAccount( accountId ) );
 		if ( !account )
 		{
-			kWarning( 14010 ) <<
+			qCWarning(LIBKOPETE_LOG) <<
 				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
 		}
@@ -447,7 +448,7 @@ void AccountManager::slotAccountOnlineStatusChanged(Contact *c,
 	if (!account)
 		return;
 
-	//kDebug(14010) ;
+	//qCDebug(LIBKOPETE_LOG) ;
 	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
 }
 
@@ -485,7 +486,7 @@ void AccountManager::removeAccountInternal()
 	Account* account = d->accountsToBeRemoved.takeFirst();
 	if ( account->isConnected() )
 	{
-		kWarning( 14010 ) << "Error, trying to remove connected account " << account->accountId();
+		qCWarning(LIBKOPETE_LOG) << "Error, trying to remove connected account " << account->accountId();
 		return;
 	}
 

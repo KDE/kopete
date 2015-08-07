@@ -29,12 +29,12 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-AddresseeItem::AddresseeItem( QTreeWidget *parent, const KABC::Addressee &addressee) :
+AddresseeItem::AddresseeItem( QTreeWidget *parent, const KContacts::Addressee &addressee) :
   QTreeWidgetItem( parent ),
   mAddressee( addressee )
 {
   //We can't save showphoto because we don't have a d pointer
-  KABC::Picture pic = mAddressee.photo();
+  KContacts::Picture pic = mAddressee.photo();
   if(!pic.isIntern())
     pic = mAddressee.logo();
   if(pic.isIntern())

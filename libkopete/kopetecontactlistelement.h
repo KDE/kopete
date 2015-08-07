@@ -21,7 +21,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QMap>
-#include <QtGui/QStandardItem>
+#include <QStandardItem>
 
 #include "kopete_export.h"
 #include "kopetepropertycontainer.h"

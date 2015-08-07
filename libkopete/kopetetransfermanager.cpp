@@ -19,16 +19,20 @@
 
 #include "kopetetransfermanager.h"
 
+#include <QDebug>
 #include <QtCore/QTimerEvent>
-#include <QtGui/QTextDocument>
+#include <QTextDocument>
 
-#include <klocale.h>
-#include <kdebug.h>
+
 #include <kfiledialog.h>
 #include <kfileitem.h>
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 #include <kio/jobuidelegate.h>
 #include <kuiserverjobtracker.h>
+#include <KSharedConfig>
+#include <KConfigGroup>
+#include <KLocalizedString>
 
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
@@ -78,10 +82,10 @@ public:
 	}
 
 	FileTransferInfo info;
-	KUrl target;
+	QUrl target;
 
 	//if ft has one file then localUrl is file otherwise it's directory
-	KUrl localUrl;
+	QUrl localUrl;
 
 	int transferRate[TransferRateWindowLength];
 	int transferRateTimer;
@@ -95,7 +99,7 @@ Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, const QString 
 	if(showProgressInfo)
 		KIO::getJobTracker()->registerJob(this);
 
-	KUrl targ; targ.setPath( localFile );
+	QUrl targ; targ.setPath( localFile );
 	d->localUrl = targ;
 	init( targ, showProgressInfo );
 }
@@ -109,11 +113,11 @@ Kopete::Transfer::Transfer( const Kopete::FileTransferInfo &kfti, bool showProgr
 		KIO::getJobTracker()->registerJob(this);
 
 	// TODO: use mInfo.url().fileName() after move to protocol-aware filetransfers
-	KUrl targ; targ.setPath( d->info.file() );
+	QUrl targ; targ.setPath( d->info.file() );
 	init( displayURL( d->info.contact(), targ.fileName() ), showProgressInfo );
 }
 
-void Kopete::Transfer::init( const KUrl &target, bool showProgressInfo )
+void Kopete::Transfer::init( const QUrl &target, bool showProgressInfo )
 {
 	d->target = target;
 	setTotalAmount( KJob::Files, d->info.files().count() );
@@ -139,10 +143,10 @@ const Kopete::FileTransferInfo &Kopete::Transfer::info() const
 	return d->info;
 }
 
-KUrl Kopete::Transfer::displayURL( const Kopete::Contact *contact, const QString &file )
+QUrl Kopete::Transfer::displayURL( const Kopete::Contact *contact, const QString &file )
 {
-	KUrl url;
-	url.setProtocol( QString::fromLatin1("kopete") );
+	QUrl url;
+	url.setScheme( QString::fromLatin1("kopete") );
 
 	QString host;
 	if( !contact )
@@ -155,58 +159,59 @@ KUrl Kopete::Transfer::displayURL( const Kopete::Contact *contact, const QString
 
 	// url.setPath( contact->protocol()->displayName() );
 
-	url.setFileName( file );
+	url = url.adjusted(QUrl::RemoveFilename);
+	url.setPath(url.path() +  file );
 	return url;
 }
 
 void Kopete::Transfer::slotNextFile( const QString &sourceFile, const QString &destinationFile )
 {
-	KUrl src;
-	KUrl dest;
+	QUrl src;
+	QUrl dest;
 
-	kDebug() << "source: " << sourceFile << " destination: " << destinationFile;
+	//qDebug() << "source: " << sourceFile << " destination: " << destinationFile;
 	if( d->info.direction() == Kopete::FileTransferInfo::Incoming )
 	{
-		KUrl url( sourceFile );
+		QUrl url( sourceFile );
 		src = displayURL( d->info.contact(), url.fileName() );
 		dest.setPath( destinationFile );
 	}
 	else
 	{
 		src.setPath( sourceFile );
-		KUrl url( destinationFile );
+		QUrl url( destinationFile );
 		dest = displayURL( d->info.contact(), url.fileName() );
 	}
 
 	setProcessedAmount( KJob::Files, processedAmount(KJob::Files) + 1 );
 	emit description(this, i18n("Copying"),
-	                 qMakePair(i18n("Source"), src.prettyUrl()),
-	                 qMakePair(i18n("Destination"), dest.prettyUrl()));
+	                 qMakePair(i18n("Source"), src.toDisplayString()),
+	                 qMakePair(i18n("Destination"), dest.toDisplayString()));
 }
 
 // TODO: add possibility of network file transfers;
 //  call mInfo->url() not file()
-KUrl Kopete::Transfer::sourceURL()
+QUrl Kopete::Transfer::sourceURL()
 {
 	if( d->info.direction() == Kopete::FileTransferInfo::Incoming )
 		return displayURL( d->info.contact(), d->info.file() );
 	else
 	{
-		KUrl url; url.setPath( d->info.file() );
+		QUrl url; url.setPath( d->info.file() );
 		return url;
 	}
 }
 
-KUrl Kopete::Transfer::destinationURL()
+QUrl Kopete::Transfer::destinationURL()
 {
 	return d->target;
 }
 
-void Kopete::Transfer::emitCopying(const KUrl &src, const KUrl &dest)
+void Kopete::Transfer::emitCopying(const QUrl &src, const QUrl &dest)
 {
     emit description(this, i18n("Copying"),
-                     qMakePair(i18n("Source"), src.prettyUrl()),
-                     qMakePair(i18n("Destination"), dest.prettyUrl()));
+                     qMakePair(i18n("Source"), src.toDisplayString()),
+                     qMakePair(i18n("Destination"), dest.toDisplayString()));
 }
 
 void Kopete::Transfer::slotProcessed( unsigned int bytes )
@@ -417,9 +422,9 @@ void Kopete::TransferManager::saveIncomingTransfer( unsigned int id )
 	if ( !info.isValid() )
 		return;
 
-	KConfigGroup cg( KGlobal::config(), "File Transfer" );
+	KConfigGroup cg( KSharedConfig::openConfig(), "File Transfer" );
 	const QString defaultPath = cg.readEntry( "defaultPath", QDir::homePath() );
-	KUrl url = QString(defaultPath + QLatin1String( "/" ) + info.file());
+	QUrl url = QString(defaultPath + QLatin1String( "/" ) + info.file());
 
 	if ( info.saveToDirectory() )
 		url = getSaveDir( url );
@@ -437,7 +442,7 @@ void Kopete::TransferManager::saveIncomingTransfer( unsigned int id )
 		return;
 	}
 
-	const QString directory = ( info.saveToDirectory() ) ? url.toLocalFile() : url.directory();
+	const QString directory = ( info.saveToDirectory() ) ? url.toLocalFile() : url.adjusted(QUrl::RemoveFilename|QUrl::StripTrailingSlash).path();
 	if( !directory.isEmpty() )
 		cg.writeEntry( "defaultPath", directory );
 
@@ -479,16 +484,16 @@ void Kopete::TransferManager::slotComplete(KJob *job)
 	}
 }
 
-void Kopete::TransferManager::sendFile( const KUrl &file, const QString &fname, unsigned long sz,
+void Kopete::TransferManager::sendFile( const QUrl &file, const QString &fname, unsigned long sz,
 	 bool mustBeLocal,	QObject *sendTo, const char *slot )
 {
-	KUrl url = file;
+	QUrl url = file;
 	QString filename;
 	unsigned int size = 0;
 
 	//If the file location is null, then get it from a file open dialog
 	if( !url.isValid() )
-		url = KFileDialog::getOpenUrl( KUrl(), QString::fromLatin1("*"), 0l, i18n( "Kopete File Transfer" ));
+		url = KFileDialog::getOpenUrl( QUrl(), QString::fromLatin1("*"), 0l, i18n( "Kopete File Transfer" ));
 	else
 	{
 		filename = fname;
@@ -514,9 +519,9 @@ void Kopete::TransferManager::sendFile( const KUrl &file, const QString &fname, 
 		}
 		else
 		{
-			connect( this, SIGNAL(sendFile(KUrl,QString,uint)), sendTo, slot );
+			connect( this, SIGNAL(sendFile(QUrl,QString,uint)), sendTo, slot );
 			emit sendFile( url, filename, size );
-			disconnect( this, SIGNAL(sendFile(KUrl,QString,uint)), sendTo, slot );
+			disconnect( this, SIGNAL(sendFile(QUrl,QString,uint)), sendTo, slot );
 		}
 	}
 }
@@ -527,9 +532,9 @@ void Kopete::TransferManager::removeTransfer( unsigned int id )
 	//we don't need to delete the job, the job get deleted itself
 }
 
-KUrl Kopete::TransferManager::getSaveFile( const KUrl& startDir ) const
+QUrl Kopete::TransferManager::getSaveFile( const QUrl &startDir ) const
 {
-	KUrl url = startDir;
+	QUrl url = startDir;
 	for ( ;; )
 	{
 		url = KFileDialog::getSaveUrl( url, QLatin1String( "*" ), 0, i18n( "File Transfer" ) );
@@ -558,7 +563,7 @@ KUrl Kopete::TransferManager::getSaveFile( const KUrl& startDir ) const
 		}
 		else
 		{
-			QFileInfo dirInfo( url.directory() );
+			QFileInfo dirInfo( url.adjusted(QUrl::RemoveFilename|QUrl::StripTrailingSlash).path() );
 			if ( !dirInfo.isDir() || !dirInfo.exists() )
 			{
 				KMessageBox::messageBox( 0, KMessageBox::Sorry, i18n( "The directory %1 does not exist", dirInfo.fileName() ) );
@@ -576,9 +581,9 @@ KUrl Kopete::TransferManager::getSaveFile( const KUrl& startDir ) const
 	return url;
 }
 
-KUrl Kopete::TransferManager::getSaveDir( const KUrl& startDir ) const
+QUrl Kopete::TransferManager::getSaveDir( const QUrl &startDir ) const
 {
-	KUrl url = startDir;
+	QUrl url = startDir;
 	for ( ;; )
 	{
 		url = KFileDialog::getExistingDirectoryUrl( url, 0, i18n( "File Transfer" ) );

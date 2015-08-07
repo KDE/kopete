@@ -29,9 +29,10 @@
 #include <KSharedConfigPtr>
 #include <KLocale>
 #include <KRandom>
-#include <KMenu>
+#include <QMenu>
 
 #include <kdeversion.h>
+#include <KSharedConfig>
 
 namespace Kopete 
 {
@@ -43,7 +44,7 @@ public:
 	{
 		id = i;
 		label = l;
-		configGroup = new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Identity_%1" ).arg( id ));
+		configGroup = new KConfigGroup(KSharedConfig::openConfig(), QString::fromLatin1( "Identity_%1" ).arg( id ));
 	}
 	QList<Kopete::Account*> accounts;
 	QString id;

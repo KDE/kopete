@@ -22,6 +22,7 @@
 #include <kglobal.h>
 
 #include <qstringlist.h>
+#include <KSharedConfig>
 
 namespace Kopete
 {
@@ -38,7 +39,7 @@ public:
 BlackLister::BlackLister(const QString &protocolId, const QString &accountId, QObject *parent)
  : QObject(parent), d( new Private )
 {
-	KConfigGroup config = KGlobal::config()->group("BlackLister");
+	KConfigGroup config = KSharedConfig::openConfig()->group("BlackLister");
 	
 	d->owner = accountId;
 	d->protocol = protocolId;
@@ -87,7 +88,7 @@ void BlackLister::removeContact(Contact *contact)
 
 void BlackLister::saveToDisk()
 {
-	KConfigGroup config = KGlobal::config()->group("BlackLister");
+	KConfigGroup config = KSharedConfig::openConfig()->group("BlackLister");
 	config.writeEntry( d->protocol + QString::fromLatin1("_") + d->owner, d->blacklist );
 	config.sync();
 }

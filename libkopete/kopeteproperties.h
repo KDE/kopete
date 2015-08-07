@@ -19,8 +19,11 @@
 
 #include <QMultiHash>
 #include <QVariant>
+#include <QDebug>
 
 #include <typeinfo>
+
+#include "libkopete_debug.h"
 
 class QString;
 class QDomElement;

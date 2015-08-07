@@ -22,18 +22,20 @@
 
 #include "kopetechatsession.h"
 
-#include <qapplication.h>
-#include <qfile.h>
-#include <qregexp.h>
-#include <qpointer.h>
+#include <QApplication>
+#include <QFile>
+#include <QRegExp>
+#include <QPointer>
 
 #include <kdebug.h>
 #include <kdeversion.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 #include <knotification.h>
-#include <kstandarddirs.h>
+#include <QStandardPaths>
+
 
 #include "kopeteaccount.h"
 #include "kopetebehaviorsettings.h"
@@ -424,7 +426,7 @@ QString Kopete::ChatSession::getUrlsFileName(const Kopete::Contact* c)
 	c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 		QString::fromLatin1( ".lasturls" );
 
-	QString filename = KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/urls/" ) + name + QString::fromLatin1( ".txt" ) ) ;
+	QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1( "kopete/urls/" ) + name + QString::fromLatin1( ".txt" )  ;
 
 	return filename;
 }
@@ -438,17 +440,17 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, const Kopete::On
 
 void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 {
-	//kDebug( 14010 ) ;
+	//qCDebug(LIBKOPETE_LOG) ;
 	if ( d->contacts.contains( (Kopete::Contact*)c ) )
 	{
-		kDebug( 14010 ) << "Contact already exists";
+		qCDebug(LIBKOPETE_LOG) << "Contact already exists";
 //		emit contactAdded( c, suppress );
 	}
 	else
 	{
 		if ( d->contacts.count() == 1 && d->isEmpty )
 		{
-			kDebug( 14010 ) << " FUCKER ZONE ";
+			qCDebug(LIBKOPETE_LOG) << " FUCKER ZONE ";
 			/* We have only 1 contact before, so the status of the
 			   message manager was given from that contact status */
 			Kopete::Contact *old = d->contacts.first();
@@ -499,13 +501,13 @@ void Kopete::ChatSession::addContact( const Kopete::Contact *c, bool suppress )
 
 void Kopete::ChatSession::removeContact( const Kopete::Contact *c, const QString& reason, Qt::TextFormat format, bool suppressNotification )
 {
-	kDebug( 14010 ) ;
+	qCDebug(LIBKOPETE_LOG) ;
 	if ( !c || !d->contacts.contains( (Kopete::Contact*)c ) )
 		return;
 
 	if ( d->contacts.count() == 1 )
 	{
-		kDebug( 14010 ) << "Contact not removed. Keep always one contact";
+		qCDebug(LIBKOPETE_LOG) << "Contact not removed. Keep always one contact";
 		d->isEmpty = true;
 	}
 	else

@@ -27,6 +27,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QAbstractButton>
+
 #include <kopete_export.h>
 
 class QScrollArea;
@@ -78,7 +79,7 @@ class KOPETE_EXPORT CollapsibleWidget : public QWidget
 
   public slots:
     void setExpanded(bool collapsed);
-    void setCaption(const QString& caption);
+    void setWindowTitle(const QString& caption);
 
 
   protected:

@@ -18,8 +18,12 @@
 #ifndef KOPETETASK_H
 #define KOPETETASK_H
 
-#include "kopete_export.h"
+#include <QDebug>
+
 #include <kcompositejob.h>
+
+#include "libkopete_debug.h"
+#include "kopete_export.h"
 
 namespace Kopete
 {

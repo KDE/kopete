@@ -75,7 +75,7 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 
 	connect( m_addressBook, SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotLoadAddressees()) );
 
-	//We should add a clear KAction here.  But we can't really do that with a designer file :\  this sucks
+	//We should add a clear QAction here.  But we can't really do that with a designer file :\  this sucks
 
 	addresseeListView->header()->setResizeMode(QHeaderView::ResizeToContents);
 	addresseeListView->currentItem()->setIcon(2, QIcon(QLatin1String("internet-mail")));
@@ -95,7 +95,7 @@ AddressBookSelectorWidget::~AddressBookSelectorWidget()
 }
 
 
-KABC::Addressee AddressBookSelectorWidget::addressee()
+KContacts::Addressee AddressBookSelectorWidget::addressee()
 {
 	AddresseeItem *item = 0L;
 	item = static_cast<AddresseeItem *>( addresseeListView->currentItem() );
@@ -132,7 +132,7 @@ bool AddressBookSelectorWidget::addresseeSelected()
 void AddressBookSelectorWidget::slotLoadAddressees()
 {
 	addresseeListView->clear();
-	KABC::AddressBook::Iterator it;
+	KContacts::AddressBook::Iterator it;
 	for( it = m_addressBook->begin(); it != m_addressBook->end(); ++it )
 	{
 		new AddresseeItem( addresseeListView, (*it));
@@ -153,7 +153,7 @@ void AddressBookSelectorWidget::slotAddAddresseeClicked()
 
 	if ( !addresseeName.isEmpty() )
 	{
-		KABC::Addressee addr;
+		KContacts::Addressee addr;
 		addr.setNameFromString( addresseeName );
 		m_addressBook->insertAddressee(addr);
 		Kopete::KABCPersistence::self()->writeAddressBook( 0 );

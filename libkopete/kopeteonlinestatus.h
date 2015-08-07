@@ -29,7 +29,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QFlags>
-#include <QtGui/QIcon>
+#include <QIcon>
 
 #include "kopeteonlinestatusmanager.h"
 

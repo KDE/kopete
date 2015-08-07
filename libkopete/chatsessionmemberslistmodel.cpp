@@ -145,7 +145,7 @@ void ChatSessionMembersListModel::setChatSession(ChatSession *session)
 
 Kopete::Contact * ChatSessionMembersListModel::contactAt( const QModelIndex &index ) const
 {
-	kDebug( 14010 ) << "memberslistmodel contactat";
+	qCDebug(LIBKOPETE_LOG) << "memberslistmodel contactat";
 	if ( d->session )
 	{
 		if (!index.isValid())
@@ -206,7 +206,7 @@ QVariant ChatSessionMembersListModel::headerData(int section, Qt::Orientation or
 
 void ChatSessionMembersListModel::slotContactAdded( const Kopete::Contact *contact )
 {
-	kDebug( 14010 ) << "memberslistmodel contact added "<< contact->displayName();
+	qCDebug(LIBKOPETE_LOG) << "memberslistmodel contact added "<< contact->displayName();
 	int index = d->getInsertIndex(contact);
 	beginInsertRows(QModelIndex(),index,index);
 	d->contacts.insert(index,(Contact*)contact);
@@ -215,10 +215,10 @@ void ChatSessionMembersListModel::slotContactAdded( const Kopete::Contact *conta
 
 void ChatSessionMembersListModel::slotContactRemoved( const Kopete::Contact *contact )
 {
-	kDebug( 14010 ) << "memberslistmodel contact removed "<< contact->displayName();
+	qCDebug(LIBKOPETE_LOG) << "memberslistmodel contact removed "<< contact->displayName();
 	int index = d->contacts.indexOf((Contact*)contact);
 	if (index == -1) {
-		kDebug( 14010 ) << "Trying to remove contact '" << contact->displayName() << "' which isn't in members list model!!!";
+		qCDebug(LIBKOPETE_LOG) << "Trying to remove contact '" << contact->displayName() << "' which isn't in members list model!!!";
 		return;
 	}
 
@@ -230,20 +230,20 @@ void ChatSessionMembersListModel::slotContactRemoved( const Kopete::Contact *con
 void ChatSessionMembersListModel::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status )
 {
 	Q_UNUSED(status)
-	kDebug( 14010 ) << "memberslistmodel contact status changed "<< contact->displayName();
+	qCDebug(LIBKOPETE_LOG) << "memberslistmodel contact status changed "<< contact->displayName();
 	slotContactRemoved(contact);
 	slotContactAdded(contact);
 }
 
 void ChatSessionMembersListModel::slotSessionChanged()
 {
-	kDebug( 14010 );
+	qCDebug(LIBKOPETE_LOG);
 	reset();
 }
 
 void ChatSessionMembersListModel::slotContactNickNameChanged( Kopete::Contact *contact)
 {
-	kDebug( 14010 ) << "memberslistmodel nickname changed to "<< contact->displayName();
+	qCDebug(LIBKOPETE_LOG) << "memberslistmodel nickname changed to "<< contact->displayName();
 	slotContactRemoved(contact);
 	slotContactAdded(contact);
 }

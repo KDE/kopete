@@ -28,8 +28,8 @@
 #include <QtCore/QPointer>
 #include <QtCore/QRegExp>
 #include <QtCore/QTextCodec>
-#include <QtGui/QTextDocument>
-#include <QtGui/QColor>
+#include <QTextDocument>
+#include <QColor>
 
 #include <kdebug.h>
 #include <kstringhandler.h>
@@ -373,7 +373,7 @@ QString Message::plainBody() const
 
 QString Message::escapedBody() const
 {
-//	kDebug(14010) << escapedBody() << " " << d->richTextOverride;
+//	qCDebug(LIBKOPETE_LOG) << escapedBody() << " " << d->richTextOverride;
 
 //	the escaped body is cached because QRegExp is very expensive, so it shouldn't be used any more than necessary
 	if (!d->escapedBodyDirty)
