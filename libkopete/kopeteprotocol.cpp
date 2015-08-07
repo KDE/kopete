@@ -20,7 +20,7 @@
 #include "kopeteprotocol.h"
 
 #include <kdebug.h>
-#include <kaction.h>
+#include <QAction>
 #include <klocale.h>
 #include <kjob.h>
 
@@ -50,7 +50,7 @@ public:
 	Kopete::OnlineStatus accountNotConnectedStatus;
 };
 
-Protocol::Protocol( const KComponentData &instance, QObject *parent, bool canAddMyself )
+Protocol::Protocol( const KAboutData &instance, QObject *parent, bool canAddMyself )
 : Plugin( instance, parent ), d(new Private())
 {
 	d->canAddMyself = canAddMyself;
@@ -67,7 +67,7 @@ Protocol::~Protocol()
 	{
 		if( a->protocol() == this )
 		{
-			kWarning( 14010 ) << "Deleting protocol with existing accounts! Did the account unloading go wrong?  account: " 
+			qCWarning(LIBKOPETE_LOG) << "Deleting protocol with existing accounts! Did the account unloading go wrong?  account: " 
 					<< a->accountId() << endl;
 		
 			delete a;
@@ -142,7 +142,7 @@ void Protocol::aboutToUnload()
 			
 			if ( a->myself() && a->myself()->isOnline() )
 			{
-				kDebug( 14010 ) << a->accountId() <<
+				qCDebug(LIBKOPETE_LOG) << a->accountId() <<
 						" is still connected, disconnecting..." << endl;
 
 				QObject::connect( a->myself(),
@@ -153,7 +153,7 @@ void Protocol::aboutToUnload()
 			else
 			{
 				// Remove account, it's already disconnected
-				kDebug( 14010 ) << a->accountId() <<
+				qCDebug(LIBKOPETE_LOG) << a->accountId() <<
 						" is already disconnected, deleting..." << endl;
 
 				QObject::connect( a, SIGNAL(destroyed()),
@@ -212,7 +212,7 @@ void Protocol::serialize( MetaContact *metaContact )
 	// FIXME: This isn't used anywhere right now.
 	for( it = addressBookData.begin(); it != addressBookData.end(); ++it )
 	{
-		//kDebug( 14010 ) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data();
+		//qCDebug(LIBKOPETE_LOG) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data();
 		// FIXME: This is a terrible hack to check the key name for the phrase "messaging/"
 		//        to indicate what app name to use, but for now it's by far the easiest
 		//        way to get this working.
@@ -223,7 +223,7 @@ void Protocol::serialize( MetaContact *metaContact )
 		if( it.key().startsWith( QString::fromLatin1( "messaging/" ) ) )
 		{
 			metaContact->setAddressBookField( this, it.key(), QString::fromLatin1( "All" ), it.value() );
-//			kDebug(14010) << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );";
+//			qCDebug(LIBKOPETE_LOG) << "metaContact->setAddressBookField( " << this << ", " << it.key() << ", \"All\", " << it.data() << " );";
 		}
 		else
 			metaContact->setAddressBookField( this, QString::fromLatin1( "kopete" ), it.key(), it.value() );
@@ -238,7 +238,7 @@ void Protocol::deserializeContactList( MetaContact *metaContact, const QList< QM
 		const QString& accountId = sd[ QString::fromLatin1( "accountId" ) ];
 		if( !d->canAddMyself && accountId == sd[ QString::fromLatin1( "contactId" ) ] )
 		{
-			kDebug( 14010 ) << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it";
+			qCDebug(LIBKOPETE_LOG) << "Myself contact was on the contactlist.xml for account " << accountId << ".  Ignore it";
 			continue;
 		}
 	
@@ -278,7 +278,7 @@ void Protocol::deserializeContactList( MetaContact *metaContact, const QList< QM
 			}
 			else
 			{
-				kWarning( 14010 ) <<
+				qCWarning(LIBKOPETE_LOG) <<
 	"No account available and account not set in " \
 	"contactlist.xml either!" << endl
 					<< "Not deserializing this contact." << endl;

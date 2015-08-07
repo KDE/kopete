@@ -18,12 +18,14 @@
 #define KOPETECOMMANDHANDLER_H
 
 #include <QtCore/QMultiHash>
+#include <QDebug>
 
-#include <kshortcut.h>
+#include <QKeySequence>
 #include <kprocess.h>
 #include "kopetemessage.h"
 
 #include "kopete_export.h"
+#include "libkopete_debug.h"
 
 struct CommandHandlerPrivate;
 
@@ -87,7 +89,7 @@ class KOPETE_EXPORT CommandHandler : public QObject
 		 */
 		void registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
 			const QString &help = QString(), uint minArgs = 0, int maxArgs = -1,
-			const KShortcut &cut = KShortcut(), const QString &pix = QString() );
+			const QKeySequence &cut = QKeySequence(), const QString &pix = QString() );
 
 		/**
 		 * \brief Register a command alias.
@@ -113,7 +115,7 @@ class KOPETE_EXPORT CommandHandler : public QObject
 			CommandType = SystemAlias,
 			uint minArgs = 0,
 			int maxArgs = -1,
-			const KShortcut &cut = KShortcut(),
+			const QKeySequence &cut = QKeySequence(),
 			const QString &pix = QString() );
 
 		/**

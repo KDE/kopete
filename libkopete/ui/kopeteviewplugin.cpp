@@ -16,7 +16,7 @@
 
 #include "kopeteviewplugin.h"
 
-Kopete::ViewPlugin::ViewPlugin( const KComponentData &instance, QObject *parent ) :
+Kopete::ViewPlugin::ViewPlugin( const KAboutData &instance, QObject *parent ) :
 	Kopete::Plugin( instance, parent )
 {
 

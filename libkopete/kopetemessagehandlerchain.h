@@ -18,11 +18,13 @@
 #define KOPETEMESSAGEHANDLERCHAIN_H
 
 #include <QtCore/QObject>
+#include <QDebug>
 
 #include <kdemacros.h>
 #include <ksharedptr.h>
 #include "kopetemessage.h"
 #include "kopetetask.h"
+#include "libkopete_debug.h"
 
 namespace Kopete
 {

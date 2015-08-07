@@ -20,10 +20,11 @@
 #define KOPETEACCOUNTMANAGER_H
 
 #include <QtCore/QObject>
-#include <QtGui/QColor>
+#include <QColor>
+#include <QDebug>
 
 #include "kopete_export.h"
-
+#include "libkopete_debug.h"
 #include "kopetestatusmessage.h"
 
 namespace Kopete {

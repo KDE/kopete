@@ -18,6 +18,7 @@
 */
 
 #include "kopeteemoticons.h"
+#include "kopeteutils_private.h"
 #include "kopeteappearancesettings.h"
 /*
  * Testcases can be found in the kopeteemoticontest app in the tests/ directory.
@@ -26,12 +27,12 @@
 
 namespace Kopete {
 
-K_GLOBAL_STATIC(KEmoticons, s_self)
+/*K_GLOBAL_STATIC(KEmoticons, s_self)
 
 KEmoticons *Emoticons::self()
 {
 	return s_self;
-}
+}*/
 
 QString Emoticons::parseEmoticons(const QString &text, KEmoticonsTheme::ParseMode mode, const QStringList &exclude)
 {

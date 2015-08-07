@@ -23,8 +23,8 @@
 
 #include <QTextDocument>
 
-#include <kabc/addressbook.h>
-#include <kabc/addressee.h>
+#include <kcontacts/addressbook.h>
+#include <kcontacts/addressee.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -92,7 +92,7 @@ void MetaContact::addContact( Contact *c )
 {
 	if( d->contacts.contains( c ) )
 	{
-		kWarning(14010) << "Ignoring attempt to add duplicate contact " << c->contactId() << "!";
+		qCWarning(LIBKOPETE_LOG) << "Ignoring attempt to add duplicate contact " << c->contactId() << "!";
 	}
 	else
 	{
@@ -166,7 +166,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 {
 	if( !d->contacts.contains( c ) )
 	{
-		kDebug(14010) << " Contact is not in this metaContact ";
+		qCDebug(LIBKOPETE_LOG) << " Contact is not in this metaContact ";
 	}
 	else
 	{
@@ -240,7 +240,7 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 			disconnect( c, SIGNAL(idleStateChanged(Kopete::Contact*)),
 				this, SIGNAL(contactIdleStateChanged(Kopete::Contact*)) );
 
-			kDebug( 14010 ) << "Contact disconnected";
+			qCDebug(LIBKOPETE_LOG) << "Contact disconnected";
 
 			KABCPersistence::self()->write( this );
 		}
@@ -255,12 +255,12 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 
 Contact *MetaContact::findContact( const QString &protocolId, const QString &accountId, const QString &contactId )
 {
-	//kDebug( 14010 ) << "Num contacts: " << d->contacts.count();
+	//qCDebug(LIBKOPETE_LOG) << "Num contacts: " << d->contacts.count();
 	QListIterator<Contact *> it( d->contacts );
 	while ( it.hasNext() )
 	{
 		Contact *c = it.next();
-		//kDebug( 14010 ) << "Trying " << it.current()->contactId() << ", proto "
+		//qCDebug(LIBKOPETE_LOG) << "Trying " << it.current()->contactId() << ", proto "
 		//<< it.current()->protocol()->pluginId() << ", account " << it.current()->accountId() << endl;
 		if( ( c->contactId() == contactId ) && ( c->protocol()->pluginId() == protocolId || protocolId.isNull() ) )
 		{
@@ -572,7 +572,7 @@ bool MetaContact::canAcceptFiles() const
 }
 
 //Slot for sending files
-void MetaContact::sendFile( const KUrl &sourceURL, const QString &altFileName, unsigned long fileSize )
+void MetaContact::sendFile( const QUrl &sourceURL, const QString &altFileName, unsigned long fileSize )
 {
 	//If we can't send any files then exit
 	if( d->contacts.isEmpty() || !canAcceptFiles() )
@@ -619,9 +619,9 @@ void MetaContact::slotContactStatusChanged( Contact * c, const OnlineStatus &sta
 
 void MetaContact::setDisplayName( const QString &name )
 {
-	/*kDebug( 14010 ) << "Change displayName from " << d->displayName <<
+	/*qCDebug(LIBKOPETE_LOG) << "Change displayName from " << d->displayName <<
 		" to " << name  << ", d->trackChildNameChanges=" << d->trackChildNameChanges << endl;
-	kDebug(14010) << kBacktrace(6);*/
+	qCDebug(LIBKOPETE_LOG) << kBacktrace(6);*/
 
 	if( name == d->displayName )
 		return;
@@ -682,7 +682,7 @@ QString MetaContact::displayName() const
 			if( d->contacts.count() >= 1 )
 			{// don't call setDisplayNameSource , or there will probably be an infinite loop
 				d->displayNameSourceContact=d->contacts.first();
-//				kDebug( 14010 ) << " setting displayname source for " << metaContactId();
+//				qCDebug(LIBKOPETE_LOG) << " setting displayname source for " << metaContactId();
 			}
 		}
 		if ( displayNameSourceContact() != 0L )
@@ -691,7 +691,7 @@ QString MetaContact::displayName() const
 		}
 		else
 		{
-//			kDebug( 14010 ) << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId();
+//			qCDebug(LIBKOPETE_LOG) << " source == SourceContact , but there is no displayNameSourceContact for contact " << metaContactId();
 		}
 	}
 	return d->displayName;
@@ -699,13 +699,13 @@ QString MetaContact::displayName() const
 
 QString nameFromKABC( const QString &id ) /*const*/
 {
-	KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
+	KContacts::AddressBook* ab = KABCPersistence::self()->addressBook();
 	if ( ! id.isEmpty() && !id.contains(':') )
 	{
-		KABC::Addressee theAddressee = ab->findByUid(id);
+		KContacts::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kDebug( 14010 ) << "no KABC::Addressee found for ( " << id << " ) " << " in current address book";
+			qCDebug(LIBKOPETE_LOG) << "no KContacts::Addressee found for ( " << id << " ) " << " in current address book";
 		}
 		else
 		{
@@ -726,12 +726,12 @@ QString nameFromContact( Kopete::Contact *c) /*const*/
 	return contactName.remove('\n');
 }
 
-KUrl MetaContact::customPhoto() const
+QUrl MetaContact::customPhoto() const
 {
-	return KUrl(d->customPicture.path());
+	return QUrl(d->customPicture.path());
 }
 
-void MetaContact::setPhoto( const KUrl &url )
+void MetaContact::setPhoto( const QUrl &url )
 {
 	d->photoUrl = url;
 	d->customPicture.setPicture(url.toLocalFile());
@@ -789,17 +789,17 @@ QImage photoFromContact( Kopete::Contact *contact) /*const*/
 
 QImage photoFromKABC( const QString &id ) /*const*/
 {
-	KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
+	KContacts::AddressBook* ab = KABCPersistence::self()->addressBook();
 	if ( ! id.isEmpty() && !id.contains(':') )
 	{
-		KABC::Addressee theAddressee = ab->findByUid(id);
+		KContacts::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kDebug( 14010 ) << "no KABC::Addressee found for ( " << id << " ) " << " in current address book";
+			qCDebug(LIBKOPETE_LOG) << "no KContacts::Addressee found for ( " << id << " ) " << " in current address book";
 		}
 		else
 		{
-			KABC::Picture pic = theAddressee.photo();
+			KContacts::Picture pic = theAddressee.photo();
 			if ( pic.data().isNull() && pic.url().isEmpty() )
 				pic = theAddressee.logo();
 
@@ -1007,7 +1007,7 @@ void MetaContact::moveToGroup( Group *from, Group *to )
 		return;
 
 
-	//kDebug( 14010 ) << from->displayName() << " => " << to->displayName();
+	//qCDebug(LIBKOPETE_LOG) << from->displayName() << " => " << to->displayName();
 
 	d->groups.removeAll( from );
 	d->groups.append( to );
@@ -1122,18 +1122,18 @@ void MetaContact::slotAllPluginsLoaded()
 
 void MetaContact::slotUpdateAddressBookPicture()
 {
-	KABC::AddressBook* ab = KABCPersistence::self()->addressBook();
+	KContacts::AddressBook* ab = KABCPersistence::self()->addressBook();
 	QString id = kabcId();
 	if ( !id.isEmpty() && !id.contains(':') )
 	{
-		KABC::Addressee theAddressee = ab->findByUid(id);
+		KContacts::Addressee theAddressee = ab->findByUid(id);
 		if ( theAddressee.isEmpty() )
 		{
-			kDebug( 14010 ) << "no KABC::Addressee found for ( " << id << " ) " << " in current address book";
+			qCDebug(LIBKOPETE_LOG) << "no KContacts::Addressee found for ( " << id << " ) " << " in current address book";
 		}
 		else
 		{
-			KABC::Picture pic = theAddressee.photo();
+			KContacts::Picture pic = theAddressee.photo();
 			if ( pic.data().isNull() && pic.url().isEmpty() )
 				pic = theAddressee.logo();
 
@@ -1242,7 +1242,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 
 		if ( !d->kabcId.isEmpty() && !newValue.isNull())
 		{
-			KABC::Addressee theAddressee = KABCPersistence::self()->addressBook()->findByUid( kabcId() );
+			KContacts::Addressee theAddressee = KABCPersistence::self()->addressBook()->findByUid( kabcId() );
 
 			if ( !theAddressee.isEmpty() )
 			{

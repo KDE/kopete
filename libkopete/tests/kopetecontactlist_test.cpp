@@ -18,8 +18,9 @@
 #include "kopetecontactlist_test.h"
 #include <qfile.h>
 #include <qdir.h>
-#include <kstandarddirs.h>
+
 #include <kunittest/module.h>
+#include <QStandardPaths>
 
 using namespace KUnitTest;
 
@@ -36,7 +37,7 @@ void KopeteContactList_Test::testSomething()
 	// change user data dir to avoid messing with user's .kde dir
 	setenv( "KDEHOME", QFile::encodeName( QDir::homePath() + "/.kopete-unittest" ), true );
 
-	QString filename = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
+	QString filename = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QString::fromLatin1( "contactlist.xml" ) ;
 	if( ! filename.isEmpty() )
 	{
 		// previous test run, delete the previous contact list

@@ -16,14 +16,25 @@
 #include "kopetestatusmanager.h"
 
 #include <QApplication>
-#include <QtCore/QFile>
-#include <QtXml/QDomElement>
-#include <QtCore/QTimer>
+#include <QFile>
+#include <QDomElement>
+#include <QTimer>
+#include <QTextStream>
+#include <QSaveFile>
+#include <QString>
+#include <QStringList>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QStandardPaths>
+#include <QTextCodec>
 
-#include <ksavefile.h>
-#include <kstandarddirs.h>
-#include <kdialog.h>
+
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
+#include <KConfigGroup>
+#include <KSharedConfig>
 
 #include "kopeteuiglobal.h"
 #include "kopeteaccountmanager.h"
@@ -91,9 +102,9 @@ StatusManager::~StatusManager()
 
 void StatusManager::saveXML()
 {
-	QString filename = KStandardDirs::locateLocal( "data", QLatin1String( "kopete/statuses.xml" ) );
-	KSaveFile file(filename);
-	if( file.open() )
+	QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/kopete/statuses.xml" ) ;
+	QSaveFile file(filename);
+	if( file.open(QIODevice::WriteOnly) )
 	{
 		QString buf;
 		QTextStream stream( &buf, QIODevice::WriteOnly );
@@ -105,7 +116,7 @@ void StatusManager::saveXML()
 		doc.documentElement().save( stream, 4 ); // QDomDocument::save() override stream codec to UTF-8
 		file.write( buf.toUtf8() );
 
-		file.close();
+		file.commit();
 	}
 }
 
@@ -116,7 +127,7 @@ void StatusManager::loadXML()
 	d->uidHash.clear();
 	d->root = 0;
 
-	const QString filename = KStandardDirs::locateLocal( "data", QLatin1String( "kopete/statuses.xml" ) );
+	const QString filename = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/kopete/statuses.xml" ) ;
 
 	QDomDocument doc;
 	QFile file( filename );
@@ -314,7 +325,7 @@ void StatusManager::setGlobalStatus( uint category, const Kopete::StatusMessage 
 	d->globalStatusCategory = category;
 	d->globalStatusMessage = statusMessage;
 
-	KConfigGroup config( KGlobal::config(), "Status Manager" );
+	KConfigGroup config( KSharedConfig::openConfig(), "Status Manager" );
 	config.writeEntry( "GlobalStatusCategory", d->globalStatusCategory );
 	config.writeEntry( "GlobalStatusTitle", d->globalStatusMessage.title() );
 	config.writeEntry( "GlobalStatusMessage", d->globalStatusMessage.message() );
@@ -327,7 +338,7 @@ void StatusManager::setGlobalStatusMessage( const Kopete::StatusMessage &statusM
 {
 	d->globalStatusMessage = statusMessage;
 	
-	KConfigGroup config( KGlobal::config(), "Status Manager" );
+	KConfigGroup config( KSharedConfig::openConfig(), "Status Manager" );
 	config.writeEntry( "GlobalStatusTitle", d->globalStatusMessage.title() );
 	config.writeEntry( "GlobalStatusMessage", d->globalStatusMessage.message() );
 	config.sync();
@@ -360,15 +371,23 @@ uint StatusManager::globalStatusCategory() const
 
 void StatusManager::askAndSetActive()
 {
-	kDebug(14010) << "Found Activity. Confirming if we should go active";
+	qCDebug(LIBKOPETE_LOG) << "Found Activity. Confirming if we should go active";
 
 	// First Create a Dialog
-	KDialog *dialog = new KDialog(Kopete::UI::Global::mainWidget());
-	dialog->setCaption(i18n("Going Online - Kopete"));
-	dialog->setButtons(KDialog::Yes | KDialog::No);
-	dialog->setDefaultButton(KDialog::Yes);
-	dialog->setEscapeButton(KDialog::No);
+	QDialog *dialog = new QDialog(Kopete::UI::Global::mainWidget());
+	dialog->setWindowTitle(i18n("Going Online - Kopete"));
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::No|QDialogButtonBox::Yes);
+	QWidget *mainWidget = new QWidget();
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	dialog->setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	dialog->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	dialog->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	buttonBox->button(QDialogButtonBox::Yes)->setDefault(true);
+	buttonBox->button(QDialogButtonBox::No)->setShortcut(Qt::Key_Escape);
 	dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+	mainLayout->addWidget(buttonBox);
 
 	// Set the Text in the Dialog
 	KMessageBox::createKMessageBox(dialog, QMessageBox::Question,
@@ -387,7 +406,7 @@ void StatusManager::askAndSetActive()
 
 void StatusManager::setActive()
 {
-	kDebug(14010) << "Found activity on desktop, setting accounts online";
+	qCDebug(LIBKOPETE_LOG) << "Found activity on desktop, setting accounts online";
 	if( d->away )
 	{
 		d->away = false;
@@ -409,7 +428,7 @@ void StatusManager::setActive()
 
 void StatusManager::setAutoAway()
 {
-	kDebug(14010) << "Going AutoAway!";
+	qCDebug(LIBKOPETE_LOG) << "Going AutoAway!";
 	if ( !d->away )
 	{
 		d->away = true;
@@ -479,7 +498,7 @@ void StatusManager::checkIdleTimer()
 
 void StatusManager::loadSettings()
 {
-	KConfigGroup config( KGlobal::config(), "Status Manager" );
+	KConfigGroup config( KSharedConfig::openConfig(), "Status Manager" );
 	d->globalStatusCategory = config.readEntry( "GlobalStatusCategory", 0 );
 
 	Kopete::StatusMessage statusMessage;

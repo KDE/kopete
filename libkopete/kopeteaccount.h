@@ -26,7 +26,7 @@
 #include "kopete_export.h"
 
 #include <QtCore/QObject>
-#include <QtGui/QPixmap>
+#include <QPixmap>
 #include <QtCore/QHash>
 
 #include <kconfiggroup.h>

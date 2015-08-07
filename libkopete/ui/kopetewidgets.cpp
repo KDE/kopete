@@ -6,7 +6,7 @@
 #include <qwidgetplugin.h>
 #include <QPixmap>
 
-#include <kcomponentdata.h>
+#include <KAboutData>
 #include <addressbooklinkwidget.h>
 #include <kopetelistview.h>
 #include <kopetelistviewsearchline.h>
@@ -80,7 +80,7 @@ KopeteWidgets::KopeteWidgets()
 #endif
 	widget.includeFile = QLatin1String("addressbooklinkwidget.h");
 	widget.toolTip = QLatin1String("Address Book Link Widget (Kopete)");
-	widget.whatsThis = QLatin1String("KABC::Addressee display/selector");
+	widget.whatsThis = QLatin1String("KContacts::Addressee display/selector");
 	widget.isContainer = false;
 	m_widgets.insert(QLatin1String("Kopete::UI::AddressBookLinkWidget"), widget);
 
@@ -108,7 +108,7 @@ KopeteWidgets::KopeteWidgets()
 	widget.isContainer = false;
 	m_widgets.insert(QLatin1String("Kopete::UI::ListView::SearchLine"), widget);
 
-	KComponentData("kopetewidgets"); // if it's the only KComponentData object then it stays as
+	KAboutData("kopetewidgets"); // if it's the only KAboutData object then it stays as
         // KGlobal::mainComponent()
 }
 KopeteWidgets::~KopeteWidgets()

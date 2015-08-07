@@ -19,7 +19,7 @@
 #define KOPETE_AVATARDIALOG_H
 
 // KDE includes
-#include <kdialog.h>
+#include <QDialog>
 
 // Kopete includes
 #include <kopete_export.h>
@@ -55,7 +55,7 @@ void SpamEgg::avatarDialogResult(Kopete::UI::AvatarDialog *dialog)
  *
  * @author Michaël Larouche <larouche@kde.org>
  */
-class KOPETE_EXPORT AvatarDialog : public KDialog
+class KOPETE_EXPORT AvatarDialog : public QDialog
 {
 	Q_OBJECT
 public:
@@ -100,7 +100,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
 	/**
 	 * @internal
-	 * A button has been clicked. Reimplemented from @ref KDialog::slotButtonClicked()
+	 * A button has been clicked. Reimplemented from @ref QDialog::slotButtonClicked()
 	 */
 	virtual void slotButtonClicked(int button);
 

@@ -19,15 +19,15 @@
 
 #include "kopeteutils.h"
 
-#include <qmap.h>
+#include <QMap>
 #include <QPixmap>
 #include <QByteArray>
 
 #include <kmessagebox.h>
-
-#include <klocale.h>
+#include <kmessagebox_queued.h>
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <KLocalizedString>
 
 #include "kopeteaccount.h"
 #include "knotification.h"
@@ -60,7 +60,7 @@ struct DefaultStrings
     const QString notifyCannotConnect_DefaultCaption;
     const QString notifyCannotConnect_DefaultExplanation;
 };
-K_GLOBAL_STATIC(DefaultStrings, defaultStrings)
+Q_GLOBAL_STATIC(DefaultStrings, defaultStrings)
 
 void notify( QPixmap pic, const QString &eventid, const QString &caption, const QString &message, const QString explanation, const QString debugInfo)
 {
@@ -72,7 +72,7 @@ void notify( QPixmap pic, const QString &eventid, const QString &caption, const 
 	QStringList actions;
 		if ( !explanation.isEmpty() )
 			actions  << i18n( "More Information..." );
-		kDebug( 14010 ) ;
+		qCDebug(LIBKOPETE_LOG) ;
 		KNotification *n = new KNotification( eventid , 0l );
 		n->setActions( actions );
 		n->setText( message );

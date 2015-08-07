@@ -22,9 +22,11 @@
 #define KOPETEPROTOCOL_H
 
 #include <QtCore/QFlags>
+#include <QDebug>
 
 #include "kopeteplugin.h"
 #include "kopeteonlinestatus.h"
+#include "libkopete_debug.h"
 
 class KopeteEditAccountWidget;
 class AddContactPage;
@@ -167,11 +169,11 @@ protected:
 	/**
 	 * @brief Constructor for Protocol
 	 *
-	 * @param instance The protocol's instance, every plugin needs to have a KComponentData of its own
+	 * @param instance The protocol's instance, every plugin needs to have a KAboutData of its own
 	 * @param parent The protocol's parent object
 	 * @param name The protocol's name
 	 */
-	Protocol( const KComponentData &instance, QObject *parent, bool canAddMyself = false );
+	Protocol( const KAboutData &instance, QObject *parent, bool canAddMyself = false );
 
 	/**
 	 * @brief Sets the capabilities of this protcol.

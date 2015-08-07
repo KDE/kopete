@@ -21,7 +21,7 @@
 #define kopeteemoticons_h__
 
 #include "kopete_export.h"
-#include <kemoticons.h>
+#include <KEmoticons/kemoticons.h>
 
 class KEmoticons;
 namespace Kopete {

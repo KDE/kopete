@@ -17,6 +17,7 @@
 #define KOPETEACTIVENOTIFICATION_H
 
 #include <QHash>
+#include <QObject>
 
 class KNotification;
 

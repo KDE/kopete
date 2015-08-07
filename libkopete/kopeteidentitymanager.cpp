@@ -106,7 +106,7 @@ Identity* IdentityManager::registerIdentity( Identity *identity )
 
 void IdentityManager::unregisterIdentity( const Identity *identity )
 {
-	kDebug( 14010 ) << "Unregistering identity " << identity->id();
+	qCDebug(LIBKOPETE_LOG) << "Unregistering identity " << identity->id();
 	d->identities.removeAll( const_cast<Identity*>(identity) );
 
 	emit identityUnregistered( identity );
@@ -195,10 +195,10 @@ void IdentityManager::removeIdentity( Identity *identity )
 void IdentityManager::save()
 {
 	// save the default identity
-	KConfigGroup group = KGlobal::config()->group("IdentityManager");
+	KConfigGroup group = KSharedConfig::openConfig()->group("IdentityManager");
 	group.writeEntry("DefaultIdentity", d->defaultIdentity->id());
 
-	//kDebug( 14010 );
+	//qCDebug(LIBKOPETE_LOG);
 	foreach( Identity *identity, d->identities )
 	{
 		KConfigGroup *config = identity->configGroup();
@@ -208,13 +208,13 @@ void IdentityManager::save()
 		identity->save();
 	}
 
-	KGlobal::config()->sync();
+	KSharedConfig::openConfig()->sync();
 }
 
 void IdentityManager::load()
 {
 	// Iterate over all groups that start with "Identity_" as those are identities.
-	KSharedConfig::Ptr config = KGlobal::config();
+	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 
 	QStringList identityGroups = config->groupList().filter( QRegExp( QString::fromLatin1( "^Identity_" ) ) );
 	for ( QStringList::Iterator it = identityGroups.begin(); it != identityGroups.end(); ++it )
@@ -227,7 +227,7 @@ void IdentityManager::load()
 		Identity *identity = registerIdentity( new Identity( identityId, label ) );
 		if ( !identity )
 		{
-			kWarning( 14010 ) <<
+			qCWarning(LIBKOPETE_LOG) <<
 								 "Failed to create identity for '" << identityId << "'" << endl;
 			continue;
 		}
@@ -248,7 +248,7 @@ void IdentityManager::load()
 void IdentityManager::slotIdentityOnlineStatusChanged(Identity *i)
 {
 	//TODO: check if we need to do something more on status changes
-	//kDebug(14010);
+	//qCDebug(LIBKOPETE_LOG);
 	emit identityOnlineStatusChanged(i);
 }
 

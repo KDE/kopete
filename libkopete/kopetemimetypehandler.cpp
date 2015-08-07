@@ -26,7 +26,7 @@
 #include <kio/netaccess.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
-#include <kstandarddirs.h>
+
 #include <kemoticons.h>
 #include <kopeteemoticons.h>
 
@@ -68,14 +68,14 @@ bool MimeTypeHandler::registerAsMimeHandler( const QString &mimeType )
 {
 	if( g_mimeHandlers[ mimeType ] )
 	{
-		kWarning(14010) << "Warning: Two mime type handlers attempting"
+		qCWarning(LIBKOPETE_LOG) << "Warning: Two mime type handlers attempting"
 			" to handle " << mimeType << endl;
 		return false;
 	}
 
 	g_mimeHandlers.insert( mimeType, this );
 	d->mimeTypes.append( mimeType );
-//	kDebug(14010) << "Mime type " << mimeType << " registered";
+//	qCDebug(LIBKOPETE_LOG) << "Mime type " << mimeType << " registered";
 	return true;
 }
 
@@ -83,14 +83,14 @@ bool MimeTypeHandler::registerAsProtocolHandler( const QString &protocol )
 {
 	if( g_protocolHandlers[ protocol ] )
 	{
-		kWarning(14010) << "Warning: Two protocol handlers attempting"
+		qCWarning(LIBKOPETE_LOG) << "Warning: Two protocol handlers attempting"
 			" to handle " << protocol << endl;
 		return false;
 	}
 
 	g_protocolHandlers.insert( protocol, this );
 	d->protocols.append( protocol );
-	kDebug(14010) << "Mime type " << protocol << " registered";
+	qCDebug(LIBKOPETE_LOG) << "Mime type " << protocol << " registered";
 	return true;
 }
 
@@ -109,7 +109,7 @@ bool MimeTypeHandler::canAcceptRemoteFiles() const
 	return d->canAcceptRemoteFiles;
 }
 
-bool MimeTypeHandler::dispatchURL( const KUrl &url )
+bool MimeTypeHandler::dispatchURL( const QUrl &url )
 {
 	if( url.isEmpty() )
 		return false;
@@ -124,7 +124,7 @@ bool MimeTypeHandler::dispatchURL( const KUrl &url )
 	}
 	else
 	{
-		mimeHandler = g_protocolHandlers[ url.protocol() ];
+		mimeHandler = g_protocolHandlers[ url.scheme() ];
 
 		if( mimeHandler )
 		{
@@ -133,13 +133,13 @@ bool MimeTypeHandler::dispatchURL( const KUrl &url )
 		}
 		else
 		{
-			kDebug(14010) << "No mime type handler can handle this URL: " << url.prettyUrl();
+			qCDebug(LIBKOPETE_LOG) << "No mime type handler can handle this URL: " << url.toDisplayString();
 			return false;
 		}
 	}
 }
 
-bool MimeTypeHandler::dispatchToHandler( const KUrl &url, const QString &mimeType, MimeTypeHandler *handler )
+bool MimeTypeHandler::dispatchToHandler( const QUrl &url, const QString &mimeType, MimeTypeHandler *handler )
 {
 	if( !handler->canAcceptRemoteFiles() )
 	{
@@ -149,20 +149,20 @@ bool MimeTypeHandler::dispatchToHandler( const KUrl &url, const QString &mimeTyp
 			QString sorryText;
 			if ( url.isLocalFile() )
 			{
-				sorryText = i18n( "Unable to find the file %1.", url.prettyUrl() );
+				sorryText = i18n( "Unable to find the file %1.", url.toDisplayString() );
 			}
 			else
 			{
 				sorryText = i18n( "<qt>Unable to download the requested file;<br />"
 				                  "please check that address %1 is correct.</qt>",
-				                  url.prettyUrl() );
+				                  url.toDisplayString() );
 			}
 
 			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), sorryText );
 			return false;
 		}
 
-		KUrl dest;
+		QUrl dest;
 		dest.setPath( file );
 
 		handler->handleURL( mimeType, dest );
@@ -178,13 +178,13 @@ bool MimeTypeHandler::dispatchToHandler( const KUrl &url, const QString &mimeTyp
 	return true;
 }
 
-void MimeTypeHandler::handleURL( const QString &mimeType, const KUrl &url ) const
+void MimeTypeHandler::handleURL( const QString &mimeType, const QUrl &url ) const
 {
 	Q_UNUSED( mimeType );
 	Q_UNUSED( url );
 }
 
-void MimeTypeHandler::handleURL( const KUrl &url ) const
+void MimeTypeHandler::handleURL( const QUrl &url ) const
 {
 	handleURL( QString(), url );
 }
@@ -198,12 +198,12 @@ EmoticonMimeTypeHandler::EmoticonMimeTypeHandler()
 	registerAsMimeHandler( QString::fromLatin1("application/x-bzip-compressed-tar") );
 }
 
-void EmoticonMimeTypeHandler::handleURL( const QString &, const KUrl &url ) const
+void EmoticonMimeTypeHandler::handleURL( const QString &, const QUrl &url ) const
 {
   Emoticons::self()->installTheme( url.toLocalFile() );
 }
 
-void EmoticonMimeTypeHandler::handleURL( const KUrl &url ) const
+void EmoticonMimeTypeHandler::handleURL( const QUrl &url ) const
 {
 	handleURL( QString(), url );
 }

@@ -18,9 +18,10 @@
 #ifndef KOPETE_UTILS_H
 #define KOPETE_UTILS_H
 
-#include "qobject.h"
-#include "qstring.h"
-#include "qpixmap.h"
+#include <QObject>
+#include <QString>
+#include <QPixmap>
+
 #include "kopete_export.h"
 
 
@@ -31,6 +32,13 @@ class Account;
 
 namespace Utils
 {
+
+void KOPETE_EXPORT notify(QPixmap pic,
+						  const QString &eventid,
+						  const QString &caption,
+						  const QString &message,
+						  const QString explanation,
+						  const QString debugInfo	);
 
 /**
  * Notifies the user connection has been lost without coupling plugins with GUI code.

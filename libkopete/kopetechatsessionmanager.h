@@ -20,10 +20,11 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
+#include <QDebug>
 
 #include "kopetechatsession.h"
 #include "kopetemessage.h"
-
+#include "libkopete_debug.h"
 #include "kopete_export.h"
 
 class KopeteView;

@@ -45,7 +45,7 @@ void Task::addSubTask(KJob *task)
 
 void Task::start()
 {
-	kDebug(14010) << "Executing children tasks for this task.";
+	qCDebug(LIBKOPETE_LOG) << "Executing children tasks for this task.";
 	KJob *subTask = 0;
 	foreach( subTask, subjobs() )
 	{

@@ -19,7 +19,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QDateTime>
-#include <QtGui/QX11Info>
+#include <QX11Info>
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 

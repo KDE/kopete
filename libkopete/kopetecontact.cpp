@@ -22,18 +22,18 @@
 #include <QApplication>
 #include <QTextDocument>
 #include <QTimer>
-
-#include <KDebug>
+#include <QDialog>
+#include <QIcon>
+#include <QMenu>
+#include <QLocale>
+#include <QVariant>
+#include <QWidget>
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
-
 #include <kabcpersistence.h>
-#include <kdialog.h>
-#include <klocale.h>
-#include <kicon.h>
-#include <kmenu.h>
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 #include <ktreewidgetsearchline.h>
 
 #include "kopetecontactlist.h"
@@ -54,12 +54,16 @@
 #include "kopetedeletecontacttask.h"
 
 //For the moving to another metacontact dialog
-#include <qlabel.h>
-#include <qimage.h>
-#include <qmime.h>
-#include <kvbox.h>
+#include <QLabel>
+#include <QImage>
+#include <QMimeData>
+#include <QMimeType>
+#include <QVBoxLayout>
 #include <QTreeWidget>
-#include <qcheckbox.h>
+#include <QCheckBox>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 
 namespace Kopete {
@@ -123,7 +127,7 @@ Contact::Contact( Account *account, const QString &contactId,
 	MetaContact *parent, const QString &icon )
 	: ContactListElement( parent ), d(new Private())
 {
-	//kDebug( 14010 ) << "Creating contact with id " << contactId;
+	//qCDebug(LIBKOPETE_LOG) << "Creating contact with id " << contactId;
 
 	d->contactId = contactId;
 	d->metaContact = parent;
@@ -163,7 +167,7 @@ Contact::Contact( Account *account, const QString &contactId,
 
 Contact::~Contact()
 {
-	//kDebug(14010) ;
+	//qCDebug(LIBKOPETE_LOG) ;
 	emit( contactDestroyed( this ) );
 	delete d;
 }
@@ -196,7 +200,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 	{
 		if ( !hasProperty( globalProps->onlineSince().key() ) )
 			setProperty( globalProps->onlineSince(), QDateTime::currentDateTime() );
-		// kDebug(14010) << "REMOVING lastSeen property for " << nickName();
+		// qCDebug(LIBKOPETE_LOG) << "REMOVING lastSeen property for " << nickName();
 		removeProperty( globalProps->lastSeen() );
 	}
 	else if( oldStatus.status() != OnlineStatus::Offline &&
@@ -204,7 +208,7 @@ void Contact::setOnlineStatus( const OnlineStatus &status )
 		status.status() == OnlineStatus::Offline ) // Contact went back offline
 	{
 		removeProperty( globalProps->onlineSince() );
-		// kDebug(14010) << "SETTING lastSeen property for " << nickName();
+		// qCDebug(LIBKOPETE_LOG) << "SETTING lastSeen property for " << nickName();
 		setProperty( globalProps->lastSeen(), QDateTime::currentDateTime() );
 	}
 
@@ -229,13 +233,13 @@ void Contact::setStatusMessage( const Kopete::StatusMessage &statusMessage )
 
 	d->statusMessage = statusMessage;
 
-	kDebug(14010) << "Setting up the status title property with this: " << statusMessage.title();
+	qCDebug(LIBKOPETE_LOG) << "Setting up the status title property with this: " << statusMessage.title();
 	if( !statusMessage.title().isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->statusTitle(), statusMessage.title() );
 	else
 		removeProperty( Kopete::Global::Properties::self()->statusTitle() );
 
-	kDebug(14010) << "Setting up the status message property with this: " << statusMessage.message();
+	qCDebug(LIBKOPETE_LOG) << "Setting up the status message property with this: " << statusMessage.message();
 	if( !statusMessage.message().isEmpty() )
 		setProperty( Kopete::Global::Properties::self()->statusMessage(), statusMessage.message() );
 	else
@@ -257,9 +261,9 @@ void Contact::slotAccountIsConnectedChanged()
 }
 
 
-void Contact::sendFile( const KUrl &, const QString &, uint )
+void Contact::sendFile( const QUrl &, const QString &, uint )
 {
-	kWarning( 14010 ) << "Plugin "
+	qCWarning(LIBKOPETE_LOG) << "Plugin "
 		<< protocol()->pluginId() << " has enabled file sending, "
 		<< "but didn't implement it!" << endl;
 }
@@ -273,14 +277,14 @@ void Contact::slotAddContact()
 	}
 }
 
-KMenu* Contact::popupMenu( ChatSession * )
+QMenu* Contact::popupMenu( ChatSession * )
 {
 	return popupMenu();
 }
 
-KMenu* Contact::popupMenu()
+QMenu* Contact::popupMenu()
 {
-	KMenu *menu = new KMenu();
+	QMenu *menu = new QMenu();
 
 	QString titleText;
 	const QString nick = displayName();
@@ -288,11 +292,11 @@ KMenu* Contact::popupMenu()
 		titleText = QString::fromLatin1( "%1 (%2)" ).arg( contactId(), onlineStatus().description() );
 	else
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), onlineStatus().description() );
-	menu->addTitle( titleText );
+	menu->addSection( titleText );
 
 	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
-		KAction *actionAddContact = new KAction( KIcon("list-add-user"), i18n( "&Add to Your Contact List" ), menu );
+		QAction *actionAddContact = new QAction( QIcon::fromTheme("list-add-user"), i18n( "&Add to Your Contact List" ), menu );
 		connect( actionAddContact, SIGNAL(triggered(bool)), this, SLOT(slotAddContact()) );
 
 		menu->addAction(actionAddContact);
@@ -303,15 +307,15 @@ KMenu* Contact::popupMenu()
 	const bool reach = account()->isConnected() && isReachable();
 	const bool myself = (this == account()->myself());
 
-	KAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT(sendMessage()), menu );
+	QAction *actionSendMessage = KopeteStdAction::sendMessage( this, SLOT(sendMessage()), menu );
 	actionSendMessage->setEnabled( reach && !myself );
 	menu->addAction( actionSendMessage );
 
-	KAction *actionChat = KopeteStdAction::chat( this, SLOT(startChat()), menu );
+	QAction *actionChat = KopeteStdAction::chat( this, SLOT(startChat()), menu );
 	actionChat->setEnabled( reach && !myself );
 	menu->addAction( actionChat );
 
-	KAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT(sendFile()), menu );
+	QAction *actionSendFile = KopeteStdAction::sendFile( this, SLOT(sendFile()), menu );
 	actionSendFile->setEnabled( reach && d->fileCapable && !myself );
 	menu->addAction( actionSendFile );
 
@@ -319,11 +323,11 @@ KMenu* Contact::popupMenu()
 	// through the use of the customContextMenuActions() function
 
 	// Get the custom actions from the protocols ( pure virtual function )
-	QList<KAction*> *customActions = customContextMenuActions();
+	QList<QAction *> *customActions = customContextMenuActions();
 	if( customActions && !customActions->isEmpty() )
 	{
 		menu->addSeparator();
-		QList<KAction*>::iterator it, itEnd = customActions->end();
+		QList<QAction *>::iterator it, itEnd = customActions->end();
 		for( it = customActions->begin(); it != itEnd; ++it )
 			menu->addAction( (*it) );
 	}
@@ -333,7 +337,7 @@ KMenu* Contact::popupMenu()
 
 	if( metaContact() && !metaContact()->isTemporary() )
 	{
-		KAction* changeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT(changeMetaContact()), menu );
+		QAction * changeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT(changeMetaContact()), menu );
 		menu->addAction( changeMetaContact );
 
 		d->toggleAlwaysVisibleAction = new KToggleAction( i18n( "Visible when offline" ), menu );
@@ -366,24 +370,37 @@ void Contact::toggleAlwaysVisible()
 
 void Contact::changeMetaContact()
 {
-	QPointer <KDialog> moveDialog = new KDialog( Kopete::UI::Global::mainWidget() );
-	moveDialog->setCaption( i18n( "Move Contact" ) );
-	moveDialog->setButtons( KDialog::Ok | KDialog::Cancel );
-	moveDialog->setDefaultButton( KDialog::Ok );
-	moveDialog->showButtonSeparator( true );
+	QPointer <QDialog> moveDialog = new QDialog( Kopete::UI::Global::mainWidget() );
+	moveDialog->setWindowTitle( i18n( "Move Contact" ) );
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+	QWidget *mainWidget = new QWidget(Kopete::UI::Global::mainWidget());
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	moveDialog->setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+	okButton->setDefault(true);
+	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+	moveDialog->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	moveDialog->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+	mainLayout->addWidget(buttonBox);
+	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
-	KVBox *w = new KVBox( moveDialog );
-	w->setSpacing( KDialog::spacingHint() );
+	QWidget *w = new QWidget( moveDialog );
+	QVBoxLayout *wVBoxLayout = new QVBoxLayout(w);
+	wVBoxLayout->setMargin(0);
+//TODO PORT QT5 	wVBoxLayout->setSpacing( QDialog::spacingHint() );
 	Kopete::UI::MetaContactSelectorWidget *selector = new Kopete::UI::MetaContactSelectorWidget(w);
 	selector->setLabelMessage(i18n( "Select the meta contact to which you want to move this contact:" ));
 	// exclude this metacontact as a target metacontact for the move
 	selector->excludeMetaContact( metaContact() );
 	QCheckBox *chkCreateNew = new QCheckBox( i18n( "Create a new metacontact for this contact" ), w );
+	wVBoxLayout->addWidget(chkCreateNew);
 	chkCreateNew ->setWhatsThis( i18n( "If you select this option, a new metacontact will be created in the top-level group "
 		"with the name of this contact and the contact will be moved to it." ) );
 	QObject::connect( chkCreateNew , SIGNAL(toggled(bool)) ,  selector , SLOT (setDisabled(bool)) ) ;
 
-	moveDialog->setMainWidget(w);
+	mainLayout->addWidget(w);
 	if( moveDialog->exec() == QDialog::Accepted )
 	{
 		Kopete::MetaContact *mc = selector->metaContact();
@@ -505,7 +522,7 @@ void Contact::slotDelete()
 	if ( KMessageBox::warningContinueCancel( Kopete::UI::Global::mainWidget(),
 		i18n( "Are you sure you want to remove the contact  '%1' from your contact list?" ,
 		 d->contactId ), i18n( "Remove Contact" ), KGuiItem(i18n("Remove"), QString::fromLatin1("list-remove-user") ), KStandardGuiItem::cancel(),
-		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify | KMessageBox::Dangerous )
+		QString::fromLatin1("askRemoveContact"), KMessageBox::Notify)
 		== KMessageBox::Continue )
 	{
 		Kopete::DeleteContactTask *deleteTask = new Kopete::DeleteContactTask(this);
@@ -558,12 +575,12 @@ void Contact::setIcon( const QString& icon )
 	return;
 }
 
-QList<KAction *> *Contact::customContextMenuActions()
+QList<QAction *> *Contact::customContextMenuActions()
 {
 	return 0L;
 }
 
-QList<KAction*> *Contact::customContextMenuActions( ChatSession * /* manager */ )
+QList<QAction *> *Contact::customContextMenuActions( ChatSession * /* manager */ )
 {
 	return customContextMenuActions();
 }
@@ -719,27 +736,32 @@ QString Contact::toolTip() const
 
 				switch(val.type())
 				{
-					case QVariant::DateTime:
-						valueText = KGlobal::locale()->formatDateTime(val.toDateTime());
+					case QMetaType::QDateTime:
+					{
+						valueText = QLocale().toString(val.toDateTime());
 						valueText = Kopete::Message::escape( valueText );
 						break;
-					case QVariant::Date:
-						valueText = KGlobal::locale()->formatDate(val.toDate());
+					}
+					case QMetaType::QDate:
+					{
+						valueText = QLocale().toString(val.toDate());
 						valueText = Kopete::Message::escape( valueText );
 						break;
-					case QVariant::Time:
-						valueText = KGlobal::locale()->formatTime(val.toTime());
+					}
+					case QMetaType::QTime:
+					{
+						valueText = QLocale().toString(val.toTime());
 						valueText = Kopete::Message::escape( valueText );
 						break;
+					}
 					default:
-						if( p.isRichText() )
-						{
+					{
+						if( p.isRichText() ) {
 							valueText = val.toString();
-						}
-						else
-						{
+						} else {
 							valueText = Kopete::Message::escape( val.toString() );
 						}
+					}
 				}
 
 				if (valueText.size() > 1000) {

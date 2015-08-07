@@ -17,11 +17,14 @@
 #include "webcamwidget.h"
 
 // QT includes
-#include <qtimer.h>
+#include <QTimer>
+#include <QWidget>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 // KDE includes
-#include <kdebug.h>
-#include <klocale.h>
+#include <KConfigGroup>
 
 // Kopete includes
 #ifndef VIDEOSUPPORT_DISABLED
@@ -55,11 +58,21 @@ public:
 };
 
 AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
- : KDialog(parent), d(new Private)
+ : QDialog(parent), d(new Private)
 {
-	showButtonSeparator(true);
-	setCaption(i18n("Take a photo"));
-	setButtons(KDialog::Ok | KDialog::Cancel);
+	setWindowTitle(i18n("Take a photo"));
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+	QWidget *mainWidget = new QWidget(this);
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+	okButton->setDefault(true);
+	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+	mainLayout->addWidget(buttonBox);
 
 #ifndef VIDEOSUPPORT_DISABLED
 	d->m_devicePool = Kopete::AV::VideoDevicePool::self();
@@ -78,7 +91,8 @@ AvatarWebcamDialog::AvatarWebcamDialog(QWidget *parent)
 	                              d->m_devicePool->height() + 5);
 #endif
 	d->m_timer->start(40);
-	setMainWidget(d->mainWidget);
+	mainLayout->addWidget(mainWidget);
+	mainLayout->addWidget(buttonBox);
 }
 
 void AvatarWebcamDialog::updateImage()
@@ -98,12 +112,15 @@ QPixmap& AvatarWebcamDialog::getLastPixmap()
 	return d->lastPixmap;
 }
 
+//Adapt code and connect okbutton or other to new slot. It doesn't exist in qdialog
 void AvatarWebcamDialog::slotButtonClicked(int button)
 {
 #ifndef VIDEOSUPPORT_DISABLED
 	d->m_devicePool->close();
 #endif
-	KDialog::slotButtonClicked(button);
+
+	/* FIXME : Adapt code and connect okbutton or other to new slot. It doesn't exist in qdialog
+	QDialog::slotButtonClicked(button); */
 }
 
 AvatarWebcamDialog::~AvatarWebcamDialog()

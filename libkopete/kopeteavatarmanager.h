@@ -19,9 +19,13 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QtGui/QImage>
+#include <QImage>
+#include <QDebug>
+
 #include <kjob.h>
+
 #include "kopete_export.h"
+#include "libkopete_debug.h"
 
 class QImage;
 

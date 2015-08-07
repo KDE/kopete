@@ -20,14 +20,15 @@
 #define ADDRESSBOOKSELECTORDIALOG_H
 
 #include <kdemacros.h>
-#include "kopete_export.h"
-#include <kdialog.h>
 #include <ktreewidgetsearchline.h>
 
+#include <QDialog>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
-namespace KABC
+#include "kopete_export.h"
+
+namespace KContacts
 {
 	class AddressBook;
 	class Addressee;
@@ -48,7 +49,7 @@ class AddressBookSelectorWidget;
  *
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  */
-class KOPETE_EXPORT AddressBookSelectorDialog : public KDialog
+class KOPETE_EXPORT AddressBookSelectorDialog : public QDialog
 {
 	Q_OBJECT
 public:
@@ -77,7 +78,7 @@ public:
 	* @returns the selected contact, or a null addressee if the user
 	* pressed the Cancel button. Optionally
 	*/
-	static KABC::Addressee getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent = 0L );
+	static KContacts::Addressee getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent = 0L );
 
 protected slots:
 	virtual void accept();

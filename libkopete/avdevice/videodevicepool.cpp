@@ -35,7 +35,8 @@
 #include <solid/device.h>
 #include <solid/devicenotifier.h>
 #include <solid/deviceinterface.h>
-#include <solid/video.h>
+//#include <solid/video.h>
+#include <KSharedConfig>
 
 
 #include "videodevice.h"
@@ -79,8 +80,8 @@ VideoDevicePool::VideoDevicePool()
 	/* NOTE: No locking needed as long as we don't connect with Qt::ConnectionType = Qt::DirectConnection
 	         while the signals are emitted by other threads
 	 */
-	foreach( Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Video, QString()) )
-		registerDevice( device );
+	/*foreach( Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::Video, QString()) )
+		registerDevice( device );*/
 }
 
 /*!
@@ -570,7 +571,7 @@ int VideoDevicePool::getSavedDevice()
 	kDebug() << "called";
 	if (m_videodevices.size())
 	{
-		KConfigGroup config(KGlobal::config(), "Video Device Settings");
+		KConfigGroup config(KSharedConfig::openConfig(), "Video Device Settings");
 		QString currentdevice = config.readEntry("Current Device", QString());
 		kDebug() << "Device name:" << config.readEntry( QString::fromLocal8Bit( "Device %1 Name" ).arg( currentdevice ), QString("NOT SAVED") );
 		if (!currentdevice.isEmpty())
@@ -605,7 +606,7 @@ void VideoDevicePool::loadDeviceConfig()
 	kDebug() << "called";
 	if ((m_current_device >= 0) && (m_current_device < m_videodevices.size()))
 	{
-		KConfigGroup config(KGlobal::config(), "Video Device Settings");
+		KConfigGroup config(KSharedConfig::openConfig(), "Video Device Settings");
 		// Load input and apply
 		const QString key_currentinput = QString::fromLocal8Bit( "Device %1 Current Input" ).arg( m_videodevices[m_current_device]->udi() );
 		const int currentinput = config.readEntry(key_currentinput, 0);
@@ -657,7 +658,7 @@ void VideoDevicePool::saveCurrentDeviceConfig()
 	kDebug() << "called";
 	if ((m_current_device >= 0) && (m_current_device < m_videodevices.size()))
 	{
-		KConfigGroup config(KGlobal::config(), "Video Device Settings");
+		KConfigGroup config(KSharedConfig::openConfig(), "Video Device Settings");
 		// Save current device:
 		kDebug() << "Current device:" << m_videodevices[m_current_device]->udi();
 		config.writeEntry( "Current Device", m_videodevices[m_current_device]->udi() );
@@ -762,13 +763,13 @@ void VideoDevicePool::deviceAdded( const QString & udi )
 {
 	kDebug() << "called with UDI" << udi;
 	Solid::Device dev( udi );
-	if ( dev.is<Solid::Video>() )
+	/*if ( dev.is<Solid::Video>() )
 	{
 		kDebug() << "Device is a video device, trying to register it.";
 		if ( registerDevice( dev ) )
 			emit deviceRegistered( udi );
 	}
-	else
+	else*/
 		kDebug() << "Device is not a video device";
 }
 
@@ -829,7 +830,7 @@ bool VideoDevicePool::registerDevice( Solid::Device & device )
 	else
 		kDebug() << "vendor:" << device.vendor() << ", product:" << device.product();
  
-	if (device.isValid())
+	/*if (device.isValid())
 	{
 		Solid::Video * solidVideoDevice = device.as<Solid::Video>();
 		if (solidVideoDevice)
@@ -868,7 +869,7 @@ bool VideoDevicePool::registerDevice( Solid::Device & device )
 		else
 			kDebug() << "Device is not a video device.";
 	}
-	else
+	else*/
 		kDebug() << "Not a valid Solid device: device is not available in the system.";
 	return false;
 }

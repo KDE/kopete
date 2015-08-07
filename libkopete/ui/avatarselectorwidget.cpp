@@ -25,13 +25,14 @@
 #include <QListWidgetItem>
 #include <QIcon>
 #include <QPainter>
+#include <QLocale>
+#include <QUrl>
+#include <QDebug>
 
 // KDE includes
-#include <kdebug.h>
-#include <klocale.h>
-#include <kurl.h>
 #include <kfiledialog.h>
 #include <kpixmapregionselectordialog.h>
+#include <KConfigGroup>
 
 #include "ui_avatarselectorwidget.h"
 #ifndef VIDEOSUPPORT_DISABLED
@@ -112,9 +113,9 @@ AvatarSelectorWidget::AvatarSelectorWidget(QWidget *parent)
 	d->mainWidget.setupUi(this);
 
 	// use icons on buttons
-	d->mainWidget.buttonAddAvatar->setIcon( KIcon("list-add") );
-	d->mainWidget.buttonRemoveAvatar->setIcon( KIcon("edit-delete") );
-	d->mainWidget.buttonFromWebcam->setIcon( KIcon("camera-web") );
+	d->mainWidget.buttonAddAvatar->setIcon( QIcon::fromTheme("list-add") );
+	d->mainWidget.buttonRemoveAvatar->setIcon( QIcon::fromTheme("edit-delete") );
+	d->mainWidget.buttonFromWebcam->setIcon( QIcon::fromTheme("camera-web") );
 
 #ifndef VIDEOSUPPORT_DISABLED
 	VideoDevicePool* devicePool = VideoDevicePool::self();
@@ -193,7 +194,7 @@ void AvatarSelectorWidget::setCurrentAvatar(const QString &path)
 
 void AvatarSelectorWidget::buttonAddAvatarClicked()
 {
-	KUrl imageUrl = KFileDialog::getImageOpenUrl( KUrl(), this );
+	QUrl imageUrl = KFileDialog::getImageOpenUrl( QUrl(), this );
 	if( !imageUrl.isEmpty() )
 	{
 		// TODO: Download image
@@ -221,7 +222,7 @@ void AvatarSelectorWidget::buttonRemoveAvatarClicked()
 		{
 			if( !Kopete::AvatarManager::self()->remove( selectedItem->avatarEntry() ) )
 			{
-				kDebug(14010) << "Removing of avatar failed for unknown reason.";
+				qCDebug(LIBKOPETE_LOG) << "Removing of avatar failed for unknown reason.";
 			}
 		}
 	}
@@ -261,14 +262,14 @@ void AvatarSelectorWidget::buttonFromWebcamClicked()
 {
 	Kopete::UI::AvatarWebcamDialog *dialog = new Kopete::UI::AvatarWebcamDialog();
 	int result = dialog->exec();
-	if(result == KDialog::Accepted){
+	if(result == QDialog::Accepted){
 		QString avatarName("Webcam");
 		int increment = 1;
-		kDebug(14010) << "Trying with: " << avatarName;
+		qCDebug(LIBKOPETE_LOG) << "Trying with: " << avatarName;
 		while((Kopete::AvatarManager::self()->exists(avatarName))) {
 			avatarName = "Webcam_"+QString::number(increment);
 			++increment;
-			kDebug(14010) << "Trying with: " << avatarName;
+			qCDebug(LIBKOPETE_LOG) << "Trying with: " << avatarName;
 		}
 		cropAndSaveAvatar(dialog->getLastPixmap(),avatarName);
 	}
@@ -310,7 +311,7 @@ void AvatarSelectorWidget::avatarRemoved(Kopete::AvatarManager::AvatarEntry entr
 		if (!avatar || avatar->avatarEntry().name != entryRemoved.name)
 		    continue;
 
-		kDebug(14010) << "Removing " << entryRemoved.name << " from list.";
+		qCDebug(LIBKOPETE_LOG) << "Removing " << entryRemoved.name << " from list.";
 
 		int deletedRow = d->mainWidget.listUserAvatar->row( item );
 		QListWidgetItem *removedItem = d->mainWidget.listUserAvatar->takeItem( deletedRow );
@@ -336,7 +337,7 @@ void AvatarSelectorWidget::listSelectionChanged(QListWidgetItem *item)
 
 AvatarSelectorWidgetItem * AvatarSelectorWidget::Private::addItem(Kopete::AvatarManager::AvatarEntry entry)
 {
-	kDebug(14010) << "Entry(" << entry.name << "): " << entry.category;
+	qCDebug(LIBKOPETE_LOG) << "Entry(" << entry.name << "): " << entry.category;
 
 	// only use User avatars
 	if( !(entry.category & Kopete::AvatarManager::User) )

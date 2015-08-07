@@ -24,7 +24,7 @@
 #ifndef ADDRESSBOOKLINKWIDGET_H
 #define ADDRESSBOOKLINKWIDGET_H
 
-#include <kabc/addressee.h>
+#include <kcontacts/addressee.h>
 #include <kopete_export.h>
 
 #include "ui_addressbooklinkwidget_base.h"
@@ -50,7 +50,7 @@ public:
 	/**
 	 * Set the currently selected addressee
 	 */
-	void setAddressee( const KABC::Addressee& addr );
+	void setAddressee( const KContacts::Addressee& addr );
 	/**
 	 * Set the current metacontact so that the selector dialog may be preselected
 	 */
@@ -61,9 +61,9 @@ public:
 	QString uid() const;
 signals:
 	/**
-	 * Emitted when the selected addressee changed.  addr is the KABC::Addressee that was selected. If addr.isEmpty() is empty, the clear button was clicked.
+	 * Emitted when the selected addressee changed.  addr is the KContacts::Addressee that was selected. If addr.isEmpty() is empty, the clear button was clicked.
 	 */
-	void addresseeChanged( const KABC::Addressee& addr );
+	void addresseeChanged( const KContacts::Addressee& addr );
 	
 	/**
 	 * Provided so you can perform your own actions instead of opening the AddressBookSelectorWidget.

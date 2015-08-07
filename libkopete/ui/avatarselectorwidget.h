@@ -18,7 +18,7 @@
 #ifndef KOPETE_AVATARSELECTORWIDGET_H
 #define KOPETE_AVATARSELECTORWIDGET_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 // Kopete includes
 #include <kopete_export.h>

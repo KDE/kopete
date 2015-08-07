@@ -80,7 +80,7 @@ void PropertyContainer::deserializeProperties( const QMap<QString, QString> &ser
 		QVariant variant( it.value() );
 		if( !variant.convert(QVariant::nameToType(type.toLatin1())) )
 		{
-			kDebug(14010) <<
+			qCDebug(LIBKOPETE_LOG) <<
 				"Casting QVariant to needed type FAILED" <<
 				"key=" << key << ", type=" << type << endl;
 			continue;
@@ -89,7 +89,7 @@ void PropertyContainer::deserializeProperties( const QMap<QString, QString> &ser
 		Kopete::PropertyTmpl tmpl = Kopete::Global::Properties::self()->tmpl(key);
 		if( tmpl.isNull() )
 		{
-			kDebug( 14010 ) << "no PropertyTmpl defined for" \
+			qCDebug(LIBKOPETE_LOG) << "no PropertyTmpl defined for" \
 				" key " << key << ", cannot restore persistent property" << endl;
 			continue;
 		}

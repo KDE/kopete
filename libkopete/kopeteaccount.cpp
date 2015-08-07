@@ -20,25 +20,31 @@
 
 #include "kopeteaccount.h"
 
-#include <qapplication.h>
+#include <QApplication>
+#include <QWidget>
 #include <QTimer>
 #include <QPixmap>
 #include <QIcon>
 #include <QPointer>
+#include <QDialog>
+#include <QLocale>
+#include <QIcon>
+#include <QAction>
+#include <QMenu>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 #include <kconfig.h>
-#include <kdebug.h>
-#include <kdialog.h>
 #include <kdeversion.h>
-#include <klocale.h>
 #include <kiconeffect.h>
-#include <kicon.h>
-#include <kaction.h>
-#include <kmenu.h>
 #include <kmessagebox.h>
-#include <kcomponentdata.h>
+#include <kmessagebox_queued.h>
+#include <KSharedConfig>
+#include <KAboutData>
 #include <kactionmenu.h>
 #include <kconfiggroup.h>
+#include <KConfigGroup>
 
 #include "kopeteidentity.h"
 #include "kopeteidentitymanager.h"
@@ -102,7 +108,7 @@ public:
 Account::Account( Protocol *parent, const QString &accountId )
  : QObject( parent ), d( new Private( parent, accountId ) )
 {
-	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
+	d->configGroup=new KConfigGroup(KSharedConfig::openConfig(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 
 	d->excludeconnect = d->configGroup->readEntry( "ExcludeConnect", false );
 	d->color = d->configGroup->readEntry( "Color" , QColor() );
@@ -133,7 +139,7 @@ Account::~Account()
 	qDeleteAll(d->contacts);
 	d->contacts.clear();
 
-	kDebug( 14010 ) << " account '" << d->id << "' about to emit accountDestroyed ";
+	qCDebug(LIBKOPETE_LOG) << " account '" << d->id << "' about to emit accountDestroyed ";
 	emit accountDestroyed(this);
 
 	delete d->myself;
@@ -146,7 +152,7 @@ void Account::reconnect()
 	if ( isConnected() )
 		return; // Already connected
 
-	kDebug( 14010 ) << "account " << d->id << " restoreStatus " << d->restoreStatus.status()
+	qCDebug(LIBKOPETE_LOG) << "account " << d->id << " restoreStatus " << d->restoreStatus.status()
 	                << " restoreTitle " << d->restoreMessage.title()
 	                << " restoreMessage " << d->restoreMessage.message();
 	setOnlineStatus( d->restoreStatus, d->restoreMessage );
@@ -177,7 +183,7 @@ void Account::networkingStatusChanged( const Solid::Networking::Status status )
 
 void Account::disconnected( DisconnectReason reason )
 {
-	kDebug( 14010 ) << reason;
+	qCDebug(LIBKOPETE_LOG) << reason;
 	//reconnect if needed
 	if ( reason == BadPassword )
 	{
@@ -313,7 +319,7 @@ bool Account::registerContact( Contact *c )
 
 	if ( d->contacts.value( c->contactId() ) )
 	{
-		kWarning(14010) << "Contact already exists!!! accountId: " << c->account() << " contactId: " << c->contactId();
+		qCWarning(LIBKOPETE_LOG) << "Contact already exists!!! accountId: " << c->account() << " contactId: " << c->contactId();
 		return false;
 	}
 
@@ -349,7 +355,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 		}
 		else
 		{
-			kWarning(14010) << "You are not allowed to add yourself to the contact list. The addition of" << contactId
+			qCWarning(LIBKOPETE_LOG) << "You are not allowed to add yourself to the contact list. The addition of" << contactId
 			                << "to account" << accountId() << "will not take place.";
 		}
 		return 0;
@@ -366,7 +372,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
-			kDebug( 14010 ) <<  " You are trying to add an existing temporary contact. Just add it on the list";
+			qCDebug(LIBKOPETE_LOG) <<  " You are trying to add an existing temporary contact. Just add it on the list";
 
 			c->metaContact()->setTemporary(false, group );
 			ContactList::self()->addMetaContact(c->metaContact());
@@ -374,7 +380,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 		else
 		{
 			// should we here add the contact to the parentContact if any?
-			kDebug( 14010 ) << "Contact already exists";
+			qCDebug(LIBKOPETE_LOG) << "Contact already exists";
 		}
 		return c->metaContact();
 	}
@@ -394,7 +400,7 @@ Kopete::MetaContact* Account::addContact( const QString &contactId, const QStrin
 		c->setMetaContact( parentContact );
 		if ( mode == ChangeKABC )
 		{
-			kDebug( 14010 ) << " changing KABC";
+			qCDebug(LIBKOPETE_LOG) << " changing KABC";
 			KABCPersistence::self()->write( parentContact );
 		}
 	}
@@ -423,7 +429,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		}
 		else
 		{
-			kWarning(14010) << "You are not allowed to add yourself to the contact list. The addition of" << contactId
+			qCWarning(LIBKOPETE_LOG) << "You are not allowed to add yourself to the contact list. The addition of" << contactId
 			                << "to account" << accountId() << "will not take place.";
 		}
 		
@@ -436,7 +442,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 	{
 		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
-			kDebug( 14010 ) <<
+			qCDebug(LIBKOPETE_LOG) <<
 				"Account::addContact: You are trying to add an existing temporary contact. Just add it on the list" << endl;
 
 				//setMetaContact ill take care about the deletion of the old contact
@@ -446,7 +452,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		else
 		{
 			// should we here add the contact to the parentContact if any?
-			kDebug( 14010 ) << "Account::addContact: Contact already exists";
+			qCDebug(LIBKOPETE_LOG) << "Account::addContact: Contact already exists";
 		}
 		return false; //(the contact is not in the correct metacontact, so false)
 	}
@@ -455,7 +461,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 
 	if ( success && mode == ChangeKABC )
 	{
-		kDebug( 14010 ) << " changing KABC";
+		qCDebug(LIBKOPETE_LOG) << " changing KABC";
 		KABCPersistence::self()->write( parent );
 	}
 
@@ -477,14 +483,12 @@ void Account::fillActionMenu( KActionMenu *actionMenu )
 
 	// Always add title at the beginning of actionMenu
 	QAction *before = actionMenu->menu()->actions().value( 0, 0 );
-	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
-		nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick ),
-		before
-	);
-
+	actionMenu->menu()->setTitle(nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick));
+	actionMenu->menu()->setIcon( myself()->onlineStatus().iconFor( myself() ));
+	actionMenu->menu()->setDefaultAction(before);
 	actionMenu->menu()->addSeparator();
 
-	KAction *propertiesAction = new KAction( i18n("Properties"), actionMenu );
+	QAction *propertiesAction = new QAction( i18n("Properties"), actionMenu );
 	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
 	actionMenu->addAction( propertiesAction );
 }
@@ -591,7 +595,7 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		d->restoreMessage.setMessage( myself()->property( Kopete::Global::Properties::self()->statusMessage() ).value().toString() );
 	}
 
-/*	kDebug(14010) << "account " << d->id << " changed status. was "
+/*	qCDebug(LIBKOPETE_LOG) << "account " << d->id << " changed status. was "
 	               << Kopete::OnlineStatus::statusTypeToString(oldStatus.status()) << ", is "
 	               << Kopete::OnlineStatus::statusTypeToString(newStatus.status()) << endl;*/
 	if ( wasOffline != isOffline )
@@ -688,9 +692,20 @@ bool Account::isBlocked( const QString &contactId )
 
 void Account::editAccount(QWidget *parent)
 {
-	QPointer <KDialog> editDialog = new KDialog( parent );
-	editDialog->setCaption( i18n( "Edit Account" ) );
-	editDialog->setButtons( KDialog::Ok | KDialog::Apply | KDialog::Cancel );
+	QPointer<QDialog> editDialog = new QDialog( parent );
+	editDialog->setWindowTitle( i18n( "Edit Account" ) );
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel|QDialogButtonBox::Apply);
+	QWidget *mainWidget = new QWidget(parent);
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	editDialog->setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+	okButton->setDefault(true);
+	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+	editDialog->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	editDialog->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+	mainLayout->addWidget(buttonBox);
 
 	KopeteEditAccountWidget *m_accountWidget = protocol()->createEditAccountWidget( this, editDialog );
 	if ( !m_accountWidget )
@@ -710,7 +725,8 @@ void Account::editAccount(QWidget *parent)
 		delete editDialog;
 		return;
 	}
-	editDialog->setMainWidget( w );
+//PORTING: Verify that widget was added to mainLayout: 	editDialog->setMainWidget( w );
+// Add mainLayout->addWidget(w); if necessary
 	if ( editDialog->exec() == QDialog::Accepted )
 	{
 		if( editDialog && m_accountWidget->validateData() )

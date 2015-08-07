@@ -21,9 +21,9 @@
 #include <ksharedptr.h>
 #include "kopete_export.h"
 
-#include <QtGui/QImage>
+#include <QImage>
 
-namespace KABC
+namespace KContacts
 {
 	class Picture;
 }
@@ -74,9 +74,9 @@ public:
 	 */
 	explicit Picture(const QImage &image);
 	/**
-	 * Create a picture from a KABC::Picture.
+	 * Create a picture from a KContacts::Picture.
 	 */
-	explicit Picture(const KABC::Picture &picture);
+	explicit Picture(const KContacts::Picture &picture);
 	/**
 	 * Copy a picture. It doesn't create a full copy, it just make a reference.
 	 */
@@ -131,7 +131,7 @@ public:
 	 * Set the picture content.
 	 * @param picture a KABC Picture.
 	 */
-	void setPicture(const KABC::Picture &picture);
+	void setPicture(const KContacts::Picture &picture);
 	
 private:
 	/**

@@ -29,7 +29,7 @@ namespace Properties {
 // FIXME: shouldn't be inline
 void customPropertyDataIncorrectType( const char *name, const std::type_info &found, const std::type_info &expected )
 {
-	kWarning(14010) << "data time mismatch for property data name " << name
+	qCWarning(LIBKOPETE_LOG) << "data time mismatch for property data name " << name
 		<< ". found: " << found.name() << ", expected: " << expected.name() << endl;
 }
 

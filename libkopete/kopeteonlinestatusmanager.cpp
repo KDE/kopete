@@ -17,15 +17,15 @@
 */
 
 #include "kopeteonlinestatusmanager.h"
-
 #include "kopeteprotocol.h"
 #include "kopetebehaviorsettings.h"
+
+#include <QDebug>
+#include <QIcon>
 
 #include <kiconloader.h>
 #include <kiconeffect.h>
 #include <kglobalsettings.h>
-#include <kdebug.h>
-#include <kicon.h>
 
 #include <algorithm> // for min
 
@@ -123,7 +123,7 @@ OnlineStatus OnlineStatusManager::onlineStatus(Protocol * protocol, Categories c
 		categ_nb=(int)(categ_nb/2);
 	} while (categ_nb > 0);
 
-	kWarning() << "No status in the category " << category << " for the protocol " << protocol->displayName();
+	qWarning() << "No status in the category " << category << " for the protocol " << protocol->displayName();
 	return OnlineStatus();
 }
 
@@ -169,13 +169,13 @@ QPixmap OnlineStatusManager::cacheLookupByObject( const OnlineStatus &statusFor,
 {
 	QString fp = fingerprint( statusFor, icon, size, color, idle );
 
-	//kDebug(14010) << "finger print:" << fp << ", icon: " << icon;
+	//qCDebug(LIBKOPETE_LOG) << "finger print:" << fp << ", icon: " << icon;
 	// look it up in the cache
 	QPixmap *theIcon = d->iconCache.value(fp);
 	if ( !theIcon )
 	{
 		// cache miss
-		kDebug(14010) << "Missed " << fp << " in icon cache!";
+		qCDebug(LIBKOPETE_LOG) << "Missed " << fp << " in icon cache!";
 		theIcon = renderIcon( statusFor, icon, size, color, idle);
 		d->iconCache[fp] = theIcon;
 	}
@@ -331,15 +331,15 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
 
-	//kDebug( 14010) << "overlayIcons size: " << statusFor.overlayIcons().count();
+	//qCDebug(LIBKOPETE_LOG) << "overlayIcons size: " << statusFor.overlayIcons().count();
 
 	// NOTE: overlayIcons car be empty
 	if ( !statusFor.overlayIcons().empty() && baseIcon == statusFor.overlayIcons().first() )
 	{
-		kWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible.";
+		qCWarning(LIBKOPETE_LOG) << "Base and overlay icons are the same - icon effects will not be visible.";
 	}
 
-	QPixmap* basis = new QPixmap( KIcon(baseIcon).pixmap(size) );
+	QPixmap* basis = new QPixmap( QIcon::fromTheme(baseIcon).pixmap(size) );
 
 	// Colorize
 	if ( color.isValid() )
@@ -405,28 +405,28 @@ QList<OnlineStatus> OnlineStatusManager::registeredStatusList( Protocol *protoco
 	return d->registeredStatus.value( protocol ).keys();
 }
 
-KIcon OnlineStatusManager::pixmapForCategory( Categories category )
+QIcon OnlineStatusManager::pixmapForCategory( Categories category )
 {
 	switch ( category )
 	{
 	case Kopete::OnlineStatusManager::Online:
-		return KIcon("user-online");
+		return QIcon::fromTheme("user-online");
 	case Kopete::OnlineStatusManager::FreeForChat:
-		return KIcon("user-online");
+		return QIcon::fromTheme("user-online");
 	case Kopete::OnlineStatusManager::Away:
-		return KIcon("user-away");
+		return QIcon::fromTheme("user-away");
 	case Kopete::OnlineStatusManager::Idle:
-		return KIcon("user-away");
+		return QIcon::fromTheme("user-away");
 	case Kopete::OnlineStatusManager::ExtendedAway:
-		return KIcon("user-away-extended");
+		return QIcon::fromTheme("user-away-extended");
 	case Kopete::OnlineStatusManager::Busy:
-		return KIcon("user-busy");
+		return QIcon::fromTheme("user-busy");
 	case Kopete::OnlineStatusManager::Invisible:
-		return KIcon("user-invisible");
+		return QIcon::fromTheme("user-invisible");
 	case Kopete::OnlineStatusManager::Offline:
-		return KIcon("user-offline");
+		return QIcon::fromTheme("user-offline");
 	default:
-		return KIcon("user-identity");
+		return QIcon::fromTheme("user-identity");
 	}
 }
 

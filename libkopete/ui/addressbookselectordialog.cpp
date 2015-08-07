@@ -23,10 +23,13 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
-#include <kvbox.h>
+#include <QVBoxLayout>
 #include <klocale.h>
-#include <kdialog.h>
+#include <QDialog>
 #include <ktreewidgetsearchline.h>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
 
 namespace Kopete
 {
@@ -34,20 +37,34 @@ namespace UI
 {
 
 AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent )
- : KDialog( parent )
+ : QDialog( parent )
 {
-	setCaption( title );
-	setButtons( Help | Ok | Cancel );
-	setEscapeButton( KDialog::Cancel );
-	setDefaultButton( KDialog::Ok );
-	KVBox *vbox=new KVBox(this);
+	setWindowTitle( title );
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel|QDialogButtonBox::Help);
+	QWidget *mainWidget = new QWidget(this);
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+	okButton->setDefault(true);
+	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+	mainLayout->addWidget(buttonBox);
+	buttonBox->button(QDialogButtonBox::Cancel)->setShortcut(Qt::Key_Escape);
+	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+	QWidget *vbox=new QWidget(this);
+	QVBoxLayout *vboxVBoxLayout = new QVBoxLayout(vbox);
+	vboxVBoxLayout->setMargin(0);
 	m_addressBookSelectorWidget= new AddressBookSelectorWidget(vbox);
+	vboxVBoxLayout->addWidget(m_addressBookSelectorWidget);
 	m_addressBookSelectorWidget->setLabelMessage(message);
 
-	vbox->setSpacing( KDialog::spacingHint() );
+//TODO PORT QT5 	vboxVBoxLayout->setSpacing( QDialog::spacingHint() );
 
-	setMainWidget(vbox);
-	enableButtonOk(false);
+	mainLayout->addWidget(vbox);
+	okButton->setEnabled(false);
 	//setHelp("linkaddressbook");
 	setHelp(QString(), "kopete");
 	connect(m_addressBookSelectorWidget, SIGNAL(addresseeListClicked(QTreeWidgetItem*)), SLOT(slotWidgetAddresseeListClicked(QTreeWidgetItem*)));
@@ -60,12 +77,12 @@ AddressBookSelectorDialog::~AddressBookSelectorDialog()
 {
 }
 
-KABC::Addressee AddressBookSelectorDialog::getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent)
+KContacts::Addressee AddressBookSelectorDialog::getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent)
 {
 	QPointer <AddressBookSelectorDialog> dialog = new AddressBookSelectorDialog(title, message, preSelectUid, parent);
 	int result = dialog->exec();
 
-	KABC::Addressee adr;
+	KContacts::Addressee adr;
 	if ( result == QDialog::Accepted && dialog )
 		adr = dialog->addressBookSelectorWidget()->addressee();
 
@@ -77,7 +94,7 @@ KABC::Addressee AddressBookSelectorDialog::getAddressee( const QString &title, c
 void AddressBookSelectorDialog::slotWidgetAddresseeListClicked( QTreeWidgetItem *addressee )
 {
 	// enable ok if a valid addressee is selected
-	enableButtonOk( addressee ? addressee->isSelected() : false);
+	okButton->setEnabled( addressee ? addressee->isSelected() : false);
 }
 
 void AddressBookSelectorDialog::accept()

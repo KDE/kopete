@@ -17,6 +17,8 @@
 #ifndef KOPETEVIEWPLUGIN_H
 #define KOPETEVIEWPLUGIN_H
 
+#include <KAboutData>
+
 #include "kopeteplugin.h"
 
 class KopeteView;
@@ -41,7 +43,7 @@ class KOPETE_EXPORT ViewPlugin : public Plugin
 		/**
 		 * @brief Create and initialize the plugin
 		 */
-		explicit ViewPlugin( const KComponentData &instance, QObject *parent = 0L );
+		explicit ViewPlugin( const KAboutData &instance, QObject *parent = 0L );
 
 		/**
 		 * @brief Creates a view to be associated with the passed in session

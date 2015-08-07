@@ -18,10 +18,10 @@
 #ifndef KOPETE_UTILS_PRIVATE_H
 #define KOPETE_UTILS_PRIVATE_H
 
-#include <qmap.h>
-#include "qobject.h"
-#include "qstring.h"
-#include "qpixmap.h"
+#include <QMap>
+#include <QObject>
+#include <QString>
+#include <QPixmap>
 
 class KNotification;
 

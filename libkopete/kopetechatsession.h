@@ -25,11 +25,11 @@
 #define KOPETECHATSESSION_H
 
 #include <QtCore/QObject>
-
+#include <QDebug>
 #include <kxmlguiclient.h>
 
 #include "kopete_export.h"
-
+#include "libkopete_debug.h"
 // FIXME: get rid of these includes
 #include "kopetemessage.h"
 #include "kopetemessagehandlerchain.h"

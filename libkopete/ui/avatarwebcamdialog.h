@@ -19,7 +19,7 @@
 #define KOPETE_AVATARFROMWEBCAMDIALOG_H
 
 // KDE includes
-#include <kdialog.h>
+#include <QDialog>
 
 // Kopete includes
 #include <kopete_export.h>
@@ -38,14 +38,14 @@ namespace UI
  * @code
 Kopete::UI::AvatarFromWebcamDialog *dialog = new Kopete::UI::AvatarFromWebcamDialog();
 int result = dialog->exec();
-if( result == KDialog::Ok ) {
+if( result == QDialog::Ok ) {
    QPixmap pixmap = dialog->getLastPixmap();
 }
  * @endcode
  *
  * @author Alex Fiestas <alex@eyeos.org>
  */
-class KOPETE_EXPORT AvatarWebcamDialog : public KDialog
+class KOPETE_EXPORT AvatarWebcamDialog : public QDialog
 {
 	Q_OBJECT
 public:
@@ -73,7 +73,7 @@ protected Q_SLOTS:
 
 	/**
 	 * @internal
-	 * A button has been clicked. Reimplemented from @ref KDialog::slotButtonClicked()
+	 * A button has been clicked. Reimplemented from @ref QDialog::slotButtonClicked()
 	 */
 	virtual void slotButtonClicked(int button);
 

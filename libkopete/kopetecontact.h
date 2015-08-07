@@ -23,15 +23,16 @@
 #include "kopetecontactlistelement.h"
 #include "kopetepropertycontainer.h"
 
-#include <kurl.h>
+#include <QUrl>
+
 #include <kdemacros.h>
 #include <ktoggleaction.h>
 #include "kopeteglobal.h"
 
 #include "kopete_export.h"
 
-class KMenu;
-class KAction;
+class QMenu;
+class QAction;
 
 namespace Kopete
 {
@@ -243,12 +244,12 @@ public:
 	 * @return Collection of menu items to be show on the context menu
 	 * @todo if possible, try to use KXMLGUI
 	 */
-	virtual QList<KAction *> *customContextMenuActions();
+	virtual QList<QAction *> *customContextMenuActions();
 
 	/**
 	 * @deprecated
 	 */
-	virtual KDE_DEPRECATED QList<KAction *> *customContextMenuActions( ChatSession *manager );
+	virtual KDE_DEPRECATED QList<QAction *> *customContextMenuActions( ChatSession *manager );
 
 	/**
 	 * @brief Get the Context Menu for this contact
@@ -256,12 +257,12 @@ public:
 	 * This menu includes generic actions common to each protocol, and action defined in
 	 * @ref customContextMenuActions()
 	 */
-	KMenu *popupMenu();
+	QMenu *popupMenu();
 
 	/**
 	 * @deprecated
 	 */
-	KDE_DEPRECATED KMenu *popupMenu( ChatSession *manager );
+	KDE_DEPRECATED QMenu *popupMenu( ChatSession *manager );
 
 	/**
 	 * \brief Get whether or not this contact is capable of file transfers
@@ -433,14 +434,14 @@ public slots:
 
 	/**
 	 * Toggle the visibility of this contact even if offline.  This function
-	 * is called by the KAction toggleAlwaysVisible that is part of the context
+	 * is called by the QAction toggleAlwaysVisible that is part of the context
 	 * menu.
 	 */
 	void toggleAlwaysVisible();
 
 	/**
 	 * Changes the MetaContact that this contact is a part of.  This function
-	 * is called by the KAction changeMetaContact that is part of the context
+	 * is called by the QAction changeMetaContact that is part of the context
 	 * menu.
 	 */
 	void changeMetaContact();
@@ -482,14 +483,14 @@ public slots:
 	 * true. If the function is called through the GUI, no parameters are sent
 	 * and they take on default values (the file is chosen with a file open dialog)
 	 *
-	 * @param sourceURL The actual KUrl of the file you are sending
+	 * @param sourceURL The actual QUrl of the file you are sending
 	 * @param fileName (Optional) An alternate name for the file - what the
 	 * receiver will see
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending
 	 * a nondeterminate
 	 *                file size (such as over  asocket
 	 */
-	virtual void sendFile( const KUrl &sourceURL = KUrl(),
+	virtual void sendFile( const QUrl &sourceURL = QUrl(),
 			       const QString &fileName = QString(), uint fileSize = 0L );
 private slots:
 	/**

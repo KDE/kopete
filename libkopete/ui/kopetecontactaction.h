@@ -1,5 +1,5 @@
 /*
-    kopetecontactaction.cpp - KAction for selecting a Kopete::Contact
+    kopetecontactaction.cpp - QAction for selecting a Kopete::Contact
 
     Copyright (c) 2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2006 by Matt Rogers            <mattr@kde.org>
@@ -18,7 +18,7 @@
 #ifndef __kopetecontactaction_h__
 #define __kopetecontactaction_h__
 
-#include <kaction.h>
+#include <QAction>
 #include "kopete_export.h"
 
 class KActionCollection;
@@ -33,14 +33,14 @@ namespace UI
  * @author Martijn Klingens <klingens@kde.org>
  * @author Matt Rogers <mattr@kde.org>
  */
-class KOPETE_EXPORT ContactAction : public KAction
+class KOPETE_EXPORT ContactAction : public QAction
 {
 	Q_OBJECT
 public:
 	/**
 	 * Create a new KopeteContactAction
 	 *
-	 * The icon, text, and internal KAction name are taken from the
+	 * The icon, text, and internal QAction name are taken from the
 	 * Kopete::Contact object given to this constructor
 	 *
 	 * @param contact the contact this action is for

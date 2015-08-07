@@ -30,7 +30,7 @@
 // *) KABC Export Wizard - TODO - think about sequence of events when adding addressees AND writing their IM data. - Extra save should be unnecessary because we are sharing a kabc instance
 // *) Select addressbook entry
 
-namespace KABC
+namespace KContacts
 {
 	class AddressBook;
 	class Resource;
@@ -61,7 +61,7 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 		/**
 		 * @brief Access Kopete's KDE address book instance
 		 */
-		static KABC::AddressBook* addressBook();
+		static KContacts::AddressBook* addressBook();
 		/**
 		 * @brief Change the KABC data associated with this metacontact
 		 *
@@ -85,7 +85,7 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 		/**
 		 * Request an address book write, will be delayed to bundle any others happening around the same time
 		 */
-		void writeAddressBook( KABC::Resource * res );
+		void writeAddressBook( KContacts::Resource * res );
 	protected:
 
 		static void splitField( const QString &str, QString &app, QString &name, QString &value );

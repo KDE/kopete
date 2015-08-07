@@ -19,10 +19,12 @@
 #ifndef KOPETECOMMAND_H
 #define KOPETECOMMAND_H
 
+#include <QDebug>
 #include <QtCore/QObject>
 
-#include <kaction.h>
+#include <QAction>
 #include "kopetecommandhandler.h"
+#include "libkopete_debug.h"
 
 namespace Kopete
 {
@@ -30,7 +32,7 @@ namespace Kopete
 class ChatSession;
 
 class Command
-	: public KAction
+	: public QAction
 {
 	Q_OBJECT
 
@@ -66,7 +68,7 @@ public:
 	 */
 	 Command( QObject *parent, const QString &command, const char* handlerSlot,
 	 	const QString &help = QString(), CommandHandler::CommandType type = CommandHandler::Normal, const QString &formatString = QString(),
-		uint minArgs = 0, int maxArgs = -1, const KShortcut &cut = KShortcut(),
+		uint minArgs = 0, int maxArgs = -1, const QKeySequence &cut = QKeySequence(),
 		const QString &pix = QString() );
 	~Command();
 

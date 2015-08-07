@@ -1,5 +1,5 @@
 /*
-    kopetecontactaction.cpp - KAction for selecting a Kopete::Contact
+    kopetecontactaction.cpp - QAction for selecting a Kopete::Contact
 
     Copyright (c) 2003 by Martijn Klingens       <klingens@kde.org>
 
@@ -16,10 +16,12 @@
 */
 
 #include "kopetecontactaction.h"
-#include "kicon.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopeteonlinestatus.h"
+
+#include <QIcon>
+
 #include <kactioncollection.h>
 
 Q_DECLARE_METATYPE(Kopete::Contact*)
@@ -30,7 +32,7 @@ namespace UI
 {
 
 ContactAction::ContactAction( Kopete::Contact *contact, KActionCollection* parent )
-: KAction( KIcon( contact->onlineStatus().iconFor( contact ) ),
+: QAction( contact->onlineStatus().iconFor( contact ),
            contact->metaContact()->displayName(), parent )
 {
 	setData( QVariant::fromValue( contact ) );

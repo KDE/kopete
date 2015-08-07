@@ -21,7 +21,7 @@
 
 #include <QtCore/QTimer>
 #include <QtCore/QDateTime>
-#include <QtGui/QCursor>
+#include <QCursor>
 
 #include <kdebug.h>
 

@@ -561,7 +561,7 @@ bool ListView::eventFilter( QObject *o, QEvent *e )
 				return false; // pass the event to the scroll bar so the button gets "clicked"
 			break;
 			default:
-				kDebug( 14010 ) << "Unhandled sub control";
+				qCDebug(LIBKOPETE_LOG) << "Unhandled sub control";
 			}
 			return true; // Now, ignore the event.
 		}

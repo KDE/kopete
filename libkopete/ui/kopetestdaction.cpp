@@ -18,18 +18,18 @@
 
 #include "kopetestdaction.h"
 
-#include <qapplication.h>
+#include <QIcon>
+#include <QApplication>
 
-#include <kdebug.h>
+
+#include <KLocalizedString>
 #include <kdeversion.h>
 #include <kguiitem.h>
-#include <klocale.h>
 #include <ksettings/dialog.h>
 #include <kstandardaction.h>
 #include <KStandardGuiItem>
 #include <kwindowsystem.h>
 #include <kcmultidialog.h>
-#include <kicon.h>
 
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
@@ -39,7 +39,7 @@
 KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
 
 KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
-: KAction( KIcon(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent )
+: QAction( QIcon::fromTheme(KStandardGuiItem::configure().iconName()), KStandardGuiItem::configure().text(), parent )
 {
 	connect( this, SIGNAL(triggered(bool)), this, SLOT(slotShowPreferences()) );
         parent->addAction( name, this );
@@ -63,14 +63,14 @@ void KopetePreferencesAction::slotShowPreferences()
 	KWindowSystem::activateWindow( s_settingsDialog->winId() );
 }
 
-KAction * KopeteStdAction::preferences( KActionCollection *parent, const char *name )
+QAction * KopeteStdAction::preferences( KActionCollection *parent, const char *name )
 {
 	return new KopetePreferencesAction( parent, name );
 }
 
-KAction * KopeteStdAction::createAction(const QString &text, const KIcon &icon, const QObject *receiver, const char *slot, QObject* parent)
+QAction * KopeteStdAction::createAction(const QString &text, const QIcon &icon, const QObject *receiver, const char *slot, QObject* parent)
 {
-	KAction *newAction = new KAction(icon, text, parent);
+	QAction *newAction = new QAction(icon, text, parent);
 	if(receiver && slot)
 	{
 		QObject::connect(newAction, SIGNAL(triggered(bool)), receiver, slot);
@@ -78,67 +78,67 @@ KAction * KopeteStdAction::createAction(const QString &text, const KIcon &icon, 
 	return newAction;
 }
 
-KAction * KopeteStdAction::chat( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::chat( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "Start &Chat..." ), KIcon("mail-message-new"), recvr, slot, parent );
+	return createAction( i18n( "Start &Chat..." ), QIcon::fromTheme("mail-message-new"), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::sendMessage( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::sendMessage( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "&Send Single Message..." ), KIcon( "mail-message-new" ), recvr, slot, parent );
+	return createAction( i18n( "&Send Single Message..." ), QIcon::fromTheme( "mail-message-new" ), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::contactInfo( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::contactInfo( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "User &Info" ), KIcon( "dialog-information" ), recvr, slot, parent );
+	return createAction( i18n( "User &Info" ), QIcon::fromTheme( "dialog-information" ), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::sendFile( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::sendFile( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "Send &File..." ), KIcon( "mail-attachment" ), recvr, slot, parent );
+	return createAction( i18n( "Send &File..." ), QIcon::fromTheme( "mail-attachment" ), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::viewHistory( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::viewHistory( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "View &History..." ), KIcon( "view-history" ), recvr, slot, parent );
+	return createAction( i18n( "View &History..." ), QIcon::fromTheme( "view-history" ), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::addGroup( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::addGroup( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "&Create Group..." ), KIcon( "folder-new" ), recvr, slot, parent );
+	return createAction( i18n( "&Create Group..." ), QIcon::fromTheme( "folder-new" ), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::toggleAlwaysVisible( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::toggleAlwaysVisible( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "Visible when offline" ), KIcon(), recvr, slot, parent );
+	return createAction( i18n( "Visible when offline" ), QIcon(), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::changeMetaContact( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::changeMetaContact( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "Cha&nge Meta Contact..." ), KIcon( "transform-move" ), recvr, slot, parent );
+	return createAction( i18n( "Cha&nge Meta Contact..." ), QIcon::fromTheme( "transform-move" ), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::deleteContact( const QObject *recvr, const char *slot, QObject* parent )
 {
-	KAction *deleteAction = createAction( i18n( "&Delete Contact" ), KIcon( "list-remove-user" ), recvr, slot, parent );
-	deleteAction->setShortcut( KShortcut(Qt::Key_Delete) );
+	QAction *deleteAction = createAction( i18n( "&Delete Contact" ), QIcon::fromTheme( "list-remove-user" ), recvr, slot, parent );
+	deleteAction->setShortcut( QKeySequence(Qt::Key_Delete) );
 
 	return deleteAction;
 }
 
-KAction * KopeteStdAction::changeAlias( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::changeAlias( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "Change A&lias..." ), KIcon( "edit-rename" ), recvr, slot, parent );
+	return createAction( i18n( "Change A&lias..." ), QIcon::fromTheme( "edit-rename" ), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::blockContact( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::blockContact( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "&Block Contact" ), KIcon( "media-playback-pause" ), recvr, slot, parent );
+	return createAction( i18n( "&Block Contact" ), QIcon::fromTheme( "media-playback-pause" ), recvr, slot, parent );
 }
 
-KAction * KopeteStdAction::unblockContact( const QObject *recvr, const char *slot, QObject* parent )
+QAction * KopeteStdAction::unblockContact( const QObject *recvr, const char *slot, QObject* parent )
 {
-	return createAction( i18n( "Un&block Contact" ), KIcon( "media-playback-start" ), recvr, slot, parent );
+	return createAction( i18n( "Un&block Contact" ), QIcon::fromTheme( "media-playback-start" ), recvr, slot, parent );
 }
 
 #include "kopetestdaction.moc"

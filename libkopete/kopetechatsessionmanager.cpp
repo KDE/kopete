@@ -56,7 +56,7 @@ ChatSessionManager::~ChatSessionManager()
 	QList<ChatSession*>::ConstIterator it;
 	for ( it=d->sessions.constBegin() ; it!=d->sessions.constEnd() ; ++it )
 	{
-		kDebug( 14010 ) << "Unloading KMM: Why this KMM isn't yet unloaded?";
+		qCDebug(LIBKOPETE_LOG) << "Unloading KMM: Why this KMM isn't yet unloaded?";
 		(*it)->deleteLater();
 	}
 	delete d;
@@ -144,7 +144,7 @@ void ChatSessionManager::registerChatSession(ChatSession * result)
 
 void ChatSessionManager::removeSession( ChatSession *session)
 {
-	kDebug(14010) ;
+	qCDebug(LIBKOPETE_LOG) ;
 	d->sessions.removeAll( session );
 }
 
@@ -158,7 +158,7 @@ KopeteView * ChatSessionManager::createView( ChatSession *kmm , const QString &r
 	KopeteView *newView = KopeteViewManager::viewManager()->view(kmm,requestedPlugin);
 	if(!newView)
 	{
-		kDebug(14010) << "View not successfuly created";
+		qCDebug(LIBKOPETE_LOG) << "View not successfuly created";
 		return 0L;
 	}
 
@@ -172,7 +172,7 @@ KopeteView * ChatSessionManager::createView( ChatSession *kmm , const QString &r
 	}
 	else
 	{
-		kWarning(14010) << "Failed to cast view to QObject *";
+		qCWarning(LIBKOPETE_LOG) << "Failed to cast view to QObject *";
 	}
 
 	emit viewCreated( newView ) ;

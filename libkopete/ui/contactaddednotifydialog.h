@@ -17,10 +17,10 @@
 #ifndef KOPETE_UICONTACTADDEDNOTIFYDIALOG_H
 #define KOPETE_UICONTACTADDEDNOTIFYDIALOG_H
 
-#include <kdialog.h>
+#include <QDialog>
 #include "kopete_export.h"
 
-namespace KABC {
+namespace KContacts {
 	class Addressee;
 }
 
@@ -66,7 +66,7 @@ namespace UI {
  *
  * @author Olivier Goffart
  */
-class KOPETE_EXPORT ContactAddedNotifyDialog : public KDialog
+class KOPETE_EXPORT ContactAddedNotifyDialog : public QDialog
 {
 Q_OBJECT
 public:
@@ -160,7 +160,7 @@ signals:
 
 
 private slots:
-	void slotAddresseeSelected( const KABC::Addressee &);
+	void slotAddresseeSelected( const KContacts::Addressee &);
 	void slotInfoClicked();
 	void slotFinished();
 

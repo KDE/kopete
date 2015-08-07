@@ -15,10 +15,11 @@
 */
 #include "kopeteutils_private.h"
 
-#include <qapplication.h>
-#include <qmap.h>
+#include <QApplication>
+#include <QMap>
 
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 
 #include <kdebug.h>
 

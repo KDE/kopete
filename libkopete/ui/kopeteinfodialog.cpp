@@ -19,10 +19,14 @@
 #include "kopeteinfodialog.h"
 #include "collapsiblewidget.h"
 #include <kopetepropertycontainer.h>
-#include <KLocale>
+
+#include <QIcon>
+#include <QVBoxLayout>
+
 #include <KTitleWidget>
 #include <KIconLoader>
-#include <QVBoxLayout>
+#include <KConfigGroup>
+#include <KLocalizedString>
 
 namespace Kopete
 {
@@ -39,9 +43,9 @@ public:
 };
 
 InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QString &icon)
-: KDialog(parent), d(new Private())
+: QDialog(parent), d(new Private())
 {
-	initialize();
+	initialize(parent);
 
 	if (!title.isEmpty())
 		setTitle( title );
@@ -49,13 +53,13 @@ InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QString &ico
 		setTitle( i18n( "Information" ) );
 	setIcon( icon );
 
-	connect(this, SIGNAL(okClicked()), this, SLOT(slotSave()));
+	connect(this, SIGNAL(clicked(QAbstractButton*)), this, SLOT(slotSave()));
 }
 
-InfoDialog::InfoDialog(QWidget *parent, const QString &title, const KIcon &icon)
-: KDialog(parent), d(new Private())
+InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QIcon &icon)
+: QDialog(parent), d(new Private())
 {
-	initialize();
+	initialize(parent);
 
 	if (!title.isEmpty())
 		setTitle( title );
@@ -65,12 +69,16 @@ InfoDialog::InfoDialog(QWidget *parent, const QString &title, const KIcon &icon)
 
 }
 
-void InfoDialog::initialize()
+void InfoDialog::initialize(QWidget *parent)
 {
 	//FIXME: this should be changed
 	resize(500,500);
 
-	d->layout = new QVBoxLayout(mainWidget());
+	QWidget *mainWidget = new QWidget(this);
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	mainWidget->setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	layout = new QVBoxLayout(mainWidget);
 	
 	d->title = new KTitleWidget();
 	d->layout->addWidget( d->title );
@@ -98,7 +106,7 @@ void InfoDialog::setIcon(const QString &icon)
 	d->title->setPixmap( icon );
 }
 
-void InfoDialog::setIcon(const KIcon &icon)
+void InfoDialog::setIcon(const QIcon &icon)
 {
 	d->title->setPixmap( icon );
 }
