@@ -10,7 +10,7 @@ class GnupgSelectUserKey: public KDialog
 {
   Q_OBJECT
 public:
-  GnupgSelectUserKey();
+  GnupgSelectUserKey(Kopete::MetaContact *mc);
   ~GnupgSelectUserKey();
 private:
   Kopete::MetaContact *m_metaContact;

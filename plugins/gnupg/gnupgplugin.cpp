@@ -1,6 +1,7 @@
 //=====QT Stuff=====//
 #include <QtCore>
 #include <QDebug>
+#include <QPointer>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QVBoxLayout>
@@ -21,16 +22,10 @@
 #include <kopeteprotocol.h>
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
-#include "kopeteprotocol.h"
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
 #include "kopetemetacontact.h"
-#include "kopetecontactlist.h"
-#include "kopetechatsessionmanager.h"
 #include "kopetesimplemessagehandler.h"
-#include "kopeteuiglobal.h"
-#include "kopetecontact.h"
-#include "kopeteprotocol.h"
 #include "kopetemessageevent.h"
 #include "kabcpersistence.h"
 //===========================//
@@ -84,7 +79,9 @@ GnupgPlugin::GnupgPlugin ( QObject *parent, const QVariantList &/*args*/ )
 void GnupgPlugin::slotSelectContactKey()
 {
   qDebug() << "Hello world 1337.";
-  QPointer <GnupgSelectUserKey> opts = new GnupgSelectUserKey ();
+  Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
+  
+  QPointer <GnupgSelectUserKey> opts = new GnupgSelectUserKey(m);
 	opts->exec();
 
 }
