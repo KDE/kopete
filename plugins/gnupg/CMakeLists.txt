@@ -40,6 +40,8 @@ install( TARGETS kcm_kopete_gnupg DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install( FILES gnupgsettings.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
 
+install( FILES gnupgui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_gnupg)
+
 install( FILES kopete_gnupg.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 
 install( FILES kopete_gnupg_config2.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)

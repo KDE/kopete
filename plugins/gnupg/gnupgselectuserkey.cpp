@@ -11,16 +11,16 @@
 #include <kabc/addressee.h>
 #include <kdialog.h>
 
-GnupgSelectUserKey::GnupgSelectUserKey(const QString &key, Kopete::MetaContact *mc): KDialog()
+GnupgSelectUserKey::GnupgSelectUserKey(): KDialog()
 {
   setCaption ( i18n ( "1337" ) );
   setButtons ( KDialog::Ok | KDialog::Cancel );
   setDefaultButton ( KDialog::Ok );
-  m_metaContact = mc;
+  //m_metaContact = mc;
   QWidget *w = new QWidget(this);
   QLabel *label = new QLabel(w);
   setMainWidget ( w );
-  label->setText(mc->displayName());  
+  //label->setText(mc->displayName());  
   QVBoxLayout * l = new QVBoxLayout ( w );
   l->addWidget ( label );
 }

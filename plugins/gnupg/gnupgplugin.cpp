@@ -24,10 +24,23 @@
 #include "kopeteprotocol.h"
 #include "kopeteuiglobal.h"
 #include "kopetechatsessionmanager.h"
+#include "kopetemetacontact.h"
+#include "kopetecontactlist.h"
+#include "kopetechatsessionmanager.h"
+#include "kopetesimplemessagehandler.h"
+#include "kopeteuiglobal.h"
+#include "kopetecontact.h"
+#include "kopeteprotocol.h"
+#include "kopetemessageevent.h"
+#include "kabcpersistence.h"
 //===========================//
 
 //=======KDE Stuff=======//
 #include <kapplication.h>
+#include <klocale.h>
+#include <kstandardaction.h>
+#include <kaction.h>
+#include <kiconloader.h>
 #include <kconfig.h>
 #include <kpluginfactory.h>
 #include <kconfiggroup.h>
@@ -40,6 +53,8 @@
 #include <qca2/QtCrypto/QtCrypto>
 #include "gnupgpreferences.h"
 #include "gnupgplugin.h"
+#include "gnupggui.h"
+#include "gnupgselectuserkey.h"
 //=========================//
 
 GnupgPlugin* GnupgPlugin::mPluginStatic = 0L;
@@ -54,9 +69,23 @@ GnupgPlugin::GnupgPlugin ( QObject *parent, const QVariantList &/*args*/ )
         mPluginStatic=this;
     KAction *action = new KAction ( KIcon ( "document-encrypt" ), i18nc ( "@action", "&Select Public Key..." ), this );
     actionCollection()->addAction ( "contactSelectKey", action );
-    //connect ( action, SIGNAL (triggered(bool)), this, SLOT (slotSelectContactKey()) );
+    connect ( action, SIGNAL (triggered(bool)), this, SLOT (slotSelectContactKey()) );
     connect ( Kopete::ContactList::self() , SIGNAL (metaContactSelected(bool)) , action , SLOT (setEnabled(bool)) );
     action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
+
+    action = new KAction ( KIcon ( "document-export-key" ), i18nc ( "@action", "&Export Public Keys To Address Book..." ), this );
+    actionCollection()->addAction ( "exportKey", action );
+    connect ( action, SIGNAL (triggered(bool)), this, SLOT (slotExportSelectedMetaContactKeys()) );
+    connect ( Kopete::ContactList::self() , SIGNAL (metaContactSelected(bool)) , action , SLOT (setEnabled(bool)) );
+    action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
+  setXMLFile ( "gnupgui.rc" );
+}
+
+void GnupgPlugin::slotSelectContactKey()
+{
+  qDebug() << "Hello world 1337.";
+  QPointer <GnupgSelectUserKey> opts = new GnupgSelectUserKey ();
+	opts->exec();
 
 }
 

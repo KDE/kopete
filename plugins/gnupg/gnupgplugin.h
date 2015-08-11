@@ -26,6 +26,7 @@ private:
 
 private slots:
     void slotIncomingMessage(Kopete::MessageEvent *msg);
+    void slotSelectContactKey();
     void slotOUtgoingMessage(Kopete::Message &msg);
 };
 
