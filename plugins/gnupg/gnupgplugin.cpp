@@ -52,16 +52,22 @@ GnupgPlugin::GnupgPlugin ( QObject *parent, const QVariantList &/*args*/ )
 {
     if ( !mPluginStatic )
         mPluginStatic=this;
+    KAction *action = new KAction ( KIcon ( "document-encrypt" ), i18nc ( "@action", "&Select Public Key..." ), this );
+    actionCollection()->addAction ( "contactSelectKey", action );
+    //connect ( action, SIGNAL (triggered(bool)), this, SLOT (slotSelectContactKey()) );
+    connect ( Kopete::ContactList::self() , SIGNAL (metaContactSelected(bool)) , action , SLOT (setEnabled(bool)) );
+    action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
+
 }
 
 void GnupgPlugin::slotIncomingMessage(Kopete::MessageEvent *msg)
 {
-  
+
 }
 
 void GnupgPlugin::slotOUtgoingMessage(Kopete::Message &msg)
 {
-  
+
 }
 
 GnupgPlugin::~GnupgPlugin()
