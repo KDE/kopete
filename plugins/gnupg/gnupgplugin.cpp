@@ -15,7 +15,6 @@
 #include <QVariantList>
 //=======================//
 
-
 //=====Kopete Stuff=====//
 #include <kopeteaccountmanager.h>
 #include <kopeteaccount.h>
@@ -48,7 +47,6 @@
 #include <qca2/QtCrypto/QtCrypto>
 #include "gnupgpreferences.h"
 #include "gnupgplugin.h"
-#include "gnupggui.h"
 #include "gnupgselectuserkey.h"
 //=========================//
 
@@ -73,16 +71,15 @@ GnupgPlugin::GnupgPlugin ( QObject *parent, const QVariantList &/*args*/ )
     connect ( action, SIGNAL (triggered(bool)), this, SLOT (slotExportSelectedMetaContactKeys()) );
     connect ( Kopete::ContactList::self() , SIGNAL (metaContactSelected(bool)) , action , SLOT (setEnabled(bool)) );
     action->setEnabled ( Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );
-  setXMLFile ( "gnupgui.rc" );
+    setXMLFile ( "gnupgui.rc" );
 }
 
 void GnupgPlugin::slotSelectContactKey()
 {
-  qDebug() << "Hello world 1337.";
-  Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
-  
-  QPointer <GnupgSelectUserKey> opts = new GnupgSelectUserKey(m);
-	opts->exec();
+    Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
+
+    QPointer <GnupgSelectUserKey> opts = new GnupgSelectUserKey(m);
+    opts->exec();
 
 }
 
