@@ -12,9 +12,9 @@ class GnupgSelectUserKey: public KDialog
   Q_OBJECT
 public:
   GnupgSelectUserKey(Kopete::MetaContact *mc);
-  virtual void save(QString *tempKey);
   ~GnupgSelectUserKey();
-public slots:
+private slots:
+  void save();
   void loadFile();
 private:
   QLineEdit *pathKey;

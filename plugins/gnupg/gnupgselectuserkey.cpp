@@ -11,15 +11,12 @@
 #include <kdialog.h>
 #include <QTextEdit>
 #include <QPushButton>
+#include <QDebug>
 #include <qca2/QtCrypto/qca.h>
 
 GnupgSelectUserKey::GnupgSelectUserKey(Kopete::MetaContact *mc): KDialog()
 {
     QCA::Initializer init;
-    QCA::KeyStoreManager::start();
-    QCA::KeyStoreManager sman(this);
-    sman.waitForBusyFinished();
-    QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
     m_metaContact = mc;
     setCaption(mc->displayName());
     setButtons(KDialog::Ok | KDialog::Cancel);
@@ -29,6 +26,7 @@ GnupgSelectUserKey::GnupgSelectUserKey(Kopete::MetaContact *mc): KDialog()
     pathKey = new QLineEdit();
     QPushButton *loadKey = new QPushButton("Select public key.");
     connect(loadKey,SIGNAL(clicked()),this,SLOT(loadFile()));
+    connect(this,SIGNAL(okClicked()),this,SLOT(save()));
     QVBoxLayout * l = new QVBoxLayout ( w );
     l->addWidget(loadKey);
     l->addWidget(pathKey);
@@ -36,14 +34,22 @@ GnupgSelectUserKey::GnupgSelectUserKey(Kopete::MetaContact *mc): KDialog()
 
 void GnupgSelectUserKey::loadFile()
 {
-  QString keyPath = QFileDialog::getOpenFileName(this, "Open PGP File 1", "/home", "PGP Files (*.pub)");
-  pathKey->setText(keyPath);
+    QString keyPath = QFileDialog::getOpenFileName(this, "Open PGP File 1", "/home/nikhatzi", "PGP Files (*.asc)");
+    pathKey->setText(keyPath);
 }
 
 
-void GnupgSelectUserKey::save(QString *tempKey)
+void GnupgSelectUserKey::save()
 {
-  QCA::PublicKey *pubKey;
+    QCA::KeyStoreManager::start();
+    QCA::KeyStoreManager sman(this);
+    sman.waitForBusyFinished();
+    QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
+    QCA::PGPKey pubKey = QCA::PGPKey::fromFile(pathKey->text());
+    pgpks.writeEntry(pubKey);
+    qDebug() << "1337 " << pubKey.toString();
+    qDebug() << "1337 " << pubKey.creationDate();
+    qDebug() << "1337 " << pubKey.inKeyring();
 }
 
 GnupgSelectUserKey::~GnupgSelectUserKey()
