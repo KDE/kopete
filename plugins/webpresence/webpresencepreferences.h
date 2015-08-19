@@ -23,7 +23,7 @@
 namespace Ui { class WebPresencePrefsUI; }
 
 /**
- * Preference widget for the Now Listening plugin, copied from the Cryptography plugin
+ * Preference widget for the Now Listening plugin, copied from the Gnupg plugin
  * @author Olivier Goffart
  */
 class WebPresencePreferences : public KCModule  {
