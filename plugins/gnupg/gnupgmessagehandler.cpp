@@ -1,4 +1,4 @@
-#include "cryptographymessagehandler.h"
+#include "gnupgmessagehandler.h"
 #include "kopetemessageevent.h"
 
 #include <kdebug.h>

@@ -1,0 +1,12 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="2" name="kopetegnupgchat">
+	<MenuBar>
+		<Menu name="tools" >
+			<text>&amp;Tools</text>
+			<Action name="encryptionToggle"/>
+		</Menu>
+	</MenuBar>
+	<ToolBar name="cryptographyToolBar" fullWidth="false">
+		<text>Cryptography Toolbar</text>
+	</ToolBar>
+</kpartgui>

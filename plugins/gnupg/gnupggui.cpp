@@ -39,7 +39,7 @@ GnupgGui::GnupgGui ( Kopete::ChatSession *parent )
 	KAboutData aboutData ( "kopete_cryptography", 0, ki18n ( "Gnupg" ) , "1.3.0" );
 	setComponentData ( KComponentData ( &aboutData ) );
 
-	setXMLFile ( "cryptographychatui.rc" );
+	setXMLFile ( "gnupgguiui.rc" );
 
 	QList<Kopete::Contact*> mb=parent->members();
 	bool wantEncrypt = false, wantSign = false, keysAvailable = false;
@@ -55,28 +55,19 @@ GnupgGui::GnupgGui ( Kopete::ChatSession *parent )
 		}
 		if ( c->pluginData ( GnupgPlugin::plugin(), "encrypt_messages" ) == "on" )
 			wantEncrypt = true;
-		if ( c->pluginData ( GnupgPlugin::plugin(), "sign_messages" ) == "on" )
-			wantSign = true;
 		if ( ! ( mc->pluginData ( GnupgPlugin::plugin(), "gpgKey" ).isEmpty() ) )
 			keysAvailable = true;
 	}
 
 	m_encAction = new KToggleAction ( KIcon ( "document-encrypt" ), i18nc ( "@action toggle action", "Encrypt Messages" ), this );
 	actionCollection()->addAction ( "encryptionToggle", m_encAction );
-	m_signAction = new KToggleAction ( KIcon ( "document-sign" ), i18nc ( "@action toggle action", "Sign Messages" ), this );
-	actionCollection()->addAction ( "signToggle", m_signAction );
-	m_exportAction = new KAction ( i18nc ( "@action toggle action", "Export Contacts' Keys to Address Book" ), this );
-	actionCollection()->addAction ( "export", m_exportAction );
 
 	m_encAction->setChecked ( wantEncrypt && keysAvailable );
-	m_signAction->setChecked ( wantSign );
 
 	slotEncryptToggled();
 	slotSignToggled();
 
 	connect ( m_encAction, SIGNAL (triggered(bool)), this, SLOT (slotEncryptToggled()) );
-	connect ( m_signAction, SIGNAL (triggered(bool)), this, SLOT (slotSignToggled()) );
-	connect ( m_exportAction, SIGNAL (triggered(bool)), this, SLOT (slotExport()) );
 }
 
 

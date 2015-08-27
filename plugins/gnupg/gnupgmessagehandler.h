@@ -2,7 +2,6 @@
 #define GNUPGMESSAGEHANDLER_H
 
 #include "kopetemessagehandler.h"
-#include "cryptography_export.h"
 using namespace Kopete;
 
 class GNUPG_EXPORT GnupgMessageHandlerFactory : public MessageHandlerFactory
