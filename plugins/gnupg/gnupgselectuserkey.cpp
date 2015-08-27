@@ -11,7 +11,7 @@
 #include <kdialog.h>
 #include <QTextEdit>
 #include <QPushButton>
-#include <QDebug>
+#include <kdebug.h>
 #include <qca2/QtCrypto/qca.h>
 
 GnupgSelectUserKey::GnupgSelectUserKey(Kopete::MetaContact *mc): KDialog()
@@ -47,9 +47,9 @@ void GnupgSelectUserKey::save()
     QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
     QCA::PGPKey pubKey = QCA::PGPKey::fromFile(pathKey->text());
     pgpks.writeEntry(pubKey);
-    qDebug() << "1337 " << pubKey.toString();
-    qDebug() << "1337 " << pubKey.creationDate();
-    qDebug() << "1337 " << pubKey.inKeyring();
+    kDebug ( 14303 ) << "1337 " << pubKey.toString();
+    kDebug ( 14303 ) << "1337 " << pubKey.creationDate();
+    kDebug ( 14303 ) << "1337 " << pubKey.inKeyring();
 }
 
 GnupgSelectUserKey::~GnupgSelectUserKey()

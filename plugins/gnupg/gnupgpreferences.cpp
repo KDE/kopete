@@ -203,19 +203,19 @@ GnupgPreferences::~GnupgPreferences()
 
 void GnupgPreferences::defaults()
 {
-    qDebug() << "DEFAULTS";
+    kDebug ( 14303 ) << "DEFAULTS";
     KCModule::defaults();
 }
 
 void GnupgPreferences::load()
 {
-    qDebug() << "LOAD";
+    kDebug ( 14303 ) << "LOAD";
     KCModule::load();
 }
 
 void GnupgPreferences::save()
 {
-    qDebug() <<"SAVE";
+    kDebug ( 14303 ) <<"SAVE";
     /*
     GnupgSettings::setAccountKopete("paparia");
     GnupgSettings::setPrivateFingerprint(QString::number(i));

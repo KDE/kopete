@@ -93,6 +93,8 @@ void GnupgPlugin::slotOUtgoingMessage(Kopete::Message &msg)
 
 }
 
+
+
 GnupgPlugin::~GnupgPlugin()
 {
 
