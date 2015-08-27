@@ -38,7 +38,6 @@ void GnupgSelectUserKey::loadFile()
     pathKey->setText(keyPath);
 }
 
-
 void GnupgSelectUserKey::save()
 {
     QCA::KeyStoreManager::start();
@@ -46,10 +45,17 @@ void GnupgSelectUserKey::save()
     sman.waitForBusyFinished();
     QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
     QCA::PGPKey pubKey = QCA::PGPKey::fromFile(pathKey->text());
-    pgpks.writeEntry(pubKey);
-    kDebug ( 14303 ) << "1337 " << pubKey.toString();
-    kDebug ( 14303 ) << "1337 " << pubKey.creationDate();
-    kDebug ( 14303 ) << "1337 " << pubKey.inKeyring();
+    //pgpks.writeEntry(pubKey);
+    if(!pubKey.isNull())
+    {
+      kDebug ( 14303 ) << "1337 " << pubKey.toString();
+      kDebug ( 14303 ) << "1337 " << pubKey.creationDate();
+      kDebug ( 14303 ) << "1337 " << pubKey.inKeyring();
+    }
+    else
+    {
+      kDebug ( 14303 ) << "Key not supported.";
+    }
 }
 
 GnupgSelectUserKey::~GnupgSelectUserKey()
