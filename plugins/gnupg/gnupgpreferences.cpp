@@ -41,6 +41,7 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
     : KCModule ( GnupgPreferencesFactory::componentData(), parent, args )
 {
     QCA::Initializer init;
+    QCA::KeyStoreManager::start();
     setButtons( KCModule::Help | KCModule::Apply | KCModule::Default );
     QVBoxLayout *globalLayout = new QVBoxLayout(this);
     QHBoxLayout *introLayout = new QHBoxLayout(0);
@@ -87,8 +88,6 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
             accountsModel->appendRow(accountItem);
         }
     }
-
-    QCA::KeyStoreManager::start();
     QCA::KeyStoreManager sman(this);
     sman.waitForBusyFinished();
     QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);

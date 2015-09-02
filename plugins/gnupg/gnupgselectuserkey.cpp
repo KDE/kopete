@@ -17,6 +17,7 @@
 GnupgSelectUserKey::GnupgSelectUserKey(Kopete::MetaContact *mc): KDialog()
 {
     QCA::Initializer init;
+    QCA::KeyStoreManager::start();
     m_metaContact = mc;
     setCaption(mc->displayName());
     setButtons(KDialog::Ok | KDialog::Cancel);
@@ -40,14 +41,25 @@ void GnupgSelectUserKey::loadFile()
 
 void GnupgSelectUserKey::save()
 {
-    QCA::KeyStoreManager::start();
     QCA::KeyStoreManager sman(this);
     sman.waitForBusyFinished();
     QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
     QCA::PGPKey pubKey = QCA::PGPKey::fromFile(pathKey->text());
-    //pgpks.writeEntry(pubKey);
+    if(!pgpks.isValid())
+    {
+      kDebug( 14303 ) << "keystore NOT valid" << endl;
+      kDebug( 14303 ) << "KEYSTORE LENGTH: " << pgpks.entryList().length() << endl;
+    }
     if(!pubKey.isNull())
     {
+      if(!pgpks.writeEntry(pubKey).isEmpty())
+      {
+	kDebug( 14303 ) << "Key written" << endl;
+      }
+      else
+      {
+	kDebug (14303 ) << "Key problem, not written" << endl;
+      }
       kDebug ( 14303 ) << "1337 " << pubKey.toString();
       kDebug ( 14303 ) << "1337 " << pubKey.creationDate();
       kDebug ( 14303 ) << "1337 " << pubKey.inKeyring();
