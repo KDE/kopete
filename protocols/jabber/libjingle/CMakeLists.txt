@@ -2,6 +2,21 @@
 
 ########### next target ###############
 
+# If we are not included from jabber protocol (= BUILD_LIBJINGLE is not defined) then find required packages
+# This is usefull for debugging and compiling call executable without kopete and KDE dependences
+if ( NOT BUILD_LIBJINGLE )
+	cmake_minimum_required(VERSION 2.8.3)
+	set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/modules ${CMAKE_MODULE_PATH})
+	find_package(Expat REQUIRED)
+	find_package(JsonCpp REQUIRED)
+	find_package(LiboRTP REQUIRED)
+	find_package(Mediastreamer REQUIRED)
+	find_package(OpenSSL REQUIRED)
+	find_package(SRTP REQUIRED)
+endif ( NOT BUILD_LIBJINGLE )
+
+########### next target ###############
+
 add_definitions (
 	-DFEATURE_ENABLE_SSL
 	-DFEATURE_ENABLE_VOICEMAIL
