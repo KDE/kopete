@@ -32,8 +32,10 @@
 
 namespace KContacts
 {
+	/* Deprecated in KF5
 	class AddressBook;
 	class Resource;
+	*/
 }
 
 namespace Kopete
@@ -61,7 +63,8 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 		/**
 		 * @brief Access Kopete's KDE address book instance
 		 */
-		static KContacts::AddressBook* addressBook();
+		//FIXME : Deprecated in KF5
+		//static KContacts::AddressBook* addressBook();
 		/**
 		 * @brief Change the KABC data associated with this metacontact
 		 *
@@ -85,7 +88,8 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 		/**
 		 * Request an address book write, will be delayed to bundle any others happening around the same time
 		 */
-		void writeAddressBook( KContacts::Resource * res );
+		//FIXME: Deprecated in KF5
+		//void writeAddressBook( KContacts::Resource * res );
 	protected:
 
 		static void splitField( const QString &str, QString &app, QString &name, QString &value );

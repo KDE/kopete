@@ -17,7 +17,6 @@
 */
 
 #include "addressbookselectordialog.h"
-#include "addressbookselectorwidget.h"
 
 #include <qdialog.h>
 #include <QTreeWidget>
@@ -26,6 +25,7 @@
 #include <QVBoxLayout>
 #include <klocale.h>
 #include <QDialog>
+#include <QPointer>
 #include <ktreewidgetsearchline.h>
 #include <KConfigGroup>
 #include <QDialogButtonBox>
@@ -36,6 +36,8 @@ namespace Kopete
 namespace UI
 {
 
+QPushButton *okButton;
+
 AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent )
  : QDialog( parent )
 {
@@ -45,7 +47,7 @@ AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	setLayout(mainLayout);
 	mainLayout->addWidget(mainWidget);
-	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+	okButton = buttonBox->button(QDialogButtonBox::Ok);
 	okButton->setDefault(true);
 	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
@@ -66,7 +68,7 @@ AddressBookSelectorDialog::AddressBookSelectorDialog(const QString &title, const
 	mainLayout->addWidget(vbox);
 	okButton->setEnabled(false);
 	//setHelp("linkaddressbook");
-	setHelp(QString(), "kopete");
+	//setHelp(QString(), "kopete");
 	connect(m_addressBookSelectorWidget, SIGNAL(addresseeListClicked(QTreeWidgetItem*)), SLOT(slotWidgetAddresseeListClicked(QTreeWidgetItem*)));
 
 	if ( !preSelectUid.isEmpty() )

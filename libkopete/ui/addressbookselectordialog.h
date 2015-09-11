@@ -19,6 +19,8 @@
 #ifndef ADDRESSBOOKSELECTORDIALOG_H
 #define ADDRESSBOOKSELECTORDIALOG_H
 
+#include "addressbookselectorwidget.h"
+
 #include <kdemacros.h>
 #include <ktreewidgetsearchline.h>
 
@@ -28,11 +30,6 @@
 
 #include "kopete_export.h"
 
-namespace KContacts
-{
-	class AddressBook;
-	class Addressee;
-}
 
 namespace Kopete
 {

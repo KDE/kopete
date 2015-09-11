@@ -16,14 +16,14 @@
 */
 #include "kopetepicture.h"
 
-#include <qbuffer.h>
-
 #include <kcontacts/picture.h>
 
 #include <kcodecs.h>
-
 #include <kdebug.h>
+
+#include <qbuffer.h>
 #include <QStandardPaths>
+#include <QCryptographicHash>
 
 
 namespace Kopete
@@ -119,9 +119,10 @@ QString Picture::path()
 		QBuffer tempBuffer(&tempArray);
 		tempBuffer.open( QIODevice::WriteOnly );
 		image().save(&tempBuffer, "PNG");
-		KMD5 context(tempArray);
+		QCryptographicHash context(QCryptographicHash::Md5);
+		context.addData(tempArray);
 		// Save the image to a file.
-		localPhotoPath = context.hexDigest() + ".png";
+		localPhotoPath = context.result() + QLatin1String(".png");
 		localPhotoPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1Char('/') + QString::fromUtf8("metacontactpicturecache/%1").arg( localPhotoPath) ;
 		if( image().save(localPhotoPath, "PNG") )
 		{

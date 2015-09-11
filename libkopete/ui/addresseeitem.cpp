@@ -21,7 +21,6 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <q3groupbox.h>
 #include <qregexp.h>
 #include <QPixmap>
 #include <QIcon>
@@ -36,7 +35,7 @@ AddresseeItem::AddresseeItem( QTreeWidget *parent, const KContacts::Addressee &a
   //We can't save showphoto because we don't have a d pointer
   KContacts::Picture pic = mAddressee.photo();
   if(!pic.isIntern())
-    pic = mAddressee.logo();
+	pic = mAddressee.logo();
   if(pic.isIntern())
   {
     QPixmap qpixmap = QPixmap::fromImage( pic.data().scaledToWidth(60) ); //60 pixels seems okay.. kmail uses 60 btw

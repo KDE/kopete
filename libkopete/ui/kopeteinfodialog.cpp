@@ -78,7 +78,7 @@ void InfoDialog::initialize(QWidget *parent)
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainWidget->setLayout(mainLayout);
 	mainLayout->addWidget(mainWidget);
-	layout = new QVBoxLayout(mainWidget);
+	d->layout = new QVBoxLayout(mainWidget);
 	
 	d->title = new KTitleWidget();
 	d->layout->addWidget( d->title );

@@ -24,7 +24,7 @@
 #include <klineedit.h>
 #include <QTreeWidget>
 
-#include <kcontacts/addressbook.h>
+#include "addressbookselectorwidget.h"
 
 /**
   @short Special ListViewItem
@@ -46,12 +46,12 @@ class AddresseeItem : public QTreeWidgetItem
       @param parent    The parent listview.
       @param addressee The associated addressee.
     */
-    AddresseeItem( QTreeWidget *parent, const KContacts::Addressee &addressee );
+	AddresseeItem(QTreeWidget *parent, const KContacts::Addressee &addressee );
    
     /**
       Returns the addressee.
     */
-    KContacts::Addressee addressee() const { return mAddressee; }
+	KContacts::Addressee addressee() const { return mAddressee; }
 
     /**
       Method used by QListView to sort the items.
@@ -59,7 +59,7 @@ class AddresseeItem : public QTreeWidgetItem
     virtual QString key( int column, bool ascending ) const;
 
   private:
-    KContacts::Addressee mAddressee;
+	KContacts::Addressee mAddressee;
 };
 
 #endif // ADDRESSEEITEM_H
