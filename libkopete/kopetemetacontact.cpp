@@ -23,14 +23,14 @@
 
 #include <QTextDocument>
 
-#include <kcontacts/addressbook.h>
 #include <kcontacts/addressee.h>
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kmessagebox.h>
 #include <kdeversion.h>
+#include <kmessagebox.h>
 #include <knotification.h>
+#include <kmessagebox_queued.h>
 
 #include "kabcpersistence.h"
 #include "kopetecontactlist.h"
@@ -64,7 +64,7 @@ MetaContact::MetaContact()
 
 	// TODO: speed up: this slot is called when any kabc contact is changed and is called in *every* metacontact instance. also slot is slow because it finding kabc id
 	// Update the KABC picture when the KDE Address book change.
-	connect(KABCPersistence::self()->addressBook(), SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotUpdateAddressBookPicture()));
+	//connect(KABCPersistence::self()->addressBook(), SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotUpdateAddressBookPicture()));
 
 	// make sure MetaContact is at least in one group
 	addToGroup( Group::topLevel() );
@@ -699,6 +699,9 @@ QString MetaContact::displayName() const
 
 QString nameFromKABC( const QString &id ) /*const*/
 {
+  /** 
+   * KABC::Addressbook is deprecated in KF5
+   * Assume an empty addressbook for the time being
 	KContacts::AddressBook* ab = KABCPersistence::self()->addressBook();
 	if ( ! id.isEmpty() && !id.contains(':') )
 	{
@@ -712,6 +715,7 @@ QString nameFromKABC( const QString &id ) /*const*/
 			return theAddressee.formattedName();
 		}
 	}
+  */
 	// no kabc association, return null image
 	return QString();
 }
@@ -789,6 +793,9 @@ QImage photoFromContact( Kopete::Contact *contact) /*const*/
 
 QImage photoFromKABC( const QString &id ) /*const*/
 {
+  /**
+   * KABC::Addressbook is deprecated in KF5.
+   * Assume an empty addressbook for the time being
 	KContacts::AddressBook* ab = KABCPersistence::self()->addressBook();
 	if ( ! id.isEmpty() && !id.contains(':') )
 	{
@@ -813,6 +820,7 @@ QImage photoFromKABC( const QString &id ) /*const*/
 			}
 		}
 	}
+  */
 	// no kabc association, return null image
 	return QImage();
 }
@@ -1122,6 +1130,8 @@ void MetaContact::slotAllPluginsLoaded()
 
 void MetaContact::slotUpdateAddressBookPicture()
 {
+  /**
+   * No Addressbook in KF5 => No picture
 	KContacts::AddressBook* ab = KABCPersistence::self()->addressBook();
 	QString id = kabcId();
 	if ( !id.isEmpty() && !id.contains(':') )
@@ -1140,6 +1150,7 @@ void MetaContact::slotUpdateAddressBookPicture()
 			d->kabcPicture.setPicture(pic);
 		}
 	}
+  */
 }
 
 bool MetaContact::isTemporary() const
@@ -1242,6 +1253,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 
 		if ( !d->kabcId.isEmpty() && !newValue.isNull())
 		{
+		  /**
 			KContacts::Addressee theAddressee = KABCPersistence::self()->addressBook()->findByUid( kabcId() );
 
 			if ( !theAddressee.isEmpty() )
@@ -1271,6 +1283,7 @@ void MetaContact::setPhotoSyncedWithKABC(bool b)
 				KABCPersistence::self()->addressBook()->insertAddressee(theAddressee);
 				KABCPersistence::self()->writeAddressBook( theAddressee.resource() );
 			}
+			*/
 
 		}
 	}

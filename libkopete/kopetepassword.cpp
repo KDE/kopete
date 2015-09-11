@@ -27,7 +27,6 @@
 #include <QDialog>
 #include <QDebug>
 
-#include <k3activelabel.h>
 #include <KGlobal>
 #include <kconfig.h>
 #include <kdebug.h>

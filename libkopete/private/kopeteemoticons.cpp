@@ -27,12 +27,12 @@
 
 namespace Kopete {
 
-/*K_GLOBAL_STATIC(KEmoticons, s_self)
+Q_GLOBAL_STATIC(KEmoticons, s_self)
 
 KEmoticons *Emoticons::self()
 {
 	return s_self;
-}*/
+}
 
 QString Emoticons::parseEmoticons(const QString &text, KEmoticonsTheme::ParseMode mode, const QStringList &exclude)
 {
