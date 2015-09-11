@@ -97,7 +97,7 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 		/**
 		 * Perform a delayed address book write
 		 */
-		void slotWriteAddressBook();
+		//void slotWriteAddressBook();
 	private:
 		class Private;
 		Private * const d;

@@ -19,9 +19,9 @@
 #include "kopeteidletimer.h"
 #include "kopeteidleplatform_p.h"
 
-#include <QtCore/QTimer>
-#include <QtCore/QDateTime>
+#include <QTimer>
 #include <QCursor>
+#include <QDateTime>
 
 #include <kdebug.h>
 

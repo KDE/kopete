@@ -17,22 +17,22 @@
 
 #include "kabcpersistence.h"
 
-#include <QString>
-#include <QTimer>
-
 #include <kcontacts/addressee.h>
 
-// UI related includes used for importing from KABC
-#include <QDialog>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 #include <KConfigGroup>
-#include <QDialogButtonBox>
+
+#include <QString>
+#include <QTimer>
+#include <QDialog>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QDialogButtonBox>
+
 #include "accountselector.h"
 #include "kopeteuiglobal.h"
-
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecontact.h"
@@ -64,7 +64,7 @@ public:
 	Private() 
 	 : addrBookWritePending(false)
 	{}
-	QList<KContacts::Resource *> pendingResources;
+	//QList<KContacts::Resource *> pendingResources;
 	bool addrBookWritePending;
 
 	// FIXME: Try to remove that static variable !
@@ -72,7 +72,7 @@ public:
 	//static KContacts::AddressBook* s_addressBook;
 };
 
-KContacts::AddressBook* KABCPersistence::Private::s_addressBook = 0L;
+//KContacts::AddressBook* KABCPersistence::Private::s_addressBook = 0L;
 
 KABCPersistence::KABCPersistence( QObject * parent, const char * name )
   : QObject( parent), d(new Private())
@@ -91,7 +91,7 @@ KABCPersistence *KABCPersistence::self()
 	return &s;
 }
 
-KContacts::AddressBook* KABCPersistence::addressBook()
+/*KContacts::AddressBook* KABCPersistence::addressBook()
 {
 	if ( Private::s_addressBook == 0L )
 	{
@@ -99,10 +99,16 @@ KContacts::AddressBook* KABCPersistence::addressBook()
 		KContacts::StdAddressBook::setAutomaticSave( false );
 	}
 	return Private::s_addressBook;
-}
+}*/
 
 void KABCPersistence::write( MetaContact * mc )
 {
+  /** Let's assume the addressbook is empty 
+      (and comment out all of this code ! ;-) )
+      for the time being.
+   */
+  
+  /*
 	// Save any changes in each contact's addressBookFields to KABC
 	KContacts::AddressBook* ab = addressBook();
 
@@ -148,6 +154,7 @@ void KABCPersistence::write( MetaContact * mc )
 		//theAddressee.dump();
 	}
 
+  */
 /*			// Wipe out the existing addressBook entries
 			d->addressBook.clear();
 	// This causes each Kopete::Protocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
@@ -176,7 +183,7 @@ void KABCPersistence::write( MetaContact * mc )
 		}*/
 }
 
-void KABCPersistence::writeAddressBook( KContacts::Resource * res)
+/*void KABCPersistence::writeAddressBook( KContacts::Resource * res)
 {
 	if ( !d->pendingResources.count( res ) )
 		d->pendingResources.append( res );
@@ -185,9 +192,9 @@ void KABCPersistence::writeAddressBook( KContacts::Resource * res)
 		d->addrBookWritePending = true;
 		QTimer::singleShot( 2000, this, SLOT(slotWriteAddressBook()) );
 	}
-}
+}*/
 
-void KABCPersistence::slotWriteAddressBook()
+/*void KABCPersistence::slotWriteAddressBook()
 {
 	//qCDebug(LIBKOPETE_LOG) ;
 	KContacts::AddressBook* ab = addressBook();
@@ -210,7 +217,7 @@ void KABCPersistence::slotWriteAddressBook()
 	}
 	d->pendingResources.clear();
 	d->addrBookWritePending = false;
-}
+}*/
 
 void KABCPersistence::removeKABC( MetaContact *)
 {
@@ -264,8 +271,9 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 	qCDebug(LIBKOPETE_LOG) ;
 	bool contactAdded = false;
 	// check whether the dontShowAgain was checked
-		KContacts::AddressBook* ab = addressBook();
-		KContacts::Addressee addr  = ab->findByUid( mc->kabcId() );
+		//KContacts::AddressBook* ab = addressBook();
+		//KContacts::Addressee addr  = ab->findByUid( mc->kabcId() );
+		KContacts::Addressee addr; 	//temporary compilation fix with KF5
 
 		if ( !addr.isEmpty() ) // if we are associated with KABC
 		{
@@ -381,7 +389,7 @@ bool KABCPersistence::syncWithKABC( MetaContact * mc )
 									QDialog *chooser = new QDialog(0);
 									chooser->setWindowTitle( i18n("Choose Account") );
 									QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
-									QWidget *mainWidget = new QWidget(this);
+									QWidget *mainWidget = new QWidget();
 									QVBoxLayout *mainLayout = new QVBoxLayout;
 									chooser->setLayout(mainLayout);
 									mainLayout->addWidget(mainWidget);

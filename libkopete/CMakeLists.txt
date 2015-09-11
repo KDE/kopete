@@ -1,4 +1,5 @@
 add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
+add_definitions(-DKDE3SUPPORT_EXPORT=KDE_DEPRECATED_IMPORT -DQT3_SUPPORT_WARNINGS)
 
 include(CheckIncludeFile)
 check_include_file(valgrind/valgrind.h HAVE_VALGRIND_H)
@@ -10,7 +11,7 @@ add_subdirectory( private )
 if(NOT DISABLE_VIDEOSUPPORT)
   add_subdirectory( avdevice )
 endif(NOT DISABLE_VIDEOSUPPORT)
-add_subdirectory( tests )
+#add_subdirectory( tests )
 
 include_directories( ${KOPETE_INCLUDES} )
 
@@ -23,6 +24,7 @@ set(kopete_private_SRCS
   private/kopeteactivenotification.cpp
 )
 
+set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_dummy.cpp )
 if (Q_WS_X11)
  if (X11_Xss_FOUND)
   set(kopete_private_SRCS ${kopete_private_SRCS} private/kopeteidleplatform_x11.cpp )
@@ -101,7 +103,7 @@ set(kopete_LIB_SRCS
    kopetemessagehandlerchain.cpp
    kopetemessagehandler.cpp
    kopetemetacontact.cpp
-   kopetefileengine.cpp
+   #kopetefileengine.cpp
    kopetemimetypehandler.cpp
    kopeteonlinestatus.cpp
    kopeteonlinestatusmanager.cpp
@@ -161,7 +163,7 @@ set(libkopete_kf5_link_libs
 	KF5::I18n
 	KF5::KIOCore
 	KF5::KIOWidgets
-	KF5::KArchive
+	KF5::Archive
 	KF5::ConfigCore
 	KF5::ConfigGui
 	KF5::Parts
