@@ -27,7 +27,9 @@
 #ifndef AddressBookSelectorWidget_H
 #define AddressBookSelectorWidget_H
 
-#include <kcontacts/addressbook.h>
+#include <kcontacts/address.h>
+#include <kcontacts/addressee.h>
+#include <kcontacts/addresseelist.h>
 
 #include <kdemacros.h>
 #include "kopete_export.h"
@@ -35,8 +37,10 @@
 #include "ui_addressbookselectorwidget_base.h"
 
 namespace KContacts {
-		class AddressBook;
-		class Addressee;
+	class Picture;
+	class Address;
+	class Addressee;
+	class AddresseeList;
 }
 
 namespace Kopete
@@ -67,7 +71,7 @@ public:
 	bool addresseeSelected();
 	
 private:
-	KContacts::AddressBook * m_addressBook;
+	//KContacts::AddressBook * m_addressBook;
 	KContacts::Addressee m_addressee;
 	
 protected slots:

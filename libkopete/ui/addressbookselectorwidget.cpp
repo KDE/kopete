@@ -59,7 +59,7 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 	setObjectName(name);
 	setupUi(this);
 
-	m_addressBook = Kopete::KABCPersistence::self()->addressBook();
+	//m_addressBook = Kopete::KABCPersistence::self()->addressBook();
 
 	// Addressee validation connections
 	connect( addAddresseeButton, SIGNAL(clicked()), SLOT(slotAddAddresseeClicked()) );
@@ -73,7 +73,7 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 	connect( addresseeListView, SIGNAL(itemPressed(QTreeWidgetItem*,int)),
 			SIGNAL(addresseeListClicked(QTreeWidgetItem*)) );
 
-	connect( m_addressBook, SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotLoadAddressees()) );
+	//connect( m_addressBook, SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotLoadAddressees()) );
 
 	//We should add a clear QAction here.  But we can't really do that with a designer file :\  this sucks
 
@@ -91,7 +91,7 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 
 AddressBookSelectorWidget::~AddressBookSelectorWidget()
 {
-	disconnect( m_addressBook, SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotLoadAddressees()) );
+	//disconnect( m_addressBook, SIGNAL(addressBookChanged(AddressBook*)), this, SLOT(slotLoadAddressees()) );
 }
 
 
@@ -132,11 +132,11 @@ bool AddressBookSelectorWidget::addresseeSelected()
 void AddressBookSelectorWidget::slotLoadAddressees()
 {
 	addresseeListView->clear();
-	KContacts::AddressBook::Iterator it;
+	/*KContacts::AddressBook::Iterator it;
 	for( it = m_addressBook->begin(); it != m_addressBook->end(); ++it )
 	{
 		new AddresseeItem( addresseeListView, (*it));
-	}
+	}*/
 
 }
 
@@ -155,8 +155,8 @@ void AddressBookSelectorWidget::slotAddAddresseeClicked()
 	{
 		KContacts::Addressee addr;
 		addr.setNameFromString( addresseeName );
-		m_addressBook->insertAddressee(addr);
-		Kopete::KABCPersistence::self()->writeAddressBook( 0 );
+		//m_addressBook->insertAddressee(addr);
+		//Kopete::KABCPersistence::self()->writeAddressBook( 0 );
 		slotLoadAddressees();
 		// select the addressee we just added
 		QList<QTreeWidgetItem *> added = addresseeListView->findItems( addresseeName, 0, 1 );

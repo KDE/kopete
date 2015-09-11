@@ -24,10 +24,13 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QDialog>
+#include <QDebug>
+
 #include <k3activelabel.h>
+#include <KGlobal>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <QDialog>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>

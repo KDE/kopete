@@ -25,21 +25,20 @@
 #include <valgrind/valgrind.h>
 #endif
 
-#include <QApplication>
+#include <QUrl>
 #include <QFile>
-#include <QRegExp>
 #include <QTimer>
 #include <QStack>
+#include <QRegExp>
+#include <QApplication>
 
-#include <ksharedconfig.h>
-#include <kdebug.h>
-#include <kparts/componentfactory.h>
-#include <kplugininfo.h>
-#include <kconfig.h>
-
-#include <QUrl>
-#include <kservicetypetrader.h>
+#include <KDebug>
+#include <KConfig>
+#include <KGlobal>
+#include <KPluginInfo>
 #include <KSharedConfig>
+#include <kparts/part.h>
+#include <kservicetypetrader.h>
 
 #include "kopeteplugin.h"
 #include "kopeteprotocol.h"
@@ -247,9 +246,6 @@ void PluginManager::slotShutdownTimeout()
 void PluginManager::slotShutdownDone()
 {
 	qCDebug(LIBKOPETE_LOG) ;
-
-	if (QTextCodec::codecForCStrings())
-		qCWarning(LIBKOPETE_LOG) << "WARNING: Some plugin set QTextCodec::setCodecForCStrings this may break protocols!!!";
 
 	_kpmp->shutdownMode = PluginManagerPrivate::DoneShutdown;
 

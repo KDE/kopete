@@ -164,6 +164,8 @@ set(libkopete_kf5_link_libs
 	KF5::KArchive
 	KF5::ConfigCore
 	KF5::ConfigGui
+	KF5::Parts
+	KF5::Wallet
 	KF5::KDELibs4Support
 )
 
@@ -172,8 +174,6 @@ target_link_libraries(kopete
 	${KDE4_KEMOTICONS_LIBS}
 	${libkopete_kf5_link_libs}
 )
-
-target_link_libraries(kopete ${libkopete_kf5_link_libs} ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KABC_LIBS} )
 
 if(NOT DISABLE_VIDEOSUPPORT)
     target_link_libraries(kopete kopete_videodevice)

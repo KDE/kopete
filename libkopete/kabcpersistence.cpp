@@ -17,13 +17,10 @@
 
 #include "kabcpersistence.h"
 
-#include <qstring.h>
-#include <qtimer.h>
+#include <QString>
+#include <QTimer>
 
-#include <kcontacts/addressbook.h>
 #include <kcontacts/addressee.h>
-#include <kcontacts/resource.h>
-#include <kcontacts/stdaddressbook.h>
 
 // UI related includes used for importing from KABC
 #include <QDialog>
@@ -71,7 +68,8 @@ public:
 	bool addrBookWritePending;
 
 	// FIXME: Try to remove that static variable !
-	static KContacts::AddressBook* s_addressBook;
+	// UPDATE : Deprecated in KF5, Fuck off !
+	//static KContacts::AddressBook* s_addressBook;
 };
 
 KContacts::AddressBook* KABCPersistence::Private::s_addressBook = 0L;

@@ -27,7 +27,7 @@
 #include <QtCore/QTextStream>
 
 // KDE includes
-#include <kcontacts/stdaddressbook.h>
+//#include <kcontacts/stdaddressbook.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>

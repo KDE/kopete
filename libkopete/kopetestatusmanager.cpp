@@ -390,9 +390,10 @@ void StatusManager::askAndSetActive()
 	mainLayout->addWidget(buttonBox);
 
 	// Set the Text in the Dialog
-	KMessageBox::createKMessageBox(dialog, QMessageBox::Question,
+	KMessageBox::createKMessageBox( dialog, buttonBox, QMessageBox::Question,
 		i18n("Do You Want to Change Status to Available?"),
-		QStringList(), QString(), NULL, KMessageBox::NoExec);
+		QStringList(), QString(), NULL, KMessageBox::NoExec
+	);
 
 	// If yes is clicked, go online
 	connect(dialog, SIGNAL(yesClicked()), this, SLOT(setActive()));

@@ -17,11 +17,12 @@
 #ifndef KOPETEWALLETMANAGER_H
 #define KOPETEWALLETMANAGER_H
 
-#include <qobject.h>
+#include <QObject>
 
 #include <kdemacros.h>
 
 #include "kopete_export.h"
+#include "libkopete_debug.h"
 
 namespace KWallet { class Wallet; }
 
