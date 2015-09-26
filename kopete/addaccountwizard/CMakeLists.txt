@@ -16,7 +16,7 @@ kde4_add_ui_files( kopeteaddaccountwizard_SRCS
 )
 
 kde4_add_library( kopeteaddaccountwizard SHARED ${kopeteaddaccountwizard_SRCS} )
-target_link_libraries( kopeteaddaccountwizard kopete ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY} )
+target_link_libraries( kopeteaddaccountwizard kopete ${KDE4_KDEUI_LIBS} )
 set_target_properties( kopeteaddaccountwizard PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kopeteaddaccountwizard ${INSTALL_TARGETS_DEFAULT_ARGS})
 

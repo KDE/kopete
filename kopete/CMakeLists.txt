@@ -57,7 +57,6 @@ set_target_properties(kopete_bin PROPERTIES RUNTIME_OUTPUT_NAME kopete)
 target_link_libraries(kopete_bin 
 	${KDE4_KTEXTEDITOR_LIBS} 
 	${KDE4_KNOTIFYCONFIG_LIBS}
-	${KDE4_KDE3SUPPORT_LIBS}
 	${KDE4_KABC_LIBS}
 	${KDE4_SOLID_LIBRARY}
 	${QIMAGEBLITZ_LIBRARIES}

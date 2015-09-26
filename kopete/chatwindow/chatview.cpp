@@ -992,7 +992,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
 
-		if ( !contact || !contact->canAcceptFiles() || event->mimeData()->hasText() || event->mimeData()->hasURls() )
+		if ( !contact || !contact->canAcceptFiles() || event->mimeData()->hasText() || event->mimeData()->hasUrls() )
 		{
 			event->ignore();
 			return;
