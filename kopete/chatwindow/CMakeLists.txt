@@ -47,7 +47,7 @@ set(kopete_chatwindow_PART_SRCS chatview.cpp kopetechatwindow.cpp chatmemberslis
 kde4_add_plugin(kopete_chatwindow ${kopete_chatwindow_PART_SRCS})
 
 
-target_link_libraries(kopete_chatwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared ${KDE4_KHTML_LIBS} ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(kopete_chatwindow  ${KDE4_KDEUI_LIBS} kopete kopetechatwindow_shared ${KDE4_KHTML_LIBS})
 
 install(TARGETS kopete_chatwindow  DESTINATION ${PLUGIN_INSTALL_DIR})
 
