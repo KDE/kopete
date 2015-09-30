@@ -37,7 +37,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kicon.h>
-#include <kaction.h>
+#include <QAction>
 #include <kmenu.h>
 #include <kcolordialog.h>
 
@@ -545,7 +545,7 @@ bool KopeteAccountConfig::eventFilter( QObject *obj, QEvent *event )
 void KopeteAccountConfig::configureActions()
 {
 	// Add account
-	m_actionAccountAdd = new KAction( i18n( "&Add Account..." ), this );
+	m_actionAccountAdd = new QAction( i18n( "&Add Account..." ), this );
 	m_actionAccountAdd->setIcon( KIcon("list-add") );
 	mButtonAccountAdd->setIcon( m_actionAccountAdd->icon() );
 	mButtonAccountAdd->setText( m_actionAccountAdd->text() );
@@ -553,7 +553,7 @@ void KopeteAccountConfig::configureActions()
 	connect( mButtonAccountAdd, SIGNAL(clicked()), m_actionAccountAdd, SLOT(trigger()) );
 
 	// Modify account
-	m_actionAccountModify = new KAction( i18n( "&Modify Account..." ), this );
+	m_actionAccountModify = new QAction( i18n( "&Modify Account..." ), this );
 	m_actionAccountModify->setIcon( KIcon("configure") );
 	mButtonAccountModify->setIcon( m_actionAccountModify->icon() );
 	mButtonAccountModify->setText( m_actionAccountModify->text() );
@@ -561,7 +561,7 @@ void KopeteAccountConfig::configureActions()
 	connect( mButtonAccountModify, SIGNAL(clicked()), m_actionAccountModify, SLOT(trigger()) );
 
 	// Remove account
-	m_actionAccountRemove = new KAction( i18n( "&Remove Account" ), this );
+	m_actionAccountRemove = new QAction( i18n( "&Remove Account" ), this );
 	m_actionAccountRemove->setIcon( KIcon("edit-delete") );
 	m_actionAccountRemove->setShortcut(QKeySequence(Qt::Key_Delete));
 	mButtonAccountRemove->setIcon( m_actionAccountRemove->icon() );
@@ -570,19 +570,19 @@ void KopeteAccountConfig::configureActions()
 	connect( mButtonAccountRemove, SIGNAL(clicked()), m_actionAccountRemove, SLOT(trigger()) );
 
 	// Switch identity for an account
-	m_actionAccountSwitchIdentity = new KAction( i18n( "&Switch Identity..." ), this );
+	m_actionAccountSwitchIdentity = new QAction( i18n( "&Switch Identity..." ), this );
 	mButtonAccountSwitchIdentity->setText( m_actionAccountSwitchIdentity->text() );
 	connect( m_actionAccountSwitchIdentity, SIGNAL(triggered(bool)), this, SLOT(slotAccountSwitchIdentity()) );
 	connect( mButtonAccountSwitchIdentity, SIGNAL(clicked()), m_actionAccountSwitchIdentity, SLOT(trigger()) );
 
 	// Set/clear custom color for account
-	m_actionAccountSetColor = new KAction( i18n( "Set C&olor..." ), this );
+	m_actionAccountSetColor = new QAction( i18n( "Set C&olor..." ), this );
 	mButtonAccountSetColor->setText( m_actionAccountSetColor->text() );
 	connect( m_actionAccountSetColor, SIGNAL(triggered(bool)), this, SLOT(slotAccountSetColor()) );
 	connect( mButtonAccountSetColor, SIGNAL(clicked()), m_actionAccountSetColor, SLOT(trigger()) );
 
 	// Add identity
-	m_actionIdentityAdd = new KAction( i18n( "Add &Identity..." ), this );
+	m_actionIdentityAdd = new QAction( i18n( "Add &Identity..." ), this );
 	m_actionIdentityAdd->setIcon( KIcon("list-add") );
 	mButtonIdentityAdd->setIcon( m_actionIdentityAdd->icon() );
 	mButtonIdentityAdd->setText( m_actionIdentityAdd->text() );
@@ -590,7 +590,7 @@ void KopeteAccountConfig::configureActions()
 	connect( mButtonIdentityAdd, SIGNAL(clicked()), m_actionIdentityAdd, SLOT(trigger()) );
 
 	// Copy identity
-	m_actionIdentityCopy = new KAction( i18n( "&Copy Identity..." ), this );
+	m_actionIdentityCopy = new QAction( i18n( "&Copy Identity..." ), this );
 	m_actionIdentityCopy->setIcon( KIcon("edit-copy") );
 	mButtonIdentityCopy->setIcon( m_actionIdentityCopy->icon() );
 	mButtonIdentityCopy->setText( m_actionIdentityCopy->text() );
@@ -598,7 +598,7 @@ void KopeteAccountConfig::configureActions()
 	connect( mButtonIdentityCopy, SIGNAL(clicked()), m_actionIdentityCopy, SLOT(trigger()) );
 
 	// Modify identity
-	m_actionIdentityModify = new KAction( i18n( "M&odify Identity..." ), this );
+	m_actionIdentityModify = new QAction( i18n( "M&odify Identity..." ), this );
 	m_actionIdentityModify->setIcon( KIcon("configure") );
 	mButtonIdentityModify->setIcon( m_actionIdentityModify->icon() );
 	mButtonIdentityModify->setText( m_actionIdentityModify->text() );
@@ -606,7 +606,7 @@ void KopeteAccountConfig::configureActions()
 	connect( mButtonIdentityModify, SIGNAL(clicked()), m_actionIdentityModify, SLOT(trigger()) );
 
 	// Remove identity
-	m_actionIdentityRemove = new KAction( i18n( "R&emove Identity" ), this );
+	m_actionIdentityRemove = new QAction( i18n( "R&emove Identity" ), this );
 	m_actionIdentityRemove->setIcon( KIcon("edit-delete") );
 	mButtonIdentityRemove->setIcon( m_actionIdentityRemove->icon() );
 	mButtonIdentityRemove->setText( m_actionIdentityRemove->text() );
@@ -614,7 +614,7 @@ void KopeteAccountConfig::configureActions()
 	connect( mButtonIdentityRemove, SIGNAL(clicked()), m_actionIdentityRemove, SLOT(trigger()) );
 
 	// Switch identity for an identity
-	m_actionIdentitySetDefault = new KAction( i18n( "Set &Default" ), this );
+	m_actionIdentitySetDefault = new QAction( i18n( "Set &Default" ), this );
 	mButtonIdentitySetDefault->setText( m_actionIdentitySetDefault->text() );
 	connect( m_actionIdentitySetDefault, SIGNAL(triggered(bool)), this, SLOT(slotSetDefaultIdentity()) );
 	connect( mButtonIdentitySetDefault, SIGNAL(clicked()), m_actionIdentitySetDefault, SLOT(trigger()) );

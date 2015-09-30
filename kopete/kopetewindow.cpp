@@ -38,7 +38,7 @@
 
 #include <khbox.h>
 #include <kvbox.h>
-#include <kaction.h>
+#include <QAction>
 #include <kactionmenu.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
@@ -190,20 +190,20 @@ class KopeteWindow::Private
 		// Some Actions
 		KActionMenu *actionAddContact;
 
-		KAction *actionDisconnect;
-		KAction *actionExportContacts;
+		QAction *actionDisconnect;
+		QAction *actionExportContacts;
 
 		KActionMenu *actionStatusMenu;
 		KActionMenu *actionDockMenu;
-		KAction *actionSetAway;
-		KAction *actionSetBusy;
-		KAction *actionSetAvailable;
-		KAction *actionSetInvisible;
+		QAction *actionSetAway;
+		QAction *actionSetBusy;
+		QAction *actionSetAvailable;
+		QAction *actionSetInvisible;
 
 
-		KAction *actionPrefs;
-		KAction *actionQuit;
-		KAction *actionSave;
+		QAction *actionPrefs;
+		QAction *actionQuit;
+		QAction *actionSave;
 		KToggleAction *menubarAction;
 		KToggleAction *statusbarAction;
 		KToggleAction *actionShowAllOfflineEmpty;
@@ -392,30 +392,30 @@ void KopeteWindow::initActions()
 	connect ( d->addContactMapper, SIGNAL (mapped(QString)),
 	          this, SLOT (slotAddContactDialogInternal(QString)) );
 
-	d->actionDisconnect = new KAction ( KIcon ( "user-offline" ), i18n ( "Offline" ), this );
+	d->actionDisconnect = new QAction ( KIcon ( "user-offline" ), i18n ( "Offline" ), this );
 	actionCollection()->addAction ( "DisconnectAll", d->actionDisconnect );
 	connect ( d->actionDisconnect, SIGNAL (triggered(bool)), this, SLOT (slotDisconnectAll()) );
 	d->actionDisconnect->setEnabled ( false );
 
-	d->actionExportContacts = new KAction ( i18n ( "&Export Contacts..." ), this );
+	d->actionExportContacts = new QAction ( i18n ( "&Export Contacts..." ), this );
 	d->actionExportContacts->setIcon ( KIcon ( "document-export" ) );
 	actionCollection()->addAction ( "ExportContacts", d->actionExportContacts );
 	connect ( d->actionExportContacts, SIGNAL (triggered(bool)), this, SLOT (showExportDialog()) );
 
-	d->actionSetAway = new KAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-away" ), i18n ( "&Away" ), this );
+	d->actionSetAway = new QAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-away" ), i18n ( "&Away" ), this );
 	actionCollection()->addAction ( "SetAwayAll", d->actionSetAway );
 	connect ( d->actionSetAway, SIGNAL (triggered(bool)), this, SLOT (slotGlobalAway()) );
 
-	d->actionSetBusy = new KAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-busy" ), i18n ( "&Busy" ), this );
+	d->actionSetBusy = new QAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-busy" ), i18n ( "&Busy" ), this );
 	actionCollection()->addAction ( "SetBusyAll", d->actionSetBusy );
 	connect ( d->actionSetBusy, SIGNAL (triggered(bool)), this, SLOT (slotGlobalBusy()) );
 
 
-	d->actionSetInvisible = new KAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-invisible" ), i18n ( "&Invisible" ), this );
+	d->actionSetInvisible = new QAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-invisible" ), i18n ( "&Invisible" ), this );
 	actionCollection()->addAction ( "SetInvisibleAll", d->actionSetInvisible );
 	connect ( d->actionSetInvisible, SIGNAL (triggered(bool)), this, SLOT (slotSetInvisibleAll()) );
 
-	d->actionSetAvailable = new KAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-online" ), i18n ( "&Online" ), this );
+	d->actionSetAvailable = new QAction ( KIcon ( "user-identity", 0, QStringList() << QString() << "user-online" ), i18n ( "&Online" ), this );
 	actionCollection()->addAction ( "SetAvailableAll", d->actionSetAvailable );
 	connect ( d->actionSetAvailable, SIGNAL (triggered(bool)), this, SLOT (slotGlobalAvailable()) );
 
@@ -444,10 +444,10 @@ void KopeteWindow::initActions()
 	d->statusbarAction = KStandardAction::showStatusbar ( statusBar(), SLOT (setVisible(bool)), actionCollection() );
 	actionCollection()->addAction ( "settings_showstatusbar", d->statusbarAction );
 
-	KAction* act = KStandardAction::keyBindings ( guiFactory(), SLOT (configureShortcuts()), actionCollection() );
+	QAction * act = KStandardAction::keyBindings ( guiFactory(), SLOT (configureShortcuts()), actionCollection() );
 	actionCollection()->addAction ( "settings_keys", act );
 
-	KAction *configureGlobalShortcutsAction = new KAction ( KIcon ( "configure-shortcuts" ), i18n ( "Configure &Global Shortcuts..." ), this );
+	QAction *configureGlobalShortcutsAction = new QAction ( KIcon ( "configure-shortcuts" ), i18n ( "Configure &Global Shortcuts..." ), this );
 	configureGlobalShortcutsAction->setMenuRole( QAction::NoRole ); //OS X: prevent Qt heuristics to move action to app menu->"Preferences"
 	actionCollection()->addAction ( "settings_global", configureGlobalShortcutsAction );
 	connect ( configureGlobalShortcutsAction, SIGNAL (triggered(bool)), this, SLOT (slotConfGlobalKeys()) );
@@ -478,7 +478,7 @@ void KopeteWindow::initActions()
 
 	KFilterProxySearchLine* searchLine = new KFilterProxySearchLine ( this );
 	searchLine->setProxy( d->proxyModel );
-	KAction *quickSearch = new KAction ( i18n ( "Quick Search Bar" ), this );
+	QAction *quickSearch = new QAction ( i18n ( "Quick Search Bar" ), this );
 	actionCollection()->addAction ( "quicksearch_bar", quickSearch );
 	quickSearch->setDefaultWidget ( searchLine );
 
@@ -487,19 +487,19 @@ void KopeteWindow::initActions()
 	slotConfigChanged();
 
 	// Global actions
-	KAction *globalReadMessage = new KAction ( i18n ( "Read Message" ), this );
+	QAction *globalReadMessage = new QAction ( i18n ( "Read Message" ), this );
 	actionCollection()->addAction ( "ReadMessage",  globalReadMessage );
 	connect ( globalReadMessage, SIGNAL (triggered(bool)), Kopete::ChatSessionManager::self(), SLOT (slotReadMessage()) );
 	globalReadMessage->setGlobalShortcut ( QKeySequence ( Qt::CTRL + Qt::SHIFT + Qt::Key_I ) );
 	globalReadMessage->setWhatsThis ( i18n ( "Read the next pending message" ) );
 
-	KAction *globalShowContactList = new KAction ( i18n ( "Show/Hide Contact List" ), this );
+	QAction *globalShowContactList = new QAction ( i18n ( "Show/Hide Contact List" ), this );
 	actionCollection()->addAction ( "ShowContactList", globalShowContactList );
 	connect ( globalShowContactList, SIGNAL (triggered(bool)), this, SLOT (slotShowHide()) );
 	globalShowContactList->setGlobalShortcut ( QKeySequence ( Qt::CTRL + Qt::ALT + Qt::Key_T ) );
 	globalShowContactList->setWhatsThis ( i18n ( "Show or hide the contact list" ) );
 
-	KAction *globalSetAway = new KAction ( i18n ( "Set Away/Back" ), this );
+	QAction *globalSetAway = new QAction ( i18n ( "Set Away/Back" ), this );
 	actionCollection()->addAction ( "Set_Away_Back",  globalSetAway );
 	connect ( globalSetAway, SIGNAL (triggered(bool)), this, SLOT (slotToggleAway()) );
 	globalSetAway->setGlobalShortcut ( QKeySequence ( Qt::CTRL + Qt::SHIFT + Qt::Key_W ) );
@@ -1199,7 +1199,7 @@ void KopeteWindow::slotAccountRegistered ( Kopete::Account *account )
 
 	// add an item for this account to the add contact actionmenu
 	QString s = QString ( "actionAdd%1Contact" ).arg ( account->accountId() );
-	KAction *action = new KAction ( KIcon ( account->accountIcon() ), account->accountLabel(), this );
+	QAction *action = new QAction ( KIcon ( account->accountIcon() ), account->accountLabel(), this );
 	actionCollection()->addAction ( s, action );
 	connect ( action, SIGNAL (triggered(bool)), d->addContactMapper, SLOT (map()) );
 	connect ( account, SIGNAL(colorChanged(QColor)), this, SLOT(slotAccountColorChanged()) );
@@ -1242,7 +1242,7 @@ void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
 	QAction *action = actionCollection()->action ( s );
 	if ( action )
 	{
-		kDebug ( 14000 ) << " found KAction " << action << " with name: " << action->objectName();
+		kDebug ( 14000 ) << " found QAction " << action << " with name: " << action->objectName();
 		d->addContactMapper->removeMappings ( action );
 		d->actionAddContact->removeAction ( action );
 	}

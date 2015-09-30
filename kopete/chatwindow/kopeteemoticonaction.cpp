@@ -1,7 +1,7 @@
 /*
     kopeteemoticonaction.cpp
 
-    KAction to show the emoticon selector
+    QAction to show the emoticon selector
 
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
     Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>

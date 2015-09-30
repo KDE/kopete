@@ -24,7 +24,7 @@
 
 // KDE includes
 #include <kdebug.h>
-#include <kaction.h>
+#include <QAction>
 #include <kactioncollection.h>
 #include <kactionmenu.h>
 #include <klocalizedstring.h>
@@ -78,7 +78,7 @@ public:
     KToggleAction* autoResize;
     KToggleAction* checkSpelling;
     KToggleAction* toggleRichText;
-    KAction* reset;
+    QAction * reset;
 
     void mergeAll(const QTextCharFormat& format);
 };
@@ -194,7 +194,7 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 
     if (!d->reset && isRichTextEnabled())
     {
-        d->reset = new KAction(KIcon("format-stroke-color"), i18n("Reset Font And Color"), actionCollection);
+        d->reset = new QAction(KIcon("format-stroke-color"), i18n("Reset Font And Color"), actionCollection);
         actionCollection->addAction("format_font_and_color_reset", d->reset);
         connect(d->reset, SIGNAL(triggered(bool)), this, SLOT(slotResetFontAndColor()));
     }

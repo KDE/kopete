@@ -26,7 +26,7 @@
 #include "kopeteappearancesettings.h"
 #include "kopetechatwindowsettings.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <kactioncollection.h>
 #include <kcolordialog.h>
 #include <kconfig.h>

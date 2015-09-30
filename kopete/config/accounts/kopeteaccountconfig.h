@@ -37,7 +37,7 @@ class Identity;
 class KopeteAccountLVI;
 class KopeteIdentityLVI;
 class KMenu;
-class KAction;
+class QAction;
 
 /**
  * @author Olivier Goffart <ogoffart@kde.org>
@@ -70,17 +70,17 @@ private:
 	KMenu *m_identityContextMenu;
 	KMenu *m_accountContextMenu;
 
-	KAction *m_actionAccountAdd;
-	KAction *m_actionAccountModify;
-	KAction *m_actionAccountRemove;
-	KAction *m_actionAccountSwitchIdentity;
-	KAction *m_actionAccountSetColor;
+	QAction *m_actionAccountAdd;
+	QAction *m_actionAccountModify;
+	QAction *m_actionAccountRemove;
+	QAction *m_actionAccountSwitchIdentity;
+	QAction *m_actionAccountSetColor;
 
-	KAction *m_actionIdentityAdd;
-	KAction *m_actionIdentityCopy;
-	KAction *m_actionIdentityModify;
-	KAction *m_actionIdentityRemove;
-	KAction *m_actionIdentitySetDefault;
+	QAction *m_actionIdentityAdd;
+	QAction *m_actionIdentityCopy;
+	QAction *m_actionIdentityModify;
+	QAction *m_actionIdentityRemove;
+	QAction *m_actionIdentitySetDefault;
 
 private slots:
 	void slotModify();

@@ -22,7 +22,7 @@
 
 #include "TokenDropTarget.h"
 
-#include <KAction>
+#include <QAction>
 #include <KHBox>
 #include <KLocale>
 
@@ -62,19 +62,19 @@ TokenWithLayout::~TokenWithLayout()
 
 void TokenWithLayout::fillMenu( QMenu * menu )
 {
-    KAction *boldAction = new KAction( KIcon( "format-text-bold"), i18n( "Bold" ), menu );
+    QAction *boldAction = new QAction( KIcon( "format-text-bold"), i18n( "Bold" ), menu );
     boldAction->setObjectName( ActionBoldName );
     boldAction->setCheckable( true );
     boldAction->setChecked( m_bold );
 
-    KAction *italicAction = new KAction( KIcon( "format-text-italic"), i18n( "Italic" ), menu );
+    QAction *italicAction = new QAction( KIcon( "format-text-italic"), i18n( "Italic" ), menu );
     italicAction->setObjectName( ActionItalicName );
     italicAction->setCheckable( true );
     italicAction->setChecked( m_italic );
 
-    KAction *alignLeftAction = new KAction( KIcon( "format-justify-left"), i18n( "Left" ), menu );
-    KAction *alignCenterAction = new KAction( KIcon( "format-justify-center"), i18n( "Center" ), menu );
-    KAction *alignRightAction = new KAction( KIcon( "format-justify-right"), i18n( "Right" ), menu );
+    QAction *alignLeftAction = new QAction( KIcon( "format-justify-left"), i18n( "Left" ), menu );
+    QAction *alignCenterAction = new QAction( KIcon( "format-justify-center"), i18n( "Center" ), menu );
+    QAction *alignRightAction = new QAction( KIcon( "format-justify-right"), i18n( "Right" ), menu );
     alignLeftAction->setObjectName( ActionAlignLeftName );
     alignLeftAction->setCheckable( true );
     alignCenterAction->setObjectName( ActionAlignCenterName );

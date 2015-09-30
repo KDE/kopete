@@ -110,14 +110,14 @@ void StatusRootAction::createAccountStatusActions( Account *account , KActionMen
 				continue;
 
 			OnlineStatus status = (*it);
-			KAction *action;
+			QAction *action;
 
 			// Any existing actions owned by the account are reused by recovering them
 			// from the parent's child list.
 			// The description of the onlinestatus is used as the qobject name
 			// This is safe as long as OnlineStatus are immutable
 			QByteArray actionName = status.description().toAscii();
-			if ( !( action = account->findChild<KAction*>( actionName ) ) )
+			if ( !( action = account->findChild<QAction *>( actionName ) ) )
 			{
 				if( status.options() & OnlineStatusManager::HasStatusMessage )
 				{

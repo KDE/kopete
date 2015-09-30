@@ -78,22 +78,22 @@ public:
 	QMap<KMenu*, QAction*> menuTitleMap;
 
 	/* ACTIONS */
-	KAction *actionSendMessage;
-	KAction *actionStartChat;
-	KAction *actionSendFile;
+	QAction *actionSendMessage;
+	QAction *actionStartChat;
+	QAction *actionSendFile;
 	KActionMenu *actionAddContact;
-	KAction *actionSendEmail;
+	QAction *actionSendEmail;
 	KSelectAction *actionMove;
 	KSelectAction *actionCopy;
-	KAction *actionRename;
-	KAction *actionRemove;
-	KAction *actionAddTemporaryContact;
-	KAction *actionProperties;
-	KAction *actionUndo;
-	KAction *actionRedo;
-	KAction *actionMakeMetaContact;
+	QAction *actionRename;
+	QAction *actionRemove;
+	QAction *actionAddTemporaryContact;
+	QAction *actionProperties;
+	QAction *actionUndo;
+	QAction *actionRedo;
+	QAction *actionMakeMetaContact;
 
-	QMap<KAction*, Kopete::Account*> addContactAccountMap;
+	QMap<QAction *, Kopete::Account*> addContactAccountMap;
 	QPointer<Kopete::MetaContact> selectedMetaContact;
 
 	QPointer<Kopete::Contact> pressedContact;
@@ -156,7 +156,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 // 	d->actionRedo->setEnabled(false);
 
 
-	KAction *actionCreateNewGroup = new KAction( i18n( "Create New Group..." ), ac );
+	QAction *actionCreateNewGroup = new QAction( i18n( "Create New Group..." ), ac );
 	actionCreateNewGroup->setIcon( KIcon( "user-group-new" ) );
 	connect( actionCreateNewGroup, SIGNAL(triggered(bool)), this, SLOT(addGroup()) );
 	ac->addAction( "AddGroup", actionCreateNewGroup );
@@ -173,18 +173,18 @@ void KopeteContactListView::initActions( KActionCollection *ac )
                                                 QKeySequence(), this, SLOT(copyToGroup()), ac );
 	ac->addAction( "contactCopy", d->actionCopy );
 
-	d->actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Merge Meta Contacts"), ac);
+	d->actionMakeMetaContact = new QAction(KIcon("list-add-user"), i18n("Merge Meta Contacts"), ac);
 	ac->addAction( "makeMetaContact", d->actionMakeMetaContact );
 	connect (d->actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(mergeMetaContact()));
 
 	d->actionRemove = KopeteStdAction::deleteContact( this, SLOT(removeGroupOrMetaContact()), ac );
 	ac->addAction( "contactRemove", d->actionRemove );
 
-	d->actionSendEmail = new KAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
+	d->actionSendEmail = new QAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
 	ac->addAction( "contactSendEmail", d->actionSendEmail );
 	connect( d->actionSendEmail, SIGNAL(triggered(bool)), this, SLOT(sendEmail()) );
 
-	d->actionRename = new KAction( KIcon("edit-rename"), i18nc( "verb, rename a contact", "Rename" ), ac );
+	d->actionRename = new QAction( KIcon("edit-rename"), i18nc( "verb, rename a contact", "Rename" ), ac );
 	d->actionRename->setShortcut( QKeySequence(Qt::Key_F2) );
 	ac->addAction( "contactRename", d->actionRename );
 	connect( d->actionRename, SIGNAL(triggered(bool)), this, SLOT(rename()) );
@@ -196,7 +196,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	ac->addAction( "contactAddContact", d->actionAddContact );
 	d->actionAddContact->menu()->addTitle( i18n("Select Account") );
 
-	d->actionAddTemporaryContact = new KAction( KIcon("list-add-user"), i18n( "Add to Your Contact List" ), ac );
+	d->actionAddTemporaryContact = new QAction( KIcon("list-add-user"), i18n( "Add to Your Contact List" ), ac );
 	ac->addAction( "contactAddTemporaryContact", d->actionAddTemporaryContact );
 	connect( d->actionAddTemporaryContact, SIGNAL(triggered(bool)), this, SLOT(addTemporaryContact()) );
 
@@ -207,7 +207,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 			this, SLOT(removeToAddContactMenu(const Kopete::Account*)) );
 
-	d->actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
+	d->actionProperties = new QAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
 	ac->addAction( "contactProperties", d->actionProperties );
 	d->actionProperties->setShortcut( QKeySequence(Qt::Key_Alt + Qt::Key_Return) );
 	connect( d->actionProperties, SIGNAL(triggered(bool)), this, SLOT(showItemProperties()) );
@@ -944,7 +944,7 @@ void KopeteContactListView::slotSettingsChanged()
 
 void KopeteContactListView::addToAddContactMenu( Kopete::Account* account )
 {
-	KAction *action = new KAction( KIcon( QIcon( account->accountIcon() ) ), account->accountLabel(), this );
+	QAction *action = new QAction( KIcon( QIcon( account->accountIcon() ) ), account->accountLabel(), this );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(addContact()) );
 	d->addContactAccountMap.insert( action, account );
 	d->actionAddContact->addAction( action );
@@ -952,13 +952,13 @@ void KopeteContactListView::addToAddContactMenu( Kopete::Account* account )
 
 void KopeteContactListView::removeToAddContactMenu( const Kopete::Account *account )
 {
-	QMapIterator<KAction *, Kopete::Account *> it( d->addContactAccountMap );
+	QMapIterator<QAction *, Kopete::Account *> it( d->addContactAccountMap );
 	while ( it.hasNext() )
 	{
 		it.next();
 		if ( it.value() == account )
 		{
-			KAction *action = it.key();
+			QAction *action = it.key();
 			d->addContactAccountMap.remove( action );
 			d->actionAddContact->removeAction( action );
 		}
@@ -972,7 +972,7 @@ void KopeteContactListView::addContact()
 
 	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
 	Kopete::Group *group = groupFromIndex( currentIndex() );
-	Kopete::Account *account = d->addContactAccountMap.value( dynamic_cast<KAction*>( sender() ) );
+	Kopete::Account *account = d->addContactAccountMap.value( dynamic_cast<QAction *>( sender() ) );
 
 	if ( (metaContact && metaContact->isTemporary() ) ||
 	     (group && group->type() == Kopete::Group::Temporary) )

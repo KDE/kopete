@@ -364,7 +364,7 @@ void KopeteChatWindow::initActions(void)
 
 	createStandardStatusBarAction();
 
-	chatSend = new KAction( KIcon("mail-send"), i18n( "&Send Message" ), coll );
+	chatSend = new QAction( KIcon("mail-send"), i18n( "&Send Message" ), coll );
 	//Recuperate the qAction for later
 	sendMessage = coll->addAction( "chat_send", chatSend );
 	//Set up change signal in case the user changer the shortcut later
@@ -378,32 +378,32 @@ void KopeteChatWindow::initActions(void)
 	chatSend->setShortcut( chatSendShortcut );
 	chatSend->setEnabled( false );
 
-	chatSendFile = new KAction( KIcon("mail-attachment"), i18n( "Send File..." ), coll );
+	chatSendFile = new QAction( KIcon("mail-attachment"), i18n( "Send File..." ), coll );
 	coll->addAction( "chat_send_file", chatSendFile );
 	connect( chatSendFile, SIGNAL(triggered(bool)), SLOT(slotSendFile()) );
 	chatSendFile->setEnabled( false );
 
 	KStandardAction::save ( this, SLOT(slotChatSave()), coll );
 	KStandardAction::print ( this, SLOT(slotChatPrint()), coll );
-	KAction* quitAction = KStandardAction::quit ( this, SLOT(close()), coll );
+	QAction * quitAction = KStandardAction::quit ( this, SLOT(close()), coll );
 	quitAction->setText( i18n("Close All Chats") );
 
 	tabClose = KStandardAction::close ( this, SLOT(slotChatClosed()), coll );
 	coll->addAction( "tabs_close", tabClose );
 
-	tabActive=new KAction( i18n( "&Activate Next Active Tab" ), coll );
+	tabActive=new QAction( i18n( "&Activate Next Active Tab" ), coll );
 	coll->addAction( "tabs_active", tabActive );
 // 	tabActive->setShortcut( KStandardShortcut::tabNext() );
 	tabActive->setEnabled( false );
 	connect( tabActive, SIGNAL(triggered(bool)), this, SLOT(slotNextActiveTab()) );
 
-	tabRight=new KAction( i18n( "&Activate Next Tab" ), coll );
+	tabRight=new QAction( i18n( "&Activate Next Tab" ), coll );
 	coll->addAction( "tabs_right", tabRight );
 	tabRight->setShortcut( KStandardShortcut::tabNext() );
 	tabRight->setEnabled( false );
 	connect( tabRight, SIGNAL(triggered(bool)), this, SLOT(slotNextTab()) );
 
-	tabLeft=new KAction( i18n( "&Activate Previous Tab" ), coll );
+	tabLeft=new QAction( i18n( "&Activate Previous Tab" ), coll );
 	coll->addAction( "tabs_left", tabLeft );
 	tabLeft->setShortcut( KStandardShortcut::tabPrev() );
 	tabLeft->setEnabled( false );
@@ -411,16 +411,16 @@ void KopeteChatWindow::initActions(void)
 
 	// This action exists mostly so that the shortcut is configurable.
 	// The actual "slot" is the eventFilter.
-	nickComplete = new KAction( i18n( "Nic&k Completion" ), coll );
+	nickComplete = new QAction( i18n( "Nic&k Completion" ), coll );
 	coll->addAction( "nick_complete", nickComplete );
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
-	tabDetach = new KAction( KIcon("tab-detach"), i18n( "&Detach Chat" ), coll );
+	tabDetach = new QAction( KIcon("tab-detach"), i18n( "&Detach Chat" ), coll );
 	coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
 	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT(slotDetachChat()));
 
-	tabCloseAllOthers = new KAction( KIcon("tab-close"), i18n( "Close &All But This Tab" ), coll );
+	tabCloseAllOthers = new QAction( KIcon("tab-close"), i18n( "Close &All But This Tab" ), coll );
 	coll->addAction( "tabs_close_others", tabCloseAllOthers );
 	tabCloseAllOthers->setEnabled( true );
 	connect( tabCloseAllOthers, SIGNAL(triggered(bool)), this, SLOT(slotCloseAllOtherTabs()));
@@ -443,14 +443,14 @@ void KopeteChatWindow::initActions(void)
 	KStandardAction::copy( this, SLOT(slotCopy()), coll);
 	KStandardAction::paste( this, SLOT(slotPaste()), coll);
 
-	KAction* action;
+	QAction * action;
 
-	historyUp = new KAction( i18n( "Previous History" ), coll );
+	historyUp = new QAction( i18n( "Previous History" ), coll );
 	coll->addAction( "history_up", historyUp );
 	historyUp->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Up) );
 	connect( historyUp, SIGNAL(triggered(bool)), this, SLOT(slotHistoryUp()) );
 
-	historyDown = new KAction( i18n( "Next History" ), coll );
+	historyDown = new QAction( i18n( "Next History" ), coll );
 	coll->addAction( "history_down", historyDown );
 	historyDown->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_Down) );
 	connect( historyDown, SIGNAL(triggered(bool)), this, SLOT(slotHistoryDown()) );
@@ -501,7 +501,7 @@ void KopeteChatWindow::initActions(void)
 	if ( animIcon )
 		animIcon->setPaused(true);
 
-	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );
+	QAction *animAction = new QAction( i18n("Toolbar Animation"), coll );
         coll->addAction( "toolbar_animation", animAction );
 	animAction->setDefaultWidget( anim );
 
