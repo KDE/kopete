@@ -35,7 +35,7 @@ Token * TokenFactory::createToken(const QString & text, const QString & iconName
 Token::Token( const QString &name, const QString &iconName, int value, QWidget *parent )
     : QWidget( parent )
     , m_name( name )
-    , m_icon( KIcon( iconName ) )
+    , m_icon( QIcon::fromTheme( iconName ) )
     , m_iconName( iconName )
     , m_value( value )
 {

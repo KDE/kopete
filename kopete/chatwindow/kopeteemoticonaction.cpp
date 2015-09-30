@@ -28,7 +28,7 @@
 #include <kmenu.h>
 #include <ktoolbar.h>
 #include <kauthorized.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kemoticons.h>
 
 #include "emoticonselector.h"
@@ -84,9 +84,9 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 	setMenu( d->m_popup );
 
 	if ( icon.isNull() )
-		setIcon( KIcon("emoticon") );
+		setIcon( QIcon::fromTheme("emoticon") );
 	else
-		setIcon( KIcon( icon ) );
+		setIcon( QIcon::fromTheme( icon ) );
 
 	setShortcutConfigurable( false );
 	connect( d->emoticonSelector, SIGNAL(itemSelected(QString)),

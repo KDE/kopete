@@ -55,7 +55,7 @@
 #include <kxmlguifactory.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
-#include <kicon.h>
+#include <QIcon>
 
 #include <qlabel.h>
 #include <qlayout.h>
@@ -215,7 +215,7 @@ void KopeteEmailWindow::initActions(void)
 {
 	KActionCollection *coll = actionCollection();
 
-	d->chatSend = new QAction( KIcon("mail-send"), i18n( "&Send Message" ), this );
+	d->chatSend = new QAction( QIcon::fromTheme("mail-send"), i18n( "&Send Message" ), this );
         coll->addAction( "chat_send", d->chatSend );
 	//Default to 'Return' for sending messages
 	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
@@ -231,15 +231,15 @@ void KopeteEmailWindow::initActions(void)
 	// Disable it for now
 #if 0
 	QAction * action;
-	action = new QAction( KIcon("preferences-desktop-font"), i18n( "&Set Font..." ), coll );
+	action = new QAction( QIcon::fromTheme("preferences-desktop-font"), i18n( "&Set Font..." ), coll );
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), d->editPart, SLOT(setFont()) );
 
-	action = new QAction( KIcon("format-stroke-color"), i18n( "Set Text &Color..." ), coll );
+	action = new QAction( QIcon::fromTheme("format-stroke-color"), i18n( "Set Text &Color..." ), coll );
         coll->addAction( "format_color", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setForegroundColorColor()) );
 
-	action = new QAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
+	action = new QAction( QIcon::fromTheme("format-fill-color"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBackgroundColorColor()) );
 #endif

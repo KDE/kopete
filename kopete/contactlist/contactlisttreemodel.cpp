@@ -24,7 +24,7 @@
 #include <QMimeData>
 #include <QDomDocument>
 
-#include <KIcon>
+#include <QIcon>
 #include <KLocale>
 
 #include "kopeteaccount.h"
@@ -292,14 +292,14 @@ QVariant ContactListTreeModel::data ( const QModelIndex & index, int role ) cons
 				if ( g->useCustomIcon() )
 					return g->icon();
 				else
-					return KIcon( KOPETE_GROUP_DEFAULT_OPEN_ICON );
+					return QIcon::fromTheme( KOPETE_GROUP_DEFAULT_OPEN_ICON );
 			}
 			else
 			{
 				if ( g->useCustomIcon() )
 					return g->icon();
 				else
-					return KIcon( KOPETE_GROUP_DEFAULT_CLOSED_ICON );
+					return QIcon::fromTheme( KOPETE_GROUP_DEFAULT_CLOSED_ICON );
 			}
 			break;
 		case Kopete::Items::TypeRole:

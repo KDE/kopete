@@ -36,7 +36,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kicon.h>
+#include <QIcon>
 #include <QAction>
 #include <kmenu.h>
 #include <kcolordialog.h>
@@ -160,7 +160,7 @@ void KopeteAccountConfig::load()
 		// Insert the item after the previous one
 		
 		identityItem->setText( 0, i->label() );
-		identityItem->setIcon( 0, KIcon( i->customIcon()) );
+		identityItem->setIcon( 0, QIcon::fromTheme( i->customIcon()) );
 		
 		identityItem->setExpanded( true );
 		
@@ -546,7 +546,7 @@ void KopeteAccountConfig::configureActions()
 {
 	// Add account
 	m_actionAccountAdd = new QAction( i18n( "&Add Account..." ), this );
-	m_actionAccountAdd->setIcon( KIcon("list-add") );
+	m_actionAccountAdd->setIcon( QIcon::fromTheme("list-add") );
 	mButtonAccountAdd->setIcon( m_actionAccountAdd->icon() );
 	mButtonAccountAdd->setText( m_actionAccountAdd->text() );
 	connect( m_actionAccountAdd, SIGNAL(triggered(bool)), this, SLOT(slotAddAccount()) );
@@ -554,7 +554,7 @@ void KopeteAccountConfig::configureActions()
 
 	// Modify account
 	m_actionAccountModify = new QAction( i18n( "&Modify Account..." ), this );
-	m_actionAccountModify->setIcon( KIcon("configure") );
+	m_actionAccountModify->setIcon( QIcon::fromTheme("configure") );
 	mButtonAccountModify->setIcon( m_actionAccountModify->icon() );
 	mButtonAccountModify->setText( m_actionAccountModify->text() );
 	connect( m_actionAccountModify, SIGNAL(triggered(bool)), this, SLOT(slotModify()));
@@ -562,7 +562,7 @@ void KopeteAccountConfig::configureActions()
 
 	// Remove account
 	m_actionAccountRemove = new QAction( i18n( "&Remove Account" ), this );
-	m_actionAccountRemove->setIcon( KIcon("edit-delete") );
+	m_actionAccountRemove->setIcon( QIcon::fromTheme("edit-delete") );
 	m_actionAccountRemove->setShortcut(QKeySequence(Qt::Key_Delete));
 	mButtonAccountRemove->setIcon( m_actionAccountRemove->icon() );
 	mButtonAccountRemove->setText( m_actionAccountRemove->text() );
@@ -583,7 +583,7 @@ void KopeteAccountConfig::configureActions()
 
 	// Add identity
 	m_actionIdentityAdd = new QAction( i18n( "Add &Identity..." ), this );
-	m_actionIdentityAdd->setIcon( KIcon("list-add") );
+	m_actionIdentityAdd->setIcon( QIcon::fromTheme("list-add") );
 	mButtonIdentityAdd->setIcon( m_actionIdentityAdd->icon() );
 	mButtonIdentityAdd->setText( m_actionIdentityAdd->text() );
 	connect( m_actionIdentityAdd, SIGNAL(triggered(bool)), this, SLOT(slotAddIdentity()) );
@@ -591,7 +591,7 @@ void KopeteAccountConfig::configureActions()
 
 	// Copy identity
 	m_actionIdentityCopy = new QAction( i18n( "&Copy Identity..." ), this );
-	m_actionIdentityCopy->setIcon( KIcon("edit-copy") );
+	m_actionIdentityCopy->setIcon( QIcon::fromTheme("edit-copy") );
 	mButtonIdentityCopy->setIcon( m_actionIdentityCopy->icon() );
 	mButtonIdentityCopy->setText( m_actionIdentityCopy->text() );
 	connect( m_actionIdentityCopy, SIGNAL(triggered(bool)), this, SLOT(slotCopyIdentity()) );
@@ -599,7 +599,7 @@ void KopeteAccountConfig::configureActions()
 
 	// Modify identity
 	m_actionIdentityModify = new QAction( i18n( "M&odify Identity..." ), this );
-	m_actionIdentityModify->setIcon( KIcon("configure") );
+	m_actionIdentityModify->setIcon( QIcon::fromTheme("configure") );
 	mButtonIdentityModify->setIcon( m_actionIdentityModify->icon() );
 	mButtonIdentityModify->setText( m_actionIdentityModify->text() );
 	connect( m_actionIdentityModify, SIGNAL(triggered(bool)), this, SLOT(slotModify()) );
@@ -607,7 +607,7 @@ void KopeteAccountConfig::configureActions()
 
 	// Remove identity
 	m_actionIdentityRemove = new QAction( i18n( "R&emove Identity" ), this );
-	m_actionIdentityRemove->setIcon( KIcon("edit-delete") );
+	m_actionIdentityRemove->setIcon( QIcon::fromTheme("edit-delete") );
 	mButtonIdentityRemove->setIcon( m_actionIdentityRemove->icon() );
 	mButtonIdentityRemove->setText( m_actionIdentityRemove->text() );
 	connect( m_actionIdentityRemove, SIGNAL(triggered(bool)), this, SLOT(removeIdentity()) );

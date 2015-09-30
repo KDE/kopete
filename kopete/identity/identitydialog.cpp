@@ -21,7 +21,7 @@
 #include "ui_identitygeneral.h"
 #include "ui_identitydetailed.h"
 
-#include <KIcon>
+#include <QIcon>
 #include <kopeteidentity.h>
 #include <avatardialog.h>
 
@@ -49,8 +49,8 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	// add the general page
 	QWidget *w = new QWidget(this);
 	d->general.setupUi(w);
-	d->general.selectPhoto->setIcon(KIcon("view-preview"));
-	d->general.clearPhoto->setIcon(KIcon("edit-clear-locationbar-rtl"));
+	d->general.selectPhoto->setIcon(QIcon::fromTheme("view-preview"));
+	d->general.clearPhoto->setIcon(QIcon::fromTheme("edit-clear-locationbar-rtl"));
 	d->general.photo->setText( QString("<qt><a href=\"selectPhoto\">"
 										"<p align=\"center\">%1</p>"
 										"</a></qt>").arg( i18n("No Photo") ));
@@ -68,7 +68,7 @@ IdentityDialog::IdentityDialog(Kopete::Identity *identity, QWidget *parent)
 	d->detailed.setupUi(w);
 	addWidget(w, i18n("Detailed Information"));
 
-	setIcon(KIcon(d->identity->customIcon()));
+	setIcon(QIcon::fromTheme(d->identity->customIcon()));
 
 	load();
 }

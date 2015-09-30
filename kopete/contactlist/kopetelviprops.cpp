@@ -208,7 +208,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 	connect( ui_mainWidget->cmbAccountPhoto, SIGNAL(activated(int)), SLOT(slotEnableAndDisableWidgets()));
 	
 
-	ui_mainWidget->btnClearPhoto->setIcon( KIcon( (QApplication::layoutDirection() == Qt::RightToLeft) ? "edit-clear-locationbar-ltr" : "edit-clear-locationbar-rtl" ) );
+	ui_mainWidget->btnClearPhoto->setIcon( QIcon::fromTheme( (QApplication::layoutDirection() == Qt::RightToLeft) ? "edit-clear-locationbar-ltr" : "edit-clear-locationbar-rtl" ) );
 	connect( ui_mainWidget->btnClearPhoto, SIGNAL(clicked()), this, SLOT(slotClearPhotoClicked()) );
 	connect( ui_mainWidget->widAddresseeLink, SIGNAL(addresseeChanged(KABC::Addressee)), SLOT(slotAddresseeChanged(KABC::Addressee)) );
 	connect( ui_mainWidget->btnChoosePhoto, SIGNAL(clicked()), this, SLOT(slotSelectPhoto()));

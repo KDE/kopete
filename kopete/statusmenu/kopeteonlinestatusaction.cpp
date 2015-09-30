@@ -33,7 +33,7 @@ public:
 };
 
 OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent )
-	: QAction( KIcon(pix), text, parent) , d( new Private(status) )
+	: QAction( pix, text, parent) , d( new Private(status) )
 {
 	setShortcut( QKeySequence() );
 

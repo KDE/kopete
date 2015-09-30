@@ -44,7 +44,7 @@
 #include <kmenubar.h>
 #include <kconfig.h>
 #include <kmenu.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kiconloader.h>
 #include <kdebug.h>
 #include <kwindowsystem.h>
@@ -364,7 +364,7 @@ void KopeteChatWindow::initActions(void)
 
 	createStandardStatusBarAction();
 
-	chatSend = new QAction( KIcon("mail-send"), i18n( "&Send Message" ), coll );
+	chatSend = new QAction( QIcon::fromTheme("mail-send"), i18n( "&Send Message" ), coll );
 	//Recuperate the qAction for later
 	sendMessage = coll->addAction( "chat_send", chatSend );
 	//Set up change signal in case the user changer the shortcut later
@@ -378,7 +378,7 @@ void KopeteChatWindow::initActions(void)
 	chatSend->setShortcut( chatSendShortcut );
 	chatSend->setEnabled( false );
 
-	chatSendFile = new QAction( KIcon("mail-attachment"), i18n( "Send File..." ), coll );
+	chatSendFile = new QAction( QIcon::fromTheme("mail-attachment"), i18n( "Send File..." ), coll );
 	coll->addAction( "chat_send_file", chatSendFile );
 	connect( chatSendFile, SIGNAL(triggered(bool)), SLOT(slotSendFile()) );
 	chatSendFile->setEnabled( false );
@@ -415,17 +415,17 @@ void KopeteChatWindow::initActions(void)
 	coll->addAction( "nick_complete", nickComplete );
 	nickComplete->setShortcut( QKeySequence( Qt::Key_Tab ) );
 
-	tabDetach = new QAction( KIcon("tab-detach"), i18n( "&Detach Chat" ), coll );
+	tabDetach = new QAction( QIcon::fromTheme("tab-detach"), i18n( "&Detach Chat" ), coll );
 	coll->addAction( "tabs_detach", tabDetach );
 	tabDetach->setEnabled( false );
 	connect( tabDetach, SIGNAL(triggered(bool)), this, SLOT(slotDetachChat()));
 
-	tabCloseAllOthers = new QAction( KIcon("tab-close"), i18n( "Close &All But This Tab" ), coll );
+	tabCloseAllOthers = new QAction( QIcon::fromTheme("tab-close"), i18n( "Close &All But This Tab" ), coll );
 	coll->addAction( "tabs_close_others", tabCloseAllOthers );
 	tabCloseAllOthers->setEnabled( true );
 	connect( tabCloseAllOthers, SIGNAL(triggered(bool)), this, SLOT(slotCloseAllOtherTabs()));
 
-	actionDetachMenu = new KActionMenu( KIcon("tab-detach"), i18n( "&Move Tab to Window" ), coll );
+	actionDetachMenu = new KActionMenu( QIcon::fromTheme("tab-detach"), i18n( "&Move Tab to Window" ), coll );
 	coll->addAction( "tabs_detachmove", actionDetachMenu );
 	actionDetachMenu->setDelayed( false );
 
@@ -470,7 +470,7 @@ void KopeteChatWindow::initActions(void)
 	QAction *toggleParticipantsAction = m_participantsWidget->toggleViewAction( );
 	toggleParticipantsAction->setText( i18n( "Show Participants" ) );
 	toggleParticipantsAction->setIconText(i18n( "Participants" ));
-	toggleParticipantsAction->setIcon(KIcon( "system-users" ) );
+	toggleParticipantsAction->setIcon(QIcon::fromTheme( "system-users" ) );
 	coll->addAction ( "show_participants_widget", toggleParticipantsAction );
 
 	actionSmileyMenu = new KopeteEmoticonAction( coll );
@@ -708,7 +708,7 @@ void KopeteChatWindow::addTab( ChatView *view )
 			c=contact;
 	}
 	QIcon pluginIcon = c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c) :
-			KIcon( view->msgManager()->protocol()->pluginIcon() );
+			QIcon::fromTheme( view->msgManager()->protocol()->pluginIcon() );
 
 	view->setParent( m_tabBar );
 	view->setWindowFlags( 0 );
@@ -1031,12 +1031,12 @@ void KopeteChatWindow::slotUpdateCaptionIcons( ChatView *view )
 	if ( view == m_activeView )
  	{
 		setWindowIcon( c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
-				KIcon(view->msgManager()->protocol()->pluginIcon()));
+				QIcon::fromTheme(view->msgManager()->protocol()->pluginIcon()));
 	}
 
 	if ( m_tabBar )
 		m_tabBar->setTabIcon(m_tabBar->indexOf( view ), c ? view->msgManager()->contactOnlineStatus( c ).iconFor( c ) :
-		                                   KIcon( view->msgManager()->protocol()->pluginIcon() ) );
+		                                   QIcon::fromTheme( view->msgManager()->protocol()->pluginIcon() ) );
 }
 
 void KopeteChatWindow::slotChatClosed()
@@ -1117,7 +1117,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 		//FIXME: This number should be a config option
 		if( ++contactCount == 15 && contact != m_them.last() )
 		{
-			KActionMenu *moreMenu = new KActionMenu( KIcon("folder-open"), i18n("More..."), this);
+			KActionMenu *moreMenu = new KActionMenu( QIcon::fromTheme("folder-open"), i18n("More..."), this);
 			connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
 				moreMenu, SLOT(deleteLater()) );
 			contactsMenu->addAction( moreMenu );

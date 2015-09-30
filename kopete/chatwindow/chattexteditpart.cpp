@@ -37,7 +37,7 @@
 #include <kfontsizeaction.h>
 #include <kglobalsettings.h>
 #include <kcolorscheme.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kparts/genericfactory.h>
 #include <kstandardaction.h>
 #include <ktoggleaction.h>

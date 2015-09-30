@@ -173,9 +173,9 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 	connect(m_styleUi.btnGetStyles, SIGNAL(clicked()),
 		this, SLOT(slotGetChatStyles()));
 
-	m_styleUi.deleteButton->setIcon(KIcon("edit-delete"));
-	m_styleUi.installButton->setIcon(KIcon("document-import"));
-	m_styleUi.btnGetStyles->setIcon(KIcon("get-hot-new-stuff"));
+	m_styleUi.deleteButton->setIcon(QIcon::fromTheme("edit-delete"));
+	m_styleUi.installButton->setIcon(QIcon::fromTheme("document-import"));
+	m_styleUi.btnGetStyles->setIcon(QIcon::fromTheme("get-hot-new-stuff"));
 
 	// Show the available styles when the Manager has finish to load the styles.
 	connect(ChatWindowStyleManager::self(), SIGNAL(loadStylesFinished()), this, SLOT(slotLoadChatStyles()));

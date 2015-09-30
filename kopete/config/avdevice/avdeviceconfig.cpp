@@ -60,7 +60,7 @@ AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
 
 	// set a default image for the webcam widget, in case the user does not have a video device
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
-	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(QIcon::fromTheme("camera-web").pixmap(128,128));
 
 	mVideoDevicePool = NULL;
 }
@@ -134,7 +134,7 @@ void AVDeviceConfig::updateVideoDevicePool()
 
 		// set a default image for the webcam widget, in case the user does not have a video device
 		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
-		mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
+		mPrfsVideoDevice->mVideoImageLabel->setPixmap(QIcon::fromTheme("camera-web").pixmap(128,128));
 	}
 }
 
@@ -385,7 +385,7 @@ void AVDeviceConfig::deviceUnregistered( const QString & udi )
 	{
 		qtimer.stop();
 		mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
-		mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
+		mPrfsVideoDevice->mVideoImageLabel->setPixmap(QIcon::fromTheme("camera-web").pixmap(128,128));
 		capturingDevice_udi.clear();
 		clearControlGUIElements();
 		if (mVideoDevicePool->size())
@@ -413,7 +413,7 @@ void AVDeviceConfig::stopCapturing()
 	qtimer.stop();
 	mVideoDevicePool->stopCapturing();
 	mPrfsVideoDevice->mVideoImageLabel->setScaledContents(false);
-	mPrfsVideoDevice->mVideoImageLabel->setPixmap(KIcon("camera-web").pixmap(128,128));
+	mPrfsVideoDevice->mVideoImageLabel->setPixmap(QIcon::fromTheme("camera-web").pixmap(128,128));
 	capturingDevice_udi.clear();
 }
 

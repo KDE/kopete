@@ -78,7 +78,7 @@
 #include <kstandardaction.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
-#include <kicon.h>
+#include <QIcon>
 
 // Kopete includes
 #include "kopetecontact.h"
@@ -274,7 +274,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	d->saveAction = KStandardAction::saveAs( this, SLOT(save()), actionCollection() );
 	d->printAction = KStandardAction::print( this, SLOT(print()),actionCollection() );
 	d->closeAction = KStandardAction::close( this, SLOT(slotCloseView()),actionCollection() );
-	d->copyURLAction = new QAction( KIcon("edit-copy"), i18n( "Copy Link Address" ), actionCollection() );
+	d->copyURLAction = new QAction( QIcon::fromTheme("edit-copy"), i18n( "Copy Link Address" ), actionCollection() );
         actionCollection()->addAction( "editcopy", d->copyURLAction );
 	connect( d->copyURLAction, SIGNAL(triggered(bool)), this, SLOT(slotCopyURL()) );
 
