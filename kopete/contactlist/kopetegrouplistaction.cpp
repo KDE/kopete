@@ -23,7 +23,7 @@
 #include <kguiitem.h>
 #include <klocale.h>
 #include <kicon.h>
-#include <kaction.h>
+#include <QAction>
 #include <kcmultidialog.h>
 
 #include "kopetecontactlist.h"
@@ -60,7 +60,7 @@ void KopeteGroupListAction::slotUpdateList()
 
 	clear();
 
-	KAction* topLevelAction = addAction( Kopete::Group::topLevel()->displayName() );
+	QAction * topLevelAction = addAction( Kopete::Group::topLevel()->displayName() );
 	topLevelAction->setData( Kopete::Group::topLevel()->groupId() );
 
 	QAction* separator = new QAction( this );

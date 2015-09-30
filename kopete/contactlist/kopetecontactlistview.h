@@ -38,7 +38,7 @@
 #include <kopete_export.h>
 
 class KActionCollection;
-class KAction;
+class QAction;
 class KSelectAction;
 class KActionMenu;
 

@@ -24,7 +24,7 @@
 namespace Kopete {
 
 StatusAction::StatusAction( Status::Status *status, StatusRootAction* rootAction, QObject * parent )
-	: KAction( parent ), mStatus(status), mRootAction(rootAction)
+	: QAction( parent ), mStatus(status), mRootAction(rootAction)
 {
 	connect( this, SIGNAL(triggered(bool)), this, SLOT(triggered()) );
 	connect( mStatus, SIGNAL(changed()), this, SLOT(changed()) );

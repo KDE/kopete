@@ -18,7 +18,7 @@
 #ifndef KOPETEONLINESTATUSACTION_H
 #define KOPETEONLINESTATUSACTION_H
 
-#include <kaction.h>
+#include <QAction>
 
 namespace Kopete
 {
@@ -27,7 +27,7 @@ namespace Kopete
 /**
  * 
  */
-class OnlineStatusAction : public KAction
+class OnlineStatusAction : public QAction
 {
 	Q_OBJECT
   public:

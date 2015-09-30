@@ -16,7 +16,7 @@
 #ifndef KOPETESTATUSACTION_H
 #define KOPETESTATUSACTION_H
 
-#include <KAction>
+#include <QAction>
 
 namespace Kopete
 {
@@ -29,7 +29,7 @@ namespace Kopete
 /**
 	@author Roman Jarosz <kedgedev@centrum.cz>
 */
-class StatusAction : public KAction
+class StatusAction : public QAction
 {
 	Q_OBJECT
 public:

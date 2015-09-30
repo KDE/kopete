@@ -30,7 +30,7 @@
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <ktoolbarspaceraction.h>
 #include <kstandardaction.h>
 #include <kcolordialog.h>
@@ -95,7 +95,7 @@ public:
 	QSplitter *split;
 	ChatMessagePart *messagePart;
 	KopeteEmailWindow::WindowMode mode;
-	KAction *chatSend;
+	QAction *chatSend;
 	QLabel *anim;
 	QMovie animIcon;
 	QPixmap normalIcon;
@@ -215,7 +215,7 @@ void KopeteEmailWindow::initActions(void)
 {
 	KActionCollection *coll = actionCollection();
 
-	d->chatSend = new KAction( KIcon("mail-send"), i18n( "&Send Message" ), this );
+	d->chatSend = new QAction( KIcon("mail-send"), i18n( "&Send Message" ), this );
         coll->addAction( "chat_send", d->chatSend );
 	//Default to 'Return' for sending messages
 	d->chatSend->setShortcut( QKeySequence( Qt::Key_Return ) );
@@ -230,16 +230,16 @@ void KopeteEmailWindow::initActions(void)
 	// FIXME: This code is not working. Slots setFont(), setForegroundColorColor() and setBackgroundColorColor do not exist
 	// Disable it for now
 #if 0
-	KAction* action;
-	action = new KAction( KIcon("preferences-desktop-font"), i18n( "&Set Font..." ), coll );
+	QAction * action;
+	action = new QAction( KIcon("preferences-desktop-font"), i18n( "&Set Font..." ), coll );
         coll->addAction( "format_font", action );
 	connect( action, SIGNAL(triggered(bool)), d->editPart, SLOT(setFont()) );
 
-	action = new KAction( KIcon("format-stroke-color"), i18n( "Set Text &Color..." ), coll );
+	action = new QAction( KIcon("format-stroke-color"), i18n( "Set Text &Color..." ), coll );
         coll->addAction( "format_color", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setForegroundColorColor()) );
 
-	action = new KAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
+	action = new QAction( KIcon("format-fill-color"), i18n( "Set &Background Color..." ), coll );
         coll->addAction( "format_bgcolor", action );
 	connect( action, SIGNAL(triggered()), d->editPart, SLOT(setBackgroundColorColor()) );
 #endif
@@ -268,11 +268,11 @@ void KopeteEmailWindow::initActions(void)
 	d->anim->setMargin( 5 );
 	d->anim->setPixmap( d->normalIcon );
 
-	KAction *spacerAction = new KToolBarSpacerAction( this );
+	QAction *spacerAction = new KToolBarSpacerAction( this );
 	spacerAction->setText( i18n( "Spacer for Animation" ) );
 	coll->addAction( "toolbar_spacer", spacerAction );
 
-	KAction *animAction = new KAction( i18n("Toolbar Animation"), coll );
+	QAction *animAction = new QAction( i18n("Toolbar Animation"), coll );
 	coll->addAction( "toolbar_animation", animAction );
 	animAction->setDefaultWidget( d->anim );
 

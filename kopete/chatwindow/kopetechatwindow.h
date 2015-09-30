@@ -34,7 +34,7 @@
 
 #include <kopete_export.h>
 
-class KAction;
+class QAction;
 class KToggleAction;
 class KActionMenu;
 class KTemporaryFile;
@@ -148,20 +148,20 @@ private:
 	QMovie* animIcon;
 	QPixmap normalIcon;
 
-	KAction *chatSend;
-	KAction *chatSendFile;
-	KAction *historyUp;
-	KAction *historyDown;
-	KAction *nickComplete;
+	QAction *chatSend;
+	QAction *chatSendFile;
+	QAction *historyUp;
+	QAction *historyDown;
+	QAction *nickComplete;
 
 	KToggleAction *mStatusbarAction;
 
-	KAction *tabActive;
-	KAction *tabLeft;
-	KAction *tabRight;
-	KAction *tabDetach;
-	KAction *tabClose;
-	KAction *tabCloseAllOthers;
+	QAction *tabActive;
+	QAction *tabLeft;
+	QAction *tabRight;
+	QAction *tabDetach;
+	QAction *tabClose;
+	QAction *tabCloseAllOthers;
 
 	QAction *sendMessage;
 

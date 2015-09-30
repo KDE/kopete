@@ -20,7 +20,7 @@
 #include <QFont>
 #include <QMenu>
 
-#include <KAction>
+#include <QAction>
 #include <KLocale>
 
 #include "kopeteitemdelegate.h"
@@ -40,7 +40,7 @@ ContactListToken::ContactListToken( const QString &text, const QString &iconName
 
 void ContactListToken::fillMenu( QMenu * menu )
 {
-	KAction *optimalSizeAction = new KAction( i18n( "Optimal width" ), menu );
+	QAction *optimalSizeAction = new QAction( i18n( "Optimal width" ), menu );
 	optimalSizeAction->setObjectName( ActionOptimalSizeName );
 	optimalSizeAction->setCheckable( true );
 	optimalSizeAction->setChecked( m_optimalSize );
@@ -48,7 +48,7 @@ void ContactListToken::fillMenu( QMenu * menu )
 
 	menu->addSeparator();
 
-	KAction *smallAction = new KAction( KIcon( "format-font-size-less"), i18n( "Small" ), menu );
+	QAction *smallAction = new QAction( KIcon( "format-font-size-less"), i18n( "Small" ), menu );
 	smallAction->setObjectName( ActionSmallName );
 	smallAction->setCheckable( true );
 	smallAction->setChecked( m_small );

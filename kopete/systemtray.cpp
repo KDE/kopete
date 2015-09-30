@@ -23,7 +23,7 @@
 
 #include <kaboutdata.h>
 #include <kactioncollection.h>
-#include <kaction.h>
+#include <QAction>
 #include <kmenu.h>
 #include <klocale.h>
 #include <kdebug.h>
