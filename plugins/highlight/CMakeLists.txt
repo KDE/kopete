@@ -28,7 +28,7 @@ kde4_add_ui_files(kcm_kopete_highlight_PART_SRCS highlightprefsbase.ui )
 kde4_add_plugin(kcm_kopete_highlight ${kcm_kopete_highlight_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_highlight ${KDE4_KUTILS_LIBS}  ${KDE4_KNOTIFYCONFIG_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(kcm_kopete_highlight ${QT_QTXML_LIBRARY} ${KDE4_KUTILS_LIBS}  ${KDE4_KNOTIFYCONFIG_LIBS})
 
 install(TARGETS kcm_kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 
