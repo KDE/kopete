@@ -24,11 +24,11 @@
 
 #include "kopetecontactlistview.h"
 
+#include <QIcon>
 #include <QHeaderView>
 #include <QScrollBar>
 
 #include <KDebug>
-#include <QIcon>
 #include <KMenu>
 #include <KStandardAction>
 #include <KActionMenu>
@@ -37,6 +37,7 @@
 #include <KLocalizedString>
 #include <KInputDialog>
 #include <KMessageBox>
+#include <kmessagebox_queued.h>
 #include <KToolInvocation>
 #include <kxmlguifactory.h>
 #include <kabc/stdaddressbook.h>

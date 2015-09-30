@@ -70,6 +70,7 @@
 #include <khtmlview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 #include <kmenu.h>
 #include <krun.h>
 #include <kstringhandler.h>

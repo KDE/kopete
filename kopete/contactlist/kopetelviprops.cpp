@@ -42,6 +42,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 #include <kurlrequester.h>
 #include <kabc/addresseedialog.h>
 #include <kabc/stdaddressbook.h>
