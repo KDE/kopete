@@ -374,7 +374,7 @@ void KopeteChatWindow::initActions(void)
 	//Default to 'Return' and 'Enter' for sending messages
 	//'Return' is the key in the main part of the keyboard
 	//'Enter' is on the Numpad
-	KShortcut chatSendShortcut( QKeySequence((int)Qt::Key_Return), QKeySequence((int)Qt::Key_Enter) );
+	QKeySequence chatSendShortcut( QKeySequence((int)Qt::Key_Return), QKeySequence((int)Qt::Key_Enter) );
 	chatSend->setShortcut( chatSendShortcut );
 	chatSend->setEnabled( false );
 

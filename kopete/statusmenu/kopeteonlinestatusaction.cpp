@@ -35,7 +35,7 @@ public:
 OnlineStatusAction::OnlineStatusAction( const OnlineStatus& status, const QString &text, const QIcon &pix, QObject *parent )
 	: KAction( KIcon(pix), text, parent) , d( new Private(status) )
 {
-	setShortcut( KShortcut() );
+	setShortcut( QKeySequence() );
 
 	connect(this, SIGNAL(triggered(bool)), this, SLOT(slotActivated()));
 

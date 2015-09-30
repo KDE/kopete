@@ -458,7 +458,7 @@ void KopeteWindow::initActions()
 
 	d->actionShowAllOfflineEmpty = new KToggleAction ( KIcon ( "view-user-offline-kopete" ), i18n ( "Show &All" ), this );
 	actionCollection()->addAction ( "settings_show_all_offline_empty", d->actionShowAllOfflineEmpty );
-	d->actionShowAllOfflineEmpty->setShortcut ( KShortcut ( Qt::CTRL + Qt::Key_U ) );
+	d->actionShowAllOfflineEmpty->setShortcut ( QKeySequence ( Qt::CTRL + Qt::Key_U ) );
 	connect ( d->actionShowAllOfflineEmpty, SIGNAL (triggered(bool)), this, SLOT (slotToggleShowAllOfflineEmpty(bool)) );
 
 	d->actionShowOfflineUsers = new KToggleAction ( KIcon ( "view-user-offline-kopete" ), i18n ( "Show Offline &Users" ), this );
@@ -467,7 +467,7 @@ void KopeteWindow::initActions()
 
 	d->actionShowEmptyGroups = new KToggleAction ( KIcon ( "folder-grey" ), i18n ( "Show Empty &Groups" ), this );
 	actionCollection()->addAction ( "settings_show_empty_groups", d->actionShowEmptyGroups );
-	d->actionShowEmptyGroups->setShortcut ( KShortcut ( Qt::CTRL + Qt::Key_G ) );
+	d->actionShowEmptyGroups->setShortcut ( QKeySequence ( Qt::CTRL + Qt::Key_G ) );
 	connect ( d->actionShowEmptyGroups, SIGNAL (triggered(bool)), this, SLOT (slotToggleShowEmptyGroups()) );
 
     /* The following are highly misleading together with the checkbox, consider removing them - ahartmetz
@@ -490,19 +490,19 @@ void KopeteWindow::initActions()
 	KAction *globalReadMessage = new KAction ( i18n ( "Read Message" ), this );
 	actionCollection()->addAction ( "ReadMessage",  globalReadMessage );
 	connect ( globalReadMessage, SIGNAL (triggered(bool)), Kopete::ChatSessionManager::self(), SLOT (slotReadMessage()) );
-	globalReadMessage->setGlobalShortcut ( KShortcut ( Qt::CTRL + Qt::SHIFT + Qt::Key_I ) );
+	globalReadMessage->setGlobalShortcut ( QKeySequence ( Qt::CTRL + Qt::SHIFT + Qt::Key_I ) );
 	globalReadMessage->setWhatsThis ( i18n ( "Read the next pending message" ) );
 
 	KAction *globalShowContactList = new KAction ( i18n ( "Show/Hide Contact List" ), this );
 	actionCollection()->addAction ( "ShowContactList", globalShowContactList );
 	connect ( globalShowContactList, SIGNAL (triggered(bool)), this, SLOT (slotShowHide()) );
-	globalShowContactList->setGlobalShortcut ( KShortcut ( Qt::CTRL + Qt::ALT + Qt::Key_T ) );
+	globalShowContactList->setGlobalShortcut ( QKeySequence ( Qt::CTRL + Qt::ALT + Qt::Key_T ) );
 	globalShowContactList->setWhatsThis ( i18n ( "Show or hide the contact list" ) );
 
 	KAction *globalSetAway = new KAction ( i18n ( "Set Away/Back" ), this );
 	actionCollection()->addAction ( "Set_Away_Back",  globalSetAway );
 	connect ( globalSetAway, SIGNAL (triggered(bool)), this, SLOT (slotToggleAway()) );
-	globalSetAway->setGlobalShortcut ( KShortcut ( Qt::CTRL + Qt::SHIFT + Qt::Key_W ) );
+	globalSetAway->setGlobalShortcut ( QKeySequence ( Qt::CTRL + Qt::SHIFT + Qt::Key_W ) );
 }
 
 void KopeteWindow::slotShowHide()
