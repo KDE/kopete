@@ -50,9 +50,9 @@ InfoEventWidget::InfoEventWidget(QWidget *parent)
 
 	d->ui.setupUi(this);
 	static_cast<KSqueezedTextLabel*>(d->ui.lblTitle)->setTextElideMode( Qt::ElideRight );
-	d->ui.buttonPrev->setIcon( KIcon( "arrow-left" ) );
-	d->ui.buttonNext->setIcon( KIcon( "arrow-right" ) );
-	d->ui.buttonClose->setIcon( KIcon( "window-close" ) );
+	d->ui.buttonPrev->setIcon( QIcon::fromTheme( "arrow-left" ) );
+	d->ui.buttonNext->setIcon( QIcon::fromTheme( "arrow-right" ) );
+	d->ui.buttonClose->setIcon( QIcon::fromTheme( "window-close" ) );
 	d->ui.lblInfo->setTextInteractionFlags(Qt::TextSelectableByMouse);
 	QWidget::setVisible( false );
 

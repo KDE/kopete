@@ -22,7 +22,7 @@
 #include <kdebug.h>
 #include <kguiitem.h>
 #include <klocale.h>
-#include <kicon.h>
+#include <QIcon>
 #include <QAction>
 #include <kcmultidialog.h>
 
@@ -31,7 +31,7 @@
 
 KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const QKeySequence &cut, const QObject *receiver,
                                               const char *slot, QObject* parent )
-: KSelectAction( KIcon(pix), text, parent )
+: KSelectAction( QIcon::fromTheme(pix), text, parent )
 {
 	setShortcut(cut);
 	if( receiver && slot )

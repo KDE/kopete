@@ -19,7 +19,7 @@
 #ifndef AMAROK_TOKEN_H
 #define AMAROK_TOKEN_H
 
-#include <KIcon>
+#include <QIcon>
 #include <QWidget>
 #include <QLabel>
 #include <QPixmap>

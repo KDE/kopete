@@ -48,7 +48,7 @@ void ContactListToken::fillMenu( QMenu * menu )
 
 	menu->addSeparator();
 
-	QAction *smallAction = new QAction( KIcon( "format-font-size-less"), i18n( "Small" ), menu );
+	QAction *smallAction = new QAction( QIcon::fromTheme( "format-font-size-less"), i18n( "Small" ), menu );
 	smallAction->setObjectName( ActionSmallName );
 	smallAction->setCheckable( true );
 	smallAction->setChecked( m_small );

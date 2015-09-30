@@ -21,7 +21,7 @@
 #include <QHeaderView>
 #include <QMap>
 #include <QPointer>
-#include <KIcon>
+#include <QIcon>
 #include <KMessageBox>
 
 #include "kopeteidentity.h"
@@ -55,7 +55,7 @@ AccountIdentityDialog::AccountIdentityDialog( QWidget *parent )
 	setButtons(KDialog::Ok | KDialog::Cancel);
 	d->ui.setupUi(mainWidget());
 	d->ui.identityList->setColumnCount( 1 );
-	d->ui.title->setPixmap(KIcon("identity").pixmap(22,22), KTitleWidget::ImageRight);
+	d->ui.title->setPixmap(QIcon::fromTheme("identity").pixmap(22,22), KTitleWidget::ImageRight);
 
 	QHeaderView *header = d->ui.identityList->header(); 
 	header->setVisible(false);
@@ -115,7 +115,7 @@ void AccountIdentityDialog::slotLoadIdentities()
 			continue;
 
 		QTreeWidgetItem *identityItem = new QTreeWidgetItem(d->ui.identityList);
-		identityItem->setIcon(0, KIcon(ident->customIcon()));
+		identityItem->setIcon(0, QIcon::fromTheme(ident->customIcon()));
 		identityItem->setText(0, ident->label());
 		d->identityItems.insert(identityItem, ident);
 		if (ident == d->currentIdentity)

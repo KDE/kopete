@@ -172,7 +172,7 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 
     if (!d->checkSpelling)
     {
-        d->checkSpelling = new KToggleAction(KIcon("tools-check-spelling"), i18n("Automatic Spell Checking"), actionCollection);
+        d->checkSpelling = new KToggleAction(QIcon::fromTheme("tools-check-spelling"), i18n("Automatic Spell Checking"), actionCollection);
         actionCollection->addAction("enable_auto_spell_check", d->checkSpelling);
         d->checkSpelling->setChecked(true);
         connect(d->checkSpelling, SIGNAL(toggled(bool)), this, SLOT(slotCheckSpellingChanged(bool)));
@@ -181,7 +181,7 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
     bool richTextSupport = (getProtocolRichTextSupport() != KopeteRichTextWidget::DisableRichText);
     if (!d->toggleRichText && richTextSupport)
     {
-        d->toggleRichText = new KToggleAction(KIcon("draw-freehand"), i18n("Enable &Rich Text"), actionCollection);
+        d->toggleRichText = new KToggleAction(QIcon::fromTheme("draw-freehand"), i18n("Enable &Rich Text"), actionCollection);
         actionCollection->addAction("enable_richtext", d->toggleRichText);
         d->toggleRichText->setChecked(isRichTextEnabled());
         connect(d->toggleRichText, SIGNAL(toggled(bool)), this, SLOT(setRichTextEnabled(bool)));
@@ -194,7 +194,7 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 
     if (!d->reset && isRichTextEnabled())
     {
-        d->reset = new QAction(KIcon("format-stroke-color"), i18n("Reset Font And Color"), actionCollection);
+        d->reset = new QAction(QIcon::fromTheme("format-stroke-color"), i18n("Reset Font And Color"), actionCollection);
         actionCollection->addAction("format_font_and_color_reset", d->reset);
         connect(d->reset, SIGNAL(triggered(bool)), this, SLOT(slotResetFontAndColor()));
     }

@@ -40,7 +40,7 @@ void StatusAction::init()
 	}
 	else
 	{
-		this->setIcon( KIcon(mRootAction->onlineStatus().iconFor( mRootAction->account() )) );
+		this->setIcon( mRootAction->onlineStatus().iconFor( mRootAction->account() ) );
 		this->setText( mStatus->title() );
 	}
 	

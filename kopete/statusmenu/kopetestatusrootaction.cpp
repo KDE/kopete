@@ -121,7 +121,7 @@ void StatusRootAction::createAccountStatusActions( Account *account , KActionMen
 			{
 				if( status.options() & OnlineStatusManager::HasStatusMessage )
 				{
-					KActionMenu *actionMenu = new KActionMenu( KIcon(status.iconFor(account)), status.caption(), 0 );
+					KActionMenu *actionMenu = new KActionMenu( status.iconFor(account), status.caption(), 0 );
 					action = actionMenu;
 
 					// Will be automatically deleted when the actionMenu is deleted.

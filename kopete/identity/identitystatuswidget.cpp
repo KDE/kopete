@@ -21,7 +21,7 @@
 #include "ui_identitystatusbase.h"
 #include "addaccountwizard.h"
 
-#include <KIcon>
+#include <QIcon>
 #include <KMenu>
 #include <KActionMenu>
 #include <QTimeLine>
@@ -195,7 +195,7 @@ void IdentityStatusWidget::load()
 		d->ui.photo->setIcon( QIcon( d->photoPath ) );
 	} else {
 		d->photoPath.clear();
-		d->ui.photo->setIcon( KIcon( "user-identity" ) );
+		d->ui.photo->setIcon( QIcon::fromTheme( "user-identity" ) );
 	}
 
 	d->ui.identityName->setText(d->identity->label());
@@ -204,7 +204,7 @@ void IdentityStatusWidget::load()
 		addAccountItem( a );
 	}
 	if ( d->identity->accounts().isEmpty() ) {
-		new QListWidgetItem( KIcon("configure" ), i18nc("Button to open account configuration widget", "Click to add an account" ), d->ui.accounts );
+		new QListWidgetItem( QIcon::fromTheme("configure" ), i18nc("Button to open account configuration widget", "Click to add an account" ), d->ui.accounts );
 	}
 	resizeAccountListWidget();
 }
@@ -240,7 +240,7 @@ void IdentityStatusWidget::slotAccountUnregistered( const Kopete::Account *accou
 	delete item;
 
 	if ( d->identity && d->identity->accounts().isEmpty() ) {
-		new QListWidgetItem( KIcon("configure" ), i18nc("Button to open account configuration widget", "Click to add an account" ), d->ui.accounts );
+		new QListWidgetItem( QIcon::fromTheme("configure" ), i18nc("Button to open account configuration widget", "Click to add an account" ), d->ui.accounts );
 	}
 	resizeAccountListWidget();
 }

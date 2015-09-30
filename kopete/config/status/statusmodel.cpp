@@ -16,7 +16,7 @@
 #include "statusmodel.h"
 
 #include <klocale.h>
-#include <kicon.h>
+#include <QIcon>
 
 #include <QMimeData>
 #include <QtXml/QDomDocument>

@@ -28,7 +28,7 @@
 #include <QScrollBar>
 
 #include <KDebug>
-#include <KIcon>
+#include <QIcon>
 #include <KMenu>
 #include <KStandardAction>
 #include <KActionMenu>
@@ -157,7 +157,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 
 	QAction *actionCreateNewGroup = new QAction( i18n( "Create New Group..." ), ac );
-	actionCreateNewGroup->setIcon( KIcon( "user-group-new" ) );
+	actionCreateNewGroup->setIcon( QIcon::fromTheme( "user-group-new" ) );
 	connect( actionCreateNewGroup, SIGNAL(triggered(bool)), this, SLOT(addGroup()) );
 	ac->addAction( "AddGroup", actionCreateNewGroup );
 
@@ -173,18 +173,18 @@ void KopeteContactListView::initActions( KActionCollection *ac )
                                                 QKeySequence(), this, SLOT(copyToGroup()), ac );
 	ac->addAction( "contactCopy", d->actionCopy );
 
-	d->actionMakeMetaContact = new QAction(KIcon("list-add-user"), i18n("Merge Meta Contacts"), ac);
+	d->actionMakeMetaContact = new QAction(QIcon::fromTheme("list-add-user"), i18n("Merge Meta Contacts"), ac);
 	ac->addAction( "makeMetaContact", d->actionMakeMetaContact );
 	connect (d->actionMakeMetaContact, SIGNAL(triggered(bool)), this, SLOT(mergeMetaContact()));
 
 	d->actionRemove = KopeteStdAction::deleteContact( this, SLOT(removeGroupOrMetaContact()), ac );
 	ac->addAction( "contactRemove", d->actionRemove );
 
-	d->actionSendEmail = new QAction( KIcon("mail-send"), i18n( "Send Email..." ), ac );
+	d->actionSendEmail = new QAction( QIcon::fromTheme("mail-send"), i18n( "Send Email..." ), ac );
 	ac->addAction( "contactSendEmail", d->actionSendEmail );
 	connect( d->actionSendEmail, SIGNAL(triggered(bool)), this, SLOT(sendEmail()) );
 
-	d->actionRename = new QAction( KIcon("edit-rename"), i18nc( "verb, rename a contact", "Rename" ), ac );
+	d->actionRename = new QAction( QIcon::fromTheme("edit-rename"), i18nc( "verb, rename a contact", "Rename" ), ac );
 	d->actionRename->setShortcut( QKeySequence(Qt::Key_F2) );
 	ac->addAction( "contactRename", d->actionRename );
 	connect( d->actionRename, SIGNAL(triggered(bool)), this, SLOT(rename()) );
@@ -192,11 +192,11 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	d->actionSendFile = KopeteStdAction::sendFile( this, SLOT(sendFile()), ac );
 	ac->addAction( "contactSendFile", d->actionSendFile );
 
-	d->actionAddContact = new KActionMenu( KIcon( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
+	d->actionAddContact = new KActionMenu( QIcon::fromTheme( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
 	ac->addAction( "contactAddContact", d->actionAddContact );
 	d->actionAddContact->menu()->addTitle( i18n("Select Account") );
 
-	d->actionAddTemporaryContact = new QAction( KIcon("list-add-user"), i18n( "Add to Your Contact List" ), ac );
+	d->actionAddTemporaryContact = new QAction( QIcon::fromTheme("list-add-user"), i18n( "Add to Your Contact List" ), ac );
 	ac->addAction( "contactAddTemporaryContact", d->actionAddTemporaryContact );
 	connect( d->actionAddTemporaryContact, SIGNAL(triggered(bool)), this, SLOT(addTemporaryContact()) );
 
@@ -207,7 +207,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( Kopete::AccountManager::self(), SIGNAL(accountUnregistered(const Kopete::Account*)),
 			this, SLOT(removeToAddContactMenu(const Kopete::Account*)) );
 
-	d->actionProperties = new QAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
+	d->actionProperties = new QAction( QIcon::fromTheme("user-properties"), i18n( "&Properties" ), ac );
 	ac->addAction( "contactProperties", d->actionProperties );
 	d->actionProperties->setShortcut( QKeySequence(Qt::Key_Alt + Qt::Key_Return) );
 	connect( d->actionProperties, SIGNAL(triggered(bool)), this, SLOT(showItemProperties()) );
@@ -944,7 +944,7 @@ void KopeteContactListView::slotSettingsChanged()
 
 void KopeteContactListView::addToAddContactMenu( Kopete::Account* account )
 {
-	QAction *action = new QAction( KIcon( QIcon( account->accountIcon() ) ), account->accountLabel(), this );
+	QAction *action = new QAction( QIcon( account->accountIcon() ) , account->accountLabel(), this );
 	connect( action, SIGNAL(triggered(bool)), this, SLOT(addContact()) );
 	d->addContactAccountMap.insert( action, account );
 	d->actionAddContact->addAction( action );
