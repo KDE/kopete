@@ -28,7 +28,7 @@ class KopeteGroupListAction : public KSelectAction
 	Q_OBJECT
 
 public:
-	KopeteGroupListAction( const QString &, const QString &, const KShortcut &,
+	KopeteGroupListAction( const QString &, const QString &, const QKeySequence &,
                                const QObject *, const char *, QObject* );
 	~KopeteGroupListAction();
 

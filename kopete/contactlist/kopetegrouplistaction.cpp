@@ -29,7 +29,7 @@
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 
-KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const KShortcut &cut, const QObject *receiver,
+KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const QKeySequence &cut, const QObject *receiver,
                                               const char *slot, QObject* parent )
 : KSelectAction( KIcon(pix), text, parent )
 {

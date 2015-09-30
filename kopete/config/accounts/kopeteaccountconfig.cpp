@@ -563,7 +563,7 @@ void KopeteAccountConfig::configureActions()
 	// Remove account
 	m_actionAccountRemove = new KAction( i18n( "&Remove Account" ), this );
 	m_actionAccountRemove->setIcon( KIcon("edit-delete") );
-	m_actionAccountRemove->setShortcut(KShortcut(Qt::Key_Delete));
+	m_actionAccountRemove->setShortcut(QKeySequence(Qt::Key_Delete));
 	mButtonAccountRemove->setIcon( m_actionAccountRemove->icon() );
 	mButtonAccountRemove->setText( m_actionAccountRemove->text() );
 	connect( m_actionAccountRemove, SIGNAL(triggered(bool)), this, SLOT(removeAccount()) );

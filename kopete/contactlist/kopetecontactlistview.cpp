@@ -167,10 +167,10 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	ac->addAction( "contactStartChat", d->actionStartChat );
 
 	d->actionMove = new KopeteGroupListAction( i18n( "&Move To" ), QLatin1String( "edit-cut" ),
-                                                KShortcut(), this, SLOT(moveToGroup()), ac );
+                                                QKeySequence(), this, SLOT(moveToGroup()), ac );
 	ac->addAction( "contactMove", d->actionMove );
 	d->actionCopy = new KopeteGroupListAction( i18n( "&Copy To" ), QLatin1String( "edit-copy" ),
-                                                KShortcut(), this, SLOT(copyToGroup()), ac );
+                                                QKeySequence(), this, SLOT(copyToGroup()), ac );
 	ac->addAction( "contactCopy", d->actionCopy );
 
 	d->actionMakeMetaContact = new KAction(KIcon("list-add-user"), i18n("Merge Meta Contacts"), ac);
@@ -185,7 +185,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( d->actionSendEmail, SIGNAL(triggered(bool)), this, SLOT(sendEmail()) );
 
 	d->actionRename = new KAction( KIcon("edit-rename"), i18nc( "verb, rename a contact", "Rename" ), ac );
-	d->actionRename->setShortcut( KShortcut(Qt::Key_F2) );
+	d->actionRename->setShortcut( QKeySequence(Qt::Key_F2) );
 	ac->addAction( "contactRename", d->actionRename );
 	connect( d->actionRename, SIGNAL(triggered(bool)), this, SLOT(rename()) );
 
@@ -209,7 +209,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	d->actionProperties = new KAction( KIcon("user-properties"), i18n( "&Properties" ), ac );
 	ac->addAction( "contactProperties", d->actionProperties );
-	d->actionProperties->setShortcut( KShortcut(Qt::Key_Alt + Qt::Key_Return) );
+	d->actionProperties->setShortcut( QKeySequence(Qt::Key_Alt + Qt::Key_Return) );
 	connect( d->actionProperties, SIGNAL(triggered(bool)), this, SLOT(showItemProperties()) );
 
 	// Update enabled/disabled actions
