@@ -26,8 +26,9 @@
 #include <QDomDocument>
 
 #include <KDebug>
-#include <KEmoticonsTheme>
 #include <KMessageBox>
+#include <kmessagebox_queued.h>
+#include <KEmoticonsTheme>
 
 #include "kopeteaccount.h"
 #include "kopetepicture.h"
