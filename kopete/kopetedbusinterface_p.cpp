@@ -17,7 +17,7 @@
 
 #include "kopetedbusinterface_p.h"
 
-#include <QtCore/QTimer>
+#include <QTimer>
 
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>

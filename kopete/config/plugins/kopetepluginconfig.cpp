@@ -20,8 +20,8 @@
 #include "kopetepluginconfig.h"
 
 // Qt includes
-#include <QtCore/QByteArray>
-#include <QtGui/QVBoxLayout>
+#include <QByteArray>
+#include <QVBoxLayout>
 
 // KDE includes
 #include <kdebug.h>

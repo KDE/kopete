@@ -27,21 +27,21 @@
 #include <ctime>
 
 // Qt includes
-#include <QtCore/QByteArray>
-#include <QtCore/QLatin1String>
-#include <QtCore/QList>
-#include <QtCore/QPointer>
-#include <QtCore/QRect>
-#include <QtCore/QRegExp>
-#include <QtCore/QTextCodec>
-#include <QtCore/QTextStream>
-#include <QtCore/QTimer>
-#include <QtCore/QBuffer>
-#include <QtGui/QClipboard>
-#include <QtGui/QCursor>
-#include <QtGui/QPixmap>
-#include <QtGui/QTextDocument>
-#include <QtGui/QScrollBar>
+#include <QByteArray>
+#include <QLatin1String>
+#include <QList>
+#include <QPointer>
+#include <QRect>
+#include <QRegExp>
+#include <QTextCodec>
+#include <QTextStream>
+#include <QTimer>
+#include <QBuffer>
+#include <QClipboard>
+#include <QCursor>
+#include <QPixmap>
+#include <QTextDocument>
+#include <QScrollBar>
 #include <QMimeData>
 #include <QApplication>
 #include <QFileDialog>

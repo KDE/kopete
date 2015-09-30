@@ -17,7 +17,7 @@
 #ifndef KOPETEACCOUNTSTATUSBARICON_H
 #define KOPETEACCOUNTSTATUSBARICON_H
 
-#include <QtGui/QLabel>
+#include <QLabel>
 
 namespace Kopete
 {

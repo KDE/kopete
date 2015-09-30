@@ -18,9 +18,9 @@
 #ifndef KOPETE_DBUS_INTERFACE_P_H
 #define KOPETE_DBUS_INTERFACE_P_H
 
-#include <QtCore/QObject>
-#include <QtCore/QVariantMap>
-#include <QtCore/QTime>
+#include <QObject>
+#include <QVariantMap>
+#include <QTime>
 
 #include "kopetemessage.h"
 #include "kopetechatsession.h"

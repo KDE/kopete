@@ -34,10 +34,10 @@
 
 // Qt includes
 #include <QUrl>
-#include <QtCore/QEvent>
+#include <QEvent>
 #include <QKeyEvent>
-#include <QtGui/QTextCursor>
-#include <QtGui/QTextCharFormat>
+#include <QTextCursor>
+#include <QTextCharFormat>
 #include <QTextDocumentFragment>
 
 // TODO: Add i18n context

@@ -18,8 +18,8 @@
 #include "statusconfig_manager.h"
 #include "statusconfig_general.h"
 
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QTabWidget>
+#include <QVBoxLayout>
+#include <QTabWidget>
 
 #include <kgenericfactory.h>
 #include "kopetestatussettings.h"

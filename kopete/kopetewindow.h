@@ -21,7 +21,7 @@
 #define KOPETEWINDOW_H
 
 // Qt includes
-#include <QtGui/QLabel>
+#include <QLabel>
 
 // KDE includes
 #include <kxmlguiwindow.h>

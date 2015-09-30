@@ -16,9 +16,9 @@
 
 #include "kopeteaccountstatusbaricon.h"
 
-#include <QtGui/QToolTip>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QMovie>
+#include <QToolTip>
+#include <QMouseEvent>
+#include <QMovie>
 
 #include <KMenu>
 #include <KActionMenu>
