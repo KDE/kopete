@@ -23,16 +23,16 @@
 
 #include "kopetechatwindow.h"
 
-#include <QtCore/QTextStream>
-#include <QtCore/QTimer>
-#include <QtGui/QDockWidget>
-#include <QtGui/QFrame>
-#include <QtGui/QLabel>
-#include <QtGui/QLayout>
-#include <QtGui/QMenu>
-#include <QtGui/QPixmap>
-#include <QtGui/QCloseEvent>
-#include <QtGui/QVBoxLayout>
+#include <QTextStream>
+#include <QTimer>
+#include <QDockWidget>
+#include <QFrame>
+#include <QLabel>
+#include <QLayout>
+#include <QMenu>
+#include <QPixmap>
+#include <QCloseEvent>
+#include <QVBoxLayout>
 
 #ifdef CHRONO
 #include <QTime>

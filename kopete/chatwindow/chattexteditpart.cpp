@@ -45,12 +45,12 @@
 
 
 // Qt includes
-#include <QtCore/QTimer>
-#include <QtCore/QRegExp>
-#include <QtCore/QEvent>
+#include <QTimer>
+#include <QRegExp>
+#include <QEvent>
 #include <QKeyEvent>
-#include <QtGui/QTextCursor>
-#include <QtGui/QTextCharFormat>
+#include <QTextCursor>
+#include <QTextCharFormat>
 
 
 typedef KParts::GenericFactory<ChatTextEditPart> ChatTextEditPartFactory;

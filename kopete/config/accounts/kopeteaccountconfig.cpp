@@ -20,13 +20,13 @@
 
 #include "kopeteaccountconfig.h"
 
-#include <QtGui/QCheckBox>
-#include <QtGui/QLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QBoxLayout>
-#include <QtCore/QPointer>
-#include <QtCore/QTimer>
-#include <QtGui/QContextMenuEvent>
+#include <QCheckBox>
+#include <QLayout>
+#include <QHeaderView>
+#include <QBoxLayout>
+#include <QPointer>
+#include <QTimer>
+#include <QContextMenuEvent>
 
 #include <kcolorbutton.h>
 #include <kpushbutton.h>

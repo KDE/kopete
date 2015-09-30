@@ -16,7 +16,7 @@
 #ifndef KOPETESTATUSEDITACTION_H
 #define KOPETESTATUSEDITACTION_H
 
-#include <QtGui/QWidgetAction>
+#include <QWidgetAction>
 
 #include <KDialog>
 

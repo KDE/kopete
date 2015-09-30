@@ -18,7 +18,7 @@
 #include <klocale.h>
 #include <kicon.h>
 
-#include <QtCore/QMimeData>
+#include <QMimeData>
 #include <QtXml/QDomDocument>
 
 #include "kopetestatusitems.h"

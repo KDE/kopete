@@ -18,8 +18,8 @@
 #ifndef ACCESSIBLECHATMESSAGEPART_H
 #define ACCESSIBLECHATMESSAGEPART_H
 
-#include <QtGui/QAccessibleTextInterface>
-#include <QtGui/QAccessibleWidget>
+#include <QAccessibleTextInterface>
+#include <QAccessibleWidget>
 
 class KHTMLPart;
 class KHTMLView;

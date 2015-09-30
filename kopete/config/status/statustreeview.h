@@ -17,8 +17,8 @@
 #ifndef STATUSTREEVIEW_H
 #define STATUSTREEVIEW_H
 
-#include <QtGui/QTreeView>
-#include <QtGui/QDrag>
+#include <QTreeView>
+#include <QDrag>
 
 class StatusTreeView : public QTreeView
 {

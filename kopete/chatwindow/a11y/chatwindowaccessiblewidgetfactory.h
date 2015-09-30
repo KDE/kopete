@@ -18,8 +18,8 @@
 #ifndef CHATWINDOWACCESSIBLEWIDGETFACTORY_H
 #define CHATWINDOWACCESSIBLEWIDGETFACTORY_H
 
-#include <QtGui/qaccessible.h>
-#include <QtGui/QAccessiblePlugin>
+#include <QAccessible>
+#include <QAccessiblePlugin>
 
 class ChatWindowAccessibleWidgetFactory: public QAccessiblePlugin {
 public:

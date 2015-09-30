@@ -57,9 +57,9 @@ add_executable(kopete_bin ${kopete_SRCS})
 set_target_properties(kopete_bin PROPERTIES RUNTIME_OUTPUT_NAME kopete)
 
 target_link_libraries(kopete_bin
+	KF5::Contacts
 	KF5::TextEditor
 	KF5::NotifyConfig
-	${KDE4_KABC_LIBS}
 	${KDE4_SOLID_LIBRARY}
 	${QIMAGEBLITZ_LIBRARIES}
 	kopete

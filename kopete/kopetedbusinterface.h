@@ -18,8 +18,8 @@
 #ifndef KOPETE_DBUSINTERFACE_H
 #define KOPETE_DBUSINTERFACE_H
 
-#include <QtCore/QObject>
-#include <QtCore/QVariantMap>
+#include <QObject>
+#include <QVariantMap>
 
 class KopeteDBusInterfacePrivate;
 

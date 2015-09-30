@@ -16,7 +16,7 @@
 #ifndef KOPETESTATUSROOTACTION_H
 #define KOPETESTATUSROOTACTION_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include "kopete_export.h"
 

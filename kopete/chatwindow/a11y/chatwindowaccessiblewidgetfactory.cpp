@@ -17,7 +17,7 @@
 
 #include "chatwindowaccessiblewidgetfactory.h"
 
-#include <QtCore/qplugin.h>
+#include <qplugin.h>
 #include "accessiblechatmessagepart.h"
 
 Q_EXPORT_PLUGIN(ChatWindowAccessibleWidgetFactory)

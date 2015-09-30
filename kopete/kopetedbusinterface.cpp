@@ -19,9 +19,9 @@
 #include "kopetedbusinterface_p.h"
 
 // Qt includes
-#include <QtCore/QStringList>
-#include <QtCore/QList>
-#include <QtCore/QLatin1String>
+#include <QStringList>
+#include <QList>
+#include <QLatin1String>
 
 // KDE includes
 #include <kurl.h>

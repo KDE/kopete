@@ -21,10 +21,10 @@
 #include <krichtextedit.h>
 #include "kopeterichtextwidget.h"
 
-#include <QtGui/QFont>
-#include <QtGui/QColor>
-#include <QtCore/QFlags>
-#include <QtCore/QStringList>
+#include <QFont>
+#include <QColor>
+#include <QFlags>
+#include <QStringList>
 
 // TODO: Use kdelibs export
 #include <kopete_export.h>

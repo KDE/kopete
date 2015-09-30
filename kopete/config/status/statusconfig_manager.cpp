@@ -16,7 +16,7 @@
 
 #include "statusconfig_manager.h"
 
-#include <QtGui/QHeaderView>
+#include <QHeaderView>
 
 #include "kopeteonlinestatusmanager.h"
 #include "statusmodel.h"

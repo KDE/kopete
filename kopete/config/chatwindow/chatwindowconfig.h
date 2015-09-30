@@ -20,7 +20,7 @@
 #ifndef CHATWINDOWCONFIG_H
 #define CHATWINDOWCONFIG_H
 
-#include <QtCore/QPointer>
+#include <QPointer>
 
 #include <kcmodule.h>
 #include "ui_chatwindowconfig_style.h"
