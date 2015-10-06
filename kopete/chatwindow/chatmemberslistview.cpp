@@ -50,7 +50,7 @@ void ChatMembersListView::slotContextMenuRequested( const QPoint & pos )
 			if (!c)
 				return;
 	
-			KMenu *p = c->popupMenu();
+			QMenu *p = c->popupMenu();
 			connect( p, SIGNAL(aboutToHide()), p, SLOT(deleteLater()) );
 			p->popup( mapToGlobal(pos) );
 		}

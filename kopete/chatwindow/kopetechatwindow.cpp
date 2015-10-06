@@ -43,7 +43,7 @@
 #include <klocale.h>
 #include <kmenubar.h>
 #include <kconfig.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <QIcon>
 #include <kiconloader.h>
 #include <kdebug.h>
@@ -331,8 +331,8 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 {
 	m_popupView = static_cast<ChatView*>( tab );
 
-	KMenu popup;
-	popup.addTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
+	QMenu popup;
+	popup.addSection( KStringHandler::rsqueeze( m_popupView->caption() ) );
 	popup.addAction( actionContactMenu );
 	popup.addSeparator();
 	popup.addAction( actionTabPlacementMenu );
@@ -1085,7 +1085,7 @@ void KopeteChatWindow::slotSendFile()
 
 void KopeteChatWindow::slotPrepareContactMenu(void)
 {
-	KMenu *contactsMenu = actionContactMenu->menu();
+	QMenu *contactsMenu = actionContactMenu->menu();
 	contactsMenu->clear();
 
 	Kopete::ContactPtrList m_them;
@@ -1102,7 +1102,7 @@ void KopeteChatWindow::slotPrepareContactMenu(void)
 
 	foreach(Kopete::Contact *contact, m_them)
 	{
-		KMenu *p = contact->popupMenu();
+		QMenu *p = contact->popupMenu();
 		connect ( actionContactMenu->menu(), SIGNAL(aboutToHide()),
 			p, SLOT(deleteLater()) );
 

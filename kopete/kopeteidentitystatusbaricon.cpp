@@ -22,7 +22,7 @@
 #include <kopetestatusrootaction.h>
 #include <kactionmenu.h>
 
-#include <KMenu>
+#include <QMenu>
 
 KopeteIdentityStatusBarIcon::KopeteIdentityStatusBarIcon( Kopete::Identity *identity, QWidget *parent )
 : QLabel( parent )

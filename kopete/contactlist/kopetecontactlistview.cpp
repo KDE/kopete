@@ -25,11 +25,12 @@
 #include "kopetecontactlistview.h"
 
 #include <QIcon>
+#include <QMenu>
+#include <QWidget>
 #include <QHeaderView>
 #include <QScrollBar>
 
 #include <KDebug>
-#include <KMenu>
 #include <KStandardAction>
 #include <KActionMenu>
 #include <KActionCollection>
@@ -76,7 +77,7 @@ public:
 	//QRect m_onItem;
 	
 	// HACK: Used to update the KMEnu title - DarkShock
-	QMap<KMenu*, QAction*> menuTitleMap;
+	QMap<QMenu*, QAction*> menuTitleMap;
 
 	/* ACTIONS */
 	QAction *actionSendMessage;
@@ -195,7 +196,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	d->actionAddContact = new KActionMenu( QIcon::fromTheme( QLatin1String("list-add-user") ), i18n( "&Add Contact" ), ac );
 	ac->addAction( "contactAddContact", d->actionAddContact );
-	d->actionAddContact->menu()->addTitle( i18n("Select Account") );
+	d->actionAddContact->menu()->setTitle( i18n("Select Account") );
 
 	d->actionAddTemporaryContact = new QAction( QIcon::fromTheme("list-add-user"), i18n( "Add to Your Contact List" ), ac );
 	ac->addAction( "contactAddTemporaryContact", d->actionAddTemporaryContact );
@@ -585,7 +586,7 @@ void KopeteContactListView::contextMenuEvent( QContextMenuEvent* event )
 			Kopete::Contact* contact = contactAt( event->pos() );
 			if ( contact )
 			{
-				KMenu *menu = contact->popupMenu();
+				QMenu *menu = contact->popupMenu();
 				connect( menu, SIGNAL(aboutToHide()), menu, SLOT(deleteLater()) );
 				menu->popup( event->globalPos() );
 			}
@@ -1032,21 +1033,22 @@ void KopeteContactListView::groupPopup( Kopete::Group *group, const QPoint& pos 
 	if ( group == Kopete::Group::offline() )
 	    return;
 
-	KMenu *popup = dynamic_cast<KMenu *>( window->factory()->container( "group_popup", window ) );
+	QMenu *popup = dynamic_cast<QMenu *>( window->factory()->container( "group_popup", window ) );
 	if ( popup )
 	{
 		QString title = group->displayName();
 		if ( title.length() > 32 )
 			title = title.left( 30 ) + QLatin1String( "..." );
 
-		// HACK: Used to update the KMenu title -DarkShock
+		// HACK: Used to update the QMenu title -DarkShock
 		if( d->menuTitleMap.contains(popup) )
 		{
 			QAction *action = d->menuTitleMap[popup];
 			popup->removeAction( action );
 			delete action;
 		}
-		d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+		//COMPLETE IT : popup->actions().first()->menu()->setTitle(title);
+		d->menuTitleMap.insert( popup, popup->addSection(title, popup->actions().first()) );
 		popup->popup( pos );
 	}
 }
@@ -1062,7 +1064,7 @@ void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, 
 		return;
 	}
 
-	KMenu *popup = dynamic_cast<KMenu *>( window->factory()->container( "contact_popup", window ) );
+	QMenu *popup = dynamic_cast<QMenu *>( window->factory()->container( "contact_popup", window ) );
 	if ( popup )
 	{
 		QString title = i18nc( "Translators: format: '<nickname> (<online status>)'", "%1 (%2)",
@@ -1071,14 +1073,14 @@ void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, 
 		if ( title.length() > 43 )
 			title = title.left( 40 ) + QLatin1String( "..." );
 
-		// HACK: Used to update the KMenu title -DarkShock
+		// HACK: Used to update the QMenu title -DarkShock
 		if( d->menuTitleMap.contains(popup) )
 		{
 			QAction *action = d->menuTitleMap[popup];
 			popup->removeAction( action );
 			delete action;
 		}
-		d->menuTitleMap.insert( popup, popup->addTitle(title, popup->actions().first()) );
+		d->menuTitleMap.insert( popup, popup->addSection(title, popup->actions().first()) );
 
 		// Submenus for separate contact actions
 		bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
@@ -1090,7 +1092,7 @@ void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, 
 				sep = false;
 			}
 
-			KMenu *contactMenu = c->popupMenu();
+			QMenu *contactMenu = c->popupMenu();
 			connect( popup, SIGNAL(aboutToHide()), contactMenu, SLOT(deleteLater()) );
 			QString text = i18nc( "Translators: format: '<displayName> (<id>)'", "%2 <%1>", c->contactId(), c->nickName() );
 			text=text.replace('&',"&&"); // cf BUG 115449
@@ -1127,9 +1129,9 @@ void KopeteContactListView::miscPopup( QModelIndexList indexes, const QPoint& po
 		}
 	}
 	
-	KMenu *popup = 0;
+	QMenu *popup = 0;
 	if ( onlyMetaContacts )
-		popup = dynamic_cast<KMenu *>( window->factory()->container( "contactlistitems_popup", window ) );
+		popup = dynamic_cast<QMenu *>( window->factory()->container( "contactlistitems_popup", window ) );
 	
 	if ( popup )
 		popup->popup( pos );

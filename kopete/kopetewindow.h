@@ -30,7 +30,7 @@ class QCloseEvent;
 class QEvent;
 class QShowEvent;
 
-class KMenu;
+class QMenu;
 
 namespace Kopete
 {
@@ -164,7 +164,7 @@ private slots:
 	 */
 	void slotAccountUnregistered( const Kopete::Account *account );
 
-	void slotTrayAboutToShowMenu(KMenu *);
+	void slotTrayAboutToShowMenu(QMenu *);
 
 	/**
 	 * Show the Add Contact wizard

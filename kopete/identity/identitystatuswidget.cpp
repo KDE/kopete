@@ -22,7 +22,7 @@
 #include "addaccountwizard.h"
 
 #include <QIcon>
-#include <KMenu>
+#include <QMenu>
 #include <KActionMenu>
 #include <QTimeLine>
 #include <QToolTip>

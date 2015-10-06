@@ -24,7 +24,7 @@
 #include <dom/html_element.h>
 #include <dom/dom2_events.h>
 
-#include <kmenu.h>
+#include <QMenu>
 #include <kopetemessage.h>
 
 #include <kopete_export.h>
@@ -35,7 +35,7 @@ namespace Kopete
 	class ChatSession;
 	class Contact;
 }
-class KMenu;
+class QMenu;
 class ChatWindowStyle;
 
 /**
@@ -158,7 +158,7 @@ signals:
 	/**
 	 * Emits before the context menu is about to show
 	 */
-	void contextMenuEvent(  const QString &textUnderMouse, KMenu *popupMenu );
+	void contextMenuEvent(  const QString &textUnderMouse, QMenu *popupMenu );
 
 	/**
 	 * Emits before the tooltip is about to show

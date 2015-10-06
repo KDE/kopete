@@ -20,7 +20,7 @@
 #include <QMouseEvent>
 #include <QMovie>
 
-#include <KMenu>
+#include <QMenu>
 #include <KActionMenu>
 #include <KGlobal>
 #include <KDebug>

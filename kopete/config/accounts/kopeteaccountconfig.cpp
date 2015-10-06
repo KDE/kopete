@@ -38,7 +38,7 @@
 #include <kmessagebox.h>
 #include <QIcon>
 #include <QAction>
-#include <kmenu.h>
+#include <QMenu>
 #include <kcolordialog.h>
 
 #include "addaccountwizard.h"
@@ -623,13 +623,13 @@ void KopeteAccountConfig::configureActions()
 void KopeteAccountConfig::configureMenus()
 {
 	// Account management context menu
-	m_accountContextMenu = new KMenu ( this );
+	m_accountContextMenu = new QMenu ( this );
 	m_accountContextMenu->addAction( m_actionAccountModify );
 	m_accountContextMenu->addAction( m_actionAccountRemove );
 	m_accountContextMenu->addAction( m_actionAccountSetColor );
 
 	// Identity management context menu
-	m_identityContextMenu = new KMenu ( this );
+	m_identityContextMenu = new QMenu ( this );
 	m_identityContextMenu->addAction( m_actionAccountAdd );
 	m_identityContextMenu->addSeparator();
 	m_identityContextMenu->addAction( m_actionIdentityModify );

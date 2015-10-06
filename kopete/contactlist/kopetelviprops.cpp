@@ -23,31 +23,32 @@
 
 #include <kdebug.h>
 
-#include <qapplication.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qtabwidget.h>
-#include <qcombobox.h>
+#include <QApplication>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QTabWidget>
+#include <QComboBox>
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QBoxLayout>
 #include <QSize>
 
-#include <kfiledialog.h>
-#include <kicondialog.h>
-#include <kiconloader.h>
-#include <klocale.h>
-#include <kmessagebox.h>
+#include <KFileDialog>
+#include <KIconDialog>
+#include <KIconLoader>
+#include <KGlobal>
+#include <KLocale>
+#include <KUrlRequester>
+#include <KStandardDirs>
+#include <KMessageBox>
 #include <kmessagebox_queued.h>
-#include <kurlrequester.h>
 #include <kabc/addresseedialog.h>
 #include <kabc/stdaddressbook.h>
 #include <kabc/addressee.h>
-#include <kstandarddirs.h>
 
 #include "kabcpersistence.h"
 #include "kopeteaddrbookexport.h"
