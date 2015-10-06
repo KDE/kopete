@@ -25,7 +25,7 @@
 #include "kopetemessageevent.h"
 
 class QTimer;
-class KMenu;
+class QMenu;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -53,7 +53,7 @@ public:
 	bool isBlinking() const;
 
 Q_SIGNALS:
-	void aboutToShowMenu(KMenu *am);
+	void aboutToShowMenu(QMenu *am);
 
 private Q_SLOTS:
 	void slotAboutToShowMenu();

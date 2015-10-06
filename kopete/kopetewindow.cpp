@@ -50,7 +50,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <knotifyconfigwidget.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kshortcutsdialog.h>
 #include <kedittoolbar.h>
 #include <kmenubar.h>
@@ -557,8 +557,8 @@ void KopeteWindow::initSystray()
 	if ( Kopete::BehaviorSettings::self()->showSystemTray() ) {
 		d->tray = KopeteSystemTray::systemTray ( this );
 
-		QObject::connect ( d->tray, SIGNAL (aboutToShowMenu(KMenu*)),
-						   this, SLOT (slotTrayAboutToShowMenu(KMenu*)) );
+		QObject::connect ( d->tray, SIGNAL (aboutToShowMenu(QMenu*)),
+						   this, SLOT (slotTrayAboutToShowMenu(QMenu*)) );
 		// :FIXME: The signal quitSelected does not exist on KopeteSystemTray
 		// QObject::connect ( d->tray, SIGNAL (quitSelected()), this, SLOT (slotQuit()) );
 	}
@@ -1258,7 +1258,7 @@ void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
 	}
 }
 
-void KopeteWindow::slotTrayAboutToShowMenu ( KMenu * popup )
+void KopeteWindow::slotTrayAboutToShowMenu ( QMenu * popup )
 {
 	KActionCollection *actionCollection = d->tray->actionCollection();
 
@@ -1366,9 +1366,9 @@ void KopeteWindow::globalStatusChanged()
 
 void KopeteWindow::slotGlobalStatusMessageIconClicked ( const QPoint &position )
 {
-	KMenu *menu = new KMenu ( this );
+	QMenu *menu = new QMenu ( this );
 
-	menu->addTitle ( i18n ( "Status Message" ) );
+	menu->addSection ( i18n ( "Status Message" ) );
 
 	Kopete::UI::StatusEditAction* statusEditAction = new Kopete::UI::StatusEditAction ( this );
 	statusEditAction->setStatusMessage ( Kopete::StatusManager::self()->globalStatusMessage() );

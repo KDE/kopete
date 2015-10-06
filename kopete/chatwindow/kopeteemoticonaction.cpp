@@ -25,7 +25,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenubar.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <ktoolbar.h>
 #include <kauthorized.h>
 #include <QIcon>
@@ -39,7 +39,7 @@ class KopeteEmoticonAction::KopeteEmoticonActionPrivate
 public:
 	KopeteEmoticonActionPrivate()
 	{
-		m_popup = new KMenu(0L);
+		m_popup = new QMenu(0L);
 		emoticonSelector = new EmoticonSelector( m_popup );
 		emoticonSelector->setObjectName( QLatin1String("KopeteEmoticonActionPrivate::emoticonSelector") );
 //FIXME do it the kde4 way
@@ -57,7 +57,7 @@ public:
 		m_popup = 0;
 	}
 
-	KMenu *m_popup;
+	QMenu *m_popup;
 	EmoticonSelector *emoticonSelector;
 };
 

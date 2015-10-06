@@ -15,7 +15,7 @@
 */
 #include "kopetestatusrootaction.h"
 
-#include <KMenu>
+#include <QMenu>
 #include <KCMultiDialog>
 
 #include <kopeteonlinestatusmanager.h>

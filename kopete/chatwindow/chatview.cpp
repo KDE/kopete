@@ -39,7 +39,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kstringhandler.h>
 #include <kwindowsystem.h>
 #include <kglobalsettings.h>
@@ -1022,7 +1022,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 void ChatView::registerContextMenuHandler( QObject *target, const char* slot )
 {
 	connect( m_messagePart,
-		SIGNAL(contextMenuEvent(Kopete::Message&,QString,KMenu*)),
+		SIGNAL(contextMenuEvent(Kopete::Message&,QString,QMenu*)),
 		target,
 		slot
 	);

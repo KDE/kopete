@@ -36,7 +36,7 @@ class Identity;
 
 class KopeteAccountLVI;
 class KopeteIdentityLVI;
-class KMenu;
+class QMenu;
 class QAction;
 
 /**
@@ -67,8 +67,8 @@ private:
 	void modifyAccount(Kopete::Account *);
 	void modifyIdentity(Kopete::Identity *);
 	bool m_protected;
-	KMenu *m_identityContextMenu;
-	KMenu *m_accountContextMenu;
+	QMenu *m_identityContextMenu;
+	QMenu *m_accountContextMenu;
 
 	QAction *m_actionAccountAdd;
 	QAction *m_actionAccountModify;

@@ -27,6 +27,8 @@
 #include <ctime>
 
 // Qt includes
+#include <QIcon>
+#include <QMenu>
 #include <QByteArray>
 #include <QLatin1String>
 #include <QList>
@@ -71,7 +73,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
-#include <kmenu.h>
 #include <krun.h>
 #include <kstringhandler.h>
 #include <ktemporaryfile.h>
@@ -79,7 +80,6 @@
 #include <kstandardaction.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
-#include <QIcon>
 
 // Kopete includes
 #include "kopetecontact.h"
@@ -781,7 +781,7 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	if ( d->activeElement.isNull() )
 		return;
 
-	KMenu *chatWindowPopup = 0L;
+	QMenu *chatWindowPopup = 0L;
 
 	if ( Kopete::Contact *contact = contactFromNode( d->activeElement ) )
 	{
@@ -790,7 +790,7 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	}
 	else
 	{
-		chatWindowPopup = new KMenu();
+		chatWindowPopup = new QMenu();
 
 		QAction *action;
 		if ( d->activeElement.className() == QLatin1String("KopeteDisplayName") )

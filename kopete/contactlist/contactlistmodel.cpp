@@ -25,6 +25,7 @@
 #include <QTextDocument>
 #include <QDomDocument>
 
+#include <KUrl>
 #include <KDebug>
 #include <KMessageBox>
 #include <kmessagebox_queued.h>

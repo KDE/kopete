@@ -24,7 +24,7 @@
 #include <kaboutdata.h>
 #include <kactioncollection.h>
 #include <QAction>
-#include <kmenu.h>
+#include <QMenu>
 #include <klocale.h>
 #include <kdebug.h>
 #include "kopetechatsessionmanager.h"
@@ -97,7 +97,7 @@ KopeteSystemTray::~KopeteSystemTray()
 
 void KopeteSystemTray::slotAboutToShowMenu()
 {
-	emit aboutToShowMenu(qobject_cast<KMenu *>(contextMenu()));
+	emit aboutToShowMenu(qobject_cast<QMenu *>(contextMenu()));
 }
 
 void KopeteSystemTray::activate(const QPoint &pos)
@@ -113,7 +113,7 @@ void KopeteSystemTray::activate(const QPoint &pos)
     }
 }
 
-// void KopeteSystemTray::contextMenuAboutToShow( KMenu *me )
+// void KopeteSystemTray::contextMenuAboutToShow( QMenu *me )
 // {
 // 	//kDebug(14010) << "Called.";
 // 	emit aboutToShowMenu( me );
