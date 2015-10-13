@@ -46,9 +46,9 @@
 #include <KStandardDirs>
 #include <KMessageBox>
 #include <kmessagebox_queued.h>
-#include <kabc/addresseedialog.h>
-#include <kabc/stdaddressbook.h>
-#include <kabc/addressee.h>
+
+
+#include <kcontacts/addressee.h>
 
 #include "kabcpersistence.h"
 #include "kopeteaddrbookexport.h"
@@ -212,7 +212,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 
 	ui_mainWidget->btnClearPhoto->setIcon( QIcon::fromTheme( (QApplication::layoutDirection() == Qt::RightToLeft) ? "edit-clear-locationbar-ltr" : "edit-clear-locationbar-rtl" ) );
 	connect( ui_mainWidget->btnClearPhoto, SIGNAL(clicked()), this, SLOT(slotClearPhotoClicked()) );
-	connect( ui_mainWidget->widAddresseeLink, SIGNAL(addresseeChanged(KABC::Addressee)), SLOT(slotAddresseeChanged(KABC::Addressee)) );
+	connect( ui_mainWidget->widAddresseeLink, SIGNAL(addresseeChanged(KContacts::Addressee)), SLOT(slotAddresseeChanged(KContacts::Addressee)) );
 	connect( ui_mainWidget->btnChoosePhoto, SIGNAL(clicked()), this, SLOT(slotSelectPhoto()));
 	ui_mainWidget->chkUseCustomIcons->setChecked( mMetaContact->useCustomIcon() );
 
@@ -245,8 +245,8 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(Kopete::MetaContact *metaContact, QWidget
 
 	if ( !mAddressBookUid.isEmpty() )
 	{
-		KABC::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();
-		KABC::Addressee a = ab->findByUid( mAddressBookUid );
+		//DEPRECATED: KContacts::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();
+		KContacts::Addressee a = KContacts::Addressee();
 		ui_mainWidget->widAddresseeLink->setAddressee( a );
 
 		if ( !a.isEmpty() )
@@ -381,8 +381,8 @@ void KopeteMetaLVIProps::slotSelectPhoto()
 
 void KopeteMetaLVIProps::slotEnableAndDisableWidgets()
 {
-	KABC::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();
-	KABC::Addressee a = ab->findByUid( mAddressBookUid );
+	//DEPRECATED: KContacts::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();
+	KContacts::Addressee a = KContacts::Addressee();
 	bool validLink = ! a.isEmpty();
 	// kabc source requires a kabc link
 	ui_mainWidget->radioNameKABC->setEnabled(validLink);
@@ -552,7 +552,7 @@ void KopeteMetaLVIProps::slotUseCustomIconsToggled(bool on)
 	ui_mainWidget->icnbUnknown->setEnabled( on );
 }
 
-void KopeteMetaLVIProps::slotAddresseeChanged( const KABC::Addressee & a )
+void KopeteMetaLVIProps::slotAddresseeChanged( const KContacts::Addressee & a )
 {
 	if ( !a.isEmpty() )
 	{

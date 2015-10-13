@@ -41,7 +41,7 @@
 #include <kmessagebox_queued.h>
 #include <KToolInvocation>
 #include <kxmlguifactory.h>
-#include <kabc/stdaddressbook.h>
+
 
 #include "kopeteuiglobal.h"
 #include "kopetecontactlistelement.h"
@@ -533,7 +533,8 @@ void KopeteContactListView::sendEmail()
 	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
 	if ( metaContact )
 	{
-		KABC::Addressee addressee = KABC::StdAddressBook::self()->findByUid( metaContact->kabcId() );
+		//DEPRECATED: KContacts::Addressee addressee = KContacts::StdAddressBook::self()->findByUid( metaContact->kabcId() );
+		KContacts::Addressee addressee = KContacts::Addressee();
 		if ( !addressee.isEmpty() )
 		{
 			QString emailAddr = addressee.fullEmail();

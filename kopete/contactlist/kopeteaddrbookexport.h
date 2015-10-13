@@ -21,8 +21,8 @@
 #ifndef KOPETEADDRBOOKEXPORT_H
 #define KOPETEADDRBOOKEXPORT_H
 
-#include <kabc/stdaddressbook.h>
-#include <kabc/addressee.h>
+
+#include <kcontacts/addressee.h>
 
 #include "kopeteproperty.h"
 #include "ui_kopeteaddrbookexportui.h"
@@ -67,7 +67,7 @@ protected:
 	/**
 	 * Populate a listbox with a given type of phone number
 	 */
-	void fetchPhoneNumbers( QListWidget * listBox, KABC::PhoneNumber::Type type, uint& counter );
+	void fetchPhoneNumbers( QListWidget * listBox, KContacts::PhoneNumber::Type type, uint& counter );
 	/**
 	 * Populate the GUI with data from IM systems
 	 */
@@ -93,8 +93,8 @@ protected:
 	QPixmap mAddrBookIcon;
 	AddressBookExportUI *mUI;
 	Kopete::MetaContact *mMetaContact;
-	KABC::AddressBook *mAddressBook;
-	KABC::Addressee mAddressee;
+	//DEPRECATED: KContacts::AddressBook *mAddressBook;
+	KContacts::Addressee mAddressee;
 	
 	// counters tracking the number of KABC values where multiple values are possible in a single key
 	uint numEmails, numHomePhones, numWorkPhones, numMobilePhones;
