@@ -21,14 +21,14 @@
 #include <kassistantdialog.h>
 
 #include <kopete_export.h>
-#include <kabc/resource.h>
+
 
 #include "ui_kabcexport_page1.h"
 #include "ui_kabcexport_page2.h"
 
 
-namespace KABC {
-	class AddressBook;
+namespace KContacts {
+	class Address;
 	class Addressee;
 }
 
@@ -53,10 +53,10 @@ Q_OBJECT
 		void slotSelectAll();
 		void slotResourceSelectionChanged( QListWidgetItem * lbi );
 	protected:
-		void exportDetails( Kopete::MetaContact * mc, KABC::Addressee & addr );
+		void exportDetails( Kopete::MetaContact * mc, KContacts::Addressee & addr );
 	private:
-		KABC::AddressBook* m_addressBook;
-		QMap<int, KABC::Resource*> m_resourceMap;
+		//DEPRECATED: KContacts::AddressBook* m_addressBook;
+		//DEPRECATED: QMap<int, KContacts::Resource*> m_resourceMap;
 		QMap<int, Kopete::MetaContact*> m_contactMap;
 		Ui::KabcExportWizardPage1 m_page1;
 		KPageWidgetItem *m_page1WidgetItem;

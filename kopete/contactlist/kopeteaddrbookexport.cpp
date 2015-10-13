@@ -20,9 +20,10 @@
 
 #include "kopeteaddrbookexport.h"
 
-#include <kabc/phonenumber.h>
-#include <qcombobox.h>
-#include <qlabel.h>
+#include <kcontacts/phonenumber.h>
+#include <QComboBox>
+#include <QLabel>
+#include <QDialog>
 #include <QPixmap>
 
 #include <kdialog.h>
@@ -38,7 +39,7 @@ KopeteAddressBookExport::KopeteAddressBookExport( QWidget *parent, Kopete::MetaC
 {
 	// instantiate dialog and populate widgets
 	mParent = parent;
-	mAddressBook = KABC::StdAddressBook::self();
+	//DEPRECATED: mAddressBook = KContacts::StdAddressBook::self();
 	mMetaContact = mc;
 
 	mWorkPhones->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -110,17 +111,17 @@ void KopeteAddressBookExport::fetchKABCData()
 		}
 		
 		// phone numbers
-		fetchPhoneNumbers( mHomePhones, KABC::PhoneNumber::Home, numHomePhones );
-		fetchPhoneNumbers( mWorkPhones, KABC::PhoneNumber::Work, numWorkPhones );
-		fetchPhoneNumbers( mMobilePhones, KABC::PhoneNumber::Cell, numMobilePhones );
+		fetchPhoneNumbers( mHomePhones, KContacts::PhoneNumber::Home, numHomePhones );
+		fetchPhoneNumbers( mWorkPhones, KContacts::PhoneNumber::Work, numWorkPhones );
+		fetchPhoneNumbers( mMobilePhones, KContacts::PhoneNumber::Cell, numMobilePhones );
 	}
 }
 
-void KopeteAddressBookExport::fetchPhoneNumbers( QListWidget * listBox, KABC::PhoneNumber::Type type, uint& counter )
+void KopeteAddressBookExport::fetchPhoneNumbers( QListWidget * listBox, KContacts::PhoneNumber::Type type, uint& counter )
 {
-	KABC::PhoneNumber::List phones = mAddressee.phoneNumbers( type );
+	KContacts::PhoneNumber::List phones = mAddressee.phoneNumbers( type );
 	counter = phones.count();
-	KABC::PhoneNumber::List::Iterator it;
+	KContacts::PhoneNumber::List::Iterator it;
 	unsigned int rowCount = 0;
 	for ( it = phones.begin(); it != phones.end(); ++it ) {
 		listBox->item(rowCount)->setIcon(QIcon(mAddrBookIcon));
@@ -182,7 +183,7 @@ void KopeteAddressBookExport::populateIM( const Kopete::Contact *contact, const 
 
 int KopeteAddressBookExport::showDialog()
 {
-	mAddressee = mAddressBook->findByUid( mMetaContact->kabcId() );
+	//DEPRECATED: mAddressee = mAddressBook->findByUid( mMetaContact->kabcId() );
 	if ( !mAddressee.isEmpty() )
 	{
 		numEmails = 0;
@@ -248,29 +249,30 @@ void KopeteAddressBookExport::exportData()
 	for ( QStringList::Iterator it = newVals.begin(); it != newVals.end(); ++it )
 	{
 		dirty = true;
-		mAddressee.insertPhoneNumber( KABC::PhoneNumber( *it, KABC::PhoneNumber::Home ) );
+		mAddressee.insertPhoneNumber( KContacts::PhoneNumber( *it, KContacts::PhoneNumber::Home ) );
 	}
 	// work phone
 	newVals = newValues( mWorkPhones, numWorkPhones );
 	for ( QStringList::Iterator it = newVals.begin(); it != newVals.end(); ++it )
 	{
 		dirty = true;
-		mAddressee.insertPhoneNumber( KABC::PhoneNumber( *it, KABC::PhoneNumber::Work ) );
+		mAddressee.insertPhoneNumber( KContacts::PhoneNumber( *it, KContacts::PhoneNumber::Work ) );
 	}
 	// mobile
 	newVals = newValues( mMobilePhones, numMobilePhones );
 	for ( QStringList::Iterator it = newVals.begin(); it != newVals.end(); ++it )
 	{
 		dirty = true;
-		mAddressee.insertPhoneNumber( KABC::PhoneNumber( *it, KABC::PhoneNumber::Cell ) );
+		mAddressee.insertPhoneNumber( KContacts::PhoneNumber( *it, KContacts::PhoneNumber::Cell ) );
 	}
 	
 	if ( dirty )
 	{
+	  /** DEPRECATED : Skipping addressbook updation for the moment
 		// write the changed addressbook
 		mAddressBook->insertAddressee( mAddressee );
 	
-		KABC::Ticket *ticket = mAddressBook->requestSaveTicket();
+		KContacts::Ticket *ticket = mAddressBook->requestSaveTicket();
 		if ( !ticket )
 			kWarning( 14000 ) << "WARNING: Resource is locked by other application!";
 		else
@@ -282,6 +284,7 @@ void KopeteAddressBookExport::exportData()
 			}
 		}
 		kDebug( 14000 ) << "Finished writing KABC";
+		*/
 	}
 }
 

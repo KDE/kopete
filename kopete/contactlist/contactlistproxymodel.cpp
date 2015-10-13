@@ -21,13 +21,15 @@
 #include <QList>
 #include <QTimer>
 
+#include <kcontacts/addressee.h>
+
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontact.h"
 #include "kopeteappearancesettings.h"
 #include "kopeteitembase.h"
-#include <kabc/stdaddressbook.h>
+
 
 namespace Kopete {
 
@@ -272,7 +274,8 @@ bool ContactListProxyModel::searchContactInfo(Kopete::MetaContact *mc, QRegExp s
 		return true;
 
 	// Check the address book
-	KABC::Addressee addressee = KABC::StdAddressBook::self()->findByUid( mc->kabcId() );
+	//DEPRECATED: KContacts::Addressee addressee = KContacts::StdAddressBook::self()->findByUid( mc->kabcId() );
+	KContacts::Addressee addressee = KContacts::Addressee();
 	if ( !addressee.isEmpty() )
 	{
 		QString emailAddr = addressee.fullEmail();

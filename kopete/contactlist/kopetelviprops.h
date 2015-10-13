@@ -21,7 +21,7 @@
 #define KOPETELVIPROPS_H
 
 #include <kdialog.h>
-#include <kabc/sound.h>
+#include <kcontacts/sound.h>
 
 #include "kopetemetacontact.h"
 
@@ -33,7 +33,7 @@ class CustomNotificationProps;
 class KopeteAddressBookExport;
 class KUrlRequester;
 
-namespace KABC { class Addressee; }
+namespace KContacts { class Addressee; }
 namespace Kopete {
 	class Contact;
 	class Group;
@@ -77,7 +77,7 @@ class KopeteMetaLVIProps: public KDialog
 		AddressBookLinkWidget *linkWidget;
 		Kopete::MetaContact *mMetaContact;
 		KopeteAddressBookExport *mExport;
-		KABC::Sound mSound;
+		KContacts::Sound mSound;
 		int m_countPhotoCapable;
 		QMap<int, Kopete::Contact *> m_withPhotoContacts;
 		QString mAddressBookUid; // the currently selected addressbook UID
@@ -93,7 +93,7 @@ class KopeteMetaLVIProps: public KDialog
 		void slotOkClicked();
 		void slotUseCustomIconsToggled( bool on );
 		void slotClearPhotoClicked();
-		void slotAddresseeChanged( const KABC::Addressee & );
+		void slotAddresseeChanged( const KContacts::Addressee & );
 		void slotExportClicked();
 		void slotImportClicked();
 		void slotFromKABCClicked();
