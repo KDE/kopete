@@ -28,8 +28,9 @@
 #include <KUrl>
 #include <KDebug>
 #include <KMessageBox>
-#include <kmessagebox_queued.h>
 #include <KEmoticonsTheme>
+#include <KLocalizedString>
+#include <kmessagebox_queued.h>
 
 #include "kopeteaccount.h"
 #include "kopetepicture.h"

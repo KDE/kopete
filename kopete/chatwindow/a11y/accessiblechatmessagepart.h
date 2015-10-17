@@ -18,8 +18,9 @@
 #ifndef ACCESSIBLECHATMESSAGEPART_H
 #define ACCESSIBLECHATMESSAGEPART_H
 
-#include <QAccessibleTextInterface>
+#include <QAccessible>
 #include <QAccessibleWidget>
+#include <QAccessibleTextInterface>
 
 class KHTMLPart;
 class KHTMLView;
@@ -28,10 +29,8 @@ namespace MessageViewer {
     class MailWebView;
 }
 
-class AccessibleChatMessagePart: public QAccessibleWidgetEx,
-                                 public QAccessibleTextInterface
+class AccessibleChatMessagePart:public QAccessibleWidget
 {
-    Q_ACCESSIBLE_OBJECT
 public:
     AccessibleChatMessagePart( KHTMLView* widget );
 
@@ -48,16 +47,16 @@ public:
     virtual QString attributes( int offset, int* startOffset, int* endOffset );
 
     virtual int childCount() const;
-    virtual int navigate(RelationFlag rel, int entry, QAccessibleInterface** target) const;
+    //DEPRECATED: virtual int navigate(QAccessible::RelationFlag rel, int entry, QAccessibleInterface** target) const;
 
     virtual void selection( int selectionIndex, int* startOffset, int* endOffset );
-    virtual QRect characterRect( int offset, QAccessible2::CoordinateType coordType );
-    virtual int offsetAtPoint( const QPoint& point, QAccessible2::CoordinateType coordType );
+    virtual QRect characterRect( int offset);
+    virtual int offsetAtPoint( const QPoint& point);
     virtual int cursorPosition();
     virtual void scrollToSubstring( int startIndex, int endIndex );
-    virtual QString textAfterOffset( int offset, QAccessible2::BoundaryType boundaryType, int* startOffset, int* endOffset );
-    virtual QString textBeforeOffset( int offset, QAccessible2::BoundaryType boundaryType, int* startOffset, int* endOffset );
-    virtual QString textAtOffset( int offset, QAccessible2::BoundaryType boundaryType, int* startOffset, int* endOffset );
+    //virtual QString textAfterOffset( int offset, QAccessible::TextBoundaryType boundaryType, int* startOffset, int* endOffset );
+    //virtual QString textBeforeOffset( int offset, QAccessible::TextBoundaryType boundaryType, int* startOffset, int* endOffset );
+    //virtual QString textAtOffset( int offset, QAccessible::TextBoundaryType boundaryType, int* startOffset, int* endOffset );
 private:
     QString plainText() const;
     KHTMLPart *m_part;

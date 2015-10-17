@@ -25,7 +25,7 @@
 #define KOPETE_CONTACTLISTVIEW_H
 
 #include <QTreeView>
-
+#include <QMimeData>
 #include <QPixmap>
 #include <QList>
 #include <QStringList>

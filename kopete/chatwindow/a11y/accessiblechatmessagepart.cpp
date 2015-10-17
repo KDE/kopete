@@ -20,17 +20,15 @@
 #include <khtmlview.h>
 #include <dom/html_document.h>
 
+/** FIXME:
 #if QT_VERSION >= 0x40800
-QString Q_GUI_EXPORT qTextAfterOffsetFromString( int offset, QAccessible2::BoundaryType boundaryType,
-                                         int *startOffset, int *endOffset, const QString& text );
-QString Q_GUI_EXPORT qTextBeforeOffsetFromString( int offset, QAccessible2::BoundaryType boundaryType,
-                                         int *startOffset, int *endOffset, const QString& text );
-QString Q_GUI_EXPORT qTextAtOffsetFromString( int offset, QAccessible2::BoundaryType boundaryType,
-                                         int *startOffset, int *endOffset, const QString& text );
+QString Q_GUI_EXPORT qTextAfterOffset( int offset, QAccessible::TextBoundaryType boundaryType, int *startOffset, int *endOffset);
+QString Q_GUI_EXPORT qTextBeforeOffset( int offset, QAccessible::TextBoundaryType boundaryType, int *startOffset, int *endOffset);
+QString Q_GUI_EXPORT qTextAtOffset( int offset, QAccessible::TextBoundaryType boundaryType, int *startOffset, int *endOffset);
 #endif
-
+*/
 AccessibleChatMessagePart::AccessibleChatMessagePart( KHTMLView* widget ):
-  QAccessibleWidgetEx( widget, QAccessible::Document )
+  QAccessibleWidget( widget, QAccessible::Document )
 {
   m_part = widget->part();
 }
@@ -40,14 +38,15 @@ int AccessibleChatMessagePart::childCount() const
     return 0;
 }
 
-int AccessibleChatMessagePart::navigate(QAccessible::RelationFlag rel, int entry, QAccessibleInterface** target) const
+// DEPRECATED: QAccessibleInterface::navigate() is replaced by child() and parent()
+/*int AccessibleChatMessagePart::navigate(QAccessible::RelationFlag rel, int entry, QAccessibleInterface** target) const
 {
     if (rel == QAccessible::Child) {
       *target = 0;
       return -1;
     }
     return QAccessibleWidgetEx::navigate(rel, entry, target);
-}
+}*/
 
 int AccessibleChatMessagePart::characterCount()
 {
@@ -111,12 +110,12 @@ void AccessibleChatMessagePart::selection( int selectionIndex, int* startOffset,
     *endOffset = -1;
 }
 
-QRect AccessibleChatMessagePart::characterRect( int offset, QAccessible2::CoordinateType coordType )
+QRect AccessibleChatMessagePart::characterRect( int offset)
 {
     return QRect();
 }
 
-int AccessibleChatMessagePart::offsetAtPoint( const QPoint& point, QAccessible2::CoordinateType coordType )
+int AccessibleChatMessagePart::offsetAtPoint( const QPoint& point)
 {
     return 0;
 }
@@ -130,29 +129,32 @@ void AccessibleChatMessagePart::scrollToSubstring( int startIndex, int endIndex 
 {
 }
 
-QString AccessibleChatMessagePart::textAfterOffset( int offset, QAccessible2::BoundaryType boundaryType, int* startOffset, int* endOffset )
+/**
+ * FIXME:
+QString AccessibleChatMessagePart::textAfterOffset( int offset, QAccessible::TextBoundaryType boundaryType, int* startOffset, int* endOffset )
 {
 #if QT_VERSION >= 0x40800
-    return qTextAfterOffsetFromString( offset, boundaryType, startOffset, endOffset, plainText() );
+    return QAccessibleTextInterface::textAfterOffset( offset, boundaryType, startOffset, endOffset );
 #else
     return QString();
 #endif
 }
 
-QString AccessibleChatMessagePart::textBeforeOffset( int offset, QAccessible2::BoundaryType boundaryType, int* startOffset, int* endOffset )
+QString AccessibleChatMessagePart::textBeforeOffset( int offset, QAccessible::TextBoundaryType boundaryType, int* startOffset, int* endOffset )
 {
 #if QT_VERSION >= 0x40800
-    return qTextBeforeOffsetFromString( offset, boundaryType, startOffset, endOffset, plainText() );
+    return QAccessibleTextInterface::textBeforeOffset( offset, boundaryType, startOffset, endOffset );
 #else
     return QString();
 #endif
 }
 
-QString AccessibleChatMessagePart::textAtOffset( int offset, QAccessible2::BoundaryType boundaryType, int* startOffset, int* endOffset )
+QString AccessibleChatMessagePart::textAtOffset( int offset, QAccessible::TextBoundaryType boundaryType, int* startOffset, int* endOffset )
 {
 #if QT_VERSION >= 0x40800
-    return qTextAtOffsetFromString( offset, boundaryType, startOffset, endOffset, plainText() );
+    return QAccessibleTextInterface::textAtOffset( offset, boundaryType, startOffset, endOffset );
 #else
     return QString();
 #endif
 }
+*/

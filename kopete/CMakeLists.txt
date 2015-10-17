@@ -31,6 +31,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/contactlist
 ########### next target ###############
 
 # Contact List
+set(KF5_VERSION "5.11.0")
 find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS NotifyConfig TextEditor)
 
 set(kopete_SRCS 
