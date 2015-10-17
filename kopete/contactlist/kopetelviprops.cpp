@@ -42,6 +42,7 @@
 #include <KIconLoader>
 #include <KGlobal>
 #include <KLocale>
+#include <KUrl>
 #include <KUrlRequester>
 #include <KStandardDirs>
 #include <KMessageBox>

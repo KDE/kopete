@@ -26,6 +26,7 @@
 
 #include <QIcon>
 #include <QMenu>
+#include <QDrag>
 #include <QWidget>
 #include <QHeaderView>
 #include <QScrollBar>

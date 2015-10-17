@@ -20,7 +20,7 @@
 #include <qplugin.h>
 #include "accessiblechatmessagepart.h"
 
-Q_EXPORT_PLUGIN(ChatWindowAccessibleWidgetFactory)
+Q_PLUGIN_METADATA(ChatWindowAccessibleWidgetFactory)
 
 QAccessibleInterface *ChatWindowAccessibleWidgetFactory::create( const QString &key, QObject *object )
 {
