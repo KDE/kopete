@@ -233,7 +233,7 @@ void KopeteAddressBookExport::exportData()
 	if ( newValue( mUrl ) )
 	{
 		dirty = true;
-		mAddressee.setUrl( KUrl( mUrl->currentText() ) );
+		mAddressee.setUrl( QUrl( mUrl->currentText() ) );
 	}
 
 	QStringList newVals;

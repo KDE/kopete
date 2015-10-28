@@ -518,7 +518,7 @@ void KopeteContactListView::sendFile()
 {
 	Kopete::MetaContact* metaContact = metaContactFromIndex( currentIndex() );
 	if ( metaContact )
-		metaContact->sendFile( KUrl() );
+		metaContact->sendFile( QUrl() );
 }
 
 void KopeteContactListView::sendMessage()

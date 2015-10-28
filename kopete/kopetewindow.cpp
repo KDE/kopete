@@ -61,7 +61,7 @@
 #include <kplugininfo.h>
 #include <ksqueezedtextlabel.h>
 #include <kstringhandler.h>
-#include <kurl.h>
+#include <QUrl>
 #include <kxmlguifactory.h>
 #include <ktoolbar.h>
 #include <kdialog.h>

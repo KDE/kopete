@@ -253,8 +253,8 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent )
 	connect( d->manager, SIGNAL(messageStateChanged(uint,Kopete::Message::MessageState)),
 	         this, SLOT(messageStateChanged(uint,Kopete::Message::MessageState)) );
 
-	connect ( browserExtension(), SIGNAL(openUrlRequestDelayed(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
-	          this, SLOT(slotOpenURLRequest(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)) );
+	connect ( browserExtension(), SIGNAL(openUrlRequestDelayed(QUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
+	          this, SLOT(slotOpenURLRequest(QUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)) );
 
 	connect( this, SIGNAL(popupMenu(QString,QPoint)),
 	         this, SLOT(slotRightClick(QString,QPoint)) );
@@ -309,7 +309,7 @@ void ChatMessagePart::slotScrollingTo( int y )
 
 void ChatMessagePart::save()
 {
-	const KUrl dummyUrl;
+	const QUrl dummyUrl;
 	QPointer <KFileDialog> dlg = new KFileDialog( dummyUrl, QLatin1String( "text/html text/plain" ), view() );
 	dlg->setCaption( i18n( "Save Conversation" ) );
 	dlg->setOperationMode( KFileDialog::Saving );
@@ -323,7 +323,7 @@ void ChatMessagePart::save()
 	if ( ! dlg )
 		return;
 
-	KUrl saveURL = dlg->selectedUrl();
+	QUrl saveURL = dlg->selectedUrl();
 	KTemporaryFile *tempFile = new KTemporaryFile();
 	tempFile->setAutoRemove(false);
 	tempFile->open();
@@ -356,12 +356,12 @@ void ChatMessagePart::save()
 	QString fileName = tempFile->fileName();
 	delete tempFile;
 
-	KIO::CopyJob *moveJob = KIO::move( KUrl( fileName ), saveURL, KIO::HideProgressInfo );
+	KIO::CopyJob *moveJob = KIO::move( QUrl( fileName ), saveURL, KIO::HideProgressInfo );
 
 	if ( !moveJob )
 	{
 		KMessageBox::queuedMessageBox( view(), KMessageBox::Error,
-				i18n("<qt>Could not open <b>%1</b> for writing.</qt>", saveURL.prettyUrl() ), // Message
+				i18n("<qt>Could not open <b>%1</b> for writing.</qt>", saveURL.toDisplayString() ), // Message
 				i18n("Error While Saving") ); //Caption
 	}
 }
@@ -376,10 +376,10 @@ void ChatMessagePart::pageDown()
 	view()->scrollBy( 0, view()->visibleHeight() );
 }
 
-void ChatMessagePart::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
+void ChatMessagePart::slotOpenURLRequest(const QUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {
 	kDebug(14000) << "url=" << url.url();
-	if ( url.protocol() == QLatin1String("kopetemessage") )
+	if ( url.scheme() == QLatin1String("kopetemessage") )
 	{
 		Kopete::Contact *contact = d->manager->account()->contacts().value( url.host() );
 		if ( contact )

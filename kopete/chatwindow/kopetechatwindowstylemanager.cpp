@@ -25,7 +25,7 @@
 #include <kstandarddirs.h>
 #include <kdirlister.h>
 #include <kdebug.h>
-#include <kurl.h>
+#include <QUrl>
 #include <kglobal.h>
 #include <karchive.h>
 #include <kzip.h>
@@ -60,7 +60,7 @@ public:
 	// key = style name, value = ChatWindowStyle instance
 	QHash<QString, ChatWindowStyle*> stylePool;
 
-	QStack<KUrl> styleDirs;
+	QStack<QUrl> styleDirs;
 };
 
 ChatWindowStyleManager *ChatWindowStyleManager::self()
@@ -91,7 +91,7 @@ void ChatWindowStyleManager::loadStyles()
 	foreach(const QString &styleDir, chatStyles)
 	{
 		kDebug(14000) << styleDir;
-		d->styleDirs.push( KUrl(styleDir) );
+		d->styleDirs.push( QUrl(styleDir) );
 	}
 
 	d->styleDirLister = new KDirLister(this);
@@ -308,7 +308,7 @@ bool ChatWindowStyleManager::removeStyle(const QString &styleName)
 		int numDeleted = 0;
 		foreach( const QString& stylePath, styleDirs )
 		{
-			KUrl urlStyle(stylePath);
+			QUrl urlStyle(stylePath);
 			// Do the actual deletion of the directory style.
 			if(KIO::NetAccess::del( urlStyle, 0 ))
 				numDeleted++;

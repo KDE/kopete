@@ -25,7 +25,7 @@
 #include <QTextDocument>
 #include <QDomDocument>
 
-#include <KUrl>
+#include <QUrl>
 #include <KDebug>
 #include <KMessageBox>
 #include <KEmoticonsTheme>
@@ -403,15 +403,15 @@ bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelInde
 	QObject* metaContactObject = qVariantValue<QObject*>( parent.data( Kopete::Items::ObjectRole ) );
 	Kopete::MetaContact* metaContact = qobject_cast<Kopete::MetaContact*>(metaContactObject);
 
-	KUrl::List urlList = KUrl::List::fromMimeData( data );
-	for ( KUrl::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+	QList<QUrl> urlList = data->urls();
+	for ( QList<QUrl>::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 	{
-		KUrl url = (*it);
-		if( url.protocol() == QLatin1String( "kopetemessage" ) )
+		QUrl url = (*it);
+		if( url.scheme() == QLatin1String( "kopetemessage" ) )
 		{
 			//Add a contact
-			QString protocolId = url.queryItem( "protocolId" );
-			QString accountId = url.queryItem( "accountId" );
+			QString protocolId = QUrlQuery(url).queryItemValue( "protocolId" );
+			QString accountId = QUrlQuery(url).queryItemValue( "accountId" );
 			QString contactId = url.host();
 
 			kDebug() << "protocolId=" << protocolId << ", accountId=" << accountId << ", contactId=" << contactId;
@@ -640,7 +640,7 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 #warning Currently using metaContact->picture().path() but should use replacement of KopeteMimeSourceFactory
 #endif
 #if 0
-			QString photoName = QLatin1String("kopete-metacontact-photo:%1").arg( KUrl::encode_string( metaContact->metaContactId() ));
+			QString photoName = QLatin1String("kopete-metacontact-photo:%1").arg( QUrl::encode_string( metaContact->metaContactId() ));
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
 			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
 #endif

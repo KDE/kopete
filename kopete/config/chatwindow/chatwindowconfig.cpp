@@ -49,7 +49,7 @@
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>
-#include <kurl.h>
+#include <QUrl>
 #include <kemoticons.h>
 #include <KCMultiDialog>
 
@@ -405,7 +405,7 @@ void ChatWindowConfig::slotChatStyleVariantSelected(const QString &variantName)
 
 void ChatWindowConfig::slotInstallChatStyle()
 {
-	KUrl styleUrl = KFileDialog::getOpenUrl( KUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window Style to Install") );
+	QUrl styleUrl = KFileDialog::getOpenUrl( QUrl(), QString::fromUtf8("application/zip application/x-compressed-tar application/x-bzip-compressed-tar"), this, i18n("Choose Chat Window Style to Install") );
 
 	if ( styleUrl.isEmpty() ) // dialog got canceled
 		return;
@@ -441,7 +441,7 @@ void ChatWindowConfig::slotInstallChatStyle()
 	}
 }
 
-int ChatWindowConfig::installChatStyle(const KUrl &styleToInstall)
+int ChatWindowConfig::installChatStyle(const QUrl &styleToInstall)
 {
 	int styleInstallReturn = ChatWindowStyleManager::StyleCannotOpen;
 
@@ -504,7 +504,7 @@ void ChatWindowConfig::slotGetChatStyles()
 		{
 			if ( entry->status() == KNS::Entry::Installed && entry->installedFiles().size() > 0 )
 			{
-				KUrl styleFile( entry->installedFiles().at(0) );
+				QUrl styleFile( entry->installedFiles().at(0) );
 				int result = installChatStyle( styleFile );
 
 				QString packageName(entry->name().representation());

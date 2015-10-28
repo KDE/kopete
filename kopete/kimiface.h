@@ -26,7 +26,7 @@
 #include <QByteArray>
 #include <dcopobject.h>
 #include <qstringlist.h>
-#include <kurl.h>
+#include <QUrl>
 
 /**
  * Generic DCOP interface for KDE instant messenger applications
@@ -155,11 +155,11 @@ k_dcop:
 	/**
 	 * Send the file to the contact
 	 * @param uid the KABC uid you are sending to.
-	 * @param sourceURL a @ref KUrl to send.
+	 * @param sourceURL a @ref QUrl to send.
 	 * @param altFileName an alternate filename describing the file
 	 * @param fileSize file size in bytes
 	 */
-	virtual void sendFile(const QString &uid, const KUrl &sourceURL,
+	virtual void sendFile(const QString &uid, const QUrl &sourceURL,
 		const QString &altFileName = QString(), uint fileSize = 0) = 0;
 
 // MUTATORS
