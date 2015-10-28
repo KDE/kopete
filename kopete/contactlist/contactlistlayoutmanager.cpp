@@ -22,7 +22,7 @@
 
 #include <KMessageBox>
 #include <KStandardDirs>
-#include <KUrl>
+#include <QUrl>
 #include <KGlobal>
 #include <KConfig>
 #include <KConfigGroup>

@@ -42,7 +42,7 @@
 #include <KIconLoader>
 #include <KGlobal>
 #include <KLocale>
-#include <KUrl>
+#include <QUrl>
 #include <KUrlRequester>
 #include <KStandardDirs>
 #include <KMessageBox>
@@ -510,7 +510,7 @@ void KopeteMetaLVIProps::slotOkClicked()
 	mMetaContact->setPhotoSource(selectedPhotoSource());
 	mMetaContact->setPhotoSourceContact( selectedPhotoSourceContact() );
 	if ( !m_photoPath.isEmpty())
-		mMetaContact->setPhoto(KUrl(m_photoPath));
+		mMetaContact->setPhoto(QUrl(m_photoPath));
 	mMetaContact->setPhotoSyncedWithKABC( ui_mainWidget->chkSyncPhoto->isChecked() );
 	
 	mMetaContact->setUseCustomIcon(
@@ -620,7 +620,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 	soundDirs += KGlobal::dirs()->resourceDirs( "sound" );
 
 	if ( !soundDirs.isEmpty() ) {
-		KUrl soundURL;
+		QUrl soundURL;
 		QDir dir;
 		dir.setFilter( QDir::Files | QDir::Readable );
 		QStringList::ConstIterator it = soundDirs.constBegin();
@@ -639,7 +639,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 void KopeteMetaLVIProps::slotClearPhotoClicked()
 {
 	m_photoPath.clear();
-	mMetaContact->setPhoto( KUrl() );
+	mMetaContact->setPhoto( QUrl() );
 
 	slotEnableAndDisableWidgets();
 }

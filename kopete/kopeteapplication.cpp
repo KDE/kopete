@@ -351,7 +351,7 @@ void KopeteApplication::handleURLArgs()
 	{
 		for ( int i = 0; i < args->count(); i++ )
 		{
-			KUrl u( args->url( i ) );
+			QUrl u( args->url( i ) );
 			if ( !u.isValid() )
 				continue;
 

@@ -24,7 +24,7 @@
 #include <QLatin1String>
 
 // KDE includes
-#include <kurl.h>
+#include <QUrl>
 #include <kplugininfo.h>
 
 // Kopete includes
@@ -175,7 +175,7 @@ void KopeteDBusInterface::setIdentityAvatar(const QString &avatarUrl,
 		// Add the avatar using AvatarManager
 		Kopete::AvatarManager::AvatarEntry avatarEntry;
 		avatarEntry.name = "D-Bus Avatar";
-		avatarEntry.path = KUrl(avatarUrl).path();
+		avatarEntry.path = QUrl(avatarUrl).path();
 		avatarEntry.category = Kopete::AvatarManager::User;
 
 		avatarEntry = Kopete::AvatarManager::self()->add(avatarEntry);
@@ -379,7 +379,7 @@ void KopeteDBusInterface::sendFile(const QString &contactId,
 		Kopete::Contact *destContact = destMetaContact->execute();
 		if (destContact && destContact->isFileCapable())
 		{
-			destContact->sendFile(KUrl(fileUrl));
+			destContact->sendFile(QUrl(fileUrl));
 		}
 	}
 }

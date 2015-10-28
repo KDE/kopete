@@ -951,7 +951,7 @@ bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 		}
 	}
 	// make sure it doesn't come from the current chat view - then it's an emoticon
-	else if ( KUrl::List::canDecode( event->mimeData() ) && m_manager->members().count() == 1 &&
+	else if ( QList<QUrl>::canDecode( event->mimeData() ) && m_manager->members().count() == 1 &&
 				 ( event->source() != (QWidget*)m_messagePart->view()->viewport() ) )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
@@ -998,9 +998,9 @@ void ChatView::dropEvent ( QDropEvent * event )
 			return;
 		}
 
-		KUrl::List urlList = KUrl::List::fromMimeData( event->mimeData() );
+		QList<QUrl> urlList = QList<QUrl>::fromMimeData( event->mimeData() );
 
-		for ( KUrl::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
+		for ( QList<QUrl>::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
 			if ( (*it).isLocalFile() )
 			{ //send a file

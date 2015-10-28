@@ -53,7 +53,7 @@ public:
 private slots:
 	//----- Style TAB ---------------------
 	void slotInstallChatStyle();
-	int installChatStyle(const KUrl &styleToInstall);
+	int installChatStyle(const QUrl &styleToInstall);
 	void slotDeleteChatStyle();
 	void slotChatStyleSelected(const QString &styleName);
 	void slotChatStyleVariantSelected(const QString &variantName);
