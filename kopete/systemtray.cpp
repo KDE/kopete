@@ -21,7 +21,7 @@
 
 #include <qtimer.h>
 
-#include <kaboutdata.h>
+#include <K4AboutData>
 #include <kactioncollection.h>
 #include <QAction>
 #include <QMenu>

@@ -502,11 +502,11 @@ void ChatTextEditPart::checkToolbarEnabled()
 	emit toolbarToggled( isRichTextEnabled() );
 }
 
-KAboutData *ChatTextEditPart::createAboutData()
+K4AboutData *ChatTextEditPart::createAboutData()
 {
-    KAboutData *aboutData = new KAboutData("krichtexteditpart", 0, ki18n("Chat Text Edit Part"), "0.1",
+    K4AboutData *aboutData = new K4AboutData("krichtexteditpart", 0, ki18n("Chat Text Edit Part"), "0.1",
                         ki18n("A simple rich text editor part"),
-                        KAboutData::License_LGPL );
+                        K4AboutData::License_LGPL );
     aboutData->addAuthor(ki18n("Richard J. Moore"), KLocalizedString(), "rich@kde.org", "http://xmelegance.org/" );
     aboutData->addAuthor(ki18n("Jason Keirstead"), KLocalizedString(), "jason@keirstead.org", "http://www.keirstead.org/" );
     aboutData->addAuthor(ki18n("Michaël Larouche"), KLocalizedString(), "larouche@kde.org" "http://www.tehbisnatch.org/" );

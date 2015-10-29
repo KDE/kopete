@@ -17,8 +17,10 @@
 
 #ifndef CHATTEXTEDITPART_H
 #define CHATTEXTEDITPART_H
+
 #include <kparts/part.h>
 #include <krichtextedit.h>
+#include <K4AboutData>
 #include "kopeterichtextwidget.h"
 
 #include <QFont>
@@ -29,7 +31,6 @@
 // TODO: Use kdelibs export
 #include <kopete_export.h>
 
-class KAboutData;
 class KTextEdit;
 class KConfigGroup;
 class KCompletion;
@@ -88,7 +89,7 @@ public:
 	 */
 	bool checkSpellingEnabled() const;
 	
-	static KAboutData *createAboutData();
+	static K4AboutData *createAboutData();
 	
 	/**
 	 * @brief Disable file open, because it's not used by this part.
