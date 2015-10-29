@@ -26,7 +26,7 @@
 #include "kopeteappearancesettings.h"
 #include "kopetechatwindowsettings.h"
 
-#include <QAction>
+
 #include <kactioncollection.h>
 #include <kcolordialog.h>
 #include <kconfig.h>
@@ -37,17 +37,17 @@
 #include <kfontsizeaction.h>
 #include <kglobalsettings.h>
 #include <kcolorscheme.h>
-#include <QIcon>
-#include <kparts/genericfactory.h>
 #include <kstandardaction.h>
 #include <ktoggleaction.h>
 #include <kxmlguifactory.h>
 
 
 // Qt includes
+#include <QIcon>
 #include <QTimer>
-#include <QRegExp>
 #include <QEvent>
+#include <QAction>
+#include <QRegExp>
 #include <QKeyEvent>
 #include <QTextCursor>
 #include <QTextCharFormat>

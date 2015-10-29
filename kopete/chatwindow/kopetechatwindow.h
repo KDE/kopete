@@ -20,7 +20,6 @@
 #ifndef KOPETECHATWINDOW_H
 #define KOPETECHATWINDOW_H
 
-#include <kparts/mainwindow.h>
 #include <qmovie.h>
 #include <QPixmap>
 #include <QLabel>

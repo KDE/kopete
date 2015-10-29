@@ -18,16 +18,18 @@
 #ifndef CHATTEXTEDITPART_H
 #define CHATTEXTEDITPART_H
 
-#include <kparts/part.h>
-#include <krichtextedit.h>
-#include <K4AboutData>
-#include "kopeterichtextwidget.h"
-
 #include <QFont>
 #include <QColor>
 #include <QFlags>
 #include <QStringList>
 
+#include <K4AboutData>
+#include <KParts/ReadOnlyPart>
+#include <KParts/ReadWritePart>
+#include <KParts/GenericFactory>
+
+#include <krichtextedit.h>
+#include "kopeterichtextwidget.h"
 // TODO: Use kdelibs export
 #include <kopete_export.h>
 
