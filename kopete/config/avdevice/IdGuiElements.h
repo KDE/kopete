@@ -20,6 +20,8 @@
 
 #include <KPushButton>
 #include <KComboBox>
+#include <KIcon>
+
 #include <QSlider>
 #include <QCheckBox>
 

@@ -55,7 +55,6 @@
 
 K_PLUGIN_FACTORY( KopeteAccountConfigFactory,
 		registerPlugin<KopeteAccountConfig>(); )
-K_EXPORT_PLUGIN( KopeteAccountConfigFactory("kcm_kopete_accountconfig") )
 
 KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QVariantList &args )
 : KCModule( KopeteAccountConfigFactory::componentData(), parent, args )

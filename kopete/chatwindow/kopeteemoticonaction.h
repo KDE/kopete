@@ -22,6 +22,7 @@
 #define _KOPETEEMOTICONACTION_H_
 
 #include <KActionMenu>
+#include <KActionCollection>
 
 #include <kopete_export.h>
 

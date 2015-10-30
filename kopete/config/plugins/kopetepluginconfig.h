@@ -21,6 +21,7 @@
 #define KOPETEPLUGINCONFIG_H
 
 #include <kcmodule.h>
+#include <KPluginFactory>
 
 class KPluginSelector;
 

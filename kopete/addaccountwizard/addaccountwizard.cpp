@@ -1,3 +1,4 @@
+
 /*
     addaccountwizard.cpp - Kopete Add Account Wizard
 
@@ -18,8 +19,8 @@
 
 #include "addaccountwizard.h"
 
-#include <qcheckbox.h>
-#include <qlabel.h>
+#include <QCheckBox>
+#include <QLabel>
 
 #include <kcolorbutton.h>
 #include <kdebug.h>

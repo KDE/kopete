@@ -31,6 +31,7 @@
 #include <kplugininfo.h>
 #include <klocale.h>
 #include <kpushbutton.h>
+#include <kpluginfactory.h>
 #include <kgenericfactory.h>
 #include <kconfig.h>
 #include <klineedit.h>
@@ -42,7 +43,6 @@
 
 K_PLUGIN_FACTORY( KopeteBehaviorConfigFactory,
 		registerPlugin<BehaviorConfig>(); )
-K_EXPORT_PLUGIN( KopeteBehaviorConfigFactory("kcm_kopete_behaviorconfig") )
 
 BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
 		KCModule( KopeteBehaviorConfigFactory::componentData(), parent, args )

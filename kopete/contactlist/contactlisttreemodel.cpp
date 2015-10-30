@@ -21,10 +21,10 @@
 #include "contactlisttreemodel.h"
 #include "contactlisttreemodel_p.h"
 
+#include <QIcon>
+#include <QDebug>
 #include <QMimeData>
 #include <QDomDocument>
-
-#include <QIcon>
 #include <KLocale>
 
 #include "kopeteaccount.h"
@@ -83,7 +83,8 @@ void ContactListTreeModel::addGroup( Kopete::Group* group )
 	}
 	else if ( !m_groups.contains( group ) )
 	{
-		kDebug(14001) << "addGroup" << group->displayName();
+		//kDebug(14001) << "addGroup" << group->displayName();
+		qDebug() << "addGroup" << group->displayName();
 
 		GroupModelItem* gmi = new GroupModelItem( group );
 		m_groups.insert( group, gmi );
@@ -476,7 +477,7 @@ bool ContactListTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction ac
 
 			GroupMetaContactPair pair;
 			pair.first = Kopete::ContactList::self()->group( grp.toUInt() );
-			pair.second = Kopete::ContactList::self()->metaContact( QUuid(id) );
+			pair.second = Kopete::ContactList::self()->metaContact( QUuid(id).toString() );
 			items.append( pair );
 		}
 
@@ -699,7 +700,7 @@ void ContactListTreeModel::saveModelSettingsImpl( QDomDocument& doc, QDomElement
 					MetaContactModelItem* mcmi = dynamic_cast<MetaContactModelItem*>( clmi );
 					if ( mcmi->metaContact() ) {
 						QDomElement metaContactElement = doc.createElement( "MetaContact" );
-						metaContactElement.setAttribute( "uuid", mcmi->metaContact()->metaContactId() );
+						metaContactElement.setAttribute( "uuid", mcmi->metaContact()->metaContactId().toString() );
 						metaContactElement.setAttribute( "possition", index++ );
 						groupElement.appendChild( metaContactElement );
 					}

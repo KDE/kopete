@@ -30,6 +30,7 @@
 #include <KLocale>
 #include <KStandardDirs>
 #include <kio/global.h>
+#include <kio/job.h>
 
 #include <QDir>
 #include <QDomDocument>

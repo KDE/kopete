@@ -17,9 +17,10 @@
 
 #include "contactlistproxymodel.h"
 
-#include <QStandardItem>
 #include <QList>
 #include <QTimer>
+#include <QDebug>
+#include <QStandardItem>
 
 #include <kcontacts/addressee.h>
 
@@ -61,7 +62,8 @@ ContactListProxyModel::~ContactListProxyModel()
 
 void ContactListProxyModel::slotConfigChanged()
 {
-	kDebug(14001) << "config changed";
+	//kDebug(14001) << "config changed";
+	qDebug() << "config changed";
 	invalidate();
 }
 

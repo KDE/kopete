@@ -50,7 +50,7 @@ StatusConfig_Manager::StatusConfig_Manager( QWidget *parent )
 	statusView->setModel( d->statusModel );
 	connect( d->statusModel, SIGNAL(changed()), this, SIGNAL(changed()) );
 
-	KIcon icon = Kopete::OnlineStatusManager::pixmapForCategory( Kopete::OnlineStatusManager::Online );
+	QIcon icon = Kopete::OnlineStatusManager::pixmapForCategory( Kopete::OnlineStatusManager::Online );
 	cbStatusCategory->addItem( icon, i18n("Online"), Kopete::OnlineStatusManager::Online );
 	icon = Kopete::OnlineStatusManager::pixmapForCategory( Kopete::OnlineStatusManager::FreeForChat );
 	cbStatusCategory->addItem( icon, i18n("Free For Chat"), Kopete::OnlineStatusManager::FreeForChat );

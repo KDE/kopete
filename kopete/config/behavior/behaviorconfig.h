@@ -17,6 +17,7 @@
 #define BEHAVIORCONFIG_H
 
 #include <kcmodule.h>
+#include <kplugininfo.h>
 
 class QTabWidget;
 
@@ -24,7 +25,6 @@ class BehaviorConfig_General;
 class BehaviorConfig_Events;
 class BehaviorConfig_Chat;
 class BehaviorConfig_Away;
-class KPluginInfo;
 
 class BehaviorConfig : public KCModule
 {

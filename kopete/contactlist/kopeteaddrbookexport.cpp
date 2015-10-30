@@ -88,7 +88,7 @@ void KopeteAddressBookExport::fetchKABCData()
 			mLastName->addItem( QIcon(mAddrBookIcon), i18n("<Not Set>") );
 		
 		// url
-		QString url = mAddressee.url().url();
+		QString url = mAddressee.url().url().toString();
 		if ( !url.isEmpty() )
 			mUrl->addItem( QIcon(mAddrBookIcon), url );
 		else
