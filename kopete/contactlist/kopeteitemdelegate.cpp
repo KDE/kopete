@@ -28,7 +28,8 @@
 #include <QHelpEvent>
 #include <QToolTip>
 
-#include <qimageblitz.h>
+//FIXME: Find alternative to QImageBlitz in Qt5
+//#include <qimageblitz.h>
 
 #include <KIconLoader>
 
@@ -249,7 +250,8 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 
 					int metaContactStatus = index.data( Kopete::Items::OnlineStatusRole ).toInt();
 					if ( metaContactStatus == Kopete::OnlineStatus::Offline )
-						Blitz::grayscale( metaContactImage );
+						//FIXME: Find alternative to QImageBlitz in Qt5
+						//Blitz::grayscale( metaContactImage );
 
 					switch ( metaContactStatus )
 					{
@@ -257,14 +259,18 @@ void KopeteItemDelegate::paintItem( ContactList::LayoutItemConfig config, QPaint
 						break;
 					case Kopete::OnlineStatus::Away:
 					case Kopete::OnlineStatus::Busy:
-						Blitz::fade( metaContactImage, 0.5, Qt::white );
+						//FIXME: Find alternative to QImageBlitz in Qt5
+						//Blitz::fade( metaContactImage, 0.5, Qt::white );
 						break;
 					case Kopete::OnlineStatus::Offline:
-						Blitz::fade( metaContactImage, 0.4, Qt::white );
+						//FIXME: Find alternative to QImageBlitz in Qt5
+						//Blitz::fade( metaContactImage, 0.4, Qt::white );
 						break;
 					case Kopete::OnlineStatus::Unknown:
 					default:
-						Blitz::fade( metaContactImage, 0.8, Qt::white );
+						//FIXME: Find alternative to QImageBlitz in Qt5
+						//Blitz::fade( metaContactImage, 0.8, Qt::white );
+						qDebug() << "Qt::White";
 					}
 
 					QPixmap photoPixmap;

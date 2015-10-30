@@ -22,13 +22,15 @@
 
 #include <math.h>
 
+#include <QIcon>
+#include <QMenu>
+#include <QAction>
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmenubar.h>
-#include <QMenu>
 #include <ktoolbar.h>
 #include <kauthorized.h>
-#include <QIcon>
 #include <kemoticons.h>
 
 #include "emoticonselector.h"
@@ -88,7 +90,7 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 	else
 		setIcon( QIcon::fromTheme( icon ) );
 
-	setShortcutConfigurable( false );
+	setShortcutsConfigurable( this, false );
 	connect( d->emoticonSelector, SIGNAL(itemSelected(QString)),
 		this, SIGNAL(activated(QString)) );
 }

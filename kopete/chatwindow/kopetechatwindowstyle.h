@@ -19,6 +19,7 @@
 
 
 #include <QHash>
+#include <QObject>
 
 #include <kopete_export.h>
 

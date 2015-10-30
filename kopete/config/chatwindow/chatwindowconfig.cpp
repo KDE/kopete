@@ -24,6 +24,7 @@
 
 #include <QCheckBox>
 #include <QDir>
+#include <QUrl>
 #include <QLayout>
 #include <QSpinBox>
 #include <QSlider>
@@ -49,7 +50,6 @@
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>
-#include <QUrl>
 #include <kemoticons.h>
 #include <KCMultiDialog>
 
@@ -83,7 +83,6 @@
 
 K_PLUGIN_FACTORY( KopeteChatWindowConfigFactory,
 		registerPlugin<ChatWindowConfig>(); )
-K_EXPORT_PLUGIN( KopeteChatWindowConfigFactory("kcm_kopete_chatwindowconfig") )
 
 // Reimplement Kopete::Contact and its abstract method
 // This is for style preview.

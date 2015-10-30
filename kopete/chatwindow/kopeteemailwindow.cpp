@@ -30,7 +30,6 @@
 #include "kopetestdaction.h"
 #include "kopeteviewmanager.h"
 
-#include <QAction>
 #include <ktoolbarspaceraction.h>
 #include <kstandardaction.h>
 #include <kcolordialog.h>
@@ -47,15 +46,15 @@
 #include <klocale.h>
 #include <kmenubar.h>
 #include <kmessagebox.h>
-#include <QMenu>
 #include <kpushbutton.h>
 #include <ktextedit.h>
 #include <kwindowsystem.h>
 #include <kgenericfactory.h>
 #include <kxmlguifactory.h>
+#include <kpluginfactory.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
-#include <QIcon>
+#include <kactioncollection.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
@@ -66,7 +65,9 @@
 #include <QList>
 #include <QMovie>
 #include <QSplitter>
-#include <kactioncollection.h>
+#include <QIcon>
+#include <QMenu>
+#include <QAction>
 
 K_PLUGIN_FACTORY( EmailWindowPluginFactory, registerPlugin<EmailWindowPlugin>(); )
 K_EXPORT_PLUGIN( EmailWindowPluginFactory( "kopete_emailwindow" ) )

@@ -44,7 +44,6 @@
 
 K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory,
 		registerPlugin<AVDeviceConfig>(); )
-K_EXPORT_PLUGIN( KopeteAVDeviceConfigFactory("kcm_kopete_avdeviceconfig") )
 
 AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
  : KCModule( KopeteAVDeviceConfigFactory::componentData(), parent, args )

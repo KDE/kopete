@@ -80,6 +80,7 @@
 #include <kstandardaction.h>
 #include <kiconloader.h>
 #include <kcodecs.h>
+#include <KMimeType>
 
 // Kopete includes
 #include "kopetecontact.h"
@@ -1090,7 +1091,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 	{
 		int light=100;
 		bool doLight=false;
-		if(senderColorRegExp.numCaptures()>=1)
+		if(senderColorRegExp.captureCount()>=1)
 		{
 			light=senderColorRegExp.cap(1).toUInt(&doLight);
 		}

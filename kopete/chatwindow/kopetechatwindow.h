@@ -27,6 +27,8 @@
 #include <QFrame>
 #include <QCloseEvent>
 #include <QList>
+
+#include <kxmlguiwindow.h>
 #include "kopetecontact.h"
 #include "kdeversion.h"
 #include <kopetechatsession.h>

@@ -39,21 +39,21 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <QMenu>
 #include <kstringhandler.h>
 #include <kwindowsystem.h>
 #include <kglobalsettings.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
 #include <kxmlguifactory.h>
+#include <kpluginfactory.h>
 
+#include <QMenu>
 #include <QTimer>
 #include <QSplitter>
 #include <QMimeData>
 #include <QScrollBar>
 
 K_PLUGIN_FACTORY( ChatWindowPluginFactory, registerPlugin<ChatWindowPlugin>(); )
-K_EXPORT_PLUGIN( ChatWindowPluginFactory( "kopete_chatwindow" ) )
 
 ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QVariantList &) :
 	Kopete::ViewPlugin( ChatWindowPluginFactory::componentData(), parent )

@@ -26,6 +26,7 @@
 #include <QTextStream>
 
 // KDE includes
+#include <KGlobal>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kstandarddirs.h>

@@ -63,7 +63,6 @@
 
 K_PLUGIN_FACTORY( KopeteAppearanceConfigFactory,
 		registerPlugin<AppearanceConfig>(); )
-K_EXPORT_PLUGIN( KopeteAppearanceConfigFactory("kcm_kopete_appearanceconfig") )
 
 class FakeProtocol;
 class FakeAccount;

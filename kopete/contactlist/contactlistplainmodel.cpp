@@ -22,6 +22,7 @@
 
 #include <QMimeData>
 #include <QDomDocument>
+#include <QDomElement>
 
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
@@ -219,7 +220,7 @@ bool ContactListPlainModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
 			GroupMetaContactPair pair;
 			pair.first = Kopete::ContactList::self()->group( grp.toUInt() );
-			pair.second = Kopete::ContactList::self()->metaContact( QUuid(id) );
+			pair.second = Kopete::ContactList::self()->metaContact( QUuid(id).toString() );
 			items.append( pair );
 		}
 
@@ -333,7 +334,7 @@ void ContactListPlainModel::saveModelSettingsImpl( QDomDocument& doc, QDomElemen
 		{
 			Kopete::MetaContact* mc = m_contacts.value( i );
 			QDomElement metaContactElement = doc.createElement( "MetaContact" );
-			metaContactElement.setAttribute( "uuid", mc->metaContactId() );
+			metaContactElement.setAttribute( "uuid", mc->metaContactId().toString() );
 			metaContactElement.setAttribute( "possition", i );
 			metaContactRootElement.appendChild( metaContactElement );
 		}

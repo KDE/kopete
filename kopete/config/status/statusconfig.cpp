@@ -22,10 +22,10 @@
 #include <QTabWidget>
 
 #include <kgenericfactory.h>
+#include <kpluginfactory.h>
 #include "kopetestatussettings.h"
 
 K_PLUGIN_FACTORY( KopeteStatusConfigFactory, registerPlugin<StatusConfig>(); )
-K_EXPORT_PLUGIN( KopeteStatusConfigFactory("kcm_kopete_statusconfig") )
 
 StatusConfig::StatusConfig( QWidget *parent, const QVariantList &args )
 : KCModule( KopeteStatusConfigFactory::componentData(), parent, args )
