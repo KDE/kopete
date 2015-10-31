@@ -11,6 +11,7 @@
 #include <QStringList>
 #include <QList>
 #include <QMessageBox>
+#include <QTest>
 //=======================//
 
 
@@ -26,7 +27,7 @@
 //=======================//
 
 //=======Other Stuff=======//
-#include <qca2/QtCrypto/QtCrypto>
+#include <QtCrypto>
 #include "gnupgpreferences.h"
 #include <kpluginfactory.h>
 #include <gnupgsettings.h>
@@ -42,6 +43,9 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
 {
     QCA::Initializer init;
     QCA::KeyStoreManager::start();
+    QCA::KeyStoreManager sman(this);
+    sman.waitForBusyFinished();
+    QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
     setButtons( KCModule::Help | KCModule::Apply | KCModule::Default );
     QVBoxLayout *globalLayout = new QVBoxLayout(this);
     QHBoxLayout *introLayout = new QHBoxLayout(0);
@@ -88,11 +92,9 @@ GnupgPreferences::GnupgPreferences(QWidget* parent, const QVariantList& args)
             accountsModel->appendRow(accountItem);
         }
     }
-    QCA::KeyStoreManager sman(this);
-    sman.waitForBusyFinished();
-    QCA::KeyStore pgpks(QString("qca-gnupg"), &sman);
     keysModel = new QStandardItemModel(this);
     keysList->setModel(keysModel);
+    kDebug ( 14303 ) << QCA::KeyStoreManager::diagnosticText();
     if(pgpks.entryList().length() == 0 )
     {
         QStandardItem *keyItem = new QStandardItem();

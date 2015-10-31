@@ -24,6 +24,7 @@ private slots:
     void remPair();
 
 private:
+
     QTableView *resultsTable;
     QStandardItemModel *resultsModel;
     QStandardItemModel *accountsModel;

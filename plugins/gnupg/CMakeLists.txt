@@ -1,4 +1,4 @@
-include_directories(${KOPETE_INCLUDES} ${QCA2_LIBRARIES})
+include_directories(${KOPETE_INCLUDES} ${QCA2_INCLUDE_DIR})
 
 ## Main Plugin ##
 

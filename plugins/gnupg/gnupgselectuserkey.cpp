@@ -12,7 +12,7 @@
 #include <QTextEdit>
 #include <QPushButton>
 #include <kdebug.h>
-#include <qca2/QtCrypto/qca.h>
+#include <QtCrypto>
 
 GnupgSelectUserKey::GnupgSelectUserKey(Kopete::MetaContact *mc): KDialog()
 {
@@ -35,7 +35,7 @@ GnupgSelectUserKey::GnupgSelectUserKey(Kopete::MetaContact *mc): KDialog()
 
 void GnupgSelectUserKey::loadFile()
 {
-    QString keyPath = QFileDialog::getOpenFileName(this, "Open PGP File 1", "/home/nikhatzi", "PGP Files (*.asc)");
+    QString keyPath = QFileDialog::getOpenFileName(this, "Open PGP Key File 1", "/home/nikhatzi", "PGP Key Files (*.*)");
     pathKey->setText(keyPath);
 }
 
