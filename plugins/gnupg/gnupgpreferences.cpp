@@ -217,19 +217,15 @@ void GnupgPreferences::load()
 void GnupgPreferences::save()
 {
     kDebug ( 14303 ) <<"SAVE";
-    /*
-    GnupgSettings::setAccountKopete("paparia");
-    GnupgSettings::setPrivateFingerprint(QString::number(i));
-    GnupgSettings::self()->writeConfig();
-    */
-    KConfig config;
+    KConfig config("/home/nikhatzi/testrc"); //test file
     KConfigGroup firstGroup(&config,"General");
-    KConfigGroup keysGroup = config.group("Kleidi");
+    
     for(int i = 0;i<10;i++)
     {
-      keysGroup.writeEntry("Test1","xouxouxou");
-      keysGroup.writeEntry("Test2",QString::number(i));
+      KConfigGroup keysGroup = config.group(QString::number(i));
+      keysGroup.writeEntry("Test1","xixixi");
+      keysGroup.writeEntry("Test2","xouxouxou");
     }
-    keysGroup.config()->sync();
+    firstGroup.config()->sync();
     //KCModule::save();
 }
