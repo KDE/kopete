@@ -29,7 +29,7 @@ IF( LIBORTP_INCLUDE_DIR AND LIBORTP_LIBRARY )
   set(save_cmake_c_flags ${CMAKE_C_FLAGS})
   set(CMAKE_C_FLAGS)
   try_run( run_result compile_result
-           ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/ortpversion.c
+           ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/ortpversion.c
            CMAKE_FLAGS -DINCLUDE_DIRECTORIES:STRING=${LIBORTP_INCLUDE_DIR} -DLINK_LIBRARIES=${LIBORTP_LIBRARY}
            COMPILE_DEFINITIONS "${ortp_CFLAGS}"
            ARGS "0 13"

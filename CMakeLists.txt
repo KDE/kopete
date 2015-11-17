@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.9)
 project(kopete)
 
 find_package(KDE4 REQUIRED)
@@ -34,8 +35,8 @@ kde4_no_enable_final(kopete)
 
 ### Alphabetical list of optional packages ###
 
-macro_optional_find_package(Alsa)
-macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "http://www.alsa-project.org/" FALSE "" "Required for the Jabber protocol with libjingle support")
+#macro_optional_find_package(Alsa)
+#macro_log_feature(ALSA_FOUND "Alsa" "Alsa is Advanced Linux Sound Architecture" "http://www.alsa-project.org/" FALSE "" "Required for the Jabber protocol with Jingle support")
 
 macro_optional_find_package(Boost)
 macro_log_feature(Boost_FOUND Boost "C++ Boost libraries" "http://www.boost.org/" FALSE "" "Required for the WLM protocol")

@@ -21,6 +21,7 @@ endif(BUILD_LIBJINGLE)
 IF(BUILD_JINGLE)
   add_definitions(-DJINGLE_SUPPORT)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/jingle)
+  include_directories(${LIBORTP_INCLUDE_DIR} ${ALSA_INCLUDES} ${SPEEX_INCLUDE_DIR})
 ENDIF(BUILD_JINGLE)
 
 #link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libiris/ ${CMAKE_CURRENT_BINARY_DIR}/jingle/ )
@@ -161,7 +162,7 @@ kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
 target_link_libraries(kopete_jabber ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QCA2_LIBRARIES} ${KDE4_SOLID_LIBS} kopete iris_kopete)
 if(BUILD_JINGLE)	
-  target_link_libraries(kopete_jabber ortp asound speex)
+  target_link_libraries(kopete_jabber ${LIBORTP_LIBRARY} ${ASOUND_LIBRARY} ${SPEEX_LIBRARY})
 endif(BUILD_JINGLE)
 
 install(TARGETS kopete_jabber  DESTINATION ${PLUGIN_INSTALL_DIR})
