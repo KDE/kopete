@@ -216,16 +216,20 @@ void GnupgPreferences::load()
 
 void GnupgPreferences::save()
 {
-    kDebug ( 14303 ) <<"SAVE";
-    KConfig config("/home/nikhatzi/testrc"); //test file
-    KConfigGroup firstGroup(&config,"General");
-    
-    for(int i = 0;i<10;i++)
-    {
-      KConfigGroup keysGroup = config.group(QString::number(i));
-      keysGroup.writeEntry("Test1","xixixi");
-      keysGroup.writeEntry("Test2","xouxouxou");
-    }
-    firstGroup.config()->sync();
-    //KCModule::save();
+  kDebug ( 14303 ) <<"SAVE";
+  KConfig config("/home/nikhatzi/testrc"); //test file
+  KConfigGroup firstGroup(&config,"General");
+  QStandardItemModel *temp = resultsModel;
+  int i;
+  for(i=0;i<temp->rowCount();i++)
+  {
+    kDebug( 14303 ) << "ROWCOUNT" << temp->rowCount();
+    QString temp1,temp2;
+    temp1=temp->item(i,0)->text();
+    temp2 = temp->item(i,1)->text();
+    KConfigGroup keysGroup = config.group(temp1);
+    keysGroup.writeEntry("Test1",temp2);
+  }
+  firstGroup.config()->sync();
+  //KCModule::save();
 }
