@@ -1049,8 +1049,9 @@ void KopeteContactListView::groupPopup( Kopete::Group *group, const QPoint& pos 
 			popup->removeAction( action );
 			delete action;
 		}
-		//COMPLETE IT : popup->actions().first()->menu()->setTitle(title);
-		d->menuTitleMap.insert( popup, popup->addSection(title, popup->actions().first()) );
+		//FIXME : Possible bug/error ahead
+		popup->actions().first()->menu()->setTitle(title);
+		d->menuTitleMap.insert( popup, popup->addSection( popup->actions().first()->text()) );
 		popup->popup( pos );
 	}
 }
@@ -1082,7 +1083,9 @@ void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, 
 			popup->removeAction( action );
 			delete action;
 		}
-		d->menuTitleMap.insert( popup, popup->addSection(title, popup->actions().first()) );
+		//FIXME: Possible bug/error ahead
+		popup->actions().first()->menu()->setTitle(title);
+		d->menuTitleMap.insert( popup, popup->addSection( popup->actions().first()->text()) );
 
 		// Submenus for separate contact actions
 		bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier

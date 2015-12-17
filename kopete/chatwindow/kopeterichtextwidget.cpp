@@ -205,7 +205,7 @@ void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
         d->reset = 0;
     }
 
-    KRichTextWidget::createActions(actionCollection);
+    actionCollection->addActions(KRichTextWidget::createActions());
 
     // FIXME: Really ugly hack, but we reset format in updateCharFormat and if we don't disconnect this
     //        then actions will have old values and not the reset.

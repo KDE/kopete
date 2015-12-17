@@ -23,14 +23,15 @@
 
 #include "kopetechatwindow.h"
 
-#include <QTextStream>
+#include <QMenu>
+#include <QIcon>
 #include <QTimer>
-#include <QDockWidget>
 #include <QFrame>
 #include <QLabel>
-#include <QLayout>
-#include <QMenu>
 #include <QPixmap>
+#include <QLayout>
+#include <QDockWidget>
+#include <QTextStream>
 #include <QCloseEvent>
 #include <QVBoxLayout>
 
@@ -43,8 +44,6 @@
 #include <klocale.h>
 #include <kmenubar.h>
 #include <kconfig.h>
-#include <QMenu>
-#include <QIcon>
 #include <kiconloader.h>
 #include <kdebug.h>
 #include <kwindowsystem.h>
@@ -62,6 +61,7 @@
 #include <khbox.h>
 #include <kvbox.h>
 #include <ktoolbar.h>
+#include <KShortcut>
 #include <kstandardaction.h>
 #include <ktoggleaction.h>
 #include <kactionmenu.h>
@@ -1356,8 +1356,9 @@ void KopeteChatWindow::resizeEvent( QResizeEvent *e )
 bool KopeteChatWindow::eventFilter( QObject *obj, QEvent *event )
 {
 	if ( m_activeView && obj == m_activeView->editWidget() && event->type() == QEvent::KeyPress ) {
+		 KShortcut *eventFilterShortcut = new KShortcut(nickComplete->shortcut());
 		 QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-		 if (nickComplete->shortcut().primary() == QKeySequence(keyEvent->key())) {
+		 if (eventFilterShortcut->primary() == QKeySequence(keyEvent->key())) {
 			 m_activeView->nickComplete();
 			 return true;
 		 }

@@ -18,6 +18,7 @@
 #include "accountidentitydialog.h"
 #include "ui_accountidentitybase.h"
 
+#include <QUrl>
 #include <QHeaderView>
 #include <QMap>
 #include <QPointer>

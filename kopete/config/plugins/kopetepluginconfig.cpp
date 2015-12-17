@@ -34,11 +34,10 @@
 // Kopete includes
 #include "kopetepluginmanager.h"
 
-K_PLUGIN_FACTORY( KopetePluginConfigFactory,
-		registerPlugin<KopetePluginConfig>(); )
+K_PLUGIN_FACTORY( KopetePluginConfigFactory, registerPlugin<KopetePluginConfig>(); )
 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const QVariantList &args )
-: KCModule(KopetePluginConfigFactory::componentData(), parent, args)
+: KCModule( parent, args)
 {
 	m_pluginSelector = new KPluginSelector( this );
 	

@@ -32,6 +32,9 @@
 #include <ktoolbar.h>
 #include <kauthorized.h>
 #include <kemoticons.h>
+#include <KAction>
+#include <KActionMenu>
+#include <KActionCollection>
 
 #include "emoticonselector.h"
 #include "kopeteemoticons.h"
@@ -90,7 +93,7 @@ KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent )
 	else
 		setIcon( QIcon::fromTheme( icon ) );
 
-	setShortcutsConfigurable( this, false );
+	//FIXME: setShortcutConfigurable( this, false );
 	connect( d->emoticonSelector, SIGNAL(itemSelected(QString)),
 		this, SIGNAL(activated(QString)) );
 }

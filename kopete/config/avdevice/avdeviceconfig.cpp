@@ -42,11 +42,10 @@
 #include "IdGuiElements.h"
 
 
-K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory,
-		registerPlugin<AVDeviceConfig>(); )
+K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory, registerPlugin<AVDeviceConfig>(); )
 
 AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
- : KCModule( KopeteAVDeviceConfigFactory::componentData(), parent, args )
+ : KCModule( parent, args )
 {
 	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::componentData() called. ";
 // "Video" TAB ============================================================

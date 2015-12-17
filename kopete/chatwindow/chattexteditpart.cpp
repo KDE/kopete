@@ -71,7 +71,7 @@ ChatTextEditPart::ChatTextEditPart(QWidget *parent, QObject*, const QStringList&
 void ChatTextEditPart::init( Kopete::ChatSession *session, QWidget *parent)
 {
 	// we need an instance
-	setComponentData( ChatTextEditPartFactory::componentData() );
+	//FIXME: setComponentData( ChatTextEditPartFactory::componentData() );
 	
 	editor = new KopeteRichTextWidget(parent, m_session->protocol()->capabilities(), actionCollection());
 	setWidget( editor );
