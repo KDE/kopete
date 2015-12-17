@@ -57,7 +57,7 @@ K_PLUGIN_FACTORY( KopeteAccountConfigFactory,
 		registerPlugin<KopeteAccountConfig>(); )
 
 KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const QVariantList &args )
-: KCModule( KopeteAccountConfigFactory::componentData(), parent, args )
+: KCModule( parent, args )
 {
 	setupUi( this );
 

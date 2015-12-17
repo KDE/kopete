@@ -31,8 +31,9 @@
 #include <kplugininfo.h>
 #include <klocale.h>
 #include <kpushbutton.h>
-#include <kpluginfactory.h>
-#include <kgenericfactory.h>
+#include <KPluginFactory>
+#include <KPluginLoader>
+#include <KGenericFactory>
 #include <kconfig.h>
 #include <klineedit.h>
 
@@ -41,11 +42,10 @@
 
 #include <qtabwidget.h>
 
-K_PLUGIN_FACTORY( KopeteBehaviorConfigFactory,
-		registerPlugin<BehaviorConfig>(); )
+K_PLUGIN_FACTORY( KopeteBehaviorConfigFactory, registerPlugin<BehaviorConfig>(); )
 
 BehaviorConfig::BehaviorConfig(QWidget *parent, const QVariantList &args) :
-		KCModule( KopeteBehaviorConfigFactory::componentData(), parent, args )
+		KCModule( parent, args )
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	// since KSetting::Dialog has margins here, we don't need our own.

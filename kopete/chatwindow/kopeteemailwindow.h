@@ -23,6 +23,7 @@
 #include "kopeteview.h"
 #include "kopeteviewplugin.h"
 #include <kxmlguiwindow.h>
+#include <KParts/MainWindow>
 #include <QCloseEvent>
 
 class EmailWindowPlugin;

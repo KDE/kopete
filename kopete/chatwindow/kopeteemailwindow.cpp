@@ -73,7 +73,7 @@ K_PLUGIN_FACTORY( EmailWindowPluginFactory, registerPlugin<EmailWindowPlugin>();
 K_EXPORT_PLUGIN( EmailWindowPluginFactory( "kopete_emailwindow" ) )
 
 EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QVariantList &) :
-	Kopete::ViewPlugin( EmailWindowPluginFactory::componentData(), parent )
+	Kopete::ViewPlugin( parent )
 {}
 
 KopeteView* EmailWindowPlugin::createView( Kopete::ChatSession *manager )
@@ -275,7 +275,8 @@ void KopeteEmailWindow::initActions(void)
 
 	QAction *animAction = new QAction( i18n("Toolbar Animation"), coll );
 	coll->addAction( "toolbar_animation", animAction );
-	animAction->setDefaultWidget( d->anim );
+	//FIXME: setDefaultWidget() is a method in QWidgetAction
+	//animAction->setDefaultWidget( d->anim );
 
 	setXMLFile( QLatin1String( "kopeteemailwindow.rc" ) );
 	createGUI( d->editPart );

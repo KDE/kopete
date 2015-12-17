@@ -56,7 +56,7 @@
 K_PLUGIN_FACTORY( ChatWindowPluginFactory, registerPlugin<ChatWindowPlugin>(); )
 
 ChatWindowPlugin::ChatWindowPlugin(QObject *parent, const QVariantList &) :
-	Kopete::ViewPlugin( ChatWindowPluginFactory::componentData(), parent )
+	Kopete::ViewPlugin( parent )
 {
 	// Load styles to make style fallback work
 	ChatWindowStyleManager::self();
@@ -271,7 +271,7 @@ void ChatView::resetFontAndColor()
 	if ( !mc )
 		return;
 
-	QString contactListGroup = QString(QLatin1String("chatwindow_") + QString(mc->metaContactId()));
+	QString contactListGroup = QString(QLatin1String("chatwindow_") + QString(mc->metaContactId().toString()));
 	KConfigGroup config = KGlobal::config()->group(contactListGroup);
 	editPart()->resetConfig( config );
 	config.sync();
@@ -825,7 +825,7 @@ void ChatView::saveChatSettings()
 		return;
 
 	QString contactListGroup = QString(QLatin1String("chatwindow_") +
-	                           QString(mc->metaContactId()));
+	                           QString(mc->metaContactId().toString()));
     KConfigGroup config = KGlobal::config()->group(contactListGroup);
 
 	// If settings are the same as default delete entry from config. This will propagate global setting change.
@@ -851,7 +851,7 @@ void ChatView::loadChatSettings()
 
 	//read settings for metacontact
 	QString contactListGroup = QString(QLatin1String("chatwindow_") +
-	                           QString(contacts.first()->metaContact()->metaContactId()));
+	                           QString(contacts.first()->metaContact()->metaContactId().toString()));
 	KConfigGroup config(KGlobal::config(), contactListGroup );
 	bool enableRichText = config.readEntry( "EnableRichText", Kopete::BehaviorSettings::self()->richTextByDefault() );
 	editPart()->textEdit()->setRichTextEnabled( enableRichText );

@@ -28,7 +28,7 @@
 K_PLUGIN_FACTORY( KopeteStatusConfigFactory, registerPlugin<StatusConfig>(); )
 
 StatusConfig::StatusConfig( QWidget *parent, const QVariantList &args )
-: KCModule( KopeteStatusConfigFactory::componentData(), parent, args )
+: KCModule( parent, args )
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	// since KSetting::Dialog has margins here, we don't need our own.

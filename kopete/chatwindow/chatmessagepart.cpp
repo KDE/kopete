@@ -312,7 +312,7 @@ void ChatMessagePart::save()
 {
 	const QUrl dummyUrl;
 	QPointer <KFileDialog> dlg = new KFileDialog( dummyUrl, QLatin1String( "text/html text/plain" ), view() );
-	dlg->setCaption( i18n( "Save Conversation" ) );
+	dlg->setWindowTitle( i18n( "Save Conversation" ) );
 	dlg->setOperationMode( KFileDialog::Saving );
 
 	if ( dlg->exec() != QDialog::Accepted )

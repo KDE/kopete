@@ -34,7 +34,6 @@
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
-
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kdebug.h>
@@ -45,13 +44,17 @@
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>
 #include <kemoticons.h>
+#include <KGlobal>
 #include <KCMultiDialog>
+#include <KComponentData>
+#include <KLocalizedString>
 
 // KNewStuff
 #include <knewstuff2/engine.h>
@@ -142,7 +145,7 @@ private:
 };
 
 ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
-	: KCModule( KopeteChatWindowConfigFactory::componentData(), parent, args ),
+	: KCModule( parent, args ),
 		m_currentStyle (0L), m_loading(false),
 		m_previewProtocol(0L), m_previewAccount(0L),
 		m_jackMetaContact(0L), m_myself(0L), m_jack(0L)
@@ -512,7 +515,7 @@ void ChatWindowConfig::slotGetChatStyles()
 				{
 					case ChatWindowStyleManager::StyleCannotOpen:
 					{
-						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "The specified archive <filename>%1</filename> cannot be opened.\nMake sure that the archive is a valid ZIP or TAR archive.", styleFile.pathOrUrl()), errorTitle);
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "The specified archive <filename>%1</filename> cannot be opened.\nMake sure that the archive is a valid ZIP or TAR archive.", styleFile.toDisplayString(QUrl::PreferLocalFile)), errorTitle);
 						break;
 					}
 					case ChatWindowStyleManager::StyleNoDirectoryValid:
@@ -521,7 +524,7 @@ void ChatWindowConfig::slotGetChatStyles()
 						break;
 					}
 					case ChatWindowStyleManager::StyleNotValid:
-						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "The specified archive <filename>%1</filename> does not contain a valid Chat Window Style.", styleFile.pathOrUrl()), errorTitle );
+						KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18nc("@info", "The specified archive <filename>%1</filename> does not contain a valid Chat Window Style.", styleFile.toDisplayString(QUrl::PreferLocalFile)), errorTitle );
 						break;
 					case ChatWindowStyleManager::StyleInstallOk:
 					{
@@ -725,7 +728,7 @@ void ChatWindowConfig::slotManageEmoticonThemes()
 	KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
 
 	KCMultiDialog *kcm = new KCMultiDialog( this );
-	kcm->setCaption( i18n( "Configure Emoticon Themes" ) );
+	kcm->setWindowTitle( i18n( "Configure Emoticon Themes" ) );
 	kcm->addModule( "emoticons" );
 	kcm->exec();
 	updateEmoticonList();

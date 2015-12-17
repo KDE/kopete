@@ -30,6 +30,7 @@
 #include <kmessagebox_queued.h>
 #include <kplugininfo.h>
 #include <kvbox.h>
+#include <KDialog>
 
 #include "editaccountwidget.h"
 #include "kopeteaccount.h"
@@ -116,7 +117,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, bool firstRun )
 		this, SLOT(slotProtocolListClicked()));
 	connect(d->uiSelectService.protocolListView, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
 		this, SLOT(slotProtocolListDoubleClicked()));
-    setHelp(QString(),"kopete");
+    //FIXME : KDialog::setHelp(QString(),"kopete");
 }
 
 QTreeWidgetItem* AddAccountWizard::Private::selectedProtocol()

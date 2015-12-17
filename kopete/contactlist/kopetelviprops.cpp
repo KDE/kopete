@@ -607,12 +607,12 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 	requester->disconnect( SIGNAL(openFileDialog(KUrlRequester*)),
 						this, SLOT(slotOpenSoundDialog(KUrlRequester*)));
 
-	KFileDialog *fileDialog = requester->fileDialog();
-	//fileDialog->setCaption( i18n("Select Sound File") );
+	QFileDialog *fileDialog = requester->fileDialog();
+	fileDialog->setWindowTitle( i18n("Select Sound File") );
 	QStringList filters;
 	filters << "audio/x-wav" << "audio/mpeg" << "application/ogg"
 			<< "audio/x-adpcm";
-	fileDialog->setMimeFilter( filters );
+	fileDialog->setMimeTypeFilters( filters );
 
 	// find the first "sound"-resource that contains files
 	QStringList soundDirs =
@@ -628,7 +628,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KUrlRequester *requester )
 			dir = *it;
 			if ( dir.isReadable() && dir.count() > 2 ) {
 				soundURL.setPath( *it );
-				fileDialog->setUrl( soundURL );
+				fileDialog->setDirectoryUrl( soundURL );
 				break;
 			}
 			++it;
