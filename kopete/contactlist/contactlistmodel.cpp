@@ -26,11 +26,11 @@
 #include <QDomDocument>
 
 #include <QUrl>
-#include <KDebug>
 #include <KMessageBox>
-#include <KEmoticonsTheme>
-#include <KLocalizedString>
-#include <kmessagebox_queued.h>
+#include <KF5/KI18n/KLocalizedString>
+#include <KF5/KDELibs4Support/KDE/KDebug>
+#include <KF5/KEmoticons/KEmoticonsTheme>
+#include <KF5/KDELibs4Support/kmessagebox_queued.h>
 
 #include "kopeteaccount.h"
 #include "kopetepicture.h"
@@ -489,10 +489,9 @@ bool ContactListModel::dropMetaContacts( int row, const QModelIndex &parent, Qt:
 			displayNames << mc->displayName();
 		}
 
-		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-		                                i18n( "<qt>Are you sure you want to merge meta contacts?\n<b>%1</b>", displayNames.join( ", " ) ),
-		                                i18n( "Meta Contact Merge" ), KStandardGuiItem::yes(), KStandardGuiItem::no(),
-		                                "askDDMergeMetaContacts", KMessageBox::Notify | KMessageBox::Dangerous ) != KMessageBox::Yes )
+		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "<qt>Are you sure you want to merge meta contacts?\n<b>%1</b>", displayNames.join( ", " ) ),
+		                                i18n( "Meta Contact Merge" ), KStandardGuiItem::yes(), KStandardGuiItem::no(),"askDDMergeMetaContacts",
+										KMessageBox::Dangerous ) != KMessageBox::Yes)
 		{
 			return false;
 		}

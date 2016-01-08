@@ -23,6 +23,7 @@
 
 #include "tooltipeditdialog.h"
 
+#include <QTimer>
 #include <QCheckBox>
 #include <QDir>
 #include <QLayout>
@@ -42,7 +43,7 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 #include <kio/netaccess.h>
-#include <khtmlview.h>
+#include <KF5/KHtml/khtmlview.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -51,6 +52,7 @@
 #include <kurlrequesterdialog.h>
 #include <krun.h>
 #include <kfiledialog.h>
+#include <KGlobal>
 
 #include "kopeteglobal.h"
 
@@ -85,7 +87,7 @@ public:
 
 
 AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
-: KCModule( KopeteAppearanceConfigFactory::componentData(), parent, args ), d(new Private())
+: KCModule( parent, args ), d(new Private())
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	// since the tab widget is already within a layout with margins in the KSettings::Dialog
@@ -95,7 +97,7 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const QVariantList &args )
 	d->mAppearanceTabCtl->setObjectName("mAppearanceTabCtl");
 	layout->addWidget( d->mAppearanceTabCtl );
 
-	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
+	KConfigGroup config(KSharedConfig::openConfig(), "ChatWindowSettings");
 
 	// "Contact List" TAB =======================================================
 	QWidget *contactListWidget = new QWidget(d->mAppearanceTabCtl);

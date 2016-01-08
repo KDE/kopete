@@ -48,7 +48,7 @@ void KopeteIdentityStatusBarIcon::mousePressEvent( QMouseEvent *me )
 		KActionMenu *statusMenu = new KActionMenu(m_identity->label(), this);
 
 		// add a title to the popup menu before the online action
-		statusMenu->menu()->addTitle(m_identity->label());
+		statusMenu->menu()->addSection(m_identity->label());
 
 		// Will be automatically deleted when the statusMenu is deleted.
 		Kopete::StatusRootAction* statusAction = new Kopete::StatusRootAction( statusMenu );

@@ -66,7 +66,7 @@ void ContactStalker::slotEmitSignal()
 {
 	if (m_contact)
 	{
-		emit contactChanged(m_contact->metaContactId());
+		emit contactChanged(m_contact->metaContactId().toString());
 	}
 }
 
@@ -80,8 +80,8 @@ void ContactStalker::messageAppended(Kopete::Message &message,
     }
 
     if ( message.direction() == Kopete::Message::Inbound ) {
-    	QString contactId = message.from()->metaContact()->metaContactId();
-    	if (contactId == m_contact->metaContactId())
+    	QString contactId = message.from()->metaContact()->metaContactId().toString();
+    	if (contactId == m_contact->metaContactId().toString())
     	{
     		foreach(Kopete::Contact *subContact, m_contact->contacts())
     		{
@@ -102,7 +102,7 @@ void ContactStalker::slotMetaContactRemoved(Kopete::MetaContact *contact)
 	if (contact == m_contact)
 	{
 		m_contact = 0L;
-		emit contactChanged(contact->metaContactId());
+		emit contactChanged(contact->metaContactId().toString());
 	}
 }
 
@@ -135,7 +135,7 @@ QStringList KopeteDBusInterfacePrivate::listContact(const QList<
 
     foreach(Kopete::MetaContact *contact, contactList)
     { 
-    	result << contact->metaContactId();
+    	result << contact->metaContactId().toString();
     }
 
 return result;

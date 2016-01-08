@@ -85,7 +85,7 @@ Token::value() const
     return m_value;
 }
 
-KIcon
+QIcon
 Token::icon() const
 {
     return m_icon;

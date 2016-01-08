@@ -272,7 +272,7 @@ void ChatView::resetFontAndColor()
 		return;
 
 	QString contactListGroup = QString(QLatin1String("chatwindow_") + QString(mc->metaContactId().toString()));
-	KConfigGroup config = KGlobal::config()->group(contactListGroup);
+	KConfigGroup config = KSharedConfig::openConfig()->group(contactListGroup);
 	editPart()->resetConfig( config );
 	config.sync();
 }
@@ -807,7 +807,7 @@ void ChatView::messageSentSuccessfully()
 
 void ChatView::saveOptions()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
+	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 	KConfigGroup kopeteChatWindowMainWinSettings( config, ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
 	kopeteChatWindowMainWinSettings.writeEntry( QLatin1String("ChatViewSplitter"), d->splitter->saveState().toBase64() );
 	saveChatSettings();
@@ -826,7 +826,7 @@ void ChatView::saveChatSettings()
 
 	QString contactListGroup = QString(QLatin1String("chatwindow_") +
 	                           QString(mc->metaContactId().toString()));
-    KConfigGroup config = KGlobal::config()->group(contactListGroup);
+    KConfigGroup config = KSharedConfig::openConfig()->group(contactListGroup);
 
 	// If settings are the same as default delete entry from config. This will propagate global setting change.
 	if ( editPart()->isRichTextEnabled() != Kopete::BehaviorSettings::self()->richTextByDefault() )
@@ -852,7 +852,7 @@ void ChatView::loadChatSettings()
 	//read settings for metacontact
 	QString contactListGroup = QString(QLatin1String("chatwindow_") +
 	                           QString(contacts.first()->metaContact()->metaContactId().toString()));
-	KConfigGroup config(KGlobal::config(), contactListGroup );
+	KConfigGroup config(KSharedConfig::openConfig(), contactListGroup );
 	bool enableRichText = config.readEntry( "EnableRichText", Kopete::BehaviorSettings::self()->richTextByDefault() );
 	editPart()->textEdit()->setRichTextEnabled( enableRichText );
 	emit rtfEnabled( this, editPart()->isRichTextEnabled() );
@@ -863,7 +863,7 @@ void ChatView::loadChatSettings()
 
 void ChatView::readOptions()
 {
-	KConfigGroup kopeteChatWindowMainWinSettings( KGlobal::config(), ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( KSharedConfig::openConfig(), ( msgManager()->form() == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
 	//kDebug(14000) << "reading splitterpos from key: " << dockKey;
 	QByteArray state;
 	state = kopeteChatWindowMainWinSettings.readEntry( QLatin1String("ChatViewSplitter"), state );
@@ -928,6 +928,8 @@ void ChatView::dragMoveEvent( QDragMoveEvent * event )
 
 bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 {
+  /**
+   * TODO: Implement virtual functions in QDragMoveEvent
 	if( event->provides( "application/kopete.metacontacts.list" ) )
 	{
 		QByteArray encodedData = event->encodedData ( "application/kopete.metacontacts.list" );
@@ -959,9 +961,12 @@ bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 		if ( contact && contact->canAcceptFiles() )
 			return true;
 	}
+  */
 	return false;
 }
 
+/* TODO : Zero uses of dropEvent() function found.
+ * Fix the errors or remove the function ?
 void ChatView::dropEvent ( QDropEvent * event )
 {
 	Kopete::ContactPtrList contacts;
@@ -1018,6 +1023,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 		QWidget::dropEvent(event);
 
 }
+*/
 
 void ChatView::registerContextMenuHandler( QObject *target, const char* slot )
 {

@@ -19,14 +19,18 @@
 
 #include "systemtray.h"
 
-#include <qtimer.h>
-
-#include <K4AboutData>
-#include <kactioncollection.h>
-#include <QAction>
 #include <QMenu>
-#include <klocale.h>
-#include <kdebug.h>
+#include <QTimer>
+#include <QAction>
+
+#include <KDebug>
+#include <KLocale>
+#include <KGlobal>
+#include <K4AboutData>
+#include <KComponentData>
+#include <KLocalizedString>
+#include <KActionCollection>
+
 #include "kopetechatsessionmanager.h"
 #include "kopetebehaviorsettings.h"
 #include "kopetemetacontact.h"
@@ -78,7 +82,10 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent)
  	// in the close widget click case, we only want to hide the parent window
 	// so instead, we make it call our general purpose quit slot on the window, which causes a window close and everything else we need
 	// KDE4 - app will have to listen for quitSelected instead
-	QAction *quit = actionCollection()->action( "file_quit" );
+	QList<QAction *> actionList = actionCollection();
+	KActionCollection *newActionList = new KActionCollection(parent);
+	newActionList->addActions(actionList);
+	QAction *quit = newActionList->action( "file_quit" );
 	quit->disconnect();
 	KopeteWindow *myParent = static_cast<KopeteWindow *>( parent );
 	connect( quit, SIGNAL(activated()), myParent, SLOT(slotQuit()) );

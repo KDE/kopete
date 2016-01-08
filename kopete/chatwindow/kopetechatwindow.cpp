@@ -265,7 +265,7 @@ KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *par
 	windows.append( this );
 	windowListChanged();
 
-	m_alwaysShowTabs = KGlobal::config()->group( "ChatWindowSettings" ).
+	m_alwaysShowTabs = KSharedConfig::openConfig()->group( "ChatWindowSettings" ).
                            readEntry( QLatin1String("AlwaysShowTabs"), false );
 //	kDebug( 14010 ) << "Open Windows: " << windows.count();
 
@@ -399,13 +399,13 @@ void KopeteChatWindow::initActions(void)
 
 	tabRight=new QAction( i18n( "&Activate Next Tab" ), coll );
 	coll->addAction( "tabs_right", tabRight );
-	tabRight->setShortcut( KStandardShortcut::tabNext() );
+	tabRight->setShortcuts( KStandardShortcut::tabNext() );
 	tabRight->setEnabled( false );
 	connect( tabRight, SIGNAL(triggered(bool)), this, SLOT(slotNextTab()) );
 
 	tabLeft=new QAction( i18n( "&Activate Previous Tab" ), coll );
 	coll->addAction( "tabs_left", tabLeft );
-	tabLeft->setShortcut( KStandardShortcut::tabPrev() );
+	tabLeft->setShortcuts( KStandardShortcut::tabPrev() );
 	tabLeft->setEnabled( false );
 	connect( tabLeft, SIGNAL(triggered(bool)), this, SLOT(slotPreviousTab()) );
 
@@ -503,7 +503,8 @@ void KopeteChatWindow::initActions(void)
 
 	QAction *animAction = new QAction( i18n("Toolbar Animation"), coll );
         coll->addAction( "toolbar_animation", animAction );
-	animAction->setDefaultWidget( anim );
+	QWidgetAction *animWidgetAction = static_cast<QWidgetAction *>(animAction);
+	animWidgetAction->setDefaultWidget( anim );
 
 	//toolBar()->insertWidget( 99, anim->width(), anim );
 	//toolBar()->alignItemRight( 99 );
@@ -650,7 +651,7 @@ void KopeteChatWindow::createTabBar()
 {
 	if( !m_tabBar )
 	{
-		KConfigGroup cg( KGlobal::config(), QLatin1String("ChatWindowSettings") );
+		KConfigGroup cg( KSharedConfig::openConfig(), QLatin1String("ChatWindowSettings") );
 
 		m_tabBar = new KTabWidget( mainArea );
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
@@ -1167,7 +1168,7 @@ void KopeteChatWindow::readOptions()
 {
 	// load and apply config file settings affecting the appearance of the UI
 //	kDebug(14010) ;
-	applyMainWindowSettings( KGlobal::config()->group( ( initialForm == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) ) );
+	applyMainWindowSettings( KSharedConfig::openConfig()->group( ( initialForm == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) ) );
 	//config->setGroup( QLatin1String("ChatWindowSettings") );
 }
 
@@ -1175,12 +1176,12 @@ void KopeteChatWindow::saveOptions()
 {
 //	kDebug(14010) ;
 
-	KConfigGroup kopeteChatWindowMainWinSettings( KGlobal::config(), ( initialForm == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
+	KConfigGroup kopeteChatWindowMainWinSettings( KSharedConfig::openConfig(), ( initialForm == Kopete::ChatSession::Chatroom ? QLatin1String( "KopeteChatWindowGroupMode" ) : QLatin1String( "KopeteChatWindowIndividualMode" ) ) );
 
 	// saves menubar,toolbar and statusbar setting
 	saveMainWindowSettings( kopeteChatWindowMainWinSettings );
 	if ( m_tabBar ) {
-		KConfigGroup chatWindowSettings( KGlobal::config(), QLatin1String("ChatWindowSettings") );
+		KConfigGroup chatWindowSettings( KSharedConfig::openConfig(), QLatin1String("ChatWindowSettings") );
 		chatWindowSettings.writeEntry ( QLatin1String("Tab Placement"), (int)m_tabBar->tabPosition() );
 		chatWindowSettings.sync();
 	}

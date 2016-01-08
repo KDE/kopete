@@ -19,6 +19,8 @@
 
 #include <KApplication>
 
+#include <QtGui/QDrag>
+#include <QMimeData>
 #include <QMouseEvent>
 
 
@@ -128,7 +130,7 @@ TokenPool::performDrag( QMouseEvent *event )
         QDataStream dataStream( &itemData, QIODevice::WriteOnly );
         dataStream << token->name() << token->iconName() << token->value() << QPoint( event->pos() - rect().topLeft() );
         
-        QMimeData *mimeData = new QMimeData;
+        QMimeData *mimeData = new QMimeData();
         mimeData->setData( m_mimeType, itemData );
         
         QDrag *drag = new QDrag( this );

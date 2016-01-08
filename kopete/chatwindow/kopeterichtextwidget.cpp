@@ -109,8 +109,8 @@ KopeteRichTextWidget::KopeteRichTextWidget(QWidget* parent, Kopete::Protocol::Ca
 
 KopeteRichTextWidget::~KopeteRichTextWidget()
 {
-    KConfigGroup configGroupMode( KGlobal::config(), QLatin1String( "KopeteChatWindowGroupMode" ));
-    KConfigGroup configIndividual( KGlobal::config(), QLatin1String( "KopeteChatWindowIndividualMode" ));
+    KConfigGroup configGroupMode( KSharedConfig::openConfig(), QLatin1String( "KopeteChatWindowGroupMode" ));
+    KConfigGroup configIndividual( KSharedConfig::openConfig(), QLatin1String( "KopeteChatWindowIndividualMode" ));
     configGroupMode.writeEntry( "AutoResize", d->autoResize->isChecked());
     configIndividual.writeEntry( "AutoResize", d->autoResize->isChecked());
     delete d;
@@ -162,7 +162,7 @@ void KopeteRichTextWidget::slotEnableAutoResize(bool enable)
 
 void KopeteRichTextWidget::createActions(KActionCollection *actionCollection)
 {
-    KConfigGroup config(KGlobal::config(), QLatin1String("KopeteChatWindowIndividualMode"));
+    KConfigGroup config(KSharedConfig::openConfig(), QLatin1String("KopeteChatWindowIndividualMode"));
 
     bool autoResizeEnabled = config.readEntry("AutoResize", true);
     d->autoResize = new KToggleAction( i18n("Input auto-resize"), actionCollection );

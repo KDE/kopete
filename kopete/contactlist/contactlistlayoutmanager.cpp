@@ -65,7 +65,7 @@ LayoutManager::LayoutManager()
 	loadDefaultLayouts();
 	loadUserLayouts();
 
-	KConfigGroup config( KGlobal::config(), "ContactList Layout" );
+	KConfigGroup config( KSharedConfig::openConfig(), "ContactList Layout" );
 	m_activeLayout = config.readEntry( "CurrentLayout", DefaultStyleName );
 
 	// Fallback to default
@@ -85,7 +85,7 @@ void LayoutManager::setActiveLayout( const QString &layout )
 {
 	kDebug() << layout;
 	m_activeLayout = layout;
-	KConfigGroup config(KGlobal::config(), "ContactList Layout");
+	KConfigGroup config(KSharedConfig::openConfig(), "ContactList Layout");
 	config.writeEntry( "CurrentLayout", m_activeLayout );
 	emit( activeLayoutChanged() );
 }

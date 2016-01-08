@@ -22,23 +22,25 @@
 
 #include "kopetewindow.h"
 
-#include <QCursor>
-#include <QLayout>
-
+#include <QUrl>
+#include <QIcon>
+#include <QMenu>
 #include <QTimer>
-#include <QPixmap>
-#include <QCloseEvent>
-#include <QMouseEvent>
 #include <QEvent>
 #include <QLabel>
-#include <QShowEvent>
+#include <QAction>
+#include <QCursor>
+#include <QLayout>
+#include <QPixmap>
 #include <QLineEdit>
-#include <QSignalMapper>
 #include <QTextEdit>
+#include <QCloseEvent>
+#include <QMouseEvent>
+#include <QShowEvent>
+#include <QSignalMapper>
 
 #include <khbox.h>
 #include <kvbox.h>
-#include <QAction>
 #include <kactionmenu.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
@@ -46,11 +48,9 @@
 #include <kdebug.h>
 #include <kglobalaccel.h>
 #include <klocale.h>
-#include <QIcon>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <knotifyconfigwidget.h>
-#include <QMenu>
 #include <kshortcutsdialog.h>
 #include <kedittoolbar.h>
 #include <kmenubar.h>
@@ -61,7 +61,6 @@
 #include <kplugininfo.h>
 #include <ksqueezedtextlabel.h>
 #include <kstringhandler.h>
-#include <QUrl>
 #include <kxmlguifactory.h>
 #include <ktoolbar.h>
 #include <kdialog.h>
@@ -590,7 +589,7 @@ bool KopeteWindow::eventFilter ( QObject* target, QEvent* event )
 
 void KopeteWindow::loadOptions()
 {
-	KSharedConfig::Ptr config = KGlobal::config();
+	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 
 	toolBar ( "mainToolBar" )->applySettings ( config->group ( "ToolBar Settings" ) );
 	toolBar ( "quickSearchBar" )->applySettings ( config->group ( "QuickSearchBar Settings" ) );
@@ -629,12 +628,12 @@ void KopeteWindow::loadOptions()
 
 void KopeteWindow::saveOptions()
 {
-	KConfigGroup mainToolbarGroup ( KGlobal::config(), "ToolBar Settings" );
+	KConfigGroup mainToolbarGroup ( KSharedConfig::openConfig(), "ToolBar Settings" );
 	toolBar ( "mainToolBar" )->saveSettings ( mainToolbarGroup );
-	KConfigGroup qsbGroup ( KGlobal::config(), "QuickSearchBar Settings" );
+	KConfigGroup qsbGroup ( KSharedConfig::openConfig(), "QuickSearchBar Settings" );
 	toolBar ( "quickSearchBar" )->saveSettings ( qsbGroup );
 
-	KConfigGroup cg ( KGlobal::config(), "General Options" );
+	KConfigGroup cg ( KSharedConfig::openConfig(), "General Options" );
 	saveMainWindowSettings ( cg );
 
 	cg.writeEntry ( "Position", pos() );
@@ -778,7 +777,7 @@ void KopeteWindow::slotConfGlobalKeys()
 
 void KopeteWindow::slotConfToolbar()
 {
-	KConfigGroup cg ( KGlobal::config(), "General Options" );
+	KConfigGroup cg ( KSharedConfig::openConfig(), "General Options" );
 	saveMainWindowSettings ( cg );
 	KEditToolBar *dlg = new KEditToolBar ( factory() );
 	connect ( dlg, SIGNAL (newToolBarConfig()), this, SLOT (slotUpdateToolbar()) );
@@ -788,7 +787,7 @@ void KopeteWindow::slotConfToolbar()
 
 void KopeteWindow::slotUpdateToolbar()
 {
-	applyMainWindowSettings ( KGlobal::config()->group ( "General Options" ) );
+	applyMainWindowSettings ( KSharedConfig::openConfig()->group ( "General Options" ) );
 }
 
 void KopeteWindow::slotGlobalAway()
@@ -936,7 +935,7 @@ void KopeteWindow::slotAllPluginsLoaded()
 //	actionConnect->setEnabled(true);
 	d->actionDisconnect->setEnabled ( true );
 
-	KConfigGroup cg( KGlobal::config(), "General Options" );
+	KConfigGroup cg( KSharedConfig::openConfig(), "General Options" );
 
 	// If some account already loaded, build the status icon
 	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();

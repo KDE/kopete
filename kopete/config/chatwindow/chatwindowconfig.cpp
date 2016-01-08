@@ -150,7 +150,7 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 		m_previewProtocol(0L), m_previewAccount(0L),
 		m_jackMetaContact(0L), m_myself(0L), m_jack(0L)
 {
-	KConfigGroup config(KGlobal::config(), "ChatWindowSettings");
+	KConfigGroup config(KSharedConfig::openConfig(), "ChatWindowSettings");
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	// since KSetting::Dialog has margins here, we don't need our own.
@@ -484,7 +484,7 @@ void ChatWindowConfig::slotDeleteChatStyle()
 
 void ChatWindowConfig::slotGetChatStyles()
 {
-	KConfigGroup configGrp(KGlobal::config(), "KNewStuff2");
+	KConfigGroup configGrp(KSharedConfig::openConfig(), "KNewStuff2");
 	configGrp.writeEntry("ProvidersUrl", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml");
 	configGrp.writeEntry("TargetDir", "kopete_chatstyles");
 	configGrp.sync();
@@ -495,7 +495,9 @@ void ChatWindowConfig::slotGetChatStyles()
 	// FIXME: Upon closing the Settings KCMultiDialog all KCMs are deleted and when reopening
 	// the settings dialog there is no active valid KComponentData, which KNS2 relies on.
 	// Forcing an active one below works around bug 163382, but the problem is somewhere else.
-	KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
+
+	// FIXME: componentData() is not a member of KopeteChatWindowConfigFactory
+	//KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
 
 	KNS::Entry::List entries = engine->downloadDialogModal(this);
 
@@ -725,7 +727,9 @@ void ChatWindowConfig::slotManageEmoticonThemes()
 	// FIXME: Upon closing the Settings KCMultiDialog all KCMs are deleted and when reopening
 	// the settings dialog there is no active valid KComponentData, which KNS2 relies on.
 	// Forcing an active one below works around bug 165919, but the problem is somewhere else.
-	KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
+
+	// FIXME: componentData() is not a member of KopeteChatWindowConfigFactory
+	//KGlobal::setActiveComponent(KopeteChatWindowConfigFactory::componentData());
 
 	KCMultiDialog *kcm = new KCMultiDialog( this );
 	kcm->setWindowTitle( i18n( "Configure Emoticon Themes" ) );
