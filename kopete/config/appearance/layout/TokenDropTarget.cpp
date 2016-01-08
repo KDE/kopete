@@ -21,10 +21,11 @@
 
 #include "Token.h"
 
+#include <QDrag>
+#include <QtDebug>
+#include <QMimeData>
 #include <QDropEvent>
 #include <QVBoxLayout>
-
-#include <QtDebug>
 
 /** TokenDragger - eventfilter that drags a token, designed to be a child of TokenDropTarget
 This is necessary, as if TokenDropTarget would QDrag::exec() itself, the eventFilter would be blocked
@@ -150,7 +151,8 @@ TokenDropTarget::accept( QDropEvent *de )
         return false;
     }
     
-    if ( de->source() && parentWidget() && de->source()->parentWidget() == parentWidget() )
+    //FIXME : Find the apt replacement for : de->source()->parentWidget()
+    if ( de->source() && parentWidget() && de->source()->findChild<QWidget *>()->parentWidget() == parentWidget() )
     {   // move
         de->setDropAction(Qt::MoveAction);
         de->accept();

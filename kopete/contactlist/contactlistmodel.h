@@ -19,9 +19,9 @@
 #ifndef KOPETE_UI_CONTACTLISTMODEL_H
 #define KOPETE_UI_CONTACTLISTMODEL_H
 
-#include <QAbstractItemModel>
 #include <QPair>
 #include <QHash>
+#include <QAbstractItemModel>
 
 #include <kopete_export.h>
 

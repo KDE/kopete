@@ -41,7 +41,7 @@
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
 #include "kopeteglobal.h"
-#include "kopetefileengine.h"
+//#include "kopetefileengine.h"
 #include "kopetemimetypehandler.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
@@ -91,7 +91,8 @@ KopeteApplication::KopeteApplication()
 	 */
 	QTimer::singleShot( 0, this, SLOT(slotLoadPlugins()) );
 
-	m_fileEngineHandler = new Kopete::FileEngineHandler();
+	//NOTE : QAbstractFileEngine and QAbstractFileEngineHandler deprecated in Qt5
+	//m_fileEngineHandler = new Kopete::FileEngineHandler();
 
 	//Create the emoticon installer
 	m_emoticonHandler = new Kopete::EmoticonMimeTypeHandler;
@@ -124,7 +125,7 @@ KopeteApplication::~KopeteApplication()
 			delete plugin;
 	}
 
-	delete m_fileEngineHandler;
+	//delete m_fileEngineHandler;
 	delete m_emoticonHandler;
 	//kDebug( 14000 ) << "Done";
 }
@@ -134,7 +135,7 @@ void KopeteApplication::slotLoadPlugins()
 	// we have to load the address book early, because calling this enters the Qt event loop when there are remote resources.
 	// The plugin manager is written with the assumption that Kopete will not reenter the event loop during plugin load,
 	// otherwise lots of things break as plugins are loaded, then contacts are added to incompletely initialised MCLVIs
-	Kopete::KABCPersistence::self()->addressBook();
+	//Kopete::KABCPersistence::self()->addressbook();
 
 	//Create the command handler (looks silly)
 	Kopete::CommandHandler::commandHandler();
@@ -146,7 +147,7 @@ void KopeteApplication::slotLoadPlugins()
 	Kopete::AccountManager::self()->load();
 	Kopete::ContactList::self()->load();
 
-	KSharedConfig::Ptr config = KGlobal::config();
+	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 
 	// Parse command-line arguments
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();

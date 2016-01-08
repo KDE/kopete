@@ -105,8 +105,8 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	tbDown->setAutoRepeat(true);
 	connect(tbDown, SIGNAL(clicked()), SLOT(slotDownButton()));
 
-	KIcon left = QIcon::fromTheme("go-previous");
-	KIcon right = QIcon::fromTheme("go-next");
+	QIcon left = QIcon::fromTheme("go-previous");
+	QIcon right = QIcon::fromTheme("go-next");
 
 	tbAdd->setIcon(QApplication::isRightToLeft() ? left : right);
 	tbAdd->setEnabled(false);

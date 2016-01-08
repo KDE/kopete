@@ -447,7 +447,7 @@ QVariantMap KopeteDBusInterface::contactProperties(const QString &contactId)
 		properties["id"] = contact->metaContactId().toString();
 		if (contact->photoSource() == Kopete::MetaContact::SourceCustom)
 		{
-			properties["picture"] = contact->customPhoto().prettyUrl();
+			properties["picture"] = contact->customPhoto().toDisplayString();
 		}
 		else
 		{

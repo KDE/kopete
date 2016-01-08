@@ -70,7 +70,6 @@
 #include <QAction>
 
 K_PLUGIN_FACTORY( EmailWindowPluginFactory, registerPlugin<EmailWindowPlugin>(); )
-K_EXPORT_PLUGIN( EmailWindowPluginFactory( "kopete_emailwindow" ) )
 
 EmailWindowPlugin::EmailWindowPlugin(QObject *parent, const QVariantList &) :
 	Kopete::ViewPlugin( parent )
@@ -187,7 +186,7 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	else
 		toggleMode( Send );
 
-	KSharedConfig::Ptr config = KGlobal::config();
+	KSharedConfig::Ptr config = KSharedConfig::openConfig();
 	applyMainWindowSettings( config->group( QLatin1String( "KopeteEmailWindow" )  ) );
 
 	d->sendInProgress = false;
@@ -205,7 +204,7 @@ KopeteEmailWindow::~KopeteEmailWindow()
 	emit( closing( this ) );
 
 	// saves menubar, toolbar and statusbar setting
-	KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteEmailWindow" ) );
+	KConfigGroup cg( KSharedConfig::openConfig(), QLatin1String( "KopeteEmailWindow" ) );
         saveMainWindowSettings( cg );
 	cg.sync();
 
@@ -311,7 +310,7 @@ void KopeteEmailWindow::slotSmileyActivated(const QString &sm )
 
 void KopeteEmailWindow::slotConfToolbar()
 {
-        KConfigGroup cg( KGlobal::config(), QLatin1String( "KopeteEmailWindow" ) );
+        KConfigGroup cg( KSharedConfig::openConfig(), QLatin1String( "KopeteEmailWindow" ) );
 	saveMainWindowSettings( cg );
 	QPointer <KEditToolBar> dlg = new KEditToolBar(actionCollection());
 	dlg->setResourceFile("kopeteemailwindow.rc");

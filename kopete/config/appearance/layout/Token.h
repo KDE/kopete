@@ -43,7 +43,7 @@ class Token : public QWidget
 
         explicit Token( const QString &text, const QString &iconName, int value, QWidget *parent = 0 );
 
-        KIcon icon() const;
+        QIcon icon() const;
         QString iconName() const;
         QString name() const;
         int value() const;
@@ -57,7 +57,7 @@ class Token : public QWidget
     protected:
 
         QString     m_name;
-        KIcon       m_icon;
+        QIcon       m_icon;
         QString     m_iconName;
         int         m_value;
 

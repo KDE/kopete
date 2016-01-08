@@ -78,7 +78,8 @@ private:
 	QPointer<KopeteWindow> m_mainWindow;
 	bool m_isShuttingDown;
 	Kopete::MimeTypeHandler *m_emoticonHandler;
-	Kopete::FileEngineHandler *m_fileEngineHandler;
+	//NOTE: QAbstractFileEngine and QAbstractFileEngineHandler deprecated in Qt5
+	//Kopete::FileEngineHandler *m_fileEngineHandler;
 private:
 	void handleURLArgs();
 };
