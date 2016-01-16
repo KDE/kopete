@@ -46,7 +46,7 @@
 #include <ktoggleaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kglobalaccel.h>
+//#include <KGlobalAccel/kglobalaccel.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>

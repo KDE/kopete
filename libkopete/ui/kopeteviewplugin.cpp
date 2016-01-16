@@ -22,6 +22,12 @@ Kopete::ViewPlugin::ViewPlugin( const KAboutData &instance, QObject *parent ) :
 
 }
 
+Kopete::ViewPlugin::ViewPlugin( QObject* parent ): Plugin( parent )
+{
+
+}
+
+
 void Kopete::ViewPlugin::aboutToUnload()
 {
 	emit readyForUnload();
