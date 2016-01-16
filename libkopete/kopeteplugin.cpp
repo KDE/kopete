@@ -39,6 +39,13 @@ Plugin::Plugin( const KAboutData &instance, QObject *parent )
 	KSettings::Dispatcher::registerComponent( instance.componentName(), this, "settingsChanged" );
 }
 
+Plugin::Plugin( QObject *parent )
+  : QObject( parent ), KXMLGUIClient(), d(new Private)
+{
+	setObjectName(QLatin1String("kopete_plugin"));
+	KSettings::Dispatcher::registerComponent(QLatin1String("kopete_plugin"), this, "settingsChanged");
+}
+
 Plugin::~Plugin()
 {
 	delete d;

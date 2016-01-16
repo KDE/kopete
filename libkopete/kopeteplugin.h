@@ -92,6 +92,7 @@ class KOPETE_EXPORT Plugin : public QObject, public KXMLGUIClient
 
 public:
 	Plugin( const KAboutData &instance, QObject *parent );
+	Plugin( QObject *parent );
 	virtual ~Plugin();
 
 	/**
