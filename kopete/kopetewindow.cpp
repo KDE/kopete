@@ -41,16 +41,20 @@
 
 #include <khbox.h>
 #include <kvbox.h>
+#include <KIcon>
+#include <kaction.h>
 #include <kactionmenu.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
-//#include <KGlobalAccel/kglobalaccel.h>
+#include <KGlobal>
+//#include <KGlobalAccel>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <knotifyconfigwidget.h>
+#include <KShortcut>
 #include <kshortcutsdialog.h>
 #include <kedittoolbar.h>
 #include <kmenubar.h>
@@ -391,34 +395,34 @@ void KopeteWindow::initActions()
 	connect ( d->addContactMapper, SIGNAL (mapped(QString)),
 	          this, SLOT (slotAddContactDialogInternal(QString)) );
 
-	d->actionDisconnect = new QAction ( QIcon::fromTheme( "user-offline" ), i18n ( "Offline" ), this );
+	d->actionDisconnect = new QAction ( QIcon::fromTheme( "user-offline"), QString( i18n ( "Offline" ) ), this );
 	actionCollection()->addAction ( "DisconnectAll", d->actionDisconnect );
 	connect ( d->actionDisconnect, SIGNAL (triggered(bool)), this, SLOT (slotDisconnectAll()) );
 	d->actionDisconnect->setEnabled ( false );
 
 	d->actionExportContacts = new QAction ( i18n ( "&Export Contacts..." ), this );
-	d->actionExportContacts->setIcon ( QIcon::fromTheme( "document-export" ) );
+	d->actionExportContacts->setIcon ( QIcon( "document-export" ) );
 	actionCollection()->addAction ( "ExportContacts", d->actionExportContacts );
 	connect ( d->actionExportContacts, SIGNAL (triggered(bool)), this, SLOT (showExportDialog()) );
 
-	d->actionSetAway = new QAction ( QIcon::fromTheme( "user-identity", 0, QStringList() << QString() << "user-away" ), i18n ( "&Away" ), this );
+	d->actionSetAway = new KAction ( KIcon( "user-identity", 0, QStringList() << QString() << "user-away" ), i18n ( "&Away" ), this );
 	actionCollection()->addAction ( "SetAwayAll", d->actionSetAway );
 	connect ( d->actionSetAway, SIGNAL (triggered(bool)), this, SLOT (slotGlobalAway()) );
 
-	d->actionSetBusy = new QAction ( QIcon::fromTheme( "user-identity", 0, QStringList() << QString() << "user-busy" ), i18n ( "&Busy" ), this );
+	d->actionSetBusy = new KAction ( KIcon( "user-identity", 0, QStringList() << QString() << "user-busy" ), i18n ( "&Busy" ), this );
 	actionCollection()->addAction ( "SetBusyAll", d->actionSetBusy );
 	connect ( d->actionSetBusy, SIGNAL (triggered(bool)), this, SLOT (slotGlobalBusy()) );
 
 
-	d->actionSetInvisible = new QAction ( QIcon::fromTheme( "user-identity", 0, QStringList() << QString() << "user-invisible" ), i18n ( "&Invisible" ), this );
+	d->actionSetInvisible = new KAction ( KIcon( "user-identity", 0, QStringList() << QString() << "user-invisible" ), i18n ( "&Invisible" ), this );
 	actionCollection()->addAction ( "SetInvisibleAll", d->actionSetInvisible );
 	connect ( d->actionSetInvisible, SIGNAL (triggered(bool)), this, SLOT (slotSetInvisibleAll()) );
 
-	d->actionSetAvailable = new QAction ( QIcon::fromTheme( "user-identity", 0, QStringList() << QString() << "user-online" ), i18n ( "&Online" ), this );
+	d->actionSetAvailable = new KAction ( KIcon( "user-identity", 0, QStringList() << QString() << "user-online" ), i18n ( "&Online" ), this );
 	actionCollection()->addAction ( "SetAvailableAll", d->actionSetAvailable );
 	connect ( d->actionSetAvailable, SIGNAL (triggered(bool)), this, SLOT (slotGlobalAvailable()) );
 
-	d->actionStatusMenu = new KActionMenu ( QIcon::fromTheme( "user-identity", 0, QStringList() << QString() << "user-online" ), i18n ( "&Set Status" ), this );
+	d->actionStatusMenu = new KActionMenu ( KIcon( "user-identity", 0, QStringList() << QString() << "user-online" ), i18n ( "&Set Status" ), this );
 	d->actionStatusMenu->setIconText ( i18n ( "Status" ) );
 	actionCollection()->addAction ( "Status", d->actionStatusMenu );
 	d->actionStatusMenu->setDelayed ( false );
@@ -477,7 +481,7 @@ void KopeteWindow::initActions()
 
 	KFilterProxySearchLine* searchLine = new KFilterProxySearchLine ( this );
 	searchLine->setProxy( d->proxyModel );
-	QAction *quickSearch = new QAction ( i18n ( "Quick Search Bar" ), this );
+	KAction *quickSearch = new KAction ( i18n ( "Quick Search Bar" ), this );
 	actionCollection()->addAction ( "quicksearch_bar", quickSearch );
 	quickSearch->setDefaultWidget ( searchLine );
 
@@ -486,22 +490,22 @@ void KopeteWindow::initActions()
 	slotConfigChanged();
 
 	// Global actions
-	QAction *globalReadMessage = new QAction ( i18n ( "Read Message" ), this );
+	KAction *globalReadMessage = new KAction ( i18n ( "Read Message" ), this );
 	actionCollection()->addAction ( "ReadMessage",  globalReadMessage );
 	connect ( globalReadMessage, SIGNAL (triggered(bool)), Kopete::ChatSessionManager::self(), SLOT (slotReadMessage()) );
-	globalReadMessage->setGlobalShortcut ( QKeySequence ( Qt::CTRL + Qt::SHIFT + Qt::Key_I ) );
+	globalReadMessage->setGlobalShortcut ( KShortcut( QKeySequence ( Qt::CTRL + Qt::SHIFT + Qt::Key_I ) ) );
 	globalReadMessage->setWhatsThis ( i18n ( "Read the next pending message" ) );
 
-	QAction *globalShowContactList = new QAction ( i18n ( "Show/Hide Contact List" ), this );
+	KAction *globalShowContactList = new KAction ( i18n ( "Show/Hide Contact List" ), this );
 	actionCollection()->addAction ( "ShowContactList", globalShowContactList );
 	connect ( globalShowContactList, SIGNAL (triggered(bool)), this, SLOT (slotShowHide()) );
-	globalShowContactList->setGlobalShortcut ( QKeySequence ( Qt::CTRL + Qt::ALT + Qt::Key_T ) );
+	globalShowContactList->setGlobalShortcut ( KShortcut( QKeySequence ( Qt::CTRL + Qt::ALT + Qt::Key_T ) ) );
 	globalShowContactList->setWhatsThis ( i18n ( "Show or hide the contact list" ) );
 
-	QAction *globalSetAway = new QAction ( i18n ( "Set Away/Back" ), this );
+	KAction *globalSetAway = new KAction ( i18n ( "Set Away/Back" ), this );
 	actionCollection()->addAction ( "Set_Away_Back",  globalSetAway );
 	connect ( globalSetAway, SIGNAL (triggered(bool)), this, SLOT (slotToggleAway()) );
-	globalSetAway->setGlobalShortcut ( QKeySequence ( Qt::CTRL + Qt::SHIFT + Qt::Key_W ) );
+	globalSetAway->setGlobalShortcut ( KShortcut( QKeySequence ( Qt::CTRL + Qt::SHIFT + Qt::Key_W ) ) );
 }
 
 void KopeteWindow::slotShowHide()
@@ -1198,7 +1202,7 @@ void KopeteWindow::slotAccountRegistered ( Kopete::Account *account )
 
 	// add an item for this account to the add contact actionmenu
 	QString s = QString ( "actionAdd%1Contact" ).arg ( account->accountId() );
-	QAction *action = new QAction ( QIcon::fromTheme( account->accountIcon() ), account->accountLabel(), this );
+	QAction *action = new QAction ( QIcon( account->accountIcon() ), account->accountLabel(), this );
 	actionCollection()->addAction ( s, action );
 	connect ( action, SIGNAL (triggered(bool)), d->addContactMapper, SLOT (map()) );
 	connect ( account, SIGNAL(colorChanged(QColor)), this, SLOT(slotAccountColorChanged()) );
@@ -1222,7 +1226,7 @@ void KopeteWindow::slotAccountColorChanged()
 	QString s = QString( "actionAdd%1Contact" ).arg( account->accountId() );
 	QAction *action = actionCollection()->action ( s );
 	if ( action )
-		action->setIcon( QIcon::fromTheme( account->accountIcon() ) );
+		action->setIcon( QIcon( account->accountIcon() ) );
 }
 
 void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
@@ -1259,10 +1263,12 @@ void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
 
 void KopeteWindow::slotTrayAboutToShowMenu ( QMenu * popup )
 {
-	KActionCollection *actionCollection = d->tray->actionCollection();
+	QList<QAction *> actions = d->tray->actionCollection();
+	KActionCollection *actionCollection;
+	actionCollection->addActions(actions);
 
 	popup->clear();
-	popup->addTitle ( qApp->windowIcon(), KGlobal::caption() );
+	popup->addSection ( qApp->windowIcon(), KGlobal::caption() );
 
 	QList<Kopete::Account *> accountList = Kopete::AccountManager::self()->accounts();
 	qSort(accountList.begin(), accountList.end(), invertedCompareOnlineStatus);

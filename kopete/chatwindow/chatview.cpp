@@ -34,6 +34,8 @@
 #include "kopetebehaviorsettings.h"
 #include "kopetechatwindowstylemanager.h"
 
+#include <KUrl>
+#include <KUrlMimeData>
 #include <kconfig.h>
 #include <ktabwidget.h>
 #include <kdebug.h>
@@ -928,11 +930,9 @@ void ChatView::dragMoveEvent( QDragMoveEvent * event )
 
 bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 {
-  /**
-   * TODO: Implement virtual functions in QDragMoveEvent
-	if( event->provides( "application/kopete.metacontacts.list" ) )
+	if( event->mimeData()->hasFormat( "application/kopete.metacontacts.list" ) )
 	{
-		QByteArray encodedData = event->encodedData ( "application/kopete.metacontacts.list" );
+		QByteArray encodedData = event->mimeData()->data( "application/kopete.metacontacts.list" );
 		QDataStream stream( &encodedData, QIODevice::ReadOnly );
 		QString metacontactID;
 		stream >> metacontactID;
@@ -953,7 +953,7 @@ bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 		}
 	}
 	// make sure it doesn't come from the current chat view - then it's an emoticon
-	else if ( QList<QUrl>::canDecode( event->mimeData() ) && m_manager->members().count() == 1 &&
+	else if ( event->mimeData()->hasUrls() && m_manager->members().count() == 1 &&
 				 ( event->source() != (QWidget*)m_messagePart->view()->viewport() ) )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
@@ -961,19 +961,16 @@ bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 		if ( contact && contact->canAcceptFiles() )
 			return true;
 	}
-  */
 	return false;
 }
 
-/* TODO : Zero uses of dropEvent() function found.
- * Fix the errors or remove the function ?
 void ChatView::dropEvent ( QDropEvent * event )
 {
 	Kopete::ContactPtrList contacts;
 
-	if( event->provides( "application/kopete.metacontacts.list" ) )
+	if( event->mimeData()->hasFormat("application/kopete.metacontacts.list") )
 	{
-		QByteArray encodedData = event->encodedData ( "application/kopete.metacontacts.list" );
+		QByteArray encodedData = event->mimeData()->data( "application/kopete.metacontacts.list" );
 		QDataStream stream( &encodedData, QIODevice::ReadOnly );
 		QString metacontactID;
 		stream >> metacontactID;
@@ -992,7 +989,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 			}
 		}
 	}
-	else if ( event->provides( "text/uri-list" ) && m_manager->members().count() == 1 )
+	else if ( event->mimeData()->hasFormat( "text/uri-list") && m_manager->members().count() == 1 )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
@@ -1003,7 +1000,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 			return;
 		}
 
-		QList<QUrl> urlList = QList<QUrl>::fromMimeData( event->mimeData() );
+		QList<QUrl> urlList = KUrlMimeData::urlsFromMimeData( event->mimeData() );
 
 		for ( QList<QUrl>::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
@@ -1023,7 +1020,6 @@ void ChatView::dropEvent ( QDropEvent * event )
 		QWidget::dropEvent(event);
 
 }
-*/
 
 void ChatView::registerContextMenuHandler( QObject *target, const char* slot )
 {
