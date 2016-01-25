@@ -42,7 +42,7 @@
 #include "IdGuiElements.h"
 
 
-K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory, registerPlugin<AVDeviceConfig>(); )
+//K_PLUGIN_FACTORY( KopeteAVDeviceConfigFactory, registerPlugin<AVDeviceConfig>(); )
 
 AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
  : KCModule( parent, args )
@@ -274,20 +274,20 @@ void AVDeviceConfig::addButtonControlElement(int cid, QString title)
 /*!
     \fn VideoDeviceConfig::save()
  */
-void AVDeviceConfig::save()
+/*void AVDeviceConfig::save()
 {
 	mVideoDevicePool->saveCurrentDeviceConfig();
 	ctrl_values_bak.clear();
-}
+}*/
 
 
 /*!
     \fn VideoDeviceConfig::load()
  */
-void AVDeviceConfig::load()
+/*void AVDeviceConfig::load()
 {
     /// @todo implement me
-}
+}*/
 
 void AVDeviceConfig::slotSettingsChanged(bool)
 {
@@ -442,7 +442,7 @@ void AVDeviceConfig::resetControls()
 	// NOTE: TO BE IMPROVED
 }
 
-void AVDeviceConfig::showEvent(QShowEvent *event)
+/**void AVDeviceConfig::showEvent(QShowEvent *event)
 {
 	// wait 1s so duplicate show/hide events will be skipped
 	QTimer::singleShot(1000, this, SLOT(updateVideoDevicePool()));
@@ -455,3 +455,4 @@ void AVDeviceConfig::hideEvent(QHideEvent *event)
 	QTimer::singleShot(1000, this, SLOT(updateVideoDevicePool()));
 	KCModule::hideEvent(event);
 }
+*/

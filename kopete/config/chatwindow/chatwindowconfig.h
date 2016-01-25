@@ -58,7 +58,7 @@ private slots:
 	void slotChatStyleSelected(const QString &styleName);
 	void slotChatStyleVariantSelected(const QString &variantName);
 	void emitChanged();
-	void slotGetChatStyles();
+	//void slotGetChatStyles();
 	void slotLoadChatStyles();
 	void slotUpdateChatPreview();
 	//----- Emoticons TAB ---------------------

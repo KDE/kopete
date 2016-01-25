@@ -41,8 +41,8 @@ Q_OBJECT
 public:
 	AVDeviceConfig(QWidget *parent, const QVariantList &args);
 	~AVDeviceConfig();
-	virtual void save();
-	virtual void load();
+	//virtual void save();
+	//virtual void load();
 
 private slots:
 	void slotSettingsChanged(bool);
@@ -88,8 +88,8 @@ private:
 	void stopCapturing();
 
 protected:
-	virtual void showEvent(QShowEvent *event);
-	virtual void hideEvent(QHideEvent *event);
+	//virtual void showEvent(QShowEvent *event);
+	//virtual void hideEvent(QHideEvent *event);
 };
 
 #endif
