@@ -57,7 +57,7 @@
 #include <KLocalizedString>
 
 // KNewStuff
-#include <knewstuff2/engine.h>
+//#include <knewstuff2/engine.h>
 
 // For Kopete Chat Window Style configuration and preview.
 #include <kopetechatwindowstylemanager.h>
@@ -172,8 +172,8 @@ ChatWindowConfig::ChatWindowConfig(QWidget *parent, const QVariantList &args )
 		this, SLOT(slotDeleteChatStyle()));
 	connect(m_styleUi.installButton, SIGNAL(clicked()),
 		this, SLOT(slotInstallChatStyle()));
-	connect(m_styleUi.btnGetStyles, SIGNAL(clicked()),
-		this, SLOT(slotGetChatStyles()));
+	//connect(m_styleUi.btnGetStyles, SIGNAL(clicked()),
+		//this, SLOT(slotGetChatStyles()));
 
 	m_styleUi.deleteButton->setIcon(QIcon::fromTheme("edit-delete"));
 	m_styleUi.installButton->setIcon(QIcon::fromTheme("document-import"));
@@ -482,6 +482,7 @@ void ChatWindowConfig::slotDeleteChatStyle()
 	slotUpdateChatPreview();
 }
 
+/**
 void ChatWindowConfig::slotGetChatStyles()
 {
 	KConfigGroup configGrp(KSharedConfig::openConfig(), "KNewStuff2");
@@ -551,6 +552,7 @@ void ChatWindowConfig::slotGetChatStyles()
 
 	delete engine;
 }
+*/
 
 void ChatWindowConfig::createPreviewChatSession()
 {
