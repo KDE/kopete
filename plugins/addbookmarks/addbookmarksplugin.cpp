@@ -12,6 +12,7 @@
 
 #include "addbookmarksplugin.h"
 
+#include <kurl.h>
 #include <kdebug.h>
 #include <kbookmark.h>
 #include <qvariant.h>
@@ -24,10 +25,9 @@
 #include "kopetemetacontact.h"
 
 K_PLUGIN_FACTORY( BookmarksPluginFactory, registerPlugin<BookmarksPlugin>(); )
-K_EXPORT_PLUGIN( BookmarksPluginFactory( "kopete_addbookmarks" ) )
 
 BookmarksPlugin::BookmarksPlugin(QObject *parent, const QVariantList &/*args*/)
- : Kopete::Plugin(BookmarksPluginFactory::componentData(), parent)
+ : Kopete::Plugin(parent)
 {
 	//kDebug(14501) << "plugin loading";
 	connect( Kopete::ChatSessionManager::self(), SIGNAL(aboutToDisplay(Kopete::Message&)), this, SLOT(slotBookmarkURLsInMessage(Kopete::Message&)) );
@@ -81,11 +81,14 @@ void BookmarksPlugin::slotAddKopeteBookmark( KIO::Job *transfer, const QByteArra
 		group = getFolder( group, sender );
 
 	if( pos == -1 ){
-		group.addBookmark( m_map[(KIO::TransferJob*)transfer].url.prettyUrl(), m_map[(KIO::TransferJob*)transfer].url.url() );
+		URLandName arg1 = m_map[(KIO::TransferJob*)transfer];
+		URLandName arg2 = m_map[(KIO::TransferJob*)transfer];
+		//group.addBookmark( m_map[(KIO::TransferJob*)transfer].url.prettyUrl(), m_map[(KIO::TransferJob*)transfer].url.url() );
+		//FIXME: group.addBookmark( arg1.url.prettyUrl(), arg2.url );
 		kDebug( 14501 ) << "failed to extract title from first data chunk";
 	}else {
-		group.addBookmark( rx.cap( 1 ).simplified(),
-                                   m_map[(KIO::TransferJob*)transfer].url.url() );
+		URLandName arg = m_map[(KIO::TransferJob*)transfer];
+		//FIXME: group.addBookmark( rx.cap( 1 ).simplified(), arg.url);
 	}
 	mgr->emitChanged( group );
 	m_map.remove( (KIO::TransferJob*)transfer );

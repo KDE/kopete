@@ -12,22 +12,23 @@
 #include "addbookmarkspreferences.h"
 #include "ui_addbookmarksprefsui.h"
 #include "addbookmarksplugin.h"
+
 #include <kgenericfactory.h>
+
 #include <kopetepluginmanager.h>
 #include <kopetecontactlist.h>
+#include <kopetemetacontact.h>
+
 #include <qlayout.h>
 #include <qnamespace.h>
 #include <qradiobutton.h>
 #include <QButtonGroup>
 #include <QStringListModel>
-#include <kopetemetacontact.h>
 
 K_PLUGIN_FACTORY( BookmarksPreferencesFactory, registerPlugin<BookmarksPreferences>(); )
-K_EXPORT_PLUGIN( BookmarksPreferencesFactory( "kcm_kopete_addbookmarks" ) )
-
 
 BookmarksPreferences::BookmarksPreferences(QWidget *parent, const QVariantList &args)
- : KCModule(BookmarksPreferencesFactory::componentData(), parent, args)
+ : KCModule(parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget();
