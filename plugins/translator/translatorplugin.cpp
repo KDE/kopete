@@ -36,6 +36,7 @@
 #include <kdeversion.h>
 #include <kselectaction.h>
 #include <kicon.h>
+#include <kurl.h>
 #include <kactioncollection.h>
 
 #include "kopetemetacontact.h"
@@ -49,10 +50,9 @@
 #include "translatorconfig.h"
 
 K_PLUGIN_FACTORY( TranslatorPluginFactory, registerPlugin<TranslatorPlugin>(); )
-K_EXPORT_PLUGIN( TranslatorPluginFactory( "kopete_translator" ) )
 
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const QVariantList & /* args */ )
-: Kopete::Plugin( TranslatorPluginFactory::componentData(), parent )
+: Kopete::Plugin( parent )
 {
 	kDebug( 14308 ) ;
 

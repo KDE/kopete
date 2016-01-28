@@ -31,10 +31,9 @@
 #include "ui_translatorprefsbase.h"
 
 K_PLUGIN_FACTORY( TranslatorPreferencesFactory, registerPlugin<TranslatorPreferences>(); )
-K_EXPORT_PLUGIN( TranslatorPreferencesFactory( "kcm_kopete_translator" ) )
 
 TranslatorPreferences::TranslatorPreferences(QWidget *parent, const QVariantList &args)
-	: KCModule(TranslatorPreferencesFactory::componentData(), parent, args)
+	: KCModule(parent, args)
 {
 	kDebug(14308) << "called.";
 
