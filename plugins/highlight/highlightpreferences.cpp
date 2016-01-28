@@ -25,9 +25,10 @@
 
 #include <kcombobox.h>
 #include <klineedit.h>
-#include <kparts/componentfactory.h>
 #include <klocale.h>
+#include <kdialog.h>
 #include <kgenericfactory.h>
+#include <kservicetypetrader.h>
 #include <kcolorbutton.h>
 #include <kinputdialog.h>
 #include <kurlrequester.h>
@@ -41,10 +42,9 @@
 #include "ui_highlightprefsbase.h"
 
 K_PLUGIN_FACTORY(HighlightPreferencesFactory, registerPlugin<HighlightPreferences>();)
-K_EXPORT_PLUGIN(HighlightPreferencesFactory( "kcm_kopete_highlight" ))
 
 HighlightPreferences::HighlightPreferences(QWidget *parent, const QVariantList &args)
-							: KCModule(HighlightPreferencesFactory::componentData(), parent, args)
+							: KCModule(parent, args)
 {
 	donttouch=true;
 
