@@ -13,11 +13,15 @@
 #define ADDBOOKMARKSPLUGIN_H
 
 #include "addbookmarksprefssettings.h"
-#include <kgenericfactory.h>
+
 #include <kopeteplugin.h>
-#include <kbookmarkmanager.h>
 #include <kopetemessage.h>
+
+#include <kgenericfactory.h>
+#include <kbookmarkmanager.h>
 #include <kio/job.h>
+#include <kurl.h>
+
 #include <qmap.h>
 
 /**
