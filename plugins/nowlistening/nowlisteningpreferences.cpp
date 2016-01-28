@@ -35,11 +35,9 @@
 #include "nowlisteningpreferences.moc"
 
 K_PLUGIN_FACTORY( NowListeningPreferencesFactory, registerPlugin<NowListeningPreferences>(); )
-K_EXPORT_PLUGIN( NowListeningPreferencesFactory( "kcm_kopete_nowlistening" ) )
-
 
 NowListeningPreferences::NowListeningPreferences(QWidget *parent, const QVariantList &args)
-	: KCModule( NowListeningPreferencesFactory::componentData(), parent, args )
+	: KCModule( parent, args )
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget;

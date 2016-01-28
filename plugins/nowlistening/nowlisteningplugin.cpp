@@ -81,10 +81,9 @@ public:
 };
 
 K_PLUGIN_FACTORY( NowListeningPluginFactory, registerPlugin<NowListeningPlugin>(); )
-K_EXPORT_PLUGIN( NowListeningPluginFactory( "kopete_nowlistening" ) )
 
 NowListeningPlugin::NowListeningPlugin( QObject *parent, const QVariantList& /*args*/ )
-: Kopete::Plugin( NowListeningPluginFactory::componentData(), parent ), d(new Private())
+: Kopete::Plugin( parent ), d(new Private())
 {
 	if ( pluginStatic_ )
 		kDebug( 14307 )<<"####"<<"Now Listening already initialized";
