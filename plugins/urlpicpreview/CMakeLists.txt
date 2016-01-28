@@ -17,7 +17,12 @@ kconfig_add_kcfg_files(kopete_urlpicpreview_PART_SRCS urlpicpreviewconfig.kcfgc 
 add_library(kopete_urlpicpreview MODULE ${kopete_urlpicpreview_PART_SRCS})
 
 
-target_link_libraries(kopete_urlpicpreview  KF5::KDELibs4Support KF5::KIOCore KF5::KCMUtils kopete )
+target_link_libraries(kopete_urlpicpreview
+    KF5::KDELibs4Support
+    KF5::KIOCore
+    KF5::KCMUtils
+    kopete
+)
 
 install(TARGETS kopete_urlpicpreview DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -34,7 +39,10 @@ kconfig_add_kcfg_files(kcm_kopete_urlpicpreview_PART_SRCS urlpicpreviewconfig.kc
 add_library(kcm_kopete_urlpicpreview MODULE ${kcm_kopete_urlpicpreview_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_urlpicpreview KF5::KIOCore  kopete )
+target_link_libraries(kcm_kopete_urlpicpreview
+    KF5::KIOCore
+    kopete
+)
 
 install(TARGETS kcm_kopete_urlpicpreview  DESTINATION ${PLUGIN_INSTALL_DIR})
 

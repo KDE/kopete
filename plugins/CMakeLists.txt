@@ -1,10 +1,10 @@
 option(WITH_latex "Enable Kopete latex plugin" ON)
 option(WITH_autoreplace "Enable Kopete autoreplace plugin" ON)
-option(WITH_history "Enable Kopete history plugin" OFF)
-option(WITH_history2 "Enable Kopete history2 plugin" OFF)
+option(WITH_history "Enable Kopete history plugin" OFF) # To be re-written
+option(WITH_history2 "Enable Kopete history2 plugin" OFF) # To be re-written
 option(WITH_contactnotes "Enable Kopete contactnotes plugin" ON)
-option(WITH_translator "Enable Kopete translator plugin" ON)
-option(WITH_nowlistening "Enable Kopete nowlistening plugin" ON)
+option(WITH_translator "Enable Kopete translator plugin" OFF)
+option(WITH_nowlistening "Enable Kopete nowlistening plugin" OFF)
 option(WITH_texteffect "Enable Kopete texteffect plugin" ON)
 option(WITH_highlight "Enable Kopete highlight plugin" ON)
 #option(WITH_alias "Enable Kopete alias plugin" ON)
@@ -13,9 +13,9 @@ option(WITH_privacy "Enable Kopete privacy plugin" ON)
 option(WITH_urlpicpreview "Enable Kopete urlpicpreview plugin" ON)
 option(WITH_statistics "Enable Kopete statistics plugin" ON)
 option(WITH_webpresence "Enable Kopete webpresence plugin" ON)
-option(WITH_pipes "Enable Kopete pipes plugin" ON)
+option(WITH_pipes "Enable Kopete pipes plugin" OFF)
 option(WITH_otr "Enable Kopete Off-the-Record plugin" ON)
-option(WITH_cryptography "Enable Kopete Cryptography plugin" OFF)
+option(WITH_cryptography "Enable Kopete Cryptography plugin" OFF) # To be re-written
 
 # Laurent this plugins use shell script which will not work on windows
 if (WITH_latex AND UNIX)

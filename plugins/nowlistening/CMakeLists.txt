@@ -26,7 +26,11 @@ kconfig_add_kcfg_files(kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfgc )
 add_library(kopete_nowlistening MODULE ${kopete_nowlistening_PART_SRCS})
 
 
-target_link_libraries(kopete_nowlistening  KF5::KIOCore kopete)
+target_link_libraries(kopete_nowlistening
+    KF5::KDELibs4Support
+    KF5::KIOCore
+    kopete
+)
 
 if(XMMS_FOUND)
    target_link_libraries( kopete_nowlistening ${XMMS_LDFLAGS} )
@@ -47,7 +51,12 @@ kconfig_add_kcfg_files(kcm_kopete_nowlistening_PART_SRCS nowlisteningconfig.kcfg
 add_library(kcm_kopete_nowlistening MODULE ${kcm_kopete_nowlistening_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_nowlistening  )
+target_link_libraries(kcm_kopete_nowlistening
+    KF5::KDELibs4Support
+    KF5::KCMUtils
+    Qt5::Widgets
+    Qt5::Core
+)
 
 install(TARGETS kcm_kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})
 

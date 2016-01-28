@@ -15,7 +15,10 @@ kconfig_add_kcfg_files(kopete_latex_PART_SRCS latexconfig.kcfgc )
 add_library(kopete_latex MODULE ${kopete_latex_PART_SRCS})
 
 
-target_link_libraries(kopete_latex   kopete )
+target_link_libraries(kopete_latex
+    kopete
+    KF5::KDELibs4Support
+)
 
 install(TARGETS kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -32,7 +35,14 @@ kconfig_add_kcfg_files(kcm_kopete_latex_PART_SRCS latexconfig.kcfgc )
 add_library(kcm_kopete_latex MODULE ${kcm_kopete_latex_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_latex   KF5::KIOCore)
+target_link_libraries(kcm_kopete_latex
+    KF5::KDELibs4Support
+    KF5::KIOCore
+    KF5::KIOWidgets
+    KF5::KCMUtils
+    Qt5::Widgets
+    Qt5::Gui
+)
 
 install(TARGETS kcm_kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
 
