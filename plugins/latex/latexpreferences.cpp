@@ -19,10 +19,11 @@
 
 #include <qlayout.h>
 
-#include <kparts/componentfactory.h>
+//#include <kparts/componentfactory.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <kdebug.h>
+#include <KUrl>
 #include <knuminput.h>
 
 #include "latexplugin.h"
@@ -30,11 +31,9 @@
 #include "ui_latexprefsbase.h"
 
 K_PLUGIN_FACTORY(LatexPreferencesFactory, registerPlugin<LatexPreferences>();)
-K_EXPORT_PLUGIN(LatexPreferencesFactory( "kcm_kopete_latex" ))
-
 
 LatexPreferences::LatexPreferences(QWidget *parent, const QVariantList &args)
-							: KCModule(LatexPreferencesFactory::componentData(), parent, args)
+							: KCModule(parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget;

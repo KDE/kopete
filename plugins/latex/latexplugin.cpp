@@ -30,6 +30,7 @@
 #include <ktemporaryfile.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 
 #include "kopetechatsessionmanager.h"
 #include "kopeteuiglobal.h"
@@ -41,11 +42,10 @@
 
 
 K_PLUGIN_FACTORY(LatexPluginFactory, registerPlugin<LatexPlugin>();)
-K_EXPORT_PLUGIN(LatexPluginFactory( "kopete_latex" ))
 
 
 LatexPlugin::LatexPlugin( QObject *parent, const QVariantList &/*args*/ )
-: Kopete::Plugin( LatexPluginFactory::componentData(), parent )
+: Kopete::Plugin( parent )
 {
 //	kDebug(14317) ;
 	if( !s_pluginStatic )
