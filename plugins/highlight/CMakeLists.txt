@@ -16,6 +16,7 @@ add_library(kopete_highlight MODULE ${kopete_highlight_PART_SRCS})
 target_link_libraries(kopete_highlight 
 	kopete
 	KF5::KDELibs4Support
+	KF5::Parts
 	Qt5::Xml
 )
 

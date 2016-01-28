@@ -26,11 +26,10 @@
 #include "highlightconfig.h"
 
 K_PLUGIN_FACTORY(HighlightPluginFactory, registerPlugin<HighlightPlugin>();)
-K_EXPORT_PLUGIN(HighlightPluginFactory( "kopete_highlight" ))
 
 
 HighlightPlugin::HighlightPlugin( QObject *parent, const QVariantList &/*args*/ )
-: Kopete::Plugin( HighlightPluginFactory::componentData(), parent )
+: Kopete::Plugin( parent )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;
