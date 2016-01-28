@@ -22,6 +22,7 @@
 
 #include <kpluginfactory.h>
 #include <kfiledialog.h>
+#include <kurl.h>
 
 #include "ui_pipesprefsbase.h"
 #include "pipesmodel.h"
@@ -30,10 +31,9 @@
 #include "pipesconfig.h"
 
 K_PLUGIN_FACTORY ( PipesPreferencesFactory, registerPlugin<PipesPreferences>(); )
-K_EXPORT_PLUGIN ( PipesPreferencesFactory ( "kcm_kopete_pipes" ) )
 
 PipesPreferences::PipesPreferences ( QWidget *parent, const QVariantList &args )
-	: KCModule ( PipesPreferencesFactory::componentData(), parent, args )
+	: KCModule ( parent, args )
 {
 	mPrefs = new Ui::PipesPrefsUI;
 	mPrefs->setupUi (this);
