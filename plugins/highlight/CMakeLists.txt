@@ -13,7 +13,11 @@ set(kopete_highlight_PART_SRCS highlightplugin.cpp highlightconfig.cpp filter.cp
 add_library(kopete_highlight MODULE ${kopete_highlight_PART_SRCS})
 
 
-target_link_libraries(kopete_highlight   kopete Qt5::Xml)
+target_link_libraries(kopete_highlight 
+	kopete
+	KF5::KDELibs4Support
+	Qt5::Xml
+)
 
 install(TARGETS kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -27,7 +31,15 @@ ki18n_wrap_ui(kcm_kopete_highlight_PART_SRCS highlightprefsbase.ui )
 
 add_library(kcm_kopete_highlight MODULE ${kcm_kopete_highlight_PART_SRCS})
 
-target_link_libraries(kcm_kopete_highlight KF5::NotifyConfig ${QT_QTXML_LIBRARY})
+target_link_libraries(kcm_kopete_highlight
+	KF5::KDELibs4Support
+	KF5::NotifyConfig
+	KF5::Completion
+	KF5::KCMUtils
+	KF5::Parts
+	Qt5::Widgets
+	Qt5::Xml
+)
 
 install(TARGETS kcm_kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
 
