@@ -32,12 +32,11 @@
 #include "autoreplaceconfig.h"
 
 K_PLUGIN_FACTORY(AutoReplacePreferencesFactory, registerPlugin<AutoReplacePreferences>();)
-K_EXPORT_PLUGIN(AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ))
 
 
 // TODO: Use KConfigXT
 AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QVariantList &args )
-: KCModule( AutoReplacePreferencesFactory::componentData(), parent, args )
+: KCModule( parent, args )
 {
 	QStringList headerList = (QStringList() << i18n("Text") << i18n("Replacement"));
 	QVBoxLayout* l = new QVBoxLayout( this );
