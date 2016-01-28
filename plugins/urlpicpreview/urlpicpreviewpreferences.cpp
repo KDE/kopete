@@ -35,11 +35,10 @@
 K_PLUGIN_FACTORY(URLPicPreviewPreferencesFactory,
         registerPlugin<URLPicPreviewPreferences>();
         )
-K_EXPORT_PLUGIN(URLPicPreviewPreferencesFactory ( "kcm_kopete_urlpicpreview" ))
 
 
 URLPicPreviewPreferences::URLPicPreviewPreferences ( QWidget *parent, const QVariantList &args )
-		: KCModule ( URLPicPreviewPreferencesFactory::componentData(), parent, args )
+		: KCModule ( parent, args )
 {
 	m_ui = new Ui::URLPicPreviewPrefsUI;
 	QWidget * w = new QWidget ( this );

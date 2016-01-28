@@ -38,10 +38,9 @@
 #include "kopetechatsessionmanager.h"
 
 K_PLUGIN_FACTORY( URLPicPreviewPluginFactory, registerPlugin<URLPicPreviewPlugin>(); )
-K_EXPORT_PLUGIN( URLPicPreviewPluginFactory( "kopete_urlpicpreview" ) )
 
 URLPicPreviewPlugin::URLPicPreviewPlugin ( QObject* parent, const QVariantList& /* args */ )
-		: Kopete::Plugin ( URLPicPreviewPluginFactory::componentData(), parent ), m_pic ( NULL ), m_abortMessageCheck ( false )
+		: Kopete::Plugin ( parent ), m_pic ( NULL ), m_abortMessageCheck ( false )
 {
 
 	kDebug ( 14314 );
