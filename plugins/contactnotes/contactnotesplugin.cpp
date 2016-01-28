@@ -30,10 +30,9 @@
 #include <kactioncollection.h>
 
 K_PLUGIN_FACTORY(ContactNotesPluginFactory, registerPlugin<ContactNotesPlugin>();)
-K_EXPORT_PLUGIN(ContactNotesPluginFactory( "kopete_contactnotes" ))
 
 ContactNotesPlugin::ContactNotesPlugin( QObject *parent, const QVariantList & /* args */ )
-: Kopete::Plugin( ContactNotesPluginFactory::componentData(), parent )
+: Kopete::Plugin( parent )
 {
 	if ( pluginStatic_ )
 		kDebug(14302)<<"ContactNotesPlugin::ContactNotesPlugin : plugin already initialized";
