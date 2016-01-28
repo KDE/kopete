@@ -27,13 +27,12 @@
 #include "autoreplaceconfig.h"
 
 K_PLUGIN_FACTORY(AutoReplacePluginFactory, registerPlugin<AutoReplacePlugin>();)
-K_EXPORT_PLUGIN(AutoReplacePluginFactory( "kopete_autoreplace" ))
 
 
 AutoReplacePlugin * AutoReplacePlugin::pluginStatic_ = 0L;
 
 AutoReplacePlugin::AutoReplacePlugin( QObject *parent, const QVariantList & )
-: Kopete::Plugin( AutoReplacePluginFactory::componentData(), parent )
+: Kopete::Plugin( parent )
 {
 	if( !pluginStatic_ )
 		pluginStatic_ = this;
