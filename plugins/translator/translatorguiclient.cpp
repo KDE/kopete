@@ -25,6 +25,8 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kicon.h>
+#include <kshortcut.h>
+#include <kactioncollection.h>
 
 #include "kopetechatsession.h"
 #include "kopeteview.h"
@@ -34,12 +36,11 @@
 
 #include "translatorplugin.h"
 #include "translatorlanguages.h"
-#include <kactioncollection.h>
 
 TranslatorGUIClient::TranslatorGUIClient( Kopete::ChatSession *parent )
 : QObject( parent ), KXMLGUIClient( parent )
 {
-	setComponentData( TranslatorPlugin::plugin()->componentData() );
+	//setComponentData( TranslatorPlugin::plugin()->componentData() );
 	connect( TranslatorPlugin::plugin(), SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()) );
 
 	m_manager = parent;
