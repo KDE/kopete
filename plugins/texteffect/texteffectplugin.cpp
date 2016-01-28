@@ -28,10 +28,9 @@
 #include "texteffectconfig.h"
 
 K_PLUGIN_FACTORY(TextEffectPluginFactory, registerPlugin<TextEffectPlugin>();)
-K_EXPORT_PLUGIN(TextEffectPluginFactory( "kopete_texteffect" ))
 
 TextEffectPlugin::TextEffectPlugin( QObject *parent, const QVariantList &/*args*/ )
-: Kopete::Plugin( TextEffectPluginFactory::componentData(), parent )
+: Kopete::Plugin( parent )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;
