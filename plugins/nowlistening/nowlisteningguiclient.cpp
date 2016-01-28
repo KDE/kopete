@@ -28,6 +28,7 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kmessagebox_queued.h>
 #include <kactioncollection.h>
 
 NowListeningGUIClient::NowListeningGUIClient( Kopete::ChatSession *parent, NowListeningPlugin *plugin )
