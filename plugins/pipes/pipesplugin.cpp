@@ -38,10 +38,9 @@
 #include "kopeteuiglobal.h"
 
 K_PLUGIN_FACTORY ( PipesPluginFactory, registerPlugin<PipesPlugin>(); )
-K_EXPORT_PLUGIN ( PipesPluginFactory ( "kopete_pipes" ) )
 
 PipesPlugin::PipesPlugin ( QObject *parent, const QVariantList &/*args*/ )
-		: Kopete::Plugin ( PipesPluginFactory::componentData(), parent )
+		: Kopete::Plugin ( parent )
 {
 	if( !mPluginStatic )
 		mPluginStatic = this;
