@@ -36,10 +36,9 @@
 #include "privacyaccountlistmodel.h"
 
 K_PLUGIN_FACTORY( PrivacyPreferencesFactory, registerPlugin<PrivacyPreferences>(); )
-K_EXPORT_PLUGIN( PrivacyPreferencesFactory( "kcm_kopete_privacy" ) )
 
 PrivacyPreferences::PrivacyPreferences(QWidget *parent, const QVariantList &args)
-	: KCModule(PrivacyPreferencesFactory::componentData(), parent, args)
+	: KCModule(parent, args)
 {
 	kDebug(14313) << "called.";
 	

@@ -40,12 +40,11 @@
 #include <kactioncollection.h>
 
 K_PLUGIN_FACTORY( PrivacyPluginFactory, registerPlugin<PrivacyPlugin>(); )
-K_EXPORT_PLUGIN( PrivacyPluginFactory( "kopete_privacy" ) )
 
 PrivacyPlugin * PrivacyPlugin::pluginStatic_ = 0L;
 
 PrivacyPlugin::PrivacyPlugin( QObject *parent, const QVariantList & )
-: Kopete::Plugin( PrivacyPluginFactory::componentData(), parent )
+: Kopete::Plugin( parent )
 {
 	kDebug(14313) ;
 	if( !pluginStatic_ )
