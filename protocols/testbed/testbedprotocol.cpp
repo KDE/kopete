@@ -18,6 +18,7 @@
 
 #include <QList>
 #include <kgenericfactory.h>
+#include <KLocalizedString>
 #include <kdebug.h>
 
 #include "kopeteaccountmanager.h"
@@ -27,12 +28,11 @@
 #include "testbededitaccountwidget.h"
 
 K_PLUGIN_FACTORY( TestbedProtocolFactory, registerPlugin<TestbedProtocol>(); )
-K_EXPORT_PLUGIN( TestbedProtocolFactory( "kopete_testbed" ) )
 
 TestbedProtocol *TestbedProtocol::s_protocol = 0L;
 
 TestbedProtocol::TestbedProtocol( QObject* parent, const QVariantList &/*args*/ )
-	: Kopete::Protocol( TestbedProtocolFactory::componentData(), parent ),
+	: Kopete::Protocol( parent ),
 	  testbedOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),
 			  i18n( "Online" ),   i18n( "O&nline" ), Kopete::OnlineStatusManager::Online ),
 	  testbedAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),

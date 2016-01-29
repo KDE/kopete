@@ -17,8 +17,11 @@
 #ifndef TESTBEDCONTACT_H
 #define TESTBEDCONTACT_H
 
-#include <qmap.h>
+#include <QMap>
 #include <QList>
+
+#include <KAction>
+  
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
@@ -55,7 +58,7 @@ public:
 	/**
 	 * Return the actions for this contact
 	 */
-	virtual QList<KAction *> *customContextMenuActions();
+	//virtual QList<KAction *> *customContextMenuActions();
 	using Kopete::Contact::customContextMenuActions;
 	/**
 	 * Returns a Kopete::ChatSession associated with this contact

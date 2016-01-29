@@ -101,7 +101,7 @@ public:
 class FakeProtocol : public Kopete::Protocol
 {
 public:
-FakeProtocol( const KComponentData &instance, QObject *parent ) : Kopete::Protocol(instance, parent){}
+FakeProtocol( QObject *parent ) : Kopete::Protocol(parent){}
 Kopete::Account* createNewAccount( const QString &/*accountId*/ ){return 0L;}
 AddContactPage* createAddContactWidget( QWidget */*parent*/, Kopete::Account */*account*/){return 0L;}
 KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account */*account*/, QWidget */*parent */){return 0L;}
@@ -556,7 +556,8 @@ void ChatWindowConfig::slotGetChatStyles()
 
 void ChatWindowConfig::createPreviewChatSession()
 {
-	m_previewProtocol = new FakeProtocol( KComponentData(QByteArray("kopete-preview-chatwindowstyle")), 0 ); m_previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
+	m_previewProtocol = new FakeProtocol( 0 ); 
+	m_previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
 	m_previewAccount = new FakeAccount(m_previewProtocol, QString("previewaccount"));
 
 	m_myself = new FakeContact(m_previewAccount, i18nc("This is the myself preview contact id", "myself@preview"), Kopete::ContactList::self()->myself());
