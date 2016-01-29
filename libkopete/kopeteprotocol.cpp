@@ -50,8 +50,8 @@ public:
 	Kopete::OnlineStatus accountNotConnectedStatus;
 };
 
-Protocol::Protocol( const KAboutData &instance, QObject *parent, bool canAddMyself )
-: Plugin( instance, parent ), d(new Private())
+Protocol::Protocol( QObject *parent, bool canAddMyself )
+: Plugin( parent ), d(new Private())
 {
 	d->canAddMyself = canAddMyself;
 	d->mStickLastSeen = Global::Properties::self()->lastSeen();

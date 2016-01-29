@@ -97,16 +97,16 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags canCreateFlags )
 }
 
 
-QList<KAction *> *TestbedContact::customContextMenuActions() //OBSOLETE
-{
+//QList<KAction *> *TestbedContact::customContextMenuActions() //OBSOLETE
+//{
 	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
 	/*m_actionCollection = new KActionCollection( this, "userColl" );
 	m_actionPrefs = new KAction(i18n( "&Contact Settings" ), 0, this,
 			SLOT(showContactSettings()), m_actionCollection, "contactSettings" );
 
 	return m_actionCollection;*/
-	return 0L;
-}
+	//return 0L;
+//}
 
 void TestbedContact::showContactSettings()
 {

@@ -173,7 +173,7 @@ protected:
 	 * @param parent The protocol's parent object
 	 * @param name The protocol's name
 	 */
-	Protocol( const KAboutData &instance, QObject *parent, bool canAddMyself = false );
+	Protocol( QObject *parent, bool canAddMyself = false );
 
 	/**
 	 * @brief Sets the capabilities of this protcol.
