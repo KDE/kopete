@@ -91,7 +91,7 @@ void ChatWindowStyleManager::loadStyles()
 	foreach(const QString &styleDir, chatStyles)
 	{
 		kDebug(14000) << styleDir;
-		d->styleDirs.push( QUrl(styleDir) );
+		d->styleDirs.push( QUrl::fromLocalFile(styleDir) );
 	}
 
 	d->styleDirLister = new KDirLister(this);
