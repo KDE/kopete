@@ -1263,10 +1263,6 @@ void KopeteWindow::slotAccountUnregistered ( const Kopete::Account *account )
 
 void KopeteWindow::slotTrayAboutToShowMenu ( QMenu * popup )
 {
-	QList<QAction *> actions = d->tray->actionCollection();
-	KActionCollection *actionCollection;
-	actionCollection->addActions(actions);
-
 	popup->clear();
 	popup->addSection ( qApp->windowIcon(), KGlobal::caption() );
 
@@ -1292,8 +1288,8 @@ void KopeteWindow::slotTrayAboutToShowMenu ( QMenu * popup )
 	popup->addAction ( d->actionPrefs );
 	popup->addAction ( d->actionAddContact );
 	popup->addSeparator();
-	popup->addAction ( actionCollection->action ( "minimizeRestore" ) );
-	popup->addAction ( actionCollection->action ( KStandardAction::name ( KStandardAction::Quit ) ) );
+	popup->addAction ( d->tray->action ( "minimizeRestore" ) );
+	popup->addAction ( d->tray->action ( KStandardAction::name ( KStandardAction::Quit ) ) );
 }
 
 void KopeteWindow::showExportDialog()
