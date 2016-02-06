@@ -43,7 +43,7 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 #include <kio/netaccess.h>
-#include <KF5/KHtml/khtmlview.h>
+#include <KHTMLView>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>

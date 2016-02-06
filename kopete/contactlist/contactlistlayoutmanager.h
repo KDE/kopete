@@ -24,6 +24,7 @@
 #include <QStringList>
 #include <QString>
 #include <QMap>
+#include <QObject>
 
 #include <kopete_export.h>
 
