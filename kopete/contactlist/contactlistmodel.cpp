@@ -27,10 +27,10 @@
 
 #include <QUrl>
 #include <KMessageBox>
-#include <KF5/KI18n/KLocalizedString>
-#include <KF5/KDELibs4Support/KDE/KDebug>
-#include <KF5/KEmoticons/KEmoticonsTheme>
-#include <KF5/KDELibs4Support/kmessagebox_queued.h>
+#include <KLocalizedString>
+#include <KDebug>
+#include <KEmoticonsTheme>
+#include <kmessagebox_queued.h>
 
 #include "kopeteaccount.h"
 #include "kopetepicture.h"

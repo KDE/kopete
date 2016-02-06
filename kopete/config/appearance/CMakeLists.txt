@@ -35,7 +35,7 @@ ki18n_wrap_ui(kcm_kopete_appearanceconfig_PART_SRCS
 add_library(kcm_kopete_appearanceconfig MODULE ${kcm_kopete_appearanceconfig_PART_SRCS})
 
 
-target_link_libraries(kcm_kopete_appearanceconfig  kopete kopetecontactlist )
+target_link_libraries(kcm_kopete_appearanceconfig KF5::KHtml kopete kopetecontactlist )
 
 install(TARGETS kcm_kopete_appearanceconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
 
