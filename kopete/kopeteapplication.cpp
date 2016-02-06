@@ -55,7 +55,6 @@
 KopeteApplication::KopeteApplication()
 : KUniqueApplication( true, true )
 {
-	setQuitOnLastWindowClosed( false );
 	m_isShuttingDown = false;
 
 	//Create the identity manager
@@ -376,11 +375,14 @@ void KopeteApplication::quitKopete()
 		if ( !(*it)->close() )
 		{
 			m_isShuttingDown = false;
-			break;
+			return;
 		}
 	}
 
-	if ( m_isShuttingDown && m_mainWindow )
+	// shutdown plugin manager
+	Kopete::PluginManager::self()->shutdown();
+
+	if ( m_mainWindow )
 	{
 		m_mainWindow->deleteLater();
 		m_mainWindow = 0;
