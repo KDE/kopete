@@ -38,7 +38,16 @@
 #include "icqstatusmanager.h"
 
 K_PLUGIN_FACTORY( ICQProtocolFactory, registerPlugin<ICQProtocol>(); )
-K_EXPORT_PLUGIN( ICQProtocolFactory( "kopete_icq" ) )
+
+QString languageCodeToName(const char* code)
+{
+	return i18n(QLocale::languageToString(QLocale(code).language()).toLatin1());
+}
+
+QString countryCodeToName(const char* code)
+{
+	return i18n(QLocale::countryToString(QLocale(code).country()).toLatin1());
+}
 
 //BEGIN class ICQProtocolHandler
 
@@ -47,7 +56,7 @@ ICQProtocolHandler::ICQProtocolHandler() : Kopete::MimeTypeHandler(false)
 	registerAsMimeHandler(QString::fromLatin1("application/x-icq"));
 }
 
-void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) const
+void ICQProtocolHandler::handleURL(const QString &mimeType, const QUrl & url) const
 {
 	if (mimeType != "application/x-icq")
 		return;
@@ -65,8 +74,8 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 
 	KConfig file(url.toLocalFile(), KConfig::SimpleConfig);
 	QString group_name;
-	
-	
+
+
 	if (file.hasGroup("ICQ User"))
 		group_name= "ICQ User";
 	else if (file.hasGroup("ICQ Message User"))
@@ -156,7 +165,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KUrl & url) co
 ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
 
 ICQProtocol::ICQProtocol(QObject *parent, const QVariantList&)
-: OscarProtocol( ICQProtocolFactory::componentData(), parent ),
+: OscarProtocol( parent ),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),
 	emailAddress(Kopete::Global::Properties::self()->emailAddress()),
@@ -201,332 +210,327 @@ void ICQProtocol::initGenders()
 void ICQProtocol::initCountries()
 {
 	mCountries.insert(0, ""); // unspecified
-	KLocale *kl = KGlobal::locale(); //KLocale(QString::fromLatin1("kopete"));
-
-	mCountries.insert(93, kl->countryCodeToName("af"));
-	mCountries.insert(355, kl->countryCodeToName("al"));
-	mCountries.insert(213, kl->countryCodeToName("dz"));
-	mCountries.insert(684, kl->countryCodeToName("as"));
-	mCountries.insert(376, kl->countryCodeToName("ad"));
-	mCountries.insert(244, kl->countryCodeToName("ao"));
-	mCountries.insert(101, kl->countryCodeToName("ai"));
+	mCountries.insert(93, countryCodeToName("af"));
+	mCountries.insert(355, countryCodeToName("al"));
+	mCountries.insert(213, countryCodeToName("dz"));
+	mCountries.insert(684, countryCodeToName("as"));
+	mCountries.insert(376, countryCodeToName("ad"));
+	mCountries.insert(244, countryCodeToName("ao"));
+	mCountries.insert(101, countryCodeToName("ai"));
 	mCountries.insert(102, i18n("Antigua"));
-	mCountries.insert(1021, kl->countryCodeToName("ag"));
-	mCountries.insert(54, kl->countryCodeToName("ar"));
-	mCountries.insert(374, kl->countryCodeToName("am"));
-	mCountries.insert(297, kl->countryCodeToName("aw"));
+	mCountries.insert(1021, countryCodeToName("ag"));
+	mCountries.insert(54, countryCodeToName("ar"));
+	mCountries.insert(374, countryCodeToName("am"));
+	mCountries.insert(297, countryCodeToName("aw"));
 	mCountries.insert(247, i18n("Ascension Island"));
-	mCountries.insert(61, kl->countryCodeToName("au"));
-	mCountries.insert(43, kl->countryCodeToName("at"));
-	mCountries.insert(994, kl->countryCodeToName("az"));
-	mCountries.insert(103, kl->countryCodeToName("bs"));
-	mCountries.insert(973, kl->countryCodeToName("bh"));
-	mCountries.insert(880, kl->countryCodeToName("bd"));
-	mCountries.insert(104, kl->countryCodeToName("bb"));
+	mCountries.insert(61, countryCodeToName("au"));
+	mCountries.insert(43, countryCodeToName("at"));
+	mCountries.insert(994, countryCodeToName("az"));
+	mCountries.insert(103, countryCodeToName("bs"));
+	mCountries.insert(973, countryCodeToName("bh"));
+	mCountries.insert(880, countryCodeToName("bd"));
+	mCountries.insert(104, countryCodeToName("bb"));
 	mCountries.insert(120, i18n("Barbuda"));
-	mCountries.insert(375, kl->countryCodeToName("by"));
-	mCountries.insert(32, kl->countryCodeToName("be"));
-	mCountries.insert(501, kl->countryCodeToName("bz"));
-	mCountries.insert(229, kl->countryCodeToName("bj"));
-	mCountries.insert(105, kl->countryCodeToName("bm"));
-	mCountries.insert(975, kl->countryCodeToName("bt"));
-	mCountries.insert(591, kl->countryCodeToName("bo"));
-	mCountries.insert(387, kl->countryCodeToName("ba"));
-	mCountries.insert(267, kl->countryCodeToName("bw"));
-	mCountries.insert(55, kl->countryCodeToName("br"));
+	mCountries.insert(375, countryCodeToName("by"));
+	mCountries.insert(32, countryCodeToName("be"));
+	mCountries.insert(501, countryCodeToName("bz"));
+	mCountries.insert(229, countryCodeToName("bj"));
+	mCountries.insert(105, countryCodeToName("bm"));
+	mCountries.insert(975, countryCodeToName("bt"));
+	mCountries.insert(591, countryCodeToName("bo"));
+	mCountries.insert(387, countryCodeToName("ba"));
+	mCountries.insert(267, countryCodeToName("bw"));
+	mCountries.insert(55, countryCodeToName("br"));
 	mCountries.insert(106, i18n("British Virgin Islands"));
-	mCountries.insert(673, kl->countryCodeToName("bn"));
-	mCountries.insert(359, kl->countryCodeToName("bg"));
-	mCountries.insert(226, kl->countryCodeToName("bf"));
-	mCountries.insert(257, kl->countryCodeToName("bi"));
-	mCountries.insert(855, kl->countryCodeToName("kh"));
-	mCountries.insert(237, kl->countryCodeToName("cm"));
-	mCountries.insert(107, kl->countryCodeToName("ca"));
-	mCountries.insert(238, kl->countryCodeToName("cv"));
-	mCountries.insert(108, kl->countryCodeToName("ky"));
-	mCountries.insert(236, kl->countryCodeToName("cf"));
-	mCountries.insert(235, kl->countryCodeToName("td"));
+	mCountries.insert(673, countryCodeToName("bn"));
+	mCountries.insert(359, countryCodeToName("bg"));
+	mCountries.insert(226, countryCodeToName("bf"));
+	mCountries.insert(257, countryCodeToName("bi"));
+	mCountries.insert(855, countryCodeToName("kh"));
+	mCountries.insert(237, countryCodeToName("cm"));
+	mCountries.insert(107, countryCodeToName("ca"));
+	mCountries.insert(238, countryCodeToName("cv"));
+	mCountries.insert(108, countryCodeToName("ky"));
+	mCountries.insert(236, countryCodeToName("cf"));
+	mCountries.insert(235, countryCodeToName("td"));
 	mCountries.insert(178, i18n("Canary Islands"));
-	mCountries.insert(56, kl->countryCodeToName("cl"));
-	mCountries.insert(86, kl->countryCodeToName("cn"));
-	mCountries.insert(672, kl->countryCodeToName("cx"));
+	mCountries.insert(56, countryCodeToName("cl"));
+	mCountries.insert(86, countryCodeToName("cn"));
+	mCountries.insert(672, countryCodeToName("cx"));
 	mCountries.insert(6101, i18n("Cocos-Keeling Islands"));
 	mCountries.insert(6102, i18n("Cocos (Keeling) Islands"));
-	mCountries.insert(57, kl->countryCodeToName("co"));
-	mCountries.insert(2691, kl->countryCodeToName("km"));
-	mCountries.insert(242, kl->countryCodeToName("cg"));
-	mCountries.insert(682, kl->countryCodeToName("ck"));
-	mCountries.insert(506, kl->countryCodeToName("cr"));
-	mCountries.insert(385, kl->countryCodeToName("hr"));
-	mCountries.insert(53, kl->countryCodeToName("cu"));
-	mCountries.insert(357, kl->countryCodeToName("cy"));
-	mCountries.insert(42, kl->countryCodeToName("cz"));
-	mCountries.insert(45, kl->countryCodeToName("dk"));
+	mCountries.insert(57, countryCodeToName("co"));
+	mCountries.insert(2691, countryCodeToName("km"));
+	mCountries.insert(242, countryCodeToName("cg"));
+	mCountries.insert(682, countryCodeToName("ck"));
+	mCountries.insert(506, countryCodeToName("cr"));
+	mCountries.insert(385, countryCodeToName("hr"));
+	mCountries.insert(53, countryCodeToName("cu"));
+	mCountries.insert(357, countryCodeToName("cy"));
+	mCountries.insert(42, countryCodeToName("cz"));
+	mCountries.insert(45, countryCodeToName("dk"));
 	mCountries.insert(246, i18n("Diego Garcia"));
-	mCountries.insert(253, kl->countryCodeToName("dj"));
-	mCountries.insert(109, kl->countryCodeToName("dm"));
-	mCountries.insert(110, kl->countryCodeToName("do"));
-	mCountries.insert(593, kl->countryCodeToName("ec"));
-	mCountries.insert(20, kl->countryCodeToName("eg"));
-	mCountries.insert(503, kl->countryCodeToName("sv"));
-	mCountries.insert(240, kl->countryCodeToName("gq"));
-	mCountries.insert(291, kl->countryCodeToName("er"));
-	mCountries.insert(372, kl->countryCodeToName("ee"));
-	mCountries.insert(251, kl->countryCodeToName("et"));
-	mCountries.insert(298, kl->countryCodeToName("fo"));
-	mCountries.insert(500, kl->countryCodeToName("fk"));
-	mCountries.insert(679, kl->countryCodeToName("fj"));
-	mCountries.insert(358, kl->countryCodeToName("fi"));
-	mCountries.insert(33, kl->countryCodeToName("fr"));
+	mCountries.insert(253, countryCodeToName("dj"));
+	mCountries.insert(109, countryCodeToName("dm"));
+	mCountries.insert(110, countryCodeToName("do"));
+	mCountries.insert(593, countryCodeToName("ec"));
+	mCountries.insert(20, countryCodeToName("eg"));
+	mCountries.insert(503, countryCodeToName("sv"));
+	mCountries.insert(240, countryCodeToName("gq"));
+	mCountries.insert(291, countryCodeToName("er"));
+	mCountries.insert(372, countryCodeToName("ee"));
+	mCountries.insert(251, countryCodeToName("et"));
+	mCountries.insert(298, countryCodeToName("fo"));
+	mCountries.insert(500, countryCodeToName("fk"));
+	mCountries.insert(679, countryCodeToName("fj"));
+	mCountries.insert(358, countryCodeToName("fi"));
+	mCountries.insert(33, countryCodeToName("fr"));
 	mCountries.insert(5901, i18n("French Antilles"));
 	mCountries.insert(5902, i18n("Antilles"));
 	mCountries.insert(594, i18n("French Guiana"));
-	mCountries.insert(689, kl->countryCodeToName("pf"));
-	mCountries.insert(241, kl->countryCodeToName("ga"));
-	mCountries.insert(220, kl->countryCodeToName("gm"));
-	mCountries.insert(995, kl->countryCodeToName("ge"));
-	mCountries.insert(49, kl->countryCodeToName("de"));
-	mCountries.insert(233, kl->countryCodeToName("gh"));
-	mCountries.insert(350, kl->countryCodeToName("gi"));
-	mCountries.insert(30, kl->countryCodeToName("gr"));
-	mCountries.insert(299, kl->countryCodeToName("gl"));
-	mCountries.insert(111, kl->countryCodeToName("gd"));
-	mCountries.insert(590, kl->countryCodeToName("gp"));
-	mCountries.insert(671, kl->countryCodeToName("gu"));
-	mCountries.insert(502, kl->countryCodeToName("gt"));
-	mCountries.insert(224, kl->countryCodeToName("gn"));
-	mCountries.insert(245, kl->countryCodeToName("gw"));
-	mCountries.insert(592, kl->countryCodeToName("gy"));
-	mCountries.insert(509, kl->countryCodeToName("ht"));
-	mCountries.insert(504, kl->countryCodeToName("hn"));
-	mCountries.insert(852, kl->countryCodeToName("hk"));
-	mCountries.insert(36, kl->countryCodeToName("hu"));
-	mCountries.insert(354, kl->countryCodeToName("is"));
-	mCountries.insert(91, kl->countryCodeToName("in"));
-	mCountries.insert(62, kl->countryCodeToName("id"));
-	mCountries.insert(98, kl->countryCodeToName("ir"));
-	mCountries.insert(964, kl->countryCodeToName("iq"));
-	mCountries.insert(353, kl->countryCodeToName("ie"));
-	mCountries.insert(972, kl->countryCodeToName("il"));
-	mCountries.insert(39, kl->countryCodeToName("it"));
-	mCountries.insert(225, kl->countryCodeToName("ci"));
-	mCountries.insert(112, kl->countryCodeToName("jm"));
-	mCountries.insert(81, kl->countryCodeToName("jp"));
-	mCountries.insert(962, kl->countryCodeToName("jo"));
-	mCountries.insert(705, kl->countryCodeToName("kz"));
-	mCountries.insert(254, kl->countryCodeToName("ke"));
-	mCountries.insert(686, kl->countryCodeToName("ki"));
-	mCountries.insert(850, kl->countryCodeToName("kp"));
-	mCountries.insert(82, kl->countryCodeToName("kr"));
-	mCountries.insert(965, kl->countryCodeToName("kw"));
-	mCountries.insert(706, kl->countryCodeToName("kg"));
-	mCountries.insert(856, kl->countryCodeToName("la"));
-	mCountries.insert(371, kl->countryCodeToName("lv"));
-	mCountries.insert(961, kl->countryCodeToName("lb"));
-	mCountries.insert(266, kl->countryCodeToName("ls"));
-	mCountries.insert(231, kl->countryCodeToName("lr"));
-	mCountries.insert(218, kl->countryCodeToName("ly"));
-	mCountries.insert(4101, kl->countryCodeToName("li"));
-	mCountries.insert(370, kl->countryCodeToName("lt"));
-	mCountries.insert(352, kl->countryCodeToName("lu"));
-	mCountries.insert(853, kl->countryCodeToName("mo"));
-	mCountries.insert(261, kl->countryCodeToName("mg"));
-	mCountries.insert(265, kl->countryCodeToName("mw"));
-	mCountries.insert(60, kl->countryCodeToName("my"));
-	mCountries.insert(960, kl->countryCodeToName("mv"));
-	mCountries.insert(223, kl->countryCodeToName("ml"));
-	mCountries.insert(356, kl->countryCodeToName("mt"));
-	mCountries.insert(692, kl->countryCodeToName("mh"));
-	mCountries.insert(596, kl->countryCodeToName("mq"));
-	mCountries.insert(222, kl->countryCodeToName("mr"));
-	mCountries.insert(230, kl->countryCodeToName("mu"));
+	mCountries.insert(689, countryCodeToName("pf"));
+	mCountries.insert(241, countryCodeToName("ga"));
+	mCountries.insert(220, countryCodeToName("gm"));
+	mCountries.insert(995, countryCodeToName("ge"));
+	mCountries.insert(49, countryCodeToName("de"));
+	mCountries.insert(233, countryCodeToName("gh"));
+	mCountries.insert(350, countryCodeToName("gi"));
+	mCountries.insert(30, countryCodeToName("gr"));
+	mCountries.insert(299, countryCodeToName("gl"));
+	mCountries.insert(111, countryCodeToName("gd"));
+	mCountries.insert(590, countryCodeToName("gp"));
+	mCountries.insert(671, countryCodeToName("gu"));
+	mCountries.insert(502, countryCodeToName("gt"));
+	mCountries.insert(224, countryCodeToName("gn"));
+	mCountries.insert(245, countryCodeToName("gw"));
+	mCountries.insert(592, countryCodeToName("gy"));
+	mCountries.insert(509, countryCodeToName("ht"));
+	mCountries.insert(504, countryCodeToName("hn"));
+	mCountries.insert(852, countryCodeToName("hk"));
+	mCountries.insert(36, countryCodeToName("hu"));
+	mCountries.insert(354, countryCodeToName("is"));
+	mCountries.insert(91, countryCodeToName("in"));
+	mCountries.insert(62, countryCodeToName("id"));
+	mCountries.insert(98, countryCodeToName("ir"));
+	mCountries.insert(964, countryCodeToName("iq"));
+	mCountries.insert(353, countryCodeToName("ie"));
+	mCountries.insert(972, countryCodeToName("il"));
+	mCountries.insert(39, countryCodeToName("it"));
+	mCountries.insert(225, countryCodeToName("ci"));
+	mCountries.insert(112, countryCodeToName("jm"));
+	mCountries.insert(81, countryCodeToName("jp"));
+	mCountries.insert(962, countryCodeToName("jo"));
+	mCountries.insert(705, countryCodeToName("kz"));
+	mCountries.insert(254, countryCodeToName("ke"));
+	mCountries.insert(686, countryCodeToName("ki"));
+	mCountries.insert(850, countryCodeToName("kp"));
+	mCountries.insert(82, countryCodeToName("kr"));
+	mCountries.insert(965, countryCodeToName("kw"));
+	mCountries.insert(706, countryCodeToName("kg"));
+	mCountries.insert(856, countryCodeToName("la"));
+	mCountries.insert(371, countryCodeToName("lv"));
+	mCountries.insert(961, countryCodeToName("lb"));
+	mCountries.insert(266, countryCodeToName("ls"));
+	mCountries.insert(231, countryCodeToName("lr"));
+	mCountries.insert(218, countryCodeToName("ly"));
+	mCountries.insert(4101, countryCodeToName("li"));
+	mCountries.insert(370, countryCodeToName("lt"));
+	mCountries.insert(352, countryCodeToName("lu"));
+	mCountries.insert(853, countryCodeToName("mo"));
+	mCountries.insert(261, countryCodeToName("mg"));
+	mCountries.insert(265, countryCodeToName("mw"));
+	mCountries.insert(60, countryCodeToName("my"));
+	mCountries.insert(960, countryCodeToName("mv"));
+	mCountries.insert(223, countryCodeToName("ml"));
+	mCountries.insert(356, countryCodeToName("mt"));
+	mCountries.insert(692, countryCodeToName("mh"));
+	mCountries.insert(596, countryCodeToName("mq"));
+	mCountries.insert(222, countryCodeToName("mr"));
+	mCountries.insert(230, countryCodeToName("mu"));
 	mCountries.insert(269, i18n("Mayotte Island"));
-	mCountries.insert(52, kl->countryCodeToName("mx"));
-	mCountries.insert(691, kl->countryCodeToName("fm"));
-	mCountries.insert(373, kl->countryCodeToName("md"));
-	mCountries.insert(377, kl->countryCodeToName("mc"));
-	mCountries.insert(976, kl->countryCodeToName("mn"));
-	mCountries.insert(113, kl->countryCodeToName("ms"));
-	mCountries.insert(212, kl->countryCodeToName("ma"));
-	mCountries.insert(258, kl->countryCodeToName("mz"));
-	mCountries.insert(95, kl->countryCodeToName("mm"));
-	mCountries.insert(264, kl->countryCodeToName("na"));
-	mCountries.insert(674, kl->countryCodeToName("nr"));
-	mCountries.insert(977, kl->countryCodeToName("np"));
-	mCountries.insert(599, kl->countryCodeToName("an"));
-	mCountries.insert(31, kl->countryCodeToName("nl"));
+	mCountries.insert(52, countryCodeToName("mx"));
+	mCountries.insert(691, countryCodeToName("fm"));
+	mCountries.insert(373, countryCodeToName("md"));
+	mCountries.insert(377, countryCodeToName("mc"));
+	mCountries.insert(976, countryCodeToName("mn"));
+	mCountries.insert(113, countryCodeToName("ms"));
+	mCountries.insert(212, countryCodeToName("ma"));
+	mCountries.insert(258, countryCodeToName("mz"));
+	mCountries.insert(95, countryCodeToName("mm"));
+	mCountries.insert(264, countryCodeToName("na"));
+	mCountries.insert(674, countryCodeToName("nr"));
+	mCountries.insert(977, countryCodeToName("np"));
+	mCountries.insert(599, countryCodeToName("an"));
+	mCountries.insert(31, countryCodeToName("nl"));
 	mCountries.insert(114, i18n("Nevis"));
-	mCountries.insert(687, kl->countryCodeToName("nc"));
-	mCountries.insert(64, kl->countryCodeToName("nz"));
-	mCountries.insert(505, kl->countryCodeToName("ni"));
-	mCountries.insert(227, kl->countryCodeToName("ne"));
-	mCountries.insert(234, kl->countryCodeToName("ng"));
-	mCountries.insert(683, kl->countryCodeToName("nu"));
-	mCountries.insert(6722, kl->countryCodeToName("nf"));
-	mCountries.insert(47, kl->countryCodeToName("no"));
-	mCountries.insert(968, kl->countryCodeToName("om"));
-	mCountries.insert(92, kl->countryCodeToName("pk"));
-	mCountries.insert(680, kl->countryCodeToName("pw"));
-	mCountries.insert(507, kl->countryCodeToName("pa"));
-	mCountries.insert(675, kl->countryCodeToName("pg"));
-	mCountries.insert(595, kl->countryCodeToName("py"));
-	mCountries.insert(51, kl->countryCodeToName("pe"));
-	mCountries.insert(63, kl->countryCodeToName("ph"));
-	mCountries.insert(48, kl->countryCodeToName("pl"));
-	mCountries.insert(351, kl->countryCodeToName("pt"));
-	mCountries.insert(121, kl->countryCodeToName("pr"));
-	mCountries.insert(974, kl->countryCodeToName("qa"));
-	mCountries.insert(389, kl->countryCodeToName("mk"));
+	mCountries.insert(687, countryCodeToName("nc"));
+	mCountries.insert(64, countryCodeToName("nz"));
+	mCountries.insert(505, countryCodeToName("ni"));
+	mCountries.insert(227, countryCodeToName("ne"));
+	mCountries.insert(234, countryCodeToName("ng"));
+	mCountries.insert(683, countryCodeToName("nu"));
+	mCountries.insert(6722, countryCodeToName("nf"));
+	mCountries.insert(47, countryCodeToName("no"));
+	mCountries.insert(968, countryCodeToName("om"));
+	mCountries.insert(92, countryCodeToName("pk"));
+	mCountries.insert(680, countryCodeToName("pw"));
+	mCountries.insert(507, countryCodeToName("pa"));
+	mCountries.insert(675, countryCodeToName("pg"));
+	mCountries.insert(595, countryCodeToName("py"));
+	mCountries.insert(51, countryCodeToName("pe"));
+	mCountries.insert(63, countryCodeToName("ph"));
+	mCountries.insert(48, countryCodeToName("pl"));
+	mCountries.insert(351, countryCodeToName("pt"));
+	mCountries.insert(121, countryCodeToName("pr"));
+	mCountries.insert(974, countryCodeToName("qa"));
+	mCountries.insert(389, countryCodeToName("mk"));
 	mCountries.insert(262, i18n("Reunion Island"));
-	mCountries.insert(40, kl->countryCodeToName("ro"));
+	mCountries.insert(40, countryCodeToName("ro"));
 	mCountries.insert(6701, i18n("Rota Island"));
-	mCountries.insert(7, kl->countryCodeToName("ru"));
-	mCountries.insert(250, kl->countryCodeToName("rw"));
-	mCountries.insert(122, kl->countryCodeToName("lc"));
+	mCountries.insert(7, countryCodeToName("ru"));
+	mCountries.insert(250, countryCodeToName("rw"));
+	mCountries.insert(122, countryCodeToName("lc"));
 	mCountries.insert(670, i18n("Saipan Island"));
-	mCountries.insert(378, kl->countryCodeToName("sm"));
-	mCountries.insert(239, kl->countryCodeToName("st"));
-	mCountries.insert(966, kl->countryCodeToName("sa"));
-	mCountries.insert(221, kl->countryCodeToName("sn"));
-	mCountries.insert(248, kl->countryCodeToName("sc"));
+	mCountries.insert(378, countryCodeToName("sm"));
+	mCountries.insert(239, countryCodeToName("st"));
+	mCountries.insert(966, countryCodeToName("sa"));
+	mCountries.insert(221, countryCodeToName("sn"));
+	mCountries.insert(248, countryCodeToName("sc"));
 	mCountries.insert(232, i18n("Sierra Leone"));
-	mCountries.insert(65, kl->countryCodeToName("sg"));
-	mCountries.insert(4201, kl->countryCodeToName("sk"));
-	mCountries.insert(386, kl->countryCodeToName("si"));
-	mCountries.insert(677, kl->countryCodeToName("sb"));
-	mCountries.insert(252, kl->countryCodeToName("so"));
-	mCountries.insert(27, kl->countryCodeToName("za"));
-	mCountries.insert(34, kl->countryCodeToName("es"));
-	mCountries.insert(94, kl->countryCodeToName("lk"));
-	mCountries.insert(290, kl->countryCodeToName("sh"));
+	mCountries.insert(65, countryCodeToName("sg"));
+	mCountries.insert(4201, countryCodeToName("sk"));
+	mCountries.insert(386, countryCodeToName("si"));
+	mCountries.insert(677, countryCodeToName("sb"));
+	mCountries.insert(252, countryCodeToName("so"));
+	mCountries.insert(27, countryCodeToName("za"));
+	mCountries.insert(34, countryCodeToName("es"));
+	mCountries.insert(94, countryCodeToName("lk"));
+	mCountries.insert(290, countryCodeToName("sh"));
 	mCountries.insert(115, i18n("St. Kitts"));
-	mCountries.insert(1141, kl->countryCodeToName("kn"));
-	mCountries.insert(508, kl->countryCodeToName("pm"));
-	mCountries.insert(116, kl->countryCodeToName("vc"));
-	mCountries.insert(249, kl->countryCodeToName("sd"));
-	mCountries.insert(597, kl->countryCodeToName("sr"));
-	mCountries.insert(268, kl->countryCodeToName("sz"));
-	mCountries.insert(46, kl->countryCodeToName("se"));
-	mCountries.insert(41, kl->countryCodeToName("ch"));
-	mCountries.insert(963, kl->countryCodeToName("sy"));
-	mCountries.insert(886, kl->countryCodeToName("tw"));
-	mCountries.insert(708, kl->countryCodeToName("tj"));
-	mCountries.insert(255, kl->countryCodeToName("tz"));
-	mCountries.insert(66, kl->countryCodeToName("th"));
+	mCountries.insert(1141, countryCodeToName("kn"));
+	mCountries.insert(508, countryCodeToName("pm"));
+	mCountries.insert(116, countryCodeToName("vc"));
+	mCountries.insert(249, countryCodeToName("sd"));
+	mCountries.insert(597, countryCodeToName("sr"));
+	mCountries.insert(268, countryCodeToName("sz"));
+	mCountries.insert(46, countryCodeToName("se"));
+	mCountries.insert(41, countryCodeToName("ch"));
+	mCountries.insert(963, countryCodeToName("sy"));
+	mCountries.insert(886, countryCodeToName("tw"));
+	mCountries.insert(708, countryCodeToName("tj"));
+	mCountries.insert(255, countryCodeToName("tz"));
+	mCountries.insert(66, countryCodeToName("th"));
 	mCountries.insert(6702, i18n("Tinian Island"));
-	mCountries.insert(228, kl->countryCodeToName("tg")); // Togo
-	mCountries.insert(690, kl->countryCodeToName("tk")); // Tokelau
-	mCountries.insert(676, kl->countryCodeToName("to")); // Tonga
-	mCountries.insert(117, kl->countryCodeToName("tt")); // Trinidad and Tobago
-	mCountries.insert(216, kl->countryCodeToName("tn")); // Tunisia
-	mCountries.insert(90, kl->countryCodeToName("tr"));
-	mCountries.insert(709, kl->countryCodeToName("tm"));
-	mCountries.insert(118, kl->countryCodeToName("tc")); // Turks and Caicos Island
-	mCountries.insert(688, kl->countryCodeToName("tv")); // Tuvalu
-	mCountries.insert(1, kl->countryCodeToName("us")); // United States of America
-	mCountries.insert(256, kl->countryCodeToName("ug")); // Uganda
-	mCountries.insert(380, kl->countryCodeToName("ua")); // Ukraine
-	mCountries.insert(971, kl->countryCodeToName("ae")); // United Arab Emirates
-	mCountries.insert(44, kl->countryCodeToName("gb")); // United Kingdom
+	mCountries.insert(228, countryCodeToName("tg")); // Togo
+	mCountries.insert(690, countryCodeToName("tk")); // Tokelau
+	mCountries.insert(676, countryCodeToName("to")); // Tonga
+	mCountries.insert(117, countryCodeToName("tt")); // Trinidad and Tobago
+	mCountries.insert(216, countryCodeToName("tn")); // Tunisia
+	mCountries.insert(90, countryCodeToName("tr"));
+	mCountries.insert(709, countryCodeToName("tm"));
+	mCountries.insert(118, countryCodeToName("tc")); // Turks and Caicos Island
+	mCountries.insert(688, countryCodeToName("tv")); // Tuvalu
+	mCountries.insert(1, countryCodeToName("us")); // United States of America
+	mCountries.insert(256, countryCodeToName("ug")); // Uganda
+	mCountries.insert(380, countryCodeToName("ua")); // Ukraine
+	mCountries.insert(971, countryCodeToName("ae")); // United Arab Emirates
+	mCountries.insert(44, countryCodeToName("gb")); // United Kingdom
 	mCountries.insert(441, i18n("Wales"));
 	mCountries.insert(442, i18n("Scotland"));
-	mCountries.insert(123, kl->countryCodeToName("vi")); // United States Virgin Islands
-	mCountries.insert(598, kl->countryCodeToName("uy")); // Uruguay
-	mCountries.insert(711, kl->countryCodeToName("uz")); // Uzbekistan
-	mCountries.insert(678, kl->countryCodeToName("vu")); // Vanuatu
-	mCountries.insert(379, kl->countryCodeToName("va")); // Vatican City
-	mCountries.insert(58, kl->countryCodeToName("ve")); // Venezuela
-	mCountries.insert(84, kl->countryCodeToName("vn")); // Vietnam
-	mCountries.insert(681, kl->countryCodeToName("wf")); // Wallis and Futuna Islands
-	mCountries.insert(685, kl->countryCodeToName("ws"));
-	mCountries.insert(967, kl->countryCodeToName("ye"));
+	mCountries.insert(123, countryCodeToName("vi")); // United States Virgin Islands
+	mCountries.insert(598, countryCodeToName("uy")); // Uruguay
+	mCountries.insert(711, countryCodeToName("uz")); // Uzbekistan
+	mCountries.insert(678, countryCodeToName("vu")); // Vanuatu
+	mCountries.insert(379, countryCodeToName("va")); // Vatican City
+	mCountries.insert(58, countryCodeToName("ve")); // Venezuela
+	mCountries.insert(84, countryCodeToName("vn")); // Vietnam
+	mCountries.insert(681, countryCodeToName("wf")); // Wallis and Futuna Islands
+	mCountries.insert(685, countryCodeToName("ws"));
+	mCountries.insert(967, countryCodeToName("ye"));
 	mCountries.insert(3811, i18n("Yugoslavia - Serbia"));
 	mCountries.insert(382, i18n("Yugoslavia - Montenegro"));
 	mCountries.insert(381, i18n("Yugoslavia"));
 	mCountries.insert(243, i18n("Congo, Democratic Republic of (Zaire)"));
-	mCountries.insert(260, kl->countryCodeToName("zm"));
-	mCountries.insert(263, kl->countryCodeToName("zw"));
+	mCountries.insert(260, countryCodeToName("zm"));
+	mCountries.insert(263, countryCodeToName("zw"));
 	mCountries.insert(9999, i18n("Unknown"));
 
 }
 
 void ICQProtocol::initLang()
 {
-
-	KLocale *kl = KGlobal::locale(); //KLocale(QString::fromLatin1("kopete"));
-
 	mLanguages.insert(0 , "");
-	mLanguages.insert(1 , kl->languageCodeToName("ar") /*i18n("Arabic")*/);
+	mLanguages.insert(1 , languageCodeToName("ar") /*i18n("Arabic")*/);
 	mLanguages.insert(2 , i18n("Bhojpuri"));
-	mLanguages.insert(3 , kl->languageCodeToName("bg") /*i18n("Bulgarian")*/);
-	mLanguages.insert(4 , kl->languageCodeToName("my") /*i18n("Burmese")*/);
+	mLanguages.insert(3 , languageCodeToName("bg") /*i18n("Bulgarian")*/);
+	mLanguages.insert(4 , languageCodeToName("my") /*i18n("Burmese")*/);
 	mLanguages.insert(5 , i18n("Cantonese"));
-	mLanguages.insert(6 , kl->languageCodeToName("ca") /*i18n("Catalan")*/);
-	mLanguages.insert(7 , kl->languageCodeToName("zh") /*i18n("Chinese")*/);
-	mLanguages.insert(8 , kl->languageCodeToName("hr") /*i18n("Croatian")*/);
-	mLanguages.insert(9 , kl->languageCodeToName("cs") /*i18n("Czech")*/);
-	mLanguages.insert(10, kl->languageCodeToName("da") /*i18n("Danish")*/);
-	mLanguages.insert(11, kl->languageCodeToName("nl") /*i18n("Dutch")*/);
-	mLanguages.insert(12, kl->languageCodeToName("en") /*i18n("English")*/);
-	mLanguages.insert(13, kl->languageCodeToName("eo") /*i18n("Esperanto")*/);
-	mLanguages.insert(14, kl->languageCodeToName("et") /*i18n("Estonian")*/);
+	mLanguages.insert(6 , languageCodeToName("ca") /*i18n("Catalan")*/);
+	mLanguages.insert(7 , languageCodeToName("zh") /*i18n("Chinese")*/);
+	mLanguages.insert(8 , languageCodeToName("hr") /*i18n("Croatian")*/);
+	mLanguages.insert(9 , languageCodeToName("cs") /*i18n("Czech")*/);
+	mLanguages.insert(10, languageCodeToName("da") /*i18n("Danish")*/);
+	mLanguages.insert(11, languageCodeToName("nl") /*i18n("Dutch")*/);
+	mLanguages.insert(12, languageCodeToName("en") /*i18n("English")*/);
+	mLanguages.insert(13, languageCodeToName("eo") /*i18n("Esperanto")*/);
+	mLanguages.insert(14, languageCodeToName("et") /*i18n("Estonian")*/);
 	mLanguages.insert(15, i18n("Farsi"));
-	mLanguages.insert(16, kl->languageCodeToName("fi") /*i18n("Finnish")*/);
-	mLanguages.insert(17, kl->languageCodeToName("fr") /*i18n("French")*/);
-	mLanguages.insert(18, kl->languageCodeToName("gd") /*i18n("Gaelic")*/);
-	mLanguages.insert(19, kl->languageCodeToName("de") /*i18n("German")*/);
-	mLanguages.insert(20, kl->languageCodeToName("el") /*i18n("Greek")*/);
-	mLanguages.insert(21, kl->languageCodeToName("he") /*i18n("Hebrew")*/);
-	mLanguages.insert(22, kl->languageCodeToName("hi") /*i18n("Hindi")*/);
-	mLanguages.insert(23, kl->languageCodeToName("hu") /*i18n("Hungarian")*/);
-	mLanguages.insert(24, kl->languageCodeToName("is") /*i18n("Icelandic")*/);
-	mLanguages.insert(25, kl->languageCodeToName("id") /*i18n("Indonesian")*/);
-	mLanguages.insert(26, kl->languageCodeToName("it") /*i18n("Italian")*/);
-	mLanguages.insert(27, kl->languageCodeToName("ja") /*i18n("Japanese")*/);
-	mLanguages.insert(28, kl->languageCodeToName("km") /*i18n("Khmer")*/);
-	mLanguages.insert(29, kl->languageCodeToName("ko") /*i18n("Korean")*/);
-	mLanguages.insert(30, kl->languageCodeToName("lo") /*i18n("Lao")*/);
-	mLanguages.insert(31, kl->languageCodeToName("lv") /*i18n("Latvian")*/);
-	mLanguages.insert(32, kl->languageCodeToName("lt") /*i18n("Lithuanian")*/);
-	mLanguages.insert(33, kl->languageCodeToName("ms") /*i18n("Malay")*/);
-	mLanguages.insert(34, kl->languageCodeToName("no") /*i18n("Norwegian")*/);
-	mLanguages.insert(35, kl->languageCodeToName("pl") /*i18n("Polish")*/);
-	mLanguages.insert(36, kl->languageCodeToName("pt") /*i18n("Portuguese")*/);
-	mLanguages.insert(37, kl->languageCodeToName("ro") /*i18n("Romanian")*/);
-	mLanguages.insert(38, kl->languageCodeToName("ru") /*i18n("Russian")*/);
-	mLanguages.insert(39, kl->languageCodeToName("sr") /*i18n("Serbian")*/);
-	mLanguages.insert(40, kl->languageCodeToName("sk") /*i18n("Slovak")*/);
-	mLanguages.insert(41, kl->languageCodeToName("sl") /*i18n("Slovenian")*/);
-	mLanguages.insert(42, kl->languageCodeToName("so") /*i18n("Somali")*/);
-	mLanguages.insert(43, kl->languageCodeToName("es") /*i18n("Spanish")*/);
-	mLanguages.insert(44, kl->languageCodeToName("sw") /*i18n("Swahili")*/);
-	mLanguages.insert(45, kl->languageCodeToName("sv") /*i18n("Swedish")*/);
-	mLanguages.insert(46, kl->languageCodeToName("tl") /*i18n("Tagalog")*/);
-	mLanguages.insert(47, kl->languageCodeToName("tt") /*i18n("Tatar")*/);
-	mLanguages.insert(48, kl->languageCodeToName("th") /*i18n("Thai")*/);
-	mLanguages.insert(49, kl->languageCodeToName("tr") /*i18n("Turkish")*/);
-	mLanguages.insert(50, kl->languageCodeToName("uk") /*i18n("Ukrainian")*/);
-	mLanguages.insert(51, kl->languageCodeToName("ur") /*i18n("Urdu")*/);
-	mLanguages.insert(52, kl->languageCodeToName("vi") /*i18n("Vietnamese")*/);
-	mLanguages.insert(53, kl->languageCodeToName("yi") /*i18n("Yiddish")*/);
-	mLanguages.insert(54, kl->languageCodeToName("yo") /*i18n("Yoruba")*/);
-	mLanguages.insert(55, kl->languageCodeToName("af") /*i18n("Afrikaans")*/);
-	mLanguages.insert(56, kl->languageCodeToName("bs") /*i18n("Bosnian")*/);
-	mLanguages.insert(57, kl->languageCodeToName("fa") /*i18n("Persian")*/);
-	mLanguages.insert(58, kl->languageCodeToName("sq") /*i18n("Albanian")*/);
-	mLanguages.insert(59, kl->languageCodeToName("hy") /*i18n("Armenian")*/);
+	mLanguages.insert(16, languageCodeToName("fi") /*i18n("Finnish")*/);
+	mLanguages.insert(17, languageCodeToName("fr") /*i18n("French")*/);
+	mLanguages.insert(18, languageCodeToName("gd") /*i18n("Gaelic")*/);
+	mLanguages.insert(19, languageCodeToName("de") /*i18n("German")*/);
+	mLanguages.insert(20, languageCodeToName("el") /*i18n("Greek")*/);
+	mLanguages.insert(21, languageCodeToName("he") /*i18n("Hebrew")*/);
+	mLanguages.insert(22, languageCodeToName("hi") /*i18n("Hindi")*/);
+	mLanguages.insert(23, languageCodeToName("hu") /*i18n("Hungarian")*/);
+	mLanguages.insert(24, languageCodeToName("is") /*i18n("Icelandic")*/);
+	mLanguages.insert(25, languageCodeToName("id") /*i18n("Indonesian")*/);
+	mLanguages.insert(26, languageCodeToName("it") /*i18n("Italian")*/);
+	mLanguages.insert(27, languageCodeToName("ja") /*i18n("Japanese")*/);
+	mLanguages.insert(28, languageCodeToName("km") /*i18n("Khmer")*/);
+	mLanguages.insert(29, languageCodeToName("ko") /*i18n("Korean")*/);
+	mLanguages.insert(30, languageCodeToName("lo") /*i18n("Lao")*/);
+	mLanguages.insert(31, languageCodeToName("lv") /*i18n("Latvian")*/);
+	mLanguages.insert(32, languageCodeToName("lt") /*i18n("Lithuanian")*/);
+	mLanguages.insert(33, languageCodeToName("ms") /*i18n("Malay")*/);
+	mLanguages.insert(34, languageCodeToName("no") /*i18n("Norwegian")*/);
+	mLanguages.insert(35, languageCodeToName("pl") /*i18n("Polish")*/);
+	mLanguages.insert(36, languageCodeToName("pt") /*i18n("Portuguese")*/);
+	mLanguages.insert(37, languageCodeToName("ro") /*i18n("Romanian")*/);
+	mLanguages.insert(38, languageCodeToName("ru") /*i18n("Russian")*/);
+	mLanguages.insert(39, languageCodeToName("sr") /*i18n("Serbian")*/);
+	mLanguages.insert(40, languageCodeToName("sk") /*i18n("Slovak")*/);
+	mLanguages.insert(41, languageCodeToName("sl") /*i18n("Slovenian")*/);
+	mLanguages.insert(42, languageCodeToName("so") /*i18n("Somali")*/);
+	mLanguages.insert(43, languageCodeToName("es") /*i18n("Spanish")*/);
+	mLanguages.insert(44, languageCodeToName("sw") /*i18n("Swahili")*/);
+	mLanguages.insert(45, languageCodeToName("sv") /*i18n("Swedish")*/);
+	mLanguages.insert(46, languageCodeToName("tl") /*i18n("Tagalog")*/);
+	mLanguages.insert(47, languageCodeToName("tt") /*i18n("Tatar")*/);
+	mLanguages.insert(48, languageCodeToName("th") /*i18n("Thai")*/);
+	mLanguages.insert(49, languageCodeToName("tr") /*i18n("Turkish")*/);
+	mLanguages.insert(50, languageCodeToName("uk") /*i18n("Ukrainian")*/);
+	mLanguages.insert(51, languageCodeToName("ur") /*i18n("Urdu")*/);
+	mLanguages.insert(52, languageCodeToName("vi") /*i18n("Vietnamese")*/);
+	mLanguages.insert(53, languageCodeToName("yi") /*i18n("Yiddish")*/);
+	mLanguages.insert(54, languageCodeToName("yo") /*i18n("Yoruba")*/);
+	mLanguages.insert(55, languageCodeToName("af") /*i18n("Afrikaans")*/);
+	mLanguages.insert(56, languageCodeToName("bs") /*i18n("Bosnian")*/);
+	mLanguages.insert(57, languageCodeToName("fa") /*i18n("Persian")*/);
+	mLanguages.insert(58, languageCodeToName("sq") /*i18n("Albanian")*/);
+	mLanguages.insert(59, languageCodeToName("hy") /*i18n("Armenian")*/);
 	mLanguages.insert(60, i18n("Punjabi"));
-	mLanguages.insert(61, kl->languageCodeToName("ch") /*i18n("Chamorro")*/);
-	mLanguages.insert(62, kl->languageCodeToName("mn") /*i18n("Mongolian")*/);
+	mLanguages.insert(61, languageCodeToName("ch") /*i18n("Chamorro")*/);
+	mLanguages.insert(62, languageCodeToName("mn") /*i18n("Mongolian")*/);
 	mLanguages.insert(63, i18n("Mandarin"));
 	mLanguages.insert(64, i18n("Taiwanese"));
-	mLanguages.insert(65, kl->languageCodeToName("mk") /*i18n("Macedonian")*/);
-	mLanguages.insert(66, kl->languageCodeToName("sd") /*i18n("Sindhi")*/);
-	mLanguages.insert(67, kl->languageCodeToName("cy") /*i18n("Welsh")*/);
-	mLanguages.insert(68, kl->languageCodeToName("az") /*i18n("Azerbaijani")*/);
-	mLanguages.insert(69, kl->languageCodeToName("ku") /*i18n("Kurdish")*/);
-	mLanguages.insert(70, kl->languageCodeToName("gu") /*i18n("Gujarati")*/);
-	mLanguages.insert(71, kl->languageCodeToName("ta") /*i18n("Tamil")*/);
+	mLanguages.insert(65, languageCodeToName("mk") /*i18n("Macedonian")*/);
+	mLanguages.insert(66, languageCodeToName("sd") /*i18n("Sindhi")*/);
+	mLanguages.insert(67, languageCodeToName("cy") /*i18n("Welsh")*/);
+	mLanguages.insert(68, languageCodeToName("az") /*i18n("Azerbaijani")*/);
+	mLanguages.insert(69, languageCodeToName("ku") /*i18n("Kurdish")*/);
+	mLanguages.insert(70, languageCodeToName("gu") /*i18n("Gujarati")*/);
+	mLanguages.insert(71, languageCodeToName("ta") /*i18n("Tamil")*/);
 	mLanguages.insert(72, i18n("Belorussian"));
 	mLanguages.insert(255, i18n("Unknown"));
 

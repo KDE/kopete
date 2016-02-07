@@ -41,7 +41,8 @@
 #include <QHash>
 #include <QtNetwork/QSslSocket>
 #include <QtNetwork/QNetworkProxy>
-#include <QtGui/QTextDocument> // Qt::escape
+#include <QTextDocument> // Qt::escape
+#include <QAbstractButton>
 
 
 #include <kdebug.h>
@@ -95,12 +96,12 @@ public:
 	QMap<QString, QString> contactAddQueue;
 	QMap<QString, QString> contactChangeQueue;
 	QMap<uint, FileTransferHandler*> fileTransferHandlerMap;
-	
+
     OscarListNonServerContacts* olnscDialog;
-	
+
 	unsigned int versionUpdaterStamp;
 	bool versionAlreadyUpdated;
-	
+
 	bool buddyIconDirty;
 
 	virtual QTextCodec* codecForContact( const QString& contactName ) const
@@ -136,7 +137,7 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, b
 	kg[14] = KOPETE_VERSION_RELEASE / 100;
 	kg[15] = KOPETE_VERSION_RELEASE % 100;
 	d->engine->setVersionCap( kg );
-	
+
 	d->versionAlreadyUpdated = false;
 	d->buddyIconDirty = false;
 	d->versionUpdaterStamp = OscarVersionUpdater::self()->stamp();
@@ -229,7 +230,7 @@ bool OscarAccount::setIdentity( Kopete::Identity *ident )
 
 	QObject::connect( ident, SIGNAL(propertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)),
 	                  this, SLOT(slotIdentityPropertyChanged(Kopete::PropertyContainer*,QString,QVariant,QVariant)) );
-	
+
 	QString photoPath = ident->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 	updateBuddyIcon( photoPath );
 	return true;
@@ -453,7 +454,7 @@ void OscarAccount::nonServerAddContactDialogClosed()
 	bool showOnce = d->olnscDialog->onlyShowOnce();
 	configGroup()->writeEntry( QString::fromLatin1("ShowMissingContactsDialog") , !showOnce);
 	configGroup()->sync();
-	
+
     d->olnscDialog->deleteLater();
     d->olnscDialog = 0L;
 }
@@ -466,27 +467,19 @@ void OscarAccount::chatroomRequest( ChatRoomHandler* handler )
 	buttonNo.setText( i18nc( "@action:button filter-no", "%1", KStandardGuiItem::no().text() ) );
 	i18nc( "@action:button post-filter", "." );
 
-	KDialog *dialog = new KDialog( NULL, Qt::Dialog );
-	dialog->setCaption( i18n( "Chat Room Invitation" ) );
-	dialog->setButtons( KDialog::Yes | KDialog::No );
+	QMessageBox *dialog = new QMessageBox( QMessageBox::Question, i18n( "Chat Room Invitation" ),
+	                                       ( handler->contact() + ": " + handler->invite() ),
+	                                       QMessageBox::Yes | QMessageBox::No, NULL );
 	dialog->setObjectName( "questionYesNoCancel" );
+	dialog->setDefaultButton(QMessageBox::Yes);
 	dialog->setModal( false );
-	dialog->showButtonSeparator( true );
-	dialog->setButtonGuiItem( KDialog::Yes, buttonYes );
-	dialog->setButtonGuiItem( KDialog::No, buttonNo );
-	dialog->setDefaultButton( KDialog::Yes );
-	dialog->setEscapeButton( KDialog::No );
 
-	QObject::connect( dialog, SIGNAL(yesClicked()),
+	QObject::connect( dialog->button(QMessageBox::Yes), SIGNAL(clicked()),
 	                  handler, SLOT(accept()) );
-	QObject::connect( dialog, SIGNAL(noClicked()),
+	QObject::connect( dialog->button(QMessageBox::No), SIGNAL(clicked()),
 	                  handler, SLOT(reject()) );
 	QObject::connect( handler, SIGNAL(joinChatRoom(QString,int)),
 	                  engine(), SLOT(joinChatRoom(QString,int)) );
-
-	KMessageBox::createKMessageBox( dialog, QMessageBox::Question,
-	                                ( handler->contact() + ": " + handler->invite() ), QStringList(),
-	                                QString(), NULL, KMessageBox::NoExec );
 
 	dialog->show();
 	dialog->raise();
@@ -788,25 +781,25 @@ void OscarAccount::updateBuddyIcon( const QString &path )
 		QImage image( path );
 		if ( image.isNull() )
 			return;
-		
+
 		const QSize size = ( d->engine->isIcq() ) ? QSize( 52, 64 ) : QSize( 48, 48 );
-		
+
 		image = image.scaled( size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
 		if( image.width() > size.width())
 			image = image.copy( ( image.width() - size.width() ) / 2, 0, size.width(), image.height() );
-		
+
 		if( image.height() > size.height())
 			image = image.copy( 0, ( image.height() - size.height() ) / 2, image.width(), size.height() );
-		
+
 		QString newlocation( KStandardDirs::locateLocal( "appdata", "oscarpictures/" + accountId() + ".jpg" ) );
-		
+
 		kDebug(OSCAR_RAW_DEBUG) << "Saving buddy icon: " << newlocation;
 		if ( !image.save( newlocation, "JPEG" ) )
 			return;
-		
+
 		myself()->setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
 	}
-	
+
 	d->buddyIconDirty = true;
 	updateBuddyIconInSSI();
 }
@@ -840,10 +833,10 @@ bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QStrin
 	{
 		if ( !autoAddGroup )
 			return false;
-		
-		kDebug(OSCAR_GEN_DEBUG) << "adding non-existent group " 
+
+		kDebug(OSCAR_GEN_DEBUG) << "adding non-existent group "
 				<< newGroupName << endl;
-			
+
 		d->contactChangeQueue[Oscar::normalize( contact )] = newGroupName;
 		d->engine->addGroup( newGroupName );
 	}
@@ -851,7 +844,7 @@ bool OscarAccount::changeContactGroupInSSI( const QString& contact, const QStrin
 	{
 		d->engine->changeContactGroup( contact, newGroupName );
 	}
-	
+
 	return true;
 }
 
@@ -979,19 +972,19 @@ void OscarAccount::ssiGroupAdded( const OContact& item )
 		{
 			kDebug(OSCAR_GEN_DEBUG) << "starting delayed add of contact '" << it.key()
 				<< "' to group " << item.name() << endl;
-			
+
 			d->engine->addContact( Oscar::normalize( it.key() ), item.name() );
 			d->contactAddQueue.erase( it );
 		}
 	}
-	
+
 	for ( it = d->contactChangeQueue.begin(); it != d->contactChangeQueue.end(); ++it )
 	{
 		if ( Oscar::normalize( it.value() ) == Oscar::normalize( item.name() ) )
 		{
 			kDebug(OSCAR_GEN_DEBUG) << "starting delayed change of contact '" << it.key()
 				<< "' to group " << item.name() << endl;
-			
+
 			d->engine->changeContactGroup( it.key(),  item.name() );
 			d->contactChangeQueue.erase( it );
 		}
@@ -1003,7 +996,7 @@ void OscarAccount::ssiContactUpdated( const OContact& item )
 	Kopete::Contact* contact = contacts().value( item.name() );
 	if ( !contact )
 		return;
-		
+
 	kDebug(OSCAR_RAW_DEBUG) << "Updating SSI Item";
 	OscarContact* oc = static_cast<OscarContact*>( contact );
 	oc->setSSIItem( item );
@@ -1083,7 +1076,7 @@ void OscarAccount::slotTaskError( const Oscar::SNAC& s, int code, bool fatal )
 			{
 				logOff( Kopete::Account::Manual );
 			}
-			break;	
+			break;
 		default:
 			logOff( Kopete::Account::Manual );
 		}
@@ -1105,29 +1098,29 @@ void OscarAccount::updateBuddyIconInSSI()
 {
 	if ( !engine()->isActive() )
 		return;
-	
+
 	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 
 	ContactManager* ssi = engine()->ssiManager();
 	OContact item = ssi->findItemForIconByRef( 1 );
-	
+
 	if ( photoPath.isEmpty() )
 	{
 		if ( item )
 		{
 			kDebug(OSCAR_GEN_DEBUG) << "Removing icon hash item from ssi";
 			OContact s(item);
-			
+
 			//remove hash and alias
 			QList<TLV> tList( item.tlvList() );
 			TLV t = Oscar::findTLV( tList, 0x00D5 );
 			if ( t )
 				tList.removeAll( t );
-			
+
 			t = Oscar::findTLV( tList, 0x0131 );
 			if ( t )
 				tList.removeAll( t );
-			
+
 			item.setTLVList( tList );
 			//s is old, item is new. modification will occur
 			engine()->modifyContactItem( s, item );
@@ -1137,29 +1130,29 @@ void OscarAccount::updateBuddyIconInSSI()
 	{
 		QFile iconFile( photoPath );
 		iconFile.open( QIODevice::ReadOnly );
-		
-		KMD5 iconHash;
-		iconHash.update( iconFile );
-		kDebug(OSCAR_GEN_DEBUG) << "hash is :" << iconHash.hexDigest();
-	
+
+		QCryptographicHash iconHash( QCryptographicHash::Md5 );
+		iconHash.addData( &iconFile );
+		kDebug(OSCAR_GEN_DEBUG) << "hash is :" << iconHash.result().toHex();
+
 		QByteArray iconTLVData;
 		iconTLVData.resize( 18 );
 		iconTLVData[0] = ( d->engine->isIcq() ) ? 0x01 : 0x00;
 		iconTLVData[1] = 0x10;
-		memcpy( iconTLVData.data() + 2, iconHash.rawDigest(), 16 );
-		
+		memcpy( iconTLVData.data() + 2, iconHash.result(), 16 );
+
 		QList<Oscar::TLV> tList;
 		tList.append( TLV( 0x00D5, iconTLVData.size(), iconTLVData ) );
 		tList.append( TLV( 0x0131, 0, 0 ) );
-		
-		
+
+
 		//find old item, create updated item
 		if ( !item )
 		{
 			kDebug(OSCAR_GEN_DEBUG) << "no existing icon hash item in ssi. creating new";
-			
+
 			OContact s( "1", 0, ssi->nextContactId(), ROSTER_BUDDYICONS, tList );
-			
+
 			//item is a non-valid ssi item, so the function will add an item
 			kDebug(OSCAR_GEN_DEBUG) << "setting new icon item";
 			engine()->modifyContactItem( item, s );
@@ -1167,11 +1160,11 @@ void OscarAccount::updateBuddyIconInSSI()
 		else
 		{ //found an item
 			OContact s(item);
-			
+
 			if ( Oscar::updateTLVs( s, tList ) == true )
 			{
 				kDebug(OSCAR_GEN_DEBUG) << "modifying old item in ssi.";
-				
+
 				//s is old, item is new. modification will occur
 				engine()->modifyContactItem( item, s );
 			}
@@ -1180,10 +1173,10 @@ void OscarAccount::updateBuddyIconInSSI()
 				kDebug(OSCAR_GEN_DEBUG) << "not updating, item is the same.";
 			}
 		}
-		
+
 		iconFile.close();
 	}
-	
+
 	d->buddyIconDirty = false;
 }
 
@@ -1194,10 +1187,10 @@ void OscarAccount::slotSendBuddyIcon()
 	QString photoPath = myself()->property( Kopete::Global::Properties::self()->photo() ).value().toString();
 	if ( photoPath.isEmpty() )
 		return;
-	
+
 	kDebug(OSCAR_RAW_DEBUG) << photoPath;
 	QFile iconFile( photoPath );
-	
+
 	if ( iconFile.open( QIODevice::ReadOnly ) )
 	{
 		if ( !engine()->hasIconConnection() )
@@ -1205,7 +1198,7 @@ void OscarAccount::slotSendBuddyIcon()
 			//will send icon when we connect to icon server
 			QObject::connect( engine(), SIGNAL(iconServerConnected()),
 			                  this, SLOT(slotSendBuddyIcon()) );
-			
+
 			engine()->connectToIconServer();
 			return;
 		}
@@ -1381,7 +1374,7 @@ QString OscarAccount::makeWellFormedXML( const QString& message ) const
 		QPair<QString, QString> pair = tagsAndText.at( i );
 		if ( pair.first.isEmpty() ) // We don't move text
 			continue;
-		
+
 		bool endTag = pair.first.startsWith( "/" );
 		if ( !endTag )
 		{
@@ -1517,7 +1510,7 @@ void OscarAccount::createClientStream( ClientStream **clientStream )
 	}
 
 	ClientStream *cs = new ClientStream( tcpSocket, 0 );
-	
+
 	Kopete::SocketTimeoutWatcher* timeoutWatcher = Kopete::SocketTimeoutWatcher::watch(tcpSocket);
 	if ( timeoutWatcher )
 	{

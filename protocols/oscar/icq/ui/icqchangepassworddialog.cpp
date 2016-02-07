@@ -60,7 +60,7 @@ void ICQChangePasswordDialog::slotButtonClicked( int button )
 		if ( m_ui->currentPassword->text().isEmpty()
 		     || ( m_account->engine()->password() != m_ui->currentPassword->text() ) )
 		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry,
+			KMessageBox::sorry( this,
 			                               i18n( "You entered your current password incorrectly." ),
 			                               i18n( "Password Incorrect" ) );
 			return;
@@ -68,7 +68,7 @@ void ICQChangePasswordDialog::slotButtonClicked( int button )
 
 		if ( m_ui->newPassword1->text() != m_ui->newPassword2->text() )
 		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry,
+			KMessageBox::sorry( this,
 			                               i18n( "Your new passwords do not match. Please enter them again." ),
 			                               i18n( "Password Incorrect" ) );
 			return;
@@ -76,14 +76,14 @@ void ICQChangePasswordDialog::slotButtonClicked( int button )
 
 		if ( m_ui->newPassword1->text().length() < 6 || 8 < m_ui->newPassword1->text().length() )
 		{
-			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry,
+			KMessageBox::sorry( this,
 			                               i18n( "Your new password must be between 6-8 characters long." ),
 			                               i18n( "Password Incorrect" ) );
 			return;
 		}
 
 		if ( !m_account->engine()->changeICQPassword( m_ui->newPassword1->text() ) )
-			KMessageBox::queuedMessageBox ( dynamic_cast<QWidget*>(parent()), KMessageBox::Sorry,
+			KMessageBox::sorry ( dynamic_cast<QWidget*>(parent()),
 			                                i18n ( "Your password could not be changed." ) );
 	}
 	else if ( button == KDialog::Cancel )
@@ -96,12 +96,12 @@ void ICQChangePasswordDialog::slotPasswordChanged( bool error )
 {
 	if ( !error )
 	{
-		KMessageBox::queuedMessageBox( dynamic_cast<QWidget*>(parent()), KMessageBox::Information,
+		KMessageBox::information( dynamic_cast<QWidget*>(parent()),
 		                               i18n( "Your password has been changed successfully." ) );
 	}
 	else
 	{
-		KMessageBox::queuedMessageBox ( dynamic_cast<QWidget*>(parent()), KMessageBox::Sorry,
+		KMessageBox::sorry( dynamic_cast<QWidget*>(parent()),
 		                                i18n ( "Your password could not be changed." ) );
 	}
 	accept();

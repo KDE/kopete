@@ -36,7 +36,6 @@ AIMChatSession::AIMChatSession( const Kopete::Contact* user,  Kopete::ContactPtr
 {
     setObjectName( QLatin1String("AIMChatSession") );
     Kopete::ChatSessionManager::self()->registerChatSession( this );
-    setComponentData( protocol->componentData() );
     setMayInvite( true );
     m_exchange = exchange;
     m_roomName = room;

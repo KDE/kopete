@@ -50,7 +50,7 @@ public:
 	 * Returns a set of custom menu items for
 	 * the context menu
 	 */
-	virtual QList<KAction*> *customContextMenuActions();
+	virtual QList<QAction*> *customContextMenuActions();
 	using ICQContactBase::customContextMenuActions;
 
 	/** Return whether or not this contact is reachable. */
@@ -65,9 +65,9 @@ public slots:
 	void userOffline( const QString& userID );
 	void loggedIn();
 
-private:	
+private:
 	AIMProtocol *mProtocol;
-	
+
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
 

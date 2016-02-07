@@ -52,9 +52,9 @@ bool AIMContact::isReachable()
 	return account()->isConnected();
 }
 
-QList<KAction*> *AIMContact::customContextMenuActions()
+QList<QAction*> *AIMContact::customContextMenuActions()
 {
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<QAction*> *actionCollection = new QList<QAction*>();
 
 	m_actionIgnore = new KToggleAction(i18n("&Ignore"), this );
         //, "actionIgnore");
@@ -68,7 +68,7 @@ QList<KAction*> *AIMContact::customContextMenuActions()
         //, "actionInvisibleTo");
 	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
 
-	m_selectEncoding = new KAction( i18n( "Select Encoding..." ), this );
+	m_selectEncoding = new QAction( i18n( "Select Encoding..." ), this );
         //, "changeEncoding" );
 	m_selectEncoding->setIcon( KIcon( "character-set" ) );
 	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );

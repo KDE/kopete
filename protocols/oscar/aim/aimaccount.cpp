@@ -238,12 +238,12 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 			this, SLOT(userLeftChat(Oscar::WORD,QString,QString)) );
 
 	// Create actions
-	mJoinChatAction = new KAction( i18n( "Join Chat..." ), this );
+	mJoinChatAction = new QAction( i18n( "Join Chat..." ), this );
 	QObject::connect( mJoinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
-	
-	mEditInfoAction = new KAction( KIcon("user-properties"), i18n( "Edit User Info..." ), this );
+
+	mEditInfoAction = new QAction( KIcon("user-properties"), i18n( "Edit User Info..." ), this );
 	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
-	
+
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
 	QObject::connect( mActionInvisible, SIGNAL(triggered(bool)), this, SLOT(slotToggleInvisible()) );
 }
@@ -506,7 +506,7 @@ void AIMAccount::messageReceived( const Oscar::Message& message )
 			Kopete::Message chatMessage( myself(), aimSender );
 			chatMessage.setHtmlBody( msg );
 			chatMessage.setDirection( Kopete::Message::Outbound );
-			
+
 			kDebug(14152) << "Sending autoresponse";
 			// Send the message
 			aimSender->sendAutoResponse( chatMessage );

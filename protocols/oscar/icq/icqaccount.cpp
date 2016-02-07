@@ -334,7 +334,7 @@ void ICQAccount::storeUserInfoDialog()
 void ICQAccount::closeUserInfoDialog()
 {
 	QObject::disconnect( this, 0, mInfoWidget, 0 );
-	mInfoWidget->delayedDestruct();
+	mInfoWidget->deleteLater();
 	mInfoWidget = 0L;
 }
 

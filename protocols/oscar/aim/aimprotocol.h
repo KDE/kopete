@@ -29,7 +29,7 @@ class AIMProtocolHandler : public Kopete::MimeTypeHandler
 {
 public:
 	AIMProtocolHandler();
-	void handleURL( const QString&, const KUrl & url ) const;
+	void handleURL( const QString&, const QUrl & url ) const;
 	using Kopete::MimeTypeHandler::handleURL;
 };
 
@@ -63,5 +63,5 @@ private:
 	AIMProtocolHandler protohandler;
 };
 
-#endif 
+#endif
 //kate: tab-width 4; indent-mode csands;

@@ -345,7 +345,7 @@ void ICQContact::receivedLongInfo( const QString& contact )
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 	{
 		if ( m_infoWidget )
-			m_infoWidget->delayedDestruct();
+			m_infoWidget->deleteLater();
 		return;
 	}
 
@@ -561,16 +561,16 @@ bool ICQContact::isReachable()
 	return account()->isConnected();
 }
 
-QList<KAction*> *ICQContact::customContextMenuActions()
+QList<QAction*> *ICQContact::customContextMenuActions()
 {
-	QList<KAction*> *actions = new QList<KAction*>();
+	QList<QAction*> *actions = new QList<QAction*>();
 
-	actionRequestAuth = new KAction( i18n("&Request Authorization"), this );
+	actionRequestAuth = new QAction( i18n("&Request Authorization"), this );
         //, "actionRequestAuth");
 	actionRequestAuth->setIcon( KIcon( "mail-reply-sender" ) );
 	QObject::connect( actionRequestAuth, SIGNAL(triggered(bool)), this, SLOT(slotRequestAuth()) );
 
-	actionSendAuth = new KAction( i18n("&Grant Authorization"), this );
+	actionSendAuth = new QAction( i18n("&Grant Authorization"), this );
         //, "actionSendAuth");
 	actionSendAuth->setIcon( KIcon( "mail-forward" ) );
 	QObject::connect( actionSendAuth, SIGNAL(triggered(bool)), this, SLOT(slotSendAuth()) );
@@ -587,7 +587,7 @@ QList<KAction*> *ICQContact::customContextMenuActions()
         //, "actionInvisibleTo");
 	QObject::connect( m_actionInvisibleTo, SIGNAL(triggered(bool)), this, SLOT(slotInvisibleTo()) );
 
-	m_selectEncoding = new KAction( i18n( "Select Encoding..." ), this );
+	m_selectEncoding = new QAction( i18n( "Select Encoding..." ), this );
         //, "changeEncoding" );
 	m_selectEncoding->setIcon( KIcon( "character-set" ) );
 	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );
@@ -655,7 +655,7 @@ void ICQContact::storeUserInfoDialog()
 void ICQContact::closeUserInfoDialog()
 {
 	QObject::disconnect( this, 0, m_infoWidget, 0 );
-	m_infoWidget->delayedDestruct();
+	m_infoWidget->deleteLater();
 	m_infoWidget = 0L;
 }
 
@@ -698,7 +698,7 @@ void ICQContact::slotReadAwayMessage()
 
 void ICQContact::slotCloseAwayMessageDialog()
 {
-	awayMessageDialog->delayedDestruct();
+	awayMessageDialog->deleteLater();
 	awayMessageDialog = 0L;
 }
 

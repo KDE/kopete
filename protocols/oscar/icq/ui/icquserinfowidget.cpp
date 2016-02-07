@@ -19,11 +19,11 @@
 
 #include "icquserinfowidget.h"
 
-#include <QtCore/QTextCodec>
-#include <QtGui/QLineEdit>
-#include <QtGui/QSpinBox>
-#include <QtGui/QStandardItemModel>
-#include <QtGui/QHeaderView>
+#include <QTextCodec>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QStandardItemModel>
+#include <QHeaderView>
 
 #include <kdatewidget.h>
 #include <kdebug.h>
@@ -94,58 +94,58 @@ void ICQUserInfoWidget::init()
 {
 	setFaceType( KPageDialog::List );
 	setModal( false );
-	setCaption( i18n( "ICQ User Information" ) );
-	setButtons( KDialog::Ok | KDialog::Cancel );
+	setWindowTitle( i18n( "ICQ User Information" ) );
+	setStandardButtons( QDialogButtonBox::Ok | QDialogButtonBox::Cancel );
 
 	if ( m_ownInfo )
-		setDefaultButton( KDialog::Ok );
+		button( QDialogButtonBox::Ok )->setDefault( true );
 	else
-		setDefaultButton( KDialog::Cancel );
-	
+		button( QDialogButtonBox::Cancel )->setDefault( true );
+
 	kDebug(OSCAR_ICQ_DEBUG) << "Creating new icq user info widget";
-	
+
 	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::ICQGeneralInfoWidget;
 	m_genInfoWidget->setupUi( genInfo );
 	KPageWidgetItem *genInfoItem = addPage( genInfo, i18n("General Info") );
 	genInfoItem->setHeader( i18n("General ICQ Information") );
 	genInfoItem->setIcon( KIcon("user-identity") );
-	
+
 	QWidget* homeInfo = new QWidget(this);
 	m_homeInfoWidget = new Ui::ICQHomeInfoWidget;
 	m_homeInfoWidget->setupUi( homeInfo );
 	KPageWidgetItem *homeInfoItem = addPage( homeInfo, i18n("Home Info") );
 	homeInfoItem->setHeader( i18n("Home Information") );
 	homeInfoItem->setIcon( KIcon("go-home") );
-	
+
 	QWidget *workInfo = new QWidget(this);
 	m_workInfoWidget = new Ui::ICQWorkInfoWidget;
 	m_workInfoWidget->setupUi( workInfo );
 	KPageWidgetItem *workInfoItem = addPage( workInfo, i18n("Work Info") );
 	workInfoItem->setHeader( i18n( "Work Information" ) );
 	workInfoItem->setIcon( KIcon("applications-engineering") );
-	
+
 	QWidget *otherInfo = new QWidget(this);
 	m_otherInfoWidget = new Ui::ICQOtherInfoWidget();
 	m_otherInfoWidget->setupUi( otherInfo );
 	KPageWidgetItem *otherInfoItem = addPage( otherInfo, i18n("Other Info") );
 	otherInfoItem->setHeader( i18n( "Other ICQ Information" ) );
 	otherInfoItem->setIcon( KIcon("internet-mail") );
-	
+
 	QWidget *interestInfo = new QWidget(this);
 	m_interestInfoWidget = new Ui::ICQInterestInfoWidget();
 	m_interestInfoWidget->setupUi( interestInfo );
 	KPageWidgetItem *interestInfoItem = addPage( interestInfo, i18n("Interest Info") );
 	interestInfoItem->setHeader( i18n( "Interest Information" ) );
 	interestInfoItem->setIcon( KIcon("applications-games") );
-	
+
 	QWidget *orgAffInfo = new QWidget(this);
 	m_orgAffInfoWidget = new Ui::ICQOrgAffInfoWidget();
 	m_orgAffInfoWidget->setupUi( orgAffInfo );
 	KPageWidgetItem *orgAffInfoItem = addPage( orgAffInfo, i18n("Org & Aff Info") );
 	orgAffInfoItem->setHeader( i18n( "Organization & Affiliation Information" ) );
 	orgAffInfoItem->setIcon( KIcon("preferences-web-browser-identification") );
-	
+
 	m_emailModel = new QStandardItemModel();
 	QStandardItem *modelItem = new QStandardItem( i18n( "Type" ) );
 	m_emailModel->setHorizontalHeaderItem( 0, modelItem );
@@ -375,10 +375,10 @@ ICQUserInfoWidget::~ ICQUserInfoWidget()
 QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
 {
 	QList<ICQInfoBase*> infoList;
-	
+
 	if ( !m_ownInfo )
 		return infoList;
-	
+
 	infoList.append( storeBasicInfo() );
 	infoList.append( storeMoreInfo() );
 	infoList.append( storeWorkInfo() );
@@ -386,7 +386,7 @@ QList<ICQInfoBase*> ICQUserInfoWidget::getInfoData() const
 	infoList.append( storeInterestInfo() );
 	infoList.append( storeNotesInfo() );
 	infoList.append( storeEmailInfo() );
-	
+
 	return infoList;
 }
 
@@ -398,10 +398,10 @@ QString ICQUserInfoWidget::getAlias() const
 void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 {
 	QTextCodec* codec = getTextCodec();
-	
+
 	if ( m_ownInfo )
 		m_generalUserInfo = ui;
-	
+
 	m_genInfoWidget->nickNameEdit->setText( codec->toUnicode( ui.nickName.get() ) );
 	m_genInfoWidget->firstNameEdit->setText( codec->toUnicode( ui.firstName.get() ) );
 	m_genInfoWidget->lastNameEdit->setText( codec->toUnicode( ui.lastName.get() ) );
@@ -412,7 +412,7 @@ void ICQUserInfoWidget::fillBasicInfo( const ICQGeneralUserInfo& ui )
 	m_homeInfoWidget->addressEdit->setText( codec->toUnicode( ui.address.get() ) );
 	m_homeInfoWidget->cellEdit->setText( codec->toUnicode( ui.cellNumber.get() ) );
 	m_homeInfoWidget->zipEdit->setText(  codec->toUnicode( ui.zip.get() ) );
-	
+
 	m_homeInfoWidget->countryCombo->setCurrentIndex( m_homeInfoWidget->countryCombo->findData( ui.country.get() ) );
 	m_genInfoWidget->timezoneCombo->setCurrentIndex( m_genInfoWidget->timezoneCombo->findData( ui.timezone.get() ) );
 
@@ -579,7 +579,7 @@ void ICQUserInfoWidget::receivedLongInfo( const QString& contact )
 	if ( Oscar::normalize( contact ) != Oscar::normalize( m_contactId ) )
 		return;
 
-	kDebug(OSCAR_ICQ_DEBUG) << "received long info from engine";	
+	kDebug(OSCAR_ICQ_DEBUG) << "received long info from engine";
 	fillBasicInfo( m_account->engine()->getGeneralInfo( contact ) );
 	fillWorkInfo( m_account->engine()->getWorkInfo( contact ) );
 	fillEmailInfo( m_account->engine()->getEmailInfo( contact ) );
@@ -594,7 +594,7 @@ void ICQUserInfoWidget::slotUpdateDay()
 	int year = m_genInfoWidget->birthdayYearSpin->value();
 	int month = m_genInfoWidget->birthdayMonthSpin->value();
 	QDate date( year, month, 1 );
-	
+
 	if ( date.isValid() )
 		m_genInfoWidget->birthdayDaySpin->setMaximum( date.daysInMonth() );
 	else
@@ -721,7 +721,7 @@ void ICQUserInfoWidget::slotRemoveEmail()
 {
 	QItemSelectionModel* selectionModel = m_otherInfoWidget->emailTableView->selectionModel();
 	QModelIndexList indexes = selectionModel->selectedIndexes();
-	
+
 	if ( indexes.count() > 0 )
 	{
 		int row = indexes.at( 0 ).row();
@@ -825,7 +825,7 @@ ICQGeneralUserInfo* ICQUserInfoWidget::storeBasicInfo() const
 
 	index = m_genInfoWidget->timezoneCombo->currentIndex();
 	info->timezone.set( m_genInfoWidget->timezoneCombo->itemData( index ).toInt() );
-	
+
 	return info;
 }
 
@@ -846,7 +846,7 @@ ICQMoreUserInfo* ICQUserInfoWidget::storeMoreInfo() const
 
 	index = m_genInfoWidget->maritalCombo->currentIndex();
 	info->marital.set( m_genInfoWidget->maritalCombo->itemData( index ).toInt() );
-	
+
 	info->ocity.set( codec->fromUnicode( m_homeInfoWidget->oCityEdit->text() ) );
 	info->ostate.set( codec->fromUnicode( m_homeInfoWidget->oStateEdit->text() ) );
 
@@ -919,10 +919,10 @@ ICQOrgAffInfo* ICQUserInfoWidget::storeOrgAffInfo() const
 
 	index = m_orgAffInfoWidget->aff2CategoryCombo->currentIndex();
 	info->pastAff2Category.set( m_orgAffInfoWidget->aff2CategoryCombo->itemData( index ).toInt() );
-	
+
 	index = m_orgAffInfoWidget->aff3CategoryCombo->currentIndex();
 	info->pastAff3Category.set( m_orgAffInfoWidget->aff3CategoryCombo->itemData( index ).toInt() );
-	
+
 	return info;
 }
 

@@ -42,7 +42,6 @@ class ChatSession;
 class StatusMessage;
 }
 
-class KAction;
 class KToggleAction;
 class OscarContact;
 class AIMAccount;
@@ -93,7 +92,7 @@ public:
 	virtual void connectWithPassword( const QString &password );
 
 	void setUserProfile(const QString &profile);
-	
+
 	void setPrivacySettings( int privacy );
 
 public slots:
@@ -136,8 +135,8 @@ private:
     AIMJoinChatUI* m_joinChatDialog;
 	QString mInitialStatusMessage;
 
-	KAction* mJoinChatAction;
-	KAction* mEditInfoAction;
+	QAction* mJoinChatAction;
+	QAction* mEditInfoAction;
 	KToggleAction* mActionInvisible;
 };
 #endif

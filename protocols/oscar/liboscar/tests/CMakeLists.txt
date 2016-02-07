@@ -1,3 +1,5 @@
+add_definitions("-DKDESRCDIR=\"${CMAKE_CURRENT_BINARY_DIR}\"")
+
 
 include_directories(
     ${KOPETE_SOURCE_DIR}/protocols/oscar/liboscar

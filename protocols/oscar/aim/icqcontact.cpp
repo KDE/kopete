@@ -144,9 +144,9 @@ bool ICQContact::isReachable()
 	return true;
 }
 
-QList<KAction*> *ICQContact::customContextMenuActions()
+QList<QAction*> *ICQContact::customContextMenuActions()
 {
-	QList<KAction*> *actions = new QList<KAction*>();
+	QList<QAction*> *actions = new QList<QAction*>();
 
 	m_actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), this );
         //, "actionVisibleTo");

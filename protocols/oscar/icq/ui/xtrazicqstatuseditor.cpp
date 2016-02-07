@@ -49,7 +49,7 @@ ICQStatusEditor::ICQStatusEditor( ICQStatusManager *statusManager, QWidget *pare
 
 	QList<QIcon> icons;
 	for ( int i = 0; i < Oscar::XSTAT_LAST; ++i )
-		icons << KIcon( QString( "icq_xstatus%1" ).arg( i ) );
+		icons << QIcon::fromTheme( QString( "icq_xstatus%1" ).arg( i ) );
 
 	mUi->statusView->setItemDelegate( new StatusDelegate( icons, this ) );
 

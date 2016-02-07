@@ -31,7 +31,7 @@ class OSCAR_EXPORT OscarProtocol : public Kopete::Protocol
 	Q_OBJECT
 
 public:
-	OscarProtocol( const KComponentData &instance, QObject *parent, bool canAddMyself = false );
+	OscarProtocol( QObject *parent, bool canAddMyself = false );
 	virtual ~OscarProtocol();
 
 	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
@@ -50,5 +50,5 @@ public:
 	virtual OscarStatusManager *statusManager() const = 0;
 };
 
-#endif 
+#endif
 //kate: tab-width 4; indent-mode csands;

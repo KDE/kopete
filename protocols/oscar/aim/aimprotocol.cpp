@@ -44,7 +44,7 @@ AIMProtocolHandler::AIMProtocolHandler() : Kopete::MimeTypeHandler(false)
 	registerAsProtocolHandler(QString::fromLatin1("aim"));
 }
 
-void AIMProtocolHandler::handleURL(const QString&, const KUrl &url) const
+void AIMProtocolHandler::handleURL(const QString&, const QUrl &url) const
 {
 /**
  * Send a Message  =================================================
@@ -224,7 +224,7 @@ void AIMProtocolHandler::handleURL(const QString&, const KUrl &url) const
 
 
 AIMProtocol::AIMProtocol(QObject *parent, const QVariantList &)
-: OscarProtocol( AIMProtocolFactory::componentData(), parent, true ),
+: OscarProtocol( parent, true ),
 	clientProfile( "clientProfile", i18n( "User Profile"), 0, Kopete::PropertyTmpl::RichTextProperty)
 {
 	if (protocolStatic_)

@@ -21,6 +21,7 @@
 #include <qapplication.h>
 #include <qtextcodec.h>
 #include <qtimer.h>
+#include <QCryptographicHash>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomNodeList>
 #include <QtGui/QTextDocument>
@@ -159,22 +160,22 @@ void OscarContact::chatSessionDestroyed()
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::sync(unsigned int flags)
 {
-	/* 
+	/*
 	 * If the contact has changed groups, then we update the server
 	 *   adding the group if it doesn't exist, changing the ssi item
 	 *   contained in the client and updating the contact's ssi item
 	 * Otherwise, we don't do much
 	 */
-	
+
 	if( !metaContact() || metaContact()->isTemporary() )
 		return;
-	
+
 	if ( (flags & Kopete::Contact::MovedBetweenGroup) == Kopete::Contact::MovedBetweenGroup )
 	{
-		
+
 		kDebug(OSCAR_GEN_DEBUG) << "Moving a contact between groups";
 		ContactManager* ssiManager = mAccount->engine()->ssiManager();
-		
+
 		OContact oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
 		Kopete::Group* newGroup = metaContact()->groups().first();
 		QString newGroupName = newGroup->displayName();
@@ -182,7 +183,7 @@ void OscarContact::sync(unsigned int flags)
 			newGroupName = "Buddies";
 		if ( newGroupName == oldGroup.name() )
 			return; //we didn't really move
-		
+
 		if ( m_ssiItem.isValid() )
 			mAccount->changeContactGroupInSSI( contactId(), newGroupName, true );
 		else
@@ -199,7 +200,7 @@ void OscarContact::sync(unsigned int flags)
 void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& details  )
 {
 	Q_UNUSED( contact );
-	
+
 	if ( details.buddyIconHash().size() > 0 && details.buddyIconHash() != m_details.buddyIconHash() )
 	{
 		OscarProtocol *p = static_cast<OscarProtocol*>(protocol());
@@ -207,7 +208,7 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 		if ( property( p->buddyIconHash ).value().toByteArray() != details.buddyIconHash() || QFileInfo(photoPath).size() == 0 )
 		{
 			m_buddyIconDirty = true;
-			
+
 			if ( !mAccount->engine()->hasIconConnection() )
 			{
 				mAccount->engine()->connectToIconServer();
@@ -221,7 +222,7 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 			}
 		}
 	}
-	
+
 	setProperty( Kopete::Global::Properties::self()->onlineSince(), details.onlineSinceTime() );
 	setIdleTime( details.idleTime() );
 	m_warningLevel = details.warningLevel();
@@ -241,7 +242,7 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	//		                "%1", m_details.clientName() );
 	//	}
 	//}
-	
+
 	// and now for some general informative capabilities
 	if ( m_details.hasCap( CAP_BUDDYICON ) )
 		capList << i18n( "Buddy icons" );
@@ -294,7 +295,7 @@ void OscarContact::messageAck( const QString& contact, uint messageId )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	Kopete::ChatSession* chatSession = manager();
 	if ( chatSession )
 		chatSession->receivedMessageState( messageId, Kopete::Message::StateSent );
@@ -304,7 +305,7 @@ void OscarContact::messageError( const QString& contact, uint messageId )
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	Kopete::ChatSession* chatSession = manager();
 	if ( chatSession )
 		chatSession->receivedMessageState( messageId, Kopete::Message::StateError );
@@ -355,7 +356,7 @@ void OscarContact::setEncoding( int mib )
 //could be called by a KAction or our dcop code or something
 void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
 {
-	kDebug(OSCAR_GEN_DEBUG) << "file: '" << sourceURL 
+	kDebug(OSCAR_GEN_DEBUG) << "file: '" << sourceURL
 		<< "' '" << altFileName << "' size " << fileSize << endl;
 	QStringList files;
 
@@ -393,7 +394,7 @@ void OscarContact::setAwayMessage( const QString &message )
 {
 	kDebug(OSCAR_AIM_DEBUG) <<
 		"Called for '" << contactId() << "', away msg='" << message << "'" << endl;
-	
+
 	if ( !message.isEmpty() )
 		setProperty( static_cast<OscarProtocol*>( protocol() )->statusMessage, filterAwayMessage( message ) );
 	else
@@ -548,7 +549,7 @@ void OscarContact::changeEncodingDialogClosed( int result )
 {
 	if ( result == QDialog::Accepted )
 		setEncoding( m_oesd->selectedEncoding() );
-	
+
 	if ( m_oesd )
 	{
 		m_oesd->deleteLater();
@@ -569,11 +570,11 @@ void OscarContact::haveIcon( const QString& user, QByteArray icon )
 {
 	if ( Oscar::normalize( user ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	kDebug(OSCAR_GEN_DEBUG) << "Updating icon for " << contactId();
-	
-	KMD5 buddyIconHash( icon );
-	if ( memcmp( buddyIconHash.rawDigest(), m_details.buddyIconHash().data(), 16 ) == 0 )
+
+	QByteArray buddyIconHash = QCryptographicHash::hash( icon, QCryptographicHash::Md5 );
+	if ( memcmp( buddyIconHash, m_details.buddyIconHash().data(), 16 ) == 0 )
 	{
 		QImage img;
 		img.loadFromData(icon);
@@ -605,7 +606,7 @@ void OscarContact::receivedStatusMessage( const QString& contact, const QString&
 {
 	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
-	
+
 	setAwayMessage( message );
 }
 
@@ -649,14 +650,14 @@ QString OscarContact::brMargin( int margin, int fontPointSize, bool forceBr ) co
 {
 	int brHeight = ( fontPointSize == 0 ) ? 12 : fontPointSize;
 	int brCount = margin / brHeight;
-	
+
 	if ( brCount <= 0 )
 		return ( forceBr ) ? "<BR>" : "";
-	
+
 	QString s;
 	while ( brCount-- > 0 )
 		s += "<BR>";
-	
+
 	return s;
 }
 

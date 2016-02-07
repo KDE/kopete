@@ -18,7 +18,7 @@
 
 #include "infocombobox.h"
 
-#include <QtGui/QLineEdit>
+#include <QLineEdit>
 
 InfoComboBox::InfoComboBox( QWidget *parent )
  : QComboBox( parent ), mReadOnly( false )
