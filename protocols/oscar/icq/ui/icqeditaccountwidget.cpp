@@ -322,7 +322,7 @@ bool ICQEditAccountWidget::validateData()
 	qulonglong uid = userId.toULongLong( &bOk );
 
 	if( !bOk || uid == 0 || userId.isEmpty() )
-	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
+	{	KMessageBox::sorry(this,
 	 	                              i18n("<qt>You must enter a valid ICQ No.</qt>"), i18n("ICQ"));
 		return false;
 	}

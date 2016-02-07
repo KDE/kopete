@@ -30,17 +30,17 @@ class AIMContact : public AIMContactBase
 Q_OBJECT
 
 public:
-	AIMContact( Kopete::Account*, const QString&, Kopete::MetaContact*, 
+	AIMContact( Kopete::Account*, const QString&, Kopete::MetaContact*,
 	            const QString& icon = QString() );
 	virtual ~AIMContact();
 
 	bool isReachable();
-	
+
 	/**
 	 * Returns a set of custom menu items for
 	 * the context menu
 	 */
-	virtual QList<KAction*> *customContextMenuActions();
+	virtual QList<QAction*> *customContextMenuActions();
 	using AIMContactBase::customContextMenuActions;
 
 	virtual void setSSIItem( const OContact& ssiItem );
@@ -59,12 +59,12 @@ private slots:
 private:
 	ICQProtocol* mProtocol;
 
-	KAction *m_selectEncoding;
+	QAction *m_selectEncoding;
 
 	KToggleAction *m_actionIgnore;
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
 
 };
-#endif 
+#endif
 //kate: tab-width 4; indent-mode csands;

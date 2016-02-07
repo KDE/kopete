@@ -27,8 +27,8 @@
 #include "oscaraccount.h"
 #include "connection.h"
 
-OscarProtocol::OscarProtocol( const KComponentData &instance, QObject *parent, bool canAddMyself )
-	: Kopete::Protocol( instance, parent, canAddMyself ),
+OscarProtocol::OscarProtocol( QObject *parent, bool canAddMyself )
+	: Kopete::Protocol( parent, canAddMyself ),
 	statusTitle(Kopete::Global::Properties::self()->statusTitle()),
 	statusMessage(Kopete::Global::Properties::self()->statusMessage()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0),

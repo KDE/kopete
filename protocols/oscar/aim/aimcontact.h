@@ -30,12 +30,12 @@ class AIMContact : public AIMContactBase
 Q_OBJECT
 
 public:
-	AIMContact( Kopete::Account*, const QString&, Kopete::MetaContact*, 
+	AIMContact( Kopete::Account*, const QString&, Kopete::MetaContact*,
 	            const QString& icon = QString() );
 	virtual ~AIMContact();
 
 	bool isReachable();
-	QList<KAction*> *customContextMenuActions();
+	QList<QAction*> *customContextMenuActions();
 	using AIMContactBase::customContextMenuActions;
 
 	int warningLevel() const;
@@ -63,11 +63,11 @@ private slots:
 private:
 	AIMProtocol* mProtocol;
 	AIMUserInfoDialog* m_infoDialog;
-	
-	KAction* m_warnUserAction;
+
+	QAction* m_warnUserAction;
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;
 
 };
-#endif 
+#endif
 //kate: tab-width 4; indent-mode csands;

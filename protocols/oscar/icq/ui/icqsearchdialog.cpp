@@ -56,7 +56,7 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
 	m_searchUI = new Ui::ICQSearchBase();
 	m_searchUI->setupUi( w );
 	setMainWidget( w );
-	
+
 	m_searchResultsModel = new QStandardItemModel( 0, 6 );
 	m_searchResultsModel->setHeaderData( 0, Qt::Horizontal, i18n( "UIN" ) );
 	m_searchResultsModel->setHeaderData( 1, Qt::Horizontal, i18n( "Nickname" ) );
@@ -66,19 +66,19 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent )
 	m_searchResultsModel->setHeaderData( 5, Qt::Horizontal, i18n( "Requires Authorization" ) );
 	m_searchUI->searchResults->setModel( m_searchResultsModel );
 	m_searchUI->searchResults->setEditTriggers( QAbstractItemView::NoEditTriggers );
-	
+
 	connect( m_searchUI->searchButton, SIGNAL(clicked()), this, SLOT(startSearch()) );
 	connect( m_searchUI->searchResults->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
 	         this, SLOT(selectionChanged(QItemSelection)) );
 	connect( m_searchUI->clearButton, SIGNAL(clicked()), this, SLOT(clear()) );
 	connect( m_searchUI->stopButton, SIGNAL(clicked()), this, SLOT(stopSearch()) );
 	connect( m_searchUI->userInfoButton, SIGNAL(clicked()), this, SLOT(userInfo()) );
-	
+
 	ICQProtocol *p = ICQProtocol::protocol();
 	p->fillComboFromTable( m_searchUI->gender, p->genders() );
 	p->fillComboFromTable( m_searchUI->country, p->countries() );
 	p->fillComboFromTable( m_searchUI->language, p->languages() );
-	
+
 	m_infoWidget = NULL;
 }
 
@@ -101,11 +101,11 @@ void ICQSearchDialog::startSearch()
 	{
 		// Account is online
 		clearResults();
-	
+
 		m_searchUI->stopButton->setEnabled( true );
 		m_searchUI->searchButton->setEnabled( false );
 		m_searchUI->clearButton->setEnabled( false );
-	
+
 		connect( m_account->engine(), SIGNAL(gotSearchResults(ICQSearchResult)),
 				this, SLOT(newResult(ICQSearchResult)) );
 		connect( m_account->engine(), SIGNAL(endOfSearch(int)),
@@ -144,7 +144,7 @@ void ICQSearchDialog::startSearch()
 			info.language = p->getCodeForCombo(m_searchUI->language, p->languages()); // Lang
 			info.country =p->getCodeForCombo(m_searchUI->country, p->countries()); // country code
 			info.onlineOnly = m_searchUI->onlyOnline->isChecked();
-	
+
 			// Check if the user has actually entered things to search
 			if( info.firstName.isEmpty()			&&
 				info.lastName.isEmpty()				&&
@@ -216,7 +216,7 @@ void ICQSearchDialog::closeUserInfo()
 {
 	// Free the ICQUserInfoWidget
 	QObject::disconnect( this, 0, m_infoWidget, 0 );
-	m_infoWidget->delayedDestruct();
+	m_infoWidget->deleteLater();
 	m_infoWidget = NULL;
 }
 
@@ -255,29 +255,29 @@ void ICQSearchDialog::newResult( const ICQSearchResult& info )
 
 	const int row = m_searchResultsModel->rowCount( QModelIndex() );
 	m_searchResultsModel->insertRows( row, 1, QModelIndex());
-	
+
 	QModelIndex index;
-	
+
 	index = m_searchResultsModel->index( row, 0, QModelIndex());
 	m_searchResultsModel->setData( index, QString::number( info.uin ) );
-	
+
 	if ( info.online )
 		m_searchResultsModel->setData( index, SmallIcon( "icq_online" ), Qt::DecorationRole );
 	else
 		m_searchResultsModel->setData( index, SmallIcon( "icq_offline" ), Qt::DecorationRole );
-	
+
 	index = m_searchResultsModel->index( row, 1, QModelIndex());
 	m_searchResultsModel->setData( index, codec->toUnicode( info.nickName ) );
-	
+
 	index = m_searchResultsModel->index( row, 2, QModelIndex());
 	m_searchResultsModel->setData( index, codec->toUnicode( info.firstName ) );
-	
+
 	index = m_searchResultsModel->index( row, 3, QModelIndex());
 	m_searchResultsModel->setData( index, codec->toUnicode( info.lastName ) );
-	
+
 	index = m_searchResultsModel->index( row, 4, QModelIndex());
 	m_searchResultsModel->setData( index, codec->toUnicode( info.email ) );
-	
+
 	index = m_searchResultsModel->index( row, 5, QModelIndex());
 	m_searchResultsModel->setData( index, info.auth ? i18n( "Yes" ) : i18n( "No" ) );
 }
@@ -293,7 +293,7 @@ void ICQSearchDialog::searchFinished( int numLeft )
 void ICQSearchDialog::clearFields()
 {
 	m_searchUI->uin->setText( QString() );
-	
+
 	m_searchUI->firstName->setText( QString() );
 	m_searchUI->lastName->setText( QString() );
 	m_searchUI->nickName->setText( QString() );

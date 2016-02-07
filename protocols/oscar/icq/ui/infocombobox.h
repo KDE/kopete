@@ -19,7 +19,7 @@
 #ifndef INFOCOMBOBOX_H
 #define INFOCOMBOBOX_H
 
-#include <QtGui/QComboBox>
+#include <QComboBox>
 
 class InfoComboBox : public QComboBox
 {

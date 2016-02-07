@@ -62,13 +62,13 @@ bool AIMContact::isReachable()
 	return true;
 }
 
-QList<KAction*> *AIMContact::customContextMenuActions()
+QList<QAction*> *AIMContact::customContextMenuActions()
 {
 
-	QList<KAction*> *actions = new QList<KAction*>();
+	QList<QAction*> *actions = new QList<QAction*>();
 	if ( !m_warnUserAction )
 	{
-		m_warnUserAction = new KAction( i18n( "&Warn User" ), this );
+		m_warnUserAction = new QAction( i18n( "&Warn User" ), this );
                 //, "warnAction" );
 		QObject::connect( m_warnUserAction, SIGNAL(triggered(bool)), this, SLOT(warnUser()) );
 	}

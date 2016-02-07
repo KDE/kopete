@@ -47,7 +47,7 @@ public:
 	 * Returns a set of custom menu items for
 	 * the context menu
 	 */
-	virtual QList<KAction*> *customContextMenuActions();
+	virtual QList<QAction*> *customContextMenuActions();
 	using ICQContactBase::customContextMenuActions;
 
 	/** Return whether or not this contact is reachable. */
@@ -75,14 +75,14 @@ signals:
 	void haveInterestInfo( const ICQInterestInfo& );
 	void haveOrgAffInfo( const ICQOrgAffInfo& );
 
-private:	
+private:
 	ICQProtocol *mProtocol;
 	ICQUserInfoWidget* m_infoWidget;
 
-	KAction *actionRequestAuth;
-	KAction *actionSendAuth;
-    KAction *m_selectEncoding;
-	
+	QAction *actionRequestAuth;
+	QAction *actionSendAuth;
+	QAction *m_selectEncoding;
+
 	KToggleAction *m_actionIgnore;
 	KToggleAction *m_actionVisibleTo;
 	KToggleAction *m_actionInvisibleTo;

@@ -28,7 +28,7 @@ ICQStatusDialog::ICQStatusDialog( QWidget *parent )
 {
 	setCaption( i18n( "Set Xtraz Status" ) );
 	setButtons( KDialog::Ok | KDialog::Cancel );
-	
+
 	mXtrazStatusUI = new Ui::XtrazICQStatusUI();
 	QWidget *w = new QWidget( this );
 	mXtrazStatusUI->setupUi( w );
@@ -36,7 +36,7 @@ ICQStatusDialog::ICQStatusDialog( QWidget *parent )
 
 	QList<QIcon> icons;
 	for ( int i = 0; i < Oscar::XSTAT_LAST; ++i )
-		icons << KIcon( QString( "icq_xstatus%1" ).arg( i ) );
+		icons << QIcon::fromTheme( QString( "icq_xstatus%1" ).arg( i ) );
 
 	mXtrazStatusUI->iconsWidget->setColumnCount( 11 );
 	mXtrazStatusUI->iconsWidget->setIcons( icons );
