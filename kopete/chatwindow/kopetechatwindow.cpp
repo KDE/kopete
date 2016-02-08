@@ -501,10 +501,10 @@ void KopeteChatWindow::initActions(void)
 	if ( animIcon )
 		animIcon->setPaused(true);
 
-	QAction *animAction = new QAction( i18n("Toolbar Animation"), coll );
-        coll->addAction( "toolbar_animation", animAction );
-	QWidgetAction *animWidgetAction = static_cast<QWidgetAction *>(animAction);
-	animWidgetAction->setDefaultWidget( anim );
+	QWidgetAction *animAction = new QWidgetAction( coll );
+	animAction->setText( i18n("Toolbar Animation") );
+	animAction->setDefaultWidget( anim );
+	coll->addAction( "toolbar_animation", animAction );
 
 	//toolBar()->insertWidget( 99, anim->width(), anim );
 	//toolBar()->alignItemRight( 99 );
@@ -549,7 +549,7 @@ void KopeteChatWindow::updateChatSendFileAction()
 {
 	if ( !m_activeView )
 		return;
-	
+
 	chatSendFile->setEnabled( m_activeView->canSendFile() );
 }
 
