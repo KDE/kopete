@@ -1,14 +1,14 @@
 /*
 	oscarclientstream.cpp - Kopete Oscar Protocol
-	
+
 	Copyright (c) 2004 Matt Rogers <mattr@kde.org>
 	Copyright (c) 2007 Roman Jarosz <kedgedev@centrum.cz>
-	
+
 	Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
 	Based on Iris, Copyright (C) 2003  Justin Karneges <justin@affinix.com>
-	
+
 	Kopete (c) 2002-2007 by the Kopete developers <kopete-devel@kde.org>
-	
+
 	*************************************************************************
 	*                                                                       *
 	* This library is free software; you can redistribute it and/or         *
@@ -72,8 +72,8 @@ ClientStream::ClientStream( QSslSocket *socket, QObject *parent )
 	connect(d->socket, SIGNAL(disconnected()), SLOT(socketDisconnected()));
 	connect(d->socket, SIGNAL(readyRead()), SLOT(socketReadyRead()));
 	connect(d->socket, SIGNAL(bytesWritten(qint64)), SLOT(socketBytesWritten(qint64)));
-	
-	
+
+
 	connect( &d->client, SIGNAL(outgoingData(QByteArray)),
 	         SLOT (cp_outgoingData(QByteArray)) );
 	connect( &d->client, SIGNAL(incomingData()),
@@ -91,7 +91,7 @@ ClientStream::~ClientStream()
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Socket open, disconnecting...";
 		d->socket->disconnectFromHost();
-	
+
 		if ( !d->socket->waitForDisconnected( 10000 ) )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "Disconnection error!";
@@ -110,7 +110,7 @@ void ClientStream::connectToServer( const QString& host, quint16 port, bool encr
 	{
 		kDebug(OSCAR_RAW_DEBUG) << "Socket open, disconnecting...";
 		d->socket->disconnectFromHost();
-		
+
 		if ( !d->socket->waitForDisconnected( 10000 ) )
 		{
 			kDebug(OSCAR_RAW_DEBUG) << "Disconnection error!";
@@ -120,7 +120,7 @@ void ClientStream::connectToServer( const QString& host, quint16 port, bool encr
 	d->client.reset();
 	d->in.clear();
 	d->newTransfers = false;
-	
+
 	d->host = host;
 	d->port = port;
 	d->name = name;
@@ -155,10 +155,10 @@ void ClientStream::setNoopTime( int mills )
 		d->noopTimer.stop();
 		return;
 	}
-	
+
 	if( !d->socket->isOpen() )
 		return;
-	
+
 	d->noopTimer.start( d->noop_time );
 }
 
@@ -205,7 +205,7 @@ Transfer* ClientStream::read()
 {
 	if( d->in.isEmpty() )
 		return 0; //first from queue...
-	else 
+	else
 		return d->in.dequeue();
 }
 
@@ -213,7 +213,7 @@ void ClientStream::write( Transfer *request )
 {
 	d->client.outgoingTransfer( request );
 }
-	
+
 void cs_dump( const QByteArray &bytes )
 {
 #if 0
@@ -238,7 +238,7 @@ void cs_dump( const QByteArray &bytes )
 			if ( count + i < bytes.count() )
 			{
 				int j = bytes [ count + i ];
-				if ( j >= 0x20 && j <= 0x7e ) 
+				if ( j >= 0x20 && j <= 0x7e )
 					printf( "%2c ", j );
 				else
 					printf( "%2c ", '.' );
@@ -272,7 +272,7 @@ void ClientStream::cp_incomingData()
 		doReadyRead();
 	}
 	else
-		kDebug(OSCAR_RAW_DEBUG) << 
+		kDebug(OSCAR_RAW_DEBUG) <<
 			"client signalled incomingData but none was available, state is: " <<
 			d->client.state() << endl;
 }
@@ -305,8 +305,14 @@ void ClientStream::socketError( QAbstractSocket::SocketError socketError )
 
 	if ( socketError == QAbstractSocket::RemoteHostClosedError )
 		d->socket->abort();
+	else if ( socketError == QAbstractSocket::SslHandshakeFailedError )
+	{
+		// nop
+	}
 	else
 		d->socket->close();
+
+	kDebug(OSCAR_RAW_DEBUG) << " after error: " << int(socketError);
 
 	d->client.reset();
 
@@ -343,7 +349,7 @@ void ClientStream::doReadyRead()
 
 void ClientStream::processNext()
 {
-	if( !d->in.isEmpty() ) 
+	if( !d->in.isEmpty() )
 	{
 		QTimer::singleShot(0, this, SLOT(doReadyRead()));
 	}
@@ -353,7 +359,7 @@ void ClientStream::doNoop()
 {
 	if ( !d->socket->isOpen() )
 		return;
-	
+
 	FLAP f = { 0x05, d->connection->flapSequence(), 0 };
 	Buffer* b = new Buffer(); //deleted in Transfer destructor
 	Transfer* t = new FlapTransfer( f, b ); //deleted after being sent
