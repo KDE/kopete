@@ -311,57 +311,54 @@ void ChatMessagePart::slotScrollingTo( int y )
 void ChatMessagePart::save()
 {
 	const QUrl dummyUrl;
-	QPointer <KFileDialog> dlg = new KFileDialog( dummyUrl, QLatin1String( "text/html text/plain" ), view() );
-	dlg->setWindowTitle( i18n( "Save Conversation" ) );
-	dlg->setOperationMode( KFileDialog::Saving );
+	QStringList mimeTypeFilters;
+	mimeTypeFilters << QStringLiteral( "text/html" ) << QStringLiteral( "text/plain" );
+	QFileDialog dlg( view(), i18n( "Save Conversation" ) );
+	dlg.setMimeTypeFilters( mimeTypeFilters );
+	dlg.setAcceptMode( QFileDialog::AcceptSave );
 
-	if ( dlg->exec() != QDialog::Accepted )
+	if ( dlg.exec() != QDialog::Accepted )
 	{
-		delete dlg;
 		return;
 	}
 
-	if ( ! dlg )
-		return;
-
-	QUrl saveURL = dlg->selectedUrl();
-	KTemporaryFile *tempFile = new KTemporaryFile();
-	tempFile->setAutoRemove(false);
-	tempFile->open();
-
-	QTextStream stream ( tempFile );
-	stream.setCodec(QTextCodec::codecForName("UTF-8"));
-
-	if ( dlg->currentFilter() == QLatin1String( "text/plain" ) )
+	QUrl saveURL = dlg.selectedUrls().value(0);
+	QTemporaryFile tempFile;
+	tempFile.setAutoRemove(false);
+	if (tempFile.open())
 	{
-		QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
-		for(it = d->allMessages.constBegin(); it != itEnd; ++it)
+		QTextStream stream ( &tempFile );
+		stream.setCodec(QTextCodec::codecForName("UTF-8"));
+
+		if ( dlg.selectedNameFilter() == QLatin1String( "text/plain" ) )
 		{
-			Kopete::Message tempMessage = *it;
-			stream << "[" << KGlobal::locale()->formatDateTime(tempMessage.timestamp()) << "] ";
-			if( tempMessage.from() && tempMessage.from()->metaContact() )
+			QList<Kopete::Message>::ConstIterator it, itEnd = d->allMessages.constEnd();
+			for(it = d->allMessages.constBegin(); it != itEnd; ++it)
 			{
-				stream << formatName(tempMessage.from()->metaContact()->displayName(), Qt::RichText);
+				Kopete::Message tempMessage = *it;
+				stream << "[" << tempMessage.timestamp().toString(QLocale().dateTimeFormat()) << "] ";
+				if( tempMessage.from() && tempMessage.from()->metaContact() )
+				{
+					stream << formatName(tempMessage.from()->metaContact()->displayName(), Qt::RichText);
+				}
+				stream << ": " << tempMessage.plainBody() << "\n";
 			}
-			stream << ": " << tempMessage.plainBody() << "\n";
 		}
+		else
+		{
+			stream << htmlDocument().toString().string() << '\n';
+		}
+
+		stream.flush();
 	}
-	else
-	{
-		stream << htmlDocument().toString().string() << '\n';
-	}
 
-	delete dlg;
+	QString fileName = tempFile.fileName();
 
-	stream.flush();
-	QString fileName = tempFile->fileName();
-	delete tempFile;
-
-	KIO::CopyJob *moveJob = KIO::move( QUrl( fileName ), saveURL, KIO::HideProgressInfo );
+	KIO::CopyJob *moveJob = KIO::copy( QUrl::fromLocalFile( fileName ), saveURL, KIO::HideProgressInfo );
 
 	if ( !moveJob )
 	{
-		KMessageBox::queuedMessageBox( view(), KMessageBox::Error,
+		KMessageBox::error( view(),
 				i18n("<qt>Could not open <b>%1</b> for writing.</qt>", saveURL.toDisplayString() ), // Message
 				i18n("Error While Saving") ); //Caption
 	}
