@@ -1371,7 +1371,7 @@ void ChatMessagePart::writeTemplate()
 			"%3\n"
 			"</body>"
 			"</html>"
-			).arg( d->currentChatStyle->getStyleBaseHref() )
+			).arg( QUrl::fromLocalFile( d->currentChatStyle->getStyleBaseHref() ).toDisplayString() )
 			.arg( formatStyleKeywords(d->currentChatStyle->getHeaderHtml()) )
 			.arg( formatStyleKeywords(d->currentChatStyle->getFooterHtml()) )
 			.arg( adjustStyleVariantForChatSession( KopeteChatWindowSettings::self()->styleVariant() ) )
