@@ -102,7 +102,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, ChatWindowPlugin *parent )
 	d->splitter = new QSplitter( Qt::Vertical, vbox );
 
 	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)
-	m_messagePart = new ChatMessagePart( mgr , this );
+	m_messagePart = new ChatMessagePart( mgr, 0 );
 
 	//Create the bottom dock widget, with the edit area, statusbar and send button
 	m_editPart = new ChatTextEditPart( mgr, vbox );
@@ -422,9 +422,9 @@ void ChatView::setMainWindow( KopeteChatWindow* parent )
 	{
 		m_mainWindow->guiFactory()->removeClient(editPart());
 	}
-	
+
 	m_mainWindow = parent;
-	
+
 	if (m_mainWindow)
 	{
 		m_mainWindow->guiFactory()->addClient(editPart());
@@ -821,7 +821,7 @@ void ChatView::saveChatSettings()
 	Kopete::ContactPtrList contacts = msgManager()->members();
 	if ( contacts.count() != 1 )
 		return; //can't save with more than one other person in the chat
-	
+
 	Kopete::MetaContact* mc = contacts.first()->metaContact();
 	if ( !mc )
 		return;
@@ -878,14 +878,14 @@ void ChatView::setActive( bool value )
 	if (d->isActive)
 	{
 		updateChatState(Normal);
-	
+
 		// attach editpart back on...
 		KXMLGUIFactory * f = msgManager()->factory();
 		if (f)
 		{
 			f->addClient(m_editPart);
 		}
-	
+
 		emit(activated(static_cast<KopeteView*>(this)));
 	}
 	else
