@@ -432,7 +432,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 			qCWarning(LIBKOPETE_LOG) << "You are not allowed to add yourself to the contact list. The addition of" << contactId
 			                << "to account" << accountId() << "will not take place.";
 		}
-		
+
 		return 0L;
 	}
 
@@ -694,25 +694,11 @@ void Account::editAccount(QWidget *parent)
 {
 	QPointer<QDialog> editDialog = new QDialog( parent );
 	editDialog->setWindowTitle( i18n( "Edit Account" ) );
-	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel|QDialogButtonBox::Apply);
-	QWidget *mainWidget = new QWidget(parent);
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	editDialog->setLayout(mainLayout);
-	mainLayout->addWidget(mainWidget);
-	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
-	okButton->setDefault(true);
-	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
-	editDialog->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-	editDialog->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
-	mainLayout->addWidget(buttonBox);
 
 	KopeteEditAccountWidget *m_accountWidget = protocol()->createEditAccountWidget( this, editDialog );
-	if ( !m_accountWidget )
-	{
-		delete editDialog;
-		return;
-	}
 	// FIXME: Why the #### is EditAccountWidget not a QWidget?!? This sideways casting
 	//        is braindead and error-prone. Looking at MSN the only reason I can see is
 	//        because it allows direct subclassing of designer widgets. But what is
@@ -725,11 +711,17 @@ void Account::editAccount(QWidget *parent)
 		delete editDialog;
 		return;
 	}
-//PORTING: Verify that widget was added to mainLayout: 	editDialog->setMainWidget( w );
-// Add mainLayout->addWidget(w); if necessary
+	mainLayout->addWidget(w);
+	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+	okButton->setDefault(true);
+	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+	QObject::connect(buttonBox, SIGNAL(accepted()), editDialog, SLOT(accept()));
+	QObject::connect(buttonBox, SIGNAL(rejected()), editDialog, SLOT(reject()));
+	mainLayout->addWidget(buttonBox);
+
 	if ( editDialog->exec() == QDialog::Accepted )
 	{
-		if( editDialog && m_accountWidget->validateData() )
+		if( m_accountWidget->validateData() )
 			m_accountWidget->apply();
 	}
 
