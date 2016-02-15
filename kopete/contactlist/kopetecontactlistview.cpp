@@ -76,7 +76,7 @@ public:
 		  scrollHide(false)
 	{}
 	//QRect m_onItem;
-	
+
 	// HACK: Used to update the KMEnu title - DarkShock
 	QMap<QMenu*, QAction*> menuTitleMap;
 
@@ -383,7 +383,7 @@ void KopeteContactListView::removeGroupOrMetaContact()
 	}
 
 	if ( groupList.isEmpty() && metaContactList.isEmpty() )
-		return;	
+		return;
 
 	if( (groupList.count() + metaContactList.count()) == 1 )
 	{
@@ -539,7 +539,7 @@ void KopeteContactListView::sendEmail()
 		if ( !addressee.isEmpty() )
 		{
 			QString emailAddr = addressee.fullEmail();
-			
+
 			kDebug( 14000 ) << "Email: " << emailAddr << "!";
 			if ( !emailAddr.isEmpty() )
 				KToolInvocation::invokeMailer( emailAddr, QString() );
@@ -663,7 +663,7 @@ void KopeteContactListView::dragMoveEvent ( QDragMoveEvent * event )
 		event->ignore();
 		return;
 	}
-	
+
 	Kopete::AppearanceSettings* as = Kopete::AppearanceSettings::self();
 	bool groupContactByGroup = as->groupContactByGroup();
 
@@ -901,7 +901,7 @@ void KopeteContactListView::updateMetaContactActions()
 	{
 		QModelIndexList selected = selectedIndexes();
 		bool singleGroupSelected = (selected.count() == 1 && selected.first().data( Kopete::Items::TypeRole ) == Kopete::Items::Group);
-		
+
 		d->actionAddTemporaryContact->setEnabled( false );
 		d->actionSendFile->setEnabled( false );
 		d->actionSendMessage->setEnabled( singleGroupSelected );
@@ -943,7 +943,7 @@ void KopeteContactListView::slotSettingsChanged()
 /*	Kopete::UI::ListView::Item::setEffects( Kopete::AppearanceSettings::self()->contactListAnimateChange(),
 	                                        Kopete::AppearanceSettings::self()->contactListFading(),
 	                                        Kopete::AppearanceSettings::self()->contactListFolding() );*/
-	
+
 }
 
 void KopeteContactListView::addToAddContactMenu( Kopete::Account* account )
@@ -1080,12 +1080,12 @@ void KopeteContactListView::metaContactPopup( Kopete::MetaContact *metaContact, 
 		if( d->menuTitleMap.contains(popup) )
 		{
 			QAction *action = d->menuTitleMap[popup];
-			popup->removeAction( action );
-			delete action;
+			action->setText(title);
 		}
-		//FIXME: Possible bug/error ahead
-		popup->actions().first()->menu()->setTitle(title);
-		d->menuTitleMap.insert( popup, popup->addSection( popup->actions().first()->text()) );
+		else
+		{
+			d->menuTitleMap.insert( popup, popup->insertSection(popup->actions().first(), title) );
+		}
 
 		// Submenus for separate contact actions
 		bool sep = false;  //FIXME: find if there is already a separator in the end - Olivier
@@ -1123,7 +1123,7 @@ void KopeteContactListView::miscPopup( QModelIndexList indexes, const QPoint& po
 			<< "Kopete::UI::Global::mainWidget() = " << Kopete::UI::Global::mainWidget() << endl;
 		return;
 	}
-	
+
 	bool onlyMetaContacts = true;
 	foreach ( QModelIndex index, indexes )
 	{
@@ -1133,11 +1133,11 @@ void KopeteContactListView::miscPopup( QModelIndexList indexes, const QPoint& po
 			break;
 		}
 	}
-	
+
 	QMenu *popup = 0;
 	if ( onlyMetaContacts )
 		popup = dynamic_cast<QMenu *>( window->factory()->container( "contactlistitems_popup", window ) );
-	
+
 	if ( popup )
 		popup->popup( pos );
 }
