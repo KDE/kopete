@@ -239,9 +239,6 @@ ChatWindowConfig::~ChatWindowConfig()
 		Kopete::ChatSessionManager::self()->removeSession(m_previewChatSession);
 	}
 
-	// Deleting the account will delete jack and myself
-	delete m_previewAccount;
-
 	delete m_jackMetaContact;
 
  	delete m_previewProtocol;
@@ -270,7 +267,7 @@ void ChatWindowConfig::save()
 
 	Kopete::AppearanceSettings *appearanceSettings = Kopete::AppearanceSettings::self();
 	QListWidgetItem *item = m_emoticonsUi.icon_theme_list->currentItem();
-	
+
 	if (item)
 		KEmoticons::setTheme( item->text() );
 
@@ -489,10 +486,10 @@ void ChatWindowConfig::slotGetChatStyles()
 	configGrp.writeEntry("ProvidersUrl", "http://download.kde.org/khotnewstuff/kopetestyles12-providers.xml");
 	configGrp.writeEntry("TargetDir", "kopete_chatstyles");
 	configGrp.sync();
-	
+
 	KNS::Engine *engine = new KNS::Engine();
 	engine->init(configGrp.config()->name());
-	
+
 	// FIXME: Upon closing the Settings KCMultiDialog all KCMs are deleted and when reopening
 	// the settings dialog there is no active valid KComponentData, which KNS2 relies on.
 	// Forcing an active one below works around bug 163382, but the problem is somewhere else.
@@ -556,7 +553,7 @@ void ChatWindowConfig::slotGetChatStyles()
 
 void ChatWindowConfig::createPreviewChatSession()
 {
-	m_previewProtocol = new FakeProtocol( 0 ); 
+	m_previewProtocol = new FakeProtocol( 0 );
 	m_previewProtocol->setObjectName( QLatin1String("kopete-preview-chatwindowstyle") );
 	m_previewAccount = new FakeAccount(m_previewProtocol, QString("previewaccount"));
 
