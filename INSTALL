@@ -80,3 +80,20 @@ course up to you to decide, but we strongly recommend to not install
 source-compiled packages like Kopete in directories that are managed
 by a package manager and only use the KDE prefix if you compiled all
 of KDE from source yourself.
+
+
+Building the KF5 branch of Kopete
+=================================
+If you are looking to build/compile the KF5 version of Kopete,
+please note that it is still bit of a WIP. Most of it works but,
+there are a few protocols that are still broken.
+
+They are:
+    1. SMS
+    2. QQ
+    3. winpopup
+    4. Bonjour
+    5. Skype
+
+Kopete will fail to build unless you either fix them or disable them
+in the protocols/CMakeLists.txt file in this repo.
