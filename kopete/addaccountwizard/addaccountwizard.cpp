@@ -153,6 +153,9 @@ void AddAccountWizard::back()
 		// removePage() already goes back to previous page, no back() needed
 	}
 	KAssistantDialog::back();
+
+	adjustSize();
+	setMinimumSize(sizeHint());
 }
 
 void AddAccountWizard::next()
@@ -204,6 +207,8 @@ void AddAccountWizard::next()
 		KAssistantDialog::next();
 	}
 
+	adjustSize();
+	setMinimumSize(sizeHint());
 }
 
 void AddAccountWizard::accept()
