@@ -2,7 +2,7 @@
 add_subdirectory( icons )
 
 add_definitions(${LIBMEANWHILE_DEFINITIONS})
-include_directories(${LIBMEANWHILE_INCLUDE_DIR})
+include_directories(${LIBMEANWHILE_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR})
 
 ########### next target ###############
 
