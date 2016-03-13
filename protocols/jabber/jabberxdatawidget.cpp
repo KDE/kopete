@@ -440,9 +440,10 @@ JabberXDataWidget::JabberXDataWidget(const XMPP::XData &data, QWidget *parent) :
 				break;
 		}
 	}
+
 	QGridLayout *formLayout = new QGridLayout(parent);
-	//formLayout->addLayout(this, fields, 3);
-	//formLayout->setSizeConstraint(QLayout::SetMinimumSize);
+	setLayout(formLayout);
+
 	int row = 0;
 	if(!data.instructions().isEmpty())
 	{

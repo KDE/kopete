@@ -35,6 +35,7 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 
 	/* Add instructions to layout. */
 	QVBoxLayout *innerLayout = new QVBoxLayout (this);
+	setLayout (innerLayout);
 	innerLayout->setSpacing (4);
 
 	QLabel *label = new QLabel (form.instructions (), this);
@@ -43,10 +44,10 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 	label->setSizePolicy (QSizePolicy::Minimum,QSizePolicy::Fixed);
 	label->show ();
 
-	innerLayout->addWidget (label, 0);
+	innerLayout->addWidget (label);
 
 	QGridLayout *formLayout = new QGridLayout (this);
-	formLayout->addLayout (innerLayout, form.count (), 2);
+	innerLayout->addLayout (formLayout);
 
 	int row = 1;
 	XMPP::Form::const_iterator formEnd = form.end ();
