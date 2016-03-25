@@ -36,6 +36,7 @@ namespace XMPP
 {
 	class TLSHandler;
 	class Connector;
+	class StreamFeatures;
 
 	class ClientStream : public Stream
 	{
@@ -119,6 +120,9 @@ namespace XMPP
 		void setRealm(const QString &s);
 		void setAuthzid(const QString &s);
 		void continueAfterParams();
+		void setSaslMechanismProvider(const QString &m, const QString &p);
+		QString saslMechanismProvider(const QString &m) const;
+		QCA::Provider::Context *currentSASLContext() const;
 
 		void setSCRAMStoredSaltedHash(const QString &s);
 		const QString getSCRAMStoredSaltedHash();
@@ -171,6 +175,8 @@ namespace XMPP
 
 		// barracuda extension
 		QStringList hosts() const;
+
+		const StreamFeatures &streamFeatures() const;
 
 	signals:
 		void connected();

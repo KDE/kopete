@@ -36,9 +36,14 @@ Features::Features(const QStringList &l)
 	setList(l);
 }
 
+Features::Features(const QSet<QString> &s)
+{
+	setList(s);
+}
+
 Features::Features(const QString &str)
 {
-	QStringList l;
+	QSet<QString> l;
 	l << str;
 
 	setList(l);
@@ -50,10 +55,15 @@ Features::~Features()
 
 QStringList Features::list() const
 {
-	return _list;
+	return _list.toList();
 }
 
 void Features::setList(const QStringList &l)
+{
+	_list = QSet<QString>::fromList(l);
+}
+
+void Features::setList(const QSet<QString> &l)
 {
 	_list = l;
 }
@@ -65,19 +75,18 @@ void Features::addFeature(const QString& s)
 
 bool Features::test(const QStringList &ns) const
 {
-	QStringList::ConstIterator it = ns.begin();
-	for ( ; it != ns.end(); ++it) {
-		if ( _list.contains( *it )) {
-			return true;
-		}
-	}
-	return false;
+	return _list.contains(QSet<QString>::fromList(ns));
+}
+
+bool Features::test(const QSet<QString> &ns) const
+{
+	return _list.contains(ns);
 }
 
 #define FID_MULTICAST "http://jabber.org/protocol/address"
 bool Features::canMulticast() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << FID_MULTICAST;
 
 	return test(ns);
@@ -86,7 +95,7 @@ bool Features::canMulticast() const
 #define FID_AHCOMMAND "http://jabber.org/protocol/commands"
 bool Features::canCommand() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << FID_AHCOMMAND;
 
 	return test(ns);
@@ -95,7 +104,7 @@ bool Features::canCommand() const
 #define FID_REGISTER "jabber:iq:register"
 bool Features::canRegister() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << FID_REGISTER;
 
 	return test(ns);
@@ -104,7 +113,7 @@ bool Features::canRegister() const
 #define FID_SEARCH "jabber:iq:search"
 bool Features::canSearch() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << FID_SEARCH;
 
 	return test(ns);
@@ -113,7 +122,7 @@ bool Features::canSearch() const
 #define FID_GROUPCHAT "jabber:iq:conference"
 bool Features::canGroupchat() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << "http://jabber.org/protocol/muc";
 	ns << FID_GROUPCHAT;
 
@@ -123,7 +132,7 @@ bool Features::canGroupchat() const
 #define FID_VOICE "http://www.google.com/xmpp/protocol/voice/v1"
 bool Features::canVoice() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << FID_VOICE;
 
 	return test(ns);
@@ -132,8 +141,17 @@ bool Features::canVoice() const
 #define FID_GATEWAY "jabber:iq:gateway"
 bool Features::isGateway() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << FID_GATEWAY;
+
+	return test(ns);
+}
+
+#define FID_QUERYVERSION "jabber:iq:version"
+bool Features::hasVersion() const
+{
+	QSet<QString> ns;
+	ns << FID_QUERYVERSION;
 
 	return test(ns);
 }
@@ -141,7 +159,7 @@ bool Features::isGateway() const
 #define FID_DISCO "http://jabber.org/protocol/disco"
 bool Features::canDisco() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << FID_DISCO;
 	ns << "http://jabber.org/protocol/disco#info";
 	ns << "http://jabber.org/protocol/disco#items";
@@ -152,7 +170,7 @@ bool Features::canDisco() const
 #define FID_CHATSTATE "http://jabber.org/protocol/chatstates"
 bool Features::canChatState() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << FID_CHATSTATE;
 
 	return test(ns);
@@ -161,7 +179,7 @@ bool Features::canChatState() const
 #define FID_VCARD "vcard-temp"
 bool Features::haveVCard() const
 {
-	QStringList ns;
+	QSet<QString> ns;
 	ns << FID_VCARD;
 
 	return test(ns);
@@ -178,34 +196,36 @@ public:
 	FeatureName()
 	: QObject(QCoreApplication::instance())
 	{
-		id2s[FID_Invalid]	= tr("ERROR: Incorrect usage of Features class");
-		id2s[FID_None]		= tr("None");
-		id2s[FID_Register]	= tr("Register");
-		id2s[FID_Search]	= tr("Search");
-		id2s[FID_Groupchat]	= tr("Groupchat");
-		id2s[FID_Gateway]	= tr("Gateway");
-		id2s[FID_Disco]		= tr("Service Discovery");
-		id2s[FID_VCard]		= tr("VCard");
-		id2s[FID_AHCommand]	= tr("Execute command");
+		id2s[FID_Invalid]		= tr("ERROR: Incorrect usage of Features class");
+		id2s[FID_None]			= tr("None");
+		id2s[FID_Register]		= tr("Register");
+		id2s[FID_Search]		= tr("Search");
+		id2s[FID_Groupchat]		= tr("Groupchat");
+		id2s[FID_Gateway]		= tr("Gateway");
+		id2s[FID_Disco]			= tr("Service Discovery");
+		id2s[FID_VCard]			= tr("VCard");
+		id2s[FID_AHCommand]		= tr("Execute command");
+		id2s[FID_QueryVersion]	= tr("Query version");
 
 		// custom Psi actions
-		id2s[FID_Add]		= tr("Add to roster");
+		id2s[FID_Add]			= tr("Add to roster");
 
 		// compute reverse map
 		//QMap<QString, long>::Iterator it = id2s.begin();
 		//for ( ; it != id2s.end(); ++it)
 		//	s2id[it.data()] = it.key();
 
-		id2f[FID_Register]	= FID_REGISTER;
-		id2f[FID_Search]	= FID_SEARCH;
-		id2f[FID_Groupchat]	= FID_GROUPCHAT;
-		id2f[FID_Gateway]	= FID_GATEWAY;
-		id2f[FID_Disco]		= FID_DISCO;
-		id2f[FID_VCard]		= FID_VCARD;
-		id2f[FID_AHCommand]	= FID_AHCOMMAND;
+		id2f[FID_Register]		= FID_REGISTER;
+		id2f[FID_Search]		= FID_SEARCH;
+		id2f[FID_Groupchat]		= FID_GROUPCHAT;
+		id2f[FID_Gateway]		= FID_GATEWAY;
+		id2f[FID_Disco]			= FID_DISCO;
+		id2f[FID_VCard]			= FID_VCARD;
+		id2f[FID_AHCommand]		= FID_AHCOMMAND;
+		id2f[FID_QueryVersion]	= FID_QUERYVERSION;
 
 		// custom Psi actions
-		id2f[FID_Add]		= FID_ADD;
+		id2f[FID_Add]			= FID_ADD;
 	}
 
 	//QMap<QString, long> s2id;
@@ -235,6 +255,8 @@ long Features::id() const
 		return FID_AHCommand;
 	else if ( test(QStringList(FID_ADD)) )
 		return FID_Add;
+	else if ( hasVersion() )
+		return FID_QueryVersion;
 
 	return FID_None;
 }
@@ -251,6 +273,12 @@ QString Features::feature(long id)
 		featureName = new FeatureName();
 
 	return featureName->id2f[id];
+}
+
+Features &Features::operator<<(const QString &feature)
+{
+	_list << feature;
+	return *this;
 }
 
 QString Features::name(long id)
