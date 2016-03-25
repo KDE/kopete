@@ -358,7 +358,10 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 	if( !account->client() || !account->client()->rootTask() )
 		return;
 
-	QString node = status.capsNode(), version = status.capsVersion(), extensions = status.capsExt(), hash = status.capsHashAlgorithm();
+	const QString &node = status.caps().node();
+	const QString &version = status.caps().version();
+	const QString &extensions = status.caps().ext().join(" ");
+	const QString &hash = XMPP::CapsSpec::cryptoMap().key(status.caps().hashAlgorithm());
 
 	Capabilities capabilities( node, version, extensions, hash );
 	
@@ -378,7 +381,7 @@ void JabberCapabilitiesManager::updateCapabilities(JabberAccount *account, const
 		}
 
 		// Check if the jid has caps in his presence message.
-		if( !status.capsNode().isEmpty() && !status.capsVersion().isEmpty() ) 
+		if( !node.isEmpty() && !version.isEmpty() )
 		{
 			// Register with all new caps nodes
 			d->jidCapabilitiesMap[jid.full()] = capabilities;

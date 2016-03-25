@@ -1082,9 +1082,7 @@ void JabberAccount::setPresence ( const XMPP::Status &status )
 	// Send entity capabilities
 	if( client() )
 	{
-		newStatus.setCapsNode( client()->capsNode() );
-		newStatus.setCapsVersion( client()->capsVersion() );
-		newStatus.setCapsExt( client()->capsExt() );
+		newStatus.setCaps( XMPP::CapsSpec( client()->capsNode(), XMPP::CapsSpec::invalidAlgo, client()->capsVersion() ) );
 	}
 
 	// make sure the status gets the correct priority
