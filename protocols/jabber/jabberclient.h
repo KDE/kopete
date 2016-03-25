@@ -281,12 +281,6 @@ public:
 	QString capsVersion() const;
 
 	/**
-	 * Return the caps extension list for this client.
-	 * @return A string containing all extensions separated by space.
-	 */
-	QString capsExt() const;
-
-	/**
 	 * Set the disco Identity information for this client.
 	 * Create a Disco identity like this:
 	 * @code

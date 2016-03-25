@@ -81,7 +81,7 @@ void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
 	}
 
 	// Update capabilities
-	if( !resource->resource().status().capsNode().isEmpty() )
+	if( !resource->resource().status().caps().node().isEmpty() )
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << "Updating capabilities for JID: " << resource->jid().full();
 		d->account->protocol()->capabilitiesManager()->updateCapabilities( d->account, resource->jid(), resource->resource().status() );
@@ -127,7 +127,7 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 
 	// Update initial capabilities if available.
 	// Called before creating JabberResource so JabberResource wouldn't ask for disco information. 
-	if( !resource.status().capsNode().isEmpty() )
+	if( !resource.status().caps().node().isEmpty() )
 	{
 		kDebug(JABBER_DEBUG_GLOBAL) << "Initial update of capabilities for JID: " << jid.full();
 		d->account->protocol()->capabilitiesManager()->updateCapabilities( d->account, jid, resource.status() );

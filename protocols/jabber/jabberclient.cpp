@@ -496,15 +496,6 @@ QString JabberClient::capsVersion() const
 	return d->capsVersion;
 }
 
-QString JabberClient::capsExt() const
-{
-	if(d->jabberClient)
-	{
-		return d->jabberClient->capsExt();
-	}
-
-	return QString();
-}
 void JabberClient::setDiscoIdentity( DiscoItem::Identity identity )
 {
 	d->discoIdentity = identity;
@@ -783,9 +774,8 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 	d->jabberClient->setOSName ( osName () );
 
 	// Set caps information
-	d->jabberClient->setCapsNode( capsNode() );
-	d->jabberClient->setCapsVersion( capsVersion() );
-	
+	d->jabberClient->setCaps( XMPP::CapsSpec( capsNode(), XMPP::CapsSpec::invalidAlgo, capsVersion() ) );
+
 	// Set Disco Identity
 	d->jabberClient->setIdentity( discoIdentity() );
 
