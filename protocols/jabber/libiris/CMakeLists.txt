@@ -32,6 +32,7 @@ ${DNSSD_INCLUDE_DIR}
 
 set(iris_SRCS
 src/xmpp/base/randomnumbergenerator.cpp
+src/xmpp/base/timezone.cpp
 src/xmpp/jid/jid.cpp
 src/irisnet/noncore/cutestuff/httppoll.cpp
 src/irisnet/noncore/cutestuff/socks.cpp
@@ -50,6 +51,7 @@ src/xmpp/xmpp-im/xmpp_features.cpp
 src/xmpp/xmpp-im/xmpp_discoinfotask.cpp
 src/xmpp/xmpp-im/xmpp_bitsofbinary.cpp
 src/xmpp/xmpp-im/xmpp_bytestream.cpp
+src/xmpp/xmpp-im/xmpp_caps.cpp
 src/xmpp/xmpp-im/s5b.cpp
 src/xmpp/xmpp-im/xmpp_tasks.cpp
 src/xmpp/xmpp-im/filetransfer.cpp
