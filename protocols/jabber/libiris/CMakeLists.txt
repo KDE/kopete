@@ -25,7 +25,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/irisnet/noncore/legacy
 ${CMAKE_CURRENT_SOURCE_DIR}/src/irisnet/corelib
 ${CMAKE_CURRENT_SOURCE_DIR}/src/irisnet/appledns
 
-${QCA2_INCLUDE_DIR}
 ${IDN_INCLUDE_DIR}
 ${ZLIB_INCLUDE_DIR}
 ${DNSSD_INCLUDE_DIR}
@@ -120,103 +119,6 @@ set(libiris_SRCS
     ${iris_SRCS} 
 )
 
- kde4_moc_headers(iris_kopete
-
-
-src/xmpp/base/randrandomnumbergenerator.h
-src/xmpp/base/randomnumbergenerator.h
-src/xmpp/jid/jid.h
-src/irisnet/noncore/cutestuff/bytestream.h
-src/irisnet/noncore/cutestuff/socks.h
-src/irisnet/noncore/cutestuff/httpconnect.h
-src/irisnet/noncore/cutestuff/bsocket.h
-src/irisnet/noncore/cutestuff/httppoll.h
-src/irisnet/noncore/iceturntransport.h
-src/irisnet/noncore/icecomponent.h
-src/irisnet/noncore/icetransport.h
-src/irisnet/noncore/turnclient.h
-src/irisnet/noncore/udpportreserver.h
-src/xmpp/xmpp-im/xmpp_xdata.h
-src/xmpp/xmpp-im/xmpp_rosterx.h
-src/xmpp/xmpp-im/xmpp_tasks.h
-src/xmpp/xmpp-im/xmpp_discoitem.h
-src/xmpp/xmpp-im/xmpp_pubsubretraction.h
-src/xmpp/xmpp-im/xmpp_xmlcommon.h
-src/xmpp/xmpp-im/xmpp_roster.h
-src/xmpp/xmpp-im/xmpp_muc.h
-src/xmpp/xmpp-im/xmpp_htmlelement.h
-src/xmpp/xmpp-im/xmpp_receipts.h
-src/xmpp/xmpp-im/xmpp_message.h
-src/xmpp/xmpp-im/xmpp_discoinfotask.h
-src/xmpp/xmpp-im/xmpp_ibb.h
-src/xmpp/xmpp-im/xmpp_liverosteritem.h
-src/xmpp/xmpp-im/xmpp_httpauthrequest.h
-src/xmpp/xmpp-im/xmpp_pubsubitem.h
-src/xmpp/xmpp-im/xmpp_vcard.h
-src/xmpp/xmpp-im/xmpp_client.h
-src/xmpp/xmpp-im/s5b.h
-src/xmpp/xmpp-im/xmpp_url.h
-src/xmpp/xmpp-im/xmpp_chatstate.h
-src/xmpp/xmpp-im/xmpp_task.h
-src/xmpp/xmpp-im/xmpp_address.h
-src/xmpp/xmpp-im/xmpp_agentitem.h
-src/xmpp/xmpp-im/filetransfer.h
-src/xmpp/xmpp-im/xmpp_status.h
-src/xmpp/xmpp-im/xmpp_resourcelist.h
-src/xmpp/xmpp-im/xmpp_liveroster.h
-src/xmpp/xmpp-im/xmpp_resource.h
-src/xmpp/xmpp-im/xmpp_rosteritem.h
-src/xmpp/xmpp-im/xmpp_features.h
-src/xmpp/xmpp-im/im.h
-src/xmpp/sasl/digestmd5response.h
-src/xmpp/sasl/digestmd5proplist.h
-src/xmpp/sasl/plainmessage.h
-src/xmpp/sasl/scramsha1response.h
-src/xmpp/zlib/common.h
-src/xmpp/zlib/zlibdecompressor.h
-src/xmpp/zlib/zlibcompressor.h
-src/xmpp/xmpp-core/xmpp_stanza.h
-src/xmpp/xmpp-core/simplesasl.h
-src/xmpp/xmpp-core/securestream.h
-src/xmpp/xmpp-core/protocol.h
-src/xmpp/xmpp-core/compressionhandler.h
-src/xmpp/xmpp-core/xmlprotocol.h
-src/xmpp/xmpp-core/xmpp.h
-src/xmpp/xmpp-core/xmpp_clientstream.h
-src/xmpp/xmpp-core/xmpp_stream.h
-src/xmpp/xmpp-core/td.h
-src/xmpp/xmpp-core/parser.h
-
-src/irisnet/noncore/stuntransaction.h
-src/irisnet/noncore/stunbinding.h
-src/irisnet/noncore/legacy/ndns.h
-src/irisnet/noncore/legacy/safedelete.h
-src/irisnet/noncore/legacy/servsock.h
-src/irisnet/noncore/legacy/srvresolver.h
-src/irisnet/noncore/stunallocate.h
-src/irisnet/noncore/ice176.h
-src/irisnet/noncore/processquit.h
-src/irisnet/noncore/icelocaltransport.h
-src/irisnet/corelib/irisnetglobal.h
-src/irisnet/corelib/objectsession.h
-src/irisnet/corelib/netavailability.h
-src/irisnet/corelib/netnames.h
-src/irisnet/corelib/irisnetplugin.h
-src/irisnet/corelib/netinterface.h
-
-src/jdns/src/jdns/jdns_packet.h
-src/jdns/src/jdns/jdns_mdnsd.h
-src/jdns/src/jdns/jdns_p.h
-src/jdns/include/jdns/jdns.h
-src/jdns/src/qjdns/qjdns_sock.h
-src/jdns/src/qjdns/qjdns_p.h
-src/jdns/src/qjdns/qjdnsshared_p.h
-src/jdns/include/jdns/qjdns.h
-src/jdns/include/jdns/qjdnsshared.h
-src/jdns/include/jdns/jdns_export.h
-
-)
-
 add_definitions(-DIRISNET_STATIC)
 add_definitions(-DJDNS_STATIC)
 
@@ -227,7 +129,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 add_library(iris_kopete STATIC ${libiris_SRCS})
 
 set(iris_kopete_libs Qt5::Core Qt5::Network Qt5::Xml
-                     ${IDN_LIBRARIES} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} )
+                     ${IDN_LIBRARIES} qca-qt5 ${ZLIB_LIBRARIES} )
 
 if(WIN32)
   set(iris_kopete_libs ${iris_kopete_libs} ws2_32)

@@ -6,25 +6,21 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 IF (NOT WIN32)
-  INCLUDE(UsePkgConfig)
+  INCLUDE(FindPkgConfig)
 
-  PKGCONFIG(meanwhile
-      _LibMeanwhileIncDir
-      _LibMeanwhileLinkDir
-      _LibMeanwhileLinkFlags
-      _LibMeanwhileCflags)
+  pkg_check_modules(MEANWHILE meanwhile)
 
   FIND_PATH(LIBMEANWHILE_INCLUDE_DIR meanwhile/mw_common.h
     PATHS
-    ${_LibMeanwhileIncDir}
+    ${MEANWHILE_INCLUDE_DIRS}
     NO_DEFAULT_PATH
   )
 
-  set(LIBMEANWHILE_DEFINITIONS ${_LibMeanwhileCflags})
+  set(LIBMEANWHILE_DEFINITIONS ${MEANWHILE_CFLAGS})
 
   FIND_LIBRARY(LIBMEANWHILE_LIBRARY NAMES meanwhile libmeanwhile
     PATHS
-    ${_LibMeanwhileLinkDir}
+    ${MEANWHILE_LIBRARY_DIRS}
     NO_DEFAULT_PATH
   )
 ELSE (NOT WIN32)
