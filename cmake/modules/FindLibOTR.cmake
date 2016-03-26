@@ -5,7 +5,6 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-INCLUDE(MacroEnsureVersion)
 INCLUDE(FindPackageHandleStandardArgs)
 
 IF (LIBOTR_INCLUDE_DIR AND LIBOTR_LIBRARY)
@@ -23,7 +22,9 @@ IF( LIBOTR_INCLUDE_DIR AND LIBOTR_LIBRARY )
   STRING(REGEX MATCH "OTRL_VERSION \"[0-9]+\\.[0-9]+\\.[0-9]+" LIBOTR_VERSION "${output}")
   STRING(REGEX REPLACE "^OTRL_VERSION \"" "" LIBOTR_VERSION "${LIBOTR_VERSION}")
   # Check if version is at least 4.0.0
-  MACRO_ENSURE_VERSION("4.0.0" ${LIBOTR_VERSION} LIBOTR_FOUND)
+  IF( LIBOTR_VERSION VERSION_GREATER "4.0.0" )
+    SET( LIBOTR_FOUND TRUE )
+  ENDIF ( LIBOTR_VERSION VERSION_GREATER "4.0.0" )
 
   IF( LIBOTR_FOUND )
     IF( NOT LIBOTR_FIND_QUIETLY )
