@@ -32,8 +32,8 @@
 
 #include <qpixmap.h>
 #include <qtimer.h>
-#include <kmenu.h>
-#include <kaction.h>
+#include <QMenu>
+#include <QAction>
 #include <kactionmenu.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -132,16 +132,16 @@ void JabberTransport::fillActionMenu( KActionMenu *actionMenu )
 	else
 		nick = myself()->displayName();
 
-	actionMenu->menu()->addTitle( myself()->onlineStatus().iconFor( myself() ),
+	actionMenu->menu()->addAction( myself()->onlineStatus().iconFor( myself() ),
 	nick.isNull() ? accountLabel() : i18n( "%2 <%1>", accountLabel(), nick )
 								  );
 	
-	QList<KAction*> *customActions = myself()->customContextMenuActions(  );
+	QList<QAction *> *customActions = myself()->customContextMenuActions(  );
 	if( customActions && !customActions->isEmpty() )
 	{
 		actionMenu->addSeparator();
 
-		foreach( KAction *a, *customActions )
+		foreach( QAction *a, *customActions )
 			actionMenu->menu()->addAction(a);
 	}
 	delete customActions;
@@ -150,18 +150,18 @@ void JabberTransport::fillActionMenu( KActionMenu *actionMenu )
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
-	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "jabber_group", 0,
+	m_actionMenu->insert(new QAction (i18n ("Join Groupchat..."), "jabber_group", 0,
 		this, SLOT (slotJoinNewChat()), this, "actionJoinChat"));
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
-	m_actionMenu->insert ( new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
+	m_actionMenu->insert ( new QAction ( i18n ("Services..."), "jabber_serv_on", 0,
 										 this, SLOT (slotGetServices()), this, "actionJabberServices") );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
+	m_actionMenu->insert ( new QAction ( i18n ("Send Raw Packet to Server..."), "mail_new", 0,
 										 this, SLOT (slotSendRaw()), this, "actionJabberSendRaw") );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Edit User Info..."), "identity", 0,
+	m_actionMenu->insert ( new QAction ( i18n ("Edit User Info..."), "identity", 0,
 										 this, SLOT (slotEditVCard()), this, "actionEditVCard") );
 
 	return m_actionMenu;*/

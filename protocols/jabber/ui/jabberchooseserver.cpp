@@ -52,7 +52,7 @@ JabberChooseServer::JabberChooseServer ( JabberRegisterAccount *parent )
 	mMainWidget->lblStatus->setText ( i18n ( "Retrieving server list...") );
 
 	// retrieve server list
-	mTransferJob = KIO::get ( KUrl("http://xmpp.net/services.xml") );
+	mTransferJob = KIO::get ( QUrl("http://xmpp.net/services.xml") );
 
 	connect ( mTransferJob, SIGNAL (result(KJob*)), this, SLOT (slotTransferResult(KJob*)) );
 	connect ( mTransferJob, SIGNAL (data(KIO::Job*,QByteArray)), this, SLOT (slotTransferData(KIO::Job*,QByteArray)) );

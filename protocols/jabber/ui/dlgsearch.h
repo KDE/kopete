@@ -19,13 +19,18 @@
 #ifndef DLGSEARCH_H
 #define DLGSEARCH_H
 
+#include <QDialog>
+
 #include "jabberaccount.h"
 #include "jabberformtranslator.h"
 #include "ui_dlgsearch.h"
 
+class QPushButton;
+class QDialogButtonBox;
+
 class JabberXDataWidget;
 
-class dlgSearch : public KDialog
+class dlgSearch : public QDialog
 {
 	Q_OBJECT
 public:
@@ -41,6 +46,8 @@ private:
 	Ui::dlgSearch ui;
 	JabberAccount *mAccount;
 	JabberXDataWidget *mXDataWidget;
+    QPushButton* mSearchButton;
+    QDialogButtonBox* mButtonBox;
 	Form mForm;
 	JabberFormTranslator * translator;
 };

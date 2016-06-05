@@ -75,7 +75,7 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	virtual QList<KAction*> *customContextMenuActions () = 0;
+	virtual QList<QAction *> *customContextMenuActions () = 0;
 	using Kopete::Contact::customContextMenuActions;
 
 	/**

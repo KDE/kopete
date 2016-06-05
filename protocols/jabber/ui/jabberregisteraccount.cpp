@@ -290,7 +290,7 @@ void JabberRegisterAccount::slotOk ()
 	{
 		case JabberClient::NoTLS:
 			// no SSL support, at the connecting stage this means the problem is client-side
-			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
+			KMessageBox::error(Kopete::UI::Global::mainWidget (),
 								i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.", 
 								  mMainWidget->leJID->text () ),
 								i18n ("Jabber SSL Error"));
@@ -405,7 +405,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 	else
 	{
 		mMainWidget->lblStatusMessage->setText ( i18n ( "Registration failed." ) );
-		KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (), KMessageBox::Information,
+		KMessageBox::information (Kopete::UI::Global::mainWidget (),
 								  i18n ("Unable to create an account on the server. The Jabber ID is probably already in use."),
 								  i18n ("Jabber Account Registration"));
 

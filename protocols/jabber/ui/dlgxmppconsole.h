@@ -16,11 +16,13 @@
 #ifndef DLGXMPPCONSOLE_H
 #define DLGXMPPCONSOLE_H
 
+#include <QDialog>
+
 #include "ui_dlgxmppconsole.h"
 
 class JabberClient;
 
-class dlgXMPPConsole : public KDialog
+class dlgXMPPConsole : public QDialog
 {
 	Q_OBJECT
 public:

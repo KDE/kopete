@@ -317,7 +317,7 @@ void JabberBaseContact::updateResourceList ()
 		
 		// resource timestamp
 		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
-						   arg ( i18n ( "Timestamp" ), KGlobal::locale()->formatDateTime ( (*it)->resource().status().timeStamp(), KLocale::ShortDate, true ) );
+						   arg ( i18n ( "Timestamp" ), QLocale().toString ( (*it)->resource().status().timeStamp(), QLocale::ShortFormat ) );
 
 		// message, if any
 		if ( !(*it)->resource().status().status().trimmed().isEmpty () )
@@ -683,7 +683,7 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 		// Downalod photo from URI.
 		if( !KIO::NetAccess::download( vCard.photoURI(), tempPhotoPath, 0) ) 
 		{
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry, i18n( "Failed to download Jabber contact photo." ) );
+			KMessageBox::sorry( Kopete::UI::Global::mainWidget (), i18n( "Failed to download Jabber contact photo." ) );
 			return;
 		}
 

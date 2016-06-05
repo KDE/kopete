@@ -31,25 +31,36 @@
 #include "jabberxdatawidget.h"
 #include "jt_xsearch.h"
 #include <kdebug.h>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 dlgSearch::dlgSearch(JabberAccount *account, const XMPP::Jid &jid, QWidget *parent):
-KDialog(parent)
+QDialog(parent)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 	QWidget *widget = new QWidget(this);
 	ui.setupUi(widget);
-	setMainWidget(widget);
-	setButtons(Close | User1);
-	setButtonText(User1, i18n("Search"));
-	setCaption(i18n("Search"));
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	setLayout(mainLayout);
+	mainLayout->addWidget(widget);
+	mButtonBox = new QDialogButtonBox(QDialogButtonBox::Close);
+	mSearchButton = new QPushButton;
+	mButtonBox->addButton(mSearchButton, QDialogButtonBox::ActionRole);
+	connect(mButtonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(mButtonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	mainLayout->addWidget(mButtonBox);
+	mSearchButton->setText(i18n("Search"));
+	setWindowTitle(i18n("Search"));
 
 	mAccount = account;
 	mXDataWidget = 0L;
 
 	ui.tblResults->header()->setResizeMode(QHeaderView::ResizeToContents);
 	ui.lblWait->setText(i18n("Please wait while retrieving search form..."));
-	enableButton(User1, false);
-	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSendForm()));
+	mSearchButton->setEnabled(false);
+	connect(mSearchButton, SIGNAL(clicked()), this, SLOT(slotSendForm()));
 	// get form
 	JT_XSearch * task = new JT_XSearch(mAccount->client()->rootTask());
 	connect(task, SIGNAL(finished()), this, SLOT(slotGotForm()));
@@ -70,7 +81,7 @@ void dlgSearch::slotGotForm()
 
 	if(!task->success())
 	{
-		KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("Unable to retrieve search form."), i18n ("Jabber Error"));
+		KMessageBox::information(this, i18n("Unable to retrieve search form."), i18n ("Jabber Error"));
 		return;
 	}
 
@@ -102,7 +113,7 @@ void dlgSearch::slotGotForm()
 	}
 
 	// enable the send button
-	enableButton(User1, true);
+	mSearchButton->setEnabled(true);
 	resize(sizeHint());
 }
 
@@ -123,19 +134,19 @@ void dlgSearch::slotSendForm()
 	}
 	task->go(true);
 	ui.tblResults->clear();
-	enableButton(User1, false);
-	enableButton(Close, false);
+	mSearchButton->setEnabled(false);
+	mButtonBox->button(QDialogButtonBox::Close)->setEnabled(false);
 }
 
 void dlgSearch::slotSentForm()
 {
 	JT_XSearch * task = (JT_XSearch *) sender ();
-	enableButton(User1, true);
-	enableButton(Close, true);
+	mSearchButton->setEnabled(true);
+	mButtonBox->button(QDialogButtonBox::Close)->setEnabled(true);
 
 	if (!task->success ())
 	{
-		KMessageBox::queuedMessageBox (this, KMessageBox::Error, i18n ("The Jabber server rejected the search."), i18n ("Jabber Search"));
+		KMessageBox::error (this, i18n ("The Jabber server rejected the search."), i18n ("Jabber Search"));
 		return;
 	}
 

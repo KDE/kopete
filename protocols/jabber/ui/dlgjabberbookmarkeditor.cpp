@@ -62,7 +62,7 @@ class JabberBookmarkModel : public QAbstractListModel
         case Qt::DisplayRole:
           return QString( "%1 (%2)" ).arg( bookmark.fullJId() ).arg( bookmark.name() );
         case Qt::DecorationRole:
-          return bookmark.autoJoin() ? KIcon( "irc-join-channel" ) : QVariant();
+          return bookmark.autoJoin() ? QIcon::fromTheme(QStringLiteral("irc-join-channel")) : QVariant();
         case NameRole:
           return bookmark.name();
         case AutoJoinRole:

@@ -60,7 +60,7 @@ void DlgJabberChangePassword::slotOk ()
 {
 	if ( m_account->password().cachedValue () != m_mainWidget->peCurrentPassword->text() )
 	{
-		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry,
+		KMessageBox::sorry ( this,
 							 i18n ( "You entered your current password incorrectly." ),
 							 i18n ( "Password Incorrect" ) );
 		return;
@@ -68,7 +68,7 @@ void DlgJabberChangePassword::slotOk ()
 
 	if ( m_mainWidget->peNewPassword1->text() !=  m_mainWidget->peNewPassword2->text() )
 	{
-		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry,
+		KMessageBox::sorry ( this,
 							 i18n ( "Your new passwords do not match. Please enter them again." ),
 							 i18n ( "Password Incorrect" ) );
 		return;
@@ -76,7 +76,7 @@ void DlgJabberChangePassword::slotOk ()
 
 	if ( m_mainWidget->peNewPassword1->text().isEmpty() ) 
 	{
-		KMessageBox::queuedMessageBox ( this, KMessageBox::Sorry,
+		KMessageBox::sorry ( this,
 							 i18n ( "For security reasons, you are not allowed to set an empty password." ),
 							 i18n ( "Password Incorrect" ) );
 		return;
@@ -124,7 +124,7 @@ void DlgJabberChangePassword::slotChangePasswordDone ()
 
 	if ( task->success () )
 	{
-		KMessageBox::queuedMessageBox ( dynamic_cast<QWidget*>(parent()), KMessageBox::Information,
+		KMessageBox::information ( dynamic_cast<QWidget*>(parent()),
 								   i18n ( "Your password has been changed successfully. Please note that the change may not be instantaneous. If you have problems logging in with your new password, please contact the administrator." ),
 								   i18n ( "Jabber Password Change" ) );
 
@@ -132,7 +132,7 @@ void DlgJabberChangePassword::slotChangePasswordDone ()
 	}
 	else
 	{
-		KMessageBox::queuedMessageBox ( dynamic_cast<QWidget*>(parent()), KMessageBox::Sorry, 
+		KMessageBox::sorry ( dynamic_cast<QWidget*>(parent()),
 							 i18n ( "Your password could not be changed. Either your server does not support this feature or the administrator does not allow you to change your password." ) );
 	}
 

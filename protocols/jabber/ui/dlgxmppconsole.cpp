@@ -15,23 +15,36 @@
 
 #include "dlgxmppconsole.h"
 
+#include <QDialogButtonBox>
+#include <QPushButton>
+
 #include "jabberclient.h"
 
 dlgXMPPConsole::dlgXMPPConsole(JabberClient *client, QWidget *parent):
-KDialog(parent)
+QDialog(parent)
 {
 	mClient = client;
 	setAttribute(Qt::WA_DeleteOnClose);
 	QWidget *widget = new QWidget(this);
 	ui.setupUi(widget);
-	setMainWidget(widget);
-	setCaption(i18n("XML Console"));
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	setLayout(mainLayout);
+	mainLayout->addWidget(widget);
+	setWindowTitle(i18n("XML Console"));
 	// Buttons
-	setButtons(Close | User1 | User2);
-	setButtonText(User1, i18n("Clear"));
-	setButtonText(User2, i18n("Send"));
-	connect(this, SIGNAL(user1Clicked()), this, SLOT(slotClear()));
-	connect(this, SIGNAL(user2Clicked()), this, SLOT(slotSend()));
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
+	QPushButton *user1Button = new QPushButton;
+	buttonBox->addButton(user1Button, QDialogButtonBox::ActionRole);
+	QPushButton *user2Button = new QPushButton;
+	buttonBox->addButton(user2Button, QDialogButtonBox::ActionRole);
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+	mainLayout->addWidget(buttonBox);
+	user1Button->setText(i18n("Clear"));
+	user2Button->setText(i18n("Send"));
+	connect(user1Button, SIGNAL(clicked()), this, SLOT(slotClear()));
+	connect(user2Button, SIGNAL(clicked()), this, SLOT(slotSend()));
 }
 
 dlgXMPPConsole::~dlgXMPPConsole()

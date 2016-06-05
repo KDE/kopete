@@ -40,7 +40,6 @@
 #include <QAbstractSocket>
 #include <QPointer>
 
-#include <kcomponentdata.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
@@ -52,7 +51,6 @@
 #include <kicon.h>
 #include <kactionmenu.h>
 #include <kglobal.h>
-#include <KComponentData>
 
 #include "kopetepassword.h"
 #include "kopetemetacontact.h"
@@ -202,7 +200,7 @@ void JabberAccount::setS5BServerPort ( int port )
 {
 	if ( !m_jabberClient->setS5BServerPort ( port ) && !m_notifiedUserCannotBindTransferPort)
 	{
-		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (), KMessageBox::Sorry,
+		KMessageBox::sorry ( Kopete::UI::Global::mainWidget (),
 							 i18n ( "Could not bind the Jabber file transfer manager to a local port. Please check if the file transfer port is already in use, or choose another port in the account settings." ),
 							 i18n ( "Failed to start Jabber File Transfer Manager" ) );
 		m_notifiedUserCannotBindTransferPort = true;
@@ -216,9 +214,9 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->addSeparator();
 
-	KAction *action;
+	QAction *action;
 	
-	action = new KAction( this );
+	action = new QAction( this );
 	action->setIcon( KIcon("jabber_group") );
 	action->setText( i18n("Join Groupchat...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotJoinNewChat()) );
@@ -232,20 +230,20 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->addSeparator();
 	
-	action = new KAction( this );
+	action = new QAction( this );
 	action->setIcon( KIcon("jabber_serv_on") );
 	action->setText( i18n ("Services...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGetServices()) );
 	action->setEnabled( isConnected() );
 	actionMenu->addAction( action );
 
-	action = new KAction( this );
+	action = new QAction( this );
 	action->setIcon( ( KIcon("mail-message-new") ) );
 	action->setText( i18n ("XML Console") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotXMPPConsole()) );
 	actionMenu->addAction( action );
 
-	action = new KAction( this );
+	action = new QAction( this );
 	action->setIcon( ( KIcon("document-properties") ) );
 	action->setText( i18n ("Edit User Info...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotEditVCard()) );
@@ -255,7 +253,7 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 	KActionMenu *mMoodMenu = new KActionMenu(i18n("Set Mood"), actionMenu);
 	for(int i = 0; i <= Mood::Worried; i++)
 	{
-		action = new KAction(mMoodMenu);
+		action = new QAction(mMoodMenu);
 		action->setText(MoodManager::self()->getMoodName((Mood::Type)i));
 		action->setData(QVariant(i));
 		QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotSetMood()) );
@@ -317,8 +315,7 @@ bool JabberAccount::createContact (const QString & contactId,  Kopete::MetaConta
 void JabberAccount::errorConnectFirst ()
 {
 
-	KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
-									KMessageBox::Error,
+	KMessageBox::error ( Kopete::UI::Global::mainWidget (),
 									i18n ("Please connect first."), i18n ("Jabber Error") );
 
 }
@@ -391,13 +388,13 @@ void JabberAccount::connectWithPassword ( const QString &password )
 		uname (&utsBuf);
 
 		m_jabberClient->setClientName ("Kopete");
-		m_jabberClient->setClientVersion (KGlobal::mainComponent().aboutData()->version ());
+		m_jabberClient->setClientVersion (KAboutData::applicationData().version ());
 		m_jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 	}
 
 	// Set caps node information
 	m_jabberClient->setCapsNode(KOPETE_CAPS_NODE);
-	m_jabberClient->setCapsVersion(KGlobal::mainComponent().aboutData()->version());
+	m_jabberClient->setCapsVersion(KAboutData::applicationData().version());
 	
 	// Set Disco Identity information
 	DiscoItem::Identity identity;
@@ -449,7 +446,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	{
 		case JabberClient::NoTLS:
 			// no SSL support, at the connecting stage this means the problem is client-side
-			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
+			KMessageBox::error(Kopete::UI::Global::mainWidget (),
 								i18n ("SSL support could not be initialized for account %1. This is most likely because TLS support for QCA is not available.",
 								myself()->contactId()),
 								i18n ("Jabber SSL Error"));
@@ -610,7 +607,7 @@ void JabberAccount::slotClientError ( JabberClient::ErrorCode errorCode )
 	{
 		case JabberClient::NoTLS:
 		default:
-			KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (), KMessageBox::Error,
+			KMessageBox::error ( Kopete::UI::Global::mainWidget (),
 					     i18n ("An encrypted connection with the Jabber server could not be established."),
 					     i18n ("Jabber Connection Error"));
 			disconnect ( Kopete::Account::Manual );
@@ -1191,7 +1188,7 @@ void JabberAccount::slotXMPPConsole ()
 
 void JabberAccount::slotSetMood()
 {
-	KAction *action = (KAction *)sender();
+	QAction *action = (QAction *)sender();
 	Mood::Type type = (Mood::Type)action->data().toInt();
 
     PubSubItem psi("current", Mood(type).toXml(*client()->client()->rootTask()->doc()));
@@ -1669,15 +1666,13 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 		break;
 
 	case JabberClient::BannedFromThisMUC:
-		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
-									KMessageBox::Error,
+		KMessageBox::error ( Kopete::UI::Global::mainWidget (),
 									i18n ("You cannot join the room %1 because you have been banned", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
 
 	case JabberClient::MaxUsersReachedForThisMuc:
-		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
-									KMessageBox::Error,
+		KMessageBox::error ( Kopete::UI::Global::mainWidget (),
 									i18n ("You cannot join the room %1 because the maximum number of users has been reached", jid.node()),
 									i18n ("Jabber Group Chat") );
 		break;
@@ -1686,8 +1681,7 @@ void JabberAccount::slotGroupChatError (const XMPP::Jid &jid, int error, const Q
 		{
 		QString detailedReason = reason.isEmpty () ? i18n ( "No reason given by the server" ) : reason;
 
-		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
-									KMessageBox::Error,
+		KMessageBox::error ( Kopete::UI::Global::mainWidget (),
 									i18n ("There was an error processing your request for groupchat %1. (Reason: %2, Code %3)", jid.full (), detailedReason, error ),
 									i18n ("Jabber Group Chat") );
 		}
@@ -1809,7 +1803,7 @@ void JabberAccount::slotUnregisterFinished( )
 
 	if ( task && ! task->success ())
 	{
-		KMessageBox::queuedMessageBox ( 0L, KMessageBox::Error,
+		KMessageBox::error ( 0L,
 			i18n ("An error occurred while trying to remove the account:\n%1", task->statusString()),
 			i18n ("Jabber Account Unregistration"));
 		m_removing=false;
@@ -1912,7 +1906,7 @@ bool JabberAccount::oldEncrypted()
 
 /*
 JabberMoodAction::JabberMoodAction(const Mood::Type type, QObject *parent):
-KAction(parent)
+QAction(parent)
 {
 	mType = type;
 	setText(MoodManager::self()->getMoodName(mType));
