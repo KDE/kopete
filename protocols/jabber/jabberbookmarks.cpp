@@ -21,7 +21,7 @@
 
 #include <QPointer>
 #include <kdebug.h>
-#include <kaction.h>
+#include <QAction>
 #include <kselectaction.h>
 #include <klocale.h>
 #include <kicon.h>
@@ -223,7 +223,7 @@ void JabberBookmarks::insertGroupChat(const XMPP::Jid &jid)
 	task->go( true );
 }
 
-KAction * JabberBookmarks::bookmarksAction(QObject *parent)
+QAction * JabberBookmarks::bookmarksAction(QObject *parent)
 {
 	Q_UNUSED( parent )
 

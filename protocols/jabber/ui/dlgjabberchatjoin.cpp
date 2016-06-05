@@ -140,7 +140,7 @@ void dlgJabberChatJoin::slotChatRooomsQueryFinished()
 	XMPP::JT_DiscoItems *task = (XMPP::JT_DiscoItems*)sender();
 	if (!task->success())
 	{
-		KMessageBox::queuedMessageBox(this, KMessageBox::Error, i18n("Unable to retrieve the list of chat rooms."),  i18n("Jabber Error"));
+		KMessageBox::error(this, i18n("Unable to retrieve the list of chat rooms."),  i18n("Jabber Error"));
 		return;
 	}
 

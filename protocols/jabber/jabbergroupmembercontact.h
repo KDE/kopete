@@ -39,7 +39,7 @@ public:
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	QList<KAction*> *customContextMenuActions ();
+	QList<QAction *> *customContextMenuActions ();
 	using JabberBaseContact::customContextMenuActions;
 
 	/**
@@ -62,13 +62,13 @@ public slots:
 	/**
 	 * This is the JabberContact level slot for sending files.
 	 *
-	 * @param sourceURL The actual KUrl of the file you are sending
+	 * @param sourceURL The actual QUrl of the file you are sending
 	 * @param fileName (Optional) An alternate name for the file - what the
 	 *                 receiver will see
 	 * @param fileSize (Optional) Size of the file being sent. Used when sending
 	 *                 a nondeterminate file size (such as over a socket)
 	 */
-	virtual void sendFile( const KUrl &sourceURL = KUrl(),
+	virtual void sendFile( const QUrl &sourceURL = QUrl(),
 		const QString &fileName = QString(), uint fileSize = 0L );
 
 private slots:

@@ -36,7 +36,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
-#include <kaction.h>
+#include <QAction>
 #include <kactionmenu.h>
 #include <kicon.h>
 #include <kstandarddirs.h>
@@ -134,30 +134,30 @@ JabberContact::~JabberContact()
 	kDebug(JABBER_DEBUG_GLOBAL) << contactId() << "  is destroyed  - " << this;
 }
 
-QList<KAction*> *JabberContact::customContextMenuActions ()
+QList<QAction *> *JabberContact::customContextMenuActions ()
 {
 
-	QList<KAction*> *actions = new QList<KAction*>();
+	QList<QAction *> *actions = new QList<QAction*>();
 
 	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("network-connect"), i18n ("Authorization"), this);
 
-	KAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
+	QAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
-	resendAuthAction = new KAction( this );
+	resendAuthAction = new QAction( this );
 	resendAuthAction->setIcon( (KIcon("mail-forward") ) );
 	resendAuthAction->setText( i18n ("(Re)send Authorization To") );
 	resendAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	connect(resendAuthAction, SIGNAL(triggered(bool)), SLOT(slotSendAuth()));
 	actionAuthorization->addAction(resendAuthAction);
 
-	requestAuthAction = new KAction( this );
+	requestAuthAction = new QAction( this );
 	requestAuthAction->setIcon( (KIcon("mail-reply-sender") ) );
 	requestAuthAction->setText( i18n ("(Re)request Authorization From") );
 	requestAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	connect(requestAuthAction, SIGNAL(triggered(bool)), SLOT(slotRequestAuth()));
 	actionAuthorization->addAction(requestAuthAction);
 	
-	removeAuthAction = new KAction( this );
+	removeAuthAction = new QAction( this );
 	removeAuthAction->setIcon( (KIcon("edit-delete") ) );
 	removeAuthAction->setText( i18n ("Remove Authorization From") );
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
@@ -168,8 +168,8 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 
 	if ( account()->enabledLibjingle() ) {
 
-		KAction *libjingleCallAction;
-		libjingleCallAction = new KAction( this );
+		QAction *libjingleCallAction;
+		libjingleCallAction = new QAction( this );
 		libjingleCallAction->setIcon( (KIcon("voicecall") ) );
 		libjingleCallAction->setText( i18n ("Call contact") );
 		libjingleCallAction->setEnabled( account()->supportLibjingle(contactId()) );
@@ -183,7 +183,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
 
 #define KACTION(status, text, name, slot) \
-	{ KAction *tmp = new KAction(this); \
+	{ QAction *tmp = new QAction(this); \
 	tmp->setIcon( KIcon(QIcon((status).iconFor(this)))); \
 	tmp->setText( text ); \
 	connect(tmp, SIGNAL(triggered(bool)), (slot));\
@@ -235,7 +235,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 		{
 			if( i == activeItem )
 			{
-				KAction *tmp = new KAction( this );
+				QAction *tmp = new QAction( this );
 				tmp->setIcon( KIcon("dialog-ok") );
 				tmp->setText( str);
 				tmp->setObjectName( QString::number(i) );
@@ -251,7 +251,7 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 				QIcon iconSet ( !i ?
 					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(str) ).iconFor ( account () ));
 
-				KAction *tmp = new KAction(this);
+				QAction *tmp = new QAction(this);
 				tmp->setIcon( KIcon(iconSet) );
 				tmp->setText( str );
 				tmp->setObjectName( QString::number(i) );
@@ -270,14 +270,14 @@ QList<KAction*> *JabberContact::customContextMenuActions ()
 	
 	
 #if 0
-	KAction *testAction = new KAction(i18n("Test action"), this);
+	QAction *testAction = new QAction(i18n("Test action"), this);
 	actionJingleAudioCall->setEnabled( true );
 	actionCollection->append( testAction );
 
-	KAction *actionJingleAudioCall = new KAction(i18n("Jingle Audio call"), this);
+	QAction *actionJingleAudioCall = new QAction(i18n("Jingle Audio call"), this);
 	connect(actionJingleAudioCall, SIGNAL(triggered(bool)), SLOT(slotJingleAudioCall()));
 	
-	KAction *actionJingleVideoCall = new KAction(i18n("Jingle Video call"), this);
+	QAction *actionJingleVideoCall = new QAction(i18n("Jingle Video call"), this);
 	connect(actionJingleVideoCall, SIGNAL(triggered(bool)), SLOT(slotJingleVideoCall()));
 
 	// Check if the current contact support jingle calls, also honor lock by default.
@@ -817,7 +817,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	if(contactPhoto.width() > 96 || contactPhoto.height() > 96)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ QUrl(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation );
@@ -836,7 +836,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() < 32 || contactPhoto.height() < 32)
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ QUrl(photoPath).fileName().toLower() ) );
 	
 		// Scale and crop the picture.
 		contactPhoto = contactPhoto.scaled( 32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation );
@@ -855,7 +855,7 @@ void JabberContact::setPhoto( const QString &photoPath )
 	else if (contactPhoto.width() != contactPhoto.height())
 	{
 		// Save image to a new location if the image isn't the correct format.
-		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ KUrl(photoPath).fileName().toLower() ) );
+		QString newLocation( KStandardDirs::locateLocal( "appdata", "jabberphotos/"+ QUrl(photoPath).fileName().toLower() ) );
 
 		if(contactPhoto.width() < contactPhoto.height())
 			contactPhoto = contactPhoto.copy((contactPhoto.width()-contactPhoto.height())/2, 0, contactPhoto.height(), contactPhoto.height());
@@ -1107,15 +1107,15 @@ void JabberContact::slotDelayedSync( )
 
 }
 
-void JabberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
+void JabberContact::sendFile ( const QUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
 {
 	QString filePath;
 
 	// if the file location is null, then get it from a file open dialog
 	if ( !sourceURL.isValid () )
-		filePath = KFileDialog::getOpenFileName( KUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
+		filePath = KFileDialog::getOpenFileName( QUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
 	else
-		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+		filePath = sourceURL.adjusted(QUrl::StripTrailingSlash).path();
 
 	QFile file ( filePath );
 
@@ -1173,7 +1173,7 @@ void JabberContact::sendSubscription ( const QString& subType )
 
 void JabberContact::slotSelectResource ()
 {
-	int currentItem = QString ( static_cast<const KAction *>( sender() )->objectName () ).toUInt ();
+	int currentItem = QString ( static_cast<const QAction *>( sender() )->objectName () ).toUInt ();
 
 	/*
 	 * Warn the user if there is already an active chat window.
@@ -1182,8 +1182,7 @@ void JabberContact::slotSelectResource ()
 	 */
 	if ( manager ( Kopete::Contact::CannotCreate ) != 0 )
 	{
-		KMessageBox::queuedMessageBox ( Kopete::UI::Global::mainWidget (),
-										KMessageBox::Information,
+		KMessageBox::information ( Kopete::UI::Global::mainWidget (),
 										i18n ("You have preselected a resource for contact %1, "
 										"but you still have open chat windows for this contact. "
 										"The preselected resource will only apply to newly opened "
@@ -1200,7 +1199,7 @@ void JabberContact::slotSelectResource ()
 	else
 	{
 		// use iconText() instead of text(), because we need stripped value without '&'
-		QString selectedResource = static_cast<const KAction *>(sender())->iconText();
+		QString selectedResource = static_cast<const QAction *>(sender())->iconText();
 
 		kDebug (JABBER_DEBUG_GLOBAL) << "Moving to resource " << selectedResource;
 

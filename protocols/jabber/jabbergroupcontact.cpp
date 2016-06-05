@@ -22,7 +22,7 @@
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kinputdialog.h>
-#include <kaction.h>
+#include <QAction>
 
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
@@ -123,13 +123,13 @@ JabberGroupContact::~JabberGroupContact ()
 	}
 }
 
-QList<KAction*> *JabberGroupContact::customContextMenuActions ()
+QList<QAction *> *JabberGroupContact::customContextMenuActions ()
 {
-	QList<KAction*> *actionCollection = new QList<KAction*>();
+	QList<QAction *> *actionCollection = new QList<QAction*>();
 
-	KAction *actionSetNick = new KAction(this);
+	QAction *actionSetNick = new QAction(this);
 	actionSetNick->setText( i18n ("Change nickname") );
-	actionSetNick->setIcon( KIcon("jabber_changenick") );
+	actionSetNick->setIcon( QIcon::fromTheme(QStringLiteral("jabber_changenick")) );
 	connect(actionSetNick, SIGNAL(triggered(bool)), this, SLOT(slotChangeNick()));
 
 	actionCollection->append( actionSetNick );
@@ -348,15 +348,15 @@ void JabberGroupContact::removeSubContact ( const XMPP::RosterItem &rosterItem )
 
 }
 
-void JabberGroupContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
+void JabberGroupContact::sendFile ( const QUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
 {
 	QString filePath;
 
 	// if the file location is null, then get it from a file open dialog
 	if ( !sourceURL.isValid () )
-		filePath = KFileDialog::getOpenFileName( KUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
+		filePath = KFileDialog::getOpenFileName( QUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
 	else
-		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+		filePath = sourceURL.adjusted(QUrl::StripTrailingSlash).path();
 
 	QFile file ( filePath );
 

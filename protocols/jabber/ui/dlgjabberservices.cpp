@@ -27,6 +27,9 @@
 #include <KMessageBox>
 #include <KLocale>
 #include <KDebug>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QVBoxLayout>
 
 #include "jabberaccount.h"
 #include "jabberclient.h"
@@ -36,14 +39,19 @@
 #include "dlgahclist.h"
 
 dlgJabberServices::dlgJabberServices(JabberAccount *account, QWidget *parent):
-KDialog(parent)
+QDialog(parent)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 	QWidget *widget = new QWidget(this);
 	ui.setupUi(widget);
-	setMainWidget(widget);
-	setButtons(Close);
-	setCaption(i18n("Services"));
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	setLayout(mainLayout);
+	mainLayout->addWidget(widget);
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	mainLayout->addWidget(buttonBox);
+	setWindowTitle(i18n("Services"));
 
 	mAccount = account;
 	if(mAccount->isConnected())

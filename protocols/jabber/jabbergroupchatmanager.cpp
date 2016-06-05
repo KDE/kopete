@@ -36,11 +36,9 @@ JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const
 {
 	kDebug ( JABBER_DEBUG_GLOBAL ) << "New message manager for " << user->contactId ();
 
-	setComponentData(protocol->componentData());
-
 	mRoomJid = roomJid;
 	
-	mInviteAction = new KActionMenu (KIcon("system-users"), i18n ("&Invite"), this);
+	mInviteAction = new KActionMenu (QIcon::fromTheme(QStringLiteral("system-users")), i18n ("&Invite"), this);
 	mInviteAction->setDelayed(false);
 	connect( mInviteAction->menu(), SIGNAL(aboutToShow()), this, SLOT(showInviteMenu()) );
 	connect( mInviteAction->menu(), SIGNAL(aboutToHide()), this, SLOT(hideInviteMenu()) );
@@ -198,7 +196,7 @@ void JabberGroupChatManager::showInviteMenu() {
 	QHash <QString, Kopete::Contact *> contactList = account()->contacts();
 	for ( QHash <QString, Kopete::Contact *>::Iterator it = contactList.begin(); it != contactList.end(); ++it ) {
 		if ( ! members().contains(it.value()) && it.value()->isOnline() && it.value()->onlineStatus().status() != Kopete::OnlineStatus::Offline ) {
-			KAction *a = new Kopete::UI::ContactAction(it.value(), actionCollection());
+			QAction *a = new Kopete::UI::ContactAction(it.value(), actionCollection());
 			connect( a, SIGNAL(triggered(QString,bool)), this, SLOT(inviteContact(QString)) );
 			mInviteAction->addAction(a);
 		}

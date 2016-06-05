@@ -64,7 +64,7 @@ JabberGroupMemberContact::~JabberGroupMemberContact ()
 	}
 }
 
-QList<KAction*> *JabberGroupMemberContact::customContextMenuActions ()
+QList<QAction *> *JabberGroupMemberContact::customContextMenuActions ()
 {
 
 	return 0;
@@ -291,15 +291,15 @@ QString JabberGroupMemberContact::lastReceivedMessageId () const
 	return mLastReceivedMessageId;
 }
 
-void JabberGroupMemberContact::sendFile ( const KUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
+void JabberGroupMemberContact::sendFile ( const QUrl &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
 {
 	QString filePath;
 
 	// if the file location is null, then get it from a file open dialog
 	if ( !sourceURL.isValid () )
-		filePath = KFileDialog::getOpenFileName( KUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
+		filePath = KFileDialog::getOpenFileName( QUrl(), "*", 0L, i18n ( "Kopete File Transfer" ) );
 	else
-		filePath = sourceURL.path(KUrl::RemoveTrailingSlash);
+		filePath = sourceURL.adjusted(QUrl::StripTrailingSlash).path();
 
 	QFile file ( filePath );
 

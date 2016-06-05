@@ -63,7 +63,7 @@ K_PLUGIN_FACTORY( JabberProtocolFactory, registerPlugin<JabberProtocol>(); )
 K_EXPORT_PLUGIN( JabberProtocolFactory( "kopete_jabber" ) )
 
 JabberProtocol::JabberProtocol (QObject * parent, const QVariantList &)
-: Kopete::Protocol( JabberProtocolFactory::componentData(), parent),
+: Kopete::Protocol(parent),
 	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, JabberFreeForChat, QStringList("jabber_chatty"), i18n ("Free for Chat"), i18n ("Free for Chat"), Kopete::OnlineStatusManager::FreeForChat, Kopete::OnlineStatusManager::HasStatusMessage ),
 	JabberKOSOnline(Kopete::OnlineStatus::Online,         90, this, JabberOnline, QStringList(), i18n ("Online"), i18n ("Online"), Kopete::OnlineStatusManager::Online, Kopete::OnlineStatusManager::HasStatusMessage ),
 	JabberKOSAway(Kopete::OnlineStatus::Away,             80, this, JabberAway, QStringList("contact_away_overlay"), i18n ("Away"), i18n ("Away"), Kopete::OnlineStatusManager::Away, Kopete::OnlineStatusManager::HasStatusMessage),
@@ -351,27 +351,31 @@ XMPP::Status JabberProtocol::kosToStatus( const Kopete::OnlineStatus & status , 
 
 #include <accountselector.h>
 #include <kopeteuiglobal.h>
-#include <kvbox.h>
+#include <QVBoxLayout>
 #include "jabbercontactpool.h"
 #include <kopeteview.h>
 #include <kmessagebox.h>
 #include <kinputdialog.h>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 
-void JabberProtocol::handleURL(const QString&, const KUrl & kurl) const
+void JabberProtocol::handleURL(const QString&, const QUrl &url) const
 {
-	QUrl url=kurl; //QUrl has better query handling.
 	if(url.scheme() != "xmpp" && !url.scheme().isEmpty() )
 		return;
 
-	url.setQueryDelimiters( '=' , ';' );
+	QUrlQuery query(url);
+	query.setQueryDelimiters( '=' , ';' );
 	QString accountid=url.authority();
 	QString jid_str=url.path();
 	if(jid_str.startsWith('/'))
 		jid_str=jid_str.mid(1);
 	XMPP::Jid jid = jid_str;
-	QString action=url.queryItems().isEmpty() ? QString() : url.queryItems().first().first;
+	QString action=query.queryItems().isEmpty() ? QString() : query.queryItems().first().first;
 	 
-	kDebug() << url.queryItemValue("body");
+	kDebug() << query.queryItemValue("body");
 
 	if(jid.isEmpty())
 	{
@@ -390,17 +394,27 @@ void JabberProtocol::handleURL(const QString&, const KUrl & kurl) const
 			account = static_cast<JabberAccount*>(accounts.first());
 		else
 		{
-			QPointer <KDialog> chooser = new KDialog(Kopete::UI::Global::mainWidget());
-			chooser->setCaption( i18n("Choose Account") );
-			chooser->setButtons( KDialog::Ok | KDialog::Cancel );
-			chooser->setDefaultButton(KDialog::Ok);
-			KVBox * vb = new KVBox(chooser);
-			chooser->setMainWidget(vb);
-			QLabel * label = new QLabel(vb);
-			label->setText(i18n("Choose an account to handle the URL %1" , kurl.prettyUrl()));
+			QPointer <QDialog> chooser = new QDialog(Kopete::UI::Global::mainWidget());
+			chooser->setWindowTitle( i18n("Choose Account") );
+			QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+			QWidget *mainWidget = new QWidget(chooser);
+			QVBoxLayout *mainLayout = new QVBoxLayout;
+			chooser->setLayout(mainLayout);
+			mainLayout->addWidget(mainWidget);
+			QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+			okButton->setDefault(true);
+			okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+			chooser->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+			chooser->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+			buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+			QLabel * label = new QLabel(mainWidget);
+			mainLayout->addWidget(label);
+			label->setText(i18n("Choose an account to handle the URL %1" , url.toDisplayString()));
 //			label->setSizePolicy(QSizePolicy::Minimum , QSizePolicy::MinimumExpanding);
 			label->setWordWrap(true);
-			QPointer <AccountSelector> accSelector = new AccountSelector(const_cast<JabberProtocol*>(this), vb);
+			QPointer <AccountSelector> accSelector = new AccountSelector(const_cast<JabberProtocol*>(this), mainWidget);
+			mainLayout->addWidget(accSelector);
+			mainLayout->addWidget(buttonBox);
 	//		accSelector->setSizePolicy(QSizePolicy::MinimumExpanding , QSizePolicy::MinimumExpanding);
 			int ret = chooser->exec();
 			if (ret == QDialog::Rejected || !accSelector)
@@ -537,7 +551,7 @@ void JabberProtocol::handleURL(const QString&, const KUrl & kurl) const
 	}//TODO: recvfile
 	else
 	{
-		kWarning(JABBER_DEBUG_GLOBAL) << "unable to handle URL "<< kurl.prettyUrl();
+		kWarning(JABBER_DEBUG_GLOBAL) << "unable to handle URL "<< url.toDisplayString();
 	}
 
 }

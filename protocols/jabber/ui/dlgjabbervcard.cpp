@@ -496,7 +496,7 @@ void dlgJabberVCard::slotSelectPhoto()
 	}
 	else
 	{
-		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "<qt>An error occurred when trying to change the photo.<br />"
+		KMessageBox::sorry( this, i18n( "<qt>An error occurred when trying to change the photo.<br />"
 			"Make sure that you have selected a valid image file</qt>" ) );
 		m_photoPath.clear();
 	}
@@ -511,7 +511,7 @@ void dlgJabberVCard::slotClearPhoto()
 void dlgJabberVCard::slotOpenURL(const QString &url)
 {
 	if ( !url.isEmpty () || (url == QString::fromLatin1("mailto:") ) )
-		new KRun( KUrl( url ), this );
+		new KRun( QUrl( url ), this );
 }
 
 #include "dlgjabbervcard.moc"

@@ -20,6 +20,7 @@
 #define DLGJABBERSERVICES_H
 
 #include <qwidget.h>
+#include <QDialog>
 
 #include "jabberaccount.h"
 #include "xmpp_tasks.h"
@@ -32,7 +33,7 @@
 
 class ServiceItem;
 
-class dlgJabberServices : public KDialog
+class dlgJabberServices : public QDialog
 {
 	Q_OBJECT
 public:

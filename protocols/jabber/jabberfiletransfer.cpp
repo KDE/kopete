@@ -150,7 +150,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseConta
 
 	  
 	if(canOpen) {
-		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), KUrl(file).fileName (), mLocalFile.size (), "", preview);
+		mXMPPTransfer->sendFile ( XMPP::Jid ( contact->fullAddress () ), QUrl(file).fileName (), mLocalFile.size (), "", preview);
 	} else {
 		mKopeteTransfer->slotError ( KIO::ERR_CANNOT_OPEN_FOR_READING, file );
 	}
