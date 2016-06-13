@@ -29,7 +29,7 @@ bonjouraccountpreferences.ui
 
 add_library(kopete_bonjour MODULE ${kopete_bonjour_PART_SRCS})
 
-target_link_libraries(kopete_bonjour KF5::KIOCore KF5::PimIdentities KF5::DNSSD kopete)
+target_link_libraries(kopete_bonjour KF5::KIOCore KF5::IdentityManagement KF5::DNSSD kopete)
 if(NOT DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_bonjour kopete_videodevice)
 endif(NOT DISABLE_VIDEOSUPPORT)

@@ -24,8 +24,8 @@
 
 #include <kopeteaccount.h>
 
-#include <dnssd/publicservice.h>
-#include <dnssd/servicebrowser.h>
+#include <KDNSSD/DNSSD/PublicService>
+#include <KDNSSD/DNSSD/ServiceBrowser>
 
 #include "bonjourcontact.h"
 #include "bonjourcontactconnection.h"
@@ -174,7 +174,7 @@ public slots:
 	 *
 	 * @param pointer A RemoteService Pointer to the Service.
 	 */
-	void comingOnline(DNSSD::RemoteService::Ptr pointer);
+	void comingOnline(KDNSSD::RemoteService::Ptr pointer);
 
 	/**
 	 * @brief Slots Called When a Contact Goes Offline
@@ -184,7 +184,7 @@ public slots:
 	 *
 	 * @param pointer A RemoteService Pointer to the Service.
 	 */
-	void goingOffline(DNSSD::RemoteService::Ptr pointer);
+	void goingOffline(KDNSSD::RemoteService::Ptr pointer);
 
 	/**
 	 * @brief A Slot Called when a connection discovers it's username
@@ -230,7 +230,7 @@ private:
 	/**
 	 * The Connection to Avahi Which Keeps Scanning For Contacts Coming Online Or Offline
 	 */
-	DNSSD::PublicService *service;
+	KDNSSD::PublicService *service;
 
 	/**
 	 * The local Server which waits for people to talk to it :D
@@ -251,7 +251,7 @@ private:
 	/**
 	 * The Service Browser Which Keeps Scanning For New People
 	 */
-	DNSSD::ServiceBrowser *browser;
+	KDNSSD::ServiceBrowser *browser;
 
 	/*
 	 * Big List of Open Connections, who we don't know is at the other end

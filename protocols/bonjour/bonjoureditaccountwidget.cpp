@@ -28,8 +28,8 @@
 #include "bonjourprotocol.h"
 #include <kconfigdialog.h>
 #include <kuser.h>
-#include <kpimidentities/identity.h>
-#include <kpimidentities/identitymanager.h>
+#include <KIdentityManagement/Identity>
+#include <KIdentityManagement/IdentityManager>
 
 BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Account* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
@@ -64,8 +64,8 @@ BonjourEditAccountWidget::BonjourEditAccountWidget( QWidget* parent, Kopete::Acc
 		}
 
 		// Next try via the default identity
-		KPIMIdentities::IdentityManager manager(true);
-		const KPIMIdentities::Identity & ident = manager.defaultIdentity();
+		KIdentityManagement::IdentityManager manager(true);
+		const KIdentityManagement::Identity & ident = manager.defaultIdentity();
 
 		if (! ident.isNull()) {
 			// Get the full name from identity (only if not available via KUser)
