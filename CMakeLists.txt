@@ -165,6 +165,5 @@ add_subdirectory(sounds)
 add_subdirectory(styles)
 add_subdirectory(doc)
 
-install(FILES kopeteui.rc kopete.notifyrc DESTINATION ${DATA_INSTALL_DIR}/kopete )
 
 #macro_display_feature_log()
