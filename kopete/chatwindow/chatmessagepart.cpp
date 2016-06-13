@@ -385,7 +385,7 @@ void ChatMessagePart::slotOpenURLRequest(const QUrl &url, const KParts::OpenUrlA
 	}
 	else
 	{
-		KRun *runner = new KRun( url, 0, 0, false ); // false = non-local files
+		KRun *runner = new KRun( url, 0, 0 ); // non-local files
 		runner->setRunExecutables( false ); //security
 		//KRun autodeletes itself by default when finished.
 	}
