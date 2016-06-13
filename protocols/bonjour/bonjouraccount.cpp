@@ -25,9 +25,6 @@
 #include <kicon.h>
 #include <kmessagebox.h>
 
-#include <dnssd/publicservice.h>
-#include <dnssd/servicebrowser.h>
-
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetedeletecontacttask.h"
@@ -145,12 +142,12 @@ void BonjourAccount::startBrowse()
 	// Delete All Contacts Before we start looking for new ones
 	wipeOutAllContacts();
 
-	browser = new DNSSD::ServiceBrowser("_presence._tcp");
+	browser = new KDNSSD::ServiceBrowser("_presence._tcp");
 	
-	QObject::connect(browser,SIGNAL(serviceAdded(DNSSD::RemoteService::Ptr)),
-			this,SLOT(comingOnline(DNSSD::RemoteService::Ptr)));
-	QObject::connect(browser,SIGNAL(serviceRemoved(DNSSD::RemoteService::Ptr)),
-			this,SLOT(goingOffline(DNSSD::RemoteService::Ptr)));
+	QObject::connect(browser,SIGNAL(serviceAdded(KDNSSD::RemoteService::Ptr)),
+			this,SLOT(comingOnline(KDNSSD::RemoteService::Ptr)));
+	QObject::connect(browser,SIGNAL(serviceRemoved(KDNSSD::RemoteService::Ptr)),
+			this,SLOT(goingOffline(KDNSSD::RemoteService::Ptr)));
 
 	kDebug()<<"Starting Browser";
 	browser->startBrowse();
@@ -160,10 +157,10 @@ void BonjourAccount::startPublish()
 {
 	if (! username.contains('@')) {
 		username.append("@");
-		username.append(DNSSD::ServiceBrowser::getLocalHostName().toUtf8());
+		username.append(KDNSSD::ServiceBrowser::getLocalHostName().toUtf8());
 	}
 
-	service = new DNSSD::PublicService(username, "_presence._tcp", listeningPort);
+	service = new KDNSSD::PublicService(username, "_presence._tcp", listeningPort);
 
         QMap <QString, QByteArray> map;
         map.insert("1st",  firstName);
@@ -191,7 +188,7 @@ void BonjourAccount::published(bool success)
 	} else {
 		kDebug()<<"Publish Failed";
 		disconnect();
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+		KMessageBox::error(Kopete::UI::Global::mainWidget(),
 		i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi."));
 	}
 }
@@ -201,8 +198,8 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 	if (username.isEmpty())
 		username = accountId().toUtf8();
 
-	if (DNSSD::ServiceBrowser::isAvailable() != DNSSD::ServiceBrowser::Working) {
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, 
+	if (KDNSSD::ServiceBrowser::isAvailable() != KDNSSD::ServiceBrowser::Working) {
+		KMessageBox::error(Kopete::UI::Global::mainWidget(),
 		i18n("Unable to connect to the local mDNS server. Please ensure the Avahi daemon is running."));
 		return;
 	}
@@ -217,7 +214,7 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 	startBrowse();
 }
 
-void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
+void BonjourAccount::comingOnline(KDNSSD::RemoteService::Ptr pointer)
 {
 	if (! pointer->resolve()) {
 		kDebug()<<"Unable to Resolve! Dumping Contact";
@@ -245,7 +242,7 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 	QString hostName = pointer->hostName();
 	kDebug()<<"Hostname is:"<<hostName;
 	if (! hostName.isEmpty()) {
-		QHostAddress hostAddress = DNSSD::ServiceBrowser::resolveHostName(hostName);
+		QHostAddress hostAddress = KDNSSD::ServiceBrowser::resolveHostName(hostName);
 		kDebug()<<"Host Address is:"<<hostAddress;
 
 		if (hostAddress != QHostAddress() ) {
@@ -268,7 +265,7 @@ void BonjourAccount::comingOnline(DNSSD::RemoteService::Ptr pointer)
 	}
 }
 
-void BonjourAccount::goingOffline(DNSSD::RemoteService::Ptr pointer)
+void BonjourAccount::goingOffline(KDNSSD::RemoteService::Ptr pointer)
 {
 	pointer->resolve();
 

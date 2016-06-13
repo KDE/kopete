@@ -32,7 +32,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_bonjour, BonjourProtocolFactory( "kopete_bonj
 BonjourProtocol *BonjourProtocol::s_protocol = 0L;
 
 BonjourProtocol::BonjourProtocol( QObject* parent, const QStringList &/*args*/ )
-	: Kopete::Protocol( BonjourProtocolFactory::componentData(), parent ),
+	: Kopete::Protocol( parent ),
 	  bonjourOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
 			  i18n( "Online" ),   i18n( "O&nline" ), Kopete::OnlineStatusManager::Online ),
 	  bonjourAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  
