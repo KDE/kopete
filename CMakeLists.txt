@@ -26,12 +26,13 @@ find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS
 	Parts
 	Wallet
 	KDELibs4Support
-	#[[Phonon PimIdentities]]
+	#[[Phonon]]
 )
 find_package(KF5Config ${KF5_VERSION} CONFIG REQUIRED)
 find_package(KF5Emoticons ${KF5_VERSION} CONFIG REQUIRED)
 find_package(KF5DBusAddons ${KF5_VERSION} CONFIG REQUIRED)
 find_package(KF5Contacts ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
+find_package(KF5IdentityManagement ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
 
 include(KDEInstallDirs)
 include(KDECompilerSettings)
