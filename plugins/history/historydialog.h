@@ -21,14 +21,15 @@
 
 #include <QtCore/QList>
 
-#include <kdialog.h>
-#include <kurl.h>
+#include <QDialog>
+#include <QUrl>
+#include <QDate>
 
 #include "kopetemessage.h"
 
 class QTreeWidgetItem;
 
-class KAction;
+class QAction;
 class KHTMLView;
 class KHTMLPart;
 namespace KParts { class BrowserArguments; class OpenUrlArguments; class Part; }
@@ -56,7 +57,7 @@ class DMPair
  * @author Richard Stellingwerff <remenic@linuxfromscratch.org>
  * @author Stefan Gehn <metz AT gehn.net>
  */
-class HistoryDialog : public KDialog
+class HistoryDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -73,7 +74,7 @@ class HistoryDialog : public KDialog
 		void closing();
 
 	private slots:
-		void slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
+		void slotOpenURLRequest(const QUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &);
 
 		// Called when a date is selected in the treeview
 		void dateSelected(QTreeWidgetItem *);
@@ -133,8 +134,8 @@ class HistoryDialog : public KDialog
 
 		bool mSearching;
 
-		KAction *mCopyAct;
-		KAction *mCopyURLAct;
+		QAction *mCopyAct;
+		QAction *mCopyURLAct;
 		QString mURL;
 };
 

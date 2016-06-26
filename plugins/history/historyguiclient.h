@@ -21,7 +21,7 @@
 
 #include <kxmlguiclient.h>
 
-class KAction;
+class QAction;
 
 namespace Kopete { class ChatSession; }
 
@@ -53,9 +53,9 @@ private:
 	//int m_nbAutoChatWindow;
 	//unsigned int m_nbChatWindow;
 
-	KAction *actionPrev;
-	KAction *actionNext;
-	KAction *actionLast;
+	QAction *actionPrev;
+	QAction *actionNext;
+	QAction *actionLast;
 };
 
 #endif

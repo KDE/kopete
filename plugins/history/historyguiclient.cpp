@@ -21,11 +21,11 @@
 #include <QtGui/QTextCursor>
 #include <QtGui/QTextDocument>
 
-#include <kaction.h>
+#include <QAction>
 #include <kstandardaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kactioncollection.h>
 
 #include "kopetechatsession.h"
@@ -41,8 +41,6 @@
 HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 		: QObject ( parent ), KXMLGUIClient ( parent )
 {
-	setComponentData ( KGenericFactory<HistoryPlugin>::componentData() );
-
 	m_manager = parent;
 
 	// Refuse to build this client, it is based on wrong parameters
@@ -52,7 +50,7 @@ HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 	QList<Kopete::Contact*> mb=m_manager->members();
 	m_logger=new HistoryLogger ( mb.first() , this );
 
-	actionLast = new KAction ( KIcon ( "go-last" ), i18n ( "Latest History" ), this );
+	actionLast = new QAction ( QIcon::fromTheme(QStringLiteral("go-last")), i18n ( "Latest History" ), this );
 	actionCollection()->addAction ( "historyLast", actionLast );
 	connect ( actionLast, SIGNAL (triggered(bool)), this, SLOT (slotLast()) );
 	actionPrev = KStandardAction::back ( this, SLOT (slotPrevious()), this );
@@ -60,12 +58,12 @@ HistoryGUIClient::HistoryGUIClient ( Kopete::ChatSession *parent )
 	actionNext = KStandardAction::forward ( this, SLOT (slotNext()), this );
 	actionCollection()->addAction ( "historyNext", actionNext );
 
-	KAction *viewChatHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
+	QAction *viewChatHistory = new QAction( QIcon::fromTheme(QStringLiteral("view-history")), i18n("View &History" ), this );
 	actionCollection()->addAction( "viewChatHistory", viewChatHistory );
-	viewChatHistory->setShortcut(KShortcut (Qt::CTRL + Qt::Key_H));
+	viewChatHistory->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_H));
 	connect(viewChatHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 
-	KAction *actionQuote = new KAction ( KIcon ( "go-last" ),i18n ( "Quote Last Message" ), this );
+	QAction *actionQuote = new QAction ( QIcon::fromTheme(QStringLiteral("go-last")),i18n ( "Quote Last Message" ), this );
 	actionCollection()->addAction ( "historyQuote",actionQuote );
 	connect ( actionQuote,SIGNAL (triggered(bool)),this,SLOT (slotQuote()) );
 

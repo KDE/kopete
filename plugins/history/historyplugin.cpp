@@ -22,11 +22,11 @@
 
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
-#include <kaction.h>
+#include <QAction>
 #include <kmessagebox.h>
 #include <kplugininfo.h>
 #include <kdeversion.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kactioncollection.h>
 
 #include "kopetechatsessionmanager.h"
@@ -42,16 +42,14 @@
 #include "historyguiclient.h"
 #include "historyconfig.h"
 
-typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
-static const KAboutData aboutdata("kopete_history", 0, ki18n("History") , "1.0" );
-K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  )
+K_PLUGIN_FACTORY(HistoryPluginFactory, registerPlugin<HistoryPlugin>();)
 
-HistoryPlugin::HistoryPlugin( QObject *parent, const QStringList & /* args */ )
-: Kopete::Plugin( HistoryPluginFactory::componentData(), parent ), m_loggerFactory( this )
+HistoryPlugin::HistoryPlugin( QObject *parent, const QVariantList & /* args */ )
+: Kopete::Plugin( parent ), m_loggerFactory( this )
 {
-	KAction *viewMetaContactHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
+	QAction *viewMetaContactHistory = new QAction( QIcon::fromTheme(QStringLiteral("view-history")), i18n("View &History" ), this );
 	actionCollection()->addAction( "viewMetaContactHistory", viewMetaContactHistory );
-	viewMetaContactHistory->setShortcut(KShortcut(Qt::CTRL + Qt::Key_H));
+	viewMetaContactHistory->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
 	connect(viewMetaContactHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 	viewMetaContactHistory->setEnabled(
 		Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );

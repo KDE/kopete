@@ -18,9 +18,9 @@
 
 #include "historypreferences.h"
 
-#include <QtGui/QLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QCheckBox>
+#include <QLayout>
+#include <QVBoxLayout>
+#include <QCheckBox>
 
 #include <kcolorbutton.h>
 #include <knuminput.h>
@@ -33,7 +33,7 @@ K_PLUGIN_FACTORY( HistoryPreferencesFactory, registerPlugin<HistoryPreferences>(
 K_EXPORT_PLUGIN( HistoryPreferencesFactory( "kcm_kopete_history" ) )
 
 HistoryPreferences::HistoryPreferences(QWidget *parent, const QVariantList &args)
-	: KCModule(HistoryPreferencesFactory::componentData(), parent, args)
+	: KCModule(parent, args)
 {
 	kDebug(14310) << "called.";
 	
