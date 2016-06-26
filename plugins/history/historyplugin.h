@@ -65,7 +65,7 @@ class HistoryPlugin : public Kopete::Plugin
 {
 	Q_OBJECT
 	public:
-		HistoryPlugin( QObject *parent, const QStringList &args );
+		HistoryPlugin( QObject *parent, const QVariantList &args );
 		~HistoryPlugin();
 
 		/**

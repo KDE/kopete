@@ -15,7 +15,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QRegExp>
 #include <QtCore/QTextStream>
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtXml/QDomDocument>
 
 #include <kconfig.h>
@@ -23,8 +23,10 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
-#include <kprogressdialog.h>
-#include <ksavefile.h>
+#include <QProgressDialog>
+#include <QSaveFile>
+#include <QStandardPaths>
+#include <KSharedConfig>
 
 #include "kopetepluginmanager.h"
 #include "kopeteaccount.h"
@@ -41,12 +43,13 @@ void HistoryPlugin::convertOldHistory()
 	bool deleteFiles=  KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 		i18n( "Would you like to remove the old history files?" ) , i18n( "History Converter" ), KStandardGuiItem::del(), KGuiItem( i18n("Keep") ) ) == KMessageBox::Yes;
 
-	KProgressDialog *progressDlg=new KProgressDialog(Kopete::UI::Global::mainWidget() , i18n( "History converter" ));
+	QProgressDialog *progressDlg = new QProgressDialog(Kopete::UI::Global::mainWidget() );
+	progressDlg->setWindowTitle(i18n( "History converter" ));
 	progressDlg->setModal(true); //modal  to  make sure the user will not doing stupid things (we have a qApp->processEvents())
-	progressDlg->setAllowCancel(false); //because i am too lazy to allow to cancel
+	progressDlg->setCancelButton(0); //because i am too lazy to allow to cancel
 
 
-	QString kopetedir=KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete"));
+	QString kopetedir=QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1( "kopete");
 	QDir d( kopetedir ); //d should point to ~/.kde/share/apps/kopete/
 
 	d.setFilter( QDir::Dirs  );
@@ -72,27 +75,27 @@ void HistoryPlugin::convertOldHistory()
 			if(fi.fileName() == "MSNProtocol" || fi.fileName() == "msn_logs" )
 			{
 				protocolId="MSNProtocol";
-				accountId=KGlobal::config()->group("MSN").readEntry( "UserID" );
+				accountId=KSharedConfig::openConfig()->group("MSN").readEntry( "UserID" );
 			}
 			else if(fi.fileName() == "ICQProtocol" || fi.fileName() == "icq_logs" )
 			{
 				protocolId="ICQProtocol";
-				accountId=KGlobal::config()->group("ICQ").readEntry( "UIN" );
+				accountId=KSharedConfig::openConfig()->group("ICQ").readEntry( "UIN" );
 			}
 			else if(fi.fileName() == "AIMProtocol" || fi.fileName() == "aim_logs" )
 			{
 				protocolId="AIMProtocol";
-				accountId=KGlobal::config()->group("AIM").readEntry( "UserID" );
+				accountId=KSharedConfig::openConfig()->group("AIM").readEntry( "UserID" );
 			}
 			else if(fi.fileName() == "OscarProtocol" )
 			{
 				protocolId="AIMProtocol";
-				accountId=KGlobal::config()->group("OSCAR").readEntry( "UserID" );
+				accountId=KSharedConfig::openConfig()->group("OSCAR").readEntry( "UserID" );
 			}
 			else if(fi.fileName() == "JabberProtocol" || fi.fileName() == "jabber_logs")
 			{
 				protocolId="JabberProtocol";
-				accountId=KGlobal::config()->group("Jabber").readEntry( "UserID" );
+				accountId=KSharedConfig::openConfig()->group("Jabber").readEntry( "UserID" );
 			}
 			//TODO: gadu, wp
 		}
@@ -104,8 +107,8 @@ void HistoryPlugin::convertOldHistory()
 			d2.setNameFilters( QStringList("*.log") );
 			const QFileInfoList list = d2.entryInfoList();;
 
-			progressDlg->progressBar()->reset();
-			progressDlg->progressBar()->setMaximum(d2.count());
+			progressDlg->reset();
+			progressDlg->setMaximum(d2.count());
 			progressDlg->setLabelText(i18n("Parsing the old history in %1", fi.fileName()));
 			progressDlg->show(); //if it was not already showed...
 
@@ -215,9 +218,8 @@ void HistoryPlugin::convertOldHistory()
 											QString::fromLatin1( "/" ) +
 											contactId.replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 											date.toString(".yyyyMM");
-									KSaveFile file(  KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name +
-									                                             QString::fromLatin1( ".xml" ) )  );
-									if( file.open() )
+									QSaveFile file(  QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString( "kopete/logs/"  + name + QString::fromLatin1( ".xml" ) )  );
+									if( file.open(QIODevice::WriteOnly) )
 									{
 										QString buf;
 										QTextStream stream( &buf, QIODevice::WriteOnly );
@@ -225,7 +227,7 @@ void HistoryPlugin::convertOldHistory()
 										doc.doctype().save( stream, 1 );
 										doc.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
 										file.write( buf.toUtf8() );
-										file.finalize();
+										file.commit();
 									}
 								}
 
@@ -281,9 +283,8 @@ void HistoryPlugin::convertOldHistory()
 								QString::fromLatin1( "/" ) +
 								contactId.replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) ) +
 								date.toString(".yyyyMM");
-						KSaveFile file( KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs/" ) + name +
-						                                            QString::fromLatin1( ".xml" ) )  );
-						if( file.open() )
+						QSaveFile file( QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString( "kopete/logs/"  + name + QString::fromLatin1( ".xml" ) )  );
+						if( file.open(QIODevice::WriteOnly) )
 						{
 							QString buf;
 							QTextStream stream( &buf, QIODevice::WriteOnly );
@@ -291,12 +292,12 @@ void HistoryPlugin::convertOldHistory()
 							doc.doctype().save( stream, 1 );
 							doc.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
 							file.write( buf.toUtf8() );
-							file.finalize();
+							file.commit();
 						}
 					}
 
 				}
-				progressDlg->progressBar()->setValue(progressDlg->progressBar()->value()+1);
+				progressDlg->setValue(progressDlg->value()+1);
 			}
 		}
 	}
@@ -307,18 +308,18 @@ void HistoryPlugin::convertOldHistory()
 
 bool HistoryPlugin::detectOldHistory()
 {
-	QString version=KGlobal::config()->group("History Plugin").readEntry( "Version" ,"0.6" );
+	QString version=KSharedConfig::openConfig()->group("History Plugin").readEntry( "Version" ,"0.6" );
 
 	if(version != "0.6")
 		return false;
 
 
-	QDir d( KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete/logs")) );
+	QDir d( QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1( "kopete/logs")) ;
 	d.setFilter( QDir::Dirs  );
 	if(d.count() >= 3)  // '.' and '..' are included
 		return false;  //the new history already exists
 
-	QDir d2( KStandardDirs::locateLocal( "data", QString::fromLatin1( "kopete")) );
+	QDir d2( QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString::fromLatin1( "kopete")) ;
 	d2.setFilter( QDir::Dirs  );
 	const QFileInfoList list = d2.entryInfoList();
 

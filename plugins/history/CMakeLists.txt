@@ -14,15 +14,12 @@ set(kopete_history_PART_SRCS
    historyguiclient.cpp
    historyimport.cpp )
 
-ki18n_wrap_ui(kopete_history_PART_SRCS historyviewer.ui )
-
 kconfig_add_kcfg_files(kopete_history_PART_SRCS historyconfig.kcfgc )
 
-
 add_library(kopete_history MODULE ${kopete_history_PART_SRCS})
+set_target_properties(kopete_history PROPERTIES AUTOMOC TRUE)
 
-
-target_link_libraries(kopete_history  KF5::KHtml kopete )
+target_link_libraries(kopete_history Qt5::Widgets KF5::KHtml kopete )
 
 install(TARGETS kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 
@@ -31,15 +28,14 @@ install(TARGETS kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(kcm_kopete_history_PART_SRCS historypreferences.cpp )
 
-ki18n_wrap_ui(kcm_kopete_history_PART_SRCS historyprefsui.ui )
-
 kconfig_add_kcfg_files(kcm_kopete_history_PART_SRCS historyconfig.kcfgc )
 
 
 add_library(kcm_kopete_history MODULE ${kcm_kopete_history_PART_SRCS})
+set_target_properties(kcm_kopete_history PROPERTIES AUTOMOC TRUE)
 
 
-target_link_libraries(kcm_kopete_history   kopete )
+target_link_libraries(kcm_kopete_history KF5::KCMUtils Qt5::Widgets kopete )
 
 install(TARGETS kcm_kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
 

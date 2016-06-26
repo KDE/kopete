@@ -21,13 +21,14 @@
 #include <QtCore/QPointer>
 #include <QtCore/QDir>
 #include <QtCore/QTextStream>
+#include <QtCore/QTimer>
 #include <QtGui/QClipboard>
 #include <QtGui/QTextDocument>
 
 #include <kdebug.h>
 #include <krun.h>
-#include <kmenu.h>
-#include <kaction.h>
+#include <QMenu>
+#include <QAction>
 #include <kstandardaction.h>
 #include <dom/dom_doc.h>
 #include <dom/dom_element.h>
@@ -35,6 +36,11 @@
 #include <dom/html_element.h>
 #include <khtml_part.h>
 #include <khtmlview.h>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QStandardPaths>
 
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
@@ -81,12 +87,20 @@ bool KListViewDateItem::operator<( const QTreeWidgetItem& other ) const
 
 
 HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
- : KDialog(parent),
+ : QDialog(parent),
    mSearching(false)
 {
 	setAttribute (Qt::WA_DeleteOnClose, true);
-	setCaption( i18n("History for %1", mc->displayName()) );
-	setButtons(KDialog::Close);
+	setWindowTitle( i18n("History for %1", mc->displayName()) );
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
+	QWidget *mainWidget = new QWidget(this);
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	//PORTING SCRIPT: WARNING mainLayout->addWidget(buttonBox) must be last item in layout. Please move it.
+	mainLayout->addWidget(buttonBox);
 	QString fontSize;
 	QString htmlCode;
 	QString fontStyle;
@@ -122,8 +136,6 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mMainWidget->dateSearchLine->setTreeWidget(mMainWidget->dateTreeWidget);
 	mMainWidget->dateTreeWidget->sortItems(0, Qt::DescendingOrder); //newest-first
 
-	setMainWidget( w );
-
 	// Initializing HTML Part
 	QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
 	mHtmlPart = new KHTMLPart(mMainWidget->htmlFrame);
@@ -152,8 +164,8 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mHtmlPart->end();
 
 
-	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
-		this, SLOT(slotOpenURLRequest(KUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)));
+	connect(mHtmlPart->browserExtension(), SIGNAL(openUrlRequestDelayed(QUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)),
+		this, SLOT(slotOpenURLRequest(QUrl,KParts::OpenUrlArguments,KParts::BrowserArguments)));
 	connect(mMainWidget->dateTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(dateSelected(QTreeWidgetItem*)));
 	connect(mMainWidget->searchButton, SIGNAL(clicked()), this, SLOT(slotSearch()));
 	connect(mMainWidget->searchLine, SIGNAL(returnPressed()), this, SLOT(slotSearch()));
@@ -167,12 +179,11 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, QWidget* parent)
 	mCopyAct = KStandardAction::copy( this, SLOT(slotCopy()), mHtmlView );
 	mHtmlView->addAction( mCopyAct );
 
-	mCopyURLAct = new KAction( KIcon("edit-copy"), i18n("Copy Link Address"), mHtmlView );
+	mCopyURLAct = new QAction( QIcon::fromTheme(QStringLiteral("edit-copy")), i18n("Copy Link Address"), mHtmlView );
 	mHtmlView->addAction( mCopyURLAct );
 	connect( mCopyURLAct, SIGNAL(triggered(bool)), this, SLOT(slotCopyURL()) );
 
 	resize(650, 700);
-	centerOnScreen(this);
 
 	// show the dialog before people get impatient
 	show();
@@ -250,7 +261,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 	const QString contact_in_filename=c->contactId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) );
 
 	// BEGIN check if there are Kopete 0.7.x
-	QDir d1(KStandardDirs::locateLocal("data",QString("kopete/logs/")+
+	QDir d1(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString("kopete/logs/"+
 			c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-"))
 					   ));
 	d1.setFilter( QDir::Files | QDir::NoSymLinks );
@@ -275,7 +286,7 @@ void HistoryDialog::init(Kopete::Contact *c)
 	}
 	// END of kopete 0.7.x check
 
-	QString logDir = KStandardDirs::locateLocal("data",QString("kopete/logs/")+
+	QString logDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString("kopete/logs/"+
 			c->protocol()->pluginId().replace( QRegExp(QString::fromLatin1("[./~?*]")),QString::fromLatin1("-")) +
 					QString::fromLatin1( "/" ) +
 					c->account()->accountId().replace( QRegExp( QString::fromLatin1( "[./~?*]" ) ), QString::fromLatin1( "-" ) )
@@ -402,7 +413,7 @@ void HistoryDialog::slotFilterChanged(int /*index*/)
 	dateSelected(mMainWidget->dateTreeWidget->currentItem());
 }
 
-void HistoryDialog::slotOpenURLRequest(const KUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
+void HistoryDialog::slotOpenURLRequest(const QUrl &url, const KParts::OpenUrlArguments &, const KParts::BrowserArguments &)
 {
 	kDebug(14310) << "url=" << url.url();
 	new KRun(url, 0, false); // false = non-local files
@@ -572,14 +583,14 @@ void HistoryDialog::slotContactChanged(int index)
 	mMainWidget->dateTreeWidget->clear();
 	if (index == 0)
 	{
-        setCaption(i18n("History for All Contacts"));
+        setWindowTitle(i18n("History for All Contacts"));
         mMetaContact = 0;
 		init();
 	}
 	else
 	{
 		mMetaContact = mMetaContactList.at(index-1);
-        setCaption(i18n("History for %1", mMetaContact->displayName()));
+        setWindowTitle(i18n("History for %1", mMetaContact->displayName()));
 		init();
 	}
 }
@@ -600,7 +611,7 @@ void HistoryDialog::doneProgressBar()
 
 void HistoryDialog::slotRightClick(const QString &url, const QPoint &point)
 {
-	KMenu *chatWindowPopup = new KMenu();
+	QMenu *chatWindowPopup = new QMenu();
 
 	if ( !url.isEmpty() )
 	{

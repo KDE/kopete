@@ -19,17 +19,17 @@
 
 #include <QtCore/QStack>
 #include <QtCore/QDir>
-#include <QtGui/QTextEdit>
-#include <QtGui/QTreeView>
-#include <QtGui/QPushButton>
-#include <QtGui/QCheckBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QStandardItemModel>
-#include <QtGui/QProgressDialog>
-#include <QtGui/QMessageBox>
-#include <QtGui/QFileDialog>
-#include <QtGui/QApplication>
-#include <QtXml/QXmlStreamReader>
+#include <QTextEdit>
+#include <QTreeView>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QGridLayout>
+#include <QStandardItemModel>
+#include <QProgressDialog>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QApplication>
+#include <QXmlStreamReader>
 
 #include <kdebug.h>
 #include <klocale.h>
