@@ -81,6 +81,7 @@ src/xmpp/xmpp-core/securestream.cpp
 src/xmpp/xmpp-core/simplesasl.cpp
 src/xmpp/xmpp-core/xmlprotocol.cpp
 src/xmpp/xmpp-core/protocol.cpp
+src/xmpp/xmpp-core/sm.cpp
 src/xmpp/xmpp-core/compressionhandler.cpp
 src/xmpp/xmpp-core/parser.cpp
 src/xmpp/xmpp-core/connector.cpp
