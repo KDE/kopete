@@ -35,7 +35,7 @@ namespace XMPP {
 	{
 		Q_OBJECT
 	public:
-		enum { ErrDisc };
+		enum { ErrDisc, ErrTimeout };
 		Task(Task *parent);
 		Task(Client *, bool isRoot);
 		virtual ~Task();
@@ -49,6 +49,9 @@ namespace XMPP {
 		int statusCode() const;
 		const QString & statusString() const;
 
+		void setTimeout(int seconds) const;
+		int timeout();
+
 		void go(bool autoDelete=false);
 		virtual bool take(const QDomElement &);
 		void safeDelete();
@@ -59,7 +62,8 @@ namespace XMPP {
 	protected:
 		virtual void onGo();
 		virtual void onDisconnect();
-		void send(const QDomElement &, bool want_notify = false);
+		virtual void onTimeout();
+		void send(const QDomElement &);
 		void setSuccess(int code=0, const QString &str="");
 		void setError(const QDomElement &);
 		void setError(int code=0, const QString &str="");
@@ -69,6 +73,7 @@ namespace XMPP {
 
 	private slots:
 		void clientDisconnected();
+		void timeoutFinished();
 		void done();
 
 	private:

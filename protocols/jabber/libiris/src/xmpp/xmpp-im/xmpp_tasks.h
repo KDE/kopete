@@ -34,6 +34,7 @@ namespace XMPP
 	class Roster;
 	class Status;
 	class BoBData;
+	class CaptchaChallenge;
 
 	class JT_Register : public Task
 	{
@@ -183,14 +184,13 @@ namespace XMPP
 	{
 		Q_OBJECT
 	public:
-		JT_Message(Task *parent, const Message &, bool want_notify = false);
+		JT_Message(Task *parent, const Message &);
 		~JT_Message();
 
 		void onGo();
 
 	private:
 		Message m;
-		bool w_notify;
 
 		class Private;
 		Private *d;
@@ -244,7 +244,7 @@ namespace XMPP
 
 		void get(const Jid &);
 		void set(const VCard &);
-		void set(const Jid &, const VCard &);
+		void set(const Jid &, const VCard &, bool isTarget = false);
 
 		const Jid & jid() const;
 		const VCard  & vcard() const;
@@ -444,7 +444,7 @@ namespace XMPP
 
 		void onGo();
 		bool take(const QDomElement &);
-		BoBData data();
+		BoBData &data();
 
 	private:
 		class Private;
@@ -457,6 +457,41 @@ namespace XMPP
 	public:
 		JT_PongServer(Task *);
 		bool take(const QDomElement &);
+	};
+
+	class JT_CaptchaChallenger : public Task
+	{
+		Q_OBJECT
+	public:
+		const static int CaptchaValidTimeout = 120;
+
+		JT_CaptchaChallenger(Task *);
+		~JT_CaptchaChallenger();
+
+		void set(const Jid &, const CaptchaChallenge &);
+
+		void onGo();
+		bool take(const QDomElement &);
+
+	private:
+		class Private;
+		Private *d;
+	};
+
+	class JT_CaptchaSender : public Task
+	{
+		Q_OBJECT
+	public:
+		JT_CaptchaSender(Task *);
+
+		void set(const Jid &, const XData &);
+
+		void onGo();
+		bool take(const QDomElement &);
+
+	private:
+		Jid to;
+		QDomElement iq;
 	};
 }
 

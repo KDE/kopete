@@ -115,7 +115,7 @@ public:
 	Task *root;
 	QString host, user, pass, resource;
 	QString osName, osVersion, tzname, clientName, clientVersion;
-	CapsSpec caps;
+	CapsSpec caps, serverCaps;
 	DiscoItem::Identity identity;
 	Features features;
 	QMap<QString,Features> extension_features;
@@ -164,6 +164,9 @@ Client::Client(QObject *par)
 
 Client::~Client()
 {
+	//fprintf(stderr, "\tClient::~Client\n");
+	//fflush(stderr);
+
 	close(true);
 
 	delete d->ftman;
@@ -185,6 +188,7 @@ void Client::connectToServer(ClientStream *s, const Jid &j, bool auth)
 	//connect(d->stream, SIGNAL(closeFinished()), SLOT(streamCloseFinished()));
 	connect(d->stream, SIGNAL(incomingXml(QString)), SLOT(streamIncomingXml(QString)));
 	connect(d->stream, SIGNAL(outgoingXml(QString)), SLOT(streamOutgoingXml(QString)));
+	connect(d->stream, SIGNAL(haveUnhandledFeatures()), SLOT(parseUnhandledStreamFeatures()));
 
 	d->stream->connectToServer(j, auth);
 }
@@ -399,14 +403,6 @@ QString Client::groupChatNick(const QString &host, const QString &room) const
 	return QString();
 }
 
-bool Client::isStreamManagementActive() const {
-	ClientStream *cs = qobject_cast<ClientStream*>(d->stream);
-	if(cs)
-		return cs->isStreamManagementActive();
-	return false;
-}
-
-
 /*void Client::start()
 {
 	if(d->stream->old()) {
@@ -422,6 +418,9 @@ bool Client::isStreamManagementActive() const {
 // TODO: fast close
 void Client::close(bool)
 {
+	//fprintf(stderr, "\tClient::close\n");
+	//fflush(stderr);
+
 	if(d->stream) {
 		d->stream->disconnect(this);
 		d->stream->close();
@@ -513,6 +512,9 @@ static QDomElement oldStyleNS(const QDomElement &e)
 
 void Client::streamReadyRead()
 {
+	//fprintf(stderr, "\tClientStream::streamReadyRead\n");
+	//fflush(stderr);
+
 	while(d->stream && d->stream->stanzaAvailable()) {
 		Stanza s = d->stream->read();
 
@@ -539,6 +541,19 @@ void Client::streamOutgoingXml(const QString &s)
 	if(str.at(str.length()-1) != '\n')
 		str += '\n';
 	emit xmlOutgoing(str);
+}
+
+void Client::parseUnhandledStreamFeatures()
+{
+	QList<QDomElement> nl = d->stream->unhandledFeatures();
+	foreach (const QDomElement &e, nl) {
+		if (e.localName() == "c" && e.namespaceURI() == NS_CAPS) {
+			d->serverCaps = CapsSpec::fromXml(e);
+			if (d->capsman->isEnabled()) {
+				d->capsman->updateCaps(Jid(d->stream->jid().domain()), d->serverCaps);
+			}
+		}
+	}
 }
 
 void Client::debug(const QString &str)
@@ -598,7 +613,7 @@ void Client::distribute(const QDomElement &x)
 	}
 }
 
-void Client::send(const QDomElement &x, bool want_notify)
+void Client::send(const QDomElement &x)
 {
 	if(!d->stream)
 		return;
@@ -617,13 +632,14 @@ void Client::send(const QDomElement &x, bool want_notify)
 		//printf("bad stanza??\n");
 		return;
 	}
+	emit stanzaElementOutgoing(e);
 	QString out = s.toString();
 	//qWarning() << "Out: " << out;
 	debug(QString("Client: outgoing: [\n%1]\n").arg(out));
 	emit xmlOutgoing(out);
 
 	//printf("x[%s] x2[%s] s[%s]\n", Stream::xmlToString(x).toLatin1(), Stream::xmlToString(e).toLatin1(), s.toString().toLatin1());
-	d->stream->write(s, want_notify);
+	d->stream->write(s);
 }
 
 void Client::send(const QString &str)
@@ -983,9 +999,9 @@ void Client::importRosterItem(const RosterItem &item)
 	debug(dstr + str);
 }
 
-void Client::sendMessage(const Message &m, bool want_notify)
+void Client::sendMessage(const Message &m)
 {
-	JT_Message *j = new JT_Message(rootTask(), m, want_notify);
+	JT_Message *j = new JT_Message(rootTask(), m);
 	j->go(true);
 }
 
@@ -1067,13 +1083,7 @@ CapsSpec Client::caps() const
 
 CapsSpec Client::serverCaps() const
 {
-	const StreamFeatures &f = d->stream->streamFeatures();
-	if (!(f.capsAlgo.isEmpty() || f.capsNode.isEmpty() || f.capsVersion.isEmpty())) {
-		if (CapsSpec::cryptoMap().contains(f.capsAlgo)) {
-			return CapsSpec(f.capsNode, CapsSpec::cryptoMap().value(f.capsAlgo), f.capsVersion);
-		}
-	}
-	return CapsSpec();
+	return d->serverCaps;
 }
 
 void Client::setOSName(const QString &name)
