@@ -71,6 +71,7 @@ src/xmpp/xmpp-core/securestream.cpp
 src/xmpp/xmpp-core/simplesasl.cpp
 src/xmpp/xmpp-core/xmlprotocol.cpp
 src/xmpp/xmpp-core/protocol.cpp
+src/xmpp/xmpp-core/sm.cpp
 src/xmpp/xmpp-core/compressionhandler.cpp
 src/xmpp/xmpp-core/parser.cpp
 src/xmpp/xmpp-core/connector.cpp
@@ -165,6 +166,7 @@ src/xmpp/xmpp-im/xmpp_address.h
 src/xmpp/xmpp-im/xmpp_agentitem.h
 src/xmpp/xmpp-im/filetransfer.h
 src/xmpp/xmpp-im/xmpp_status.h
+src/xmpp/xmpp-im/xmpp_captcha.h
 src/xmpp/xmpp-im/xmpp_resourcelist.h
 src/xmpp/xmpp-im/xmpp_liveroster.h
 src/xmpp/xmpp-im/xmpp_resource.h
@@ -185,6 +187,7 @@ src/xmpp/xmpp-core/securestream.h
 src/xmpp/xmpp-core/protocol.h
 src/xmpp/xmpp-core/compressionhandler.h
 src/xmpp/xmpp-core/xmlprotocol.h
+src/xmpp/xmpp-core/sm.h
 src/xmpp/xmpp-core/xmpp.h
 src/xmpp/xmpp-core/xmpp_clientstream.h
 src/xmpp/xmpp-core/xmpp_stream.h
