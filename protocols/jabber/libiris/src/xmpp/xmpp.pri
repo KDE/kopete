@@ -9,7 +9,7 @@ iris_bundle:{
 	include(../irisnet/noncore/noncore.pri)
 }
 else {
-	LIBS += -L$$IRIS_BASE/lib -lirisnet
+	LIBS += -L$$top_iris_builddir/lib -lirisnet
 }
 
 include($$IRIS_XMPP_BASE_MODULE)
@@ -30,6 +30,7 @@ HEADERS += \
 	$$PWD/xmpp-core/parser.h \
 	$$PWD/xmpp-core/xmlprotocol.h \
 	$$PWD/xmpp-core/protocol.h \
+	$$PWD/xmpp-core/sm.h \
 	$$PWD/xmpp-core/compressionhandler.h \
 	$$PWD/xmpp-core/td.h \
 	$$PWD/xmpp-im/xmpp_tasks.h \
@@ -64,6 +65,7 @@ HEADERS += \
 	$$PWD/xmpp-im/xmpp_task.h \
 	$$PWD/xmpp-im/xmpp_httpauthrequest.h \
 	$$PWD/xmpp-im/xmpp_status.h \
+	$$PWD/xmpp-im/xmpp_captcha.h \
 	$$PWD/xmpp-im/xmpp_features.h \
 	$$PWD/xmpp-im/xmpp_agentitem.h \
 	$$PWD/xmpp-im/xmpp_discoitem.h \
@@ -78,6 +80,7 @@ SOURCES += \
 	$$PWD/xmpp-core/parser.cpp \
 	$$PWD/xmpp-core/xmlprotocol.cpp \
 	$$PWD/xmpp-core/protocol.cpp \
+	$$PWD/xmpp-core/sm.cpp \
 	$$PWD/xmpp-core/compressionhandler.cpp \
 	$$PWD/xmpp-core/stream.cpp \
 	$$PWD/xmpp-core/simplesasl.cpp \

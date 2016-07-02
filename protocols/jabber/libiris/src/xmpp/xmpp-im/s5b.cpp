@@ -25,6 +25,7 @@
 #include <QByteArray>
 #include <stdlib.h>
 #include <qca.h>
+
 #include "xmpp_xmlcommon.h"
 #include "im.h"
 #include "socks.h"
@@ -828,7 +829,7 @@ void S5BManager::srv_incomingReady(SocksClient *sc, const QString &key)
 	Entry *e = findEntryByHash(key);
 	if(!e->i->allowIncoming) {
 		sc->requestDeny();
-		SafeDelete::deleteSingle(sc);
+		sc->deleteLater();
 		return;
 	}
 	if(e->c->d->mode == S5BConnection::Datagram)
@@ -2104,7 +2105,7 @@ void S5BServer::ss_incomingReady()
 
 void S5BServer::ss_incomingUDP(const QString &host, int port, const QHostAddress &addr, int sourcePort, const QByteArray &data)
 {
-	if(port != 0 || port != 1)
+	if(port != 0 && port != 1)
 		return;
 
 	foreach(S5BManager* m, d->manList) {
