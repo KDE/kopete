@@ -293,12 +293,28 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 	msgElem.setAttribute( "nick",  msg.from()->displayName() ); //do we have to set this?
 	msgElem.setAttribute( "time", msg.timestamp().toString("d h:m:s") );
 
-	QDomText msgNode;
-
+	QString body;
 	if ( msg.format() != Qt::PlainText )
-		msgNode = doc.createTextNode( msg.escapedBody() );
+		body = msg.escapedBody();
 	else
-		msgNode = doc.createTextNode( Qt::escape(msg.plainBody()).replace('\n', "<br />") );
+		body = Qt::escape(msg.plainBody()).replace('\n', "<br />");
+
+	// Convert UTF-16 surrogate pairs into XML entities
+	if ( body.contains(QRegExp("[\\xD800-\\xDBFF][\\xDC00-\\xDFFF]")) ) {
+		QString bodyEsc;
+		int bodySize = body.size();
+		for ( int i = 0; i < bodySize; ++i ) {
+			if ( i + 1 < bodySize && body.at(i).isHighSurrogate() && body.at(i+1).isLowSurrogate() ) {
+				bodyEsc += "&#x" + QString::number(QChar::surrogateToUcs4(body.at(i), body.at(i+1)), 16) + ';';
+				++i;
+				continue;
+			}
+			bodyEsc += body.at(i);
+		}
+		body = bodyEsc;
+	}
+
+	QDomText msgNode = doc.createTextNode( body );
 
 	docElem.appendChild( msgElem );
 	msgElem.appendChild( msgNode );
@@ -342,9 +358,11 @@ void HistoryLogger::saveToDisk()
 	KSaveFile file( m_toSaveFileName );
 	if( file.open() )
 	{
-		QTextStream stream ( &file );
-		//stream.setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
+		QString buf;
+		QTextStream stream( &buf, QIODevice::WriteOnly );
+		stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
 		m_toSaveDocument.save( stream, 1 );
+		file.write( buf.toUtf8() );
 		file.finalize();
 
 		m_saveTimerTime=qMin(t.elapsed()*1000, 300000);
@@ -872,6 +890,7 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
 			continue;
 		}
 		QTextStream stream(&file);
+		stream.setCodec("UTF-8");
 		QString fullText = stream.readAll();
 		file.close();
 

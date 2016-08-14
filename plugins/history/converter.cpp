@@ -219,9 +219,11 @@ void HistoryPlugin::convertOldHistory()
 									                                             QString::fromLatin1( ".xml" ) )  );
 									if( file.open() )
 									{
-										QTextStream stream ( &file );
-										//stream.setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
+										QString buf;
+										QTextStream stream( &buf, QIODevice::WriteOnly );
+										stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
 										doc.save( stream , 1 );
+										file.write( buf.toUtf8() );
 										file.finalize();
 									}
 								}
@@ -282,9 +284,11 @@ void HistoryPlugin::convertOldHistory()
 						                                            QString::fromLatin1( ".xml" ) )  );
 						if( file.open() )
 						{
-							QTextStream stream ( &file );
-							//stream.setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
+							QString buf;
+							QTextStream stream( &buf, QIODevice::WriteOnly );
+							stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
 							doc.save( stream ,1 );
+							file.write( buf.toUtf8() );
 							file.finalize();
 						}
 					}
