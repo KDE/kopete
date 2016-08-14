@@ -273,9 +273,11 @@ void XmlContactStorage::save()
         }
     }
 
-    QTextStream stream ( &contactListFile );
-    stream.setCodec(QTextCodec::codecForName("UTF-8"));
+    QString buf;
+    QTextStream stream( &buf, QIODevice::WriteOnly );
+    stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
     doc.save( stream, 4 );
+    contactListFile.write( buf.toUtf8() );
 
     if ( !contactListFile.finalize() )
     {

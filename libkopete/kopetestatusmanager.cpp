@@ -95,12 +95,14 @@ void StatusManager::saveXML()
 	KSaveFile file(filename);
 	if( file.open() )
 	{
-		QTextStream stream (&file);
-		stream.setCodec(QTextCodec::codecForName("UTF-8"));
+		QString buf;
+		QTextStream stream( &buf, QIODevice::WriteOnly );
+		stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
 
 		QDomDocument doc( QString::fromLatin1( "kopete-statuses" ) );
 		doc.appendChild( StatusManager::storeStatusItem( d->root ) );
 		doc.save( stream, 4 );
+		file.write( buf.toUtf8() );
 
 		file.close();
 	}
