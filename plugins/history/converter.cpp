@@ -222,7 +222,8 @@ void HistoryPlugin::convertOldHistory()
 										QString buf;
 										QTextStream stream( &buf, QIODevice::WriteOnly );
 										stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
-										doc.save( stream , 1 );
+										doc.doctype().save( stream, 1 );
+										doc.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
 										file.write( buf.toUtf8() );
 										file.finalize();
 									}
@@ -287,7 +288,8 @@ void HistoryPlugin::convertOldHistory()
 							QString buf;
 							QTextStream stream( &buf, QIODevice::WriteOnly );
 							stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
-							doc.save( stream ,1 );
+							doc.doctype().save( stream, 1 );
+							doc.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
 							file.write( buf.toUtf8() );
 							file.finalize();
 						}
