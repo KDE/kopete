@@ -361,7 +361,8 @@ void HistoryLogger::saveToDisk()
 		QString buf;
 		QTextStream stream( &buf, QIODevice::WriteOnly );
 		stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
-		m_toSaveDocument.save( stream, 1 );
+		m_toSaveDocument.doctype().save( stream, 1 );
+		m_toSaveDocument.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
 		file.write( buf.toUtf8() );
 		file.finalize();
 

@@ -101,7 +101,8 @@ void StatusManager::saveXML()
 
 		QDomDocument doc( QString::fromLatin1( "kopete-statuses" ) );
 		doc.appendChild( StatusManager::storeStatusItem( d->root ) );
-		doc.save( stream, 4 );
+		doc.doctype().save( stream, 4 );
+		doc.documentElement().save( stream, 4 ); // QDomDocument::save() override stream codec to UTF-8
 		file.write( buf.toUtf8() );
 
 		file.close();
