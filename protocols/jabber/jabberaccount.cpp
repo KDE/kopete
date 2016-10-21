@@ -376,6 +376,9 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	// allow plaintext password authentication or not?
 	m_jabberClient->setAllowPlainTextPassword ( configGroup()->readEntry ( "AllowPlainTextPassword", false ) );
 
+	// use X-OAUTH2
+	m_jabberClient->setUseXOAuth2 ( configGroup()->readEntry ( "UseXOAuth2", false ) );
+
 	// enable file transfer (if empty, IP will be set after connection has been established)
 	KConfigGroup config = KGlobal::config()->group ( "Jabber" );
 	m_jabberClient->setFileTransfersEnabled ( true, config.readEntry ( "LocalIP" ) );
@@ -1865,7 +1868,7 @@ void JabberAccount::loginLibjingleResolver(const QHostAddress &address, quint16 
 
 bool JabberAccount::enabledLibjingle()
 {
-	return configGroup()->readEntry("Libjingle", true);
+	return configGroup()->readEntry("Libjingle", true) && !configGroup()->readEntry("UseXOAuth2", false);
 }
 
 void JabberAccount::enableLibjingle(bool b)

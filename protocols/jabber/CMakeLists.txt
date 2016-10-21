@@ -11,6 +11,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/tasks/
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/include/iris
 ${CMAKE_CURRENT_SOURCE_DIR}/libiris/src
 ${QCA2_INCLUDE_DIR}
+${QJSON_INCLUDE_DIR}
 )
 
 if(BUILD_LIBJINGLE)
@@ -49,6 +50,7 @@ set(kopete_jabber_ui_SRCS
     ui/privacylistmodel.cpp
     ui/privacydlg.cpp
     ui/privacyruledlg.cpp
+    ui/dlgjabberxoauth2.cpp
 )
 
 if(BUILD_LIBJINGLE)
@@ -82,6 +84,7 @@ set(kopete_jabber_ui_files
    ui/dlgchatroomslist.ui 
    ui/privacyrule.ui
    ui/privacy.ui
+   ui/dlgxoauth2.ui
 )
 
 if(BUILD_LIBJINGLE)
@@ -133,6 +136,7 @@ set(kopete_jabber_PART_SRCS
    jabberbookmarks.cpp 
    jabberclient.cpp 
    jabberbobcache.cpp
+   xoauth2provider.cpp
 )
 
 if(BUILD_LIBJINGLE)
@@ -160,7 +164,7 @@ endif(BUILD_JINGLE)
 kde4_add_plugin(kopete_jabber ${kopete_jabber_PART_SRCS})
 
 
-target_link_libraries(kopete_jabber ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QCA2_LIBRARIES} ${KDE4_SOLID_LIBS} kopete iris_kopete)
+target_link_libraries(kopete_jabber ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${QCA2_LIBRARIES} ${QJSON_LIBRARIES} ${KDE4_SOLID_LIBS} kopete iris_kopete)
 if(BUILD_JINGLE)	
   target_link_libraries(kopete_jabber ${LIBORTP_LIBRARY} ${ASOUND_LIBRARY} ${SPEEX_LIBRARY})
 endif(BUILD_JINGLE)

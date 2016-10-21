@@ -55,6 +55,7 @@ private slots:
 	void awayPriorityToggled (bool);
 	void updateServerField ();
 	void slotPrivacyListsClicked ();
+	void slotManageXOAuth2Clicked ();
 
 private:
 	JabberProtocol *m_protocol;

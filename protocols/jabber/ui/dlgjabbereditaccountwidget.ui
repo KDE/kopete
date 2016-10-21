@@ -459,6 +459,40 @@
             </item>
            </layout>
           </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QCheckBox" name="cbUseXOAuth2">
+              <property name="text">
+               <string>Use X-OAuth2 authentication</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnXOAuth2">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Manage X-OAuth2 tokens</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>
@@ -1330,6 +1364,70 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
     <hint type="destinationlabel" >
      <x>535</x>
      <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbUseXOAuth2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnXOAuth2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>441</x>
+     <y>193</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbUseXOAuth2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>mPass</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>276</x>
+     <y>94</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbUseXOAuth2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Libjingle</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>276</x>
+     <y>94</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbUseXOAuth2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbAllowPlainTextPassword</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>276</x>
+     <y>94</y>
     </hint>
    </hints>
   </connection>

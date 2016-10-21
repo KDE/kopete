@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DlgXOAuth2</class>
+ <widget class="QWidget" name="DlgXOAuth2">
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Manage X-OAuth2 tokens</string>
+  </property>
+  <layout class="QGridLayout" name="layout">
+   <item row="0" column="0" colspan="2">
+    <widget class="QCheckBox" name="cbUseAccessToken">
+     <property name="text">
+      <string>Authenticate directly with Access Token</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="labelAccessToken">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Access Token</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="accessToken">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::PasswordEchoOnEdit</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="labelRequetUrl">
+     <property name="text">
+      <string>Request URL</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="requestUrl"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="labelClientId">
+     <property name="text">
+      <string>Client ID</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="clientId"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="labelClientSecretKey">
+     <property name="text">
+      <string>Client Secret Key</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="clientSecretKey">
+     <property name="echoMode">
+      <enum>QLineEdit::PasswordEchoOnEdit</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="labelRefreshToken">
+     <property name="text">
+      <string>Refresh Token</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLineEdit" name="refreshToken">
+     <property name="echoMode">
+      <enum>QLineEdit::PasswordEchoOnEdit</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>accessToken</receiver>
+   <slot>clear()</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>accessToken</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelAccessToken</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>clientId</receiver>
+   <slot>setDisabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelClientId</receiver>
+   <slot>setDisabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>clientSecretKey</receiver>
+   <slot>setDisabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelClientSecretKey</receiver>
+   <slot>setDisabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>refreshToken</receiver>
+   <slot>setDisabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelRefreshToken</receiver>
+   <slot>setDisabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>requestUrl</receiver>
+   <slot>setDisabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>cbUseAccessToken</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelRequetUrl</receiver>
+   <slot>setDisabled(bool)</slot>
+  </connection>
+ </connections>
+</ui>

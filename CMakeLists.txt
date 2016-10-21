@@ -95,6 +95,9 @@ macro_log_feature(OPENSSL_FOUND "OpenSSL" "OpenSSL implementation of SSL" "https
 macro_optional_find_package(QCA2)
 macro_log_feature(QCA2_FOUND "QCA2" "Qt Cryptographic Architecture" "http://delta.affinix.com/qca/" FALSE "2.0.0" "Required for the GroupWise and Jabber protocols")
 
+macro_optional_find_package(QJSON)
+macro_log_feature(QJSON_FOUND "QJSON" "JSON handling library for Qt" "http://qjson.sourceforge.net/" FALSE "" "Required for the Jabber protocol")
+
 macro_optional_find_package(QGpgme)
 macro_log_feature(QGPGME_FOUND "QGpgme" "QGpgME library (from kdepimlibs)" "http://www.kde.org/" FALSE "" "Required for the Cryptography plugin")
 
