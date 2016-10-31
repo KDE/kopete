@@ -21,8 +21,6 @@
 #ifndef GW_EVENTTASK_H
 #define GW_EVENTTASK_H
 
-#include <q3valuelist.h>
-
 #include "eventtransfer.h"
 #include "task.h"
 
