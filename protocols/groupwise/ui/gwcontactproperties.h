@@ -26,8 +26,8 @@
 #include "ui_gwcontactprops.h"
 
 namespace Ui { class GroupWiseContactPropsWidget; }
-class KDialog;
-class KAction;
+class QDialog;
+class QAction;
 
 /**
 Logic, wrapping UI, for displaying contact properties
@@ -54,8 +54,8 @@ protected slots:
 	void copy();
 private:
 	Ui::GroupWiseContactProps m_ui;
-	KAction * m_copyAction;
-	KDialog * m_dialog;
+	QAction * m_copyAction;
+	QDialog * m_dialog;
 };
 
 #endif // GWCONTACTPROPERTIES_H

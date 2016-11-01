@@ -19,7 +19,6 @@
 #include "chatroommanager.h"
 
 #include <qmap.h>
-#include <q3valuelist.h>
 
 #include <kdebug.h>
 

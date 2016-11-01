@@ -38,7 +38,7 @@
 #include "gwfield.h"
 #include "gwmessagemanager.h"
 
-class KAction;
+class QAction;
 class KActionCollection;
 namespace Kopete { class Account; }
 class GroupWiseAccount;
@@ -99,7 +99,7 @@ public:
 	/**
 	 * Return the actions for this contact
 	 */
-	virtual QList<KAction *> *customContextMenuActions();
+	virtual QList<QAction *> *customContextMenuActions();
 	using Kopete::Contact::customContextMenuActions;
 	
 	/**
@@ -180,8 +180,8 @@ protected:
 	int m_sequence;
 	QString m_dn;
 	QString m_displayName;
-	KAction* m_actionPrefs;
-	KAction *m_actionBlock;
+	QAction * m_actionPrefs;
+	QAction *m_actionBlock;
 	// Novell Messenger Properties, as received by the server.  
 	// Unfortunately we don't know the domain of the set of keys, so they are not easily mappable to KopeteContactProperties
 	QMap< QString, QVariant > m_serverProperties;

@@ -43,6 +43,10 @@
 #include <kopeteprotocol.h>
 #include <kopeteuiglobal.h>
 #include <kopeteview.h>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 #include "client.h"
 #include "gwaccount.h"
@@ -58,9 +62,6 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	m_mmId=++s_id;
 
 	kDebug () << "New message manager for " << user->contactId();
-
-	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
-	setComponentData( protocol->componentData() );
 
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
@@ -78,11 +79,11 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	actionCollection()->addAction( "gwInvite", m_actionInvite );
 	connect( m_actionInvite->menu(), SIGNAL(aboutToShow()), this, SLOT(slotActionInviteAboutToShow()) ) ;
 
-	m_secure = new KAction( KIcon( "security-high" ), i18n( "Security Status" ), 0 ); // "gwSecureChat"
+	m_secure = new QAction( QIcon::fromTheme(QStringLiteral("security-high")), i18n( "Security Status" ), 0 ); // "gwSecureChat"
 	QObject::connect( m_secure, SIGNAL(triggered(bool)), SLOT(slotShowSecurity()) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 
-	m_logging = new KAction( KIcon( "utilities-log-viewer" ), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
+	m_logging = new QAction( QIcon::fromTheme(QStringLiteral("utilities-log-viewer")), i18n( "Archiving Status" ), 0 ); // "gwLoggingChat"
 	QObject::connect( m_secure, SIGNAL(triggered(bool)),  SLOT(slotShowArchiving()) );
 	updateArchiving();
 
@@ -303,7 +304,7 @@ void GroupWiseChatSession::dequeueMessagesAndInvites()
 
 void GroupWiseChatSession::slotActionInviteAboutToShow()
 {
-	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
+	// We can't simply insert  QAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
 
 	qDeleteAll(m_inviteActions);
@@ -316,7 +317,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	{
 		if( !members().contains( contact ) && contact->isOnline() )
 		{
-			KAction *a = new Kopete::UI::ContactAction( contact,
+			QAction *a = new Kopete::UI::ContactAction( contact,
 			                                            actionCollection() );
 			m_actionInvite->addAction( a );
 			QObject::connect( a, SIGNAL(triggered(Kopete::Contact*,bool)),
@@ -325,7 +326,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 		}
 	}
 	// Invite someone off-list
-	KAction *b = new KAction( i18n("&Other..."), this );
+	QAction *b = new QAction( i18n("&Other..."), this );
 	actionCollection()->addAction( "actionOther", b );
 	QObject::connect( b, SIGNAL(triggered(bool)),
 	                  this, SLOT(slotInviteOtherContact()) );
@@ -371,14 +372,23 @@ void GroupWiseChatSession::slotInviteOtherContact()
 		// show search dialog
 		QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
 					Kopete::UI::Global::mainWidget() );
-		m_searchDlg = new KDialog( w);
-		m_searchDlg->setCaption(i18n( "Search for Contact to Invite" ));
-		m_searchDlg->setButtons(KDialog::Ok|KDialog::Cancel );
-		m_searchDlg->setDefaultButton(KDialog::Ok);
+		m_searchDlg = new QDialog( w);
+		m_searchDlg->setWindowTitle(i18n( "Search for Contact to Invite" ));
+		QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+		QWidget *mainWidget = new QWidget();
+		QVBoxLayout *mainLayout = new QVBoxLayout;
+		m_searchDlg->setLayout(mainLayout);
+		mainLayout->addWidget(mainWidget);
+		QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+		okButton->setDefault(true);
+		okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+		m_searchDlg->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+		m_searchDlg->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+		mainLayout->addWidget(buttonBox);
+		buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 		m_search = new GroupWiseContactSearch( account(), QAbstractItemView::SingleSelection, true, m_searchDlg );
-		m_searchDlg->setMainWidget( m_search );
-		connect( m_search, SIGNAL(selectionValidates(bool)), m_searchDlg, SLOT(enableButtonOk(bool)) );
-		m_searchDlg->enableButtonOk( false );
+		connect( m_search, SIGNAL(selectionValidates(bool)), m_searchDlg, SLOT(okButton->setEnabled(bool)) );
+		okButton->setEnabled( false );
 	}
 	m_searchDlg->show();
 }
@@ -514,14 +524,14 @@ void GroupWiseChatSession::slotShowSecurity()
 {
 	QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
 				Kopete::UI::Global::mainWidget() );
-	KMessageBox::queuedMessageBox( w, KMessageBox::Information, i18n( "This conversation is secured with SSL security." ), i18n("Security Status" ) );
+	KMessageBox::information( w, i18n( "This conversation is secured with SSL security." ), i18n("Security Status" ) );
 }
 
 void GroupWiseChatSession::slotShowArchiving()
 {
 	QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
 				Kopete::UI::Global::mainWidget() );
-	KMessageBox::queuedMessageBox( w, KMessageBox::Information, i18n( "This conversation is being logged administratively." ), i18n("Archiving Status" ) );
+	KMessageBox::information( w, i18n( "This conversation is being logged administratively." ), i18n("Archiving Status" ) );
 }
 
 #include "gwmessagemanager.moc"

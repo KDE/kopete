@@ -19,7 +19,6 @@
 
 #include "gwcontactproperties.h"
 #include <qclipboard.h>
-#include <q3header.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qmap.h>
@@ -33,8 +32,13 @@
 #include <kopeteonlinestatus.h>
 #include <kopetemetacontact.h>
 #include <kopeteuiglobal.h>
-#include <kaction.h>
+#include <QAction>
 #include <kstandardaction.h>
+#include <KConfigGroup>
+#include <QDialogButtonBox>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QDialog>
 
 #include "gwcontact.h"
 #include "gwprotocol.h"
@@ -76,14 +80,21 @@ GroupWiseContactProperties::~GroupWiseContactProperties()
 
 void GroupWiseContactProperties::init()
 {
-	m_dialog = new KDialog( qobject_cast<QWidget*>( parent() ));
-	m_dialog->setCaption(i18n( "Contact Properties" ));
-	m_dialog->setButtons(KDialog::Ok);
-	m_dialog->setDefaultButton(KDialog::Ok);
+	m_dialog = new QDialog( qobject_cast<QWidget*>( parent() ));
+	m_dialog->setWindowTitle(i18n( "Contact Properties" ));
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
+	QWidget *mainWidget = new QWidget();
+	QVBoxLayout *mainLayout = new QVBoxLayout;
+	m_dialog->setLayout(mainLayout);
+	mainLayout->addWidget(mainWidget);
+	QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+	okButton->setDefault(true);
+	okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
+	m_dialog->connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	m_dialog->connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	mainLayout->addWidget(buttonBox);
 	m_dialog->setModal(false);
-	QWidget * wid = new QWidget( m_dialog );
-	m_dialog->setMainWidget( wid );
-	m_ui.setupUi( wid );
+	m_ui.setupUi( mainWidget );
 	m_copyAction = KStandardAction::copy( this, SLOT(copy()), 0 );
 	m_ui.propsView->addAction( m_copyAction );
 }

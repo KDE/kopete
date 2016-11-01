@@ -24,7 +24,7 @@
 #include <QStringList>
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
-#include <QtGui/QLabel>
+#include <QLabel>
 
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -358,7 +358,7 @@ void GroupWisePrivacyDialog::commitChanges()
 
 void GroupWisePrivacyDialog::errorNotConnected()
 {
-	KMessageBox::queuedMessageBox( this, KMessageBox::Information,
+	KMessageBox::information( this,
 			i18n( "You can only change privacy settings while you are logged in to the GroupWise Messenger server." ) , i18n("'%1' Not Logged In", m_account->accountId() ) );
 }
 

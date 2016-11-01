@@ -56,7 +56,7 @@ add_library(kopete_groupwise MODULE ${kopete_groupwise_PART_SRCS})
 
 link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libgroupwise )
 
-target_link_libraries(kopete_groupwise  KF5::KDELibs4Support ${KDE4_KDE3SUPPORT_LIBS} qgroupwise kopete ${QCA2_LIBRARIES})
+target_link_libraries(kopete_groupwise  KF5::KDELibs4Support qgroupwise kopete ${QCA2_LIBRARIES})
 
 install(TARGETS kopete_groupwise  DESTINATION ${PLUGIN_INSTALL_DIR})
 

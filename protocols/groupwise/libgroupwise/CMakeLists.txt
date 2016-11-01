@@ -82,7 +82,7 @@ set( libqgroupwise_SRCS
 
 add_library( qgroupwise SHARED ${libqgroupwise_tasks_SRCS} ${libqgroupwise_SRCS} )
 
-target_link_libraries( qgroupwise Qt5::Core Qt5::Gui Qt5::Network ${QT_QT3SUPPORT_LIBRARY} ${QCA2_LIBRARIES} ${ZLIB_LIBRARIES} KF5::KDELibs4Support)
+target_link_libraries( qgroupwise Qt5::Core Qt5::Gui Qt5::Network qca-qt5 ${ZLIB_LIBRARIES} KF5::KDELibs4Support)
 
 ########### install files ###############
 

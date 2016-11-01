@@ -30,7 +30,6 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
-#include <q3valuelist.h>
 #include <QVBoxLayout>
 
 #include <kdebug.h>

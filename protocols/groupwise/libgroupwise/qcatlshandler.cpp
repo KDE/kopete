@@ -22,7 +22,7 @@
 
 #include <qtimer.h>
 
-#include <QtCrypto>
+#include <QtCrypto/QtCrypto>
 
 class QCATLSHandler::Private
 {
