@@ -45,7 +45,7 @@ K_EXPORT_PLUGIN( GroupWiseProtocolFactory( "kopete_groupwise" ) )
 GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
 
 GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const QVariantList &/*args*/ )
-	: Kopete::Protocol( GroupWiseProtocolFactory::componentData(), parent ),
+	: Kopete::Protocol( parent ),
 /* initialise Kopete::OnlineStatus that should be user selectable in the user interface */
 	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, GroupWise::Offline, QStringList(),
 			i18n( "Offline" ), i18n( "O&ffline" ), Kopete::OnlineStatusManager::Offline ),
@@ -253,7 +253,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 			}
 			else
 			{
-				kDebug() << "bogus utf-8 lead byte: 0x" << QTextStream::hex << current;
+				kDebug() << "bogus utf-8 lead byte: 0x" << hex << current;
 				ucs4Char = 0x003F;
 				bytesEncoded = 1;
 			}

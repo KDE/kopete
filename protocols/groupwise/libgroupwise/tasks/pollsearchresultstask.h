@@ -21,8 +21,6 @@
 #ifndef POLLSEARCHRESULTSTASK_H
 #define POLLSEARCHRESULTSTASK_H
 
-#include <q3valuelist.h>
-
 #include "gwerror.h"
 
 #include "requesttask.h"

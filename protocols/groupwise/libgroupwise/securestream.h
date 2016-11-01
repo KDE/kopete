@@ -22,7 +22,7 @@
 #ifndef SECURESTREAM_H
 #define SECURESTREAM_H
 
-#include <QtCrypto>
+#include <QtCrypto/QtCrypto>
 #include "tlshandler.h"
 #include"bytestream.h"
 

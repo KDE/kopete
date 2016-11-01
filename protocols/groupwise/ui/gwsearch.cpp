@@ -19,12 +19,12 @@
 
 #include "gwsearch.h"
 #include <QtCore/QAbstractItemModel>
-#include <QtGui/QComboBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPainter>
-#include <QtGui/QSortFilterProxyModel>
+#include <QComboBox>
+#include <QHeaderView>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPainter>
+#include <QSortFilterProxyModel>
 
 #include <kdebug.h>
 #include <klocale.h>

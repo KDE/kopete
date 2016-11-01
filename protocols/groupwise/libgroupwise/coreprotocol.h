@@ -22,7 +22,6 @@
 #define GW_CORE_PROTOCOL_H
 
 #include <QLatin1Char>
-#include <q3cstring.h>
 #include <qobject.h>
 
 #include "gwfield.h"

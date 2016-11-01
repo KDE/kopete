@@ -26,7 +26,6 @@
 
 #include <kaboutdata.h>
 #include <kconfig.h>
-#include <kcomponentdata.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
 #include <klocale.h>
@@ -251,7 +250,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 
 	if (!sslPossible)
 	{
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
+		KMessageBox::error(Kopete::UI::Global::mainWidget (),
 							i18n ("SSL support could not be initialized for account %1. This is most likely because the QCA TLS plugin is not installed on your system.", 
 							myself()->contactId()),
 							i18n ("GroupWise SSL Error"));
@@ -350,7 +349,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	struct utsname utsBuf;
 	uname (&utsBuf);
 	m_client->setClientName ("Kopete");
-	m_client->setClientVersion ( KGlobal::mainComponent().aboutData()->version () );
+	m_client->setClientVersion ( KAboutData::applicationData().version () );
 	m_client->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 
 	kDebug () << "Connecting to GroupWise server " << server() << ':' << port();
@@ -366,7 +365,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 
 void GroupWiseAccount::slotMessageSendingFailed()
 {
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+	KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
 				i18nc("Message Sending Failed using the named local account", "Kopete was not able to send the last message sent on account '%1'.\nIf possible, please send the console output from Kopete to <wstephenson@novell.com> for analysis.", accountId() ) , i18nc("message sending failed using the named local account", "Unable to Send Message on Account '%1'", accountId() ) );
 }
 
@@ -657,7 +656,7 @@ void GroupWiseAccount::slotKopeteGroupRemoved( Kopete::Group * group )
 void GroupWiseAccount::slotConnError()
 {
 	kDebug () ;
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
+	KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
 				i18nc( "Error shown when connecting failed", "Kopete was not able to connect to the GroupWise Messenger server for account '%1'.\nPlease check your server and port settings and try again.", accountId() ) , i18n ("Unable to Connect '%1'", accountId() ) );
 
 	disconnect();
@@ -1271,7 +1270,7 @@ void GroupWiseAccount::receiveContactCreated()
 					delete c;
 			}
 		}
-		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget (), KMessageBox::Error,
+		KMessageBox::error( Kopete::UI::Global::mainWidget (),
 							i18n ("The contact %1 could not be added to the contact list, with error message: %2", 
 							cct->userId(), cct->statusString() ),
 							i18n ("Error Adding Contact") );

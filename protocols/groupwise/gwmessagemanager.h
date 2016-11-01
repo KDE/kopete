@@ -30,9 +30,9 @@
 #include "gwerror.h"
 
 class QLabel;
-class KAction;
+class QAction;
 class KActionMenu;
-class KDialog;
+class QDialog;
 class GroupWiseAccount;
 class GroupWiseContact;
 class GroupWiseContactSearch;
@@ -164,13 +164,13 @@ private:
 	QList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
 	Kopete::ContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
 	KActionMenu *m_actionInvite;
-	QList<KAction*> m_inviteActions;
+	QList<QAction *> m_inviteActions;
 	// labels showing secure and logging status
-	KAction *m_secure;
-	KAction *m_logging;
+	QAction *m_secure;
+	QAction *m_logging;
 	// search widget and dialog used for inviting contacts
 	GroupWiseContactSearch * m_search;
-	KDialog * m_searchDlg;
+	QDialog * m_searchDlg;
 	// contacts who have been invited to join but have not yet joined the chat
 	Kopete::ContactPtrList m_invitees;
 	// track the number of members actually in the chat

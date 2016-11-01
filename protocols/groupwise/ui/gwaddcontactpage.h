@@ -26,7 +26,7 @@
 #include "gwerror.h"
 
 #include <addcontactpage.h>
-#include <QtGui/QLabel>
+#include <QLabel>
 
 class QLabel;
 namespace Kopete { class Account; }

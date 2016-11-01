@@ -29,7 +29,7 @@
 #include "gwcontact.h"
 #include <qmap.h>
 
-#include <kaction.h>
+#include <QAction>
 #include <KActionCollection>
 #include <kdebug.h>
 #include <kicon.h>
@@ -152,15 +152,15 @@ Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags
 	return account()->chatSession( chatMembers, QString("")/*FIXME Check this is right*/, canCreate );
 }
 
-QList<KAction*> *GroupWiseContact::customContextMenuActions()
+QList<QAction *> *GroupWiseContact::customContextMenuActions()
 {
-	QList<KAction *> * actions = new QList<KAction *>;
+	QList<QAction *> * actions = new QList<QAction *>;
 
 	// Block/unblock contact
 	QString label = account()->isContactBlocked( m_dn ) ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !m_actionBlock )
 	{
-		m_actionBlock = new KAction( KIcon( "msn_blocked" ), label, 0 );
+		m_actionBlock = new QAction( KIcon( "msn_blocked" ), label, 0 );
 		QObject::connect( m_actionBlock, SIGNAL(triggered(bool)), SLOT(slotBlock()) );
 	}
 	else

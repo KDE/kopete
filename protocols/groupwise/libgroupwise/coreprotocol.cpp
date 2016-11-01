@@ -28,7 +28,6 @@
 
 #include <qdatastream.h>
 #include <qdatetime.h>
-#include <q3textstream.h>
 #include <QByteArray>
 
 

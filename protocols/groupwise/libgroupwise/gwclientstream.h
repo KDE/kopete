@@ -22,7 +22,7 @@
 
 #include <QHostAddress>
 
-#include <QtCrypto>
+#include <QtCrypto/QtCrypto>
 
 #include "gwfield.h"
 #include "libgroupwise_export.h"

@@ -19,8 +19,6 @@
 
 #include "gwfield.h"
 
-#include <q3cstring.h>
-
 #include "gwerror.h"
 
 #ifdef LIBGW_USE_KDEBUG
