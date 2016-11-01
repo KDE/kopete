@@ -27,6 +27,8 @@
 #include <KColorScheme>
 #include <QScrollArea>
 #include <QObject>
+#include <QLocale>
+#include <KCoreAddons/KFormat>
 
 #include <khbox.h>
 #include <kdialog.h>
@@ -439,8 +441,8 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 		generalHTMLPart->write ( QString ( "</div>" ) );
 
 		generalHTMLPart->write ( QString ( "<div class=\"statgroup\">" ) );
-		generalHTMLPart->write ( i18n ( "<b title=\"The last time you talked with %1\">Last talk :</b> %2<br>", m_contact->metaContact()->displayName(), KGlobal::locale()->formatDateTime ( m_contact->lastTalk() ) ) );
-		generalHTMLPart->write ( i18n ( "<b title=\"The last time %1 was online or away\">Last time present :</b> %2", m_contact->metaContact()->displayName(), KGlobal::locale()->formatDateTime ( m_contact->lastPresent() ) ) );
+		generalHTMLPart->write ( i18n ( "<b title=\"The last time you talked with %1\">Last talk :</b> %2<br>", m_contact->metaContact()->displayName(), QLocale().toString ( m_contact->lastTalk() ) ) );
+		generalHTMLPart->write ( i18n ( "<b title=\"The last time %1 was online or away\">Last time present :</b> %2", m_contact->metaContact()->displayName(), QLocale().toString ( m_contact->lastPresent() ) ) );
 		generalHTMLPart->write ( QString ( "</div>" ) );
 
 		//generalHTMLPart->write(QString("<div class=\"statgroup\">"));
@@ -453,7 +455,7 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 		generalHTMLPart->write ( "<div title=\"" +i18n ( "Current status" ) + "\" class=\"statgroup\">" );
 		generalHTMLPart->write ( i18n ( "Is <b>%1</b> since <b>%2</b>",
 		                                Kopete::OnlineStatus ( m_contact->oldStatus() ).description(),
-		                                KGlobal::locale()->formatDateTime ( m_contact->oldStatusDateTime() ) ) );
+		                                QLocale().toString ( m_contact->oldStatusDateTime() ) ) );
 		generalHTMLPart->write ( QString ( "</div>" ) );
 	}
 
@@ -465,8 +467,8 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 	                         + i18nc ( "TRANSLATOR: please reverse 'left' and 'right' as appropriate for your language",
 	                                   "When was this contact visible?<br />All charts are in 24 blocks, "
 	                                   "one per hour, encompassing one day. %1 is on the left, "
-	                                   "and %2 is on the right.", KGlobal::locale()->formatTime ( QTime ( 0, 0 ) ),
-	                                   KGlobal::locale()->formatTime ( QTime ( 23, 59 ) ) )
+	                                   "and %2 is on the right.", QLocale().toString ( QTime ( 0, 0 ) ),
+	                                   QLocale().toString ( QTime ( 23, 59 ) ) )
 	                         + QString ( "</td></tr>" ) );
 	generalHTMLPart->write ( QString ( "<tr><td height=\"200\" valign=\"bottom\" colspan=\"3\" class=\"chart\">" ) );
 
@@ -490,8 +492,8 @@ void StatisticsDialog::generatePageFromQStringList ( QStringList values, const Q
 		               +colorPath
 		               +"\" width=\"4%\" title=\""
 		               +i18n ( "Between %1 and %2, %3 was visible for %4% of the hour.",
-		                       KGlobal::locale()->formatTime ( QTime ( i, 0 ) ),
-		                       KGlobal::locale()->formatTime ( QTime ( ( i+1 ) % 24, 0 ) ),
+		                       QLocale().toString ( QTime ( i, 0 ) ),
+		                       QLocale().toString ( QTime ( ( i+1 ) % 24, 0 ) ),
 		                       m_contact->metaContact()->displayName(), hrWidth )
 		               + QString ( "\">" );
 	}
@@ -565,8 +567,8 @@ QString StatisticsDialog::generateHTMLChart ( const int *hours, const int *hours
 		               + colorPath
 		               + "\" width=\"4%\" title=\""
 		               + i18n ( "Between %1 and %2, %3 was %4% %5.",
-		                        KGlobal::locale()->formatTime ( QTime ( i, 0 ) ),
-		                        KGlobal::locale()->formatTime ( QTime ( ( i+1 ) % 24, 0 ) ),
+		                        QLocale().toString ( QTime ( i, 0 ) ),
+		                        QLocale().toString ( QTime ( ( i+1 ) % 24, 0 ) ),
 		                        m_contact->metaContact()->displayName(),
 		                        hrWidth,
 		                        caption )
@@ -577,7 +579,7 @@ QString StatisticsDialog::generateHTMLChart ( const int *hours, const int *hours
 
 QString StatisticsDialog::stringFromSeconds ( const int seconds )
 {
-	return KGlobal::locale()->prettyFormatDuration ( (unsigned long)seconds * 1000 );
+	return KFormat().formatDuration( (unsigned long)seconds * 1000 );
 }
 
 void StatisticsDialog::fillCalendarCells()
@@ -633,9 +635,9 @@ void StatisticsDialog::fillCalendarCells()
 		else if ( statuses.at ( i ) == Kopete::OnlineStatus::Offline )
 			color = m_offlineColor;
 
-		dialogUi->datePicker->dateTable()->setCustomDatePainting (
-		    QDate ( firstOfMonth.date().year(), firstOfMonth.date().month(), i ),
-		    m_textColor, KDateTable::RectangleMode, color );
+// 		dialogUi->datePicker->dateTable()->setCustomDatePainting (
+// 		    QDate ( firstOfMonth.date().year(), firstOfMonth.date().month(), i ),
+// 		    m_textColor, KDateTable::RectangleMode, color );
 	}
 	dialogUi->datePicker->update();
 }
@@ -657,7 +659,7 @@ void StatisticsDialog::generateOneDayStats ()
 
 	QString todayString;
 	todayString.append ( i18n ( "<h2>%1</h2><table width=\"100%\"><tr><td>Status</td><td>From</td><td>To</td></tr>",
-	                            KGlobal::locale()->formatDate ( topOfDay.date(), KLocale::ShortDate ) ) );
+	                            QLocale().toString ( topOfDay.date() ) ) );
 
 	for ( int i=0; i<values.count(); i+=3 )
 	{

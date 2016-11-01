@@ -52,11 +52,11 @@ K_PLUGIN_FACTORY(StatisticsPluginFactory, registerPlugin<StatisticsPlugin>();)
 K_EXPORT_PLUGIN(StatisticsPluginFactory( "kopete_statistics" ))
 
 StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*/ )
-	: Kopete::Plugin( StatisticsPluginFactory::componentData(), parent )
+	: Kopete::Plugin( parent )
 {
 
 	m_db = 0L;
-	KAction *viewMetaContactStatistics = new KAction( KIcon("view-statistics"), i18n("View &Statistics" ),
+	KAction *viewMetaContactStatistics = new KAction( QIcon::fromTheme(QStringLiteral("view-statistics")), i18n("View &Statistics" ),
 		this );
 	actionCollection()->addAction ( "viewMetaContactStatistics", viewMetaContactStatistics );
 	connect(viewMetaContactStatistics, SIGNAL(triggered(bool)), this, SLOT(slotViewStatistics()));
