@@ -19,8 +19,6 @@
 
 #include <stdlib.h>
 
-#include <q3valuelist.h>
-
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -29,7 +27,7 @@
 
 #include "statisticsdb.h"
 
-StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) : m_metaContact(mc), m_metaContactId(mc->metaContactId()), m_db(db), m_oldStatus(Kopete::OnlineStatus::Unknown)
+StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) : m_metaContact(mc), m_metaContactId(mc->metaContactId().toString()), m_db(db), m_oldStatus(Kopete::OnlineStatus::Unknown)
 {
 	m_isChatWindowOpen = false;
 	m_oldStatusDateTime = QDateTime::currentDateTime();
