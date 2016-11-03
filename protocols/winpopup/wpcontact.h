@@ -19,7 +19,7 @@
 #define WPCONTACT_H
 
 // KDE Includes
-#include <kaction.h>
+#include <QAction>
 
 // Qt Includes
 #include <qdatetime.h>
@@ -40,7 +40,7 @@
 
 class QTimer;
 class Q3ListView;
-class KAction;
+class QAction;
 namespace Kopete { class MetaContact; }
 
 class WPContact: public Kopete::Contact
@@ -52,7 +52,7 @@ public:
 
 //	virtual bool isOnline() const;
 	virtual bool isReachable();
-	virtual QList<KAction*> *customContextMenuActions();
+	virtual QList<QAction *> *customContextMenuActions();
 	using Kopete::Contact::customContextMenuActions;
 	virtual Kopete::ChatSession *manager(Kopete::Contact::CanCreateFlags = Kopete::Contact::CannotCreate);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);

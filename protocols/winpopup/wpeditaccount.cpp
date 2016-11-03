@@ -37,6 +37,7 @@
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
+#include <ksharedconfig.h>
 
 
 // Kopete Includes
@@ -60,7 +61,7 @@ WPEditAccount::WPEditAccount(QWidget *parent, Kopete::Account *theAccount)
 		mHostName->setText(account()->accountId());
 //		mAutoConnect->setChecked(account()->excludeConnect());
 		mHostName->setReadOnly(true);
-		KConfigGroup group = KGlobal::config()->group("WinPopup");
+		KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
 		mHostCheckFreq->setValue(group.readEntry("HostCheckFreq", 60));
 		mSmbcPath->setUrl(group.readEntry("SmbcPath", tmpSmbcPath));
 
@@ -116,7 +117,7 @@ bool WPEditAccount::validateData()
 
 void WPEditAccount::writeConfig()
 {
-	KConfigGroup group = KGlobal::config()->group("WinPopup");
+	KConfigGroup group = KSharedConfig::openConfig()->group("WinPopup");
 	group.writeEntry("SmbcPath", mSmbcPath->url().toLocalFile());
 	group.writeEntry("HostCheckFreq", mHostCheckFreq->text());
 }

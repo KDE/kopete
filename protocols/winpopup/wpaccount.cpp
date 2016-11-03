@@ -165,17 +165,17 @@ void WPAccount::fillActionMenu( KActionMenu *actionMenu )
 	/// How to remove an action from Kopete::Account::actionMenu()? GF
 
 	actionMenu->setIcon( myself()->onlineStatus().iconFor(this) );
-	actionMenu->menu()->addTitle( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)", accountId()));
+	actionMenu->menu()->addAction( QIcon(myself()->onlineStatus().iconFor(this)), i18n("WinPopup (%1)", accountId()));
 
 	if (mProtocol)
 	{
-		KAction *goOnline = new KAction( KIcon(QIcon(mProtocol->WPOnline.iconFor(this))), i18n("Online"), this );
+		QAction *goOnline = new QAction( KIcon(QIcon(mProtocol->WPOnline.iconFor(this))), i18n("Online"), this );
 		//, "actionGoAvailable" );
 		QObject::connect( goOnline, SIGNAL(triggered(bool)), this, SLOT(connect()) );
 		goOnline->setEnabled(isConnected() && isAway());
 		actionMenu->addAction(goOnline);
 
-		KAction *goAway = new KAction( KIcon(QIcon(mProtocol->WPAway.iconFor(this))), i18n("Away"), this );
+		QAction *goAway = new QAction( KIcon(QIcon(mProtocol->WPAway.iconFor(this))), i18n("Away"), this );
                 //, "actionGoAway" );
 		QObject::connect( goAway, SIGNAL(triggered(bool)), this, SLOT(goAway()) );
 		goAway->setEnabled(isConnected() && !isAway());
@@ -184,7 +184,7 @@ void WPAccount::fillActionMenu( KActionMenu *actionMenu )
 		/// One cannot really go offline manually - appears online as long as samba server is running. GF
 
 		actionMenu->addSeparator();
-		KAction *properties = new KAction( i18n("Properties"), this );
+		QAction *properties = new QAction( i18n("Properties"), this );
                 // "actionAccountProperties" );
 		QObject::connect( properties, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
 		actionMenu->addAction( properties );
