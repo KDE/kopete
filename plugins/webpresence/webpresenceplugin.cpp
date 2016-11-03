@@ -56,7 +56,7 @@ K_EXPORT_PLUGIN(WebPresencePluginFactory( "kopete_webpresence" ))
 
 
 WebPresencePlugin::WebPresencePlugin( QObject *parent, const QVariantList& /*args*/ )
-	: Kopete::Plugin( WebPresencePluginFactory::componentData(), parent ),
+	: Kopete::Plugin( parent ),
 	shuttingDown( false ), resultFormatting( WEB_HTML ), m_output(0)
 {
 	m_writeScheduler = new QTimer( this );
@@ -199,7 +199,7 @@ void WebPresencePlugin::slotUploadJobResult( KJob *job )
 {
 	if ( job->error() ) {
 		kDebug(14309) << "Error uploading presence info.";
-		KMessageBox::queuedDetailedError( 0, i18n("An error occurred when uploading your presence page.\nCheck the path and write permissions of the destination."), 0, displayName() );
+		KMessageBox::detailedError( 0, i18n("An error occurred when uploading your presence page.\nCheck the path and write permissions of the destination."), 0, displayName() );
 		delete m_output;
 		m_output = 0L;
 	}

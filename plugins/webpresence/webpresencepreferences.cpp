@@ -27,7 +27,7 @@ K_PLUGIN_FACTORY(WebPresencePreferencesFactory, registerPlugin<WebPresencePrefer
 K_EXPORT_PLUGIN(WebPresencePreferencesFactory("kcm_kopete_webpresence"))
 
 WebPresencePreferences::WebPresencePreferences(QWidget *parent, const QVariantList &args)
-		: KCModule(WebPresencePreferencesFactory::componentData(), parent, args)
+		: KCModule(parent, args)
 {
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget;
