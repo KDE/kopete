@@ -37,7 +37,7 @@
 #include "wpaddcontact.h"
 
 class KActionMenu;
-class KAction;
+class QAction;
 class WPProtocol;
 
 namespace Kopete
