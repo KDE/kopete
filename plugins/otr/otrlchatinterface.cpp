@@ -744,6 +744,10 @@ int OtrlChatInterface::privState( Kopete::ChatSession *session ){
 	ConnContext *context = otrl_context_find(userstate, session->members().first()->contactId().toLocal8Bit(), session->account()->accountId().toLocal8Bit(), session->account()->protocol()->displayName().toLocal8Bit(), instance, 0, NULL, NULL, NULL);
 
 	if( context ){
+		if( instance == OTRL_INSTAG_BEST && context->their_instance ){
+			kDebug(14318) << "Updating otr-instag to" << context->their_instance << "for session" << session;
+			session->setProperty("otr-instag", QString::number(context->their_instance));
+		}
 		switch( context->msgstate ){
 		case OTRL_MSGSTATE_PLAINTEXT:
 			return 0;
