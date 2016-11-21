@@ -202,6 +202,7 @@ void OtrlChatInterface::gone_secure(void *opdata, ConnContext *context){
 		OtrlChatInterface::self()->emitGoneSecure( ((Kopete::ChatSession*)opdata), 1 );
 	}
 
+	kDebug(14318) << "Updating otr-instag to" << context->their_instance << "for session" << session;
 	session->setProperty("otr-instag", QString::number(context->their_instance));
 }
 
@@ -581,6 +582,7 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 	QString body = message.plainBody();
 
 	OtrlTLV *tlvs = NULL;
+	ConnContext *context = NULL;
 	char *newMessage = NULL;
 
 	if (m_keyGenThread != 0) {
@@ -594,7 +596,14 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 		return 1;
 	}
 
-	int ignoremessage = otrl_message_receiving( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), body.toLocal8Bit(), &newMessage, &tlvs, NULL, NULL, NULL );
+	int ignoremessage = otrl_message_receiving( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), body.toLocal8Bit(), &newMessage, &tlvs, &context, NULL, NULL );
+	if (context && !ignoremessage && newMessage != NULL) {
+		otrl_instag_t instance = message.manager()->property("otr-instag").toUInt();
+		if (instance != context->their_instance && context->their_instance) {
+			kDebug(14318) << "Encrypted message from different instance was received";
+			gone_secure( (void *)chatSession, context );
+		}
+	}
 
 	if (tlvs) {
 		OtrlTLV *tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
