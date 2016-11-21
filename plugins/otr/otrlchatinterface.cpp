@@ -596,8 +596,7 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 
 	int ignoremessage = otrl_message_receiving( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), body.toLocal8Bit(), &newMessage, &tlvs, NULL, NULL, NULL );
 
-	ConnContext *context = otrl_context_find( userstate, contactId.toLocal8Bit(), accountId.toLocal8Bit(), protocol.toLocal8Bit(), 0, 0, NULL, NULL, NULL);
-	if (context) {
+	if (tlvs) {
 		OtrlTLV *tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
 		if( tlv ){
 			Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
@@ -605,10 +604,8 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 			msg.setDirection( Kopete::Message::Internal );
 			chatSession->appendMessage( msg );
 			OtrlChatInterface::self()->emitGoneSecure( chatSession, 3 );
-
-			otrl_tlv_free(tlvs);
 		}
-
+		otrl_tlv_free(tlvs);
 	}
 
 	// message is now decrypted or is a Plaintext message and ready to deliver
