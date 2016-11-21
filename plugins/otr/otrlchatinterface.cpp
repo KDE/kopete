@@ -400,7 +400,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 	switch (msg_event)
 	{
 	case OTRL_MSGEVENT_NONE:
-		break;
+		return;
 	case OTRL_MSGEVENT_ENCRYPTION_REQUIRED:
 		msg.setHtmlBody( i18n( "You attempted to send an unencrypted message to %1.", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Internal );
@@ -453,7 +453,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 		return;
 	case OTRL_MSGEVENT_LOG_HEARTBEAT_SENT:
 		kDebug(14318) << "Heartbeat sent to" << context->username;
-		break;
+		return;
 	case OTRL_MSGEVENT_RCVDMSG_GENERAL_ERR:
 		msg.setHtmlBody( QLatin1String(message) );
 		msg.setDirection( Kopete::Message::Internal );
@@ -466,7 +466,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 		break;
 	case OTRL_MSGEVENT_RCVDMSG_UNRECOGNIZED:
 		kDebug(14318) << "Unrecognized OTR message received from" << context->username;
-		break;
+		return;
 	case OTRL_MSGEVENT_RCVDMSG_FOR_OTHER_INSTANCE:
 		msg.setHtmlBody( i18n( "%1 has sent an encrypted message intended for a different session. If you are logged in multiple times, another session may have received the message.", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Inbound );
