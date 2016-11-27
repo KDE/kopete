@@ -932,7 +932,7 @@ void OtrlChatInterface::otrlMessagePoll()
 
 void OtrlChatInterface::replayStoredMessages()
 {
-    while (m_storedMessages.isEmpty()) {
+    while (!m_storedMessages.isEmpty()) {
         Kopete::Message msg = m_storedMessages.takeFirst();
         msg.manager()->appendMessage(msg);
     }
