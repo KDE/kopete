@@ -52,7 +52,7 @@ public:
 	 * Notify all relevant contacts in case
 	 * a resource has been added, updated or removed.
 	 */
-	void notifyRelevantContacts ( const XMPP::Jid &jid, bool removed = false );
+	void notifyRelevantContacts ( const XMPP::Jid &jid );
 
 	/**
 	 * Add a resource to the pool
