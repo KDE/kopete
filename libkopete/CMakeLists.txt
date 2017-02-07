@@ -277,6 +277,8 @@ install( FILES
   kopeteutils.h
   kopeteversion.h
   kopetestatusmanager.h
+  libkopete_debug.h
+  kopete_export.h
   tasks/kopetetask.h
   tasks/kopetecontacttaskbase.h
   tasks/kopetedeletecontacttask.h
