@@ -87,7 +87,7 @@ AvatarManager::AvatarManager(QObject *parent)
  : QObject(parent), d(new Private)
 {
 	// Locate avatar data dir on disk
-	d->baseDir = QUrl( QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1String("/avatars") ) ;
+	d->baseDir = QUrl::fromLocalFile( QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QLatin1String("/avatars") ) ;
 
 	// Create directory on disk, if necessary
 	d->createDirectory( d->baseDir );
