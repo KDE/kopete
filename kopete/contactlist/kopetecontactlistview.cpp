@@ -73,7 +73,8 @@ public:
 		  scrollAutoHideCounter(10),
 		  scrollAutoHideTimeout(10),
 		  scrollAutoHide(false),
-		  scrollHide(false)
+		  scrollHide(false),
+		  initialized(false)
 	{}
 	//QRect m_onItem;
 
@@ -112,6 +113,7 @@ public:
 	bool scrollAutoHide;
 	//! State of always hide scrollbar feature
 	bool scrollHide;
+	bool initialized;
 };
 
 KopeteContactListView::KopeteContactListView( QWidget *parent )
@@ -217,6 +219,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	// Update enabled/disabled actions
 	//	slotViewSelectionChanged();
+	d->initialized = true;
 }
 
 Kopete::MetaContact* KopeteContactListView::metaContactFromIndex( const QModelIndex& index ) const
@@ -825,6 +828,9 @@ void KopeteContactListView::itemCollapsed( const QModelIndex& index )
 
 void KopeteContactListView::updateActions()
 {
+	if (!d->initialized) {
+		return;
+	}
 	QModelIndexList selected = selectedIndexes();
 
 	bool singleContactSelected = (selected.count() == 1 && selected.first().data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact);
@@ -887,6 +893,9 @@ void KopeteContactListView::updateActions()
 
 void KopeteContactListView::updateMetaContactActions()
 {
+	if (!d->initialized) {
+		return;
+	}
 	bool reachable = false;
 
 	if( d->selectedMetaContact )
