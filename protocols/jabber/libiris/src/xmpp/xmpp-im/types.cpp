@@ -963,12 +963,14 @@ public:
 	QList<MUCInvite> mucInvites;
 	MUCDecline mucDecline;
 	QString mucPassword;
+	bool hasMUCUser;
 
 	bool spooled, wasEncrypted;
 
 	//XEP-0280 Message Carbons
 	Message::CarbonDir carbonDir; // it's a forwarded message
 	bool isDisabledCarbons;
+	QString replaceId;
 };
 
 //! \brief Constructs Message with given Jid information.
@@ -991,6 +993,7 @@ Message::Message(const Jid &to)
 	d->messageReceipt = ReceiptNone;
 	d->carbonDir = Message::NoCarbon;
 	d->isDisabledCarbons = false;
+	d->hasMUCUser = false;
 }
 
 //! \brief Constructs a copy of Message object
@@ -1400,6 +1403,11 @@ void Message::setMUCPassword(const QString& p)
 	d->mucPassword = p;
 }
 
+bool Message::hasMUCUser() const
+{
+	return d->hasMUCUser;
+}
+
 QString Message::invite() const
 {
 	return d->invite;
@@ -1513,6 +1521,14 @@ bool Message::wasEncrypted() const
 void Message::setWasEncrypted(bool b)
 {
 	d->wasEncrypted = b;
+}
+
+QString Message::replaceId() const {
+	return d->replaceId;
+}
+
+void Message::setReplaceId(const QString& id) {
+	d->replaceId = id;
 }
 
 Stanza Message::toStanza(Stream *stream) const
@@ -1745,7 +1761,11 @@ Stanza Message::toStanza(Stream *stream) const
 		QDomElement e = s.createElement("urn:xmpp:carbons:2","private");
 		s.appendChild(e);
 	}
-
+	if (!d->replaceId.isEmpty()) {
+		QDomElement e = s.createElement("urn:xmpp:message-correct:0", "replace");
+		e.setAttribute("id", d->replaceId);
+		s.appendChild(e);
+	}
 	return s;
 }
 
@@ -2013,6 +2033,7 @@ bool Message::fromStanza(const Stanza &s, bool useTimeZoneOffset, int timeZoneOf
 
 	t = childElementsByTagNameNS(root, "http://jabber.org/protocol/muc#user", "x").item(0).toElement();
 	if(!t.isNull()) {
+		d->hasMUCUser = true;
 		for(QDomNode muc_n = t.firstChild(); !muc_n.isNull(); muc_n = muc_n.nextSibling()) {
 			QDomElement muc_e = muc_n.toElement();
 			if(muc_e.isNull())
@@ -2060,7 +2081,10 @@ bool Message::fromStanza(const Stanza &s, bool useTimeZoneOffset, int timeZoneOf
 	if (!t.isNull()) {
 		d->ibbData.fromXml(t);
 	}
-
+	t = childElementsByTagNameNS(root, "urn:xmpp:message-correct:0", "replace").item(0).toElement();
+	if (!t.isNull()) {
+		d->replaceId = t.attribute("id");
+	}
 	return true;
 }
 
