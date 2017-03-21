@@ -41,7 +41,7 @@ class KActionMenu;
 class KTemporaryFile;
 class QPixmap;
 class KSqueezedTextLabel;
-class KPushButton;
+class QPushButton;
 class QVBoxLayout;
 class QFrame;
 class KTabWidget;
@@ -141,7 +141,7 @@ private:
 	bool m_alwaysShowTabs;
 	bool updateBg;
 	KTabWidget *m_tabBar;
-	KPushButton *m_button_send;
+	QPushButton *m_button_send;
 	KSqueezedTextLabel *m_status_text;
 	QVBoxLayout *mainLayout;
 	QFrame *mainArea;

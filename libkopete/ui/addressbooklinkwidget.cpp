@@ -26,7 +26,7 @@
 #include <qapplication.h>
 #include <klineedit.h>
 #include <klocale.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 
 #include <kiconloader.h>
 

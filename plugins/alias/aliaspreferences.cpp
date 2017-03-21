@@ -17,7 +17,7 @@
 
 #include "aliaspreferences.h"
 
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <klocale.h>
 #include <klineedit.h>
 #include <kglobal.h>

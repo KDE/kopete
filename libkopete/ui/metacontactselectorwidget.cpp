@@ -33,7 +33,7 @@
 
 #include <kdeversion.h>
 #include <kinputdialog.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <kdebug.h>
 #include <QTreeWidget>
 #include <ktreewidgetsearchline.h>

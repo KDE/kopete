@@ -24,7 +24,7 @@
 #include <QPainter>
 
 #include <kdebug.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <klocale.h>
 #include "gwerror.h"
 

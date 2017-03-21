@@ -50,7 +50,7 @@
 #include <ktemporaryfile.h>
 #include <kedittoolbar.h>
 #include <kstatusbar.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <ktabwidget.h>
 #include <kdialog.h>
 #include <kstringhandler.h>
@@ -245,7 +245,7 @@ KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *par
 	if ( Kopete::BehaviorSettings::self()->chatWindowShowSendButton() )
 	{
 		//Send Button
-		m_button_send = new KPushButton( i18nc("@action:button", "Send"), statusBar() );
+		m_button_send = new QPushButton( i18nc("@action:button", "Send"), statusBar() );
 		m_button_send->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum ) );
 		m_button_send->setEnabled( false );
 		m_button_send->setFont( statusBar()->font() );
