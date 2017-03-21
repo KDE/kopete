@@ -21,7 +21,7 @@
 namespace Kopete
 {
 
-class StatusMessage::Private : public KShared
+class StatusMessage::Private : public QSharedData
 {
 public:
 	Private()
