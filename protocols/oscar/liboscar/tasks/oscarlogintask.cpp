@@ -281,4 +281,3 @@ QByteArray OscarLoginTask::encodePassword() const
 
 //kate: indent-mode csands; tab-width 4; replace-tabs off; indent-spaces off;
 
-#include "oscarlogintask.moc"

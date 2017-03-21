@@ -1394,6 +1394,5 @@ void MetaContact::onlineStatusNotification( Kopete::Contact * c )
 
 } //END namespace Kopete
 
-#include "kopetemetacontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

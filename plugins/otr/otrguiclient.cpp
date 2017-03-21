@@ -141,6 +141,5 @@ void OtrGUIClient::encryptionEnabled(Kopete::ChatSession *session, int state){
 	}
 }
 
-#include "otrguiclient.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -260,5 +260,4 @@ GaduEditAccount::apply()
 	return account();
 }
 
-#include "gadueditaccount.moc"
 

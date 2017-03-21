@@ -141,7 +141,6 @@ QAction * KopeteStdAction::unblockContact( const QObject *recvr, const char *slo
 	return createAction( i18n( "Un&block Contact" ), QIcon::fromTheme( "media-playback-start" ), recvr, slot, parent );
 }
 
-#include "kopetestdaction.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -135,4 +135,3 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 	}
 	return cd;
 }
-#include "getdetailstask.moc"

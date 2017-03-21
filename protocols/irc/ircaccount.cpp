@@ -851,5 +851,4 @@ void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &
 //	d->contactManager->addToNotifyList( newnick );
 }
 */
-#include "ircaccount.moc"
 

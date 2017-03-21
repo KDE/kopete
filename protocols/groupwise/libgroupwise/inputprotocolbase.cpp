@@ -111,4 +111,3 @@ bool InputProtocolBase::safeReadBytes( QByteArray & data, uint & len )
 	return true;
 }
 
-#include "inputprotocolbase.moc"

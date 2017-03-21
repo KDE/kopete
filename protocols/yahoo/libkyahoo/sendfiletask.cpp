@@ -436,5 +436,4 @@ QString SendFileTask::newYahooTransferId()
 	return newId;
 }
 
-#include "sendfiletask.moc"
 

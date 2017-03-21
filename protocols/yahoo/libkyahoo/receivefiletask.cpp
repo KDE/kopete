@@ -303,5 +303,4 @@ void ReceiveFileTask::canceled( unsigned int id )
 	setError();
 }
 
-#include "receivefiletask.moc"
 

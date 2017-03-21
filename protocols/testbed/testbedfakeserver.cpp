@@ -60,4 +60,3 @@ void TestbedFakeServer::purgeMessages()
 	}
 }
 
-#include "testbedfakeserver.moc"

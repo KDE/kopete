@@ -347,4 +347,3 @@ void ChannelList::slotListEnd()
 	mSearching = false;
 }
 
-#include "channellist.moc"

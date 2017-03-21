@@ -150,7 +150,6 @@ void SMSContact::userPrefs()
 	p->show();
 }
 
-#include "smscontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

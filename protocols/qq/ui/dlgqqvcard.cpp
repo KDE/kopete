@@ -368,7 +368,6 @@ void dlgQQVCard::slotOpenURL(const QString &url)
 	*/
 }
 
-#include "dlgqqvcard.moc"
 
 /*
  * Local variables:

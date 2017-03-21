@@ -141,4 +141,3 @@ void CreateContactTask::slotCheckContactInstanceCreated()
 	}
 }
 
-#include "createcontacttask.moc"

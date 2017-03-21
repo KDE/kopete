@@ -128,4 +128,3 @@ QString JoinChatTask::displayName() const
 	return m_displayName;
 }
 
-#include "joinchattask.moc"

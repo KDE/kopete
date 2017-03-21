@@ -80,4 +80,3 @@ void MoveContactTask::onFolderCreated()
 	moveContact( m_contactToMove, m_folderId );
 	RequestTask::onGo();
 }
-#include "movecontacttask.moc"

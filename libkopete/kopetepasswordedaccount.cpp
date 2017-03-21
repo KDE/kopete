@@ -98,6 +98,5 @@ void Kopete::PasswordedAccount::disconnected( Kopete::Account::DisconnectReason 
 }
 
 
-#include "kopetepasswordedaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

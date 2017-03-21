@@ -190,4 +190,3 @@ GaduDCCServer::watcher() {
 
 	enableNotifiers( dccSock->check );
 }
-#include "gadudccserver.moc"

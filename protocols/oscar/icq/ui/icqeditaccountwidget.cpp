@@ -350,6 +350,5 @@ void ICQEditAccountWidget::slotChangePassword()
 	delete passwordDlg;
 }
 
-#include "icqeditaccountwidget.moc"
 // vim: set noet ts=4 sts=4 sw=4:
 // kate: indent-mode csands; space-indent off; replace-tabs off;

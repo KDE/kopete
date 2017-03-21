@@ -188,4 +188,3 @@ void ContactAddedNotifyDialog::slotFinished()
 
 } // namespace UI
 } // namespace Kopete
-#include "contactaddednotifydialog.moc"

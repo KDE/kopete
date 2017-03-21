@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-#include "kirci18ntask.moc"
 
 #include "kircclientsocket.h"
 

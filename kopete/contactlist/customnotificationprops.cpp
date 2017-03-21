@@ -63,4 +63,3 @@ QWidget* CustomNotificationProps::widget()
 	return m_notifyWidget;
 }
 
-#include "customnotificationprops.moc"

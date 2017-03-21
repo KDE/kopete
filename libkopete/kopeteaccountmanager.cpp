@@ -544,6 +544,5 @@ void AccountManager::removeAccountInternal()
 
 } //END namespace Kopete
 
-#include "kopeteaccountmanager.moc"
 // vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; indent-mode csands;

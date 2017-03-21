@@ -359,4 +359,3 @@ void LoginTask::extractKeepalivePeriod( Field::FieldList & fields )
 	}
 }
 
-#include "logintask.moc"

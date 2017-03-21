@@ -308,4 +308,3 @@ void JabberGroupMemberContact::sendFile ( const QUrl &sourceURL, const QString &
 }
 
 
-#include "jabbergroupmembercontact.moc"

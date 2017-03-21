@@ -260,4 +260,3 @@ bool JT_AHCGetList::take(const QDomElement &e)
 	}
 }
 
-#include "jt_ahcommand.moc"

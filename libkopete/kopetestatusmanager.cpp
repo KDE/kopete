@@ -521,4 +521,3 @@ void StatusManager::loadBehaviorSettings()
 
 }
 
-#include "kopetestatusmanager.moc"

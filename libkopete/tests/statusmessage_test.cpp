@@ -77,4 +77,3 @@ void StatusMessage_Test::testAppendHash()
 	QCOMPARE( status3.metaData("album").toString(), QString("Live Scenes From New York") );
 }
 
-#include "statusmessage_test.moc"

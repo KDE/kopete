@@ -22,4 +22,3 @@ StatusConfig_General::StatusConfig_General(QWidget *parent)
 	setupUi(this);
 }
 
-#include "statusconfig_general.moc"

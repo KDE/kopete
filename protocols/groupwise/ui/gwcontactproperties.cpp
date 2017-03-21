@@ -142,4 +142,3 @@ void GroupWiseContactProperties::copy()
 		cb->setText( selection.first()->text( 1 ) );
 	}
 }
-#include "gwcontactproperties.moc"

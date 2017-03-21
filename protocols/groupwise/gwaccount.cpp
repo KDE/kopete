@@ -1695,4 +1695,3 @@ void GroupWiseAccount::syncContact( GroupWiseContact * contact )
 	}
 }
 
-#include "gwaccount.moc"

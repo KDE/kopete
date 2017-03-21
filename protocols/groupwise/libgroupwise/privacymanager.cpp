@@ -247,4 +247,3 @@ QStringList PrivacyManager::difference( const QStringList & lhs, const QStringLi
 	}
 	return diff;
 }
-#include "privacymanager.moc"

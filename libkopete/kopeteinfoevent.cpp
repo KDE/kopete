@@ -132,4 +132,3 @@ void InfoEvent::close()
 
 }
 
-#include "kopeteinfoevent.moc"

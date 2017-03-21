@@ -37,4 +37,3 @@ void StatusAction::triggered()
 
 }
 
-#include "xtrazstatusaction.moc"

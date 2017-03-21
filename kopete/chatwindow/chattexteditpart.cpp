@@ -571,6 +571,5 @@ bool ChatTextEditPart::isRichTextEnabled() const
 	return editor->isRichTextEnabled();
 }
 
-#include "chattexteditpart.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

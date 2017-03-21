@@ -258,5 +258,4 @@ bool CoreProtocol::okToProceed( const QDataStream &din )
 		return true;
 }
 
-#include "coreprotocol.moc"
 //kate: indent-mode csands; tab-width 4;

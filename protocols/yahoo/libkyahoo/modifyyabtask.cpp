@@ -204,4 +204,3 @@ void ModifyYABTask::slotRead()
 	
 	setSuccess();
 }
-#include "modifyyabtask.moc"

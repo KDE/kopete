@@ -60,4 +60,3 @@ void StatusAction::changed()
 
 }
 
-#include "kopetestatusaction.moc"

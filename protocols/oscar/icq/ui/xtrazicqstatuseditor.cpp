@@ -144,4 +144,3 @@ void ICQStatusEditor::updateButtons()
 
 }
 
-#include "xtrazicqstatuseditor.moc"

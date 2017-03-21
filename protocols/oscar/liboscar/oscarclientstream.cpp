@@ -366,6 +366,5 @@ void ClientStream::doNoop()
 	write( t );
 }
 
-#include "oscarclientstream.moc"
 
 //kate: tab-width 4; indent-mode csands;

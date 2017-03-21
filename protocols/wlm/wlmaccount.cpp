@@ -1547,4 +1547,3 @@ void WlmAccount::slotRemoveRecentDPRequests()
     m_recentDPRequests.pop_front();
 }
 
-#include "wlmaccount.moc"

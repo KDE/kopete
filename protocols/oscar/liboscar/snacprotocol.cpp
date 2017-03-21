@@ -103,4 +103,3 @@ Transfer* SnacProtocol::parse( const QByteArray & packet, uint& bytes )
 }
 
 
-#include "snacprotocol.moc"

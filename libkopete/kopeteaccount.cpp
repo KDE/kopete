@@ -745,5 +745,4 @@ QString Account::customIcon()  const
 
 } // END namespace Kopete
 
-#include "kopeteaccount.moc"
 

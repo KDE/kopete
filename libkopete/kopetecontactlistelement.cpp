@@ -194,7 +194,6 @@ void ContactListElement::setUseCustomIcon( bool useCustomIcon )
 
 } //END namespace Kopete
 
-#include "kopetecontactlistelement.moc"
 
 
 

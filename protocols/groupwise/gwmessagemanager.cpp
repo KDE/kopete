@@ -534,4 +534,3 @@ void GroupWiseChatSession::slotShowArchiving()
 	KMessageBox::information( w, i18n( "This conversation is being logged administratively." ), i18n("Archiving Status" ) );
 }
 
-#include "gwmessagemanager.moc"

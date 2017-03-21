@@ -94,4 +94,3 @@ void TestbedWebcamDialog::slotUpdateImage()
 }
 
 
-#include "testbedwebcamdialog.moc"

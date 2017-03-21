@@ -347,4 +347,3 @@ Kopete::Status::StatusGroup *KopeteStatusModel::getGroup( Kopete::Status::Status
 	return qobject_cast<Kopete::Status::StatusGroup*>( item );
 }
 
-#include "statusmodel.moc"

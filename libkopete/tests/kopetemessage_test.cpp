@@ -33,7 +33,6 @@
 #include <kprocess.h>
 #include <kdebug.h>
 
-#include "kopetemessage_test.moc"
 #include "kopeteaccount_mock.h"
 #include "kopeteprotocol_mock.h"
 #include "kopetecontact_mock.h"

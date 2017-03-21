@@ -101,7 +101,6 @@ void TranslatorGUIClient::messageTranslated( const QVariant &result )
 	m_manager->view()->setCurrentMessage( msg );
 }
 
-#include "translatorguiclient.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -93,5 +93,4 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 
 
 
-#include "yahoobuddyiconloader.moc"
 

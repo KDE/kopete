@@ -277,7 +277,6 @@ int SMSSendProvider::maxSize()
 	return m_maxSize;
 }
 
-#include "smssendprovider.moc"
 /*
  * Local variables:
  * c-indentation-style: k&r

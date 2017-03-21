@@ -233,4 +233,3 @@ bool CoreProtocol::okToProceed( QDataStream &din)
 		return true;
 }
 
-#include "coreprotocol.moc"

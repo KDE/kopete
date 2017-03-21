@@ -58,4 +58,3 @@ void NonServerContactsAddInfoEvent::ssiContactAdded( const OContact& item )
 	updateText();
 }
 
-#include "nscainfoevent.moc"

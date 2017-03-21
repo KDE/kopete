@@ -55,4 +55,3 @@ void JT_XSearch::onGo()
 		JT_Search::onGo();
 }
 
-#include "jt_xsearch.moc"

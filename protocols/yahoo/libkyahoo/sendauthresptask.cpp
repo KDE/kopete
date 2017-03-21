@@ -70,4 +70,3 @@ void SendAuthRespTask::setMessage( const QString &msg )
 }
 
 
-#include "sendauthresptask.moc"

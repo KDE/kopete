@@ -80,4 +80,3 @@ void StatusDelegate::updateEditorGeometry( QWidget *editor, const QStyleOptionVi
 
 }
 
-#include "xtrazstatusdelegate.moc"

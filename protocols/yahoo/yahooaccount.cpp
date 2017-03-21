@@ -2068,7 +2068,6 @@ void YahooAccount::sendChatMessage( const Kopete::Message &msg, const QString &h
 }
 
 
-#include "yahooaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 //kate: indent-mode csands; tab-width 4;

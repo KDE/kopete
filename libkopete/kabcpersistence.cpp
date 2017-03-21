@@ -468,4 +468,3 @@ void KABCPersistence::splitField( const QString &str, QString &app, QString &nam
 
 		// dump addressbook contents
 
-#include "kabcpersistence.moc"

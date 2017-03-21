@@ -123,4 +123,3 @@ void AvatarDialog::slotButtonClicked(int button)
 } // namespace UI
 
 } // namespace Kopete
-#include "avatardialog.moc"

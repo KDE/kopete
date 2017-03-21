@@ -354,4 +354,3 @@ QList<DMPair> History2Logger::getDays(QString search) {
 
 	return dayList;
 }
-#include "history2logger.moc"

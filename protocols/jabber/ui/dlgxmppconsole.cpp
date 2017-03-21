@@ -73,4 +73,3 @@ void dlgXMPPConsole::slotClear()
 	ui.brLog->clear();
 }
 
-#include "dlgxmppconsole.moc"

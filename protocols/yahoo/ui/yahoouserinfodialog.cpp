@@ -268,7 +268,6 @@ void YahooUserInfoDialog::setData( const YABEntry &yab )
 	m_otherInfoWidget->note4Edit->setText( yab.additional4 );
 }
 
-#include "yahoouserinfodialog.moc"
 
 //kate: indent-mode csands; tab-width 4; space-indent off; replace-tabs off;
 

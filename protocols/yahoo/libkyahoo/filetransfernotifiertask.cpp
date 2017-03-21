@@ -160,4 +160,3 @@ void FileTransferNotifierTask::acceptFileTransfer( YMSGTransfer *transfer )
 	send( t );
 }
 
-#include "filetransfernotifiertask.moc"

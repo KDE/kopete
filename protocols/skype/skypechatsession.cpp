@@ -311,4 +311,3 @@ void SkypeChatSession::hideInviteMenu() {
 	d->inviteAction->menu()->clear();
 }
 
-#include "skypechatsession.moc"

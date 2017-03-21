@@ -164,4 +164,3 @@ void DlgJabberBookmarkEditor::removeBookmark()
   m_model->removeRow( index.row() );
 }
 
-#include "dlgjabberbookmarkeditor.moc"

@@ -458,4 +458,3 @@ const QString& LoginTask::loginCookie()
 {
 	return m_loginCookie;
 }
-#include "logintask.moc"

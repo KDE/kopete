@@ -194,4 +194,3 @@ void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 	}
 }
 
-#include "messagereceivertask.moc"

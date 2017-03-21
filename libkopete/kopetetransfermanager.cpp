@@ -612,5 +612,4 @@ QUrl Kopete::TransferManager::getSaveDir( const QUrl &startDir ) const
 	return url;
 }
 
-#include "kopetetransfermanager.moc"
 

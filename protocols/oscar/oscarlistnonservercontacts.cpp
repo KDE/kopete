@@ -72,4 +72,3 @@ void OscarListNonServerContacts::slotButtonClicked( int buttonCode )
     	emit closing();
 }
 
-#include "oscarlistnonservercontacts.moc"

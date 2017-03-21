@@ -96,4 +96,3 @@ void QQWebcamDialog::slotUpdateImage()
 }
 
 
-#include "qqwebcamdialog.moc"

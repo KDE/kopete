@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-#include "kircsocket.moc"
 #include "kircsocket_p.moc"
 
 #include "kirccontext.h"

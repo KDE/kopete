@@ -175,4 +175,3 @@ bool ContactListLayoutWidget::saveLayoutData( QString& layoutName, bool showProm
 	return true;
 }
 
-#include "contactlistlayoutwidget.moc"

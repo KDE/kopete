@@ -53,4 +53,3 @@ void PrivKeyPopup::closeEvent( QCloseEvent *e ){
 	}
 }
 
-#include "privkeypopup.moc"

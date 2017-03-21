@@ -187,4 +187,3 @@ void History2GUIClient::slotViewHistory2() {
 	}
 }
 
-#include "history2guiclient.moc"

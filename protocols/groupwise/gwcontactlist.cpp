@@ -172,5 +172,4 @@ void GWContactInstance::dump( unsigned int depth )
 	s.fill( ' ', ++depth * 2 );
 	kDebug() << s << "Contact " << displayName << " id: " << id << " dn: " << dn;
 }
-#include "gwcontactlist.moc"
 

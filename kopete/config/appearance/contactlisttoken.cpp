@@ -98,4 +98,3 @@ void ContactListToken::setOptimalSize( bool optimalSize )
 	emit changed();
 }
 
-#include "contactlisttoken.moc"

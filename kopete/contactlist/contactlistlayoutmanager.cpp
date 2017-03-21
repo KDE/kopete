@@ -373,4 +373,3 @@ bool LayoutManager::deleteLayout( const QString & layout )
 
 } //namespace ContactList
 
-#include "contactlistlayoutmanager.moc"

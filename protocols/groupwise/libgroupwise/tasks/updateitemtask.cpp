@@ -36,4 +36,3 @@ void UpdateItemTask::item( Field::FieldList updateItemFields )
 	createTransfer( "updateitem", lst );
 }
 
-#include "updateitemtask.moc"

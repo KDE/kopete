@@ -106,4 +106,3 @@ void StatusGroupAction::childRemoved( Kopete::Status::StatusItem* item )
 
 }
 
-#include "kopetestatusgroupaction.moc"

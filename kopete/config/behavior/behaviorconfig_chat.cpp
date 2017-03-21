@@ -23,4 +23,3 @@ BehaviorConfig_Chat::BehaviorConfig_Chat(QWidget *parent)
 	setupUi(this);
 }
 
-#include "behaviorconfig_chat.moc"

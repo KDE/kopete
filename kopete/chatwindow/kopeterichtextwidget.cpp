@@ -635,4 +635,3 @@ void KopeteRichTextWidget::Private::mergeAll(const QTextCharFormat& format)
 }
 
 // kate: space-indent on; indent-width 4; encoding utf-8; replace-tabs on;
-#include "kopeterichtextwidget.moc"

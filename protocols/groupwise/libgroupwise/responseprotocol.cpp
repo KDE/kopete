@@ -321,4 +321,3 @@ bool ResponseProtocol::readGroupWiseLine( QByteArray & line )
 	return true;
 }
 
-#include "responseprotocol.moc"

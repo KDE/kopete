@@ -54,6 +54,5 @@ bool MessageAckTask::take( Transfer* transfer )
 }
 
 
-#include "messageacktask.moc"
 
 //kate: indent-mode csands;

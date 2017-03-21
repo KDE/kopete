@@ -96,4 +96,3 @@ void LinkPreview::completed() {
     m_URLLoading = false;
 }
 
-#include "linkpreview.moc"

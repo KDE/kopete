@@ -697,4 +697,3 @@ void StatisticsDialog::generateOneDayStats ()
 
 }
 
-#include "statisticsdialog.moc"

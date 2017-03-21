@@ -64,4 +64,3 @@ void ChannelListDialog::slotChannelDoubleClicked( const QString & )
 	close();
 }
 
-#include "channellistdialog.moc"

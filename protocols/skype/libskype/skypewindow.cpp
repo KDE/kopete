@@ -291,4 +291,3 @@ void SkypeWindow::revertWebcamWidget(const QString &user) {
 	XUnmapWindow(QX11Info::display(), webcamWidgetWId);
 }
 
-#include "skypewindow.moc"

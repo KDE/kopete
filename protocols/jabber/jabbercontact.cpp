@@ -1446,4 +1446,3 @@ void JabberContact::makeLibjingleCallAction()
 
 #endif
 
-#include "jabbercontact.moc"

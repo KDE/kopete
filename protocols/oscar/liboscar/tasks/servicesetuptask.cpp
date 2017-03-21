@@ -135,4 +135,3 @@ void ServiceSetupTask::onGo()
 
 //kate: tab-width 4; indent-mode csands;
 
-#include "servicesetuptask.moc"

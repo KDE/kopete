@@ -119,5 +119,4 @@ void dlgJabberChatRoomsList::slotClick(QTableWidgetItem *item)
 	m_selectedItem = item;
 }
 
-#include "dlgjabberchatroomslist.moc"
 

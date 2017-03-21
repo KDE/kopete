@@ -114,4 +114,3 @@ dlgJabberRegister::~dlgJabberRegister ()
 
 }
 
-#include "dlgjabberregister.moc"

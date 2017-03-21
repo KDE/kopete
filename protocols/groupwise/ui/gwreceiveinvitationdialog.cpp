@@ -79,4 +79,3 @@ void ReceiveInvitationDialog::slotNoClicked()
 	deleteLater();
 }
 
-#include "gwreceiveinvitationdialog.moc"

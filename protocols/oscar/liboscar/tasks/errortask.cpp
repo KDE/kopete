@@ -74,6 +74,5 @@ bool ErrorTask::take( Transfer* transfer )
 		return false;
 }
 
-#include "errortask.moc"
 
 //kate indent-mode csands;

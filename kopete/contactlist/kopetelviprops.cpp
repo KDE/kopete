@@ -644,4 +644,3 @@ void KopeteMetaLVIProps::slotClearPhotoClicked()
 	slotEnableAndDisableWidgets();
 }
 
-#include "kopetelviprops.moc"

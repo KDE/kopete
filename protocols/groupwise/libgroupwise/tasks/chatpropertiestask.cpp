@@ -136,4 +136,3 @@ QList< ChatContact > ChatPropertiesTask::aclEntries()
 	return m_aclEntries;
 }
 
-#include "chatpropertiestask.moc"

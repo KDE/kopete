@@ -118,7 +118,6 @@ void TypingNotifyTask::setParams( const QString& contact, int notifyType )
 	m_notificationType = notifyType;
 }
 
-#include "typingnotifytask.moc"
 
 // kate: indent-mode csands; space-indent off; replace-tabs off;
 

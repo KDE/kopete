@@ -55,5 +55,4 @@ Field::FieldList UpdateFolderTask::folderToFields( const GroupWise::FolderItem &
 	return lst;
 }
 
-#include "updatefoldertask.moc"
 

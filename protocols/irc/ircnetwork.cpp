@@ -188,4 +188,3 @@ void Networks::addNetwork( IRCNetwork *network )
 }
 */
 
-#include "ircnetwork.moc"

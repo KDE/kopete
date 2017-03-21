@@ -757,4 +757,3 @@ void History2Import::readKopeteMessages(QString protocol, QString account, QStri
 }
 
 
-#include "history2import.moc"

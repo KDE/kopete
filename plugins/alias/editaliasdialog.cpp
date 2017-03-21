@@ -49,6 +49,5 @@ void EditAliasDialog::checkButtonsEnabled()
 		addButton->setEnabled( false ) ;
 }
 
-#include "editaliasdialog.moc"
 
 // kate: space-indent off; replace-tabs off; tab-width 4; indent-mode csands;

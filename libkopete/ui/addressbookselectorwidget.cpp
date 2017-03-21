@@ -175,7 +175,6 @@ void AddressBookSelectorWidget::slotAddAddresseeClicked()
 } // namespace UI
 } // namespace Kopete
 
-#include "addressbookselectorwidget.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

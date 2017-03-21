@@ -250,4 +250,3 @@ void KabcExportWizard::exportDetails( Kopete::MetaContact * mc, KContacts::Addre
 	}
 }
 
-#include "kabcexport.moc"

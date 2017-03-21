@@ -149,4 +149,3 @@ void ICQTlvInfoRequestTask::parse( Oscar::DWORD seq, const QByteArray &data )
 	m_contactSequenceMap.remove( seq );
 }
 
-#include "icqtlvinforequesttask.moc"

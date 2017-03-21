@@ -1521,5 +1521,4 @@ void OscarAccount::createClientStream( ClientStream **clientStream )
 	*clientStream = cs;
 }
 
-#include "oscaraccount.moc"
 //kate: tab-width 4; indent-mode cstyle; replace-tabs 0;

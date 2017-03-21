@@ -82,5 +82,4 @@ void AIMContactBase::sendAutoResponse(Kopete::Message& msg)
 	}
 }
 
-#include "aimcontactbase.moc"
 //kate: tab-width 4; indent-mode csands;

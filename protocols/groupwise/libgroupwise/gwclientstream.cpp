@@ -604,4 +604,3 @@ void ClientStream::handleError()
 {
 }
 
-#include "gwclientstream.moc"

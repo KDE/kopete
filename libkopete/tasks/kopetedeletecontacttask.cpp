@@ -98,4 +98,3 @@ QString DeleteContactTask::taskType() const
 
 } // namespace Kopete
 
-#include "kopetedeletecontacttask.moc"

@@ -1368,6 +1368,5 @@ bool KopeteChatWindow::eventFilter( QObject *obj, QEvent *event )
 	return KXmlGuiWindow::eventFilter(obj, event);
 }
 
-#include "kopetechatwindow.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

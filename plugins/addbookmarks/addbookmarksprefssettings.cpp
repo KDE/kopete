@@ -76,4 +76,3 @@ bool BookmarksPrefsSettings::useSubfolderForContact( QString nickname )
 	return false;
 }
 
-#include "addbookmarksprefssettings.moc"

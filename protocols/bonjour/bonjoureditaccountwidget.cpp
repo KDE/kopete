@@ -121,4 +121,3 @@ bool BonjourEditAccountWidget::validateData()
    	return !( m_preferencesWidget->kcfg_username->text().isEmpty() );
 }
 
-#include "bonjoureditaccountwidget.moc"

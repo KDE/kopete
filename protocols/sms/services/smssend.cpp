@@ -245,7 +245,6 @@ const QString& SMSSend::description()
 }
 
 
-#include "smssend.moc"
 /*
  * Local variables:
  * c-indentation-style: k&r

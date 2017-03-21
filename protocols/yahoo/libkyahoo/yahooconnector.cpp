@@ -107,6 +107,5 @@ void KNetworkConnector::setOptHostPort( const QString &host, quint16 port )
 
 }
 
-#include "yahooconnector.moc"
 
 // kate: indent-width 4; replace-tabs off; tab-width 4; space-indent off;

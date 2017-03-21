@@ -285,4 +285,3 @@ bool CollapsibleWidget::isExpanded() const
 }
 
 
-#include "collapsiblewidget.moc"

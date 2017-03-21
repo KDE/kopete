@@ -514,7 +514,6 @@ void dlgJabberVCard::slotOpenURL(const QString &url)
 		new KRun( QUrl( url ), this );
 }
 
-#include "dlgjabbervcard.moc"
 
 /*
  * Local variables:

@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-#include "kirccommandhandler.moc"
 
 #include "kirccommand.h"
 #include "kircsocket.h"

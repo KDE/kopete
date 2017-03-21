@@ -284,4 +284,3 @@ MeanwhileSession *MeanwhileAccount::session()
     return m_session;
 }
 
-#include "meanwhileaccount.moc"

@@ -284,7 +284,6 @@ void TokenWithLayout::setItalic( bool italic )
 }
 
 
-#include "TokenWithLayout.moc"
 
 
 

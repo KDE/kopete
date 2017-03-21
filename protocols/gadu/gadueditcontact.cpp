@@ -212,4 +212,3 @@ GaduEditContact::slotApply()
 	if( contact_->metaContact()->groups().isEmpty() == true )
 		contact_->metaContact()->addToGroup( Kopete::Group::topLevel() );
 }
-#include "gadueditcontact.moc"

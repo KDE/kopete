@@ -192,6 +192,5 @@ void ChatRoomTask::doAccept()
 }
 
 
-#include "chatroomtask.moc"
 //kate: space-indent off; tab-width 4; indent-mode csands;
 

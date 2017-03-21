@@ -502,7 +502,6 @@ bool PluginManager::isAllPluginsLoaded() const
 } //END namespace Kopete
 
 
-#include "kopetepluginmanager.moc"
 
 
 

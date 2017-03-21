@@ -39,4 +39,3 @@ void FileTransferTest::testRRequest()
 }
 
 
-#include "filetransfertest.moc"

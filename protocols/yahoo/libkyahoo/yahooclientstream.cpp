@@ -417,4 +417,3 @@ void ClientStream::handleError()
 {
 }
 
-#include "yahooclientstream.moc"

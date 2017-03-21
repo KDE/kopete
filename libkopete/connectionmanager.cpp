@@ -163,4 +163,3 @@ bool ConnectionManager::askToConnect( QWidget * mainWidget )
 			QLatin1String("OfflineModeAlwaysGoOnline") ) == KMessageBox::Yes );
 }
 
-#include "connectionmanager.moc"

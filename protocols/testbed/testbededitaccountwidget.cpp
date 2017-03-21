@@ -65,4 +65,3 @@ bool TestbedEditAccountWidget::validateData()
 	return true;
 }
 
-#include "testbededitaccountwidget.moc"

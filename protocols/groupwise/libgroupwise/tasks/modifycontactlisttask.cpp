@@ -134,4 +134,3 @@ void ModifyContactListTask::processFolderChange( Field::MultiField * container )
 }
 
 
-#include "modifycontactlisttask.moc"

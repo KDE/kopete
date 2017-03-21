@@ -176,4 +176,3 @@ int IconCells::columnFromIndex( int index ) const
 	return index % columnCount();
 }
 
-#include "iconcells.moc"

@@ -55,4 +55,3 @@ void Task::start()
 
 }
 
-#include "kopetetask.moc"

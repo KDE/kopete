@@ -171,4 +171,3 @@ void WlmSocket::initPingTimer()
     mPingTimer->start();
 }
 
-#include "wlmsocket.moc"

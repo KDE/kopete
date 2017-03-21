@@ -227,4 +227,3 @@ bool ConferenceTask::queueWhileAwaitingData( const ConferenceEvent & event )
 	}
 }
 
-#include "conferencetask.moc"

@@ -38,4 +38,3 @@ void CreateFolderTask::folder( const int parentId, const int sequence, const QSt
 	createTransfer( "createfolder", lst );
 }
 
-#include "createfoldertask.moc"

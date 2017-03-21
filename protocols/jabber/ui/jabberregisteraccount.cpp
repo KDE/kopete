@@ -424,4 +424,3 @@ void JabberRegisterAccount::slotDebugMessage ( const QString &msg )
 
 }
 
-#include "jabberregisteraccount.moc"

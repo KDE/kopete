@@ -1233,4 +1233,3 @@ void JabberClient::slotSubscription ( const Jid &jid, const QString &type )
 }
 
 
-#include "jabberclient.moc"

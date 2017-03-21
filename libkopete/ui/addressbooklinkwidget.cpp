@@ -107,4 +107,3 @@ void AddressBookLinkWidget::slotSelectAddressee()
 } // end namespace UI
 } // end namespace Kopete
 
-#include "addressbooklinkwidget.moc"

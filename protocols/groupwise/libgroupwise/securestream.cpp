@@ -602,4 +602,3 @@ void SecureStream::incomingData(const QByteArray &a)
 		readyRead();
 }
 
-#include "securestream.moc"

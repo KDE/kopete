@@ -354,4 +354,3 @@ void StatusRootAction::changeStatus( const Kopete::Status::Status* status )
 
 }
 
-#include "kopetestatusrootaction.moc"

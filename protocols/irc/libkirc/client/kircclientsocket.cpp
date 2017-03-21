@@ -16,7 +16,6 @@
     *************************************************************************
 */
 
-#include "kircclientsocket.moc"
 #include "kircclientsocket_p.moc"
 
 #include "kircentity.h"

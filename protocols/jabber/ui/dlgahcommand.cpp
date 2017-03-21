@@ -152,4 +152,3 @@ XMPP::XData dlgAHCommand::data() const
 	return x;
 }
 
-#include "dlgahcommand.moc"

@@ -91,7 +91,6 @@ void YahooChatChatSession::slotMessageSent( Kopete::Message & message, Kopete::C
 	messageSucceeded();
 }
 
-#include "yahoochatchatsession.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

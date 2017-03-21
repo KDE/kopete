@@ -134,4 +134,3 @@ QStringList PrivacyAccountListModel::toStringList() const
 	return list;
 }
 
-#include "privacyaccountlistmodel.moc"

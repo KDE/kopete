@@ -155,4 +155,3 @@ void KNetworkByteStream::slotError ( QAbstractSocket::SocketError code )
 	emit error ( code );
 }
 
-#include "gwbytestream.moc"

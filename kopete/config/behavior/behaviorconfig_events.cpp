@@ -31,4 +31,3 @@ BehaviorConfig_Events::BehaviorConfig_Events(QWidget *parent)
 	}
 }
 
-#include "behaviorconfig_events.moc"

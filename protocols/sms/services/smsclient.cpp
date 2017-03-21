@@ -182,7 +182,6 @@ const QString& SMSClient::description()
 	return m_description;
 }
 
-#include "smsclient.moc"
 /*
  * Local variables:
  * c-indentation-style: k&r

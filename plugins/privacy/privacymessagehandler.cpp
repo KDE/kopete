@@ -83,6 +83,5 @@ void PrivacyMessageHandler::handleMessage( MessageEvent *e )
 		kDebug(14313) << "MessageEvent destroyed!";
 }
 
-#include "privacymessagehandler.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

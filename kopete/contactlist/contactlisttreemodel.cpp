@@ -872,5 +872,4 @@ int GroupModelItem::indexOf( const ContactListModelItem* item ) const
 
 }
 
-#include "contactlisttreemodel.moc"
 //kate: tab-width 4

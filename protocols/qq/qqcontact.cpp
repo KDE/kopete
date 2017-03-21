@@ -484,7 +484,6 @@ void QQContact::setObject(const QString &obj)
 }
 
 
-#include "qqcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

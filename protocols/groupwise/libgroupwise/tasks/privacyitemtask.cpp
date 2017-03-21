@@ -79,4 +79,3 @@ void PrivacyItemTask::defaultPolicy( bool defaultDeny )
 	createTransfer( "updateblocks", lst );
 }
 
-#include "privacyitemtask.moc"

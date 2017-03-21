@@ -44,4 +44,3 @@ bool EventTask::forMe( const Transfer * transfer ) const
 	return false;
 }
 
-#include "eventtask.moc"

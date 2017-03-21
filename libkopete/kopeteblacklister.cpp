@@ -105,4 +105,3 @@ void BlackLister::removeContact(const QString &contactId)
 
 }
 
-#include "kopeteblacklister.moc"

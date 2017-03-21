@@ -1020,7 +1020,6 @@ QTextCodec* ICQUserInfoWidget::getTextCodec() const
 	return (m_contact) ? m_contact->contactCodec() : m_account->defaultCodec();
 }
 
-#include "icquserinfowidget.moc"
 
 //kate: indent-mode csands; tab-width 4; space-indent off; replace-tabs off;
 

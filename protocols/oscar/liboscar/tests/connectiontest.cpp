@@ -55,4 +55,3 @@ void ConnectionTest::checkSupportedFamiliesList()
     delete c;
 }
 
-#include "connectiontest.moc"

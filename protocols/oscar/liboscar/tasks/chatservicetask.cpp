@@ -358,5 +358,4 @@ void ChatServiceTask::parseChatError()
 }
 
 
-#include "chatservicetask.moc"
 

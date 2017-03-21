@@ -482,4 +482,3 @@ void QQAccount::getVCard( QQContact* contact )
 	return ;
 }
 
-#include "qqaccount.moc"

@@ -90,4 +90,3 @@ JabberFormTranslator::~JabberFormTranslator ()
 {
 }
 
-#include "jabberformtranslator.moc"

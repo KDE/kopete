@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-#include "kircclientchannelhandler.moc"
 
 #include "kircclientsocket.h"
 

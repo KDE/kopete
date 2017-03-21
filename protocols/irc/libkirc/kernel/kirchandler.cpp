@@ -14,7 +14,6 @@
 */
 
 #include "kirchandler_p.h"
-#include "kirchandler.moc"
 
 #include <QtCore/QMultiHash>
 #include <kdebug.h>

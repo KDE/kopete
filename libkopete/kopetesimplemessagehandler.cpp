@@ -96,6 +96,5 @@ void SimpleMessageHandler::handleMessage( MessageEvent *event )
 
 }
 
-#include "kopetesimplemessagehandler.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

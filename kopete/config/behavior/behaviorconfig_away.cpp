@@ -23,4 +23,3 @@ BehaviorConfig_Away::BehaviorConfig_Away(QWidget *parent)
 	setupUi(this);
 }
 
-#include "behaviorconfig_away.moc"

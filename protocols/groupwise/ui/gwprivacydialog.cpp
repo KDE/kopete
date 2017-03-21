@@ -362,4 +362,3 @@ void GroupWisePrivacyDialog::errorNotConnected()
 			i18n( "You can only change privacy settings while you are logged in to the GroupWise Messenger server." ) , i18n("'%1' Not Logged In", m_account->accountId() ) );
 }
 
-#include "gwprivacydialog.moc"

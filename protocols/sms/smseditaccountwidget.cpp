@@ -138,7 +138,6 @@ void SMSEditAccountWidget::showDescription()
 	KMessageBox::information(Kopete::UI::Global::mainWidget(), d, i18n("Description"));
 }
 
-#include "smseditaccountwidget.moc"
 
 /*
  * Local variables:

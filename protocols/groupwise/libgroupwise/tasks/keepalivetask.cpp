@@ -39,4 +39,3 @@ void KeepAliveTask::setup()
 	createTransfer( "ping", lst );
 }
 
-#include "keepalivetask.moc"

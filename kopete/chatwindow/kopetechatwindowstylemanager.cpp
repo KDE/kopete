@@ -425,4 +425,3 @@ void ChatWindowStyleManager::slotDirectoryFinished()
 	}
 }
 
-#include "kopetechatwindowstylemanager.moc"

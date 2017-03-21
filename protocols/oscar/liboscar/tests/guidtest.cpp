@@ -61,4 +61,3 @@ void GuidTest::testCompare()
 }
 
 
-#include "guidtest.moc"

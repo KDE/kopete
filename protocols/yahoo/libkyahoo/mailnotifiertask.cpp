@@ -74,4 +74,3 @@ void MailNotifierTask::parseMail( YMSGTransfer *t )
 		emit mailNotify( QString(), QString(), count.toInt());
 }
 
-#include "mailnotifiertask.moc"

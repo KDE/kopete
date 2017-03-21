@@ -157,4 +157,3 @@ void JabberChooseServer::slotTransferResult ( KJob *kJob )
 }
 
 
-#include "jabberchooseserver.moc"

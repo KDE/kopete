@@ -348,4 +348,3 @@ void ICQSearchDialog::slotButtonClicked( int button )
 
 //kate: indent-mode csands; space-indent off; replace-tabs off; tab-width 4;
 
-#include "icqsearchdialog.moc"

@@ -329,4 +329,3 @@ void ServiceItem::slotDiscoInfoFinished()
 	}
 }
 
-#include "dlgjabberservices.moc"

@@ -102,4 +102,3 @@ SkypeDetails &SkypeDetails::setSex(const QString &sex) {
 	return *this;
 }
 
-#include "skypedetails.moc"

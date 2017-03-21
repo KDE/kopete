@@ -36,4 +36,3 @@ void RejectInviteTask::reject( const GroupWise::ConferenceGuid & guid )
 	createTransfer( "rejectconf", lst );
 }
 
-#include "rejectinvitetask.moc"

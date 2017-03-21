@@ -176,5 +176,4 @@ void dlgJabberChatJoin::slotCheckData()
 
 // end todo
 
-#include "dlgjabberchatjoin.moc"
 

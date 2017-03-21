@@ -134,4 +134,3 @@ QList< GroupWise::ContactDetails > SearchUserTask::results()
 	return m_results;
 }
 
-#include "searchusertask.moc"

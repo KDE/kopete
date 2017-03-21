@@ -139,4 +139,3 @@ GaduAddContactPage::apply( Kopete::Account* a , Kopete::MetaContact* mc )
 	return true;
 }
 
-#include "gaduaddcontactpage.moc"

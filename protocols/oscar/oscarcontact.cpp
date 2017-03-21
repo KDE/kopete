@@ -661,5 +661,4 @@ QString OscarContact::brMargin( int margin, int fontPointSize, bool forceBr ) co
 	return s;
 }
 
-#include "oscarcontact.moc"
 //kate: tab-width 4; indent-mode csands;

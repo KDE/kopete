@@ -171,4 +171,3 @@ GroupWise::ConferenceGuid JoinConferenceTask::guid() const
 	return m_guid;
 }
 
-#include "joinconferencetask.moc"

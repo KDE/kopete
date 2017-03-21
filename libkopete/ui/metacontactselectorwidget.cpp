@@ -302,7 +302,6 @@ void MetaContactSelectorWidget::setLabelMessage( const QString &msg )
 } // namespace UI
 } // namespace Kopete
 
-#include "metacontactselectorwidget.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

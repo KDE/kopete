@@ -451,4 +451,3 @@ GaduDCCTransaction::watcher() {
 	enableNotifiers( dccSock_->check );
 }
 
-#include "gadudcctransaction.moc"

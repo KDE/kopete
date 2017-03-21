@@ -418,4 +418,3 @@ JabberResource *JabberResourcePool::getJabberResource ( const XMPP::Jid &jid, co
 	return bestJabberResource(jid);
 }
 
-#include "jabberresourcepool.moc"

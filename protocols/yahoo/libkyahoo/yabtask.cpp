@@ -158,4 +158,3 @@ void YABTask::slotResult( KJob* job )
 	}
 }
 
-#include "yabtask.moc"

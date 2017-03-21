@@ -60,7 +60,6 @@ void SMSUserPreferences::slotCancel()
 	deleteLater();
 }
 
-#include "smsuserpreferences.moc"
 /*
  * Local variables:
  * c-indentation-style: k&r

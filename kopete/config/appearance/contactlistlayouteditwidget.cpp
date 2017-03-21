@@ -120,5 +120,4 @@ ContactList::LayoutItemConfig LayoutEditWidget::config()
 }
 
 
-#include "contactlistlayouteditwidget.moc"
 

@@ -228,7 +228,6 @@ bool AccountIdentityDialog::changeAccountIdentity( QWidget *parent, QList<Kopete
 	return ret;
 }
 
-#include "accountidentitydialog.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

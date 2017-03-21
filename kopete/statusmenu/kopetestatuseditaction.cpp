@@ -160,4 +160,3 @@ void StatusEditDialog::setStatusMessage( const Kopete::StatusMessage& statusMess
 
 }
 
-#include "kopetestatuseditaction.moc"

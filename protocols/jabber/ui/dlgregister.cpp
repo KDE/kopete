@@ -137,4 +137,3 @@ void dlgRegister::slotSentForm()
 	}
 }
 
-#include "dlgregister.moc"

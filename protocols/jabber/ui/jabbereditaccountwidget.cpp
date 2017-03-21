@@ -444,6 +444,5 @@ void JabberEditAccountWidget::slotPrivacyListsClicked()
 	dialog->show();
 }
 
-#include "jabbereditaccountwidget.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

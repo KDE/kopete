@@ -41,4 +41,3 @@ void TypingTask::typing( const GroupWise::ConferenceGuid & conferenceGuid, const
 	createTransfer( "sendtyping", outgoingList );
 }
 
-#include "typingtask.moc"

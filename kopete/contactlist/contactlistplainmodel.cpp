@@ -393,5 +393,4 @@ void ContactListPlainModel::loadModelSettingsImpl( QDomElement& rootElement )
 
 }
 
-#include "contactlistplainmodel.moc"
 //kate: tab-width 4

@@ -891,4 +891,3 @@ QList<int> HistoryLogger::getDaysForMonth(QDate date)
 	return dayList;
 }
 
-#include "historylogger.moc"

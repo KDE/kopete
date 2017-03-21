@@ -58,4 +58,3 @@ void SMSService::disconnect()
 // vim: set noet ts=4 sts=4 sw=4:
 
 
-#include "smsservice.moc"

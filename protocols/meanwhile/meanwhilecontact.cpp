@@ -127,7 +127,6 @@ void MeanwhileContact::slotChatSessionDestroyed()
 	m_msgManager = 0L;
 }
 
-#include "meanwhilecontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -152,4 +152,3 @@ UserDetails UserInfoTask::getInfoFor( Oscar::DWORD sequence ) const
 //kate: indent-mode csands; tab-width 4;
 
 
-#include "userinfotask.moc"

@@ -556,5 +556,4 @@ QTextCodec* MessageReceiverTask::guessCodec( const QByteArray& string )
 	return 0;
 }
 
-#include "messagereceivertask.moc"
 //kate: indent-mode csands;

@@ -128,4 +128,3 @@ void YahooWebcam::removeViewer( const QString &viewer )
 		theDialog->setViewer( m_viewer );
 }
 
-#include "yahoowebcam.moc"

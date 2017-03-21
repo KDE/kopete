@@ -88,4 +88,3 @@ void SendNotifyTask::setState( State state)
 }
 
 
-#include "sendnotifytask.moc"

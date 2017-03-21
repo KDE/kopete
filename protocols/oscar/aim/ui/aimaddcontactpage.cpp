@@ -102,4 +102,3 @@ bool AIMAddContactPage::apply(Kopete::Account *account,
 }
 //kate: tab-width 4; indent-mode csands;
 
-#include "aimaddcontactpage.moc"

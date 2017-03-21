@@ -847,7 +847,6 @@ void YahooContact::readYABEntry()
 	m_YABEntry->additional4 = property( YahooProtocol::protocol()->propAdditional4 ).value().toString();
 }
 
-#include "yahoocontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 //kate: space-indent off; replace-tabs off; indent-mode csands;

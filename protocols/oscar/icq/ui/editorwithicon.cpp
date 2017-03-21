@@ -114,4 +114,3 @@ void EditorWithIcon::popupIcons()
 	iconCells->setFocus();
 }
 
-#include "editorwithicon.moc"

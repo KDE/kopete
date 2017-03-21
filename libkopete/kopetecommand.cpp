@@ -167,4 +167,3 @@ void Kopete::Command::printError( const QString &error, Kopete::ChatSession *man
 	}
 }
 
-#include "kopetecommand.moc"

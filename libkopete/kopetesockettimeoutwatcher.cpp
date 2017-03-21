@@ -122,4 +122,3 @@ void SocketTimeoutWatcher::ackTimeoutCheck()
 
 }
 
-#include "kopetesockettimeoutwatcher.moc"

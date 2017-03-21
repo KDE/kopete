@@ -463,4 +463,3 @@ void SkypeContact::sendFile(const KUrl &url, const QString &, uint) {
 	d->account->openFileTransfer(contactId(), url.toLocalFile());
 }
 
-#include "skypecontact.moc"

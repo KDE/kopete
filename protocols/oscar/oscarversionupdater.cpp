@@ -294,4 +294,3 @@ bool OscarVersionUpdater::equal( const Oscar::ClientVersion& a, const Oscar::Cli
 	return true;
 }
 
-#include "oscarversionupdater.moc"

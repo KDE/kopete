@@ -517,4 +517,3 @@ bool JabberXDataWidget::isValid() const
 	return true;
 }
 
-#include "jabberxdatawidget.moc"

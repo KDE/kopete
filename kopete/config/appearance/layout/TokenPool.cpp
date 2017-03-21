@@ -141,4 +141,3 @@ TokenPool::performDrag( QMouseEvent *event )
     }
 }
 
-#include "TokenPool.moc"

@@ -503,4 +503,3 @@ void QQChatSession::slotShowArchiving()
 	KMessageBox::queuedMessageBox( w, KMessageBox::Information, i18n( "This conversation is being logged administratively." ), i18n("Archiving Status" ) );
 }
 
-#include "qqchatsession.moc"

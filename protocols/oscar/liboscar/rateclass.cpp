@@ -237,6 +237,5 @@ void RateClass::dumpQueue()
 	}
 }
 
-#include "rateclass.moc"
 
 //kate: tab-width 4; indent-mode csands;

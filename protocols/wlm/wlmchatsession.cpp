@@ -1183,4 +1183,3 @@ WlmChatSession::requestDisplayPicture ()
     }
 }
 
-#include "wlmchatsession.moc"

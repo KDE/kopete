@@ -117,4 +117,3 @@ void YahooWebcamDialog::setViewer( const QStringList &viewer )
 
 // kate: indent-mode csands; tab-width 4;
 
-#include "yahoowebcamdialog.moc"

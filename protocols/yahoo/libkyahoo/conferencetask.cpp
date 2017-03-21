@@ -252,4 +252,3 @@ void ConferenceTask::sendMessage( const QString &room, const QStringList &member
 
 	send( t );
 }
-#include "conferencetask.moc"

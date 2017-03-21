@@ -201,4 +201,3 @@ void StatusConfig_Manager::editTypeChanged( int index )
 	d->statusModel->setData( modelIndex, cbStatusCategory->itemData(index), KopeteStatusModel::Category );
 }
 
-#include "statusconfig_manager.moc"

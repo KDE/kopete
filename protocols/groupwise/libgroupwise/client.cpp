@@ -550,4 +550,3 @@ void Client::smt_messageSent()
 
 }
 
-#include "client.moc"

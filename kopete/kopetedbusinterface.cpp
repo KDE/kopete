@@ -476,4 +476,3 @@ QVariantMap KopeteDBusInterface::contactProperties(const QString &contactId)
 	return properties;
 }
 
-#include "kopetedbusinterface.moc"

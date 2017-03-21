@@ -72,7 +72,6 @@ bool YahooAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *th
 	return true;
 }
 
-#include "yahooaddcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

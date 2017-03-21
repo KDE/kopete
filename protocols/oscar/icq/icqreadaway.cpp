@@ -101,5 +101,4 @@ void ICQReadAway::slotMailClicked(const QString&, const QString &address)
 	new KRun(KUrl(address));
 }
 
-#include "icqreadaway.moc"
 // vim: set noet ts=4 sts=4 sw=4:

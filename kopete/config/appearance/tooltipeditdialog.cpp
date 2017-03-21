@@ -270,4 +270,3 @@ void TooltipEditDialog::slotRemoveButton()
 	}
 }
 
-#include "tooltipeditdialog.moc"

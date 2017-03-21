@@ -30,4 +30,3 @@ void BehaviorConfig_General::queueToggled(bool checked)
 	kcfg_queueUnreadMessages->setEnabled(checked);
 }
 
-#include "behaviorconfig_general.moc"

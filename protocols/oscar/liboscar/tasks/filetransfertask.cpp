@@ -898,6 +898,5 @@ QString FileTransferTask::parseDescription( const QByteArray &description ) cons
 		return QString::fromUtf8( description );
 }
 
-#include "filetransfertask.moc"
 //kate: space-indent off; tab-width 4; indent-mode csands;
 

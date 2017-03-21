@@ -111,4 +111,3 @@ void GroupWiseChatSearchDialog::slotGotProperties(const GroupWise::Chatroom & ro
 	new GroupWiseChatPropsDialog( room, true, this );
 }
 
-#include "gwchatsearchdialog.moc"

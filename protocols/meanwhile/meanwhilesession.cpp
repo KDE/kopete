@@ -1002,4 +1002,3 @@ MEANWHILE_HOOK_CONFERENCE(conference_invite,
             KMessageBox::Notify);
 }
 #endif
-#include "meanwhilesession.moc"

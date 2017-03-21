@@ -70,4 +70,3 @@ bool TestbedAddContactPage::validateData()
 }
 
 
-#include "testbedaddcontactpage.moc"

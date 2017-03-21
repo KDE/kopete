@@ -709,5 +709,4 @@ void AIMAccount::setPrivacySettings( int privacy )
 	engine()->setPrivacyTLVs( privacyByte, userClasses );
 }
 
-#include "aimaccount.moc"
 //kate: tab-width 4; indent-mode csands;
