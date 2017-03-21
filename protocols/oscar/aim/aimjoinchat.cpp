@@ -96,5 +96,4 @@ QString AIMJoinChatUI::exchange() const
     return m_exchange;
 }
 
-#include "aimjoinchat.moc"
 //kate: space-indent on; indent-width 4;

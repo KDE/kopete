@@ -168,6 +168,5 @@ QString ServerRedirectTask::chatRoomName() const
     return m_chatRoom;
 }
 
-#include "serverredirecttask.moc"
 //kate: indent-mode csands; tab-width 4;
 

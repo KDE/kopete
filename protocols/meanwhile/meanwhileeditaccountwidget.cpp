@@ -189,4 +189,3 @@ void MeanwhileEditAccountWidget::slotSetServer2Default()
     ui.mClientVersionMinor->setValue(verMinor);
 }
 
-#include "meanwhileeditaccountwidget.moc"

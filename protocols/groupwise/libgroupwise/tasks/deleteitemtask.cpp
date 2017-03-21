@@ -43,4 +43,3 @@ void DeleteItemTask::item( const int parentFolder, const int objectId )
 	createTransfer( "deletecontact", lst );
 }
 
-#include "deleteitemtask.moc"

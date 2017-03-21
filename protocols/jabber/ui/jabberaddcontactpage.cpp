@@ -236,7 +236,6 @@ void JabberAddContactPage_there_is_no_possibility_to_add_assync_WORKAROUND::slot
 
 
 
-#include "jabberaddcontactpage.moc"
 
 /*
  * Local variables:

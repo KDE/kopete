@@ -133,4 +133,3 @@ void GroupWiseEditAccountWidget::configChanged ()
 	settings_changed = true;
 }
 
-#include "gweditaccountwidget.moc"

@@ -172,6 +172,5 @@ void SSIListTask::checkContactTimestamp()
 	send( t );
 }
 
-#include "ssilisttask.moc"
 
 // kate: tab-width 4; indent-mode csands;

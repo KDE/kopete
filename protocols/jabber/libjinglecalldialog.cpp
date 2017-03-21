@@ -26,5 +26,4 @@ void LibjingleCallDialog::closeEvent(QCloseEvent * e) {
 	emit(closed());
 }
 
-#include "libjinglecalldialog.moc"
 

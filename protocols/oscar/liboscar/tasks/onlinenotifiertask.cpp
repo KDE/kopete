@@ -95,5 +95,4 @@ void OnlineNotifierTask::userOffline()
 	emit userIsOffline( user, ud );
 }
 
-#include "onlinenotifiertask.moc"
 //kate: tab-width 4; indent-mode csands;

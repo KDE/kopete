@@ -85,4 +85,3 @@ void NotifyHelper::unregisterNotification(const KNotification* event)
 } // end ns ErrorNotifier
 } // end ns Kopete
 
-#include "kopeteutils_private.moc"

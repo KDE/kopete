@@ -96,4 +96,3 @@ GaduAway::slotApply()
 	}
 }
 
-#include "gaduaway.moc"

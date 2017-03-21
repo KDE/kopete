@@ -485,4 +485,3 @@ void IRCNetworkConfigWidget::slotSaveNetworkConfig()
 }
 
 
-#include "networkconfigwidget.moc"

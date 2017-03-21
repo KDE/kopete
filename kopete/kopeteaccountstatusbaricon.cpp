@@ -100,4 +100,3 @@ bool KopeteAccountStatusBarIcon::event( QEvent *event )
 	return QLabel::event( event );
 }
 
-#include "kopeteaccountstatusbaricon.moc"

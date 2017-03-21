@@ -107,4 +107,3 @@ void ICQChangePasswordDialog::slotPasswordChanged( bool error )
 	accept();
 }
 
-#include "icqchangepassworddialog.moc"

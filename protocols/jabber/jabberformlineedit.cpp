@@ -36,4 +36,3 @@ JabberFormLineEdit::~JabberFormLineEdit ()
 {
 }
 
-#include "jabberformlineedit.moc"

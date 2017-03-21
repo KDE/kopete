@@ -33,4 +33,3 @@ TutorialPlugin::~TutorialPlugin()
 
 }
 
-#include "tutorialplugin.moc"

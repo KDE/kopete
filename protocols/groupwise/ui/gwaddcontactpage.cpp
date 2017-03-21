@@ -111,4 +111,3 @@ void GroupWiseAddContactPage::searchResult(bool valid)
 	m_canadd = valid;
 }
 
-#include "gwaddcontactpage.moc"

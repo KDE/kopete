@@ -136,6 +136,5 @@ void KNetworkByteStream::slotError( int code )
 	emit error( code );
 }
 
-#include "yahoobytestream.moc"
 
 // kate: indent-width 4; replace-tabs off; tab-width 4; space-indent off;

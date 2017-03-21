@@ -118,7 +118,6 @@ bool WPAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMe
 	return theAccount->addContact(theDialog->mHostName->currentText(), theMetaContact, Kopete::Account::ChangeKABC );
 }
 
-#include "wpaddcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; indent-width 4; replace-trailing-space-save on;

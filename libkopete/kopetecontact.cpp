@@ -960,4 +960,3 @@ QString Kopete::Contact::displayName() const
 
 } //END namespace Kopete
 
-#include "kopetecontact.moc"

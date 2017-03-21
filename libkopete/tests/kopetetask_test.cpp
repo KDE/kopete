@@ -20,7 +20,6 @@
 #include <QtTest/QSignalSpy>
 #include <QTimer>
 
-#include "kopetetask_test.moc"
 
 #include <kcmdlineargs.h>
 #include <kdebug.h>

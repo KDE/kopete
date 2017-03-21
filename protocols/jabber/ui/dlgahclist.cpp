@@ -94,4 +94,3 @@ void dlgAHCList::slotCommandExecuted()
 	close();
 }
 
-#include "dlgahclist.moc"

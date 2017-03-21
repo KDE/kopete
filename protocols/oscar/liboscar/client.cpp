@@ -1856,5 +1856,4 @@ void Client::gotFileMessage( int type, const QString from, const QByteArray cook
 
 }
 
-#include "client.moc"
 //kate: tab-width 4; indent-mode csands; space-indent off; replace-tabs off;

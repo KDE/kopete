@@ -82,4 +82,3 @@ QMap< QString, int > ChatCountsTask::results()
 	return m_results;
 }
 
-#include "chatcountstask.moc"

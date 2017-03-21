@@ -487,4 +487,3 @@ BonjourContact *BonjourAccount::verifyUser(BonjourContactConnection *conn, const
 }
 	
 
-#include "bonjouraccount.moc"

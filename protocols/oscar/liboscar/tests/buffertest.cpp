@@ -85,4 +85,3 @@ void BufferTest::testGuid()
 	
 }
 
-#include "buffertest.moc"

@@ -201,4 +201,3 @@ void TestbedAccount::updateContactStatus()
 }
 
 
-#include "testbedaccount.moc"

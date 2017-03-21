@@ -545,6 +545,5 @@ void ICQAccount::addedInfoEventActionActivated( uint actionId )
 	}
 }
 
-#include "icqaccount.moc"
 
 //kate: tab-width 4; indent-mode csands;

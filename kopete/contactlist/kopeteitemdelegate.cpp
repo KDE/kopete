@@ -669,4 +669,3 @@ qreal KopeteItemDelegate::calculateRowHeight( const ContactList::LayoutItemConfi
 	return rowHeight;
 }
 
-#include "kopeteitemdelegate.moc"

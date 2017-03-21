@@ -69,4 +69,3 @@ bool QQAddContactPage::validateData()
 }
 
 
-#include "qqaddcontactpage.moc"

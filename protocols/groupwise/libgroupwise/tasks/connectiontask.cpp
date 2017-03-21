@@ -52,4 +52,3 @@ bool ConnectionTask::take( Transfer * transfer )
 	return false;
 }
 
-#include "connectiontask.moc"

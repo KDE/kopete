@@ -193,4 +193,3 @@ Kopete::MetaContact *KopeteDBusInterfacePrivate::findContact(
     return contact;
 }
 
-#include "kopetedbusinterface_p.moc"

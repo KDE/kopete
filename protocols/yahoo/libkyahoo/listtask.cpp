@@ -111,4 +111,3 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 
 
 
-#include "listtask.moc"

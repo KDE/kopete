@@ -80,6 +80,5 @@ void NowListeningGUIClient::slotPluginUnloaded()
 		w->removeAction(m_action);
 }
 
-#include "nowlisteningguiclient.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

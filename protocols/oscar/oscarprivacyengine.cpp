@@ -187,4 +187,3 @@ void OscarPrivacyEngine::addAllContacts( const ContactMap& contacts )
 	}
 }
 
-#include "oscarprivacyengine.moc"

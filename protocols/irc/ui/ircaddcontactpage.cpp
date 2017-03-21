@@ -82,4 +82,3 @@ bool IRCAddContactPage::validateData()
 	return true;
 }
 
-#include "ircaddcontactpage.moc"

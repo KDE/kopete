@@ -214,4 +214,3 @@ bool EventProtocol::readFlags( quint32 &flags)
 	return false;
 }
 
-#include "eventprotocol.moc"

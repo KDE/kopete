@@ -355,4 +355,3 @@ GaduPublicDir::slotSearch()
 	}
 }
 
-#include "gadupubdir.moc"

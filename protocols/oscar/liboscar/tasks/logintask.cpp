@@ -213,6 +213,5 @@ void StageTwoLoginTask::rateTaskFinished()
 	setSuccess( 0, QString() );
 }
 
-#include "logintask.moc"
 
 //kate: tab-width 4; indent-mode csands;

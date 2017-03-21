@@ -358,5 +358,4 @@ void ChatNavServiceTask::handleCreateRoomInfo( const TLV& t )
 	}
 }
 
-#include "chatnavservicetask.moc"
 //kate: indent-mode csands; tab-width 4;

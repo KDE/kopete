@@ -101,4 +101,3 @@ void PrivacyGUIClient::slotAddToWhiteList()
 	static_cast<PrivacyPlugin *>(plugin)->addContactsToWhiteList( list );
 }
 
-#include "privacyguiclient.moc"

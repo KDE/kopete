@@ -55,7 +55,6 @@ bool SMSAddContactPage::validateData()
 	return true;
 }
 
-#include "smsaddcontactpage.moc"
 /*
  * Local variables:
  * c-indentation-style: k&r

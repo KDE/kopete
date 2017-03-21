@@ -38,4 +38,3 @@ void ServerVersionsTest::testSupportedFamilies()
 }
 
 
-#include "serverversionstest.moc"

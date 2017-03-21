@@ -136,4 +136,3 @@ void ChatroomManager::slotGotChatProperties()
 	}
 }
 
-#include "chatroommanager.moc"

@@ -105,4 +105,3 @@ WlmChatSessionInkArea::~WlmChatSessionInkArea()
 {
 }
 
-#include "wlmchatsessioninkarea.moc"

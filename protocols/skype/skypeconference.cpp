@@ -74,4 +74,3 @@ void SkypeConference::embedCall(SkypeCallDialog *dialog) {
 	connect(this, SIGNAL(destroyed()), dialog, SLOT(hangUp()));
 }
 
-#include "skypeconference.moc"

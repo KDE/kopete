@@ -57,4 +57,3 @@ bool OscarTestBase::loadFile(const QString& file)
 	return true;
 }
 
-#include "oscartestbase.moc"

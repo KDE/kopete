@@ -653,6 +653,5 @@ Oscar::WORD ContactManager::findFreeId( const QSet<Oscar::WORD>& idSet, Oscar::W
 	return 0xFFFF;
 }
 
-#include "contactmanager.moc"
 
 //kate: tab-width 4; indent-mode csands;

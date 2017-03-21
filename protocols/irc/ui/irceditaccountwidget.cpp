@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-#include "irceditaccountwidget.moc"
 
 #include "ircaccount.h"
 #include "irccontact.h"

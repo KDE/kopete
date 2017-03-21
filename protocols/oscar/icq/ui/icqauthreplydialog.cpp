@@ -86,4 +86,3 @@ bool ICQAuthReplyDialog::grantAuth() const
 	return m_ui->rbGrant->isChecked();
 }
 
-#include "icqauthreplydialog.moc"

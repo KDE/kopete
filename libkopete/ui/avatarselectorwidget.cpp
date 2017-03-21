@@ -354,5 +354,4 @@ AvatarSelectorWidgetItem * AvatarSelectorWidget::Private::addItem(Kopete::Avatar
 
 } // Namespace Kopete
 
-#include "avatarselectorwidget.moc"
 #endif // LIBKOPETE_UI/AVATARSELECTORWIDGET_CPP

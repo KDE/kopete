@@ -179,4 +179,3 @@ KIRC::Transfer *IRCTransferHandler::getKIRCTransfer(const Kopete::FileTransferIn
 	return t;
 }
 
-#include "irctransferhandler.moc"

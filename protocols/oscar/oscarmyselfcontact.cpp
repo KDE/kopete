@@ -56,6 +56,5 @@ void OscarMyselfContact::deleteContact()
 	kWarning( OSCAR_GEN_DEBUG ) << "called on myself contact! Ignoring." << endl << kBacktrace();
 }
 
-#include "oscarmyselfcontact.moc"
 
 //kate: indent-mode csands;

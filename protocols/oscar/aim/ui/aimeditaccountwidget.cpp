@@ -228,5 +228,4 @@ void AIMEditAccountWidget::slotOpenRegister()
 	KToolInvocation::invokeBrowser( QString::fromLatin1("http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&mcState=initialized&createSn=1") );
 }
 
-#include "aimeditaccountwidget.moc"
 // vim: set noet ts=4 sts=4 sw=4:

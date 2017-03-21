@@ -586,7 +586,6 @@ QList<Kopete::MessageEvent*> KopeteViewManager::pendingMessages( Kopete::Contact
 	return pending;
 }
 
-#include "kopeteviewmanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

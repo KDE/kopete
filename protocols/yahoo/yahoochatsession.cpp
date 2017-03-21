@@ -193,4 +193,3 @@ void YahooChatSession::slotDisplayPictureChanged()
 	}
 }
 
-#include "yahoochatsession.moc"

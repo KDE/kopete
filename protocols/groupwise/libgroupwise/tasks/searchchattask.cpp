@@ -124,4 +124,3 @@ QList< GroupWise::ChatroomSearchResult > SearchChatTask::results()
 	return m_results;
 }
 
-#include "searchchattask.moc"

@@ -477,4 +477,3 @@ void AvatarQueryJob::Private::listAvatarDirectory(const QString &relativeDirecto
 
 }
 
-#include "kopeteavatarmanager.moc"

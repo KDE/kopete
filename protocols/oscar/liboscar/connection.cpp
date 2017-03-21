@@ -296,5 +296,4 @@ void Connection::streamSocketError( int code )
 	emit socketError( code, d->clientStream->errorString() );
 }
 
-#include "connection.moc"
 //kate: tab-width 4; indent-mode csands;

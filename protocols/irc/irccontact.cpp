@@ -16,7 +16,6 @@
     *************************************************************************
 */
 
-#include "irccontact.moc"
 
 #include "ircaccount.h"
 #include "ircprotocol.h"

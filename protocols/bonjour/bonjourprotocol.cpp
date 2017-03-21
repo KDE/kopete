@@ -104,4 +104,3 @@ BonjourProtocol *BonjourProtocol::protocol()
 
 
 
-#include "bonjourprotocol.moc"

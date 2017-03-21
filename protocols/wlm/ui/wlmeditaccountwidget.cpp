@@ -284,4 +284,3 @@ void WlmEditAccountWidget::slotOpenRegister()
     KToolInvocation::invokeBrowser( "http://register.passport.net/"  );
 }
 
-#include "wlmeditaccountwidget.moc"

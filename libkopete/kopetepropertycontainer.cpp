@@ -167,5 +167,4 @@ void PropertyContainer::removeProperty(const Kopete::PropertyTmpl &tmpl)
 
 } //END namespace Kopete
 
-#include "kopetepropertycontainer.moc"
 

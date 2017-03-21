@@ -55,4 +55,3 @@ void NeedFolderTask::slotFolderTaskFinished()
 		setError( 1, "Folder creation failed" );
 }
 
-#include "needfoldertask.moc"

@@ -15,7 +15,6 @@
     *************************************************************************
 */
 
-#include "kirctransferserver.moc"
 
 #include "kirctransferhandler.h"
 
@@ -150,4 +149,3 @@ void Transfer::initClient()
 	}
 }
 */
-#include "kirctransferserver.moc"

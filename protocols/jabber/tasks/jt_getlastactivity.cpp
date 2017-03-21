@@ -85,4 +85,3 @@ bool JT_GetLastActivity::take(const QDomElement &x)
 	return true;
 }
 
-#include "jt_getlastactivity.moc"

@@ -69,4 +69,3 @@ bool GetStatusTask::take( Transfer * transfer )
 	return true;
 }
 
-#include "getstatustask.moc"

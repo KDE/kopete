@@ -184,4 +184,3 @@ GroupWise::ContactDetails PollSearchResultsTask::extractUserDetails( Field::Fiel
 	return cd;
 }
 
-#include "pollsearchresultstask.moc"

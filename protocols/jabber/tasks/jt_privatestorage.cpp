@@ -108,4 +108,3 @@ QDomElement JT_PrivateStorage::element( )
 	return d->elem;
 }
 
-#include "jt_privatestorage.moc"

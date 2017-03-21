@@ -79,4 +79,3 @@ void AIMChatSession::setExchange( Oscar::WORD exchange )
 }
 
 
-#include "aimchatsession.moc"

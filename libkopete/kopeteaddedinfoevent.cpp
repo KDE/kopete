@@ -169,4 +169,3 @@ void AddedInfoEvent::addDialogFinished()
 
 }
 
-#include "kopeteaddedinfoevent.moc"

@@ -28,4 +28,3 @@ TLSHandler::~TLSHandler()
 {
 }
 
-#include "tlshandler.moc"

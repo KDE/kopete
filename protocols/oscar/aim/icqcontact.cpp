@@ -187,5 +187,4 @@ void ICQContact::slotInvisibleTo()
 	account()->engine()->setInvisibleTo( contactId(), m_actionInvisibleTo->isChecked() );
 }
 
-#include "icqcontact.moc"
 //kate: indent-mode csands; tab-width 4; replace-tabs off; space-indent off;

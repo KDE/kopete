@@ -350,4 +350,3 @@ void SkypeCallDialog::stopReceivingVideo(const QString &callId) {
 	d->skypeWindow->revertWebcamWidget(d->userId);
 }
 
-#include "skypecalldialog.moc"

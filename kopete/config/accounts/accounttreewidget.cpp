@@ -69,4 +69,3 @@ void AccountTreeWidget::dropEvent(QDropEvent *event)
 		dragItem->setExpanded( true );
 }
 
-#include "accounttreewidget.moc"

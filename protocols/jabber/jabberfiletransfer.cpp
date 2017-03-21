@@ -376,4 +376,3 @@ void JabberFileTransfer::slotOutgoingBytesWritten ( qint64 nrWritten )
 
 }
 
-#include "jabberfiletransfer.moc"

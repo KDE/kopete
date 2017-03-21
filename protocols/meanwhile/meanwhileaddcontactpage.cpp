@@ -63,4 +63,3 @@ bool MeanwhileAddContactPage::validateData()
     return !ui.contactID->text().isEmpty();
 }
 
-#include "meanwhileaddcontactpage.moc"

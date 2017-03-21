@@ -53,4 +53,3 @@ bool BonjourAddContactPage::validateData()
 }
 
 
-#include "bonjouraddcontactpage.moc"

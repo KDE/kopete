@@ -65,4 +65,3 @@ Kopete::Contact *ContactTaskBase::contact()
 
 } // end namespace Kopete
 
-#include "kopetecontacttaskbase.moc"

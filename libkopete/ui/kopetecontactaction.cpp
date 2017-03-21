@@ -51,6 +51,5 @@ void ContactAction::slotTriggered( bool checked )
 
 }
 }
-#include "kopetecontactaction.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -832,4 +832,3 @@ GaduSession::checkDescriptor()
 	}
 }
 
-#include "gadusession.moc"

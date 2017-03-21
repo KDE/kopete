@@ -219,4 +219,3 @@ GaduRegisterAccount::~GaduRegisterAccount( )
 	delete ui;
 }
 
-#include "gaduregisteraccount.moc"

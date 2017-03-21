@@ -117,5 +117,4 @@ QString Kopete::Plugin::addressBookIndexField() const
 
 } //END namespace Kopete
 
-#include "kopeteplugin.moc"
 

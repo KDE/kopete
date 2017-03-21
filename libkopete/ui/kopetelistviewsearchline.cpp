@@ -132,4 +132,3 @@ void SearchLine::setItemVisible( QTreeWidgetItem *it, bool b )
 } // namespace UI
 } // namespace Kopete
 
-#include "kopetelistviewsearchline.moc"

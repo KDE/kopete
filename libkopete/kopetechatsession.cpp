@@ -739,7 +739,6 @@ void Kopete::ChatSession::slotDisplayNameChanged(const QString &oldName, const Q
 	emit nickNameChanged(c, oldName);
 }
 
-#include "kopetechatsession.moc"
 
 
 

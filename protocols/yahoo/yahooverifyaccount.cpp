@@ -111,7 +111,6 @@ void YahooVerifyAccount::slotApply()
 	QDialog::done(0);
 }
 
-#include "yahooverifyaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -1162,4 +1162,3 @@ void SkypeAccount::SkypeActionHandler(const QString &message) {
 	}
 }
 
-#include "skypeaccount.moc"

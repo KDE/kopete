@@ -182,4 +182,3 @@ GaduDCC::listeingPort()
 	return 0;
 }
 
-#include "gadudcc.moc"

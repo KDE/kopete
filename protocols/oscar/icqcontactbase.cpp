@@ -56,5 +56,4 @@ void ICQContactBase::receivedXStatusMessage( const QString& contact, int icon, c
 	setStatusMessage( statusMessage );
 }
 
-#include "icqcontactbase.moc"
 //kate: indent-mode csands; tab-width 4; replace-tabs off; space-indent off;

@@ -64,4 +64,3 @@ WlmServer::WlmDisconnect ()
     }
 }
 
-#include "wlmserver.moc"

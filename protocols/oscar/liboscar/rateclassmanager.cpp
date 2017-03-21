@@ -173,6 +173,5 @@ int RateClassManager::timeToInitialLevel( SNAC s )
 	return 0;
 }
 
-#include "rateclassmanager.moc"
 
 //kate: tab-width 4; indent-mode csands;

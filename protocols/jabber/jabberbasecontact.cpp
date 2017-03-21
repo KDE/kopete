@@ -716,6 +716,5 @@ void JabberBaseContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 
 
 
-#include "jabberbasecontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

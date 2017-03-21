@@ -301,4 +301,3 @@ bool ContactListProxyModel::searchContactInfo(Kopete::MetaContact *mc, QRegExp s
 
 }
 
-#include "contactlistproxymodel.moc"

@@ -1057,4 +1057,3 @@ void Skype::stopSendingVideo(const QString &callId) {
 	d->connection << QString("ALTER CALL %1 STOP_VIDEO_SEND").arg(callId);
 }
 
-#include "skype.moc"

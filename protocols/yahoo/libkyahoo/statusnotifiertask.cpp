@@ -181,4 +181,3 @@ void StatusNotifierTask::parseStealthStatus( YMSGTransfer* t )
 	emit stealthStatusChanged( nick, ( state == 1 ) ? Yahoo::StealthActive : Yahoo::StealthNotActive );
 }
 
-#include "statusnotifiertask.moc"

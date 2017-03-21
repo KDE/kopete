@@ -447,7 +447,6 @@ const QString& GSMLib::description()
 	return m_description;
 }
 
-#include "gsmlib.moc"
 
 #endif
 /*

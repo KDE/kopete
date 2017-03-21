@@ -101,4 +101,3 @@ bool SkypeAddContact::apply(Kopete::Account *, Kopete::MetaContact *metaContact)
 	return true;//all OK
 }
 
-#include "skypeaddcontact.moc"

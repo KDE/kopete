@@ -87,4 +87,3 @@ void InfoEventManager::eventClosed( Kopete::InfoEvent* event )
 
 }
 
-#include "kopeteinfoeventmanager.moc"

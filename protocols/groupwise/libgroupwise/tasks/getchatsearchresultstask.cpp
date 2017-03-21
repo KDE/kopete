@@ -119,4 +119,3 @@ GroupWise::ChatroomSearchResult GetChatSearchResultsTask::extractChatDetails( Fi
 	return csr;
 }
 
-#include "getchatsearchresultstask.moc"

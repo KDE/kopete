@@ -511,4 +511,3 @@ bool CoreProtocol::okToProceed()
 	return false;
 }
 
-#include "coreprotocol.moc"

@@ -112,7 +112,6 @@ void AddressBookSelectorDialog::reject()
 } // namespace UI
 } // namespace Kopete
 
-#include "addressbookselectordialog.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

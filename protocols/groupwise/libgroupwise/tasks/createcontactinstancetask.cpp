@@ -94,4 +94,3 @@ void CreateContactInstanceTask::onFolderCreated()
 	RequestTask::onGo();
 }
 
-#include "createcontactinstancetask.moc"

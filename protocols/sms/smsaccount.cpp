@@ -207,4 +207,3 @@ SMSService* SMSAccount::service()
 	return theService;
 }
 
-#include "smsaccount.moc"

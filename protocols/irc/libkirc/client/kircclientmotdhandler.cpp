@@ -13,7 +13,6 @@
     *************************************************************************
 */
 
-#include "kircclientmotdhandler.moc"
 
 #include "kircclientsocket.h"
 

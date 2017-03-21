@@ -243,6 +243,5 @@ void BuddyIconTask::handleICQBuddyIconResponse()
 	setSuccess( 0, QString() );
 }
 
-#include "buddyicontask.moc"
 
 

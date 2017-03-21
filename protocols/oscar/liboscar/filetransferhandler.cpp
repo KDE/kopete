@@ -132,4 +132,3 @@ void FileTransferHandler::emitTransferFinished()
 	emit transferFinished();
 }
 
-#include "filetransferhandler.moc"

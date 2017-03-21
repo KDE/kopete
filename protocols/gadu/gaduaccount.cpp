@@ -1445,4 +1445,3 @@ GaduAccount::setUseTls( tlsConnection ut )
 	p->config->writeEntry( QString::fromAscii( "useEncryptedConnection" ), s );
 }
 
-#include "gaduaccount.moc"

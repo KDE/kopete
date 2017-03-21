@@ -588,5 +588,4 @@ Oscar::DWORD OftMetaTransfer::chunkChecksum( const char *buffer, int bufferSize,
 	return checksum << 16;
 }
 
-#include "oftmetatransfer.moc"
 

@@ -66,4 +66,3 @@ QString SetStatusTask::autoReply() const
 	return m_autoReply;
 }
 
-#include "setstatustask.moc"

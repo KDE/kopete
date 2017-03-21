@@ -73,4 +73,3 @@ bool RequestTask::take( Transfer * transfer )
 		return false;
 }
 
-#include "requesttask.moc"

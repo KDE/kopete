@@ -361,4 +361,3 @@ void Transfer::checkFileTransferEnd(quint32 fileSizeAck)
 		emit complete();
 }
 
-#include "kirctransfer.moc"

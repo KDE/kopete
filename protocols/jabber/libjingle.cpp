@@ -498,5 +498,4 @@ void Libjingle::muteCall(bool b) {
 
 }
 
-#include "libjingle.moc"
 

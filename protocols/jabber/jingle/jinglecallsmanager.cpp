@@ -389,4 +389,3 @@ MediaManager* JingleCallsManager::mediaManager()
 	return d->mediaManager;
 }
 
-#include "jinglecallsmanager.moc"

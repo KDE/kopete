@@ -171,5 +171,4 @@ void AccountSelector::slotSelectionChanged(QTreeWidgetItem *item)
 	emit selectionChanged(0);
 }
 
-#include "accountselector.moc"
 // vim: set noet ts=4 sts=4 sw=4:

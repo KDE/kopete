@@ -158,4 +158,3 @@ void PictureNotifierTask::parsePictureUploadResponse( YMSGTransfer *t )
 	}
 }
 
-#include "picturenotifiertask.moc"

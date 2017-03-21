@@ -187,7 +187,6 @@ void Kopete::WalletManager::emitWalletOpened( KWallet::Wallet *wallet )
 }
 
 
-#include "kopetewalletmanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

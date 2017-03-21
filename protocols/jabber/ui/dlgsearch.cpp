@@ -210,4 +210,3 @@ void dlgSearch::slotSentForm()
 	}
 }
 
-#include "dlgsearch.moc"

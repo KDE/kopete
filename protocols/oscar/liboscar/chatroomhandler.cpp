@@ -63,4 +63,3 @@ void ChatRoomHandler::accept()
 	m_chatRoomTask->doAccept();
 }
 
-#include "chatroomhandler.moc"

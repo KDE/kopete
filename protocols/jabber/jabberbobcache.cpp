@@ -29,4 +29,3 @@ XMPP::BoBData JabberBoBCache::get(const QString &cid)
 	return mem.value(cid);
 }
 
-#include "jabberbobcache.moc"

@@ -156,4 +156,3 @@ void ServerVersionsTask::requestFamilyVersions()
 	send( st );
 }
 
-#include "serverversionstask.moc"

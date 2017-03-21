@@ -376,4 +376,3 @@ GaduContact::ignored()
 	return ignored_;
 }
 
-#include "gaducontact.moc"

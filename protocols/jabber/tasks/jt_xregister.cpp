@@ -70,4 +70,3 @@ QDomElement JT_XRegister::xdataElement() const
 	return QDomElement();
 }
 
-#include "jt_xregister.moc"

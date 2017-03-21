@@ -366,6 +366,5 @@ void JabberTransport::eatContacts( )
 
 
 
-#include "jabbertransport.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

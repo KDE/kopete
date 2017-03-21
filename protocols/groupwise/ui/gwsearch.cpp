@@ -436,4 +436,3 @@ void GroupWiseContactSearch::slotValidateSelection()
 	emit selectionValidates( selectedCount != 0 );
 }
 
-#include "gwsearch.moc"

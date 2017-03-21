@@ -270,4 +270,3 @@ void JabberBookmarks::slotJoinChatBookmark( const QString & _jid )
 	}
 }
 
-#include "jabberbookmarks.moc"

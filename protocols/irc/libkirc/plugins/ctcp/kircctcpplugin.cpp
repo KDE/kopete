@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-#include "kircctcpplugin.moc"
 
 #include "kircclientsocket.h"
 #include "kirctransferhandler.h"

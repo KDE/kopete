@@ -82,4 +82,3 @@ int CreateConferenceTask::clientConfId() const
 	return m_confId;
 }	
 
-#include "createconferencetask.moc"

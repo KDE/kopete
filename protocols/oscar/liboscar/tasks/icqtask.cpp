@@ -146,6 +146,5 @@ void ICQTask::setRequestSubType( Oscar::WORD subType )
 	m_requestSubType = subType;
 }
 
-#include "icqtask.moc"
 
 //kate: space-indent off; tab-width 4; replace-tabs off; indent-mode csands;

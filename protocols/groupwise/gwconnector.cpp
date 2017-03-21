@@ -118,4 +118,3 @@ void KNetworkConnector::setOptSSL ( bool ssl )
 
 }
 
-#include "gwconnector.moc"

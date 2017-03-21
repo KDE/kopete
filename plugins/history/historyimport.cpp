@@ -621,4 +621,3 @@ void HistoryImport::parsePidginXml(QFile &file, struct Log * log, QDate date)
 	}
 }
 
-#include "historyimport.moc"

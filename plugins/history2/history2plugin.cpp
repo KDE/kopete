@@ -182,4 +182,3 @@ void History2Plugin::slotSettingsChanged()
 	History2Config::self()->readConfig();
 }
 
-#include "history2plugin.moc"

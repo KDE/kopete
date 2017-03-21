@@ -45,4 +45,3 @@ QString TranslatorDialog::translatedText()
 }  */
 
 
-#include "translatordialog.moc"

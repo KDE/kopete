@@ -718,4 +718,3 @@ bool WlmChatManager::fillEmoticons(WlmChatSession *chat, Kopete::Message* messag
     message->setHtmlBody(escapedMessage);
     return true;
 }
-#include "wlmchatmanager.moc"

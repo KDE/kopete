@@ -13,7 +13,6 @@
     *************************************************************************
 */
 
-#include "kirchandlerplugin.moc"
 
 using namespace KIrc;
 

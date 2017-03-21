@@ -702,4 +702,3 @@ void WebcamTask::transmitWebcamImage()
 	
 	transmissionPending = false;
 }
-#include "webcamtask.moc"

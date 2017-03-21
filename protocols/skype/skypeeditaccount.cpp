@@ -251,4 +251,3 @@ void skypeEditAccount::configureSkypeClient() {
 	KMessageBox::information(this, i18n("Process has completed.\nSkype is now configured for Kopete.\nYou must restart the Skype client for changes to take effect."), i18n("Skype protocol"));
 }
 
-#include "skypeeditaccount.moc"

@@ -37,4 +37,3 @@ void LeaveConferenceTask::leave( const GroupWise::ConferenceGuid & guid )
 	createTransfer( "leaveconf", lst );
 }
 
-#include "leaveconferencetask.moc"

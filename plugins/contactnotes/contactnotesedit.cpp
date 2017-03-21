@@ -61,4 +61,3 @@ void ContactNotesEdit::slotButtonClicked(int buttonCode)
 		emit notesChanged(m_linesEdit->toPlainText(),m_metaContact) ;
 }
 
-#include "contactnotesedit.moc"

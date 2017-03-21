@@ -122,4 +122,3 @@ void InfoDialog::addWidget(QWidget *w, const QString &caption)
 } // namespace UI
 } // namespace Kopete
 
-#include "kopeteinfodialog.moc"

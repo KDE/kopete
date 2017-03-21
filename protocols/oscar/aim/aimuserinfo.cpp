@@ -224,6 +224,5 @@ void AIMUserInfoDialog::slotMailClicked(const QString&, const QString &address)
 	//new KRun(KUrl(address));
 }
 
-#include "aimuserinfo.moc"
 
 //kate: indent-mode csands; tab-width 4; space-indent off; replace-tabs off;

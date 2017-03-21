@@ -17,7 +17,6 @@
     *************************************************************************
 */
 
-#include "kircclientpingponghandler.moc"
 
 #include "kircclientsocket.h"
 

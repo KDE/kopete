@@ -490,6 +490,5 @@ WlmContact::setOnlineStatus(const Kopete::OnlineStatus& status)
 		Kopete::Contact::setOnlineStatus(status);
 }
 
-#include "wlmcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

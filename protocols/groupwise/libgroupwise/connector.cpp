@@ -70,4 +70,3 @@ void Connector::setPeerAddress(const QHostAddress &_addr, quint16 _port)
 	port = _port;
 }
 
-#include "connector.moc"

@@ -70,4 +70,3 @@ void ManagedConnectionAccount::slotConnectionStatusChanged( const QString & host
 }
 		
 } // end namespace Kopete
-#include "managedconnectionaccount.moc"

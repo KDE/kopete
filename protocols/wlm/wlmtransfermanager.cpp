@@ -327,4 +327,3 @@ WlmTransferManager::slotCanceled ()
     }
 }
 
-#include "wlmtransfermanager.moc"

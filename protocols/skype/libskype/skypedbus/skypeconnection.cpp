@@ -342,4 +342,3 @@ void SkypeConnection::tryConnect() {
 		startLogOn();//OK, it's your choise
 }
 
-#include "skypeconnection.moc"

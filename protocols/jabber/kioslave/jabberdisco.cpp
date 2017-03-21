@@ -393,4 +393,3 @@ int kdemain ( int argc, char **argv )
 	return 0;
 }
 
-#include "jabberdisco.moc"

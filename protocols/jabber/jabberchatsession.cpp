@@ -547,7 +547,6 @@ void JabberChatSession::slotJingleSession()
 
 #endif
 
-#include "jabberchatsession.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 // kate: tab-width 4; replace-tabs off; space-indent off;

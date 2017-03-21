@@ -121,4 +121,3 @@ void QCATLSHandler::tls_error()
 	fail();
 }
 
-#include "qcatlshandler.moc"

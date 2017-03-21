@@ -443,4 +443,3 @@ void JabberGroupContact::slotSubContactDestroyed( Kopete::Contact * deadContact 
 
 }
 
-#include "jabbergroupcontact.moc"

@@ -282,4 +282,3 @@ int InfoEventWidget::sizeHintHeight() const
 	return qMin( sizeHint().height(), 250 );
 }
 
-#include "infoeventwidget.moc"

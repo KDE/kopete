@@ -151,4 +151,3 @@ Transfer* OftProtocol::parse( const QByteArray & packet, uint& bytes )
 }
 
 
-#include "oftprotocol.moc"

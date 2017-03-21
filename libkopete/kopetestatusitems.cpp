@@ -143,4 +143,3 @@ StatusItem* Status::copy() const
 
 }
 
-#include "kopetestatusitems.moc"

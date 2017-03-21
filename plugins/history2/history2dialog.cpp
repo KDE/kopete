@@ -461,4 +461,3 @@ QString History2Dialog::escapeXMLText(const QString& text) const {
 	return excapedText;
 }
 
-#include "history2dialog.moc"

@@ -44,4 +44,3 @@ void TutorialPreferences::load()
 {
 }
 
-#include "tutorialpreferences.moc"

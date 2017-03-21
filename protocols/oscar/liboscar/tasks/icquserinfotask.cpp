@@ -248,6 +248,5 @@ ICQOrgAffInfo ICQUserInfoRequestTask::orgAffInfoFor( const QString& contact )
 	return m_orgAffInfoMap[seq];
 }
 
-#include "icquserinfotask.moc"
 
 //kate: indent-mode csands; tab-width 4; space-indent off; replace-tabs off;

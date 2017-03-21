@@ -432,7 +432,6 @@ QIcon OnlineStatusManager::pixmapForCategory( Categories category )
 
 } //END namespace Kopete
 
-#include "kopeteonlinestatusmanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

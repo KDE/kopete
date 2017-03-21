@@ -195,5 +195,4 @@ void CryptographyGUIClient::slotExport()
 	delete dialog;
 }
 
-#include "cryptographyguiclient.moc"
 

@@ -790,5 +790,4 @@ void ICQContact::slotVisibleTo()
 	setVisibleTo(actionVisibleTo->isChecked(), true);
 }
 #endif
-#include "icqcontact.moc"
 //kate: indent-mode csands; tab-width 4; replace-tabs off; space-indent off;

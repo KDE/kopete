@@ -398,6 +398,5 @@ void IdentityStatusWidget::slotIdentityChanged(Kopete::Identity *identity)
 	load();
 }
 
-#include "identitystatuswidget.moc"
 // vim: set noet ts=4 sts=4 sw=4:
 

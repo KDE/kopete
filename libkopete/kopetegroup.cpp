@@ -229,7 +229,6 @@ QList<MetaContact *> Group::onlineMembers() const
 } //END namespace Kopete
 
 
-#include "kopetegroup.moc"
 
 
 

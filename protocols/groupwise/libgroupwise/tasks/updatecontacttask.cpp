@@ -74,4 +74,3 @@ void UpdateContactTask::renameContact( const QString & newName, const QList<Cont
 	UpdateItemTask::item( lst );
 }
 
-#include "updatecontacttask.moc"

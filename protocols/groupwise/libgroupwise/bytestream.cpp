@@ -275,4 +275,3 @@ QByteArray ByteStream::takeArray(QByteArray *from, int size, bool del)
 
 // CS_NAMESPACE_END
 
-#include "bytestream.moc"

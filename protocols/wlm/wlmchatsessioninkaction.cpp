@@ -82,4 +82,3 @@ WlmChatSessionInkAction::~WlmChatSessionInkAction()
     d = NULL;
 }
 
-#include "wlmchatsessioninkaction.moc"

@@ -326,5 +326,4 @@ bool Protocol::validatePassword( const QString & password ) const
 
 } //END namespace Kopete
 
-#include "kopeteprotocol.moc"
 

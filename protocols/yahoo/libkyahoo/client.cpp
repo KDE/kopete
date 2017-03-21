@@ -1013,4 +1013,3 @@ void Client::deleteTasks()
 
 }
 
-#include "client.moc"

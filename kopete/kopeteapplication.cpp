@@ -396,5 +396,4 @@ void KopeteApplication::commitData( QSessionManager &sm )
 	KUniqueApplication::commitData( sm );
 }
 
-#include "kopeteapplication.moc"
 // vim: set noet ts=4 sts=4 sw=4:

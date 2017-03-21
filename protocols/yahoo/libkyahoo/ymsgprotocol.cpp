@@ -401,4 +401,3 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	return t;
 }
 
-#include "ymsgprotocol.moc"

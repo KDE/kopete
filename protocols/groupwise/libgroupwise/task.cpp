@@ -260,4 +260,3 @@ bool Task::forMe( const Transfer * transfer ) const
 	return false;
 }
 
-#include "task.moc"

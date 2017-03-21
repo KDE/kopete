@@ -912,4 +912,3 @@ void Callbacks::emitSocketError( QAbstractSocket::SocketError error )
         c->disconnect();
 }
 
-#include "wlmlibmsn.moc"

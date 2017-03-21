@@ -174,7 +174,6 @@ void RateInfoTask::sendRateInfoAck()
 	setSuccess( 0, QString() );
 }
 
-#include "rateinfotask.moc"
 
 //kate: tab-width 4; indent-mode csands;
 

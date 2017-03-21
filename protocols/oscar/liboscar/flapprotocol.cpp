@@ -68,4 +68,3 @@ Transfer* FlapProtocol::parse( const QByteArray & packet, uint& bytes )
 }
 
 
-#include "flapprotocol.moc"

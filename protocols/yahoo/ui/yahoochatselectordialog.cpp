@@ -183,5 +183,4 @@ Yahoo::ChatRoom YahooChatSelectorDialog::selectedRoom()
 	return room;
 }
 
-#include "yahoochatselectordialog.moc"
 

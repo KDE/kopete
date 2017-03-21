@@ -135,4 +135,3 @@ void UserDetailsManager::slotReceiveContactDetails( const GroupWise::ContactDeta
 	emit gotContactDetails( details );
 }
 
-#include "userdetailsmanager.moc"

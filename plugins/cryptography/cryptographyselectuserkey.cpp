@@ -80,5 +80,4 @@ QString CryptographySelectUserKey::publicKey() const
 
 
 
-#include "cryptographyselectuserkey.moc"
 

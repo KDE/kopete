@@ -98,4 +98,3 @@ void RateInfoTest::testRateClasses()
 }
 
 
-#include "rateinfotest.moc"

@@ -133,4 +133,3 @@ UserDetails OwnUserInfoTask::getInfo() const
 
 //kate: tab-width 4; indent-mode csands;
 
-#include "ownuserinfotask.moc"

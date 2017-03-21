@@ -717,5 +717,4 @@ QString ContactListModel::metaContactTooltip( const Kopete::MetaContact* metaCon
 
 }
 
-#include "contactlistmodel.moc"
 //kate: tab-width 4

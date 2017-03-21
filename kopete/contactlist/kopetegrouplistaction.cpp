@@ -76,4 +76,3 @@ void KopeteGroupListAction::slotUpdateList()
 	}
 }
 
-#include "kopetegrouplistaction.moc"

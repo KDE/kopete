@@ -338,4 +338,3 @@ void YahooChatTask::parseLogout( YMSGTransfer *t )
 		m_loggedIn = false;
 }
 
-#include "yahoochattask.moc"

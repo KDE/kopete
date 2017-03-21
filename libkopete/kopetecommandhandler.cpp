@@ -543,7 +543,6 @@ void Kopete::CommandHandler::slotPluginDestroyed( QObject *plugin )
 	p->pluginCommands.remove( static_cast<Kopete::Plugin*>(plugin)  );
 }
 
-#include "kopetecommandhandler.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

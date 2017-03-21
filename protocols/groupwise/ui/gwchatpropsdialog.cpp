@@ -133,4 +133,3 @@ void GroupWiseChatPropsDialog::slotWidgetChanged()
 	m_dirty = true;
 }
 
-#include "gwchatpropsdialog.moc"

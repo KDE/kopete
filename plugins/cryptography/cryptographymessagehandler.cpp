@@ -85,6 +85,5 @@ void CryptographyMessageHandler::handleMessage( MessageEvent *e )
 		kDebug(14303) << "MessageEvent destroyed!";
 }
 
-#include "cryptographymessagehandler.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

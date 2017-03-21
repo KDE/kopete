@@ -109,4 +109,3 @@ void XmlContactStorage_Test::testLoad()
 	}
 }
 
-#include "xmlcontactstorage_test.moc"

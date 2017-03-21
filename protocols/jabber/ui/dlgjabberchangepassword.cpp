@@ -140,4 +140,3 @@ void DlgJabberChangePassword::slotChangePasswordDone ()
 
 }
 
-#include "dlgjabberchangepassword.moc"

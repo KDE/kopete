@@ -70,4 +70,3 @@ WlmAddContactPage::validateData ()
 }
 
 
-#include "wlmaddcontactpage.moc"

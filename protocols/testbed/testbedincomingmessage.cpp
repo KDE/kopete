@@ -33,4 +33,3 @@ void TestbedIncomingMessage::deliver()
 	m_delivered = true; 
 }
 
-#include "testbedincomingmessage.moc"

@@ -171,5 +171,4 @@ void YahooInviteListImpl::slotAdd()
 }
 
 
-#include "yahooinvitelistimpl.moc"
 
