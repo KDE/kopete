@@ -24,7 +24,7 @@
 #include <QAction>
 #include <kselectaction.h>
 #include <klocale.h>
-#include <kicon.h>
+#include <QIcon>
 
 #include "tasks/jt_privatestorage.h"
 #include "ui/dlgjabberbookmarkeditor.h"
@@ -238,7 +238,7 @@ QAction * JabberBookmarks::bookmarksAction(QObject *parent)
 	}
 
 	KSelectAction *action = new KSelectAction( this );
-	action->setIcon( KIcon( "jabber_group" ) );
+    action->setIcon( QIcon::fromTheme( "jabber_group" ) );
 	action->setText( i18n( "Groupchat Bookmark" ) );
 	action->setItems( menuEntries );
 

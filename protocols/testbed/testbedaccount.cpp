@@ -54,7 +54,7 @@ void TestbedAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	KAction *action;
 
-	action = new KAction (KIcon("testbed_showvideo"), i18n ("Show my own video..."), actionMenu );
+    action = new KAction (QIcon::fromTheme("testbed_showvideo"), i18n ("Show my own video..."), actionMenu );
         //, "actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	actionMenu->addAction(action);

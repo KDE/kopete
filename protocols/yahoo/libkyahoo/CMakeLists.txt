@@ -76,7 +76,7 @@ endif(MINGW)
 
 add_library( kyahoo SHARED ${libkyahoo_SRCS} )
 
-target_link_libraries( kyahoo KF5::KIOCore Qt5::Xml Qt5::Network ${JASPER_LIBRARIES} )
+target_link_libraries( kyahoo KF5::KDE4Support KF5::KIOCore Qt5::Xml Qt5::Network ${JASPER_LIBRARIES} )
 set_target_properties( kyahoo PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
 

@@ -135,7 +135,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	                  this, SLOT(slotGotAuthRequest(QString,QString)) );
 
 	// Create actions
-	mEditInfoAction = new KAction( KIcon("user-properties"), i18n( "Edit User Info..." ), this );
+    mEditInfoAction = new KAction( QIcon::fromTheme("user-properties"), i18n( "Edit User Info..." ), this );
 	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
 
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
@@ -179,7 +179,7 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	Oscar::Presence pres( presence().type(), presence().flags() | Oscar::Presence::Invisible );
 	pres.setXtrazStatus( presence().xtrazStatus() );
-	mActionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
+    mActionInvisible->setIcon( KIcon( protocol()->statusManager()->onlineStatusOf( pres ).iconFor( this ) ) );
 	mActionInvisible->setChecked( (presence().flags() & Oscar::Presence::Invisible) == Oscar::Presence::Invisible );
 	actionMenu->addAction( mActionInvisible );
 

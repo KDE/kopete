@@ -108,7 +108,7 @@ QVariant StatusModel::data( const QModelIndex &index, int role ) const
 	{
 		if ( index.column() == 0 )
 		{
-			return KIcon( QString( "icq_xstatus%1" ).arg( status.status() ) );
+            return QIcon::fromTheme( QString( "icq_xstatus%1" ).arg( status.status() ) );
 		}
 	}
 

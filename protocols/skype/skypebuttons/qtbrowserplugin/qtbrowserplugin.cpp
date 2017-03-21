@@ -21,6 +21,7 @@
 **
 ****************************************************************************/
 #include "qtbrowserplugin.h"
+#include "qtbrowserplugin.moc"
 
 #include <QtGui>
 
