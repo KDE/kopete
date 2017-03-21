@@ -17,7 +17,7 @@
 
 #include "editaliasdialog.h"
 #include <qobject.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <qwidget.h>
 #include <qstring.h>
 #include <klineedit.h>

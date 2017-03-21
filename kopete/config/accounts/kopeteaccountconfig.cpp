@@ -29,7 +29,7 @@
 #include <QContextMenuEvent>
 
 #include <kcolorbutton.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kpluginfactory.h>

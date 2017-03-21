@@ -45,7 +45,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <kstandarddirs.h>
 #include <kurlrequesterdialog.h>
 #include <krun.h>

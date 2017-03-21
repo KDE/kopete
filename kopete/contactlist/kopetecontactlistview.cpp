@@ -68,7 +68,8 @@ class KopeteContactListViewPrivate
 {
 public:
 	KopeteContactListViewPrivate()
-		: controlPressed( false ),
+        : actionSendEmail(0),
+          controlPressed( false ),
 		  scrollAutoHideTimer(0),
 		  scrollAutoHideCounter(10),
 		  scrollAutoHideTimeout(10),
@@ -825,6 +826,9 @@ void KopeteContactListView::itemCollapsed( const QModelIndex& index )
 
 void KopeteContactListView::updateActions()
 {
+    if (!d->actionSendEmail) {
+        return;
+    }
 	QModelIndexList selected = selectedIndexes();
 
 	bool singleContactSelected = (selected.count() == 1 && selected.first().data( Kopete::Items::TypeRole ) == Kopete::Items::MetaContact);
@@ -887,6 +891,10 @@ void KopeteContactListView::updateActions()
 
 void KopeteContactListView::updateMetaContactActions()
 {
+    if (!d->actionSendEmail) {
+        return;
+    }
+
 	bool reachable = false;
 
 	if( d->selectedMetaContact )
@@ -907,7 +915,6 @@ void KopeteContactListView::updateMetaContactActions()
 		d->actionSendMessage->setEnabled( singleGroupSelected );
 		d->actionStartChat->setEnabled( false );
 	}
-
 }
 
 void KopeteContactListView::slotSettingsChanged()

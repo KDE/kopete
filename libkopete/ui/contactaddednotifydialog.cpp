@@ -23,7 +23,7 @@
 #include <klocale.h>
 #include <kcombobox.h>
 #include <klineedit.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <kiconloader.h>
 
 #include <kcontacts/addressee.h>

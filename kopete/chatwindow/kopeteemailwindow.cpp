@@ -46,7 +46,7 @@
 #include <klocale.h>
 #include <kmenubar.h>
 #include <kmessagebox.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <ktextedit.h>
 #include <kwindowsystem.h>
 #include <kgenericfactory.h>
@@ -89,9 +89,9 @@ public:
 	bool sendInProgress;
 	bool visible;
 	int queuePosition;
-	KPushButton *btnReplySend;
-	KPushButton *btnReadNext;
-	KPushButton *btnReadPrev;
+	QPushButton *btnReplySend;
+	QPushButton *btnReadNext;
+	QPushButton *btnReadPrev;
 	QSplitter *split;
 	ChatMessagePart *messagePart;
 	KopeteEmailWindow::WindowMode mode;
@@ -163,16 +163,16 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, EmailWindowP
 	h->setSpacing( 4 );
 	h->addStretch();
 
-	d->btnReadPrev = new KPushButton( i18n( "<< Prev" ), containerWidget );
+	d->btnReadPrev = new QPushButton( i18n( "<< Prev" ), containerWidget );
 	connect( d->btnReadPrev, SIGNAL(pressed()), this, SLOT(slotReadPrev()) );
 	h->addWidget( d->btnReadPrev, 0, Qt::AlignRight | Qt::AlignVCenter );
 	d->btnReadPrev->setEnabled( false );
 
-	d->btnReadNext = new KPushButton( i18n( "(0) Next >>" ), containerWidget );
+	d->btnReadNext = new QPushButton( i18n( "(0) Next >>" ), containerWidget );
 	connect( d->btnReadNext, SIGNAL(pressed()), this, SLOT(slotReadNext()) );
 	h->addWidget( d->btnReadNext, 0, Qt::AlignRight | Qt::AlignVCenter );
 
-	d->btnReplySend = new KPushButton( containerWidget );
+	d->btnReplySend = new QPushButton( containerWidget );
 	connect( d->btnReplySend, SIGNAL(pressed()), this, SLOT(slotReplySend()) );
 	h->addWidget( d->btnReplySend, 0, Qt::AlignRight | Qt::AlignVCenter );
 

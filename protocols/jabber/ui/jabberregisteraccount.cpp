@@ -28,7 +28,7 @@
 #include <kmessagebox.h>
 #include <klineedit.h>
 #include <knuminput.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qtimer.h>

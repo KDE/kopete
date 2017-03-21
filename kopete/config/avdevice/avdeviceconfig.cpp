@@ -31,7 +31,7 @@
 
 #include <kplugininfo.h>
 #include <klocale.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <kpluginfactory.h>
 //#include <ktrader.h>
 #include <kconfig.h>
@@ -188,7 +188,7 @@ void AVDeviceConfig::setupControls()
 		int insert_row = mPrfsVideoDevice->actions_gridLayout->rowCount();
 		QLabel *label = new QLabel( i18n("Reset sliders & options to default values") + ":", mPrfsVideoDevice->VideoTabWidget ); // "Reset sliders and options"
 		mPrfsVideoDevice->actions_gridLayout->addWidget( label, insert_row, 0 );
-		KPushButton *button = new KPushButton( mPrfsVideoDevice->VideoTabWidget );
+		QPushButton *button = new QPushButton( mPrfsVideoDevice->VideoTabWidget );
 		button->setText( i18n("Execute") );
 		mPrfsVideoDevice->actions_gridLayout->addWidget( button, insert_row, 1 );
 		connect( button, SIGNAL(pressed()), this, SLOT(resetControls()) );

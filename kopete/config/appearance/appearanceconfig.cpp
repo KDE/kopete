@@ -47,7 +47,7 @@
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <kstandarddirs.h>
 #include <kurlrequesterdialog.h>
 #include <krun.h>

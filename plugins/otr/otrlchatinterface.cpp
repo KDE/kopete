@@ -40,7 +40,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <kpassivepopup.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 
 #include <Qt>
 #include <qlabel.h>

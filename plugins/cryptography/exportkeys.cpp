@@ -20,7 +20,7 @@
 #include <kabc/addressbook.h>
 
 #include <kiconloader.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 
 #include "kopetemetacontact.h"
 #include "kabcpersistence.h"

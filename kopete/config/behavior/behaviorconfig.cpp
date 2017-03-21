@@ -30,7 +30,7 @@
 #include <kdebug.h>
 #include <kplugininfo.h>
 #include <klocale.h>
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <KGenericFactory>

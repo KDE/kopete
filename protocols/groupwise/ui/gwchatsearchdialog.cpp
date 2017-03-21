@@ -23,7 +23,7 @@
 #include <QTreeWidget>
 #include <ktreewidgetsearchline.h>
 
-#include <kpushbutton.h>
+#include <QPushButton>
 #include <kdebug.h>
 #include <klocale.h>
 #include "client.h"
