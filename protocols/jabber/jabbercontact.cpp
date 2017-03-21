@@ -139,26 +139,26 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 
 	QList<QAction *> *actions = new QList<QAction*>();
 
-	KActionMenu *actionAuthorization = new KActionMenu ( KIcon("network-connect"), i18n ("Authorization"), this);
+    KActionMenu *actionAuthorization = new KActionMenu ( QIcon::fromTheme("network-connect"), i18n ("Authorization"), this);
 
 	QAction *resendAuthAction, *requestAuthAction, *removeAuthAction;
 	
 	resendAuthAction = new QAction( this );
-	resendAuthAction->setIcon( (KIcon("mail-forward") ) );
+    resendAuthAction->setIcon( QIcon::fromTheme("mail-forward") );
 	resendAuthAction->setText( i18n ("(Re)send Authorization To") );
 	resendAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::To || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	connect(resendAuthAction, SIGNAL(triggered(bool)), SLOT(slotSendAuth()));
 	actionAuthorization->addAction(resendAuthAction);
 
 	requestAuthAction = new QAction( this );
-	requestAuthAction->setIcon( (KIcon("mail-reply-sender") ) );
+    requestAuthAction->setIcon( QIcon::fromTheme("mail-reply-sender") );
 	requestAuthAction->setText( i18n ("(Re)request Authorization From") );
 	requestAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::From || mRosterItem.subscription().type() == XMPP::Subscription::None );
 	connect(requestAuthAction, SIGNAL(triggered(bool)), SLOT(slotRequestAuth()));
 	actionAuthorization->addAction(requestAuthAction);
 	
 	removeAuthAction = new QAction( this );
-	removeAuthAction->setIcon( (KIcon("edit-delete") ) );
+    removeAuthAction->setIcon( QIcon::fromTheme("edit-delete") );
 	removeAuthAction->setText( i18n ("Remove Authorization From") );
 	removeAuthAction->setEnabled( mRosterItem.subscription().type() == XMPP::Subscription::Both || mRosterItem.subscription().type() == XMPP::Subscription::From );
 	connect(removeAuthAction, SIGNAL(triggered(bool)), SLOT(slotRemoveAuth()));
@@ -170,7 +170,7 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 
 		QAction *libjingleCallAction;
 		libjingleCallAction = new QAction( this );
-		libjingleCallAction->setIcon( (KIcon("voicecall") ) );
+        libjingleCallAction->setIcon( (QIcon::fromTheme("voicecall") ) );
 		libjingleCallAction->setText( i18n ("Call contact") );
 		libjingleCallAction->setEnabled( account()->supportLibjingle(contactId()) );
 		connect(libjingleCallAction, SIGNAL(triggered(bool)), SLOT(makeLibjingleCallAction()));
@@ -180,7 +180,7 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 
 #endif
 
-	KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
+    KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
 
 #define KACTION(status, text, name, slot) \
 	{ QAction *tmp = new QAction(this); \

@@ -17,7 +17,7 @@
 #include "privacyplugin.h"
 
 #include <kgenericfactory.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kaction.h>
 #include <knotification.h>
 #include <kplugininfo.h>
@@ -50,10 +50,10 @@ PrivacyPlugin::PrivacyPlugin( QObject *parent, const QVariantList & )
 	if( !pluginStatic_ )
 		pluginStatic_ = this;
 
-	KAction *addToWhiteList = new KAction( KIcon("privacy_whitelist"), i18n("Add to WhiteList" ), this );
+    KAction *addToWhiteList = new KAction( QIcon::fromTheme("privacy_whitelist"), i18n("Add to WhiteList" ), this );
         actionCollection()->addAction( "addToWhiteList", addToWhiteList );
 	connect(addToWhiteList, SIGNAL(triggered(bool)), this, SLOT(slotAddToWhiteList()));
-	KAction *addToBlackList = new KAction( KIcon("privacy_blacklist"), i18n("Add to BlackList" ), this );
+    KAction *addToBlackList = new KAction( QIcon::fromTheme("privacy_blacklist"), i18n("Add to BlackList" ), this );
         actionCollection()->addAction( "addToBlackList", addToBlackList );
 	connect(addToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()));
 

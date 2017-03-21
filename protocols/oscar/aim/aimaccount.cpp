@@ -241,7 +241,7 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID)
 	mJoinChatAction = new QAction( i18n( "Join Chat..." ), this );
 	QObject::connect( mJoinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChat()) );
 
-	mEditInfoAction = new QAction( KIcon("user-properties"), i18n( "Edit User Info..." ), this );
+    mEditInfoAction = new QAction( QIcon::fromTheme("user-properties"), i18n( "Edit User Info..." ), this );
 	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()) );
 
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );

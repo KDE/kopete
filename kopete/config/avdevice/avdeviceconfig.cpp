@@ -33,7 +33,7 @@
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kpluginfactory.h>
-#include <ktrader.h>
+//#include <ktrader.h>
 #include <kconfig.h>
 #include <kcombobox.h>
 #include <qimage.h>

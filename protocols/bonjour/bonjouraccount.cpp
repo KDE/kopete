@@ -22,7 +22,6 @@
 #include <klocale.h>
 #include <kactionmenu.h>
 #include <kmenu.h>
-#include <kicon.h>
 #include <kmessagebox.h>
 
 #include "kopetemetacontact.h"
