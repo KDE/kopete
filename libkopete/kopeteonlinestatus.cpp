@@ -74,7 +74,7 @@ private:
 using namespace Kopete;
 
 class OnlineStatus::Private
-	: public KShared
+	: public QSharedData
 {
 public:
 	StatusType status;

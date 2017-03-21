@@ -137,7 +137,7 @@ public:
 
 private:
 	class Private;
-	KSharedPtr<Private> d;
+    KSharedPtr<Private> d;
 };
 
 }

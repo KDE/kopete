@@ -29,7 +29,7 @@
 namespace Kopete
 {
 
-class Picture::Private : public KShared
+class Picture::Private : public QSharedData
 {
 public:
 	Private()
@@ -189,7 +189,7 @@ void Picture::setPicture(const KContacts::Picture &picture)
 
 void Picture::detach()
 {
-	// there is no detach in KSharedPtr.
+	// there is no detach in QExplicitlySharedDataPointer.
 	if( d.count() == 1 )
 		return;
 
