@@ -182,21 +182,21 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 
     KActionMenu *actionSetAvailability = new KActionMenu ( KIcon("user-identity", 0, QStringList() << QString() << "user-online"), i18n ("Set Availability"), this );
 
-#define KACTION(status, text, name, slot) \
+#define QAction(status, text, name, slot) \
 	{ QAction *tmp = new QAction(this); \
 	tmp->setIcon( KIcon(QIcon((status).iconFor(this)))); \
 	tmp->setText( text ); \
 	connect(tmp, SIGNAL(triggered(bool)), (slot));\
 	actionSetAvailability->addAction(tmp); }
 
-	KACTION( protocol()->JabberKOSOnline, i18n ("Online"),         "actionOnline", SLOT(slotStatusOnline()) );
-	KACTION( protocol()->JabberKOSChatty, i18n ("Free to Chat"),   "actionChatty", SLOT(slotStatusChatty()) );
-	KACTION( protocol()->JabberKOSAway,   i18n ("Away"),           "actionAway",   SLOT(slotStatusAway()) );
-	KACTION( protocol()->JabberKOSXA,     i18n ("Extended Away"),  "actionXA",     SLOT(slotStatusXA()) );
-	KACTION( protocol()->JabberKOSDND,    i18n ("Do Not Disturb"), "actionDND",    SLOT(slotStatusDND()) );
-	KACTION( protocol()->JabberKOSInvisible, i18n ("Invisible"),   "actionInvisible", SLOT(slotStatusInvisible()) );
+    QAction( protocol()->JabberKOSOnline, i18n ("Online"),         "actionOnline", SLOT(slotStatusOnline()) );
+    QAction( protocol()->JabberKOSChatty, i18n ("Free to Chat"),   "actionChatty", SLOT(slotStatusChatty()) );
+    QAction( protocol()->JabberKOSAway,   i18n ("Away"),           "actionAway",   SLOT(slotStatusAway()) );
+    QAction( protocol()->JabberKOSXA,     i18n ("Extended Away"),  "actionXA",     SLOT(slotStatusXA()) );
+    QAction( protocol()->JabberKOSDND,    i18n ("Do Not Disturb"), "actionDND",    SLOT(slotStatusDND()) );
+    QAction( protocol()->JabberKOSInvisible, i18n ("Invisible"),   "actionInvisible", SLOT(slotStatusInvisible()) );
 
-#undef KACTION
+#undef QAction
 
 	KActionMenu *actionSelectResource = new KActionMenu ( i18n ("Select Resource"), this );
 

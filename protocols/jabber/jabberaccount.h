@@ -354,7 +354,7 @@ private slots:
 	//void slotIncomingJingleSession(const QString &sessionType, JingleSession *session);
 };
 
-/*class JabberMoodAction : public KAction
+/*class JabberMoodAction : public QAction
 {
 	Q_OBJECT
 public:

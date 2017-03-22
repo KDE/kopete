@@ -17,7 +17,7 @@
 
 #include "testbedaccount.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <KLocalizedString>
 #include <kactionmenu.h>
@@ -52,9 +52,9 @@ void TestbedAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->addSeparator();
 
-	KAction *action;
+	QAction *action;
 
-    action = new KAction (QIcon::fromTheme("testbed_showvideo"), i18n ("Show my own video..."), actionMenu );
+    action = new QAction (QIcon::fromTheme("testbed_showvideo"), i18n ("Show my own video..."), actionMenu );
         //, "actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	actionMenu->addAction(action);

@@ -20,7 +20,7 @@
 #include <kxmlguiclient.h>
 
 namespace Kopete { class ChatSession; }
-class KAction;
+class QAction;
 
 class PrivacyGUIClient : public QObject , public KXMLGUIClient
 {
@@ -34,8 +34,8 @@ private slots:
 
 private:
 	Kopete::ChatSession *m_manager;
-	KAction *actionAddToWhiteList;
-	KAction *actionAddToBlackList;
+	QAction *actionAddToWhiteList;
+	QAction *actionAddToBlackList;
 };
 
 #endif

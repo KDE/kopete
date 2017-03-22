@@ -26,7 +26,7 @@
 #include <kdebug.h>
 #include <KLocalizedString>
 #include <kicon.h>
-#include <kaction.h>
+#include <QAction>
 #include <kactioncollection.h>
 #include "kopetechatsessionmanager.h"
 #include "kopetemessage.h"
@@ -68,12 +68,12 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	slotUpdateDisplayName ();
 
 #ifdef JINGLE_SUPPORT
-	KAction *jingleSessionGui = new KAction(i18n("Show audio calls"), members().first());
+	QAction *jingleSessionGui = new QAction(i18n("Show audio calls"), members().first());
 	jingleSessionGui->setIcon(KIcon("voicecall"));
 	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui()));
 	setComponentData(protocol->componentData());
 
-	KAction *jingleSession = new KAction(i18n("Start audio call"), members().first());
+	QAction *jingleSession = new QAction(i18n("Start audio call"), members().first());
 	jingleSession->setIcon(KIcon("voicecall"));
 	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession()));
 	setComponentData(protocol->componentData());
@@ -95,12 +95,12 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 	}
 
 
-	/*KAction *jingleaudiocall = new KAction(i18n("Jingle Audio call" ), members().first());
+	/*QAction *jingleaudiocall = new QAction(i18n("Jingle Audio call" ), members().first());
 	connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall()));
 	setComponentData(protocol->componentData());
 	jingleaudiocall->setEnabled( false );
 
-	KAction *jinglevideocall = new KAction(i18n("Jingle Video call" ), members().first());
+	QAction *jinglevideocall = new QAction(i18n("Jingle Video call" ), members().first());
 	connect(jinglevideocall, SIGNAL(triggered(bool)), SLOT (slotJingleVideoCall()));
 	setComponentData(protocol->componentData());
 	jinglevideocall->setEnabled( false );*/

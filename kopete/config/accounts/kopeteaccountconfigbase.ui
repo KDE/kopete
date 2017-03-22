@@ -106,7 +106,7 @@ The priority is used to determine which contact to use when you click on a metac
           </property>
           <property name="text">
            <string>Add Account
-KAction replaces
+QAction replaces
 these labels!</string>
           </property>
          </widget>

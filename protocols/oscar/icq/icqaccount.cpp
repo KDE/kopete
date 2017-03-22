@@ -135,7 +135,7 @@ ICQAccount::ICQAccount(Kopete::Protocol *parent, QString accountID)
 	                  this, SLOT(slotGotAuthRequest(QString,QString)) );
 
 	// Create actions
-    mEditInfoAction = new KAction( QIcon::fromTheme("user-properties"), i18n( "Edit User Info..." ), this );
+    mEditInfoAction = new QAction( QIcon::fromTheme("user-properties"), i18n( "Edit User Info..." ), this );
 	QObject::connect( mEditInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
 
 	mActionInvisible = new KToggleAction( i18n( "In&visible" ), this );
@@ -190,11 +190,11 @@ void ICQAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	KActionMenu *xtrazStatusMenu = new KActionMenu( i18n( "Set Xtraz Status" ), actionMenu );
 
-	KAction* xtrazStatusSetAction = new KAction( i18n( "Set Status..." ), xtrazStatusMenu );
+	QAction* xtrazStatusSetAction = new QAction( i18n( "Set Status..." ), xtrazStatusMenu );
 	QObject::connect( xtrazStatusSetAction, SIGNAL(triggered(bool)), this, SLOT(setXtrazStatus()) );
 	xtrazStatusMenu->addAction( xtrazStatusSetAction );
 
-	KAction* xtrazStatusEditAction = new KAction( i18n( "Edit Statuses..." ), xtrazStatusMenu );
+	QAction* xtrazStatusEditAction = new QAction( i18n( "Edit Statuses..." ), xtrazStatusMenu );
 	QObject::connect( xtrazStatusEditAction, SIGNAL(triggered(bool)), this, SLOT(editXtrazStatuses()) );
 	xtrazStatusMenu->addAction( xtrazStatusEditAction );
 

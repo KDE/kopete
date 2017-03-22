@@ -20,7 +20,7 @@
 #include <QList>
 #include <QHostAddress>
 
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <KLocalizedString>
 

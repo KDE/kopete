@@ -20,7 +20,7 @@ namespace Xtraz
 {
 
 StatusAction::StatusAction( const Xtraz::Status &status, QObject *parent )
-: KAction( parent ), mStatus( status )
+: QAction( parent ), mStatus( status )
 {
 	this->setText( mStatus.description() );
 
