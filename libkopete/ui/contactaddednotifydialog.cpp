@@ -22,7 +22,7 @@
 
 #include <klocale.h>
 #include <kcombobox.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <QPushButton>
 #include <kiconloader.h>
 

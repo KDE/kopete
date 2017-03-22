@@ -33,7 +33,7 @@
 #include <klocale.h>
 #include <kurlrequester.h>
 #include <knuminput.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>

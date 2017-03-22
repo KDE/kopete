@@ -24,7 +24,7 @@
 #include <QTreeWidget>
 
 #include <klocale.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <kglobal.h>
 #include <kgenericfactory.h>
 

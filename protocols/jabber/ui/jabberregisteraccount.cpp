@@ -26,7 +26,7 @@
 #include <kiconloader.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <knuminput.h>
 #include <QPushButton>
 #include <qlabel.h>
@@ -84,9 +84,9 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent )
 	// get all settings from the main dialog
 	mMainWidget->leJID->setText ( parent->mID->text () );
 	mMainWidget->lePassword->setText ( parent->mPass->password () );
-    mMainWidget->lePassword->setPasswordMode ( true );
+    mMainWidget->lePassword->setEchoMode(QLineEdit::Password);
 	//	mMainWidget->lePasswordVerify->setText ( parent->mPass->password () ); //BUG 114631
-    mMainWidget->lePasswordVerify->setPasswordMode ( true );
+    mMainWidget->lePasswordVerify->setEchoMode(QLineEdit::Password);
 	mMainWidget->cbUseSSL->setChecked ( parent->cbUseSSL->isChecked () );
 	mMainWidget->cbOverrideHost->setChecked ( parent->cbCustomServer->isChecked () );
 	mMainWidget->leServer->setText ( parent->mServer->text () );

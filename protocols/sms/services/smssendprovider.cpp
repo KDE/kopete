@@ -22,7 +22,7 @@
 
 #include <kconfigbase.h>
 #include <k3process.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -171,7 +171,7 @@ bool SMSSendProvider::isHidden(int i) const
 	return isHiddens[i];
 }
 
-void SMSSendProvider::save(const QList<KLineEdit*>& args)
+void SMSSendProvider::save(const QList<QLineEdit*>& args)
 {
 	kDebug( 14160 ) << "m_account = " << m_account << " (should be non-zero!!)";
 	if (!m_account) return;		// prevent crash in worst case

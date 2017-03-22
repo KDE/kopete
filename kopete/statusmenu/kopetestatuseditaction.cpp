@@ -35,7 +35,7 @@ StatusEditWidget::StatusEditWidget( QWidget *parent )
 {
 	ui->setupUi( this );
 
-	ui->statusTitle->setClearButtonShown( true );
+	ui->statusTitle->setClearButtonEnabled( true );
 	ui->buttonBox->addButton( KGuiItem( i18n( "C&lear" ), "edit-clear" ), QDialogButtonBox::DestructiveRole, this, SLOT(clearClicked()) );
 
 	setFocusPolicy( Qt::StrongFocus );

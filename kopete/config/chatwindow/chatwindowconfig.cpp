@@ -41,7 +41,7 @@
 #include <kpluginfactory.h>
 #include <kio/netaccess.h>
 #include <khtmlview.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>

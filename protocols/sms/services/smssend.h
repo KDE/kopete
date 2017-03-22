@@ -20,7 +20,7 @@
 #include <QList>
 
 
-#include <klineedit.h>
+#include <QLineEdit>
 
 #include "smsservice.h"
 
@@ -55,7 +55,7 @@ private slots:
 private:
 	SMSSendProvider* m_provider;
 	SMSSendPrefsUI* prefWidget;
-	QList<KLineEdit*> args;
+	QList<QLineEdit*> args;
 	QList<QLabel*> labels;
 	QString m_description;
 } ;

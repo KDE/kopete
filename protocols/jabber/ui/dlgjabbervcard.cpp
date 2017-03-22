@@ -30,7 +30,7 @@
 // KDE includes
 #include <kdebug.h>
 #include <QPushButton>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <klocale.h>
 #include <kurllabel.h>
 #include <kmessagebox.h>

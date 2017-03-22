@@ -60,11 +60,11 @@ JabberFormTranslator::JabberFormTranslator (const XMPP::Form & form, QWidget * p
 		formLayout->addWidget (label, row, 0);
 		label->show ();
 
-		KLineEdit *edit;
+		QLineEdit *edit;
         edit = new JabberFormLineEdit ((*it).type (), (*it).realName (),
                                          (*it).value (), this);
 		if ((*it).type() == XMPP::FormField::password)
-            edit->setPasswordMode(true);
+            edit->setEchoMode(QLineEdit::Password);
 
 		formLayout->addWidget (edit, row, 1);
 		edit->show ();

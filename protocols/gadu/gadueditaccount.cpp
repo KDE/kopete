@@ -35,7 +35,7 @@
 #include <qpushbutton.h>
 #include <QGroupBox>
 
-#include <klineedit.h>
+#include <QLineEdit>
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <klocale.h>

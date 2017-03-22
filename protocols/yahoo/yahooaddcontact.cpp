@@ -24,7 +24,7 @@
 
 // KDE Includes
 #include <kdebug.h>
-#include <klineedit.h>
+#include <QLineEdit>
 
 // Kopete Includes
 #include <addcontactpage.h>

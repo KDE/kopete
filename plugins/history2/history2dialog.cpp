@@ -109,7 +109,7 @@ History2Dialog::History2Dialog(Kopete::MetaContact *mc, QWidget* parent)
 	mMainWidget->setupUi( w );
 	mMainWidget->searchLine->setFocus();
 	mMainWidget->searchLine->setTrapReturnKey (true);
-	mMainWidget->searchLine->setClearButtonShown(true);
+	mMainWidget->searchLine->setClearButtonEnabled(true);
 
 	mMainWidget->contactComboBox->addItem(i18n("All"));
 	mMetaContactList = Kopete::ContactList::self()->metaContacts();
