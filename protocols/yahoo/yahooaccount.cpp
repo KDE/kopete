@@ -47,6 +47,7 @@
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
 #include <kicon.h>
+#include <kmessagebox_queued.h>
 
 // Kopete
 #include <kopetechatsession.h>
@@ -739,7 +740,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	{
 		initConnectionSignals( DeleteConnections );
 		errorMsg = i18n("Could not log into the Yahoo service: your account has been locked.\nVisit %1 to reactivate it.", url);
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
+        KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( BadUserName ); // FIXME: add a more appropriate disconnect reason
 		return;
@@ -748,7 +749,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	{
 		initConnectionSignals( DeleteConnections );
 		errorMsg = i18n("Could not log into the Yahoo service: the username specified was invalid.");
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
+        KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( BadUserName );
 		return;
@@ -757,7 +758,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	{
 		initConnectionSignals( DeleteConnections );
 		errorMsg = i18n("You have been logged out of the Yahoo service, possibly due to a duplicate login.");
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
+        KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		disconnected( Manual ); // cannot use ConnectionReset since that will auto-reconnect
 		return;
@@ -775,7 +776,7 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	//If we get here, something went wrong, so set ourselves to offline
 	initConnectionSignals( DeleteConnections );
 	errorMsg = i18nc("@info", "Could not log into the Yahoo service. Error code: <message><numid>%1</numid></message>.", succ);
-	KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
+    KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	disconnected( Unknown );
 }
@@ -1451,7 +1452,7 @@ void YahooAccount::slotModifyYABEntryError( YABEntry *entry, const QString &msg 
 	YahooContact* kc = contact( entry->yahooId );
 	if( kc )
 		kc->setYABEntry( entry, true );
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "Yahoo Plugin" ) );
+    KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, msg, i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotFile( const QString &  who, const QString &  url , long /* expires */, const QString &  msg , const QString &  fname, unsigned long  fesize, const QPixmap &preview )
@@ -1640,7 +1641,7 @@ void YahooAccount::slotGotWebcamInvite( const QString& who )
 }
 void YahooAccount::slotWebcamNotAvailable( const QString &who )
 {
-	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n("Webcam for %1 is not available.", who), i18n( "Yahoo Plugin" ) );
+    //KF5 FIXME  KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n("Webcam for %1 is not available.", who), i18n( "Yahoo Plugin" ) );
 }
 
 void YahooAccount::slotGotWebcamImage( const QString& who, const QPixmap& image )
@@ -1738,7 +1739,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 		uint expire = myself()->property( YahooProtocol::protocol()->iconExpire ).value().toInt();
 
 		if ( image.isNull() ) {
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "<qt>The selected buddy icon could not be opened. <br />Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
+            KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "<qt>The selected buddy icon could not be opened. <br />Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
 			return;
 		}
 		image = image.scaled( 96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation );
@@ -1753,7 +1754,7 @@ void YahooAccount::setBuddyIcon( const KUrl &url )
 
 		if( !image.save( newlocation, "PNG" ) || !iconFile.open(QIODevice::ReadOnly) )
 		{
-			KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
+            KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n( "An error occurred when trying to change the display picture." ), i18n( "Yahoo Plugin" ) );
 			return;
 		}
 

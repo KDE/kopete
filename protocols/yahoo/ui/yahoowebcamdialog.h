@@ -34,7 +34,7 @@ class YahooWebcamDialog : public KDialog
 {
 Q_OBJECT
 public:
-	explicit YahooWebcamDialog( const QString &, QWidget* parent = 0 );
+	explicit YahooWebcamDialog( const QString &, QWidget* parent = nullptr );
 	~YahooWebcamDialog();
 	
 	void setViewer( const QStringList & );

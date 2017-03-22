@@ -22,6 +22,7 @@
 // QT Includes
 
 // KDE Includes
+#include <KUrl>
 #include <kdialog.h>
 #include <kio/job.h>
 

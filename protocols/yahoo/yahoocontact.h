@@ -26,6 +26,7 @@
 #include <QPixmap>
 #include <QList>
 #include <kurl.h>
+#include <QAction>
 
 class KAction;
 class KTemporaryFile;
@@ -49,7 +50,7 @@ public:
 	/** Base Class Reimplementations **/
 	virtual bool isOnline() const;
 	virtual bool isReachable();
-	virtual QList<KAction*> *customContextMenuActions();
+    virtual QList<QAction*> *customContextMenuActions();
 	using Kopete::Contact::customContextMenuActions;
 	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate= Kopete::Contact::CanCreate );
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
@@ -124,12 +125,12 @@ private:
 	bool m_receivingWebcam;
 	bool m_sessionActive;
 	
-	KAction* m_stealthAction;
-	KAction* m_profileAction;
-	KAction* m_webcamAction;
-	KAction* m_inviteWebcamAction;
-	KAction* m_buzzAction;	
-	KAction* m_inviteConferenceAction;
+    QAction* m_stealthAction;
+    QAction* m_profileAction;
+    QAction* m_webcamAction;
+    QAction* m_inviteWebcamAction;
+    QAction* m_buzzAction;
+    QAction* m_inviteConferenceAction;
 };
 
 #endif
