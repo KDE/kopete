@@ -25,7 +25,7 @@ class BehaviorConfig_Away : public QWidget, public Ui::BehaviorConfig_Away
 	Q_OBJECT
 
 public:
-	BehaviorConfig_Away(QWidget *parent = 0);
+	BehaviorConfig_Away(QWidget *parent = nullptr);
 };
 
 #endif // BEHAVIORCONFIG_AWAY_H

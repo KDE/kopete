@@ -31,7 +31,7 @@ public:
 	/**
 	 * Info event widget constructor
 	 */
-	InfoEventWidget( QWidget *parent = 0 );
+	InfoEventWidget( QWidget *parent = nullptr );
 
 	~InfoEventWidget();
 

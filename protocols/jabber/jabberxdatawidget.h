@@ -26,7 +26,7 @@ class JabberXDataWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	explicit JabberXDataWidget(const XMPP::XData &data, QWidget *parent = 0);
+	explicit JabberXDataWidget(const XMPP::XData &data, QWidget *parent = nullptr);
 	~JabberXDataWidget();
 
 	XMPP::XData::FieldList fields() const;

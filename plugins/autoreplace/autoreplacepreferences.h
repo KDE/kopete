@@ -34,7 +34,7 @@ class AutoReplacePreferences : public KCModule
 	Q_OBJECT
 
 public:
-	explicit AutoReplacePreferences( QWidget *parent = 0, const QVariantList &args = QVariantList() );
+	explicit AutoReplacePreferences( QWidget *parent = nullptr, const QVariantList &args = QVariantList() );
 	virtual~AutoReplacePreferences();
 
 	virtual void save();

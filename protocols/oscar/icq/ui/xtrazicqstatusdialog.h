@@ -33,7 +33,7 @@ namespace Xtraz
 class ICQStatusDialog : public KDialog
 {
 public:
-	ICQStatusDialog( QWidget *parent = 0 );
+	ICQStatusDialog( QWidget *parent = nullptr );
 	~ICQStatusDialog();
 
 	void setXtrazStatus( Xtraz::Status status );

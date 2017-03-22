@@ -45,7 +45,7 @@ class KOPETEADDACCOUNTWIZARD_EXPORT AddAccountWizard : public KAssistantDialog
 	Q_OBJECT
 
 public:
-	explicit AddAccountWizard( QWidget *parent = 0, bool firstRun = false );
+	explicit AddAccountWizard( QWidget *parent = nullptr, bool firstRun = false );
 	~AddAccountWizard();
 
 	/**

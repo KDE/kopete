@@ -32,7 +32,7 @@ class TextEffectPreferences : public KCModule  {
    Q_OBJECT
 public:
 
-	explicit TextEffectPreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+	explicit TextEffectPreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
 	~TextEffectPreferences();
 
 	// Overloaded from parent

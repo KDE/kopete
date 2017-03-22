@@ -31,7 +31,7 @@ class TokenFactory
 
 public:
     virtual ~TokenFactory() {}
-    virtual Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = 0 );
+    virtual Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
 };
 
 //Defines a part of a filename, drag&droppable in the TokenLayoutWidget bar from the TokenPool list.
@@ -41,7 +41,7 @@ class Token : public QWidget
 
     public:
 
-        explicit Token( const QString &text, const QString &iconName, int value, QWidget *parent = 0 );
+        explicit Token( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
 
         QIcon icon() const;
         QString iconName() const;

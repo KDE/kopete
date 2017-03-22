@@ -54,7 +54,7 @@ public:
 	* The constructor of an empty AddressBookSelectorWidget
 	*/
 	AddressBookSelectorDialog( const QString &title, const QString &message,
-	                           const QString &preSelectUid, QWidget *parent = 0L
+	                           const QString &preSelectUid, QWidget *parent = nullptr
 	                          );
 	/**
 	* The destructor of the dialog
@@ -75,7 +75,7 @@ public:
 	* @returns the selected contact, or a null addressee if the user
 	* pressed the Cancel button. Optionally
 	*/
-	static KContacts::Addressee getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent = 0L );
+	static KContacts::Addressee getAddressee( const QString &title, const QString &message, const QString &preSelectUid, QWidget *parent = nullptr );
 
 protected slots:
 	virtual void accept();

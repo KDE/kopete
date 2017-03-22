@@ -27,7 +27,7 @@ class QMenu;
 class TokenWithLayoutFactory : public TokenFactory
 {
 public:
-    virtual Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = 0 );
+    virtual Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
 };
 
 /**
@@ -39,7 +39,7 @@ class TokenWithLayout : public Token
 {
     Q_OBJECT
 public:
-    TokenWithLayout( const QString &text, const QString &iconName, int value, QWidget *parent = 0 );
+    TokenWithLayout( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
     ~TokenWithLayout();
 
     Qt::Alignment alignment();

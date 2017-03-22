@@ -37,7 +37,7 @@ class ChatMembersListView : public QListView
 {
 	Q_OBJECT
 public:
-	explicit ChatMembersListView( QWidget *parent = 0);
+	explicit ChatMembersListView( QWidget *parent = nullptr);
 	virtual ~ChatMembersListView();
 
 public slots:

@@ -39,7 +39,7 @@ class KOPETE_EXPORT MetaContactSelectorWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	explicit MetaContactSelectorWidget( QWidget *parent = 0, const char *name  = 0 );
+	explicit MetaContactSelectorWidget( QWidget *parent = nullptr, const char *name  = 0 );
 	~MetaContactSelectorWidget();
 	Kopete::MetaContact* metaContact();
 	/**

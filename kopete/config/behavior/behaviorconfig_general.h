@@ -25,7 +25,7 @@ class BehaviorConfig_General : public QWidget, public Ui::BehaviorConfig_General
 	Q_OBJECT
 
 public:
-	BehaviorConfig_General(QWidget *parent = 0);
+	BehaviorConfig_General(QWidget *parent = nullptr);
 
 private slots:
 	void queueToggled(bool checked);

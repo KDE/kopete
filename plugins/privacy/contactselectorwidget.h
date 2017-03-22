@@ -26,7 +26,7 @@ class Ui_ContactSelectorWidget_Base;
 class ContactSelectorWidget : public QWidget
 {
 public:
-	ContactSelectorWidget( QWidget *parent = 0);
+	ContactSelectorWidget( QWidget *parent = nullptr);
 	~ContactSelectorWidget();
 
 	QList<AccountListEntry> contacts();

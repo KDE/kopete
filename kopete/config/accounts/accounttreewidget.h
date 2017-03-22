@@ -25,7 +25,7 @@ class AccountTreeWidget : public QTreeWidget
 {
 	Q_OBJECT
 public:
-	AccountTreeWidget( QWidget *parent = 0 );
+	AccountTreeWidget( QWidget *parent = nullptr );
 
 signals:
 	void itemPositionChanged();

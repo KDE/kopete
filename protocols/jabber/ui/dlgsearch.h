@@ -34,7 +34,7 @@ class dlgSearch : public QDialog
 {
 	Q_OBJECT
 public:
-	dlgSearch(JabberAccount *account, const XMPP::Jid &jid, QWidget *parent = 0);
+	dlgSearch(JabberAccount *account, const XMPP::Jid &jid, QWidget *parent = nullptr);
 	~dlgSearch();
 
 private slots:

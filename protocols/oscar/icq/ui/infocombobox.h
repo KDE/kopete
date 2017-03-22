@@ -26,7 +26,7 @@ class InfoComboBox : public QComboBox
 	Q_OBJECT
 
 public:
-	InfoComboBox( QWidget *parent = 0 );
+	InfoComboBox( QWidget *parent = nullptr );
 
 	/**
 	 * Set read only mode for the combo box

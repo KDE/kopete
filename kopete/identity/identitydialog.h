@@ -30,7 +30,7 @@ class KOPETE_IDENTITY_EXPORT IdentityDialog : public Kopete::UI::InfoDialog
 {
 	Q_OBJECT
 public:
-	explicit IdentityDialog(Kopete::Identity *identity, QWidget *parent = 0);
+	explicit IdentityDialog(Kopete::Identity *identity, QWidget *parent = nullptr);
 	~IdentityDialog();
 
 protected slots:

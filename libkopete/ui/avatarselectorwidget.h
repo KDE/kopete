@@ -49,7 +49,7 @@ public:
 	 * @brief Create a new AvatarSelectorWidget
 	 * @param parent parent widget
 	 */
-	AvatarSelectorWidget(QWidget *parent = 0);
+	AvatarSelectorWidget(QWidget *parent = nullptr);
 	/**
 	 * @brief Destructor
 	 */
