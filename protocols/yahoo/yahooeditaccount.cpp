@@ -41,6 +41,7 @@
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
+#include <kmessagebox_queued.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -103,13 +104,13 @@ bool YahooEditAccount::validateData()
 	kDebug(YAHOO_GEN_DEBUG) ;
 
 	if(mScreenName->text().isEmpty())
-	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
-			i18n("<qt>You must enter a valid screen name.</qt>"), i18n("Yahoo"));
+    {
+        KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,	i18n("<qt>You must enter a valid screen name.</qt>"), i18n("Yahoo"));
 		return false;
 	}
 	if(!mPasswordWidget->validate())
-	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
-			i18n("<qt>You must enter a valid password.</qt>"), i18n("Yahoo"));
+    {
+        KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,	i18n("<qt>You must enter a valid password.</qt>"), i18n("Yahoo"));
 		return false;
 	}
 	return true;
@@ -170,7 +171,7 @@ void YahooEditAccount::slotSelectPicture()
 	}
 	else
 	{
-		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "<qt>The selected buddy icon could not be opened. <br />Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
+        KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "<qt>The selected buddy icon could not be opened. <br />Please set a new buddy icon.</qt>" ), i18n( "Yahoo Plugin" ) );
 		return;
 	}
 }

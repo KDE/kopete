@@ -43,14 +43,14 @@ YahooConferenceChatSession::YahooConferenceChatSession( const QString & yahooRoo
 {
 
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
-	setComponentData(protocol->componentData());
+    //KF5 FIXME setComponentData(protocol->componentData());
 
 	connect ( this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
 			  SLOT(slotMessageSent(Kopete::Message&,Kopete::ChatSession*)) );
 
 	m_yahooRoom = yahooRoom;
 
-	m_actionInvite = new KAction( KIcon("x-office-contact"), i18n( "&Invite others" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
+    m_actionInvite = new QAction( KIcon("x-office-contact"), i18n( "&Invite others" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
         actionCollection()->addAction( "yahooInvite", m_actionInvite );
 	connect ( m_actionInvite, SIGNAL(triggered(bool)), this, SLOT(slotInviteOthers()) );
 

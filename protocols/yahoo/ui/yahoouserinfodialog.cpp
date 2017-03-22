@@ -32,6 +32,7 @@
 #include <kglobal.h>
 #include <kicon.h>
 #include <klocale.h>
+#include <KDialog>
 
 #include "ui_yahooworkinfowidget.h"
 #include "ui_yahoogeneralinfowidget.h"
@@ -42,12 +43,12 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent )
 : KPageDialog( parent ), m_contact(c)
 {
 	setFaceType( KPageDialog::List );
-	setCaption( i18n( "Yahoo User Information" ) );
-	setButtons( KDialog::User2 | KDialog::User1 | KDialog::Cancel );
-	setDefaultButton( KDialog::Cancel );
-	setButtonGuiItem( KDialog::User1, KGuiItem( i18n("Save and Close") ) );
-	setButtonGuiItem( KDialog::User2, KGuiItem( i18n("Merge with existing entry") ) );
-	showButton( KDialog::User2, false );
+    setWindowTitle(i18n( "Yahoo User Information" ) );
+    //KF5 FIXME setButtons( KDialog::User2 | KDialog::User1 | KDialog::Cancel );
+    //KF5 FIXME setDefaultButton( KDialog::Cancel );
+    //KF5 FIXME setButtonGuiItem( KDialog::User1, KGuiItem( i18n("Save and Close") ) );
+    //KF5 FIXME setButtonGuiItem( KDialog::User2, KGuiItem( i18n("Merge with existing entry") ) );
+    //KF5 FIXME showButton( KDialog::User2, false );
 
 	kDebug(14180) << "Creating new yahoo user info widget";
 	
@@ -85,8 +86,8 @@ YahooUserInfoDialog::~YahooUserInfoDialog()
 
 void YahooUserInfoDialog::setAccountConnected( bool isOnline )
 {
-	enableButton( User1, isOnline );
-	enableButton( User2, isOnline );
+    //KF5 FIXME enableButton( KDialog::User1, isOnline );
+    //KF5 FIXME enableButton( KDialog::User2, isOnline );
 }
 
 void YahooUserInfoDialog::slotSaveAndCloseClicked()
@@ -221,8 +222,8 @@ void YahooUserInfoDialog::setData( const YABEntry &yab )
 	
 	if( m_yab.source == YABEntry::SourceContact )
 	{
-		showButton( User2, true );
-		setButtonText( User1, i18n("Replace existing entry") );
+        //KF5 FIXME showButton( KDialog::User2, true );
+        //KF5 FIXME setButtonText( KDialog::User1, i18n("Replace existing entry") );
 	}
 	
 	m_genInfoWidget->firstNameEdit->setText( yab.firstName );

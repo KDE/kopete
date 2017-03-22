@@ -48,7 +48,7 @@ protected slots:
 private:
 	QString m_yahooRoom;
 
-	KAction *m_actionInvite;
+    QAction *m_actionInvite;
 };
 
 #endif
