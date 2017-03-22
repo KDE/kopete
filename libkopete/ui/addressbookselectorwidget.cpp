@@ -31,7 +31,7 @@
 #include <kiconloader.h>
 
 #include <kdeversion.h>
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 
 #include <QPushButton>
 #include <kdebug.h>
@@ -149,7 +149,7 @@ void AddressBookSelectorWidget::setLabelMessage( const QString &msg )
 void AddressBookSelectorWidget::slotAddAddresseeClicked()
 {
 	// Pop up add addressee dialog
-	QString addresseeName = KInputDialog::getText( i18n( "New Address Book Entry" ), i18n( "Name the new entry:" ), QString(), 0, this );
+    QString addresseeName = QInputDialog::getText( this, i18n( "New Address Book Entry" ), i18n( "Name the new entry:" ));
 
 	if ( !addresseeName.isEmpty() )
 	{

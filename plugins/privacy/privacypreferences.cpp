@@ -22,7 +22,6 @@
 #include <QPointer>
 
 #include <kgenericfactory.h>
-#include <kinputdialog.h>
 #include <kdialog.h>
 #include <kvbox.h>
 

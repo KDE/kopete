@@ -41,7 +41,7 @@
 #include <kicon.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 #include <kopeteview.h>
 
 #include "kopetecontactlist.h"
@@ -324,8 +324,8 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 					message.from().full(), room , originalBody);
 			
 			bool ok=false;
-			QString futureNewNickName = KInputDialog::getText( i18n( "Invited to a conference - Jabber Plugin" ),
-					mes, QString() , &ok , (mManager ? dynamic_cast<QWidget*>(mManager->view(false)) : 0) );
+            QString futureNewNickName = QInputDialog::getText( (mManager ? dynamic_cast<QWidget*>(mManager->view(false)) : 0), i18n( "Invited to a conference - Jabber Plugin" ),
+                    mes,QLineEdit::Normal, QString() , &ok  );
 			if ( !ok || !account()->isConnected() || futureNewNickName.isEmpty() )
 				return;
 			

@@ -21,7 +21,7 @@
 #include <kdebug.h>
 #include <KLocalizedString>
 #include <kfiledialog.h>
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 #include <QAction>
 
 #include "jabberprotocol.h"
@@ -418,8 +418,8 @@ void JabberGroupContact::slotChangeNick( )
 {
 
 	bool ok;
-	QString futureNewNickName = KInputDialog::getText( i18n( "Change nickname - Jabber Plugin" ),
-			i18n( "Please enter the new nickname you want to have in the room <i>%1</i>" , rosterItem().jid().bare()),
+    QString futureNewNickName = QInputDialog::getText( nullptr, i18n( "Change nickname - Jabber Plugin" ),
+            i18n( "Please enter the new nickname you want to have in the room <i>%1</i>" , rosterItem().jid().bare()), QLineEdit::Normal,
 			mNick, &ok );
 	if ( !ok || !account()->isConnected())
 		return;

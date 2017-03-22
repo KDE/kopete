@@ -355,7 +355,7 @@ XMPP::Status JabberProtocol::kosToStatus( const Kopete::OnlineStatus & status , 
 #include "jabbercontactpool.h"
 #include <kopeteview.h>
 #include <kmessagebox.h>
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 #include <KConfigGroup>
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -509,8 +509,8 @@ void JabberProtocol::handleURL(const QString&, const QUrl &url) const
 			if(nick.isEmpty())
 			{
 				bool ok=true;
-				nick = KInputDialog::getText(i18n("Please enter your nickname for the room %1", jid.bare()),
-						i18n("Provide your nickname"),
+                nick = QInputDialog::getText(nullptr, i18n("Please enter your nickname for the room %1", jid.bare()),
+                        i18n("Provide your nickname"), QLineEdit::Normal,
 						QString(),
 						&ok);
 				if (!ok)

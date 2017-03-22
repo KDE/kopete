@@ -32,7 +32,6 @@
 #include <kiconloader.h>
 
 #include <kdeversion.h>
-#include <kinputdialog.h>
 #include <QPushButton>
 #include <kdebug.h>
 #include <QTreeWidget>

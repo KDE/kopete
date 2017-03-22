@@ -24,7 +24,7 @@
 
 #include <kauthorized.h>
 #include <kdebug.h>
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 #include <KLocalizedString>
 #include <QIcon>
 #include <kmessagebox.h>
@@ -88,7 +88,7 @@ void Kopete::Command::slotAction()
 	QString args;
 	if( m_minArgs > 0 )
 	{
-		args = KInputDialog::getText( i18n("Enter Arguments"), i18n("Enter the arguments to %1:", m_command) );
+        args = QInputDialog::getText(0, i18n("Enter Arguments"), i18n("Enter the arguments to %1:", m_command) );
 		if( args.isNull() )
 			return;
 	}

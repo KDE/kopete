@@ -37,7 +37,7 @@
 #include <KActionCollection>
 #include <KXmlGuiWindow>
 #include <KLocalizedString>
-#include <KInputDialog>
+#include <QInputDialog>
 #include <KMessageBox>
 #include <kmessagebox_queued.h>
 #include <KToolInvocation>
@@ -344,7 +344,7 @@ void KopeteContactListView::mergeMetaContact()
 
 void KopeteContactListView::addGroup()
 {
-	QString groupName = KInputDialog::getText( i18n( "New Group" ),
+    QString groupName = QInputDialog::getText(this, i18n( "New Group" ),
 	                                           i18n( "Please enter the name for the new group:" ) );
 
 	if ( !groupName.isEmpty() )

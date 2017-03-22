@@ -126,7 +126,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 			                 message.from().full(), room , originalBody);
 			
 			bool ok=false;
-			QString futureNewNickName = KInputDialog::getText( i18n( "Invited to a conference - Jabber Plugin" ),
+            QString futureNewNickName = QInputDialog::getText( i18n( "Invited to a conference - Jabber Plugin" ),
 				mes, QString() , &ok , (mManager ? dynamic_cast<QWidget*>(mManager->view(false)) : 0) );
 			if ( !ok || !account()->isConnected() || futureNewNickName.isEmpty() )
 				return;

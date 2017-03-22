@@ -30,7 +30,7 @@
 #include <kgenericfactory.h>
 #include <kservicetypetrader.h>
 #include <kcolorbutton.h>
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 #include <kurlrequester.h>
 #include <kregexpeditorinterface.h>
 #include <kdebug.h>
@@ -195,8 +195,8 @@ void HighlightPreferences::slotRenameFilter()
 		return;
 
 	bool ok;
-	const QString newname = KInputDialog::getText(
-		i18n( "Rename Filter" ), i18n( "Please enter the new name for the filter:" ), current->displayName, &ok );
+    const QString newname = QInputDialog::getText( this,
+        i18n( "Rename Filter" ), i18n( "Please enter the new name for the filter:" ), QLineEdit::Normal, current->displayName, &ok );
 	if( !ok )
 		return;
 	current->displayName=newname;

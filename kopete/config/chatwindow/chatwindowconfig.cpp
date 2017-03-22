@@ -33,7 +33,6 @@
 #include <QVBoxLayout>
 
 #include <kdeversion.h>
-#include <kinputdialog.h>
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kdebug.h>
