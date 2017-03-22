@@ -29,7 +29,7 @@
 #include <qcolor.h>
 
 #include <kdebug.h>
-#include <kaction.h>
+#include <qaction.h>
 #include <kconfig.h>
 #include <kgenericfactory.h>
 #include <kselectaction.h>
@@ -95,7 +95,7 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
     otrPolicyMenu = new KSelectAction( QIcon::fromTheme("object-locked"), i18nc( "@item:inmenu", "&OTR Policy" ), this );
 	actionCollection()->addAction( "otr_policy", otrPolicyMenu );
 
-	KAction *separatorAction = new KAction( otrPolicyMenu );
+    QAction *separatorAction = new QAction( otrPolicyMenu );
 	separatorAction->setSeparator( true );
 
 	otrPolicyMenu->addAction( i18nc( "@item:inmenu Use the default encryption mode specified in settings dialog", "&Default") );

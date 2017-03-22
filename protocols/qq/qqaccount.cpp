@@ -20,7 +20,7 @@
 #include <QTextCodec>
 #include <QDateTime>
 
-#include <kaction.h>
+#include <qaction.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kactionmenu.h>
@@ -131,9 +131,7 @@ void QQAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->addSeparator();
 
-	KAction *action;
-
-	action = new KAction (KIcon("qq_showvideo"), i18n ("Show my own video..."), actionMenu );
+    QAction *action = new QAction (KIcon("qq_showvideo"), i18n ("Show my own video..."), actionMenu );
         action->setObjectName("actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	actionMenu->addAction(action);
