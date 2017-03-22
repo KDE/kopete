@@ -30,7 +30,7 @@
 #include <QIcon>
 #include <QMenu>
 #include <QByteArray>
-#include <QLatin1String>
+
 #include <QList>
 #include <QPointer>
 #include <QRect>

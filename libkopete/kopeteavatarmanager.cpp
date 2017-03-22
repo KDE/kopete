@@ -17,7 +17,7 @@
 #include "kopeteavatarmanager.h"
 
 // Qt includes
-#include <QLatin1String>
+
 #include <QBuffer>
 #include <QCoreApplication>
 #include <QFile>

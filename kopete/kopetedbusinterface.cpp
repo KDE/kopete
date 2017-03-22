@@ -21,7 +21,7 @@
 // Qt includes
 #include <QStringList>
 #include <QList>
-#include <QLatin1String>
+
 
 // KDE includes
 #include <QUrl>
