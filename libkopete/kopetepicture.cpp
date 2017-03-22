@@ -190,7 +190,7 @@ void Picture::setPicture(const KContacts::Picture &picture)
 void Picture::detach()
 {
 	// there is no detach in QExplicitlySharedDataPointer.
-	if( d.count() == 1 )
+    if( d.data())
 		return;
 
 	// Warning: this only works as long as the private object doesn't contain pointers to allocated objects.

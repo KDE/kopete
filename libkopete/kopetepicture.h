@@ -18,7 +18,7 @@
 #define KOPETEPICTURE_H
 
 #include <kdemacros.h>
-#include <ksharedptr.h>
+#include <QExplicitlySharedDataPointer>
 #include "kopete_export.h"
 
 #include <QImage>
@@ -141,7 +141,7 @@ private:
 	void detach();
 
 	class Private;
-	KSharedPtr<Private> d;
+	QExplicitlySharedDataPointer<Private> d;
 };
 
 }//END namespace Kopete

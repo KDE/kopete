@@ -24,7 +24,7 @@
 #include "kopete_export.h"
 
 #include <kdemacros.h>
-#include <ksharedptr.h>
+#include <QExplicitlySharedDataPointer>
 #include <kiconloader.h>
 
 #include <QtCore/QObject>
@@ -465,7 +465,7 @@ public:
 private:
 
 	class Private;
-	KSharedPtr<Private> d;
+	QExplicitlySharedDataPointer<Private> d;
 
 	QString mimeSource( const QString& icon, int size, QColor color, bool idle) const;
 
