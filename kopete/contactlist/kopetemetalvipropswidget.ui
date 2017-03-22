@@ -330,7 +330,7 @@
              </widget>
             </item>
             <item>
-             <widget class="KPushButton" name="btnClearPhoto" >
+             <widget class="QPushButton" name="btnClearPhoto" >
               <property name="maximumSize" >
                <size>
                 <width>32</width>
@@ -500,11 +500,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
   <customwidget>
    <class>Kopete::UI::AddressBookLinkWidget</class>
    <extends>QWidget</extends>

@@ -38,7 +38,7 @@
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="btnClear" >
+      <widget class="QPushButton" name="btnClear" >
        <property name="toolTip" >
                         <string>Clear</string>
                     </property>
@@ -69,13 +69,6 @@
    <class>KLineEdit</class>
    <extends></extends>
    <header>klineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends></extends>
-   <header>kpushbutton.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
