@@ -38,7 +38,7 @@
 #include "yahootypes.h"
 
 class QColor;
-class KAction;
+class QAction;
 class KActionMenu;
 class YahooContact;
 class YahooAccount;
@@ -79,7 +79,7 @@ public:
 	 */
 	YahooContact *contact(const QString &id);
 
-	virtual void fillActionMenu( KActionMenu *actionMenu );
+    virtual void fillActionMenu( KActionMenu *actionMenu );
 
 	/**
 	 * Sets the yahoo away status
@@ -293,10 +293,10 @@ private:
 
 	YahooWebcam *m_webcam;
 
-	KAction *m_openInboxAction;	// Menu item openInbox
-	KAction *m_openYABAction;	// Menu item openYahooAddressbook
-	KAction *m_editOwnYABEntry;	// Menu item editOwnYABEntry
-	KAction *m_joinChatAction;	// Menu item joinChatAction
+    QAction *m_openInboxAction;	// Menu item openInbox
+    QAction *m_openYABAction;	// Menu item openYahooAddressbook
+    QAction *m_editOwnYABEntry;	// Menu item editOwnYABEntry
+    QAction *m_joinChatAction;	// Menu item joinChatAction
 	
 	KYahoo::Client *m_session;		// The Connection object
 };

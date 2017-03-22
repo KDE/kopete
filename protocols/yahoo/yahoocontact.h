@@ -28,7 +28,6 @@
 #include <kurl.h>
 #include <QAction>
 
-class KAction;
 class KTemporaryFile;
 
 namespace Kopete { class ChatSession; }

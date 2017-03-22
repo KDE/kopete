@@ -31,7 +31,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <knotification.h>
-#include <kactionmenu.h>
+#include <KActionMenu>
 
 #include <kopeteuiglobal.h>
 #include <kopetecontactlist.h>
@@ -77,15 +77,15 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	QObject::connect( Kopete::ContactList::self(), SIGNAL(groupRemoved(Kopete::Group*)),
 			SLOT(slotKopeteGroupRemoved(Kopete::Group*)) );
 
-//		m_actionBlock = new KAction( KIcon( "msn_blocked" ), label, 0, "actionBlock" );
+//		m_actionBlock = new QAction( KIcon( "msn_blocked" ), label, 0, "actionBlock" );
 //		QObject::connect( m_actionBlock, SIGNAL(triggered(bool)), SLOT(slotBlock()) );
-	m_actionAutoReply = new KAction ( i18n( "&Set Auto-Reply..." ), 0 );
+    m_actionAutoReply = new QAction ( i18n( "&Set Auto-Reply..." ), 0 );
 	QObject::connect( m_actionAutoReply, SIGNAL(triggered(bool)),
 			SLOT(slotSetAutoReply()) );
-	m_actionJoinChatRoom = new KAction ( i18n( "&Join Channel..." ), 0 );
+    m_actionJoinChatRoom = new QAction ( i18n( "&Join Channel..." ), 0 );
 	QObject::connect( m_actionJoinChatRoom, SIGNAL(triggered(bool)),
 										 SLOT(slotJoinChatRoom()) );
-	m_actionManagePrivacy = new KAction ( i18n( "&Manage Privacy..." ), 0 );
+    m_actionManagePrivacy = new QAction ( i18n( "&Manage Privacy..." ), 0 );
 	QObject::connect( m_actionManagePrivacy, SIGNAL(triggered(bool)),
 										 SLOT(slotPrivacy()) );
 			
@@ -115,7 +115,7 @@ void GroupWiseAccount::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->addAction( m_actionJoinChatRoom );
 	/* Used for debugging */
 	/*
-	theActionMenu->insert( new KAction ( "Test rtfize()", QString(), 0, this,
+    theActionMenu->insert( new QAction ( "Test rtfize()", QString(), 0, this,
 		SLOT(slotTestRTFize()), this,
 		"actionTestRTFize") );
 	*/

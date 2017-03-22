@@ -39,8 +39,8 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kaction.h>
-#include <kactionmenu.h>
+#include <QAction>
+#include <KActionMenu>
 #include <QMenu>
 #include <kmessagebox.h>
 #include <krun.h>
@@ -91,16 +91,16 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_webcam = 0;
 	m_chatChatSession = 0;
 
-	m_openInboxAction = new KAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
+    m_openInboxAction = new QAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect(m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
-	m_openYABAction = new KAction( KIcon("x-office-address-book"), i18n( "Open &Address book..." ), this );
+    m_openYABAction = new QAction( KIcon("x-office-address-book"), i18n( "Open &Address book..." ), this );
         //, "m_openYABAction" );
 	QObject::connect(m_openYABAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenYAB()) );
-	m_editOwnYABEntry = new KAction( KIcon("document-properties"), i18n( "&Edit my contact details..."), this );
+    m_editOwnYABEntry = new QAction( KIcon("document-properties"), i18n( "&Edit my contact details..."), this );
         //, "m_editOwnYABEntry" );
 	QObject::connect(m_editOwnYABEntry, SIGNAL(triggered(bool)), this, SLOT(slotEditOwnYABEntry()) );
-	m_joinChatAction = new KAction( KIcon("im-chat-room-join"), i18n( "&Join chat room..."), this );
+    m_joinChatAction = new QAction( KIcon("im-chat-room-join"), i18n( "&Join chat room..."), this );
         //, "m_joinChatAction" );
 	QObject::connect(m_joinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChatRoom()) );
 
@@ -917,7 +917,7 @@ void YahooAccount::slotgotAuthorizationRequest( const QString &user, const QStri
 		metaContact=kc->metaContact();
 
 	Kopete::AddedInfoEvent::ShowActionOptions actions = Kopete::AddedInfoEvent::AuthorizeAction;
-	actions |= Kopete::AddedInfoEvent::BlockAction;
+    actions |= Kopete::AddedInfoEvent::BlockAction;
 	if( !metaContact || metaContact->isTemporary() )
 		actions |= Kopete::AddedInfoEvent::AddAction;
 
@@ -940,7 +940,7 @@ void YahooAccount::slotAddedInfoEventActionActivated( uint actionId )
 	case Kopete::AddedInfoEvent::AuthorizeAction:
 		m_session->sendAuthReply( event->contactId(), true, QString() );
 		break;
-	case Kopete::AddedInfoEvent::BlockAction:
+    case Kopete::AddedInfoEvent::BlockAction:
 		m_session->sendAuthReply( event->contactId(), false, QString() );
 		break;
 	case Kopete::AddedInfoEvent::AddContactAction:

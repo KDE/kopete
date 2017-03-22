@@ -25,7 +25,7 @@
 #include <QtCore/QList>
 #include <QtCrypto>
 
-#include <kaction.h>
+#include <qaction.h>
 
 #include <kopetechatsessionmanager.h>
 #include <kopetecontact.h>
@@ -334,9 +334,9 @@ protected:
 	void cleanup();
 private:
 	// action menu and its actions
-	KAction * m_actionAutoReply;
-	KAction * m_actionManagePrivacy;
-	KAction * m_actionJoinChatRoom;
+    QAction * m_actionAutoReply;
+    QAction * m_actionManagePrivacy;
+    QAction * m_actionJoinChatRoom;
 	// Network code
 	KNetworkConnector * m_connector;
 	QCA::Initializer m_qcaInit;
