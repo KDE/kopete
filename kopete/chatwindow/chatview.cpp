@@ -37,7 +37,7 @@
 #include <KUrl>
 #include <KUrlMimeData>
 #include <kconfig.h>
-#include <ktabwidget.h>
+#include <QTabWidget>
 #include <kdebug.h>
 #include <KLocalizedString>
 #include <kmessagebox.h>

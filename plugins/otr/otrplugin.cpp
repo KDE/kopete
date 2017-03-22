@@ -59,7 +59,7 @@ K_EXPORT_PLUGIN ( OTRPluginFactory ( "kopete_otr" ) )
 
 
 OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
-	: Kopete::Plugin ( OTRPluginFactory::componentData(), parent )
+    : Kopete::Plugin ( parent )
 {
 
 	kDebug(14318) << "OTR Plugin loading...";
@@ -92,7 +92,7 @@ OTRPlugin::OTRPlugin ( QObject *parent, const QVariantList &/*args*/ )
 	slotSettingsChanged();
 
 	//adding menu to contaclists menubar and contacts popup menu
-	otrPolicyMenu = new KSelectAction( KIcon("object-locked"), i18nc( "@item:inmenu", "&OTR Policy" ), this );
+    otrPolicyMenu = new KSelectAction( QIcon::fromTheme("object-locked"), i18nc( "@item:inmenu", "&OTR Policy" ), this );
 	actionCollection()->addAction( "otr_policy", otrPolicyMenu );
 
 	KAction *separatorAction = new KAction( otrPolicyMenu );

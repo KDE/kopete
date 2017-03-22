@@ -39,7 +39,7 @@
 #include <QIcon>
 #include <QAction>
 #include <QMenu>
-#include <kcolordialog.h>
+#include <QColorDialog>
 
 #include "addaccountwizard.h"
 #include "editaccountwidget.h"
@@ -391,7 +391,8 @@ void KopeteAccountConfig::slotAccountSetColor()
 
 	QColor color = a->color();
 
-	if ( KColorDialog::getColor(color, Qt::black, this) == KColorDialog::Accepted ) {
+    color = QColorDialog::getColor(Qt::black, this);
+	if ( color.isValid() ) {
 		a->setColor(color);
 	}
 

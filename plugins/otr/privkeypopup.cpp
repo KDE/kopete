@@ -25,6 +25,7 @@
 #include "privkeypopup.h"
 
 #include <kwindowsystem.h>
+#include <KIcon>
 
 PrivKeyPopup::PrivKeyPopup( QWidget *parent ):KDialog( parent ){
 	QWidget *widget = new QWidget( this );

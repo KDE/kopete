@@ -28,7 +28,7 @@
 
 
 #include <kactioncollection.h>
-#include <kcolordialog.h>
+#include <QColorDialog>
 #include <kconfig.h>
 #include <kcompletion.h>
 #include <kdebug.h>

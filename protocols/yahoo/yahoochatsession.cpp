@@ -28,7 +28,7 @@
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <ktemporaryfile.h>
 #include <kxmlguiwindow.h>
 #include <ktoolbar.h>

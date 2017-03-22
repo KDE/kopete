@@ -24,7 +24,7 @@
 
 #include <kaction.h>
 #include <kactionmenu.h>
-#include <KMenu>
+#include <QMenu>
 
 #include "kopetechatsession.h"
 #include "wlmchatsessioninkaction.h"

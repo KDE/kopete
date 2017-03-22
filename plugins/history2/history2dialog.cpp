@@ -27,7 +27,7 @@
 
 #include <kdebug.h>
 #include <krun.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kaction.h>
 #include <kstandardaction.h>
 #include <dom/dom_doc.h>
@@ -373,7 +373,7 @@ void History2Dialog::doneProgressBar() {
 }
 
 void History2Dialog::slotRightClick(const QString &url, const QPoint &point) {
-	KMenu *chatWindowPopup = new KMenu();
+	QMenu *chatWindowPopup = new QMenu();
 
 	if ( !url.isEmpty() ) {
 		mURL = url;

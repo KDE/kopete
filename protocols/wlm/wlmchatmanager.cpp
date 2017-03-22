@@ -32,7 +32,7 @@
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kmainwindow.h>
 #include <ktoolbar.h>
 #include <krun.h>

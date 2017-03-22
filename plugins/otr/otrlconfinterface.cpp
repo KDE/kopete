@@ -39,6 +39,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
+#include <kglobal.h>
 
 /*********************** Konstruktor/Destruktor **********************/
 

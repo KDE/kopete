@@ -23,7 +23,7 @@
 #include <klocale.h>
 #include <kxmlguiwindow.h>
 #include <kmessagebox.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kactionmenu.h>
 #include <kshortcut.h>
 #include <kicon.h>

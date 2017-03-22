@@ -34,7 +34,8 @@
 #include <ui/kopeteview.h>
 #include <kopeteprotocol.h>
 #include <kopetecontact.h>
-
+#include <KGlobal>
+#include <KLocale>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>

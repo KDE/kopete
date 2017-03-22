@@ -55,7 +55,7 @@ K_PLUGIN_FACTORY(OTRPreferencesFactory, registerPlugin<OTRPreferences>();)
 K_EXPORT_PLUGIN(OTRPreferencesFactory ( "kcm_kopete_otr" ))
 
 OTRPreferences::OTRPreferences(QWidget *parent, const QVariantList &args)
-		: KCModule(OTRPreferencesFactory::componentData(), parent, args)
+        : KCModule(parent, args)
 {
 	QVBoxLayout *layout = new QVBoxLayout( this ) ;
 	QWidget *widget = new QWidget(this);

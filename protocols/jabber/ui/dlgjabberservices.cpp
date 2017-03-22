@@ -23,7 +23,7 @@
 #include <QTreeWidget>
 #include <QContextMenuEvent>
 #include <QHeaderView>
-#include <KMenu>
+#include <QMenu>
 #include <KMessageBox>
 #include <KLocale>
 #include <KDebug>
@@ -95,7 +95,7 @@ bool dlgJabberServices::eventFilter(QObject *object, QEvent *event)
 		{
 			QContextMenuEvent *e = (QContextMenuEvent *)event;
 			ServiceItem *si = (ServiceItem *)ui.trServices->currentItem();
-			KMenu *menu = new KMenu(this);
+			QMenu *menu = new QMenu(this);
 			if(si->features().canRegister())
 				menu->addAction(mActRegister);
 			if(si->features().canSearch())

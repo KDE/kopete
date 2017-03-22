@@ -41,7 +41,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kmessagebox.h>
 #include <knotification.h>
 #include <ktemporaryfile.h>

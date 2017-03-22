@@ -42,7 +42,7 @@
 #include "wpaccount.h"
 #include "wpcontact.h"
 
-class KMenu;
+class QMenu;
 
 WPProtocol *WPProtocol::sProtocol = 0;
 

@@ -27,7 +27,7 @@
 
 #include <kaction.h>
 #include <kactionmenu.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <klocale.h>
 #include <kconfigbase.h>
 #include <kinputdialog.h>

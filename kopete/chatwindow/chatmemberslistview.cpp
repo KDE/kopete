@@ -23,7 +23,7 @@
 #include <QMimeData>
 
 #include "kdebug.h"
-#include "kmenu.h"
+#include <QMenu>
 #include "kopetecontact.h"
 #include "chatsessionmemberslistmodel.h"
 
@@ -33,7 +33,7 @@ ChatMembersListView::ChatMembersListView( QWidget *parent )
 	 : QListView( parent )
 {
 	setContextMenuPolicy (Qt::CustomContextMenu);
-	connect(this, SIGNAL(customContextMenuRequested(QPoint)), SLOT(slotContextMenuRequested(QPoint)));
+    connect(this, &QWidget::customContextMenuRequested, this, &ChatMembersListView::slotContextMenuRequested);
 }
 
 void ChatMembersListView::slotContextMenuRequested( const QPoint & pos )
