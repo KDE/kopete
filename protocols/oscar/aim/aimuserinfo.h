@@ -22,7 +22,7 @@
 
 namespace Kopete { class Contact; }
 namespace Ui { class AIMUserInfoWidget; }
-class KTextBrowser;
+class QTextBrowser;
 class KTextEdit;
 class AIMAccount;
 
@@ -37,7 +37,7 @@ class AIMUserInfoDialog : public KDialog
 		AIMAccount *mAccount;
 		Kopete::Contact* m_contact;
 		Ui::AIMUserInfoWidget *mMainWidget;
-		KTextBrowser *userInfoView;
+        QTextBrowser *userInfoView;
 		KTextEdit *userInfoEdit;
 
 	private slots:

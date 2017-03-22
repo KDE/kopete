@@ -143,7 +143,7 @@
     </widget>
    </item>
    <item row="4" column="0" colspan="4" >
-    <widget class="KTextBrowser" native="1" name="txtAwayMessage" >
+    <widget class="QTextBrowser" native="1" name="txtAwayMessage" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
        <horstretch>0</horstretch>
@@ -180,13 +180,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KTextBrowser</class>
-   <extends></extends>
-   <header>ktextbrowser.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>txtNickName</tabstop>
   <tabstop>txtScreenName</tabstop>

@@ -11,7 +11,7 @@
   </property>
   <layout class="QVBoxLayout" >
    <item>
-    <widget class="KTextBrowser" name="brLog" />
+    <widget class="QTextBrowser" name="brLog" />
    </item>
    <item>
     <widget class="KTextEdit" name="mTextEdit" >
@@ -29,11 +29,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>ktextbrowser.h</header>
-  </customwidget>
   <customwidget>
    <class>KTextEdit</class>
    <extends>QTextEdit</extends>

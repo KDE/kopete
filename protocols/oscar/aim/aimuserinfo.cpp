@@ -30,7 +30,7 @@
 
 #include <KLocalizedString>
 #include <kstandarddirs.h>
-#include <ktextbrowser.h>
+#include <qtextbrowser.h>
 #include <kdebug.h>
 
 #include <ktextedit.h>
@@ -97,9 +97,9 @@ AIMUserInfoDialog::AIMUserInfoDialog( Kopete::Contact *c, AIMAccount *acc, QWidg
 		mMainWidget->userInfoFrame->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
 		QVBoxLayout *l = new QVBoxLayout(mMainWidget->userInfoFrame);
 		l->setContentsMargins( 0, 0, 0, 0 );
-		userInfoView = new KTextBrowser(mMainWidget->userInfoFrame);
+        userInfoView = new QTextBrowser(mMainWidget->userInfoFrame);
 		userInfoView->setObjectName("userInfoView");
-		userInfoView->setNotifyClick(true);
+        //KF5 PORT ME userInfoView->setNotifyClick(true);
 		QObject::connect(
 			userInfoView, SIGNAL(urlClick(QString)),
 			this, SLOT(slotUrlClicked(QString)));
