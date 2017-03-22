@@ -58,7 +58,7 @@ public:
 	 *
 	 * You must set the contact to delete with setContact()
 	 */
-	DeleteContactTask(QObject *parent = 0); //implicit
+	DeleteContactTask(QObject *parent = nullptr); //implicit
 	
 	/**
 	 * @brief Delete the given contact

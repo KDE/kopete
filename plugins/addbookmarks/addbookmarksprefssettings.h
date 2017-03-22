@@ -24,7 +24,7 @@ Q_OBJECT
 public:
 	enum UseSubfolders { Always=0, Never=1, SelectedContacts=2, UnselectedContacts=3 };
 
-    BookmarksPrefsSettings(QObject *parent = 0);
+    BookmarksPrefsSettings(QObject *parent = nullptr);
 
     ~BookmarksPrefsSettings();
     

@@ -26,7 +26,7 @@ class PrivacyGUIClient : public QObject , public KXMLGUIClient
 {
 Q_OBJECT
 public:
-	PrivacyGUIClient(Kopete::ChatSession *parent = 0);
+    PrivacyGUIClient(Kopete::ChatSession *parent = nullptr);
 	~PrivacyGUIClient();
 private slots:
 	void slotAddToWhiteList();

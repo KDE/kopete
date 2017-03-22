@@ -98,7 +98,7 @@ private:
 	friend class Private;
 	Private *d;
 
-	ProcessQuit(QObject *parent = 0);
+	ProcessQuit(QObject *parent = nullptr);
 	~ProcessQuit();
 };
 

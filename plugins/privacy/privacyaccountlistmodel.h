@@ -30,7 +30,7 @@ class KOPETEPRIVACY_EXPORT PrivacyAccountListModel : public QAbstractTableModel
 Q_OBJECT
 
 public:
-	PrivacyAccountListModel(QObject *parent = 0);
+    PrivacyAccountListModel(QObject *parent = nullptr);
 	~PrivacyAccountListModel();
 
 	void loadAccounts( const QStringList &accounts );

@@ -44,7 +44,7 @@ class QTcpSocketSignalRelay : public QObject
 {
 	Q_OBJECT
 public:
-	QTcpSocketSignalRelay(QTcpSocket *sock, QObject *parent = 0)
+	QTcpSocketSignalRelay(QTcpSocket *sock, QObject *parent = nullptr)
 	:QObject(parent)
 	{
 		qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");

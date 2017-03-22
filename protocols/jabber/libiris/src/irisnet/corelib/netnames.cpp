@@ -704,7 +704,7 @@ public:
 	QHash<int,ServiceResolver::Private*> sres_instances;
 	QHash<int,ServiceLocalPublisher::Private*> slp_instances;
 
-	NameManager(QObject *parent = 0) : QObject(parent)
+	NameManager(QObject *parent = nullptr) : QObject(parent)
 	{
 		p_net = 0;
 		p_local = 0;

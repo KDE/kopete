@@ -44,7 +44,7 @@ public:
 	 *
 	 / You must set the contact with setContact()
 	 */
-	explicit ContactTaskBase(QObject *parent = 0);
+	explicit ContactTaskBase(QObject *parent = nullptr);
 	/**
 	 * destructor
 	 */

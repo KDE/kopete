@@ -55,7 +55,7 @@ private:
 	int writtenCount;
 
 public:
-	SafeUdpSocket(QUdpSocket *_sock, QObject *parent = 0) :
+	SafeUdpSocket(QUdpSocket *_sock, QObject *parent = nullptr) :
 		QObject(parent),
 		sess(this),
 		sock(_sock)

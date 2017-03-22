@@ -461,7 +461,7 @@ public:
 		NameResolver::Error error;
 		NameResolver::Error localError;
 
-		Item(QObject *parent = 0) :
+		Item(QObject *parent = nullptr) :
 			id(-1),
 			req(0),
 			sess(parent),
@@ -477,7 +477,7 @@ public:
 	};
 	QList<Item*> items;
 
-	static JDnsNameProvider *create(JDnsGlobal *global, Mode mode, QObject *parent = 0)
+	static JDnsNameProvider *create(JDnsGlobal *global, Mode mode, QObject *parent = nullptr)
 	{
 		if(mode == Internet)
 		{
@@ -493,7 +493,7 @@ public:
 		return new JDnsNameProvider(global, mode, parent);
 	}
 
-	JDnsNameProvider(JDnsGlobal *_global, Mode _mode, QObject *parent = 0) :
+	JDnsNameProvider(JDnsGlobal *_global, Mode _mode, QObject *parent = nullptr) :
 		NameProvider(parent)
 	{
 		global = _global;
@@ -816,7 +816,7 @@ public:
 	QByteArray type, typeAndDomain;
 	QJDnsSharedRequest req;
 
-	JDnsBrowse(QJDnsShared *_jdns, QObject *parent = 0) :
+	JDnsBrowse(QJDnsShared *_jdns, QObject *parent = nullptr) :
 		QObject(parent),
 		req(_jdns, this)
 	{
@@ -915,7 +915,7 @@ public:
 	bool have4, have6;
 	QHostAddress addr4, addr6;
 
-	JDnsServiceResolve(QJDnsShared *_jdns, QObject *parent = 0) :
+	JDnsServiceResolve(QJDnsShared *_jdns, QObject *parent = nullptr) :
 		QObject(parent),
 		reqtxt(_jdns, this),
 		req(_jdns, this),
@@ -1137,7 +1137,7 @@ public:
 	QJDnsSharedRequest pub_ptr;
 	bool success_;
 
-	JDnsPublishAddress(QJDnsShared *_jdns, QObject *parent = 0) :
+	JDnsPublishAddress(QJDnsShared *_jdns, QObject *parent = nullptr) :
 		QObject(parent),
 		pub_addr(_jdns, this),
 		pub_ptr(_jdns, this)
@@ -1244,7 +1244,7 @@ public:
 	bool have6, have4;
 	ObjectSession sess;
 
-	JDnsPublishAddresses(QJDnsShared *_jdns, QObject *parent = 0) :
+	JDnsPublishAddresses(QJDnsShared *_jdns, QObject *parent = nullptr) :
 		QObject(parent),
 		started(false),
 		use6(false),
@@ -1528,7 +1528,7 @@ public:
 
 	QSet<JDnsPublishExtra*> extraList;
 
-	JDnsPublish(QJDnsShared *_jdns, QObject *parent = 0) :
+	JDnsPublish(QJDnsShared *_jdns, QObject *parent = nullptr) :
 		QObject(parent),
 		jdns(_jdns),
 		pub_srv(_jdns, this),
@@ -2193,12 +2193,12 @@ public:
 	PublishItemList publishItemList;
 	PublishExtraItemList publishExtraItemList;
 
-	static JDnsServiceProvider *create(JDnsGlobal *global, QObject *parent = 0)
+	static JDnsServiceProvider *create(JDnsGlobal *global, QObject *parent = nullptr)
 	{
 		return new JDnsServiceProvider(global, parent);
 	}
 
-	JDnsServiceProvider(JDnsGlobal *_global, QObject *parent = 0) :
+	JDnsServiceProvider(JDnsGlobal *_global, QObject *parent = nullptr) :
 		ServiceProvider(parent),
 		pub_addresses(0)
 	{

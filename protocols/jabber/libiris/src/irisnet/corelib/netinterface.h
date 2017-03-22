@@ -157,7 +157,7 @@ public:
 	/**
 	   \brief Constructs a new manager object with the given \a parent
 	*/
-	NetInterfaceManager(QObject *parent = 0);
+	NetInterfaceManager(QObject *parent = nullptr);
 
 	/**
 	   \brief Destroys the manager object
