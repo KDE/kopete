@@ -121,8 +121,10 @@ set_package_properties(Mediastreamer PROPERTIES DESCRIPTION "A streaming enginer
 find_package(OpenSSL QUIET)
 set_package_properties(OpenSSL PROPERTIES DESCRIPTION "OpenSSL implementation of SSL" URL "https://www.openssl.org/" TYPE OPTIONAL PURPOSE "Required for the Jabber protocol with libjingle support")
 
-find_package(Qca-qt5 QUIET CONFIG)
-set_package_properties(Qca-qt5 PROPERTIES DESCRIPTION "Qt Cryptographic Architecture" URL "http://delta.affinix.com/qca/" TYPE OPTIONAL PURPOSE "Required for the GroupWise and Jabber protocols")
+find_package(Qca-qt5 2.1.0)
+set_package_properties(Qca-qt5 PROPERTIES DESCRIPTION "Support for encryption"
+                       URL "http://download.kde.org/stable/qca-qt5/"
+                       TYPE RECOMMENDED)
 
 find_package(QGpgme QUIET CONFIG)
 set_package_properties(QGpgme PROPERTIES DESCRIPTION "QGpgME library (from kdepimlibs)" URL "http://www.kde.org/" TYPE OPTIONAL PURPOSE "Required for the Cryptography plugin")
