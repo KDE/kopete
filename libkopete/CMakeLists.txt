@@ -1,5 +1,3 @@
-add_definitions(-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-add_definitions(-DKDE3SUPPORT_EXPORT=KDE_DEPRECATED_IMPORT -DQT3_SUPPORT_WARNINGS)
 
 include(CheckIncludeFile)
 check_include_file(valgrind/valgrind.h HAVE_VALGRIND_H)

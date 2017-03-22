@@ -1,22 +1,22 @@
 
 include_directories( 
-${KOPETE_INCLUDES} 
-)
+    ${KOPETE_INCLUDES}
+    )
 
 
 ########### next target ###############
 
 set( kopetestatusmenu_SRCS
-  kopetestatuseditaction.cpp
-  kopetestatusgroupaction.cpp
-  kopetestatusaction.cpp
-  kopeteonlinestatusaction.cpp
-  kopetestatusrootaction.cpp
-)
+    kopetestatuseditaction.cpp
+    kopetestatusgroupaction.cpp
+    kopetestatusaction.cpp
+    kopeteonlinestatusaction.cpp
+    kopetestatusrootaction.cpp
+    )
 
 ki18n_wrap_ui( kopetestatusmenu_SRCS
-  kopetestatuseditwidget_base.ui
-)
+    kopetestatuseditwidget_base.ui
+    )
 
 add_library( kopetestatusmenu SHARED ${kopetestatusmenu_SRCS} )
 target_link_libraries( kopetestatusmenu kopete  KF5::KCMUtils )
