@@ -23,7 +23,7 @@
 #include <QSpinBox>
 #include <QPushButton>
 #include <QValidator>
-#include <QLatin1String>
+
 #include <QLocale>
 #include <QPointer>
 

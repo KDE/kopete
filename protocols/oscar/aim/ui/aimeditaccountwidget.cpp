@@ -7,7 +7,7 @@
 #include <qradiobutton.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
-#include <QLatin1String>
+
 
 #include <kdebug.h>
 #include <ktoolinvocation.h>

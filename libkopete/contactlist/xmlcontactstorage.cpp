@@ -29,7 +29,7 @@
 #include <QSaveFile>
 #include <QTextCodec>
 #include <QTextStream>
-#include <QLatin1String>
+
 #include <QStandardPaths>
 #include <QDomDocument>
 #include <QDomElement>
