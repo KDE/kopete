@@ -19,7 +19,7 @@
 
 #include <QtCore/QVariant>
 
-#include <ksharedptr.h>
+#include <QExplicitlySharedDataPointer>
 #include "kopete_export.h"
 
 namespace Kopete
@@ -137,7 +137,7 @@ public:
 
 private:
 	class Private;
-    KSharedPtr<Private> d;
+    QExplicitlySharedDataPointer<Private> d;
 };
 
 }

@@ -21,7 +21,7 @@
 #include <QDebug>
 
 #include <kdemacros.h>
-#include <ksharedptr.h>
+#include <QExplicitlySharedDataPointer>
 #include "kopetemessage.h"
 #include "kopetetask.h"
 #include "libkopete_debug.h"
@@ -44,12 +44,12 @@ class ProcessMessageTask;
  * 
  * @author Richard Smith       <kde@metafoo.co.uk>
  */
-class MessageHandlerChain : public QObject, private KShared
+class MessageHandlerChain : public QObject, private QSharedData
 {
 	Q_OBJECT
 public:
-	friend class KSharedPtr<MessageHandlerChain>;
-	typedef KSharedPtr<MessageHandlerChain> Ptr;
+	friend class QExplicitlySharedDataPointer<MessageHandlerChain>;
+	typedef QExplicitlySharedDataPointer<MessageHandlerChain> Ptr;
 	
 	/**
 	 * Create a new MessageHandlerChain object with the appropriate handlers for
