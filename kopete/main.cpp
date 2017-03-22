@@ -101,7 +101,7 @@ int main( int argc, char *argv[] )
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	KUniqueApplication::addCmdLineOptions();
 
-	KopeteApplication kopete;
+    KopeteApplication kopete;
 	return kopete.exec();
 }
 // vim: set noet ts=4 sts=4 sw=4:

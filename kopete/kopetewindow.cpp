@@ -461,7 +461,7 @@ void KopeteWindow::initActions()
 
 	d->actionShowAllOfflineEmpty = new KToggleAction ( QIcon::fromTheme( "view-user-offline-kopete" ), i18n ( "Show &All" ), this );
 	actionCollection()->addAction ( "settings_show_all_offline_empty", d->actionShowAllOfflineEmpty );
-	d->actionShowAllOfflineEmpty->setShortcut ( QKeySequence ( Qt::CTRL + Qt::Key_U ) );
+    actionCollection()->setDefaultShortcut(d->actionShowAllOfflineEmpty, QKeySequence ( Qt::CTRL + Qt::Key_U ) );
 	connect ( d->actionShowAllOfflineEmpty, SIGNAL (triggered(bool)), this, SLOT (slotToggleShowAllOfflineEmpty(bool)) );
 
 	d->actionShowOfflineUsers = new KToggleAction ( QIcon::fromTheme( "view-user-offline-kopete" ), i18n ( "Show Offline &Users" ), this );
@@ -470,7 +470,7 @@ void KopeteWindow::initActions()
 
 	d->actionShowEmptyGroups = new KToggleAction ( QIcon::fromTheme( "folder-grey" ), i18n ( "Show Empty &Groups" ), this );
 	actionCollection()->addAction ( "settings_show_empty_groups", d->actionShowEmptyGroups );
-	d->actionShowEmptyGroups->setShortcut ( QKeySequence ( Qt::CTRL + Qt::Key_G ) );
+    actionCollection()->setDefaultShortcut(d->actionShowEmptyGroups, QKeySequence ( Qt::CTRL + Qt::Key_G ) );
 	connect ( d->actionShowEmptyGroups, SIGNAL (triggered(bool)), this, SLOT (slotToggleShowEmptyGroups()) );
 
     /* The following are highly misleading together with the checkbox, consider removing them - ahartmetz
