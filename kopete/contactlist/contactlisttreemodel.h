@@ -41,7 +41,7 @@ class KOPETE_CONTACT_LIST_EXPORT ContactListTreeModel : public ContactListModel
 {
 Q_OBJECT
 public:
-	ContactListTreeModel(QObject* parent = 0);
+	ContactListTreeModel(QObject* parent = nullptr);
 	~ContactListTreeModel();
 
 	virtual bool setData ( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );

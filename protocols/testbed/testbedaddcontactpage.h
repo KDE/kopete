@@ -32,7 +32,7 @@ class TestbedAddContactPage : public AddContactPage
 {
 	Q_OBJECT
 public:
-    TestbedAddContactPage( QWidget* parent = 0 );
+    TestbedAddContactPage( QWidget* parent = nullptr );
     ~TestbedAddContactPage();
 	
     /**

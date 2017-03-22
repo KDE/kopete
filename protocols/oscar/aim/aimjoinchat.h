@@ -31,7 +31,7 @@ class AIMJoinChatUI : public KDialog
 {
 Q_OBJECT
 public:
-	explicit AIMJoinChatUI( AIMAccount*, QWidget* parent = 0 );
+	explicit AIMJoinChatUI( AIMAccount*, QWidget* parent = nullptr );
 	~AIMJoinChatUI();
 
     void setExchangeList( const QList<int>& );

@@ -20,7 +20,7 @@
 #include <qdom.h>
 #include <QApplication>
 
-#include <kdeversion.h>
+
 #include <kxmlguiclient.h>
 #include <kauthorized.h>
 #include <kactioncollection.h>

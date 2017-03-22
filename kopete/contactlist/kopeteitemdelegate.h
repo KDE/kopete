@@ -35,7 +35,7 @@ class KOPETE_CONTACT_LIST_EXPORT KopeteItemDelegate : public QStyledItemDelegate
 {
 	Q_OBJECT
 public:
-	KopeteItemDelegate( QAbstractItemView* parent = 0 );
+	KopeteItemDelegate( QAbstractItemView* parent = nullptr );
 	~KopeteItemDelegate();
 
 	static QFont normalFont( const QFont& naturalFont );

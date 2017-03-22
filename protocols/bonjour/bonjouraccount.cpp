@@ -21,7 +21,7 @@
 #include <kdebug.h>
 #include <KLocalizedString>
 #include <kactionmenu.h>
-#include <kmenu.h>
+
 #include <kmessagebox.h>
 
 #include "kopetemetacontact.h"

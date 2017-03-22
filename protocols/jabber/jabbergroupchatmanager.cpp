@@ -19,7 +19,7 @@
 
 #include <kdebug.h>
 #include <KLocalizedString>
-#include <kmenu.h>
+#include <QMenu>
 #include <kactionmenu.h>
 #include <kactioncollection.h>
 #include "kopetechatsessionmanager.h"

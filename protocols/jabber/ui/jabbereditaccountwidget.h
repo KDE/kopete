@@ -40,7 +40,7 @@ class JabberEditAccountWidget: public QWidget, public Ui::DlgJabberEditAccountWi
 Q_OBJECT
 
 public:
-	JabberEditAccountWidget (JabberProtocol * proto, JabberAccount *, QWidget * parent = 0);
+	JabberEditAccountWidget (JabberProtocol * proto, JabberAccount *, QWidget * parent = nullptr);
 	~JabberEditAccountWidget ();
 	virtual bool validateData ();
 	virtual Kopete::Account *apply ();

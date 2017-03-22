@@ -29,7 +29,7 @@
 #include <kactioncollection.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <kdeversion.h>
+
 #include <kapplication.h>
 
 #include "kopetechatsessionmanager.h"

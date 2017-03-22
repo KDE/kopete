@@ -45,7 +45,7 @@ class KOPETE_EXPORT AddressBookLinkWidget : public QWidget, private Ui::AddressB
 {
 Q_OBJECT
 public:
-	explicit AddressBookLinkWidget( QWidget * parent = 0, const char * name = 0 );
+	explicit AddressBookLinkWidget( QWidget * parent = nullptr, const char * name = 0 );
 	~AddressBookLinkWidget() {}
 	/**
 	 * Set the currently selected addressee

@@ -30,7 +30,7 @@
 #include <kgenericfactory.h>
 #include <kdebug.h>
 
-#include <kdeversion.h>
+
 
 #include "ui_texteffectprefs.h"
 #include "texteffectconfig.h"

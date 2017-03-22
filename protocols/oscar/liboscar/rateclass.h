@@ -39,7 +39,7 @@ class LIBOSCAR_EXPORT RateClass : public QObject
 {
 	Q_OBJECT
 public:
-	RateClass( QObject* parent = 0 );
+	RateClass( QObject* parent = nullptr );
 	~RateClass();
 
 	/** Accessor for classid */

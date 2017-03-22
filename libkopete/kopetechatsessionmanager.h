@@ -174,7 +174,7 @@ public slots:
 	void slotReadMessage();
 
 private:
-	ChatSessionManager( QObject* parent = 0 );
+	ChatSessionManager( QObject* parent = nullptr );
 
 	class Private;
 	Private * const d;

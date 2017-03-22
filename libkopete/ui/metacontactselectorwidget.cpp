@@ -31,7 +31,7 @@
 #include <KLocalizedString>
 #include <kiconloader.h>
 
-#include <kdeversion.h>
+
 #include <QPushButton>
 #include <kdebug.h>
 #include <QTreeWidget>

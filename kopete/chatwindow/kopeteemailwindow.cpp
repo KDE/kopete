@@ -36,7 +36,7 @@
 #include <kconfig.h>
 #include <kcursor.h>
 #include <kdebug.h>
-#include <kdeversion.h>
+
 #include <kedittoolbar.h>
 #include <kfontdialog.h>
 #include <kcolorscheme.h>

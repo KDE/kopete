@@ -31,7 +31,7 @@
 #include <KRandom>
 #include <QMenu>
 
-#include <kdeversion.h>
+
 #include <KSharedConfig>
 
 namespace Kopete 

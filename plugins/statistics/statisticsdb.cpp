@@ -27,7 +27,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <kdeversion.h>
+
 
 #include <time.h>
 

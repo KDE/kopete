@@ -42,7 +42,7 @@ class LIBOSCAR_EXPORT ContactManager : public QObject
 {
         Q_OBJECT
 public:
-	ContactManager( QObject* parent = 0 );
+	ContactManager( QObject* parent = nullptr );
 
 	~ContactManager();
 	

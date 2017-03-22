@@ -42,7 +42,7 @@ class KOPETE_CONTACT_LIST_EXPORT ContactListPlainModel : public ContactListModel
 {
 Q_OBJECT
 public:
-	ContactListPlainModel(QObject* parent = 0);
+	ContactListPlainModel(QObject* parent = nullptr);
 	~ContactListPlainModel();
 
 	virtual QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
