@@ -44,7 +44,7 @@ public:
 	 * constructor, but the easiest (and the recommended) way of calling it is by 
 	 * using the static methods @ref changeAccountIdentity()
 	 */
-	explicit AccountIdentityDialog( QWidget *parent = 0 );
+	explicit AccountIdentityDialog( QWidget *parent = nullptr );
 	~AccountIdentityDialog();
 
 	/**

@@ -33,7 +33,7 @@ class WPUserInfo : public KDialog
 	Q_OBJECT
 
 	public:
-		explicit WPUserInfo( WPContact *, QWidget *parent = 0 );
+		explicit WPUserInfo( WPContact *, QWidget *parent = nullptr );
 		~WPUserInfo();
 
 		void startDetailsProcess(const QString &host);

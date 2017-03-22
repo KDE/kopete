@@ -113,7 +113,7 @@ public:
 
 private:
 	// All KopeteChatWindows are created by the window function
-	KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *parent = 0 );
+    KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *parent = nullptr );
 
 	/**
 	 * The window list has changed:

@@ -61,7 +61,7 @@ class KOPETE_CONTACT_LIST_EXPORT KopeteContactListView : public QTreeView
 	Q_OBJECT
 
 public:
-	KopeteContactListView( QWidget *parent = 0 );
+	KopeteContactListView( QWidget *parent = nullptr );
 	~KopeteContactListView();
 
 	void initActions( KActionCollection *ac );

@@ -50,7 +50,7 @@ class KopeteWindow : public KXmlGuiWindow
 	Q_OBJECT
 
 public:
-	explicit KopeteWindow ( QWidget *parent = 0 );
+	explicit KopeteWindow ( QWidget *parent = nullptr );
 	~KopeteWindow();
 
 	virtual bool eventFilter( QObject* o, QEvent* e );
@@ -237,7 +237,7 @@ class GlobalStatusMessageIconLabel : public QLabel
 {
       Q_OBJECT
 public:
-      GlobalStatusMessageIconLabel(QWidget *parent = 0);
+      GlobalStatusMessageIconLabel(QWidget *parent = nullptr);
 
 protected:
       void mouseReleaseEvent(QMouseEvent *event);
@@ -251,7 +251,7 @@ class InfoEventIconLabel : public QLabel
 {
 	Q_OBJECT
 public:
-	InfoEventIconLabel( QWidget *parent = 0 );
+	InfoEventIconLabel( QWidget *parent = nullptr );
 
 protected:
 	void mouseReleaseEvent( QMouseEvent *event );

@@ -53,7 +53,7 @@ class EmoticonSelector : public QWidget
 
 public:
 
-	EmoticonSelector ( QWidget *parent = 0 );
+	EmoticonSelector ( QWidget *parent = nullptr );
 //	~EmoticonSelector();
 
 signals:

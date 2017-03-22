@@ -53,7 +53,7 @@ public:
 	 * Create a new AvatarFromWebcamDialog
 	 * @param parent Parent widget
 	 */
-	AvatarWebcamDialog(QWidget *parent = 0);
+	AvatarWebcamDialog(QWidget *parent = nullptr);
 	/**
 	 * Clean-up resource of AvatarFromWebcamDialog
 	 */

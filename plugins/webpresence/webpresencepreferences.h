@@ -30,7 +30,7 @@ class WebPresencePreferences : public KCModule  {
    Q_OBJECT
 
 public:
-	explicit WebPresencePreferences(QWidget *parent = 0, const QVariantList &args = QVariantList());
+	explicit WebPresencePreferences(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
 	~WebPresencePreferences();
 
 private:

@@ -30,7 +30,7 @@ class AIMUserInfoDialog : public KDialog
 {
 	Q_OBJECT
 	public:
-		AIMUserInfoDialog(Kopete::Contact *c, AIMAccount *acc, QWidget *parent = 0);
+		AIMUserInfoDialog(Kopete::Contact *c, AIMAccount *acc, QWidget *parent = nullptr);
 		~AIMUserInfoDialog();
 
 	private:

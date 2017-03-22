@@ -26,7 +26,7 @@ class dlgXMPPConsole : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit dlgXMPPConsole(JabberClient *client, QWidget *parent = 0);
+	explicit dlgXMPPConsole(JabberClient *client, QWidget *parent = nullptr);
 	virtual ~dlgXMPPConsole();
 
 public slots:

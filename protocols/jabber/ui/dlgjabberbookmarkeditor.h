@@ -26,7 +26,7 @@ class DlgJabberBookmarkEditor : public KDialog
   Q_OBJECT
 
   public:
-    DlgJabberBookmarkEditor( const JabberBookmark::List &bookmarks, QWidget *parent = 0 );
+    DlgJabberBookmarkEditor( const JabberBookmark::List &bookmarks, QWidget *parent = nullptr );
     ~DlgJabberBookmarkEditor();
 
     JabberBookmark::List bookmarks() const;

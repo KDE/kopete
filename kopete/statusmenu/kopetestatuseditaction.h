@@ -39,7 +39,7 @@ namespace Kopete
 		{
 		Q_OBJECT
 		public:
-			StatusEditWidget( QWidget *parent = 0 );
+			StatusEditWidget( QWidget *parent = nullptr );
 			~StatusEditWidget();
 
 			KDialogButtonBox *buttonBox() const;
@@ -108,7 +108,7 @@ namespace Kopete
 		class StatusEditDialog : public KDialog
 		{
 		public:
-			StatusEditDialog( QWidget *parent = 0 );
+			StatusEditDialog( QWidget *parent = nullptr );
 
 			/**
 			 * Returns Kopete::StatusMessage

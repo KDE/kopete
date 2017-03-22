@@ -29,7 +29,7 @@ class dlgAHCList : public KDialog
 {
 	Q_OBJECT
 public:
-	dlgAHCList(const XMPP::Jid &jid, XMPP::Client *client, QWidget *parent = 0);
+	dlgAHCList(const XMPP::Jid &jid, XMPP::Client *client, QWidget *parent = nullptr);
 	~dlgAHCList();
 
 protected slots:

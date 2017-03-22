@@ -23,14 +23,14 @@
 class ContactListTokenFactory : public TokenFactory
 {
 public:
-	virtual Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = 0 );
+	virtual Token * createToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
 };
 
 class ContactListToken : public TokenWithLayout
 {
 	Q_OBJECT
 public:
-	ContactListToken( const QString &text, const QString &iconName, int value, QWidget *parent = 0 );
+	ContactListToken( const QString &text, const QString &iconName, int value, QWidget *parent = nullptr );
 
 	bool small() const;
 	void setSmall( bool small );

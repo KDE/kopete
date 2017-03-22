@@ -39,7 +39,7 @@ class KOPETE_EXPORT ListView : public QTreeWidget
 	Q_OBJECT
 
 public:
-	ListView( QWidget *parent = 0 );
+	ListView( QWidget *parent = nullptr );
 	~ListView();
 
 	/**

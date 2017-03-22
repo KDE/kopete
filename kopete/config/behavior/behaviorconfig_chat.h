@@ -27,7 +27,7 @@ class BehaviorConfig_Chat : public QWidget, public Ui::BehaviorConfig_Chat
 	Q_OBJECT
 
 public:
-	BehaviorConfig_Chat(QWidget *parent = 0);
+	BehaviorConfig_Chat(QWidget *parent = nullptr);
 };
 
 #endif // BEHAVIORCONFIG_CHAT_H

@@ -25,7 +25,7 @@ class BehaviorConfig_Events : public QWidget, public Ui::BehaviorConfig_Events
 	Q_OBJECT
 
 public:
-	BehaviorConfig_Events(QWidget *parent = 0);
+	BehaviorConfig_Events(QWidget *parent = nullptr);
 };
 
 #endif // BEHAVIORCONFIG_EVENTS_H

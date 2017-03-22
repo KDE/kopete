@@ -33,7 +33,7 @@ class dlgRegister : public KDialog
 {
 	Q_OBJECT
 public:
-	  dlgRegister(JabberAccount *account, const XMPP::Jid &jid, QWidget *parent = 0);
+	  dlgRegister(JabberAccount *account, const XMPP::Jid &jid, QWidget *parent = nullptr);
 	 ~dlgRegister();
 
 private slots:

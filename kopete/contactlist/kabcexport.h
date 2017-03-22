@@ -44,7 +44,7 @@ class KOPETE_CONTACT_LIST_EXPORT KabcExportWizard : public KAssistantDialog
 {
 Q_OBJECT
 	public:
-		KabcExportWizard( QWidget *parent = 0 );
+		KabcExportWizard( QWidget *parent = nullptr );
 		~KabcExportWizard();
 	public slots:
 		void accept();

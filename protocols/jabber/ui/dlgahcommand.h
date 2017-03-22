@@ -28,7 +28,7 @@ class dlgAHCommand : public KDialog
 {
 	Q_OBJECT
 public:
-	dlgAHCommand(const AHCommand &r, const XMPP::Jid &jid, XMPP::Client *client, bool final = false, QWidget *parent = 0);
+	dlgAHCommand(const AHCommand &r, const XMPP::Jid &jid, XMPP::Client *client, bool final = false, QWidget *parent = nullptr);
 	~dlgAHCommand();
 
 protected slots:

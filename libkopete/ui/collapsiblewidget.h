@@ -48,7 +48,7 @@ class ClickableLabel : public QLabel
 class ArrowButton : public QAbstractButton
 {
   public:
-    ArrowButton(QWidget *parent = 0);
+    ArrowButton(QWidget *parent = nullptr);
     ~ArrowButton();
 
     QSize sizeHint() const { return QSize(16, 16); }
@@ -67,8 +67,8 @@ class KOPETE_EXPORT CollapsibleWidget : public QWidget
 {
     Q_OBJECT
   public:
-    CollapsibleWidget(QWidget *parent = 0);
-    explicit CollapsibleWidget(const QString& caption, QWidget *parent = 0);
+    CollapsibleWidget(QWidget *parent = nullptr);
+    explicit CollapsibleWidget(const QString& caption, QWidget *parent = nullptr);
     ~CollapsibleWidget();
     
     QString caption() const;
@@ -108,7 +108,7 @@ class KOPETE_EXPORT SettingsContainer : public QScrollArea
     Q_OBJECT
   public:
     enum CollapseState { Collapsed, Uncollapsed };
-    SettingsContainer( QWidget *parent = 0 );
+    SettingsContainer( QWidget *parent = nullptr );
     ~SettingsContainer();
 
     CollapsibleWidget* insertWidget( QWidget* w, const QString& name );

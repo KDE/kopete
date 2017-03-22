@@ -26,7 +26,7 @@ class ContactListLayoutWidget : public QWidget, private Ui::ContactListLayoutWid
 {
 	Q_OBJECT
 public:
-	ContactListLayoutWidget( QWidget *parent = 0 );
+	ContactListLayoutWidget( QWidget *parent = nullptr );
 
 	void load();
 	bool save();

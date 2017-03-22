@@ -38,7 +38,7 @@ public:
 	 * If \a listView is null then the widget will be disabled until a listview
 	 * is set with setListView().
 	 */
-	explicit SearchLine( QWidget *parent = 0, ListView *listView = 0 );
+    explicit SearchLine( QWidget *parent = nullptr, ListView *listView = 0 );
 	/**
 	 * Destroys the SearchLine.
 	 */

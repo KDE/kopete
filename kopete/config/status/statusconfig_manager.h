@@ -24,7 +24,7 @@ class StatusConfig_Manager : public QWidget, private Ui::StatusConfig_Manager
 	Q_OBJECT
 
 public:
-	StatusConfig_Manager( QWidget *parent = 0 );
+	StatusConfig_Manager( QWidget *parent = nullptr );
 	~StatusConfig_Manager();
 
 public slots:

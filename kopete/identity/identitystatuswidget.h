@@ -44,7 +44,7 @@ public:
 	/**
 	 * @brief Default constructor for the identity status widget
 	 */
-	explicit IdentityStatusWidget( Kopete::Identity *ident, QWidget *parent = 0 );
+	explicit IdentityStatusWidget( Kopete::Identity *ident, QWidget *parent = nullptr );
 	~IdentityStatusWidget();
 
 	/**

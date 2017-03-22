@@ -31,7 +31,7 @@ class TokenPool : public KListWidget
     Q_PROPERTY(QString mimeType READ mimeType WRITE setMimeType)
     
     public:
-        TokenPool( QWidget *parent = 0 );
+        TokenPool( QWidget *parent = nullptr );
         void addToken( Token * token );
     
         QString mimeType() const;

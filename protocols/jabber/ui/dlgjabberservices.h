@@ -37,7 +37,7 @@ class dlgJabberServices : public QDialog
 {
 	Q_OBJECT
 public:
-	  explicit dlgJabberServices(JabberAccount *account, QWidget *parent = 0);
+	  explicit dlgJabberServices(JabberAccount *account, QWidget *parent = nullptr);
 	 ~dlgJabberServices ();
 
 protected:

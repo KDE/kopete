@@ -236,7 +236,7 @@ QList<QAction *> *JabberContact::customContextMenuActions ()
 			if( i == activeItem )
 			{
 				QAction *tmp = new QAction( this );
-				tmp->setIcon( KIcon("dialog-ok") );
+                tmp->setIcon( QIcon::fromTheme("dialog-ok") );
 				tmp->setText( str);
 				tmp->setObjectName( QString::number(i) );
 				connect(tmp, SIGNAL(triggered(bool)), SLOT(slotSelectResource()));

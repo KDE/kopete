@@ -40,7 +40,7 @@ public:
 	 * @param icons The list of icons user can choose from.
 	 * @param parent The parent of the new widget
 	 */
-	explicit EditorWithIcon( const QList<QIcon> &icons, QWidget *parent = 0 );
+	explicit EditorWithIcon( const QList<QIcon> &icons, QWidget *parent = nullptr );
 
 	/** Returns the icons user can choose from */
 	QList<QIcon> icons() const { return mIcons; }
