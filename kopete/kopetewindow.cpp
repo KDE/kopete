@@ -61,7 +61,6 @@
 #include <kstatusbar.h>
 #include <kwindowsystem.h>
 #include <kdeversion.h>
-#include <kinputdialog.h>
 #include <kplugininfo.h>
 #include <ksqueezedtextlabel.h>
 #include <kstringhandler.h>

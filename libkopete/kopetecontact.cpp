@@ -30,7 +30,6 @@
 #include <QWidget>
 
 #include <kdeversion.h>
-#include <kinputdialog.h>
 #include <kabcpersistence.h>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>

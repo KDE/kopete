@@ -170,8 +170,6 @@ set(libkopete_kf5_link_libs
 )
 
 target_link_libraries(kopete
-	${QT_QTXML_LIBRARIES}
-	${KDE4_KEMOTICONS_LIBS}
 	${libkopete_kf5_link_libs}
 )
 

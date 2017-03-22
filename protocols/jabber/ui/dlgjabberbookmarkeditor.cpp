@@ -14,7 +14,7 @@
 
 #include "dlgjabberbookmarkeditor.h"
 
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 
 #include <QtCore/QAbstractListModel>
 
@@ -135,8 +135,8 @@ void DlgJabberBookmarkEditor::renameBookmark()
 
   const QModelIndex index = m_ui.listView->selectionModel()->selectedRows().first();
 
-  const QString name = KInputDialog::getText( i18n( "Group Chat Name" ),
-                                              i18n( "Enter a name for the group chat:" ),
+  const QString name = QInputDialog::getText( nullptr, i18n( "Group Chat Name" ),
+                                              i18n( "Enter a name for the group chat:" ), QLineEdit::Normal,
                                               index.data( JabberBookmarkModel::NameRole ).toString() );
 
   if ( !name.isEmpty() ) {

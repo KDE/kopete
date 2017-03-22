@@ -24,7 +24,7 @@
 #include <KActionCollection>
 #include <KLocalizedString>
 #include <knotification.h>
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 #include <krandom.h>
 #include <ktoggleaction.h>
 #include <kicon.h>
@@ -269,8 +269,8 @@ void ICQContact::loggedIn()
 
 void ICQContact::slotRequestAuth()
 {
-	QString reason = KInputDialog::getText( i18n("Request Authorization"),
-	                                        i18n("Reason for requesting authorization:"),
+    QString reason = QInputDialog::getText( nullptr, i18n("Request Authorization"),
+                                            i18n("Reason for requesting authorization:"), QLineEdit::Normal,
 	                                        i18n("Please authorize me so I can add you to my contact list") );
 	if ( !reason.isNull() )
 		mAccount->engine()->requestAuth( contactId(), reason );

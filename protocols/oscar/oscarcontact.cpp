@@ -35,7 +35,7 @@
 #include <kcodecs.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <kinputdialog.h>
+#include <qinputdialog.h>
 
 #include <kdeversion.h>
 #include <kfiledialog.h>
@@ -420,7 +420,7 @@ void OscarContact::requestAuthorization()
 	                    "Do you want to send an authorization request?\n\nReason for requesting authorization:",
 	                    displayName() );
 
-	QString reason = KInputDialog::getText( i18n("Request Authorization"), info,
+    QString reason = QInputDialog::getText( nullptr, i18n("Request Authorization"), info, QLineEdit::Normal,
 	                                        i18n("Please authorize me so I can add you to my contact list") );
 	if ( !reason.isNull() )
 		mAccount->engine()->requestAuth( contactId(), reason );

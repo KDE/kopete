@@ -21,7 +21,7 @@
  
 #include "privacydlg.h"
 #include <QListView>
-#include <KInputDialog>
+#include <QInputDialog>
 #include <KMessageBox>
 
 #include "jabberaccount.h"
@@ -308,7 +308,7 @@ void PrivacyDlg::newList()
 	bool ok = false;
 	QString name;
 	while (!done) {
-		name = KInputDialog::getText(i18n("New List"), i18n("Enter the name of the new list:"), QString(), &ok, this);
+        name = QInputDialog::getText(this, i18n("New List"), i18n("Enter the name of the new list:"), QLineEdit::Normal, QString(), &ok);
 		if (!ok) {
 			done = true;
 		}
