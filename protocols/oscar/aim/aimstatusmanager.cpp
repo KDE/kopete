@@ -17,7 +17,7 @@
 
 #include "aimstatusmanager.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "aimprotocol.h"
 #include "oscarpresencesdataclasses.h"

@@ -30,7 +30,7 @@
 #include <kiconloader.h>
 #include <kurlrequester.h>
 #include <kmessagebox.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 // Kopete Includes
 #include <addcontactpage.h>

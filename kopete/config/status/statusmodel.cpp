@@ -15,7 +15,7 @@
 */
 #include "statusmodel.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QIcon>
 
 #include <QMimeData>

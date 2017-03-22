@@ -28,7 +28,7 @@
 #include <QVBoxLayout>
 #include <qtimer.h>
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kstandarddirs.h>
 #include <ktextbrowser.h>
 #include <kdebug.h>

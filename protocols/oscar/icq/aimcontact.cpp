@@ -18,7 +18,7 @@
 #include "aimcontact.h"
 
 #include <KActionCollection>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <ktoggleaction.h>
 #include <kicon.h>
 

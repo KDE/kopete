@@ -22,7 +22,7 @@
 #include "jabberregisteraccount.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kiconloader.h>
 #include <kglobal.h>
 #include <kmessagebox.h>

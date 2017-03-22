@@ -16,7 +16,7 @@
 
 #include "oscarmyselfcontact.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "kopetecontactlist.h"
 

@@ -25,7 +25,7 @@
 #include <QPixmap>
 #include <QIcon>
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kdebug.h>
 
 AddresseeItem::AddresseeItem( QTreeWidget *parent, const KContacts::Addressee &addressee) :

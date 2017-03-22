@@ -20,7 +20,7 @@
 #include <QPointer>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmenu.h>
 #include <kactionmenu.h>
 #include <kmessagebox.h>

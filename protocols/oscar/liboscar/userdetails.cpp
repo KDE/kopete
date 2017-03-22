@@ -20,7 +20,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include "buffer.h"
 #include "oscarutils.h"
 #include "oscardebug.h"

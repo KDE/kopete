@@ -23,7 +23,7 @@
 #include <QTreeWidgetItem>
 
 #include <QVBoxLayout>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QDialog>
 #include <QPointer>
 #include <ktreewidgetsearchline.h>

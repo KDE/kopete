@@ -42,7 +42,7 @@
 #include <kio/netaccess.h>
 #include <khtmlview.h>
 #include <QLineEdit>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
 #include <QPushButton>

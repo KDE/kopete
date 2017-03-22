@@ -19,7 +19,7 @@
 #include "jabberbasecontact.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
 #include <qtimer.h>

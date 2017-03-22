@@ -36,7 +36,7 @@
 #include <QAction>
 #include <kactionmenu.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kconfig.h>
 
 #include "xmpp_tasks.h"

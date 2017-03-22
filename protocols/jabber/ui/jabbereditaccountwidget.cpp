@@ -27,7 +27,7 @@
 
 #include <kconfig.h>
 #include <kmessagebox.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kglobal.h>
 #include <QLineEdit>
 #include <kopetepassword.h>

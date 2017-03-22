@@ -21,7 +21,7 @@
 
 #include <kdebug.h>
 #include <kguiitem.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QIcon>
 #include <QAction>
 #include <kcmultidialog.h>

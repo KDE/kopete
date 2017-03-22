@@ -21,7 +21,7 @@
 #include <QTextEdit>
 
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kvbox.h>
 
 #include "kopetemetacontact.h"

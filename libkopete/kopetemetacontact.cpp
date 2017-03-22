@@ -26,7 +26,7 @@
 #include <kcontacts/addressee.h>
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kdeversion.h>
 #include <kmessagebox.h>
 #include <knotification.h>

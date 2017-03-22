@@ -20,7 +20,7 @@
 #include <qcheckbox.h>
 #include <qapplication.h>
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kcombobox.h>
 #include <QLineEdit>
 #include <QPushButton>

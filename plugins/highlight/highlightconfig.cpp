@@ -28,7 +28,7 @@
 
 #include <ksavefile.h>
 #include <kstandarddirs.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "filter.h"
 

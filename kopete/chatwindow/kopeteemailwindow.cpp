@@ -43,7 +43,7 @@
 #include <khtmlview.h>
 #include <kiconloader.h>
 #include <klibloader.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmenubar.h>
 #include <kmessagebox.h>
 #include <QPushButton>

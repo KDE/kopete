@@ -29,7 +29,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kicon.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "ui_icqgeneralinfo.h"
 #include "ui_icqhomeinfowidget.h"

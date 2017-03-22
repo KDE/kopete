@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include "connection.h"
 #include "oscartypes.h"
 #include "oscarutils.h"

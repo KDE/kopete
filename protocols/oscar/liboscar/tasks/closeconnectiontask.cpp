@@ -22,7 +22,7 @@
 #include <qstring.h>
 #include <QList>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include "connection.h"
 #include "transfer.h"
 #include "oscarutils.h"

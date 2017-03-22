@@ -25,7 +25,7 @@
 
 #include <kcombobox.h>
 #include <QLineEdit>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kservicetypetrader.h>

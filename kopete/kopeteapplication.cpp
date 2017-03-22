@@ -26,7 +26,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kcmdlineargs.h>
 #include <kmessagebox.h>
 #include <solid/networking.h>

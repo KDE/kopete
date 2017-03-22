@@ -11,7 +11,7 @@
 //
 #include "dlgjabberchatroomslist.h"
 #include <kmessagebox.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kdebug.h>
 
 #include <qlineedit.h>

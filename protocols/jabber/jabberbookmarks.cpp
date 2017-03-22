@@ -23,7 +23,7 @@
 #include <kdebug.h>
 #include <QAction>
 #include <kselectaction.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QIcon>
 
 #include "tasks/jt_privatestorage.h"

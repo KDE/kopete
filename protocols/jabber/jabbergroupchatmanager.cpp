@@ -18,7 +18,7 @@
 #include "jabbergroupchatmanager.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmenu.h>
 #include <kactionmenu.h>
 #include <kactioncollection.h>

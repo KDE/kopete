@@ -25,7 +25,7 @@
 
 // KDE includes
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kpluginselector.h>
 #include <kpluginfactory.h>
 #include <ksettings/dispatcher.h>

@@ -22,7 +22,7 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kplugininfo.h>
 #include <knotification.h>
 #include <kglobal.h>

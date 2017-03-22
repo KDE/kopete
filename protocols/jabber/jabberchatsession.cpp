@@ -24,7 +24,7 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kicon.h>
 #include <kaction.h>
 #include <kactioncollection.h>

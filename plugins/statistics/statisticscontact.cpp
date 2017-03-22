@@ -20,7 +20,7 @@
 #include <stdlib.h>
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"

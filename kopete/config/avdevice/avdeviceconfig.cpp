@@ -30,7 +30,7 @@
 #include <QHideEvent>
 
 #include <kplugininfo.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QPushButton>
 #include <kpluginfactory.h>
 //#include <ktrader.h>

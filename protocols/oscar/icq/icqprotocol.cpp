@@ -22,7 +22,7 @@
 #include <kdialog.h>
 
 #include <kgenericfactory.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kconfig.h>
 #include <kmessagebox.h>
 

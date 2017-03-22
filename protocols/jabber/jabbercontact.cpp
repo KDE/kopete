@@ -33,7 +33,7 @@
 
 #include <KActionCollection>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <QAction>

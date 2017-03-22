@@ -22,7 +22,7 @@
 #include <qtimer.h>
 
 #include <KActionCollection>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <krandom.h>
 #include <ktoggleaction.h>
 

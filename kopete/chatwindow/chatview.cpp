@@ -39,7 +39,7 @@
 #include <kconfig.h>
 #include <ktabwidget.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kstringhandler.h>
 #include <kwindowsystem.h>

@@ -34,7 +34,7 @@
 #include <kdialog.h>
 #include <kpluginfactory.h>
 #include <kiconloader.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <QIcon>
 #include <QAction>

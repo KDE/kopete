@@ -41,7 +41,7 @@
 
 #include <kactioncollection.h>
 #include <kcursor.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmenubar.h>
 #include <kconfig.h>
 #include <kiconloader.h>

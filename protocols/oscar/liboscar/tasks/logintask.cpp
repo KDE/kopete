@@ -21,7 +21,7 @@
 
 #include <qtimer.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "connection.h"
 #include "closeconnectiontask.h"

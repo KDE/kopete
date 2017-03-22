@@ -47,7 +47,7 @@
 
 #include <kdebug.h>
 #include <kconfig.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kcodecs.h>
 #include <kmessagebox.h>
 #include <kdialog.h>

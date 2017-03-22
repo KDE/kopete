@@ -28,7 +28,7 @@
 // KDE includes
 #include <KGlobal>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kstandarddirs.h>
 
 class ChatWindowStyle::Private

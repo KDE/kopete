@@ -19,7 +19,7 @@
 
 #include <kcmdlineargs.h>
 #include <K4AboutData>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "kopeteapplication.h"
 #include "kopeteversion.h"

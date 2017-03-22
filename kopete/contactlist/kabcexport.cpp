@@ -24,7 +24,7 @@
 #include <qpushbutton.h>
 #include <qmap.h>
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kcontacts/picture.h>
 #include <kcontacts/addressee.h>

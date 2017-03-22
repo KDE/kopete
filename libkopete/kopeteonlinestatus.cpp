@@ -28,7 +28,7 @@
 #include <kiconloader.h>
 #include <kiconeffect.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QPixmap>
 #include <QIconEngineV2>
 #include <QPainter>

@@ -44,7 +44,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <knotification.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kaboutdata.h>
 #include <kpassworddialog.h>
 #include <kinputdialog.h>

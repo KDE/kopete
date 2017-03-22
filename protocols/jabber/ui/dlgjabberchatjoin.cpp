@@ -18,7 +18,7 @@
 
 #include "dlgjabberchatjoin.h"
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>

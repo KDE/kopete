@@ -29,7 +29,7 @@
 
 #include <kdebug.h>
 #include <kplugininfo.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QPushButton>
 #include <KPluginFactory>
 #include <KPluginLoader>

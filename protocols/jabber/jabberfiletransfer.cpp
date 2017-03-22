@@ -21,7 +21,7 @@
 #include <kdebug.h>
 #include <im.h>
 #include <xmpp.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <kcodecs.h>

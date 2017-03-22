@@ -30,7 +30,7 @@
 
 #include <kaction.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <krandom.h>
 #include <kcodecs.h>
 #include <kmessagebox.h>

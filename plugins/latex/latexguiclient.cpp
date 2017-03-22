@@ -20,7 +20,7 @@
 #include <qvariant.h>
 
 #include <kaction.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kshortcut.h>
 #include <kmessagebox.h>
 #include <kicon.h>
