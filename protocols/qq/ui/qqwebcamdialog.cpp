@@ -36,7 +36,7 @@ QQWebcamDialog::QQWebcamDialog( const QString &contactId, QWidget * parent )
 	//setButtons( KDialog::Close );
 	setDefaultButton( KDialog::Close );
 	// showButtonSeparator( true );
-	setWindowFlags( Qt::WDestructiveClose );
+    //FIXME KF5 setWindowFlags( Qt::WDestructiveClose );
 
 	setInitialSize( QSize(320,290) );
 	

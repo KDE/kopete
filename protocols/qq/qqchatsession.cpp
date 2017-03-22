@@ -27,6 +27,7 @@
 #include <kactionmenu.h>
 #include <kshortcut.h>
 #include <kicon.h>
+#include <kmessagebox_queued.h>
 
 #include <kopetecontact.h>
 #include <kopetecontactaction.h>
@@ -49,7 +50,7 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 	kDebug ( 14140 ) << "New message manager for " << user->contactId();
 
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
-	setComponentData( protocol->componentData() );
+    //setComponentData( protocol->componentData() );
 
 	// make sure Kopete knows about this instance
 	Kopete::ChatSessionManager::self()->registerChatSession ( this );
@@ -290,13 +291,13 @@ void QQChatSession::slotActionInviteAboutToShow()
 	{
 		if( !members().contains( it.value() ) && it.value()->isOnline() )
 		{
-			KAction *a = new Kopete::UI::ContactAction( it.value(), actionCollection() );
+            QAction *a = new Kopete::UI::ContactAction( it.value(), actionCollection() );
 			m_actionInvite->addAction( a );
 			m_inviteActions.append( a ) ;
 		}
 	}
 	// Invite someone off-list
-	KAction *b=new KAction( KIcon(), i18n ("&Other..."), actionCollection() );
+    QAction *b=new QAction( KIcon(), i18n ("&Other..."), actionCollection() );
         actionCollection()->addAction( "actionOther", b );
 	QObject::connect( b, SIGNAL(triggered(bool)),
 	                  this, SLOT(slotInviteOtherContact()) );

@@ -19,12 +19,10 @@
 #include "qqeditaccountwidget.h"
 
 #include <qcheckbox.h>
-#include <q3groupbox.h>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <q3listbox.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qspinbox.h>
@@ -54,6 +52,7 @@
 #include "qqnotifysocket.h"
 #include "qqprotocol.h"
 #include "dlgqqvcard.h"
+#include <kmessagebox_queued.h>
 
 // TODO: This was using KAutoConfig before, use KConfigXT instead.
 class QQEditAccountWidgetPrivate

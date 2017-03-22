@@ -31,7 +31,7 @@ K_EXPORT_PLUGIN( QQProtocolFactory( "kopete_qq" ) )
 QQProtocol *QQProtocol::s_protocol = 0L;
 
 QQProtocol::QQProtocol( QObject* parent, const QVariantList &/*args*/ )
-	: Kopete::Protocol( QQProtocolFactory::componentData(), parent ),
+    : Kopete::Protocol( parent ),
 	  qqOnline(  Kopete::OnlineStatus::Online, 25, this, 0,  QStringList(QString()),  
 			  i18n( "Online" ),   i18n( "O&nline" ) ),
 	  qqAway(  Kopete::OnlineStatus::Away, 25, this, 1, QStringList(QLatin1String("msn_away")),  
