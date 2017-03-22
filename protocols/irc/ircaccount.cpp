@@ -46,7 +46,7 @@
 //#include <QLineEdit>
 //#include <klineeditdlg.h>
 #include <klocale.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kmessagebox.h>
 
 

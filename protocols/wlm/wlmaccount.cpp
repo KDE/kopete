@@ -27,7 +27,7 @@
 #include <kactionmenu.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kmessagebox.h>
 #include <knotification.h>
 #include <KCodecs>

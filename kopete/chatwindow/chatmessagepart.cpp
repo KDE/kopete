@@ -65,6 +65,7 @@
 
 
 // KDE includes
+#include <KFormat>
 #include <kactioncollection.h>
 #include <kdebug.h>
 
@@ -1120,7 +1121,7 @@ QString ChatMessagePart::formatStyleKeywords( const QString &sourceHTML, const K
 		}
 
 		resultHTML.replace( QLatin1String("%fileName%"), Qt::escape( message.fileName() ).replace('"',"&quot;") );
-		resultHTML.replace( QLatin1String("%fileSize%"), KGlobal::locale()->formatByteSize( message.fileSize() ).replace('"',"&quot;") );
+        resultHTML.replace( QLatin1String("%fileSize%"), KFormat().formatByteSize( message.fileSize() ).replace('"',"&quot;") );
 		resultHTML.replace( QLatin1String("%fileIconPath%"), fileIcon );
 
 		resultHTML.replace( QLatin1String("%saveFileHandlerId%"), QString( "ftSV%1" ).arg( message.id() ) );

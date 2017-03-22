@@ -28,6 +28,7 @@
 #include "qevent.h"
 
 #include "ui_privkeypopup.h"
+#include <KDialog>
 
 class PrivKeyPopup: public KDialog
 {

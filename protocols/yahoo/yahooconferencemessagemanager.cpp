@@ -22,7 +22,7 @@
 #include <QLineEdit>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kconfig.h>
 
 #include <kopetecontactaction.h>

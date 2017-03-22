@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kactionmenu.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kicon.h>
 #include <kconfiggroup.h>
 

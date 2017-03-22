@@ -41,7 +41,7 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <kactionmenu.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kmessagebox.h>
 #include <krun.h>
 #include <kstandarddirs.h>

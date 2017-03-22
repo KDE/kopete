@@ -26,7 +26,7 @@
 #include <QListWidgetItem>
 
 #include <KLocalizedString>
-#include <kcolordialog.h>
+#include <QColorDialog>
 #include <kgenericfactory.h>
 #include <kdebug.h>
 
@@ -154,7 +154,8 @@ QStringList TextEffectPreferences::colors()
 void TextEffectPreferences::slotAddPressed()
 {
 	QColor myColor;
-	if( KColorDialog::getColor( myColor ) == KColorDialog::Accepted )
+    myColor = QColorDialog::getColor();
+    if ( myColor.isValid() )
 	{
 		preferencesDialog->mColorsListBox->addItem(myColor.name());
 	}

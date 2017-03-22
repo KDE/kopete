@@ -18,7 +18,7 @@
 
 #include <QHBoxLayout>
 
-#include <KMenu>
+#include <QMenu>
 #include <KIcon>
 #include <KLocale>
 
@@ -30,7 +30,7 @@ class WlmChatSessionInkAction::WlmChatSessionInkActionPrivate
 public:
     WlmChatSessionInkActionPrivate()
     {
-        m_popup = new KMenu(0L);
+        m_popup = new QMenu(0L);
         m_sessionInk = new QWidget;
         Ui::InkWindow ui;
         ui.setupUi(m_sessionInk);
@@ -48,7 +48,7 @@ public:
         m_sessionInk = 0;
     }
 
-    KMenu *m_popup;
+    QMenu *m_popup;
     QWidget *m_sessionInk;
 };
 

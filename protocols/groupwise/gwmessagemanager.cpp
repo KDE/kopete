@@ -33,7 +33,7 @@
 #include <klocale.h>
 #include <kxmlguiwindow.h>
 #include <kmessagebox.h>
-#include <kmenu.h>
+#include <QMenu>
 #include <kshortcut.h>
 
 #include <kopetecontact.h>

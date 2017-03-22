@@ -32,7 +32,7 @@
 
 #include <ktoolbarspaceraction.h>
 #include <kstandardaction.h>
-#include <kcolordialog.h>
+#include <QColorDialog>
 #include <kconfig.h>
 #include <kcursor.h>
 #include <kdebug.h>

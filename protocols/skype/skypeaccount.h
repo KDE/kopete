@@ -22,7 +22,7 @@
 
 #include <kopeteaccount.h>
 #include <kactionmenu.h>
-#include <kmenu.h>
+#include <QMenu>
 
 class SkypeProtocol;
 class QString;
