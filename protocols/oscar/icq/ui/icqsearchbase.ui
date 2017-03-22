@@ -234,7 +234,7 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="KPushButton" name="searchButton" >
+      <widget class="QPushButton" name="searchButton" >
        <property name="whatsThis" >
         <string>Search the ICQ Whitepages with your search criteria</string>
        </property>
@@ -244,7 +244,7 @@
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="clearButton" >
+      <widget class="QPushButton" name="clearButton" >
        <property name="enabled" >
         <bool>false</bool>
        </property>
@@ -257,7 +257,7 @@
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="stopButton" >
+      <widget class="QPushButton" name="stopButton" >
        <property name="enabled" >
         <bool>false</bool>
        </property>
@@ -273,7 +273,7 @@
       </widget>
      </item>
      <item>
-      <widget class="KPushButton" name="userInfoButton" >
+      <widget class="QPushButton" name="userInfoButton" >
        <property name="enabled" >
         <bool>false</bool>
        </property>
@@ -305,13 +305,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>tabWidget3</tabstop>
   <tabstop>nickName</tabstop>

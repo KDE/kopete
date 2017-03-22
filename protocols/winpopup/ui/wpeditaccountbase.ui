@@ -87,7 +87,7 @@
              </widget>
             </item>
             <item>
-             <widget class="KPushButton" name="doInstallSamba" >
+             <widget class="QPushButton" name="doInstallSamba" >
               <property name="toolTip" >
                <string>Install support into Samba to enable this service.</string>
               </property>
@@ -388,13 +388,6 @@ However, the recommended way is to ask your administrator to create this directo
    <class>KUrlRequester</class>
    <extends></extends>
    <header>kurlrequester.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends></extends>
-   <header>kpushbutton.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

@@ -1167,7 +1167,7 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
         </widget>
        </item>
        <item>
-        <widget class="KPushButton" name="privacyListsButton" >
+        <widget class="QPushButton" name="privacyListsButton" >
          <property name="text" >
           <string>Privacy Lists</string>
          </property>
@@ -1203,11 +1203,6 @@ One media type uses 2 ports and each new Jingle session will use the next 2 avai
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
   <customwidget>
    <class>Kopete::UI::PasswordWidget</class>
    <extends></extends>
