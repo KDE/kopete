@@ -30,7 +30,7 @@
 #include <kdebug.h>
 #include <kdeversion.h>
 #include <kglobal.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
 #include <knotification.h>

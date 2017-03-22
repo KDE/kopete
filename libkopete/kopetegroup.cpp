@@ -25,7 +25,7 @@
 #include "kopetechatsession.h"
 
 #include <QIcon>
-#include <klocale.h>
+#include <KLocalizedString>
 
 namespace Kopete {
 

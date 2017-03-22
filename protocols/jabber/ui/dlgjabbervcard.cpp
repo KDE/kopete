@@ -31,7 +31,7 @@
 #include <kdebug.h>
 #include <QPushButton>
 #include <QLineEdit>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kurllabel.h>
 #include <kmessagebox.h>
 #include <krun.h>

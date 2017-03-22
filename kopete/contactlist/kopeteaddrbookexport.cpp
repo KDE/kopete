@@ -28,7 +28,7 @@
 
 #include <kdialog.h>
 #include <kiconloader.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "kopeteaccount.h"
 #include "kopeteglobal.h"

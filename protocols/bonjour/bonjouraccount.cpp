@@ -19,7 +19,7 @@
 
 #include <kaction.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kactionmenu.h>
 #include <kmenu.h>
 #include <kmessagebox.h>

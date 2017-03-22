@@ -26,7 +26,7 @@
 #include <QVBoxLayout>
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 TestbedWebcamDialog::TestbedWebcamDialog( const QString &contactId, QWidget * parent )
 : KDialog( parent )

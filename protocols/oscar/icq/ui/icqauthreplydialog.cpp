@@ -18,7 +18,7 @@
 #include "icqauthreplydialog.h"
 #include "ui_icqauthreplyui.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <qlabel.h>
 #include <qradiobutton.h>

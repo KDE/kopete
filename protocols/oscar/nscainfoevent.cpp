@@ -15,7 +15,7 @@
 */
 #include "nscainfoevent.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "contactmanager.h"
 #include "oscarutils.h"

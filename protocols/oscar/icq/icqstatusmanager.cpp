@@ -17,7 +17,7 @@
 
 #include "icqstatusmanager.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <ksharedconfig.h>
 #include <kglobal.h>
 #include <kconfig.h>

@@ -21,7 +21,7 @@
 
 #include <kdebug.h>
 #include <QAction>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kjob.h>
 
 #include "kopeteaccountmanager.h"

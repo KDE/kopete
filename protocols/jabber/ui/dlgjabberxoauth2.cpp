@@ -15,7 +15,7 @@
 
 #include "dlgjabberxoauth2.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kopetepassword.h>
 
 #include "jabberaccount.h"

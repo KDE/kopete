@@ -20,7 +20,7 @@
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kdialog.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmenu.h>
 #include <kactionmenu.h>
 #include <kmessagebox.h>

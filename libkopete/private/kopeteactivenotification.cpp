@@ -15,7 +15,7 @@
 
 #include "kopeteactivenotification.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <knotification.h>
 
 namespace Kopete

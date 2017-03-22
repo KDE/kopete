@@ -28,7 +28,7 @@
 #include <QSortFilterProxyModel>
 
 #include <kiconloader.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 TooltipEditDialog::TooltipEditDialog(QWidget *parent)
 	: KDialog(parent)

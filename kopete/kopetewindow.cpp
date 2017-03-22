@@ -50,7 +50,7 @@
 #include <kdebug.h>
 #include <KGlobal>
 //#include <KGlobalAccel>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <knotifyconfigwidget.h>

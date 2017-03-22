@@ -25,7 +25,7 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kcolordialog.h>
 #include <kgenericfactory.h>
 #include <kdebug.h>

@@ -22,7 +22,7 @@
 #include <QPointer>
 #include <qtimer.h>
 #include <KActionCollection>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <knotification.h>
 #include <kinputdialog.h>
 #include <krandom.h>

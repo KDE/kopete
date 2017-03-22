@@ -23,7 +23,7 @@
 #include <qpushbutton.h>
 #include <QTreeWidget>
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QLineEdit>
 #include <kglobal.h>
 #include <kgenericfactory.h>

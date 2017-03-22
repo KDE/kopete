@@ -70,7 +70,7 @@
 #include <kdeversion.h>
 #include <kfiledialog.h>
 #include <khtmlview.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
 #include <krun.h>

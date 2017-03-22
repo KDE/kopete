@@ -45,7 +45,7 @@
 #include <kio/netaccess.h>
 #include <KHTMLView>
 #include <QLineEdit>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <QPushButton>
 #include <kstandarddirs.h>

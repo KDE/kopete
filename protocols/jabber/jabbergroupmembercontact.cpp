@@ -18,7 +18,7 @@
 #include "jabbergroupmembercontact.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kfiledialog.h>
 #include "jabberprotocol.h"
 #include "jabberaccount.h"

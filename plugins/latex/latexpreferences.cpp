@@ -20,7 +20,7 @@
 #include <qlayout.h>
 
 //#include <kparts/componentfactory.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kgenericfactory.h>
 #include <kdebug.h>
 #include <KUrl>

@@ -22,7 +22,7 @@
 #include "ui_oscarlistcontactsbase.h"
 #include <qstringlist.h>
 #include <qcheckbox.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 OscarListNonServerContacts::OscarListNonServerContacts(QWidget* parent)
     : KDialog( parent )

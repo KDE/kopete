@@ -33,7 +33,7 @@
 #include <krandom.h>
 #include <kio/global.h>
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kdebug.h>
 
 #include "buffer.h"

@@ -19,7 +19,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteonlinestatus.h"
 
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <qpixmap.h>
 

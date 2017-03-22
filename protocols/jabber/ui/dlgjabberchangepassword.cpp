@@ -20,7 +20,7 @@
 #include "dlgjabberchangepassword.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QLineEdit>
 #include <kmessagebox.h>
 #include <qlabel.h>

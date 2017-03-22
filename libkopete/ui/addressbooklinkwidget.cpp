@@ -25,7 +25,7 @@
 
 #include <qapplication.h>
 #include <QLineEdit>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QPushButton>
 
 #include <kiconloader.h>

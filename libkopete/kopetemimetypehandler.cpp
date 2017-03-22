@@ -22,7 +22,7 @@
 #include <qwidget.h>
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kio/netaccess.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>

@@ -29,7 +29,7 @@
 #include <QtNetwork/QSslSocket>
 
 #include <kdebug.h> //for kDebug()
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "filetransfertask.h"
 #include "buddyicontask.h"

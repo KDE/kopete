@@ -19,7 +19,7 @@
 
 #include <kcontacts/addressee.h>
 
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>
 #include <KConfigGroup>

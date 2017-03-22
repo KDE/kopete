@@ -22,7 +22,7 @@
 
 #include <kaction.h>
 #include <kstandardaction.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kgenericfactory.h>
 #include <kicon.h>
 

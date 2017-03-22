@@ -27,7 +27,7 @@
 #include <QAction>
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmenubar.h>
 #include <ktoolbar.h>
 #include <kauthorized.h>

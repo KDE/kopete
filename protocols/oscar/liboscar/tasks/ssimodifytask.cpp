@@ -21,7 +21,7 @@
 #include "ssimodifytask.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <qstring.h>
 #include "connection.h"
 #include "oscarutils.h"

@@ -27,7 +27,7 @@
 #include "addressbookselectorwidget.h"
 
 #include <kconfig.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kiconloader.h>
 
 #include <kdeversion.h>

@@ -21,7 +21,7 @@
 #include "ui_oscarencodingselectionbase.h"
 
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 OscarEncodingSelectionDialog::OscarEncodingSelectionDialog( QWidget* parent, int initialEncoding )
     : KDialog( parent )

@@ -30,7 +30,7 @@
 #include <KGlobal>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kmessagebox.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>

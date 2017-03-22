@@ -22,7 +22,7 @@
 
 #include <qlayout.h>
 #include <QLineEdit>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kopeteaccount.h>
 #include <qlabel.h>
 #include <kopetegroup.h>

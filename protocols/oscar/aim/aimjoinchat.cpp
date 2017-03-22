@@ -20,7 +20,7 @@
 #include "aimjoinchat.h"
 
 #include <qlineedit.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include "ui_aimjoinchatbase.h"
 #include "aimaccount.h"

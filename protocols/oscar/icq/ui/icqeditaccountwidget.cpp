@@ -30,7 +30,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <kiconloader.h>
 #include <kurllabel.h>
 #include <kdatewidget.h>

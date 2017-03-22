@@ -25,7 +25,7 @@
 #include <kauthorized.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
-#include <klocale.h>
+#include <KLocalizedString>
 #include <QIcon>
 #include <kmessagebox.h>
 

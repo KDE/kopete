@@ -22,7 +22,7 @@
 
 #include <kaction.h>
 #include <kdebug.h>
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <kopeteaccount.h>
 #include <kopetechatsessionmanager.h>
