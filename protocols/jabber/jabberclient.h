@@ -214,6 +214,9 @@ public:
 	 */
 	bool allowPlainTextPassword () const;
 
+	void setUseXOAuth2 ( bool flag );
+	bool useXOAuth2 () const;
+
 	/**
 	 * Enable file transfers. Default is false.
 	 * @param flag Whether to enable file transfers.

@@ -517,6 +517,7 @@ void HistoryDialog::slotSearch()
 				}
 
 				QTextStream stream(&file);
+				stream.setCodec("UTF-8");
 				QString textLine;
     			QString msgItem;
 				while(!stream.atEnd())
@@ -702,6 +703,7 @@ QString HistoryDialog::escapeXMLText(const QString& text) const
 
 	QString excapedText;
 	QTextStream stream(&excapedText, QIODevice::WriteOnly);
+	stream.setCodec("UTF-16"); // QtXML works only with UTF-16
 	tmpTextNode.save(stream, 0);
 	return excapedText;
 }

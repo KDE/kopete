@@ -346,7 +346,10 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			{
 				mManager->receivedEventNotification ( i18n("Message has been delivered") );
 				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
-				mSendsDeliveredEvent = true;
+				JabberResource *jresource = account()->resourcePool()->getJabberResource(message.from(), message.from().resource());
+				// getJabberResource() can returns best resource so verify it is same as in message
+				if (jresource && jresource->resource().name().toLower() == message.from().resource().toLower())
+					jresource->setSendsDeliveredEvent(true);
 			}
 			else if (message.containsEvent ( XMPP::OfflineEvent ) )
 			{
@@ -371,7 +374,6 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			{
 				mManager->receivedEventNotification ( i18n("Message has been delivered") );
 				mManager->receivedMessageState( message.messageReceiptId().toUInt(), Kopete::Message::StateSent );
-				mSendsDeliveredEvent = true;
 			}
 		}
 		else

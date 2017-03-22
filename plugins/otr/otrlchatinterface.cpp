@@ -202,6 +202,7 @@ void OtrlChatInterface::gone_secure(void *opdata, ConnContext *context){
 		OtrlChatInterface::self()->emitGoneSecure( ((Kopete::ChatSession*)opdata), 1 );
 	}
 
+	kDebug(14318) << "Updating otr-instag to" << context->their_instance << "for session" << session;
 	session->setProperty("otr-instag", QString::number(context->their_instance));
 }
 
@@ -400,7 +401,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 	switch (msg_event)
 	{
 	case OTRL_MSGEVENT_NONE:
-		break;
+		return;
 	case OTRL_MSGEVENT_ENCRYPTION_REQUIRED:
 		msg.setHtmlBody( i18n( "You attempted to send an unencrypted message to %1.", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Internal );
@@ -453,7 +454,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 		return;
 	case OTRL_MSGEVENT_LOG_HEARTBEAT_SENT:
 		kDebug(14318) << "Heartbeat sent to" << context->username;
-		break;
+		return;
 	case OTRL_MSGEVENT_RCVDMSG_GENERAL_ERR:
 		msg.setHtmlBody( QLatin1String(message) );
 		msg.setDirection( Kopete::Message::Internal );
@@ -466,7 +467,7 @@ void OtrlChatInterface::handle_msg_event(void *opdata, OtrlMessageEvent msg_even
 		break;
 	case OTRL_MSGEVENT_RCVDMSG_UNRECOGNIZED:
 		kDebug(14318) << "Unrecognized OTR message received from" << context->username;
-		break;
+		return;
 	case OTRL_MSGEVENT_RCVDMSG_FOR_OTHER_INSTANCE:
 		msg.setHtmlBody( i18n( "%1 has sent an encrypted message intended for a different session. If you are logged in multiple times, another session may have received the message.", QLatin1String(context->username) ) );
 		msg.setDirection( Kopete::Message::Inbound );
@@ -581,6 +582,7 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 	QString body = message.plainBody();
 
 	OtrlTLV *tlvs = NULL;
+	ConnContext *context = NULL;
 	char *newMessage = NULL;
 
 	if (m_keyGenThread != 0) {
@@ -594,10 +596,16 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 		return 1;
 	}
 
-	int ignoremessage = otrl_message_receiving( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), body.toLocal8Bit(), &newMessage, &tlvs, NULL, NULL, NULL );
+	int ignoremessage = otrl_message_receiving( userstate, &ui_ops, chatSession, accountId.toLocal8Bit(), protocol.toLocal8Bit(), contactId.toLocal8Bit(), body.toLocal8Bit(), &newMessage, &tlvs, &context, NULL, NULL );
+	if (context && !ignoremessage && newMessage != NULL) {
+		otrl_instag_t instance = message.manager()->property("otr-instag").toUInt();
+		if (instance != context->their_instance && context->their_instance) {
+			kDebug(14318) << "Encrypted message from different instance was received";
+			gone_secure( (void *)chatSession, context );
+		}
+	}
 
-	ConnContext *context = otrl_context_find( userstate, contactId.toLocal8Bit(), accountId.toLocal8Bit(), protocol.toLocal8Bit(), 0, 0, NULL, NULL, NULL);
-	if (context) {
+	if (tlvs) {
 		OtrlTLV *tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
 		if( tlv ){
 			Kopete::Message msg( chatSession->members().first(), chatSession->account()->myself() );
@@ -605,10 +613,8 @@ int OtrlChatInterface::decryptMessage( Kopete::Message &message){
 			msg.setDirection( Kopete::Message::Internal );
 			chatSession->appendMessage( msg );
 			OtrlChatInterface::self()->emitGoneSecure( chatSession, 3 );
-
-			otrl_tlv_free(tlvs);
 		}
-
+		otrl_tlv_free(tlvs);
 	}
 
 	// message is now decrypted or is a Plaintext message and ready to deliver
@@ -744,6 +750,10 @@ int OtrlChatInterface::privState( Kopete::ChatSession *session ){
 	ConnContext *context = otrl_context_find(userstate, session->members().first()->contactId().toLocal8Bit(), session->account()->accountId().toLocal8Bit(), session->account()->protocol()->displayName().toLocal8Bit(), instance, 0, NULL, NULL, NULL);
 
 	if( context ){
+		if( instance == OTRL_INSTAG_BEST && context->their_instance ){
+			kDebug(14318) << "Updating otr-instag to" << context->their_instance << "for session" << session;
+			session->setProperty("otr-instag", QString::number(context->their_instance));
+		}
 		switch( context->msgstate ){
 		case OTRL_MSGSTATE_PLAINTEXT:
 			return 0;
@@ -922,7 +932,7 @@ void OtrlChatInterface::otrlMessagePoll()
 
 void OtrlChatInterface::replayStoredMessages()
 {
-    while (m_storedMessages.isEmpty()) {
+    while (!m_storedMessages.isEmpty()) {
         Kopete::Message msg = m_storedMessages.takeFirst();
         msg.manager()->appendMessage(msg);
     }

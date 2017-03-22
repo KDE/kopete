@@ -44,6 +44,7 @@
 #include "jabberclient.h"
 #include "jabberregisteraccount.h"
 #include "dlgjabberchangepassword.h"
+#include "dlgjabberxoauth2.h"
 #include "privacydlg.h"
 
 #include "xmpp.h"
@@ -66,6 +67,8 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (cbUseSSL, SIGNAL (toggled(bool)), this, SLOT (sslToggled(bool)));
 
 	connect (btnChangePassword, SIGNAL (clicked()), this, SLOT (slotChangePasswordClicked()));
+
+	connect (btnXOAuth2, SIGNAL (clicked()), this, SLOT (slotManageXOAuth2Clicked()));
 	
 	connect (privacyListsButton, SIGNAL (clicked()), this, SLOT (slotPrivacyListsClicked()) );
 
@@ -212,6 +215,7 @@ void JabberEditAccountWidget::reopen ()
 	}
 
 	cbAllowPlainTextPassword->setChecked (account()->configGroup()->readEntry("AllowPlainTextPassword", true));
+	cbUseXOAuth2->setChecked (account()->configGroup()->readEntry("UseXOAuth2", false));
 
 	KConfigGroup config = KGlobal::config()->group("Jabber");
 	leLocalIP->setText (config.readEntry("LocalIP", QString()));
@@ -290,6 +294,7 @@ void JabberEditAccountWidget::writeConfig ()
 {
 	account()->configGroup()->writeEntry("UseSSL", cbUseSSL->isChecked());
 
+	if (!cbUseXOAuth2->isChecked())
 	mPass->save(&account()->password ());
 
 	account()->configGroup()->writeEntry("CustomServer", cbCustomServer->isChecked());
@@ -299,6 +304,7 @@ void JabberEditAccountWidget::writeConfig ()
 	//account()->setAccountId(mID->text());
 
 	account()->configGroup()->writeEntry("AllowPlainTextPassword", cbAllowPlainTextPassword->isChecked());
+	account()->configGroup()->writeEntry("UseXOAuth2", cbUseXOAuth2->isChecked());
 	account()->configGroup()->writeEntry("Server", mServer->text().trimmed ());
 	account()->configGroup()->writeEntry("Resource", mResource->text ());
 	account()->configGroup()->writeEntry("Priority", QString::number (mPriority->value ()));
@@ -344,7 +350,7 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->setOldEncrypted(oldEncrypted->isChecked());
 
 #ifdef LIBJINGLE_SUPPORT
-	account()->enableLibjingle(Libjingle->isChecked());
+	account()->enableLibjingle(Libjingle->isChecked() && !cbUseXOAuth2->isChecked());
 #endif
 
 }
@@ -426,6 +432,17 @@ void JabberEditAccountWidget::slotChangePasswordFinished ()
 
 	// in case the password has been changed, we need to update it in the UI
 	reopen ();
+
+}
+
+void JabberEditAccountWidget::slotManageXOAuth2Clicked ()
+{
+
+	DlgJabberXOAuth2 *xoath2Dlg = new DlgJabberXOAuth2 ( account(), this );
+
+	xoath2Dlg->show();
+
+	mPass->setPassword ( QString() );
 
 }
 

@@ -239,8 +239,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
- </customwidgets>
  <tabstops>
   <tabstop>TabWidget3</tabstop>
  </tabstops>

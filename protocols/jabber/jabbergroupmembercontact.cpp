@@ -26,6 +26,8 @@
 #include "jabbergroupchatmanager.h"
 #include "jabberchatsession.h"
 #include "jabbercontactpool.h"
+#include "jabberresource.h"
+#include "jabberresourcepool.h"
 #include "kopetemetacontact.h"
 
 /**
@@ -149,7 +151,10 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 			{
 				//mManager->receivedEventNotification ( i18n("Message has been delivered") );
 				mManager->receivedMessageState( message.eventId().toUInt(), Kopete::Message::StateSent );
-				mSendsDeliveredEvent = true;
+				JabberResource *jresource = account()->resourcePool()->getJabberResource(message.from(), message.from().resource());
+				// getJabberResource() can returns best resource so verify it is same as in message
+				if (jresource && jresource->resource().name().toLower() == message.from().resource().toLower())
+					jresource->setSendsDeliveredEvent(true);
 			}
 			else if (message.containsEvent ( XMPP::OfflineEvent ) )
 			{
@@ -174,7 +179,6 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 			{
 				//mManager->receivedEventNotification ( i18n("Message has been delivered") );
 				mManager->receivedMessageState( message.messageReceiptId().toUInt(), Kopete::Message::StateSent );
-				mSendsDeliveredEvent = true;
 			}
 		}
 		else

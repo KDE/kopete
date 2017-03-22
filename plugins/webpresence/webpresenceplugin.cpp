@@ -309,10 +309,13 @@ KTemporaryFile* WebPresencePlugin::generateFile()
 	KTemporaryFile* file = new KTemporaryFile();
 	file->setAutoRemove(false);
 	file->open();
-	QTextStream stream( file );
-	stream.setCodec(QTextCodec::codecForName("UTF-8"));
-	doc.save( stream, 4 );
-	stream.flush();
+
+	QString buf;
+	QTextStream stream( &buf, QIODevice::WriteOnly );
+	stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
+	doc.documentElement().save( stream, 4 ); // QDomDocument::save() override stream codec to UTF-8
+	file->write( buf.toUtf8() );
+	file->flush();
 	return file;
 }
 

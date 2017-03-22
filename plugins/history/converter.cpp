@@ -221,10 +221,13 @@ void HistoryPlugin::convertOldHistory()
 									QSaveFile file(  QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString( "kopete/logs/"  + name + QString::fromLatin1( ".xml" ) )  );
 									if( file.open(QIODevice::WriteOnly) )
 									{
-										QTextStream stream ( &file );
-										//stream.setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
-										doc.save( stream , 1 );
-										file.commit();
+										QString buf;
+										QTextStream stream( &buf, QIODevice::WriteOnly );
+										stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
+										doc.doctype().save( stream, 1 );
+										doc.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
+										file.write( buf.toUtf8() );
+										file.finalize();
 									}
 								}
 
@@ -283,10 +286,13 @@ void HistoryPlugin::convertOldHistory()
 						QSaveFile file( QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QString( "kopete/logs/"  + name + QString::fromLatin1( ".xml" ) )  );
 						if( file.open(QIODevice::WriteOnly) )
 						{
-							QTextStream stream ( &file );
-							//stream.setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
-							doc.save( stream ,1 );
-							file.commit();
+							QString buf;
+							QTextStream stream( &buf, QIODevice::WriteOnly );
+							stream.setCodec( "UTF-16" ); // QtXML works only with UTF-16
+							doc.doctype().save( stream, 1 );
+							doc.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
+							file.write( buf.toUtf8() );
+							file.finalize();
 						}
 					}
 

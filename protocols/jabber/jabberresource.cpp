@@ -37,7 +37,7 @@ class JabberResource::Private
 {
 public:
 	Private( JabberAccount *t_account, const XMPP::Jid &t_jid, const XMPP::Resource &t_resource )
-	 : account(t_account), jid(t_jid), resource(t_resource), capsEnabled(false)
+	 : account(t_account), jid(t_jid), resource(t_resource), capsEnabled(false), sendsDeliveredEvent(false)
 	{
 		// Make sure the resource is always set.
 		jid = jid.withResource(resource.name());
@@ -50,6 +50,7 @@ public:
 	QString clientName, clientVersion, clientSystem;
 	XMPP::Features supportedFeatures;
 	bool capsEnabled;
+	bool sendsDeliveredEvent;
 };
 
 JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, const XMPP::Resource &resource )
@@ -67,9 +68,17 @@ JabberResource::JabberResource ( JabberAccount *account, const XMPP::Jid &jid, c
 		{
 			QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetDiscoCapabilties()) );
 		}
-		else if(cm->features(jid).list().contains("jabber:iq:version"))
+		else
 		{
-			QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedClientVersion()) );
+			if(cm->features(jid).list().contains("jabber:iq:version"))
+			{
+				QTimer::singleShot ( account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedClientVersion()) );
+			}
+
+			if(cm->features(jid).list().contains("urn:xmpp:receipts"))
+			{
+				d->sendsDeliveredEvent = true;
+			}
 		}
 	}
 }
@@ -112,6 +121,16 @@ const QString &JabberResource::clientVersion () const
 const QString &JabberResource::clientSystem () const
 {
 	return d->clientSystem;
+}
+
+void JabberResource::setSendsDeliveredEvent( bool sends )
+{
+	d->sendsDeliveredEvent = sends;
+}
+
+bool JabberResource::sendsDeliveredEvent() const
+{
+	return d->sendsDeliveredEvent;
 }
 
 XMPP::Features JabberResource::features() const
@@ -180,6 +199,11 @@ void JabberResource::slotGotDiscoCapabilities ()
 		if(d->supportedFeatures.list().contains("jabber:iq:version"))
 		{
 			QTimer::singleShot ( d->account->client()->getPenaltyTime () * 1000, this, SLOT (slotGetTimedClientVersion()) );
+		}
+
+		if(d->supportedFeatures.list().contains("urn:xmpp:receipts"))
+		{
+			d->sendsDeliveredEvent = true;
 		}
 
 		emit updated ( this );

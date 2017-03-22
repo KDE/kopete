@@ -88,15 +88,12 @@ void JabberResourcePool::slotResourceUpdated ( JabberResource *resource )
 	}
 }
 
-void JabberResourcePool::notifyRelevantContacts ( const XMPP::Jid &jid, bool removed )
+void JabberResourcePool::notifyRelevantContacts ( const XMPP::Jid &jid )
 {
 	QList<JabberBaseContact*> list = d->account->contactPool()->findRelevantSources ( jid );
 
 	foreach(JabberBaseContact *mContact, list)
 	{
-		if ( removed )
-			mContact->setSendsDeliveredEvent ( false );
-
 		mContact->reevaluateStatus ();
 	}
 }
@@ -155,7 +152,7 @@ void JabberResourcePool::removeResource ( const XMPP::Jid &jid, const XMPP::Reso
 			JabberResource *deletedResource = d->pool.takeAt( d->pool.indexOf(mResource) );
 			delete deletedResource;
 
-			notifyRelevantContacts ( jid, true );
+			notifyRelevantContacts ( jid );
 			return;
 		}
 	}
@@ -213,7 +210,7 @@ void JabberResourcePool::clear ()
 	 */
 	for ( QStringList::Iterator it = jidList.begin (); it != jidList.end (); ++it )
 	{
-		notifyRelevantContacts ( XMPP::Jid ( *it ), true );
+		notifyRelevantContacts ( XMPP::Jid ( *it ) );
 	}
 
 }

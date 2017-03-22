@@ -94,7 +94,7 @@ public:
 	 * from Kopete::Contact @param c in the given @param sens
 	 */
 	QList<Kopete::Message> readMessages(int lines,
-	                                    int offset=0, const Kopete::MetaContact *c=false, bool reverseOrder=true);
+	                                    int offset=0, const Kopete::MetaContact *c=NULL, bool reverseOrder=true);
 
 	/**
 	 * Same as the following, but for one date. I did'nt reuse the above function

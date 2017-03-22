@@ -71,6 +71,16 @@ public:
 	 */
 	XMPP::Features features() const;
 
+	/**
+	 * Set if client sends delivery event flag.
+	 */
+	void setSendsDeliveredEvent( bool sends );
+
+	/**
+	 * Return true if client sends delivery event.
+	 */
+	bool sendsDeliveredEvent() const;
+
 signals:
 	void updated ( JabberResource * );
 

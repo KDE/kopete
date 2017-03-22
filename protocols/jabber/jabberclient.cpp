@@ -43,6 +43,8 @@
 
 #include "privacymanager.h"
 
+#include "xoauth2provider.h"
+
 #define JABBER_PENALTY_TIME	2
 
 class JabberClient::Private
@@ -113,6 +115,9 @@ public:
 
 	// allow transmission of plaintext passwords
 	bool allowPlainTextPassword;
+
+	// use X-OAUTH2
+	bool useXOAuth2;
 
 	// enable file transfers
 	bool fileTransfersEnabled;
@@ -185,6 +190,7 @@ void JabberClient::cleanUp ()
 	setOverrideHost ( false );
 
 	setAllowPlainTextPassword ( true );
+	setUseXOAuth2 ( false );
 
 	setFileTransfersEnabled ( false );
 	setS5BServerPort ( 8010 );
@@ -409,6 +415,20 @@ bool JabberClient::allowPlainTextPassword () const
 {
 
 	return d->allowPlainTextPassword;
+
+}
+
+void JabberClient::setUseXOAuth2 ( bool flag )
+{
+
+	d->useXOAuth2 = flag;
+
+}
+
+bool JabberClient::useXOAuth2 () const
+{
+
+	return d->useXOAuth2;
 
 }
 
@@ -677,6 +697,26 @@ JabberClient::ErrorCode JabberClient::connect ( const XMPP::Jid &jid, const QStr
 				   this, SLOT (slotCSError(int)) );
 		QObject::connect ( d->jabberClientStream, SIGNAL (connected()),
 		                   this, SLOT (slotCSConnected()) );
+	}
+
+	if ( useXOAuth2() )
+	{
+		/*
+		 * Load X-OAUTH2 SASL provider
+		 */
+		bool loaded = false;
+		foreach ( QCA::Provider *p, QCA::providers() ) {
+			if ( p->name() == "xoauth2sasl" ) {
+				loaded = true;
+				break;
+			}
+		}
+		if ( ! loaded ) {
+			/* install with higher priority as simplesasl to prevent loading xoauth2sasl automatically */
+			QCA::insertProvider(createProviderXOAuth2());
+			QCA::setProviderPriority("xoauth2sasl", 11);
+		}
+		d->jabberClientStream->setSaslMechanismProvider("X-OAUTH2", "xoauth2sasl");
 	}
 
 	/*
