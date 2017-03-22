@@ -34,7 +34,7 @@ class LIBOSCAR_EXPORT ClientStream : public Stream
 {
 	Q_OBJECT
 public:
-	explicit ClientStream( QSslSocket *socket, QObject *parent = 0 );
+	explicit ClientStream( QSslSocket *socket, QObject *parent = nullptr );
 	~ClientStream();
 
 	void connectToServer( const QString& host, quint16 port, bool encrypted, const QString &name );

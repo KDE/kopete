@@ -29,7 +29,7 @@ class OftProtocol : public InputProtocolBase
 {
 Q_OBJECT
 public:
-	OftProtocol( QObject *parent = 0 );
+	OftProtocol( QObject *parent = nullptr );
 	~OftProtocol();
 
 	/**

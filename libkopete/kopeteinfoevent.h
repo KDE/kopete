@@ -42,7 +42,7 @@ class KOPETE_EXPORT InfoEvent : public QObject
 {
 Q_OBJECT
 public:
-	InfoEvent( QObject *parent = 0 );
+	InfoEvent( QObject *parent = nullptr );
 
 	~InfoEvent();
 

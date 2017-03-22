@@ -48,7 +48,7 @@ public:
 	 *
 	 * This class provides an interface for reading and writing properties.
 	 */
-	PropertyContainer( QObject *parent = 0 );
+	PropertyContainer( QObject *parent = nullptr );
 
 	virtual ~PropertyContainer();
 

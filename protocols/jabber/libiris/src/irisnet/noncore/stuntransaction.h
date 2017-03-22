@@ -78,7 +78,7 @@ public:
 		ErrorTimeout
 	};
 
-	StunTransaction(QObject *parent = 0);
+	StunTransaction(QObject *parent = nullptr);
 	~StunTransaction();
 
 	// toAddress/toPort are optional, to associate this request to a
@@ -142,7 +142,7 @@ public:
 		DL_Packet
 	};
 
-	StunTransactionPool(StunTransaction::Mode mode, QObject *parent = 0);
+	StunTransactionPool(StunTransaction::Mode mode, QObject *parent = nullptr);
 	~StunTransactionPool();
 
 	StunTransaction::Mode mode() const;

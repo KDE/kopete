@@ -115,7 +115,7 @@ public:
 		DL_Packet
 	};
 
-	IceComponent(int id, QObject *parent = 0);
+	IceComponent(int id, QObject *parent = nullptr);
 	~IceComponent();
 
 	int id() const;

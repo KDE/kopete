@@ -73,7 +73,7 @@ public:
 	 * @brief Create a new task
 	 * @param parent QObject parent
 	 */
-	Task(QObject *parent = 0);
+	Task(QObject *parent = nullptr);
 	/**
 	 * Destructor
 	 */

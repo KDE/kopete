@@ -27,7 +27,7 @@ class JabberBookmarkModel : public QAbstractListModel
       AutoJoinRole
     };
 
-    JabberBookmarkModel( QObject *parent = 0 )
+    JabberBookmarkModel( QObject *parent = nullptr )
       : QAbstractListModel( parent )
     {
     }

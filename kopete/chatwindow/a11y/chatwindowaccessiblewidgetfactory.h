@@ -23,7 +23,7 @@
 
 class ChatWindowAccessibleWidgetFactory: public QAccessiblePlugin {
 public:
-    ChatWindowAccessibleWidgetFactory( QObject *parent = 0 );
+    ChatWindowAccessibleWidgetFactory( QObject *parent = nullptr );
     virtual QAccessibleInterface *create( const QString &key, QObject *object );
     virtual QStringList keys() const;
 };

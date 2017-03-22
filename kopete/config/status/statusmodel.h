@@ -34,7 +34,7 @@ class KopeteStatusModel : public QAbstractItemModel
 {
 	Q_OBJECT
 public:
-	KopeteStatusModel( Kopete::Status::StatusGroup *rootItem, QObject *parent = 0 );
+	KopeteStatusModel( Kopete::Status::StatusGroup *rootItem, QObject *parent = nullptr );
 	~KopeteStatusModel();
 
 	enum ItemRole

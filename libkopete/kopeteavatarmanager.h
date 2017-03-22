@@ -210,7 +210,7 @@ private:
 	 * Constructor is private because the class is a singleton
 	 * @param parent QObject parent, not really used
 	 */
-	AvatarManager(QObject *parent = 0);
+	AvatarManager(QObject *parent = nullptr);
 
 private:
 	static AvatarManager *s_self;
@@ -253,7 +253,7 @@ class KOPETE_EXPORT AvatarQueryJob : public KJob
 {
 	Q_OBJECT
 public:
-	AvatarQueryJob(QObject *parent = 0);
+	AvatarQueryJob(QObject *parent = nullptr);
 	~AvatarQueryJob();
 
 	/**
