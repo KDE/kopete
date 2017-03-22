@@ -35,7 +35,7 @@
 #include <KPluginLoader>
 #include <KGenericFactory>
 #include <kconfig.h>
-#include <klineedit.h>
+#include <QLineEdit>
 
 #include "kopetebehaviorsettings.h"
 #include "kopetepluginmanager.h"

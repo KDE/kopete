@@ -43,7 +43,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kinputdialog.h>
-//#include <klineedit.h>
+//#include <QLineEdit>
 //#include <klineeditdlg.h>
 #include <klocale.h>
 #include <kmenu.h>

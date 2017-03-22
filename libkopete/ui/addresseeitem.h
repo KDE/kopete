@@ -21,7 +21,7 @@
 #ifndef ADDRESSEEITEM_H
 #define ADDRESSEEITEM_H
 
-#include <klineedit.h>
+#include <QLineEdit>
 #include <QTreeWidget>
 
 #include "addressbookselectorwidget.h"

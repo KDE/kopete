@@ -19,7 +19,7 @@
 #include <qlabel.h>
 
 #include <klocale.h>
-#include <klineedit.h>
+#include <QLineEdit>
 
 #include "smsuserprefs.h"
 #include "smscontact.h"

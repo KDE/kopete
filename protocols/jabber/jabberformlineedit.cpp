@@ -17,7 +17,7 @@
 
 #include "jabberformlineedit.h"
 
-JabberFormLineEdit::JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent) : KLineEdit (value, parent)
+JabberFormLineEdit::JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent) : QLineEdit (value, parent)
 {
 
 	fieldType = type;

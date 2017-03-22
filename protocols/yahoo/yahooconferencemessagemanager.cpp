@@ -19,7 +19,7 @@
 #include "yahooconferencemessagemanager.h"
 
 #include <kdebug.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmenu.h>

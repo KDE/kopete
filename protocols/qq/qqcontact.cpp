@@ -28,7 +28,7 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <kfiledialog.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>

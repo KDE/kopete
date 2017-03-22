@@ -27,7 +27,7 @@
 #include <qlabel.h>
 #include <QPixmap>
 
-#include <klineedit.h>
+#include <QLineEdit>
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <klocale.h>

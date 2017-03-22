@@ -19,7 +19,7 @@
 #define JABBERFORMLINEEDIT_H
 
 #include <qwidget.h>
-#include <klineedit.h>
+#include <QLineEdit>
 
 #include "xmpp_tasks.h"
 
@@ -27,7 +27,7 @@
   *@author Till Gerken <till@tantalo.net>
   */
 
-class JabberFormLineEdit:public KLineEdit
+class JabberFormLineEdit:public QLineEdit
 {
 
   Q_OBJECT public:

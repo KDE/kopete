@@ -22,7 +22,7 @@
 #include <QList>
 #include <QByteArray>
 
-#include <klineedit.h>
+#include <QLineEdit>
 
 #include "kopetemessage.h"
 
@@ -46,7 +46,7 @@ public:
 	const QString& description(int i);
 	bool isHidden(int i) const;
 
-	void save(const QList<KLineEdit*>& args);
+	void save(const QList<QLineEdit*>& args);
 	void send(const Kopete::Message& msg);
 
 	int maxSize();

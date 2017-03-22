@@ -40,14 +40,14 @@ Kopete::UI::PasswordWidget::PasswordWidget( QWidget *parent )
 	    : QWidget( parent ), d( new Private )
 {
 	setupUi( this );
-	mPassword->setPasswordMode(true);
+    mPassword->setEchoMode(QLineEdit::Password);
 }
 
 Kopete::UI::PasswordWidget::PasswordWidget( Kopete::Password *from, QWidget *parent )
 	: QWidget( parent ), d( new Private )
 {
 	setupUi( this );
-	mPassword->setPasswordMode(true);
+    mPassword->setEchoMode(QLineEdit::Password);
 
 	load( from );
 }

@@ -22,7 +22,7 @@
 
 
 #include <kconfigbase.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <klocale.h>
 #include <kurlrequester.h>
 #include <kmessagebox.h>
@@ -202,7 +202,7 @@ void SMSSend::setOptions(const QString& name)
 			l->setText('&' + m_provider->name(i) + ':');
 			l->setToolTip( m_provider->description(i));
 			m_layout->addWidget(l, i+2, 0);
-			KLineEdit *e = new KLineEdit(m_parent);
+			QLineEdit *e = new QLineEdit(m_parent);
 			e->setText(m_provider->value(i));
 			m_layout->addWidget(e, i+2, 1);
 			args.append(e);

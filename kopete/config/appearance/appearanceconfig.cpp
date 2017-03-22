@@ -44,7 +44,7 @@
 #include <kpluginloader.h>
 #include <kio/netaccess.h>
 #include <KHTMLView>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <QPushButton>

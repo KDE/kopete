@@ -21,7 +21,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <kmessagebox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
@@ -44,9 +44,9 @@ DlgJabberChangePassword::DlgJabberChangePassword ( JabberAccount *account, QWidg
 	m_mainWidget = new Ui::DlgChangePassword;
 	m_mainWidget->setupUi( mainWidget() );
     
-    m_mainWidget->peNewPassword1->setPasswordMode( true );
-    m_mainWidget->peNewPassword2->setPasswordMode( true );
-    m_mainWidget->peCurrentPassword->setPasswordMode( true );
+    m_mainWidget->peNewPassword1->setEchoMode(QLineEdit::Password);
+    m_mainWidget->peNewPassword2->setEchoMode(QLineEdit::Password);
+    m_mainWidget->peCurrentPassword->setEchoMode(QLineEdit::Password);
     connect(this,SIGNAL(okClicked()),this,SLOT(slotOk()));
     connect(this,SIGNAL(cancelClicked()),this,SLOT(slotCancel()));
 }

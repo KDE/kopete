@@ -23,7 +23,7 @@
 
 // KDE Includes
 #include <kdebug.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <ktemporaryfile.h>
 #include <klocale.h>
 #include <kio/global.h>

@@ -20,7 +20,7 @@
 #include <QPushButton>
 #include <qwidget.h>
 #include <qstring.h>
-#include <klineedit.h>
+#include <QLineEdit>
 
 
 EditAliasDialog::EditAliasDialog( QWidget* parent )

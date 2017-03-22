@@ -21,7 +21,7 @@
 #include "jabberaddcontactpage.h"
 
 #include <qlayout.h>
-#include <klineedit.h>
+#include <QLineEdit>
 #include <klocale.h>
 #include <kopeteaccount.h>
 #include <qlabel.h>
