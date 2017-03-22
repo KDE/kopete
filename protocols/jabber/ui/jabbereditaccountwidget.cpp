@@ -131,32 +131,32 @@ JabberEditAccountWidget::~JabberEditAccountWidget ()
 #ifdef JINGLE_SUPPORT
 void JabberEditAccountWidget::checkAudioDevices()
 {
-	kDebug() << "Start.";
+	qDebug() << "Start.";
 	/*Solid::DeviceNotifier *notifier = Solid::DeviceNotifier::instance();
 	foreach (const Solid::Device &device, Solid::Device::listFromType(Solid::DeviceInterface::AudioInterface, QString()))
 	//foreach (const Solid::Device &device, Solid::Device::allDevices())
 	{
-		kDebug() << "Found :";
-		kDebug() << device.udi().toLatin1().constData();
+		qDebug() << "Found :";
+		qDebug() << device.udi().toLatin1().constData();
 	}*/
 	QList<Item> devices = getAlsaItems();
 	for (int i = 0; i < devices.count(); i++)
 	{
 		if (devices.at(i).dir == Item::Input)
 		{
-			kDebug() << "Microphone :" << devices.at(i).name << "(" << devices.at(i).id << ")";
+			qDebug() << "Microphone :" << devices.at(i).name << "(" << devices.at(i).id << ")";
 			audioInputsCombo->addItem(devices.at(i).name);
 			inputDevices << devices.at(i);
 		}
 		else if (devices.at(i).dir == Item::Output)
 		{
-			kDebug() << "Audio output :" << devices.at(i).name << "(" << devices.at(i).id << ")";
+			qDebug() << "Audio output :" << devices.at(i).name << "(" << devices.at(i).id << ")";
 			audioOutputsCombo->addItem(devices.at(i).name);
 			outputDevices << devices.at(i);
 		}
 
 	}
-	kDebug() << "End.";
+	qDebug() << "End.";
 
 }
 #endif

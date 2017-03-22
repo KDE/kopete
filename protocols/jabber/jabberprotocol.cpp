@@ -375,7 +375,7 @@ void JabberProtocol::handleURL(const QString&, const QUrl &url) const
 	XMPP::Jid jid = jid_str;
 	QString action=query.queryItems().isEmpty() ? QString() : query.queryItems().first().first;
 	 
-	kDebug() << query.queryItemValue("body");
+	qDebug() << query.queryItemValue("body");
 
 	if(jid.isEmpty())
 	{

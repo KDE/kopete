@@ -82,7 +82,7 @@ void dlgRegister::slotGotForm()
 		XMPP::XData form;
 		form.fromXml(e);
 		mXDataWidget = new JabberXDataWidget(form, mMainWidget);
-		//kDebug() << "COUNT " << mMainWidget->layout()->count();
+		//qDebug() << "COUNT " << mMainWidget->layout()->count();
 		mMainWidget->layout()->addWidget(mXDataWidget);
 		mXDataWidget->show();
 	}

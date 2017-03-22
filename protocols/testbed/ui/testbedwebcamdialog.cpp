@@ -84,7 +84,7 @@ TestbedWebcamDialog::~TestbedWebcamDialog( )
 void TestbedWebcamDialog::slotUpdateImage()
 {
 #ifndef VIDEOSUPPORT_DISABLED
-	kDebug() << "Getting image";
+	qDebug() << "Getting image";
 	if (EXIT_SUCCESS == mVideoDevicePool->getFrame())
 	{
 		mVideoDevicePool->getImage(&mImage);

@@ -54,7 +54,7 @@ Kopete::IdleTimer::IdleTimer()
 	Kopete::IdlePlatform *p = new Kopete::IdlePlatform();
 	if ( p->init() )
 	{
-		kDebug() << "Using platform idle timer";
+		qDebug() << "Using platform idle timer";
 		d->platform = p;
 	}
 	else

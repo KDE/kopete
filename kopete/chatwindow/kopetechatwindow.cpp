@@ -274,7 +274,7 @@ KopeteChatWindow::KopeteChatWindow( Kopete::ChatSession::Form form, QWidget *par
 	//has to be done after the setupGUI, in order to have the toolbar set up to restore window settings.
 	readOptions();
 #ifdef CHRONO
-	kDebug()<<"TIME: "<<chrono.elapsed();
+	qDebug()<<"TIME: "<<chrono.elapsed();
 #endif
 }
 
@@ -1247,13 +1247,13 @@ bool KopeteChatWindow::queryClose()
 		// if the view is closed, it is removed from chatViewList for us
 		if ( !view->closeView() )
 		{
-			kDebug() << "Closing view failed!";
+			qDebug() << "Closing view failed!";
 			canClose = false;
 		}
 	}
 	setUpdatesEnabled(true);
 #ifdef CHRONO
-        kDebug()<<"TIME: "<<chrono.elapsed();
+        qDebug()<<"TIME: "<<chrono.elapsed();
 #endif
 	return canClose;
 }

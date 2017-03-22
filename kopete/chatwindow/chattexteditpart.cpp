@@ -517,7 +517,7 @@ K4AboutData *ChatTextEditPart::createAboutData()
 
 void ChatTextEditPart::readConfig( KConfigGroup& config )
 {
-    kDebug() << "Loading config";
+    qDebug() << "Loading config";
 
     QTextCharFormat format = editor->defaultRichFormat();
 
@@ -536,7 +536,7 @@ void ChatTextEditPart::readConfig( KConfigGroup& config )
 
 void ChatTextEditPart::writeConfig( KConfigGroup& config )
 {
-    kDebug() << "Saving config";
+    qDebug() << "Saving config";
 
 	config.writeEntry( "TextFont", editor->currentRichFormat().font() );
 	config.writeEntry( "TextFgColor", editor->currentRichFormat().foreground().color() );
@@ -546,7 +546,7 @@ void ChatTextEditPart::writeConfig( KConfigGroup& config )
 
 void ChatTextEditPart::resetConfig( KConfigGroup& config )
 {
-    kDebug() << "Setting default font style";
+    qDebug() << "Setting default font style";
 
     editor->slotResetFontAndColor();
 

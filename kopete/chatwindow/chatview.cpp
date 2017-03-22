@@ -938,7 +938,7 @@ bool ChatView::isDragEventAccepted( const QDragMoveEvent * event ) const
 		stream >> metacontactID;
 
 		metacontactID.remove( 0, metacontactID.indexOf('/')+1 ); // strip groupid
-		kDebug() << metacontactID;
+		qDebug() << metacontactID;
 		Kopete::MetaContact *parent = Kopete::ContactList::self()->metaContact(metacontactID);
 		if ( parent && m_manager->mayInvite() )
 		{

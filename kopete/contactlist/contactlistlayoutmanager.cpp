@@ -83,7 +83,7 @@ QStringList LayoutManager::layouts() const
 
 void LayoutManager::setActiveLayout( const QString &layout )
 {
-	kDebug() << layout;
+	qDebug() << layout;
 	m_activeLayout = layout;
 	KConfigGroup config(KSharedConfig::openConfig(), "ContactList Layout");
 	config.writeEntry( "CurrentLayout", m_activeLayout );
@@ -120,7 +120,7 @@ void LayoutManager::loadUserLayouts()
 	for ( int i = 0; i < list.size(); ++i )
 	{
 		QFileInfo fileInfo = list.at(i);
-		kDebug() << "found user file: " << fileInfo.fileName();
+		qDebug() << "found user file: " << fileInfo.fileName();
 		loadLayouts( layoutsDir.filePath( fileInfo.fileName() ), true );
 	}
 }
@@ -137,19 +137,19 @@ void LayoutManager::loadLayouts( const QString &fileName, bool user )
 	QDomDocument doc( "layouts" );
 	if ( !QFile::exists( fileName ) )
 	{
-		kDebug() << "file " << fileName << "does not exist";
+		qDebug() << "file " << fileName << "does not exist";
 		return;
 	}
 
 	QFile file( fileName );
 	if( !file.open( QIODevice::ReadOnly ) )
 	{
-		kDebug() << "error reading file " << fileName;
+		qDebug() << "error reading file " << fileName;
 		return;
 	}
 	if ( !doc.setContent( &file ) )
 	{
-		kDebug() << "error parsing file " << fileName;
+		qDebug() << "error parsing file " << fileName;
 		return;
 	}
 	file.close();
@@ -349,7 +349,7 @@ bool LayoutManager::deleteLayout( const QString & layout )
 	{
 		QDir layoutsDir = QDir( KStandardDirs::locateLocal( "appdata", QString::fromUtf8("contactlistlayouts") ) );
 		QString xmlFile = layoutsDir.path() + '/' + layout + ".xml";
-		kDebug() << "deleting file: " << xmlFile;
+		qDebug() << "deleting file: " << xmlFile;
 
 		if ( !QFile::remove( xmlFile ) )
 		{

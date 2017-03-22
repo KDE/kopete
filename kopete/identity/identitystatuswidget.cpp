@@ -249,7 +249,7 @@ void IdentityStatusWidget::addAccountItem( Kopete::Account *account )
 {
 	// debug to diagnose if the account was created with the right identity.  see comment in
 	// slotAccountRegistered
-	//kDebug() << "Adding Account item for identity: " << ( account->identity() ? account->identity()->label() : "" ) << ", showing identity " << ( d->identity ? d->identity->label() : "" )<< " in widget.";
+	//qDebug() << "Adding Account item for identity: " << ( account->identity() ? account->identity()->label() : "" ) << ", showing identity " << ( d->identity ? d->identity->label() : "" )<< " in widget.";
 	if ( !account || ( account->identity() != d->identity ) ) {
 		return;
 	}

@@ -23,7 +23,7 @@ namespace AV {
 
 VideoInput::VideoInput()
 {
-	kDebug() << "Executing Video Input's constructor!!!";
+	qDebug() << "Executing Video Input's constructor!!!";
 	img_softcorr_autobrightnesscontrast = false;
 	img_softcorr_autocolor = false;
 	img_softcorr_vflip = false;

@@ -75,7 +75,7 @@ BonjourContactConnection::BonjourContactConnection(const QHostAddress &address, 
 	local = alocal;
 	remote = aremote;
 
-	kDebug()<<"Starting to Wait for Connection";
+	qDebug()<<"Starting to Wait for Connection";
 	//If We Cannot Connect within 3 seconds, that's an error :(
 	if (! (socket->waitForConnected()))
 	{
@@ -119,7 +119,7 @@ const BonjourContactConnection::BonjourXmlToken BonjourContactConnection::getNex
 	ret.attributes = parser.attributes();
 	ret.text = parser.text();
 
-	kDebug()<<"Read Token: "<<ret.qualifiedName.toString();
+	qDebug()<<"Read Token: "<<ret.qualifiedName.toString();
 	return ret;
 }
 
@@ -172,7 +172,7 @@ void BonjourContactConnection::dataInSocket()
 	// Hense, we get the next Start Element or End Element
 	token = getNextToken(BonjourXmlStartOrEndElement);
 
-	kDebug()<<"Data Available: "<<token.qualifiedName.toString()<<" ConnectionState: "<<connectionState;
+	qDebug()<<"Data Available: "<<token.qualifiedName.toString()<<" ConnectionState: "<<connectionState;
 	
 	switch (connectionState) {
 		
@@ -221,7 +221,7 @@ void BonjourContactConnection::getStreamTag(BonjourXmlToken &token)
 	// From Now On, We are Guaranteed It it an Incoming Connection
 	remote = token.attributes.value("from").toString();
 	local = token.attributes.value("to").toString();
-	kDebug()<<"Local: "<<local<<" Remote: "<<remote;
+	qDebug()<<"Local: "<<local<<" Remote: "<<remote;
 
 	if (! local.isEmpty() && ! remote.isEmpty()) {
 		connectionState = BonjourConnectionConnected;
@@ -237,7 +237,7 @@ void BonjourContactConnection::getStreamTag(BonjourXmlToken &token)
 
 void BonjourContactConnection::sayStream()
 {
-	kDebug()<<"Sending <stream>";
+	qDebug()<<"Sending <stream>";
 
 	QString response;
 	QTextStream stream(&response);
@@ -278,7 +278,7 @@ void BonjourContactConnection::sendMessage(const Kopete::Message &message)
 		<<"<x xmlns='jabber:x:event'><composing /></x>"
 		<<"</message>";
 
-	kDebug()<<response;
+	qDebug()<<response;
 	socket->write(response.toUtf8());
 }
 
@@ -405,7 +405,7 @@ void BonjourContactConnection::setRemoteAndLocal(const QString &aremote, const Q
 {
 	remote = aremote;
 	local = alocal;
-	kDebug()<<"Local: "<<local<<" Remote: "<<remote;
+	qDebug()<<"Local: "<<local<<" Remote: "<<remote;
 	connectionState = BonjourConnectionConnected;
 }
 

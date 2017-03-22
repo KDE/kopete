@@ -38,7 +38,7 @@ ChatMembersListView::ChatMembersListView( QWidget *parent )
 
 void ChatMembersListView::slotContextMenuRequested( const QPoint & pos )
 {
-	kDebug() << "context menu requested";
+	qDebug() << "context menu requested";
 	QModelIndex index = indexAt(pos);
 	if ( model() )
 	{

@@ -347,7 +347,7 @@ void KopeteRichTextWidget::setTextUnderline(bool underline)
 
 void KopeteRichTextWidget::setTextStrikeOut(bool)
 {
-    kDebug() << "Strikeout not supported!";
+    qDebug() << "Strikeout not supported!";
 }
 
 void KopeteRichTextWidget::setCurrentCharFormat(const QTextCharFormat & format)

@@ -28,7 +28,7 @@
 #include <QTextCodec>
 #include <QtNetwork/QSslSocket>
 
-#include <kdebug.h> //for kDebug()
+#include <kdebug.h> //for qDebug()
 #include <KLocalizedString>
 
 #include "filetransfertask.h"

@@ -36,7 +36,7 @@ SocketTimeoutWatcher* SocketTimeoutWatcher::watch( QAbstractSocket* socket, quin
 {
 	if (watchedSocketSet.contains(socket))
 	{
-		kDebug() << "Socket is already being watched " << socket;
+		qDebug() << "Socket is already being watched " << socket;
 		return 0;
 	}
 

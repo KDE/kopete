@@ -31,7 +31,7 @@
 BonjourAddContactPage::BonjourAddContactPage( QWidget* parent )
 		: AddContactPage(parent)
 {
-	kDebug() ;
+	qDebug() ;
 	QVBoxLayout* l = new QVBoxLayout( this );
 	QWidget* w = new QWidget();
 	m_bonjourAddUI.setupUi( w );

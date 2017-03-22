@@ -221,7 +221,7 @@ void dlgJabberServices::slotDiscoFinished( )
 		{
 			const DiscoItem a = *it;
 			//dlgJabberServies_item *item=new dlgJabberServies_item( lvServices ,a.jid().full() , a.node() , a.name());
-			kDebug() << a.jid().full() << " " << a.node() << " " << a.name();
+			qDebug() << a.jid().full() << " " << a.node() << " " << a.name();
 			ServiceItem *item = new ServiceItem(a.jid().full(), a.node(), a.name());
 			trServices->addTopLevelItem(item);
 		}
@@ -305,7 +305,7 @@ void ServiceItem::slotDiscoFinished()
 		for(DiscoList::ConstIterator it = list.begin(); it != list.end(); ++it)
 		{
 			const DiscoItem a = *it;
-			//kDebug() << a.jid().full() << " " << a.node() << " " << a.name();
+			//qDebug() << a.jid().full() << " " << a.node() << " " << a.name();
 			ServiceItem *item = new ServiceItem(mAccount, a.jid().full(), a.node(), a.name());
 			addChild(item);
 		}
