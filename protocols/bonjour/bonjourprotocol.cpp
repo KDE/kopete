@@ -43,7 +43,7 @@ BonjourProtocol::BonjourProtocol( QObject* parent, const QStringList &/*args*/ )
 
 
 {
-	kDebug()<<"Protocol Icon is: "<<pluginIcon();
+	qDebug()<<"Protocol Icon is: "<<pluginIcon();
 
 	s_protocol = this;
 
@@ -71,7 +71,7 @@ Kopete::Contact *BonjourProtocol::deserializeContact(
 
 	if ( !account )
 	{
-		kDebug() << "Account doesn't exist, skipping";
+		qDebug() << "Account doesn't exist, skipping";
 		return 0;
 	}
 
@@ -82,13 +82,13 @@ Kopete::Contact *BonjourProtocol::deserializeContact(
 
 AddContactPage * BonjourProtocol::createAddContactWidget( QWidget *parent, Kopete::Account * /* account */ )
 {
-	kDebug()<< "Creating Add Contact Page";
+	qDebug()<< "Creating Add Contact Page";
 	return new BonjourAddContactPage( parent );
 }
 
 KopeteEditAccountWidget * BonjourProtocol::createEditAccountWidget( Kopete::Account *account, QWidget *parent )
 {
-	kDebug() << "Creating Edit Account Page";
+	qDebug() << "Creating Edit Account Page";
 	return new BonjourEditAccountWidget( parent, account );
 }
 

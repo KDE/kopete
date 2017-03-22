@@ -63,7 +63,7 @@ public:
      * 
      * if( !storage->isValid() )
      * {
-     *     kDebug() << "Contact list storage failed. Reason: " << storage->errorMessage();
+     *     qDebug() << "Contact list storage failed. Reason: " << storage->errorMessage();
      * }
      * @endcode
      * 

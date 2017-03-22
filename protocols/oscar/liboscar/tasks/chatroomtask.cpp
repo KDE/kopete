@@ -164,7 +164,7 @@ void ChatRoomTask::doInvite()
 
 void ChatRoomTask::doReject()
 {
-	kDebug() << "invitation to join chat " << m_room << " rejected!";
+	qDebug() << "invitation to join chat " << m_room << " rejected!";
 
 	Buffer* b = new Buffer();
 	b->addString( m_cookie, 8 );
@@ -186,7 +186,7 @@ void ChatRoomTask::doReject()
 
 void ChatRoomTask::doAccept()
 {
-	kDebug() << "invitation to join chat " << m_room << " accepted!";
+	qDebug() << "invitation to join chat " << m_room << " accepted!";
 	emit joinChatRoom( m_room, m_exchange );
 	setSuccess( true );
 }

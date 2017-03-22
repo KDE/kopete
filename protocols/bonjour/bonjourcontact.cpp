@@ -38,14 +38,14 @@ BonjourContact::BonjourContact( Kopete::Account* _account, const QString &unique
 : Kopete::Contact( _account, uniqueName, parent, QString("bonjour_protocol") ), connection(NULL), 
 	remoteHostName(), remoteAddress(), remotePort(0), m_msgManager(NULL)
 {
-	kDebug()<< " uniqueName: " << uniqueName;
+	qDebug()<< " uniqueName: " << uniqueName;
 
 	setOnlineStatus( BonjourProtocol::protocol()->bonjourOffline );
 }
 
 BonjourContact::~BonjourContact()
 {
-	kDebug()<<"Deleting Contact!";
+	qDebug()<<"Deleting Contact!";
 	delete connection;
 	remotePort = 0;
 }
@@ -62,7 +62,7 @@ void BonjourContact::serialize( QMap< QString, QString > & /*serializedData*/, Q
 
 Kopete::ChatSession* BonjourContact::manager( CanCreateFlags canCreateFlags )
 {
-	kDebug();
+	qDebug();
 	if ( m_msgManager )
 	{
 		return m_msgManager;
@@ -92,7 +92,7 @@ void BonjourContact::showContactSettings()
 
 void BonjourContact::sendMessage( Kopete::Message &message )
 {
-	kDebug();
+	qDebug();
 
 	// This is Blocking, we may lose upto 5 seconds here
 	if (! connection) {

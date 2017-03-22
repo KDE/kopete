@@ -69,7 +69,7 @@ const QStringList WPAccount::getHosts(const QString &Group)
 
 bool WPAccount::checkHost(const QString &Name)
 {
-//	kDebug() << "WPAccount::checkHost: " << Name;
+//	qDebug() << "WPAccount::checkHost: " << Name;
 	if (Name.toUpper() == QString::fromLatin1("LOCALHOST")) {
 		// Assume localhost is always there, but it will not appear in the samba output.
 		// Should never happen as localhost is now forbidden as contact, just for safety. GF

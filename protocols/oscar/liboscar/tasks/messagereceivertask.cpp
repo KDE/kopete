@@ -418,14 +418,14 @@ void MessageReceiverTask::parseRendezvousData( Buffer* b, Oscar::Message* msg )
 			QString chatroom = rx.cap( 3 );
 
 			if ( num != 10 )
-				kDebug() << "Warning: Expecting 10 but got " << num;
+				qDebug() << "Warning: Expecting 10 but got " << num;
 
 			msg->setExchange( exchange );
 			msg->setChatRoom( chatroom );
 			return;
 		}
 
-		kDebug() << "Error: Join string '" << joinString << "' did not match the regex.";
+		qDebug() << "Error: Join string '" << joinString << "' did not match the regex.";
 
 		return;
 	}

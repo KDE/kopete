@@ -168,7 +168,7 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 	for(entriesIt = entries.begin(); entriesIt != entries.end(); ++entriesIt)
 	{
 		currentEntry = const_cast<KArchiveEntry*>(rootDir->entry(*entriesIt));
-// 		kDebug() << "Current entry name: " << currentEntry->name();
+// 		qDebug() << "Current entry name: " << currentEntry->name();
 		if (currentEntry->isDirectory())
 		{
 			currentDir = dynamic_cast<KArchiveDirectory*>( currentEntry );
@@ -176,58 +176,58 @@ int ChatWindowStyleManager::installStyle(const QString &styleBundlePath)
 			{
 				if( currentDir->entry(QString::fromUtf8("Contents")) )
 				{
-// 					kDebug() << "Contents found";
+// 					qDebug() << "Contents found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources")) )
 				{
-// 					kDebug() << "Contents/Resources found";
+// 					qDebug() << "Contents/Resources found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Incoming")) )
 				{
-// 					kDebug() << "Contents/Resources/Incoming found";
+// 					qDebug() << "Contents/Resources/Incoming found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Outgoing")) )
 				{
-// 					kDebug() << "Contents/Resources/Outgoing found";
+// 					qDebug() << "Contents/Resources/Outgoing found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/main.css")) )
 				{
-// 					kDebug() << "Contents/Resources/main.css found";
+// 					qDebug() << "Contents/Resources/main.css found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Footer.html")) )
 				{
-// 					kDebug() << "Contents/Resources/Footer.html found";
+// 					qDebug() << "Contents/Resources/Footer.html found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Status.html")) )
 				{
-// 					kDebug() << "Contents/Resources/Status.html found";
+// 					qDebug() << "Contents/Resources/Status.html found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Header.html")) )
 				{
-// 					kDebug() << "Contents/Resources/Header.html found";
+// 					qDebug() << "Contents/Resources/Header.html found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Incoming/Content.html")) )
 				{
-// 					kDebug() << "Contents/Resources/Incoming/Content.html found";
+// 					qDebug() << "Contents/Resources/Incoming/Content.html found";
 					validResult += 1;
 				}
 				if( currentDir->entry(QString::fromUtf8("Contents/Resources/Outgoing/Content.html")) )
 				{
-// 					kDebug() << "Contents/Resources/Outgoing/Content.html found";
+// 					qDebug() << "Contents/Resources/Outgoing/Content.html found";
 					validResult += 1;
 				}
 			}
 		}
 	}
-// 	kDebug() << "Valid result: " << QString::number(validResult);
+// 	qDebug() << "Valid result: " << QString::number(validResult);
 	// The archive is a valid style bundle.
 	if(validResult >= 8)
 	{

@@ -231,7 +231,7 @@ void IdentityManager::load()
 								 "Failed to create identity for '" << identityId << "'" << endl;
 			continue;
 		}
-		kDebug() << "Created identity " << identityId;
+		qDebug() << "Created identity " << identityId;
 	}
 
 	// get the default identity

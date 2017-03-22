@@ -1410,7 +1410,7 @@ void JabberContact::startJingleAudioCall()
 
 void JabberContact::startJingleVideoCall()
 {
-	kDebug() << "Start a Jingle Session";
+	qDebug() << "Start a Jingle Session";
 
 	//JingleCallsManager should manage messages itself.
 	/*XMPP::Jid jid = rosterItem().jid();

@@ -105,7 +105,7 @@ Kopete::OnlineStatus OscarStatusManager::onlineStatusOf( const Oscar::Presence &
 	
 	if ( (pres.flags() & Oscar::Presence::XStatus) || (pres.flags() & Oscar::Presence::ExtStatus2) )
 	{
-		kDebug() << "Creating Kopete::OnlineStatus for XStatus, internal status: " << pres.internalStatus();
+		qDebug() << "Creating Kopete::OnlineStatus for XStatus, internal status: " << pres.internalStatus();
 		// XStatus, we have to create new KOS
 		Oscar::PresenceOverlay overlay = pscOverlayForFlags( pres.flags() );
 		const Oscar::PresenceType &type = pscTypeForType( pres.type() );
@@ -117,7 +117,7 @@ Kopete::OnlineStatus OscarStatusManager::onlineStatusOf( const Oscar::Presence &
 	}
 	else if ( pres.flags() & Oscar::Presence::ExtStatus )
 	{
-		kDebug() << "Creating Kopete::OnlineStatus for ExtStatus, internal status: " << pres.internalStatus();
+		qDebug() << "Creating Kopete::OnlineStatus for ExtStatus, internal status: " << pres.internalStatus();
 		// ExtStatus, we have to create new KOS
 		Oscar::PresenceOverlay overlay = pscOverlayForFlags( pres.flags() );
 		const Oscar::PresenceType &type = pscTypeForType( pres.type() );

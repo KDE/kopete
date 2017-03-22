@@ -131,7 +131,7 @@ bool BonjourAccount::startLocalServer()
                 else
                         port++;
 
-	kDebug()<<"Listening On Port: "<<listeningPort;
+	qDebug()<<"Listening On Port: "<<listeningPort;
 
         return localServer->isListening();
 }
@@ -148,7 +148,7 @@ void BonjourAccount::startBrowse()
 	QObject::connect(browser,SIGNAL(serviceRemoved(KDNSSD::RemoteService::Ptr)),
 			this,SLOT(goingOffline(KDNSSD::RemoteService::Ptr)));
 
-	kDebug()<<"Starting Browser";
+	qDebug()<<"Starting Browser";
 	browser->startBrowse();
 }
 
@@ -174,7 +174,7 @@ void BonjourAccount::startPublish()
 
         service->setTextData(map);
 
-	kDebug()<<"Starting Publish";
+	qDebug()<<"Starting Publish";
 	QObject::connect(service, SIGNAL(published(bool)), this, SLOT(published(bool)));
         service->publishAsync();
 }
@@ -183,9 +183,9 @@ void BonjourAccount::published(bool success)
 {
 	// If we have successfully published, great :)
 	if (success) {
-		kDebug()<<"Publish Successful";
+		qDebug()<<"Publish Successful";
 	} else {
-		kDebug()<<"Publish Failed";
+		qDebug()<<"Publish Failed";
 		disconnect();
 		KMessageBox::error(Kopete::UI::Global::mainWidget(),
 		i18n("Unable to publish Bonjour service. Currently the Bonjour plugin only works with Avahi."));
@@ -216,10 +216,10 @@ void BonjourAccount::connect( const Kopete::OnlineStatus& /* initialStatus */ )
 void BonjourAccount::comingOnline(KDNSSD::RemoteService::Ptr pointer)
 {
 	if (! pointer->resolve()) {
-		kDebug()<<"Unable to Resolve! Dumping Contact";
+		qDebug()<<"Unable to Resolve! Dumping Contact";
 	}
 
-	kDebug()<<"Coming Online:"<<pointer->serviceName();
+	qDebug()<<"Coming Online:"<<pointer->serviceName();
 	
 	if (pointer->serviceName() == username)			// Don't Add Ourselves
 		return;
@@ -239,10 +239,10 @@ void BonjourAccount::comingOnline(KDNSSD::RemoteService::Ptr pointer)
 		display = pointer->serviceName().split('@')[0];
 
 	QString hostName = pointer->hostName();
-	kDebug()<<"Hostname is:"<<hostName;
+	qDebug()<<"Hostname is:"<<hostName;
 	if (! hostName.isEmpty()) {
 		QHostAddress hostAddress = KDNSSD::ServiceBrowser::resolveHostName(hostName);
-		kDebug()<<"Host Address is:"<<hostAddress;
+		qDebug()<<"Host Address is:"<<hostAddress;
 
 		if (hostAddress != QHostAddress() ) {
 			Kopete::MetaContact *mc;
@@ -326,7 +326,7 @@ void BonjourAccount::disconnect()
 
 void BonjourAccount::slotGoOnline ()
 {
-	kDebug();
+	qDebug();
 
 	if (!isConnected())
 		connect();
@@ -342,7 +342,7 @@ void BonjourAccount::slotGoOnline ()
 
 void BonjourAccount::slotGoAway ()
 {
-	kDebug();
+	qDebug();
 
 	if (!isConnected ())
 		connect();
@@ -359,7 +359,7 @@ void BonjourAccount::slotGoAway ()
 
 void BonjourAccount::slotGoOffline ()
 {
-	kDebug();
+	qDebug();
 
 	if (isConnected ())
 		disconnect ();
@@ -436,16 +436,16 @@ void BonjourAccount::newIncomingConnection()
 
 void BonjourAccount::discoveredUserName(BonjourContactConnection *conn, const QString &user)
 {
-	kDebug()<<"User Making Contact (unverified): "<<user;
+	qDebug()<<"User Making Contact (unverified): "<<user;
 
 	BonjourContact *c;
 
 	if (! (c = verifyUser(conn, user))) {
-		kDebug()<<"Ignoring Unverified User: "<<user;
+		qDebug()<<"Ignoring Unverified User: "<<user;
 		return;
 	}
 		
-	kDebug()<<"User Verified: "<<user;
+	qDebug()<<"User Verified: "<<user;
 
 	unknownConnections.removeAll(conn);
 
@@ -456,13 +456,13 @@ void BonjourAccount::usernameNotInStream(BonjourContactConnection *conn)
 {
 	QList <BonjourContact *> list = getContactsByAddress(conn->getHostAddress());
 
-	kDebug()<<"Looking Up Via IP Address"<<conn->getHostAddress()<<list;
+	qDebug()<<"Looking Up Via IP Address"<<conn->getHostAddress()<<list;
 
 	// Set this connection to first user in the list
 	if (list.size()) {
 		BonjourContact *c = list[0];
 	
-		kDebug()<<"Assigned to Contact: "<<c->getusername();
+		qDebug()<<"Assigned to Contact: "<<c->getusername();
 
 		unknownConnections.removeAll(conn);
 

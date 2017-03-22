@@ -179,7 +179,7 @@ bool ContactListModel::loadModelSettings( const QString& modelType )
 		QFile file( fileName );
 		if( !file.open( QIODevice::ReadOnly ) || !doc.setContent( &file ) )
 		{
-			kDebug() << "error opening/parsing file " << fileName;
+			qDebug() << "error opening/parsing file " << fileName;
 			QDomElement dummyElement;
 			loadModelSettingsImpl( dummyElement );
 			return false;
@@ -222,7 +222,7 @@ bool ContactListModel::saveModelSettings( const QString& modelType )
 	{
 		QFile file( fileName );
 		if( !file.open( QIODevice::ReadOnly ) || !doc.setContent( &file ) )
-			kDebug() << "error opening/parsing file " << fileName;
+			qDebug() << "error opening/parsing file " << fileName;
 
 		file.close();
 	}
@@ -258,7 +258,7 @@ bool ContactListModel::saveModelSettings( const QString& modelType )
 	QFile file( fileName );
 	if ( !file.open( QIODevice::WriteOnly | QIODevice::Text ) )
 	{
-		kDebug() << "error saving file " << fileName;
+		qDebug() << "error saving file " << fileName;
 		return false;
 	}
 
@@ -414,7 +414,7 @@ bool ContactListModel::dropUrl( const QMimeData *data, int row, const QModelInde
 			QString accountId = QUrlQuery(url).queryItemValue( "accountId" );
 			QString contactId = url.host();
 
-			kDebug() << "protocolId=" << protocolId << ", accountId=" << accountId << ", contactId=" << contactId;
+			qDebug() << "protocolId=" << protocolId << ", accountId=" << accountId << ", contactId=" << contactId;
 			Kopete::Account *account = Kopete::AccountManager::self()->findAccount( protocolId, accountId );
 			if( account && account->contacts().value( contactId ) )
 			{

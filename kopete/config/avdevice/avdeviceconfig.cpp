@@ -47,7 +47,7 @@
 AVDeviceConfig::AVDeviceConfig(QWidget *parent, const QVariantList &args)
  : KCModule( parent, args )
 {
-	kDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::componentData() called. ";
+	qDebug() << "kopete:config (avdevice): KopeteAVDeviceConfigFactory::componentData() called. ";
 // "Video" TAB ============================================================
 	mPrfsVideoDevice = new Ui_AVDeviceConfig_VideoDevice();
 	mPrfsVideoDevice->setupUi(this);
@@ -152,7 +152,7 @@ void AVDeviceConfig::setupControls()
 	menuCtrls = mVideoDevicePool->getSupportedMenuControls();
 	actionCtrls = mVideoDevicePool->getSupportedActionControls();
 
-	kDebug() << "Supported controls:" << numericCtrls.size() << "numeric," << booleanCtrls.size()
+	qDebug() << "Supported controls:" << numericCtrls.size() << "numeric," << booleanCtrls.size()
 		 << "boolean," << menuCtrls.size() << "menus," << actionCtrls.size() << "actions.";
 
 	/* SETUP GUI-elements */
@@ -301,12 +301,12 @@ void AVDeviceConfig::slotValueChanged(int)
 
 void AVDeviceConfig::slotDeviceKComboBoxChanged(int)
 {
-	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
+	qDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 	int newdevice = mPrfsVideoDevice->mDeviceKComboBox->currentIndex();
-	kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDevice() << "New device: " << newdevice;
+	qDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) Current device: " << mVideoDevicePool->currentDevice() << "New device: " << newdevice;
 	if ((newdevice >= 0 && newdevice < mVideoDevicePool->size()) && (newdevice != mVideoDevicePool->currentDevice()))
 	{
-		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. ";
+		qDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) should change device. ";
 		stopCapturing();
 		mVideoDevicePool->close();
 		mVideoDevicePool->open(newdevice);
@@ -315,7 +315,7 @@ void AVDeviceConfig::slotDeviceKComboBoxChanged(int)
 		mVideoDevicePool->fillStandardKComboBox(mPrfsVideoDevice->mStandardKComboBox);
 		setupControls();
 		startCapturing();
-		kDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
+		qDebug() << "kopete:config (avdevice): slotDeviceKComboBoxChanged(int) called. ";
 		emit changed( true );
 	}
 }
@@ -354,7 +354,7 @@ void AVDeviceConfig::slotUpdateImage()
 	{
 		mVideoDevicePool->getImage(&qimage);
 		mPrfsVideoDevice->mVideoImageLabel->setPixmap(QPixmap::fromImage(qimage));
-		//kDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
+		//qDebug() << "kopete (avdeviceconfig_videoconfig): Image updated.";
 	}
 }
 
