@@ -17,14 +17,14 @@
 #ifndef XTRAZSTATUSACTION_H
 #define XTRAZSTATUSACTION_H
 
-#include <kaction.h>
+#include <QAction>
 
 #include "xtrazstatus.h"
 
 namespace Xtraz
 {
 
-class StatusAction: public KAction
+class StatusAction: public QAction
 {
 	Q_OBJECT
 public:

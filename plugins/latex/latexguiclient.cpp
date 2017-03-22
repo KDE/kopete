@@ -19,7 +19,7 @@
 
 #include <qvariant.h>
 
-#include <kaction.h>
+#include <QAction>
 #include <KLocalizedString>
 #include <kshortcut.h>
 #include <kmessagebox.h>
@@ -42,9 +42,9 @@ LatexGUIClient::LatexGUIClient( Kopete::ChatSession *parent )
 
 	m_manager = parent;
 
-	KAction *previewAction = new KAction( KIcon("latex"), i18n( "Preview Latex Images" ), this );
+	QAction *previewAction = new QAction( KIcon("latex"), i18n( "Preview Latex Images" ), this );
         actionCollection()->addAction( "latexPreview", previewAction );
-	previewAction->setShortcut( KShortcut(Qt::CTRL + Qt::Key_L) );
+    previewAction->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_L) );
 	connect(previewAction, SIGNAL(triggered(bool)), this, SLOT(slotPreview()) );
 
 	setXMLFile( "latexchatui.rc" );

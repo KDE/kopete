@@ -32,7 +32,7 @@
 #include <ktoolbar.h>
 #include <kauthorized.h>
 #include <kemoticons.h>
-#include <KAction>
+#include <QAction>
 #include <KActionMenu>
 #include <KActionCollection>
 

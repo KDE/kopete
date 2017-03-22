@@ -20,12 +20,12 @@
 #include <QMap>
 #include <QList>
 
-#include <KAction>
+#include <QAction>
   
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
-class KAction;
+class QAction;
 class KActionCollection;
 namespace Kopete { class Account; }
 namespace Kopete { class ChatSession; }
@@ -58,7 +58,7 @@ public:
 	/**
 	 * Return the actions for this contact
 	 */
-	//virtual QList<KAction *> *customContextMenuActions();
+	//virtual QList<QAction *> *customContextMenuActions();
 	using Kopete::Contact::customContextMenuActions;
 	/**
 	 * Returns a Kopete::ChatSession associated with this contact
@@ -97,7 +97,7 @@ protected:
 	Kopete::ChatSession* m_msgManager;
 	KActionCollection* m_actionCollection;
 	Type m_type;
-	KAction* m_actionPrefs;
+	QAction* m_actionPrefs;
 };
 
 #endif

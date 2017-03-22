@@ -20,7 +20,7 @@
 #include "kopetecontact.h"
 #include "kopetepluginmanager.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <kstandardaction.h>
 #include <KLocalizedString>
 #include <kgenericfactory.h>
@@ -44,10 +44,10 @@ PrivacyGUIClient::PrivacyGUIClient(Kopete::ChatSession *parent)
 
 	QList<Kopete::Contact*> mb=m_manager->members();
 
-	actionAddToWhiteList = new KAction( KIcon("privacy_whitelist"), i18n("Add to WhiteList" ), this );
+	actionAddToWhiteList = new QAction( KIcon("privacy_whitelist"), i18n("Add to WhiteList" ), this );
         actionCollection()->addAction( "addToWhiteList", actionAddToWhiteList );
 	connect( actionAddToWhiteList, SIGNAL(triggered(bool)), this, SLOT(slotAddToWhiteList()) );
-	actionAddToBlackList = new KAction( KIcon("privacy_blacklist"), i18n("Add to BlackList" ), this );
+	actionAddToBlackList = new QAction( KIcon("privacy_blacklist"), i18n("Add to BlackList" ), this );
         actionCollection()->addAction( "addToBlackList", actionAddToBlackList );
 	connect( actionAddToBlackList, SIGNAL(triggered(bool)), this, SLOT(slotAddToBlackList()) );
 	actionAddToWhiteList->setEnabled(true);

@@ -17,7 +17,7 @@
 
 #include "bonjouraccount.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <KLocalizedString>
 #include <kactionmenu.h>

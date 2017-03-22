@@ -25,7 +25,7 @@
 #include "oscartypeclasses.h"
 #include "oscarpresence.h"
 
-class KAction;
+class QAction;
 class KToggleAction;
 
 namespace Kopete { class StatusMessage; }
@@ -110,7 +110,7 @@ private:
 	Kopete::StatusMessage mInitialStatusMessage;
 	ICQUserInfoWidget* mInfoWidget;
 
-	KAction* mEditInfoAction;
+	QAction* mEditInfoAction;
 	KToggleAction* mActionInvisible;
 };
 

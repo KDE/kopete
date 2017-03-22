@@ -25,7 +25,7 @@
 
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
-#include <kaction.h>
+#include <QAction>
 #include <kactioncollection.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
@@ -56,7 +56,7 @@ StatisticsPlugin::StatisticsPlugin( QObject *parent, const QVariantList &/*args*
 {
 
 	m_db = 0L;
-	KAction *viewMetaContactStatistics = new KAction( QIcon::fromTheme(QStringLiteral("view-statistics")), i18n("View &Statistics" ),
+	QAction *viewMetaContactStatistics = new QAction( QIcon::fromTheme(QStringLiteral("view-statistics")), i18n("View &Statistics" ),
 		this );
 	actionCollection()->addAction ( "viewMetaContactStatistics", viewMetaContactStatistics );
 	connect(viewMetaContactStatistics, SIGNAL(triggered(bool)), this, SLOT(slotViewStatistics()));

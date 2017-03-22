@@ -28,7 +28,7 @@
 #include <QtGui/QTextCharFormat>
 #include <QtGui/QTextBlock>
 
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <KLocalizedString>
 #include <krandom.h>
@@ -353,7 +353,7 @@ void OscarContact::setEncoding( int mib )
 }
 
 //here's where a filetransfer usually begins
-//could be called by a KAction or our dcop code or something
+//could be called by a QAction or our dcop code or something
 void OscarContact::sendFile( const KUrl &sourceURL, const QString &altFileName, uint fileSize )
 {
 	kDebug(OSCAR_GEN_DEBUG) << "file: '" << sourceURL

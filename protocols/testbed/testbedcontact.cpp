@@ -18,7 +18,7 @@
 
 #include <QList>
 
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <KLocalizedString>
 
@@ -97,11 +97,11 @@ Kopete::ChatSession* TestbedContact::manager( CanCreateFlags canCreateFlags )
 }
 
 
-//QList<KAction *> *TestbedContact::customContextMenuActions() //OBSOLETE
+//QList<QAction *> *TestbedContact::customContextMenuActions() //OBSOLETE
 //{
 	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
 	/*m_actionCollection = new KActionCollection( this, "userColl" );
-	m_actionPrefs = new KAction(i18n( "&Contact Settings" ), 0, this,
+	m_actionPrefs = new QAction(i18n( "&Contact Settings" ), 0, this,
 			SLOT(showContactSettings()), m_actionCollection, "contactSettings" );
 
 	return m_actionCollection;*/
