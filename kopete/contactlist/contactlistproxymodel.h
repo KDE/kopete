@@ -37,7 +37,7 @@ class KOPETE_CONTACT_LIST_EXPORT ContactListProxyModel : public QSortFilterProxy
 {
 Q_OBJECT
 	public:
-		ContactListProxyModel(QObject* parent = 0);
+		ContactListProxyModel(QObject* parent = nullptr);
 		~ContactListProxyModel();
 	
 	public slots:

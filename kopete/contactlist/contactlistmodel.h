@@ -43,7 +43,7 @@ class KOPETE_CONTACT_LIST_EXPORT ContactListModel : public QAbstractItemModel
 {
 Q_OBJECT
 public:
-	ContactListModel(QObject* parent = 0);
+	ContactListModel(QObject* parent = nullptr);
 
 	void init();
 

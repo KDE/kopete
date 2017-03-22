@@ -28,7 +28,7 @@
 #include <QPointer>
 
 #include <kdebug.h>
-#include <kdeversion.h>
+
 #include <kglobal.h>
 #include <KLocalizedString>
 #include <kmessagebox.h>

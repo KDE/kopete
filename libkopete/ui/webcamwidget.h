@@ -36,7 +36,7 @@ public:
 	* @brief WebcamWidget constructor.
 	* @param parent The parent widget of this widget
 	*/
-	WebcamWidget(QWidget* parent = 0);
+	WebcamWidget(QWidget* parent = nullptr);
 	~WebcamWidget();
 
 	/**

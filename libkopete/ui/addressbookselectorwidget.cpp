@@ -30,7 +30,7 @@
 #include <KLocalizedString>
 #include <kiconloader.h>
 
-#include <kdeversion.h>
+
 #include <qinputdialog.h>
 
 #include <QPushButton>

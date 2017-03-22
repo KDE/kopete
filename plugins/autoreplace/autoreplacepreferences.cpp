@@ -59,7 +59,7 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const QVariantL
 		SLOT(slotEditCouple()) );
 	connect( preferencesDialog->m_remove, SIGNAL(pressed()),
 		SLOT(slotRemoveCouple()) );
-	connect( preferencesDialog->m_list, SIGNAL(selectionChanged()),
+    connect( preferencesDialog->m_list, SIGNAL(itemSelectionChanged()),
 		SLOT(slotSelectionChanged()) );
 	connect( preferencesDialog->m_key, SIGNAL(textChanged(QString)),
 		SLOT(slotEnableAddEdit(QString)) ); 

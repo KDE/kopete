@@ -27,7 +27,7 @@ namespace Xtraz
 class StatusModel : public QAbstractTableModel
 {
 public:
-	StatusModel( QObject * parent = 0 );
+	StatusModel( QObject * parent = nullptr );
 
 	QList<Xtraz::Status> getStatuses() const;
 	void setStatuses( const QList<Xtraz::Status> &statusList );

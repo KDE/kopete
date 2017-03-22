@@ -23,7 +23,7 @@
 
 
 #include <KLocalizedString>
-#include <kdeversion.h>
+
 #include <kguiitem.h>
 #include <ksettings/dialog.h>
 #include <kstandardaction.h>

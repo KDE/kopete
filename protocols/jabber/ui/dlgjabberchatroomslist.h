@@ -25,7 +25,7 @@ class dlgJabberChatRoomsList : public KDialog
   Q_OBJECT
 
 public:
-	explicit dlgJabberChatRoomsList(JabberAccount* account, const QString& server = QString(), const QString& nick = QString(), QWidget* parent = 0);
+	explicit dlgJabberChatRoomsList(JabberAccount* account, const QString& server = QString(), const QString& nick = QString(), QWidget* parent = nullptr);
 	~dlgJabberChatRoomsList();
   /*$PUBLIC_FUNCTIONS$*/
 

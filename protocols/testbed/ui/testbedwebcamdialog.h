@@ -40,7 +40,7 @@ class TestbedWebcamDialog : public KDialog
 {
 Q_OBJECT
 public:
-	explicit TestbedWebcamDialog( const QString &, QWidget* parent = 0 );
+	explicit TestbedWebcamDialog( const QString &, QWidget* parent = nullptr );
 	~TestbedWebcamDialog();
 	
 public slots:

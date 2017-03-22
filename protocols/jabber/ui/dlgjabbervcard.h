@@ -54,7 +54,7 @@ public:
 	 * @param widget Parent widget.
 	 * @param name widget name.
 	 */
-	dlgJabberVCard (JabberAccount *account, JabberBaseContact *contact, QWidget * parent = 0);
+	dlgJabberVCard (JabberAccount *account, JabberBaseContact *contact, QWidget * parent = nullptr);
 	~dlgJabberVCard ();
 
 private slots:

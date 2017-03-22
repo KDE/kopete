@@ -23,7 +23,7 @@
 #include <QStringList>
 #include <KDebug>
 
-#include <kdeversion.h>
+
 
 namespace Kopete {
 

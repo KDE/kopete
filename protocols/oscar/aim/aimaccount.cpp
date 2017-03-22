@@ -21,7 +21,7 @@
 #include <kconfig.h>
 #include <kdialog.h>
 #include <KLocalizedString>
-#include <kmenu.h>
+
 #include <kactionmenu.h>
 #include <kmessagebox.h>
 #include <ktoggleaction.h>

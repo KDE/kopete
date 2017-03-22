@@ -30,10 +30,10 @@ class IdPushButton : public KPushButton
 {
 	Q_OBJECT
 public:
-	IdPushButton(unsigned int id, QWidget * parent = 0);
-	IdPushButton(unsigned int id, const QString text, QWidget * parent = 0);
-	IdPushButton(unsigned int id, const KIcon icon, const QString text, QWidget * parent = 0);
-	IdPushButton(unsigned int id, KGuiItem item, QWidget * parent = 0);
+	IdPushButton(unsigned int id, QWidget * parent = nullptr);
+	IdPushButton(unsigned int id, const QString text, QWidget * parent = nullptr);
+	IdPushButton(unsigned int id, const KIcon icon, const QString text, QWidget * parent = nullptr);
+	IdPushButton(unsigned int id, KGuiItem item, QWidget * parent = nullptr);
 private:
 	unsigned int _id;
 private slots:
@@ -47,8 +47,8 @@ class IdComboBox : public KComboBox
 {
 	Q_OBJECT
 public:
-	IdComboBox(unsigned int id, QWidget * parent = 0);
-	IdComboBox(unsigned int id, bool rw, QWidget * parent = 0);
+	IdComboBox(unsigned int id, QWidget * parent = nullptr);
+	IdComboBox(unsigned int id, bool rw, QWidget * parent = nullptr);
 private:
 	unsigned int _id;
 private slots:
@@ -62,8 +62,8 @@ class IdCheckBox : public QCheckBox
 {
 	Q_OBJECT
 public:
-	IdCheckBox(unsigned int id, QWidget * parent = 0);
-	IdCheckBox(unsigned int id, const QString & text, QWidget * parent = 0);
+	IdCheckBox(unsigned int id, QWidget * parent = nullptr);
+	IdCheckBox(unsigned int id, const QString & text, QWidget * parent = nullptr);
 private:
 	unsigned int _id;
 private slots:
@@ -77,8 +77,8 @@ class IdSlider : public QSlider
 {
 	Q_OBJECT
 public:
-	IdSlider(unsigned int id, QWidget * parent = 0);
-	IdSlider(unsigned int id, Qt::Orientation orientation, QWidget * parent = 0);
+	IdSlider(unsigned int id, QWidget * parent = nullptr);
+	IdSlider(unsigned int id, Qt::Orientation orientation, QWidget * parent = nullptr);
 private:
 	unsigned int _id;
 private slots:

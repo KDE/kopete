@@ -1,8 +1,9 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <author>Duncan Mac-Vicar</author>
  <class>LatexPrefsUI</class>
- <widget class="QWidget" name="LatexPrefsUI" >
-  <property name="geometry" >
+ <widget class="QWidget" name="LatexPrefsUI">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,64 +11,76 @@
     <height>437</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QLabel" name="textLabel1" >
-     <property name="frameShape" >
+    <widget class="QLabel" name="textLabel1">
+     <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>The KopeteTeX plugin allows Kopete to render LaTeX formulas in the chat window. The sender must enclose the formula between two pairs of $ signs. ie: $$formula$$
 This plugin requires that the ImageMagick convert program be installed in order to work.</string>
      </property>
-     <property name="wordWrap" >
+     <property name="wordWrap">
       <bool>true</bool>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
       <string>Options</string>
      </property>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <layout class="QVBoxLayout" >
+       <layout class="QVBoxLayout">
         <item>
-         <layout class="QHBoxLayout" >
+         <layout class="QHBoxLayout">
           <item>
-           <widget class="QLabel" name="textLabel4" >
-            <property name="text" >
+           <widget class="QLabel" name="textLabel4">
+            <property name="text">
              <string>LaTeX include file:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="KUrlRequester" name="includeUrlRequester" />
+           <widget class="KUrlRequester" name="includeUrlRequester"/>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" >
+         <layout class="QHBoxLayout">
           <item>
-           <widget class="QLabel" name="textLabel2" >
-            <property name="text" >
+           <widget class="QLabel" name="textLabel2">
+            <property name="text">
              <string>Rendering resolution (DPI):</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="KIntNumInput" name="horizontalDPI" />
+           <widget class="KIntNumInput" name="horizontalDPI"/>
           </item>
           <item>
-           <widget class="QLabel" name="textLabel3" >
-            <property name="text" >
+           <widget class="QLabel" name="textLabel3">
+            <property name="text">
              <string>x</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="KIntNumInput" name="verticalDPI" />
+           <widget class="KIntNumInput" name="verticalDPI"/>
           </item>
          </layout>
         </item>
@@ -75,10 +88,10 @@ This plugin requires that the ImageMagick convert program be installed in order 
       </item>
       <item>
        <spacer>
-        <property name="orientation" >
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0">
          <size>
           <width>40</width>
           <height>20</height>
@@ -91,10 +104,10 @@ This plugin requires that the ImageMagick convert program be installed in order 
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>40</height>
@@ -104,7 +117,7 @@ This plugin requires that the ImageMagick convert program be installed in order 
    </item>
   </layout>
  </widget>
-  <customwidgets>
+ <customwidgets>
   <customwidget>
    <class>KIntNumInput</class>
    <extends>QWidget</extends>
@@ -112,7 +125,7 @@ This plugin requires that the ImageMagick convert program be installed in order 
   </customwidget>
   <customwidget>
    <class>KUrlRequester</class>
-   <extends>QFrame</extends>
+   <extends>QWidget</extends>
    <header>kurlrequester.h</header>
   </customwidget>
  </customwidgets>

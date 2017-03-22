@@ -37,7 +37,7 @@
 #include <kstandarddirs.h>
 #include <qinputdialog.h>
 
-#include <kdeversion.h>
+
 #include <kfiledialog.h>
 
 #include "kopeteaccount.h"

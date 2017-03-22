@@ -60,7 +60,7 @@
 #include <kmenubar.h>
 #include <kstatusbar.h>
 #include <kwindowsystem.h>
-#include <kdeversion.h>
+
 #include <kplugininfo.h>
 #include <ksqueezedtextlabel.h>
 #include <kstringhandler.h>

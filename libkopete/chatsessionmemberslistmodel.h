@@ -34,7 +34,7 @@ class KOPETE_EXPORT ChatSessionMembersListModel : public QAbstractListModel
 {
 	Q_OBJECT
 public:
-	explicit ChatSessionMembersListModel(QObject * parent = 0);
+	explicit ChatSessionMembersListModel(QObject * parent = nullptr);
 
 	~ChatSessionMembersListModel();
 

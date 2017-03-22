@@ -36,7 +36,7 @@
 #include <QVBoxLayout>
 
 #include <kconfig.h>
-#include <kdeversion.h>
+
 #include <kiconeffect.h>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>

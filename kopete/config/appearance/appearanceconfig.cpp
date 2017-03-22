@@ -33,7 +33,7 @@
 #include <QPixmap>
 #include <QVBoxLayout>
 
-#include <kdeversion.h>
+
 
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
@@ -42,7 +42,6 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 #include <kio/netaccess.h>
-#include <KHTMLView>
 #include <QLineEdit>
 #include <KLocalizedString>
 #include <kmessagebox.h>

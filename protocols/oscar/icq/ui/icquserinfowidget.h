@@ -42,8 +42,8 @@ class ICQUserInfoWidget : public KPageDialog
 {
 Q_OBJECT
 public:
-	ICQUserInfoWidget( ICQAccount* account, const QString& contactId, QWidget* parent = 0, bool ownInfo = false );
-	ICQUserInfoWidget( ICQContact* contact, QWidget* parent = 0, bool ownInfo = false );
+	ICQUserInfoWidget( ICQAccount* account, const QString& contactId, QWidget* parent = nullptr, bool ownInfo = false );
+	ICQUserInfoWidget( ICQContact* contact, QWidget* parent = nullptr, bool ownInfo = false );
 	~ICQUserInfoWidget();
 	
 	QList<ICQInfoBase*> getInfoData() const;

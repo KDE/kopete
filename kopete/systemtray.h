@@ -41,7 +41,7 @@ public:
 	/**
 	 * Retrieve the system tray instance
 	 */
-	static KopeteSystemTray* systemTray( QWidget* parent = 0);
+	static KopeteSystemTray* systemTray( QWidget* parent = nullptr);
 
 	virtual ~KopeteSystemTray();
 

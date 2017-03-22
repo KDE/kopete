@@ -35,7 +35,7 @@ class BonjourAddContactPage : public AddContactPage
 {
 	Q_OBJECT
 public:
-	BonjourAddContactPage( QWidget* parent = 0 );
+    BonjourAddContactPage( QWidget* parent = nullptr );
 	~BonjourAddContactPage();
 
     	/**

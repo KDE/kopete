@@ -27,7 +27,7 @@
 
 #include <kdebug.h>
 #include <KLocalizedString>
-#include <kdeversion.h>
+
 #include <kmessagebox.h>
 #include <knotification.h>
 #include <kmessagebox_queued.h>

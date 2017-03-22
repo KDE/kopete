@@ -584,7 +584,7 @@ public slots:
 	/**
 	 * Display the edit account widget for the account
 	 */
-	void editAccount( QWidget* parent = 0L );
+	void editAccount( QWidget* parent = nullptr );
 
 	/**
 	 * Add a user to the blacklist. The default implementation calls

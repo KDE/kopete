@@ -67,7 +67,7 @@
 // KDE includes
 #include <kactioncollection.h>
 #include <kdebug.h>
-#include <kdeversion.h>
+
 #include <kfiledialog.h>
 #include <khtmlview.h>
 #include <KLocalizedString>

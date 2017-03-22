@@ -58,7 +58,7 @@ class KOPETE_EXPORT KABCPersistence : public QObject
 		 */
 		static KABCPersistence* self();
 		
-		explicit KABCPersistence( QObject * parent = 0, const char * name = 0 );
+		explicit KABCPersistence( QObject * parent = nullptr, const char * name = 0 );
 		~KABCPersistence();
 		/**
 		 * @brief Access Kopete's KDE address book instance

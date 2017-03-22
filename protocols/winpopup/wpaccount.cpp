@@ -27,16 +27,15 @@
 
 // KDE Includes
 #include <kdebug.h>
-#include <kmenu.h>
+
 #include <KLocalizedString>
 #include <kconfig.h>
 #include <kactionmenu.h>
 #include <kicon.h>
 
 // Kopete Includes
+#include <QMenu>
 
-
-class KMenu;
 
 WPAccount::WPAccount(WPProtocol *parent, const QString &accountID)
 	: Kopete::Account(parent, accountID)

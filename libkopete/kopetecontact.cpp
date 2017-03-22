@@ -29,7 +29,7 @@
 #include <QVariant>
 #include <QWidget>
 
-#include <kdeversion.h>
+
 #include <kabcpersistence.h>
 #include <kmessagebox.h>
 #include <kmessagebox_queued.h>

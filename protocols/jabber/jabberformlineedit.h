@@ -31,7 +31,7 @@ class JabberFormLineEdit:public QLineEdit
 {
 
   Q_OBJECT public:
-	  JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent = 0);
+	  JabberFormLineEdit (const int type, const QString & realName, const QString & value, QWidget * parent = nullptr);
 	 ~JabberFormLineEdit ();
 
 	public slots:void slotGatherData (XMPP::Form & form);
