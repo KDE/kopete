@@ -32,7 +32,7 @@
 
 class QPixmap;
 
-class KAction;
+class QAction;
 class KTemporaryFile;
 
 namespace Kopete { class Protocol; }
@@ -93,7 +93,7 @@ public:
 
 	virtual bool isReachable();
 
-	virtual QList<KAction*> *customContextMenuActions();
+    virtual QList<QAction*> *customContextMenuActions();
 	using Kopete::Contact::customContextMenuActions;
 
 	/**
@@ -176,11 +176,11 @@ private:
 	QString m_phoneMobile;
 
 
-	KAction *actionBlock;
-	KAction *actionShowProfile;
-	KAction *actionSendMail;
-	KAction *actionWebcamReceive;
-	KAction *actionWebcamSend;
+    QAction *actionBlock;
+    QAction *actionShowProfile;
+    QAction *actionSendMail;
+    QAction *actionWebcamReceive;
+    QAction *actionWebcamSend;
 
 	QString m_obj; //the QQObject
 	QMap<const char*, QByteArray> m_contactDetail;

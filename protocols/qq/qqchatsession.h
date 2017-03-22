@@ -13,7 +13,6 @@
 #ifndef QQCHATSESSION_H
 #define QQCHATSESSION_H
 
-#include <q3ptrqueue.h>
 #include <QLabel>
 #include <QList>
 #include <QDateTime>
@@ -157,7 +156,7 @@ private:
 	QList< Kopete::Message > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
 	Kopete::ContactPtrList m_pendingInvites; // people we wanted to invite to the conference, queued while waiting for the conference to be created.
 	KActionMenu *m_actionInvite;
-	typedef QList<KAction*> ActionList;
+    typedef QList<QAction*> ActionList;
 	ActionList m_inviteActions;
 	// labels showing secure and logging status
 	QAction *m_secure;

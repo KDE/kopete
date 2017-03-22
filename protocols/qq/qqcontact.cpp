@@ -25,7 +25,7 @@
 #include <QList>
 
 #undef KDE_NO_COMPAT
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <kfiledialog.h>
 #include <QLineEdit>
@@ -128,31 +128,31 @@ Kopete::ChatSession *QQContact::manager( Kopete::Contact::CanCreateFlags canCrea
 	return static_cast<QQAccount*>(account())->chatSession( chatMembers, guid, canCreate );
 }
 
-QList<KAction*> *QQContact::customContextMenuActions()
+QList<QAction*> *QQContact::customContextMenuActions()
 {
-	QList<KAction*> *m_actionCollection = new QList<KAction*>;
+    QList<QAction*> *m_actionCollection = new QList<QAction*>;
 
 	// Block/unblock Contact
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !actionBlock )
 	{
-		actionBlock = new KAction( KIcon("qq_blocked"), label, this );
+        actionBlock = new QAction( KIcon("qq_blocked"), label, this );
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotBlockUser()) );
 
 		//show profile
-		actionShowProfile = new KAction( i18n("Show Profile"), this );
+        actionShowProfile = new QAction( i18n("Show Profile"), this );
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
 		// Send mail (only available if it is an hotmail account)
-		actionSendMail = new KAction( KIcon("mail-message-new"), i18n("Send Email..."), this );
+        actionSendMail = new QAction( KIcon("mail-message-new"), i18n("Send Email..."), this );
 		connect( actionSendMail, SIGNAL(triggered(bool)), this, SLOT(slotSendMail()) );
 
 		// Invite to receive webcam
-		actionWebcamReceive = new KAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), this );
+        actionWebcamReceive = new QAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), this );
 		connect( actionWebcamReceive, SIGNAL(triggered(bool)), this, SLOT(slotWebcamReceive()) );
 
 		//Send webcam action
-		actionWebcamSend = new KAction( KIcon("webcamsend"), i18n( "Send Webcam" ), this );
+        actionWebcamSend = new QAction( KIcon("webcamsend"), i18n( "Send Webcam" ), this );
 		connect( actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 	}
 	else
