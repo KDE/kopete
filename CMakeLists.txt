@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 2.8.9)
 project(kopete)
 
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
@@ -6,7 +5,7 @@ cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 set(KOPETE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(KOPETE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
-set(KF5_VERSION "5.11.0")
+set(KF5_VERSION "5.25.0")
 set(REQUIRED_QT_VERSION "5.6.0")
 
 #ECM modules configurations
@@ -26,8 +25,10 @@ find_package(KF5 ${KF5_VERSION} REQUIRED COMPONENTS
 	Parts
 	Wallet
 	KDELibs4Support
+        TextEditor
 	#[[Phonon]]
 )
+
 find_package(KF5Config ${KF5_VERSION} CONFIG REQUIRED)
 find_package(KF5Emoticons ${KF5_VERSION} CONFIG REQUIRED)
 find_package(KF5DBusAddons ${KF5_VERSION} CONFIG REQUIRED)
