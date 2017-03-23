@@ -36,7 +36,7 @@
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <ksavefile.h>
+#include <QSaveFile>
 
 #include "kopeteglobal.h"
 #include "kopetecontact.h"
