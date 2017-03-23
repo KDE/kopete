@@ -29,7 +29,7 @@
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
-#include <ksavefile.h>
+#include <QSaveFile>
 
 #include "kopeteglobal.h"
 #include "kopetecontact.h"
@@ -355,8 +355,8 @@ void HistoryLogger::saveToDisk()
 	QTime t;
 	t.start(); //mesure the time needed to save.
 
-	KSaveFile file( m_toSaveFileName );
-	if( file.open() )
+	QSaveFile file( m_toSaveFileName );
+	if( file.open(QIODevice::WriteOnly) )
 	{
 		QString buf;
 		QTextStream stream( &buf, QIODevice::WriteOnly );
@@ -364,7 +364,7 @@ void HistoryLogger::saveToDisk()
 		m_toSaveDocument.doctype().save( stream, 1 );
 		m_toSaveDocument.documentElement().save( stream, 1 ); // QDomDocument::save() override stream codec to UTF-8
 		file.write( buf.toUtf8() );
-		file.finalize();
+		file.commit();
 
 		m_saveTimerTime=qMin(t.elapsed()*1000, 300000);
 		    //a time 1000 times supperior to the time needed to save.  but with a upper limit of 5 minutes

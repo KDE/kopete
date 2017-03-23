@@ -26,7 +26,7 @@
 #include <QTextCodec>
 #include <QTextStream>
 
-#include <ksavefile.h>
+#include <QSaveFile>
 #include <kstandarddirs.h>
 #include <KLocalizedString>
 
@@ -151,8 +151,8 @@ void HighlightConfig::save()
 
 	const QString fileName = KStandardDirs::locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
 
-	KSaveFile file( fileName );
-	if( file.open() )
+	QSaveFile file( fileName );
+	if( file.open(QIODevice::WriteOnly) )
 	{
 		QTextStream stream ( &file );
 		stream.setCodec(QTextCodec::codecForName("UTF-8"));
