@@ -2,6 +2,10 @@ project(kopete)
 
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
+if (POLICY CMP0063)
+    cmake_policy(SET CMP0063 NEW)
+endif()
+
 set(KOPETE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(KOPETE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -169,5 +173,5 @@ add_subdirectory(sounds)
 add_subdirectory(styles)
 add_subdirectory(doc)
 
-
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 #macro_display_feature_log()
