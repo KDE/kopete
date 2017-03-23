@@ -189,7 +189,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	connect( d->actionSendEmail, SIGNAL(triggered(bool)), this, SLOT(sendEmail()) );
 
 	d->actionRename = new QAction( QIcon::fromTheme("edit-rename"), i18nc( "verb, rename a contact", "Rename" ), ac );
-	d->actionRename->setShortcut( QKeySequence(Qt::Key_F2) );
+    ac->setDefaultShortcut(d->actionRename, QKeySequence(Qt::Key_F2) );
 	ac->addAction( "contactRename", d->actionRename );
 	connect( d->actionRename, SIGNAL(triggered(bool)), this, SLOT(rename()) );
 
@@ -213,7 +213,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 	d->actionProperties = new QAction( QIcon::fromTheme("user-properties"), i18n( "&Properties" ), ac );
 	ac->addAction( "contactProperties", d->actionProperties );
-	d->actionProperties->setShortcut( QKeySequence(Qt::Key_Alt + Qt::Key_Return) );
+    ac->setDefaultShortcut(d->actionProperties, QKeySequence(Qt::Key_Alt + Qt::Key_Return) );
 	connect( d->actionProperties, SIGNAL(triggered(bool)), this, SLOT(showItemProperties()) );
 
 	// Update enabled/disabled actions
