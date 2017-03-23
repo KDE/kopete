@@ -155,23 +155,19 @@ ecm_qt_declare_logging_category(kopete_LIB_SRCS HEADER libkopete_debug.h IDENTIF
 find_package(KF5Contacts ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
 add_library(kopete SHARED ${kopete_LIB_SRCS})
 
-set(libkopete_kf5_link_libs
-	KF5::Contacts
-	KF5::Emoticons
-	KF5::KCMUtils
-	KF5::I18n
-	KF5::KIOCore
-	KF5::KIOWidgets
-	KF5::Archive
-	KF5::ConfigCore
-	KF5::ConfigGui
-	KF5::Parts
-	KF5::Wallet
-	KF5::KDELibs4Support
-)
-
 target_link_libraries(kopete
-	${libkopete_kf5_link_libs}
+    KF5::Contacts
+    KF5::Emoticons
+    KF5::KCMUtils
+    KF5::I18n
+    KF5::KIOCore
+    KF5::KIOWidgets
+    KF5::Archive
+    KF5::ConfigCore
+    KF5::ConfigGui
+    KF5::Parts
+    KF5::Wallet
+    KF5::KDELibs4Support
 )
 
 if(NOT DISABLE_VIDEOSUPPORT)
