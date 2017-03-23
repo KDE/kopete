@@ -39,7 +39,6 @@ add_library( kopetecontactlist SHARED ${kopetecontactlist_SRCS} )
 target_link_libraries(
 	kopetecontactlist
 	kopete
-	${KDE4_KABC_LIBS}
 	KF5::NotifyConfig
 	${QIMAGEBLITZ_LIBRARIES}
 )
