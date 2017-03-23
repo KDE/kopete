@@ -34,7 +34,7 @@
 #include <ktoolbar.h>
 #include <krun.h>
 #include <kiconloader.h>
-#include <kicon.h>
+#include <QIcon>
 
 #include "kopetecontactaction.h"
 #include "kopetemetacontact.h"
@@ -57,20 +57,20 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
     //setComponentData(protocol->componentData());
 
 	// Add Actions
-    QAction *buzzAction = new QAction( KIcon("bell"), i18n( "Buzz Contact" ), this );
+    QAction *buzzAction = new QAction( QIcon::fromTheme(QStringLiteral("bell")), i18n( "Buzz Contact" ), this );
         actionCollection()->addAction( "yahooBuzz", buzzAction );
     buzzAction->setShortcut( QKeySequence("Ctrl+G") );
 	connect( buzzAction, SIGNAL(triggered(bool)), this, SLOT(slotBuzzContact()) );
 
-    QAction *userInfoAction = new QAction( KIcon("help-about"), i18n( "Show User Info" ), this );
+    QAction *userInfoAction = new QAction( QIcon::fromTheme(QStringLiteral("help-about")), i18n( "Show User Info" ), this );
         actionCollection()->addAction( "yahooShowInfo",  userInfoAction) ;
 	connect( userInfoAction, SIGNAL(triggered(bool)), this, SLOT(slotUserInfo()) );
 
-    QAction *receiveWebcamAction = new QAction( KIcon("webcamreceive"), i18n( "Request Webcam" ), this );
+    QAction *receiveWebcamAction = new QAction( QIcon::fromTheme(QStringLiteral("webcamreceive")), i18n( "Request Webcam" ), this );
         actionCollection()->addAction( "yahooRequestWebcam",  receiveWebcamAction) ;
 	connect( receiveWebcamAction, SIGNAL(triggered(bool)), this, SLOT(slotRequestWebcam()) );
 
-    QAction *sendWebcamAction = new QAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), this );
+    QAction *sendWebcamAction = new QAction( QIcon::fromTheme(QStringLiteral("webcamsend")), i18n( "Invite to view your Webcam" ), this );
         actionCollection()->addAction( "yahooSendWebcam",  sendWebcamAction) ;
 	connect( sendWebcamAction, SIGNAL(triggered(bool)), this, SLOT(slotInviteWebcam()) );
 

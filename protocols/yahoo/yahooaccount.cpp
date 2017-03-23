@@ -46,7 +46,7 @@
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <ktoolinvocation.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kmessagebox_queued.h>
 
 // Kopete
@@ -91,16 +91,16 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId)
 	m_webcam = 0;
 	m_chatChatSession = 0;
 
-    m_openInboxAction = new QAction( KIcon("mail-folder-inbox"), i18n( "Open Inbo&x..." ), this );
+    m_openInboxAction = new QAction( QIcon::fromTheme(QStringLiteral("mail-folder-inbox")), i18n( "Open Inbo&x..." ), this );
         //, "m_openInboxAction" );
 	QObject::connect(m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()) );
-    m_openYABAction = new QAction( KIcon("x-office-address-book"), i18n( "Open &Address book..." ), this );
+    m_openYABAction = new QAction( QIcon::fromTheme(QStringLiteral("x-office-address-book")), i18n( "Open &Address book..." ), this );
         //, "m_openYABAction" );
 	QObject::connect(m_openYABAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenYAB()) );
-    m_editOwnYABEntry = new QAction( KIcon("document-properties"), i18n( "&Edit my contact details..."), this );
+    m_editOwnYABEntry = new QAction( QIcon::fromTheme(QStringLiteral("document-properties")), i18n( "&Edit my contact details..."), this );
         //, "m_editOwnYABEntry" );
 	QObject::connect(m_editOwnYABEntry, SIGNAL(triggered(bool)), this, SLOT(slotEditOwnYABEntry()) );
-    m_joinChatAction = new QAction( KIcon("im-chat-room-join"), i18n( "&Join chat room..."), this );
+    m_joinChatAction = new QAction( QIcon::fromTheme(QStringLiteral("im-chat-room-join")), i18n( "&Join chat room..."), this );
         //, "m_joinChatAction" );
 	QObject::connect(m_joinChatAction, SIGNAL(triggered(bool)), this, SLOT(slotJoinChatRoom()) );
 

@@ -923,37 +923,37 @@ void SkypeAccount::fillActionMenu( KActionMenu *actionMenu ) {
 
 	if (d->protocol)
 	{
-		KAction *setOnline = new KAction( KIcon(QIcon(d->protocol->Online.iconFor(this))), i18n("Online"), this );
+		KAction *setOnline = new KAction( QIcon::fromTheme(QIcon(d->protocol->Online.iconFor(this))), i18n("Online"), this );
 		QObject::connect( setOnline, SIGNAL(triggered(bool)), &d->skype, SLOT(setOnline()) );
 		actionMenu->addAction(setOnline);
 
-		KAction *setOffline = new KAction( KIcon(QIcon(d->protocol->Offline.iconFor(this))), i18n("Offline"), this );
+		KAction *setOffline = new KAction( QIcon::fromTheme(QIcon(d->protocol->Offline.iconFor(this))), i18n("Offline"), this );
 		QObject::connect( setOffline, SIGNAL(triggered(bool)), &d->skype, SLOT(setOffline()) );
 		actionMenu->addAction(setOffline);
 
-		KAction *setAway = new KAction( KIcon(QIcon(d->protocol->Away.iconFor(this))), i18n("Away"), this );
+		KAction *setAway = new KAction( QIcon::fromTheme(QIcon(d->protocol->Away.iconFor(this))), i18n("Away"), this );
 		QObject::connect( setAway, SIGNAL(triggered(bool)), &d->skype, SLOT(setAway()) );
 		actionMenu->addAction(setAway);
 
-		KAction *setNotAvailable = new KAction( KIcon(QIcon(d->protocol->NotAvailable.iconFor(this))), i18n("Not Available"), this );
+		KAction *setNotAvailable = new KAction( QIcon::fromTheme(QIcon(d->protocol->NotAvailable.iconFor(this))), i18n("Not Available"), this );
 		QObject::connect( setNotAvailable, SIGNAL(triggered(bool)), &d->skype, SLOT(setNotAvailable()) );
 		actionMenu->addAction(setNotAvailable);
 
-		KAction *setDND = new KAction( KIcon(QIcon(d->protocol->DoNotDisturb.iconFor(this))), i18n("Do Not Disturb"), this );
+		KAction *setDND = new KAction( QIcon::fromTheme(QIcon(d->protocol->DoNotDisturb.iconFor(this))), i18n("Do Not Disturb"), this );
 		QObject::connect( setDND, SIGNAL(triggered(bool)), &d->skype, SLOT(setDND()) );
 		actionMenu->addAction(setDND);
 
-		KAction *setInvisible = new KAction( KIcon(QIcon(d->protocol->Invisible.iconFor(this))), i18n("Invisible"), this );
+		KAction *setInvisible = new KAction( QIcon::fromTheme(QIcon(d->protocol->Invisible.iconFor(this))), i18n("Invisible"), this );
 		QObject::connect( setInvisible, SIGNAL(triggered(bool)), &d->skype, SLOT(setInvisible()) );
 		actionMenu->addAction(setInvisible);
 
-		KAction *setSkypeMe = new KAction( KIcon(QIcon(d->protocol->SkypeMe.iconFor(this))), i18n("Skype Me"), this );
+		KAction *setSkypeMe = new KAction( QIcon::fromTheme(QIcon(d->protocol->SkypeMe.iconFor(this))), i18n("Skype Me"), this );
 		QObject::connect( setSkypeMe, SIGNAL(triggered(bool)), &d->skype, SLOT(setSkypeMe()) );
 		actionMenu->addAction(setSkypeMe);
 
 		actionMenu->addSeparator();
 
-		KAction *makeTestCall = new KAction( KIcon("voicecall"), i18n("Make Test Call"), this );
+		KAction *makeTestCall = new KAction( QIcon::fromTheme(QStringLiteral("voicecall")), i18n("Make Test Call"), this );
 		QObject::connect( makeTestCall, SIGNAL(triggered(bool)), this, SLOT(makeTestCall()) );
 
 		const Kopete::OnlineStatus &myStatus = (myself()) ? myself()->onlineStatus() : protocol()->Offline;

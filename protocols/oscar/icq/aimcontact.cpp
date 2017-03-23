@@ -20,7 +20,7 @@
 #include <KActionCollection>
 #include <KLocalizedString>
 #include <ktoggleaction.h>
-#include <kicon.h>
+#include <QIcon>
 
 //liboscar
 #include "oscarutils.h"
@@ -70,7 +70,7 @@ QList<QAction*> *AIMContact::customContextMenuActions()
 
 	m_selectEncoding = new QAction( i18n( "Select Encoding..." ), this );
         //, "changeEncoding" );
-    m_selectEncoding->setIcon( QIcon::fromTheme( "character-set" ) );
+    m_selectEncoding->setIcon( QIcon::fromTheme(QStringLiteral("character-set")) );
 	QObject::connect( m_selectEncoding, SIGNAL(triggered(bool)), this, SLOT(changeContactEncoding()) );
 
 	bool on = account()->isConnected();

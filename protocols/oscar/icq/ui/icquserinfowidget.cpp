@@ -28,7 +28,7 @@
 #include <kdatewidget.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kicon.h>
+#include <QIcon>
 #include <KLocalizedString>
 
 #include "ui_icqgeneralinfo.h"
@@ -109,42 +109,42 @@ void ICQUserInfoWidget::init()
 	m_genInfoWidget->setupUi( genInfo );
 	KPageWidgetItem *genInfoItem = addPage( genInfo, i18n("General Info") );
 	genInfoItem->setHeader( i18n("General ICQ Information") );
-    genInfoItem->setIcon( QIcon::fromTheme("user-identity") );
+    genInfoItem->setIcon( QIcon::fromTheme(QStringLiteral("user-identity")) );
 
 	QWidget* homeInfo = new QWidget(this);
 	m_homeInfoWidget = new Ui::ICQHomeInfoWidget;
 	m_homeInfoWidget->setupUi( homeInfo );
 	KPageWidgetItem *homeInfoItem = addPage( homeInfo, i18n("Home Info") );
 	homeInfoItem->setHeader( i18n("Home Information") );
-    homeInfoItem->setIcon( QIcon::fromTheme("go-home") );
+    homeInfoItem->setIcon( QIcon::fromTheme(QStringLiteral("go-home")) );
 
 	QWidget *workInfo = new QWidget(this);
 	m_workInfoWidget = new Ui::ICQWorkInfoWidget;
 	m_workInfoWidget->setupUi( workInfo );
 	KPageWidgetItem *workInfoItem = addPage( workInfo, i18n("Work Info") );
 	workInfoItem->setHeader( i18n( "Work Information" ) );
-    workInfoItem->setIcon( QIcon::fromTheme("applications-engineering") );
+    workInfoItem->setIcon( QIcon::fromTheme(QStringLiteral("applications-engineering")) );
 
 	QWidget *otherInfo = new QWidget(this);
 	m_otherInfoWidget = new Ui::ICQOtherInfoWidget();
 	m_otherInfoWidget->setupUi( otherInfo );
 	KPageWidgetItem *otherInfoItem = addPage( otherInfo, i18n("Other Info") );
 	otherInfoItem->setHeader( i18n( "Other ICQ Information" ) );
-    otherInfoItem->setIcon( QIcon::fromTheme("internet-mail") );
+    otherInfoItem->setIcon( QIcon::fromTheme(QStringLiteral("internet-mail")) );
 
 	QWidget *interestInfo = new QWidget(this);
 	m_interestInfoWidget = new Ui::ICQInterestInfoWidget();
 	m_interestInfoWidget->setupUi( interestInfo );
 	KPageWidgetItem *interestInfoItem = addPage( interestInfo, i18n("Interest Info") );
 	interestInfoItem->setHeader( i18n( "Interest Information" ) );
-    interestInfoItem->setIcon( QIcon::fromTheme("applications-games") );
+    interestInfoItem->setIcon( QIcon::fromTheme(QStringLiteral("applications-games")) );
 
 	QWidget *orgAffInfo = new QWidget(this);
 	m_orgAffInfoWidget = new Ui::ICQOrgAffInfoWidget();
 	m_orgAffInfoWidget->setupUi( orgAffInfo );
 	KPageWidgetItem *orgAffInfoItem = addPage( orgAffInfo, i18n("Org & Aff Info") );
 	orgAffInfoItem->setHeader( i18n( "Organization & Affiliation Information" ) );
-    orgAffInfoItem->setIcon( QIcon::fromTheme("preferences-web-browser-identification") );
+    orgAffInfoItem->setIcon( QIcon::fromTheme(QStringLiteral("preferences-web-browser-identification")) );
 
 	m_emailModel = new QStandardItemModel();
 	QStandardItem *modelItem = new QStandardItem( i18n( "Type" ) );

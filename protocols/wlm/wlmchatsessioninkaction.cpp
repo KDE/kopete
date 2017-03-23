@@ -19,7 +19,7 @@
 #include <QHBoxLayout>
 
 #include <QMenu>
-#include <KIcon>
+#include <QIcon>
 #include <KLocale>
 
 #include "wlmchatsessioninkarea.h"
@@ -59,7 +59,7 @@ WlmChatSessionInkAction::WlmChatSessionInkAction( QObject* parent )
     d = new WlmChatSessionInkActionPrivate;
     setMenu( d->m_popup );
     
-    setIcon( KIcon("application-pgp-signature") );
+    setIcon( QIcon::fromTheme(QStringLiteral("application-pgp-signature")) );
     QList<WlmChatSessionInkArea *> sessionInkList = d->m_sessionInk->findChildren<WlmChatSessionInkArea *>();
     WlmChatSessionInkArea *inkArea = sessionInkList.first();
     if(inkArea)

@@ -77,7 +77,7 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	QObject::connect( Kopete::ContactList::self(), SIGNAL(groupRemoved(Kopete::Group*)),
 			SLOT(slotKopeteGroupRemoved(Kopete::Group*)) );
 
-//		m_actionBlock = new QAction( KIcon( "msn_blocked" ), label, 0, "actionBlock" );
+//		m_actionBlock = new QAction( QIcon::fromTheme(QStringLiteral("msn_blocked")), label, 0, "actionBlock" );
 //		QObject::connect( m_actionBlock, SIGNAL(triggered(bool)), SLOT(slotBlock()) );
     m_actionAutoReply = new QAction ( i18n( "&Set Auto-Reply..." ), 0 );
 	QObject::connect( m_actionAutoReply, SIGNAL(triggered(bool)),

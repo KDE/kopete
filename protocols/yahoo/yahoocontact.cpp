@@ -64,7 +64,7 @@
 #include <kstandarddirs.h>
 #include <kfiledialog.h>
 #include <ktoolinvocation.h>
-#include <kicon.h>
+#include <QIcon>
 
 YahooContact::YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, Kopete::MetaContact *metaContact )
 	: Kopete::Contact( account, userId, metaContact )
@@ -403,7 +403,7 @@ QList<QAction*> *YahooContact::customContextMenuActions()
     QList<QAction*> *actions = new QList<QAction*>();
 	if ( !m_webcamAction )
 	{
-        m_webcamAction = new QAction( KIcon("webcamreceive"), i18n( "View &Webcam" ), this );
+        m_webcamAction = new QAction( QIcon::fromTheme(QStringLiteral("webcamreceive")), i18n( "View &Webcam" ), this );
 		connect( m_webcamAction, SIGNAL(triggered(bool)), this, SLOT(requestWebcam()) );
 	}
 	if ( isReachable() )
@@ -415,7 +415,7 @@ QList<QAction*> *YahooContact::customContextMenuActions()
 
 	if( !m_inviteWebcamAction )
 	{
-        m_inviteWebcamAction = new QAction( KIcon("webcamsend"), i18n( "Invite to view your Webcam" ), this );
+        m_inviteWebcamAction = new QAction( QIcon::fromTheme(QStringLiteral("webcamsend")), i18n( "Invite to view your Webcam" ), this );
 		connect( m_inviteWebcamAction, SIGNAL(triggered(bool)), this, SLOT(inviteWebcam()) );
 	}
 	if ( isReachable() )
@@ -427,7 +427,7 @@ QList<QAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_buzzAction )
 	{
-        m_buzzAction = new QAction( KIcon("bell"), i18n( "&Buzz Contact" ), this);
+        m_buzzAction = new QAction( QIcon::fromTheme(QStringLiteral("bell")), i18n( "&Buzz Contact" ), this);
 		connect( m_buzzAction, SIGNAL(triggered(bool)), this, SLOT(buzzContact()) );
 	}
 	if ( isReachable() )
@@ -439,7 +439,7 @@ QList<QAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_stealthAction )
 	{
-        m_stealthAction = new QAction( KIcon("yahoo_stealthed"), i18n( "&Stealth Setting" ), this );
+        m_stealthAction = new QAction( QIcon::fromTheme(QStringLiteral("yahoo_stealthed")), i18n( "&Stealth Setting" ), this );
 		connect( m_stealthAction, SIGNAL(triggered(bool)), this, SLOT(stealthContact()) );
 	}
 	if ( isReachable() )
@@ -451,7 +451,7 @@ QList<QAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_inviteConferenceAction )
 	{
-        m_inviteConferenceAction = new QAction( KIcon("x-office-contact"), i18n( "&Invite to Conference" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
+        m_inviteConferenceAction = new QAction( QIcon::fromTheme(QStringLiteral("x-office-contact")), i18n( "&Invite to Conference" ), this ); // icon should probably be "contact-invite", but that doesn't exist... please request an icon on http://techbase.kde.org/index.php?title=Projects/Oxygen/Missing_Icons
 		connect( m_inviteConferenceAction, SIGNAL(triggered(bool)), this, SLOT(inviteConference()) );
 	}
 	if ( isReachable() )
@@ -463,7 +463,7 @@ QList<QAction*> *YahooContact::customContextMenuActions()
 
 	if ( !m_profileAction )
 	{
-        m_profileAction = new QAction( KIcon("document-preview"), i18n( "&View Yahoo Profile" ), this );
+        m_profileAction = new QAction( QIcon::fromTheme(QStringLiteral("document-preview")), i18n( "&View Yahoo Profile" ), this );
 		connect( m_profileAction, SIGNAL(triggered(bool)), this, SLOT(slotUserProfile()) );
 	}
 	m_profileAction->setEnabled( true );

@@ -39,7 +39,7 @@
 #include <qregexp.h>
 #include <kio/job.h>
 #include <kdialog.h>
-#include <kicon.h>
+#include <QIcon>
 
 #include "kopetecontactlist.h"
 #include "kopetechatsessionmanager.h"
@@ -136,7 +136,7 @@ QList<QAction*> *QQContact::customContextMenuActions()
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !actionBlock )
 	{
-        actionBlock = new QAction( KIcon("qq_blocked"), label, this );
+        actionBlock = new QAction( QIcon::fromTheme(QStringLiteral("qq_blocked")), label, this );
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotBlockUser()) );
 
 		//show profile
@@ -144,15 +144,15 @@ QList<QAction*> *QQContact::customContextMenuActions()
 		connect( actionBlock, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()) );
 
 		// Send mail (only available if it is an hotmail account)
-        actionSendMail = new QAction( KIcon("mail-message-new"), i18n("Send Email..."), this );
+        actionSendMail = new QAction( QIcon::fromTheme(QStringLiteral("mail-message-new")), i18n("Send Email..."), this );
 		connect( actionSendMail, SIGNAL(triggered(bool)), this, SLOT(slotSendMail()) );
 
 		// Invite to receive webcam
-        actionWebcamReceive = new QAction( KIcon("webcamreceive"), i18n( "View Contact's Webcam" ), this );
+        actionWebcamReceive = new QAction( QIcon::fromTheme(QStringLiteral("webcamreceive")), i18n( "View Contact's Webcam" ), this );
 		connect( actionWebcamReceive, SIGNAL(triggered(bool)), this, SLOT(slotWebcamReceive()) );
 
 		//Send webcam action
-        actionWebcamSend = new QAction( KIcon("webcamsend"), i18n( "Send Webcam" ), this );
+        actionWebcamSend = new QAction( QIcon::fromTheme(QStringLiteral("webcamsend")), i18n( "Send Webcam" ), this );
 		connect( actionWebcamSend, SIGNAL(triggered(bool)), this, SLOT(slotWebcamSend()) );
 	}
 	else

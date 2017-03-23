@@ -55,7 +55,7 @@ Kopete::Contact (_account, uniqueName, parent)
     if ( metaContact() )
         m_currentGroup = metaContact()->groups().first();
 
-    m_actionBlockContact = new KToggleAction(KIcon("wlm_blocked"), i18n("Block Contact"), this );
+    m_actionBlockContact = new KToggleAction(QIcon::fromTheme(QStringLiteral("wlm_blocked")), i18n("Block Contact"), this );
     QObject::connect( m_actionBlockContact, SIGNAL(triggered(bool)), this, SLOT(blockContact(bool)) );
 
     m_actionShowProfile = new KAction(i18n("Show Profile"), this);
@@ -64,7 +64,7 @@ Kopete::Contact (_account, uniqueName, parent)
     m_actionUpdateDisplayPicture = new KAction(i18n("Update Photo"), this);
     QObject::connect(m_actionUpdateDisplayPicture, SIGNAL(triggered(bool)), this, SLOT(slotUpdateDisplayPicture()));
 
-    m_actionDontShowEmoticons = new KToggleAction (KIcon ("wlm_fakefriend"), 
+    m_actionDontShowEmoticons = new KToggleAction (QIcon::fromTheme(QStringLiteral("wlm_fakefriend")), 
            i18n ("&Block custom emoticons"), this);
     QObject::connect (m_actionDontShowEmoticons, SIGNAL(triggered(bool)), this, SLOT(slotDontShowEmoticons(bool)));
 }

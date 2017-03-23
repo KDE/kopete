@@ -101,7 +101,7 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 	setXMLFile("skypeui.rc");
 
 	d->callContactAction = new KAction( this );
-	d->callContactAction->setIcon( (KIcon("voicecall") ) );
+	d->callContactAction->setIcon( (QIcon::fromTheme(QStringLiteral("voicecall")) ) );
 	d->callContactAction->setText( i18n ("Call") );
 	connect(d->callContactAction, SIGNAL(triggered(bool)), SLOT(callContacts()));
 

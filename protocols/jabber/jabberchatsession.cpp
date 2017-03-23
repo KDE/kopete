@@ -25,7 +25,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <KLocalizedString>
-#include <kicon.h>
+#include <QIcon>
 #include <QAction>
 #include <kactioncollection.h>
 #include "kopetechatsessionmanager.h"
@@ -69,12 +69,12 @@ JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBas
 
 #ifdef JINGLE_SUPPORT
 	QAction *jingleSessionGui = new QAction(i18n("Show audio calls"), members().first());
-	jingleSessionGui->setIcon(KIcon("voicecall"));
+	jingleSessionGui->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
 	connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT (slotJingleSessionGui()));
 	setComponentData(protocol->componentData());
 
 	QAction *jingleSession = new QAction(i18n("Start audio call"), members().first());
-	jingleSession->setIcon(KIcon("voicecall"));
+	jingleSession->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
 	connect(jingleSession, SIGNAL(triggered(bool)), SLOT (slotJingleSession()));
 	setComponentData(protocol->componentData());
 

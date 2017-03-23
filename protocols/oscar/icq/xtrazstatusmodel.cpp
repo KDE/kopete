@@ -16,7 +16,7 @@
 
 #include "xtrazstatusmodel.h"
 
-#include <kicon.h>
+#include <QIcon>
 #include <KLocalizedString>
 
 namespace Xtraz

@@ -114,14 +114,14 @@ m_sessionID(1)
         setReady (true);
     }
 
-    m_actionNudge = new KAction (KIcon ("preferences-desktop-notification-bell"), i18n ("Send Nudge"), this);
+    m_actionNudge = new KAction (QIcon::fromTheme(QStringLiteral("preferences-desktop-notification-bell")), i18n ("Send Nudge"), this);
     actionCollection ()->addAction ("wlmSendNudge", m_actionNudge);
     connect (m_actionNudge, SIGNAL (triggered(bool)), this,
              SLOT (sendNudge()));
 
 
     m_actionInvite =
-        new KActionMenu (KIcon ("system-users"), i18n ("&Invite"), this);
+        new KActionMenu (QIcon::fromTheme(QStringLiteral("system-users")), i18n ("&Invite"), this);
     actionCollection ()->addAction ("wlmInvite", m_actionInvite);
     m_actionInvite->setDelayed(false);
     connect (m_actionInvite->menu (), SIGNAL (aboutToShow()), this,
@@ -144,7 +144,7 @@ m_sessionID(1)
 #ifdef HAVE_MEDIASTREAMER
     if(userCaps & MSN::VoiceClips)
     {
-        m_actionVoice = new KActionMenu (KIcon ("preferences-desktop-sound"), i18n ("Send &Voice"), this);
+        m_actionVoice = new KActionMenu (QIcon::fromTheme(QStringLiteral("preferences-desktop-sound")), i18n ("Send &Voice"), this);
         actionCollection ()->addAction ("wlmSendVoice", m_actionVoice);
         ms_init();
         m_voiceCardCapture = ms_snd_card_manager_get_default_capture_card(ms_snd_card_manager_get());
@@ -159,7 +159,7 @@ m_sessionID(1)
         connect (m_actionVoice->menu(), SIGNAL (aboutToHide()), this,
                  SLOT (slotSendVoiceStopRec()));
 
-        KAction *stopRec = new  KAction(KIcon("wlm_fakefriend"), i18n("Stop &recording"), actionCollection ());
+        KAction *stopRec = new  KAction(QIcon::fromTheme(QStringLiteral("wlm_fakefriend")), i18n("Stop &recording"), actionCollection ());
         m_actionVoice->addAction (stopRec);
         m_actionVoice->setDelayed(false);
     }

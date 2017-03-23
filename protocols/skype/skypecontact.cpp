@@ -99,22 +99,22 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 
 	d->callContactAction = new KAction( this );
 	d->callContactAction->setText( i18n ("Call contact") );
-	d->callContactAction->setIcon( (KIcon("voicecall") ) );
+	d->callContactAction->setIcon( (QIcon::fromTheme(QStringLiteral("voicecall")) ) );
 	connect(d->callContactAction, SIGNAL(triggered()), SLOT(call()));
 
 	d->authorizeAction = new KAction( this );
 	d->authorizeAction->setText( i18n ("(Re)send Authorization To") );
-	d->authorizeAction->setIcon( (KIcon("mail-forward") ) );
+	d->authorizeAction->setIcon( (QIcon::fromTheme(QStringLiteral("mail-forward")) ) );
 	connect(d->authorizeAction, SIGNAL(triggered()), SLOT(authorize()));
 
 	d->disAuthorAction = new KAction( this );
 	d->disAuthorAction->setText( i18n ("Remove Authorization From") );
-	d->disAuthorAction->setIcon( (KIcon("edit-delete") ) );
+	d->disAuthorAction->setIcon( (QIcon::fromTheme(QStringLiteral("edit-delete")) ) );
 	connect(d->disAuthorAction, SIGNAL(triggered()), SLOT(disAuthor()));
 
 	d->blockAction = new KAction( this );
 	d->blockAction->setText( i18n("Block contact") );
-	d->blockAction->setIcon( (KIcon("dialog-cancel") ) );
+	d->blockAction->setIcon( (QIcon::fromTheme(QStringLiteral("dialog-cancel")) ) );
 	connect(d->blockAction, SIGNAL(triggered()), SLOT(block()));
 
 	statusChanged();//This one takes care of disabling/enabling this action depending on the user's status.

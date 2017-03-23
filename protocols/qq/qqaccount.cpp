@@ -25,7 +25,7 @@
 #include <klocale.h>
 #include <kactionmenu.h>
 #include <QMenu>
-#include <kicon.h>
+#include <QIcon>
 #include <kconfiggroup.h>
 
 #include "kopetemetacontact.h"
@@ -131,7 +131,7 @@ void QQAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->addSeparator();
 
-    QAction *action = new QAction (KIcon("qq_showvideo"), i18n ("Show my own video..."), actionMenu );
+    QAction *action = new QAction (QIcon::fromTheme(QStringLiteral("qq_showvideo")), i18n ("Show my own video..."), actionMenu );
         action->setObjectName("actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	actionMenu->addAction(action);

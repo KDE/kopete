@@ -112,7 +112,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 
 	d->callAction = new KAction(this);
 	d->callAction->setText(i18n("Call"));
-	d->callAction->setIcon(KIcon("voicecall"));
+	d->callAction->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
 	connect(d->callAction, SIGNAL(triggered()), SLOT(callChatSession()));
 
 	connect(contact, SIGNAL(setActionsPossible(bool)), d->callAction, SLOT(setEnabled(bool)));
@@ -122,7 +122,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 
 	d->contact = contact;
 
-	d->inviteAction = new KActionMenu (KIcon("system-users"), i18n ("&Invite"), this);
+	d->inviteAction = new KActionMenu (QIcon::fromTheme(QStringLiteral("system-users")), i18n ("&Invite"), this);
 	d->inviteAction->setDelayed(false);
 	connect( d->inviteAction->menu(), SIGNAL(aboutToShow()), this, SLOT(showInviteMenu()) );
 	connect( d->inviteAction->menu(), SIGNAL(aboutToHide()), this, SLOT(hideInviteMenu()) );
@@ -153,14 +153,14 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 
 	d->callAction = new KAction(this);
 	d->callAction->setText(i18n("Call"));
-	d->callAction->setIcon(KIcon("voicecall"));
+	d->callAction->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
 	connect(d->callAction, SIGNAL(triggered()), SLOT(callChatSession()));
 
 	actionCollection()->addAction("callSkypeContactFromChat", d->callAction);
 
 	disallowCall();//TODO I hope it will not be needed in future
 
-	d->inviteAction = new KActionMenu (KIcon("system-users"), i18n ("&Invite"), this);
+	d->inviteAction = new KActionMenu (QIcon::fromTheme(QStringLiteral("system-users")), i18n ("&Invite"), this);
 	d->inviteAction->setDelayed(false);
 	connect( d->inviteAction->menu(), SIGNAL(aboutToShow()), this, SLOT(showInviteMenu()) );
 	connect( d->inviteAction->menu(), SIGNAL(aboutToHide()), this, SLOT(hideInviteMenu()) );
