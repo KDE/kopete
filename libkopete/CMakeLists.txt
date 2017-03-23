@@ -128,7 +128,6 @@ set(kopete_LIB_SRCS
    kopeteinfoevent.cpp
    kopeteaddedinfoevent.cpp
    kopetesockettimeoutwatcher.cpp
-   libkopete_debug.cpp
 # REMOVED FOR NOW
 #   connectionmanager.cpp
 #   managedconnectionaccount.cpp
@@ -150,6 +149,8 @@ kconfig_add_kcfg_files(kopete_LIB_SRCS GENERATE_MOC
   kopetebehaviorsettings.kcfgc
   kopetestatussettings.kcfgc
   )
+
+ecm_qt_declare_logging_category(kopete_LIB_SRCS HEADER libkopete_debug.h IDENTIFIER LIBKOPETE_LOG CATEGORY_NAME org.kde.kopete.libkopete)
 
 find_package(KF5Contacts ${KCONTACTS_LIB_VERSION} CONFIG REQUIRED)
 add_library(kopete SHARED ${kopete_LIB_SRCS})

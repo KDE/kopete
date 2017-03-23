@@ -46,6 +46,7 @@ include(FeatureSummary)
 include(ECMAddTests)
 include(ECMAddAppIcon)
 include(ECMInstallIcons)
+include(ECMQtDeclareLoggingCategory)
 include_directories(${PHONON_INCLUDES})
 
 if(WIN32)
@@ -173,5 +174,7 @@ add_subdirectory(sounds)
 add_subdirectory(styles)
 add_subdirectory(doc)
 
+install( FILES kopete.categories DESTINATION ${KDE_INSTALL_CONFDIR} )
+
+
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
-#macro_display_feature_log()
