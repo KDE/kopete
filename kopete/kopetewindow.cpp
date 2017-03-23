@@ -57,7 +57,7 @@
 #include <KShortcut>
 #include <kshortcutsdialog.h>
 #include <kedittoolbar.h>
-#include <kmenubar.h>
+#include <QMenuBar>
 #include <kstatusbar.h>
 #include <kwindowsystem.h>
 

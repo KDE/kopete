@@ -42,7 +42,7 @@
 #include <kactioncollection.h>
 #include <kcursor.h>
 #include <KLocalizedString>
-#include <kmenubar.h>
+#include <QMenuBar>
 #include <kconfig.h>
 #include <kiconloader.h>
 #include <kdebug.h>

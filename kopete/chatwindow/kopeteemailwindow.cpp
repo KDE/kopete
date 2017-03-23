@@ -44,7 +44,7 @@
 #include <kiconloader.h>
 #include <klibloader.h>
 #include <KLocalizedString>
-#include <kmenubar.h>
+#include <QMenuBar>
 #include <kmessagebox.h>
 #include <QPushButton>
 #include <ktextedit.h>
