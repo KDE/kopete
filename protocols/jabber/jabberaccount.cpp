@@ -48,7 +48,7 @@
 #include <kaboutdata.h>
 #include <kpassworddialog.h>
 #include <qinputdialog.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kactionmenu.h>
 #include <kglobal.h>
 
@@ -217,7 +217,7 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 	QAction *action;
 	
 	action = new QAction( this );
-	action->setIcon( KIcon("jabber_group") );
+	action->setIcon( QIcon::fromTheme(QStringLiteral("jabber_group")) );
 	action->setText( i18n("Join Groupchat...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotJoinNewChat()) );
 	actionMenu->addAction(action);
@@ -231,20 +231,20 @@ void JabberAccount::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->addSeparator();
 	
 	action = new QAction( this );
-	action->setIcon( KIcon("jabber_serv_on") );
+	action->setIcon( QIcon::fromTheme(QStringLiteral("jabber_serv_on")) );
 	action->setText( i18n ("Services...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGetServices()) );
 	action->setEnabled( isConnected() );
 	actionMenu->addAction( action );
 
 	action = new QAction( this );
-	action->setIcon( ( KIcon("mail-message-new") ) );
+	action->setIcon( ( QIcon::fromTheme(QStringLiteral("mail-message-new")) ) );
 	action->setText( i18n ("XML Console") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotXMPPConsole()) );
 	actionMenu->addAction( action );
 
 	action = new QAction( this );
-	action->setIcon( ( KIcon("document-properties") ) );
+	action->setIcon( ( QIcon::fromTheme(QStringLiteral("document-properties")) ) );
 	action->setText( i18n ("Edit User Info...") );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotEditVCard()) );
 	action->setEnabled( isConnected() );
@@ -1913,7 +1913,7 @@ QAction(parent)
 {
 	mType = type;
 	setText(MoodManager::self()->getMoodName(mType));
-	//setIcon( KIcon( QString( "icq_xstatus%1" ).arg( mStatus.status() ) ) );
+	//setIcon( QIcon::fromTheme( QString( "icq_xstatus%1" ).arg( mStatus.status() ) ) );
 	//setToolTip();
 	QObject::connect(this, SIGNAL(triggered(bool)), this, SLOT(triggered()));
 }

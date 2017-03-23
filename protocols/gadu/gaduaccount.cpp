@@ -48,7 +48,7 @@
 #include <kactionmenu.h>
 #include <ktoggleaction.h>
 #include <kio/netaccess.h>
-#include <kicon.h>
+#include <QIcon>
 
 #include <qapplication.h>
 #include <qdialog.h>
@@ -200,23 +200,23 @@ GaduAccount::initActions()
 	QObject::connect( p->searchAction, SIGNAL(triggered(bool)), this, SLOT(search()) );
 
 	p->listPutAction = new KAction( i18n( "Export Contacts to Server" ), this );
-	p->listPutAction->setIcon ( KIcon ( "document-export" ) );
+	p->listPutAction->setIcon ( QIcon::fromTheme(QStringLiteral("document-export")) );
 	QObject::connect( p->listPutAction, SIGNAL(triggered(bool)), this, SLOT(slotExportContactsList()) );
 
 	p->listGetAction = new KAction( i18n( "Import Contacts from Server" ), this );
-	p->listGetAction->setIcon ( KIcon ( "document-import" ) );
+	p->listGetAction->setIcon ( QIcon::fromTheme(QStringLiteral("document-import")) );
 	QObject::connect( p->listGetAction, SIGNAL(triggered(bool)), this, SLOT(slotImportContactsList()) );
 
 	p->listDeleteAction = new KAction( i18n( "Delete Contacts from Server" ), this );
-	p->listDeleteAction->setIcon ( KIcon ( "document-close" ) );
+	p->listDeleteAction->setIcon ( QIcon::fromTheme(QStringLiteral("document-close")) );
 	QObject::connect( p->listDeleteAction, SIGNAL(triggered(bool)), this, SLOT(slotDeleteContactsList()) );
 
 	p->listToFileAction = new KAction( i18n( "Export Contacts to File..." ), this );
-	p->listToFileAction->setIcon ( KIcon ( "document-save" ) );
+	p->listToFileAction->setIcon ( QIcon::fromTheme(QStringLiteral("document-save")) );
 	QObject::connect( p->listToFileAction, SIGNAL(triggered(bool)), this, SLOT(slotExportContactsListToFile()) );
 
 	p->listFromFileAction = new KAction( i18n( "Import Contacts from File..." ), this );
-	p->listFromFileAction->setIcon ( KIcon ( "document-open" ) );
+	p->listFromFileAction->setIcon ( QIcon::fromTheme(QStringLiteral("document-open")) );
 	QObject::connect( p->listFromFileAction, SIGNAL(triggered(bool)), this, SLOT(slotImportContactsFromFile()) );
 
 	p->friendsModeAction = new KToggleAction( i18n( "Only for Friends" ), this );
@@ -321,34 +321,34 @@ GaduAccount::fillActionMenu( KActionMenu *actionMenu )
 	}
 
 	KAction* action = new KAction(
-		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ))),
+		QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ))),
 		i18n("Go O&nline"), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOnline()));
 	actionMenu->addAction( action );
 
 	action = new KAction(
-		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ))),
+		QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ))),
 		i18n( "Set &Busy" ), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoBusy()) );
 	actionMenu->addAction( action );
 
 	action = new KAction(
-		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ))),
+		QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ))),
 		i18n( "Set &Invisible" ), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoInvisible()) );
 	actionMenu->addAction( action );
 
 	action = new KAction(
-		KIcon(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ))),
+		QIcon::fromTheme(QIcon(GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ))),
 		i18n( "Go &Offline" ), this );
         //, "actionGaduConnect" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotGoOffline()) );
 	actionMenu->addAction( action );
 
-	action = new KAction( KIcon("edit-rename"), i18n( "Set &Description..." ), this );
+	action = new KAction( QIcon::fromTheme(QStringLiteral("edit-rename")), i18n( "Set &Description..." ), this );
         //, "actionGaduDescription" );
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotDescription()) );
 	actionMenu->addAction( action );
@@ -361,7 +361,7 @@ GaduAccount::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->addSeparator();
 
 	KActionMenu *listMenuAction = new KActionMenu(
-		KIcon ( "user-identity" ),
+		QIcon::fromTheme(QStringLiteral("user-identity")),
 		i18n("Contacts"), this);
 
 	listMenuAction->addAction( p->listPutAction );
@@ -380,7 +380,7 @@ GaduAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	actionMenu->addAction( listMenuAction );
 
-	KAction *propertiesAction = new KAction( KIcon("configure"), i18n("Properties"), actionMenu );
+	KAction *propertiesAction = new KAction( QIcon::fromTheme(QStringLiteral("configure")), i18n("Properties"), actionMenu );
 	QObject::connect( propertiesAction, SIGNAL(triggered(bool)), this, SLOT(editAccount()) );
 	actionMenu->addAction( propertiesAction );
 

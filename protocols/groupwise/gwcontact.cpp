@@ -32,7 +32,7 @@
 #include <QAction>
 #include <KActionCollection>
 #include <kdebug.h>
-#include <kicon.h>
+#include <QIcon>
 #include <klocale.h>
 
 #include <kopetemetacontact.h>
@@ -160,7 +160,7 @@ QList<QAction *> *GroupWiseContact::customContextMenuActions()
 	QString label = account()->isContactBlocked( m_dn ) ? i18n( "Unblock User" ) : i18n( "Block User" );
 	if( !m_actionBlock )
 	{
-		m_actionBlock = new QAction( KIcon( "msn_blocked" ), label, 0 );
+		m_actionBlock = new QAction( QIcon::fromTheme(QStringLiteral("msn_blocked")), label, 0 );
 		QObject::connect( m_actionBlock, SIGNAL(triggered(bool)), SLOT(slotBlock()) );
 	}
 	else

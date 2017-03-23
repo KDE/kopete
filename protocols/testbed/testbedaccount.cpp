@@ -22,7 +22,7 @@
 #include <KLocalizedString>
 #include <kactionmenu.h>
 
-#include <kicon.h>
+#include <QIcon>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -54,7 +54,7 @@ void TestbedAccount::fillActionMenu( KActionMenu *actionMenu )
 
 	QAction *action;
 
-    action = new QAction (QIcon::fromTheme("testbed_showvideo"), i18n ("Show my own video..."), actionMenu );
+    action = new QAction (QIcon::fromTheme(QStringLiteral("testbed_showvideo")), i18n ("Show my own video..."), actionMenu );
         //, "actionShowVideo");
 	QObject::connect( action, SIGNAL(triggered(bool)), this, SLOT(slotShowVideo()) );
 	actionMenu->addAction(action);

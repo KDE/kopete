@@ -26,7 +26,7 @@
 #include <QMenu>
 #include <kactionmenu.h>
 #include <kshortcut.h>
-#include <kicon.h>
+#include <QIcon>
 #include <kmessagebox_queued.h>
 
 #include <kopetecontact.h>
@@ -70,13 +70,13 @@ QQChatSession::QQChatSession( const Kopete::Contact* user, Kopete::ContactPtrLis
 
 	m_secure = actionCollection()->addAction( "qqSecureChat" );
 	m_secure->setText( i18n( "Security Status" ) );
-        m_secure->setIcon( KIcon( "security-high" ) );
+        m_secure->setIcon( QIcon::fromTheme(QStringLiteral("security-high")) );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
         connect( m_secure, SIGNAL(triggered()), this, SLOT(slotShowSecurity()) );
 
 	m_logging = actionCollection()->addAction( "qqLoggingChat" );
 	m_logging->setText( i18n( "Archiving Status" ) );
-        m_logging->setIcon( KIcon( "utilities-log-viewer" ) );
+        m_logging->setIcon( QIcon::fromTheme(QStringLiteral("utilities-log-viewer")) );
         connect( m_logging, SIGNAL(triggered()), this, SLOT(slotShowArchiving()) );
 	updateArchiving();
 
@@ -297,7 +297,7 @@ void QQChatSession::slotActionInviteAboutToShow()
 		}
 	}
 	// Invite someone off-list
-    QAction *b=new QAction( KIcon(), i18n ("&Other..."), actionCollection() );
+    QAction *b=new QAction( QIcon(), i18n ("&Other..."), actionCollection() );
         actionCollection()->addAction( "actionOther", b );
 	QObject::connect( b, SIGNAL(triggered(bool)),
 	                  this, SLOT(slotInviteOtherContact()) );

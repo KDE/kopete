@@ -78,8 +78,8 @@ WlmEditAccountWidget::WlmEditAccountWidget (QWidget * parent, Kopete::Account * 
         m_preferencesWidget->m_allowButton->setEnabled( connected );
         m_preferencesWidget->m_blockButton->setEnabled( connected );
 
-        m_preferencesWidget->m_allowButton->setIcon( KIcon( "arrow-left" ) );
-        m_preferencesWidget->m_blockButton->setIcon( KIcon( "arrow-right" ) );
+        m_preferencesWidget->m_allowButton->setIcon( QIcon::fromTheme(QStringLiteral("arrow-left")) );
+        m_preferencesWidget->m_blockButton->setIcon( QIcon::fromTheme(QStringLiteral("arrow-right")) );
 
         QSet<QString> serverSideContacts = m_wlmAccount->serverSideContacts();
         foreach ( const QString &contact, m_wlmAccount->allowList() )

@@ -18,7 +18,7 @@
 
 #include <QLineEdit>
 
-#include <kicon.h>
+#include <QIcon>
 
 #include "editorwithicon.h"
 

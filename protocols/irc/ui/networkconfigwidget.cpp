@@ -81,8 +81,8 @@ IRCNetworkConfigWidget::IRCNetworkConfigWidget(QWidget *parent, Qt::WindowFlags 
 	}
 
 //	m_host->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), this ) );
-	upButton->setIcon( KIcon( "go-up" )  );
-	downButton->setIcon( KIcon( "go-down" ) );
+	upButton->setIcon( QIcon::fromTheme(QStringLiteral("go-up"))  );
+	downButton->setIcon( QIcon::fromTheme(QStringLiteral("go-down")) );
 
 	connect(m_networkList, SIGNAL(selectionChanged()),
 		this, SLOT(slotUpdateNetworkConfig()));

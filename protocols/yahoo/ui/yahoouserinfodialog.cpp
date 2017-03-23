@@ -30,7 +30,7 @@
 #include <kdatewidget.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kicon.h>
+#include <QIcon>
 #include <klocale.h>
 #include <KDialog>
 
@@ -57,21 +57,21 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent )
 	m_genInfoWidget->setupUi( genInfo );
 	KPageWidgetItem *genInfoItem = addPage( genInfo, i18n("General Info") );
 	genInfoItem->setHeader(  i18n( "General Yahoo Information" ) );
-	genInfoItem->setIcon( KIcon("user-identity") );
+	genInfoItem->setIcon( QIcon::fromTheme(QStringLiteral("user-identity")) );
 	
 	QWidget *workInfo = new QWidget(this);
 	m_workInfoWidget = new Ui::YahooWorkInfoWidget;
 	m_workInfoWidget->setupUi( workInfo );
 	KPageWidgetItem *workInfoItem = addPage( workInfo, i18n("Work Info") );
 	workInfoItem->setHeader( i18n( "Work Information" ) );
-	workInfoItem->setIcon( KIcon("mail-attachment") );
+	workInfoItem->setIcon( QIcon::fromTheme(QStringLiteral("mail-attachment")) );
 	
 	QWidget *otherInfo = new QWidget(this);
 	m_otherInfoWidget = new Ui::YahooOtherInfoWidget;
 	m_otherInfoWidget->setupUi( otherInfo );
 	KPageWidgetItem *otherInfoItem = addPage( otherInfo, i18n("Other Info") );
 	otherInfoItem->setHeader( i18n( "Other Yahoo Information" ) );
-	otherInfoItem->setIcon( KIcon("document-properties") );
+	otherInfoItem->setIcon( QIcon::fromTheme(QStringLiteral("document-properties")) );
 	
 	QObject::connect(this, SIGNAL(user1Clicked()), this, SLOT(slotSaveAndCloseClicked()));
 	QObject::connect(this, SIGNAL(user2Clicked()), this, SLOT(slotUser2()));

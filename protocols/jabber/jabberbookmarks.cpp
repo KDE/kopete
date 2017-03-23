@@ -238,7 +238,7 @@ QAction * JabberBookmarks::bookmarksAction(QObject *parent)
 	}
 
 	KSelectAction *action = new KSelectAction( this );
-    action->setIcon( QIcon::fromTheme( "jabber_group" ) );
+    action->setIcon( QIcon::fromTheme(QStringLiteral("jabber_group")) );
 	action->setText( i18n( "Groupchat Bookmark" ) );
 	action->setItems( menuEntries );
 

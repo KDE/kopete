@@ -72,13 +72,13 @@ m_lastMainConnectionError(Callbacks::NoError)
     clientid += MSN::SIPInvitations;
     clientid += MSN::SupportMultiPacketMessaging;
 
-    m_openInboxAction = new KAction(KIcon("mail-folder-inbox"), i18n("Open Inbo&x..."), this);
+    m_openInboxAction = new KAction(QIcon::fromTheme(QStringLiteral("mail-folder-inbox")), i18n("Open Inbo&x..."), this);
     QObject::connect(m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()));
 
     m_changeDNAction = new KAction(i18n("&Change Display Name..."), this);
     QObject::connect(m_changeDNAction, SIGNAL(triggered(bool)), this, SLOT(slotChangePublicName()));
 
-//     m_startChatAction = new KAction(KIcon("mail-message-new"), i18n("&Start Chat..."), this);
+//     m_startChatAction = new KAction(QIcon::fromTheme(QStringLiteral("mail-message-new")), i18n("&Start Chat..."), this);
 //     QObject::connect(m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()));
     
     m_openStatusAction = new KAction(i18n("Open MS&N service status site..."), this);
