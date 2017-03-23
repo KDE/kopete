@@ -28,7 +28,7 @@
 
 #include <kdebug.h>
 #include <KLocalizedString>
-#include <kmenubar.h>
+#include <QMenuBar>
 #include <ktoolbar.h>
 #include <kauthorized.h>
 #include <kemoticons.h>
