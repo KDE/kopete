@@ -19,14 +19,14 @@
 
 #include <QMap>
 #include <QList>
-#include <kaction.h>
+#include <QAction>
 #include <kurl.h>
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
 #include "wlmchatsession.h"
 
-class KAction;
+class QAction;
 class KActionCollection;
 class KToggleAction;
 namespace Kopete
@@ -66,7 +66,7 @@ public:
     /**
 	 * Return the actions for this contact
 	 */
-    virtual QList <KAction *>*customContextMenuActions ();
+    virtual QList <QAction *>*customContextMenuActions ();
     using Kopete::Contact::customContextMenuActions;
         /**
 	 * Returns a Kopete::ChatSession associated with this contact
@@ -129,9 +129,9 @@ protected:
     WlmAccount * m_account;
     KToggleAction* m_actionBlockContact;
     KToggleAction* m_actionDontShowEmoticons;
-    KAction * m_actionShowProfile;
-    KAction * m_actionUpdateDisplayPicture;
-    KAction * m_actionPrefs;
+    QAction * m_actionShowProfile;
+    QAction * m_actionUpdateDisplayPicture;
+    QAction * m_actionPrefs;
     QString m_msnobj;
     QString m_contactSerial;
     Kopete::Group *m_currentGroup;

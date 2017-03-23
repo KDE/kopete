@@ -32,7 +32,7 @@
 #include "kopeteview.h"
 #include "kopeteuiglobal.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <kcharsets.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>

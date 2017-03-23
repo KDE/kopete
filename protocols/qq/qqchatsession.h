@@ -21,7 +21,7 @@
 
 
 class QLabel;
-class KAction;
+class QAction;
 class KActionMenu;
 class KDialog;
 class QQAccount;

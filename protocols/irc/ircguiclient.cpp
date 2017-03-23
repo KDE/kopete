@@ -22,7 +22,7 @@
 
 #include "kopetechatsession.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -51,8 +51,8 @@ IRCGUIClient::IRCGUIClient(Kopete::ChatSession *parent)
 
 	QDomDocument doc = domDocument();
 	QDomNode menu = doc.documentElement().firstChild().firstChild();
-	QList<KAction *> *actions = m_contact->customContextMenuActions( parent );
-	for( KAction *actions, m_contact->customContextMenuActions( parent ))
+	QList<QAction *> *actions = m_contact->customContextMenuActions( parent );
+	for( QAction *actions, m_contact->customContextMenuActions( parent ))
 	{
 		actionCollection()->insert(action);
 		QDomElement newNode = doc.createElement( "Action" );

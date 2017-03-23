@@ -35,7 +35,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <QMenu>
-#include <kaction.h>
+#include <QAction>
 #include <kactionmenu.h>
 #include <kactioncollection.h>
 #include <kmainwindow.h>
@@ -114,7 +114,7 @@ m_sessionID(1)
         setReady (true);
     }
 
-    m_actionNudge = new KAction (QIcon::fromTheme(QStringLiteral("preferences-desktop-notification-bell")), i18n ("Send Nudge"), this);
+    m_actionNudge = new QAction (QIcon::fromTheme(QStringLiteral("preferences-desktop-notification-bell")), i18n ("Send Nudge"), this);
     actionCollection ()->addAction ("wlmSendNudge", m_actionNudge);
     connect (m_actionNudge, SIGNAL (triggered(bool)), this,
              SLOT (sendNudge()));
@@ -159,7 +159,7 @@ m_sessionID(1)
         connect (m_actionVoice->menu(), SIGNAL (aboutToHide()), this,
                  SLOT (slotSendVoiceStopRec()));
 
-        KAction *stopRec = new  KAction(QIcon::fromTheme(QStringLiteral("wlm_fakefriend")), i18n("Stop &recording"), actionCollection ());
+        QAction *stopRec = new  QAction(QIcon::fromTheme(QStringLiteral("wlm_fakefriend")), i18n("Stop &recording"), actionCollection ());
         m_actionVoice->addAction (stopRec);
         m_actionVoice->setDelayed(false);
     }
@@ -641,7 +641,7 @@ WlmChatSession::slotSendInk ( const QPixmap & ink)
 void
 WlmChatSession::slotActionInviteAboutToShow ()
 {
-    // We can't simply insert  KAction in this menu bebause we don't know when to delete them.
+    // We can't simply insert  QAction in this menu bebause we don't know when to delete them.
     //  items inserted with insert items are automatically deleted when we call clear
 
     qDeleteAll (m_inviteactions);
@@ -657,7 +657,7 @@ WlmChatSession::slotActionInviteAboutToShow ()
     {
         if (!members ().contains (it.value ()) && it.value ()->isOnline ())
         {
-            KAction *a =
+            QAction *a =
                 new Kopete::UI::ContactAction (it.value (),
                                                actionCollection ());
 			connect( a, SIGNAL(triggered(Kopete::Contact*,bool)),
@@ -668,7 +668,7 @@ WlmChatSession::slotActionInviteAboutToShow ()
         }
     }
 
-    // We can't simply insert  KAction in this menu bebause we don't know when to delete them.
+    // We can't simply insert  QAction in this menu bebause we don't know when to delete them.
     //  items inserted with insert items are automatically deleted when we call clear
 /*
     m_inviteactions.setAutoDelete(true);
@@ -681,13 +681,13 @@ WlmChatSession::slotActionInviteAboutToShow ()
     {
         if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != myself() )
         {
-            KAction *a=new KopeteContactAction( it.current(), this,
+            QAction *a=new KopeteContactAction( it.current(), this,
                 SLOT(slotInviteContact(Kopete::Contact*)), m_actionInvite );
             m_actionInvite->insert( a );
             m_inviteactions.append( a ) ;
         }
     }
-//    KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT(slotInviteOtherContact()), m_actionInvite, "actionOther" );
+//    QAction *b=new QAction( i18n ("Other..."), 0, this, SLOT(slotInviteOtherContact()), m_actionInvite, "actionOther" );
 //    m_actionInvite->insert( b );
 //    m_inviteactions.append( b ) ;
 */

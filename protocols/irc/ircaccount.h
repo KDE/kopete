@@ -43,7 +43,7 @@ class ChatSession;
 class MetaContact;
 }
 
-class KAction;
+class QAction;
 class KActionMenu;
 
 class IRCAccount

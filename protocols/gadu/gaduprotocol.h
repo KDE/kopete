@@ -32,7 +32,7 @@
 
 #include "gaducommands.h"
 
-class KAction;
+class QAction;
 
 class QWidget;
 class QString;

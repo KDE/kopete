@@ -23,7 +23,7 @@
 #include "kopetechatsessionmanager.h"
 #include "kopeteview.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <klocale.h>
 

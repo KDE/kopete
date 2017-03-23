@@ -357,7 +357,7 @@ private:
  * @internal
  * An action that selects an OnlineStatus and provides a status message, but not using Kopete::Away, because the status message relates only to this status.
  */
-/*class OnlineStatusMessageAction : public KAction
+/*class OnlineStatusMessageAction : public QAction
 {
 	Q_OBJECT
   public:

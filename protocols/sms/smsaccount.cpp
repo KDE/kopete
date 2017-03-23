@@ -19,7 +19,7 @@
 #include "smsaccount.h"
 
 #include <kconfigbase.h>
-#include <kaction.h>
+#include <QAction>
 #include <QMenu>
 #include <kdebug.h>
 #include <kmessagebox.h>

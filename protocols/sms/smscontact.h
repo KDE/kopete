@@ -26,7 +26,7 @@ namespace Kopete { class ChatSession; }
 namespace Kopete { class MetaContact; }
 
 class KActionCollection;
-class KAction;
+class QAction;
 
 class SMSContact : public Kopete::Contact
 {
@@ -35,7 +35,7 @@ public:
 	SMSContact( Kopete::Account* _account, const QString &phoneNumber,
 		Kopete::MetaContact *parent );
 
-	virtual QList<KAction *>* customContextMenuActions();
+	virtual QList<QAction *>* customContextMenuActions();
 	using Kopete::Contact::customContextMenuActions;
 
 	const QString &phoneNumber();
@@ -61,7 +61,7 @@ private slots:
 	void slotChatSessionDestroyed();
 
 private:
-	KAction* m_actionPrefs;
+	QAction * m_actionPrefs;
 
 	QString m_phoneNumber;
 

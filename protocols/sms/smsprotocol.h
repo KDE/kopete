@@ -27,7 +27,7 @@
 #include "kopeteonlinestatus.h"
 #include "kopetecontact.h"
 
-class KAction;
+class QAction;
 
 namespace Kopete { class Contact; }
 namespace Kopete { class MetaContact; }

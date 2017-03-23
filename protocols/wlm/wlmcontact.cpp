@@ -17,7 +17,7 @@
 #include "wlmcontact.h"
 
 #include <QPointer>
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <klocale.h>
 #include <ktoggleaction.h>
@@ -58,10 +58,10 @@ Kopete::Contact (_account, uniqueName, parent)
     m_actionBlockContact = new KToggleAction(QIcon::fromTheme(QStringLiteral("wlm_blocked")), i18n("Block Contact"), this );
     QObject::connect( m_actionBlockContact, SIGNAL(triggered(bool)), this, SLOT(blockContact(bool)) );
 
-    m_actionShowProfile = new KAction(i18n("Show Profile"), this);
+    m_actionShowProfile = new QAction(i18n("Show Profile"), this);
     QObject::connect(m_actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowProfile()));
 
-    m_actionUpdateDisplayPicture = new KAction(i18n("Update Photo"), this);
+    m_actionUpdateDisplayPicture = new QAction(i18n("Update Photo"), this);
     QObject::connect(m_actionUpdateDisplayPicture, SIGNAL(triggered(bool)), this, SLOT(slotUpdateDisplayPicture()));
 
     m_actionDontShowEmoticons = new KToggleAction (QIcon::fromTheme(QStringLiteral("wlm_fakefriend")), 
@@ -216,9 +216,9 @@ Kopete::ChatSession *
     return manager;
 }
 
-QList < KAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
+QList < QAction * >* WlmContact::customContextMenuActions ()     //OBSOLETE
 {
-    QList<KAction*> *actions = new QList<KAction*>();
+    QList<QAction *> *actions = new QList<QAction*>();
 
     m_actionBlockContact->setEnabled(m_account->isConnected());
     m_actionBlockContact->setChecked(m_account->isContactBlocked(contactId()));

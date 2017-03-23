@@ -26,7 +26,7 @@
 
 class QTimer;
 
-class KAction;
+class QAction;
 class KActionMenu;
 class KCodecAction;
 
@@ -64,7 +64,7 @@ public:
 	IRCUserContact(IRCContactManager *, const QString &nickname, Kopete::MetaContact *mc);
 
 	// Kopete::Contact stuff
-	virtual QList<KAction*> *customContextMenuActions( Kopete::ChatSession *manager );
+	virtual QList<QAction *> *customContextMenuActions( Kopete::ChatSession *manager );
 	virtual const QString caption() const;
 
 	void setAway(bool isAway);
@@ -118,7 +118,7 @@ private:
 
 	KActionMenu *actionModeMenu;
 	KActionMenu *actionCtcpMenu;
-	KAction *actionKick;
+	QAction *actionKick;
 	KActionMenu *actionBanMenu;
 	KCodecAction *codecAction;
 	Kopete::ChatSession *mActiveManager;

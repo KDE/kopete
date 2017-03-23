@@ -18,7 +18,7 @@
 
 #undef KDE_NO_COMPAT
 #include <kconfigbase.h>
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -120,13 +120,13 @@ void SMSContact::setPhoneNumber( const QString phoneNumber )
 	new SMSContact(account(), phoneNumber, metaContact());
 }
 
-QList<KAction *>* SMSContact::customContextMenuActions()
+QList<QAction *>* SMSContact::customContextMenuActions()
 {
-	QList<KAction*> *actions = new QList<KAction*>();
+	QList<QAction *> *actions = new QList<QAction*>();
 
 	if( !m_actionPrefs )
 	{
-		m_actionPrefs = new KAction(i18n("&Contact Settings"),
+		m_actionPrefs = new QAction(i18n("&Contact Settings"),
 					    this );
 
 //       dynamic_cast<QObject*>(this),

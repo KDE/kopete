@@ -325,10 +325,10 @@ private slots:
 private:
     Kopete::OnlineStatus temporaryStatus;
 
-    KAction *m_openInboxAction;
-//     KAction *m_startChatAction;
-    KAction *m_changeDNAction;
-    KAction *m_openStatusAction;
+    QAction *m_openInboxAction;
+//     QAction *m_startChatAction;
+    QAction *m_changeDNAction;
+    QAction *m_openStatusAction;
 
     QString
         m_pictureFilename;

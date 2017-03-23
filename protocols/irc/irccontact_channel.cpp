@@ -521,20 +521,20 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 	return false;
 }
 
-QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
+QPtrList<QAction> *IRCChannelContact::customContextMenuActions()
 {
-	// KAction stuff
-	QPtrList<KAction> *mCustomActions = new QPtrList<KAction>();
+	// QAction stuff
+	QPtrList<QAction> *mCustomActions = new QPtrList<QAction>();
 	if( !actionJoin )
 	{
-		actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(join()), this, "actionJoin");
-		actionPart = new KAction(i18n("&Part"), 0, this, SLOT(part()), this, "actionPart");
-		actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
+		actionJoin = new QAction(i18n("&Join"), 0, this, SLOT(join()), this, "actionJoin");
+		actionPart = new QAction(i18n("&Part"), 0, this, SLOT(part()), this, "actionPart");
+		actionTopic = new QAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
 		actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");
 
 		if( !property(m_protocol->propHomepage).value().isNull() )
 		{
-			actionHomePage = new KAction( i18n("Visit &Homepage"), 0, this,
+			actionHomePage = new QAction( i18n("Visit &Homepage"), 0, this,
 				SLOT(slotHomepage()), this, "actionHomepage");
 		}
 		else if( actionHomePage )
