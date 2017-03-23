@@ -54,7 +54,7 @@
 #include <kdialog.h>
 #include <klocale.h>
 #include <krun.h>
-#include <kshortcut.h>
+#include <QKeySequence>
 #include <kmessagebox.h>
 #include <ktemporaryfile.h>
 #include <kio/global.h>

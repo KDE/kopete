@@ -30,7 +30,7 @@
 #include <kdebug.h>
 #include <QAction>
 #include <kactioncollection.h>
-#include <kshortcut.h>
+#include <QKeySequence>
 #include <kopetecontactlist.h>
 #include <kopetemetacontact.h>
 
