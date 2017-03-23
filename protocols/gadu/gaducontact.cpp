@@ -23,7 +23,7 @@
 #include "gaducontact.h"
 
 #include <klocale.h>
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
@@ -183,18 +183,18 @@ GaduContact::isReachable()
 	return account_->isConnected();
 }
 
-QList<KAction*>*
+QList<QAction *>*
 GaduContact::customContextMenuActions()
 {
-	QList<KAction*> *fakeCollection = new QList<KAction*>();
+	QList<QAction *> *fakeCollection = new QList<QAction*>();
 	//show profile
-	KAction* actionShowProfile = new KAction( QIcon::fromTheme(QStringLiteral("help-about")), i18n("Show Profile"), this );
+	QAction * actionShowProfile = new QAction( QIcon::fromTheme(QStringLiteral("help-about")), i18n("Show Profile"), this );
 	//, "actionShowPublicProfile" );
 	connect( actionShowProfile, SIGNAL(triggered(bool)), this, SLOT(slotShowPublicProfile()) );
 
 	fakeCollection->append( actionShowProfile );
 
-	KAction* actionEditContact = new KAction( QIcon::fromTheme(QStringLiteral("document-properties")), i18n("Edit..."), this );
+	QAction * actionEditContact = new QAction( QIcon::fromTheme(QStringLiteral("document-properties")), i18n("Edit..."), this );
 	//, "actionEditContact" );
 	connect( actionEditContact, SIGNAL(triggered(bool)), this, SLOT(slotEditContact()) );
 

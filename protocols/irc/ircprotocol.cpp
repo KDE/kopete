@@ -41,7 +41,7 @@
 #include "kopeteuiglobal.h"
 
 #include <kaboutdata.h>
-#include <kaction.h>
+#include <QAction>
 #include <kcharsets.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -447,7 +447,7 @@ void IRCProtocol::slotMessageFilter(Message &msg)
 	}
 }
 /*
-QList<KAction *> *IRCProtocol::customChatWindowPopupActions(const Message &m, DOM::Node &n)
+QList<QAction *> *IRCProtocol::customChatWindowPopupActions(const Message &m, DOM::Node &n)
 {
 	DOM::HTMLElement e = n;
 

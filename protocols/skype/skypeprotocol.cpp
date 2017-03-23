@@ -28,7 +28,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <kdebug.h>
-#include <kaction.h>
+#include <QAction>
 #include <kactioncollection.h>
 #include <kshortcut.h>
 #include <kopetecontactlist.h>
@@ -59,7 +59,7 @@ class SkypeProtocolPrivate {
 	private:
 	public:
 		///The "call contact" action
-		KAction *callContactAction;
+		QAction *callContactAction;
 		///Pointer to the account
 		SkypeAccount *account;
 		///Constructor
@@ -100,7 +100,7 @@ SkypeProtocol::SkypeProtocol(QObject *parent, const QList<QVariant>&) :
 
 	setXMLFile("skypeui.rc");
 
-	d->callContactAction = new KAction( this );
+	d->callContactAction = new QAction( this );
 	d->callContactAction->setIcon( (QIcon::fromTheme(QStringLiteral("voicecall")) ) );
 	d->callContactAction->setText( i18n ("Call") );
 	connect(d->callContactAction, SIGNAL(triggered(bool)), SLOT(callContacts()));

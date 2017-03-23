@@ -23,7 +23,7 @@
 #include <QDomDocument>
 #include <QtCore/QCryptographicHash>
 
-#include <kaction.h>
+#include <QAction>
 #include <kactionmenu.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -72,16 +72,16 @@ m_lastMainConnectionError(Callbacks::NoError)
     clientid += MSN::SIPInvitations;
     clientid += MSN::SupportMultiPacketMessaging;
 
-    m_openInboxAction = new KAction(QIcon::fromTheme(QStringLiteral("mail-folder-inbox")), i18n("Open Inbo&x..."), this);
+    m_openInboxAction = new QAction(QIcon::fromTheme(QStringLiteral("mail-folder-inbox")), i18n("Open Inbo&x..."), this);
     QObject::connect(m_openInboxAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenInbox()));
 
-    m_changeDNAction = new KAction(i18n("&Change Display Name..."), this);
+    m_changeDNAction = new QAction(i18n("&Change Display Name..."), this);
     QObject::connect(m_changeDNAction, SIGNAL(triggered(bool)), this, SLOT(slotChangePublicName()));
 
-//     m_startChatAction = new KAction(QIcon::fromTheme(QStringLiteral("mail-message-new")), i18n("&Start Chat..."), this);
+//     m_startChatAction = new QAction(QIcon::fromTheme(QStringLiteral("mail-message-new")), i18n("&Start Chat..."), this);
 //     QObject::connect(m_startChatAction, SIGNAL(triggered(bool)), this, SLOT(slotStartChat()));
     
-    m_openStatusAction = new KAction(i18n("Open MS&N service status site..."), this);
+    m_openStatusAction = new QAction(i18n("Open MS&N service status site..."), this);
     QObject::connect(m_openStatusAction, SIGNAL(triggered(bool)), this, SLOT(slotOpenStatus()));
 
     tmpMailFile = 0L;

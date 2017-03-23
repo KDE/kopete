@@ -30,7 +30,7 @@
 #include <kopetechatsessionmanager.h>
 #include <kopeteproperty.h>
 #include <kopetemetacontact.h>
-#include <kaction.h>
+#include <QAction>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -65,13 +65,13 @@ class SkypeContactPrivate {
 		///The chat session
 		SkypeChatSession *session;
 		///The action to call the user
-		KAction *callContactAction;
+		QAction *callContactAction;
 		///Authorization action
-		KAction *authorizeAction;
+		QAction *authorizeAction;
 		///Remove authorization action
-		KAction *disAuthorAction;
+		QAction *disAuthorAction;
 		///Block user action
-		KAction *blockAction;
+		QAction *blockAction;
 		///The private phone
 		QString privatePhone;
 		///The private mobile phone
@@ -97,22 +97,22 @@ SkypeContact::SkypeContact(SkypeAccount *account, const QString &id, Kopete::Met
 	account->prepareContact(this);//let the account prepare us
 	d->user = user;
 
-	d->callContactAction = new KAction( this );
+	d->callContactAction = new QAction( this );
 	d->callContactAction->setText( i18n ("Call contact") );
 	d->callContactAction->setIcon( (QIcon::fromTheme(QStringLiteral("voicecall")) ) );
 	connect(d->callContactAction, SIGNAL(triggered()), SLOT(call()));
 
-	d->authorizeAction = new KAction( this );
+	d->authorizeAction = new QAction( this );
 	d->authorizeAction->setText( i18n ("(Re)send Authorization To") );
 	d->authorizeAction->setIcon( (QIcon::fromTheme(QStringLiteral("mail-forward")) ) );
 	connect(d->authorizeAction, SIGNAL(triggered()), SLOT(authorize()));
 
-	d->disAuthorAction = new KAction( this );
+	d->disAuthorAction = new QAction( this );
 	d->disAuthorAction->setText( i18n ("Remove Authorization From") );
 	d->disAuthorAction->setIcon( (QIcon::fromTheme(QStringLiteral("edit-delete")) ) );
 	connect(d->disAuthorAction, SIGNAL(triggered()), SLOT(disAuthor()));
 
-	d->blockAction = new KAction( this );
+	d->blockAction = new QAction( this );
 	d->blockAction->setText( i18n("Block contact") );
 	d->blockAction->setIcon( (QIcon::fromTheme(QStringLiteral("dialog-cancel")) ) );
 	connect(d->blockAction, SIGNAL(triggered()), SLOT(block()));
@@ -338,13 +338,13 @@ void SkypeContact::receiveIm(const QString &message, const QString &chat, const 
 	d->session->appendMessage(mes);//add it to the session
 }
 
-QList<KAction*> *SkypeContact::customContextMenuActions() {
+QList<QAction *> *SkypeContact::customContextMenuActions() {
 	kDebug(SKYPE_DEBUG_GLOBAL);
 
 	if (d->account->myself() == this)
 		return 0L;
 
-	QList<KAction*> *actions = new QList<KAction*>();
+	QList<QAction *> *actions = new QList<QAction*>();
 
 	actions->append(d->callContactAction);
 	actions->append(d->authorizeAction);

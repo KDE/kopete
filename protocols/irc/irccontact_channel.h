@@ -22,7 +22,7 @@
 #include "irccontact.h"
 #include <QList>
 
-class KAction;
+class QAction;
 class KActionMenu;
 class KCodecAction;
 class KToggleAction;
@@ -70,7 +70,7 @@ public:
 	bool modeEnabled( QChar mode, QString *value = 0 );
 
 	// Kopete::Contact stuff
-	virtual QList<KAction*> *customContextMenuActions();
+	virtual QList<QAction *> *customContextMenuActions();
 	virtual const QString caption() const;
 
 	//Methods handled by the signal mapper
@@ -124,11 +124,11 @@ private slots:
 	void slotChannelListed(const QString &channel, uint members, const QString &topic);
 
 private:
-	// KAction stuff:
-	KAction *actionJoin;
-	KAction *actionPart;
-	KAction *actionTopic;
-	KAction *actionHomePage;
+	// QAction stuff:
+	QAction *actionJoin;
+	QAction *actionPart;
+	QAction *actionTopic;
+	QAction *actionHomePage;
 	KActionMenu *actionModeMenu;
 	KCodecAction *codecAction;
 

@@ -35,7 +35,7 @@
 #include <qhostaddress.h>
 #include <qmap.h>
 #include <qstring.h>
-#include <kaction.h>
+#include <QAction>
 #include <kfiledialog.h>
 
 class GaduAccountPrivate;

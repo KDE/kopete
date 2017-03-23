@@ -22,7 +22,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <kdebug.h>
 #include <kfiledialog.h>
 #include <klocale.h>
@@ -420,11 +420,11 @@ void IRCUserContact::newWhoReply( const QString &channel, const QString &user, c
 	}
 }
 
-QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession *manager )
+QPtrList<QAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession *manager )
 {
 	if( manager )
 	{
-		QPtrList<KAction> *mCustomActions = new QPtrList<KAction> ();
+		QPtrList<QAction> *mCustomActions = new QPtrList<QAction> ();
 		mActiveManager = manager;
 		Kopete::ContactPtrList members = mActiveManager->members();
 		IRCChannelContact *isChannel = dynamic_cast<IRCChannelContact*>( members.first() );
@@ -432,33 +432,33 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession
 		if( !actionCtcpMenu )
 		{
 			actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, this );
-			actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this,
+			actionCtcpMenu->insert( new QAction(i18n("&Version"), 0, this,
 				SLOT(slotCtcpVersion()), actionCtcpMenu) );
-			actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this,
+			actionCtcpMenu->insert(  new QAction(i18n("&Ping"), 0, this,
 				SLOT(slotCtcpPing()), actionCtcpMenu) );
 
 			actionModeMenu = new KActionMenu(i18n("&Modes"), 0, this, "actionModeMenu");
-			actionModeMenu->insert( new KAction(i18n("&Op"), 0, this,
+			actionModeMenu->insert( new QAction(i18n("&Op"), 0, this,
 				SLOT(slotOp()), actionModeMenu, "actionOp") );
-			actionModeMenu->insert( new KAction(i18n("&Deop"), 0, this,
+			actionModeMenu->insert( new QAction(i18n("&Deop"), 0, this,
 				SLOT(slotDeop()), actionModeMenu, "actionDeop") );
-			actionModeMenu->insert( new KAction(i18n("&Voice"), 0, this,
+			actionModeMenu->insert( new QAction(i18n("&Voice"), 0, this,
 				SLOT(slotVoice()), actionModeMenu, "actionVoice") );
-			actionModeMenu->insert( new KAction(i18n("Devoice"), 0, this,
+			actionModeMenu->insert( new QAction(i18n("Devoice"), 0, this,
 				SLOT(slotDevoice()), actionModeMenu, "actionDevoice") );
 			actionModeMenu->setEnabled( false );
 
-			actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), this);
+			actionKick = new QAction(i18n("&Kick"), 0, this, SLOT(slotKick()), this);
 			actionKick->setEnabled( false );
 
 			actionBanMenu = new KActionMenu(i18n("&Ban"), 0, this, "actionBanMenu");
-			actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this,
+			actionBanMenu->insert( new QAction(i18n("Ban *!*@*.host"), 0, this,
 				SLOT(slotBanHost()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this,
+			actionBanMenu->insert( new QAction(i18n("Ban *!*@domain"), 0, this,
 				SLOT(slotBanDomain()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this,
+			actionBanMenu->insert( new QAction(i18n("Ban *!*user@*.host"), 0, this,
 				 SLOT(slotBanUserHost()), actionBanMenu ) );
-			actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this,
+			actionBanMenu->insert( new QAction(i18n("Ban *!*user@domain"), 0, this,
 				 SLOT(slotBanUserDomain()), actionBanMenu ) );
 			actionBanMenu->setEnabled( false );
 

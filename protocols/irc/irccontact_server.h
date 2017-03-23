@@ -27,7 +27,7 @@
 #include <qvaluelist.h>
 #include <qlist.h>
 
-class KAction;
+class QAction;
 class KopeteView;
 
 class IRCContactManager;

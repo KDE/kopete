@@ -30,7 +30,7 @@ namespace Kopete {
 	class MetaContact;
 	class ChatSession;
 }
-class KAction;
+class QAction;
 class SkypeChatSession;
 
 /**
@@ -80,7 +80,7 @@ class SkypeContact : public Kopete::Contact
 		///Does this contact has opened chat session?
 		bool hasChat() const;
 		///Tell kopete which actions to show in the contact pop-up menu
-		virtual QList<KAction*> *customContextMenuActions();
+		virtual QList<QAction *> *customContextMenuActions();
 		using Kopete::Contact::customContextMenuActions;
 		///Give me actually existing chat session
 		SkypeChatSession *getChatSession();

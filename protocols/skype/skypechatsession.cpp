@@ -28,7 +28,7 @@
 #include <kopetemetacontact.h>
 #include <kopetecontactaction.h>
 #include <qstring.h>
-#include <kaction.h>
+#include <QAction>
 #include <kactionmenu.h>
 #include <kactioncollection.h>
 #include <klocale.h>
@@ -81,7 +81,7 @@ class SkypeChatSessionPrivate {
 			}
 		};
 		///The action to call the user(s)
-		KAction *callAction;
+		QAction *callAction;
 		///The action to invite the user
 		KActionMenu *inviteAction;
 		///The contact if any (and one)
@@ -110,7 +110,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, SkypeContact *contact)
 	account->prepareChatSession(this);
 	d->isMulti = false;
 
-	d->callAction = new KAction(this);
+	d->callAction = new QAction(this);
 	d->callAction->setText(i18n("Call"));
 	d->callAction->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
 	connect(d->callAction, SIGNAL(triggered()), SLOT(callChatSession()));
@@ -151,7 +151,7 @@ SkypeChatSession::SkypeChatSession(SkypeAccount *account, const QString &session
 	d->chatId = session;
 	emit updateChatId("", session, this);
 
-	d->callAction = new KAction(this);
+	d->callAction = new QAction(this);
 	d->callAction->setText(i18n("Call"));
 	d->callAction->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
 	connect(d->callAction, SIGNAL(triggered()), SLOT(callChatSession()));
@@ -292,7 +292,7 @@ void SkypeChatSession::showInviteMenu() {
 	QHash <QString, Kopete::Contact *> contactList = account()->contacts();
 	for ( QHash <QString, Kopete::Contact *>::Iterator it = contactList.begin(); it != contactList.end(); ++it ) {
 		if ( ! members().contains(it.value()) && it.value()->isOnline() && it.value()->onlineStatus().status() != Kopete::OnlineStatus::Offline ) {
-			KAction *a = new Kopete::UI::ContactAction(it.value(), actionCollection());
+			QAction *a = new Kopete::UI::ContactAction(it.value(), actionCollection());
 			connect( a, SIGNAL(triggered(QString,bool)), this, SLOT(inviteContact(QString)) );
 			d->inviteAction->addAction(a);
 		}

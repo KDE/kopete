@@ -88,8 +88,8 @@ public:
 	QMap<QString, QString> customCtcp;
 	Kopete::ChatSession *commandSource;
 
-	KAction *joinChannelAction;
-	KAction *searchChannelAction;
+	QAction *joinChannelAction;
+	QAction *searchChannelAction;
 
 	QString motd;
 };
@@ -185,9 +185,9 @@ IRCAccount::IRCAccount(const QString &accountId, const QString &autoChan, const 
 #ifdef __GNUC__
 	#warning spurus slot calls for now
 #endif
-	d->joinChannelAction = new KAction(i18n("Join Channel..."), this);
+	d->joinChannelAction = new QAction(i18n("Join Channel..."), this);
 	QObject::connect(d->joinChannelAction, SIGNAL(triggered()), this, SLOT(slotJoinChannel()));
-	d->searchChannelAction = new KAction(i18n("Search Channels..."), this);
+	d->searchChannelAction = new QAction(i18n("Search Channels..."), this);
 	QObject::connect(d->searchChannelAction, SIGNAL(triggered()), this, SLOT(slotSearchChannels()));
 }
 
@@ -468,11 +468,11 @@ void IRCAccount::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->addAction(d->joinChannelAction);
 	actionMenu->addAction(d->searchChannelAction);
 /*
-	actionMenu->insert( new KAction ( i18n("Show Server Window"), QString(), 0, this, SLOT(slotShowServerWindow()), actionMenu ) );
+	actionMenu->insert( new QAction ( i18n("Show Server Window"), QString(), 0, this, SLOT(slotShowServerWindow()), actionMenu ) );
 
 //	if (d->client->isConnected() && d->client->useSSL())
 	{
-		actionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, d->client,
+		actionMenu->insert( new QAction ( i18n("Show Security Information"), "", 0, d->client,
 			SLOT(showInfoDialog()), actionMenu ) );
 	}
 */

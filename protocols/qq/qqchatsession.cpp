@@ -278,7 +278,7 @@ void QQChatSession::dequeueMessagesAndInvites()
 
 void QQChatSession::slotActionInviteAboutToShow()
 {
-	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
+	// We can't simply insert  QAction in this menu bebause we don't know when to delete them.
 	//  items inserted with insert items are automatically deleted when we call clear
 
 	qDeleteAll(m_inviteActions);

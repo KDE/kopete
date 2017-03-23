@@ -22,7 +22,7 @@
 #include <QWidgetAction>
 #include <QTimer>
 
-#include <kaction.h>
+#include <QAction>
 #include <kactionmenu.h>
 #include <QMenu>
 
@@ -121,10 +121,10 @@ class WlmChatSession: public Kopete::ChatSession
     QLinkedList < QString > m_pendingInvitations;
     QLinkedList < QString > m_pendingFiles;
     QLinkedList < QByteArray > m_pendingInks;
-    KAction * m_actionNudge;
+    QAction * m_actionNudge;
     WlmChatSessionInkAction * m_actionInk;
     KActionMenu * m_actionInvite;
-    QList < KAction* > m_inviteactions;
+    QList < QAction * > m_inviteactions;
     QTimer * m_keepalivetimer;
     QStringList m_filesToRemove;
 

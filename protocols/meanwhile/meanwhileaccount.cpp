@@ -25,7 +25,7 @@
 #include "kopetecontactlist.h"
 #include "kopetepassword.h"
 
-#include <kaction.h>
+#include <QAction>
 #include <kactionmenu.h>
 #include <QMenu>
 #include <klocale.h>
@@ -139,7 +139,7 @@ void MeanwhileAccount::fillActionMenu( KActionMenu *actionMenu )
 	actionMenu->menu()->addSeparator();
 
 #if 0
-    actionMenu->insert(new KAction(i18n("&Change Status Message"), QString(), 0,
+    actionMenu->insert(new QAction(i18n("&Change Status Message"), QString(), 0,
                 this, SLOT(meanwhileChangeStatus()), this,
                 "meanwhileChangeStatus"));
     //infoPlugin->addCustomMenus(theMenu);

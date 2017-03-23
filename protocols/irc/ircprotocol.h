@@ -86,7 +86,7 @@ public:
 
 	virtual Kopete::Account* createNewAccount(const QString &accountId);
 
-//	virtual QList<KAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
+//	virtual QList<QAction *> *customChatWindowPopupActions(const Kopete::Message &, DOM::Node &);
 
 	Kopete::OnlineStatus onlineStatusFor(KIrc::EntityPtr entity);
 

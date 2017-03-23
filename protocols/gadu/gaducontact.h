@@ -35,7 +35,7 @@
 
 #include <libgadu.h>
 
-class KAction;
+class QAction;
 class GaduAccount;
 namespace Kopete { class Account; }
 namespace Kopete { class ChatSession; }
@@ -51,7 +51,7 @@ public:
 
 	virtual bool isReachable();
 	virtual void serialize( QMap<QString, QString>&, QMap<QString, QString>& );
-	virtual QList<KAction*>* customContextMenuActions();
+	virtual QList<QAction *>* customContextMenuActions();
 	using Kopete::Contact::customContextMenuActions;
 	virtual QString identityId() const;
 

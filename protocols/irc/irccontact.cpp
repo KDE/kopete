@@ -54,10 +54,10 @@ public:
 //	QList<Kopete::Contact *> mMyself;
 	Kopete::Message::MessageDirection execDir;
 
-	QList<KAction *> actions;
-	QList<KAction *> serverActions;
-	QList<KAction *> channelActions;
-	QList<KAction *> userActions;
+	QList<QAction *> actions;
+	QList<QAction *> serverActions;
+	QList<QAction *> channelActions;
+	QList<QAction *> userActions;
 };
 
 IRCContact::IRCContact(IRCAccount *account, const KIrc::EntityPtr &entity, MetaContact *metac, const QString& icon)
