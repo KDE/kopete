@@ -100,8 +100,10 @@ int main( int argc, char *argv[] )
 	options.add("!+[URL]", ki18n("URLs to pass to kopete / emoticon themes to install"));
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	KUniqueApplication::addCmdLineOptions();
+    KLocalizedString::setApplicationDomain("kopete");
 
     KopeteApplication kopete;
+
 	return kopete.exec();
 }
 // vim: set noet ts=4 sts=4 sw=4:
