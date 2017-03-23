@@ -25,7 +25,7 @@
 #include <kmessagebox.h>
 #include <QMenu>
 #include <kactionmenu.h>
-#include <kshortcut.h>
+#include <QKeySequence>
 #include <QIcon>
 #include <kmessagebox_queued.h>
 

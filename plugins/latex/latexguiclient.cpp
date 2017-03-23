@@ -21,7 +21,7 @@
 
 #include <QAction>
 #include <KLocalizedString>
-#include <kshortcut.h>
+#include <QKeySequence>
 #include <kmessagebox.h>
 #include <kicon.h>
 #include <qimage.h>

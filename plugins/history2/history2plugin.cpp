@@ -52,7 +52,7 @@ History2Plugin::History2Plugin( QObject *parent, const QStringList & /* args */ 
 {
 	KAction *viewMetaContactHistory = new KAction( KIcon("view-history"), i18n("View &History" ), this );
 	actionCollection()->addAction( "viewMetaContactHistory", viewMetaContactHistory );
-	viewMetaContactHistory->setShortcut(KShortcut(Qt::CTRL + Qt::Key_H));
+	viewMetaContactHistory->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
 	connect(viewMetaContactHistory, SIGNAL(triggered(bool)), this, SLOT(slotViewHistory()));
 	viewMetaContactHistory->setEnabled(
 		Kopete::ContactList::self()->selectedMetaContacts().count() == 1 );

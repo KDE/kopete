@@ -34,7 +34,7 @@
 #include <kxmlguiwindow.h>
 #include <kmessagebox.h>
 #include <QMenu>
-#include <kshortcut.h>
+#include <QKeySequence>
 
 #include <kopetecontact.h>
 #include <kopetecontactaction.h>
