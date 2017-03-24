@@ -22,11 +22,11 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 ChatSessionTask::ChatSessionTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 ChatSessionTask::~ChatSessionTask()
@@ -35,7 +35,7 @@ ChatSessionTask::~ChatSessionTask()
 
 void ChatSessionTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YMSGTransfer *t = new YMSGTransfer( Yahoo::ServiceChatSession );
 	t->setId( client()->sessionID() );

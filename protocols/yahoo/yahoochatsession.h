@@ -21,7 +21,6 @@
 
 class QLabel;
 
-
 /**
  * @author Andre Duffeck
  */

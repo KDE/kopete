@@ -22,7 +22,6 @@
 #include <kdialog.h>
 #include "ui_yahooinvitelistbase.h"
 
-
 class YahooInviteListImpl : public KDialog
 {
 	Q_OBJECT

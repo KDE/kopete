@@ -23,7 +23,7 @@
 #include <QVBoxLayout>
 
 // KDE Includes
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <QLineEdit>
 
 // Kopete Includes
@@ -37,7 +37,7 @@
 // Yahoo Add Contact page
 YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent): AddContactPage(parent)
 {
-	kDebug(YAHOO_GEN_DEBUG) << "YahooAddContact::YahooAddContact(<owner>, <parent>, " << objectName() << ")";
+	qCDebug(YAHOO_PROTOCOL_LOG) << "YahooAddContact::YahooAddContact(<owner>, <parent>, " << objectName() << ")";
 
 	QVBoxLayout *topLayout = new QVBoxLayout( this );
 	QWidget* w = new QWidget( this );
@@ -51,27 +51,24 @@ YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent): AddCont
 // Destructor
 YahooAddContact::~YahooAddContact()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	delete theDialog;
 }
 
 bool YahooAddContact::validateData()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	return !theDialog->contactID->text().isEmpty();
 }
 
 bool YahooAddContact::apply(Kopete::Account *theAccount, Kopete::MetaContact *theMetaContact)
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString displayName = theDialog->contactID->text();
 	YahooAccount* myAccount = static_cast<YahooAccount*>(theAccount);
 	myAccount->addContact(theDialog->contactID->text().toLower(), theMetaContact, Kopete::Account::ChangeKABC );
 	return true;
 }
-
-
-// vim: set noet ts=4 sts=4 sw=4:
 

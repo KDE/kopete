@@ -19,7 +19,7 @@
 */
 
 #include "logintest.h"
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include "../ymsgtransfer.h"
 #include "../yahootypes.h"
 
@@ -48,7 +48,7 @@ void LoginTest::slotDoTest()
 {
 	QLatin1String server("scs.msg.yahoo.com");
 	// connect to server
-	kDebug(14180) << " connecting to server";
+	qCDebug(YAHOO_PROTOCOL_LOG) << " connecting to server";
 	
 	connect( myClient, SIGNAL(connected()), SLOT(slotConnected()) );
 	myClient->start( server, 5050, "duncanmacvicar", "**********" );
@@ -57,7 +57,7 @@ void LoginTest::slotDoTest()
 
 void LoginTest::slotConnected()
 {	
-	kDebug(14180) << " connection is up";
+	qCDebug(YAHOO_PROTOCOL_LOG) << " connection is up";
 	connected = true;
 }
 

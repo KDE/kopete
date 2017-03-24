@@ -22,7 +22,7 @@
 
 #include <QTimer>
 #include <QFile>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <klocale.h>
 #include <kio/global.h>
 #include <kio/job.h>
@@ -30,7 +30,7 @@
 
 ReceiveFileTask::ReceiveFileTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	m_transmitted = 0;
 	m_file = 0;
 	m_transferJob = 0;
@@ -44,7 +44,7 @@ ReceiveFileTask::~ReceiveFileTask()
 
 void ReceiveFileTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceFileTransfer7);
 	switch( m_type )
 	{
@@ -87,7 +87,7 @@ void ReceiveFileTask::onGo()
 
 bool ReceiveFileTask::take( Transfer* transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	
 	if ( !forMe( transfer ) )
 		return false;
@@ -101,12 +101,11 @@ bool ReceiveFileTask::take( Transfer* transfer )
 
 bool ReceiveFileTask::forMe( const Transfer *transfer ) const
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	const YMSGTransfer *t = 0L;
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
-
 
 	if( t->service() == Yahoo::ServiceFileTransfer7Info )
 	{
@@ -123,7 +122,7 @@ bool ReceiveFileTask::forMe( const Transfer *transfer ) const
 void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
 {
 	Q_UNUSED( job );
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	m_transmitted += data.size();
 	emit bytesProcessed( m_transferId, m_transmitted );
@@ -131,10 +130,9 @@ void ReceiveFileTask::slotData( KIO::Job *job, const QByteArray& data )
 	
 }
 
-
 void ReceiveFileTask::slotHeadComplete( KJob *job )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
@@ -170,10 +168,9 @@ void ReceiveFileTask::slotHeadComplete( KJob *job )
 	m_mimetypeJob = 0;
 }
 
-
 void ReceiveFileTask::slotComplete( KJob *job )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
@@ -194,7 +191,7 @@ void ReceiveFileTask::slotComplete( KJob *job )
 
 void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 {	
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	if( transfer->firstParam( 249 ).toInt() == 1 )
 	{
@@ -246,7 +243,6 @@ void ReceiveFileTask::parseFileTransfer7Info( YMSGTransfer *transfer )
 	}
 }
 
-
 void ReceiveFileTask::setCommonTransferMetaData(KIO::TransferJob* job)
 {
 	job->addMetaData(QStringLiteral("accept"), QStringLiteral("*/*")); // Accept header
@@ -257,7 +253,6 @@ void ReceiveFileTask::setCommonTransferMetaData(KIO::TransferJob* job)
  	job->addMetaData(QStringLiteral("setcookies"), QStringLiteral("Cookie: T=%1; Y=%2;")
  				.arg(client()->tCookie()).arg(client()->yCookie()) );
 }
-
 
 void ReceiveFileTask::setRemoteUrl( KUrl url )
 {
@@ -302,5 +297,4 @@ void ReceiveFileTask::canceled( unsigned int id )
 	
 	setError();
 }
-
 

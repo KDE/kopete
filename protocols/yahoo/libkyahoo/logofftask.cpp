@@ -20,11 +20,11 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 LogoffTask::LogoffTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 LogoffTask::~LogoffTask()
@@ -33,7 +33,7 @@ LogoffTask::~LogoffTask()
 
 void LogoffTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceLogoff);
 	t->setId( client()->sessionID() );

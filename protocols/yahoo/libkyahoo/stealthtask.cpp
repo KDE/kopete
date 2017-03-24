@@ -23,7 +23,7 @@
 
 StealthTask::StealthTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 StealthTask::~StealthTask()

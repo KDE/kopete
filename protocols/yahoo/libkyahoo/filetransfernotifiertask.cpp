@@ -22,14 +22,14 @@
 
 #include <QFile>
 #include <QPixmap>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <kcodecs.h>
 
 using namespace KYahoo;
 
 FileTransferNotifierTask::FileTransferNotifierTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 FileTransferNotifierTask::~FileTransferNotifierTask()
@@ -50,7 +50,6 @@ bool FileTransferNotifierTask::take( Transfer* transfer )
 		parseFileTransfer7( t );
 	else if( t->service() == Yahoo::ServicePeerToPeer )
 		acceptFileTransfer( t );
-		
 
 	return true;
 }
@@ -61,7 +60,6 @@ bool FileTransferNotifierTask::forMe( const Transfer *transfer ) const
 	t = dynamic_cast<const YMSGTransfer*>(transfer);
 	if (!t)
 		return false;
-
 
 	if( t->service() == Yahoo::ServiceP2PFileXfer ||
 	    t->service() == Yahoo::ServicePeerToPeer ||
@@ -76,7 +74,7 @@ bool FileTransferNotifierTask::forMe( const Transfer *transfer ) const
 
 void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString from;		/* key = 4  */
 	QString to;		/* key = 5  */
@@ -94,8 +92,6 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 	filename = t->firstParam( 27 );
 	size = t->firstParam( 28 ).toULong();
 
-
-
 	if( from.startsWith( QLatin1String("FILE_TRANSFER_SYSTEM") ) )
 	{
 		client()->notifyError( QStringLiteral("Fileupload result received."), msg, Client::Notice );
@@ -104,7 +100,6 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 	
 	if( url.isEmpty() )
 		return;
-	
 
 	unsigned int left = url.lastIndexOf( '/' ) + 1;
 	unsigned int right = url.lastIndexOf( '?' );
@@ -115,7 +110,7 @@ void FileTransferNotifierTask::parseFileTransfer( YMSGTransfer *t )
 
 void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 { 
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString from;		/* key = 4  */
 	QString to;		/* key = 5  */
@@ -149,7 +144,7 @@ void FileTransferNotifierTask::parseFileTransfer7( YMSGTransfer *t )
 
 void FileTransferNotifierTask::acceptFileTransfer( YMSGTransfer *transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePeerToPeer);
 	t->setId( client()->sessionID() );

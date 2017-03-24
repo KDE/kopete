@@ -24,7 +24,7 @@
 #include <QList>
 
 #include <kconfig.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -52,7 +52,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 	Kopete::ContactPtrList others )
 : Kopete::ChatSession( user, others, protocol )
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
     //
 
@@ -102,42 +102,42 @@ YahooChatSession::~YahooChatSession()
 
 void YahooChatSession::slotBuzzContact()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->buzzContact();
 }
 
 void YahooChatSession::slotUserInfo()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->slotUserInfo();
 }
 
 void YahooChatSession::slotRequestWebcam()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->requestWebcam();
 }
 
 void YahooChatSession::slotInviteWebcam()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->inviteWebcam();
 }
 
 void YahooChatSession::slotSendFile()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	QList<Kopete::Contact*>contacts = members();
 	static_cast<YahooContact *>(contacts.first())->sendFile();
 }
 
 void YahooChatSession::slotDisplayPictureChanged()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	QList<Kopete::Contact*> mb=members();
 	YahooContact *c = static_cast<YahooContact *>( mb.first() );
 	if ( c && m_image )

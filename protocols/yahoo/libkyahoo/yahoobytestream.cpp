@@ -19,13 +19,13 @@
 
 #include <qobject.h>
 #include <k3bufferedsocket.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <k3resolver.h>
 
 KNetworkByteStream::KNetworkByteStream( QObject *parent )
  : ByteStream ( parent )
 {
-	kDebug( 14181 ) << "Instantiating new KNetwork byte stream.";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Instantiating new KNetwork byte stream.";
 
 	// reset close tracking flag
 	mClosing = false;
@@ -45,7 +45,7 @@ KNetworkByteStream::KNetworkByteStream( QObject *parent )
 
 bool KNetworkByteStream::connect( QString host, QString service )
 {
-	kDebug( 14181 ) << "Connecting to " << host << ", service " << service;
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Connecting to " << host << ", service " << service;
 
 	return socket()->connect( host, service );
 }
@@ -58,7 +58,7 @@ bool KNetworkByteStream::isOpen() const
 
 void KNetworkByteStream::close ()
 {
-	kDebug ( 14181 ) << "Closing stream.";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Closing stream.";
 
 	// close the socket and set flag that we are closing it ourselves
 	mClosing = true;
@@ -69,7 +69,7 @@ int KNetworkByteStream::tryWrite ()
 {
 	// send all data from the buffers to the socket
 	QByteArray writeData = takeWrite();
-	kDebug( 14181 ) << "[writeData.size() = " << writeData.size() << "]";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "[writeData.size() = " << writeData.size() << "]";
 	
 	socket()->write( writeData.data(), writeData.size () );
 
@@ -93,25 +93,25 @@ void KNetworkByteStream::slotConnected()
 
 void KNetworkByteStream::slotConnectionClosed()
 {
-	kDebug( 14181 ) << "Socket has been closed.";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Socket has been closed.";
 
 	// depending on who closed the socket, emit different signals
 	if ( mClosing )
 	{
-		kDebug( 14181 ) << "..by ourselves!";
-		kDebug( 14181 ) << "socket error is " << socket()->errorString();
+                qCDebug(YAHOO_PROTOCOL_LOG) << "..by ourselves!";
+                qCDebug(YAHOO_PROTOCOL_LOG) << "socket error is " << socket()->errorString();
 		emit connectionClosed ();
 	}
 	else
 	{
-		kDebug( 14181 ) << "..by the other end";
+                qCDebug(YAHOO_PROTOCOL_LOG) << "..by the other end";
 		emit delayedCloseFinished ();
 	}
 }
 
 void KNetworkByteStream::slotReadyRead()
 {
-	kDebug( 14181 );
+        qCDebug(YAHOO_PROTOCOL_LOG);
 	// stuff all available data into our buffers
 	QByteArray readBuffer;
 	readBuffer.resize( socket()->bytesAvailable () );
@@ -125,16 +125,14 @@ void KNetworkByteStream::slotReadyRead()
 
 void KNetworkByteStream::slotBytesWritten( qint64 bytes )
 {
-	kDebug( 14181 ) << "[int bytes]: " << bytes;
+        qCDebug(YAHOO_PROTOCOL_LOG) << "[int bytes]: " << bytes;
 	emit bytesWritten(bytes);
 }
 
 void KNetworkByteStream::slotError( int code )
 {
-	kDebug( 14181 ) << "Socket error " << code;
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Socket error " << code;
 
 	emit error( code );
 }
 
-
-// kate: indent-width 4; replace-tabs off; tab-width 4; space-indent off;

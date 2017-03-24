@@ -25,7 +25,7 @@
 #include <QBuffer>
 #include <QIODevice>
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 #include <jasper/jasper.h>
 
@@ -33,11 +33,11 @@ bool jasperConvert(jas_image_t* &image, jas_stream_t* &out, const char* data, un
 {
 	jas_stream_t *in;
 
-	// kDebug(YAHOO_RAW_DEBUG) << "Got data - size=" << size;
+	// qCDebug(YAHOO_PROTOCOL_LOG) << "Got data - size=" << size;
 
 	if(!(in = jas_stream_memopen(const_cast<char*>(data), size)))
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Could not open jasper input stream";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Could not open jasper input stream";
 		return false;
 	}
 
@@ -47,31 +47,31 @@ bool jasperConvert(jas_image_t* &image, jas_stream_t* &out, const char* data, un
 	if (infmt < 0)
 	{
 		jas_stream_close(in);
-		kDebug(YAHOO_RAW_DEBUG) << "Failed to recognize input webcam image format";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Failed to recognize input webcam image format";
 		return false;
 	}
 
 	if (!(image = jas_image_decode(in, infmt, 0)))
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Unable to decode image";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Unable to decode image";
 		jas_stream_close(in);
 		return false;
 	}
-	/* kDebug(YAHOO_RAW_DEBUG) << "jasper: decoded image: " << jas_image_width(image) << "x" << jas_image_height(image) << " bytes: " <<
+	/* qCDebug(YAHOO_PROTOCOL_LOG) << "jasper: decoded image: " << jas_image_width(image) << "x" << jas_image_height(image) << " bytes: " <<
 		jas_image_rawsize(image) << " components:" << jas_image_numcmpts(image);
 	*/
 
 	char* out_img = NULL;
 	if(!(out = jas_stream_memopen(out_img, 0)))
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Could not open output stream";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Could not open output stream";
 		jas_stream_close(in);
 		return false;
 	}
 
 	if (jas_image_encode(image, out, outfmt, const_cast<char*>(outopts)))
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Unable to convert image";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Unable to convert image";
 		jas_stream_close(in);
 		jas_stream_close(out);
 		jas_image_destroy(image);
@@ -88,7 +88,7 @@ WebcamImgFormat::WebcamImgFormat()
 	int err = jas_init();
 	if (err)
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Unable to initialize jasper library: code=" << err;
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Unable to initialize jasper library: code=" << err;
 		return;
 	}
 
@@ -115,7 +115,7 @@ WebcamImgFormat::WebcamImgFormat()
 		fromYahooFmtID = fmt_id;
 	} else
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Couldn't find a reasonable intermerdiary image format (ppm, png,jpg)";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Couldn't find a reasonable intermerdiary image format (ppm, png,jpg)";
 		return;
 	}
 	forYahooFmtQt[sizeof(forYahooFmtQt) / sizeof(forYahooFmtQt[0]) - 1] = '\0'; // due to the strncpy above
@@ -123,11 +123,11 @@ WebcamImgFormat::WebcamImgFormat()
 	jpcFmtID = jas_image_strtofmt(const_cast<char*>("jpc"));
 	if (jpcFmtID < 0)
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "library does not support the needed JPEG2000 format";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "library does not support the needed JPEG2000 format";
 		return;
 	}
 
-	kDebug(YAHOO_RAW_DEBUG) << "Will use intermediary image format " << formats;
+	qCDebug(YAHOO_PROTOCOL_LOG) << "Will use intermediary image format " << formats;
 	initOk = true;
 }
 
@@ -166,7 +166,7 @@ bool WebcamImgFormat::forYahoo(QByteArray& result, const QImage* src)
 		return false;
 	if (!src->save(&buffer, forYahooFmtQt, 100))
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Failed to write intermediary " << forYahooFmtQt << " image";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Failed to write intermediary " << forYahooFmtQt << " image";
 		return false;
 	}
 

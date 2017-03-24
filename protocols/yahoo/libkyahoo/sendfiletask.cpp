@@ -23,7 +23,7 @@
 #include <qstring.h>
 #include <qtimer.h>
 #include <QTime>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <klocale.h>
 #include <k3streamsocket.h>
 #include <kio/global.h>
@@ -32,16 +32,14 @@
 using namespace KNetwork;
 using namespace KYahoo;
 
-
 /* Buffer size to send file data. Automatically resized. Won't grow up past BUFFER_SIZE_MAX. Code will try
    to send as much data as it can in one shot */
 static const int BUFFER_SIZE_INITIAL = 1024;
 static const int BUFFER_SIZE_MAX = (64 * 1024);
 
-
 SendFileTask::SendFileTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 	m_transmitted = 0;
 	m_socket = 0;
 
@@ -79,7 +77,7 @@ bool SendFileTask::take(Transfer* transfer)
 
 	YMSGTransfer *t = static_cast<YMSGTransfer*>(transfer);
 
-	kDebug(YAHOO_RAW_DEBUG) << t->service();
+    qCDebug(YAHOO_PROTOCOL_LOG) << t->service();
 
 	if(t->service() == Yahoo::ServiceFileTransfer7)
 		parseFileTransfer(t);
@@ -91,7 +89,7 @@ bool SendFileTask::take(Transfer* transfer)
 
 void SendFileTask::parseFileTransfer( const Transfer *transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG);
+    qCDebug(YAHOO_PROTOCOL_LOG);
 
 	const YMSGTransfer *t = static_cast<const YMSGTransfer*>(transfer);
 
@@ -115,7 +113,7 @@ void SendFileTask::parseFileTransfer( const Transfer *transfer )
 
 void SendFileTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	m_file.setFileName( m_url.toLocalFile() );
 
@@ -141,7 +139,7 @@ void SendFileTask::onGo()
 
 void SendFileTask::sendFileTransferInfo()
 {
-	kDebug(YAHOO_RAW_DEBUG);
+    qCDebug(YAHOO_PROTOCOL_LOG);
 
 	KResolverResults results = KResolver::resolve(QStringLiteral("relay.msg.yahoo.com"), QString::number(80));
 	if(results.count() > 0)
@@ -171,7 +169,7 @@ void SendFileTask::sendFileTransferInfo()
 
 void SendFileTask::parseTransferAccept(const Transfer *transfer)
 {	
-	kDebug(YAHOO_RAW_DEBUG);
+    qCDebug(YAHOO_PROTOCOL_LOG);
 
 	const YMSGTransfer *t = static_cast<const YMSGTransfer*>(transfer);
 
@@ -183,7 +181,7 @@ void SendFileTask::parseTransferAccept(const Transfer *transfer)
 	}
 
 	m_token = t->firstParam(251);
-	kDebug(YAHOO_RAW_DEBUG) << "Token: " << m_token;
+    qCDebug(YAHOO_PROTOCOL_LOG) << "Token: " << m_token;
 
 	m_socket = new KStreamSocket( m_relayHost, QString::number(80) );
 	m_socket->setBlocking( false );
@@ -199,22 +197,22 @@ void SendFileTask::parseTransferAccept(const Transfer *transfer)
 void SendFileTask::connectFailed( int i )
 {
 	QString err = KSocketBase::errorString(m_socket->error());
-	kDebug(YAHOO_RAW_DEBUG) << i << ": " << err;
+    qCDebug(YAHOO_PROTOCOL_LOG) << i << ": " << err;
 	emit error( m_transferId, i, err );
 	setError();
 }
 
 void SendFileTask::connectSucceeded()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	if ( m_file.open(QIODevice::ReadOnly ) )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "File successfully opened. Reading...";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "File successfully opened. Reading...";
 	}
 	else
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Error opening file: " << m_file.errorString();
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Error opening file: " << m_file.errorString();
 		client()->notifyError( i18n( "An error occurred while sending the file." ), m_file.errorString(), Client::Error );
 		m_socket->close();
 		emit error( m_transferId, m_file.error(), m_file.errorString() );
@@ -222,7 +220,7 @@ void SendFileTask::connectSucceeded()
 		return;
 	}
 
-	kDebug(YAHOO_RAW_DEBUG) << "Sizes: File (" << m_url << "): " << m_file.size();
+    qCDebug(YAHOO_PROTOCOL_LOG) << "Sizes: File (" << m_url << "): " << m_file.size();
 	QString header = QLatin1String("POST /relay?token=") + 
 		QUrl::toPercentEncoding(m_token) +
 		QString::fromLatin1("&sender=%1&recver=%2 HTTP/1.1\r\n"
@@ -240,7 +238,6 @@ void SendFileTask::connectSucceeded()
 	m_bufferOutPos = 0;
 	m_bufferInPos = m_buffer.size();
 }
-
 
 void SendFileTask::transmitHeader()
 {
@@ -260,11 +257,10 @@ void SendFileTask::transmitHeader()
 		return;
 	}
 
-
-	kDebug(YAHOO_RAW_DEBUG) << "Trying to send header part: " << m_buffer.mid(m_bufferOutPos);
+    qCDebug(YAHOO_PROTOCOL_LOG) << "Trying to send header part: " << m_buffer.mid(m_bufferOutPos);
 
 	const qint64 written = m_socket->write(m_buffer.constData() + m_bufferOutPos, remaining);
-	kDebug(YAHOO_RAW_DEBUG) << "  sent " << written << " bytes";
+    qCDebug(YAHOO_PROTOCOL_LOG) << "  sent " << written << " bytes";
 
 	if (written <= 0)
 	{
@@ -277,13 +273,11 @@ void SendFileTask::transmitHeader()
 	m_bufferOutPos += written;
 }
 
-
-
 bool SendFileTask::checkTransferEnd()
 {
 	if (m_transmitted >= m_file.size())
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Upload Successful: " << m_transmitted;
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Upload Successful: " << m_transmitted;
 		emit complete( m_transferId );
 		setSuccess();
 		m_socket->close();
@@ -291,8 +285,6 @@ bool SendFileTask::checkTransferEnd()
 	}
 	return false;
 }
-
-
 
 bool SendFileTask::fillSendBuffer()
 {
@@ -313,7 +305,6 @@ bool SendFileTask::fillSendBuffer()
 		m_bufferOutPos = 0;
 	}
 
-
 	const int to_read = m_buffer.size() - m_bufferInPos;
 	if (to_read <= 0)
 	{
@@ -321,11 +312,11 @@ bool SendFileTask::fillSendBuffer()
 	}
 	const qint64 file_read = m_file.read(m_buffer.data() + m_bufferInPos, to_read);
 
-	// kDebug(YAHOO_RAW_DEBUG) << "reading from file: want" << to_read << "got to read" << file_read << " bytes";
+    // qCDebug(YAHOO_PROTOCOL_LOG) << "reading from file: want" << to_read << "got to read" << file_read << " bytes";
 
 	if (file_read < 0)
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Upload Failed (reading file)!";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Upload Failed (reading file)!";
 
 		m_buffer.clear();
 		m_buffer.reserve(0); // free memory until this task is reused or freed.
@@ -340,10 +331,9 @@ bool SendFileTask::fillSendBuffer()
 	return false;
 }
 
-
 void SendFileTask::transmitData()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	if (fillSendBuffer())
 		return;
@@ -355,12 +345,12 @@ void SendFileTask::transmitData()
 	const qint64 written = m_socket->write(m_buffer.constData() + m_bufferOutPos, remaining);
 	if (written <= 0)
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Upload Failed (sending data)! toSend=" << remaining << "sent=" << written;
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Upload Failed (sending data)! toSend=" << remaining << "sent=" << written;
 		emit error( m_transferId, m_socket->error(), m_socket->errorString() );
 		setError();
 		return;
 	}
-	// kDebug(YAHOO_RAW_DEBUG) << "sending file content: toSend=" << remaining << "sent=" << written;
+    // qCDebug(YAHOO_PROTOCOL_LOG) << "sending file content: toSend=" << remaining << "sent=" << written;
 
 	m_transmitted += written;
 	m_bufferOutPos += written;
@@ -374,10 +364,9 @@ void SendFileTask::transmitData()
 		// double its size
 		int oldC = m_buffer.size();
 		m_buffer.resize(MIN(2 * oldC, BUFFER_SIZE_MAX));
-		// kDebug(YAHOO_RAW_DEBUG) << "buffer resized from " << oldC << " to " << m_buffer.size();
+        // qCDebug(YAHOO_PROTOCOL_LOG) << "buffer resized from " << oldC << " to " << m_buffer.size();
 	}
 }
-
 
 void SendFileTask::setTarget( const QString &to )
 {
@@ -431,9 +420,8 @@ QString SendFileTask::newYahooTransferId()
 
 	newId += QLatin1String("$$");
 
-	kDebug() << "New Yahoo Transfer Id: " << newId;
+    qCDebug(YAHOO_PROTOCOL_LOG) << "New Yahoo Transfer Id: " << newId;
 
 	return newId;
 }
-
 

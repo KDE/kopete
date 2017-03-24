@@ -20,11 +20,11 @@
 #include "yahootypes.h"
 #include "client.h"
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 SendNotifyTask::SendNotifyTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 SendNotifyTask::~SendNotifyTask()
@@ -53,7 +53,7 @@ void SendNotifyTask::onGo()
 	break;
 	case NotifyWebcamInvite:
 		
-		kDebug(YAHOO_RAW_DEBUG) << "send invitation set Param";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "send invitation set Param";
 		t->setParam( 1, client()->userId().toLocal8Bit() );
 		t->setParam( 5, m_target.toLocal8Bit() );
 		t->setParam( 13, 0 );
@@ -86,5 +86,4 @@ void SendNotifyTask::setState( State state)
 {
 	m_state = state;
 }
-
 

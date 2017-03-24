@@ -22,7 +22,7 @@
 #include <QLayout>
 #include <QVBoxLayout>
 #include <QPixmap>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <klocale.h>
 
 #include <webcamwidget.h>
@@ -77,7 +77,7 @@ void YahooWebcamDialog::webcamPaused()
 
 void YahooWebcamDialog::webcamClosed( int reason  )
 {
-	kDebug(14180) << "webcam closed with reason?? " <<  reason;
+	qCDebug(YAHOO_PROTOCOL_LOG) << "webcam closed with reason?? " <<  reason;
 	QString closeReason;
 	switch ( reason )
 	{
@@ -114,6 +114,4 @@ void YahooWebcamDialog::setViewer( const QStringList &viewer )
 	m_Viewer->setText( s );
 	m_Viewer->show();
 }
-
-// kate: indent-mode csands; tab-width 4;
 

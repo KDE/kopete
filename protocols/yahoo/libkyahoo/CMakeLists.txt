@@ -1,4 +1,4 @@
-include_directories( ${JASPER_INCLUDE_DIR} )
+include_directories( ${JASPER_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/../)
 
 add_subdirectory( tests ) 
 
@@ -70,6 +70,7 @@ receivefiletask.cpp
 yahoochattask.cpp
 )
 
+ecm_qt_declare_logging_category(libkyahoo_SRCS HEADER yahoo_protocol_debug.h IDENTIFIER YAHOO_PROTOCOL_LOG CATEGORY_NAME org.kde.kopete.yahoo)
 if(MINGW)
     set_source_files_properties(yahoo_fn.c PROPERTIES COMPILE_FLAGS "--std=c99")
 endif(MINGW)

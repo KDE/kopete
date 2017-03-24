@@ -67,7 +67,7 @@ void YABEntry::fromQDomElement( const QDomElement &e )
 
 void YABEntry::fromQDomDocument( const QDomDocument &d )
 {
-	kDebug() << d.toString() << 
+	qCDebug(YAHOO_PROTOCOL_LOG) << d.toString() << 
 		d.elementsByTagName(QStringLiteral("yi")).item(0).toElement().text();
 	yahooId = d.elementsByTagName(QStringLiteral("yi")).item(0).toElement().text();
 	firstName = d.elementsByTagName(QStringLiteral("fn")).item(0).toElement().text();
@@ -164,7 +164,7 @@ void YABEntry::fillQDomElement( QDomElement &e ) const
 
 void YABEntry::dump() const
 {
-	kDebug() << "firstName: " << firstName << endl << 
+	qCDebug(YAHOO_PROTOCOL_LOG) << "firstName: " << firstName << endl << 
 		"secondName: " << secondName << endl << 
 		"lastName: " << lastName << endl << 
 		"nickName: " << nickName << endl << 

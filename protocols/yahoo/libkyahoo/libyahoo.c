@@ -255,8 +255,7 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 	} while (x < 20); 
 
 	/* Dump magic key into a char for SHA1 action. */
-	
-		
+
 	for(x = 0; x < 4; x++) 
 		magic_key_char[x] = comparison_src[x];
 

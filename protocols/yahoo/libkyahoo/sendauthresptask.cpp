@@ -21,11 +21,11 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 SendAuthRespTask::SendAuthRespTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 SendAuthRespTask::~SendAuthRespTask()
@@ -68,5 +68,4 @@ void SendAuthRespTask::setMessage( const QString &msg )
 {
 	m_msg = msg;
 }
-
 

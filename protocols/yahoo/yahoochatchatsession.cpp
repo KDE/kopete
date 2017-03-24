@@ -18,7 +18,7 @@
 
 #include "yahoochatchatsession.h"
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <klocale.h>
 #include <kcomponentdata.h>
 
@@ -81,7 +81,7 @@ void YahooChatChatSession::left( YahooContact *c )
 
 void YahooChatChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSession * )
 {
-	kDebug ( YAHOO_GEN_DEBUG ) ;
+    qCDebug (YAHOO_PROTOCOL_LOG) ;
 
 	YahooAccount *acc = dynamic_cast< YahooAccount *>( account() );
 	if( acc )
@@ -89,7 +89,4 @@ void YahooChatChatSession::slotMessageSent( Kopete::Message & message, Kopete::C
 	appendMessage( message );
 	messageSucceeded();
 }
-
-
-// vim: set noet ts=4 sts=4 sw=4:
 

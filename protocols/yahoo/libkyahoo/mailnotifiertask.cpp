@@ -22,11 +22,11 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 MailNotifierTask::MailNotifierTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 MailNotifierTask::~MailNotifierTask()
@@ -61,7 +61,7 @@ bool MailNotifierTask::forMe( const Transfer* transfer ) const
 
 void MailNotifierTask::parseMail( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString count = t->firstParam( 9 );
 	QString mail = t->firstParam( 42 );

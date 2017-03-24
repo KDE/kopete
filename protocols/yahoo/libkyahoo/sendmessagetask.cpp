@@ -20,14 +20,14 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <klocale.h>
 
 using namespace KYahoo;
 
 SendMessageTask::SendMessageTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 SendMessageTask::~SendMessageTask()
@@ -36,11 +36,11 @@ SendMessageTask::~SendMessageTask()
 
 void SendMessageTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	if( m_text.isEmpty() )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Text to send is empty.";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Text to send is empty.";
 		client()->notifyError( i18n( "An error occurred while sending the message" ), i18n( "The message is empty." ), Client::Debug );
 		return;
 	}	

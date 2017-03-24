@@ -21,7 +21,6 @@
 #ifndef LIBKYAHOO_CONNECTOR_H
 #define LIBKYAHOO_CONNECTOR_H
 
-
 #include <qobject.h>
 #include "qhostaddress.h"
 

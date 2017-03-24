@@ -63,7 +63,6 @@ public:
 	 * Send a message to the server
 	 */
 	virtual void write( Transfer *request) = 0;
-	
 
 signals:
 	void connectionClosed();

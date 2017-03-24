@@ -28,7 +28,7 @@
 #include <qtextcodec.h>
 
 #include <kdatewidget.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <kglobal.h>
 #include <QIcon>
 #include <klocale.h>
@@ -50,7 +50,7 @@ YahooUserInfoDialog::YahooUserInfoDialog( YahooContact *c, QWidget * parent )
     //KF5 FIXME setButtonGuiItem( KDialog::User2, KGuiItem( i18n("Merge with existing entry") ) );
     //KF5 FIXME showButton( KDialog::User2, false );
 
-	kDebug(14180) << "Creating new yahoo user info widget";
+	qCDebug(YAHOO_PROTOCOL_LOG) << "Creating new yahoo user info widget";
 	
 	QWidget *genInfo = new QWidget(this);
 	m_genInfoWidget = new Ui::YahooGeneralInfoWidget;
@@ -268,7 +268,4 @@ void YahooUserInfoDialog::setData( const YABEntry &yab )
 	m_otherInfoWidget->note3Edit->setText( yab.additional3 );
 	m_otherInfoWidget->note4Edit->setText( yab.additional4 );
 }
-
-
-//kate: indent-mode csands; tab-width 4; space-indent off; replace-tabs off;
 

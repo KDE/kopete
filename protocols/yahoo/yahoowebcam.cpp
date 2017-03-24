@@ -15,7 +15,7 @@
 
 #include "yahoowebcam.h"
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <qtimer.h>
 
 #include "client.h"
@@ -30,7 +30,7 @@
 YahooWebcam::YahooWebcam( YahooAccount *account ) : QObject( 0 )
 {
 	setObjectName( QStringLiteral("yahoo_webcam") );
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	theAccount = account;
 	theDialog = 0L;
 	m_img = new QImage();
@@ -91,7 +91,7 @@ void YahooWebcam::updateImage()
 
 void YahooWebcam::sendImage()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 #ifndef VIDEOSUPPORT_DISABLED
 	if (EXIT_SUCCESS == m_devicePool->getFrame())
@@ -106,12 +106,12 @@ void YahooWebcam::sendImage()
 	{
 		if (WebcamImgFormat::instance()->forYahoo(result, m_img))
 		{
-			kDebug(YAHOO_RAW_DEBUG) << "Image successfully converted";
+			qCDebug(YAHOO_PROTOCOL_LOG) << "Image successfully converted";
 			theAccount->yahooSession()->sendWebcamImage(result);
 		} else
-			kDebug(YAHOO_RAW_DEBUG) << "Failed to convert outgoing Yahoo webcam image";
+			qCDebug(YAHOO_PROTOCOL_LOG) << "Failed to convert outgoing Yahoo webcam image";
 	} else
-		kDebug(YAHOO_RAW_DEBUG) << "Failed to initialize WebcamImgFormat helper";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Failed to initialize WebcamImgFormat helper";
 }
 
 void YahooWebcam::addViewer( const QString &viewer )

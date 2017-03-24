@@ -19,7 +19,7 @@
 #include <qfile.h>
 
 // KDE Includes
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <ktemporaryfile.h>
 #include <kio/global.h>
 #include <kio/job.h>
@@ -44,7 +44,7 @@ YahooBuddyIconLoader::~YahooBuddyIconLoader()
 
 void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int checksum )
 {
-	kDebug(YAHOO_RAW_DEBUG) << url;
+	qCDebug(YAHOO_PROTOCOL_LOG) << url;
 	KIO::TransferJob *transfer;
 	QString Url = url.url();
 	QString ext = Url.left( Url.lastIndexOf( QLatin1String("?") ) );
@@ -63,7 +63,7 @@ void YahooBuddyIconLoader::fetchBuddyIcon( const QString &who, KUrl url, int che
 void YahooBuddyIconLoader::slotData( KIO::Job *job, const QByteArray& data )
 {
 
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
@@ -73,13 +73,13 @@ void YahooBuddyIconLoader::slotData( KIO::Job *job, const QByteArray& data )
 
 void YahooBuddyIconLoader::slotComplete( KJob *job )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	KIO::TransferJob *transfer = static_cast< KIO::TransferJob * >(job);
 
 	if ( job->error () || transfer->isErrorPage () )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "An error occurred while downloading buddy icon.";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "An error occurred while downloading buddy icon.";
 		if( m_client )
 			m_client->notifyError( i18n( "An error occurred while downloading a buddy icon (%1)", m_jobs[transfer].url.url() ), job->errorString(), Client::Info );
 	}
@@ -90,7 +90,4 @@ void YahooBuddyIconLoader::slotComplete( KJob *job )
 
 	m_jobs.remove( transfer );
 }
-
-
-
 

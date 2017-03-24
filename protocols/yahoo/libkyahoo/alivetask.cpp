@@ -22,11 +22,11 @@
 #include "yahootypes.h"
 #include "client.h"
 #include <qstring.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 AliveTask::AliveTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 AliveTask::~AliveTask()
@@ -35,7 +35,7 @@ AliveTask::~AliveTask()
 
 void AliveTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServicePing7);
 	t->setParam( 0, client()->userId().toLocal8Bit() );

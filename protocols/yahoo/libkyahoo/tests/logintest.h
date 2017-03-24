@@ -30,7 +30,6 @@
 #include "yahooclientstream.h"
 #include "yahooconnector.h"
 
-
 #define QT_FATAL_ASSERT 1
 
 class LoginTest : public QApplication

@@ -18,7 +18,7 @@
 
 #include "yahooconferencemessagemanager.h"
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <QLineEdit>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -83,7 +83,7 @@ void YahooConferenceChatSession::left( YahooContact *c )
 
 void YahooConferenceChatSession::slotMessageSent( Kopete::Message & message, Kopete::ChatSession * )
 {
-	kDebug ( YAHOO_GEN_DEBUG ) ;
+    qCDebug (YAHOO_PROTOCOL_LOG) ;
 
 	YahooAccount *acc = dynamic_cast< YahooAccount *>( account() );
 	if( acc )
@@ -112,7 +112,4 @@ void YahooConferenceChatSession::slotInviteOthers()
 		dlg->addParticipant( (*it)->contactId() );
 	dlg->show();
 }
-
-
-// vim: set noet ts=4 sts=4 sw=4:
 

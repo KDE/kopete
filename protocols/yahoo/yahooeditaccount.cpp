@@ -32,7 +32,7 @@
 
 // KDE Includes
 #include <klocale.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <kmessagebox.h>
 #include <krun.h>
 #include <kurl.h>
@@ -56,7 +56,7 @@
 YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *theAccount, QWidget *parent): QWidget(parent), KopeteEditAccountWidget(theAccount)
 {
 	setupUi(this);
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	theProtocol = protocol;
 
@@ -101,7 +101,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, Kopete::Account *the
 
 bool YahooEditAccount::validateData()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	if(mScreenName->text().isEmpty())
     {
@@ -118,7 +118,7 @@ bool YahooEditAccount::validateData()
 
 Kopete::Account *YahooEditAccount::apply()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	if ( !account() )
 		setAccount( new YahooAccount( theProtocol, mScreenName->text().toLower() ) );
@@ -175,7 +175,4 @@ void YahooEditAccount::slotSelectPicture()
 		return;
 	}
 }
-
-
-// vim: set noet ts=4 sts=4 sw=4:
 

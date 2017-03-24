@@ -96,8 +96,6 @@ static uint64_t _byteswap64(uint64_t x)
 
 #define BYTESWAP64(x) _byteswap64(x)
 
-
-
 #endif /* WORDS_BIGENDIAN */
 
 #else /* !RUNTIME_ENDIAN */

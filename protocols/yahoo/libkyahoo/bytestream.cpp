@@ -18,7 +18,7 @@
  *
  */
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include"bytestream.h"
 #include <QByteArray>
 

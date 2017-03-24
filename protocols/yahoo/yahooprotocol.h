@@ -131,13 +131,10 @@ public slots:
 	KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent) Q_DECL_OVERRIDE;
 	Kopete::Account *createNewAccount(const QString &accountId) Q_DECL_OVERRIDE;
 
-
 private:
 	static YahooProtocol* s_protocolStatic_;
 
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
 

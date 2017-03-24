@@ -47,7 +47,6 @@ public:
 	YMSGTransfer();
 	~YMSGTransfer();
 
-
 	TransferType type() Q_DECL_OVERRIDE;
 
 	//! Get the validity of the transfer object
@@ -60,14 +59,12 @@ public:
 	void setId(unsigned int id);
 	int packetLength() const;
 	void setPacketLength(int len);
-	
 
 	ParamList paramList() const;
 	QByteArray firstParam( int index ) const;
 	QByteArray nthParam( int index, int occurrence ) const;
 	QByteArray nthParamSeparated( int index, int occurrence, int separator ) const;
 	int paramCount( int index ) const;
-	
 
 	void setParam(int index, const QByteArray &data);
 	void setParam(int index, int data);

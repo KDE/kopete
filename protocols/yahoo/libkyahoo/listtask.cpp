@@ -22,11 +22,11 @@
 #include "transfer.h"
 #include "ymsgtransfer.h"
 #include "client.h"
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 ListTask::ListTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	
 }
 
@@ -54,7 +54,6 @@ bool ListTask::forMe( const Transfer* transfer ) const
 	if (!t)
 		return false;
 
-
 	if ( t->service() == Yahoo::ServiceBuddyList )
 		return true;
 	else
@@ -63,15 +62,15 @@ bool ListTask::forMe( const Transfer* transfer ) const
 
 void ListTask::parseBuddyList( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	QString group;
 	QString buddy;
 	// We need some low-level parsing here
 	
 	foreach( const Param &p, t->paramList() )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "1:" << p.first ;
-		kDebug(YAHOO_RAW_DEBUG) << "2:" << p.second ;
+		qCDebug(YAHOO_PROTOCOL_LOG) << "1:" << p.first ;
+		qCDebug(YAHOO_PROTOCOL_LOG) << "2:" << p.second ;
 		switch( p.first )
 		{
 		case 65:
@@ -87,7 +86,7 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 			break;
 		case 317:
 			if( p.second == "2"){
-				kDebug(YAHOO_RAW_DEBUG) << "Stealthed setting on" << buddy ;
+				qCDebug(YAHOO_PROTOCOL_LOG) << "Stealthed setting on" << buddy ;
 				emit stealthStatusChanged( buddy, Yahoo::StealthActive );
 			};
 			break;
@@ -108,6 +107,4 @@ void ListTask::parseBuddyList( YMSGTransfer *t )
 	* so better to compile list of both now then notify kopete client.
 	*/
 }
-
-
 

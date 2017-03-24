@@ -1,7 +1,6 @@
 #ifndef LIBKYAHOO_EXPORT_H
 #define LIBKYAHOO_EXPORT_H
 
-
 #include <kdemacros.h>
 
 #if defined Q_OS_WIN

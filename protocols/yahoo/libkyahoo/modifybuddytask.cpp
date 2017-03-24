@@ -20,11 +20,11 @@
 #include "yahootypes.h"
 #include "client.h"
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 ModifyBuddyTask::ModifyBuddyTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 ModifyBuddyTask::~ModifyBuddyTask()
@@ -82,7 +82,7 @@ bool ModifyBuddyTask::forMe( const Transfer* transfer ) const
 
 void ModifyBuddyTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	switch( m_type )
 	{

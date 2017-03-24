@@ -21,7 +21,7 @@
 /* QT Includes */
 
 /* KDE Includes */
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <kgenericfactory.h>
 #include <kconfig.h>
 
@@ -104,17 +104,16 @@ YahooProtocol::YahooProtocol( QObject *parent, const QVariantList & )
 	propAdditional3(QStringLiteral("YABAdditional3"), i18n("Additional 3"), QString(), Kopete::PropertyTmpl::PersistentProperty),
 	propAdditional4(QStringLiteral("YABAdditional4"), i18n("Additional 4"), QString(), Kopete::PropertyTmpl::PersistentProperty)
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	s_protocolStatic_ = this;
 	setCapabilities( RichFgColor | RichFormatting | RichFont );
 	addAddressBookField( QStringLiteral("messaging/yahoo"), Kopete::Plugin::MakeIndexField );
 }
 
-
 YahooProtocol::~YahooProtocol()
 {
-	kDebug(YAHOO_GEN_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	s_protocolStatic_ = 0L;
 }
 
@@ -180,12 +179,12 @@ Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaCon
 	YahooAccount *theAccount = static_cast<YahooAccount*>(Kopete::AccountManager::self()->findAccount(protocol()->pluginId(), accountId));
 
 	if(!theAccount)
-	{	kDebug( YAHOO_GEN_DEBUG ) << "Account " << accountId << " not found";
+    {	qCDebug (YAHOO_PROTOCOL_LOG) << "Account " << accountId << " not found";
 		return 0;
 	}
 
 	if(theAccount->contact(contactId))
-	{	kDebug( YAHOO_GEN_DEBUG ) << "User " << contactId << " already in contacts map";
+    {	qCDebug (YAHOO_PROTOCOL_LOG) << "User " << contactId << " already in contacts map";
 		return 0;
 	}
 
@@ -201,7 +200,7 @@ Kopete::Contact *YahooProtocol::deserializeContact( Kopete::MetaContact *metaCon
 
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent , Kopete::Account* )
 {
-	kDebug(YAHOO_GEN_DEBUG) << "YahooProtocol::createAddContactWidget(<parent>)";
+	qCDebug(YAHOO_PROTOCOL_LOG) << "YahooProtocol::createAddContactWidget(<parent>)";
 	return new YahooAddContact(this, parent);
 }
 
@@ -216,6 +215,4 @@ Kopete::Account *YahooProtocol::createNewAccount(const QString &accountId)
 }
 
 #include "yahooprotocol.moc"
-
-// vim: set noet ts=4 sts=4 sw=4:
 

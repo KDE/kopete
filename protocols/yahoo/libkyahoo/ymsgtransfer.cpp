@@ -19,17 +19,16 @@
 */
 
 #include "ymsgtransfer.h"
+#include "yahoo_protocol_debug.h"
 
 #include <string>
 
 #include "yahootypes.h"
-#include "kdebug.h"
 
 #include <qdatastream.h>
 #include <qmap.h>
 #include <qstring.h>
 #include <qstringlist.h>
-
 
 using namespace Yahoo;
 
@@ -143,7 +142,6 @@ int YMSGTransfer::paramCount( int index ) const
 	return cnt;
 }
 
-
 QByteArray YMSGTransfer::nthParam( int index, int occurrence ) const
 {
 	int cnt = 0;
@@ -202,7 +200,6 @@ int YMSGTransfer::length() const
 	return len;
 }
 
-
 QByteArray YMSGTransfer::serialize() const
 {
 	/*
@@ -238,13 +235,13 @@ QByteArray YMSGTransfer::serialize() const
 	stream << (qint32)d->id;
  	for (ParamList::ConstIterator it = d->data.constBegin(); it !=  d->data.constEnd(); ++it) 
 	{
- 		kDebug(YAHOO_RAW_DEBUG) << " Serializing key " << (*it).first << " value " << (*it).second;
+ 		qCDebug(YAHOO_PROTOCOL_LOG) << " Serializing key " << (*it).first << " value " << (*it).second;
 		stream.writeRawData ( QString::number( (*it).first ).toLocal8Bit(), QString::number( (*it).first ).length() );
 		stream << (qint8)0xc0 << (qint8)0x80;
 		stream.writeRawData( (*it).second, (*it).second.length() );
 		stream << (qint8)0xc0 << (qint8)0x80;
 	}
-	kDebug(YAHOO_RAW_DEBUG) << " pos=" << pos << " (packet size)" << buffer;
+	qCDebug(YAHOO_PROTOCOL_LOG) << " pos=" << pos << " (packet size)" << buffer;
 	return buffer;
 }
 

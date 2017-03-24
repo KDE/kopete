@@ -20,11 +20,11 @@
 #include "yahootypes.h"
 #include "client.h"
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 ChangeStatusTask::ChangeStatusTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 ChangeStatusTask::~ChangeStatusTask()
@@ -33,7 +33,7 @@ ChangeStatusTask::~ChangeStatusTask()
 
 void ChangeStatusTask::onGo()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	if( m_status == Yahoo::StatusInvisible )			// status --> Invisible
 	{

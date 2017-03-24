@@ -21,11 +21,11 @@
 #include "client.h"
 #include <qstring.h>
 #include <qstringlist.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 ConferenceTask::ConferenceTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 ConferenceTask::~ConferenceTask()
@@ -75,7 +75,7 @@ bool ConferenceTask::forMe( const Transfer* transfer ) const
 
 void ConferenceTask::parseInvitation( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	
 	int i = 0;
 	QString who = t->firstParam( 50 );
@@ -101,7 +101,7 @@ void ConferenceTask::parseInvitation( YMSGTransfer *t )
 
 void ConferenceTask::parseMessage( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString room = t->firstParam( 57 );
 	QString from = t->firstParam( 3 );
@@ -118,7 +118,7 @@ void ConferenceTask::parseMessage( YMSGTransfer *t )
 
 void ConferenceTask::parseUserJoined( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString room = t->firstParam( 57 );
 	QString who = t->firstParam( 53 );
@@ -129,7 +129,7 @@ void ConferenceTask::parseUserJoined( YMSGTransfer *t )
 
 void ConferenceTask::parseUserLeft( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString room = t->firstParam( 57 );
 	QString who = t->firstParam( 56 );
@@ -140,7 +140,7 @@ void ConferenceTask::parseUserLeft( YMSGTransfer *t )
 
 void ConferenceTask::parseUserDeclined( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString room = t->firstParam( 57 );
 	QString who = t->firstParam( 54 );
@@ -152,7 +152,7 @@ void ConferenceTask::parseUserDeclined( YMSGTransfer *t )
 
 void ConferenceTask::inviteConference( const QString &room, const QStringList &members, const QString &msg )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfInvite);
 	t->setId( client()->sessionID() );
@@ -170,7 +170,7 @@ void ConferenceTask::inviteConference( const QString &room, const QStringList &m
 
 void ConferenceTask::addInvite( const QString &room, const QStringList &who, const QStringList &members, const QString &msg )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfAddInvite);
 	t->setId( client()->sessionID() );
@@ -196,7 +196,7 @@ void ConferenceTask::addInvite( const QString &room, const QStringList &who, con
 
 void ConferenceTask::joinConference( const QString &room, const QStringList &members )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfLogon);
 	t->setId( client()->sessionID() );
@@ -210,7 +210,7 @@ void ConferenceTask::joinConference( const QString &room, const QStringList &mem
 
 void ConferenceTask::declineConference( const QString &room, const QStringList &members, const QString &msg )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfDecline);
 	t->setId( client()->sessionID() );
@@ -225,7 +225,7 @@ void ConferenceTask::declineConference( const QString &room, const QStringList &
 }
 void ConferenceTask::leaveConference( const QString &room, const QStringList &members )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfLogoff);
 	t->setId( client()->sessionID() );
@@ -239,7 +239,7 @@ void ConferenceTask::leaveConference( const QString &room, const QStringList &me
 
 void ConferenceTask::sendMessage( const QString &room, const QStringList &members, const QString &msg )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceConfMsg);
 	t->setId( client()->sessionID() );

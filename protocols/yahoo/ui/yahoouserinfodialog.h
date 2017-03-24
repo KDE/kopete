@@ -56,4 +56,3 @@ private:
 
 #endif
 
-//kate: indent-mode csands; tab-width 4; space-indent off; replace-tabs off;

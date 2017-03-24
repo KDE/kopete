@@ -26,7 +26,7 @@
 #include <QTimer>
 #include <QPixmap>
 #include <k3streamsocket.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <klocale.h>
 
 using namespace KNetwork;
@@ -34,7 +34,7 @@ using namespace KYahoo;
 
 WebcamTask::WebcamTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	transmittingData = false;
 	transmissionPending = false;
 	timestamp = 1;
@@ -74,7 +74,7 @@ bool WebcamTask::forMe( const Transfer* transfer ) const
 
 void WebcamTask::requestWebcam( const QString &who )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceWebcam);
 	t->setId( client()->sessionID() );
@@ -89,7 +89,7 @@ void WebcamTask::requestWebcam( const QString &who )
 
 void WebcamTask::parseWebcamInformation( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	YahooWebcamInformation info;
 	if (!keysPending.isEmpty())
@@ -114,7 +114,7 @@ void WebcamTask::parseWebcamInformation( YMSGTransfer *t )
 		info.direction = Incoming;
 	}
 	
-	kDebug(YAHOO_RAW_DEBUG) << "Got WebcamInformation: Sender: " << info.sender << " Server: " << info.server << " Key: " << info.key;
+	qCDebug(YAHOO_PROTOCOL_LOG) << "Got WebcamInformation: Sender: " << info.sender << " Server: " << info.server << " Key: " << info.key;
 
 	KStreamSocket *socket = new KStreamSocket( info.server, QString::number(5100) );
 	socketMap[socket] = info;
@@ -132,11 +132,10 @@ void WebcamTask::slotConnectionStage1Established()
 	KStreamSocket* socket = const_cast<KStreamSocket*>( dynamic_cast<const KStreamSocket*>( sender() ) );
 	if( !socket )
 		return;
-	kDebug(YAHOO_RAW_DEBUG) << "Webcam connection Stage1 to the user " << socketMap[socket].sender << " established.";
+	qCDebug(YAHOO_PROTOCOL_LOG) << "Webcam connection Stage1 to the user " << socketMap[socket].sender << " established.";
 	disconnect( socket, SIGNAL(connected(KNetwork::KResolverEntry)), this, SLOT(slotConnectionStage1Established()) );
 	disconnect( socket, SIGNAL(gotError(int)), this, SLOT(slotConnectionFailed(int)) );
 	socketMap[socket].status = ConnectedStage1;
-	
 
 	QByteArray buffer;
 	QDataStream stream( &buffer, QIODevice::WriteOnly );
@@ -165,7 +164,7 @@ void WebcamTask::slotConnectionStage2Established()
 	if( !socket )
 		return;
 
-	kDebug(YAHOO_RAW_DEBUG) << "Webcam connection Stage2 to the user " << socketMap[socket].sender << " established.";
+	qCDebug(YAHOO_PROTOCOL_LOG) << "Webcam connection Stage2 to the user " << socketMap[socket].sender << " established.";
 	disconnect( socket, SIGNAL(connected(KNetwork::KResolverEntry)), this, SLOT(slotConnectionStage2Established()) );
 	disconnect( socket, SIGNAL(gotError(int)), this, SLOT(slotConnectionFailed(int)) );
 	socketMap[socket].status = ConnectedStage2;
@@ -174,7 +173,6 @@ void WebcamTask::slotConnectionStage2Established()
 	QDataStream stream( &buffer, QIODevice::WriteOnly );
 	QString s;
 
-	
 	if( socketMap[socket].direction == Incoming )
 	{
 		// Send <REQIMG>-Packet
@@ -203,7 +201,7 @@ void WebcamTask::slotConnectionStage2Established()
 void WebcamTask::slotConnectionFailed( int error )
 {
 	KStreamSocket* socket = const_cast<KStreamSocket*>( dynamic_cast<const KStreamSocket*>( sender() ) );
-	kDebug(YAHOO_RAW_DEBUG) << "Webcam connection to the user " << socketMap[socket].sender << " failed. Error " << error << " - " << socket->errorString();
+	qCDebug(YAHOO_PROTOCOL_LOG) << "Webcam connection to the user " << socketMap[socket].sender << " failed. Error " << error << " - " << socket->errorString();
 	client()->notifyError( i18n("Webcam connection to the user %1 could not be established.\n\nPlease relogin and try again.", socketMap[socket].sender), QStringLiteral("%1 - %2").arg(error).arg( socket->errorString()), Client::Error );
 	socketMap.remove( socket );
 	socket->deleteLater();
@@ -232,11 +230,11 @@ void WebcamTask::slotRead()
 
 void WebcamTask::connectStage2( KStreamSocket *socket )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	QByteArray data;
 	data.reserve( socket->bytesAvailable() );
 	data = socket->readAll();
-	kDebug(YAHOO_RAW_DEBUG) << "Magic Byte:" << data[2];
+	qCDebug(YAHOO_PROTOCOL_LOG) << "Magic Byte:" << data[2];
 
 	socketMap[socket].status = ConnectedStage2;
 
@@ -252,14 +250,14 @@ void WebcamTask::connectStage2( KStreamSocket *socket )
 	case (qint8)0x07:
 		while( (const char)data[i] != (qint8)0x00 )
 			server += data[i++];
-		kDebug(YAHOO_RAW_DEBUG) << "Server:" << server;
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Server:" << server;
 		if( server.isEmpty() )
 		{
 			emit webcamNotAvailable(socketMap[socket].sender);
 			break;
 		}
 		
-		kDebug(YAHOO_RAW_DEBUG) << "Connecting to " << server;
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Connecting to " << server;
 		newSocket = new KStreamSocket( server, QString::number(5100) );
 		socketMap[newSocket] = socketMap[socket];
 		newSocket->enableRead( true );
@@ -289,7 +287,7 @@ void WebcamTask::processData( KStreamSocket *socket )
 	data = socket->readAll();
 	if( data.size() <= 0 )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "No data read.";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "No data read.";
 		return;
 	}
 	
@@ -304,20 +302,20 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 	if( !info->headerRead )
 	{
 		headerLength = data[0];	
-		kDebug(YAHOO_RAW_DEBUG) << "headerLength " << headerLength;
+		qCDebug(YAHOO_PROTOCOL_LOG) << "headerLength " << headerLength;
 		if( data.size() < headerLength )
 			return;			
 		if( headerLength >= 8 )
 		{
-			kDebug() << data[0] << data[1] << data[2] << data[3] << data[4] << data[5] << data[6] << data[7];
+                        qCDebug(YAHOO_PROTOCOL_LOG) << data[0] << data[1] << data[2] << data[3] << data[4] << data[5] << data[6] << data[7];
 			info->reason = data[1];
 			info->dataLength = yahoo_get32(data.data() + 4);
 		}
 		if( headerLength == 13 )
 		{
-			kDebug() << data[8] << data[9] << data[10] << data[11] << data[12];
+                        qCDebug(YAHOO_PROTOCOL_LOG) << data[8] << data[9] << data[10] << data[11] << data[12];
 			info->timestamp = yahoo_get32(data.data() + 9);
-			kDebug(YAHOO_RAW_DEBUG) << "PacketType: " << data[8] << " reason: " << info->reason << " timestamp: " << info->timestamp;
+			qCDebug(YAHOO_PROTOCOL_LOG) << "PacketType: " << data[8] << " reason: " << info->reason << " timestamp: " << info->timestamp;
 			QStringList::iterator it;
 			switch( data[8] )
 			{
@@ -347,7 +345,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 					}
 				break;
 				case 0x05:
-					kDebug(YAHOO_RAW_DEBUG) << "Ready for Transmission";
+					qCDebug(YAHOO_PROTOCOL_LOG) << "Ready for Transmission";
 					if( info->timestamp == 1 )
 					{
 						info->status = Sending;
@@ -363,7 +361,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 					// Send  very first Invitation packets
 					for(it = pendingInvitations.begin(); it != pendingInvitations.end(); it++)
 					{
-						kDebug(YAHOO_RAW_DEBUG) << "send primary invitation";
+						qCDebug(YAHOO_PROTOCOL_LOG) << "send primary invitation";
 						SendNotifyTask *snt = new SendNotifyTask( parent() );
 						snt->setTarget( *it );
 						snt->setType( SendNotifyTask::NotifyWebcamInvite );
@@ -396,7 +394,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 		if( !info->headerRead && data.size() > headerLength )
 		{
 			// More headers to read
-			kDebug(YAHOO_RAW_DEBUG) << "More data to read...";
+			qCDebug(YAHOO_PROTOCOL_LOG) << "More data to read...";
 			QByteArray newData;
 			newData.reserve( data.size() - headerLength );
 			QDataStream stream( &newData, QIODevice::WriteOnly );
@@ -404,31 +402,31 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			parseData( newData, socket );
 			return;
 		}
-		kDebug(YAHOO_RAW_DEBUG) << "Parsed Packet: HeaderLen: " << headerLength << " DataLen: " << info->dataLength;
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Parsed Packet: HeaderLen: " << headerLength << " DataLen: " << info->dataLength;
 	}
 	
 	if( info->dataLength <= 0 )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "No data to read. (info->dataLength <= 0)";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "No data to read. (info->dataLength <= 0)";
 		if( info->headerRead )
 			info->headerRead = false;
 		return;
 	}
 	if( headerLength >= data.size() )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "No data to read. (headerLength >= data.size())";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "No data to read. (headerLength >= data.size())";
 		return;		//Nothing to read here...
 	}
 	if( !info->buffer )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Buffer created";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Buffer created";
 		info->buffer = new QBuffer();
 		info->buffer->open( QIODevice::WriteOnly );
 	}
-	kDebug(YAHOO_RAW_DEBUG) << "data.size() " << data.size() << " headerLength " << headerLength << " buffersize " << info->buffer->size();
+	qCDebug(YAHOO_PROTOCOL_LOG) << "data.size() " << data.size() << " headerLength " << headerLength << " buffersize " << info->buffer->size();
 	read = headerLength + info->dataLength - info->buffer->size();
 	info->buffer->write( data.data() + headerLength, data.size() - headerLength );//info->dataLength - info->buffer->size() );
-	kDebug(YAHOO_RAW_DEBUG) << "read " << data.size() - headerLength << " Bytes, Buffer is now " << info->buffer->size();
+	qCDebug(YAHOO_PROTOCOL_LOG) << "read " << data.size() - headerLength << " Bytes, Buffer is now " << info->buffer->size();
 	if( info->buffer->size() >= static_cast<uint>(info->dataLength) )
 	{	
 		info->buffer->close();
@@ -439,7 +437,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			{
 			who.append( info->buffer->buffer() );
 			who = who.mid( 2, who.indexOf('\n') - 3);
-			kDebug(YAHOO_RAW_DEBUG) << "User wants to view webcam: " << who << " len: " << who.length() << " Index: " << accessGranted.indexOf( who );
+			qCDebug(YAHOO_PROTOCOL_LOG) << "User wants to view webcam: " << who << " len: " << who.length() << " Index: " << accessGranted.indexOf( who );
 			if( accessGranted.indexOf( who ) >= 0 )
 			{
 				grantAccess( who );
@@ -451,13 +449,13 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 		case NewWatcher:
 			who.append( info->buffer->buffer() );
 			who = who.left( who.length() - 1 );
-			kDebug(YAHOO_RAW_DEBUG) << "New Watcher of webcam: " << who;
+			qCDebug(YAHOO_PROTOCOL_LOG) << "New Watcher of webcam: " << who;
 			emit viewerJoined( who );
 		break;
 		case WatcherLeft:
 			who.append( info->buffer->buffer() );
 			who = who.left( who.length() - 1 );
-			kDebug(YAHOO_RAW_DEBUG) << "A Watcher left: " << who << " len: " << who.length();
+			qCDebug(YAHOO_PROTOCOL_LOG) << "A Watcher left: " << who << " len: " << who.length();
 			accessGranted.removeAll( who );
 			emit viewerLeft( who );
 		break;
@@ -469,12 +467,12 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 			{
 				if (WebcamImgFormat::instance()->fromYahoo(webcamImage, info->buffer->buffer().constData(), info->buffer->buffer().size()))
 				{
-					kDebug(YAHOO_RAW_DEBUG) << "Image Received and converted. Size: " << webcamImage.size();
+					qCDebug(YAHOO_PROTOCOL_LOG) << "Image Received and converted. Size: " << webcamImage.size();
 					emit webcamImageReceived( info->sender, webcamImage );
 				} else
-					kDebug(YAHOO_RAW_DEBUG) << "Failed to convert incoming Yahoo webcam image";
+					qCDebug(YAHOO_PROTOCOL_LOG) << "Failed to convert incoming Yahoo webcam image";
 			} else
-				kDebug(YAHOO_RAW_DEBUG) << "Failed to initialize WebcamImgFormat helper";
+				qCDebug(YAHOO_PROTOCOL_LOG) << "Failed to initialize WebcamImgFormat helper";
 			}
 		break;
 		default:
@@ -488,7 +486,7 @@ void WebcamTask::parseData( QByteArray &data, KStreamSocket *socket )
 	if( data.size() > read )
 	{
 		// More headers to read
-		kDebug(YAHOO_RAW_DEBUG) << "More data to read..." << data.size() - read;
+		qCDebug(YAHOO_PROTOCOL_LOG) << "More data to read..." << data.size() - read;
 		QByteArray newData;
 		newData.reserve( data.size() - read );
 		QDataStream stream( &newData, QIODevice::WriteOnly );
@@ -509,27 +507,26 @@ void WebcamTask::cleanUpConnection( KStreamSocket *socket )
 
 void WebcamTask::closeWebcam( const QString & who )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << it.value().sender << " - " << who;
+		qCDebug(YAHOO_PROTOCOL_LOG) << it.value().sender << " - " << who;
 		if( it.value().sender == who )
 		{
 			cleanUpConnection( it.key() );
 			return;
 		}
 	}
-	kDebug(YAHOO_RAW_DEBUG) << "Error. You tried to close a connection that did not exist.";
+	qCDebug(YAHOO_PROTOCOL_LOG) << "Error. You tried to close a connection that did not exist.";
 	client()->notifyError( i18n( "An error occurred closing the webcam session. " ), i18n( "You tried to close a connection that did not exist." ), Client::Debug );
 }
-
 
 // Sending 
 
 void WebcamTask::registerWebcam()
 {	
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceWebcam);
 	t->setId( client()->sessionID() );
@@ -541,7 +538,7 @@ void WebcamTask::registerWebcam()
 
 void WebcamTask::addPendingInvitation( const QString &userId )
 {
-	kDebug(YAHOO_RAW_DEBUG) << "Inviting " << userId << " to watch the webcam.";
+	qCDebug(YAHOO_PROTOCOL_LOG) << "Inviting " << userId << " to watch the webcam.";
 	pendingInvitations.append( userId );
 	accessGranted.append( userId );
 
@@ -549,7 +546,7 @@ void WebcamTask::addPendingInvitation( const QString &userId )
 
 void WebcamTask::grantAccess( const QString &userId )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	KStreamSocket *socket = 0L;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
@@ -562,7 +559,7 @@ void WebcamTask::grantAccess( const QString &userId )
 	}
 	if( !socket )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Error. No outgoing socket found.";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Error. No outgoing socket found.";
 		return;
 	}
 	QByteArray ar;
@@ -577,7 +574,7 @@ void WebcamTask::grantAccess( const QString &userId )
 
 void WebcamTask::closeOutgoingWebcam()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	KStreamSocket *socket = 0L;
 	SocketInfoMap::Iterator it;
 	for( it = socketMap.begin(); it != socketMap.end(); it++ )
@@ -590,7 +587,7 @@ void WebcamTask::closeOutgoingWebcam()
 	}
 	if( !socket )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Error. No outgoing socket found.";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Error. No outgoing socket found.";
 		return;
 	}
 	
@@ -600,7 +597,7 @@ void WebcamTask::closeOutgoingWebcam()
 
 void WebcamTask::sendEmptyWebcamImage()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	KStreamSocket *socket = 0L;
 	SocketInfoMap::Iterator it;
@@ -614,7 +611,7 @@ void WebcamTask::sendEmptyWebcamImage()
 	}
 	if( !socket )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Error. No outgoing socket found.";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Error. No outgoing socket found.";
 		return;
 	}
 	if( socketMap[socket].status != SendingEmpty )
@@ -632,7 +629,7 @@ void WebcamTask::doPendingInvitations()
 	QStringList::iterator itb;
 	for(itb = pendingInvitations.begin(); itb != pendingInvitations.end(); itb++)
 		{
-		kDebug(YAHOO_RAW_DEBUG) << "send invitation when no users";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "send invitation when no users";
 		SendNotifyTask *snt = new SendNotifyTask( parent() );
 		snt->setTarget( *itb );
 		snt->setType( SendNotifyTask::NotifyWebcamInvite );
@@ -645,7 +642,7 @@ void WebcamTask::doPendingInvitations()
 
 void WebcamTask::sendWebcamImage( const QByteArray &image )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	pictureBuffer = image;
 	transmissionPending = true;
 	KStreamSocket *socket = 0L;
@@ -661,7 +658,7 @@ void WebcamTask::sendWebcamImage( const QByteArray &image )
 	}
 	if( !socket )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Error. No outgoing socket found.";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Error. No outgoing socket found.";
 		return;
 	}
 
@@ -672,7 +669,7 @@ void WebcamTask::transmitWebcamImage()
 {
 	if( !transmissionPending )
 		return;
-	kDebug(YAHOO_RAW_DEBUG) << "arraysize: " << pictureBuffer.size();
+	qCDebug(YAHOO_PROTOCOL_LOG) << "arraysize: " << pictureBuffer.size();
 
 	// Find outgoing socket
 	KStreamSocket *socket = 0L;
@@ -687,7 +684,7 @@ void WebcamTask::transmitWebcamImage()
 	}
 	if( !socket )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Error. No outgoing socket found.";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Error. No outgoing socket found.";
 		return;
 	}
 

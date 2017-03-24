@@ -78,7 +78,6 @@ main()
 }
 #endif /* TEST */
 
-
 /*
  * For reference, here is the program that computed the T values.
  */

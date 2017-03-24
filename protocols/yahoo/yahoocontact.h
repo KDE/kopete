@@ -59,7 +59,6 @@ public:
 	void updateStealthed();
 	bool stealthed() const;
 
-
 	/** The group name getter and setter methods**/
 	QString group() const;
 	void setGroup( const QString& );
@@ -133,6 +132,4 @@ private:
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
 

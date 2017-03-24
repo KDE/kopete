@@ -22,13 +22,13 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 using namespace KYahoo;
 
 MessageReceiverTask::MessageReceiverTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 MessageReceiverTask::~MessageReceiverTask()
@@ -83,7 +83,7 @@ bool MessageReceiverTask::forMe( const Transfer* transfer ) const
 
 void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	int cnt = t->paramCount( 5 );
 	for( int i = 0; i < cnt; ++i )
@@ -108,7 +108,7 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 	
 		if( msg.isEmpty() )
 		{
-			kDebug(YAHOO_RAW_DEBUG) << "Got a empty message. Dropped.";
+			qCDebug(YAHOO_PROTOCOL_LOG) << "Got a empty message. Dropped.";
 			continue;
 		}
 	
@@ -130,7 +130,7 @@ void MessageReceiverTask::parseMessage( YMSGTransfer *t )
 void MessageReceiverTask::parseAnimatedAudibleIcon( YMSGTransfer *t )
 {
 	// added by michaelacole
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	int cnt = t->paramCount( 5 );
 	for( int i = 0; i < cnt; ++i )
@@ -149,7 +149,7 @@ void MessageReceiverTask::parseAnimatedAudibleIcon( YMSGTransfer *t )
 
 		if( msg.isEmpty() )
 		{
-			kDebug(YAHOO_RAW_DEBUG) << "Got a empty message. Dropped.";
+			qCDebug(YAHOO_PROTOCOL_LOG) << "Got a empty message. Dropped.";
 			continue;
 		}
 
@@ -168,7 +168,7 @@ void MessageReceiverTask::parseAnimatedAudibleIcon( YMSGTransfer *t )
 
 void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString from = t->firstParam( 4 );
 	//QString to = t->firstParam( 5 );
@@ -184,12 +184,12 @@ void MessageReceiverTask::parseNotify( YMSGTransfer *t )
 	{
 		if( ind.startsWith(' ') )
 		{
-			kDebug(YAHOO_RAW_DEBUG) << "Got a WebcamInvitation.";
+			qCDebug(YAHOO_PROTOCOL_LOG) << "Got a WebcamInvitation.";
 			emit gotWebcamInvite( from );
 		}
 		else
 		{
-			kDebug(YAHOO_RAW_DEBUG) << "Got a WebcamRequest-Response: " << ind.toInt();
+			qCDebug(YAHOO_PROTOCOL_LOG) << "Got a WebcamRequest-Response: " << ind.toInt();
 		}
 	}
 }

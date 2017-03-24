@@ -24,7 +24,7 @@
 #include <QTimer>
 #include <QPixmap>
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <k3socketbase.h>
 
 #include "yahooclientstream.h"
@@ -153,7 +153,7 @@ Client::~Client()
 
 void Client::connect( const QString &host, const uint port, const QString &userId, const QString &pass )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 	d->host = host;
 	d->port = port;
 	d->user = userId;
@@ -178,9 +178,9 @@ void Client::cancelConnect()
 
 void Client::cs_connected()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 	emit connected();
-	kDebug(YAHOO_RAW_DEBUG) << " starting login task ... ";
+    qCDebug(YAHOO_PROTOCOL_LOG) << " starting login task ... ";
 
 	// Clear stealth settings
 	d->stealthedBuddies.clear();
@@ -192,7 +192,7 @@ void Client::cs_connected()
 
 void Client::close()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 	m_pingTimer->stop();
 	m_aliveTimer->stop();
 	if( d->active )
@@ -233,7 +233,7 @@ QString Client::errorInformation()
 // SLOTS //
 void Client::streamError( int error )
 {
-	kDebug(YAHOO_RAW_DEBUG) << "CLIENT ERROR (Error " <<  error << ")";
+    qCDebug(YAHOO_PROTOCOL_LOG) << "CLIENT ERROR (Error " <<  error << ")";
 	QString msg;
 
 	d->active = false;
@@ -271,7 +271,7 @@ void Client::streamDisconnected()
 
 void Client::lt_loginFinished()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	slotLoginResponse( d->loginTask->statusCode(), d->loginTask->statusString() );
 }
@@ -301,19 +301,19 @@ void Client::slotLoginResponse( int response, const QString &msg )
 		close();
 	}
 
-	kDebug(YAHOO_RAW_DEBUG) << "Emitting loggedIn";
+    qCDebug(YAHOO_PROTOCOL_LOG) << "Emitting loggedIn";
 	emit loggedIn( response, msg );
 }
 
 void Client::lt_gotSessionID( uint id )
 {
-	kDebug(YAHOO_RAW_DEBUG) << "Got SessionID: " << id;	
+    qCDebug(YAHOO_PROTOCOL_LOG) << "Got SessionID: " << id;
 	d->sessionID = id;
 }
 
 void Client::slotGotCookies()
 {
-	kDebug(YAHOO_RAW_DEBUG) << "Y: " << d->loginTask->yCookie()
+    qCDebug(YAHOO_PROTOCOL_LOG) << "Y: " << d->loginTask->yCookie()
 					<< " T: " << d->loginTask->tCookie()
 					<< " C: " << d->loginTask->cCookie() << endl;
 	d->yCookie = d->loginTask->yCookie();
@@ -424,7 +424,7 @@ void Client::cancelFileTransfer( unsigned int transferId )
 
 void Client::changeStatus( Yahoo::Status status, const QString &message, Yahoo::StatusType type )
 {
-	kDebug(YAHOO_RAW_DEBUG) << "status: " << status
+    qCDebug(YAHOO_PROTOCOL_LOG) << "status: " << status
 					<< " message: " << message
 					<< " type: " << type << endl;	
 	ChangeStatusTask *cst = new ChangeStatusTask( d->root );
@@ -452,10 +452,10 @@ void Client::sendPing()
 {
 	if( !d->active )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Disconnected. NOT sending a PING.";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Disconnected. NOT sending a PING.";
 		return;
 	}
-	kDebug(YAHOO_RAW_DEBUG) << "Sending a PING.";
+    qCDebug(YAHOO_PROTOCOL_LOG) << "Sending a PING.";
 	PingTask *pt = new PingTask( d->root );
 	pt->go( true );
 }
@@ -464,10 +464,10 @@ void Client::sendAlive()
 {
 	if( !d->active )
 	{
-		kDebug(YAHOO_RAW_DEBUG) << "Disconnected. NOT sending a ALIVE.";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "Disconnected. NOT sending a ALIVE.";
 		return;
 	}
-	kDebug(YAHOO_RAW_DEBUG) << "Sending a ALIVE.";
+    qCDebug(YAHOO_PROTOCOL_LOG) << "Sending a ALIVE.";
 	AliveTask *at = new AliveTask( d->root );
 	at->go( true );
 }
@@ -527,7 +527,7 @@ void Client::moveBuddy( const QString &userId, const QString &oldGroup, const QS
 
 void Client::processPictureQueue()
 {
-	kDebug(YAHOO_RAW_DEBUG) << k_funcinfo << endl;
+    qCDebug(YAHOO_PROTOCOL_LOG) << endl;
 	d->buddyListReady = true;
 	if( d->pictureRequestQueue.isEmpty() )
 	{
@@ -537,7 +537,6 @@ void Client::processPictureQueue()
 	requestPicture( d->pictureRequestQueue.front() );
 	d->pictureRequestQueue.pop_front();
 
-	
 	if( !d->pictureRequestQueue.isEmpty() )
 	{
 		QTimer::singleShot( 1000, this, SLOT(processPictureQueue()) );
@@ -571,7 +570,7 @@ void Client::downloadPicture(  const QString &userId, KUrl url, int checksum )
 
 void Client::uploadPicture( KUrl url )
 {
-	kDebug(YAHOO_RAW_DEBUG) << "URL: " << url.url();
+    qCDebug(YAHOO_PROTOCOL_LOG) << "URL: " << url.url();
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::UploadPicture );
 	spt->setFilename( url.fileName() );
@@ -584,7 +583,7 @@ void Client::uploadPicture( KUrl url )
 
 void Client::sendPictureChecksum( const QString &userId, int checksum )
 {
-	kDebug(YAHOO_RAW_DEBUG) << "checksum: " << checksum;
+    qCDebug(YAHOO_PROTOCOL_LOG) << "checksum: " << checksum;
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::SendChecksum );
 	spt->setChecksum( checksum );
@@ -595,7 +594,7 @@ void Client::sendPictureChecksum( const QString &userId, int checksum )
 
 void Client::sendPictureInformation( const QString &userId, const QString &url, int checksum )
 {
-	kDebug(YAHOO_RAW_DEBUG) << "checksum: " << checksum;
+    qCDebug(YAHOO_PROTOCOL_LOG) << "checksum: " << checksum;
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::SendInformation );
 	spt->setChecksum( checksum );
@@ -609,7 +608,7 @@ void Client::setPictureStatus( Yahoo::PictureStatus status )
 	if( d->pictureFlag == status )
 		return;
 
-	kDebug(YAHOO_RAW_DEBUG) << "Setting PictureStatus to: " << status;
+    qCDebug(YAHOO_PROTOCOL_LOG) << "Setting PictureStatus to: " << status;
 	d->pictureFlag = status;
 	SendPictureTask *spt = new SendPictureTask( d->root );
 	spt->setType( SendPictureTask::SendStatus );
@@ -638,7 +637,6 @@ void Client::closeOutgoingWebcam()
 {
 	d->webcamTask->closeOutgoingWebcam();
 }
-
 
 void Client::grantWebcamAccess( const QString &userId )
 {
@@ -739,7 +737,7 @@ void Client::leaveChat()
 // ***** other *****
 void Client::notifyError( const QString &info, const QString & errorString, LogLevel level )
 {
-	kDebug(YAHOO_RAW_DEBUG) << QStringLiteral("\nThe following error occurred: %1\n    Reason: %2\n    LogLevel: %3")
+    qCDebug(YAHOO_PROTOCOL_LOG) << QStringLiteral("\nThe following error occurred: %1\n    Reason: %2\n    LogLevel: %3")
 		.arg(info).arg(errorString).arg(level) << endl;
 	d->errorString = errorString;
 	d->errorInformation = info;
@@ -783,7 +781,6 @@ void Client::setStatus( Yahoo::Status status )
 {
 	d->status = status;
 }
-
 
 void Client::setStatusOnConnect( Yahoo::Status status )
 {
@@ -852,18 +849,18 @@ QString Client::cCookie()
 
 void Client::distribute( Transfer * transfer )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+    qCDebug(YAHOO_PROTOCOL_LOG) ;
 	if( !rootTask()->take( transfer ) )
-		kDebug(YAHOO_RAW_DEBUG) << "CLIENT: root task refused transfer";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "CLIENT: root task refused transfer";
 	delete transfer;
 }
 
 void Client::send( Transfer* request )
 {
-	kDebug(YAHOO_RAW_DEBUG) << "CLIENT::send()";
+    qCDebug(YAHOO_PROTOCOL_LOG) << "CLIENT::send()";
 	if( !d->stream )
 	{	
-		kDebug(YAHOO_RAW_DEBUG) << "CLIENT - NO STREAM TO SEND ON!";
+        qCDebug(YAHOO_PROTOCOL_LOG) << "CLIENT - NO STREAM TO SEND ON!";
 		return;
 	}
 

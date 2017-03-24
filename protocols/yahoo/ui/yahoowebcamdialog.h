@@ -17,9 +17,7 @@
 #ifndef YAHOOWEBCAMDIALOG_H_
 #define YAHOOWEBCAMDIALOG_H_
 
-
 #include <kdialog.h>
-
 
 class QPixmap;
 class QLabel;

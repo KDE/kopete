@@ -19,7 +19,6 @@
 
 #include "task.h"
 
-
 /**
 @author André Duffeck
 */

@@ -14,7 +14,6 @@
     *************************************************************************
 */
 
-
 #ifndef YAHOOCHATSELECTORDIALOG_H
 #define YAHOOCHATSELECTORDIALOG_H
 

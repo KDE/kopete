@@ -16,7 +16,7 @@
 #ifndef YABEntry_H
 #define YABEntry_H
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <qdatetime.h>
 #include <qdom.h>
 
@@ -80,7 +80,6 @@ struct YABEntry
 	QString		additional3;
 	QString		additional4;
 
-	
 	void fromQDomElement( const QDomElement &e );
 	void fromQDomDocument( const QDomDocument &e );
 	void fillQDomElement( QDomElement &e ) const;

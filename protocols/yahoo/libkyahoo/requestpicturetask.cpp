@@ -20,11 +20,11 @@
 #include "yahootypes.h"
 #include "client.h"
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 RequestPictureTask::RequestPictureTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 RequestPictureTask::~RequestPictureTask()
@@ -47,5 +47,4 @@ void RequestPictureTask::setTarget( const QString &target )
 {
 	m_target = target;
 }
-
 

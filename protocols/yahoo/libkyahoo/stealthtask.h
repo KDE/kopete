@@ -19,7 +19,7 @@
 
 #include "task.h"
 #include "yahootypes.h"
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 class QString;
 

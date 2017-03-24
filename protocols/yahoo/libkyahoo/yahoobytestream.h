@@ -22,7 +22,6 @@
 
 #include "bytestream.h"
 
-
 /**
  * Low level socket class, using KDE's KNetwork socket classes
  * @author Till Gerken
@@ -65,4 +64,3 @@ private:
 
 #endif // YAHOOBYTESTREAM_H
 
-// kate: indent-width 4; replace-tabs off; tab-width 4; space-indent off;

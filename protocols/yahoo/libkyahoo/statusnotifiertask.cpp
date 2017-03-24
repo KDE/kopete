@@ -21,14 +21,14 @@
 #include "client.h"
 #include <qstring.h>
 #include <qstringlist.h>
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 #include <klocale.h>
 
 using namespace KYahoo;
 
 StatusNotifierTask::StatusNotifierTask(Task* parent) : Task(parent)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 }
 
 StatusNotifierTask::~StatusNotifierTask()
@@ -60,7 +60,6 @@ bool StatusNotifierTask::forMe( const Transfer* transfer ) const
 	if (!t)
 		return false;
 
-
 	if ( t->service() == Yahoo::ServiceLogon ||
 		t->service() == Yahoo::ServiceLogoff ||
 		t->service() == Yahoo::ServiceIsAway ||
@@ -81,7 +80,7 @@ bool StatusNotifierTask::forMe( const Transfer* transfer ) const
 
 void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	if( t->status() == Yahoo::StatusDisconnected && 
 		t->service() == Yahoo::ServiceLogoff )
@@ -132,7 +131,7 @@ void StatusNotifierTask::parseStatus( YMSGTransfer* t )
 
 void StatusNotifierTask::parseAuthorization( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString nick;		/* key = 4  */	
 	QString msg;		/* key = 14  */
@@ -163,14 +162,14 @@ void StatusNotifierTask::parseAuthorization( YMSGTransfer* t )
 		if( !fname.isEmpty() || !lname.isEmpty() )
 			name = QStringLiteral("%1 %2").arg(fname).arg(lname);
 
-		kDebug(YAHOO_RAW_DEBUG) << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )";
+		qCDebug(YAHOO_PROTOCOL_LOG) << "Emitting gotAuthorizationRequest( " << nick<< ", " << msg << ", " << name << " )";
 		emit gotAuthorizationRequest( nick, msg, name );
 	}
 }
 
 void StatusNotifierTask::parseStealthStatus( YMSGTransfer* t )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 
 	QString nick;		/* key = 7  */
 	int state;		/* key = 31  */

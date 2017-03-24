@@ -7,6 +7,7 @@ include_directories(
 ${KOPETE_INCLUDES} 
 ${CMAKE_CURRENT_SOURCE_DIR}/ui 
 ${CMAKE_CURRENT_SOURCE_DIR}/libkyahoo 
+${CMAKE_CURRENT_BINARY_DIR}/
 ${JASPER_INCLUDE_DIR}
 )
 
@@ -46,6 +47,7 @@ set(kopete_yahoo_PART_SRCS
    yahooverifyaccount.cpp 
    yahoowebcam.cpp )
 
+ecm_qt_declare_logging_category(kopete_yahoo_PART_SRCS HEADER yahoo_protocol_debug.h IDENTIFIER YAHOO_PROTOCOL_LOG CATEGORY_NAME org.kde.kopete.yahoo)
 
 add_library(kopete_yahoo MODULE ${kopete_yahoo_PART_SRCS})
 

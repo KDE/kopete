@@ -22,7 +22,6 @@
 
 class QString;
 
-
 /**
 @author André Duffeck
 */

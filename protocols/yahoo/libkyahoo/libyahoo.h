@@ -41,7 +41,6 @@
  *
  */
 
-
 #ifndef LIB_YAHOO_UTILS_H
 #define LIB_YAHOO_UTILS_H
 

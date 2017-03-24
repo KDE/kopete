@@ -18,7 +18,6 @@
 	*************************************************************************
 */
 
-
 #include "yahooclientstream.h"
 
 #include <QApplication>  // for qdebug
@@ -27,7 +26,7 @@
 #include <QTimer>
 #include <QQueue>
 
-#include <kdebug.h>
+#include "yahoo_protocol_debug.h"
 
 #include "bytestream.h"
 #include "connector.h"
@@ -105,7 +104,7 @@ public:
 ClientStream::ClientStream(Connector *conn, QObject *parent)
 :Stream(parent), d(new Private())
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	
 	d->mode = Client;
 	d->conn = conn;
@@ -126,7 +125,7 @@ ClientStream::~ClientStream()
 
 void ClientStream::reset(bool all)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	d->reset();
 	d->noopTimer.stop();
 
@@ -150,7 +149,7 @@ void ClientStream::reset(bool all)
 
 void ClientStream::connectToServer(const QString& server, bool auth)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	reset(true);
 	d->state = Connecting;
 	d->doAuth = auth;
@@ -161,7 +160,7 @@ void ClientStream::connectToServer(const QString& server, bool auth)
 
 void ClientStream::continueAfterWarning()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 /* unneeded?
 	if(d->state == WaitVersion) {
 		d->state = Connecting;
@@ -234,7 +233,7 @@ void ClientStream::close()
 
 bool ClientStream::transfersAvailable() const
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	return ( !d->in.isEmpty() );
 }
 
@@ -248,7 +247,7 @@ Transfer* ClientStream::read()
 
 void ClientStream::write( Transfer *request )
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	// pass to CoreProtocol for transformation into wire format
 	d->client.outgoingTransfer( request );
 }
@@ -301,30 +300,30 @@ void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 		return;
 	
 	// take formatted bytes from CoreProtocol and put them on the wire
-	kDebug(YAHOO_RAW_DEBUG) << "[data size: " << outgoingBytes.size() << "]";
+	qCDebug(YAHOO_PROTOCOL_LOG) << "[data size: " << outgoingBytes.size() << "]";
 	//cs_dump( outgoingBytes );
 	d->bs->write( outgoingBytes );
 }
 
 void ClientStream::cp_incomingData()
 {
-// 	kDebug(YAHOO_RAW_DEBUG) ;
+// 	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	Transfer * incoming = d->client.incomingTransfer();
 	if ( incoming )
 	{
-// 		kDebug(YAHOO_RAW_DEBUG) << " - got a new transfer";
+// 		qCDebug(YAHOO_PROTOCOL_LOG) << " - got a new transfer";
 		d->in.enqueue( incoming );
 		d->newTransfers = true;
 		emit doReadyRead();
 	}
 	else
-		kDebug(YAHOO_RAW_DEBUG) << " - client signalled incomingData but none was available, state is: "<< d->client.state();
+		qCDebug(YAHOO_PROTOCOL_LOG) << " - client signalled incomingData but none was available, state is: "<< d->client.state();
 }
 
 /* Connector connected */
 void ClientStream::cr_connected()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	
 	d->bs = d->conn->stream();
 	connect(d->bs, SIGNAL(connectionClosed()), SLOT(bs_connectionClosed()));
@@ -343,7 +342,7 @@ void ClientStream::cr_connected()
 
 void ClientStream::cr_error()
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	reset();
 	emit error(ErrConnection);
 }
@@ -361,20 +360,20 @@ void ClientStream::bs_delayedCloseFinished()
 
 void ClientStream::bs_error(int)
 {
-	kDebug(YAHOO_RAW_DEBUG) ;
+	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	// TODO
 }
 
 void ClientStream::bs_readyRead()
 {
-// 	kDebug(YAHOO_RAW_DEBUG) ;
+// 	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	QByteArray a;
 	//qDebug( "size of storage for incoming data is %i bytes.", a.size() );
 	a = d->bs->read();
 
 	//QCString cs(a.data(), a.size()+1);
 	//qDebug("ClientStream: recv: %d [%s]\n", a.size(), cs.data());
-	//kDebug(YAHOO_RAW_DEBUG) << " recv: " << a.size()  <<" bytes";
+	//qCDebug(YAHOO_PROTOCOL_LOG) << " recv: " << a.size()  <<" bytes";
 	//cs_dump( a );
 
 	d->client.addIncomingData(a);
@@ -382,7 +381,7 @@ void ClientStream::bs_readyRead()
 
 void ClientStream::bs_bytesWritten(int bytes)
 {
-	kDebug(YAHOO_RAW_DEBUG) << " written: " << bytes  <<" bytes";
+	qCDebug(YAHOO_PROTOCOL_LOG) << " written: " << bytes  <<" bytes";
 }
 
 void ClientStream::srvProcessNext()
@@ -391,7 +390,7 @@ void ClientStream::srvProcessNext()
 
 void ClientStream::doReadyRead()
 {
-// 	kDebug(YAHOO_RAW_DEBUG) ;
+// 	qCDebug(YAHOO_PROTOCOL_LOG) ;
 	emit readyRead();
 }
 
@@ -407,7 +406,6 @@ bool ClientStream::handleNeed()
 {
 	return false;
 }
-
 
 void ClientStream::doNoop()
 {
