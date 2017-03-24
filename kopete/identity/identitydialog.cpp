@@ -149,7 +149,7 @@ void IdentityDialog::setPhoto(QString path)
 	else
 	{
 		d->general.photo->setText( QString("<qt><a href=\"selectPhoto\">"
-											"<p align=\"center\">No Photo</p>"
+                                            "<p align=\"center\">%1</p>"
 										"</a>").arg( i18n("No Photo") ));
 	}
 }
