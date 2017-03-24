@@ -78,7 +78,7 @@ private:
 	class Private;
 	Private * const d;
 
-	void initialize(QWidget *parent);
+    void initialize();
 
 };
 

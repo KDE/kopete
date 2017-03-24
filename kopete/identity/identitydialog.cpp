@@ -134,6 +134,7 @@ void IdentityDialog::slotSave()
 	d->identity->setProperty( d->props->emailAddress(), d->detailed.email->text() );
 	d->identity->setProperty( d->props->privatePhone(), d->detailed.privatePhone->text() );
 	d->identity->setProperty( d->props->privateMobilePhone(), d->detailed.mobilePhone->text() );
+    accept();
 }
 
 void IdentityDialog::setPhoto(QString path)

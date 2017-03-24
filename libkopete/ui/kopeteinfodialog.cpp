@@ -22,6 +22,7 @@
 
 #include <QIcon>
 #include <QVBoxLayout>
+#include <QDialogButtonBox>
 
 #include <KTitleWidget>
 #include <KIconLoader>
@@ -37,7 +38,6 @@ namespace UI
 class InfoDialog::Private
 {
 public:
-	QVBoxLayout *layout;
 	KTitleWidget *title;
 	SettingsContainer *container;
 };
@@ -45,21 +45,19 @@ public:
 InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QString &icon)
 : QDialog(parent), d(new Private())
 {
-	initialize(parent);
+    initialize();
 
 	if (!title.isEmpty())
 		setTitle( title );
 	else
 		setTitle( i18n( "Information" ) );
 	setIcon( icon );
-
-	connect(this, SIGNAL(clicked(QAbstractButton*)), this, SLOT(slotSave()));
 }
 
 InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QIcon &icon)
 : QDialog(parent), d(new Private())
 {
-	initialize(parent);
+    initialize();
 
 	if (!title.isEmpty())
 		setTitle( title );
@@ -69,22 +67,22 @@ InfoDialog::InfoDialog(QWidget *parent, const QString &title, const QIcon &icon)
 
 }
 
-void InfoDialog::initialize(QWidget *parent)
+void InfoDialog::initialize()
 {
 	//FIXME: this should be changed
 	resize(500,500);
 
-	QWidget *mainWidget = new QWidget(this);
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	mainWidget->setLayout(mainLayout);
-	mainLayout->addWidget(mainWidget);
-	d->layout = new QVBoxLayout(mainWidget);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	
 	d->title = new KTitleWidget();
-	d->layout->addWidget( d->title );
+    mainLayout->addWidget( d->title );
 
 	d->container = new SettingsContainer();
-	d->layout->addWidget( d->container );
+    mainLayout->addWidget( d->container );
+    QDialogButtonBox *button = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel, this);
+    connect(button, &QDialogButtonBox::accepted, this, &InfoDialog::slotSave);
+    connect(button, &QDialogButtonBox::rejected, this, &InfoDialog::reject);
+    mainLayout->addWidget(button);
 }
 
 InfoDialog::~InfoDialog()
@@ -94,6 +92,7 @@ InfoDialog::~InfoDialog()
 
 void InfoDialog::slotSave()
 {
+    accept();
 }
 
 void InfoDialog::setTitle(const QString &title)
