@@ -22,13 +22,13 @@ IdPushButton::IdPushButton(unsigned int id, QWidget *parent) : KPushButton(paren
     connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
 }
 
-IdPushButton::IdPushButton(unsigned int id, const QString text, QWidget *parent) : KPushButton(text, parent)
+IdPushButton::IdPushButton(unsigned int id, const QString &text, QWidget *parent) : KPushButton(text, parent)
 {
     _id = id;
     connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));
 }
 
-IdPushButton::IdPushButton(unsigned int id, const KIcon icon, const QString text, QWidget *parent) : KPushButton(icon, text, parent)
+IdPushButton::IdPushButton(unsigned int id, const KIcon &icon, const QString &text, QWidget *parent) : KPushButton(icon, text, parent)
 {
     _id = id;
     connect(this, SIGNAL(pressed()), this, SLOT(emitPressed()));

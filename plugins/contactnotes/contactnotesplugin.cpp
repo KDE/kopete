@@ -20,7 +20,7 @@
 #include <QAction>
 #include <kdebug.h>
 #include <kgenericfactory.h>
-#include <kicon.h>
+#include <qicon.h>
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -41,7 +41,7 @@ ContactNotesPlugin::ContactNotesPlugin(QObject *parent, const QVariantList & /* 
         pluginStatic_ = this;
     }
 
-    QAction *m_actionEdit = new QAction(KIcon(QStringLiteral("user-identity")), i18n("&Notes"), this);
+    QAction *m_actionEdit = new QAction(QIcon::fromTheme(QStringLiteral("user-identity")), i18n("&Notes"), this);
     actionCollection()->addAction(QStringLiteral("editContactNotes"), m_actionEdit);
     connect(m_actionEdit, SIGNAL(triggered(bool)), this, SLOT(slotEditInfo()));
 

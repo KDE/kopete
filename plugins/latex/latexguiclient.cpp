@@ -23,7 +23,7 @@
 #include <KLocalizedString>
 #include <QKeySequence>
 #include <kmessagebox.h>
-#include <kicon.h>
+#include <qicon.h>
 #include <qimage.h>
 #include <qregexp.h>
 
@@ -43,7 +43,7 @@ LatexGUIClient::LatexGUIClient(Kopete::ChatSession *parent)
 
     m_manager = parent;
 
-    QAction *previewAction = new QAction(KIcon(QStringLiteral("latex")), i18n("Preview Latex Images"), this);
+    QAction *previewAction = new QAction(QIcon::fromTheme(QStringLiteral("latex")), i18n("Preview Latex Images"), this);
     actionCollection()->addAction(QStringLiteral("latexPreview"), previewAction);
     previewAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
     connect(previewAction, SIGNAL(triggered(bool)), this, SLOT(slotPreview()));

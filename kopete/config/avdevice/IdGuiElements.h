@@ -29,8 +29,8 @@ class IdPushButton : public KPushButton
     Q_OBJECT
 public:
     IdPushButton(unsigned int id, QWidget *parent = nullptr);
-    IdPushButton(unsigned int id, const QString text, QWidget *parent = nullptr);
-    IdPushButton(unsigned int id, const KIcon icon, const QString text, QWidget *parent = nullptr);
+    IdPushButton(unsigned int id, const QString &text, QWidget *parent = nullptr);
+    IdPushButton(unsigned int id, const KIcon &icon, const QString &text, QWidget *parent = nullptr);
     IdPushButton(unsigned int id, KGuiItem item, QWidget *parent = nullptr);
 private:
     unsigned int _id;
