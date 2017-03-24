@@ -36,7 +36,7 @@ if(XMMS_FOUND)
    target_link_libraries( kopete_nowlistening ${XMMS_LDFLAGS} )
 endif(XMMS_FOUND)
 
-install(TARGETS kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_nowlistening  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -58,15 +58,15 @@ target_link_libraries(kcm_kopete_nowlistening
     Qt5::Core
 )
 
-install(TARGETS kcm_kopete_nowlistening  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_nowlistening  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES nowlisteningconfig.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
-install( FILES kopete_nowlistening.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES nowlisteningui.rc nowlisteningchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
-install( FILES kopete_nowlistening_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install( FILES nowlisteningconfig.kcfg  DESTINATION ${KDE_INSTALL_KCFGDIR})
+install( FILES kopete_nowlistening.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES nowlisteningui.rc nowlisteningchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete)
+install( FILES kopete_nowlistening_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
 
 
 

@@ -15,7 +15,7 @@ set( kopete_sms_services_SRCS
 
 
 ########### install files ###############
-install(TARGETS kopetesmsservices  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopetesmsservices  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 

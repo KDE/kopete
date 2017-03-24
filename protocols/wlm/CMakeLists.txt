@@ -83,7 +83,7 @@ endif(GIF_FOUND)
 include_directories(${kopete_wlm_include_DIRS})
 target_link_libraries(kopete_wlm ${kopete_wlm_link_LIBS})
 
-install(TARGETS kopete_wlm  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_wlm  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
-install(FILES  kopete_wlm.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES  wlmchatui.rc DESTINATION ${DATA_INSTALL_DIR}/kopete_wlm)
+install(FILES  kopete_wlm.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install(FILES  wlmchatui.rc DESTINATION ${KDE_INSTALL_DATADIR}/kopete_wlm)

@@ -11,7 +11,7 @@ add_library( kopetesmsui SHARED ${uiSrcs} )
 target_link_libraries(kopetesmsui  KF5::KIOCore )
 
 ########### install files ###############
-install(TARGETS kopetesmsui  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopetesmsui  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 

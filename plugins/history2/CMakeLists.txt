@@ -23,7 +23,7 @@ add_library(kopete_history2 MODULE ${kopete_history2_PART_SRCS})
 
 target_link_libraries(kopete_history2  KF5::KHtml kopete Qt5::Sql)
 
-install(TARGETS kopete_history2  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_history2  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -40,15 +40,15 @@ add_library(kcm_kopete_history2 MODULE ${kcm_kopete_history2_PART_SRCS})
 
 target_link_libraries(kcm_kopete_history2   KF5::KHtml kopete Qt5::Sql)
 
-install(TARGETS kcm_kopete_history2  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_history2  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES history2config.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
-install( FILES kopete_history2.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES history2ui.rc  history2chatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_history2)
-install( FILES kopete_history2_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install( FILES history2config.kcfg  DESTINATION ${KDE_INSTALL_KCFGDIR})
+install( FILES kopete_history2.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES history2ui.rc  history2chatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_history2)
+install( FILES kopete_history2_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
 
 
 

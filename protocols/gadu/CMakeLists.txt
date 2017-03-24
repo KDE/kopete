@@ -47,12 +47,12 @@ add_library(kopete_gadu MODULE ${kopete_gadu_PART_SRCS})
 
 target_link_libraries(kopete_gadu KF5::KIOCore Qt5::Network ${KDE4_KDE3SUPPORT_LIBS} ${LIBGADU_LIBRARIES} kopete )
 
-install(TARGETS kopete_gadu  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_gadu  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_gadu.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_gadu.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 
 
 

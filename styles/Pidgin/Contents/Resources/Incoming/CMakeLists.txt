@@ -1,1 +1,1 @@
-install( FILES Content.html NextContent.html Action.html  DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Pidgin/Contents/Resources/Incoming)
+install( FILES Content.html NextContent.html Action.html  DESTINATION ${KDE_INSTALL_DATADIR}/kopete/styles/Pidgin/Contents/Resources/Incoming)

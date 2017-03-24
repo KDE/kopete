@@ -10,7 +10,7 @@ add_library(kopete_webpresence MODULE ${kopete_webpresence_PART_SRCS})
 
 target_link_libraries(kopete_webpresence  KF5::KIOCore kopete ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} Qt5::Xml)
 
-install(TARGETS kopete_webpresence  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_webpresence  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -25,12 +25,12 @@ add_library(kcm_kopete_webpresence MODULE ${kcm_kopete_webpresence_PART_SRCS})
 
 target_link_libraries(kcm_kopete_webpresence   KF5::KIOCore kopete )
 
-install(TARGETS kcm_kopete_webpresence  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_webpresence  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install(FILES webpresenceconfig.kcfg DESTINATION ${KCFG_INSTALL_DIR})
-install(FILES kopete_webpresence.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES webpresence_html.xsl webpresence_html_images.xsl webpresence_xhtml.xsl webpresence_xhtml_images.xsl DESTINATION ${DATA_INSTALL_DIR}/kopete/webpresence)
-install(FILES kopete_webpresence_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install(FILES webpresenceconfig.kcfg DESTINATION ${KDE_INSTALL_KCFGDIR})
+install(FILES kopete_webpresence.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install(FILES webpresence_html.xsl webpresence_html_images.xsl webpresence_xhtml.xsl webpresence_xhtml_images.xsl DESTINATION ${KDE_INSTALL_DATADIR}/kopete/webpresence)
+install(FILES kopete_webpresence_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)

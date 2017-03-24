@@ -54,13 +54,13 @@ if(NOT DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_yahoo kopete_videodevice)
 endif(NOT DISABLE_VIDEOSUPPORT)
 
-install(TARGETS kopete_yahoo  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_yahoo  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_yahoo.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES yahooconferenceui.rc yahooimui.rc yahoochatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_yahoo)
+install( FILES kopete_yahoo.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES yahooconferenceui.rc yahooimui.rc yahoochatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_yahoo)
 
 
 

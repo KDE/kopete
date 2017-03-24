@@ -1,5 +1,5 @@
 
 ########### install files ###############
 
-install( FILES Action.html Content.html NextContent.html  DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Retropete/Contents/Resources/Incoming)
+install( FILES Action.html Content.html NextContent.html  DESTINATION ${KDE_INSTALL_DATADIR}/kopete/styles/Retropete/Contents/Resources/Incoming)
 

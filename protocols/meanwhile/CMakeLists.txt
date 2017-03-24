@@ -27,11 +27,11 @@ target_link_libraries(kopete_meanwhile
    Qt5::Network
   kopete)
 
-install(TARGETS kopete_meanwhile DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_meanwhile DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### install files ###############
 
-install(FILES kopete_meanwhile.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES kopete_meanwhile.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 
 
 

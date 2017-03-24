@@ -68,19 +68,19 @@ target_link_libraries(kopete_bin
 	kopeteidentity
 )
 
-install(TARGETS kopete_bin  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install(TARGETS kopete_bin  ${KDE_INSTALL_TARGETS_DEFAULT_ARGS} )
 
 
 ########### install files ###############
 
-install( PROGRAMS kopete.desktop  DESTINATION ${XDG_APPS_INSTALL_DIR})
+install( PROGRAMS kopete.desktop  DESTINATION ${KDE_INSTALL_APPDIR})
 install(FILES
     kopeteui.rc
     DESTINATION  ${KDE_INSTALL_KXMLGUI5DIR}/kopete)
 
-install( FILES kopete.notifyrc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
-install( FILES kopeterc DESTINATION ${CONFIG_INSTALL_DIR} )
-install( FILES org.kde.Kopete.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES kopete.notifyrc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete)
+install( FILES kopeterc DESTINATION ${KDE_INSTALL_CONFDIR} )
+install( FILES org.kde.Kopete.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
 
-ecm_install_icons( ${ICON_INSTALL_DIR}   )
+ecm_install_icons( ${KDE_INSTALL_ICONDIR}   )
 

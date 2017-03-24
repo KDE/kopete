@@ -19,7 +19,7 @@ add_library(kopete_cryptography MODULE ${kopete_cryptography_PART_SRCS})
 
 target_link_libraries(kopete_cryptography Qt5::Gui  KF5::KDELibs4Support kopete ${KLEOPATRA_LIBRARIES} ${KDE4_KABC_LIBS} ${QGPGME_LIBRARIES} )
 
-install(TARGETS kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_cryptography  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -43,11 +43,11 @@ target_link_libraries(
     Qt5::Gui
     )
 
-install(TARGETS kcm_kopete_cryptography  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_cryptography  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_cryptography.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES cryptographyui.rc cryptographychatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_cryptography)
-install( FILES kopete_cryptography_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install( FILES kopete_cryptography.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES cryptographyui.rc cryptographychatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_cryptography)
+install( FILES kopete_cryptography_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)

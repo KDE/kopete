@@ -45,12 +45,12 @@ target_link_libraries(kopete_aim
     Qt5::Xml
     )
 
-install(TARGETS kopete_aim  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_aim  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_aim.desktop aim.protocol  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_aim.desktop aim.protocol  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 
 
 

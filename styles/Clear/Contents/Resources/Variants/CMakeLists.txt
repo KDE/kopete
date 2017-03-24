@@ -1,1 +1,1 @@
-install( FILES No_avatars.css  DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Clear/Contents/Resources/Variants)
+install( FILES No_avatars.css  DESTINATION ${KDE_INSTALL_DATADIR}/kopete/styles/Clear/Contents/Resources/Variants)

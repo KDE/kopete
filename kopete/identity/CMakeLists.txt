@@ -27,7 +27,7 @@ ki18n_wrap_ui( kopeteidentity_SRCS
 add_library( kopeteidentity SHARED ${kopeteidentity_SRCS} )
 target_link_libraries( kopeteidentity kopeteaddaccountwizard kopete  kopetestatusmenu )
 set_target_properties( kopeteidentity PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install(TARGETS kopeteidentity ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kopeteidentity ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 

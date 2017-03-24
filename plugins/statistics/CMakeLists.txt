@@ -19,10 +19,10 @@ add_library(kopete_statistics MODULE ${kopete_statistics_PART_SRCS})
 
 target_link_libraries(kopete_statistics  kopete Qt5::Sql KF5::KHtml )
 
-install(TARGETS kopete_statistics  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_statistics  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
-install( FILES org.kde.kopete.Statistics.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
-install( FILES kopete_statistics.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES statisticsui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_statistics)
+install( FILES org.kde.kopete.Statistics.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )
+install( FILES kopete_statistics.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES statisticsui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_statistics)

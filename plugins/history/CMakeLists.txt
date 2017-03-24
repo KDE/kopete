@@ -21,7 +21,7 @@ set_target_properties(kopete_history PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(kopete_history Qt5::Widgets KF5::KHtml kopete )
 
-install(TARGETS kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_history  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -37,15 +37,15 @@ set_target_properties(kcm_kopete_history PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(kcm_kopete_history KF5::KCMUtils Qt5::Widgets kopete )
 
-install(TARGETS kcm_kopete_history  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_history  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES historyconfig.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
-install( FILES kopete_history.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES historyui.rc  historychatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_history)
-install( FILES kopete_history_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install( FILES historyconfig.kcfg  DESTINATION ${KDE_INSTALL_KCFGDIR})
+install( FILES kopete_history.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES historyui.rc  historychatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_history)
+install( FILES kopete_history_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
 
 
 

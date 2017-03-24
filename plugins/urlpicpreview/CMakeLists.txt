@@ -24,7 +24,7 @@ target_link_libraries(kopete_urlpicpreview
     kopete
 )
 
-install(TARGETS kopete_urlpicpreview DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_urlpicpreview DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -44,14 +44,14 @@ target_link_libraries(kcm_kopete_urlpicpreview
     kopete
 )
 
-install(TARGETS kcm_kopete_urlpicpreview  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_urlpicpreview  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES urlpicpreview.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
-install( FILES kopete_urlpicpreview.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES kopete_urlpicpreview_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install( FILES urlpicpreview.kcfg  DESTINATION ${KDE_INSTALL_KCFGDIR})
+install( FILES kopete_urlpicpreview.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES kopete_urlpicpreview_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
 file(GLOB icons_png "*.png")
 file(GLOB icons_svg "*.svg")
 set(all_icons ${icons_png} ${icons_svg})

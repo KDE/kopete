@@ -44,10 +44,10 @@ if(NOT DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_qq kopete_videodevice)
 endif(NOT DISABLE_VIDEOSUPPORT)
 
-install(TARGETS kopete_qq DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS kopete_qq DESTINATION ${KDE_INSTALL_PLUGINDIR} )
 
 
 ########### install files ###############
 
-install(FILES kopete_qq.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+install(FILES kopete_qq.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR} )
 

@@ -80,7 +80,7 @@ target_link_libraries( kyahoo KF5::KDELibs4Support KF5::KIOCore Qt5::Xml Qt5::Ne
 set_target_properties( kyahoo PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
 
-install(TARGETS kyahoo ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kyahoo ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 

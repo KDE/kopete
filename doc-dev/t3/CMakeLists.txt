@@ -7,7 +7,7 @@ include (MacroLibrary)
 
 ########### install the plugin desktop file ###############
 
-install(FILES kopete_tutorialplugin.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES kopete_tutorialplugin.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 
 ########### library containing plugin logic ###############
 
@@ -32,7 +32,7 @@ add_library(kopete_tutorialplugin MODULE ${kopete_tutorialplugin_PART_SRCS})
 target_link_libraries(kopete_tutorialplugin  kopete )
 
 # install the result with other KDE plugins
-install(TARGETS kopete_tutorialplugin DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_tutorialplugin DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### configuration module ##########################
 
@@ -45,7 +45,7 @@ add_library(kcm_kopete_tutorialplugin MODULE ${kcm_kopete_tutorialplugin_PART_SR
 
 target_link_libraries(kcm_kopete_tutorialplugin )
 
-install(TARGETS kcm_kopete_tutorialplugin DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_tutorialplugin DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
-install( FILES kopete_tutorialplugin_config.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install( FILES kopete_tutorialplugin_config.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
 

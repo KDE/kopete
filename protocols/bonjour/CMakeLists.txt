@@ -31,9 +31,9 @@ if(NOT DISABLE_VIDEOSUPPORT)
     target_link_libraries(kopete_bonjour kopete_videodevice)
 endif(NOT DISABLE_VIDEOSUPPORT)
 
-install(TARGETS kopete_bonjour  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_bonjour  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_bonjour.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_bonjour.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})

@@ -86,7 +86,7 @@ target_link_libraries( qgroupwise Qt5::Core Qt5::Gui Qt5::Network qca-qt5 ${ZLIB
 
 ########### install files ###############
 
-install(TARGETS qgroupwise ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS qgroupwise ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 

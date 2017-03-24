@@ -32,5 +32,5 @@ add_library(kopete_sms MODULE ${kopete_sms_PART_SRCS})
 
 target_link_libraries(kopete_sms  KF5::KIOCore ${KDE4_KDE3SUPPORT_LIBS} kopete )
 
-install(TARGETS kopete_sms  DESTINATION ${PLUGIN_INSTALL_DIR})
-install( FILES kopete_sms.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install(TARGETS kopete_sms  DESTINATION ${KDE_INSTALL_PLUGINDIR})
+install( FILES kopete_sms.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})

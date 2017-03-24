@@ -85,9 +85,9 @@ ecm_optional_add_subdirectory( skypebuttons )
 
 ########### install files ###############
 
-install( TARGETS kopete_skype DESTINATION ${PLUGIN_INSTALL_DIR} )
-install( FILES kopete_skype.desktop skype.protocol callto.protocol tel.protocol DESTINATION ${SERVICES_INSTALL_DIR} )
-install( FILES skypeui.rc skypechatui.rc DESTINATION ${DATA_INSTALL_DIR}/kopete_skype )
+install( TARGETS kopete_skype DESTINATION ${KDE_INSTALL_PLUGINDIR} )
+install( FILES kopete_skype.desktop skype.protocol callto.protocol tel.protocol DESTINATION ${KDE_INSTALL_KSERVICES5DIR} )
+install( FILES skypeui.rc skypechatui.rc DESTINATION ${KDE_INSTALL_DATADIR}/kopete_skype )
 
 #Enable this for system bus dbus type communication with skype public api
 #Linux skype client (version 2.0.0.72) still does not support it, so we do not need it now maybe in new skype version

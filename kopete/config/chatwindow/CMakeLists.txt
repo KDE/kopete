@@ -24,11 +24,11 @@ add_library(kcm_kopete_chatwindowconfig MODULE ${kcm_kopete_chatwindowconfig_PAR
 
 target_link_libraries(kcm_kopete_chatwindowconfig  kopete kopetechatwindow_shared ${KDE4_KNEWSTUFF2_LIBS} KF5::KHtml)
 
-install(TARGETS kcm_kopete_chatwindowconfig DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_chatwindowconfig DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_chatwindowconfig.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_chatwindowconfig.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 
 

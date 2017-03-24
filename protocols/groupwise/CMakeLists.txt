@@ -58,9 +58,9 @@ link_directories( ${CMAKE_CURRENT_BINARY_DIR}/libgroupwise )
 
 target_link_libraries(kopete_groupwise  KF5::KDELibs4Support qgroupwise kopete ${QCA2_LIBRARIES})
 
-install(TARGETS kopete_groupwise  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_groupwise  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### install files ###############
 
-install( FILES kopete_groupwise.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES gwchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_groupwise)
+install( FILES kopete_groupwise.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES gwchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_groupwise)

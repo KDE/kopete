@@ -35,9 +35,9 @@ if(NOT DISABLE_VIDEOSUPPORT)
   target_link_libraries(kopete_testbed kopete_videodevice)
 endif(NOT DISABLE_VIDEOSUPPORT)
 
-install(TARGETS kopete_testbed  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_testbed  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_testbed.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_testbed.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})

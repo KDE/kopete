@@ -7,4 +7,4 @@ include (MacroLibrary)
 
 ########### install the plugins desktop file ###############
 
-install(FILES kopete_tutorialplugin.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES kopete_tutorialplugin.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})

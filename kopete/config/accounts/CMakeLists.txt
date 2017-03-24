@@ -21,12 +21,12 @@ add_library(kcm_kopete_accountconfig MODULE ${kcm_kopete_accountconfig_PART_SRCS
 
 target_link_libraries(kcm_kopete_accountconfig   kopete kopeteaddaccountwizard kopeteidentity)
 
-install(TARGETS kcm_kopete_accountconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_accountconfig  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_accountconfig.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES kopete_accountconfig.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
 
 
 

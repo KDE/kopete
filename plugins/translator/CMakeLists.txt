@@ -20,7 +20,7 @@ add_library(kopete_translator MODULE ${kopete_translator_PART_SRCS})
 
 target_link_libraries(kopete_translator  KF5::KIOCore kopete )
 
-install(TARGETS kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_translator  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -37,15 +37,15 @@ add_library(kcm_kopete_translator MODULE ${kcm_kopete_translator_PART_SRCS})
 
 target_link_libraries(kcm_kopete_translator   kopete )
 
-install(TARGETS kcm_kopete_translator  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_translator  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES translatorconfig.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
-install( FILES kopete_translator.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES translatorui.rc translatorchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_translator)
-install( FILES kopete_translator_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install( FILES translatorconfig.kcfg  DESTINATION ${KDE_INSTALL_KCFGDIR})
+install( FILES kopete_translator.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES translatorui.rc translatorchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_translator)
+install( FILES kopete_translator_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
 
 
 

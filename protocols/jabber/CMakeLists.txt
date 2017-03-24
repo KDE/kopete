@@ -169,10 +169,10 @@ if(BUILD_JINGLE)
   target_link_libraries(kopete_jabber ${LIBORTP_LIBRARY} ${ASOUND_LIBRARY} ${SPEEX_LIBRARY})
 endif(BUILD_JINGLE)
 
-install(TARGETS kopete_jabber  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_jabber  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_jabber.desktop xmpp.protocol DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES jabberchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_jabber)
+install( FILES kopete_jabber.desktop xmpp.protocol DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES jabberchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_jabber)

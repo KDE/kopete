@@ -12,7 +12,7 @@ add_library(kopete_otr MODULE ${kopete_otr_PART_SRCS})
 
 target_link_libraries(kopete_otr  kopete kopete_otr_shared ${LIBOTR_LIBRARY})
 
-install(TARGETS kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_otr DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### next target ###############
 
@@ -26,7 +26,7 @@ add_library(kcm_kopete_otr MODULE ${kcm_kopete_otr_PART_SRCS})
 
 target_link_libraries(kcm_kopete_otr  kopete kopete_otr_shared ${LIBOTR_LIBRARY})
 
-install(TARGETS kcm_kopete_otr DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_otr DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ########### next target ###############
 
@@ -43,11 +43,11 @@ add_library(kopete_otr_shared SHARED ${kopete_otr_shared_LIB_SRCS})
 target_link_libraries(kopete_otr_shared kopete KF5::KIOCore  ${LIBOTR_LIBRARY})
 
 set_target_properties(kopete_otr_shared PROPERTIES VERSION 1.0.0 SOVERSION 1)
-install(TARGETS kopete_otr_shared ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kopete_otr_shared ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 
-install(FILES kopete_otr.kcfg DESTINATION ${KCFG_INSTALL_DIR})
-install(FILES kopete_otr.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES otrchatui.rc otrui.rc DESTINATION ${DATA_INSTALL_DIR}/kopete_otr)
-install(FILES kopete_otr_config.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install(FILES kopete_otr.kcfg DESTINATION ${KDE_INSTALL_KCFGDIR})
+install(FILES kopete_otr.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install(FILES otrchatui.rc otrui.rc DESTINATION ${KDE_INSTALL_DATADIR}/kopete_otr)
+install(FILES kopete_otr_config.desktop DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)

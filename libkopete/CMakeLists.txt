@@ -187,7 +187,7 @@ if(MSVC)
       OUTPUT_NAME libkopete
       )
 endif(MSVC)
-install(TARGETS kopete ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kopete ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 ########### install files ###############
@@ -212,17 +212,17 @@ install(FILES
  ui/kopetestdaction.h
  ui/kopeteview.h
  ui/kopeteviewplugin.h
-DESTINATION ${INCLUDE_INSTALL_DIR}/kopete/ui COMPONENT Devel )
+DESTINATION ${KDE_INSTALL_INCLUDEDIR}/kopete/ui COMPONENT Devel )
 
 
 install( FILES
   kopeteappearancesettings.kcfg
   kopetebehaviorsettings.kcfg
   kopetestatussettings.kcfg
-DESTINATION ${KCFG_INSTALL_DIR})
+DESTINATION ${KDE_INSTALL_KCFGDIR})
 
-install( FILES kopetecommandui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete)
-install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DESTINATION ${SERVICETYPES_INSTALL_DIR})
+install( FILES kopetecommandui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete)
+install( FILES kopeteplugin.desktop kopeteprotocol.desktop kopeteui.desktop  DESTINATION ${KDE_INSTALL_KSERVICETYPES5DIR})
 
 install( FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kopeteappearancesettings.h
@@ -274,6 +274,6 @@ install( FILES
   tasks/kopetecontacttaskbase.h
   tasks/kopetedeletecontacttask.h
   private/kopeteemoticons.h
-DESTINATION ${INCLUDE_INSTALL_DIR}/kopete COMPONENT Devel)
+DESTINATION ${KDE_INSTALL_INCLUDEDIR}/kopete COMPONENT Devel)
 
-install( FILES org.kde.kopete.Client.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install( FILES org.kde.kopete.Client.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR} )

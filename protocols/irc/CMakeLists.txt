@@ -44,13 +44,13 @@ add_library(kopete_irc MODULE ${kopete_irc_SRCS})
 
 target_link_libraries(kopete_irc KF5::KIOCore ${QT_QT3SUPPORT_LIBRARY} kopete kirc_client kirc )
 
-install(TARGETS kopete_irc  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_irc  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 ############ Test Files #################
 
 ########### install files ###############
 
-install( FILES kopete_irc.desktop irc.protocol  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES ircchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_irc)
-install( FILES ircnetworks.xml  DESTINATION ${DATA_INSTALL_DIR}/kopete)
+install( FILES kopete_irc.desktop irc.protocol  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES ircchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_irc)
+install( FILES ircnetworks.xml  DESTINATION ${KDE_INSTALL_DATADIR}/kopete)
 

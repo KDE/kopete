@@ -6,5 +6,5 @@ add_subdirectory( Variants )
 
 ########### install files ###############
 
-install( FILES main.css Footer.html Header.html Status.html  DESTINATION ${DATA_INSTALL_DIR}/kopete/styles/Clear/Contents/Resources)
+install( FILES main.css Footer.html Header.html Status.html  DESTINATION ${KDE_INSTALL_DATADIR}/kopete/styles/Clear/Contents/Resources)
 

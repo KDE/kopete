@@ -20,7 +20,7 @@ target_link_libraries(kopete_latex
     KF5::KDELibs4Support
 )
 
-install(TARGETS kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_latex  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -44,16 +44,16 @@ target_link_libraries(kcm_kopete_latex
     Qt5::Gui
 )
 
-install(TARGETS kcm_kopete_latex  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_latex  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES latexconfig.kcfg  DESTINATION ${KCFG_INSTALL_DIR})
-install( FILES kopete_latex.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES latexchatui.rc  DESTINATION ${DATA_INSTALL_DIR}/kopete_latex)
-install( FILES kopete_latex_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
-install( PROGRAMS kopete_latexconvert.sh DESTINATION ${BIN_INSTALL_DIR})
+install( FILES latexconfig.kcfg  DESTINATION ${KDE_INSTALL_KCFGDIR})
+install( FILES kopete_latex.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES latexchatui.rc  DESTINATION ${KDE_INSTALL_DATADIR}/kopete_latex)
+install( FILES kopete_latex_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
+install( PROGRAMS kopete_latexconvert.sh DESTINATION ${KDE_INSTALL_BINDIR})
 
 
 

@@ -15,7 +15,7 @@ add_library(kopete_pipes MODULE ${kopete_pipes_PART_SRCS})
 
 target_link_libraries( kopete_pipes KF5::KIOCore  kopete )
 
-install( TARGETS kopete_pipes DESTINATION ${PLUGIN_INSTALL_DIR})
+install( TARGETS kopete_pipes DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -36,9 +36,9 @@ target_link_libraries( kcm_kopete_pipes
 	kopete
 )
 
-install( TARGETS kcm_kopete_pipes  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install( TARGETS kcm_kopete_pipes  DESTINATION ${KDE_INSTALL_PLUGINDIR} )
 
 ########### install files ###############
-install( FILES kopete_pipes.desktop  DESTINATION ${SERVICES_INSTALL_DIR} )
-install( FILES kopete_pipes_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog )
+install( FILES kopete_pipes.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR} )
+install( FILES kopete_pipes_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog )
 

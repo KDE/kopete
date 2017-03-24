@@ -20,7 +20,7 @@ target_link_libraries(kopete_highlight
 	Qt5::Xml
 )
 
-install(TARGETS kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kopete_highlight  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### next target ###############
@@ -42,13 +42,13 @@ target_link_libraries(kcm_kopete_highlight
 	Qt5::Xml
 )
 
-install(TARGETS kcm_kopete_highlight  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_kopete_highlight  DESTINATION ${KDE_INSTALL_PLUGINDIR})
 
 
 ########### install files ###############
 
-install( FILES kopete_highlight.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
-install( FILES kopete_highlight_config.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install( FILES kopete_highlight.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR})
+install( FILES kopete_highlight_config.desktop  DESTINATION ${KDE_INSTALL_KSERVICES5DIR}/kconfiguredialog)
 
 
 
