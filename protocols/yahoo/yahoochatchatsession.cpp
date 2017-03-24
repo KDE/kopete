@@ -36,7 +36,6 @@ YahooChatChatSession::YahooChatChatSession( Kopete::Protocol *protocol, const Ko
 : Kopete::ChatSession( user, others, protocol )
 {
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
-    //KF5 FIXME  setComponentData(protocol->componentData());
 
 	connect ( this, SIGNAL(messageSent(Kopete::Message&,Kopete::ChatSession*)),
 			  SLOT(slotMessageSent(Kopete::Message&,Kopete::ChatSession*)) );

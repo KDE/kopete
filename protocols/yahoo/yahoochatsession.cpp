@@ -54,7 +54,7 @@ YahooChatSession::YahooChatSession( Kopete::Protocol *protocol, const Kopete::Co
 {
 	kDebug(YAHOO_GEN_DEBUG) ;
 	Kopete::ChatSessionManager::self()->registerChatSession( this );
-    //setComponentData(protocol->componentData());
+    //
 
 	// Add Actions
     QAction *buzzAction = new QAction( QIcon::fromTheme(QStringLiteral("bell")), i18n( "Buzz Contact" ), this );

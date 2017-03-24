@@ -69,12 +69,12 @@ JabberChatSession::JabberChatSession (JabberProtocol *protocol, const JabberBase
     QAction *jingleSessionGui = new QAction(i18n("Show audio calls"), members().first());
     jingleSessionGui->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
     connect(jingleSessionGui, SIGNAL(triggered(bool)), SLOT(slotJingleSessionGui()));
-    setComponentData(protocol->componentData());
+
 
     QAction *jingleSession = new QAction(i18n("Start audio call"), members().first());
     jingleSession->setIcon(QIcon::fromTheme(QStringLiteral("voicecall")));
     connect(jingleSession, SIGNAL(triggered(bool)), SLOT(slotJingleSession()));
-    setComponentData(protocol->componentData());
+
 
     Kopete::ContactPtrList chatMembers = members();
     if (!chatMembers.isEmpty()) {
@@ -90,12 +90,12 @@ JabberChatSession::JabberChatSession (JabberProtocol *protocol, const JabberBase
 
     /*QAction *jingleaudiocall = new QAction(i18n("Jingle Audio call" ), members().first());
     connect(jingleaudiocall, SIGNAL(triggered(bool)), SLOT (slotJingleAudioCall()));
-    setComponentData(protocol->componentData());
+
     jingleaudiocall->setEnabled( false );
 
     QAction *jinglevideocall = new QAction(i18n("Jingle Video call" ), members().first());
     connect(jinglevideocall, SIGNAL(triggered(bool)), SLOT (slotJingleVideoCall()));
-    setComponentData(protocol->componentData());
+
     jinglevideocall->setEnabled( false );*/
 
     //Kopete::ContactPtrList chatMembers = members ();
